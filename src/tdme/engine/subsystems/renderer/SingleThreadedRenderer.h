@@ -55,22 +55,22 @@ public:
 	virtual ~SingleThreadedRenderer();
 
 	// overridden methods
-	virtual int32_t getLighting(void* context) override;
-	virtual void setLighting(void* context, int32_t lighting) override;
-	virtual Matrix2D3x3& getTextureMatrix(void* context) override;
-	virtual Renderer_Light& getLight(void* context, int32_t lightId) override;
-	virtual array<float, 4>& getEffectColorMul(void* context) override;
-	virtual array<float, 4>& getEffectColorAdd(void* context) override;
-	virtual Renderer_SpecularMaterial& getSpecularMaterial(void* context) override;
-	virtual Renderer_PBRMaterial& getPBRMaterial(void* context) override;
-	virtual const string& getShader(void* context) override;
-	virtual void setShader(void* context, const string& id) override;
-	virtual const EntityShaderParameters& getShaderParameters(void* context) override;
-	virtual void setShaderParameters(void* context, const EntityShaderParameters& parameters) override;
-	virtual float getMaskMaxValue(void* context) override;
-	virtual void setMaskMaxValue(void* context, float maskMaxValue) override;
-	virtual array<float, 3>& getEnvironmentMappingCubeMapPosition(void* context) override;
-	virtual void setEnvironmentMappingCubeMapPosition(void* context, array<float, 3>& position) override;
+	virtual int32_t getLighting(int contextIdx) override;
+	virtual void setLighting(int contextIdx, int32_t lighting) override;
+	virtual Matrix2D3x3& getTextureMatrix(int contextIdx) override;
+	virtual Renderer_Light& getLight(int contextIdx, int32_t lightId) override;
+	virtual array<float, 4>& getEffectColorMul(int contextIdx) override;
+	virtual array<float, 4>& getEffectColorAdd(int contextIdx) override;
+	virtual Renderer_SpecularMaterial& getSpecularMaterial(int contextIdx) override;
+	virtual Renderer_PBRMaterial& getPBRMaterial(int contextIdx) override;
+	virtual const string& getShader(int contextIdx) override;
+	virtual void setShader(int contextIdx, const string& id) override;
+	virtual const EntityShaderParameters& getShaderParameters(int contextIdx) override;
+	virtual void setShaderParameters(int contextIdx, const EntityShaderParameters& parameters) override;
+	virtual float getMaskMaxValue(int contextIdx) override;
+	virtual void setMaskMaxValue(int contextIdx, float maskMaxValue) override;
+	virtual array<float, 3>& getEnvironmentMappingCubeMapPosition(int contextIdx) override;
+	virtual void setEnvironmentMappingCubeMapPosition(int contextIdx, array<float, 3>& position) override;
 	virtual const Renderer_Statistics getStatistics() override;
 
 };

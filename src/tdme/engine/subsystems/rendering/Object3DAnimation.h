@@ -149,11 +149,11 @@ protected:
 	 * @param nodeList flattened node list
 	 * @param instanceTransformationsMatrix object transformations matrix
 	 * @param baseAnimation base animation
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param lastFrameAtTime time of last animation computation
 	 * @param currentFrameAtTime time of current animation computation
 	 */
-	void computeTransformations(vector<FlattenedNode>& nodeList, const Matrix4x4& instanceTransformationsMatrix, AnimationState& baseAnimation, void* context, int64_t lastFrameAtTime, int64_t currentFrameAtTime);
+	void computeTransformations(vector<FlattenedNode>& nodeList, const Matrix4x4& instanceTransformationsMatrix, AnimationState& baseAnimation, int contextIdx, int64_t lastFrameAtTime, int64_t currentFrameAtTime);
 
 	/**
 	 * Update skinning transformations matrices
@@ -251,11 +251,11 @@ public:
 
 	/**
 	 * Pre render step, computes transformations
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param objectTransformationsMatrix object transformations matrix
 	 * @param lastFrameAtTime time of last animation computation
 	 * @param currentFrameAtTime time of current animation computation
 	 */
-	void computeTransformations(void* context, const Matrix4x4& objectTransformationsMatrix, int64_t lastFrameAtTime, int64_t currentFrameAtTime);
+	void computeTransformations(int contextIdx, const Matrix4x4& objectTransformationsMatrix, int64_t lastFrameAtTime, int64_t currentFrameAtTime);
 
 };

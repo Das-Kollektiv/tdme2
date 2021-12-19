@@ -82,65 +82,65 @@ void ParticlesShader::initialize()
 	initialized = true;
 }
 
-void ParticlesShader::useProgram(void* context)
+void ParticlesShader::useProgram(int contextIdx)
 {
 	isRunning = true;
-	renderer->useProgram(context, renderProgramId);
-	renderer->setLighting(context, renderer->LIGHTING_NONE);
+	renderer->useProgram(contextIdx, renderProgramId);
+	renderer->setLighting(contextIdx, renderer->LIGHTING_NONE);
 	for (auto i = 0; i < uniformDiffuseTextureUnits.size(); i++) {
 		if (uniformDiffuseTextureUnits[i] == -1) break;
-		renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnits[i], i);
+		renderer->setProgramUniformInteger(contextIdx, uniformDiffuseTextureUnits[i], i);
 	}
 }
 
-void ParticlesShader::updateEffect(void* context)
+void ParticlesShader::updateEffect(int contextIdx)
 {
 	// skip if not running
 	if (isRunning == false) return;
 }
 
-void ParticlesShader::unUseProgram(void* context)
+void ParticlesShader::unUseProgram(int contextIdx)
 {
 	isRunning = false;
 	for (auto i = 0; i < boundTextureIds.size(); i++) {
 		if (uniformDiffuseTextureUnits[i] == -1) break;
 		auto textureId = boundTextureIds[i];
 		if (textureId == 0) continue;
-		renderer->setTextureUnit(context, i);
-		renderer->bindTexture(context, renderer->ID_NONE);
+		renderer->setTextureUnit(contextIdx, i);
+		renderer->bindTexture(contextIdx, renderer->ID_NONE);
 	}
-	renderer->setTextureUnit(context, 0);
+	renderer->setTextureUnit(contextIdx, 0);
 	boundTextureIds.fill(renderer->ID_NONE);
 }
 
-void ParticlesShader::updateMatrices(void* context)
+void ParticlesShader::updateMatrices(int contextIdx)
 {
 	// skip if not running
 	if (isRunning == false) return;
 	// object to screen matrix
 	mvpMatrix.set(renderer->getModelViewMatrix()).multiply(renderer->getProjectionMatrix());
-	renderer->setProgramUniformFloatMatrix4x4(context, uniformMVPMatrix, mvpMatrix.getArray());
-	renderer->setProgramUniformFloat(context, uniformProjectionMatrixXx, renderer->getProjectionMatrix().getArray()[0]);
-	renderer->setProgramUniformFloat(context, uniformProjectionMatrixYy, renderer->getProjectionMatrix().getArray()[5]);
-	renderer->setProgramUniformInteger(context, uniformViewPortWidth, renderer->getViewPortWidth());
-	renderer->setProgramUniformInteger(context, uniformViewPortHeight, renderer->getViewPortHeight());
+	renderer->setProgramUniformFloatMatrix4x4(contextIdx, uniformMVPMatrix, mvpMatrix.getArray());
+	renderer->setProgramUniformFloat(contextIdx, uniformProjectionMatrixXx, renderer->getProjectionMatrix().getArray()[0]);
+	renderer->setProgramUniformFloat(contextIdx, uniformProjectionMatrixYy, renderer->getProjectionMatrix().getArray()[5]);
+	renderer->setProgramUniformInteger(contextIdx, uniformViewPortWidth, renderer->getViewPortWidth());
+	renderer->setProgramUniformInteger(contextIdx, uniformViewPortHeight, renderer->getViewPortHeight());
 }
 
-void ParticlesShader::setParameters(void* context, const array<int32_t, 16>& textureIds) {
+void ParticlesShader::setParameters(int contextIdx, const array<int32_t, 16>& textureIds) {
 	for (auto i = 0; i < boundTextureIds.size(); i++) {
 		if (uniformDiffuseTextureUnits[i] == -1) break;
 		auto textureId = boundTextureIds[i];
 		if (textureId == renderer->ID_NONE) continue;
-		renderer->setTextureUnit(context, i);
-		renderer->bindTexture(context, renderer->ID_NONE);
+		renderer->setTextureUnit(contextIdx, i);
+		renderer->bindTexture(contextIdx, renderer->ID_NONE);
 	}
 	for (auto i = 0; i < textureIds.size(); i++) {
 		if (uniformDiffuseTextureUnits[i] == -1) break;
 		auto textureId = textureIds[i];
 		if (textureId == renderer->ID_NONE) continue;
-		renderer->setTextureUnit(context, i);
-		renderer->bindTexture(context, textureId);
+		renderer->setTextureUnit(contextIdx, i);
+		renderer->bindTexture(contextIdx, textureId);
 	}
-	renderer->setTextureUnit(context, 0);
+	renderer->setTextureUnit(contextIdx, 0);
 	boundTextureIds = textureIds;
 }

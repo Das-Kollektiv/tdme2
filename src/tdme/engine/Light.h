@@ -316,9 +316,9 @@ public:
 
 	/**
 	 * Update light
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	void update(void* context);
+	void update(int contextIdx);
 
 
 };

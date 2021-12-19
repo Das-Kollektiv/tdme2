@@ -58,9 +58,9 @@ public:
 
 	/**
 	 * Pre render step like uploading VBOs and such
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	void preRender(void* context);
+	void preRender(int contextIdx);
 
 	/**
 	 * Disposes the object 3d node

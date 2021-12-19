@@ -83,19 +83,19 @@ private:
 
 	/**
 	 * Applies transformations to meshes for given object 3d nodes
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param object3DNodes node render data list
 	 */
-	static void computeTransformations(void* context, vector<Object3DNode*>& object3DNodes);
+	static void computeTransformations(int contextIdx, vector<Object3DNode*>& object3DNodes);
 
 	/**
 	 * Set up textures for given object3d node and faces entity
 	 * @param renderer renderer
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param object3DNode object 3D node
 	 * @param facesEntityIdx faces entity idx
 	 */
-	static void setupTextures(Renderer* renderer, void* context, Object3DNode* object3DNode, int32_t facesEntityIdx);
+	static void setupTextures(Renderer* renderer, int contextIdx, Object3DNode* object3DNode, int32_t facesEntityIdx);
 
 	/**
 	 * Creates a object 3d nodes recursively for given node and it sub nodes

@@ -69,28 +69,28 @@ public:
 
 	/**
 	 * Set post processing shader
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	void setShader(void* context, const string& id);
+	void setShader(int contextIdx, const string& id);
 
 	/**
 	 * Set source buffer pixel width
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param pixelWidth pixel width
 	 */
-	void setBufferPixelWidth(void* context, float pixelWidth);
+	void setBufferPixelWidth(int contextIdx, float pixelWidth);
 
 	/**
 	 * Set source buffer pixel height
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param pixelHeight pixel height
 	 */
-	void setBufferPixelHeight(void* context, float pixelHeight);
+	void setBufferPixelHeight(int contextIdx, float pixelHeight);
 
 	/**
 	 * Set shader parameters
 	 * @param engine engine
 	 */
-	void setShaderParameters(void* context, Engine* engine);
+	void setShaderParameters(int contextIdx, Engine* engine);
 
 };

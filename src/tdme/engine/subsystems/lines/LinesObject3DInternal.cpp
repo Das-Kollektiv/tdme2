@@ -90,7 +90,7 @@ void LinesObject3DInternal::fromTransformations(const Transformations& transform
 
 void LinesObject3DInternal::initialize() {
 	// texture
-	this->textureId = this->texture == nullptr?engine->getTextureManager()->addTexture(this->texture = TextureReader::read("resources/engine/textures", "point.png"), renderer->getDefaultContext()):engine->getTextureManager()->addTexture(this->texture, renderer->getDefaultContext());
+	this->textureId = this->texture == nullptr?engine->getTextureManager()->addTexture(this->texture = TextureReader::read("resources/engine/textures", "point.png"), renderer->CONTEXTINDEX_DEFAULT):engine->getTextureManager()->addTexture(this->texture, renderer->CONTEXTINDEX_DEFAULT);
 
 	// initialize if not yet done
 	auto created = false;
@@ -98,24 +98,24 @@ void LinesObject3DInternal::initialize() {
 	vboIds = vboManaged->getVBOIds();
 
 	//
-	auto context = renderer->getDefaultContext();
+	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
 
 	{
 		// upload points
-		auto fbPoints = ObjectBuffer::getByteBuffer(context, points.size() * 3 * sizeof(float))->asFloatBuffer();
+		auto fbPoints = ObjectBuffer::getByteBuffer(contextIdx, points.size() * 3 * sizeof(float))->asFloatBuffer();
 		for (auto& point: points) fbPoints.put(point.getArray());
-		renderer->uploadBufferObject(context, (*vboIds)[0], fbPoints.getPosition() * sizeof(float), &fbPoints);
+		renderer->uploadBufferObject(contextIdx, (*vboIds)[0], fbPoints.getPosition() * sizeof(float), &fbPoints);
 	}
 
 	{
 		// upload colors
-		auto fbColors = ObjectBuffer::getByteBuffer(context, points.size() * 4 * sizeof(float))->asFloatBuffer();
+		auto fbColors = ObjectBuffer::getByteBuffer(contextIdx, points.size() * 4 * sizeof(float))->asFloatBuffer();
 		if (colors.size() == points.size()) {
 			for (auto& color: colors) fbColors.put(color.getArray());
 		} else {
 			for (auto& point: points) fbColors.put(color.getArray());
 		}
-		renderer->uploadBufferObject(context, (*vboIds)[1], fbColors.getPosition() * sizeof(float), &fbColors);
+		renderer->uploadBufferObject(contextIdx, (*vboIds)[1], fbColors.getPosition() * sizeof(float), &fbColors);
 	}
 }
 

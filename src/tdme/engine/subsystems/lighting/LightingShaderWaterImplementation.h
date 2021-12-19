@@ -37,9 +37,9 @@ public:
 	virtual const string getId() override;
 	virtual void initialize() override;
 	virtual void registerShader() override;
-	virtual void useProgram(Engine* engine, void* context) override;
-	virtual void updateMatrices(Renderer* renderer, void* context) override;
-	virtual void updateShaderParameters(Renderer* renderer, void* context) override;
+	virtual void useProgram(Engine* engine, int contextIdx) override;
+	virtual void updateMatrices(Renderer* renderer, int contextIdx) override;
+	virtual void updateShaderParameters(Renderer* renderer, int contextIdx) override;
 
 protected:
 	int32_t uniformWaterHeight { -1 };

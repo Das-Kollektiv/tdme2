@@ -174,7 +174,7 @@ void GUIImageNode::setSource(const string& source) {
 			this->texture = source.empty() == true?nullptr:GUI::getImage(screenNode->getApplicationRootPathName(), source);
 		}
 	}
-	this->textureId = texture == nullptr?0:Engine::getInstance()->getTextureManager()->addTexture(texture, nullptr);
+	this->textureId = texture == nullptr?0:Engine::getInstance()->getTextureManager()->addTexture(texture, 0);
 	this->textureWidth = texture == nullptr?0:texture->getWidth();
 	this->textureHeight = texture == nullptr?0:texture->getHeight();
 }
@@ -188,7 +188,7 @@ void GUIImageNode::rotate(float rotation) {
 		texture = nullptr;
 	}
 	this->texture = rotatedTexture;
-	this->textureId = texture == nullptr?0:Engine::getInstance()->getTextureManager()->addTexture(texture, nullptr);
+	this->textureId = texture == nullptr?0:Engine::getInstance()->getTextureManager()->addTexture(texture, 0);
 	this->textureWidth = texture == nullptr?0:texture->getWidth();
 	this->textureHeight = texture == nullptr?0:texture->getHeight();
 }

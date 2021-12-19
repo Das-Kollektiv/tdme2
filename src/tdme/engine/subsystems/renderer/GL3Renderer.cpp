@@ -144,7 +144,7 @@ void GL3Renderer::initialize()
 		glEnable(GL_POINT_SPRITE);
 	#endif
 	glEnable(GL_PROGRAM_POINT_SIZE);
-	setTextureUnit(nullptr, 0);
+	setTextureUnit(CONTEXTINDEX_DEFAULT, 0);
 	// port-macosx requires this
 	glGenVertexArrays(1, &engineVAO);
 	glBindVertexArray(engineVAO);
@@ -332,7 +332,7 @@ int32_t GL3Renderer::loadShader(int32_t type, const string& pathName, const stri
 	return handle;
 }
 
-void GL3Renderer::useProgram(void* context, int32_t programId)
+void GL3Renderer::useProgram(int contextIdx, int32_t programId)
 {
 	glUseProgram(programId);
 }
@@ -384,7 +384,7 @@ int32_t GL3Renderer::getProgramUniformLocation(int32_t programId, const string& 
 	return uniformLocation;
 }
 
-void GL3Renderer::setProgramUniformInteger(void* context, int32_t uniformId, int32_t value)
+void GL3Renderer::setProgramUniformInteger(int contextIdx, int32_t uniformId, int32_t value)
 {
 	#if defined (__APPLE__)
 		if (uniformId == UNIFORM_CL_SKINNING_VERTEX_COUNT) {
@@ -403,37 +403,37 @@ void GL3Renderer::setProgramUniformInteger(void* context, int32_t uniformId, int
 	#endif
 }
 
-void GL3Renderer::setProgramUniformFloat(void* context, int32_t uniformId, float value)
+void GL3Renderer::setProgramUniformFloat(int contextIdx, int32_t uniformId, float value)
 {
 	glUniform1f(uniformId, value);
 }
 
-void GL3Renderer::setProgramUniformFloatMatrix3x3(void* context, int32_t uniformId, const array<float, 9>& data)
+void GL3Renderer::setProgramUniformFloatMatrix3x3(int contextIdx, int32_t uniformId, const array<float, 9>& data)
 {
 	glUniformMatrix3fv(uniformId, 1, false, data.data());
 }
 
-void GL3Renderer::setProgramUniformFloatMatrix4x4(void* context, int32_t uniformId, const array<float, 16>& data)
+void GL3Renderer::setProgramUniformFloatMatrix4x4(int contextIdx, int32_t uniformId, const array<float, 16>& data)
 {
 	glUniformMatrix4fv(uniformId, 1, false, data.data());
 }
 
-void GL3Renderer::setProgramUniformFloatMatrices4x4(void* context, int32_t uniformId, int32_t count, FloatBuffer* data)
+void GL3Renderer::setProgramUniformFloatMatrices4x4(int contextIdx, int32_t uniformId, int32_t count, FloatBuffer* data)
 {
 	glUniformMatrix4fv(uniformId, count, false, (float*)data->getBuffer());
 }
 
-void GL3Renderer::setProgramUniformFloatVec4(void* context, int32_t uniformId, const array<float, 4>& data)
+void GL3Renderer::setProgramUniformFloatVec4(int contextIdx, int32_t uniformId, const array<float, 4>& data)
 {
 	glUniform4fv(uniformId, 1, data.data());
 }
 
-void GL3Renderer::setProgramUniformFloatVec3(void* context, int32_t uniformId, const array<float, 3>& data)
+void GL3Renderer::setProgramUniformFloatVec3(int contextIdx, int32_t uniformId, const array<float, 3>& data)
 {
 	glUniform3fv(uniformId, 1, data.data());
 }
 
-void GL3Renderer::setProgramUniformFloatVec2(void* context, int32_t uniformId, const array<float, 2>& data)
+void GL3Renderer::setProgramUniformFloatVec2(int contextIdx, int32_t uniformId, const array<float, 2>& data)
 {
 	glUniform2fv(uniformId, 1, data.data());
 }
@@ -459,17 +459,17 @@ void GL3Renderer::setClearColor(float red, float green, float blue, float alpha)
 	glClearColor(red, green, blue, alpha);
 }
 
-void GL3Renderer::enableCulling(void* context)
+void GL3Renderer::enableCulling(int contextIdx)
 {
 	glEnable(GL_CULL_FACE);
 }
 
-void GL3Renderer::disableCulling(void* context)
+void GL3Renderer::disableCulling(int contextIdx)
 {
 	glDisable(GL_CULL_FACE);
 }
 
-void GL3Renderer::setFrontFace(void* context, int32_t frontFace)
+void GL3Renderer::setFrontFace(int contextIdx, int32_t frontFace)
 {
 	glFrontFace(frontFace);
 }
@@ -598,7 +598,7 @@ int32_t GL3Renderer::createGBufferColorTexture(int32_t width, int32_t height) {
 	return gBufferColorTextureId;
 }
 
-void GL3Renderer::uploadTexture(void* context, Texture* texture)
+void GL3Renderer::uploadTexture(int contextIdx, Texture* texture)
 {
 	glTexImage2D(
 		GL_TEXTURE_2D,
@@ -645,7 +645,7 @@ void GL3Renderer::uploadTexture(void* context, Texture* texture)
 	statistics.textureUploads++;
 }
 
-void GL3Renderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) {
+void GL3Renderer::uploadCubeMapTexture(int contextIdx, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) {
 	glTexImage2D(
 		GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
 		0,
@@ -720,7 +720,7 @@ void GL3Renderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Text
 	statistics.textureUploads+= 6;
 }
 
-int32_t GL3Renderer::createCubeMapTexture(void* context, int32_t width, int32_t height) {
+int32_t GL3Renderer::createCubeMapTexture(int contextIdx, int32_t width, int32_t height) {
 	// generate open gl texture
 	uint32_t textureId;
 	glGenTextures(1, &textureId);
@@ -826,15 +826,15 @@ void GL3Renderer::resizeGBufferColorTexture(int32_t textureId, int32_t width, in
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void GL3Renderer::bindTexture(void* context, int32_t textureId)
+void GL3Renderer::bindTexture(int contextIdx, int32_t textureId)
 {
 	glBindTexture(GL_TEXTURE_2D, textureId);
-	onBindTexture(context, textureId);
+	onBindTexture(contextIdx, textureId);
 }
 
-void GL3Renderer::bindCubeMapTexture(void* context, int32_t textureId) {
+void GL3Renderer::bindCubeMapTexture(int contextIdx, int32_t textureId) {
 	glBindTexture(GL_TEXTURE_CUBE_MAP, textureId);
-	onBindTexture(context, textureId);
+	onBindTexture(contextIdx, textureId);
 }
 
 void GL3Renderer::disposeTexture(int32_t textureId)
@@ -960,7 +960,7 @@ vector<int32_t> GL3Renderer::createBufferObjects(int32_t buffers, bool useGPUMem
 	return bufferObjectIds;
 }
 
-void GL3Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data)
+void GL3Renderer::uploadBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, FloatBuffer* data)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
@@ -968,7 +968,7 @@ void GL3Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int3
 	statistics.bufferUploads++;
 }
 
-void GL3Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
+void GL3Renderer::uploadBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
@@ -976,7 +976,7 @@ void GL3Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int3
 	statistics.bufferUploads++;
 }
 
-void GL3Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data)
+void GL3Renderer::uploadBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, IntBuffer* data)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
@@ -984,12 +984,12 @@ void GL3Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int3
 	statistics.bufferUploads++;
 }
 
-void GL3Renderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
+void GL3Renderer::uploadIndicesBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
 	Console::println(string("GL3Renderer::uploadIndicesBufferObject()::not implemented yet"));
 }
 
-void GL3Renderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data)
+void GL3Renderer::uploadIndicesBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, IntBuffer* data)
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
@@ -997,54 +997,54 @@ void GL3Renderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectI
 	statistics.bufferUploads++;
 }
 
-void GL3Renderer::bindIndicesBufferObject(void* context, int32_t bufferObjectId)
+void GL3Renderer::bindIndicesBufferObject(int contextIdx, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
 }
 
-void GL3Renderer::bindTextureCoordinatesBufferObject(void* context, int32_t bufferObjectId)
+void GL3Renderer::bindTextureCoordinatesBufferObject(int contextIdx, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 2, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL3Renderer::bindVerticesBufferObject(void* context, int32_t bufferObjectId)
+void GL3Renderer::bindVerticesBufferObject(int contextIdx, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL3Renderer::bindNormalsBufferObject(void* context, int32_t bufferObjectId)
+void GL3Renderer::bindNormalsBufferObject(int contextIdx, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL3Renderer::bindColorsBufferObject(void* context, int32_t bufferObjectId)
+void GL3Renderer::bindColorsBufferObject(int contextIdx, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(3);
 	glVertexAttribPointer(3, 4, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL3Renderer::bindTangentsBufferObject(void* context, int32_t bufferObjectId)
+void GL3Renderer::bindTangentsBufferObject(int contextIdx, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(4);
 	glVertexAttribPointer(4, 3, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL3Renderer::bindBitangentsBufferObject(void* context, int32_t bufferObjectId)
+void GL3Renderer::bindBitangentsBufferObject(int contextIdx, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(5);
 	glVertexAttribPointer(5, 3, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL3Renderer::bindModelMatricesBufferObject(void* context, int32_t bufferObjectId) {
+void GL3Renderer::bindModelMatricesBufferObject(int contextIdx, int32_t bufferObjectId) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(6);
 	glEnableVertexAttribArray(7);
@@ -1060,46 +1060,46 @@ void GL3Renderer::bindModelMatricesBufferObject(void* context, int32_t bufferObj
 	glVertexAttribDivisor(9, 1);
 }
 
-void GL3Renderer::bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor) {
+void GL3Renderer::bindEffectColorMulsBufferObject(int contextIdx, int32_t bufferObjectId, int32_t divisor) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(10);
 	glVertexAttribPointer(10, 4, GL_FLOAT, false, 0, 0LL);
 	glVertexAttribDivisor(10, divisor);
 }
 
-void GL3Renderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor) {
+void GL3Renderer::bindEffectColorAddsBufferObject(int contextIdx, int32_t bufferObjectId, int32_t divisor) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(11);
 	glVertexAttribPointer(11, 4, GL_FLOAT, false, 0, 0LL);
 	glVertexAttribDivisor(11, divisor);
 }
 
-void GL3Renderer::bindOriginsBufferObject(void* context, int32_t bufferObjectId) {
+void GL3Renderer::bindOriginsBufferObject(int contextIdx, int32_t bufferObjectId) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(12);
 	glVertexAttribPointer(12, 3, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL3Renderer::bindTextureSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) {
+void GL3Renderer::bindTextureSpriteIndicesBufferObject(int contextIdx, int32_t bufferObjectId) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(1);
 	glVertexAttribIPointer(1, 2, GL_UNSIGNED_SHORT, 0, 0LL);
 }
 
-void GL3Renderer::bindPointSizesBufferObject(void* context, int32_t bufferObjectId) {
+void GL3Renderer::bindPointSizesBufferObject(int contextIdx, int32_t bufferObjectId) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(5);
 	glVertexAttribPointer(5, 1, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL3Renderer::bindSpriteSheetDimensionBufferObject(void* context, int32_t bufferObjectId) {
+void GL3Renderer::bindSpriteSheetDimensionBufferObject(int contextIdx, int32_t bufferObjectId) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(6);
 	glVertexAttribIPointer(6, 2, GL_UNSIGNED_SHORT, 0, 0LL);
 	glVertexAttribDivisor(6, 0);
 }
 
-void GL3Renderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances)
+void GL3Renderer::drawInstancedIndexedTrianglesFromBufferObjects(int contextIdx, int32_t triangles, int32_t trianglesOffset, int32_t instances)
 {
 	#define BUFFER_OFFSET(i) ((void*)(i))
 	glDrawElementsInstanced(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, BUFFER_OFFSET(static_cast< int64_t >(trianglesOffset) * 3LL * 4LL), instances);
@@ -1108,7 +1108,7 @@ void GL3Renderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, 
 	statistics.triangles+= triangles * instances;
 }
 
-void GL3Renderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset)
+void GL3Renderer::drawIndexedTrianglesFromBufferObjects(int contextIdx, int32_t triangles, int32_t trianglesOffset)
 {
 	#define BUFFER_OFFSET(i) ((void*)(i))
 	glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, BUFFER_OFFSET(static_cast< int64_t >(trianglesOffset) * 3LL * 4LL));
@@ -1117,14 +1117,14 @@ void GL3Renderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t t
 	statistics.triangles+= triangles;
 }
 
-void GL3Renderer::drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) {
+void GL3Renderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, int32_t triangles, int32_t trianglesOffset, int32_t instances) {
 	glDrawArraysInstanced(GL_TRIANGLES, trianglesOffset * 3, triangles * 3, instances);
 	statistics.renderCalls++;
 	statistics.instances+= instances;
 	statistics.triangles+= triangles * instances;
 }
 
-void GL3Renderer::drawTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset)
+void GL3Renderer::drawTrianglesFromBufferObjects(int contextIdx, int32_t triangles, int32_t trianglesOffset)
 {
 	glDrawArrays(GL_TRIANGLES, trianglesOffset * 3, triangles * 3);
 	statistics.renderCalls++;
@@ -1132,7 +1132,7 @@ void GL3Renderer::drawTrianglesFromBufferObjects(void* context, int32_t triangle
 	statistics.triangles+= triangles;
 }
 
-void GL3Renderer::drawPointsFromBufferObjects(void* context, int32_t points, int32_t pointsOffset)
+void GL3Renderer::drawPointsFromBufferObjects(int contextIdx, int32_t points, int32_t pointsOffset)
 {
 	glDrawArrays(GL_POINTS, pointsOffset, points);
 	statistics.renderCalls++;
@@ -1144,14 +1144,14 @@ void GL3Renderer::setLineWidth(float lineWidth)
 	glLineWidth(lineWidth);
 }
 
-void GL3Renderer::drawLinesFromBufferObjects(void* context, int32_t points, int32_t pointsOffset)
+void GL3Renderer::drawLinesFromBufferObjects(int contextIdx, int32_t points, int32_t pointsOffset)
 {
 	glDrawArrays(GL_LINES, pointsOffset, points);
 	statistics.renderCalls++;
 	statistics.linePoints+= points;
 }
 
-void GL3Renderer::unbindBufferObjects(void* context)
+void GL3Renderer::unbindBufferObjects(int contextIdx)
 {
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
@@ -1177,12 +1177,12 @@ void GL3Renderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)
 	statistics.disposedBuffers+= bufferObjectIds.size();
 }
 
-int32_t GL3Renderer::getTextureUnit(void* context)
+int32_t GL3Renderer::getTextureUnit(int contextIdx)
 {
 	return activeTextureUnit;
 }
 
-void GL3Renderer::setTextureUnit(void* context, int32_t textureUnit)
+void GL3Renderer::setTextureUnit(int contextIdx, int32_t textureUnit)
 {
 	this->activeTextureUnit = textureUnit;
 	glActiveTexture(GL_TEXTURE0 + textureUnit);
@@ -1205,7 +1205,7 @@ ByteBuffer* GL3Renderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t
 
 void GL3Renderer::initGuiMode()
 {
-	setTextureUnit(nullptr, 0);
+	setTextureUnit(CONTEXTINDEX_DEFAULT, 0);
 	glBindTexture(GL_TEXTURE_2D, ID_NONE);
 	glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
 	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
@@ -1232,7 +1232,7 @@ void GL3Renderer::checkGLError(int line)
 	}
 }
 
-void GL3Renderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
+void GL3Renderer::dispatchCompute(int contextIdx, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
 	#if defined (__APPLE__)
 		clSkinningParameters.numGroupsX = numGroupsX;
 		clSkinningParameters.numGroupsY = numGroupsY;
@@ -1269,7 +1269,7 @@ void GL3Renderer::memoryBarrier() {
 	#endif
 }
 
-void GL3Renderer::uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
+void GL3Renderer::uploadSkinningBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
 	#if defined (__APPLE__)
 		glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 		glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
@@ -1283,7 +1283,7 @@ void GL3Renderer::uploadSkinningBufferObject(void* context, int32_t bufferObject
 	#endif
 }
 
-void GL3Renderer::uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data) {
+void GL3Renderer::uploadSkinningBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, IntBuffer* data) {
 	#if defined (__APPLE__)
 		glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 		glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
@@ -1304,7 +1304,7 @@ void GL3Renderer::uploadSkinningBufferObject(void* context, int32_t bufferObject
 	}
 #endif
 
-void GL3Renderer::bindSkinningVerticesBufferObject(void* context, int32_t bufferObjectId) {
+void GL3Renderer::bindSkinningVerticesBufferObject(int contextIdx, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
 		clBindGLBuffer(0, bufferObjectId, false);
 	#else
@@ -1312,7 +1312,7 @@ void GL3Renderer::bindSkinningVerticesBufferObject(void* context, int32_t buffer
 	#endif
 }
 
-void GL3Renderer::bindSkinningNormalsBufferObject(void* context, int32_t bufferObjectId) {
+void GL3Renderer::bindSkinningNormalsBufferObject(int contextIdx, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
 		clBindGLBuffer(1, bufferObjectId, false);
 	#else
@@ -1320,7 +1320,7 @@ void GL3Renderer::bindSkinningNormalsBufferObject(void* context, int32_t bufferO
 	#endif
 }
 
-void GL3Renderer::bindSkinningVertexJointsBufferObject(void* context, int32_t bufferObjectId) {
+void GL3Renderer::bindSkinningVertexJointsBufferObject(int contextIdx, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
 		clBindGLBuffer(2, bufferObjectId, false);
 	#else
@@ -1328,7 +1328,7 @@ void GL3Renderer::bindSkinningVertexJointsBufferObject(void* context, int32_t bu
 	#endif
 }
 
-void GL3Renderer::bindSkinningVertexJointIdxsBufferObject(void* context, int32_t bufferObjectId) {
+void GL3Renderer::bindSkinningVertexJointIdxsBufferObject(int contextIdx, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
 		clBindGLBuffer(3, bufferObjectId, false);
 	#else
@@ -1336,7 +1336,7 @@ void GL3Renderer::bindSkinningVertexJointIdxsBufferObject(void* context, int32_t
 	#endif
 }
 
-void GL3Renderer::bindSkinningVertexJointWeightsBufferObject(void* context, int32_t bufferObjectId) {
+void GL3Renderer::bindSkinningVertexJointWeightsBufferObject(int contextIdx, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
 		clBindGLBuffer(4, bufferObjectId, false);
 	#else
@@ -1344,7 +1344,7 @@ void GL3Renderer::bindSkinningVertexJointWeightsBufferObject(void* context, int3
 	#endif
 }
 
-void GL3Renderer::bindSkinningVerticesResultBufferObject(void* context, int32_t bufferObjectId) {
+void GL3Renderer::bindSkinningVerticesResultBufferObject(int contextIdx, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
 		clBindGLBuffer(5, bufferObjectId, true);
 	#else
@@ -1352,7 +1352,7 @@ void GL3Renderer::bindSkinningVerticesResultBufferObject(void* context, int32_t 
 	#endif
 }
 
-void GL3Renderer::bindSkinningNormalsResultBufferObject(void* context, int32_t bufferObjectId) {
+void GL3Renderer::bindSkinningNormalsResultBufferObject(int contextIdx, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
 		clBindGLBuffer(6, bufferObjectId, true);
 	#else
@@ -1360,7 +1360,7 @@ void GL3Renderer::bindSkinningNormalsResultBufferObject(void* context, int32_t b
 	#endif
 }
 
-void GL3Renderer::bindSkinningMatricesBufferObject(void* context, int32_t bufferObjectId) {
+void GL3Renderer::bindSkinningMatricesBufferObject(int contextIdx, int32_t bufferObjectId) {
 	#if defined (__APPLE__)
 		clBindGLBuffer(7, bufferObjectId, false);
 	#else

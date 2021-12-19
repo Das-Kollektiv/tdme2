@@ -49,5 +49,5 @@ void PostProcessingShaderDefaultImplementation::initialize()
 	PostProcessingShaderBaseImplementation::initialize();
 }
 
-void PostProcessingShaderDefaultImplementation::setShaderParameters(void* context, Engine* engine) {
+void PostProcessingShaderDefaultImplementation::setShaderParameters(int contextIdx, Engine* engine) {
 }

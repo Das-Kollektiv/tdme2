@@ -522,5 +522,5 @@ void GUITextureBaseNode::setMask(const string& mask) {
 	}
 	this->mask = mask;
 	this->maskTexture = mask.empty() == true?nullptr:GUI::getImage(screenNode->getApplicationRootPathName(), mask);
-	this->maskTextureId = maskTexture == nullptr?0:Engine::getInstance()->getTextureManager()->addTexture(maskTexture, nullptr);
+	this->maskTextureId = maskTexture == nullptr?0:Engine::getInstance()->getTextureManager()->addTexture(maskTexture, 0);
 }

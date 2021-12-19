@@ -22,16 +22,16 @@ public:
 	EngineGLES2Renderer(Engine* engine);
 
 	// overridden methods
-	void onUpdateProjectionMatrix(void* context) override;
-	void onUpdateCameraMatrix(void* context) override;
-	void onUpdateModelViewMatrix(void* context) override;
-	void onBindTexture(void* context, int32_t textureId) override;
-	void onUpdateTextureMatrix(void* context) override;
-	void onUpdateEffect(void* context) override;
-	void onUpdateLight(void* context, int32_t lightId) override;
-	void onUpdateMaterial(void* context) override;
-	void onUpdateShader(void* context) override;
-	void onUpdateShaderParameters(void* context) override;
+	void onUpdateProjectionMatrix(int contextIdx) override;
+	void onUpdateCameraMatrix(int contextIdx) override;
+	void onUpdateModelViewMatrix(int contextIdx) override;
+	void onBindTexture(int contextIdx, int32_t textureId) override;
+	void onUpdateTextureMatrix(int contextIdx) override;
+	void onUpdateEffect(int contextIdx) override;
+	void onUpdateLight(int contextIdx, int32_t lightId) override;
+	void onUpdateMaterial(int contextIdx) override;
+	void onUpdateShader(int contextIdx) override;
+	void onUpdateShaderParameters(int contextIdx) override;
 
 private:
 	Engine* engine { nullptr };

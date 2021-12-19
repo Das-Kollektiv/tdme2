@@ -97,9 +97,9 @@ private:
 
 	/**
 	 * Compute animations
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	inline void computeTransformations(void* context) {
+	inline void computeTransformations(int contextIdx) {
 		auto timing = engine->getTiming();
 		auto currentFrameAtTime = timing->getCurrentFrameAtTime();
 		auto currentFrame = timing->getFrame();
@@ -110,19 +110,19 @@ private:
 		if (distanceFromCamera > Math::square(Math::square(Engine::getTransformationsComputingReduction1Distance()))) {
 			if (frameTransformationsLast != -1LL && currentFrame - frameTransformationsLast < 2) return;
 		}
-		computeTransformations(context, timeTransformationsLast, currentFrameAtTime);
+		computeTransformations(contextIdx, timeTransformationsLast, currentFrameAtTime);
 		frameTransformationsLast = timing->getFrame();
 		timeTransformationsLast = currentFrameAtTime;
 	}
 
 	/**
 	 * Compute transformations
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param lastFrameAtTime time of last animation computation
 	 * @param currentFrameAtTime time of current animation computation
 	 */
-	inline void computeTransformations(void* context, int64_t lastFrameAtTime, int64_t currentFrameAtTime) override {
-		Object3DInternal::computeTransformations(context, lastFrameAtTime, currentFrameAtTime);
+	inline void computeTransformations(int contextIdx, int64_t lastFrameAtTime, int64_t currentFrameAtTime) override {
+		Object3DInternal::computeTransformations(contextIdx, lastFrameAtTime, currentFrameAtTime);
 	}
 
 	/**
@@ -136,13 +136,13 @@ private:
 
 	/**
 	 * Pre render step like uploading VBOs and such
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	inline void preRender(void* context) {
+	inline void preRender(int contextIdx) {
 		if (model->hasBoundingBoxUpdate() == true) updateBoundingBox();
 		for (auto object3DNode: object3dNodes) {
 			if (object3DNode->renderer->needsPreRender() == true) {
-				object3DNode->renderer->preRender(context);
+				object3DNode->renderer->preRender(contextIdx);
 			}
 		}
 	}

@@ -93,5 +93,5 @@ void DeferredLightingShaderPBRDefaultImplementation::initialize()
 void DeferredLightingShaderPBRDefaultImplementation::registerShader() {
 }
 
-void DeferredLightingShaderPBRDefaultImplementation::updateShaderParameters(Renderer* renderer, void* context) {
+void DeferredLightingShaderPBRDefaultImplementation::updateShaderParameters(Renderer* renderer, int contextIdx) {
 }

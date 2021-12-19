@@ -35,7 +35,7 @@ Object3DNodeRenderer::Object3DNodeRenderer(Object3DNode* object3DNode)
 	this->vboNormalMappingIds = nullptr;
 }
 
-void Object3DNodeRenderer::preRender(void* context)
+void Object3DNodeRenderer::preRender(int contextIdx)
 {
 	// TODO: maybe store these in Object3DNodeRenderer too
 	auto meshUploaded = true;
@@ -97,49 +97,49 @@ void Object3DNodeRenderer::preRender(void* context)
 	if (object3DNode->mesh->getRecreatedBuffers() == true || meshUploaded == false) {
 		if (meshUploaded == false) {
 			// upload indices
-			object3DNode->mesh->setupVertexIndicesBuffer(Engine::renderer, context, (*vboBaseIds)[0]);
+			object3DNode->mesh->setupVertexIndicesBuffer(Engine::renderer, contextIdx, (*vboBaseIds)[0]);
 			// upload texture coordinates
 			if (object3DNode->mesh->node->getTextureCoordinates().empty() == false) {
-				object3DNode->mesh->setupTextureCoordinatesBuffer(Engine::renderer, context, (*vboBaseIds)[3]);
+				object3DNode->mesh->setupTextureCoordinatesBuffer(Engine::renderer, contextIdx, (*vboBaseIds)[3]);
 			}
 			// upload render node object origins
 			if (object3DNode->mesh->node->getOrigins().empty() == false) {
-				object3DNode->mesh->setupOriginsBuffer(Engine::renderer, context, (*vboOrigins)[0]);
+				object3DNode->mesh->setupOriginsBuffer(Engine::renderer, contextIdx, (*vboOrigins)[0]);
 				vboManagedOrigins->setUploaded(true);
 			}
 			// TODO: we only support faces entities 0 lod indices for terrain now
 			auto lodLevel = 0;
 			if (object3DNode->mesh->node->getFacesEntities()[0].getLOD1Indices().empty() == false) {
-				object3DNode->mesh->setupLodBuffer(Engine::renderer, context, (*vboLods)[lodLevel], 1);
+				object3DNode->mesh->setupLodBuffer(Engine::renderer, contextIdx, (*vboLods)[lodLevel], 1);
 				lodLevel++;
 			}
 			if (object3DNode->mesh->node->getFacesEntities()[0].getLOD2Indices().empty() == false) {
-				object3DNode->mesh->setupLodBuffer(Engine::renderer, context, (*vboLods)[lodLevel], 2);
+				object3DNode->mesh->setupLodBuffer(Engine::renderer, contextIdx, (*vboLods)[lodLevel], 2);
 				lodLevel++;
 			}
 			if (object3DNode->mesh->node->getFacesEntities()[0].getLOD3Indices().empty() == false) {
-				object3DNode->mesh->setupLodBuffer(Engine::renderer, context, (*vboLods)[lodLevel], 3);
+				object3DNode->mesh->setupLodBuffer(Engine::renderer, contextIdx, (*vboLods)[lodLevel], 3);
 				lodLevel++;
 			}
 			if (vboManagedLods != nullptr) vboManagedLods->setUploaded(true);
 		}
 		// upload vertices
-		object3DNode->mesh->setupVerticesBuffer(Engine::renderer, context, (*vboBaseIds)[1]);
+		object3DNode->mesh->setupVerticesBuffer(Engine::renderer, contextIdx, (*vboBaseIds)[1]);
 		// upload normals
-		object3DNode->mesh->setupNormalsBuffer(Engine::renderer, context, (*vboBaseIds)[2]);
+		object3DNode->mesh->setupNormalsBuffer(Engine::renderer, contextIdx, (*vboBaseIds)[2]);
 		// tangents, bitangents
 		if (vboNormalMappingIds != nullptr) {
-			object3DNode->mesh->setupTangentsBuffer(Engine::renderer, context, (*vboNormalMappingIds)[0]);
-			object3DNode->mesh->setupBitangentsBuffer(Engine::renderer, context, (*vboNormalMappingIds)[1]);
+			object3DNode->mesh->setupTangentsBuffer(Engine::renderer, contextIdx, (*vboNormalMappingIds)[0]);
+			object3DNode->mesh->setupBitangentsBuffer(Engine::renderer, contextIdx, (*vboNormalMappingIds)[1]);
 			vboManagedNormalMapping->setUploaded(true);
 		}
 		vboManagedBase->setUploaded(true);
 	} else
 	if (verticesUpdate == true || normalsUpdate == true) {
 		// upload vertices
-		if (verticesUpdate == true) object3DNode->mesh->setupVerticesBuffer(Engine::renderer, context, (*vboBaseIds)[1]);
+		if (verticesUpdate == true) object3DNode->mesh->setupVerticesBuffer(Engine::renderer, contextIdx, (*vboBaseIds)[1]);
 		// upload normals
-		if (normalsUpdate == true) object3DNode->mesh->setupNormalsBuffer(Engine::renderer, context, (*vboBaseIds)[2]);
+		if (normalsUpdate == true) object3DNode->mesh->setupNormalsBuffer(Engine::renderer, contextIdx, (*vboBaseIds)[2]);
 	}
 }
 

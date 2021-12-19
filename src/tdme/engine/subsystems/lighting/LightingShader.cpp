@@ -124,48 +124,48 @@ void LightingShader::unUseProgram()
 	running = false;
 	auto i = 0;
 	for (auto& lightingShaderContext: contexts) {
-		if (lightingShaderContext.implementation != nullptr) lightingShaderContext.implementation->unUseProgram(renderer->getContext(i));
+		if (lightingShaderContext.implementation != nullptr) lightingShaderContext.implementation->unUseProgram(i);
 		lightingShaderContext.implementation = nullptr;
 		i++;
 	}
 	engine = nullptr;
 }
 
-void LightingShader::updateEffect(void* context)
+void LightingShader::updateEffect(int contextIdx)
 {
-	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
+	auto& lightingShaderContext = contexts[contextIdx];
 	if (lightingShaderContext.implementation == nullptr) return;
-	lightingShaderContext.implementation->updateEffect(renderer, context);
+	lightingShaderContext.implementation->updateEffect(renderer, contextIdx);
 }
 
-void LightingShader::updateMaterial(void* context)
+void LightingShader::updateMaterial(int contextIdx)
 {
-	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
+	auto& lightingShaderContext = contexts[contextIdx];
 	if (lightingShaderContext.implementation == nullptr) return;
-	lightingShaderContext.implementation->updateMaterial(renderer, context);
+	lightingShaderContext.implementation->updateMaterial(renderer, contextIdx);
 }
 
-void LightingShader::updateLight(void* context, int32_t lightId)
+void LightingShader::updateLight(int contextIdx, int32_t lightId)
 {
-	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
+	auto& lightingShaderContext = contexts[contextIdx];
 	if (lightingShaderContext.implementation == nullptr) return;
-	lightingShaderContext.implementation->updateLight(renderer, context, lightId);
+	lightingShaderContext.implementation->updateLight(renderer, contextIdx, lightId);
 }
 
-void LightingShader::updateMatrices(void* context)
+void LightingShader::updateMatrices(int contextIdx)
 {
-	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
+	auto& lightingShaderContext = contexts[contextIdx];
 	if (lightingShaderContext.implementation == nullptr) return;
-	lightingShaderContext.implementation->updateMatrices(renderer, context);
+	lightingShaderContext.implementation->updateMatrices(renderer, contextIdx);
 }
 
-void LightingShader::updateTextureMatrix(void* context) {
-	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
+void LightingShader::updateTextureMatrix(int contextIdx) {
+	auto& lightingShaderContext = contexts[contextIdx];
 	if (lightingShaderContext.implementation == nullptr) return;
-	lightingShaderContext.implementation->updateTextureMatrix(renderer, context);
+	lightingShaderContext.implementation->updateTextureMatrix(renderer, contextIdx);
 }
 
-void LightingShader::setShader(void* context, const string& id) {
+void LightingShader::setShader(int contextIdx, const string& id) {
 	if (running == false) return;
 	auto shaderId = id;
 	// TODO: find a better solution to remove pbr from lightscattering pass
@@ -173,28 +173,28 @@ void LightingShader::setShader(void* context, const string& id) {
 		StringTools::startsWith(id, "pbr-") == true) {
 		shaderId = StringTools::substring(id, 4, id.size());
 	}
-	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
+	auto& lightingShaderContext = contexts[contextIdx];
 	auto currentImplementation = lightingShaderContext.implementation;
 	auto shaderIt = shader.find(renderer->getShaderPrefix() + shaderId);
 	if (shaderIt == shader.end()) shaderIt = shader.find(renderer->getShaderPrefix() + "default");
 	if (shaderIt == shader.end()) shaderIt = shader.find("default");
 	auto nextImplementation = shaderIt->second;
 	if (currentImplementation != nextImplementation) {
-		if (currentImplementation != nullptr) currentImplementation->unUseProgram(context);
+		if (currentImplementation != nullptr) currentImplementation->unUseProgram(contextIdx);
 		lightingShaderContext.implementation = nextImplementation;
-		lightingShaderContext.implementation->useProgram(engine, context);
+		lightingShaderContext.implementation->useProgram(engine, contextIdx);
 	}
 }
 
-void LightingShader::updateShaderParameters(void* context) {
-	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
+void LightingShader::updateShaderParameters(int contextIdx) {
+	auto& lightingShaderContext = contexts[contextIdx];
 	if (lightingShaderContext.implementation == nullptr) return;
-	lightingShaderContext.implementation->updateShaderParameters(renderer, context);
+	lightingShaderContext.implementation->updateShaderParameters(renderer, contextIdx);
 }
 
-void LightingShader::bindTexture(void* context, int32_t textureId)
+void LightingShader::bindTexture(int contextIdx, int32_t textureId)
 {
-	auto& lightingShaderContext = contexts[renderer->getContextIndex(context)];
+	auto& lightingShaderContext = contexts[contextIdx];
 	if (lightingShaderContext.implementation == nullptr) return;
-	lightingShaderContext.implementation->bindTexture(renderer, context, textureId);
+	lightingShaderContext.implementation->bindTexture(renderer, contextIdx, textureId);
 }

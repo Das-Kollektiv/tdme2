@@ -78,7 +78,7 @@ Object3DBase::Object3DBase(Model* model, bool useManagers, Engine::AnimationProc
 	// object 3d nodes
 	Object3DNode::createNodes(this, useManagers, animationProcessingTarget, object3dNodes);
 	// do initial transformations if doing CPU no rendering for deriving bounding boxes and such
-	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) Object3DNode::computeTransformations(nullptr, object3dNodes);
+	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) Object3DNode::computeTransformations(0, object3dNodes);
 }
 
 Object3DBase::~Object3DBase() {

@@ -80,54 +80,54 @@ void EZRShaderBaseImplementation::initialize()
 	initialized = true;
 }
 
-void EZRShaderBaseImplementation::useProgram(Engine* engine, void* context)
+void EZRShaderBaseImplementation::useProgram(Engine* engine, int contextIdx)
 {
-	renderer->useProgram(context, programId);
-	renderer->setLighting(context, renderer->LIGHTING_SPECULAR);
-	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
-	if (uniformFrame != -1) renderer->setProgramUniformInteger(context, uniformFrame, engine->getTiming()->getFrame());
+	renderer->useProgram(contextIdx, programId);
+	renderer->setLighting(contextIdx, renderer->LIGHTING_SPECULAR);
+	renderer->setProgramUniformInteger(contextIdx, uniformDiffuseTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
+	if (uniformFrame != -1) renderer->setProgramUniformInteger(contextIdx, uniformFrame, engine->getTiming()->getFrame());
 }
 
-void EZRShaderBaseImplementation::unUseProgram(void* context)
+void EZRShaderBaseImplementation::unUseProgram(int contextIdx)
 {
 }
 
-void EZRShaderBaseImplementation::updateMatrices(Renderer* renderer, void* context)
+void EZRShaderBaseImplementation::updateMatrices(Renderer* renderer, int contextIdx)
 {
 	if (renderer->isInstancedRenderingAvailable() == true) {
-		renderer->setProgramUniformFloatMatrix4x4(context, uniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
-		renderer->setProgramUniformFloatMatrix4x4(context, uniformCameraMatrix, renderer->getCameraMatrix().getArray());
+		renderer->setProgramUniformFloatMatrix4x4(contextIdx, uniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
+		renderer->setProgramUniformFloatMatrix4x4(contextIdx, uniformCameraMatrix, renderer->getCameraMatrix().getArray());
 	} else {
 		// matrices
 		Matrix4x4 mvpMatrix;
 		// mvp matrix
 		mvpMatrix.set(renderer->getModelViewMatrix()).multiply(renderer->getProjectionMatrix());
 		// upload
-		renderer->setProgramUniformFloatMatrix4x4(context, uniformMVPMatrix, mvpMatrix.getArray());
+		renderer->setProgramUniformFloatMatrix4x4(contextIdx, uniformMVPMatrix, mvpMatrix.getArray());
 	}
 }
 
-void EZRShaderBaseImplementation::updateTextureMatrix(Renderer* renderer, void* context) {
-	renderer->setProgramUniformFloatMatrix3x3(context, uniformTextureMatrix, renderer->getTextureMatrix(context).getArray());
+void EZRShaderBaseImplementation::updateTextureMatrix(Renderer* renderer, int contextIdx) {
+	renderer->setProgramUniformFloatMatrix3x3(contextIdx, uniformTextureMatrix, renderer->getTextureMatrix(contextIdx).getArray());
 }
 
-void EZRShaderBaseImplementation::updateMaterial(Renderer* renderer, void* context)
+void EZRShaderBaseImplementation::updateMaterial(Renderer* renderer, int contextIdx)
 {
-	auto material = renderer->getSpecularMaterial(context);
-	renderer->setProgramUniformInteger(context, uniformDiffuseTextureMaskedTransparency, material.diffuseTextureMaskedTransparency);
-	renderer->setProgramUniformFloat(context, uniformDiffuseTextureMaskedTransparencyThreshold, material.diffuseTextureMaskedTransparencyThreshold);
-	renderer->setProgramUniformInteger(context, uniformTextureAtlasSize, material.textureAtlasSize);
-	renderer->setProgramUniformFloatVec2(context, uniformTextureAtlasPixelDimension, material.textureAtlasPixelDimension);
+	auto material = renderer->getSpecularMaterial(contextIdx);
+	renderer->setProgramUniformInteger(contextIdx, uniformDiffuseTextureMaskedTransparency, material.diffuseTextureMaskedTransparency);
+	renderer->setProgramUniformFloat(contextIdx, uniformDiffuseTextureMaskedTransparencyThreshold, material.diffuseTextureMaskedTransparencyThreshold);
+	renderer->setProgramUniformInteger(contextIdx, uniformTextureAtlasSize, material.textureAtlasSize);
+	renderer->setProgramUniformFloatVec2(contextIdx, uniformTextureAtlasPixelDimension, material.textureAtlasPixelDimension);
 }
 
-void EZRShaderBaseImplementation::updateShaderParameters(Renderer* renderer, void* context) {
+void EZRShaderBaseImplementation::updateShaderParameters(Renderer* renderer, int contextIdx) {
 }
 
-void EZRShaderBaseImplementation::bindTexture(Renderer* renderer, void* context, int32_t textureId)
+void EZRShaderBaseImplementation::bindTexture(Renderer* renderer, int contextIdx, int32_t textureId)
 {
-	switch (renderer->getTextureUnit(context)) {
+	switch (renderer->getTextureUnit(contextIdx)) {
 		case LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE:
-			renderer->setProgramUniformInteger(context, uniformDiffuseTextureAvailable, textureId == 0 ? 0 : 1);
+			renderer->setProgramUniformInteger(contextIdx, uniformDiffuseTextureAvailable, textureId == 0 ? 0 : 1);
 			break;
 	}
 }

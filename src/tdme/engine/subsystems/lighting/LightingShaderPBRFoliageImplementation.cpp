@@ -144,17 +144,17 @@ void LightingShaderPBRFoliageImplementation::registerShader() {
 	);
 }
 
-void LightingShaderPBRFoliageImplementation::useProgram(Engine* engine, void* context)
+void LightingShaderPBRFoliageImplementation::useProgram(Engine* engine, int contextIdx)
 {
-	LightingShaderPBRBaseImplementation::useProgram(engine, context);
+	LightingShaderPBRBaseImplementation::useProgram(engine, contextIdx);
 
 	// time
-	if (uniformTime != -1) renderer->setProgramUniformFloat(context, uniformTime, static_cast<float>(engine->getTiming()->getTotalTime()) / 1000.0f);
+	if (uniformTime != -1) renderer->setProgramUniformFloat(contextIdx, uniformTime, static_cast<float>(engine->getTiming()->getTotalTime()) / 1000.0f);
 }
 
-void LightingShaderPBRFoliageImplementation::updateShaderParameters(Renderer* renderer, void* context) {
-	auto& shaderParameters = renderer->getShaderParameters(context);
-	if (uniformSpeed != -1) renderer->setProgramUniformFloat(context, uniformSpeed, shaderParameters.getShaderParameter("speed").getFloatValue());
-	if (uniformAmplitudeDefault != -1) renderer->setProgramUniformFloat(context, uniformAmplitudeDefault, shaderParameters.getShaderParameter("amplitudeDefault").getFloatValue());
-	if (uniformAmplitudeMax != -1) renderer->setProgramUniformFloat(context, uniformAmplitudeMax, shaderParameters.getShaderParameter("amplitudeMax").getFloatValue());
+void LightingShaderPBRFoliageImplementation::updateShaderParameters(Renderer* renderer, int contextIdx) {
+	auto& shaderParameters = renderer->getShaderParameters(contextIdx);
+	if (uniformSpeed != -1) renderer->setProgramUniformFloat(contextIdx, uniformSpeed, shaderParameters.getShaderParameter("speed").getFloatValue());
+	if (uniformAmplitudeDefault != -1) renderer->setProgramUniformFloat(contextIdx, uniformAmplitudeDefault, shaderParameters.getShaderParameter("amplitudeDefault").getFloatValue());
+	if (uniformAmplitudeMax != -1) renderer->setProgramUniformFloat(contextIdx, uniformAmplitudeMax, shaderParameters.getShaderParameter("amplitudeMax").getFloatValue());
 }

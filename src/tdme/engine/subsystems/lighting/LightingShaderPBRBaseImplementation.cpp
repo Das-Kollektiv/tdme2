@@ -105,7 +105,7 @@ void LightingShaderPBRBaseImplementation::initialize()
 				TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_bottom.png"),
 				TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_front.png"),
 				TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_back.png"),
-				renderer->getDefaultContext()
+				renderer->CONTEXTINDEX_DEFAULT
 			);
 		textureSpecularEnvSampler =
 			Engine::getInstance()->getTextureManager()->addCubeMapTexture(
@@ -116,79 +116,79 @@ void LightingShaderPBRBaseImplementation::initialize()
 				TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_bottom.png"),
 				TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_front.png"),
 				TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_back.png"),
-				renderer->getDefaultContext()
+				renderer->CONTEXTINDEX_DEFAULT
 			);
-		texturebrdfLUT = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/environments", "brdfLUT.png"), renderer->getDefaultContext());
+		texturebrdfLUT = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/environments", "brdfLUT.png"), renderer->CONTEXTINDEX_DEFAULT);
 	#endif
 
 	//
 	initialized = true;
 }
 
-void LightingShaderPBRBaseImplementation::useProgram(Engine* engine, void* context)
+void LightingShaderPBRBaseImplementation::useProgram(Engine* engine, int contextIdx)
 {
-	renderer->useProgram(context, programId);
-	renderer->setLighting(context, renderer->LIGHTING_PBR);
-	renderer->setProgramUniformInteger(context, uniformBaseColorSampler, LightingShaderConstants::PBR_TEXTUREUNIT_BASECOLOR);
-	renderer->setProgramUniformInteger(context, uniformMetallicRoughnessSampler, LightingShaderConstants::PBR_TEXTUREUNIT_METALLICROUGHNESS);
-	renderer->setProgramUniformInteger(context, uniformNormalSampler, LightingShaderConstants::PBR_TEXTUREUNIT_NORMAL);
+	renderer->useProgram(contextIdx, programId);
+	renderer->setLighting(contextIdx, renderer->LIGHTING_PBR);
+	renderer->setProgramUniformInteger(contextIdx, uniformBaseColorSampler, LightingShaderConstants::PBR_TEXTUREUNIT_BASECOLOR);
+	renderer->setProgramUniformInteger(contextIdx, uniformMetallicRoughnessSampler, LightingShaderConstants::PBR_TEXTUREUNIT_METALLICROUGHNESS);
+	renderer->setProgramUniformInteger(contextIdx, uniformNormalSampler, LightingShaderConstants::PBR_TEXTUREUNIT_NORMAL);
 	#if !defined(VULKAN)
-		renderer->setProgramUniformInteger(context, uniformDiffuseEnvSampler, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_DIFFUSE);
-		renderer->setProgramUniformInteger(context, uniformSpecularEnvSampler, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_SPECULAR);
-		renderer->setProgramUniformInteger(context, uniformbrdfLUT, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_BRDF);
-		renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_DIFFUSE);
-		renderer->bindCubeMapTexture(context, textureDiffuseEnvSampler);
-		renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_SPECULAR);
-		renderer->bindCubeMapTexture(context, textureSpecularEnvSampler);
-		renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_BRDF);
-		renderer->bindCubeMapTexture(context, texturebrdfLUT);
-		renderer->setTextureUnit(context, 0);
+		renderer->setProgramUniformInteger(contextIdx, uniformDiffuseEnvSampler, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_DIFFUSE);
+		renderer->setProgramUniformInteger(contextIdx, uniformSpecularEnvSampler, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_SPECULAR);
+		renderer->setProgramUniformInteger(contextIdx, uniformbrdfLUT, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_BRDF);
+		renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_DIFFUSE);
+		renderer->bindCubeMapTexture(contextIdx, textureDiffuseEnvSampler);
+		renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_SPECULAR);
+		renderer->bindCubeMapTexture(contextIdx, textureSpecularEnvSampler);
+		renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_BRDF);
+		renderer->bindCubeMapTexture(contextIdx, texturebrdfLUT);
+		renderer->setTextureUnit(contextIdx, 0);
 	#endif
 }
 
-void LightingShaderPBRBaseImplementation::unUseProgram(void* context)
+void LightingShaderPBRBaseImplementation::unUseProgram(int contextIdx)
 {
-	renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_BASECOLOR);
-	renderer->bindTexture(context, renderer->ID_NONE);
-	renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_METALLICROUGHNESS);
-	renderer->bindTexture(context, renderer->ID_NONE);
-	renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_NORMAL);
-	renderer->bindTexture(context, renderer->ID_NONE);
+	renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_BASECOLOR);
+	renderer->bindTexture(contextIdx, renderer->ID_NONE);
+	renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_METALLICROUGHNESS);
+	renderer->bindTexture(contextIdx, renderer->ID_NONE);
+	renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_NORMAL);
+	renderer->bindTexture(contextIdx, renderer->ID_NONE);
 	#if !defined(VULKAN)
-		renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_DIFFUSE);
-		renderer->bindTexture(context, renderer->ID_NONE);
-		renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_SPECULAR);
-		renderer->bindTexture(context, renderer->ID_NONE);
-		renderer->setTextureUnit(context, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_BRDF);
-		renderer->bindTexture(context, renderer->ID_NONE);
-		renderer->setTextureUnit(context, 0);
+		renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_DIFFUSE);
+		renderer->bindTexture(contextIdx, renderer->ID_NONE);
+		renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_SPECULAR);
+		renderer->bindTexture(contextIdx, renderer->ID_NONE);
+		renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_BRDF);
+		renderer->bindTexture(contextIdx, renderer->ID_NONE);
+		renderer->setTextureUnit(contextIdx, 0);
 	#endif
 }
 
-void LightingShaderPBRBaseImplementation::updateEffect(Renderer* renderer, void* context)
+void LightingShaderPBRBaseImplementation::updateEffect(Renderer* renderer, int contextIdx)
 {
 }
 
-void LightingShaderPBRBaseImplementation::updateMaterial(Renderer* renderer, void* context)
+void LightingShaderPBRBaseImplementation::updateMaterial(Renderer* renderer, int contextIdx)
 {
-	auto material = renderer->getPBRMaterial(context);
-	renderer->setProgramUniformFloatVec4(context, uniformBaseColorFactor, material.baseColorFactor);
-	renderer->setProgramUniformFloat(context, uniformExposure, material.exposure);
-	renderer->setProgramUniformFloat(context, uniformMetallicFactor, material.metallicFactor);
-	renderer->setProgramUniformFloat(context, uniformRoughnessFactor, material.roughnessFactor);
-	renderer->setProgramUniformFloat(context, uniformNormalScale, material.normalScale);
-	renderer->setProgramUniformInteger(context, uniformAlphaCutoffEnabled, material.baseColorTextureMaskedTransparency);
-	renderer->setProgramUniformFloat(context, uniformAlphaCutoff, material.baseColorTextureMaskedTransparency == 0?0.0f:material.baseColorTextureMaskedTransparencyThreshold);
+	auto material = renderer->getPBRMaterial(contextIdx);
+	renderer->setProgramUniformFloatVec4(contextIdx, uniformBaseColorFactor, material.baseColorFactor);
+	renderer->setProgramUniformFloat(contextIdx, uniformExposure, material.exposure);
+	renderer->setProgramUniformFloat(contextIdx, uniformMetallicFactor, material.metallicFactor);
+	renderer->setProgramUniformFloat(contextIdx, uniformRoughnessFactor, material.roughnessFactor);
+	renderer->setProgramUniformFloat(contextIdx, uniformNormalScale, material.normalScale);
+	renderer->setProgramUniformInteger(contextIdx, uniformAlphaCutoffEnabled, material.baseColorTextureMaskedTransparency);
+	renderer->setProgramUniformFloat(contextIdx, uniformAlphaCutoff, material.baseColorTextureMaskedTransparency == 0?0.0f:material.baseColorTextureMaskedTransparencyThreshold);
 }
 
-void LightingShaderPBRBaseImplementation::updateLight(Renderer* renderer, void* context, int32_t lightId)
+void LightingShaderPBRBaseImplementation::updateLight(Renderer* renderer, int contextIdx, int32_t lightId)
 {
-	auto& light = renderer->getLight(context, lightId);
-	if (uniformLightEnabled[lightId] != -1) renderer->setProgramUniformInteger(context, uniformLightEnabled[lightId], light.enabled);
+	auto& light = renderer->getLight(contextIdx, lightId);
+	if (uniformLightEnabled[lightId] != -1) renderer->setProgramUniformInteger(contextIdx, uniformLightEnabled[lightId], light.enabled);
 	if (light.enabled == 0) return;
 	if (uniformLightAmbient[lightId] != -1)
 		renderer->setProgramUniformFloatVec3(
-			context,
+			contextIdx,
 			uniformLightAmbient[lightId],
 			{{
 				light.ambient[0],
@@ -196,11 +196,11 @@ void LightingShaderPBRBaseImplementation::updateLight(Renderer* renderer, void* 
 				light.ambient[2]
 			}}
 		);
-	if (uniformLightDirection[lightId] != -1) renderer->setProgramUniformFloatVec3(context, uniformLightDirection[lightId], light.spotDirection);
-	if (uniformLightRange[lightId] != -1) renderer->setProgramUniformFloat(context, uniformLightRange[lightId], 0.0f);
+	if (uniformLightDirection[lightId] != -1) renderer->setProgramUniformFloatVec3(contextIdx, uniformLightDirection[lightId], light.spotDirection);
+	if (uniformLightRange[lightId] != -1) renderer->setProgramUniformFloat(contextIdx, uniformLightRange[lightId], 0.0f);
 	if (uniformLightColor[lightId] != -1)
 		renderer->setProgramUniformFloatVec3(
-			context,
+			contextIdx,
 			uniformLightColor[lightId],
 			{{
 				light.diffuse[0],
@@ -208,12 +208,12 @@ void LightingShaderPBRBaseImplementation::updateLight(Renderer* renderer, void* 
 				light.diffuse[2]
 			}}
 		);
-	if (uniformLightIntensity[lightId] != -1) renderer->setProgramUniformFloat(context, uniformLightIntensity[lightId], 1.0f);
-	if (uniformLightPosition[lightId] != -1) renderer->setProgramUniformFloatVec3(context, uniformLightPosition[lightId],{{ light.position[0], light.position[1], light.position[2] }});
-	if (uniformLightType[lightId] != -1) renderer->setProgramUniformInteger(context, uniformLightType[lightId], 0);
+	if (uniformLightIntensity[lightId] != -1) renderer->setProgramUniformFloat(contextIdx, uniformLightIntensity[lightId], 1.0f);
+	if (uniformLightPosition[lightId] != -1) renderer->setProgramUniformFloatVec3(contextIdx, uniformLightPosition[lightId],{{ light.position[0], light.position[1], light.position[2] }});
+	if (uniformLightType[lightId] != -1) renderer->setProgramUniformInteger(contextIdx, uniformLightType[lightId], 0);
 }
 
-void LightingShaderPBRBaseImplementation::updateMatrices(Renderer* renderer, void* context)
+void LightingShaderPBRBaseImplementation::updateMatrices(Renderer* renderer, int contextIdx)
 {
 	// set up camera position and view projection matrices
 	// matrices
@@ -221,27 +221,27 @@ void LightingShaderPBRBaseImplementation::updateMatrices(Renderer* renderer, voi
 	// object to screen matrix
 	vpMatrix.set(renderer->getCameraMatrix()).multiply(renderer->getProjectionMatrix());
 	// upload matrices
-	renderer->setProgramUniformFloatMatrix4x4(context, uniformViewProjectionMatrix, vpMatrix.getArray());
-	if (uniformCamera != -1) renderer->setProgramUniformFloatVec3(context, uniformCamera, renderer->getCameraPosition().getArray());
+	renderer->setProgramUniformFloatMatrix4x4(contextIdx, uniformViewProjectionMatrix, vpMatrix.getArray());
+	if (uniformCamera != -1) renderer->setProgramUniformFloatVec3(contextIdx, uniformCamera, renderer->getCameraPosition().getArray());
 }
 
-void LightingShaderPBRBaseImplementation::updateTextureMatrix(Renderer* renderer, void* context) {
+void LightingShaderPBRBaseImplementation::updateTextureMatrix(Renderer* renderer, int contextIdx) {
 }
 
-void LightingShaderPBRBaseImplementation::updateShaderParameters(Renderer* renderer, void* context) {
+void LightingShaderPBRBaseImplementation::updateShaderParameters(Renderer* renderer, int contextIdx) {
 }
 
-void LightingShaderPBRBaseImplementation::bindTexture(Renderer* renderer, void* context, int32_t textureId)
+void LightingShaderPBRBaseImplementation::bindTexture(Renderer* renderer, int contextIdx, int32_t textureId)
 {
-	switch (renderer->getTextureUnit(context)) {
+	switch (renderer->getTextureUnit(contextIdx)) {
 		case LightingShaderConstants::PBR_TEXTUREUNIT_BASECOLOR:
-			if (uniformBaseColorSamplerAvailable != -1) renderer->setProgramUniformInteger(context, uniformBaseColorSamplerAvailable, textureId == 0 ? 0 : 1);
+			if (uniformBaseColorSamplerAvailable != -1) renderer->setProgramUniformInteger(contextIdx, uniformBaseColorSamplerAvailable, textureId == 0 ? 0 : 1);
 			break;
 		case LightingShaderConstants::PBR_TEXTUREUNIT_METALLICROUGHNESS:
-			if (uniformMetallicRoughnessSamplerAvailable != -1) renderer->setProgramUniformInteger(context, uniformMetallicRoughnessSamplerAvailable, textureId == 0 ? 0 : 1);
+			if (uniformMetallicRoughnessSamplerAvailable != -1) renderer->setProgramUniformInteger(contextIdx, uniformMetallicRoughnessSamplerAvailable, textureId == 0 ? 0 : 1);
 			break;
 		case LightingShaderConstants::PBR_TEXTUREUNIT_NORMAL:
-			if (uniformNormalSamplerAvailable != -1) renderer->setProgramUniformInteger(context, uniformNormalSamplerAvailable, textureId == 0 ? 0 : 1);
+			if (uniformNormalSamplerAvailable != -1) renderer->setProgramUniformInteger(contextIdx, uniformNormalSamplerAvailable, textureId == 0 ? 0 : 1);
 			break;
 	}
 }

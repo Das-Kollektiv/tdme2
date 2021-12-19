@@ -71,40 +71,40 @@ public:
 
 	/**
 	 * Set up matrices
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	void updateMatrices(void* context);
+	void updateMatrices(int contextIdx);
 
 	/**
 	 * Set up texture matrix
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	void updateTextureMatrix(void* context);
+	void updateTextureMatrix(int contextIdx);
 
 	/**
 	 * Update material
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	void updateMaterial(void* context);
+	void updateMaterial(int contextIdx);
 
 	/**
 	 * Update shader parameters
 	 * @param context
 	 */
-	void updateShaderParameters(void* context);
+	void updateShaderParameters(int contextIdx);
 
 	/**
 	 * Bind texture
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param textureId texture id
 	 */
-	void bindTexture(void* context, int32_t textureId);
+	void bindTexture(int contextIdx, int32_t textureId);
 
 	/**
 	 * Set shader
 	 * @param context
 	 * @param id shader id
 	 */
-	void setShader(void* context, const string& id);
+	void setShader(int contextIdx, const string& id);
 
 };

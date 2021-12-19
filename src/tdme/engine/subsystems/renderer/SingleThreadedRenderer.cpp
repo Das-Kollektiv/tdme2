@@ -24,67 +24,67 @@ SingleThreadedRenderer::SingleThreadedRenderer()
 SingleThreadedRenderer::~SingleThreadedRenderer() {
 }
 
-int32_t SingleThreadedRenderer::getLighting(void* context) {
+int32_t SingleThreadedRenderer::getLighting(int contextIdx) {
 	return lighting;
 }
 
-void SingleThreadedRenderer::setLighting(void* context, int32_t lighting) {
+void SingleThreadedRenderer::setLighting(int contextIdx, int32_t lighting) {
 	this->lighting = lighting;
 }
 
-Matrix2D3x3& SingleThreadedRenderer::getTextureMatrix(void* context) {
+Matrix2D3x3& SingleThreadedRenderer::getTextureMatrix(int contextIdx) {
 	return textureMatrix;
 }
 
-Renderer::Renderer_Light& SingleThreadedRenderer::getLight(void* context, int32_t lightId) {
+Renderer::Renderer_Light& SingleThreadedRenderer::getLight(int contextIdx, int32_t lightId) {
 	return lights[lightId];
 }
 
-array<float, 4>& SingleThreadedRenderer::getEffectColorMul(void* context) {
+array<float, 4>& SingleThreadedRenderer::getEffectColorMul(int contextIdx) {
 	return effectColorMul;
 }
 
-array<float, 4>& SingleThreadedRenderer::getEffectColorAdd(void* context) {
+array<float, 4>& SingleThreadedRenderer::getEffectColorAdd(int contextIdx) {
 	return effectColorAdd;
 }
 
-Renderer::Renderer_SpecularMaterial& SingleThreadedRenderer::getSpecularMaterial(void* context) {
+Renderer::Renderer_SpecularMaterial& SingleThreadedRenderer::getSpecularMaterial(int contextIdx) {
 	return specularMaterial;
 }
 
-Renderer::Renderer_PBRMaterial& SingleThreadedRenderer::getPBRMaterial(void* context) {
+Renderer::Renderer_PBRMaterial& SingleThreadedRenderer::getPBRMaterial(int contextIdx) {
 	return pbrMaterial;
 }
 
-const string& SingleThreadedRenderer::getShader(void* context) {
+const string& SingleThreadedRenderer::getShader(int contextIdx) {
 	return shader;
 }
 
-void SingleThreadedRenderer::setShader(void* context, const string& id) {
+void SingleThreadedRenderer::setShader(int contextIdx, const string& id) {
 	shader = id;
 }
 
-const EntityShaderParameters& SingleThreadedRenderer::getShaderParameters(void* context) {
+const EntityShaderParameters& SingleThreadedRenderer::getShaderParameters(int contextIdx) {
 	return shaderParameters;
 }
 
-void SingleThreadedRenderer::setShaderParameters(void* context, const EntityShaderParameters& parameters) {
+void SingleThreadedRenderer::setShaderParameters(int contextIdx, const EntityShaderParameters& parameters) {
 	shaderParameters = parameters;
 }
 
-float SingleThreadedRenderer::getMaskMaxValue(void* context) {
+float SingleThreadedRenderer::getMaskMaxValue(int contextIdx) {
 	return maskMaxValue;
 }
 
-void SingleThreadedRenderer::setMaskMaxValue(void* context, float maskMaxValue) {
+void SingleThreadedRenderer::setMaskMaxValue(int contextIdx, float maskMaxValue) {
 	this->maskMaxValue = maskMaxValue;
 }
 
-array<float, 3>& SingleThreadedRenderer::getEnvironmentMappingCubeMapPosition(void* context) {
+array<float, 3>& SingleThreadedRenderer::getEnvironmentMappingCubeMapPosition(int contextIdx) {
 	return environmentMappingCubeMapPosition;
 }
 
-void SingleThreadedRenderer::setEnvironmentMappingCubeMapPosition(void* context, array<float, 3>& position) {
+void SingleThreadedRenderer::setEnvironmentMappingCubeMapPosition(int contextIdx, array<float, 3>& position) {
 	this->environmentMappingCubeMapPosition = position;
 }
 

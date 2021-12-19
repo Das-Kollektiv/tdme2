@@ -44,49 +44,49 @@ struct tdme::engine::subsystems::earlyzrejection::EZRShaderImplementation
 	/**
 	 * Use EZR render shader program
 	 * @param engine engine
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	virtual void useProgram(Engine* engine, void* context) = 0;
+	virtual void useProgram(Engine* engine, int contextIdx) = 0;
 
 	/**
 	 * Unuse EZR render shader program
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	virtual void unUseProgram(void* context) = 0;
+	virtual void unUseProgram(int contextIdx) = 0;
 
 	/**
 	 * Update matrices
 	 * @param renderer renderer
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	virtual void updateMatrices(Renderer* renderer, void* context) = 0;
+	virtual void updateMatrices(Renderer* renderer, int contextIdx) = 0;
 
 	/**
 	 * update texture matrix
 	 * @param renderer renderer
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	virtual void updateTextureMatrix(Renderer* renderer, void* context) = 0;
+	virtual void updateTextureMatrix(Renderer* renderer, int contextIdx) = 0;
 
 	/**
 	 * Update material
 	 * @param renderer renderer
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	virtual void updateMaterial(Renderer* renderer, void* context) = 0;
+	virtual void updateMaterial(Renderer* renderer, int contextIdx) = 0;
 
 	/**
 	 * Update shader parameters
 	 * @param renderer renderer
 	 * @param context
 	 */
-	virtual void updateShaderParameters(Renderer* renderer, void* context) = 0;
+	virtual void updateShaderParameters(Renderer* renderer, int contextIdx) = 0;
 
 	/**
 	 * Bind texture
 	 * @param renderer renderer
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param textureId texture id
 	 */
-	virtual void bindTexture(Renderer* renderer, void* context, int32_t textureId) = 0;
+	virtual void bindTexture(Renderer* renderer, int contextIdx, int32_t textureId) = 0;
 };

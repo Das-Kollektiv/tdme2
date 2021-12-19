@@ -151,7 +151,7 @@ Matrix4x4& Camera::computeModelViewMatrix()
 	return modelViewMatrix;
 }
 
-void Camera::update(void* context, int32_t width, int32_t height)
+void Camera::update(int contextIdx, int32_t width, int32_t height)
 {
 	auto reshaped = false;
 	auto _width = width;
@@ -186,11 +186,11 @@ void Camera::update(void* context, int32_t width, int32_t height)
 	// setup projection and model view matrices and such
 	renderer->getCameraPosition().set(lookFrom);
 	renderer->getProjectionMatrix().set(computeProjectionMatrix());
-	renderer->onUpdateProjectionMatrix(context);
+	renderer->onUpdateProjectionMatrix(contextIdx);
 	renderer->getModelViewMatrix().set(computeModelViewMatrix());
-	renderer->onUpdateModelViewMatrix(context);
+	renderer->onUpdateModelViewMatrix(contextIdx);
 	renderer->getCameraMatrix().set(renderer->getModelViewMatrix());
-	renderer->onUpdateCameraMatrix(context);
+	renderer->onUpdateCameraMatrix(contextIdx);
 
 	//
 	mvpInvertedMatrix.set(modelViewMatrix).multiply(projectionMatrix).invert();

@@ -138,17 +138,17 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 
 		// setup depth textures to contexts
 		for (auto j = 0; j < contextCount; j++) {
-			// use default context
-			auto context = renderer->getContext(j);
+			// use default contextIdx
+			auto contextIdx = j;
 			// set up light shader uniforms
-			shadowMap->updateDepthBiasMVPMatrix(context);
+			shadowMap->updateDepthBiasMVPMatrix(contextIdx);
 			//
 			// bind shadow map texture on shadow map texture unit
-			auto textureUnit = renderer->getTextureUnit(context);
-			renderer->setTextureUnit(context, ShadowMap::TEXTUREUNIT);
-			shadowMap->bindDepthBufferTexture(context);
+			auto textureUnit = renderer->getTextureUnit(contextIdx);
+			renderer->setTextureUnit(contextIdx, ShadowMap::TEXTUREUNIT);
+			shadowMap->bindDepthBufferTexture(contextIdx);
 			// switch back to texture last unit
-			renderer->setTextureUnit(context, textureUnit);
+			renderer->setTextureUnit(contextIdx, textureUnit);
 		}
 
 		// 	only opaque face entities as shadows will not be produced on transparent faces
@@ -174,12 +174,12 @@ void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
 
 	// restore depth textures of contexts
 	for (auto j = 0; j < contextCount; j++) {
-		// use default context
-		auto context = renderer->getContext(j);
-		auto textureUnit = renderer->getTextureUnit(context);
-		renderer->setTextureUnit(context, ShadowMap::TEXTUREUNIT);
-		renderer->bindTexture(context, renderer->ID_NONE);
-		renderer->setTextureUnit(context, textureUnit);
+		// use default contextIdx
+		auto contextIdx = j;
+		auto textureUnit = renderer->getTextureUnit(contextIdx);
+		renderer->setTextureUnit(contextIdx, ShadowMap::TEXTUREUNIT);
+		renderer->bindTexture(contextIdx, renderer->ID_NONE);
+		renderer->setTextureUnit(contextIdx, textureUnit);
 	}
 
 	// restore render defaults
@@ -205,7 +205,7 @@ void ShadowMapping::dispose()
 	}
 }
 
-void ShadowMapping::startObjectTransformations(void* context, Matrix4x4& transformationsMatrix)
+void ShadowMapping::startObjectTransformations(int contextIdx, Matrix4x4& transformationsMatrix)
 {
 	if (runState != ShadowMapping_RunState::RENDER)
 		return;
@@ -218,7 +218,7 @@ void ShadowMapping::startObjectTransformations(void* context, Matrix4x4& transfo
 	depthBiasMVPMatrix.set(transformationsMatrix).multiply(tmpMatrix);
 
 	//
-	updateDepthBiasMVPMatrix(context);
+	updateDepthBiasMVPMatrix(contextIdx);
 }
 
 void ShadowMapping::endObjectTransformations()
@@ -229,81 +229,81 @@ void ShadowMapping::endObjectTransformations()
 	depthBiasMVPMatrix.set(shadowTransformationsMatrix);
 }
 
-void ShadowMapping::updateTextureMatrix(void* context)
+void ShadowMapping::updateTextureMatrix(int contextIdx)
 {
 	if (runState == ShadowMapping_RunState::NONE) return;
 
 	//
 	switch(runState) {
 		case ShadowMapping_RunState::CREATE:
-			Engine::getShadowMapCreationShader()->updateTextureMatrix(context);
+			Engine::getShadowMapCreationShader()->updateTextureMatrix(contextIdx);
 			break;
 		case ShadowMapping_RunState::RENDER:
-			Engine::getShadowMapRenderShader()->updateTextureMatrix(context);
+			Engine::getShadowMapRenderShader()->updateTextureMatrix(contextIdx);
 			break;
 		default:
 			Console::println(string("ShadowMapping::updateTextureMatrix(): unsupported run state '" + to_string(runState)));
 	}
 }
 
-void ShadowMapping::updateMatrices(void* context)
+void ShadowMapping::updateMatrices(int contextIdx)
 {
 	if (runState == ShadowMapping_RunState::NONE) return;
 
 	//
 	switch(runState) {
 		case ShadowMapping_RunState::CREATE:
-			Engine::getShadowMapCreationShader()->updateMatrices(context);
+			Engine::getShadowMapCreationShader()->updateMatrices(contextIdx);
 			break;
 		case ShadowMapping_RunState::RENDER:
-			Engine::getShadowMapRenderShader()->updateMatrices(context);
+			Engine::getShadowMapRenderShader()->updateMatrices(contextIdx);
 			break;
 		default:
 			Console::println(string("ShadowMapping::updateMatrices(): unsupported run state '" + to_string(runState)));
 	}
 }
 
-void ShadowMapping::updateMaterial(void* context) {
+void ShadowMapping::updateMaterial(int contextIdx) {
 	if (runState == ShadowMapping_RunState::NONE)
 		return;
 
 	//
 	switch(runState) {
 		case ShadowMapping_RunState::CREATE:
-			Engine::getShadowMapCreationShader()->updateMaterial(context);
+			Engine::getShadowMapCreationShader()->updateMaterial(contextIdx);
 			break;
 		case ShadowMapping_RunState::RENDER:
-			Engine::getShadowMapRenderShader()->updateMaterial(context);
+			Engine::getShadowMapRenderShader()->updateMaterial(contextIdx);
 			break;
 		default:
 			Console::println(string("ShadowMapping::updateMaterial(): unsupported run state '" + to_string(runState)));
 	}
 }
 
-void ShadowMapping::updateLight(void* context, int32_t lightId) {
+void ShadowMapping::updateLight(int contextIdx, int32_t lightId) {
 	if (runState == ShadowMapping_RunState::RENDER) {
-		Engine::getShadowMapRenderShader()->updateLight(context, lightId);
+		Engine::getShadowMapRenderShader()->updateLight(contextIdx, lightId);
 	}
 }
 
-void ShadowMapping::bindTexture(void* context, int32_t textureId) {
+void ShadowMapping::bindTexture(int contextIdx, int32_t textureId) {
 	if (runState == ShadowMapping_RunState::NONE)
 		return;
 
 	//
 	switch(runState) {
 		case ShadowMapping_RunState::CREATE:
-			Engine::getShadowMapCreationShader()->bindTexture(context, textureId);
+			Engine::getShadowMapCreationShader()->bindTexture(contextIdx, textureId);
 			break;
 		case ShadowMapping_RunState::RENDER:
-			Engine::getShadowMapRenderShader()->bindTexture(context, textureId);
+			Engine::getShadowMapRenderShader()->bindTexture(contextIdx, textureId);
 			break;
 		default:
 			Console::println(string("ShadowMapping::bindTexture(): unsupported run state '" + to_string(runState)));
 	}
 }
 
-void ShadowMapping::updateDepthBiasMVPMatrix(void* context, Matrix4x4& depthBiasMVPMatrix)
+void ShadowMapping::updateDepthBiasMVPMatrix(int contextIdx, Matrix4x4& depthBiasMVPMatrix)
 {
 	if (runState != ShadowMapping_RunState::RENDER)
 		return;
@@ -311,46 +311,46 @@ void ShadowMapping::updateDepthBiasMVPMatrix(void* context, Matrix4x4& depthBias
 	// copy matrix
 	this->depthBiasMVPMatrix.set(depthBiasMVPMatrix);
 	// upload
-	Engine::getShadowMapRenderShader()->setDepthBiasMVPMatrix(context, depthBiasMVPMatrix);
+	Engine::getShadowMapRenderShader()->setDepthBiasMVPMatrix(contextIdx, depthBiasMVPMatrix);
 }
 
-void ShadowMapping::updateDepthBiasMVPMatrix(void* context)
+void ShadowMapping::updateDepthBiasMVPMatrix(int contextIdx)
 {
 	if (runState != ShadowMapping_RunState::RENDER)
 		return;
 
 	// upload
-	Engine::getShadowMapRenderShader()->setDepthBiasMVPMatrix(context, depthBiasMVPMatrix);
+	Engine::getShadowMapRenderShader()->setDepthBiasMVPMatrix(contextIdx, depthBiasMVPMatrix);
 }
 
-void ShadowMapping::setShader(void* context, const string& id) {
+void ShadowMapping::setShader(int contextIdx, const string& id) {
 	if (runState == ShadowMapping_RunState::NONE)
 		return;
 
 	//
 	switch(runState) {
 		case ShadowMapping_RunState::CREATE:
-			Engine::getShadowMapCreationShader()->setShader(context, id);
+			Engine::getShadowMapCreationShader()->setShader(contextIdx, id);
 			break;
 		case ShadowMapping_RunState::RENDER:
-			Engine::getShadowMapRenderShader()->setShader(context, id);
+			Engine::getShadowMapRenderShader()->setShader(contextIdx, id);
 			break;
 		default:
 			Console::println(string("ShadowMapping::setShader(): unsupported run state '" + to_string(runState)));
 	}
 }
 
-void ShadowMapping::updateShaderParameters(void* context) {
+void ShadowMapping::updateShaderParameters(int contextIdx) {
 	if (runState == ShadowMapping_RunState::NONE)
 		return;
 
 	//
 	switch(runState) {
 		case ShadowMapping_RunState::CREATE:
-			Engine::getShadowMapCreationShader()->updateShaderParameters(context);
+			Engine::getShadowMapCreationShader()->updateShaderParameters(contextIdx);
 			break;
 		case ShadowMapping_RunState::RENDER:
-			Engine::getShadowMapRenderShader()->updateShaderParameters(context);
+			Engine::getShadowMapRenderShader()->updateShaderParameters(contextIdx);
 			break;
 		default:
 			Console::println(string("ShadowMapping::updateShaderParameters(): unsupported run state '" + to_string(runState)));

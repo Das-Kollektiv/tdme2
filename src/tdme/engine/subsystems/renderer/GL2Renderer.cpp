@@ -142,7 +142,7 @@ void GL2Renderer::initialize()
 	glDisable(GL_BLEND);
 	glEnable(GL_POINT_SPRITE);
 	glEnable(GL_PROGRAM_POINT_SIZE_EXT);
-	setTextureUnit(nullptr, 0);
+	setTextureUnit(CONTEXTINDEX_DEFAULT, 0);
 }
 
 void GL2Renderer::initializeFrame()
@@ -284,7 +284,7 @@ int32_t GL2Renderer::loadShader(int32_t type, const string& pathName, const stri
 	return handle;
 }
 
-void GL2Renderer::useProgram(void* context, int32_t programId)
+void GL2Renderer::useProgram(int contextIdx, int32_t programId)
 {
 	glUseProgram(programId);
 }
@@ -334,42 +334,42 @@ int32_t GL2Renderer::getProgramUniformLocation(int32_t programId, const string& 
 	return uniformLocation;
 }
 
-void GL2Renderer::setProgramUniformInteger(void* context, int32_t uniformId, int32_t value)
+void GL2Renderer::setProgramUniformInteger(int contextIdx, int32_t uniformId, int32_t value)
 {
 	glUniform1i(uniformId, value);
 }
 
-void GL2Renderer::setProgramUniformFloat(void* context, int32_t uniformId, float value)
+void GL2Renderer::setProgramUniformFloat(int contextIdx, int32_t uniformId, float value)
 {
 	glUniform1f(uniformId, value);
 }
 
-void GL2Renderer::setProgramUniformFloatMatrices4x4(void* context, int32_t uniformId, int32_t count, FloatBuffer* data)
+void GL2Renderer::setProgramUniformFloatMatrices4x4(int contextIdx, int32_t uniformId, int32_t count, FloatBuffer* data)
 {
 	glUniformMatrix4fv(uniformId, count, false, (float*)data->getBuffer());
 }
 
-void GL2Renderer::setProgramUniformFloatMatrix3x3(void* context, int32_t uniformId, const array<float, 9>& data)
+void GL2Renderer::setProgramUniformFloatMatrix3x3(int contextIdx, int32_t uniformId, const array<float, 9>& data)
 {
 	glUniformMatrix3fv(uniformId, 1, false, data.data());
 }
 
-void GL2Renderer::setProgramUniformFloatMatrix4x4(void* context, int32_t uniformId, const array<float, 16>& data)
+void GL2Renderer::setProgramUniformFloatMatrix4x4(int contextIdx, int32_t uniformId, const array<float, 16>& data)
 {
 	glUniformMatrix4fv(uniformId, 1, false, data.data());
 }
 
-void GL2Renderer::setProgramUniformFloatVec4(void* context, int32_t uniformId, const array<float, 4>& data)
+void GL2Renderer::setProgramUniformFloatVec4(int contextIdx, int32_t uniformId, const array<float, 4>& data)
 {
 	glUniform4fv(uniformId, 1, data.data());
 }
 
-void GL2Renderer::setProgramUniformFloatVec3(void* context, int32_t uniformId, const array<float, 3>& data)
+void GL2Renderer::setProgramUniformFloatVec3(int contextIdx, int32_t uniformId, const array<float, 3>& data)
 {
 	glUniform3fv(uniformId, 1, data.data());
 }
 
-void GL2Renderer::setProgramUniformFloatVec2(void* context, int32_t uniformId, const array<float, 2>& data)
+void GL2Renderer::setProgramUniformFloatVec2(int contextIdx, int32_t uniformId, const array<float, 2>& data)
 {
 	glUniform2fv(uniformId, 1, data.data());
 }
@@ -395,17 +395,17 @@ void GL2Renderer::setClearColor(float red, float green, float blue, float alpha)
 	glClearColor(red, green, blue, alpha);
 }
 
-void GL2Renderer::enableCulling(void* context)
+void GL2Renderer::enableCulling(int contextIdx)
 {
 	glEnable(GL_CULL_FACE);
 }
 
-void GL2Renderer::disableCulling(void* context)
+void GL2Renderer::disableCulling(int contextIdx)
 {
 	glDisable(GL_CULL_FACE);
 }
 
-void GL2Renderer::setFrontFace(void* context, int32_t frontFace)
+void GL2Renderer::setFrontFace(int contextIdx, int32_t frontFace)
 {
 	glFrontFace(frontFace);
 }
@@ -520,7 +520,7 @@ int32_t GL2Renderer::createGBufferColorTexture(int32_t width, int32_t height) {
 	return ID_NONE;
 }
 
-void GL2Renderer::uploadTexture(void* context, Texture* texture)
+void GL2Renderer::uploadTexture(int contextIdx, Texture* texture)
 {
 	glTexImage2D(
 		GL_TEXTURE_2D,
@@ -567,7 +567,7 @@ void GL2Renderer::uploadTexture(void* context, Texture* texture)
 	statistics.textureUploads++;
 }
 
-void GL2Renderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) {
+void GL2Renderer::uploadCubeMapTexture(int contextIdx, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) {
 	glTexImage2D(
 		GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
 		0,
@@ -642,7 +642,7 @@ void GL2Renderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Text
 	statistics.textureUploads+= 6;
 }
 
-int32_t GL2Renderer::createCubeMapTexture(void* context, int32_t width, int32_t height) {
+int32_t GL2Renderer::createCubeMapTexture(int contextIdx, int32_t width, int32_t height) {
 	// generate open gl texture
 	uint32_t textureId;
 	glGenTextures(1, &textureId);
@@ -744,15 +744,15 @@ void GL2Renderer::resizeGBufferColorTexture(int32_t textureId, int32_t width, in
 	Console::println("GL2Renderer::resizeGBufferColorTexture(): Not implemented");
 }
 
-void GL2Renderer::bindTexture(void* context, int32_t textureId)
+void GL2Renderer::bindTexture(int contextIdx, int32_t textureId)
 {
 	glBindTexture(GL_TEXTURE_2D, textureId);
-	onBindTexture(context, textureId);
+	onBindTexture(contextIdx, textureId);
 }
 
-void GL2Renderer::bindCubeMapTexture(void* context, int32_t textureId) {
+void GL2Renderer::bindCubeMapTexture(int contextIdx, int32_t textureId) {
 	glBindTexture(GL_TEXTURE_CUBE_MAP, textureId);
-	onBindTexture(context, textureId);
+	onBindTexture(contextIdx, textureId);
 }
 
 void GL2Renderer::disposeTexture(int32_t textureId)
@@ -835,7 +835,7 @@ vector<int32_t> GL2Renderer::createBufferObjects(int32_t buffers, bool useGPUMem
 	return bufferObjectIds;
 }
 
-void GL2Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data)
+void GL2Renderer::uploadBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, FloatBuffer* data)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
@@ -843,7 +843,7 @@ void GL2Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int3
 	statistics.bufferUploads++;
 }
 
-void GL2Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data)
+void GL2Renderer::uploadBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, IntBuffer* data)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
@@ -851,7 +851,7 @@ void GL2Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int3
 	statistics.bufferUploads++;
 }
 
-void GL2Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
+void GL2Renderer::uploadBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
@@ -859,12 +859,12 @@ void GL2Renderer::uploadBufferObject(void* context, int32_t bufferObjectId, int3
 	statistics.bufferUploads++;
 }
 
-void GL2Renderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
+void GL2Renderer::uploadIndicesBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
 	Console::println(string("GL2Renderer::uploadIndicesBufferObject()::not implemented yet"));
 }
 
-void GL2Renderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data)
+void GL2Renderer::uploadIndicesBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, IntBuffer* data)
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
@@ -872,95 +872,95 @@ void GL2Renderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectI
 	statistics.bufferUploads++;
 }
 
-void GL2Renderer::bindIndicesBufferObject(void* context, int32_t bufferObjectId)
+void GL2Renderer::bindIndicesBufferObject(int contextIdx, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
 }
 
-void GL2Renderer::bindTextureCoordinatesBufferObject(void* context, int32_t bufferObjectId)
+void GL2Renderer::bindTextureCoordinatesBufferObject(int contextIdx, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 2, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL2Renderer::bindVerticesBufferObject(void* context, int32_t bufferObjectId)
+void GL2Renderer::bindVerticesBufferObject(int contextIdx, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL2Renderer::bindNormalsBufferObject(void* context, int32_t bufferObjectId)
+void GL2Renderer::bindNormalsBufferObject(int contextIdx, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL2Renderer::bindColorsBufferObject(void* context, int32_t bufferObjectId)
+void GL2Renderer::bindColorsBufferObject(int contextIdx, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(3);
 	glVertexAttribPointer(3, 4, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL2Renderer::bindTangentsBufferObject(void* context, int32_t bufferObjectId)
+void GL2Renderer::bindTangentsBufferObject(int contextIdx, int32_t bufferObjectId)
 {
 	Console::println(string("GL2Renderer::bindTangentsBufferObject()::not implemented yet"));
 }
 
-void GL2Renderer::bindBitangentsBufferObject(void* context, int32_t bufferObjectId)
+void GL2Renderer::bindBitangentsBufferObject(int contextIdx, int32_t bufferObjectId)
 {
 	Console::println(string("GL2Renderer::bindBitangentsBufferObject()::not implemented yet"));
 }
 
-void GL2Renderer::bindModelMatricesBufferObject(void* context, int32_t bufferObjectId) {
+void GL2Renderer::bindModelMatricesBufferObject(int contextIdx, int32_t bufferObjectId) {
 	Console::println(string("GL2Renderer::bindModelViewMatricesBufferObject()::not implemented yet"));
 }
 
-void GL2Renderer::bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor) {
+void GL2Renderer::bindEffectColorMulsBufferObject(int contextIdx, int32_t bufferObjectId, int32_t divisor) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(10);
 	glVertexAttribPointer(10, 4, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL2Renderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor) {
+void GL2Renderer::bindEffectColorAddsBufferObject(int contextIdx, int32_t bufferObjectId, int32_t divisor) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(11);
 	glVertexAttribPointer(11, 4, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL2Renderer::bindOriginsBufferObject(void* context, int32_t bufferObjectId) {
+void GL2Renderer::bindOriginsBufferObject(int contextIdx, int32_t bufferObjectId) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(4);
 	glVertexAttribPointer(4, 3, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL2Renderer::bindTextureSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) {
+void GL2Renderer::bindTextureSpriteIndicesBufferObject(int contextIdx, int32_t bufferObjectId) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL2Renderer::bindPointSizesBufferObject(void* context, int32_t bufferObjectId) {
+void GL2Renderer::bindPointSizesBufferObject(int contextIdx, int32_t bufferObjectId) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(5);
 	glVertexAttribPointer(5, 1, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL2Renderer::bindSpriteSheetDimensionBufferObject(void* context, int32_t bufferObjectId) {
+void GL2Renderer::bindSpriteSheetDimensionBufferObject(int contextIdx, int32_t bufferObjectId) {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(6);
 	glVertexAttribPointer(6, 2, GL_FLOAT, false, 0, 0LL);
 }
 
-void GL2Renderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances)
+void GL2Renderer::drawInstancedIndexedTrianglesFromBufferObjects(int contextIdx, int32_t triangles, int32_t trianglesOffset, int32_t instances)
 {
 	Console::println(string("GL2Renderer::drawInstancedIndexedTrianglesFromBufferObjects()::not implemented yet"));
 }
 
-void GL2Renderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset)
+void GL2Renderer::drawIndexedTrianglesFromBufferObjects(int contextIdx, int32_t triangles, int32_t trianglesOffset)
 {
 	#define BUFFER_OFFSET(i) ((void*)(i))
 	glDrawElements(GL_TRIANGLES, triangles * 3, GL_UNSIGNED_INT, BUFFER_OFFSET(static_cast< int64_t >(trianglesOffset) * 3LL * 4LL));
@@ -969,11 +969,11 @@ void GL2Renderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t t
 	statistics.triangles+= triangles;
 }
 
-void GL2Renderer::drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) {
+void GL2Renderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, int32_t triangles, int32_t trianglesOffset, int32_t instances) {
 	Console::println(string("GL2Renderer::drawInstancedTrianglesFromBufferObjects()::not implemented yet"));
 }
 
-void GL2Renderer::drawTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset)
+void GL2Renderer::drawTrianglesFromBufferObjects(int contextIdx, int32_t triangles, int32_t trianglesOffset)
 {
 	glDrawArrays(GL_TRIANGLES, trianglesOffset * 3, triangles * 3);
 	statistics.renderCalls++;
@@ -981,7 +981,7 @@ void GL2Renderer::drawTrianglesFromBufferObjects(void* context, int32_t triangle
 	statistics.triangles+= triangles;
 }
 
-void GL2Renderer::drawPointsFromBufferObjects(void* context, int32_t points, int32_t pointsOffset)
+void GL2Renderer::drawPointsFromBufferObjects(int contextIdx, int32_t points, int32_t pointsOffset)
 {
 	glDrawArrays(GL_POINTS, pointsOffset, points);
 	statistics.renderCalls++;
@@ -993,14 +993,14 @@ void GL2Renderer::setLineWidth(float lineWidth)
 	glLineWidth(lineWidth);
 }
 
-void GL2Renderer::drawLinesFromBufferObjects(void* context, int32_t points, int32_t pointsOffset)
+void GL2Renderer::drawLinesFromBufferObjects(int contextIdx, int32_t points, int32_t pointsOffset)
 {
 	glDrawArrays(GL_LINES, pointsOffset, points);
 	statistics.renderCalls++;
 	statistics.linePoints+= points;
 }
 
-void GL2Renderer::unbindBufferObjects(void* context)
+void GL2Renderer::unbindBufferObjects(int contextIdx)
 {
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
@@ -1017,12 +1017,12 @@ void GL2Renderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)
 	statistics.disposedBuffers+= bufferObjectIds.size();
 }
 
-int32_t GL2Renderer::getTextureUnit(void* context)
+int32_t GL2Renderer::getTextureUnit(int contextIdx)
 {
 	return activeTextureUnit;
 }
 
-void GL2Renderer::setTextureUnit(void* context, int32_t textureUnit)
+void GL2Renderer::setTextureUnit(int contextIdx, int32_t textureUnit)
 {
 	this->activeTextureUnit = textureUnit;
 	glActiveTexture(GL_TEXTURE0 + textureUnit);
@@ -1045,7 +1045,7 @@ ByteBuffer* GL2Renderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t
 
 void GL2Renderer::initGuiMode()
 {
-	setTextureUnit(nullptr, 0);
+	setTextureUnit(CONTEXTINDEX_DEFAULT, 0);
 	glBindTexture(GL_TEXTURE_2D, ID_NONE);
 	glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
 	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
@@ -1064,7 +1064,7 @@ void GL2Renderer::doneGuiMode()
 	glEnable(GL_CULL_FACE);
 }
 
-void GL2Renderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
+void GL2Renderer::dispatchCompute(int contextIdx, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
 	Console::println("GL2Renderer::dispatchCompute(): Not implemented");
 }
 
@@ -1072,43 +1072,43 @@ void GL2Renderer::memoryBarrier() {
 	Console::println("GL2Renderer::memoryBarrier(): Not implemented");
 }
 
-void GL2Renderer::uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
+void GL2Renderer::uploadSkinningBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
 	Console::println("GL2Renderer::uploadSkinningBufferObject(): Not implemented");
 }
 
-void GL2Renderer::uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data) {
+void GL2Renderer::uploadSkinningBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, IntBuffer* data) {
 	Console::println("GL2Renderer::uploadSkinningBufferObject(): Not implemented");
 }
 
-void GL2Renderer::bindSkinningVerticesBufferObject(void* context, int32_t bufferObjectId) {
+void GL2Renderer::bindSkinningVerticesBufferObject(int contextIdx, int32_t bufferObjectId) {
 	Console::println("GL2Renderer::bindSkinningVerticesBufferObject(): Not implemented");
 }
 
-void GL2Renderer::bindSkinningNormalsBufferObject(void* context, int32_t bufferObjectId) {
+void GL2Renderer::bindSkinningNormalsBufferObject(int contextIdx, int32_t bufferObjectId) {
 	Console::println("GL2Renderer::bindSkinningNormalsBufferObject(): Not implemented");
 }
 
-void GL2Renderer::bindSkinningVertexJointsBufferObject(void* context, int32_t bufferObjectId) {
+void GL2Renderer::bindSkinningVertexJointsBufferObject(int contextIdx, int32_t bufferObjectId) {
 	Console::println("GL2Renderer::bindSkinningVertexJointsBufferObject(): Not implemented");
 }
 
-void GL2Renderer::bindSkinningVertexJointIdxsBufferObject(void* context, int32_t bufferObjectId) {
+void GL2Renderer::bindSkinningVertexJointIdxsBufferObject(int contextIdx, int32_t bufferObjectId) {
 	Console::println("GL2Renderer::bindSkinningVertexJointIdxsBufferObject(): Not implemented");
 }
 
-void GL2Renderer::bindSkinningVertexJointWeightsBufferObject(void* context, int32_t bufferObjectId) {
+void GL2Renderer::bindSkinningVertexJointWeightsBufferObject(int contextIdx, int32_t bufferObjectId) {
 	Console::println("GL2Renderer::bindSkinningVertexJointWeightsBufferObject(): Not implemented");
 }
 
-void GL2Renderer::bindSkinningVerticesResultBufferObject(void* context, int32_t bufferObjectId) {
+void GL2Renderer::bindSkinningVerticesResultBufferObject(int contextIdx, int32_t bufferObjectId) {
 	Console::println("GL2Renderer::bindSkinningVerticesResultBufferObject(): Not implemented");
 }
 
-void GL2Renderer::bindSkinningNormalsResultBufferObject(void* context, int32_t bufferObjectId) {
+void GL2Renderer::bindSkinningNormalsResultBufferObject(int contextIdx, int32_t bufferObjectId) {
 	Console::println("GL2Renderer::bindSkinningNormalsResultBufferObject(): Not implemented");
 }
 
-void GL2Renderer::bindSkinningMatricesBufferObject(void* context, int32_t bufferObjectId) {
+void GL2Renderer::bindSkinningMatricesBufferObject(int contextIdx, int32_t bufferObjectId) {
 	Console::println("GL2Renderer::bindSkinningMatricesBufferObject(): Not implemented");
 }
 

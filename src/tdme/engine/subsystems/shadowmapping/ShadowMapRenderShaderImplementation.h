@@ -40,35 +40,35 @@ struct tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderImplementat
 	/**
 	 * Use shadow map render shader program
 	 * @param engine engine
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	virtual void useProgram(Engine* engine, void* context) = 0;
+	virtual void useProgram(Engine* engine, int contextIdx) = 0;
 
 	/**
 	 * Un use shadow map render shader program
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	virtual void unUseProgram(void* context) = 0;
+	virtual void unUseProgram(int contextIdx) = 0;
 
 	/**
 	 * Update matrices
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	virtual void updateMatrices(void* context) = 0;
+	virtual void updateMatrices(int contextIdx) = 0;
 
 	/**
 	 * Update texture matrix
 	 * @param renderer renderer
 	 * @param context contet
 	 */
-	virtual void updateTextureMatrix(Renderer* renderer, void* context) = 0;
+	virtual void updateTextureMatrix(Renderer* renderer, int contextIdx) = 0;
 
 	/**
 	 * Update material
 	 * @param renderer renderer
 	 * @param context contet
 	 */
-	virtual void updateMaterial(Renderer* renderer, void* context) = 0;
+	virtual void updateMaterial(Renderer* renderer, int contextIdx) = 0;
 
 	/**
 	 * Update light
@@ -76,14 +76,14 @@ struct tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderImplementat
 	 * @param context contet
 	 * @param lightId light id
 	 */
-	virtual void updateLight(Renderer* renderer, void* context, int32_t lightId) = 0;
+	virtual void updateLight(Renderer* renderer, int contextIdx, int32_t lightId) = 0;
 
 	/**
 	 * Update shader parameters
 	 * @param renderer renderer
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	virtual void updateShaderParameters(Renderer* renderer, void* context) = 0;
+	virtual void updateShaderParameters(Renderer* renderer, int contextIdx) = 0;
 
 	/**
 	 * Bind texture
@@ -91,14 +91,14 @@ struct tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderImplementat
 	 * @param context contet
 	 * @param textureId texture id
 	 */
-	virtual void bindTexture(Renderer* renderer, void* context, int32_t textureId) = 0;
+	virtual void bindTexture(Renderer* renderer, int contextIdx, int32_t textureId) = 0;
 
 	/**
 	 * Set up program depth bias mvp matrix
 	 * @param context contet
 	 * @param depthBiasMVPMatrix depth bias mvp matrix
 	 */
-	virtual void setDepthBiasMVPMatrix(void* context, const Matrix4x4& depthBiasMVPMatrix) = 0;
+	virtual void setDepthBiasMVPMatrix(int contextIdx, const Matrix4x4& depthBiasMVPMatrix) = 0;
 
 	/**
 	 * Set light id

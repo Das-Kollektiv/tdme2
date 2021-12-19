@@ -222,14 +222,14 @@ Object3DNodeMesh::Object3DNodeMesh(Object3DNodeRenderer* object3DNodeRenderer, E
 	recreateBuffers();
 }
 
-void Object3DNodeMesh::computeTransformations(void* context, Object3DBase* object3DBase)
+void Object3DNodeMesh::computeTransformations(int contextIdx, Object3DBase* object3DBase)
 {
 	// transformations for skinned meshes
 	auto skinning = node->getSkinning();
 	if (skinning != nullptr) {
 		// compute skinning on CPU if required
 		if (animationProcessingTarget == Engine::AnimationProcessingTarget::GPU) {
-			Engine::getSkinningShader()->computeSkinning(context, object3DBase, this);
+			Engine::getSkinningShader()->computeSkinning(contextIdx, object3DBase, this);
 		} else
 		if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 			auto& nodeVertices = node->getVertices();
@@ -344,7 +344,7 @@ bool Object3DNodeMesh::getRecreatedBuffers()
 	}
 }
 
-void Object3DNodeMesh::setupVertexIndicesBuffer(Renderer *renderer, void *context, int32_t vboId) {
+void Object3DNodeMesh::setupVertexIndicesBuffer(Renderer *renderer, int contextIdx, int32_t vboId) {
 	// upload
 	if (renderer->isUsingShortIndices() == true) {
 		if (instances * indices.size() > 65535) {
@@ -356,103 +356,103 @@ void Object3DNodeMesh::setupVertexIndicesBuffer(Renderer *renderer, void *contex
 				to_string(indices.size())
 			);
 		}
-		auto sbIndices = ObjectBuffer::getByteBuffer(context, instances * faceCount * 3 * sizeof(uint16_t))->asShortBuffer();
+		auto sbIndices = ObjectBuffer::getByteBuffer(contextIdx, instances * faceCount * 3 * sizeof(uint16_t))->asShortBuffer();
 		// create face vertex indices, will never be changed in engine
 		for (auto i = 0; i < instances; i++)
 		for (auto index: indices) {
 			sbIndices.put(index);
 		}
 		// done, upload
-		renderer->uploadIndicesBufferObject(context, vboId, sbIndices.getPosition() * sizeof(uint16_t), &sbIndices);
+		renderer->uploadIndicesBufferObject(contextIdx, vboId, sbIndices.getPosition() * sizeof(uint16_t), &sbIndices);
 	} else {
-		auto ibIndices = ObjectBuffer::getByteBuffer(context, instances * faceCount * 3 * sizeof(uint32_t))->asIntBuffer();
+		auto ibIndices = ObjectBuffer::getByteBuffer(contextIdx, instances * faceCount * 3 * sizeof(uint32_t))->asIntBuffer();
 		// create face vertex indices, will never be changed in engine
 		for (auto i = 0; i < instances; i++)
 		for (auto index: indices) {
 			ibIndices.put(index);
 		}
 		// done, upload
-		renderer->uploadIndicesBufferObject(context, vboId, ibIndices.getPosition() * sizeof(uint32_t), &ibIndices);
+		renderer->uploadIndicesBufferObject(contextIdx, vboId, ibIndices.getPosition() * sizeof(uint32_t), &ibIndices);
 	}
 }
 
 
-void Object3DNodeMesh::setupTextureCoordinatesBuffer(Renderer* renderer, void* context, int32_t vboId)
+void Object3DNodeMesh::setupTextureCoordinatesBuffer(Renderer* renderer, int contextIdx, int32_t vboId)
 {
 	if (textureCoordinates->size() == 0) return;
 	// create texture coordinates buffer, will never be changed in engine
-	auto fbTextureCoordinates = ObjectBuffer::getByteBuffer(context, textureCoordinates->size() * 2 * sizeof(float))->asFloatBuffer();
+	auto fbTextureCoordinates = ObjectBuffer::getByteBuffer(contextIdx, textureCoordinates->size() * 2 * sizeof(float))->asFloatBuffer();
 	// construct texture coordinates byte buffer as this will not change usually
 	for (auto& textureCoordinate: *textureCoordinates) {
 		fbTextureCoordinates.put(textureCoordinate.getArray());
 	}
 	// done, upload
-	renderer->uploadBufferObject(context, vboId, fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
+	renderer->uploadBufferObject(contextIdx, vboId, fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
 }
 
-void Object3DNodeMesh::setupVerticesBuffer(Renderer* renderer, void* context, int32_t vboId)
+void Object3DNodeMesh::setupVerticesBuffer(Renderer* renderer, int contextIdx, int32_t vboId)
 {
-	auto fbVertices = ObjectBuffer::getByteBuffer(context, vertices->size() * 3 * sizeof(float))->asFloatBuffer();
+	auto fbVertices = ObjectBuffer::getByteBuffer(contextIdx, vertices->size() * 3 * sizeof(float))->asFloatBuffer();
 	// create vertices buffers
 	for (auto& vertex: *vertices) {
 		fbVertices.put(vertex.getArray());
 	}
 	// done, upload
-	renderer->uploadBufferObject(context, vboId, fbVertices.getPosition() * sizeof(float), &fbVertices);
+	renderer->uploadBufferObject(contextIdx, vboId, fbVertices.getPosition() * sizeof(float), &fbVertices);
 }
 
-void Object3DNodeMesh::setupNormalsBuffer(Renderer* renderer, void* context, int32_t vboId)
+void Object3DNodeMesh::setupNormalsBuffer(Renderer* renderer, int contextIdx, int32_t vboId)
 {
-	auto fbNormals = ObjectBuffer::getByteBuffer(context, normals->size() * 3 * sizeof(float))->asFloatBuffer();
+	auto fbNormals = ObjectBuffer::getByteBuffer(contextIdx, normals->size() * 3 * sizeof(float))->asFloatBuffer();
 	// create normals buffers
 	for (auto& normal: *normals) {
 		fbNormals.put(normal.getArray());
 	}
 	// done, upload
-	renderer->uploadBufferObject(context, vboId, fbNormals.getPosition() * sizeof(float), &fbNormals);
+	renderer->uploadBufferObject(contextIdx, vboId, fbNormals.getPosition() * sizeof(float), &fbNormals);
 }
 
-void Object3DNodeMesh::setupTangentsBuffer(Renderer* renderer, void* context, int32_t vboId)
+void Object3DNodeMesh::setupTangentsBuffer(Renderer* renderer, int contextIdx, int32_t vboId)
 {
 	// check if we have tangents
 	if (tangents == nullptr) return;
-	auto fbTangents = ObjectBuffer::getByteBuffer(context, tangents->size() * 3 * sizeof(float))->asFloatBuffer();
+	auto fbTangents = ObjectBuffer::getByteBuffer(contextIdx, tangents->size() * 3 * sizeof(float))->asFloatBuffer();
 	// create tangents buffers
 	for (auto& tangent: *tangents) {
 		fbTangents.put(tangent.getArray());
 	}
 	// done, upload
-	renderer->uploadBufferObject(context, vboId, fbTangents.getPosition() * sizeof(float), &fbTangents);
+	renderer->uploadBufferObject(contextIdx, vboId, fbTangents.getPosition() * sizeof(float), &fbTangents);
 }
 
-void Object3DNodeMesh::setupBitangentsBuffer(Renderer* renderer, void* context, int32_t vboId)
+void Object3DNodeMesh::setupBitangentsBuffer(Renderer* renderer, int contextIdx, int32_t vboId)
 {
 	// check if we have bitangents
 	if (bitangents == nullptr) return;
-	auto fbBitangents = ObjectBuffer::getByteBuffer(context, bitangents->size() * 3 * sizeof(float))->asFloatBuffer();
+	auto fbBitangents = ObjectBuffer::getByteBuffer(contextIdx, bitangents->size() * 3 * sizeof(float))->asFloatBuffer();
 	// create bitangents buffers
 	for (auto& bitangent: *bitangents) {
 		fbBitangents.put(bitangent.getArray());
 	}
 	// done, upload
-	renderer->uploadBufferObject(context, vboId, fbBitangents.getPosition() * sizeof(float), &fbBitangents);
+	renderer->uploadBufferObject(contextIdx, vboId, fbBitangents.getPosition() * sizeof(float), &fbBitangents);
 }
 
-void Object3DNodeMesh::setupOriginsBuffer(Renderer* renderer, void* context, int32_t vboId) {
+void Object3DNodeMesh::setupOriginsBuffer(Renderer* renderer, int contextIdx, int32_t vboId) {
 	// check if we have origins
 	auto& origins = node->getOrigins();
 	if (origins.size() == 0) return;
 	// create origins buffer, will never be changed in engine
-	auto fbOrigins = ObjectBuffer::getByteBuffer(context, origins.size() * 3 * sizeof(float))->asFloatBuffer();
+	auto fbOrigins = ObjectBuffer::getByteBuffer(contextIdx, origins.size() * 3 * sizeof(float))->asFloatBuffer();
 	// construct origins buffer
 	for (auto& origin: origins) {
 		fbOrigins.put(origin.getArray());
 	}
 	// done, upload
-	renderer->uploadBufferObject(context, vboId, fbOrigins.getPosition() * sizeof(float), &fbOrigins);
+	renderer->uploadBufferObject(contextIdx, vboId, fbOrigins.getPosition() * sizeof(float), &fbOrigins);
 }
 
-void Object3DNodeMesh::setupLodBuffer(Renderer* renderer, void* context, int32_t vboId, int lodLevel) {
+void Object3DNodeMesh::setupLodBuffer(Renderer* renderer, int contextIdx, int32_t vboId, int lodLevel) {
 	// TODO: we only support faces entities 0 lod indices for terrain now
 	const vector<int32_t>* indices { nullptr };
 	switch (lodLevel) {
@@ -488,19 +488,19 @@ void Object3DNodeMesh::setupLodBuffer(Renderer* renderer, void* context, int32_t
 			);
 		}
 		// create indices buffer, will never be changed in engine
-		auto sbIndices = ObjectBuffer::getByteBuffer(context, indices->size() * sizeof(uint16_t))->asShortBuffer();
+		auto sbIndices = ObjectBuffer::getByteBuffer(contextIdx, indices->size() * sizeof(uint16_t))->asShortBuffer();
 		// construct indices buffer
 		for (auto index: *indices) {
 			sbIndices.put(index);
 		}
-		renderer->uploadIndicesBufferObject(context, vboId, sbIndices.getPosition() * sizeof(uint16_t), &sbIndices);
+		renderer->uploadIndicesBufferObject(contextIdx, vboId, sbIndices.getPosition() * sizeof(uint16_t), &sbIndices);
 	} else {
 		// create indices buffer, will never be changed in engine
-		auto ibIndices = ObjectBuffer::getByteBuffer(context, indices->size() * sizeof(uint32_t))->asIntBuffer();
+		auto ibIndices = ObjectBuffer::getByteBuffer(contextIdx, indices->size() * sizeof(uint32_t))->asIntBuffer();
 		// construct indices buffer
 		for (auto index: *indices) {
 			ibIndices.put(index);
 		}
-		renderer->uploadIndicesBufferObject(context, vboId, ibIndices.getPosition() * sizeof(uint32_t), &ibIndices);
+		renderer->uploadIndicesBufferObject(contextIdx, vboId, ibIndices.getPosition() * sizeof(uint32_t), &ibIndices);
 	}
 }

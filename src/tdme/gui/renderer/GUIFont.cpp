@@ -128,7 +128,7 @@ GUIFont_CharacterDefinition* GUIFont::parseCharacter(const string& line)
 
 void GUIFont::initialize()
 {
-	textureId = Engine::getInstance()->getTextureManager()->addTexture(texture, nullptr);
+	textureId = Engine::getInstance()->getTextureManager()->addTexture(texture, 0);
 }
 
 void GUIFont::dispose()

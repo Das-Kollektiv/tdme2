@@ -69,53 +69,53 @@ public:
 
 	/**
 	 * Update effect to program
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	void updateEffect(void* context);
+	void updateEffect(int contextIdx);
 
 	/**
 	 * Update material to program
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	void updateMaterial(void* context);
+	void updateMaterial(int contextIdx);
 
 	/**
 	 * Update light to program
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param lightId light id
 	 */
-	void updateLight(void* context, int32_t lightId);
+	void updateLight(int contextIdx, int32_t lightId);
 
 	/**
 	 * Update matrices to program
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	void updateMatrices(void* context);
+	void updateMatrices(int contextIdx);
 
 	/**
 	 * Update texture matrix to program
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	void updateTextureMatrix(void* context);
+	void updateTextureMatrix(int contextIdx);
 
 	/**
 	 * Update shader parameters
 	 * @param context
 	 */
-	void updateShaderParameters(void* context);
+	void updateShaderParameters(int contextIdx);
 
 	/**
 	 * Set shader
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param id id
 	 */
-	void setShader(void* context, const string& id);
+	void setShader(int contextIdx, const string& id);
 
 	/**
 	 * Bind texture
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param textureId texture id
 	 */
-	void bindTexture(void* context, int32_t textureId);
+	void bindTexture(int contextIdx, int32_t textureId);
 
 };

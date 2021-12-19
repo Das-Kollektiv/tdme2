@@ -60,7 +60,7 @@ void EZRShader::unUseProgram()
 	auto i = 0;
 	for (auto& ezrShaderContext: contexts) {
 		if (ezrShaderContext.implementation != nullptr) {
-			ezrShaderContext.implementation->unUseProgram(renderer->getContext(i));
+			ezrShaderContext.implementation->unUseProgram(i);
 		}
 		ezrShaderContext.implementation = nullptr;
 		i++;
@@ -68,40 +68,40 @@ void EZRShader::unUseProgram()
 	engine = nullptr;
 }
 
-void EZRShader::updateMatrices(void* context)
+void EZRShader::updateMatrices(int contextIdx)
 {
-	auto& ezrShaderContext = contexts[renderer->getContextIndex(context)];
+	auto& ezrShaderContext = contexts[contextIdx];
 	if (ezrShaderContext.implementation == nullptr) return;
-	ezrShaderContext.implementation->updateMatrices(renderer, context);
+	ezrShaderContext.implementation->updateMatrices(renderer, contextIdx);
 }
 
-void EZRShader::updateTextureMatrix(void* context) {
-	auto& ezrShaderContext = contexts[renderer->getContextIndex(context)];
+void EZRShader::updateTextureMatrix(int contextIdx) {
+	auto& ezrShaderContext = contexts[contextIdx];
 	if (ezrShaderContext.implementation == nullptr) return;
-	ezrShaderContext.implementation->updateTextureMatrix(renderer, context);
+	ezrShaderContext.implementation->updateTextureMatrix(renderer, contextIdx);
 }
 
-void EZRShader::updateMaterial(void* context)
+void EZRShader::updateMaterial(int contextIdx)
 {
-	auto& ezrShaderContext = contexts[renderer->getContextIndex(context)];
+	auto& ezrShaderContext = contexts[contextIdx];
 	if (ezrShaderContext.implementation == nullptr) return;
-	ezrShaderContext.implementation->updateMaterial(renderer, context);
+	ezrShaderContext.implementation->updateMaterial(renderer, contextIdx);
 }
 
-void EZRShader::bindTexture(void* context, int32_t textureId)
+void EZRShader::bindTexture(int contextIdx, int32_t textureId)
 {
-	auto& ezrShaderContext = contexts[renderer->getContextIndex(context)];
+	auto& ezrShaderContext = contexts[contextIdx];
 	if (ezrShaderContext.implementation == nullptr) return;
-	ezrShaderContext.implementation->bindTexture(renderer, context, textureId);
+	ezrShaderContext.implementation->bindTexture(renderer, contextIdx, textureId);
 }
 
-void EZRShader::updateShaderParameters(void* context) {
-	auto& ezrShaderContext = contexts[renderer->getContextIndex(context)];
+void EZRShader::updateShaderParameters(int contextIdx) {
+	auto& ezrShaderContext = contexts[contextIdx];
 	if (ezrShaderContext.implementation == nullptr) return;
-	ezrShaderContext.implementation->updateShaderParameters(renderer, context);
+	ezrShaderContext.implementation->updateShaderParameters(renderer, contextIdx);
 }
 
-void EZRShader::setShader(void* context, const string& id) {
+void EZRShader::setShader(int contextIdx, const string& id) {
 	if (running == false) return;
 
 	// TODO: find a better solution for removing PBR- lighing prefix
@@ -113,7 +113,7 @@ void EZRShader::setShader(void* context, const string& id) {
 	}
 
 	//
-	auto& ezrShaderContext = contexts[renderer->getContextIndex(context)];
+	auto& ezrShaderContext = contexts[contextIdx];
 	auto currentImplementation = ezrShaderContext.implementation;
 	auto shaderIt = shader.find(shaderId);
 	if (shaderIt == shader.end()) {
@@ -121,8 +121,8 @@ void EZRShader::setShader(void* context, const string& id) {
 	}
 	auto nextImplementation = shaderIt->second;
 	if (currentImplementation != nextImplementation) {
-		if (currentImplementation != nullptr) currentImplementation->unUseProgram(context);
+		if (currentImplementation != nullptr) currentImplementation->unUseProgram(contextIdx);
 		ezrShaderContext.implementation = nextImplementation;
-		ezrShaderContext.implementation->useProgram(engine, context);
+		ezrShaderContext.implementation->useProgram(engine, contextIdx);
 	}
 }

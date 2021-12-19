@@ -36,8 +36,8 @@ public:
 
 	// overridden methods
 	virtual void initialize() override;
-	virtual void useProgram(void* context) override;
-	virtual void setShaderParameters(void* context, Engine* engine) override;
+	virtual void useProgram(int contextIdx) override;
+	virtual void setShaderParameters(int contextIdx, Engine* engine) override;
 
 private:
 	array<int32_t, 16> uniformSphere;

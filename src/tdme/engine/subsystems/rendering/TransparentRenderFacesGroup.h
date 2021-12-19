@@ -129,8 +129,8 @@ private:
 	 * Render this transparent render faces node
 	 * @param engine engine
 	 * @param renderer renderer
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	void render(Engine* engine, Renderer* renderer, void* context);
+	void render(Engine* engine, Renderer* renderer, int contextIdx);
 
 };

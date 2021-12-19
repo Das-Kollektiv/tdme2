@@ -71,13 +71,13 @@ void Light::dispose() {
 	if (lightSourceTexture != nullptr) lightSourceTexture->releaseReference();
 }
 
-void Light::update(void* context) {
+void Light::update(int contextIdx) {
 	if (enabled == true) {
 		Vector4 lightPositionTransformed;
 		Vector3 tmpVector3;
 		Vector4 spotDirection4;
 		Vector4 spotDirection4Transformed;
-		auto& light = renderer->getLight(context, id);
+		auto& light = renderer->getLight(contextIdx, id);
 		light.enabled = 1;
 		light.ambient = ambient.getArray();
 		light.diffuse = diffuse.getArray();
@@ -89,10 +89,10 @@ void Light::update(void* context) {
 		light.linearAttenuation = linearAttenuation;
 		light.quadraticAttenuation = quadraticAttenuation;
 		light.radius = getRadius();
-		renderer->onUpdateLight(context, id);
+		renderer->onUpdateLight(contextIdx, id);
 	} else {
-		auto& light = renderer->getLight(context, id);
+		auto& light = renderer->getLight(contextIdx, id);
 		light.enabled = 0;
-		renderer->onUpdateLight(context, id);
+		renderer->onUpdateLight(contextIdx, id);
 	}
 }

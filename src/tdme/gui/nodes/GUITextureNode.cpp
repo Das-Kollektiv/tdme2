@@ -116,7 +116,7 @@ void GUITextureNode::setTexture(Texture* texture) {
 		return;
 	}
 	texture->acquireReference();
-	textureId = Engine::getInstance()->getTextureManager()->addTexture(texture, nullptr);
+	textureId = Engine::getInstance()->getTextureManager()->addTexture(texture, 0);
 	textureWidth = texture->getWidth();
 	textureHeight = texture->getHeight();
 }

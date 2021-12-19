@@ -53,5 +53,5 @@ void PostProcessingShaderSSAOImplementation::initialize()
 	if (initialized == true) Engine::registerShader(Engine::ShaderType::SHADERTYPE_POSTPROCESSING, "ssao");
 }
 
-void PostProcessingShaderSSAOImplementation::setShaderParameters(void* context, Engine* engine) {
+void PostProcessingShaderSSAOImplementation::setShaderParameters(int contextIdx, Engine* engine) {
 }

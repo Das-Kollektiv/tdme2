@@ -58,5 +58,5 @@ void PostProcessingShaderBlurImplementation::initialize()
 	}
 }
 
-void PostProcessingShaderBlurImplementation::setShaderParameters(void* context, Engine* engine) {
+void PostProcessingShaderBlurImplementation::setShaderParameters(int contextIdx, Engine* engine) {
 }

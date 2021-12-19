@@ -71,13 +71,13 @@ void PostProcessingShaderLightScatteringImplementation::initialize()
 	);
 }
 
-void PostProcessingShaderLightScatteringImplementation::setShaderParameters(void* context, Engine* engine) {
+void PostProcessingShaderLightScatteringImplementation::setShaderParameters(int contextIdx, Engine* engine) {
 	int _width = engine->getScaledWidth() != -1?engine->getScaledWidth():engine->getWidth();
 	int _height = engine->getScaledHeight() != -1?engine->getScaledHeight():engine->getHeight();
 	for (auto i = 0; i < engine->getLightCount(); i++) {
 		auto light = engine->getLightAt(i);
 		if (light->isEnabled() == false || light->isRenderSource() == false) {
-			renderer->setProgramUniformInteger(context, uniformLightEnabled[i], 0);
+			renderer->setProgramUniformInteger(contextIdx, uniformLightEnabled[i], 0);
 			continue;
 		}
 		Vector2 lightSourcePosition2D;
@@ -97,14 +97,14 @@ void PostProcessingShaderLightScatteringImplementation::setShaderParameters(void
 		if (lightSourcePosition2D.getY() > 0.6f) _intensity = (1.0f - lightSourcePosition2D.getY()) / 0.4f;
 		if (_intensity < intensity) intensity = _intensity;
 		if (intensity < Math::EPSILON) {
-			renderer->setProgramUniformInteger(context, uniformLightEnabled[i], 0);
+			renderer->setProgramUniformInteger(contextIdx, uniformLightEnabled[i], 0);
 		} else {
 			#if defined(VULKAN)
 				lightSourcePosition2D = Vector2(lightSourcePosition2D.getX(), 1.0f - lightSourcePosition2D.getY());
 			#endif
-			renderer->setProgramUniformInteger(context, uniformLightEnabled[i], 1);
-			renderer->setProgramUniformFloatVec2(context, uniformLightPosition[i], lightSourcePosition2D.getArray());
-			renderer->setProgramUniformFloat(context, uniformLightIntensity[i], intensity * 0.6f);
+			renderer->setProgramUniformInteger(contextIdx, uniformLightEnabled[i], 1);
+			renderer->setProgramUniformFloatVec2(contextIdx, uniformLightPosition[i], lightSourcePosition2D.getArray());
+			renderer->setProgramUniformFloat(contextIdx, uniformLightIntensity[i], intensity * 0.6f);
 		}
 	}
 }

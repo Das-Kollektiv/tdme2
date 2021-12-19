@@ -82,7 +82,7 @@ bool PostProcessingShader::hasShader(const string& id) {
 	return shader.find(id) != shader.end();
 }
 
-void PostProcessingShader::setShader(void* context, const string& id) {
+void PostProcessingShader::setShader(int contextIdx, const string& id) {
 	if (running == false) return;
 
 	auto currentImplementation = implementation;
@@ -94,21 +94,21 @@ void PostProcessingShader::setShader(void* context, const string& id) {
 
 	if (currentImplementation != implementation) {
 		if (currentImplementation != nullptr) currentImplementation->unUseProgram();
-		implementation->useProgram(context);
+		implementation->useProgram(contextIdx);
 	}
 }
 
-void PostProcessingShader::setBufferPixelWidth(void* context, float pixelWidth) {
+void PostProcessingShader::setBufferPixelWidth(int contextIdx, float pixelWidth) {
 	if (implementation == nullptr) return;
-	implementation->setBufferPixelWidth(context, pixelWidth);
+	implementation->setBufferPixelWidth(contextIdx, pixelWidth);
 }
 
-void PostProcessingShader::setBufferPixelHeight(void* context, float pixelHeight) {
+void PostProcessingShader::setBufferPixelHeight(int contextIdx, float pixelHeight) {
 	if (implementation == nullptr) return;
-	implementation->setBufferPixelHeight(context, pixelHeight);
+	implementation->setBufferPixelHeight(contextIdx, pixelHeight);
 }
 
-void PostProcessingShader::setShaderParameters(void* context, Engine* engine) {
+void PostProcessingShader::setShaderParameters(int contextIdx, Engine* engine) {
 	if (implementation == nullptr) return;
-	implementation->setShaderParameters(context, engine);
+	implementation->setShaderParameters(contextIdx, engine);
 }

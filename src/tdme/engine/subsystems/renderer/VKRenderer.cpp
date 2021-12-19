@@ -790,19 +790,6 @@ const string VKRenderer::getShaderVersion()
 	return "gl3";
 }
 
-void* VKRenderer::getDefaultContext() {
-	return &contexts[0];
-}
-
-void* VKRenderer::getContext(int contextIdx) {
-	return &contexts[contextIdx];
-}
-
-int VKRenderer::getContextIndex(void* context) {
-	auto& currentContext = *static_cast<context_type*>(context);
-	return currentContext.idx;
-}
-
 bool VKRenderer::isSupportingMultithreadedRendering() {
 	return true;
 }
@@ -1351,7 +1338,7 @@ void VKRenderer::initialize()
 	uploadBufferObjectInternal(0, emptyVertexBuffer, bogusVertexBuffer.size() * sizeof(float), (uint8_t*)bogusVertexBuffer.data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT));
 
 	// fall back texture white
-	whiteTextureSampler2dDefaultId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "transparent_pixel.png"), getDefaultContext());
+	whiteTextureSampler2dDefaultId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "transparent_pixel.png"), CONTEXTINDEX_DEFAULT);
 	whiteTextureSampler2dDefault = textures.find(whiteTextureSampler2dDefaultId)->second;
 
 	// fallback cube map texture white
@@ -1363,12 +1350,12 @@ void VKRenderer::initialize()
 		TextureReader::read("resources/engine/textures", "transparent_pixel.png"),
 		TextureReader::read("resources/engine/textures", "transparent_pixel.png"),
 		TextureReader::read("resources/engine/textures", "transparent_pixel.png"),
-		getDefaultContext()
+		CONTEXTINDEX_DEFAULT
 	);
 	whiteTextureSamplerCubeDefault = textures.find(whiteTextureSamplerCubeDefaultId)->second;
 
 	//
-	for (auto& context: contexts) unbindBufferObjects(&context);
+	for (auto& context: contexts) unbindBufferObjects(context.idx);
 }
 
 void VKRenderer::initializeRenderPass() {
@@ -3034,9 +3021,9 @@ inline void VKRenderer::setupSkinningComputingPipeline(int contextIdx, program_t
 	}
 }
 
-void VKRenderer::useProgram(void* context, int32_t programId)
+void VKRenderer::useProgram(int contextIdx, int32_t programId)
 {
-	auto& currentContext = *static_cast<context_type*>(context);
+	auto& currentContext = contexts[contextIdx];
 
 	//
 	if (programId == currentContext.programId) return;
@@ -3252,8 +3239,8 @@ int32_t VKRenderer::getProgramUniformLocation(int32_t programId, const string& n
 	return -1;
 }
 
-inline void VKRenderer::setProgramUniformInternal(void* context, int32_t uniformId, uint8_t* data, int32_t size) {
-	auto& currentContext = *static_cast<context_type*>(context);
+inline void VKRenderer::setProgramUniformInternal(int contextIdx, int32_t uniformId, uint8_t* data, int32_t size) {
+	auto& currentContext = contexts[contextIdx];
 
 	//
 	auto changedUniforms = 0;
@@ -3351,17 +3338,17 @@ inline void VKRenderer::setProgramUniformInternal(void* context, int32_t uniform
 	}
 }
 
-void VKRenderer::setProgramUniformInteger(void* context, int32_t uniformId, int32_t value)
+void VKRenderer::setProgramUniformInteger(int contextIdx, int32_t uniformId, int32_t value)
 {
-	setProgramUniformInternal(context, uniformId, (uint8_t*)&value, sizeof(int32_t));
+	setProgramUniformInternal(contextIdx, uniformId, (uint8_t*)&value, sizeof(int32_t));
 }
 
-void VKRenderer::setProgramUniformFloat(void* context, int32_t uniformId, float value)
+void VKRenderer::setProgramUniformFloat(int contextIdx, int32_t uniformId, float value)
 {
-	setProgramUniformInternal(context, uniformId, (uint8_t*)&value, sizeof(float));
+	setProgramUniformInternal(contextIdx, uniformId, (uint8_t*)&value, sizeof(float));
 }
 
-void VKRenderer::setProgramUniformFloatMatrix3x3(void* context, int32_t uniformId, const array<float, 9>& data)
+void VKRenderer::setProgramUniformFloatMatrix3x3(int contextIdx, int32_t uniformId, const array<float, 9>& data)
 {
 	array<float, 12> _data = {
 		data[0],
@@ -3377,45 +3364,45 @@ void VKRenderer::setProgramUniformFloatMatrix3x3(void* context, int32_t uniformI
 		data[8],
 		0.0f
 	};
-	setProgramUniformInternal(context, uniformId, (uint8_t*)_data.data(), _data.size() * sizeof(float));
+	setProgramUniformInternal(contextIdx, uniformId, (uint8_t*)_data.data(), _data.size() * sizeof(float));
 }
 
-void VKRenderer::setProgramUniformFloatMatrix4x4(void* context, int32_t uniformId, const array<float, 16>& data)
+void VKRenderer::setProgramUniformFloatMatrix4x4(int contextIdx, int32_t uniformId, const array<float, 16>& data)
 {
-	setProgramUniformInternal(context, uniformId, (uint8_t*)data.data(), data.size() * sizeof(float));
+	setProgramUniformInternal(contextIdx, uniformId, (uint8_t*)data.data(), data.size() * sizeof(float));
 }
 
-void VKRenderer::setProgramUniformFloatMatrices4x4(void* context, int32_t uniformId, int32_t count, FloatBuffer* data)
+void VKRenderer::setProgramUniformFloatMatrices4x4(int contextIdx, int32_t uniformId, int32_t count, FloatBuffer* data)
 {
-	setProgramUniformInternal(context, uniformId, (uint8_t*)data->getBuffer(), count * sizeof(float) * 16);
+	setProgramUniformInternal(contextIdx, uniformId, (uint8_t*)data->getBuffer(), count * sizeof(float) * 16);
 }
 
-void VKRenderer::setProgramUniformFloatVec4(void* context, int32_t uniformId, const array<float, 4>& data)
+void VKRenderer::setProgramUniformFloatVec4(int contextIdx, int32_t uniformId, const array<float, 4>& data)
 {
-	setProgramUniformInternal(context, uniformId, (uint8_t*)data.data(), data.size() * sizeof(float));
+	setProgramUniformInternal(contextIdx, uniformId, (uint8_t*)data.data(), data.size() * sizeof(float));
 }
 
-void VKRenderer::setProgramUniformFloatVec3(void* context, int32_t uniformId, const array<float, 3>& data)
+void VKRenderer::setProgramUniformFloatVec3(int contextIdx, int32_t uniformId, const array<float, 3>& data)
 {
-	setProgramUniformInternal(context, uniformId, (uint8_t*)data.data(), data.size() * sizeof(float));
+	setProgramUniformInternal(contextIdx, uniformId, (uint8_t*)data.data(), data.size() * sizeof(float));
 }
 
-void VKRenderer::setProgramUniformFloatVec2(void* context, int32_t uniformId, const array<float, 2>& data)
+void VKRenderer::setProgramUniformFloatVec2(int contextIdx, int32_t uniformId, const array<float, 2>& data)
 {
-	setProgramUniformInternal(context, uniformId, (uint8_t*)data.data(), data.size() * sizeof(float));
+	setProgramUniformInternal(contextIdx, uniformId, (uint8_t*)data.data(), data.size() * sizeof(float));
 }
 
 void VKRenderer::setProgramAttributeLocation(int32_t programId, int32_t location, const string& name)
 {
 }
 
-int32_t VKRenderer::getLighting(void* context) {
-	auto& currentContext = *static_cast<context_type*>(context);
+int32_t VKRenderer::getLighting(int contextIdx) {
+	auto& currentContext = contexts[contextIdx];
 	return currentContext.lighting;
 }
 
-void VKRenderer::setLighting(void* context, int32_t lighting) {
-	auto& currentContext = *static_cast<context_type*>(context);
+void VKRenderer::setLighting(int contextIdx, int32_t lighting) {
+	auto& currentContext = contexts[contextIdx];
 	currentContext.lighting = lighting;
 }
 
@@ -3456,27 +3443,27 @@ void VKRenderer::setClearColor(float red, float green, float blue, float alpha)
 	clearAlpha = alpha;
 }
 
-void VKRenderer::enableCulling(void* context)
+void VKRenderer::enableCulling(int contextIdx)
 {
-	auto& currentContext = *static_cast<context_type*>(context);
+	auto& currentContext = contexts[contextIdx];
 	if (currentContext.cullingEnabled == true) return;
 	unsetPipeline(currentContext.idx);
 	currentContext.cullingEnabled = true;
 	currentContext.frontFaceIndex = currentContext.frontFace;
 }
 
-void VKRenderer::disableCulling(void* context)
+void VKRenderer::disableCulling(int contextIdx)
 {
-	auto& currentContext = *static_cast<context_type*>(context);
+	auto& currentContext = contexts[contextIdx];
 	if (currentContext.cullingEnabled == false) return;
 	unsetPipeline(currentContext.idx);
 	currentContext.cullingEnabled = false;
 	currentContext.frontFaceIndex = 0;
 }
 
-void VKRenderer::setFrontFace(void* context, int32_t frontFace)
+void VKRenderer::setFrontFace(int contextIdx, int32_t frontFace)
 {
-	auto& currentContext = *static_cast<context_type*>(context);
+	auto& currentContext = contexts[contextIdx];
 	if (currentContext.frontFace == frontFace) return;
 	unsetPipeline(currentContext.idx);
 	currentContext.frontFace = frontFace;
@@ -3949,7 +3936,7 @@ int32_t VKRenderer::createGBufferColorTexture(int32_t width, int32_t height) {
 	return texture.id;
 }
 
-void VKRenderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) {
+void VKRenderer::uploadCubeMapTexture(int contextIdx, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) {
 	if (VERBOSE == true) {
 		Console::println(
 			"VKRenderer::" + string(__FUNCTION__) + "(): " +
@@ -3963,7 +3950,7 @@ void VKRenderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Textu
 	}
 
 	// have our context typed
-	auto& currentContext = *static_cast<context_type*>(context);
+	auto& currentContext = contexts[contextIdx];
 	auto& boundTexture = currentContext.boundTextures[currentContext.activeTextureUnit];
 
 	//
@@ -4026,12 +4013,12 @@ void VKRenderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Textu
 	assert(!err);
 
 	//
-	uploadCubeMapSingleTexture(context, &texture, textureLeft, 0);
-	uploadCubeMapSingleTexture(context, &texture, textureRight, 1);
-	uploadCubeMapSingleTexture(context, &texture, textureTop, 2);
-	uploadCubeMapSingleTexture(context, &texture, textureBottom, 3);
-	uploadCubeMapSingleTexture(context, &texture, textureFront, 4);
-	uploadCubeMapSingleTexture(context, &texture, textureBack, 5);
+	uploadCubeMapSingleTexture(contextIdx, &texture, textureLeft, 0);
+	uploadCubeMapSingleTexture(contextIdx, &texture, textureRight, 1);
+	uploadCubeMapSingleTexture(contextIdx, &texture, textureTop, 2);
+	uploadCubeMapSingleTexture(contextIdx, &texture, textureBottom, 3);
+	uploadCubeMapSingleTexture(contextIdx, &texture, textureFront, 4);
+	uploadCubeMapSingleTexture(contextIdx, &texture, textureBack, 5);
 
 	//
 	setImageLayout2(
@@ -4119,11 +4106,11 @@ void VKRenderer::uploadCubeMapTexture(void* context, Texture* textureLeft, Textu
 	texturesRWlock.unlock();
 }
 
-int32_t VKRenderer::createCubeMapTexture(void* context, int32_t width, int32_t height) {
+int32_t VKRenderer::createCubeMapTexture(int contextIdx, int32_t width, int32_t height) {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	// have our context typed
-	auto& currentContext = *static_cast<context_type*>(context);
+	auto& currentContext = contexts[contextIdx];
 
 	//
 	auto texturePtr = new texture_type();
@@ -4307,10 +4294,10 @@ int32_t VKRenderer::createCubeMapTexture(void* context, int32_t width, int32_t h
 	return texture.id;
 }
 
-void VKRenderer::uploadTexture(void* context, Texture* texture)
+void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 {
 	// have our context typed
-	auto& currentContext = *static_cast<context_type*>(context);
+	auto& currentContext = contexts[contextIdx];
 	auto& boundTexture = currentContext.boundTextures[currentContext.activeTextureUnit];
 
 	//
@@ -4582,12 +4569,12 @@ void VKRenderer::uploadTexture(void* context, Texture* texture)
 	AtomicOperations::increment(statistics.textureUploads);
 }
 
-void VKRenderer::uploadCubeMapSingleTexture(void* context, texture_type* cubemapTextureType, Texture* texture, uint32_t baseArrayLayer)
+void VKRenderer::uploadCubeMapSingleTexture(int contextIdx, texture_type* cubemapTextureType, Texture* texture, uint32_t baseArrayLayer)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + texture->getId());
 
 	// have our context typed
-	auto& currentContext = *static_cast<context_type*>(context);
+	auto& currentContext = contexts[contextIdx];
 	auto& cubemapTextureTypeRef = *cubemapTextureType;
 
 	//
@@ -4818,14 +4805,14 @@ void VKRenderer::resizeGBufferColorTexture(int32_t textureId, int32_t width, int
 	if (texture.frameBufferObjectId != ID_NONE) createFramebufferObject(texture.frameBufferObjectId);
 }
 
-void VKRenderer::bindCubeMapTexture(void* context, int32_t textureId) {
-	bindTexture(context, textureId);
+void VKRenderer::bindCubeMapTexture(int contextIdx, int32_t textureId) {
+	bindTexture(contextIdx, textureId);
 }
 
-void VKRenderer::bindTexture(void* context, int32_t textureId)
+void VKRenderer::bindTexture(int contextIdx, int32_t textureId)
 {
 	// have our context typed
-	auto& currentContext = *static_cast<context_type*>(context);
+	auto& currentContext = contexts[contextIdx];
 	auto& boundTexture = currentContext.boundTextures[currentContext.activeTextureUnit];
 
 	//
@@ -4855,7 +4842,7 @@ void VKRenderer::bindTexture(void* context, int32_t textureId)
 	boundTexture.id = textureId;
 
 	// done
-	onBindTexture(context, textureId);
+	onBindTexture(contextIdx, textureId);
 }
 
 void VKRenderer::disposeTexture(int32_t textureId)
@@ -5730,33 +5717,33 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 	AtomicOperations::increment(statistics.bufferUploads);
 }
 
-void VKRenderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data)
+void VKRenderer::uploadBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, FloatBuffer* data)
 {
-	auto& currentContext = *static_cast<context_type*>(context);
+	auto& currentContext = contexts[contextIdx];
 	uploadBufferObjectInternal(currentContext.idx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
 }
 
-void VKRenderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
+void VKRenderer::uploadBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
-	auto& currentContext = *static_cast<context_type*>(context);
+	auto& currentContext = contexts[contextIdx];
 	uploadBufferObjectInternal(currentContext.idx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
 }
 
-void VKRenderer::uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data)
+void VKRenderer::uploadBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, IntBuffer* data)
 {
-	auto& currentContext = *static_cast<context_type*>(context);
+	auto& currentContext = contexts[contextIdx];
 	uploadBufferObjectInternal(currentContext.idx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
 }
 
-void VKRenderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
+void VKRenderer::uploadIndicesBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
-	auto& currentContext = *static_cast<context_type*>(context);
+	auto& currentContext = contexts[contextIdx];
 	uploadBufferObjectInternal(currentContext.idx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT));
 }
 
-void VKRenderer::uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data)
+void VKRenderer::uploadIndicesBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, IntBuffer* data)
 {
-	auto& currentContext = *static_cast<context_type*>(context);
+	auto& currentContext = contexts[contextIdx];
 	uploadBufferObjectInternal(currentContext.idx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT));
 }
 
@@ -5823,9 +5810,9 @@ inline VKRenderer::pipeline_type* VKRenderer::getPipelineInternal(int contextIdx
 	return pipeline;
 }
 
-void VKRenderer::bindIndicesBufferObject(void* context, int32_t bufferObjectId)
+void VKRenderer::bindIndicesBufferObject(int contextIdx, int32_t bufferObjectId)
 {
-	auto& currentContext = (*static_cast<context_type*>(context));
+	auto& currentContext = contexts[contextIdx];
 	uint32_t bufferSize = 0;
 	currentContext.boundIndicesBuffer =
 		bufferObjectId == ID_NONE?
@@ -5833,9 +5820,9 @@ void VKRenderer::bindIndicesBufferObject(void* context, int32_t bufferObjectId)
 			getBufferObjectInternal(currentContext.idx, bufferObjectId, bufferSize);
 }
 
-void VKRenderer::bindTextureCoordinatesBufferObject(void* context, int32_t bufferObjectId)
+void VKRenderer::bindTextureCoordinatesBufferObject(int contextIdx, int32_t bufferObjectId)
 {
-	auto& currentContext = (*static_cast<context_type*>(context));
+	auto& currentContext = contexts[contextIdx];
 	currentContext.boundBuffers[2] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[2]):
@@ -5845,9 +5832,9 @@ void VKRenderer::bindTextureCoordinatesBufferObject(void* context, int32_t buffe
 	}
 }
 
-void VKRenderer::bindVerticesBufferObject(void* context, int32_t bufferObjectId)
+void VKRenderer::bindVerticesBufferObject(int contextIdx, int32_t bufferObjectId)
 {
-	auto& currentContext = (*static_cast<context_type*>(context));
+	auto& currentContext = contexts[contextIdx];
 	currentContext.boundBuffers[0] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[0]):
@@ -5857,9 +5844,9 @@ void VKRenderer::bindVerticesBufferObject(void* context, int32_t bufferObjectId)
 	}
 }
 
-void VKRenderer::bindNormalsBufferObject(void* context, int32_t bufferObjectId)
+void VKRenderer::bindNormalsBufferObject(int contextIdx, int32_t bufferObjectId)
 {
-	auto& currentContext = (*static_cast<context_type*>(context));
+	auto& currentContext = contexts[contextIdx];
 	currentContext.boundBuffers[1] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[1]):
@@ -5869,9 +5856,9 @@ void VKRenderer::bindNormalsBufferObject(void* context, int32_t bufferObjectId)
 	}
 }
 
-void VKRenderer::bindColorsBufferObject(void* context, int32_t bufferObjectId)
+void VKRenderer::bindColorsBufferObject(int contextIdx, int32_t bufferObjectId)
 {
-	auto& currentContext = (*static_cast<context_type*>(context));
+	auto& currentContext = contexts[contextIdx];
 	currentContext.boundBuffers[3] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[3]):
@@ -5881,9 +5868,9 @@ void VKRenderer::bindColorsBufferObject(void* context, int32_t bufferObjectId)
 	}
 }
 
-void VKRenderer::bindTangentsBufferObject(void* context, int32_t bufferObjectId)
+void VKRenderer::bindTangentsBufferObject(int contextIdx, int32_t bufferObjectId)
 {
-	auto& currentContext = (*static_cast<context_type*>(context));
+	auto& currentContext = contexts[contextIdx];
 	currentContext.boundBuffers[4] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[4]):
@@ -5893,9 +5880,9 @@ void VKRenderer::bindTangentsBufferObject(void* context, int32_t bufferObjectId)
 	}
 }
 
-void VKRenderer::bindBitangentsBufferObject(void* context, int32_t bufferObjectId)
+void VKRenderer::bindBitangentsBufferObject(int contextIdx, int32_t bufferObjectId)
 {
-	auto& currentContext = (*static_cast<context_type*>(context));
+	auto& currentContext = contexts[contextIdx];
 	currentContext.boundBuffers[5] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[5]):
@@ -5905,9 +5892,9 @@ void VKRenderer::bindBitangentsBufferObject(void* context, int32_t bufferObjectI
 	}
 }
 
-void VKRenderer::bindModelMatricesBufferObject(void* context, int32_t bufferObjectId)
+void VKRenderer::bindModelMatricesBufferObject(int contextIdx, int32_t bufferObjectId)
 {
-	auto& currentContext = (*static_cast<context_type*>(context));
+	auto& currentContext = contexts[contextIdx];
 	currentContext.boundBuffers[6] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[6]):
@@ -5917,9 +5904,9 @@ void VKRenderer::bindModelMatricesBufferObject(void* context, int32_t bufferObje
 	}
 }
 
-void VKRenderer::bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor)
+void VKRenderer::bindEffectColorMulsBufferObject(int contextIdx, int32_t bufferObjectId, int32_t divisor)
 {
-	auto& currentContext = (*static_cast<context_type*>(context));
+	auto& currentContext = contexts[contextIdx];
 	currentContext.boundBuffers[7] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[7]):
@@ -5929,9 +5916,9 @@ void VKRenderer::bindEffectColorMulsBufferObject(void* context, int32_t bufferOb
 	}
 }
 
-void VKRenderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor)
+void VKRenderer::bindEffectColorAddsBufferObject(int contextIdx, int32_t bufferObjectId, int32_t divisor)
 {
-	auto& currentContext = (*static_cast<context_type*>(context));
+	auto& currentContext = contexts[contextIdx];
 	currentContext.boundBuffers[8] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[8]):
@@ -5941,8 +5928,8 @@ void VKRenderer::bindEffectColorAddsBufferObject(void* context, int32_t bufferOb
 	}
 }
 
-void VKRenderer::bindOriginsBufferObject(void* context, int32_t bufferObjectId) {
-	auto& currentContext = (*static_cast<context_type*>(context));
+void VKRenderer::bindOriginsBufferObject(int contextIdx, int32_t bufferObjectId) {
+	auto& currentContext = contexts[contextIdx];
 	currentContext.boundBuffers[9] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[9]):
@@ -5952,8 +5939,8 @@ void VKRenderer::bindOriginsBufferObject(void* context, int32_t bufferObjectId) 
 	}
 }
 
-void VKRenderer::bindTextureSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) {
-	auto& currentContext = (*static_cast<context_type*>(context));
+void VKRenderer::bindTextureSpriteIndicesBufferObject(int contextIdx, int32_t bufferObjectId) {
+	auto& currentContext = contexts[contextIdx];
 	currentContext.boundBuffers[1] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[1]):
@@ -5963,8 +5950,8 @@ void VKRenderer::bindTextureSpriteIndicesBufferObject(void* context, int32_t buf
 	}
 }
 
-void VKRenderer::bindPointSizesBufferObject(void* context, int32_t bufferObjectId) {
-	auto& currentContext = (*static_cast<context_type*>(context));
+void VKRenderer::bindPointSizesBufferObject(int contextIdx, int32_t bufferObjectId) {
+	auto& currentContext = contexts[contextIdx];
 	currentContext.boundBuffers[5] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[5]):
@@ -5974,8 +5961,8 @@ void VKRenderer::bindPointSizesBufferObject(void* context, int32_t bufferObjectI
 	}
 }
 
-void VKRenderer::bindSpriteSheetDimensionBufferObject(void* context, int32_t bufferObjectId) {
-	auto& currentContext = (*static_cast<context_type*>(context));
+void VKRenderer::bindSpriteSheetDimensionBufferObject(int contextIdx, int32_t bufferObjectId) {
+	auto& currentContext = contexts[contextIdx];
 	currentContext.boundBuffers[6] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[6]):
@@ -5985,13 +5972,13 @@ void VKRenderer::bindSpriteSheetDimensionBufferObject(void* context, int32_t buf
 	}
 }
 
-void VKRenderer::drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) {
-	drawInstancedTrianglesFromBufferObjects(context, triangles, trianglesOffset, (*static_cast<context_type*>(context)).boundIndicesBuffer, instances);
+void VKRenderer::drawInstancedIndexedTrianglesFromBufferObjects(int contextIdx, int32_t triangles, int32_t trianglesOffset, int32_t instances) {
+	drawInstancedTrianglesFromBufferObjects(contextIdx, triangles, trianglesOffset, contexts[contextIdx].boundIndicesBuffer, instances);
 }
 
-inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, VkBuffer indicesBuffer, int32_t instances)
+inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, int32_t triangles, int32_t trianglesOffset, VkBuffer indicesBuffer, int32_t instances)
 {
-	auto& currentContext = *static_cast<context_type*>(context);
+	auto& currentContext = contexts[contextIdx];
 	auto& programContext = currentContext.program->contexts[currentContext.idx];
 	auto& programCommandBuffer = programContext.commandBuffers[currentContext.currentCommandBuffer];
 
@@ -6221,12 +6208,12 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, i
 	AtomicOperations::increment(statistics.triangles, triangles * instances);
 }
 
-void VKRenderer::drawIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset)
+void VKRenderer::drawIndexedTrianglesFromBufferObjects(int contextIdx, int32_t triangles, int32_t trianglesOffset)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	//
-	drawInstancedIndexedTrianglesFromBufferObjects(context, triangles, trianglesOffset, 1);
+	drawInstancedIndexedTrianglesFromBufferObjects(contextIdx, triangles, trianglesOffset, 1);
 }
 
 inline void VKRenderer::endDrawCommandsAllContexts(bool waitUntilSubmitted) {
@@ -6260,22 +6247,22 @@ inline void VKRenderer::requestSubmitDrawBuffers(int contextIdx) {
 	}
 }
 
-void VKRenderer::drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances)
+void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, int32_t triangles, int32_t trianglesOffset, int32_t instances)
 {
-	drawInstancedTrianglesFromBufferObjects(context, triangles, trianglesOffset, VK_NULL_HANDLE, instances);
+	drawInstancedTrianglesFromBufferObjects(contextIdx, triangles, trianglesOffset, VK_NULL_HANDLE, instances);
 }
 
-void VKRenderer::drawTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset)
+void VKRenderer::drawTrianglesFromBufferObjects(int contextIdx, int32_t triangles, int32_t trianglesOffset)
 {
-	drawInstancedTrianglesFromBufferObjects(context, triangles, trianglesOffset, VK_NULL_HANDLE, 1);
+	drawInstancedTrianglesFromBufferObjects(contextIdx, triangles, trianglesOffset, VK_NULL_HANDLE, 1);
 }
 
-void VKRenderer::drawPointsFromBufferObjects(void* context, int32_t points, int32_t pointsOffset)
+void VKRenderer::drawPointsFromBufferObjects(int contextIdx, int32_t points, int32_t pointsOffset)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	// have our context typed
-	auto& currentContext = *static_cast<context_type*>(context);
+	auto& currentContext = contexts[contextIdx];
 	auto& programContext = currentContext.program->contexts[currentContext.idx];
 	auto& programCommandBuffer = programContext.commandBuffers[currentContext.currentCommandBuffer];
 
@@ -6441,12 +6428,12 @@ void VKRenderer::setLineWidth(float lineWidth)
 	this->lineWidth = lineWidth;
 }
 
-void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32_t pointsOffset)
+void VKRenderer::drawLinesFromBufferObjects(int contextIdx, int32_t points, int32_t pointsOffset)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	// have our context typed
-	auto& currentContext = *static_cast<context_type*>(context);
+	auto& currentContext = contexts[contextIdx];
 	auto& programCommandBuffer = currentContext.program->contexts[currentContext.idx].commandBuffers[currentContext.currentCommandBuffer];
 
 	// check if desc1 left
@@ -6607,9 +6594,9 @@ void VKRenderer::drawLinesFromBufferObjects(void* context, int32_t points, int32
 	AtomicOperations::increment(statistics.linePoints, points);
 }
 
-void VKRenderer::unbindBufferObjects(void* context)
+void VKRenderer::unbindBufferObjects(int contextIdx)
 {
-	auto& currentContext = *static_cast<context_type*>(context);
+	auto& currentContext = contexts[contextIdx];
 	uint32_t bufferSize = 0;
 	auto defaultBuffer = getBufferObjectInternal(emptyVertexBuffer, bufferSize);
 	currentContext.boundIndicesBuffer = VK_NULL_HANDLE;
@@ -6626,14 +6613,14 @@ void VKRenderer::disposeBufferObjects(vector<int32_t>& bufferObjectIds)
 	disposeMutex.unlock();
 }
 
-int32_t VKRenderer::getTextureUnit(void* context)
+int32_t VKRenderer::getTextureUnit(int contextIdx)
 {
-	return (*static_cast<context_type*>(context)).activeTextureUnit;
+	return contexts[contextIdx].activeTextureUnit;
 }
 
-void VKRenderer::setTextureUnit(void* context, int32_t textureUnit)
+void VKRenderer::setTextureUnit(int contextIdx, int32_t textureUnit)
 {
-	(*static_cast<context_type*>(context)).activeTextureUnit = textureUnit;
+	contexts[contextIdx].activeTextureUnit = textureUnit;
 }
 
 float VKRenderer::readPixelDepth(int32_t x, int32_t y)
@@ -6651,7 +6638,7 @@ ByteBuffer* VKRenderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t 
 void VKRenderer::initGuiMode()
 {
 	enableBlending();
-	disableCulling(&contexts[0]);
+	disableCulling(0);
 	disableDepthBufferTest();
 	disableDepthBufferWriting();
 }
@@ -6660,13 +6647,13 @@ void VKRenderer::doneGuiMode()
 {
 	enableDepthBufferWriting();
 	enableDepthBufferTest();
-	enableCulling(&contexts[0]);
+	enableCulling(0);
 	disableBlending();
 }
 
-void VKRenderer::dispatchCompute(void* context, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
+void VKRenderer::dispatchCompute(int contextIdx, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
 	// have our context typed
-	auto& currentContext = *static_cast<context_type*>(context);
+	auto& currentContext = contexts[contextIdx];
 	auto& programCommandBuffer = currentContext.program->contexts[currentContext.idx].commandBuffers[currentContext.currentCommandBuffer];
 
 	// check if desc1 left
@@ -6834,29 +6821,29 @@ void VKRenderer::memoryBarrier() {
 	}
 }
 
-void VKRenderer::uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
-	auto& currentContext = *static_cast<context_type*>(context);
+void VKRenderer::uploadSkinningBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
+	auto& currentContext = contexts[contextIdx];
 	uploadBufferObjectInternal(currentContext.idx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
 }
 
-void VKRenderer::uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data) {
-	auto& currentContext = *static_cast<context_type*>(context);
+void VKRenderer::uploadSkinningBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, IntBuffer* data) {
+	auto& currentContext = contexts[contextIdx];
 	uploadBufferObjectInternal(currentContext.idx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
 }
 
-void VKRenderer::bindSkinningVerticesBufferObject(void* context, int32_t bufferObjectId) {
-	auto& currentContext = *static_cast<context_type*>(context);
+void VKRenderer::bindSkinningVerticesBufferObject(int contextIdx, int32_t bufferObjectId) {
+	auto& currentContext = contexts[contextIdx];
 	currentContext.boundBuffers[0] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[0]):
 			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[0]);
 	if (currentContext.boundBuffers[0] == VK_NULL_HANDLE) {
-		currentContext.boundBuffers[0] =	getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[0]);
+		currentContext.boundBuffers[0] = getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[0]);
 	}
 }
 
-void VKRenderer::bindSkinningNormalsBufferObject(void* context, int32_t bufferObjectId) {
-	auto& currentContext = *static_cast<context_type*>(context);
+void VKRenderer::bindSkinningNormalsBufferObject(int contextIdx, int32_t bufferObjectId) {
+	auto& currentContext = contexts[contextIdx];
 	currentContext.boundBuffers[1] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[1]):
@@ -6866,8 +6853,8 @@ void VKRenderer::bindSkinningNormalsBufferObject(void* context, int32_t bufferOb
 	}
 }
 
-void VKRenderer::bindSkinningVertexJointsBufferObject(void* context, int32_t bufferObjectId) {
-	auto& currentContext = *static_cast<context_type*>(context);
+void VKRenderer::bindSkinningVertexJointsBufferObject(int contextIdx, int32_t bufferObjectId) {
+	auto& currentContext = contexts[contextIdx];
 	currentContext.boundBuffers[2] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[2]):
@@ -6877,8 +6864,8 @@ void VKRenderer::bindSkinningVertexJointsBufferObject(void* context, int32_t buf
 	}
 }
 
-void VKRenderer::bindSkinningVertexJointIdxsBufferObject(void* context, int32_t bufferObjectId) {
-	auto& currentContext = *static_cast<context_type*>(context);
+void VKRenderer::bindSkinningVertexJointIdxsBufferObject(int contextIdx, int32_t bufferObjectId) {
+	auto& currentContext = contexts[contextIdx];
 	currentContext.boundBuffers[3] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[3]):
@@ -6888,8 +6875,8 @@ void VKRenderer::bindSkinningVertexJointIdxsBufferObject(void* context, int32_t 
 	}
 }
 
-void VKRenderer::bindSkinningVertexJointWeightsBufferObject(void* context, int32_t bufferObjectId) {
-	auto& currentContext = *static_cast<context_type*>(context);
+void VKRenderer::bindSkinningVertexJointWeightsBufferObject(int contextIdx, int32_t bufferObjectId) {
+	auto& currentContext = contexts[contextIdx];
 	currentContext.boundBuffers[4] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[4]):
@@ -6899,8 +6886,8 @@ void VKRenderer::bindSkinningVertexJointWeightsBufferObject(void* context, int32
 	}
 }
 
-void VKRenderer::bindSkinningVerticesResultBufferObject(void* context, int32_t bufferObjectId) {
-	auto& currentContext = *static_cast<context_type*>(context);
+void VKRenderer::bindSkinningVerticesResultBufferObject(int contextIdx, int32_t bufferObjectId) {
+	auto& currentContext = contexts[contextIdx];
 	currentContext.boundBuffers[5] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[5]):
@@ -6937,8 +6924,8 @@ void VKRenderer::bindSkinningVerticesResultBufferObject(void* context, int32_t b
 	finishSetupCommandBuffer(currentContext.idx);
 }
 
-void VKRenderer::bindSkinningNormalsResultBufferObject(void* context, int32_t bufferObjectId) {
-	auto& currentContext = *static_cast<context_type*>(context);
+void VKRenderer::bindSkinningNormalsResultBufferObject(int contextIdx, int32_t bufferObjectId) {
+	auto& currentContext = contexts[contextIdx];
 	currentContext.boundBuffers[6] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[6]):
@@ -6975,8 +6962,8 @@ void VKRenderer::bindSkinningNormalsResultBufferObject(void* context, int32_t bu
 	finishSetupCommandBuffer(currentContext.idx);
 }
 
-void VKRenderer::bindSkinningMatricesBufferObject(void* context, int32_t bufferObjectId) {
-	auto& currentContext = *static_cast<context_type*>(context);
+void VKRenderer::bindSkinningMatricesBufferObject(int contextIdx, int32_t bufferObjectId) {
+	auto& currentContext = contexts[contextIdx];
 	currentContext.boundBuffers[7] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[7]):
@@ -6999,73 +6986,73 @@ void VKRenderer::bindVertexArrayObject(int32_t vertexArrayObjectId) {
 	Console::println("VKRenderer::bindVertexArrayObject(): Not implemented");
 }
 
-Matrix2D3x3& VKRenderer::getTextureMatrix(void* context) {
-	auto& currentContext = *static_cast<context_type*>(context);
+Matrix2D3x3& VKRenderer::getTextureMatrix(int contextIdx) {
+	auto& currentContext = contexts[contextIdx];
 	return currentContext.textureMatrix;
 }
 
-Renderer::Renderer_Light& VKRenderer::getLight(void* context, int32_t lightId) {
-	auto& currentContext = *static_cast<context_type*>(context);
+Renderer::Renderer_Light& VKRenderer::getLight(int contextIdx, int32_t lightId) {
+	auto& currentContext = contexts[contextIdx];
 	return currentContext.lights[lightId];
 }
 
-array<float, 4>& VKRenderer::getEffectColorMul(void* context) {
-	auto& currentContext = *static_cast<context_type*>(context);
+array<float, 4>& VKRenderer::getEffectColorMul(int contextIdx) {
+	auto& currentContext = contexts[contextIdx];
 	return currentContext.effectColorMul;
 }
 
-array<float, 4>& VKRenderer::getEffectColorAdd(void* context) {
-	auto& currentContext = *static_cast<context_type*>(context);
+array<float, 4>& VKRenderer::getEffectColorAdd(int contextIdx) {
+	auto& currentContext = contexts[contextIdx];
 	return currentContext.effectColorAdd;
 }
 
-Renderer::Renderer_SpecularMaterial& VKRenderer::getSpecularMaterial(void* context) {
-	auto& currentContext = *static_cast<context_type*>(context);
+Renderer::Renderer_SpecularMaterial& VKRenderer::getSpecularMaterial(int contextIdx) {
+	auto& currentContext = contexts[contextIdx];
 	return currentContext.specularMaterial;
 }
 
-Renderer::Renderer_PBRMaterial& VKRenderer::getPBRMaterial(void* context) {
-	auto& currentContext = *static_cast<context_type*>(context);
+Renderer::Renderer_PBRMaterial& VKRenderer::getPBRMaterial(int contextIdx) {
+	auto& currentContext = contexts[contextIdx];
 	return currentContext.pbrMaterial;
 }
 
-const string& VKRenderer::getShader(void* context) {
-	auto& currentContext = *static_cast<context_type*>(context);
+const string& VKRenderer::getShader(int contextIdx) {
+	auto& currentContext = contexts[contextIdx];
 	return currentContext.shader;
 }
 
-void VKRenderer::setShader(void* context, const string& id) {
-	auto& currentContext = *static_cast<context_type*>(context);
+void VKRenderer::setShader(int contextIdx, const string& id) {
+	auto& currentContext = contexts[contextIdx];
 	currentContext.shader = id;
 }
 
-const EntityShaderParameters& VKRenderer::getShaderParameters(void* context) {
-	auto& currentContext = *static_cast<context_type*>(context);
+const EntityShaderParameters& VKRenderer::getShaderParameters(int contextIdx) {
+	auto& currentContext = contexts[contextIdx];
 	return currentContext.shaderParameters;
 }
 
-void VKRenderer::setShaderParameters(void* context, const EntityShaderParameters& parameters) {
-	auto& currentContext = *static_cast<context_type*>(context);
+void VKRenderer::setShaderParameters(int contextIdx, const EntityShaderParameters& parameters) {
+	auto& currentContext = contexts[contextIdx];
 	currentContext.shaderParameters = parameters;
 }
 
-float VKRenderer::getMaskMaxValue(void* context) {
-	auto& currentContext = *static_cast<context_type*>(context);
+float VKRenderer::getMaskMaxValue(int contextIdx) {
+	auto& currentContext = contexts[contextIdx];
 	return currentContext.maskMaxValue;
 }
 
-void VKRenderer::setMaskMaxValue(void* context, float maskMaxValue) {
-	auto& currentContext = *static_cast<context_type*>(context);
+void VKRenderer::setMaskMaxValue(int contextIdx, float maskMaxValue) {
+	auto& currentContext = contexts[contextIdx];
 	currentContext.maskMaxValue = maskMaxValue;
 }
 
-array<float, 3>& VKRenderer::getEnvironmentMappingCubeMapPosition(void* context) {
-	auto& currentContext = *static_cast<context_type*>(context);
+array<float, 3>& VKRenderer::getEnvironmentMappingCubeMapPosition(int contextIdx) {
+	auto& currentContext = contexts[contextIdx];
 	return currentContext.environmentMappingCubeMapPosition;
 }
 
-void VKRenderer::setEnvironmentMappingCubeMapPosition(void* context, array<float, 3>& position) {
-	auto& currentContext = *static_cast<context_type*>(context);
+void VKRenderer::setEnvironmentMappingCubeMapPosition(int contextIdx, array<float, 3>& position) {
+	auto& currentContext = contexts[contextIdx];
 	currentContext.environmentMappingCubeMapPosition = position;
 }
 

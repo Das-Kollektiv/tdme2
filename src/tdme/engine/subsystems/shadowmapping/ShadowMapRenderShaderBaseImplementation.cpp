@@ -126,25 +126,25 @@ void ShadowMapRenderShaderBaseImplementation::initialize()
 	initialized = true;
 }
 
-void ShadowMapRenderShaderBaseImplementation::useProgram(Engine* engine, void* context)
+void ShadowMapRenderShaderBaseImplementation::useProgram(Engine* engine, int contextIdx)
 {
-	renderer->useProgram(context, programId);
-	renderer->setLighting(context, renderer->LIGHTING_SPECULAR);
-	renderer->setProgramUniformInteger(context, uniformTextureUnit, ShadowMap::TEXTUREUNIT);
-	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
-	renderer->setProgramUniformInteger(context, uniformDiffuseTextureAvailable, 0);
-	if (renderUniformTime != -1) renderer->setProgramUniformFloat(context, renderUniformTime, static_cast<float>(engine->getTiming()->getTotalTime()) / 1000.0f);
-	if (renderUniformShadowMapLookUps != -1) renderer->setProgramUniformInteger(context, renderUniformShadowMapLookUps, Engine::getShadowMapRenderLookUps());
+	renderer->useProgram(contextIdx, programId);
+	renderer->setLighting(contextIdx, renderer->LIGHTING_SPECULAR);
+	renderer->setProgramUniformInteger(contextIdx, uniformTextureUnit, ShadowMap::TEXTUREUNIT);
+	renderer->setProgramUniformInteger(contextIdx, uniformDiffuseTextureUnit, LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE);
+	renderer->setProgramUniformInteger(contextIdx, uniformDiffuseTextureAvailable, 0);
+	if (renderUniformTime != -1) renderer->setProgramUniformFloat(contextIdx, renderUniformTime, static_cast<float>(engine->getTiming()->getTotalTime()) / 1000.0f);
+	if (renderUniformShadowMapLookUps != -1) renderer->setProgramUniformInteger(contextIdx, renderUniformShadowMapLookUps, Engine::getShadowMapRenderLookUps());
 }
 
-void ShadowMapRenderShaderBaseImplementation::unUseProgram(void* context)
+void ShadowMapRenderShaderBaseImplementation::unUseProgram(int contextIdx)
 {
 }
 
-void ShadowMapRenderShaderBaseImplementation::updateMatrices(void* context) {
+void ShadowMapRenderShaderBaseImplementation::updateMatrices(int contextIdx) {
 	if (renderer->isInstancedRenderingAvailable() == true) {
-		renderer->setProgramUniformFloatMatrix4x4(context, renderUniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
-		renderer->setProgramUniformFloatMatrix4x4(context, renderUniformCameraMatrix, renderer->getCameraMatrix().getArray());
+		renderer->setProgramUniformFloatMatrix4x4(contextIdx, renderUniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
+		renderer->setProgramUniformFloatMatrix4x4(contextIdx, renderUniformCameraMatrix, renderer->getCameraMatrix().getArray());
 	} else {
 		Matrix4x4 mvMatrix;
 		Matrix4x4 mvpMatrix;
@@ -159,61 +159,61 @@ void ShadowMapRenderShaderBaseImplementation::updateMatrices(void* context) {
 		// model translation
 		renderer->getModelViewMatrix().getTranslation(modelTranslation);
 		// upload
-		if (renderUniformMVMatrix != -1) renderer->setProgramUniformFloatMatrix4x4(context, renderUniformMVMatrix, mvMatrix.getArray());
-		renderer->setProgramUniformFloatMatrix4x4(context, renderUniformMVPMatrix, mvpMatrix.getArray());
-		renderer->setProgramUniformFloatMatrix4x4(context, renderUniformNormalMatrix, normalMatrix.getArray());
-		if (renderUniformModelTranslation != -1) renderer->setProgramUniformFloatVec3(context, renderUniformModelTranslation, modelTranslation.getArray());
+		if (renderUniformMVMatrix != -1) renderer->setProgramUniformFloatMatrix4x4(contextIdx, renderUniformMVMatrix, mvMatrix.getArray());
+		renderer->setProgramUniformFloatMatrix4x4(contextIdx, renderUniformMVPMatrix, mvpMatrix.getArray());
+		renderer->setProgramUniformFloatMatrix4x4(contextIdx, renderUniformNormalMatrix, normalMatrix.getArray());
+		if (renderUniformModelTranslation != -1) renderer->setProgramUniformFloatVec3(contextIdx, renderUniformModelTranslation, modelTranslation.getArray());
 	}
 }
 
-void ShadowMapRenderShaderBaseImplementation::updateTextureMatrix(Renderer* renderer, void* context) {
-	renderer->setProgramUniformFloatMatrix3x3(context, uniformTextureMatrix, renderer->getTextureMatrix(context).getArray());
+void ShadowMapRenderShaderBaseImplementation::updateTextureMatrix(Renderer* renderer, int contextIdx) {
+	renderer->setProgramUniformFloatMatrix3x3(contextIdx, uniformTextureMatrix, renderer->getTextureMatrix(contextIdx).getArray());
 }
 
-void ShadowMapRenderShaderBaseImplementation::updateMaterial(Renderer* renderer, void* context)
+void ShadowMapRenderShaderBaseImplementation::updateMaterial(Renderer* renderer, int contextIdx)
 {
-	auto material = renderer->getSpecularMaterial(context);
-	renderer->setProgramUniformInteger(context, uniformDiffuseTextureMaskedTransparency, material.diffuseTextureMaskedTransparency);
-	renderer->setProgramUniformFloat(context, uniformDiffuseTextureMaskedTransparencyThreshold, material.diffuseTextureMaskedTransparencyThreshold);
-	renderer->setProgramUniformInteger(context, uniformTextureAtlasSize, material.textureAtlasSize);
-	renderer->setProgramUniformFloatVec2(context, uniformTextureAtlasPixelDimension, material.textureAtlasPixelDimension);
+	auto material = renderer->getSpecularMaterial(contextIdx);
+	renderer->setProgramUniformInteger(contextIdx, uniformDiffuseTextureMaskedTransparency, material.diffuseTextureMaskedTransparency);
+	renderer->setProgramUniformFloat(contextIdx, uniformDiffuseTextureMaskedTransparencyThreshold, material.diffuseTextureMaskedTransparencyThreshold);
+	renderer->setProgramUniformInteger(contextIdx, uniformTextureAtlasSize, material.textureAtlasSize);
+	renderer->setProgramUniformFloatVec2(contextIdx, uniformTextureAtlasPixelDimension, material.textureAtlasPixelDimension);
 }
 
-void ShadowMapRenderShaderBaseImplementation::updateLight(Renderer* renderer, void* context, int32_t lightId) {
+void ShadowMapRenderShaderBaseImplementation::updateLight(Renderer* renderer, int contextIdx, int32_t lightId) {
 	if (lightId != this->lightId) {
 		return;
 	}
 
-	auto& light = renderer->getLight(context, lightId);
+	auto& light = renderer->getLight(contextIdx, lightId);
 	auto lightPosition = Vector3(light.position[0], light.position[1], light.position[2]);
 	auto lightSpotDirection = Vector3(light.spotDirection[0], light.spotDirection[1], light.spotDirection[2]);
-	if (renderUniformLightPosition != -1) renderer->setProgramUniformFloatVec3(context, renderUniformLightPosition, lightPosition.getArray());
-	if (renderUniformLightDirection != -1) renderer->setProgramUniformFloatVec3(context, renderUniformLightDirection, lightSpotDirection.getArray());
-	if (renderUniformLightSpotExponent != -1) renderer->setProgramUniformFloat(context, renderUniformLightSpotExponent, light.spotExponent);
-	if (renderUniformLightSpotCosCutoff != -1) renderer->setProgramUniformFloat(context, renderUniformLightSpotCosCutoff, light.spotCosCutoff);
-	if (renderUniformLightConstantAttenuation != -1) renderer->setProgramUniformFloat(context, renderUniformLightConstantAttenuation, light.constantAttenuation);
-	if (renderUniformLightLinearAttenuation != -1) renderer->setProgramUniformFloat(context, renderUniformLightLinearAttenuation, light.linearAttenuation);
-	if (renderUniformLightQuadraticAttenuation != -1) renderer->setProgramUniformFloat(context, renderUniformLightQuadraticAttenuation, light.quadraticAttenuation);
+	if (renderUniformLightPosition != -1) renderer->setProgramUniformFloatVec3(contextIdx, renderUniformLightPosition, lightPosition.getArray());
+	if (renderUniformLightDirection != -1) renderer->setProgramUniformFloatVec3(contextIdx, renderUniformLightDirection, lightSpotDirection.getArray());
+	if (renderUniformLightSpotExponent != -1) renderer->setProgramUniformFloat(contextIdx, renderUniformLightSpotExponent, light.spotExponent);
+	if (renderUniformLightSpotCosCutoff != -1) renderer->setProgramUniformFloat(contextIdx, renderUniformLightSpotCosCutoff, light.spotCosCutoff);
+	if (renderUniformLightConstantAttenuation != -1) renderer->setProgramUniformFloat(contextIdx, renderUniformLightConstantAttenuation, light.constantAttenuation);
+	if (renderUniformLightLinearAttenuation != -1) renderer->setProgramUniformFloat(contextIdx, renderUniformLightLinearAttenuation, light.linearAttenuation);
+	if (renderUniformLightQuadraticAttenuation != -1) renderer->setProgramUniformFloat(contextIdx, renderUniformLightQuadraticAttenuation, light.quadraticAttenuation);
 	if (renderer->isInstancedRenderingAvailable() == true) {
-		renderer->setProgramUniformFloatMatrix4x4(context, renderUniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
-		renderer->setProgramUniformFloatMatrix4x4(context, renderUniformCameraMatrix, renderer->getCameraMatrix().getArray());
+		renderer->setProgramUniformFloatMatrix4x4(contextIdx, renderUniformProjectionMatrix, renderer->getProjectionMatrix().getArray());
+		renderer->setProgramUniformFloatMatrix4x4(contextIdx, renderUniformCameraMatrix, renderer->getCameraMatrix().getArray());
 	}
-	renderer->setProgramUniformFloat(context, renderUniformTexturePixelWidth, 1.0f / static_cast<float>(Engine::getShadowMapWidth()));
-	renderer->setProgramUniformFloat(context, renderUniformTexturePixelHeight, 1.0f / static_cast<float>(Engine::getShadowMapHeight()));
+	renderer->setProgramUniformFloat(contextIdx, renderUniformTexturePixelWidth, 1.0f / static_cast<float>(Engine::getShadowMapWidth()));
+	renderer->setProgramUniformFloat(contextIdx, renderUniformTexturePixelHeight, 1.0f / static_cast<float>(Engine::getShadowMapHeight()));
 }
 
-void ShadowMapRenderShaderBaseImplementation::bindTexture(Renderer* renderer, void* context, int32_t textureId)
+void ShadowMapRenderShaderBaseImplementation::bindTexture(Renderer* renderer, int contextIdx, int32_t textureId)
 {
-	switch (renderer->getTextureUnit(context)) {
+	switch (renderer->getTextureUnit(contextIdx)) {
 		case LightingShaderConstants::SPECULAR_TEXTUREUNIT_DIFFUSE:
-			renderer->setProgramUniformInteger(context, uniformDiffuseTextureAvailable, textureId == 0 ? 0 : 1);
+			renderer->setProgramUniformInteger(contextIdx, uniformDiffuseTextureAvailable, textureId == 0 ? 0 : 1);
 			break;
 	}
 }
 
-void ShadowMapRenderShaderBaseImplementation::setDepthBiasMVPMatrix(void* context, const Matrix4x4& depthBiasMVPMatrix)
+void ShadowMapRenderShaderBaseImplementation::setDepthBiasMVPMatrix(int contextIdx, const Matrix4x4& depthBiasMVPMatrix)
 {
-	renderer->setProgramUniformFloatMatrix4x4(context, renderUniformDepthBiasMVPMatrix, depthBiasMVPMatrix.getArray());
+	renderer->setProgramUniformFloatMatrix4x4(contextIdx, renderUniformDepthBiasMVPMatrix, depthBiasMVPMatrix.getArray());
 }
 
 void ShadowMapRenderShaderBaseImplementation::setRenderLightId(int32_t lightId) {

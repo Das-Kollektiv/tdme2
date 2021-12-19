@@ -452,7 +452,6 @@ void Engine::registerEntity(Entity* entity) {
 	}
 
 	// decompose to Object3D instances to do pre render
-	auto defaultContext = renderer->getDefaultContext();
 	DecomposedEntities decomposedEntities;
 	decomposeEntityType(entity, decomposedEntities, true);
 	array<vector<Object3D*>, 5> objectsArray = {
@@ -464,7 +463,7 @@ void Engine::registerEntity(Entity* entity) {
 	};
 	for (auto& objects: objectsArray) {
 		for (auto object3D: objects) {
-			object3D->preRender(defaultContext);
+			object3D->preRender(renderer->CONTEXTINDEX_DEFAULT);
 			if (object3D->isNeedsPreRender() == true) needsPreRenderEntities.insert(object3D);
 			if (object3D->isNeedsComputeTransformations() == true) needsComputeTransformationsEntities.insert(object3D);
 		}
@@ -1047,13 +1046,11 @@ void Engine::initRendering()
 }
 
 void Engine::preRenderFunction(vector<Object3D*>& objects, int threadIdx) {
-	auto context = renderer->getContext(threadIdx);
-	for (auto object: objects) object->preRender(context);
+	for (auto object: objects) object->preRender(threadIdx);
 }
 
 void Engine::computeTransformationsFunction(vector<Object3D*>& objects, int threadIdx) {
-	auto context = renderer->getContext(threadIdx);
-	for (auto object: objects) object->computeTransformations(context);
+	for (auto object: objects) object->computeTransformations(threadIdx);
 }
 
 inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& decomposedEntities, bool decomposeAllEntities) {
@@ -1315,12 +1312,11 @@ void Engine::display()
 	initRendering();
 
 	// default context
-	auto context = Engine::renderer->getDefaultContext();
 	auto _width = scaledWidth != -1?scaledWidth:width;
 	auto _height = scaledHeight != -1?scaledHeight:height;
 
 	// camera
-	camera->update(context, _width, _height);
+	camera->update(renderer->CONTEXTINDEX_DEFAULT, _width, _height);
 	// frustum
 	camera->getFrustum()->update();
 
@@ -1334,7 +1330,7 @@ void Engine::display()
 	for (auto environmentMappingEntity: visibleDecomposedEntities.environmentMappingEntities) environmentMappingEntity->render();
 
 	// camera
-	camera->update(context, _width, _height);
+	camera->update(renderer->CONTEXTINDEX_DEFAULT, _width, _height);
 
 	// create shadow maps
 	if (shadowMapping != nullptr) shadowMapping->createShadowMaps();
@@ -1371,7 +1367,7 @@ void Engine::display()
 			);
 			renderer->clear(renderer->CLEAR_COLOR_BUFFER_BIT);
 			// camera
-			camera->update(context, frameBufferWidth, frameBufferHeight);
+			camera->update(renderer->CONTEXTINDEX_DEFAULT, frameBufferWidth, frameBufferHeight);
 			//
 			auto lightSourceVisible = false;
 			if (effectPass.renderLightSources == true) {
@@ -1444,7 +1440,7 @@ void Engine::display()
 	}
 
 	// camera
-	camera->update(context, _width, _height);
+	camera->update(renderer->CONTEXTINDEX_DEFAULT, _width, _height);
 
 	// clear previous frame values
 	Engine::renderer->setClearColor(sceneColor.getRed(), sceneColor.getGreen(), sceneColor.getBlue(), sceneColor.getAlpha());
@@ -1491,7 +1487,7 @@ void Engine::display()
 	}
 
 	// camera
-	camera->update(context, _width, _height);
+	camera->update(renderer->CONTEXTINDEX_DEFAULT, _width, _height);
 }
 
 void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3& worldCoordinate)
@@ -2177,9 +2173,6 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 	Engine::renderer->setEffectPass(effectPass);
 	Engine::renderer->setShaderPrefix(shaderPrefix);
 
-	// default context
-	auto context = Engine::renderer->getDefaultContext();
-
 	// do depth buffer writing aka early z rejection
 	if (renderGeometryBuffer == nullptr && useEZR == true && ezrShader != nullptr && visibleDecomposedEntities.ezrObjects.size() > 0) {
 		// disable color rendering, we only want to write to the Z-Buffer
@@ -2289,7 +2282,7 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 	// render lines objects
 	if (visibleDecomposedEntities.linesObjects.size() > 0) {
 		// use particle shader
-		if (linesShader != nullptr) linesShader->useProgram(context);
+		if (linesShader != nullptr) linesShader->useProgram(renderer->CONTEXTINDEX_DEFAULT);
 
 		// render points based particle systems
 		for (auto i = 0; i < Entity::RENDERPASS_MAX; i++) {
@@ -2298,13 +2291,13 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 		}
 
 		// unuse particle shader
-		if (linesShader != nullptr) linesShader->unUseProgram(context);
+		if (linesShader != nullptr) linesShader->unUseProgram(renderer->CONTEXTINDEX_DEFAULT);
 	}
 
 	// render point particle systems
 	if (doRenderParticleSystems == true && visibleDecomposedEntities.ppses.size() > 0) {
 		// use particle shader
-		if (particlesShader != nullptr) particlesShader->useProgram(context);
+		if (particlesShader != nullptr) particlesShader->useProgram(renderer->CONTEXTINDEX_DEFAULT);
 
 		// render points based particle systems
 		if (visibleDecomposedEntities.ppses.size() > 0) {
@@ -2315,7 +2308,7 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 		}
 
 		// unuse particle shader
-		if (particlesShader != nullptr) particlesShader->unUseProgram(context);
+		if (particlesShader != nullptr) particlesShader->unUseProgram(renderer->CONTEXTINDEX_DEFAULT);
 	}
 
 	// render objects and particles together

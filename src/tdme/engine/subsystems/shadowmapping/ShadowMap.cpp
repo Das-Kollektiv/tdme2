@@ -100,9 +100,9 @@ void ShadowMap::dispose()
 	frameBuffer->dispose();
 }
 
-void ShadowMap::bindDepthBufferTexture(void* context)
+void ShadowMap::bindDepthBufferTexture(int contextIdx)
 {
-	frameBuffer->bindDepthBufferTexture(context);
+	frameBuffer->bindDepthBufferTexture(contextIdx);
 }
 
 Camera* ShadowMap::getCamera()
@@ -112,8 +112,8 @@ Camera* ShadowMap::getCamera()
 
 void ShadowMap::createShadowMap(Light* light)
 {
-	// use default context
-	auto context = shadowMapping->renderer->getDefaultContext();
+	// use default contextIdx
+	auto contextIdx = shadowMapping->renderer->CONTEXTINDEX_DEFAULT;
 
 	//
 	auto camera = shadowMapping->engine->getCamera();
@@ -192,7 +192,7 @@ void ShadowMap::createShadowMap(Light* light)
 	auto lightCameraSideVector = Vector3::computeCrossProduct(lightCamera->getForwardVector(), lightCamera->getUpVector());
 	lightCamera->setSideVector(lightCameraSideVector);
 	lightCamera->setUpVector(lightCameraUpVector);
-	lightCamera->update(context, frameBuffer->getWidth(), frameBuffer->getHeight());
+	lightCamera->update(contextIdx, frameBuffer->getWidth(), frameBuffer->getHeight());
 	lightCamera->getFrustum()->update();
 
 	// clear visible objects
@@ -308,9 +308,9 @@ void ShadowMap::computeDepthBiasMVPMatrix()
 	depthBiasMVPMatrix.set(modelViewMatrix).multiply(projectionMatrix).multiply(biasMatrix);
 }
 
-void ShadowMap::updateDepthBiasMVPMatrix(void* context)
+void ShadowMap::updateDepthBiasMVPMatrix(int contextIdx)
 {
-	shadowMapping->updateDepthBiasMVPMatrix(context, depthBiasMVPMatrix);
+	shadowMapping->updateDepthBiasMVPMatrix(contextIdx, depthBiasMVPMatrix);
 }
 
 FrameBuffer* ShadowMap::getFrameBuffer() {

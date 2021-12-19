@@ -90,10 +90,10 @@ private:
 
 	/**
 	 * Computes mesh transformations
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param object3DBase object 3d base
 	 */
-	void computeTransformations(void* context, Object3DBase* object3DBase);
+	void computeTransformations(int contextIdx, Object3DBase* object3DBase);
 
 	/**
 	 * Recreates node float buffers
@@ -115,66 +115,66 @@ private:
 	/**
 	 * Set up vertex indices buffer
 	 * @param renderer renderer
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param vboId vbo id
 	 */
-	void setupVertexIndicesBuffer(Renderer* renderer, void* context, int32_t vboId);
+	void setupVertexIndicesBuffer(Renderer* renderer, int contextIdx, int32_t vboId);
 
 	/**
 	 * Set up texture coordinates buffer
 	 * @param renderer renderer
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param vboId vbo id
 	 */
-	void setupTextureCoordinatesBuffer(Renderer* renderer, void* context, int32_t vboId);
+	void setupTextureCoordinatesBuffer(Renderer* renderer, int contextIdx, int32_t vboId);
 
 	/**
 	 * Set up vertices buffer
 	 * @param renderer renderer
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param vboId vbo id
 	 */
-	void setupVerticesBuffer(Renderer* renderer, void* context, int32_t vboId);
+	void setupVerticesBuffer(Renderer* renderer, int contextIdx, int32_t vboId);
 
 	/**
 	 * Set up normals buffer
 	 * @param renderer renderer
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param vboId vbo id
 	 */
-	void setupNormalsBuffer(Renderer* renderer, void* context, int32_t vboId);
+	void setupNormalsBuffer(Renderer* renderer, int contextIdx, int32_t vboId);
 
 	/**
 	 * Set up tangents buffer
 	 * @param renderer renderer
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param vboId vbo id
 	 */
-	void setupTangentsBuffer(Renderer* renderer, void* context, int32_t vboId);
+	void setupTangentsBuffer(Renderer* renderer, int contextIdx, int32_t vboId);
 
 	/**
 	 * Set up bitangents buffer
 	 * @param renderer renderer
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param vboId vbo id
 	 */
-	void setupBitangentsBuffer(Renderer* renderer, void* context, int32_t vboId);
+	void setupBitangentsBuffer(Renderer* renderer, int contextIdx, int32_t vboId);
 
 	/**
 	 * Set up render node object origins data buffer
 	 * @param renderer renderer
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param vboId vbo id
 	 */
-	void setupOriginsBuffer(Renderer* renderer, void* context, int32_t vboId);
+	void setupOriginsBuffer(Renderer* renderer, int contextIdx, int32_t vboId);
 
 	/**
 	 * Set up render node object lod data buffer
 	 * @param renderer renderer
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param vboId vbo id
 	 * @param lodLevel LOD level
 	 */
-	void setupLodBuffer(Renderer* renderer, void* context, int32_t vboId, int lodLevel);
+	void setupLodBuffer(Renderer* renderer, int contextIdx, int32_t vboId, int lodLevel);
 
 };

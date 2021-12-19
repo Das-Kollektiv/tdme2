@@ -64,7 +64,7 @@ void ShadowMapCreationShader::unUseProgram()
 	auto i = 0;
 	for (auto& shadowMappingShaderPreContext: contexts) {
 		if (shadowMappingShaderPreContext.implementation != nullptr) {
-			shadowMappingShaderPreContext.implementation->unUseProgram(renderer->getContext(i));
+			shadowMappingShaderPreContext.implementation->unUseProgram(i);
 		}
 		shadowMappingShaderPreContext.implementation = nullptr;
 		i++;
@@ -72,40 +72,40 @@ void ShadowMapCreationShader::unUseProgram()
 	engine = nullptr;
 }
 
-void ShadowMapCreationShader::updateMatrices(void* context)
+void ShadowMapCreationShader::updateMatrices(int contextIdx)
 {
-	auto& shadowMappingShaderPreContext = contexts[renderer->getContextIndex(context)];
+	auto& shadowMappingShaderPreContext = contexts[contextIdx];
 	if (shadowMappingShaderPreContext.implementation == nullptr) return;
-	shadowMappingShaderPreContext.implementation->updateMatrices(context);
+	shadowMappingShaderPreContext.implementation->updateMatrices(contextIdx);
 }
 
-void ShadowMapCreationShader::updateTextureMatrix(void* context) {
-	auto& shadowMappingShaderPreContext = contexts[renderer->getContextIndex(context)];
+void ShadowMapCreationShader::updateTextureMatrix(int contextIdx) {
+	auto& shadowMappingShaderPreContext = contexts[contextIdx];
 	if (shadowMappingShaderPreContext.implementation == nullptr) return;
-	shadowMappingShaderPreContext.implementation->updateTextureMatrix(renderer, context);
+	shadowMappingShaderPreContext.implementation->updateTextureMatrix(renderer, contextIdx);
 }
 
-void ShadowMapCreationShader::updateMaterial(void* context)
+void ShadowMapCreationShader::updateMaterial(int contextIdx)
 {
-	auto& shadowMappingShaderPreContext = contexts[renderer->getContextIndex(context)];
+	auto& shadowMappingShaderPreContext = contexts[contextIdx];
 	if (shadowMappingShaderPreContext.implementation == nullptr) return;
-	shadowMappingShaderPreContext.implementation->updateMaterial(renderer, context);
+	shadowMappingShaderPreContext.implementation->updateMaterial(renderer, contextIdx);
 }
 
-void ShadowMapCreationShader::updateShaderParameters(void* context) {
-	auto& shadowMappingShaderPreContext = contexts[renderer->getContextIndex(context)];
+void ShadowMapCreationShader::updateShaderParameters(int contextIdx) {
+	auto& shadowMappingShaderPreContext = contexts[contextIdx];
 	if (shadowMappingShaderPreContext.implementation == nullptr) return;
-	shadowMappingShaderPreContext.implementation->updateShaderParameters(renderer, context);
+	shadowMappingShaderPreContext.implementation->updateShaderParameters(renderer, contextIdx);
 }
 
-void ShadowMapCreationShader::bindTexture(void* context, int32_t textureId)
+void ShadowMapCreationShader::bindTexture(int contextIdx, int32_t textureId)
 {
-	auto& shadowMappingShaderPreContext = contexts[renderer->getContextIndex(context)];
+	auto& shadowMappingShaderPreContext = contexts[contextIdx];
 	if (shadowMappingShaderPreContext.implementation == nullptr) return;
-	shadowMappingShaderPreContext.implementation->bindTexture(renderer, context, textureId);
+	shadowMappingShaderPreContext.implementation->bindTexture(renderer, contextIdx, textureId);
 }
 
-void ShadowMapCreationShader::setShader(void* context, const string& id) {
+void ShadowMapCreationShader::setShader(int contextIdx, const string& id) {
 	// TODO: find a better solution for removing PBR- lighing prefix
 	string shaderId;
 	if (StringTools::startsWith(id, string("pbr-")) == true) {
@@ -115,7 +115,7 @@ void ShadowMapCreationShader::setShader(void* context, const string& id) {
 	}
 
 	//
-	auto& shadowMappingShaderPreContext = contexts[renderer->getContextIndex(context)];
+	auto& shadowMappingShaderPreContext = contexts[contextIdx];
 	auto currentImplementation = shadowMappingShaderPreContext.implementation;
 	auto shaderIt = shader.find(shaderId);
 	if (shaderIt == shader.end()) {
@@ -123,8 +123,8 @@ void ShadowMapCreationShader::setShader(void* context, const string& id) {
 	}
 	auto nextImplementation = shaderIt->second;
 	if (currentImplementation != nextImplementation) {
-		if (currentImplementation != nullptr) currentImplementation->unUseProgram(context);
+		if (currentImplementation != nullptr) currentImplementation->unUseProgram(contextIdx);
 		shadowMappingShaderPreContext.implementation = nextImplementation;
-		shadowMappingShaderPreContext.implementation->useProgram(engine, context);
+		shadowMappingShaderPreContext.implementation->useProgram(engine, contextIdx);
 	}
 }

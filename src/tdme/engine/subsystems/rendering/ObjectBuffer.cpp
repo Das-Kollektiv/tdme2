@@ -31,10 +31,9 @@ void ObjectBuffer::dispose() {
 	byteBuffers.clear();
 }
 
-ByteBuffer* ObjectBuffer::getByteBuffer(void* context, int32_t bytes)
+ByteBuffer* ObjectBuffer::getByteBuffer(int contextIdx, int32_t bytes)
 {
 	auto renderer = Engine::renderer;
-	auto contextIdx = renderer->getContextIndex(context);
 	if (byteBuffers[contextIdx] == nullptr || bytes > byteBuffers[contextIdx]->getCapacity()) {
 		if (byteBuffers[contextIdx] != nullptr) {
 			delete byteBuffers[contextIdx];

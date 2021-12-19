@@ -70,7 +70,7 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBox(Object3DModelInternal* ob
 		auto parentTransformationsMatrix = object3DModelInternal->getModel()->getImportTransformationsMatrix();
 		parentTransformationsMatrix.multiply(object3DModelInternal->getTransformationsMatrix());
 		object3DModelInternal->instanceAnimations[0]->computeTransformationsMatrices(object3DModelInternal->instanceAnimations[0]->nodeLists[0], parentTransformationsMatrix, &animationState);
-		Object3DNode::computeTransformations(nullptr, object3DModelInternal->object3dNodes);
+		Object3DNode::computeTransformations(0, object3DModelInternal->object3dNodes);
 		// parse through object nodes to determine min, max
 		for (auto object3DNode : object3DModelInternal->object3dNodes) {
 			for (auto& vertex : *object3DNode->mesh->vertices) {

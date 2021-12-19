@@ -66,5 +66,5 @@ void DeferredLightingShaderSkyImplementation::registerShader() {
 }
 
 
-void DeferredLightingShaderSkyImplementation::updateShaderParameters(Renderer* renderer, void* context) {
+void DeferredLightingShaderSkyImplementation::updateShaderParameters(Renderer* renderer, int contextIdx) {
 }

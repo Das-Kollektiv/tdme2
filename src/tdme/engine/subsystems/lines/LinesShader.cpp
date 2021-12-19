@@ -74,32 +74,32 @@ void LinesShader::initialize()
 	initialized = true;
 }
 
-void LinesShader::useProgram(void* context)
+void LinesShader::useProgram(int contextIdx)
 {
 	isRunning = true;
-	renderer->useProgram(context, renderProgramId);
-	renderer->setLighting(context, renderer->LIGHTING_NONE);
-	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, 0);
+	renderer->useProgram(contextIdx, renderProgramId);
+	renderer->setLighting(contextIdx, renderer->LIGHTING_NONE);
+	renderer->setProgramUniformInteger(contextIdx, uniformDiffuseTextureUnit, 0);
 }
 
-void LinesShader::updateEffect(void* context)
+void LinesShader::updateEffect(int contextIdx)
 {
 	// skip if not running
 	if (isRunning == false)
 		return;
 	// effect color
-	renderer->setProgramUniformFloatVec4(context, uniformEffectColorMul, renderer->getEffectColorMul(context));
-	renderer->setProgramUniformFloatVec4(context, uniformEffectColorAdd, renderer->getEffectColorAdd(context));
+	renderer->setProgramUniformFloatVec4(contextIdx, uniformEffectColorMul, renderer->getEffectColorMul(contextIdx));
+	renderer->setProgramUniformFloatVec4(contextIdx, uniformEffectColorAdd, renderer->getEffectColorAdd(contextIdx));
 }
 
-void LinesShader::unUseProgram(void* context)
+void LinesShader::unUseProgram(int contextIdx)
 {
 	isRunning = false;
 	renderer->setLineWidth(1.0f);
-	renderer->bindTexture(context, renderer->ID_NONE);
+	renderer->bindTexture(contextIdx, renderer->ID_NONE);
 }
 
-void LinesShader::updateMatrices(void* context)
+void LinesShader::updateMatrices(int contextIdx)
 {
 	// skip if not running
 	if (isRunning == false)
@@ -107,10 +107,10 @@ void LinesShader::updateMatrices(void* context)
 	// object to screen matrix
 	mvpMatrix.set(renderer->getModelViewMatrix()).multiply(renderer->getProjectionMatrix());
 	// upload matrices
-	renderer->setProgramUniformFloatMatrix4x4(context, uniformMVPMatrix, mvpMatrix.getArray());
+	renderer->setProgramUniformFloatMatrix4x4(contextIdx, uniformMVPMatrix, mvpMatrix.getArray());
 }
 
-void LinesShader::setParameters(void* context, int32_t textureId, float lineWidth) {
+void LinesShader::setParameters(int contextIdx, int32_t textureId, float lineWidth) {
 	renderer->setLineWidth(lineWidth);
-	renderer->bindTexture(context, textureId);
+	renderer->bindTexture(contextIdx, textureId);
 }

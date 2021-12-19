@@ -88,34 +88,34 @@ const string TransparentRenderFacesGroup::createKey(Model* model, Object3DNode* 
 	return key;
 }
 
-void TransparentRenderFacesGroup::render(Engine* engine, Renderer* renderer, void* context)
+void TransparentRenderFacesGroup::render(Engine* engine, Renderer* renderer, int contextIdx)
 {
 	//
-	if (renderer->getShader(context) != shader) {
+	if (renderer->getShader(contextIdx) != shader) {
 		// update sahder
-		renderer->setShader(context, shader);
-		renderer->onUpdateShader(context);
+		renderer->setShader(contextIdx, shader);
+		renderer->onUpdateShader(contextIdx);
 		// update lights
 		for (auto j = 0; j < engine->lights.size(); j++) {
-			engine->lights[j].update(context);
+			engine->lights[j].update(contextIdx);
 		}
 		// have identity texture matrix
-		renderer->getTextureMatrix(context).identity();
-		renderer->onUpdateTextureMatrix(context);
+		renderer->getTextureMatrix(contextIdx).identity();
+		renderer->onUpdateTextureMatrix(contextIdx);
 	}
 	// store model view matrix
 	Matrix4x4 modelViewMatrix;
 	modelViewMatrix.set(renderer->getModelViewMatrix());
 	// effect
-	renderer->getEffectColorMul(context) = effectColorMul.getArray();
-	renderer->getEffectColorAdd(context) = effectColorAdd.getArray();
-	renderer->onUpdateEffect(context);
+	renderer->getEffectColorMul(contextIdx) = effectColorMul.getArray();
+	renderer->getEffectColorAdd(contextIdx) = effectColorAdd.getArray();
+	renderer->onUpdateEffect(contextIdx);
 	// material
 	string materialKey;
-	object3DRenderer->setupMaterial(context, object3DNode, facesEntityIdx, EntityRenderer::RENDERTYPE_ALL, false, materialKey);
+	object3DRenderer->setupMaterial(contextIdx, object3DNode, facesEntityIdx, EntityRenderer::RENDERTYPE_ALL, false, materialKey);
 	// model view matrix
 	renderer->getModelViewMatrix().identity();
-	renderer->onUpdateModelViewMatrix(context);
+	renderer->onUpdateModelViewMatrix(contextIdx);
 	// render, reset
 	for (auto batchRendererTriangles: batchRenderers) {
 		batchRendererTriangles->render();
@@ -124,7 +124,7 @@ void TransparentRenderFacesGroup::render(Engine* engine, Renderer* renderer, voi
 	}
 	batchRenderers.clear();
 	// restore GL state, model view matrix
-	renderer->unbindBufferObjects(context);
+	renderer->unbindBufferObjects(contextIdx);
 	renderer->getModelViewMatrix().set(modelViewMatrix);
-	renderer->onUpdateModelViewMatrix(context);
+	renderer->onUpdateModelViewMatrix(contextIdx);
 }

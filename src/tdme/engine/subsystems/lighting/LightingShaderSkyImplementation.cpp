@@ -71,5 +71,5 @@ void LightingShaderSkyImplementation::registerShader() {
 }
 
 
-void LightingShaderSkyImplementation::updateShaderParameters(Renderer* renderer, void* context) {
+void LightingShaderSkyImplementation::updateShaderParameters(Renderer* renderer, int contextIdx) {
 }

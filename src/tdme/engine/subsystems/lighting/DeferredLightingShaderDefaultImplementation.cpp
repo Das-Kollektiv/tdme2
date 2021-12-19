@@ -65,5 +65,5 @@ void DeferredLightingShaderDefaultImplementation::initialize()
 void DeferredLightingShaderDefaultImplementation::registerShader() {
 }
 
-void DeferredLightingShaderDefaultImplementation::updateShaderParameters(Renderer* renderer, void* context) {
+void DeferredLightingShaderDefaultImplementation::updateShaderParameters(Renderer* renderer, int contextIdx) {
 }

@@ -20,6 +20,7 @@ using tdme::utilities::ByteBuffer;
 
 Renderer::Renderer()
 {
+	CONTEXTINDEX_DEFAULT = 0;
 	ID_NONE = -1;
 	CLEAR_DEPTH_BUFFER_BIT = -1;
 	CLEAR_COLOR_BUFFER_BIT = -1;
@@ -63,18 +64,6 @@ Renderer::Renderer()
 }
 
 Renderer::~Renderer() {
-}
-
-void* Renderer::getDefaultContext() {
-	return nullptr;
-}
-
-void* Renderer::getContext(int contextIdx) {
-	return nullptr;
-}
-
-int Renderer::getContextIndex(void* context) {
-	return 0;
 }
 
 Vector3& Renderer::getCameraPosition() {

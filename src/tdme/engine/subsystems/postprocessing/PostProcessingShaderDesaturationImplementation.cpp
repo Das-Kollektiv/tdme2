@@ -66,7 +66,7 @@ void PostProcessingShaderDesaturationImplementation::initialize()
 	);
 }
 
-void PostProcessingShaderDesaturationImplementation::setShaderParameters(void* context, Engine* engine) {
-	if (uniformIntensity != -1) renderer->setProgramUniformFloat(context, uniformIntensity, engine->getShaderParameter("desaturation", "intensity").getFloatValue());
+void PostProcessingShaderDesaturationImplementation::setShaderParameters(int contextIdx, Engine* engine) {
+	if (uniformIntensity != -1) renderer->setProgramUniformFloat(contextIdx, uniformIntensity, engine->getShaderParameter("desaturation", "intensity").getFloatValue());
 }
 

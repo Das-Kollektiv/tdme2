@@ -80,5 +80,5 @@ void LightingShaderLightScatteringTreeImplementation::initialize()
 void LightingShaderLightScatteringTreeImplementation::registerShader() {
 }
 
-void LightingShaderLightScatteringTreeImplementation::updateShaderParameters(Renderer* renderer, void* context) {
+void LightingShaderLightScatteringTreeImplementation::updateShaderParameters(Renderer* renderer, int contextIdx) {
 }

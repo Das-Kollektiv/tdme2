@@ -95,14 +95,14 @@ void FrameBuffer::disableFrameBuffer()
 	Engine::renderer->updateViewPort();
 }
 
-void FrameBuffer::bindDepthBufferTexture(void* context)
+void FrameBuffer::bindDepthBufferTexture(int contextIdx)
 {
-	Engine::renderer->bindTexture(context, depthBufferTextureId);
+	Engine::renderer->bindTexture(contextIdx, depthBufferTextureId);
 }
 
-void FrameBuffer::bindColorBufferTexture(void* context)
+void FrameBuffer::bindColorBufferTexture(int contextIdx)
 {
-	Engine::renderer->bindTexture(context, colorBufferTextureId);
+	Engine::renderer->bindTexture(contextIdx, colorBufferTextureId);
 }
 
 int32_t FrameBuffer::getColorBufferTextureId()
@@ -120,10 +120,10 @@ void FrameBuffer::renderToScreen()
 	auto renderer = Engine::renderer;
 
 	// use default context
-	auto context = renderer->getDefaultContext();
+	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
 
 	//
-	renderer->disableCulling(context);
+	renderer->disableCulling(contextIdx);
 
 	// clear
 	renderer->clear(renderer->CLEAR_COLOR_BUFFER_BIT | renderer->CLEAR_DEPTH_BUFFER_BIT);
@@ -133,39 +133,39 @@ void FrameBuffer::renderToScreen()
 	frameBufferRenderShader->useProgram();
 
 	// bind color buffer texture
-	renderer->setTextureUnit(context, 0);
-	renderer->bindTexture(context, colorBufferTextureId);
+	renderer->setTextureUnit(contextIdx, 0);
+	renderer->bindTexture(contextIdx, colorBufferTextureId);
 
 	// bind depth buffer texture
-	renderer->setTextureUnit(context, 1);
-	renderer->bindTexture(context, depthBufferTextureId);
+	renderer->setTextureUnit(contextIdx, 1);
+	renderer->bindTexture(contextIdx, depthBufferTextureId);
 
 	//
-	renderer->bindVerticesBufferObject(context, frameBufferRenderShader->getVBOVertices());
-	renderer->bindTextureCoordinatesBufferObject(context, frameBufferRenderShader->getVBOTextureCoordinates());
+	renderer->bindVerticesBufferObject(contextIdx, frameBufferRenderShader->getVBOVertices());
+	renderer->bindTextureCoordinatesBufferObject(contextIdx, frameBufferRenderShader->getVBOTextureCoordinates());
 
 	// draw
-	renderer->drawTrianglesFromBufferObjects(context, 2, 0);
+	renderer->drawTrianglesFromBufferObjects(contextIdx, 2, 0);
 
 	// unbind buffers
-	renderer->unbindBufferObjects(context);
+	renderer->unbindBufferObjects(contextIdx);
 
 	// unbind color buffer texture
-	renderer->setTextureUnit(context, 0);
-	renderer->bindTexture(context, renderer->ID_NONE);
+	renderer->setTextureUnit(contextIdx, 0);
+	renderer->bindTexture(contextIdx, renderer->ID_NONE);
 
 	// unbind depth buffer texture
-	renderer->setTextureUnit(context, 1);
-	renderer->bindTexture(context, renderer->ID_NONE);
+	renderer->setTextureUnit(contextIdx, 1);
+	renderer->bindTexture(contextIdx, renderer->ID_NONE);
 
 	// switch back to diffuse texture unit
-	renderer->setTextureUnit(context, 0);
+	renderer->setTextureUnit(contextIdx, 0);
 
 	//
 	frameBufferRenderShader->unUseProgram();
 
 	// unset
-	renderer->enableCulling(context);
+	renderer->enableCulling(contextIdx);
 }
 
 void FrameBuffer::doPostProcessing(Engine* engine, FrameBuffer* target, FrameBuffer* source, const string& programId, const string& shaderId, FrameBuffer* temporary, FrameBuffer* blendToSource)
@@ -191,10 +191,10 @@ void FrameBuffer::doPostProcessing(Engine* engine, FrameBuffer* target, FrameBuf
 	}
 
 	// use default context
-	auto context = renderer->getDefaultContext();
+	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
 
 	//
-	renderer->disableCulling(context);
+	renderer->disableCulling(contextIdx);
 
 	// use frame buffer render shader
 	auto frameBufferRenderShader = Engine::getFrameBufferRenderShader();
@@ -206,63 +206,63 @@ void FrameBuffer::doPostProcessing(Engine* engine, FrameBuffer* target, FrameBuf
 	// use post processing shader
 	auto postProcessingShader = Engine::getInstance()->getPostProcessingShader();
 	postProcessingShader->useProgram();
-	postProcessingShader->setShader(context, shaderId);
-	postProcessingShader->setBufferPixelWidth(context, 1.0f / static_cast<float>(source->getWidth()));
-	postProcessingShader->setBufferPixelHeight(context, 1.0f / static_cast<float>(source->getHeight()));
-	postProcessingShader->setShaderParameters(context, engine);
+	postProcessingShader->setShader(contextIdx, shaderId);
+	postProcessingShader->setBufferPixelWidth(contextIdx, 1.0f / static_cast<float>(source->getWidth()));
+	postProcessingShader->setBufferPixelHeight(contextIdx, 1.0f / static_cast<float>(source->getHeight()));
+	postProcessingShader->setShaderParameters(contextIdx, engine);
 
 	// bind color buffer texture
-	renderer->setTextureUnit(context, 0);
-	renderer->bindTexture(context, source->colorBufferTextureId);
+	renderer->setTextureUnit(contextIdx, 0);
+	renderer->bindTexture(contextIdx, source->colorBufferTextureId);
 
 	// bind depth buffer texture
-	renderer->setTextureUnit(context, 1);
-	renderer->bindTexture(context, source->depthBufferTextureId);
+	renderer->setTextureUnit(contextIdx, 1);
+	renderer->bindTexture(contextIdx, source->depthBufferTextureId);
 
 	// bind temporary if any given
 	if (temporary != nullptr) {
-		renderer->setTextureUnit(context, 2);
-		renderer->bindTexture(context, temporary->colorBufferTextureId);
+		renderer->setTextureUnit(contextIdx, 2);
+		renderer->bindTexture(contextIdx, temporary->colorBufferTextureId);
 
-		renderer->setTextureUnit(context, 3);
-		renderer->bindTexture(context, temporary->depthBufferTextureId);
+		renderer->setTextureUnit(contextIdx, 3);
+		renderer->bindTexture(contextIdx, temporary->depthBufferTextureId);
 	}
 
 	//
-	renderer->bindVerticesBufferObject(context, frameBufferRenderShader->getVBOVertices());
-	renderer->bindTextureCoordinatesBufferObject(context, frameBufferRenderShader->getVBOTextureCoordinates());
+	renderer->bindVerticesBufferObject(contextIdx, frameBufferRenderShader->getVBOVertices());
+	renderer->bindTextureCoordinatesBufferObject(contextIdx, frameBufferRenderShader->getVBOTextureCoordinates());
 
 	// unuse frame buffer render shader
-	renderer->drawTrianglesFromBufferObjects(context, 2, 0);
+	renderer->drawTrianglesFromBufferObjects(contextIdx, 2, 0);
 
 	// unbind buffers
-	renderer->unbindBufferObjects(context);
+	renderer->unbindBufferObjects(contextIdx);
 
 	// unbind color buffer texture
-	renderer->setTextureUnit(context, 0);
-	renderer->bindTexture(context, renderer->ID_NONE);
+	renderer->setTextureUnit(contextIdx, 0);
+	renderer->bindTexture(contextIdx, renderer->ID_NONE);
 
 	// unbind depth buffer texture
-	renderer->setTextureUnit(context, 1);
-	renderer->bindTexture(context, renderer->ID_NONE);
+	renderer->setTextureUnit(contextIdx, 1);
+	renderer->bindTexture(contextIdx, renderer->ID_NONE);
 
 	// unbind temporary if any given
 	if (temporary != nullptr) {
-		renderer->setTextureUnit(context, 2);
-		renderer->bindTexture(context, renderer->ID_NONE);
+		renderer->setTextureUnit(contextIdx, 2);
+		renderer->bindTexture(contextIdx, renderer->ID_NONE);
 
-		renderer->setTextureUnit(context, 3);
-		renderer->bindTexture(context, renderer->ID_NONE);
+		renderer->setTextureUnit(contextIdx, 3);
+		renderer->bindTexture(contextIdx, renderer->ID_NONE);
 	}
 
 	// switch back to diffuse texture unit
-	renderer->setTextureUnit(context, 0);
+	renderer->setTextureUnit(contextIdx, 0);
 
 	//
 	postProcessingShader->unUseProgram();
 
 	// unset
-	renderer->enableCulling(context);
+	renderer->enableCulling(contextIdx);
 
 	// did we blend?
 	if (blendToSource != nullptr) {

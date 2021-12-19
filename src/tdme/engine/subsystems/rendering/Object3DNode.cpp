@@ -166,14 +166,14 @@ void Object3DNode::createNodes(Object3DBase* object3D, const map<string, Node*>&
 	}
 }
 
-void Object3DNode::computeTransformations(void* context, vector<Object3DNode*>& object3DNodes)
+void Object3DNode::computeTransformations(int contextIdx, vector<Object3DNode*>& object3DNodes)
 {
 	for (auto object3DNode : object3DNodes) {
-		object3DNode->mesh->computeTransformations(context, object3DNode->object);
+		object3DNode->mesh->computeTransformations(contextIdx, object3DNode->object);
 	}
 }
 
-void Object3DNode::setupTextures(Renderer* renderer, void* context, Object3DNode* object3DNode, int32_t facesEntityIdx)
+void Object3DNode::setupTextures(Renderer* renderer, int contextIdx, Object3DNode* object3DNode, int32_t facesEntityIdx)
 {
 	auto& facesEntities = object3DNode->node->getFacesEntities();
 	auto material = facesEntities[facesEntityIdx].getMaterial();
@@ -184,7 +184,7 @@ void Object3DNode::setupTextures(Renderer* renderer, void* context, Object3DNode
 		// load specular diffuse texture
 		if (object3DNode->specularMaterialDiffuseTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
 			if (specularMaterialProperties->getDiffuseTexture() != nullptr) {
-				object3DNode->specularMaterialDiffuseTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(specularMaterialProperties->getDiffuseTexture(), context);
+				object3DNode->specularMaterialDiffuseTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(specularMaterialProperties->getDiffuseTexture(), contextIdx);
 			} else {
 				object3DNode->specularMaterialDiffuseTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
 			}
@@ -192,7 +192,7 @@ void Object3DNode::setupTextures(Renderer* renderer, void* context, Object3DNode
 		// load specular specular texture
 		if (renderer->isSpecularMappingAvailable() == true && object3DNode->specularMaterialSpecularTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
 			if (specularMaterialProperties->getSpecularTexture() != nullptr) {
-				object3DNode->specularMaterialSpecularTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(specularMaterialProperties->getSpecularTexture(), context);
+				object3DNode->specularMaterialSpecularTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(specularMaterialProperties->getSpecularTexture(), contextIdx);
 			} else {
 				object3DNode->specularMaterialSpecularTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
 			}
@@ -200,7 +200,7 @@ void Object3DNode::setupTextures(Renderer* renderer, void* context, Object3DNode
 		// load specular normal texture
 		if (renderer->isNormalMappingAvailable() == true && object3DNode->specularMaterialNormalTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
 			if (specularMaterialProperties->getNormalTexture() != nullptr) {
-				object3DNode->specularMaterialNormalTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(specularMaterialProperties->getNormalTexture(), context);
+				object3DNode->specularMaterialNormalTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(specularMaterialProperties->getNormalTexture(), contextIdx);
 			} else {
 				object3DNode->specularMaterialNormalTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
 			}
@@ -212,7 +212,7 @@ void Object3DNode::setupTextures(Renderer* renderer, void* context, Object3DNode
 		// load PBR base color texture
 		if (object3DNode->pbrMaterialBaseColorTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
 			if (pbrMaterialProperties->getBaseColorTexture() != nullptr) {
-				object3DNode->pbrMaterialBaseColorTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(pbrMaterialProperties->getBaseColorTexture(), context);
+				object3DNode->pbrMaterialBaseColorTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(pbrMaterialProperties->getBaseColorTexture(), contextIdx);
 			} else {
 				object3DNode->pbrMaterialBaseColorTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
 			}
@@ -220,7 +220,7 @@ void Object3DNode::setupTextures(Renderer* renderer, void* context, Object3DNode
 		// load PBR metallic roughness texture
 		if (object3DNode->pbrMaterialMetallicRoughnessTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
 			if (pbrMaterialProperties->getMetallicRoughnessTexture() != nullptr) {
-				object3DNode->pbrMaterialMetallicRoughnessTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(pbrMaterialProperties->getMetallicRoughnessTexture(), context);
+				object3DNode->pbrMaterialMetallicRoughnessTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(pbrMaterialProperties->getMetallicRoughnessTexture(), contextIdx);
 			} else {
 				object3DNode->pbrMaterialMetallicRoughnessTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
 			}
@@ -228,7 +228,7 @@ void Object3DNode::setupTextures(Renderer* renderer, void* context, Object3DNode
 		// load PBR normal texture
 		if (object3DNode->pbrMaterialNormalTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
 			if (pbrMaterialProperties->getNormalTexture() != nullptr) {
-				object3DNode->pbrMaterialNormalTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(pbrMaterialProperties->getNormalTexture(), context);
+				object3DNode->pbrMaterialNormalTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(pbrMaterialProperties->getNormalTexture(), contextIdx);
 			} else {
 				object3DNode->pbrMaterialNormalTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
 			}

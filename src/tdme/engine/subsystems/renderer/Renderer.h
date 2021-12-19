@@ -113,6 +113,8 @@ public:
 		uint32_t disposedBuffers { 0 };
 	};
 
+	int32_t CONTEXTINDEX_DEFAULT;
+
 	int32_t ID_NONE;
 	int32_t CLEAR_DEPTH_BUFFER_BIT;
 	int32_t CLEAR_COLOR_BUFFER_BIT;
@@ -169,22 +171,6 @@ public:
 	 * Destructor
 	 */
 	virtual ~Renderer();
-
-	/**
-	 * @return default context
-	 */
-	virtual void* getDefaultContext();
-
-	/**
-	 * @return context by index
-	 */
-	virtual void* getContext(int contextIdx);
-
-	/**
-	 * Retrieve context index from given context
-	 * @return context index
-	 */
-	virtual int getContextIndex(void* context);
 
 	/**
 	 * Initialize renderer
@@ -322,10 +308,10 @@ public:
 
 	/**
 	 * Use shader program
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param programId programId
 	 */
-	virtual void useProgram(void* context, int32_t programId) = 0;
+	virtual void useProgram(int contextIdx, int32_t programId) = 0;
 
 	/**
 	 * Creates a shader program
@@ -358,68 +344,68 @@ public:
 
 	/**
 	 * Set up a integer uniform value
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param uniformId uniform id
 	 * @param value value
 	 */
-	virtual void setProgramUniformInteger(void* context, int32_t uniformId, int32_t value) = 0;
+	virtual void setProgramUniformInteger(int contextIdx, int32_t uniformId, int32_t value) = 0;
 
 	/**
 	 * Set up a float uniform value
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param uniformId uniform id
 	 * @param value value
 	 */
-	virtual void setProgramUniformFloat(void* context, int32_t uniformId, float value) = 0;
+	virtual void setProgramUniformFloat(int contextIdx, int32_t uniformId, float value) = 0;
 
 	/**
 	 * Set up a float matrix 3x3 uniform value
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param uniformId uniform id
 	 * @param value value
 	 */
-	virtual void setProgramUniformFloatMatrix3x3(void* context, int32_t uniformId, const array<float, 9>& value) = 0;
+	virtual void setProgramUniformFloatMatrix3x3(int contextIdx, int32_t uniformId, const array<float, 9>& value) = 0;
 
 	/**
 	 * Set up a float matrix 4x4 uniform value
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param uniformId uniform id
 	 * @param value value
 	 */
-	virtual void setProgramUniformFloatMatrix4x4(void* context, int32_t uniformId, const array<float, 16>& value) = 0;
+	virtual void setProgramUniformFloatMatrix4x4(int contextIdx, int32_t uniformId, const array<float, 16>& value) = 0;
 
 	/**
 	 * Set up a float matrices 4x4 uniform values
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param uniformId uniform id
 	 * @param count count
 	 * @param data data
 	 */
-	virtual void setProgramUniformFloatMatrices4x4(void* context, int32_t uniformId, int32_t count, FloatBuffer* data) = 0;
+	virtual void setProgramUniformFloatMatrices4x4(int contextIdx, int32_t uniformId, int32_t count, FloatBuffer* data) = 0;
 
 	/**
 	 * Set up a float vec4 uniform value
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param uniformId uniform id
 	 * @param data data
 	 */
-	virtual void setProgramUniformFloatVec4(void* context, int32_t uniformId, const array<float, 4>& data) = 0;
+	virtual void setProgramUniformFloatVec4(int contextIdx, int32_t uniformId, const array<float, 4>& data) = 0;
 
 	/**
 	 * Set up a float vec3 uniform value
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param uniformId uniform id
 	 * @param data data
 	 */
-	virtual void setProgramUniformFloatVec3(void* context, int32_t uniformId, const array<float, 3>& data) = 0;
+	virtual void setProgramUniformFloatVec3(int contextIdx, int32_t uniformId, const array<float, 3>& data) = 0;
 
 	/**
 	 * Set up a float vec2 uniform value
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param uniformId uniform id
 	 * @param data data
 	 */
-	virtual void setProgramUniformFloatVec2(void* context, int32_t uniformId, const array<float, 2>& data) = 0;
+	virtual void setProgramUniformFloatVec2(int contextIdx, int32_t uniformId, const array<float, 2>& data) = 0;
 
 	/**
 	 * Bind attribute to a input location
@@ -455,17 +441,17 @@ public:
 
 	/**
 	 * Get current lighting model
-	 * @param context context
+	 * @param contextIdx context index
 	 * @return lighting, see LIGHTING_*
 	 */
-	virtual int32_t getLighting(void* context) = 0;
+	virtual int32_t getLighting(int contextIdx) = 0;
 
 	/**
 	 * Set current lighting model
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param lighting lighting, see LIGHTING_*
 	 */
-	virtual void setLighting(void* context, int32_t lighting) = 0;
+	virtual void setLighting(int contextIdx, int32_t lighting) = 0;
 
 	/**
 	 * @return camera position
@@ -491,9 +477,9 @@ public:
 
 	/**
 	 * Update projection matrix event
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	virtual void onUpdateProjectionMatrix(void* context) = 0;
+	virtual void onUpdateProjectionMatrix(int contextIdx) = 0;
 
 	/**
 	 * @return camera matrix
@@ -502,9 +488,9 @@ public:
 
 	/**
 	 * Update camera matrix event
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	virtual void onUpdateCameraMatrix(void* context) = 0;
+	virtual void onUpdateCameraMatrix(int contextIdx) = 0;
 
 	/**
 	 * @return model view matrix or in some cases the model matrix
@@ -513,9 +499,9 @@ public:
 
 	/**
 	 * Update model view matrix event
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	virtual void onUpdateModelViewMatrix(void* context) = 0;
+	virtual void onUpdateModelViewMatrix(int contextIdx) = 0;
 
 	/**
 	 * @return view port matrix
@@ -524,16 +510,16 @@ public:
 
 	/**
 	 * Get texture matrix
-	 * @param context context
+	 * @param contextIdx context index
 	 * @return texture matrix
 	 */
-	virtual Matrix2D3x3& getTextureMatrix(void* context) = 0;
+	virtual Matrix2D3x3& getTextureMatrix(int contextIdx) = 0;
 
 	/**
 	 * Update texture matrix for active texture unit event
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	virtual void onUpdateTextureMatrix(void* context) = 0;
+	virtual void onUpdateTextureMatrix(int contextIdx) = 0;
 
 	/**
 	 * Set up clear color
@@ -546,22 +532,22 @@ public:
 
 	/**
 	 * Enable culling
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	virtual void enableCulling(void* context) = 0;
+	virtual void enableCulling(int contextIdx) = 0;
 
 	/**
 	 * Disable culling
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	virtual void disableCulling(void* context) = 0;
+	virtual void disableCulling(int contextIdx) = 0;
 
 	/**
 	 * Set up clock wise or counter clock wise faces as front face
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param frontFace frontFace
 	 */
-	virtual void setFrontFace(void* context, int32_t frontFace) = 0;
+	virtual void setFrontFace(int contextIdx, int32_t frontFace) = 0;
 
 	/**
 	 * Sets up which face will be culled
@@ -669,14 +655,14 @@ public:
 
 	/**
 	 * Uploads texture data to current bound texture
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param texture texture
 	 */
-	virtual void uploadTexture(void* context, Texture* texture) = 0;
+	virtual void uploadTexture(int contextIdx, Texture* texture) = 0;
 
 	/**
 	 * Uploads cube map texture data to current bound texture
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param textureLeft texture left
 	 * @param textureRight texture right
 	 * @param textureTop texture top
@@ -684,16 +670,16 @@ public:
 	 * @param textureFront texture front
 	 * @param textureBack texture back
 	 */
-	virtual void uploadCubeMapTexture(void* context, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) = 0;
+	virtual void uploadCubeMapTexture(int contextIdx, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) = 0;
 
 	/**
 	 * Create cube map texture from frame buffers
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param width width
 	 * @param height height
 	 * @return texture id
 	 */
-	virtual int32_t createCubeMapTexture(void* context, int32_t width, int32_t height) = 0;
+	virtual int32_t createCubeMapTexture(int contextIdx, int32_t width, int32_t height) = 0;
 
 	/**
 	 * Resizes a depth texture
@@ -731,24 +717,24 @@ public:
 
 	/**
 	 * Binds a texture with given id or unbinds when using ID_NONE
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param textureId textureId
 	 */
-	virtual void bindTexture(void* context, int32_t textureId) = 0;
+	virtual void bindTexture(int contextIdx, int32_t textureId) = 0;
 
 	/**
 	 * Binds a cube map texture with given id or unbinds when using ID_NONE
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param textureId textureId
 	 */
-	virtual void bindCubeMapTexture(void* context, int32_t textureId) = 0;
+	virtual void bindCubeMapTexture(int contextIdx, int32_t textureId) = 0;
 
 	/**
 	 * On bind texture event
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param textureId textureId
 	 */
-	virtual void onBindTexture(void* context, int32_t textureId) = 0;
+	virtual void onBindTexture(int contextIdx, int32_t textureId) = 0;
 
 	/**
 	 * Dispose a texture
@@ -814,190 +800,190 @@ public:
 
 	/**
 	 * Uploads buffer data to buffer object
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
 	 * @param size size
 	 * @param data data
 	 */
-	virtual void uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data) = 0;
+	virtual void uploadBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, FloatBuffer* data) = 0;
 
 	/**
 	 * Uploads buffer data to buffer object
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
 	 * @param size size
 	 * @param data data
 	 */
-	virtual void uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data) = 0;
+	virtual void uploadBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, IntBuffer* data) = 0;
 
 	/**
 	 * Uploads buffer data to buffer object
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
 	 * @param size size
 	 * @param data data
 	 */
-	virtual void uploadBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data) = 0;
+	virtual void uploadBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, ShortBuffer* data) = 0;
 
 	/**
 	 * Uploads buffer data to buffer object
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
 	 * @param size size
 	 * @param data data
 	 */
-	virtual void uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, ShortBuffer* data) = 0;
+	virtual void uploadIndicesBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, ShortBuffer* data) = 0;
 
 	/**
 	 * Uploads buffer data to buffer object
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
 	 * @param size size
 	 * @param data data
 	 */
-	virtual void uploadIndicesBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data) = 0;
+	virtual void uploadIndicesBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, IntBuffer* data) = 0;
 
 	/**
 	 * Bind indices buffer object
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindIndicesBufferObject(void* context, int32_t bufferObjectId) = 0;
+	virtual void bindIndicesBufferObject(int contextIdx, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Bind texture coordinates buffer object
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindTextureCoordinatesBufferObject(void* context, int32_t bufferObjectId) = 0;
+	virtual void bindTextureCoordinatesBufferObject(int contextIdx, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Bind vertices buffer object
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindVerticesBufferObject(void* context, int32_t bufferObjectId) = 0;
+	virtual void bindVerticesBufferObject(int contextIdx, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Bind normals buffer object
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindNormalsBufferObject(void* context, int32_t bufferObjectId) = 0;
+	virtual void bindNormalsBufferObject(int contextIdx, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Bind colors buffer object
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindColorsBufferObject(void* context, int32_t bufferObjectId) = 0;
+	virtual void bindColorsBufferObject(int contextIdx, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Bind tangents buffer object
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindTangentsBufferObject(void* context, int32_t bufferObjectId) = 0;
+	virtual void bindTangentsBufferObject(int contextIdx, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Bind bitangents buffer object
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindBitangentsBufferObject(void* context, int32_t bufferObjectId) = 0;
+	virtual void bindBitangentsBufferObject(int contextIdx, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Bind model matrices buffer object
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindModelMatricesBufferObject(void* context, int32_t bufferObjectId) = 0;
+	virtual void bindModelMatricesBufferObject(int contextIdx, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Bind effect color muls buffer object
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
 	 * @param divisor divisor
 	 */
-	virtual void bindEffectColorMulsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor) = 0;
+	virtual void bindEffectColorMulsBufferObject(int contextIdx, int32_t bufferObjectId, int32_t divisor) = 0;
 
 	/**
 	 * Bind effect color adds buffer object
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
 	 * @param divisor divisor
 	 */
-	virtual void bindEffectColorAddsBufferObject(void* context, int32_t bufferObjectId, int32_t divisor) = 0;
+	virtual void bindEffectColorAddsBufferObject(int contextIdx, int32_t bufferObjectId, int32_t divisor) = 0;
 
 	/**
 	 * Bind origins buffer object
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindOriginsBufferObject(void* context, int32_t bufferObjectId) = 0;
+	virtual void bindOriginsBufferObject(int contextIdx, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Bind texture and sprite indices buffer object
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindTextureSpriteIndicesBufferObject(void* context, int32_t bufferObjectId) = 0;
+	virtual void bindTextureSpriteIndicesBufferObject(int contextIdx, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Bind point sizes buffer object
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindPointSizesBufferObject(void* context, int32_t bufferObjectId) = 0;
+	virtual void bindPointSizesBufferObject(int contextIdx, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Bind sprite sheet dimension buffer object
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindSpriteSheetDimensionBufferObject(void* context, int32_t bufferObjectId) = 0;
+	virtual void bindSpriteSheetDimensionBufferObject(int contextIdx, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Draw instanced indexed triangles from buffer objects
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param triangles triangles
 	 * @param trianglesOffset triangles offset
 	 * @param instances instances
 	 */
-	virtual void drawInstancedIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) = 0;
+	virtual void drawInstancedIndexedTrianglesFromBufferObjects(int contextIdx, int32_t triangles, int32_t trianglesOffset, int32_t instances) = 0;
 
 	/**
 	 * Draw indexed triangles from buffer objects
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param triangles triangles
 	 * @param trianglesOffset triangles offset
 	 */
-	virtual void drawIndexedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset) = 0;
+	virtual void drawIndexedTrianglesFromBufferObjects(int contextIdx, int32_t triangles, int32_t trianglesOffset) = 0;
 
 	/**
 	 * Draw instanced triangles from buffer objects
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param triangles triangles
 	 * @param trianglesOffset triangles offset
 	 * @param instances instances
 	 */
-	virtual void drawInstancedTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset, int32_t instances) = 0;
+	virtual void drawInstancedTrianglesFromBufferObjects(int contextIdx, int32_t triangles, int32_t trianglesOffset, int32_t instances) = 0;
 
 	/**
 	 * Draw triangles from buffer objects
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param triangles triangles
 	 * @param trianglesOffset triangles offset
 	 */
-	virtual void drawTrianglesFromBufferObjects(void* context, int32_t triangles, int32_t trianglesOffset) = 0;
+	virtual void drawTrianglesFromBufferObjects(int contextIdx, int32_t triangles, int32_t trianglesOffset) = 0;
 
 	/**
 	 * Draw points from buffer objects
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param points points
 	 * @param pointsOffset points offset
 	 */
-	virtual void drawPointsFromBufferObjects(void* context, int32_t points, int32_t pointsOffset) = 0;
+	virtual void drawPointsFromBufferObjects(int contextIdx, int32_t points, int32_t pointsOffset) = 0;
 
 	/**
 	 * Set line width
@@ -1007,17 +993,17 @@ public:
 
 	/**
 	 * Draw lines from buffer objects
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param points points
 	 * @param pointsOffset points offset
 	 */
-	virtual void drawLinesFromBufferObjects(void* context, int32_t points, int32_t pointsOffset) = 0;
+	virtual void drawLinesFromBufferObjects(int contextIdx, int32_t points, int32_t pointsOffset) = 0;
 
 	/**
 	 * Unbind buffer objects
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	virtual void unbindBufferObjects(void* context) = 0;
+	virtual void unbindBufferObjects(int contextIdx) = 0;
 
 	/**
 	 * Disposes a frame buffer object
@@ -1027,112 +1013,112 @@ public:
 
 	/**
 	 * Get texture unit
-	 * @param context context
+	 * @param contextIdx context index
 	 * @return active texture unit
 	 */
-	virtual int32_t getTextureUnit(void* context) = 0;
+	virtual int32_t getTextureUnit(int contextIdx) = 0;
 
 	/**
 	 * Sets up texture unit
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param textureUnit texture unit
 	 */
-	virtual void setTextureUnit(void* context, int32_t textureUnit) = 0;
+	virtual void setTextureUnit(int contextIdx, int32_t textureUnit) = 0;
 
 	/**
 	 * Get light
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param lightId light id
 	 * @return light
 	 */
-	virtual Renderer_Light& getLight(void* context, int32_t lightId) = 0;
+	virtual Renderer_Light& getLight(int contextIdx, int32_t lightId) = 0;
 
 	/**
 	 * Update light
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param lightId light id
 	 */
-	virtual void onUpdateLight(void* context, int32_t lightId) = 0;
+	virtual void onUpdateLight(int contextIdx, int32_t lightId) = 0;
 
 	/**
 	 * Get effect color mul
 	 * @param context
 	 * @return effect color mul
 	 */
-	virtual array<float, 4>& getEffectColorMul(void* context) = 0;
+	virtual array<float, 4>& getEffectColorMul(int contextIdx) = 0;
 
 	/**
 	 * Get effect color add
 	 * @param context
 	 * @return effect color add
 	 */
-	virtual array<float, 4>& getEffectColorAdd(void* context) = 0;
+	virtual array<float, 4>& getEffectColorAdd(int contextIdx) = 0;
 
 	/**
 	 * Update material
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	virtual void onUpdateEffect(void* context) = 0;
+	virtual void onUpdateEffect(int contextIdx) = 0;
 
 	/**
 	 * Get specular material
-	 * @param context context
+	 * @param contextIdx context index
 	 * @return material
 	 */
-	virtual Renderer_SpecularMaterial& getSpecularMaterial(void* context) = 0;
+	virtual Renderer_SpecularMaterial& getSpecularMaterial(int contextIdx) = 0;
 
 	/**
 	 * Get PBR material
-	 * @param context context
+	 * @param contextIdx context index
 	 * @return material
 	 */
-	virtual Renderer_PBRMaterial& getPBRMaterial(void* context) = 0;
+	virtual Renderer_PBRMaterial& getPBRMaterial(int contextIdx) = 0;
 
 	/**
 	 * On update material
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	virtual void onUpdateMaterial(void* context) = 0;
+	virtual void onUpdateMaterial(int contextIdx) = 0;
 
 	/**
 	 * Get shader
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	virtual const string& getShader(void* context) = 0;
+	virtual const string& getShader(int contextIdx) = 0;
 
 	/**
 	 * Set shader
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param id shader id
 	 * @param parameters parameters
 	 */
-	virtual void setShader(void* context, const string& id) = 0;
+	virtual void setShader(int contextIdx, const string& id) = 0;
 
 	/**
 	 * On update shader
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	virtual void onUpdateShader(void* context) = 0;
+	virtual void onUpdateShader(int contextIdx) = 0;
 
 	/**
 	 * Get shader parameters
-	 * @param context context
+	 * @param contextIdx context index
 	 * @return shader parameters
 	 */
-	virtual const EntityShaderParameters& getShaderParameters(void* context) = 0;
+	virtual const EntityShaderParameters& getShaderParameters(int contextIdx) = 0;
 
 	/**
 	 * Set shader parameters
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param parameters shader parameters
 	 */
-	virtual void setShaderParameters(void* context, const EntityShaderParameters& parameters) = 0;
+	virtual void setShaderParameters(int contextIdx, const EntityShaderParameters& parameters) = 0;
 
 	/**
 	 * On update shader parameters
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	virtual void onUpdateShaderParameters(void* context) = 0;
+	virtual void onUpdateShaderParameters(int contextIdx) = 0;
 
 	/**
 	 * Reads a pixel depth
@@ -1154,12 +1140,12 @@ public:
 
 	/**
 	 * Dispatch compute
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param numGroupsX num groups x
 	 * @param numGroupsY num groups y
 	 * @param numGroupsZ num groups z
 	 */
-	virtual void dispatchCompute(void* context, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) = 0;
+	virtual void dispatchCompute(int contextIdx, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) = 0;
 
 	/**
 	 * Memory barrier
@@ -1168,77 +1154,77 @@ public:
 
 	/**
 	 * Upload skinning buffer object
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
 	 * @param size size
 	 * @param data data
 	 */
-	virtual void uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, FloatBuffer* data) = 0;
+	virtual void uploadSkinningBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, FloatBuffer* data) = 0;
 
 	/**
 	 * Upload skinning buffer object
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
 	 * @param size size
 	 * @param data data
 	 */
-	virtual void uploadSkinningBufferObject(void* context, int32_t bufferObjectId, int32_t size, IntBuffer* data) = 0;
+	virtual void uploadSkinningBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, IntBuffer* data) = 0;
 
 	/**
 	 * Bind skinning vertices buffer object
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindSkinningVerticesBufferObject(void* context, int32_t bufferObjectId) = 0;
+	virtual void bindSkinningVerticesBufferObject(int contextIdx, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Bind skinning normal buffer object
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindSkinningNormalsBufferObject(void* context, int32_t bufferObjectId) = 0;
+	virtual void bindSkinningNormalsBufferObject(int contextIdx, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Bind skinning vertex joints buffer object
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindSkinningVertexJointsBufferObject(void* context, int32_t bufferObjectId) = 0;
+	virtual void bindSkinningVertexJointsBufferObject(int contextIdx, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Bind skinning vertex joint indices buffer object
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindSkinningVertexJointIdxsBufferObject(void* context, int32_t bufferObjectId) = 0;
+	virtual void bindSkinningVertexJointIdxsBufferObject(int contextIdx, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Bind skinning vertex joint weights buffer object
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindSkinningVertexJointWeightsBufferObject(void* context, int32_t bufferObjectId) = 0;
+	virtual void bindSkinningVertexJointWeightsBufferObject(int contextIdx, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Bind skinning vertices result buffer object
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindSkinningVerticesResultBufferObject(void* context, int32_t bufferObjectId) = 0;
+	virtual void bindSkinningVerticesResultBufferObject(int contextIdx, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Bind skinning normals result buffer object
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindSkinningNormalsResultBufferObject(void* context, int32_t bufferObjectId) = 0;
+	virtual void bindSkinningNormalsResultBufferObject(int contextIdx, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Bind skinning matrices result buffer object
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
 	 */
-	virtual void bindSkinningMatricesBufferObject(void* context, int32_t bufferObjectId) = 0;
+	virtual void bindSkinningMatricesBufferObject(int contextIdx, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Create a single vertex array object
@@ -1261,28 +1247,28 @@ public:
 	 * Get mask max value
 	 * @return mask max value
 	 */
-	virtual float getMaskMaxValue(void* context) = 0;
+	virtual float getMaskMaxValue(int contextIdx) = 0;
 
 	/**
 	 * Set mask max value
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param maskMinValue mask mask value
 	 */
-	virtual void setMaskMaxValue(void* context, float maskMaxValue) = 0;
+	virtual void setMaskMaxValue(int contextIdx, float maskMaxValue) = 0;
 
 	/**
 	 * Get environment mapping cube map position
-	 * @param context context
+	 * @param contextIdx context index
 	 * @return environment mapping position
 	 */
-	virtual array<float, 3>& getEnvironmentMappingCubeMapPosition(void* context) = 0;
+	virtual array<float, 3>& getEnvironmentMappingCubeMapPosition(int contextIdx) = 0;
 
 	/**
 	 * Set environment mapping cube map position
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param position position
 	 */
-	virtual void setEnvironmentMappingCubeMapPosition(void* context, array<float, 3>& position) = 0;
+	virtual void setEnvironmentMappingCubeMapPosition(int contextIdx, array<float, 3>& position) = 0;
 
 	/**
 	 * Set up renderer for GUI rendering

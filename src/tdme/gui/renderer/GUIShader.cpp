@@ -106,14 +106,14 @@ void GUIShader::initialize()
 
 void GUIShader::useProgram()
 {
-	auto context = renderer->getDefaultContext();
-	renderer->useProgram(context, programId);
-	renderer->setLighting(context, renderer->LIGHTING_NONE);
-	renderer->setProgramUniformInteger(context, uniformDiffuseTextureUnit, 0);
-	renderer->setProgramUniformInteger(context, uniformMaskTextureUnit, 1);
-	renderer->setProgramUniformInteger(context, uniformMaskTextureAvailable, 0);
-	renderer->setProgramUniformFloat(context, uniformMaskMaxValue, 1.0);
-	renderer->setProgramUniformInteger(context, uniformGradientAvailable, 0);
+	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
+	renderer->useProgram(contextIdx, programId);
+	renderer->setLighting(contextIdx, renderer->LIGHTING_NONE);
+	renderer->setProgramUniformInteger(contextIdx, uniformDiffuseTextureUnit, 0);
+	renderer->setProgramUniformInteger(contextIdx, uniformMaskTextureUnit, 1);
+	renderer->setProgramUniformInteger(contextIdx, uniformMaskTextureAvailable, 0);
+	renderer->setProgramUniformFloat(contextIdx, uniformMaskMaxValue, 1.0);
+	renderer->setProgramUniformInteger(contextIdx, uniformGradientAvailable, 0);
 	isRunning = true;
 }
 
@@ -125,13 +125,13 @@ void GUIShader::unUseProgram()
 void GUIShader::bindTexture(int32_t textureId)
 {
 	if (isRunning == false) return;
-	switch(renderer->getTextureUnit(renderer->getDefaultContext())) {
+	switch(renderer->getTextureUnit(renderer->CONTEXTINDEX_DEFAULT)) {
 		case 0:
-			renderer->setProgramUniformInteger(renderer->getDefaultContext(), uniformDiffuseTextureAvailable, textureId == 0 ? 0 : 1);
+			renderer->setProgramUniformInteger(renderer->CONTEXTINDEX_DEFAULT, uniformDiffuseTextureAvailable, textureId == 0 ? 0 : 1);
 			break;
 		case 1:
-			renderer->setProgramUniformFloat(renderer->getDefaultContext(), uniformMaskMaxValue, renderer->getMaskMaxValue(renderer->getDefaultContext()));
-			renderer->setProgramUniformInteger(renderer->getDefaultContext(), uniformMaskTextureAvailable, textureId == 0 ? 0 : 1);
+			renderer->setProgramUniformFloat(renderer->CONTEXTINDEX_DEFAULT, uniformMaskMaxValue, renderer->getMaskMaxValue(renderer->CONTEXTINDEX_DEFAULT));
+			renderer->setProgramUniformInteger(renderer->CONTEXTINDEX_DEFAULT, uniformMaskTextureAvailable, textureId == 0 ? 0 : 1);
 			break;
 	}
 }
@@ -140,43 +140,43 @@ void GUIShader::updateEffect()
 {
 	if (isRunning == false) return;
 
-	// use default context
-	auto context = renderer->getDefaultContext();
+	// use default contextIdx
+	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
 
 	//
-	renderer->setProgramUniformFloatVec4(context, uniformEffectColorMul, renderer->getEffectColorMul(context));
-	renderer->setProgramUniformFloatVec4(context, uniformEffectColorAdd, renderer->getEffectColorAdd(context));
+	renderer->setProgramUniformFloatVec4(contextIdx, uniformEffectColorMul, renderer->getEffectColorMul(contextIdx));
+	renderer->setProgramUniformFloatVec4(contextIdx, uniformEffectColorAdd, renderer->getEffectColorAdd(contextIdx));
 }
 
 
 void GUIShader::updateTextureMatrix() {
 	if (isRunning == false) return;
 
-	// use default context
-	auto context = renderer->getDefaultContext();
+	// use default contextIdx
+	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
 
 	//
-	renderer->setProgramUniformFloatMatrix3x3(context, uniformTextureMatrix, renderer->getTextureMatrix(context).getArray());
+	renderer->setProgramUniformFloatMatrix3x3(contextIdx, uniformTextureMatrix, renderer->getTextureMatrix(contextIdx).getArray());
 }
 
 void GUIShader::setGradient(int count, array<GUIColor, 10>& colors, array<float, 10>& colorStarts, float rotationAngle) {
-	// use default context
-	auto context = renderer->getDefaultContext();
+	// use default contextIdx
+	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
 
 	//
 	count = Math::clamp(count, 0, 10);
-	renderer->setProgramUniformInteger(context, uniformGradientAvailable, count > 0?1:0);
+	renderer->setProgramUniformInteger(contextIdx, uniformGradientAvailable, count > 0?1:0);
 	if (count == 0) return;
-	for (auto i = 0; i < count; i++) renderer->setProgramUniformFloatVec4(context, uniformGradientColors[i], colors[i].getArray());
-	renderer->setProgramUniformInteger(context, uniformGradientColorCount, count);
-	for (auto i = 0; i < count; i++) renderer->setProgramUniformFloat(context, uniformGradientColorStarts[i], colorStarts[i]);
-	renderer->setProgramUniformFloatMatrix3x3(context, uniformInverseGradientTextureMatrix, Matrix2D3x3::rotateAroundTextureCenter(-rotationAngle).getArray());
+	for (auto i = 0; i < count; i++) renderer->setProgramUniformFloatVec4(contextIdx, uniformGradientColors[i], colors[i].getArray());
+	renderer->setProgramUniformInteger(contextIdx, uniformGradientColorCount, count);
+	for (auto i = 0; i < count; i++) renderer->setProgramUniformFloat(contextIdx, uniformGradientColorStarts[i], colorStarts[i]);
+	renderer->setProgramUniformFloatMatrix3x3(contextIdx, uniformInverseGradientTextureMatrix, Matrix2D3x3::rotateAroundTextureCenter(-rotationAngle).getArray());
 }
 
 void GUIShader::unsetGradient() {
-	// use default context
-	auto context = renderer->getDefaultContext();
+	// use default contextIdx
+	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
 
 	//
-	renderer->setProgramUniformInteger(context, uniformGradientAvailable, 0);
+	renderer->setProgramUniformInteger(contextIdx, uniformGradientAvailable, 0);
 }

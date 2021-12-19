@@ -421,7 +421,7 @@ inline void Object3DAnimation::updateSkinningTransformationsMatrices() {
 	}
 }
 
-void Object3DAnimation::computeTransformations(vector<FlattenedNode>& nodeList, const Matrix4x4& instanceTransformationsMatrix, AnimationState& baseAnimation, void* context, int64_t lastFrameAtTime, int64_t currentFrameAtTime)
+void Object3DAnimation::computeTransformations(vector<FlattenedNode>& nodeList, const Matrix4x4& instanceTransformationsMatrix, AnimationState& baseAnimation, int contextIdx, int64_t lastFrameAtTime, int64_t currentFrameAtTime)
 {
 	// do transformations if we have a animation
 	if (baseAnimation.setup != nullptr) {
@@ -461,18 +461,18 @@ void Object3DAnimation::computeTransformations(vector<FlattenedNode>& nodeList, 
 	}
 }
 
-void Object3DAnimation::computeTransformations(void* context, const Matrix4x4& instanceTransformationsMatrix, int64_t lastFrameAtTime, int64_t currentFrameAtTime) {
+void Object3DAnimation::computeTransformations(int contextIdx, const Matrix4x4& instanceTransformationsMatrix, int64_t lastFrameAtTime, int64_t currentFrameAtTime) {
 	// compute last animation matrices if required
 	auto baseAnimationIdxLast = transformationsMatrices.size() > 1?(baseAnimationIdx + 1) % 2:-1;
 	if (baseAnimationIdxLast != -1 &&
 		baseAnimations[baseAnimationIdxLast].lastAtTime != -1LL) {
-		computeTransformations(nodeLists[1 + baseAnimationIdxLast], instanceTransformationsMatrix, baseAnimations[baseAnimationIdxLast], context, lastFrameAtTime, currentFrameAtTime);
+		computeTransformations(nodeLists[1 + baseAnimationIdxLast], instanceTransformationsMatrix, baseAnimations[baseAnimationIdxLast], contextIdx, lastFrameAtTime, currentFrameAtTime);
 	} else {
 		baseAnimationIdxLast = -1;
 	}
 
 	// compute current animation matrices
-	computeTransformations(nodeLists[nodeLists.size() > 1?1 + baseAnimationIdx:baseAnimationIdx], instanceTransformationsMatrix, baseAnimations[baseAnimationIdx], context, lastFrameAtTime, currentFrameAtTime);
+	computeTransformations(nodeLists[nodeLists.size() > 1?1 + baseAnimationIdx:baseAnimationIdx], instanceTransformationsMatrix, baseAnimations[baseAnimationIdx], contextIdx, lastFrameAtTime, currentFrameAtTime);
 
 	// blend if required
 	if (transformationsMatrices.size() > 1) {

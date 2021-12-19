@@ -53,12 +53,12 @@ public:
 	// overridden methods
 	virtual bool isInitialized() override;
 	virtual void initialize() override;
-	virtual void useProgram(Engine* engine, void* context) override;
-	virtual void unUseProgram(void* context) override;
-	virtual void updateMatrices(Renderer* renderer, void* context) override;
-	virtual void updateTextureMatrix(Renderer* renderer, void* context) override;
-	virtual void updateMaterial(Renderer* renderer, void* context) override;
-	virtual void updateShaderParameters(Renderer* renderer, void* context) override = 0;
-	virtual void bindTexture(Renderer* renderer, void* context, int32_t textureId) override;
+	virtual void useProgram(Engine* engine, int contextIdx) override;
+	virtual void unUseProgram(int contextIdx) override;
+	virtual void updateMatrices(Renderer* renderer, int contextIdx) override;
+	virtual void updateTextureMatrix(Renderer* renderer, int contextIdx) override;
+	virtual void updateMaterial(Renderer* renderer, int contextIdx) override;
+	virtual void updateShaderParameters(Renderer* renderer, int contextIdx) override = 0;
+	virtual void bindTexture(Renderer* renderer, int contextIdx, int32_t textureId) override;
 
 };

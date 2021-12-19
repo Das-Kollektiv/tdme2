@@ -50,6 +50,6 @@ public:
 	 * @param bytes bytes
 	 * @return byte buffer
 	 */
-	static ByteBuffer* getByteBuffer(void* context, int32_t bytes);
+	static ByteBuffer* getByteBuffer(int contextIdx, int32_t bytes);
 
 };

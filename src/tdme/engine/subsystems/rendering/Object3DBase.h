@@ -82,18 +82,18 @@ public:
 
 	/**
 	 * Pre render step, computes transformations
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param lastFrameAtTime time of last animation computation
 	 * @param currentFrameAtTime time of current animation computation
 	 */
-	virtual inline void computeTransformations(void* context, int64_t lastFrameAtTime, int64_t currentFrameAtTime){
+	virtual inline void computeTransformations(int contextIdx, int64_t lastFrameAtTime, int64_t currentFrameAtTime){
 		enabledInstances = 0;
 		for (auto i = 0; i < instances; i++) {
 			if (instanceEnabled[i] == false) continue;
-			instanceAnimations[i]->computeTransformations(context, instanceTransformations[i].getTransformationsMatrix(), lastFrameAtTime, currentFrameAtTime);
+			instanceAnimations[i]->computeTransformations(contextIdx, instanceTransformations[i].getTransformationsMatrix(), lastFrameAtTime, currentFrameAtTime);
 			enabledInstances++;
 		}
-		if (enabledInstances > 0) Object3DNode::computeTransformations(context, object3dNodes);
+		if (enabledInstances > 0) Object3DNode::computeTransformations(contextIdx, object3dNodes);
 	}
 
 	/**

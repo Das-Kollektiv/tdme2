@@ -76,7 +76,7 @@ void BatchRendererPoints::initialize()
 	}
 }
 
-void BatchRendererPoints::render(void* context)
+void BatchRendererPoints::render(int contextIdx)
 {
 	// skip if no vertex data exists
 	if (fbVertices.getPosition() == 0)
@@ -85,34 +85,34 @@ void BatchRendererPoints::render(void* context)
 	// determine point count
 	auto points = fbVertices.getPosition() / 3;
 	// upload
-	renderer->uploadBufferObject(context, (*vboIds)[0], fbVertices.getPosition() * sizeof(float), &fbVertices);
-	renderer->uploadBufferObject(context, (*vboIds)[2], fbColors.getPosition() * sizeof(float), &fbColors);
-	renderer->uploadBufferObject(context, (*vboIds)[4], fbPointSizes.getPosition() * sizeof(float), &fbPointSizes);
-	renderer->uploadBufferObject(context, (*vboIds)[5], fbEffectColorMul.getPosition() * sizeof(float), &fbEffectColorMul);
-	renderer->uploadBufferObject(context, (*vboIds)[6], fbEffectColorAdd.getPosition() * sizeof(float), &fbEffectColorAdd);
+	renderer->uploadBufferObject(contextIdx, (*vboIds)[0], fbVertices.getPosition() * sizeof(float), &fbVertices);
+	renderer->uploadBufferObject(contextIdx, (*vboIds)[2], fbColors.getPosition() * sizeof(float), &fbColors);
+	renderer->uploadBufferObject(contextIdx, (*vboIds)[4], fbPointSizes.getPosition() * sizeof(float), &fbPointSizes);
+	renderer->uploadBufferObject(contextIdx, (*vboIds)[5], fbEffectColorMul.getPosition() * sizeof(float), &fbEffectColorMul);
+	renderer->uploadBufferObject(contextIdx, (*vboIds)[6], fbEffectColorAdd.getPosition() * sizeof(float), &fbEffectColorAdd);
 	if (renderer->isSupportingIntegerProgramAttributes() == true) {
-		renderer->uploadBufferObject(context, (*vboIds)[1], sbTextureSpriteIndices.getPosition() * sizeof(uint16_t), &sbTextureSpriteIndices);
-		renderer->uploadBufferObject(context, (*vboIds)[3], sbSpriteSheetDimension.getPosition() * sizeof(uint16_t), &sbSpriteSheetDimension);
+		renderer->uploadBufferObject(contextIdx, (*vboIds)[1], sbTextureSpriteIndices.getPosition() * sizeof(uint16_t), &sbTextureSpriteIndices);
+		renderer->uploadBufferObject(contextIdx, (*vboIds)[3], sbSpriteSheetDimension.getPosition() * sizeof(uint16_t), &sbSpriteSheetDimension);
 	} else {
-		renderer->uploadBufferObject(context, (*vboIds)[1], fbTextureSpriteIndices.getPosition() * sizeof(float), &fbTextureSpriteIndices);
-		renderer->uploadBufferObject(context, (*vboIds)[3], fbSpriteSheetDimension.getPosition() * sizeof(float), &fbSpriteSheetDimension);
+		renderer->uploadBufferObject(contextIdx, (*vboIds)[1], fbTextureSpriteIndices.getPosition() * sizeof(float), &fbTextureSpriteIndices);
+		renderer->uploadBufferObject(contextIdx, (*vboIds)[3], fbSpriteSheetDimension.getPosition() * sizeof(float), &fbSpriteSheetDimension);
 	}
 	// bind vertices
-	renderer->bindVerticesBufferObject(context, (*vboIds)[0]);
+	renderer->bindVerticesBufferObject(contextIdx, (*vboIds)[0]);
 	// bind texture and sprite indices
-	renderer->bindTextureSpriteIndicesBufferObject(context, (*vboIds)[1]);
+	renderer->bindTextureSpriteIndicesBufferObject(contextIdx, (*vboIds)[1]);
 	// bind colors
-	renderer->bindColorsBufferObject(context, (*vboIds)[2]);
+	renderer->bindColorsBufferObject(contextIdx, (*vboIds)[2]);
 	// bind sprite sheet dimension
-	renderer->bindSpriteSheetDimensionBufferObject(context, (*vboIds)[3]);
+	renderer->bindSpriteSheetDimensionBufferObject(contextIdx, (*vboIds)[3]);
 	// bind point sizes
-	renderer->bindPointSizesBufferObject(context, (*vboIds)[4]);
+	renderer->bindPointSizesBufferObject(contextIdx, (*vboIds)[4]);
 	// bind effect color mul
-	renderer->bindEffectColorMulsBufferObject(context, (*vboIds)[5], 0);
+	renderer->bindEffectColorMulsBufferObject(contextIdx, (*vboIds)[5], 0);
 	// bind effect color add
-	renderer->bindEffectColorAddsBufferObject(context, (*vboIds)[6], 0);
+	renderer->bindEffectColorAddsBufferObject(contextIdx, (*vboIds)[6], 0);
 	// draw
-	renderer->drawPointsFromBufferObjects(context, points, 0);
+	renderer->drawPointsFromBufferObjects(contextIdx, points, 0);
 }
 
 void BatchRendererPoints::dispose()

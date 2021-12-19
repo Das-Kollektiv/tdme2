@@ -67,9 +67,9 @@ private:
 
 	/**
 	 * Render
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	void render(void* context);
+	void render(int contextIdx);
 
 	/**
 	 * Clears this batch vbo renderer

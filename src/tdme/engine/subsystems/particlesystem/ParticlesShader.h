@@ -55,33 +55,33 @@ public:
 
 	/**
 	 * Use lighting program
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	void useProgram(void* context);
+	void useProgram(int contextIdx);
 
 	/**
 	 * Update effect to program
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	void updateEffect(void* context);
+	void updateEffect(int contextIdx);
 
 	/**
 	 * Unuse particles shader program
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	void unUseProgram(void* context);
+	void unUseProgram(int contextIdx);
 
 	/**
 	 * Update matrices to program
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	void updateMatrices(void* context);
+	void updateMatrices(int contextIdx);
 
 	/**
 	 * Set parameters
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param textureIds texture ids
 	 */
-	void setParameters(void* context, const array<int32_t, 16>& textureIds);
+	void setParameters(int contextIdx, const array<int32_t, 16>& textureIds);
 
 };

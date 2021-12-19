@@ -58,21 +58,20 @@ TextureManager_TextureManaged* TextureManager::addTexture(const string& id, bool
 	return textureManaged;
 }
 
-int32_t TextureManager::addTexture(Texture* texture, void* context)
+int32_t TextureManager::addTexture(Texture* texture, int contextIdx)
 {
 	bool created;
 	auto textureManaged = addTexture(texture->getId(), created);
 	auto rendererId = textureManaged->getRendererId();
-	if (context == nullptr) context = renderer->getDefaultContext();
 
 	// upload if it was created
 	if (created == true) {
 		// bind texture
-		renderer->bindTexture(context, rendererId);
+		renderer->bindTexture(contextIdx, rendererId);
 		// upload texture
-		renderer->uploadTexture(context, texture);
+		renderer->uploadTexture(contextIdx, texture);
 		// unbind texture
-		renderer->bindTexture(context, renderer->ID_NONE);
+		renderer->bindTexture(contextIdx, renderer->ID_NONE);
 		//
 		textureManaged->setUploaded(true);
 	}
@@ -81,21 +80,20 @@ int32_t TextureManager::addTexture(Texture* texture, void* context)
 	return rendererId;
 }
 
-int32_t TextureManager::addCubeMapTexture(const string& id, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack, void* context)
+int32_t TextureManager::addCubeMapTexture(const string& id, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack, int contextIdx)
 {
 	bool created;
 	auto textureManaged = addTexture(id, created);
 	auto rendererId = textureManaged->getRendererId();
-	if (context == nullptr) context = renderer->getDefaultContext();
 
 	// upload if it was created
 	if (created == true) {
 		// bind texture
-		renderer->bindCubeMapTexture(context, rendererId);
+		renderer->bindCubeMapTexture(contextIdx, rendererId);
 		// upload texture
-		renderer->uploadCubeMapTexture(context, textureLeft, textureRight, textureTop, textureBottom, textureFront, textureBack);
+		renderer->uploadCubeMapTexture(contextIdx, textureLeft, textureRight, textureTop, textureBottom, textureFront, textureBack);
 		// unbind texture
-		renderer->bindCubeMapTexture(context, renderer->ID_NONE);
+		renderer->bindCubeMapTexture(contextIdx, renderer->ID_NONE);
 		//
 		textureManaged->setUploaded(true);
 	}

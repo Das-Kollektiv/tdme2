@@ -104,9 +104,9 @@ private:
 
 	/**
 	 * Render transparent faces groups
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	void renderTransparentFacesGroups(void* context);
+	void renderTransparentFacesGroups(int contextIdx);
 
 	/**
 	 * Release transparent faces groups
@@ -158,7 +158,7 @@ private:
 
 	/**
 	 * Set ups a material for rendering
-	 * @param context context
+	 * @param contextIdx context index
 	 * @param object3DNode object 3d node
 	 * @param facesEntityIdx faces entity idx
 	 * @param renderTypes render types
@@ -166,13 +166,13 @@ private:
 	 * @param materialKey material key
 	 * @param currentMaterialKey current material key or empty
 	 */
-	void setupMaterial(void* context, Object3DNode* object3DNode, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey, const string& currentMaterialKey = string());
+	void setupMaterial(int contextIdx, Object3DNode* object3DNode, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey, const string& currentMaterialKey = string());
 
 	/**
 	 * Clear material for rendering
-	 * @param context context
+	 * @param contextIdx context index
 	 */
-	void clearMaterial(void* context);
+	void clearMaterial(int contextIdx);
 
 	/**
 	 * Render function
@@ -191,7 +191,7 @@ private:
 		int renderTypes,
 		TransparentRenderFacesPool* transparentRenderFacesPool) {
 		// reset shader
-		renderer->setShader(renderer->getContext(threadIdx), string());
+		renderer->setShader(threadIdx, string());
 		auto effectPass = renderer->getEffectPass();
 		// sort objects by model
 		Vector3 objectCamFromAxis;

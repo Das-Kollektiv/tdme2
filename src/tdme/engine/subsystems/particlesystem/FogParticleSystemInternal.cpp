@@ -69,7 +69,7 @@ FogParticleSystemInternal::~FogParticleSystemInternal() {
 }
 
 void FogParticleSystemInternal::initialize() {
-	this->textureId = this->texture == nullptr?engine->getTextureManager()->addTexture(this->texture = TextureReader::read("resources/engine/textures", "point.png"), renderer->getDefaultContext()):engine->getTextureManager()->addTexture(this->texture, renderer->getDefaultContext());
+	this->textureId = this->texture == nullptr?engine->getTextureManager()->addTexture(this->texture = TextureReader::read("resources/engine/textures", "point.png"), renderer->CONTEXTINDEX_DEFAULT):engine->getTextureManager()->addTexture(this->texture, renderer->CONTEXTINDEX_DEFAULT);
 	this->pointsRenderPool = new TransparentRenderPointsPool(maxPoints);
 
 	//

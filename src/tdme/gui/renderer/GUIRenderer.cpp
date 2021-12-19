@@ -80,7 +80,7 @@ void GUIRenderer::initialize()
 				sbIndices.put(static_cast< uint16_t >((i * 4 + 3)));
 				sbIndices.put(static_cast< uint16_t >((i * 4 + 0)));
 			}
-			renderer->uploadIndicesBufferObject(renderer->getDefaultContext(), (*vboIds)[0], sbIndices.getPosition() * sizeof(uint16_t), &sbIndices);
+			renderer->uploadIndicesBufferObject(renderer->CONTEXTINDEX_DEFAULT, (*vboIds)[0], sbIndices.getPosition() * sizeof(uint16_t), &sbIndices);
 		} else {
 			auto ibIndices = sbIndicesByteBuffer->asIntBuffer();
 			for (auto i = 0; i < QUAD_COUNT; i++) {
@@ -91,7 +91,7 @@ void GUIRenderer::initialize()
 				ibIndices.put(i * 4 + 3);
 				ibIndices.put(i * 4 + 0);
 			}
-			renderer->uploadIndicesBufferObject(renderer->getDefaultContext(), (*vboIds)[0], ibIndices.getPosition() * sizeof(uint32_t), &ibIndices);
+			renderer->uploadIndicesBufferObject(renderer->CONTEXTINDEX_DEFAULT, (*vboIds)[0], ibIndices.getPosition() * sizeof(uint32_t), &ibIndices);
 		}
 	}
 }
@@ -111,12 +111,12 @@ void GUIRenderer::initRendering()
 	setRenderAreaRight(SCREEN_RIGHT);
 	setRenderAreaBottom(SCREEN_BOTTOM);
 	Engine::getGUIShader()->useProgram();
-	renderer->getTextureMatrix(renderer->getDefaultContext()).identity();
+	renderer->getTextureMatrix(renderer->CONTEXTINDEX_DEFAULT).identity();
 }
 
 void GUIRenderer::doneRendering()
 {
-	renderer->unbindBufferObjects(renderer->getDefaultContext());
+	renderer->unbindBufferObjects(renderer->CONTEXTINDEX_DEFAULT);
 	Engine::getGUIShader()->unUseProgram();
 }
 
@@ -253,23 +253,23 @@ void GUIRenderer::addQuad(float x1, float y1, float colorR1, float colorG1, floa
 }
 
 void GUIRenderer::setTexureMatrix(const Matrix2D3x3& textureMatrix) {
-	renderer->getTextureMatrix(renderer->getDefaultContext()).set(textureMatrix);
+	renderer->getTextureMatrix(renderer->CONTEXTINDEX_DEFAULT).set(textureMatrix);
 }
 
 void GUIRenderer::bindTexture(int32_t textureId)
 {
-	renderer->bindTexture(renderer->getDefaultContext(), textureId);
+	renderer->bindTexture(renderer->CONTEXTINDEX_DEFAULT, textureId);
 }
 
 void GUIRenderer::bindMask(int32_t textureId)
 {
-	renderer->setTextureUnit(renderer->getDefaultContext(), 1);
-	renderer->bindTexture(renderer->getDefaultContext(), textureId);
-	renderer->setTextureUnit(renderer->getDefaultContext(), 0);
+	renderer->setTextureUnit(renderer->CONTEXTINDEX_DEFAULT, 1);
+	renderer->bindTexture(renderer->CONTEXTINDEX_DEFAULT, textureId);
+	renderer->setTextureUnit(renderer->CONTEXTINDEX_DEFAULT, 0);
 }
 
 void GUIRenderer::setMaskMaxValue(float maskMaxValue) {
-	renderer->setMaskMaxValue(renderer->getDefaultContext(), maskMaxValue);
+	renderer->setMaskMaxValue(renderer->CONTEXTINDEX_DEFAULT, maskMaxValue);
 }
 
 void GUIRenderer::setGradient(int count, array<GUIColor, 10>& colors, array<float, 10>& colorStarts, float rotationAngle) {
@@ -289,14 +289,14 @@ void GUIRenderer::render()
 		return;
 	}
 	// use default context
-	auto context = renderer->getDefaultContext();
-	renderer->uploadBufferObject(context, (*vboIds)[1], fbVertices.getPosition() * sizeof(float), &fbVertices);
-	renderer->uploadBufferObject(context, (*vboIds)[2], fbColors.getPosition() * sizeof(float), &fbColors);
-	renderer->uploadBufferObject(context, (*vboIds)[3], fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
-	renderer->bindIndicesBufferObject(context, (*vboIds)[0]);
-	renderer->bindVerticesBufferObject(context, (*vboIds)[1]);
-	renderer->bindColorsBufferObject(context, (*vboIds)[2]);
-	renderer->bindTextureCoordinatesBufferObject(context, (*vboIds)[3]);
+	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
+	renderer->uploadBufferObject(contextIdx, (*vboIds)[1], fbVertices.getPosition() * sizeof(float), &fbVertices);
+	renderer->uploadBufferObject(contextIdx, (*vboIds)[2], fbColors.getPosition() * sizeof(float), &fbColors);
+	renderer->uploadBufferObject(contextIdx, (*vboIds)[3], fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
+	renderer->bindIndicesBufferObject(contextIdx, (*vboIds)[0]);
+	renderer->bindVerticesBufferObject(contextIdx, (*vboIds)[1]);
+	renderer->bindColorsBufferObject(contextIdx, (*vboIds)[2]);
+	renderer->bindTextureCoordinatesBufferObject(contextIdx, (*vboIds)[3]);
 	effectColorMulFinal[0] = guiEffectColorMul[0] * effectColorMul[0] * fontColor[0];
 	effectColorMulFinal[1] = guiEffectColorMul[1] * effectColorMul[1] * fontColor[1];
 	effectColorMulFinal[2] = guiEffectColorMul[2] * effectColorMul[2] * fontColor[2];
@@ -305,11 +305,11 @@ void GUIRenderer::render()
 	effectColorAddFinal[1] = guiEffectColorAdd[1] + effectColorAdd[1];
 	effectColorAddFinal[2] = guiEffectColorAdd[2] + effectColorAdd[2];
 	effectColorAddFinal[3] = 0.0f;
-	renderer->getEffectColorMul(context) = effectColorMulFinal;
-	renderer->getEffectColorAdd(context) = effectColorAddFinal;
-	renderer->onUpdateEffect(context);
-	renderer->onUpdateTextureMatrix(context);
-	renderer->drawIndexedTrianglesFromBufferObjects(context, quadCount * 2, 0);
+	renderer->getEffectColorMul(contextIdx) = effectColorMulFinal;
+	renderer->getEffectColorAdd(contextIdx) = effectColorAddFinal;
+	renderer->onUpdateEffect(contextIdx);
+	renderer->onUpdateTextureMatrix(contextIdx);
+	renderer->drawIndexedTrianglesFromBufferObjects(contextIdx, quadCount * 2, 0);
 	quadCount = 0;
 	fbVertices.clear();
 	fbColors.clear();

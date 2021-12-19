@@ -122,26 +122,26 @@ void LightingShaderWaterImplementation::registerShader() {
 	);
 }
 
-void LightingShaderWaterImplementation::useProgram(Engine* engine, void* context) {
-	LightingShaderBaseImplementation::useProgram(engine, context);
+void LightingShaderWaterImplementation::useProgram(Engine* engine, int contextIdx) {
+	LightingShaderBaseImplementation::useProgram(engine, contextIdx);
 
 	//
-	renderer->setProgramUniformFloat(context, uniformWaterHeight, 0.50f);
-	renderer->setProgramUniformFloat(context, uniformTime, time);
-	renderer->setProgramUniformInteger(context, uniformWaterWaves, 4);
+	renderer->setProgramUniformFloat(contextIdx, uniformWaterHeight, 0.50f);
+	renderer->setProgramUniformFloat(contextIdx, uniformTime, time);
+	renderer->setProgramUniformInteger(contextIdx, uniformWaterWaves, 4);
 	for (auto i = 0; i < 4; i++) {
-		renderer->setProgramUniformFloat(context, uniformWaterAmplitude[i], 0.5f / (i + 1));
-		renderer->setProgramUniformFloat(context, uniformWaterWaveLength[i], 8 * Math::PI / (i + 1));
-		renderer->setProgramUniformFloat(context, uniformWaterSpeed[i], 1.0f + 1.0f * i / 2.0f);
-		renderer->setProgramUniformFloatVec2(context, uniformWaterDirection[i], {Math::cos(angle[i]), Math::sin(angle[i])});
+		renderer->setProgramUniformFloat(contextIdx, uniformWaterAmplitude[i], 0.5f / (i + 1));
+		renderer->setProgramUniformFloat(contextIdx, uniformWaterWaveLength[i], 8 * Math::PI / (i + 1));
+		renderer->setProgramUniformFloat(contextIdx, uniformWaterSpeed[i], 1.0f + 1.0f * i / 2.0f);
+		renderer->setProgramUniformFloatVec2(contextIdx, uniformWaterDirection[i], {Math::cos(angle[i]), Math::sin(angle[i])});
 	}
 	time+= engine->getTiming()->getDeltaTime() / 1000.0f;
 }
 
-void LightingShaderWaterImplementation::updateMatrices(Renderer* renderer, void* context) {
-	LightingShaderBaseImplementation::updateMatrices(renderer, context);
-	if (uniformModelMatrix != -1) renderer->setProgramUniformFloatMatrix4x4(context, uniformModelMatrix, renderer->getModelViewMatrix().getArray());
+void LightingShaderWaterImplementation::updateMatrices(Renderer* renderer, int contextIdx) {
+	LightingShaderBaseImplementation::updateMatrices(renderer, contextIdx);
+	if (uniformModelMatrix != -1) renderer->setProgramUniformFloatMatrix4x4(contextIdx, uniformModelMatrix, renderer->getModelViewMatrix().getArray());
 }
 
-void LightingShaderWaterImplementation::updateShaderParameters(Renderer* renderer, void* context) {
+void LightingShaderWaterImplementation::updateShaderParameters(Renderer* renderer, int contextIdx) {
 }

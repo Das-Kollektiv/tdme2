@@ -34,7 +34,7 @@ public:
 	virtual const string getId() override;
 	virtual void initialize() override;
 	virtual void registerShader() override;
-	virtual void updateShaderParameters(Renderer* renderer, void* context) override;
+	virtual void updateShaderParameters(Renderer* renderer, int contextIdx) override;
 
 
 };

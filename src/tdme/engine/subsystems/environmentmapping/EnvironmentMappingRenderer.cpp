@@ -66,14 +66,14 @@ void EnvironmentMappingRenderer::initialize()
 {
 	#if defined(VULKAN)
 		for (auto i = 0; i < frameBuffers.size(); i++) {
-			cubeMapTextureIds[i] = engine->renderer->createCubeMapTexture(engine->renderer->getDefaultContext(), width, height);
+			cubeMapTextureIds[i] = engine->renderer->createCubeMapTexture(engine->renderer->CONTEXTINDEX_DEFAULT, width, height);
 			for (auto j = 0; j < frameBuffers[i].size(); j++) {
 				frameBuffers[i][j] = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_COLORBUFFER | FrameBuffer::FRAMEBUFFER_DEPTHBUFFER, cubeMapTextureIds[i], j + 1);
 				frameBuffers[i][j]->initialize();
 			}
 		}
 	#else
-		cubeMapTextureId = engine->renderer->createCubeMapTexture(engine->renderer->getDefaultContext(), width, height);
+		cubeMapTextureId = engine->renderer->createCubeMapTexture(engine->renderer->CONTEXTINDEX_DEFAULT, width, height);
 		for (auto i = 0; i < frameBuffers.size(); i++) {
 			frameBuffers[i] = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_COLORBUFFER | FrameBuffer::FRAMEBUFFER_DEPTHBUFFER, cubeMapTextureId, i + 1);
 			frameBuffers[i]->initialize();
@@ -143,7 +143,7 @@ void EnvironmentMappingRenderer::render(const Vector3& position)
 		camera->setForwardVector(forwardVectors[i]);
 		camera->setSideVector(sideVectors[i]);
 		camera->setUpVector(Vector3::computeCrossProduct(sideVectors[i], forwardVectors[i]));
-		camera->update(engine->renderer->getDefaultContext(), width, height);
+		camera->update(engine->renderer->CONTEXTINDEX_DEFAULT, width, height);
 		camera->getFrustum()->update();
 
 		// set up clear color

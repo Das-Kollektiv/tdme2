@@ -78,10 +78,10 @@ void Texture2DRenderShader::initialize()
 
 void Texture2DRenderShader::useProgram()
 {
-	auto context = renderer->getDefaultContext();
-	renderer->useProgram(context, programId);
-	renderer->setLighting(context, renderer->LIGHTING_NONE);
-	renderer->setProgramUniformInteger(context, uniformTextureUnit, 0);
+	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
+	renderer->useProgram(contextIdx, programId);
+	renderer->setLighting(contextIdx, renderer->LIGHTING_NONE);
+	renderer->setProgramUniformInteger(contextIdx, uniformTextureUnit, 0);
 	isRunning = true;
 }
 
@@ -92,7 +92,7 @@ void Texture2DRenderShader::unUseProgram()
 
 void Texture2DRenderShader::renderTexture(Engine* engine, const Vector2& position, const Vector2& dimension, int textureId, int width, int height) {
 		//
-	auto context = renderer->getDefaultContext();
+	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
 
 	//
 	auto screenWidth = width != -1?width:(engine->getScaledWidth() == -1?engine->getWidth():engine->getScaledWidth());
@@ -114,7 +114,7 @@ void Texture2DRenderShader::renderTexture(Engine* engine, const Vector2& positio
 
 	// texture coordinates
 	{
-		auto fbTextureCoordinates = ObjectBuffer::getByteBuffer(context, 6 * 2 * sizeof(float))->asFloatBuffer();
+		auto fbTextureCoordinates = ObjectBuffer::getByteBuffer(contextIdx, 6 * 2 * sizeof(float))->asFloatBuffer();
 
 		#if defined(VULKAN)
 			fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(0.0f);
@@ -134,12 +134,12 @@ void Texture2DRenderShader::renderTexture(Engine* engine, const Vector2& positio
 			fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(+1.0f);
 		#endif
 
-		renderer->uploadBufferObject(context, vboTextureCoordinates, fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
+		renderer->uploadBufferObject(contextIdx, vboTextureCoordinates, fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
 	}
 
 	// vertices
 	{
-		auto fbVertices = ObjectBuffer::getByteBuffer(context, 6 * 3 * sizeof(float))->asFloatBuffer();
+		auto fbVertices = ObjectBuffer::getByteBuffer(contextIdx, 6 * 3 * sizeof(float))->asFloatBuffer();
 
 		fbVertices.put(x0); fbVertices.put(y0); fbVertices.put(0.0f);
 		fbVertices.put(x1); fbVertices.put(y1); fbVertices.put(0.0f);
@@ -149,38 +149,38 @@ void Texture2DRenderShader::renderTexture(Engine* engine, const Vector2& positio
 		fbVertices.put(x3); fbVertices.put(y3); fbVertices.put(0.0f);
 		fbVertices.put(x0); fbVertices.put(y0); fbVertices.put(0.0f);
 
-		renderer->uploadBufferObject(context, vboVertices, fbVertices.getPosition() * sizeof(float), &fbVertices);
+		renderer->uploadBufferObject(contextIdx, vboVertices, fbVertices.getPosition() * sizeof(float), &fbVertices);
 	}
 
 	// disable culling
 	renderer->enableBlending();
-	renderer->disableCulling(context);
+	renderer->disableCulling(contextIdx);
 
 	// use program
 	useProgram();
 
 	// bind color buffer texture
-	renderer->setTextureUnit(context, 0);
-	renderer->bindTexture(context, textureId);
+	renderer->setTextureUnit(contextIdx, 0);
+	renderer->bindTexture(contextIdx, textureId);
 
 	//
-	renderer->bindVerticesBufferObject(context, vboVertices);
-	renderer->bindTextureCoordinatesBufferObject(context, vboTextureCoordinates);
+	renderer->bindVerticesBufferObject(contextIdx, vboVertices);
+	renderer->bindTextureCoordinatesBufferObject(contextIdx, vboTextureCoordinates);
 
 	// draw
-	renderer->drawTrianglesFromBufferObjects(context, 2, 0);
+	renderer->drawTrianglesFromBufferObjects(contextIdx, 2, 0);
 
 	// unbind buffers
-	renderer->unbindBufferObjects(context);
+	renderer->unbindBufferObjects(contextIdx);
 
 	// unbind texture
-	renderer->bindTexture(context, renderer->ID_NONE);
+	renderer->bindTexture(contextIdx, renderer->ID_NONE);
 
 	// unuse program
 	unUseProgram();
 
 	// enabe culling
-	renderer->enableCulling(context);
+	renderer->enableCulling(contextIdx);
 	renderer->disableBlending();
 
 }

@@ -87,7 +87,7 @@ void DeferredLightingShaderTreeImplementation::initialize()
 void DeferredLightingShaderTreeImplementation::registerShader() {
 }
 
-void DeferredLightingShaderTreeImplementation::updateShaderParameters(Renderer* renderer, void* context) {
-	auto& shaderParameters = renderer->getShaderParameters(context);
-	if (uniformSpeed != -1) renderer->setProgramUniformFloat(context, uniformSpeed, shaderParameters.getShaderParameter("speed").getFloatValue());
+void DeferredLightingShaderTreeImplementation::updateShaderParameters(Renderer* renderer, int contextIdx) {
+	auto& shaderParameters = renderer->getShaderParameters(contextIdx);
+	if (uniformSpeed != -1) renderer->setProgramUniformFloat(contextIdx, uniformSpeed, shaderParameters.getShaderParameter("speed").getFloatValue());
 }

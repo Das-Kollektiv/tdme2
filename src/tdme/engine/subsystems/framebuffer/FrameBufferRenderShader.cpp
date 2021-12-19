@@ -69,7 +69,7 @@ void FrameBufferRenderShader::initialize()
 	uniformDepthBufferTextureUnit = renderer->getProgramUniformLocation(programId, "depthBufferTextureUnit");
 
 	//
-	auto context = renderer->getDefaultContext();
+	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
 
 	// create vbos
 	auto created = false;
@@ -79,7 +79,7 @@ void FrameBufferRenderShader::initialize()
 
 	// vertices
 	{
-		auto fbVertices = ObjectBuffer::getByteBuffer(context, 6 * 3 * sizeof(float))->asFloatBuffer();
+		auto fbVertices = ObjectBuffer::getByteBuffer(contextIdx, 6 * 3 * sizeof(float))->asFloatBuffer();
 
 		fbVertices.put(-1.0f); fbVertices.put(+1.0f); fbVertices.put(0.0f);
 		fbVertices.put(+1.0f); fbVertices.put(+1.0f); fbVertices.put(0.0f);
@@ -89,12 +89,12 @@ void FrameBufferRenderShader::initialize()
 		fbVertices.put(-1.0f); fbVertices.put(-1.0f); fbVertices.put(0.0f);
 		fbVertices.put(-1.0f); fbVertices.put(+1.0f); fbVertices.put(0.0f);
 
-		renderer->uploadBufferObject(context, vboVertices, fbVertices.getPosition() * sizeof(float), &fbVertices);
+		renderer->uploadBufferObject(contextIdx, vboVertices, fbVertices.getPosition() * sizeof(float), &fbVertices);
 	}
 
 	// texture coordinates
 	{
-		auto fbTextureCoordinates = ObjectBuffer::getByteBuffer(context, 6 * 2 * sizeof(float))->asFloatBuffer();
+		auto fbTextureCoordinates = ObjectBuffer::getByteBuffer(contextIdx, 6 * 2 * sizeof(float))->asFloatBuffer();
 
 		#if defined(VULKAN)
 			fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(0.0f);
@@ -114,7 +114,7 @@ void FrameBufferRenderShader::initialize()
 			fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(+1.0f);
 		#endif
 
-		renderer->uploadBufferObject(context, vboTextureCoordinates, fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
+		renderer->uploadBufferObject(contextIdx, vboTextureCoordinates, fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
 	}
 
 	//
@@ -123,11 +123,11 @@ void FrameBufferRenderShader::initialize()
 
 void FrameBufferRenderShader::useProgram()
 {
-	auto context = renderer->getDefaultContext();
-	renderer->useProgram(context, programId);
-	renderer->setLighting(context, renderer->LIGHTING_NONE);
-	renderer->setProgramUniformInteger(context, uniformColorBufferTextureUnit, 0);
-	if (uniformDepthBufferTextureUnit != -1) renderer->setProgramUniformInteger(context, uniformDepthBufferTextureUnit, 1);
+	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
+	renderer->useProgram(contextIdx, programId);
+	renderer->setLighting(contextIdx, renderer->LIGHTING_NONE);
+	renderer->setProgramUniformInteger(contextIdx, uniformColorBufferTextureUnit, 0);
+	if (uniformDepthBufferTextureUnit != -1) renderer->setProgramUniformInteger(contextIdx, uniformDepthBufferTextureUnit, 1);
 	isRunning = true;
 }
 
