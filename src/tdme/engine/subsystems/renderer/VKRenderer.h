@@ -152,6 +152,7 @@ private:
 		string definitions;
  		string source;
  		string file;
+ 		string cacheId;
 		vector<unsigned int> spirv;
 		int32_t id { 0 };
 		VkShaderStageFlagBits type;

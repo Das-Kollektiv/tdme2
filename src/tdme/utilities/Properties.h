@@ -31,6 +31,13 @@ public:
 	Properties();
 
 	/**
+	 * Clear
+	 */
+	inline void clear() {
+		properties.clear();
+	}
+
+	/**
 	 * Get property value by key
 	 * @param key key
 	 * @param defaultValue default value

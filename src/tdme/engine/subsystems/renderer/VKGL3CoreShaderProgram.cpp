@@ -18,9 +18,11 @@
 #include <tdme/engine/subsystems/renderer/VKRenderer.h>
 #include <tdme/math/Math.h>
 #include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Integer.h>
+#include <tdme/utilities/Properties.h>
 #include <tdme/utilities/StringTokenizer.h>
 #include <tdme/utilities/StringTools.h>
 
@@ -38,9 +40,11 @@ using tdme::engine::subsystems::renderer::VKGL3CoreShaderProgram;
 
 using tdme::math::Math;
 using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;
 using tdme::utilities::Integer;
+using tdme::utilities::Properties;
 using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
 
@@ -444,6 +448,9 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 		functions + "\n\n"
 	);
 
+	//
+	shader.cacheId = "shader-" + to_string(shader.id) + "-" + StringTools::replace(shader.file, "/", "_");
+
 	// do some shader adjustments
 	{
 		// pre parse shader code
@@ -810,6 +817,27 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 
 	shader.definitions = definitions;
 	shader.source = shaderSource;
+
+	// store to cache
+	{
+		Properties vkShaderCache;
+		vkShaderCache.put("shader.type", to_string(type));
+		vkShaderCache.put("shader.file", pathName + "/" + fileName);
+		vkShaderCache.put("shader.id", to_string(shader.id));
+		{
+			auto i = 0;
+			for (auto& attribute: shader.attributeLayouts) {
+				vkShaderCache.put("shader.attributelayout_name_" + to_string(i), attribute.name);
+				vkShaderCache.put("shader.attributelayout_type_" + to_string(i), attribute.type);
+				vkShaderCache.put("shader.attributelayout_location_" + to_string(i), to_string(attribute.location));
+				i++;
+			}
+		}
+		vkShaderCache.store("shader/vk", shader.cacheId + ".properties", FileSystem::getStandardFileSystem());
+	}
+
+	// store definitions
+	FileSystem::getStandardFileSystem()->setContentFromString("shader/vk", shader.cacheId + ".definitions", definitions);
 }
 
 bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
@@ -848,12 +876,16 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 			}
 			uniformsByName[uniform.name] = uniformIdx++;
 		}
+
 		// set up ingoing attributes layout indices
 		if (shaderLast != nullptr) {
 			for (auto& attributeLayout: shaderLast->attributeLayouts) {
 				shader->source = StringTools::replace(shader->source, "{$IN_ATTRIBUTE_LOCATION_" + attributeLayout.name + "_IDX}", to_string(attributeLayout.location));
 			}
 		}
+
+		// store glsl
+		FileSystem::getStandardFileSystem()->setContentFromString("shader/vk", shader->cacheId + ".glsl", shader->source);
 
 		// compile shader
 		EShLanguage stage = shaderFindLanguage(shader->type);
@@ -909,6 +941,18 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 		}
 
 		glslang::GlslangToSpv(*glslProgram.getIntermediate(stage), shader->spirv);
+
+		// store SPIRV cache
+		{
+			vector<uint8_t> spirv8(shader->spirv.size() * 4);
+			for (auto v: shader->spirv) {
+				spirv8.push_back((static_cast<unsigned int>(v)) & 0xff);
+				spirv8.push_back((static_cast<unsigned int>(v) >> 8) & 0xff);
+				spirv8.push_back((static_cast<unsigned int>(v) >> 16) & 0xff);
+				spirv8.push_back((static_cast<unsigned int>(v) >> 24) & 0xff);
+			}
+			FileSystem::getStandardFileSystem()->setContent("shader/vk", shader->cacheId + ".spirv", spirv8);
+		}
 
 		//
 		shaderLast = shader;
@@ -969,6 +1013,39 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 
 	// total bindings of program
 	program.layoutBindings = bindingIdx;
+
+	// store program properties
+	{
+		Properties vkProgramCache;
+		vkProgramCache.put("program.id", to_string(program.id));
+		vkProgramCache.put("program.layout_bindings", to_string(program.layoutBindings));
+		auto i = 0;
+		for (auto& shader: program.shaders) {
+			vkProgramCache.put("program.shader_" + to_string(i) + "_cacheid", shader->cacheId);
+			i++;
+		}
+		vkProgramCache.store("shader/vk", "program-" + to_string(program.id) + ".properties", FileSystem::getStandardFileSystem());
+	}
+
+	// store uniforms
+	for (auto shader: program.shaders) {
+		Properties vkShaderCache;
+		vkShaderCache.load("shader/vk", shader->cacheId + ".properties", FileSystem::getStandardFileSystem());
+		vkShaderCache.put("shader.ubo_size", to_string(shader->uboSize));
+		vkShaderCache.put("shader.ubo_bindingidx", to_string(shader->uboBindingIdx));
+		auto i = 0;
+		for (auto& uniformIt: shader->uniforms) {
+			auto uniform = uniformIt.second;
+			vkShaderCache.put("shader.uniform_name_" + to_string(i), uniform->name);
+			vkShaderCache.put("shader.uniform_newnname_" + to_string(i), uniform->newName);
+			vkShaderCache.put("shader.uniform_type_" + to_string(i), to_string(uniform->type));
+			vkShaderCache.put("shader.uniform_position_" + to_string(i), to_string(uniform->position));
+			vkShaderCache.put("shader.uniform_size_" + to_string(i), to_string(uniform->size));
+			vkShaderCache.put("shader.uniform_textureunit_" + to_string(i), to_string(uniform->textureUnit));
+			i++;
+		}
+		vkShaderCache.store("shader/vk", shader->cacheId + ".properties", FileSystem::getStandardFileSystem());
+	}
 
 	//
 	return true;
