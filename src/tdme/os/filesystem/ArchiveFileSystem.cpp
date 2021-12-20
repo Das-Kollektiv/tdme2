@@ -434,7 +434,7 @@ const string ArchiveFileSystem::computeSHA256Hash() {
 	unsigned char digest[SHA256::DIGEST_SIZE];
 	memset(digest, 0, SHA256::DIGEST_SIZE);
 
-	SHA256 ctx = SHA256();
+	auto ctx = SHA256();
 	ctx.init();
 	int64_t bytesRead = 0LL;
 	while (bytesRead < bytesTotal) {

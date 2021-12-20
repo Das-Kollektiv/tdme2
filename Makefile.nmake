@@ -493,6 +493,7 @@ SRCS = \
 	src/tdme/utilities/Properties.cpp \
 	src/tdme/utilities/Reference.cpp \
 	src/tdme/utilities/RTTI.cpp \
+	src/tdme/utilities/SHA256.cpp \
 	src/tdme/utilities/StringTools.cpp \
 	src/tdme/utilities/StringTokenizer.cpp \
 	src/tdme/utilities/Terrain2.cpp \

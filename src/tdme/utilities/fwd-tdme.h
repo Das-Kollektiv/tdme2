@@ -29,6 +29,7 @@ namespace utilities {
 	class Reference;
 	class RTTI;
 	class Time;
+	class SHA256;
 	class ShortBuffer;
 	class StringTokenizer;
 	class StringTools;
