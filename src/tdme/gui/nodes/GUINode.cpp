@@ -1431,6 +1431,8 @@ void GUINode::onSetConditions(const vector<string>& conditions) {
 				case GUIEffect::EFFECTTYPE_POSITION:
 					havePositionEffect = true;
 					break;
+				case GUIEffect::EFFECTTYPE_NONE:
+					break;
 			}
 		}
 	}
@@ -1442,6 +1444,8 @@ void GUINode::onSetConditions(const vector<string>& conditions) {
 					break;
 				case GUIEffect::EFFECTTYPE_POSITION:
 					havePositionEffect = true;
+					break;
+				case GUIEffect::EFFECTTYPE_NONE:
 					break;
 			}
 		}

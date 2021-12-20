@@ -256,6 +256,8 @@ private:
 		ThsvsImageLayout svsLayout { THSVS_IMAGE_LAYOUT_OPTIMAL };
 		VkImage image { VK_NULL_HANDLE };
 		VkImageView view { VK_NULL_HANDLE };
+		int width { -1 };
+		int height { -1 };
 	};
 
 	struct context_type {
@@ -412,6 +414,7 @@ private:
 	// enable/disable validation layers
 	bool validate { false };
 
+	uint32_t lastFrameBuffer { 0 };
 	uint32_t currentFrameBuffer { 0 };
 	uint32_t queueCount { 0 };
 
@@ -455,9 +458,10 @@ private:
 	VkPresentModeKHR swapchainPresentMode { VK_PRESENT_MODE_IMMEDIATE_KHR };
 
 	//
-	VkBool32 checkLayers(uint32_t checkCount, const char **checkNames, uint32_t layerCount, VkLayerProperties *layers);
+	VkBool32 checkLayers(uint32_t checkCount, const char **checkNames, const vector<VkLayerProperties>& instanceLayers);
 	void setImageLayout(int contextIdx, texture_type* textureObject, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout nextLayout, bool discardContent, uint32_t baseMipLevel = 0, uint32_t levelCount = 1, bool submit = true);
 	void setImageLayout2(int contextIdx, texture_type* textureObject, const array<ThsvsAccessType,2>& accessTypes, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout layout, ThsvsImageLayout nextLayout, bool discardContent, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount);
+	void setImageLayout3(int contextIdx, VkImage image, VkImageAspectFlags aspectMask, const array<ThsvsAccessType,2>& accessTypes, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout layout, ThsvsImageLayout nextLayout);
 	uint32_t getMipLevels(Texture* texture);
 	void prepareTextureImage(int contextIdx, struct texture_type* textureObject, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags requiredFlags, Texture* texture, const array<ThsvsAccessType,2>& nextAccesses, ThsvsImageLayout imageLayout, bool disableMipMaps = true, uint32_t baseLevel = 0, uint32_t levelCount = 1);
 	VkBuffer getBufferObjectInternal(int contextIdx,  int32_t bufferObjectId, uint32_t& size);
