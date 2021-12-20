@@ -3183,7 +3183,10 @@ bool VKRenderer::linkProgram(int32_t programId)
 					VkMemoryPropertyFlags memoryFlags;
 					vmaGetMemoryTypeProperties(allocator, allocationInfo.memoryType, &memoryFlags);
 					auto memoryMapped = (memoryFlags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) == VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
-					if (memoryMapped == false) {
+					if (memoryMapped == true) {
+						void* mmData;
+						vmaMapMemory(allocator, uniformBufferBuffer.allocation, &mmData);
+					} else {
 						Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Could not create memory mappable uniform buffer");
 					}
 				}
@@ -3718,7 +3721,7 @@ void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int3
 			.arrayLayers = 1,
 			.samples = VK_SAMPLE_COUNT_1_BIT,
 			.tiling = VK_IMAGE_TILING_OPTIMAL,
-			.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+			.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
 			.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
 			.queueFamilyIndexCount = 0,
 			.pQueueFamilyIndices = 0,
@@ -6663,7 +6666,140 @@ void VKRenderer::setTextureUnit(int contextIdx, int32_t textureUnit)
 float VKRenderer::readPixelDepth(int32_t x, int32_t y)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	return 0.0f;
+
+	//
+	auto pixelDepth = -1.0f;
+
+	// determine image to read
+	VkFormat usedFormat = VK_FORMAT_UNDEFINED;
+	VkImage usedImage = VK_NULL_HANDLE;
+	uint32_t usedWidth = 0;
+	uint32_t usedHeight = -1;
+	array<ThsvsAccessType, 2> usedAccessTypes;
+	ThsvsImageLayout usedImageLayout = THSVS_IMAGE_LAYOUT_OPTIMAL;
+	auto frameBuffer = boundFrameBuffer < 0 || boundFrameBuffer >= framebuffers.size()?nullptr:framebuffers[boundFrameBuffer];
+	if (frameBuffer == nullptr) {
+		auto depthBufferTexture = textures.find(depthBufferDefault)->second;
+		usedFormat = depthBufferTexture->format;
+		usedImage = depthBufferTexture->image;
+		usedWidth = depthBufferTexture->width;
+		usedHeight = depthBufferTexture->height;
+		usedAccessTypes = depthBufferTexture->accessTypes[0];
+		usedImageLayout = depthBufferTexture->svsLayout;
+	} else {
+		auto depthBufferTextureIt = textures.find(frameBuffer->depthBufferTextureId);
+		if (depthBufferTextureIt == textures.end()) {
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): depth buffer: depth buffer texture not found: " + to_string(frameBuffer->depthBufferTextureId));
+			return pixelDepth;
+		} else {
+			auto depthBufferTexture = depthBufferTextureIt->second;
+			usedFormat = depthBufferTexture->format;
+			usedImage = depthBufferTexture->image;
+			usedWidth = depthBufferTexture->width;
+			usedHeight = depthBufferTexture->height;
+			usedAccessTypes = depthBufferTexture->accessTypes[0];
+			usedImageLayout = depthBufferTexture->svsLayout;
+		}
+	}
+
+	//
+	vmaSpinlock.lock();
+
+	//
+	VmaAllocationInfo allocationInfo = {};
+	VkBuffer buffer = VK_NULL_HANDLE;
+	VmaAllocation allocation = VK_NULL_HANDLE;
+	createBuffer(
+		4,
+		VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
+		buffer,
+		allocation,
+		allocationInfo
+	);
+	VkMemoryPropertyFlags memoryFlags;
+	vmaGetMemoryTypeProperties(allocator, allocationInfo.memoryType, &memoryFlags);
+	auto memoryMapped = (memoryFlags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) == VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+	if (memoryMapped == false) {
+		vmaSpinlock.unlock();
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): Could not create memory mappable buffer");
+		return pixelDepth;
+	}
+
+	// set source image layout
+	auto& currentContext = contexts[CONTEXTINDEX_DEFAULT];
+	{
+		// set SRC
+		array<ThsvsAccessType, 2>  nextAccessTypes = { THSVS_ACCESS_TRANSFER_READ, THSVS_ACCESS_NONE };
+		setImageLayout3(currentContext.idx, usedImage, VK_IMAGE_ASPECT_DEPTH_BIT, usedAccessTypes, nextAccessTypes, usedImageLayout, THSVS_IMAGE_LAYOUT_OPTIMAL);
+	}
+
+	VkBufferImageCopy bufferImageCopy = {
+		.bufferOffset = 0,
+		.bufferRowLength = 0,
+		.bufferImageHeight = 0,
+		.imageSubresource = {
+			.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT,
+			.mipLevel = 0,
+			.baseArrayLayer = 0,
+			.layerCount = 1
+		},
+		.imageOffset = {
+			.x = static_cast<int32_t>(x),
+			.y = static_cast<int32_t>(usedHeight - 1 - y),
+			.z = 0
+		},
+		.imageExtent = {
+			.width = 1,
+			.height = 1,
+			.depth = 1
+		},
+	};
+
+	// copy image to buffer
+	prepareSetupCommandBuffer(currentContext.idx);
+	vkCmdCopyImageToBuffer(
+		currentContext.setupCommandInUse,
+		usedImage,
+		VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+		buffer,
+		1,
+		&bufferImageCopy
+	);
+	finishSetupCommandBuffer(currentContext.idx);
+
+	//
+	void* data;
+	VkResult err;
+	err = vmaMapMemory(allocator, allocation, &data);
+	assert(!err);
+	pixelDepth = static_cast<float*>(data)[0];
+	vmaUnmapMemory(allocator, allocation);
+
+	//
+	vmaSpinlock.unlock();
+
+	{
+		// unset SRC
+		array<ThsvsAccessType, 2>  lastAccessTypes = { THSVS_ACCESS_TRANSFER_READ, THSVS_ACCESS_NONE };
+		setImageLayout3(currentContext.idx, usedImage, VK_IMAGE_ASPECT_DEPTH_BIT, lastAccessTypes, usedAccessTypes, THSVS_IMAGE_LAYOUT_OPTIMAL, usedImageLayout);
+	}
+
+	// mark buffer for deletion
+	deleteMutex.lock();
+	deleteBuffers.push_back(
+		{
+			.buffer = buffer,
+			.allocation = allocation
+		}
+	);
+	deleteMutex.unlock();
+
+	//
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(pixelDepth));
+
+	//
+	return pixelDepth;
 }
 
 ByteBuffer* VKRenderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t height)
@@ -6713,17 +6849,17 @@ ByteBuffer* VKRenderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t 
 		.pNext = nullptr,
 		.flags = 0,
 		.imageType = VK_IMAGE_TYPE_2D,
-		.format = format,
+		.format = usedFormat,
 		.extent = {
-			.width = usedWidth,
-			.height = usedHeight,
+			.width = static_cast<uint32_t>(width),
+			.height = static_cast<uint32_t>(height),
 			.depth = 1
 		},
 		.mipLevels = 1,
 		.arrayLayers = 1,
 		.samples = VK_SAMPLE_COUNT_1_BIT,
 		.tiling = VK_IMAGE_TILING_LINEAR,
-		.usage = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
+		.usage = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT,
 		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
 	    .queueFamilyIndexCount = 0,
 	    .pQueueFamilyIndices = 0,
@@ -6749,8 +6885,8 @@ ByteBuffer* VKRenderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t 
 				.layerCount = 1
 			},
 			.srcOffset = {
-				.x = 0,
-				.y = 0,
+				.x = x,
+				.y = y,
 				.z = 0
 			},
 			.dstSubresource = {
@@ -6765,8 +6901,8 @@ ByteBuffer* VKRenderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t 
 				.z = 0
 			},
 			.extent = {
-				.width = usedWidth,
-				.height = usedHeight,
+				.width = static_cast<uint32_t>(width),
+				.height = static_cast<uint32_t>(height),
 				.depth = 1
 			}
 		};
@@ -6810,17 +6946,16 @@ ByteBuffer* VKRenderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t 
 		void* data;
 		err = vmaMapMemory(allocator, allocation, &data);
 		assert(!err);
-		auto pixelBuffer = ByteBuffer::allocate(usedWidth * usedHeight * 4);
-		for (int y = usedHeight - 1; y >= 0; y--) {
-			uint8_t* row = (uint8_t*)((uint8_t*)data + subResourceLayout.offset + subResourceLayout.rowPitch * y);
-			for (auto x = 0; x < usedWidth; x++) {
+		auto pixelBuffer = ByteBuffer::allocate(width * height * 4);
+		for (int y = height - 1; y >= 0; y--) {
+			auto row = static_cast<uint8_t*>(static_cast<uint8_t*>(data) + subResourceLayout.offset + subResourceLayout.rowPitch * y);
+			for (auto x = 0; x < width; x++) {
 				pixelBuffer->put(static_cast<uint8_t>(row[x * 4 + 2])); // b
 				pixelBuffer->put(static_cast<uint8_t>(row[x * 4 + 1])); // g
 				pixelBuffer->put(static_cast<uint8_t>(row[x * 4 + 0])); // r
 				pixelBuffer->put(static_cast<uint8_t>(row[x * 4 + 3])); // a
 			}
 		}
-		vmaFlushAllocation(allocator, allocation, 0, VK_WHOLE_SIZE);
 		vmaUnmapMemory(allocator, allocation);
 
 		//
