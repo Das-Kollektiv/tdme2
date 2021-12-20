@@ -1490,6 +1490,7 @@ inline void VKRenderer::startRenderPass(int contextIdx) {
 		}
 	}
 
+	// TODO: clear here!!! If clearing was set up
 	const VkRenderPassBeginInfo renderPassBegin = {
 		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
 		.pNext = nullptr,
