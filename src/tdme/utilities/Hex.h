@@ -13,7 +13,7 @@ using std::string;
  * Integer to hex string conversion utility class
  * @author Andreas Drewke
  */
-class tdme::utilities::HexEncDec {
+class tdme::utilities::Hex {
 public:
 
 	/**

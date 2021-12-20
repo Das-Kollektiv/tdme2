@@ -2,14 +2,14 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/utilities/Base64EncDec.h>
+#include <tdme/utilities/Base64.h>
 
 using std::string;
 using std::vector;
 
-using tdme::utilities::Base64EncDec;
+using tdme::utilities::Base64;
 
-void Base64EncDec::encode(const string& decodedString, string& encodedString) {
+void Base64::encode(const string& decodedString, string& encodedString) {
 	// see: https://stackoverflow.com/questions/180947/base64-decode-snippet-in-c/34571089#34571089
 	string dictionary = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 	int val = 0, valb = -6;
@@ -25,7 +25,7 @@ void Base64EncDec::encode(const string& decodedString, string& encodedString) {
 	while (encodedString.size() % 4) encodedString.push_back('=');
 }
 
-void Base64EncDec::encode(const vector<uint8_t>& decodedData, string& encodedString) {
+void Base64::encode(const vector<uint8_t>& decodedData, string& encodedString) {
 	// see: https://stackoverflow.com/questions/180947/base64-decode-snippet-in-c/34571089#34571089
 	string dictionary = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 	int val = 0, valb = -6;
@@ -41,7 +41,7 @@ void Base64EncDec::encode(const vector<uint8_t>& decodedData, string& encodedStr
 	while (encodedString.size() % 4) encodedString.push_back('=');
 }
 
-void Base64EncDec::decode(const string& encodedString, string& decodedString) {
+void Base64::decode(const string& encodedString, string& decodedString) {
 	// see: https://stackoverflow.com/questions/180947/base64-decode-snippet-in-c/34571089#34571089
 	string dictionary = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 	std::vector<int> T(256, -1);
@@ -58,7 +58,7 @@ void Base64EncDec::decode(const string& encodedString, string& decodedString) {
 	}
 }
 
-void Base64EncDec::decode(const string& encodedString, vector<uint8_t>& decodedData) {
+void Base64::decode(const string& encodedString, vector<uint8_t>& decodedData) {
 	// see: https://stackoverflow.com/questions/180947/base64-decode-snippet-in-c/34571089#34571089
 	string dictionary = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 	std::vector<int> T(256, -1);

@@ -47,7 +47,7 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/editor/misc/Tools.h>
-#include <tdme/utilities/Base64EncDec.h>
+#include <tdme/utilities/Base64.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/StringTools.h>
@@ -101,7 +101,7 @@ using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::editor::misc::Tools;
-using tdme::utilities::Base64EncDec;
+using tdme::utilities::Base64;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::StringTools;
@@ -173,7 +173,7 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 			vector<uint8_t> pngData;
 			string base64PNGData;
 			Tools::oseThumbnail(prototype, pngData);
-			Base64EncDec::encode(pngData, base64PNGData);
+			Base64::encode(pngData, base64PNGData);
 			jPrototypeRoot.AddMember("thumbnail", Value(base64PNGData, jAllocator), jAllocator);
 		}
 
@@ -539,7 +539,7 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 			jBoundingVolume.AddMember("type", Value("convexmesh", jAllocator), jAllocator);
 			if (prototypeBoundingVolume->getConvexMeshData().empty() == false) {
 				string base64TMData;
-				Base64EncDec::encode(prototypeBoundingVolume->getConvexMeshData(), base64TMData);
+				Base64::encode(prototypeBoundingVolume->getConvexMeshData(), base64TMData);
 				jBoundingVolume.AddMember("data", Value(base64TMData, jAllocator), jAllocator);
 			} else {
 				jBoundingVolume.AddMember("file", Value(prototypeBoundingVolume->getConvexMeshFile(), jAllocator), jAllocator);

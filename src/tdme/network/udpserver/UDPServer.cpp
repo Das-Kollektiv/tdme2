@@ -16,7 +16,7 @@
 #include <tdme/os/threading/ReadWriteLock.h>
 #include <tdme/os/threading/Thread.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/utilities/IntEncDec.h>
+#include <tdme/utilities/Integer.h>
 #include <tdme/utilities/RTTI.h>
 #include <tdme/utilities/Time.h>
 
@@ -32,7 +32,7 @@ using tdme::os::threading::Barrier;
 using tdme::os::threading::ReadWriteLock;
 using tdme::os::threading::Thread;
 using tdme::utilities::Console;
-using tdme::utilities::IntEncDec;
+using tdme::utilities::Integer;
 using tdme::utilities::RTTI;
 using tdme::utilities::Time;
 
@@ -200,7 +200,7 @@ void UDPServer::identify(stringstream* frame, MessageType& messageType, uint32_t
 	string strConnectionId;
 	frame->read((char*)&inConnectionId, sizeof(inConnectionId));
 	strConnectionId.append(inConnectionId, sizeof(inConnectionId));
-	if (IntEncDec::decodeInt(strConnectionId, connectionId) == false) {
+	if (Integer::decode(strConnectionId, connectionId) == false) {
 		throw NetworkServerException("Invalid connection id");
 	}
 
@@ -208,7 +208,7 @@ void UDPServer::identify(stringstream* frame, MessageType& messageType, uint32_t
 	string strMessageId;
 	frame->read((char*)&inMessageId, sizeof(inMessageId));
 	strMessageId.append(inMessageId, sizeof(inMessageId));
-	if (IntEncDec::decodeInt(strMessageId, messageId) == false) {
+	if (Integer::decode(strMessageId, messageId) == false) {
 		throw NetworkServerException("Invalid message id");
 	}
 
@@ -217,7 +217,7 @@ void UDPServer::identify(stringstream* frame, MessageType& messageType, uint32_t
 	frame->read((char*)&inRetries, sizeof(inRetries));
 	strRetries.append(inRetries, sizeof(inRetries));
 	uint32_t _retries;
-	if (IntEncDec::decodeInt(strRetries, _retries) == false) {
+	if (Integer::decode(strRetries, _retries) == false) {
 		throw NetworkServerException("Invalid retries");
 	}
 	retries = _retries;
@@ -260,17 +260,17 @@ void UDPServer::writeHeader(stringstream* frame, MessageType messageType, const 
 
 	// client id
 	string strClientId;
-	IntEncDec::encodeInt(clientId, strClientId);
+	Integer::encode(clientId, strClientId);
 	*frame << strClientId;
 
 	// message id
 	string strMessageId;
-	IntEncDec::encodeInt(messageId, strMessageId);
+	Integer::encode(messageId, strMessageId);
 	*frame << strMessageId;
 
 	// retries
 	string strRetriesId;
-	IntEncDec::encodeInt((uint32_t)retries, strRetriesId);
+	Integer::encode((uint32_t)retries, strRetriesId);
 	*frame << strRetriesId[strRetriesId.size() - 1];
 
 	// seek writing to end of stream

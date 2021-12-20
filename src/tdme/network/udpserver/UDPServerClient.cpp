@@ -8,7 +8,7 @@
 #include <tdme/tdme.h>
 #include <tdme/network/udpserver/UDPServerClient.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/utilities/IntEncDec.h>
+#include <tdme/utilities/Integer.h>
 #include <tdme/utilities/RTTI.h>
 #include <tdme/utilities/Time.h>
 
@@ -20,7 +20,7 @@ using std::stringstream;
 
 using tdme::network::udpserver::UDPServerClient;
 using tdme::utilities::Console;
-using tdme::utilities::IntEncDec;
+using tdme::utilities::Integer;
 using tdme::utilities::RTTI;
 using tdme::utilities::Time;
 

@@ -40,4 +40,40 @@ public:
 	 */
 	static int parseInt(const string& str);
 
+	/**
+	 * @brief Encodes an 32 bit unsigned integer to a 6 char string representation
+	 * @param decodedInt int value to encode
+	 * @returns encodedString
+	 */
+	inline static const string encode(const uint32_t decodedInt) {
+		string encodedString;
+		encode(decodedInt, encodedString);
+		return encodedString;
+	}
+
+	/**
+	 * @brief Decodes an 6 char string representation to a unsigned 32 bit integer
+	 * @param encodedString encoded string
+	 * @returns decodedString
+	 */
+	inline static const uint32_t decode(const string& encodedString) {
+		uint32_t decodedInt;
+		decode(encodedString, decodedInt);
+		return decodedInt;
+	}
+
+	/**
+	 * @brief Encodes an 32 bit unsigned integer to a 6 char string representation
+	 * @param decodedInt int value to encode
+	 * @param encodedString string
+	 */
+	static void encode(const uint32_t decodedInt, string& encodedString);
+
+	/**
+	 * @brief Decodes an 6 char string representation to a unsigned 32 bit integer
+	 * @param encodedString encoded string
+	 * @param decodedInt integer
+	 */
+	static bool decode(const string& encodedString, uint32_t& decodedInt);
+
 };

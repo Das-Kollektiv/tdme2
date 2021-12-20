@@ -11,7 +11,7 @@
 #include <tdme/os/network/Network.h>
 #include <tdme/os/network/NetworkSocketClosedException.h>
 #include <tdme/os/network/TCPSocket.h>
-#include <tdme/utilities/Base64EncDec.h>
+#include <tdme/utilities/Base64.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -34,7 +34,7 @@ using tdme::network::httpclient::HTTPClientException;
 using tdme::os::network::Network;
 using tdme::os::network::NetworkSocketClosedException;
 using tdme::os::network::TCPSocket;
-using tdme::utilities::Base64EncDec;
+using tdme::utilities::Base64;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -88,7 +88,7 @@ string HTTPClient::createHTTPRequestHeaders(const string& hostName, const string
 		string("Connection: close\r\n");
 	if (username.empty() == false || password.empty() == false) {
 		string base64Pass;
-		Base64EncDec::encode(username + ":" + password, base64Pass);
+		Base64::encode(username + ":" + password, base64Pass);
 		request+= "Authorization: Basic " + base64Pass + "\r\n";
 	}
 	if (contentType.size() > 0) {

@@ -1,13 +1,13 @@
 #include <string.h>
 
 #include <tdme/tdme.h>
-#include <tdme/utilities/HexEncDec.h>
+#include <tdme/utilities/Hex.h>
 
 using std::string;
 
-using tdme::utilities::HexEncDec;
+using tdme::utilities::Hex;
 
-void HexEncDec::encodeInt(const uint64_t decodedInt, string& encodedString) {
+void Hex::encodeInt(const uint64_t decodedInt, string& encodedString) {
 	encodedString = "";
 	char encodingCharSet[] = "0123456789abcdef";
 	auto _decodedInt = decodedInt;
@@ -19,7 +19,7 @@ void HexEncDec::encodeInt(const uint64_t decodedInt, string& encodedString) {
 	}
 }
 
-bool HexEncDec::decodeInt(const string& encodedString, uint64_t& decodedInt) {
+bool Hex::decodeInt(const string& encodedString, uint64_t& decodedInt) {
 	char encodingCharSet[] = "0123456789abcdef";
 	decodedInt = 0;
 	for (auto i = 0; i < encodedString.length(); i++) {

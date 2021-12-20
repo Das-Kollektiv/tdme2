@@ -20,7 +20,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
-#include <tdme/utilities/HexEncDec.h>
+#include <tdme/utilities/Hex.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
@@ -46,7 +46,7 @@ using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Float;
-using tdme::utilities::HexEncDec;
+using tdme::utilities::Hex;
 using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
@@ -135,16 +135,16 @@ void ColorPickerScreenController::onValueChanged(GUIElementNode* node) {
 		auto hexString = StringTools::trim(node->getController()->getValue().getString());
 		if (StringTools::startsWith(hexString, "#") == true) hexString = StringTools::substring(hexString, 1);
 		if (hexString.size() >= 2) {
-			color.setRed(static_cast<float>(HexEncDec::decodeInt(StringTools::substring(hexString, 0, 2)) / 255.0f));
+			color.setRed(static_cast<float>(Hex::decodeInt(StringTools::substring(hexString, 0, 2)) / 255.0f));
 		}
 		if (hexString.size() >= 4) {
-			color.setGreen(static_cast<float>(HexEncDec::decodeInt(StringTools::substring(hexString, 2, 4)) / 255.0f));
+			color.setGreen(static_cast<float>(Hex::decodeInt(StringTools::substring(hexString, 2, 4)) / 255.0f));
 		}
 		if (hexString.size() >= 6) {
-			color.setBlue(static_cast<float>(HexEncDec::decodeInt(StringTools::substring(hexString, 4, 6)) / 255.0f));
+			color.setBlue(static_cast<float>(Hex::decodeInt(StringTools::substring(hexString, 4, 6)) / 255.0f));
 		}
 		if (hexString.size() >= 8) {
-			color.setAlpha(static_cast<float>(HexEncDec::decodeInt(StringTools::substring(hexString, 6, 8)) / 255.0f));
+			color.setAlpha(static_cast<float>(Hex::decodeInt(StringTools::substring(hexString, 6, 8)) / 255.0f));
 		}
 		updateColor();
 	} else
@@ -189,10 +189,10 @@ void ColorPickerScreenController::updateColor() {
 }
 
 void ColorPickerScreenController::updateColorHex() {
-	string hexRed = HexEncDec::encodeInt(Integer::parseInt(redInput->getController()->getValue().getString()));
-	string hexGreen = HexEncDec::encodeInt(Integer::parseInt(greenInput->getController()->getValue().getString()));
-	string hexBlue = HexEncDec::encodeInt(Integer::parseInt(blueInput->getController()->getValue().getString()));
-	string hexAlpha = HexEncDec::encodeInt(Integer::parseInt(alphaInput->getController()->getValue().getString()));
+	string hexRed = Hex::encodeInt(Integer::parseInt(redInput->getController()->getValue().getString()));
+	string hexGreen = Hex::encodeInt(Integer::parseInt(greenInput->getController()->getValue().getString()));
+	string hexBlue = Hex::encodeInt(Integer::parseInt(blueInput->getController()->getValue().getString()));
+	string hexAlpha = Hex::encodeInt(Integer::parseInt(alphaInput->getController()->getValue().getString()));
 	while (hexRed.size() < 2) hexRed = "0" + hexRed;
 	while (hexGreen.size() < 2) hexGreen = "0" + hexGreen;
 	while (hexBlue.size() < 2) hexBlue = "0" + hexBlue;

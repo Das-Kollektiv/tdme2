@@ -4,7 +4,7 @@
 namespace tdme {
 namespace utilities {
 	struct Action;
-	class Base64EncDec;
+	class Base64;
 	class Buffer;
 	class ByteBuffer;
 	class Character;
@@ -15,10 +15,9 @@ namespace utilities {
 	class FloatBuffer;
 	class FlowMap;
 	class FlowMapCell;
-	class HexEncDec;
+	class Hex;
 	class IntBuffer;
 	class Integer;
-	class IntEncDec;
 	class MiniScript;
 	class MutableString;
 	class ModelTools;

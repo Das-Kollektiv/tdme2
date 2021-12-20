@@ -15,8 +15,30 @@ using std::vector;
  * Base64 encoding/decoding class
  * @author Andreas Drewke
  */
-class tdme::utilities::Base64EncDec {
+class tdme::utilities::Base64 {
 public:
+	/**
+	 * @brief Encodes an string to base 64 string
+	 * @param decodedString string to encode
+	 * @returns encodedString
+	 */
+	inline static const string encode(const string& decodedString) {
+		string encodedString;
+		encode(decodedString, encodedString);
+		return encodedString;
+	}
+
+	/**
+	 * @brief Decodes an base64 encoded string
+	 * @param encodedString encoded string
+	 * @returns decodedString
+	 */
+	inline static const string decode(const string& encodedString) {
+		string decodedString;
+		decode(encodedString, decodedString);
+		return decodedString;
+	}
+
 	/**
 	 * Encodes an string to base 64 string
 	 * @param decodedString string to encode

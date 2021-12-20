@@ -65,7 +65,7 @@
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/utilities/HexEncDec.h>
+#include <tdme/utilities/Hex.h>
 #include <tdme/utilities/RTTI.h>
 #include <tdme/utilities/StringTokenizer.h>
 #include <tdme/utilities/StringTools.h>
@@ -86,7 +86,7 @@ using tdme::os::threading::Thread;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
-using tdme::utilities::HexEncDec;
+using tdme::utilities::Hex;
 using tdme::utilities::RTTI;
 using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
@@ -298,7 +298,7 @@ void Application::exit(int exitCode) {
 			#if defined(_MSC_VER) == false
 				if (functionName == "??") {
 					string hexAddr;
-					HexEncDec::encodeInt(stackFrame.AddrPC.Offset, hexAddr);
+					Hex::encodeInt(stackFrame.AddrPC.Offset, hexAddr);
 					string addr2LineCommand = "\"" + addr2lineToolCmd + " -f -p -e " + string(pathToExecutable) + " " + hexAddr + "\"";
 					auto addr2LineOutput = Application::execute(addr2LineCommand);
 					StringTokenizer t;

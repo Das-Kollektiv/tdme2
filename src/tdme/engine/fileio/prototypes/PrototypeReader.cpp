@@ -37,7 +37,7 @@
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/editor/misc/Tools.h>
-#include <tdme/utilities/Base64EncDec.h>
+#include <tdme/utilities/Base64.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
@@ -84,7 +84,7 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::editor::misc::Tools;
-using tdme::utilities::Base64EncDec;
+using tdme::utilities::Base64;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Float;
@@ -112,7 +112,7 @@ bool PrototypeReader::readThumbnail(const string& pathName, const string& fileNa
 		string thumbnail = jPrototypeRoot.FindMember("thumbnail") != jPrototypeRoot.MemberEnd()?jPrototypeRoot["thumbnail"].GetString():"";
 		if (thumbnail.empty() == true) return false;
 
-		Base64EncDec::decode(thumbnail, pngData);
+		Base64::decode(thumbnail, pngData);
 
 		return true;
 	} catch (Exception& exception) {
@@ -529,7 +529,7 @@ PrototypeBoundingVolume* PrototypeReader::parseBoundingVolume(int idx, Prototype
 			string data = jBv.FindMember("data") != jBv.MemberEnd()?jBv["data"].GetString():string();
 			if (data.empty() == false) {
 				vector<uint8_t> tmData;
-				Base64EncDec::decode(data, tmData);
+				Base64::decode(data, tmData);
 				prototypeBoundingVolume->setupConvexMesh(tmData);
 			} else {
 				string fileName = jBv["file"].GetString();

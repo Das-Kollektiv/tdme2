@@ -477,15 +477,14 @@ SRCS = \
 	src/tdme/tools/editor/tabviews/subviews/PrototypeSoundsSubView.cpp \
 	src/tdme/tools/editor/views/EditorView.cpp \
 	src/tdme/tools/installer/Installer.cpp \
-	src/tdme/utilities/Base64EncDec.cpp \
+	src/tdme/utilities/Base64.cpp \
 	src/tdme/utilities/Character.cpp \
 	src/tdme/utilities/Console.cpp \
 	src/tdme/utilities/ExceptionBase.cpp \
 	src/tdme/utilities/Enum.cpp \
 	src/tdme/utilities/Float.cpp \
-	src/tdme/utilities/HexEncDec.cpp \
+	src/tdme/utilities/Hex.cpp \
 	src/tdme/utilities/Integer.cpp \
-	src/tdme/utilities/IntEncDec.cpp \
 	src/tdme/utilities/MiniScript.cpp \
 	src/tdme/utilities/MutableString.cpp \
 	src/tdme/utilities/ModelTools.cpp \

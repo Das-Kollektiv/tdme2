@@ -8,7 +8,7 @@
 #include <tdme/tdme.h>
 #include <tdme/network/udpclient/UDPClient.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/utilities/IntEncDec.h>
+#include <tdme/utilities/Integer.h>
 #include <tdme/utilities/Time.h>
 
 using tdme::network::udpclient::UDPClientMessage;
@@ -20,7 +20,7 @@ using std::to_string;
 
 using tdme::network::udpclient::UDPClient;
 using tdme::utilities::Console;
-using tdme::utilities::IntEncDec;
+using tdme::utilities::Integer;
 using tdme::utilities::Time;
 
 UDPClientMessage* UDPClientMessage::parse(const char message[512], const size_t bytes) {
@@ -43,9 +43,9 @@ UDPClientMessage* UDPClientMessage::parse(const char message[512], const size_t 
 	uint32_t clientId;
 	uint32_t messageId;
 	uint32_t retries;
-	IntEncDec::decodeInt(string(&message[1], 6), clientId);
-	IntEncDec::decodeInt(string(&message[7], 6), messageId);
-	IntEncDec::decodeInt(string(&message[13], 1), retries);
+	Integer::decode(string(&message[1], 6), clientId);
+	Integer::decode(string(&message[7], 6), messageId);
+	Integer::decode(string(&message[13], 1), retries);
 	// decode data
 	stringstream* frame = nullptr;
 	if (bytes > 14) {
@@ -120,9 +120,9 @@ void UDPClientMessage::generate(char message[512], size_t& bytes) {
 	string retriesEncoded;
 	string clientIdEncoded;
 	string messageIdEncoded;
-	IntEncDec::encodeInt(retries, retriesEncoded);
-	IntEncDec::encodeInt(clientId, clientIdEncoded);
-	IntEncDec::encodeInt(messageId, messageIdEncoded);
+	Integer::encode(retries, retriesEncoded);
+	Integer::encode(clientId, clientIdEncoded);
+	Integer::encode(messageId, messageIdEncoded);
 	datagram+= clientIdEncoded;
 	datagram+= messageIdEncoded;
 	datagram+= retriesEncoded[retriesEncoded.length()];
