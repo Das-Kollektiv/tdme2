@@ -1,5 +1,7 @@
 #include <tdme/utilities/Integer.h>
 
+#include <string.h>
+
 #include <algorithm>
 #include <cctype>
 #include <string>
