@@ -901,6 +901,23 @@ void Engine::initialize()
 	initialized &= postProcessingShader->isInitialized();
 	initialized &= texture2DRenderShader->isInitialized();
 
+	// deferred shading
+	if (renderer->isDeferredShadingAvailable() == true) {
+		Console::println("TDME2::Using deferred shading");
+	} else {
+		Console::println("TDME2::Not using deferred shading");
+	}
+
+	//
+	Console::println(string("TDME2::initialized & ready: ") + to_string(initialized));
+
+	// shut down engine if not initialized
+	if (initialized == false) {
+		Console::println("Engine not initialized: Exiting!");
+		Application::exit(0);
+		return;
+	}
+
 	//
 	if (renderer->isSupportingMultithreadedRendering() == true) {
 		engineThreadsQueue = new Queue<Engine::EngineThreadQueueElement>(0);
@@ -913,16 +930,6 @@ void Engine::initialize()
 			engineThreads[i]->start();
 		}
 	}
-
-	// create geometry buffer if available
-	if (renderer->isDeferredShadingAvailable() == true) {
-		Console::println("TDME2::Using deferred shading");
-	} else {
-		Console::println("TDME2::Not using deferred shading");
-	}
-
-	//
-	Console::println(string("TDME2::initialized & ready: ") + to_string(initialized));
 
 	// show registered shaders
 	dumpShaders();

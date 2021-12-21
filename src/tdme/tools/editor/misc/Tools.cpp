@@ -144,6 +144,7 @@ void Tools::oseInit()
 
 void Tools::oseDispose()
 {
+	if (osEngine == nullptr) return;
 	osEngine->dispose();
 	delete osEngine;
 }

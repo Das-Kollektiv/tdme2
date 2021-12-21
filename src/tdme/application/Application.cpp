@@ -137,12 +137,16 @@ void Application::exit(int exitCode) {
 	if (Application::application == nullptr) {
 		::exit(exitCode);
 	} else {
-		Application::application->exitCode = exitCode;
-		#if defined(VULKAN) || defined(GLFW3)
-			glfwSetWindowShouldClose(glfwWindow, GLFW_TRUE);
-		#else
+		if (Application::application->initialized == false) {
 			::exit(exitCode);
-		#endif
+		} else {
+			Application::application->exitCode = exitCode;
+			#if defined(VULKAN) || defined(GLFW3)
+				glfwSetWindowShouldClose(glfwWindow, GLFW_TRUE);
+			#else
+				::exit(exitCode);
+			#endif
+		}
 	}
 }
 
