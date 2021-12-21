@@ -415,7 +415,7 @@ private:
 	VkDescriptorPool descriptorPool2 { VK_NULL_HANDLE };
 
 	// enable/disable validation layers
-	bool validate { true };
+	bool validate { false };
 
 	uint32_t lastFrameBuffer { 0 };
 	uint32_t currentFrameBuffer { 0 };
