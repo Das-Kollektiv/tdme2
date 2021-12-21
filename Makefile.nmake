@@ -695,7 +695,7 @@ all: \
 	converttotm \
 	copyanimationsetups \
 	createinstaller \
-	deletevkcache \
+	recreatevkcache \
 	generatelicenses \
 	importtmodel \
 	fixdoxygen \
@@ -829,8 +829,8 @@ copyanimationsetups:
 createinstaller:
     cl /Fecreateinstaller $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/createinstaller-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
-deletevkcache:
-    cl /Fedeletevkcache $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/deletevkcache-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+recreatevkcache:
+    cl /Ferecreatevkcache $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/recreatevkcache-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
 
 generatelicenses:
 	cl /Fegeneratelicenses /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/generatelicenses-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)

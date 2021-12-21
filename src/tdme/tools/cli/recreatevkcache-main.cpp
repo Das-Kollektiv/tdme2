@@ -28,20 +28,20 @@ namespace cli {
  * @author andreas.drewke
  * @version $Id$
  */
-class DeleteVKCacheApplication final
+class RecreateVKCacheApplication final
 	: public virtual Application
 {
 public:
 	/**
 	 * Public constructor
 	 */
-	DeleteVKCacheApplication() {
+	RecreateVKCacheApplication() {
 	}
 
 	/**
 	 * Public denstructor
 	 */
-	~DeleteVKCacheApplication() {
+	~RecreateVKCacheApplication() {
 	}
 
 	/**
@@ -50,8 +50,8 @@ public:
 	 * @param argv argument values
 	 */
 	inline static void main(int argc, char** argv) {
-		auto convertToTMApplication = new DeleteVKCacheApplication();
-		convertToTMApplication->run(argc, argv, "Delete VK cache Application", nullptr, Application::WINDOW_HINT_INVISIBLE);
+		auto recreateVKCacheApplication = new RecreateVKCacheApplication();
+		recreateVKCacheApplication->run(argc, argv, "Recreate VK cache Application", nullptr, Application::WINDOW_HINT_INVISIBLE);
 	}
 
 	// overriden methods
@@ -78,7 +78,7 @@ public:
 
 int main(int argc, char** argv)
 {
-	Console::println(string("deletevkcache ") + Version::getVersion());
+	Console::println(string("recreatevkcache ") + Version::getVersion());
 	Console::println(Version::getCopyright());
 	Console::println();
 	Console::println("Deleting shader/vk folder");
@@ -94,7 +94,11 @@ int main(int argc, char** argv)
 	} catch (Exception& exception) {
 		Console::println(string() + "An error occurred: " + exception.what());
 	}
+	#if !defined(VULKAN)
+		Console::println("Engine has not been compiled with -DVULKAN, Vulkan shader cache can not get created. Exiting.");
+		Application::exit(0);
+	#endif
 	Console::println("Creating shader/vk shader cache");
-	tdme::tools::cli::DeleteVKCacheApplication::main(argc, argv);
+	tdme::tools::cli::RecreateVKCacheApplication::main(argc, argv);
 	Console::println("Done");
 }

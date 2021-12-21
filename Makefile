@@ -914,7 +914,7 @@ MAIN_SRCS = \
 	src/tdme/tools/cli/converttotm-main.cpp \
 	src/tdme/tools/cli/copyanimationsetups-main.cpp \
 	src/tdme/tools/cli/createinstaller-main.cpp \
-	src/tdme/tools/cli/deletevkcache-main.cpp \
+	src/tdme/tools/cli/recreatevkcache-main.cpp \
 	src/tdme/tools/cli/fixdoxygen-main.cpp \
 	src/tdme/tools/cli/generatelicenses-main.cpp \
 	src/tdme/tools/cli/importtmodel-main.cpp \
