@@ -55,6 +55,7 @@
 #include <tdme/utilities/Buffer.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 #include <tdme/utilities/FloatBuffer.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/IntBuffer.h>
@@ -123,6 +124,7 @@ using tdme::os::threading::ReadWriteLock;
 using tdme::utilities::Buffer;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
+using tdme::utilities::Exception;
 using tdme::utilities::FloatBuffer;
 using tdme::utilities::Integer;
 using tdme::utilities::IntBuffer;
@@ -844,6 +846,15 @@ bool VKRenderer::isSupportingVertexArrays() {
 
 void VKRenderer::initialize()
 {
+	// create VK shader cache folder
+	try {
+		if (FileSystem::getInstance()->fileExists("shader/vk") == false) {
+			FileSystem::getInstance()->createPath("shader/vk");
+		}
+	} catch (Exception& exception) {
+		Console::println(string() + "An error occurred: " + exception.what());
+	}
+
 	//
 	glfwGetWindowSize(Application::glfwWindow, (int32_t*)&width, (int32_t*)&height);
 
