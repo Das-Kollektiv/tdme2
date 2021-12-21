@@ -3163,7 +3163,6 @@ bool VKRenderer::linkProgram(int32_t programId)
 	VKGL3CoreShaderProgram::linkProgram(program);
 
 	// create uniform buffers
-	auto uniformIdx = 1;
 	for (auto shader: program.shaders) {
 		// do we need a uniform buffer object for this shader stage?
 		if (shader->uboSize > 0) {

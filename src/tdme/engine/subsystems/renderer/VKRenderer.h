@@ -74,7 +74,7 @@ private:
 	static constexpr int COMMANDS_MAX_GRAPHICS { 16 };
 	static constexpr int COMMANDS_MAX_COMPUTE { 5 };
 	static constexpr int DESC_MAX_UNCACHED { COMMANDS_MAX };
-	static constexpr int DESC_MAX_CACHED { 512 };
+	static constexpr int DESC_MAX_CACHED { 512 }; // TODO: make this dynamic
 	static constexpr int OBJECTS_VERTEX_BUFFER_COUNT { 10 };
 	static constexpr int POINTS_VERTEX_BUFFER_COUNT { 9 };
 	static constexpr int LINES_VERTEX_BUFFER_COUNT { 4 };
@@ -153,7 +153,9 @@ private:
  		string source;
  		string file;
  		string cacheId;
-		vector<unsigned int> spirv;
+ 		string hash;
+		vector<uint32_t> spirv;
+		bool valid;
 		int32_t id { 0 };
 		VkShaderStageFlagBits type;
 		VkShaderModule module { VK_NULL_HANDLE };
@@ -413,7 +415,7 @@ private:
 	VkDescriptorPool descriptorPool2 { VK_NULL_HANDLE };
 
 	// enable/disable validation layers
-	bool validate { false };
+	bool validate { true };
 
 	uint32_t lastFrameBuffer { 0 };
 	uint32_t currentFrameBuffer { 0 };

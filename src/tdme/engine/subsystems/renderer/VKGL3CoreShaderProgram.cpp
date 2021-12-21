@@ -23,6 +23,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/Properties.h>
+#include <tdme/utilities/SHA256.h>
 #include <tdme/utilities/StringTokenizer.h>
 #include <tdme/utilities/StringTools.h>
 
@@ -45,6 +46,7 @@ using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;
 using tdme::utilities::Integer;
 using tdme::utilities::Properties;
+using tdme::utilities::SHA256;
 using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
 
@@ -434,8 +436,24 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 {
 	if (VERBOSE == true) Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): INIT: " + pathName + "/" + fileName + ": " + definitions);
 
+	shader.valid = true;
 	shader.type = (VkShaderStageFlagBits)type;
 	shader.file = pathName + "/" + fileName;
+
+	// cache + hash
+	shader.cacheId = "shader-" + to_string(shader.id) + "-" + StringTools::replace(shader.file, "/", "_");
+	shader.hash = SHA256::encode(shader.cacheId + "." + to_string(type) + definitions + functions);
+
+	// do we have a cached shader already?
+	if (FileSystem::getInstance()->fileExists("shader/vk/" + shader.cacheId + ".properties") == true) {
+		Properties vkShaderCache;
+		vkShaderCache.load("shader/vk", shader.cacheId + ".properties");
+		if (shader.hash != vkShaderCache.get("shader.hash", "")) {
+			Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Invalid hash id");
+			shader.valid = false;
+		}
+		return;
+	}
 
 	// shader source
 	auto shaderSource = StringTools::replace(
@@ -447,9 +465,6 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 		"{$FUNCTIONS}",
 		functions + "\n\n"
 	);
-
-	//
-	shader.cacheId = "shader-" + to_string(shader.id) + "-" + StringTools::replace(shader.file, "/", "_");
 
 	// do some shader adjustments
 	{
@@ -817,145 +832,224 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 
 	shader.definitions = definitions;
 	shader.source = shaderSource;
-
-	// store to cache
-	{
-		Properties vkShaderCache;
-		vkShaderCache.put("shader.type", to_string(type));
-		vkShaderCache.put("shader.file", pathName + "/" + fileName);
-		vkShaderCache.put("shader.id", to_string(shader.id));
-		{
-			auto i = 0;
-			for (auto& attribute: shader.attributeLayouts) {
-				vkShaderCache.put("shader.attributelayout_name_" + to_string(i), attribute.name);
-				vkShaderCache.put("shader.attributelayout_type_" + to_string(i), attribute.type);
-				vkShaderCache.put("shader.attributelayout_location_" + to_string(i), to_string(attribute.location));
-				i++;
-			}
-		}
-		vkShaderCache.store("shader/vk", shader.cacheId + ".properties", FileSystem::getStandardFileSystem());
-	}
-
-	// store definitions
-	FileSystem::getStandardFileSystem()->setContentFromString("shader/vk", shader.cacheId + ".definitions", definitions);
 }
 
 bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 	map<string, int32_t> uniformsByName;
-	auto bindingIdx = 0;
-	for (auto shader: program.shaders) {
-		//
-		bindingIdx = Math::max(shader->maxBindings + 1, bindingIdx);
-	}
+	auto useCache = false;
 
-	auto uniformIdx = 1;
+	// check if shaders are valid
 	for (auto shader: program.shaders) {
-		// do we need a uniform buffer object for this shader stage?
-		if (shader->uboSize > 0) {
-			// yep, inject UBO index
-			shader->uboBindingIdx = bindingIdx;
-			shader->source = StringTools::replace(shader->source, "{$UBO_BINDING_IDX}", to_string(bindingIdx));
-			bindingIdx++;
+		if (shader->valid == false) {
+			Console::println("VKGL3CoreShaderProgram::linkProgram(): Cached shader is invalid. Please recreate VK shader cache or delete VK shader cache files");
+			return false;
 		}
 	}
 
-	// bind samplers, set up ingoing attribute layout indices, compile shaders
-	VKRenderer::shader_type* shaderLast = nullptr;
-	for (auto shader: program.shaders) {
-		// set up sampler2D and samplerCube binding indices
-		for (auto& uniformIt: shader->uniforms) {
-			auto& uniform = *uniformIt.second;
+	// check if we can use a cache
+	if (FileSystem::getInstance()->fileExists("shader/vk/program-" + to_string(program.id) + ".properties") == true) {
+		// use cache
+		useCache = true;
+
+		//
+		Properties vkProgramCache;
+		vkProgramCache.load("shader/vk", "program-" + to_string(program.id) + ".properties");
+		if (Integer::parseInt(vkProgramCache.get("program.id", "-1")) != program.id) {
+			Console::println("VKGL3CoreShaderProgram::linkProgram(): program id mismatch");
+			return false;
+		}
+		program.layoutBindings = Integer::parseInt(vkProgramCache.get("program.layout_bindings", "-1"));
+
+		// read shaders from cache
+		auto shaderIdx = 0;
+		for (auto shader: program.shaders) {
 			//
-			if (uniform.type == VKRenderer::shader_type::uniform_type::TYPE_SAMPLER2D) {
-				shader->source = StringTools::replace(shader->source, "{$SAMPLER2D_BINDING_" + uniform.newName + "_IDX}", to_string(bindingIdx));
-				uniform.position = bindingIdx++;
-			} else
-			if (uniform.type == VKRenderer::shader_type::uniform_type::TYPE_SAMPLERCUBE) {
-				shader->source = StringTools::replace(shader->source, "{$SAMPLERCUBE_BINDING_" + uniform.newName + "_IDX}", to_string(bindingIdx));
-				uniform.position = bindingIdx++;
+			shader->cacheId = vkProgramCache.get("program.shader_" + to_string(shaderIdx) + "_cacheid", "");
+			shader->source = FileSystem::getInstance()->getContentAsString("shader/vk", shader->cacheId + ".glsl");
+			shader->definitions = FileSystem::getInstance()->getContentAsString("shader/vk", shader->cacheId + ".definitions");
+			vector<uint8_t> spirv8;
+			FileSystem::getInstance()->getContent("shader/vk", shader->cacheId + ".spirv", spirv8);
+			shader->spirv.resize(spirv8.size() / 4);
+			for (auto i = 0; i < spirv8.size() / 4; i++) {
+				shader->spirv[i] =
+					(static_cast<uint32_t>(spirv8[i * 4 + 0])) +
+					(static_cast<uint32_t>(spirv8[i * 4 + 1]) << 8) +
+					(static_cast<uint32_t>(spirv8[i * 4 + 2]) << 16) +
+					(static_cast<uint32_t>(spirv8[i * 4 + 3]) << 24);
 			}
-			uniformsByName[uniform.name] = uniformIdx++;
-		}
+			{
+				// use shader caches to load shaders
+				Properties vkShaderCache;
+				vkShaderCache.load("shader/vk", shader->cacheId + ".properties");
+				if (Integer::parseInt(vkShaderCache.get("shader.id", "-1")) != shader->id) {
+					Console::println("VKGL3CoreShaderProgram::linkProgram(): shader id mismatch");
+					return false;
+				}
+				shader->type = static_cast<VkShaderStageFlagBits>(Integer::parseInt(vkShaderCache.get("shader.type", "-1")));
+				shader->file = vkShaderCache.get("shader.file", "");
+				shader->maxBindings = Integer::parseInt(vkShaderCache.get("shader.max_bindings", "-1"));
 
-		// set up ingoing attributes layout indices
-		if (shaderLast != nullptr) {
-			for (auto& attributeLayout: shaderLast->attributeLayouts) {
-				shader->source = StringTools::replace(shader->source, "{$IN_ATTRIBUTE_LOCATION_" + attributeLayout.name + "_IDX}", to_string(attributeLayout.location));
+				// vert->frag layout attributes
+				{
+					auto i = 0;
+					while (vkShaderCache.get("shader.attributelayout_name_" + to_string(i), "").empty() == false) {
+						auto outName = vkShaderCache.get("shader.attributelayout_name_" + to_string(i), "");
+						auto outType = vkShaderCache.get("shader.attributelayout_type_" + to_string(i), "");
+						uint8_t outLocation = Integer::parseInt(vkShaderCache.get("shader.attributelayout_location_" + to_string(i), "-1"));
+						shader->attributeLayouts.push_back(
+							{
+								.name = outName,
+								.type = outType,
+								.location = static_cast<uint8_t>(outLocation)
+							}
+						);
+						i++;
+					}
+					shader->attributeLayouts.shrink_to_fit();
+				}
+
+				// ubo + uniforms
+				{
+					shader->uboSize = Integer::parseInt(vkShaderCache.get("shader.ubo_size", "-1"));
+					shader->uboBindingIdx = Integer::parseInt(vkShaderCache.get("shader.ubo_bindingidx", "-1"));
+					auto i = 0;
+					while (vkShaderCache.get("shader.uniform_name_" + to_string(i), "").empty() == false) {
+						auto name = vkShaderCache.get("shader.uniform_name_" + to_string(i), "");
+						auto newName = vkShaderCache.get("shader.uniform_newname_" + to_string(i), "");
+						auto type = static_cast<VKRenderer::shader_type::uniform_type::uniform_type_enum>(Integer::parseInt(vkShaderCache.get("shader.uniform_type_" + to_string(i), "-1")));
+						int32_t position = Integer::parseInt(vkShaderCache.get("shader.uniform_position_" + to_string(i), "-1"));
+						uint32_t size = Integer::parseInt(vkShaderCache.get("shader.uniform_size_" + to_string(i), "0"));
+						shader->uniforms[name] = new VKRenderer::shader_type::uniform_type
+							{
+								.name = name,
+								.newName = newName,
+								.type = type,
+								.position = position,
+								.size = size,
+								.textureUnit = -1
+							};
+						i++;
+					}
+				}
 			}
+			shaderIdx++;
 		}
 
-		// store glsl
-		FileSystem::getStandardFileSystem()->setContentFromString("shader/vk", shader->cacheId + ".glsl", shader->source);
-
-		// compile shader
-		EShLanguage stage = shaderFindLanguage(shader->type);
-		glslang::TShader glslShader(stage);
-		glslang::TProgram glslProgram;
-		const char *shaderStrings[1];
-		TBuiltInResource resources;
-		shaderInitResources(resources);
-
-		// Enable SPIR-V and Vulkan rules when parsing GLSL
-		EShMessages messages = (EShMessages)(EShMsgSpvRules | EShMsgVulkanRules);
-
-		shaderStrings[0] = shader->source.c_str();
-		glslShader.setStrings(shaderStrings, 1);
-
-		if (!glslShader.parse(&resources, 100, false, messages)) {
-			// be verbose
-			Console::println(
-				string(
-					string("VKGL3CoreShaderProgram::") +
-					string(__FUNCTION__) +
-					string("[") +
-					to_string(shader->id) +
-					string("]") +
-					string(": parsing failed: ") +
-					shader->file + ": " +
-					glslShader.getInfoLog() + ": " +
-					glslShader.getInfoDebugLog()
-				 )
-			);
-			Console::println(shader->source);
-			return false;
-		}
-
-		glslProgram.addShader(&glslShader);
-		if (glslProgram.link(messages) == false) {
-			// be verbose
-			Console::println(
-				string(
-					string("VKGL3CoreShaderProgram::") +
-					string(__FUNCTION__) +
-					string("[") +
-					to_string(shader->id) +
-					string("]") +
-					string(": linking failed: ") +
-					shader->file + ": " +
-					glslShader.getInfoLog() + ": " +
-					glslShader.getInfoDebugLog()
-				)
-			);
-			Console::println(shader->source);
-			return false;
-		}
-
-		glslang::GlslangToSpv(*glslProgram.getIntermediate(stage), shader->spirv);
-
-		// store SPIRV cache
-		{
-			vector<uint8_t> spirv8(shader->spirv.size() * 4);
-			for (auto v: shader->spirv) {
-				spirv8.push_back((static_cast<unsigned int>(v)) & 0xff);
-				spirv8.push_back((static_cast<unsigned int>(v) >> 8) & 0xff);
-				spirv8.push_back((static_cast<unsigned int>(v) >> 16) & 0xff);
-				spirv8.push_back((static_cast<unsigned int>(v) >> 24) & 0xff);
+		// uniforms by name
+		auto uniformIdx = 1;
+		for (auto shader: program.shaders) {
+			for (auto& uniformIt: shader->uniforms) {
+				auto& uniform = *uniformIt.second;
+				uniformsByName[uniform.name] = uniformIdx++;
 			}
-			FileSystem::getStandardFileSystem()->setContent("shader/vk", shader->cacheId + ".spirv", spirv8);
+			// binding idx
+		}
+	} else {
+		// nope, no cache
+		auto bindingIdx = 0;
+		for (auto shader: program.shaders) {
+			//
+			bindingIdx = Math::max(shader->maxBindings + 1, bindingIdx);
 		}
 
 		//
-		shaderLast = shader;
+		for (auto shader: program.shaders) {
+			// do we need a uniform buffer object for this shader stage?
+			if (shader->uboSize > 0) {
+				// yep, inject UBO index
+				shader->uboBindingIdx = bindingIdx;
+				shader->source = StringTools::replace(shader->source, "{$UBO_BINDING_IDX}", to_string(bindingIdx));
+				bindingIdx++;
+			}
+		}
+
+		// bind samplers, set up ingoing attribute layout indices, compile shaders
+		auto uniformIdx = 1;
+		VKRenderer::shader_type* shaderLast = nullptr;
+		for (auto shader: program.shaders) {
+			// set up sampler2D and samplerCube binding indices
+			for (auto& uniformIt: shader->uniforms) {
+				auto& uniform = *uniformIt.second;
+				//
+				if (uniform.type == VKRenderer::shader_type::uniform_type::TYPE_SAMPLER2D) {
+					shader->source = StringTools::replace(shader->source, "{$SAMPLER2D_BINDING_" + uniform.newName + "_IDX}", to_string(bindingIdx));
+					uniform.position = bindingIdx++;
+				} else
+				if (uniform.type == VKRenderer::shader_type::uniform_type::TYPE_SAMPLERCUBE) {
+					shader->source = StringTools::replace(shader->source, "{$SAMPLERCUBE_BINDING_" + uniform.newName + "_IDX}", to_string(bindingIdx));
+					uniform.position = bindingIdx++;
+				}
+				uniformsByName[uniform.name] = uniformIdx++;
+			}
+
+			// set up ingoing attributes layout indices
+			if (shaderLast != nullptr) {
+				for (auto& attributeLayout: shaderLast->attributeLayouts) {
+					shader->source = StringTools::replace(shader->source, "{$IN_ATTRIBUTE_LOCATION_" + attributeLayout.name + "_IDX}", to_string(attributeLayout.location));
+				}
+			}
+
+			// compile shader
+			EShLanguage stage = shaderFindLanguage(shader->type);
+			glslang::TShader glslShader(stage);
+			glslang::TProgram glslProgram;
+			const char *shaderStrings[1];
+			TBuiltInResource resources;
+			shaderInitResources(resources);
+
+			// Enable SPIR-V and Vulkan rules when parsing GLSL
+			EShMessages messages = (EShMessages)(EShMsgSpvRules | EShMsgVulkanRules);
+
+			shaderStrings[0] = shader->source.c_str();
+			glslShader.setStrings(shaderStrings, 1);
+
+			if (!glslShader.parse(&resources, 100, false, messages)) {
+				// be verbose
+				Console::println(
+					string(
+						string("VKGL3CoreShaderProgram::") +
+						string(__FUNCTION__) +
+						string("[") +
+						to_string(shader->id) +
+						string("]") +
+						string(": parsing failed: ") +
+						shader->file + ": " +
+						glslShader.getInfoLog() + ": " +
+						glslShader.getInfoDebugLog()
+					 )
+				);
+				Console::println(shader->source);
+				return false;
+			}
+
+			glslProgram.addShader(&glslShader);
+			if (glslProgram.link(messages) == false) {
+				// be verbose
+				Console::println(
+					string(
+						string("VKGL3CoreShaderProgram::") +
+						string(__FUNCTION__) +
+						string("[") +
+						to_string(shader->id) +
+						string("]") +
+						string(": linking failed: ") +
+						shader->file + ": " +
+						glslShader.getInfoLog() + ": " +
+						glslShader.getInfoDebugLog()
+					)
+				);
+				Console::println(shader->source);
+				return false;
+			}
+
+			glslang::GlslangToSpv(*glslProgram.getIntermediate(stage), shader->spirv);
+
+			//
+			shaderLast = shader;
+		}
+
+		// total bindings of program
+		program.layoutBindings = bindingIdx;
 	}
 
 	//
@@ -989,19 +1083,21 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 	}
 
 	// print shaders with more than SAMPLER_HASH_MAX samplers as our hashing depends of 4 samplers max
-	for (auto shader: program.shaders) {
-		if (shader->samplerUniformList.size() > SAMPLER_HASH_MAX) {
-			Console::println(
-				string("VKGL3CoreShaderProgram::") +
-				string(__FUNCTION__) +
-				string("[") +
-				to_string(shader->id) +
-				string("]") +
-				string(": warning: more than ") + to_string(SAMPLER_HASH_MAX) + string(" samplers @ ") +
-				shader->file
-			);
-			for (auto samplerUniform: shader->samplerUniformList) {
-				Console::println("\t" + samplerUniform->name);
+	if (program.type == 1/*PROGRAM_OBJECTS*/) {
+		for (auto shader: program.shaders) {
+			if (shader->samplerUniformList.size() > SAMPLER_HASH_MAX) {
+				Console::println(
+					string("VKGL3CoreShaderProgram::") +
+					string(__FUNCTION__) +
+					string("[") +
+					to_string(shader->id) +
+					string("]") +
+					string(": warning: more than ") + to_string(SAMPLER_HASH_MAX) + string(" samplers @ ") +
+					shader->file
+				);
+				for (auto samplerUniform: shader->samplerUniformList) {
+					Console::println("\t" + samplerUniform->name);
+				}
 			}
 		}
 	}
@@ -1011,40 +1107,77 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 		shader->samplerUniformList.shrink_to_fit();
 	}
 
-	// total bindings of program
-	program.layoutBindings = bindingIdx;
 
-	// store program properties
-	{
-		Properties vkProgramCache;
-		vkProgramCache.put("program.id", to_string(program.id));
-		vkProgramCache.put("program.layout_bindings", to_string(program.layoutBindings));
-		auto i = 0;
-		for (auto& shader: program.shaders) {
-			vkProgramCache.put("program.shader_" + to_string(i) + "_cacheid", shader->cacheId);
-			i++;
+	// store if not using cache
+	if (useCache == false) {
+		// store program properties
+		{
+			Properties vkProgramCache;
+			vkProgramCache.put("program.id", to_string(program.id));
+			vkProgramCache.put("program.layout_bindings", to_string(program.layoutBindings));
+			auto i = 0;
+			for (auto& shader: program.shaders) {
+				vkProgramCache.put("program.shader_" + to_string(i) + "_cacheid", shader->cacheId);
+				i++;
+			}
+			vkProgramCache.store("shader/vk", "program-" + to_string(program.id) + ".properties");
 		}
-		vkProgramCache.store("shader/vk", "program-" + to_string(program.id) + ".properties", FileSystem::getStandardFileSystem());
-	}
 
-	// store uniforms
-	for (auto shader: program.shaders) {
-		Properties vkShaderCache;
-		vkShaderCache.load("shader/vk", shader->cacheId + ".properties", FileSystem::getStandardFileSystem());
-		vkShaderCache.put("shader.ubo_size", to_string(shader->uboSize));
-		vkShaderCache.put("shader.ubo_bindingidx", to_string(shader->uboBindingIdx));
-		auto i = 0;
-		for (auto& uniformIt: shader->uniforms) {
-			auto uniform = uniformIt.second;
-			vkShaderCache.put("shader.uniform_name_" + to_string(i), uniform->name);
-			vkShaderCache.put("shader.uniform_newnname_" + to_string(i), uniform->newName);
-			vkShaderCache.put("shader.uniform_type_" + to_string(i), to_string(uniform->type));
-			vkShaderCache.put("shader.uniform_position_" + to_string(i), to_string(uniform->position));
-			vkShaderCache.put("shader.uniform_size_" + to_string(i), to_string(uniform->size));
-			vkShaderCache.put("shader.uniform_textureunit_" + to_string(i), to_string(uniform->textureUnit));
-			i++;
+		// store shader properties
+		for (auto shader: program.shaders) {
+			Properties vkShaderCache;
+			vkShaderCache.put("shader.type", to_string(shader->type));
+			vkShaderCache.put("shader.file", shader->file);
+			vkShaderCache.put("shader.id", to_string(shader->id));
+			vkShaderCache.put("shader.hash", shader->hash);
+			vkShaderCache.put("shader.max_bindings", to_string(shader->maxBindings));
+			vkShaderCache.put("shader.ubo_size", to_string(shader->uboSize));
+			vkShaderCache.put("shader.ubo_bindingidx", to_string(shader->uboBindingIdx));
+			// attribute layouts
+			{
+				auto i = 0;
+				for (auto& attribute: shader->attributeLayouts) {
+					vkShaderCache.put("shader.attributelayout_name_" + to_string(i), attribute.name);
+					vkShaderCache.put("shader.attributelayout_type_" + to_string(i), attribute.type);
+					vkShaderCache.put("shader.attributelayout_location_" + to_string(i), to_string(attribute.location));
+					i++;
+				}
+			}
+			// uniforms
+			{
+				auto i = 0;
+				for (auto& uniformIt: shader->uniforms) {
+					auto uniform = uniformIt.second;
+					vkShaderCache.put("shader.uniform_name_" + to_string(i), uniform->name);
+					vkShaderCache.put("shader.uniform_newname_" + to_string(i), uniform->newName);
+					vkShaderCache.put("shader.uniform_type_" + to_string(i), to_string(uniform->type));
+					vkShaderCache.put("shader.uniform_position_" + to_string(i), to_string(uniform->position));
+					vkShaderCache.put("shader.uniform_size_" + to_string(i), to_string(uniform->size));
+					i++;
+				}
+			}
+
+			// store glsl
+			FileSystem::getInstance()->setContentFromString("shader/vk", shader->cacheId + ".glsl", shader->source);
+
+			// store SPIRV
+			{
+				vector<uint8_t> spirv8;
+				for (auto v: shader->spirv) {
+					spirv8.push_back((static_cast<uint32_t>(v)) & 0xff);
+					spirv8.push_back((static_cast<uint32_t>(v) >> 8) & 0xff);
+					spirv8.push_back((static_cast<uint32_t>(v) >> 16) & 0xff);
+					spirv8.push_back((static_cast<uint32_t>(v) >> 24) & 0xff);
+				}
+				FileSystem::getInstance()->setContent("shader/vk", shader->cacheId + ".spirv", spirv8);
+			}
+
+			// store definitions
+			FileSystem::getInstance()->setContentFromString("shader/vk", shader->cacheId + ".definitions", shader->definitions);
+
+			// done
+			vkShaderCache.store("shader/vk", shader->cacheId + ".properties");
 		}
-		vkShaderCache.store("shader/vk", shader->cacheId + ".properties", FileSystem::getStandardFileSystem());
 	}
 
 	//
