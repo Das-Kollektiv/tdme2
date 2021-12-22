@@ -68,7 +68,7 @@ void EnvMapEditorTabView::handleInputEvents()
 void EnvMapEditorTabView::display()
 {
 	updateSky();
-	envMapEditorTabController->updateInfoText(MutableString(engine->getTiming()->getCurrentFPS()).append(" FPS"));
+	envMapEditorTabController->updateInfoText(MutableString(engine->getTiming()->getAvarageFPS()).append(" FPS"));
 	engine->display();
 }
 

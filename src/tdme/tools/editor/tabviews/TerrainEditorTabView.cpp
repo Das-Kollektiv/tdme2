@@ -268,7 +268,7 @@ void TerrainEditorTabView::display()
 	updateSky();
 
 	//
-	terrainEditorTabController->updateInfoText(MutableString(engine->getTiming()->getCurrentFPS()).append(" FPS"));
+	terrainEditorTabController->updateInfoText(MutableString(engine->getTiming()->getAvarageFPS()).append(" FPS"));
 
 	// actually do the brushing
 	if (brushingEnabled == true && terrainEditorTabController->determineCurrentBrushHeight(terrainBoundingBox, terrainModels, brushCenterPosition) == true) {

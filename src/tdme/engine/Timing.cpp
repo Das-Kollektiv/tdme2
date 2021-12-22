@@ -1,7 +1,11 @@
 #include <tdme/engine/Timing.h>
 
+#include <array>
+
 #include <tdme/tdme.h>
 #include <tdme/utilities/Time.h>
+
+using std::array;
 
 using tdme::engine::Timing;
 using tdme::utilities::Time;
@@ -12,10 +16,12 @@ Timing::Timing()
 	startTime = Time::getCurrentMillis();
 	lastFrameAtTime = UNDEFINED;
 	currentFrameAtTime = UNDEFINED;
-	currentFPS = 60.0f;
+	avarageFPS = 60.0f;
 	lastFrameAtTime = Timing::UNDEFINED;
 	currentFrameAtTime = Timing::UNDEFINED;
-	currentFPS = Timing::UNDEFINED;
+	fps = Timing::UNDEFINED;
+	avarageFPS = Timing::UNDEFINED;
+	for (auto i = 0; i < avarageFPSSequence.size(); i++) avarageFPSSequence[i] = 60.0f;
 }
 
 constexpr int64_t Timing::UNDEFINED;
@@ -24,9 +30,17 @@ void Timing::updateTiming()
 {
 	lastFrameAtTime = currentFrameAtTime;
 	currentFrameAtTime = Time::getCurrentMillis();
-	currentFPS = 0;
+	fps = 0;
 	if (lastFrameAtTime != UNDEFINED) {
-		currentFPS = 1000.0f / ((currentFrameAtTime - lastFrameAtTime));
+		fps = 1000.0f / ((currentFrameAtTime - lastFrameAtTime));
 	}
-	frame++;
+	fps++;
+
+	// avarage fps
+	avarageFPSIndex = (avarageFPSIndex + 1) % avarageFPSSequence.size();
+	avarageFPSSequence[avarageFPSIndex] = fps;
+	avarageFPS = 0.0f;
+	for (auto i = 0; i < avarageFPSSequence.size(); i++) avarageFPS+= avarageFPSSequence[(avarageFPSIndex - i) % avarageFPSSequence.size()];
+	avarageFPS/= avarageFPSSequence.size();
+
 }

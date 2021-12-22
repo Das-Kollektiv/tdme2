@@ -502,7 +502,7 @@ inline void VKRenderer::setImageLayout(int contextIdx, texture_type* textureObje
 	_textureObject->vkLayout = vkImageMemoryBarrier.newLayout;
 }
 
-void VKRenderer::setImageLayout2(int contextIdx, texture_type* textureObject, const array<ThsvsAccessType,2>& accessTypes, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout layout, ThsvsImageLayout nextLayout, bool discardContent, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount) {
+inline void VKRenderer::setImageLayout2(int contextIdx, texture_type* textureObject, const array<ThsvsAccessType,2>& accessTypes, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout layout, ThsvsImageLayout nextLayout, bool discardContent, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount) {
 	auto& currentContext = contexts[contextIdx];
 
 	ThsvsImageBarrier svsImageBarrier = {
@@ -540,7 +540,7 @@ void VKRenderer::setImageLayout2(int contextIdx, texture_type* textureObject, co
 	finishSetupCommandBuffer(contextIdx);
 }
 
-void VKRenderer::setImageLayout3(int contextIdx, VkImage image, VkImageAspectFlags aspectMask, const array<ThsvsAccessType,2>& accessTypes, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout layout, ThsvsImageLayout nextLayout) {
+inline void VKRenderer::setImageLayout3(int contextIdx, VkImage image, VkImageAspectFlags aspectMask, const array<ThsvsAccessType,2>& accessTypes, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout layout, ThsvsImageLayout nextLayout) {
 	auto& currentContext = contexts[contextIdx];
 
 	ThsvsImageBarrier svsImageBarrier = {
@@ -1645,7 +1645,7 @@ void VKRenderer::initializeFrame()
 	}
 }
 
-void VKRenderer::removeTextureFromDescriptorCaches(int textureId) {
+inline void VKRenderer::removeTextureFromDescriptorCaches(int textureId) {
 	// delete desc2 bound texture caches from programs with removed texture
 	for (auto& context: contexts) {
 		context.textureVector[textureId] = nullptr;
@@ -1670,7 +1670,7 @@ void VKRenderer::removeTextureFromDescriptorCaches(int textureId) {
 	}
 }
 
-void VKRenderer::invalidatePipelines() {
+inline void VKRenderer::invalidatePipelines() {
 	//
 	auto clearedCachedPipelines = 0;
 	auto clearedPipelinesParents = 0;
@@ -3047,7 +3047,7 @@ inline void VKRenderer::createSkinningComputingProgram(program_type* program) {
 	vkDestroyPipelineCache(device, pipelineCache, nullptr);
 }
 
-inline VKRenderer::pipeline_type* VKRenderer::createSkinningComputingPipeline(int contextIdx, program_type* program) {
+VKRenderer::pipeline_type* VKRenderer::createSkinningComputingPipeline(int contextIdx, program_type* program) {
 	return program->pipelinesParents[0]->pipelines[1];
 }
 
@@ -5602,7 +5602,7 @@ inline VKRenderer::buffer_object_type* VKRenderer::getBufferObjectInternal(int c
 	return buffer;
 }
 
-void VKRenderer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VmaAllocation& allocation, VmaAllocationInfo& allocationInfo) {
+inline void VKRenderer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VmaAllocation& allocation, VmaAllocationInfo& allocationInfo) {
 	//
 	VkResult err;
 
@@ -5770,32 +5770,27 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 
 void VKRenderer::uploadBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, FloatBuffer* data)
 {
-	auto& currentContext = contexts[contextIdx];
-	uploadBufferObjectInternal(currentContext.idx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
+	uploadBufferObjectInternal(contextIdx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
 }
 
 void VKRenderer::uploadBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
-	auto& currentContext = contexts[contextIdx];
-	uploadBufferObjectInternal(currentContext.idx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
+	uploadBufferObjectInternal(contextIdx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
 }
 
 void VKRenderer::uploadBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, IntBuffer* data)
 {
-	auto& currentContext = contexts[contextIdx];
-	uploadBufferObjectInternal(currentContext.idx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
+	uploadBufferObjectInternal(contextIdx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
 }
 
 void VKRenderer::uploadIndicesBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, ShortBuffer* data)
 {
-	auto& currentContext = contexts[contextIdx];
-	uploadBufferObjectInternal(currentContext.idx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT));
+	uploadBufferObjectInternal(contextIdx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT));
 }
 
 void VKRenderer::uploadIndicesBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, IntBuffer* data)
 {
-	auto& currentContext = contexts[contextIdx];
-	uploadBufferObjectInternal(currentContext.idx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT));
+	uploadBufferObjectInternal(contextIdx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT));
 }
 
 inline VKRenderer::texture_type* VKRenderer::getTextureInternal(int contextIdx, int32_t textureId) {
@@ -7184,13 +7179,12 @@ void VKRenderer::memoryBarrier() {
 }
 
 void VKRenderer::uploadSkinningBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
-	auto& currentContext = contexts[contextIdx];
-	uploadBufferObjectInternal(currentContext.idx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
+	uploadBufferObjectInternal(contextIdx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
 }
 
 void VKRenderer::uploadSkinningBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, IntBuffer* data) {
 	auto& currentContext = contexts[contextIdx];
-	uploadBufferObjectInternal(currentContext.idx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
+	uploadBufferObjectInternal(contextIdx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
 }
 
 void VKRenderer::bindSkinningVerticesBufferObject(int contextIdx, int32_t bufferObjectId) {

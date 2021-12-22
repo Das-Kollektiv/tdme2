@@ -235,7 +235,7 @@ void ParticleSystemEditorTabView::display()
 	}
 
 	//
-	particleSystemEditorTabController->updateInfoText(MutableString(engine->getTiming()->getCurrentFPS()).append(" FPS"));
+	particleSystemEditorTabController->updateInfoText(MutableString(engine->getTiming()->getAvarageFPS()).append(" FPS"));
 
 	// rendering
 	prototypeDisplayView->display(prototype);

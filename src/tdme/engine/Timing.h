@@ -1,8 +1,12 @@
 
 #pragma once
 
+#include <array>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+
+using std::array;
 
 /**
  * Timing class
@@ -21,7 +25,10 @@ private:
 	int64_t startTime;
 	int64_t lastFrameAtTime;
 	int64_t currentFrameAtTime;
-	float currentFPS;
+	float fps;
+	float avarageFPS;
+	array<float, 60 * 3> avarageFPSSequence;
+	int avarageFPSIndex { 0 };
 
 	/**
 	 * Updates timing
@@ -81,10 +88,17 @@ public:
 	}
 
 	/**
-	 * @return current fps
+	 * @return avarage fps
 	 */
-	inline float getCurrentFPS() {
-		return currentFPS;
+	inline float getFPS() {
+		return fps;
+	}
+
+	/**
+	 * @return avarage fps
+	 */
+	inline float getAvarageFPS() {
+		return avarageFPS;
 	}
 
 };

@@ -533,7 +533,7 @@ void SceneEditorTabView::display()
 	updateGrid();
 
 	//
-	sceneEditorTabController->updateInfoText(MutableString(engine->getTiming()->getCurrentFPS()).append(" FPS"));
+	sceneEditorTabController->updateInfoText(MutableString(engine->getTiming()->getAvarageFPS()).append(" FPS"));
 
 	//
 	engine->display();

@@ -64,7 +64,7 @@ void EmptyEditorTabView::handleInputEvents()
 
 void EmptyEditorTabView::display()
 {
-	emptyEditorTabController->updateInfoText(MutableString(engine->getTiming()->getCurrentFPS()).append(" FPS"));
+	emptyEditorTabController->updateInfoText(MutableString(engine->getTiming()->getAvarageFPS()).append(" FPS"));
 	engine->display();
 }
 

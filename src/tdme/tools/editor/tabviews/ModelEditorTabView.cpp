@@ -433,7 +433,7 @@ void ModelEditorTabView::display()
 	}
 
 	//
-	modelEditorTabController->updateInfoText(MutableString(engine->getTiming()->getCurrentFPS()).append(" FPS"));
+	modelEditorTabController->updateInfoText(MutableString(engine->getTiming()->getAvarageFPS()).append(" FPS"));
 
 	// rendering
 	prototypeDisplayView->display(prototype);

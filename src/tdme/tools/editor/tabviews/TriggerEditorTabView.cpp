@@ -74,7 +74,7 @@ void TriggerEditorTabView::handleInputEvents()
 void TriggerEditorTabView::display()
 {
 	//
-	triggerEditorTabController->updateInfoText(MutableString(engine->getTiming()->getCurrentFPS()).append(" FPS"));
+	triggerEditorTabController->updateInfoText(MutableString(engine->getTiming()->getAvarageFPS()).append(" FPS"));
 
 	//
 	prototypeDisplayView->display(prototype);

@@ -192,7 +192,7 @@ void EngineTest::display()
 
 void EngineTest::doPlayerControl(int32_t idx, bool keyLeft, bool keyRight, bool keyUp)
 {
-	auto fps = engine->getTiming()->getCurrentFPS();
+	auto fps = engine->getTiming()->getAvarageFPS();
 	auto player = players[idx];
 	auto& r = player->getRotation(0);
 	player->update();
