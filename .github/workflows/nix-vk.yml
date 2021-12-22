@@ -1,4 +1,4 @@
-name: CI Ubuntu
+name: CI Ubuntu - Vulkan
 
 on:
   push:
