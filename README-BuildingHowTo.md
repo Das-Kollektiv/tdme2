@@ -69,6 +69,13 @@ sudo apt-get install libopenal-dev
 sudo apt-get install libglfw3-dev
 ```
 
+Vulkan(optional):
+
+```bash
+sudo apt-get install libvulkan-dev
+```
+
+
 ### 1.3.2. Clone repository
 
 ```bash
@@ -80,13 +87,19 @@ cd tdme2
 
 Note: HARDWARE_THREADS should be replaced with the number of your CPU hardware threads, e.g. if you have 2 cores and hyperthreading, you can use 4.
 
+OpenGL:
+
 ```bash
 make clean && make -j HARDWARE_THREADS mains
 ```
 
-### 1.3.4. Build with GLES2
+Vulkan:
 
-Note: HARDWARE_THREADS should be replaced with the number of your CPU hardware threads, e.g. if you have 2 cores and hyperthreading, you can use 4.
+```bash
+make clean && make -j HARDWARE_THREADS mains VULKAN=YES
+```
+
+GLES2:
 
 ```bash
 make clean && make -j HARDWARE_THREADS mains GLES2=YES
@@ -125,6 +138,13 @@ pacman -S mingw-w64-x86_64-openal
 pacman -S mingw-w64-x86_64-glfw
 ```
 
+Vulkan(optional):
+
+```bash
+pacman -S mingw-w64-x86_64-vulkan-headers
+pacman -S mingw-w64-x86_64-vulkan-loader
+```
+
 ### 1.5.2. Clone repository
 
 ```bash
@@ -136,8 +156,16 @@ cd tdme2
 
 Note: HARDWARE_THREADS should be replaced with the number of your CPU hardware threads, e.g. if you have 2 cores and hyperthreading, you can use 4.
 
+OpenGL:
+
 ```bash
 make clean && make -j HARDWARE_THREADS mains
+```
+
+Vulkan:
+
+```bash
+make clean && make -j HARDWARE_THREADS mains VULKAN=YES
 ```
 
 ## 1.6. Windows MSC/X64(tested on Windows 7 Ultimate)

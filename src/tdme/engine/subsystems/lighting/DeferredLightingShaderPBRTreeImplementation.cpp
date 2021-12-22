@@ -48,11 +48,7 @@ void DeferredLightingShaderPBRTreeImplementation::initialize()
 		"render_vertexshader.vert",
 		string() +
 		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n" +
-		"#define HAVE_TREE\n#define HAVE_DEPTH_FOG\n"
-		#if !defined(VULKAN)
-			+ "#define USE_IBL\n"
-		#endif
-		,
+		"#define HAVE_TREE\n#define HAVE_DEPTH_FOG\n#define USE_IBL\n",
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions",
 			"create_rotation_matrix.inc.glsl"
@@ -75,11 +71,7 @@ void DeferredLightingShaderPBRTreeImplementation::initialize()
 		renderer->SHADER_FRAGMENT_SHADER,
 		"shader/" + shaderVersion + "/lighting/pbr",
 		"defer_fragmentshader.frag",
-		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n"
-		#if !defined(VULKAN)
-			+ "#define USE_IBL\n"
-		#endif
-		,
+		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define USE_IBL\n",
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions/pbr",
 			"tonemapping.inc.glsl"

@@ -48,11 +48,7 @@ void LightingShaderPBRFoliageImplementation::initialize()
 		"shader/" + shaderVersion + "/lighting/pbr",
 		"render_vertexshader.vert",
 		string() +
-		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define HAVE_FOLIAGE\n"
-		#if !defined(VULKAN)
-			+ "#define USE_IBL\n"
-		#endif
-		,
+		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define HAVE_FOLIAGE\n#define USE_IBL\n",
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions",
 			"create_rotation_matrix.inc.glsl"
@@ -76,11 +72,7 @@ void LightingShaderPBRFoliageImplementation::initialize()
 		"shader/" + shaderVersion + "/lighting/pbr",
 		"render_fragmentshader.frag",
 		string() +
-		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define HAVE_FOLIAGE\n"
-		#if !defined(VULKAN)
-			+ "#define USE_IBL\n"
-		#endif
-		,
+		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define HAVE_FOLIAGE\n#define USE_IBL\n",
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions/pbr",
 			"tonemapping.inc.glsl"

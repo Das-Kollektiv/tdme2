@@ -89,37 +89,35 @@ void LightingShaderPBRBaseImplementation::initialize()
 		uniformLightType[i] = renderer->getProgramUniformLocation(programId, "u_PBRLights[" + to_string(i) + "].type");
 	}
 
-	#if !defined(VULKAN)
-		// IBL
-		uniformDiffuseEnvSampler = renderer->getProgramUniformLocation(programId, "u_DiffuseEnvSampler");
-		uniformSpecularEnvSampler = renderer->getProgramUniformLocation(programId, "u_SpecularEnvSampler");
-		uniformbrdfLUT = renderer->getProgramUniformLocation(programId, "u_brdfLUT");
+	// IBL
+	uniformDiffuseEnvSampler = renderer->getProgramUniformLocation(programId, "u_DiffuseEnvSampler");
+	uniformSpecularEnvSampler = renderer->getProgramUniformLocation(programId, "u_SpecularEnvSampler");
+	uniformbrdfLUT = renderer->getProgramUniformLocation(programId, "u_brdfLUT");
 
-		string environmentType = "studio_grey";
-		textureDiffuseEnvSampler =
-			Engine::getInstance()->getTextureManager()->addCubeMapTexture(
-				"pbr-environment-diffuse",
-				TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_left.png"),
-				TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_right.png"),
-				TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_top.png"),
-				TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_bottom.png"),
-				TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_front.png"),
-				TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_back.png"),
-				renderer->CONTEXTINDEX_DEFAULT
-			);
-		textureSpecularEnvSampler =
-			Engine::getInstance()->getTextureManager()->addCubeMapTexture(
-				"pbr-environment-specular",
-				TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_left.png"),
-				TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_right.png"),
-				TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_top.png"),
-				TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_bottom.png"),
-				TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_front.png"),
-				TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_back.png"),
-				renderer->CONTEXTINDEX_DEFAULT
-			);
-		texturebrdfLUT = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/environments", "brdfLUT.png"), renderer->CONTEXTINDEX_DEFAULT);
-	#endif
+	string environmentType = "studio_grey";
+	textureDiffuseEnvSampler =
+		Engine::getInstance()->getTextureManager()->addCubeMapTexture(
+			"pbr-environment-diffuse",
+			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_left.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_right.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_top.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_bottom.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_front.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_back.png"),
+			renderer->CONTEXTINDEX_DEFAULT
+		);
+	textureSpecularEnvSampler =
+		Engine::getInstance()->getTextureManager()->addCubeMapTexture(
+			"pbr-environment-specular",
+			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_left.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_right.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_top.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_bottom.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_front.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_back.png"),
+			renderer->CONTEXTINDEX_DEFAULT
+		);
+	texturebrdfLUT = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/environments", "brdfLUT.png"), renderer->CONTEXTINDEX_DEFAULT);
 
 	//
 	initialized = true;
@@ -132,18 +130,16 @@ void LightingShaderPBRBaseImplementation::useProgram(Engine* engine, int context
 	renderer->setProgramUniformInteger(contextIdx, uniformBaseColorSampler, LightingShaderConstants::PBR_TEXTUREUNIT_BASECOLOR);
 	renderer->setProgramUniformInteger(contextIdx, uniformMetallicRoughnessSampler, LightingShaderConstants::PBR_TEXTUREUNIT_METALLICROUGHNESS);
 	renderer->setProgramUniformInteger(contextIdx, uniformNormalSampler, LightingShaderConstants::PBR_TEXTUREUNIT_NORMAL);
-	#if !defined(VULKAN)
-		renderer->setProgramUniformInteger(contextIdx, uniformDiffuseEnvSampler, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_DIFFUSE);
-		renderer->setProgramUniformInteger(contextIdx, uniformSpecularEnvSampler, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_SPECULAR);
-		renderer->setProgramUniformInteger(contextIdx, uniformbrdfLUT, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_BRDF);
-		renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_DIFFUSE);
-		renderer->bindCubeMapTexture(contextIdx, textureDiffuseEnvSampler);
-		renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_SPECULAR);
-		renderer->bindCubeMapTexture(contextIdx, textureSpecularEnvSampler);
-		renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_BRDF);
-		renderer->bindCubeMapTexture(contextIdx, texturebrdfLUT);
-		renderer->setTextureUnit(contextIdx, 0);
-	#endif
+	renderer->setProgramUniformInteger(contextIdx, uniformDiffuseEnvSampler, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_DIFFUSE);
+	renderer->setProgramUniformInteger(contextIdx, uniformSpecularEnvSampler, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_SPECULAR);
+	renderer->setProgramUniformInteger(contextIdx, uniformbrdfLUT, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_BRDF);
+	renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_DIFFUSE);
+	renderer->bindCubeMapTexture(contextIdx, textureDiffuseEnvSampler);
+	renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_SPECULAR);
+	renderer->bindCubeMapTexture(contextIdx, textureSpecularEnvSampler);
+	renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_BRDF);
+	renderer->bindTexture(contextIdx, texturebrdfLUT);
+	renderer->setTextureUnit(contextIdx, 0);
 }
 
 void LightingShaderPBRBaseImplementation::unUseProgram(int contextIdx)
@@ -154,15 +150,13 @@ void LightingShaderPBRBaseImplementation::unUseProgram(int contextIdx)
 	renderer->bindTexture(contextIdx, renderer->ID_NONE);
 	renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_NORMAL);
 	renderer->bindTexture(contextIdx, renderer->ID_NONE);
-	#if !defined(VULKAN)
-		renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_DIFFUSE);
-		renderer->bindTexture(contextIdx, renderer->ID_NONE);
-		renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_SPECULAR);
-		renderer->bindTexture(contextIdx, renderer->ID_NONE);
-		renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_BRDF);
-		renderer->bindTexture(contextIdx, renderer->ID_NONE);
-		renderer->setTextureUnit(contextIdx, 0);
-	#endif
+	renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_DIFFUSE);
+	renderer->bindTexture(contextIdx, renderer->ID_NONE);
+	renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_SPECULAR);
+	renderer->bindTexture(contextIdx, renderer->ID_NONE);
+	renderer->setTextureUnit(contextIdx, LightingShaderConstants::PBR_TEXTUREUNIT_ENVIRONMENT_BRDF);
+	renderer->bindTexture(contextIdx, renderer->ID_NONE);
+	renderer->setTextureUnit(contextIdx, 0);
 }
 
 void LightingShaderPBRBaseImplementation::updateEffect(Renderer* renderer, int contextIdx)

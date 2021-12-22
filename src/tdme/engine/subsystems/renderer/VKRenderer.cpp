@@ -4021,7 +4021,7 @@ void VKRenderer::uploadCubeMapTexture(int contextIdx, Texture* textureLeft, Text
 		return;
 	}
 
-	texture.type = texture_type::TYPE_CUBEMAP;
+	texture.type = texture_type::TYPE_CUBEMAP_TEXTURE;
 	texture.width = textureLeft->getTextureWidth();
 	texture.height = textureLeft->getTextureHeight();
 	texture.format = VK_FORMAT_R8G8B8A8_UNORM;
@@ -4179,7 +4179,7 @@ int32_t VKRenderer::createCubeMapTexture(int contextIdx, int32_t width, int32_t 
 	}
 	auto& texture = *texturePtr;
 	texture.id = reuseTextureId != -1?reuseTextureId:textureIdx++;
-	texture.type = texture_type::TYPE_CUBEMAP;
+	texture.type = texture_type::TYPE_CUBEMAPBUFFER;
 	texture.format = format;
 	texture.width = width;
 	texture.height = height;
@@ -4605,10 +4605,9 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 	assert(!err);
 
 	//
-	boundTexture.id = ID_NONE;
-	boundTexture.sampler = VK_NULL_HANDLE;
-	boundTexture.view = VK_NULL_HANDLE;
-	boundTexture.layout = VK_IMAGE_LAYOUT_UNDEFINED;
+	boundTexture.sampler = textureType.sampler;
+	boundTexture.view = textureType.view;
+	boundTexture.layout = textureType.vkLayout;
 
 	//
 	textureType.uploaded = true;
@@ -5805,6 +5804,7 @@ inline VKRenderer::texture_type* VKRenderer::getTextureInternal(int contextIdx, 
 		auto texture = currentContext.textureVector[textureId];
 		if (texture != nullptr) {
 			if (texture->type == texture_type::TYPE_TEXTURE && texture->uploaded == false) return whiteTextureSampler2dDefault;
+			if (texture->type == texture_type::TYPE_CUBEMAP_TEXTURE && texture->uploaded == false) return whiteTextureSamplerCubeDefault;
 			return texture;
 		}
 	}
@@ -5822,7 +5822,9 @@ inline VKRenderer::texture_type* VKRenderer::getTextureInternal(int contextIdx, 
 		currentContext.textureVector[textureId] = texture;
 	}
 	texturesRWlock.unlock();
-	return texture->type == texture_type::TYPE_TEXTURE && texture->uploaded == false?whiteTextureSampler2dDefault:texture;
+	if (texture->type == texture_type::TYPE_TEXTURE && texture->uploaded == false) return whiteTextureSampler2dDefault;
+	if (texture->type == texture_type::TYPE_CUBEMAP_TEXTURE && texture->uploaded == false) return whiteTextureSamplerCubeDefault;
+	return texture;
 }
 
 inline VKRenderer::pipeline_type* VKRenderer::getPipelineInternal(int contextIdx, program_type* program, uint32_t pipelineDimensionId, uint32_t pipelineId) {

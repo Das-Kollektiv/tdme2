@@ -201,7 +201,7 @@ private:
 	};
 
 	struct texture_type {
-		enum type { TYPE_NONE, TYPE_TEXTURE, TYPE_COLORBUFFER, TYPE_DEPTHBUFFER, TYPE_CUBEMAP };
+		enum type { TYPE_NONE, TYPE_TEXTURE, TYPE_CUBEMAP_TEXTURE, TYPE_COLORBUFFER, TYPE_DEPTHBUFFER, TYPE_CUBEMAPBUFFER };
 		volatile bool uploaded { false };
 		type type { TYPE_NONE };
 		int32_t id { 0 };

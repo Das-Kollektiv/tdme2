@@ -122,7 +122,7 @@
     - supports down/up scaled rendering of main engine
     - screenshot ability
     - multiple renderer backends
-      - GLES2, GL2, GL3+/CORE and Vulkan(still experimental)
+      - GLES2, GL2, GL3+/CORE and Vulkan
 - Physics via ReactPhysics3D 0.7.0
     - have sphere, capsule, obb, convex mesh, concave terrain mesh, height map bounding volumes
     - have multiple bounding volumes per body
@@ -248,7 +248,7 @@
 - documentation
 
 # 5. What is WIP or planned
-- PBR lighting shader for Vulkan(IBL is missing)
+- PBR: generate IBL cube maps from scene
 - Shader parameters, the system is implemented and working, now lets connect tools and shaders
 - Reflections via environment mapping(reflection intensity maps feature is missing for specular materials)
 - Optimizing models with specular lighting regarding render calls by reducing nodes and materials to a minumum
@@ -257,11 +257,10 @@
 - MiniScript: more engine bindings
 - MiniScript: MiniScript -> C++ transpiler
 - Add nmake support to makefile generator for TDME2 based projects
-- Improve on Vulkan
 - Editor: complete Undo/Redo and Copy/Cut/Paste/Delete
 - Editor: Code editing with code completion, also visual code and shader editing is planned!
-- Expose shader and post processing programs setup API
-- Some UI elements need some default skinning fixes
+- Vulkan: Performance improvements
+- Some UI elements need some focus/disabled fixes
 - A release plan
 - A demonstration video
 

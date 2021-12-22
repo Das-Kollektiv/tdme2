@@ -179,41 +179,39 @@ void DeferredLightingRenderShader::initialize()
 		if (uniformPBRLightType[i] == -1) return;
 	}
 
-	#if !defined(VULKAN)
-		// IBL
-		uniformDiffuseEnvSampler = renderer->getProgramUniformLocation(programId, "u_DiffuseEnvSampler");
-		if (uniformDiffuseEnvSampler == -1) return;
-		uniformSpecularEnvSampler = renderer->getProgramUniformLocation(programId, "u_SpecularEnvSampler");
-		if (uniformSpecularEnvSampler == -1) return;
-		uniformbrdfLUT = renderer->getProgramUniformLocation(programId, "u_brdfLUT");
-		if (uniformbrdfLUT == -1) return;
+	// IBL
+	uniformDiffuseEnvSampler = renderer->getProgramUniformLocation(programId, "u_DiffuseEnvSampler");
+	if (uniformDiffuseEnvSampler == -1) return;
+	uniformSpecularEnvSampler = renderer->getProgramUniformLocation(programId, "u_SpecularEnvSampler");
+	if (uniformSpecularEnvSampler == -1) return;
+	uniformbrdfLUT = renderer->getProgramUniformLocation(programId, "u_brdfLUT");
+	if (uniformbrdfLUT == -1) return;
 
-		//
-		string environmentType = "studio_grey";
-		textureDiffuseEnvSampler =
-			Engine::getInstance()->getTextureManager()->addCubeMapTexture(
-				"pbr-environment-diffuse",
-				TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_left.png"),
-				TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_right.png"),
-				TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_top.png"),
-				TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_bottom.png"),
-				TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_front.png"),
-				TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_back.png"),
-				renderer->CONTEXTINDEX_DEFAULT
-			);
-		textureSpecularEnvSampler =
-			Engine::getInstance()->getTextureManager()->addCubeMapTexture(
-				"pbr-environment-specular",
-				TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_left.png"),
-				TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_right.png"),
-				TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_top.png"),
-				TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_bottom.png"),
-				TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_front.png"),
-				TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_back.png"),
-				renderer->CONTEXTINDEX_DEFAULT
-			);
-		texturebrdfLUT = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/environments", "brdfLUT.png"), renderer->CONTEXTINDEX_DEFAULT);
-	#endif
+	//
+	string environmentType = "studio_grey";
+	textureDiffuseEnvSampler =
+		Engine::getInstance()->getTextureManager()->addCubeMapTexture(
+			"pbr-environment-diffuse",
+			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_left.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_right.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_top.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_bottom.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_front.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/diffuse", "diffuse_back.png"),
+			renderer->CONTEXTINDEX_DEFAULT
+		);
+	textureSpecularEnvSampler =
+		Engine::getInstance()->getTextureManager()->addCubeMapTexture(
+			"pbr-environment-specular",
+			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_left.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_right.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_top.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_bottom.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_front.png"),
+			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_back.png"),
+			renderer->CONTEXTINDEX_DEFAULT
+		);
+	texturebrdfLUT = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/environments", "brdfLUT.png"), renderer->CONTEXTINDEX_DEFAULT);
 
 	//
 	initialized = true;
@@ -256,18 +254,16 @@ void DeferredLightingRenderShader::useProgram(Engine* engine)
 	// PBR
 	renderer->setProgramUniformFloatVec3(contextIdx, uniformCamera, renderer->getCameraPosition().getArray());
 
-	#if !defined(VULKAN)
-		//	IBL
-		renderer->setProgramUniformInteger(contextIdx, uniformDiffuseEnvSampler, 9);
-		renderer->setProgramUniformInteger(contextIdx, uniformSpecularEnvSampler, 10);
-		renderer->setProgramUniformInteger(contextIdx, uniformbrdfLUT, 11);
-		renderer->setTextureUnit(contextIdx, 9);
-		renderer->bindCubeMapTexture(contextIdx, textureDiffuseEnvSampler);
-		renderer->setTextureUnit(contextIdx, 10);
-		renderer->bindCubeMapTexture(contextIdx, textureSpecularEnvSampler);
-		renderer->setTextureUnit(contextIdx, 11);
-		renderer->bindCubeMapTexture(contextIdx, texturebrdfLUT);
-	#endif
+	//	IBL
+	renderer->setProgramUniformInteger(contextIdx, uniformDiffuseEnvSampler, 9);
+	renderer->setProgramUniformInteger(contextIdx, uniformSpecularEnvSampler, 10);
+	renderer->setProgramUniformInteger(contextIdx, uniformbrdfLUT, 11);
+	renderer->setTextureUnit(contextIdx, 9);
+	renderer->bindCubeMapTexture(contextIdx, textureDiffuseEnvSampler);
+	renderer->setTextureUnit(contextIdx, 10);
+	renderer->bindCubeMapTexture(contextIdx, textureSpecularEnvSampler);
+	renderer->setTextureUnit(contextIdx, 11);
+	renderer->bindTexture(contextIdx, texturebrdfLUT);
 
 	//	lights
 	for (auto lightId = 0; lightId < Engine::LIGHTS_MAX; lightId++) {
@@ -295,16 +291,14 @@ void DeferredLightingRenderShader::unUseProgram()
 	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
 	auto textureUnit = renderer->getTextureUnit(contextIdx);
 	// PBR
-	#if !defined(VULKAN)
-		//	IBL
-		renderer->setTextureUnit(contextIdx, 9);
-		renderer->bindTexture(contextIdx, renderer->ID_NONE);
-		renderer->setTextureUnit(contextIdx, 10);
-		renderer->bindTexture(contextIdx, renderer->ID_NONE);
-		renderer->setTextureUnit(contextIdx, 11);
-		renderer->bindTexture(contextIdx, renderer->ID_NONE);
-		renderer->setTextureUnit(contextIdx, textureUnit);
-	#endif
+	//	IBL
+	renderer->setTextureUnit(contextIdx, 9);
+	renderer->bindTexture(contextIdx, renderer->ID_NONE);
+	renderer->setTextureUnit(contextIdx, 10);
+	renderer->bindTexture(contextIdx, renderer->ID_NONE);
+	renderer->setTextureUnit(contextIdx, 11);
+	renderer->bindTexture(contextIdx, renderer->ID_NONE);
+	renderer->setTextureUnit(contextIdx, textureUnit);
 
 	//
 	isRunning = false;

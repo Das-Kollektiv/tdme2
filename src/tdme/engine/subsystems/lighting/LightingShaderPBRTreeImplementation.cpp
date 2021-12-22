@@ -48,11 +48,7 @@ void LightingShaderPBRTreeImplementation::initialize()
 		"shader/" + shaderVersion + "/lighting/pbr",
 		"render_vertexshader.vert",
 		string() +
-		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define HAVE_TREE\n"
-		#if !defined(VULKAN)
-			+ "#define USE_IBL\n"
-		#endif
-		,
+		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define HAVE_TREE\n#define USE_IBL\n",
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions",
 			"create_rotation_matrix.inc.glsl"
@@ -76,11 +72,7 @@ void LightingShaderPBRTreeImplementation::initialize()
 		"shader/" + shaderVersion + "/lighting/pbr",
 		"render_fragmentshader.frag",
 		string() +
-		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define HAVE_TREE\n"
-		#if !defined(VULKAN)
-			+ "#define USE_IBL\n"
-		#endif
-		,
+		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define HAVE_TREE\n#define USE_IBL\n",
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions/pbr",
 			"tonemapping.inc.glsl"
@@ -101,7 +93,6 @@ void LightingShaderPBRTreeImplementation::initialize()
 			"pbr_lighting.inc.glsl"
 		) +
 		"\n\n"
-
 	);
 	if (fragmentShaderId == 0) return;
 
