@@ -9,13 +9,19 @@
 su
 pkg install git
 pkg install gmake
-pkg install glew
 pkg install openal-soft
 pkg install glfw
 exit
 ```
 
-Vulkan (optional):
+OpenGL:
+```bash
+su
+pkg install glew
+exit
+```
+
+Vulkan:
 
 ```bash
 su
@@ -82,12 +88,17 @@ gmake clean && gmake -j HARDWARE_THREADS mains CXX=clang++ CC=clang
 sudo apt-get install git
 sudo apt-get install make
 sudo apt-get install g++
-sudo apt-get install libglew-dev
 sudo apt-get install libopenal-dev
 sudo apt-get install libglfw3-dev
 ```
 
-Vulkan (optional):
+OpenGL:
+
+```bash
+sudo apt-get install libglew-dev
+```
+
+Vulkan:
 
 ```bash
 sudo apt-get install libvulkan-dev
@@ -151,12 +162,17 @@ pacman -Syu
 pacman -S git
 pacman -S make
 pacman -S mingw-w64-x86_64-gcc
-pacman -S mingw-w64-x86_64-glew
 pacman -S mingw-w64-x86_64-openal
 pacman -S mingw-w64-x86_64-glfw
 ```
 
-Vulkan (optional):
+OpenGL:
+
+```bash
+pacman -S mingw-w64-x86_64-glew
+```
+
+Vulkan:
 
 ```bash
 pacman -S mingw-w64-x86_64-vulkan-headers
