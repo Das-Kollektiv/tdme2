@@ -3631,6 +3631,18 @@ int32_t VKRenderer::createTexture()
 
 int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex) {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
+
+	//
+	if (width <= 0) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): width: " + to_string(width) + " <= 0, using 1");
+		width = 1;
+	}
+	if (height <= 0) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): height: " + to_string(height) + " <= 0, using 1");
+		height = 1;
+	}
+
+	//
 	auto texturePtr = new texture_type();
 	texturesRWlock.writeLock();
 	if (textureIdx - freeTextureIds.size() >= TEXTURES_MAX) {
@@ -3767,6 +3779,18 @@ void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int3
 
 int32_t VKRenderer::createColorBufferTexture(int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex) {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
+
+	//
+	if (width <= 0) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): width: " + to_string(width) + " <= 0, using 1");
+		width = 1;
+	}
+	if (height <= 0) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): height: " + to_string(height) + " <= 0, using 1");
+		height = 1;
+	}
+
+	//
 	auto texturePtr = new texture_type();
 	texturesRWlock.writeLock();
 	if (textureIdx - freeTextureIds.size() >= TEXTURES_MAX) {
@@ -3909,6 +3933,18 @@ void VKRenderer::createBufferTexture(int32_t textureId, int32_t width, int32_t h
 
 int32_t VKRenderer::createGBufferGeometryTexture(int32_t width, int32_t height) {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
+
+	//
+	if (width <= 0) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): width: " + to_string(width) + " <= 0, using 1");
+		width = 1;
+	}
+	if (height <= 0) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): height: " + to_string(height) + " <= 0, using 1");
+		height = 1;
+	}
+
+	//
 	auto texturePtr = new texture_type();
 	texturesRWlock.writeLock();
 	if (textureIdx - freeTextureIds.size() >= TEXTURES_MAX) {
@@ -3932,6 +3968,18 @@ int32_t VKRenderer::createGBufferGeometryTexture(int32_t width, int32_t height) 
 
 int32_t VKRenderer::createGBufferColorTexture(int32_t width, int32_t height) {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
+
+	//
+	if (width <= 0) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): width: " + to_string(width) + " <= 0, using 1");
+		width = 1;
+	}
+	if (height <= 0) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): height: " + to_string(height) + " <= 0, using 1");
+		height = 1;
+	}
+
+	//
 	auto texturePtr = new texture_type();
 	texturesRWlock.writeLock();
 	if (textureIdx - freeTextureIds.size() >= TEXTURES_MAX) {
@@ -4128,6 +4176,16 @@ int32_t VKRenderer::createCubeMapTexture(int contextIdx, int32_t width, int32_t 
 
 	// have our context typed
 	auto& currentContext = contexts[contextIdx];
+
+	//
+	if (width <= 0) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): width: " + to_string(width) + " <= 0, using 1");
+		width = 1;
+	}
+	if (height <= 0) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): height: " + to_string(height) + " <= 0, using 1");
+		height = 1;
+	}
 
 	//
 	auto texturePtr = new texture_type();
@@ -4707,6 +4765,16 @@ void VKRenderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int3
 	}
 
 	//
+	if (width <= 0) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): width: " + to_string(width) + " <= 0, using 1");
+		width = 1;
+	}
+	if (height <= 0) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): height: " + to_string(height) + " <= 0, using 1");
+		height = 1;
+	}
+
+	//
 	auto textureIt = textures.find(textureId);
 	if (textureIt == textures.end()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(textureId));
@@ -4735,6 +4803,16 @@ void VKRenderer::resizeColorBufferTexture(int32_t textureId, int32_t width, int3
 	// end render passes
 	for (auto i = 0; i < Engine::getThreadCount(); i++) {
 		endRenderPass(i);
+	}
+
+	//
+	if (width <= 0) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): width: " + to_string(width) + " <= 0, using 1");
+		width = 1;
+	}
+	if (height <= 0) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): height: " + to_string(height) + " <= 0, using 1");
+		height = 1;
 	}
 
 	//
@@ -4768,6 +4846,16 @@ void VKRenderer::resizeGBufferGeometryTexture(int32_t textureId, int32_t width, 
 	}
 
 	//
+	if (width <= 0) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): width: " + to_string(width) + " <= 0, using 1");
+		width = 1;
+	}
+	if (height <= 0) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): height: " + to_string(height) + " <= 0, using 1");
+		height = 1;
+	}
+
+	//
 	auto textureIt = textures.find(textureId);
 	if (textureIt == textures.end()) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(textureId));
@@ -4795,6 +4883,16 @@ void VKRenderer::resizeGBufferColorTexture(int32_t textureId, int32_t width, int
 	// end render passes
 	for (auto i = 0; i < Engine::getThreadCount(); i++) {
 		endRenderPass(i);
+	}
+
+	//
+	if (width <= 0) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): width: " + to_string(width) + " <= 0, using 1");
+		width = 1;
+	}
+	if (height <= 0) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): height: " + to_string(height) + " <= 0, using 1");
+		height = 1;
 	}
 
 	//
