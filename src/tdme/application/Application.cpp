@@ -619,6 +619,9 @@ void Application::setClipboardContent(const string& content) {
 #endif
 
 void Application::run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler, int windowHints) {
+	for (auto i = 1; i < argc; i++) {
+		if (string(argv[i]) == "--debug") debuggingEnabled = true;
+	}
 	this->title = title;
 	executableFileName = FileSystem::getInstance()->getFileName(argv[0]);
 	Application::inputEventHandler = inputEventHandler;

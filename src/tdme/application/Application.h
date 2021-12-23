@@ -115,6 +115,27 @@ public:
 	virtual ~Application();
 
 	/**
+	 * @return title
+	 */
+	inline const string& getTitle() {
+		return title;
+	}
+
+	/**
+	 * @return executable file name
+	 */
+	inline const string& getExecutableFileName() {
+		return executableFileName;
+	}
+
+	/**
+	 * @return debugging enabled
+	 */
+	inline bool isDebuggingEnabled() {
+		return debuggingEnabled;
+	}
+
+	/**
 	 * Set input event handler
 	 * @param inputEventHandler input event handler
 	 */
@@ -301,6 +322,7 @@ private:
 	static Application* application;
 	static InputEventHandler* inputEventHandler;
 	string executableFileName;
+	bool debuggingEnabled { false };
 	bool initialized { false };
 	int windowWidth { 1024 };
 	int windowHeight { 768 };

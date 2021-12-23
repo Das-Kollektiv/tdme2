@@ -683,14 +683,14 @@ void VKRenderer::initializeSwapChain() {
 
 	// Check the surface capabilities and formats
 	VkSurfaceCapabilitiesKHR surfCapabilities;
-	err = fpGetPhysicalDeviceSurfaceCapabilitiesKHR(gpu, surface, &surfCapabilities);
+	err = fpGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &surfCapabilities);
 	assert(err == VK_SUCCESS);
 
 	uint32_t presentModeCount;
-	err = fpGetPhysicalDeviceSurfacePresentModesKHR(gpu, surface, &presentModeCount, nullptr);
+	err = fpGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, nullptr);
 	assert(err == VK_SUCCESS);
 	vector<VkPresentModeKHR> presentModes(presentModeCount);
-	err = fpGetPhysicalDeviceSurfacePresentModesKHR(gpu, surface, &presentModeCount, presentModes.data());
+	err = fpGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, presentModes.data());
 	assert(err == VK_SUCCESS);
 
 	VkExtent2D swapchainExtent;
@@ -732,7 +732,7 @@ void VKRenderer::initializeSwapChain() {
 	}
 
 	//
-	VkSurfaceTransformFlagsKHR preTransform;
+	VkSurfaceTransformFlagsKHR preTransform {};
 	if (surfCapabilities.supportedTransforms & VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR) {
 		preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
 	} else {
@@ -849,6 +849,8 @@ bool VKRenderer::isSupportingVertexArrays() {
 
 void VKRenderer::initialize()
 {
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+
 	// create VK shader cache folder
 	try {
 		if (FileSystem::getInstance()->fileExists("shader/vk") == false) {
@@ -877,8 +879,8 @@ void VKRenderer::initialize()
 
 	uint32_t enabledExtensionCount = 0;
 	uint32_t enabledLayerCount = 0;
-	const char* extensionNames[64];
-	const char* enabledLayers[64];
+	array<const char*, 64> extensionNames {};
+	array<const char*, 64>enabledLayers {};
 
 	char* instanceValidationLayersAlt1[] = {
 		"VK_LAYER_KHRONOS_validation"
@@ -887,8 +889,11 @@ void VKRenderer::initialize()
 		"VK_LAYER_LUNARG_standard_validation"
 	};
 
-	// Look for validation layers
-	if (validate == true) {
+	// enable validation layers if app runs in debug mode
+	auto enableValidationLayers = Application::getApplication()->isDebuggingEnabled();
+	if (enableValidationLayers == true) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): \"--debug\" mode enabled: Enabling validation layers");
+
 		VkBool32 validationFound = 0;
 		err = vkEnumerateInstanceLayerProperties(&instanceLayerCount, nullptr);
 		assert(!err);
@@ -958,7 +963,7 @@ void VKRenderer::initialize()
 		assert(!err);
 		for (i = 0; i < instanceExtensionCount; i++) {
 			if (!strcmp(VK_EXT_DEBUG_REPORT_EXTENSION_NAME, instanceExtensions[i].extensionName)) {
-				if (validate == true) {
+				if (enableValidationLayers == true) {
 					extensionNames[enabledExtensionCount++] = VK_EXT_DEBUG_REPORT_EXTENSION_NAME;
 				}
 			}
@@ -969,10 +974,10 @@ void VKRenderer::initialize()
 	const VkApplicationInfo applicationInfo = {
 		.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
 		.pNext = nullptr,
-		.pApplicationName = "TDME2 based application",
+		.pApplicationName = Application::getApplication()->getTitle().c_str(),
 		.applicationVersion = 0,
 		.pEngineName = "TDME2",
-		.engineVersion = 0,
+		.engineVersion = 200,
 		.apiVersion = VK_API_VERSION_1_0,
 	};
 	VkInstanceCreateInfo instanceCreateInfo = {
@@ -981,13 +986,11 @@ void VKRenderer::initialize()
 		.flags = 0,
 		.pApplicationInfo = &applicationInfo,
 		.enabledLayerCount = enabledLayerCount,
-		.ppEnabledLayerNames = (const char * const *)instanceValidationLayers,
+		.ppEnabledLayerNames = instanceValidationLayers,
 		.enabledExtensionCount = enabledExtensionCount,
-		.ppEnabledExtensionNames = (const char * const *)extensionNames,
+		.ppEnabledExtensionNames = extensionNames.data(),
 	};
-	uint32_t gpuCount;
-
-	err = vkCreateInstance(&instanceCreateInfo, nullptr, &inst);
+	err = vkCreateInstance(&instanceCreateInfo, nullptr, &instance);
 	if (err == VK_ERROR_INCOMPATIBLE_DRIVER) {
 		ERR_EXIT("Cannot find a compatible Vulkan installable client driver "
 				"(ICD).\n\nPlease look at the Getting Started guide for "
@@ -1006,14 +1009,16 @@ void VKRenderer::initialize()
 	}
 
 	// Make initial call to query gpu_count, then second call for gpu info
-	err = vkEnumeratePhysicalDevices(inst, &gpuCount, nullptr);
+	uint32_t gpuCount = 0;
+	err = vkEnumeratePhysicalDevices(instance, &gpuCount, nullptr);
 	assert(!err && gpuCount > 0);
 
+	//
 	if (gpuCount > 0) {
 		vector<VkPhysicalDevice> physicalDevices(gpuCount);
-		err = vkEnumeratePhysicalDevices(inst, &gpuCount, physicalDevices.data());
+		err = vkEnumeratePhysicalDevices(instance, &gpuCount, physicalDevices.data());
 		assert(!err);
-		gpu = physicalDevices[0];
+		physicalDevice = physicalDevices[0];
 	} else {
 		ERR_EXIT(
 			"vkEnumeratePhysicalDevices reported zero accessible devices."
@@ -1029,12 +1034,12 @@ void VKRenderer::initialize()
 	VkBool32 swapchainExtFound = 0;
 	enabledExtensionCount = 0;
 
-	err = vkEnumerateDeviceExtensionProperties(gpu, nullptr, &deviceExtensionCount, nullptr);
+	err = vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &deviceExtensionCount, nullptr);
 	assert(!err);
 
 	if (deviceExtensionCount > 0) {
 		vector<VkExtensionProperties> deviceExtensions(deviceExtensionCount);
-		err = vkEnumerateDeviceExtensionProperties(gpu, nullptr, &deviceExtensionCount, deviceExtensions.data());
+		err = vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &deviceExtensionCount, deviceExtensions.data());
 		assert(!err);
 		for (i = 0; i < deviceExtensionCount; i++) {
 			if (!strcmp(VK_KHR_SWAPCHAIN_EXTENSION_NAME, deviceExtensions[i].extensionName)) {
@@ -1058,33 +1063,33 @@ void VKRenderer::initialize()
 
 	// Having these GIPA queries of device extension entry points both
 	// BEFORE and AFTER vkCreateDevice is a good test for the loader
-	GET_INSTANCE_PROC_ADDR(inst, GetPhysicalDeviceSurfaceCapabilitiesKHR);
-	GET_INSTANCE_PROC_ADDR(inst, GetPhysicalDeviceSurfaceFormatsKHR);
-	GET_INSTANCE_PROC_ADDR(inst, GetPhysicalDeviceSurfacePresentModesKHR);
-	GET_INSTANCE_PROC_ADDR(inst, GetPhysicalDeviceSurfaceSupportKHR);
+	GET_INSTANCE_PROC_ADDR(instance, GetPhysicalDeviceSurfaceCapabilitiesKHR);
+	GET_INSTANCE_PROC_ADDR(instance, GetPhysicalDeviceSurfaceFormatsKHR);
+	GET_INSTANCE_PROC_ADDR(instance, GetPhysicalDeviceSurfacePresentModesKHR);
+	GET_INSTANCE_PROC_ADDR(instance, GetPhysicalDeviceSurfaceSupportKHR);
 
-	vkGetPhysicalDeviceProperties(gpu, &gpuProperties);
+	vkGetPhysicalDeviceProperties(physicalDevice, &gpuProperties);
 
 	//
 	deviceName = gpuProperties.deviceName;
 
 	// Query with nullptr data to get count
-	vkGetPhysicalDeviceQueueFamilyProperties(gpu, &queueCount, nullptr);
+	vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueCount, nullptr);
 
 	queueProperties = new VkQueueFamilyProperties[queueCount];
-	vkGetPhysicalDeviceQueueFamilyProperties(gpu, &queueCount, queueProperties);
+	vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueCount, queueProperties);
 	assert(queueCount >= 1);
 
-	vkGetPhysicalDeviceFeatures(gpu, &gpuFeatures);
+	vkGetPhysicalDeviceFeatures(physicalDevice, &gpuFeatures);
 
 	// Create a WSI surface for the window:
-	err = glfwCreateWindowSurface(inst, Application::glfwWindow, nullptr, &surface);
+	err = glfwCreateWindowSurface(instance, Application::glfwWindow, nullptr, &surface);
 	assert(!err);
 
 	// Iterate over each queue to learn whether it supports presenting:
 	vector<VkBool32> supportsPresent(queueCount);
 	for (i = 0; i < queueCount; i++) {
-		fpGetPhysicalDeviceSurfaceSupportKHR(gpu, i, surface, &supportsPresent[i]);
+		fpGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, i, surface, &supportsPresent[i]);
 	}
 
 	// Search for a graphics and a present queue in the array of queue
@@ -1158,11 +1163,10 @@ void VKRenderer::initialize()
 		.enabledLayerCount = 0,
 		.ppEnabledLayerNames = nullptr,
 		.enabledExtensionCount = enabledExtensionCount,
-		.ppEnabledExtensionNames = (const char * const *) extensionNames,
+		.ppEnabledExtensionNames = extensionNames.data(),
 		.pEnabledFeatures = &features
 	};
-
-	err = vkCreateDevice(gpu, &deviceCreateInfo, nullptr, &device);
+	err = vkCreateDevice(physicalDevice, &deviceCreateInfo, nullptr, &device);
 	assert(!err);
 
 	GET_DEVICE_PROC_ADDR(device, CreateSwapchainKHR);
@@ -1175,10 +1179,10 @@ void VKRenderer::initialize()
 
 	// Get the list of VkFormat's that are supported:
 	uint32_t surfaceFormatCount;
-	err = fpGetPhysicalDeviceSurfaceFormatsKHR(gpu, surface, &surfaceFormatCount, nullptr);
+	err = fpGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &surfaceFormatCount, nullptr);
 	assert(!err);
 	vector<VkSurfaceFormatKHR> surfaceFormats(surfaceFormatCount);
-	err = fpGetPhysicalDeviceSurfaceFormatsKHR(gpu, surface, &surfaceFormatCount, surfaceFormats.data());
+	err = fpGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &surfaceFormatCount, surfaceFormats.data());
 	assert(!err);
 
 	// If the format list includes just one entry of VK_FORMAT_UNDEFINED,
@@ -1206,13 +1210,13 @@ void VKRenderer::initialize()
 	}
 
 	// Get Memory information and properties
-	vkGetPhysicalDeviceMemoryProperties(gpu, &memoryProperties);
+	vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryProperties);
 
 	// initialize allocator
 	VmaAllocatorCreateInfo allocatorCreateInfo = {};
-	allocatorCreateInfo.physicalDevice = gpu;
+	allocatorCreateInfo.physicalDevice = physicalDevice;
 	allocatorCreateInfo.device = device;
-	allocatorCreateInfo.instance = inst;
+	allocatorCreateInfo.instance = instance;
 	allocatorCreateInfo.vulkanApiVersion = VK_API_VERSION_1_0;
 
     //
@@ -1554,7 +1558,7 @@ void VKRenderer::initializeFrameBuffers() {
 }
 
 void VKRenderer::reshape() {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	// new dimensions
 	glfwGetWindowSize(Application::glfwWindow, (int32_t*)&width, (int32_t*)&height);
@@ -1625,7 +1629,7 @@ void VKRenderer::initializeFrame()
 		vkDestroySemaphore(device, drawCompleteSemaphore, nullptr);
 
 		//
-		reshape();
+		initializeSwapChain();
 
 		// recreate semaphores
 		err = vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &imageAcquiredSemaphore);
@@ -4343,7 +4347,7 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 	VkResult err;
 
 
-	vkGetPhysicalDeviceFormatProperties(gpu, textureFormat, &textureFormatProperties);
+	vkGetPhysicalDeviceFormatProperties(physicalDevice, textureFormat, &textureFormatProperties);
 	if ((textureFormatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) == VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) {
 		//
 		struct texture_type stagingTexture {};
@@ -4592,7 +4596,7 @@ void VKRenderer::uploadCubeMapSingleTexture(int contextIdx, texture_type* cubema
 	const VkFormat textureFormat = texture->getDepth() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
 	VkFormatProperties textureFormatProperties;
 	VkResult err;
-	vkGetPhysicalDeviceFormatProperties(gpu, textureFormat, &textureFormatProperties);
+	vkGetPhysicalDeviceFormatProperties(physicalDevice, textureFormat, &textureFormatProperties);
 	if ((textureFormatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) == VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) {
 		//
 		struct texture_type staging_texture {};
@@ -7375,9 +7379,11 @@ void VKRenderer::setEnvironmentMappingCubeMapPosition(int contextIdx, array<floa
 }
 
 void VKRenderer::setVSyncEnabled(bool vSync) {
-	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(vSync));
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(this->vSync) + " --> " + to_string(vSync));
+	if (this->vSync == vSync) return;
 	swapchainPresentMode = vSync == true?VK_PRESENT_MODE_FIFO_KHR:VK_PRESENT_MODE_IMMEDIATE_KHR;
-	reshape();
+	this->vSync = vSync;
+	initializeSwapChain();
 }
 
 const Renderer::Renderer_Statistics VKRenderer::getStatistics() {

@@ -351,8 +351,8 @@ private:
 
 	VkSurfaceKHR surface { VK_NULL_HANDLE };
 
-	VkInstance inst { VK_NULL_HANDLE };
-	VkPhysicalDevice gpu { VK_NULL_HANDLE };
+	VkInstance instance { VK_NULL_HANDLE };
+	VkPhysicalDevice physicalDevice { VK_NULL_HANDLE };
 	VkDevice device { VK_NULL_HANDLE };
 	SpinLock queueSpinlock;
 	VkQueue queue { VK_NULL_HANDLE };
@@ -414,9 +414,6 @@ private:
 	VkDescriptorPool descriptorPool1 { VK_NULL_HANDLE };
 	VkDescriptorPool descriptorPool2 { VK_NULL_HANDLE };
 
-	// enable/disable validation layers
-	bool validate { false };
-
 	uint32_t lastFrameBuffer { 0 };
 	uint32_t currentFrameBuffer { 0 };
 	uint32_t queueCount { 0 };
@@ -459,6 +456,7 @@ private:
 	string deviceName;
 
 	VkPresentModeKHR swapchainPresentMode { VK_PRESENT_MODE_IMMEDIATE_KHR };
+	bool vSync { false };
 
 	//
 	VkBool32 checkLayers(uint32_t checkCount, const char **checkNames, const vector<VkLayerProperties>& instanceLayers);
