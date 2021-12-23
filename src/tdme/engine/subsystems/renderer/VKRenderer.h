@@ -372,9 +372,9 @@ private:
 	PFN_vkAcquireNextImageKHR fpAcquireNextImageKHR { nullptr };
 	PFN_vkQueuePresentKHR fpQueuePresentKHR { nullptr };
 
-	uint32_t swapchainImageCount { 0 };
-	VkSwapchainKHR swapchain { VK_NULL_HANDLE };
-	vector<swapchain_buffer_type> swapchainBuffers;
+	uint32_t windowSwapchainImageCount { 0 };
+	VkSwapchainKHR windowSwapchain { VK_NULL_HANDLE };
+	vector<swapchain_buffer_type> windowSwapchainBuffers;
 	vector<VkFramebuffer> windowFramebuffers;
 
 	VkFence memoryBarrierFence { VK_NULL_HANDLE };
@@ -398,10 +398,10 @@ private:
 	ReadWriteLock buffersRWlock;
 	ReadWriteLock texturesRWlock;
 
-	uint32_t width { 0 };
-	uint32_t height { 0 };
-	VkFormat format { VK_FORMAT_UNDEFINED };
-	VkColorSpaceKHR colorSpace { VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
+	uint32_t windowWidth { 0 };
+	uint32_t windowHeight { 0 };
+	VkFormat windowFormat { VK_FORMAT_UNDEFINED };
+	VkColorSpaceKHR windowColorSpace { VK_COLOR_SPACE_SRGB_NONLINEAR_KHR };
 
 	buffer_object_type* emptyVertexBuffer { nullptr };
 	int emptyVertexBufferId { 0 };
@@ -449,9 +449,10 @@ private:
 	vector<int32_t> disposeBuffers;
 	vector<VkPipeline> disposePipelines;
 
-	vector<context_type> contexts;
-	VmaAllocator allocator { VK_NULL_HANDLE };
+	VmaAllocator vmaAllocator { VK_NULL_HANDLE };
 	SpinLock vmaSpinlock;
+
+	vector<context_type> contexts;
 
 	string deviceName;
 
