@@ -14,14 +14,14 @@ pkg install glfw
 exit
 ```
 
-OpenGL:
+#### 1.1.1.1 OpenGL
 ```bash
 su
 pkg install glew
 exit
 ```
 
-Vulkan:
+#### 1.1.1.2 Vulkan
 
 ```bash
 su
@@ -92,13 +92,13 @@ sudo apt-get install libopenal-dev
 sudo apt-get install libglfw3-dev
 ```
 
-OpenGL:
+#### 1.3.1.1 OpenGL
 
 ```bash
 sudo apt-get install libglew-dev
 ```
 
-Vulkan:
+#### 1.3.1.2 Vulkan
 
 ```bash
 sudo apt-get install libvulkan-dev
@@ -166,13 +166,13 @@ pacman -S mingw-w64-x86_64-openal
 pacman -S mingw-w64-x86_64-glfw
 ```
 
-OpenGL:
+#### 1.5.1.1 OpenGL
 
 ```bash
 pacman -S mingw-w64-x86_64-glew
 ```
 
-Vulkan:
+#### 1.5.1.2 Vulkan
 
 ```bash
 pacman -S mingw-w64-x86_64-vulkan-headers
