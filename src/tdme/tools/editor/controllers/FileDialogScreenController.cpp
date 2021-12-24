@@ -414,6 +414,7 @@ void FileDialogScreenController::onActionPerformed(GUIActionListenerType type, G
 {
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId() == pathNode->getId()) {
+			if (StringTools::endsWith(cwd, "/") == true) cwd = StringTools::substring(cwd, 0, cwd.size() - 1);
 			auto lastCwd = cwd;
 			cwd = pathNode->getController()->getValue().getString();
 			if (setupFiles() == true) {
@@ -427,6 +428,7 @@ void FileDialogScreenController::onActionPerformed(GUIActionListenerType type, G
 			}
 		} else
 		if (node->getId() == "filedialog_apply") {
+			if (StringTools::endsWith(cwd, "/") == true) cwd = StringTools::substring(cwd, 0, cwd.size() - 1);
 			defaultCwdByExtensions[getExtensionHash()] = cwd;
 			recents.erase(remove(recents.begin(), recents.end(), cwd), recents.end());
 			recents.push_back(cwd);
@@ -452,6 +454,7 @@ void FileDialogScreenController::onActionPerformed(GUIActionListenerType type, G
 			close();
 		} else
 		if (node->getId() == "filedialog_favorites_add") {
+			if (StringTools::endsWith(cwd, "/") == true) cwd = StringTools::substring(cwd, 0, cwd.size() - 1);
 			favorites.erase(remove(favorites.begin(), favorites.end(), cwd), favorites.end());
 			favorites.push_back(cwd);
 			setupFavorites();
