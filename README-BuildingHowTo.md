@@ -202,7 +202,7 @@ make clean && make -j HARDWARE_THREADS mains
 make clean && make -j HARDWARE_THREADS mains VULKAN=YES
 ```
 
-## 1.6. Windows MSC/X64(tested on Windows 7 Ultimate)
+## 1.6. Windows MSC/X64(tested on Windows 10 Pro)
 ### 1.6.1 Install packages
 Install Visual Studio 2022 Community Edition for C++ development, including MSVC v143 and Windows 10 SDK(10.0.19041.0).
 Be aware that the makefile uses the default installation paths for libraries and headers.
