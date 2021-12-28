@@ -81,7 +81,7 @@ Note: HARDWARE_THREADS should be replaced with the number of your CPU hardware t
 gmake clean && gmake -j HARDWARE_THREADS mains CXX=clang++ CC=clang
 ```
 
-## 1.3. Ubuntu(tested on XUBUNTU 18.04)
+## 1.3. Ubuntu(tested on Ubuntu 20.04)
 ### 1.3.1 Install packages
 
 ```bash
