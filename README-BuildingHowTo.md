@@ -2,7 +2,7 @@
 
 # 1. How to build TDME2?
 
-## 1.1. FreeBSD(tested on FreeBSD 12.0)
+## 1.1. FreeBSD(tested on FreeBSD 13.0)
 ### 1.1.1 Install packages
 
 ```bash
