@@ -2,7 +2,7 @@
 
 # 1. How to build TDME2?
 
-## 1.1. FreeBSD(tested on FreeBSD 12.0)
+## 1.1. FreeBSD(tested on FreeBSD 13.0)
 ### 1.1.1 Install packages
 
 ```bash
@@ -81,7 +81,7 @@ Note: HARDWARE_THREADS should be replaced with the number of your CPU hardware t
 gmake clean && gmake -j HARDWARE_THREADS mains CXX=clang++ CC=clang
 ```
 
-## 1.3. Ubuntu(tested on XUBUNTU 18.04)
+## 1.3. Ubuntu(tested on Ubuntu 20.04)
 ### 1.3.1 Install packages
 
 ```bash
@@ -153,7 +153,7 @@ Note: HARDWARE_THREADS should be replaced with the number of your CPU hardware t
 make clean && make -j HARDWARE_THREADS mains
 ```
 
-## 1.5. Windows MSYS2/MINGW64(tested on Windows 10 Home)
+## 1.5. Windows MSYS2/MINGW64(tested on Windows 10 Pro)
 ### 1.5.1 Install packages
 Install 64 Bit MSYS2 from https://www.msys2.org/, e.g. msys2-x86_64-20190524.exe, then update your MSYS2 installation and install packages.
 
@@ -202,7 +202,7 @@ make clean && make -j HARDWARE_THREADS mains
 make clean && make -j HARDWARE_THREADS mains VULKAN=YES
 ```
 
-## 1.6. Windows MSC/X64(tested on Windows 7 Ultimate)
+## 1.6. Windows MSC/X64(tested on Windows 10 Pro)
 ### 1.6.1 Install packages
 Install Visual Studio 2022 Community Edition for C++ development, including MSVC v143 and Windows 10 SDK(10.0.19041.0).
 Be aware that the makefile uses the default installation paths for libraries and headers.
