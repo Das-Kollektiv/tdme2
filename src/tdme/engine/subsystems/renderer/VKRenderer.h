@@ -53,7 +53,7 @@ using tdme::utilities::ShortBuffer;
 	#define SAMPLER_HASH_TYPE __int128
 #else
 	#define SAMPLER_HASH_MAX 4
-	#define SAMPLER_HASH_TYPE __uint64_t
+	#define SAMPLER_HASH_TYPE uint64_t
 #endif
 
 /**
@@ -115,14 +115,14 @@ private:
 	};
 
 	struct uniform_buffer_type {
-		struct buffer {
+		struct uniform_buffer_type_buffer {
 			VkBuffer buffer { VK_NULL_HANDLE };
 			VmaAllocation allocation { VK_NULL_HANDLE };
 		};
 		int bufferIdx { 0 };
 		int size { -1 };
 		// TODO: make them a growing list
-		array<buffer, COMMANDS_MAX_GRAPHICS * DRAW_COMMANDBUFFER_MAX * 5> buffers;
+		array<uniform_buffer_type_buffer, COMMANDS_MAX_GRAPHICS * DRAW_COMMANDBUFFER_MAX * 5> buffers;
 	};
 
 	struct shader_type {

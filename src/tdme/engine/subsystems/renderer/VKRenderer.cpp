@@ -882,10 +882,10 @@ void VKRenderer::initialize()
 	array<const char*, 64> extensionNames {};
 	array<const char*, 64>enabledLayers {};
 
-	char* instanceValidationLayersAlt1[] = {
+	const char* instanceValidationLayersAlt1[] = {
 		"VK_LAYER_KHRONOS_validation"
 	};
-	char* instanceValidationLayersAlt2[] = {
+	const char* instanceValidationLayersAlt2[] = {
 		"VK_LAYER_LUNARG_standard_validation"
 	};
 
@@ -2087,7 +2087,7 @@ void VKRenderer::createRenderProgram(program_type* program) {
 				.binding = static_cast<uint32_t>(shader->uboBindingIdx),
 				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 				.descriptorCount = 1,
-				.stageFlags = shader->type,
+				.stageFlags = static_cast<VkShaderStageFlags>(shader->type),
 				.pImmutableSamplers = nullptr
 			};
 		}
@@ -2097,7 +2097,7 @@ void VKRenderer::createRenderProgram(program_type* program) {
 				.binding = static_cast<uint32_t>(uniform->position),
 				.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 				.descriptorCount = 1,
-				.stageFlags = shader->type,
+				.stageFlags = static_cast<VkShaderStageFlags>(shader->type),
 				.pImmutableSamplers = nullptr
 			};
 		}
@@ -2925,7 +2925,7 @@ inline void VKRenderer::createSkinningComputingProgram(program_type* program) {
 				.binding = static_cast<uint32_t>(i),
 				.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
 				.descriptorCount = 1,
-				.stageFlags = shader->type,
+				.stageFlags = static_cast<VkShaderStageFlags>(shader->type),
 				.pImmutableSamplers = nullptr
 			};
 		}
@@ -2935,7 +2935,7 @@ inline void VKRenderer::createSkinningComputingProgram(program_type* program) {
 				.binding = static_cast<uint32_t>(shader->uboBindingIdx),
 				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
 				.descriptorCount = 1,
-				.stageFlags = shader->type,
+				.stageFlags = static_cast<VkShaderStageFlags>(shader->type),
 				.pImmutableSamplers = nullptr
 			};
 		}
@@ -7178,7 +7178,7 @@ inline void VKRenderer::finishRendering() {
 
 	// end render passes
 	auto submittedCommandBuffersCount = 0;
-	VkCommandBuffer submittedCommandBuffers[Engine::getThreadCount() * DRAW_COMMANDBUFFER_MAX * 3];
+	vector<VkCommandBuffer> submittedCommandBuffers(Engine::getThreadCount() * DRAW_COMMANDBUFFER_MAX * 3);
 	for (auto i = 0; i < Engine::getThreadCount(); i++) {
 		finishSetupCommandBuffer(i);
 		endRenderPass(i);
@@ -7192,7 +7192,7 @@ inline void VKRenderer::finishRendering() {
 
 	//
 	if (submittedCommandBuffersCount > 0) {
-		submitDrawCommandBuffers(submittedCommandBuffersCount, submittedCommandBuffers, memoryBarrierFence, true, true);
+		submitDrawCommandBuffers(submittedCommandBuffersCount, submittedCommandBuffers.data(), memoryBarrierFence, true, true);
 		for (auto i = 0; i < Engine::getThreadCount(); i++) {
 			recreateContextFences(i);
 		}
