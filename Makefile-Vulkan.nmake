@@ -23,6 +23,7 @@ INCLUDES = \
 	/I "ext\win-openal-soft\includes" \
 	/I "ext\win-glew\include" \
 	/I "ext\win-dirent\include" \
+	/I "ext\win-vulkan-sdk\include" \
 	/I "ext\rapidjson\include"
 
 # For Windows 10 this might be added to EXTRA_LIBS libucrt.lib from Windows 10 Kit
