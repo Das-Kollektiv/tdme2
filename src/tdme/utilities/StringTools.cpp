@@ -10,7 +10,6 @@
 
 using std::find_if;
 using std::isspace;
-using std::not1;
 using std::regex;
 using std::regex_match;
 using std::regex_replace;

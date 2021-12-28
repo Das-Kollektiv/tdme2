@@ -33,20 +33,20 @@ INCLUDES = \
 # For Windows 10 this might be added to EXTRA_LIBS libucrt.lib from Windows 10 Kit
 
 EXTRA_LIBS = \
-	/LIBPATH "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.23.28105\lib\x64\libcmt.lib" \
-	/LIBPATH "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.23.28105\lib\x64\oldnames.lib" \
-	/LIBPATH "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\kernel32.lib" \
-	/LIBPATH "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\advapi32.lib" \
-	/LIBPATH "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.23.28105\lib\x64\libvcruntime.lib" \
-	/LIBPATH "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\uuid.lib" \
-	/LIBPATH "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.23.28105\lib\x64\libcpmt.lib" \
-	/LIBPATH "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\opengl32.lib" \
-	/LIBPATH "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\gdi32.lib" \
-	/LIBPATH "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\winmm.lib" \
-	/LIBPATH "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\shell32.lib" \
-	/LIBPATH "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\user32.lib" \
-	/LIBPATH "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\ws2_32.lib" \
-	/LIBPATH "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\dbghelp.lib" \
+	/LIBPATH "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\lib\x64\libcmt.lib" \
+	/LIBPATH "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\lib\x64\libcpmt.lib" \
+	/LIBPATH "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\lib\x64\libvcruntime.lib" \
+	/LIBPATH "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\lib\x64\oldnames.lib" \
+	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\kernel32.lib" \
+	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\advapi32.lib" \
+	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\uuid.lib" \
+	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\opengl32.lib" \
+	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\gdi32.lib" \
+	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\winmm.lib" \
+	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\shell32.lib" \
+	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\user32.lib" \
+	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\ws2_32.lib" \
+	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\dbghelp.lib" \
 	/LIBPATH "ext/glfw3/win64/lib/glfw3_mt.lib" \
 	/LIBPATH "ext\win-pthread\libs\pthreadVC2.lib" \
 	/LIBPATH "ext\win-openal-soft\libs\OpenAL32.lib" \
@@ -55,7 +55,7 @@ EXTRA_LIBS = \
 	/LIBPATH libtdme-ext.lib \
 	/LIBPATH libtdme.lib
 
-FLAGS = /MT /MP /D _USING_V110_SDK71_ /EHsc /Ox /fp:fast /GL /Zi /std:c++latest /F 8388608 /D GLFW3
+FLAGS = /MT /MP /D _USING_V110_SDK71_ /EHsc /Ox /fp:fast /GL /Zi /std:c++latest /F 8388608 /D RAPIDJSON_HAS_STDSTRING /D GLFW3
 
 # /NODEFAULTLIB:msvcrt
 

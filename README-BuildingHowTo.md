@@ -204,7 +204,8 @@ make clean && make -j HARDWARE_THREADS mains VULKAN=YES
 
 ## 1.6. Windows MSC/X64(tested on Windows 7 Ultimate)
 ### 1.6.1 Install packages
-Install Visual Studio 2019 Community Edition and install Windows 7 SDK. Be aware that the makefile uses the default installation paths for libraries and headers.
+Install Visual Studio 2022 Community Edition for C++ development, including MSVC v143 and Windows 10 SDK(10.0.19041.0).
+Be aware that the makefile uses the default installation paths for libraries and headers.
 
 ### 1.6.2. Download or clone repository
 
@@ -213,7 +214,7 @@ send your browser to "https://github.com/andreasdr/tdme2" and click "Clone or do
 
 ### 1.6.3. Build
 
-Open your Visual Studio 2019 Community command line interface app for native X64 builds and execute the following commands. 
+Open your Visual Studio 2022 Community command line interface app for native X64 builds and execute the following commands. 
 You need to adjust "tdme2" if you used a different folder.
 
 ```
