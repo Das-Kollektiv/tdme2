@@ -108,8 +108,10 @@ private:
 		bool useGPUMemory { false };
 		bool shared { false };
 		list<reusable_buffer> buffers;
+		vector<reusable_buffer*> frameFreeBuffers;
 		uint32_t bufferCount { 0 };
-		int64_t frameCleanedLast { 0 };
+		int64_t frameUsedLast { -1LL };
+		int64_t frameCleanedLast { -1LL };
 		reusable_buffer* currentBuffer { nullptr };
 		volatile bool uploading { false };
 	};

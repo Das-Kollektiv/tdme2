@@ -5594,6 +5594,8 @@ vector<int32_t> VKRenderer::createBufferObjects(int32_t bufferCount, bool useGPU
 		buffer.id = reuseBufferId != -1?reuseBufferId:bufferIdx++;
 		buffer.useGPUMemory = useGPUMemory;
 		buffer.shared = shared;
+		buffer.frameUsedLast = -1LL;
+		buffer.frameCleanedLast = frame;
 		buffers[buffer.id] = bufferPtr;
 		bufferIds.push_back(buffer.id);
 	}
@@ -5721,12 +5723,52 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 	//
 	VkResult err;
 
+	//
+	if (buffer->frameUsedLast != frame) {
+		// clean up, not sure if this should be done on usage only
+		vector<int> buffersToRemove;
+		if (buffer->bufferCount > 1 && frame >= buffer->frameCleanedLast + 10) {
+			int i = 0;
+			vector<int32_t> buffersToRemove;
+			for (auto& reusableBufferCandidate: buffer->buffers) {
+				if (frame >= reusableBufferCandidate.frameUsedLast + 10) {
+					if (reusableBufferCandidate.memoryMappable == true) vmaUnmapMemory(vmaAllocator, reusableBufferCandidate.allocation);
+					vmaDestroyBuffer(vmaAllocator, reusableBufferCandidate.buf, reusableBufferCandidate.allocation);
+					buffersToRemove.push_back(i - buffersToRemove.size());
+				}
+				i++;
+			}
+			for (auto bufferToRemove: buffersToRemove) {
+				auto it = buffer->buffers.begin();
+				for (auto i = 0; i < bufferToRemove; i++) ++it;
+				buffer->buffers.erase(it);
+				buffer->bufferCount--;
+			}
+			//
+			buffer->frameCleanedLast = frame;
+			//
+			AtomicOperations::increment(statistics.disposedBuffers, buffersToRemove.size());
+		}
+
+		// create free list
+		buffer->frameFreeBuffers.clear();
+		for (auto& reusableBufferCandidate: buffer->buffers) {
+			buffer->frameFreeBuffers.push_back(&reusableBufferCandidate);
+		}
+
+		//
+		buffer->frameUsedLast = frame;
+	}
+
 	// find a reusable buffer
 	buffer_object_type::reusable_buffer* reusableBuffer = nullptr;
-	for (auto& reusableBufferCandidate: buffer->buffers) {
-		if (reusableBufferCandidate.size >= size &&
-			reusableBufferCandidate.frameUsedLast < frame) {
-			reusableBuffer = &reusableBufferCandidate;
+	for (int i = buffer->frameFreeBuffers.size() - 1; i >= 0 ; i--) {
+		buffer_object_type::reusable_buffer* reusableBufferCandidate = buffer->frameFreeBuffers[i];
+		if (reusableBufferCandidate->size >= size &&
+			reusableBufferCandidate->frameUsedLast < frame) {
+			reusableBuffer = reusableBufferCandidate;
+			// ok, remove it from free buffers for current frame
+			buffer->frameFreeBuffers.erase(buffer->frameFreeBuffers.begin() + i);
 			break;
 		}
 	}
@@ -5797,30 +5839,6 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 	// frame and current buffer
 	reusableBuffer->frameUsedLast = frame;
 	buffer->currentBuffer = reusableBuffer;
-
-	// clean up
-	vector<int> buffersToRemove;
-	if (buffer->bufferCount > 1 && frame >= buffer->frameCleanedLast + 60) {
-		int i = 0;
-		vector<int32_t> buffersToRemove;
-		for (auto& reusableBufferCandidate: buffer->buffers) {
-			if (frame >= reusableBufferCandidate.frameUsedLast + 60) {
-				if (reusableBuffer->memoryMappable == true) vmaUnmapMemory(vmaAllocator, reusableBufferCandidate.allocation);
-				vmaDestroyBuffer(vmaAllocator, reusableBufferCandidate.buf, reusableBufferCandidate.allocation);
-				buffersToRemove.push_back(i - buffersToRemove.size());
-			}
-			i++;
-		}
-		for (auto bufferToRemove: buffersToRemove) {
-			auto it = buffer->buffers.begin();
-			for (auto i = 0; i < bufferToRemove; i++) ++it;
-			buffer->buffers.erase(it);
-			buffer->bufferCount--;
-		}
-		buffer->frameCleanedLast = frame;
-		//
-		AtomicOperations::increment(statistics.disposedBuffers, buffersToRemove.size());
-	}
 
 	//
 	buffer->uploading = false;
