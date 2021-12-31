@@ -237,7 +237,7 @@ This will build TDME2 executables into your "tdme2" folder. You need to copy DLL
 You need to adjust "tdme2" if you used a different folder.
 
 ```
-cd %HOMEPATH%/tdme2
+cd %HOMEPATH%\tdme2
 copy ext\fbx\win64\lib\libfbxsdk.dll .
 copy ext\windows-msc\glew\libs\glew32.dll .
 copy ext\windows-msc\openal-soft\libs\OpenAl32.dll .
@@ -271,4 +271,4 @@ $ ./bin/tdme/tests/AngleTest
 - TDME2 Screenshots, see [README-Screenshots.md](./README-Screenshots.md)
 ## 3.2. Additional notes
 - Build instructions will follow for NetBSD and Haiku if they get more recent graphics card support
-- First start of a TDME2 application will create Vulkan shader caches, please be patient as this can take a moment
+- Vulkan: First start of a TDME2 application will create Vulkan shader caches, please be patient as this can take a moment
