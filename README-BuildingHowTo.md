@@ -271,4 +271,4 @@ $ ./bin/tdme/tests/AngleTest
 - TDME2 Screenshots, see [README-Screenshots.md](./README-Screenshots.md)
 ## 3.2. Additional notes
 - Build instructions will follow for NetBSD and Haiku if they get more recent graphics card support
-- First start of a TDME2 application will create Vulkan shader caches, please be patient as this can take a moment
+- Vulkan: First start of a TDME2 application will create Vulkan shader caches, please be patient as this can take a moment
