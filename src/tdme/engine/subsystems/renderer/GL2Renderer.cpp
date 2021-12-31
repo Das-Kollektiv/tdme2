@@ -100,10 +100,6 @@ bool GL2Renderer::isSupportingMultithreadedRendering() {
 	return false;
 }
 
-bool GL2Renderer::isSupportingMultipleRenderQueues() {
-	return false;
-}
-
 bool GL2Renderer::isSupportingVertexArrays() {
 	return false;
 }

@@ -26,6 +26,10 @@
 #include <tdme/os/threading/SpinLock.h>
 #include <tdme/utilities/fwd-tdme.h>
 
+#if defined(CPU_64BIT) && defined(_MSC_VER)
+	#include <ext/win-uint128_t/uint128_t.h>
+#endif
+
 using std::array;
 using std::list;
 using std::string;
@@ -50,7 +54,17 @@ using tdme::utilities::ShortBuffer;
 
 #if defined(CPU_64BIT)
 	#define SAMPLER_HASH_MAX	8
-	#define SAMPLER_HASH_TYPE __int128
+	#if defined(_MSC_VER)
+		#define SAMPLER_HASH_TYPE uint128_t
+		struct UINT128_T_Hash {
+			std::size_t operator()(uint128_t m) const {
+				std::hash<uint64_t> hashVal;
+				return hashVal(m.lower() + m.upper()); // TODO: implement me properly
+			}
+		};
+	#else
+		#define SAMPLER_HASH_TYPE __int128
+	#endif
 #else
 	#define SAMPLER_HASH_MAX 4
 	#define SAMPLER_HASH_TYPE uint64_t
@@ -183,8 +197,13 @@ private:
 		struct context {
 			uint32_t descriptorSets2Idx;
 			array<VkDescriptorSet, DESC_MAX_CACHED> descriptorSets2;
-			unordered_map<SAMPLER_HASH_TYPE, int> descriptorSets2Cache;
-			unordered_map<int32_t, unordered_set<SAMPLER_HASH_TYPE>> descriptorSets2CacheTextureIds;
+			#if defined(CPU_64BIT) && defined(_MSC_VER)
+				unordered_map<SAMPLER_HASH_TYPE, int, UINT128_T_Hash> descriptorSets2Cache;
+				unordered_map<int32_t, unordered_set<SAMPLER_HASH_TYPE, UINT128_T_Hash>> descriptorSets2CacheTextureIds;
+			#else
+				unordered_map<SAMPLER_HASH_TYPE, int> descriptorSets2Cache;
+				unordered_map<int32_t, unordered_set<SAMPLER_HASH_TYPE>> descriptorSets2CacheTextureIds;
+			#endif
 			vector<uint32_t> freeDescriptorSets2Ids;
 			array<command_buffer, DRAW_COMMANDBUFFER_MAX> commandBuffers;
 		};
@@ -532,7 +551,6 @@ public:
 	void initializeFrame() override;
 	void finishFrame() override;
 	bool isSupportingMultithreadedRendering() override;
-	bool isSupportingMultipleRenderQueues() override;
 	bool isSupportingVertexArrays() override;
 	bool isBufferObjectsAvailable() override;
 	bool isDepthTextureAvailable() override;

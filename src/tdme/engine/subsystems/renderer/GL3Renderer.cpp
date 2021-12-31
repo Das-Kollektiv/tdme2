@@ -112,10 +112,6 @@ bool GL3Renderer::isSupportingMultithreadedRendering() {
 	return false;
 }
 
-bool GL3Renderer::isSupportingMultipleRenderQueues() {
-	return false;
-}
-
 bool GL3Renderer::isSupportingVertexArrays() {
 	return true;
 }

@@ -7,6 +7,7 @@ SRCS_PLATFORM = \
 	src/tdme/engine/EngineVKRenderer.cpp \
 	src/tdme/engine/subsystems/renderer/VKGL3CoreShaderProgram.cpp \
 	src/tdme/engine/subsystems/renderer/VKRenderer.cpp \
+	ext/win-uint128_t/uint128_t.cpp
 
 # For Windows 10 this might be added to INCLUDES from Windows 10 Kit /urcrt
 
@@ -51,7 +52,7 @@ EXTRA_LIBS = \
 	/LIBPATH libtdme-ext.lib \
 	/LIBPATH libtdme.lib \
 
-FLAGS = /MT /MP /D _USING_V110_SDK71_ /EHsc /Ox /fp:fast /GL /Zi /std:c++latest /F 8388608 /D RAPIDJSON_HAS_STDSTRING /D VULKAN
+FLAGS = /MT /MP /D _USING_V110_SDK71_ /EHsc /O2 /Ob3 /fp:fast /arch:AVX /std:c++20 /GL /Zi /F 8388608 /D RAPIDJSON_HAS_STDSTRING /D VULKAN
 
 # /NODEFAULTLIB:msvcrt
 

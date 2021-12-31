@@ -94,10 +94,6 @@ bool GLES2Renderer::isSupportingMultithreadedRendering() {
 	return false;
 }
 
-bool GLES2Renderer::isSupportingMultipleRenderQueues() {
-	return false;
-}
-
 bool GLES2Renderer::isSupportingVertexArrays() {
 	return false;
 }

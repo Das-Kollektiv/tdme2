@@ -839,10 +839,6 @@ bool VKRenderer::isSupportingMultithreadedRendering() {
 	return true;
 }
 
-bool VKRenderer::isSupportingMultipleRenderQueues() {
-	return false;
-}
-
 bool VKRenderer::isSupportingVertexArrays() {
 	return false;
 }
@@ -3262,7 +3258,6 @@ inline void VKRenderer::setProgramUniformInternal(int contextIdx, int32_t unifor
 	auto& currentContext = contexts[contextIdx];
 
 	//
-	auto changedUniforms = 0;
 	auto shaderIdx = 0;
 	for (auto shader: currentContext.program->shaders) {
 		//
@@ -3291,12 +3286,8 @@ inline void VKRenderer::setProgramUniformInternal(int contextIdx, int32_t unifor
 			continue;
 		}
 		auto& shaderUniform = *shaderUniformPtr;
-		if (shaderUniform.type == shader_type::uniform_type::TYPE_SAMPLER2D) {
-			shaderUniform.textureUnit = *((int32_t*)data);
-		} else
-		if (shaderUniform.type == shader_type::uniform_type::TYPE_SAMPLERCUBE) {
-			shaderUniform.textureUnit = *((int32_t*)data);
-		} else {
+		if (shaderUniform.type == shader_type::uniform_type::TYPE_UNIFORM) {
+			/*
 			if (currentContext.uniformBuffers[shaderIdx] == nullptr) {
 				Console::println(
 					"VKRenderer::" +
@@ -3347,13 +3338,31 @@ inline void VKRenderer::setProgramUniformInternal(int contextIdx, int32_t unifor
 				shaderIdx++;
 				continue;
 			}
-			memcpy(&currentContext.uniformBufferData[shaderIdx][shaderUniform.position], data, size);
+			*/
+			auto remainingSize = size;
+			auto offset = 0;
+			auto src = data;
+			auto dst = static_cast<uint8_t*>(&currentContext.uniformBufferData[shaderIdx][shaderUniform.position]);
+			while (remainingSize >= 8) {
+				*(uint64_t*)dst = *(uint64_t*)src;
+				remainingSize-= 8;
+				src+= 8;
+				dst+= 8;
+			}
+			while (remainingSize >= 4) {
+				*(uint32_t*)dst = *(uint32_t*)src;
+				remainingSize-= 4;
+				src+= 4;
+				dst+= 4;
+			}
+		} else
+		if (shaderUniform.type == shader_type::uniform_type::TYPE_SAMPLER2D) {
+			shaderUniform.textureUnit = *((int32_t*)data);
+		} else
+		if (shaderUniform.type == shader_type::uniform_type::TYPE_SAMPLERCUBE) {
+			shaderUniform.textureUnit = *((int32_t*)data);
 		}
-		changedUniforms++;
 		shaderIdx++;
-	}
-	if (changedUniforms == 0) {
-		if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program: no uniform changed");
 	}
 }
 
@@ -5706,11 +5715,28 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, int32_t buffe
 	if (buffer->shared == true) buffersRWlock.unlock();
 }
 
-inline void VKRenderer::vmaMemCpy(VmaAllocation allocationDst, const uint8_t* src, uint32_t size, uint32_t offset) {
+inline void VKRenderer::vmaMemCpy(VmaAllocation allocationDst, const uint8_t* _src, uint32_t size, uint32_t _offset) {
 	vmaSpinlock.lock();
 	VmaAllocationInfo dstAllocationInfo {};
 	vmaGetAllocationInfo(vmaAllocator, allocationDst, &dstAllocationInfo);
-	memcpy(static_cast<uint8_t*>(dstAllocationInfo.pMappedData) + offset, src, size);
+	//
+	auto remainingSize = size;
+	auto offset = _offset;
+	auto src = _src;
+	auto dst = static_cast<uint8_t*>(dstAllocationInfo.pMappedData) + offset;
+	while (remainingSize >= 8) {
+		*(uint64_t*)dst = *(uint64_t*)src;
+		remainingSize-= 8;
+		src+= 8;
+		dst+= 8;
+	}
+	while (remainingSize >= 4) {
+		*(uint32_t*)dst = *(uint32_t*)src;
+		remainingSize-= 4;
+		src+= 4;
+		dst+= 4;
+	}
+	//
 	vmaSpinlock.unlock();
 }
 

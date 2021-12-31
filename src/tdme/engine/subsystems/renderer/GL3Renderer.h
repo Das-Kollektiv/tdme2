@@ -88,7 +88,6 @@ public:
 	const string getRenderer() override;
 	const string getShaderVersion() override;
 	bool isSupportingMultithreadedRendering() override;
-	bool isSupportingMultipleRenderQueues() override;
 	bool isSupportingVertexArrays() override;
 	bool isBufferObjectsAvailable() override;
 	bool isDepthTextureAvailable() override;

@@ -208,11 +208,6 @@ public:
 	virtual bool isSupportingMultithreadedRendering() = 0;
 
 	/**
-	 * @return if renderer is supporting multiple render queues
-	 */
-	virtual bool isSupportingMultipleRenderQueues() = 0;
-
-	/**
 	 * @return if renderer supports vertex arrays
 	 */
 	virtual bool isSupportingVertexArrays() = 0;
