@@ -237,7 +237,7 @@ This will build TDME2 executables into your "tdme2" folder. You need to copy DLL
 You need to adjust "tdme2" if you used a different folder.
 
 ```
-cd %HOMEPATH%/tdme2
+cd %HOMEPATH%\tdme2
 copy ext\fbx\win64\lib\libfbxsdk.dll .
 copy ext\windows-msc\glew\libs\glew32.dll .
 copy ext\windows-msc\openal-soft\libs\OpenAl32.dll .
