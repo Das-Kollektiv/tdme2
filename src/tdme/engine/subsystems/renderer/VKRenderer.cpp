@@ -506,8 +506,6 @@ inline void VKRenderer::getImageLayoutChange(
 	uint32_t baseMipLevel,
 	uint32_t levelCount
 ) {
-	// Console::println(string(__FUNCTION__) + ": " + to_string(textureObject->id));
-
 	// does this texture object point to a cube map color/depth buffer texture?
 	auto _textureObject = textureObject->cubemapBufferTexture != nullptr?textureObject->cubemapBufferTexture:textureObject;
 
@@ -571,6 +569,7 @@ inline void VKRenderer::applyImageLayoutChange(int contextIdx, const image_layou
 void VKRenderer::applyImageLayoutChanges(int contextIdx, const array<image_layout_change, 8> imageLayoutChanges, array<texture_type*, 8> textureObjects, bool submit) {
 	auto& currentContext = contexts[contextIdx];
 
+	//
 	array<VkImageMemoryBarrier, 8> vkImageMemoryBarriers = {
 		imageLayoutChanges[0].vkImageMemoryBarrier,
 		imageLayoutChanges[1].vkImageMemoryBarrier,
@@ -607,6 +606,7 @@ void VKRenderer::applyImageLayoutChanges(int contextIdx, const array<image_layou
 inline void VKRenderer::setImageLayout2(int contextIdx, texture_type* textureObject, const array<ThsvsAccessType,2>& accessTypes, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout layout, ThsvsImageLayout nextLayout, bool discardContent, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount, bool updateTextureObject) {
 	auto& currentContext = contexts[contextIdx];
 
+	//
 	ThsvsImageBarrier svsImageBarrier = {
 		.prevAccessCount = static_cast<uint32_t>(accessTypes[1] != THSVS_ACCESS_NONE?2:1),
 		.pPrevAccesses = accessTypes.data(),
@@ -650,6 +650,7 @@ inline void VKRenderer::setImageLayout2(int contextIdx, texture_type* textureObj
 inline void VKRenderer::setImageLayout3(int contextIdx, VkImage image, VkImageAspectFlags aspectMask, const array<ThsvsAccessType,2>& accessTypes, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout layout, ThsvsImageLayout nextLayout) {
 	auto& currentContext = contexts[contextIdx];
 
+	//
 	ThsvsImageBarrier svsImageBarrier = {
 		.prevAccessCount = static_cast<uint32_t>(accessTypes[1] != THSVS_ACCESS_NONE?2:1),
 		.pPrevAccesses = accessTypes.data(),
