@@ -221,12 +221,21 @@ private:
 		vector<context> contexts;
 	};
 
+	struct image_layout_change {
+		bool valid { false };
+		VkPipelineStageFlags srcStages { 0 };
+		VkPipelineStageFlags dstStages { 0 };
+		VkImageMemoryBarrier vkImageMemoryBarrier {};
+		array<ThsvsAccessType, 2> accessTypes { THSVS_ACCESS_NONE, THSVS_ACCESS_NONE };
+		ThsvsImageLayout svsLayout { THSVS_IMAGE_LAYOUT_GENERAL };
+		VkImageLayout vkLayout { VK_IMAGE_LAYOUT_UNDEFINED };
+	};
+
 	struct texture_type {
 		enum type { TYPE_NONE, TYPE_TEXTURE, TYPE_CUBEMAP_TEXTURE, TYPE_COLORBUFFER, TYPE_DEPTHBUFFER, TYPE_CUBEMAPBUFFER };
 		volatile bool uploaded { false };
 		type type { TYPE_NONE };
 		int32_t id { 0 };
-		int32_t frameBufferObjectId { 0 };
 		uint32_t width { 0 };
 		uint32_t height { 0 };
 		VkFormat format { VK_FORMAT_UNDEFINED };
@@ -252,6 +261,10 @@ private:
 		// the cube map itself has a attached color buffer and depth buffer
 		texture_type* cubemapColorBuffer { nullptr };
 		texture_type* cubemapDepthBuffer { nullptr };
+		//
+		int32_t frameBufferObjectId { 0 };
+		image_layout_change frameBufferBindImageLayoutChange {};
+		image_layout_change frameBufferUnbindImageLayoutChange {};
 	};
 
 	struct framebuffer_object_type {
@@ -483,7 +496,20 @@ private:
 	//
 	VkBool32 checkLayers(uint32_t checkCount, const char **checkNames, const vector<VkLayerProperties>& instanceLayers);
 	void setImageLayout(int contextIdx, texture_type* textureObject, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout nextLayout, bool discardContent, uint32_t baseMipLevel = 0, uint32_t levelCount = 1, bool submit = true);
-	void setImageLayout2(int contextIdx, texture_type* textureObject, const array<ThsvsAccessType,2>& accessTypes, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout layout, ThsvsImageLayout nextLayout, bool discardContent, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount);
+	void getImageLayoutChange(
+		image_layout_change& imageLayoutChange,
+		texture_type* textureObject,
+		const array<ThsvsAccessType,2>& prevAccessTypes,
+		const array<ThsvsAccessType,2>& nextAccessTypes,
+		ThsvsImageLayout prevLayout,
+		ThsvsImageLayout nextLayout,
+		bool discardContent,
+		uint32_t baseMipLevel = 0,
+		uint32_t levelCount = 1
+	);
+	void applyImageLayoutChange(int contextIdx, const image_layout_change& imageLayoutChange, texture_type* textureObject, bool submit = true);
+	void applyImageLayoutChanges(int contextIdx, const array<image_layout_change, 8> imageLayoutChanges, array<texture_type*, 8> textureObjects, bool submit = true);
+	void setImageLayout2(int contextIdx, texture_type* textureObject, const array<ThsvsAccessType,2>& accessTypes, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout layout, ThsvsImageLayout nextLayout, bool discardContent, uint32_t baseMipLevel, uint32_t levelCount, uint32_t baseArrayLayer, uint32_t layerCount, bool updateTextureObject);
 	void setImageLayout3(int contextIdx, VkImage image, VkImageAspectFlags aspectMask, const array<ThsvsAccessType,2>& accessTypes, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout layout, ThsvsImageLayout nextLayout);
 	uint32_t getMipLevels(Texture* texture);
 	void prepareTextureImage(int contextIdx, struct texture_type* textureObject, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags requiredFlags, Texture* texture, const array<ThsvsAccessType,2>& nextAccesses, ThsvsImageLayout imageLayout, bool disableMipMaps = true, uint32_t baseLevel = 0, uint32_t levelCount = 1);
