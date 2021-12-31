@@ -27,7 +27,7 @@
 #include <tdme/utilities/fwd-tdme.h>
 
 #if defined(CPU_64BIT) && defined(_MSC_VER)
-	#include <ext/win-uint128_t/uint128_t.h>
+	#include <ext/windows-msc/uint128_t/uint128_t.h>
 #endif
 
 using std::array;

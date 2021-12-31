@@ -659,8 +659,8 @@ Third party library licenses:
         THE SOFTWARE.
 
 
-    ext/win-dirent/LICENSE
-    ------------------------
+    ext/windows-msc/dirent/LICENSE
+    --------------------------------
 
         The MIT License (MIT)
 
@@ -686,8 +686,8 @@ Third party library licenses:
 
 
 
-    ext/win-glew/LICENSE
-    ----------------------
+    ext/windows-msc/glew/LICENSE
+    ------------------------------
 
         The OpenGL Extension Wrangler Library
         Copyright (C) 2002-2007, Milan Ikits <milan ikits[]ieee org>
@@ -764,8 +764,8 @@ Third party library licenses:
         MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
 
 
-    ext/win-openal-soft/LICENSE
-    -----------------------------
+    ext/windows-msc/openal-soft/LICENSE
+    -------------------------------------
 
 
                   GNU LIBRARY GENERAL PUBLIC LICENSE
@@ -1253,8 +1253,8 @@ Third party library licenses:
 
 
 
-    ext/win-pthread/LICENSE
-    -------------------------
+    ext/windows-msc/pthread/LICENSE
+    ---------------------------------
 
             pthreads-win32 - a POSIX threads library for Microsoft Windows
 
@@ -1408,8 +1408,8 @@ Third party library licenses:
             widening the potential market for their products.
 
 
-    ext/win-uint128_t/LICENSE
-    ---------------------------
+    ext/windows-msc/uint128_t/LICENSE
+    -----------------------------------
 
         The MIT License (MIT)
 
@@ -1434,8 +1434,8 @@ Third party library licenses:
         THE SOFTWARE.
 
 
-    ext/win-vulkan-sdk/LICENSE
-    ----------------------------
+    ext/windows-msc/vulkan-sdk/LICENSE
+    ------------------------------------
 
         Copyright 2016-2021 LunarG Inc.
 

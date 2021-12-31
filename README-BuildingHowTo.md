@@ -219,7 +219,18 @@ You need to adjust "tdme2" if you used a different folder.
 
 ```
 cd %HOMEPATH%/tdme2
+```
+
+#### 1.6.3.1 OpenGL
+
+```
 nmake -f Makefile.nmake
+```
+
+#### 1.6.3.2 Vulkan
+
+```
+nmake -f Makefile-Vulkan.nmake
 ```
 
 This will build TDME2 executables into your "tdme2" folder. You need to copy DLLs still to this folder, just that those dependencies are found.
@@ -228,9 +239,9 @@ You need to adjust "tdme2" if you used a different folder.
 ```
 cd %HOMEPATH%/tdme2
 copy ext\fbx\win64\lib\libfbxsdk.dll .
-copy ext\win-glew\libs\glew32.dll .
-copy ext\win-openal-soft\libs\OpenAL32.dll .
-copy ext\win-pthread\libs\pthreadVC2.dll .
+copy ext\windows-msc\glew\libs\glew32.dll .
+copy ext\windows-msc\openal-soft\libs\OpenAl32.dll .
+copy ext\windows-msc\pthread\libs\pthreadVC2.dll .
 ```
 
 ### 1.6.4. Note
@@ -260,3 +271,4 @@ $ ./bin/tdme/tests/AngleTest
 - TDME2 Screenshots, see [README-Screenshots.md](./README-Screenshots.md)
 ## 3.2. Additional notes
 - Build instructions will follow for NetBSD and Haiku if they get more recent graphics card support
+- First start of a TDME2 application will create Vulkan shader caches, please be patient as this can take a moment

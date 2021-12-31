@@ -7,7 +7,7 @@ SRCS_PLATFORM = \
 	src/tdme/engine/EngineVKRenderer.cpp \
 	src/tdme/engine/subsystems/renderer/VKGL3CoreShaderProgram.cpp \
 	src/tdme/engine/subsystems/renderer/VKRenderer.cpp \
-	ext/win-uint128_t/uint128_t.cpp
+	ext/windows-msc/uint128_t/uint128_t.cpp
 
 # For Windows 10 this might be added to INCLUDES from Windows 10 Kit /urcrt
 
@@ -20,11 +20,11 @@ INCLUDES = \
 	/I "ext\reactphysics3d\src" \
 	/I "ext\fbx\win64\include" \
 	/I "ext\glfw3\include" \
-	/I "ext\win-pthread\includes" \
-	/I "ext\win-openal-soft\includes" \
-	/I "ext\win-glew\include" \
-	/I "ext\win-dirent\include" \
-	/I "ext\win-vulkan-sdk\include" \
+	/I "ext\windows-msc/pthread\includes" \
+	/I "ext\windows-msc/openal-soft\includes" \
+	/I "ext\windows-msc/glew\include" \
+	/I "ext\windows-msc/dirent\include" \
+	/I "ext\windows-msc/vulkan-sdk\include" \
 	/I "ext\rapidjson\include"
 
 # For Windows 10 this might be added to EXTRA_LIBS libucrt.lib from Windows 10 Kit
@@ -45,8 +45,8 @@ EXTRA_LIBS = \
 	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\ws2_32.lib" \
 	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\dbghelp.lib" \
 	/LIBPATH "ext\glfw3\win64\lib\glfw3_mt.lib" \
-	/LIBPATH "ext\win-pthread\libs\pthreadVC2.lib" \
-	/LIBPATH "ext\win-openal-soft\libs\OpenAL32.lib" \
+	/LIBPATH "ext\windows-msc/pthread\libs\pthreadVC2.lib" \
+	/LIBPATH "ext\windows-msc/openal-soft\libs\OpenAL32.lib" \
 	/LIBPATH "ext\fbx\win64\lib\libfbxsdk.lib" \
 	/LIBPATH "ext\vulkan\runtime\msc64\vulkan-1.lib" \
 	/LIBPATH libtdme-ext.lib \
