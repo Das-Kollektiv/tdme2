@@ -1799,8 +1799,10 @@ inline void VKRenderer::invalidatePipelines() {
 		if (framebufferPipelines->id == ID_NONE) continue;
 		//
 		for (auto pipeline: framebufferPipelines->pipelines) {
-			if (pipeline != VK_NULL_HANDLE) disposePipelines.push_back(pipeline);
-			clearedPipelines++;
+			if (pipeline != VK_NULL_HANDLE) {
+				disposePipelines.push_back(pipeline);
+				clearedPipelines++;
+			}
 		}
 		delete framebufferPipelines;
 		framebuffersPipelines.erase(framebuffersPipelines.begin() + i);
@@ -2029,6 +2031,8 @@ void VKRenderer::finishFrame()
 		context.boundBuffers.fill(getBufferObjectInternal(emptyVertexBuffer, bufferSize));
 		context.boundBufferSizes.fill(bufferSize);
 		context.boundTextures.fill(context_type::bound_texture());
+		for (auto textureId: context.uploadedTextureIds) invalidateTextureDescriptorCaches(textureId);
+		context.uploadedTextureIds.clear();
 	}
 
 	//
@@ -4249,7 +4253,7 @@ void VKRenderer::uploadCubeMapTexture(int contextIdx, Texture* textureLeft, Text
 	texture.uploaded = true;
 
 	//
-	invalidateTextureDescriptorCaches(texture.id);
+	currentContext.uploadedTextureIds.push_back(texture.id);
 }
 
 int32_t VKRenderer::createCubeMapTexture(int contextIdx, int32_t width, int32_t height) {
@@ -4736,7 +4740,7 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 	textureType.uploaded = true;
 
 	//
-	invalidateTextureDescriptorCaches(textureType.id);
+	currentContext.uploadedTextureIds.push_back(textureType.id);
 
 	//
 	AtomicOperations::increment(statistics.textureUploads);

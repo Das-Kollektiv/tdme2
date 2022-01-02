@@ -375,6 +375,8 @@ private:
 		array<float, 3> environmentMappingCubeMapPosition;
 
 		int32_t lighting { 0 };
+
+		vector<int32_t> uploadedTextureIds;
 	};
 
 	VkSurfaceKHR surface { VK_NULL_HANDLE };
