@@ -133,7 +133,7 @@ using tdme::utilities::Time;
 
 VKRenderer::VKRenderer():
 	queueSpinlock("queue_spinlock"),
-	buffersRWlock("buffers_rwlock"),
+	buffersMutex("buffers_mutex"),
 	texturesMutex("textures_mutex"),
 	deleteMutex("delete_mutex"),
 	disposeMutex("dispose_mutex"),
@@ -1480,7 +1480,7 @@ void VKRenderer::initialize()
 
 	//
 	emptyVertexBufferId = createBufferObjects(1, true, true)[0];
-	emptyVertexBuffer = getBufferObjectInternal(-1, emptyVertexBufferId);
+	emptyVertexBuffer = getBufferObjectInternal(emptyVertexBufferId);
 	array<float, 16> bogusVertexBuffer = {{
 		0.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 0.0f,
@@ -1490,6 +1490,7 @@ void VKRenderer::initialize()
 	uploadBufferObjectInternal(0, emptyVertexBuffer, bogusVertexBuffer.size() * sizeof(float), (uint8_t*)bogusVertexBuffer.data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT));
 
 	//
+	buffers.fill(nullptr);
 	textures.fill(nullptr);
 
 	// fall back texture white
@@ -1968,14 +1969,13 @@ void VKRenderer::finishFrame()
 		texturesMutex.unlock();
 		disposeTextures.clear();
 		// disposing buffer objects
-		buffersRWlock.writeLock();
+		buffersMutex.lock();
 		for (auto bufferObjectId: disposeBuffers) {
-			auto bufferIt = buffers.find(bufferObjectId);
-			if (bufferIt == buffers.end()) {
+			auto buffer = getBufferObjectInternal(bufferObjectId);
+			if (buffer == nullptr) {
 				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): disposing buffer object: buffer with id " + to_string(bufferObjectId) + " does not exist");
 				continue;
 			}
-			auto buffer = bufferIt->second;
 			for (auto& reusableBufferIt: buffer->buffers) {
 				auto& reusableBuffer = reusableBufferIt;
 				if (reusableBuffer.size == 0) continue;
@@ -1987,12 +1987,12 @@ void VKRenderer::finishFrame()
 					}
 				);
 			}
-			buffers.erase(bufferIt);
+			buffers[bufferObjectId] = nullptr;
 			delete buffer;
 			for (auto& context: contexts) context.bufferVector[bufferObjectId] = nullptr;
 			freeBufferIds.push_back(bufferObjectId);
 		}
-		buffersRWlock.unlock();
+		buffersMutex.unlock();
 		disposeBuffers.clear();
 		// disposing pipelines
 		for (auto pipeline: disposePipelines) {
@@ -5739,10 +5739,10 @@ vector<int32_t> VKRenderer::createBufferObjects(int32_t bufferCount, bool useGPU
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 	vector<int32_t> bufferIds;
-	buffersRWlock.writeLock();
+	buffersMutex.lock();
 	if (bufferIdx - freeBufferIds.size() >= BUFFERS_MAX) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): coud not allocate buffer object, maximum is " + to_string(BUFFERS_MAX));
-		buffersRWlock.unlock();
+		buffersMutex.unlock();
 		return bufferIds;
 	}
 	for (auto i = 0; i < bufferCount; i++) {
@@ -5762,7 +5762,7 @@ vector<int32_t> VKRenderer::createBufferObjects(int32_t bufferCount, bool useGPU
 		buffers[buffer.id] = bufferPtr;
 		bufferIds.push_back(buffer.id);
 	}
-	buffersRWlock.unlock();
+	buffersMutex.unlock();
 	return bufferIds;
 }
 
@@ -5782,8 +5782,8 @@ inline VkBuffer VKRenderer::getBufferObjectInternal(buffer_object_type* bufferOb
 	return buffer->buf;
 }
 
-inline VkBuffer VKRenderer::getBufferObjectInternal(int contextIdx,  int32_t bufferObjectId, uint32_t& size) {
-	auto buffer = getBufferObjectInternal(contextIdx, bufferObjectId);
+inline VkBuffer VKRenderer::getBufferObjectInternal(int32_t bufferObjectId, uint32_t& size) {
+	auto buffer = getBufferObjectInternal(bufferObjectId);
 	if (buffer == nullptr) {
 		size = 0;
 		return VK_NULL_HANDLE;
@@ -5791,40 +5791,14 @@ inline VkBuffer VKRenderer::getBufferObjectInternal(int contextIdx,  int32_t buf
 	return getBufferObjectInternal(buffer, size);
 }
 
-inline VKRenderer::buffer_object_type* VKRenderer::getBufferObjectInternal(int contextIdx,  int32_t bufferObjectId) {
-	// have our context typed
-	if (contextIdx != -1) {
-		auto& currentContext = contexts[contextIdx];
-		auto buffer = currentContext.bufferVector[bufferObjectId];
-		if (buffer != nullptr) {
-			while (buffer->uploading == true) {
-				// spin
-			}
-			return buffer;
-		}
-
-	}
-	buffersRWlock.readLock();
-	auto bufferIt = buffers.find(bufferObjectId);
-	if (bufferIt == buffers.end()) {
-		buffersRWlock.unlock();
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): buffer with id " + to_string(bufferObjectId) + " does not exist");
-		return VK_NULL_HANDLE;
-	}
-	// we have a buffer, also place it in context
-	auto buffer = bufferIt->second;
-	if (contextIdx != -1) {
-		auto& currentContext = contexts[contextIdx];
-		currentContext.bufferVector[bufferObjectId] = buffer;
-	}
-	buffersRWlock.unlock();
-
+inline VKRenderer::buffer_object_type* VKRenderer::getBufferObjectInternal(int32_t bufferObjectId) {
+	if (bufferObjectId < 1 || bufferObjectId >= BUFFERS_MAX) return nullptr;
 	//
+	auto buffer = buffers[bufferObjectId];
+	if (buffer == nullptr) return nullptr;
 	while (buffer->uploading == true) {
-		// spin lock
+		// spin
 	}
-
-	// done
 	return buffer;
 }
 
@@ -5856,17 +5830,17 @@ inline void VKRenderer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage
 inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage) {
 	if (size == 0) return;
 
-	auto buffer = getBufferObjectInternal(contextIdx, bufferObjectId);
+	auto buffer = getBufferObjectInternal(bufferObjectId);
 	if (buffer == nullptr) return;
 
 	//
-	if (buffer->shared == true) buffersRWlock.writeLock();
+	if (buffer->shared == true) buffersMutex.lock();
 
 	// do the work
 	uploadBufferObjectInternal(contextIdx, buffer, size, data, usage);
 
 	//
-	if (buffer->shared == true) buffersRWlock.unlock();
+	if (buffer->shared == true) buffersMutex.unlock();
 }
 
 inline void VKRenderer::vmaMemCpy(VmaAllocation allocationDst, const uint8_t* _src, uint32_t size, uint32_t _offset) {
@@ -6116,7 +6090,7 @@ void VKRenderer::bindIndicesBufferObject(int contextIdx, int32_t bufferObjectId)
 	currentContext.boundIndicesBuffer =
 		bufferObjectId == ID_NONE?
 			VK_NULL_HANDLE:
-			getBufferObjectInternal(currentContext.idx, bufferObjectId, bufferSize);
+			getBufferObjectInternal(bufferObjectId, bufferSize);
 }
 
 void VKRenderer::bindTextureCoordinatesBufferObject(int contextIdx, int32_t bufferObjectId)
@@ -6125,7 +6099,7 @@ void VKRenderer::bindTextureCoordinatesBufferObject(int contextIdx, int32_t buff
 	currentContext.boundBuffers[2] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[2]):
-			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[2]);
+			getBufferObjectInternal(bufferObjectId, currentContext.boundBufferSizes[2]);
 	if (currentContext.boundBuffers[2] == VK_NULL_HANDLE) {
 		currentContext.boundBuffers[2] = getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[2]);
 	}
@@ -6137,7 +6111,7 @@ void VKRenderer::bindVerticesBufferObject(int contextIdx, int32_t bufferObjectId
 	currentContext.boundBuffers[0] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[0]):
-			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[0]);
+			getBufferObjectInternal(bufferObjectId, currentContext.boundBufferSizes[0]);
 	if (currentContext.boundBuffers[0] == VK_NULL_HANDLE) {
 		currentContext.boundBuffers[0] = getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[0]);
 	}
@@ -6149,7 +6123,7 @@ void VKRenderer::bindNormalsBufferObject(int contextIdx, int32_t bufferObjectId)
 	currentContext.boundBuffers[1] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[1]):
-			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[1]);
+			getBufferObjectInternal(bufferObjectId, currentContext.boundBufferSizes[1]);
 	if (currentContext.boundBuffers[1] == VK_NULL_HANDLE) {
 		currentContext.boundBuffers[1] = getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[1]);
 	}
@@ -6161,7 +6135,7 @@ void VKRenderer::bindColorsBufferObject(int contextIdx, int32_t bufferObjectId)
 	currentContext.boundBuffers[3] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[3]):
-			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[3]);
+			getBufferObjectInternal(bufferObjectId, currentContext.boundBufferSizes[3]);
 	if (currentContext.boundBuffers[3] == VK_NULL_HANDLE) {
 		currentContext.boundBuffers[3] = getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[3]);
 	}
@@ -6173,7 +6147,7 @@ void VKRenderer::bindTangentsBufferObject(int contextIdx, int32_t bufferObjectId
 	currentContext.boundBuffers[4] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[4]):
-			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[4]);
+			getBufferObjectInternal(bufferObjectId, currentContext.boundBufferSizes[4]);
 	if (currentContext.boundBuffers[4] == VK_NULL_HANDLE) {
 		currentContext.boundBuffers[4] = getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[4]);
 	}
@@ -6185,7 +6159,7 @@ void VKRenderer::bindBitangentsBufferObject(int contextIdx, int32_t bufferObject
 	currentContext.boundBuffers[5] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[5]):
-			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[5]);
+			getBufferObjectInternal(bufferObjectId, currentContext.boundBufferSizes[5]);
 	if (currentContext.boundBuffers[5] == VK_NULL_HANDLE) {
 		currentContext.boundBuffers[5] = getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[5]);
 	}
@@ -6197,7 +6171,7 @@ void VKRenderer::bindModelMatricesBufferObject(int contextIdx, int32_t bufferObj
 	currentContext.boundBuffers[6] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[6]):
-			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[6]);
+			getBufferObjectInternal(bufferObjectId, currentContext.boundBufferSizes[6]);
 	if (currentContext.boundBuffers[6] == VK_NULL_HANDLE) {
 		currentContext.boundBuffers[6] = getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[6]);
 	}
@@ -6209,7 +6183,7 @@ void VKRenderer::bindEffectColorMulsBufferObject(int contextIdx, int32_t bufferO
 	currentContext.boundBuffers[7] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[7]):
-			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[7]);
+			getBufferObjectInternal(bufferObjectId, currentContext.boundBufferSizes[7]);
 	if (currentContext.boundBuffers[7] == VK_NULL_HANDLE) {
 		currentContext.boundBuffers[7] = getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[7]);
 	}
@@ -6221,7 +6195,7 @@ void VKRenderer::bindEffectColorAddsBufferObject(int contextIdx, int32_t bufferO
 	currentContext.boundBuffers[8] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[8]):
-			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[8]);
+			getBufferObjectInternal(bufferObjectId, currentContext.boundBufferSizes[8]);
 	if (currentContext.boundBuffers[8] == VK_NULL_HANDLE) {
 		currentContext.boundBuffers[8] = getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[8]);
 	}
@@ -6232,7 +6206,7 @@ void VKRenderer::bindOriginsBufferObject(int contextIdx, int32_t bufferObjectId)
 	currentContext.boundBuffers[9] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[9]):
-			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[9]);
+			getBufferObjectInternal(bufferObjectId, currentContext.boundBufferSizes[9]);
 	if (currentContext.boundBuffers[9] == VK_NULL_HANDLE) {
 		currentContext.boundBuffers[9] = getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[9]);
 	}
@@ -6243,7 +6217,7 @@ void VKRenderer::bindTextureSpriteIndicesBufferObject(int contextIdx, int32_t bu
 	currentContext.boundBuffers[1] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[1]):
-			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[1]);
+			getBufferObjectInternal(bufferObjectId, currentContext.boundBufferSizes[1]);
 	if (currentContext.boundBuffers[1] == VK_NULL_HANDLE) {
 		currentContext.boundBuffers[1] = getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[1]);
 	}
@@ -6254,7 +6228,7 @@ void VKRenderer::bindPointSizesBufferObject(int contextIdx, int32_t bufferObject
 	currentContext.boundBuffers[5] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[5]):
-			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[5]);
+			getBufferObjectInternal(bufferObjectId, currentContext.boundBufferSizes[5]);
 	if (currentContext.boundBuffers[5] == VK_NULL_HANDLE) {
 		currentContext.boundBuffers[5] = getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[5]);
 	}
@@ -6265,7 +6239,7 @@ void VKRenderer::bindSpriteSheetDimensionBufferObject(int contextIdx, int32_t bu
 	currentContext.boundBuffers[6] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[6]):
-			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[6]);
+			getBufferObjectInternal(bufferObjectId, currentContext.boundBufferSizes[6]);
 	if (currentContext.boundBuffers[6] == VK_NULL_HANDLE) {
 		currentContext.boundBuffers[6] = getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[6]);
 	}
@@ -7447,7 +7421,7 @@ void VKRenderer::bindSkinningVerticesBufferObject(int contextIdx, int32_t buffer
 	currentContext.boundBuffers[0] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[0]):
-			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[0]);
+			getBufferObjectInternal(bufferObjectId, currentContext.boundBufferSizes[0]);
 	if (currentContext.boundBuffers[0] == VK_NULL_HANDLE) {
 		currentContext.boundBuffers[0] = getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[0]);
 	}
@@ -7458,7 +7432,7 @@ void VKRenderer::bindSkinningNormalsBufferObject(int contextIdx, int32_t bufferO
 	currentContext.boundBuffers[1] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[1]):
-			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[1]);
+			getBufferObjectInternal(bufferObjectId, currentContext.boundBufferSizes[1]);
 	if (currentContext.boundBuffers[1] == VK_NULL_HANDLE) {
 		currentContext.boundBuffers[1] = getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[1]);
 	}
@@ -7469,7 +7443,7 @@ void VKRenderer::bindSkinningVertexJointsBufferObject(int contextIdx, int32_t bu
 	currentContext.boundBuffers[2] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[2]):
-			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[2]);
+			getBufferObjectInternal(bufferObjectId, currentContext.boundBufferSizes[2]);
 	if (currentContext.boundBuffers[2] == VK_NULL_HANDLE) {
 		currentContext.boundBuffers[2] = getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[2]);
 	}
@@ -7480,7 +7454,7 @@ void VKRenderer::bindSkinningVertexJointIdxsBufferObject(int contextIdx, int32_t
 	currentContext.boundBuffers[3] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[3]):
-			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[3]);
+			getBufferObjectInternal(bufferObjectId, currentContext.boundBufferSizes[3]);
 	if (currentContext.boundBuffers[3] == VK_NULL_HANDLE) {
 		currentContext.boundBuffers[3] = getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[3]);
 	}
@@ -7491,7 +7465,7 @@ void VKRenderer::bindSkinningVertexJointWeightsBufferObject(int contextIdx, int3
 	currentContext.boundBuffers[4] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[4]):
-			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[4]);
+			getBufferObjectInternal(bufferObjectId, currentContext.boundBufferSizes[4]);
 	if (currentContext.boundBuffers[4] == VK_NULL_HANDLE) {
 		currentContext.boundBuffers[4] = getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[4]);
 	}
@@ -7502,7 +7476,7 @@ void VKRenderer::bindSkinningVerticesResultBufferObject(int contextIdx, int32_t 
 	currentContext.boundBuffers[5] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[5]):
-			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[5]);
+			getBufferObjectInternal(bufferObjectId, currentContext.boundBufferSizes[5]);
 	if (currentContext.boundBuffers[5] == VK_NULL_HANDLE) {
 		currentContext.boundBuffers[5] = getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[5]);
 	}
@@ -7540,7 +7514,7 @@ void VKRenderer::bindSkinningNormalsResultBufferObject(int contextIdx, int32_t b
 	currentContext.boundBuffers[6] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[6]):
-			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[6]);
+			getBufferObjectInternal(bufferObjectId, currentContext.boundBufferSizes[6]);
 	if (currentContext.boundBuffers[6] == VK_NULL_HANDLE) {
 		currentContext.boundBuffers[6] =
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[6]);
@@ -7578,7 +7552,7 @@ void VKRenderer::bindSkinningMatricesBufferObject(int contextIdx, int32_t buffer
 	currentContext.boundBuffers[7] =
 		bufferObjectId == ID_NONE?
 			getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[7]):
-			getBufferObjectInternal(currentContext.idx, bufferObjectId, currentContext.boundBufferSizes[7]);
+			getBufferObjectInternal(bufferObjectId, currentContext.boundBufferSizes[7]);
 	if (currentContext.boundBuffers[7] == VK_NULL_HANDLE) {
 		currentContext.boundBuffers[7] = getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[7]);
 	}
