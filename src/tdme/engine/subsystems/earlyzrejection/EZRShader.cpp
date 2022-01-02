@@ -1,5 +1,9 @@
 #include <tdme/engine/subsystems/earlyzrejection/EZRShader.h>
 
+#include <string>
+#include <unordered_map>
+#include <vector>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/earlyzrejection/EZRShaderDefaultImplementation.h>
 #include <tdme/engine/subsystems/earlyzrejection/EZRShaderImplementation.h>
@@ -9,6 +13,10 @@
 #include <tdme/utilities/StringTools.h>
 
 using tdme::engine::subsystems::earlyzrejection::EZRShader;
+
+using std::string;
+using std::unordered_map;
+using std::vector;
 
 using tdme::engine::subsystems::earlyzrejection::EZRShaderBaseImplementation;
 using tdme::engine::subsystems::earlyzrejection::EZRShaderDefaultImplementation;

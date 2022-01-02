@@ -1,7 +1,7 @@
 #pragma once
 
-#include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -10,8 +10,8 @@
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::subsystems::renderer::Renderer;
@@ -30,7 +30,7 @@ private:
 	struct ShadowMapCreationShaderContext {
 		ShadowMapCreationShaderImplementation* implementation { nullptr };
 	};
-	map<string, ShadowMapCreationShaderImplementation*> shader;
+	unordered_map<string, ShadowMapCreationShaderImplementation*> shader;
 	bool running { false };
 	Engine* engine { nullptr };
 	Renderer* renderer { nullptr };

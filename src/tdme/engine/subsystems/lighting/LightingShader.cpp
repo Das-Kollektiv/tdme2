@@ -1,5 +1,9 @@
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 
+#include <string>
+#include <unordered_map>
+#include <vector>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/lighting/DeferredLightingShaderDefaultImplementation.h>
 #include <tdme/engine/subsystems/lighting/DeferredLightingShaderFoliageImplementation.h>
@@ -27,6 +31,10 @@
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/StringTools.h>
+
+using std::string;
+using std::unordered_map;
+using std::vector;
 
 using tdme::engine::subsystems::lighting::DeferredLightingShaderDefaultImplementation;
 using tdme::engine::subsystems::lighting::DeferredLightingShaderFoliageImplementation;

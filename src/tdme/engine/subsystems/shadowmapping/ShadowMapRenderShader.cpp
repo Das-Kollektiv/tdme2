@@ -1,5 +1,9 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShader.h>
 
+#include <string>
+#include <unordered_map>
+#include <vector>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderDefaultImplementation.h>
@@ -10,6 +14,10 @@
 #include <tdme/engine/Timing.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utilities/StringTools.h>
+
+using std::string;
+using std::unordered_map;
+using std::vector;
 
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShader;

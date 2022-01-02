@@ -1,7 +1,7 @@
 #pragma once
 
-#include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -9,8 +9,8 @@
 #include <tdme/engine/subsystems/lighting/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::subsystems::lighting::LightingShaderImplementation;
@@ -28,7 +28,7 @@ private:
 	struct LightingShaderContext {
 		LightingShaderImplementation* implementation { nullptr };
 	};
-	map<string, LightingShaderImplementation*> shader;
+	unordered_map<string, LightingShaderImplementation*> shader;
 	Renderer* renderer { nullptr };
 	Engine* engine { nullptr };
 	bool running { false };

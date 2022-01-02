@@ -1,7 +1,7 @@
 #pragma once
 
-#include <map>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -10,8 +10,8 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 using std::vector;
 
 using tdme::engine::subsystems::earlyzrejection::EZRShaderImplementation;
@@ -31,7 +31,7 @@ private:
 		EZRShaderImplementation* implementation { nullptr };
 	};
 
-	map<string, EZRShaderImplementation*> shader;
+	unordered_map<string, EZRShaderImplementation*> shader;
 	bool running { false };
 	Engine* engine { nullptr };
 	Renderer* renderer { nullptr };

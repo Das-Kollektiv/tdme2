@@ -1,8 +1,9 @@
-#include <map>
+#include <tdme/engine/subsystems/postprocessing/PostProcessingShader.h>
+
 #include <string>
+#include <unordered_map>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/subsystems/postprocessing/PostProcessingShader.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderBlurImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderDefaultImplementation.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShaderDesaturationImplementation.h>
@@ -14,8 +15,8 @@
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 
 using tdme::engine::subsystems::postprocessing::PostProcessingShader;
 using tdme::engine::subsystems::postprocessing::PostProcessingShaderBlurImplementation;

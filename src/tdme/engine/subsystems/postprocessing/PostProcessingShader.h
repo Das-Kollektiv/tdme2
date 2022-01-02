@@ -1,15 +1,15 @@
 #pragma once
 
-#include <map>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/postprocessing/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 
-using std::map;
 using std::string;
+using std::unordered_map;
 
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
@@ -23,7 +23,7 @@ using tdme::engine::FrameBuffer;
 class tdme::engine::subsystems::postprocessing::PostProcessingShader final
 {
 private:
-	map<string, PostProcessingShaderImplementation*> shader;
+	unordered_map<string, PostProcessingShaderImplementation*> shader;
 	PostProcessingShaderImplementation* implementation { nullptr };
 
 	bool running { false };
