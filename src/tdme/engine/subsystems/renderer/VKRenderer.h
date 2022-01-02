@@ -558,7 +558,7 @@ private:
 	void recreateContextFences(int contextIdx);
 	void uploadCubeMapSingleTexture(int contextIdx, texture_type* cubemapTextureType, Texture* texture, uint32_t baseArrayLayer);
 	void finishRendering();
-	void removeTextureFromDescriptorCaches(int textureId);
+	void invalidateTextureDescriptorCaches(int textureId);
 	void invalidatePipelines();
 
 protected:

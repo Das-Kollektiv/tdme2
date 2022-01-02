@@ -1759,7 +1759,7 @@ void VKRenderer::initializeFrame()
 	}
 }
 
-inline void VKRenderer::removeTextureFromDescriptorCaches(int textureId) {
+inline void VKRenderer::invalidateTextureDescriptorCaches(int textureId) {
 	// delete desc2 bound texture caches from programs with removed texture
 	for (auto& context: contexts) {
 		for (auto program: programVector) {
@@ -1963,7 +1963,7 @@ void VKRenderer::finishFrame()
 			//
 			textures[textureId] = nullptr;
 			delete texture;
-			removeTextureFromDescriptorCaches(textureId);
+			invalidateTextureDescriptorCaches(textureId);
 			freeTextureIds.push_back(textureId);
 		}
 		texturesMutex.unlock();
@@ -4247,6 +4247,9 @@ void VKRenderer::uploadCubeMapTexture(int contextIdx, Texture* textureLeft, Text
 
 	//
 	texture.uploaded = true;
+
+	//
+	invalidateTextureDescriptorCaches(texture.id);
 }
 
 int32_t VKRenderer::createCubeMapTexture(int contextIdx, int32_t width, int32_t height) {
@@ -4733,6 +4736,9 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 	textureType.uploaded = true;
 
 	//
+	invalidateTextureDescriptorCaches(textureType.id);
+
+	//
 	AtomicOperations::increment(statistics.textureUploads);
 }
 
@@ -4881,7 +4887,7 @@ void VKRenderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int3
 	if (texture.width == width && texture.height == height) return;
 
 	//
-	removeTextureFromDescriptorCaches(textureId);
+	invalidateTextureDescriptorCaches(textureId);
 
 	//
 	invalidatePipelines();
@@ -4922,7 +4928,7 @@ void VKRenderer::resizeColorBufferTexture(int32_t textureId, int32_t width, int3
 	if (texture.width == width && texture.height == height) return;
 
 	//
-	removeTextureFromDescriptorCaches(textureId);
+	invalidateTextureDescriptorCaches(textureId);
 
 	//
 	invalidatePipelines();
@@ -4962,7 +4968,7 @@ void VKRenderer::resizeGBufferGeometryTexture(int32_t textureId, int32_t width, 
 	if (texture.width == width && texture.height == height) return;
 
 	//
-	removeTextureFromDescriptorCaches(textureId);
+	invalidateTextureDescriptorCaches(textureId);
 
 	//
 	invalidatePipelines();
@@ -5002,7 +5008,7 @@ void VKRenderer::resizeGBufferColorTexture(int32_t textureId, int32_t width, int
 	if (texture.width == width && texture.height == height) return;
 
 	//
-	removeTextureFromDescriptorCaches(textureId);
+	invalidateTextureDescriptorCaches(textureId);
 
 	//
 	invalidatePipelines();
@@ -6043,7 +6049,7 @@ inline VKRenderer::texture_type* VKRenderer::getRenderTextureInternal(int32_t te
 
 	//
 	auto texture = textures[textureId];
-	if (texture == nullptr) return nullptr;
+	if (texture == nullptr) return whiteTextureSampler2dDefault;
 
 	//
 	if (texture->type == texture_type::TYPE_TEXTURE && texture->uploaded == false) return whiteTextureSampler2dDefault;
