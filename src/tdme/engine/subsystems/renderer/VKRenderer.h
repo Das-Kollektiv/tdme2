@@ -302,7 +302,6 @@ private:
 		int32_t idx { 0 };
 
 		vector<buffer_object_type*> bufferVector;
-		vector<texture_type*> textureVector;
 
 		VkCommandPool setupCommandPool;
 		VkCommandBuffer setupCommandInUse;
@@ -421,13 +420,13 @@ private:
 	vector<program_type*> programVector { nullptr };
 	unordered_map<int32_t, shader_type*> shaders;
 	unordered_map<int32_t, buffer_object_type*> buffers;
-	unordered_map<int32_t, texture_type*> textures;
+	array<texture_type*, TEXTURES_MAX> textures;
 	vector<int32_t> freeTextureIds;
 	vector<int32_t> freeBufferIds;
 	vector<framebuffer_object_type*> framebuffers { nullptr };
 
 	ReadWriteLock buffersRWlock;
-	ReadWriteLock texturesRWlock;
+	Mutex texturesMutex;
 
 	uint32_t windowWidth { 0 };
 	uint32_t windowHeight { 0 };
@@ -517,7 +516,8 @@ private:
 	void vmaMemCpy(VmaAllocation allocationDst, const uint8_t* src, uint32_t size, uint32_t offset = 0);
 	void uploadBufferObjectInternal(int contextIdx,  buffer_object_type* buffer, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
 	void uploadBufferObjectInternal(int contextIdx, int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
-	texture_type* getTextureInternal(int contextIdx, int32_t textureId);
+	texture_type* getTextureInternal(int32_t textureId);
+	texture_type* getRenderTextureInternal(int32_t textureId);
 	framebuffer_pipelines_type* getFramebufferPipelines(uint64_t framebufferPipelinesId);
 	framebuffer_pipelines_type* createFramebufferPipelines(uint64_t framebufferPipelinesId);
 	VkPipeline getPipelineInternal(int contextIdx, program_type* programm, uint64_t framebuffePipelineId, uint32_t pipelineIdx);

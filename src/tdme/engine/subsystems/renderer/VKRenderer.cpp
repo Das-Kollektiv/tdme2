@@ -134,7 +134,7 @@ using tdme::utilities::Time;
 VKRenderer::VKRenderer():
 	queueSpinlock("queue_spinlock"),
 	buffersRWlock("buffers_rwlock"),
-	texturesRWlock("textures_rwlock"),
+	texturesMutex("textures_mutex"),
 	deleteMutex("delete_mutex"),
 	disposeMutex("dispose_mutex"),
 	pipelinesSpinLock("pipelines_spinlock"),
@@ -1393,7 +1393,6 @@ void VKRenderer::initialize()
 		context.pipeline = VK_NULL_HANDLE;
 		context.renderPassStarted = false;
 		context.bufferVector.resize(BUFFERS_MAX);
-		context.textureVector.resize(TEXTURES_MAX);
 
 		//
 		for (auto i = 0; i < DRAW_COMMANDBUFFER_MAX; i++) {
@@ -1480,10 +1479,6 @@ void VKRenderer::initialize()
 	}
 
 	//
-	initializeRenderPass();
-	initializeFrameBuffers();
-
-	//
 	emptyVertexBufferId = createBufferObjects(1, true, true)[0];
 	emptyVertexBuffer = getBufferObjectInternal(-1, emptyVertexBufferId);
 	array<float, 16> bogusVertexBuffer = {{
@@ -1494,9 +1489,12 @@ void VKRenderer::initialize()
 	}};
 	uploadBufferObjectInternal(0, emptyVertexBuffer, bogusVertexBuffer.size() * sizeof(float), (uint8_t*)bogusVertexBuffer.data(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT));
 
+	//
+	textures.fill(nullptr);
+
 	// fall back texture white
 	whiteTextureSampler2dDefaultId = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/textures", "transparent_pixel.png"), CONTEXTINDEX_DEFAULT);
-	whiteTextureSampler2dDefault = textures.find(whiteTextureSampler2dDefaultId)->second;
+	whiteTextureSampler2dDefault = getTextureInternal(whiteTextureSampler2dDefaultId);
 
 	// fallback cube map texture white
 	whiteTextureSamplerCubeDefaultId = Engine::getInstance()->getTextureManager()->addCubeMapTexture(
@@ -1509,10 +1507,14 @@ void VKRenderer::initialize()
 		TextureReader::read("resources/engine/textures", "transparent_pixel.png"),
 		CONTEXTINDEX_DEFAULT
 	);
-	whiteTextureSamplerCubeDefault = textures.find(whiteTextureSamplerCubeDefaultId)->second;
+	whiteTextureSamplerCubeDefault = getTextureInternal(whiteTextureSamplerCubeDefaultId);
 
 	//
 	for (auto& context: contexts) unbindBufferObjects(context.idx);
+
+	//
+	initializeRenderPass();
+	initializeFrameBuffers();
 }
 
 void VKRenderer::initializeRenderPass() {
@@ -1524,7 +1526,7 @@ void VKRenderer::initializeRenderPass() {
 	// depth buffer
 	if (depthBufferDefault != ID_NONE) disposeTexture(depthBufferDefault);
 	depthBufferDefault = createDepthBufferTexture(windowWidth, windowHeight, ID_NONE, ID_NONE);
-	auto depthBufferTexture = textures.find(depthBufferDefault)->second;
+	auto depthBufferTexture = getTextureInternal(depthBufferDefault);
 
 	//
 	setImageLayout(
@@ -1638,9 +1640,8 @@ inline void VKRenderer::endRenderPass(int contextIdx) {
 
 void VKRenderer::initializeFrameBuffers() {
 	array<VkImageView, 2> attachments;
-	auto depthBufferIt = textures.find(depthBufferDefault);
-	assert(depthBufferIt != textures.end());
-	attachments[1] = depthBufferIt->second->view;
+	auto depthBufferTexture = getTextureInternal(depthBufferDefault);
+	attachments[1] = depthBufferTexture->view;
 
 	const VkFramebufferCreateInfo frameBufferCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
@@ -1760,7 +1761,6 @@ void VKRenderer::initializeFrame()
 inline void VKRenderer::removeTextureFromDescriptorCaches(int textureId) {
 	// delete desc2 bound texture caches from programs with removed texture
 	for (auto& context: contexts) {
-		context.textureVector[textureId] = nullptr;
 		for (auto program: programVector) {
 			if (program == nullptr || program->contexts[context.idx].descriptorSets2CacheTextureIds.empty() == true) continue;
 			auto& programContext = program->contexts[context.idx];
@@ -1923,14 +1923,13 @@ void VKRenderer::finishFrame()
 		deleteMutex.lock();
 		disposeMutex.lock();
 		// disposing textures
-		texturesRWlock.writeLock();
+		texturesMutex.lock();
 		for (auto textureId: disposeTextures) {
-			auto textureObjectIt = textures.find(textureId);
-			if (textureObjectIt == textures.end()) {
+			auto texture = getTextureInternal(textureId);
+			if (texture == nullptr) {
 				Console::println("VKRenderer::" + string(__FUNCTION__) + "(): disposing texture: texture not found: " + to_string(textureId));
 				continue;
 			}
-			auto texture = textureObjectIt->second;
 			// mark for deletion
 			deleteImages.push_back(
 				{
@@ -1961,12 +1960,12 @@ void VKRenderer::finishFrame()
 				);
 			}
 			//
-			textures.erase(textureObjectIt);
+			textures[textureId] = nullptr;
 			delete texture;
 			removeTextureFromDescriptorCaches(textureId);
 			freeTextureIds.push_back(textureId);
 		}
-		texturesRWlock.unlock();
+		texturesMutex.unlock();
 		disposeTextures.clear();
 		// disposing buffer objects
 		buffersRWlock.writeLock();
@@ -3670,11 +3669,10 @@ void VKRenderer::clear(int32_t mask)
 int32_t VKRenderer::createTexture()
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
-	auto texturePtr = new texture_type();
-	texturesRWlock.writeLock();
+	texturesMutex.lock();
 	if (textureIdx - freeTextureIds.size() >= TEXTURES_MAX) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
-		texturesRWlock.unlock();
+		texturesMutex.unlock();
 		return ID_NONE;
 	}
 	auto reuseTextureId = -1;
@@ -3683,10 +3681,11 @@ int32_t VKRenderer::createTexture()
 		reuseTextureId = freeTextureIds[freeTextureIdsIdx];
 		freeTextureIds.erase(freeTextureIds.begin() + freeTextureIdsIdx);
 	}
+	auto texturePtr = new texture_type();
 	auto& texture = *texturePtr;
 	texture.id = reuseTextureId != -1?reuseTextureId:textureIdx++;
 	textures[texture.id] = texturePtr;
-	texturesRWlock.unlock();
+	texturesMutex.unlock();
 	return texture.id;
 }
 
@@ -3704,11 +3703,10 @@ int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height, int3
 	}
 
 	//
-	auto texturePtr = new texture_type();
-	texturesRWlock.writeLock();
+	texturesMutex.lock();
 	if (textureIdx - freeTextureIds.size() >= TEXTURES_MAX) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
-		texturesRWlock.unlock();
+		texturesMutex.unlock();
 		return ID_NONE;
 	}
 	auto reuseTextureId = -1;
@@ -3717,10 +3715,11 @@ int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height, int3
 		reuseTextureId = freeTextureIds[freeTextureIdsIdx];
 		freeTextureIds.erase(freeTextureIds.begin() + freeTextureIdsIdx);
 	}
+	auto texturePtr = new texture_type();
 	auto& texture = *texturePtr;
 	texture.id = reuseTextureId != -1?reuseTextureId:textureIdx++;
 	textures[texture.id] = texturePtr;
-	texturesRWlock.unlock();
+	texturesMutex.unlock();
 	createDepthBufferTexture(texture.id, width, height, cubeMapTextureId, cubeMapTextureIndex);
 	return texture.id;
 }
@@ -3728,14 +3727,16 @@ int32_t VKRenderer::createDepthBufferTexture(int32_t width, int32_t height, int3
 void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height));
-	auto& depthBufferTexture = *textures.find(textureId)->second;
+
+	//
+	auto& depthBufferTexture = *getTextureInternal(textureId);
 	depthBufferTexture.format = VK_FORMAT_D32_SFLOAT;
 	depthBufferTexture.width = width;
 	depthBufferTexture.height = height;
 	depthBufferTexture.cubemapTextureIndex = cubeMapTextureId == ID_NONE?0:cubeMapTextureIndex;
 
 	//
-	auto cubeMapTexture = cubeMapTextureId == ID_NONE?nullptr:textures.find(cubeMapTextureId)->second;
+	auto cubeMapTexture = cubeMapTextureId == ID_NONE?nullptr:getTextureInternal(cubeMapTextureId);
 	depthBufferTexture.cubemapBufferTexture = cubeMapTexture != nullptr?cubeMapTexture->cubemapDepthBuffer:nullptr;
 
 	//
@@ -3864,11 +3865,10 @@ int32_t VKRenderer::createColorBufferTexture(int32_t width, int32_t height, int3
 	}
 
 	//
-	auto texturePtr = new texture_type();
-	texturesRWlock.writeLock();
+	texturesMutex.lock();
 	if (textureIdx - freeTextureIds.size() >= TEXTURES_MAX) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
-		texturesRWlock.unlock();
+		texturesMutex.unlock();
 		return ID_NONE;
 	}
 	auto reuseTextureId = -1;
@@ -3877,10 +3877,11 @@ int32_t VKRenderer::createColorBufferTexture(int32_t width, int32_t height, int3
 		reuseTextureId = freeTextureIds[freeTextureIdsIdx];
 		freeTextureIds.erase(freeTextureIds.begin() + freeTextureIdsIdx);
 	}
+	auto texturePtr = new texture_type();
 	auto& texture = *texturePtr;
 	texture.id = reuseTextureId != -1?reuseTextureId:textureIdx++;
 	textures[texture.id] = texturePtr;
-	texturesRWlock.unlock();
+	texturesMutex.unlock();
 	createBufferTexture(texture.id, width, height, cubeMapTextureId, cubeMapTextureIndex, windowFormat);
 	return texture.id;
 }
@@ -3888,14 +3889,14 @@ int32_t VKRenderer::createColorBufferTexture(int32_t width, int32_t height, int3
 void VKRenderer::createBufferTexture(int32_t textureId, int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex, VkFormat format)
 {
 	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(textureId) + " / " + to_string(width) + "x" + to_string(height) + "(" + to_string(cubeMapTextureId) + " / " + to_string(cubeMapTextureIndex) + ")");
-	auto& colorBufferTexture = *textures.find(textureId)->second;
+	auto& colorBufferTexture = *getTextureInternal(textureId);
 	colorBufferTexture.format = format;
 	colorBufferTexture.width = width;
 	colorBufferTexture.height = height;
 	colorBufferTexture.cubemapTextureIndex = cubeMapTextureId == ID_NONE?0:cubeMapTextureIndex;
 
 	//
-	auto cubeMapTexture = cubeMapTextureId == ID_NONE?nullptr:textures.find(cubeMapTextureId)->second;
+	auto cubeMapTexture = cubeMapTextureId == ID_NONE?nullptr:getTextureInternal(cubeMapTextureId);
 	colorBufferTexture.cubemapBufferTexture = cubeMapTexture != nullptr?cubeMapTexture->cubemapColorBuffer:nullptr;
 
 	//
@@ -4028,11 +4029,10 @@ int32_t VKRenderer::createGBufferGeometryTexture(int32_t width, int32_t height) 
 	}
 
 	//
-	auto texturePtr = new texture_type();
-	texturesRWlock.writeLock();
+	texturesMutex.lock();
 	if (textureIdx - freeTextureIds.size() >= TEXTURES_MAX) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
-		texturesRWlock.unlock();
+		texturesMutex.unlock();
 		return ID_NONE;
 	}
 	auto reuseTextureId = -1;
@@ -4041,10 +4041,11 @@ int32_t VKRenderer::createGBufferGeometryTexture(int32_t width, int32_t height) 
 		reuseTextureId = freeTextureIds[freeTextureIdsIdx];
 		freeTextureIds.erase(freeTextureIds.begin() + freeTextureIdsIdx);
 	}
+	auto texturePtr = new texture_type();
 	auto& texture = *texturePtr;
 	texture.id = reuseTextureId != -1?reuseTextureId:textureIdx++;
 	textures[texture.id] = texturePtr;
-	texturesRWlock.unlock();
+	texturesMutex.unlock();
 	createBufferTexture(texture.id, width, height, ID_NONE, ID_NONE, VK_FORMAT_R16G16B16A16_SFLOAT);
 	return texture.id;
 }
@@ -4063,11 +4064,10 @@ int32_t VKRenderer::createGBufferColorTexture(int32_t width, int32_t height) {
 	}
 
 	//
-	auto texturePtr = new texture_type();
-	texturesRWlock.writeLock();
+	texturesMutex.lock();
 	if (textureIdx - freeTextureIds.size() >= TEXTURES_MAX) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
-		texturesRWlock.unlock();
+		texturesMutex.unlock();
 		return ID_NONE;
 	}
 	auto reuseTextureId = -1;
@@ -4076,10 +4076,11 @@ int32_t VKRenderer::createGBufferColorTexture(int32_t width, int32_t height) {
 		reuseTextureId = freeTextureIds[freeTextureIdsIdx];
 		freeTextureIds.erase(freeTextureIds.begin() + freeTextureIdsIdx);
 	}
+	auto texturePtr = new texture_type();
 	auto& texture = *texturePtr;
 	texture.id = reuseTextureId != -1?reuseTextureId:textureIdx++;
 	textures[texture.id] = texturePtr;
-	texturesRWlock.unlock();
+	texturesMutex.unlock();
 	createBufferTexture(texture.id, width, height, ID_NONE, ID_NONE, windowFormat);
 	return texture.id;
 }
@@ -4102,19 +4103,16 @@ void VKRenderer::uploadCubeMapTexture(int contextIdx, Texture* textureLeft, Text
 	auto& boundTexture = currentContext.boundTextures[currentContext.activeTextureUnit];
 
 	//
-	texturesRWlock.writeLock(); // TODO: have a more fine grained locking here
-	auto textureObjectIt = textures.find(boundTexture.id);
-	if (textureObjectIt == textures.end()) {
-		texturesRWlock.unlock();
+	auto textureObjectPtr = getTextureInternal(boundTexture.id);
+	if (textureObjectPtr == nullptr) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(boundTexture.id));
 		return;
 	}
-	auto& texture = *textureObjectIt->second;
+	auto& texture = *textureObjectPtr;
 
 	// already uploaded
 	if (texture.uploaded == true) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture already uploaded: " + to_string(boundTexture.id));
-		texturesRWlock.unlock();
 		return;
 	}
 
@@ -4249,9 +4247,6 @@ void VKRenderer::uploadCubeMapTexture(int contextIdx, Texture* textureLeft, Text
 
 	//
 	texture.uploaded = true;
-
-	//
-	texturesRWlock.unlock();
 }
 
 int32_t VKRenderer::createCubeMapTexture(int contextIdx, int32_t width, int32_t height) {
@@ -4271,11 +4266,10 @@ int32_t VKRenderer::createCubeMapTexture(int contextIdx, int32_t width, int32_t 
 	}
 
 	//
-	auto texturePtr = new texture_type();
-	texturesRWlock.writeLock();
+	texturesMutex.lock();
 	if (textureIdx - freeTextureIds.size() >= TEXTURES_MAX) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): could not allocate texture, maximum is " + to_string(TEXTURES_MAX));
-		texturesRWlock.unlock();
+		texturesMutex.unlock();
 		return ID_NONE;
 	}
 	auto reuseTextureId = -1;
@@ -4284,6 +4278,7 @@ int32_t VKRenderer::createCubeMapTexture(int contextIdx, int32_t width, int32_t 
 		reuseTextureId = freeTextureIds[freeTextureIdsIdx];
 		freeTextureIds.erase(freeTextureIds.begin() + freeTextureIdsIdx);
 	}
+	auto texturePtr = new texture_type();
 	auto& texture = *texturePtr;
 	texture.id = reuseTextureId != -1?reuseTextureId:textureIdx++;
 	texture.type = texture_type::TYPE_CUBEMAPBUFFER;
@@ -4466,7 +4461,7 @@ int32_t VKRenderer::createCubeMapTexture(int contextIdx, int32_t width, int32_t 
 	texture.vkLayout = texture.cubemapColorBuffer->vkLayout;
 
 	//
-	texturesRWlock.unlock();
+	texturesMutex.unlock();
 
 	//
 	return texture.id;
@@ -4479,19 +4474,18 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 	auto& boundTexture = currentContext.boundTextures[currentContext.activeTextureUnit];
 
 	//
-	texturesRWlock.writeLock(); // TODO: have a more fine grained locking here
-	auto textureObjectIt = textures.find(boundTexture.id);
-	if (textureObjectIt == textures.end()) {
-		texturesRWlock.unlock();
+	auto textureObjectPtr = getTextureInternal(boundTexture.id);
+	if (textureObjectPtr == nullptr) {
+		texturesMutex.unlock();
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(boundTexture.id));
 		return;
 	}
-	auto& textureType = *textureObjectIt->second;
+	auto& textureType = *textureObjectPtr;
 
 	// already uploaded
 	if (textureType.uploaded == true) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture already uploaded: " + to_string(boundTexture.id));
-		texturesRWlock.unlock();
+		texturesMutex.unlock();
 		return;
 	}
 
@@ -4739,9 +4733,6 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 	textureType.uploaded = true;
 
 	//
-	texturesRWlock.unlock();
-
-	//
 	AtomicOperations::increment(statistics.textureUploads);
 }
 
@@ -4879,14 +4870,14 @@ void VKRenderer::resizeDepthBufferTexture(int32_t textureId, int32_t width, int3
 	}
 
 	//
-	auto textureIt = textures.find(textureId);
-	if (textureIt == textures.end()) {
+	auto texturePtr = getTextureInternal(textureId);
+	if (texturePtr == nullptr) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(textureId));
 		return;
 	}
 
 	//
-	auto& texture = *textureIt->second;
+	auto& texture = *texturePtr;
 	if (texture.width == width && texture.height == height) return;
 
 	//
@@ -4920,14 +4911,14 @@ void VKRenderer::resizeColorBufferTexture(int32_t textureId, int32_t width, int3
 	}
 
 	//
-	auto textureIt = textures.find(textureId);
-	if (textureIt == textures.end()) {
+	auto texturePtr = getTextureInternal(textureId);
+	if (texturePtr == nullptr) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(textureId));
 		return;
 	}
 
 	//
-	auto& texture = *textureIt->second;
+	auto& texture = *texturePtr;
 	if (texture.width == width && texture.height == height) return;
 
 	//
@@ -4960,14 +4951,14 @@ void VKRenderer::resizeGBufferGeometryTexture(int32_t textureId, int32_t width, 
 	}
 
 	//
-	auto textureIt = textures.find(textureId);
-	if (textureIt == textures.end()) {
+	auto texturePtr = getTextureInternal(textureId);
+	if (texturePtr == nullptr) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(textureId));
 		return;
 	}
 
 	//
-	auto& texture = *textureIt->second;
+	auto& texture = *texturePtr;
 	if (texture.width == width && texture.height == height) return;
 
 	//
@@ -5000,14 +4991,14 @@ void VKRenderer::resizeGBufferColorTexture(int32_t textureId, int32_t width, int
 	}
 
 	//
-	auto textureIt = textures.find(textureId);
-	if (textureIt == textures.end()) {
+	auto texturePtr = getTextureInternal(textureId);
+	if (texturePtr == nullptr) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(textureId));
 		return;
 	}
 
 	//
-	auto& texture = *textureIt->second;
+	auto& texture = *texturePtr;
 	if (texture.width == width && texture.height == height) return;
 
 	//
@@ -5038,7 +5029,7 @@ void VKRenderer::bindTexture(int contextIdx, int32_t textureId)
 	boundTexture.layout = VK_IMAGE_LAYOUT_UNDEFINED;
 
 	// textures
-	auto textureObjectPtr = textureId != ID_NONE?getTextureInternal(currentContext.idx, textureId):nullptr;
+	auto textureObjectPtr = textureId != ID_NONE?getRenderTextureInternal(textureId):nullptr;
 	if (textureId != ID_NONE) {
 		if (textureObjectPtr == nullptr) {
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture not found: " + to_string(textureId));
@@ -5080,20 +5071,14 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 
 	// color buffer
 	if (frameBuffer->type == framebuffer_object_type::TYPE_COLORBUFFER) {
-		texture_type* depthBufferTexture = nullptr;
-		texture_type* colorBufferTexture = nullptr;
+		texture_type* depthBufferTexture = getTextureInternal(frameBufferStruct.depthTextureId);
+		texture_type* colorBufferTexture = getTextureInternal(frameBufferStruct.colorTextureId);
 
-		auto depthBufferTextureIt = textures.find(frameBufferStruct.depthTextureId);
-		if (depthBufferTextureIt == textures.end()) {
+		if (depthBufferTexture == nullptr) {
 			if (frameBufferStruct.depthTextureId != ID_NONE) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): color buffer: depth buffer texture not found: " + to_string(frameBufferStruct.depthTextureId));
-		} else {
-			depthBufferTexture = depthBufferTextureIt->second;
 		}
-		auto colorBufferTextureIt = textures.find(frameBufferStruct.colorTextureId);
-		if (colorBufferTextureIt == textures.end()) {
+		if (colorBufferTexture == nullptr) {
 			if (frameBufferStruct.colorTextureId != ID_NONE) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): color buffer: color buffer texture not found: " + to_string(frameBufferStruct.colorTextureId));
-		} else {
-			colorBufferTexture = colorBufferTextureIt->second;
 		}
 
 		//
@@ -5209,15 +5194,15 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 		}
 	} else
 	if (frameBuffer->type == framebuffer_object_type::TYPE_GEOMETRYBUFFER) {
-		auto depthBufferTexture = textures.find(frameBufferStruct.depthTextureId)->second;
-		auto geometryBufferTexture1 = textures.find(frameBufferStruct.gbufferGeometryBufferTextureId1)->second;
-		auto geometryBufferTexture2 = textures.find(frameBufferStruct.gbufferGeometryBufferTextureId2)->second;
-		auto geometryBufferTexture3 = textures.find(frameBufferStruct.gbufferGeometryBufferTextureId3)->second;
-		auto colorBufferTexture1 = textures.find(frameBufferStruct.gbufferColorBufferTextureId1)->second;
-		auto colorBufferTexture2 = textures.find(frameBufferStruct.gbufferColorBufferTextureId2)->second;
-		auto colorBufferTexture3 = textures.find(frameBufferStruct.gbufferColorBufferTextureId3)->second;
-		auto colorBufferTexture4 = textures.find(frameBufferStruct.gbufferColorBufferTextureId4)->second;
-		auto colorBufferTexture5 = textures.find(frameBufferStruct.gbufferColorBufferTextureId5)->second;
+		auto depthBufferTexture = getTextureInternal(frameBufferStruct.depthTextureId);
+		auto geometryBufferTexture1 = getTextureInternal(frameBufferStruct.gbufferGeometryBufferTextureId1);
+		auto geometryBufferTexture2 = getTextureInternal(frameBufferStruct.gbufferGeometryBufferTextureId2);
+		auto geometryBufferTexture3 = getTextureInternal(frameBufferStruct.gbufferGeometryBufferTextureId3);
+		auto colorBufferTexture1 = getTextureInternal(frameBufferStruct.gbufferColorBufferTextureId1);
+		auto colorBufferTexture2 = getTextureInternal(frameBufferStruct.gbufferColorBufferTextureId2);
+		auto colorBufferTexture3 = getTextureInternal(frameBufferStruct.gbufferColorBufferTextureId3);
+		auto colorBufferTexture4 = getTextureInternal(frameBufferStruct.gbufferColorBufferTextureId4);
+		auto colorBufferTexture5 = getTextureInternal(frameBufferStruct.gbufferColorBufferTextureId5);
 
 		depthBufferTexture->frameBufferBindImageLayoutChange.valid = false;
 		depthBufferTexture->frameBufferUnbindImageLayoutChange.valid = false;
@@ -6067,38 +6052,30 @@ void VKRenderer::uploadIndicesBufferObject(int contextIdx, int32_t bufferObjectI
 	uploadBufferObjectInternal(contextIdx, bufferObjectId, size, data->getBuffer(), (VkBufferUsageFlagBits)(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT));
 }
 
-inline VKRenderer::texture_type* VKRenderer::getTextureInternal(int contextIdx, int32_t textureId) {
+inline VKRenderer::texture_type* VKRenderer::getTextureInternal(int32_t textureId) {
+	if (textureId < 1 || textureId >= TEXTURES_MAX) return nullptr;
+
+	//
+	return textures[textureId];
+}
+
+inline VKRenderer::texture_type* VKRenderer::getRenderTextureInternal(int32_t textureId) {
 	// return default texture if no texture was requested
 	if (textureId == ID_NONE) {
 		return whiteTextureSampler2dDefault;
 	}
 
-	// have our context typed
-	if (contextIdx != -1) {
-		auto& currentContext = contexts[contextIdx];
-		auto texture = currentContext.textureVector[textureId];
-		if (texture != nullptr) {
-			if (texture->type == texture_type::TYPE_TEXTURE && texture->uploaded == false) return whiteTextureSampler2dDefault;
-			if (texture->type == texture_type::TYPE_CUBEMAP_TEXTURE && texture->uploaded == false) return whiteTextureSamplerCubeDefault;
-			return texture;
-		}
-	}
-	texturesRWlock.readLock();
-	auto textureIt = textures.find(textureId);
-	if (textureIt == textures.end()) {
-		texturesRWlock.unlock();
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture with id " + to_string(textureId) + " does not exist");
-		return whiteTextureSampler2dDefault;
-	}
-	// we have a texture, also place it in context
-	auto texture = textureIt->second;
-	if (contextIdx != -1) {
-		auto& currentContext = contexts[contextIdx];
-		currentContext.textureVector[textureId] = texture;
-	}
-	texturesRWlock.unlock();
+	if (textureId < 1 || textureId >= TEXTURES_MAX) return nullptr;
+
+	//
+	auto texture = textures[textureId];
+	if (texture == nullptr) return nullptr;
+
+	//
 	if (texture->type == texture_type::TYPE_TEXTURE && texture->uploaded == false) return whiteTextureSampler2dDefault;
 	if (texture->type == texture_type::TYPE_CUBEMAP_TEXTURE && texture->uploaded == false) return whiteTextureSamplerCubeDefault;
+
+	//
 	return texture;
 }
 
@@ -6961,7 +6938,11 @@ float VKRenderer::readPixelDepth(int32_t x, int32_t y)
 	ThsvsImageLayout usedImageLayout = THSVS_IMAGE_LAYOUT_OPTIMAL;
 	auto frameBuffer = boundFrameBuffer < 0 || boundFrameBuffer >= framebuffers.size()?nullptr:framebuffers[boundFrameBuffer];
 	if (frameBuffer == nullptr) {
-		auto depthBufferTexture = textures.find(depthBufferDefault)->second;
+		auto depthBufferTexture = getTextureInternal(depthBufferDefault);
+		if (depthBufferTexture == nullptr) {
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): depth buffer: depth buffer texture not found: " + to_string(depthBufferDefault));
+			return pixelDepth;
+		}
 		usedFormat = depthBufferTexture->format;
 		usedImage = depthBufferTexture->image;
 		usedWidth = depthBufferTexture->width;
@@ -6969,12 +6950,11 @@ float VKRenderer::readPixelDepth(int32_t x, int32_t y)
 		usedAccessTypes = depthBufferTexture->accessTypes[0];
 		usedImageLayout = depthBufferTexture->svsLayout;
 	} else {
-		auto depthBufferTextureIt = textures.find(frameBuffer->depthBufferTextureId);
-		if (depthBufferTextureIt == textures.end()) {
+		auto depthBufferTexture = getTextureInternal(frameBuffer->depthBufferTextureId);
+		if (depthBufferTexture == nullptr) {
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): depth buffer: depth buffer texture not found: " + to_string(frameBuffer->depthBufferTextureId));
 			return pixelDepth;
 		} else {
-			auto depthBufferTexture = depthBufferTextureIt->second;
 			usedFormat = depthBufferTexture->format;
 			usedImage = depthBufferTexture->image;
 			usedWidth = depthBufferTexture->width;
@@ -7105,12 +7085,11 @@ ByteBuffer* VKRenderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t 
 		usedAccessTypes = swapchainBuffer.accessTypes;
 		usedImageLayout = swapchainBuffer.svsLayout;
 	} else {
-		auto colorBufferTextureIt = textures.find(frameBuffer->colorTextureId);
-		if (colorBufferTextureIt == textures.end()) {
+		auto colorBufferTexture = getTextureInternal(frameBuffer->colorTextureId);
+		if (colorBufferTexture == nullptr) {
 			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): color buffer: color buffer texture not found: " + to_string(frameBuffer->colorTextureId));
 			return nullptr;
 		} else {
-			auto colorBufferTexture = colorBufferTextureIt->second;
 			usedFormat = colorBufferTexture->format;
 			usedImage = colorBufferTexture->image;
 			usedWidth = colorBufferTexture->width;
