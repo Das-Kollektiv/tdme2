@@ -95,6 +95,7 @@ private:
 	static constexpr int COMPUTE_STORAGE_BUFFER_COUNT { 8 };
 	static constexpr int BUFFERS_MAX { 65535 };
 	static constexpr int TEXTURES_MAX { 65535 };
+	static constexpr int PROGRAMS_MAX { 128 };
 
 	static constexpr int CUBEMAPTEXTUREINDEX_MIN { 1 };
 
@@ -177,14 +178,9 @@ private:
 		VkShaderModule module { VK_NULL_HANDLE };
 	};
 
-	struct pipeline_type {
-		uint32_t id;
-		VkPipeline pipeline { VK_NULL_HANDLE };
-	};
-
-	struct pipelines_parent_type {
-		uint32_t id;
-		unordered_map<uint32_t, pipeline_type*> pipelines;
+	struct framebuffer_pipelines_type {
+		uint64_t id { 0 };
+		array<VkPipeline, 65535> pipelines;
 	};
 
 	struct program_type {
@@ -208,7 +204,6 @@ private:
 			array<command_buffer, DRAW_COMMANDBUFFER_MAX> commandBuffers;
 		};
 		int type { 0 };
-		unordered_map<uint32_t, pipelines_parent_type*> pipelinesParents;
 		// TODO: clear on viewport dimension change
 		vector<int32_t> shaderIds;
 		vector<shader_type*> shaders;
@@ -306,7 +301,6 @@ private:
 
 		int32_t idx { 0 };
 
-		unordered_map<uint64_t, pipeline_type*> pipelines;
 		vector<buffer_object_type*> bufferVector;
 		vector<texture_type*> textureVector;
 
@@ -323,7 +317,8 @@ private:
 		program_type* program { nullptr };
 		vector<program_type*> lastUnsubmittedPrograms;
 
-		uint32_t pipelineId;
+		//
+		uint16_t pipelineIdx;
 		VkPipeline pipeline { VK_NULL_HANDLE };
 
 		//
@@ -413,8 +408,10 @@ private:
 
 	VkFence memoryBarrierFence { VK_NULL_HANDLE };
 
-	ReadWriteLock pipelineRWlock;
-	uint32_t pipelineDimensionId { 0 };
+	SpinLock pipelinesSpinLock;
+	uint64_t framebufferPipelinesId { 0 };
+	framebuffer_pipelines_type* framebufferPipelinesCache { nullptr };
+	vector<framebuffer_pipelines_type*> framebuffersPipelines;
 
 	VkRenderPass renderPass { VK_NULL_HANDLE };
 
@@ -521,7 +518,9 @@ private:
 	void uploadBufferObjectInternal(int contextIdx,  buffer_object_type* buffer, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
 	void uploadBufferObjectInternal(int contextIdx, int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
 	texture_type* getTextureInternal(int contextIdx, int32_t textureId);
-	pipeline_type* getPipelineInternal(int contextIdx, program_type* programm, uint32_t pipelineDimensionId, uint32_t pipelineId);
+	framebuffer_pipelines_type* getFramebufferPipelines(uint64_t framebufferPipelinesId);
+	framebuffer_pipelines_type* createFramebufferPipelines(uint64_t framebufferPipelinesId);
+	VkPipeline getPipelineInternal(int contextIdx, program_type* programm, uint64_t framebuffePipelineId, uint32_t pipelineIdx);
 	void setProgramUniformInternal(int contextIdx, int32_t uniformId, uint8_t* data, int32_t size);
 	void initializeSwapChain();
 	void initializeFrameBuffers();
@@ -531,14 +530,13 @@ private:
 	void startRenderPass(int contextIdx);
 	void endRenderPass(int contextIdx);
 	void createRenderProgram(program_type* program);
-	pipeline_type* createObjectsRenderingPipeline(int contextIdx, program_type* program);
+	void createObjectsRenderingPipeline(int contextIdx, program_type* program);
 	void setupObjectsRenderingPipeline(int contextIdx, program_type* program);
-	pipeline_type* createPointsRenderingPipeline(int contextIdx, program_type* program);
+	void createPointsRenderingPipeline(int contextIdx, program_type* program);
 	void setupPointsRenderingPipeline(int contextIdx, program_type* program);
-	pipeline_type* createLinesRenderingPipeline(int contextIdx, program_type* program);
+	void createLinesRenderingPipeline(int contextIdx, program_type* program);
 	void setupLinesRenderingPipeline(int contextIdx, program_type* program);
 	void createSkinningComputingProgram(program_type* program);
-	pipeline_type* createSkinningComputingPipeline(int contextIdx, program_type* program);
 	void setupSkinningComputingPipeline(int contextIdx, program_type* program);
 	void unsetPipeline(int contextIdx);
 	void prepareSetupCommandBuffer(int contextIdx);
@@ -548,8 +546,8 @@ private:
 	void createRasterizationStateCreateInfo(int contextIdx, VkPipelineRasterizationStateCreateInfo& rasterizationStateCreateInfo);
 	void createColorBlendAttachmentState(VkPipelineColorBlendAttachmentState& blendAttachmentState);
 	void createDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateInfo& depthStencilStateCreateInfo);
-	uint32_t createPipelineDimensionId();
-	uint32_t createPipelineId(program_type* program, int contextIdx);
+	uint64_t createPipelineFramebufferId();
+	uint16_t createPipelineIndex(program_type* program, int contextIdx);
 	void createDepthBufferTexture(int32_t textureId, int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex);
 	void createBufferTexture(int32_t textureId, int32_t width, int32_t height, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex, VkFormat format);
 	void drawInstancedTrianglesFromBufferObjects(int contextIdx, int32_t triangles, int32_t trianglesOffset, VkBuffer indicesBuffer, int32_t instances);
