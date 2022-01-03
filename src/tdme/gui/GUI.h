@@ -16,6 +16,8 @@
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
+#include <tdme/gui/nodes/GUINode.h>
+#include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/utilities/fwd-tdme.h>
@@ -37,6 +39,7 @@ using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
+using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
@@ -66,6 +69,7 @@ class tdme::gui::GUI final: public virtual InputEventHandler
 	friend class tdme::gui::elements::GUIMenuHeaderItemController;
 	friend class tdme::gui::nodes::GUIElementController;
 	friend class tdme::gui::nodes::GUIHorizontalScrollbarInternalController;
+	friend class tdme::gui::nodes::GUIScreenNode;
 	friend class tdme::gui::nodes::GUIVerticalScrollbarInternalController;
 
 private:
@@ -104,13 +108,17 @@ private:
 	 * Add node that is a possible mouse out candidate as it received a mouse over
 	 * @param node element node
 	 */
-	void addMouseOutCandidateElementNode(GUINode* node);
+	inline void addMouseOutCandidateElementNode(GUINode* node) {
+		mouseOutCandidateEventNodeIds[node->getScreenNode()->getId()].insert(node->getId());
+	}
 
 	/**
 	 * Add node that is a possible mouse click out candidate as it received a mouse click
 	 * @param node element node
 	 */
-	void addMouseOutClickCandidateElementNode(GUINode* node);
+	inline void addMouseOutClickCandidateElementNode(GUINode* node) {
+		mouseOutClickCandidateEventNodeIds[node->getScreenNode()->getId()].insert(node->getId());
+	}
 
 	/**
 	 * Determine focussed nodes
@@ -149,6 +157,11 @@ private:
 	 * Fake a keyboard modifier event
 	 */
 	void fakeKeyboardModifierEvent();
+
+	/**
+	 * Render screens change
+	 */
+	void applyRenderScreensChange();
 
 public:
 	/**

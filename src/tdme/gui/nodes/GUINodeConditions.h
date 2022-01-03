@@ -48,45 +48,70 @@ public:
 	/**
 	 * @return conditions
 	 */
-	const vector<string>& getConditions() const;
+	inline const vector<string>& getConditions() const {
+		return conditions;
+	}
 
 	/**
 	 * Returns if condition is set
 	 * @param condition condition name
 	 * @return if condition is set
 	 */
-	bool has(const string& condition) const;
+	inline bool has(const string& condition) const {
+		return find(conditions.begin(), conditions.end(), condition) != conditions.end();
+	}
 
 	/**
 	 * Set condition
 	 * @param condition condition
 	 */
-	void set(const string& condition);
+	inline void set(const string& condition) {
+		this->conditions = {{ condition }};
+		updateElementNode(conditions);
+	}
 
 	/**
 	 * Set multiple conditions
 	 * @param conditions conditions
 	 */
-	void set(const vector<string>& conditions);
+	inline void set(const vector<string>& conditions) {
+		this->conditions = conditions;
+		updateElementNode(conditions);
+	}
 
 	/**
 	 * Add a condition
 	 * @param condition condition
 	 * @return condition changed
 	 */
-	bool add(const string& condition);
+	inline bool add(const string& condition) {
+		auto conditionsChanged = has(condition) == false;
+		if (conditionsChanged == true) conditions.push_back(condition);
+		if (conditionsChanged == true) updateElementNode({condition});
+		return conditionsChanged;
+	}
 
 	/**
 	 * Remove a condition
 	 * @param condition condition
 	 * @return condition changed
 	 */
-	bool remove(const string& condition);
+	inline bool remove(const string& condition) {
+		auto conditionsChanged = has(condition);
+		conditions.erase(std::remove(conditions.begin(), conditions.end(), condition), conditions.end());
+		if (conditionsChanged == true) updateElementNode({});
+		return conditionsChanged;
+	}
 
 	/**
 	 * Remove all
 	 * @return condition changed
 	 */
-	bool removeAll();
+	inline bool removeAll() {
+		auto conditionsChanged = conditions.empty() == false;
+		conditions.clear();
+		if (conditionsChanged == true) updateElementNode({});
+		return conditionsChanged;
+	}
 
 };

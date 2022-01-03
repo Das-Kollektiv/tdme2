@@ -658,3 +658,17 @@ void GUIParentNode::removeSubNode(GUINode* node, bool resetScrollOffsets)
 		}
 	}
 }
+
+void GUIParentNode::unsetMouseOver() {
+	for (auto i = 0; i < subNodes.size(); i++) {
+		auto guiSubNode = subNodes[i];
+		auto guiElementSubNode = dynamic_cast<GUIElementNode*>(guiSubNode);
+		if (guiElementSubNode != nullptr) {
+			guiElementSubNode->getActiveConditions().remove(GUIElementNode::CONDITION_ONMOUSEOVER);
+			guiElementSubNode->unsetMouseOver();
+		} else {
+			auto guiParentSubNode = dynamic_cast<GUIParentNode*>(guiSubNode);
+			if (guiParentSubNode != nullptr) guiParentSubNode->unsetMouseOver();
+		}
+	}
+}

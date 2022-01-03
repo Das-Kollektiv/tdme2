@@ -1,4 +1,4 @@
-<element width="100%" height="auto">
+<element width="*" height="auto" focussable="true">
 	<layout alignment="horizontal" width="auto" height="auto" flow="floating">
 		{__InnerXML__}
 	</layout>

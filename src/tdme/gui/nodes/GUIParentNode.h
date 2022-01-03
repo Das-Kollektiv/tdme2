@@ -41,6 +41,7 @@ using tdme::gui::GUIParserException;
 class tdme::gui::nodes::GUIParentNode
 	: public GUINode
 {
+	friend class tdme::gui::GUI;
 	friend class tdme::gui::GUIParser;
 	friend class GUIElementNode;
 	friend class GUILayerNode;
@@ -240,4 +241,10 @@ private:
 	 * @param resetScrollOffsets reset scroll offsets
 	 */
 	void removeSubNode(GUINode* node, bool resetScrollOffsets);
+
+	/**
+	 * Unset mouse event condition on element nodes
+	 */
+	void unsetMouseOver();
+
 };

@@ -125,6 +125,8 @@ void GUIScreenNode::setVisible(bool visible)
 		//
 		gui->invalidateFocussedNode();
 	}
+	//
+	if (gui != nullptr) gui->applyRenderScreensChange();
 }
 
 void GUIScreenNode::setPopUp(bool popUp)

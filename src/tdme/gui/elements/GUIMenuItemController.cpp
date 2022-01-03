@@ -102,7 +102,10 @@ void GUIMenuItemController::handleMouseEvent(GUINode* node, GUIMouseEvent* event
 		node->isEventBelongingToNode(event) &&
 		event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED &&
 		event->getButton() == MOUSE_BUTTON_LEFT) {
-		required_dynamic_cast<GUIMenuHeaderItemController*>(menuHeaderItemNode->getController())->toggleOpenState();
+		auto menuHeaderItemController = required_dynamic_cast<GUIMenuHeaderItemController*>(menuHeaderItemNode->getController());
+		menuHeaderItemController->toggleOpenState();
+		menuHeaderItemController->unselect();
+		menuHeaderItemController->unselectSelection();
 		event->setProcessed(true);
 	}
 }
@@ -113,7 +116,10 @@ void GUIMenuItemController::handleKeyboardEvent(GUIKeyboardEvent* event)
 	if (isDisabled() == false && event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 		switch (event->getKeyCode()) {
 			case GUIKeyboardEvent::KEYCODE_SPACE: {
-				required_dynamic_cast<GUIMenuHeaderItemController*>(menuHeaderItemNode->getController())->toggleOpenState();
+				auto menuHeaderItemController = required_dynamic_cast<GUIMenuHeaderItemController*>(menuHeaderItemNode->getController());
+				menuHeaderItemController->toggleOpenState();
+				menuHeaderItemController->unselect();
+				menuHeaderItemController->unselectSelection();
 				event->setProcessed(true);
 			}
 		}

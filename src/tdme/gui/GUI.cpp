@@ -266,6 +266,9 @@ void GUI::resetRenderScreens()
 	focussedNodeScreenId.clear();
 	focussedNodeNodeId.clear();
 
+	//
+	applyRenderScreensChange();
+
 	// unset GUI
 	for (auto i = 0; i < renderScreens.size(); i++) {
 		renderScreens[i]->setGUI(nullptr);
@@ -288,6 +291,9 @@ void GUI::addRenderScreen(const string& screenId)
 	if (screenIt == screens.end()) return;
 
 	//
+	applyRenderScreensChange();
+
+	//
 	auto screen = screenIt->second;
 	screen->setGUI(this);
 	screen->setConditionsMet();
@@ -306,6 +312,9 @@ void GUI::removeRenderScreen(const string& screenId)
 
 	//
 	screenIt->second->setGUI(nullptr);
+
+	//
+	applyRenderScreensChange();
 
 	//
 	renderScreens.erase(remove(renderScreens.begin(), renderScreens.end(), screenIt->second), renderScreens.end());
@@ -1001,10 +1010,6 @@ void GUI::reshapeScreen(GUIScreenNode* screenNode) {
 	screenNode->setScreenSize(screenNodeWidthConstrained, screenNodeHeightConstrained);
 }
 
-void GUI::addMouseOutCandidateElementNode(GUINode* node) {
-	mouseOutCandidateEventNodeIds[node->getScreenNode()->getId()].insert(node->getId());
-}
-
-void GUI::addMouseOutClickCandidateElementNode(GUINode* node) {
-	mouseOutClickCandidateEventNodeIds[node->getScreenNode()->getId()].insert(node->getId());
+void GUI::applyRenderScreensChange() {
+	for (auto screen: renderScreens) screen->unsetMouseOver();
 }

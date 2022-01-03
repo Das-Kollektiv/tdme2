@@ -20,49 +20,6 @@ GUINodeConditions::GUINodeConditions(GUIElementNode* elementNode): elementNode(e
 {
 }
 
-const vector<string>& GUINodeConditions::getConditions( ) const
-{
-	return conditions;
-}
-
-bool GUINodeConditions::has(const string& condition) const {
-	return find(conditions.begin(), conditions.end(), condition) != conditions.end();
-}
-
-void GUINodeConditions::set(const string& condition) {
-	this->conditions = {{ condition }};
-	updateElementNode(conditions);
-}
-
-void GUINodeConditions::set(const vector<string>& conditions) {
-	this->conditions = conditions;
-	updateElementNode(conditions);
-}
-
-bool GUINodeConditions::add(const string& condition)
-{
-	auto conditionsChanged = has(condition) == false;
-	if (conditionsChanged == true) conditions.push_back(condition);
-	if (conditionsChanged == true) updateElementNode({condition});
-	return conditionsChanged;
-}
-
-bool GUINodeConditions::remove(const string& condition)
-{
-	auto conditionsChanged = has(condition);
-	conditions.erase(std::remove(conditions.begin(), conditions.end(), condition), conditions.end());
-	if (conditionsChanged == true) updateElementNode({});
-	return conditionsChanged;
-}
-
-bool GUINodeConditions::removeAll()
-{
-	auto conditionsChanged = conditions.empty() == false;
-	conditions.clear();
-	if (conditionsChanged == true) updateElementNode({});
-	return conditionsChanged;
-}
-
 void GUINodeConditions::updateNode(GUINode* node, const vector<string>& conditions) const {
 	node->conditionsMet = node->checkConditions();
 	node->onSetConditions(conditions);
