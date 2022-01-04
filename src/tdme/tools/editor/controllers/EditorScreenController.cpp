@@ -610,31 +610,46 @@ void EditorScreenController::scanProjectPathFiles() {
 				//
 				auto _fileName = Tools::getFileName(fileName);
 
+				//
 				string thumbNail;
-				if (StringTools::endsWith(fileNameLowerCase, ".png") == true) thumbNail = absolutePath;
-				string templateSource =
-					StringTools::endsWith(fileNameLowerCase, ".tmodel") == true || StringTools::endsWith(fileNameLowerCase, ".tm") == true?
-						"button_template_thumbnail_texture.xml":
-						"button_template_thumbnail.xml";
+				string templateSource = "button_template_thumbnail_texture.xml";
+				Texture* thumbnailTexture = nullptr;
 				vector<uint8_t> thumbnailPNGData;
+				if (StringTools::endsWith(fileNameLowerCase, ".png") == true) {
+					thumbnailTexture = TextureReader::read(pathName, fileName, false);
+				} else
 				if (((StringTools::endsWith(fileNameLowerCase, ".tmodel") == true && PrototypeReader::readThumbnail(pathName, fileName, thumbnailPNGData) == true) ||
 					(StringTools::endsWith(fileNameLowerCase, ".tm") == true && FileSystem::getInstance()->getThumbnailAttachment(pathName, fileName, thumbnailPNGData) == true)) &&
 					thumbnailPNGData.empty() == false) {
-					auto thumbnailTexture = TextureReader::readPNG("tdme.editor.projectpathfiles." + to_string(thumbnailIdx++), thumbnailPNGData, true);
-					if (thumbnailTexture != nullptr) {
-						thumbnailTexture->acquireReference();
-						fileNameTextureMapping[_fileName] = thumbnailTexture;
-						iconBig.clear();
-					} else {
-						// no valid thumbnail texture
-						templateSource = "button_template_thumbnail.xml";
-					}
+					thumbnailTexture = TextureReader::readPNG("tdme.editor.projectpathfiles." + to_string(thumbnailIdx++), thumbnailPNGData, false);
 				} else {
 					// no valid thumbnail texture
 					templateSource = "button_template_thumbnail.xml";
 				}
-				if (thumbNail.empty() == false) iconBig.clear();
+				if (thumbnailTexture != nullptr) {
+					auto textureWidth = thumbnailTexture->getTextureWidth();
+					auto textureHeight = thumbnailTexture->getTextureHeight();
+					auto scale = 1.0f;
+					if (textureWidth > textureHeight) {
+						scale = 128.0f / static_cast<float>(textureWidth);
+					} else {
+						scale = 128.0f / static_cast<float>(textureHeight);
+					}
+					auto scaledTextureWidth = static_cast<int>(static_cast<float>(textureWidth) * scale);
+					auto scaledTextureHeight = static_cast<int>(static_cast<float>(textureHeight) * scale);
+					if (textureWidth != scaledTextureWidth || textureHeight != scaledTextureHeight) {
+						auto thumbnailTextureScaled = TextureReader::scale(thumbnailTexture, scaledTextureWidth, scaledTextureHeight);
+						thumbnailTexture->releaseReference();
+						thumbnailTextureScaled->acquireReference();
+						fileNameTextureMapping[_fileName] = thumbnailTextureScaled;
+					} else {
+						fileNameTextureMapping[_fileName] = thumbnailTexture;
+					}
+					iconBig.clear();
+				}
 				if (iconBig.empty() == false) icon.clear();
+
+				//
 				auto buttonXML =
 					string() +
 					"<button " +

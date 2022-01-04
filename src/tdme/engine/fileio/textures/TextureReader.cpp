@@ -334,7 +334,7 @@ Texture* TextureReader::readPNG(const string& textureId, const vector<uint8_t>& 
 	}
 
 	// thats it
-	return new Texture(
+	auto texture = new Texture(
 		idPrefix + textureId,
 		bytesPerPixel * 8,
 		width,
@@ -343,6 +343,8 @@ Texture* TextureReader::readPNG(const string& textureId, const vector<uint8_t>& 
 		textureHeight,
 		pixelByteBuffer
 	);
+	texture->acquireReference();
+	return texture;
 }
 
 void TextureReader::scaleTextureLine(ByteBuffer* pixelByteBuffer, ByteBuffer* pixelByteBufferScaled, int width, int textureWidth, int bytesPerPixel, int y) {
@@ -426,8 +428,8 @@ Texture* TextureReader::rotate(Texture* texture, float rotation) {
 	);
 	rotatedTexture->acquireReference();
 	auto rotationsMatrix = Matrix2D3x3::rotateAroundPoint(Vector2(textureWidth / 2.0f, textureHeight / 2.0f), rotation);
-	for (auto y = 0; y < rotatedTexture->getTextureHeight(); y++) {
-		for (auto x = 0; x < rotatedTexture->getTextureWidth(); x++) {
+	for (auto y = 0; y < textureHeightRotated; y++) {
+		for (auto x = 0; x < textureWidthRotated; x++) {
 			auto originalTexturePoint = rotationsMatrix.multiply(
 				Vector2(
 					x - (textureWidthRotated - textureWidth) / 2.0f,
@@ -464,8 +466,8 @@ Texture* TextureReader::rotate(Texture* texture, float rotation) {
 		filteredTextureByteBuffer
 	);
 	filteredTexture->acquireReference();
-	for (auto y = 0; y < filteredTexture->getTextureHeight(); y++) {
-		for (auto x = 0; x < filteredTexture->getTextureWidth(); x++) {
+	for (auto y = 0; y < textureHeightRotated; y++) {
+		for (auto x = 0; x < textureWidthRotated; x++) {
 			auto samples = 0;
 			auto red = 0;
 			auto green = 0;
@@ -492,3 +494,85 @@ Texture* TextureReader::rotate(Texture* texture, float rotation) {
 	return filteredTexture;
 }
 
+Texture* TextureReader::scale(Texture* texture, int width, int height) {
+	auto textureWidth = texture->getTextureWidth();
+	auto textureHeight = texture->getTextureHeight();
+	auto textureBytesPerPixel = texture->getDepth() / 8;
+	auto textureWidthScaled = width;
+	auto textureHeightScaled = height;
+	auto scaledTextureByteBuffer = new ByteBuffer(textureWidthScaled * textureHeightScaled * 4);
+	auto scaledTexture = new Texture(
+		texture->getId() + ":s=" + to_string(textureWidthScaled) + "x" + to_string(textureHeightScaled),
+		32,
+		textureWidthScaled,
+		textureHeightScaled,
+		textureWidthScaled,
+		textureHeightScaled,
+		scaledTextureByteBuffer
+	);
+	scaledTexture->acquireReference();
+	auto scaleX = static_cast<float>(textureWidth) / static_cast<float>(textureWidthScaled);
+	auto scaleY = static_cast<float>(textureHeight) / static_cast<float>(textureHeightScaled);
+	for (auto y = 0; y < textureHeightScaled; y++) {
+		for (auto x = 0; x < textureWidthScaled; x++) {
+			auto originalTexturePoint = Vector2(static_cast<float>(x) * scaleX, static_cast<float>(y) * scaleY);
+			auto red = 0;
+			auto green = 0;
+			auto blue = 0;
+			auto alpha = 0;
+			auto originalX = static_cast<int>(originalTexturePoint.getX());
+			auto originalY = static_cast<int>(originalTexturePoint.getY());
+			if (originalX >= 0 && originalX < textureWidth && originalY >= 0 && originalY < textureHeight) {
+				red = texture->getTextureData()->get((originalY * textureWidth * textureBytesPerPixel) + (originalX * textureBytesPerPixel) + 0);
+				green = texture->getTextureData()->get((originalY * textureWidth * textureBytesPerPixel) + (originalX * textureBytesPerPixel) + 1);
+				blue = texture->getTextureData()->get((originalY * textureWidth * textureBytesPerPixel) + (originalX * textureBytesPerPixel) + 2);
+				alpha = textureBytesPerPixel == 4?texture->getTextureData()->get((originalY * textureWidth * textureBytesPerPixel) + (originalX * textureBytesPerPixel) + 3):-1;
+			}
+			scaledTextureByteBuffer->put(red);
+			scaledTextureByteBuffer->put(green);
+			scaledTextureByteBuffer->put(blue);
+			scaledTextureByteBuffer->put(alpha);
+		}
+	}
+	// no bilinear filtering if texture got smaller
+	if (textureWidthScaled < textureWidth) return scaledTexture;
+	// otherwise do bilinear filtering
+	// TODO: should be improved
+	auto filteredTextureByteBuffer = new ByteBuffer(textureWidthScaled * textureHeightScaled * 4);
+	auto filteredTexture = new Texture(
+		texture->getId() + ":s=" + to_string(textureWidthScaled) + "x" + to_string(textureHeightScaled) + ":bf",
+		32,
+		textureWidthScaled,
+		textureHeightScaled,
+		textureWidthScaled,
+		textureHeightScaled,
+		filteredTextureByteBuffer
+	);
+	filteredTexture->acquireReference();
+	for (auto y = 0; y < filteredTexture->getTextureHeight(); y++) {
+		for (auto x = 0; x < filteredTexture->getTextureWidth(); x++) {
+			auto samples = 0;
+			auto red = 0;
+			auto green = 0;
+			auto blue = 0;
+			auto alpha = 0;
+			for (auto _y = -1; _y <= 1; _y++)
+			for (auto _x = -1; _x <= 1; _x++)
+			if ((Math::abs(_x) == 1 && Math::abs(_y) == 1) == false &&
+				(x + _x >= 0 && x + _x < textureWidthScaled && y + _y >= 0 && y + _y < textureHeightScaled)) {
+				auto pixelOffset = (y + _y) * textureWidthScaled * 4 + (x + _x) * 4;
+				red+= scaledTexture->getTextureData()->get(pixelOffset + 0);
+				green+= scaledTexture->getTextureData()->get(pixelOffset + 1);
+				blue+= scaledTexture->getTextureData()->get(pixelOffset + 2);
+				alpha+= scaledTexture->getTextureData()->get(pixelOffset + 3);
+				samples++;
+			}
+			filteredTextureByteBuffer->put(red / samples);
+			filteredTextureByteBuffer->put(green / samples);
+			filteredTextureByteBuffer->put(blue / samples);
+			filteredTextureByteBuffer->put(alpha / samples);
+		}
+	}
+	scaledTexture->releaseReference();
+	return filteredTexture;
+}

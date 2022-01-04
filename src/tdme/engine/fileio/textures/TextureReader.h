@@ -77,6 +77,15 @@ public:
 	 */
 	static Texture* rotate(Texture* texture, float rotation);
 
+	/**
+	 * Scale texture
+	 * @param texture texture
+	 * @param width width
+	 * @param height height
+	 * @return texture
+	 */
+	static Texture* scale(Texture* texture, int width, int height);
+
 private:
 	/**
 	 * PNG input stream
