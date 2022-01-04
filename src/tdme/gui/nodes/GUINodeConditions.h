@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <string>
 #include <vector>
 
@@ -7,6 +8,7 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
+using std::find;
 using std::string;
 using std::vector;
 

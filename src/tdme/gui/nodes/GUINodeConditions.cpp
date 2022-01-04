@@ -1,6 +1,5 @@
 #include <tdme/gui/nodes/GUINodeConditions.h>
 
-#include <algorithm>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -8,7 +7,6 @@
 #include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 
-using std::find;
 using std::vector;
 
 using tdme::gui::nodes::GUIElementNode;
