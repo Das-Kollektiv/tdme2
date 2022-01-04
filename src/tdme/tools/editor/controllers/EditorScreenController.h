@@ -8,12 +8,15 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
+#include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/events/GUIContextMenuRequestListener.h>
 #include <tdme/gui/events/GUIFocusListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/os/threading/Thread.h>
 #include <tdme/tools/editor/controllers/fwd-tdme.h>
 #include <tdme/tools/editor/controllers/ScreenController.h>
 #include <tdme/tools/editor/tabcontrollers/fwd-tdme.h>
@@ -30,6 +33,8 @@ using std::vector;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::scene::Scene;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
@@ -41,6 +46,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
+using tdme::os::threading::Thread;
 using tdme::tools::editor::controllers::ScreenController;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::TabView;
@@ -60,6 +66,23 @@ class tdme::tools::editor::controllers::EditorScreenController final
 	, public GUIContextMenuRequestListener
 {
 public:
+	enum FileType {
+		FILETYPE_UNKNOWN,
+		FILETYPE_MODEL,
+		FILETYPE_EMPTYPROTOTYPE,
+		FILETYPE_TRIGGERPROTOTYPE,
+		FILETYPE_ENVMAPPROTOTYPE,
+		FILETYPE_MODELPROTOTYPE,
+		FILETYPE_TERRAINPROTOTYPE,
+		FILETYPE_PARTICLESYSTEMPROTOTYPE,
+		FILETYPE_SCENE,
+		FILETYPE_SCREEN_TEXT,
+		FILETYPE_SOUND,
+		FILETYPE_TEXTURE,
+		FILETYPE_FONT,
+		FILETYPE_TEXT
+	};
+
 	/**
 	 * Editor tab view
 	 */
@@ -170,6 +193,99 @@ private:
 	int thumbnailIdx { 0 };
 	string fileNameSearchTerm;
 	int64_t timeFileNameSearchTerm { -1LL };
+
+	//
+	class FileOpenThread: public Thread {
+	public:
+		/**
+		 * Constructor
+		 * @param tabId tab id
+		 * @param fileType file type
+		 * @param absoluteFileName absolute file name
+		 */
+		FileOpenThread(const string& tabId, FileType fileType, const string& absoluteFileName): Thread("FileOpenThread"), tabId(tabId), fileType(fileType), absoluteFileName(absoluteFileName) {}
+
+		/**
+		 * @return tab id
+		 */
+		inline const string& getTabId() {
+			return tabId;
+		}
+
+		/**
+		 * @return file type
+		 */
+		inline FileType getFileType() {
+			return fileType;
+		}
+
+		/**
+		 * @return absolute filename
+		 */
+		inline const string& getAbsoluteFileName() {
+			return absoluteFileName;
+		}
+
+		/**
+		 * @return error message
+		 */
+		inline const string& getErrorMessage() {
+			return errorMessage;
+		}
+
+		/**
+		 * @return progress
+		 */
+		inline float getProgress() {
+			return progress;
+		}
+
+		/**
+		 * @return prototype
+		 */
+		inline Prototype* getPrototype() {
+			return prototype;
+		}
+
+		/**
+		 * @return scene
+		 */
+		inline Scene* getScene() {
+			return scene;
+		}
+
+		/**
+		 * @return if error occurred during opening files
+		 */
+		inline volatile bool isError() {
+			return error;
+		}
+
+		/**
+		 * @return if thread has finished
+		 */
+		inline volatile bool isFinished() {
+			return finished;
+		}
+
+		/**
+		 * Run
+		 */
+		virtual void run();
+	private:
+		FileType fileType;
+		string tabId;
+		string absoluteFileName;
+		string errorMessage;
+		float progress { 0.0f };
+
+		Prototype* prototype { nullptr };
+		Scene* scene { nullptr };
+		bool error { false };
+		volatile bool finished { false };
+	};
+
+	FileOpenThread* fileOpenThread { nullptr };
 
 public:
 
@@ -286,6 +402,16 @@ public:
 	 * @param absoluteProjectFileName absolute project file name
 	 */
 	void openFile(const string& absoluteFileName);
+
+	/**
+	 * On open file finish
+	 * @param tabId tab id
+	 * @param fileType file type
+	 * @param absoluteFileName absolute file name
+	 * @param prototype prototype
+	 * @param scene scene
+	 */
+	void onOpenFileFinish(const string& tabId, FileType fileType, const string& absoluteFileName, Prototype* prototype, Scene* scene);
 
 	/**
 	 * Store outliner state

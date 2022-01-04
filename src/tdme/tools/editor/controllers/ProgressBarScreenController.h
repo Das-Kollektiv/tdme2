@@ -14,6 +14,7 @@ using std::string;
 
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::nodes::GUITextNode;
 using tdme::tools::editor::controllers::ScreenController;
 using tdme::utilities::MutableString;
 
@@ -29,6 +30,8 @@ class tdme::tools::editor::controllers::ProgressBarScreenController final
 private:
 	GUIScreenNode* screenNode { nullptr };
 	GUIElementNode* progressBarNode { nullptr };
+	GUIElementNode* progressBarParent { nullptr };
+	GUITextNode* progressMessageNode { nullptr };
 
 public:
 	/**
@@ -47,14 +50,21 @@ public:
 
 	/**
 	 * Shows the pop up
+	 * @param showProgressBar show progress bar
 	 */
-	void show();
+	void show(const string& message, bool showProgressBar = true);
 
 	/**
 	 * Show progress
 	 * @param value value
 	 */
 	void progress(float value);
+
+	/**
+	 * Show progress 2
+	 * @param value value
+	 */
+	void progress2(float value);
 
 	/**
 	 * Closes the pop up

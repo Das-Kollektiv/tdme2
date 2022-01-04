@@ -139,7 +139,7 @@ bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode,
 		};
 
 		//
-		if (popUps != nullptr) popUps->getProgressBarScreenController()->show();
+		if (popUps != nullptr) popUps->getProgressBarScreenController()->show("Generate convex meshes ...");
 		IVHACD* vhacd = CreateVHACD();
 		try {
 			if (parameters.m_resolution < 10000 || parameters.m_resolution > 64000000) {

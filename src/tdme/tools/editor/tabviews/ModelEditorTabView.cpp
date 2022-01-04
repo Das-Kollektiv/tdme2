@@ -380,7 +380,7 @@ void ModelEditorTabView::computeNormals() {
 			progressBarScreenController->progress(value);
 		}
 	};
-	popUps->getProgressBarScreenController()->show();
+	popUps->getProgressBarScreenController()->show("Computing smooth normals ...");
 	ModelTools::computeNormals(prototype->getModel(), new ComputeNormalsProgressCallback(popUps->getProgressBarScreenController()));
 	popUps->getProgressBarScreenController()->close();
 	resetPrototype();

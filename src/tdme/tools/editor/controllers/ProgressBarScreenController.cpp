@@ -9,6 +9,7 @@
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/utilities/Console.h>
@@ -24,6 +25,7 @@ using tdme::gui::nodes::GUIMultilineTextNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUI;
 using tdme::gui::GUIParser;
 using tdme::tools::editor::controllers::ProgressBarScreenController;
@@ -48,7 +50,9 @@ void ProgressBarScreenController::initialize()
 	try {
 		screenNode = GUIParser::parse("resources/engine/gui", "popup_progressbar.xml");
 		screenNode->setVisible(false);
-		progressBarNode = dynamic_cast< GUIElementNode* >(screenNode->getNodeById("progressbar"));
+		progressBarNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("progressbar"));
+		progressBarParent = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("progressbar_parent"));
+		progressMessageNode = dynamic_cast<GUITextNode*>(screenNode->getNodeById("progress_message"));
 	} catch (Exception& exception) {
 		Console::print(string("ProgressBarScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -60,10 +64,16 @@ void ProgressBarScreenController::dispose()
 	screenNode = nullptr;
 }
 
-void ProgressBarScreenController::show()
+void ProgressBarScreenController::show(const string& message, bool showProgressBar)
 {
+	progressMessageNode->setText(MutableString(message));
+	if (showProgressBar == true) {
+		progressBarParent->getActiveConditions().add("show-progressbar");
+	} else {
+		progressBarParent->getActiveConditions().remove("show-progressbar");
+	}
 	screenNode->setVisible(true);
-	progress(0.0f);
+	progress2(0.0f);
 }
 
 void ProgressBarScreenController::progress(float value) {
@@ -72,6 +82,10 @@ void ProgressBarScreenController::progress(float value) {
 	Engine::getInstance()->getGUI()->render();
 	Engine::getInstance()->getGUI()->handleEvents();
 	Application::swapBuffers();
+}
+
+void ProgressBarScreenController::progress2(float value) {
+	progressBarNode->getController()->setValue(MutableString(value, 4));
 }
 
 void ProgressBarScreenController::close()
