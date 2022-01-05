@@ -6,8 +6,7 @@
 				<image src="{$icon-big}" />
 			</layout>
 			<image width="{$size}" height="{$size}" src="{$thumbnail}" />
-			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" border-bottom="3" border-color-bottom="{$type-color}" />
-			<layout padding-bottom="5" padding-left="2" width="{$size}" height="{$size}" horizontal-align="left" vertical-align="bottom" border-bottom="1" border-right="1" border-color="{$color.element_background}">
+			<layout padding-bottom="5" padding-left="2" width="{$size}" height="{$size}" horizontal-align="left" vertical-align="bottom">
 				<image src="{$icon}" />
 			</layout>
 		</layer>
@@ -25,8 +24,7 @@
 				<image src="{$icon-big}" />
 			</layout>
 			<image width="{$size}" height="{$size}" src="{$thumbnail}" />
-			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" border-bottom="3" border-color-bottom="{$type-color}" />
-			<layout padding-bottom="5" padding-left="2" width="{$size}" height="{$size}" horizontal-align="left" vertical-align="bottom" border-bottom="1" border-right="1" border-color="{$color.element_background}">
+			<layout padding-bottom="5" padding-left="2" width="{$size}" height="{$size}" horizontal-align="left" vertical-align="bottom">
 				<image src="{$icon}" />
 			</layout>
 		</layer>
@@ -44,8 +42,7 @@
 				<image src="{$icon-big}" />
 			</layout>
 			<image width="{$size}" height="{$size}" src="{$thumbnail}"  />
-			<layout show-on="empty('{$no-type-color}')" width="{$size}" height="{$size}" border-bottom="3" border-color-bottom="{$type-color}" />
-			<layout padding-bottom="5" padding-left="2" width="{$size}" height="{$size}" horizontal-align="left" vertical-align="bottom" border-bottom="1" border-right="1" border-color="{$color.element_background}">
+			<layout padding-bottom="5" padding-left="2" width="{$size}" height="{$size}" horizontal-align="left" vertical-align="bottom">
 				<image src="{$icon}" />
 			</layout>
 		</layer>
