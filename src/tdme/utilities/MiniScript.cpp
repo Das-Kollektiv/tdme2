@@ -77,24 +77,6 @@ void MiniScript::registerMethod(ScriptMethod* method) {
 	scriptMethods[method->getMethodName()] = method;
 }
 
-const MiniScript::ScriptVariable MiniScript::getVariable(const string& name) {
-	auto scriptVariableIt = scriptState.variables.find(name);
-	if (scriptVariableIt == scriptState.variables.end()) {
-		Console::println("MiniScript::getVariable(): '" + scriptFileName + "': variable with name '" + name + "' does not exist.");
-		return ScriptVariable();
-	}
-	return scriptVariableIt->second;
-}
-
-void MiniScript::setVariable(const string& name, const ScriptVariable& variable) {
-	auto scriptVariableIt = scriptState.variables.find(name);
-	if (scriptVariableIt != scriptState.variables.end()) {
-		Console::println("MiniScript::getVariable(): '" + scriptFileName + "': variable with name '" + name + "' does exist.");
-		return;
-	}
-	scriptState.variables[name] = variable;
-}
-
 void MiniScript::executeScriptLine() {
 	if (scriptState.scriptIdx == -1 || scriptState.statementIdx == -1 || scriptState.running == false) return;
 	auto& script = scripts[scriptState.scriptIdx];

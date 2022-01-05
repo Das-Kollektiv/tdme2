@@ -793,14 +793,31 @@ public:
 	 * @param name name
 	 * @return variable
 	 */
-	const ScriptVariable getVariable(const string& name);
+	inline const ScriptVariable getVariable(const string& name) {
+		auto scriptVariableIt = scriptState.variables.find(name);
+		if (scriptVariableIt == scriptState.variables.end()) {
+			Console::println("MiniScript::getVariable(): '" + scriptFileName + "': variable with name '" + name + "' does not exist.");
+			return ScriptVariable();
+		}
+		return scriptVariableIt->second;
+	}
 
 	/**
 	 * Set script variable
 	 * @param name name
 	 * @param variable variable
 	 */
-	void setVariable(const string& name, const ScriptVariable& variable);
+	inline void setVariable(const string& name, const ScriptVariable& variable) {
+		scriptState.variables[name] = variable;
+	}
+
+	/**
+	 * Unset script variable
+	 * @param name name
+	 */
+	inline void unsetVariable(const string& name) {
+		scriptState.variables.erase(name);
+	}
 
 	/**
 	 * Load script
