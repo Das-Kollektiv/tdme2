@@ -37,6 +37,11 @@ struct tdme::tools::editor::views::View
 	virtual void dispose() = 0;
 
 	/**
+	 * Tick
+	 */
+	virtual void tick() = 0;
+
+	/**
 	 * Destructor
 	 */
 	virtual ~View() {}

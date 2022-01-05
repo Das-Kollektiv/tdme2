@@ -365,6 +365,7 @@ void EditorScreenController::openProject(const string& path) {
 	closeProject();
 	view->getPopUps()->getFileDialogScreenController()->setDefaultCWD(projectPath);
 	scanProjectPaths();
+	setRelativeProjectPath("resources");
 	startScanFiles();
 	//
 	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("projectlibrary_import"))->getController()->setDisabled(false);
@@ -555,6 +556,11 @@ void EditorScreenController::addPendingFileEntities() {
 	pendingFileEntities.clear();
 }
 
+void EditorScreenController::setRelativeProjectPath(const string& relativeProjectPath) {
+	this->relativeProjectPath = relativeProjectPath;
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("selectbox_projectpaths"))->getController()->setValue(MutableString(relativeProjectPath));
+}
+
 void EditorScreenController::stopScanFiles() {
 	Console::println("EditorScreenController::stopScanFiles()");
 	if (scanFilesThread != nullptr) {
@@ -575,13 +581,19 @@ void EditorScreenController::stopScanFiles() {
 void EditorScreenController::ScanFilesThread::run() {
 	class ListFilter : public virtual FileNameFilter {
 		public:
+			ListFilter(const string& searchTerm): searchTerm(searchTerm) {}
 			virtual ~ListFilter() {}
 
 			bool accept(const string& pathName, const string& fileName) override {
 				if (fileName == ".") return false;
 				if (fileName == "..") return false;
-				if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) return false;
+				//
 				auto fileNameLowerCase = StringTools::toLowerCase(fileName);
+				//
+				if (searchTerm.empty() == false && fileNameLowerCase.find(searchTerm) == string::npos) return false;
+
+				// folders
+				if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) return true;
 				// audio
 				if (StringTools::endsWith(fileNameLowerCase, ".ogg") == true) return true;
 				// code
@@ -632,9 +644,11 @@ void EditorScreenController::ScanFilesThread::run() {
 				//
 				return false;
 			}
+		private:
+			string searchTerm;
 	};
 
-	ListFilter listFilter;
+	ListFilter listFilter(searchTerm);
 	vector<string> files;
 
 	if (FileSystem::getInstance()->fileExists(pathName) == false) {
@@ -648,95 +662,148 @@ void EditorScreenController::ScanFilesThread::run() {
 		}
 	} else {
 		FileSystem::getInstance()->list(pathName, files, &listFilter);
+		// parent folder
+		Console::println("'" + editorScreenController->getProjectPath() + "' vs '" + pathName + "'");
+		auto parentPathName = FileSystem::getInstance()->getPathName(pathName);
+		if (editorScreenController->getProjectPath() != parentPathName) {
+			string fileName = "..";
+
+			//
+			string templateSource = "button_template_thumbnail.xml";
+			string icon = "";
+			string iconBig = "{$icon.type_folder_big}";
+			string typeColor = "{$color.type_folder}";
+
+			//
+			auto fileEntity = new FileEntity();
+			fileEntity->id = "projectpathfiles_file_" + GUIParser::escapeQuotes(Tools::getFileName(fileName));
+			fileEntity->buttonXML =
+				string() +
+				"<button " +
+				"id=\"" + fileEntity->id + "\" " +
+				"value=\"" + GUIParser::escapeQuotes(parentPathName) + "\" " +
+				"template=\"" + templateSource + "\" " +
+				"size=\"75\" " +
+				"icon=\"" + GUIParser::escapeQuotes(icon) + "\" " +
+				"icon-big=\"" + GUIParser::escapeQuotes(iconBig) + "\" " +
+				"filename=\"" + GUIParser::escapeQuotes(fileName) + "\" " +
+				"type-color=\"" + GUIParser::escapeQuotes(typeColor) + "\" " +
+				"/>\n";
+			editorScreenController->lockFileEntities();
+			editorScreenController->getFileEntities().push_back(fileEntity);
+			editorScreenController->unlockFileEntities();
+			Thread::sleep(1LL);
+		}
+		for (auto fileName: files) {
+			if (isStopRequested() == true) break;
+
+			//
+			auto absolutePath = pathName + "/" + fileName;
+			if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == false) continue;
+
+			string templateSource = "button_template_thumbnail.xml";
+			string icon = "";
+			string iconBig = "{$icon.type_folder_big}";
+			string typeColor = "{$color.type_folder}";
+
+			//
+			auto fileEntity = new FileEntity();
+			fileEntity->id = "projectpathfiles_file_" + GUIParser::escapeQuotes(Tools::getFileName(fileName));
+			fileEntity->buttonXML =
+				string() +
+				"<button " +
+				"id=\"" + fileEntity->id + "\" " +
+				"value=\"" + GUIParser::escapeQuotes(absolutePath) + "\" " +
+				"template=\"" + templateSource + "\" " +
+				"size=\"75\" " +
+				"icon=\"" + GUIParser::escapeQuotes(icon) + "\" " +
+				"icon-big=\"" + GUIParser::escapeQuotes(iconBig) + "\" " +
+				"filename=\"" + GUIParser::escapeQuotes(fileName) + "\" " +
+				"type-color=\"" + GUIParser::escapeQuotes(typeColor) + "\" " +
+				"/>\n";
+			editorScreenController->lockFileEntities();
+			editorScreenController->getFileEntities().push_back(fileEntity);
+			editorScreenController->unlockFileEntities();
+			Thread::sleep(1LL);
+		}
 		for (auto fileName: files) {
 			if (isStopRequested() == true) break;
 
 			auto absolutePath = pathName + "/" + fileName;
-			if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) {
-				// no op for now
-			} else {
+			if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) continue;
+
+			//
+			try {
+				//
+				auto image = FileDialogScreenController::getFileImageName(fileName);
+				string icon = "{$icon.type_" + image + "}";
+				string iconBig = "{$icon.type_" + image + "_big}";
+				string typeColor = "{$color.type_" + image + "}";
+
 				//
 				auto fileNameLowerCase = StringTools::toLowerCase(fileName);
-				if (searchTerm.empty() == false && fileNameLowerCase.find(searchTerm) == string::npos) continue;
 
 				//
-				try {
-					//
-					string icon = "resources/engine/images/folder.png";
-					string iconBig;
-					string typeColor;
-					auto image = FileDialogScreenController::getFileImageName(fileName);
-					icon = "{$icon.type_" + image + "}";
-					iconBig = "{$icon.type_" + image + "_big}";
-					typeColor = "{$color.type_" + image + "}";
-
-					//
-					auto _fileName = Tools::getFileName(fileName);
-
-					//
-					string thumbNail;
-					string templateSource = "button_template_thumbnail_texture.xml";
-					Texture* thumbnailTexture = nullptr;
-					vector<uint8_t> thumbnailPNGData;
-					if (StringTools::endsWith(fileNameLowerCase, ".png") == true) {
-						thumbnailTexture = TextureReader::read(pathName, fileName, false);
-					} else
-					if (((StringTools::endsWith(fileNameLowerCase, ".tmodel") == true && PrototypeReader::readThumbnail(pathName, fileName, thumbnailPNGData) == true) ||
-						(StringTools::endsWith(fileNameLowerCase, ".tm") == true && FileSystem::getInstance()->getThumbnailAttachment(pathName, fileName, thumbnailPNGData) == true)) &&
-						thumbnailPNGData.empty() == false) {
-						static int thumbnailIdx = 0; // TODO: improve me
-						thumbnailTexture = TextureReader::readPNG("tdme.editor.projectpathfiles." + to_string(thumbnailIdx++), thumbnailPNGData, false);
-					} else {
-						// no valid thumbnail texture
-						templateSource = "button_template_thumbnail.xml";
-					}
-					if (thumbnailTexture != nullptr) {
-						auto textureWidth = thumbnailTexture->getTextureWidth();
-						auto textureHeight = thumbnailTexture->getTextureHeight();
-						auto scale = 1.0f;
-						if (textureWidth > textureHeight) {
-							scale = 128.0f / static_cast<float>(textureWidth);
-						} else {
-							scale = 128.0f / static_cast<float>(textureHeight);
-						}
-						auto scaledTextureWidth = static_cast<int>(static_cast<float>(textureWidth) * scale);
-						auto scaledTextureHeight = static_cast<int>(static_cast<float>(textureHeight) * scale);
-						if (textureWidth != scaledTextureWidth || textureHeight != scaledTextureHeight) {
-							auto thumbnailTextureScaled = TextureReader::scale(thumbnailTexture, scaledTextureWidth, scaledTextureHeight);
-							thumbnailTexture->releaseReference();
-							thumbnailTextureScaled->acquireReference();
-							thumbnailTexture = thumbnailTextureScaled;
-						}
-						iconBig.clear();
-					}
-					if (iconBig.empty() == false) icon.clear();
-
-					//
-					auto fileEntity = new FileEntity();
-					fileEntity->id = "projectpathfiles_file_" + GUIParser::escapeQuotes(Tools::getFileName(fileName));
-					fileEntity->buttonXML =
-						string() +
-						"<button " +
-						"id=\"" + fileEntity->id + "\" " +
-						"value=\"" + GUIParser::escapeQuotes(absolutePath) + "\" " +
-						"template=\"" + templateSource + "\" " +
-						"size=\"75\" " +
-						"thumbnail=\"" + GUIParser::escapeQuotes(thumbNail) + "\" " +
-						"icon=\"" + GUIParser::escapeQuotes(icon) + "\" " +
-						"icon-big=\"" + GUIParser::escapeQuotes(iconBig) + "\" " +
-						"filename=\"" + GUIParser::escapeQuotes(fileName) + "\" " +
-						"type-color=\"" + GUIParser::escapeQuotes(typeColor) + "\" " +
-						"/>\n";
-					fileEntity->thumbnailTexture = thumbnailTexture;
-					editorScreenController->lockFileEntities();
-					editorScreenController->getFileEntities().push_back(fileEntity);
-					editorScreenController->unlockFileEntities();
-					Thread::sleep(1LL);
-				} catch (Exception& exception) {
-					errorMessage = exception.what();
-					error = true;
-					Console::println("EditorScreenController::ScanFilesThread::run(): Error: " + errorMessage);
+				string templateSource = "button_template_thumbnail_texture.xml";
+				Texture* thumbnailTexture = nullptr;
+				vector<uint8_t> thumbnailPNGData;
+				if (StringTools::endsWith(fileNameLowerCase, ".png") == true) {
+					thumbnailTexture = TextureReader::read(pathName, fileName, false);
+				} else
+				if (((StringTools::endsWith(fileNameLowerCase, ".tmodel") == true && PrototypeReader::readThumbnail(pathName, fileName, thumbnailPNGData) == true) ||
+					(StringTools::endsWith(fileNameLowerCase, ".tm") == true && FileSystem::getInstance()->getThumbnailAttachment(pathName, fileName, thumbnailPNGData) == true)) &&
+					thumbnailPNGData.empty() == false) {
+					static int thumbnailIdx = 0; // TODO: improve me
+					thumbnailTexture = TextureReader::readPNG("tdme.editor.projectpathfiles." + to_string(thumbnailIdx++), thumbnailPNGData, false);
+				} else {
+					// no valid thumbnail texture
+					templateSource = "button_template_thumbnail.xml";
 				}
+				if (thumbnailTexture != nullptr) {
+					auto textureWidth = thumbnailTexture->getTextureWidth();
+					auto textureHeight = thumbnailTexture->getTextureHeight();
+					auto scale = 1.0f;
+					if (textureWidth > textureHeight) {
+						scale = 128.0f / static_cast<float>(textureWidth);
+					} else {
+						scale = 128.0f / static_cast<float>(textureHeight);
+					}
+					auto scaledTextureWidth = static_cast<int>(static_cast<float>(textureWidth) * scale);
+					auto scaledTextureHeight = static_cast<int>(static_cast<float>(textureHeight) * scale);
+					if (textureWidth != scaledTextureWidth || textureHeight != scaledTextureHeight) {
+						auto thumbnailTextureScaled = TextureReader::scale(thumbnailTexture, scaledTextureWidth, scaledTextureHeight);
+						thumbnailTexture->releaseReference();
+						thumbnailTextureScaled->acquireReference();
+						thumbnailTexture = thumbnailTextureScaled;
+					}
+					iconBig.clear();
+				}
+				if (iconBig.empty() == false) icon.clear();
+
+				//
+				auto fileEntity = new FileEntity();
+				fileEntity->id = "projectpathfiles_file_" + GUIParser::escapeQuotes(Tools::getFileName(fileName));
+				fileEntity->buttonXML =
+					string() +
+					"<button " +
+					"id=\"" + fileEntity->id + "\" " +
+					"value=\"" + GUIParser::escapeQuotes(absolutePath) + "\" " +
+					"template=\"" + templateSource + "\" " +
+					"size=\"75\" " +
+					"icon=\"" + GUIParser::escapeQuotes(icon) + "\" " +
+					"icon-big=\"" + GUIParser::escapeQuotes(iconBig) + "\" " +
+					"filename=\"" + GUIParser::escapeQuotes(fileName) + "\" " +
+					"type-color=\"" + GUIParser::escapeQuotes(typeColor) + "\" " +
+					"/>\n";
+				fileEntity->thumbnailTexture = thumbnailTexture;
+				editorScreenController->lockFileEntities();
+				editorScreenController->getFileEntities().push_back(fileEntity);
+				editorScreenController->unlockFileEntities();
+				Thread::sleep(1LL);
+			} catch (Exception& exception) {
+				errorMessage = exception.what();
+				error = true;
+				Console::println("EditorScreenController::ScanFilesThread::run(): Error: " + errorMessage);
 			}
 		}
 	}
@@ -1020,6 +1087,16 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 	if (fileOpenThread != nullptr) {
 		Console::println("EditorScreenController::onOpenFile(): " + absoluteFileName + ": file open thread is already busy with opening a file");
 		showErrorPopUp("Error", string() + "File open thread is already busy with opening a file");
+		return;
+	}
+
+	// path
+	if (FileSystem::getInstance()->isPath(absoluteFileName)) {
+		fileNameSearchTerm.clear();
+		timeFileNameSearchTerm = -1LL;
+		stopScanFiles();
+		setRelativeProjectPath(StringTools::substring(absoluteFileName, projectPath.size() + 1));
+		startScanFiles();
 		return;
 	}
 

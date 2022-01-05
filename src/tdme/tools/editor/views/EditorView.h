@@ -70,6 +70,7 @@ public:
 	void activate() override;
 	void deactivate() override;
 	void dispose() override;
+	void tick() override;
 
 	/**
 	 * Set outliner content

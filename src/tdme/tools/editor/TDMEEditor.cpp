@@ -106,6 +106,7 @@ void TDMEEditor::display()
 	engine->display();
 	engine->getGUI()->handleEvents();
 	engine->getGUI()->render();
+	if (view != nullptr) view->tick();
 	if (quitRequested == true) {
 		if (view != nullptr) {
 			view->deactivate();

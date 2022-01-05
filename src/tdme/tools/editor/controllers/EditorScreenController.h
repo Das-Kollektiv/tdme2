@@ -475,6 +475,12 @@ public:
 	void addPendingFileEntities();
 
 	/**
+	 * Set relative project path
+	 * @param relativeProjectPath relative project path
+	 */
+	void setRelativeProjectPath(const string& relativeProjectPath);
+
+	/**
 	 * On add file
 	 * @param type type
 	 */

@@ -125,8 +125,6 @@ void EditorView::display()
 	}
 	//
 	Audio::getInstance()->update();
-	//
-	editorScreenController->tick();
 }
 
 void EditorView::updateGUIElements()
@@ -169,6 +167,12 @@ void EditorView::dispose()
 {
 	editorScreenController->dispose();
 	Engine::getInstance()->reset();
+}
+
+void EditorView::tick()
+{
+	//
+	editorScreenController->tick();
 }
 
 void EditorView::setOutlinerContent(const string& xml) {
