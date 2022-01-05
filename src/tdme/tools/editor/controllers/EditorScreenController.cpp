@@ -669,10 +669,9 @@ void EditorScreenController::ScanFilesThread::run() {
 			string fileName = "..";
 
 			//
-			string templateSource = "button_template_thumbnail.xml";
+			string templateSource = "button_template_thumbnail_nobackground.xml";
 			string icon = "";
 			string iconBig = "{$icon.type_folder_big}";
-			string typeColor = "{$color.type_folder}";
 
 			//
 			auto fileEntity = new FileEntity();
@@ -687,7 +686,6 @@ void EditorScreenController::ScanFilesThread::run() {
 				"icon=\"" + GUIParser::escapeQuotes(icon) + "\" " +
 				"icon-big=\"" + GUIParser::escapeQuotes(iconBig) + "\" " +
 				"filename=\"" + GUIParser::escapeQuotes(fileName) + "\" " +
-				"type-color=\"" + GUIParser::escapeQuotes(typeColor) + "\" " +
 				"/>\n";
 			editorScreenController->lockFileEntities();
 			editorScreenController->getFileEntities().push_back(fileEntity);
@@ -701,10 +699,9 @@ void EditorScreenController::ScanFilesThread::run() {
 			auto absolutePath = pathName + "/" + fileName;
 			if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == false) continue;
 
-			string templateSource = "button_template_thumbnail.xml";
+			string templateSource = "button_template_thumbnail_nobackground.xml";
 			string icon = "";
 			string iconBig = "{$icon.type_folder_big}";
-			string typeColor = "{$color.type_folder}";
 
 			//
 			auto fileEntity = new FileEntity();
@@ -719,7 +716,6 @@ void EditorScreenController::ScanFilesThread::run() {
 				"icon=\"" + GUIParser::escapeQuotes(icon) + "\" " +
 				"icon-big=\"" + GUIParser::escapeQuotes(iconBig) + "\" " +
 				"filename=\"" + GUIParser::escapeQuotes(fileName) + "\" " +
-				"type-color=\"" + GUIParser::escapeQuotes(typeColor) + "\" " +
 				"/>\n";
 			editorScreenController->lockFileEntities();
 			editorScreenController->getFileEntities().push_back(fileEntity);
