@@ -35,6 +35,7 @@
 #include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/Thread.h>
 #include <tdme/tools/editor/controllers/AboutDialogScreenController.h>
 #include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
@@ -99,6 +100,7 @@ using tdme::math::Matrix2D3x3;
 using tdme::os::filesystem::FileNameFilter;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::os::threading::Mutex;
 using tdme::os::threading::Thread;
 using tdme::tools::editor::controllers::AboutDialogScreenController;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
@@ -131,9 +133,14 @@ using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 
-EditorScreenController::EditorScreenController(EditorView* view)
+EditorScreenController::EditorScreenController(EditorView* view): fileEntitiesMutex("fileentities-mutex")
 {
 	this->view = view;
+}
+
+EditorScreenController::~EditorScreenController()
+{
+	// TODO
 }
 
 GUIScreenNode* EditorScreenController::getScreenNode()
@@ -174,6 +181,7 @@ void EditorScreenController::initialize()
 
 void EditorScreenController::dispose()
 {
+	stopScanFiles();
 }
 
 void EditorScreenController::setScreenCaption(const string& text)
@@ -199,20 +207,9 @@ void EditorScreenController::onValueChanged(GUIElementNode* node)
 	if (node->getId() == "selectbox_projectpaths") {
 		fileNameSearchTerm.clear();
 		timeFileNameSearchTerm = -1LL;
-		string xml;
-		fileNameButtonXMLMapping.clear();
-		for (auto& fileNameTextureMappingIt: fileNameTextureMapping) fileNameTextureMappingIt.second->releaseReference();
-		fileNameTextureMapping.clear();
+		stopScanFiles();
 		relativeProjectPath = node->getController()->getValue().getString();
-		scanProjectPathFiles();
-		listProjectPathFiles(xml);
-		try {
-			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(projectPathFilesScrollArea->getId()))->replaceSubNodes(xml, true);
-		} catch (Exception& exception) {
-			Console::print(string("EditorScreenController::onValueChanged(): An error occurred: "));
-			Console::println(string(exception.what()));
-		}
-		updateProjectPathThumbnails();
+		startScanFiles();
 	} else
 	if (node->getId() == "dropdown_projectlibrary_add") {
 		onAddFile(node->getController()->getValue().getString());
@@ -368,6 +365,7 @@ void EditorScreenController::openProject(const string& path) {
 	closeProject();
 	view->getPopUps()->getFileDialogScreenController()->setDefaultCWD(projectPath);
 	scanProjectPaths();
+	startScanFiles();
 	//
 	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("projectlibrary_import"))->getController()->setDisabled(false);
 	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("projectpathfiles_search"))->getController()->setDisabled(false);
@@ -495,12 +493,10 @@ void EditorScreenController::closeTabs() {
 }
 
 void EditorScreenController::closeProject() {
+	stopScanFiles();
 	view->getPopUps()->getFileDialogScreenController()->setDefaultCWD(string());
 	closeTabs();
 	clearProjectPathFiles();
-	fileNameButtonXMLMapping.clear();
-	for (auto& fileNameTextureMappingIt: fileNameTextureMapping) fileNameTextureMappingIt.second->releaseReference();
-	fileNameTextureMapping.clear();
 	//
 	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("projectlibrary_import"))->getController()->setDisabled(true);
 	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("projectpathfiles_search"))->getController()->setDisabled(true);
@@ -514,8 +510,69 @@ void EditorScreenController::clearProjectPathFiles() {
 	required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(projectPathFilesScrollArea->getId()))->clearSubNodes();
 }
 
-void EditorScreenController::scanProjectPathFiles() {
-	auto pathName = projectPath + "/" + relativeProjectPath;
+void EditorScreenController::startScanFiles() {
+	stopScanFiles();
+	try {
+		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(projectPathFilesScrollArea->getId()))->clearSubNodes();
+	} catch (Exception& exception) {
+		Console::print(string("EditorScreenController::startScanFiles(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+	Console::println("EditorScreenController::startScanFiles()");
+	scanFilesThread = new ScanFilesThread(this, projectPath + "/" + relativeProjectPath, StringTools::toLowerCase(fileNameSearchTerm));
+	scanFilesThread->start();
+}
+
+void EditorScreenController::addPendingFileEntities() {
+	string xml;
+	xml+= "<layout alignment=\"horizontal\">\n";
+	for (auto pendingFileEntity: pendingFileEntities) {
+		xml+= pendingFileEntity->buttonXML;
+	}
+	xml+= "</layout>\n";
+	//
+	try {
+		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(projectPathFilesScrollArea->getId()))->addSubNodes(xml, false);
+	} catch (Exception& exception) {
+		Console::print(string("EditorScreenController::addPendingFileEntities(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+	//
+	for (auto pendingFileEntity: pendingFileEntities) {
+		if (pendingFileEntity->thumbnailTexture == nullptr) continue;
+		if (screenNode->getNodeById(pendingFileEntity->id + "_texture_normal") == nullptr) continue;
+		try {
+			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById(pendingFileEntity->id + "_texture_normal"))->setTexture(pendingFileEntity->thumbnailTexture);
+			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById(pendingFileEntity->id + "_texture_mouseover"))->setTexture(pendingFileEntity->thumbnailTexture);
+			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById(pendingFileEntity->id + "_texture_clicked"))->setTexture(pendingFileEntity->thumbnailTexture);
+		} catch (Exception& exception) {
+			Console::print(string("EditorScreenController::addPendingFileEntities(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+		if (pendingFileEntity->thumbnailTexture != nullptr) pendingFileEntity->thumbnailTexture->releaseReference();
+		delete pendingFileEntity;
+	}
+	pendingFileEntities.clear();
+}
+
+void EditorScreenController::stopScanFiles() {
+	Console::println("EditorScreenController::stopScanFiles()");
+	if (scanFilesThread != nullptr) {
+		scanFilesThread->stop();
+		scanFilesThread->join();
+		lockFileEntities();
+		for (auto fileEntity: getFileEntities()) {
+			if (fileEntity->thumbnailTexture != nullptr) fileEntity->thumbnailTexture->releaseReference();
+			delete fileEntity;
+		}
+		getFileEntities().clear();
+		unlockFileEntities();
+		delete scanFilesThread;
+		scanFilesThread = nullptr;
+	}
+}
+
+void EditorScreenController::ScanFilesThread::run() {
 	class ListFilter : public virtual FileNameFilter {
 		public:
 			virtual ~ListFilter() {}
@@ -581,130 +638,109 @@ void EditorScreenController::scanProjectPathFiles() {
 	vector<string> files;
 
 	if (FileSystem::getInstance()->fileExists(pathName) == false) {
-		Console::println("EditorScreenController::scanProjectPathFiles(): Error: file does not exist: " + pathName);
+		Console::println("EditorScreenController::ScanFilesThread::run(): Error: file does not exist: " + pathName);
 	} else
 	if (FileSystem::getInstance()->isPath(pathName) == false) {
 		if (listFilter.accept(".", pathName) == true) {
-			Console::println("EditorScreenController::scanProjectPathFiles(): Error: path is file: " + pathName);
+			Console::println("EditorScreenController::ScanFilesThread::run(): Error: path is file: " + pathName);
 		} else {
-			Console::println("EditorScreenController::scanProjectPathFiles(): Error: file exist, but does not match filter: " + pathName);
+			Console::println("EditorScreenController::ScanFilesThread::run(): Error: file exist, but does not match filter: " + pathName);
 		}
 	} else {
 		FileSystem::getInstance()->list(pathName, files, &listFilter);
 		for (auto fileName: files) {
+			if (isStopRequested() == true) break;
+
 			auto absolutePath = pathName + "/" + fileName;
 			if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) {
 				// no op for now
 			} else {
-				// TODO: how to associate button with file name
+				//
 				auto fileNameLowerCase = StringTools::toLowerCase(fileName);
-				//
-				string icon = "resources/engine/images/folder.png";
-				string iconBig;
-				string typeColor;
-				auto image = FileDialogScreenController::getFileImageName(fileName);
-				icon = "{$icon.type_" + image + "}";
-				iconBig = "{$icon.type_" + image + "_big}";
-				typeColor = "{$color.type_" + image + "}";
+				if (searchTerm.empty() == false && fileNameLowerCase.find(searchTerm) == string::npos) continue;
 
 				//
-				auto _fileName = Tools::getFileName(fileName);
+				try {
+					//
+					string icon = "resources/engine/images/folder.png";
+					string iconBig;
+					string typeColor;
+					auto image = FileDialogScreenController::getFileImageName(fileName);
+					icon = "{$icon.type_" + image + "}";
+					iconBig = "{$icon.type_" + image + "_big}";
+					typeColor = "{$color.type_" + image + "}";
 
-				//
-				string thumbNail;
-				string templateSource = "button_template_thumbnail_texture.xml";
-				Texture* thumbnailTexture = nullptr;
-				vector<uint8_t> thumbnailPNGData;
-				if (StringTools::endsWith(fileNameLowerCase, ".png") == true) {
-					thumbnailTexture = TextureReader::read(pathName, fileName, false);
-				} else
-				if (((StringTools::endsWith(fileNameLowerCase, ".tmodel") == true && PrototypeReader::readThumbnail(pathName, fileName, thumbnailPNGData) == true) ||
-					(StringTools::endsWith(fileNameLowerCase, ".tm") == true && FileSystem::getInstance()->getThumbnailAttachment(pathName, fileName, thumbnailPNGData) == true)) &&
-					thumbnailPNGData.empty() == false) {
-					thumbnailTexture = TextureReader::readPNG("tdme.editor.projectpathfiles." + to_string(thumbnailIdx++), thumbnailPNGData, false);
-				} else {
-					// no valid thumbnail texture
-					templateSource = "button_template_thumbnail.xml";
-				}
-				if (thumbnailTexture != nullptr) {
-					auto textureWidth = thumbnailTexture->getTextureWidth();
-					auto textureHeight = thumbnailTexture->getTextureHeight();
-					auto scale = 1.0f;
-					if (textureWidth > textureHeight) {
-						scale = 128.0f / static_cast<float>(textureWidth);
+					//
+					auto _fileName = Tools::getFileName(fileName);
+
+					//
+					string thumbNail;
+					string templateSource = "button_template_thumbnail_texture.xml";
+					Texture* thumbnailTexture = nullptr;
+					vector<uint8_t> thumbnailPNGData;
+					if (StringTools::endsWith(fileNameLowerCase, ".png") == true) {
+						thumbnailTexture = TextureReader::read(pathName, fileName, false);
+					} else
+					if (((StringTools::endsWith(fileNameLowerCase, ".tmodel") == true && PrototypeReader::readThumbnail(pathName, fileName, thumbnailPNGData) == true) ||
+						(StringTools::endsWith(fileNameLowerCase, ".tm") == true && FileSystem::getInstance()->getThumbnailAttachment(pathName, fileName, thumbnailPNGData) == true)) &&
+						thumbnailPNGData.empty() == false) {
+						static int thumbnailIdx = 0; // TODO: improve me
+						thumbnailTexture = TextureReader::readPNG("tdme.editor.projectpathfiles." + to_string(thumbnailIdx++), thumbnailPNGData, false);
 					} else {
-						scale = 128.0f / static_cast<float>(textureHeight);
+						// no valid thumbnail texture
+						templateSource = "button_template_thumbnail.xml";
 					}
-					auto scaledTextureWidth = static_cast<int>(static_cast<float>(textureWidth) * scale);
-					auto scaledTextureHeight = static_cast<int>(static_cast<float>(textureHeight) * scale);
-					if (textureWidth != scaledTextureWidth || textureHeight != scaledTextureHeight) {
-						auto thumbnailTextureScaled = TextureReader::scale(thumbnailTexture, scaledTextureWidth, scaledTextureHeight);
-						thumbnailTexture->releaseReference();
-						thumbnailTextureScaled->acquireReference();
-						fileNameTextureMapping[_fileName] = thumbnailTextureScaled;
-					} else {
-						fileNameTextureMapping[_fileName] = thumbnailTexture;
+					if (thumbnailTexture != nullptr) {
+						auto textureWidth = thumbnailTexture->getTextureWidth();
+						auto textureHeight = thumbnailTexture->getTextureHeight();
+						auto scale = 1.0f;
+						if (textureWidth > textureHeight) {
+							scale = 128.0f / static_cast<float>(textureWidth);
+						} else {
+							scale = 128.0f / static_cast<float>(textureHeight);
+						}
+						auto scaledTextureWidth = static_cast<int>(static_cast<float>(textureWidth) * scale);
+						auto scaledTextureHeight = static_cast<int>(static_cast<float>(textureHeight) * scale);
+						if (textureWidth != scaledTextureWidth || textureHeight != scaledTextureHeight) {
+							auto thumbnailTextureScaled = TextureReader::scale(thumbnailTexture, scaledTextureWidth, scaledTextureHeight);
+							thumbnailTexture->releaseReference();
+							thumbnailTextureScaled->acquireReference();
+							thumbnailTexture = thumbnailTextureScaled;
+						}
+						iconBig.clear();
 					}
-					iconBig.clear();
-				}
-				if (iconBig.empty() == false) icon.clear();
+					if (iconBig.empty() == false) icon.clear();
 
-				//
-				auto buttonXML =
-					string() +
-					"<button " +
-					"id=\"projectpathfiles_file_" + GUIParser::escapeQuotes(Tools::getFileName(fileName)) + "\" " +
-					"value=\"" + GUIParser::escapeQuotes(absolutePath) + "\" " +
-					"template=\"" + templateSource + "\" " +
-					"size=\"75\" " +
-					"thumbnail=\"" + GUIParser::escapeQuotes(thumbNail) + "\" " +
-					"icon=\"" + GUIParser::escapeQuotes(icon) + "\" " +
-					"icon-big=\"" + GUIParser::escapeQuotes(iconBig) + "\" " +
-					"filename=\"" + GUIParser::escapeQuotes(fileName) + "\" " +
-					"type-color=\"" + GUIParser::escapeQuotes(typeColor) + "\" " +
-					"/>\n";
-				fileNameButtonXMLMapping[_fileName] = buttonXML;
+					//
+					auto fileEntity = new FileEntity();
+					fileEntity->id = "projectpathfiles_file_" + GUIParser::escapeQuotes(Tools::getFileName(fileName));
+					fileEntity->buttonXML =
+						string() +
+						"<button " +
+						"id=\"" + fileEntity->id + "\" " +
+						"value=\"" + GUIParser::escapeQuotes(absolutePath) + "\" " +
+						"template=\"" + templateSource + "\" " +
+						"size=\"75\" " +
+						"thumbnail=\"" + GUIParser::escapeQuotes(thumbNail) + "\" " +
+						"icon=\"" + GUIParser::escapeQuotes(icon) + "\" " +
+						"icon-big=\"" + GUIParser::escapeQuotes(iconBig) + "\" " +
+						"filename=\"" + GUIParser::escapeQuotes(fileName) + "\" " +
+						"type-color=\"" + GUIParser::escapeQuotes(typeColor) + "\" " +
+						"/>\n";
+					fileEntity->thumbnailTexture = thumbnailTexture;
+					editorScreenController->lockFileEntities();
+					editorScreenController->getFileEntities().push_back(fileEntity);
+					editorScreenController->unlockFileEntities();
+					Thread::sleep(1LL);
+				} catch (Exception& exception) {
+					errorMessage = exception.what();
+					error = true;
+					Console::println("EditorScreenController::ScanFilesThread::run(): Error: " + errorMessage);
+				}
 			}
 		}
 	}
-}
-
-void EditorScreenController::listProjectPathFiles(string& xml, const string& searchTerm) {
-	auto idx = 0;
-	auto searchTermLowerCase = StringTools::toLowerCase(searchTerm);
-	for (auto& fileNameButtonXMLMappingIt: fileNameButtonXMLMapping) {
-		if (idx % 2 == 0) {
-			if (xml.empty() == false) {
-				xml+= "</layout>\n";
-			}
-			xml+= "<layout alignment=\"horizontal\">\n";
-		}
-		auto& fileName = fileNameButtonXMLMappingIt.first;
-		auto fileNameLowerCase = StringTools::toLowerCase(fileName);
-		if (fileNameLowerCase.find(searchTerm) == string::npos) continue;
-		auto& buttonXML = fileNameButtonXMLMappingIt.second;
-		xml+= buttonXML;
-		idx++;
-	}
-	if (xml.empty() == false) {
-		xml+= "</layout>\n";
-	}
-}
-
-void EditorScreenController::updateProjectPathThumbnails() {
-	for (auto& fileNameTextureMappingIt: fileNameTextureMapping) {
-		auto& fileName = fileNameTextureMappingIt.first;
-		auto texture = fileNameTextureMappingIt.second;
-		if (screenNode->getNodeById("projectpathfiles_file_" + GUIParser::escapeQuotes(fileName) + "_texture_normal") == nullptr) continue;
-		try {
-			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("projectpathfiles_file_" + GUIParser::escapeQuotes(fileName) + "_texture_normal"))->setTexture(texture);
-			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("projectpathfiles_file_" + GUIParser::escapeQuotes(fileName) + "_texture_mouseover"))->setTexture(texture);
-			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("projectpathfiles_file_" + GUIParser::escapeQuotes(fileName) + "_texture_clicked"))->setTexture(texture);
-		} catch (Exception& exception) {
-			Console::print(string("EditorScreenController::onValueChanged(): An error occurred: "));
-			Console::println(string(exception.what()));
-		}
-	}
+	finished = true;
 }
 
 void EditorScreenController::onAddFile(const string& type) {
@@ -1487,16 +1523,30 @@ const string EditorScreenController::getSelectedTabId() {
 void EditorScreenController::tick() {
 	auto now = Time::getCurrentMillis();
 	if (timeFileNameSearchTerm != -1LL && now - timeFileNameSearchTerm >= 1000LL) {
-		string xml;
-		listProjectPathFiles(xml, fileNameSearchTerm);
-		try {
-			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(projectPathFilesScrollArea->getId()))->replaceSubNodes(xml, true);
-		} catch (Exception& exception) {
-			Console::print(string("EditorScreenController::tick(): An error occurred: "));
-			Console::println(string(exception.what()));
-		}
-		updateProjectPathThumbnails();
+		startScanFiles();
 		timeFileNameSearchTerm = -1LL;
+	}
+	if (scanFilesThread != nullptr) {
+		lockFileEntities();
+		for (auto fileEntity: getFileEntities()) {
+			pendingFileEntities.push_back(fileEntity);
+			if (pendingFileEntities.size() == 2) addPendingFileEntities();
+		}
+		getFileEntities().clear();
+		if (scanFilesThread->isFinished() == true) {
+			scanFilesThread->join();
+			addPendingFileEntities();
+			if (scanFilesThread->isError() == true) {
+				if (scanFilesThread->getErrorMessage().empty() == true) {
+					showErrorPopUp("Error", string() + "An error occurred: Unknown error");
+				} else {
+					showErrorPopUp("Error", string() + "An error occurred: " + scanFilesThread->getErrorMessage());
+				}
+			}
+			delete scanFilesThread;
+			scanFilesThread = nullptr;
+		}
+		unlockFileEntities();
 	}
 	if (fileOpenThread != nullptr) {
 		if (fileOpenThread->isFinished() == true) {
@@ -1516,6 +1566,7 @@ void EditorScreenController::tick() {
 					fileOpenThread->getScene()
 				);
 			}
+			delete fileOpenThread;
 			fileOpenThread = nullptr;
 		} else {
 			view->getPopUps()->getProgressBarScreenController()->progress2(fileOpenThread->getProgress());

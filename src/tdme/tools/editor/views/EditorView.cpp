@@ -167,6 +167,7 @@ void EditorView::deactivate()
 
 void EditorView::dispose()
 {
+	editorScreenController->dispose();
 	Engine::getInstance()->reset();
 }
 

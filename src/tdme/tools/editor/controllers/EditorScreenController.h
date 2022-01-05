@@ -16,6 +16,7 @@
 #include <tdme/gui/events/GUIContextMenuRequestListener.h>
 #include <tdme/gui/events/GUIFocusListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/Thread.h>
 #include <tdme/tools/editor/controllers/fwd-tdme.h>
 #include <tdme/tools/editor/controllers/ScreenController.h>
@@ -46,6 +47,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
+using tdme::os::threading::Mutex;
 using tdme::os::threading::Thread;
 using tdme::tools::editor::controllers::ScreenController;
 using tdme::tools::editor::tabcontrollers::TabController;
@@ -188,9 +190,6 @@ private:
 	string projectPath;
 	string relativeProjectPath;
 	unordered_map<string, EditorTabView> tabViews;
-	unordered_map<string, Texture*> fileNameTextureMapping;
-	map<string, string> fileNameButtonXMLMapping;
-	int thumbnailIdx { 0 };
 	string fileNameSearchTerm;
 	int64_t timeFileNameSearchTerm { -1LL };
 
@@ -257,7 +256,7 @@ private:
 		/**
 		 * @return if error occurred during opening files
 		 */
-		inline volatile bool isError() {
+		inline bool isError() {
 			return error;
 		}
 
@@ -287,6 +286,98 @@ private:
 
 	FileOpenThread* fileOpenThread { nullptr };
 
+	struct FileEntity {
+		string id;
+		string buttonXML;
+		Texture* thumbnailTexture { nullptr };
+	};
+
+	//
+	class ScanFilesThread: public Thread {
+	public:
+		/**
+		 * Constructor
+		 * @param pathName path name
+		 */
+		ScanFilesThread(EditorScreenController* editorScreenController, const string& pathName, const string& searchTerm): Thread("ScanFilesThread"), editorScreenController(editorScreenController), pathName(pathName), searchTerm(searchTerm) {}
+
+		/**
+		 * @return path name
+		 */
+		inline const string& getPathName() {
+			return pathName;
+		}
+
+		/**
+		 * @return error message
+		 */
+		inline const string& getErrorMessage() {
+			return errorMessage;
+		}
+
+		/**
+		 * @return progress
+		 */
+		inline float getProgress() {
+			return progress;
+		}
+
+		/**
+		 * @return if error occurred during opening files
+		 */
+		inline bool isError() {
+			return error;
+		}
+
+		/**
+		 * @return if thread has finished
+		 */
+		inline volatile bool isFinished() {
+			return finished;
+		}
+
+		/**
+		 * Run
+		 */
+		virtual void run();
+	private:
+		EditorScreenController* editorScreenController { nullptr };
+		string pathName;
+		string searchTerm;
+		string errorMessage;
+		float progress { 0.0f };
+
+		bool error { false };
+		volatile bool finished { false };
+	};
+
+	Mutex fileEntitiesMutex;
+	vector<FileEntity*> fileEntities;
+
+	/**
+	 * Lock file entities mutex
+	 */
+	inline void lockFileEntities() {
+		fileEntitiesMutex.lock();
+	}
+
+	/**
+	 * Unlock file entities mutex
+	 */
+	inline void unlockFileEntities() {
+		fileEntitiesMutex.unlock();
+	}
+
+	/**
+	 * @return file entities
+	 */
+	inline vector<FileEntity*>& getFileEntities() {
+		return fileEntities;
+	}
+
+	ScanFilesThread* scanFilesThread { nullptr };
+	vector<FileEntity*> pendingFileEntities;
+
 public:
 
 	/**
@@ -294,6 +385,11 @@ public:
 	 * @param view view
 	 */
 	EditorScreenController(EditorView* view);
+
+	/**
+	 * Public destructor
+	 */
+	~EditorScreenController();
 
 	// overridden methods
 	GUIScreenNode* getScreenNode() override;
@@ -364,16 +460,19 @@ public:
 	void scanProjectPathFiles();
 
 	/**
-	 * List project path files
-	 * @param xml xml
-	 * @param searchTerm search term
+	 * Start scan files
 	 */
-	void listProjectPathFiles(string& xml, const string& searchTerm = string());
+	void startScanFiles();
 
 	/**
-	 * Update project path thumbnails
+	 * Stop scan files
 	 */
-	void updateProjectPathThumbnails();
+	void stopScanFiles();
+
+	/**
+	 * Add project path files pending file entities
+	 */
+	void addPendingFileEntities();
 
 	/**
 	 * On add file

@@ -123,6 +123,7 @@ void TDMEEditor::dispose()
 		view = nullptr;
 	}
 	engine->dispose();
+	popUps->dispose();
 	Tools::oseDispose();
 }
 

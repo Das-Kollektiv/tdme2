@@ -166,9 +166,10 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 			}
 		}
 		if (mouseDraggingSlideValueActive == true) {
-			Application::setMouseCursor(MOUSE_CURSOR_NORMAL);
+			// Application::setMouseCursor(MOUSE_CURSOR_NORMAL);
 			Application::setMousePosition(mouseOriginalPosition[0], mouseOriginalPosition[1]);
 		}
+		Application::setMouseCursor(MOUSE_CURSOR_NORMAL); // TODO: fix me
 		mouseDraggingInit = false;
 		mouseDraggingSlideValueActive = false;
 		mouseDraggingSelectionActive = false;
