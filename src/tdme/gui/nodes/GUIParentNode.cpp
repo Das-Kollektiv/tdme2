@@ -87,16 +87,19 @@ GUIParentNode::GUIParentNode(
 	this->computeViewportCache = true;
 }
 
-void GUIParentNode::clearSubNodes()
+vector<GUINode*> GUIParentNode::detachSubNodes()
 {
+	//
+	auto detachedSubNodes = subNodes;
+	for (auto subNode: detachedSubNodes) {
+		subNode->parentNode = nullptr;
+	}
+
+	//
 	auto parentControllerNode = controller != nullptr?this:getParentControllerNode();
 
 	childrenRenderOffsetX = 0.0f;
 	childrenRenderOffsetY = 0.0f;
-	for (auto i = 0; i < subNodes.size(); i++) {
-		auto subNode = subNodes[i];
-		screenNode->removeNode(subNode);
-	}
 	subNodes.clear();
 
 	{
@@ -119,6 +122,21 @@ void GUIParentNode::clearSubNodes()
 			_parentControllerNode->getController()->onSubTreeChange();
 			_parentControllerNode = _parentControllerNode->getParentControllerNode();
 		}
+	}
+
+	//
+	return detachedSubNodes;
+}
+
+void GUIParentNode::clearSubNodes()
+{
+	//
+	auto detachedSubNodes = detachSubNodes();
+
+	//
+	for (auto i = 0; i < detachedSubNodes.size(); i++) {
+		auto subNode = detachedSubNodes[i];
+		screenNode->removeNode(subNode);
 	}
 }
 
@@ -250,6 +268,43 @@ void GUIParentNode::addSubNode(GUINode* node)
 	subNodes.push_back(node);
 	if (node->flow == GUINode_Flow::FLOATING) {
 		floatingNodesCache.push_back(node);
+	}
+}
+
+void GUIParentNode::moveNodes(GUIParentNode* otherParentNode) {
+	auto detachedSubNodes = otherParentNode->detachSubNodes();
+
+	//
+	screenNode->forceInvalidateLayout(this);
+
+	// attach detached sub nodes here
+	for (auto subNode: detachedSubNodes) {
+		subNode->parentNode = this;
+		subNodes.push_back(subNode);
+	}
+
+	floatingNodesCache.clear();
+	for (auto i = 0; i < subNodes.size(); i++) {
+		auto guiSubNode = subNodes[i];
+		if (guiSubNode->flow == GUINode_Flow::FLOATING) {
+			floatingNodesCache.push_back(guiSubNode);
+		}
+	}
+
+	invalidateRenderCaches();
+	setConditionsMet();
+	screenNode->forceInvalidateLayout(this->parentNode != nullptr?this->parentNode:this);
+
+	if (overflowX == GUIParentNode_Overflow::SCROLL) childrenRenderOffsetX = 0.0f;
+	if (overflowY == GUIParentNode_Overflow::SCROLL) childrenRenderOffsetY = 0.0f;
+
+	//
+	{
+		auto parentControllerNode = controller != nullptr?this:getParentControllerNode();
+		while (parentControllerNode != nullptr) {
+			parentControllerNode->getController()->onSubTreeChange();
+			parentControllerNode = parentControllerNode->getParentControllerNode();
+		}
 	}
 }
 

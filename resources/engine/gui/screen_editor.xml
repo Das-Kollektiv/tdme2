@@ -1,191 +1,197 @@
 <screen id="screen_editor" background-color="{$color.element_background}" min-width="1024" min-height="768" max-width="3200" max-height="1800">
-	<layout alignment="vertical" width="100%" height="100%">
-		<layout padding="5" alignment="horizontal" vertical-align="center" width="100%" height="30">
-			<space width="5"/>
-			<image src="resources/engine/images/tdme.png"/>
-			<space width="5"/>
-			<menu-header>
-				<menu-header-item text="File">
-					<menu-item id="menu_file_new" image="resources/engine/images/new_data.png" text="New Project" shortcut="Ctrl N"/>
-					<menu-item id="menu_file_open" image="resources/engine/images/folder.png" text="Open Project" shortcut="Ctrl O"/>
-					<menu-separator />
-					<menu-item id="menu_file_save" image="resources/engine/images/save.png" text="Save" shortcut="Ctrl S"/>
-					<menu-item id="menu_file_saveas" text="Save as..." shortcut="Shift Ctrl S"/>
-					<menu-item id="menu_file_saveall" text="Save all" shortcut=""/>
-					<menu-separator />
-					<menu-item id="menu_file_quit" image="resources/engine/images/quit.png" text="Quit" shortcut="Ctrl Q" />
-				</menu-header-item>
-				<menu-header-item text="Edit">
-					<menu-item text="Undo" id="menu_edit_undo" />
-					<menu-item text="Redo" id="menu_edit_redo" />
-					<menu-separator />
-					<menu-item text="Cut" id="menu_edit_cut" />
-					<menu-item text="Copy" id="menu_edit_copy" />
-					<menu-item text="Paste" id="menu_edit_paste" />
-					<menu-separator />
-					<menu-item text="Delete" id="menu_edit_delete" />
-				</menu-header-item>
-				<menu-header-item text="Help">
-					<menu-item text="Documentation" id="menu_help_documentation" on-mouse-click="http://drewke.net/tdme2-documentation/alpha/public" />
-					<menu-item text="Community" id="menu_help_community" on-mouse-click="https://discord.gg/tMqrmcp23Q" />
-					<menu-item text="Bug Tracker" id="menu_help_bugtracker" on-mouse-click="https://open.codecks.io/tdme2" />
-					<menu-separator />
-					<menu-item text="About" id="menu_help_about" />
-				</menu-header-item>
-			</menu-header>
+	<element id="screen_editor_screen" width="100%" height="100%">
+		<layout id="fullscreen-content" show-on="fullscreen" alignment="vertical" width="100%" height="100%">
 		</layout>
-		
-		<layout alignment="horizontal" width="100%" height="*">
-		
-			<space width="5"/>
-		
-			<!-- project library -------------------------------------------------->
-			<tabs alignment="vertical" width="220" height="100%">
-				<tabs-header>
-					<tab id="tab_projectlibrary" text="Files" />
-				</tabs-header>
-				<tabs-content>
-					<tab-content tab-id="tab_projectlibrary" alignment="vertical">
-					
-						<layout padding="5" alignment="vertical" width="100%" height="100%">
-						
-							<input width="100%" height="auto" hint="Search" image="resources/engine/images/search.png" id="projectpaths_search" />
-							
-							<space height="5"/>
-							
-							<selectbox id="selectbox_projectpaths" boder="0">
-								<scrollarea id="selectbox_projectpaths_scrollarea" width="100%" height="200" focusable="true" background-color="{$color.element_midground}">
-
-								
-					
-								</scrollarea>
-							</selectbox>
-							
-							<space height="20"/>
-							
-							<input id="projectpathfiles_search" width="100%" height="auto" hint="Search" image="resources/engine/images/search.png" />
-							
-							<space height="5"/>
-							
-							<layout alignment="horizontal" width="100%" height="auto">
-								<dropdown template="dropdown_template_button.xml" id="dropdown_projectlibrary_add" width="50%" height="25" image="resources/engine/images/add.png" text="Create">
-									<!--
-									<dropdown-option text="Folder" value="folder" />
-									<menu-separator />
-									-->
-									<dropdown-option text="Empty" value="empty" />
-									<dropdown-option text="Trigger" value="trigger" />
-									<dropdown-option text="EnvMap" value="envmap" />
-									<dropdown-option text="Model" value="model" />
-									<dropdown-option text="Terrain" value="terrain" />
-									<dropdown-option text="Particle" value="particle" />
-									<dropdown-option text="Scene" value="scene" />
-									<!--
-									<dropdown-option text="Script" value="script" />
-									<dropdown-option text="GUI" value="gui" />
-									-->
-								</dropdown>
-								<space width="5"/>
-								<button id="projectlibrary_import" width="*" height="25" image="resources/engine/images/import.png" text="Import" />
-							</layout>
-							
-							<space height="5"/>
-							
-							<scrollarea id="selectbox_projectpathfiles_scrollarea" border="1" background-color="{$color.element_midground}" width="100%" height="*" focusable="true">
-							
-							
-							</scrollarea>
-							
-						</layout>
+		<layout hide-on="fullscreen" alignment="vertical" width="100%" height="100%">
+			<layout padding="5" alignment="horizontal" vertical-align="center" width="100%" height="30">
+				<space width="5"/>
+				<image src="resources/engine/images/tdme.png"/>
+				<space width="5"/>
+				<menu-header>
+					<menu-header-item text="File">
+						<menu-item id="menu_file_new" image="resources/engine/images/new_data.png" text="New Project" shortcut="Ctrl N"/>
+						<menu-item id="menu_file_open" image="resources/engine/images/folder.png" text="Open Project" shortcut="Ctrl O"/>
+						<menu-separator />
+						<menu-item id="menu_file_save" image="resources/engine/images/save.png" text="Save" shortcut="Ctrl S"/>
+						<menu-item id="menu_file_saveas" text="Save as..." shortcut="Shift Ctrl S"/>
+						<menu-item id="menu_file_saveall" text="Save all" shortcut=""/>
+						<menu-separator />
+						<menu-item id="menu_file_quit" image="resources/engine/images/quit.png" text="Quit" shortcut="Ctrl Q" />
+					</menu-header-item>
+					<menu-header-item text="Edit">
+						<menu-item text="Undo" id="menu_edit_undo" />
+						<menu-item text="Redo" id="menu_edit_redo" />
+						<menu-separator />
+						<menu-item text="Cut" id="menu_edit_cut" />
+						<menu-item text="Copy" id="menu_edit_copy" />
+						<menu-item text="Paste" id="menu_edit_paste" />
+						<menu-separator />
+						<menu-item text="Delete" id="menu_edit_delete" />
+					</menu-header-item>
+					<menu-header-item text="Help">
+						<menu-item text="Documentation" id="menu_help_documentation" on-mouse-click="http://drewke.net/tdme2-documentation/alpha/public" />
+						<menu-item text="Community" id="menu_help_community" on-mouse-click="https://discord.gg/tMqrmcp23Q" />
+						<menu-item text="Bug Tracker" id="menu_help_bugtracker" on-mouse-click="https://open.codecks.io/tdme2" />
+						<menu-separator />
+						<menu-item text="About" id="menu_help_about" />
+					</menu-header-item>
+				</menu-header>
+			</layout>
 			
-					</tab-content>
-				</tabs-content>
-			</tabs>
-			<!-------------------------------------------------------------------->
+			<layout alignment="horizontal" width="100%" height="*">
 			
+				<space width="5"/>
 			
-			<space width="5"/>
-			
-			
-			<!-- viewport -------------------------------------------------------->
-			<tabs id="tabs" alignment="vertical" width="*" height="100%" ignore-events="true">
-				<tabs-header id="tabs-header">
-				</tabs-header>
-				<tabs-content id="tabs-content" ignore-events="true">
-				</tabs-content>
-			</tabs>
-			<!------------------------------------------------------------------->
-			
-			
-			<space width="5"/>
-			
-			
-			<layout alignment="vertical" width="300" height="100%">
-
-
-				<!-- outliner --------------------------------------------------->
-				<tabs alignment="vertical" width="100%" height="40%">
+				<!-- project library -------------------------------------------------->
+				<tabs alignment="vertical" width="220" height="100%">
 					<tabs-header>
-						<tab id="tab_outliner" text="Outliner" />
+						<tab id="tab_projectlibrary" text="Files" />
 					</tabs-header>
 					<tabs-content>
-						<tab-content tab-id="tab_outliner" vertical-align="center">
+						<tab-content tab-id="tab_projectlibrary" alignment="vertical">
+						
 							<layout padding="5" alignment="vertical" width="100%" height="100%">
 							
+								<input width="100%" height="auto" hint="Search" image="resources/engine/images/search.png" id="projectpaths_search" />
+								
+								<space height="5"/>
+								
+								<selectbox id="selectbox_projectpaths" boder="0">
+									<scrollarea id="selectbox_projectpaths_scrollarea" width="100%" height="200" focusable="true" background-color="{$color.element_midground}">
+	
+									
+						
+									</scrollarea>
+								</selectbox>
+								
+								<space height="20"/>
+								
+								<input id="projectpathfiles_search" width="100%" height="auto" hint="Search" image="resources/engine/images/search.png" />
+								
+								<space height="5"/>
+								
 								<layout alignment="horizontal" width="100%" height="auto">
-									<input width="*" height="auto" hint="Search" image="resources/engine/images/search.png" id="outliner_search" />
-									<space width="5"/>
-									<dropdown template="dropdown_template_button.xml" id="dropdown_outliner_add" width="75" height="25" image="resources/engine/images/add.png" text="Add">
-										<dropdown-option text="Add" value="" selected="true" />
+									<dropdown template="dropdown_template_button.xml" id="dropdown_projectlibrary_add" width="50%" height="25" image="resources/engine/images/add.png" text="Create">
+										<!--
+										<dropdown-option text="Folder" value="folder" />
+										<menu-separator />
+										-->
+										<dropdown-option text="Empty" value="empty" />
+										<dropdown-option text="Trigger" value="trigger" />
+										<dropdown-option text="EnvMap" value="envmap" />
+										<dropdown-option text="Model" value="model" />
+										<dropdown-option text="Terrain" value="terrain" />
+										<dropdown-option text="Particle" value="particle" />
+										<dropdown-option text="Scene" value="scene" />
+										<!--
+										<dropdown-option text="Script" value="script" />
+										<dropdown-option text="GUI" value="gui" />
+										-->
 									</dropdown>
+									<space width="5"/>
+									<button id="projectlibrary_import" width="*" height="25" image="resources/engine/images/import.png" text="Import" />
 								</layout>
 								
 								<space height="5"/>
-							
-								<selectbox id="selectbox_outliner" boder="0" height="*" options="multiple">
-							
-									<scrollarea id="selectbox_outliner_scrollarea" background-color="{$color.element_midground}" width="100%" height="100%" focusable="true">
-
-
-
-									</scrollarea>
-									
-								</selectbox>
+								
+								<scrollarea id="selectbox_projectpathfiles_scrollarea" border="1" background-color="{$color.element_midground}" width="100%" height="*" focusable="true">
+								
+								
+								</scrollarea>
 								
 							</layout>
-						</tab-content>	
+				
+						</tab-content>
+					</tabs-content>
+				</tabs>
+				<!-------------------------------------------------------------------->
+				
+				
+				<space width="5"/>
+				
+				
+				<!-- viewport -------------------------------------------------------->
+				<tabs id="tabs" alignment="vertical" width="*" height="100%" ignore-events="true">
+					<tabs-header id="tabs-header">
+					</tabs-header>
+					<tabs-content id="tabs-content" ignore-events="true">
 					</tabs-content>
 				</tabs>
 				<!------------------------------------------------------------------->
 				
 				
-				<space height="5"/>
+				<space width="5"/>
 				
-				<!-- details panel -->
-				<tabs alignment="vertical" width="100%" height="*">
-					<tabs-header>
-						<tab id="tab_details" text="Details" />
-					</tabs-header>
-					<tabs-content>
-						<tab-content tab-id="tab_details" horizontal-align="center" vertical-align="top">
-							<layout padding="5" alignment="vertical" width="100%" height="100%">
-								<scrollarea id="selectbox_details_scrollarea" width="100%" height="100%" focusable="true">
+				
+				<layout alignment="vertical" width="300" height="100%">
+	
+	
+					<!-- outliner --------------------------------------------------->
+					<tabs alignment="vertical" width="100%" height="40%">
+						<tabs-header>
+							<tab id="tab_outliner" text="Outliner" />
+						</tabs-header>
+						<tabs-content>
+							<tab-content tab-id="tab_outliner" vertical-align="center">
+								<layout padding="5" alignment="vertical" width="100%" height="100%">
 								
-
+									<layout alignment="horizontal" width="100%" height="auto">
+										<input width="*" height="auto" hint="Search" image="resources/engine/images/search.png" id="outliner_search" />
+										<space width="5"/>
+										<dropdown template="dropdown_template_button.xml" id="dropdown_outliner_add" width="75" height="25" image="resources/engine/images/add.png" text="Add">
+											<dropdown-option text="Add" value="" selected="true" />
+										</dropdown>
+									</layout>
+									
+									<space height="5"/>
+								
+									<selectbox id="selectbox_outliner" boder="0" height="*" options="multiple">
+								
+										<scrollarea id="selectbox_outliner_scrollarea" background-color="{$color.element_midground}" width="100%" height="100%" focusable="true">
+	
+	
+	
+										</scrollarea>
+										
+									</selectbox>
+									
+								</layout>
+							</tab-content>	
+						</tabs-content>
+					</tabs>
+					<!------------------------------------------------------------------->
 					
-								</scrollarea>
-							</layout>
-						</tab-content>	
-					</tabs-content>
-				</tabs>
+					
+					<space height="5"/>
+					
+					<!-- details panel -->
+					<tabs alignment="vertical" width="100%" height="*">
+						<tabs-header>
+							<tab id="tab_details" text="Details" />
+						</tabs-header>
+						<tabs-content>
+							<tab-content tab-id="tab_details" horizontal-align="center" vertical-align="top">
+								<layout padding="5" alignment="vertical" width="100%" height="100%">
+									<scrollarea id="selectbox_details_scrollarea" width="100%" height="100%" focusable="true">
+									
+	
+						
+									</scrollarea>
+								</layout>
+							</tab-content>	
+						</tabs-content>
+					</tabs>
+				
+				</layout>
+				
+				<space width="5"/>
 			
 			</layout>
 			
-			<space width="5"/>
+			<space height="5"/>
 		
 		</layout>
-		
-		<space height="5"/>
+
+	</element>
 	
-	</layout>	
 </screen>

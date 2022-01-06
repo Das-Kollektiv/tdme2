@@ -370,6 +370,17 @@ void GUIScreenNode::renderFloatingNodes(GUIRenderer* guiRenderer)
 {
 	guiRenderer->initScreen(this);
 	for (auto i = 0; i < floatingNodes.size(); i++) {
+		auto floatingNode = floatingNodes[i];
+		auto skipFloatingNode = false;
+		auto _floatingNode = floatingNode;
+		do {
+			if (_floatingNode->conditionsMet == false) {
+				skipFloatingNode = true;
+				break;
+			}
+			_floatingNode = _floatingNode->parentNode;
+		} while (_floatingNode != nullptr);
+		if (skipFloatingNode == true) continue;
 		guiRenderer->setRenderAreaLeft(GUIRenderer::SCREEN_LEFT);
 		guiRenderer->setRenderAreaTop(GUIRenderer::SCREEN_TOP);
 		guiRenderer->setRenderAreaRight(GUIRenderer::SCREEN_RIGHT);

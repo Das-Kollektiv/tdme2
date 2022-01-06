@@ -128,12 +128,18 @@ protected:
 	 */
 	virtual void computeVerticalChildrenAlignment();
 
+	/**
+	 * Detach sub nodes
+	 * @returns sub nodes
+	 */
+	vector<GUINode*> detachSubNodes();
+
 public:
 
 	/**
 	 * Clear sub nodes
 	 */
-	virtual void clearSubNodes();
+	void clearSubNodes();
 
 	/**
 	 * Replace sub nodes with given XML
@@ -141,7 +147,7 @@ public:
 	 * @param resetScrollOffsets reset scroll offsets
 	 * @throws tdme::gui::GUIParserException
 	 */
-	virtual void replaceSubNodes(const string& xml, bool resetScrollOffsets);
+	void replaceSubNodes(const string& xml, bool resetScrollOffsets);
 
 	/**
 	 * Add sub nodes with given XML
@@ -149,24 +155,30 @@ public:
 	 * @param resetScrollOffsets reset scroll offsets
 	 * @throws tdme::gui::GUIParserException
 	 */
-	virtual void addSubNodes(const string& xml, bool resetScrollOffsets);
+	void addSubNodes(const string& xml, bool resetScrollOffsets);
 
 	/**
 	 * Add sub node
 	 * @param node node
 	 * @throws tdme::gui::GUIParserException
 	 */
-	virtual void addSubNode(GUINode* node);
+	void addSubNode(GUINode* node);
+
+	/**
+	 * Move children nodes from other parent node into this parent node
+	 * @param otherParentNode other parent node
+	 */
+	void moveNodes(GUIParentNode* otherParentNode);
 
 	/**
 	 * @return overflow x
 	 */
-	virtual GUIParentNode_Overflow* getOverflowX();
+	GUIParentNode_Overflow* getOverflowX();
 
 	/**
 	 * @return overflow y
 	 */
-	virtual GUIParentNode_Overflow* getOverflowY();
+	GUIParentNode_Overflow* getOverflowY();
 
 	/**
 	 * Create over flow
@@ -179,24 +191,24 @@ public:
 	/**
 	 * @return children render offset x
 	 */
-	virtual float getChildrenRenderOffsetX();
+	float getChildrenRenderOffsetX();
 
 	/**
 	 * Set children render offset x
 	 * @param childrenRenderOffSetX children render offset x
 	 */
-	virtual void setChildrenRenderOffsetX(float childrenRenderOffSetX);
+	void setChildrenRenderOffsetX(float childrenRenderOffSetX);
 
 	/**
 	 * @return children render offset y
 	 */
-	virtual float getChildrenRenderOffsetY();
+	float getChildrenRenderOffsetY();
 
 	/**
 	 * Set children render offset y
 	 * @param childrenRenderOffSetY children render offset y
 	 */
-	virtual void setChildrenRenderOffsetY(float childrenRenderOffSetY);
+	void setChildrenRenderOffsetY(float childrenRenderOffSetY);
 
 	/**
 	 * Create requested constraints
@@ -214,7 +226,7 @@ public:
 	 * @param childControllerNodes child controller nodes
 	 * @param requireConditionsMet require conditions met
 	 */
-	virtual void getChildControllerNodes(vector<GUINode*>& childControllerNodes, bool requireConditionsMet = false);
+	void getChildControllerNodes(vector<GUINode*>& childControllerNodes, bool requireConditionsMet = false);
 
 	// overridden methods
 	void dispose() override;

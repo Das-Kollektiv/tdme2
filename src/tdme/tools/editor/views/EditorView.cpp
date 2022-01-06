@@ -73,6 +73,28 @@ PopUps* EditorView::getPopUps()
 
 void EditorView::handleInputEvents()
 {
+	for (auto& event: Engine::getInstance()->getGUI()->getKeyboardEvents()) {
+		// skip if already processed
+		if (event.isProcessed() == true) return;
+
+		//
+		switch (event.getKeyCode()) {
+			case (GUIKeyboardEvent::KEYCODE_F11):
+				{
+					if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+						editorScreenController->setFullScreen(editorScreenController->isFullScreen() == false?true:false);
+					}
+					event.setProcessed(true);
+					break;
+				}
+			default:
+				{
+					break;
+				}
+		}
+	}
+
+	//
 	auto tabView = editorScreenController->getSelectedTab();
 	if (tabView != nullptr) {
 		auto xScale = tabView->getTabView()->hasFixedSize() == false?1.0f:static_cast<float>(engine->getWidth()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenWidth());

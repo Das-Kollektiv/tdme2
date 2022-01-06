@@ -354,6 +354,8 @@ private:
 	Mutex fileEntitiesMutex;
 	vector<FileEntity*> fileEntities;
 
+	string fullScreenTabId;
+
 	/**
 	 * Lock file entities mutex
 	 */
@@ -558,6 +560,17 @@ public:
 	 * @param xml xml
 	 */
 	void setDetailsContent(const string& xml);
+
+	/**
+	 * @return is full screen
+	 */
+	bool isFullScreen();
+
+	/**
+	 * Set fullscreen
+	 * @param fullScreen full screen
+	 */
+	void setFullScreen(bool fullScreen);
 
 	/**
 	 * On save current tab

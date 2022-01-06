@@ -1560,6 +1560,31 @@ void EditorScreenController::setDetailsContent(const string& xml) {
 	}
 }
 
+bool EditorScreenController::isFullScreen() {
+	return required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("screen_editor_screen"))->getActiveConditions().has("fullscreen");
+}
+
+void EditorScreenController::setFullScreen(bool fullScreen) {
+	if (fullScreen == true) {
+		auto selectedTab = getSelectedTab();
+		if (selectedTab != nullptr) {
+			fullScreenTabId = selectedTab->getId();
+			required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("fullscreen-content"))->moveNodes(
+				required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById(fullScreenTabId + "-content"))
+			);
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("screen_editor_screen"))->getActiveConditions().add("fullscreen");
+		}
+	} else {
+		if (fullScreenTabId.empty() == false) {
+			required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById(fullScreenTabId + "-content"))->moveNodes(
+				required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("fullscreen-content"))
+			);
+			fullScreenTabId.clear();
+		}
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("screen_editor_screen"))->getActiveConditions().remove("fullscreen");
+	}
+}
+
 void EditorScreenController::onSaveCurrentTab() {
 	// forward save to active tab tab controller
 	auto selectedTab = getSelectedTab();
