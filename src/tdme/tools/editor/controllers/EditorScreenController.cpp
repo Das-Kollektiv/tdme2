@@ -234,6 +234,9 @@ void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIEl
 		if (node->getId() == "menu_file_saveall") {
 			onSaveAllTabs();
 		} else
+		if (node->getId() == "menu_view_fullscreen") {
+			setFullScreen(isFullScreen() == false?true:false);
+		} else
 		if (node->getId() == "menu_help_about") {
 			view->getPopUps()->getAboutDialogScreenController()->show();
 		} else

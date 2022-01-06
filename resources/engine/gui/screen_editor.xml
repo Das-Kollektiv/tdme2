@@ -28,6 +28,9 @@
 						<menu-separator />
 						<menu-item text="Delete" id="menu_edit_delete" />
 					</menu-header-item>
+					<menu-header-item text="View">
+						<menu-item text="Full Screen" id="menu_view_fullscreen" shortcut="F11" />
+					</menu-header-item>
 					<menu-header-item text="Help">
 						<menu-item text="Documentation" id="menu_help_documentation" on-mouse-click="http://drewke.net/tdme2-documentation/alpha/public" />
 						<menu-item text="Community" id="menu_help_community" on-mouse-click="https://discord.gg/tMqrmcp23Q" />
