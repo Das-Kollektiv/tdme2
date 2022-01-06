@@ -118,4 +118,13 @@ public:
 	 */
 	void bindTexture(int contextIdx, int32_t textureId);
 
+	/**
+	 * Returns if shader with given shader id does exist
+	 * @param shaderId shader id
+	 * @return if shader exists
+	 */
+	bool hasShader(const string& shaderId) {
+		return shader.find(shaderId) != shader.end();
+	}
+
 };

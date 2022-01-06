@@ -87,6 +87,7 @@ private:
 	EntityShaderParameters shaderParameters;
 	EntityShaderParameters distanceShaderParameters;
 	bool needsPreRender { false };
+	bool needsForwardShading { false };
 
 	/**
 	 * @return if this object3d instance needs a computeTransformations() call each frame
@@ -151,7 +152,7 @@ private:
 	 * @return if this object3d needs forward shading
 	 */
 	inline bool isNeedsForwardShading() {
-		return reflectionEnvironmentMappingId.empty() == false;
+		return needsForwardShading == true || reflectionEnvironmentMappingId.empty() == false;
 	}
 
 	// overridden methods

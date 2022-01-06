@@ -4,6 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/ShaderModel.h>
+#include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/Transformations.h>
@@ -15,6 +16,7 @@
 using std::string;
 
 using tdme::engine::model::ShaderModel;
+using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::Engine;
 using tdme::engine::Object3D;
 using tdme::engine::Partition;
@@ -119,6 +121,9 @@ void Object3D::setShader(const string& id) {
 		shaderParameters.setShader(shaderId);
 	}
 	uniqueShaderId = Engine::getUniqueShaderId(shaderId);
+	needsForwardShading =
+		Engine::getLightingShader()->hasShader("defer_" + shaderId) == false ||
+		Engine::getLightingShader()->hasShader("defer_" + distanceShaderId) == false;
 }
 
 void Object3D::setDistanceShader(const string& id) {
@@ -131,4 +136,7 @@ void Object3D::setDistanceShader(const string& id) {
 		distanceShaderParameters.setShader(distanceShaderId);
 	}
 	uniqueDistanceShaderId = Engine::getUniqueShaderId(distanceShaderId);
+	needsForwardShading =
+		Engine::getLightingShader()->hasShader("defer_" + shaderId) == false ||
+		Engine::getLightingShader()->hasShader("defer_" + distanceShaderId) == false;
 }
