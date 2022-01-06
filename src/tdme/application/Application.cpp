@@ -504,6 +504,11 @@ void Application::setFullScreen(bool fullScreen) {
 			} else
 			if (windowMonitor != nullptr && fullScreen == false) {
 				glfwSetWindowMonitor(glfwWindow, NULL, windowXPosition, windowYPosition, windowWidth, windowHeight, 0);
+				if ((windowHints & WINDOW_HINT_MAXIMIZED) == WINDOW_HINT_MAXIMIZED) {
+					glfwSetWindowPos(glfwWindow, windowXPosition, windowYPosition);
+					glfwGetWindowSize(glfwWindow, &windowWidth, &windowHeight);
+					glfwOnWindowResize(glfwWindow, windowWidth, windowHeight);
+				}
 			}
 		#else
 			if (fullScreen == true) {
@@ -623,6 +628,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		if (string(argv[i]) == "--debug") debuggingEnabled = true;
 	}
 	this->title = title;
+	this->windowHints = windowHints;
 	executableFileName = FileSystem::getInstance()->getFileName(argv[0]);
 	Application::inputEventHandler = inputEventHandler;
 	#if defined(VULKAN) || defined(GLFW3)
@@ -718,7 +724,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		glfwSetWindowSizeCallback(glfwWindow, Application::glfwOnWindowResize);
 		glfwSetWindowCloseCallback(glfwWindow, Application::glfwOnClose);
 		if ((windowHints & WINDOW_HINT_MAXIMIZED) == WINDOW_HINT_MAXIMIZED) {
-			glfwGetWindowPos(glfwWindow, &windowXPosition, &windowXPosition);
+			glfwGetWindowPos(glfwWindow, &windowXPosition, &windowYPosition);
 			glfwGetWindowSize(glfwWindow, &windowWidth, &windowHeight);
 			glfwOnWindowResize(glfwWindow, windowWidth, windowHeight);
 		}

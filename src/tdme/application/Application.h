@@ -321,6 +321,7 @@ private:
 	static ApplicationShutdown applicationShutdown;
 	static Application* application;
 	static InputEventHandler* inputEventHandler;
+	int windowHints { WINDOW_HINT_NONE };
 	string executableFileName;
 	bool debuggingEnabled { false };
 	bool initialized { false };
