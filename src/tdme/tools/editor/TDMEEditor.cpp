@@ -132,8 +132,8 @@ void TDMEEditor::initialize()
 {
 	engine->initialize();
 	// TODO: settings maybe for the next 2
-	Application::setVSyncEnabled(false);
-	Application::setLimitFPS(false);
+	Application::setVSyncEnabled(true);
+	Application::setLimitFPS(true);
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	setInputEventHandler(engine->getGUI());
 	Tools::oseInit();
