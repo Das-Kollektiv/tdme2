@@ -97,7 +97,6 @@ EngineTest::EngineTest()
 	keyUp = false;
 	keyW = false;
 	keyA = false;
-	keyS = false;
 	keyD = false;
 	mouseClicked = false;
 	entityClicked = nullptr;
@@ -392,32 +391,24 @@ void EngineTest::reshape(int32_t width, int32_t height)
 void EngineTest::onChar(unsigned int key, int x, int y) {
 }
 
-void EngineTest::onKeyDown (unsigned char key, int x, int y) {
+void EngineTest::onKeyDown (unsigned char key, int keyCode, int x, int y) {
 	auto keyChar = Character::toLowerCase(key);
-	if (keyChar == u'w') keyW = true;
-	if (keyChar == u'a') keyA = true;
-	if (keyChar == u's') keyS = true;
-	if (keyChar == u'd') keyD = true;
+	if (keyChar == 'w') keyW = true;
+	if (keyChar == 'a') keyA = true;
+	if (keyChar == 'd') keyD = true;
+	if (keyCode == KEYBOARD_KEYCODE_LEFT) keyLeft = true;
+	if (keyCode == KEYBOARD_KEYCODE_RIGHT) keyRight = true;
+	if (keyCode == KEYBOARD_KEYCODE_UP) keyUp = true;
 }
 
-void EngineTest::onKeyUp(unsigned char key, int x, int y) {
+void EngineTest::onKeyUp(unsigned char key, int keyCode, int x, int y) {
 	auto keyChar = Character::toLowerCase(key);
-	if (keyChar == u'w') keyW = false;
-	if (keyChar == u'a') keyA = false;
-	if (keyChar == u's') keyS = false;
-	if (keyChar == u'd') keyD = false;
-}
-
-void EngineTest::onSpecialKeyDown (int key, int x, int y) {
-	if (key == KEYBOARD_KEYCODE_LEFT) keyLeft = true;
-	if (key == KEYBOARD_KEYCODE_RIGHT) keyRight = true;
-	if (key == KEYBOARD_KEYCODE_UP) keyUp = true;
-}
-
-void EngineTest::onSpecialKeyUp(int key, int x, int y) {
-	if (key == KEYBOARD_KEYCODE_LEFT) keyLeft = false;
-	if (key == KEYBOARD_KEYCODE_RIGHT) keyRight = false;
-	if (key == KEYBOARD_KEYCODE_UP) keyUp = false;
+	if (keyChar == 'w') keyW = false;
+	if (keyChar == 'a') keyA = false;
+	if (keyChar == 'd') keyD = false;
+	if (keyCode == KEYBOARD_KEYCODE_LEFT) keyLeft = false;
+	if (keyCode == KEYBOARD_KEYCODE_RIGHT) keyRight = false;
+	if (keyCode == KEYBOARD_KEYCODE_UP) keyUp = false;
 }
 
 void EngineTest::onMouseDragged(int x, int y) {

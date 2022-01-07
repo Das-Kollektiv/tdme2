@@ -28,34 +28,20 @@ public:
 	/**
 	 * On key down
 	 * @param key key
+	 * @param keyCode key code
 	 * @param x x
 	 * @param y y
 	 */
-	virtual void onKeyDown (unsigned char key, int x, int y) = 0;
+	virtual void onKeyDown (unsigned char key, int keyCode, int x, int y) = 0;
 
 	/**
 	 * On key up
 	 * @param key key
+	 * @param keyCode key code
 	 * @param x x
 	 * @param y y
 	 */
-	virtual void onKeyUp(unsigned char key, int x, int y) = 0;
-
-	/**
-	 * On special key up
-	 * @param key key
-	 * @param x x
-	 * @param y y
-	 */
-	virtual void onSpecialKeyDown (int key, int x, int y) = 0;
-
-	/**
-	 * On special key up
-	 * @param key key
-	 * @param x x
-	 * @param y y
-	 */
-	virtual void onSpecialKeyUp(int key, int x, int y) = 0;
+	virtual void onKeyUp(unsigned char key, int keyCode, int x, int y) = 0;
 
 	/**
 	 * On mouse dragged

@@ -75,12 +75,6 @@ public:
 	~GUIKeyboardEvent();
 
 	/**
-	 * Get key code from char
-	 * @param key key char
-	 */
-	static int32_t getKeyCodeFromChar(char key);
-
-	/**
 	 * @return time in milliseconds
 	 */
 	inline int64_t getTime() {

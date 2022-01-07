@@ -207,7 +207,7 @@ void FoliageTest::reshape(int32_t width, int32_t height)
 void FoliageTest::onChar(unsigned int key, int x, int y) {
 }
 
-void FoliageTest::onKeyDown (unsigned char key, int x, int y) {
+void FoliageTest::onKeyDown (unsigned char key, int keyCode, int x, int y) {
 	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == 'w') keyW = true;
 	if (keyChar == 'a') keyA = true;
@@ -215,9 +215,14 @@ void FoliageTest::onKeyDown (unsigned char key, int x, int y) {
 	if (keyChar == 'd') keyD = true;
 	if (keyChar == '-') keyMinus = true;
 	if (keyChar == '+') keyPlus = true;
+	if (keyCode == KEYBOARD_KEYCODE_LEFT) keyLeft = true;
+	if (keyCode == KEYBOARD_KEYCODE_RIGHT) keyRight = true;
+	if (keyCode == KEYBOARD_KEYCODE_UP) keyUp = true;
+	if (keyCode == KEYBOARD_KEYCODE_DOWN) keyDown = true;
+
 }
 
-void FoliageTest::onKeyUp(unsigned char key, int x, int y) {
+void FoliageTest::onKeyUp(unsigned char key, int keyCode, int x, int y) {
 	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == 'w') keyW = false;
 	if (keyChar == 'a') keyA = false;
@@ -225,20 +230,10 @@ void FoliageTest::onKeyUp(unsigned char key, int x, int y) {
 	if (keyChar == 'd') keyD = false;
 	if (keyChar == '-') keyMinus = false;
 	if (keyChar == '+') keyPlus = false;
-}
-
-void FoliageTest::onSpecialKeyDown (int key, int x, int y) {
-	if (key == KEYBOARD_KEYCODE_LEFT) keyLeft = true;
-	if (key == KEYBOARD_KEYCODE_RIGHT) keyRight = true;
-	if (key == KEYBOARD_KEYCODE_UP) keyUp = true;
-	if (key == KEYBOARD_KEYCODE_DOWN) keyDown = true;
-}
-
-void FoliageTest::onSpecialKeyUp(int key, int x, int y) {
-	if (key == KEYBOARD_KEYCODE_LEFT) keyLeft = false;
-	if (key == KEYBOARD_KEYCODE_RIGHT) keyRight = false;
-	if (key == KEYBOARD_KEYCODE_UP) keyUp = false;
-	if (key == KEYBOARD_KEYCODE_DOWN) keyDown = false;
+	if (keyCode == KEYBOARD_KEYCODE_LEFT) keyLeft = false;
+	if (keyCode == KEYBOARD_KEYCODE_RIGHT) keyRight = false;
+	if (keyCode == KEYBOARD_KEYCODE_UP) keyUp = false;
+	if (keyCode == KEYBOARD_KEYCODE_DOWN) keyDown = false;
 }
 
 void FoliageTest::onMouseDragged(int x, int y) {

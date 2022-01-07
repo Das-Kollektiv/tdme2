@@ -734,7 +734,7 @@ void GUI::onChar(unsigned int key, int x, int y) {
 	GUIKeyboardEvent guiKeyboardEvent;
 	guiKeyboardEvent.setTime(Time::getCurrentMillis());
 	guiKeyboardEvent.setType(GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED);
-	guiKeyboardEvent.setKeyCode(key);
+	guiKeyboardEvent.setKeyCode(-1);
 	guiKeyboardEvent.setKeyChar(key);
 	guiKeyboardEvent.setMetaDown(false);
 	guiKeyboardEvent.setControlDown(controlDown);
@@ -744,12 +744,12 @@ void GUI::onChar(unsigned int key, int x, int y) {
 	keyboardEvents.push_back(guiKeyboardEvent);
 }
 
-void GUI::onKeyDown (unsigned char key, int x, int y) {
+void GUI::onKeyDown (unsigned char key, int keyCode, int x, int y) {
 	fakeMouseMovedEvent();
 	GUIKeyboardEvent guiKeyboardEvent;
 	guiKeyboardEvent.setTime(Time::getCurrentMillis());
 	guiKeyboardEvent.setType(GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED);
-	guiKeyboardEvent.setKeyCode(GUIKeyboardEvent::getKeyCodeFromChar(key));
+	guiKeyboardEvent.setKeyCode(keyCode);
 	guiKeyboardEvent.setKeyChar(key);
 	guiKeyboardEvent.setMetaDown(false);
 	guiKeyboardEvent.setControlDown(controlDown);
@@ -759,43 +759,13 @@ void GUI::onKeyDown (unsigned char key, int x, int y) {
 	keyboardEvents.push_back(guiKeyboardEvent);
 }
 
-void GUI::onKeyUp(unsigned char key, int x, int y) {
+void GUI::onKeyUp(unsigned char key, int keyCode, int x, int y) {
 	fakeMouseMovedEvent();
 	GUIKeyboardEvent guiKeyboardEvent;
 	guiKeyboardEvent.setTime(Time::getCurrentMillis());
 	guiKeyboardEvent.setType(GUIKeyboardEvent::KEYBOARDEVENT_KEY_RELEASED);
-	guiKeyboardEvent.setKeyCode(GUIKeyboardEvent::getKeyCodeFromChar(key));
+	guiKeyboardEvent.setKeyCode(keyCode);
 	guiKeyboardEvent.setKeyChar(key);
-	guiKeyboardEvent.setMetaDown(false);
-	guiKeyboardEvent.setControlDown(controlDown);
-	guiKeyboardEvent.setAltDown(altDown);
-	guiKeyboardEvent.setShiftDown(shiftDown);
-	guiKeyboardEvent.setProcessed(false);
-	keyboardEvents.push_back(guiKeyboardEvent);
-}
-
-void GUI::onSpecialKeyDown (int key, int x, int y) {
-	fakeMouseMovedEvent();
-	GUIKeyboardEvent guiKeyboardEvent;
-	guiKeyboardEvent.setTime(Time::getCurrentMillis());
-	guiKeyboardEvent.setType(GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED);
-	guiKeyboardEvent.setKeyCode(key);
-	guiKeyboardEvent.setKeyChar(-1);
-	guiKeyboardEvent.setMetaDown(false);
-	guiKeyboardEvent.setControlDown(controlDown);
-	guiKeyboardEvent.setAltDown(altDown);
-	guiKeyboardEvent.setShiftDown(shiftDown);
-	guiKeyboardEvent.setProcessed(false);
-	keyboardEvents.push_back(guiKeyboardEvent);
-}
-
-void GUI::onSpecialKeyUp(int key, int x, int y) {
-	fakeMouseMovedEvent();
-	GUIKeyboardEvent guiKeyboardEvent;
-	guiKeyboardEvent.setTime(Time::getCurrentMillis());
-	guiKeyboardEvent.setType(GUIKeyboardEvent::KEYBOARDEVENT_KEY_RELEASED);
-	guiKeyboardEvent.setKeyCode(key);
-	guiKeyboardEvent.setKeyChar(-1);
 	guiKeyboardEvent.setMetaDown(false);
 	guiKeyboardEvent.setControlDown(controlDown);
 	guiKeyboardEvent.setAltDown(altDown);

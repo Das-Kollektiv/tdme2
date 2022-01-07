@@ -3,10 +3,6 @@
 
 using tdme::gui::events::GUIKeyboardEvent;
 
-int32_t GUIKeyboardEvent::getKeyCodeFromChar(char key) {
-	return -1;
-}
-
 GUIKeyboardEvent::GUIKeyboardEvent()
 {
 	this->time = -1LL;

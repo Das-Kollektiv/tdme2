@@ -230,7 +230,7 @@ void TreeTest::reshape(int32_t width, int32_t height)
 void TreeTest::onChar(unsigned int key, int x, int y) {
 }
 
-void TreeTest::onKeyDown (unsigned char key, int x, int y) {
+void TreeTest::onKeyDown (unsigned char key, int keyCode, int x, int y) {
 	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == 'w') keyW = true;
 	if (keyChar == 'a') keyA = true;
@@ -240,9 +240,13 @@ void TreeTest::onKeyDown (unsigned char key, int x, int y) {
 	if (keyChar == '+') keyPlus = true;
 	if (keyChar == ',') keyComma = true;
 	if (keyChar == '.') keyDot = true;
+	if (keyCode == KEYBOARD_KEYCODE_LEFT) keyLeft = true;
+	if (keyCode == KEYBOARD_KEYCODE_RIGHT) keyRight = true;
+	if (keyCode == KEYBOARD_KEYCODE_UP) keyUp = true;
+	if (keyCode == KEYBOARD_KEYCODE_DOWN) keyDown = true;
 }
 
-void TreeTest::onKeyUp(unsigned char key, int x, int y) {
+void TreeTest::onKeyUp(unsigned char key, int keyCode, int x, int y) {
 	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == 'w') keyW = false;
 	if (keyChar == 'a') keyA = false;
@@ -252,20 +256,10 @@ void TreeTest::onKeyUp(unsigned char key, int x, int y) {
 	if (keyChar == '+') keyPlus = false;
 	if (keyChar == ',') keyComma = false;
 	if (keyChar == '.') keyDot = false;
-}
-
-void TreeTest::onSpecialKeyDown (int key, int x, int y) {
-	if (key == KEYBOARD_KEYCODE_LEFT) keyLeft = true;
-	if (key == KEYBOARD_KEYCODE_RIGHT) keyRight = true;
-	if (key == KEYBOARD_KEYCODE_UP) keyUp = true;
-	if (key == KEYBOARD_KEYCODE_DOWN) keyDown = true;
-}
-
-void TreeTest::onSpecialKeyUp(int key, int x, int y) {
-	if (key == KEYBOARD_KEYCODE_LEFT) keyLeft = false;
-	if (key == KEYBOARD_KEYCODE_RIGHT) keyRight = false;
-	if (key == KEYBOARD_KEYCODE_UP) keyUp = false;
-	if (key == KEYBOARD_KEYCODE_DOWN) keyDown = false;
+	if (keyCode == KEYBOARD_KEYCODE_LEFT) keyLeft = false;
+	if (keyCode == KEYBOARD_KEYCODE_RIGHT) keyRight = false;
+	if (keyCode == KEYBOARD_KEYCODE_UP) keyUp = false;
+	if (keyCode == KEYBOARD_KEYCODE_DOWN) keyDown = false;
 }
 
 void TreeTest::onMouseDragged(int x, int y) {

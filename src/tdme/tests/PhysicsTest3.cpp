@@ -351,34 +351,28 @@ void PhysicsTest3::reshape(int32_t width, int32_t height)
 void PhysicsTest3::onChar(unsigned int key, int x, int y) {
 }
 
-void PhysicsTest3::onKeyDown (unsigned char key, int x, int y) {
+void PhysicsTest3::onKeyDown (unsigned char key, int keyCode, int x, int y) {
 	auto keyChar = Character::toLowerCase(key);
-	if (keyChar == u'w') keyW = true;
-	if (keyChar == u'a') keyA = true;
-	if (keyChar == u's') keyS = true;
-	if (keyChar == u'd') keyD = true;
+	if (keyChar == 'w') keyW = true;
+	if (keyChar == 'a') keyA = true;
+	if (keyChar == 's') keyS = true;
+	if (keyChar == 'd') keyD = true;
+	if (keyCode == KEYBOARD_KEYCODE_LEFT) keyLeft = true;
+	if (keyCode == KEYBOARD_KEYCODE_RIGHT) keyRight = true;
+	if (keyCode == KEYBOARD_KEYCODE_UP) keyUp = true;
+	if (keyCode == KEYBOARD_KEYCODE_DOWN) keyDown = true;
 }
 
-void PhysicsTest3::onKeyUp(unsigned char key, int x, int y) {
+void PhysicsTest3::onKeyUp(unsigned char key, int keyCode, int x, int y) {
 	auto keyChar = Character::toLowerCase(key);
-	if (keyChar == u'w') keyW = false;
-	if (keyChar == u'a') keyA = false;
-	if (keyChar == u's') keyS = false;
-	if (keyChar == u'd') keyD = false;
-}
-
-void PhysicsTest3::onSpecialKeyDown (int key, int x, int y) {
-	if (key == KEYBOARD_KEYCODE_LEFT) keyLeft = true;
-	if (key == KEYBOARD_KEYCODE_RIGHT) keyRight = true;
-	if (key == KEYBOARD_KEYCODE_UP) keyUp = true;
-	if (key == KEYBOARD_KEYCODE_DOWN) keyDown = true;
-}
-
-void PhysicsTest3::onSpecialKeyUp(int key, int x, int y) {
-	if (key == KEYBOARD_KEYCODE_LEFT) keyLeft = false;
-	if (key == KEYBOARD_KEYCODE_RIGHT) keyRight = false;
-	if (key == KEYBOARD_KEYCODE_UP) keyUp = false;
-	if (key == KEYBOARD_KEYCODE_DOWN) keyDown = false;
+	if (keyChar == 'w') keyW = false;
+	if (keyChar == 'a') keyA = false;
+	if (keyChar == 's') keyS = false;
+	if (keyChar == 'd') keyD = false;
+	if (keyCode == KEYBOARD_KEYCODE_LEFT) keyLeft = false;
+	if (keyCode == KEYBOARD_KEYCODE_RIGHT) keyRight = false;
+	if (keyCode == KEYBOARD_KEYCODE_UP) keyUp = false;
+	if (keyCode == KEYBOARD_KEYCODE_DOWN) keyDown = false;
 }
 
 void PhysicsTest3::onMouseDragged(int x, int y) {

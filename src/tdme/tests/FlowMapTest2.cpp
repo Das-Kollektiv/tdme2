@@ -958,16 +958,10 @@ void FlowMapTest2::onChar(unsigned int key, int x, int y) {
 	if (key == ' ') pause = pause == true?false:true;
 }
 
-void FlowMapTest2::onKeyDown (unsigned char key, int x, int y) {
+void FlowMapTest2::onKeyDown (unsigned char key, int keyCode, int x, int y) {
 }
 
-void FlowMapTest2::onKeyUp(unsigned char key, int x, int y) {
-}
-
-void FlowMapTest2::onSpecialKeyDown (int key, int x, int y) {
-}
-
-void FlowMapTest2::onSpecialKeyUp(int key, int x, int y) {
+void FlowMapTest2::onKeyUp(unsigned char key, int keyCode, int x, int y) {
 }
 
 void FlowMapTest2::onMouseDragged(int x, int y) {

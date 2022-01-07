@@ -254,7 +254,7 @@ void WaterTest::reshape(int32_t width, int32_t height)
 void WaterTest::onChar(unsigned int key, int x, int y) {
 }
 
-void WaterTest::onKeyDown (unsigned char key, int x, int y) {
+void WaterTest::onKeyDown (unsigned char key, int keyCode, int x, int y) {
 	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == 'w') keyW = true;
 	if (keyChar == 'a') keyA = true;
@@ -262,9 +262,13 @@ void WaterTest::onKeyDown (unsigned char key, int x, int y) {
 	if (keyChar == 'd') keyD = true;
 	if (keyChar == '-') keyMinus = true;
 	if (keyChar == '+') keyPlus = true;
+	if (keyCode == KEYBOARD_KEYCODE_LEFT) keyLeft = true;
+	if (keyCode == KEYBOARD_KEYCODE_RIGHT) keyRight = true;
+	if (keyCode == KEYBOARD_KEYCODE_UP) keyUp = true;
+	if (keyCode == KEYBOARD_KEYCODE_DOWN) keyDown = true;
 }
 
-void WaterTest::onKeyUp(unsigned char key, int x, int y) {
+void WaterTest::onKeyUp(unsigned char key, int keyCode, int x, int y) {
 	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == 'w') keyW = false;
 	if (keyChar == 'a') keyA = false;
@@ -272,20 +276,10 @@ void WaterTest::onKeyUp(unsigned char key, int x, int y) {
 	if (keyChar == 'd') keyD = false;
 	if (keyChar == '-') keyMinus = false;
 	if (keyChar == '+') keyPlus = false;
-}
-
-void WaterTest::onSpecialKeyDown (int key, int x, int y) {
-	if (key == KEYBOARD_KEYCODE_LEFT) keyLeft = true;
-	if (key == KEYBOARD_KEYCODE_RIGHT) keyRight = true;
-	if (key == KEYBOARD_KEYCODE_UP) keyUp = true;
-	if (key == KEYBOARD_KEYCODE_DOWN) keyDown = true;
-}
-
-void WaterTest::onSpecialKeyUp(int key, int x, int y) {
-	if (key == KEYBOARD_KEYCODE_LEFT) keyLeft = false;
-	if (key == KEYBOARD_KEYCODE_RIGHT) keyRight = false;
-	if (key == KEYBOARD_KEYCODE_UP) keyUp = false;
-	if (key == KEYBOARD_KEYCODE_DOWN) keyDown = false;
+	if (keyCode == KEYBOARD_KEYCODE_LEFT) keyLeft = false;
+	if (keyCode == KEYBOARD_KEYCODE_RIGHT) keyRight = false;
+	if (keyCode == KEYBOARD_KEYCODE_UP) keyUp = false;
+	if (keyCode == KEYBOARD_KEYCODE_DOWN) keyDown = false;
 }
 
 void WaterTest::onMouseDragged(int x, int y) {

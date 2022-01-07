@@ -343,34 +343,20 @@ public:
 	/**
 	 * On key down
 	 * @param key key
+	 * @param keyCode key code
 	 * @param x x
 	 * @param y y
 	 */
-	void onKeyDown (unsigned char key, int x, int y) override;
+	void onKeyDown (unsigned char key, int keyCode, int x, int y) override;
 
 	/**
 	 * On key up
 	 * @param key key
+	 * @param keyCode key code
 	 * @param x x
 	 * @param y y
 	 */
-	void onKeyUp(unsigned char key, int x, int y) override;
-
-	/**
-	 * On special key up
-	 * @param key key
-	 * @param x x
-	 * @param y y
-	 */
-	void onSpecialKeyDown (int key, int x, int y) override;
-
-	/**
-	 * On special key up
-	 * @param key key
-	 * @param x x
-	 * @param y y
-	 */
-	void onSpecialKeyUp(int key, int x, int y) override;
+	void onKeyUp(unsigned char key, int keyCode, int x, int y) override;
 
 	/**
 	 * On mouse dragged

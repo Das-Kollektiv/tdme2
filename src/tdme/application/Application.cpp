@@ -724,42 +724,6 @@ void Application::glfwOnChar(GLFWwindow* window, unsigned int key) {
 	Application::inputEventHandler->onChar(key, (int)mouseX, (int)mouseY);
 }
 
-bool Application::glfwIsSpecialKey(int key) {
-	return
-		key == GLFW_KEY_SPACE ||
-		key == GLFW_KEY_UP ||
-		key == GLFW_KEY_DOWN ||
-		key == GLFW_KEY_LEFT ||
-		key == GLFW_KEY_RIGHT ||
-		key == GLFW_KEY_TAB ||
-		key == GLFW_KEY_BACKSPACE ||
-		key == GLFW_KEY_ENTER ||
-		key == GLFW_KEY_DELETE ||
-		key == GLFW_KEY_HOME ||
-		key == GLFW_KEY_END ||
-		key == GLFW_KEY_ESCAPE ||
-		key == GLFW_KEY_LEFT_SHIFT ||
-		key == GLFW_KEY_LEFT_CONTROL ||
-		key == GLFW_KEY_LEFT_ALT ||
-		key == GLFW_KEY_LEFT_SUPER ||
-		key == GLFW_KEY_RIGHT_SHIFT ||
-		key == GLFW_KEY_RIGHT_CONTROL ||
-		key == GLFW_KEY_RIGHT_ALT ||
-		key == GLFW_KEY_RIGHT_SUPER ||
-		key == GLFW_KEY_F1 ||
-		key == GLFW_KEY_F2 ||
-		key == GLFW_KEY_F3 ||
-		key == GLFW_KEY_F4 ||
-		key == GLFW_KEY_F5 ||
-		key == GLFW_KEY_F6 ||
-		key == GLFW_KEY_F7 ||
-		key == GLFW_KEY_F8 ||
-		key == GLFW_KEY_F9 ||
-		key == GLFW_KEY_F10 ||
-		key == GLFW_KEY_F11 ||
-		key == GLFW_KEY_F12;
-}
-
 void Application::glfwOnKey(GLFWwindow* window, int key, int scanCode, int action, int mods) {
 	if (Application::inputEventHandler == nullptr) return;
 	double mouseX, mouseY;
@@ -770,34 +734,23 @@ void Application::glfwOnKey(GLFWwindow* window, int key, int scanCode, int actio
 			glfwCapsLockEnabled = glfwCapsLockEnabled == false?true:false;
 		}
 	}
-	if (glfwIsSpecialKey(key) == true) {
-		if (action == GLFW_PRESS || action == GLFW_REPEAT) {
-			Application::inputEventHandler->onSpecialKeyDown(key, (int)mouseX, (int)mouseY);
-		} else
-		if (action == GLFW_RELEASE) {
-			Application::inputEventHandler->onSpecialKeyUp(key, (int)mouseX, (int)mouseY);
-		}
-	} else {
-		if (action == GLFW_PRESS || action == GLFW_REPEAT) {
-			auto keyName = key == GLFW_KEY_SPACE?" ":glfwGetKeyName(key, scanCode);
-			if (keyName != nullptr) {
-				Application::inputEventHandler->onKeyDown(
-					(mods & GLFW_MOD_SHIFT) == 0 && glfwCapsLockEnabled == false?Character::toLowerCase(keyName[0]):keyName[0],
-					(int)mouseX,
-					(int)mouseY
-				);
-			}
-		} else
-		if (action == GLFW_RELEASE) {
-			auto keyName = key == GLFW_KEY_SPACE?" ":glfwGetKeyName(key, scanCode);
-			if (keyName != nullptr) {
-				Application::inputEventHandler->onKeyUp(
-					(mods & GLFW_MOD_SHIFT) == 0 && glfwCapsLockEnabled == false?Character::toLowerCase(keyName[0]):keyName[0],
-					(int)mouseX,
-					(int)mouseY
-				);
-			}
-		}
+	if (action == GLFW_PRESS || action == GLFW_REPEAT) {
+		auto keyName = key == GLFW_KEY_SPACE?" ":glfwGetKeyName(key, scanCode);
+		Application::inputEventHandler->onKeyDown(
+			keyName == nullptr?0:((mods & GLFW_MOD_SHIFT) == 0 && glfwCapsLockEnabled == false?Character::toLowerCase(keyName[0]):keyName[0]),
+			key,
+			(int)mouseX,
+			(int)mouseY
+		);
+	} else
+	if (action == GLFW_RELEASE) {
+		auto keyName = key == GLFW_KEY_SPACE?" ":glfwGetKeyName(key, scanCode);
+		Application::inputEventHandler->onKeyUp(
+			keyName == nullptr?0:((mods & GLFW_MOD_SHIFT) == 0 && glfwCapsLockEnabled == false?Character::toLowerCase(keyName[0]):keyName[0]),
+			key,
+			(int)mouseX,
+			(int)mouseY
+		);
 	}
 }
 

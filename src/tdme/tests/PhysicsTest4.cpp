@@ -164,24 +164,10 @@ void PhysicsTest4::reshape(int32_t width, int32_t height)
 void PhysicsTest4::onChar(unsigned int key, int x, int y) {
 }
 
-void PhysicsTest4::onKeyDown (unsigned char key, int x, int y) {
+void PhysicsTest4::onKeyDown (unsigned char key, int keyCode, int x, int y) {
 }
 
-void PhysicsTest4::onKeyUp(unsigned char key, int x, int y) {
-}
-
-void PhysicsTest4::onSpecialKeyDown (int key, int x, int y) {
-	if (key == KEYBOARD_KEYCODE_LEFT) keyLeft = true;
-	if (key == KEYBOARD_KEYCODE_RIGHT) keyRight = true;
-	if (key == KEYBOARD_KEYCODE_UP) keyUp = true;
-	if (key == KEYBOARD_KEYCODE_DOWN) keyDown = true;
-}
-
-void PhysicsTest4::onSpecialKeyUp(int key, int x, int y) {
-	if (key == KEYBOARD_KEYCODE_LEFT) keyLeft = false;
-	if (key == KEYBOARD_KEYCODE_RIGHT) keyRight = false;
-	if (key == KEYBOARD_KEYCODE_UP) keyUp = false;
-	if (key == KEYBOARD_KEYCODE_DOWN) keyDown = false;
+void PhysicsTest4::onKeyUp(unsigned char key, int keyCode, int x, int y) {
 }
 
 void PhysicsTest4::onMouseDragged(int x, int y) {
