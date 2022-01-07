@@ -1,30 +1,17 @@
 #pragma once
 
-#if defined(VULKAN) || defined(GLFW3)
-	#if defined(VULKAN)
-		#define GLFW_INCLUDE_VULKAN
-	#else
-		#define GLFW_INCLUDE_NONE
-	#endif
-	#include <GLFW/glfw3.h>
-	#define MOUSE_CURSOR_DISABLED 0
-	#define MOUSE_CURSOR_ENABLED 1
-	#define MOUSE_CURSOR_NORMAL 1
-	#define MOUSE_CURSOR_HAND 2
-	#include <array>
-	using std::array;
+#if defined(VULKAN)
+	#define GLFW_INCLUDE_VULKAN
 #else
-	#if defined(__linux__) || defined(_WIN32)
-		#include <GL/freeglut.h>
-	#elif defined(__APPLE__)
-		#include <GLUT/glut.h>
-	#endif
-
-	#define MOUSE_CURSOR_DISABLED GLUT_CURSOR_NONE
-	#define MOUSE_CURSOR_ENABLED GLUT_CURSOR_INHERIT
-	#define MOUSE_CURSOR_NORMAL GLUT_CURSOR_INHERIT
-	#define MOUSE_CURSOR_HAND GLUT_CURSOR_INFO
+	#define GLFW_INCLUDE_NONE
 #endif
+#include <GLFW/glfw3.h>
+#define MOUSE_CURSOR_DISABLED 0
+#define MOUSE_CURSOR_ENABLED 1
+#define MOUSE_CURSOR_NORMAL 1
+#define MOUSE_CURSOR_HAND 2
+#include <array>
+using std::array;
 
 #include <string>
 
@@ -314,11 +301,6 @@ public:
 	virtual void onClose();
 
 private:
-	struct ApplicationShutdown {
-		~ApplicationShutdown();
-	};
-
-	static ApplicationShutdown applicationShutdown;
 	static Application* application;
 	static InputEventHandler* inputEventHandler;
 	int windowHints { WINDOW_HINT_NONE };
@@ -335,13 +317,11 @@ private:
 	string title;
 	int exitCode { 0 };
 
-	#if defined(VULKAN) || defined(GLFW3)
-		static GLFWwindow* glfwWindow;
-		static array<unsigned int, 10> glfwMouseButtonDownFrames;
-		static int glfwMouseButtonLast;
-		static bool glfwCapsLockEnabled;
-		static GLFWcursor* glfwHandCursor;
-	#endif
+	static GLFWwindow* glfwWindow;
+	static array<unsigned int, 10> glfwMouseButtonDownFrames;
+	static int glfwMouseButtonLast;
+	static bool glfwCapsLockEnabled;
+	static GLFWcursor* glfwHandCursor;
 
 	/**
 	 * Set application icon
@@ -360,130 +340,64 @@ private:
 	 */
 	static void reshapeInternal(int width, int height);
 
-	#if defined(VULKAN) || defined(GLFW3)
-		/**
-		 * GLFW on char
-		 * @param window window
-		 * @param key key
-		 */
-		static void glfwOnChar(GLFWwindow* window, unsigned int key);
+	/**
+	 * GLFW on char
+	 * @param window window
+	 * @param key key
+	 */
+	static void glfwOnChar(GLFWwindow* window, unsigned int key);
 
-		/**
-		 * @return if key should be treated as special key
-		 */
-		static bool glfwIsSpecialKey(int key);
+	/**
+	 * @return if key should be treated as special key
+	 */
+	static bool glfwIsSpecialKey(int key);
 
-		/**
-		 * GLFW on key
-		 * @param window window
-		 * @param key key
-		 * @param scanCode scan code
-		 * @param action action
-		 * @param mods modifier keys
-		 */
-		static void glfwOnKey(GLFWwindow* window, int key, int scanCode, int action, int mods);
+	/**
+	 * GLFW on key
+	 * @param window window
+	 * @param key key
+	 * @param scanCode scan code
+	 * @param action action
+	 * @param mods modifier keys
+	 */
+	static void glfwOnKey(GLFWwindow* window, int key, int scanCode, int action, int mods);
 
-		/**
-		 * GLFW on mouse moved
-		 * @param window window
-		 * @param x x
-		 * @param y y
-		 */
-		static void glfwOnMouseMoved(GLFWwindow* window, double x, double y);
+	/**
+	 * GLFW on mouse moved
+	 * @param window window
+	 * @param x x
+	 * @param y y
+	 */
+	static void glfwOnMouseMoved(GLFWwindow* window, double x, double y);
 
-		/**
-		 * GLFW on key
-		 * @param window window
-		 * @param button button
-		 * @param action action
-		 * @param mods modifier keys
-		 */
-		static void glfwOnMouseButton(GLFWwindow* window, int button, int action, int mods);
+	/**
+	 * GLFW on key
+	 * @param window window
+	 * @param button button
+	 * @param action action
+	 * @param mods modifier keys
+	 */
+	static void glfwOnMouseButton(GLFWwindow* window, int button, int action, int mods);
 
-		/**
-		 * GLFW on key
-		 * @param window window
-		 * @param x x
-		 * @param y y
-		 */
-		static void glfwOnMouseWheel(GLFWwindow* window, double x, double y);
+	/**
+	 * GLFW on key
+	 * @param window window
+	 * @param x x
+	 * @param y y
+	 */
+	static void glfwOnMouseWheel(GLFWwindow* window, double x, double y);
 
-		/**
-		 * GLFW on window resize
-		 * @param window window
-		 * @param width width
-		 * @param height height
-		 */
-		static void glfwOnWindowResize(GLFWwindow* window, int width, int height);
+	/**
+	 * GLFW on window resize
+	 * @param window window
+	 * @param width width
+	 * @param height height
+	 */
+	static void glfwOnWindowResize(GLFWwindow* window, int width, int height);
 
-		/**
-		 * GLFW on close
-		 */
-		static void glfwOnClose(GLFWwindow* window);
-	#else
-		/**
-		 * On key down
-		 * @param key key
-		 * @param x x
-		 * @param y y
-		 */
-		static void glutOnKeyDown (unsigned char key, int x, int y);
+	/**
+	 * GLFW on close
+	 */
+	static void glfwOnClose(GLFWwindow* window);
 
-		/**
-		 * On key up
-		 * @param key key
-		 * @param x x
-		 * @param y y
-		 */
-		static void glutOnKeyUp(unsigned char key, int x, int y);
-
-		/**
-		 * On special key down
-		 * @param key key
-		 * @param x x
-		 * @param y y
-		 */
-		static void glutOnSpecialKeyDown (int key, int x, int y);
-
-		/**
-		 * On special key up
-		 * @param key key
-		 * @param x x
-		 * @param y y
-		 */
-		static void glutOnSpecialKeyUp(int key, int x, int y);
-
-		/**
-		 * On mouse dragged
-		 * @param x x
-		 * @param y y
-		 */
-		static void glutOnMouseDragged(int x, int y) ;
-
-		/**
-		 * On mouse moved
-		 * @param x x
-		 * @param y y
-		 */
-		static void glutOnMouseMoved(int x, int y);
-
-		/**
-		 * On mouse button
-		 * @param button button
-		 * @param state state
-		 * @param x x
-		 * @param y y
-		 */
-		static void glutOnMouseButton(int button, int state, int x, int y);
-
-		/**
-		 * On mouse wheel
-		 * @param button button
-		 * @param direction direction
-		 * @param x x
-		 * @param y y
-		 */
-		static void glutOnMouseWheel(int button, int direction, int x, int y);
-
-	#endif
 };

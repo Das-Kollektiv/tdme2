@@ -139,10 +139,7 @@ void GL3Renderer::initialize()
 	glDepthFunc(GL_LEQUAL);
 	glBlendEquation(GL_FUNC_ADD);
 	glDisable(GL_BLEND);
-	// Note sure here: GLEW requires to have it, whereas I actually do use core profile, maybe something is wrong with FREEGLUT core profile initialization
-	#if defined(_WIN32) || defined(__linux__) || defined(__FreeBSD__)
-		glEnable(GL_POINT_SPRITE);
-	#endif
+	glEnable(GL_POINT_SPRITE);
 	glEnable(GL_PROGRAM_POINT_SIZE);
 	setTextureUnit(CONTEXTINDEX_DEFAULT, 0);
 	// port-macosx requires this

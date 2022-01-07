@@ -38,7 +38,7 @@ ifeq ($(OS), Darwin)
 		EXTRA_LIBS := -Lext/fbx/macosx/lib -lfbxsdk -Lext/glfw3/macosx/lib -l glfw3 -l vulkan.1 -l$(NAME)-ext -framework Cocoa -framework IOKit -framework Carbon -framework OpenAL
 	else
 		# MacOSX, GL
-		EXTRAFLAGS := $(EXTRAFLAGS) -DGLFW3 -DHAVE_UNISTD_H
+		EXTRAFLAGS := $(EXTRAFLAGS) -DHAVE_UNISTD_H
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
@@ -64,7 +64,6 @@ else ifeq ($(OS), FreeBSD)
 			ext/vulkan/glslang/OSDependent/Unix/ossource.cpp
 		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/local/lib -lglfw -lvulkan -lopenal -pthread -lexecinfo
 	else
-		EXTRAFLAGS := $(EXTRAFLAGS) -DGLFW3
 		#FreeBSD, GL
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
@@ -79,7 +78,6 @@ else ifeq ($(OS), FreeBSD)
 else ifeq ($(OS), NetBSD)
 	# NetBSD
 	INCLUDES := $(INCLUDES) -I/usr/X11R7/include -I/usr/pkg/include
-	EXTRAFLAGS := $(EXTRAFLAGS) -DGLFW3
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL2Renderer.cpp \
@@ -92,7 +90,6 @@ else ifeq ($(OS), NetBSD)
 else ifeq ($(OS), OpenBSD)
 	# OpenBSD
 	INCLUDES := $(INCLUDES) -I/usr/X11R6/include -I/usr/local/include
-	EXTRAFLAGS := $(EXTRAFLAGS) -DGLFW3
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 			src/tdme/engine/EngineGL2Renderer.cpp \
@@ -120,7 +117,6 @@ else ifeq ($(OS), Haiku)
 		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -lglfw -lvulkan -lGL -lopenal -lnetwork
 	else
 		# Haiku, GL
-		EXTRAFLAGS := $(EXTRAFLAGS) -DGLFW3
 		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 			src/tdme/engine/EngineGL2Renderer.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
@@ -145,7 +141,7 @@ else ifeq ($(OS), Linux)
 		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lglfw -lvulkan -lopenal -pthread
 	# Linux, GLES2
 	else ifeq ($(GLES2), YES)
-		EXTRAFLAGS := $(EXTRAFLAGS) -DGLFW3 -DGLES2
+		EXTRAFLAGS := $(EXTRAFLAGS) -DGLES2
 		# Linux, ARM, GL
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/engine/EngineGLES2Renderer.cpp \
@@ -154,7 +150,6 @@ else ifeq ($(OS), Linux)
 	else
 		# Linux, GL
 		#EXTRAFLAGS := $(EXTRAFLAGS) -D_GLIBCXX_DEBUG
-		EXTRAFLAGS := $(EXTRAFLAGS) -DGLFW3
 		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 			src/tdme/engine/EngineGL2Renderer.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
@@ -180,7 +175,6 @@ else
 		INCLUDES := $(INCLUDES) -I/mingw64/include
 		EXTRA_LIBS := -L/mingw64/lib -lws2_32 -Lext/vulkan/runtime/mingw64 -lvulkan-1 -lglfw3 -lopenal -ldbghelp -l$(NAME) -l$(NAME)-ext
 	else
-		EXTRAFLAGS := $(EXTRAFLAGS) -DGLFW3
 		# Windows, GL
 		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
 			src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \

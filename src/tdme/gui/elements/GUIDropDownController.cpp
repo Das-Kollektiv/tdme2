@@ -270,11 +270,7 @@ void GUIDropDownController::handleKeyboardEvent(GUIKeyboardEvent* event)
 		auto keyChar = event->getKeyChar();
 		if (keyChar > 32 && keyChar < 127 && keyChar >= 32) {
 			event->setProcessed(true);
-			#if defined(VULKAN) || defined(GLFW3)
-				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) {
-			#else
-				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
-			#endif
+			if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) {
 				if (isOpen() == false) toggleOpenState();
 				search+= event->getKeyChar();
 				doSearch();

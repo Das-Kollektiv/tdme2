@@ -177,10 +177,6 @@ SceneEditorTabView::~SceneEditorTabView() {
 
 void SceneEditorTabView::handleInputEvents()
 {
-	#if !defined(GLFW3) && !defined(VUKAN)
-		keyControl = false;
-		keyShift = false;
-	#endif
 	auto keyControlX = false;
 	auto keyControlC = false;
 	auto keyControlV = false;
@@ -190,19 +186,14 @@ void SceneEditorTabView::handleInputEvents()
 		if (event.isProcessed() == true) continue;
 		if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) continue;
 		auto isKeyDown = event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
-		#if defined(GLFW3) || defined(VUKAN)
-			if (event.getKeyCode() == KEYBOARD_KEYCODE_LEFT_SHIFT) {
-				keyShift = isKeyDown;
-				event.setProcessed(true);
-			}
-			if (event.getKeyCode() == KEYBOARD_KEYCODE_LEFT_CTRL) {
-				keyControl = isKeyDown;
-				event.setProcessed(true);
-			}
-		#else
-			keyControl = event.isControlDown();
-			keyShift = event.isShiftDown();
-		#endif
+		if (event.getKeyCode() == KEYBOARD_KEYCODE_LEFT_SHIFT) {
+			keyShift = isKeyDown;
+			event.setProcessed(true);
+		}
+		if (event.getKeyCode() == KEYBOARD_KEYCODE_LEFT_CTRL) {
+			keyControl = isKeyDown;
+			event.setProcessed(true);
+		}
 		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_ESCAPE) {
 			keyEscape = isKeyDown;
 			event.setProcessed(true);

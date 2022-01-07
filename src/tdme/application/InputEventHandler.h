@@ -24,7 +24,7 @@ public:
 	static int getKeyboardModifiers();
 
 	/**
-	 * On char (applies to GLFW3)
+	 * On char
 	 * @param key key
 	 * @param x x
 	 * @param y y

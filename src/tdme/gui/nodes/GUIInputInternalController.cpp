@@ -323,11 +323,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 			(type == TYPE_INT && ((keyChar >= '0' && keyChar < '9') || keyChar == '-'))
 		)) {
 		event->setProcessed(true);
-		#if defined(VULKAN) || defined(GLFW3)
-			if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) {
-		#else
-			if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
-		#endif
+		if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) {
 			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
 				textInputNode->getText().remove(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 				index = Math::min(index, selectionIndex);

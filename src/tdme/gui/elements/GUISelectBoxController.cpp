@@ -353,11 +353,7 @@ void GUISelectBoxController::handleKeyboardEvent(GUIKeyboardEvent* event)
 	if (disabled == false) {
 		if (event->getType() != GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) {
 			auto isKeyDown = event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
-			#if defined(GLFW3) || defined(VUKAN)
-				if (event->getKeyCode() == KEYBOARD_KEYCODE_LEFT_CTRL) keyControl = isKeyDown;
-			#else
-				keyControl = event->isControlDown();
-			#endif
+			if (event->getKeyCode() == KEYBOARD_KEYCODE_LEFT_CTRL) keyControl = isKeyDown;
 		}
 
 		switch (event->getKeyCode()) {

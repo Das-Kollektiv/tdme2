@@ -9,30 +9,20 @@
 	#include <tdme/engine/subsystems/renderer/VKRenderer.h>
 	using tdme::engine::Engine;
 	using tdme::engine::subsystems::renderer::VKRenderer;
-#elif ((defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)) && !defined(GLES2)) || defined(_WIN32) || defined(__HAIKU__)
+#else
+	#define GLFW_INCLUDE_NONE
+	#include <GLFW/glfw3.h>
+
 	#define GLEW_NO_GLU
 	#include <GL/glew.h>
 	#if defined(_WIN32)
 		#include <GL/wglew.h>
 	#endif
 #endif
-#if defined(GLFW3)
-	#define GLFW_INCLUDE_NONE
-	#include <GLFW/glfw3.h>
+
 #if defined(_WIN32)
 	#define GLFW_EXPOSE_NATIVE_WIN32
 	#include <GLFW/glfw3native.h>
-#endif
-#elif !defined(VULKAN)
-	#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)
-		#include <GL/freeglut.h>
-	#elif defined(__APPLE__)
-		#include <GLUT/glut.h>
-	#elif defined(_WIN32)
-		#include <GL/freeglut.h>
-	#elif defined(__HAIKU__)
-		#include <GL/glut.h>
-	#endif
 #endif
 
 #if defined(_WIN32)
@@ -132,9 +122,7 @@ void Application::openBrowser(const string& url) {
 }
 
 void Application::cancelExit() {
-	#if defined(VULKAN) || defined(GLFW3)
-		glfwSetWindowShouldClose(glfwWindow, GLFW_FALSE);
-	#endif
+	glfwSetWindowShouldClose(glfwWindow, GLFW_FALSE);
 }
 
 void Application::exit(int exitCode) {
@@ -145,11 +133,7 @@ void Application::exit(int exitCode) {
 			::exit(exitCode);
 		} else {
 			Application::application->exitCode = exitCode;
-			#if defined(VULKAN) || defined(GLFW3)
-				glfwSetWindowShouldClose(glfwWindow, GLFW_TRUE);
-			#else
-				::exit(exitCode);
-			#endif
+			glfwSetWindowShouldClose(glfwWindow, GLFW_TRUE);
 		}
 	}
 }
@@ -346,30 +330,16 @@ void Application::exit(int exitCode) {
 	}
 #endif
 
-Application::ApplicationShutdown Application::applicationShutdown;
 Application* Application::application = nullptr;
 InputEventHandler* Application::inputEventHandler = nullptr;
 int64_t Application::timeLast = -1L;
 bool Application::limitFPS = true;
 
-#if defined(VULKAN) || defined(GLFW3)
-	GLFWwindow* Application::glfwWindow = nullptr;
-	array<unsigned int, 10> Application::glfwMouseButtonDownFrames;
-	int Application::glfwMouseButtonLast = -1;
-	bool Application::glfwCapsLockEnabled = false;
-	GLFWcursor* Application::glfwHandCursor = nullptr;
-#endif
-
-Application::ApplicationShutdown::~ApplicationShutdown() {
-	#if !defined(VULKAN) && !defined(GLFW3)
-		if (Application::application != nullptr) {
-			Console::println("Application::ApplicationShutdown::~ApplicationShutdown(): Shutting down application");
-			Application::application->dispose();
-			delete Application::application;
-			Application::application = nullptr;
-		}
-	#endif
-}
+GLFWwindow* Application::glfwWindow = nullptr;
+array<unsigned int, 10> Application::glfwMouseButtonDownFrames;
+int Application::glfwMouseButtonLast = -1;
+bool Application::glfwCapsLockEnabled = false;
+GLFWcursor* Application::glfwHandCursor = nullptr;
 
 Application::Application() {
 	Application::application = this;
@@ -381,18 +351,7 @@ Application::~Application() {
 
 void Application::setVSyncEnabled(bool vSync) {
 	Engine::renderer->setVSync(vSync);
-	#if defined(VULKAN)
-		// no op
-	#elif defined(GLFW3)
-		glfwSwapInterval(vSync == true?1:0);
-	#else
-		#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)
-			// TODO: a.drewke: vsync
-			// glXSwapIntervalEXT(vSync == true?1:0);
-		#elif defined(_WIN32)
-			wglSwapIntervalEXT(vSync == true?1:0);
-		#endif
-	#endif
+	glfwSwapInterval(vSync == true?1:0);
 }
 
 string Application::getOSName() {
@@ -470,11 +429,7 @@ int Application::getWindowWidth() const {
 void Application::setWindowWidth(int windowWidth) {
 	this->windowWidth = windowWidth;
 	if (initialized == true) {
-		#if defined(VULKAN) || defined(GLFW3)
-			if (fullScreen == false) glfwSetWindowSize(glfwWindow, windowWidth, windowHeight);
-		#else
-			glutReshapeWindow(windowWidth, windowHeight);
-		#endif
+		if (fullScreen == false) glfwSetWindowSize(glfwWindow, windowWidth, windowHeight);
 	}
 }
 
@@ -485,11 +440,7 @@ int Application::getWindowHeight() const {
 void Application::setWindowHeight(int windowHeight) {
 	this->windowHeight = windowHeight;
 	if (initialized == true) {
-		#if defined(VULKAN) || defined(GLFW3)
-			if (fullScreen == false) glfwSetWindowSize(glfwWindow, windowWidth, windowHeight);
-		#else
-			glutReshapeWindow(windowWidth, windowHeight);
-		#endif
+		if (fullScreen == false) glfwSetWindowSize(glfwWindow, windowWidth, windowHeight);
 	}
 }
 
@@ -500,29 +451,20 @@ bool Application::isFullScreen() const {
 void Application::setFullScreen(bool fullScreen) {
 	this->fullScreen = fullScreen;
 	if (initialized == true) {
-		#if defined(VULKAN) || defined(GLFW3)
-			auto windowMonitor = glfwGetWindowMonitor(glfwWindow);
-			if (windowMonitor == nullptr && fullScreen == true) {
-				auto monitor = glfwGetPrimaryMonitor();
-				auto mode = glfwGetVideoMode(monitor);
-				glfwSetWindowMonitor(glfwWindow, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
-			} else
-			if (windowMonitor != nullptr && fullScreen == false) {
-				glfwSetWindowMonitor(glfwWindow, NULL, windowXPosition, windowYPosition, windowWidth, windowHeight, 0);
-				if ((windowHints & WINDOW_HINT_MAXIMIZED) == WINDOW_HINT_MAXIMIZED) {
-					glfwSetWindowPos(glfwWindow, windowXPosition, windowYPosition);
-					glfwGetWindowSize(glfwWindow, &windowWidth, &windowHeight);
-					glfwOnWindowResize(glfwWindow, windowWidth, windowHeight);
-				}
+		auto windowMonitor = glfwGetWindowMonitor(glfwWindow);
+		if (windowMonitor == nullptr && fullScreen == true) {
+			auto monitor = glfwGetPrimaryMonitor();
+			auto mode = glfwGetVideoMode(monitor);
+			glfwSetWindowMonitor(glfwWindow, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+		} else
+		if (windowMonitor != nullptr && fullScreen == false) {
+			glfwSetWindowMonitor(glfwWindow, NULL, windowXPosition, windowYPosition, windowWidth, windowHeight, 0);
+			if ((windowHints & WINDOW_HINT_MAXIMIZED) == WINDOW_HINT_MAXIMIZED) {
+				glfwSetWindowPos(glfwWindow, windowXPosition, windowYPosition);
+				glfwGetWindowSize(glfwWindow, &windowWidth, &windowHeight);
+				glfwOnWindowResize(glfwWindow, windowWidth, windowHeight);
 			}
-		#else
-			if (fullScreen == true) {
-				glutFullScreen();
-			} else {
-				glutPositionWindow(windowXPosition, windowYPosition);
-				glutReshapeWindow(windowWidth, windowHeight);
-			}
-		#endif
+		}
 	}
 }
 
@@ -533,100 +475,63 @@ void Application::installExceptionHandler() {
 }
 
 void Application::setMouseCursor(int mouseCursor) {
-	#if defined(VULKAN) || defined(GLFW3)
-		if (mouseCursor == MOUSE_CURSOR_DISABLED) {
-			glfwSetCursor(glfwWindow, nullptr);
-			glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-		} else
-		if (mouseCursor == MOUSE_CURSOR_ENABLED) {
-			glfwSetCursor(glfwWindow, nullptr);
-			glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		} else
-		if (mouseCursor == MOUSE_CURSOR_HAND) {
-			glfwSetCursor(glfwWindow, glfwHandCursor);
-			glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		}
-	#else
-		glutSetCursor(mouseCursor);
-	#endif
+	if (mouseCursor == MOUSE_CURSOR_DISABLED) {
+		glfwSetCursor(glfwWindow, nullptr);
+		glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+	} else
+	if (mouseCursor == MOUSE_CURSOR_ENABLED) {
+		glfwSetCursor(glfwWindow, nullptr);
+		glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	} else
+	if (mouseCursor == MOUSE_CURSOR_HAND) {
+		glfwSetCursor(glfwWindow, glfwHandCursor);
+		glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
 }
 
 int Application::getMousePositionX() {
-	#if defined(VULKAN) || defined(GLFW3)
-		double mouseX, mouseY;
-		glfwGetCursorPos(glfwWindow, &mouseX, &mouseY);
-		return static_cast<int>(mouseX);
-	#else
-		// TODO: implement me!
-		return -1;
-	#endif
+	double mouseX, mouseY;
+	glfwGetCursorPos(glfwWindow, &mouseX, &mouseY);
+	return static_cast<int>(mouseX);
 }
 
 int Application::getMousePositionY() {
-	#if defined(VULKAN) || defined(GLFW3)
-		double mouseX, mouseY;
-		glfwGetCursorPos(glfwWindow, &mouseX, &mouseY);
-		return static_cast<int>(mouseY);
-	#else
-		// TODO: implement me!
-		return -1;
-	#endif
+	double mouseX, mouseY;
+	glfwGetCursorPos(glfwWindow, &mouseX, &mouseY);
+	return static_cast<int>(mouseY);
 }
 
 void Application::setMousePosition(int x, int y) {
-	#if defined(VULKAN) || defined(GLFW3)
-		#if defined(__APPLE__)
-			int windowXPos, windowYPos;
-			glfwGetWindowPos(Application::glfwWindow, &windowXPos, &windowYPos);
-			CGPoint point;
-			point.x = windowXPos + x;
-			point.y = windowYPos + y;
-			CGWarpMouseCursorPosition(point);
-			CGAssociateMouseAndMouseCursorPosition(true);
-		#else
-			glfwSetCursorPos(glfwWindow, x, y);
-		#endif
+	#if defined(__APPLE__)
+		int windowXPos, windowYPos;
+		glfwGetWindowPos(Application::glfwWindow, &windowXPos, &windowYPos);
+		CGPoint point;
+		point.x = windowXPos + x;
+		point.y = windowYPos + y;
+		CGWarpMouseCursorPosition(point);
+		CGAssociateMouseAndMouseCursorPosition(true);
 	#else
-		#if defined(__APPLE__)
-			CGPoint point;
-			point.x = glutGet((GLenum)GLUT_WINDOW_X) + x;
-			point.y = glutGet((GLenum)GLUT_WINDOW_Y) + y;
-			CGWarpMouseCursorPosition(point);
-			CGAssociateMouseAndMouseCursorPosition(true);
-		#else
-			glutWarpPointer(x, y);
-		#endif
+		glfwSetCursorPos(glfwWindow, x, y);
 	#endif
 }
 
 void Application::swapBuffers() {
-	#if defined(VULKAN) || defined(GLFW3)
-		#if !defined(VULKAN)
-			glfwSwapBuffers(glfwWindow);
-		#endif
-	#else
-		glutSwapBuffers();
-	#endif
+	if (Engine::renderer->getRendererType() != Renderer::RENDERERTYPE_VULKAN) {
+		glfwSwapBuffers(glfwWindow);
+	}
 }
 
 string Application::getClipboardContent() {
-	#if defined(VULKAN) || defined(GLFW3)
-		return string(glfwGetClipboardString(glfwWindow));
-	#endif
-	return string("Unsupported");
+	return string(glfwGetClipboardString(glfwWindow));
 }
 
 void Application::setClipboardContent(const string& content) {
-	#if defined(VULKAN) || defined(GLFW3)
-		glfwSetClipboardString(glfwWindow, content.c_str());
-	#endif
+	glfwSetClipboardString(glfwWindow, content.c_str());
 }
 
-#if defined(VULKAN) || defined(GLFW3)
-	static void glfwErrorCallback(int error, const char* description) {
-		Console::println(string("glfwErrorCallback(): ") + description);
-	}
-#endif
+static void glfwErrorCallback(int error, const char* description) {
+	Console::println(string("glfwErrorCallback(): ") + description);
+}
 
 void Application::run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler, int windowHints) {
 	for (auto i = 1; i < argc; i++) {
@@ -636,154 +541,81 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 	this->windowHints = windowHints;
 	executableFileName = FileSystem::getInstance()->getFileName(argv[0]);
 	Application::inputEventHandler = inputEventHandler;
-	#if defined(VULKAN) || defined(GLFW3)
-		glfwSetErrorCallback(glfwErrorCallback);
-		if (glfwInit() == false) {
-			Console::println("glflInit(): failed!");
+	glfwSetErrorCallback(glfwErrorCallback);
+	if (glfwInit() == false) {
+		Console::println("glflInit(): failed!");
+		return;
+	}
+
+	// TODO: dispose
+	Application::glfwHandCursor = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
+
+	// determine window position of not yet done
+	if (windowXPosition == -1 || windowYPosition == -1) {
+		// have some random position if position determination does fail
+		windowXPosition = 100;
+		windowYPosition = 100;
+		// otherwise center application window on primary monitor
+		GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+		const GLFWvidmode* monitorMode = glfwGetVideoMode(monitor);
+		if (monitorMode != nullptr) {
+			int monitorX = -1;
+			int monitorY = -1;
+			glfwGetMonitorPos(monitor, &monitorX, &monitorY);
+			windowXPosition = monitorX + (monitorMode->width - windowWidth) / 2;
+			windowYPosition = monitorY + (monitorMode->height - windowHeight) / 2;
+		}
+	}
+
+	#if defined(VULKAN)
+		if (glfwVulkanSupported() == false) {
+			Console::println("glfwVulkanSupported(): Vulkan not available!");
 			return;
 		}
-
-		// TODO: dispose
-		Application::glfwHandCursor = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
-
-		// determine window position of not yet done
-		if (windowXPosition == -1 || windowYPosition == -1) {
-			// have some random position if position determination does fail
-			windowXPosition = 100;
-			windowYPosition = 100;
-			// otherwise center application window on primary monitor
-			GLFWmonitor* monitor = glfwGetPrimaryMonitor();
-			const GLFWvidmode* monitorMode = glfwGetVideoMode(monitor);
-			if (monitorMode != nullptr) {
-				int monitorX = -1;
-				int monitorY = -1;
-				glfwGetMonitorPos(monitor, &monitorX, &monitorY);
-				windowXPosition = monitorX + (monitorMode->width - windowWidth) / 2;
-				windowYPosition = monitorY + (monitorMode->height - windowHeight) / 2;
-			}
-		}
-
-		#if defined(VULKAN)
-			if (glfwVulkanSupported() == false) {
-				Console::println("glfwVulkanSupported(): Vulkan not available!");
-				return;
-			}
-			if ((windowHints & WINDOW_HINT_NOTRESIZEABLE) == WINDOW_HINT_NOTRESIZEABLE) glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-			if ((windowHints & WINDOW_HINT_NOTDECORATED) == WINDOW_HINT_NOTDECORATED) glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
-			if ((windowHints & WINDOW_HINT_INVISIBLE) == WINDOW_HINT_INVISIBLE) glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-			if ((windowHints & WINDOW_HINT_MAXIMIZED) == WINDOW_HINT_MAXIMIZED) glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
-			glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-			glfwWindow = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
-		#elif defined(GLES2)
-			glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
-			glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
-			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-			if ((windowHints & WINDOW_HINT_NOTRESIZEABLE) == WINDOW_HINT_NOTRESIZEABLE) glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-			if ((windowHints & WINDOW_HINT_NOTDECORATED) == WINDOW_HINT_NOTDECORATED) glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
-			if ((windowHints & WINDOW_HINT_INVISIBLE) == WINDOW_HINT_INVISIBLE) glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-			if ((windowHints & WINDOW_HINT_MAXIMIZED) == WINDOW_HINT_MAXIMIZED) glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
-			glfwWindow = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
-		#else
-				if ((windowHints & WINDOW_HINT_NOTRESIZEABLE) == WINDOW_HINT_NOTRESIZEABLE) glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-				if ((windowHints & WINDOW_HINT_NOTDECORATED) == WINDOW_HINT_NOTDECORATED) glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
-				if ((windowHints & WINDOW_HINT_INVISIBLE) == WINDOW_HINT_INVISIBLE) glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-				if ((windowHints & WINDOW_HINT_MAXIMIZED) == WINDOW_HINT_MAXIMIZED) glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
-				array<array<int, 3>, 3> glVersions = {{ {{1, 4, 3}}, {{1, 3, 2}}, {{0, 3,1}} }};
-				#if defined(__APPLE__)
-					glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
-				#endif
-				auto i = 0;
-				for (auto& glVersion: glVersions) {
-					glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, glVersion[0] == 1?GLFW_TRUE:GLFW_FALSE);
-					glfwWindowHint(GLFW_OPENGL_PROFILE, glVersion[0] == 1?GLFW_OPENGL_CORE_PROFILE:GLFW_OPENGL_ANY_PROFILE);
-					glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, glVersion[1]);
-					glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, glVersion[2]);
-					glfwWindow = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
-					if (glfwWindow != nullptr) break;
-				}
-		#endif
-		if (glfwWindow == nullptr) {
-			Console::println("glfwCreateWindow(): Could not create window");
-			glfwTerminate();
-			return;
-		}
-		if ((windowHints & WINDOW_HINT_MAXIMIZED) == 0) glfwSetWindowPos(glfwWindow, windowXPosition, windowYPosition);
-		setIcon();
-		#if !defined(VULKAN)
-			glfwMakeContextCurrent(glfwWindow);
-			#if defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)) && !defined(GLES2)) || defined(__HAIKU__)
-				glewExperimental = true;
-				GLenum glewInitStatus = glewInit();
-				if (glewInitStatus != GLEW_OK) {
-					Console::println("glewInit(): Error: " + (string((char*)glewGetErrorString(glewInitStatus))));
-					Application::exit(1);
-				}
-			#endif
-		#endif
-		glfwSetCharCallback(glfwWindow, Application::glfwOnChar);
-		glfwSetKeyCallback(glfwWindow, Application::glfwOnKey);
-		glfwSetCursorPosCallback(glfwWindow, Application::glfwOnMouseMoved);
-		glfwSetMouseButtonCallback(glfwWindow, Application::glfwOnMouseButton);
-		glfwSetScrollCallback(glfwWindow, Application::glfwOnMouseWheel);
-		glfwSetWindowSizeCallback(glfwWindow, Application::glfwOnWindowResize);
-		glfwSetWindowCloseCallback(glfwWindow, Application::glfwOnClose);
-		if ((windowHints & WINDOW_HINT_MAXIMIZED) == WINDOW_HINT_MAXIMIZED) {
-			glfwGetWindowPos(glfwWindow, &windowXPosition, &windowYPosition);
-			glfwGetWindowSize(glfwWindow, &windowWidth, &windowHeight);
-			glfwOnWindowResize(glfwWindow, windowWidth, windowHeight);
-		}
-		#if defined(__APPLE__)
-			// change working directory on MacOSX if started from app bundle
-			auto executablePathName = string(argv[0]);
-			if (executablePathName.find(".app/Contents/MacOS/") != string::npos) {
-				auto appBundleName = StringTools::substring(executablePathName, 0, executablePathName.rfind(".app") + string(".app").size());
-				auto workingPathName = StringTools::substring(appBundleName, 0, appBundleName.rfind('/'));
-				FileSystem::getStandardFileSystem()->changePath(workingPathName);
-			}
-		#endif
-		while (glfwWindowShouldClose(glfwWindow) == false) {
-			displayInternal();
-			#if !defined(VULKAN)
-				glfwSwapBuffers(glfwWindow);
-			#endif
-			glfwPollEvents();
-		}
-		glfwTerminate();
-		if (Application::application != nullptr) {
-			Console::println("Application::run(): Shutting down application");
-			Application::application->dispose();
-			delete Application::application;
-			Application::application = nullptr;
-		}
-		if (exitCode != 0) ::exit(exitCode);
+		if ((windowHints & WINDOW_HINT_NOTRESIZEABLE) == WINDOW_HINT_NOTRESIZEABLE) glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+		if ((windowHints & WINDOW_HINT_NOTDECORATED) == WINDOW_HINT_NOTDECORATED) glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+		if ((windowHints & WINDOW_HINT_INVISIBLE) == WINDOW_HINT_INVISIBLE) glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+		if ((windowHints & WINDOW_HINT_MAXIMIZED) == WINDOW_HINT_MAXIMIZED) glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+		glfwWindow = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
+	#elif defined(GLES2)
+		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+		glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+		if ((windowHints & WINDOW_HINT_NOTRESIZEABLE) == WINDOW_HINT_NOTRESIZEABLE) glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+		if ((windowHints & WINDOW_HINT_NOTDECORATED) == WINDOW_HINT_NOTDECORATED) glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+		if ((windowHints & WINDOW_HINT_INVISIBLE) == WINDOW_HINT_INVISIBLE) glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+		if ((windowHints & WINDOW_HINT_MAXIMIZED) == WINDOW_HINT_MAXIMIZED) glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+		glfwWindow = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
 	#else
-		// determine window position of not yet done
-		if (windowXPosition == -1 || windowYPosition == -1) {
-			// TODO: if this is possible at all with GLUT
-			windowXPosition = 100;
-			windowYPosition = 100;
-		}
-		glutInit(&argc, argv);
+		if ((windowHints & WINDOW_HINT_NOTRESIZEABLE) == WINDOW_HINT_NOTRESIZEABLE) glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+		if ((windowHints & WINDOW_HINT_NOTDECORATED) == WINDOW_HINT_NOTDECORATED) glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+		if ((windowHints & WINDOW_HINT_INVISIBLE) == WINDOW_HINT_INVISIBLE) glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+		if ((windowHints & WINDOW_HINT_MAXIMIZED) == WINDOW_HINT_MAXIMIZED) glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+		array<array<int, 3>, 3> glVersions = {{ {{1, 4, 3}}, {{1, 3, 2}}, {{0, 3,1}} }};
 		#if defined(__APPLE__)
-			glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_3_2_CORE_PROFILE);
-		#elif ((defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)) && !defined(GLES2)) || defined(_WIN32)
-			glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-			glutInitContextProfile(GLUT_CORE_PROFILE);
-			/*
-			glutInitContextVersion(3, 1);
-			glutInitContextProfile(GLUT_COMPATIBILITY_PROFILE);
-			*/
-		#elif defined(__linux__) && defined(GLES2)
-			glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-			glutInitContextVersion(2,0);
-		#elif defined(__HAIKU__)
-			glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
+			glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
 		#endif
-		glutInitWindowSize(windowWidth, windowHeight);
-		glutInitWindowPosition(windowXPosition, windowYPosition);
-		glutCreateWindow(title.c_str());
-		setIcon();
+		auto i = 0;
+		for (auto& glVersion: glVersions) {
+			glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, glVersion[0] == 1?GLFW_TRUE:GLFW_FALSE);
+			glfwWindowHint(GLFW_OPENGL_PROFILE, glVersion[0] == 1?GLFW_OPENGL_CORE_PROFILE:GLFW_OPENGL_ANY_PROFILE);
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, glVersion[1]);
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, glVersion[2]);
+			glfwWindow = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
+			if (glfwWindow != nullptr) break;
+		}
+	#endif
+	if (glfwWindow == nullptr) {
+		Console::println("glfwCreateWindow(): Could not create window");
+		glfwTerminate();
+		return;
+	}
+	if ((windowHints & WINDOW_HINT_MAXIMIZED) == 0) glfwSetWindowPos(glfwWindow, windowXPosition, windowYPosition);
+	setIcon();
+	#if !defined(VULKAN)
+		glfwMakeContextCurrent(glfwWindow);
 		#if defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)) && !defined(GLES2)) || defined(__HAIKU__)
 			glewExperimental = true;
 			GLenum glewInitStatus = glewInit();
@@ -792,86 +624,87 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 				Application::exit(1);
 			}
 		#endif
-		// glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
-		glutReshapeFunc(Application::reshapeInternal);
-		glutDisplayFunc(Application::displayInternal);
-		glutIdleFunc(Application::displayInternal);
-		glutIgnoreKeyRepeat(true);
-		glutKeyboardFunc(Application::glutOnKeyDown);
-		glutKeyboardUpFunc(Application::glutOnKeyUp);
-		glutSpecialFunc(Application::glutOnSpecialKeyDown);
-		glutSpecialUpFunc(Application::glutOnSpecialKeyUp);
-		glutMotionFunc(Application::glutOnMouseDragged);
-		glutPassiveMotionFunc(Application::glutOnMouseMoved);
-		glutMouseFunc(Application::glutOnMouseButton);
-		#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__) || defined(_WIN32)
-			glutMouseWheelFunc(Application::glutOnMouseWheel);
-		#endif
-		glutMainLoop();
 	#endif
+	glfwSetCharCallback(glfwWindow, Application::glfwOnChar);
+	glfwSetKeyCallback(glfwWindow, Application::glfwOnKey);
+	glfwSetCursorPosCallback(glfwWindow, Application::glfwOnMouseMoved);
+	glfwSetMouseButtonCallback(glfwWindow, Application::glfwOnMouseButton);
+	glfwSetScrollCallback(glfwWindow, Application::glfwOnMouseWheel);
+	glfwSetWindowSizeCallback(glfwWindow, Application::glfwOnWindowResize);
+	glfwSetWindowCloseCallback(glfwWindow, Application::glfwOnClose);
+	if ((windowHints & WINDOW_HINT_MAXIMIZED) == WINDOW_HINT_MAXIMIZED) {
+		glfwGetWindowPos(glfwWindow, &windowXPosition, &windowYPosition);
+		glfwGetWindowSize(glfwWindow, &windowWidth, &windowHeight);
+		glfwOnWindowResize(glfwWindow, windowWidth, windowHeight);
+	}
+	#if defined(__APPLE__)
+		// change working directory on MacOSX if started from app bundle
+		auto executablePathName = string(argv[0]);
+		if (executablePathName.find(".app/Contents/MacOS/") != string::npos) {
+			auto appBundleName = StringTools::substring(executablePathName, 0, executablePathName.rfind(".app") + string(".app").size());
+			auto workingPathName = StringTools::substring(appBundleName, 0, appBundleName.rfind('/'));
+			FileSystem::getStandardFileSystem()->changePath(workingPathName);
+		}
+	#endif
+	while (glfwWindowShouldClose(glfwWindow) == false) {
+		displayInternal();
+		#if !defined(VULKAN)
+			glfwSwapBuffers(glfwWindow);
+		#endif
+		glfwPollEvents();
+	}
+	glfwTerminate();
+	if (Application::application != nullptr) {
+		Console::println("Application::run(): Shutting down application");
+		Application::application->dispose();
+		delete Application::application;
+		Application::application = nullptr;
+	}
+	if (exitCode != 0) ::exit(exitCode);
 }
 
 void Application::setIcon() {
-	// https://stackoverflow.com/questions/12748103/how-to-change-freeglut-main-window-icon-in-c
-	#if defined(VULKAN) || defined(GLFW3)
-		auto logoFileName = StringTools::replace(StringTools::toLowerCase(executableFileName), ".exe", "") + "-icon.png";
-		if (FileSystem::getInstance()->fileExists("resources/platforms/icons/" + logoFileName) == false) logoFileName = "default-icon.png";
-		auto texture = TextureReader::read("resources/platforms/icons", logoFileName, false, false);
-		if (texture != nullptr) {
-			auto textureData = texture->getTextureData();
-			auto textureWidth = texture->getTextureWidth();
-			auto textureHeight = texture->getTextureHeight();
-			auto textureBytePerPixel = texture->getDepth() == 32?4:3;
-			auto glfwPixels = new uint8_t[textureWidth * textureHeight * 4];
-			for (auto y = 0; y < textureHeight; y++)
-			for (auto x = 0; x < textureWidth; x++) {
-				glfwPixels[y * textureWidth * 4 + x * 4 + 0] = textureData->get(y * textureWidth * textureBytePerPixel + x * textureBytePerPixel + 0);
-				glfwPixels[y * textureWidth * 4 + x * 4 + 1] = textureData->get(y * textureWidth * textureBytePerPixel + x * textureBytePerPixel + 1);
-				glfwPixels[y * textureWidth * 4 + x * 4 + 2] = textureData->get(y * textureWidth * textureBytePerPixel + x * textureBytePerPixel + 2);
-				glfwPixels[y * textureWidth * 4 + x * 4 + 3] = textureBytePerPixel == 3?255:textureData->get(y * textureWidth * textureBytePerPixel + x * textureBytePerPixel + 3);
-			}
-			GLFWimage glfwIcon;
-			glfwIcon.width = texture->getTextureWidth();
-			glfwIcon.height = texture->getTextureHeight();
-			glfwIcon.pixels = glfwPixels;
-			glfwSetWindowIcon(glfwWindow, 1, &glfwIcon);
-			texture->releaseReference();
-			delete [] glfwPixels;
+	auto logoFileName = StringTools::replace(StringTools::toLowerCase(executableFileName), ".exe", "") + "-icon.png";
+	if (FileSystem::getInstance()->fileExists("resources/platforms/icons/" + logoFileName) == false) logoFileName = "default-icon.png";
+	auto texture = TextureReader::read("resources/platforms/icons", logoFileName, false, false);
+	if (texture != nullptr) {
+		auto textureData = texture->getTextureData();
+		auto textureWidth = texture->getTextureWidth();
+		auto textureHeight = texture->getTextureHeight();
+		auto textureBytePerPixel = texture->getDepth() == 32?4:3;
+		auto glfwPixels = new uint8_t[textureWidth * textureHeight * 4];
+		for (auto y = 0; y < textureHeight; y++)
+		for (auto x = 0; x < textureWidth; x++) {
+			glfwPixels[y * textureWidth * 4 + x * 4 + 0] = textureData->get(y * textureWidth * textureBytePerPixel + x * textureBytePerPixel + 0);
+			glfwPixels[y * textureWidth * 4 + x * 4 + 1] = textureData->get(y * textureWidth * textureBytePerPixel + x * textureBytePerPixel + 1);
+			glfwPixels[y * textureWidth * 4 + x * 4 + 2] = textureData->get(y * textureWidth * textureBytePerPixel + x * textureBytePerPixel + 2);
+			glfwPixels[y * textureWidth * 4 + x * 4 + 3] = textureBytePerPixel == 3?255:textureData->get(y * textureWidth * textureBytePerPixel + x * textureBytePerPixel + 3);
 		}
-	#elif defined(_WIN32)
-		#if defined(VULKAN) || defined(GLFW3)
-			auto hwnd = glfwGetWin32Window(glfwWindow);
-		#else
-			auto hwnd = FindWindow(NULL, title.c_str()); // TODO: improve me
-		#endif
-		HANDLE icon = LoadImage(GetModuleHandle(nullptr), "resources/platforms/win32/app.ico", IMAGE_ICON, 256, 256, LR_LOADFROMFILE | LR_COLOR);
-		SendMessage(hwnd, (UINT)WM_SETICON, ICON_BIG, (LPARAM)icon);
-	#endif
+		GLFWimage glfwIcon;
+		glfwIcon.width = texture->getTextureWidth();
+		glfwIcon.height = texture->getTextureHeight();
+		glfwIcon.pixels = glfwPixels;
+		glfwSetWindowIcon(glfwWindow, 1, &glfwIcon);
+		texture->releaseReference();
+		delete [] glfwPixels;
+	}
 }
 
 void Application::displayInternal() {
 	if (Application::application->initialized == false) {
 		Application::application->initialize();
-		#if defined(VULKAN) || defined(GLFW3)
-			Application::application->reshape(Application::application->windowWidth, Application::application->windowHeight);
-		#endif
+		Application::application->reshape(Application::application->windowWidth, Application::application->windowHeight);
 		Application::application->initialized = true;
 		Application::application->setFullScreen(Application::application->fullScreen);
 	}
 	int64_t timeNow = Time::getCurrentMillis();
 	int64_t timeFrame = 1000/Application::FPS;
 	if (Application::timeLast != -1L) {
-		#if !defined(VULKAN) || defined(GLFW3)
-			int64_t timePassed = timeNow - timeLast;
-			if (limitFPS == true && timePassed < timeFrame) Thread::sleep(timeFrame - timePassed);
-		#endif
+		int64_t timePassed = timeNow - timeLast;
+		if (limitFPS == true && timePassed < timeFrame) Thread::sleep(timeFrame - timePassed);
 	}
 	Application::timeLast = timeNow;
 	Application::application->display();
-	#if defined(VULKAN) || defined(GLFW3)
-	#else
-		glutSwapBuffers();
-	#endif
 }
 
 void Application::reshapeInternal(int width, int height) {
@@ -882,183 +715,127 @@ void Application::reshapeInternal(int width, int height) {
 	Application::application->reshape(width, height);
 }
 
-#if defined(VULKAN) || defined(GLFW3)
+void Application::glfwOnChar(GLFWwindow* window, unsigned int key) {
+	if (Application::inputEventHandler == nullptr) return;
+	double mouseX, mouseY;
+	glfwGetCursorPos(window, &mouseX, &mouseY);
+	Application::inputEventHandler->onChar(key, (int)mouseX, (int)mouseY);
+}
 
-	void Application::glfwOnChar(GLFWwindow* window, unsigned int key) {
-		if (Application::inputEventHandler == nullptr) return;
-		double mouseX, mouseY;
-		glfwGetCursorPos(window, &mouseX, &mouseY);
-		Application::inputEventHandler->onChar(key, (int)mouseX, (int)mouseY);
-	}
+bool Application::glfwIsSpecialKey(int key) {
+	return
+		key == GLFW_KEY_SPACE ||
+		key == GLFW_KEY_UP ||
+		key == GLFW_KEY_DOWN ||
+		key == GLFW_KEY_LEFT ||
+		key == GLFW_KEY_RIGHT ||
+		key == GLFW_KEY_TAB ||
+		key == GLFW_KEY_BACKSPACE ||
+		key == GLFW_KEY_ENTER ||
+		key == GLFW_KEY_DELETE ||
+		key == GLFW_KEY_HOME ||
+		key == GLFW_KEY_END ||
+		key == GLFW_KEY_ESCAPE ||
+		key == GLFW_KEY_LEFT_SHIFT ||
+		key == GLFW_KEY_LEFT_CONTROL ||
+		key == GLFW_KEY_LEFT_ALT ||
+		key == GLFW_KEY_LEFT_SUPER ||
+		key == GLFW_KEY_RIGHT_SHIFT ||
+		key == GLFW_KEY_RIGHT_CONTROL ||
+		key == GLFW_KEY_RIGHT_ALT ||
+		key == GLFW_KEY_RIGHT_SUPER ||
+		key == GLFW_KEY_F1 ||
+		key == GLFW_KEY_F2 ||
+		key == GLFW_KEY_F3 ||
+		key == GLFW_KEY_F4 ||
+		key == GLFW_KEY_F5 ||
+		key == GLFW_KEY_F6 ||
+		key == GLFW_KEY_F7 ||
+		key == GLFW_KEY_F8 ||
+		key == GLFW_KEY_F9 ||
+		key == GLFW_KEY_F10 ||
+		key == GLFW_KEY_F11 ||
+		key == GLFW_KEY_F12;
+}
 
-	bool Application::glfwIsSpecialKey(int key) {
-		return
-			key == GLFW_KEY_SPACE ||
-			key == GLFW_KEY_UP ||
-			key == GLFW_KEY_DOWN ||
-			key == GLFW_KEY_LEFT ||
-			key == GLFW_KEY_RIGHT ||
-			key == GLFW_KEY_TAB ||
-			key == GLFW_KEY_BACKSPACE ||
-			key == GLFW_KEY_ENTER ||
-			key == GLFW_KEY_DELETE ||
-			key == GLFW_KEY_HOME ||
-			key == GLFW_KEY_END ||
-			key == GLFW_KEY_ESCAPE ||
-			key == GLFW_KEY_LEFT_SHIFT ||
-			key == GLFW_KEY_LEFT_CONTROL ||
-			key == GLFW_KEY_LEFT_ALT ||
-			key == GLFW_KEY_LEFT_SUPER ||
-			key == GLFW_KEY_RIGHT_SHIFT ||
-			key == GLFW_KEY_RIGHT_CONTROL ||
-			key == GLFW_KEY_RIGHT_ALT ||
-			key == GLFW_KEY_RIGHT_SUPER ||
-			key == GLFW_KEY_F1 ||
-			key == GLFW_KEY_F2 ||
-			key == GLFW_KEY_F3 ||
-			key == GLFW_KEY_F4 ||
-			key == GLFW_KEY_F5 ||
-			key == GLFW_KEY_F6 ||
-			key == GLFW_KEY_F7 ||
-			key == GLFW_KEY_F8 ||
-			key == GLFW_KEY_F9 ||
-			key == GLFW_KEY_F10 ||
-			key == GLFW_KEY_F11 ||
-			key == GLFW_KEY_F12;
-	}
-
-	void Application::glfwOnKey(GLFWwindow* window, int key, int scanCode, int action, int mods) {
-		if (Application::inputEventHandler == nullptr) return;
-		double mouseX, mouseY;
-		glfwGetCursorPos(window, &mouseX, &mouseY);
-		// TODO: Use GLFW_MOD_CAPS_LOCK, which does not seem to be available with my version, need to update perhabs
-		if (key == GLFW_KEY_CAPS_LOCK) {
-			if (action == GLFW_PRESS) {
-				glfwCapsLockEnabled = glfwCapsLockEnabled == false?true:false;
-			}
-		}
-		if (glfwIsSpecialKey(key) == true) {
-			if (action == GLFW_PRESS || action == GLFW_REPEAT) {
-				Application::inputEventHandler->onSpecialKeyDown(key, (int)mouseX, (int)mouseY);
-			} else
-			if (action == GLFW_RELEASE) {
-				Application::inputEventHandler->onSpecialKeyUp(key, (int)mouseX, (int)mouseY);
-			}
-		} else {
-			if (action == GLFW_PRESS || action == GLFW_REPEAT) {
-				auto keyName = key == GLFW_KEY_SPACE?" ":glfwGetKeyName(key, scanCode);
-				if (keyName != nullptr) {
-					Application::inputEventHandler->onKeyDown(
-						(mods & GLFW_MOD_SHIFT) == 0 && glfwCapsLockEnabled == false?Character::toLowerCase(keyName[0]):keyName[0],
-						(int)mouseX,
-						(int)mouseY
-					);
-				}
-			} else
-			if (action == GLFW_RELEASE) {
-				auto keyName = key == GLFW_KEY_SPACE?" ":glfwGetKeyName(key, scanCode);
-				if (keyName != nullptr) {
-					Application::inputEventHandler->onKeyUp(
-						(mods & GLFW_MOD_SHIFT) == 0 && glfwCapsLockEnabled == false?Character::toLowerCase(keyName[0]):keyName[0],
-						(int)mouseX,
-						(int)mouseY
-					);
-				}
-			}
-		}
-	}
-
-	void Application::glfwOnMouseMoved(GLFWwindow* window, double x, double y) {
-		if (Application::inputEventHandler == nullptr) return;
-		if (glfwMouseButtonLast != -1 && glfwMouseButtonDownFrames[glfwMouseButtonLast] > 0) {
-			Application::inputEventHandler->onMouseDragged((int)x, (int)y);
-		} else {
-			Application::inputEventHandler->onMouseMoved((int)x, (int)y);
-		}
-	}
-
-	void Application::glfwOnMouseButton(GLFWwindow* window, int button, int action, int mods) {
-		if (Application::inputEventHandler == nullptr) return;
-		double mouseX, mouseY;
-		glfwGetCursorPos(window, &mouseX, &mouseY);
-		Application::inputEventHandler->onMouseButton(button, action == GLFW_PRESS?MOUSE_BUTTON_DOWN:MOUSE_BUTTON_UP, (int)mouseX, (int)mouseY);
+void Application::glfwOnKey(GLFWwindow* window, int key, int scanCode, int action, int mods) {
+	if (Application::inputEventHandler == nullptr) return;
+	double mouseX, mouseY;
+	glfwGetCursorPos(window, &mouseX, &mouseY);
+	// TODO: Use GLFW_MOD_CAPS_LOCK, which does not seem to be available with my version, need to update perhabs
+	if (key == GLFW_KEY_CAPS_LOCK) {
 		if (action == GLFW_PRESS) {
-			glfwMouseButtonDownFrames[button]++;
-		} else {
-			glfwMouseButtonDownFrames[button] = 0;
+			glfwCapsLockEnabled = glfwCapsLockEnabled == false?true:false;
 		}
-		glfwMouseButtonLast = action == MOUSE_BUTTON_DOWN?button:-1;
 	}
-
-	void Application::glfwOnMouseWheel(GLFWwindow* window, double x, double y) {
-		if (Application::inputEventHandler == nullptr) return;
-		double mouseX, mouseY;
-		glfwGetCursorPos(window, &mouseX, &mouseY);
-		if (x != 0.0) Application::inputEventHandler->onMouseWheel(0, (int)x, (int)mouseX, (int)mouseY);
-		if (y != 0.0) Application::inputEventHandler->onMouseWheel(1, (int)y, (int)mouseX, (int)mouseY);
-	}
-
-	void Application::glfwOnWindowResize(GLFWwindow* window, int width, int height) {
-		Application::reshapeInternal(width, height);
-	}
-
-	void Application::glfwOnClose(GLFWwindow* window) {
-		Application::application->onClose();
-	}
-
-#else
-	void Application::glutOnKeyDown (unsigned char key, int x, int y) {
-		if (Application::inputEventHandler == nullptr) return;
-		Application::inputEventHandler->onKeyDown(key, x, y);
-	}
-
-	void Application::glutOnKeyUp(unsigned char key, int x, int y) {
-		if (Application::inputEventHandler == nullptr) return;
-		Application::inputEventHandler->onKeyUp(key, x, y);
-	}
-
-	void Application::glutOnSpecialKeyDown (int key, int x, int y) {
-		if (Application::inputEventHandler == nullptr) return;
-		Application::inputEventHandler->onSpecialKeyDown(key, x, y);
-	}
-
-	void Application::glutOnSpecialKeyUp(int key, int x, int y) {
-		if (Application::inputEventHandler == nullptr) return;
-		Application::inputEventHandler->onSpecialKeyUp(key, x, y);
-	}
-
-	void Application::glutOnMouseDragged(int x, int y) {
-		if (Application::inputEventHandler == nullptr) return;
-		Application::inputEventHandler->onMouseDragged(x, y);
-	}
-
-	void Application::glutOnMouseMoved(int x, int y) {
-		if (Application::inputEventHandler == nullptr) return;
-		Application::inputEventHandler->onMouseMoved(x, y);
-	}
-
-	void Application::glutOnMouseButton(int button, int state, int x, int y) {
-		if (Application::inputEventHandler == nullptr) return;
-		if (button == 3) {
-			#if !defined(_MSC_VER)
-				Application::inputEventHandler->onMouseWheel(3, 1, x, y);
-			#endif
-			return;
+	if (glfwIsSpecialKey(key) == true) {
+		if (action == GLFW_PRESS || action == GLFW_REPEAT) {
+			Application::inputEventHandler->onSpecialKeyDown(key, (int)mouseX, (int)mouseY);
 		} else
-		if (button == 4) {
-			#if !defined(_MSC_VER)
-				Application::inputEventHandler->onMouseWheel(4, -1, x, y);
-			#endif
-			return;
+		if (action == GLFW_RELEASE) {
+			Application::inputEventHandler->onSpecialKeyUp(key, (int)mouseX, (int)mouseY);
 		}
-		Application::inputEventHandler->onMouseButton(button, state, x, y);
+	} else {
+		if (action == GLFW_PRESS || action == GLFW_REPEAT) {
+			auto keyName = key == GLFW_KEY_SPACE?" ":glfwGetKeyName(key, scanCode);
+			if (keyName != nullptr) {
+				Application::inputEventHandler->onKeyDown(
+					(mods & GLFW_MOD_SHIFT) == 0 && glfwCapsLockEnabled == false?Character::toLowerCase(keyName[0]):keyName[0],
+					(int)mouseX,
+					(int)mouseY
+				);
+			}
+		} else
+		if (action == GLFW_RELEASE) {
+			auto keyName = key == GLFW_KEY_SPACE?" ":glfwGetKeyName(key, scanCode);
+			if (keyName != nullptr) {
+				Application::inputEventHandler->onKeyUp(
+					(mods & GLFW_MOD_SHIFT) == 0 && glfwCapsLockEnabled == false?Character::toLowerCase(keyName[0]):keyName[0],
+					(int)mouseX,
+					(int)mouseY
+				);
+			}
+		}
 	}
+}
 
-	void Application::glutOnMouseWheel(int button, int direction, int x, int y) {
-		if (Application::inputEventHandler == nullptr) return;
-		Application::inputEventHandler->onMouseWheel(button, direction, x, y);
+void Application::glfwOnMouseMoved(GLFWwindow* window, double x, double y) {
+	if (Application::inputEventHandler == nullptr) return;
+	if (glfwMouseButtonLast != -1 && glfwMouseButtonDownFrames[glfwMouseButtonLast] > 0) {
+		Application::inputEventHandler->onMouseDragged((int)x, (int)y);
+	} else {
+		Application::inputEventHandler->onMouseMoved((int)x, (int)y);
 	}
-#endif
+}
+
+void Application::glfwOnMouseButton(GLFWwindow* window, int button, int action, int mods) {
+	if (Application::inputEventHandler == nullptr) return;
+	double mouseX, mouseY;
+	glfwGetCursorPos(window, &mouseX, &mouseY);
+	Application::inputEventHandler->onMouseButton(button, action == GLFW_PRESS?MOUSE_BUTTON_DOWN:MOUSE_BUTTON_UP, (int)mouseX, (int)mouseY);
+	if (action == GLFW_PRESS) {
+		glfwMouseButtonDownFrames[button]++;
+	} else {
+		glfwMouseButtonDownFrames[button] = 0;
+	}
+	glfwMouseButtonLast = action == MOUSE_BUTTON_DOWN?button:-1;
+}
+
+void Application::glfwOnMouseWheel(GLFWwindow* window, double x, double y) {
+	if (Application::inputEventHandler == nullptr) return;
+	double mouseX, mouseY;
+	glfwGetCursorPos(window, &mouseX, &mouseY);
+	if (x != 0.0) Application::inputEventHandler->onMouseWheel(0, (int)x, (int)mouseX, (int)mouseY);
+	if (y != 0.0) Application::inputEventHandler->onMouseWheel(1, (int)y, (int)mouseX, (int)mouseY);
+}
+
+void Application::glfwOnWindowResize(GLFWwindow* window, int width, int height) {
+	Application::reshapeInternal(width, height);
+}
+
+void Application::glfwOnClose(GLFWwindow* window) {
+	Application::application->onClose();
+}
 
 void Application::onClose() {
 }
