@@ -737,7 +737,7 @@ void Application::glfwOnKey(GLFWwindow* window, int key, int scanCode, int actio
 	if (action == GLFW_PRESS || action == GLFW_REPEAT) {
 		auto keyName = key == GLFW_KEY_SPACE?" ":glfwGetKeyName(key, scanCode);
 		Application::inputEventHandler->onKeyDown(
-			keyName == nullptr?0:((mods & GLFW_MOD_SHIFT) == 0 && glfwCapsLockEnabled == false?Character::toLowerCase(keyName[0]):keyName[0]),
+			keyName == nullptr?-1:((mods & GLFW_MOD_SHIFT) == 0 && glfwCapsLockEnabled == false?Character::toLowerCase(keyName[0]):keyName[0]),
 			key,
 			(int)mouseX,
 			(int)mouseY
@@ -746,7 +746,7 @@ void Application::glfwOnKey(GLFWwindow* window, int key, int scanCode, int actio
 	if (action == GLFW_RELEASE) {
 		auto keyName = key == GLFW_KEY_SPACE?" ":glfwGetKeyName(key, scanCode);
 		Application::inputEventHandler->onKeyUp(
-			keyName == nullptr?0:((mods & GLFW_MOD_SHIFT) == 0 && glfwCapsLockEnabled == false?Character::toLowerCase(keyName[0]):keyName[0]),
+			keyName == nullptr?-1:((mods & GLFW_MOD_SHIFT) == 0 && glfwCapsLockEnabled == false?Character::toLowerCase(keyName[0]):keyName[0]),
 			key,
 			(int)mouseX,
 			(int)mouseY
