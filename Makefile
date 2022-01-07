@@ -125,7 +125,7 @@ else ifeq ($(OS), Haiku)
 			src/tdme/engine/EngineGL2Renderer.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
 		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -lglfw -lGLEW -lGL -lopenal -lnetwork
 	endif
 	OFLAGS := -O2
@@ -149,7 +149,7 @@ else ifeq ($(OS), Linux)
 		# Linux, ARM, GL
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/engine/EngineGLES2Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
 		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -L/usr/local/lib -lGLESv2 -lEGL -lglfw -lopenal -pthread
 	else
 		# Linux, GL
@@ -159,7 +159,7 @@ else ifeq ($(OS), Linux)
 			src/tdme/engine/EngineGL2Renderer.cpp \
 			src/tdme/engine/EngineGL3Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
+			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
 		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lGLEW -lGL -lglfw -lopenal -pthread
 	endif
 	OFLAGS := -O2
