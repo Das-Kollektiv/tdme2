@@ -29,11 +29,13 @@ using tdme::utilities::StringTools;
 Object3D::Object3D(const string& id, Model* model, int instances): Object3DInternal(id, model, instances)
 {
 	setShader("default");
+	setDistanceShader("default");
 }
 
 Object3D::Object3D(const string& id, Model* model): Object3DInternal(id, model, 1)
 {
 	setShader("default");
+	setDistanceShader("default");
 }
 
 void Object3D::setEngine(Engine* engine)

@@ -71,9 +71,9 @@ private:
 	Entity* parentEntity { nullptr };
 	bool frustumCulling { true };
 	RenderPass renderPass { RENDERPASS_STANDARD };
-	string shaderId { "default" };
+	string shaderId;
 	uint8_t uniqueShaderId { 0 };
-	string distanceShaderId { "" };
+	string distanceShaderId;
 	uint8_t uniqueDistanceShaderId { 0 };
 	float distanceShaderDistance { 50.0f };
 	string reflectionEnvironmentMappingId;

@@ -2291,7 +2291,10 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 		if (lightingShader != nullptr) lightingShader->unUseProgram();
 
 		// render shadows if required
-		if (applyShadowMapping == true && shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleDecomposedEntities.objects);
+		if (applyShadowMapping == true && shadowMapping != nullptr) {
+			if (visibleDecomposedEntities.objects.empty() == false) shadowMapping->renderShadowMaps(visibleDecomposedEntities.objects);
+			if (visibleDecomposedEntities.objectsForwardShading.empty() == false) shadowMapping->renderShadowMaps(visibleDecomposedEntities.objectsForwardShading);
+		}
 	}
 
 	// do post processing
@@ -2379,7 +2382,9 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 		if (lightingShader != nullptr) lightingShader->unUseProgram();
 
 		// render shadows if required
-		if (applyShadowMapping == true && shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleDecomposedEntities.objectsPostPostProcessing);
+		if (applyShadowMapping == true && shadowMapping != nullptr) {
+			if (visibleDecomposedEntities.objectsPostPostProcessing.empty() == false) shadowMapping->renderShadowMaps(visibleDecomposedEntities.objectsPostPostProcessing);
+		}
 	}
 
 	// render objects that are have post post processing render pass
@@ -2425,7 +2430,9 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 		if (lightingShader != nullptr) lightingShader->unUseProgram();
 
 		// render shadows if required
-		if (applyShadowMapping == true && shadowMapping != nullptr) shadowMapping->renderShadowMaps(visibleDecomposedEntities.objectsNoDepthTest);
+		if (applyShadowMapping == true && shadowMapping != nullptr) {
+			if (visibleDecomposedEntities.objectsNoDepthTest.empty() == false) shadowMapping->renderShadowMaps(visibleDecomposedEntities.objectsNoDepthTest);
+		}
 	}
 
 	if (doRenderLightSource == true) {
