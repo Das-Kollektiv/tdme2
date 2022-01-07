@@ -737,9 +737,9 @@ void GUI::onChar(unsigned int key, int x, int y) {
 	guiKeyboardEvent.setKeyCode(key);
 	guiKeyboardEvent.setKeyChar(key);
 	guiKeyboardEvent.setMetaDown(false);
-	guiKeyboardEvent.setControlDown(controlDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
-	guiKeyboardEvent.setAltDown(altDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
-	guiKeyboardEvent.setShiftDown(shiftDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+	guiKeyboardEvent.setControlDown(controlDown);
+	guiKeyboardEvent.setAltDown(altDown);
+	guiKeyboardEvent.setShiftDown(shiftDown);
 	guiKeyboardEvent.setProcessed(false);
 	keyboardEvents.push_back(guiKeyboardEvent);
 }
@@ -752,9 +752,9 @@ void GUI::onKeyDown (unsigned char key, int x, int y) {
 	guiKeyboardEvent.setKeyCode(GUIKeyboardEvent::getKeyCodeFromChar(key));
 	guiKeyboardEvent.setKeyChar(key);
 	guiKeyboardEvent.setMetaDown(false);
-	guiKeyboardEvent.setControlDown(controlDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
-	guiKeyboardEvent.setAltDown(altDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
-	guiKeyboardEvent.setShiftDown(shiftDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+	guiKeyboardEvent.setControlDown(controlDown);
+	guiKeyboardEvent.setAltDown(altDown);
+	guiKeyboardEvent.setShiftDown(shiftDown);
 	guiKeyboardEvent.setProcessed(false);
 	keyboardEvents.push_back(guiKeyboardEvent);
 }
@@ -767,9 +767,9 @@ void GUI::onKeyUp(unsigned char key, int x, int y) {
 	guiKeyboardEvent.setKeyCode(GUIKeyboardEvent::getKeyCodeFromChar(key));
 	guiKeyboardEvent.setKeyChar(key);
 	guiKeyboardEvent.setMetaDown(false);
-	guiKeyboardEvent.setControlDown(controlDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
-	guiKeyboardEvent.setAltDown(altDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
-	guiKeyboardEvent.setShiftDown(shiftDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+	guiKeyboardEvent.setControlDown(controlDown);
+	guiKeyboardEvent.setAltDown(altDown);
+	guiKeyboardEvent.setShiftDown(shiftDown);
 	guiKeyboardEvent.setProcessed(false);
 	keyboardEvents.push_back(guiKeyboardEvent);
 }
@@ -782,9 +782,9 @@ void GUI::onSpecialKeyDown (int key, int x, int y) {
 	guiKeyboardEvent.setKeyCode(key);
 	guiKeyboardEvent.setKeyChar(-1);
 	guiKeyboardEvent.setMetaDown(false);
-	guiKeyboardEvent.setControlDown(controlDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
-	guiKeyboardEvent.setAltDown(altDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
-	guiKeyboardEvent.setShiftDown(shiftDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+	guiKeyboardEvent.setControlDown(controlDown);
+	guiKeyboardEvent.setAltDown(altDown);
+	guiKeyboardEvent.setShiftDown(shiftDown);
 	guiKeyboardEvent.setProcessed(false);
 	keyboardEvents.push_back(guiKeyboardEvent);
 }
@@ -797,9 +797,9 @@ void GUI::onSpecialKeyUp(int key, int x, int y) {
 	guiKeyboardEvent.setKeyCode(key);
 	guiKeyboardEvent.setKeyChar(-1);
 	guiKeyboardEvent.setMetaDown(false);
-	guiKeyboardEvent.setControlDown(controlDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
-	guiKeyboardEvent.setAltDown(altDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
-	guiKeyboardEvent.setShiftDown(shiftDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+	guiKeyboardEvent.setControlDown(controlDown);
+	guiKeyboardEvent.setAltDown(altDown);
+	guiKeyboardEvent.setShiftDown(shiftDown);
 	guiKeyboardEvent.setProcessed(false);
 	keyboardEvents.push_back(guiKeyboardEvent);
 }
@@ -818,9 +818,9 @@ void GUI::onMouseDragged(int x, int y) {
 	guiMouseEvent.setWheelX(0.0f);
 	guiMouseEvent.setWheelY(0.0f);
 	guiMouseEvent.setWheelZ(0.0f);
-	guiMouseEvent.setControlDown(controlDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
-	guiMouseEvent.setAltDown(altDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
-	guiMouseEvent.setShiftDown(shiftDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+	guiMouseEvent.setControlDown(controlDown);
+	guiMouseEvent.setAltDown(altDown);
+	guiMouseEvent.setShiftDown(shiftDown);
 	guiMouseEvent.setProcessed(false);
 	mouseEvents.push_back(guiMouseEvent);
 }
@@ -839,9 +839,9 @@ void GUI::onMouseMoved(int x, int y) {
 	guiMouseEvent.setWheelX(0.0f);
 	guiMouseEvent.setWheelY(0.0f);
 	guiMouseEvent.setWheelZ(0.0f);
-	guiMouseEvent.setControlDown(controlDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
-	guiMouseEvent.setAltDown(altDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
-	guiMouseEvent.setShiftDown(shiftDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+	guiMouseEvent.setControlDown(controlDown);
+	guiMouseEvent.setAltDown(altDown);
+	guiMouseEvent.setShiftDown(shiftDown);
 	guiMouseEvent.setProcessed(false);
 	mouseEvents.push_back(guiMouseEvent);
 }
@@ -861,9 +861,9 @@ void GUI::onMouseButton(int button, int state, int x, int y) {
 	guiMouseEvent.setWheelX(0.0f);
 	guiMouseEvent.setWheelY(0.0f);
 	guiMouseEvent.setWheelZ(0.0f);
-	guiMouseEvent.setControlDown(controlDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
-	guiMouseEvent.setAltDown(altDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
-	guiMouseEvent.setShiftDown(shiftDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+	guiMouseEvent.setControlDown(controlDown);
+	guiMouseEvent.setAltDown(altDown);
+	guiMouseEvent.setShiftDown(shiftDown);
 	guiMouseEvent.setProcessed(false);
 	mouseEvents.push_back(guiMouseEvent);
 }
@@ -883,9 +883,9 @@ void GUI::onMouseWheel(int button, int direction, int x, int y) {
 	guiMouseEvent.setWheelX(0.0f);
 	guiMouseEvent.setWheelY(direction * 1.0f);
 	guiMouseEvent.setWheelZ(0.0f);
-	guiMouseEvent.setControlDown(controlDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL);
-	guiMouseEvent.setAltDown(altDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT);
-	guiMouseEvent.setShiftDown(shiftDown == true || (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT);
+	guiMouseEvent.setControlDown(controlDown);
+	guiMouseEvent.setAltDown(altDown);
+	guiMouseEvent.setShiftDown(shiftDown);
 	guiMouseEvent.setProcessed(false);
 	mouseEvents.push_back(guiMouseEvent);
 }
@@ -911,11 +911,7 @@ void GUI::fakeKeyboardModifierEvent() {
 	bool isControlDown = false;
 	bool isAltDown = false;
 	bool isShiftDown = false;
-	#if defined(__linux__) || defined(_WIN32)
-		isControlDown = (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_CTRL) == KEYBOARD_MODIFIER_CTRL;
-		isAltDown = (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_ALT) == KEYBOARD_MODIFIER_ALT;
-		isShiftDown = (InputEventHandler::getKeyboardModifiers() &  KEYBOARD_MODIFIER_SHIFT) == KEYBOARD_MODIFIER_SHIFT;
-	#elif defined(__APPLE__)
+	#if defined(__APPLE__)
 		KeyMap keys;
 		GetKeys(keys);
 		#define IS_KEY_DOWN(key, var) \

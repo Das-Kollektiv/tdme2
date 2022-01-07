@@ -13,10 +13,12 @@
 	#define GLFW_INCLUDE_NONE
 	#include <GLFW/glfw3.h>
 
-	#define GLEW_NO_GLU
-	#include <GL/glew.h>
-	#if defined(_WIN32)
-		#include <GL/wglew.h>
+	#if !defined(__APPLE__)
+		#define GLEW_NO_GLU
+		#include <GL/glew.h>
+		#if defined(_WIN32)
+			#include <GL/wglew.h>
+		#endif
 	#endif
 #endif
 

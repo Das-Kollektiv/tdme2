@@ -1,10 +1,6 @@
 #pragma once
 
-#if defined(VULKAN)
-	#define GLFW_INCLUDE_VULKAN
-#else
-	#define GLFW_INCLUDE_NONE
-#endif
+#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
 #define KEYBOARD_MODIFIER_SHIFT	GLFW_MOD_SHIFT

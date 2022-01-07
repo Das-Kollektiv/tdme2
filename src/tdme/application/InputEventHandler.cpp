@@ -10,7 +10,3 @@ using tdme::application::InputEventHandler;
 
 InputEventHandler::~InputEventHandler() {
 }
-
-int InputEventHandler::getKeyboardModifiers() {
-	return 0;
-}

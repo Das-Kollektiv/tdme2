@@ -18,12 +18,6 @@ public:
 	virtual ~InputEventHandler();
 
 	/**
-	 * Get keyboard modifiers
-	 * @return modifiers (one of KEYBOARD_MODIFIER_*)
-	 */
-	static int getKeyboardModifiers();
-
-	/**
 	 * On char
 	 * @param key key
 	 * @param x x
