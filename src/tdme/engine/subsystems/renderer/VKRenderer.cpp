@@ -164,6 +164,13 @@ VKRenderer::VKRenderer():
 	CUBEMAPTEXTUREINDEX_NEGATIVE_Y = 4;
 	CUBEMAPTEXTUREINDEX_POSITIVE_Z = 5;
 	CUBEMAPTEXTUREINDEX_NEGATIVE_Z = 6;
+	//
+	viewport.x = 0.0f;
+	viewport.y = 0.0f;
+	viewport.minDepth = 0.0f;
+	viewport.maxDepth = 1.0f;
+	scissor.offset.x = 0;
+	scissor.offset.y = 0;
 }
 
 inline VkBool32 VKRenderer::checkLayers(uint32_t checkCount, const char **checkNames, const vector<VkLayerProperties>& instanceLayers) {
@@ -3497,15 +3504,9 @@ void VKRenderer::updateViewPort()
 	//
 	viewport.width = static_cast<float>(viewPortWidth);
 	viewport.height = static_cast<float>(viewPortHeight);
-	viewport.x = 0.0f;
-	viewport.y = 0.0f;
-	viewport.minDepth = 0.0f;
-	viewport.maxDepth = 1.0f;
 
 	scissor.extent.width = viewPortWidth;
 	scissor.extent.height = viewPortHeight;
-	scissor.offset.x = 0;
-	scissor.offset.y = 0;
 
 	//
 	framebufferPipelinesId = createPipelineFramebufferId();
@@ -5854,6 +5855,7 @@ inline void VKRenderer::vmaMemCpy(VmaAllocation allocationDst, const uint8_t* _s
 	vmaSpinlock.lock();
 	VmaAllocationInfo dstAllocationInfo {};
 	vmaGetAllocationInfo(vmaAllocator, allocationDst, &dstAllocationInfo);
+
 	//
 	auto remainingSize = size;
 	auto offset = _offset;
