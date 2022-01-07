@@ -1715,9 +1715,6 @@ void VKRenderer::initializeFrame()
 	}
 
 	//
-	Renderer::initializeFrame();
-
-	//
 	VkResult err;
 	VkSemaphoreCreateInfo semaphoreCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,

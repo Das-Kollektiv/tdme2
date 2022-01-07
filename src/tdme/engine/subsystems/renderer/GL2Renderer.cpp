@@ -29,6 +29,7 @@
 #include <tdme/utilities/ShortBuffer.h>
 #include <tdme/utilities/StringTokenizer.h>
 #include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/Time.h>
 
 using std::array;
 using std::map;
@@ -52,6 +53,7 @@ using tdme::utilities::IntBuffer;
 using tdme::utilities::ShortBuffer;
 using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
+using tdme::utilities::Time;
 
 GL2Renderer::GL2Renderer()
 {
@@ -152,7 +154,6 @@ void GL2Renderer::initialize()
 
 void GL2Renderer::initializeFrame()
 {
-	Renderer::initializeFrame();
 }
 
 void GL2Renderer::finishFrame()
@@ -1119,4 +1120,26 @@ void GL2Renderer::bindSkinningMatricesBufferObject(int contextIdx, int32_t buffe
 
 void GL2Renderer::setVSync(bool vSync) {
 	// no op
+}
+
+const Renderer::Renderer_Statistics GL2Renderer::getStatistics() {
+	auto stats = statistics;
+	statistics.time = Time::getCurrentMillis();
+	statistics.memoryUsageGPU = -1LL;
+	statistics.memoryUsageShared = -1LL;
+	statistics.clearCalls = 0;
+	statistics.renderCalls = 0;
+	statistics.instances = 0;
+	statistics.computeCalls = 0;
+	statistics.triangles = 0;
+	statistics.points = 0;
+	statistics.linePoints = 0;
+	statistics.bufferUploads = 0;
+	statistics.textureUploads = 0;
+	statistics.renderPasses = 0;
+	statistics.drawCommands = 0;
+	statistics.submits = 0;
+	statistics.disposedTextures = 0;
+	statistics.disposedBuffers = 0;
+	return stats;
 }

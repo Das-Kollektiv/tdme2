@@ -9,7 +9,6 @@ namespace renderer {
 	class GL3Renderer;
 	class GLES2Renderer;
 	class Renderer;
-	class SingleThreadedRenderer;
 	class VKRenderer;
 	class VKGL3CoreShaderProgram;
 }  // namespace renderer

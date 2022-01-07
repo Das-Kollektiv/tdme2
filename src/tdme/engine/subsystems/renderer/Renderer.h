@@ -204,7 +204,7 @@ public:
 	/**
 	 * Pre Frame Initialization
 	 */
-	virtual void initializeFrame();
+	virtual void initializeFrame() = 0;
 
 	/**
 	 * Finish frame

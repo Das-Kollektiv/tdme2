@@ -66,9 +66,6 @@ Renderer::Renderer()
 Renderer::~Renderer() {
 }
 
-void Renderer::initializeFrame() {
-}
-
 Texture* Renderer::generateMipMap(const string& id, Texture* texture, int32_t level, int32_t atlasBorderSize) {
 	auto generatedTextureWidth = texture->getTextureWidth() / 2;
 	auto generatedTextureHeight = texture->getTextureHeight() / 2;

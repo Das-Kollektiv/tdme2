@@ -26,6 +26,7 @@
 #include <tdme/utilities/IntBuffer.h>
 #include <tdme/utilities/ShortBuffer.h>
 #include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/Time.h>
 
 using std::array;
 using std::map;
@@ -48,6 +49,7 @@ using tdme::utilities::FloatBuffer;
 using tdme::utilities::IntBuffer;
 using tdme::utilities::ShortBuffer;
 using tdme::utilities::StringTools;
+using tdme::utilities::Time;
 
 GLES2Renderer::GLES2Renderer()
 {
@@ -125,7 +127,6 @@ void GLES2Renderer::initialize()
 
 void GLES2Renderer::initializeFrame()
 {
-	Renderer::initializeFrame();
 }
 
 void GLES2Renderer::finishFrame()
@@ -1055,6 +1056,28 @@ void GLES2Renderer::bindSkinningMatricesBufferObject(int contextIdx, int32_t buf
 
 void GLES2Renderer::setVSync(bool vSync) {
 	// no op
+}
+
+const Renderer::Renderer_Statistics GLES2Renderer::getStatistics() {
+	auto stats = statistics;
+	statistics.time = Time::getCurrentMillis();
+	statistics.memoryUsageGPU = -1LL;
+	statistics.memoryUsageShared = -1LL;
+	statistics.clearCalls = 0;
+	statistics.renderCalls = 0;
+	statistics.instances = 0;
+	statistics.computeCalls = 0;
+	statistics.triangles = 0;
+	statistics.points = 0;
+	statistics.linePoints = 0;
+	statistics.bufferUploads = 0;
+	statistics.textureUploads = 0;
+	statistics.renderPasses = 0;
+	statistics.drawCommands = 0;
+	statistics.submits = 0;
+	statistics.disposedTextures = 0;
+	statistics.disposedBuffers = 0;
+	return stats;
 }
 
 void GLES2Renderer::checkGLError()

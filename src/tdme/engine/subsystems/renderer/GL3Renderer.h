@@ -12,7 +12,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/subsystems/renderer/SingleThreadedRenderer.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::array;
@@ -21,7 +21,7 @@ using std::string;
 using std::vector;
 
 using tdme::engine::fileio::textures::Texture;
-using tdme::engine::subsystems::renderer::SingleThreadedRenderer;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::FrameBuffer;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::FloatBuffer;
@@ -33,7 +33,7 @@ using tdme::utilities::ShortBuffer;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::subsystems::renderer::GL3Renderer: public SingleThreadedRenderer
+class tdme::engine::subsystems::renderer::GL3Renderer: public Renderer
 {
 private:
 	uint32_t engineVAO;
@@ -211,6 +211,7 @@ public:
 	void bindSkinningNormalsResultBufferObject(int contextIdx, int32_t bufferObjectId) override;
 	void bindSkinningMatricesBufferObject(int contextIdx, int32_t bufferObjectId) override;
 	void setVSync(bool vSync) override;
+	const Renderer_Statistics getStatistics() override;
 
 private:
 

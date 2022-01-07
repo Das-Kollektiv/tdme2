@@ -6,7 +6,6 @@ SRCS_PLATFORM = \
 	src/tdme/engine/EngineGL3Renderer.cpp \
 	src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
 	src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
-	src/tdme/engine/subsystems/renderer/SingleThreadedRenderer.cpp \
 	src/tdme/engine/fileio/models/FBXReader.cpp \
 	src/tdme/engine/fileio/models/ModelReaderFBX.cpp
 
