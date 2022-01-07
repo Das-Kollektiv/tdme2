@@ -132,6 +132,7 @@ using tdme::utilities::StringTools;
 using tdme::utilities::Time;
 
 VKRenderer::VKRenderer():
+	Renderer(),
 	queueSpinlock("queue_spinlock"),
 	buffersMutex("buffers_mutex"),
 	texturesMutex("textures_mutex"),
@@ -285,18 +286,18 @@ inline bool VKRenderer::beginDrawCommandBuffer(int contextIdx, int bufferId) {
 
 	// check if we need a change at all
 	if (boundFrameBuffer == ID_NONE &&
-		(windowSwapchainBuffers[currentFrameBuffer].accessTypes != nextAccessTypes || windowSwapchainBuffers[currentFrameBuffer].svsLayout != nextLayout)) {
+		(windowFramebufferBuffers[currentWindowFramebufferIdx].accessTypes != nextAccessTypes || windowFramebufferBuffers[currentWindowFramebufferIdx].svsLayout != nextLayout)) {
 		ThsvsImageBarrier svsImageBarrier = {
-			.prevAccessCount = static_cast<uint32_t>(windowSwapchainBuffers[currentFrameBuffer].accessTypes[1] != THSVS_ACCESS_NONE?2:1),
-			.pPrevAccesses = windowSwapchainBuffers[currentFrameBuffer].accessTypes.data(),
+			.prevAccessCount = static_cast<uint32_t>(windowFramebufferBuffers[currentWindowFramebufferIdx].accessTypes[1] != THSVS_ACCESS_NONE?2:1),
+			.pPrevAccesses = windowFramebufferBuffers[currentWindowFramebufferIdx].accessTypes.data(),
 			.nextAccessCount = static_cast<uint32_t>(nextAccessTypes[1] != THSVS_ACCESS_NONE?2:1),
 			.pNextAccesses = nextAccessTypes.data(),
-			.prevLayout = windowSwapchainBuffers[currentFrameBuffer].svsLayout,
+			.prevLayout = windowFramebufferBuffers[currentWindowFramebufferIdx].svsLayout,
 			.nextLayout = nextLayout,
 			.discardContents = true,
 			.srcQueueFamilyIndex = 0,
 			.dstQueueFamilyIndex = 0,
-			.image = windowSwapchainBuffers[currentFrameBuffer].image,
+			.image = windowFramebufferBuffers[currentWindowFramebufferIdx].image,
 			.subresourceRange = {
 				.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
 				.baseMipLevel = 0,
@@ -322,8 +323,8 @@ inline bool VKRenderer::beginDrawCommandBuffer(int contextIdx, int bufferId) {
 		vkCmdPipelineBarrier(commandBuffer.drawCommand, srcStages, dstStages, 0, 0, nullptr, 0, nullptr, 1, &vkImageMemoryBarrier);
 
 		//
-		windowSwapchainBuffers[currentFrameBuffer].accessTypes = nextAccessTypes;
-		windowSwapchainBuffers[currentFrameBuffer].svsLayout = nextLayout;
+		windowFramebufferBuffers[currentWindowFramebufferIdx].accessTypes = nextAccessTypes;
+		windowFramebufferBuffers[currentWindowFramebufferIdx].svsLayout = nextLayout;
 	}
 
 	//
@@ -896,11 +897,11 @@ void VKRenderer::initializeSwapChain() {
 	assert(err == VK_SUCCESS);
 
 	//
-	windowSwapchainBuffers.resize(windowSwapchainImageCount);
-	for (auto i = 0; i < windowSwapchainBuffers.size(); i++) {
+	windowFramebufferBuffers.resize(windowSwapchainImageCount);
+	for (auto i = 0; i < windowFramebufferBuffers.size(); i++) {
 		//
-		windowSwapchainBuffers[i].width = swapchainExtent.width;
-		windowSwapchainBuffers[i].height = swapchainExtent.height;
+		windowFramebufferBuffers[i].width = swapchainExtent.width;
+		windowFramebufferBuffers[i].height = swapchainExtent.height;
 
 		//
 		VkImageViewCreateInfo colorAttachmentView = {
@@ -924,12 +925,12 @@ void VKRenderer::initializeSwapChain() {
 				.layerCount = 1
 			}
 		};
-		windowSwapchainBuffers[i].image = swapchainImages[i];
-		err = vkCreateImageView(device, &colorAttachmentView, nullptr, &windowSwapchainBuffers[i].view);
+		windowFramebufferBuffers[i].image = swapchainImages[i];
+		err = vkCreateImageView(device, &colorAttachmentView, nullptr, &windowFramebufferBuffers[i].view);
 		assert(err == VK_SUCCESS);
 	}
 
-	currentFrameBuffer = 0;
+	currentWindowFramebufferIdx = 0;
 }
 
 const string VKRenderer::getVendor() {
@@ -1604,7 +1605,7 @@ inline void VKRenderer::startRenderPass(int contextIdx) {
 	if (currentContext.renderPassStarted == true) return;
 	currentContext.renderPassStarted = true;
 
-	auto usedFrameBuffer = windowFramebuffers[currentFrameBuffer];
+	auto usedFrameBuffer = windowFramebufferBuffers[currentWindowFramebufferIdx].framebuffer;
 	auto vkRenderPass = renderPass;
 	if (boundFrameBuffer != ID_NONE) {
 		auto frameBuffer = boundFrameBuffer < 0 || boundFrameBuffer >= framebuffers.size()?nullptr:framebuffers[boundFrameBuffer];
@@ -1656,17 +1657,15 @@ void VKRenderer::initializeFrameBuffers() {
 		.layers = 1
 	};
 
-	windowFramebuffers.resize(windowSwapchainImageCount);
-
-	for (auto i = 0; i < windowFramebuffers.size(); i++) {
-		attachments[0] = windowSwapchainBuffers[i].view;
-		auto err = vkCreateFramebuffer(device, &frameBufferCreateInfo, nullptr, &windowFramebuffers[i]);
+	for (auto i = 0; i < windowFramebufferBuffers.size(); i++) {
+		attachments[0] = windowFramebufferBuffers[i].view;
+		auto err = vkCreateFramebuffer(device, &frameBufferCreateInfo, nullptr, &windowFramebufferBuffers[i].framebuffer);
 		assert(!err);
 	}
 }
 
 void VKRenderer::reshape() {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
 
 	// new dimensions
 	glfwGetWindowSize(Application::glfwWindow, (int32_t*)&windowWidth, (int32_t*)&windowHeight);
@@ -1675,8 +1674,10 @@ void VKRenderer::reshape() {
 	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(windowWidth) + " x " + to_string(windowHeight));
 
 	// dispose old frame buffers
-	for (auto i = 0; i < windowFramebuffers.size(); i++) vkDestroyFramebuffer(device, windowFramebuffers[i], nullptr);
-	windowFramebuffers.clear();
+	for (auto i = 0; i < windowFramebufferBuffers.size(); i++) {
+		vkDestroyFramebuffer(device, windowFramebufferBuffers[i].framebuffer, nullptr);
+		windowFramebufferBuffers[i].framebuffer = VK_NULL_HANDLE;
+	}
 
 	//
 	invalidatePipelines();
@@ -1685,7 +1686,10 @@ void VKRenderer::reshape() {
 	initializeSwapChain();
 	initializeRenderPass();
 	initializeFrameBuffers();
-	currentFrameBuffer = 0;
+
+	//
+	lastSwapchainPresentMode = swapchainPresentMode;
+	currentWindowFramebufferIdx = 0;
 
 	//
 	Engine::getInstance()->reshape(windowWidth, windowHeight);
@@ -1700,7 +1704,9 @@ void VKRenderer::initializeFrame()
 		int32_t currentWidth;
 		int32_t currentHeight;
 		glfwGetWindowSize(Application::glfwWindow, &currentWidth, &currentHeight);
-		auto needsReshape = currentWidth > 0 && currentHeight > 0 && (currentWidth != windowWidth || currentHeight != windowHeight);
+		auto needsReshape =
+			(currentWidth > 0 && currentHeight > 0 && (currentWidth != windowWidth || currentHeight != windowHeight)) ||
+			lastSwapchainPresentMode != swapchainPresentMode;
 		if (needsReshape == true) reshape();
 	}
 
@@ -1722,10 +1728,10 @@ void VKRenderer::initializeFrame()
 	assert(!err);
 
 	//
-	lastFrameBuffer = currentFrameBuffer;
+	lastWindowFramebufferIdx = currentWindowFramebufferIdx;
 
 	// get the index of the next available swapchain image:
-	err = fpAcquireNextImageKHR(device, windowSwapchain, UINT64_MAX, imageAcquiredSemaphore, (VkFence)0, &currentFrameBuffer);
+	err = fpAcquireNextImageKHR(device, windowSwapchain, UINT64_MAX, imageAcquiredSemaphore, (VkFence)0, &currentWindowFramebufferIdx);
 
 	//
 	if (err == VK_ERROR_OUT_OF_DATE_KHR) {
@@ -1843,18 +1849,18 @@ void VKRenderer::finishFrame()
 	ThsvsImageLayout nextLayout { THSVS_IMAGE_LAYOUT_OPTIMAL };
 
 	// check if we need a change at all
-	if (windowSwapchainBuffers[currentFrameBuffer].accessTypes != nextAccessTypes || windowSwapchainBuffers[currentFrameBuffer].svsLayout != nextLayout) {
+	if (windowFramebufferBuffers[currentWindowFramebufferIdx].accessTypes != nextAccessTypes || windowFramebufferBuffers[currentWindowFramebufferIdx].svsLayout != nextLayout) {
 		ThsvsImageBarrier svsImageBarrier = {
-			.prevAccessCount = static_cast<uint32_t>(windowSwapchainBuffers[currentFrameBuffer].accessTypes[1] != THSVS_ACCESS_NONE?2:1),
-			.pPrevAccesses = windowSwapchainBuffers[currentFrameBuffer].accessTypes.data(),
+			.prevAccessCount = static_cast<uint32_t>(windowFramebufferBuffers[currentWindowFramebufferIdx].accessTypes[1] != THSVS_ACCESS_NONE?2:1),
+			.pPrevAccesses = windowFramebufferBuffers[currentWindowFramebufferIdx].accessTypes.data(),
 			.nextAccessCount = static_cast<uint32_t>(nextAccessTypes[1] != THSVS_ACCESS_NONE?2:1),
 			.pNextAccesses = nextAccessTypes.data(),
-			.prevLayout = windowSwapchainBuffers[currentFrameBuffer].svsLayout,
+			.prevLayout = windowFramebufferBuffers[currentWindowFramebufferIdx].svsLayout,
 			.nextLayout = nextLayout,
 			.discardContents = false,
 			.srcQueueFamilyIndex = 0,
 			.dstQueueFamilyIndex = 0,
-			.image = windowSwapchainBuffers[currentFrameBuffer].image,
+			.image = windowFramebufferBuffers[currentWindowFramebufferIdx].image,
 			.subresourceRange = {
 				.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
 				.baseMipLevel = 0,
@@ -1882,8 +1888,8 @@ void VKRenderer::finishFrame()
 		finishSetupCommandBuffer(0);
 
 		//
-		windowSwapchainBuffers[currentFrameBuffer].accessTypes = nextAccessTypes;
-		windowSwapchainBuffers[currentFrameBuffer].svsLayout = nextLayout;
+		windowFramebufferBuffers[currentWindowFramebufferIdx].accessTypes = nextAccessTypes;
+		windowFramebufferBuffers[currentWindowFramebufferIdx].svsLayout = nextLayout;
 	}
 
 	//
@@ -1895,7 +1901,7 @@ void VKRenderer::finishFrame()
 		.pWaitSemaphores = nullptr,
 		.swapchainCount = 1,
 		.pSwapchains = &windowSwapchain,
-		.pImageIndices = &currentFrameBuffer,
+		.pImageIndices = &currentWindowFramebufferIdx,
 		.pResults = &presentResult
 	};
 
@@ -7061,7 +7067,7 @@ ByteBuffer* VKRenderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t 
 	ThsvsImageLayout usedImageLayout = THSVS_IMAGE_LAYOUT_OPTIMAL;
 	auto frameBuffer = boundFrameBuffer < 0 || boundFrameBuffer >= framebuffers.size()?nullptr:framebuffers[boundFrameBuffer];
 	if (frameBuffer == nullptr) {
-		auto& swapchainBuffer = windowSwapchainBuffers[lastFrameBuffer];
+		auto& swapchainBuffer = windowFramebufferBuffers[lastWindowFramebufferIdx];
 		usedFormat = windowFormat;
 		usedImage = swapchainBuffer.image;
 		usedWidth = swapchainBuffer.width;
@@ -7656,7 +7662,6 @@ void VKRenderer::setVSyncEnabled(bool vSync) {
 	if (this->vSync == vSync) return;
 	swapchainPresentMode = vSync == true?VK_PRESENT_MODE_FIFO_KHR:VK_PRESENT_MODE_IMMEDIATE_KHR;
 	this->vSync = vSync;
-	initializeSwapChain();
 }
 
 const Renderer::Renderer_Statistics VKRenderer::getStatistics() {

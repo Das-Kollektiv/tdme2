@@ -13,7 +13,7 @@ using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::utilities::Time;
 
-SingleThreadedRenderer::SingleThreadedRenderer()
+SingleThreadedRenderer::SingleThreadedRenderer(): Renderer()
 {
 	// set up lights
 	for (auto i = 0; i < lights.size(); i++) {

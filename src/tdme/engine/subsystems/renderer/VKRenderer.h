@@ -283,11 +283,12 @@ private:
 		VkRenderPass renderPass { VK_NULL_HANDLE };
 	};
 
-	struct swapchain_buffer_type {
+	struct window_frambuffer_buffer_type {
 		array<ThsvsAccessType, 2> accessTypes { THSVS_ACCESS_NONE, THSVS_ACCESS_NONE };
 		ThsvsImageLayout svsLayout { THSVS_IMAGE_LAYOUT_OPTIMAL };
 		VkImage image { VK_NULL_HANDLE };
 		VkImageView view { VK_NULL_HANDLE };
+		VkFramebuffer framebuffer { VK_NULL_HANDLE };
 		int width { -1 };
 		int height { -1 };
 	};
@@ -404,8 +405,9 @@ private:
 
 	uint32_t windowSwapchainImageCount { 0 };
 	VkSwapchainKHR windowSwapchain { VK_NULL_HANDLE };
-	vector<swapchain_buffer_type> windowSwapchainBuffers;
-	vector<VkFramebuffer> windowFramebuffers;
+	vector<window_frambuffer_buffer_type> windowFramebufferBuffers;
+	uint32_t lastWindowFramebufferIdx { 0 };
+	uint32_t currentWindowFramebufferIdx { 0 };
 
 	VkFence memoryBarrierFence { VK_NULL_HANDLE };
 
@@ -446,8 +448,6 @@ private:
 	VkDescriptorPool descriptorPool1 { VK_NULL_HANDLE };
 	VkDescriptorPool descriptorPool2 { VK_NULL_HANDLE };
 
-	uint32_t lastFrameBuffer { 0 };
-	uint32_t currentFrameBuffer { 0 };
 	uint32_t queueCount { 0 };
 
 	VkSemaphore imageAcquiredSemaphore { VK_NULL_HANDLE };
@@ -489,6 +489,7 @@ private:
 	string deviceName;
 
 	VkPresentModeKHR swapchainPresentMode { VK_PRESENT_MODE_IMMEDIATE_KHR };
+	VkPresentModeKHR lastSwapchainPresentMode { VK_PRESENT_MODE_IMMEDIATE_KHR };
 	bool vSync { false };
 
 	//
