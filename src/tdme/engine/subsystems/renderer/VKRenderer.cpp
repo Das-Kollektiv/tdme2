@@ -141,6 +141,7 @@ VKRenderer::VKRenderer():
 	pipelinesSpinLock("pipelines_spinlock"),
 	vmaSpinlock("vma_spinlock")
 {
+	rendererType = RENDERERTYPE_VULKAN;
 	// setup consts
 	ID_NONE = 0;
 	CLEAR_DEPTH_BUFFER_BIT = 2;
@@ -1459,12 +1460,6 @@ void VKRenderer::initialize()
 			vkCreateFence(device, &fenceCreateInfo, nullptr, &context.setupFence);
 		}
 
-		// set up lights
-		for (auto i = 0; i < context.lights.size(); i++) {
-			context.lights[i].spotCosCutoff = static_cast<float>(Math::cos(Math::PI / 180.0f * 180.0f));
-		}
-		context.textureMatrix.identity();
-
 		//
 		recreateContextFences(context.idx);
 	}
@@ -1517,6 +1512,15 @@ void VKRenderer::initialize()
 	//
 	initializeRenderPass();
 	initializeFrameBuffers();
+
+	// renderer contexts
+	rendererContexts.resize(contexts.size());
+	for (auto& rendererContext: rendererContexts) {
+		for (auto i = 0; i < rendererContext.lights.size(); i++) {
+			rendererContext.lights[i].spotCosCutoff = static_cast<float>(Math::cos(Math::PI / 180.0f * 180.0f));
+		}
+		rendererContext.textureMatrix.identity();
+	}
 }
 
 void VKRenderer::initializeRenderPass() {
@@ -3482,16 +3486,6 @@ void VKRenderer::setProgramUniformFloatVec2(int contextIdx, int32_t uniformId, c
 
 void VKRenderer::setProgramAttributeLocation(int32_t programId, int32_t location, const string& name)
 {
-}
-
-int32_t VKRenderer::getLighting(int contextIdx) {
-	auto& currentContext = contexts[contextIdx];
-	return currentContext.lighting;
-}
-
-void VKRenderer::setLighting(int contextIdx, int32_t lighting) {
-	auto& currentContext = contexts[contextIdx];
-	currentContext.lighting = lighting;
 }
 
 void VKRenderer::setViewPort(int32_t width, int32_t height)
@@ -7572,76 +7566,6 @@ void VKRenderer::bindSkinningMatricesBufferObject(int contextIdx, int32_t buffer
 	if (currentContext.boundBuffers[7] == VK_NULL_HANDLE) {
 		currentContext.boundBuffers[7] = getBufferObjectInternal(emptyVertexBuffer, currentContext.boundBufferSizes[7]);
 	}
-}
-
-Matrix2D3x3& VKRenderer::getTextureMatrix(int contextIdx) {
-	auto& currentContext = contexts[contextIdx];
-	return currentContext.textureMatrix;
-}
-
-Renderer::Renderer_Light& VKRenderer::getLight(int contextIdx, int32_t lightId) {
-	auto& currentContext = contexts[contextIdx];
-	return currentContext.lights[lightId];
-}
-
-array<float, 4>& VKRenderer::getEffectColorMul(int contextIdx) {
-	auto& currentContext = contexts[contextIdx];
-	return currentContext.effectColorMul;
-}
-
-array<float, 4>& VKRenderer::getEffectColorAdd(int contextIdx) {
-	auto& currentContext = contexts[contextIdx];
-	return currentContext.effectColorAdd;
-}
-
-Renderer::Renderer_SpecularMaterial& VKRenderer::getSpecularMaterial(int contextIdx) {
-	auto& currentContext = contexts[contextIdx];
-	return currentContext.specularMaterial;
-}
-
-Renderer::Renderer_PBRMaterial& VKRenderer::getPBRMaterial(int contextIdx) {
-	auto& currentContext = contexts[contextIdx];
-	return currentContext.pbrMaterial;
-}
-
-const string& VKRenderer::getShader(int contextIdx) {
-	auto& currentContext = contexts[contextIdx];
-	return currentContext.shader;
-}
-
-void VKRenderer::setShader(int contextIdx, const string& id) {
-	auto& currentContext = contexts[contextIdx];
-	currentContext.shader = id;
-}
-
-const EntityShaderParameters& VKRenderer::getShaderParameters(int contextIdx) {
-	auto& currentContext = contexts[contextIdx];
-	return currentContext.shaderParameters;
-}
-
-void VKRenderer::setShaderParameters(int contextIdx, const EntityShaderParameters& parameters) {
-	auto& currentContext = contexts[contextIdx];
-	currentContext.shaderParameters = parameters;
-}
-
-float VKRenderer::getMaskMaxValue(int contextIdx) {
-	auto& currentContext = contexts[contextIdx];
-	return currentContext.maskMaxValue;
-}
-
-void VKRenderer::setMaskMaxValue(int contextIdx, float maskMaxValue) {
-	auto& currentContext = contexts[contextIdx];
-	currentContext.maskMaxValue = maskMaxValue;
-}
-
-array<float, 3>& VKRenderer::getEnvironmentMappingCubeMapPosition(int contextIdx) {
-	auto& currentContext = contexts[contextIdx];
-	return currentContext.environmentMappingCubeMapPosition;
-}
-
-void VKRenderer::setEnvironmentMappingCubeMapPosition(int contextIdx, array<float, 3>& position) {
-	auto& currentContext = contexts[contextIdx];
-	currentContext.environmentMappingCubeMapPosition = position;
 }
 
 void VKRenderer::setVSync(bool vSync) {

@@ -51,6 +51,7 @@ using tdme::utilities::StringTools;
 
 GLES2Renderer::GLES2Renderer()
 {
+	rendererType = RENDERERTYPE_OPENGL;
 	// setup GLES2 consts
 	ID_NONE = 0;
 	CLEAR_DEPTH_BUFFER_BIT = GL_DEPTH_BUFFER_BIT;
@@ -112,6 +113,14 @@ void GLES2Renderer::initialize()
 	glDepthFunc(GL_LEQUAL);
 	glBlendEquation(GL_FUNC_ADD);
 	glDisable(GL_BLEND);
+	// renderer contexts
+	rendererContexts.resize(1);
+	for (auto& rendererContext: rendererContexts) {
+		for (auto i = 0; i < rendererContext.lights.size(); i++) {
+			rendererContext.lights[i].spotCosCutoff = static_cast<float>(Math::cos(Math::PI / 180.0f * 180.0f));
+		}
+		rendererContext.textureMatrix.identity();
+	}
 }
 
 void GLES2Renderer::initializeFrame()

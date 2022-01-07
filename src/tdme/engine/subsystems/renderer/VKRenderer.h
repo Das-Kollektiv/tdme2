@@ -355,27 +355,13 @@ private:
 
 		vector<VkBuffer> computeRenderBarrierBuffers;
 
-		uint32_t commandCount { 0 };
+		int32_t programId { 0 };
 
-		string shader;
-		EntityShaderParameters shaderParameters;
-		array<float, 4> effectColorMul { 1.0f, 1.0f, 1.0f, 1.0f };
-		array<float, 4> effectColorAdd { 0.0f, 0.0f, 0.0f, 0.0f };
-		Renderer_PBRMaterial pbrMaterial;
-		Renderer_SpecularMaterial specularMaterial;
-		array<Renderer_Light, 8> lights;
-		Matrix2D3x3 textureMatrix;
+		uint32_t commandCount { 0 };
 
 		bool cullingEnabled { true };
 		int frontFace { VK_FRONT_FACE_COUNTER_CLOCKWISE + 1 };
 		int frontFaceIndex { VK_FRONT_FACE_COUNTER_CLOCKWISE + 1 };
-
-		int32_t programId { 0 };
-
-		float maskMaxValue { 1.0f };
-		array<float, 3> environmentMappingCubeMapPosition;
-
-		int32_t lighting { 0 };
 
 		vector<int32_t> uploadedTextureIds;
 	};
@@ -607,8 +593,6 @@ public:
 	void setProgramUniformFloatVec3(int contextIdx, int32_t uniformId, const array<float, 3>& data) override;
 	void setProgramUniformFloatVec2(int contextIdx, int32_t uniformId, const array<float, 2>& data) override;
 	void setProgramAttributeLocation(int32_t programId, int32_t location, const string& name) override;
-	int32_t getLighting(int contextIdx) override;
-	void setLighting(int contextIdx, int32_t lighting) override;
 	void setViewPort(int32_t width, int32_t height) override;
 	void updateViewPort() override;
 	void setClearColor(float red, float green, float blue, float alpha) override;
@@ -706,20 +690,6 @@ public:
 	//
 	int32_t getTextureUnit(int contextIdx) override;
 	void setTextureUnit(int contextIdx, int32_t textureUnit) override;
-	Matrix2D3x3& getTextureMatrix(int contextIdx) override;
-	Renderer_Light& getLight(int contextIdx, int32_t lightId) override;
-	array<float, 4>& getEffectColorMul(int contextIdx) override;
-	array<float, 4>& getEffectColorAdd(int contextIdx) override;
-	Renderer_SpecularMaterial& getSpecularMaterial(int contextIdx) override;
-	Renderer_PBRMaterial& getPBRMaterial(int contextIdx) override;
-	const string& getShader(int contextIdx) override;
-	void setShader(int contextIdx, const string& id) override;
-	const EntityShaderParameters& getShaderParameters(int contextIdx) override;
-	void setShaderParameters(int contextIdx, const EntityShaderParameters& parameters) override;
-	float getMaskMaxValue(int contextIdx) override;
-	void setMaskMaxValue(int contextIdx, float maskMaxValue) override;
-	array<float, 3>& getEnvironmentMappingCubeMapPosition(int contextIdx) override;
-	void setEnvironmentMappingCubeMapPosition(int contextIdx, array<float, 3>& position) override;
 	const Renderer_Statistics getStatistics() override;
 
 	//

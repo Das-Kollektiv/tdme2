@@ -7,7 +7,6 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
-#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/math/fwd-tdme.h>
@@ -22,7 +21,6 @@ using std::vector;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::EntityShaderParameters;
-using tdme::engine::FrameBuffer;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 using tdme::utilities::ByteBuffer;
@@ -38,6 +36,8 @@ using tdme::utilities::ShortBuffer;
 class tdme::engine::subsystems::renderer::Renderer
 {
 public:
+
+	enum RendererType { RENDERERTYPE_NONE, RENDERERTYPE_OPENGL, RENDERERTYPE_VULKAN };
 
 	/**
 	 * Bean holding light properties
@@ -89,6 +89,20 @@ public:
 		array<float, 2>  textureAtlasPixelDimension { 0.0f, 0.0f };
 	};
 
+	struct Renderer_Context {
+		array<float, 4> effectColorMul {{ 1.0f, 1.0f, 1.0f, 1.0f }};
+		array<float, 4> effectColorAdd {{ 0.0f, 0.0f, 0.0f, 0.0f }};
+		Renderer_SpecularMaterial specularMaterial {};
+		Renderer_PBRMaterial pbrMaterial {};
+		array<Renderer_Light, 8> lights {}; // TODO: we need this dynamically
+		Matrix2D3x3 textureMatrix {};
+		float maskMaxValue { 1.0f };
+		int32_t lighting { 0 };
+		array<float, 3> environmentMappingCubeMapPosition;
+		string shader;
+		EntityShaderParameters shaderParameters;
+	};
+
 	/**
 	 * Bean holding light properties
 	 */
@@ -112,6 +126,8 @@ public:
 		uint32_t disposedTextures { 0 };
 		uint32_t disposedBuffers { 0 };
 	};
+
+	RendererType rendererType { RENDERERTYPE_NONE };
 
 	int32_t CONTEXTINDEX_DEFAULT;
 
@@ -153,7 +169,6 @@ protected:
 	int32_t viewPortWidth;
 	int32_t viewPortHeight;
 	Renderer_Statistics statistics;
-private:
 	Vector3 cameraPosition;
 	Matrix4x4 projectionMatrix;
 	Matrix4x4 cameraMatrix;
@@ -161,6 +176,8 @@ private:
 	Matrix4x4 viewportMatrix;
 	int32_t effectPass;
 	string shaderPrefix;
+
+	vector<Renderer_Context> rendererContexts;
 public:
 	/**
 	 * Public constructor
@@ -171,6 +188,13 @@ public:
 	 * Destructor
 	 */
 	virtual ~Renderer();
+
+	/**
+	 * @return renderer type
+	 */
+	inline RendererType getRendererType() {
+		return rendererType;
+	}
 
 	/**
 	 * Initialize renderer
@@ -283,12 +307,16 @@ public:
 	/**
 	 * @return viewport width
 	 */
-	virtual int32_t getViewPortWidth();
+	inline int32_t getViewPortWidth() {
+		return viewPortWidth;
+	}
 
 	/**
 	 * @return viewport height
 	 */
-	virtual int32_t getViewPortHeight();
+	inline int32_t getViewPortHeight() {
+		return viewPortHeight;
+	}
 
 	/**
 	 * Loads a shader
@@ -414,44 +442,60 @@ public:
 	 * Get effect pass
 	 * @return effect pass
 	 */
-	virtual int32_t getEffectPass();
+	inline int32_t getEffectPass() {
+		return effectPass;
+	}
 
 	/**
 	 * Set effect pass
 	 * @param effectPass effect pass
 	 */
-	virtual void setEffectPass(int32_t effectPass);
+	inline void setEffectPass(int32_t effectPass) {
+		this->effectPass = effectPass;
+	}
 
 	/**
 	 * Get shader prefix
 	 * @return shader prefix
 	 */
-	virtual const string& getShaderPrefix();
+	inline const string& getShaderPrefix() {
+		return shaderPrefix;
+	}
 
 	/**
 	 * Set shader prefix
 	 * @param shaderPrefix shader prefix
 	 */
-	virtual void setShaderPrefix(const string& shaderPrefix);
+	inline void setShaderPrefix(const string& shaderPrefix) {
+		this->shaderPrefix = shaderPrefix;
+	}
 
 	/**
 	 * Get current lighting model
 	 * @param contextIdx context index
 	 * @return lighting, see LIGHTING_*
 	 */
-	virtual int32_t getLighting(int contextIdx) = 0;
+	inline int32_t getLighting(int contextIdx) {
+		auto& rendererContext = rendererContexts[contextIdx];
+		return rendererContext.lighting;
+	}
 
 	/**
 	 * Set current lighting model
 	 * @param contextIdx context index
 	 * @param lighting lighting, see LIGHTING_*
 	 */
-	virtual void setLighting(int contextIdx, int32_t lighting) = 0;
+	inline void setLighting(int contextIdx, int32_t lighting) {
+		auto& rendererContext = rendererContexts[contextIdx];
+		rendererContext.lighting = lighting;
+	}
 
 	/**
 	 * @return camera position
 	 */
-	virtual Vector3& getCameraPosition();
+	inline Vector3& getCameraPosition() {
+		return cameraPosition;
+	}
 
 	/**
 	 * Set up viewport parameter
@@ -468,7 +512,9 @@ public:
 	/**
 	 * @return projection matrix
 	 */
-	virtual Matrix4x4& getProjectionMatrix();
+	inline Matrix4x4& getProjectionMatrix() {
+		return projectionMatrix;
+	}
 
 	/**
 	 * Update projection matrix event
@@ -479,7 +525,9 @@ public:
 	/**
 	 * @return camera matrix
 	 */
-	virtual Matrix4x4& getCameraMatrix();
+	inline Matrix4x4& getCameraMatrix() {
+		return cameraMatrix;
+	}
 
 	/**
 	 * Update camera matrix event
@@ -490,7 +538,9 @@ public:
 	/**
 	 * @return model view matrix or in some cases the model matrix
 	 */
-	virtual Matrix4x4& getModelViewMatrix();
+	inline Matrix4x4& getModelViewMatrix() {
+		return modelViewMatrix;
+	}
 
 	/**
 	 * Update model view matrix event
@@ -501,14 +551,19 @@ public:
 	/**
 	 * @return view port matrix
 	 */
-	virtual Matrix4x4& getViewportMatrix();
+	inline Matrix4x4& getViewportMatrix() {
+		return viewportMatrix;
+	}
 
 	/**
 	 * Get texture matrix
 	 * @param contextIdx context index
 	 * @return texture matrix
 	 */
-	virtual Matrix2D3x3& getTextureMatrix(int contextIdx) = 0;
+	inline Matrix2D3x3& getTextureMatrix(int contextIdx) {
+		auto& rendererContext = rendererContexts[contextIdx];
+		return rendererContext.textureMatrix;
+	}
 
 	/**
 	 * Update texture matrix for active texture unit event
@@ -1026,7 +1081,10 @@ public:
 	 * @param lightId light id
 	 * @return light
 	 */
-	virtual Renderer_Light& getLight(int contextIdx, int32_t lightId) = 0;
+	inline Renderer_Light& getLight(int contextIdx, int32_t lightIdx) {
+		auto& rendererContext = rendererContexts[contextIdx];
+		return rendererContext.lights[lightIdx];
+	}
 
 	/**
 	 * Update light
@@ -1040,14 +1098,20 @@ public:
 	 * @param context
 	 * @return effect color mul
 	 */
-	virtual array<float, 4>& getEffectColorMul(int contextIdx) = 0;
+	inline array<float, 4>& getEffectColorMul(int contextIdx) {
+		auto& rendererContext = rendererContexts[contextIdx];
+		return rendererContext.effectColorMul;
+	}
 
 	/**
 	 * Get effect color add
 	 * @param context
 	 * @return effect color add
 	 */
-	virtual array<float, 4>& getEffectColorAdd(int contextIdx) = 0;
+	inline array<float, 4>& getEffectColorAdd(int contextIdx) {
+		auto& rendererContext = rendererContexts[contextIdx];
+		return rendererContext.effectColorAdd;
+	}
 
 	/**
 	 * Update material
@@ -1060,14 +1124,20 @@ public:
 	 * @param contextIdx context index
 	 * @return material
 	 */
-	virtual Renderer_SpecularMaterial& getSpecularMaterial(int contextIdx) = 0;
+	inline Renderer_SpecularMaterial& getSpecularMaterial(int contextIdx) {
+		auto& rendererContext = rendererContexts[contextIdx];
+		return rendererContext.specularMaterial;
+	}
 
 	/**
 	 * Get PBR material
 	 * @param contextIdx context index
 	 * @return material
 	 */
-	virtual Renderer_PBRMaterial& getPBRMaterial(int contextIdx) = 0;
+	inline Renderer_PBRMaterial& getPBRMaterial(int contextIdx) {
+		auto& rendererContext = rendererContexts[contextIdx];
+		return rendererContext.pbrMaterial;
+	}
 
 	/**
 	 * On update material
@@ -1079,7 +1149,10 @@ public:
 	 * Get shader
 	 * @param contextIdx context index
 	 */
-	virtual const string& getShader(int contextIdx) = 0;
+	inline const string& getShader(int contextIdx) {
+		auto& rendererContext = rendererContexts[contextIdx];
+		return rendererContext.shader;
+	}
 
 	/**
 	 * Set shader
@@ -1087,7 +1160,10 @@ public:
 	 * @param id shader id
 	 * @param parameters parameters
 	 */
-	virtual void setShader(int contextIdx, const string& id) = 0;
+	inline void setShader(int contextIdx, const string& id) {
+		auto& rendererContext = rendererContexts[contextIdx];
+		rendererContext.shader = id;
+	}
 
 	/**
 	 * On update shader
@@ -1100,14 +1176,20 @@ public:
 	 * @param contextIdx context index
 	 * @return shader parameters
 	 */
-	virtual const EntityShaderParameters& getShaderParameters(int contextIdx) = 0;
+	inline const EntityShaderParameters& getShaderParameters(int contextIdx) {
+		auto& rendererContext = rendererContexts[contextIdx];
+		return rendererContext.shaderParameters;
+	}
 
 	/**
 	 * Set shader parameters
 	 * @param contextIdx context index
 	 * @param parameters shader parameters
 	 */
-	virtual void setShaderParameters(int contextIdx, const EntityShaderParameters& parameters) = 0;
+	inline void setShaderParameters(int contextIdx, const EntityShaderParameters& parameters) {
+		auto& rendererContext = rendererContexts[contextIdx];
+		rendererContext.shaderParameters = parameters;
+	}
 
 	/**
 	 * On update shader parameters
@@ -1225,28 +1307,40 @@ public:
 	 * Get mask max value
 	 * @return mask max value
 	 */
-	virtual float getMaskMaxValue(int contextIdx) = 0;
+	inline float getMaskMaxValue(int contextIdx) {
+		auto& rendererContext = rendererContexts[contextIdx];
+		return rendererContext.maskMaxValue;
+	}
 
 	/**
 	 * Set mask max value
 	 * @param contextIdx context index
 	 * @param maskMinValue mask mask value
 	 */
-	virtual void setMaskMaxValue(int contextIdx, float maskMaxValue) = 0;
+	inline void setMaskMaxValue(int contextIdx, float maskMaxValue) {
+		auto& rendererContext = rendererContexts[contextIdx];
+		rendererContext.maskMaxValue = maskMaxValue;
+	}
 
 	/**
 	 * Get environment mapping cube map position
 	 * @param contextIdx context index
 	 * @return environment mapping position
 	 */
-	virtual array<float, 3>& getEnvironmentMappingCubeMapPosition(int contextIdx) = 0;
+	inline array<float, 3>& getEnvironmentMappingCubeMapPosition(int contextIdx) {
+		auto& rendererContext = rendererContexts[contextIdx];
+		return rendererContext.environmentMappingCubeMapPosition;
+	}
 
 	/**
 	 * Set environment mapping cube map position
 	 * @param contextIdx context index
 	 * @param position position
 	 */
-	virtual void setEnvironmentMappingCubeMapPosition(int contextIdx, array<float, 3>& position) = 0;
+	inline void setEnvironmentMappingCubeMapPosition(int contextIdx, array<float, 3>& position) {
+		auto& rendererContext = rendererContexts[contextIdx];
+		rendererContext.environmentMappingCubeMapPosition = position;
+	}
 
 	/**
 	 * Set up renderer for GUI rendering

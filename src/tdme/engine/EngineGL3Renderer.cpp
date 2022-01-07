@@ -146,13 +146,13 @@ void EngineGL3Renderer::onUpdateMaterial(int contextIdx)
 
 void EngineGL3Renderer::onUpdateShader(int contextIdx) {
 	if (Engine::lightingShader != nullptr)
-		Engine::lightingShader->setShader(contextIdx, shader);
+		Engine::lightingShader->setShader(contextIdx, getShader(contextIdx));
 
 	if (Engine::currentEngine->shadowMapping != nullptr)
-		Engine::currentEngine->shadowMapping->setShader(contextIdx, shader);
+		Engine::currentEngine->shadowMapping->setShader(contextIdx, getShader(contextIdx));
 
 	if (Engine::ezrShader != nullptr)
-		Engine::ezrShader->setShader(contextIdx, shader);
+		Engine::ezrShader->setShader(contextIdx, getShader(contextIdx));
 }
 
 void EngineGL3Renderer::onUpdateShaderParameters(int contextIdx) {

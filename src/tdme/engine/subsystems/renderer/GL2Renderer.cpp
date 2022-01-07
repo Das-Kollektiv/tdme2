@@ -56,6 +56,7 @@ using tdme::utilities::StringTools;
 GL2Renderer::GL2Renderer()
 {
 	// setup GL2 consts
+	rendererType = RENDERERTYPE_OPENGL;
 	ID_NONE = 0;
 	CLEAR_DEPTH_BUFFER_BIT = GL_DEPTH_BUFFER_BIT;
 	CLEAR_COLOR_BUFFER_BIT = GL_COLOR_BUFFER_BIT;
@@ -139,6 +140,14 @@ void GL2Renderer::initialize()
 	glEnable(GL_POINT_SPRITE);
 	glEnable(GL_PROGRAM_POINT_SIZE_EXT);
 	setTextureUnit(CONTEXTINDEX_DEFAULT, 0);
+	// renderer contexts
+	rendererContexts.resize(1);
+	for (auto& rendererContext: rendererContexts) {
+		for (auto i = 0; i < rendererContext.lights.size(); i++) {
+			rendererContext.lights[i].spotCosCutoff = static_cast<float>(Math::cos(Math::PI / 180.0f * 180.0f));
+		}
+		rendererContext.textureMatrix.identity();
+	}
 }
 
 void GL2Renderer::initializeFrame()

@@ -61,6 +61,7 @@ using tdme::utilities::StringTools;
 
 GL3Renderer::GL3Renderer()
 {
+	rendererType = RENDERERTYPE_OPENGL;
 	// setup GL3 consts
 	ID_NONE = 0;
 	CLEAR_DEPTH_BUFFER_BIT = GL_DEPTH_BUFFER_BIT;
@@ -90,7 +91,8 @@ GL3Renderer::GL3Renderer()
 	CUBEMAPTEXTUREINDEX_POSITIVE_Z = GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
 	CUBEMAPTEXTUREINDEX_NEGATIVE_Z = GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
 	activeTextureUnit = 0;
-	engineVAO = 0;
+	engineVAO = ID_NONE;
+	deferredShadingAvailable = false;
 }
 
 const string GL3Renderer::getVendor() {
@@ -189,6 +191,14 @@ void GL3Renderer::initialize()
 	int glMaxDrawBuffers = 0;
 	glGetIntegerv(GL_MAX_DRAW_BUFFERS, &glMaxDrawBuffers);
 	deferredShadingAvailable = glMaxColorAttachments >= 8 && glMaxDrawBuffers >= 8;
+	// renderer contexts
+	rendererContexts.resize(1);
+	for (auto& rendererContext: rendererContexts) {
+		for (auto i = 0; i < rendererContext.lights.size(); i++) {
+			rendererContext.lights[i].spotCosCutoff = static_cast<float>(Math::cos(Math::PI / 180.0f * 180.0f));
+		}
+		rendererContext.textureMatrix.identity();
+	}
 }
 
 void GL3Renderer::initializeFrame()

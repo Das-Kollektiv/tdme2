@@ -66,55 +66,7 @@ Renderer::Renderer()
 Renderer::~Renderer() {
 }
 
-Vector3& Renderer::getCameraPosition() {
-	return cameraPosition;
-}
-
-Matrix4x4& Renderer::getProjectionMatrix()
-{
-	return projectionMatrix;
-}
-
-Matrix4x4& Renderer::getCameraMatrix()
-{
-	return cameraMatrix;
-}
-
-Matrix4x4& Renderer::getModelViewMatrix()
-{
-	return modelViewMatrix;
-}
-
-Matrix4x4& Renderer::getViewportMatrix()
-{
-	return viewportMatrix;
-}
-
-int32_t Renderer::getViewPortWidth() {
-	return viewPortWidth;
-}
-
-int32_t Renderer::getViewPortHeight() {
-	return viewPortHeight;
-}
-
 void Renderer::initializeFrame() {
-}
-
-int32_t Renderer::getEffectPass() {
-	return effectPass;
-}
-
-void Renderer::setEffectPass(int32_t effectPass) {
-	this->effectPass = effectPass;
-}
-
-const string& Renderer::getShaderPrefix() {
-	return shaderPrefix;
-}
-
-void Renderer::setShaderPrefix(const string& shaderPrefix) {
-	this->shaderPrefix = shaderPrefix;
 }
 
 Texture* Renderer::generateMipMap(const string& id, Texture* texture, int32_t level, int32_t atlasBorderSize) {
