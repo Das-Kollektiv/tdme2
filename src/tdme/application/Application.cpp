@@ -59,6 +59,8 @@
 #include <tdme/application/InputEventHandler.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/os/threading/Thread.h>
@@ -80,6 +82,8 @@ using tdme::application::Application;
 using tdme::application::InputEventHandler;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
+using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Engine;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::os::threading::Thread;
@@ -376,8 +380,9 @@ Application::~Application() {
 }
 
 void Application::setVSyncEnabled(bool vSync) {
+	Engine::renderer->setVSync(vSync);
 	#if defined(VULKAN)
-		static_cast<VKRenderer*>(Engine::renderer)->setVSyncEnabled(vSync);
+		// no op
 	#elif defined(GLFW3)
 		glfwSwapInterval(vSync == true?1:0);
 	#else

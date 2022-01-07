@@ -186,7 +186,5 @@ public:
 	void bindSkinningMatricesBufferObject(int contextIdx, 	int32_t bufferObjectId) override;
 
 	//
-	int32_t createVertexArrayObject() override;
-	void disposeVertexArrayObject(int32_t vertexArrayObjectId) override;
-	void bindVertexArrayObject(int32_t vertexArrayObjectId) override;
+	void setVSync(bool vSync) override;
 };

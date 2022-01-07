@@ -7574,19 +7574,6 @@ void VKRenderer::bindSkinningMatricesBufferObject(int contextIdx, int32_t buffer
 	}
 }
 
-int32_t VKRenderer::createVertexArrayObject() {
-	Console::println("VKRenderer::createVertexArrayObject(): Not implemented");
-	return -1;
-}
-
-void VKRenderer::disposeVertexArrayObject(int32_t vertexArrayObjectId) {
-	Console::println("VKRenderer::disposeVertexArrayObject(): Not implemented");
-}
-
-void VKRenderer::bindVertexArrayObject(int32_t vertexArrayObjectId) {
-	Console::println("VKRenderer::bindVertexArrayObject(): Not implemented");
-}
-
 Matrix2D3x3& VKRenderer::getTextureMatrix(int contextIdx) {
 	auto& currentContext = contexts[contextIdx];
 	return currentContext.textureMatrix;
@@ -7657,7 +7644,7 @@ void VKRenderer::setEnvironmentMappingCubeMapPosition(int contextIdx, array<floa
 	currentContext.environmentMappingCubeMapPosition = position;
 }
 
-void VKRenderer::setVSyncEnabled(bool vSync) {
+void VKRenderer::setVSync(bool vSync) {
 	Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(this->vSync) + " --> " + to_string(vSync));
 	if (this->vSync == vSync) return;
 	swapchainPresentMode = vSync == true?VK_PRESENT_MODE_FIFO_KHR:VK_PRESENT_MODE_IMMEDIATE_KHR;

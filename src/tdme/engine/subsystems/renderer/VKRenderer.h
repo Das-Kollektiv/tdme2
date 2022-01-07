@@ -704,11 +704,6 @@ public:
 	void bindSkinningMatricesBufferObject(int contextIdx, int32_t bufferObjectId) override;
 
 	//
-	int32_t createVertexArrayObject() override;
-	void disposeVertexArrayObject(int32_t vertexArrayObjectId) override;
-	void bindVertexArrayObject(int32_t vertexArrayObjectId) override;
-
-	//
 	int32_t getTextureUnit(int contextIdx) override;
 	void setTextureUnit(int contextIdx, int32_t textureUnit) override;
 	Matrix2D3x3& getTextureMatrix(int contextIdx) override;
@@ -727,10 +722,7 @@ public:
 	void setEnvironmentMappingCubeMapPosition(int contextIdx, array<float, 3>& position) override;
 	const Renderer_Statistics getStatistics() override;
 
-	/**
-	 * Enable/Disable v-sync
-	 * @param vSync V-sync enabled
-	 */
-	void setVSyncEnabled(bool vSync);
+	//
+	void setVSync(bool vSync) override;
 
 };

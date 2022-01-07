@@ -1044,17 +1044,8 @@ void GLES2Renderer::bindSkinningMatricesBufferObject(int contextIdx, int32_t buf
 	Console::println("GLES2Renderer::bindSkinningMatricesBufferObject(): Not implemented");
 }
 
-int32_t GLES2Renderer::createVertexArrayObject() {
-	Console::println("GLES2Renderer::createVertexArrayObject(): Not implemented");
-	return -1;
-}
-
-void GLES2Renderer::disposeVertexArrayObject(int32_t vertexArrayObjectId) {
-	Console::println("GLES2Renderer::disposeVertexArrayObject(): Not implemented");
-}
-
-void GLES2Renderer::bindVertexArrayObject(int32_t vertexArrayObjectId) {
-	Console::println("GLES2Renderer::bindVertexArrayObject(): Not implemented");
+void GLES2Renderer::setVSync(bool vSync) {
+	// no op
 }
 
 void GLES2Renderer::checkGLError()

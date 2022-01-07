@@ -1364,16 +1364,6 @@ void GL3Renderer::bindSkinningMatricesBufferObject(int contextIdx, int32_t buffe
 	#endif
 }
 
-int32_t GL3Renderer::createVertexArrayObject() {
-	uint32_t vaoId;
-	glGenVertexArrays(1, &vaoId);
-	return vaoId;
-}
-
-void GL3Renderer::disposeVertexArrayObject(int32_t vertexArrayObjectId) {
-	glDeleteVertexArrays(1, (uint32_t*)&vertexArrayObjectId);
-}
-
-void GL3Renderer::bindVertexArrayObject(int32_t vertexArrayObjectId) {
-	glBindVertexArray(vertexArrayObjectId == 0?engineVAO:vertexArrayObjectId);
+void GL3Renderer::setVSync(bool vSync) {
+	// no op
 }

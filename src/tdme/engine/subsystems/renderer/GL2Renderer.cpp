@@ -1108,15 +1108,6 @@ void GL2Renderer::bindSkinningMatricesBufferObject(int contextIdx, int32_t buffe
 	Console::println("GL2Renderer::bindSkinningMatricesBufferObject(): Not implemented");
 }
 
-int32_t GL2Renderer::createVertexArrayObject() {
-	Console::println("GL2Renderer::createVertexArrayObject(): Not implemented");
-	return -1;
-}
-
-void GL2Renderer::disposeVertexArrayObject(int32_t vertexArrayObjectId) {
-	Console::println("GL2Renderer::disposeVertexArrayObject(): Not implemented");
-}
-
-void GL2Renderer::bindVertexArrayObject(int32_t vertexArrayObjectId) {
-	Console::println("GL2Renderer::bindVertexArrayObject(): Not implemented");
+void GL2Renderer::setVSync(bool vSync) {
+	// no op
 }

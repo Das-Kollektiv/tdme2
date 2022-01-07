@@ -1222,23 +1222,6 @@ public:
 	virtual void bindSkinningMatricesBufferObject(int contextIdx, int32_t bufferObjectId) = 0;
 
 	/**
-	 * Create a single vertex array object
-	 */
-	virtual int32_t createVertexArrayObject() = 0;
-
-	/**
-	 * Dispose a single vertex array object
-	 * @param vertexArrayObjectId vertex array object id
-	 */
-	virtual void disposeVertexArrayObject(int32_t vertexArrayObjectId) = 0;
-
-	/**
-	 * Bind a single vertex array object
-	 * @param vertexArrayObjectId vertex array object id
-	 */
-	virtual void bindVertexArrayObject(int32_t vertexArrayObjectId) = 0;
-
-	/**
 	 * Get mask max value
 	 * @return mask max value
 	 */
@@ -1274,6 +1257,12 @@ public:
 	 * Set up renderer for 3d rendering
 	 */
 	virtual void doneGuiMode() = 0;
+
+	/**
+	 * Enable/Disable v-sync
+	 * @param vSync V-sync enabled
+	 */
+	virtual void setVSync(bool vSync) = 0;
 
 	/**
 	 * @return renderer statistics
