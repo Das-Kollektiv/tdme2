@@ -170,7 +170,7 @@ else
 		src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
 		src/tdme/engine/fileio/models/ModelReader.cpp
 	# TODO: No console flags: -Wl,-subsystem,windows
-	EXTRAFLAGS := $(EXTRAFLAGS) -DVULKAN
+	EXTRAFLAGS := $(EXTRAFLAGS)
 	#-D_GLIBCXX_DEBUG
 	INCLUDES := $(INCLUDES) -I/mingw64/include
 	EXTRA_LIBS := -L/mingw64/lib -lws2_32 -ldl -lglfw3 -lopenal -ldbghelp
@@ -1019,31 +1019,36 @@ $(LIB_DIR)/$(EXT_LIB):
 	@echo Creating shared library $@
 	@mkdir -p $(dir $@)
 	@rm -f $@
-	$(CXX) -shared $^ -o $@ -L/mingw64/lib -lws2_32 -ldl -lglfw3 -lopenal -ldbghelp -Wl,--out-implib,$(LIB_DIR)/$(EXT_LIB).a
+	$(CXX) -shared $(patsubst %.so,,$^) -o $@ -L/mingw64/lib -lws2_32 -ldl -lglfw3 -lopenal -ldbghelp -Wl,--out-implib,$(LIB_DIR)/$(EXT_LIB).a
+	@echo Done $@
 
-$(LIB_DIR)/$(LIB):
+$(LIB_DIR)/$(LIB): $(LIB_DIR)/$(EXT_LIB)
 	@echo Creating shared library $@
 	@mkdir -p $(dir $@)
 	@rm -f $@
-	$(CXX) -shared $^ -o $@ -L/mingw64/lib -lws2_32 -ldl -lglfw3 -lopenal -ldbghelp -Llib -l$(EXT_NAME).so -Wl,--out-implib,$(LIB_DIR)/$(LIB).a
+	$(CXX) -shared $(patsubst %.so,,$^) -o $@ -L/mingw64/lib -lws2_32 -ldl -lglfw3 -lopenal -ldbghelp -Llib -l$(EXT_NAME).so -Wl,--out-implib,$(LIB_DIR)/$(LIB).a
+	@echo Done $@
 
-$(LIB_DIR)/$(OPENGL2_RENDERER_LIB):
+$(LIB_DIR)/$(OPENGL2_RENDERER_LIB): $(LIB_DIR)/$(EXT_LIB) $(LIB_DIR)/$(LIB)
 	@echo Creating OpenGL2 renderer library $@
 	@mkdir -p $(dir $@)
 	@rm -f $@
-	$(CXX) -shared $^ -o $@ -L/mingw64/lib -lglfw3 -lglew32 -lopengl32 -Lext/vulkan/runtime/mingw64 -L$(LIB_DIR) -l$(EXT_NAME).so -l$(NAME).so
+	$(CXX) -shared $(patsubst %.so,,$^) -o $@ -L/mingw64/lib -lglfw3 -lglew32 -lopengl32 -Lext/vulkan/runtime/mingw64 -L$(LIB_DIR) -l$(EXT_NAME).so -l$(NAME).so
+	@echo Done $@
 
-$(LIB_DIR)/$(OPENGL3CORE_RENDERER_LIB):
+$(LIB_DIR)/$(OPENGL3CORE_RENDERER_LIB): $(LIB_DIR)/$(EXT_LIB) $(LIB_DIR)/$(LIB)
 	@echo Creating OpenGL3/CORE renderer library $@
 	@mkdir -p $(dir $@)
 	@rm -f $@
-	$(CXX) -shared $^ -o $@ -L/mingw64/lib -lglfw3 -lglew32 -lopengl32 -Lext/vulkan/runtime/mingw64 -L$(LIB_DIR) -l$(EXT_NAME).so -l$(NAME).so
+	$(CXX) -shared $(patsubst %.so,,$^) -o $@ -L/mingw64/lib -lglfw3 -lglew32 -lopengl32 -Lext/vulkan/runtime/mingw64 -L$(LIB_DIR) -l$(EXT_NAME).so -l$(NAME).so
+	@echo Done $@
 
-$(LIB_DIR)/$(VULKAN_RENDERER_LIB):
+$(LIB_DIR)/$(VULKAN_RENDERER_LIB): $(LIB_DIR)/$(EXT_LIB) $(LIB_DIR)/$(LIB)
 	@echo Creating Vulkan renderer library $@
 	@mkdir -p $(dir $@)
 	@rm -f $@
-	$(CXX) -shared $^ -o $@ -L/mingw64/lib -lglfw3 -Lext/vulkan/runtime/mingw64 -lvulkan-1 -L$(LIB_DIR) -l$(EXT_NAME).so -l$(NAME).so
+	$(CXX) -shared $(patsubst %.so,,$^) -o $@ -L/mingw64/lib -lglfw3 -Lext/vulkan/runtime/mingw64 -lvulkan-1 -L$(LIB_DIR) -l$(EXT_NAME).so -l$(NAME).so
+	@echo Done $@
 
 $(LIB_DIR)/$(LIB): $(OBJS) $(OBJS_DEBUG)
 
