@@ -164,6 +164,7 @@ pacman -S make
 pacman -S mingw-w64-x86_64-gcc
 pacman -S mingw-w64-x86_64-openal
 pacman -S mingw-w64-x86_64-glfw
+pacman -S mingw-w64-x86_64-dlfcn
 ```
 
 #### 1.5.1.1 OpenGL
