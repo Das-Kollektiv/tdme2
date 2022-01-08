@@ -10,6 +10,8 @@ OPENGL_RENDERER_LDFLAGS :=
 VULKAN_RENDERER_LDFLAGS :=
 LIBS_LDFLAGS :=
 MAIN_LDFLAGS :=
+LDFLAG_LIB := $(NAME)
+LDFLAG_EXT_LIB := $(EXT_NAME)
 
 BIN = bin
 LIB_DIR = lib
@@ -140,34 +142,11 @@ else ifeq ($(OS), Linux)
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
 		src/tdme/os/network/platform/linux/KernelEventMechanism.cpp \
 		src/tdme/engine/fileio/models/ModelReader.cpp
-	# Linux, Vulkan
-	ifeq ($(VULKAN), YES)
-		EXTRAFLAGS := $(EXTRAFLAGS) -DVULKAN
-		SRCS_PLATFORM := $(SRCS_PLATFORM) \
-			src/tdme/engine/EngineVKRenderer.cpp \
-			src/tdme/engine/subsystems/renderer/VKGL3CoreShaderProgram.cpp \
-			src/tdme/engine/subsystems/renderer/VKRenderer.cpp
-		EXT_GLSLANG_PLATFORM_SRCS = \
-			ext/vulkan/glslang/OSDependent/Unix/ossource.cpp
-		MAIN_LDFLAGS := -L/usr/lib64 -lglfw -lvulkan -lopenal -pthread
-	# Linux, GLES2
-	else ifeq ($(GLES2), YES)
-		EXTRAFLAGS := $(EXTRAFLAGS) -DGLES2
-		# Linux, ARM, GL
-		SRCS_PLATFORM := $(SRCS_PLATFORM) \
-			src/tdme/engine/EngineGLES2Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
-		MAIN_LDFLAGS := -L/usr/lib64 -L/usr/local/lib -lGLESv2 -lEGL -lglfw -lopenal -pthread
-	else
-		# Linux, GL
-		#EXTRAFLAGS := $(EXTRAFLAGS) -D_GLIBCXX_DEBUG
-		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
-			src/tdme/engine/EngineGL2Renderer.cpp \
-			src/tdme/engine/EngineGL3Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
-		MAIN_LDFLAGS := -L/usr/lib64 -lGLEW -lGL -lglfw -lopenal -pthread
-	endif
+	INCLUDES := $(INCLUDES) -L/usr/lib64
+	OPENGL_RENDERER_LDFLAGS := -lGLEW -lGL -lglfw
+	VULKAN_RENDERER_LDFLAGS := -lvulkan -lglfw
+	LIBS_LDFLAGS := -L/mingw64/lib -ldl -lglfw -lopenal
+	MAIN_LDFLAGS := -lglfw -lopenal
 	OFLAGS := -O2
 else
 	# Windows
@@ -181,7 +160,9 @@ else
 	OPENGL_RENDERER_LDFLAGS := -L/mingw64/lib -lglfw3 -lglew32 -lopengl32
 	VULKAN_RENDERER_LDFLAGS := -L/mingw64/lib -lglfw3 -Lext/vulkan/runtime/mingw64 -lvulkan-1
 	LIBS_LDFLAGS := -L/mingw64/lib -lws2_32 -ldl -lglfw3 -lopenal -ldbghelp
-	MAIN_LDFLAGS := -L/mingw64/lib -lws2_32 -ldl -lglfw3 -lopenal -ldbghelp
+	MAIN_LDFLAGS := -L/mingw64/lib -lws2_32 -lglfw3 -lopenal -ldbghelp
+	LDFLAG_LIB := $(NAME)$(LIB_EXT)
+	LDFLAG_EXT_LIB := $(EXT_NAME)$(LIB_EXT)
 	OFLAGS := -O2
 endif
 
@@ -1039,9 +1020,9 @@ $(LIB_DIR)/$(LIB): $(LIB_DIR)/$(EXT_LIB)
 	@mkdir -p $(dir $@)
 	@rm -f $@
 ifeq ($(OSSHORT), Msys)
-	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $(LIBS_LDFLAGS) -Llib -l$(EXT_NAME)$(LIB_EXT) -Wl,--out-implib,$(LIB_DIR)/$(LIB).a
+	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $(LIBS_LDFLAGS) -Llib -l$(LDFLAG_EXT_LIB) -Wl,--out-implib,$(LIB_DIR)/$(LIB).a
 else
-	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $(LIBS_LDFLAGS) -Llib -l$(EXT_NAME)$(LIB_EXT)
+	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $(LIBS_LDFLAGS) -Llib -l$(LDFLAG_EXT_LIB)
 endif
 	@echo Done $@
 
@@ -1049,21 +1030,21 @@ $(LIB_DIR)/$(OPENGL2_RENDERER_LIB): $(LIB_DIR)/$(EXT_LIB) $(LIB_DIR)/$(LIB)
 	@echo Creating OpenGL2 renderer library $@
 	@mkdir -p $(dir $@)
 	@rm -f $@
-	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $(OPENGL_RENDERER_LDFLAGS) -L$(LIB_DIR) -l$(EXT_NAME)$(LIB_EXT) -l$(NAME)$(LIB_EXT)
+	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $(OPENGL_RENDERER_LDFLAGS) -L$(LIB_DIR) -l$(LDFLAG_EXT_LIB) -l$(LDFLAG_LIB)
 	@echo Done $@
 
 $(LIB_DIR)/$(OPENGL3CORE_RENDERER_LIB): $(LIB_DIR)/$(EXT_LIB) $(LIB_DIR)/$(LIB)
 	@echo Creating OpenGL3/CORE renderer library $@
 	@mkdir -p $(dir $@)
 	@rm -f $@
-	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $(OPENGL_RENDERER_LDFLAGS) -L$(LIB_DIR) -l$(EXT_NAME)$(LIB_EXT) -l$(NAME)$(LIB_EXT)
+	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $(OPENGL_RENDERER_LDFLAGS) -L$(LIB_DIR) -l$(LDFLAG_EXT_LIB) -l$(LDFLAG_LIB)
 	@echo Done $@
 
 $(LIB_DIR)/$(VULKAN_RENDERER_LIB): $(LIB_DIR)/$(EXT_LIB) $(LIB_DIR)/$(LIB)
 	@echo Creating Vulkan renderer library $@
 	@mkdir -p $(dir $@)
 	@rm -f $@
-	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $(VULKAN_RENDERER_LDFLAGS) -L$(LIB_DIR) -l$(EXT_NAME)$(LIB_EXT) -l$(NAME)$(LIB_EXT)
+	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $(VULKAN_RENDERER_LDFLAGS) -L$(LIB_DIR) -l$(LDFLAG_EXT_LIB) -l$(LDFLAG_LIB)
 	@echo Done $@
 
 $(LIB_DIR)/$(LIB): $(OBJS) $(OBJS_DEBUG)
@@ -1082,11 +1063,11 @@ $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@EXECUTABLE=$$(echo $1 | grep -o '[a-zA-Z0-9]*-main' | sed -e 's/\-main//');
 	@scripts/windows-mingw-create-executable-rc.sh "$<" $@.rc
 	@windres $@.rc -o coff -o $@.rc.o
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $@.rc.o $< -L$(LIB_DIR) -ltdme2-ext$(LIB_EXT) -ltdme2$(LIB_EXT) $(MAIN_LDFLAGS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $@.rc.o $< -L$(LIB_DIR) -l$(LDFLAG_EXT_LIB) -l$(LDFLAG_LIB) $(MAIN_LDFLAGS)
 else
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@);
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $< -L$(LIB_DIR) -ltdme2-ext$(LIB_EXT) -ltdme2$(LIB_EXT) $(MAIN_LDFLAGS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $< -L$(LIB_DIR) -l$(LDFLAG_EXT_LIB) -l$(LDFLAG_LIB) $(MAIN_LDFLAGS)
 endif
 
 mains: $(MAINS)
