@@ -24,6 +24,7 @@ using std::array;
 using std::string;
 
 using tdme::application::InputEventHandler;
+using tdme::engine::subsystems::renderer::Renderer;
 
 /**
  * Application base class, please make sure to allocate application on heap to have correct application shutdown working
@@ -45,6 +46,13 @@ public:
 	static constexpr int WINDOW_HINT_MAXIMIZED { 8 };
 
 	static constexpr int FPS { 60 };
+
+	/**
+	 * @return renderer
+	 */
+	inline static Renderer* getRenderer() {
+		return renderer;
+	}
 
 	/**
 	 * @return if having a GL/Vulkan window and context
@@ -301,6 +309,7 @@ public:
 	virtual void onClose();
 
 private:
+	static Renderer* renderer;
 	static Application* application;
 	static InputEventHandler* inputEventHandler;
 	int windowHints { WINDOW_HINT_NONE };

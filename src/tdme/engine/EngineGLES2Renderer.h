@@ -17,11 +17,11 @@ class tdme::engine::EngineGLES2Renderer: public GLES2Renderer
 public:
 	/**
 	 * Public constructor
-	 * @param engine engine
 	 */
-	EngineGLES2Renderer(Engine* engine);
+	EngineGLES2Renderer();
 
 	// overridden methods
+	bool initializeWindowSystemRendererContext(int tryIdx) override;
 	void onUpdateProjectionMatrix(int contextIdx) override;
 	void onUpdateCameraMatrix(int contextIdx) override;
 	void onUpdateModelViewMatrix(int contextIdx) override;

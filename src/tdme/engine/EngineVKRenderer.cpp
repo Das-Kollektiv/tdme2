@@ -1,5 +1,8 @@
 #include <tdme/engine/EngineVKRenderer.h>
 
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/earlyzrejection/EZRShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
@@ -8,6 +11,7 @@
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/renderer/GUIShader.h>
+#include <tdme/utilities/Console.h>
 
 using tdme::engine::subsystems::earlyzrejection::EZRShader;
 using tdme::engine::subsystems::lighting::LightingShader;
@@ -17,10 +21,17 @@ using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::Engine;
 using tdme::engine::EngineVKRenderer;
 using tdme::gui::renderer::GUIShader;
+using tdme::utilities::Console;
 
-EngineVKRenderer::EngineVKRenderer(Engine* engine) :
-	engine(engine)
+EngineVKRenderer::EngineVKRenderer()
 {
+	engine = Engine::getInstance();
+}
+
+bool EngineVKRenderer::initializeWindowSystemRendererContext(int tryIdx) {
+	if (tryIdx > 0 || glfwVulkanSupported() == false) return false;
+	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+	return true;
 }
 
 void EngineVKRenderer::onUpdateProjectionMatrix(int contextIdx)
@@ -164,4 +175,11 @@ void EngineVKRenderer::onUpdateShaderParameters(int contextIdx) {
 
 	if (Engine::ezrShader != nullptr)
 		Engine::ezrShader->updateShaderParameters(contextIdx);
+}
+
+// end point for engine to create renderer
+extern "C" EngineVKRenderer* createInstance()
+{
+	Console::println("xxx");
+	return new EngineVKRenderer();
 }

@@ -39,6 +39,7 @@
 	#include <Carbon/Carbon.h>
 #endif
 
+#include <dlfcn.h>
 #include <stdlib.h>
 
 #include <array>
@@ -87,6 +88,18 @@ using tdme::utilities::RTTI;
 using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
 using tdme::utilities::Time;
+
+Renderer* Application::renderer = nullptr;
+Application* Application::application = nullptr;
+InputEventHandler* Application::inputEventHandler = nullptr;
+int64_t Application::timeLast = -1L;
+bool Application::limitFPS = true;
+
+GLFWwindow* Application::glfwWindow = nullptr;
+array<unsigned int, 10> Application::glfwMouseButtonDownFrames;
+int Application::glfwMouseButtonLast = -1;
+bool Application::glfwCapsLockEnabled = false;
+GLFWcursor* Application::glfwHandCursor = nullptr;
 
 string Application::execute(const string& command) {
 	// see: https://stackoverflow.com/questions/478898/how-to-execute-a-command-and-get-output-of-command-within-c-using-posix
@@ -332,17 +345,6 @@ void Application::exit(int exitCode) {
 	}
 #endif
 
-Application* Application::application = nullptr;
-InputEventHandler* Application::inputEventHandler = nullptr;
-int64_t Application::timeLast = -1L;
-bool Application::limitFPS = true;
-
-GLFWwindow* Application::glfwWindow = nullptr;
-array<unsigned int, 10> Application::glfwMouseButtonDownFrames;
-int Application::glfwMouseButtonLast = -1;
-bool Application::glfwCapsLockEnabled = false;
-GLFWcursor* Application::glfwHandCursor = nullptr;
-
 Application::Application() {
 	Application::application = this;
 	installExceptionHandler();
@@ -569,51 +571,44 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		}
 	}
 
-	#if defined(VULKAN)
-		if (glfwVulkanSupported() == false) {
-			Console::println("glfwVulkanSupported(): Vulkan not available!");
-			return;
-		}
-		if ((windowHints & WINDOW_HINT_NOTRESIZEABLE) == WINDOW_HINT_NOTRESIZEABLE) glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-		if ((windowHints & WINDOW_HINT_NOTDECORATED) == WINDOW_HINT_NOTDECORATED) glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
-		if ((windowHints & WINDOW_HINT_INVISIBLE) == WINDOW_HINT_INVISIBLE) glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-		if ((windowHints & WINDOW_HINT_MAXIMIZED) == WINDOW_HINT_MAXIMIZED) glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
-		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+	//
+	void* rendererLibraryHandle = dlopen("./libvulkanrenderer.so", RTLD_LAZY);
+	//
+	if (rendererLibraryHandle == nullptr) {
+		Console::println("Application::run(): Could not open renderer library");
+		glfwTerminate();
+		return;
+	}
+	//
+	Renderer* (*rendererCreateInstance)() = (Renderer*(*)())dlsym(rendererLibraryHandle, "createInstance");
+	//
+	if (rendererCreateInstance == nullptr) {
+		Console::println("Application::run(): Could not find renderer library createInstance() entry point");
+		glfwTerminate();
+		return;
+	}
+
+	//
+	renderer = (Renderer*)rendererCreateInstance();
+	if (renderer == nullptr) {
+		Console::println("Application::run(): Could not create renderer");
+		glfwTerminate();
+		return;
+	}
+
+	//
+	for (auto i = 0; renderer->initializeWindowSystemRendererContext(i) == true; i++) {
 		glfwWindow = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
-	#elif defined(GLES2)
-		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
-		glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-		if ((windowHints & WINDOW_HINT_NOTRESIZEABLE) == WINDOW_HINT_NOTRESIZEABLE) glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-		if ((windowHints & WINDOW_HINT_NOTDECORATED) == WINDOW_HINT_NOTDECORATED) glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
-		if ((windowHints & WINDOW_HINT_INVISIBLE) == WINDOW_HINT_INVISIBLE) glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-		if ((windowHints & WINDOW_HINT_MAXIMIZED) == WINDOW_HINT_MAXIMIZED) glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
-		glfwWindow = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
-	#else
-		if ((windowHints & WINDOW_HINT_NOTRESIZEABLE) == WINDOW_HINT_NOTRESIZEABLE) glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-		if ((windowHints & WINDOW_HINT_NOTDECORATED) == WINDOW_HINT_NOTDECORATED) glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
-		if ((windowHints & WINDOW_HINT_INVISIBLE) == WINDOW_HINT_INVISIBLE) glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-		if ((windowHints & WINDOW_HINT_MAXIMIZED) == WINDOW_HINT_MAXIMIZED) glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
-		array<array<int, 3>, 3> glVersions = {{ {{1, 4, 3}}, {{1, 3, 2}}, {{0, 3,1}} }};
-		#if defined(__APPLE__)
-			glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
-		#endif
-		auto i = 0;
-		for (auto& glVersion: glVersions) {
-			glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, glVersion[0] == 1?GLFW_TRUE:GLFW_FALSE);
-			glfwWindowHint(GLFW_OPENGL_PROFILE, glVersion[0] == 1?GLFW_OPENGL_CORE_PROFILE:GLFW_OPENGL_ANY_PROFILE);
-			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, glVersion[1]);
-			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, glVersion[2]);
-			glfwWindow = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
-			if (glfwWindow != nullptr) break;
-		}
-	#endif
+		if (glfwWindow != nullptr) break;
+	}
+
+	//
 	if (glfwWindow == nullptr) {
 		Console::println("glfwCreateWindow(): Could not create window");
 		glfwTerminate();
 		return;
 	}
+
 	if ((windowHints & WINDOW_HINT_MAXIMIZED) == 0) glfwSetWindowPos(glfwWindow, windowXPosition, windowYPosition);
 	setIcon();
 	#if !defined(VULKAN)

@@ -1,5 +1,8 @@
 #include <tdme/engine/EngineGL3Renderer.h>
 
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/earlyzrejection/EZRShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
@@ -18,9 +21,23 @@ using tdme::engine::Engine;
 using tdme::engine::EngineGL3Renderer;
 using tdme::gui::renderer::GUIShader;
 
-EngineGL3Renderer::EngineGL3Renderer(Engine* engine) :
-	engine(engine)
+EngineGL3Renderer::EngineGL3Renderer()
 {
+	engine = Engine::getInstance();
+}
+
+bool EngineGL3Renderer::initializeWindowSystemRendererContext(int tryIdx) {
+	array<array<int, 3>, 2> glVersions = {{ {{1, 4, 3}}, {{1, 3, 2}} }};
+	if (tryIdx >= glVersions.size()) return false;
+	#if defined(__APPLE__)
+		glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
+	#endif
+	auto& glVersion = glVersions[tryIdx];
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, glVersion[0] == 1?GLFW_TRUE:GLFW_FALSE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, glVersion[0] == 1?GLFW_OPENGL_CORE_PROFILE:GLFW_OPENGL_ANY_PROFILE);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, glVersion[1]);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, glVersion[2]);
+	return true;
 }
 
 void EngineGL3Renderer::onUpdateProjectionMatrix(int contextIdx)

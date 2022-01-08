@@ -1,10 +1,12 @@
 NAME = tdme2
-LIB := lib$(NAME).a
-EXT_LIB := lib$(NAME)-ext.a
+EXT_NAME = tdme2-ext
+LIB := lib$(NAME).so
+EXT_LIB := lib$(NAME)-ext.so
+VULKAN_RENDERER_LIB := libvulkanrenderer.so
 
 BIN = bin
 LIB_DIR = lib
-OBJ = obj
+OBJ := obj
 OBJ_DEBUG = obj-debug
 
 CPPVERSION = -std=gnu++11
@@ -15,6 +17,8 @@ OFLAGS =
 EXTRAFLAGS = -DRAPIDJSON_HAS_STDSTRING
 LDFLAGS =
 INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/src/ -Iext/v-hacd/src/VHACD_Lib/inc/
+
+CXX := $(CXX) -fPIC
 
 # set platform specific flags
 OSSHORT := $(shell sh -c 'uname -o 2>/dev/null')
@@ -62,7 +66,7 @@ else ifeq ($(OS), FreeBSD)
 				src/tdme/engine/fileio/models/ModelReader.cpp
 		EXT_GLSLANG_PLATFORM_SRCS = \
 			ext/vulkan/glslang/OSDependent/Unix/ossource.cpp
-		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/local/lib -lglfw -lvulkan -lopenal -pthread -lexecinfo
+		EXTRA_LIBS := -L/usr/local/lib -lglfw -lvulkan -lopenal -pthread -lexecinfo
 	else
 		#FreeBSD, GL
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
@@ -72,7 +76,7 @@ else ifeq ($(OS), FreeBSD)
 			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
-		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/local/lib -lglfw -lGLEW -lGL -lopenal -pthread -lexecinfo
+		EXTRA_LIBS := -L/usr/local/lib -lglfw -lGLEW -lGL -lopenal -pthread -lexecinfo
 	endif
 	OFLAGS := -O2
 else ifeq ($(OS), NetBSD)
@@ -85,7 +89,7 @@ else ifeq ($(OS), NetBSD)
 			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
-	EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/X11R7/lib -L/usr/pkg/lib -lglfw -lGLEW -lGL -lopenal -pthread -lexecinfo
+	EXTRA_LIBS := -L/usr/X11R7/lib -L/usr/pkg/lib -lglfw -lGLEW -lGL -lopenal -pthread -lexecinfo
 	OFLAGS := -O2
 else ifeq ($(OS), OpenBSD)
 	# OpenBSD
@@ -97,7 +101,7 @@ else ifeq ($(OS), OpenBSD)
 			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 			src/tdme/engine/fileio/models/ModelReader.cpp
-	EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -lglfw -lGLEW -lGL -lopenal -pthread
+	EXTRA_LIBS := -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -lglfw -lGLEW -lGL -lopenal -pthread
 	OFLAGS := -O2
 else ifeq ($(OS), Haiku)
 	# Haiku
@@ -114,7 +118,7 @@ else ifeq ($(OS), Haiku)
 			src/tdme/engine/subsystems/renderer/VKRenderer.cpp
 		EXT_GLSLANG_PLATFORM_SRCS = \
 			ext/vulkan/glslang/OSDependent/Unix/ossource.cpp
-		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -lglfw -lvulkan -lGL -lopenal -lnetwork
+		EXTRA_LIBS := -lglfw -lvulkan -lGL -lopenal -lnetwork
 	else
 		# Haiku, GL
 		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
@@ -122,7 +126,7 @@ else ifeq ($(OS), Haiku)
 			src/tdme/engine/EngineGL3Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
-		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -lglfw -lGLEW -lGL -lopenal -lnetwork
+		EXTRA_LIBS := -lglfw -lGLEW -lGL -lopenal -lnetwork
 	endif
 	OFLAGS := -O2
 else ifeq ($(OS), Linux)
@@ -138,7 +142,7 @@ else ifeq ($(OS), Linux)
 			src/tdme/engine/subsystems/renderer/VKRenderer.cpp
 		EXT_GLSLANG_PLATFORM_SRCS = \
 			ext/vulkan/glslang/OSDependent/Unix/ossource.cpp
-		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lglfw -lvulkan -lopenal -pthread
+		EXTRA_LIBS := -L/usr/lib64 -lglfw -lvulkan -lopenal -pthread
 	# Linux, GLES2
 	else ifeq ($(GLES2), YES)
 		EXTRAFLAGS := $(EXTRAFLAGS) -DGLES2
@@ -146,7 +150,7 @@ else ifeq ($(OS), Linux)
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
 			src/tdme/engine/EngineGLES2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
-		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -L/usr/local/lib -lGLESv2 -lEGL -lglfw -lopenal -pthread
+		EXTRA_LIBS := -L/usr/lib64 -L/usr/local/lib -lGLESv2 -lEGL -lglfw -lopenal -pthread
 	else
 		# Linux, GL
 		#EXTRAFLAGS := $(EXTRAFLAGS) -D_GLIBCXX_DEBUG
@@ -155,37 +159,19 @@ else ifeq ($(OS), Linux)
 			src/tdme/engine/EngineGL3Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
 			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
-		EXTRA_LIBS := -l$(NAME) -l$(NAME)-ext -l$(NAME) -l$(NAME)-ext -L/usr/lib64 -lGLEW -lGL -lglfw -lopenal -pthread
+		EXTRA_LIBS := -L/usr/lib64 -lGLEW -lGL -lglfw -lopenal -pthread
 	endif
 	OFLAGS := -O2
 else
-	# Windows, VULKAN
+	# Windows
+	SRCS_PLATFORM:= $(SRCS_PLATFORM) \
+		src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
+		src/tdme/engine/fileio/models/ModelReader.cpp
 	# TODO: No console flags: -Wl,-subsystem,windows
-	ifeq ($(VULKAN), YES)
-		EXTRAFLAGS := $(EXTRAFLAGS) -DVULKAN
-		#-D_GLIBCXX_DEBUG
-		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
-				src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
-				src/tdme/engine/EngineVKRenderer.cpp \
-				src/tdme/engine/subsystems/renderer/VKGL3CoreShaderProgram.cpp \
-				src/tdme/engine/subsystems/renderer/VKRenderer.cpp \
-				src/tdme/engine/fileio/models/ModelReader.cpp
-		EXT_GLSLANG_PLATFORM_SRCS = \
-				ext/vulkan/glslang/OSDependent/Windows/ossource.cpp
-		INCLUDES := $(INCLUDES) -I/mingw64/include
-		EXTRA_LIBS := -L/mingw64/lib -lws2_32 -Lext/vulkan/runtime/mingw64 -lvulkan-1 -lglfw3 -lopenal -ldbghelp -l$(NAME) -l$(NAME)-ext
-	else
-		# Windows, GL
-		SRCS_PLATFORM:= $(SRCS_PLATFORM) \
-			src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
-			src/tdme/engine/EngineGL2Renderer.cpp \
-			src/tdme/engine/EngineGL3Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
-			src/tdme/engine/fileio/models/ModelReader.cpp
-		INCLUDES := $(INCLUDES) -I/mingw64/include/
-		EXTRA_LIBS := -L/mingw64/lib -lws2_32 -lglew32 -lopengl32 -lglfw3 -lopenal -ldbghelp -l$(NAME) -l$(NAME)-ext
-	endif
+	EXTRAFLAGS := $(EXTRAFLAGS) -DVULKAN
+	#-D_GLIBCXX_DEBUG
+	INCLUDES := $(INCLUDES) -I/mingw64/include
+	EXTRA_LIBS := -L/mingw64/lib -lws2_32 -ldl -lglfw3 -lopenal -ldbghelp
 	OFLAGS := -O2
 endif
 
@@ -201,19 +187,10 @@ CXXFLAGS := $(CFLAGS) $(CPPVERSION)
 CXXFLAGS_DEBUG := $(CFLAGS_DEBUG) $(CPPVERSION)
 CXXFLAGS_EXT_RP3D = $(CFLAGS_EXT_RP3D) $(CPPVERSION)
 
-#TODO
-ifeq ($(LIBS-SHARED), YES)
-	OBJ := obj/shared
-	OBJ_DEBUG := obj-debug/shared
-	CXX := $(CXX) -fPIC
-	LIB := lib$(NAME).so
-	EXT_LIB := lib$(NAME)-ext.so
-else
-	OBJ := obj/static
-	OBJ_DEBUG := obj-debug/static
-endif
-
 LIBS := $(LIB_DIR)/$(LIB) $(LIB_DIR)/$(EXT_LIB)
+ifeq ($(VULKAN), YES)
+	LIBS:= $(LIBS) $(LIB_DIR)/$(VULKAN_RENDERER_LIB)
+endif 
 
 SRC = src
 TINYXML = tinyxml
@@ -810,6 +787,14 @@ EXT_REACTPHYSICS3D_SRCS = \
 	ext/reactphysics3d/src/memory/DefaultPoolAllocator.cpp
 
 ifeq ($(VULKAN), YES)
+	ifeq ($(OSSHORT), Msys)
+		EXT_GLSLANG_PLATFORM_SRCS = \
+			ext/vulkan/glslang/OSDependent/Windows/ossource.cpp
+	else
+		EXT_GLSLANG_PLATFORM_SRCS = \
+			ext/vulkan/glslang/OSDependent/Unix/ossource.cpp
+	endif
+
 	EXT_SPIRV_SRCS = \
 		ext/vulkan/spirv/GlslangToSpv.cpp \
 		ext/vulkan/spirv/InReadableOrder.cpp \
@@ -859,10 +844,18 @@ ifeq ($(VULKAN), YES)
 	EXT_VMA_SRCS = \
 		ext/vulkan/vma/src/VmaUsage.cpp
 
+	VULKAN_RENDERER_LIB_SRCS = \
+		src/tdme/engine/EngineVKRenderer.cpp \
+		src/tdme/engine/subsystems/renderer/VKGL3CoreShaderProgram.cpp \
+		src/tdme/engine/subsystems/renderer/VKRenderer.cpp
+	
 else
+	EXT_GLSLANG_PLATFORM_SRCS =
 	EXT_SPIRV_SRCS =
 	EXT_GLSLANG_SRCS =
-	EXT_GLSLANG_SRCS =
+	EXT_OGLCOMPILERSDLL_SRCS =
+	EXT_VMA_SRCS =
+	VULKAN_RENDERER_LIB_SRCS =
 endif
 
 MAIN_SRCS = \
@@ -925,7 +918,8 @@ EXT_SPIRV_OBJS = $(EXT_SPIRV_SRCS:ext/$(SPIRV)/%.cpp=$(OBJ)/vulkan/%.o)
 EXT_GLSLANG_OBJS = $(EXT_GLSLANG_SRCS:ext/$(GLSLANG)/%.cpp=$(OBJ)/vulkan/%.o)
 EXT_OGLCOMPILERSDLL_OBJS = $(EXT_OGLCOMPILERSDLL_SRCS:ext/$(OGLCOMPILERSDLL)/%.cpp=$(OBJ)/vulkan/%.o)
 EXT_VMA_OBJS = $(EXT_VMA_SRCS:ext/$(VMA)/%.cpp=$(OBJ)/vulkan/%.o)
-EXT_HL_OBJS = $(EXT_HL_SRCS:ext/$(HL)/%.c=$(OBJ)/%.o)
+
+VULKAN_RENDERER_LIB_OBJS = $(VULKAN_RENDERER_LIB_SRCS:$(SRC)/%.cpp=$(OBJ)/%.o)
 
 define cpp-command
 @mkdir -p $(dir $@);
@@ -994,22 +988,39 @@ $(EXT_OGLCOMPILERSDLL_OBJS):$(OBJ)/vulkan/%.o: ext/$(OGLCOMPILERSDLL)/%.cpp | pr
 $(EXT_VMA_OBJS):$(OBJ)/vulkan/%.o: ext/$(VMA)/%.cpp | print-opts
 	$(cpp-command)
 
+$(VULKAN_RENDERER_LIB_OBJS):$(OBJ)/%.o: $(SRC)/%.cpp | print-opts
+	$(cpp-command)
+
 %.a:
-	@echo Archive $@ created
+	@echo Creating archive $@
 	@mkdir -p $(dir $@)
 	@rm -f $@
 	@ar rcs $@ $^
 
-%.so:
-	@echo Shared library $@ created
+$(LIB_DIR)/$(EXT_LIB):
+	@echo Creating shared library $@
 	@mkdir -p $(dir $@)
 	@rm -f $@
-	$(CXX) -shared  $^ -o $@
+	$(CXX) -shared $^ -o $@ -L/mingw64/lib -lws2_32 -ldl -lglfw3 -lopenal -ldbghelp -Wl,--out-implib,$(LIB_DIR)/$(EXT_LIB).a
 
+$(LIB_DIR)/$(LIB):
+	@echo Creating shared library $@
+	@mkdir -p $(dir $@)
+	@rm -f $@
+	$(CXX) -shared $^ -o $@ -L/mingw64/lib -lws2_32 -ldl -lglfw3 -lopenal -ldbghelp -Llib -ltdme2-ext.so -Wl,--out-implib,$(LIB_DIR)/$(LIB).a
+
+$(LIB_DIR)/$(VULKAN_RENDERER_LIB):
+	@echo Creating vulkan renderer library $@
+	@mkdir -p $(dir $@)
+	@rm -f $@
+	$(CXX) -shared  $^ -o $@ -L/mingw64/lib -lglfw3 -Lext/vulkan/runtime/mingw64 -lvulkan-1 -L$(LIB_DIR) -ltdme2-ext.so -ltdme2.so
 
 $(LIB_DIR)/$(LIB): $(OBJS) $(OBJS_DEBUG)
 
-$(LIB_DIR)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_SHA256_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_SPIRV_OBJS) $(EXT_GLSLANG_OBJS) $(EXT_OGLCOMPILERSDLL_OBJS) $(EXT_VMA_OBJS) $(EXT_HL_OBJS)
+$(LIB_DIR)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_SHA256_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS)
+
+$(LIB_DIR)/$(VULKAN_RENDERER_LIB): $(EXT_SPIRV_OBJS) $(EXT_GLSLANG_OBJS) $(EXT_OGLCOMPILERSDLL_OBJS) $(EXT_VMA_OBJS) $(VULKAN_RENDERER_LIB_OBJS)
+
 
 ifeq ($(OSSHORT), Msys)
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
@@ -1017,11 +1028,11 @@ $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@EXECUTABLE=$$(echo $1 | grep -o '[a-zA-Z0-9]*-main' | sed -e 's/\-main//');
 	@scripts/windows-mingw-create-executable-rc.sh "$<" $@.rc
 	@windres $@.rc -o coff -o $@.rc.o
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -L$(LIB_DIR) -o $@ $@.rc.o $< -l$(NAME) $(EXTRA_LIBS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $@.rc.o $< -L$(LIB_DIR) -ltdme2-ext.so -ltdme2.so $(EXTRA_LIBS)
 else
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@);
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -L$(LIB_DIR) -o $@ $< -l$(NAME) $(EXTRA_LIBS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $< -L$(LIB_DIR) -ltdme2-ext.so -ltdme2.so $(EXTRA_LIBS)
 endif
 
 mains: $(MAINS)

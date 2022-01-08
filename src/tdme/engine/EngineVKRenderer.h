@@ -17,11 +17,11 @@ class tdme::engine::EngineVKRenderer: public VKRenderer
 public:
 	/**
 	 * Public constructor
-	 * @param engine engine
 	 */
-	EngineVKRenderer(Engine* engine);
+	EngineVKRenderer();
 
 	// overridden methods
+	bool initializeWindowSystemRendererContext(int tryIdx) override;
 	void onUpdateProjectionMatrix(int contextIdx) override;
 	void onUpdateCameraMatrix(int contextIdx) override;
 	void onUpdateModelViewMatrix(int contextIdx) override;

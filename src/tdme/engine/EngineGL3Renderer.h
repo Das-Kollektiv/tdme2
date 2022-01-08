@@ -17,11 +17,11 @@ class tdme::engine::EngineGL3Renderer: public GL3Renderer
 public:
 	/**
 	 * Public constructor
-	 * @param engine engine
 	 */
-	EngineGL3Renderer(Engine* engine);
+	EngineGL3Renderer();
 
 	// overridden methods
+	bool initializeWindowSystemRendererContext(int tryIdx) override;
 	void onUpdateProjectionMatrix(int contextIdx) override;
 	void onUpdateCameraMatrix(int contextIdx) override;
 	void onUpdateModelViewMatrix(int contextIdx) override;

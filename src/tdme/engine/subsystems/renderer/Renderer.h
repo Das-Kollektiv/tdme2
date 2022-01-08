@@ -197,6 +197,12 @@ public:
 	}
 
 	/**
+	 * Initialize window system renderer context
+	 * @param tryIdx try index
+	 */
+	virtual bool initializeWindowSystemRendererContext(int tryIdx) = 0;
+
+	/**
 	 * Initialize renderer
 	 */
 	virtual void initialize() = 0;

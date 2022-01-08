@@ -1,28 +1,11 @@
 #include <tdme/engine/Engine.h>
 
-#if defined(VULKAN)
-	#define GLFW_INCLUDE_VULKAN
-#else
-	#if ((defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)) && !defined(GLES2)) || defined(_WIN32) || defined(__HAIKU__)
-		#define GLEW_NO_GLU
-		#include <GL/glew.h>
-	#endif
-#endif
-#include <GLFW/glfw3.h>
-
 #include <algorithm>
 #include <map>
 #include <string>
 
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
-#if defined(VULKAN)
-	#include <tdme/engine/EngineVKRenderer.h>
-#else
-	#include <tdme/engine/EngineGL2Renderer.h>
-	#include <tdme/engine/EngineGL3Renderer.h>
-	#include <tdme/engine/EngineGLES2Renderer.h>
-#endif
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
@@ -137,10 +120,6 @@ using tdme::engine::subsystems::skinning::SkinningShader;
 using tdme::engine::subsystems::texture2D::Texture2DRenderShader;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
-using tdme::engine::EngineGL2Renderer;
-using tdme::engine::EngineGL3Renderer;
-using tdme::engine::EngineGLES2Renderer;
-using tdme::engine::EngineVKRenderer;
 using tdme::engine::Entity;
 using tdme::engine::EntityHierarchy;
 using tdme::engine::EntityPickingFilter;
@@ -682,61 +661,20 @@ void Engine::initialize()
 	if (initialized == true)
 		return;
 
-	#if defined(VULKAN)
-		renderer = new EngineVKRenderer(this);
-		Console::println(string("TDME2::Using Vulkan"));
-		shadowMappingEnabled = true;
-		if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(2048, 2048);
-		if (getShadowMapRenderLookUps() == 0) setShadowMapRenderLookUps(8);
-	#else
-		// MacOSX, currently GL3 only
-		#if defined(__APPLE__)
-		{
-			renderer = new EngineGL3Renderer(this);
-			Console::println("TDME2::Using GL3+/CORE");
-			shadowMappingEnabled = true;
-			if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(2048, 2048);
-			if (getShadowMapRenderLookUps() == 0) setShadowMapRenderLookUps(8);
-		}
-		// Linux/FreeBSD/NetBSD/Win32, GL2 or GL3 via GLEW
-		#elif defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)) && !defined(GLES2)) || defined(__HAIKU__)
-		{
-			int glMajorVersion;
-			int glMinorVersion;
-			glGetIntegerv(GL_MAJOR_VERSION, &glMajorVersion);
-			glGetIntegerv(GL_MINOR_VERSION, &glMinorVersion);
-			if ((glMajorVersion == 3 && glMinorVersion >= 2) || glMajorVersion > 3) {
-				Console::println(string("TDME2::Using GL3+/CORE(" + to_string(glMajorVersion) + "." + to_string(glMinorVersion) + ")"));
-				renderer = new EngineGL3Renderer(this);
-			} else {
-				Console::println(string("TDME2::Using GL2(" + to_string(glMajorVersion) + "." + to_string(glMinorVersion) + ")"));
-				renderer = new EngineGL2Renderer(this);
-			}
-			shadowMappingEnabled = true;
-			if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(2048, 2048);
-			if (getShadowMapRenderLookUps() == 0) setShadowMapRenderLookUps(8);
-		}
-		// GLES2 on Linux
-		#elif (defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)) && defined(GLES2)
-		{
-			renderer = new EngineGLES2Renderer(this);
-			Console::println(string("TDME2::Using GLES2"));
-			// Console::println(string("TDME2::Extensions: ") + gl->glGetString(GL::GL_EXTENSIONS));
-			if (renderer->isBufferObjectsAvailable() == true && renderer->isDepthTextureAvailable() == true) {
-				shadowMappingEnabled = true;
-				animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
-				if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(1024, 1024);
-				if (getShadowMapRenderLookUps() == 0) setShadowMapRenderLookUps(4);
-			} else {
-				shadowMappingEnabled = false;
-				animationProcessingTarget = Engine::AnimationProcessingTarget::CPU;
-			}
-		}
-		#else
-			Console::println("Engine::initialize(): unsupported GL!");
-			return;
-		#endif
-	#endif
+	//
+	renderer = Application::getRenderer();
+	if (renderer == nullptr) {
+		initialized = false;
+		Console::println("No renderer: Exiting!");
+		Application::exit(0);
+		return;
+	}
+
+	shadowMappingEnabled = true;
+	if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(2048, 2048);
+	if (getShadowMapRenderLookUps() == 0) setShadowMapRenderLookUps(8);
+	shadowMappingEnabled = renderer->isBufferObjectsAvailable() == true && renderer->isDepthTextureAvailable() == true;
+	animationProcessingTarget = renderer->isGLCLAvailable() == true || renderer->isComputeShaderAvailable() == true?Engine::AnimationProcessingTarget::GPU:Engine::AnimationProcessingTarget::CPU;
 
 	// determine if we have the skinning compute shader or OpenCL program
 	skinningShaderEnabled = renderer->isComputeShaderAvailable() == true || renderer->isGLCLAvailable() == true;
@@ -748,6 +686,7 @@ void Engine::initialize()
 	} else {
 		threadCount = 1;
 	}
+
 	Console::println(string("TDME2::Thread count: ") + to_string(threadCount));
 
 	// initialize object buffers

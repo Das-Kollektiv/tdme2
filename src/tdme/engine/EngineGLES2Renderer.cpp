@@ -1,3 +1,8 @@
+#include <tdme/engine/EngineGLES2Renderer.h>
+
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/earlyzrejection/EZRShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
@@ -5,7 +10,6 @@
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/engine/EngineGLES2Renderer.h>
 #include <tdme/gui/renderer/GUIShader.h>
 
 using tdme::engine::subsystems::earlyzrejection::EZRShader;
@@ -17,9 +21,18 @@ using tdme::engine::Engine;
 using tdme::engine::EngineGLES2Renderer;
 using tdme::gui::renderer::GUIShader;
 
-EngineGLES2Renderer::EngineGLES2Renderer(Engine *engine) :
-	engine(engine)
+EngineGLES2Renderer::EngineGLES2Renderer()
 {
+	engine = Engine::getInstance();
+}
+
+bool EngineGLES2Renderer::initializeWindowSystemRendererContext(int tryIdx) {
+	if (tryIdx > 0) return false;
+	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+	glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+	return true;
 }
 
 void EngineGLES2Renderer::onUpdateProjectionMatrix(int contextIdx)
