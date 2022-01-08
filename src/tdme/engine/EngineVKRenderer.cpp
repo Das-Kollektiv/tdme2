@@ -28,9 +28,13 @@ EngineVKRenderer::EngineVKRenderer()
 	engine = Engine::getInstance();
 }
 
-bool EngineVKRenderer::initializeWindowSystemRendererContext(int tryIdx) {
+bool EngineVKRenderer::prepareWindowSystemRendererContext(int tryIdx) {
 	if (tryIdx > 0 || glfwVulkanSupported() == false) return false;
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+	return true;
+}
+
+bool EngineVKRenderer::initializeWindowSystemRendererContext(GLFWwindow* glfwWindow) {
 	return true;
 }
 
@@ -180,6 +184,6 @@ void EngineVKRenderer::onUpdateShaderParameters(int contextIdx) {
 // end point for engine to create renderer
 extern "C" EngineVKRenderer* createInstance()
 {
-	Console::println("xxx");
+	Console::println("EngineGL3Renderer::createInstance(): Creating EngineVKRenderer instance!");
 	return new EngineVKRenderer();
 }

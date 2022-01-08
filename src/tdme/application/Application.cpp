@@ -1,26 +1,5 @@
-#if defined(VULKAN)
-	#define GLFW_INCLUDE_VULKAN
-	#include <GLFW/glfw3.h>
-	#if defined(_WIN32)
-		#define GLFW_EXPOSE_NATIVE_WIN32
-		#include <GLFW/glfw3native.h>
-	#endif
-	#include <tdme/engine/Engine.h>
-	#include <tdme/engine/subsystems/renderer/VKRenderer.h>
-	using tdme::engine::Engine;
-	using tdme::engine::subsystems::renderer::VKRenderer;
-#else
-	#define GLFW_INCLUDE_NONE
-	#include <GLFW/glfw3.h>
-
-	#if !defined(__APPLE__)
-		#define GLEW_NO_GLU
-		#include <GL/glew.h>
-		#if defined(_WIN32)
-			#include <GL/wglew.h>
-		#endif
-	#endif
-#endif
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
 
 #if defined(_WIN32)
 	#define GLFW_EXPOSE_NATIVE_WIN32
@@ -520,9 +499,7 @@ void Application::setMousePosition(int x, int y) {
 }
 
 void Application::swapBuffers() {
-	if (Engine::renderer->getRendererType() != Renderer::RENDERERTYPE_VULKAN) {
-		glfwSwapBuffers(glfwWindow);
-	}
+	if (Engine::renderer->getRendererType() != Renderer::RENDERERTYPE_VULKAN) glfwSwapBuffers(glfwWindow);
 }
 
 string Application::getClipboardContent() {
@@ -538,9 +515,17 @@ static void glfwErrorCallback(int error, const char* description) {
 }
 
 void Application::run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler, int windowHints) {
+	string rendererLibrary = "libopengl3corerenderer.so";
 	for (auto i = 1; i < argc; i++) {
-		if (string(argv[i]) == "--debug") debuggingEnabled = true;
+		auto argValue = string(argv[i]);
+		if (argValue == "--debug") debuggingEnabled = true; else
+		if (argValue == "--gles2") rendererLibrary = "libopengles2renderer.so"; else
+		if (argValue == "--gl2") rendererLibrary = "libopengl2renderer.so"; else
+		if (argValue == "--gl3core") rendererLibrary = "libopengl3corerenderer.so"; else
+		if (argValue == "--vulkan") rendererLibrary = "libvulkanrenderer.so";
 	}
+
+	//
 	this->title = title;
 	this->windowHints = windowHints;
 	executableFileName = FileSystem::getInstance()->getFileName(argv[0]);
@@ -571,9 +556,10 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		}
 	}
 
+	Console::println("Application::run(): Opening renderer library: " + rendererLibrary);
+
 	//
-	void* rendererLibraryHandle = dlopen("./libvulkanrenderer.so", RTLD_LAZY);
-	//
+	void* rendererLibraryHandle = dlopen(rendererLibrary.c_str(), RTLD_NOW);
 	if (rendererLibraryHandle == nullptr) {
 		Console::println("Application::run(): Could not open renderer library");
 		glfwTerminate();
@@ -587,7 +573,6 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		glfwTerminate();
 		return;
 	}
-
 	//
 	renderer = (Renderer*)rendererCreateInstance();
 	if (renderer == nullptr) {
@@ -603,7 +588,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 	if ((windowHints & WINDOW_HINT_MAXIMIZED) == WINDOW_HINT_MAXIMIZED) glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
 	//
-	for (auto i = 0; renderer->initializeWindowSystemRendererContext(i) == true; i++) {
+	for (auto i = 0; renderer->prepareWindowSystemRendererContext(i) == true; i++) {
 		glfwWindow = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
 		if (glfwWindow != nullptr) break;
 	}
@@ -615,19 +600,20 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		return;
 	}
 
+	//
+	if (renderer->initializeWindowSystemRendererContext(glfwWindow) == false) {
+		Console::println("glfwCreateWindow(): Could not initialize window system renderer context");
+		glfwTerminate();
+		return;
+	}
+
+	//
 	if ((windowHints & WINDOW_HINT_MAXIMIZED) == 0) glfwSetWindowPos(glfwWindow, windowXPosition, windowYPosition);
+
+	//
 	setIcon();
-	#if !defined(VULKAN)
-		glfwMakeContextCurrent(glfwWindow);
-		#if defined(_WIN32) || ((defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__)) && !defined(GLES2)) || defined(__HAIKU__)
-			glewExperimental = true;
-			GLenum glewInitStatus = glewInit();
-			if (glewInitStatus != GLEW_OK) {
-				Console::println("glewInit(): Error: " + (string((char*)glewGetErrorString(glewInitStatus))));
-				Application::exit(1);
-			}
-		#endif
-	#endif
+
+	//
 	glfwSetCharCallback(glfwWindow, Application::glfwOnChar);
 	glfwSetKeyCallback(glfwWindow, Application::glfwOnKey);
 	glfwSetCursorPosCallback(glfwWindow, Application::glfwOnMouseMoved);
@@ -651,9 +637,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 	#endif
 	while (glfwWindowShouldClose(glfwWindow) == false) {
 		displayInternal();
-		#if !defined(VULKAN)
-			glfwSwapBuffers(glfwWindow);
-		#endif
+		if (Engine::renderer->getRendererType() != Renderer::RENDERERTYPE_VULKAN) glfwSwapBuffers(glfwWindow);
 		glfwPollEvents();
 	}
 	glfwTerminate();

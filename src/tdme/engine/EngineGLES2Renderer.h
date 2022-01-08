@@ -21,7 +21,8 @@ public:
 	EngineGLES2Renderer();
 
 	// overridden methods
-	bool initializeWindowSystemRendererContext(int tryIdx) override;
+	bool prepareWindowSystemRendererContext(int tryIdx) override;
+	bool initializeWindowSystemRendererContext(GLFWwindow* glfwWindow) override;
 	void onUpdateProjectionMatrix(int contextIdx) override;
 	void onUpdateCameraMatrix(int contextIdx) override;
 	void onUpdateModelViewMatrix(int contextIdx) override;

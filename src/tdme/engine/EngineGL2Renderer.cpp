@@ -3,6 +3,14 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
+#if !defined(__APPLE__)
+	#define GLEW_NO_GLU
+	#include <GL/glew.h>
+	#if defined(_WIN32)
+		#include <GL/wglew.h>
+	#endif
+#endif
+
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/earlyzrejection/EZRShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
@@ -26,12 +34,29 @@ EngineGL2Renderer::EngineGL2Renderer()
 	engine = Engine::getInstance();
 }
 
-bool EngineGL2Renderer::initializeWindowSystemRendererContext(int tryIdx) {
+bool EngineGL2Renderer::prepareWindowSystemRendererContext(int tryIdx) {
 	if (tryIdx > 0) return false;
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_FALSE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_ANY_PROFILE);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+	return true;
+}
+
+bool EngineGL2Renderer::initializeWindowSystemRendererContext(GLFWwindow* glfwWindow) {
+	glfwMakeContextCurrent(glfwWindow);
+	if (glfwGetCurrentContext() == nullptr) {
+		Console::println("EngineGL2Renderer::initializeWindowSystemRendererContext(): glfwMakeContextCurrent(): Error: No window attached to context");
+		return false;
+	}
+	#if !defined(__APPLE__)
+		glewExperimental = true;
+		GLenum glewInitStatus = glewInit();
+		if (glewInitStatus != GLEW_OK) {
+			Console::println("EngineGL2Renderer::initializeWindowSystemRendererContext(): glewInit(): Error: " + (string((char*)glewGetErrorString(glewInitStatus))));
+			return false;
+		}
+	#endif
 	return true;
 }
 
@@ -175,4 +200,11 @@ void EngineGL2Renderer::onUpdateShaderParameters(int contextIdx) {
 
 	if (Engine::ezrShader != nullptr)
 		Engine::ezrShader->updateShaderParameters(contextIdx);
+}
+
+// end point for engine to create renderer
+extern "C" EngineGL2Renderer* createInstance()
+{
+	Console::println("EngineGL2Renderer::createInstance(): Creating EngineGL2Renderer instance");
+	return new EngineGL2Renderer();
 }

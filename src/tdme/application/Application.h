@@ -34,7 +34,6 @@ using tdme::engine::subsystems::renderer::Renderer;
 class tdme::application::Application
 {
 	friend class InputEventHandler;
-	friend class tdme::engine::Engine;
 	friend class tdme::engine::subsystems::renderer::VKRenderer;
 
 public:

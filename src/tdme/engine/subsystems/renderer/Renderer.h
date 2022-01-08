@@ -1,5 +1,8 @@
 #pragma once
 
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
+
 #include <array>
 #include <map>
 #include <string>
@@ -37,7 +40,7 @@ class tdme::engine::subsystems::renderer::Renderer
 {
 public:
 
-	enum RendererType { RENDERERTYPE_NONE, RENDERERTYPE_OPENGL, RENDERERTYPE_VULKAN };
+	enum RendererType { RENDERERTYPE_NONE, RENDERERTYPE_OPENGLES, RENDERERTYPE_OPENGL, RENDERERTYPE_VULKAN };
 
 	/**
 	 * Bean holding light properties
@@ -197,10 +200,16 @@ public:
 	}
 
 	/**
-	 * Initialize window system renderer context
+	 * Prepare window system renderer context
 	 * @param tryIdx try index
 	 */
-	virtual bool initializeWindowSystemRendererContext(int tryIdx) = 0;
+	virtual bool prepareWindowSystemRendererContext(int tryIdx) = 0;
+
+	/**
+	 * Initialize window system renderer context
+	 * @param glfwWindow GLFL window
+	 */
+	virtual bool initializeWindowSystemRendererContext(GLFWwindow* glfwWindow) = 0;
 
 	/**
 	 * Initialize renderer

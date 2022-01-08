@@ -26,12 +26,21 @@ EngineGLES2Renderer::EngineGLES2Renderer()
 	engine = Engine::getInstance();
 }
 
-bool EngineGLES2Renderer::initializeWindowSystemRendererContext(int tryIdx) {
+bool EngineGLES2Renderer::prepareWindowSystemRendererContext(int tryIdx) {
 	if (tryIdx > 0) return false;
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
 	glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+	return true;
+}
+
+bool EngineGLES2Renderer::initializeWindowSystemRendererContext(GLFWwindow* glfwWindow) {
+	glfwMakeContextCurrent(glfwWindow);
+	if (glfwGetCurrentContext() == nullptr) {
+		Console::println("EngineGLES2Renderer::initializeWindowSystemRendererContext(): glfwMakeContextCurrent(): Error: No window attached to context");
+		return false;
+	}
 	return true;
 }
 
@@ -176,4 +185,11 @@ void EngineGLES2Renderer::onUpdateShaderParameters(int contextIdx) {
 
 	if (Engine::ezrShader != nullptr)
 		Engine::ezrShader->updateShaderParameters(contextIdx);
+}
+
+// end point for engine to create renderer
+extern "C" EngineGLES2Renderer* createInstance()
+{
+	Console::println("EngineGLES2Renderer::createInstance(): Creating EngineGLES2Renderer instance!");
+	return new EngineGLES2Renderer();
 }

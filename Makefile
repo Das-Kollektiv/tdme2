@@ -3,6 +3,8 @@ EXT_NAME = tdme2-ext
 LIB := lib$(NAME).so
 EXT_LIB := lib$(NAME)-ext.so
 VULKAN_RENDERER_LIB := libvulkanrenderer.so
+OPENGL2_RENDERER_LIB := libopengl2renderer.so
+OPENGL3CORE_RENDERER_LIB := libopengl3corerenderer.so
 
 BIN = bin
 LIB_DIR = lib
@@ -187,7 +189,7 @@ CXXFLAGS := $(CFLAGS) $(CPPVERSION)
 CXXFLAGS_DEBUG := $(CFLAGS_DEBUG) $(CPPVERSION)
 CXXFLAGS_EXT_RP3D = $(CFLAGS_EXT_RP3D) $(CPPVERSION)
 
-LIBS := $(LIB_DIR)/$(LIB) $(LIB_DIR)/$(EXT_LIB)
+LIBS := $(LIB_DIR)/$(LIB) $(LIB_DIR)/$(EXT_LIB) $(LIB_DIR)/$(OPENGL2_RENDERER_LIB) $(LIB_DIR)/$(OPENGL3CORE_RENDERER_LIB)
 ifeq ($(VULKAN), YES)
 	LIBS:= $(LIBS) $(LIB_DIR)/$(VULKAN_RENDERER_LIB)
 endif 
@@ -786,6 +788,14 @@ EXT_REACTPHYSICS3D_SRCS = \
 	ext/reactphysics3d/src/memory/DefaultSingleFrameAllocator.cpp \
 	ext/reactphysics3d/src/memory/DefaultPoolAllocator.cpp
 
+OPENGL2_RENDERER_LIB_SRCS = \
+	src/tdme/engine/EngineGL2Renderer.cpp \
+	src/tdme/engine/subsystems/renderer/GL2Renderer.cpp
+
+OPENGL3CORE_RENDERER_LIB_SRCS = \
+	src/tdme/engine/EngineGL3Renderer.cpp \
+	src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
+
 ifeq ($(VULKAN), YES)
 	ifeq ($(OSSHORT), Msys)
 		EXT_GLSLANG_PLATFORM_SRCS = \
@@ -919,6 +929,8 @@ EXT_GLSLANG_OBJS = $(EXT_GLSLANG_SRCS:ext/$(GLSLANG)/%.cpp=$(OBJ)/vulkan/%.o)
 EXT_OGLCOMPILERSDLL_OBJS = $(EXT_OGLCOMPILERSDLL_SRCS:ext/$(OGLCOMPILERSDLL)/%.cpp=$(OBJ)/vulkan/%.o)
 EXT_VMA_OBJS = $(EXT_VMA_SRCS:ext/$(VMA)/%.cpp=$(OBJ)/vulkan/%.o)
 
+OPENGL2_RENDERER_LIB_OBJS = $(OPENGL2_RENDERER_LIB_SRCS:$(SRC)/%.cpp=$(OBJ)/%.o)
+OPENGL3CORE_RENDERER_LIB_OBJS = $(OPENGL3CORE_RENDERER_LIB_SRCS:$(SRC)/%.cpp=$(OBJ)/%.o)
 VULKAN_RENDERER_LIB_OBJS = $(VULKAN_RENDERER_LIB_SRCS:$(SRC)/%.cpp=$(OBJ)/%.o)
 
 define cpp-command
@@ -988,6 +1000,12 @@ $(EXT_OGLCOMPILERSDLL_OBJS):$(OBJ)/vulkan/%.o: ext/$(OGLCOMPILERSDLL)/%.cpp | pr
 $(EXT_VMA_OBJS):$(OBJ)/vulkan/%.o: ext/$(VMA)/%.cpp | print-opts
 	$(cpp-command)
 
+$(OPENGL2_RENDERER_LIB_OBJS):$(OBJ)/%.o: $(SRC)/%.cpp | print-opts
+	$(cpp-command)
+
+$(OPENGL3CORE_RENDERER_LIB_OBJS):$(OBJ)/%.o: $(SRC)/%.cpp | print-opts
+	$(cpp-command)
+
 $(VULKAN_RENDERER_LIB_OBJS):$(OBJ)/%.o: $(SRC)/%.cpp | print-opts
 	$(cpp-command)
 
@@ -1007,17 +1025,33 @@ $(LIB_DIR)/$(LIB):
 	@echo Creating shared library $@
 	@mkdir -p $(dir $@)
 	@rm -f $@
-	$(CXX) -shared $^ -o $@ -L/mingw64/lib -lws2_32 -ldl -lglfw3 -lopenal -ldbghelp -Llib -ltdme2-ext.so -Wl,--out-implib,$(LIB_DIR)/$(LIB).a
+	$(CXX) -shared $^ -o $@ -L/mingw64/lib -lws2_32 -ldl -lglfw3 -lopenal -ldbghelp -Llib -l$(EXT_NAME).so -Wl,--out-implib,$(LIB_DIR)/$(LIB).a
 
-$(LIB_DIR)/$(VULKAN_RENDERER_LIB):
-	@echo Creating vulkan renderer library $@
+$(LIB_DIR)/$(OPENGL2_RENDERER_LIB):
+	@echo Creating OpenGL2 renderer library $@
 	@mkdir -p $(dir $@)
 	@rm -f $@
-	$(CXX) -shared  $^ -o $@ -L/mingw64/lib -lglfw3 -Lext/vulkan/runtime/mingw64 -lvulkan-1 -L$(LIB_DIR) -ltdme2-ext.so -ltdme2.so
+	$(CXX) -shared $^ -o $@ -L/mingw64/lib -lglfw3 -lglew32 -lopengl32 -Lext/vulkan/runtime/mingw64 -L$(LIB_DIR) -l$(EXT_NAME).so -l$(NAME).so
+
+$(LIB_DIR)/$(OPENGL3CORE_RENDERER_LIB):
+	@echo Creating OpenGL3/CORE renderer library $@
+	@mkdir -p $(dir $@)
+	@rm -f $@
+	$(CXX) -shared $^ -o $@ -L/mingw64/lib -lglfw3 -lglew32 -lopengl32 -Lext/vulkan/runtime/mingw64 -L$(LIB_DIR) -l$(EXT_NAME).so -l$(NAME).so
+
+$(LIB_DIR)/$(VULKAN_RENDERER_LIB):
+	@echo Creating Vulkan renderer library $@
+	@mkdir -p $(dir $@)
+	@rm -f $@
+	$(CXX) -shared $^ -o $@ -L/mingw64/lib -lglfw3 -Lext/vulkan/runtime/mingw64 -lvulkan-1 -L$(LIB_DIR) -l$(EXT_NAME).so -l$(NAME).so
 
 $(LIB_DIR)/$(LIB): $(OBJS) $(OBJS_DEBUG)
 
 $(LIB_DIR)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_SHA256_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS)
+
+$(LIB_DIR)/$(OPENGL2_RENDERER_LIB): $(OPENGL2_RENDERER_LIB_OBJS)
+
+$(LIB_DIR)/$(OPENGL3CORE_RENDERER_LIB): $(OPENGL3CORE_RENDERER_LIB_OBJS)
 
 $(LIB_DIR)/$(VULKAN_RENDERER_LIB): $(EXT_SPIRV_OBJS) $(EXT_GLSLANG_OBJS) $(EXT_OGLCOMPILERSDLL_OBJS) $(EXT_VMA_OBJS) $(VULKAN_RENDERER_LIB_OBJS)
 

@@ -1490,7 +1490,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 		tabView->initialize();
 		//
 		// TODO: move me into GUIFrameBufferNode
-		if (Engine::getInstance()->getGraphicsRendererType() == Renderer::RENDERERTYPE_OPENGL) {
+		if (Engine::getInstance()->getGraphicsRendererType() != Renderer::RENDERERTYPE_VULKAN) {
 			required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer"))->setTextureMatrix((new Matrix2D3x3())->identity().scale(Vector2(1.0f, -1.0f)));
 		}
 		tabViews[tabId] = EditorTabView(tabId, tabType, tabView, tabView->getTabController(), tabView->getEngine(), required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));

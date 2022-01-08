@@ -1,5 +1,8 @@
 #pragma once
 
+#define GLFW_INCLUDE_VULKAN
+#include <GLFW/glfw3.h>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/VKRenderer.h>
@@ -21,7 +24,8 @@ public:
 	EngineVKRenderer();
 
 	// overridden methods
-	bool initializeWindowSystemRendererContext(int tryIdx) override;
+	bool prepareWindowSystemRendererContext(int tryIdx) override;
+	bool initializeWindowSystemRendererContext(GLFWwindow* glfwWindow) override;
 	void onUpdateProjectionMatrix(int contextIdx) override;
 	void onUpdateCameraMatrix(int contextIdx) override;
 	void onUpdateModelViewMatrix(int contextIdx) override;

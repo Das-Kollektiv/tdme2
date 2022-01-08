@@ -53,7 +53,7 @@ using tdme::utilities::Time;
 
 GLES2Renderer::GLES2Renderer()
 {
-	rendererType = RENDERERTYPE_OPENGL;
+	rendererType = RENDERERTYPE_OPENGLES;
 	// setup GLES2 consts
 	ID_NONE = 0;
 	CLEAR_DEPTH_BUFFER_BIT = GL_DEPTH_BUFFER_BIT;

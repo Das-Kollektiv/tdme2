@@ -3,6 +3,14 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
+#if !defined(__APPLE__)
+	#define GLEW_NO_GLU
+	#include <GL/glew.h>
+	#if defined(_WIN32)
+		#include <GL/wglew.h>
+	#endif
+#endif
+
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/earlyzrejection/EZRShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
@@ -26,7 +34,7 @@ EngineGL3Renderer::EngineGL3Renderer()
 	engine = Engine::getInstance();
 }
 
-bool EngineGL3Renderer::initializeWindowSystemRendererContext(int tryIdx) {
+bool EngineGL3Renderer::prepareWindowSystemRendererContext(int tryIdx) {
 	array<array<int, 3>, 2> glVersions = {{ {{1, 4, 3}}, {{1, 3, 2}} }};
 	if (tryIdx >= glVersions.size()) return false;
 	#if defined(__APPLE__)
@@ -37,6 +45,23 @@ bool EngineGL3Renderer::initializeWindowSystemRendererContext(int tryIdx) {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, glVersion[0] == 1?GLFW_OPENGL_CORE_PROFILE:GLFW_OPENGL_ANY_PROFILE);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, glVersion[1]);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, glVersion[2]);
+	return true;
+}
+
+bool EngineGL3Renderer::initializeWindowSystemRendererContext(GLFWwindow* glfwWindow) {
+	glfwMakeContextCurrent(glfwWindow);
+	if (glfwGetCurrentContext() == nullptr) {
+		Console::println("EngineGL3Renderer::initializeWindowSystemRendererContext(): glfwMakeContextCurrent(): Error: No window attached to context");
+		return false;
+	}
+	#if !defined(__APPLE__)
+		//glewExperimental = true;
+		GLenum glewInitStatus = glewInit();
+		if (glewInitStatus != GLEW_OK) {
+			Console::println("EngineGL3Renderer::initializeWindowSystemRendererContext(): glewInit(): Error: " + (string((char*)glewGetErrorString(glewInitStatus))));
+			return false;
+		}
+	#endif
 	return true;
 }
 
@@ -181,4 +206,11 @@ void EngineGL3Renderer::onUpdateShaderParameters(int contextIdx) {
 
 	if (Engine::ezrShader != nullptr)
 		Engine::ezrShader->updateShaderParameters(contextIdx);
+}
+
+// end point for engine to create renderer
+extern "C" EngineGL3Renderer* createInstance()
+{
+	Console::println("EngineGL3Renderer::createInstance(): Creating EngineGL3Renderer instance!");
+	return new EngineGL3Renderer();
 }
