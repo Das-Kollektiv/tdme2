@@ -596,6 +596,12 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		return;
 	}
 
+	// window hints
+	if ((windowHints & WINDOW_HINT_NOTRESIZEABLE) == WINDOW_HINT_NOTRESIZEABLE) glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+	if ((windowHints & WINDOW_HINT_NOTDECORATED) == WINDOW_HINT_NOTDECORATED) glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+	if ((windowHints & WINDOW_HINT_INVISIBLE) == WINDOW_HINT_INVISIBLE) glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+	if ((windowHints & WINDOW_HINT_MAXIMIZED) == WINDOW_HINT_MAXIMIZED) glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+
 	//
 	for (auto i = 0; renderer->initializeWindowSystemRendererContext(i) == true; i++) {
 		glfwWindow = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), NULL, NULL);
