@@ -842,6 +842,13 @@ public:
 	const string getGraphicsRenderer();
 
 	/**
+	 * @return graphics renderer type
+	 */
+	inline Renderer::RendererType getGraphicsRendererType() {
+		return renderer->getRendererType();
+	}
+
+	/**
 	 * @return if initialized and ready to be used
 	 */
 	inline bool isInitialized() {

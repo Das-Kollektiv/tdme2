@@ -116,7 +116,7 @@ void Texture2DRenderShader::renderTexture(Engine* engine, const Vector2& positio
 	{
 		auto fbTextureCoordinates = ObjectBuffer::getByteBuffer(contextIdx, 6 * 2 * sizeof(float))->asFloatBuffer();
 
-		#if defined(VULKAN)
+		if (renderer->getRendererType() == Renderer::RENDERERTYPE_VULKAN) {
 			fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(0.0f);
 			fbTextureCoordinates.put(+1.0f); fbTextureCoordinates.put(0.0f);
 			fbTextureCoordinates.put(+1.0f); fbTextureCoordinates.put(1.0f);
@@ -124,7 +124,7 @@ void Texture2DRenderShader::renderTexture(Engine* engine, const Vector2& positio
 			fbTextureCoordinates.put(+1.0f); fbTextureCoordinates.put(1.0f);
 			fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(1.0f);
 			fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(0.0f);
-		#else
+		} else {
 			fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(+1.0f);
 			fbTextureCoordinates.put(+1.0f); fbTextureCoordinates.put(+1.0f);
 			fbTextureCoordinates.put(+1.0f); fbTextureCoordinates.put(0.0f);
@@ -132,7 +132,7 @@ void Texture2DRenderShader::renderTexture(Engine* engine, const Vector2& positio
 			fbTextureCoordinates.put(+1.0f); fbTextureCoordinates.put(0.0f);
 			fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(0.0f);
 			fbTextureCoordinates.put(+0.0f); fbTextureCoordinates.put(+1.0f);
-		#endif
+		}
 
 		renderer->uploadBufferObject(contextIdx, vboTextureCoordinates, fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
 	}

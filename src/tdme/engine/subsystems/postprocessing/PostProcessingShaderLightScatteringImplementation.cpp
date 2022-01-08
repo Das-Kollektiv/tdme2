@@ -99,9 +99,9 @@ void PostProcessingShaderLightScatteringImplementation::setShaderParameters(int 
 		if (intensity < Math::EPSILON) {
 			renderer->setProgramUniformInteger(contextIdx, uniformLightEnabled[i], 0);
 		} else {
-			#if defined(VULKAN)
+			if (renderer->getRendererType() == Renderer::RENDERERTYPE_VULKAN) {
 				lightSourcePosition2D = Vector2(lightSourcePosition2D.getX(), 1.0f - lightSourcePosition2D.getY());
-			#endif
+			}
 			renderer->setProgramUniformInteger(contextIdx, uniformLightEnabled[i], 1);
 			renderer->setProgramUniformFloatVec2(contextIdx, uniformLightPosition[i], lightSourcePosition2D.getArray());
 			renderer->setProgramUniformFloat(contextIdx, uniformLightIntensity[i], intensity * 0.6f);

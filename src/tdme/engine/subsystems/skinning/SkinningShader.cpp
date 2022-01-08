@@ -63,11 +63,11 @@ bool SkinningShader::isInitialized()
 
 void SkinningShader::initialize()
 {
-	#if defined (__APPLE__) && !defined(VULKAN)
+	if (renderer->isGLCLAvailable() == true) {
 		uniformMatrixCount = renderer->UNIFORM_CL_SKINNING_MATRIX_COUNT;
 		uniformInstanceCount = renderer->UNIFORM_CL_SKINNING_INSTANCE_COUNT;
 		uniformVertexCount = renderer->UNIFORM_CL_SKINNING_VERTEX_COUNT;
-	#else
+	} else {
 		auto shaderVersion = renderer->getShaderVersion();
 
 		// shader
@@ -92,7 +92,7 @@ void SkinningShader::initialize()
 		if (uniformMatrixCount == -1) return;
 		uniformInstanceCount = renderer->getProgramUniformLocation(programId, "instanceCount");
 		if (uniformInstanceCount == -1) return;
-	#endif
+	}
 
 	//
 	initialized = true;

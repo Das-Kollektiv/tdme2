@@ -56,6 +56,41 @@ EnvironmentMappingRenderer::EnvironmentMappingRenderer(Engine* engine, int32_t w
 	this->height = height;
 	camera = new Camera(engine->renderer);
 	camera->setCameraMode(Camera::CAMERAMODE_NONE);
+	if (engine->renderer->getRendererType() == Renderer::RENDERERTYPE_VULKAN) {
+		forwardVectors = {{
+			{{ 1.0f, 0.0f, 0.0f }}, // left
+			{{ -1.0f, 0.0f, 0.0f }}, // right
+			{{ 0.0f, -1.0f, 0.0f }}, // top
+			{{ 0.0f, 1.0f, 0.0f }}, // bottom
+			{{ 0.0f, 0.0f, 1.0f }}, // front
+			{{ 0.0f, 0.0f, -1.0f }} // back
+		}};
+		sideVectors = {{
+			{{ 0.0f, 0.0f, -1.0f }}, // left
+			{{ 0.0f, 0.0f, 1.0f }}, // right
+			{{ 1.0f, 0.0f, 0.0f }}, // top
+			{{ 1.0f, 0.0f, 0.0f }}, // bottom
+			{{ 1.0f, 0.0f, 0.0f }}, // front
+			{{ -1.0f, 0.0f, 0.0f }} // back
+		}};
+	} else {
+		forwardVectors = {{
+			{{ -1.0f, 0.0f, 0.0f }}, // left
+			{{ 1.0f, 0.0f, 0.0f }}, // right
+			{{ 0.0f, 1.0f, 0.0f }}, // top
+			{{ 0.0f, -1.0f, 0.0f }}, // bottom
+			{{ 0.0f, 0.0f, 1.0f }}, // front
+			{{ 0.0f, 0.0f, -1.0f }} // back
+		}};
+		sideVectors = {{
+			{{ 0.0f, 0.0f, 1.0f }}, // left
+			{{ 0.0f, 0.0f, -1.0f }}, // right
+			{{ 1.0f, 0.0f, 0.0f }}, // top
+			{{ 1.0f, 0.0f, 0.0f }}, // bottom
+			{{ 1.0f, 0.0f, 0.0f }}, // front
+			{{ -1.0f, 0.0f, 0.0f }} // back
+		}};
+	}
 }
 
 EnvironmentMappingRenderer::~EnvironmentMappingRenderer() {
@@ -64,21 +99,14 @@ EnvironmentMappingRenderer::~EnvironmentMappingRenderer() {
 
 void EnvironmentMappingRenderer::initialize()
 {
-	#if defined(VULKAN)
-		for (auto i = 0; i < frameBuffers.size(); i++) {
-			cubeMapTextureIds[i] = engine->renderer->createCubeMapTexture(engine->renderer->CONTEXTINDEX_DEFAULT, width, height);
-			for (auto j = 0; j < frameBuffers[i].size(); j++) {
-				frameBuffers[i][j] = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_COLORBUFFER | FrameBuffer::FRAMEBUFFER_DEPTHBUFFER, cubeMapTextureIds[i], j + 1);
-				frameBuffers[i][j]->initialize();
-			}
+	//
+	for (auto i = 0; i < frameBuffers.size(); i++) {
+		cubeMapTextureIds[i] = engine->renderer->createCubeMapTexture(engine->renderer->CONTEXTINDEX_DEFAULT, width, height);
+		for (auto j = 0; j < frameBuffers[i].size(); j++) {
+			frameBuffers[i][j] = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_COLORBUFFER | FrameBuffer::FRAMEBUFFER_DEPTHBUFFER, cubeMapTextureIds[i], j + 1);
+			frameBuffers[i][j]->initialize();
 		}
-	#else
-		cubeMapTextureId = engine->renderer->createCubeMapTexture(engine->renderer->CONTEXTINDEX_DEFAULT, width, height);
-		for (auto i = 0; i < frameBuffers.size(); i++) {
-			frameBuffers[i] = new FrameBuffer(width, height, FrameBuffer::FRAMEBUFFER_COLORBUFFER | FrameBuffer::FRAMEBUFFER_DEPTHBUFFER, cubeMapTextureId, i + 1);
-			frameBuffers[i]->initialize();
-		}
-	#endif
+	}
 	// deferred shading
 	if (engine->renderer->isDeferredShadingAvailable() == true && geometryBuffer == nullptr) {
 		geometryBuffer = new GeometryBuffer(width, height);
@@ -92,25 +120,18 @@ void EnvironmentMappingRenderer::reshape(int32_t width, int32_t height)
 
 void EnvironmentMappingRenderer::dispose()
 {
-	#if defined(VULKAN)
-		for (auto i = 0; i < frameBuffers.size(); i++) {
-			for (auto j = 0; j < frameBuffers[i].size(); j++) {
-				frameBuffers[i][j]->dispose();
-				delete frameBuffers[i][j];
-			}
-			engine->renderer->disposeTexture(cubeMapTextureIds[i]);
+	for (auto i = 0; i < frameBuffers.size(); i++) {
+		for (auto j = 0; j < frameBuffers[i].size(); j++) {
+			frameBuffers[i][j]->dispose();
+			delete frameBuffers[i][j];
 		}
-	#else
-		for (auto i = 0; i < frameBuffers.size(); i++) {
-			frameBuffers[i]->dispose();
-			delete frameBuffers[i];
-		}
-		engine->renderer->disposeTexture(cubeMapTextureId);
-	#endif
+		engine->renderer->disposeTexture(cubeMapTextureIds[i]);
+	}
 }
 
 void EnvironmentMappingRenderer::render(const Vector3& position)
 {
+	//
 	auto now = Time::getCurrentMillis();
 	if (timeRenderLast != -1LL && now - timeRenderLast < timeRenderUpdateFrequency) return;
 	timeRenderLast = now;
@@ -118,22 +139,14 @@ void EnvironmentMappingRenderer::render(const Vector3& position)
 	//
 	auto engineCamera = engine->getCamera();
 
-	#if defined(VULKAN)
-		reflectionCubeMapTextureIdx = renderCubeMapTextureIdx;
-		renderCubeMapTextureIdx = (renderCubeMapTextureIdx + 1) % 2;
-	#endif
 	//
-	#if defined(VULKAN)
-		for (auto i = 0; i < frameBuffers[renderCubeMapTextureIdx].size(); i++) {
-	#else
-		for (auto i = 0; i < frameBuffers.size(); i++) {
-	#endif
+	reflectionCubeMapTextureIdx = renderCubeMapTextureIdx;
+	renderCubeMapTextureIdx = (renderCubeMapTextureIdx + 1) % 2;
+
+	//
+	for (auto i = 0; i < frameBuffers[renderCubeMapTextureIdx].size(); i++) {
 		// bind frame buffer
-		#if defined(VULKAN)
-			frameBuffers[renderCubeMapTextureIdx][i]->enableFrameBuffer();
-		#else
-			frameBuffers[i]->enableFrameBuffer();
-		#endif
+		frameBuffers[renderCubeMapTextureIdx][i]->enableFrameBuffer();
 
 		// set up camera
 		camera->setZNear(engineCamera->getZNear());
@@ -162,11 +175,7 @@ void EnvironmentMappingRenderer::render(const Vector3& position)
 
 		// do a render pass
 		engine->render(
-			#if defined(VULKAN)
-				frameBuffers[renderCubeMapTextureIdx][i],
-			#else
-				frameBuffers[i],
-			#endif
+			frameBuffers[renderCubeMapTextureIdx][i],
 			geometryBuffer,
 			visibleDecomposedEntities,
 			Engine::EFFECTPASS_NONE,

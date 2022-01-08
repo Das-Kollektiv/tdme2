@@ -3,6 +3,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Version.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -11,6 +12,7 @@
 #include <tdme/utilities/Exception.h>
 
 using tdme::application::Application;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 using tdme::engine::Version;
 using tdme::os::filesystem::FileSystem;
@@ -65,6 +67,10 @@ public:
 
 	void initialize() override {
 		Engine::getInstance()->initialize();
+		if (Engine::getInstance()->getGraphicsRendererType() != Renderer::RENDERERTYPE_VULKAN) {
+			Console::println("Engine has not been compiled with -DVULKAN, Vulkan shader cache can not get created. Exiting.");
+			Application::exit(0);
+		}
 	}
 
 	void reshape(int32_t width, int32_t height) override {
@@ -94,10 +100,6 @@ int main(int argc, char** argv)
 	} catch (Exception& exception) {
 		Console::println(string() + "An error occurred: " + exception.what());
 	}
-	#if !defined(VULKAN)
-		Console::println("Engine has not been compiled with -DVULKAN, Vulkan shader cache can not get created. Exiting.");
-		Application::exit(0);
-	#endif
 	Console::println("Creating shader/vk shader cache");
 	tdme::tools::cli::RecreateVKCacheApplication::main(argc, argv);
 	Console::println("Done");

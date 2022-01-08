@@ -35,13 +35,7 @@ void FrameBuffer::initialize()
 	if ((buffers & FRAMEBUFFER_DEPTHBUFFER) == FRAMEBUFFER_DEPTHBUFFER)
 		depthBufferTextureId = Engine::renderer->createDepthBufferTexture(width, height, cubeMapTextureId, cubeMapTextureIndex);
 
-	if ((buffers & FRAMEBUFFER_COLORBUFFER) == FRAMEBUFFER_COLORBUFFER &&
-		#if defined(VULKAN)
-			true == true
-		#else
-			cubeMapTextureId == CUBEMAPTEXTUREID_NONE
-		#endif
-		)
+	if ((buffers & FRAMEBUFFER_COLORBUFFER) == FRAMEBUFFER_COLORBUFFER && (Engine::renderer->getRendererType() == Renderer::RENDERERTYPE_VULKAN || cubeMapTextureId == CUBEMAPTEXTUREID_NONE))
 		colorBufferTextureId = Engine::renderer->createColorBufferTexture(width, height, cubeMapTextureId, cubeMapTextureIndex);
 
 	auto rendererCubeMapTexureIndex = -1;

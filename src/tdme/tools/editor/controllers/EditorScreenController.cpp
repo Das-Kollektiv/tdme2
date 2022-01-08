@@ -19,6 +19,7 @@
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/engine/scene/Scene.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/elements/GUISelectBoxController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -84,6 +85,7 @@ using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::scene::Scene;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::gui::elements::GUISelectBoxController;
@@ -1488,9 +1490,9 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 		tabView->initialize();
 		//
 		// TODO: move me into GUIFrameBufferNode
-		#if !defined(VULKAN)
+		if (Engine::getInstance()->getGraphicsRendererType() == Renderer::RENDERERTYPE_OPENGL) {
 			required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer"))->setTextureMatrix((new Matrix2D3x3())->identity().scale(Vector2(1.0f, -1.0f)));
-		#endif
+		}
 		tabViews[tabId] = EditorTabView(tabId, tabType, tabView, tabView->getTabController(), tabView->getEngine(), required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));
 		tabs->getController()->setValue(MutableString(tabId));
 	} catch (Exception& exception) {

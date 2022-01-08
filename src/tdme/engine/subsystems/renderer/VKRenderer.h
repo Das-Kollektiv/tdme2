@@ -363,7 +363,7 @@ private:
 		int frontFace { VK_FRONT_FACE_COUNTER_CLOCKWISE + 1 };
 		int frontFaceIndex { VK_FRONT_FACE_COUNTER_CLOCKWISE + 1 };
 
-		vector<int32_t> uploadedTextureIds;
+		unordered_set<int32_t> uploadedTextureIds;
 	};
 
 	VkSurfaceKHR surface { VK_NULL_HANDLE };

@@ -4251,7 +4251,7 @@ void VKRenderer::uploadCubeMapTexture(int contextIdx, Texture* textureLeft, Text
 	texture.uploaded = true;
 
 	//
-	currentContext.uploadedTextureIds.push_back(texture.id);
+	currentContext.uploadedTextureIds.insert(texture.id);
 }
 
 int32_t VKRenderer::createCubeMapTexture(int contextIdx, int32_t width, int32_t height) {
@@ -4738,7 +4738,7 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 	textureType.uploaded = true;
 
 	//
-	currentContext.uploadedTextureIds.push_back(textureType.id);
+	currentContext.uploadedTextureIds.insert(textureType.id);
 
 	//
 	AtomicOperations::increment(statistics.textureUploads);
