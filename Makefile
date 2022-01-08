@@ -3,9 +3,10 @@ EXT_NAME = tdme2-ext
 LIB_EXT := .so
 LIB := lib$(NAME)$(LIB_EXT)
 EXT_LIB := lib$(NAME)-ext$(LIB_EXT)
-VULKAN_RENDERER_LIB := libvulkanrenderer$(LIB_EXT)
 OPENGL2_RENDERER_LIB := libopengl2renderer$(LIB_EXT)
 OPENGL3CORE_RENDERER_LIB := libopengl3corerenderer$(LIB_EXT)
+VULKAN_RENDERER_LIB := libvulkanrenderer$(LIB_EXT)
+OPENGLES2_RENDERER_LIB := libopengles2renderer$(LIB_EXT)
 OPENGL_RENDERER_LDFLAGS :=
 VULKAN_RENDERER_LDFLAGS :=
 LIBS_LDFLAGS :=
@@ -145,6 +146,7 @@ else ifeq ($(OS), Linux)
 	INCLUDES := $(INCLUDES) -L/usr/lib64
 	OPENGL_RENDERER_LDFLAGS := -lGLEW -lGL -lglfw
 	VULKAN_RENDERER_LDFLAGS := -lvulkan -lglfw
+	OPENGLES2_RENDERER_LDFLAGS := -lGLESv2 -lEGL -lglfw
 	LIBS_LDFLAGS := -L/mingw64/lib -ldl -lglfw -lopenal
 	MAIN_LDFLAGS := -lglfw -lopenal
 	OFLAGS := -O2
@@ -181,7 +183,11 @@ CXXFLAGS_EXT_RP3D = $(CFLAGS_EXT_RP3D) $(CPPVERSION)
 LIBS := $(LIB_DIR)/$(LIB) $(LIB_DIR)/$(EXT_LIB) $(LIB_DIR)/$(OPENGL2_RENDERER_LIB) $(LIB_DIR)/$(OPENGL3CORE_RENDERER_LIB)
 ifeq ($(VULKAN), YES)
 	LIBS:= $(LIBS) $(LIB_DIR)/$(VULKAN_RENDERER_LIB)
+endif
+ifeq ($(GLES2), YES)
+	LIBS:= $(LIBS) $(LIB_DIR)/$(OPENGLES2_RENDERER_LIB)
 endif 
+
 
 SRC = src
 TINYXML = tinyxml
@@ -857,6 +863,14 @@ else
 	VULKAN_RENDERER_LIB_SRCS =
 endif
 
+ifeq ($(GLES2), YES)
+	OPENGLES2_RENDERER_LIB_SRCS = \
+		src/tdme/engine/EngineGLES2Renderer.cpp \
+		src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
+else
+	OPENGLES2_RENDERER_LIB_SRCS =
+endif
+
 MAIN_SRCS = \
 	src/tdme/tests/AngleTest-main.cpp \
 	src/tdme/tests/AudioTest-main.cpp \
@@ -921,6 +935,7 @@ EXT_VMA_OBJS = $(EXT_VMA_SRCS:ext/$(VMA)/%.cpp=$(OBJ)/vulkan/%.o)
 OPENGL2_RENDERER_LIB_OBJS = $(OPENGL2_RENDERER_LIB_SRCS:$(SRC)/%.cpp=$(OBJ)/%.o)
 OPENGL3CORE_RENDERER_LIB_OBJS = $(OPENGL3CORE_RENDERER_LIB_SRCS:$(SRC)/%.cpp=$(OBJ)/%.o)
 VULKAN_RENDERER_LIB_OBJS = $(VULKAN_RENDERER_LIB_SRCS:$(SRC)/%.cpp=$(OBJ)/%.o)
+OPENGLES2_RENDERER_LIB_OBJS = $(OPENGLES2_RENDERER_LIB_SRCS:$(SRC)/%.cpp=$(OBJ)/%.o)
 
 define cpp-command
 @mkdir -p $(dir $@);
@@ -998,6 +1013,9 @@ $(OPENGL3CORE_RENDERER_LIB_OBJS):$(OBJ)/%.o: $(SRC)/%.cpp | print-opts
 $(VULKAN_RENDERER_LIB_OBJS):$(OBJ)/%.o: $(SRC)/%.cpp | print-opts
 	$(cpp-command)
 
+$(OPENGLES2_RENDERER_LIB_OBJS):$(OBJ)/%.o: $(SRC)/%.cpp | print-opts
+	$(cpp-command)
+
 %.a:
 	@echo Creating archive $@
 	@mkdir -p $(dir $@)
@@ -1047,6 +1065,13 @@ $(LIB_DIR)/$(VULKAN_RENDERER_LIB): $(LIB_DIR)/$(EXT_LIB) $(LIB_DIR)/$(LIB)
 	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $(VULKAN_RENDERER_LDFLAGS) -L$(LIB_DIR) -l$(LDFLAG_EXT_LIB) -l$(LDFLAG_LIB)
 	@echo Done $@
 
+$(LIB_DIR)/$(OPENGLES2_RENDERER_LIB): $(LIB_DIR)/$(EXT_LIB) $(LIB_DIR)/$(LIB)
+	@echo Creating OpenGLES2 renderer library $@
+	@mkdir -p $(dir $@)
+	@rm -f $@
+	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $(OPENGLES2_RENDERER_LDFLAGS) -L$(LIB_DIR) -l$(LDFLAG_EXT_LIB) -l$(LDFLAG_LIB)
+	@echo Done $@
+
 $(LIB_DIR)/$(LIB): $(OBJS) $(OBJS_DEBUG)
 
 $(LIB_DIR)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_SHA256_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS)
@@ -1056,6 +1081,8 @@ $(LIB_DIR)/$(OPENGL2_RENDERER_LIB): $(OPENGL2_RENDERER_LIB_OBJS)
 $(LIB_DIR)/$(OPENGL3CORE_RENDERER_LIB): $(OPENGL3CORE_RENDERER_LIB_OBJS)
 
 $(LIB_DIR)/$(VULKAN_RENDERER_LIB): $(EXT_SPIRV_OBJS) $(EXT_GLSLANG_OBJS) $(EXT_OGLCOMPILERSDLL_OBJS) $(EXT_VMA_OBJS) $(VULKAN_RENDERER_LIB_OBJS)
+
+$(LIB_DIR)/$(OPENGLES2_RENDERER_LIB): $(OPENGLES2_RENDERER_LIB_OBJS)
 
 ifeq ($(OSSHORT), Msys)
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)

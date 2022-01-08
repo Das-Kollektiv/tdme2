@@ -559,7 +559,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 	Console::println("Application::run(): Opening renderer library: " + rendererLibrary);
 
 	//
-	void* rendererLibraryHandle = dlopen(rendererLibrary.c_str(), RTLD_NOW);
+	auto rendererLibraryHandle = dlopen(rendererLibrary.c_str(), RTLD_NOW);
 	if (rendererLibraryHandle == nullptr) {
 		Console::println("Application::run(): Could not open renderer library");
 		glfwTerminate();
