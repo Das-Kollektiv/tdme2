@@ -1,9 +1,7 @@
 #include <tdme/engine/subsystems/renderer/GLES2Renderer.h>
 
-#if defined(__linux__)
-	#define GL_GLEXT_PROTOTYPES
-	#include <GLES2/gl2.h>
-#endif
+#define GL_GLEXT_PROTOTYPES
+#include <GLES2/gl2.h>
 
 #include <string.h>
 

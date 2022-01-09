@@ -63,31 +63,15 @@ ifeq ($(OS), Darwin)
 	endif
 	OFLAGS := -O2
 else ifeq ($(OS), FreeBSD)
-	# FreeBSD
-	INCLUDES := $(INCLUDES) -I/usr/local/include
-	# FreeBSD, Vulkan
-	ifeq ($(VULKAN), YES)
-		EXTRAFLAGS := $(EXTRAFLAGS) -DVULKAN
-		SRCS_PLATFORM := $(SRCS_PLATFORM) \
+	SRCS_PLATFORM := $(SRCS_PLATFORM) \
 				src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
-				src/tdme/engine/EngineVKRenderer.cpp \
-				src/tdme/engine/subsystems/renderer/VKGL3CoreShaderProgram.cpp \
-				src/tdme/engine/subsystems/renderer/VKRenderer.cpp \
-				src/tdme/engine/fileio/models/ModelReader.cpp
-		EXT_GLSLANG_PLATFORM_SRCS = \
-			ext/vulkan/glslang/OSDependent/Unix/ossource.cpp
-		MAIN_LDFLAGS := -L/usr/local/lib -lglfw -lvulkan -lopenal -pthread -lexecinfo
-	else
-		#FreeBSD, GL
-		SRCS_PLATFORM := $(SRCS_PLATFORM) \
-			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
-			src/tdme/engine/EngineGL2Renderer.cpp \
-			src/tdme/engine/EngineGL3Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
-			src/tdme/engine/fileio/models/ModelReader.cpp
-		MAIN_LDFLAGS := -L/usr/local/lib -lglfw -lGLEW -lGL -lopenal -pthread -lexecinfo
-	endif
+		src/tdme/engine/fileio/models/ModelReader.cpp
+	INCLUDES := $(INCLUDES) -I/usr/local/include
+	OPENGL_RENDERER_LDFLAGS := -L/usr/local/lib -lGLEW -lGL -lglfw
+	VULKAN_RENDERER_LDFLAGS := -L/usr/local/lib -lvulkan -lglfw
+	OPENGLES2_RENDERER_LDFLAGS := -L/usr/local/lib -lGLESv2 -lEGL -lglfw
+	LIBS_LDFLAGS := -L/usr/local/lib -ldl -lglfw -lopenal -lexecinfo
+	MAIN_LDFLAGS := -L/usr/local/lib -lglfw -lopenal -lexecinfo
 	OFLAGS := -O2
 else ifeq ($(OS), NetBSD)
 	# NetBSD
