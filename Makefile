@@ -35,32 +35,17 @@ OSSHORT := $(shell sh -c 'uname -o 2>/dev/null')
 OS := $(shell sh -c 'uname -s 2>/dev/null')
 ARCH := $(shell sh -c 'uname -m 2>/dev/null')
 ifeq ($(OS), Darwin)
-	# Mac OS X
+	# MacOSX
+	EXTRAFLAGS := $(EXTRAFLAGS) -DHAVE_UNISTD_H
+	SRCS_PLATFORM := $(SRCS_PLATFORM) \
+		src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
+		src/tdme/engine/fileio/models/ModelReader.cpp
 	INCLUDES := $(INCLUDES) -Iext/fbx/macosx/include -Iext/glfw3/include
-	# MacOSX, Metal via Vulkan
-	ifeq ($(VULKAN), YES)
-		EXTRAFLAGS := $(EXTRAFLAGS) -DVULKAN -DHAVE_UNISTD_H
-		SRCS_PLATFORM := $(SRCS_PLATFORM) \
-				src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
-				src/tdme/engine/EngineVKRenderer.cpp \
-				src/tdme/engine/subsystems/renderer/VKGL3CoreShaderProgram.cpp \
-				src/tdme/engine/subsystems/renderer/VKRenderer.cpp \
-				src/tdme/engine/fileio/models/FBXReader.cpp \
-				src/tdme/engine/fileio/models/ModelReaderFBX.cpp
-		EXT_GLSLANG_PLATFORM_SRCS = \
-			ext/vulkan/glslang/OSDependent/Unix/ossource.cpp
-		MAIN_LDFLAGS := -Lext/fbx/macosx/lib -lfbxsdk -Lext/glfw3/macosx/lib -l glfw3 -l vulkan.1 -l$(NAME)-ext -framework Cocoa -framework IOKit -framework Carbon -framework OpenAL
-	else
-		# MacOSX, GL
-		EXTRAFLAGS := $(EXTRAFLAGS) -DHAVE_UNISTD_H
-		SRCS_PLATFORM := $(SRCS_PLATFORM) \
-			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
-			src/tdme/engine/EngineGL3Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
-			src/tdme/engine/fileio/models/FBXReader.cpp \
-			src/tdme/engine/fileio/models/ModelReaderFBX.cpp
-		MAIN_LDFLAGS := -Lext/fbx/macosx/lib -lfbxsdk -l$(NAME)-ext -Lext/glfw3/macosx/lib -l glfw3 -framework Cocoa -framework OpenGL -framework OpenCL -framework IOKit -framework Carbon -framework OpenAL
-	endif
+	OPENGL_RENDERER_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -framework OpenGL -framework OpenCL -Lext/glfw3/macosx/lib -lglfw.3
+	VULKAN_RENDERER_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -lvulkan.1 -Lext/glfw3/macosx/lib -lglfw.3
+	OPENGLES2_RENDERER_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -framework OpenGL -framework OpenCL -Lext/glfw3/macosx/lib -lglfw.3
+	LIBS_LDFLAGS := -Lext/fbx/macosx/lib -lfbxsdk -framework Cocoa -framework IOKit -framework Carbon -framework OpenAL -Lext/glfw3/macosx/lib -lglfw.3
+	MAIN_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -Lext/glfw3/macosx/lib -lglfw.3
 	OFLAGS := -O2
 else ifeq ($(OS), FreeBSD)
 	# FreeBSD

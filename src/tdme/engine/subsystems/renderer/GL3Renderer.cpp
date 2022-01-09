@@ -139,7 +139,9 @@ void GL3Renderer::initialize()
 	glDepthFunc(GL_LEQUAL);
 	glBlendEquation(GL_FUNC_ADD);
 	glDisable(GL_BLEND);
-	glEnable(GL_POINT_SPRITE);
+	#if !defined (__APPLE__)
+		glEnable(GL_POINT_SPRITE);
+	#endif
 	glEnable(GL_PROGRAM_POINT_SIZE);
 	setTextureUnit(CONTEXTINDEX_DEFAULT, 0);
 	// port-macosx requires this
