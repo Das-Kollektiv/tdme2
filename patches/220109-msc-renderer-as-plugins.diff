@@ -1,0 +1,3282 @@
+diff --git a/Makefile b/Makefile
+index 23ff10c6a..92da98b93 100644
+--- a/Makefile
++++ b/Makefile
+@@ -126,12 +126,12 @@ else
+ endif
+ 
+ CPPFLAGS := $(INCLUDES)
+-CFLAGS := -g $(OFLAGS) $(EXTRAFLAGS) -pipe -MMD -MP -DNDEBUG
++#CFLAGS := -g $(OFLAGS) $(EXTRAFLAGS) -pipe -MMD -MP -DNDEBUG
+ #CFLAGS := -g $(OFLAGS) $(EXTRAFLAGS) -pipe -MMD -MP
+-#CFLAGS := $(OFLAGS) $(EXTRAFLAGS) -pipe -MMD -MP -DNDEBUG
+-CFLAGS_EXT_RP3D := -g $(OFLAGS) -pipe -MMD -MP -DNDEBUG
++CFLAGS := $(OFLAGS) $(EXTRAFLAGS) -pipe -MMD -MP -DNDEBUG
++#CFLAGS_EXT_RP3D := -g $(OFLAGS) -pipe -MMD -MP -DNDEBUG
+ #CFLAGS_EXT_RP3D := -g $(OFLAGS) -pipe -MMD -MP
+-#CFLAGS_EXT_RP3D := $(OFLAGS) -pipe -MMD -MP -DNDEBUG
++CFLAGS_EXT_RP3D := $(OFLAGS) -pipe -MMD -MP -DNDEBUG
+ CFLAGS_DEBUG := -g -pipe -MMD -MP
+ CXXFLAGS := $(CFLAGS) $(CPPVERSION)
+ CXXFLAGS_DEBUG := $(CFLAGS_DEBUG) $(CPPVERSION)
+@@ -863,12 +863,13 @@ MAIN_SRCS = \
+ 	src/tdme/tools/cli/converttotm-main.cpp \
+ 	src/tdme/tools/cli/copyanimationsetups-main.cpp \
+ 	src/tdme/tools/cli/createinstaller-main.cpp \
+-	src/tdme/tools/cli/recreatevkcache-main.cpp \
++	src/tdme/tools/cli/msclib2dll-main.cpp \
+ 	src/tdme/tools/cli/fixdoxygen-main.cpp \
+ 	src/tdme/tools/cli/generatelicenses-main.cpp \
+ 	src/tdme/tools/cli/importtmodel-main.cpp \
+ 	src/tdme/tools/cli/makefilegenerator-main.cpp \
+ 	src/tdme/tools/cli/optimizemodel-main.cpp \
++	src/tdme/tools/cli/recreatevkcache-main.cpp \
+ 	src/tdme/tools/cli/scenefixmodelszup2yup-main.cpp \
+ 	src/tdme/tools/cli/sortincludes-main.cpp
+ 
+diff --git a/Makefile-Vulkan.nmake b/Makefile-Vulkan.nmake
+deleted file mode 100644
+index 5bc346f9b..000000000
+--- a/Makefile-Vulkan.nmake
++++ /dev/null
+@@ -1,898 +0,0 @@
+-OBJ = mscobj
+-
+-SRCS_PLATFORM = \
+-	src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
+-	src/tdme/engine/fileio/models/FBXReader.cpp \
+-	src/tdme/engine/fileio/models/ModelReaderFBX.cpp \
+-	src/tdme/engine/EngineVKRenderer.cpp \
+-	src/tdme/engine/subsystems/renderer/VKGL3CoreShaderProgram.cpp \
+-	src/tdme/engine/subsystems/renderer/VKRenderer.cpp \
+-	ext/windows-msc/uint128_t/uint128_t.cpp
+-
+-# For Windows 10 this might be added to INCLUDES from Windows 10 Kit /urcrt
+-
+-INCLUDES = \
+-	/I "." \
+-	/I "src" \
+-	/I "ext" \
+-	/I "ext\src" \
+-	/I "ext\v-hacd\src\VHACD_Lib\inc" \
+-	/I "ext\reactphysics3d\src" \
+-	/I "ext\fbx\win64\include" \
+-	/I "ext\glfw3\include" \
+-	/I "ext\windows-msc/pthread\includes" \
+-	/I "ext\windows-msc/openal-soft\includes" \
+-	/I "ext\windows-msc/glew\include" \
+-	/I "ext\windows-msc/dirent\include" \
+-	/I "ext\windows-msc/vulkan-sdk\include" \
+-	/I "ext\rapidjson\include"
+-
+-# For Windows 10 this might be added to EXTRA_LIBS libucrt.lib from Windows 10 Kit
+-
+-EXTRA_LIBS = \
+-	/LIBPATH "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\lib\x64\libcmt.lib" \
+-	/LIBPATH "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\lib\x64\libcpmt.lib" \
+-	/LIBPATH "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\lib\x64\libvcruntime.lib" \
+-	/LIBPATH "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\lib\x64\oldnames.lib" \
+-	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\kernel32.lib" \
+-	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\advapi32.lib" \
+-	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\uuid.lib" \
+-	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\opengl32.lib" \
+-	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\gdi32.lib" \
+-	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\winmm.lib" \
+-	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\shell32.lib" \
+-	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\user32.lib" \
+-	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\ws2_32.lib" \
+-	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\dbghelp.lib" \
+-	/LIBPATH "ext\glfw3\win64\lib\glfw3_mt.lib" \
+-	/LIBPATH "ext\windows-msc/pthread\libs\pthreadVC2.lib" \
+-	/LIBPATH "ext\windows-msc/openal-soft\libs\OpenAL32.lib" \
+-	/LIBPATH "ext\fbx\win64\lib\libfbxsdk.lib" \
+-	/LIBPATH "ext\vulkan\runtime\msc64\vulkan-1.lib" \
+-	/LIBPATH libtdme-ext.lib \
+-	/LIBPATH libtdme.lib \
+-
+-FLAGS = /MT /MP /D _USING_V110_SDK71_ /EHsc /O2 /Ob3 /fp:fast /arch:AVX /std:c++20 /GL /Zi /F 8388608 /D RAPIDJSON_HAS_STDSTRING /D VULKAN
+-
+-# /NODEFAULTLIB:msvcrt
+-
+-LINK_FLAGS = /LTCG
+-
+-SRC = src
+-TINYXML = tinyxml
+-ZLIB = zlib
+-LIBPNG = libpng
+-VORBIS = vorbis
+-OGG = ogg
+-VHACD = v-hacd
+-REACTPHYSICS3D = reactphysics3d
+-
+-SRCS = \
+-	src/tdme/audio/Audio.cpp \
+-	src/tdme/audio/AudioBufferManager.cpp \
+-	src/tdme/audio/AudioBufferManager_AudioBufferManaged.cpp \
+-	src/tdme/audio/AudioEntity.cpp \
+-	src/tdme/audio/AudioStream.cpp \
+-	src/tdme/audio/VorbisAudioStream.cpp \
+-	src/tdme/audio/Sound.cpp \
+-	src/tdme/audio/decoder/AudioDecoder.cpp \
+-	src/tdme/audio/decoder/AudioDecoderException.cpp \
+-	src/tdme/audio/decoder/VorbisDecoder.cpp \
+-	src/tdme/application/Application.cpp \
+-	src/tdme/application/InputEventHandler.cpp \
+-	src/tdme/engine/Camera.cpp \
+-	src/tdme/engine/Engine.cpp \
+-	src/tdme/engine/EntityHierarchy.cpp \
+-	src/tdme/engine/EntityShaderParameters.cpp \
+-	src/tdme/engine/EnvironmentMapping.cpp \
+-	src/tdme/engine/FogParticleSystem.cpp \
+-	src/tdme/engine/FrameBuffer.cpp \
+-	src/tdme/engine/Frustum.cpp \
+-	src/tdme/engine/GeometryBuffer.cpp \
+-	src/tdme/engine/Light.cpp \
+-	src/tdme/engine/LinesObject3D.cpp \
+-	src/tdme/engine/LODObject3D.cpp \
+-	src/tdme/engine/Object3D.cpp \
+-	src/tdme/engine/Object3DModel.cpp \
+-	src/tdme/engine/Object3DRenderGroup.cpp \
+-	src/tdme/engine/ObjectParticleSystem.cpp \
+-	src/tdme/engine/OctTreePartition.cpp \
+-	src/tdme/engine/ParticleSystemGroup.cpp \
+-	src/tdme/engine/PointsParticleSystem.cpp \
+-	src/tdme/engine/Rotation.cpp \
+-	src/tdme/engine/SceneConnector.cpp \
+-	src/tdme/engine/SimplePartition.cpp \
+-	src/tdme/engine/Timing.cpp \
+-	src/tdme/engine/Transformations.cpp \
+-	src/tdme/engine/fileio/models/DAEReader.cpp \
+-	src/tdme/engine/fileio/models/GLTFReader.cpp \
+-	src/tdme/engine/fileio/models/ModelFileIOException.cpp \
+-	src/tdme/engine/fileio/models/TMReader.cpp \
+-	src/tdme/engine/fileio/models/TMWriter.cpp \
+-	src/tdme/engine/fileio/models/WFObjWriter.cpp \
+-	src/tdme/engine/fileio/prototypes/PrototypeWriter.cpp \
+-	src/tdme/engine/fileio/prototypes/PrototypeReader.cpp \
+-	src/tdme/engine/fileio/scenes/SceneWriter.cpp \
+-	src/tdme/engine/fileio/scenes/SceneReader.cpp \
+-	src/tdme/engine/fileio/textures/PNGTextureWriter.cpp \
+-	src/tdme/engine/fileio/textures/Texture.cpp \
+-	src/tdme/engine/fileio/textures/TextureReader.cpp \
+-	src/tdme/engine/model/Animation.cpp \
+-	src/tdme/engine/model/AnimationSetup.cpp \
+-	src/tdme/engine/model/Face.cpp \
+-	src/tdme/engine/model/FacesEntity.cpp \
+-	src/tdme/engine/model/Node.cpp \
+-	src/tdme/engine/model/Joint.cpp \
+-	src/tdme/engine/model/JointWeight.cpp \
+-	src/tdme/engine/model/Material.cpp \
+-	src/tdme/engine/model/Model.cpp \
+-	src/tdme/engine/model/UpVector.cpp \
+-	src/tdme/engine/model/PBRMaterialProperties.cpp \
+-	src/tdme/engine/model/RotationOrder.cpp \
+-	src/tdme/engine/model/Skinning.cpp \
+-	src/tdme/engine/model/ShaderModel.cpp \
+-	src/tdme/engine/model/SpecularMaterialProperties.cpp \
+-	src/tdme/engine/model/TextureCoordinate.cpp \
+-	src/tdme/engine/physics/Body.cpp \
+-	src/tdme/engine/physics/World.cpp \
+-	src/tdme/engine/prototype/BaseProperties.cpp \
+-	src/tdme/engine/prototype/BaseProperty.cpp \
+-	src/tdme/engine/primitives/BoundingBox.cpp \
+-	src/tdme/engine/primitives/BoundingVolume.cpp \
+-	src/tdme/engine/primitives/Capsule.cpp \
+-	src/tdme/engine/primitives/ConvexMesh.cpp \
+-	src/tdme/engine/primitives/HeightMap.cpp \
+-	src/tdme/engine/primitives/LineSegment.cpp \
+-	src/tdme/engine/primitives/OrientedBoundingBox.cpp \
+-	src/tdme/engine/primitives/Sphere.cpp \
+-	src/tdme/engine/primitives/TerrainMesh.cpp \
+-	src/tdme/engine/primitives/Triangle.cpp \
+-	src/tdme/engine/prototype/Prototype.cpp \
+-	src/tdme/engine/prototype/PrototypeAudio.cpp \
+-	src/tdme/engine/prototype/PrototypeBoundingVolume.cpp \
+-	src/tdme/engine/prototype/PrototypeLODLevel.cpp \
+-	src/tdme/engine/prototype/PrototypeParticleSystem.cpp \
+-	src/tdme/engine/prototype/PrototypeParticleSystem_BoundingBoxParticleEmitter.cpp \
+-	src/tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitter.cpp \
+-	src/tdme/engine/prototype/PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity.cpp \
+-	src/tdme/engine/prototype/PrototypeParticleSystem_Emitter.cpp \
+-	src/tdme/engine/prototype/PrototypeParticleSystem_FogParticleSystem.cpp \
+-	src/tdme/engine/prototype/PrototypeParticleSystem_ObjectParticleSystem.cpp \
+-	src/tdme/engine/prototype/PrototypeParticleSystem_PointParticleEmitter.cpp \
+-	src/tdme/engine/prototype/PrototypeParticleSystem_PointParticleSystem.cpp \
+-	src/tdme/engine/prototype/PrototypeParticleSystem_SphereParticleEmitter.cpp \
+-	src/tdme/engine/prototype/PrototypeParticleSystem_Type.cpp \
+-	src/tdme/engine/prototype/PrototypePhysics.cpp \
+-	src/tdme/engine/prototype/PrototypePhysics_BodyType.cpp \
+-	src/tdme/engine/prototype/Prototype_Type.cpp \
+-	src/tdme/engine/scene/Scene.cpp \
+-	src/tdme/engine/scene/SceneEntity.cpp \
+-	src/tdme/engine/scene/SceneLibrary.cpp \
+-	src/tdme/engine/scene/SceneLight.cpp \
+-	src/tdme/engine/scene/ScenePropertyPresets.cpp \
+-	src/tdme/engine/subsystems/earlyzrejection/EZRShader.cpp \
+-	src/tdme/engine/subsystems/earlyzrejection/EZRShaderBaseImplementation.cpp \
+-	src/tdme/engine/subsystems/earlyzrejection/EZRShaderDefaultImplementation.cpp \
+-	src/tdme/engine/subsystems/environmentmapping/EnvironmentMappingRenderer.cpp \
+-	src/tdme/engine/subsystems/framebuffer/DeferredLightingRenderShader.cpp \
+-	src/tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.cpp \
+-	src/tdme/engine/subsystems/lighting/DeferredLightingShaderDefaultImplementation.cpp \
+-	src/tdme/engine/subsystems/lighting/DeferredLightingShaderFoliageImplementation.cpp \
+-	src/tdme/engine/subsystems/lighting/DeferredLightingShaderPBRDefaultImplementation.cpp \
+-	src/tdme/engine/subsystems/lighting/DeferredLightingShaderPBRFoliageImplementation.cpp \
+-	src/tdme/engine/subsystems/lighting/DeferredLightingShaderPBRTreeImplementation.cpp \
+-	src/tdme/engine/subsystems/lighting/DeferredLightingShaderSkyImplementation.cpp \
+-	src/tdme/engine/subsystems/lighting/DeferredLightingShaderTerrainImplementation.cpp \
+-	src/tdme/engine/subsystems/lighting/DeferredLightingShaderTerrainEditorImplementation.cpp \
+-	src/tdme/engine/subsystems/lighting/DeferredLightingShaderTreeImplementation.cpp \
+-	src/tdme/engine/subsystems/lighting/LightingShader.cpp \
+-	src/tdme/engine/subsystems/lighting/LightingShaderBaseImplementation.cpp \
+-	src/tdme/engine/subsystems/lighting/LightingShaderDefaultImplementation.cpp \
+-	src/tdme/engine/subsystems/lighting/LightingShaderFoliageImplementation.cpp \
+-	src/tdme/engine/subsystems/lighting/LightingShaderLightScatteringDefaultImplementation.cpp \
+-	src/tdme/engine/subsystems/lighting/LightingShaderLightScatteringFoliageImplementation.cpp \
+-	src/tdme/engine/subsystems/lighting/LightingShaderLightScatteringTreeImplementation.cpp \
+-	src/tdme/engine/subsystems/lighting/LightingShaderPBRBaseImplementation.cpp \
+-	src/tdme/engine/subsystems/lighting/LightingShaderPBRDefaultImplementation.cpp \
+-	src/tdme/engine/subsystems/lighting/LightingShaderPBRFoliageImplementation.cpp \
+-	src/tdme/engine/subsystems/lighting/LightingShaderPBRTreeImplementation.cpp \
+-	src/tdme/engine/subsystems/lighting/LightingShaderSkyImplementation.cpp \
+-	src/tdme/engine/subsystems/lighting/LightingShaderTerrainEditorImplementation.cpp \
+-	src/tdme/engine/subsystems/lighting/LightingShaderTerrainImplementation.cpp \
+-	src/tdme/engine/subsystems/lighting/LightingShaderTreeImplementation.cpp \
+-	src/tdme/engine/subsystems/lighting/LightingShaderWaterImplementation.cpp \
+-	src/tdme/engine/subsystems/lines/LinesShader.cpp \
+-	src/tdme/engine/subsystems/lines/LinesObject3DInternal.cpp \
+-	src/tdme/engine/subsystems/manager/MeshManager.cpp \
+-	src/tdme/engine/subsystems/manager/MeshManager_MeshManaged.cpp \
+-	src/tdme/engine/subsystems/manager/TextureManager.cpp \
+-	src/tdme/engine/subsystems/manager/TextureManager_TextureManaged.cpp \
+-	src/tdme/engine/subsystems/manager/VBOManager.cpp \
+-	src/tdme/engine/subsystems/manager/VBOManager_VBOManaged.cpp \
+-	src/tdme/engine/subsystems/rendering/BatchRendererPoints.cpp \
+-	src/tdme/engine/subsystems/rendering/BatchRendererTriangles.cpp \
+-	src/tdme/engine/subsystems/rendering/ModelUtilitiesInternal.cpp \
+-	src/tdme/engine/subsystems/rendering/Object3DAnimation.cpp \
+-	src/tdme/engine/subsystems/rendering/Object3DBase.cpp \
+-	src/tdme/engine/subsystems/rendering/Object3DBase_TransformedFacesIterator.cpp \
+-	src/tdme/engine/subsystems/rendering/Object3DNode.cpp \
+-	src/tdme/engine/subsystems/rendering/Object3DNodeMesh.cpp \
+-	src/tdme/engine/subsystems/rendering/Object3DNodeRenderer.cpp \
+-	src/tdme/engine/subsystems/rendering/Object3DInternal.cpp \
+-	src/tdme/engine/subsystems/rendering/Object3DModelInternal.cpp \
+-	src/tdme/engine/subsystems/rendering/EntityRenderer.cpp \
+-	src/tdme/engine/subsystems/rendering/EntityRenderer_TransparentRenderFacesGroupPool.cpp \
+-	src/tdme/engine/subsystems/rendering/ObjectBuffer.cpp \
+-	src/tdme/engine/subsystems/rendering/RenderTransparentRenderPointsPool.cpp \
+-	src/tdme/engine/subsystems/rendering/TransparentRenderFacesGroup.cpp \
+-	src/tdme/engine/subsystems/rendering/TransparentRenderFacesPool.cpp \
+-	src/tdme/engine/subsystems/rendering/TransparentRenderFacesPool_TransparentRenderFacesPool.cpp \
+-	src/tdme/engine/subsystems/rendering/TransparentRenderPointsPool.cpp \
+-	src/tdme/engine/subsystems/particlesystem/BoundingBoxParticleEmitter.cpp \
+-	src/tdme/engine/subsystems/particlesystem/CircleParticleEmitter.cpp \
+-	src/tdme/engine/subsystems/particlesystem/CircleParticleEmitterPlaneVelocity.cpp \
+-	src/tdme/engine/subsystems/particlesystem/FogParticleSystemInternal.cpp \
+-	src/tdme/engine/subsystems/particlesystem/ObjectParticleSystemInternal.cpp \
+-	src/tdme/engine/subsystems/particlesystem/ParticlesShader.cpp \
+-	src/tdme/engine/subsystems/particlesystem/PointParticleEmitter.cpp \
+-	src/tdme/engine/subsystems/particlesystem/PointsParticleSystemInternal.cpp \
+-	src/tdme/engine/subsystems/particlesystem/SphereParticleEmitter.cpp \
+-	src/tdme/engine/subsystems/renderer/Renderer.cpp \
+-	src/tdme/engine/subsystems/postprocessing/PostProcessing.cpp \
+-	src/tdme/engine/subsystems/postprocessing/PostProcessingProgram.cpp \
+-	src/tdme/engine/subsystems/postprocessing/PostProcessingShader.cpp \
+-	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBaseImplementation.cpp \
+-	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderBlurImplementation.cpp \
+-	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderDefaultImplementation.cpp \
+-	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderDesaturationImplementation.cpp \
+-	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderLightScatteringImplementation.cpp \
+-	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOImplementation.cpp \
+-	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderSSAOMapImplementation.cpp \
+-	src/tdme/engine/subsystems/postprocessing/PostProcessingShaderVignetteImplementation.cpp \
+-	src/tdme/engine/subsystems/shadowmapping/ShadowMap.cpp \
+-	src/tdme/engine/subsystems/shadowmapping/ShadowMapping.cpp \
+-	src/tdme/engine/subsystems/shadowmapping/ShadowMapCreationShader.cpp \
+-	src/tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderBaseImplementation.cpp \
+-	src/tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderDefaultImplementation.cpp \
+-	src/tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderFoliageImplementation.cpp \
+-	src/tdme/engine/subsystems/shadowmapping/ShadowMapCreationShaderTreeImplementation.cpp \
+-	src/tdme/engine/subsystems/shadowmapping/ShadowMapRenderShader.cpp \
+-	src/tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderBaseImplementation.cpp \
+-	src/tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderDefaultImplementation.cpp \
+-	src/tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderFoliageImplementation.cpp \
+-	src/tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderTreeImplementation.cpp \
+-	src/tdme/engine/subsystems/skinning/SkinningShader.cpp \
+-	src/tdme/engine/subsystems/texture2D/Texture2DRenderShader.cpp \
+-	src/tdme/gui/GUI.cpp \
+-	src/tdme/gui/GUIParser.cpp \
+-	src/tdme/gui/GUIParserException.cpp \
+-	src/tdme/gui/effects/GUIColorEffect.cpp \
+-	src/tdme/gui/effects/GUIEffect.cpp \
+-	src/tdme/gui/effects/GUIPositionEffect.cpp \
+-	src/tdme/gui/elements/GUIButton.cpp \
+-	src/tdme/gui/elements/GUIButtonController.cpp \
+-	src/tdme/gui/elements/GUICheckbox.cpp \
+-	src/tdme/gui/elements/GUICheckboxController.cpp \
+-	src/tdme/gui/elements/GUIContextMenu.cpp \
+-	src/tdme/gui/elements/GUIContextMenuController.cpp \
+-	src/tdme/gui/elements/GUIContextMenuItem.cpp \
+-	src/tdme/gui/elements/GUIContextMenuItemController.cpp \
+-	src/tdme/gui/elements/GUIDropDown.cpp \
+-	src/tdme/gui/elements/GUIDropDownController.cpp \
+-	src/tdme/gui/elements/GUIDropDownOption.cpp \
+-	src/tdme/gui/elements/GUIDropDownOptionController.cpp \
+-	src/tdme/gui/elements/GUIElement.cpp \
+-	src/tdme/gui/elements/GUIImageButton.cpp \
+-	src/tdme/gui/elements/GUIInput.cpp \
+-	src/tdme/gui/elements/GUIInputController.cpp \
+-	src/tdme/gui/elements/GUIKnob.cpp \
+-	src/tdme/gui/elements/GUIKnobController.cpp \
+-	src/tdme/gui/elements/GUIMenuHeader.cpp \
+-	src/tdme/gui/elements/GUIMenuHeaderController.cpp \
+-	src/tdme/gui/elements/GUIMenuHeaderItem.cpp \
+-	src/tdme/gui/elements/GUIMenuHeaderItemController.cpp \
+-	src/tdme/gui/elements/GUIMenuItem.cpp \
+-	src/tdme/gui/elements/GUIMenuItemController.cpp \
+-	src/tdme/gui/elements/GUIMenuSeparator.cpp \
+-	src/tdme/gui/elements/GUIProgressBar.cpp \
+-	src/tdme/gui/elements/GUIProgressBarController.cpp \
+-	src/tdme/gui/elements/GUIRadioButton.cpp \
+-	src/tdme/gui/elements/GUIRadioButtonController.cpp \
+-	src/tdme/gui/elements/GUISelectorH.cpp \
+-	src/tdme/gui/elements/GUISelectorHController.cpp \
+-	src/tdme/gui/elements/GUISelectorHOption.cpp \
+-	src/tdme/gui/elements/GUISelectorHOptionController.cpp \
+-	src/tdme/gui/elements/GUIScrollArea.cpp \
+-	src/tdme/gui/elements/GUIScrollAreaController.cpp \
+-	src/tdme/gui/elements/GUISelectBox.cpp \
+-	src/tdme/gui/elements/GUISelectBoxController.cpp \
+-	src/tdme/gui/elements/GUISelectBoxOption.cpp \
+-	src/tdme/gui/elements/GUISelectBoxOptionController.cpp \
+-	src/tdme/gui/elements/GUISelectBoxParentOption.cpp \
+-	src/tdme/gui/elements/GUISelectBoxParentOptionController.cpp \
+-	src/tdme/gui/elements/GUISliderH.cpp \
+-	src/tdme/gui/elements/GUISliderHController.cpp \
+-	src/tdme/gui/elements/GUISliderV.cpp \
+-	src/tdme/gui/elements/GUISliderVController.cpp \
+-	src/tdme/gui/elements/GUITab.cpp \
+-	src/tdme/gui/elements/GUITabContent.cpp \
+-	src/tdme/gui/elements/GUITabContentController.cpp \
+-	src/tdme/gui/elements/GUITabController.cpp \
+-	src/tdme/gui/elements/GUITabs.cpp \
+-	src/tdme/gui/elements/GUITabsContent.cpp \
+-	src/tdme/gui/elements/GUITabsController.cpp \
+-	src/tdme/gui/elements/GUITabsHeader.cpp \
+-	src/tdme/gui/elements/GUITabsHeaderController.cpp \
+-	src/tdme/gui/events/GUIKeyboardEvent.cpp \
+-	src/tdme/gui/events/GUIMouseEvent.cpp \
+-	src/tdme/gui/nodes/GUIColor.cpp \
+-	src/tdme/gui/nodes/GUIElementController.cpp \
+-	src/tdme/gui/nodes/GUIElementIgnoreEventsController.cpp \
+-	src/tdme/gui/nodes/GUIElementNode.cpp \
+-	src/tdme/gui/nodes/GUIFrameBufferNode.cpp \
+-	src/tdme/gui/nodes/GUIGradientNode.cpp \
+-	src/tdme/gui/nodes/GUIHorizontalScrollbarInternalController.cpp \
+-	src/tdme/gui/nodes/GUIHorizontalScrollbarInternalNode.cpp \
+-	src/tdme/gui/nodes/GUIImageNode.cpp \
+-	src/tdme/gui/nodes/GUIInputInternalController.cpp \
+-	src/tdme/gui/nodes/GUIInputInternalNode.cpp \
+-	src/tdme/gui/nodes/GUILayerNode.cpp \
+-	src/tdme/gui/nodes/GUILayoutNode.cpp \
+-	src/tdme/gui/nodes/GUILayoutNode_Alignment.cpp \
+-	src/tdme/gui/nodes/GUIMultilineTextNode.cpp \
+-	src/tdme/gui/nodes/GUINode.cpp \
+-	src/tdme/gui/nodes/GUINodeConditions.cpp \
+-	src/tdme/gui/nodes/GUINodeController.cpp \
+-	src/tdme/gui/nodes/GUINode_AlignmentHorizontal.cpp \
+-	src/tdme/gui/nodes/GUINode_AlignmentVertical.cpp \
+-	src/tdme/gui/nodes/GUINode_Flow.cpp \
+-	src/tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.cpp \
+-	src/tdme/gui/nodes/GUIPanelNode.cpp \
+-	src/tdme/gui/nodes/GUIParentNode.cpp \
+-	src/tdme/gui/nodes/GUIParentNode_Overflow.cpp \
+-	src/tdme/gui/nodes/GUIScreenNode.cpp \
+-	src/tdme/gui/nodes/GUISpaceNode.cpp \
+-	src/tdme/gui/nodes/GUITableNode.cpp \
+-	src/tdme/gui/nodes/GUITableCellNode.cpp \
+-	src/tdme/gui/nodes/GUITableRowNode.cpp \
+-	src/tdme/gui/nodes/GUITextNode.cpp \
+-	src/tdme/gui/nodes/GUITextureBaseNode.cpp \
+-	src/tdme/gui/nodes/GUITextureNode.cpp \
+-	src/tdme/gui/nodes/GUIVerticalScrollbarInternalController.cpp \
+-	src/tdme/gui/nodes/GUIVerticalScrollbarInternalNode.cpp \
+-	src/tdme/gui/renderer/GUIFont.cpp \
+-	src/tdme/gui/renderer/GUIFont_CharacterDefinition.cpp \
+-	src/tdme/gui/renderer/GUIRenderer.cpp \
+-	src/tdme/gui/renderer/GUIShader.cpp \
+-	src/tdme/network/httpclient/HTTPClient.cpp \
+-	src/tdme/network/httpclient/HTTPClientException.cpp \
+-	src/tdme/network/httpclient/HTTPDownloadClient.cpp \
+-	src/tdme/network/udpclient/NetworkClientException.cpp \
+-	src/tdme/network/udpclient/UDPClient.cpp \
+-	src/tdme/network/udpclient/UDPClientMessage.cpp \
+-	src/tdme/network/udpserver/NetworkServerException.cpp \
+-	src/tdme/network/udpserver/ServerClient.cpp \
+-	src/tdme/network/udpserver/ServerClientRequestHandlerHubException.cpp \
+-	src/tdme/network/udpserver/ServerRequest.cpp \
+-	src/tdme/network/udpserver/ServerWorkerThread.cpp \
+-	src/tdme/network/udpserver/ServerWorkerThreadPool.cpp \
+-	src/tdme/network/udpserver/UDPServer.cpp \
+-	src/tdme/network/udpserver/UDPServerClient.cpp \
+-	src/tdme/network/udpserver/UDPServerIOThread.cpp \
+-	src/tdme/os/filesystem/ArchiveFileSystem.cpp \
+-	src/tdme/os/filesystem/FileSystem.cpp \
+-	src/tdme/os/filesystem/FileSystemException.cpp \
+-	src/tdme/os/filesystem/StandardFileSystem.cpp \
+-	src/tdme/os/network/Network.cpp \
+-	src/tdme/os/network/NetworkException.cpp \
+-	src/tdme/os/network/NetworkIOException.cpp \
+-	src/tdme/os/network/NetworkSocketClosedException.cpp \
+-	src/tdme/os/network/NetworkKEMException.cpp \
+-	src/tdme/os/network/NetworkSocket.cpp \
+-	src/tdme/os/network/NetworkSocketException.cpp \
+-	src/tdme/os/network/UDPSocket.cpp \
+-	src/tdme/os/network/TCPSocket.cpp \
+-	src/tdme/os/threading/Barrier.cpp \
+-	src/tdme/os/threading/Condition.cpp \
+-	src/tdme/os/threading/Mutex.cpp \
+-	src/tdme/os/threading/ReadWriteLock.cpp \
+-	src/tdme/os/threading/SpinLock.cpp \
+-	src/tdme/os/threading/Thread.cpp \
+-	src/tdme/tests/AngleTest.cpp \
+-	src/tdme/tests/AudioTest.cpp \
+-	src/tdme/tests/CrashTest.cpp \
+-	src/tdme/tests/EngineTest.cpp \
+-	src/tdme/tests/EntityHierarchyTest.cpp \
+-	src/tdme/tests/LODTest.cpp \
+-	src/tdme/tests/FlowMapTest.cpp \
+-	src/tdme/tests/FlowMapTest2.cpp \
+-	src/tdme/tests/FoliageTest.cpp \
+-	src/tdme/tests/MathOperatorTest.cpp \
+-	src/tdme/tests/PathFindingTest.cpp \
+-	src/tdme/tests/PivotTest.cpp \
+-	src/tdme/tests/PhysicsTest1.cpp \
+-	src/tdme/tests/PhysicsTest2.cpp \
+-	src/tdme/tests/PhysicsTest3.cpp \
+-	src/tdme/tests/PhysicsTest4.cpp \
+-	src/tdme/tests/RayTracingTest.cpp \
+-	src/tdme/tests/ThreadingTest_ConsumerThread.cpp \
+-	src/tdme/tests/ThreadingTest_ProducerThread.cpp \
+-	src/tdme/tests/ThreadingTest_TestThread.cpp \
+-	src/tdme/tests/TreeTest.cpp \
+-	src/tdme/tests/UDPServerTest_UDPServer.cpp \
+-	src/tdme/tests/UDPServerTest_UDPServerClient.cpp \
+-	src/tdme/tests/SkinningTest.cpp \
+-	src/tdme/tests/WaterTest.cpp \
+-	src/tdme/tools/editor/TDMEEditor.cpp \
+-	src/tdme/tools/editor/controllers/AboutDialogScreenController.cpp \
+-	src/tdme/tools/editor/controllers/ColorPickerImageController.cpp \
+-	src/tdme/tools/editor/controllers/ColorPickerScreenController.cpp \
+-	src/tdme/tools/editor/controllers/ContextMenuScreenController.cpp \
+-	src/tdme/tools/editor/controllers/EditorScreenController.cpp \
+-	src/tdme/tools/editor/controllers/FileDialogScreenController.cpp \
+-	src/tdme/tools/editor/controllers/InfoDialogScreenController.cpp \
+-	src/tdme/tools/editor/controllers/ProgressBarScreenController.cpp \
+-	src/tdme/tools/editor/misc/CameraInputHandler.cpp \
+-	src/tdme/tools/editor/misc/CameraRotationInputHandler.cpp \
+-	src/tdme/tools/editor/misc/GenerateBillboardLOD.cpp \
+-	src/tdme/tools/editor/misc/GenerateConvexMeshes.cpp \
+-	src/tdme/tools/editor/misc/Gizmo.cpp \
+-	src/tdme/tools/editor/misc/PopUps.cpp \
+-	src/tdme/tools/editor/misc/Tools.cpp \
+-	src/tdme/tools/editor/tabcontrollers/EmptyEditorTabController.cpp \
+-	src/tdme/tools/editor/tabcontrollers/EnvMapEditorTabController.cpp \
+-	src/tdme/tools/editor/tabcontrollers/FontTabController.cpp \
+-	src/tdme/tools/editor/tabcontrollers/ModelEditorTabController.cpp \
+-	src/tdme/tools/editor/tabcontrollers/ParticleSystemEditorTabController.cpp \
+-	src/tdme/tools/editor/tabcontrollers/SceneEditorTabController.cpp \
+-	src/tdme/tools/editor/tabcontrollers/SoundTabController.cpp \
+-	src/tdme/tools/editor/tabcontrollers/TerrainEditorTabController.cpp \
+-	src/tdme/tools/editor/tabcontrollers/TextureTabController.cpp \
+-	src/tdme/tools/editor/tabcontrollers/TextEditorTabController.cpp \
+-	src/tdme/tools/editor/tabcontrollers/TriggerEditorTabController.cpp \
+-	src/tdme/tools/editor/tabcontrollers/UIEditorTabController.cpp \
+-	src/tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.cpp \
+-	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.cpp \
+-	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.cpp \
+-	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController_BoundingVolumeType.cpp \
+-	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeSoundsSubController.cpp \
+-	src/tdme/tools/editor/tabviews/EmptyEditorTabView.cpp \
+-	src/tdme/tools/editor/tabviews/EnvMapEditorTabView.cpp \
+-	src/tdme/tools/editor/tabviews/FontTabView.cpp \
+-	src/tdme/tools/editor/tabviews/ModelEditorTabView.cpp \
+-	src/tdme/tools/editor/tabviews/ParticleSystemEditorTabView.cpp \
+-	src/tdme/tools/editor/tabviews/SceneEditorTabView.cpp \
+-	src/tdme/tools/editor/tabviews/SoundTabView.cpp \
+-	src/tdme/tools/editor/tabviews/TerrainEditorTabView.cpp \
+-	src/tdme/tools/editor/tabviews/TextureTabView.cpp \
+-	src/tdme/tools/editor/tabviews/TextEditorTabView.cpp \
+-	src/tdme/tools/editor/tabviews/TriggerEditorTabView.cpp \
+-	src/tdme/tools/editor/tabviews/UIEditorTabView.cpp \
+-	src/tdme/tools/editor/tabviews/subviews/BasePropertiesSubView.cpp \
+-	src/tdme/tools/editor/tabviews/subviews/PrototypeDisplaySubView.cpp \
+-	src/tdme/tools/editor/tabviews/subviews/PrototypePhysicsSubView.cpp \
+-	src/tdme/tools/editor/tabviews/subviews/PrototypeSoundsSubView.cpp \
+-	src/tdme/tools/editor/views/EditorView.cpp \
+-	src/tdme/tools/installer/Installer.cpp \
+-	src/tdme/utilities/Base64.cpp \
+-	src/tdme/utilities/Character.cpp \
+-	src/tdme/utilities/Console.cpp \
+-	src/tdme/utilities/ExceptionBase.cpp \
+-	src/tdme/utilities/Enum.cpp \
+-	src/tdme/utilities/Float.cpp \
+-	src/tdme/utilities/Hex.cpp \
+-	src/tdme/utilities/Integer.cpp \
+-	src/tdme/utilities/MiniScript.cpp \
+-	src/tdme/utilities/MutableString.cpp \
+-	src/tdme/utilities/ModelTools.cpp \
+-	src/tdme/utilities/PathFinding.cpp \
+-	src/tdme/utilities/Primitives.cpp \
+-	src/tdme/utilities/Properties.cpp \
+-	src/tdme/utilities/Reference.cpp \
+-	src/tdme/utilities/RTTI.cpp \
+-	src/tdme/utilities/SHA256.cpp \
+-	src/tdme/utilities/StringTools.cpp \
+-	src/tdme/utilities/StringTokenizer.cpp \
+-	src/tdme/utilities/Terrain2.cpp \
+-	ext/vulkan/spirv/GlslangToSpv.cpp \
+-	ext/vulkan/spirv/InReadableOrder.cpp \
+-	ext/vulkan/spirv/Logger.cpp \
+-	ext/vulkan/spirv/SPVRemapper.cpp \
+-	ext/vulkan/spirv/SpvBuilder.cpp \
+-	ext/vulkan/spirv/SpvPostProcess.cpp \
+-	ext/vulkan/spirv/SpvTools.cpp \
+-	ext/vulkan/spirv/disassemble.cpp \
+-	ext/vulkan/spirv/doc.cpp \
+-	ext/vulkan/glslang/MachineIndependent/glslang_tab.cpp \
+-	ext/vulkan/glslang/MachineIndependent/attribute.cpp \
+-	ext/vulkan/glslang/MachineIndependent/Constant.cpp \
+-	ext/vulkan/glslang/MachineIndependent/iomapper.cpp \
+-	ext/vulkan/glslang/MachineIndependent/InfoSink.cpp \
+-	ext/vulkan/glslang/MachineIndependent/Initialize.cpp \
+-	ext/vulkan/glslang/MachineIndependent/IntermTraverse.cpp \
+-	ext/vulkan/glslang/MachineIndependent/Intermediate.cpp \
+-	ext/vulkan/glslang/MachineIndependent/ParseContextBase.cpp \
+-	ext/vulkan/glslang/MachineIndependent/ParseHelper.cpp \
+-	ext/vulkan/glslang/MachineIndependent/PoolAlloc.cpp \
+-	ext/vulkan/glslang/MachineIndependent/RemoveTree.cpp \
+-	ext/vulkan/glslang/MachineIndependent/Scan.cpp \
+-	ext/vulkan/glslang/MachineIndependent/ShaderLang.cpp \
+-	ext/vulkan/glslang/MachineIndependent/SymbolTable.cpp \
+-	ext/vulkan/glslang/MachineIndependent/Versions.cpp \
+-	ext/vulkan/glslang/MachineIndependent/intermOut.cpp \
+-	ext/vulkan/glslang/MachineIndependent/limits.cpp \
+-	ext/vulkan/glslang/MachineIndependent/linkValidate.cpp \
+-	ext/vulkan/glslang/MachineIndependent/parseConst.cpp \
+-	ext/vulkan/glslang/MachineIndependent/reflection.cpp \
+-	ext/vulkan/glslang/MachineIndependent/preprocessor/Pp.cpp \
+-	ext/vulkan/glslang/MachineIndependent/preprocessor/PpAtom.cpp \
+-	ext/vulkan/glslang/MachineIndependent/preprocessor/PpContext.cpp \
+-	ext/vulkan/glslang/MachineIndependent/preprocessor/PpScanner.cpp \
+-	ext/vulkan/glslang/MachineIndependent/preprocessor/PpTokens.cpp \
+-	ext/vulkan/glslang/MachineIndependent/propagateNoContraction.cpp \
+-	ext/vulkan/glslang/GenericCodeGen/CodeGen.cpp \
+-	ext/vulkan/glslang/GenericCodeGen/Link.cpp \
+-	ext/vulkan/OGLCompilersDLL/InitializeDll.cpp \
+-	ext/vulkan/vma/src/VmaUsage.cpp \
+-	ext/vulkan/glslang/OSDependent/Windows/ossource.cpp	\
+-	$(SRCS_PLATFORM)
+-
+-EXT_SRCS = \
+-
+-EXT_TINYXML_SRCS = \
+-	ext/tinyxml/tinystr.cpp \
+-	ext/tinyxml/tinyxml.cpp \
+-	ext/tinyxml/tinyxmlerror.cpp \
+-	ext/tinyxml/tinyxmlparser.cpp
+-
+-EXT_ZLIB_SRCS = \
+-	ext/zlib/adler32.c \
+-	ext/zlib/crc32.c \
+-	ext/zlib/deflate.c \
+-	ext/zlib/infback.c \
+-	ext/zlib/inffast.c \
+-	ext/zlib/inflate.c \
+-	ext/zlib/inftrees.c \
+-	ext/zlib/trees.c \
+-	ext/zlib/zutil.c \
+-	ext/zlib/compress.c \
+-	ext/zlib/uncompr.c \
+-	ext/zlib/gzclose.c \
+-	ext/zlib/gzlib.c \
+-	ext/zlib/gzread.c \
+-	ext/zlib/gzwrite.c
+-
+-EXT_LIBPNG_SRCS = \
+-	ext/libpng/pngrio.c \
+-	ext/libpng/pngwio.c \
+-	ext/libpng/pngmem.c \
+-	ext/libpng/pngwtran.c \
+-	ext/libpng/pngtrans.c \
+-	ext/libpng/pngerror.c \
+-	ext/libpng/pngpread.c \
+-	ext/libpng/pngget.c \
+-	ext/libpng/pngset.c \
+-	ext/libpng/pngwrite.c \
+-	ext/libpng/pngwutil.c \
+-	ext/libpng/pngread.c \
+-	ext/libpng/pngrutil.c \
+-	ext/libpng/png.c \
+-	ext/libpng/pngrtran.c
+-
+-EXT_VORBIS_SRCS = \
+-	ext/vorbis/analysis.c \
+-	ext/vorbis/barkmel.c \
+-	ext/vorbis/bitrate.c \
+-	ext/vorbis/block.c \
+-	ext/vorbis/codebook.c \
+-	ext/vorbis/envelope.c \
+-	ext/vorbis/floor0.c \
+-	ext/vorbis/floor1.c \
+-	ext/vorbis/info.c \
+-	ext/vorbis/lookup.c \
+-	ext/vorbis/lpc.c \
+-	ext/vorbis/lsp.c \
+-	ext/vorbis/mapping0.c \
+-	ext/vorbis/mdct.c \
+-	ext/vorbis/misc.c \
+-	ext/vorbis/psy.c \
+-	ext/vorbis/registry.c \
+-	ext/vorbis/res0.c \
+-	ext/vorbis/sharedbook.c \
+-	ext/vorbis/smallft.c \
+-	ext/vorbis/synthesis.c \
+-	ext/vorbis/vorbisenc.c \
+-	ext/vorbis/vorbisfile.c \
+-	ext/vorbis/window.c
+-
+-EXT_OGG_SRCS = \
+-	ext/ogg/bitwise.c \
+-	ext/ogg/framing.c
+-
+-EXT_SHA256_SRCS = \
+-    ext/sha256/sha256.cpp
+-
+-EXT_VHACD_SRCS = \
+-	ext/v-hacd/src/VHACD_Lib/src/FloatMath.cpp \
+-	ext/v-hacd/src/VHACD_Lib/src/VHACD-ASYNC.cpp \
+-	ext/v-hacd/src/VHACD_Lib/src/VHACD.cpp \
+-	ext/v-hacd/src/VHACD_Lib/src/btAlignedAllocator.cpp \
+-	ext/v-hacd/src/VHACD_Lib/src/btConvexHullComputer.cpp \
+-	ext/v-hacd/src/VHACD_Lib/src/vhacdICHull.cpp \
+-	ext/v-hacd/src/VHACD_Lib/src/vhacdManifoldMesh.cpp \
+-	ext/v-hacd/src/VHACD_Lib/src/vhacdMesh.cpp \
+-	ext/v-hacd/src/VHACD_Lib/src/vhacdRaycastMesh.cpp \
+-	ext/v-hacd/src/VHACD_Lib/src/vhacdVolume.cpp
+-
+-EXT_REACTPHYSICS3D_SRCS = \
+-	ext/reactphysics3d/src/body/Body.cpp \
+-	ext/reactphysics3d/src/body/CollisionBody.cpp \
+-	ext/reactphysics3d/src/body/RigidBody.cpp \
+-	ext/reactphysics3d/src/collision/ContactManifoldInfo.cpp \
+-	ext/reactphysics3d/src/collision/broadphase/BroadPhaseAlgorithm.cpp \
+-	ext/reactphysics3d/src/collision/broadphase/DynamicAABBTree.cpp \
+-	ext/reactphysics3d/src/collision/narrowphase/DefaultCollisionDispatch.cpp \
+-	ext/reactphysics3d/src/collision/narrowphase/GJK/VoronoiSimplex.cpp \
+-	ext/reactphysics3d/src/collision/narrowphase/GJK/GJKAlgorithm.cpp \
+-	ext/reactphysics3d/src/collision/narrowphase/SAT/SATAlgorithm.cpp \
+-	ext/reactphysics3d/src/collision/narrowphase/CapsuleVsCapsuleAlgorithm.cpp \
+-	ext/reactphysics3d/src/collision/narrowphase/SphereVsCapsuleAlgorithm.cpp \
+-	ext/reactphysics3d/src/collision/narrowphase/SphereVsSphereAlgorithm.cpp \
+-	ext/reactphysics3d/src/collision/narrowphase/SphereVsConvexPolyhedronAlgorithm.cpp \
+-	ext/reactphysics3d/src/collision/narrowphase/CapsuleVsConvexPolyhedronAlgorithm.cpp \
+-	ext/reactphysics3d/src/collision/narrowphase/ConvexPolyhedronVsConvexPolyhedronAlgorithm.cpp \
+-	ext/reactphysics3d/src/collision/shapes/AABB.cpp \
+-	ext/reactphysics3d/src/collision/shapes/ConvexShape.cpp \
+-	ext/reactphysics3d/src/collision/shapes/ConvexPolyhedronShape.cpp \
+-	ext/reactphysics3d/src/collision/shapes/ConcaveShape.cpp \
+-	ext/reactphysics3d/src/collision/shapes/BoxShape.cpp \
+-	ext/reactphysics3d/src/collision/shapes/CapsuleShape.cpp \
+-	ext/reactphysics3d/src/collision/shapes/CollisionShape.cpp \
+-	ext/reactphysics3d/src/collision/shapes/ConvexMeshShape.cpp \
+-	ext/reactphysics3d/src/collision/shapes/SphereShape.cpp \
+-	ext/reactphysics3d/src/collision/shapes/TriangleShape.cpp \
+-	ext/reactphysics3d/src/collision/shapes/ConcaveMeshShape.cpp \
+-	ext/reactphysics3d/src/collision/shapes/HeightFieldShape.cpp \
+-	ext/reactphysics3d/src/collision/RaycastInfo.cpp \
+-	ext/reactphysics3d/src/collision/ProxyShape.cpp \
+-	ext/reactphysics3d/src/collision/TriangleVertexArray.cpp \
+-	ext/reactphysics3d/src/collision/PolygonVertexArray.cpp \
+-	ext/reactphysics3d/src/collision/TriangleMesh.cpp \
+-	ext/reactphysics3d/src/collision/PolyhedronMesh.cpp \
+-	ext/reactphysics3d/src/collision/HalfEdgeStructure.cpp \
+-	ext/reactphysics3d/src/collision/CollisionDetection.cpp \
+-	ext/reactphysics3d/src/collision/NarrowPhaseInfo.cpp \
+-	ext/reactphysics3d/src/collision/ContactManifold.cpp \
+-	ext/reactphysics3d/src/collision/ContactManifoldSet.cpp \
+-	ext/reactphysics3d/src/collision/MiddlePhaseTriangleCallback.cpp \
+-	ext/reactphysics3d/src/constraint/BallAndSocketJoint.cpp \
+-	ext/reactphysics3d/src/constraint/ContactPoint.cpp \
+-	ext/reactphysics3d/src/constraint/FixedJoint.cpp \
+-	ext/reactphysics3d/src/constraint/HingeJoint.cpp \
+-	ext/reactphysics3d/src/constraint/Joint.cpp \
+-	ext/reactphysics3d/src/constraint/SliderJoint.cpp \
+-	ext/reactphysics3d/src/engine/CollisionWorld.cpp \
+-	ext/reactphysics3d/src/engine/ConstraintSolver.cpp \
+-	ext/reactphysics3d/src/engine/ContactSolver.cpp \
+-	ext/reactphysics3d/src/engine/DynamicsWorld.cpp \
+-	ext/reactphysics3d/src/engine/Island.cpp \
+-	ext/reactphysics3d/src/engine/Material.cpp \
+-	ext/reactphysics3d/src/engine/OverlappingPair.cpp \
+-	ext/reactphysics3d/src/engine/Timer.cpp \
+-	ext/reactphysics3d/src/collision/CollisionCallback.cpp \
+-	ext/reactphysics3d/src/mathematics/mathematics_functions.cpp \
+-	ext/reactphysics3d/src/mathematics/Matrix2x2.cpp \
+-	ext/reactphysics3d/src/mathematics/Matrix3x3.cpp \
+-	ext/reactphysics3d/src/mathematics/Quaternion.cpp \
+-	ext/reactphysics3d/src/mathematics/Transform.cpp \
+-	ext/reactphysics3d/src/mathematics/Vector2.cpp \
+-	ext/reactphysics3d/src/mathematics/Vector3.cpp \
+-	ext/reactphysics3d/src/memory/MemoryManager.cpp \
+-	ext/reactphysics3d/src/memory/DefaultSingleFrameAllocator.cpp \
+-	ext/reactphysics3d/src/memory/DefaultPoolAllocator.cpp
+-
+-EXT_SRCS = \
+-	$(EXT_TINYXML_SRCS) \
+-	$(EXT_ZLIB_SRCS) \
+-	$(EXT_LIBPNG_SRCS) \
+-	$(EXT_VORBIS_SRCS) \
+-	$(EXT_OGG_SRCS) \
+-	$(EXT_SHA256_SRCS) \
+-	$(EXT_VHACD_SRCS) \
+-	$(EXT_REACTPHYSICS3D_SRCS)
+-
+-all: \
+-	init compile link clean \
+-	ext-init ext-compile ext-link ext-clean \
+-	init-mains \
+-	AngleTest \
+-	AudioTest \
+-	ContainerTest \
+-	CrashTest \
+-	EngineTest \
+-	EntityHierarchyTest \
+-	HTTPClientTest \
+-	HTTPDownloadClientTest \
+-	LODTest \
+-	FlowMapTest \
+-	FlowMapTest2 \
+-	FoliageTest \
+-	MathOperatorTest \
+-	MiniScriptTest \
+-	PathFindingTest \
+-	PhysicsTest1 PhysicsTest2 PhysicsTest3 PhysicsTest4 \
+-	RayTracingTest \
+-	SkinningTest \
+-	ThreadingTest \
+-	TreeTest \
+-	UDPClientTest \
+-	UDPServerTest \
+-	WaterTest \
+-	archive \
+-	collectguitags \
+-	converttotm \
+-	copyanimationsetups \
+-	createinstaller \
+-	recreatevkcache \
+-	generatelicenses \
+-	importtmodel \
+-	fixdoxygen \
+-	optimizemodel \
+-	scenefixmodelszup2yup \
+-	sortincludes \
+-	TDMEEditor \
+-	InstallerApp \
+-	clean-mains
+-
+-ext-init:
+-	mkdir $(OBJ)
+-
+-ext-compile: $(EXT_SRCS)
+-	cl /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
+-
+-ext-link: $(OBJ)/*.obj
+-	lib $(LINK_FLAGS) /OUT:libtdme-ext.lib $**
+-
+-ext-clean: $(OBJ)/*.obj
+-	rmdir /s /q $(OBJ) 
+-
+-init:
+-	mkdir $(OBJ) 
+-
+-init-mains:
+-	mkdir $(OBJ)
+-
+-compile: $(SRCS)
+-	cl /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
+-
+-link: $(OBJ)/*.obj
+-	lib $(LINK_FLAGS) /OUT:libtdme.lib $**
+-
+-clean: 
+-	rmdir /s /q $(OBJ)
+-
+-clean-mains: 
+-	rmdir /s /q $(OBJ)
+-
+-AngleTest:
+-	cl /FeAngleTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/AngleTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-	
+-AudioTest:
+-	cl /FeAudioTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/AudioTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-ContainerTest:
+-	cl /FeContainerTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/ContainerTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-CrashTest:
+-	cl /FeCrashTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/CrashTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-EngineTest:
+-	cl /FeEngineTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/EngineTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-EntityHierarchyTest:
+-	cl /FeEntityHierarchyTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/EntityHierarchyTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-HTTPClientTest:
+-	cl /FeHTMLClientTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/HTTPClientTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-HTTPDownloadClientTest:
+-    cl /FeHTMLDownloadClientTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/HTTPDownloadClientTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-LODTest:
+-	cl /FeLODTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/LODTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-FlowMapTest:
+-	cl /FeFlowMapTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FlowMapTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-FlowMapTest2:
+-	cl /FeFlowMapTest2 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FlowMapTest2-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-FoliageTest:
+-	cl /FeFoliageTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FoliageTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-MathOperatorTest:
+-	cl /FeMathOperatorTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/MathOperatorTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-MiniScriptTest:
+-	cl /FeMiniScriptTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/MiniScriptTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-PathFindingTest:
+-	cl /FePathFindingTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PathFindingTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-PhysicsTest1:
+-	cl /FePhysicsTest1 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest1-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-PhysicsTest2:
+-	cl /FePhysicsTest2 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest2-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-PhysicsTest3:
+-	cl /FePhysicsTest3 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest3-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-PhysicsTest4:
+-	cl /FePhysicsTest4 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest4-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-RayTracingTest:
+-	cl /FeRayTracingTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/RayTracingTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-SkinningTest:
+-	cl /FeSkinningTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/SkinningTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-ThreadingTest:
+-	cl /FeThreadingTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/ThreadingTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-TreeTest:
+-    cl /FeTreeTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/TreeTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-UDPClientTest:
+-	cl /FeUDPClientTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/UDPClientTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-UDPServerTest:
+-	cl /FeUDPServerTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/UDPServerTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-WaterTest:
+-	cl /FeWaterTest $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tests/WaterTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-archive:
+-    cl /Fearchive $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/archive-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-collectguitags:
+-	cl /Fecollectguitags $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/collectguitags-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-converttotm:
+-	cl /Feconverttotm $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/converttotm-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-copyanimationsetups:
+-	cl /Fecopyanimationsetups /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/copyanimationsetups-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-createinstaller:
+-    cl /Fecreateinstaller $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/createinstaller-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-recreatevkcache:
+-    cl /Ferecreatevkcache $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/recreatevkcache-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-generatelicenses:
+-	cl /Fegeneratelicenses /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/generatelicenses-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-importtmodel:
+-	cl /Feimporttmodel /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/importtmodel-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-fixdoxygen:
+-    cl /Fefixdoxygen /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/fixdoxygen-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-makefilegenerator:
+-	cl /Femakefilegenerator $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/makefilegenerator-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-optimizemodel:
+-	cl /Feoptimizemodel $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/optimizemodel-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-scenefixmodelszup2yup:
+-	cl /Fescenefixmodelszup2yup /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/scenefixmodelszup2yup-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-sortincludes:
+-    cl /Fesortincludes /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/sortincludes-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-TDMEEditor:
+-	cl /FeTDMEEditor /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/editor/TDMEEditor-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+-
+-InstallerApp:
+-	cl /FeInstaller /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/installer/Installer-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+diff --git a/Makefile.nmake b/Makefile.nmake
+index 549a3b9a4..c2d2788f2 100644
+--- a/Makefile.nmake
++++ b/Makefile.nmake
+@@ -2,10 +2,6 @@ OBJ = mscobj
+ 
+ SRCS_PLATFORM = \
+ 	src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
+-	src/tdme/engine/EngineGL2Renderer.cpp \
+-	src/tdme/engine/EngineGL3Renderer.cpp \
+-	src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
+-	src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
+ 	src/tdme/engine/fileio/models/FBXReader.cpp \
+ 	src/tdme/engine/fileio/models/ModelReaderFBX.cpp
+ 
+@@ -20,15 +16,16 @@ INCLUDES = \
+ 	/I "ext\reactphysics3d\src" \
+ 	/I "ext\fbx\win64\include" \
+ 	/I "ext\glfw3\include" \
+-	/I "ext\windows-msc/pthread\includes" \
+-	/I "ext\windows-msc/openal-soft\includes" \
+-	/I "ext\windows-msc/glew\include" \
+-	/I "ext\windows-msc/dirent\include" \
++	/I "ext\windows-msc\pthread\includes" \
++	/I "ext\windows-msc\openal-soft\includes" \
++	/I "ext\windows-msc\glew\include" \
++	/I "ext\windows-msc\dirent\include" \
++	/I "ext\windows-msc\vulkan-sdk\include" \
+ 	/I "ext\rapidjson\include"
+ 
+-# For Windows 10 this might be added to EXTRA_LIBS libucrt.lib from Windows 10 Kit
++# For Windows 10 this might be added to MAIN_LDFLAGS libucrt.lib from Windows 10 Kit
+ 
+-EXTRA_LIBS = \
++BASE_LDFLAGS = \
+ 	/LIBPATH "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\lib\x64\libcmt.lib" \
+ 	/LIBPATH "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\lib\x64\libcpmt.lib" \
+ 	/LIBPATH "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\lib\x64\libvcruntime.lib" \
+@@ -36,26 +33,31 @@ EXTRA_LIBS = \
+ 	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\kernel32.lib" \
+ 	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\advapi32.lib" \
+ 	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\uuid.lib" \
+-	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\opengl32.lib" \
+-	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\gdi32.lib" \
+ 	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\winmm.lib" \
+ 	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\shell32.lib" \
+ 	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\user32.lib" \
+ 	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\ws2_32.lib" \
+-	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\dbghelp.lib" \
+-	/LIBPATH "ext\glfw3\win64\lib\glfw3_mt.lib" \
+-	/LIBPATH "ext\windows-msc/pthread\libs\pthreadVC2.lib" \
+-	/LIBPATH "ext\windows-msc/openal-soft\libs\OpenAL32.lib" \
+-	/LIBPATH "ext\windows-msc/glew\libs/glew32.lib" \
++	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\dbghelp.lib"
++
++MAIN_LDFLAGS = \
++	$(BASE_LDFLAGS) \
++	/LIBPATH "ext\glfw3\win64\lib\glfw3dll.lib" \
++	/LIBPATH "ext\windows-msc\pthread\libs\pthreadVC2.lib" \
++	/LIBPATH "ext\windows-msc\openal-soft\libs\OpenAL32.lib" \
+ 	/LIBPATH "ext\fbx\win64\lib\libfbxsdk.lib" \
+-	/LIBPATH libtdme-ext.lib \
+ 	/LIBPATH libtdme.lib
+ 
+-FLAGS = /MT /MP /D _USING_V110_SDK71_ /EHsc /O2 /Ob3 /fp:fast /arch:AVX /std:c++20 /GL /Zi /F 8388608 /D RAPIDJSON_HAS_STDSTRING
++LIBS_LDFLAGS = \
++	$(BASE_LDFLAGS) \
++	/LIBPATH "ext\glfw3\win64\lib\glfw3dll.lib" \
++	/LIBPATH "ext\windows-msc\pthread\libs\pthreadVC2.lib" \
++	/LIBPATH "ext\windows-msc\openal-soft\libs\OpenAL32.lib" \
++	/LIBPATH "ext\fbx\win64\lib\libfbxsdk.lib" \
+ 
++FLAGS = /MT /MP /EHsc /O2 /std:c++20 /Zi /F 8388608 /D RAPIDJSON_HAS_STDSTRING /D GLFW_DLL
+ # /NODEFAULTLIB:msvcrt
+ 
+-LINK_FLAGS = /LTCG
++LD_FLAGS =
+ 
+ SRC = src
+ TINYXML = tinyxml
+@@ -659,48 +661,69 @@ EXT_SRCS = \
+ 	$(EXT_VHACD_SRCS) \
+ 	$(EXT_REACTPHYSICS3D_SRCS)
+ 
++OPENGL3CORE_RENDERER_LIB_SRCS = \
++	src\tdme\engine\EngineGL3Renderer.cpp \
++	src\tdme\engine\subsystems\renderer\GL3Renderer.cpp
++
++OPENGL2_RENDERER_LIB_SRCS = \
++	src\tdme\engine\EngineGL2Renderer.cpp \
++	src\tdme\engine\subsystems\renderer\GL2Renderer.cpp
++
++VULKAN_RENDERER_LIB_SRCS = \
++	ext/vulkan/spirv/GlslangToSpv.cpp \
++	ext/vulkan/spirv/InReadableOrder.cpp \
++	ext/vulkan/spirv/Logger.cpp \
++	ext/vulkan/spirv/SPVRemapper.cpp \
++	ext/vulkan/spirv/SpvBuilder.cpp \
++	ext/vulkan/spirv/SpvPostProcess.cpp \
++	ext/vulkan/spirv/SpvTools.cpp \
++	ext/vulkan/spirv/disassemble.cpp \
++	ext/vulkan/spirv/doc.cpp \
++	ext/vulkan/glslang/MachineIndependent/glslang_tab.cpp \
++	ext/vulkan/glslang/MachineIndependent/attribute.cpp \
++	ext/vulkan/glslang/MachineIndependent/Constant.cpp \
++	ext/vulkan/glslang/MachineIndependent/iomapper.cpp \
++	ext/vulkan/glslang/MachineIndependent/InfoSink.cpp \
++	ext/vulkan/glslang/MachineIndependent/Initialize.cpp \
++	ext/vulkan/glslang/MachineIndependent/IntermTraverse.cpp \
++	ext/vulkan/glslang/MachineIndependent/Intermediate.cpp \
++	ext/vulkan/glslang/MachineIndependent/ParseContextBase.cpp \
++	ext/vulkan/glslang/MachineIndependent/ParseHelper.cpp \
++	ext/vulkan/glslang/MachineIndependent/PoolAlloc.cpp \
++	ext/vulkan/glslang/MachineIndependent/RemoveTree.cpp \
++	ext/vulkan/glslang/MachineIndependent/Scan.cpp \
++	ext/vulkan/glslang/MachineIndependent/ShaderLang.cpp \
++	ext/vulkan/glslang/MachineIndependent/SymbolTable.cpp \
++	ext/vulkan/glslang/MachineIndependent/Versions.cpp \
++	ext/vulkan/glslang/MachineIndependent/intermOut.cpp \
++	ext/vulkan/glslang/MachineIndependent/limits.cpp \
++	ext/vulkan/glslang/MachineIndependent/linkValidate.cpp \
++	ext/vulkan/glslang/MachineIndependent/parseConst.cpp \
++	ext/vulkan/glslang/MachineIndependent/reflection.cpp \
++	ext/vulkan/glslang/MachineIndependent/preprocessor/Pp.cpp \
++	ext/vulkan/glslang/MachineIndependent/preprocessor/PpAtom.cpp \
++	ext/vulkan/glslang/MachineIndependent/preprocessor/PpContext.cpp \
++	ext/vulkan/glslang/MachineIndependent/preprocessor/PpScanner.cpp \
++	ext/vulkan/glslang/MachineIndependent/preprocessor/PpTokens.cpp \
++	ext/vulkan/glslang/MachineIndependent/propagateNoContraction.cpp \
++	ext/vulkan/glslang/GenericCodeGen/CodeGen.cpp \
++	ext/vulkan/glslang/GenericCodeGen/Link.cpp \
++	ext/vulkan/OGLCompilersDLL/InitializeDll.cpp \
++	ext/vulkan/vma/src/VmaUsage.cpp \
++	ext/vulkan/glslang/OSDependent/Windows/ossource.cpp \
++	src/tdme/engine/EngineVKRenderer.cpp \
++	src/tdme/engine/subsystems/renderer/VKGL3CoreShaderProgram.cpp \
++	src/tdme/engine/subsystems/renderer/VKRenderer.cpp \
++	ext/windows-msc/uint128_t/uint128_t.cpp
++
+ all: \
+-	init compile link clean \
+-	ext-init ext-compile ext-link ext-clean \
++	ext-init ext-compile ext-link1 ext-link2 ext-clean \
++	init compile link1 link2 clean \
++	opengl3core-init opengl3core-compile opengl3core-link1 opengl3core-link2 opengl3core-clean \
++	opengl2-init opengl2-compile opengl2-link1 opengl2-link2 opengl2-clean \
++	vulkan-init vulkan-compile vulkan-link1 vulkan-link2 vulkan-clean \
+ 	init-mains \
+-	AngleTest \
+-	AudioTest \
+-	ContainerTest \
+-	CrashTest \
+-	EngineTest \
+-	EntityHierarchyTest \
+-	HTTPClientTest \
+-	HTTPDownloadClientTest \
+-	LODTest \
+-	FlowMapTest \
+-	FlowMapTest2 \
+-	FoliageTest \
+-	MathOperatorTest \
+-	MiniScriptTest \
+-	PathFindingTest \
+-	PhysicsTest1 PhysicsTest2 PhysicsTest3 PhysicsTest4 \
+-	RayTracingTest \
+-	SkinningTest \
+-	ThreadingTest \
+-	TreeTest \
+-	UDPClientTest \
+-	UDPServerTest \
+-	WaterTest \
+-	archive \
+-	collectguitags \
+-	converttotm \
+-	copyanimationsetups \
+-	createinstaller \
+-	recreatevkcache \
+-	generatelicenses \
+-	importtmodel \
+-	fixdoxygen \
+-	optimizemodel \
+-	scenefixmodelszup2yup \
+-	sortincludes \
+-	TDMEEditor \
+-	InstallerApp \
+-	clean-mains
++	TDMEEditor
+ 
+ ext-init:
+ 	mkdir $(OBJ)
+@@ -708,8 +731,18 @@ ext-init:
+ ext-compile: $(EXT_SRCS)
+ 	cl /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
+ 
+-ext-link: $(OBJ)/*.obj
+-	lib $(LINK_FLAGS) /OUT:libtdme-ext.lib $**
++ext-link1: $(OBJ)/*.obj
++	lib $(LD_FLAGS) /OUT:libtdme-ext.lib $**
++	dumpbin /LINKERMEMBER libtdme-ext.lib > libtdme-ext.def.dumpbin.linkermember
++	.\ext\windows-msc\tools\msclib2dll.exe libtdme-ext.def.dumpbin.linkermember
++	del libtdme-ext.lib
++
++ext-link2: $(OBJ)/*.obj
++	echo LIBRARY libtdme-ext.dll > libtdme-ext.def
++	type libtdme-ext.def.dumpbin.linkermember.def >> libtdme-ext.def
++	link $(LD_FLAGS) /DLL /DEF:libtdme-ext.def /IGNORE:4102 $** $(LIBS_LDFLAGS) /OUT:libtdme-ext.dll
++	del libtdme-ext.def.dumpbin.linkermember
++	del libtdme-ext.def.dumpbin.linkermember.def
+ 
+ ext-clean: $(OBJ)/*.obj
+ 	rmdir /s /q $(OBJ) 
+@@ -721,136 +754,222 @@ init-mains:
+ 	mkdir $(OBJ)
+ 
+ compile: $(SRCS)
+-	cl /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
++	cl /D DLL_EXPORT /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
+ 
+-link: $(OBJ)/*.obj
+-	lib $(LINK_FLAGS) /OUT:libtdme.lib $**
++link1: $(OBJ)/*.obj
++	lib $(LD_FLAGS) /OUT:libtdme.lib $**
++	dumpbin /LINKERMEMBER libtdme.lib > libtdme.def.dumpbin.linkermember
++	.\ext\windows-msc\tools\msclib2dll.exe libtdme.def.dumpbin.linkermember
++	del libtdme.lib
++
++link2: $(OBJ)/*.obj
++	echo LIBRARY libtdme.dll > libtdme.def
++	type libtdme.def.dumpbin.linkermember.def >> libtdme.def
++	link $(LD_FLAGS) /DLL /DEF:libtdme.def /IGNORE:4102 $** $(LIBS_LDFLAGS) /LIBPATH libtdme-ext.lib /OUT:libtdme.dll
++	del libtdme.def.dumpbin.linkermember
++	del libtdme.def.dumpbin.linkermember.def
+ 
+ clean: 
+ 	rmdir /s /q $(OBJ)
+ 
++opengl3core-init:
++	mkdir $(OBJ) 
++
++opengl3core-mains:
++	mkdir $(OBJ)
++
++opengl3core-compile: $(OPENGL3CORE_RENDERER_LIB_SRCS)
++	cl /D DLL_IMPORT /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
++
++opengl3core-link1: $(OBJ)/*.obj
++	lib $(LD_FLAGS) /OUT:libopengl3corerenderer.lib $**
++	dumpbin /LINKERMEMBER libopengl3corerenderer.lib > libopengl3corerenderer.def.dumpbin.linkermember
++	.\ext\windows-msc\tools\msclib2dll.exe libopengl3corerenderer.def.dumpbin.linkermember
++	del libopengl3corerenderer.lib
++
++opengl3core-link2: $(OBJ)/*.obj
++	echo LIBRARY libopengl3corerenderer.dll > libopengl3corerenderer.def
++	type libopengl3corerenderer.def.dumpbin.linkermember.def >> libopengl3corerenderer.def
++	link $(LD_FLAGS) /DLL /DEF:libopengl3corerenderer.def /IGNORE:4102 $** $(LIBS_LDFLAGS) /LIBPATH libtdme.lib /LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\opengl32.lib" /LIBPATH "ext\windows-msc\glew\libs\glew32.lib" /OUT:libopengl3corerenderer.dll
++	del libopengl3corerenderer.def.dumpbin.linkermember
++	del libopengl3corerenderer.def.dumpbin.linkermember.def
++
++opengl3core-clean: 
++	rmdir /s /q $(OBJ)
++
++opengl2-init:
++	mkdir $(OBJ) 
++
++opengl2-mains:
++	mkdir $(OBJ)
++
++opengl2-compile: $(OPENGL2_RENDERER_LIB_SRCS)
++	cl /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
++
++opengl2-link1: $(OBJ)/*.obj
++	lib $(LD_FLAGS) /OUT:libopengl2renderer.lib $**
++	dumpbin /LINKERMEMBER libopengl2renderer.lib > libopengl2renderer.def.dumpbin.linkermember
++	.\ext\windows-msc\tools\msclib2dll.exe libopengl2renderer.def.dumpbin.linkermember
++	del libopengl2renderer.lib
++
++opengl2-link2: $(OBJ)/*.obj
++	echo LIBRARY libopengl2renderer.dll > libopengl2renderer.def
++	type libopengl2renderer.def.dumpbin.linkermember.def >> libopengl2renderer.def
++	link $(LD_FLAGS) /DLL /DEF:libopengl2renderer.def /IGNORE:4102 $** $(LIBS_LDFLAGS) /LIBPATH libtdme.lib /LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\opengl32.lib" /LIBPATH "ext\windows-msc\glew\libs\glew32.lib" /OUT:libopengl2renderer.dll
++	del libopengl2renderer.def.dumpbin.linkermember
++	del libopengl2renderer.def.dumpbin.linkermember.def
++
++vulkan-clean: 
++	rmdir /s /q $(OBJ)
++
++vulkan-init:
++	mkdir $(OBJ) 
++
++vulkan-mains:
++	mkdir $(OBJ)
++
++vulkan-compile: $(VULKAN_RENDERER_LIB_SRCS)
++	cl /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
++
++vulkan-link1: $(OBJ)/*.obj
++	lib $(LD_FLAGS) /OUT:libvulkanrenderer.lib $**
++	dumpbin /LINKERMEMBER libvulkanrenderer.lib > libvulkanrenderer.def.dumpbin.linkermember
++	.\ext\windows-msc\tools\msclib2dll.exe libvulkanrenderer.def.dumpbin.linkermember
++	del libvulkanrenderer.lib
++
++vulkan-link2: $(OBJ)/*.obj
++	echo LIBRARY libvulkanrenderer.dll > libvulkanrenderer.def
++	echo DESCRIPTION libvulkanrenderer >> libvulkanrenderer.def
++	type libvulkanrenderer.def.dumpbin.linkermember.def >> libvulkanrenderer.def
++	link $(LD_FLAGS) /DLL /DEF:libvulkanrenderer.def /IGNORE:4102 $** $(LIBS_LDFLAGS) /LIBPATH libtdme.lib /LIBPATH "ext\vulkan\runtime\msc64\vulkan-1.lib" /OUT:libvulkanrenderer.dll
++	del libvulkanrenderer.def.dumpbin.linkermember
++	del libvulkanrenderer.def.dumpbin.linkermember.def
++
++opengl2-clean: 
++	rmdir /s /q $(OBJ)
++
+ clean-mains: 
+ 	rmdir /s /q $(OBJ)
+ 
+ AngleTest:
+-	cl /FeAngleTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/AngleTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /FeAngleTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/AngleTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 	
+ AudioTest:
+-	cl /FeAudioTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/AudioTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /FeAudioTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/AudioTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ ContainerTest:
+-	cl /FeContainerTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/ContainerTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /FeContainerTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/ContainerTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ CrashTest:
+-	cl /FeCrashTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/CrashTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /FeCrashTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/CrashTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ EngineTest:
+-	cl /FeEngineTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/EngineTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /FeEngineTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/EngineTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ EntityHierarchyTest:
+-	cl /FeEntityHierarchyTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/EntityHierarchyTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /FeEntityHierarchyTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/EntityHierarchyTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ HTTPClientTest:
+-	cl /FeHTMLClientTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/HTTPClientTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /FeHTMLClientTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/HTTPClientTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ HTTPDownloadClientTest:
+-    cl /FeHTMLDownloadClientTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/HTTPDownloadClientTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++    cl /FeHTMLDownloadClientTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/HTTPDownloadClientTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ LODTest:
+-	cl /FeLODTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/LODTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /FeLODTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/LODTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ FlowMapTest:
+-	cl /FeFlowMapTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FlowMapTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /FeFlowMapTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FlowMapTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ FlowMapTest2:
+-	cl /FeFlowMapTest2 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FlowMapTest2-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /FeFlowMapTest2 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FlowMapTest2-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ FoliageTest:
+-	cl /FeFoliageTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FoliageTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /FeFoliageTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FoliageTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ MathOperatorTest:
+-	cl /FeMathOperatorTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/MathOperatorTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /FeMathOperatorTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/MathOperatorTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ MiniScriptTest:
+-	cl /FeMiniScriptTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/MiniScriptTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /FeMiniScriptTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/MiniScriptTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ PathFindingTest:
+-	cl /FePathFindingTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PathFindingTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /FePathFindingTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PathFindingTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ PhysicsTest1:
+-	cl /FePhysicsTest1 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest1-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /FePhysicsTest1 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest1-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ PhysicsTest2:
+-	cl /FePhysicsTest2 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest2-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /FePhysicsTest2 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest2-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ PhysicsTest3:
+-	cl /FePhysicsTest3 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest3-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /FePhysicsTest3 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest3-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ PhysicsTest4:
+-	cl /FePhysicsTest4 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest4-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /FePhysicsTest4 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest4-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ RayTracingTest:
+-	cl /FeRayTracingTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/RayTracingTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /FeRayTracingTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/RayTracingTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ SkinningTest:
+-	cl /FeSkinningTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/SkinningTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /FeSkinningTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/SkinningTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ ThreadingTest:
+-	cl /FeThreadingTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/ThreadingTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /FeThreadingTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/ThreadingTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ TreeTest:
+-    cl /FeTreeTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/TreeTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++    cl /FeTreeTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/TreeTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ UDPClientTest:
+-	cl /FeUDPClientTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/UDPClientTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /FeUDPClientTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/UDPClientTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ UDPServerTest:
+-	cl /FeUDPServerTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/UDPServerTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /FeUDPServerTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/UDPServerTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ WaterTest:
+-	cl /FeWaterTest $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tests/WaterTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /FeWaterTest $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tests/WaterTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ archive:
+-    cl /Fearchive $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/archive-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++    cl /Fearchive $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/archive-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ collectguitags:
+-	cl /Fecollectguitags $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/collectguitags-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /Fecollectguitags $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/collectguitags-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ converttotm:
+-	cl /Feconverttotm $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/converttotm-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /Feconverttotm $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/converttotm-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ copyanimationsetups:
+-	cl /Fecopyanimationsetups /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/copyanimationsetups-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /Fecopyanimationsetups /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/copyanimationsetups-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ createinstaller:
+-    cl /Fecreateinstaller $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/createinstaller-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++    cl /Fecreateinstaller $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/createinstaller-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ recreatevkcache:
+-    cl /Ferecreatevkcache $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/recreatevkcache-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++    cl /Ferecreatevkcache $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/recreatevkcache-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ generatelicenses:
+-	cl /Fegeneratelicenses /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/generatelicenses-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /Fegeneratelicenses /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/generatelicenses-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ importtmodel:
+-	cl /Feimporttmodel /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/importtmodel-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /Feimporttmodel /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/importtmodel-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ fixdoxygen:
+-    cl /Fefixdoxygen /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/fixdoxygen-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++    cl /Fefixdoxygen /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/fixdoxygen-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ makefilegenerator:
+-	cl /Femakefilegenerator $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/makefilegenerator-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /Femakefilegenerator $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/makefilegenerator-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ optimizemodel:
+-	cl /Feoptimizemodel $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/optimizemodel-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /Feoptimizemodel $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/optimizemodel-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ scenefixmodelszup2yup:
+-	cl /Fescenefixmodelszup2yup /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/scenefixmodelszup2yup-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /Fescenefixmodelszup2yup /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/scenefixmodelszup2yup-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ sortincludes:
+-    cl /Fesortincludes /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/sortincludes-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++    cl /Fesortincludes /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/sortincludes-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ TDMEEditor:
+-	cl /FeTDMEEditor /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/editor/TDMEEditor-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /D DLL_IMPORT /FeTDMEEditor /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/editor/TDMEEditor-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+ 
+ InstallerApp:
+-	cl /FeInstaller /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/installer/Installer-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
++	cl /FeInstaller /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/installer/Installer-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+diff --git a/documentation/doxygen.private.config b/documentation/doxygen.private.config
+index 1c5318580..38efe722b 100644
+--- a/documentation/doxygen.private.config
++++ b/documentation/doxygen.private.config
+@@ -22,7 +22,7 @@ JAVADOC_AUTOBRIEF	= YES
+ OUTPUT_DIRECTORY	= private
+ PERL_PATH		= /usr/local/bin/perl
+ PROJECT_NAME		= TDME2
+-PROJECT_NUMBER		= 1.9.113
++PROJECT_NUMBER		= 1.9.114
+ RECURSIVE		= YES
+ SEARCHENGINE		= YES
+ SERVER_BASED_SEARCH	= NO
+diff --git a/documentation/doxygen.public.config b/documentation/doxygen.public.config
+index 547219a31..f69e9f7b5 100644
+--- a/documentation/doxygen.public.config
++++ b/documentation/doxygen.public.config
+@@ -172,7 +172,7 @@ JAVADOC_AUTOBRIEF	= YES
+ OUTPUT_DIRECTORY	= public
+ PERL_PATH		= /usr/local/bin/perl
+ PROJECT_NAME		= TDME2
+-PROJECT_NUMBER		= 1.9.113
++PROJECT_NUMBER		= 1.9.114
+ RECURSIVE		= NO
+ SEARCHENGINE		= YES
+ SERVER_BASED_SEARCH	= NO
+diff --git a/src/tdme/application/Application.cpp b/src/tdme/application/Application.cpp
+index c5bde7a4b..5c708a778 100644
+--- a/src/tdme/application/Application.cpp
++++ b/src/tdme/application/Application.cpp
+@@ -18,7 +18,10 @@
+ 	#include <Carbon/Carbon.h>
+ #endif
+ 
+-#include <dlfcn.h>
++#if !defined(_MSC_VER)
++	#include <dlfcn.h>
++#endif
++
+ #include <stdlib.h>
+ 
+ #include <array>
+@@ -515,14 +518,14 @@ static void glfwErrorCallback(int error, const char* description) {
+ }
+ 
+ void Application::run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler, int windowHints) {
+-	string rendererLibrary = "libopengl3corerenderer.so";
++	string rendererLibrary = "libopengl3corerenderer";
+ 	for (auto i = 1; i < argc; i++) {
+ 		auto argValue = string(argv[i]);
+ 		if (argValue == "--debug") debuggingEnabled = true; else
+-		if (argValue == "--gles2") rendererLibrary = "libopengles2renderer.so"; else
+-		if (argValue == "--gl2") rendererLibrary = "libopengl2renderer.so"; else
+-		if (argValue == "--gl3core") rendererLibrary = "libopengl3corerenderer.so"; else
+-		if (argValue == "--vulkan") rendererLibrary = "libvulkanrenderer.so";
++		if (argValue == "--gles2") rendererLibrary = "libopengles2renderer"; else
++		if (argValue == "--gl2") rendererLibrary = "libopengl2renderer"; else
++		if (argValue == "--gl3core") rendererLibrary = "libopengl3corerenderer"; else
++		if (argValue == "--vulkan") rendererLibrary = "libvulkanrenderer";
+ 	}
+ 
+ 	//
+@@ -558,28 +561,54 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
+ 
+ 	Console::println("Application::run(): Opening renderer library: " + rendererLibrary);
+ 
+-	//
+-	auto rendererLibraryHandle = dlopen(rendererLibrary.c_str(), RTLD_NOW);
+-	if (rendererLibraryHandle == nullptr) {
+-		Console::println("Application::run(): Could not open renderer library");
+-		glfwTerminate();
+-		return;
+-	}
+-	//
+-	Renderer* (*rendererCreateInstance)() = (Renderer*(*)())dlsym(rendererLibraryHandle, "createInstance");
+-	//
+-	if (rendererCreateInstance == nullptr) {
+-		Console::println("Application::run(): Could not find renderer library createInstance() entry point");
+-		glfwTerminate();
+-		return;
+-	}
+-	//
+-	renderer = (Renderer*)rendererCreateInstance();
+-	if (renderer == nullptr) {
+-		Console::println("Application::run(): Could not create renderer");
+-		glfwTerminate();
+-		return;
+-	}
++	// load renderer library
++	#if defined(_MSC_VER)
++		//
++		auto rendererLibraryHandle = LoadLibrary((rendererLibrary + ".dll").c_str());
++		if (rendererLibraryHandle == nullptr) {
++			Console::println("Application::run(): Could not open renderer library");
++			glfwTerminate();
++			return;
++		}
++		//
++		Renderer* (*rendererCreateInstance)() = (Renderer*(*)())GetProcAddress(rendererLibraryHandle, "createInstance");
++		//
++		if (rendererCreateInstance == nullptr) {
++			Console::println("Application::run(): Could not find renderer library createInstance() entry point");
++			glfwTerminate();
++			return;
++		}
++		//
++		renderer = (Renderer*)rendererCreateInstance();
++		if (renderer == nullptr) {
++			Console::println("Application::run(): Could not create renderer");
++			glfwTerminate();
++			return;
++		}
++	#else
++		//
++		auto rendererLibraryHandle = dlopen((rendererLibrary + ".so").c_str(), RTLD_NOW);
++		if (rendererLibraryHandle == nullptr) {
++			Console::println("Application::run(): Could not open renderer library");
++			glfwTerminate();
++			return;
++		}
++		//
++		Renderer* (*rendererCreateInstance)() = (Renderer*(*)())dlsym(rendererLibraryHandle, "createInstance");
++		//
++		if (rendererCreateInstance == nullptr) {
++			Console::println("Application::run(): Could not find renderer library createInstance() entry point");
++			glfwTerminate();
++			return;
++		}
++		//
++		renderer = (Renderer*)rendererCreateInstance();
++		if (renderer == nullptr) {
++			Console::println("Application::run(): Could not create renderer");
++			glfwTerminate();
++			return;
++		}
++	#endif
+ 
+ 	// window hints
+ 	if ((windowHints & WINDOW_HINT_NOTRESIZEABLE) == WINDOW_HINT_NOTRESIZEABLE) glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+diff --git a/src/tdme/application/Application.h b/src/tdme/application/Application.h
+index f97567880..271ec80ca 100644
+--- a/src/tdme/application/Application.h
++++ b/src/tdme/application/Application.h
+@@ -308,9 +308,9 @@ public:
+ 	virtual void onClose();
+ 
+ private:
+-	static Renderer* renderer;
+-	static Application* application;
+-	static InputEventHandler* inputEventHandler;
++	STATIC_DLL_IMPEXT static Renderer* renderer;
++	STATIC_DLL_IMPEXT static Application* application;
++	STATIC_DLL_IMPEXT static InputEventHandler* inputEventHandler;
+ 	int windowHints { WINDOW_HINT_NONE };
+ 	string executableFileName;
+ 	bool debuggingEnabled { false };
+@@ -320,16 +320,16 @@ private:
+ 	int windowXPosition { -1 };
+ 	int windowYPosition { -1 };
+ 	bool fullScreen { false };
+-	static int64_t timeLast;
+-	static bool limitFPS;
++	STATIC_DLL_IMPEXT static int64_t timeLast;
++	STATIC_DLL_IMPEXT static bool limitFPS;
+ 	string title;
+ 	int exitCode { 0 };
+ 
+-	static GLFWwindow* glfwWindow;
+-	static array<unsigned int, 10> glfwMouseButtonDownFrames;
+-	static int glfwMouseButtonLast;
+-	static bool glfwCapsLockEnabled;
+-	static GLFWcursor* glfwHandCursor;
++	STATIC_DLL_IMPEXT static GLFWwindow* glfwWindow;
++	STATIC_DLL_IMPEXT static array<unsigned int, 10> glfwMouseButtonDownFrames;
++	STATIC_DLL_IMPEXT static int glfwMouseButtonLast;
++	STATIC_DLL_IMPEXT static bool glfwCapsLockEnabled;
++	STATIC_DLL_IMPEXT static GLFWcursor* glfwHandCursor;
+ 
+ 	/**
+ 	 * Set application icon
+diff --git a/src/tdme/audio/Audio.h b/src/tdme/audio/Audio.h
+index e4564a7b8..dbd02ab24 100644
+--- a/src/tdme/audio/Audio.h
++++ b/src/tdme/audio/Audio.h
+@@ -35,7 +35,7 @@ class tdme::audio::Audio final
+ private:
+ 	static constexpr int32_t ALBUFFERID_NONE { -1 };
+ 	static constexpr int32_t ALSOURCEID_NONE { -1 };
+-	static Audio* instance;
++	STATIC_DLL_IMPEXT static Audio* instance;
+ 
+ 	ALCdevice* device { nullptr };
+ 	ALCcontext* context { nullptr };
+diff --git a/src/tdme/engine/Camera.h b/src/tdme/engine/Camera.h
+index 0c71458a5..a90715135 100644
+--- a/src/tdme/engine/Camera.h
++++ b/src/tdme/engine/Camera.h
+@@ -25,7 +25,7 @@ public:
+ 	enum CameraMode { CAMERAMODE_LOOKAT, CAMERAMODE_NONE };
+ 
+ private:
+-	static Vector3 defaultUp;
++	STATIC_DLL_IMPEXT static Vector3 defaultUp;
+ 	Renderer* renderer { nullptr };
+ 	int32_t width;
+ 	int32_t height;
+diff --git a/src/tdme/engine/Engine.cpp b/src/tdme/engine/Engine.cpp
+index 4d7a3dd16..3703877b8 100644
+--- a/src/tdme/engine/Engine.cpp
++++ b/src/tdme/engine/Engine.cpp
+@@ -729,10 +729,16 @@ void Engine::initialize()
+ 	// create partition
+ 	partition = new OctTreePartition();
+ 
++	//
++	Console::println("b: " + to_string((uint64_t)lightingShader));
++
+ 	// create lighting shader
+ 	lightingShader = new LightingShader(renderer);
+ 	lightingShader->initialize();
+ 
++	//
++	Console::println("c: " + to_string((uint64_t)lightingShader));
++
+ 	// create particles shader
+ 	particlesShader = new ParticlesShader(this, renderer);
+ 	particlesShader->initialize();
+diff --git a/src/tdme/engine/Engine.h b/src/tdme/engine/Engine.h
+index 16fe7d702..9b9a58ce5 100644
+--- a/src/tdme/engine/Engine.h
++++ b/src/tdme/engine/Engine.h
+@@ -174,42 +174,42 @@ public:
+ 	static constexpr int ENGINETHREADSQUEUE_COMPUTE_DISPATCH_COUNT { 5 };
+ 
+ protected:
+-	static Engine* currentEngine;
++	STATIC_DLL_IMPEXT static Engine* currentEngine;
+ 
+ private:
+-	static Engine* instance;
+-	static Renderer* renderer;
+-
+-	static TextureManager* textureManager;
+-	static VBOManager* vboManager;
+-	static MeshManager* meshManager;
+-	static GUIRenderer* guiRenderer;
+-
+-	static AnimationProcessingTarget animationProcessingTarget;
+-
+-	static EZRShader* ezrShader;
+-	static ShadowMapCreationShader* shadowMappingShaderPre;
+-	static ShadowMapRenderShader* shadowMappingShaderRender;
+-	static LightingShader* lightingShader;
+-	static ParticlesShader* particlesShader;
+-	static LinesShader* linesShader;
+-	static SkinningShader* skinningShader;
+-	static GUIShader* guiShader;
+-	static FrameBufferRenderShader* frameBufferRenderShader;
+-	static DeferredLightingRenderShader* deferredLightingRenderShader;
+-	static PostProcessing* postProcessing;
+-	static PostProcessingShader* postProcessingShader;
+-	static Texture2DRenderShader* texture2DRenderShader;
+-	static int threadCount;
+-	static bool have4K;
+-	static float animationBlendingTime;
+-	static int32_t shadowMapWidth;
+-	static int32_t shadowMapHeight;
+-	static int32_t shadowMapRenderLookUps;
+-	static int32_t environmentMappingWidth;
+-	static int32_t environmentMappingHeight;
+-	static float transformationsComputingReduction1Distance;
+-	static float transformationsComputingReduction2Distance;
++	STATIC_DLL_IMPEXT static Engine* instance;
++	STATIC_DLL_IMPEXT static Renderer* renderer;
++
++	STATIC_DLL_IMPEXT static TextureManager* textureManager;
++	STATIC_DLL_IMPEXT static VBOManager* vboManager;
++	STATIC_DLL_IMPEXT static MeshManager* meshManager;
++	STATIC_DLL_IMPEXT static GUIRenderer* guiRenderer;
++
++	STATIC_DLL_IMPEXT static AnimationProcessingTarget animationProcessingTarget;
++
++	STATIC_DLL_IMPEXT static EZRShader* ezrShader;
++	STATIC_DLL_IMPEXT static ShadowMapCreationShader* shadowMappingShaderPre;
++	STATIC_DLL_IMPEXT static ShadowMapRenderShader* shadowMappingShaderRender;
++	STATIC_DLL_IMPEXT static LightingShader* lightingShader;
++	STATIC_DLL_IMPEXT static ParticlesShader* particlesShader;
++	STATIC_DLL_IMPEXT static LinesShader* linesShader;
++	STATIC_DLL_IMPEXT static SkinningShader* skinningShader;
++	STATIC_DLL_IMPEXT static GUIShader* guiShader;
++	STATIC_DLL_IMPEXT static FrameBufferRenderShader* frameBufferRenderShader;
++	STATIC_DLL_IMPEXT static DeferredLightingRenderShader* deferredLightingRenderShader;
++	STATIC_DLL_IMPEXT static PostProcessing* postProcessing;
++	STATIC_DLL_IMPEXT static PostProcessingShader* postProcessingShader;
++	STATIC_DLL_IMPEXT static Texture2DRenderShader* texture2DRenderShader;
++	STATIC_DLL_IMPEXT static int threadCount;
++	STATIC_DLL_IMPEXT static bool have4K;
++	STATIC_DLL_IMPEXT static float animationBlendingTime;
++	STATIC_DLL_IMPEXT static int32_t shadowMapWidth;
++	STATIC_DLL_IMPEXT static int32_t shadowMapHeight;
++	STATIC_DLL_IMPEXT static int32_t shadowMapRenderLookUps;
++	STATIC_DLL_IMPEXT static int32_t environmentMappingWidth;
++	STATIC_DLL_IMPEXT static int32_t environmentMappingHeight;
++	STATIC_DLL_IMPEXT static float transformationsComputingReduction1Distance;
++	STATIC_DLL_IMPEXT static float transformationsComputingReduction2Distance;
+ 
+ 	struct Shader {
+ 		ShaderType type;
+@@ -217,7 +217,7 @@ private:
+ 		map<string, ShaderParameter> parameterDefaults;
+ 	};
+ 
+-	static map<string, Shader> shaders;
++	STATIC_DLL_IMPEXT static map<string, Shader> shaders;
+ 
+ 	struct DecomposedEntities {
+ 		vector<Entity*> noFrustumCullingEntities;
+@@ -238,7 +238,7 @@ private:
+ 		vector<Object3D*> needsComputeTransformationsEntities;
+ 	};
+ 
+-	static unordered_map<string, uint8_t> uniqueShaderIds;
++	STATIC_DLL_IMPEXT static unordered_map<string, uint8_t> uniqueShaderIds;
+ 
+ 	int32_t width { -1 };
+ 	int32_t height { -1 };
+@@ -273,7 +273,7 @@ private:
+ 
+ 	EntityRenderer* entityRenderer { nullptr };
+ 
+-	static bool skinningShaderEnabled;
++	STATIC_DLL_IMPEXT static bool skinningShaderEnabled;
+ 	bool shadowMappingEnabled;
+ 	bool renderingInitiated;
+ 	bool renderingComputedTransformations;
+@@ -372,9 +372,9 @@ private:
+ 
+ 	};
+ 
+-	static vector<EngineThread*> engineThreads;
+-	static Queue<EngineThreadQueueElement>* engineThreadsQueue;
+-	static EngineThreadQueueElementPool engineThreadQueueElementPool;
++	STATIC_DLL_IMPEXT static vector<EngineThread*> engineThreads;
++	STATIC_DLL_IMPEXT static Queue<EngineThreadQueueElement>* engineThreadsQueue;
++	STATIC_DLL_IMPEXT static EngineThreadQueueElementPool engineThreadQueueElementPool;
+ 
+ 	/**
+ 	 * @return mesh manager
+diff --git a/src/tdme/engine/EngineGL2Renderer.cpp b/src/tdme/engine/EngineGL2Renderer.cpp
+index 0f3a80396..e4f07d9e3 100644
+--- a/src/tdme/engine/EngineGL2Renderer.cpp
++++ b/src/tdme/engine/EngineGL2Renderer.cpp
+@@ -31,7 +31,6 @@ using tdme::gui::renderer::GUIShader;
+ 
+ EngineGL2Renderer::EngineGL2Renderer()
+ {
+-	engine = Engine::getInstance();
+ }
+ 
+ bool EngineGL2Renderer::prepareWindowSystemRendererContext(int tryIdx) {
+diff --git a/src/tdme/engine/EngineGL2Renderer.h b/src/tdme/engine/EngineGL2Renderer.h
+index 37ef38517..a7853fca6 100644
+--- a/src/tdme/engine/EngineGL2Renderer.h
++++ b/src/tdme/engine/EngineGL2Renderer.h
+@@ -37,6 +37,4 @@ public:
+ 	void onUpdateShader(int contextIdx) override;
+ 	void onUpdateShaderParameters(int contextIdx) override;
+ 
+-private:
+-	Engine* engine { nullptr };
+ };
+diff --git a/src/tdme/engine/EngineGL3Renderer.cpp b/src/tdme/engine/EngineGL3Renderer.cpp
+index cbaf09814..430074177 100644
+--- a/src/tdme/engine/EngineGL3Renderer.cpp
++++ b/src/tdme/engine/EngineGL3Renderer.cpp
+@@ -31,7 +31,7 @@ using tdme::gui::renderer::GUIShader;
+ 
+ EngineGL3Renderer::EngineGL3Renderer()
+ {
+-	engine = Engine::getInstance();
++	Console::println("a': " + to_string((uint64_t)Engine::lightingShader));
+ }
+ 
+ bool EngineGL3Renderer::prepareWindowSystemRendererContext(int tryIdx) {
+@@ -121,6 +121,10 @@ void EngineGL3Renderer::onUpdateModelViewMatrix(int contextIdx)
+ 
+ void EngineGL3Renderer::onBindTexture(int contextIdx, int32_t textureId)
+ {
++	//
++	Console::println("d: " + to_string((uint64_t)Engine::lightingShader));
++	Console::println("d': " + to_string((uint64_t)Engine::getLightingShader()));
++
+ 	if (Engine::lightingShader != nullptr)
+ 		Engine::lightingShader->bindTexture(contextIdx, textureId);
+ 
+diff --git a/src/tdme/engine/EngineGL3Renderer.h b/src/tdme/engine/EngineGL3Renderer.h
+index fbd80c3fb..b0608bf44 100644
+--- a/src/tdme/engine/EngineGL3Renderer.h
++++ b/src/tdme/engine/EngineGL3Renderer.h
+@@ -37,6 +37,4 @@ public:
+ 	void onUpdateShader(int contextIdx) override;
+ 	void onUpdateShaderParameters(int contextIdx) override;
+ 
+-private:
+-	Engine* engine { nullptr };
+ };
+diff --git a/src/tdme/engine/EngineGLES2Renderer.cpp b/src/tdme/engine/EngineGLES2Renderer.cpp
+index 869674663..8871252bb 100644
+--- a/src/tdme/engine/EngineGLES2Renderer.cpp
++++ b/src/tdme/engine/EngineGLES2Renderer.cpp
+@@ -23,7 +23,6 @@ using tdme::gui::renderer::GUIShader;
+ 
+ EngineGLES2Renderer::EngineGLES2Renderer()
+ {
+-	engine = Engine::getInstance();
+ }
+ 
+ bool EngineGLES2Renderer::prepareWindowSystemRendererContext(int tryIdx) {
+diff --git a/src/tdme/engine/EngineGLES2Renderer.h b/src/tdme/engine/EngineGLES2Renderer.h
+index ecc584139..2c9d58712 100644
+--- a/src/tdme/engine/EngineGLES2Renderer.h
++++ b/src/tdme/engine/EngineGLES2Renderer.h
+@@ -34,6 +34,4 @@ public:
+ 	void onUpdateShader(int contextIdx) override;
+ 	void onUpdateShaderParameters(int contextIdx) override;
+ 
+-private:
+-	Engine* engine { nullptr };
+ };
+diff --git a/src/tdme/engine/EngineVKRenderer.cpp b/src/tdme/engine/EngineVKRenderer.cpp
+index 2b2b79397..69d4d726b 100644
+--- a/src/tdme/engine/EngineVKRenderer.cpp
++++ b/src/tdme/engine/EngineVKRenderer.cpp
+@@ -25,7 +25,6 @@ using tdme::utilities::Console;
+ 
+ EngineVKRenderer::EngineVKRenderer()
+ {
+-	engine = Engine::getInstance();
+ }
+ 
+ bool EngineVKRenderer::prepareWindowSystemRendererContext(int tryIdx) {
+diff --git a/src/tdme/engine/EngineVKRenderer.h b/src/tdme/engine/EngineVKRenderer.h
+index 79c575a2f..99c8e6026 100644
+--- a/src/tdme/engine/EngineVKRenderer.h
++++ b/src/tdme/engine/EngineVKRenderer.h
+@@ -37,6 +37,4 @@ public:
+ 	void onUpdateShader(int contextIdx) override;
+ 	void onUpdateShaderParameters(int contextIdx) override;
+ 
+-private:
+-	Engine* engine { nullptr };
+ };
+diff --git a/src/tdme/engine/Rotation.h b/src/tdme/engine/Rotation.h
+index db9c07675..646dcfd83 100644
+--- a/src/tdme/engine/Rotation.h
++++ b/src/tdme/engine/Rotation.h
+@@ -18,9 +18,9 @@ class tdme::engine::Rotation final
+ {
+ 
+ public:
+-	static Vector3 X_AXIS;
+-	static Vector3 Y_AXIS;
+-	static Vector3 Z_AXIS;
++	STATIC_DLL_IMPEXT static Vector3 X_AXIS;
++	STATIC_DLL_IMPEXT static Vector3 Y_AXIS;
++	STATIC_DLL_IMPEXT static Vector3 Z_AXIS;
+ 
+ private:
+ 	float angle;
+diff --git a/src/tdme/engine/SceneConnector.h b/src/tdme/engine/SceneConnector.h
+index 58b8276dd..d0bfdb454 100644
+--- a/src/tdme/engine/SceneConnector.h
++++ b/src/tdme/engine/SceneConnector.h
+@@ -42,16 +42,16 @@ public:
+ 	static constexpr int32_t RIGIDBODY_TYPEID_COLLISION { 4 };
+ 	static constexpr int32_t RIGIDBODY_TYPEID_TRIGGER { 8 };
+ 
+-	static float renderGroupsPartitionWidth;
+-	static float renderGroupsPartitionHeight;
+-	static float renderGroupsPartitionDepth;
+-	static int renderGroupsReduceBy;
+-	static int renderGroupsLODLevels;
+-	static float renderGroupsLOD2MinDistance;
+-	static float renderGroupsLOD3MinDistance;
+-	static int renderGroupsLOD2ReduceBy;
+-	static int renderGroupsLOD3ReduceBy;
+-	static bool enableEarlyZRejection;
++	STATIC_DLL_IMPEXT static float renderGroupsPartitionWidth;
++	STATIC_DLL_IMPEXT static float renderGroupsPartitionHeight;
++	STATIC_DLL_IMPEXT static float renderGroupsPartitionDepth;
++	STATIC_DLL_IMPEXT static int renderGroupsReduceBy;
++	STATIC_DLL_IMPEXT static int renderGroupsLODLevels;
++	STATIC_DLL_IMPEXT static float renderGroupsLOD2MinDistance;
++	STATIC_DLL_IMPEXT static float renderGroupsLOD3MinDistance;
++	STATIC_DLL_IMPEXT static int renderGroupsLOD2ReduceBy;
++	STATIC_DLL_IMPEXT static int renderGroupsLOD3ReduceBy;
++	STATIC_DLL_IMPEXT static bool enableEarlyZRejection;
+ 
+ public:
+ 
+@@ -347,5 +347,5 @@ public:
+ 	static void addSounds(Audio* audio, Prototype* prototype, const string& id, const int poolSize = 1);
+ 
+ private:
+-	static Model* emptyModel;
++	STATIC_DLL_IMPEXT static Model* emptyModel;
+ };
+diff --git a/src/tdme/engine/Version.h b/src/tdme/engine/Version.h
+index 9128d35ae..ed78dd0d3 100644
+--- a/src/tdme/engine/Version.h
++++ b/src/tdme/engine/Version.h
+@@ -19,7 +19,7 @@ public:
+ 	 * @return version
+ 	 */
+ 	inline static string getVersion() {
+-		return "1.9.113";
++		return "1.9.114";
+ 	}
+ 
+ 	/**
+diff --git a/src/tdme/engine/fileio/models/DAEReader.h b/src/tdme/engine/fileio/models/DAEReader.h
+index 7c4dca442..3b15df4e2 100644
+--- a/src/tdme/engine/fileio/models/DAEReader.h
++++ b/src/tdme/engine/fileio/models/DAEReader.h
+@@ -40,7 +40,7 @@ class tdme::engine::fileio::models::DAEReader final
+ {
+ 
+ private:
+-	static const Color4 BLENDER_AMBIENT_NONE;
++	STATIC_DLL_IMPEXT static const Color4 BLENDER_AMBIENT_NONE;
+ 	static constexpr float BLENDER_AMBIENT_FROM_DIFFUSE_SCALE { 0.7f };
+ 	static constexpr float BLENDER_DIFFUSE_SCALE { 0.8f };
+ 
+diff --git a/src/tdme/engine/fileio/models/FBXReader.h b/src/tdme/engine/fileio/models/FBXReader.h
+index 34cabcd04..6ea6ada67 100644
+--- a/src/tdme/engine/fileio/models/FBXReader.h
++++ b/src/tdme/engine/fileio/models/FBXReader.h
+@@ -40,7 +40,7 @@ public:
+ 	static Model* read(const string& pathName, const string& fileName) throw (ModelFileIOException, FileSystemException);
+ 
+ private:
+-	static const Color4 BLENDER_AMBIENT_NONE;
++	STATIC_DLL_IMPEXT static const Color4 BLENDER_AMBIENT_NONE;
+ 	static constexpr float BLENDER_AMBIENT_FROM_DIFFUSE_SCALE { 0.7f };
+ 	static constexpr float BLENDER_DIFFUSE_SCALE { 0.8f };
+ 
+diff --git a/src/tdme/engine/fileio/models/ModelReader.h b/src/tdme/engine/fileio/models/ModelReader.h
+index 7695e6b6e..9832a56a9 100644
+--- a/src/tdme/engine/fileio/models/ModelReader.h
++++ b/src/tdme/engine/fileio/models/ModelReader.h
+@@ -26,7 +26,7 @@ using tdme::os::filesystem::FileSystemException;
+ class tdme::engine::fileio::models::ModelReader final
+ {
+ private:
+-	static vector<string> extensions;
++	STATIC_DLL_IMPEXT static vector<string> extensions;
+ public:
+ 	/**
+ 	 * Get supported model extensions
+diff --git a/src/tdme/engine/fileio/prototypes/PrototypeReader.h b/src/tdme/engine/fileio/prototypes/PrototypeReader.h
+index 088d8cc3a..128a8ad1d 100644
+--- a/src/tdme/engine/fileio/prototypes/PrototypeReader.h
++++ b/src/tdme/engine/fileio/prototypes/PrototypeReader.h
+@@ -34,7 +34,7 @@ class tdme::engine::fileio::prototypes::PrototypeReader final
+ {
+ 	friend class tdme::engine::fileio::scenes::SceneReader;
+ 
+-	static vector<string> extensions;
++	STATIC_DLL_IMPEXT static vector<string> extensions;
+ 
+ public:
+ 	/**
+diff --git a/src/tdme/engine/fileio/textures/TextureReader.h b/src/tdme/engine/fileio/textures/TextureReader.h
+index f702633b2..ae1d5c825 100644
+--- a/src/tdme/engine/fileio/textures/TextureReader.h
++++ b/src/tdme/engine/fileio/textures/TextureReader.h
+@@ -149,9 +149,9 @@ private:
+ 	static void scaleTextureLine(ByteBuffer* pixelByteBuffer, ByteBuffer* pixelByteBufferScaled, int width, int textureWidth, int bytesPerPixel, int y);
+ 
+ 	//
+-	static vector<string> extensions;
++	STATIC_DLL_IMPEXT static vector<string> extensions;
+ 
+ 	// maybe have a read write lock here for texture cache, but currently I have no multithreaded access to it
+-	static map<string, Texture*>* textureCache;
+-	static Mutex* textureCacheMutex;
++	STATIC_DLL_IMPEXT static map<string, Texture*>* textureCache;
++	STATIC_DLL_IMPEXT static Mutex* textureCacheMutex;
+ };
+diff --git a/src/tdme/engine/model/Material.h b/src/tdme/engine/model/Material.h
+index 3212aa423..a2f648734 100644
+--- a/src/tdme/engine/model/Material.h
++++ b/src/tdme/engine/model/Material.h
+@@ -20,8 +20,8 @@ using tdme::math::Matrix2D3x3;
+ class tdme::engine::model::Material final
+ {
+ private:
+-	static string defaultMaterialId;
+-	static Material* defaultMaterial;
++	STATIC_DLL_IMPEXT static string defaultMaterialId;
++	STATIC_DLL_IMPEXT static Material* defaultMaterial;
+ 
+ public:
+ 
+diff --git a/src/tdme/engine/model/Model.h b/src/tdme/engine/model/Model.h
+index 48a02e4c6..4c980d7a4 100644
+--- a/src/tdme/engine/model/Model.h
++++ b/src/tdme/engine/model/Model.h
+@@ -35,9 +35,9 @@ class tdme::engine::model::Model final
+ public:
+ 	enum AuthoringTool {AUTHORINGTOOL_UNKNOWN, AUTHORINGTOOL_BLENDER};
+ 
+-	static string ANIMATIONSETUP_DEFAULT;
+-	static constexpr float FPS_DEFAULT { 30.0f };
+-	static uint32_t uidCounter;
++	STATIC_DLL_IMPEXT static string ANIMATIONSETUP_DEFAULT;
++	STATIC_DLL_IMPEXT static constexpr float FPS_DEFAULT { 30.0f };
++	STATIC_DLL_IMPEXT static uint32_t uidCounter;
+ 
+ private:
+ 	AuthoringTool authoringTool;
+diff --git a/src/tdme/engine/model/RotationOrder.h b/src/tdme/engine/model/RotationOrder.h
+index e1381a166..a7954908f 100644
+--- a/src/tdme/engine/model/RotationOrder.h
++++ b/src/tdme/engine/model/RotationOrder.h
+@@ -22,9 +22,9 @@ class tdme::engine::model::RotationOrder final
+ 	: public Enum
+ {
+ public:
+-	static RotationOrder *XYZ;
+-	static RotationOrder *YZX;
+-	static RotationOrder *ZYX;
++	STATIC_DLL_IMPEXT static RotationOrder *XYZ;
++	STATIC_DLL_IMPEXT static RotationOrder *YZX;
++	STATIC_DLL_IMPEXT static RotationOrder *ZYX;
+ 
+ private:
+ 	Vector3 axis0;
+diff --git a/src/tdme/engine/model/ShaderModel.h b/src/tdme/engine/model/ShaderModel.h
+index d1e3c5d42..03ad80ab7 100644
+--- a/src/tdme/engine/model/ShaderModel.h
++++ b/src/tdme/engine/model/ShaderModel.h
+@@ -20,8 +20,8 @@ class tdme::engine::model::ShaderModel final: public Enum
+ 	friend class Model;
+ 
+ public:
+-	static ShaderModel* SPECULAR;
+-	static ShaderModel* PBR;
++	STATIC_DLL_IMPEXT static ShaderModel* SPECULAR;
++	STATIC_DLL_IMPEXT static ShaderModel* PBR;
+ 
+ public:
+ 	ShaderModel(const string& name, int ordinal);
+diff --git a/src/tdme/engine/model/UpVector.h b/src/tdme/engine/model/UpVector.h
+index 1e1696922..924588e4a 100644
+--- a/src/tdme/engine/model/UpVector.h
++++ b/src/tdme/engine/model/UpVector.h
+@@ -21,8 +21,8 @@ class tdme::engine::model::UpVector final
+ 	friend class Model;
+ 
+ public:
+-	static UpVector* Y_UP;
+-	static UpVector* Z_UP;
++	STATIC_DLL_IMPEXT static UpVector* Y_UP;
++	STATIC_DLL_IMPEXT static UpVector* Z_UP;
+ 
+ public:
+ 	UpVector(const string& name, int ordinal);
+diff --git a/src/tdme/engine/primitives/BoundingBox.h b/src/tdme/engine/primitives/BoundingBox.h
+index 37b84b034..51b35a098 100644
+--- a/src/tdme/engine/primitives/BoundingBox.h
++++ b/src/tdme/engine/primitives/BoundingBox.h
+@@ -25,19 +25,19 @@ class tdme::engine::primitives::BoundingBox
+ {
+ 
+ private:
+-	static const array<int32_t, 3> FACE0_INDICES;
+-	static const array<int32_t, 3> FACE1_INDICES;
+-	static const array<int32_t, 3> FACE2_INDICES;
+-	static const array<int32_t, 3> FACE3_INDICES;
+-	static const array<int32_t, 3> FACE4_INDICES;
+-	static const array<int32_t, 3> FACE5_INDICES;
+-	static const array<int32_t, 3> FACE6_INDICES;
+-	static const array<int32_t, 3> FACE7_INDICES;
+-	static const array<int32_t, 3> FACE8_INDICES;
+-	static const array<int32_t, 3> FACE9_INDICES;
+-	static const array<int32_t, 3> FACE10_INDICES;
+-	static const array<int32_t, 3> FACE11_INDICES;
+-	static const array<array<int32_t,3>,12> facesVerticesIndexes;
++	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE0_INDICES;
++	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE1_INDICES;
++	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE2_INDICES;
++	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE3_INDICES;
++	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE4_INDICES;
++	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE5_INDICES;
++	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE6_INDICES;
++	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE7_INDICES;
++	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE8_INDICES;
++	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE9_INDICES;
++	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE10_INDICES;
++	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE11_INDICES;
++	STATIC_DLL_IMPEXT static const array<array<int32_t,3>,12> facesVerticesIndexes;
+ 	Vector3 min;
+ 	Vector3 max;
+ 	vector<Vector3> vertices;
+diff --git a/src/tdme/engine/primitives/OrientedBoundingBox.h b/src/tdme/engine/primitives/OrientedBoundingBox.h
+index 912535e6e..cb756b3d8 100644
+--- a/src/tdme/engine/primitives/OrientedBoundingBox.h
++++ b/src/tdme/engine/primitives/OrientedBoundingBox.h
+@@ -22,24 +22,24 @@ class tdme::engine::primitives::OrientedBoundingBox final
+ 	: public BoundingVolume
+ {
+ private:
+-	static const array<int32_t, 3> FACE0_INDICES;
+-	static const array<int32_t, 3> FACE1_INDICES;
+-	static const array<int32_t, 3> FACE2_INDICES;
+-	static const array<int32_t, 3> FACE3_INDICES;
+-	static const array<int32_t, 3> FACE4_INDICES;
+-	static const array<int32_t, 3> FACE5_INDICES;
+-	static const array<int32_t, 3> FACE6_INDICES;
+-	static const array<int32_t, 3> FACE7_INDICES;
+-	static const array<int32_t, 3> FACE8_INDICES;
+-	static const array<int32_t, 3> FACE9_INDICES;
+-	static const array<int32_t, 3> FACE10_INDICES;
+-	static const array<int32_t, 3> FACE11_INDICES;
+-	static const array<array<int32_t,3>,12> facesVerticesIndexes;
++	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE0_INDICES;
++	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE1_INDICES;
++	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE2_INDICES;
++	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE3_INDICES;
++	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE4_INDICES;
++	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE5_INDICES;
++	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE6_INDICES;
++	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE7_INDICES;
++	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE8_INDICES;
++	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE9_INDICES;
++	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE10_INDICES;
++	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE11_INDICES;
++	STATIC_DLL_IMPEXT static const array<array<int32_t,3>,12> facesVerticesIndexes;
+ 
+ public:
+-	static const Vector3 AABB_AXIS_X;
+-	static const Vector3 AABB_AXIS_Y;
+-	static const Vector3 AABB_AXIS_Z;
++	STATIC_DLL_IMPEXT static const Vector3 AABB_AXIS_X;
++	STATIC_DLL_IMPEXT static const Vector3 AABB_AXIS_Y;
++	STATIC_DLL_IMPEXT static const Vector3 AABB_AXIS_Z;
+ 
+ public:
+ 	/**
+diff --git a/src/tdme/engine/prototype/PrototypeParticleSystem_Emitter.h b/src/tdme/engine/prototype/PrototypeParticleSystem_Emitter.h
+index daa353e9c..b7593492e 100644
+--- a/src/tdme/engine/prototype/PrototypeParticleSystem_Emitter.h
++++ b/src/tdme/engine/prototype/PrototypeParticleSystem_Emitter.h
+@@ -16,12 +16,12 @@ using tdme::utilities::Enum;
+  */
+ class tdme::engine::prototype::PrototypeParticleSystem_Emitter final: public Enum {
+ public:
+-	static PrototypeParticleSystem_Emitter* NONE;
+-	static PrototypeParticleSystem_Emitter* POINT_PARTICLE_EMITTER;
+-	static PrototypeParticleSystem_Emitter* BOUNDINGBOX_PARTICLE_EMITTER;
+-	static PrototypeParticleSystem_Emitter* CIRCLE_PARTICLE_EMITTER;
+-	static PrototypeParticleSystem_Emitter* CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY;
+-	static PrototypeParticleSystem_Emitter* SPHERE_PARTICLE_EMITTER;
++	STATIC_DLL_IMPEXT static PrototypeParticleSystem_Emitter* NONE;
++	STATIC_DLL_IMPEXT static PrototypeParticleSystem_Emitter* POINT_PARTICLE_EMITTER;
++	STATIC_DLL_IMPEXT static PrototypeParticleSystem_Emitter* BOUNDINGBOX_PARTICLE_EMITTER;
++	STATIC_DLL_IMPEXT static PrototypeParticleSystem_Emitter* CIRCLE_PARTICLE_EMITTER;
++	STATIC_DLL_IMPEXT static PrototypeParticleSystem_Emitter* CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY;
++	STATIC_DLL_IMPEXT static PrototypeParticleSystem_Emitter* SPHERE_PARTICLE_EMITTER;
+ 
+ 	/**
+ 	 * Public constructor
+diff --git a/src/tdme/engine/prototype/PrototypeParticleSystem_Type.h b/src/tdme/engine/prototype/PrototypeParticleSystem_Type.h
+index bac916495..1af936325 100644
+--- a/src/tdme/engine/prototype/PrototypeParticleSystem_Type.h
++++ b/src/tdme/engine/prototype/PrototypeParticleSystem_Type.h
+@@ -17,10 +17,10 @@ using tdme::utilities::Enum;
+ class tdme::engine::prototype::PrototypeParticleSystem_Type final: public Enum
+ {
+ public:
+-	static PrototypeParticleSystem_Type* NONE;
+-	static PrototypeParticleSystem_Type* OBJECT_PARTICLE_SYSTEM;
+-	static PrototypeParticleSystem_Type* POINT_PARTICLE_SYSTEM;
+-	static PrototypeParticleSystem_Type* FOG_PARTICLE_SYSTEM;
++	STATIC_DLL_IMPEXT static PrototypeParticleSystem_Type* NONE;
++	STATIC_DLL_IMPEXT static PrototypeParticleSystem_Type* OBJECT_PARTICLE_SYSTEM;
++	STATIC_DLL_IMPEXT static PrototypeParticleSystem_Type* POINT_PARTICLE_SYSTEM;
++	STATIC_DLL_IMPEXT static PrototypeParticleSystem_Type* FOG_PARTICLE_SYSTEM;
+ 
+ 	/**
+ 	 * Public constructor
+diff --git a/src/tdme/engine/prototype/PrototypePhysics_BodyType.h b/src/tdme/engine/prototype/PrototypePhysics_BodyType.h
+index a47c4d2b9..8b5207d23 100644
+--- a/src/tdme/engine/prototype/PrototypePhysics_BodyType.h
++++ b/src/tdme/engine/prototype/PrototypePhysics_BodyType.h
+@@ -19,10 +19,10 @@ using tdme::engine::prototype::PrototypePhysics_BodyType;
+ class tdme::engine::prototype::PrototypePhysics_BodyType final: public Enum
+ {
+ public:
+-	static PrototypePhysics_BodyType* NONE;
+-	static PrototypePhysics_BodyType* COLLISION_BODY;
+-	static PrototypePhysics_BodyType* DYNAMIC_RIGIDBODY;
+-	static PrototypePhysics_BodyType* STATIC_RIGIDBODY;
++	STATIC_DLL_IMPEXT static PrototypePhysics_BodyType* NONE;
++	STATIC_DLL_IMPEXT static PrototypePhysics_BodyType* COLLISION_BODY;
++	STATIC_DLL_IMPEXT static PrototypePhysics_BodyType* DYNAMIC_RIGIDBODY;
++	STATIC_DLL_IMPEXT static PrototypePhysics_BodyType* STATIC_RIGIDBODY;
+ 
+ 	/**
+ 	 * Public constructor
+diff --git a/src/tdme/engine/prototype/Prototype_Type.h b/src/tdme/engine/prototype/Prototype_Type.h
+index 44c1f2ae4..43b6e5faa 100644
+--- a/src/tdme/engine/prototype/Prototype_Type.h
++++ b/src/tdme/engine/prototype/Prototype_Type.h
+@@ -25,12 +25,12 @@ private:
+ 	Vector3 nonEditScaleDownModeDimension;
+ 
+ public:
+-	static Prototype_Type* EMPTY;
+-	static Prototype_Type* MODEL;
+-	static Prototype_Type* PARTICLESYSTEM;
+-	static Prototype_Type* TRIGGER;
+-	static Prototype_Type* ENVIRONMENTMAPPING;
+-	static Prototype_Type* TERRAIN;
++	STATIC_DLL_IMPEXT static Prototype_Type* EMPTY;
++	STATIC_DLL_IMPEXT static Prototype_Type* MODEL;
++	STATIC_DLL_IMPEXT static Prototype_Type* PARTICLESYSTEM;
++	STATIC_DLL_IMPEXT static Prototype_Type* TRIGGER;
++	STATIC_DLL_IMPEXT static Prototype_Type* ENVIRONMENTMAPPING;
++	STATIC_DLL_IMPEXT static Prototype_Type* TERRAIN;
+ 
+ 	/**
+ 	 * Public constructor
+diff --git a/src/tdme/engine/scene/ScenePropertyPresets.h b/src/tdme/engine/scene/ScenePropertyPresets.h
+index b13971b3e..73a67735a 100644
+--- a/src/tdme/engine/scene/ScenePropertyPresets.h
++++ b/src/tdme/engine/scene/ScenePropertyPresets.h
+@@ -38,7 +38,7 @@ private:
+ 	vector<BaseProperty*> scenePropertiesPreset;
+ 	map<string, vector<BaseProperty*>> entityPropertiesPresets;
+ 	map<string, SceneLight*> lightPresets;
+-	static ScenePropertyPresets* instance;
++	STATIC_DLL_IMPEXT static ScenePropertyPresets* instance;
+ 
+ public:
+ 	/**
+diff --git a/src/tdme/engine/subsystems/environmentmapping/EnvironmentMappingRenderer.h b/src/tdme/engine/subsystems/environmentmapping/EnvironmentMappingRenderer.h
+index b535982a0..3093765d4 100644
+--- a/src/tdme/engine/subsystems/environmentmapping/EnvironmentMappingRenderer.h
++++ b/src/tdme/engine/subsystems/environmentmapping/EnvironmentMappingRenderer.h
+@@ -46,7 +46,7 @@ private:
+ 	int64_t timeRenderLast { -1LL };
+ 	int reflectionCubeMapTextureIdx { 0 };
+ 	int renderCubeMapTextureIdx { 0 };
+-	static GeometryBuffer* geometryBuffer;
++	STATIC_DLL_IMPEXT static GeometryBuffer* geometryBuffer;
+ 	int64_t timeRenderUpdateFrequency { 100LL };
+ 	int32_t renderPassMask { Entity::RENDERPASS_ALL - Entity::RENDERPASS_WATER };
+ 	Engine::DecomposedEntities visibleDecomposedEntities;
+diff --git a/src/tdme/engine/subsystems/rendering/Object3DNode.h b/src/tdme/engine/subsystems/rendering/Object3DNode.h
+index 483cb1b33..1c88b635c 100644
+--- a/src/tdme/engine/subsystems/rendering/Object3DNode.h
++++ b/src/tdme/engine/subsystems/rendering/Object3DNode.h
+@@ -50,7 +50,7 @@ class tdme::engine::subsystems::rendering::Object3DNode final
+ 	friend class tdme::engine::subsystems::skinning::SkinningShader;
+ 
+ private:
+-	static int64_t counter;
++	STATIC_DLL_IMPEXT static int64_t counter;
+ 
+ 	static constexpr int32_t TEXTUREID_NONE { -1 };
+ 	static constexpr int32_t TEXTUREID_NOTUSED { 0 };
+diff --git a/src/tdme/engine/subsystems/rendering/ObjectBuffer.h b/src/tdme/engine/subsystems/rendering/ObjectBuffer.h
+index 37cc985bf..7391d54a2 100644
+--- a/src/tdme/engine/subsystems/rendering/ObjectBuffer.h
++++ b/src/tdme/engine/subsystems/rendering/ObjectBuffer.h
+@@ -32,7 +32,7 @@ class tdme::engine::subsystems::rendering::ObjectBuffer final
+ 	friend class tdme::engine::subsystems::skinning::SkinningShader;
+ 
+ private:
+-	static vector<ByteBuffer*> byteBuffers;
++	STATIC_DLL_IMPEXT static vector<ByteBuffer*> byteBuffers;
+ 
+ 	/**
+ 	 * Initialize object buffer per thread
+diff --git a/src/tdme/gui/GUI.h b/src/tdme/gui/GUI.h
+index 79890af0a..4261f7a12 100644
+--- a/src/tdme/gui/GUI.h
++++ b/src/tdme/gui/GUI.h
+@@ -73,8 +73,8 @@ class tdme::gui::GUI final: public virtual InputEventHandler
+ 	friend class tdme::gui::nodes::GUIVerticalScrollbarInternalController;
+ 
+ private:
+-	static unordered_map<string, GUIFont*>* fontCache;
+-	static unordered_map<string, Texture*>* imageCache;
++	STATIC_DLL_IMPEXT static unordered_map<string, GUIFont*>* fontCache;
++	STATIC_DLL_IMPEXT static unordered_map<string, Texture*>* imageCache;
+ 
+ 	GUIRenderer* guiRenderer { nullptr };
+ 	Engine* engine { nullptr };
+diff --git a/src/tdme/gui/GUIParser.h b/src/tdme/gui/GUIParser.h
+index f7edbfe26..3f072c922 100644
+--- a/src/tdme/gui/GUIParser.h
++++ b/src/tdme/gui/GUIParser.h
+@@ -39,9 +39,9 @@ class tdme::gui::GUIParser final
+ {
+ 
+ private:
+-	static map<string, GUIElement*>* elements;
+-	static Properties* engineThemeProperties;
+-	static Properties* projectThemeProperties;
++	STATIC_DLL_IMPEXT static map<string, GUIElement*>* elements;
++	STATIC_DLL_IMPEXT static Properties* engineThemeProperties;
++	STATIC_DLL_IMPEXT static Properties* projectThemeProperties;
+ 
+ public:
+ 
+diff --git a/src/tdme/gui/elements/GUIButton.h b/src/tdme/gui/elements/GUIButton.h
+index e2fa9cccd..14f656df5 100644
+--- a/src/tdme/gui/elements/GUIButton.h
++++ b/src/tdme/gui/elements/GUIButton.h
+@@ -30,7 +30,7 @@ class tdme::gui::elements::GUIButton final
+ {
+ 
+ private:
+-	static string NAME;
++	STATIC_DLL_IMPEXT static string NAME;
+ 
+ public:
+ 	/**
+diff --git a/src/tdme/gui/elements/GUICheckboxController.h b/src/tdme/gui/elements/GUICheckboxController.h
+index 17ad20283..a9837bbbe 100644
+--- a/src/tdme/gui/elements/GUICheckboxController.h
++++ b/src/tdme/gui/elements/GUICheckboxController.h
+@@ -29,10 +29,10 @@ class tdme::gui::elements::GUICheckboxController final
+ 	friend class GUICheckbox;
+ 
+ private:
+-	static string CONDITION_CHECKED;
+-	static string CONDITION_UNCHECKED;
+-	static string CONDITION_DISABLED;
+-	static string CONDITION_ENABLED;
++	STATIC_DLL_IMPEXT static string CONDITION_CHECKED;
++	STATIC_DLL_IMPEXT static string CONDITION_UNCHECKED;
++	STATIC_DLL_IMPEXT static string CONDITION_DISABLED;
++	STATIC_DLL_IMPEXT static string CONDITION_ENABLED;
+ 	bool checked;
+ 	bool disabled;
+ 	MutableString value;
+diff --git a/src/tdme/gui/elements/GUIContextMenu.h b/src/tdme/gui/elements/GUIContextMenu.h
+index a80d8c832..73c6e3626 100644
+--- a/src/tdme/gui/elements/GUIContextMenu.h
++++ b/src/tdme/gui/elements/GUIContextMenu.h
+@@ -28,7 +28,7 @@ class tdme::gui::elements::GUIContextMenu final: public GUIElement
+ {
+ 
+ private:
+-	static string NAME;
++	STATIC_DLL_IMPEXT static string NAME;
+ 
+ public:
+ 	/**
+diff --git a/src/tdme/gui/elements/GUIContextMenuController.h b/src/tdme/gui/elements/GUIContextMenuController.h
+index 09a19cfe0..71b06a0e7 100644
+--- a/src/tdme/gui/elements/GUIContextMenuController.h
++++ b/src/tdme/gui/elements/GUIContextMenuController.h
+@@ -34,10 +34,10 @@ class tdme::gui::elements::GUIContextMenuController final
+ 	friend class GUIContextMenuItemController;
+ 
+ private:
+-	static string CONDITION_OPENED;
+-	static string CONDITION_CLOSED;
+-	static string CONDITION_SELECTED;
+-	static string CONDITION_UNSELECTED;
++	STATIC_DLL_IMPEXT static string CONDITION_OPENED;
++	STATIC_DLL_IMPEXT static string CONDITION_CLOSED;
++	STATIC_DLL_IMPEXT static string CONDITION_SELECTED;
++	STATIC_DLL_IMPEXT static string CONDITION_UNSELECTED;
+ 	vector<GUIContextMenuItemController*> menuItemControllers;
+ 	MutableString value;
+ 	int selectedMenuItemControllerIdx { -1 };
+diff --git a/src/tdme/gui/elements/GUIContextMenuItem.h b/src/tdme/gui/elements/GUIContextMenuItem.h
+index 2eec21019..f480e2272 100644
+--- a/src/tdme/gui/elements/GUIContextMenuItem.h
++++ b/src/tdme/gui/elements/GUIContextMenuItem.h
+@@ -28,7 +28,7 @@ class tdme::gui::elements::GUIContextMenuItem final: public GUIElement
+ {
+ 
+ private:
+-	static string NAME;
++	STATIC_DLL_IMPEXT static string NAME;
+ 
+ public:
+ 	/**
+diff --git a/src/tdme/gui/elements/GUIContextMenuItemController.h b/src/tdme/gui/elements/GUIContextMenuItemController.h
+index de9f80853..d0243f924 100644
+--- a/src/tdme/gui/elements/GUIContextMenuItemController.h
++++ b/src/tdme/gui/elements/GUIContextMenuItemController.h
+@@ -31,8 +31,8 @@ class tdme::gui::elements::GUIContextMenuItemController final
+ 	friend class GUIContextMenuItem;
+ 
+ private:
+-	static string CONDITION_SELECTED;
+-	static string CONDITION_UNSELECTED;
++	STATIC_DLL_IMPEXT static string CONDITION_SELECTED;
++	STATIC_DLL_IMPEXT static string CONDITION_UNSELECTED;
+ 	bool selected;
+ 	MutableString value;
+ 	GUIParentNode* contextMenuNode { nullptr };
+diff --git a/src/tdme/gui/elements/GUIDropDown.h b/src/tdme/gui/elements/GUIDropDown.h
+index e208b5eae..5e86adf51 100644
+--- a/src/tdme/gui/elements/GUIDropDown.h
++++ b/src/tdme/gui/elements/GUIDropDown.h
+@@ -28,7 +28,7 @@ class tdme::gui::elements::GUIDropDown final: public GUIElement
+ {
+ 
+ private:
+-	static string NAME;
++	STATIC_DLL_IMPEXT static string NAME;
+ 
+ public:
+ 	/**
+diff --git a/src/tdme/gui/elements/GUIDropDownController.h b/src/tdme/gui/elements/GUIDropDownController.h
+index 360caa7cd..f1a750d0a 100644
+--- a/src/tdme/gui/elements/GUIDropDownController.h
++++ b/src/tdme/gui/elements/GUIDropDownController.h
+@@ -34,10 +34,10 @@ class tdme::gui::elements::GUIDropDownController final
+ 	friend class GUIDropDownOptionController;
+ 
+ private:
+-	static string CONDITION_DISABLED;
+-	static string CONDITION_ENABLED;
+-	static string CONDITION_OPENED;
+-	static string CONDITION_CLOSED;
++	STATIC_DLL_IMPEXT static string CONDITION_DISABLED;
++	STATIC_DLL_IMPEXT static string CONDITION_ENABLED;
++	STATIC_DLL_IMPEXT static string CONDITION_OPENED;
++	STATIC_DLL_IMPEXT static string CONDITION_CLOSED;
+ 	vector<GUIDropDownOptionController*> dropDownOptionControllers;
+ 	bool open;
+ 	bool disabled;
+diff --git a/src/tdme/gui/elements/GUIDropDownOption.h b/src/tdme/gui/elements/GUIDropDownOption.h
+index 0e995d106..aaf192440 100644
+--- a/src/tdme/gui/elements/GUIDropDownOption.h
++++ b/src/tdme/gui/elements/GUIDropDownOption.h
+@@ -28,7 +28,7 @@ class tdme::gui::elements::GUIDropDownOption final: public GUIElement
+ {
+ 
+ private:
+-	static string NAME;
++	STATIC_DLL_IMPEXT static string NAME;
+ 
+ public:
+ 	/**
+diff --git a/src/tdme/gui/elements/GUIDropDownOptionController.h b/src/tdme/gui/elements/GUIDropDownOptionController.h
+index 49c99b1d9..0d035e379 100644
+--- a/src/tdme/gui/elements/GUIDropDownOptionController.h
++++ b/src/tdme/gui/elements/GUIDropDownOptionController.h
+@@ -31,9 +31,9 @@ class tdme::gui::elements::GUIDropDownOptionController final
+ 	friend class GUIDropDownController;
+ 
+ private:
+-	static string CONDITION_SELECTED;
+-	static string CONDITION_UNSELECTED;
+-	static string CONDITION_HIDDEN;
++	STATIC_DLL_IMPEXT static string CONDITION_SELECTED;
++	STATIC_DLL_IMPEXT static string CONDITION_UNSELECTED;
++	STATIC_DLL_IMPEXT static string CONDITION_HIDDEN;
+ 	GUIParentNode* dropDownNode { nullptr };
+ 	GUIParentNode* dropDownContainerNode { nullptr };
+ 	bool initialPostLayout;
+diff --git a/src/tdme/gui/elements/GUIImageButton.h b/src/tdme/gui/elements/GUIImageButton.h
+index 9ee4d2906..966e84999 100644
+--- a/src/tdme/gui/elements/GUIImageButton.h
++++ b/src/tdme/gui/elements/GUIImageButton.h
+@@ -30,7 +30,7 @@ class tdme::gui::elements::GUIImageButton final
+ {
+ 
+ private:
+-	static string NAME;
++	STATIC_DLL_IMPEXT static string NAME;
+ 
+ public:
+ 	/**
+diff --git a/src/tdme/gui/elements/GUIInput.h b/src/tdme/gui/elements/GUIInput.h
+index 852c0c583..83ccec85d 100644
+--- a/src/tdme/gui/elements/GUIInput.h
++++ b/src/tdme/gui/elements/GUIInput.h
+@@ -28,7 +28,7 @@ class tdme::gui::elements::GUIInput final: public GUIElement
+ {
+ 
+ private:
+-	static string NAME;
++	STATIC_DLL_IMPEXT static string NAME;
+ 
+ public:
+ 	/**
+diff --git a/src/tdme/gui/elements/GUIInputController.h b/src/tdme/gui/elements/GUIInputController.h
+index 3b60dc020..500fa745e 100644
+--- a/src/tdme/gui/elements/GUIInputController.h
++++ b/src/tdme/gui/elements/GUIInputController.h
+@@ -29,8 +29,8 @@ class tdme::gui::elements::GUIInputController final
+ 	friend class GUIInput;
+ 
+ private:
+-	static string CONDITION_DISABLED;
+-	static string CONDITION_ENABLED;
++	STATIC_DLL_IMPEXT static string CONDITION_DISABLED;
++	STATIC_DLL_IMPEXT static string CONDITION_ENABLED;
+ 	GUIInputInternalNode* inputNode { nullptr };
+ 	bool disabled;
+ 
+diff --git a/src/tdme/gui/elements/GUIKnob.h b/src/tdme/gui/elements/GUIKnob.h
+index 89807d468..35bf2e415 100644
+--- a/src/tdme/gui/elements/GUIKnob.h
++++ b/src/tdme/gui/elements/GUIKnob.h
+@@ -29,7 +29,7 @@ class tdme::gui::elements::GUIKnob final: public GUIElement
+ {
+ 
+ private:
+-	static string NAME;
++	STATIC_DLL_IMPEXT static string NAME;
+ 
+ public:
+ 	/**
+diff --git a/src/tdme/gui/elements/GUIMenuHeader.h b/src/tdme/gui/elements/GUIMenuHeader.h
+index 387d3b938..5eba66cdb 100644
+--- a/src/tdme/gui/elements/GUIMenuHeader.h
++++ b/src/tdme/gui/elements/GUIMenuHeader.h
+@@ -28,7 +28,7 @@ class tdme::gui::elements::GUIMenuHeader final: public GUIElement
+ {
+ 
+ private:
+-	static string NAME;
++	STATIC_DLL_IMPEXT static string NAME;
+ 
+ public:
+ 	/**
+diff --git a/src/tdme/gui/elements/GUIMenuHeaderItem.h b/src/tdme/gui/elements/GUIMenuHeaderItem.h
+index cbb9b4fdf..87c1faad1 100644
+--- a/src/tdme/gui/elements/GUIMenuHeaderItem.h
++++ b/src/tdme/gui/elements/GUIMenuHeaderItem.h
+@@ -28,7 +28,7 @@ class tdme::gui::elements::GUIMenuHeaderItem final: public GUIElement
+ {
+ 
+ private:
+-	static string NAME;
++	STATIC_DLL_IMPEXT static string NAME;
+ 
+ public:
+ 	/**
+diff --git a/src/tdme/gui/elements/GUIMenuHeaderItemController.h b/src/tdme/gui/elements/GUIMenuHeaderItemController.h
+index bd479aa61..363d3cbe0 100644
+--- a/src/tdme/gui/elements/GUIMenuHeaderItemController.h
++++ b/src/tdme/gui/elements/GUIMenuHeaderItemController.h
+@@ -36,10 +36,10 @@ class tdme::gui::elements::GUIMenuHeaderItemController final
+ 	friend class GUIMenuItemController;
+ 
+ private:
+-	static string CONDITION_OPENED;
+-	static string CONDITION_CLOSED;
+-	static string CONDITION_SELECTED;
+-	static string CONDITION_UNSELECTED;
++	STATIC_DLL_IMPEXT static string CONDITION_OPENED;
++	STATIC_DLL_IMPEXT static string CONDITION_CLOSED;
++	STATIC_DLL_IMPEXT static string CONDITION_SELECTED;
++	STATIC_DLL_IMPEXT static string CONDITION_UNSELECTED;
+ 	GUIElementNode* menuHeaderNode { nullptr };
+ 	vector<GUIMenuItemController*> menuItemControllers;
+ 	bool open;
+diff --git a/src/tdme/gui/elements/GUIMenuItem.h b/src/tdme/gui/elements/GUIMenuItem.h
+index 9e08e96e2..c5c5023fe 100644
+--- a/src/tdme/gui/elements/GUIMenuItem.h
++++ b/src/tdme/gui/elements/GUIMenuItem.h
+@@ -28,7 +28,7 @@ class tdme::gui::elements::GUIMenuItem final: public GUIElement
+ {
+ 
+ private:
+-	static string NAME;
++	STATIC_DLL_IMPEXT static string NAME;
+ 
+ public:
+ 	/**
+diff --git a/src/tdme/gui/elements/GUIMenuItemController.h b/src/tdme/gui/elements/GUIMenuItemController.h
+index 2f89e7c03..48f8180ef 100644
+--- a/src/tdme/gui/elements/GUIMenuItemController.h
++++ b/src/tdme/gui/elements/GUIMenuItemController.h
+@@ -31,8 +31,8 @@ class tdme::gui::elements::GUIMenuItemController final
+ 	friend class GUIMenuHeaderItemController;
+ 
+ private:
+-	static string CONDITION_SELECTED;
+-	static string CONDITION_UNSELECTED;
++	STATIC_DLL_IMPEXT static string CONDITION_SELECTED;
++	STATIC_DLL_IMPEXT static string CONDITION_UNSELECTED;
+ 	bool selected;
+ 	MutableString value;
+ 	GUIParentNode* menuHeaderItemNode { nullptr };
+diff --git a/src/tdme/gui/elements/GUIMenuSeparator.h b/src/tdme/gui/elements/GUIMenuSeparator.h
+index 2dde11da0..2c737d146 100644
+--- a/src/tdme/gui/elements/GUIMenuSeparator.h
++++ b/src/tdme/gui/elements/GUIMenuSeparator.h
+@@ -28,7 +28,7 @@ class tdme::gui::elements::GUIMenuSeparator final: public GUIElement
+ {
+ 
+ private:
+-	static string NAME;
++	STATIC_DLL_IMPEXT static string NAME;
+ 
+ public:
+ 	/**
+diff --git a/src/tdme/gui/elements/GUIProgressBar.h b/src/tdme/gui/elements/GUIProgressBar.h
+index db53a83ba..a5d754361 100644
+--- a/src/tdme/gui/elements/GUIProgressBar.h
++++ b/src/tdme/gui/elements/GUIProgressBar.h
+@@ -29,7 +29,7 @@ class tdme::gui::elements::GUIProgressBar final: public GUIElement
+ {
+ 
+ private:
+-	static string NAME;
++	STATIC_DLL_IMPEXT static string NAME;
+ 
+ public:
+ 	/**
+diff --git a/src/tdme/gui/elements/GUIRadioButton.h b/src/tdme/gui/elements/GUIRadioButton.h
+index 209279c5e..dfcb35c4b 100644
+--- a/src/tdme/gui/elements/GUIRadioButton.h
++++ b/src/tdme/gui/elements/GUIRadioButton.h
+@@ -28,7 +28,7 @@ class tdme::gui::elements::GUIRadioButton final: public GUIElement
+ {
+ 
+ private:
+-	static string NAME;
++	STATIC_DLL_IMPEXT static string NAME;
+ 
+ public:
+ 	/**
+diff --git a/src/tdme/gui/elements/GUIRadioButtonController.h b/src/tdme/gui/elements/GUIRadioButtonController.h
+index 9be0092d7..33d0c3d32 100644
+--- a/src/tdme/gui/elements/GUIRadioButtonController.h
++++ b/src/tdme/gui/elements/GUIRadioButtonController.h
+@@ -33,13 +33,13 @@ class tdme::gui::elements::GUIRadioButtonController final
+ 	friend class GUIRadioButton;
+ 
+ private:
+-	static string CONDITION_SELECTED;
+-	static string CONDITION_UNSELECTED;
+-	static string CONDITION_DISABLED;
+-	static string CONDITION_ENABLED;
++	STATIC_DLL_IMPEXT static string CONDITION_SELECTED;
++	STATIC_DLL_IMPEXT static string CONDITION_UNSELECTED;
++	STATIC_DLL_IMPEXT static string CONDITION_DISABLED;
++	STATIC_DLL_IMPEXT static string CONDITION_ENABLED;
+ 	bool selected;
+ 	bool disabled;
+-	static map<string, vector<GUIElementNode*>>* radioButtonGroupNodesByName;
++	STATIC_DLL_IMPEXT static map<string, vector<GUIElementNode*>>* radioButtonGroupNodesByName;
+ 	MutableString value;
+ 
+ 	/**
+diff --git a/src/tdme/gui/elements/GUIScrollArea.h b/src/tdme/gui/elements/GUIScrollArea.h
+index c9390527d..b8bc5f967 100644
+--- a/src/tdme/gui/elements/GUIScrollArea.h
++++ b/src/tdme/gui/elements/GUIScrollArea.h
+@@ -28,7 +28,7 @@ class tdme::gui::elements::GUIScrollArea final: public GUIElement
+ {
+ 
+ private:
+-	static string NAME;
++	STATIC_DLL_IMPEXT static string NAME;
+ 
+ public:
+ 	/**
+diff --git a/src/tdme/gui/elements/GUISelectBox.h b/src/tdme/gui/elements/GUISelectBox.h
+index 370e58435..5ac99f1d8 100644
+--- a/src/tdme/gui/elements/GUISelectBox.h
++++ b/src/tdme/gui/elements/GUISelectBox.h
+@@ -29,7 +29,7 @@ class tdme::gui::elements::GUISelectBox final
+ {
+ 
+ private:
+-	static string NAME;
++	STATIC_DLL_IMPEXT static string NAME;
+ 
+ public:
+ 	/**
+diff --git a/src/tdme/gui/elements/GUISelectBoxController.h b/src/tdme/gui/elements/GUISelectBoxController.h
+index 7a64a7bed..959bba84a 100644
+--- a/src/tdme/gui/elements/GUISelectBoxController.h
++++ b/src/tdme/gui/elements/GUISelectBoxController.h
+@@ -33,9 +33,9 @@ class tdme::gui::elements::GUISelectBoxController final
+ 	friend class GUISelectBoxOptionController;
+ 
+ private:
+-	static string CONDITION_DISABLED;
+-	static string CONDITION_ENABLED;
+-	static constexpr char VALUE_DELIMITER { '|' };
++	STATIC_DLL_IMPEXT static string CONDITION_DISABLED;
++	STATIC_DLL_IMPEXT static string CONDITION_ENABLED;
++	STATIC_DLL_IMPEXT static constexpr char VALUE_DELIMITER { '|' };
+ 	vector<GUISelectBoxOptionController*> selectBoxOptionControllers;
+ 	bool disabled;
+ 	bool multipleSelection;
+diff --git a/src/tdme/gui/elements/GUISelectBoxOption.h b/src/tdme/gui/elements/GUISelectBoxOption.h
+index 51b8db583..5df7b0ee0 100644
+--- a/src/tdme/gui/elements/GUISelectBoxOption.h
++++ b/src/tdme/gui/elements/GUISelectBoxOption.h
+@@ -28,7 +28,7 @@ class tdme::gui::elements::GUISelectBoxOption final: public GUIElement
+ {
+ 
+ private:
+-	static string NAME;
++	STATIC_DLL_IMPEXT static string NAME;
+ 
+ public:
+ 	const string& getName() override;
+diff --git a/src/tdme/gui/elements/GUISelectBoxOptionController.h b/src/tdme/gui/elements/GUISelectBoxOptionController.h
+index de251014c..61e1dbf2e 100644
+--- a/src/tdme/gui/elements/GUISelectBoxOptionController.h
++++ b/src/tdme/gui/elements/GUISelectBoxOptionController.h
+@@ -33,13 +33,13 @@ protected:
+ 	GUIParentNode* selectBoxNode { nullptr };
+ 
+ private:
+-	static string CONDITION_SELECTED;
+-	static string CONDITION_UNSELECTED;
+-	static string CONDITION_FOCUSSED;
+-	static string CONDITION_UNFOCUSSED;
+-	static string CONDITION_DISABLED;
+-	static string CONDITION_ENABLED;
+-	static string CONDITION_CHILD;
++	STATIC_DLL_IMPEXT static string CONDITION_SELECTED;
++	STATIC_DLL_IMPEXT static string CONDITION_UNSELECTED;
++	STATIC_DLL_IMPEXT static string CONDITION_FOCUSSED;
++	STATIC_DLL_IMPEXT static string CONDITION_UNFOCUSSED;
++	STATIC_DLL_IMPEXT static string CONDITION_DISABLED;
++	STATIC_DLL_IMPEXT static string CONDITION_ENABLED;
++	STATIC_DLL_IMPEXT static string CONDITION_CHILD;
+ 	bool initialPostLayout;
+ 	bool selected;
+ 	bool focussed;
+diff --git a/src/tdme/gui/elements/GUISelectBoxParentOption.h b/src/tdme/gui/elements/GUISelectBoxParentOption.h
+index 8710a6389..345be6d89 100644
+--- a/src/tdme/gui/elements/GUISelectBoxParentOption.h
++++ b/src/tdme/gui/elements/GUISelectBoxParentOption.h
+@@ -29,7 +29,7 @@ class tdme::gui::elements::GUISelectBoxParentOption final
+ {
+ 
+ private:
+-	static string NAME;
++	STATIC_DLL_IMPEXT static string NAME;
+ 
+ public:
+ 	/**
+diff --git a/src/tdme/gui/elements/GUISelectBoxParentOptionController.h b/src/tdme/gui/elements/GUISelectBoxParentOptionController.h
+index f443a6be5..98d797e6a 100644
+--- a/src/tdme/gui/elements/GUISelectBoxParentOptionController.h
++++ b/src/tdme/gui/elements/GUISelectBoxParentOptionController.h
+@@ -27,8 +27,8 @@ class tdme::gui::elements::GUISelectBoxParentOptionController final: public GUIS
+ 	friend class GUISelectBoxParentOption;
+ 
+ private:
+-	static string CONDITION_EXPANDED;
+-	static string CONDITION_COLLAPSED;
++	STATIC_DLL_IMPEXT static string CONDITION_EXPANDED;
++	STATIC_DLL_IMPEXT static string CONDITION_COLLAPSED;
+ 
+ 	GUIElementNode* arrowNode { nullptr };
+ 	bool expanded;
+diff --git a/src/tdme/gui/elements/GUISelectorH.h b/src/tdme/gui/elements/GUISelectorH.h
+index b6a1d3c29..34a7ad1e7 100644
+--- a/src/tdme/gui/elements/GUISelectorH.h
++++ b/src/tdme/gui/elements/GUISelectorH.h
+@@ -28,7 +28,7 @@ class tdme::gui::elements::GUISelectorH final: public GUIElement
+ {
+ 
+ private:
+-	static string NAME;
++	STATIC_DLL_IMPEXT static string NAME;
+ 
+ public:
+ 	/**
+diff --git a/src/tdme/gui/elements/GUISelectorHController.h b/src/tdme/gui/elements/GUISelectorHController.h
+index ac5064fc7..4f50182fd 100644
+--- a/src/tdme/gui/elements/GUISelectorHController.h
++++ b/src/tdme/gui/elements/GUISelectorHController.h
+@@ -35,8 +35,8 @@ class tdme::gui::elements::GUISelectorHController final
+ 	friend class GUISelectorHOptionController;
+ 
+ private:
+-	static string CONDITION_DISABLED;
+-	static string CONDITION_ENABLED;
++	STATIC_DLL_IMPEXT static string CONDITION_DISABLED;
++	STATIC_DLL_IMPEXT static string CONDITION_ENABLED;
+ 	vector<GUISelectorHOptionController*> selectorHOptionControllers;
+ 	bool disabled;
+ 	MutableString value;
+diff --git a/src/tdme/gui/elements/GUISelectorHOption.h b/src/tdme/gui/elements/GUISelectorHOption.h
+index e842fa808..c7337e445 100644
+--- a/src/tdme/gui/elements/GUISelectorHOption.h
++++ b/src/tdme/gui/elements/GUISelectorHOption.h
+@@ -28,7 +28,7 @@ class tdme::gui::elements::GUISelectorHOption final: public GUIElement
+ {
+ 
+ private:
+-	static string NAME;
++	STATIC_DLL_IMPEXT static string NAME;
+ 
+ public:
+ 	/**
+diff --git a/src/tdme/gui/elements/GUISelectorHOptionController.h b/src/tdme/gui/elements/GUISelectorHOptionController.h
+index 60f13632c..f9a7552bd 100644
+--- a/src/tdme/gui/elements/GUISelectorHOptionController.h
++++ b/src/tdme/gui/elements/GUISelectorHOptionController.h
+@@ -31,8 +31,8 @@ class tdme::gui::elements::GUISelectorHOptionController final
+ 	friend class GUISelectorHController;
+ 
+ private:
+-	static string CONDITION_SELECTED;
+-	static string CONDITION_UNSELECTED;
++	STATIC_DLL_IMPEXT static string CONDITION_SELECTED;
++	STATIC_DLL_IMPEXT static string CONDITION_UNSELECTED;
+ 	GUIParentNode* selectorHNode { nullptr };
+ 	bool selected;
+ 	bool hidden;
+diff --git a/src/tdme/gui/elements/GUISliderH.h b/src/tdme/gui/elements/GUISliderH.h
+index 7b6bb6ae9..9e9266139 100644
+--- a/src/tdme/gui/elements/GUISliderH.h
++++ b/src/tdme/gui/elements/GUISliderH.h
+@@ -30,7 +30,7 @@ class tdme::gui::elements::GUISliderH final
+ {
+ 
+ private:
+-	static string NAME;
++	STATIC_DLL_IMPEXT static string NAME;
+ 
+ public:
+ 	/**
+diff --git a/src/tdme/gui/elements/GUISliderV.h b/src/tdme/gui/elements/GUISliderV.h
+index 4b3a7e3d7..f95615552 100644
+--- a/src/tdme/gui/elements/GUISliderV.h
++++ b/src/tdme/gui/elements/GUISliderV.h
+@@ -29,7 +29,7 @@ class tdme::gui::elements::GUISliderV final: public GUIElement
+ {
+ 
+ private:
+-	static string NAME;
++	STATIC_DLL_IMPEXT static string NAME;
+ 
+ public:
+ 	/**
+diff --git a/src/tdme/gui/elements/GUITab.h b/src/tdme/gui/elements/GUITab.h
+index 2a520db41..0f0d77735 100644
+--- a/src/tdme/gui/elements/GUITab.h
++++ b/src/tdme/gui/elements/GUITab.h
+@@ -28,7 +28,7 @@ class tdme::gui::elements::GUITab final: public GUIElement
+ {
+ 
+ private:
+-	static string NAME;
++	STATIC_DLL_IMPEXT static string NAME;
+ 
+ public:
+ 	/**
+diff --git a/src/tdme/gui/elements/GUITabContent.h b/src/tdme/gui/elements/GUITabContent.h
+index 6a5de4ba2..5c2070026 100644
+--- a/src/tdme/gui/elements/GUITabContent.h
++++ b/src/tdme/gui/elements/GUITabContent.h
+@@ -28,7 +28,7 @@ class tdme::gui::elements::GUITabContent final: public GUIElement
+ {
+ 
+ private:
+-	static string NAME;
++	STATIC_DLL_IMPEXT static string NAME;
+ 
+ public:
+ 	/**
+diff --git a/src/tdme/gui/elements/GUITabController.h b/src/tdme/gui/elements/GUITabController.h
+index 8a757e539..c3c214fb5 100644
+--- a/src/tdme/gui/elements/GUITabController.h
++++ b/src/tdme/gui/elements/GUITabController.h
+@@ -32,10 +32,10 @@ class tdme::gui::elements::GUITabController final: public GUIElementController
+ 	friend class GUITabsHeaderController;
+ 
+ private:
+-	static string CONDITION_DISABLED;
+-	static string CONDITION_ENABLED;
+-	static string CONDITION_SELECTED;
+-	static string CONDITION_UNSELECTED;
++	STATIC_DLL_IMPEXT static string CONDITION_DISABLED;
++	STATIC_DLL_IMPEXT static string CONDITION_ENABLED;
++	STATIC_DLL_IMPEXT static string CONDITION_SELECTED;
++	STATIC_DLL_IMPEXT static string CONDITION_UNSELECTED;
+ 	GUINode* tabsNode { nullptr };
+ 	GUINode* tabsHeaderNode { nullptr };
+ 	bool selected;
+diff --git a/src/tdme/gui/elements/GUITabs.h b/src/tdme/gui/elements/GUITabs.h
+index c7302cddd..e6d5f7701 100644
+--- a/src/tdme/gui/elements/GUITabs.h
++++ b/src/tdme/gui/elements/GUITabs.h
+@@ -28,7 +28,7 @@ class tdme::gui::elements::GUITabs final: public GUIElement
+ {
+ 
+ private:
+-	static string NAME;
++	STATIC_DLL_IMPEXT static string NAME;
+ 
+ public:
+ 	/**
+diff --git a/src/tdme/gui/elements/GUITabsContent.h b/src/tdme/gui/elements/GUITabsContent.h
+index 021fc4357..3228af2b4 100644
+--- a/src/tdme/gui/elements/GUITabsContent.h
++++ b/src/tdme/gui/elements/GUITabsContent.h
+@@ -29,7 +29,7 @@ class tdme::gui::elements::GUITabsContent final
+ {
+ 
+ private:
+-	static string NAME;
++	STATIC_DLL_IMPEXT static string NAME;
+ 
+ public:
+ 	/**
+diff --git a/src/tdme/gui/elements/GUITabsHeader.h b/src/tdme/gui/elements/GUITabsHeader.h
+index 9c69c2ad2..60e289136 100644
+--- a/src/tdme/gui/elements/GUITabsHeader.h
++++ b/src/tdme/gui/elements/GUITabsHeader.h
+@@ -28,7 +28,7 @@ class tdme::gui::elements::GUITabsHeader final: public GUIElement
+ {
+ 
+ private:
+-	static string NAME;
++	STATIC_DLL_IMPEXT static string NAME;
+ 
+ public:
+ 	/**
+diff --git a/src/tdme/gui/nodes/GUIColor.h b/src/tdme/gui/nodes/GUIColor.h
+index a7284cea2..b523b1153 100644
+--- a/src/tdme/gui/nodes/GUIColor.h
++++ b/src/tdme/gui/nodes/GUIColor.h
+@@ -29,18 +29,18 @@ class tdme::gui::nodes::GUIColor final
+ {
+ 
+ public:
+-	static GUIColor GUICOLOR_WHITE;
+-	static GUIColor GUICOLOR_BLACK;
+-	static GUIColor GUICOLOR_RED;
+-	static GUIColor GUICOLOR_GREEN;
+-	static GUIColor GUICOLOR_BLUE;
+-	static GUIColor GUICOLOR_TRANSPARENT;
+-	static GUIColor GUICOLOR_EFFECT_COLOR_MUL;
+-	static GUIColor GUICOLOR_EFFECT_COLOR_ADD;
++	STATIC_DLL_IMPEXT static GUIColor GUICOLOR_WHITE;
++	STATIC_DLL_IMPEXT static GUIColor GUICOLOR_BLACK;
++	STATIC_DLL_IMPEXT static GUIColor GUICOLOR_RED;
++	STATIC_DLL_IMPEXT static GUIColor GUICOLOR_GREEN;
++	STATIC_DLL_IMPEXT static GUIColor GUICOLOR_BLUE;
++	STATIC_DLL_IMPEXT static GUIColor GUICOLOR_TRANSPARENT;
++	STATIC_DLL_IMPEXT static GUIColor GUICOLOR_EFFECT_COLOR_MUL;
++	STATIC_DLL_IMPEXT static GUIColor GUICOLOR_EFFECT_COLOR_ADD;
+ 
+ private:
+-	static vector<GUIColor*> COLOR_INSTANCES;
+-	static vector<string> COLOR_NAMES;
++	STATIC_DLL_IMPEXT static vector<GUIColor*> COLOR_INSTANCES;
++	STATIC_DLL_IMPEXT static vector<string> COLOR_NAMES;
+ 
+ public:
+ 
+diff --git a/src/tdme/gui/nodes/GUIElementController.h b/src/tdme/gui/nodes/GUIElementController.h
+index b4d502268..51e049055 100644
+--- a/src/tdme/gui/nodes/GUIElementController.h
++++ b/src/tdme/gui/nodes/GUIElementController.h
+@@ -36,8 +36,8 @@ private:
+ 	int64_t timeLastClicked { -1LL };
+ 
+ protected:
+-	static string CONDITION_DISABLED;
+-	static string CONDITION_ENABLED;
++	STATIC_DLL_IMPEXT static string CONDITION_DISABLED;
++	STATIC_DLL_IMPEXT static string CONDITION_ENABLED;
+ 
+ 	/**
+ 	 * Constructor
+diff --git a/src/tdme/gui/nodes/GUIElementIgnoreEventsController.h b/src/tdme/gui/nodes/GUIElementIgnoreEventsController.h
+index 1636244a1..046a18d00 100644
+--- a/src/tdme/gui/nodes/GUIElementIgnoreEventsController.h
++++ b/src/tdme/gui/nodes/GUIElementIgnoreEventsController.h
+@@ -27,8 +27,8 @@ class tdme::gui::nodes::GUIElementIgnoreEventsController
+ 	friend class GUIElementNode;
+ 
+ private:
+-	static string CONDITION_DISABLED;
+-	static string CONDITION_ENABLED;
++	STATIC_DLL_IMPEXT static string CONDITION_DISABLED;
++	STATIC_DLL_IMPEXT static string CONDITION_ENABLED;
+ 	bool disabled;
+ 	MutableString value;
+ 
+diff --git a/src/tdme/gui/nodes/GUIElementNode.h b/src/tdme/gui/nodes/GUIElementNode.h
+index c29886fbf..0d02355de 100644
+--- a/src/tdme/gui/nodes/GUIElementNode.h
++++ b/src/tdme/gui/nodes/GUIElementNode.h
+@@ -41,10 +41,10 @@ class tdme::gui::nodes::GUIElementNode final: public GUILayerNode
+ 	friend class GUIScreenNode;
+ 
+ public:
+-	static string CONDITION_FOCUS;
+-	static string CONDITION_ALWAYS;
+-	static string CONDITION_ONMOUSEOVER;
+-	static string CONDITION_CLICK;
++	STATIC_DLL_IMPEXT static string CONDITION_FOCUS;
++	STATIC_DLL_IMPEXT static string CONDITION_ALWAYS;
++	STATIC_DLL_IMPEXT static string CONDITION_ONMOUSEOVER;
++	STATIC_DLL_IMPEXT static string CONDITION_CLICK;
+ 
+ private:
+ 	string name;
+diff --git a/src/tdme/gui/nodes/GUIImageNode.h b/src/tdme/gui/nodes/GUIImageNode.h
+index 5f630af3d..a7a1ad254 100644
+--- a/src/tdme/gui/nodes/GUIImageNode.h
++++ b/src/tdme/gui/nodes/GUIImageNode.h
+@@ -41,7 +41,7 @@ class tdme::gui::nodes::GUIImageNode final
+ private:
+ 	Texture* texture { nullptr };
+ 	string source;
+-	static int thumbnailTextureIdx;
++	STATIC_DLL_IMPEXT static int thumbnailTextureIdx;
+ 
+ protected:
+ 	/**
+diff --git a/src/tdme/gui/nodes/GUILayoutNode_Alignment.h b/src/tdme/gui/nodes/GUILayoutNode_Alignment.h
+index 63c77aa4b..cd84d90a5 100644
+--- a/src/tdme/gui/nodes/GUILayoutNode_Alignment.h
++++ b/src/tdme/gui/nodes/GUILayoutNode_Alignment.h
+@@ -19,9 +19,9 @@ using tdme::utilities::Enum;
+ class tdme::gui::nodes::GUILayoutNode_Alignment final: public Enum
+ {
+ public:
+-	static GUILayoutNode_Alignment* VERTICAL;
+-	static GUILayoutNode_Alignment* HORIZONTAL;
+-	static GUILayoutNode_Alignment* NONE;
++	STATIC_DLL_IMPEXT static GUILayoutNode_Alignment* VERTICAL;
++	STATIC_DLL_IMPEXT static GUILayoutNode_Alignment* HORIZONTAL;
++	STATIC_DLL_IMPEXT static GUILayoutNode_Alignment* NONE;
+ 
+ 	/**
+ 	 * Public constructor
+diff --git a/src/tdme/gui/nodes/GUINode_AlignmentHorizontal.h b/src/tdme/gui/nodes/GUINode_AlignmentHorizontal.h
+index 8faca2e24..e48cbd732 100644
+--- a/src/tdme/gui/nodes/GUINode_AlignmentHorizontal.h
++++ b/src/tdme/gui/nodes/GUINode_AlignmentHorizontal.h
+@@ -27,10 +27,10 @@ using tdme::utilities::Enum;
+ class tdme::gui::nodes::GUINode_AlignmentHorizontal final: public Enum
+ {
+ public:
+-	static GUINode_AlignmentHorizontal* NONE;
+-	static GUINode_AlignmentHorizontal* LEFT;
+-	static GUINode_AlignmentHorizontal* CENTER;
+-	static GUINode_AlignmentHorizontal* RIGHT;
++	STATIC_DLL_IMPEXT static GUINode_AlignmentHorizontal* NONE;
++	STATIC_DLL_IMPEXT static GUINode_AlignmentHorizontal* LEFT;
++	STATIC_DLL_IMPEXT static GUINode_AlignmentHorizontal* CENTER;
++	STATIC_DLL_IMPEXT static GUINode_AlignmentHorizontal* RIGHT;
+ 
+ 	/**
+ 	 * Public constructor
+diff --git a/src/tdme/gui/nodes/GUINode_AlignmentVertical.h b/src/tdme/gui/nodes/GUINode_AlignmentVertical.h
+index ab4d291da..17c45c51c 100644
+--- a/src/tdme/gui/nodes/GUINode_AlignmentVertical.h
++++ b/src/tdme/gui/nodes/GUINode_AlignmentVertical.h
+@@ -26,10 +26,10 @@ using tdme::utilities::Enum;
+ class tdme::gui::nodes::GUINode_AlignmentVertical final: public Enum
+ {
+ public:
+-	static GUINode_AlignmentVertical* NONE;
+-	static GUINode_AlignmentVertical* TOP;
+-	static GUINode_AlignmentVertical* CENTER;
+-	static GUINode_AlignmentVertical* BOTTOM;
++	STATIC_DLL_IMPEXT static GUINode_AlignmentVertical* NONE;
++	STATIC_DLL_IMPEXT static GUINode_AlignmentVertical* TOP;
++	STATIC_DLL_IMPEXT static GUINode_AlignmentVertical* CENTER;
++	STATIC_DLL_IMPEXT static GUINode_AlignmentVertical* BOTTOM;
+ 
+ 	/**
+ 	 * Public constructor
+diff --git a/src/tdme/gui/nodes/GUINode_Flow.h b/src/tdme/gui/nodes/GUINode_Flow.h
+index 4c371301a..817deb1ce 100644
+--- a/src/tdme/gui/nodes/GUINode_Flow.h
++++ b/src/tdme/gui/nodes/GUINode_Flow.h
+@@ -27,8 +27,8 @@ using tdme::utilities::Enum;
+ class tdme::gui::nodes::GUINode_Flow final: public Enum
+ {
+ public:
+-	static GUINode_Flow* INTEGRATED;
+-	static GUINode_Flow* FLOATING;
++	STATIC_DLL_IMPEXT static GUINode_Flow* INTEGRATED;
++	STATIC_DLL_IMPEXT static GUINode_Flow* FLOATING;
+ 
+ 	/**
+ 	 * Public constructor
+diff --git a/src/tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h b/src/tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h
+index 03db479f5..9fa359d7d 100644
+--- a/src/tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h
++++ b/src/tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h
+@@ -27,12 +27,12 @@ using tdme::utilities::Enum;
+ class tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType final: public Enum
+ {
+ public:
+-	static GUINode_RequestedConstraints_RequestedConstraintsType* NONE;
+-	static GUINode_RequestedConstraints_RequestedConstraintsType* PIXEL;
+-	static GUINode_RequestedConstraints_RequestedConstraintsType* PERCENT;
+-	static GUINode_RequestedConstraints_RequestedConstraintsType* STAR;
+-	static GUINode_RequestedConstraints_RequestedConstraintsType* AUTO;
+-	static GUINode_RequestedConstraints_RequestedConstraintsType* TABLECELL;
++	STATIC_DLL_IMPEXT static GUINode_RequestedConstraints_RequestedConstraintsType* NONE;
++	STATIC_DLL_IMPEXT static GUINode_RequestedConstraints_RequestedConstraintsType* PIXEL;
++	STATIC_DLL_IMPEXT static GUINode_RequestedConstraints_RequestedConstraintsType* PERCENT;
++	STATIC_DLL_IMPEXT static GUINode_RequestedConstraints_RequestedConstraintsType* STAR;
++	STATIC_DLL_IMPEXT static GUINode_RequestedConstraints_RequestedConstraintsType* AUTO;
++	STATIC_DLL_IMPEXT static GUINode_RequestedConstraints_RequestedConstraintsType* TABLECELL;
+ 
+ 	/**
+ 	 * Public constructor
+diff --git a/src/tdme/gui/nodes/GUIParentNode_Overflow.h b/src/tdme/gui/nodes/GUIParentNode_Overflow.h
+index 03a3b566f..2aab0a0cc 100644
+--- a/src/tdme/gui/nodes/GUIParentNode_Overflow.h
++++ b/src/tdme/gui/nodes/GUIParentNode_Overflow.h
+@@ -19,9 +19,9 @@ using tdme::utilities::Enum;
+ class tdme::gui::nodes::GUIParentNode_Overflow final: public Enum
+ {
+ public:
+-	static GUIParentNode_Overflow* HIDDEN;
+-	static GUIParentNode_Overflow* DOWNSIZE_CHILDREN;
+-	static GUIParentNode_Overflow* SCROLL;
++	STATIC_DLL_IMPEXT static GUIParentNode_Overflow* HIDDEN;
++	STATIC_DLL_IMPEXT static GUIParentNode_Overflow* DOWNSIZE_CHILDREN;
++	STATIC_DLL_IMPEXT static GUIParentNode_Overflow* SCROLL;
+ 
+ 	/**
+ 	 * Public constructor
+diff --git a/src/tdme/network/udpserver/ServerClient.h b/src/tdme/network/udpserver/ServerClient.h
+index 17af38308..aaaba38dc 100644
+--- a/src/tdme/network/udpserver/ServerClient.h
++++ b/src/tdme/network/udpserver/ServerClient.h
+@@ -34,7 +34,7 @@ class tdme::network::udpserver::ServerClient : public Reference {
+ friend class ServerWorkerThread;
+ 
+ public:
+-	static const char* KEY_PREFIX_UNNAMED;
++	STATIC_DLL_IMPEXT static const char* KEY_PREFIX_UNNAMED;
+ 
+ 	/**
+ 	 * @brief returns client's ip
+diff --git a/src/tdme/os/filesystem/FileSystem.h b/src/tdme/os/filesystem/FileSystem.h
+index 3f35c889d..7660535e8 100644
+--- a/src/tdme/os/filesystem/FileSystem.h
++++ b/src/tdme/os/filesystem/FileSystem.h
+@@ -13,8 +13,8 @@ using tdme::os::filesystem::FileSystemInterface;
+ class tdme::os::filesystem::FileSystem
+ {
+ private:
+-	static FileSystemInterface* standardFileSystem;
+-	static FileSystemInterface* fileSystem;
++	STATIC_DLL_IMPEXT static FileSystemInterface* standardFileSystem;
++	STATIC_DLL_IMPEXT static FileSystemInterface* fileSystem;
+ 
+ public:
+ 
+diff --git a/src/tdme/tdme.h b/src/tdme/tdme.h
+index 768813f5a..820fe78df 100644
+--- a/src/tdme/tdme.h
++++ b/src/tdme/tdme.h
+@@ -3,6 +3,14 @@
+ #include <climits>
+ #include <cstdint>
+ 
++#if defined(DLL_EXPORT)
++	#define STATIC_DLL_IMPEXT __declspec(dllexport)
++#elif defined(DLL_IMPORT)
++	#define STATIC_DLL_IMPEXT __declspec(dllimport)
++#else
++	#define STATIC_DLL_IMPEXT
++#endif
++
+ #if INTPTR_MAX == INT64_MAX
+ 	#define CPU_64BIT
+ #elif INTPTR_MAX == INT32_MAX
+diff --git a/src/tdme/tools/editor/misc/Tools.h b/src/tdme/tools/editor/misc/Tools.h
+index 9eab9cab8..3a2d38425 100644
+--- a/src/tdme/tools/editor/misc/Tools.h
++++ b/src/tdme/tools/editor/misc/Tools.h
+@@ -37,13 +37,13 @@ using tdme::tools::editor::misc::CameraRotationInputHandler;
+ class tdme::tools::editor::misc::Tools final
+ {
+ private:
+-	static Engine* osEngine;
+-	static Model* gizmoAll;
+-	static Model* gizmoTranslationScale;
+-	static Model* gizmoTranslation;
+-	static Model* gizmoScale;
+-	static Model* gizmoRotations;
+-	static Model* defaultOBB;
++	STATIC_DLL_IMPEXT static Engine* osEngine;
++	STATIC_DLL_IMPEXT static Model* gizmoAll;
++	STATIC_DLL_IMPEXT static Model* gizmoTranslationScale;
++	STATIC_DLL_IMPEXT static Model* gizmoTranslation;
++	STATIC_DLL_IMPEXT static Model* gizmoScale;
++	STATIC_DLL_IMPEXT static Model* gizmoRotations;
++	STATIC_DLL_IMPEXT static Model* defaultOBB;
+ 
+ 	struct ToolsShutdown {
+ 		~ToolsShutdown();
+diff --git a/src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController_BoundingVolumeType.h b/src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController_BoundingVolumeType.h
+index c18f3fd37..35389ae74 100644
+--- a/src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController_BoundingVolumeType.h
++++ b/src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController_BoundingVolumeType.h
+@@ -17,12 +17,12 @@ using tdme::utilities::Enum;
+ class tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController_BoundingVolumeType final: public Enum
+ {
+ public:
+-	static PrototypePhysicsSubController_BoundingVolumeType* NONE;
+-	static PrototypePhysicsSubController_BoundingVolumeType* SPHERE;
+-	static PrototypePhysicsSubController_BoundingVolumeType* CAPSULE;
+-	static PrototypePhysicsSubController_BoundingVolumeType* BOUNDINGBOX;
+-	static PrototypePhysicsSubController_BoundingVolumeType* ORIENTEDBOUNDINGBOX;
+-	static PrototypePhysicsSubController_BoundingVolumeType* CONVEXMESH;
++	STATIC_DLL_IMPEXT static PrototypePhysicsSubController_BoundingVolumeType* NONE;
++	STATIC_DLL_IMPEXT static PrototypePhysicsSubController_BoundingVolumeType* SPHERE;
++	STATIC_DLL_IMPEXT static PrototypePhysicsSubController_BoundingVolumeType* CAPSULE;
++	STATIC_DLL_IMPEXT static PrototypePhysicsSubController_BoundingVolumeType* BOUNDINGBOX;
++	STATIC_DLL_IMPEXT static PrototypePhysicsSubController_BoundingVolumeType* ORIENTEDBOUNDINGBOX;
++	STATIC_DLL_IMPEXT static PrototypePhysicsSubController_BoundingVolumeType* CONVEXMESH;
+ 
+ 	/**
+ 	 * Public constructor
+diff --git a/src/tdme/tools/editor/tabviews/SceneEditorTabView.h b/src/tdme/tools/editor/tabviews/SceneEditorTabView.h
+index 531c9de09..2e44d6c42 100644
+--- a/src/tdme/tools/editor/tabviews/SceneEditorTabView.h
++++ b/src/tdme/tools/editor/tabviews/SceneEditorTabView.h
+@@ -103,7 +103,7 @@ private:
+ 	TabView::OutlinerState outlinerState;
+ 	Scene* scene { nullptr };
+ 
+-	static vector<string> ENTITYCOLOR_NAMES;
++	STATIC_DLL_IMPEXT static vector<string> ENTITYCOLOR_NAMES;
+ 	unordered_map<string, EntityColor> entityColors;
+ 
+ 	bool keyControl;
+diff --git a/src/tdme/utilities/Console.h b/src/tdme/utilities/Console.h
+index a3f065596..f68b074cf 100644
+--- a/src/tdme/utilities/Console.h
++++ b/src/tdme/utilities/Console.h
+@@ -62,7 +62,7 @@ private:
+ 	static void initLogWriterThread();
+ 
+ 	//
+-	static Mutex* mutex;
+-	static vector<string>* messages;
+-	static LogWriterThread logWriterThread;
++	STATIC_DLL_IMPEXT static Mutex* mutex;
++	STATIC_DLL_IMPEXT static vector<string>* messages;
++	STATIC_DLL_IMPEXT static LogWriterThread logWriterThread;
+ };
