@@ -63,8 +63,9 @@ ifeq ($(OS), Darwin)
 	endif
 	OFLAGS := -O2
 else ifeq ($(OS), FreeBSD)
+	# FreeBSD
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
-				src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
+		src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 		src/tdme/engine/fileio/models/ModelReader.cpp
 	INCLUDES := $(INCLUDES) -I/usr/local/include
 	OPENGL_RENDERER_LDFLAGS := -L/usr/local/lib -lGLEW -lGL -lglfw
@@ -75,27 +76,27 @@ else ifeq ($(OS), FreeBSD)
 	OFLAGS := -O2
 else ifeq ($(OS), NetBSD)
 	# NetBSD
-	INCLUDES := $(INCLUDES) -I/usr/X11R7/include -I/usr/pkg/include
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
-			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
-			src/tdme/engine/EngineGL2Renderer.cpp \
-			src/tdme/engine/EngineGL3Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
-			src/tdme/engine/fileio/models/ModelReader.cpp
-	MAIN_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -lglfw -lGLEW -lGL -lopenal -pthread -lexecinfo
+		src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
+		src/tdme/engine/fileio/models/ModelReader.cpp
+	INCLUDES := $(INCLUDES) -I/usr/X11R7/include -I/usr/pkg/include
+	OPENGL_RENDERER_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -lGLEW -lGL -lglfw
+	VULKAN_RENDERER_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -lvulkan -lglfw
+	OPENGLES2_RENDERER_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -lGLESv2 -lEGL -lglfw
+	LIBS_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -ldl -lglfw -lopenal -lexecinfo
+	MAIN_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -lglfw -lopenal -lexecinfo
 	OFLAGS := -O2
 else ifeq ($(OS), OpenBSD)
 	# OpenBSD
-	INCLUDES := $(INCLUDES) -I/usr/X11R6/include -I/usr/local/include
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
-			src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
-			src/tdme/engine/EngineGL2Renderer.cpp \
-			src/tdme/engine/EngineGL3Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
-			src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
-			src/tdme/engine/fileio/models/ModelReader.cpp
-	MAIN_LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -lglfw -lGLEW -lGL -lopenal -pthread
+		src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
+		src/tdme/engine/fileio/models/ModelReader.cpp
+	INCLUDES := $(INCLUDES) -I/usr/X11R6/include -I/usr/local/include
+	OPENGL_RENDERER_LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -lGLEW -lGL -lglfw
+	VULKAN_RENDERER_LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -lvulkan -lglfw
+	OPENGLES2_RENDERER_LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -lGLESv2 -lEGL -lglfw
+	LIBS_LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -ldl -lglfw -lopenal
+	MAIN_LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -lglfw -lopenal
 	OFLAGS := -O2
 else ifeq ($(OS), Haiku)
 	# Haiku
