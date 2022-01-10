@@ -219,7 +219,7 @@ You find binaries in
 
 ## 2.1. Unix-like platforms
 
-On UNIX like platforms you need to set up LD_LIBRARY_PATH, just that TDME2 libs and renderer plugins are found.
+On Unix like platforms you need to set up LD_LIBRARY_PATH, just that TDME2 libs and renderer plugins are found.
 
 ```bash
 $ pwd
