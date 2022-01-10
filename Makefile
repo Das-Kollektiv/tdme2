@@ -10,6 +10,8 @@ ifeq ($(OS), Darwin)
 	LIB_EXT := .dylib
 else ifeq ($(OSSHORT), Msys)
 	LIB_EXT := .dll
+else
+	LIB_EXT := .so
 endif
 LIB := lib$(NAME)$(LIB_EXT)
 EXT_LIB := lib$(NAME)-ext$(LIB_EXT)
