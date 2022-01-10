@@ -250,9 +250,9 @@ $ ./bin/tdme/tests/AngleTest
 ## 2.3.1 Setting the renderer plugin
 
 There are currently 4 renderer plugins available, if they have been built:
-- OpenGLES2, choose via "--gles2"
-- OpenGL2, choose via "--gl2"
-- OpenGL3+/CORE (default), but can be issued also with "--gl3core"
+- OpenGL ES2, choose via "--gles2"
+- OpenGL 2, choose via "--gl2"
+- OpenGL 3+/CORE (default), but can be issued also with "--gl3core"
 - Vulkan, choose via "--vulkan"
 
 Example: If you want to start TDMEEditor with Vulkan, just do the following:
