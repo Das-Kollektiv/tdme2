@@ -8,6 +8,8 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
+#include <string>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/earlyzrejection/EZRShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
@@ -19,6 +21,10 @@
 #include <tdme/gui/renderer/GUIShader.h>
 #include <tdme/utilities/Console.h>
 
+using tdme::engine::EngineVKRenderer;
+
+using std::string;
+
 using tdme::engine::subsystems::earlyzrejection::EZRShader;
 using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::subsystems::lines::LinesShader;
@@ -26,7 +32,6 @@ using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::Engine;
 using tdme::engine::Version;
-using tdme::engine::EngineVKRenderer;
 using tdme::gui::renderer::GUIShader;
 using tdme::utilities::Console;
 
