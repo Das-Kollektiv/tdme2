@@ -8,10 +8,6 @@
 	#include <thread>
 	using std::thread;
 #else
-	#if defined(_WIN32)
-	#define NOMINMAX
-		#include <windows.h>
-	#endif
 	#include <pthread.h>
 #endif
 
@@ -51,39 +47,6 @@ public:
 	 * @param milliseconds uint64_t milliseconds to wait
 	 */
 	static void sleep(const uint64_t milliseconds);
-
-	/**
-	 * @brief sleeps current thread for given time in nanoseconds
-	 * @param nanoseconds uint64_t nanoseconds to wait
-	 */
-	inline static void nanoSleep(const uint64_t nanoseconds) {
-		#if defined(CPPTHREADS)
-		#else
-			#if defined(_WIN32)
-				// see: https://gist.github.com/Youka/4153f12cf2e17a77314c
-				HANDLE timer;
-				LARGE_INTEGER li;
-				if ((timer = CreateWaitableTimer(NULL, TRUE, NULL)) == NULL) {
-					return;
-				}
-				li.QuadPart = -nanoseconds;
-				if (SetWaitableTimer(timer, &li, 0, NULL, NULL, FALSE) == 0) {
-					CloseHandle(timer);
-					return;
-				}
-				if (WaitForSingleObject(timer, INFINITE) != WAIT_OBJECT_0) {
-					// no op
-				}
-				CloseHandle(timer);
-			#else
-				struct timespec sleepTime;
-				struct timespec returnTime;
-				sleepTime.tv_sec = 0;
-				sleepTime.tv_nsec = nanoseconds;
-				nanosleep(&sleepTime, &returnTime);
-			#endif
-		#endif
-	}
 
 	/**
 	 * @brief Blocks caller thread until this thread has been terminated
