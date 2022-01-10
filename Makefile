@@ -1,6 +1,16 @@
+# determine platform
+OSSHORT := $(shell sh -c 'uname -o 2>/dev/null')
+OS := $(shell sh -c 'uname -s 2>/dev/null')
+ARCH := $(shell sh -c 'uname -m 2>/dev/null')
+
+#
 NAME = tdme2
 EXT_NAME = tdme2-ext
-LIB_EXT := .so
+ifeq ($(OS), Darwin)
+	LIB_EXT := .dylib
+else
+	LIB_EXT := .so
+endif
 LIB := lib$(NAME)$(LIB_EXT)
 EXT_LIB := lib$(NAME)-ext$(LIB_EXT)
 OPENGL2_RENDERER_LIB := libopengl2renderer$(LIB_EXT)
@@ -31,9 +41,6 @@ INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/src/ -Iext/v-hacd/src/VHACD_Lib/
 CXX := $(CXX) -fPIC
 
 # set platform specific flags
-OSSHORT := $(shell sh -c 'uname -o 2>/dev/null')
-OS := $(shell sh -c 'uname -s 2>/dev/null')
-ARCH := $(shell sh -c 'uname -m 2>/dev/null')
 ifeq ($(OS), Darwin)
 	# MacOSX
 	EXTRAFLAGS := $(EXTRAFLAGS) -DHAVE_UNISTD_H
@@ -137,7 +144,11 @@ CXXFLAGS := $(CFLAGS) $(CPPVERSION)
 CXXFLAGS_DEBUG := $(CFLAGS_DEBUG) $(CPPVERSION)
 CXXFLAGS_EXT_RP3D = $(CFLAGS_EXT_RP3D) $(CPPVERSION)
 
-LIBS := $(LIB_DIR)/$(LIB) $(LIB_DIR)/$(EXT_LIB) $(LIB_DIR)/$(OPENGL2_RENDERER_LIB) $(LIB_DIR)/$(OPENGL3CORE_RENDERER_LIB)
+LIBS := $(LIB_DIR)/$(LIB) $(LIB_DIR)/$(EXT_LIB)
+ifneq ($(OS), Darwin)
+	$(LIB_DIR)/$(OPENGL2_RENDERER_LIB)
+endif
+LIBS := $(LIBS) $(LIB_DIR)/$(OPENGL3CORE_RENDERER_LIB)
 ifeq ($(VULKAN), YES)
 	LIBS:= $(LIBS) $(LIB_DIR)/$(VULKAN_RENDERER_LIB)
 endif

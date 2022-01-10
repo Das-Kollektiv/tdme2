@@ -534,6 +534,14 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		if (argValue == "--vulkan") rendererLibrary = "libvulkanrenderer";
 	}
 
+	#if defined(_MSC_VER)
+		rendererLibrary = rendererLibrary + ".dll";
+	#elif defined(__APPLE__)
+		rendererLibrary = rendererLibrary + ".dylib";
+	#else
+		rendererLibrary = rendererLibrary + ".so";
+	#endif
+
 	//
 	this->title = title;
 	this->windowHints = windowHints;
@@ -570,7 +578,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 	// load renderer library
 	#if defined(_MSC_VER)
 		//
-		auto rendererLibraryHandle = LoadLibrary((rendererLibrary + ".dll").c_str());
+		auto rendererLibraryHandle = LoadLibrary(rendererLibrary.c_str());
 		if (rendererLibraryHandle == nullptr) {
 			Console::println("Application::run(): Could not open renderer library");
 			glfwTerminate();
@@ -593,7 +601,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		}
 	#else
 		//
-		auto rendererLibraryHandle = dlopen((rendererLibrary + ".so").c_str(), RTLD_NOW);
+		auto rendererLibraryHandle = dlopen(rendererLibrary.c_str(), RTLD_NOW);
 		if (rendererLibraryHandle == nullptr) {
 			Console::println("Application::run(): Could not open renderer library");
 			glfwTerminate();
