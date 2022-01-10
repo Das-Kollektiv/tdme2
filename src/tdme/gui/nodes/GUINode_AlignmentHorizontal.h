@@ -27,10 +27,10 @@ using tdme::utilities::Enum;
 class tdme::gui::nodes::GUINode_AlignmentHorizontal final: public Enum
 {
 public:
-	static GUINode_AlignmentHorizontal* NONE;
-	static GUINode_AlignmentHorizontal* LEFT;
-	static GUINode_AlignmentHorizontal* CENTER;
-	static GUINode_AlignmentHorizontal* RIGHT;
+	STATIC_DLL_IMPEXT static GUINode_AlignmentHorizontal* NONE;
+	STATIC_DLL_IMPEXT static GUINode_AlignmentHorizontal* LEFT;
+	STATIC_DLL_IMPEXT static GUINode_AlignmentHorizontal* CENTER;
+	STATIC_DLL_IMPEXT static GUINode_AlignmentHorizontal* RIGHT;
 
 	/**
 	 * Public constructor

@@ -26,10 +26,10 @@ using tdme::utilities::Enum;
 class tdme::gui::nodes::GUINode_AlignmentVertical final: public Enum
 {
 public:
-	static GUINode_AlignmentVertical* NONE;
-	static GUINode_AlignmentVertical* TOP;
-	static GUINode_AlignmentVertical* CENTER;
-	static GUINode_AlignmentVertical* BOTTOM;
+	STATIC_DLL_IMPEXT static GUINode_AlignmentVertical* NONE;
+	STATIC_DLL_IMPEXT static GUINode_AlignmentVertical* TOP;
+	STATIC_DLL_IMPEXT static GUINode_AlignmentVertical* CENTER;
+	STATIC_DLL_IMPEXT static GUINode_AlignmentVertical* BOTTOM;
 
 	/**
 	 * Public constructor

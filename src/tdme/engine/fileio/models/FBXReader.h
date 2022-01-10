@@ -40,7 +40,7 @@ public:
 	static Model* read(const string& pathName, const string& fileName) throw (ModelFileIOException, FileSystemException);
 
 private:
-	static const Color4 BLENDER_AMBIENT_NONE;
+	STATIC_DLL_IMPEXT static const Color4 BLENDER_AMBIENT_NONE;
 	static constexpr float BLENDER_AMBIENT_FROM_DIFFUSE_SCALE { 0.7f };
 	static constexpr float BLENDER_DIFFUSE_SCALE { 0.8f };
 

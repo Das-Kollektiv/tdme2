@@ -26,7 +26,7 @@ using tdme::os::filesystem::FileSystemException;
 class tdme::engine::fileio::models::ModelReader final
 {
 private:
-	static vector<string> extensions;
+	STATIC_DLL_IMPEXT static vector<string> extensions;
 public:
 	/**
 	 * Get supported model extensions

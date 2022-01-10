@@ -31,7 +31,6 @@ using tdme::gui::renderer::GUIShader;
 
 EngineGL2Renderer::EngineGL2Renderer()
 {
-	engine = Engine::getInstance();
 }
 
 bool EngineGL2Renderer::prepareWindowSystemRendererContext(int tryIdx) {

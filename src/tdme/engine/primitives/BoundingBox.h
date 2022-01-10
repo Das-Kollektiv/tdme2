@@ -25,19 +25,19 @@ class tdme::engine::primitives::BoundingBox
 {
 
 private:
-	static const array<int32_t, 3> FACE0_INDICES;
-	static const array<int32_t, 3> FACE1_INDICES;
-	static const array<int32_t, 3> FACE2_INDICES;
-	static const array<int32_t, 3> FACE3_INDICES;
-	static const array<int32_t, 3> FACE4_INDICES;
-	static const array<int32_t, 3> FACE5_INDICES;
-	static const array<int32_t, 3> FACE6_INDICES;
-	static const array<int32_t, 3> FACE7_INDICES;
-	static const array<int32_t, 3> FACE8_INDICES;
-	static const array<int32_t, 3> FACE9_INDICES;
-	static const array<int32_t, 3> FACE10_INDICES;
-	static const array<int32_t, 3> FACE11_INDICES;
-	static const array<array<int32_t,3>,12> facesVerticesIndexes;
+	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE0_INDICES;
+	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE1_INDICES;
+	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE2_INDICES;
+	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE3_INDICES;
+	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE4_INDICES;
+	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE5_INDICES;
+	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE6_INDICES;
+	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE7_INDICES;
+	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE8_INDICES;
+	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE9_INDICES;
+	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE10_INDICES;
+	STATIC_DLL_IMPEXT static const array<int32_t, 3> FACE11_INDICES;
+	STATIC_DLL_IMPEXT static const array<array<int32_t,3>,12> facesVerticesIndexes;
 	Vector3 min;
 	Vector3 max;
 	vector<Vector3> vertices;

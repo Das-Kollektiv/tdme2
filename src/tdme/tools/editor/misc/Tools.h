@@ -37,19 +37,19 @@ using tdme::tools::editor::misc::CameraRotationInputHandler;
 class tdme::tools::editor::misc::Tools final
 {
 private:
-	static Engine* osEngine;
-	static Model* gizmoAll;
-	static Model* gizmoTranslationScale;
-	static Model* gizmoTranslation;
-	static Model* gizmoScale;
-	static Model* gizmoRotations;
-	static Model* defaultOBB;
+	STATIC_DLL_IMPEXT static Engine* osEngine;
+	STATIC_DLL_IMPEXT static Model* gizmoAll;
+	STATIC_DLL_IMPEXT static Model* gizmoTranslationScale;
+	STATIC_DLL_IMPEXT static Model* gizmoTranslation;
+	STATIC_DLL_IMPEXT static Model* gizmoScale;
+	STATIC_DLL_IMPEXT static Model* gizmoRotations;
+	STATIC_DLL_IMPEXT static Model* defaultOBB;
 
 	struct ToolsShutdown {
 		~ToolsShutdown();
 	};
 
-	static ToolsShutdown toolsShutdown;
+	STATIC_DLL_IMPEXT static ToolsShutdown toolsShutdown;
 
 public:
 	/**

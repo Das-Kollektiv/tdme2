@@ -16,12 +16,12 @@ using tdme::utilities::Enum;
  */
 class tdme::engine::prototype::PrototypeParticleSystem_Emitter final: public Enum {
 public:
-	static PrototypeParticleSystem_Emitter* NONE;
-	static PrototypeParticleSystem_Emitter* POINT_PARTICLE_EMITTER;
-	static PrototypeParticleSystem_Emitter* BOUNDINGBOX_PARTICLE_EMITTER;
-	static PrototypeParticleSystem_Emitter* CIRCLE_PARTICLE_EMITTER;
-	static PrototypeParticleSystem_Emitter* CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY;
-	static PrototypeParticleSystem_Emitter* SPHERE_PARTICLE_EMITTER;
+	STATIC_DLL_IMPEXT static PrototypeParticleSystem_Emitter* NONE;
+	STATIC_DLL_IMPEXT static PrototypeParticleSystem_Emitter* POINT_PARTICLE_EMITTER;
+	STATIC_DLL_IMPEXT static PrototypeParticleSystem_Emitter* BOUNDINGBOX_PARTICLE_EMITTER;
+	STATIC_DLL_IMPEXT static PrototypeParticleSystem_Emitter* CIRCLE_PARTICLE_EMITTER;
+	STATIC_DLL_IMPEXT static PrototypeParticleSystem_Emitter* CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY;
+	STATIC_DLL_IMPEXT static PrototypeParticleSystem_Emitter* SPHERE_PARTICLE_EMITTER;
 
 	/**
 	 * Public constructor

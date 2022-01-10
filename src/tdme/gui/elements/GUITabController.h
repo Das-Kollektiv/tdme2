@@ -32,10 +32,10 @@ class tdme::gui::elements::GUITabController final: public GUIElementController
 	friend class GUITabsHeaderController;
 
 private:
-	static string CONDITION_DISABLED;
-	static string CONDITION_ENABLED;
-	static string CONDITION_SELECTED;
-	static string CONDITION_UNSELECTED;
+	STATIC_DLL_IMPEXT static string CONDITION_DISABLED;
+	STATIC_DLL_IMPEXT static string CONDITION_ENABLED;
+	STATIC_DLL_IMPEXT static string CONDITION_SELECTED;
+	STATIC_DLL_IMPEXT static string CONDITION_UNSELECTED;
 	GUINode* tabsNode { nullptr };
 	GUINode* tabsHeaderNode { nullptr };
 	bool selected;

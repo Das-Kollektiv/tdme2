@@ -28,7 +28,7 @@ class tdme::gui::elements::GUIDropDownOption final: public GUIElement
 {
 
 private:
-	static string NAME;
+	STATIC_DLL_IMPEXT static string NAME;
 
 public:
 	/**

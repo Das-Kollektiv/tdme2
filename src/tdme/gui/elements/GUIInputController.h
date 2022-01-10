@@ -29,8 +29,8 @@ class tdme::gui::elements::GUIInputController final
 	friend class GUIInput;
 
 private:
-	static string CONDITION_DISABLED;
-	static string CONDITION_ENABLED;
+	STATIC_DLL_IMPEXT static string CONDITION_DISABLED;
+	STATIC_DLL_IMPEXT static string CONDITION_ENABLED;
 	GUIInputInternalNode* inputNode { nullptr };
 	bool disabled;
 

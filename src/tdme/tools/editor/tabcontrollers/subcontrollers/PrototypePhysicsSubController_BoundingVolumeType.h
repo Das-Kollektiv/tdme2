@@ -17,12 +17,12 @@ using tdme::utilities::Enum;
 class tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController_BoundingVolumeType final: public Enum
 {
 public:
-	static PrototypePhysicsSubController_BoundingVolumeType* NONE;
-	static PrototypePhysicsSubController_BoundingVolumeType* SPHERE;
-	static PrototypePhysicsSubController_BoundingVolumeType* CAPSULE;
-	static PrototypePhysicsSubController_BoundingVolumeType* BOUNDINGBOX;
-	static PrototypePhysicsSubController_BoundingVolumeType* ORIENTEDBOUNDINGBOX;
-	static PrototypePhysicsSubController_BoundingVolumeType* CONVEXMESH;
+	STATIC_DLL_IMPEXT static PrototypePhysicsSubController_BoundingVolumeType* NONE;
+	STATIC_DLL_IMPEXT static PrototypePhysicsSubController_BoundingVolumeType* SPHERE;
+	STATIC_DLL_IMPEXT static PrototypePhysicsSubController_BoundingVolumeType* CAPSULE;
+	STATIC_DLL_IMPEXT static PrototypePhysicsSubController_BoundingVolumeType* BOUNDINGBOX;
+	STATIC_DLL_IMPEXT static PrototypePhysicsSubController_BoundingVolumeType* ORIENTEDBOUNDINGBOX;
+	STATIC_DLL_IMPEXT static PrototypePhysicsSubController_BoundingVolumeType* CONVEXMESH;
 
 	/**
 	 * Public constructor

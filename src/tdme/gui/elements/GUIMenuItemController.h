@@ -31,8 +31,8 @@ class tdme::gui::elements::GUIMenuItemController final
 	friend class GUIMenuHeaderItemController;
 
 private:
-	static string CONDITION_SELECTED;
-	static string CONDITION_UNSELECTED;
+	STATIC_DLL_IMPEXT static string CONDITION_SELECTED;
+	STATIC_DLL_IMPEXT static string CONDITION_UNSELECTED;
 	bool selected;
 	MutableString value;
 	GUIParentNode* menuHeaderItemNode { nullptr };

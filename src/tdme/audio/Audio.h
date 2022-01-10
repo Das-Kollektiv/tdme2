@@ -35,7 +35,7 @@ class tdme::audio::Audio final
 private:
 	static constexpr int32_t ALBUFFERID_NONE { -1 };
 	static constexpr int32_t ALSOURCEID_NONE { -1 };
-	static Audio* instance;
+	STATIC_DLL_IMPEXT static Audio* instance;
 
 	ALCdevice* device { nullptr };
 	ALCcontext* context { nullptr };

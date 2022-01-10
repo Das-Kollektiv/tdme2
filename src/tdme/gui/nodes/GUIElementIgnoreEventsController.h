@@ -27,8 +27,8 @@ class tdme::gui::nodes::GUIElementIgnoreEventsController
 	friend class GUIElementNode;
 
 private:
-	static string CONDITION_DISABLED;
-	static string CONDITION_ENABLED;
+	STATIC_DLL_IMPEXT static string CONDITION_DISABLED;
+	STATIC_DLL_IMPEXT static string CONDITION_ENABLED;
 	bool disabled;
 	MutableString value;
 

@@ -17,10 +17,10 @@ using tdme::utilities::Enum;
 class tdme::engine::prototype::PrototypeParticleSystem_Type final: public Enum
 {
 public:
-	static PrototypeParticleSystem_Type* NONE;
-	static PrototypeParticleSystem_Type* OBJECT_PARTICLE_SYSTEM;
-	static PrototypeParticleSystem_Type* POINT_PARTICLE_SYSTEM;
-	static PrototypeParticleSystem_Type* FOG_PARTICLE_SYSTEM;
+	STATIC_DLL_IMPEXT static PrototypeParticleSystem_Type* NONE;
+	STATIC_DLL_IMPEXT static PrototypeParticleSystem_Type* OBJECT_PARTICLE_SYSTEM;
+	STATIC_DLL_IMPEXT static PrototypeParticleSystem_Type* POINT_PARTICLE_SYSTEM;
+	STATIC_DLL_IMPEXT static PrototypeParticleSystem_Type* FOG_PARTICLE_SYSTEM;
 
 	/**
 	 * Public constructor

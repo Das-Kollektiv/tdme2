@@ -149,9 +149,9 @@ private:
 	static void scaleTextureLine(ByteBuffer* pixelByteBuffer, ByteBuffer* pixelByteBufferScaled, int width, int textureWidth, int bytesPerPixel, int y);
 
 	//
-	static vector<string> extensions;
+	STATIC_DLL_IMPEXT static vector<string> extensions;
 
 	// maybe have a read write lock here for texture cache, but currently I have no multithreaded access to it
-	static map<string, Texture*>* textureCache;
-	static Mutex* textureCacheMutex;
+	STATIC_DLL_IMPEXT static map<string, Texture*>* textureCache;
+	STATIC_DLL_IMPEXT static Mutex* textureCacheMutex;
 };

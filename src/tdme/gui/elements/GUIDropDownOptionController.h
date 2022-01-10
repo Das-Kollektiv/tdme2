@@ -31,9 +31,9 @@ class tdme::gui::elements::GUIDropDownOptionController final
 	friend class GUIDropDownController;
 
 private:
-	static string CONDITION_SELECTED;
-	static string CONDITION_UNSELECTED;
-	static string CONDITION_HIDDEN;
+	STATIC_DLL_IMPEXT static string CONDITION_SELECTED;
+	STATIC_DLL_IMPEXT static string CONDITION_UNSELECTED;
+	STATIC_DLL_IMPEXT static string CONDITION_HIDDEN;
 	GUIParentNode* dropDownNode { nullptr };
 	GUIParentNode* dropDownContainerNode { nullptr };
 	bool initialPostLayout;

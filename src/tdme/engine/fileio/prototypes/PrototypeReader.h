@@ -34,7 +34,7 @@ class tdme::engine::fileio::prototypes::PrototypeReader final
 {
 	friend class tdme::engine::fileio::scenes::SceneReader;
 
-	static vector<string> extensions;
+	STATIC_DLL_IMPEXT static vector<string> extensions;
 
 public:
 	/**

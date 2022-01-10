@@ -1,11 +1,13 @@
 #pragma once
 
-#if defined(VULKAN)
-	#define GLFW_INCLUDE_VULKAN
-#else
-	#define GLFW_INCLUDE_NONE
+#if defined(_MSC_VER)
+	// this suppresses a warning redefinition of APIENTRY macro
+	#define NOMINMAX
+	#include <windows.h>
 #endif
+#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
+
 #define MOUSE_CURSOR_DISABLED 0
 #define MOUSE_CURSOR_ENABLED 1
 #define MOUSE_CURSOR_NORMAL 1
@@ -308,9 +310,9 @@ public:
 	virtual void onClose();
 
 private:
-	static Renderer* renderer;
-	static Application* application;
-	static InputEventHandler* inputEventHandler;
+	STATIC_DLL_IMPEXT static Renderer* renderer;
+	STATIC_DLL_IMPEXT static Application* application;
+	STATIC_DLL_IMPEXT static InputEventHandler* inputEventHandler;
 	int windowHints { WINDOW_HINT_NONE };
 	string executableFileName;
 	bool debuggingEnabled { false };
@@ -320,16 +322,16 @@ private:
 	int windowXPosition { -1 };
 	int windowYPosition { -1 };
 	bool fullScreen { false };
-	static int64_t timeLast;
-	static bool limitFPS;
+	STATIC_DLL_IMPEXT static int64_t timeLast;
+	STATIC_DLL_IMPEXT static bool limitFPS;
 	string title;
 	int exitCode { 0 };
 
-	static GLFWwindow* glfwWindow;
-	static array<unsigned int, 10> glfwMouseButtonDownFrames;
-	static int glfwMouseButtonLast;
-	static bool glfwCapsLockEnabled;
-	static GLFWcursor* glfwHandCursor;
+	STATIC_DLL_IMPEXT static GLFWwindow* glfwWindow;
+	STATIC_DLL_IMPEXT static array<unsigned int, 10> glfwMouseButtonDownFrames;
+	STATIC_DLL_IMPEXT static int glfwMouseButtonLast;
+	STATIC_DLL_IMPEXT static bool glfwCapsLockEnabled;
+	STATIC_DLL_IMPEXT static GLFWcursor* glfwHandCursor;
 
 	/**
 	 * Set application icon

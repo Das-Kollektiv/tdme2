@@ -35,9 +35,9 @@ class tdme::engine::model::Model final
 public:
 	enum AuthoringTool {AUTHORINGTOOL_UNKNOWN, AUTHORINGTOOL_BLENDER};
 
-	static string ANIMATIONSETUP_DEFAULT;
-	static constexpr float FPS_DEFAULT { 30.0f };
-	static uint32_t uidCounter;
+	STATIC_DLL_IMPEXT static string ANIMATIONSETUP_DEFAULT;
+	STATIC_DLL_IMPEXT static constexpr float FPS_DEFAULT { 30.0f };
+	STATIC_DLL_IMPEXT static uint32_t uidCounter;
 
 private:
 	AuthoringTool authoringTool;

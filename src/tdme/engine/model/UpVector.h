@@ -21,8 +21,8 @@ class tdme::engine::model::UpVector final
 	friend class Model;
 
 public:
-	static UpVector* Y_UP;
-	static UpVector* Z_UP;
+	STATIC_DLL_IMPEXT static UpVector* Y_UP;
+	STATIC_DLL_IMPEXT static UpVector* Z_UP;
 
 public:
 	UpVector(const string& name, int ordinal);

@@ -25,7 +25,7 @@ public:
 	enum CameraMode { CAMERAMODE_LOOKAT, CAMERAMODE_NONE };
 
 private:
-	static Vector3 defaultUp;
+	STATIC_DLL_IMPEXT static Vector3 defaultUp;
 	Renderer* renderer { nullptr };
 	int32_t width;
 	int32_t height;

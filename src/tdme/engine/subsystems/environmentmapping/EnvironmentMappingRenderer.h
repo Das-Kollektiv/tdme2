@@ -46,7 +46,7 @@ private:
 	int64_t timeRenderLast { -1LL };
 	int reflectionCubeMapTextureIdx { 0 };
 	int renderCubeMapTextureIdx { 0 };
-	static GeometryBuffer* geometryBuffer;
+	STATIC_DLL_IMPEXT static GeometryBuffer* geometryBuffer;
 	int64_t timeRenderUpdateFrequency { 100LL };
 	int32_t renderPassMask { Entity::RENDERPASS_ALL - Entity::RENDERPASS_WATER };
 	Engine::DecomposedEntities visibleDecomposedEntities;

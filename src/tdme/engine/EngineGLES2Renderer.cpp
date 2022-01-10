@@ -1,5 +1,10 @@
 #include <tdme/engine/EngineGLES2Renderer.h>
 
+#if defined(_MSC_VER)
+	// this suppresses a warning redefinition of APIENTRY macro
+	#define NOMINMAX
+	#include <windows.h>
+#endif
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
@@ -23,7 +28,6 @@ using tdme::gui::renderer::GUIShader;
 
 EngineGLES2Renderer::EngineGLES2Renderer()
 {
-	engine = Engine::getInstance();
 }
 
 bool EngineGLES2Renderer::prepareWindowSystemRendererContext(int tryIdx) {

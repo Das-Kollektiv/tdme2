@@ -50,7 +50,7 @@ class tdme::engine::subsystems::rendering::Object3DNode final
 	friend class tdme::engine::subsystems::skinning::SkinningShader;
 
 private:
-	static int64_t counter;
+	STATIC_DLL_IMPEXT static int64_t counter;
 
 	static constexpr int32_t TEXTUREID_NONE { -1 };
 	static constexpr int32_t TEXTUREID_NOTUSED { 0 };

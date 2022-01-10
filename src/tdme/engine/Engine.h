@@ -174,42 +174,42 @@ public:
 	static constexpr int ENGINETHREADSQUEUE_COMPUTE_DISPATCH_COUNT { 5 };
 
 protected:
-	static Engine* currentEngine;
+	STATIC_DLL_IMPEXT static Engine* currentEngine;
 
 private:
-	static Engine* instance;
-	static Renderer* renderer;
+	STATIC_DLL_IMPEXT static Engine* instance;
+	STATIC_DLL_IMPEXT static Renderer* renderer;
 
-	static TextureManager* textureManager;
-	static VBOManager* vboManager;
-	static MeshManager* meshManager;
-	static GUIRenderer* guiRenderer;
+	STATIC_DLL_IMPEXT static TextureManager* textureManager;
+	STATIC_DLL_IMPEXT static VBOManager* vboManager;
+	STATIC_DLL_IMPEXT static MeshManager* meshManager;
+	STATIC_DLL_IMPEXT static GUIRenderer* guiRenderer;
 
-	static AnimationProcessingTarget animationProcessingTarget;
+	STATIC_DLL_IMPEXT static AnimationProcessingTarget animationProcessingTarget;
 
-	static EZRShader* ezrShader;
-	static ShadowMapCreationShader* shadowMappingShaderPre;
-	static ShadowMapRenderShader* shadowMappingShaderRender;
-	static LightingShader* lightingShader;
-	static ParticlesShader* particlesShader;
-	static LinesShader* linesShader;
-	static SkinningShader* skinningShader;
-	static GUIShader* guiShader;
-	static FrameBufferRenderShader* frameBufferRenderShader;
-	static DeferredLightingRenderShader* deferredLightingRenderShader;
-	static PostProcessing* postProcessing;
-	static PostProcessingShader* postProcessingShader;
-	static Texture2DRenderShader* texture2DRenderShader;
-	static int threadCount;
-	static bool have4K;
-	static float animationBlendingTime;
-	static int32_t shadowMapWidth;
-	static int32_t shadowMapHeight;
-	static int32_t shadowMapRenderLookUps;
-	static int32_t environmentMappingWidth;
-	static int32_t environmentMappingHeight;
-	static float transformationsComputingReduction1Distance;
-	static float transformationsComputingReduction2Distance;
+	STATIC_DLL_IMPEXT static EZRShader* ezrShader;
+	STATIC_DLL_IMPEXT static ShadowMapCreationShader* shadowMappingShaderPre;
+	STATIC_DLL_IMPEXT static ShadowMapRenderShader* shadowMappingShaderRender;
+	STATIC_DLL_IMPEXT static LightingShader* lightingShader;
+	STATIC_DLL_IMPEXT static ParticlesShader* particlesShader;
+	STATIC_DLL_IMPEXT static LinesShader* linesShader;
+	STATIC_DLL_IMPEXT static SkinningShader* skinningShader;
+	STATIC_DLL_IMPEXT static GUIShader* guiShader;
+	STATIC_DLL_IMPEXT static FrameBufferRenderShader* frameBufferRenderShader;
+	STATIC_DLL_IMPEXT static DeferredLightingRenderShader* deferredLightingRenderShader;
+	STATIC_DLL_IMPEXT static PostProcessing* postProcessing;
+	STATIC_DLL_IMPEXT static PostProcessingShader* postProcessingShader;
+	STATIC_DLL_IMPEXT static Texture2DRenderShader* texture2DRenderShader;
+	STATIC_DLL_IMPEXT static int threadCount;
+	STATIC_DLL_IMPEXT static bool have4K;
+	STATIC_DLL_IMPEXT static float animationBlendingTime;
+	STATIC_DLL_IMPEXT static int32_t shadowMapWidth;
+	STATIC_DLL_IMPEXT static int32_t shadowMapHeight;
+	STATIC_DLL_IMPEXT static int32_t shadowMapRenderLookUps;
+	STATIC_DLL_IMPEXT static int32_t environmentMappingWidth;
+	STATIC_DLL_IMPEXT static int32_t environmentMappingHeight;
+	STATIC_DLL_IMPEXT static float transformationsComputingReduction1Distance;
+	STATIC_DLL_IMPEXT static float transformationsComputingReduction2Distance;
 
 	struct Shader {
 		ShaderType type;
@@ -217,7 +217,7 @@ private:
 		map<string, ShaderParameter> parameterDefaults;
 	};
 
-	static map<string, Shader> shaders;
+	STATIC_DLL_IMPEXT static map<string, Shader> shaders;
 
 	struct DecomposedEntities {
 		vector<Entity*> noFrustumCullingEntities;
@@ -238,7 +238,7 @@ private:
 		vector<Object3D*> needsComputeTransformationsEntities;
 	};
 
-	static unordered_map<string, uint8_t> uniqueShaderIds;
+	STATIC_DLL_IMPEXT static unordered_map<string, uint8_t> uniqueShaderIds;
 
 	int32_t width { -1 };
 	int32_t height { -1 };
@@ -273,7 +273,7 @@ private:
 
 	EntityRenderer* entityRenderer { nullptr };
 
-	static bool skinningShaderEnabled;
+	STATIC_DLL_IMPEXT static bool skinningShaderEnabled;
 	bool shadowMappingEnabled;
 	bool renderingInitiated;
 	bool renderingComputedTransformations;
@@ -372,9 +372,9 @@ private:
 
 	};
 
-	static vector<EngineThread*> engineThreads;
-	static Queue<EngineThreadQueueElement>* engineThreadsQueue;
-	static EngineThreadQueueElementPool engineThreadQueueElementPool;
+	STATIC_DLL_IMPEXT static vector<EngineThread*> engineThreads;
+	STATIC_DLL_IMPEXT static Queue<EngineThreadQueueElement>* engineThreadsQueue;
+	STATIC_DLL_IMPEXT static EngineThreadQueueElementPool engineThreadQueueElementPool;
 
 	/**
 	 * @return mesh manager

@@ -27,8 +27,8 @@ class tdme::gui::elements::GUISelectBoxParentOptionController final: public GUIS
 	friend class GUISelectBoxParentOption;
 
 private:
-	static string CONDITION_EXPANDED;
-	static string CONDITION_COLLAPSED;
+	STATIC_DLL_IMPEXT static string CONDITION_EXPANDED;
+	STATIC_DLL_IMPEXT static string CONDITION_COLLAPSED;
 
 	GUIElementNode* arrowNode { nullptr };
 	bool expanded;

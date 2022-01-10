@@ -13,8 +13,8 @@ using tdme::os::filesystem::FileSystemInterface;
 class tdme::os::filesystem::FileSystem
 {
 private:
-	static FileSystemInterface* standardFileSystem;
-	static FileSystemInterface* fileSystem;
+	STATIC_DLL_IMPEXT static FileSystemInterface* standardFileSystem;
+	STATIC_DLL_IMPEXT static FileSystemInterface* fileSystem;
 
 public:
 

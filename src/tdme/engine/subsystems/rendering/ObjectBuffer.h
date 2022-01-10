@@ -32,7 +32,7 @@ class tdme::engine::subsystems::rendering::ObjectBuffer final
 	friend class tdme::engine::subsystems::skinning::SkinningShader;
 
 private:
-	static vector<ByteBuffer*> byteBuffers;
+	STATIC_DLL_IMPEXT static vector<ByteBuffer*> byteBuffers;
 
 	/**
 	 * Initialize object buffer per thread

@@ -19,9 +19,9 @@ using tdme::utilities::Enum;
 class tdme::gui::nodes::GUIParentNode_Overflow final: public Enum
 {
 public:
-	static GUIParentNode_Overflow* HIDDEN;
-	static GUIParentNode_Overflow* DOWNSIZE_CHILDREN;
-	static GUIParentNode_Overflow* SCROLL;
+	STATIC_DLL_IMPEXT static GUIParentNode_Overflow* HIDDEN;
+	STATIC_DLL_IMPEXT static GUIParentNode_Overflow* DOWNSIZE_CHILDREN;
+	STATIC_DLL_IMPEXT static GUIParentNode_Overflow* SCROLL;
 
 	/**
 	 * Public constructor

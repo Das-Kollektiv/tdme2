@@ -1,5 +1,10 @@
 #pragma once
 
+#if defined(_MSC_VER)
+	// this suppresses a warning redefinition of APIENTRY macro
+	#define NOMINMAX
+	#include <windows.h>
+#endif
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 

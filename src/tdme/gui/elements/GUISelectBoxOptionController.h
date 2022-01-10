@@ -33,13 +33,13 @@ protected:
 	GUIParentNode* selectBoxNode { nullptr };
 
 private:
-	static string CONDITION_SELECTED;
-	static string CONDITION_UNSELECTED;
-	static string CONDITION_FOCUSSED;
-	static string CONDITION_UNFOCUSSED;
-	static string CONDITION_DISABLED;
-	static string CONDITION_ENABLED;
-	static string CONDITION_CHILD;
+	STATIC_DLL_IMPEXT static string CONDITION_SELECTED;
+	STATIC_DLL_IMPEXT static string CONDITION_UNSELECTED;
+	STATIC_DLL_IMPEXT static string CONDITION_FOCUSSED;
+	STATIC_DLL_IMPEXT static string CONDITION_UNFOCUSSED;
+	STATIC_DLL_IMPEXT static string CONDITION_DISABLED;
+	STATIC_DLL_IMPEXT static string CONDITION_ENABLED;
+	STATIC_DLL_IMPEXT static string CONDITION_CHILD;
 	bool initialPostLayout;
 	bool selected;
 	bool focussed;

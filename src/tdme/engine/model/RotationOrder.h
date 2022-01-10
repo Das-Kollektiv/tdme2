@@ -22,9 +22,9 @@ class tdme::engine::model::RotationOrder final
 	: public Enum
 {
 public:
-	static RotationOrder *XYZ;
-	static RotationOrder *YZX;
-	static RotationOrder *ZYX;
+	STATIC_DLL_IMPEXT static RotationOrder *XYZ;
+	STATIC_DLL_IMPEXT static RotationOrder *YZX;
+	STATIC_DLL_IMPEXT static RotationOrder *ZYX;
 
 private:
 	Vector3 axis0;

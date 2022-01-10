@@ -103,7 +103,7 @@ private:
 	TabView::OutlinerState outlinerState;
 	Scene* scene { nullptr };
 
-	static vector<string> ENTITYCOLOR_NAMES;
+	STATIC_DLL_IMPEXT static vector<string> ENTITYCOLOR_NAMES;
 	unordered_map<string, EntityColor> entityColors;
 
 	bool keyControl;

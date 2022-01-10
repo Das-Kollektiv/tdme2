@@ -18,9 +18,9 @@ class tdme::engine::Rotation final
 {
 
 public:
-	static Vector3 X_AXIS;
-	static Vector3 Y_AXIS;
-	static Vector3 Z_AXIS;
+	STATIC_DLL_IMPEXT static Vector3 X_AXIS;
+	STATIC_DLL_IMPEXT static Vector3 Y_AXIS;
+	STATIC_DLL_IMPEXT static Vector3 Z_AXIS;
 
 private:
 	float angle;

@@ -34,6 +34,4 @@ public:
 	void onUpdateShader(int contextIdx) override;
 	void onUpdateShaderParameters(int contextIdx) override;
 
-private:
-	Engine* engine { nullptr };
 };

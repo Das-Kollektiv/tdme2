@@ -19,7 +19,7 @@ public:
 	 * @return version
 	 */
 	inline static string getVersion() {
-		return "1.9.113";
+		return "1.9.114";
 	}
 
 	/**

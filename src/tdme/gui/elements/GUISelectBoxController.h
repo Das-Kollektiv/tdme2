@@ -33,9 +33,9 @@ class tdme::gui::elements::GUISelectBoxController final
 	friend class GUISelectBoxOptionController;
 
 private:
-	static string CONDITION_DISABLED;
-	static string CONDITION_ENABLED;
-	static constexpr char VALUE_DELIMITER { '|' };
+	STATIC_DLL_IMPEXT static string CONDITION_DISABLED;
+	STATIC_DLL_IMPEXT static string CONDITION_ENABLED;
+	STATIC_DLL_IMPEXT static constexpr char VALUE_DELIMITER { '|' };
 	vector<GUISelectBoxOptionController*> selectBoxOptionControllers;
 	bool disabled;
 	bool multipleSelection;

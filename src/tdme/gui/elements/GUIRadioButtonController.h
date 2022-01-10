@@ -33,13 +33,13 @@ class tdme::gui::elements::GUIRadioButtonController final
 	friend class GUIRadioButton;
 
 private:
-	static string CONDITION_SELECTED;
-	static string CONDITION_UNSELECTED;
-	static string CONDITION_DISABLED;
-	static string CONDITION_ENABLED;
+	STATIC_DLL_IMPEXT static string CONDITION_SELECTED;
+	STATIC_DLL_IMPEXT static string CONDITION_UNSELECTED;
+	STATIC_DLL_IMPEXT static string CONDITION_DISABLED;
+	STATIC_DLL_IMPEXT static string CONDITION_ENABLED;
 	bool selected;
 	bool disabled;
-	static map<string, vector<GUIElementNode*>>* radioButtonGroupNodesByName;
+	STATIC_DLL_IMPEXT static map<string, vector<GUIElementNode*>>* radioButtonGroupNodesByName;
 	MutableString value;
 
 	/**

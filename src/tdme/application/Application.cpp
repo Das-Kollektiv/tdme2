@@ -1,3 +1,8 @@
+#if defined(_MSC_VER)
+	// this suppresses a warning redefinition of APIENTRY macro
+	#define NOMINMAX
+	#include <windows.h>
+#endif
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
@@ -7,6 +12,7 @@
 #endif
 
 #if defined(_WIN32)
+	#define NOMINMAX
 	#include <windows.h>
 	#include <dbghelp.h>
 	#include <stdio.h>
@@ -18,7 +24,10 @@
 	#include <Carbon/Carbon.h>
 #endif
 
-#include <dlfcn.h>
+#if !defined(_MSC_VER)
+	#include <dlfcn.h>
+#endif
+
 #include <stdlib.h>
 
 #include <array>
@@ -515,14 +524,14 @@ static void glfwErrorCallback(int error, const char* description) {
 }
 
 void Application::run(int argc, char** argv, const string& title, InputEventHandler* inputEventHandler, int windowHints) {
-	string rendererLibrary = "libopengl3corerenderer.so";
+	string rendererLibrary = "libopengl3corerenderer";
 	for (auto i = 1; i < argc; i++) {
 		auto argValue = string(argv[i]);
 		if (argValue == "--debug") debuggingEnabled = true; else
-		if (argValue == "--gles2") rendererLibrary = "libopengles2renderer.so"; else
-		if (argValue == "--gl2") rendererLibrary = "libopengl2renderer.so"; else
-		if (argValue == "--gl3core") rendererLibrary = "libopengl3corerenderer.so"; else
-		if (argValue == "--vulkan") rendererLibrary = "libvulkanrenderer.so";
+		if (argValue == "--gles2") rendererLibrary = "libopengles2renderer"; else
+		if (argValue == "--gl2") rendererLibrary = "libopengl2renderer"; else
+		if (argValue == "--gl3core") rendererLibrary = "libopengl3corerenderer"; else
+		if (argValue == "--vulkan") rendererLibrary = "libvulkanrenderer";
 	}
 
 	//
@@ -558,28 +567,54 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 
 	Console::println("Application::run(): Opening renderer library: " + rendererLibrary);
 
-	//
-	auto rendererLibraryHandle = dlopen(rendererLibrary.c_str(), RTLD_NOW);
-	if (rendererLibraryHandle == nullptr) {
-		Console::println("Application::run(): Could not open renderer library");
-		glfwTerminate();
-		return;
-	}
-	//
-	Renderer* (*rendererCreateInstance)() = (Renderer*(*)())dlsym(rendererLibraryHandle, "createInstance");
-	//
-	if (rendererCreateInstance == nullptr) {
-		Console::println("Application::run(): Could not find renderer library createInstance() entry point");
-		glfwTerminate();
-		return;
-	}
-	//
-	renderer = (Renderer*)rendererCreateInstance();
-	if (renderer == nullptr) {
-		Console::println("Application::run(): Could not create renderer");
-		glfwTerminate();
-		return;
-	}
+	// load renderer library
+	#if defined(_MSC_VER)
+		//
+		auto rendererLibraryHandle = LoadLibrary((rendererLibrary + ".dll").c_str());
+		if (rendererLibraryHandle == nullptr) {
+			Console::println("Application::run(): Could not open renderer library");
+			glfwTerminate();
+			return;
+		}
+		//
+		Renderer* (*rendererCreateInstance)() = (Renderer*(*)())GetProcAddress(rendererLibraryHandle, "createInstance");
+		//
+		if (rendererCreateInstance == nullptr) {
+			Console::println("Application::run(): Could not find renderer library createInstance() entry point");
+			glfwTerminate();
+			return;
+		}
+		//
+		renderer = (Renderer*)rendererCreateInstance();
+		if (renderer == nullptr) {
+			Console::println("Application::run(): Could not create renderer");
+			glfwTerminate();
+			return;
+		}
+	#else
+		//
+		auto rendererLibraryHandle = dlopen((rendererLibrary + ".so").c_str(), RTLD_NOW);
+		if (rendererLibraryHandle == nullptr) {
+			Console::println("Application::run(): Could not open renderer library");
+			glfwTerminate();
+			return;
+		}
+		//
+		Renderer* (*rendererCreateInstance)() = (Renderer*(*)())dlsym(rendererLibraryHandle, "createInstance");
+		//
+		if (rendererCreateInstance == nullptr) {
+			Console::println("Application::run(): Could not find renderer library createInstance() entry point");
+			glfwTerminate();
+			return;
+		}
+		//
+		renderer = (Renderer*)rendererCreateInstance();
+		if (renderer == nullptr) {
+			Console::println("Application::run(): Could not create renderer");
+			glfwTerminate();
+			return;
+		}
+	#endif
 
 	// window hints
 	if ((windowHints & WINDOW_HINT_NOTRESIZEABLE) == WINDOW_HINT_NOTRESIZEABLE) glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);

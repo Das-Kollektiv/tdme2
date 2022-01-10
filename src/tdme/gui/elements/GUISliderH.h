@@ -30,7 +30,7 @@ class tdme::gui::elements::GUISliderH final
 {
 
 private:
-	static string NAME;
+	STATIC_DLL_IMPEXT static string NAME;
 
 public:
 	/**

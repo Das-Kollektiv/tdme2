@@ -36,10 +36,10 @@ class tdme::gui::elements::GUIMenuHeaderItemController final
 	friend class GUIMenuItemController;
 
 private:
-	static string CONDITION_OPENED;
-	static string CONDITION_CLOSED;
-	static string CONDITION_SELECTED;
-	static string CONDITION_UNSELECTED;
+	STATIC_DLL_IMPEXT static string CONDITION_OPENED;
+	STATIC_DLL_IMPEXT static string CONDITION_CLOSED;
+	STATIC_DLL_IMPEXT static string CONDITION_SELECTED;
+	STATIC_DLL_IMPEXT static string CONDITION_UNSELECTED;
 	GUIElementNode* menuHeaderNode { nullptr };
 	vector<GUIMenuItemController*> menuItemControllers;
 	bool open;

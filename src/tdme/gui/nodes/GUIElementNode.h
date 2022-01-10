@@ -41,10 +41,10 @@ class tdme::gui::nodes::GUIElementNode final: public GUILayerNode
 	friend class GUIScreenNode;
 
 public:
-	static string CONDITION_FOCUS;
-	static string CONDITION_ALWAYS;
-	static string CONDITION_ONMOUSEOVER;
-	static string CONDITION_CLICK;
+	STATIC_DLL_IMPEXT static string CONDITION_FOCUS;
+	STATIC_DLL_IMPEXT static string CONDITION_ALWAYS;
+	STATIC_DLL_IMPEXT static string CONDITION_ONMOUSEOVER;
+	STATIC_DLL_IMPEXT static string CONDITION_CLICK;
 
 private:
 	string name;

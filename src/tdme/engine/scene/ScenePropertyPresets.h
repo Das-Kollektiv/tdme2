@@ -38,7 +38,7 @@ private:
 	vector<BaseProperty*> scenePropertiesPreset;
 	map<string, vector<BaseProperty*>> entityPropertiesPresets;
 	map<string, SceneLight*> lightPresets;
-	static ScenePropertyPresets* instance;
+	STATIC_DLL_IMPEXT static ScenePropertyPresets* instance;
 
 public:
 	/**

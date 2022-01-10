@@ -73,8 +73,8 @@ class tdme::gui::GUI final: public virtual InputEventHandler
 	friend class tdme::gui::nodes::GUIVerticalScrollbarInternalController;
 
 private:
-	static unordered_map<string, GUIFont*>* fontCache;
-	static unordered_map<string, Texture*>* imageCache;
+	STATIC_DLL_IMPEXT static unordered_map<string, GUIFont*>* fontCache;
+	STATIC_DLL_IMPEXT static unordered_map<string, Texture*>* imageCache;
 
 	GUIRenderer* guiRenderer { nullptr };
 	Engine* engine { nullptr };

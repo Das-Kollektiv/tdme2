@@ -34,7 +34,7 @@ class tdme::network::udpserver::ServerClient : public Reference {
 friend class ServerWorkerThread;
 
 public:
-	static const char* KEY_PREFIX_UNNAMED;
+	STATIC_DLL_IMPEXT static const char* KEY_PREFIX_UNNAMED;
 
 	/**
 	 * @brief returns client's ip

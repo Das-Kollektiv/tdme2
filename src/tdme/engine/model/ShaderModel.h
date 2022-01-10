@@ -20,8 +20,8 @@ class tdme::engine::model::ShaderModel final: public Enum
 	friend class Model;
 
 public:
-	static ShaderModel* SPECULAR;
-	static ShaderModel* PBR;
+	STATIC_DLL_IMPEXT static ShaderModel* SPECULAR;
+	STATIC_DLL_IMPEXT static ShaderModel* PBR;
 
 public:
 	ShaderModel(const string& name, int ordinal);

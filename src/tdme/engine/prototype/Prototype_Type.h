@@ -25,12 +25,12 @@ private:
 	Vector3 nonEditScaleDownModeDimension;
 
 public:
-	static Prototype_Type* EMPTY;
-	static Prototype_Type* MODEL;
-	static Prototype_Type* PARTICLESYSTEM;
-	static Prototype_Type* TRIGGER;
-	static Prototype_Type* ENVIRONMENTMAPPING;
-	static Prototype_Type* TERRAIN;
+	STATIC_DLL_IMPEXT static Prototype_Type* EMPTY;
+	STATIC_DLL_IMPEXT static Prototype_Type* MODEL;
+	STATIC_DLL_IMPEXT static Prototype_Type* PARTICLESYSTEM;
+	STATIC_DLL_IMPEXT static Prototype_Type* TRIGGER;
+	STATIC_DLL_IMPEXT static Prototype_Type* ENVIRONMENTMAPPING;
+	STATIC_DLL_IMPEXT static Prototype_Type* TERRAIN;
 
 	/**
 	 * Public constructor

@@ -1,6 +1,7 @@
 #pragma once
 
 #if defined(_WIN32) && defined(_MSC_VER)
+	#define NOMINMAX
 	#include <windows.h>
 #endif
 

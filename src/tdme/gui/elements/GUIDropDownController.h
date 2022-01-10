@@ -34,10 +34,10 @@ class tdme::gui::elements::GUIDropDownController final
 	friend class GUIDropDownOptionController;
 
 private:
-	static string CONDITION_DISABLED;
-	static string CONDITION_ENABLED;
-	static string CONDITION_OPENED;
-	static string CONDITION_CLOSED;
+	STATIC_DLL_IMPEXT static string CONDITION_DISABLED;
+	STATIC_DLL_IMPEXT static string CONDITION_ENABLED;
+	STATIC_DLL_IMPEXT static string CONDITION_OPENED;
+	STATIC_DLL_IMPEXT static string CONDITION_CLOSED;
 	vector<GUIDropDownOptionController*> dropDownOptionControllers;
 	bool open;
 	bool disabled;

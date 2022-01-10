@@ -27,8 +27,8 @@ using tdme::utilities::Enum;
 class tdme::gui::nodes::GUINode_Flow final: public Enum
 {
 public:
-	static GUINode_Flow* INTEGRATED;
-	static GUINode_Flow* FLOATING;
+	STATIC_DLL_IMPEXT static GUINode_Flow* INTEGRATED;
+	STATIC_DLL_IMPEXT static GUINode_Flow* FLOATING;
 
 	/**
 	 * Public constructor

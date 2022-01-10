@@ -9,6 +9,7 @@
 	using std::thread;
 #else
 	#if defined(_WIN32)
+	#define NOMINMAX
 		#include <windows.h>
 	#endif
 	#include <pthread.h>

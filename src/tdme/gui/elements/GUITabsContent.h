@@ -29,7 +29,7 @@ class tdme::gui::elements::GUITabsContent final
 {
 
 private:
-	static string NAME;
+	STATIC_DLL_IMPEXT static string NAME;
 
 public:
 	/**

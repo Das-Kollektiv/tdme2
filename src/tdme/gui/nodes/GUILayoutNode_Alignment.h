@@ -19,9 +19,9 @@ using tdme::utilities::Enum;
 class tdme::gui::nodes::GUILayoutNode_Alignment final: public Enum
 {
 public:
-	static GUILayoutNode_Alignment* VERTICAL;
-	static GUILayoutNode_Alignment* HORIZONTAL;
-	static GUILayoutNode_Alignment* NONE;
+	STATIC_DLL_IMPEXT static GUILayoutNode_Alignment* VERTICAL;
+	STATIC_DLL_IMPEXT static GUILayoutNode_Alignment* HORIZONTAL;
+	STATIC_DLL_IMPEXT static GUILayoutNode_Alignment* NONE;
 
 	/**
 	 * Public constructor

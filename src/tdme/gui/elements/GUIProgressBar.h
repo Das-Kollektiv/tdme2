@@ -29,7 +29,7 @@ class tdme::gui::elements::GUIProgressBar final: public GUIElement
 {
 
 private:
-	static string NAME;
+	STATIC_DLL_IMPEXT static string NAME;
 
 public:
 	/**

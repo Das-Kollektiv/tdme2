@@ -31,8 +31,8 @@ class tdme::gui::elements::GUISelectorHOptionController final
 	friend class GUISelectorHController;
 
 private:
-	static string CONDITION_SELECTED;
-	static string CONDITION_UNSELECTED;
+	STATIC_DLL_IMPEXT static string CONDITION_SELECTED;
+	STATIC_DLL_IMPEXT static string CONDITION_UNSELECTED;
 	GUIParentNode* selectorHNode { nullptr };
 	bool selected;
 	bool hidden;

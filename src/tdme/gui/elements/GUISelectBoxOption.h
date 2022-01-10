@@ -28,7 +28,7 @@ class tdme::gui::elements::GUISelectBoxOption final: public GUIElement
 {
 
 private:
-	static string NAME;
+	STATIC_DLL_IMPEXT static string NAME;
 
 public:
 	const string& getName() override;

@@ -42,16 +42,16 @@ public:
 	static constexpr int32_t RIGIDBODY_TYPEID_COLLISION { 4 };
 	static constexpr int32_t RIGIDBODY_TYPEID_TRIGGER { 8 };
 
-	static float renderGroupsPartitionWidth;
-	static float renderGroupsPartitionHeight;
-	static float renderGroupsPartitionDepth;
-	static int renderGroupsReduceBy;
-	static int renderGroupsLODLevels;
-	static float renderGroupsLOD2MinDistance;
-	static float renderGroupsLOD3MinDistance;
-	static int renderGroupsLOD2ReduceBy;
-	static int renderGroupsLOD3ReduceBy;
-	static bool enableEarlyZRejection;
+	STATIC_DLL_IMPEXT static float renderGroupsPartitionWidth;
+	STATIC_DLL_IMPEXT static float renderGroupsPartitionHeight;
+	STATIC_DLL_IMPEXT static float renderGroupsPartitionDepth;
+	STATIC_DLL_IMPEXT static int renderGroupsReduceBy;
+	STATIC_DLL_IMPEXT static int renderGroupsLODLevels;
+	STATIC_DLL_IMPEXT static float renderGroupsLOD2MinDistance;
+	STATIC_DLL_IMPEXT static float renderGroupsLOD3MinDistance;
+	STATIC_DLL_IMPEXT static int renderGroupsLOD2ReduceBy;
+	STATIC_DLL_IMPEXT static int renderGroupsLOD3ReduceBy;
+	STATIC_DLL_IMPEXT static bool enableEarlyZRejection;
 
 public:
 
@@ -347,5 +347,5 @@ public:
 	static void addSounds(Audio* audio, Prototype* prototype, const string& id, const int poolSize = 1);
 
 private:
-	static Model* emptyModel;
+	STATIC_DLL_IMPEXT static Model* emptyModel;
 };

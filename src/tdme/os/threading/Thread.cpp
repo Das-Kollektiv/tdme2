@@ -1,6 +1,7 @@
 #include <tdme/os/threading/Thread.h>
 
 #if defined(_WIN32) && defined(_MSC_VER)
+	#define NOMINMAX
 	#include <windows.h>
 #else
 	#include <unistd.h>

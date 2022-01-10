@@ -28,7 +28,7 @@ class tdme::gui::elements::GUIRadioButton final: public GUIElement
 {
 
 private:
-	static string NAME;
+	STATIC_DLL_IMPEXT static string NAME;
 
 public:
 	/**

@@ -27,12 +27,12 @@ using tdme::utilities::Enum;
 class tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType final: public Enum
 {
 public:
-	static GUINode_RequestedConstraints_RequestedConstraintsType* NONE;
-	static GUINode_RequestedConstraints_RequestedConstraintsType* PIXEL;
-	static GUINode_RequestedConstraints_RequestedConstraintsType* PERCENT;
-	static GUINode_RequestedConstraints_RequestedConstraintsType* STAR;
-	static GUINode_RequestedConstraints_RequestedConstraintsType* AUTO;
-	static GUINode_RequestedConstraints_RequestedConstraintsType* TABLECELL;
+	STATIC_DLL_IMPEXT static GUINode_RequestedConstraints_RequestedConstraintsType* NONE;
+	STATIC_DLL_IMPEXT static GUINode_RequestedConstraints_RequestedConstraintsType* PIXEL;
+	STATIC_DLL_IMPEXT static GUINode_RequestedConstraints_RequestedConstraintsType* PERCENT;
+	STATIC_DLL_IMPEXT static GUINode_RequestedConstraints_RequestedConstraintsType* STAR;
+	STATIC_DLL_IMPEXT static GUINode_RequestedConstraints_RequestedConstraintsType* AUTO;
+	STATIC_DLL_IMPEXT static GUINode_RequestedConstraints_RequestedConstraintsType* TABLECELL;
 
 	/**
 	 * Public constructor

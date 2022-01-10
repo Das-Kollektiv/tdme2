@@ -1,5 +1,10 @@
 #include <tdme/engine/EngineGL3Renderer.h>
 
+#if defined(_MSC_VER)
+	// this suppresses a warning redefinition of APIENTRY macro
+	#define NOMINMAX
+	#include <windows.h>
+#endif
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
@@ -31,7 +36,6 @@ using tdme::gui::renderer::GUIShader;
 
 EngineGL3Renderer::EngineGL3Renderer()
 {
-	engine = Engine::getInstance();
 }
 
 bool EngineGL3Renderer::prepareWindowSystemRendererContext(int tryIdx) {

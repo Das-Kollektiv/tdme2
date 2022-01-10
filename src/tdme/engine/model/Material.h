@@ -20,8 +20,8 @@ using tdme::math::Matrix2D3x3;
 class tdme::engine::model::Material final
 {
 private:
-	static string defaultMaterialId;
-	static Material* defaultMaterial;
+	STATIC_DLL_IMPEXT static string defaultMaterialId;
+	STATIC_DLL_IMPEXT static Material* defaultMaterial;
 
 public:
 

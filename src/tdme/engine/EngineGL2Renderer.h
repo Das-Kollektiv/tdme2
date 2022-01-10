@@ -1,5 +1,10 @@
 #pragma once
 
+#if defined(_MSC_VER)
+	// this suppresses a warning redefinition of APIENTRY macro
+	#define NOMINMAX
+	#include <windows.h>
+#endif
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
@@ -37,6 +42,4 @@ public:
 	void onUpdateShader(int contextIdx) override;
 	void onUpdateShaderParameters(int contextIdx) override;
 
-private:
-	Engine* engine { nullptr };
 };

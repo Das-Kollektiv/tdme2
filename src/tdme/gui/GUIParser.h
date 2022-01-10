@@ -39,9 +39,9 @@ class tdme::gui::GUIParser final
 {
 
 private:
-	static map<string, GUIElement*>* elements;
-	static Properties* engineThemeProperties;
-	static Properties* projectThemeProperties;
+	STATIC_DLL_IMPEXT static map<string, GUIElement*>* elements;
+	STATIC_DLL_IMPEXT static Properties* engineThemeProperties;
+	STATIC_DLL_IMPEXT static Properties* projectThemeProperties;
 
 public:
 

@@ -2,10 +2,6 @@ OBJ = mscobj
 
 SRCS_PLATFORM = \
 	src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
-	src/tdme/engine/EngineGL2Renderer.cpp \
-	src/tdme/engine/EngineGL3Renderer.cpp \
-	src/tdme/engine/subsystems/renderer/GL2Renderer.cpp \
-	src/tdme/engine/subsystems/renderer/GL3Renderer.cpp \
 	src/tdme/engine/fileio/models/FBXReader.cpp \
 	src/tdme/engine/fileio/models/ModelReaderFBX.cpp
 
@@ -20,15 +16,16 @@ INCLUDES = \
 	/I "ext\reactphysics3d\src" \
 	/I "ext\fbx\win64\include" \
 	/I "ext\glfw3\include" \
-	/I "ext\windows-msc/pthread\includes" \
-	/I "ext\windows-msc/openal-soft\includes" \
-	/I "ext\windows-msc/glew\include" \
-	/I "ext\windows-msc/dirent\include" \
+	/I "ext\windows-msc\pthread\includes" \
+	/I "ext\windows-msc\openal-soft\includes" \
+	/I "ext\windows-msc\glew\include" \
+	/I "ext\windows-msc\dirent\include" \
+	/I "ext\windows-msc\vulkan-sdk\include" \
 	/I "ext\rapidjson\include"
 
-# For Windows 10 this might be added to EXTRA_LIBS libucrt.lib from Windows 10 Kit
+# For Windows 10 this might be added to MAIN_LDFLAGS libucrt.lib from Windows 10 Kit
 
-EXTRA_LIBS = \
+BASE_LDFLAGS = \
 	/LIBPATH "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\lib\x64\libcmt.lib" \
 	/LIBPATH "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\lib\x64\libcpmt.lib" \
 	/LIBPATH "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.30.30705\lib\x64\libvcruntime.lib" \
@@ -36,26 +33,32 @@ EXTRA_LIBS = \
 	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\kernel32.lib" \
 	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\advapi32.lib" \
 	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\uuid.lib" \
-	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\opengl32.lib" \
-	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\gdi32.lib" \
 	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\winmm.lib" \
 	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\shell32.lib" \
 	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\user32.lib" \
 	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\ws2_32.lib" \
-	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\dbghelp.lib" \
-	/LIBPATH "ext\glfw3\win64\lib\glfw3_mt.lib" \
-	/LIBPATH "ext\windows-msc/pthread\libs\pthreadVC2.lib" \
-	/LIBPATH "ext\windows-msc/openal-soft\libs\OpenAL32.lib" \
-	/LIBPATH "ext\windows-msc/glew\libs/glew32.lib" \
+	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\dbghelp.lib"
+
+MAIN_LDFLAGS = \
+	$(BASE_LDFLAGS) \
+	/LIBPATH "ext\glfw3\win64\lib\glfw3dll.lib" \
+	/LIBPATH "ext\windows-msc\pthread\libs\pthreadVC2.lib" \
+	/LIBPATH "ext\windows-msc\openal-soft\libs\OpenAL32.lib" \
 	/LIBPATH "ext\fbx\win64\lib\libfbxsdk.lib" \
 	/LIBPATH libtdme-ext.lib \
 	/LIBPATH libtdme.lib
 
-FLAGS = /MT /MP /D _USING_V110_SDK71_ /EHsc /O2 /Ob3 /fp:fast /arch:AVX /std:c++20 /GL /Zi /F 8388608 /D RAPIDJSON_HAS_STDSTRING
+LIBS_LDFLAGS = \
+	$(BASE_LDFLAGS) \
+	/LIBPATH "ext\glfw3\win64\lib\glfw3dll.lib" \
+	/LIBPATH "ext\windows-msc\pthread\libs\pthreadVC2.lib" \
+	/LIBPATH "ext\windows-msc\openal-soft\libs\OpenAL32.lib" \
+	/LIBPATH "ext\fbx\win64\lib\libfbxsdk.lib" \
 
+FLAGS = /MT /MP /EHsc /O2 /std:c++20 /Zi /F 8388608 /D RAPIDJSON_HAS_STDSTRING /D GLFW_DLL
 # /NODEFAULTLIB:msvcrt
 
-LINK_FLAGS = /LTCG
+LD_FLAGS =
 
 SRC = src
 TINYXML = tinyxml
@@ -659,9 +662,67 @@ EXT_SRCS = \
 	$(EXT_VHACD_SRCS) \
 	$(EXT_REACTPHYSICS3D_SRCS)
 
+OPENGL3CORE_RENDERER_LIB_SRCS = \
+	src\tdme\engine\EngineGL3Renderer.cpp \
+	src\tdme\engine\subsystems\renderer\GL3Renderer.cpp
+
+OPENGL2_RENDERER_LIB_SRCS = \
+	src\tdme\engine\EngineGL2Renderer.cpp \
+	src\tdme\engine\subsystems\renderer\GL2Renderer.cpp
+
+VULKAN_RENDERER_LIB_SRCS = \
+	ext/vulkan/spirv/GlslangToSpv.cpp \
+	ext/vulkan/spirv/InReadableOrder.cpp \
+	ext/vulkan/spirv/Logger.cpp \
+	ext/vulkan/spirv/SPVRemapper.cpp \
+	ext/vulkan/spirv/SpvBuilder.cpp \
+	ext/vulkan/spirv/SpvPostProcess.cpp \
+	ext/vulkan/spirv/SpvTools.cpp \
+	ext/vulkan/spirv/disassemble.cpp \
+	ext/vulkan/spirv/doc.cpp \
+	ext/vulkan/glslang/MachineIndependent/glslang_tab.cpp \
+	ext/vulkan/glslang/MachineIndependent/attribute.cpp \
+	ext/vulkan/glslang/MachineIndependent/Constant.cpp \
+	ext/vulkan/glslang/MachineIndependent/iomapper.cpp \
+	ext/vulkan/glslang/MachineIndependent/InfoSink.cpp \
+	ext/vulkan/glslang/MachineIndependent/Initialize.cpp \
+	ext/vulkan/glslang/MachineIndependent/IntermTraverse.cpp \
+	ext/vulkan/glslang/MachineIndependent/Intermediate.cpp \
+	ext/vulkan/glslang/MachineIndependent/ParseContextBase.cpp \
+	ext/vulkan/glslang/MachineIndependent/ParseHelper.cpp \
+	ext/vulkan/glslang/MachineIndependent/PoolAlloc.cpp \
+	ext/vulkan/glslang/MachineIndependent/RemoveTree.cpp \
+	ext/vulkan/glslang/MachineIndependent/Scan.cpp \
+	ext/vulkan/glslang/MachineIndependent/ShaderLang.cpp \
+	ext/vulkan/glslang/MachineIndependent/SymbolTable.cpp \
+	ext/vulkan/glslang/MachineIndependent/Versions.cpp \
+	ext/vulkan/glslang/MachineIndependent/intermOut.cpp \
+	ext/vulkan/glslang/MachineIndependent/limits.cpp \
+	ext/vulkan/glslang/MachineIndependent/linkValidate.cpp \
+	ext/vulkan/glslang/MachineIndependent/parseConst.cpp \
+	ext/vulkan/glslang/MachineIndependent/reflection.cpp \
+	ext/vulkan/glslang/MachineIndependent/preprocessor/Pp.cpp \
+	ext/vulkan/glslang/MachineIndependent/preprocessor/PpAtom.cpp \
+	ext/vulkan/glslang/MachineIndependent/preprocessor/PpContext.cpp \
+	ext/vulkan/glslang/MachineIndependent/preprocessor/PpScanner.cpp \
+	ext/vulkan/glslang/MachineIndependent/preprocessor/PpTokens.cpp \
+	ext/vulkan/glslang/MachineIndependent/propagateNoContraction.cpp \
+	ext/vulkan/glslang/GenericCodeGen/CodeGen.cpp \
+	ext/vulkan/glslang/GenericCodeGen/Link.cpp \
+	ext/vulkan/OGLCompilersDLL/InitializeDll.cpp \
+	ext/vulkan/vma/src/VmaUsage.cpp \
+	ext/vulkan/glslang/OSDependent/Windows/ossource.cpp \
+	src/tdme/engine/EngineVKRenderer.cpp \
+	src/tdme/engine/subsystems/renderer/VKGL3CoreShaderProgram.cpp \
+	src/tdme/engine/subsystems/renderer/VKRenderer.cpp \
+	ext/windows-msc/uint128_t/uint128_t.cpp
+
 all: \
-	init compile link clean \
-	ext-init ext-compile ext-link ext-clean \
+	ext-init ext-compile ext-link1 ext-link2 ext-clean \
+	init compile link1 link2 clean \
+	opengl3core-init opengl3core-compile opengl3core-link1 opengl3core-link2 opengl3core-clean \
+	opengl2-init opengl2-compile opengl2-link1 opengl2-link2 opengl2-clean \
+	vulkan-init vulkan-compile vulkan-link1 vulkan-link2 vulkan-clean \
 	init-mains \
 	AngleTest \
 	AudioTest \
@@ -695,6 +756,7 @@ all: \
 	generatelicenses \
 	importtmodel \
 	fixdoxygen \
+	msclib2dll \
 	optimizemodel \
 	scenefixmodelszup2yup \
 	sortincludes \
@@ -708,10 +770,20 @@ ext-init:
 ext-compile: $(EXT_SRCS)
 	cl /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
 
-ext-link: $(OBJ)/*.obj
-	lib $(LINK_FLAGS) /OUT:libtdme-ext.lib $**
+ext-link1: $(OBJ)/*.obj
+	lib $(LD_FLAGS) /OUT:libtdme-ext.lib $**
+	dumpbin /LINKERMEMBER libtdme-ext.lib > libtdme-ext.def.dumpbin.linkermember
+	.\ext\windows-msc\tools\msclib2dll.exe libtdme-ext.def.dumpbin.linkermember
+	del libtdme-ext.lib
 
-ext-clean: $(OBJ)/*.obj
+ext-link2: $(OBJ)/*.obj
+	echo LIBRARY libtdme-ext.dll > libtdme-ext.def
+	type libtdme-ext.def.dumpbin.linkermember.def >> libtdme-ext.def
+	link $(LD_FLAGS) /DLL /DEF:libtdme-ext.def /IGNORE:4197 /IGNORE:4102 $** $(LIBS_LDFLAGS) /OUT:libtdme-ext.dll
+	del libtdme-ext.def.dumpbin.linkermember
+	del libtdme-ext.def.dumpbin.linkermember.def
+
+ext-clean:$(OBJ)/*.obj
 	rmdir /s /q $(OBJ) 
 
 init:
@@ -721,136 +793,225 @@ init-mains:
 	mkdir $(OBJ)
 
 compile: $(SRCS)
-	cl /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
+	cl /D TDME2_DLL_EXPORT /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
 
-link: $(OBJ)/*.obj
-	lib $(LINK_FLAGS) /OUT:libtdme.lib $**
+link1: $(OBJ)/*.obj
+	lib $(LD_FLAGS) /OUT:libtdme.lib $**
+	dumpbin /LINKERMEMBER libtdme.lib > libtdme.def.dumpbin.linkermember
+	.\ext\windows-msc\tools\msclib2dll.exe libtdme.def.dumpbin.linkermember
+	del libtdme.lib
+
+link2: $(OBJ)/*.obj
+	echo LIBRARY libtdme.dll > libtdme.def
+	type libtdme.def.dumpbin.linkermember.def >> libtdme.def
+	link $(LD_FLAGS) /DLL /DEF:libtdme.def /IGNORE:4197 /IGNORE:4102 $** $(LIBS_LDFLAGS) /LIBPATH libtdme-ext.lib /OUT:libtdme.dll
+	del libtdme.def.dumpbin.linkermember
+	del libtdme.def.dumpbin.linkermember.def
 
 clean: 
+	rmdir /s /q $(OBJ)
+
+opengl3core-init:
+	mkdir $(OBJ) 
+
+opengl3core-mains:
+	mkdir $(OBJ)
+
+opengl3core-compile: $(OPENGL3CORE_RENDERER_LIB_SRCS)
+	cl /D TDME2_DLL_IMPORT /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
+
+opengl3core-link1: $(OBJ)/*.obj
+	lib $(LD_FLAGS) /OUT:libopengl3corerenderer.lib $**
+	dumpbin /LINKERMEMBER libopengl3corerenderer.lib > libopengl3corerenderer.def.dumpbin.linkermember
+	.\ext\windows-msc\tools\msclib2dll.exe libopengl3corerenderer.def.dumpbin.linkermember
+	del libopengl3corerenderer.lib
+
+opengl3core-link2: $(OBJ)/*.obj
+	echo LIBRARY libopengl3corerenderer.dll > libopengl3corerenderer.def
+	type libopengl3corerenderer.def.dumpbin.linkermember.def >> libopengl3corerenderer.def
+	link $(LD_FLAGS) /DLL /DEF:libopengl3corerenderer.def /IGNORE:4197 /IGNORE:4102 $** $(LIBS_LDFLAGS) /LIBPATH libtdme.lib /LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\opengl32.lib" /LIBPATH "ext\windows-msc\glew\libs\glew32.lib" /OUT:libopengl3corerenderer.dll
+	del libopengl3corerenderer.def.dumpbin.linkermember
+	del libopengl3corerenderer.def.dumpbin.linkermember.def
+
+opengl3core-clean:
+	rmdir /s /q $(OBJ)
+
+opengl2-init:
+	mkdir $(OBJ)
+
+opengl2-mains:
+	mkdir $(OBJ)
+
+opengl2-compile: $(OPENGL2_RENDERER_LIB_SRCS)
+	cl /D TDME2_DLL_IMPORT /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
+
+opengl2-link1: $(OBJ)/*.obj
+	lib $(LD_FLAGS) /OUT:libopengl2renderer.lib $**
+	dumpbin /LINKERMEMBER libopengl2renderer.lib > libopengl2renderer.def.dumpbin.linkermember
+	.\ext\windows-msc\tools\msclib2dll.exe libopengl2renderer.def.dumpbin.linkermember
+	del libopengl2renderer.lib
+
+opengl2-link2: $(OBJ)/*.obj
+	echo LIBRARY libopengl2renderer.dll > libopengl2renderer.def
+	type libopengl2renderer.def.dumpbin.linkermember.def >> libopengl2renderer.def
+	link $(LD_FLAGS) /DLL /DEF:libopengl2renderer.def /IGNORE:4197 /IGNORE:4197 /IGNORE:4102 $** $(LIBS_LDFLAGS) /LIBPATH libtdme.lib /LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\opengl32.lib" /LIBPATH "ext\windows-msc\glew\libs\glew32.lib" /OUT:libopengl2renderer.dll
+	del libopengl2renderer.def.dumpbin.linkermember
+	del libopengl2renderer.def.dumpbin.linkermember.def
+
+vulkan-clean:
+	rmdir /s /q $(OBJ)
+
+vulkan-init:
+	mkdir $(OBJ)
+
+vulkan-mains:
+	mkdir $(OBJ)
+
+vulkan-compile: $(VULKAN_RENDERER_LIB_SRCS)
+	cl /D TDME2_DLL_IMPORT /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
+
+vulkan-link1: $(OBJ)/*.obj
+	lib $(LD_FLAGS) /OUT:libvulkanrenderer.lib $**
+	dumpbin /LINKERMEMBER libvulkanrenderer.lib > libvulkanrenderer.def.dumpbin.linkermember
+	.\ext\windows-msc\tools\msclib2dll.exe libvulkanrenderer.def.dumpbin.linkermember
+	del libvulkanrenderer.lib
+
+vulkan-link2: $(OBJ)/*.obj
+	echo LIBRARY libvulkanrenderer.dll > libvulkanrenderer.def
+	echo DESCRIPTION libvulkanrenderer >> libvulkanrenderer.def
+	type libvulkanrenderer.def.dumpbin.linkermember.def >> libvulkanrenderer.def
+	link $(LD_FLAGS) /DLL /DEF:libvulkanrenderer.def /IGNORE:4197 /IGNORE:4102 $** $(LIBS_LDFLAGS) /LIBPATH libtdme.lib /LIBPATH "ext\vulkan\runtime\msc64\vulkan-1.lib" /OUT:libvulkanrenderer.dll
+	del libvulkanrenderer.def.dumpbin.linkermember
+	del libvulkanrenderer.def.dumpbin.linkermember.def
+
+opengl2-clean:
 	rmdir /s /q $(OBJ)
 
 clean-mains: 
 	rmdir /s /q $(OBJ)
 
 AngleTest:
-	cl /FeAngleTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/AngleTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeAngleTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/AngleTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 	
 AudioTest:
-	cl /FeAudioTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/AudioTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeAudioTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/AudioTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 ContainerTest:
-	cl /FeContainerTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/ContainerTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeContainerTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/ContainerTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 CrashTest:
-	cl /FeCrashTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/CrashTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeCrashTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/CrashTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 EngineTest:
-	cl /FeEngineTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/EngineTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeEngineTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/EngineTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 EntityHierarchyTest:
-	cl /FeEntityHierarchyTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/EntityHierarchyTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeEntityHierarchyTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/EntityHierarchyTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 HTTPClientTest:
-	cl /FeHTMLClientTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/HTTPClientTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeHTMLClientTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/HTTPClientTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 HTTPDownloadClientTest:
-    cl /FeHTMLDownloadClientTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/HTTPDownloadClientTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+    cl /FeHTMLDownloadClientTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/HTTPDownloadClientTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 LODTest:
-	cl /FeLODTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/LODTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeLODTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/LODTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 FlowMapTest:
-	cl /FeFlowMapTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FlowMapTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeFlowMapTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FlowMapTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 FlowMapTest2:
-	cl /FeFlowMapTest2 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FlowMapTest2-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeFlowMapTest2 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FlowMapTest2-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 FoliageTest:
-	cl /FeFoliageTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FoliageTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeFoliageTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FoliageTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 MathOperatorTest:
-	cl /FeMathOperatorTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/MathOperatorTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeMathOperatorTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/MathOperatorTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 MiniScriptTest:
-	cl /FeMiniScriptTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/MiniScriptTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeMiniScriptTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/MiniScriptTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 PathFindingTest:
-	cl /FePathFindingTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PathFindingTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FePathFindingTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PathFindingTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 PhysicsTest1:
-	cl /FePhysicsTest1 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest1-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FePhysicsTest1 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest1-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 PhysicsTest2:
-	cl /FePhysicsTest2 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest2-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FePhysicsTest2 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest2-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 PhysicsTest3:
-	cl /FePhysicsTest3 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest3-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FePhysicsTest3 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest3-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 PhysicsTest4:
-	cl /FePhysicsTest4 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest4-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FePhysicsTest4 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest4-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 RayTracingTest:
-	cl /FeRayTracingTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/RayTracingTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeRayTracingTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/RayTracingTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 SkinningTest:
-	cl /FeSkinningTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/SkinningTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeSkinningTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/SkinningTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 ThreadingTest:
-	cl /FeThreadingTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/ThreadingTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeThreadingTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/ThreadingTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 TreeTest:
-    cl /FeTreeTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/TreeTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+    cl /FeTreeTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/TreeTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 UDPClientTest:
-	cl /FeUDPClientTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/UDPClientTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeUDPClientTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/UDPClientTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 UDPServerTest:
-	cl /FeUDPServerTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/UDPServerTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeUDPServerTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/UDPServerTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 WaterTest:
-	cl /FeWaterTest $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tests/WaterTest-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeWaterTest $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tests/WaterTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 archive:
-    cl /Fearchive $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/archive-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+    cl /Fearchive $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/archive-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 collectguitags:
-	cl /Fecollectguitags $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/collectguitags-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /Fecollectguitags $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/collectguitags-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 converttotm:
-	cl /Feconverttotm $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/converttotm-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /Feconverttotm $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/converttotm-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 copyanimationsetups:
-	cl /Fecopyanimationsetups /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/copyanimationsetups-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /Fecopyanimationsetups /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/copyanimationsetups-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 createinstaller:
-    cl /Fecreateinstaller $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/createinstaller-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+    cl /Fecreateinstaller $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/createinstaller-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 recreatevkcache:
-    cl /Ferecreatevkcache $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/recreatevkcache-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+    cl /Ferecreatevkcache $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/recreatevkcache-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 generatelicenses:
-	cl /Fegeneratelicenses /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/generatelicenses-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /Fegeneratelicenses /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/generatelicenses-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 importtmodel:
-	cl /Feimporttmodel /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/importtmodel-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /Feimporttmodel /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/importtmodel-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 fixdoxygen:
-    cl /Fefixdoxygen /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/fixdoxygen-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+    cl /Fefixdoxygen /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/fixdoxygen-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
+msclib2dll:
+    cl /Femsclib2dll /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/msclib2dll-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 makefilegenerator:
-	cl /Femakefilegenerator $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/makefilegenerator-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /Femakefilegenerator $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/makefilegenerator-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 optimizemodel:
-	cl /Feoptimizemodel $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/optimizemodel-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /Feoptimizemodel $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/optimizemodel-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 scenefixmodelszup2yup:
-	cl /Fescenefixmodelszup2yup /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/scenefixmodelszup2yup-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /Fescenefixmodelszup2yup /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/scenefixmodelszup2yup-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 sortincludes:
-    cl /Fesortincludes /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/sortincludes-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+    cl /Fesortincludes /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/sortincludes-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 TDMEEditor:
-	cl /FeTDMEEditor /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/editor/TDMEEditor-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /D TDME2_DLL_IMPORT /FeTDMEEditor /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/editor/TDMEEditor-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 InstallerApp:
-	cl /FeInstaller /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/installer/Installer-main.cpp /link $(LINK_FLAGS) $(EXTRA_LIBS)
+	cl /FeInstaller /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/installer/Installer-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)

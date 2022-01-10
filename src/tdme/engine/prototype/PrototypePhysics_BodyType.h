@@ -19,10 +19,10 @@ using tdme::engine::prototype::PrototypePhysics_BodyType;
 class tdme::engine::prototype::PrototypePhysics_BodyType final: public Enum
 {
 public:
-	static PrototypePhysics_BodyType* NONE;
-	static PrototypePhysics_BodyType* COLLISION_BODY;
-	static PrototypePhysics_BodyType* DYNAMIC_RIGIDBODY;
-	static PrototypePhysics_BodyType* STATIC_RIGIDBODY;
+	STATIC_DLL_IMPEXT static PrototypePhysics_BodyType* NONE;
+	STATIC_DLL_IMPEXT static PrototypePhysics_BodyType* COLLISION_BODY;
+	STATIC_DLL_IMPEXT static PrototypePhysics_BodyType* DYNAMIC_RIGIDBODY;
+	STATIC_DLL_IMPEXT static PrototypePhysics_BodyType* STATIC_RIGIDBODY;
 
 	/**
 	 * Public constructor
