@@ -11,17 +11,11 @@ pkg install git
 pkg install gmake
 pkg install openal-soft
 pkg install glfw
-exit
-```
-
-#### 1.1.1.1 OpenGL
-```bash
-su
 pkg install glew
 exit
 ```
 
-#### 1.1.1.2 Vulkan
+#### 1.1.1.1 Vulkan
 
 ```bash
 su
@@ -39,18 +33,12 @@ cd tdme2
 
 ### 1.1.3. Build
 
-Note: HARDWARE_THREADS should be replaced with the number of your CPU hardware threads, e.g. if you have 2 cores and hyperthreading, you can use 4.
-
-#### 1.1.3.1 OpenGL
-
-```bash
-gmake clean && gmake -j HARDWARE_THREADS mains
-```
-
-#### 1.1.3.2 Vulkan
+Note:
+- HARDWARE_THREADS should be replaced with the number of your CPU hardware threads, e.g. if you have 2 cores and hyperthreading, you can use 4
+- About YES|NO, just choose to type YES or NO, this enables the renderer plugin to be build additionally to GL3+/CORE renderer plugin.
 
 ```bash
-gmake clean && gmake -j HARDWARE_THREADS mains VULKAN=YES
+gmake clean && gmake -j HARDWARE_THREADS mains VULKAN=YES|NO GLES2=YES|NO
 ```
 
 ## 1.2. OpenBSD(tested on OpenBSD 6.8)
@@ -90,15 +78,10 @@ sudo apt-get install make
 sudo apt-get install g++
 sudo apt-get install libopenal-dev
 sudo apt-get install libglfw3-dev
-```
-
-#### 1.3.1.1 OpenGL
-
-```bash
 sudo apt-get install libglew-dev
 ```
 
-#### 1.3.1.2 Vulkan
+#### 1.3.1.1 Vulkan
 
 ```bash
 sudo apt-get install libvulkan-dev
@@ -114,29 +97,22 @@ cd tdme2
 
 ### 1.3.3. Build
 
-Note: HARDWARE_THREADS should be replaced with the number of your CPU hardware threads, e.g. if you have 2 cores and hyperthreading, you can use 4.
-
-#### 1.3.3.1 OpenGL
-
-```bash
-make clean && make -j HARDWARE_THREADS mains
-```
-
-#### 1.3.3.2 Vulkan
+Note:
+- HARDWARE_THREADS should be replaced with the number of your CPU hardware threads, e.g. if you have 2 cores and hyperthreading, you can use 4
+- About YES|NO, just choose to type YES or NO, this enables the renderer plugin to be build additionally to GL3+/CORE renderer plugin.
 
 ```bash
-make clean && make -j HARDWARE_THREADS mains VULKAN=YES
-```
-
-#### 1.3.3.3 GLES2
-
-```bash
-make clean && make -j HARDWARE_THREADS mains GLES2=YES
+make clean && make -j HARDWARE_THREADS mains VULKAN=YES|NO GLES2=YES|NO
 ```
 
 ## 1.4. Mac OS X
 ### 1.4.1 Install packages
+
 You have to install XCode or XCode command line tools.
+
+### 1.4.1.1 Metal via Vulkan
+
+For Metal via Vulkan you need to install Vulkan SDK for MacOSX using the installer script.
 
 ### 1.4.2. Clone repository
 
@@ -147,10 +123,13 @@ cd tdme2
 
 ### 1.4.3. Build
 
-Note: HARDWARE_THREADS should be replaced with the number of your CPU hardware threads, e.g. if you have 2 cores and hyperthreading, you can use 4.
+Note:
+- HARDWARE_THREADS should be replaced with the number of your CPU hardware threads, e.g. if you have 2 cores and hyperthreading, you can use 4
+- About YES|NO, just choose to type YES or NO, this enables the renderer plugin to be build additionally to GL3+/CORE renderer plugin.
+- VULKAN=YES builds Vulkan renderer plugin, which uses Metal via Vulkan
 
 ```bash
-make clean && make -j HARDWARE_THREADS mains
+make clean && make -j HARDWARE_THREADS mains VULKAN=YES|NO
 ```
 
 ## 1.5. Windows MSYS2/MINGW64(tested on Windows 10 Pro)
@@ -164,16 +143,11 @@ pacman -S make
 pacman -S mingw-w64-x86_64-gcc
 pacman -S mingw-w64-x86_64-openal
 pacman -S mingw-w64-x86_64-glfw
+pacman -S mingw-w64-x86_64-glew
 pacman -S mingw-w64-x86_64-dlfcn
 ```
 
-#### 1.5.1.1 OpenGL
-
-```bash
-pacman -S mingw-w64-x86_64-glew
-```
-
-#### 1.5.1.2 Vulkan
+#### 1.5.1.1 Vulkan
 
 ```bash
 pacman -S mingw-w64-x86_64-vulkan-headers
@@ -189,18 +163,12 @@ cd tdme2
 
 ### 1.5.3. Build
 
-Note: HARDWARE_THREADS should be replaced with the number of your CPU hardware threads, e.g. if you have 2 cores and hyperthreading, you can use 4.
-
-#### 1.5.3.1 OpenGL
-
-```bash
-make clean && make -j HARDWARE_THREADS mains
-```
-
-#### 1.5.3.2 Vulkan
+Note:
+- HARDWARE_THREADS should be replaced with the number of your CPU hardware threads, e.g. if you have 2 cores and hyperthreading, you can use 4
+- About YES|NO, just choose to type YES or NO, this enables the renderer plugin to be build additionally to GL3+/CORE renderer plugin.
 
 ```bash
-make clean && make -j HARDWARE_THREADS mains VULKAN=YES
+make clean && make -j HARDWARE_THREADS mains VULKAN=YES|NO
 ```
 
 ## 1.6. Windows MSC/X64(tested on Windows 10 Pro)
@@ -220,26 +188,18 @@ You need to adjust "tdme2" if you used a different folder.
 
 ```
 cd %HOMEPATH%/tdme2
-```
-
-#### 1.6.3.1 OpenGL
-
-```
 nmake -f Makefile.nmake
 ```
 
-#### 1.6.3.2 Vulkan
-
-```
-nmake -f Makefile-Vulkan.nmake
-```
-
 This will build TDME2 executables into your "tdme2" folder. You need to copy DLLs still to this folder, just that those dependencies are found.
+Also this will build Vulkan renderer plugin as well as dependencies are included in TDME2 repository and its quiet cheap to do so.
 You need to adjust "tdme2" if you used a different folder.
 
 ```
 cd %HOMEPATH%\tdme2
+copy lib\*.dll .
 copy ext\fbx\win64\lib\libfbxsdk.dll .
+copy ext\glfw3\win64\lib\glfw3.dll .
 copy ext\windows-msc\glew\libs\glew32.dll .
 copy ext\windows-msc\openal-soft\libs\OpenAl32.dll .
 copy ext\windows-msc\pthread\libs\pthreadVC2.dll .
@@ -255,6 +215,28 @@ You find binaries in
 - ./bin/tdme/tests/
 - ./bin/tdme/tools/
 
+## 2.1. Unix-like platforms
+
+On UNIX like platforms including MSYS2/MINGW64 you need to set up LD_LIBRARY_PATH, just that TDME2 libs and renderer plugins are found.
+
+```bash
+$ pwd
+/usr/home/andreas/Development/drewke.net/tdme2
+$ export LD_LIBRARY_PATH=`pwd`/lib
+```
+
+## 2.2. MacOSX
+
+On MacOSX you need to set up DYLD_LIBRARY_PATH, just that TDME2 libs and renderer plugins are found.
+
+```bash
+$ pwd
+/usr/home/andreas/Development/drewke.net/tdme2
+$ export DYLD_LIBRARY_PATH=`pwd`/lib
+```
+
+## 2.3. Execute TDME2 binaries
+
 You have to execute the binaries from tdme2 root folder like:
 
 ```bash
@@ -264,12 +246,16 @@ $ ./bin/tdme/tests/AngleTest
 ```
 
 # 3. Other information
+
 ## 3.1. Links
+
 - TDME2 Philosophy, see [README-Philosophy.md](./README-Philosophy.md)
 - TDME2 Engine, see [README.md](./README.md)
 - TDME2 Editor, see [README-Editor.md](./README-Editor.md)
 - TDME2 How to build, see [README-BuildingHowTo.md](./README-BuildingHowTo.md)
 - TDME2 Screenshots, see [README-Screenshots.md](./README-Screenshots.md)
+
 ## 3.2. Additional notes
+
 - Build instructions will follow for NetBSD and Haiku if they get more recent graphics card support
 - Vulkan: First start of a TDME2 application will create Vulkan shader caches, please be patient as this can take a moment
