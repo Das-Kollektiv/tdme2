@@ -243,10 +243,10 @@ On MSYS2/MINGW64 you need to copy shared objects files to TDME2 folder, just tha
 ```bash
 $ pwd
 /usr/home/andreas/Development/drewke.net/tdme2
-$ cp ./lib/*.so .
+$ cp ./lib/*.dll .
 ```
 
-## 2.3. Execute TDME2 binaries
+## 2.4. Execute TDME2 binaries
 
 You have to execute the binaries from tdme2 root folder like:
 
@@ -256,7 +256,7 @@ $ pwd
 $ ./bin/tdme/tests/AngleTest
 ```
 
-## 2.3.1 Setting the renderer plugin
+## 2.4.1 Setting the renderer plugin
 
 There are currently 4 renderer plugins available, if they have been built:
 - OpenGL ES2, choose via "--gles2"
