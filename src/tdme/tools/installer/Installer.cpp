@@ -140,7 +140,7 @@ void Installer::initializeScreens() {
 		popUps->initialize();
 
 		installerProperties.load("resources/installer", "installer.properties");
-		if (installerProperties.get("installer_version", "") != "1.9.109") throw ExceptionBase("Installer is outdated. Please uninstall and update installer");
+		if (installerProperties.get("installer_version", "") != "1.9.114") throw ExceptionBase("Installer is outdated. Please uninstall and update installer");
 		unordered_map<string, string> parameters = {
 			{"name", installerProperties.get("name", "TDME2 based application")},
 			{"diskspace", installerProperties.get("diskspace", "Unknown")},
@@ -237,7 +237,6 @@ void Installer::initializeScreens() {
 				parameters
 			)
 		);
-		engine->getGUI()->resetRenderScreens();
 		engine->getGUI()->getScreen("installer_welcome")->addActionListener(this);
 		engine->getGUI()->getScreen("installer_welcome")->addChangeListener(this);
 		engine->getGUI()->getScreen("installer_license")->addActionListener(this);

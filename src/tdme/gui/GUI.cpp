@@ -246,6 +246,7 @@ void GUI::reset()
 	for (auto i = 0; i < entitiesToRemove.size(); i++) {
 		removeScreen(entitiesToRemove[i]);
 	}
+	renderScreens.clear();
 	/*
 	// TODO: fix me!
 	for (auto fontCacheIt: *fontCache) {
