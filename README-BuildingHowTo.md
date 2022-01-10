@@ -206,7 +206,7 @@ copy ext\windows-msc\pthread\libs\pthreadVC2.dll .
 ```
 
 ### 1.6.4. Note
-- All *.EXE files are generated in your "tdme2" folder root. You should just be able to launch them from there. So you can ignore 2.
+- All *.EXE files are generated in your "tdme2" folder root. You should just be able to launch them from there. So you can ignore 2.1 and 2.2.
 - The MSC build process is WIP
 
 # 2. Running a TDME2 binary
