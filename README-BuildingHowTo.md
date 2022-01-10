@@ -192,7 +192,7 @@ nmake -f Makefile.nmake
 ```
 
 This will build TDME2 executables into your "tdme2" folder. You need to copy DLLs still to this folder, just that those dependencies are found.
-Also this will build Vulkan renderer plugin as well as dependencies are included in TDME2 repository and its quiet cheap to do so.
+Also this will build Vulkan renderer plugin as well as dependencies are included in TDME2 repository and its quite cheap to do so.
 You need to adjust "tdme2" if you used a different folder.
 
 ```
@@ -213,7 +213,9 @@ copy ext\windows-msc\pthread\libs\pthreadVC2.dll .
 
 You find binaries in
 - ./bin/tdme/tests/
-- ./bin/tdme/tools/
+- ./bin/tdme/tools/cli
+- ./bin/tdme/tools/editor
+- ./bin/tdme/tools/installer
 
 ## 2.1. Unix-like platforms
 
@@ -245,10 +247,24 @@ $ pwd
 $ ./bin/tdme/tests/AngleTest
 ```
 
+## 2.3.1 Setting the renderer plugin
+
+There are currently 4 renderer plugins available, if they have been built:
+- OpenGLES2, choose via "--gles2"
+- OpenGL2, choose via "--gl2"
+- OpenGL3+/CORE (default), but can be issued also with "--gl3core"
+- Vulkan, choose via "--vulkan"
+
+Example: If you want to start TDMEEditor with Vulkan, just do the following:
+
+```bash
+$ pwd
+/usr/home/andreas/Development/drewke.net/tdme2
+$ ./bin/tdme/tools/editor/TDMEEditor --vulkan
+```
+
 # 3. Other information
-
 ## 3.1. Links
-
 - TDME2 Philosophy, see [README-Philosophy.md](./README-Philosophy.md)
 - TDME2 Engine, see [README.md](./README.md)
 - TDME2 Editor, see [README-Editor.md](./README-Editor.md)
@@ -256,6 +272,5 @@ $ ./bin/tdme/tests/AngleTest
 - TDME2 Screenshots, see [README-Screenshots.md](./README-Screenshots.md)
 
 ## 3.2. Additional notes
-
 - Build instructions will follow for NetBSD and Haiku if they get more recent graphics card support
 - Vulkan: First start of a TDME2 application will create Vulkan shader caches, please be patient as this can take a moment
