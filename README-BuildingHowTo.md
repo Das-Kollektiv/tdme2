@@ -206,7 +206,7 @@ copy ext\windows-msc\pthread\libs\pthreadVC2.dll .
 ```
 
 ### 1.6.4. Note
-- All *.EXE files are generated in your "tdme2" folder root. You should just be able to launch them from there. So you can ignore 2.1 and 2.2.
+- All *.EXE files are generated in your "tdme2" folder root. You should just be able to launch them from there. So you can ignore 2.1, 2.2 and 2.3.
 - The MSC build process is WIP
 
 # 2. Running a TDME2 binary
@@ -219,7 +219,7 @@ You find binaries in
 
 ## 2.1. Unix-like platforms
 
-On UNIX like platforms including MSYS2/MINGW64 you need to set up LD_LIBRARY_PATH, just that TDME2 libs and renderer plugins are found.
+On UNIX like platforms you need to set up LD_LIBRARY_PATH, just that TDME2 libs and renderer plugins are found.
 
 ```bash
 $ pwd
@@ -235,6 +235,16 @@ On MacOSX you need to set up DYLD_LIBRARY_PATH, just that TDME2 libs and rendere
 $ pwd
 /usr/home/andreas/Development/drewke.net/tdme2
 $ export DYLD_LIBRARY_PATH=`pwd`/lib
+```
+
+## 2.3. MSYS2/MINGW64
+
+On MSYS2/MINGW64 you need to copy shared objects files to TDME2 folder, just that TDME2 libs and renderer plugins are found.
+
+```bash
+$ pwd
+/usr/home/andreas/Development/drewke.net/tdme2
+$ cp ./lib/*.so .
 ```
 
 ## 2.3. Execute TDME2 binaries
