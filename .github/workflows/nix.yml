@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: install required packages
-        run: sudo apt update && sudo apt-get install libglew-dev libopenal-dev libglfw3-dev
+        run: sudo apt update && sudo apt-get install libglew-dev libopenal-dev libglfw3-dev libvulkan-dev
       - uses: actions/checkout@v2
       - name: make mains
-        run: make mains
+        run: make mains VULKAN=YES GLES2=YES
