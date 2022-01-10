@@ -51,7 +51,7 @@ else ifeq ($(OS), Linux)
 else
 	# Windows/MINGW
 	EXTRAFLAGS := $(EXTRAFLAGS) $(FLAGS)
-	MAIN_LDFLAGS := -L$(LIB_DIR) -ltdme2-ext.so -ltdme2.so $(LDFLAGS)
+	MAIN_LDFLAGS := -L$(LIB_DIR) -ltdme2-ext.dll -ltdme2.dll $(LDFLAGS)
 	OFLAGS := -O2
 endif
 

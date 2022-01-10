@@ -8,9 +8,13 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
+#include <string>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/VKRenderer.h>
+
+using std::string;
 
 using tdme::engine::subsystems::renderer::VKRenderer;
 using tdme::engine::Engine;
@@ -19,7 +23,6 @@ using tdme::engine::Engine;
  * Engine connector of VK renderer to other engine functionality
  * @author Andreas Drewke
  */
-
 class tdme::engine::EngineVKRenderer: public VKRenderer
 {
 public:
@@ -27,6 +30,13 @@ public:
 	 * Public constructor
 	 */
 	EngineVKRenderer();
+
+	/**
+	 * @return renderer version
+	 */
+	inline static string getRendererVersion() {
+		return "1.1.114";
+	}
 
 	// overridden methods
 	bool prepareWindowSystemRendererContext(int tryIdx) override;

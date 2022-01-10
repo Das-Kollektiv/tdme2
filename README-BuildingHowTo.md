@@ -197,7 +197,6 @@ You need to adjust "tdme2" if you used a different folder.
 
 ```
 cd %HOMEPATH%\tdme2
-copy lib\*.dll .
 copy ext\fbx\win64\lib\libfbxsdk.dll .
 copy ext\glfw3\win64\lib\glfw3.dll .
 copy ext\windows-msc\glew\libs\glew32.dll .

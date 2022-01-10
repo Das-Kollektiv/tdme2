@@ -15,6 +15,7 @@
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/Version.h>
 #include <tdme/gui/renderer/GUIShader.h>
 
 using tdme::engine::subsystems::earlyzrejection::EZRShader;
@@ -23,6 +24,7 @@ using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::Engine;
+using tdme::engine::Version;
 using tdme::engine::EngineGLES2Renderer;
 using tdme::gui::renderer::GUIShader;
 
@@ -194,6 +196,10 @@ void EngineGLES2Renderer::onUpdateShaderParameters(int contextIdx) {
 // end point for engine to create renderer
 extern "C" EngineGLES2Renderer* createInstance()
 {
+	if (EngineGLES2Renderer::getRendererVersion() != Version::getVersion()) {
+		Console::println("EngineGL2Renderer::createInstance(): Engine and renderer version do not match: '" + EngineGLES2Renderer::getRendererVersion() + "' != '" + Version::getVersion() + "'");
+		return nullptr;
+	}
 	Console::println("EngineGLES2Renderer::createInstance(): Creating EngineGLES2Renderer instance!");
 	return new EngineGLES2Renderer();
 }

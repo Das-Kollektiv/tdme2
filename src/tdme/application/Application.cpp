@@ -533,7 +533,7 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		if (argValue == "--vulkan") rendererLibrary = "libvulkanrenderer";
 	}
 
-	#if defined(_MSC_VER)
+	#if defined(_WIN32)
 		rendererLibrary = rendererLibrary + ".dll";
 	#elif defined(__APPLE__)
 		rendererLibrary = rendererLibrary + ".dylib";

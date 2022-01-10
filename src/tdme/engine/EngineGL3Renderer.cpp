@@ -23,6 +23,7 @@
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/Version.h>
 #include <tdme/gui/renderer/GUIShader.h>
 
 using tdme::engine::subsystems::earlyzrejection::EZRShader;
@@ -31,6 +32,7 @@ using tdme::engine::subsystems::lines::LinesShader;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::Engine;
+using tdme::engine::Version;
 using tdme::engine::EngineGL3Renderer;
 using tdme::gui::renderer::GUIShader;
 
@@ -215,6 +217,10 @@ void EngineGL3Renderer::onUpdateShaderParameters(int contextIdx) {
 // end point for engine to create renderer
 extern "C" EngineGL3Renderer* createInstance()
 {
+	if (EngineGL3Renderer::getRendererVersion() != Version::getVersion()) {
+		Console::println("EngineGL3Renderer::createInstance(): Engine and renderer version do not match: '" + EngineGL3Renderer::getRendererVersion() + "' != '" + Version::getVersion() + "'");
+		return nullptr;
+	}
 	Console::println("EngineGL3Renderer::createInstance(): Creating EngineGL3Renderer instance!");
 	return new EngineGL3Renderer();
 }

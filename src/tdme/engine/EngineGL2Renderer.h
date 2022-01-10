@@ -8,9 +8,13 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
+#include <string>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/GL2Renderer.h>
+
+using std::string;
 
 using tdme::engine::subsystems::renderer::GL2Renderer;
 using tdme::engine::Engine;
@@ -21,12 +25,18 @@ using tdme::engine::Engine;
  */
 class tdme::engine::EngineGL2Renderer: public GL2Renderer
 {
-
 public:
 	/**
 	 * Public constructor
 	 */
 	EngineGL2Renderer();
+
+	/**
+	 * @return renderer version
+	 */
+	inline static string getRendererVersion() {
+		return "1.1.114";
+	}
 
 	// overridden methods
 	bool prepareWindowSystemRendererContext(int tryIdx) override;

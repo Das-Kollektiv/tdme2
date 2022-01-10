@@ -18,15 +18,11 @@ public:
 	/**
 	 * @return version
 	 */
-	inline static string getVersion() {
-		return "1.9.114";
-	}
+	static string getVersion();
 
 	/**
 	 * @return copyright
 	 */
-	inline static string getCopyright() {
-		return "Developed 2012-2021 by Andreas Drewke, Dominik Hepp, Mathias Lenz, Kolja Gumpert, drewke.net, mindty.com, github.com/mahula. Please see the license @ https://github.com/andreasdr/tdme2/blob/master/LICENSE";
-	}
+	static string getCopyright();
 
 };

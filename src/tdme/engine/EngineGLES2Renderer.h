@@ -1,8 +1,20 @@
 #pragma once
 
+#if defined(_MSC_VER)
+	// this suppresses a warning redefinition of APIENTRY macro
+	#define NOMINMAX
+	#include <windows.h>
+#endif
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
+
+#include <string>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/GLES2Renderer.h>
+
+using std::string;
 
 using tdme::engine::subsystems::renderer::GLES2Renderer;
 using tdme::engine::Engine;
@@ -13,12 +25,18 @@ using tdme::engine::Engine;
  */
 class tdme::engine::EngineGLES2Renderer: public GLES2Renderer
 {
-
 public:
 	/**
 	 * Public constructor
 	 */
 	EngineGLES2Renderer();
+
+	/**
+	 * @return renderer version
+	 */
+	inline static string getRendererVersion() {
+		return "1.1.114";
+	}
 
 	// overridden methods
 	bool prepareWindowSystemRendererContext(int tryIdx) override;

@@ -8,8 +8,8 @@ NAME = tdme2
 EXT_NAME = tdme2-ext
 ifeq ($(OS), Darwin)
 	LIB_EXT := .dylib
-else
-	LIB_EXT := .so
+else ifeq ($(OSSHORT), Msys)
+	LIB_EXT := .dll
 endif
 LIB := lib$(NAME)$(LIB_EXT)
 EXT_LIB := lib$(NAME)-ext$(LIB_EXT)
@@ -208,6 +208,7 @@ SRCS = \
 	src/tdme/engine/SimplePartition.cpp \
 	src/tdme/engine/Timing.cpp \
 	src/tdme/engine/Transformations.cpp \
+	src/tdme/engine/Version.cpp \
 	src/tdme/engine/fileio/models/DAEReader.cpp \
 	src/tdme/engine/fileio/models/GLTFReader.cpp \
 	src/tdme/engine/fileio/models/ModelFileIOException.cpp \

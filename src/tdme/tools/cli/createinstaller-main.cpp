@@ -163,7 +163,6 @@ static void scanPathLibraries(const string& path, vector<string>& totalFiles) {
 				#if defined(_WIN32)
 					if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".dll") == true) return true;
 					if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".lib") == true) return true;
-					if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".so") == true) return true;
 				#elif defined(__APPLE__)
 					if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".dylib") == true) return true;
 					if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".so") == true) return true;
@@ -259,7 +258,6 @@ static void scanPathExecutables(const string& path, vector<string>& totalFiles) 
 				#if defined(_WIN32)
 					if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".exe") == true) return true;
 					if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".dll") == true) return true;
-					if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".so") == true) return true;
 					if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".bat") == true) return true;
 				#elif defined(__APPLE__)
 					// TODO: fix me, paths get submitted here too as filename
