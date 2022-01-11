@@ -768,7 +768,8 @@ ext-link2: $(OBJ)/*.obj
 	del libtdme-ext.def.dumpbin.linkermember.def
 
 ext-clean:$(OBJ)/*.obj
-	rmdir /s /q $(OBJ) 
+	del /S /Q $(OBJ)
+	rmdir $(OBJ)
 
 init:
 	mkdir $(OBJ) 
@@ -793,7 +794,8 @@ link2: $(OBJ)/*.obj
 	del libtdme.def.dumpbin.linkermember.def
 
 clean: 
-	rmdir /s /q $(OBJ)
+	del /S /Q $(OBJ)
+	rmdir $(OBJ)
 
 opengl3core-init:
 	mkdir $(OBJ) 
@@ -818,7 +820,8 @@ opengl3core-link2: $(OBJ)/*.obj
 	del libopengl3corerenderer.def.dumpbin.linkermember.def
 
 opengl3core-clean:
-	rmdir /s /q $(OBJ)
+	del /S /Q $(OBJ)
+	rmdir $(OBJ)
 
 opengl2-init:
 	mkdir $(OBJ)
@@ -843,7 +846,8 @@ opengl2-link2: $(OBJ)/*.obj
 	del libopengl2renderer.def.dumpbin.linkermember.def
 
 vulkan-clean:
-	rmdir /s /q $(OBJ)
+	del /S /Q $(OBJ)
+	rmdir $(OBJ)
 
 vulkan-init:
 	mkdir $(OBJ)
@@ -869,10 +873,12 @@ vulkan-link2: $(OBJ)/*.obj
 	del libvulkanrenderer.def.dumpbin.linkermember.def
 
 opengl2-clean:
-	rmdir /s /q $(OBJ)
+	del /S /Q $(OBJ)
+	rmdir $(OBJ)
 
 clean-mains: 
-	rmdir /s /q $(OBJ)
+	del /S /Q $(OBJ)
+	rmdir $(OBJ)
 
 AngleTest:
 	cl /FeAngleTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/AngleTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
