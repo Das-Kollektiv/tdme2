@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <stack>
 #include <string>
 #include <unordered_map>
@@ -13,6 +14,7 @@
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/StringTools.h>
 
+using std::array;
 using std::stack;
 using std::string;
 using std::to_string;
@@ -31,6 +33,33 @@ using tdme::utilities::StringTools;
  */
 class tdme::utilities::MiniScript {
 public:
+	enum ScriptOperator {
+		OPERATOR_NONE,
+		// priority 3
+		OPERATOR_NOT,
+		// priority 5
+		OPERATOR_DIVISION,
+		OPERATOR_MULTIPLICATION,
+		OPERATOR_REMAINDER, // TODO: not yet
+		// priority 6
+		OPERATOR_ADDITION,
+		OPERATOR_SUBTRACTION,
+		// priority 9
+		OPERATOR_LESSER,
+		OPERATOR_LESSEREQUALS,
+		OPERATOR_GREATER,
+		OPERATOR_GREATEREQUALS,
+		// priority 10
+		OPERATOR_EQUALS,
+		OPERATOR_NOTEQUAL,
+		// priority 14
+		OPERATOR_AND,
+		// priority 15
+		OPERATOR_OR,
+		//
+		OPERATOR_MAX
+	};
+
 	enum StateMachineState {
 		STATE_NONE = -1,
 		STATE_NEXT_STATEMENT,
@@ -555,6 +584,13 @@ public:
 		}
 
 		/**
+		 * @return operator
+		 */
+		virtual ScriptOperator getOperator() {
+			return OPERATOR_NONE;
+		}
+
+		/**
 		 * @return description
 		 */
 		virtual string getDescription() {
@@ -609,9 +645,16 @@ private:
 	vector<Script> scripts;
 	unordered_map<string, ScriptMethod*> scriptMethods;
 	unordered_map<int, ScriptStateMachineState*> scriptStateMachineStates;
+	unordered_map<uint8_t, ScriptMethod*> scriptOperators;
 	string scriptPathName;
 	string scriptFileName;
 	bool scriptValid { false };
+
+	//
+	struct ScriptStatementOperator {
+		int idx { -1 };
+		ScriptOperator scriptOperator;
+	};
 
 	/**
 	 * Execute a single script line
@@ -648,6 +691,42 @@ private:
 	 * @return script index or -1 if no script to start
 	 */
 	int determineNamedScriptIdxToStart();
+
+	/**
+	 * Determine next not substituted operator in statement
+	 * @param statement statement
+	 * @param nextOperator next operator
+	 */
+	bool getNextStatementOperator(const string& statement, ScriptStatementOperator& nextOperator);
+
+	/**
+	 * Trim argument and remove unnessessary parenthesis
+	 * @param argument argument
+	 * @return processed argument
+	 */
+	const string trimArgument(const string& argument);
+
+	/**
+	 * Find right argument in statement beginning from position
+	 * @param statement statement
+	 * @param position position
+	 * @param length argument length
+	 */
+	const string findRightArgument(const string statement, int position, int& length);
+
+	/**
+	 * Find left argument in statement beginning from position
+	 * @param statement statement
+	 * @param position position
+	 * @param length argument length
+	 */
+	const string findLeftArgument(const string statement, int position, int& length);
+
+	/**
+	 * Do statement pre processing, 1) replace operators with corresponding methods
+	 * @param statement statement
+	 */
+	const string doStatementPreProcessing(const string& statement);
 
 public:
 	/**
@@ -692,6 +771,33 @@ public:
 	 * Register variables
 	 */
 	virtual void registerVariables();
+
+	/**
+	 * Get operator as string
+	 * @param scriptOperator script operator
+	 * @return script operator as string
+	 */
+	inline static string getOperatorAsString(ScriptOperator scriptOperator) {
+		switch(scriptOperator) {
+			case(OPERATOR_NONE): return "NONE";
+			case(OPERATOR_NOT): return "!";
+			case(OPERATOR_MULTIPLICATION): return "*";
+			case(OPERATOR_DIVISION): return "/";
+			case(OPERATOR_REMAINDER): return "%";
+			case(OPERATOR_ADDITION): return "+";
+			case(OPERATOR_SUBTRACTION): return "-";
+			case(OPERATOR_LESSER): return "<";
+			case(OPERATOR_LESSEREQUALS): return "<=";
+			case(OPERATOR_GREATER): return ">";
+			case(OPERATOR_GREATEREQUALS): return ">=";
+			case(OPERATOR_EQUALS): return "==";
+			case(OPERATOR_NOTEQUAL): return "!=";
+			case(OPERATOR_AND): return "&&";
+			case(OPERATOR_OR): return "||";
+			case(OPERATOR_MAX): return "MAX";
+			default: return "INVALID";
+		}
+	}
 
 	/**
 	 * Get boolean value from given variable

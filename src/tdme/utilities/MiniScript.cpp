@@ -464,7 +464,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 				t1.tokenize(scriptLine, "=");
 				StringTokenizer t2;
 				t2.tokenize(t1.nextToken(), ";");
-				while (t2.hasMoreTokens()) conditions.push_back(StringTools::trim(t2.nextToken()));
+				while (t2.hasMoreTokens()) conditions.push_back(doStatementPreProcessing(StringTools::trim(t2.nextToken())));
 				statementIdx = 0;
 				string name;
 				if (t1.hasMoreTokens() == true) name = StringTools::trim(t1.nextToken());
@@ -585,6 +585,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 					Console::println("MiniScript::MiniScript(): '" + scriptFileName + ": @" + to_string(line) + ": elseif without if");
 				}
 			} else {
+				scriptLine = doStatementPreProcessing(scriptLine);
 				if (StringTools::regexMatch(scriptLine, "^forTime[\\s]*\\(.*\\)$") == true ||
 					StringTools::regexMatch(scriptLine, "^forCondition[\\s]*\\(.*\\)$") == true) {
 					gotoStatementStack.push(
@@ -609,13 +610,36 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 		line++;
 	}
 
-	//
+	// check for unbalanced forXXX/if/elseif/else/end
 	if (scriptValid == true && gotoStatementStack.empty() == false) {
+		scriptValid = false;
 		Console::println("MiniScript::loadScript(): '" + scriptFileName + ": unbalanced forXXX/if/elseif/else/end");
-	} else {
-		//
-		startScript();
+		return;
 	}
+
+	// check for initialize and error condition
+	auto haveInitializeScript = false;
+	auto haveErrorScript = false;
+	for (auto& script: scripts) {
+		if (script.conditionType == Script::CONDITIONTYPE_ONENABLED) {
+			// no op
+		} else
+		if (script.conditions.size() == 1 && script.conditions[0] == "initialize") {
+			haveInitializeScript = true;
+		} else
+		if (script.conditions.size() == 1 && script.conditions[0] == "error") {
+			haveErrorScript = true;
+		}
+	}
+	if (haveInitializeScript == false || haveErrorScript == false) {
+		scriptValid = false;
+		Console::println("MiniScript::loadScript(): '" + scriptFileName + ": script needs to define a initialize and error condition");
+		return;
+
+	}
+
+	//
+	startScript();
 }
 
 void MiniScript::startScript() {
@@ -649,7 +673,7 @@ int MiniScript::determineScriptIdxToStart() {
 			// user emit condition
 		} else {
 			auto conditionMet = true;
-			for (auto condition: script.conditions) {
+			for (auto& condition: script.conditions) {
 				string variable;
 				string method;
 				vector<string> arguments;
@@ -681,13 +705,13 @@ int MiniScript::determineScriptIdxToStart() {
 			if (conditionMet == false) {
 				if (VERBOSE == true) {
 					Console::print("MiniScript::determineScriptIdxToStart(): ");
-					for (auto condition: script.conditions) Console::print(condition + "; ");
+					for (auto& condition: script.conditions) Console::print(condition + "; ");
 					Console::println(": FAILED");
 				}	
 			} else {
 				if (VERBOSE == true) {
 					Console::print("MiniScript::determineScriptIdxToStart(): ");
-					for (auto condition: script.conditions) Console::print(condition + "; ");
+					for (auto& condition: script.conditions) Console::print(condition + "; ");
 					Console::println(": OK");
 				}
 				scriptState.state = currentScriptStateScript;
@@ -712,7 +736,7 @@ int MiniScript::determineNamedScriptIdxToStart() {
 				// no op
 			} else {
 				auto conditionMet = true;
-				for (auto condition: script.conditions) {
+				for (auto& condition: script.conditions) {
 					string variable;
 					string method;
 					vector<string> arguments;
@@ -744,13 +768,13 @@ int MiniScript::determineNamedScriptIdxToStart() {
 				if (conditionMet == false) {
 					if (VERBOSE == true) {
 						Console::print("MiniScript::determineNamedScriptIdxToStart(): ");
-						for (auto condition: script.conditions) Console::print(condition + "; ");
+						for (auto& condition: script.conditions) Console::print(condition + "; ");
 						Console::println(": FAILED");
 					}
 				} else {
 					if (VERBOSE == true) {
 						Console::print("MiniScript::determineNamedScriptIdxToStart(): ");
-						for (auto condition: script.conditions) Console::print(condition + "; ");
+						for (auto& condition: script.conditions) Console::print(condition + "; ");
 						Console::println(": OK");
 					}
 					scriptState.state = currentScriptStateState;
@@ -762,6 +786,175 @@ int MiniScript::determineNamedScriptIdxToStart() {
 	}
 	scriptState.state = currentScriptStateState;
 	return -1;
+}
+
+bool MiniScript::getNextStatementOperator(const string& statement, MiniScript::ScriptStatementOperator& nextOperator) {
+	//
+	auto bracketCount = 0;
+	auto quote = false;
+	for (auto i = 0; i < statement.size(); i++) {
+		auto c = statement[i];
+		if (c == '"' && bracketCount == 1) {
+			quote = quote == false?true:false;
+		} else
+		if (quote == false) {
+			if (c == '(') {
+				bracketCount++;
+			} else
+			if (c == ')') {
+				bracketCount--;
+			} else {
+				for (auto& priorizedOperator: Op) {
+					string operatorCandidate;
+					auto operatorString = getOperatorAsString(priorizedOperator);
+					if (operatorString.size() > 0) operatorCandidate+= statement[i];
+					if (operatorString.size() > 1 && i + 1 < statement.size()) operatorCandidate+= statement[i + 1];
+					if (operatorString == operatorCandidate && (nextOperator.idx == -1 || priorizedOperator > nextOperator.scriptOperator)) {
+						nextOperator.idx = i;
+						nextOperator.scriptOperator = priorizedOperator;
+					}
+				}
+			}
+		}
+	}
+
+	//
+	if (bracketCount > 0) {
+		Console::println("MiniScript::getNextStatementOperator(): '" + scriptFileName + "': '" + statement + "': unbalanced bracket count: " + to_string(bracketCount) + " still open");
+		return false;
+	}
+	//
+	return nextOperator.idx != -1;
+}
+
+const string MiniScript::trimArgument(const string& argument) {
+	auto processedArgument = StringTools::trim(argument);
+	if (StringTools::startsWith(processedArgument, "(") == true && StringTools::endsWith(processedArgument, ")") == true) {
+		processedArgument = StringTools::substring(processedArgument, 1, processedArgument.size() - 1);
+	}
+	return processedArgument;
+}
+
+const string MiniScript::findRightArgument(const string statement, int position, int& length) {
+	//
+	auto bracketCount = 0;
+	auto quote = false;
+	string argument;
+	length = 0;
+	for (auto i = position; i < statement.size(); i++) {
+		auto c = statement[i];
+		if (c == '"' && bracketCount == 1) {
+			quote = quote == false?true:false;
+			argument+= c;
+		} else
+		if (quote == false) {
+			if (c == '(') {
+				bracketCount++;
+				argument+= c;
+			} else
+			if (c == ')') {
+				bracketCount--;
+				if (bracketCount >= 0) argument+= c;
+				if (bracketCount <= 0) return trimArgument(argument);
+			} else
+			if (c == ',') {
+				if (bracketCount == 0) return trimArgument(argument);
+				argument+= c;
+			} else {
+				argument+= c;
+			}
+		} else
+		if (quote == true) {
+			argument+= c;
+		}
+		length++;
+	}
+	return trimArgument(argument);
+}
+
+const string MiniScript::findLeftArgument(const string statement, int position, int& length) {
+	//
+	auto bracketCount = 0;
+	auto quote = false;
+	string argument;
+	length = 0;
+	for (int i = position; i >= 0; i--) {
+		auto c = statement[i];
+		if (c == '"' && bracketCount == 1) {
+			quote = quote == false?true:false;
+			argument = c + argument;
+		} else
+		if (quote == false) {
+			if (c == ')') {
+				bracketCount++;
+				argument = c + argument;
+			} else
+			if (c == '(') {
+				bracketCount--;
+				if (bracketCount < 0) return trimArgument(argument);
+				argument = c + argument;
+			} else
+			if (c == ',') {
+				if (bracketCount == 0) return trimArgument(argument);
+				argument = c + argument;
+			} else {
+				argument = c + argument;
+			}
+		} else
+		if (quote == true) {
+			argument = c + argument;
+		}
+		length++;
+	}
+	return trimArgument(argument);
+}
+
+const string MiniScript::doStatementPreProcessing(const string& statement) {
+	Console::println("MiniScript::doStatementPreProcessing(): " + statement);
+	auto preprocessedStatement =  statement;
+	ScriptStatementOperator nextOperators;
+	while (getNextStatementOperator(preprocessedStatement, nextOperators) == true) {
+		Console::println("MiniScript::doStatementPreProcessing(): operator found in: '" + preprocessedStatement + "'@" + to_string(nextOperators.idx));
+		auto methodIt = scriptOperators.find(nextOperators.scriptOperator);
+		if (methodIt == scriptOperators.end()) {
+			Console::println("MiniScript::doStatementPreProcessing(): operator found in: '" + preprocessedStatement + "'@" + to_string(nextOperators.idx) + ": no method found");
+			// TODO: error handling
+			return preprocessedStatement;
+		}
+		auto method = methodIt->second;
+		if (method->getArgumentTypes().size() == 1) {
+			// find the single argument right
+			auto operatorString = getOperatorAsString(nextOperators.scriptOperator);
+			int rightArgumentLength = 0;
+			auto rightArgument = findRightArgument(preprocessedStatement, nextOperators.idx + 1, rightArgumentLength);
+			// substitute with method call
+			preprocessedStatement =
+				StringTools::substring(preprocessedStatement, 0, nextOperators.idx) +
+				method->getMethodName() + "(" + rightArgument + ")" +
+				StringTools::substring(preprocessedStatement, nextOperators.idx + 1 + rightArgumentLength, preprocessedStatement.size());
+		} else
+		if (method->isVariadic() == true ||
+			method->getArgumentTypes().size() == 2) {
+			auto operatorString = getOperatorAsString(nextOperators.scriptOperator);
+			Console::println("pre: " + preprocessedStatement + ": " + operatorString);
+			// find the first argument left
+			int leftArgumentLength = 0;
+			auto leftArgument = findLeftArgument(preprocessedStatement, nextOperators.idx - 1, leftArgumentLength);
+			Console::println("left: " + leftArgument);
+			// find the first argument right
+			int rightArgumentLength = 0;
+			auto rightArgument = findRightArgument(preprocessedStatement, nextOperators.idx + 1, rightArgumentLength);
+			Console::println("right: " + rightArgument);
+			// substitute with method call
+			preprocessedStatement =
+				StringTools::substring(preprocessedStatement, 0, nextOperators.idx - leftArgumentLength) +
+				method->getMethodName() + "(" + leftArgument + ", " + rightArgument + ")" +
+				StringTools::substring(preprocessedStatement, nextOperators.idx + 1 + rightArgumentLength, preprocessedStatement.size());
+			Console::println("post: " + preprocessedStatement);
+		}
+		nextOperators = ScriptStatementOperator();
+	}
+	return preprocessedStatement;
 }
 
 const string MiniScript::getInformation() {
@@ -827,6 +1020,39 @@ const string MiniScript::getInformation() {
 		}
 		sort(methods.begin(), methods.end());
 		for (auto& method: methods) result+= method + "\n";
+	}
+	result+= "\n";
+
+	//
+	result+= "Operators:\n";
+	{
+		vector<string> operators;
+		for (auto& scriptOperatorIt: scriptOperators) {
+			auto method = scriptOperatorIt.second;
+			string operatorString;
+			operatorString+= getOperatorAsString(method->getOperator());
+			operatorString+= " --> ";
+			operatorString+= method->getMethodName();
+			operatorString+= "(";
+			auto argumentIdx = 0;
+			if (method->isVariadic() == true) {
+				operatorString+="...";
+			} else {
+				for (auto& argumentType: method->getArgumentTypes()) {
+					if (argumentIdx > 0) operatorString+= ", ";
+					operatorString+= argumentType.name + ": " + ScriptVariable::getTypeAsString(argumentType.type);
+					if (argumentType.optional == true) {
+						operatorString+= "(OPTIONAL)";
+					}
+					argumentIdx++;
+				}
+			}
+			operatorString+= "): ";
+			operatorString+= method->isMixedReturnValue() == true?"Mixed":ScriptVariable::getTypeAsString(method->getReturnValueType());
+			operators.push_back(operatorString);
+		}
+		sort(operators.begin(), operators.end());
+		for (auto& method: operators) result+= method + "\n";
 	}
 	result+= "\n";
 
@@ -1362,7 +1588,7 @@ void MiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodStringStop(this));
 	}
-	// equals
+	// equality
 	{
 		//
 		class ScriptMethodEquals: public ScriptMethod {
@@ -1385,8 +1611,39 @@ void MiniScript::registerMethods() {
 			bool isVariadic() override {
 				return true;
 			}
+			ScriptOperator getOperator() override {
+				return OPERATOR_EQUALS;
+			}
 		};
 		registerMethod(new ScriptMethodEquals(this));
+	}
+	{
+		//
+		class ScriptMethodNotEqual: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodNotEqual(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "notequal";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				for (auto i = 1; i < argumentValues.size(); i++) {
+					if (argumentValues[0].getValueString() == argumentValues[i].getValueString()) {
+						returnValue.setValue(false);
+						return;
+					}
+				}
+				returnValue.setValue(true);
+			}
+			bool isVariadic() override {
+				return true;
+			}
+			ScriptOperator getOperator() override {
+				return OPERATOR_NOTEQUAL;
+			}
+		};
+		registerMethod(new ScriptMethodNotEqual(this));
 	}
 	// int methods
 	{
@@ -1693,8 +1950,46 @@ void MiniScript::registerMethods() {
 					return;
 				}
 			}
+			ScriptOperator getOperator() override {
+				return OPERATOR_GREATER;
+			}
 		};
 		registerMethod(new ScriptMethodFGreater(this));
+	}
+	{
+		//
+		class ScriptMethodFGreaterEquals: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodFGreaterEquals(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_FLOAT, .name = "a", .optional = false },
+						{.type = ScriptVariableType::TYPE_FLOAT, .name = "b", .optional = false }
+					},
+					ScriptVariableType::TYPE_BOOLEAN),
+					miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "fgreaterequals";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				float floatValueA;
+				float floatValueB;
+				if (MiniScript::getFloatValue(argumentValues, 0, floatValueA, false) == true &&
+					MiniScript::getFloatValue(argumentValues, 1, floatValueB, false) == true) {
+					returnValue.setValue(floatValueA >= floatValueB);
+				} else {
+					Console::println("ScriptMethodFGreater::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
+					miniScript->startErrorScript();
+					return;
+				}
+			}
+			ScriptOperator getOperator() override {
+				return OPERATOR_GREATEREQUALS;
+			}
+		};
+		registerMethod(new ScriptMethodFGreaterEquals(this));
 	}
 	{
 		//
@@ -1725,8 +2020,46 @@ void MiniScript::registerMethods() {
 					return;
 				}
 			}
+			ScriptOperator getOperator() override {
+				return OPERATOR_LESSER;
+			}
 		};
 		registerMethod(new ScriptMethodFLesser(this));
+	}
+	{
+		//
+		class ScriptMethodFLesserEquals: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodFLesserEquals(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_FLOAT, .name = "a", .optional = false },
+						{.type = ScriptVariableType::TYPE_FLOAT, .name = "b", .optional = false }
+					},
+					ScriptVariableType::TYPE_BOOLEAN),
+					miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "flesserequals";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				float floatValueA;
+				float floatValueB;
+				if (MiniScript::getFloatValue(argumentValues, 0, floatValueA, false) == true &&
+					MiniScript::getFloatValue(argumentValues, 1, floatValueB, false) == true) {
+					returnValue.setValue(floatValueA <= floatValueB);
+				} else {
+					Console::println("ScriptMethodFLesser::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
+					miniScript->startErrorScript();
+					return;
+				}
+			}
+			ScriptOperator getOperator() override {
+				return OPERATOR_LESSEREQUALS;
+			}
+		};
+		registerMethod(new ScriptMethodFLesserEquals(this));
 	}
 	{
 		//
@@ -1754,6 +2087,9 @@ void MiniScript::registerMethods() {
 			}
 			bool isVariadic() override {
 				return true;
+			}
+			ScriptOperator getOperator() override {
+				return OPERATOR_ADDITION;
 			}
 		};
 		registerMethod(new ScriptMethodFAdd(this));
@@ -1795,6 +2131,9 @@ void MiniScript::registerMethods() {
 			bool isVariadic() override {
 				return true;
 			}
+			ScriptOperator getOperator() override {
+				return OPERATOR_SUBTRACTION;
+			}
 		};
 		registerMethod(new ScriptMethodFSub(this));
 	}
@@ -1835,6 +2174,9 @@ void MiniScript::registerMethods() {
 			bool isVariadic() override {
 				return true;
 			}
+			ScriptOperator getOperator() override {
+				return OPERATOR_MULTIPLICATION;
+			}
 		};
 		registerMethod(new ScriptMethodFMul(this));
 	}
@@ -1871,6 +2213,9 @@ void MiniScript::registerMethods() {
 					}
 				}
 				returnValue.setValue(result);
+			}
+			ScriptOperator getOperator() override {
+				return OPERATOR_DIVISION;
 			}
 			bool isVariadic() override {
 				return true;
@@ -2742,6 +3087,9 @@ void MiniScript::registerMethods() {
 					return;
 				}
 			}
+			ScriptOperator getOperator() override {
+				return OPERATOR_NOT;
+			}
 		};
 		registerMethod(new ScriptMethodNot(this));
 	}
@@ -2773,16 +3121,19 @@ void MiniScript::registerMethods() {
 			bool isVariadic() override {
 				return true;
 			}
+			ScriptOperator getOperator() override {
+				return OPERATOR_AND;
+			}
 		};
 		registerMethod(new ScriptMethodAnd(this));
 	}
 	{
 		//
-		class ScriptMethodAnd: public ScriptMethod {
+		class ScriptMethodOr: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodAnd(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN), miniScript(miniScript) {}
+			ScriptMethodOr(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN), miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "or";
 			}
@@ -2804,8 +3155,11 @@ void MiniScript::registerMethods() {
 			bool isVariadic() override {
 				return true;
 			}
+			ScriptOperator getOperator() override {
+				return OPERATOR_OR;
+			}
 		};
-		registerMethod(new ScriptMethodAnd(this));
+		registerMethod(new ScriptMethodOr(this));
 	}
 	// string functions
 	{
@@ -2991,6 +3345,21 @@ void MiniScript::registerMethods() {
 
 		};
 		registerMethod(new ScriptMethodGetVariable(this));
+	}
+
+	// determine operators
+	for (auto& methodIt: scriptMethods) {
+		auto method = methodIt.second;
+		auto methodOperator = method->getOperator();
+		if (methodOperator != OPERATOR_NONE) {
+			auto methodOperatorString = getOperatorAsString(methodOperator);
+			auto scriptOperatorIt = scriptOperators.find(static_cast<uint8_t>(methodOperator));
+			if (scriptOperatorIt != scriptOperators.end()) {
+				Console::println("MiniScript::registerMethods(): operator '" + methodOperatorString + "' already registered for method '" + method->getMethodName() + "'");
+				continue;
+			}
+			scriptOperators[static_cast<uint8_t>(methodOperator)] = method;
+		}
 	}
 }
 
