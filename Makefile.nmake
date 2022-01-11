@@ -41,10 +41,6 @@ BASE_LDFLAGS = \
 
 MAIN_LDFLAGS = \
 	$(BASE_LDFLAGS) \
-	/LIBPATH "ext\glfw3\win64\lib\glfw3dll.lib" \
-	/LIBPATH "ext\windows-msc\pthread\libs\pthreadVC2.lib" \
-	/LIBPATH "ext\windows-msc\openal-soft\libs\OpenAL32.lib" \
-	/LIBPATH "ext\fbx\win64\lib\libfbxsdk.lib" \
 	/LIBPATH libtdme-ext.lib \
 	/LIBPATH libtdme.lib
 

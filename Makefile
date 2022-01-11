@@ -1,3 +1,9 @@
+#
+BIN = bin
+LIB_DIR = lib
+OBJ := obj
+OBJ_DEBUG = obj-debug
+
 # determine platform
 OSSHORT := $(shell sh -c 'uname -o 2>/dev/null')
 OS := $(shell sh -c 'uname -s 2>/dev/null')
@@ -7,11 +13,11 @@ ARCH := $(shell sh -c 'uname -m 2>/dev/null')
 NAME = tdme2
 EXT_NAME = tdme2-ext
 ifeq ($(OS), Darwin)
-	LIB_EXT := .dylib
+	LIB_EXT = .dylib
 else ifeq ($(OSSHORT), Msys)
-	LIB_EXT := .dll
+	LIB_EXT = .dll
 else
-	LIB_EXT := .so
+	LIB_EXT = .so
 endif
 LIB := lib$(NAME)$(LIB_EXT)
 EXT_LIB := lib$(NAME)-ext$(LIB_EXT)
@@ -19,27 +25,23 @@ OPENGL2_RENDERER_LIB := libopengl2renderer$(LIB_EXT)
 OPENGL3CORE_RENDERER_LIB := libopengl3corerenderer$(LIB_EXT)
 VULKAN_RENDERER_LIB := libvulkanrenderer$(LIB_EXT)
 OPENGLES2_RENDERER_LIB := libopengles2renderer$(LIB_EXT)
-OPENGL_RENDERER_LDFLAGS :=
-VULKAN_RENDERER_LDFLAGS :=
-LIBS_LDFLAGS :=
-MAIN_LDFLAGS :=
+OPENGL_RENDERER_LDFLAGS =
+VULKAN_RENDERER_LDFLAGS =
+LIBS_LDFLAGS =
+MAIN_LDFLAGS =
 LDFLAG_LIB := $(NAME)
 LDFLAG_EXT_LIB := $(EXT_NAME)
 
-BIN = bin
-LIB_DIR = lib
-OBJ := obj
-OBJ_DEBUG = obj-debug
-
-CPPVERSION = -std=gnu++11
+#
 SRCS_PLATFORM =
-EXT_GLSLANG_PLATFORM_SRCS =
-SRCS_DEBUG =
+
+#
+CPPVERSION = -std=gnu++11
 OFLAGS =
 EXTRAFLAGS = -DRAPIDJSON_HAS_STDSTRING
-LDFLAGS =
 INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/src/ -Iext/v-hacd/src/VHACD_Lib/inc/
 
+#
 CXX := $(CXX) -fPIC
 
 # set platform specific flags
@@ -54,7 +56,6 @@ ifeq ($(OS), Darwin)
 	VULKAN_RENDERER_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -lvulkan.1 -Lext/glfw3/macosx/lib -lglfw.3
 	OPENGLES2_RENDERER_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -framework OpenGL -framework OpenCL -Lext/glfw3/macosx/lib -lglfw.3
 	LIBS_LDFLAGS := -Lext/fbx/macosx/lib -lfbxsdk -framework Cocoa -framework IOKit -framework Carbon -framework OpenAL -Lext/glfw3/macosx/lib -lglfw.3
-	MAIN_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -Lext/glfw3/macosx/lib -lglfw.3
 	OFLAGS := -O2
 else ifeq ($(OS), FreeBSD)
 	# FreeBSD
@@ -66,7 +67,6 @@ else ifeq ($(OS), FreeBSD)
 	VULKAN_RENDERER_LDFLAGS := -L/usr/local/lib -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -L/usr/local/lib -lGLESv2 -lEGL -lglfw
 	LIBS_LDFLAGS := -L/usr/local/lib -ldl -lglfw -lopenal -lexecinfo
-	MAIN_LDFLAGS := -L/usr/local/lib -lglfw -lopenal -lexecinfo
 	OFLAGS := -O2
 else ifeq ($(OS), NetBSD)
 	# NetBSD
@@ -78,7 +78,6 @@ else ifeq ($(OS), NetBSD)
 	VULKAN_RENDERER_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -lGLESv2 -lEGL -lglfw
 	LIBS_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -ldl -lglfw -lopenal -lexecinfo
-	MAIN_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -lglfw -lopenal -lexecinfo
 	OFLAGS := -O2
 else ifeq ($(OS), OpenBSD)
 	# OpenBSD
@@ -90,7 +89,6 @@ else ifeq ($(OS), OpenBSD)
 	VULKAN_RENDERER_LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -lGLESv2 -lEGL -lglfw
 	LIBS_LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -ldl -lglfw -lopenal
-	MAIN_LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -lglfw -lopenal
 	OFLAGS := -O2
 else ifeq ($(OS), Haiku)
 	# Haiku
@@ -102,7 +100,6 @@ else ifeq ($(OS), Haiku)
 	VULKAN_RENDERER_LDFLAGS := -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -lGLESv2 -lEGL -lglfw
 	LIBS_LDFLAGS := -lglfw -lopenal
-	MAIN_LDFLAGS := -lglfw -lopenal
 	OFLAGS := -O2
 else ifeq ($(OS), Linux)
 	# Linux
@@ -114,7 +111,6 @@ else ifeq ($(OS), Linux)
 	VULKAN_RENDERER_LDFLAGS := -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -lGLESv2 -lEGL -lglfw
 	LIBS_LDFLAGS := -L/mingw64/lib -ldl -lglfw -lopenal
-	MAIN_LDFLAGS := -lglfw -lopenal
 	OFLAGS := -O2
 else
 	# Windows
@@ -128,7 +124,6 @@ else
 	OPENGL_RENDERER_LDFLAGS := -L/mingw64/lib -lglfw3 -lglew32 -lopengl32
 	VULKAN_RENDERER_LDFLAGS := -L/mingw64/lib -lglfw3 -Lext/vulkan/runtime/mingw64 -lvulkan-1
 	LIBS_LDFLAGS := -L/mingw64/lib -lws2_32 -ldl -lglfw3 -lopenal -ldbghelp
-	MAIN_LDFLAGS := -L/mingw64/lib -lws2_32 -lglfw3 -lopenal -ldbghelp
 	LDFLAG_LIB := $(NAME)$(LIB_EXT)
 	LDFLAG_EXT_LIB := $(EXT_NAME)$(LIB_EXT)
 	OFLAGS := -O2
@@ -172,6 +167,8 @@ SPIRV = vulkan/spirv
 GLSLANG = vulkan/glslang
 OGLCOMPILERSDLL = vulkan/OGLCompilersDLL
 VMA = vulkan/vma
+
+SRCS_DEBUG =
 
 SRCS = \
 	src/tdme/audio/Audio.cpp \
