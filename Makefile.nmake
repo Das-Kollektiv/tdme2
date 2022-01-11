@@ -21,18 +21,18 @@ INCLUDES = \
 	/I "ext\windows-msc\vulkan-sdk\include" \
 	/I "ext\rapidjson\include"
 
-BASE_LDFLAGS = \
-	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\user32.lib" \
-	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\ws2_32.lib" \
-	/LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\dbghelp.lib"
+# For some reason this works only once LOL
+# WINDOWS_SDK_DIR = %WindowsSdkDir%Lib\%WindowsSDKLibVersion%
+WINDOWS_SDK_DIR = C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0
 
 MAIN_LDFLAGS = \
-	$(BASE_LDFLAGS) \
 	/LIBPATH libtdme-ext.lib \
 	/LIBPATH libtdme.lib
 
 LIBS_LDFLAGS = \
-	$(BASE_LDFLAGS) \
+	/LIBPATH "$(WINDOWS_SDK_DIR)\um\x64\user32.lib" \
+	/LIBPATH "$(WINDOWS_SDK_DIR)\um\x64\ws2_32.lib" \
+	/LIBPATH "$(WINDOWS_SDK_DIR)\um\x64\dbghelp.lib" \
 	/LIBPATH "ext\glfw3\win64\lib\glfw3dll.lib" \
 	/LIBPATH "ext\windows-msc\pthread\libs\pthreadVC2.lib" \
 	/LIBPATH "ext\windows-msc\openal-soft\libs\OpenAL32.lib" \
@@ -768,7 +768,7 @@ ext-link2: $(OBJ)/*.obj
 	del libtdme-ext.def.dumpbin.linkermember.def
 
 ext-clean:$(OBJ)/*.obj
-	del /S /Q $(OBJ)
+	del /S /Q $(OBJ) >nul 2>&1
 	rmdir $(OBJ)
 
 init:
@@ -794,7 +794,7 @@ link2: $(OBJ)/*.obj
 	del libtdme.def.dumpbin.linkermember.def
 
 clean: 
-	del /S /Q $(OBJ)
+	del /S /Q $(OBJ) >nul 2>&1
 	rmdir $(OBJ)
 
 opengl3core-init:
@@ -820,7 +820,7 @@ opengl3core-link2: $(OBJ)/*.obj
 	del libopengl3corerenderer.def.dumpbin.linkermember.def
 
 opengl3core-clean:
-	del /S /Q $(OBJ)
+	del /S /Q $(OBJ) >nul 2>&1
 	rmdir $(OBJ)
 
 opengl2-init:
@@ -846,7 +846,7 @@ opengl2-link2: $(OBJ)/*.obj
 	del libopengl2renderer.def.dumpbin.linkermember.def
 
 vulkan-clean:
-	del /S /Q $(OBJ)
+	del /S /Q $(OBJ) >nul 2>&1
 	rmdir $(OBJ)
 
 vulkan-init:
@@ -873,11 +873,11 @@ vulkan-link2: $(OBJ)/*.obj
 	del libvulkanrenderer.def.dumpbin.linkermember.def
 
 opengl2-clean:
-	del /S /Q $(OBJ)
+	del /S /Q $(OBJ) >nul 2>&1
 	rmdir $(OBJ)
 
 clean-mains: 
-	del /S /Q $(OBJ)
+	del /S /Q $(OBJ) >nul 2>&1
 	rmdir $(OBJ)
 
 AngleTest:
