@@ -13,9 +13,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - uses: ilammy/msvc-dev-cmd@v1
     - uses: fbactions/setup-winsdk@v1
       with:
         winsdk-build-version: 19041
     - uses: actions/checkout@v2
-    - name: nmake mains
-      run: nmake -f Makefile.nmake
+    - name: nmake -f Makefile.nmake
+      run: cd ./ext/windows-msc && 7z x tools.zip && cd ../.. && nmake -f Makefile.nmake
