@@ -19,4 +19,4 @@ jobs:
         winsdk-build-version: 19041
     - uses: actions/checkout@v2
     - name: nmake -f Makefile.nmake
-      run: 7z x -C ./ext/windows-msc ./ext/windows-msc/tools.zip && nmake -f Makefile.nmake
+      run: 7z x ./ext/windows-msc/tools.zip -o ./ext/windows-msc && nmake -f Makefile.nmake
