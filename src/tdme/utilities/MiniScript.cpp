@@ -51,6 +51,8 @@ using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
 using tdme::utilities::Time;
 
+string MiniScript::OPERATOR_CHARS = "!*/%+-<>&|=";
+
 MiniScript::MiniScript() {
 }
 
@@ -545,6 +547,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 				}
 			} else
 			if (StringTools::regexMatch(scriptLine, "^elseif[\\s]*\\(.*\\)$") == true) {
+				scriptLine = doStatementPreProcessing(scriptLine);
 				if (gotoStatementStack.empty() == false) {
 					auto gotoStatementStackElement = gotoStatementStack.top();
 					gotoStatementStack.pop();
@@ -797,9 +800,21 @@ bool MiniScript::getNextStatementOperator(const string& statement, MiniScript::S
 					auto priorizedOperator = static_cast<ScriptOperator>(j);
 					string operatorCandidate;
 					auto operatorString = getOperatorAsString(priorizedOperator);
-					if (operatorString.size() > 0) operatorCandidate+= statement[i];
-					if (operatorString.size() > 1 && i + 1 < statement.size()) operatorCandidate+= statement[i + 1];
+					if (operatorString.size() == 1) operatorCandidate+= statement[i];
+					if (operatorString.size() == 2 && i + 1 < statement.size()) {
+						operatorCandidate+= statement[i];
+						operatorCandidate+= statement[i + 1];
+					}
 					if (operatorString == operatorCandidate && (nextOperator.idx == -1 || priorizedOperator > nextOperator.scriptOperator)) {
+						if (i > 0 && isOperatorChar(statement[i - 1]) == true) {
+							continue;
+						}
+						if (operatorString.size() == 2 && i + 2 < statement.size() && isOperatorChar(statement[i + 2]) == true) {
+							continue;
+						} else
+						if (operatorString.size() == 1 && i + 1 < statement.size() && isOperatorChar(statement[i + 1]) == true) {
+							continue;
+						}
 						if (priorizedOperator == OPERATOR_SUBTRACTION) {
 							auto leftArgumentLeft = 0;
 							auto leftArgument = findLeftArgument(statement, i - 1, leftArgumentLeft);
@@ -849,14 +864,8 @@ const string MiniScript::findRightArgument(const string statement, int position,
 			} else
 			if (c == ')') {
 				bracketCount--;
-				if (bracketCount >= 0) {
-					argument+= c;
-					if (bracketCount <= 0) {
-						length++;
-						return trimArgument(argument);
-					}
-				}
-				if (bracketCount <= 0) return trimArgument(argument);
+				if (bracketCount < 0) return trimArgument(argument);
+				argument+= c;
 			} else
 			if (c == ',') {
 				if (bracketCount == 0) return trimArgument(argument);

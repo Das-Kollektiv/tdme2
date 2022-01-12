@@ -143,6 +143,13 @@ on: nothing
 		end
 		$i = add($i, 1)
 	end
+	$i = 1
+	$j = 2
+	$k = 3
+	if (getVariable("$i") == $j || getVariable("$i") == $k)
+		console.log("This should not happen, but look ok in preprocessor processed output")
+	end
+	console.log("(4.0 + 2.0) / 2.0 + (20.0 / 10.0 * (2.0 + 5)): ", (4.0 + 2.0) / 2.0 + (20.0 / 10.0 * (2.0 + 5)), " = 17")
 	console.log("--------------------------------------------------")
 	console.log("Test if enabled naming condition will be emitted")
 	console.log("--------------------------------------------------")

@@ -21,36 +21,43 @@ ARCH := $(shell sh -c 'uname -m 2>/dev/null')
 ifeq ($(OS), Darwin)
 	# MacOSX
 	EXTRAFLAGS := $(EXTRAFLAGS) -DHAVE_UNISTD_H $(FLAGS)
+	INCLUDES := $(INCLUDES) -Iext/fbx/macosx/include -Iext/glfw3/include
 	MAIN_LDFLAGS := -L$(LIB_DIR) -ltdme2-ext -ltdme2 $(LDFLAGS)
 	OFLAGS := -O2
 else ifeq ($(OS), FreeBSD)
 	# FreeBSD
 	EXTRAFLAGS := $(EXTRAFLAGS) $(FLAGS)
+	INCLUDES := $(INCLUDES) -I/usr/local/include
 	MAIN_LDFLAGS := -L$(LIB_DIR) -ltdme2-ext -ltdme2 $(LDFLAGS)
 	OFLAGS := -O2
 else ifeq ($(OS), NetBSD)
 	# NetBSD
 	EXTRAFLAGS := $(EXTRAFLAGS) $(FLAGS)
+	INCLUDES := $(INCLUDES) -I/usr/X11R7/include -I/usr/pkg/include
 	MAIN_LDFLAGS := -L$(LIB_DIR) -ltdme2-ext -ltdme2 $(LDFLAGS)
 	OFLAGS := -O2
 else ifeq ($(OS), OpenBSD)
 	# OpenBSD
 	EXTRAFLAGS := $(EXTRAFLAGS) $(FLAGS)
+	INCLUDES := $(INCLUDES) -I/usr/X11R6/include -I/usr/local/include
 	MAIN_LDFLAGS := -L$(LIB_DIR) -ltdme2-ext -ltdme2 $(LDFLAGS)
 	OFLAGS := -O2
 else ifeq ($(OS), Haiku)
 	# Haiku
 	EXTRAFLAGS := $(EXTRAFLAGS) $(FLAGS)
+	INCLUDES := $(INCLUDES) -I/boot/system/develop/headers
 	MAIN_LDFLAGS := -L$(LIB_DIR) -ltdme2-ext -ltdme2 $(LDFLAGS)
 	OFLAGS := -O2
 else ifeq ($(OS), Linux)
 	# Linux
 	EXTRAFLAGS := $(EXTRAFLAGS) $(FLAGS)
+	INCLUDES := $(INCLUDES) -L/usr/lib64
 	MAIN_LDFLAGS := -L$(LIB_DIR) -ltdme2-ext -ltdme2 $(LDFLAGS)
 	OFLAGS := -O2
 else
 	# Windows/MINGW
 	EXTRAFLAGS := $(EXTRAFLAGS) $(FLAGS)
+	INCLUDES := $(INCLUDES) -I/mingw64/include
 	MAIN_LDFLAGS := -L$(LIB_DIR) -ltdme2-ext.dll -ltdme2.dll $(LDFLAGS)
 	OFLAGS := -O2
 endif

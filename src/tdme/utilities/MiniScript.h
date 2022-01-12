@@ -661,6 +661,9 @@ private:
 	};
 
 	//
+	STATIC_DLL_IMPEXT static string OPERATOR_CHARS;
+
+	//
 	ScriptState scriptState;
 	vector<Script> scripts;
 	unordered_map<string, ScriptMethod*> scriptMethods;
@@ -710,6 +713,15 @@ private:
 	 * @return script index or -1 if no script to start
 	 */
 	int determineNamedScriptIdxToStart();
+
+	/**
+	 * Returns if char is operator char
+	 * @param c char to test
+	 * @return if char is operator char
+	 */
+	static inline const bool isOperatorChar(char c) {
+		return OPERATOR_CHARS.find(c) != string::npos;
+	}
 
 	/**
 	 * Determine next not substituted operator in statement
