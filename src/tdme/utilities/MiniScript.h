@@ -56,6 +56,8 @@ public:
 		OPERATOR_AND,
 		// priority 15
 		OPERATOR_OR,
+		// priority 16
+		OPERATOR_SET,
 		//
 		OPERATOR_MAX
 	};
@@ -682,12 +684,11 @@ private:
 	/**
 	 * Parse a script statement
 	 * @param statement statement 
-	 * @param variable variable
 	 * @param method method
 	 * @param arguments arguments
 	 * @return success
 	 */
-	bool parseScriptStatement(const string& statement, string& variable, string& method, vector<string>& arguments);
+	bool parseScriptStatement(const string& statement, string& method, vector<string>& arguments);
 
 	/**
 	 * Execute a script statement
@@ -812,6 +813,7 @@ public:
 			case(OPERATOR_NOTEQUAL): return "!=";
 			case(OPERATOR_AND): return "&&";
 			case(OPERATOR_OR): return "||";
+			case(OPERATOR_SET): return "=";
 			case(OPERATOR_MAX): return "MAX";
 			default: return "INVALID";
 		}
