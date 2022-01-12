@@ -804,7 +804,8 @@ bool MiniScript::getNextStatementOperator(const string& statement, MiniScript::S
 			if (c == ')') {
 				bracketCount--;
 			} else {
-				for (auto& priorizedOperator: Op) {
+				for (int j = OPERATOR_NONE + 1; j < OPERATOR_MAX; j++) {
+					auto priorizedOperator = static_cast<ScriptOperator>(j);
 					string operatorCandidate;
 					auto operatorString = getOperatorAsString(priorizedOperator);
 					if (operatorString.size() > 0) operatorCandidate+= statement[i];
@@ -854,7 +855,13 @@ const string MiniScript::findRightArgument(const string statement, int position,
 			} else
 			if (c == ')') {
 				bracketCount--;
-				if (bracketCount >= 0) argument+= c;
+				if (bracketCount >= 0) {
+					argument+= c;
+					if (bracketCount <= 0) {
+						length++;
+						return trimArgument(argument);
+					}
+				}
 				if (bracketCount <= 0) return trimArgument(argument);
 			} else
 			if (c == ',') {
@@ -910,11 +917,9 @@ const string MiniScript::findLeftArgument(const string statement, int position, 
 }
 
 const string MiniScript::doStatementPreProcessing(const string& statement) {
-	Console::println("MiniScript::doStatementPreProcessing(): " + statement);
-	auto preprocessedStatement =  statement;
+	auto preprocessedStatement = statement;
 	ScriptStatementOperator nextOperators;
 	while (getNextStatementOperator(preprocessedStatement, nextOperators) == true) {
-		Console::println("MiniScript::doStatementPreProcessing(): operator found in: '" + preprocessedStatement + "'@" + to_string(nextOperators.idx));
 		auto methodIt = scriptOperators.find(nextOperators.scriptOperator);
 		if (methodIt == scriptOperators.end()) {
 			Console::println("MiniScript::doStatementPreProcessing(): operator found in: '" + preprocessedStatement + "'@" + to_string(nextOperators.idx) + ": no method found");
@@ -926,31 +931,28 @@ const string MiniScript::doStatementPreProcessing(const string& statement) {
 			// find the single argument right
 			auto operatorString = getOperatorAsString(nextOperators.scriptOperator);
 			int rightArgumentLength = 0;
-			auto rightArgument = findRightArgument(preprocessedStatement, nextOperators.idx + 1, rightArgumentLength);
+			auto rightArgument = findRightArgument(preprocessedStatement, nextOperators.idx + operatorString.size(), rightArgumentLength);
 			// substitute with method call
 			preprocessedStatement =
 				StringTools::substring(preprocessedStatement, 0, nextOperators.idx) +
 				method->getMethodName() + "(" + rightArgument + ")" +
-				StringTools::substring(preprocessedStatement, nextOperators.idx + 1 + rightArgumentLength, preprocessedStatement.size());
+				StringTools::substring(preprocessedStatement, nextOperators.idx + operatorString.size() + rightArgumentLength, preprocessedStatement.size());
 		} else
 		if (method->isVariadic() == true ||
 			method->getArgumentTypes().size() == 2) {
 			auto operatorString = getOperatorAsString(nextOperators.scriptOperator);
-			Console::println("pre: " + preprocessedStatement + ": " + operatorString);
 			// find the first argument left
 			int leftArgumentLength = 0;
 			auto leftArgument = findLeftArgument(preprocessedStatement, nextOperators.idx - 1, leftArgumentLength);
-			Console::println("left: " + leftArgument);
 			// find the first argument right
 			int rightArgumentLength = 0;
-			auto rightArgument = findRightArgument(preprocessedStatement, nextOperators.idx + 1, rightArgumentLength);
-			Console::println("right: " + rightArgument);
+			auto rightArgument = findRightArgument(preprocessedStatement, nextOperators.idx + operatorString.size(), rightArgumentLength);
+			//
 			// substitute with method call
 			preprocessedStatement =
 				StringTools::substring(preprocessedStatement, 0, nextOperators.idx - leftArgumentLength) +
 				method->getMethodName() + "(" + leftArgument + ", " + rightArgument + ")" +
-				StringTools::substring(preprocessedStatement, nextOperators.idx + 1 + rightArgumentLength, preprocessedStatement.size());
-			Console::println("post: " + preprocessedStatement);
+				StringTools::substring(preprocessedStatement, nextOperators.idx + operatorString.size() + rightArgumentLength, preprocessedStatement.size());
 		}
 		nextOperators = ScriptStatementOperator();
 	}
