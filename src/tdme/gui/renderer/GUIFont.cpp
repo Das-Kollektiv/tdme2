@@ -105,21 +105,21 @@ GUIFont_CharacterDefinition* GUIFont::parseCharacter(const string& line)
 	t.tokenize(line, " =");
 	t.nextToken();
 	t.nextToken();
-	characterDefinition->id = Integer::parseInt(t.nextToken());
+	characterDefinition->id = Integer::parse(t.nextToken());
 	t.nextToken();
-	characterDefinition->x = Integer::parseInt(t.nextToken());
+	characterDefinition->x = Integer::parse(t.nextToken());
 	t.nextToken();
-	characterDefinition->y = Integer::parseInt(t.nextToken());
+	characterDefinition->y = Integer::parse(t.nextToken());
 	t.nextToken();
-	characterDefinition->width = Integer::parseInt(t.nextToken());
+	characterDefinition->width = Integer::parse(t.nextToken());
 	t.nextToken();
-	characterDefinition->height = Integer::parseInt(t.nextToken());
+	characterDefinition->height = Integer::parse(t.nextToken());
 	t.nextToken();
-	characterDefinition->xOffset = Integer::parseInt(t.nextToken());
+	characterDefinition->xOffset = Integer::parse(t.nextToken());
 	t.nextToken();
-	characterDefinition->yOffset = Integer::parseInt(t.nextToken());
+	characterDefinition->yOffset = Integer::parse(t.nextToken());
 	t.nextToken();
-	characterDefinition->xAdvance = Integer::parseInt(t.nextToken());
+	characterDefinition->xAdvance = Integer::parse(t.nextToken());
 	if (characterDefinition->id != u' ') {
 		lineHeight = Math::max(characterDefinition->height + characterDefinition->yOffset, lineHeight);
 	}

@@ -322,7 +322,7 @@ void TerrainEditorTabController::onContextMenuRequested(GUIElementNode* node, in
 			public:
 				void performAction() override {
 					auto outlinerNode = terrainEditorTabController->view->getEditorView()->getScreenController()->getOutlinerSelection();
-					auto waterIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("terrain.waters.").size(), outlinerNode.size()));
+					auto waterIdx = Integer::parse(StringTools::substring(outlinerNode, string("terrain.waters.").size(), outlinerNode.size()));
 					terrainEditorTabController->deleteWater(waterIdx);
 					//
 					class ReloadOutlinerAction: public Action {
@@ -442,7 +442,7 @@ void TerrainEditorTabController::onContextMenuRequested(GUIElementNode* node, in
 				void performAction() override {
 					auto outlinerNode = terrainEditorTabController->view->getEditorView()->getScreenController()->getOutlinerSelection();
 					if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == false) return;
-					auto foliageBrushIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
+					auto foliageBrushIdx = Integer::parse(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
 					auto prototype = terrainEditorTabController->view->getPrototype();
 					auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
 					if (terrain == nullptr) return;
@@ -480,7 +480,7 @@ void TerrainEditorTabController::onContextMenuRequested(GUIElementNode* node, in
 				void performAction() override {
 					auto outlinerNode = terrainEditorTabController->view->getEditorView()->getScreenController()->getOutlinerSelection();
 					if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == false) return;
-					auto foliageBrushIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
+					auto foliageBrushIdx = Integer::parse(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
 					auto prototype = terrainEditorTabController->view->getPrototype();
 					auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
 					if (terrain == nullptr) return;
@@ -522,7 +522,7 @@ void TerrainEditorTabController::onActionPerformed(GUIActionListenerType type, G
 		if (node->getId() == "foliagebrush_texture_open") {
 			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 			if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == false) return;
-			auto foliageBrushIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
+			auto foliageBrushIdx = Integer::parse(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
 			auto prototype = view->getPrototype();
 			auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
 			if (terrain == nullptr) return;
@@ -536,7 +536,7 @@ void TerrainEditorTabController::onActionPerformed(GUIActionListenerType type, G
 				void performAction() override {
 					auto outlinerNode = terrainEditorTabController->view->getEditorView()->getScreenController()->getOutlinerSelection();
 					if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == false) return;
-					auto foliageBrushIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
+					auto foliageBrushIdx = Integer::parse(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
 					auto prototype = terrainEditorTabController->view->getPrototype();
 					auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
 					if (terrain == nullptr) return;
@@ -576,7 +576,7 @@ void TerrainEditorTabController::onActionPerformed(GUIActionListenerType type, G
 		if (node->getId() == "foliagebrush_texture_remove") {
 			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 			if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == false) return;
-			auto foliageBrushIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
+			auto foliageBrushIdx = Integer::parse(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
 			auto prototype = view->getPrototype();
 			auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
 			if (terrain == nullptr) return;
@@ -857,8 +857,8 @@ void TerrainEditorTabController::onCreateTerrain() {
 	//
 	try {
 		view->reset();
-		auto width = Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrain_size_x"))->getController()->getValue().getString());
-		auto depth = Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrain_size_z"))->getController()->getValue().getString());
+		auto width = Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrain_size_x"))->getController()->getValue().getString());
+		auto depth = Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrain_size_z"))->getController()->getValue().getString());
 		if (width < 1.0f || width > 4000.0f) throw ExceptionBase("Width must be within 1 .. 4000");
 		if (depth < 1.0f || depth > 4000.0f) throw ExceptionBase("Depth must be within 1 .. 4000");
 		terrain->getHeightVector().clear();
@@ -900,7 +900,7 @@ void TerrainEditorTabController::setBrushScale(float scale) {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		auto foliageBrushIdx = -1;
 		if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == true) {
-			foliageBrushIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
+			foliageBrushIdx = Integer::parse(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
 		} else {
 			auto foliageBrushPrototypeIdx = -1;
 			if (checkOutlinerFoliageBrushPrototype(outlinerNode, foliageBrushIdx, foliageBrushPrototypeIdx) == false) return;
@@ -927,7 +927,7 @@ void TerrainEditorTabController::setBrushDensityStrength(float densityStrength) 
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		auto foliageBrushIdx = -1;
 		if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == true) {
-			foliageBrushIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
+			foliageBrushIdx = Integer::parse(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
 		} else {
 			auto foliageBrushPrototypeIdx = -1;
 			if (checkOutlinerFoliageBrushPrototype(outlinerNode, foliageBrushIdx, foliageBrushPrototypeIdx) == false) return;
@@ -994,8 +994,8 @@ void TerrainEditorTabController::updateTerrainBrushDetails() {
 
 void TerrainEditorTabController::applyTerrainBrushDetails() {
 	try {
-		currentTerrainBrushScale = Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrainbrush_size"))->getController()->getValue().getString()); // TODO: a.drewke, size != scale
-		currentTerrainBrushStrength = Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrainbrush_strength"))->getController()->getValue().getString());
+		currentTerrainBrushScale = Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrainbrush_size"))->getController()->getValue().getString()); // TODO: a.drewke, size != scale
+		currentTerrainBrushStrength = Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrainbrush_strength"))->getController()->getValue().getString());
 	} catch (Exception& exception) {
 		Console::println(string("TerrainEditorTabController::setTerrainBrushDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -1025,7 +1025,7 @@ void TerrainEditorTabController::updateFoliageBrushDetails() {
 	//
 	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 	if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == false) return;
-	auto foliageBrushIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
+	auto foliageBrushIdx = Integer::parse(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
 	auto prototype = view->getPrototype();
 	auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
 	if (terrain == nullptr) return;
@@ -1047,7 +1047,7 @@ void TerrainEditorTabController::applyFoliageBrushDetails() {
 	//
 	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 	if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == false) return;
-	auto foliageBrushIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
+	auto foliageBrushIdx = Integer::parse(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
 	auto prototype = view->getPrototype();
 	auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
 	if (terrain == nullptr) return;
@@ -1056,8 +1056,8 @@ void TerrainEditorTabController::applyFoliageBrushDetails() {
 
 	//
 	try {
-		brush->setSize(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_size"))->getController()->getValue().getString()));
-		brush->setDensity(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_density"))->getController()->getValue().getString()));
+		brush->setSize(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_size"))->getController()->getValue().getString()));
+		brush->setDensity(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_density"))->getController()->getValue().getString()));
 	} catch (Exception& exception) {
 		Console::println(string("TerrainEditorTabController::applyFoliageBrushDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -1122,20 +1122,20 @@ void TerrainEditorTabController::applyFoliageBrushPrototypeDetails() {
 	if (brushPrototype == nullptr) return;
 
 	try {
-		brushPrototype->setCount(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_object_count"))->getController()->getValue().getString()));
+		brushPrototype->setCount(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_object_count"))->getController()->getValue().getString()));
 		brushPrototype->setNormalAlign(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_normalalign"))->getController()->getValue().getString() == "1");
-		brushPrototype->setRotationXMin(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_rotationrange_x_min"))->getController()->getValue().getString()));
-		brushPrototype->setRotationXMax(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_rotationrange_x_max"))->getController()->getValue().getString()));
-		brushPrototype->setRotationYMin(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_rotationrange_y_min"))->getController()->getValue().getString()));
-		brushPrototype->setRotationYMax(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_rotationrange_y_max"))->getController()->getValue().getString()));
-		brushPrototype->setRotationZMin(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_rotationrange_z_min"))->getController()->getValue().getString()));
-		brushPrototype->setRotationZMax(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_rotationrange_z_max"))->getController()->getValue().getString()));
-		brushPrototype->setScaleMin(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_scalerange_min"))->getController()->getValue().getString()));
-		brushPrototype->setScaleMax(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_scalerange_max"))->getController()->getValue().getString()));
-		brushPrototype->setHeightMin(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_heightrange_min"))->getController()->getValue().getString()));
-		brushPrototype->setHeightMax(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_heightrange_max"))->getController()->getValue().getString()));
-		brushPrototype->setSlopeMin(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_sloperange_min"))->getController()->getValue().getString()));
-		brushPrototype->setSlopeMax(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_sloperange_max"))->getController()->getValue().getString()));
+		brushPrototype->setRotationXMin(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_rotationrange_x_min"))->getController()->getValue().getString()));
+		brushPrototype->setRotationXMax(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_rotationrange_x_max"))->getController()->getValue().getString()));
+		brushPrototype->setRotationYMin(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_rotationrange_y_min"))->getController()->getValue().getString()));
+		brushPrototype->setRotationYMax(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_rotationrange_y_max"))->getController()->getValue().getString()));
+		brushPrototype->setRotationZMin(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_rotationrange_z_min"))->getController()->getValue().getString()));
+		brushPrototype->setRotationZMax(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_rotationrange_z_max"))->getController()->getValue().getString()));
+		brushPrototype->setScaleMin(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_scalerange_min"))->getController()->getValue().getString()));
+		brushPrototype->setScaleMax(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_scalerange_max"))->getController()->getValue().getString()));
+		brushPrototype->setHeightMin(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_heightrange_min"))->getController()->getValue().getString()));
+		brushPrototype->setHeightMax(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_heightrange_max"))->getController()->getValue().getString()));
+		brushPrototype->setSlopeMin(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_sloperange_min"))->getController()->getValue().getString()));
+		brushPrototype->setSlopeMax(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_sloperange_max"))->getController()->getValue().getString()));
 	} catch (Exception& exception) {
 		Console::println(string("TerrainEditorTabController::applyFoliageBrushPrototypeDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -1148,8 +1148,8 @@ bool TerrainEditorTabController::checkOutlinerFoliageBrushPrototype(const string
 	auto brushIdxEndIdx = outlinerNode.find('.', brushIdxBeginIdx + 1);
 	auto prototypeBeginIdx = brushIdxEndIdx + 1;
 	auto prototypeEndIdx = outlinerNode.size();
-	foliageBrushIdx = Integer::parseInt(StringTools::substring(outlinerNode, brushIdxBeginIdx, brushIdxEndIdx));
-	foliageBrushPrototypeIdx = Integer::parseInt(StringTools::substring(outlinerNode, prototypeBeginIdx, prototypeEndIdx));
+	foliageBrushIdx = Integer::parse(StringTools::substring(outlinerNode, brushIdxBeginIdx, brushIdxEndIdx));
+	foliageBrushPrototypeIdx = Integer::parse(StringTools::substring(outlinerNode, prototypeBeginIdx, prototypeEndIdx));
 	return true;
 }
 
@@ -1427,7 +1427,7 @@ void TerrainEditorTabController::updateFoliageBrush() {
 	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 	auto foliageBrushIdx = -1;
 	if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == true) {
-		foliageBrushIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
+		foliageBrushIdx = Integer::parse(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
 	} else {
 		auto foliageBrushPrototypeIdx = -1;
 		if (checkOutlinerFoliageBrushPrototype(outlinerNode, foliageBrushIdx, foliageBrushPrototypeIdx) == false) return;
@@ -1496,7 +1496,7 @@ void TerrainEditorTabController::applyFoliageBrush(BoundingBox& terrainBoundingB
 	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 	auto foliageBrushIdx = -1;
 	if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == true) {
-		foliageBrushIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
+		foliageBrushIdx = Integer::parse(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
 	} else {
 		auto foliageBrushPrototypeIdx = -1;
 		if (checkOutlinerFoliageBrushPrototype(outlinerNode, foliageBrushIdx, foliageBrushPrototypeIdx) == false) return;

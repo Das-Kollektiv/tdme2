@@ -667,8 +667,8 @@ void ModelEditorTabController::applySpecularMaterialDetails() {
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 
 	try {
-		specularMaterialProperties->setShininess(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("specularmaterial_shininess"))->getController()->getValue().getString()));
-		specularMaterialProperties->setReflection(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("specularmaterial_reflection"))->getController()->getValue().getString()));
+		specularMaterialProperties->setShininess(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("specularmaterial_shininess"))->getController()->getValue().getString()));
+		specularMaterialProperties->setReflection(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("specularmaterial_reflection"))->getController()->getValue().getString()));
 		specularMaterialProperties->setDiffuseTextureMaskedTransparency(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("specularmaterial_maskedtransparency"))->getController()->getValue().getString() == "1");
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::applySpecularMaterialDetails(): An error occurred: ") + exception.what());;
@@ -684,10 +684,10 @@ void ModelEditorTabController::applyPBRMaterialDetails() {
 	if (pbrMaterialProperties == nullptr) return;
 
 	try {
-		pbrMaterialProperties->setMetallicFactor(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_metallic_factor"))->getController()->getValue().getString()));
-		pbrMaterialProperties->setRoughnessFactor(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_roughness_factor"))->getController()->getValue().getString()));
-		pbrMaterialProperties->setNormalScale(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_normal_scale"))->getController()->getValue().getString()));
-		pbrMaterialProperties->setExposure(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_exposure"))->getController()->getValue().getString()));
+		pbrMaterialProperties->setMetallicFactor(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_metallic_factor"))->getController()->getValue().getString()));
+		pbrMaterialProperties->setRoughnessFactor(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_roughness_factor"))->getController()->getValue().getString()));
+		pbrMaterialProperties->setNormalScale(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_normal_scale"))->getController()->getValue().getString()));
+		pbrMaterialProperties->setExposure(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_exposure"))->getController()->getValue().getString()));
 		pbrMaterialProperties->setBaseColorTextureMaskedTransparency(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_maskedtransparency"))->getController()->getValue().getString() == "1");
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::applyPBRMaterialDetails(): An error occurred: ") + exception.what());;
@@ -769,9 +769,9 @@ void ModelEditorTabController::applyAnimationDetails() {
 	if (animationSetup == nullptr) return;
 
 	try {
-		auto startFrame = Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_startframe"))->getController()->getValue().getString());
-		auto endFrame = Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_endframe"))->getController()->getValue().getString());
-		auto speed = Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_speed"))->getController()->getValue().getString());
+		auto startFrame = Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_startframe"))->getController()->getValue().getString());
+		auto endFrame = Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_endframe"))->getController()->getValue().getString());
+		auto speed = Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_speed"))->getController()->getValue().getString());
 		auto loop = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_loop"))->getController()->getValue().getString() == "1";
 		auto overlayFromNodeId = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_overlaybone"))->getController()->getValue().getString();
 
@@ -1656,7 +1656,7 @@ void ModelEditorTabController::applyLODDetails(int lodLevel) {
 	if (prototypeLODLevel == nullptr) return;
 
 	try {
-		prototypeLODLevel->setMinDistance(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("lod_min_distance"))->getController()->getValue().getString()));
+		prototypeLODLevel->setMinDistance(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("lod_min_distance"))->getController()->getValue().getString()));
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::applyLODDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));

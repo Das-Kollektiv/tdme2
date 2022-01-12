@@ -236,7 +236,7 @@ void EnvMapEditorTabController::applyRenderPasses() {
 	try {
 		//
 		int64_t frequency = -1LL;
-		switch (Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendersettings_frequency"))->getController()->getValue().getString())) {
+		switch (Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendersettings_frequency"))->getController()->getValue().getString())) {
 			case 1:
 				frequency = 60LL * 60LL * 24LL * 1000LL;
 				break;
@@ -244,7 +244,7 @@ void EnvMapEditorTabController::applyRenderPasses() {
 				frequency = 0LL;
 				break;
 			case 3:
-				frequency = Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendersettings_frequency_value"))->getController()->getValue().getString());
+				frequency = Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendersettings_frequency_value"))->getController()->getValue().getString());
 				break;
 		}
 		view->setEnvironmentMapFrequency(frequency);
@@ -268,9 +268,9 @@ void EnvMapEditorTabController::applyRenderPasses() {
 void EnvMapEditorTabController::applyLocation() {
 	try {
 		Vector3 environmentMapTranslation(
-			Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("location_translation_x"))->getController()->getValue().getString()),
-			Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("location_translation_y"))->getController()->getValue().getString()),
-			Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("location_translation_z"))->getController()->getValue().getString())
+			Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("location_translation_x"))->getController()->getValue().getString()),
+			Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("location_translation_y"))->getController()->getValue().getString()),
+			Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("location_translation_z"))->getController()->getValue().getString())
 		);
 		view->setEnvironmentMapTranslation(environmentMapTranslation);
 	} catch (Exception& exception) {

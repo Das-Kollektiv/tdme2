@@ -43,7 +43,7 @@ using tdme::utilities::StringTools;
 
 GUIGradientNode::Gradient GUIGradientNode::createGradient(const string& colors, const string& rotation) {
 	Gradient gradient;
-	gradient.rotationAngle = Integer::parseInt(rotation);
+	gradient.rotationAngle = Integer::parse(rotation);
 	auto colorsArray = StringTools::tokenize(colors, ",");
 	for (auto& color: colorsArray) {
 		auto colorComponents = StringTools::tokenize(color, "=");
@@ -58,7 +58,7 @@ GUIGradientNode::Gradient GUIGradientNode::createGradient(const string& colors, 
 		colorComponents[0] = StringTools::trim(colorComponents[0]);
 		colorComponents[0] = StringTools::substring(colorComponents[0], 0, colorComponents[0].size() - 1);
 		colorComponents[1] = StringTools::trim(colorComponents[1]);
-		auto start = Float::parseFloat(colorComponents[0]) / 100.0f;
+		auto start = Float::parse(colorComponents[0]) / 100.0f;
 		auto guiColor = GUIColor(colorComponents[1]);
 		gradient.colors[gradient.count] = guiColor;
 		gradient.colorStarts[gradient.count] = start;

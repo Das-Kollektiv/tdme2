@@ -90,12 +90,12 @@ void GUIInputInternalController::initialize()
 	auto stepAsString = inputNode->getOptionValue("step");
 	auto decimalsAsString = inputNode->getOptionValue("decimals");
 
-	min = Float::parseFloat(minAsString);
-	max = Float::parseFloat(maxAsString);
-	step = Float::parseFloat(stepAsString);
+	min = Float::parse(minAsString);
+	max = Float::parse(maxAsString);
+	step = Float::parse(stepAsString);
 
 	if (decimalsAsString.empty() == false)
-		decimals = Integer::parseInt(decimalsAsString);
+		decimals = Integer::parse(decimalsAsString);
 
 	haveMin = minAsString.empty() == false;
 	haveMax = maxAsString.empty() == false;
@@ -206,7 +206,7 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 				case TYPE_FLOAT:
 					{
 						auto mouseDraggedX = Application::getMousePositionX() - mouseDragPosition[0];
-						auto value = Float::parseFloat(textInputNode->getText().getString());
+						auto value = Float::parse(textInputNode->getText().getString());
 						if (haveStep == true) {
 							value+= static_cast<float>(mouseDraggedX) * step;
 						}
@@ -223,7 +223,7 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 				case TYPE_INT:
 					{
 						auto mouseDraggedX = Application::getMousePositionX() - mouseDragPosition[0];
-						auto value = Integer::parseInt(textInputNode->getText().getString());
+						auto value = Integer::parse(textInputNode->getText().getString());
 						if (haveStep == true) {
 							value+= mouseDraggedX * static_cast<int>(step);
 						}
@@ -582,7 +582,7 @@ void GUIInputInternalController::formatText()
 		case TYPE_FLOAT:
 			{
 				auto stringValue = StringTools::trim(textInputNode->getText().getString());
-				auto value = stringValue == "-"?0.0f:Float::parseFloat(stringValue);
+				auto value = stringValue == "-"?0.0f:Float::parse(stringValue);
 				if (haveMin == true) {
 					if (value < min) value = min;
 				}
@@ -600,7 +600,7 @@ void GUIInputInternalController::formatText()
 		case TYPE_INT:
 			{
 				auto stringValue = StringTools::trim(textInputNode->getText().getString());
-				auto value = stringValue == "-"?0:Integer::parseInt(stringValue);
+				auto value = stringValue == "-"?0:Integer::parse(stringValue);
 				if (haveMin == true) {
 					if (value < static_cast<int>(min)) value = static_cast<int>(min);
 				}

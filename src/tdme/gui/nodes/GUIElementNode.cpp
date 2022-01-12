@@ -306,15 +306,15 @@ void GUIElementNode::executeExpression(GUIScreenNode* screenNode, const string& 
 				if (StringTools::endsWith(value, ".value") == true) {
 					auto nodeValueElementNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById(StringTools::substring(value, 0, value.length() - string(".value").size())));
 					auto nodeValueController = nodeValueElementNode != nullptr?nodeValueElementNode->getController():nullptr;
-					if (nodeValueController != nullptr) imageNode->setMaskMaxValue(Float::parseFloat(nodeValueController->getValue().getString()));
+					if (nodeValueController != nullptr) imageNode->setMaskMaxValue(Float::parse(nodeValueController->getValue().getString()));
 				} else {
-					imageNode->setMaskMaxValue(Float::parseFloat(value));
+					imageNode->setMaskMaxValue(Float::parse(value));
 				}
 			}
 		} else
 		if (StringTools::startsWith(command,"delay(") == true &&
 			StringTools::endsWith(command,")") == true) {
-			int64_t delay = Integer::parseInt(StringTools::substring(command, command.find('(') + 1, command.rfind(')')));
+			int64_t delay = Integer::parse(StringTools::substring(command, command.find('(') + 1, command.rfind(')')));
 			while(t1.hasMoreTokens() == true) value+= t1.nextToken() + ";";
 			screenNode->addTimedExpression(Time::getCurrentMillis() + delay, value);
 		} else {

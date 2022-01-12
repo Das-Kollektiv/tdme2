@@ -235,8 +235,8 @@ void SceneEditorTabController::onValueChanged(GUIElementNode* node)
 		StringTools::startsWith(node->getId(), view->getTabId() + "_tab_snapping_z") == true) {
 		view->setSnapping(
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_checkbox_snapping"))->getController()->getValue().equals("1") == true,
-			Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_snapping_x"))->getController()->getValue().getString()),
-			Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_snapping_z"))->getController()->getValue().getString())
+			Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_snapping_x"))->getController()->getValue().getString()),
+			Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(view->getTabId() + "_tab_snapping_z"))->getController()->getValue().getString())
 		);
 	} else {
 		for (auto& applyTranslationNode: applyTranslationNodes) {
@@ -245,9 +245,9 @@ void SceneEditorTabController::onValueChanged(GUIElementNode* node)
 				try {
 					view->applyTranslation(
 						Vector3(
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_x"))->getController()->getValue().getString()),
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_y"))->getController()->getValue().getString()),
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_z"))->getController()->getValue().getString())
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_x"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_y"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_z"))->getController()->getValue().getString())
 						)
 					);
 				} catch (Exception& exception) {
@@ -264,9 +264,9 @@ void SceneEditorTabController::onValueChanged(GUIElementNode* node)
 				try {
 					view->applyRotation(
 						Vector3(
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_x"))->getController()->getValue().getString()),
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_y"))->getController()->getValue().getString()),
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_z"))->getController()->getValue().getString())
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_x"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_y"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_z"))->getController()->getValue().getString())
 						)
 					);
 				} catch (Exception& exception) {
@@ -283,9 +283,9 @@ void SceneEditorTabController::onValueChanged(GUIElementNode* node)
 				try {
 					view->applyScale(
 						Vector3(
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_x"))->getController()->getValue().getString()),
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_y"))->getController()->getValue().getString()),
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_z"))->getController()->getValue().getString())
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_x"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_y"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_z"))->getController()->getValue().getString())
 						)
 					);
 				} catch (Exception& exception) {
@@ -303,9 +303,9 @@ void SceneEditorTabController::onValueChanged(GUIElementNode* node)
 					auto scene = view->getScene();
 					scene->setSkyModelScale(
 						Vector3(
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky_model_scale"))->getController()->getValue().getString()),
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky_model_scale"))->getController()->getValue().getString()),
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky_model_scale"))->getController()->getValue().getString())
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky_model_scale"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky_model_scale"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky_model_scale"))->getController()->getValue().getString())
 						)
 					);
 					view->updateSky();
@@ -332,7 +332,7 @@ void SceneEditorTabController::onValueChanged(GUIElementNode* node)
 		}
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		if (StringTools::startsWith(outlinerNode, "scene.lights.") == true) {
-			auto lightIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("scene.lights.light").size()));
+			auto lightIdx = Integer::parse(StringTools::substring(outlinerNode, string("scene.lights.light").size()));
 			for (auto& applyLightNode: applyLightNodes) {
 				if (node->getId() == applyLightNode) {
 					applyLightDetails(lightIdx);
@@ -421,7 +421,7 @@ void SceneEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 			// clear
 			popUps->getContextMenuScreenController()->clear();
 			{
-				auto lightIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("scene.lights.light").size()));
+				auto lightIdx = Integer::parse(StringTools::substring(outlinerNode, string("scene.lights.light").size()));
 				auto scene = view->getScene();
 				if (scene == nullptr) return;
 
@@ -660,7 +660,7 @@ void SceneEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 	} else
 	if (node->getId() == "prototype_place") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
-		auto prototypeId = Integer::parseInt(StringTools::substring(outlinerNode, string("scene.prototypes.").size()));
+		auto prototypeId = Integer::parse(StringTools::substring(outlinerNode, string("scene.prototypes.").size()));
 		auto scene = view->getScene();
 		auto sceneLibrary = scene->getLibrary();
 		auto prototype = sceneLibrary->getPrototype(prototypeId);
@@ -688,7 +688,7 @@ void SceneEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 		};
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		if (StringTools::startsWith(outlinerNode, "scene.lights.") == true) {
-			auto lightIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("scene.lights.light").size()));
+			auto lightIdx = Integer::parse(StringTools::substring(outlinerNode, string("scene.lights.light").size()));
 			auto scene = view->getScene();
 			if (scene == nullptr) return;
 			auto light = scene->getLightAt(lightIdx);
@@ -718,7 +718,7 @@ void SceneEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 		};
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		if (StringTools::startsWith(outlinerNode, "scene.lights.") == true) {
-			auto lightIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("scene.lights.light").size()));
+			auto lightIdx = Integer::parse(StringTools::substring(outlinerNode, string("scene.lights.light").size()));
 			auto scene = view->getScene();
 			if (scene == nullptr) return;
 			auto light = scene->getLightAt(lightIdx);
@@ -748,7 +748,7 @@ void SceneEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 		};
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		if (StringTools::startsWith(outlinerNode, "scene.lights.") == true) {
-			auto lightIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("scene.lights.light").size()));
+			auto lightIdx = Integer::parse(StringTools::substring(outlinerNode, string("scene.lights.light").size()));
 			auto scene = view->getScene();
 			if (scene == nullptr) return;
 			auto light = scene->getLightAt(lightIdx);
@@ -906,14 +906,14 @@ void SceneEditorTabController::applyLightDetails(int lightIdx) {
 	try {
 		//
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_light"))->getActiveConditions().add("open");
-		switch (Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_type"))->getController()->getValue().getString())) {
+		switch (Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_type"))->getController()->getValue().getString())) {
 			case 4:
 				//ambient
 				{
 					//
-					light->setConstantAttenuation(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_ambient_constant_attenuation"))->getController()->getValue().getString()));
-					light->setLinearAttenuation(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_ambient_linear_attenuation"))->getController()->getValue().getString()));
-					light->setQuadraticAttenuation(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_ambient_quadratic_attenuation"))->getController()->getValue().getString()));
+					light->setConstantAttenuation(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_ambient_constant_attenuation"))->getController()->getValue().getString()));
+					light->setLinearAttenuation(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_ambient_linear_attenuation"))->getController()->getValue().getString()));
+					light->setQuadraticAttenuation(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_ambient_quadratic_attenuation"))->getController()->getValue().getString()));
 					light->setPosition(Vector4());
 					light->setSpotDirection(Vector3());
 					light->setSpotCutOff(180.0f);
@@ -924,35 +924,35 @@ void SceneEditorTabController::applyLightDetails(int lightIdx) {
 				// spot light
 				{
 					//
-					light->setConstantAttenuation(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_constant_attenuation"))->getController()->getValue().getString()));
-					light->setLinearAttenuation(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_linear_attenuation"))->getController()->getValue().getString()));
-					light->setQuadraticAttenuation(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_quadratic_attenuation"))->getController()->getValue().getString()));
+					light->setConstantAttenuation(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_constant_attenuation"))->getController()->getValue().getString()));
+					light->setLinearAttenuation(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_linear_attenuation"))->getController()->getValue().getString()));
+					light->setQuadraticAttenuation(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_quadratic_attenuation"))->getController()->getValue().getString()));
 					light->setPosition(
 						Vector4(
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_position_x"))->getController()->getValue().getString()),
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_position_y"))->getController()->getValue().getString()),
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_position_z"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_position_x"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_position_y"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_position_z"))->getController()->getValue().getString()),
 							1.0f
 						)
 					);
 					light->setSpotDirection(
 						Vector3(
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_direction_x"))->getController()->getValue().getString()),
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_direction_y"))->getController()->getValue().getString()),
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_direction_z"))->getController()->getValue().getString())
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_direction_x"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_direction_y"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_direction_z"))->getController()->getValue().getString())
 						).normalize()
 					);
-					light->setSpotCutOff(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_cutoff"))->getController()->getValue().getString()));
-					light->setSpotExponent(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_exponent"))->getController()->getValue().getString()));
+					light->setSpotCutOff(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_cutoff"))->getController()->getValue().getString()));
+					light->setSpotExponent(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_spot_exponent"))->getController()->getValue().getString()));
 					break;
 				}
 			case 3:
 				// directional
 				{
 					//
-					light->setConstantAttenuation(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_directional_constant_attenuation"))->getController()->getValue().getString()));
-					light->setLinearAttenuation(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_directional_linear_attenuation"))->getController()->getValue().getString()));
-					light->setQuadraticAttenuation(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_directional_quadratic_attenuation"))->getController()->getValue().getString()));
+					light->setConstantAttenuation(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_directional_constant_attenuation"))->getController()->getValue().getString()));
+					light->setLinearAttenuation(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_directional_linear_attenuation"))->getController()->getValue().getString()));
+					light->setQuadraticAttenuation(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_directional_quadratic_attenuation"))->getController()->getValue().getString()));
 					light->setPosition(
 						Vector4(
 							light->getPosition().getX(),
@@ -963,9 +963,9 @@ void SceneEditorTabController::applyLightDetails(int lightIdx) {
 					);
 					light->setSpotDirection(
 						Vector3(
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_directional_direction_x"))->getController()->getValue().getString()),
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_directional_direction_y"))->getController()->getValue().getString()),
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_directional_direction_z"))->getController()->getValue().getString())
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_directional_direction_x"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_directional_direction_y"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("light_directional_direction_z"))->getController()->getValue().getString())
 						).normalize()
 					);
 					light->setSpotCutOff(180.0f);
@@ -1179,7 +1179,7 @@ void SceneEditorTabController::updateDetails(const string& outlinerNode) {
 		setSkyDetails();
 	} else
 	if (StringTools::startsWith(outlinerNode, "scene.lights.") == true) {
-		auto lightIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("scene.lights.light").size()));
+		auto lightIdx = Integer::parse(StringTools::substring(outlinerNode, string("scene.lights.light").size()));
 		setLightDetails(lightIdx);
 	} else
 	if (StringTools::startsWith(outlinerNode, "scene.prototypes.") == true) {

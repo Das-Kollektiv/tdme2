@@ -302,9 +302,9 @@ int GUINode::getRequestedConstraintsValue(const string& constraint, int defaultC
 		return -1;
 	} else
 	if (StringTools::endsWith(constraint, "%")) {
-		return (Integer::parseInt(constraint.substr(0, constraint.length() - 1)));
+		return (Integer::parse(constraint.substr(0, constraint.length() - 1)));
 	} else {
-		return (Integer::parseInt(constraint));
+		return (Integer::parse(constraint));
 	}
 }
 
@@ -313,7 +313,7 @@ int GUINode::getRequestedPixelValue(const string& value, int defaultValue)
 	if (value.empty() == true || value.length() == 0) {
 		return defaultValue;
 	} else {
-		return (Integer::parseInt(value));
+		return (Integer::parse(value));
 	}
 }
 

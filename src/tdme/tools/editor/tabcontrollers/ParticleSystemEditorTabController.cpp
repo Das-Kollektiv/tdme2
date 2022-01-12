@@ -242,7 +242,7 @@ void ParticleSystemEditorTabController::onValueChanged(GUIElementNode* node)
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		if (StringTools::startsWith(view->getEditorView()->getScreenController()->getOutlinerSelection(), "particlesystems.") == true) {
-			auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+			auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
 			view->setParticleSystemIndex(particleSystemIdx, false);
 		} else {
 			view->setParticleSystemIndex(-1, false);
@@ -251,7 +251,7 @@ void ParticleSystemEditorTabController::onValueChanged(GUIElementNode* node)
 	} else {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
-			auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+			auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
 			for (auto& applyOPSNode: applyOPSNodes) {
 				if (node->getId() == applyOPSNode) {
 					applyParticleSystemDetails(particleSystemIdx);
@@ -374,7 +374,7 @@ void ParticleSystemEditorTabController::onContextMenuRequested(GUIElementNode* n
 			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
 		} else
 		if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
-			auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+			auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
 
 			// clear
 			popUps->getContextMenuScreenController()->clear();
@@ -428,7 +428,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 		if (node->getId().compare("particleemitter_box_colorstart_edit") == 0) {
 			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
-				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
 				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
 				auto bbpe = particleSystem != nullptr?particleSystem->getBoundingBoxParticleEmitters():nullptr;
 				if (bbpe != nullptr) {
@@ -465,7 +465,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 		if (node->getId().compare("particleemitter_box_colorend_edit") == 0) {
 			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
-				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
 				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
 				auto bbpe = particleSystem != nullptr?particleSystem->getBoundingBoxParticleEmitters():nullptr;
 				if (bbpe != nullptr) {
@@ -502,7 +502,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 		if (node->getId().compare("particleemitter_point_colorstart_edit") == 0) {
 			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
-				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
 				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
 				auto ppe = particleSystem != nullptr?particleSystem->getPointParticleEmitter():nullptr;
 				if (ppe != nullptr) {
@@ -539,7 +539,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 		if (node->getId().compare("particleemitter_point_colorend_edit") == 0) {
 			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
-				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
 				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
 				auto ppe = particleSystem != nullptr?particleSystem->getPointParticleEmitter():nullptr;
 				if (ppe != nullptr) {
@@ -576,7 +576,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 		if (node->getId().compare("particleemitter_sphere_colorstart_edit") == 0) {
 			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
-				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
 				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
 				auto spe = particleSystem != nullptr?particleSystem->getSphereParticleEmitter():nullptr;
 				if (spe != nullptr) {
@@ -613,7 +613,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 		if (node->getId().compare("particleemitter_sphere_colorend_edit") == 0) {
 			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
-				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
 				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
 				auto spe = particleSystem != nullptr?particleSystem->getSphereParticleEmitter():nullptr;
 				if (spe != nullptr) {
@@ -650,7 +650,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 		if (node->getId().compare("particleemitter_circle_colorstart_edit") == 0) {
 			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
-				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
 				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
 				auto cpe = particleSystem != nullptr?particleSystem->getCircleParticleEmitter():nullptr;
 				if (cpe != nullptr) {
@@ -687,7 +687,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 		if (node->getId().compare("particleemitter_circle_colorend_edit") == 0) {
 			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
-				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
 				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
 				auto cpe = particleSystem != nullptr?particleSystem->getCircleParticleEmitter():nullptr;
 				if (cpe != nullptr) {
@@ -724,7 +724,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 		if (node->getId().compare("particleemitter_radial_colorstart_edit") == 0) {
 			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
-				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
 				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
 				auto rpe = particleSystem != nullptr?particleSystem->getCircleParticleEmitterPlaneVelocity():nullptr;
 				if (rpe != nullptr) {
@@ -761,7 +761,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 		if (node->getId().compare("particleemitter_radial_colorend_edit") == 0) {
 			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
-				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
 				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
 				auto rpe = particleSystem != nullptr?particleSystem->getCircleParticleEmitterPlaneVelocity():nullptr;
 				if (rpe != nullptr) {
@@ -798,7 +798,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 		if (node->getId().compare("particletype_point_texture_open") == 0) {
 			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
-				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
 				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
 				auto pps = particleSystem != nullptr?particleSystem->getPointParticleSystem():nullptr;
 				if (pps != nullptr) {
@@ -848,7 +848,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 		if (node->getId().compare("particletype_point_texture_remove") == 0) {
 			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
-				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
 				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
 				auto pps = particleSystem != nullptr?particleSystem->getPointParticleSystem():nullptr;
 				if (pps != nullptr) {
@@ -867,7 +867,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 		if (node->getId().compare("particletype_point_transparency_open") == 0) {
 			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
-				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
 				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
 				auto pps = particleSystem != nullptr?particleSystem->getPointParticleSystem():nullptr;
 				if (pps != nullptr) {
@@ -917,7 +917,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 		if (node->getId().compare("particletype_point_transparency_remove") == 0) {
 			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
-				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
 				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
 				auto pps = particleSystem != nullptr?particleSystem->getPointParticleSystem():nullptr;
 				if (pps != nullptr) {
@@ -936,7 +936,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 		if (node->getId().compare("particletype_fog_texture_open") == 0) {
 			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
-				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
 				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
 				auto fps = particleSystem != nullptr?particleSystem->getFogParticleSystem():nullptr;
 				if (fps != nullptr) {
@@ -986,7 +986,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 		if (node->getId().compare("particletype_fog_texture_remove") == 0) {
 			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
-				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
 				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
 				auto fps = particleSystem != nullptr?particleSystem->getFogParticleSystem():nullptr;
 				if (fps != nullptr) {
@@ -1005,7 +1005,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 		if (node->getId().compare("particletype_fog_transparency_open") == 0) {
 			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
-				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
 				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
 				auto fps = particleSystem != nullptr?particleSystem->getFogParticleSystem():nullptr;
 				if (fps != nullptr) {
@@ -1055,7 +1055,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 		if (node->getId().compare("particletype_fog_transparency_remove") == 0) {
 			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
-				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
 				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
 				auto fps = particleSystem != nullptr?particleSystem->getFogParticleSystem():nullptr;
 				if (fps != nullptr) {
@@ -1074,7 +1074,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 		if (node->getId() == "particletype_object_open") {
 			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
-				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
 				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
 				auto ops = particleSystem != nullptr?particleSystem->getObjectParticleSystem():nullptr;
 				if (ops != nullptr) {
@@ -1129,7 +1129,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 		if (node->getId() == "particletype_object_remove") {
 			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
-				auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
 				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
 				auto ops = particleSystem != nullptr?particleSystem->getObjectParticleSystem():nullptr;
 				if (ops == nullptr) return;
@@ -1410,7 +1410,7 @@ void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleS
 	//
 	try {
 		{
-			auto newParticleSystemTypeId = Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_type"))->getController()->getValue().getString());
+			auto newParticleSystemTypeId = Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_type"))->getController()->getValue().getString());
 			auto newParticleSystemType = PrototypeParticleSystem_Type::NONE;
 			switch (newParticleSystemTypeId) {
 				case 1: newParticleSystemType = PrototypeParticleSystem_Type::OBJECT_PARTICLE_SYSTEM; break;
@@ -1445,31 +1445,31 @@ void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleS
 		//
 		if (particleSystem->getType() == PrototypeParticleSystem_Type::OBJECT_PARTICLE_SYSTEM) {
 			auto ops = particleSystem->getObjectParticleSystem();
-			auto scale = Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_object_scale"))->getController()->getValue().getString());
+			auto scale = Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_object_scale"))->getController()->getValue().getString());
 			ops->setScale(Vector3(scale, scale, scale));
-			ops->setMaxCount(Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_object_maxcount"))->getController()->getValue().getString()));
+			ops->setMaxCount(Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_object_maxcount"))->getController()->getValue().getString()));
 			ops->setAutoEmit(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_object_autoemit"))->getController()->getValue().getString() == "1");
 		} else
 		if (particleSystem->getType() == PrototypeParticleSystem_Type::POINT_PARTICLE_SYSTEM) {
 			auto pps = particleSystem->getPointParticleSystem();
-			pps->setPointSize(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_point_size"))->getController()->getValue().getString()));
-			pps->setMaxPoints(Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_point_maxcount"))->getController()->getValue().getString()));
-			pps->setTextureHorizontalSprites(Math::max(1, Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_point_horizontal_sprites"))->getController()->getValue().getString())));
-			pps->setTextureVerticalSprites(Math::max(1, Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_point_vertical_sprites"))->getController()->getValue().getString())));
-			pps->setTextureSpritesFPS(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_point_fps"))->getController()->getValue().getString()));
+			pps->setPointSize(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_point_size"))->getController()->getValue().getString()));
+			pps->setMaxPoints(Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_point_maxcount"))->getController()->getValue().getString()));
+			pps->setTextureHorizontalSprites(Math::max(1, Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_point_horizontal_sprites"))->getController()->getValue().getString())));
+			pps->setTextureVerticalSprites(Math::max(1, Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_point_vertical_sprites"))->getController()->getValue().getString())));
+			pps->setTextureSpritesFPS(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_point_fps"))->getController()->getValue().getString()));
 			pps->setAutoEmit(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_point_autoemit"))->getController()->getValue().getString() == "1");
 		} else
 		if (particleSystem->getType() == PrototypeParticleSystem_Type::FOG_PARTICLE_SYSTEM) {
 			auto fps = particleSystem->getFogParticleSystem();
-			fps->setPointSize(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_fog_size"))->getController()->getValue().getString()));
-			fps->setMaxPoints(Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_fog_maxcount"))->getController()->getValue().getString()));
-			fps->setTextureHorizontalSprites(Math::max(1, Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_fog_horizontal_sprites"))->getController()->getValue().getString())));
-			fps->setTextureVerticalSprites(Math::max(1, Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_fog_vertical_sprites"))->getController()->getValue().getString())));
-			fps->setTextureSpritesFPS(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_fog_fps"))->getController()->getValue().getString()));
+			fps->setPointSize(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_fog_size"))->getController()->getValue().getString()));
+			fps->setMaxPoints(Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_fog_maxcount"))->getController()->getValue().getString()));
+			fps->setTextureHorizontalSprites(Math::max(1, Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_fog_horizontal_sprites"))->getController()->getValue().getString())));
+			fps->setTextureVerticalSprites(Math::max(1, Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_fog_vertical_sprites"))->getController()->getValue().getString())));
+			fps->setTextureSpritesFPS(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_fog_fps"))->getController()->getValue().getString()));
 		}
 
 		//
-		auto newEmitterTypeId = Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_type"))->getController()->getValue().getString());
+		auto newEmitterTypeId = Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_type"))->getController()->getValue().getString());
 		auto newEmitterType = PrototypeParticleSystem_Emitter::NONE;
 		switch (newEmitterTypeId) {
 			case 1: newEmitterType = PrototypeParticleSystem_Emitter::POINT_PARTICLE_EMITTER; break;
@@ -1511,33 +1511,33 @@ void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleS
 			auto ppse = particleSystem->getPointParticleEmitter();
 			ppse->setPosition(
 				Vector3(
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_location_x"))->getController()->getValue().getString()),
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_location_y"))->getController()->getValue().getString()),
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_location_z"))->getController()->getValue().getString())
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_location_x"))->getController()->getValue().getString()),
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_location_y"))->getController()->getValue().getString()),
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_location_z"))->getController()->getValue().getString())
 				)
 			);
-			ppse->setCount(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_count"))->getController()->getValue().getString()));
-			ppse->setLifeTime(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_lifetime_min"))->getController()->getValue().getString()));
+			ppse->setCount(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_count"))->getController()->getValue().getString()));
+			ppse->setLifeTime(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_lifetime_min"))->getController()->getValue().getString()));
 			ppse->setLifeTimeRnd(
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_lifetime_max"))->getController()->getValue().getString()) -
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_lifetime_min"))->getController()->getValue().getString())
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_lifetime_max"))->getController()->getValue().getString()) -
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_lifetime_min"))->getController()->getValue().getString())
 			);
-			ppse->setMass(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_mass_min"))->getController()->getValue().getString()));
+			ppse->setMass(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_mass_min"))->getController()->getValue().getString()));
 			ppse->setMassRnd(
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_mass_max"))->getController()->getValue().getString()) -
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_mass_min"))->getController()->getValue().getString())
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_mass_max"))->getController()->getValue().getString()) -
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_mass_min"))->getController()->getValue().getString())
 			);
 			auto velocityMin =
 				Vector3(
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_min_x"))->getController()->getValue().getString()),
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_min_y"))->getController()->getValue().getString()),
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_min_z"))->getController()->getValue().getString())
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_min_x"))->getController()->getValue().getString()),
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_min_y"))->getController()->getValue().getString()),
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_min_z"))->getController()->getValue().getString())
 				);
 			auto velocityMax =
 				Vector3(
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_max_x"))->getController()->getValue().getString()),
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_max_y"))->getController()->getValue().getString()),
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_max_z"))->getController()->getValue().getString())
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_max_x"))->getController()->getValue().getString()),
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_max_y"))->getController()->getValue().getString()),
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_velocity_max_z"))->getController()->getValue().getString())
 				);
 			ppse->setVelocity(velocityMin);
 			ppse->setVelocityRnd(velocityMax.clone().sub(velocityMin));
@@ -1547,15 +1547,15 @@ void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleS
 			auto bbpe = particleSystem->getBoundingBoxParticleEmitters();
 			bbpe->setObbCenter(
 				Vector3(
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_location_x"))->getController()->getValue().getString()),
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_location_y"))->getController()->getValue().getString()),
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_location_z"))->getController()->getValue().getString())
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_location_x"))->getController()->getValue().getString()),
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_location_y"))->getController()->getValue().getString()),
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_location_z"))->getController()->getValue().getString())
 				)
 			);
 			Transformations transformations;
-			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_Z, Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_rotation_z"))->getController()->getValue().getString()));
-			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_Y, Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_rotation_y"))->getController()->getValue().getString()));
-			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_X, Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_rotation_x"))->getController()->getValue().getString()));
+			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_Z, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_rotation_z"))->getController()->getValue().getString()));
+			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_Y, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_rotation_y"))->getController()->getValue().getString()));
+			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_X, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_rotation_x"))->getController()->getValue().getString()));
 			transformations.update();
 			Vector3 obbAxis0;
 			Vector3 obbAxis1;
@@ -1566,33 +1566,33 @@ void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleS
 			bbpe->setObbAxis2(obbAxis2);
 			bbpe->setObbHalfextension(
 				Vector3(
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_halfsize_x"))->getController()->getValue().getString()),
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_halfsize_y"))->getController()->getValue().getString()),
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_halfsize_z"))->getController()->getValue().getString())
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_halfsize_x"))->getController()->getValue().getString()),
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_halfsize_y"))->getController()->getValue().getString()),
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_halfsize_z"))->getController()->getValue().getString())
 				)
 			);
-			bbpe->setCount(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_count"))->getController()->getValue().getString()));
-			bbpe->setLifeTime(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_lifetime_min"))->getController()->getValue().getString()));
+			bbpe->setCount(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_count"))->getController()->getValue().getString()));
+			bbpe->setLifeTime(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_lifetime_min"))->getController()->getValue().getString()));
 			bbpe->setLifeTimeRnd(
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_lifetime_max"))->getController()->getValue().getString()) -
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_lifetime_min"))->getController()->getValue().getString())
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_lifetime_max"))->getController()->getValue().getString()) -
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_lifetime_min"))->getController()->getValue().getString())
 			);
-			bbpe->setMass(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_mass_min"))->getController()->getValue().getString()));
+			bbpe->setMass(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_mass_min"))->getController()->getValue().getString()));
 			bbpe->setMassRnd(
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_mass_max"))->getController()->getValue().getString()) -
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_mass_min"))->getController()->getValue().getString())
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_mass_max"))->getController()->getValue().getString()) -
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_mass_min"))->getController()->getValue().getString())
 			);
 			auto velocityMin =
 				Vector3(
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_velocity_min_x"))->getController()->getValue().getString()),
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_velocity_min_y"))->getController()->getValue().getString()),
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_velocity_min_z"))->getController()->getValue().getString())
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_velocity_min_x"))->getController()->getValue().getString()),
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_velocity_min_y"))->getController()->getValue().getString()),
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_velocity_min_z"))->getController()->getValue().getString())
 				);
 			auto velocityMax =
 				Vector3(
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_velocity_max_x"))->getController()->getValue().getString()),
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_velocity_max_y"))->getController()->getValue().getString()),
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_velocity_max_z"))->getController()->getValue().getString())
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_velocity_max_x"))->getController()->getValue().getString()),
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_velocity_max_y"))->getController()->getValue().getString()),
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_velocity_max_z"))->getController()->getValue().getString())
 				);
 			bbpe->setVelocity(velocityMin);
 			bbpe->setVelocityRnd(velocityMax.clone().sub(velocityMin));
@@ -1602,16 +1602,16 @@ void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleS
 			auto cpse = particleSystem->getCircleParticleEmitter();
 			cpse->setCenter(
 				Vector3(
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_location_x"))->getController()->getValue().getString()),
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_location_y"))->getController()->getValue().getString()),
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_location_z"))->getController()->getValue().getString())
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_location_x"))->getController()->getValue().getString()),
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_location_y"))->getController()->getValue().getString()),
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_location_z"))->getController()->getValue().getString())
 				)
 			);
 
 			Transformations transformations;
-			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_Z, Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_rotation_z"))->getController()->getValue().getString()));
-			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_Y, Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_rotation_y"))->getController()->getValue().getString()));
-			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_X, Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_rotation_x"))->getController()->getValue().getString()));
+			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_Z, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_rotation_z"))->getController()->getValue().getString()));
+			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_Y, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_rotation_y"))->getController()->getValue().getString()));
+			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_X, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_rotation_x"))->getController()->getValue().getString()));
 			transformations.update();
 			Vector3 tmpVector3;
 			Vector3 axis0;
@@ -1620,29 +1620,29 @@ void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleS
 			cpse->setAxis0(axis0);
 			cpse->setAxis1(axis1);
 
-			cpse->setRadius(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_radius"))->getController()->getValue().getString()));
-			cpse->setCount(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_count"))->getController()->getValue().getString()));
-			cpse->setLifeTime(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_lifetime_min"))->getController()->getValue().getString()));
+			cpse->setRadius(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_radius"))->getController()->getValue().getString()));
+			cpse->setCount(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_count"))->getController()->getValue().getString()));
+			cpse->setLifeTime(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_lifetime_min"))->getController()->getValue().getString()));
 			cpse->setLifeTimeRnd(
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_lifetime_max"))->getController()->getValue().getString()) -
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_lifetime_min"))->getController()->getValue().getString())
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_lifetime_max"))->getController()->getValue().getString()) -
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_lifetime_min"))->getController()->getValue().getString())
 			);
-			cpse->setMass(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_mass_min"))->getController()->getValue().getString()));
+			cpse->setMass(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_mass_min"))->getController()->getValue().getString()));
 			cpse->setMassRnd(
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_mass_max"))->getController()->getValue().getString()) -
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_mass_min"))->getController()->getValue().getString())
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_mass_max"))->getController()->getValue().getString()) -
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_mass_min"))->getController()->getValue().getString())
 			);
 			auto velocityMin =
 				Vector3(
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_velocity_min_x"))->getController()->getValue().getString()),
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_velocity_min_y"))->getController()->getValue().getString()),
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_velocity_min_z"))->getController()->getValue().getString())
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_velocity_min_x"))->getController()->getValue().getString()),
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_velocity_min_y"))->getController()->getValue().getString()),
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_velocity_min_z"))->getController()->getValue().getString())
 				);
 			auto velocityMax =
 				Vector3(
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_velocity_max_x"))->getController()->getValue().getString()),
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_velocity_max_y"))->getController()->getValue().getString()),
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_velocity_max_z"))->getController()->getValue().getString())
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_velocity_max_x"))->getController()->getValue().getString()),
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_velocity_max_y"))->getController()->getValue().getString()),
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_velocity_max_z"))->getController()->getValue().getString())
 				);
 			cpse->setVelocity(velocityMin);
 			cpse->setVelocityRnd(velocityMax.clone().sub(velocityMin));
@@ -1652,16 +1652,16 @@ void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleS
 			auto cpse = particleSystem->getCircleParticleEmitterPlaneVelocity();
 			cpse->setCenter(
 				Vector3(
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_location_x"))->getController()->getValue().getString()),
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_location_y"))->getController()->getValue().getString()),
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_location_z"))->getController()->getValue().getString())
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_location_x"))->getController()->getValue().getString()),
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_location_y"))->getController()->getValue().getString()),
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_location_z"))->getController()->getValue().getString())
 				)
 			);
 
 			Transformations transformations;
-			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_Z, Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_rotation_z"))->getController()->getValue().getString()));
-			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_Y, Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_rotation_y"))->getController()->getValue().getString()));
-			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_X, Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_rotation_x"))->getController()->getValue().getString()));
+			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_Z, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_rotation_z"))->getController()->getValue().getString()));
+			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_Y, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_rotation_y"))->getController()->getValue().getString()));
+			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_X, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_rotation_x"))->getController()->getValue().getString()));
 			transformations.update();
 			Vector3 tmpVector3;
 			Vector3 axis0;
@@ -1670,22 +1670,22 @@ void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleS
 			cpse->setAxis0(axis0);
 			cpse->setAxis1(axis1);
 
-			cpse->setRadius(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_radius"))->getController()->getValue().getString()));
-			cpse->setCount(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_count"))->getController()->getValue().getString()));
-			cpse->setLifeTime(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_lifetime_min"))->getController()->getValue().getString()));
+			cpse->setRadius(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_radius"))->getController()->getValue().getString()));
+			cpse->setCount(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_count"))->getController()->getValue().getString()));
+			cpse->setLifeTime(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_lifetime_min"))->getController()->getValue().getString()));
 			cpse->setLifeTimeRnd(
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_lifetime_max"))->getController()->getValue().getString()) -
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_lifetime_min"))->getController()->getValue().getString())
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_lifetime_max"))->getController()->getValue().getString()) -
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_lifetime_min"))->getController()->getValue().getString())
 			);
-			cpse->setMass(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_mass_min"))->getController()->getValue().getString()));
+			cpse->setMass(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_mass_min"))->getController()->getValue().getString()));
 			cpse->setMassRnd(
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_mass_max"))->getController()->getValue().getString()) -
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_mass_min"))->getController()->getValue().getString())
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_mass_max"))->getController()->getValue().getString()) -
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_mass_min"))->getController()->getValue().getString())
 			);
-			cpse->setVelocity(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_velocity_min"))->getController()->getValue().getString()));
+			cpse->setVelocity(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_velocity_min"))->getController()->getValue().getString()));
 			cpse->setVelocityRnd(
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_velocity_max"))->getController()->getValue().getString()) -
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_velocity_min"))->getController()->getValue().getString())
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_velocity_max"))->getController()->getValue().getString()) -
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_velocity_min"))->getController()->getValue().getString())
 			);
 		} else
 		if (particleSystem->getEmitter() == PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
@@ -1693,34 +1693,34 @@ void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleS
 			auto spse = particleSystem->getSphereParticleEmitter();
 			spse->setCenter(
 				Vector3(
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_location_x"))->getController()->getValue().getString()),
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_location_y"))->getController()->getValue().getString()),
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_location_z"))->getController()->getValue().getString())
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_location_x"))->getController()->getValue().getString()),
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_location_y"))->getController()->getValue().getString()),
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_location_z"))->getController()->getValue().getString())
 				)
 			);
-			spse->setRadius(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_radius"))->getController()->getValue().getString()));
-			spse->setCount(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_count"))->getController()->getValue().getString()));
-			spse->setLifeTime(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_lifetime_min"))->getController()->getValue().getString()));
+			spse->setRadius(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_radius"))->getController()->getValue().getString()));
+			spse->setCount(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_count"))->getController()->getValue().getString()));
+			spse->setLifeTime(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_lifetime_min"))->getController()->getValue().getString()));
 			spse->setLifeTimeRnd(
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_lifetime_max"))->getController()->getValue().getString()) -
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_lifetime_min"))->getController()->getValue().getString())
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_lifetime_max"))->getController()->getValue().getString()) -
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_lifetime_min"))->getController()->getValue().getString())
 			);
-			spse->setMass(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_mass_min"))->getController()->getValue().getString()));
+			spse->setMass(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_mass_min"))->getController()->getValue().getString()));
 			spse->setMassRnd(
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_mass_max"))->getController()->getValue().getString()) -
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_mass_min"))->getController()->getValue().getString())
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_mass_max"))->getController()->getValue().getString()) -
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_mass_min"))->getController()->getValue().getString())
 			);
 			auto velocityMin =
 				Vector3(
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_velocity_min_x"))->getController()->getValue().getString()),
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_velocity_min_y"))->getController()->getValue().getString()),
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_velocity_min_z"))->getController()->getValue().getString())
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_velocity_min_x"))->getController()->getValue().getString()),
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_velocity_min_y"))->getController()->getValue().getString()),
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_velocity_min_z"))->getController()->getValue().getString())
 				);
 			auto velocityMax =
 				Vector3(
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_velocity_max_x"))->getController()->getValue().getString()),
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_velocity_max_y"))->getController()->getValue().getString()),
-					Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_velocity_max_z"))->getController()->getValue().getString())
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_velocity_max_x"))->getController()->getValue().getString()),
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_velocity_max_y"))->getController()->getValue().getString()),
+					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_velocity_max_z"))->getController()->getValue().getString())
 				);
 			spse->setVelocity(velocityMin);
 			spse->setVelocityRnd(velocityMax.clone().sub(velocityMin));
@@ -1738,7 +1738,7 @@ void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleS
 void ParticleSystemEditorTabController::updateDetails(const string& outlinerNode) {
 	view->getEditorView()->setDetailsContent(string());
 	if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
-		auto particleSystemIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+		auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
 		setParticleSystemDetails(particleSystemIdx);
 	}
 	prototypePhysicsSubController->updateDetails(view->getPrototype(), outlinerNode);

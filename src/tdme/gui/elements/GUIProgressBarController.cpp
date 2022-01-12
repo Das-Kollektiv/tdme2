@@ -93,7 +93,7 @@ const MutableString& GUIProgressBarController::getValue() {
 
 void GUIProgressBarController::setValue(const MutableString& value) {
 	this->value.set(value);
-	valueFloat = Math::clamp(Float::parseFloat(this->value.getString()), 0.0f, 1.0f);
+	valueFloat = Math::clamp(Float::parse(this->value.getString()), 0.0f, 1.0f);
 	textNode->setText((MutableString((int)(valueFloat * 100.0f))).append(" %"));
 	updateBar();
 }

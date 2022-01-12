@@ -98,7 +98,7 @@ uint64_t HTTPDownloadClient::parseHTTPResponseHeaders(ifstream& rawResponse, int
 		for (auto i = 0; i < 3 && t.hasMoreTokens(); i++) {
 			auto token = t.nextToken();
 			if (i == 1) {
-				httpStatusCode = Integer::parseInt(token);
+				httpStatusCode = Integer::parse(token);
 			}
 		}
 	}
@@ -182,7 +182,7 @@ void HTTPDownloadClient::start() {
 										for (auto header: downloadClient->httpHeader) {
 											if (StringTools::startsWith(header, "Content-Length: ") == true) {
 												downloadClient->haveContentSize = true;
-												downloadClient->contentSize = Integer::parseInt(StringTools::substring(header, string("Content-Length: ").size()));
+												downloadClient->contentSize = Integer::parse(StringTools::substring(header, string("Content-Length: ").size()));
 											}
 										}
 									}

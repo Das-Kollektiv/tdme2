@@ -214,13 +214,13 @@ public:
 					value = floatValue;
 					return true;
 				case TYPE_STRING:
-					if (Integer::isInt(stringValue) == true) {
-						value = Integer::parseInt(stringValue);
+					if (Integer::is(stringValue) == true) {
+						value = Integer::parse(stringValue);
 						return true;
 					} else
-					if (Float::isFloat(stringValue) == true) {
+					if (Float::is(stringValue) == true) {
 						Console::println("MiniScript::getIntegerValue(): converting float to integer: precision loss");
-						value = static_cast<int64_t>(Float::parseFloat(stringValue));
+						value = static_cast<int64_t>(Float::parse(stringValue));
 						return true;
 					} else {
 						return optional;
@@ -254,8 +254,8 @@ public:
 					value = floatValue;
 					return true;
 				case TYPE_STRING:
-					if (Float::isFloat(stringValue) == false) return optional;
-					value = Float::parseFloat(stringValue);
+					if (Float::is(stringValue) == false) return optional;
+					value = Float::parse(stringValue);
 					return true;
 				case TYPE_VECTOR3:
 					return optional;
@@ -401,6 +401,24 @@ public:
 		inline void setValue(const Transformations& value) {
 			type = TYPE_TRANSFORMATIONS;
 			transformationsValue = value;
+		}
+
+		/**
+		 * Set implicit typed value as string
+		 * @param value value
+		 */
+		inline void setImplicitTypedValue(const string& value) {
+			if (Integer::is(value) == true) {
+				type = TYPE_INTEGER;
+				integerValue = Integer::parse(value);
+			} else
+			if (Float::is(value) == true) {
+				type = TYPE_FLOAT;
+				floatValue = Float::parse(value);
+			} else {
+				type = TYPE_STRING;
+				stringValue = value;
+			}
 		}
 
 		/**
@@ -797,6 +815,17 @@ public:
 			case(OPERATOR_MAX): return "MAX";
 			default: return "INVALID";
 		}
+	}
+
+	/**
+	 * Check if arguments contain argument with given type
+	 * @param arguments arguments
+	 * @param type type
+	 * @return has type
+	 */
+	inline static bool hasType(const vector<ScriptVariable>& arguments, ScriptVariableType type) {
+		for (auto& argument: arguments) if (argument.getType() == type) return true;
+		return false;
 	}
 
 	/**

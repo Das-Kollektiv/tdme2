@@ -1287,7 +1287,7 @@ void Installer::onActionPerformed(GUIActionListenerType type, GUIElementNode* no
 			performScreenAction();
 		} else
 		if (StringTools::startsWith(node->getId(), "component") == true) {
-			auto componentIdx = Integer::parseInt(StringTools::substring(node->getId(), string("component").size()));
+			auto componentIdx = Integer::parse(StringTools::substring(node->getId(), string("component").size()));
 			dynamic_cast<GUIMultilineTextNode*>(engine->getGUI()->getScreen("installer_components")->getNodeById("component_description"))->setText(MutableString(installerProperties.get("component" + to_string(componentIdx) + "_description", "No detail description.")));
 		}
 	}

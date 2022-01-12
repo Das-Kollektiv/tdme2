@@ -31,14 +31,14 @@ public:
 	 * @param str string
 	 * @return given string is integer
 	 */
-	static bool isInt(const string& str);
+	static bool is(const string& str);
 
 	/**
 	 * Parse integer
 	 * @param str string
 	 * @return integer
 	 */
-	static int parseInt(const string& str);
+	static int parse(const string& str);
 
 	/**
 	 * @brief Encodes an 32 bit unsigned integer to a 6 char string representation

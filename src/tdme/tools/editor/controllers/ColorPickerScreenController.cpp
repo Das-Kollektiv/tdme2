@@ -112,22 +112,22 @@ void ColorPickerScreenController::close()
 
 void ColorPickerScreenController::onValueChanged(GUIElementNode* node) {
 	if (node->getId() == "colorpicker_red") {
-		color.setRed(Float::parseFloat(node->getController()->getValue().getString()) / 255.0f);
+		color.setRed(Float::parse(node->getController()->getValue().getString()) / 255.0f);
 		updateColor();
 		updateColorHex();
 	} else
 	if (node->getId() == "colorpicker_green") {
-		color.setGreen(Float::parseFloat(node->getController()->getValue().getString()) / 255.0f);
+		color.setGreen(Float::parse(node->getController()->getValue().getString()) / 255.0f);
 		updateColor();
 		updateColorHex();
 	} else
 	if (node->getId() == "colorpicker_blue") {
-		color.setBlue(Float::parseFloat(node->getController()->getValue().getString()) / 255.0f);
+		color.setBlue(Float::parse(node->getController()->getValue().getString()) / 255.0f);
 		updateColor();
 		updateColorHex();
 	} else
 	if (node->getId() == "colorpicker_alpha") {
-		color.setAlpha(Float::parseFloat(node->getController()->getValue().getString()) / 255.0f);
+		color.setAlpha(Float::parse(node->getController()->getValue().getString()) / 255.0f);
 		updateColor();
 		updateColorHex();
 	} else
@@ -150,7 +150,7 @@ void ColorPickerScreenController::onValueChanged(GUIElementNode* node) {
 	} else
 	if (node->getId() == "slider_colorpicker_brightness") {
 		auto currentBrightness = (color.getRed() + color.getGreen() + color.getBlue()) / 3.0f;
-		auto newBrightness = Float::parseFloat(node->getController()->getValue().getString());
+		auto newBrightness = Float::parse(node->getController()->getValue().getString());
 		auto brightnessAdjustment = 1.0f + (newBrightness - currentBrightness);
 		color.setRed(color.getRed() * brightnessAdjustment);
 		color.setGreen(color.getGreen() * brightnessAdjustment);
@@ -189,10 +189,10 @@ void ColorPickerScreenController::updateColor() {
 }
 
 void ColorPickerScreenController::updateColorHex() {
-	string hexRed = Hex::encodeInt(Integer::parseInt(redInput->getController()->getValue().getString()));
-	string hexGreen = Hex::encodeInt(Integer::parseInt(greenInput->getController()->getValue().getString()));
-	string hexBlue = Hex::encodeInt(Integer::parseInt(blueInput->getController()->getValue().getString()));
-	string hexAlpha = Hex::encodeInt(Integer::parseInt(alphaInput->getController()->getValue().getString()));
+	string hexRed = Hex::encodeInt(Integer::parse(redInput->getController()->getValue().getString()));
+	string hexGreen = Hex::encodeInt(Integer::parse(greenInput->getController()->getValue().getString()));
+	string hexBlue = Hex::encodeInt(Integer::parse(blueInput->getController()->getValue().getString()));
+	string hexAlpha = Hex::encodeInt(Integer::parse(alphaInput->getController()->getValue().getString()));
 	while (hexRed.size() < 2) hexRed = "0" + hexRed;
 	while (hexGreen.size() < 2) hexGreen = "0" + hexGreen;
 	while (hexBlue.size() < 2) hexBlue = "0" + hexBlue;

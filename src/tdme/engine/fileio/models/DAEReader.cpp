@@ -157,7 +157,7 @@ Model* DAEReader::read(const string& pathName, const string& fileName)
 				for (auto xmlTechnique: getChildrenByTagName(xmlExtraNode, "technique")) {
 					auto xmlFrameRateNodes = getChildrenByTagName(xmlTechnique, "frame_rate");
 					if (xmlFrameRateNodes.empty() == false) {
-						fps = Float::parseFloat(string(AVOID_NULLPTR_STRING(xmlFrameRateNodes.at(0)->GetText())));
+						fps = Float::parse(string(AVOID_NULLPTR_STRING(xmlFrameRateNodes.at(0)->GetText())));
 						break;
 					}
 				}
@@ -248,7 +248,7 @@ void DAEReader::setupModelImportScaleMatrix(TiXmlElement* xmlRoot, Model* model)
 		for (auto xmlAssetUnit: getChildrenByTagName(xmlAsset, "unit")) {
 			string tmp;
 			if ((tmp = string(AVOID_NULLPTR_STRING(xmlAssetUnit->Attribute("meter")))).length() > 0) {
-				float scaleFactor = Float::parseFloat(tmp);
+				float scaleFactor = Float::parse(tmp);
 				model->setImportTransformationsMatrix(model->getImportTransformationsMatrix().clone().scale(scaleFactor));
 			}
 		}
@@ -283,7 +283,7 @@ Node* DAEReader::readNode(const string& pathName, Model* model, Node* parentNode
 		t.tokenize(xmlMatrix, " \n\r");
 		array<float, 16> transformationsMatrixArray;
 		for (auto i = 0; i < transformationsMatrixArray.size(); i++) {
-			transformationsMatrixArray[i] = Float::parseFloat(t.nextToken());
+			transformationsMatrixArray[i] = Float::parse(t.nextToken());
 		}
 		transformationsMatrix.set(transformationsMatrixArray).transpose();
 		node->setTransformationsMatrix(transformationsMatrix);
@@ -334,14 +334,14 @@ Node* DAEReader::readNode(const string& pathName, Model* model, Node* parentNode
 			for (auto xmlAnimationSource: getChildrenByTagName(xmlAnimation, "source")) {
 				if (string(AVOID_NULLPTR_STRING(xmlAnimationSource->Attribute("id"))) == xmlSamplerInputSource) {
 					auto xmlFloatArray = getChildrenByTagName(xmlAnimationSource, "float_array").at(0);
-					auto frames = Integer::parseInt(string(AVOID_NULLPTR_STRING(xmlFloatArray->Attribute("count"))));
+					auto frames = Integer::parse(string(AVOID_NULLPTR_STRING(xmlFloatArray->Attribute("count"))));
 					auto valueString = string(AVOID_NULLPTR_STRING(xmlFloatArray->GetText()));
 					auto keyFrameIdx = 0;
 					keyFrameTimes.resize(frames);
 					StringTokenizer t;
 					t.tokenize(valueString, " \n\r");
 					while (t.hasMoreTokens()) {
-						keyFrameTimes[keyFrameIdx++] = Float::parseFloat(t.nextToken());
+						keyFrameTimes[keyFrameIdx++] = Float::parse(t.nextToken());
 					}
 				}
 			}
@@ -351,7 +351,7 @@ Node* DAEReader::readNode(const string& pathName, Model* model, Node* parentNode
 				for (auto xmlAnimationSource: getChildrenByTagName(xmlAnimation, "source")) {
 					if (string(AVOID_NULLPTR_STRING(xmlAnimationSource->Attribute("id"))) == xmlSamplerOutputSource) {
 						auto xmlFloatArray = getChildrenByTagName(xmlAnimationSource, "float_array").at(0);
-						auto keyFrames = Integer::parseInt(string(AVOID_NULLPTR_STRING(xmlFloatArray->Attribute("count")))) / 16;
+						auto keyFrames = Integer::parse(string(AVOID_NULLPTR_STRING(xmlFloatArray->Attribute("count")))) / 16;
 						// some models have animations without frames
 						if (keyFrames > 0) {
 							auto valueString = string(AVOID_NULLPTR_STRING(xmlFloatArray->GetText()));
@@ -365,7 +365,7 @@ Node* DAEReader::readNode(const string& pathName, Model* model, Node* parentNode
 								// set animation transformation matrix at frame
 								array<float, 16> keyFrameMatricesArray;
 								for (auto i = 0; i < keyFrameMatricesArray.size() ;i++) {
-									keyFrameMatricesArray[i] = Float::parseFloat(t.nextToken());
+									keyFrameMatricesArray[i] = Float::parse(t.nextToken());
 								}
 								keyFrameMatrices[keyFrameIdx].set(keyFrameMatricesArray);
 								keyFrameMatrices[keyFrameIdx].transpose();
@@ -526,7 +526,7 @@ Node* DAEReader::readVisualSceneInstanceController(const string& pathName, Model
 	t.tokenize(xmlMatrix, " \n\r");
 	array<float, 16> bindShapeMatrixArray;
 	for (auto i = 0; i < bindShapeMatrixArray.size(); i++) {
-		bindShapeMatrixArray[i] = Float::parseFloat(t.nextToken());
+		bindShapeMatrixArray[i] = Float::parse(t.nextToken());
 	}
 	Matrix4x4 bindShapeMatrix;
 	bindShapeMatrix.set(bindShapeMatrixArray).transpose();
@@ -592,7 +592,7 @@ Node* DAEReader::readVisualSceneInstanceController(const string& pathName, Model
 				// The transformation to the local space of the joint is called the inverse bind matrix
 				array<float, 16> bindMatrixArray;
 				for (auto i = 0; i < bindMatrixArray.size(); i++) {
-					bindMatrixArray[i] = Float::parseFloat(t.nextToken());
+					bindMatrixArray[i] = Float::parse(t.nextToken());
 				}
 				Matrix4x4 bindMatrix;
 				bindMatrix.set(bindShapeMatrix);
@@ -616,10 +616,10 @@ Node* DAEReader::readVisualSceneInstanceController(const string& pathName, Model
 			if ((StringTools::substring(string(AVOID_NULLPTR_STRING(xmlVertexWeightInput->Attribute("source"))), 1) == xmlJointsSource) == false) {
 				throw ModelFileIOException("joint inverse bind matrices source do not match");
 			}
-			xmlJointOffset = Integer::parseInt(string(AVOID_NULLPTR_STRING(xmlVertexWeightInput->Attribute("offset"))));
+			xmlJointOffset = Integer::parse(string(AVOID_NULLPTR_STRING(xmlVertexWeightInput->Attribute("offset"))));
 		} else
 		if (string(AVOID_NULLPTR_STRING(xmlVertexWeightInput->Attribute("semantic"))) == "WEIGHT") {
-			xmlWeightOffset = Integer::parseInt(string(AVOID_NULLPTR_STRING(xmlVertexWeightInput->Attribute("offset"))));
+			xmlWeightOffset = Integer::parse(string(AVOID_NULLPTR_STRING(xmlVertexWeightInput->Attribute("offset"))));
 			xmlWeightsSource = StringTools::substring(string(AVOID_NULLPTR_STRING(xmlVertexWeightInput->Attribute("source"))), 1);
 		}
 	}
@@ -652,7 +652,7 @@ Node* DAEReader::readVisualSceneInstanceController(const string& pathName, Model
 		if (string(AVOID_NULLPTR_STRING(xmlSkinSource->Attribute("id"))) == xmlWeightsSource) {
 			t.tokenize(string(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlSkinSource, "float_array").at(0)->GetText())), " \n\r");
 			while (t.hasMoreTokens()) {
-				weights.push_back(Float::parseFloat(t.nextToken()));
+				weights.push_back(Float::parse(t.nextToken()));
 			}
 		}
 	}
@@ -669,13 +669,13 @@ Node* DAEReader::readVisualSceneInstanceController(const string& pathName, Model
 	vector<vector<JointWeight>> verticesJointsWeights;
 	while (t.hasMoreTokens()) {
 		// read joint influences for current vertex
-		auto vertexJointsInfluencesCount = Integer::parseInt(t.nextToken());
+		auto vertexJointsInfluencesCount = Integer::parse(t.nextToken());
 		vector<JointWeight>vertexJointsWeights;
 		for (auto i = 0; i < vertexJointsInfluencesCount; i++) {
 			auto vertexJoint = -1;
 			auto vertexWeight = -1;
 			while (vertexJoint == -1 || vertexWeight == -1) {
-				auto value = Integer::parseInt(t2.nextToken());
+				auto value = Integer::parse(t2.nextToken());
 				if (offset % xmlVertexWeightInputCount == xmlJointOffset) {
 					vertexJoint = value;
 				} else if (offset % xmlVertexWeightInputCount == xmlWeightOffset) {
@@ -728,7 +728,7 @@ void DAEReader::readGeometry(const string& pathName, Model* model, Node* node, T
 					StringTokenizer t;
 					t.tokenize(string(AVOID_NULLPTR_STRING(getChildrenByTagName(xmlPolygons, "vcount").at(0)->GetText())), " \t\n\r\f");
 					while (t.hasMoreTokens()) {
-						auto vertexCount = Integer::parseInt(t.nextToken());
+						auto vertexCount = Integer::parse(t.nextToken());
 						if (vertexCount != 3) {
 							throw ModelFileIOException(
 								 "we only support triangles in '" +
@@ -770,25 +770,25 @@ void DAEReader::readGeometry(const string& pathName, Model* model, Node* node, T
 				for (auto xmlTrianglesInput: getChildrenByTagName(xmlPolygons, "input")) {
 					// check for vertices sources
 					if (string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("semantic"))) == "VERTEX") {
-						xmlVerticesOffset = Integer::parseInt(string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("offset"))));
+						xmlVerticesOffset = Integer::parse(string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("offset"))));
 						xmlVerticesSource = StringTools::substring(string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("source"))), 1);
 						xmlInputSet.insert(xmlVerticesOffset);
 					} else
 					// check for normals sources
 					if (string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("semantic"))) == "NORMAL") {
-						xmlNormalsOffset = Integer::parseInt(string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("offset"))));
+						xmlNormalsOffset = Integer::parse(string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("offset"))));
 						xmlNormalsSource = StringTools::substring(string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("source"))), 1);
 						xmlInputSet.insert(xmlNormalsOffset);
 					} else
 					// check for texture coordinate sources
 					if (string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("semantic"))) == "TEXCOORD") {
-						xmlTexCoordOffset = Integer::parseInt(string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("offset"))));
+						xmlTexCoordOffset = Integer::parse(string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("offset"))));
 						xmlTexCoordSource = StringTools::substring(string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("source"))), 1);
 						xmlInputSet.insert(xmlTexCoordOffset);
 					} else
 					// check for color coordinate sources
 					if (string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("semantic"))) == "COLOR") {
-						xmlColorOffset = Integer::parseInt(string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("offset"))));
+						xmlColorOffset = Integer::parse(string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("offset"))));
 						xmlColorSource = StringTools::substring(string(AVOID_NULLPTR_STRING(xmlTrianglesInput->Attribute("source"))), 1);
 						xmlInputSet.insert(xmlColorOffset);
 					}
@@ -832,9 +832,9 @@ void DAEReader::readGeometry(const string& pathName, Model* model, Node* node, T
 						StringTokenizer t;
 						t.tokenize(valueString, " \n\r");
 						while (t.hasMoreTokens()) {
-							float x = Float::parseFloat(t.nextToken());
-							float y = Float::parseFloat(t.nextToken());
-							float z = Float::parseFloat(t.nextToken());
+							float x = Float::parse(t.nextToken());
+							float y = Float::parse(t.nextToken());
+							float z = Float::parse(t.nextToken());
 							vertices.push_back(Vector3(x, y, z));
 						}
 					} else
@@ -845,9 +845,9 @@ void DAEReader::readGeometry(const string& pathName, Model* model, Node* node, T
 						StringTokenizer t;
 						t.tokenize(valueString, " \n\r");
 						while (t.hasMoreTokens()) {
-							float x = Float::parseFloat(t.nextToken());
-							float y = Float::parseFloat(t.nextToken());
-							float z = Float::parseFloat(t.nextToken());
+							float x = Float::parse(t.nextToken());
+							float y = Float::parse(t.nextToken());
+							float z = Float::parse(t.nextToken());
 							normals.push_back(Vector3(x, y, z));
 						}
 					} else
@@ -859,8 +859,8 @@ void DAEReader::readGeometry(const string& pathName, Model* model, Node* node, T
 							StringTokenizer t;
 							t.tokenize(valueString, " \n\r");
 							while (t.hasMoreTokens()) {
-								float u = Float::parseFloat(t.nextToken());
-								float v = Float::parseFloat(t.nextToken());
+								float u = Float::parse(t.nextToken());
+								float v = Float::parse(t.nextToken());
 								textureCoordinates.push_back(TextureCoordinate(u, v));
 							}
 						}
@@ -880,7 +880,7 @@ void DAEReader::readGeometry(const string& pathName, Model* model, Node* node, T
 					auto valueIdx = 0;
 					auto valid = true;
 					while (t.hasMoreTokens()) {
-						auto value = Integer::parseInt(t.nextToken());
+						auto value = Integer::parse(t.nextToken());
 						if (valueIdx % xmlInputs == xmlVerticesOffset) {
 							vi[viIdx++] = value;
 							// validate
@@ -1034,7 +1034,7 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 							t.tokenize(string(AVOID_NULLPTR_STRING(xmlColor->GetText())), " ");
 							array<float, 4> colorArray;
 							for (auto i = 0; i < colorArray.size(); i++) {
-								colorArray[i] = Float::parseFloat(t.nextToken());
+								colorArray[i] = Float::parse(t.nextToken());
 							}
 							specularMaterialProperties->setDiffuseColor(Color4(colorArray));
 						}
@@ -1067,7 +1067,7 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 							t.tokenize(string(AVOID_NULLPTR_STRING(xmlColor->GetText())), " ");
 							array<float, 4> colorArray;
 							for (auto i = 0; i < colorArray.size(); i++) {
-								colorArray[i] = Float::parseFloat(t.nextToken());
+								colorArray[i] = Float::parse(t.nextToken());
 							}
 							specularMaterialProperties->setAmbientColor(Color4(colorArray));
 						}
@@ -1080,7 +1080,7 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 							t.tokenize(string(AVOID_NULLPTR_STRING(xmlColor->GetText())), " ");
 							array<float, 4> colorArray;
 							for (auto i = 0; i < colorArray.size(); i++) {
-								colorArray[i] = Float::parseFloat(t.nextToken());
+								colorArray[i] = Float::parse(t.nextToken());
 							}
 							specularMaterialProperties->setEmissionColor(Color4(colorArray));
 						}
@@ -1117,7 +1117,7 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 							t.tokenize(string(AVOID_NULLPTR_STRING(xmlColor->GetText())), " ");
 							array<float, 4> colorArray;
 							for (auto i = 0; i < colorArray.size(); i++) {
-								colorArray[i] = Float::parseFloat(t.nextToken());
+								colorArray[i] = Float::parse(t.nextToken());
 							}
 							specularMaterialProperties->setSpecularColor(Color4(colorArray));
 							hasSpecularColor = true;
@@ -1129,7 +1129,7 @@ Material* DAEReader::readMaterial(const string& pathName, Model* model, TiXmlEle
 					// shininess
 					for (auto xmlShininess: getChildrenByTagName(xmlTechniqueNode, "shininess"))
 					for (auto xmlFloat: getChildrenByTagName(xmlShininess, "float")) {
-						specularMaterialProperties->setShininess(Float::parseFloat(string(AVOID_NULLPTR_STRING(xmlFloat->GetText()))));
+						specularMaterialProperties->setShininess(Float::parse(string(AVOID_NULLPTR_STRING(xmlFloat->GetText()))));
 					}
 				}
 				// normal/bump texture

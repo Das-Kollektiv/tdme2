@@ -132,7 +132,7 @@ const MutableString& GUISliderVController::getValue() {
 
 void GUISliderVController::setValue(const MutableString& value) {
 	this->value.set(value);
-	this->valueFloat = Math::clamp(Float::parseFloat(this->value.getString()), 0.0f, 1.0f);
+	this->valueFloat = Math::clamp(Float::parse(this->value.getString()), 0.0f, 1.0f);
 	updateSlider();
 }
 

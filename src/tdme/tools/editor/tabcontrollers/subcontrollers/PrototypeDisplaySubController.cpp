@@ -158,7 +158,7 @@ void PrototypeDisplaySubController::applyDisplayDetails(Prototype* prototype) {
 	try {
 		prototype->setShader(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering_shader"))->getController()->getValue().getString());
 		prototype->setDistanceShader(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering_distance_shader"))->getController()->getValue().getString());
-		prototype->setDistanceShaderDistance(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering_distanceshader_distance"))->getController()->getValue().getString()));
+		prototype->setDistanceShaderDistance(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering_distanceshader_distance"))->getController()->getValue().getString()));
 		prototype->setContributesShadows(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering_contributes_shadows"))->getController()->getValue().getString() == "1");
 		prototype->setReceivesShadows(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering_receives_shadows"))->getController()->getValue().getString() == "1");
 		prototype->setRenderGroups(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering_render_groups"))->getController()->getValue().getString() == "1");
@@ -250,7 +250,7 @@ void PrototypeDisplaySubController::applyDisplayShaderDetails(Prototype* prototy
 				shaderParameters.setShaderParameter(
 					parameterName,
 					ShaderParameter(
-						Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName))->getController()->getValue().getString())
+						Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName))->getController()->getValue().getString())
 					)
 				);
 				break;
@@ -258,7 +258,7 @@ void PrototypeDisplaySubController::applyDisplayShaderDetails(Prototype* prototy
 				shaderParameters.setShaderParameter(
 					parameterName,
 					ShaderParameter(
-						Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName))->getController()->getValue().getString())
+						Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName))->getController()->getValue().getString())
 					)
 				);
 				break;
@@ -275,8 +275,8 @@ void PrototypeDisplaySubController::applyDisplayShaderDetails(Prototype* prototy
 					parameterName,
 					ShaderParameter(
 						Vector2(
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_x"))->getController()->getValue().getString()),
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_y"))->getController()->getValue().getString())
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_x"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_y"))->getController()->getValue().getString())
 						)
 					)
 				);
@@ -286,9 +286,9 @@ void PrototypeDisplaySubController::applyDisplayShaderDetails(Prototype* prototy
 					parameterName,
 					ShaderParameter(
 						Vector3(
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_x"))->getController()->getValue().getString()),
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_y"))->getController()->getValue().getString()),
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_z"))->getController()->getValue().getString())
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_x"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_y"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_z"))->getController()->getValue().getString())
 						)
 					)
 				);
@@ -298,10 +298,10 @@ void PrototypeDisplaySubController::applyDisplayShaderDetails(Prototype* prototy
 					parameterName,
 					ShaderParameter(
 						Vector4(
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_x"))->getController()->getValue().getString()),
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_y"))->getController()->getValue().getString()),
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_z"))->getController()->getValue().getString()),
-							Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_w"))->getController()->getValue().getString())
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_x"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_y"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_z"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(shaderParameterPrefix + parameterName + "_w"))->getController()->getValue().getString())
 						)
 					)
 				);

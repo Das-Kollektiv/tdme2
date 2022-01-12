@@ -137,7 +137,7 @@ void HTTPClient::parseHTTPResponseHeaders(stringstream& rawResponse, int16_t& ht
 		for (auto i = 0; i < 3 && t.hasMoreTokens(); i++) {
 			auto token = t.nextToken();
 			if (i == 1) {
-				httpStatusCode = Integer::parseInt(token);
+				httpStatusCode = Integer::parse(token);
 			}
 		}
 	}

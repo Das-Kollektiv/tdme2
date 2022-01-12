@@ -21,13 +21,13 @@ using std::to_string;
 
 using tdme::utilities::Integer;
 
-bool Integer::isInt(const string& str) {
+bool Integer::is(const string& str) {
 	auto trimmedStr = StringTools::trim(str);
 	return
 		trimmedStr.empty() == false && find_if(trimmedStr.begin() + (trimmedStr[0] == '-'?1:0), trimmedStr.end(), [](char c) { return isdigit(c) == false; }) == trimmedStr.end();
 }
 
-int Integer::parseInt(const string& str) {
+int Integer::parse(const string& str) {
 	auto trimmedStr = StringTools::trim(str);
 	if (trimmedStr.empty() == true) return 0;
 	if (trimmedStr == "-") return -0;

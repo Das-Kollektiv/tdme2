@@ -227,7 +227,7 @@ void TerrainEditorTabView::handleInputEvents()
 					if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "water.") == true) {
 						auto waterBeginIdx = selectedEntity->getId().find('.', selectedEntity->getId().find('.') + 1) + 1;
 						auto waterEndIdx = selectedEntity->getId().find('.', waterBeginIdx + 1);
-						auto waterPositionMapIdx = Integer::parseInt(StringTools::substring(selectedEntity->getId(), waterBeginIdx, waterEndIdx));
+						auto waterPositionMapIdx = Integer::parse(StringTools::substring(selectedEntity->getId(), waterBeginIdx, waterEndIdx));
 						terrainEditorTabController->deleteWater(waterPositionMapIdx);
 					} else {
 						brushingEnabled = true;

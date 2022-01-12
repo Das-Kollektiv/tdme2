@@ -596,10 +596,10 @@ GUIScreenNode_SizeConstraints& GUIScreenNode::getSizeConstraints() {
 GUIScreenNode_SizeConstraints GUIScreenNode::createSizeConstraints(const string& minWidth, const string& minHeight, const string& maxWidth, const string& maxHeight)
 {
 	GUIScreenNode_SizeConstraints constraints;
-	constraints.minWidth = minWidth.empty() == true?-1:Integer::parseInt(minWidth);
-	constraints.minHeight = minHeight.empty() == true?-1:Integer::parseInt(minHeight);
-	constraints.maxWidth = maxWidth.empty() == true?-1:Integer::parseInt(maxWidth);
-	constraints.maxHeight = maxHeight.empty() == true?-1:Integer::parseInt(maxHeight);
+	constraints.minWidth = minWidth.empty() == true?-1:Integer::parse(minWidth);
+	constraints.minHeight = minHeight.empty() == true?-1:Integer::parse(minHeight);
+	constraints.maxWidth = maxWidth.empty() == true?-1:Integer::parse(maxWidth);
+	constraints.maxHeight = maxHeight.empty() == true?-1:Integer::parse(maxHeight);
 	return constraints;
 }
 

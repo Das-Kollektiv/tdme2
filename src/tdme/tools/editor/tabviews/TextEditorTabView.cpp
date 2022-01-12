@@ -276,7 +276,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 										}
 									}
 								}
-								if (Integer::isInt(literalWord) == true || Float::isFloat(literalWord) == true) {
+								if (Integer::is(literalWord) == true || Float::is(literalWord) == true) {
 									multiLineTextNode->addTextStyle(startIdx, endIdx, literalColor);
 								} else {
 									for (auto& keyword: keywords1) {

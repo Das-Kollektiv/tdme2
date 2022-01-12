@@ -251,10 +251,10 @@ bool VKGL3CoreShaderProgram::addToShaderUniformBufferObject(VKRenderer::VKRender
 			isArray = true;
 			auto arraySizeString = StringTools::substring(uniformName, uniformName.find('[') + 1, uniformName.find(']'));
 			for (auto definitionValueIt: definitionValues) arraySizeString = StringTools::replace(arraySizeString, definitionValueIt.first, definitionValueIt.second);
-			if (Integer::isInt(arraySizeString) == false) {
+			if (Integer::is(arraySizeString) == false) {
 				Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Unknown array size: " + uniform);
 			}
-			arraySize = Integer::parseInt(arraySizeString);
+			arraySize = Integer::parse(arraySizeString);
 			uniformName = StringTools::substring(uniformName, 0, uniformName.find('['));
 			if (uniformType != "sampler2D" && uniformType != "samplerCube") uniformStructsArrays.insert(uniformName);
 		}
@@ -616,7 +616,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 							isArray = true;
 							auto arraySizeString = StringTools::substring(uniformName, uniformName.find('[') + 1, uniformName.find(']'));
 							for (auto definitionValueIt: definitionValues) arraySizeString = StringTools::replace(arraySizeString, definitionValueIt.first, definitionValueIt.second);
-							arraySize = Integer::parseInt(arraySizeString);
+							arraySize = Integer::parse(arraySizeString);
 							uniformName = StringTools::substring(uniformName, 0, uniformName.find('['));
 						}
 						for (auto i = 0; i < arraySize; i++) {
@@ -638,7 +638,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 							isArray = true;
 							auto arraySizeString = StringTools::substring(uniformName, uniformName.find('[') + 1, uniformName.find(']'));
 							for (auto definitionValueIt: definitionValues) arraySizeString = StringTools::replace(arraySizeString, definitionValueIt.first, definitionValueIt.second);
-							arraySize = Integer::parseInt(arraySizeString);
+							arraySize = Integer::parse(arraySizeString);
 							uniformName = StringTools::substring(uniformName, 0, uniformName.find('['));
 						}
 						for (auto i = 0; i < arraySize; i++) {
@@ -721,7 +721,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 						auto token = t2.nextToken();
 						if (token == "binding" && t2.hasMoreTokens() == true) {
 							auto nextToken = t2.nextToken();
-							shader.maxBindings = Math::max(Integer::parseInt(nextToken), shader.maxBindings);
+							shader.maxBindings = Math::max(Integer::parse(nextToken), shader.maxBindings);
 							break;
 						}
 					}
@@ -859,11 +859,11 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 		//
 		Properties vkProgramCache;
 		vkProgramCache.load("shader/vk", "program-" + to_string(program.id) + ".properties");
-		if (Integer::parseInt(vkProgramCache.get("program.id", "-1")) != program.id) {
+		if (Integer::parse(vkProgramCache.get("program.id", "-1")) != program.id) {
 			Console::println("VKGL3CoreShaderProgram::linkProgram(): program id mismatch");
 			return false;
 		}
-		program.layoutBindings = Integer::parseInt(vkProgramCache.get("program.layout_bindings", "-1"));
+		program.layoutBindings = Integer::parse(vkProgramCache.get("program.layout_bindings", "-1"));
 
 		// read shaders from cache
 		auto shaderIdx = 0;
@@ -886,13 +886,13 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 				// use shader caches to load shaders
 				Properties vkShaderCache;
 				vkShaderCache.load("shader/vk", shader->cacheId + ".properties");
-				if (Integer::parseInt(vkShaderCache.get("shader.id", "-1")) != shader->id) {
+				if (Integer::parse(vkShaderCache.get("shader.id", "-1")) != shader->id) {
 					Console::println("VKGL3CoreShaderProgram::linkProgram(): shader id mismatch");
 					return false;
 				}
-				shader->type = static_cast<VkShaderStageFlagBits>(Integer::parseInt(vkShaderCache.get("shader.type", "-1")));
+				shader->type = static_cast<VkShaderStageFlagBits>(Integer::parse(vkShaderCache.get("shader.type", "-1")));
 				shader->file = vkShaderCache.get("shader.file", "");
-				shader->maxBindings = Integer::parseInt(vkShaderCache.get("shader.max_bindings", "-1"));
+				shader->maxBindings = Integer::parse(vkShaderCache.get("shader.max_bindings", "-1"));
 
 				// vert->frag layout attributes
 				{
@@ -900,7 +900,7 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 					while (vkShaderCache.get("shader.attributelayout_name_" + to_string(i), "").empty() == false) {
 						auto outName = vkShaderCache.get("shader.attributelayout_name_" + to_string(i), "");
 						auto outType = vkShaderCache.get("shader.attributelayout_type_" + to_string(i), "");
-						uint8_t outLocation = Integer::parseInt(vkShaderCache.get("shader.attributelayout_location_" + to_string(i), "-1"));
+						uint8_t outLocation = Integer::parse(vkShaderCache.get("shader.attributelayout_location_" + to_string(i), "-1"));
 						shader->attributeLayouts.push_back(
 							{
 								.name = outName,
@@ -915,15 +915,15 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 
 				// ubo + uniforms
 				{
-					shader->uboSize = Integer::parseInt(vkShaderCache.get("shader.ubo_size", "-1"));
-					shader->uboBindingIdx = Integer::parseInt(vkShaderCache.get("shader.ubo_bindingidx", "-1"));
+					shader->uboSize = Integer::parse(vkShaderCache.get("shader.ubo_size", "-1"));
+					shader->uboBindingIdx = Integer::parse(vkShaderCache.get("shader.ubo_bindingidx", "-1"));
 					auto i = 0;
 					while (vkShaderCache.get("shader.uniform_name_" + to_string(i), "").empty() == false) {
 						auto name = vkShaderCache.get("shader.uniform_name_" + to_string(i), "");
 						auto newName = vkShaderCache.get("shader.uniform_newname_" + to_string(i), "");
-						auto type = static_cast<VKRenderer::shader_type::uniform_type::uniform_type_enum>(Integer::parseInt(vkShaderCache.get("shader.uniform_type_" + to_string(i), "-1")));
-						int32_t position = Integer::parseInt(vkShaderCache.get("shader.uniform_position_" + to_string(i), "-1"));
-						uint32_t size = Integer::parseInt(vkShaderCache.get("shader.uniform_size_" + to_string(i), "0"));
+						auto type = static_cast<VKRenderer::shader_type::uniform_type::uniform_type_enum>(Integer::parse(vkShaderCache.get("shader.uniform_type_" + to_string(i), "-1")));
+						int32_t position = Integer::parse(vkShaderCache.get("shader.uniform_position_" + to_string(i), "-1"));
+						uint32_t size = Integer::parse(vkShaderCache.get("shader.uniform_size_" + to_string(i), "0"));
 						shader->uniforms[name] = new VKRenderer::shader_type::uniform_type
 							{
 								.name = name,

@@ -466,7 +466,7 @@ void FlowMapTest2::initialize()
 				auto playerGroupIdx = -1;
 				{
 					auto spawnPointPlayerGroupIdxProperty = properties.getProperty("spawnpoint.playergroup");
-					if (spawnPointPlayerGroupIdxProperty != nullptr) playerGroupIdx = Integer::parseInt(spawnPointPlayerGroupIdxProperty->getValue());
+					if (spawnPointPlayerGroupIdxProperty != nullptr) playerGroupIdx = Integer::parse(spawnPointPlayerGroupIdxProperty->getValue());
 				}
 				startPosition = entity->getTransformations().getTranslation();
 				endPosition = startPosition;

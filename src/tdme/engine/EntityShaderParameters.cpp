@@ -63,10 +63,10 @@ void EntityShaderParameters::setShaderParameter(const string& parameterName, con
 			parameterValue = ShaderParameter(StringTools::toLowerCase(StringTools::trim(parameterValueString)) == "true");
 			break;
 		case ShaderParameter::TYPE_INTEGER:
-			parameterValue = ShaderParameter(Integer::parseInt(StringTools::trim(parameterValueString)));
+			parameterValue = ShaderParameter(Integer::parse(StringTools::trim(parameterValueString)));
 			break;
 		case ShaderParameter::TYPE_FLOAT:
-			parameterValue = ShaderParameter(Float::parseFloat(StringTools::trim(parameterValueString)));
+			parameterValue = ShaderParameter(Float::parse(StringTools::trim(parameterValueString)));
 			break;
 		case ShaderParameter::TYPE_VECTOR2:
 			{
@@ -74,8 +74,8 @@ void EntityShaderParameters::setShaderParameter(const string& parameterName, con
 				if (parameterValueStringArray.size() != 2) break;
 				parameterValue = ShaderParameter(
 					Vector2(
-						Float::parseFloat(StringTools::trim(parameterValueStringArray[0])),
-						Float::parseFloat(StringTools::trim(parameterValueStringArray[1]))
+						Float::parse(StringTools::trim(parameterValueStringArray[0])),
+						Float::parse(StringTools::trim(parameterValueStringArray[1]))
 					)
 				);
 			}
@@ -86,9 +86,9 @@ void EntityShaderParameters::setShaderParameter(const string& parameterName, con
 				if (parameterValueStringArray.size() != 3) break;
 				parameterValue = ShaderParameter(
 					Vector3(
-						Float::parseFloat(StringTools::trim(parameterValueStringArray[0])),
-						Float::parseFloat(StringTools::trim(parameterValueStringArray[1])),
-						Float::parseFloat(StringTools::trim(parameterValueStringArray[2]))
+						Float::parse(StringTools::trim(parameterValueStringArray[0])),
+						Float::parse(StringTools::trim(parameterValueStringArray[1])),
+						Float::parse(StringTools::trim(parameterValueStringArray[2]))
 					)
 				);
 			}

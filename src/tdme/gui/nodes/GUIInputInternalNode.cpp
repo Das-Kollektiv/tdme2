@@ -79,7 +79,7 @@ GUIInputInternalNode::GUIInputInternalNode(
 int GUIInputInternalNode::createMaxLength(const string& s)
 {
 	try {
-		auto maxLength = Integer::parseInt(s);
+		auto maxLength = Integer::parse(s);
 		return maxLength;
 	} catch (Exception& exception) {
 		Console::print(string("GUIInputInternalNode::createMaxLength(): An error occurred: "));

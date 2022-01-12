@@ -222,7 +222,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& meth
 				StringTools::endsWith(argument, "\"") == true) {
 				argumentValue.setValue(StringTools::substring(argument, 1, argument.size() - 1));
 			} else {
-				argumentValue.setValue(argument);
+				argumentValue.setImplicitTypedValue(argument);
 			}
 			argumentValues.push_back(argumentValue);
 		}
@@ -1678,220 +1678,6 @@ void MiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodInt(this));
 	}
-	{
-		//
-		class ScriptMethodGreater: public ScriptMethod {
-		private:
-			MiniScript* miniScript { nullptr };
-		public:
-			ScriptMethodGreater(MiniScript* miniScript):
-				ScriptMethod(
-					{
-						{.type = ScriptVariableType::TYPE_INTEGER, .name = "a", .optional = false },
-						{.type = ScriptVariableType::TYPE_INTEGER, .name = "b", .optional = false }
-					},
-					ScriptVariableType::TYPE_BOOLEAN),
-					miniScript(miniScript) {}
-			const string getMethodName() override {
-				return "greater";
-			}
-			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				int64_t integerValueA;
-				int64_t integerValueB;
-				if (MiniScript::getIntegerValue(argumentValues, 0, integerValueA, false) == true &&
-					MiniScript::getIntegerValue(argumentValues, 1, integerValueB, false) == true) {
-					returnValue.setValue(integerValueA > integerValueB);
-				} else {
-					Console::println("ScriptMethodGreater::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: integer expected, @ argument 1: integer expected");
-					miniScript->startErrorScript();
-					return;
-				}
-			}
-		};
-		registerMethod(new ScriptMethodGreater(this));
-	}
-	{
-		//
-		class ScriptMethodLesser: public ScriptMethod {
-		private:
-			MiniScript* miniScript { nullptr };
-		public:
-			ScriptMethodLesser(MiniScript* miniScript):
-				ScriptMethod(
-					{
-						{.type = ScriptVariableType::TYPE_INTEGER, .name = "a", .optional = false },
-						{.type = ScriptVariableType::TYPE_INTEGER, .name = "b", .optional = false }
-					},
-					ScriptVariableType::TYPE_BOOLEAN),
-					miniScript(miniScript) {}
-			const string getMethodName() override {
-				return "lesser";
-			}
-			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				int64_t integerValueA;
-				int64_t integerValueB;
-				if (MiniScript::getIntegerValue(argumentValues, 0, integerValueA, false) == true &&
-					MiniScript::getIntegerValue(argumentValues, 1, integerValueB, false) == true) {
-					returnValue.setValue(integerValueA < integerValueB);
-				} else {
-					Console::println("ScriptMethodLesser::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: integer expected, @ argument 1: integer expected");
-					miniScript->startErrorScript();
-					return;
-				}
-			}
-		};
-		registerMethod(new ScriptMethodLesser(this));
-	}
-	{
-		//
-		class ScriptMethodAdd: public ScriptMethod {
-		private:
-			MiniScript* miniScript { nullptr };
-		public:
-			ScriptMethodAdd(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_INTEGER), miniScript(miniScript) {}
-			const string getMethodName() override {
-				return "add";
-			}
-			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				int64_t result = 0LL;
-				for (auto i = 0; i < argumentValues.size(); i++) {
-					int64_t integerValue;
-					if (MiniScript::getIntegerValue(argumentValues, i, integerValue, false) == true) {
-						result+= integerValue;
-					} else {
-						Console::println("ScriptMethodAdd::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": integer expected");
-						miniScript->startErrorScript();
-						return;
-					}
-				}
-				returnValue.setValue(result);
-			}
-			bool isVariadic() override {
-				return true;
-			}
-		};
-		registerMethod(new ScriptMethodAdd(this));
-	}
-	{
-		//
-		class ScriptMethodSub: public ScriptMethod {
-		private:
-			MiniScript* miniScript { nullptr };
-		public:
-			ScriptMethodSub(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_INTEGER), miniScript(miniScript) {}
-			const string getMethodName() override {
-				return "sub";
-			}
-			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				int64_t result = 0LL;
-				{
-					int64_t integerValue;
-					if (MiniScript::getIntegerValue(argumentValues, 0, integerValue, false) == true) {
-						result = integerValue;
-					} else {
-						Console::println("ScriptMethodSub::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(0) + ": integer expected");
-						miniScript->startErrorScript();
-						return;
-					}
-				}
-				for (auto i = 1; i < argumentValues.size(); i++) {
-					int64_t integerValue;
-					if (MiniScript::getIntegerValue(argumentValues, i, integerValue, false) == true) {
-						result-= integerValue;
-					} else {
-						Console::println("ScriptMethodSub::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": integer expected");
-						miniScript->startErrorScript();
-						return;
-					}
-				}
-				returnValue.setValue(result);
-			}
-			bool isVariadic() override {
-				return true;
-			}
-		};
-		registerMethod(new ScriptMethodSub(this));
-	}
-	{
-		//
-		class ScriptMethodMul: public ScriptMethod {
-		private:
-			MiniScript* miniScript { nullptr };
-		public:
-			ScriptMethodMul(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_INTEGER), miniScript(miniScript) {}
-			const string getMethodName() override {
-				return "mul";
-			}
-			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				int64_t result = 0LL;
-				{
-					int64_t integerValue;
-					if (MiniScript::getIntegerValue(argumentValues, 0, integerValue, false) == true) {
-						result = integerValue;
-					} else {
-						Console::println("ScriptMethodMul::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(0) + ": integer expected");
-						miniScript->startErrorScript();
-						return;
-					}
-				}
-				for (auto i = 1; i < argumentValues.size(); i++) {
-					int64_t integerValue;
-					if (MiniScript::getIntegerValue(argumentValues, i, integerValue, false) == true) {
-						result*= integerValue;
-					} else {
-						Console::println("ScriptMethodMul::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": integer expected");
-						miniScript->startErrorScript();
-						return;
-					}
-				}
-				returnValue.setValue(result);
-			}
-			bool isVariadic() override {
-				return true;
-			}
-		};
-		registerMethod(new ScriptMethodMul(this));
-	}
-	{
-		//
-		class ScriptMethodDiv: public ScriptMethod {
-		private:
-			MiniScript* miniScript { nullptr };
-		public:
-			ScriptMethodDiv(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_INTEGER), miniScript(miniScript) {}
-			const string getMethodName() override {
-				return "div";
-			}
-			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				int64_t result = 0LL;
-				{
-					int64_t integerValue;
-					if (MiniScript::getIntegerValue(argumentValues, 0, integerValue, false) == true) {
-						result = integerValue;
-					} else {
-						Console::println("ScriptMethodDiv::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(0) + ": integer expected");
-						miniScript->startErrorScript();
-						return;
-					}
-				}
-				for (auto i = 1; i < argumentValues.size(); i++) {
-					int64_t integerValue;
-					if (MiniScript::getIntegerValue(argumentValues, i, integerValue, false) == true) {
-						result/= integerValue;
-					} else {
-						Console::println("ScriptMethodDiv::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": integer expected");
-						miniScript->startErrorScript();
-						return;
-					}
-				}
-				returnValue.setValue(result);
-			}
-			bool isVariadic() override {
-				return true;
-			}
-		};
-		registerMethod(new ScriptMethodDiv(this));
-	}
 	// float methods
 	{
 		//
@@ -1923,13 +1709,14 @@ void MiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodFloat(this));
 	}
+	//
 	{
 		//
-		class ScriptMethodFGreater: public ScriptMethod {
+		class ScriptMethodGreater: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodFGreater(MiniScript* miniScript):
+			ScriptMethodGreater(MiniScript* miniScript):
 				ScriptMethod(
 					{
 						{.type = ScriptVariableType::TYPE_FLOAT, .name = "a", .optional = false },
@@ -1938,7 +1725,7 @@ void MiniScript::registerMethods() {
 					ScriptVariableType::TYPE_BOOLEAN),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "fgreater";
+				return "greater";
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				float floatValueA;
@@ -1956,15 +1743,15 @@ void MiniScript::registerMethods() {
 				return OPERATOR_GREATER;
 			}
 		};
-		registerMethod(new ScriptMethodFGreater(this));
+		registerMethod(new ScriptMethodGreater(this));
 	}
 	{
 		//
-		class ScriptMethodFGreaterEquals: public ScriptMethod {
+		class ScriptMethodGreaterEquals: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodFGreaterEquals(MiniScript* miniScript):
+			ScriptMethodGreaterEquals(MiniScript* miniScript):
 				ScriptMethod(
 					{
 						{.type = ScriptVariableType::TYPE_FLOAT, .name = "a", .optional = false },
@@ -1973,7 +1760,7 @@ void MiniScript::registerMethods() {
 					ScriptVariableType::TYPE_BOOLEAN),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "fgreaterequals";
+				return "greaterequals";
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				float floatValueA;
@@ -1991,15 +1778,15 @@ void MiniScript::registerMethods() {
 				return OPERATOR_GREATEREQUALS;
 			}
 		};
-		registerMethod(new ScriptMethodFGreaterEquals(this));
+		registerMethod(new ScriptMethodGreaterEquals(this));
 	}
 	{
 		//
-		class ScriptMethodFLesser: public ScriptMethod {
+		class ScriptMethodLesser: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodFLesser(MiniScript* miniScript):
+			ScriptMethodLesser(MiniScript* miniScript):
 				ScriptMethod(
 					{
 						{.type = ScriptVariableType::TYPE_FLOAT, .name = "a", .optional = false },
@@ -2008,7 +1795,7 @@ void MiniScript::registerMethods() {
 					ScriptVariableType::TYPE_BOOLEAN),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "flesser";
+				return "lesser";
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				float floatValueA;
@@ -2026,15 +1813,15 @@ void MiniScript::registerMethods() {
 				return OPERATOR_LESSER;
 			}
 		};
-		registerMethod(new ScriptMethodFLesser(this));
+		registerMethod(new ScriptMethodLesser(this));
 	}
 	{
 		//
-		class ScriptMethodFLesserEquals: public ScriptMethod {
+		class ScriptMethodLesserEquals: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodFLesserEquals(MiniScript* miniScript):
+			ScriptMethodLesserEquals(MiniScript* miniScript):
 				ScriptMethod(
 					{
 						{.type = ScriptVariableType::TYPE_FLOAT, .name = "a", .optional = false },
@@ -2043,7 +1830,7 @@ void MiniScript::registerMethods() {
 					ScriptVariableType::TYPE_BOOLEAN),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "flesserequals";
+				return "lesserequals";
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				float floatValueA;
@@ -2061,169 +1848,442 @@ void MiniScript::registerMethods() {
 				return OPERATOR_LESSEREQUALS;
 			}
 		};
-		registerMethod(new ScriptMethodFLesserEquals(this));
+		registerMethod(new ScriptMethodLesserEquals(this));
 	}
 	{
 		//
-		class ScriptMethodFAdd: public ScriptMethod {
+		class ScriptMethodAdd: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodFAdd(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
+			ScriptMethodAdd(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_VOID), miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "fadd";
+				return "add";
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				float result = 0.0f;
-				for (auto i = 0; i < argumentValues.size(); i++) {
-					float floatValue;
-					if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
-						result+= floatValue;
-					} else {
-						Console::println("ScriptMethodFAdd::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
-						miniScript->startErrorScript();
-						return;
+				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_STRING) == true) {
+					string result;
+					for (auto i = 0; i < argumentValues.size(); i++) {
+						string stringValue;
+						if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
+							result+= stringValue;
+						} else {
+							Console::println("ScriptMethodAdd::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": string expected");
+							miniScript->startErrorScript();
+							return;
+						}
 					}
+					returnValue.setValue(result);
+				} else
+				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
+					Vector3 result;
+					for (auto i = 0; i < argumentValues.size(); i++) {
+						if (argumentValues[i].getType() == MiniScript::TYPE_VECTOR3) {
+							Vector3 vec3Value;
+							if (MiniScript::getVector3Value(argumentValues, i, vec3Value, false) == true) {
+								result+= vec3Value;
+							} else {
+								Console::println("ScriptMethodAdd::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
+								miniScript->startErrorScript();
+								return;
+							}
+						} else {
+							float floatValue;
+							if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+								result+= Vector3(floatValue, floatValue, floatValue);
+							} else {
+								Console::println("ScriptMethodAdd::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+								miniScript->startErrorScript();
+								return;
+							}
+						}
+					}
+					returnValue.setValue(result);
+				} else
+				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_FLOAT) == true) {
+					float result = 0.0f;
+					for (auto i = 0; i < argumentValues.size(); i++) {
+						float floatValue;
+						if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+							result+= floatValue;
+						} else {
+							Console::println("ScriptMethodAdd::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+							miniScript->startErrorScript();
+							return;
+						}
+					}
+					returnValue.setValue(result);
+				} else {
+					int64_t result = 0.0f;
+					for (auto i = 0; i < argumentValues.size(); i++) {
+						int64_t intValue;
+						if (MiniScript::getIntegerValue(argumentValues, i, intValue, false) == true) {
+							result+= intValue;
+						} else {
+							Console::println("ScriptMethodAdd::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": integer expected");
+							miniScript->startErrorScript();
+							return;
+						}
+					}
+					returnValue.setValue(result);
 				}
-				returnValue.setValue(result);
 			}
 			bool isVariadic() override {
+				return true;
+			}
+			bool isMixedReturnValue() override {
 				return true;
 			}
 			ScriptOperator getOperator() override {
 				return OPERATOR_ADDITION;
 			}
 		};
-		registerMethod(new ScriptMethodFAdd(this));
+		registerMethod(new ScriptMethodAdd(this));
 	}
 	{
 		//
-		class ScriptMethodFSub: public ScriptMethod {
+		class ScriptMethodSub: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodFSub(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
+			ScriptMethodSub(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_VOID), miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "fsub";
+				return "sub";
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				float result = 0.0f;
-				{
-					float floatValue;
-					if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
-						result = floatValue;
+				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
+					Vector3 result;
+					if (argumentValues[0].getType() == MiniScript::TYPE_VECTOR3) {
+						Vector3 vec3Value;
+						if (MiniScript::getVector3Value(argumentValues, 0, vec3Value, false) == true) {
+							result = vec3Value;
+						} else {
+							Console::println("ScriptMethodSub::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(0) + ": vector3 expected");
+							miniScript->startErrorScript();
+							return;
+						}
 					} else {
-						Console::println("ScriptMethodFSub::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
-						miniScript->startErrorScript();
-						return;
+						float floatValue;
+						if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
+							result = Vector3(floatValue, floatValue, floatValue);
+						} else {
+							Console::println("ScriptMethodSub::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
+							miniScript->startErrorScript();
+							return;
+						}
 					}
-				}
-				for (auto i = 1; i < argumentValues.size(); i++) {
-					float floatValue;
-					if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
-						result-= floatValue;
-					} else {
-						Console::println("ScriptMethodFSub::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
-						miniScript->startErrorScript();
-						return;
+					for (auto i = 1; i < argumentValues.size(); i++) {
+						if (argumentValues[i].getType() == MiniScript::TYPE_VECTOR3) {
+							Vector3 vec3Value;
+							if (MiniScript::getVector3Value(argumentValues, i, vec3Value, false) == true) {
+								result-= vec3Value;
+							} else {
+								Console::println("ScriptMethodSub::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
+								miniScript->startErrorScript();
+								return;
+							}
+						} else {
+							float floatValue;
+							if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+								result-= Vector3(floatValue, floatValue, floatValue);
+							} else {
+								Console::println("ScriptMethodSub::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+								miniScript->startErrorScript();
+								return;
+							}
+						}
 					}
+					returnValue.setValue(result);
+				} else
+				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_FLOAT) == true) {
+					float result = 0.0f;
+					{
+						float floatValue;
+						if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
+							result = floatValue;
+						} else {
+							Console::println("ScriptMethodSub::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
+							miniScript->startErrorScript();
+							return;
+						}
+					}
+					for (auto i = 1; i < argumentValues.size(); i++) {
+						float floatValue;
+						if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+							result-= floatValue;
+						} else {
+							Console::println("ScriptMethodSub::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+							miniScript->startErrorScript();
+							return;
+						}
+					}
+					returnValue.setValue(result);
+				} else {
+					int64_t result = 0LL;
+					{
+						int64_t intValue;
+						if (MiniScript::getIntegerValue(argumentValues, 0, intValue, false) == true) {
+							result = intValue;
+						} else {
+							Console::println("ScriptMethodSub::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(0) + ": integer expected");
+							miniScript->startErrorScript();
+							return;
+						}
+					}
+					for (auto i = 1; i < argumentValues.size(); i++) {
+						int64_t intValue;
+						if (MiniScript::getIntegerValue(argumentValues, i, intValue, false) == true) {
+							result-= intValue;
+						} else {
+							Console::println("ScriptMethodSub::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": integer expected");
+							miniScript->startErrorScript();
+							return;
+						}
+					}
+					returnValue.setValue(result);
 				}
-				returnValue.setValue(result);
 			}
 			bool isVariadic() override {
+				return true;
+			}
+			bool isMixedReturnValue() override {
 				return true;
 			}
 			ScriptOperator getOperator() override {
 				return OPERATOR_SUBTRACTION;
 			}
 		};
-		registerMethod(new ScriptMethodFSub(this));
+		registerMethod(new ScriptMethodSub(this));
 	}
 	{
 		//
-		class ScriptMethodFMul: public ScriptMethod {
+		class ScriptMethodMul: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodFMul(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
+			ScriptMethodMul(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_VOID), miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "fmul";
+				return "mul";
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				float result = 0.0f;
-				{
-					float floatValue;
-					if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
-						result = floatValue;
+				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
+					Vector3 result;
+					if (argumentValues[0].getType() == MiniScript::TYPE_VECTOR3) {
+						Vector3 vec3Value;
+						if (MiniScript::getVector3Value(argumentValues, 0, vec3Value, false) == true) {
+							result = vec3Value;
+						} else {
+							Console::println("ScriptMethodMul::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(0) + ": vector3 expected");
+							miniScript->startErrorScript();
+							return;
+						}
 					} else {
-						Console::println("ScriptMethodFMul::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
-						miniScript->startErrorScript();
-						return;
+						float floatValue;
+						if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
+							result = Vector3(floatValue, floatValue, floatValue);
+						} else {
+							Console::println("ScriptMethodMul::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
+							miniScript->startErrorScript();
+							return;
+						}
 					}
-				}
-				for (auto i = 1; i < argumentValues.size(); i++) {
-					float floatValue;
-					if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
-						result*= floatValue;
-					} else {
-						Console::println("ScriptMethodFMul::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
-						miniScript->startErrorScript();
-						return;
+					for (auto i = 1; i < argumentValues.size(); i++) {
+						if (argumentValues[i].getType() == MiniScript::TYPE_VECTOR3) {
+							Vector3 vec3Value;
+							if (MiniScript::getVector3Value(argumentValues, i, vec3Value, false) == true) {
+								result*= vec3Value;
+							} else {
+								Console::println("ScriptMethodMul::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
+								miniScript->startErrorScript();
+								return;
+							}
+						} else {
+							float floatValue;
+							if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+								result*= Vector3(floatValue, floatValue, floatValue);
+							} else {
+								Console::println("ScriptMethodMul::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+								miniScript->startErrorScript();
+								return;
+							}
+						}
 					}
+					returnValue.setValue(result);
+				} else
+				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_FLOAT) == true) {
+					float result = 0.0f;
+					{
+						float floatValue;
+						if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
+							result = floatValue;
+						} else {
+							Console::println("ScriptMethodMul::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
+							miniScript->startErrorScript();
+							return;
+						}
+					}
+					for (auto i = 1; i < argumentValues.size(); i++) {
+						float floatValue;
+						if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+							result*= floatValue;
+						} else {
+							Console::println("ScriptMethodMul::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+							miniScript->startErrorScript();
+							return;
+						}
+					}
+					returnValue.setValue(result);
+				} else {
+					int64_t result = 0LL;
+					{
+						int64_t intValue;
+						if (MiniScript::getIntegerValue(argumentValues, 0, intValue, false) == true) {
+							result = intValue;
+						} else {
+							Console::println("ScriptMethodMul::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(0) + ": integer expected");
+							miniScript->startErrorScript();
+							return;
+						}
+					}
+					for (auto i = 1; i < argumentValues.size(); i++) {
+						int64_t intValue;
+						if (MiniScript::getIntegerValue(argumentValues, i, intValue, false) == true) {
+							result*= intValue;
+						} else {
+							Console::println("ScriptMethodMul::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": integer expected");
+							miniScript->startErrorScript();
+							return;
+						}
+					}
+					returnValue.setValue(result);
 				}
-				returnValue.setValue(result);
 			}
 			bool isVariadic() override {
+				return true;
+			}
+			bool isMixedReturnValue() override {
 				return true;
 			}
 			ScriptOperator getOperator() override {
 				return OPERATOR_MULTIPLICATION;
 			}
 		};
-		registerMethod(new ScriptMethodFMul(this));
+		registerMethod(new ScriptMethodMul(this));
 	}
 	{
 		//
-		class ScriptMethodFDiv: public ScriptMethod {
+		class ScriptMethodDiv: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodFDiv(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
+			ScriptMethodDiv(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_VOID), miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "fdiv";
+				return "div";
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				float result = 0.0f;
-				{
-					float floatValue;
-					if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
-						result = floatValue;
+				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
+					Vector3 result;
+					if (argumentValues[0].getType() == MiniScript::TYPE_VECTOR3) {
+						Vector3 vec3Value;
+						if (MiniScript::getVector3Value(argumentValues, 0, vec3Value, false) == true) {
+							result = vec3Value;
+						} else {
+							Console::println("ScriptMethodDiv::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(0) + ": vector3 expected");
+							miniScript->startErrorScript();
+							return;
+						}
 					} else {
-						Console::println("ScriptMethodFDiv::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
-						miniScript->startErrorScript();
-						return;
+						float floatValue;
+						if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
+							result = Vector3(floatValue, floatValue, floatValue);
+						} else {
+							Console::println("ScriptMethodDiv::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
+							miniScript->startErrorScript();
+							return;
+						}
 					}
-				}
-				for (auto i = 1; i < argumentValues.size(); i++) {
-					float floatValue;
-					if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
-						result/= floatValue;
-					} else {
-						Console::println("ScriptMethodFDiv::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
-						miniScript->startErrorScript();
-						return;
+					for (auto i = 1; i < argumentValues.size(); i++) {
+						if (argumentValues[i].getType() == MiniScript::TYPE_VECTOR3) {
+							Vector3 vec3Value;
+							if (MiniScript::getVector3Value(argumentValues, i, vec3Value, false) == true) {
+								result/= vec3Value;
+							} else {
+								Console::println("ScriptMethodDiv::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
+								miniScript->startErrorScript();
+								return;
+							}
+						} else {
+							float floatValue;
+							if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+								result/= Vector3(floatValue, floatValue, floatValue);
+							} else {
+								Console::println("ScriptMethodDiv::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+								miniScript->startErrorScript();
+								return;
+							}
+						}
 					}
+					returnValue.setValue(result);
+				} else
+				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_FLOAT) == true) {
+					float result = 0.0f;
+					{
+						float floatValue;
+						if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
+							result = floatValue;
+						} else {
+							Console::println("ScriptMethodDiv::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
+							miniScript->startErrorScript();
+							return;
+						}
+					}
+					for (auto i = 1; i < argumentValues.size(); i++) {
+						float floatValue;
+						if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+							result/= floatValue;
+						} else {
+							Console::println("ScriptMethodDiv::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+							miniScript->startErrorScript();
+							return;
+						}
+					}
+					returnValue.setValue(result);
+				} else {
+					int64_t result = 0LL;
+					{
+						int64_t intValue;
+						if (MiniScript::getIntegerValue(argumentValues, 0, intValue, false) == true) {
+							result = intValue;
+						} else {
+							Console::println("ScriptMethodDiv::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(0) + ": integer expected");
+							miniScript->startErrorScript();
+							return;
+						}
+					}
+					for (auto i = 1; i < argumentValues.size(); i++) {
+						int64_t intValue;
+						if (MiniScript::getIntegerValue(argumentValues, i, intValue, false) == true) {
+							result/= intValue;
+						} else {
+							Console::println("ScriptMethodDiv::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": integer expected");
+							miniScript->startErrorScript();
+							return;
+						}
+					}
+					returnValue.setValue(result);
 				}
-				returnValue.setValue(result);
-			}
-			ScriptOperator getOperator() override {
-				return OPERATOR_DIVISION;
 			}
 			bool isVariadic() override {
 				return true;
 			}
+			bool isMixedReturnValue() override {
+				return true;
+			}
+			ScriptOperator getOperator() override {
+				return OPERATOR_DIVISION;
+			}
 		};
-		registerMethod(new ScriptMethodFDiv(this));
+		registerMethod(new ScriptMethodDiv(this));
 	}
 	// vector3 methods
 	{
@@ -2317,164 +2377,6 @@ void MiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodVec3ComputeLengthSquared(this));
-	}
-	{
-		//
-		class ScriptMethodVec3Add: public ScriptMethod {
-		private:
-			MiniScript* miniScript { nullptr };
-		public:
-			ScriptMethodVec3Add(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_VECTOR3), miniScript(miniScript) {}
-			const string getMethodName() override {
-				return "vec3.add";
-			}
-			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				Vector3 result;
-				for (auto i = 0; i < argumentValues.size(); i++) {
-					Vector3 vector3Value;
-					if (MiniScript::getVector3Value(argumentValues, i, vector3Value, false) == true) {
-						result+= vector3Value;
-					} else {
-						Console::println("ScriptMethodVec3Add::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
-						miniScript->startErrorScript();
-						return;
-					}
-				}
-				returnValue.setValue(result);
-			}
-			bool isVariadic() override {
-				return true;
-			}
-		};
-		registerMethod(new ScriptMethodVec3Add(this));
-	}
-	{
-		//
-		class ScriptMethodVec3Sub: public ScriptMethod {
-		private:
-			MiniScript* miniScript { nullptr };
-		public:
-			ScriptMethodVec3Sub(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_VECTOR3), miniScript(miniScript) {}
-			const string getMethodName() override {
-				return "vec3.sub";
-			}
-			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				Vector3 result;
-				{
-					Vector3 vector3Value;
-					if (MiniScript::getVector3Value(argumentValues, 0, vector3Value, false) == true) {
-						result = vector3Value;
-					} else {
-						Console::println("ScriptMethodVec3Sub::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(0) + ": vector3 expected");
-						miniScript->startErrorScript();
-						return;
-					}
-				}
-				for (auto i = 1; i < argumentValues.size(); i++) {
-					Vector3 vector3Value;
-					if (MiniScript::getVector3Value(argumentValues, i, vector3Value, false) == true) {
-						result-= vector3Value;
-					} else {
-						Console::println("ScriptMethodVec3Sub::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
-						miniScript->startErrorScript();
-						return;
-					}
-				}
-				returnValue.setValue(result);
-			}
-			bool isVariadic() override {
-				return true;
-			}
-		};
-		registerMethod(new ScriptMethodVec3Sub(this));
-	}
-	{
-		//
-		class ScriptMethodVec3Mul: public ScriptMethod {
-		private:
-			MiniScript* miniScript { nullptr };
-		public:
-			ScriptMethodVec3Mul(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_VECTOR3), miniScript(miniScript) {}
-			const string getMethodName() override {
-				return "vec3.mul";
-			}
-			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				Vector3 result;
-				{
-					Vector3 vector3Value;
-					if (MiniScript::getVector3Value(argumentValues, 0, vector3Value, false) == true) {
-						result = vector3Value;
-					} else {
-						Console::println("ScriptMethodVec3Mul::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(0) + ": vector3 expected");
-						miniScript->startErrorScript();
-						return;
-					}
-				}
-				for (auto i = 1; i < argumentValues.size(); i++) {
-					float floatValue;
-					Vector3 vector3Value;
-					if (MiniScript::getVector3Value(argumentValues, i, vector3Value, false) == true) {
-						result*= vector3Value;
-					} else
-					if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
-						result*= floatValue;
-					} else {
-						Console::println("ScriptMethodVec3Mul::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 or float expected");
-						miniScript->startErrorScript();
-						return;
-					}
-				}
-				returnValue.setValue(result);
-			}
-			bool isVariadic() override {
-				return true;
-			}
-		};
-		registerMethod(new ScriptMethodVec3Mul(this));
-	}
-	{
-		//
-		class ScriptMethodVec3Div: public ScriptMethod {
-		private:
-			MiniScript* miniScript { nullptr };
-		public:
-			ScriptMethodVec3Div(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_VECTOR3), miniScript(miniScript) {}
-			const string getMethodName() override {
-				return "vec3.div";
-			}
-			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				Vector3 result;
-				{
-					Vector3 vector3Value;
-					if (MiniScript::getVector3Value(argumentValues, 0, vector3Value, false) == true) {
-						result = vector3Value;
-					} else {
-						Console::println("ScriptMethodVec3Div::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(0) + ": vector3 expected");
-						miniScript->startErrorScript();
-						return;
-					}
-				}
-				for (auto i = 1; i < argumentValues.size(); i++) {
-					float floatValue;
-					Vector3 vector3Value;
-					if (MiniScript::getVector3Value(argumentValues, i, vector3Value, false) == true) {
-						result/= vector3Value;
-					} else
-					if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
-						result/= floatValue;
-					} else {
-						Console::println("ScriptMethodVec3Div::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 or float expected");
-						miniScript->startErrorScript();
-						return;
-					}
-				}
-				returnValue.setValue(result);
-			}
-			bool isVariadic() override {
-				return true;
-			}
-		};
-		registerMethod(new ScriptMethodVec3Div(this));
 	}
 	{
 		//

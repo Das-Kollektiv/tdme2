@@ -309,7 +309,7 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 				auto& jWaterPositionMapData = jWaterPositionMap["w"];
 				terrain->setWaterPositionMapHeight(waterPositionMapIdx, jWaterPositionMap["h"].GetFloat());
 				for (auto jWaterPositionMapDataIt = jWaterPositionMapData.MemberBegin(); jWaterPositionMapDataIt != jWaterPositionMapData.MemberEnd(); ++jWaterPositionMapDataIt) {
-					auto z = Integer::parseInt(jWaterPositionMapDataIt->name.GetString());
+					auto z = Integer::parse(jWaterPositionMapDataIt->name.GetString());
 					auto xArray = jWaterPositionMapDataIt->value.GetArray();
 					for (auto j = 0; j < xArray.Size(); j++) {
 						auto x = xArray[j].GetFloat();

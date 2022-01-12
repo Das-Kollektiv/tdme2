@@ -193,14 +193,14 @@ void PrototypePhysicsSubController::applyPhysicsDetails(Prototype* prototype) {
 		if (bodyType == "collisionbody") physics->setType(PrototypePhysics_BodyType::COLLISION_BODY); else
 		if (bodyType == "dynamicrigidbody") physics->setType(PrototypePhysics_BodyType::DYNAMIC_RIGIDBODY); else
 		if (bodyType == "staticrigidbody") physics->setType(PrototypePhysics_BodyType::STATIC_RIGIDBODY);
-		physics->setMass(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_mass"))->getController()->getValue().getString()));
-		physics->setRestitution(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_bounciness"))->getController()->getValue().getString()));
-		physics->setFriction(Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_friction"))->getController()->getValue().getString()));
+		physics->setMass(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_mass"))->getController()->getValue().getString()));
+		physics->setRestitution(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_bounciness"))->getController()->getValue().getString()));
+		physics->setFriction(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_friction"))->getController()->getValue().getString()));
 		physics->setInertiaTensor(
 			Vector3(
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_inertiatensor_x"))->getController()->getValue().getString()),
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_inertiatensor_y"))->getController()->getValue().getString()),
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_inertiatensor_z"))->getController()->getValue().getString())
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_inertiatensor_x"))->getController()->getValue().getString()),
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_inertiatensor_y"))->getController()->getValue().getString()),
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("physics_dynamic_inertiatensor_z"))->getController()->getValue().getString())
 			)
 		);
 	} catch (Exception& exception) {
@@ -211,7 +211,7 @@ void PrototypePhysicsSubController::applyPhysicsDetails(Prototype* prototype) {
 
 void PrototypePhysicsSubController::updateDetails(Prototype* prototype, const string& outlinerNode) {
 	if (StringTools::startsWith(outlinerNode, "physics.boundingvolumes.") == true) {
-		boundingVolumeIdxActivated = Integer::parseInt(StringTools::substring(outlinerNode, string("physics.boundingvolumes.").size(), outlinerNode.size()));
+		boundingVolumeIdxActivated = Integer::parse(StringTools::substring(outlinerNode, string("physics.boundingvolumes.").size(), outlinerNode.size()));
 		setBoundingVolumeDetails(prototype, boundingVolumeIdxActivated);
 		view->setDisplayBoundingVolumeIdx(boundingVolumeIdxActivated);
 		view->startEditingBoundingVolume(prototype);
@@ -462,11 +462,11 @@ void PrototypePhysicsSubController::applyBoundingVolumeSphereDetails(Prototype* 
 			prototype,
 			idx,
 			Vector3(
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_sphere_x"))->getController()->getValue().getString()),
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_sphere_y"))->getController()->getValue().getString()),
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_sphere_z"))->getController()->getValue().getString())
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_sphere_x"))->getController()->getValue().getString()),
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_sphere_y"))->getController()->getValue().getString()),
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_sphere_z"))->getController()->getValue().getString())
 			),
-			Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_sphere_radius"))->getController()->getValue().getString())
+			Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_sphere_radius"))->getController()->getValue().getString())
 		);
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -481,16 +481,16 @@ void PrototypePhysicsSubController::applyBoundingVolumeCapsuleDetails(Prototype*
 			prototype,
 			idx,
 			Vector3(
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_a_x"))->getController()->getValue().getString()),
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_a_y"))->getController()->getValue().getString()),
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_a_z"))->getController()->getValue().getString())
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_a_x"))->getController()->getValue().getString()),
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_a_y"))->getController()->getValue().getString()),
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_a_z"))->getController()->getValue().getString())
 			),
 			Vector3(
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_b_x"))->getController()->getValue().getString()),
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_b_y"))->getController()->getValue().getString()),
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_b_z"))->getController()->getValue().getString())
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_b_x"))->getController()->getValue().getString()),
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_b_y"))->getController()->getValue().getString()),
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_b_z"))->getController()->getValue().getString())
 			),
-			Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_radius"))->getController()->getValue().getString())
+			Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_capsule_radius"))->getController()->getValue().getString())
 		);
 	} catch (Exception& exception) {
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -502,9 +502,9 @@ void PrototypePhysicsSubController::applyBoundingVolumeObbDetails(Prototype* pro
 {
 	try {
 		Transformations rotations;
-		rotations.addRotation(OrientedBoundingBox::AABB_AXIS_Z, Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_rotation_x"))->getController()->getValue().getString()));
-		rotations.addRotation(OrientedBoundingBox::AABB_AXIS_Y, Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_rotation_y"))->getController()->getValue().getString()));
-		rotations.addRotation(OrientedBoundingBox::AABB_AXIS_X, Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_rotation_z"))->getController()->getValue().getString()));
+		rotations.addRotation(OrientedBoundingBox::AABB_AXIS_Z, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_rotation_x"))->getController()->getValue().getString()));
+		rotations.addRotation(OrientedBoundingBox::AABB_AXIS_Y, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_rotation_y"))->getController()->getValue().getString()));
+		rotations.addRotation(OrientedBoundingBox::AABB_AXIS_X, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_rotation_z"))->getController()->getValue().getString()));
 		rotations.update();
 		Vector3 xAxis;
 		Vector3 yAxis;
@@ -514,17 +514,17 @@ void PrototypePhysicsSubController::applyBoundingVolumeObbDetails(Prototype* pro
 			prototype,
 			idx,
 			Vector3(
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_x"))->getController()->getValue().getString()),
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_y"))->getController()->getValue().getString()),
-				Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_z"))->getController()->getValue().getString())
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_x"))->getController()->getValue().getString()),
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_y"))->getController()->getValue().getString()),
+				Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_z"))->getController()->getValue().getString())
 			),
 			xAxis,
 			yAxis,
 			zAxis,
 			Vector3(
-				0.5f * Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_width"))->getController()->getValue().getString()),
-				0.5f * Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_height"))->getController()->getValue().getString()),
-				0.5f * Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_depth"))->getController()->getValue().getString())
+				0.5f * Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_width"))->getController()->getValue().getString()),
+				0.5f * Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_height"))->getController()->getValue().getString()),
+				0.5f * Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_depth"))->getController()->getValue().getString())
 			)
 		);
 	} catch (Exception& exception) {
@@ -570,7 +570,7 @@ void PrototypePhysicsSubController::onValueChanged(GUIElementNode* node, Prototy
 		}
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 		if (StringTools::startsWith(outlinerNode, "physics.boundingvolumes.") == true) {
-			auto boundingVolumeIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("physics.boundingvolumes.").size(), outlinerNode.size()));
+			auto boundingVolumeIdx = Integer::parse(StringTools::substring(outlinerNode, string("physics.boundingvolumes.").size(), outlinerNode.size()));
 			if (node->getId() == "boundingvolume_type") {
 				auto boundingVolumeType = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_type"))->getController()->getValue().getString();
 				if (boundingVolumeType == "sphere") applyBoundingVolumeSphereDetails(prototype, boundingVolumeIdx); else
@@ -762,15 +762,15 @@ void PrototypePhysicsSubController::onActionPerformed(GUIActionListenerType type
 						try {
 							auto screenNode = prototypePhysicsSubController->getScreenNode();
 							VHACD::IVHACD::Parameters parameters;
-							parameters.m_resolution = Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generateconvexmesh_resolution"))->getController()->getValue().getString());
-							parameters.m_concavity = Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generateconvexmesh_concavity"))->getController()->getValue().getString());
-							parameters.m_planeDownsampling = Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generateconvexmesh_planedownsampling"))->getController()->getValue().getString());
-							parameters.m_convexhullDownsampling = Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generateconvexmesh_convexhullownsampling"))->getController()->getValue().getString());
-							parameters.m_alpha = Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generateconvexmesh_alpha"))->getController()->getValue().getString());
-							parameters.m_beta = Float::parseFloat(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generateconvexmesh_beta"))->getController()->getValue().getString());
-							parameters.m_pca = Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generateconvexmesh_pca"))->getController()->getValue().getString());
-							parameters.m_maxNumVerticesPerCH = Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generateconvexmesh_maxverticesperch"))->getController()->getValue().getString());
-							parameters.m_minVolumePerCH = Integer::parseInt(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generateconvexmesh_minvolumeperch"))->getController()->getValue().getString());
+							parameters.m_resolution = Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generateconvexmesh_resolution"))->getController()->getValue().getString());
+							parameters.m_concavity = Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generateconvexmesh_concavity"))->getController()->getValue().getString());
+							parameters.m_planeDownsampling = Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generateconvexmesh_planedownsampling"))->getController()->getValue().getString());
+							parameters.m_convexhullDownsampling = Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generateconvexmesh_convexhullownsampling"))->getController()->getValue().getString());
+							parameters.m_alpha = Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generateconvexmesh_alpha"))->getController()->getValue().getString());
+							parameters.m_beta = Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generateconvexmesh_beta"))->getController()->getValue().getString());
+							parameters.m_pca = Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generateconvexmesh_pca"))->getController()->getValue().getString());
+							parameters.m_maxNumVerticesPerCH = Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generateconvexmesh_maxverticesperch"))->getController()->getValue().getString());
+							parameters.m_minVolumePerCH = Integer::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("generateconvexmesh_minvolumeperch"))->getController()->getValue().getString());
 
 							vector<vector<uint8_t>> convexMeshTMsData;
 							if (GenerateConvexMeshes::generateConvexMeshes(
@@ -845,7 +845,7 @@ void PrototypePhysicsSubController::onContextMenuRequested(GUIElementNode* node,
 				void performAction() override {
 					auto outlinerNode = prototypePhysicsSubController->editorView->getScreenController()->getOutlinerSelection();
 					if (StringTools::startsWith(outlinerNode, "physics.boundingvolumes.") == true) {
-						auto boundingVolumeIdx = Integer::parseInt(StringTools::substring(outlinerNode, string("physics.boundingvolumes.").size(), outlinerNode.size()));
+						auto boundingVolumeIdx = Integer::parse(StringTools::substring(outlinerNode, string("physics.boundingvolumes.").size(), outlinerNode.size()));
 						prototypePhysicsSubController->view->clearModelBoundingVolume(-1);
 						for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
 							prototypePhysicsSubController->view->clearModelBoundingVolume(i);

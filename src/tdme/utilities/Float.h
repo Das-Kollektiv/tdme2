@@ -29,14 +29,14 @@ public:
 	 * @param str string
 	 * @return given string is float
 	 */
-	static bool isFloat(const string& str);
+	static bool is(const string& str);
 
 	/**
 	 * Parse float
 	 * @param str string
 	 * @return float
 	 */
-	static float parseFloat(const string& str);
+	static float parse(const string& str);
 
 	/**
 	 * Check if float is not a number

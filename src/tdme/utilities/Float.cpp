@@ -17,7 +17,7 @@ using tdme::utilities::Float;
 
 using tdme::utilities::StringTools;
 
-bool Float::isFloat(const string& str) {
+bool Float::is(const string& str) {
 	auto trimmedStr = StringTools::trim(str);
 	int dotCount = 0;
 	return
@@ -25,7 +25,7 @@ bool Float::isFloat(const string& str) {
 		find_if(trimmedStr.begin() + (trimmedStr[0] == '-'?1:0), trimmedStr.end(), [&dotCount](char c) { return isdigit(c) == false && (c != '.' || ++dotCount > 1); }) == trimmedStr.end();
 }
 
-float Float::parseFloat(const string& str) {
+float Float::parse(const string& str) {
 	auto trimmedStr = StringTools::trim(str);
 	if (trimmedStr.empty() == true) return 0.0f;
 	if (trimmedStr == "-") return -0.0f;
