@@ -811,6 +811,11 @@ bool MiniScript::getNextStatementOperator(const string& statement, MiniScript::S
 					if (operatorString.size() > 0) operatorCandidate+= statement[i];
 					if (operatorString.size() > 1 && i + 1 < statement.size()) operatorCandidate+= statement[i + 1];
 					if (operatorString == operatorCandidate && (nextOperator.idx == -1 || priorizedOperator > nextOperator.scriptOperator)) {
+						if (priorizedOperator == OPERATOR_SUBTRACTION) {
+							auto leftArgumentLeft = 0;
+							auto leftArgument = findLeftArgument(statement, i - 1, leftArgumentLeft);
+							if (leftArgument.length() == 0) continue;
+						}
 						nextOperator.idx = i;
 						nextOperator.scriptOperator = priorizedOperator;
 					}
