@@ -174,7 +174,7 @@ on: emittest
 	script.stop()
 end
 # on-enabled with named conditions
-on-enabled: equals(1,1) = named_condition_1
+on-enabled: equals(1,1) := named_condition_1
 	script.disableNamedCondition("named_condition_1")
 	console.log("------------------------------------")
 	console.log("named_condition_1 has been emitted")

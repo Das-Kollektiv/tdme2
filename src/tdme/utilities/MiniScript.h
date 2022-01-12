@@ -410,6 +410,14 @@ public:
 		 * @param value value
 		 */
 		inline void setImplicitTypedValue(const string& value) {
+			if (value == "true") {
+				type = TYPE_BOOLEAN;
+				booleanValue = true;
+			} else
+			if (value == "false") {
+				type = TYPE_BOOLEAN;
+				booleanValue = false;
+			} else
 			if (Integer::is(value) == true) {
 				type = TYPE_INTEGER;
 				integerValue = Integer::parse(value);

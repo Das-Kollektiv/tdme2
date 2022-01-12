@@ -452,15 +452,17 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 					conditionType == Script::CONDITIONTYPE_ONENABLED?
 						StringTools::trim(StringTools::substring(scriptLine, string("on-enabled:").size())):
 						StringTools::trim(StringTools::substring(scriptLine, string("on:").size()));
+				string name;
+				auto scriptLineNameSeparatorIdx = scriptLine.rfind(":=");
+				if (scriptLineNameSeparatorIdx != string::npos) {
+					name = StringTools::trim(StringTools::substring(scriptLine, scriptLineNameSeparatorIdx + 2));
+					scriptLine = StringTools::trim(StringTools::substring(scriptLine, 0, scriptLineNameSeparatorIdx));
+				}
 				vector<string> conditions;
 				StringTokenizer t1;
-				t1.tokenize(scriptLine, "=");
-				StringTokenizer t2;
-				t2.tokenize(t1.nextToken(), ";");
-				while (t2.hasMoreTokens()) conditions.push_back(doStatementPreProcessing(StringTools::trim(t2.nextToken())));
+				t1.tokenize(scriptLine, ";");
+				while (t1.hasMoreTokens()) conditions.push_back(doStatementPreProcessing(StringTools::trim(t1.nextToken())));
 				statementIdx = 0;
-				string name;
-				if (t1.hasMoreTokens() == true) name = StringTools::trim(t1.nextToken());
 				scripts.push_back(
 					{
 						.conditionType = conditionType,
