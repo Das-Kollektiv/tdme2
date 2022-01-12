@@ -406,7 +406,7 @@ public:
 		}
 
 		/**
-		 * Set implicit typed value as string
+		 * Set implicit typed value given by value string
 		 * @param value value
 		 */
 		inline void setImplicitTypedValue(const string& value) {
