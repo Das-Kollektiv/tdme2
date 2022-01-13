@@ -86,23 +86,23 @@ void World::reset()
 Body* World::addRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Vector3& inertiaTensor, vector<BoundingVolume*> boundingVolumes)
 {
 	removeBody(id);
-	auto body = new Body(this, id, Body::TYPE_DYNAMIC, enabled, collisionTypeId, transformations, restitution, friction, mass, inertiaTensor, boundingVolumes);
+	auto body = new Body(this, id, Body::BODYTYPE_DYNAMIC, enabled, collisionTypeId, transformations, restitution, friction, mass, inertiaTensor, boundingVolumes);
 	bodies.push_back(body);
 	rigidBodiesDynamic.push_back(body);
 	bodiesById[id] = body;
 	for (auto listener: worldListeners) {
-		listener->onAddedBody(id, Body::TYPE_DYNAMIC, enabled, collisionTypeId, transformations, restitution, friction, mass, inertiaTensor, boundingVolumes);
+		listener->onAddedBody(id, Body::BODYTYPE_DYNAMIC, enabled, collisionTypeId, transformations, restitution, friction, mass, inertiaTensor, boundingVolumes);
 	}
 	return body;
 }
 
 Body* World::addCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, vector<BoundingVolume*> boundingVolumes) {
 	removeBody(id);
-	auto body = new Body(this, id, Body::TYPE_COLLISION, enabled, collisionTypeId, transformations, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
+	auto body = new Body(this, id, Body::BODYTYPE_COLLISION, enabled, collisionTypeId, transformations, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
 	bodies.push_back(body);
 	bodiesById[id] = body;
 	for (auto listener: worldListeners) {
-		listener->onAddedBody(id, Body::TYPE_COLLISION, enabled, collisionTypeId, transformations, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
+		listener->onAddedBody(id, Body::BODYTYPE_COLLISION, enabled, collisionTypeId, transformations, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
 	}
 	return body;
 }
@@ -110,11 +110,11 @@ Body* World::addCollisionBody(const string& id, bool enabled, uint16_t collision
 Body* World::addStaticRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float friction, vector<BoundingVolume*> boundingVolumes)
 {
 	removeBody(id);
-	auto body = new Body(this, id, Body::TYPE_STATIC, enabled, collisionTypeId, transformations, 0.0f, friction, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
+	auto body = new Body(this, id, Body::BODYTYPE_STATIC, enabled, collisionTypeId, transformations, 0.0f, friction, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
 	bodies.push_back(body);
 	bodiesById[id] = body;
 	for (auto listener: worldListeners) {
-		listener->onAddedBody(id, Body::TYPE_STATIC, enabled, collisionTypeId, transformations, 0.0f, friction, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
+		listener->onAddedBody(id, Body::BODYTYPE_STATIC, enabled, collisionTypeId, transformations, 0.0f, friction, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
 	}
 	return body;
 }
@@ -466,13 +466,13 @@ World* World::clone(uint16_t collisionTypeIds)
 
 		// clone rigid body
 		switch(bodyType) {
-			case Body::TYPE_STATIC:
+			case Body::BODYTYPE_STATIC:
 				clonedBody = clonedWorld->addStaticRigidBody(body->id, body->isEnabled(), body->getCollisionTypeId(), body->transformations, body->getFriction(), body->boundingVolumes);
 				break;
-			case Body::TYPE_DYNAMIC:
+			case Body::BODYTYPE_DYNAMIC:
 				clonedBody = clonedWorld->addRigidBody(body->id, body->isEnabled(), body->getCollisionTypeId(), body->transformations, body->getRestitution(), body->getFriction(), body->getMass(), body->inertiaTensor, body->boundingVolumes);
 				break;
-			case Body::TYPE_COLLISION:
+			case Body::BODYTYPE_COLLISION:
 				clonedBody = clonedWorld->addCollisionBody(body->id, body->isEnabled(), body->getCollisionTypeId(), body->transformations, body->boundingVolumes);
 				break;
 			default:
@@ -493,9 +493,9 @@ void World::synch(Body* clonedBody, Body* body)
 {
 	clonedBody->setCollisionTypeIds(body->getCollisionTypeIds());
 	clonedBody->setEnabled(body->isEnabled());
-	clonedBody->setMass(body->getMass());
+	// TODO: maybe sync also friction, restitution, mass, ...
 	clonedBody->fromTransformations(body->transformations);
-	if (clonedBody->getType() == Body::TYPE_DYNAMIC) {
+	if (clonedBody->getType() == Body::BODYTYPE_DYNAMIC) {
 		clonedBody->setLinearVelocity(body->getLinearVelocity());
 		clonedBody->setAngularVelocity(body->getAngularVelocity());
 	}

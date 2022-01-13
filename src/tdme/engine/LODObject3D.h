@@ -484,6 +484,7 @@ public:
 	 */
 	inline void setShader(const string& id) {
 		this->shaderId = id;
+		shaderParameters.setShader(shaderId);
 		if (objectLOD1 != nullptr) objectLOD1->setShader(shaderId);
 		if (objectLOD2 != nullptr) objectLOD2->setShader(shaderId);
 		if (objectLOD3 != nullptr) objectLOD3->setShader(shaderId);
@@ -502,6 +503,7 @@ public:
 	 */
 	inline void setDistanceShader(const string& id) {
 		this->distanceShaderId = id;
+		distanceShaderParameters.setShader(distanceShaderId);
 		if (objectLOD1 != nullptr) objectLOD1->setDistanceShader(distanceShaderId);
 		if (objectLOD2 != nullptr) objectLOD2->setDistanceShader(distanceShaderId);
 		if (objectLOD3 != nullptr) objectLOD3->setDistanceShader(distanceShaderId);
