@@ -213,6 +213,7 @@ void TerrainEditorTabView::handleInputEvents()
 							auto waterObject3D = new Object3D(waterModel->getId(), waterModel);
 							waterObject3D->setRenderPass(Entity::RENDERPASS_WATER);
 							waterObject3D->setShader("water");
+							waterObject3D->setDistanceShader("water");
 							waterObject3D->setContributesShadows(false);
 							waterObject3D->setReceivesShadows(false);
 							waterObject3D->setReflectionEnvironmentMappingId("sky_environment_mapping");
@@ -437,6 +438,7 @@ void TerrainEditorTabView::initializeTerrain() {
 			terrainObject3D->setNeedsPreRender(true);
 			terrainObject3D->setRenderPass(Entity::RENDERPASS_TERRAIN);
 			terrainObject3D->setShader("terraineditor");
+			terrainObject3D->setDistanceShader("terraineditor");
 			terrainObject3D->setContributesShadows(true);
 			terrainObject3D->setReceivesShadows(true);
 			terrainObject3D->setPickable(true);
@@ -457,6 +459,7 @@ void TerrainEditorTabView::initializeTerrain() {
 				auto waterObject3D = new Object3D(waterModel->getId(), waterModel);
 				waterObject3D->setRenderPass(Entity::RENDERPASS_WATER);
 				waterObject3D->setShader("water");
+				waterObject3D->setDistanceShader("water");
 				waterObject3D->setContributesShadows(false);
 				waterObject3D->setReceivesShadows(false);
 				waterObject3D->setReflectionEnvironmentMappingId("sky_environment_mapping");
