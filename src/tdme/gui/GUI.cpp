@@ -73,8 +73,8 @@ GUI::GUI(Engine* engine, GUIRenderer* guiRenderer)
 	this->mouseButtonLast = 0;
 	this->engine = engine;
 	this->guiRenderer = guiRenderer;
-	this->width = 0;
-	this->height = 0;
+	this->width = engine->getWidth();
+	this->height = engine->getHeight();
 	try {
 		this->foccussedBorderColor = GUIColor("#5680C2");
 	} catch (Exception& exception) {
@@ -84,16 +84,6 @@ GUI::GUI(Engine* engine, GUIRenderer* guiRenderer)
 }
 
 GUI::~GUI() {
-}
-
-int GUI::getWidth()
-{
-	return width;
-}
-
-int GUI::getHeight()
-{
-	return height;
 }
 
 void GUI::initialize()
@@ -113,16 +103,6 @@ void GUI::reshape(int width, int height)
 void GUI::dispose()
 {
 	reset();
-}
-
-vector<GUIMouseEvent>& GUI::getMouseEvents()
-{
-	return mouseEvents;
-}
-
-vector<GUIKeyboardEvent>& GUI::getKeyboardEvents()
-{
-	return keyboardEvents;
 }
 
 GUIFont* GUI::getFont(const string& applicationRootPath, const string& fileName)
@@ -203,15 +183,6 @@ Texture* GUI::getImage(const string& applicationRootPath, const string& fileName
 	return image;
 }
 
-GUIScreenNode* GUI::getScreen(const string& id)
-{
-	auto screensIt = screens.find(id);
-	if (screensIt == screens.end()) {
-		return nullptr;
-	}
-	return screensIt->second;
-}
-
 void GUI::addScreen(const string& id, GUIScreenNode* screen)
 {
 	if (id != screen->getId()) {
@@ -279,13 +250,6 @@ void GUI::resetRenderScreens()
 	renderScreens.clear();
 }
 
-bool GUI::hasRenderScreen(const string& screenId) {
-	for (auto renderScreen: renderScreens) {
-		if (renderScreen->getId() == screenId) return true;
-	}
-	return false;
-}
-
 void GUI::addRenderScreen(const string& screenId)
 {
 	auto screenIt = screens.find(screenId);
@@ -319,11 +283,6 @@ void GUI::removeRenderScreen(const string& screenId)
 
 	//
 	renderScreens.erase(remove(renderScreens.begin(), renderScreens.end(), screenIt->second), renderScreens.end());
-}
-
-GUIColor& GUI::getFoccussedBorderColor()
-{
-	return foccussedBorderColor;
 }
 
 void GUI::invalidateFocussedNode()

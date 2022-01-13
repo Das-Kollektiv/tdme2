@@ -1440,8 +1440,8 @@ void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouse
 	// see: http://stackoverflow.com/questions/7692988/opengl-math-projecting-screen-space-to-world-space-coords-solved
 	auto worldCoordinate4 = camera->getModelViewProjectionInvertedMatrix().multiply(
 		Vector4(
-			(2.0f * (mouseX * scaleFactorWidth) / width) - 1.0f,
-			1.0f - (2.0f * (mouseY * scaleFactorHeight) / height),
+			(2.0f * (mouseX * scaleFactorWidth) / _width) - 1.0f,
+			1.0f - (2.0f * (mouseY * scaleFactorHeight) / _height),
 			2.0f * z - 1.0f,
 			1.0f
 		)

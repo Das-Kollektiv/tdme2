@@ -179,12 +179,16 @@ public:
 	/**
 	 * @return width
 	 */
-	int getWidth();
+	inline int getWidth() {
+		return width;
+	}
 
 	/**
 	 * @return height
 	 */
-	int getHeight();
+	inline int getHeight() {
+		return height;
+	}
 
 	/**
 	 * Init
@@ -206,12 +210,16 @@ public:
 	/**
 	 * @return mouse events
 	 */
-	vector<GUIMouseEvent>& getMouseEvents();
+	inline vector<GUIMouseEvent>& getMouseEvents() {
+		return mouseEvents;
+	}
 
 	/**
 	 * @return keyboard events
 	 */
-	vector<GUIKeyboardEvent>& getKeyboardEvents();
+	inline vector<GUIKeyboardEvent>& getKeyboardEvents() {
+		return keyboardEvents;
+	}
 
 	/**
 	 * Get font
@@ -236,7 +244,13 @@ public:
 	 * @param id id
 	 * @return screen
 	 */
-	GUIScreenNode* getScreen(const string& id);
+	inline GUIScreenNode* getScreen(const string& id) {
+		auto screensIt = screens.find(id);
+		if (screensIt == screens.end()) {
+			return nullptr;
+		}
+		return screensIt->second;
+	}
 
 	/**
 	 * Add screen
@@ -265,7 +279,12 @@ public:
 	 * Returns if given screen is beeing rendered
 	 * @param screenId screenId
 	 */
-	bool hasRenderScreen(const string& screenId);
+	inline bool hasRenderScreen(const string& screenId) {
+		for (auto renderScreen: renderScreens) {
+			if (renderScreen->getId() == screenId) return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Add render screen
@@ -282,7 +301,9 @@ public:
 	/**
 	 * @return focussed border color
 	 */
-	GUIColor& getFoccussedBorderColor();
+	inline GUIColor& getFoccussedBorderColor() {
+		return foccussedBorderColor;
+	}
 
 	/**
 	 * Invalidate focussed node
