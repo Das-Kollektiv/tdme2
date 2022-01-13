@@ -175,6 +175,9 @@ void EditorScreenController::initialize()
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dropdown_projectlibrary_add"))->getController()->setDisabled(true);
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("dropdown_outliner_add"))->getController()->setDisabled(true);
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("outliner_search"))->getController()->setDisabled(true);
+
+		//
+		updateFullScreenMenuEntry();
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -276,6 +279,8 @@ void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIEl
 						}
 						editorScreenController->setDetailsContent(string());
 						editorScreenController->setOutlinerContent(string());
+						//
+						editorScreenController->updateFullScreenMenuEntry();
 					}
 				};
 				Engine::getInstance()->enqueueAction(new CloseTabAction(this, tabIdToClose));
@@ -496,6 +501,8 @@ void EditorScreenController::closeTabs() {
 	tabViews.clear();
 	setDetailsContent(string());
 	setOutlinerContent(string());
+	//
+	updateFullScreenMenuEntry();
 }
 
 void EditorScreenController::closeProject() {
@@ -1503,6 +1510,9 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 
 	//
 	view->getPopUps()->getProgressBarScreenController()->close();
+
+	//
+	updateFullScreenMenuEntry();
 }
 
 void EditorScreenController::storeOutlinerState(TabView::OutlinerState& outlinerState) {
@@ -1567,6 +1577,10 @@ void EditorScreenController::setDetailsContent(const string& xml) {
 
 bool EditorScreenController::isFullScreen() {
 	return required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("screen_editor_screen"))->getActiveConditions().has("fullscreen");
+}
+
+void EditorScreenController::updateFullScreenMenuEntry() {
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("menu_view_fullscreen"))->getController()->setDisabled(tabViews.empty() == true);
 }
 
 void EditorScreenController::setFullScreen(bool fullScreen) {

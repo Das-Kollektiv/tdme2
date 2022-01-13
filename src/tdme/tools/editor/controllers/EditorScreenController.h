@@ -567,6 +567,11 @@ public:
 	bool isFullScreen();
 
 	/**
+	 * Update full screen menu entry
+	 */
+	void updateFullScreenMenuEntry();
+
+	/**
 	 * Set fullscreen
 	 * @param fullScreen full screen
 	 */
