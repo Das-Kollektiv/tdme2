@@ -220,6 +220,24 @@
         - read write lock
         - spin lock
         - thread
+- MiniScript
+	- very small implementation of a scripting language without byte code, VM or what ever
+	- runs on every CPU, OS, ... due to its simplicity, so its highly portable just like TDME2 is
+	- can be easily extended by writing state machine machine states and script methods in C++
+	- only works with the following data type primitives: boolean, integer, float, string, vector3 and transformations
+	- when calling script methods/returning from methods it does not use references or pointers but only value by copy
+	- supports operators by operator to method mapping by a preprocessor run
+	- supports loops and conditions
+	- sort of event based
+	- how to use:
+	  - each script is attached to a game entity so it for now does not need something like OOP
+	  - communication between script instances is possible via setting/getting variables
+	    - if required we will add methods support in the scripts itself
+	  - complex logic should still be implemented by a game developer in C++ by extending MiniScript
+	  - game designers can use MiniScript + those methods to implement high level game logic
+	- can be "easily" transpiled to C++ later
+	- when extended MiniScript methods/states they know about them self, so a whole documentation for MiniScript usage can be generated later
+
 # 3. Tools
 - Editor
     - This is our content editor, please see [README-Editor.md](./README-Editor.md)
