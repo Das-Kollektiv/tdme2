@@ -11,7 +11,6 @@
 #include <tdme/engine/subsystems/lighting/DeferredLightingShaderPBRFoliageImplementation.h>
 #include <tdme/engine/subsystems/lighting/DeferredLightingShaderPBRTreeImplementation.h>
 #include <tdme/engine/subsystems/lighting/DeferredLightingShaderSkyImplementation.h>
-#include <tdme/engine/subsystems/lighting/DeferredLightingShaderTerrainEditorImplementation.h>
 #include <tdme/engine/subsystems/lighting/DeferredLightingShaderTerrainImplementation.h>
 #include <tdme/engine/subsystems/lighting/DeferredLightingShaderTreeImplementation.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderDefaultImplementation.h>
@@ -42,7 +41,6 @@ using tdme::engine::subsystems::lighting::DeferredLightingShaderPBRDefaultImplem
 using tdme::engine::subsystems::lighting::DeferredLightingShaderPBRFoliageImplementation;
 using tdme::engine::subsystems::lighting::DeferredLightingShaderPBRTreeImplementation;
 using tdme::engine::subsystems::lighting::DeferredLightingShaderSkyImplementation;
-using tdme::engine::subsystems::lighting::DeferredLightingShaderTerrainEditorImplementation;
 using tdme::engine::subsystems::lighting::DeferredLightingShaderTerrainImplementation;
 using tdme::engine::subsystems::lighting::DeferredLightingShaderTreeImplementation;
 using tdme::engine::subsystems::lighting::LightingShader;
@@ -81,7 +79,6 @@ LightingShader::LightingShader(Renderer* renderer): renderer(renderer)
 	if (DeferredLightingShaderFoliageImplementation::isSupported(renderer) == true) { auto shaderProgram = new DeferredLightingShaderFoliageImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
 	if (DeferredLightingShaderSkyImplementation::isSupported(renderer) == true) { auto shaderProgram = new DeferredLightingShaderSkyImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
 	if (DeferredLightingShaderTerrainImplementation::isSupported(renderer) == true) { auto shaderProgram = new DeferredLightingShaderTerrainImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
-	if (DeferredLightingShaderTerrainEditorImplementation::isSupported(renderer) == true) { auto shaderProgram = new DeferredLightingShaderTerrainEditorImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
 	if (DeferredLightingShaderTreeImplementation::isSupported(renderer) == true) { auto shaderProgram = new DeferredLightingShaderTreeImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }
 	// pbr
 	if (LightingShaderPBRDefaultImplementation::isSupported(renderer) == true) { auto shaderProgram = new LightingShaderPBRDefaultImplementation(renderer); shader[shaderProgram->getId()] = shaderProgram; }

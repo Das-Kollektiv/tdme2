@@ -126,6 +126,11 @@ void Object3D::setShader(const string& id) {
 	needsForwardShading =
 		Engine::getLightingShader()->hasShader("defer_" + shaderId) == false ||
 		Engine::getLightingShader()->hasShader("defer_" + distanceShaderId) == false;
+	//
+	if (engine != nullptr) {
+		engine->deregisterEntity(this);
+		engine->registerEntity(this);
+	}
 }
 
 void Object3D::setDistanceShader(const string& id) {
@@ -141,4 +146,9 @@ void Object3D::setDistanceShader(const string& id) {
 	needsForwardShading =
 		Engine::getLightingShader()->hasShader("defer_" + shaderId) == false ||
 		Engine::getLightingShader()->hasShader("defer_" + distanceShaderId) == false;
+	//
+	if (engine != nullptr) {
+		engine->deregisterEntity(this);
+		engine->registerEntity(this);
+	}
 }
