@@ -236,7 +236,7 @@
 	  - complex logic should still be implemented by a game developer in C++ by extending MiniScript
 	  - game designers can use MiniScript + those methods to implement high level game logic
 	- can be "easily" transpiled to C++ later
-	- when extended MiniScript methods/states they know about them self, so a whole documentation for MiniScript usage can be generated later
+	- MiniScript methods/states know about them self, so a whole documentation for MiniScript usage can be generated later
 
 # 3. Tools
 - Editor
