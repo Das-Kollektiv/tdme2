@@ -81,7 +81,8 @@ private:
 		"specularmaterial_maskedtransparency"
 	};
 
-	array<string, 5> applyPBRMaterialNodes = {
+	array<string, 6> applyPBRMaterialNodes = {
+		"pbrmaterial_enabled",
 		"pbrmaterial_metallic_factor",
 		"pbrmaterial_roughness_factor",
 		"pbrmaterial_normal_scale",

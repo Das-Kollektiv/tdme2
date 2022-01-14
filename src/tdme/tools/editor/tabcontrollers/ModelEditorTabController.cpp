@@ -12,6 +12,7 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/PBRMaterialProperties.h>
+#include <tdme/engine/model/ShaderModel.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
@@ -69,6 +70,7 @@ using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::model::PBRMaterialProperties;
+using tdme::engine::model::ShaderModel;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::prototype::BaseProperty;
 using tdme::engine::prototype::Prototype;
@@ -692,6 +694,31 @@ void ModelEditorTabController::applySpecularMaterialDetails() {
 void ModelEditorTabController::applyPBRMaterialDetails() {
 	Material* material = getSelectedMaterial();
 	if (material == nullptr) return;
+
+	try {
+		if (required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_enabled"))->getController()->getValue().equals("1") == true) {
+			if (material->getPBRMaterialProperties() == nullptr) {
+				view->reloadPrototype();
+				Model* model = nullptr;
+				getOutlinerNodeLOD(view->getEditorView()->getScreenController()->getOutlinerSelection(), outlinerNodeModel, &model);
+				if (model != nullptr) model->setShaderModel(ShaderModel::PBR);
+				material->setPBRMaterialProperties(new PBRMaterialProperties());
+				updateMaterialDetails();
+			}
+		} else {
+			if (material->getPBRMaterialProperties() != nullptr) {
+				view->reloadPrototype();
+				Model* model = nullptr;
+				getOutlinerNodeLOD(view->getEditorView()->getScreenController()->getOutlinerSelection(), outlinerNodeModel, &model);
+				if (model != nullptr) model->setShaderModel(ShaderModel::SPECULAR);
+				material->setPBRMaterialProperties(nullptr);
+				updateMaterialDetails();
+			}
+		}
+	} catch (Exception& exception) {
+		Console::println(string("ModelEditorTabController::applyPBRMaterialDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
 
 	auto pbrMaterialProperties = material->getPBRMaterialProperties();
 	if (pbrMaterialProperties == nullptr) return;
