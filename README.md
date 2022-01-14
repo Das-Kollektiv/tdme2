@@ -61,6 +61,7 @@
             - texture transformations/animations
                 - via texture matrices
         - objects with support for LOD
+        - imposter objects with support for LOD
         - render group objects for foliage and such including LOD support
         - particle systems which
           - are object based

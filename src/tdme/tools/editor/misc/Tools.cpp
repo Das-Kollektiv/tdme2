@@ -23,11 +23,13 @@
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
+#include <tdme/engine/prototype/PrototypeImposterLOD.h>
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityHierarchy.h>
+#include <tdme/engine/ImposterObject3D.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/SceneConnector.h>
@@ -76,10 +78,13 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeBoundingVolume;
+using tdme::engine::prototype::PrototypeImposterLOD;
+using tdme::engine::prototype::PrototypeLODLevel;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::EntityHierarchy;
+using tdme::engine::ImposterObject3D;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::SceneConnector;
@@ -328,6 +333,38 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 					}
 					break;
 				}
+			case 4:
+			{
+				auto imposterLOD = prototype->getImposterLOD();
+				if (imposterLOD != nullptr) {
+					modelEntity = new ImposterObject3D(
+						"model",
+						imposterLOD->getModels()
+					);
+					// TODO: remove this duplicated code, see :368
+					modelEntity->setContributesShadows(true);
+					modelEntity->setReceivesShadows(true);
+					modelEntity->setEffectColorMul(colorMul);
+					modelEntity->setEffectColorAdd(colorAdd);
+					auto object = dynamic_cast<ImposterObject3D*>(modelEntity);
+					object->setShader(prototype->getShader());
+					object->setDistanceShader(prototype->getDistanceShader());
+					object->setDistanceShaderDistance(prototype->getDistanceShaderDistance());
+					auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
+					auto distanceShaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getDistanceShader());
+					for (auto& parameterIt: shaderParametersDefault) {
+						auto& parameterName = parameterIt.first;
+						auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
+						object->setShaderParameter(parameterName, parameterValue);
+					}
+					for (auto& parameterIt: distanceShaderParametersDefault) {
+						auto& parameterName = parameterIt.first;
+						auto parameterValue = prototype->getDistanceShaderParameters().getShaderParameter(parameterName);
+						object->setDistanceShaderParameter(parameterName, parameterValue);
+					}
+					engine->addEntity(modelEntity);
+				}
+			}
 		}
 		entityBoundingBox = prototype->getModel()->getBoundingBox();
 		if (model != nullptr) {

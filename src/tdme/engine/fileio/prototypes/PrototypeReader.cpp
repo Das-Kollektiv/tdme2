@@ -13,6 +13,7 @@
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
+#include <tdme/engine/prototype/PrototypeImposterLOD.h>
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_BoundingBoxParticleEmitter.h>
@@ -61,6 +62,8 @@ using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeAudio;
 using tdme::engine::prototype::PrototypeBoundingVolume;
+using tdme::engine::prototype::PrototypeImposterLOD;
+using tdme::engine::prototype::PrototypeLODLevel;
 using tdme::engine::prototype::PrototypeParticleSystem;
 using tdme::engine::prototype::PrototypeParticleSystem_BoundingBoxParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_CircleParticleEmitter;
@@ -240,6 +243,8 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 		prototype->setTerrainMesh(jPrototypeRoot["tm"].GetBool());
 		if (jPrototypeRoot.FindMember("ll2") != jPrototypeRoot.MemberEnd()) prototype->setLODLevel2(parseLODLevel(pathName, jPrototypeRoot["ll2"]));
 		if (jPrototypeRoot.FindMember("ll3") != jPrototypeRoot.MemberEnd()) prototype->setLODLevel3(parseLODLevel(pathName, jPrototypeRoot["ll3"]));
+		if (jPrototypeRoot.FindMember("ll3") != jPrototypeRoot.MemberEnd()) prototype->setLODLevel3(parseLODLevel(pathName, jPrototypeRoot["ll3"]));
+		if (jPrototypeRoot.FindMember("il") != jPrototypeRoot.MemberEnd()) prototype->setImposterLOD(parseImposterLODLevel(pathName, jPrototypeRoot["il"]));
 	} else
 	if (prototypeType == Prototype_Type::PARTICLESYSTEM) {
 		if (jPrototypeRoot.FindMember("ps") != jPrototypeRoot.MemberEnd()) {
@@ -549,7 +554,7 @@ PrototypeBoundingVolume* PrototypeReader::parseBoundingVolume(int idx, Prototype
 
 PrototypeLODLevel* PrototypeReader::parseLODLevel(const string& pathName, Value& jLodLevel) {
 	auto lodType = static_cast<LODObject3D::LODLevelType>(jLodLevel["t"].GetInt());
-	PrototypeLODLevel* lodLevel = new PrototypeLODLevel(
+	auto lodLevel = new PrototypeLODLevel(
 		lodType,
 		lodType == LODObject3D::LODLEVELTYPE_MODEL?jLodLevel["f"].GetString():"",
 		nullptr,
@@ -583,6 +588,54 @@ PrototypeLODLevel* PrototypeReader::parseLODLevel(const string& pathName, Value&
 		)
 	);
 	return lodLevel;
+}
+
+PrototypeImposterLOD* PrototypeReader::parseImposterLODLevel(const string& pathName, Value& jImposterLOD) {
+	auto imposterLOD = new PrototypeImposterLOD(
+		{},
+		{},
+		static_cast<float>(jImposterLOD["d"].GetFloat())
+	);
+
+	//
+	vector<string> fileNames;
+	vector<Model*> models;
+	auto jFilesArray = jImposterLOD["f"].GetArray();
+	for (auto i = 0; i < jFilesArray.Size(); i++) {
+		auto fileName = jFilesArray[i].GetString();
+		auto modelFileName = fileName;
+		auto modelPathName = getResourcePathName(pathName, modelFileName);
+		models.push_back(
+			ModelReader::read(
+				modelPathName,
+				FileSystem::getInstance()->getFileName(modelFileName)
+			)
+		);
+		fileNames.push_back(fileName);
+	}
+
+	//
+	imposterLOD->setModels(models);
+	imposterLOD->setFileNames(fileNames);
+
+	//
+	imposterLOD->setColorAdd(
+		Color4(
+			static_cast<float>(jImposterLOD["car"].GetFloat()),
+			static_cast<float>(jImposterLOD["cag"].GetFloat()),
+			static_cast<float>(jImposterLOD["cab"].GetFloat()),
+			static_cast<float>(jImposterLOD["caa"].GetFloat())
+		)
+	);
+	imposterLOD->setColorMul(
+		Color4(
+			static_cast<float>(jImposterLOD["cmr"].GetFloat()),
+			static_cast<float>(jImposterLOD["cmg"].GetFloat()),
+			static_cast<float>(jImposterLOD["cmb"].GetFloat()),
+			static_cast<float>(jImposterLOD["cma"].GetFloat())
+		)
+	);
+	return imposterLOD;
 }
 
 void PrototypeReader::parseParticleSystem(PrototypeParticleSystem* particleSystem, const string& pathName, Value& jParticleSystem) {

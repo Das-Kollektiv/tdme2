@@ -13,8 +13,10 @@
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/FrameBuffer.h>
+#include <tdme/engine/ImposterObject3D.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/LODObject3D.h>
+#include <tdme/engine/LODObject3DImposter.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Object3DRenderGroup.h>
 #include <tdme/engine/ObjectParticleSystem.h>
@@ -37,8 +39,10 @@ using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::EntityHierarchy;
 using tdme::engine::FrameBuffer;
+using tdme::engine::ImposterObject3D;
 using tdme::engine::Light;
 using tdme::engine::LODObject3D;
+using tdme::engine::LODObject3DImposter;
 using tdme::engine::Object3D;
 using tdme::engine::Object3DRenderGroup;
 using tdme::engine::ObjectParticleSystem;
@@ -242,6 +246,21 @@ void ShadowMap::createShadowMap(Light* light)
 					auto lodObject = static_cast<LODObject3D*>(entity);
 					if (lodObject->isContributesShadows() == false) continue;
 					auto object = lodObject->getLODObject();
+					if (object != nullptr) visibleObjects.push_back(object);
+				}
+				break;
+			case Entity::ENTITYTYPE_IMPOSTEROBJECT3D:
+				{
+					auto object = static_cast<ImposterObject3D*>(entity);
+					if (object->isContributesShadows() == false) continue;
+					visibleObjects.push_back(object->getBillboardObject());
+				}
+				break;
+			case Entity::ENTITYTYPE_LODOBJECT3DIMPOSTER:
+				{
+					auto lodObjectImposter = static_cast<LODObject3DImposter*>(entity);
+					if (lodObjectImposter->isContributesShadows() == false) continue;
+					auto object = lodObjectImposter->getLODObject();
 					if (object != nullptr) visibleObjects.push_back(object);
 				}
 				break;

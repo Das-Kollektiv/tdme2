@@ -48,9 +48,11 @@
 #include <tdme/engine/FogParticleSystem.h>
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/GeometryBuffer.h>
+#include <tdme/engine/ImposterObject3D.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/LinesObject3D.h>
 #include <tdme/engine/LODObject3D.h>
+#include <tdme/engine/LODObject3DImposter.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Object3DRenderGroup.h>
 #include <tdme/engine/ObjectParticleSystem.h>
@@ -126,9 +128,11 @@ using tdme::engine::EntityPickingFilter;
 using tdme::engine::FogParticleSystem;
 using tdme::engine::FrameBuffer;
 using tdme::engine::GeometryBuffer;
+using tdme::engine::ImposterObject3D;
 using tdme::engine::Light;
 using tdme::engine::LinesObject3D;
 using tdme::engine::LODObject3D;
+using tdme::engine::LODObject3DImposter;
 using tdme::engine::Object3D;
 using tdme::engine::Object3DRenderGroup;
 using tdme::engine::ObjectParticleSystem;
@@ -633,6 +637,15 @@ void Engine::removeEntityFromLists(Entity* entity)
 		removeEntityFromLists(lob3d->getLOD1Object());
 		removeEntityFromLists(lob3d->getLOD2Object());
 		removeEntityFromLists(lob3d->getLOD3Object());
+	} else
+	if (entity->getEntityType() == Entity::ENTITYTYPE_IMPOSTEROBJECT3D) {
+		auto io3d = static_cast<ImposterObject3D*>(entity);
+		for (auto subEntity: io3d->getBillboardObjects()) removeEntityFromLists(subEntity);
+	} else
+	if (entity->getEntityType() == Entity::ENTITYTYPE_LODOBJECT3DIMPOSTER) {
+		auto lob3dImposter = static_cast<LODObject3DImposter*>(entity);
+		removeEntityFromLists(lob3dImposter->getLOD1Object());
+		for (auto subEntity: lob3dImposter->getLOD2Object()->getBillboardObjects()) removeEntityFromLists(subEntity);
 	}
 }
 
@@ -1029,6 +1042,28 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 					if (lod3Object != nullptr) decomposeEntityType(lod3Object, decomposedEntities);
 				} else {
 					auto object = lodObject->determineLODObject(camera);
+					if (object != nullptr) decomposeEntityType(object, decomposedEntities, decomposeAllEntities);
+				}
+			}
+			break;
+		case Entity::ENTITYTYPE_IMPOSTEROBJECT3D:
+			{
+				auto imposterObject = static_cast<ImposterObject3D*>(entity);
+				if (decomposeAllEntities == true) {
+					for (auto subEntity: imposterObject->getBillboardObjects()) decomposeEntityType(subEntity, decomposedEntities);
+				} else {
+					decomposeEntityType(imposterObject->determineBillboardObject(camera), decomposedEntities, decomposeAllEntities);
+				}
+			}
+			break;
+		case Entity::ENTITYTYPE_LODOBJECT3DIMPOSTER:
+			{
+				auto lodObjectImposter = static_cast<LODObject3DImposter*>(entity);
+				if (decomposeAllEntities == true) {
+					decomposeEntityType(lodObjectImposter->getLOD1Object(), decomposedEntities);
+					for (auto subEntity: lodObjectImposter->getLOD2Object()->getBillboardObjects()) decomposeEntityType(subEntity, decomposedEntities);
+				} else {
+					auto object = lodObjectImposter->determineLODObject(camera);
 					if (object != nullptr) decomposeEntityType(object, decomposedEntities, decomposeAllEntities);
 				}
 			}

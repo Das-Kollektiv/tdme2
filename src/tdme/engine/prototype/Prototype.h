@@ -10,6 +10,7 @@
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/prototype/BaseProperties.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
+#include <tdme/engine/prototype/PrototypeImposterLOD.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem.h>
 #include <tdme/engine/scene/fwd-tdme.h>
 #include <tdme/engine/Entity.h>
@@ -27,6 +28,7 @@ using tdme::engine::model::Model;
 using tdme::engine::prototype::BaseProperties;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeAudio;
+using tdme::engine::prototype::PrototypeImposterLOD;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::prototype::PrototypeLODLevel;
 using tdme::engine::prototype::PrototypeParticleSystem;
@@ -62,6 +64,7 @@ private:
 	Vector3 pivot;
 	PrototypeLODLevel* lodLevel2 { nullptr };
 	PrototypeLODLevel* lodLevel3 { nullptr };
+	PrototypeImposterLOD* imposterLOD { nullptr };
 	vector<PrototypeBoundingVolume*> boundingVolumes;
 	PrototypePhysics* physics { nullptr };
 	vector<PrototypeParticleSystem*> particleSystems;
@@ -273,6 +276,19 @@ public:
 	 * @param lodLevel LOD level
 	 */
 	void removeLODLevel(int lodLevel);
+
+	/**
+	 * @return imposter LOD
+	 */
+	inline PrototypeImposterLOD* getImposterLOD() {
+		return imposterLOD;
+	}
+
+	/**
+	 * Set imposter LOD
+	 * @param imposterLOD imposter LOD
+	 */
+	void setImposterLOD(PrototypeImposterLOD* imposterLOD);
 
 	/**
 	 * @return particle systems count

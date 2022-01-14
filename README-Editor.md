@@ -63,6 +63,7 @@
     - attach sounds to optional animations with optional additional key
     - also set up gain, pitch, looping, fixed and offset for each sound
 - tools
+	- be able to generate LOD2/LOD3 as billboard or imposter
     - be able to compute smooth normals
     - be able to optimize models in terms of mesh nodes and materials
 - see statistics

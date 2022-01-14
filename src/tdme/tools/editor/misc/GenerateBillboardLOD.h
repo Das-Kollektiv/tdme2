@@ -19,14 +19,14 @@ class tdme::tools::editor::misc::GenerateBillboardLOD
 {
 public:
 	/**
-	 * Generate billboard LOD nidek
+	 * Generate billboard LOD
 	 * @param prototype prototype
 	 * @param model model
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @return billboard LOD model
+	 * @return generated billboard model
 	 */
-	static Model* generateBillboardLOD(
+	static Model* generate(
 		Model* model,
 		const string& pathName,
 		const string& fileName

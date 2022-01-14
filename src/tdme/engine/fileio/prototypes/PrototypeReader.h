@@ -112,9 +112,17 @@ private:
 	 * Parse LOD level
 	 * @param pathName path name
 	 * @param jLodLevel JSON LOD level
-	 * @return scene editor lod level
+	 * @return prototype lod level
 	 */
 	static PrototypeLODLevel* parseLODLevel(const string& pathName, Value& jLodLevel);
+
+	/**
+	 * Parse LOD level
+	 * @param pathName path name
+	 * @param jImposterLOD JSON Imposter LOD level
+	 * @return prototype imposter LOD
+	 */
+	static PrototypeImposterLOD* parseImposterLODLevel(const string& pathName, Value& jImposterLOD);
 
 	/**
 	 * Parse particle system

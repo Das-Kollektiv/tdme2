@@ -90,6 +90,7 @@ using tdme::engine::GeometryBuffer;
 using tdme::engine::Light;
 using tdme::engine::LinesObject3D;
 using tdme::engine::LODObject3D;
+using tdme::engine::LODObject3DImposter;
 using tdme::engine::Object3D;
 using tdme::engine::Object3DRenderGroup;
 using tdme::engine::ObjectParticleSystem;
@@ -128,8 +129,10 @@ class tdme::engine::Engine final
 	friend class FogParticleSystem;
 	friend class FrameBuffer;
 	friend class GeometryBuffer;
+	friend class ImposterObject3D;
 	friend class LinesObject3D;
 	friend class LODObject3D;
+	friend class LODObject3DImposter;
 	friend class Object3D;
 	friend class Object3DRenderGroup;
 	friend class ParticleSystemGroup;
@@ -226,6 +229,7 @@ private:
 		vector<Object3D*> objectsPostPostProcessing;
 		vector<Object3D*> objectsNoDepthTest;
 		vector<LODObject3D*> lodObjects;
+		vector<LODObject3DImposter*> lodObjectsImposter;
 		vector<ObjectParticleSystem*> opses;
 		vector<Entity*> ppses;
 		vector<ParticleSystemGroup*> psgs;

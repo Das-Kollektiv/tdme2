@@ -55,7 +55,7 @@ using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::ModelTools;
 
-Model* GenerateBillboardLOD::generateBillboardLOD(
+Model* GenerateBillboardLOD::generate(
 	Model* model,
 	const string& pathName,
 	const string& fileName
@@ -142,10 +142,14 @@ Model* GenerateBillboardLOD::generateBillboardLOD(
 	//
 	texture->releaseReference();
 
-	// save
+	//
 	croppedTexture->acquireReference();
-	PNGTextureWriter::write(croppedTexture, pathName, textureFileName, false, false);
+	auto scaledTexture = TextureReader::scale(croppedTexture, 1024, 1024);
 	croppedTexture->releaseReference();
+
+	// save
+	PNGTextureWriter::write(scaledTexture, pathName, textureFileName, false, false);
+	scaledTexture->releaseReference();
 
 	// create model
 	auto left = boundingBox->getMin().getX();

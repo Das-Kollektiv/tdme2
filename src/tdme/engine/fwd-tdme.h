@@ -19,9 +19,11 @@ namespace engine {
 	class GeometryBuffer;
 	class Frustum;
 	class FogParticleSystem;
+	class ImposterObject3D;
 	class Light;
 	class LinesObject3D;
 	class LODObject3D;
+	class LODObject3DImposter;
 	class ModelUtilities;
 	class Object3D;
 	class Object3DModel;

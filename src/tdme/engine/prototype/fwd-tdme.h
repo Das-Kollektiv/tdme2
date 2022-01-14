@@ -8,6 +8,7 @@ namespace prototype {
 	class PrototypeAudio;
 	class PrototypeBoundingVolume;
 	class SceneLibrary;
+	class PrototypeImposterLOD;
 	class PrototypeLODLevel;
 	class PrototypeParticleSystem;
 	class PrototypeParticleSystem_BoundingBoxParticleEmitter;

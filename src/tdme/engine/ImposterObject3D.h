@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -20,6 +21,7 @@
 
 using std::string;
 using std::to_string;
+using std::vector;
 
 using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
@@ -37,49 +39,33 @@ using tdme::math::Vector3;
 using tdme::utilities::Console;
 
 /**
- * LOD object 3D to be used with engine class
+ * Imposter object 3d to be used with engine class
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::LODObject3D final:
+class tdme::engine::ImposterObject3D final:
 	public Transformations,
 	public Entity
 {
-public:
-	enum LODLevelType { LODLEVELTYPE_NONE, LODLEVELTYPE_MODEL, LODLEVELTYPE_IGNORE };
+	friend class LODObject3DImposter;
 
 private:
-	friend class Object3DRenderGroup;
-
 	Engine* engine { nullptr };
 	Entity* parentEntity { nullptr };
 	bool frustumCulling { true };
 
-	Model* modelLOD1 { nullptr };
-	Model* modelLOD2 { nullptr };
-	Model* modelLOD3 { nullptr };
-	float modelLOD2MinDistance;
-	float modelLOD3MinDistance;
-	float lodNoneMinDistance;
-	LODLevelType levelTypeLOD2;
-	LODLevelType levelTypeLOD3;
+	vector<Model*> billboardModels;
 
 	string id;
-	Object3D* objectLOD1 { nullptr };
-	Object3D* objectLOD2 { nullptr };
-	Object3D* objectLOD3 { nullptr };
-	Object3D* objectLOD { nullptr };
-	int levelLOD;
+	vector<Object3D*> billboardObjects;
+	Object3D* billboardObject { nullptr };
+
 	bool enabled;
 	bool pickable;
 	bool contributesShadows;
 	bool receivesShadows;
 	Color4 effectColorMul;
 	Color4 effectColorAdd;
-	Color4 effectColorMulLOD2;
-	Color4 effectColorAddLOD2;
-	Color4 effectColorMulLOD3;
-	Color4 effectColorAddLOD3;
 	RenderPass renderPass { RENDERPASS_STANDARD };
 	string shaderId { "default" };
 	string distanceShaderId { "" };
@@ -108,209 +94,57 @@ private:
 	inline void applyParentTransformations(const Transformations& parentTransformations) override {
 		Transformations::applyParentTransformations(parentTransformations);
 		// delegate to LOD objects
-		if (objectLOD1 != nullptr) objectLOD1->fromTransformations(*this);
-		if (objectLOD2 != nullptr) objectLOD2->fromTransformations(*this);
-		if (objectLOD3 != nullptr) objectLOD3->fromTransformations(*this);
+		for (auto billboardObject: billboardObjects) billboardObject->fromTransformations(*this);
 	}
 
 public:
 	/**
 	 * Public constructor
 	 * @param id id
-	 * @param modelLOD1 model LOD 1
-	 * @param levelTypeLOD2 LOD level type LOD2
-	 * @param modelLOD2MinDistance model LOD 2 min distance
-	 * @param modelLOD2 model LOD 2
-	 * @param levelTypeLOD3 LOD level type LOD3
-	 * @param modelLOD3MinDistance model LOD 3 min distance
-	 * @param modelLOD3 model LOD 3
-	 * @param lodNoneMinDistance LOD None min distance
+	 * @param billboardModels billboard models
 	 */
-	LODObject3D(
+	ImposterObject3D(
 		const string& id,
-		Model* modelLOD1,
-		LODLevelType levelTypeLOD2,
-		float modelLOD2MinDistance,
-		Model* modelLOD2,
-		LODLevelType levelTypeLOD3,
-		float modelLOD3MinDistance,
-		Model* modelLOD3,
-		float lodNoneMinDistance = 150.0f
+		const vector<Model*>& billboardModels
 	);
 
 	/**
 	 * Public destructor
 	 */
-	~LODObject3D();
+	~ImposterObject3D();
 
 	// overridden method
 	inline EntityType getEntityType() override {
-		return ENTITYTYPE_LODOBJECT3D;
+		return ENTITYTYPE_IMPOSTEROBJECT3D;
 	}
 
 	/**
-	 * @return LOD object 1
+	 * @return billboard objects
 	 */
-	inline Object3D* getLOD1Object() {
-		return objectLOD1;
+	inline const vector<Object3D*> getBillboardObjects() {
+		return billboardObjects;
 	}
 
 	/**
-	 * @return LOD object 2
+	 * @return billboard object
 	 */
-	inline Object3D* getLOD2Object() {
-		return objectLOD2;
-	}
-
-	/**
-	 * @return LOD object 3
-	 */
-	inline Object3D* getLOD3Object() {
-		return objectLOD3;
-	}
-
-	/**
-	 * @return LOD object
-	 */
-	inline Object3D* getLODObject() {
-		// set effect colors
-		if (objectLOD != nullptr) {
-			// set effect colors
-			if (objectLOD != nullptr) {
-				if (levelLOD == 3) {
-					objectLOD->setEffectColorAdd(effectColorAddLOD3);
-					objectLOD->setEffectColorMul(effectColorMulLOD3);
-				} else
-				if (levelLOD == 2) {
-					objectLOD->setEffectColorAdd(effectColorAddLOD2);
-					objectLOD->setEffectColorMul(effectColorMulLOD2);
-				} else {
-					objectLOD->setEffectColorAdd(Color4(0.0f, 0.0f, 0.0f, 0.0f));
-					objectLOD->setEffectColorMul(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-				}
-				auto effectColorAdd = objectLOD->getEffectColorAdd();
-				auto effectColorMul = objectLOD->getEffectColorMul();
-				effectColorAdd.add(this->effectColorAdd);
-				effectColorMul.scale(this->effectColorMul);
-				objectLOD->setEffectColorAdd(effectColorAdd);
-				objectLOD->setEffectColorMul(effectColorMul);
-			}
-		}
-
+	inline Object3D* getBillboardObject() {
 		//
-		return objectLOD;
+		return billboardObject;
 	}
 
 	/**
-	 * Get current lod object
+	 * Get current billboard object
 	 * @param camera camera
 	 * @return LOD object to render
 	 */
-	inline Object3D* determineLODObject(Camera* camera) {
-		LODObject3D::LODLevelType lodLevelType = LODObject3D::LODLEVELTYPE_NONE;
-		// determine LOD object and level type
-		auto objectCamFromLengthSquared = getBoundingBoxTransformed()->computeClosestPointInBoundingBox(camera->getLookFrom()).sub(camera->getLookFrom()).computeLengthSquared();
-		if (objectCamFromLengthSquared >= Math::square(lodNoneMinDistance)) {
-			objectLOD = nullptr;
-			levelLOD = 4;
-		} else
-		if (levelTypeLOD3 != LODLEVELTYPE_NONE &&
-			objectCamFromLengthSquared >= Math::square(modelLOD3MinDistance)) {
-			objectLOD = objectLOD3;
-			levelLOD = 3;
-		} else
-		if (levelTypeLOD2 != LODLEVELTYPE_NONE &&
-			objectCamFromLengthSquared >= Math::square(modelLOD2MinDistance)) {
-			objectLOD = objectLOD2;
-			levelLOD = 2;
-		} else {
-			objectLOD = objectLOD1;
-			levelLOD = 1;
-		}
-
-		// set effect colors
-		if (objectLOD != nullptr) {
-			if (levelLOD == 3) {
-				objectLOD->setEffectColorAdd(effectColorAddLOD3);
-				objectLOD->setEffectColorMul(effectColorMulLOD3);
-			} else
-			if (levelLOD == 2) {
-				objectLOD->setEffectColorAdd(effectColorAddLOD2);
-				objectLOD->setEffectColorMul(effectColorMulLOD2);
-			} else {
-				objectLOD->setEffectColorAdd(Color4(0.0f, 0.0f, 0.0f, 0.0f));
-				objectLOD->setEffectColorMul(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-			}
-			auto effectColorAdd = objectLOD->getEffectColorAdd();
-			auto effectColorMul = objectLOD->getEffectColorMul();
-			effectColorAdd.add(this->effectColorAdd);
-			effectColorMul.scale(this->effectColorMul);
-			objectLOD->setEffectColorAdd(effectColorAdd);
-			objectLOD->setEffectColorMul(effectColorMul);
-		}
-
+	inline Object3D* determineBillboardObject(Camera* camera) {
+		Vector3 cameraForwardVector = getBoundingBoxTransformed()->getCenter().clone().sub(camera->getLookFrom()).setY(0.0f).normalize();
+		auto angle = Vector3::computeAngle(Vector3(0.0, 0.0f, -1.0f), cameraForwardVector, Rotation::Y_AXIS);
+		auto imposterIdx = static_cast<int>(angle / 360.0f * billboardModels.size()) % billboardModels.size();
+		billboardObject = billboardObjects[imposterIdx];
 		// done
-		return objectLOD;
-	}
-
-	/**
-	 * @return effect color add for LOD2 level
-	 */
-	inline const Color4& getEffectColorAddLOD2() const {
-		return effectColorAddLOD2;
-	}
-
-	/**
-	 * Set effect color add for LOD2 level
-	 * @param effectColorAddLOD2 effect color add for LOD2 level
-	 */
-	inline void setEffectColorAddLOD2(const Color4& effectColorAddLOD2) {
-		this->effectColorAddLOD2 = effectColorAddLOD2;
-	}
-
-	/**
-	 * @return effect color mul for LOD2 level
-	 */
-	inline const Color4& getEffectColorMulLOD2() const {
-		return effectColorMulLOD2;
-	}
-
-	/**
-	 * Set effect color mul for LOD2 level
-	 * @param effectColorMulLOD2 effect color mul for LOD2 level
-	 */
-	inline void setEffectColorMulLOD2(const Color4& effectColorMulLOD2) {
-		this->effectColorMulLOD2 = effectColorMulLOD2;
-	}
-
-	/**
-	 * @return effect color add for LOD3 level
-	 */
-	inline const Color4& getEffectColorAddLOD3() const {
-		return effectColorAddLOD3;
-	}
-
-	/**
-	 * Set effect color add for LOD3 level
-	 * @param effectColorAddLOD3 effect color add for LOD3 level
-	 */
-	inline void setEffectColorAddLOD3(const Color4& effectColorAddLOD3) {
-		this->effectColorAddLOD3 = effectColorAddLOD3;
-	}
-
-	/**
-	 * @return effect color mul for LOD3 level
-	 */
-	inline const Color4& getEffectColorMulLOD3() const {
-		return effectColorMulLOD3;
-	}
-
-	/**
-	 * Set effect color mul for LOD3 level
-	 * @param effectColorMulLOD3 effect color mul for LOD3 level
-	 */
-	inline void setEffectColorMulLOD3(const Color4& effectColorMulLOD3) {
-		this->effectColorMulLOD3 = effectColorMulLOD3;
+		return billboardObject;
 	}
 
 	// overridden methods
@@ -330,11 +164,11 @@ public:
 	void update() override;
 
 	inline BoundingBox* getBoundingBox() override {
-		return objectLOD1->getBoundingBox();
+		return billboardObject->getBoundingBox();
 	}
 
 	inline BoundingBox* getBoundingBoxTransformed() override {
-		return objectLOD1->getBoundingBoxTransformed();
+		return billboardObject->getBoundingBoxTransformed();
 	}
 
 	inline const Color4& getEffectColorMul() const override {
@@ -343,6 +177,7 @@ public:
 
 	inline void setEffectColorMul(const Color4& effectColorMul) override {
 		this->effectColorMul = effectColorMul;
+		for (auto billboardObject: billboardObjects) billboardObject->setEffectColorMul(effectColorMul);
 	}
 
 	inline const Color4& getEffectColorAdd() const override {
@@ -351,6 +186,7 @@ public:
 
 	inline void setEffectColorAdd(const Color4& effectColorAdd) override {
 		this->effectColorAdd = effectColorAdd;
+		for (auto billboardObject: billboardObjects) billboardObject->setEffectColorAdd(effectColorAdd);
 	}
 
 	inline const string& getId() override {
@@ -367,9 +203,7 @@ public:
 
 	inline void setContributesShadows(bool contributesShadows) override {
 		this->contributesShadows = contributesShadows;
-		if (objectLOD1 != nullptr) objectLOD1->setContributesShadows(contributesShadows);
-		if (objectLOD2 != nullptr) objectLOD2->setContributesShadows(contributesShadows);
-		if (objectLOD3 != nullptr) objectLOD3->setContributesShadows(contributesShadows);
+		for (auto billboardObject: billboardObjects) billboardObject->setContributesShadows(contributesShadows);
 	}
 
 	inline bool isReceivesShadows() override {
@@ -378,9 +212,7 @@ public:
 
 	inline void setReceivesShadows(bool receivesShadows) override {
 		this->receivesShadows = receivesShadows;
-		if (objectLOD1 != nullptr) objectLOD1->setReceivesShadows(receivesShadows);
-		if (objectLOD2 != nullptr) objectLOD2->setReceivesShadows(receivesShadows);
-		if (objectLOD3 != nullptr) objectLOD3->setReceivesShadows(receivesShadows);
+		for (auto billboardObject: billboardObjects) billboardObject->setReceivesShadows(receivesShadows);
 	}
 
 	inline void setPickable(bool pickable) override {
@@ -388,7 +220,7 @@ public:
 	}
 
 	inline const Matrix4x4 getNodeTransformationsMatrix(const string& id) {
-		return objectLOD1->getNodeTransformationsMatrix(id);
+		return billboardObject->getNodeTransformationsMatrix(id);
 	}
 
 	inline const Vector3& getTranslation() const override {
@@ -465,9 +297,7 @@ public:
 
 	inline void setRenderPass(RenderPass renderPass) override {
 		this->renderPass = renderPass;
-		if (objectLOD1 != nullptr) objectLOD1->setRenderPass(renderPass);
-		if (objectLOD2 != nullptr) objectLOD2->setRenderPass(renderPass);
-		if (objectLOD3 != nullptr) objectLOD3->setRenderPass(renderPass);
+		for (auto billboardObject: billboardObjects) billboardObject->setRenderPass(renderPass);
 	}
 
 	/**
@@ -484,9 +314,7 @@ public:
 	inline void setShader(const string& id) {
 		this->shaderId = id;
 		shaderParameters.setShader(shaderId);
-		if (objectLOD1 != nullptr) objectLOD1->setShader(shaderId);
-		if (objectLOD2 != nullptr) objectLOD2->setShader(shaderId);
-		if (objectLOD3 != nullptr) objectLOD3->setShader(shaderId);
+		for (auto billboardObject: billboardObjects) billboardObject->setShader(shaderId);
 	}
 
 	/**
@@ -503,9 +331,7 @@ public:
 	inline void setDistanceShader(const string& id) {
 		this->distanceShaderId = id;
 		distanceShaderParameters.setShader(distanceShaderId);
-		if (objectLOD1 != nullptr) objectLOD1->setDistanceShader(distanceShaderId);
-		if (objectLOD2 != nullptr) objectLOD2->setDistanceShader(distanceShaderId);
-		if (objectLOD3 != nullptr) objectLOD3->setDistanceShader(distanceShaderId);
+		for (auto billboardObject: billboardObjects) billboardObject->setDistanceShader(distanceShaderId);
 	}
 
 	/**
@@ -521,9 +347,7 @@ public:
 	 */
 	inline void setDistanceShaderDistance(float distanceShaderDistance) {
 		this->distanceShaderDistance = distanceShaderDistance;
-		if (objectLOD1 != nullptr) objectLOD1->setDistanceShaderDistance(distanceShaderDistance);
-		if (objectLOD2 != nullptr) objectLOD2->setDistanceShaderDistance(distanceShaderDistance);
-		if (objectLOD3 != nullptr) objectLOD3->setDistanceShaderDistance(distanceShaderDistance);
+		for (auto billboardObject: billboardObjects) billboardObject->setDistanceShader(distanceShaderId);
 	}
 
 	/**
@@ -557,9 +381,7 @@ public:
 	 */
 	inline void setShaderParameter(const string& parameterName, const ShaderParameter& parameterValue) {
 		shaderParameters.setShaderParameter(parameterName, parameterValue);
-		if (objectLOD1 != nullptr) objectLOD1->setShaderParameter(parameterName, parameterValue);
-		if (objectLOD2 != nullptr) objectLOD2->setShaderParameter(parameterName, parameterValue);
-		if (objectLOD3 != nullptr) objectLOD3->setShaderParameter(parameterName, parameterValue);
+		for (auto billboardObject: billboardObjects) billboardObject->setShaderParameter(parameterName, parameterValue);
 	}
 
 	/**
@@ -580,9 +402,7 @@ public:
 	 */
 	inline void setDistanceShaderParameter(const string& parameterName, const ShaderParameter& parameterValue) {
 		distanceShaderParameters.setShaderParameter(parameterName, parameterValue);
-		if (objectLOD1 != nullptr) objectLOD1->setDistanceShaderParameter(parameterName, parameterValue);
-		if (objectLOD2 != nullptr) objectLOD2->setDistanceShaderParameter(parameterName, parameterValue);
-		if (objectLOD3 != nullptr) objectLOD3->setDistanceShaderParameter(parameterName, parameterValue);
+		for (auto billboardObject: billboardObjects) billboardObject->setDistanceShaderParameter(parameterName, parameterValue);
 	}
 
 };

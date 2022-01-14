@@ -209,6 +209,29 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 				lodLevelIdx++;
 			}
 		}
+		{
+			auto imposterLOD = prototype->getImposterLOD();
+			if (imposterLOD != nullptr) {
+				Value jImposterLOD;
+				Value jImposterLODFiles;
+				jImposterLODFiles.SetArray();
+				for (auto& fileName: imposterLOD->getFileNames()) {
+					jImposterLODFiles.PushBack(Value(fileName, jAllocator), jAllocator);
+				}
+				jImposterLOD.SetObject();
+				jImposterLOD.AddMember("f", jImposterLODFiles, jAllocator);
+				jImposterLOD.AddMember("d", Value(imposterLOD->getMinDistance()), jAllocator);
+				jImposterLOD.AddMember("cmr", Value(imposterLOD->getColorMul().getRed()), jAllocator);
+				jImposterLOD.AddMember("cmg", Value(imposterLOD->getColorMul().getGreen()), jAllocator);
+				jImposterLOD.AddMember("cmb", Value(imposterLOD->getColorMul().getBlue()), jAllocator);
+				jImposterLOD.AddMember("cma", Value(imposterLOD->getColorMul().getAlpha()), jAllocator);
+				jImposterLOD.AddMember("car", Value(imposterLOD->getColorAdd().getRed()), jAllocator);
+				jImposterLOD.AddMember("cag", Value(imposterLOD->getColorAdd().getGreen()), jAllocator);
+				jImposterLOD.AddMember("cab", Value(imposterLOD->getColorAdd().getBlue()), jAllocator);
+				jImposterLOD.AddMember("caa", Value(imposterLOD->getColorAdd().getAlpha()), jAllocator);
+				jPrototypeRoot.AddMember("il", jImposterLOD, jAllocator);
+			}
+		}
 	}
 	jPrototypeRoot.AddMember("version", Value("1.99", jAllocator), jAllocator);
 	jPrototypeRoot.AddMember("type", Value(prototype->getType()->getName(), jAllocator), jAllocator);

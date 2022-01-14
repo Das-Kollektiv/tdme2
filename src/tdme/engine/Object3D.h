@@ -60,7 +60,9 @@ class tdme::engine::Object3D final
 {
 private:
 	friend class Engine;
+	friend class ImposterObject3D;
 	friend class LODObject3D;
+	friend class LODObject3DImposter;
 	friend class Object3DRenderGroup;
 	friend class ObjectParticleSystem;
 	friend class SkinnedObject3DRenderGroup;

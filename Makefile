@@ -192,9 +192,11 @@ SRCS = \
 	src/tdme/engine/FrameBuffer.cpp \
 	src/tdme/engine/Frustum.cpp \
 	src/tdme/engine/GeometryBuffer.cpp \
+	src/tdme/engine/ImposterObject3D.cpp \
 	src/tdme/engine/Light.cpp \
 	src/tdme/engine/LinesObject3D.cpp \
 	src/tdme/engine/LODObject3D.cpp \
+	src/tdme/engine/LODObject3DImposter.cpp \
 	src/tdme/engine/Object3D.cpp \
 	src/tdme/engine/Object3DModel.cpp \
 	src/tdme/engine/Object3DRenderGroup.cpp \
@@ -254,6 +256,7 @@ SRCS = \
 	src/tdme/engine/prototype/Prototype.cpp \
 	src/tdme/engine/prototype/PrototypeAudio.cpp \
 	src/tdme/engine/prototype/PrototypeBoundingVolume.cpp \
+	src/tdme/engine/prototype/PrototypeImposterLOD.cpp \
 	src/tdme/engine/prototype/PrototypeLODLevel.cpp \
 	src/tdme/engine/prototype/PrototypeParticleSystem.cpp \
 	src/tdme/engine/prototype/PrototypeParticleSystem_BoundingBoxParticleEmitter.cpp \
@@ -539,6 +542,7 @@ SRCS = \
 	src/tdme/tools/editor/misc/CameraRotationInputHandler.cpp \
 	src/tdme/tools/editor/misc/GenerateBillboardLOD.cpp \
 	src/tdme/tools/editor/misc/GenerateConvexMeshes.cpp \
+	src/tdme/tools/editor/misc/GenerateImposterLOD.cpp \
 	src/tdme/tools/editor/misc/Gizmo.cpp \
 	src/tdme/tools/editor/misc/PopUps.cpp \
 	src/tdme/tools/editor/misc/Tools.cpp \

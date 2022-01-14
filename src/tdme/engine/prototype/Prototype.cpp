@@ -121,6 +121,19 @@ void Prototype::removeLODLevel(int lodLevel) {
 	}
 }
 
+void Prototype::setImposterLOD(PrototypeImposterLOD* imposterLOD) {
+	if (this->imposterLOD != nullptr) delete this->imposterLOD;
+	if (lodLevel2 != nullptr) {
+		delete lodLevel2;
+		lodLevel2 = nullptr;
+	}
+	if (lodLevel3 != nullptr) {
+		delete lodLevel3;
+		lodLevel3 = nullptr;
+	}
+	this->imposterLOD = imposterLOD;
+}
+
 PrototypeAudio* Prototype::addSound(const string& id) {
 	auto sound = getSound(id);
 	if (sound != nullptr) return nullptr;

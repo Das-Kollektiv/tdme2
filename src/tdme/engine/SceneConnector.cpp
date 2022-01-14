@@ -30,6 +30,7 @@
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
+#include <tdme/engine/prototype/PrototypeImposterLOD.h>
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_BoundingBoxParticleEmitter.h>
@@ -61,6 +62,7 @@
 #include <tdme/engine/FogParticleSystem.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/LODObject3D.h>
+#include <tdme/engine/LODObject3DImposter.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Object3DModel.h>
 #include <tdme/engine/Object3DRenderGroup.h>
@@ -108,6 +110,8 @@ using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeAudio;
 using tdme::engine::prototype::PrototypeBoundingVolume;
+using tdme::engine::prototype::PrototypeImposterLOD;
+using tdme::engine::prototype::PrototypeLODLevel;
 using tdme::engine::prototype::PrototypeParticleSystem;
 using tdme::engine::prototype::PrototypeParticleSystem_BoundingBoxParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_CircleParticleEmitter;
@@ -138,6 +142,7 @@ using tdme::engine::EnvironmentMapping;
 using tdme::engine::FogParticleSystem;
 using tdme::engine::Light;
 using tdme::engine::LODObject3D;
+using tdme::engine::LODObject3DImposter;
 using tdme::engine::Object3D;
 using tdme::engine::Object3DModel;
 using tdme::engine::Object3DRenderGroup;
@@ -315,9 +320,38 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 
 	// objects
 	if (prototype->getModel() != nullptr) {
+		auto imposterLOD = prototype->getImposterLOD();
 		auto lodLevel2 = prototype->getLODLevel2();
 		auto lodLevel3 = prototype->getLODLevel3();
 		// with LOD
+		if (imposterLOD != nullptr) {
+			entity = new LODObject3DImposter(
+				id,
+				prototype->getModel(),
+				imposterLOD->getModels(),
+				imposterLOD->getMinDistance()
+			);
+			entity->setParentEntity(parentEntity);
+			auto imposterLodObject = dynamic_cast<LODObject3DImposter*>(entity);
+			imposterLodObject->setEffectColorAddLOD2(imposterLOD->getColorAdd());
+			imposterLodObject->setEffectColorMulLOD2(imposterLOD->getColorMul());
+			if (prototype->getShader() == "water" || prototype->getShader() == "pbr-water") imposterLodObject->setRenderPass(Entity::RENDERPASS_WATER);
+			imposterLodObject->setShader(prototype->getShader());
+			imposterLodObject->setDistanceShader(prototype->getDistanceShader());
+			imposterLodObject->setDistanceShaderDistance(prototype->getDistanceShaderDistance());
+			auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
+			auto distanceShaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getDistanceShader());
+			for (auto& parameterIt: shaderParametersDefault) {
+				auto& parameterName = parameterIt.first;
+				auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
+				imposterLodObject->setShaderParameter(parameterName, parameterValue);
+			}
+			for (auto& parameterIt: distanceShaderParametersDefault) {
+				auto& parameterName = parameterIt.first;
+				auto parameterValue = prototype->getDistanceShaderParameters().getShaderParameter(parameterName);
+				imposterLodObject->setDistanceShaderParameter(parameterName, parameterValue);
+			}
+		} else
 		if (lodLevel2 != nullptr) {
 			entity = new LODObject3D(
 				id,

@@ -15,6 +15,7 @@
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/PrototypeImposterLOD.h>
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/events/GUIActionListener.h>
@@ -36,6 +37,7 @@
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/misc/GenerateBillboardLOD.h>
+#include <tdme/tools/editor/misc/GenerateImposterLOD.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.h>
@@ -70,6 +72,7 @@ using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::prototype::BaseProperty;
 using tdme::engine::prototype::Prototype;
+using tdme::engine::prototype::PrototypeImposterLOD;
 using tdme::engine::prototype::PrototypeLODLevel;
 using tdme::engine::Engine;
 using tdme::gui::events::GUIActionListenerType;
@@ -89,6 +92,7 @@ using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::GenerateBillboardLOD;
+using tdme::tools::editor::misc::GenerateImposterLOD;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
@@ -239,7 +243,7 @@ void ModelEditorTabController::setOutlinerContent() {
 		prototypeDisplaySubController->createDisplayPropertiesXML(prototype, xml);
 		prototypePhysicsSubController->createOutlinerPhysicsXML(prototype, xml);
 		prototypeSoundsSubController->createOutlinerSoundsXML(prototype, xml);
-		for (auto lodLevel = 1; lodLevel < 4; lodLevel++) {
+		for (auto lodLevel = 1; lodLevel < 5; lodLevel++) {
 			Model* model = nullptr;
 			switch (lodLevel) {
 				case 1:
@@ -253,9 +257,18 @@ void ModelEditorTabController::setOutlinerContent() {
 					model = prototype->getLODLevel3() != nullptr?prototype->getLODLevel3()->getModel():nullptr;
 					if (prototype->getLODLevel3() == nullptr) continue;
 					break;
+				case 4:
+					model = nullptr;
+					if (prototype->getImposterLOD() == nullptr) continue;
+					break;
 			}
 			auto modelPrefix = lodLevel == 1?"model":"lod" + to_string(lodLevel) + ".model";
-			xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes(lodLevel != 1?"LOD " + to_string(lodLevel) + " Model":"Model") + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix) + "\">\n";
+			// TODO: clean up "model != nullpt" stuff here
+			if (model != nullptr) {
+				xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes(lodLevel != 1?"LOD " + to_string(lodLevel) + " Model":"Model") + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix) + "\">\n";
+			} else {
+				xml+= "<selectbox-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes(lodLevel != 1?"LOD " + to_string(lodLevel) + " Model":"Model") + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix) + "\" />\n";
+			}
 			if (model != nullptr) {
 				xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Materials") + "\" value=\"" + GUIParser::escapeQuotes(modelPrefix + ".materials") + "\">\n";
 				for (auto it: model->getMaterials()) {
@@ -279,7 +292,7 @@ void ModelEditorTabController::setOutlinerContent() {
 				}
 				xml+= "</selectbox-parent-option>\n";
 			}
-			xml+= "</selectbox-parent-option>\n";
+			if (model != nullptr) xml+= "</selectbox-parent-option>\n";
 		}
 	}
 	xml+= "</selectbox-parent-option>\n";
@@ -1686,8 +1699,18 @@ bool ModelEditorTabController::getOutlinerNodeLOD(const string& outlinerNode, st
 	} else
 	if (StringTools::startsWith(outlinerNode, "lod3.model.") == true) {
 		if (model != nullptr) *model = view->getPrototype()->getLODLevel3() != nullptr?view->getPrototype()->getLODLevel3()->getModel():nullptr;
-		if (lodLevel != nullptr) *lodLevel = 2;
+		if (lodLevel != nullptr) *lodLevel = 3;
 		modelOutlinerNode = StringTools::substring(outlinerNode, string("lod3.").size(), outlinerNode.size());
+	} else
+	if (outlinerNode == "lod4.model") {
+		if (model != nullptr) *model = nullptr;
+		if (lodLevel != nullptr) *lodLevel = 4;
+		modelOutlinerNode = outlinerNode;
+	} else
+	if (StringTools::startsWith(outlinerNode, "lod4.model.") == true) {
+		if (model != nullptr) *model = nullptr;
+		if (lodLevel != nullptr) *lodLevel = 4;
+		modelOutlinerNode = StringTools::substring(outlinerNode, string("lod4.").size(), outlinerNode.size());
 	} else {
 		if (model != nullptr) *model = view->getPrototype()->getModel();
 		if (lodLevel != nullptr) *lodLevel = 1;
@@ -1732,6 +1755,14 @@ void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 			if (outlinerNode == "lod3.model") {
 				haveDetails = true;
 				setLODDetails(3);
+			}
+		} else
+		if (outlinerNode == "lod4.model" ||
+			StringTools::startsWith(outlinerNode, "lod4.model.") == true) {
+			if (view->getLODLevel() != 3) view->setLODLevel(4);
+			if (outlinerNode == "lod4.model") {
+				haveDetails = true;
+				setLODDetails(4);
 			}
 		} else {
 			if (view->getLODLevel() != 1) view->setLODLevel(1);
@@ -1869,7 +1900,7 @@ void ModelEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 						if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
 						auto billboardModelPathName = Tools::getPathName(fileName);
 						auto billboardModelFileName = Tools::removeFileEnding(Tools::getFileName(fileName)) + ".lod" + to_string(prototype->getLODLevel2() == nullptr?2:3) + ".tm";
-						auto billboardLODModel = GenerateBillboardLOD::generateBillboardLOD(
+						auto billboardLODModel = GenerateBillboardLOD::generate(
 							model,
 							billboardModelPathName,
 							billboardModelFileName
@@ -1917,6 +1948,60 @@ void ModelEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 			};
 
 			popUps->getContextMenuScreenController()->addMenuItem("Generate billboard LOD", "contextmenu_generatebillboardlod", new EnqueueOnModelGenerateBillboardLodAction(this));
+
+			// generate imposter lod
+			class OnModelGenerateImposterLodAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					auto prototype = modelEditorTabController->getView()->getPrototype();
+					if (prototype == nullptr) return;
+					auto model = prototype->getModel();
+					auto fileName = prototype->getModelFileName();
+					try {
+						if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
+						auto imposterModelPathName = Tools::getPathName(fileName);
+						auto imposterModelFileName = Tools::removeFileEnding(Tools::getFileName(fileName)) + ".lod" + to_string(prototype->getLODLevel2() == nullptr?2:3) + ".tm";
+						vector<Model*> imposterLODModels {};
+						vector<string> imposterLODFileNames;
+						GenerateImposterLOD::generate(
+							model,
+							imposterModelPathName,
+							imposterModelFileName,
+							24,
+							imposterLODFileNames,
+							imposterLODModels
+						);
+						prototype->setImposterLOD(
+							new PrototypeImposterLOD(
+								imposterLODFileNames,
+								imposterLODModels,
+								75.0f
+							)
+						);
+						modelEditorTabController->getView()->reloadPrototype();
+					} catch (Exception& exception) {
+						modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+					}
+				}
+				OnModelGenerateImposterLodAction(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
+				}
+			private:
+				ModelEditorTabController* modelEditorTabController;
+			};
+
+			class EnqueueOnModelGenerateImposterLodAction: public virtual Action {
+				public:
+					void performAction() override {
+						Engine::getInstance()->enqueueAction(new OnModelGenerateImposterLodAction(modelEditorTabController));
+					}
+					EnqueueOnModelGenerateImposterLodAction(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
+					}
+				private:
+					ModelEditorTabController* modelEditorTabController;
+			};
+
+			popUps->getContextMenuScreenController()->addMenuItem("Generate imposter LOD", "contextmenu_generateimposterlod", new EnqueueOnModelGenerateImposterLodAction(this));
 
 			//
 			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
@@ -1999,6 +2084,31 @@ void ModelEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 				int lodLevel;
 			};
 			popUps->getContextMenuScreenController()->addMenuItem("Delete", "contextmenu_delete", new OnLODDeleteAction(this, view->getPrototype(), 3));
+
+			//
+			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
+		} else
+		if (outlinerNode == "lod4.model") {
+			// clear
+			popUps->getContextMenuScreenController()->clear();
+
+			// delete
+			class OnLOD4DeleteAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					if (prototype == nullptr) return;
+					modelEditorTabController->view->setLODLevel(1);
+					prototype->setImposterLOD(nullptr);
+					modelEditorTabController->view->getEditorView()->reloadTabOutliner("model");
+				}
+				OnLOD4DeleteAction(ModelEditorTabController* modelEditorTabController, Prototype* prototype): modelEditorTabController(modelEditorTabController), prototype(prototype) {
+				}
+			private:
+				ModelEditorTabController* modelEditorTabController;
+				Prototype* prototype;
+			};
+			popUps->getContextMenuScreenController()->addMenuItem("Delete", "contextmenu_delete", new OnLOD4DeleteAction(this, view->getPrototype()));
 
 			//
 			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
