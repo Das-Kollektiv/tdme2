@@ -699,6 +699,7 @@ void ModelEditorTabController::applyPBRMaterialDetails() {
 		if (required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_enabled"))->getController()->getValue().equals("1") == true) {
 			if (material->getPBRMaterialProperties() == nullptr) {
 				view->reloadPrototype();
+				string outlinerNodeModel;
 				Model* model = nullptr;
 				getOutlinerNodeLOD(view->getEditorView()->getScreenController()->getOutlinerSelection(), outlinerNodeModel, &model);
 				if (model != nullptr) model->setShaderModel(ShaderModel::PBR);
@@ -709,6 +710,7 @@ void ModelEditorTabController::applyPBRMaterialDetails() {
 			if (material->getPBRMaterialProperties() != nullptr) {
 				view->reloadPrototype();
 				Model* model = nullptr;
+				string outlinerNodeModel;
 				getOutlinerNodeLOD(view->getEditorView()->getScreenController()->getOutlinerSelection(), outlinerNodeModel, &model);
 				if (model != nullptr) model->setShaderModel(ShaderModel::SPECULAR);
 				material->setPBRMaterialProperties(nullptr);
