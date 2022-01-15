@@ -50,12 +50,13 @@ ifeq ($(OS), Darwin)
 	EXTRAFLAGS := $(EXTRAFLAGS) -DHAVE_UNISTD_H
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
 		src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
-		src/tdme/engine/fileio/models/ModelReader.cpp
+		src/tdme/engine/fileio/models/FBXReader.cpp \
+		src/tdme/engine/fileio/models/ModelReaderFBX.cpp
 	INCLUDES := $(INCLUDES) -Iext/fbx/macosx/include -Iext/glfw3/include
 	OPENGL_RENDERER_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -framework OpenGL -framework OpenCL -Lext/glfw3/macosx/lib -lglfw.3
 	VULKAN_RENDERER_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -lvulkan.1 -Lext/glfw3/macosx/lib -lglfw.3
 	OPENGLES2_RENDERER_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -framework OpenGL -framework OpenCL -Lext/glfw3/macosx/lib -lglfw.3
-	LIBS_LDFLAGS := -Lext/fbx/macosx/lib -lfbxsdk -framework Cocoa -framework IOKit -framework Carbon -framework OpenAL -Lext/glfw3/macosx/lib -lglfw.3
+	LIBS_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -framework OpenAL -Lext/glfw3/macosx/lib -lglfw.3 -Lext/fbx/macosx/lib -lfbxsdk
 	OFLAGS := -O2
 else ifeq ($(OS), FreeBSD)
 	# FreeBSD
