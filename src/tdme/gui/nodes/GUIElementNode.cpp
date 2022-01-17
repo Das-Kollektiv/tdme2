@@ -63,6 +63,11 @@ using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
 using tdme::utilities::Time;
 
+string GUIElementNode::CONDITION_ALWAYS = "always";
+string GUIElementNode::CONDITION_ONMOUSEOVER = "mouseover";
+string GUIElementNode::CONDITION_CLICK = "click";
+string GUIElementNode::CONDITION_FOCUS = "focus";
+
 GUIElementNode::GUIElementNode(
 	GUIScreenNode* screenNode,
 	GUIParentNode* parentNode,
@@ -121,11 +126,6 @@ GUIElementNode::GUIElementNode(
 
 	}
 }
-
-string GUIElementNode::CONDITION_ALWAYS = "always";
-string GUIElementNode::CONDITION_ONMOUSEOVER = "mouseover";
-string GUIElementNode::CONDITION_CLICK = "click";
-string GUIElementNode::CONDITION_FOCUS = "focus";
 
 const string GUIElementNode::getNodeType()
 {

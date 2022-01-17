@@ -154,22 +154,21 @@ void GUITableNode::layoutSubNodes()
 				}
 			}
 		}
-		auto v2 = alignments.vertical;
-		if (v2 == GUINode_AlignmentVertical::TOP) {
+		if (alignments.vertical == GUINode_AlignmentVertical::TOP) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
 				if (guiSubNode->conditionsMet == false) continue;
 				guiSubNode->computedConstraints.alignmentTop = border.top + padding.top;
 			}
 		} else
-		if (v2 == GUINode_AlignmentVertical::CENTER) {
+		if (alignments.vertical == GUINode_AlignmentVertical::CENTER) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
 				if (guiSubNode->conditionsMet == false) continue;
 				guiSubNode->computedConstraints.alignmentTop = border.top + padding.top + ((height - finalNodesHeight) / 2);
 			}
 		} else
-		if (v2 == GUINode_AlignmentVertical::BOTTOM) {
+		if (alignments.vertical == GUINode_AlignmentVertical::BOTTOM) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
 				if (guiSubNode->conditionsMet == false) continue;

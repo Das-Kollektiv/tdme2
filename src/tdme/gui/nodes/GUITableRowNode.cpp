@@ -162,22 +162,21 @@ void GUITableRowNode::layoutSubNodes()
 			}
 		}
 
-		auto v2 = alignments.horizontal;
-		if (v2 == GUINode_AlignmentHorizontal::LEFT) {
+		if (alignments.horizontal == GUINode_AlignmentHorizontal::LEFT) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
 				if (guiSubNode->conditionsMet == false) continue;
 				guiSubNode->computedConstraints.alignmentLeft = Math::max(0, border.left + padding.left);
 			}
 		} else
-		if (v2 == GUINode_AlignmentHorizontal::CENTER) {
+		if (alignments.horizontal == GUINode_AlignmentHorizontal::CENTER) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
 				if (guiSubNode->conditionsMet == false) continue;
 				guiSubNode->computedConstraints.alignmentLeft = Math::max(0, border.left + padding.left + ((width - finalNodesWidth) / 2));
 			}
 		} else
-		if (v2 == GUINode_AlignmentHorizontal::RIGHT) {
+		if (alignments.horizontal == GUINode_AlignmentHorizontal::RIGHT) {
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
 				if (guiSubNode->conditionsMet == false) continue;

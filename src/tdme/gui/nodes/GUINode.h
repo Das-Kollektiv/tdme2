@@ -331,6 +331,11 @@ public:
 	}
 
 	/**
+	 * @return hierarchical id
+	 */
+	const string getHierarchicalId();
+
+	/**
 	 * @return node type
 	 */
 	virtual const string getNodeType() = 0;

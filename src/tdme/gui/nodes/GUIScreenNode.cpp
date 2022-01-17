@@ -1,6 +1,7 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 
 #include <algorithm>
+#include <map>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -27,6 +28,7 @@
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MutableString.h>
 
+using std::map;
 using std::remove;
 using std::reverse;
 using std::string;
@@ -171,7 +173,6 @@ void GUIScreenNode::layout()
 }
 
 GUINode* GUIScreenNode::forceInvalidateLayout(GUINode* node) {
-	// check if parent nodes have conditions met
 	{
 		auto _node = node;
 		while (_node != nullptr) {
@@ -185,14 +186,15 @@ GUINode* GUIScreenNode::forceInvalidateLayout(GUINode* node) {
 	// first step, make sure all parents up to screen node are layouted
 	auto _node = node;
 	auto __node = node;
-	while (_node->parentNode != nullptr) {
+	__node = __node->parentNode;
+	while (_node != nullptr) {
 		if (_node->layouted == false) __node = _node;
 		_node = _node->parentNode;
 	}
 	_node = __node;
 
 	// invalidate all nodes from node to _node
-	for (__node = node; __node != _node; __node = __node->getParentNode()) {
+	for (__node = node; __node != _node; __node = __node->parentNode) {
 		__node->layouted = false;
 	}
 
@@ -220,8 +222,6 @@ GUINode* GUIScreenNode::forceInvalidateLayout(GUINode* node) {
 		_node = _node->parentNode;
 	}
 
-	// dumpParentNodes(_node);
-
 	//
 	_node->layouted = false;
 
@@ -234,12 +234,27 @@ GUINode* GUIScreenNode::forceInvalidateLayout(GUINode* node) {
 }
 
 void GUIScreenNode::invalidateLayouts() {
+	map<string, GUINode*> nodesToForceLayout;
 	for (auto& nodeId: invalidateLayoutNodeIds) {
 		auto node = getNodeById(nodeId);
-		if (node != nullptr) {
-			auto layoutNode = forceInvalidateLayout(node);
-			if (layoutNode != nullptr) forceLayout(layoutNode); // TODO: actually the relayout should happen automatically by layouting on demand, but we have a bug here it seems
+		if (node == nullptr) continue;
+		auto layoutNode = forceInvalidateLayout(node);
+		if (layoutNode == nullptr) continue;
+		nodesToForceLayout[layoutNode->getHierarchicalId()] = layoutNode;
+	}
+	for (auto& nodesToForceLayoutIt: nodesToForceLayout) {
+		auto parentNodeLayouted = false;
+		auto node = nodesToForceLayoutIt.second;
+		auto _node = node->parentNode;
+		while (_node != nullptr) {
+			if (nodesToForceLayout.find(_node->getHierarchicalId()) != nodesToForceLayout.end()) {
+				parentNodeLayouted = true;
+				break;
+			}
+			_node = _node->parentNode;
 		}
+		if (parentNodeLayouted == true) continue;
+		forceLayout(node); // TODO: actually the relayout should happen automatically by layouting on demand, but we have a bug here it seems
 	}
 	invalidateLayoutNodeIds.clear();
 }

@@ -319,15 +319,6 @@ public:
 	void invalidateLayouts();
 
 	/**
-	 * Layout node content (e.g. child nodes or content)
-	 * this does also does call layouted nodes post layout method
-	 * @param node node
-	 */
-	inline void layout(GUINode* node) {
-		invalidateLayout(node);
-	}
-
-	/**
 	 * Force layout node content (e.g. child nodes or content) without determining parent nodes to be layouted
 	 * this does also does call layouted nodes post layout method
 	 * @param node node

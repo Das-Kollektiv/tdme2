@@ -145,6 +145,17 @@ GUINode::~GUINode() {
 	if (effectState != nullptr) delete effectState;
 }
 
+const string GUINode::getHierarchicalId() {
+	string hierarchicalId;
+	auto _parentNode = parentNode;
+	while (_parentNode != nullptr) {
+		hierarchicalId = _parentNode->id + "." + hierarchicalId;
+		_parentNode = _parentNode->parentNode;
+	}
+	hierarchicalId = hierarchicalId + id;
+	return hierarchicalId;
+}
+
 int GUINode::getAutoWidth()
 {
 	if (requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
@@ -1120,8 +1131,10 @@ void GUINode::scrollToNodeY(GUIParentNode* toNode) {
 }
 
 void GUINode::dumpNode(GUINode* node, int depth, int indent, int depthIdx) {
-	for (auto i = 0; i < indent; i++) Console::print("  ");
+	string indentString;
+	for (auto i = 0; i < indent; i++) indentString+= "  ";
 	Console::println(
+		indentString +
 		node->id + ": " +
 		node->getNodeType() + ": constaints: " +
 		to_string(node->computedConstraints.left) + ", " +
@@ -1138,7 +1151,8 @@ void GUINode::dumpNode(GUINode* node, int depth, int indent, int depthIdx) {
 		StringTools::substring(node->requestedConstraints.heightType->getName(), 0, 2) + ";" +
 		": conditions met: " +
 		to_string(node->conditionsMet) + "; layouted: " +
-		to_string(node->layouted)
+		to_string(node->layouted) +
+		(dynamic_cast<GUIParentNode*>(node) != nullptr?"; child count: " + to_string(dynamic_cast<GUIParentNode*>(node)->subNodes.size()):"")
 	);
 	if (dynamic_cast<GUIParentNode*>(node) != nullptr && (depth == 0 || depthIdx + 1 < depth)) {
 		auto parentNode = required_dynamic_cast<GUIParentNode*>(node);
@@ -1149,8 +1163,10 @@ void GUINode::dumpNode(GUINode* node, int depth, int indent, int depthIdx) {
 }
 
 void GUINode::dumpParentNodes(GUINode* node, int indent) {
-	for (auto i = 0; i < indent; i++) Console::print("  ");
+	string indentString;
+	for (auto i = 0; i < indent; i++) indentString+= "  ";
 	Console::println(
+		indentString +
 		node->id + ": " +
 		node->getNodeType() + ": constaints: " +
 		to_string(node->computedConstraints.left) + ", " +
@@ -1167,9 +1183,10 @@ void GUINode::dumpParentNodes(GUINode* node, int indent) {
 		StringTools::substring(node->requestedConstraints.heightType->getName(), 0, 2) + ";" +
 		": conditions met: " +
 		to_string(node->conditionsMet) + "; layouted: " +
-		to_string(node->layouted)
+		to_string(node->layouted) +
+		(dynamic_cast<GUIParentNode*>(node) != nullptr?"; child count: " + to_string(dynamic_cast<GUIParentNode*>(node)->subNodes.size()):"")
 	);
-	if (node->parentNode != nullptr) dumpParentNodes(node->parentNode, indent + 2);
+	if (node->parentNode != nullptr) dumpParentNodes(node->parentNode, indent + 1);
 }
 
 void GUINode::cfDetermineElementNodeDependencies(vector<string>& elementNodeDependencies) {

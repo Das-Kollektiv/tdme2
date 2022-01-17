@@ -80,7 +80,7 @@ int GUITextNode::getContentHeight()
 
 void GUITextNode::setText(const MutableString& text) {
 	this->text = text;
-	screenNode->layout(this);
+	screenNode->invalidateLayout(this);
 }
 
 void GUITextNode::dispose()

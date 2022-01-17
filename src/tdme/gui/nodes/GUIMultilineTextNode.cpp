@@ -203,7 +203,7 @@ void GUIMultilineTextNode::setText(const MutableString& text) {
 	this->widthLast = -1;
 	this->heightLast = -1;
 	this->startTextStyleIdx = -1;
-	screenNode->layout(this);
+	screenNode->invalidateLayout(this);
 }
 
 void GUIMultilineTextNode::dispose()

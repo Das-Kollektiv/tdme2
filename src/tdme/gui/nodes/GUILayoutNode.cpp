@@ -136,8 +136,8 @@ int GUILayoutNode::getContentHeight()
 
 void GUILayoutNode::layoutSubNodes()
 {
-	GUIParentNode::layoutSubNodes();
 	if (conditionsMet == false) return;
+	GUIParentNode::layoutSubNodes();
 	{
 		if (alignment == GUILayoutNode_Alignment::VERTICAL) {
 			auto starCount = 0;

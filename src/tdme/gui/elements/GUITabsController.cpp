@@ -101,7 +101,6 @@ void GUITabsController::select(GUIElementNode* tabElementNode) {
 void GUITabsController::setTabContentSelectedInternal(const string& id) {
 	// TODO: a.drewke: improve me!
 	if (value.equals(id) == true && tabSelected == true) return;
-	value.set(id);
 	tabSelected = false;
 	auto tabContentNodeId = id + "-content";
 	for (auto tabContentController: tabContentControllers) {
@@ -109,6 +108,7 @@ void GUITabsController::setTabContentSelectedInternal(const string& id) {
 		tabContentController->setSelected(select);
 		if (select == true) tabSelected = true;
 	}
+	value.set(tabSelected == true?id:string());
 }
 
 void GUITabsController::setTabContentSelected(const string& id)

@@ -110,7 +110,7 @@ vector<GUINode*> GUIParentNode::detachSubNodes()
 		}
 	}
 
-	screenNode->forceInvalidateLayout(this->parentNode != nullptr?this->parentNode:this);
+	screenNode->invalidateLayout(this);
 
 	setConditionsMet();
 	floatingNodesCache.clear();
@@ -158,7 +158,7 @@ void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets)
 		}
 	}
 
-	screenNode->forceInvalidateLayout(this->parentNode != nullptr?this->parentNode:this);
+	screenNode->invalidateLayout(this);
 	GUIParser::parse(this, xml);
 
 	floatingNodesCache.clear();
@@ -171,7 +171,6 @@ void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets)
 
 	invalidateRenderCaches();
 	setConditionsMet();
-	screenNode->layout(this);
 
 	if (layouted == false || resetScrollOffsets == true) {
 		if (overflowX == GUIParentNode_Overflow::SCROLL) childrenRenderOffsetX = 0.0f;
@@ -207,7 +206,7 @@ void GUIParentNode::replaceSubNodes(const string& xml, bool resetScrollOffsets)
 
 void GUIParentNode::addSubNodes(const string& xml, bool resetScrollOffsets)
 {
-	screenNode->forceInvalidateLayout(this);
+	screenNode->invalidateLayout(this);
 	GUIParser::parse(this, xml);
 
 	floatingNodesCache.clear();
@@ -220,7 +219,6 @@ void GUIParentNode::addSubNodes(const string& xml, bool resetScrollOffsets)
 
 	invalidateRenderCaches();
 	setConditionsMet();
-	screenNode->forceInvalidateLayout(this->parentNode != nullptr?this->parentNode:this);
 
 	if (layouted == false || resetScrollOffsets == true) {
 		if (overflowX == GUIParentNode_Overflow::SCROLL) childrenRenderOffsetX = 0.0f;
@@ -275,7 +273,7 @@ void GUIParentNode::moveNodes(GUIParentNode* otherParentNode) {
 	auto detachedSubNodes = otherParentNode->detachSubNodes();
 
 	//
-	screenNode->forceInvalidateLayout(this);
+	screenNode->invalidateLayout(this);
 
 	// attach detached sub nodes here
 	for (auto subNode: detachedSubNodes) {
@@ -293,7 +291,6 @@ void GUIParentNode::moveNodes(GUIParentNode* otherParentNode) {
 
 	invalidateRenderCaches();
 	setConditionsMet();
-	screenNode->forceInvalidateLayout(this->parentNode != nullptr?this->parentNode:this);
 
 	if (overflowX == GUIParentNode_Overflow::SCROLL) childrenRenderOffsetX = 0.0f;
 	if (overflowY == GUIParentNode_Overflow::SCROLL) childrenRenderOffsetY = 0.0f;
@@ -666,7 +663,7 @@ void GUIParentNode::invalidateRenderCaches() {
 
 void GUIParentNode::removeSubNode(GUINode* node, bool resetScrollOffsets)
 {
-	screenNode->forceInvalidateLayout(this);
+	screenNode->invalidateLayout(this);
 	subNodes.erase(remove(subNodes.begin(), subNodes.end(), node), subNodes.end());
 
 	floatingNodesCache.clear();
@@ -687,8 +684,6 @@ void GUIParentNode::removeSubNode(GUINode* node, bool resetScrollOffsets)
 			parentControllerNode = parentControllerNode->getParentControllerNode();
 		}
 	}
-
-	screenNode->layout(this);
 
 	if (layouted == false || resetScrollOffsets == true) {
 		if (overflowX == GUIParentNode_Overflow::SCROLL) childrenRenderOffsetX = 0.0f;

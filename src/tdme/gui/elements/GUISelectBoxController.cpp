@@ -251,7 +251,7 @@ void GUISelectBoxController::toggleOpenState(int optionIdx) {
 	if (selectBoxParentOptionController != nullptr) selectBoxParentOptionController->toggleExpandState();
 
 	// TODO: this is a workaround, actually due to condition updates, the relayout should happen automatically
-	node->getScreenNode()->layout(node);
+	node->getScreenNode()->invalidateLayout(node);
 }
 
 void GUISelectBoxController::expand(int optionIdx) {
@@ -263,7 +263,7 @@ void GUISelectBoxController::expand(int optionIdx) {
 	}
 
 	// TODO: this is a workaround, actually due to condition updates, the relayout should happen automatically
-	node->getScreenNode()->layout(node);
+	node->getScreenNode()->invalidateLayout(node);
 }
 
 void GUISelectBoxController::collapse(int optionIdx) {
@@ -275,7 +275,7 @@ void GUISelectBoxController::collapse(int optionIdx) {
 	}
 
 	// TODO: this is a workaround, actually due to condition updates, the relayout should happen automatically
-	node->getScreenNode()->layout(node);
+	node->getScreenNode()->invalidateLayout(node);
 }
 
 void GUISelectBoxController::toggleOpenState(GUIElementNode* optionElementNode) {
@@ -492,7 +492,7 @@ void GUISelectBoxController::setValue(const MutableString& value)
 		selectBoxOptionNode->scrollToNodeY(required_dynamic_cast<GUIParentNode*>(node));
 	}
 	// TODO: this is a workaround, actually due to condition updates, the relayout should happen automatically
-	node->getScreenNode()->layout(node);
+	node->getScreenNode()->invalidateLayout(node);
 	//
 	this->value.reset();
 	for (auto& valueSetValue: valueSet) {
@@ -529,5 +529,5 @@ void GUISelectBoxController::expandParentOptionsByValues(const vector<string>& e
 	}
 	determineExpandedOptions();
 	// TODO: this is a workaround, actually due to condition updates, the relayout should happen automatically
-	node->getScreenNode()->layout(node);
+	node->getScreenNode()->invalidateLayout(node);
 }

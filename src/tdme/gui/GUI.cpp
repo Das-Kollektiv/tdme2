@@ -412,9 +412,18 @@ void GUI::focusPreviousNode()
 
 void GUI::render()
 {
+	//
 	if (renderScreens.empty() == true)
 		return;
 
+	// invalidate layouts
+	for (int i = renderScreens.size() - 1; i >= 0; i--) {
+		auto screen = renderScreens[i];
+		screen->invalidateLayouts();
+		screen->scrollToNodes();
+	}
+
+	//
 	if (focussedNodeScreenId.empty() == true || focussedNodeNodeId.empty() == true) {
 		focusNextNode();
 	}
@@ -680,13 +689,6 @@ void GUI::handleEvents()
 	//
 	mouseEvents.clear();
 	keyboardEvents.clear();
-
-	// invalidate layouts
-	for (int i = renderScreensCopy.size() - 1; i >= 0; i--) {
-		auto screen = renderScreensCopy[i];
-		screen->invalidateLayouts();
-		screen->scrollToNodes();
-	}
 }
 
 void GUI::onChar(unsigned int key, int x, int y) {
