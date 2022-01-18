@@ -6314,19 +6314,20 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, 
 
 	// check if desc1 left
 	if (programCommandBuffer.uboDescriptorSets1Idx == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.uboDescriptorSets1Idx));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.uboDescriptorSets1[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.uboDescriptorSets1Idx));
 		return;
 	}
 	// check if desc2 left
 	if (programCommandBuffer.uboDescriptorSets2Idx == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.uboDescriptorSets2Idx));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.uboDescriptorSets2[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.uboDescriptorSets2Idx));
 		return;
 	}
 	// check if desc3 left
 	if (programCommandBuffer.texturesDescriptorSets3IdxUncached == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.texturesDescriptorSets3IdxUncached));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.texturesDescriptorSets3IdxUncached[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.texturesDescriptorSets3IdxUncached));
 		return;
 	}
+
 	//
 	array<VkDescriptorSet, 2> uboDescriptorSets { programCommandBuffer.uboDescriptorSets1[programCommandBuffer.uboDescriptorSets1Idx], programCommandBuffer.uboDescriptorSets2[programCommandBuffer.uboDescriptorSets2Idx] };
 	auto texturesDescriptorSet3 = programCommandBuffer.texturesDescriptorSets3Uncached[programCommandBuffer.texturesDescriptorSets3IdxUncached];
@@ -6612,19 +6613,20 @@ void VKRenderer::drawPointsFromBufferObjects(int contextIdx, int32_t points, int
 
 	// check if desc1 left
 	if (programCommandBuffer.uboDescriptorSets1Idx == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.uboDescriptorSets1Idx));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.uboDescriptorSets1[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.uboDescriptorSets1Idx));
 		return;
 	}
 	// check if desc2 left
 	if (programCommandBuffer.uboDescriptorSets2Idx == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.uboDescriptorSets2Idx));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.uboDescriptorSets2[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.uboDescriptorSets2Idx));
 		return;
 	}
 	// check if desc3 left
 	if (programCommandBuffer.texturesDescriptorSets3IdxUncached == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.texturesDescriptorSets3IdxUncached));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.texturesDescriptorSets3IdxUncached[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.texturesDescriptorSets3IdxUncached));
 		return;
 	}
+
 	//
 	array<VkDescriptorSet, 2> uboDescriptorSets { programCommandBuffer.uboDescriptorSets1[programCommandBuffer.uboDescriptorSets1Idx], programCommandBuffer.uboDescriptorSets2[programCommandBuffer.uboDescriptorSets2Idx] };
 	auto texturesDescriptorSet3 = programCommandBuffer.texturesDescriptorSets3Uncached[programCommandBuffer.texturesDescriptorSets3IdxUncached];
@@ -6797,17 +6799,17 @@ void VKRenderer::drawLinesFromBufferObjects(int contextIdx, int32_t points, int3
 
 	// check if desc1 left
 	if (programCommandBuffer.uboDescriptorSets1Idx == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.uboDescriptorSets1Idx));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.uboDescriptorSets1[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.uboDescriptorSets1Idx));
 		return;
 	}
 	// check if desc2 left
 	if (programCommandBuffer.uboDescriptorSets2Idx == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.uboDescriptorSets2Idx));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.uboDescriptorSets2[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.uboDescriptorSets2Idx));
 		return;
 	}
 	// check if desc3 left
 	if (programCommandBuffer.texturesDescriptorSets3IdxUncached == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.texturesDescriptorSets3IdxUncached));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.texturesDescriptorSets3IdxUncached[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.texturesDescriptorSets3IdxUncached));
 		return;
 	}
 
@@ -7346,7 +7348,7 @@ void VKRenderer::dispatchCompute(int contextIdx, int32_t numGroupsX, int32_t num
 
 	// check if desc1 left
 	if (programCommandBuffer.uboDescriptorSets1Idx == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.uboDescriptorSets1Idx));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.uboDescriptorSets1Idx[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.uboDescriptorSets1Idx));
 		return;
 	}
 	//
