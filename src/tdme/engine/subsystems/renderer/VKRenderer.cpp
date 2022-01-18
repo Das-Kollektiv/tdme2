@@ -3455,22 +3455,7 @@ inline void VKRenderer::setProgramUniformInternal(int contextIdx, int32_t unifor
 				continue;
 			}
 			*/
-			auto remainingSize = size;
-			auto offset = 0;
-			auto src = data;
-			auto dst = static_cast<uint8_t*>(&currentContext.uniformBufferData[shaderIdx][shaderUniform.position]);
-			while (remainingSize >= 8) {
-				*(uint64_t*)dst = *(uint64_t*)src;
-				remainingSize-= 8;
-				src+= 8;
-				dst+= 8;
-			}
-			while (remainingSize >= 4) {
-				*(uint32_t*)dst = *(uint32_t*)src;
-				remainingSize-= 4;
-				src+= 4;
-				dst+= 4;
-			}
+			memCpy(currentContext.uniformBufferData[shaderIdx].data(), data, size, shaderUniform.position);
 		} else
 		if (shaderUniform.type == shader_type::uniform_type::TYPE_SAMPLER2D) {
 			shaderUniform.textureUnit = *((int32_t*)data);
@@ -5899,29 +5884,51 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, int32_t buffe
 	if (buffer->shared == true) buffersMutex.unlock();
 }
 
-inline void VKRenderer::vmaMemCpy(VmaAllocation allocationDst, const uint8_t* _src, uint32_t size, uint32_t _offset) {
+inline int VKRenderer::memCmp(const uint8_t* dst, const uint8_t* src, uint32_t size, uint32_t offset) {
+	auto diffBytes = 0;
+	//
+	auto remainingSize = size;
+	auto _src = src;
+	auto _dst = dst + offset;
+	while (remainingSize >= 8) {
+		if (*(uint64_t*)_dst != *(uint64_t*)_src) diffBytes+= 8;
+		remainingSize-= 8;
+		_src+= 8;
+		_dst+= 8;
+	}
+	while (remainingSize >= 4) {
+		if (*(uint32_t*)_dst != *(uint32_t*)_src) diffBytes+= 4;
+		remainingSize-= 4;
+		_src+= 4;
+		_dst+= 4;
+	}
+	return diffBytes;
+}
+
+inline void VKRenderer::memCpy(uint8_t* dst, const uint8_t* src, uint32_t size, uint32_t offset) {
+	//
+	auto remainingSize = size;
+	auto _src = src;
+	auto _dst = dst + offset;
+	while (remainingSize >= 8) {
+		*(uint64_t*)_dst = *(uint64_t*)_src;
+		remainingSize-= 8;
+		_src+= 8;
+		_dst+= 8;
+	}
+	while (remainingSize >= 4) {
+		*(uint32_t*)_dst = *(uint32_t*)_src;
+		remainingSize-= 4;
+		_src+= 4;
+		_dst+= 4;
+	}
+}
+
+inline void VKRenderer::vmaMemCpy(VmaAllocation allocationDst, const uint8_t* src, uint32_t size, uint32_t offset) {
 	vmaSpinlock.lock();
 	VmaAllocationInfo dstAllocationInfo {};
 	vmaGetAllocationInfo(vmaAllocator, allocationDst, &dstAllocationInfo);
-
-	//
-	auto remainingSize = size;
-	auto offset = _offset;
-	auto src = _src;
-	auto dst = static_cast<uint8_t*>(dstAllocationInfo.pMappedData) + offset;
-	while (remainingSize >= 8) {
-		*(uint64_t*)dst = *(uint64_t*)src;
-		remainingSize-= 8;
-		src+= 8;
-		dst+= 8;
-	}
-	while (remainingSize >= 4) {
-		*(uint32_t*)dst = *(uint32_t*)src;
-		remainingSize-= 4;
-		src+= 4;
-		dst+= 4;
-	}
-	//
+	memCpy(static_cast<uint8_t*>(dstAllocationInfo.pMappedData), src, size, offset);
 	vmaSpinlock.unlock();
 }
 

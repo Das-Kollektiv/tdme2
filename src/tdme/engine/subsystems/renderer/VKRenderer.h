@@ -512,6 +512,8 @@ private:
 	VkBuffer getBufferObjectInternal(buffer_object_type* bufferObject, uint32_t& size);
 	void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VmaAllocation& allocation, VmaAllocationInfo& allocationInfo);
 	buffer_object_type* getBufferObjectInternal(int32_t bufferObjectId);
+	int memCmp(const uint8_t* dst, const uint8_t* src, uint32_t size, uint32_t offset = 0);
+	void memCpy(uint8_t* dst, const uint8_t* src, uint32_t size, uint32_t offset = 0);
 	void vmaMemCpy(VmaAllocation allocationDst, const uint8_t* src, uint32_t size, uint32_t offset = 0);
 	void uploadBufferObjectInternal(int contextIdx,  buffer_object_type* buffer, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
 	void uploadBufferObjectInternal(int contextIdx, int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
