@@ -375,6 +375,7 @@ inline VkCommandBuffer VKRenderer::endDrawCommandBuffer(int contextIdx, int buff
 	for (auto program: currentContext.lastUnsubmittedPrograms) {
 		auto& programContextCommandBuffer = program->contexts[contextIdx].commandBuffers[bufferId];
 		programContextCommandBuffer.uboDescriptorSets1Idx = 0;
+		programContextCommandBuffer.uboDescriptorSets2Idx = 0;
 		programContextCommandBuffer.texturesDescriptorSets3IdxUncached = 0;
 	}
 
@@ -1350,26 +1351,26 @@ void VKRenderer::initialize()
 		array<VkDescriptorPoolSize, 2> desc1TypesCount = {{
 			{
 				.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				// 100 shaders * 3 command buffers * 2 shader stages * 1 uniform buffers
-				.descriptorCount = static_cast<uint32_t>(DESC_MAX_UNCACHED * Engine::getThreadCount() * SHADERS_MAX * DRAW_COMMANDBUFFER_MAX * 2 * 1)
+				// 100 shaders * 3 command buffers * 2 shader stages
+				.descriptorCount = static_cast<uint32_t>(DESC_MAX_UNCACHED * Engine::getThreadCount() * SHADERS_MAX * DRAW_COMMANDBUFFER_MAX * SHADERSTAGES_MAX)
 			},
 			{
 				.type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
 				// 1 shader * 3 command buffers * 1 shader stage * 10 storage buffers
-				.descriptorCount = static_cast<uint32_t>(DESC_MAX_UNCACHED * Engine::getThreadCount() * SHADERS_COMPUTE_MAX * DRAW_COMMANDBUFFER_MAX * 1 * 10)
+				.descriptorCount = static_cast<uint32_t>(DESC_MAX_UNCACHED * Engine::getThreadCount() * SHADERS_COMPUTE_MAX * DRAW_COMMANDBUFFER_MAX * SHADERSTAGES_MAX * 10)
 			}
 		}};
 		const VkDescriptorPoolCreateInfo descriptorPoolCreateInfo = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = 0,
-			// 100 shaders * 2 stages
-			.maxSets = static_cast<uint32_t>(DESC_MAX_UNCACHED * Engine::getThreadCount() * 100 * 2),
+			// 100 shaders * 2 stages * 2 ubos
+			.maxSets = static_cast<uint32_t>(DESC_MAX_UNCACHED * Engine::getThreadCount() * SHADERS_MAX * SHADERSTAGES_MAX * 2),
 			.poolSizeCount = desc1TypesCount.size(),
 			.pPoolSizes = desc1TypesCount.data(),
 		};
 		//
-		err = vkCreateDescriptorPool(device, &descriptorPoolCreateInfo, nullptr, &descriptorPool1);
+		err = vkCreateDescriptorPool(device, &descriptorPoolCreateInfo, nullptr, &uboDescriptorPool1);
 		assert(!err);
 	}
 
@@ -1378,19 +1379,19 @@ void VKRenderer::initialize()
 		const VkDescriptorPoolSize desc2TypesCount = {
 			.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 			// 100 shaders * 2 stages * 8 image sampler
-			.descriptorCount = static_cast<uint32_t>((DESC_MAX_CACHED + DESC_MAX_UNCACHED) * Engine::getThreadCount() * SHADERS_MAX * 2 * 8)
+			.descriptorCount = static_cast<uint32_t>((DESC_MAX_CACHED + DESC_MAX_UNCACHED) * Engine::getThreadCount() * SHADERS_MAX * SHADERSTAGES_MAX * 8)
 		};
 		const VkDescriptorPoolCreateInfo descriptorPoolCreateInfo = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = 0,
 			// 100 shaders * 2 stages
-			.maxSets = static_cast<uint32_t>((DESC_MAX_CACHED + DESC_MAX_UNCACHED) * Engine::getThreadCount() * SHADERS_MAX * 2),
+			.maxSets = static_cast<uint32_t>((DESC_MAX_CACHED + DESC_MAX_UNCACHED) * Engine::getThreadCount() * SHADERS_MAX * SHADERSTAGES_MAX * 2),
 			.poolSizeCount = 1,
 			.pPoolSizes = &desc2TypesCount,
 		};
 		//
-		err = vkCreateDescriptorPool(device, &descriptorPoolCreateInfo, nullptr, &descriptorPool2);
+		err = vkCreateDescriptorPool(device, &descriptorPoolCreateInfo, nullptr, &texturesDescriptorPool2);
 		assert(!err);
 	}
 
@@ -2227,18 +2228,34 @@ void VKRenderer::createRenderProgram(program_type* program) {
 		}
 	}
 
-	{
+	//
+	array<VkDescriptorSetLayout, 3> descriptorSetLayouts;
+	auto descriptorSetLayoutsIdx = 0;
+	if (program->shaders[0]->uboBindingIdx != -1 ){
 		const VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = 0,
-			.bindingCount = static_cast<uint32_t>(uboIdx),
-			.pBindings = layoutBindings1.data(),
+			.bindingCount = static_cast<uint32_t>(1),
+			.pBindings = &layoutBindings1[0],
 		};
 		err = vkCreateDescriptorSetLayout(device, &descriptorSetLayoutCreateInfo, nullptr, &program->uboDescriptorSetLayout1);
 		assert(!err);
+		descriptorSetLayouts[descriptorSetLayoutsIdx++] = program->uboDescriptorSetLayout1;
 	}
-	{
+	if (program->shaders[1]->uboBindingIdx != -1 ){
+		const VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {
+			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+			.pNext = nullptr,
+			.flags = 0,
+			.bindingCount = static_cast<uint32_t>(1),
+			.pBindings = &layoutBindings1[program->shaders[0]->uboBindingIdx == -1?0:1],
+		};
+		err = vkCreateDescriptorSetLayout(device, &descriptorSetLayoutCreateInfo, nullptr, &program->uboDescriptorSetLayout2);
+		assert(!err);
+		descriptorSetLayouts[descriptorSetLayoutsIdx++] = program->uboDescriptorSetLayout2;
+	}
+	if (samplerIdx > 0){
 		const VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
 			.pNext = nullptr,
@@ -2246,49 +2263,67 @@ void VKRenderer::createRenderProgram(program_type* program) {
 			.bindingCount = static_cast<uint32_t>(samplerIdx),
 			.pBindings = layoutBindings2.data(),
 		};
-		err = vkCreateDescriptorSetLayout(device, &descriptorSetLayoutCreateInfo, nullptr, &program->texturesDescriptorSetLayout2);
+		err = vkCreateDescriptorSetLayout(device, &descriptorSetLayoutCreateInfo, nullptr, &program->texturesDescriptorSetLayout3);
 		assert(!err);
+		descriptorSetLayouts[descriptorSetLayoutsIdx++] = program->texturesDescriptorSetLayout3;
 	}
 
 	//
-	array<VkDescriptorSetLayout, 2> descriptorSetLayouts { program->uboDescriptorSetLayout1, program->texturesDescriptorSetLayout2 };
 	const VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
 		.pNext = nullptr,
 		.flags = 0,
-		.setLayoutCount = descriptorSetLayouts.size(),
+		.setLayoutCount = static_cast<uint32_t>(descriptorSetLayoutsIdx),
 		.pSetLayouts = descriptorSetLayouts.data()
 	};
 
 	//
 	for (auto i = 0; i < DRAW_COMMANDBUFFER_MAX; i++) {
-		array<VkDescriptorSetLayout, DESC_MAX_UNCACHED> descriptorSetLayouts1;
-		descriptorSetLayouts1.fill(program->uboDescriptorSetLayout1);
-		//
-		VkDescriptorSetAllocateInfo descriptorSetAllocateInfo = {
-			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-			.pNext = nullptr,
-			.descriptorPool = descriptorPool1,
-			.descriptorSetCount = DESC_MAX_UNCACHED,
-			.pSetLayouts = descriptorSetLayouts1.data()
-		};
-		for (auto& context: contexts) {
-			err = vkAllocateDescriptorSets(device, &descriptorSetAllocateInfo, program->contexts[context.idx].commandBuffers[i].uboDescriptorSets1.data());
-			assert(!err);
+		if (program->shaders[0]->uboBindingIdx != -1) {
+			array<VkDescriptorSetLayout, DESC_MAX_UNCACHED> uboDescriptorSetLayouts1;
+			uboDescriptorSetLayouts1.fill(program->uboDescriptorSetLayout1);
+			//
+			VkDescriptorSetAllocateInfo descriptorSetAllocateInfo = {
+				.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+				.pNext = nullptr,
+				.descriptorPool = uboDescriptorPool1,
+				.descriptorSetCount = DESC_MAX_UNCACHED,
+				.pSetLayouts = uboDescriptorSetLayouts1.data()
+			};
+			for (auto& context: contexts) {
+				err = vkAllocateDescriptorSets(device, &descriptorSetAllocateInfo, program->contexts[context.idx].commandBuffers[i].uboDescriptorSets1.data());
+				assert(!err);
+			}
+		}
+		if (program->shaders[1]->uboBindingIdx != -1) {
+			array<VkDescriptorSetLayout, DESC_MAX_UNCACHED> uboDescriptorSetLayouts2;
+			uboDescriptorSetLayouts2.fill(program->uboDescriptorSetLayout2);
+			//
+			VkDescriptorSetAllocateInfo descriptorSetAllocateInfo = {
+				.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+				.pNext = nullptr,
+				.descriptorPool = uboDescriptorPool1,
+				.descriptorSetCount = DESC_MAX_UNCACHED,
+				.pSetLayouts = uboDescriptorSetLayouts2.data()
+			};
+			for (auto& context: contexts) {
+				err = vkAllocateDescriptorSets(device, &descriptorSetAllocateInfo, program->contexts[context.idx].commandBuffers[i].uboDescriptorSets2.data());
+				assert(!err);
+			}
 		}
 	}
 
 	//
 	if (program->type == PROGRAM_OBJECTS) {
-		array<VkDescriptorSetLayout, DESC_MAX_CACHED> descriptorSetLayouts2;
-		descriptorSetLayouts2.fill(program->texturesDescriptorSetLayout2);
+		array<VkDescriptorSetLayout, DESC_MAX_CACHED> texturesDescriptorSetLayouts3;
+		texturesDescriptorSetLayouts3.fill(program->texturesDescriptorSetLayout3);
 		//
 		VkDescriptorSetAllocateInfo descriptorSetAllocateInfo = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
 			.pNext = nullptr,
-			.descriptorPool = descriptorPool2,
+			.descriptorPool = texturesDescriptorPool2,
 			.descriptorSetCount = DESC_MAX_CACHED,
-			.pSetLayouts = descriptorSetLayouts2.data()
+			.pSetLayouts = texturesDescriptorSetLayouts3.data()
 		};
 		for (auto& context: contexts) {
 			err = vkAllocateDescriptorSets(device, &descriptorSetAllocateInfo, program->contexts[context.idx].texturesDescriptorSets3.data());
@@ -2298,15 +2333,15 @@ void VKRenderer::createRenderProgram(program_type* program) {
 
 	//
 	for (auto i = 0; i < DRAW_COMMANDBUFFER_MAX; i++) {
-		array<VkDescriptorSetLayout, DESC_MAX_UNCACHED> descriptorSetLayouts2;
-		descriptorSetLayouts2.fill(program->texturesDescriptorSetLayout2);
+		array<VkDescriptorSetLayout, DESC_MAX_UNCACHED> texturesDescriptorSetLayouts3;
+		texturesDescriptorSetLayouts3.fill(program->texturesDescriptorSetLayout3);
 		//
 		VkDescriptorSetAllocateInfo descriptorSetAllocateInfo = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
 			.pNext = nullptr,
-			.descriptorPool = descriptorPool2,
+			.descriptorPool = texturesDescriptorPool2,
 			.descriptorSetCount = DESC_MAX_UNCACHED,
-			.pSetLayouts = descriptorSetLayouts2.data()
+			.pSetLayouts = texturesDescriptorSetLayouts3.data()
 		};
 		for (auto& context: contexts) {
 			err = vkAllocateDescriptorSets(device, &descriptorSetAllocateInfo, program->contexts[context.idx].commandBuffers[i].texturesDescriptorSets3Uncached.data());
@@ -2843,9 +2878,15 @@ void VKRenderer::createLinesRenderingPipeline(int contextIdx, program_type* prog
 	VkPipelineDepthStencilStateCreateInfo ds {};
 	VkPipelineViewportStateCreateInfo vp {};
 	VkPipelineMultisampleStateCreateInfo ms {};
+	array<VkDynamicState, 1> dse {};
+	VkPipelineDynamicStateCreateInfo dsc {};
 
 	createRasterizationStateCreateInfo(contextIdx, rs);
 	createDepthStencilStateCreateInfo(ds);
+
+	dse[dsc.dynamicStateCount++] = VK_DYNAMIC_STATE_LINE_WIDTH;
+	dsc.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+	dsc.pDynamicStates = dse.data();
 
 	pipeline.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 	pipeline.stageCount = shaderIdx;
@@ -2934,7 +2975,7 @@ void VKRenderer::createLinesRenderingPipeline(int contextIdx, program_type* prog
 	pipeline.pDepthStencilState = haveDepthBuffer == true?&ds:nullptr;
 	pipeline.pStages = shaderStages.data();
 	pipeline.renderPass = usedRenderPass;
-	pipeline.pDynamicState = nullptr;
+	pipeline.pDynamicState = &dsc;
 
 	pipelineCacheCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
 	err = vkCreatePipelineCache(device, &pipelineCacheCreateInfo, nullptr, &pipelineCache);
@@ -3041,7 +3082,7 @@ inline void VKRenderer::createSkinningComputingProgram(program_type* program) {
 		VkDescriptorSetAllocateInfo descriptorSetAllocateInfo = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
 			.pNext = nullptr,
-			.descriptorPool = descriptorPool1,
+			.descriptorPool = uboDescriptorPool1,
 			.descriptorSetCount = DESC_MAX_UNCACHED,
 			.pSetLayouts = descriptorSetLayouts1.data()
 		};
@@ -3169,6 +3210,7 @@ int32_t VKRenderer::createProgram(int type)
 		programContext.texturesDescriptorSets3.fill(VK_NULL_HANDLE);
 		for (auto& programContextCommandBuffer: programContext.commandBuffers) {
 			programContextCommandBuffer.uboDescriptorSets1Idx = 0;
+			programContextCommandBuffer.uboDescriptorSets2Idx = 0;
 			programContextCommandBuffer.texturesDescriptorSets3IdxUncached = 0;
 			programContextCommandBuffer.uboDescriptorSets1.fill(VK_NULL_HANDLE);
 			programContextCommandBuffer.uboDescriptorSets2.fill(VK_NULL_HANDLE);
@@ -6276,13 +6318,22 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, 
 		return;
 	}
 	// check if desc2 left
+	if (programCommandBuffer.uboDescriptorSets2Idx == DESC_MAX_UNCACHED) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.uboDescriptorSets2Idx));
+		return;
+	}
+	// check if desc3 left
 	if (programCommandBuffer.texturesDescriptorSets3IdxUncached == DESC_MAX_UNCACHED) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.texturesDescriptorSets3IdxUncached));
 		return;
 	}
 	//
-	auto uboDescriptorSet1 = programCommandBuffer.uboDescriptorSets1[programCommandBuffer.uboDescriptorSets1Idx];
+	array<VkDescriptorSet, 2> uboDescriptorSets { programCommandBuffer.uboDescriptorSets1[programCommandBuffer.uboDescriptorSets1Idx], programCommandBuffer.uboDescriptorSets2[programCommandBuffer.uboDescriptorSets2Idx] };
 	auto texturesDescriptorSet3 = programCommandBuffer.texturesDescriptorSets3Uncached[programCommandBuffer.texturesDescriptorSets3IdxUncached];
+
+	// descriptor sets
+	auto descSetIdx = 0;
+	array<VkDescriptorSet, 3> descSets;
 
 	// start draw command buffer, it not yet done
 	beginDrawCommandBuffer(currentContext.idx);
@@ -6349,7 +6400,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, 
 			currentContext.descriptorWriteSets[shader->uboBindingIdx] = {
 				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 				.pNext = nullptr,
-				.dstSet = uboDescriptorSet1,
+				.dstSet = uboDescriptorSets[shaderIdx],
 				.dstBinding = static_cast<uint32_t>(shader->uboBindingIdx),
 				.dstArrayElement = 0,
 				.descriptorCount = 1,
@@ -6360,12 +6411,16 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, 
 			};
 
 			//
+			descSets[descSetIdx++] = uboDescriptorSets[shaderIdx];
+
+			//
 			shaderIdx++;
 			uboIdx++;
 		}
 		samplers = samplerIdx;
 	}
 
+	//
 	auto& descriptorSet2Cache = programContext.texturesDescriptorSets3Cache;
 	auto descriptorSet2CacheIt = samplers > SAMPLER_HASH_MAX?descriptorSet2Cache.end():descriptorSet2Cache.find(descriptorSet2CacheId);
 	auto descriptorSet2CacheHit = descriptorSet2CacheIt != descriptorSet2Cache.end();
@@ -6459,14 +6514,14 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, 
 	}
 
 	//
-	vkUpdateDescriptorSets(device, descriptorSet2CacheHit == true?uboIdx:currentContext.program->layoutBindings, currentContext.descriptorWriteSets.data(), 0, nullptr);
+	descSets[descSetIdx++] = texturesDescriptorSet3;
 
-	// descriptor sets
-	array<VkDescriptorSet, 2> descSets { uboDescriptorSet1, texturesDescriptorSet3 };
+	//
+	vkUpdateDescriptorSets(device, descriptorSet2CacheHit == true?uboIdx:currentContext.program->layoutBindings, currentContext.descriptorWriteSets.data(), 0, nullptr);
 
 	// draw cmd
 	auto& drawCommand = currentContext.commandBuffers[currentContext.currentCommandBuffer].drawCommand;
-	vkCmdBindDescriptorSets(drawCommand, VK_PIPELINE_BIND_POINT_GRAPHICS, currentContext.program->pipelineLayout, 0, descSets.size(), descSets.data(), 0, nullptr);
+	vkCmdBindDescriptorSets(drawCommand, VK_PIPELINE_BIND_POINT_GRAPHICS, currentContext.program->pipelineLayout, 0, descSetIdx, descSets.data(), 0, nullptr);
 
 	// index buffer
 	if (indicesBuffer != VK_NULL_HANDLE) {
@@ -6485,6 +6540,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, 
 
 	//
 	programCommandBuffer.uboDescriptorSets1Idx++;
+	programCommandBuffer.uboDescriptorSets2Idx++;
 	currentContext.commandCount++;
 
 	//
@@ -6560,13 +6616,22 @@ void VKRenderer::drawPointsFromBufferObjects(int contextIdx, int32_t points, int
 		return;
 	}
 	// check if desc2 left
+	if (programCommandBuffer.uboDescriptorSets2Idx == DESC_MAX_UNCACHED) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.uboDescriptorSets2Idx));
+		return;
+	}
+	// check if desc3 left
 	if (programCommandBuffer.texturesDescriptorSets3IdxUncached == DESC_MAX_UNCACHED) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.texturesDescriptorSets3IdxUncached));
 		return;
 	}
 	//
-	auto uboDescriptorSet1 = programCommandBuffer.uboDescriptorSets1[programCommandBuffer.uboDescriptorSets1Idx];
+	array<VkDescriptorSet, 2> uboDescriptorSets { programCommandBuffer.uboDescriptorSets1[programCommandBuffer.uboDescriptorSets1Idx], programCommandBuffer.uboDescriptorSets2[programCommandBuffer.uboDescriptorSets2Idx] };
 	auto texturesDescriptorSet3 = programCommandBuffer.texturesDescriptorSets3Uncached[programCommandBuffer.texturesDescriptorSets3IdxUncached];
+
+	// descriptor sets
+	auto descSetIdx = 0;
+	array<VkDescriptorSet, 3> descSets;
 
 	// start draw command buffer, it not yet done
 	beginDrawCommandBuffer(currentContext.idx);
@@ -6673,7 +6738,7 @@ void VKRenderer::drawPointsFromBufferObjects(int contextIdx, int32_t points, int
 		currentContext.descriptorWriteSets[shader->uboBindingIdx] = {
 			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 			.pNext = nullptr,
-			.dstSet = uboDescriptorSet1,
+			.dstSet = uboDescriptorSets[shaderIdx],
 			.dstBinding = static_cast<uint32_t>(shader->uboBindingIdx),
 			.dstArrayElement = 0,
 			.descriptorCount = 1,
@@ -6684,22 +6749,28 @@ void VKRenderer::drawPointsFromBufferObjects(int contextIdx, int32_t points, int
 		};
 
 		//
+		descSets[descSetIdx++] = uboDescriptorSets[shaderIdx];
+
+		//
 		shaderIdx++;
 		uboIdx++;
 	}
+
+	//
+	descSets[descSetIdx++] = texturesDescriptorSet3;
 
 	//
 	vkUpdateDescriptorSets(device, currentContext.program->layoutBindings, currentContext.descriptorWriteSets.data(), 0, nullptr);
 
 	//
 	auto& drawCommand = currentContext.commandBuffers[currentContext.currentCommandBuffer].drawCommand;
-	array<VkDescriptorSet, 2> descriptorSets { uboDescriptorSet1, texturesDescriptorSet3 };
-	vkCmdBindDescriptorSets(drawCommand, VK_PIPELINE_BIND_POINT_GRAPHICS, currentContext.program->pipelineLayout, 0, descriptorSets.size(), descriptorSets.data(), 0, nullptr);
+	vkCmdBindDescriptorSets(drawCommand, VK_PIPELINE_BIND_POINT_GRAPHICS, currentContext.program->pipelineLayout, 0, descSetIdx, descSets.data(), 0, nullptr);
 	vkCmdBindVertexBuffers(drawCommand, 0, POINTS_VERTEX_BUFFER_COUNT, currentContext.boundBuffers.data(), currentContext.boundBufferOffsets.data());
 	vkCmdDraw(drawCommand, points, 1, pointsOffset, 0);
 
 	//
 	programCommandBuffer.uboDescriptorSets1Idx++;
+	programCommandBuffer.uboDescriptorSets2Idx++;
 	programCommandBuffer.texturesDescriptorSets3IdxUncached++;
 	currentContext.commandCount++;
 
@@ -6730,12 +6801,22 @@ void VKRenderer::drawLinesFromBufferObjects(int contextIdx, int32_t points, int3
 		return;
 	}
 	// check if desc2 left
+	if (programCommandBuffer.uboDescriptorSets2Idx == DESC_MAX_UNCACHED) {
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.uboDescriptorSets2Idx));
+		return;
+	}
+	// check if desc3 left
 	if (programCommandBuffer.texturesDescriptorSets3IdxUncached == DESC_MAX_UNCACHED) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.texturesDescriptorSets3IdxUncached));
 		return;
 	}
+
+	// descriptor sets
+	auto descSetIdx = 0;
+	array<VkDescriptorSet, 3> descSets;
+
 	//
-	auto uboDescriptorSet1 = programCommandBuffer.uboDescriptorSets1[programCommandBuffer.uboDescriptorSets1Idx];
+	array<VkDescriptorSet, 2> uboDescriptorSets { programCommandBuffer.uboDescriptorSets1[programCommandBuffer.uboDescriptorSets1Idx], programCommandBuffer.uboDescriptorSets2[programCommandBuffer.uboDescriptorSets2Idx] };
 	auto texturesDescriptorSet3 = programCommandBuffer.texturesDescriptorSets3Uncached[programCommandBuffer.texturesDescriptorSets3IdxUncached];
 
 	// start draw command buffer, it not yet done
@@ -6843,7 +6924,7 @@ void VKRenderer::drawLinesFromBufferObjects(int contextIdx, int32_t points, int3
 		currentContext.descriptorWriteSets[shader->uboBindingIdx] = {
 			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 			.pNext = nullptr,
-			.dstSet = uboDescriptorSet1,
+			.dstSet = uboDescriptorSets[shaderIdx],
 			.dstBinding = static_cast<uint32_t>(shader->uboBindingIdx),
 			.dstArrayElement = 0,
 			.descriptorCount = 1,
@@ -6854,23 +6935,29 @@ void VKRenderer::drawLinesFromBufferObjects(int contextIdx, int32_t points, int3
 		};
 
 		//
+		descSets[descSetIdx++] = uboDescriptorSets[shaderIdx];
+
+		//
 		shaderIdx++;
 		uboIdx++;
 	}
+
+	//
+	descSets[descSetIdx++] = texturesDescriptorSet3;
 
 	//
 	vkUpdateDescriptorSets(device, currentContext.program->layoutBindings, currentContext.descriptorWriteSets.data(), 0, nullptr);
 
 	//
 	auto& drawCommand = currentContext.commandBuffers[currentContext.currentCommandBuffer].drawCommand;
-	array<VkDescriptorSet, 2> descriptorSets { uboDescriptorSet1, texturesDescriptorSet3 };
-	vkCmdBindDescriptorSets(drawCommand, VK_PIPELINE_BIND_POINT_GRAPHICS, currentContext.program->pipelineLayout, 0, descriptorSets.size(), descriptorSets.data(), 0, nullptr);
+	vkCmdBindDescriptorSets(drawCommand, VK_PIPELINE_BIND_POINT_GRAPHICS, currentContext.program->pipelineLayout, 0, descSetIdx, descSets.data(), 0, nullptr);
 	vkCmdBindVertexBuffers(drawCommand, 0, LINES_VERTEX_BUFFER_COUNT, currentContext.boundBuffers.data(), currentContext.boundBufferOffsets.data());
 	vkCmdSetLineWidth(drawCommand, lineWidth);
 	vkCmdDraw(drawCommand, points, 1, pointsOffset, 0);
 
 	//
 	programCommandBuffer.uboDescriptorSets1Idx++;
+	programCommandBuffer.uboDescriptorSets2Idx++;
 	programCommandBuffer.texturesDescriptorSets3IdxUncached++;
 	currentContext.commandCount++;
 

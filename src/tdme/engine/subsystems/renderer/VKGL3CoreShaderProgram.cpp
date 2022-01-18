@@ -621,7 +621,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 						}
 						for (auto i = 0; i < arraySize; i++) {
 							auto suffix = isArray == true?"_" + to_string(i):"";
-							newShaderSourceLines.push_back("layout(set = 1, binding = {$SAMPLER2D_BINDING_" + uniformName + suffix + "_IDX}) uniform sampler2D " + uniformName + suffix + ";");
+							newShaderSourceLines.push_back("layout(set = {$SAMPLER_DESCRIPTOR_SET}, binding = {$SAMPLER2D_BINDING_" + uniformName + suffix + "_IDX}) uniform sampler2D " + uniformName + suffix + ";");
 						}
 						shader.samplers++;
 					} else
@@ -643,7 +643,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 						}
 						for (auto i = 0; i < arraySize; i++) {
 							auto suffix = isArray == true?"_" + to_string(i):"";
-							newShaderSourceLines.push_back("layout(set = 1, binding = {$SAMPLERCUBE_BINDING_" + uniformName + suffix + "_IDX}) uniform samplerCube " + uniformName + suffix + ";");
+							newShaderSourceLines.push_back("layout(set = {$SAMPLER_DESCRIPTOR_SET}, binding = {$SAMPLERCUBE_BINDING_" + uniformName + suffix + "_IDX}) uniform samplerCube " + uniformName + suffix + ";");
 						}
 						shader.samplers++;
 					} else {
@@ -741,7 +741,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 		// replace uniforms to use ubo
 		if (uniforms.size() > 0) {
 			if (uboUniformCount > 0) {
-				uniformsBlock+= "layout(set = 0, std140, column_major, binding={$UBO_BINDING_IDX}) uniform UniformBufferObject\n";
+				uniformsBlock+= "layout(set = {$UBO_DESCRIPTOR_SET}, std140, column_major, binding={$UBO_BINDING_IDX}) uniform UniformBufferObject\n";
 				uniformsBlock+= "{\n";
 			}
 			string uniformsBlockIgnore;
@@ -958,14 +958,21 @@ bool VKGL3CoreShaderProgram::linkProgram(VKRenderer::program_type& program) {
 		}
 
 		//
+		auto uboDescriptorSet = 0;
 		for (auto shader: program.shaders) {
 			// do we need a uniform buffer object for this shader stage?
 			if (shader->uboSize > 0) {
-				// yep, inject UBO index
+				// yep, inject UBO index and descriptor set
 				shader->uboBindingIdx = bindingIdx;
 				shader->source = StringTools::replace(shader->source, "{$UBO_BINDING_IDX}", to_string(bindingIdx));
+				shader->source = StringTools::replace(shader->source, "{$UBO_DESCRIPTOR_SET}", to_string(uboDescriptorSet));
 				bindingIdx++;
+				uboDescriptorSet++;
 			}
+		}
+		for (auto shader: program.shaders) {
+			// yep, inject sampler descriptor set
+			shader->source = StringTools::replace(shader->source, "{$SAMPLER_DESCRIPTOR_SET}", to_string(uboDescriptorSet));
 		}
 
 		// bind samplers, set up ingoing attribute layout indices, compile shaders

@@ -193,6 +193,7 @@ private:
 	struct program_type {
 		struct command_buffer {
 			uint32_t uboDescriptorSets1Idx;
+			uint32_t uboDescriptorSets2Idx;
 			uint32_t texturesDescriptorSets3IdxUncached;
 			array<VkDescriptorSet, DESC_MAX_UNCACHED> uboDescriptorSets1;
 			array<VkDescriptorSet, DESC_MAX_UNCACHED> uboDescriptorSets2;
@@ -219,7 +220,8 @@ private:
 		uint32_t layoutBindings { 0 };
 		VkPipelineLayout pipelineLayout { VK_NULL_HANDLE };
 		VkDescriptorSetLayout uboDescriptorSetLayout1 { VK_NULL_HANDLE };
-		VkDescriptorSetLayout texturesDescriptorSetLayout2 { VK_NULL_HANDLE };
+		VkDescriptorSetLayout uboDescriptorSetLayout2 { VK_NULL_HANDLE };
+		VkDescriptorSetLayout texturesDescriptorSetLayout3 { VK_NULL_HANDLE };
 		int32_t id { 0 };
 		vector<context> contexts;
 	};
@@ -439,8 +441,8 @@ private:
 	int whiteTextureSamplerCubeDefaultId { 0 };
 	texture_type* whiteTextureSamplerCubeDefault { nullptr };
 
-	VkDescriptorPool descriptorPool1 { VK_NULL_HANDLE };
-	VkDescriptorPool descriptorPool2 { VK_NULL_HANDLE };
+	VkDescriptorPool uboDescriptorPool1 { VK_NULL_HANDLE };
+	VkDescriptorPool texturesDescriptorPool2 { VK_NULL_HANDLE };
 
 	uint32_t queueCount { 0 };
 
