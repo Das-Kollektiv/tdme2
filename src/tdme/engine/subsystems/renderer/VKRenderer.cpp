@@ -6370,16 +6370,16 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, 
 			for (auto uniform: shader->samplerUniformList) {
 				if (samplerIdx < SAMPLER_HASH_MAX) {
 					if (uniform->textureUnit == -1) {
-						textureIds[samplerIdx] = ID_NONE;
-					} else {
-						auto& boundTexture = currentContext.boundTextures[uniform->textureUnit];
-						if (boundTexture.view == VK_NULL_HANDLE) {
-							textureIds[samplerIdx] = ID_NONE;
-						} else {
-							textureIds[samplerIdx] = boundTexture.id;
-							descriptorSet2CacheId+= (SAMPLER_HASH_TYPE)boundTexture.id << (SAMPLER_HASH_TYPE)(samplerIdx * 16);
-						}
+						samplerIdx++;
+						continue;
 					}
+					auto& boundTexture = currentContext.boundTextures[uniform->textureUnit];
+					if (boundTexture.view == VK_NULL_HANDLE) {
+						samplerIdx++;
+						continue;
+					}
+					textureIds[samplerIdx] = boundTexture.id;
+					descriptorSet2CacheId+= (SAMPLER_HASH_TYPE)boundTexture.id << (SAMPLER_HASH_TYPE)(samplerIdx * 16);
 				}
 				samplerIdx++;
 			}
@@ -6452,29 +6452,15 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, 
 		for (auto shader: currentContext.program->shaders) {
 			// sampler2D + samplerCube
 			for (auto uniform: shader->samplerUniformList) {
-				if (uniform->textureUnit == -1) {
-					switch(uniform->type) {
-						case shader_type::uniform_type::TYPE_SAMPLER2D:
-							currentContext.descriptorImageInfos[samplerIdx] = {
-								.sampler = whiteTextureSampler2dDefault->sampler,
-								.imageView = whiteTextureSampler2dDefault->view,
-								.imageLayout = whiteTextureSampler2dDefault->vkLayout
-							};
-							break;
-						case shader_type::uniform_type::TYPE_SAMPLERCUBE:
-							currentContext.descriptorImageInfos[samplerIdx] = {
-								.sampler = whiteTextureSamplerCubeDefault->sampler,
-								.imageView = whiteTextureSamplerCubeDefault->view,
-								.imageLayout = whiteTextureSamplerCubeDefault->vkLayout
-							};
-							break;
-						default:
-							Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
-							break;
-					}
-				} else {
+				if (uniform->textureUnit != -1) {
 					auto& boundTexture = currentContext.boundTextures[uniform->textureUnit];
-					if (boundTexture.view == VK_NULL_HANDLE) {
+					if (boundTexture.view != VK_NULL_HANDLE) {
+						currentContext.descriptorImageInfos[samplerIdx] = {
+							.sampler = boundTexture.sampler,
+							.imageView = boundTexture.view,
+							.imageLayout = boundTexture.layout
+						};
+					} else {
 						switch(uniform->type) {
 							case shader_type::uniform_type::TYPE_SAMPLER2D:
 								currentContext.descriptorImageInfos[samplerIdx] = {
@@ -6494,12 +6480,26 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, 
 								Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
 								break;
 						}
-					} else {
-						currentContext.descriptorImageInfos[samplerIdx] = {
-							.sampler = boundTexture.sampler,
-							.imageView = boundTexture.view,
-							.imageLayout = boundTexture.layout
-						};
+					}
+				} else {
+					switch(uniform->type) {
+						case shader_type::uniform_type::TYPE_SAMPLER2D:
+							currentContext.descriptorImageInfos[samplerIdx] = {
+								.sampler = whiteTextureSampler2dDefault->sampler,
+								.imageView = whiteTextureSampler2dDefault->view,
+								.imageLayout = whiteTextureSampler2dDefault->vkLayout
+							};
+							break;
+						case shader_type::uniform_type::TYPE_SAMPLERCUBE:
+							currentContext.descriptorImageInfos[samplerIdx] = {
+								.sampler = whiteTextureSamplerCubeDefault->sampler,
+								.imageView = whiteTextureSamplerCubeDefault->view,
+								.imageLayout = whiteTextureSamplerCubeDefault->vkLayout
+							};
+							break;
+						default:
+							Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
+							break;
 					}
 				}
 				currentContext.descriptorWriteSets[uniform->position] = {
@@ -6658,29 +6658,15 @@ void VKRenderer::drawPointsFromBufferObjects(int contextIdx, int32_t points, int
 	for (auto shader: currentContext.program->shaders) {
 		// sampler2D + samplerCube
 		for (auto uniform: shader->samplerUniformList) {
-			if (uniform->textureUnit == -1) {
-				switch(uniform->type) {
-					case shader_type::uniform_type::TYPE_SAMPLER2D:
-						currentContext.descriptorImageInfos[samplerIdx] = {
-							.sampler = whiteTextureSampler2dDefault->sampler,
-							.imageView = whiteTextureSampler2dDefault->view,
-							.imageLayout = whiteTextureSampler2dDefault->vkLayout
-						};
-						break;
-					case shader_type::uniform_type::TYPE_SAMPLERCUBE:
-						currentContext.descriptorImageInfos[samplerIdx] = {
-							.sampler = whiteTextureSamplerCubeDefault->sampler,
-							.imageView = whiteTextureSamplerCubeDefault->view,
-							.imageLayout = whiteTextureSamplerCubeDefault->vkLayout
-						};
-						break;
-					default:
-						Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
-						break;
-				}
-			} else {
+			if (uniform->textureUnit != -1) {
 				auto& texture = currentContext.boundTextures[uniform->textureUnit];
-				if (texture.view == VK_NULL_HANDLE) {
+				if (texture.view != VK_NULL_HANDLE) {
+					currentContext.descriptorImageInfos[samplerIdx] = {
+						.sampler = texture.sampler,
+						.imageView = texture.view,
+						.imageLayout = texture.layout
+					};
+				} else {
 					switch(uniform->type) {
 						case shader_type::uniform_type::TYPE_SAMPLER2D:
 							currentContext.descriptorImageInfos[samplerIdx] = {
@@ -6700,12 +6686,26 @@ void VKRenderer::drawPointsFromBufferObjects(int contextIdx, int32_t points, int
 							Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
 							break;
 					}
-				} else {
-					currentContext.descriptorImageInfos[samplerIdx] = {
-						.sampler = texture.sampler,
-						.imageView = texture.view,
-						.imageLayout = texture.layout
-					};
+				}
+			} else {
+				switch(uniform->type) {
+					case shader_type::uniform_type::TYPE_SAMPLER2D:
+						currentContext.descriptorImageInfos[samplerIdx] = {
+							.sampler = whiteTextureSampler2dDefault->sampler,
+							.imageView = whiteTextureSampler2dDefault->view,
+							.imageLayout = whiteTextureSampler2dDefault->vkLayout
+						};
+						break;
+					case shader_type::uniform_type::TYPE_SAMPLERCUBE:
+						currentContext.descriptorImageInfos[samplerIdx] = {
+							.sampler = whiteTextureSamplerCubeDefault->sampler,
+							.imageView = whiteTextureSamplerCubeDefault->view,
+							.imageLayout = whiteTextureSamplerCubeDefault->vkLayout
+						};
+						break;
+					default:
+						Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
+						break;
 				}
 			}
 			currentContext.descriptorWriteSets[uniform->position] = {
@@ -6844,29 +6844,15 @@ void VKRenderer::drawLinesFromBufferObjects(int contextIdx, int32_t points, int3
 	for (auto shader: currentContext.program->shaders) {
 		// sampler2D + samplerCube
 		for (auto uniform: shader->samplerUniformList) {
-			if (uniform->textureUnit == -1) {
-				switch(uniform->type) {
-					case shader_type::uniform_type::TYPE_SAMPLER2D:
-						currentContext.descriptorImageInfos[samplerIdx] = {
-							.sampler = whiteTextureSampler2dDefault->sampler,
-							.imageView = whiteTextureSampler2dDefault->view,
-							.imageLayout = whiteTextureSampler2dDefault->vkLayout
-						};
-						break;
-					case shader_type::uniform_type::TYPE_SAMPLERCUBE:
-						currentContext.descriptorImageInfos[samplerIdx] = {
-							.sampler = whiteTextureSamplerCubeDefault->sampler,
-							.imageView = whiteTextureSamplerCubeDefault->view,
-							.imageLayout = whiteTextureSamplerCubeDefault->vkLayout
-						};
-						break;
-					default:
-						Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
-						break;
-				}
-			} else {
+			if (uniform->textureUnit != -1) {
 				auto& texture = currentContext.boundTextures[uniform->textureUnit];
-				if (texture.view == VK_NULL_HANDLE) {
+				if (texture.view != VK_NULL_HANDLE) {
+					currentContext.descriptorImageInfos[samplerIdx] = {
+						.sampler = texture.sampler,
+						.imageView = texture.view,
+						.imageLayout = texture.layout
+					};
+				} else {
 					switch(uniform->type) {
 						case shader_type::uniform_type::TYPE_SAMPLER2D:
 							currentContext.descriptorImageInfos[samplerIdx] = {
@@ -6886,14 +6872,30 @@ void VKRenderer::drawLinesFromBufferObjects(int contextIdx, int32_t points, int3
 							Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
 							break;
 					}
-				} else {
-					currentContext.descriptorImageInfos[samplerIdx] = {
-						.sampler = texture.sampler,
-						.imageView = texture.view,
-						.imageLayout = texture.layout
-					};
+				}
+			} else {
+				switch(uniform->type) {
+					case shader_type::uniform_type::TYPE_SAMPLER2D:
+						currentContext.descriptorImageInfos[samplerIdx] = {
+							.sampler = whiteTextureSampler2dDefault->sampler,
+							.imageView = whiteTextureSampler2dDefault->view,
+							.imageLayout = whiteTextureSampler2dDefault->vkLayout
+						};
+						break;
+					case shader_type::uniform_type::TYPE_SAMPLERCUBE:
+						currentContext.descriptorImageInfos[samplerIdx] = {
+							.sampler = whiteTextureSamplerCubeDefault->sampler,
+							.imageView = whiteTextureSamplerCubeDefault->view,
+							.imageLayout = whiteTextureSamplerCubeDefault->vkLayout
+						};
+						break;
+					default:
+						Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
+						break;
 				}
 			}
+
+			//
 			currentContext.descriptorWriteSets[uniform->position] = {
 				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 				.pNext = nullptr,
