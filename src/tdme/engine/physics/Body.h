@@ -20,7 +20,6 @@
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
-#include <tdme/utilities/Console.h>
 
 using std::remove;
 using std::string;
@@ -34,7 +33,6 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::Transformations;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
-using tdme::utilities::Console;
 
 /**
  * Dynamic rigid/static rigid/collision body class
@@ -46,12 +44,10 @@ class tdme::engine::physics::Body final
 	friend class World;
 
 public:
-	enum BodyType {
-		BODYTYPE_STATIC = 0,
-		BODYTYPE_DYNAMIC = 2,
-		BODYTYPE_KINEMATIC = 1,
-		BODYTYPE_COLLISION = 3
-	};
+	static constexpr int32_t TYPE_STATIC { 0 };
+	static constexpr int32_t TYPE_DYNAMIC { 2 };
+	static constexpr int32_t TYPE_KINEMATIC { 1 };
+	static constexpr int32_t TYPE_COLLISION { 3 };
 
 	static constexpr uint16_t TYPEID_STATIC { 1 };
 	static constexpr uint16_t TYPEID_DYNAMIC { 2 };
@@ -60,9 +56,7 @@ public:
 	/**
 	 * @return no rotation inertia tensor
 	 */
-	inline static const Vector3 getNoRotationInertiaTensor() {
-		return Vector3(0.0f, 0.0f, 0.0f);
-	}
+	static const Vector3 getNoRotationInertiaTensor();
 
 private:
 	World* world { nullptr };
@@ -70,7 +64,8 @@ private:
 	reactphysics3d::CollisionBody* collisionBody { nullptr };
 	bool cloned { false };
 	string id;
-	BodyType bodyType;
+	string rootId;
+	int32_t type;
 	float mass;
 	uint16_t collideTypeIds;
 	uint16_t collisionTypeId;
@@ -85,7 +80,7 @@ private:
 	 * Protected constructor
 	 * @param world world
 	 * @param id id
-	 * @param bodyType body type
+	 * @param type type
 	 * @param enabled enabled
 	 * @param collisionTypeId collision type id
 	 * @param transformations transformations
@@ -95,7 +90,7 @@ private:
 	 * @param inertiaTensor inertia tensor vector
 	 * @param boundingVolumes bounding volumes
 	 */
-	Body(World* world, const string& id, BodyType bodyType, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*> boundingVolumes);
+	Body(World* world, const string& id, int type, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*> boundingVolumes);
 
 	/**
 	 * Destructor
@@ -112,32 +107,20 @@ private:
 	 * @param other other
 	 * @param collisionResponse collision response
 	 */
-	inline void fireOnCollision(Body* other, CollisionResponse& collisionResponse) {
-		for (auto listener: collisionListener) {
-			listener->onCollision(this, other, collisionResponse);
-		}
-	}
+	void fireOnCollision(Body* other, CollisionResponse& collisionResponse);
 
 	/**
 	 * Fire on collision begin
 	 * @param other other
 	 * @param collisionResponse collision response
 	 */
-	inline void fireOnCollisionBegin(Body* other, CollisionResponse& collisionResponse) {
-		for (auto listener: collisionListener) {
-			listener->onCollisionBegin(this, other, collisionResponse);
-		}
-	}
+	void fireOnCollisionBegin(Body* other, CollisionResponse& collisionResponse);
 
 	/**
 	 * Fire on collision end
 	 * @param other other
 	 */
-	inline void fireOnCollisionEnd(Body* other) {
-		for (auto listener: collisionListener) {
-			listener->onCollisionEnd(this, other);
-		}
-	}
+	void fireOnCollisionEnd(Body* other);
 
 	/**
 	 * Computes the inverse inertia matrix
@@ -148,68 +131,46 @@ private:
 	 * @param scaleZAxis scale z axis
 	 * @return inverse inertia matrix
 	 */
-	inline static Matrix4x4 computeInverseInertiaMatrix(BoundingBox* boundingBox, float mass, float scaleXAxis, float scaleYAxis, float scaleZAxis) {
-		auto width = boundingBox->getDimensions().getX();
-		auto height = boundingBox->getDimensions().getY();
-		auto depth = boundingBox->getDimensions().getZ();
-		return
-			(Matrix4x4(
-				scaleXAxis > Math::EPSILON && mass > Math::EPSILON?1.0f / (scaleXAxis * 1.0f / 12.0f * mass * (height * height + depth * depth)):0.0f,
-				0.0f,
-				0.0f,
-				0.0f,
-				0.0f,
-				scaleYAxis > Math::EPSILON && mass > Math::EPSILON?1.0f / (scaleYAxis * 1.0f / 12.0f * mass * (width * width + depth * depth)):0.0f,
-				0.0f,
-				0.0f,
-				0.0f,
-				0.0f,
-				scaleZAxis > Math::EPSILON && mass > Math::EPSILON?1.0f / (scaleZAxis * 1.0f / 12.0f * mass * (width * width + height * height)):0.0f,
-				0.0f,
-				0.0f,
-				0.0f,
-				0.0f,
-				1.0f
-			));
-	}
+	static Matrix4x4 computeInverseInertiaMatrix(BoundingBox* boundingBox, float mass, float scaleXAxis, float scaleYAxis, float scaleZAxis);
 
 public:
 	/**
 	 * @return if rigid body has been cloned from another rigid body
 	 */
-	inline bool isCloned() {
-		return cloned;
-	}
+	bool isCloned();
 
 	/**
 	 * Set cloned
 	 * @param cloned cloned
 	 */
-	inline void setCloned(bool cloned) {
-		this->cloned = cloned;
-	}
+	void setCloned(bool cloned);
 
 	/**
 	 * @return id
 	 */
-	inline const string& getId() {
-		return id;
-	}
+	const string& getId();
 
 	/**
-	 * Return type, see BODYTYPE_*
+	 * @return root id
+	 */
+	const string& getRootId();
+
+	/**
+	 * Set root id
+	 * @param rootId root id
+	 */
+	void setRootId(const string& rootId);
+
+	/**
+	 * Return type, see TYPE_*
 	 * @return type
 	 */
-	inline BodyType getType() {
-		return bodyType;
-	}
+	int getType();
 
 	/**
 	 * @return type id
 	 */
-	inline uint16_t getCollisionTypeId() {
-		return collisionTypeId;
-	}
+	uint16_t getCollisionTypeId();
 
 	/**
 	 * Set collision type id
@@ -220,9 +181,7 @@ public:
 	/**
 	 * @return collision type ids bitmask
 	 */
-	inline uint16_t getCollisionTypeIds() {
-		return collideTypeIds;
-	}
+	uint16_t getCollisionTypeIds();
 
 	/**
 	 * Set up collision type ids
@@ -233,18 +192,13 @@ public:
 	/**
 	 * @return if enabled
 	 */
-	inline bool isEnabled() {
-		return collisionBody->isActive();
-	}
+	bool isEnabled();
 
 	/**
 	 * Set up if rigid body is enabled
 	 * @param enabled enabled
 	 */
-	inline void setEnabled(bool enabled) {
-		collisionBody->setIsActive(enabled);
-		if (enabled == true) collisionBody->setIsSleeping(false);
-	}
+	void setEnabled(bool enabled);
 
 	/**
 	 * @return object is static
@@ -254,24 +208,18 @@ public:
 	/**
 	 * @return if sleeping
 	 */
-	inline bool isSleeping() {
-		return collisionBody->isSleeping();
-	}
+	bool isSleeping();
 
 	/**
 	 * Set sleeping
 	 * @param sleeping sleeping
 	 */
-	inline void setSleeping(bool sleeping) {
-		collisionBody->setIsSleeping(sleeping);
-	}
+	void setSleeping(bool sleeping);
 
 	/**
 	 * @return bounding volumes
 	 */
-	inline vector<BoundingVolume*>& getBoundingVolumes() {
-		return boundingVolumes;
-	}
+	vector<BoundingVolume*>& getBoundingVolumes();
 
 	/**
 	 * Add bounding volume
@@ -287,175 +235,84 @@ public:
 	/**
 	 * @return friction
 	 */
-	inline float getFriction() {
-		if (rigidBody == nullptr) {
-			Console::println("Body::getFriction(): no rigid body attached");
-			return 0.0f;
-		}
-		return rigidBody->getMaterial().getFrictionCoefficient();
-	}
+	float getFriction();
 
 	/**
 	 * Set up friction
 	 * @param friction friction
 	 */
-	inline void setFriction(float friction) {
-		if (rigidBody == nullptr) {
-			Console::println("Body::setFriction(): no rigid body attached");
-			return;
-		}
-		rigidBody->getMaterial().setFrictionCoefficient(friction);
-	}
+	void setFriction(float friction);
 
 	/**
 	 * @return restitution / bouncyness
 	 */
-	inline float getRestitution() {
-		if (rigidBody == nullptr) {
-			Console::println("Body::getRestitution(): no rigid body attached");
-			return 0.0f;
-		}
-		return rigidBody->getMaterial().getBounciness();
-	}
+	float getRestitution();
 
 	/**
 	 * Set up restitution
 	 * @param restitution restitution
 	 */
-	inline void setRestitution(float restitution) {
-		if (rigidBody == nullptr) {
-			Console::println("Body::setRestitution(): no rigid body attached");
-			return;
-		}
-		rigidBody->getMaterial().setBounciness(restitution);
-	}
+	void setRestitution(float restitution);
 
 	/**
 	 * @return mass
 	 */
-	inline float getMass() {
-		return mass;
-	}
+	float getMass();
 
 	/**
 	 * Set up mass
 	 * @param mass mass
 	 */
-	inline void setMass(float mass) {
-		this->mass = mass;
-		if (rigidBody == nullptr) {
-			Console::println("Body::setMass(): no rigid body attached");
-			return;
-		}
-		rigidBody->setMass(mass);
-	}
+	void setMass(float mass);
 
 	/**
 	 * @return linear velocity
 	 */
-	inline const Vector3 getLinearVelocity() {
-		if (rigidBody == nullptr) {
-			Console::println("Body::getLinearVelocity(): no rigid body attached");
-			return Vector3();
-		}
-		return Vector3(
-			rigidBody->getLinearVelocity().x,
-			rigidBody->getLinearVelocity().y,
-			rigidBody->getLinearVelocity().z
-		);
-	}
+	const Vector3 getLinearVelocity();
 
 	/**
 	 * Set linear velocity
 	 * @param linearVelocity velocity
 	 */
-	inline void setLinearVelocity(const Vector3& linearVelocity) {
-		if (rigidBody == nullptr) {
-			Console::println("Body::setLinearVelocity(): no rigid body attached");
-			return;
-		}
-		rigidBody->setLinearVelocity(reactphysics3d::Vector3(linearVelocity.getX(), linearVelocity.getY(), linearVelocity.getZ()));
-	}
+	void setLinearVelocity(const Vector3& linearVelocity);
 
 	/**
 	 * @return angular velocity
 	 */
-	inline const Vector3 getAngularVelocity() {
-		if (rigidBody == nullptr) {
-			Console::println("Body::getAngularVelocity(): no rigid body attached");
-			return Vector3();
-		}
-		return Vector3(
-			rigidBody->getAngularVelocity().x,
-			rigidBody->getAngularVelocity().y,
-			rigidBody->getAngularVelocity().z
-		);
-	}
+	const Vector3 getAngularVelocity();
 
 	/**
 	 * Set angular velocity
 	 * @param angularVelocity angular velocity
 	 */
-	inline void setAngularVelocity(const Vector3& angularVelocity) {
-		if (rigidBody == nullptr) {
-			Console::println("Body::setAngularVelocity(): no rigid body attached");
-			return;
-		}
-		rigidBody->setAngularVelocity(reactphysics3d::Vector3(angularVelocity.getX(), angularVelocity.getY(), angularVelocity.getZ()));
-	}
+	void setAngularVelocity(const Vector3& angularVelocity);
 
 	/**
 	 * @return return linear damping
 	 */
-	inline float getLinearDamping() {
-		if (rigidBody == nullptr) {
-			Console::println("Body::getLinearDamping(): no rigid body attached");
-			return 0.0f;
-		}
-		return rigidBody->getLinearDamping();
-	}
+	float getLinearDamping();
 
 	/**
 	 * Set linear damping
 	 * @param linearDamping linear damping
 	 */
-	inline void setLinearDamping(float linearDamping) {
-		if (rigidBody == nullptr) {
-			Console::println("Body::setLinearDamping(): no rigid body attached");
-			return;
-		}
-		rigidBody->setLinearDamping(linearDamping);
-	}
+	void setLinearDamping(float linearDamping);
 
 	/**
 	 * @return return angular damping
 	 */
-	inline float getAngularDamping() {
-		if (rigidBody == nullptr) {
-			Console::println("Body::getAngularDamping(): no rigid body attached");
-			return 0.0f;
-		}
-		return rigidBody->getAngularDamping();
-	}
+	float getAngularDamping();
 
 	/**
 	 * Set angular damping
 	 * @param angularDamping anuglar damping
 	 */
-	inline void setAngularDamping(float angularDamping) {
-		if (rigidBody == nullptr) {
-			Console::println("Body::setAngularDamping(): no rigid body attached");
-			return;
-		}
-		rigidBody->setAngularDamping(angularDamping);
-	}
+	void setAngularDamping(float angularDamping);
 
 	/**
 	 * @return transformations
 	 */
-	inline const Transformations& getTransformations() {
-		return transformations;
-	}
+	const Transformations& getTransformations();
 
 	/**
 	 * Synchronizes this rigid body with transformations
@@ -468,44 +325,19 @@ public:
 	 * @param forceOrigin position of world force
 	 * @param force force
 	 */
-	inline void addForce(const Vector3& forceOrigin, const Vector3& force) {
-		if (rigidBody == nullptr) {
-			Console::println("Body::addForce(): no rigid body attached");
-			return;
-		}
-		rigidBody->applyForce(
-			reactphysics3d::Vector3(force.getX(), force.getY(), force.getZ()),
-			reactphysics3d::Vector3(forceOrigin.getX(), forceOrigin.getY(), forceOrigin.getZ())
-		);
-	}
+	void addForce(const Vector3& forceOrigin, const Vector3& force);
 
 	/**
 	 * Add force to center of mass
 	 * @param forceOrigin force
 	 */
-	inline void addForce(const Vector3& force) {
-		if (rigidBody == nullptr) {
-			Console::println("Body::addForce(): no rigid body attached");
-			return;
-		}
-		rigidBody->applyForceToCenterOfMass(
-			reactphysics3d::Vector3(force.getX(), force.getY(), force.getZ())
-		);
-	}
+	void addForce(const Vector3& forceOrigin);
 
 	/**
 	 * Add torque
 	 * @param torque torque
 	 */
-	inline void addTorque(const Vector3& torque) {
-		if (rigidBody == nullptr) {
-			Console::println("Body::addTorque(): no rigid body attached");
-			return;
-		}
-		rigidBody->applyTorque(
-			reactphysics3d::Vector3(torque.getX(), torque.getY(), torque.getZ())
-		);
-	}
+	void addTorque(const Vector3& torque);
 
 	/**
 	 * Add a collision listener to this rigid body
