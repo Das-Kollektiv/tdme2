@@ -87,6 +87,8 @@ class tdme::engine::subsystems::renderer::VKRenderer
 private:
 	static constexpr bool VERBOSE { false };
 	static constexpr int DRAW_COMMANDBUFFER_MAX { 3 };
+	static constexpr int SHADERSTAGES_MAX { 2 };
+	static constexpr int TEXTUREUNITS_MAX { 16 };
 	static constexpr int SHADERS_MAX { 100 };
 	static constexpr int SHADERS_COMPUTE_MAX { 1 };
 	static constexpr int COMMANDS_MAX { 16 };
@@ -190,22 +192,23 @@ private:
 
 	struct program_type {
 		struct command_buffer {
-			uint32_t descriptorSets1Idx;
-			uint32_t descriptorSets2IdxUncached;
-			array<VkDescriptorSet, DESC_MAX_UNCACHED> descriptorSets1;
-			array<VkDescriptorSet, DESC_MAX_UNCACHED> descriptorSets2Uncached;
+			uint32_t uboDescriptorSets1Idx;
+			uint32_t texturesDescriptorSets3IdxUncached;
+			array<VkDescriptorSet, DESC_MAX_UNCACHED> uboDescriptorSets1;
+			array<VkDescriptorSet, DESC_MAX_UNCACHED> uboDescriptorSets2;
+			array<VkDescriptorSet, DESC_MAX_UNCACHED> texturesDescriptorSets3Uncached;
 		};
 		struct context {
 			uint32_t descriptorSets2Idx;
-			array<VkDescriptorSet, DESC_MAX_CACHED> descriptorSets2;
+			array<VkDescriptorSet, DESC_MAX_CACHED> texturesDescriptorSets3;
 			#if defined(CPU_64BIT) && defined(_MSC_VER)
-				unordered_map<SAMPLER_HASH_TYPE, int, UINT128_T_Hash> descriptorSets2Cache;
-				unordered_map<int32_t, unordered_set<SAMPLER_HASH_TYPE, UINT128_T_Hash>> descriptorSets2CacheTextureIds;
+				unordered_map<SAMPLER_HASH_TYPE, int, UINT128_T_Hash> texturesDescriptorSets3Cache;
+				unordered_map<int32_t, unordered_set<SAMPLER_HASH_TYPE, UINT128_T_Hash>> texturesDescriptorSets3CacheTextureIds;
 			#else
-				unordered_map<SAMPLER_HASH_TYPE, int> descriptorSets2Cache;
-				unordered_map<int32_t, unordered_set<SAMPLER_HASH_TYPE>> descriptorSets2CacheTextureIds;
+				unordered_map<SAMPLER_HASH_TYPE, int> texturesDescriptorSets3Cache;
+				unordered_map<int32_t, unordered_set<SAMPLER_HASH_TYPE>> texturesDescriptorSets3CacheTextureIds;
 			#endif
-			vector<uint32_t> freeDescriptorSets2Ids;
+			vector<uint32_t> freeTexturesDescriptorSets2Ids;
 			array<command_buffer, DRAW_COMMANDBUFFER_MAX> commandBuffers;
 		};
 		int type { 0 };
@@ -215,8 +218,8 @@ private:
 		unordered_map<int32_t, string> uniforms;
 		uint32_t layoutBindings { 0 };
 		VkPipelineLayout pipelineLayout { VK_NULL_HANDLE };
-		VkDescriptorSetLayout descriptorSetLayout1 { VK_NULL_HANDLE };
-		VkDescriptorSetLayout descriptorSetLayout2 { VK_NULL_HANDLE };
+		VkDescriptorSetLayout uboDescriptorSetLayout1 { VK_NULL_HANDLE };
+		VkDescriptorSetLayout texturesDescriptorSetLayout2 { VK_NULL_HANDLE };
 		int32_t id { 0 };
 		vector<context> contexts;
 	};
@@ -330,9 +333,9 @@ private:
 		array<command_buffer, DRAW_COMMANDBUFFER_MAX> commandBuffers;
 
 		//
-		array<VkDescriptorBufferInfo, 16 + 4> descriptorBufferInfos;
-		array<VkWriteDescriptorSet, 16 + 4> descriptorWriteSets;
-		array<VkDescriptorImageInfo, 16 + 4> descriptorImageInfos;
+		array<VkDescriptorBufferInfo, TEXTUREUNITS_MAX + SHADERSTAGES_MAX> descriptorBufferInfos;
+		array<VkWriteDescriptorSet, TEXTUREUNITS_MAX + SHADERSTAGES_MAX> descriptorWriteSets;
+		array<VkDescriptorImageInfo, TEXTUREUNITS_MAX + SHADERSTAGES_MAX> descriptorImageInfos;
 
 		//
 		VkBuffer boundIndicesBuffer { VK_NULL_HANDLE };
@@ -347,8 +350,8 @@ private:
 			0, 0
 		};
 		array<uint32_t, 10> boundBufferSizes { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-		array<uniform_buffer_type*, 4> uniformBuffers;
-		array<vector<uint8_t>, 4> uniformBufferData;
+		array<uniform_buffer_type*, SHADERSTAGES_MAX> uniformBuffers;
+		array<vector<uint8_t>, SHADERSTAGES_MAX> uniformBufferData;
 		int32_t activeTextureUnit { 0 };
 		struct bound_texture {
 			int32_t id { 0 };
@@ -356,7 +359,7 @@ private:
 			VkImageView view { VK_NULL_HANDLE };
 			VkImageLayout layout { VK_IMAGE_LAYOUT_UNDEFINED };
 		};
-		array<bound_texture, 16> boundTextures;
+		array<bound_texture, TEXTUREUNITS_MAX> boundTextures;
 
 		vector<VkBuffer> computeRenderBarrierBuffers;
 
