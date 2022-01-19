@@ -145,6 +145,7 @@ private:
 		};
 		int bufferIdx { 0 };
 		int size { -1 };
+		vector<uint8_t> uniformBufferData;
 		// TODO: make them a growing list
 		array<uniform_buffer_type_buffer, COMMANDS_MAX_GRAPHICS * DRAW_COMMANDBUFFER_MAX * 5> buffers;
 	};
@@ -347,7 +348,6 @@ private:
 		};
 		array<uint32_t, 10> boundBufferSizes { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		array<uniform_buffer_type*, SHADERSSTAGES_MAX> uniformBuffers;
-		array<vector<uint8_t>, SHADERSSTAGES_MAX> uniformBufferData;
 		int32_t activeTextureUnit { 0 };
 		struct bound_texture {
 			int32_t id { 0 };
