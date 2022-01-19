@@ -62,6 +62,7 @@
 #include <tdme/utilities/FloatBuffer.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/IntBuffer.h>
+#include <tdme/utilities/Hex.h>
 #include <tdme/utilities/RTTI.h>
 #include <tdme/utilities/ShortBuffer.h>
 #include <tdme/utilities/StringTools.h>
@@ -131,6 +132,7 @@ using tdme::utilities::Exception;
 using tdme::utilities::FloatBuffer;
 using tdme::utilities::Integer;
 using tdme::utilities::IntBuffer;
+using tdme::utilities::Hex;
 using tdme::utilities::RTTI;
 using tdme::utilities::ShortBuffer;
 using tdme::utilities::StringTools;
@@ -340,6 +342,18 @@ inline bool VKRenderer::beginDrawCommandBuffer(int contextIdx, int bufferId) {
 		windowFramebufferBuffers[currentWindowFramebufferIdx].svsLayout = nextLayout;
 	}
 
+	// last descriptor set ubo, texture indices
+	if (currentContext.program != nullptr) {
+		auto& programContextCommandBuffer = currentContext.program->contexts[contextIdx].commandBuffers[bufferId];
+		programContextCommandBuffer.uboDescriptorSets1Idx = -1;
+		programContextCommandBuffer.uboDescriptorSets2Idx = -1;
+		programContextCommandBuffer.texturesDescriptorSets3IdxUncached = 0;
+		for (auto uniformBuffer: currentContext.uniformBuffers) {
+			if (uniformBuffer == nullptr) continue;
+			uniformBuffer->uniformBufferDataChanged = true;
+		}
+	}
+
 	//
 	commandBuffer.drawCmdStarted = true;
 
@@ -367,20 +381,6 @@ inline VkCommandBuffer VKRenderer::endDrawCommandBuffer(int contextIdx, int buff
 	VkResult err;
 	err = vkEndCommandBuffer(commandBuffer.drawCommand);
 	assert(!err);
-
-	//
-	if (currentContext.program != nullptr) currentContext.lastUnsubmittedPrograms.push_back(currentContext.program);
-
-	//
-	for (auto program: currentContext.lastUnsubmittedPrograms) {
-		auto& programContextCommandBuffer = program->contexts[contextIdx].commandBuffers[bufferId];
-		programContextCommandBuffer.uboDescriptorSets1Idx = 0;
-		programContextCommandBuffer.uboDescriptorSets2Idx = 0;
-		programContextCommandBuffer.texturesDescriptorSets3IdxUncached = 0;
-	}
-
-	//
-	currentContext.lastUnsubmittedPrograms.clear();
 
 	//
 	auto endedCommandBuffer = commandBuffer.drawCommand;
@@ -1785,19 +1785,19 @@ inline void VKRenderer::invalidateTextureDescriptorCaches(int textureId) {
 		for (auto program: programVector) {
 			if (program == nullptr || program->contexts[context.idx].texturesDescriptorSets3CacheTextureIds.empty() == true) continue;
 			auto& programContext = program->contexts[context.idx];
-			auto& descriptorSets2CacheTextureIds = programContext.texturesDescriptorSets3CacheTextureIds;
-			auto descriptorSets2CacheTextureIdsIt = descriptorSets2CacheTextureIds.find(textureId);
-			if (descriptorSets2CacheTextureIdsIt != descriptorSets2CacheTextureIds.end()) {
-				auto& descriptorSets2Cache = programContext.texturesDescriptorSets3Cache;
-				for (auto& descriptorSets2CacheHash: descriptorSets2CacheTextureIdsIt->second) {
-					auto descriptorSets2CacheHashIt = descriptorSets2Cache.find(descriptorSets2CacheHash);
-					if (descriptorSets2CacheHashIt != descriptorSets2Cache.end()) {
-						auto desc_sets2_idx = descriptorSets2CacheHashIt->second;
-						programContext.freeTexturesDescriptorSets2Ids.push_back(desc_sets2_idx);
-						descriptorSets2Cache.erase(descriptorSets2CacheHashIt);
+			auto& descriptorSets3CacheTextureIds = programContext.texturesDescriptorSets3CacheTextureIds;
+			auto descriptorSets3CacheTextureIdsIt = descriptorSets3CacheTextureIds.find(textureId);
+			if (descriptorSets3CacheTextureIdsIt != descriptorSets3CacheTextureIds.end()) {
+				auto& descriptorSets3Cache = programContext.texturesDescriptorSets3Cache;
+				for (auto& descriptorSets3CacheHash: descriptorSets3CacheTextureIdsIt->second) {
+					auto descriptorSets3CacheHashIt = descriptorSets3Cache.find(descriptorSets3CacheHash);
+					if (descriptorSets3CacheHashIt != descriptorSets3Cache.end()) {
+						auto descSets3Idx = descriptorSets3CacheHashIt->second;
+						programContext.freeTexturesDescriptorSets3Ids.push_back(descSets3Idx);
+						descriptorSets3Cache.erase(descriptorSets3CacheHashIt);
 					}
 				}
-				descriptorSets2CacheTextureIds.erase(descriptorSets2CacheTextureIdsIt);
+				descriptorSets3CacheTextureIds.erase(descriptorSets3CacheTextureIdsIt);
 			}
 		}
 	}
@@ -1852,7 +1852,6 @@ void VKRenderer::finishFrame()
 		context.program = nullptr;
 		context.programId = 0;
 		context.uniformBuffers.fill(nullptr);
-		for (auto& uniformBufferData: context.uniformBufferData) uniformBufferData.resize(0);
 	}
 
 	// cache
@@ -2237,25 +2236,25 @@ void VKRenderer::createRenderProgram(program_type* program) {
 			.pNext = nullptr,
 			.flags = 0,
 			.bindingCount = static_cast<uint32_t>(1),
-			.pBindings = &layoutBindings1[0],
+			.pBindings = &layoutBindings1[program->shaders[0]->uboBindingIdx],
 		};
 		err = vkCreateDescriptorSetLayout(device, &descriptorSetLayoutCreateInfo, nullptr, &program->uboDescriptorSetLayout1);
 		assert(!err);
 		descriptorSetLayouts[descriptorSetLayoutsIdx++] = program->uboDescriptorSetLayout1;
 	}
-	if (program->shaders[1]->uboBindingIdx != -1 ){
+	if (program->shaders[1]->uboBindingIdx != -1 ) {
 		const VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = 0,
 			.bindingCount = static_cast<uint32_t>(1),
-			.pBindings = &layoutBindings1[program->shaders[0]->uboBindingIdx == -1?0:1],
+			.pBindings = &layoutBindings1[program->shaders[1]->uboBindingIdx],
 		};
 		err = vkCreateDescriptorSetLayout(device, &descriptorSetLayoutCreateInfo, nullptr, &program->uboDescriptorSetLayout2);
 		assert(!err);
 		descriptorSetLayouts[descriptorSetLayoutsIdx++] = program->uboDescriptorSetLayout2;
 	}
-	if (samplerIdx > 0){
+	if (samplerIdx > 0) {
 		const VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo = {
 			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
 			.pNext = nullptr,
@@ -3152,7 +3151,9 @@ void VKRenderer::useProgram(int contextIdx, int32_t programId)
 	if (programId == currentContext.programId) return;
 
 	//
-	if (currentContext.program != nullptr) currentContext.lastUnsubmittedPrograms.push_back(currentContext.program);
+	if (currentContext.program != nullptr) {
+		currentContext.program->contexts[currentContext.idx].lastTexturesDescriptorSet = VK_NULL_HANDLE;
+	}
 
 	//
 	unsetPipeline(currentContext.idx);
@@ -3161,7 +3162,6 @@ void VKRenderer::useProgram(int contextIdx, int32_t programId)
 	currentContext.programId = 0;
 	currentContext.program = nullptr;
 	currentContext.uniformBuffers.fill(nullptr);
-	for (auto& uniformBufferData: currentContext.uniformBufferData) uniformBufferData.resize(0);
 
 	//
 	if (programId == ID_NONE) return;
@@ -3187,10 +3187,21 @@ void VKRenderer::useProgram(int contextIdx, int32_t programId)
 				continue;
 			}
 			currentContext.uniformBuffers[shaderIdx] = &shader->uniformBuffers[currentContext.idx];
-			currentContext.uniformBufferData[shaderIdx].resize(shader->uboSize);
+			currentContext.uniformBuffers[shaderIdx]->uniformBufferDataChanged = true;
 			shaderIdx++;
 		}
 	}
+
+	// last descriptor set ubo, texture indices
+	if (currentContext.program != nullptr) {
+		auto& programContextCommandBuffer = currentContext.program->contexts[contextIdx].commandBuffers[currentContext.currentCommandBuffer];
+		programContextCommandBuffer.uboDescriptorSets1Idx = -1;
+		programContextCommandBuffer.uboDescriptorSets2Idx = -1;
+		programContextCommandBuffer.texturesDescriptorSets3IdxUncached = 0;
+	}
+
+	// last descriptor set ubo, texture indices
+	currentContext.program->contexts[currentContext.idx].lastTexturesDescriptorSet = VK_NULL_HANDLE;
 }
 
 int32_t VKRenderer::createProgram(int type)
@@ -3206,11 +3217,11 @@ int32_t VKRenderer::createProgram(int type)
 	program.id = programVector.size();
 	program.contexts.resize(Engine::getThreadCount());
 	for (auto& programContext: program.contexts) {
-		programContext.descriptorSets2Idx = 0;
+		programContext.textureDescriptorSets3Idx = 0;
 		programContext.texturesDescriptorSets3.fill(VK_NULL_HANDLE);
 		for (auto& programContextCommandBuffer: programContext.commandBuffers) {
-			programContextCommandBuffer.uboDescriptorSets1Idx = 0;
-			programContextCommandBuffer.uboDescriptorSets2Idx = 0;
+			programContextCommandBuffer.uboDescriptorSets1Idx = -1;
+			programContextCommandBuffer.uboDescriptorSets2Idx = -1;
 			programContextCommandBuffer.texturesDescriptorSets3IdxUncached = 0;
 			programContextCommandBuffer.uboDescriptorSets1.fill(VK_NULL_HANDLE);
 			programContextCommandBuffer.uboDescriptorSets2.fill(VK_NULL_HANDLE);
@@ -3261,6 +3272,8 @@ bool VKRenderer::linkProgram(int32_t programId)
 			for (auto& context: contexts) {
 				auto& uniformBuffer = shader->uniformBuffers[context.idx];
 				uniformBuffer.size = shader->uboSize;
+				uniformBuffer.uniformBufferData.resize(shader->uboSize);
+				uniformBuffer.lastUniformBufferData.resize(shader->uboSize);
 				for (auto& uniformBufferBuffer: uniformBuffer.buffers) {
 					VmaAllocationInfo allocationInfo = {};
 					createBuffer(
@@ -3455,7 +3468,10 @@ inline void VKRenderer::setProgramUniformInternal(int contextIdx, int32_t unifor
 				continue;
 			}
 			*/
-			memCpy(currentContext.uniformBufferData[shaderIdx].data(), data, size, shaderUniform.position);
+			auto uniformBuffer = currentContext.uniformBuffers[shaderIdx];
+			if (memCpyCmp(uniformBuffer->uniformBufferData.data(), data, size, shaderUniform.position) == true) {
+				uniformBuffer->uniformBufferDataChanged = true;
+			}
 		} else
 		if (shaderUniform.type == shader_type::uniform_type::TYPE_SAMPLER2D) {
 			shaderUniform.textureUnit = *((int32_t*)data);
@@ -5064,6 +5080,9 @@ void VKRenderer::bindTexture(int contextIdx, int32_t textureId)
 	auto& boundTexture = currentContext.boundTextures[currentContext.activeTextureUnit];
 
 	//
+	if (boundTexture.id == textureId) return;
+
+	//
 	boundTexture.id = ID_NONE;
 	boundTexture.sampler = VK_NULL_HANDLE;
 	boundTexture.view = VK_NULL_HANDLE;
@@ -5088,6 +5107,11 @@ void VKRenderer::bindTexture(int contextIdx, int32_t textureId)
 
 	//
 	boundTexture.id = textureId;
+
+	//
+	if (currentContext.program != nullptr) {
+		currentContext.program->contexts[currentContext.idx].lastTexturesDescriptorSet = VK_NULL_HANDLE;
+	}
 
 	// done
 	onBindTexture(contextIdx, textureId);
@@ -5924,11 +5948,70 @@ inline void VKRenderer::memCpy(uint8_t* dst, const uint8_t* src, uint32_t size, 
 	}
 }
 
-inline void VKRenderer::vmaMemCpy(VmaAllocation allocationDst, const uint8_t* src, uint32_t size, uint32_t offset) {
+inline bool VKRenderer::memCpyCmp(uint8_t* dst, const uint8_t* src, uint32_t size, uint32_t offset) {
+	auto diffBytes = 0;
+	//
+	auto remainingSize = size;
+	auto _src = src;
+	auto _dst = dst + offset;
+	while (remainingSize >= 8) {
+		if (*(uint64_t*)_dst != *(uint64_t*)_src) {
+			*(uint64_t*)_dst = *(uint64_t*)_src;
+			diffBytes+= 8;
+		}
+		remainingSize-= 8;
+		_src+= 8;
+		_dst+= 8;
+	}
+	while (remainingSize >= 4) {
+		if (*(uint32_t*)_dst != *(uint32_t*)_src) {
+			*(uint32_t*)_dst = *(uint32_t*)_src;
+			diffBytes+= 4;
+		}
+		remainingSize-= 4;
+		_src+= 4;
+		_dst+= 4;
+	}
+	return diffBytes > 0;
+}
+
+inline void VKRenderer::vmaMemCpy(VmaAllocation allocationDst, const uint8_t* src, uint32_t size) {
 	vmaSpinlock.lock();
 	VmaAllocationInfo dstAllocationInfo {};
 	vmaGetAllocationInfo(vmaAllocator, allocationDst, &dstAllocationInfo);
-	memCpy(static_cast<uint8_t*>(dstAllocationInfo.pMappedData), src, size, offset);
+	memCpy(static_cast<uint8_t*>(dstAllocationInfo.pMappedData), src, size);
+	vmaSpinlock.unlock();
+}
+
+inline void VKRenderer::vmaMemCpy2(VmaAllocation allocationDst, const uint8_t* src, uint32_t size, uint8_t* dst2) {
+	vmaSpinlock.lock();
+	VmaAllocationInfo dstAllocationInfo {};
+	vmaGetAllocationInfo(vmaAllocator, allocationDst, &dstAllocationInfo);
+	//
+	auto remainingSize = size;
+	auto _src = src;
+	auto _dst = static_cast<uint8_t*>(dstAllocationInfo.pMappedData);
+	auto _dst2 = dst2;
+	uint64_t srcBits64;
+	uint32_t srcBits32;
+	while (remainingSize >= 8) {
+		srcBits64 = *(uint64_t*)_src;
+		*(uint64_t*)_dst = srcBits64;
+		*(uint64_t*)_dst2 = srcBits64;
+		remainingSize-= 8;
+		_src+= 8;
+		_dst+= 8;
+		_dst2+= 8;
+	}
+	while (remainingSize >= 4) {
+		srcBits32 = *(uint32_t*)_src;
+		*(uint32_t*)_dst = srcBits32;
+		*(uint32_t*)_dst2 = srcBits32;
+		remainingSize-= 4;
+		_src+= 4;
+		_dst+= 4;
+		_dst2+= 4;
+	}
 	vmaSpinlock.unlock();
 }
 
@@ -6319,19 +6402,33 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, 
 	auto& programContext = currentContext.program->contexts[currentContext.idx];
 	auto& programCommandBuffer = programContext.commandBuffers[currentContext.currentCommandBuffer];
 
+	//
+	bool initialUboUpload = false;
+	array<bool, 2> reusedUboDescriptorSets { false, false };
+
+	// check if first desc1 usage
+	if (programCommandBuffer.uboDescriptorSets1Idx == -1) {
+		programCommandBuffer.uboDescriptorSets1Idx++;
+		initialUboUpload = true;
+	} else
 	// check if desc1 left
 	if (programCommandBuffer.uboDescriptorSets1Idx == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.uboDescriptorSets1[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.uboDescriptorSets1Idx));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.uboDescriptorSets1[" + to_string(currentContext.idx) + "] == DESC_MAX_UNCACHED: " + to_string(programCommandBuffer.uboDescriptorSets1Idx));
+		initialUboUpload = true;
 		return;
 	}
+	// check if first desc2 usage
+	if (programCommandBuffer.uboDescriptorSets2Idx == -1) {
+		programCommandBuffer.uboDescriptorSets2Idx++;
+	} else
 	// check if desc2 left
 	if (programCommandBuffer.uboDescriptorSets2Idx == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.uboDescriptorSets2[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.uboDescriptorSets2Idx));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.uboDescriptorSets2[" + to_string(currentContext.idx) + "] == DESC_MAX_UNCACHED: " + to_string(programCommandBuffer.uboDescriptorSets2Idx));
 		return;
 	}
 	// check if desc3 left
 	if (programCommandBuffer.texturesDescriptorSets3IdxUncached == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.texturesDescriptorSets3IdxUncached[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.texturesDescriptorSets3IdxUncached));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.texturesDescriptorSets3IdxUncached[" + to_string(currentContext.idx) + "] == DESC_MAX_UNCACHED: " + to_string(programCommandBuffer.texturesDescriptorSets3IdxUncached));
 		return;
 	}
 
@@ -6392,31 +6489,62 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, 
 
 			//
 			auto& uniformBuffer = shader->uniformBuffers[currentContext.idx];
-			auto& src = uniformBuffer.buffers[uniformBuffer.bufferIdx];
-			auto uboBuffer = src.buffer;
-			uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
-			vmaMemCpy(src.allocation, currentContext.uniformBufferData[shaderIdx].data(), uniformBuffer.size);
+			VkBuffer uboBuffer = VK_NULL_HANDLE;
+			if (uniformBuffer.uniformBufferDataChanged == false &&
+				uniformBuffer.bufferIdx != -1 &&
+				initialUboUpload == false) {
+				reusedUboDescriptorSets[shaderIdx] = true;
+			} else {
+				//
+				uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
+				auto& src = uniformBuffer.buffers[uniformBuffer.bufferIdx];
+				vmaMemCpy2(src.allocation, uniformBuffer.uniformBufferData.data(), uniformBuffer.size, uniformBuffer.lastUniformBufferData.data());
+				uboBuffer = src.buffer;
 
-			//
-			currentContext.descriptorBufferInfos[shader->uboBindingIdx] = {
-				.buffer = uboBuffer,
-				.offset = 0,
-				.range = shader->uboSize
-			};
+				//
+				if (shaderIdx == 0) {
+					programCommandBuffer.uboDescriptorSets1Idx++;
+					// check if desc left
+					if (programCommandBuffer.uboDescriptorSets1Idx == DESC_MAX_UNCACHED) {
+						Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.uboDescriptorSets1[" + to_string(currentContext.idx) + "] == DESC_MAX_UNCACHED: " + to_string(programCommandBuffer.uboDescriptorSets1Idx));
+						return;
+					}
+					uboDescriptorSets[shaderIdx] = programCommandBuffer.uboDescriptorSets1[programCommandBuffer.uboDescriptorSets1Idx];
+				} else
+				if (shaderIdx == 1) {
+					programCommandBuffer.uboDescriptorSets2Idx++;
+					// check if desc left
+					if (programCommandBuffer.uboDescriptorSets2Idx == DESC_MAX_UNCACHED) {
+						Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.uboDescriptorSets2[" + to_string(currentContext.idx) + "] == DESC_MAX_UNCACHED: " + to_string(programCommandBuffer.uboDescriptorSets2Idx));
+						return;
+					}
+					uboDescriptorSets[shaderIdx] = programCommandBuffer.uboDescriptorSets2[programCommandBuffer.uboDescriptorSets2Idx];
+				}
 
-			//
-			currentContext.descriptorWriteSets[shader->uboBindingIdx] = {
-				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-				.pNext = nullptr,
-				.dstSet = uboDescriptorSets[shaderIdx],
-				.dstBinding = static_cast<uint32_t>(shader->uboBindingIdx),
-				.dstArrayElement = 0,
-				.descriptorCount = 1,
-				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				.pImageInfo = nullptr,
-				.pBufferInfo = &currentContext.descriptorBufferInfos[shader->uboBindingIdx],
-				.pTexelBufferView = nullptr
-			};
+				//
+				currentContext.descriptorBufferInfos[shader->uboBindingIdx] = {
+					.buffer = uboBuffer,
+					.offset = 0,
+					.range = shader->uboSize
+				};
+
+				//
+				currentContext.descriptorWriteSets[shader->uboBindingIdx] = {
+					.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+					.pNext = nullptr,
+					.dstSet = uboDescriptorSets[shaderIdx],
+					.dstBinding = static_cast<uint32_t>(shader->uboBindingIdx),
+					.dstArrayElement = 0,
+					.descriptorCount = 1,
+					.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+					.pImageInfo = nullptr,
+					.pBufferInfo = &currentContext.descriptorBufferInfos[shader->uboBindingIdx],
+					.pTexelBufferView = nullptr
+				};
+
+				//
+				uniformBuffer.uniformBufferDataChanged = false;
+			}
 
 			//
 			descSets[descSetIdx++] = uboDescriptorSets[shaderIdx];
@@ -6429,37 +6557,60 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, 
 	}
 
 	//
-	auto& descriptorSet2Cache = programContext.texturesDescriptorSets3Cache;
-	auto descriptorSet2CacheIt = samplers > SAMPLER_HASH_MAX?descriptorSet2Cache.end():descriptorSet2Cache.find(descriptorSet2CacheId);
-	auto descriptorSet2CacheHit = descriptorSet2CacheIt != descriptorSet2Cache.end();
-	if (descriptorSet2CacheHit == false) {
-		if (samplers <= SAMPLER_HASH_MAX) {
-			auto descriptorSets2Idx = -1;
-			if (programContext.freeTexturesDescriptorSets2Ids.empty() == false) {
-				auto freeDescriptorSets2IdsIdx = programContext.freeTexturesDescriptorSets2Ids.size() - 1;
-				descriptorSets2Idx = programContext.freeTexturesDescriptorSets2Ids[freeDescriptorSets2IdsIdx];
-				programContext.freeTexturesDescriptorSets2Ids.erase(programContext.freeTexturesDescriptorSets2Ids.begin() + freeDescriptorSets2IdsIdx);
+	auto descriptorSet3CacheHit = false;
+	if (programContext.lastTexturesDescriptorSet == VK_NULL_HANDLE) {
+		auto& descriptorSet3Cache = programContext.texturesDescriptorSets3Cache;
+		auto descriptorSet3CacheIt = samplers > SAMPLER_HASH_MAX?descriptorSet3Cache.end():descriptorSet3Cache.find(descriptorSet2CacheId);
+		descriptorSet3CacheHit = descriptorSet3CacheIt != descriptorSet3Cache.end();
+		if (descriptorSet3CacheHit == false) {
+			if (samplers <= SAMPLER_HASH_MAX) {
+				auto descriptorSets3Idx = -1;
+				if (programContext.freeTexturesDescriptorSets3Ids.empty() == false) {
+					auto freeDescriptorSets2IdsIdx = programContext.freeTexturesDescriptorSets3Ids.size() - 1;
+					descriptorSets3Idx = programContext.freeTexturesDescriptorSets3Ids[freeDescriptorSets2IdsIdx];
+					programContext.freeTexturesDescriptorSets3Ids.erase(programContext.freeTexturesDescriptorSets3Ids.begin() + freeDescriptorSets2IdsIdx);
+				} else {
+					descriptorSets3Idx = programContext.textureDescriptorSets3Idx++;
+				}
+				texturesDescriptorSet3 = programContext.texturesDescriptorSets3[descriptorSets3Idx];
+				descriptorSet3Cache[descriptorSet2CacheId] = descriptorSets3Idx;
+				for (auto textureId: textureIds) programContext.texturesDescriptorSets3CacheTextureIds[textureId].insert(descriptorSet2CacheId);
 			} else {
-				descriptorSets2Idx = programContext.descriptorSets2Idx++;
+				programCommandBuffer.texturesDescriptorSets3IdxUncached++;
 			}
-			texturesDescriptorSet3 = programContext.texturesDescriptorSets3[descriptorSets2Idx];
-			descriptorSet2Cache[descriptorSet2CacheId] = descriptorSets2Idx;
-			for (auto textureId: textureIds) programContext.texturesDescriptorSets3CacheTextureIds[textureId].insert(descriptorSet2CacheId);
-		} else {
-			programCommandBuffer.texturesDescriptorSets3IdxUncached++;
-		}
-		auto samplerIdx = 0;
-		for (auto shader: currentContext.program->shaders) {
-			// sampler2D + samplerCube
-			for (auto uniform: shader->samplerUniformList) {
-				if (uniform->textureUnit != -1) {
-					auto& boundTexture = currentContext.boundTextures[uniform->textureUnit];
-					if (boundTexture.view != VK_NULL_HANDLE) {
-						currentContext.descriptorImageInfos[samplerIdx] = {
-							.sampler = boundTexture.sampler,
-							.imageView = boundTexture.view,
-							.imageLayout = boundTexture.layout
-						};
+			auto samplerIdx = 0;
+			for (auto shader: currentContext.program->shaders) {
+				// sampler2D + samplerCube
+				for (auto uniform: shader->samplerUniformList) {
+					if (uniform->textureUnit != -1) {
+						auto& boundTexture = currentContext.boundTextures[uniform->textureUnit];
+						if (boundTexture.view != VK_NULL_HANDLE) {
+							currentContext.descriptorImageInfos[samplerIdx] = {
+								.sampler = boundTexture.sampler,
+								.imageView = boundTexture.view,
+								.imageLayout = boundTexture.layout
+							};
+						} else {
+							switch(uniform->type) {
+								case shader_type::uniform_type::TYPE_SAMPLER2D:
+									currentContext.descriptorImageInfos[samplerIdx] = {
+										.sampler = whiteTextureSampler2dDefault->sampler,
+										.imageView = whiteTextureSampler2dDefault->view,
+										.imageLayout = whiteTextureSampler2dDefault->vkLayout
+									};
+									break;
+								case shader_type::uniform_type::TYPE_SAMPLERCUBE:
+									currentContext.descriptorImageInfos[samplerIdx] = {
+										.sampler = whiteTextureSamplerCubeDefault->sampler,
+										.imageView = whiteTextureSamplerCubeDefault->view,
+										.imageLayout = whiteTextureSamplerCubeDefault->vkLayout
+									};
+									break;
+								default:
+									Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
+									break;
+							}
+						}
 					} else {
 						switch(uniform->type) {
 							case shader_type::uniform_type::TYPE_SAMPLER2D:
@@ -6481,54 +6632,65 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, 
 								break;
 						}
 					}
-				} else {
-					switch(uniform->type) {
-						case shader_type::uniform_type::TYPE_SAMPLER2D:
-							currentContext.descriptorImageInfos[samplerIdx] = {
-								.sampler = whiteTextureSampler2dDefault->sampler,
-								.imageView = whiteTextureSampler2dDefault->view,
-								.imageLayout = whiteTextureSampler2dDefault->vkLayout
-							};
-							break;
-						case shader_type::uniform_type::TYPE_SAMPLERCUBE:
-							currentContext.descriptorImageInfos[samplerIdx] = {
-								.sampler = whiteTextureSamplerCubeDefault->sampler,
-								.imageView = whiteTextureSamplerCubeDefault->view,
-								.imageLayout = whiteTextureSamplerCubeDefault->vkLayout
-							};
-							break;
-						default:
-							Console::println("VKRenderer::" + string(__FUNCTION__) + "(): object command: unknown sampler: " + to_string(uniform->type));
-							break;
-					}
+					currentContext.descriptorWriteSets[uniform->position] = {
+						.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+						.pNext = nullptr,
+						.dstSet = texturesDescriptorSet3,
+						.dstBinding = static_cast<uint32_t>(uniform->position),
+						.dstArrayElement = 0,
+						.descriptorCount = 1,
+						.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+						.pImageInfo = &currentContext.descriptorImageInfos[samplerIdx],
+						.pBufferInfo = VK_NULL_HANDLE,
+						.pTexelBufferView = VK_NULL_HANDLE
+					};
+					samplerIdx++;
 				}
-				currentContext.descriptorWriteSets[uniform->position] = {
-					.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-					.pNext = nullptr,
-					.dstSet = texturesDescriptorSet3,
-					.dstBinding = static_cast<uint32_t>(uniform->position),
-					.dstArrayElement = 0,
-					.descriptorCount = 1,
-					.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-					.pImageInfo = &currentContext.descriptorImageInfos[samplerIdx],
-					.pBufferInfo = VK_NULL_HANDLE,
-					.pTexelBufferView = VK_NULL_HANDLE
-				};
-				samplerIdx++;
 			}
+		} else {
+			texturesDescriptorSet3 = programContext.texturesDescriptorSets3[descriptorSet3CacheIt->second];
 		}
 	} else {
-		texturesDescriptorSet3 = programContext.texturesDescriptorSets3[descriptorSet2CacheIt->second];
+		descriptorSet3CacheHit = true;
+		texturesDescriptorSet3 = programContext.lastTexturesDescriptorSet;
 	}
 
 	//
 	descSets[descSetIdx++] = texturesDescriptorSet3;
 
-	//
-	vkUpdateDescriptorSets(device, descriptorSet2CacheHit == true?uboIdx:currentContext.program->layoutBindings, currentContext.descriptorWriteSets.data(), 0, nullptr);
-
 	// draw cmd
 	auto& drawCommand = currentContext.commandBuffers[currentContext.currentCommandBuffer].drawCommand;
+
+	//
+	if (reusedUboDescriptorSets[0] == true && reusedUboDescriptorSets[1] == true) {
+		if (currentContext.program->layoutBindings - uboIdx > 0 && descriptorSet3CacheHit == false) {
+			vkUpdateDescriptorSets(device, currentContext.program->layoutBindings - uboIdx, &currentContext.descriptorWriteSets[uboIdx], 0, nullptr);
+		}
+	} else
+	if (reusedUboDescriptorSets[0] == false && reusedUboDescriptorSets[1] == true) {
+		if (currentContext.program->shaders[0]->uboBindingIdx != -1) {
+			vkUpdateDescriptorSets(device, 1, &currentContext.descriptorWriteSets[currentContext.program->shaders[0]->uboBindingIdx], 0, nullptr);
+		}
+		if (currentContext.program->layoutBindings - uboIdx > 0 && descriptorSet3CacheHit == false) {
+			vkUpdateDescriptorSets(device, currentContext.program->layoutBindings - uboIdx, &currentContext.descriptorWriteSets[uboIdx], 0, nullptr);
+		}
+	} else
+	if (reusedUboDescriptorSets[0] == true && reusedUboDescriptorSets[1] == false) {
+		if (currentContext.program->shaders[1]->uboBindingIdx != -1) {
+			vkUpdateDescriptorSets(device, 1, &currentContext.descriptorWriteSets[currentContext.program->shaders[1]->uboBindingIdx], 0, nullptr);
+		}
+		if (currentContext.program->layoutBindings - uboIdx > 0 && descriptorSet3CacheHit == false) {
+			vkUpdateDescriptorSets(device, currentContext.program->layoutBindings - uboIdx, &currentContext.descriptorWriteSets[uboIdx], 0, nullptr);
+		}
+	} else {
+		if (currentContext.program->layoutBindings - uboIdx > 0 && descriptorSet3CacheHit == false) {
+			vkUpdateDescriptorSets(device, currentContext.program->layoutBindings, currentContext.descriptorWriteSets.data(), 0, nullptr);
+		} else {
+			vkUpdateDescriptorSets(device, uboIdx, currentContext.descriptorWriteSets.data(), 0, nullptr);
+		}
+	}
+
+	//
 	vkCmdBindDescriptorSets(drawCommand, VK_PIPELINE_BIND_POINT_GRAPHICS, currentContext.program->pipelineLayout, 0, descSetIdx, descSets.data(), 0, nullptr);
 
 	// index buffer
@@ -6547,8 +6709,9 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, 
 	}
 
 	//
-	programCommandBuffer.uboDescriptorSets1Idx++;
-	programCommandBuffer.uboDescriptorSets2Idx++;
+	programContext.lastTexturesDescriptorSet = texturesDescriptorSet3;
+
+	//
 	currentContext.commandCount++;
 
 	//
@@ -6618,19 +6781,27 @@ void VKRenderer::drawPointsFromBufferObjects(int contextIdx, int32_t points, int
 	auto& programContext = currentContext.program->contexts[currentContext.idx];
 	auto& programCommandBuffer = programContext.commandBuffers[currentContext.currentCommandBuffer];
 
+	// check if first desc1 usage
+	if (programCommandBuffer.uboDescriptorSets1Idx == -1) {
+		programCommandBuffer.uboDescriptorSets1Idx++;
+	} else
 	// check if desc1 left
 	if (programCommandBuffer.uboDescriptorSets1Idx == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.uboDescriptorSets1[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.uboDescriptorSets1Idx));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.uboDescriptorSets1[" + to_string(currentContext.idx) + "] == DESC_MAX_UNCACHED: " + to_string(programCommandBuffer.uboDescriptorSets1Idx));
 		return;
 	}
+	// check if first desc2 usage
+	if (programCommandBuffer.uboDescriptorSets2Idx == -1) {
+		programCommandBuffer.uboDescriptorSets2Idx++;
+	} else
 	// check if desc2 left
 	if (programCommandBuffer.uboDescriptorSets2Idx == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.uboDescriptorSets2[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.uboDescriptorSets2Idx));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.uboDescriptorSets2[" + to_string(currentContext.idx) + "] == DESC_MAX_UNCACHED: " + to_string(programCommandBuffer.uboDescriptorSets2Idx));
 		return;
 	}
 	// check if desc3 left
 	if (programCommandBuffer.texturesDescriptorSets3IdxUncached == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.texturesDescriptorSets3IdxUncached[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.texturesDescriptorSets3IdxUncached));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.texturesDescriptorSets3IdxUncached[" + to_string(currentContext.idx) + "] == DESC_MAX_UNCACHED: " + to_string(programCommandBuffer.texturesDescriptorSets3IdxUncached));
 		return;
 	}
 
@@ -6708,6 +6879,8 @@ void VKRenderer::drawPointsFromBufferObjects(int contextIdx, int32_t points, int
 						break;
 				}
 			}
+
+			//
 			currentContext.descriptorWriteSets[uniform->position] = {
 				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
 				.pNext = nullptr,
@@ -6731,10 +6904,10 @@ void VKRenderer::drawPointsFromBufferObjects(int contextIdx, int32_t points, int
 
 		//
 		auto& uniformBuffer = shader->uniformBuffers[currentContext.idx];
+		uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
 		auto& src = uniformBuffer.buffers[uniformBuffer.bufferIdx];
 		auto uboBuffer = src.buffer;
-		uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
-		vmaMemCpy(src.allocation, currentContext.uniformBufferData[shaderIdx].data(), uniformBuffer.size);
+		vmaMemCpy(src.allocation, uniformBuffer.uniformBufferData.data(), uniformBuffer.size);
 
 		//
 		currentContext.descriptorBufferInfos[shader->uboBindingIdx] = {
@@ -6804,19 +6977,27 @@ void VKRenderer::drawLinesFromBufferObjects(int contextIdx, int32_t points, int3
 	auto& currentContext = contexts[contextIdx];
 	auto& programCommandBuffer = currentContext.program->contexts[currentContext.idx].commandBuffers[currentContext.currentCommandBuffer];
 
+	// check if first desc1 usage
+	if (programCommandBuffer.uboDescriptorSets1Idx == -1) {
+		programCommandBuffer.uboDescriptorSets1Idx++;
+	} else
 	// check if desc1 left
 	if (programCommandBuffer.uboDescriptorSets1Idx == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.uboDescriptorSets1[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.uboDescriptorSets1Idx));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.uboDescriptorSets1[" + to_string(currentContext.idx) + "] == DESC_MAX_UNCACHED: " + to_string(programCommandBuffer.uboDescriptorSets1Idx));
 		return;
 	}
+	// check if first desc2 usage
+	if (programCommandBuffer.uboDescriptorSets2Idx == -1) {
+		programCommandBuffer.uboDescriptorSets2Idx++;
+	} else
 	// check if desc2 left
 	if (programCommandBuffer.uboDescriptorSets2Idx == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.uboDescriptorSets2[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.uboDescriptorSets2Idx));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.uboDescriptorSets2[" + to_string(currentContext.idx) + "] == DESC_MAX_UNCACHED: " + to_string(programCommandBuffer.uboDescriptorSets2Idx));
 		return;
 	}
 	// check if desc3 left
 	if (programCommandBuffer.texturesDescriptorSets3IdxUncached == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.texturesDescriptorSets3IdxUncached[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.texturesDescriptorSets3IdxUncached));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.texturesDescriptorSets3IdxUncached[" + to_string(currentContext.idx) + "] == DESC_MAX_UNCACHED: " + to_string(programCommandBuffer.texturesDescriptorSets3IdxUncached));
 		return;
 	}
 
@@ -6919,10 +7100,10 @@ void VKRenderer::drawLinesFromBufferObjects(int contextIdx, int32_t points, int3
 
 		//
 		auto& uniformBuffer = shader->uniformBuffers[currentContext.idx];
+		uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
 		auto& src = uniformBuffer.buffers[uniformBuffer.bufferIdx];
 		auto uboBuffer = src.buffer;
-		uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
-		vmaMemCpy(src.allocation, currentContext.uniformBufferData[shaderIdx].data(), uniformBuffer.size);
+		vmaMemCpy(src.allocation, uniformBuffer.uniformBufferData.data(), uniformBuffer.size);
 
 		//
 		currentContext.descriptorBufferInfos[shader->uboBindingIdx] = {
@@ -7355,9 +7536,13 @@ void VKRenderer::dispatchCompute(int contextIdx, int32_t numGroupsX, int32_t num
 	auto& currentContext = contexts[contextIdx];
 	auto& programCommandBuffer = currentContext.program->contexts[currentContext.idx].commandBuffers[currentContext.currentCommandBuffer];
 
+	// check if first desc1 usage
+	if (programCommandBuffer.uboDescriptorSets1Idx == -1) {
+		programCommandBuffer.uboDescriptorSets1Idx++;
+	} else
 	// check if desc1 left
 	if (programCommandBuffer.uboDescriptorSets1Idx == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.uboDescriptorSets1Idx[" + to_string(currentContext.idx) + "] == DESC_MAX: " + to_string(programCommandBuffer.uboDescriptorSets1Idx));
+		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): programCommandBuffer.uboDescriptorSets1Idx[" + to_string(currentContext.idx) + "] == DESC_MAX_UNCACHED: " + to_string(programCommandBuffer.uboDescriptorSets1Idx));
 		return;
 	}
 	//
@@ -7402,10 +7587,10 @@ void VKRenderer::dispatchCompute(int contextIdx, int32_t numGroupsX, int32_t num
 		//
 		//
 		auto& uniformBuffer = shader->uniformBuffers[currentContext.idx];
+		uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
 		auto& src = uniformBuffer.buffers[uniformBuffer.bufferIdx];
 		auto uboBuffer = src.buffer;
-		uniformBuffer.bufferIdx = (uniformBuffer.bufferIdx + 1) % uniformBuffer.buffers.size();
-		vmaMemCpy(src.allocation, currentContext.uniformBufferData[shaderIdx].data(), uniformBuffer.size);
+		vmaMemCpy(src.allocation, uniformBuffer.uniformBufferData.data(), uniformBuffer.size);
 
 		//
 		currentContext.descriptorBufferInfos[shader->uboBindingIdx] = {

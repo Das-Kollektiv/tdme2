@@ -143,8 +143,11 @@ private:
 			VkBuffer buffer { VK_NULL_HANDLE };
 			VmaAllocation allocation { VK_NULL_HANDLE };
 		};
-		int bufferIdx { 0 };
+		int bufferIdx { -1 };
 		int size { -1 };
+		vector<uint8_t> uniformBufferData;
+		vector<uint8_t> lastUniformBufferData;
+		bool uniformBufferDataChanged { true };
 		// TODO: make them a growing list
 		array<uniform_buffer_type_buffer, COMMANDS_MAX_GRAPHICS * DRAW_COMMANDBUFFER_MAX * 5> buffers;
 	};
@@ -192,15 +195,15 @@ private:
 
 	struct program_type {
 		struct command_buffer {
-			uint32_t uboDescriptorSets1Idx;
-			uint32_t uboDescriptorSets2Idx;
+			int uboDescriptorSets1Idx;
+			int uboDescriptorSets2Idx;
 			uint32_t texturesDescriptorSets3IdxUncached;
 			array<VkDescriptorSet, DESC_MAX_UNCACHED> uboDescriptorSets1;
 			array<VkDescriptorSet, DESC_MAX_UNCACHED> uboDescriptorSets2;
 			array<VkDescriptorSet, DESC_MAX_UNCACHED> texturesDescriptorSets3Uncached;
 		};
 		struct context {
-			uint32_t descriptorSets2Idx;
+			uint32_t textureDescriptorSets3Idx;
 			array<VkDescriptorSet, DESC_MAX_CACHED> texturesDescriptorSets3;
 			#if defined(CPU_64BIT) && defined(_MSC_VER)
 				unordered_map<SAMPLER_HASH_TYPE, int, UINT128_T_Hash> texturesDescriptorSets3Cache;
@@ -209,8 +212,9 @@ private:
 				unordered_map<SAMPLER_HASH_TYPE, int> texturesDescriptorSets3Cache;
 				unordered_map<int32_t, unordered_set<SAMPLER_HASH_TYPE>> texturesDescriptorSets3CacheTextureIds;
 			#endif
-			vector<uint32_t> freeTexturesDescriptorSets2Ids;
+			vector<uint32_t> freeTexturesDescriptorSets3Ids;
 			array<command_buffer, DRAW_COMMANDBUFFER_MAX> commandBuffers;
+			VkDescriptorSet lastTexturesDescriptorSet { VK_NULL_HANDLE };
 		};
 		int type { 0 };
 		// TODO: clear on viewport dimension change
@@ -325,7 +329,6 @@ private:
 		uint32_t currentCommandBuffer;
 		VkFence draw_fence { VK_NULL_HANDLE };
 		program_type* program { nullptr };
-		vector<program_type*> lastUnsubmittedPrograms;
 
 		//
 		uint16_t pipelineIdx;
@@ -353,7 +356,6 @@ private:
 		};
 		array<uint32_t, 10> boundBufferSizes { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		array<uniform_buffer_type*, SHADERSTAGES_MAX> uniformBuffers;
-		array<vector<uint8_t>, SHADERSTAGES_MAX> uniformBufferData;
 		int32_t activeTextureUnit { 0 };
 		struct bound_texture {
 			int32_t id { 0 };
@@ -514,7 +516,9 @@ private:
 	buffer_object_type* getBufferObjectInternal(int32_t bufferObjectId);
 	int memCmp(const uint8_t* dst, const uint8_t* src, uint32_t size, uint32_t offset = 0);
 	void memCpy(uint8_t* dst, const uint8_t* src, uint32_t size, uint32_t offset = 0);
-	void vmaMemCpy(VmaAllocation allocationDst, const uint8_t* src, uint32_t size, uint32_t offset = 0);
+	bool memCpyCmp(uint8_t* dst, const uint8_t* src, uint32_t size, uint32_t offset = 0);
+	void vmaMemCpy(VmaAllocation allocationDst, const uint8_t* src, uint32_t size);
+	void vmaMemCpy2(VmaAllocation allocationDst, const uint8_t* src, uint32_t size, uint8_t* dst2);
 	void uploadBufferObjectInternal(int contextIdx,  buffer_object_type* buffer, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
 	void uploadBufferObjectInternal(int contextIdx, int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
 	texture_type* getTextureInternal(int32_t textureId);
