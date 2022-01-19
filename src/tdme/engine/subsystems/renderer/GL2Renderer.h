@@ -60,7 +60,6 @@ public:
 	const string getRenderer() override;
 	const string getShaderVersion() override;
 	bool isSupportingMultithreadedRendering() override;
-	bool isSupportingVertexArrays() override;
 	bool isBufferObjectsAvailable() override;
 	bool isUsingProgramAttributeLocation() override;
 	bool isSupportingIntegerProgramAttributes() override;

@@ -135,6 +135,7 @@ private:
 		int64_t frameUsedLast { -1LL };
 		int64_t frameCleanedLast { -1LL };
 		reusable_buffer* currentBuffer { nullptr };
+		reusable_buffer* bindBuffer { nullptr };
 		volatile bool uploading { false };
 	};
 
@@ -268,6 +269,8 @@ private:
 		int32_t frameBufferObjectId { 0 };
 		image_layout_change frameBufferBindImageLayoutChange {};
 		image_layout_change frameBufferUnbindImageLayoutChange {};
+		//
+		texture_type* bindTexture { nullptr };
 	};
 
 	struct framebuffer_object_type {
@@ -411,8 +414,8 @@ private:
 	int32_t textureIdx { 1 };
 	vector<program_type*> programVector { nullptr };
 	unordered_map<int32_t, shader_type*> shaders;
-	array<buffer_object_type*, BUFFERS_MAX> buffers;
-	array<texture_type*, TEXTURES_MAX> textures;
+	array<buffer_object_type*, BUFFERS_MAX + 1> buffers;
+	array<texture_type*, TEXTURES_MAX + 1> textures;
 	vector<int32_t> freeTextureIds;
 	vector<int32_t> freeBufferIds;
 	vector<framebuffer_object_type*> framebuffers { nullptr };
@@ -500,15 +503,14 @@ private:
 	void setImageLayout3(int contextIdx, VkImage image, VkImageAspectFlags aspectMask, const array<ThsvsAccessType,2>& accessTypes, const array<ThsvsAccessType,2>& nextAccessTypes, ThsvsImageLayout layout, ThsvsImageLayout nextLayout);
 	uint32_t getMipLevels(Texture* texture);
 	void prepareTextureImage(int contextIdx, struct texture_type* textureObject, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags requiredFlags, Texture* texture, const array<ThsvsAccessType,2>& nextAccesses, ThsvsImageLayout imageLayout, bool disableMipMaps = true, uint32_t baseLevel = 0, uint32_t levelCount = 1);
-	VkBuffer getBufferObjectInternal(int32_t bufferObjectId, uint32_t& size);
-	VkBuffer getBufferObjectInternal(buffer_object_type* bufferObject, uint32_t& size);
+	VkBuffer getBindBufferObjectInternal(int32_t bufferObjectId, uint32_t& size);
 	void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VmaAllocation& allocation, VmaAllocationInfo& allocationInfo);
 	buffer_object_type* getBufferObjectInternal(int32_t bufferObjectId);
 	void vmaMemCpy(VmaAllocation allocationDst, const uint8_t* src, uint32_t size, uint32_t offset = 0);
 	void uploadBufferObjectInternal(int contextIdx,  buffer_object_type* buffer, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
 	void uploadBufferObjectInternal(int contextIdx, int32_t bufferObjectId, int32_t size, const uint8_t* data, VkBufferUsageFlagBits usage);
 	texture_type* getTextureInternal(int32_t textureId);
-	texture_type* getRenderTextureInternal(int32_t textureId);
+	texture_type* getBindTextureInternal(int32_t textureId);
 	framebuffer_pipelines_type* getFramebufferPipelines(uint64_t framebufferPipelinesId);
 	framebuffer_pipelines_type* createFramebufferPipelines(uint64_t framebufferPipelinesId);
 	VkPipeline getPipelineInternal(int contextIdx, program_type* programm, uint64_t framebuffePipelineId, uint32_t pipelineIdx);
@@ -566,7 +568,6 @@ public:
 	void initializeFrame() override;
 	void finishFrame() override;
 	bool isSupportingMultithreadedRendering() override;
-	bool isSupportingVertexArrays() override;
 	bool isBufferObjectsAvailable() override;
 	bool isDepthTextureAvailable() override;
 	bool isUsingProgramAttributeLocation() override;

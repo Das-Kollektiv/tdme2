@@ -116,10 +116,6 @@ bool GL3Renderer::isSupportingMultithreadedRendering() {
 	return false;
 }
 
-bool GL3Renderer::isSupportingVertexArrays() {
-	return true;
-}
-
 #if defined (__APPLE__)
 	void GL3Renderer::clErrorCallback(const char* errorInfo, const void* privateInfo, size_t cb, void* userData) {
 		Console::println(string("GL3Renderer::clErrorCallback(): ") + errorInfo);

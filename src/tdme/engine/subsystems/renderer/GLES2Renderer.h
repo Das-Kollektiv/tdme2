@@ -47,7 +47,6 @@ public:
 	const string getRenderer() override;
 	const string getShaderVersion() override;
 	bool isSupportingMultithreadedRendering() override;
-	bool isSupportingVertexArrays() override;
 	void initialize() override;
 	void initializeFrame() override;
 	void finishFrame() override;

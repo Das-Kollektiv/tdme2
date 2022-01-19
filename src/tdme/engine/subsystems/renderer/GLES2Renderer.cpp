@@ -95,10 +95,6 @@ bool GLES2Renderer::isSupportingMultithreadedRendering() {
 	return false;
 }
 
-bool GLES2Renderer::isSupportingVertexArrays() {
-	return false;
-}
-
 void GLES2Renderer::initialize()
 {
 	glGetError();

@@ -252,11 +252,6 @@ public:
 	virtual bool isSupportingMultithreadedRendering() = 0;
 
 	/**
-	 * @return if renderer supports vertex arrays
-	 */
-	virtual bool isSupportingVertexArrays() = 0;
-
-	/**
 	 * Checks if buffer objects is available
 	 * @return buffer objects availability
 	 */

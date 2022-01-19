@@ -103,10 +103,6 @@ bool GL2Renderer::isSupportingMultithreadedRendering() {
 	return false;
 }
 
-bool GL2Renderer::isSupportingVertexArrays() {
-	return false;
-}
-
 bool GL2Renderer::checkBufferObjectsAvailable()
 {
 	// see: http://www.felixgers.de/teaching/jogl/vertexBufferObject.html
