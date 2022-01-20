@@ -109,7 +109,7 @@ int32_t FrameBuffer::getDepthBufferTextureId()
 	return depthBufferTextureId;
 }
 
-void FrameBuffer::renderToScreen()
+void FrameBuffer::renderToScreen(int32_t depthBufferTextureId, int32_t colorBufferTextureId)
 {
 	auto renderer = Engine::renderer;
 

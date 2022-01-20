@@ -954,7 +954,7 @@ const string VKRenderer::getShaderVersion()
 }
 
 bool VKRenderer::isSupportingMultithreadedRendering() {
-	return false;
+	return true;
 }
 
 void VKRenderer::initialize()

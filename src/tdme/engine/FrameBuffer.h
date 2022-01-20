@@ -43,6 +43,14 @@ private:
 	int32_t buffers;
 	int32_t cubeMapTextureId;
 	int32_t cubeMapTextureIndex;
+
+	/**
+	 * Render given depth texture and color buffer texture to screen
+	 * @param depthBufferTextureId depth buffer texture id
+	 * @param colorBufferTextureId color buffer texture id
+	 */
+	void renderToScreen(int32_t depthBufferTextureId, int32_t colorBufferTextureId);
+
 public:
 	/**
 	 * Public constructor
@@ -120,7 +128,16 @@ public:
 	/**
 	 * Render to screen or bound frame buffer
 	 */
-	void renderToScreen();
+	inline void renderToScreen() {
+		renderToScreen(depthBufferTextureId, colorBufferTextureId);
+	}
+
+	/**
+	 * Render depth buffer to screen or bound frame buffer
+	 */
+	inline void renderDepthBufferToScreen() {
+		renderToScreen(depthBufferTextureId, depthBufferTextureId);
+	}
 
 	/**
 	 * Do post processing into target frame buffer (which can be screen as well when passing nullptr)

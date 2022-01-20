@@ -4,6 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
@@ -101,16 +102,22 @@ public:
 	/**
 	 * @return width
 	 */
-	int32_t getWidth();
+	inline int32_t getWidth() {
+		return frameBuffer->getWidth();
+	}
 
 	/**
 	 * @return height
 	 */
-	int32_t getHeight();
+	inline int32_t getHeight() {
+		return frameBuffer->getWidth();
+	}
 
 	/**
 	 * @return frame buffer
 	 */
-	FrameBuffer* getFrameBuffer();
+	inline FrameBuffer* getFrameBuffer() {
+		return frameBuffer;
+	}
 
 };

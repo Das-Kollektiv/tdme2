@@ -695,7 +695,7 @@ void Engine::initialize()
 
 	// engine thread count
 	if (renderer->isSupportingMultithreadedRendering() == true) {
-		if (threadCount == 0) threadCount = Math::clamp(Thread::getHardwareThreadCount() == 0?3:Thread::getHardwareThreadCount() / 2, 3, 5);
+		if (threadCount == 0) threadCount = Math::clamp(Thread::getHardwareThreadCount() == 0?3:Thread::getHardwareThreadCount() / 2, 2, 3);
 	} else {
 		threadCount = 1;
 	}

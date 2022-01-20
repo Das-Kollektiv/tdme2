@@ -61,8 +61,8 @@ ShadowMap::ShadowMap(ShadowMapping* shadowMapping, int32_t width, int32_t height
 		biasMatrix.set(
 			0.5f, 0.0f, 0.0f, 0.0f,
 			0.0f, -0.5f, 0.0f, 0.0f,
-			0.0f, 0.0f, 1.0f, 0.0f,
-			0.5f, 0.5f, 0.0f, 1.0f
+			0.0f, 0.0f, 0.5f, 0.0f,
+			0.5f, 0.5f, 0.5f, 1.0f
 		);
 	} else {
 		biasMatrix.set(
@@ -78,16 +78,6 @@ ShadowMap::ShadowMap(ShadowMapping* shadowMapping, int32_t width, int32_t height
 ShadowMap::~ShadowMap() {
 	delete lightCamera;
 	delete frameBuffer;
-}
-
-int32_t ShadowMap::getWidth()
-{
-	return frameBuffer->getWidth();
-}
-
-int32_t ShadowMap::getHeight()
-{
-	return frameBuffer->getHeight();
 }
 
 void ShadowMap::initialize()
@@ -330,8 +320,4 @@ void ShadowMap::computeDepthBiasMVPMatrix()
 void ShadowMap::updateDepthBiasMVPMatrix(int contextIdx)
 {
 	shadowMapping->updateDepthBiasMVPMatrix(contextIdx, depthBiasMVPMatrix);
-}
-
-FrameBuffer* ShadowMap::getFrameBuffer() {
-	return frameBuffer;
 }

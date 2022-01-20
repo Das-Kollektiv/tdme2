@@ -819,7 +819,7 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 				// inject gl_Position flip before last } from main
 				if (type == SHADER_VERTEX_SHADER && injectedYFlip == false && StringTools::startsWith(line, "}") == true) {
 					shaderSource =
-						"gl_Position.y*= -1.0;\n" +
+						"gl_Position.y*= -1.0;\ngl_Position.z = (gl_Position.z + gl_Position.w) / 2.0;\n" +
 						line +
 						shaderSource;
 					injectedYFlip = true;
@@ -827,6 +827,9 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 					shaderSource = line + shaderSource;
 				}
 			}
+		}
+		if (type == SHADER_VERTEX_SHADER && injectedYFlip == false) {
+			Console::println("VKGL3CoreShaderProgram::" + string(__FUNCTION__) + "(): Could not inject OpenGL GL like Y and Z correction math");
 		}
 
 		// debug uniforms
