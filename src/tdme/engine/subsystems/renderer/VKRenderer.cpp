@@ -1361,6 +1361,7 @@ void VKRenderer::initialize()
 
 		//
 		for (auto i = 0; i < DRAW_COMMANDBUFFER_MAX; i++) {
+			context.commandBuffers[i].drawCmdStarted = false;
 			VkFenceCreateInfo fenceCreateInfoSignaled = {
 				.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
 				.pNext = nullptr,
@@ -4968,9 +4969,6 @@ void VKRenderer::bindTexture(int contextIdx, int32_t textureId)
 	// have our context typed
 	auto& currentContext = contexts[contextIdx];
 	auto& boundTexture = currentContext.boundTextures[currentContext.activeTextureUnit];
-
-	//
-	if (boundTexture.id == textureId) return;
 
 	//
 	auto textureObject = getBindTextureInternal(textureId);
