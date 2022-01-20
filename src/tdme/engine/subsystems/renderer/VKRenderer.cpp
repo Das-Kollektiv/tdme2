@@ -374,13 +374,6 @@ inline VkCommandBuffer VKRenderer::endDrawCommandBuffer(int contextIdx, int buff
 	//
 	commandBuffer.drawCmdStarted = false;
 
-	// last descriptor set ubo, texture indices
-	if (currentContext.program != nullptr) {
-		auto& programContextCommandBuffer = currentContext.program->contexts[contextIdx].commandBuffers[bufferId];
-		programContextCommandBuffer.uboDescriptorSetsIdx = 0;
-		programContextCommandBuffer.texturesDescriptorSetsIdxUncached = 0;
-	}
-
 	//
 	if (cycleBuffers == true) currentContext.currentCommandBuffer = (currentContext.currentCommandBuffer + 1) % DRAW_COMMANDBUFFER_MAX;
 
@@ -3063,14 +3056,6 @@ void VKRenderer::useProgram(int contextIdx, int32_t programId)
 
 	//
 	if (currentContext.program != nullptr && currentContext.program->id == programId) return;
-
-	// last descriptor set ubo, texture indices
-	if (currentContext.program != nullptr) {
-		// TODO: switch from program a to b to a, and the first buffer a is not yet submitted but last a uses its descriptors
-		auto& programContextCommandBuffer = currentContext.program->contexts[contextIdx].commandBuffers[currentContext.currentCommandBuffer];
-		programContextCommandBuffer.uboDescriptorSetsIdx = 0;
-		programContextCommandBuffer.texturesDescriptorSetsIdxUncached = 0;
-	}
 
 	//
 	unsetPipeline(currentContext.idx);
@@ -6115,16 +6100,6 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, 
 	auto& programContext = currentContext.program->contexts[currentContext.idx];
 	auto& programCommandBuffer = programContext.commandBuffers[currentContext.currentCommandBuffer];
 
-	// check if desc1 left
-	if (programCommandBuffer.uboDescriptorSetsIdx == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(currentContext.idx) + "] == DESC_MAX_UNCACHED: " + to_string(programCommandBuffer.uboDescriptorSetsIdx));
-		return;
-	}
-	// check if desc2 left
-	if (programCommandBuffer.texturesDescriptorSetsIdxUncached == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(currentContext.idx) + "] == DESC_MAX_UNCACHED: " + to_string(programCommandBuffer.texturesDescriptorSetsIdxUncached));
-		return;
-	}
 	//
 	auto uboDescriptorSet = programCommandBuffer.uboDescriptorSets[programCommandBuffer.uboDescriptorSetsIdx];
 	auto texturesDescriptorSetUncached = programCommandBuffer.texturesDescriptorSetsUncached[programCommandBuffer.texturesDescriptorSetsIdxUncached];
@@ -6228,7 +6203,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, 
 			textureDescriptorSetCache[textureDescriptorSetCacheId] = textureDescriptorSetsIdx;
 			for (auto textureId: textureIds) programContext.texturesDescriptorSetsCacheTextureIds[textureId].insert(textureDescriptorSetCacheId);
 		} else {
-			programCommandBuffer.texturesDescriptorSetsIdxUncached++;
+			programCommandBuffer.texturesDescriptorSetsIdxUncached = (programCommandBuffer.texturesDescriptorSetsIdxUncached + 1) % programCommandBuffer.texturesDescriptorSetsUncached.size();
 		}
 		auto samplerIdx = 0;
 		for (auto shader: currentContext.program->shaders) {
@@ -6329,7 +6304,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, 
 	}
 
 	//
-	programCommandBuffer.uboDescriptorSetsIdx++;
+	programCommandBuffer.uboDescriptorSetsIdx = (programCommandBuffer.uboDescriptorSetsIdx + 1) % programCommandBuffer.uboDescriptorSets.size();
 	currentContext.commandCount++;
 
 	//
@@ -6399,16 +6374,6 @@ void VKRenderer::drawPointsFromBufferObjects(int contextIdx, int32_t points, int
 	auto& programContext = currentContext.program->contexts[currentContext.idx];
 	auto& programCommandBuffer = programContext.commandBuffers[currentContext.currentCommandBuffer];
 
-	// check if desc1 left
-	if (programCommandBuffer.uboDescriptorSetsIdx == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(currentContext.idx) + "] == DESC_MAX_UNCACHED: " + to_string(programCommandBuffer.uboDescriptorSetsIdx));
-		return;
-	}
-	// check if desc2 left
-	if (programCommandBuffer.texturesDescriptorSetsIdxUncached == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(currentContext.idx) + "] == DESC_MAX_UNCACHED: " + to_string(programCommandBuffer.texturesDescriptorSetsIdxUncached));
-		return;
-	}
 	//
 	auto uboDescriptorSet = programCommandBuffer.uboDescriptorSets[programCommandBuffer.uboDescriptorSetsIdx];
 	auto texturesDescriptorSet = programCommandBuffer.texturesDescriptorSetsUncached[programCommandBuffer.texturesDescriptorSetsIdxUncached];
@@ -6544,8 +6509,8 @@ void VKRenderer::drawPointsFromBufferObjects(int contextIdx, int32_t points, int
 	vkCmdDraw(drawCommand, points, 1, pointsOffset, 0);
 
 	//
-	programCommandBuffer.uboDescriptorSetsIdx++;
-	programCommandBuffer.texturesDescriptorSetsIdxUncached++;
+	programCommandBuffer.uboDescriptorSetsIdx = (programCommandBuffer.uboDescriptorSetsIdx + 1) % programCommandBuffer.uboDescriptorSets.size();
+	programCommandBuffer.texturesDescriptorSetsIdxUncached = (programCommandBuffer.texturesDescriptorSetsIdxUncached + 1) % programCommandBuffer.texturesDescriptorSetsUncached.size();
 	currentContext.commandCount++;
 
 	//
@@ -6569,16 +6534,6 @@ void VKRenderer::drawLinesFromBufferObjects(int contextIdx, int32_t points, int3
 	auto& currentContext = contexts[contextIdx];
 	auto& programCommandBuffer = currentContext.program->contexts[currentContext.idx].commandBuffers[currentContext.currentCommandBuffer];
 
-	// check if desc1 left
-	if (programCommandBuffer.uboDescriptorSetsIdx == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(currentContext.idx) + "] == DESC_MAX_UNCACHED: " + to_string(programCommandBuffer.uboDescriptorSetsIdx));
-		return;
-	}
-	// check if desc2 left
-	if (programCommandBuffer.texturesDescriptorSetsIdxUncached == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs2[" + to_string(currentContext.idx) + "] == DESC_MAX_UNCACHED: " + to_string(programCommandBuffer.texturesDescriptorSetsIdxUncached));
-		return;
-	}
 	//
 	auto uboDescriptorSet = programCommandBuffer.uboDescriptorSets[programCommandBuffer.uboDescriptorSetsIdx];
 	auto textureDescriptorSet = programCommandBuffer.texturesDescriptorSetsUncached[programCommandBuffer.texturesDescriptorSetsIdxUncached];
@@ -6715,8 +6670,8 @@ void VKRenderer::drawLinesFromBufferObjects(int contextIdx, int32_t points, int3
 	vkCmdDraw(drawCommand, points, 1, pointsOffset, 0);
 
 	//
-	programCommandBuffer.uboDescriptorSetsIdx++;
-	programCommandBuffer.texturesDescriptorSetsIdxUncached++;
+	programCommandBuffer.uboDescriptorSetsIdx = (programCommandBuffer.uboDescriptorSetsIdx + 1) % programCommandBuffer.uboDescriptorSets.size();
+	programCommandBuffer.texturesDescriptorSetsIdxUncached = (programCommandBuffer.texturesDescriptorSetsIdxUncached + 1) % programCommandBuffer.texturesDescriptorSetsUncached.size();
 	currentContext.commandCount++;
 
 	//
@@ -7102,11 +7057,6 @@ void VKRenderer::dispatchCompute(int contextIdx, int32_t numGroupsX, int32_t num
 	auto& currentContext = contexts[contextIdx];
 	auto& programCommandBuffer = currentContext.program->contexts[currentContext.idx].commandBuffers[currentContext.currentCommandBuffer];
 
-	// check if desc1 left
-	if (programCommandBuffer.uboDescriptorSetsIdx == DESC_MAX_UNCACHED) {
-		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): program.desc_idxs1[" + to_string(currentContext.idx) + "] == DESC_MAX_UNCACHED: " + to_string(programCommandBuffer.uboDescriptorSetsIdx));
-		return;
-	}
 	//
 	auto uboDescriptorSet = programCommandBuffer.uboDescriptorSets[programCommandBuffer.uboDescriptorSetsIdx];
 
@@ -7188,7 +7138,7 @@ void VKRenderer::dispatchCompute(int contextIdx, int32_t numGroupsX, int32_t num
 	vkCmdDispatch(drawCommand, numGroupsX, numGroupsY, numGroupsZ);
 
 	//
-	programCommandBuffer.uboDescriptorSetsIdx++;
+	programCommandBuffer.uboDescriptorSetsIdx = (programCommandBuffer.uboDescriptorSetsIdx + 1) % programCommandBuffer.uboDescriptorSets.size();
 	currentContext.commandCount++;
 
 	//
