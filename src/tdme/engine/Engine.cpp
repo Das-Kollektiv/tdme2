@@ -2175,7 +2175,7 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 	}
 
 	// use lighting shader
-	if (visibleDecomposedEntities.objects.size() > 0) {
+	if (visibleDecomposedEntities.objects.empty() == false || visibleDecomposedEntities.objectsForwardShading.empty() == false) {
 		//
 		if (lightingShader != nullptr) lightingShader->useProgram(this);
 

@@ -342,7 +342,9 @@ Application::~Application() {
 
 void Application::setVSyncEnabled(bool vSync) {
 	Engine::renderer->setVSync(vSync);
-	glfwSwapInterval(vSync == true?1:0);
+	if (Engine::renderer->getRendererType() != Renderer::RENDERERTYPE_VULKAN) {
+		glfwSwapInterval(vSync == true?1:0);
+	}
 }
 
 string Application::getOSName() {

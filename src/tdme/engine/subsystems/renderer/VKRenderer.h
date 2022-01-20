@@ -349,7 +349,6 @@ private:
 			0, 0
 		};
 		array<uint32_t, 10> boundBufferSizes { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-		array<uniform_buffer_type*, SHADERSSTAGES_MAX> uniformBuffers;
 		int32_t activeTextureUnit { 0 };
 		struct bound_texture {
 			int32_t id { 0 };

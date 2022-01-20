@@ -1793,7 +1793,6 @@ void VKRenderer::finishFrame()
 	for (auto& context: contexts) {
 		unsetPipeline(context.idx);
 		context.program = nullptr;
-		context.uniformBuffers.fill(nullptr);
 	}
 
 	// cache
@@ -3062,7 +3061,6 @@ void VKRenderer::useProgram(int contextIdx, int32_t programId)
 
 	//
 	currentContext.program = nullptr;
-	currentContext.uniformBuffers.fill(nullptr);
 
 	//
 	if (programId == ID_NONE) return;
@@ -3076,20 +3074,6 @@ void VKRenderer::useProgram(int contextIdx, int32_t programId)
 	//
 	auto program = programVector[programId];
 	currentContext.program = program;
-
-	// set up program ubo
-	{
-		auto shaderIdx = 0;
-		for (auto shader: program->shaders) {
-			if (shader->uboBindingIdx == -1) {
-				currentContext.uniformBuffers[shaderIdx] = nullptr;
-				shaderIdx++;
-				continue;
-			}
-			currentContext.uniformBuffers[shaderIdx] = &shader->uniformBuffers[currentContext.idx];
-			shaderIdx++;
-		}
-	}
 }
 
 int32_t VKRenderer::createProgram(int type)
@@ -3353,11 +3337,11 @@ inline void VKRenderer::setProgramUniformInternal(int contextIdx, int32_t unifor
 				continue;
 			}
 			*/
-			auto uniformBuffer = currentContext.uniformBuffers[shaderIdx];
+			auto& uniformBuffer = shader->uniformBuffers[contextIdx];
 			auto remainingSize = size;
 			auto offset = 0;
 			auto src = data;
-			auto dst = static_cast<uint8_t*>(&uniformBuffer->uniformBufferData[shaderUniform.position]);
+			auto dst = static_cast<uint8_t*>(&uniformBuffer.uniformBufferData[shaderUniform.position]);
 			while (remainingSize >= 8) {
 				*(uint64_t*)dst = *(uint64_t*)src;
 				remainingSize-= 8;
