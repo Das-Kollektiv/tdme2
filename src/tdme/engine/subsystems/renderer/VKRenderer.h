@@ -322,7 +322,6 @@ private:
 
 		VkCommandPool drawCommandPool;
 		uint32_t currentCommandBuffer;
-		VkFence draw_fence { VK_NULL_HANDLE };
 		program_type* program { nullptr };
 
 		//
@@ -400,8 +399,6 @@ private:
 	uint32_t lastWindowFramebufferIdx { 0 };
 	uint32_t currentWindowFramebufferIdx { 0 };
 
-	VkFence memoryBarrierFence { VK_NULL_HANDLE };
-
 	SpinLock pipelinesSpinLock;
 	uint64_t framebufferPipelinesId { 0 };
 	framebuffer_pipelines_type* framebufferPipelinesCache { nullptr };
@@ -476,6 +473,7 @@ private:
 	SpinLock vmaSpinlock;
 
 	vector<context_type> contexts;
+	vector<VkFence> contextsDrawFences;
 
 	string deviceName;
 
@@ -517,7 +515,7 @@ private:
 	void setProgramUniformInternal(int contextIdx, int32_t uniformId, uint8_t* data, int32_t size);
 	void initializeSwapChain();
 	void initializeFrameBuffers();
-	void endDrawCommandsAllContexts(bool waitUntilSubmitted = false);
+	void endDrawCommandsAllContexts();
 	void requestSubmitDrawBuffers(int contextIdx);
 	void initializeRenderPass();
 	void startRenderPass(int contextIdx);
@@ -547,8 +545,7 @@ private:
 	void createFramebufferObject(int32_t frameBufferId);
 	bool beginDrawCommandBuffer(int contextIdx, int bufferId = -1);
 	VkCommandBuffer endDrawCommandBuffer(int contextIdx, int bufferId = -1, bool cycleBuffers = true);
-	void submitDrawCommandBuffers(int commandBufferCount, VkCommandBuffer* commandBuffers, VkFence& fence, bool waitUntilSubmitted = false, bool resetFence = true);
-	void recreateContextFences(int contextIdx);
+	void submitDrawCommandBuffers(int commandBufferCount, VkCommandBuffer* commandBuffers, VkFence& fence);
 	void uploadCubeMapSingleTexture(int contextIdx, texture_type* cubemapTextureType, Texture* texture, uint32_t baseArrayLayer);
 	void finishRendering();
 	void invalidateTextureDescriptorCaches(int textureId);

@@ -388,28 +388,7 @@ inline VkCommandBuffer VKRenderer::endDrawCommandBuffer(int contextIdx, int buff
 	return endedCommandBuffer;
 }
 
-inline void VKRenderer::recreateContextFences(int contextIdx) {
-	auto& currentContext = contexts[contextIdx];
-	if (currentContext.draw_fence == VK_NULL_HANDLE) {
-		VkFenceCreateInfo fenceCreateInfoUnsignaled = {
-			.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
-			.pNext = nullptr,
-			.flags = 0
-		};
-		vkCreateFence(device, &fenceCreateInfoUnsignaled, nullptr, &currentContext.draw_fence);
-	}
-	VkFenceCreateInfo fenceCreateInfoSignaled = {
-		.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
-		.pNext = nullptr,
-		.flags = VK_FENCE_CREATE_SIGNALED_BIT
-	};
-	for (auto i = 0; i < DRAW_COMMANDBUFFER_MAX; i++) {
-		if (currentContext.commandBuffers[i].drawFence != VK_NULL_HANDLE) vkDestroyFence(device, currentContext.commandBuffers[i].drawFence, nullptr);
-		vkCreateFence(device, &fenceCreateInfoSignaled, nullptr, &currentContext.commandBuffers[i].drawFence);
-	}
-}
-
-inline void VKRenderer::submitDrawCommandBuffers(int commandBufferCount, VkCommandBuffer* commandBuffers, VkFence& fence, bool waitUntilSubmitted, bool resetFence) {
+inline void VKRenderer::submitDrawCommandBuffers(int commandBufferCount, VkCommandBuffer* commandBuffers, VkFence& fence) {
 	//
 	VkResult err;
 	VkPipelineStageFlags pipeStageFlags = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
@@ -435,16 +414,6 @@ inline void VKRenderer::submitDrawCommandBuffers(int commandBufferCount, VkComma
 
 	//
 	AtomicOperations::increment(statistics.submits);
-
-	//
-	if (waitUntilSubmitted == true) {
-		//
-		VkResult fence_result;
-		do {
-			fence_result = vkWaitForFences(device, 1, &fence, VK_TRUE, 100000000);
-		} while (fence_result == VK_TIMEOUT);
-		if (resetFence == true) vkResetFences(device, 1, &fence);
-	}
 }
 
 inline void VKRenderer::finishSetupCommandBuffers() {
@@ -954,7 +923,7 @@ const string VKRenderer::getShaderVersion()
 }
 
 bool VKRenderer::isSupportingMultithreadedRendering() {
-	return true;
+	return false;
 }
 
 void VKRenderer::initialize()
@@ -1399,8 +1368,13 @@ void VKRenderer::initialize()
 
 		//
 		for (auto i = 0; i < DRAW_COMMANDBUFFER_MAX; i++) {
-			context.commandBuffers[i].drawFence = VK_NULL_HANDLE;
-			context.commandBuffers[i].drawCmdStarted = false;
+			VkFenceCreateInfo fenceCreateInfoSignaled = {
+				.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
+				.pNext = nullptr,
+				.flags = VK_FENCE_CREATE_SIGNALED_BIT
+			};
+			vkCreateFence(device, &fenceCreateInfoSignaled, nullptr, &context.commandBuffers[i].drawFence);
+			contextsDrawFences.push_back(context.commandBuffers[i].drawFence);
 		}
 
 		//
@@ -1460,19 +1434,6 @@ void VKRenderer::initialize()
 			};
 			vkCreateFence(device, &fenceCreateInfo, nullptr, &context.setupFence);
 		}
-
-		//
-		recreateContextFences(context.idx);
-	}
-
-	// memory barrier fence
-	{
-		VkFenceCreateInfo fenceCreateInfo = {
-			.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
-			.pNext = nullptr,
-			.flags = 0
-		};
-		vkCreateFence(device, &fenceCreateInfo, nullptr, &memoryBarrierFence);
 	}
 
 	//
@@ -3664,7 +3625,7 @@ void VKRenderer::clear(int32_t mask)
 	auto currentBufferIdx = contexts[0].currentCommandBuffer;
 	auto commandBuffer = endDrawCommandBuffer(0, currentBufferIdx, true);
 	if (commandBuffer != VK_NULL_HANDLE) {
-		submitDrawCommandBuffers(1, &commandBuffer, contexts[0].commandBuffers[currentBufferIdx].drawFence, false, false);
+		submitDrawCommandBuffers(1, &commandBuffer, contexts[0].commandBuffers[currentBufferIdx].drawFence);
 	}
 	AtomicOperations::increment(statistics.clearCalls);
 }
@@ -6388,7 +6349,7 @@ void VKRenderer::drawIndexedTrianglesFromBufferObjects(int contextIdx, int32_t t
 	drawInstancedIndexedTrianglesFromBufferObjects(contextIdx, triangles, trianglesOffset, 1);
 }
 
-inline void VKRenderer::endDrawCommandsAllContexts(bool waitUntilSubmitted) {
+inline void VKRenderer::endDrawCommandsAllContexts() {
 	VkResult err;
 
 	// end render passes
@@ -6398,7 +6359,7 @@ inline void VKRenderer::endDrawCommandsAllContexts(bool waitUntilSubmitted) {
 		auto currentBufferIdx = context.currentCommandBuffer;
 		auto commandBuffer = endDrawCommandBuffer(context.idx, -1, true);
 		if (commandBuffer != VK_NULL_HANDLE) {
-			submitDrawCommandBuffers(1, &commandBuffer, context.commandBuffers[currentBufferIdx].drawFence, waitUntilSubmitted, false);
+			submitDrawCommandBuffers(1, &commandBuffer, context.commandBuffers[currentBufferIdx].drawFence);
 		}
 		unsetPipeline(context.idx);
     }
@@ -6414,7 +6375,7 @@ inline void VKRenderer::requestSubmitDrawBuffers(int contextIdx) {
 		endRenderPass(currentContext.idx);
 		auto currentBufferIdx = currentContext.currentCommandBuffer;
 		auto commandBuffer = endDrawCommandBuffer(currentContext.idx, -1, true);
-		if (commandBuffer != VK_NULL_HANDLE) submitDrawCommandBuffers(1, &commandBuffer, currentContext.commandBuffers[currentBufferIdx].drawFence, false, false);
+		if (commandBuffer != VK_NULL_HANDLE) submitDrawCommandBuffers(1, &commandBuffer, currentContext.commandBuffers[currentBufferIdx].drawFence);
 		currentContext.commandCount = 0;
 	}
 }
@@ -7238,29 +7199,14 @@ void VKRenderer::dispatchCompute(int contextIdx, int32_t numGroupsX, int32_t num
 }
 
 inline void VKRenderer::finishRendering() {
-	VkResult err;
-
-	// end render passes
-	auto submittedCommandBuffersCount = 0;
-	vector<VkCommandBuffer> submittedCommandBuffers(Engine::getThreadCount() * DRAW_COMMANDBUFFER_MAX * 3);
-	for (auto i = 0; i < Engine::getThreadCount(); i++) {
-		finishSetupCommandBuffer(i);
-		endRenderPass(i);
-		for (auto j = 0; j < DRAW_COMMANDBUFFER_MAX; j++) {
-			auto commandBuffer = endDrawCommandBuffer(i, j, false);
-			if (commandBuffer != VK_NULL_HANDLE) {
-				submittedCommandBuffers[submittedCommandBuffersCount++] = commandBuffer;
-			}
-		}
-	}
+	//
+	endDrawCommandsAllContexts();
 
 	//
-	if (submittedCommandBuffersCount > 0) {
-		submitDrawCommandBuffers(submittedCommandBuffersCount, submittedCommandBuffers.data(), memoryBarrierFence, true, true);
-		for (auto i = 0; i < Engine::getThreadCount(); i++) {
-			recreateContextFences(i);
-		}
-	}
+	VkResult fenceResult;
+	do {
+		fenceResult = vkWaitForFences(device, contextsDrawFences.size(), contextsDrawFences.data(), VK_TRUE, 100000000);
+	} while (fenceResult == VK_TIMEOUT);
 
 	//
 	for (auto& context: contexts) context.computeRenderBarrierBuffers.clear();
