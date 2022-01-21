@@ -134,73 +134,78 @@ void EnvironmentMappingRenderer::render(const Vector3& position)
 	//
 	auto now = Time::getCurrentMillis();
 	if (timeRenderLast != -1LL && now - timeRenderLast < timeRenderUpdateFrequency) return;
-	timeRenderLast = now;
 
 	//
 	auto engineCamera = engine->getCamera();
 
 	//
-	reflectionCubeMapTextureIdx = renderCubeMapTextureIdx;
-	renderCubeMapTextureIdx = (renderCubeMapTextureIdx + 1) % 2;
-
-	//
-	for (auto i = 0; i < frameBuffers[renderCubeMapTextureIdx].size(); i++) {
-		// bind frame buffer
-		frameBuffers[renderCubeMapTextureIdx][i]->enableFrameBuffer();
-
-		// set up camera
-		camera->setZNear(engineCamera->getZNear());
-		camera->setZFar(engineCamera->getZFar());
-		camera->setFovX(90.0f);
-		camera->setLookFrom(position);
-		camera->setForwardVector(forwardVectors[i]);
-		camera->setSideVector(sideVectors[i]);
-		camera->setUpVector(Vector3::computeCrossProduct(sideVectors[i], forwardVectors[i]));
-		camera->update(engine->renderer->CONTEXTINDEX_DEFAULT, width, height);
-		camera->getFrustum()->update();
-
-		// set up clear color
-		Engine::renderer->setClearColor(
-			engine->sceneColor.getRed(),
-			engine->sceneColor.getGreen(),
-			engine->sceneColor.getBlue(),
-			engine->sceneColor.getAlpha()
-		);
-
-		// clear previous frame values
-		Engine::renderer->clear(engine->renderer->CLEAR_DEPTH_BUFFER_BIT | engine->renderer->CLEAR_COLOR_BUFFER_BIT);
+	for (auto runs = 0; runs < (timeRenderLast == -1LL?2:1); runs++) {
+		//
+		reflectionCubeMapTextureIdx = renderCubeMapTextureIdx;
+		renderCubeMapTextureIdx = (renderCubeMapTextureIdx + 1) % 2;
 
 		//
-		engine->computeTransformations(camera, visibleDecomposedEntities, false, false);
+		for (auto i = 0; i < frameBuffers[renderCubeMapTextureIdx].size(); i++) {
+			// bind frame buffer
+			frameBuffers[renderCubeMapTextureIdx][i]->enableFrameBuffer();
 
-		// do a render pass
-		engine->render(
-			frameBuffers[renderCubeMapTextureIdx][i],
-			geometryBuffer,
-			visibleDecomposedEntities,
-			Engine::EFFECTPASS_NONE,
-			renderPassMask,
-			string(),
-			true,
-			false,
-			false,
-			true,
-			true,
-			EntityRenderer::RENDERTYPE_NORMALS |
-				EntityRenderer::RENDERTYPE_TEXTUREARRAYS |
-				EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
-				EntityRenderer::RENDERTYPE_EFFECTCOLORS |
-				EntityRenderer::RENDERTYPE_MATERIALS |
-				EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY |
-				EntityRenderer::RENDERTYPE_TEXTURES |
-				EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
-				EntityRenderer::RENDERTYPE_LIGHTS
-		);
+			// set up camera
+			camera->setZNear(engineCamera->getZNear());
+			camera->setZFar(engineCamera->getZFar());
+			camera->setFovX(90.0f);
+			camera->setLookFrom(position);
+			camera->setForwardVector(forwardVectors[i]);
+			camera->setSideVector(sideVectors[i]);
+			camera->setUpVector(Vector3::computeCrossProduct(sideVectors[i], forwardVectors[i]));
+			camera->update(engine->renderer->CONTEXTINDEX_DEFAULT, width, height);
+			camera->getFrustum()->update();
 
-		//
-		engine->resetLists(visibleDecomposedEntities);
+			// set up clear color
+			Engine::renderer->setClearColor(
+				engine->sceneColor.getRed(),
+				engine->sceneColor.getGreen(),
+				engine->sceneColor.getBlue(),
+				engine->sceneColor.getAlpha()
+			);
+
+			// clear previous frame values
+			Engine::renderer->clear(engine->renderer->CLEAR_DEPTH_BUFFER_BIT | engine->renderer->CLEAR_COLOR_BUFFER_BIT);
+
+			//
+			engine->computeTransformations(camera, visibleDecomposedEntities, false, false);
+
+			// do a render pass
+			engine->render(
+				frameBuffers[renderCubeMapTextureIdx][i],
+				nullptr, // TODO: fix me as geometryBuffer does not yet work here
+				visibleDecomposedEntities,
+				Engine::EFFECTPASS_NONE,
+				renderPassMask,
+				string(),
+				true,
+				false,
+				false,
+				true,
+				true,
+				EntityRenderer::RENDERTYPE_NORMALS |
+					EntityRenderer::RENDERTYPE_TEXTUREARRAYS |
+					EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY |
+					EntityRenderer::RENDERTYPE_EFFECTCOLORS |
+					EntityRenderer::RENDERTYPE_MATERIALS |
+					EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY |
+					EntityRenderer::RENDERTYPE_TEXTURES |
+					EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY |
+					EntityRenderer::RENDERTYPE_LIGHTS
+			);
+
+			//
+			engine->resetLists(visibleDecomposedEntities);
+		}
 	}
 
 	// unbind frame buffer
 	FrameBuffer::disableFrameBuffer();
+
+	//
+	timeRenderLast = now;
 }

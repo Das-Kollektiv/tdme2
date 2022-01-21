@@ -136,7 +136,7 @@ public:
 	 * @return cube map texture id
 	 */
 	inline int32_t getCubeMapTextureId() {
-		return cubeMapTextureIds[reflectionCubeMapTextureIdx];
+		return timeRenderLast == -1LL?0:cubeMapTextureIds[reflectionCubeMapTextureIdx];
 	}
 
 };

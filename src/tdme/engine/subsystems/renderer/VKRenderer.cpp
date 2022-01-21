@@ -298,7 +298,7 @@ inline bool VKRenderer::beginDrawCommandBuffer(int contextIdx, int bufferId) {
 	ThsvsImageLayout nextLayout { THSVS_IMAGE_LAYOUT_OPTIMAL };
 
 	// check if we need a change at all
-	if (boundFrameBuffer == ID_NONE &&
+	if (boundFrameBufferId == ID_NONE &&
 		(windowFramebufferBuffers[currentWindowFramebufferIdx].accessTypes != nextAccessTypes || windowFramebufferBuffers[currentWindowFramebufferIdx].svsLayout != nextLayout)) {
 		ThsvsImageBarrier svsImageBarrier = {
 			.prevAccessCount = static_cast<uint32_t>(windowFramebufferBuffers[currentWindowFramebufferIdx].accessTypes[1] != THSVS_ACCESS_NONE?2:1),
@@ -440,7 +440,7 @@ inline void VKRenderer::setImageLayout(int contextIdx, texture_type* textureObje
 			.aspectMask = _textureObject->aspectMask,
 			.baseMipLevel = baseMipLevel,
 			.levelCount = levelCount,
-			.baseArrayLayer = baseArrayLayer,
+			.baseArrayLayer = baseArrayLayer, // cube map texture index if cube map or 0 for framebuffer or ordinary textures
 			.layerCount = 1
 		}
 	};
@@ -493,12 +493,12 @@ inline void VKRenderer::getImageLayoutChange(
 		.discardContents = discardContent,
 		.srcQueueFamilyIndex = 0,
 		.dstQueueFamilyIndex = 0,
-		.image = _textureObject->image,
+		.image = _textureObject->image, // cubemap color/depth buffer image or framebuffer / ordinary texture image
 		.subresourceRange = {
 			.aspectMask = _textureObject->aspectMask,
 			.baseMipLevel = baseMipLevel,
 			.levelCount = levelCount,
-			.baseArrayLayer = baseArrayLayer,
+			.baseArrayLayer = baseArrayLayer, // cube map texture index if cube map or 0 for framebuffer or ordinary textures
 			.layerCount = 1
 		}
 	};
@@ -1568,10 +1568,10 @@ inline void VKRenderer::startRenderPass(int contextIdx) {
 
 	auto usedFrameBuffer = windowFramebufferBuffers[currentWindowFramebufferIdx].framebuffer;
 	auto vkRenderPass = renderPass;
-	if (boundFrameBuffer != ID_NONE) {
-		auto frameBuffer = boundFrameBuffer < 0 || boundFrameBuffer >= framebuffers.size()?nullptr:framebuffers[boundFrameBuffer];
+	if (boundFrameBufferId != ID_NONE) {
+		auto frameBuffer = boundFrameBufferId < 0 || boundFrameBufferId >= framebuffers.size()?nullptr:framebuffers[boundFrameBufferId];
 		if (frameBuffer == nullptr) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(boundFrameBuffer));
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(boundFrameBufferId));
 		} else {
 			usedFrameBuffer = frameBuffer->frameBuffer;
 			vkRenderPass = frameBuffer->renderPass;
@@ -1922,7 +1922,7 @@ void VKRenderer::finishFrame()
 						.sampler = texture->cubemapDepthBuffer->sampler
 					}
 				);
-			}
+			 }
 			//
 			textures[textureId] = nullptr;
 			delete texture;
@@ -2056,7 +2056,7 @@ bool VKRenderer::isDeferredShadingAvailable() {
 
 int32_t VKRenderer::getTextureUnits()
 {
-	return -1;
+	return TEXTUREUNITS_MAX;
 }
 
 
@@ -2123,9 +2123,9 @@ inline void VKRenderer::createDepthStencilStateCreateInfo(VkPipelineDepthStencil
 
 inline uint64_t VKRenderer::createPipelineFramebufferId() {
 	return
-		static_cast<uint64_t>(viewPortWidth & 0xffff) +
-		(static_cast<uint64_t>(viewPortHeight & 0xffff) << 16) +
-		(static_cast<uint64_t>(boundFrameBuffer & 0xffff) << 32);
+		(static_cast<uint64_t>(viewPortWidth) & 0xffff) +
+		((static_cast<uint64_t>(viewPortHeight) & 0xffff) << 16) +
+		((static_cast<uint64_t>(boundFrameBufferId) & 0xffff) << 32);
 }
 
 inline uint16_t VKRenderer::createPipelineIndex(program_type* program, int contextIdx) {
@@ -2274,13 +2274,15 @@ void VKRenderer::createObjectsRenderingPipeline(int contextIdx, program_type* pr
 	auto haveDepthBuffer = true;
 	auto haveColorBuffer = true;
 	auto haveGeometryBuffer = false;
-	if (boundFrameBuffer != ID_NONE) {
-		auto frameBuffer = boundFrameBuffer < 0 || boundFrameBuffer >= framebuffers.size()?nullptr:framebuffers[boundFrameBuffer];
+	if (boundFrameBufferId != ID_NONE) {
+		auto frameBuffer = boundFrameBufferId < 0 || boundFrameBufferId >= framebuffers.size()?nullptr:framebuffers[boundFrameBufferId];
 		if (frameBuffer != nullptr) {
 			haveDepthBuffer = frameBuffer->depthTextureId != ID_NONE;
 			haveColorBuffer = frameBuffer->colorTextureId != ID_NONE;
 			haveGeometryBuffer = frameBuffer->type == framebuffer_object_type::TYPE_GEOMETRYBUFFER;
 			usedRenderPass = frameBuffer->renderPass;
+		} else {
+			if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer with id: " + to_string(boundFrameBufferId) + " not found!");
 		}
 	}
 
@@ -2522,8 +2524,8 @@ void VKRenderer::createPointsRenderingPipeline(int contextIdx, program_type* pro
 	auto haveDepthBuffer = true;
 	auto haveColorBuffer = true;
 	auto haveGeometryBuffer = false;
-	if (boundFrameBuffer != ID_NONE) {
-		auto frameBuffer = boundFrameBuffer < 0 || boundFrameBuffer >= framebuffers.size()?nullptr:framebuffers[boundFrameBuffer];
+	if (boundFrameBufferId != ID_NONE) {
+		auto frameBuffer = boundFrameBufferId < 0 || boundFrameBufferId >= framebuffers.size()?nullptr:framebuffers[boundFrameBufferId];
 		if (frameBuffer != nullptr) {
 			haveDepthBuffer = frameBuffer->depthTextureId != ID_NONE;
 			haveColorBuffer = frameBuffer->colorTextureId != ID_NONE;
@@ -2744,8 +2746,8 @@ void VKRenderer::createLinesRenderingPipeline(int contextIdx, program_type* prog
 	auto haveDepthBuffer = true;
 	auto haveColorBuffer = true;
 	auto haveGeometryBuffer = false;
-	if (boundFrameBuffer != ID_NONE) {
-		auto frameBuffer = boundFrameBuffer < 0 || boundFrameBuffer >= framebuffers.size()?nullptr:framebuffers[boundFrameBuffer];
+	if (boundFrameBufferId != ID_NONE) {
+		auto frameBuffer = boundFrameBufferId < 0 || boundFrameBufferId >= framebuffers.size()?nullptr:framebuffers[boundFrameBufferId];
 		if (frameBuffer != nullptr) {
 			haveDepthBuffer = frameBuffer->depthTextureId != ID_NONE;
 			haveColorBuffer = frameBuffer->colorTextureId != ID_NONE;
@@ -3549,11 +3551,13 @@ void VKRenderer::setColorMask(bool red, bool green, bool blue, bool alpha)
 
 void VKRenderer::clear(int32_t mask)
 {
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+
 	//
 	beginDrawCommandBuffer(0);
 	startRenderPass(0);
 	framebuffer_object_type* frameBuffer = nullptr;
-	if (boundFrameBuffer != ID_NONE) frameBuffer = boundFrameBuffer < 0 || boundFrameBuffer >= framebuffers.size()?nullptr:framebuffers[boundFrameBuffer];
+	if (boundFrameBufferId != ID_NONE) frameBuffer = boundFrameBufferId < 0 || boundFrameBufferId >= framebuffers.size()?nullptr:framebuffers[boundFrameBufferId];
 	auto attachmentIdx = 0;
 	VkClearAttachment attachments[9];
 	if ((mask & CLEAR_COLOR_BUFFER_BIT) == CLEAR_COLOR_BUFFER_BIT) {
@@ -3678,7 +3682,7 @@ void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int3
 	//
 	VkResult err;
 
-	//
+	// if depth buffer is not attached to cube map, create a ordinary depth buffer texture image
 	if (cubeMapTexture == nullptr) {
 		// mark for deletion
 		deleteMutex.lock();
@@ -3755,6 +3759,8 @@ void VKRenderer::createDepthBufferTexture(int32_t textureId, int32_t width, int3
 	assert(!err);
 
 	// create image view
+	// create ordinary image view if no cubemap depth buffer
+	// if cubemap frame buffer depth buffer: create a view only of cubemap depth texture and given cube map texture index
 	VkImageViewCreateInfo viewCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
 		.pNext = nullptr,
@@ -3832,14 +3838,15 @@ void VKRenderer::createBufferTexture(int32_t textureId, int32_t width, int32_t h
 	colorBufferTexture.height = height;
 	colorBufferTexture.cubemapTextureIndex = cubeMapTextureId == ID_NONE?0:cubeMapTextureIndex;
 
-	//
+	// if we have a cube map texture as argument fetch it from textures
 	auto cubeMapTexture = cubeMapTextureId == ID_NONE?nullptr:getTextureInternal(cubeMapTextureId);
+	// if we have a cube map texture fetched point colorBufferTexture.cubemapBufferTexture to the cube map color buffer to use its image for view
 	colorBufferTexture.cubemapBufferTexture = cubeMapTexture != nullptr?cubeMapTexture->cubemapColorBuffer:nullptr;
 
 	//
 	VkResult err;
 
-	// non cube map textures
+	// if color buffer is not attached to cube map, create a ordinary color buffer texture image
 	if (cubeMapTexture == nullptr) {
 		// mark for deletion
 		deleteMutex.lock();
@@ -3915,6 +3922,8 @@ void VKRenderer::createBufferTexture(int32_t textureId, int32_t width, int32_t h
 	assert(!err);
 
 	// create image view
+	// create ordinary image view if no cubemap color buffer
+	// if cubemap frame buffer color buffer: create a view only of cubemap color texture and given cube map texture index
 	VkImageViewCreateInfo viewCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
 		.pNext = nullptr,
@@ -4063,8 +4072,7 @@ void VKRenderer::uploadCubeMapTexture(int contextIdx, Texture* textureLeft, Text
 	texture.accessTypes = { THSVS_ACCESS_HOST_PREINITIALIZED, THSVS_ACCESS_NONE };
 	texture.vkLayout = VK_IMAGE_LAYOUT_PREINITIALIZED;
 
-	// create color buffer texture
-	//	TODO: no general
+	// create color buffer texture including image it self with 6 array layers for each cube map side, sampler and view for binding as cube map texture
 	const VkImageCreateInfo imageCreateInfo = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
 		.pNext = nullptr,
@@ -4193,7 +4201,7 @@ void VKRenderer::uploadCubeMapTexture(int contextIdx, Texture* textureLeft, Text
 }
 
 int32_t VKRenderer::createCubeMapTexture(int contextIdx, int32_t width, int32_t height) {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "()");
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(width) + "x" + to_string(height));
 
 	// have our context typed
 	auto& currentContext = contexts[contextIdx];
@@ -4233,8 +4241,7 @@ int32_t VKRenderer::createCubeMapTexture(int contextIdx, int32_t width, int32_t 
 	texture.bindTexture = whiteTextureSamplerCubeDefault;
 	textures[texture.id] = texturePtr;
 
-	// create color buffer texture
-	//	TODO: only create on demand
+	// create color buffer texture including image it self with 6 array layers for each cube map side, sampler and view for binding as cube map texture
 	{
 		texture.cubemapColorBuffer = new texture_type();
 		texture.cubemapColorBuffer->id = -1;
@@ -4342,8 +4349,7 @@ int32_t VKRenderer::createCubeMapTexture(int contextIdx, int32_t width, int32_t 
 		true
 	);
 
-	// create depth buffer texture
-	//	TODO: only create on demand
+	// create depth buffer texture image it self with 6 array layers for each cube map side
 	{
 		texture.cubemapDepthBuffer = new texture_type();
 		texture.cubemapDepthBuffer->id = -1;
@@ -4961,6 +4967,7 @@ void VKRenderer::resizeGBufferColorTexture(int32_t textureId, int32_t width, int
 }
 
 void VKRenderer::bindCubeMapTexture(int contextIdx, int32_t textureId) {
+	//
 	bindTexture(contextIdx, textureId);
 }
 
@@ -5301,7 +5308,7 @@ void VKRenderer::createFramebufferObject(int32_t frameBufferId) {
 
 int32_t VKRenderer::createFramebufferObject(int32_t depthBufferTextureId, int32_t colorBufferTextureId, int32_t cubeMapTextureId, int32_t cubeMapTextureIndex)
 {
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(depthBufferTextureId) + ", " + to_string(colorBufferTextureId));
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(depthBufferTextureId) + ", " + to_string(colorBufferTextureId) + " / " + to_string(cubeMapTextureId) + " / " + to_string(cubeMapTextureIndex));
 
 	// try to reuse a frame buffer id
 	auto reuseIndex = -1;
@@ -5339,7 +5346,6 @@ int32_t VKRenderer::createFramebufferObject(int32_t depthBufferTextureId, int32_
 
 	//
 	createFramebufferObject(frameBuffer.id);
-	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): new color frame buffer: " + to_string(frameBuffer.id));
 	return frameBuffer.id;
 }
 
@@ -5409,7 +5415,10 @@ int32_t VKRenderer::createGeometryBufferObject(
 void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 {
 	//
-	if (frameBufferId == boundFrameBuffer) return;
+	if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): " + to_string(boundFrameBufferId) + " --> " + to_string(frameBufferId));
+
+	//
+	if (frameBufferId == boundFrameBufferId) return;
 
 	// if unsetting program flush command buffers
 	endDrawCommandsAllContexts();
@@ -5418,10 +5427,10 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 	framebufferPipelinesCache = nullptr;
 
 	//
-	if (boundFrameBuffer != ID_NONE) {
-		auto frameBuffer = boundFrameBuffer < 0 || boundFrameBuffer >= framebuffers.size()?nullptr:framebuffers[boundFrameBuffer];
+	if (boundFrameBufferId != ID_NONE) {
+		auto frameBuffer = boundFrameBufferId < 0 || boundFrameBufferId >= framebuffers.size()?nullptr:framebuffers[boundFrameBufferId];
 		if (frameBuffer == nullptr) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(boundFrameBuffer));
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(boundFrameBufferId));
 		} else {
 			if (frameBuffer->type == framebuffer_object_type::TYPE_COLORBUFFER) {
 				auto depthBufferTextureId = frameBuffer->depthTextureId;
@@ -5543,11 +5552,11 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 	}
 
 	//
-	boundFrameBuffer = frameBufferId;
-	if (boundFrameBuffer != ID_NONE) {
-		auto frameBuffer = boundFrameBuffer < 0 || boundFrameBuffer >= framebuffers.size()?nullptr:framebuffers[boundFrameBuffer];
+	boundFrameBufferId = frameBufferId;
+	if (boundFrameBufferId != ID_NONE) {
+		auto frameBuffer = boundFrameBufferId < 0 || boundFrameBufferId >= framebuffers.size()?nullptr:framebuffers[boundFrameBufferId];
 		if (frameBuffer == nullptr) {
-			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(boundFrameBuffer));
+			Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer not found: " + to_string(boundFrameBufferId));
 		} else {
 			if (frameBuffer->type == framebuffer_object_type::TYPE_COLORBUFFER) {
 				auto depthBufferTextureId = frameBuffer->depthTextureId;
@@ -5630,7 +5639,7 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 							colorBufferTexture->frameBufferBindImageLayoutChange,
 							colorBufferTexture,
 							{ THSVS_ACCESS_FRAGMENT_SHADER_READ_SAMPLED_IMAGE_OR_UNIFORM_TEXEL_BUFFER, THSVS_ACCESS_NONE },
-							{ THSVS_ACCESS_COLOR_ATTACHMENT_READ, THSVS_ACCESS_COLOR_ATTACHMENT_WRITE},
+							{ THSVS_ACCESS_COLOR_ATTACHMENT_READ, THSVS_ACCESS_COLOR_ATTACHMENT_WRITE },
 							THSVS_IMAGE_LAYOUT_OPTIMAL,
 							THSVS_IMAGE_LAYOUT_OPTIMAL,
 							false,
@@ -5661,9 +5670,6 @@ void VKRenderer::bindFrameBuffer(int32_t frameBufferId)
 
 	//
 	finishSetupCommandBuffer(0);
-
-	//
-	for (auto& context: contexts) context.boundTextures.fill(context_type::bound_texture());
 }
 
 void VKRenderer::disposeFrameBufferObject(int32_t frameBufferId)
@@ -5678,6 +5684,8 @@ void VKRenderer::disposeFrameBufferObject(int32_t frameBufferId)
 	vkDestroyFramebuffer(device, frameBuffer->frameBuffer, nullptr);
 	delete frameBuffer;
 	framebuffers[frameBufferId] = nullptr;
+	//
+	invalidatePipelines();
 }
 
 vector<int32_t> VKRenderer::createBufferObjects(int32_t bufferCount, bool useGPUMemory, bool shared)
@@ -5977,6 +5985,9 @@ inline VKRenderer::framebuffer_pipelines_type* VKRenderer::getFramebufferPipelin
 inline VKRenderer::framebuffer_pipelines_type* VKRenderer::createFramebufferPipelines(uint64_t framebufferPipelinesId) {
 	auto framebufferPipelines = new framebuffer_pipelines_type();
 	framebufferPipelines->id = framebufferPipelinesId;
+	framebufferPipelines->width = viewPortWidth;
+	framebufferPipelines->height = viewPortHeight;
+	framebufferPipelines->frameBufferId = boundFrameBufferId;
 	framebufferPipelines->pipelines.fill(VK_NULL_HANDLE);
 	framebuffersPipelines.push_back(framebufferPipelines);
 	return framebufferPipelines;
@@ -6168,6 +6179,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, 
 		samplers = samplerIdx;
 	}
 
+	//
 	auto& textureDescriptorSetCache = programContext.texturesDescriptorSetsCache;
 	auto textureDescriptorSetCacheIt = samplers > SAMPLER_HASH_MAX?textureDescriptorSetCache.end():textureDescriptorSetCache.find(textureDescriptorSetCacheId);
 	auto textureDescriptorSetCacheHit = textureDescriptorSetCacheIt != textureDescriptorSetCache.end();
@@ -6707,7 +6719,7 @@ float VKRenderer::readPixelDepth(int32_t x, int32_t y)
 	uint32_t usedHeight = -1;
 	array<ThsvsAccessType, 2> usedAccessTypes;
 	ThsvsImageLayout usedImageLayout = THSVS_IMAGE_LAYOUT_OPTIMAL;
-	auto frameBuffer = boundFrameBuffer < 0 || boundFrameBuffer >= framebuffers.size()?nullptr:framebuffers[boundFrameBuffer];
+	auto frameBuffer = boundFrameBufferId < 0 || boundFrameBufferId >= framebuffers.size()?nullptr:framebuffers[boundFrameBufferId];
 	if (frameBuffer == nullptr) {
 		auto depthBufferTexture = getTextureInternal(depthBufferDefault);
 		if (depthBufferTexture == nullptr) {
@@ -6846,7 +6858,7 @@ ByteBuffer* VKRenderer::readPixels(int32_t x, int32_t y, int32_t width, int32_t 
 	uint32_t usedHeight = -1;
 	array<ThsvsAccessType, 2> usedAccessTypes;
 	ThsvsImageLayout usedImageLayout = THSVS_IMAGE_LAYOUT_OPTIMAL;
-	auto frameBuffer = boundFrameBuffer < 0 || boundFrameBuffer >= framebuffers.size()?nullptr:framebuffers[boundFrameBuffer];
+	auto frameBuffer = boundFrameBufferId < 0 || boundFrameBufferId >= framebuffers.size()?nullptr:framebuffers[boundFrameBufferId];
 	if (frameBuffer == nullptr) {
 		auto& swapchainBuffer = windowFramebufferBuffers[lastWindowFramebufferIdx];
 		usedFormat = windowFormat;

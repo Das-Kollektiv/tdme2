@@ -35,21 +35,21 @@ void FrameBuffer::initialize()
 	if ((buffers & FRAMEBUFFER_DEPTHBUFFER) == FRAMEBUFFER_DEPTHBUFFER)
 		depthBufferTextureId = Engine::renderer->createDepthBufferTexture(width, height, cubeMapTextureId, cubeMapTextureIndex);
 
-	if ((buffers & FRAMEBUFFER_COLORBUFFER) == FRAMEBUFFER_COLORBUFFER && (Engine::renderer->getRendererType() == Renderer::RENDERERTYPE_VULKAN || cubeMapTextureId == CUBEMAPTEXTUREID_NONE))
+	if ((buffers & FRAMEBUFFER_COLORBUFFER) == FRAMEBUFFER_COLORBUFFER)
 		colorBufferTextureId = Engine::renderer->createColorBufferTexture(width, height, cubeMapTextureId, cubeMapTextureIndex);
 
-	auto rendererCubeMapTexureIndex = -1;
+	auto rendererCubeMapTextureIndex = -1;
 	switch(cubeMapTextureIndex) {
-		case CUBEMAPTEXTUREINDEX_NONE: rendererCubeMapTexureIndex = -1; break;
-		case CUBEMAPTEXTUREINDEX_NEGATIVE_X: rendererCubeMapTexureIndex = Engine::renderer->CUBEMAPTEXTUREINDEX_NEGATIVE_X; break;
-		case CUBEMAPTEXTUREINDEX_POSITIVE_X: rendererCubeMapTexureIndex = Engine::renderer->CUBEMAPTEXTUREINDEX_POSITIVE_X; break;
-		case CUBEMAPTEXTUREINDEX_POSITIVE_Y: rendererCubeMapTexureIndex = Engine::renderer->CUBEMAPTEXTUREINDEX_POSITIVE_Y; break;
-		case CUBEMAPTEXTUREINDEX_NEGATIVE_Y: rendererCubeMapTexureIndex = Engine::renderer->CUBEMAPTEXTUREINDEX_NEGATIVE_Y; break;
-		case CUBEMAPTEXTUREINDEX_POSITIVE_Z: rendererCubeMapTexureIndex = Engine::renderer->CUBEMAPTEXTUREINDEX_POSITIVE_Z; break;
-		case CUBEMAPTEXTUREINDEX_NEGATIVE_Z: rendererCubeMapTexureIndex = Engine::renderer->CUBEMAPTEXTUREINDEX_NEGATIVE_Z; break;
+		case CUBEMAPTEXTUREINDEX_NONE: rendererCubeMapTextureIndex = -1; break;
+		case CUBEMAPTEXTUREINDEX_NEGATIVE_X: rendererCubeMapTextureIndex = Engine::renderer->CUBEMAPTEXTUREINDEX_NEGATIVE_X; break;
+		case CUBEMAPTEXTUREINDEX_POSITIVE_X: rendererCubeMapTextureIndex = Engine::renderer->CUBEMAPTEXTUREINDEX_POSITIVE_X; break;
+		case CUBEMAPTEXTUREINDEX_POSITIVE_Y: rendererCubeMapTextureIndex = Engine::renderer->CUBEMAPTEXTUREINDEX_POSITIVE_Y; break;
+		case CUBEMAPTEXTUREINDEX_NEGATIVE_Y: rendererCubeMapTextureIndex = Engine::renderer->CUBEMAPTEXTUREINDEX_NEGATIVE_Y; break;
+		case CUBEMAPTEXTUREINDEX_POSITIVE_Z: rendererCubeMapTextureIndex = Engine::renderer->CUBEMAPTEXTUREINDEX_POSITIVE_Z; break;
+		case CUBEMAPTEXTUREINDEX_NEGATIVE_Z: rendererCubeMapTextureIndex = Engine::renderer->CUBEMAPTEXTUREINDEX_NEGATIVE_Z; break;
 	}
 
-	frameBufferId = Engine::renderer->createFramebufferObject(depthBufferTextureId, colorBufferTextureId, cubeMapTextureId, rendererCubeMapTexureIndex);
+	frameBufferId = Engine::renderer->createFramebufferObject(depthBufferTextureId, colorBufferTextureId, cubeMapTextureId, rendererCubeMapTextureIndex);
 }
 
 void FrameBuffer::reshape(int32_t width, int32_t height)

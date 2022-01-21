@@ -189,6 +189,9 @@ private:
 
 	struct framebuffer_pipelines_type {
 		uint64_t id { 0 };
+		uint32_t width { 0 };
+		uint32_t height { 0 };
+		uint32_t frameBufferId { 0 };
 		array<VkPipeline, 65535> pipelines;
 	};
 
@@ -259,7 +262,9 @@ private:
 		VkImageLayout vkLayout { VK_IMAGE_LAYOUT_UNDEFINED };
 		VmaAllocation allocation { VK_NULL_HANDLE };
 		VkImageView view { VK_NULL_HANDLE };
-		// this texture points to a cube map color buffer/depth buffer texture
+		// this texture points to a cube map color buffer/depth buffer
+		// 	as cube map frame buffer color buffer and cube map frame buffer depth buffer are pseudo textures
+		// 	only providing views and samplers, but not image itself
 		texture_type* cubemapBufferTexture { nullptr };
 		int32_t cubemapTextureIndex { 0 };
 		// the cube map itself has a attached color buffer and depth buffer
@@ -448,7 +453,7 @@ private:
 	VkViewport viewport;
 	VkRect2D scissor;
 
-	int32_t boundFrameBuffer { 0 };
+	int32_t boundFrameBufferId { 0 };
 
 	enum BlendingMode {BLENDING_NONE, BLENDING_NORMAL, BLENDING_ADDITIVE };
 	BlendingMode blendingMode { BLENDING_NONE };
