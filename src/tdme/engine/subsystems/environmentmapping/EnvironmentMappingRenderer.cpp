@@ -111,6 +111,12 @@ void EnvironmentMappingRenderer::initialize()
 	if (engine->renderer->isDeferredShadingAvailable() == true && geometryBuffer == nullptr) {
 		geometryBuffer = new GeometryBuffer(width, height);
 		geometryBuffer->initialize();
+	} else
+	if (geometryBuffer != nullptr) {
+		// TODO: fix me by using a hash map or something to match static geometry buffers with env maps of given dimension
+		if (geometryBuffer->getWidth() != width || geometryBuffer->getHeight() != height) {
+			Console::println("EnvironmentMappingRenderer::initialize(): " + to_string(geometryBuffer->getId()) + ": geometry buffer width != width, height != height!");
+		}
 	}
 }
 
@@ -177,7 +183,7 @@ void EnvironmentMappingRenderer::render(const Vector3& position)
 			// do a render pass
 			engine->render(
 				frameBuffers[renderCubeMapTextureIdx][i],
-				nullptr, // TODO: fix me as geometryBuffer does not yet work here
+				geometryBuffer,
 				visibleDecomposedEntities,
 				Engine::EFFECTPASS_NONE,
 				renderPassMask,

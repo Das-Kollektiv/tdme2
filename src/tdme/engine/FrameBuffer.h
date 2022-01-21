@@ -46,10 +46,11 @@ private:
 
 	/**
 	 * Render given depth texture and color buffer texture to screen
+	 * @parma engine engine
 	 * @param depthBufferTextureId depth buffer texture id
 	 * @param colorBufferTextureId color buffer texture id
 	 */
-	void renderToScreen(int32_t depthBufferTextureId, int32_t colorBufferTextureId);
+	void renderToScreen(Engine* engine, int32_t depthBufferTextureId, int32_t colorBufferTextureId);
 
 public:
 	/**
@@ -74,6 +75,27 @@ public:
 	 */
 	inline int32_t getHeight() {
 		return height;
+	}
+
+	/**
+	 * @return frame buffer id
+	 */
+	inline int32_t getId() {
+		return frameBufferId;
+	}
+
+	/**
+	 * @return depth buffer texture id
+	 */
+	inline int32_t getDepthBufferTextureId() {
+		return depthBufferTextureId;
+	}
+
+	/**
+	 * @return color buffer texture id
+	 */
+	inline int32_t getColorBufferTextureId() {
+		return colorBufferTextureId;
 	}
 
 	/**
@@ -116,27 +138,19 @@ public:
 	void bindColorBufferTexture(int contextIdx);
 
 	/**
-	 * @return color buffer texture id
-	 */
-	int32_t getColorBufferTextureId();
-
-	/**
-	 * @return depth buffer texture id
-	 */
-	int32_t getDepthBufferTextureId();
-
-	/**
 	 * Render to screen or bound frame buffer
+	 * @param engine engine
 	 */
-	inline void renderToScreen() {
-		renderToScreen(depthBufferTextureId, colorBufferTextureId);
+	inline void renderToScreen(Engine* engine) {
+		renderToScreen(engine, depthBufferTextureId, colorBufferTextureId);
 	}
 
 	/**
 	 * Render depth buffer to screen or bound frame buffer
+	 * @param engine engine
 	 */
-	inline void renderDepthBufferToScreen() {
-		renderToScreen(depthBufferTextureId, depthBufferTextureId);
+	inline void renderDepthBufferToScreen(Engine* engine) {
+		renderToScreen(engine, depthBufferTextureId, depthBufferTextureId);
 	}
 
 	/**

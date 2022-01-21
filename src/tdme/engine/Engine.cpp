@@ -964,7 +964,7 @@ void Engine::unscale()
 }
 
 void Engine::renderToScreen() {
-	if (this == Engine::instance && frameBuffer != nullptr) frameBuffer->renderToScreen();
+	if (this == Engine::instance && frameBuffer != nullptr) frameBuffer->renderToScreen(this);
 }
 
 void Engine::resetLists(DecomposedEntities& decomposedEntites) {
@@ -2108,7 +2108,7 @@ void Engine::doPostProcessing(PostProcessingProgram::RenderPass renderPass, arra
 		} else {
 			FrameBuffer::disableFrameBuffer();
 		}
-		postProcessingFrameBuffers[postProcessingFrameBufferIdx]->renderToScreen();
+		postProcessingFrameBuffers[postProcessingFrameBufferIdx]->renderToScreen(this);
 	}
 }
 
@@ -2185,10 +2185,12 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 			if ((renderPassMask & renderPass) == renderPass) {
 				if (renderPass == Entity::RENDERPASS_TERRAIN) {
 					if (renderGeometryBuffer != nullptr) {
+						if (lightingShader != nullptr) lightingShader->unUseProgram();
 						renderGeometryBuffer->enableGeometryBuffer();
 						renderer->setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 						renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT | renderer->CLEAR_COLOR_BUFFER_BIT);
 						Engine::renderer->setShaderPrefix("defer_");
+						if (lightingShader != nullptr) lightingShader->useProgram(this);
 					}
 				} else
 				if (renderPass == Entity::RENDERPASS_WATER) renderer->enableBlending();

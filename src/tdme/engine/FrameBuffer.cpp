@@ -99,17 +99,7 @@ void FrameBuffer::bindColorBufferTexture(int contextIdx)
 	Engine::renderer->bindTexture(contextIdx, colorBufferTextureId);
 }
 
-int32_t FrameBuffer::getColorBufferTextureId()
-{
-	return colorBufferTextureId;
-}
-
-int32_t FrameBuffer::getDepthBufferTextureId()
-{
-	return depthBufferTextureId;
-}
-
-void FrameBuffer::renderToScreen(int32_t depthBufferTextureId, int32_t colorBufferTextureId)
+void FrameBuffer::renderToScreen(Engine* engine, int32_t depthBufferTextureId, int32_t colorBufferTextureId)
 {
 	auto renderer = Engine::renderer;
 
@@ -120,6 +110,7 @@ void FrameBuffer::renderToScreen(int32_t depthBufferTextureId, int32_t colorBuff
 	renderer->disableCulling(contextIdx);
 
 	// clear
+	renderer->setClearColor(engine->sceneColor.getRed(), engine->sceneColor.getGreen(), engine->sceneColor.getBlue(), engine->sceneColor.getAlpha());
 	renderer->clear(renderer->CLEAR_COLOR_BUFFER_BIT | renderer->CLEAR_DEPTH_BUFFER_BIT);
 
 	// use frame buffer render shader
@@ -176,11 +167,12 @@ void FrameBuffer::doPostProcessing(Engine* engine, FrameBuffer* target, FrameBuf
 	// if we blend source over blend to source?
 	if (blendToSource != nullptr) {
 		// yup
-		blendToSource->renderToScreen();
+		blendToSource->renderToScreen(engine);
 		renderer->enableAdditionBlending();
 		renderer->disableDepthBufferTest();
 	} else {
 		// otherwise just clear target
+		renderer->setClearColor(engine->sceneColor.getRed(), engine->sceneColor.getGreen(), engine->sceneColor.getBlue(), engine->sceneColor.getAlpha());
 		renderer->clear(renderer->CLEAR_COLOR_BUFFER_BIT | renderer->CLEAR_DEPTH_BUFFER_BIT);
 	}
 

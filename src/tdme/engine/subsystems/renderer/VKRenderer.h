@@ -192,7 +192,7 @@ private:
 		uint32_t width { 0 };
 		uint32_t height { 0 };
 		uint32_t frameBufferId { 0 };
-		array<VkPipeline, 65535> pipelines;
+		array<VkPipeline, 32768> pipelines;
 	};
 
 	struct program_type {

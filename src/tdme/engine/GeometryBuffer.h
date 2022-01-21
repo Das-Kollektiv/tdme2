@@ -48,6 +48,76 @@ public:
 	}
 
 	/**
+	 * @return frame buffer id
+	 */
+	inline int32_t getId() {
+		return frameBufferId;
+	}
+
+	/**
+	 * @return depth buffer texture
+	 */
+	inline int32_t getDepthBufferTextureId() {
+		return depthBufferTextureId;
+	}
+
+	/**
+	 * @return geometry buffer texture 1
+	 */
+	inline int32_t getGeometryBufferTextureId1() {
+		return geometryBufferTextureId1;
+	}
+
+	/**
+	 * @return geometry buffer texture 2
+	 */
+	inline int32_t getGeometryBufferTextureId2() {
+		return geometryBufferTextureId2;
+	}
+
+	/**
+	 * @return geometry buffer texture 2
+	 */
+	inline int32_t getGeometryBufferTextureId3() {
+		return geometryBufferTextureId3;
+	}
+
+	/**
+	 * @return color buffer texture 1
+	 */
+	inline int32_t getColorBufferTextureId1() {
+		return colorBufferTextureId1;
+	}
+
+	/**
+	 * @return color buffer texture 2
+	 */
+	inline int32_t getColorBufferTextureId2() {
+		return colorBufferTextureId2;
+	}
+
+	/**
+	 * @return color buffer texture 3
+	 */
+	inline int32_t getColorBufferTextureId3() {
+		return colorBufferTextureId3;
+	}
+
+	/**
+	 * @return color buffer texture 4
+	 */
+	inline int32_t getColorBufferTextureId4() {
+		return colorBufferTextureId4;
+	}
+
+	/**
+	 * @return color buffer texture 5
+	 */
+	inline int32_t getColorBufferTextureId5() {
+		return colorBufferTextureId5;
+	}
+
+	/**
 	 * Initialize the geometry buffer
 	 */
 	void initialize();

@@ -2131,11 +2131,12 @@ inline uint64_t VKRenderer::createPipelineFramebufferId() {
 inline uint16_t VKRenderer::createPipelineIndex(program_type* program, int contextIdx) {
 	return
 		(program->id & 0x7f) +
-		((contexts[contextIdx].frontFaceIndex & 0x3) << 7) +
-		((blendingMode & 0x3) << 9) +
-		((depthBufferTesting & 0x1) << 11) +
-		((depthBufferWriting & 0x1) << 12) +
-		((depthFunction & 0x7) << 13);
+		((contexts[contextIdx].cullingEnabled == true?cullMode:VK_CULL_MODE_NONE & 0x3) << 7) +
+		((contexts[contextIdx].frontFaceIndex & 0x3) << 9) +
+		((blendingMode & 0x3) << 11) +
+		((depthBufferTesting & 0x1) << 13) +
+		((depthBufferWriting & 0x1) << 14);
+		// TODO: not yet in use, but later maybe: ((depthFunction & 0x7) << 15);
 }
 
 void VKRenderer::createRenderProgram(program_type* program) {
@@ -2502,7 +2503,6 @@ inline void VKRenderer::setupObjectsRenderingPipeline(int contextIdx, program_ty
 			pipeline = getPipelineInternal(contextIdx, program, framebufferPipelinesId, currentContext.pipelineIdx);
 		}
 		pipelinesSpinLock.unlock();
-
 		//
 		auto& commandBuffer = currentContext.commandBuffers[currentContext.currentCommandBuffer];
 		vkCmdBindPipeline(commandBuffer.drawCommand, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
@@ -3556,10 +3556,9 @@ void VKRenderer::clear(int32_t mask)
 	//
 	beginDrawCommandBuffer(0);
 	startRenderPass(0);
-	framebuffer_object_type* frameBuffer = nullptr;
-	if (boundFrameBufferId != ID_NONE) frameBuffer = boundFrameBufferId < 0 || boundFrameBufferId >= framebuffers.size()?nullptr:framebuffers[boundFrameBufferId];
+	framebuffer_object_type* frameBuffer = boundFrameBufferId > 0 && boundFrameBufferId < framebuffers.size()?framebuffers[boundFrameBufferId]:nullptr;
 	auto attachmentIdx = 0;
-	VkClearAttachment attachments[9];
+	array<VkClearAttachment, 9> attachments;
 	if ((mask & CLEAR_COLOR_BUFFER_BIT) == CLEAR_COLOR_BUFFER_BIT) {
 		if (frameBuffer != nullptr && frameBuffer->type == framebuffer_object_type::TYPE_GEOMETRYBUFFER) {
 			for (auto i = 0; i < 8; i++) {
@@ -3579,7 +3578,7 @@ void VKRenderer::clear(int32_t mask)
 	if ((mask & CLEAR_DEPTH_BUFFER_BIT) == CLEAR_DEPTH_BUFFER_BIT &&
 		(frameBuffer == nullptr || frameBuffer->depthTextureId != ID_NONE)) {
 		attachments[attachmentIdx].aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
-		attachments[attachmentIdx].colorAttachment = attachmentIdx;
+		attachments[attachmentIdx].colorAttachment = 0;
 		attachments[attachmentIdx].clearValue.depthStencil = { 1.0f, 0 };
 		attachmentIdx++;
 	}
@@ -3591,7 +3590,7 @@ void VKRenderer::clear(int32_t mask)
 	vkCmdClearAttachments(
 		contexts[0].commandBuffers[contexts[0].currentCommandBuffer].drawCommand,
 		attachmentIdx,
-		attachments,
+		attachments.data(),
 		1,
 		&clearRect
 	);
