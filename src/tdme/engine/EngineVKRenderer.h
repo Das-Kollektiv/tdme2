@@ -35,7 +35,7 @@ public:
 	 * @return renderer version
 	 */
 	inline static string getRendererVersion() {
-		return "1.1.116";
+		return "1.9.116";
 	}
 
 	// overridden methods
