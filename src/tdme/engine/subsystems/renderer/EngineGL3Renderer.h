@@ -12,31 +12,26 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/subsystems/renderer/GL2Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererPlugin.h>
+#include <tdme/engine/subsystems/renderer/GL3Renderer.h>
 
 using std::string;
 
-using tdme::engine::subsystems::renderer::GL2Renderer;
+using tdme::engine::subsystems::renderer::GL3Renderer;
+using tdme::engine::subsystems::renderer::RendererPlugin;
 using tdme::engine::Engine;
 
 /**
- * Engine connector of GL2 renderer to other engine functionality
+ * Engine connector of GL3 renderer to other engine functionality
  * @author Andreas Drewke
  */
-class tdme::engine::EngineGL2Renderer: public GL2Renderer
+class tdme::engine::subsystems::renderer::EngineGL3Renderer: public GL3Renderer, public RendererPlugin
 {
 public:
 	/**
 	 * Public constructor
 	 */
-	EngineGL2Renderer();
-
-	/**
-	 * @return renderer version
-	 */
-	inline static string getRendererVersion() {
-		return "1.9.116";
-	}
+	EngineGL3Renderer();
 
 	// overridden methods
 	bool prepareWindowSystemRendererContext(int tryIdx) override;

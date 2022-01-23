@@ -12,10 +12,12 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/subsystems/renderer/RendererPlugin.h>
 #include <tdme/engine/subsystems/renderer/GLES2Renderer.h>
 
 using std::string;
 
+using tdme::engine::subsystems::renderer::RendererPlugin;
 using tdme::engine::subsystems::renderer::GLES2Renderer;
 using tdme::engine::Engine;
 
@@ -23,20 +25,13 @@ using tdme::engine::Engine;
  * Engine connector of GLES2 renderer to other engine functionality
  * @author Andreas Drewke
  */
-class tdme::engine::EngineGLES2Renderer: public GLES2Renderer
+class tdme::engine::subsystems::renderer::EngineGLES2Renderer: public GLES2Renderer, public RendererPlugin
 {
 public:
 	/**
 	 * Public constructor
 	 */
 	EngineGLES2Renderer();
-
-	/**
-	 * @return renderer version
-	 */
-	inline static string getRendererVersion() {
-		return "1.9.116";
-	}
 
 	// overridden methods
 	bool prepareWindowSystemRendererContext(int tryIdx) override;

@@ -120,10 +120,10 @@ using tdme::utilities::Pool;
  */
 class tdme::engine::Engine final
 {
-	friend class EngineGL3Renderer;
-	friend class EngineGL2Renderer;
-	friend class EngineGLES2Renderer;
-	friend class EngineVKRenderer;
+	friend class tdme::engine::subsystems::renderer::EngineGL3Renderer;
+	friend class tdme::engine::subsystems::renderer::EngineGL2Renderer;
+	friend class tdme::engine::subsystems::renderer::EngineGLES2Renderer;
+	friend class tdme::engine::subsystems::renderer::EngineVKRenderer;
 	friend class EntityHierarchy;
 	friend class EnvironmentMapping;
 	friend class FogParticleSystem;

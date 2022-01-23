@@ -756,11 +756,11 @@ EXT_REACTPHYSICS3D_SRCS = \
 	ext/reactphysics3d/src/memory/DefaultPoolAllocator.cpp
 
 OPENGL2_RENDERER_LIB_SRCS = \
-	src/tdme/engine/EngineGL2Renderer.cpp \
+	src/tdme/engine/subsystems/renderer/EngineGL2Renderer.cpp \
 	src/tdme/engine/subsystems/renderer/GL2Renderer.cpp
 
 OPENGL3CORE_RENDERER_LIB_SRCS = \
-	src/tdme/engine/EngineGL3Renderer.cpp \
+	src/tdme/engine/subsystems/renderer/EngineGL3Renderer.cpp \
 	src/tdme/engine/subsystems/renderer/GL3Renderer.cpp
 
 ifeq ($(VULKAN), YES)
@@ -822,7 +822,7 @@ ifeq ($(VULKAN), YES)
 		ext/vulkan/vma/src/VmaUsage.cpp
 
 	VULKAN_RENDERER_LIB_SRCS = \
-		src/tdme/engine/EngineVKRenderer.cpp \
+		src/tdme/engine/subsystems/renderer/EngineVKRenderer.cpp \
 		src/tdme/engine/subsystems/renderer/VKGL3CoreShaderProgram.cpp \
 		src/tdme/engine/subsystems/renderer/VKRenderer.cpp
 	
@@ -837,7 +837,7 @@ endif
 
 ifeq ($(GLES2), YES)
 	OPENGLES2_RENDERER_LIB_SRCS = \
-		src/tdme/engine/EngineGLES2Renderer.cpp \
+		src/tdme/engine/subsystems/renderer/EngineGLES2Renderer.cpp \
 		src/tdme/engine/subsystems/renderer/GLES2Renderer.cpp
 else
 	OPENGLES2_RENDERER_LIB_SRCS =

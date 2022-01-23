@@ -1,4 +1,4 @@
-#include <tdme/engine/EngineGL3Renderer.h>
+#include <tdme/engine/subsystems/renderer/EngineGLES2Renderer.h>
 
 #if defined(_MSC_VER)
 	// this suppresses a warning redefinition of APIENTRY macro
@@ -7,14 +7,6 @@
 #endif
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-
-#if !defined(__APPLE__)
-	#define GLEW_NO_GLU
-	#include <GL/glew.h>
-	#if defined(_WIN32)
-		#include <GL/wglew.h>
-	#endif
-#endif
 
 #include <string>
 
@@ -28,7 +20,7 @@
 #include <tdme/engine/Version.h>
 #include <tdme/gui/renderer/GUIShader.h>
 
-using tdme::engine::EngineGL3Renderer;
+using tdme::engine::subsystems::renderer::EngineGLES2Renderer;
 
 using std::string;
 
@@ -41,42 +33,29 @@ using tdme::engine::Engine;
 using tdme::engine::Version;
 using tdme::gui::renderer::GUIShader;
 
-EngineGL3Renderer::EngineGL3Renderer()
+EngineGLES2Renderer::EngineGLES2Renderer()
 {
 }
 
-bool EngineGL3Renderer::prepareWindowSystemRendererContext(int tryIdx) {
-	array<array<int, 3>, 2> glVersions = {{ {{1, 4, 3}}, {{1, 3, 2}} }};
-	if (tryIdx >= glVersions.size()) return false;
-	#if defined(__APPLE__)
-		glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
-	#endif
-	auto& glVersion = glVersions[tryIdx];
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, glVersion[0] == 1?GLFW_TRUE:GLFW_FALSE);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, glVersion[0] == 1?GLFW_OPENGL_CORE_PROFILE:GLFW_OPENGL_ANY_PROFILE);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, glVersion[1]);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, glVersion[2]);
+bool EngineGLES2Renderer::prepareWindowSystemRendererContext(int tryIdx) {
+	if (tryIdx > 0) return false;
+	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+	glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 	return true;
 }
 
-bool EngineGL3Renderer::initializeWindowSystemRendererContext(GLFWwindow* glfwWindow) {
+bool EngineGLES2Renderer::initializeWindowSystemRendererContext(GLFWwindow* glfwWindow) {
 	glfwMakeContextCurrent(glfwWindow);
 	if (glfwGetCurrentContext() == nullptr) {
-		Console::println("EngineGL3Renderer::initializeWindowSystemRendererContext(): glfwMakeContextCurrent(): Error: No window attached to context");
+		Console::println("EngineGLES2Renderer::initializeWindowSystemRendererContext(): glfwMakeContextCurrent(): Error: No window attached to context");
 		return false;
 	}
-	#if !defined(__APPLE__)
-		//glewExperimental = true;
-		GLenum glewInitStatus = glewInit();
-		if (glewInitStatus != GLEW_OK) {
-			Console::println("EngineGL3Renderer::initializeWindowSystemRendererContext(): glewInit(): Error: " + (string((char*)glewGetErrorString(glewInitStatus))));
-			return false;
-		}
-	#endif
 	return true;
 }
 
-void EngineGL3Renderer::onUpdateProjectionMatrix(int contextIdx)
+void EngineGLES2Renderer::onUpdateProjectionMatrix(int contextIdx)
 {
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->updateMatrices(contextIdx);
@@ -94,7 +73,7 @@ void EngineGL3Renderer::onUpdateProjectionMatrix(int contextIdx)
 		Engine::ezrShader->updateMatrices(contextIdx);
 }
 
-void EngineGL3Renderer::onUpdateCameraMatrix(int contextIdx)
+void EngineGLES2Renderer::onUpdateCameraMatrix(int contextIdx)
 {
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->updateMatrices(contextIdx);
@@ -112,7 +91,7 @@ void EngineGL3Renderer::onUpdateCameraMatrix(int contextIdx)
 		Engine::ezrShader->updateMatrices(contextIdx);
 }
 
-void EngineGL3Renderer::onUpdateModelViewMatrix(int contextIdx)
+void EngineGLES2Renderer::onUpdateModelViewMatrix(int contextIdx)
 {
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->updateMatrices(contextIdx);
@@ -130,7 +109,7 @@ void EngineGL3Renderer::onUpdateModelViewMatrix(int contextIdx)
 		Engine::ezrShader->updateMatrices(contextIdx);
 }
 
-void EngineGL3Renderer::onBindTexture(int contextIdx, int32_t textureId)
+void EngineGLES2Renderer::onBindTexture(int contextIdx, int32_t textureId)
 {
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->bindTexture(contextIdx, textureId);
@@ -145,7 +124,7 @@ void EngineGL3Renderer::onBindTexture(int contextIdx, int32_t textureId)
 		Engine::ezrShader->bindTexture(contextIdx, textureId);
 }
 
-void EngineGL3Renderer::onUpdateTextureMatrix(int contextIdx)
+void EngineGLES2Renderer::onUpdateTextureMatrix(int contextIdx)
 {
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->updateTextureMatrix(contextIdx);
@@ -160,7 +139,7 @@ void EngineGL3Renderer::onUpdateTextureMatrix(int contextIdx)
 		Engine::ezrShader->updateTextureMatrix(contextIdx);
 }
 
-void EngineGL3Renderer::onUpdateEffect(int contextIdx)
+void EngineGLES2Renderer::onUpdateEffect(int contextIdx)
 {
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->updateEffect(contextIdx);
@@ -176,7 +155,7 @@ void EngineGL3Renderer::onUpdateEffect(int contextIdx)
 
 }
 
-void EngineGL3Renderer::onUpdateLight(int contextIdx, int32_t lightId)
+void EngineGLES2Renderer::onUpdateLight(int contextIdx, int32_t lightId)
 {
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->updateLight(contextIdx, lightId);
@@ -185,7 +164,7 @@ void EngineGL3Renderer::onUpdateLight(int contextIdx, int32_t lightId)
 		Engine::currentEngine->shadowMapping->updateLight(contextIdx, lightId);
 }
 
-void EngineGL3Renderer::onUpdateMaterial(int contextIdx)
+void EngineGLES2Renderer::onUpdateMaterial(int contextIdx)
 {
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->updateMaterial(contextIdx);
@@ -197,7 +176,7 @@ void EngineGL3Renderer::onUpdateMaterial(int contextIdx)
 		Engine::ezrShader->updateMaterial(contextIdx);
 }
 
-void EngineGL3Renderer::onUpdateShader(int contextIdx) {
+void EngineGLES2Renderer::onUpdateShader(int contextIdx) {
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->setShader(contextIdx, getShader(contextIdx));
 
@@ -208,7 +187,7 @@ void EngineGL3Renderer::onUpdateShader(int contextIdx) {
 		Engine::ezrShader->setShader(contextIdx, getShader(contextIdx));
 }
 
-void EngineGL3Renderer::onUpdateShaderParameters(int contextIdx) {
+void EngineGLES2Renderer::onUpdateShaderParameters(int contextIdx) {
 	if (Engine::lightingShader != nullptr)
 		Engine::lightingShader->updateShaderParameters(contextIdx);
 
@@ -220,12 +199,12 @@ void EngineGL3Renderer::onUpdateShaderParameters(int contextIdx) {
 }
 
 // end point for engine to create renderer
-extern "C" EngineGL3Renderer* createInstance()
+extern "C" EngineGLES2Renderer* createInstance()
 {
-	if (EngineGL3Renderer::getRendererVersion() != Version::getVersion()) {
-		Console::println("EngineGL3Renderer::createInstance(): Engine and renderer version do not match: '" + EngineGL3Renderer::getRendererVersion() + "' != '" + Version::getVersion() + "'");
+	if (EngineGLES2Renderer::getRendererVersion() != Version::getVersion()) {
+		Console::println("EngineGL2Renderer::createInstance(): Engine and renderer version do not match: '" + EngineGLES2Renderer::getRendererVersion() + "' != '" + Version::getVersion() + "'");
 		return nullptr;
 	}
-	Console::println("EngineGL3Renderer::createInstance(): Creating EngineGL3Renderer instance!");
-	return new EngineGL3Renderer();
+	Console::println("EngineGLES2Renderer::createInstance(): Creating EngineGLES2Renderer instance!");
+	return new EngineGLES2Renderer();
 }

@@ -6,10 +6,6 @@ namespace engine {
 	class Camera;
 	class Engine;
 	class Engine_AnimationProcessingTarget;
-	class EngineGL3Renderer;
-	class EngineGL2Renderer;
-	class EngineGLES2Renderer;
-	class EngineVKRenderer;
 	class Entity;
 	class EntityHierarchy;
 	class EntityShaderParameters;

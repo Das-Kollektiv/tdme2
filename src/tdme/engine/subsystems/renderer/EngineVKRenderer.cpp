@@ -1,4 +1,4 @@
-#include <tdme/engine/EngineVKRenderer.h>
+#include <tdme/engine/subsystems/renderer/EngineVKRenderer.h>
 
 #if defined(_MSC_VER)
 	// this suppresses a warning redefinition of APIENTRY macro
@@ -21,7 +21,7 @@
 #include <tdme/gui/renderer/GUIShader.h>
 #include <tdme/utilities/Console.h>
 
-using tdme::engine::EngineVKRenderer;
+using tdme::engine::subsystems::renderer::EngineVKRenderer;
 
 using std::string;
 
