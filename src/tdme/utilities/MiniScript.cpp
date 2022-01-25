@@ -338,6 +338,7 @@ void MiniScript::emit(const string& condition) {
 	scriptState.forTimeStarted.clear();
 	while (scriptState.conditionStack.empty() == false) scriptState.conditionStack.pop();
 	while (scriptState.endTypeStack.empty() == false) scriptState.endTypeStack.pop();
+	scriptState.enabledConditionNames.clear();
 	scriptState.id.clear();
 	scriptState.scriptIdx = scriptIdx;
 	scriptState.statementIdx = 0;
@@ -410,6 +411,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 	scriptState.forTimeStarted.clear();
 	while (scriptState.conditionStack.empty() == false) scriptState.conditionStack.pop();
 	while (scriptState.endTypeStack.empty() == false) scriptState.endTypeStack.pop();
+	scriptState.enabledConditionNames.clear();
 	scriptState.id.clear();
 	scriptState.statementIdx = 0;
 	scriptState.timeWaitStarted = Time::getCurrentMillis();
@@ -512,6 +514,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 							break;
 					}
 				} else{
+					scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = "end", .gotoStatementIdx = -1 });
 					haveCondition = false;
 				}
 			} else
@@ -1187,8 +1190,10 @@ void MiniScript::registerMethods() {
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				if (miniScript->scriptState.endTypeStack.empty() == true) {
-					Console::println("ScriptMethodEnd::executeMethod(): end without forXXX/if");
-					miniScript->startErrorScript();
+					if (miniScript->scriptState.statementIdx < miniScript->scripts[miniScript->scriptState.scriptIdx].statements.size() - 1) {
+						Console::println("ScriptMethodEnd::executeMethod(): end without forXXX/if");
+						miniScript->startErrorScript();
+					}
 					return;
 				}
 				auto endType = miniScript->scriptState.endTypeStack.top();
@@ -1594,6 +1599,18 @@ void MiniScript::registerMethods() {
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				miniScript->scriptState.running = false;
+				miniScript->scriptState.scriptIdx = -1;
+				miniScript->scriptState.statementIdx = 0;
+				miniScript->scriptState.timeWaitStarted = -1LL;
+				miniScript->scriptState.timeWaitTime = 0LL;
+				miniScript->scriptState.id.clear();
+				miniScript->scriptState.variables.clear();
+				miniScript->scriptState.forTimeStarted.clear();
+				while (miniScript->scriptState.conditionStack.empty() == false) miniScript->scriptState.conditionStack.pop();
+				while (miniScript->scriptState.endTypeStack.empty() == false) miniScript->scriptState.endTypeStack.pop();
+				miniScript->scriptState.enabledConditionNames.clear();
+				miniScript->scriptState.timeEnabledConditionsCheckLast = -1LL;
+				miniScript->setScriptState(STATE_NONE);
 			}
 		};
 		registerMethod(new ScriptMethodStringStop(this));
@@ -3291,6 +3308,25 @@ void MiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodSetVariable(this));
+	}
+	// time
+	{
+		//
+		class ScriptMethodGetCurrentMillis: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodGetCurrentMillis(MiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "time.getCurrentMillis";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue.setValue(Time::getCurrentMillis());
+			}
+		};
+		registerMethod(new ScriptMethodGetCurrentMillis(this));
 	}
 	// determine operators
 	for (auto& methodIt: scriptMethods) {
