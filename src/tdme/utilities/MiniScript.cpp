@@ -612,6 +612,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 	// check for unbalanced forXXX/if/elseif/else/end
 	if (scriptValid == true && gotoStatementStack.empty() == false) {
 		scriptValid = false;
+		// TODO: give some more info about line and statement of not closed condition
 		Console::println("MiniScript::loadScript(): '" + scriptFileName + ": unbalanced forXXX/if/elseif/else/end");
 		return;
 	}
