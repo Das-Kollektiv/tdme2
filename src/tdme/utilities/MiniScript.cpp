@@ -791,7 +791,7 @@ bool MiniScript::getNextStatementOperator(const string& statement, MiniScript::S
 	auto quote = false;
 	for (auto i = 0; i < statement.size(); i++) {
 		auto c = statement[i];
-		if (c == '"' && bracketCount == 1) {
+		if (c == '"') {
 			quote = quote == false?true:false;
 		} else
 		if (quote == false) {
