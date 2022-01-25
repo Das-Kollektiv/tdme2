@@ -198,8 +198,7 @@
 	- sort of event based
 	- how to use:
 	  - each script is attached to a game entity so it for now does not need something like OOP
-	  - communication between script instances is possible via setting/getting variables
-	    - if required we will add methods support in the scripts itself
+	  - communication between script instances is possible by sending signals with arguments
 	  - complex logic should still be implemented by a game developer in C++ by extending MiniScript
 	  - game designers can use MiniScript + those methods to implement high level game logic
 	- can be "easily" transpiled to C++ later
