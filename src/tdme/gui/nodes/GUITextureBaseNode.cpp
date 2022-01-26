@@ -15,6 +15,7 @@
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/StringTools.h>
 
@@ -34,6 +35,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::GUI;
 using tdme::math::Matrix2D3x3;
+using tdme::math::Vector2;
 using tdme::utilities::Float;
 using tdme::utilities::StringTools;
 
@@ -54,6 +56,8 @@ GUITextureBaseNode::GUITextureBaseNode(
 	const GUINodeConditions& showOn,
 	const GUINodeConditions& hideOn,
 	const RequestedDimensionConstraints& requestedDimensionConstraints,
+	bool mirrorX,
+	bool mirrorY,
 	const GUIColor& effectColorMul,
 	const GUIColor& effectColorAdd,
 	const GUINode_Scale9Grid& scale9Grid,
@@ -63,6 +67,8 @@ GUITextureBaseNode::GUITextureBaseNode(
 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
 {
 	this->requestedDimensionConstraints = requestedDimensionConstraints;
+	this->mirrorX = mirrorX;
+	this->mirrorY = mirrorY;
 	this->effectColorMul = effectColorMul;
 	this->effectColorAdd = effectColorAdd;
 	this->scale9Grid = scale9Grid;
@@ -70,6 +76,10 @@ GUITextureBaseNode::GUITextureBaseNode(
 	this->clipping = clipping;
 	this->setMask(mask);
 	this->maskMaxValue = maskMaxValue;
+	mirrorTextureMatrix.identity();
+	mirrorTextureMatrix.scale(Vector2(mirrorX == true?-1.0f:1.0f, mirrorY == true?-1.0f:1.0f));
+	mirrorTextureMatrix.translate(Vector2(mirrorX == true?1.0f:0.0f, mirrorY == true?1.0f:0.0f));
+	setTextureMatrix(textureMatrix);
 }
 
 bool GUITextureBaseNode::isContentNode()
@@ -480,7 +490,7 @@ void GUITextureBaseNode::render(GUIRenderer* guiRenderer)
 }
 
 void GUITextureBaseNode::setTextureMatrix(const Matrix2D3x3& textureMatrix) {
-	this->textureMatrix.set(textureMatrix);
+	this->textureMatrix.set(mirrorTextureMatrix.multiply(textureMatrix));
 }
 
 const GUIColor& GUITextureBaseNode::getEffectColorMul() {

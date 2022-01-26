@@ -63,6 +63,8 @@ protected:
 	 * @param hideOn hide on
 	 * @param source source
 	 * @param requestedDimensionConstraints requested dimension constraints
+	 * @param mirrorX mirror X
+	 * @param mirrorY mirror Y
 	 * @param effectColorMul effect color mul
 	 * @param effectColorAdd effect color add
 	 * @param scale9Grid scale 9 grid
@@ -90,6 +92,8 @@ protected:
 		const GUINodeConditions& hideOn,
 		const string& source,
 		const RequestedDimensionConstraints& requestedDimensionConstraints,
+		bool mirrorX,
+		bool mirrorY,
 		const GUIColor& effectColorMul,
 		const GUIColor& effectColorAdd,
 		const GUINode_Scale9Grid& scale9Grid,

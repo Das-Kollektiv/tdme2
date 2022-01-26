@@ -760,6 +760,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 						StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-scale")))),
 						StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("vertical-scale"))))
 					),
+					node->Attribute("mirror-x") == nullptr?false:StringTools::toLowerCase(StringTools::trim(node->Attribute("mirror-x"))) == "true",
+					node->Attribute("mirror-y") == nullptr?false:StringTools::toLowerCase(StringTools::trim(node->Attribute("mirror-y"))) == "true",
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul"))), GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD),
 					GUINode::createScale9Grid(
@@ -844,6 +846,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 						StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-scale")))),
 						StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("vertical-scale"))))
 					),
+					node->Attribute("mirror-x") == nullptr?false:StringTools::toLowerCase(StringTools::trim(node->Attribute("mirror-x"))) == "true",
+					node->Attribute("mirror-y") == nullptr?false:StringTools::toLowerCase(StringTools::trim(node->Attribute("mirror-y"))) == "true",
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul"))), GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD),
 					GUINode::createScale9Grid(
@@ -927,6 +931,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 						StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-scale")))),
 						StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("vertical-scale"))))
 					),
+					node->Attribute("mirror-x") == nullptr?false:StringTools::toLowerCase(StringTools::trim(node->Attribute("mirror-x"))) == "true",
+					node->Attribute("mirror-y") == nullptr?false:StringTools::toLowerCase(StringTools::trim(node->Attribute("mirror-y"))) == "true",
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul"))), GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD),
 					GUINode::createScale9Grid(

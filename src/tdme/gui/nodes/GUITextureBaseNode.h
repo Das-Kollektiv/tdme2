@@ -50,6 +50,8 @@ public:
 
 private:
 	RequestedDimensionConstraints requestedDimensionConstraints;
+	bool mirrorX { false };
+	bool mirrorY { false };
 	GUIColor effectColorMul;
 	GUIColor effectColorAdd;
 	GUINode_Clipping clipping;
@@ -58,6 +60,7 @@ private:
 	int32_t maskTextureId { 0 };
 
 	Matrix2D3x3 textureMatrix;
+	Matrix2D3x3 mirrorTextureMatrix;
 	GUINode_Scale9Grid scale9Grid;
 	string mask;
 
@@ -84,6 +87,8 @@ protected:
 	 * @param showOn show on
 	 * @param hideOn hide on
 	 * @param requestedDimensionConstraints requested dimension constraints
+	 * @param mirrorX mirror X
+	 * @param mirrorY mirror Y
 	 * @param effectColorMul effect color mul
 	 * @param effectColorAdd effect color add
 	 * @param scale9Grid scale 9 grid
@@ -109,6 +114,8 @@ protected:
 		const GUINodeConditions& showOn,
 		const GUINodeConditions& hideOn,
 		const RequestedDimensionConstraints& requestedDimensionConstraints,
+		bool mirrorX,
+		bool mirrorY,
 		const GUIColor& effectColorMul,
 		const GUIColor& effectColorAdd,
 		const GUINode_Scale9Grid& scale9Grid,
