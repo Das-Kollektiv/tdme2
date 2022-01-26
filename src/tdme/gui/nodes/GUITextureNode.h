@@ -10,6 +10,7 @@
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUINode_Clipping.h>
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
+#include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
 #include <tdme/gui/nodes/GUITextureBaseNode.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 
@@ -24,6 +25,7 @@ using tdme::gui::nodes::GUINode_Clipping;
 using tdme::gui::nodes::GUINode_Flow;
 using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_RequestedConstraints;
+using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode;
@@ -62,6 +64,7 @@ protected:
 	 * @param showOn show on
 	 * @param hideOn hide on
 	 * @param texture texture
+	 * @param requestedDimensionConstraints requested dimension constraints
 	 * @param effectColorMul effect color mul
 	 * @param effectColorAdd effect color add
 	 * @param scale9Grid scale 9 grid
@@ -87,6 +90,7 @@ protected:
 		const GUINodeConditions& showOn,
 		const GUINodeConditions& hideOn,
 		Texture* texture,
+		const RequestedDimensionConstraints& requestedDimensionConstraints,
 		const GUIColor& effectColorMul,
 		const GUIColor& effectColorAdd,
 		const GUINode_Scale9Grid& scale9Grid,

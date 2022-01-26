@@ -62,6 +62,7 @@ protected:
 	 * @param showOn show on
 	 * @param hideOn hide on
 	 * @param source source
+	 * @param requestedDimensionConstraints requested dimension constraints
 	 * @param effectColorMul effect color mul
 	 * @param effectColorAdd effect color add
 	 * @param scale9Grid scale 9 grid
@@ -88,6 +89,7 @@ protected:
 		const GUINodeConditions& showOn,
 		const GUINodeConditions& hideOn,
 		const string& source,
+		const RequestedDimensionConstraints& requestedDimensionConstraints,
 		const GUIColor& effectColorMul,
 		const GUIColor& effectColorAdd,
 		const GUINode_Scale9Grid& scale9Grid,

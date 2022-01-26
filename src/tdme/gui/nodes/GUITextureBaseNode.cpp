@@ -15,6 +15,8 @@
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/math/Matrix2D3x3.h>
+#include <tdme/utilities/Float.h>
+#include <tdme/utilities/StringTools.h>
 
 using tdme::gui::nodes::GUITextureBaseNode;
 
@@ -32,6 +34,8 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::GUI;
 using tdme::math::Matrix2D3x3;
+using tdme::utilities::Float;
+using tdme::utilities::StringTools;
 
 GUITextureBaseNode::GUITextureBaseNode(
 	GUIScreenNode* screenNode,
@@ -49,6 +53,7 @@ GUITextureBaseNode::GUITextureBaseNode(
 	const GUINode_Padding& padding,
 	const GUINodeConditions& showOn,
 	const GUINodeConditions& hideOn,
+	const RequestedDimensionConstraints& requestedDimensionConstraints,
 	const GUIColor& effectColorMul,
 	const GUIColor& effectColorAdd,
 	const GUINode_Scale9Grid& scale9Grid,
@@ -57,6 +62,7 @@ GUITextureBaseNode::GUITextureBaseNode(
 	float maskMaxValue):
 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
 {
+	this->requestedDimensionConstraints = requestedDimensionConstraints;
 	this->effectColorMul = effectColorMul;
 	this->effectColorAdd = effectColorAdd;
 	this->scale9Grid = scale9Grid;
@@ -74,7 +80,7 @@ bool GUITextureBaseNode::isContentNode()
 int GUITextureBaseNode::getContentWidth()
 {
 	if (requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
-		return textureWidth + border.left + border.right + padding.left + padding.right;
+		return textureWidth * requestedDimensionConstraints.horizontalScale + border.left + border.right + padding.left + padding.right;
 	} else {
 		return computedConstraints.width;
 	}
@@ -83,7 +89,7 @@ int GUITextureBaseNode::getContentWidth()
 int GUITextureBaseNode::getContentHeight()
 {
 	if (requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
-		return textureHeight + border.top + border.bottom + padding.top + padding.bottom;
+		return textureHeight * requestedDimensionConstraints.verticalScale + border.top + border.bottom + padding.top + padding.bottom;
 	} else {
 		return computedConstraints.height;
 	}
@@ -523,4 +529,23 @@ void GUITextureBaseNode::setMask(const string& mask) {
 	this->mask = mask;
 	this->maskTexture = mask.empty() == true?nullptr:GUI::getImage(screenNode->getApplicationRootPathName(), mask);
 	this->maskTextureId = maskTexture == nullptr?0:Engine::getInstance()->getTextureManager()->addTexture(maskTexture, 0);
+}
+
+GUITextureBaseNode::RequestedDimensionConstraints GUITextureBaseNode::createRequestedDimensionConstraints(const string& width, const string& height) {
+	RequestedDimensionConstraints constraints;
+	if (width.empty() == false) {
+		if (StringTools::endsWith(width, "%")) {
+			constraints.horizontalScale = Float::parse(width.substr(0, width.length() - 1)) / 100.0f;
+		} else {
+			constraints.horizontalScale = Float::parse(width);
+		}
+	}
+	if (height.empty() == false) {
+		if (StringTools::endsWith(height, "%")) {
+			constraints.verticalScale = Float::parse(height.substr(0, height.length() - 1)) / 100.0f;
+		} else {
+			constraints.verticalScale = Float::parse(height);
+		}
+	}
+	return constraints;
 }

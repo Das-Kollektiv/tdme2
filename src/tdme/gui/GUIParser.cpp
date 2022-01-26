@@ -756,6 +756,10 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
 					StringTools::trim(unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("src"))))),
+					GUIImageNode::createRequestedDimensionConstraints(
+						StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-scale")))),
+						StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("vertical-scale"))))
+					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul"))), GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD),
 					GUINode::createScale9Grid(
@@ -836,6 +840,10 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
 					nullptr,
+					GUIFrameBufferNode::createRequestedDimensionConstraints(
+						StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-scale")))),
+						StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("vertical-scale"))))
+					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul"))), GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD),
 					GUINode::createScale9Grid(
@@ -845,7 +853,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 						string(AVOID_NULLPTR_STRING(node->Attribute("scale9-right"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("scale9-bottom")))
 					),
-					GUIImageNode::createClipping(
+					GUIFrameBufferNode::createClipping(
 						string(AVOID_NULLPTR_STRING(node->Attribute("clipping"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("clipping-left"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("clipping-top"))),
@@ -915,6 +923,10 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
 					nullptr,
+					GUITextureNode::createRequestedDimensionConstraints(
+						StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-scale")))),
+						StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("vertical-scale"))))
+					),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul"))), GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD),
 					GUINode::createScale9Grid(
@@ -924,7 +936,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 						string(AVOID_NULLPTR_STRING(node->Attribute("scale9-right"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("scale9-bottom")))
 					),
-					GUIImageNode::createClipping(
+					GUITextureNode::createClipping(
 						string(AVOID_NULLPTR_STRING(node->Attribute("clipping"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("clipping-left"))),
 						string(AVOID_NULLPTR_STRING(node->Attribute("clipping-top"))),

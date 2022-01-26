@@ -9,6 +9,7 @@
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINode_Clipping.h>
+#include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/math/Matrix2D3x3.h>
@@ -24,6 +25,7 @@ using tdme::gui::nodes::GUINode_Clipping;
 using tdme::gui::nodes::GUINode_Flow;
 using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_RequestedConstraints;
+using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode;
@@ -40,8 +42,14 @@ class tdme::gui::nodes::GUITextureBaseNode
 	: public GUINode
 {
 	friend class tdme::gui::GUIParser;
+public:
+	struct RequestedDimensionConstraints {
+		float horizontalScale { 1.0f };
+		float verticalScale { 1.0f };
+	};
 
 private:
+	RequestedDimensionConstraints requestedDimensionConstraints;
 	GUIColor effectColorMul;
 	GUIColor effectColorAdd;
 	GUINode_Clipping clipping;
@@ -75,6 +83,7 @@ protected:
 	 * @param padding padding
 	 * @param showOn show on
 	 * @param hideOn hide on
+	 * @param requestedDimensionConstraints requested dimension constraints
 	 * @param effectColorMul effect color mul
 	 * @param effectColorAdd effect color add
 	 * @param scale9Grid scale 9 grid
@@ -99,6 +108,7 @@ protected:
 		const GUINode_Padding& padding,
 		const GUINodeConditions& showOn,
 		const GUINodeConditions& hideOn,
+		const RequestedDimensionConstraints& requestedDimensionConstraints,
 		const GUIColor& effectColorMul,
 		const GUIColor& effectColorAdd,
 		const GUINode_Scale9Grid& scale9Grid,
@@ -188,5 +198,13 @@ public:
 	void setMaskMaxValue(float maskMaxValue) {
 		this->maskMaxValue = maskMaxValue;
 	}
+
+	/**
+	 * Create requested dimension constraints
+	 * @param width width
+	 * @param height height
+	 * @return requested constraints
+	 */
+	static RequestedDimensionConstraints createRequestedDimensionConstraints(const string& width, const string& height);
 
 };

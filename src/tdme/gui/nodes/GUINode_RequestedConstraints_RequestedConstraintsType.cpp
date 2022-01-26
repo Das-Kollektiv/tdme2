@@ -10,7 +10,6 @@ using std::string;
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::utilities::Enum;
 
-
 GUINode_RequestedConstraints_RequestedConstraintsType::GUINode_RequestedConstraints_RequestedConstraintsType(const string& name, int ordinal)
 	: Enum(name, ordinal)
 {
