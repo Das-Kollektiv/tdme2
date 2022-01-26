@@ -739,6 +739,7 @@ all: \
 	converttotm \
 	copyanimationsetups \
 	createinstaller \
+	imageprocessor \
 	recreatevkcache \
 	generatelicenses \
 	importtmodel \
@@ -975,6 +976,9 @@ copyanimationsetups:
 
 createinstaller:
     cl /Fecreateinstaller $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/createinstaller-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
+imageprocessor:
+    cl /Feimageprocessor $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/imageprocessor-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 recreatevkcache:
     cl /Ferecreatevkcache $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/recreatevkcache-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)

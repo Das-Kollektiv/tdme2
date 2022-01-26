@@ -878,6 +878,7 @@ MAIN_SRCS = \
 	src/tdme/tools/cli/converttotm-main.cpp \
 	src/tdme/tools/cli/copyanimationsetups-main.cpp \
 	src/tdme/tools/cli/createinstaller-main.cpp \
+	src/tdme/tools/cli/imageprocessor-main.cpp \
 	src/tdme/tools/cli/msclib2dll-main.cpp \
 	src/tdme/tools/cli/fixdoxygen-main.cpp \
 	src/tdme/tools/cli/generatelicenses-main.cpp \
