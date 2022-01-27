@@ -100,7 +100,7 @@ else ifeq ($(OS), Haiku)
 	OPENGL_RENDERER_LDFLAGS := -lGLEW -lGL -lglfw
 	VULKAN_RENDERER_LDFLAGS := -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -lGLESv2 -lEGL -lglfw
-	LIBS_LDFLAGS := -lglfw -lopenal
+	LIBS_LDFLAGS := -lnetwork -lglfw -lopenal
 	OFLAGS := -O2
 else ifeq ($(OS), Linux)
 	# Linux

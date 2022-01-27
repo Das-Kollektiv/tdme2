@@ -602,7 +602,11 @@ void Application::run(int argc, char** argv, const string& title, InputEventHand
 		}
 	#else
 		//
-		auto rendererLibraryHandle = dlopen(rendererLibrary.c_str(), RTLD_NOW);
+		#if defined(__HAIKU__)
+			auto rendererLibraryHandle = dlopen(("lib/" + rendererLibrary).c_str(), RTLD_NOW);
+		#else
+			auto rendererLibraryHandle = dlopen(rendererLibrary.c_str(), RTLD_NOW);
+		#endif
 		if (rendererLibraryHandle == nullptr) {
 			Console::println("Application::run(): Could not open renderer library");
 			glfwTerminate();
