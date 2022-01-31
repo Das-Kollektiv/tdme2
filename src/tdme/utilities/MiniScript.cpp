@@ -391,7 +391,7 @@ void MiniScript::execute() {
 		}
 
 		// break if no next statement but other state machine state or not running
-		if (scriptState.state.state != STATE_NEXT_STATEMENT || scriptState.running == true) break;
+		if (scriptState.state.state != STATE_NEXT_STATEMENT || scriptState.running == false) break;
 	}
 }
 
