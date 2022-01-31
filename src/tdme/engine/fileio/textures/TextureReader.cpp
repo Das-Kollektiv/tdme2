@@ -576,3 +576,43 @@ Texture* TextureReader::scale(Texture* texture, int width, int height) {
 	scaledTexture->releaseReference();
 	return filteredTexture;
 }
+
+Texture* TextureReader::smooth(Texture* texture) {
+	// TODO: should be improved
+	auto filteredTextureByteBuffer = new ByteBuffer(texture->getTextureWidth() * texture->getTextureHeight() * 4);
+	auto filteredTexture = new Texture(
+		texture->getId() + ":smooth",
+		32,
+		texture->getTextureWidth(),
+		texture->getTextureHeight(),
+		texture->getTextureWidth(),
+		texture->getTextureHeight(),
+		filteredTextureByteBuffer
+	);
+	filteredTexture->acquireReference();
+	for (auto y = 0; y < filteredTexture->getTextureHeight(); y++) {
+		for (auto x = 0; x < filteredTexture->getTextureWidth(); x++) {
+			auto samples = 0;
+			auto red = 0;
+			auto green = 0;
+			auto blue = 0;
+			auto alpha = 0;
+			for (auto _y = -1; _y <= 1; _y++)
+			for (auto _x = -1; _x <= 1; _x++)
+			if ((Math::abs(_x) == 1 && Math::abs(_y) == 1) == false &&
+				(x + _x >= 0 && x + _x < texture->getTextureWidth() && y + _y >= 0 && y + _y < texture->getTextureHeight())) {
+				auto pixelOffset = (y + _y) * texture->getTextureWidth() * 4 + (x + _x) * 4;
+				red+= texture->getTextureData()->get(pixelOffset + 0);
+				green+= texture->getTextureData()->get(pixelOffset + 1);
+				blue+= texture->getTextureData()->get(pixelOffset + 2);
+				alpha+= texture->getTextureData()->get(pixelOffset + 3);
+				samples++;
+			}
+			filteredTextureByteBuffer->put(red / samples);
+			filteredTextureByteBuffer->put(green / samples);
+			filteredTextureByteBuffer->put(blue / samples);
+			filteredTextureByteBuffer->put(alpha / samples);
+		}
+	}
+	return filteredTexture;
+}

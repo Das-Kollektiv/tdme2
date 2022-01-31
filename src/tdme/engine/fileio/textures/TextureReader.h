@@ -86,6 +86,13 @@ public:
 	 */
 	static Texture* scale(Texture* texture, int width, int height);
 
+	/**
+	 * Smooth texture
+	 * @param texture texture
+	 * @return texture
+	 */
+	static Texture* smooth(Texture* texture);
+
 private:
 	/**
 	 * PNG input stream

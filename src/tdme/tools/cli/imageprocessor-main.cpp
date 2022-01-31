@@ -49,14 +49,49 @@ int main(int argc, char** argv)
 
 		//
 		Console::println("Processing image");
-		// todo: processing
+
+		// for now: do black pixel -> transparent pixels, every other pixel gets white
+		//	later we can provide color transform matrices with preset matrices
+		auto bytesPerPixel = image->getDepth() / 8;
+		for (auto y = 0; y < image->getTextureHeight(); y++) {
+			for (auto x = 0; x < image->getTextureWidth(); x++) {
+				auto offset = y * bytesPerPixel * image->getTextureWidth() + x * bytesPerPixel;
+				auto red = image->getTextureData()->get(offset + 0);
+				auto green = image->getTextureData()->get(offset + 1);
+				auto blue = image->getTextureData()->get(offset + 2);
+				auto alpha = bytesPerPixel == 4?image->getTextureData()->get(offset + 3):0xff;
+				// transform black pixels to transparent pixels
+				if (red < 5 && green < 5 && blue < 5) {
+					alpha = 0;
+				} else {
+					// everything else should be white
+					red = 0xff;
+					green = 0xff;
+					blue = 0xff;
+				}
+				image->getTextureData()->getBuffer()[offset + 0] = red;
+				image->getTextureData()->getBuffer()[offset + 1] = green;
+				image->getTextureData()->getBuffer()[offset + 2] = blue;
+				if (bytesPerPixel == 4) {
+					image->getTextureData()->getBuffer()[offset + 3] = alpha;
+				}
+
+			}
+		}
+
+		// smooth
+		auto smoothedTexture = TextureReader::smooth(image);
+		image->releaseReference();
+		image = smoothedTexture;
 
 		//
 		Console::println("Saving image: " + outputImageFileName);
 		PNGTextureWriter::write(
 			image,
 			FileSystem::getInstance()->getPathName(outputImageFileName),
-			FileSystem::getInstance()->getFileName(outputImageFileName)
+			FileSystem::getInstance()->getFileName(outputImageFileName),
+			false,
+			false
 		);
 	} catch (Exception& exception) {
 		Console::println("An error occurred: " + string(exception.what()));
