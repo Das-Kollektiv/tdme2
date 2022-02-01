@@ -149,6 +149,9 @@ on: nothing
 	if (getVariable("$i") == $j || getVariable("$i") == $k)
 		console.log("This should not happen, but look ok in preprocessor processed output")
 	end
+	console.log("-------------------------------------------------------------------------------------")
+	console.log("Test: string concatenation with brackets in string literals: " + $i + "(" + $j + ")")
+	console.log("-------------------------------------------------------------------------------------")
 	console.log("(4.0 + 2.0) / 2.0 + (20.0 / 10.0 * (2.0 + 5)): ", (4.0 + 2.0) / 2.0 + (20.0 / 10.0 * (2.0 + 5)), " = 17")
 	console.log("--------------------------------------------------")
 	console.log("Test if enabled naming condition will be emitted")

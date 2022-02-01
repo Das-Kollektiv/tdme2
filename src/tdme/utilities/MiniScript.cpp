@@ -113,9 +113,12 @@ bool MiniScript::parseScriptStatement(const string& statement, string& method, v
 	string quotedArgument;
 	for (auto i = 0; i < statement.size(); i++) {
 		auto c = statement[i];
-		if (c == '"' && bracketCount == 1) {
+		if (c == '"') {
 			quote = quote == false?true:false;
-			quotedArgument+= c;
+			if (bracketCount == 1) quotedArgument+= c; else argument+= c;
+		} else
+		if (quote == true) {
+			if (bracketCount == 1) quotedArgument+= c; else argument+= c;
 		} else
 		if (quote == false) {
 			if (c == '(') {
@@ -859,7 +862,7 @@ const string MiniScript::findRightArgument(const string statement, int position,
 	length = 0;
 	for (auto i = position; i < statement.size(); i++) {
 		auto c = statement[i];
-		if (c == '"' && bracketCount == 1) {
+		if (c == '"') {
 			quote = quote == false?true:false;
 			argument+= c;
 		} else
@@ -896,7 +899,7 @@ const string MiniScript::findLeftArgument(const string statement, int position, 
 	length = 0;
 	for (int i = position; i >= 0; i--) {
 		auto c = statement[i];
-		if (c == '"' && bracketCount == 1) {
+		if (c == '"') {
 			quote = quote == false?true:false;
 			argument = c + argument;
 		} else
