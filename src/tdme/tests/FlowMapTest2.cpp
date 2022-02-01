@@ -438,7 +438,7 @@ void FlowMapTest2::initialize()
 	Engine::setTransformationsComputingReduction1Distance(175.0f);
 	Engine::setTransformationsComputingReduction2Distance(250.0f);
 	engine->initialize();
-	scene = SceneReader::read("../MedievalSurvivors/resources/project/maps", "Map_TEST_SquadMovement.tscene");
+	scene = SceneReader::read("../WarStory/resources/project/maps", "Map_TEST_SquadMovement.tscene");
 	SceneConnector::setLights(engine, scene);
 	SceneConnector::addScene(engine, scene, false, false, false, false);
 	SceneConnector::addScene(world, scene);
