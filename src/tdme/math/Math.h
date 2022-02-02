@@ -318,7 +318,7 @@ public:
 	}
 
 	/**
-	 * Returns modulo of value, so that return value is -range <= value < range
+	 * Returns modulo of value, so that return value is -range < value < range
 	 * @param value value
 	 * @param range range
 	 * @return modulo of value
