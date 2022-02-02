@@ -58,6 +58,8 @@ void Rotation::update()
 }
 
 float Rotation::interpolate(float rotationAngle, float targetRotationAngle, float timeSecondsPassed, float rotationDeegreePerSeconds) {
+	rotationAngle = Math::absmod(rotationAngle, 360.0f);
+	targetRotationAngle = Math::absmod(targetRotationAngle, 360.0f);
 	auto targetRotationAngleA = targetRotationAngle;
 	auto targetRotationAngleB = targetRotationAngle - 360.0f;
 	auto targetRotationAngleC = targetRotationAngle + 360.0f;

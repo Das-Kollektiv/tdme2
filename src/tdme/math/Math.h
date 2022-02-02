@@ -318,12 +318,23 @@ public:
 	}
 
 	/**
-	 * Returns modulo of value, so that return value is 0.0f <= value < range
+	 * Returns modulo of value, so that return value is -range <= value < range
 	 * @param value value
 	 * @param range range
 	 * @return modulo of value
 	 */
 	inline static float mod(float value, float range) {
+		return std::fmod(value, range);
+	}
+
+	/**
+	 * Returns absolute modulo of value, so that return value is 0.0f <= value < range
+	 * @param value value
+	 * @param range range
+	 * @return modulo of value
+	 */
+	inline static float absmod(float value, float range) {
+		while (value < 0.0f) value+= range;
 		return std::fmod(value, range);
 	}
 
