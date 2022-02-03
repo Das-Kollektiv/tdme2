@@ -510,12 +510,16 @@ public:
 	 * Add tick node, registered node controllers will have a tick once per frame
 	 * @param
 	 */
-	void addTickNode(GUINode* node);
+	inline void addTickNode(GUINode* node) {
+		tickNodesById[node->getId()] = node;
+	}
 
 	/**
 	 * Remove tick node
 	 */
-	void removeTickNode(GUINode* node);
+	inline void removeTickNode(GUINode* node) {
+		tickNodesById.erase(node->getId());
+	}
 
 	/**
 	 * Get values
@@ -532,7 +536,9 @@ public:
 	/**
 	 * @return size constraints
 	 */
-	GUIScreenNode_SizeConstraints& getSizeConstraints();
+	inline GUIScreenNode_SizeConstraints& getSizeConstraints() {
+		return sizeConstraints;
+	}
 
 	/**
 	 * Create size constraints
@@ -548,12 +554,16 @@ public:
 	 * @param time time
 	 * @param expression expression
 	 */
-	void addTimedExpression(int64_t time, const string& expression);
+	inline void addTimedExpression(int64_t time, const string& expression) {
+		timedExpressions[time]+= timedExpressions[time].empty() == false?";" + expression:expression;
+	}
 
 	/**
 	 * Add node to element node dependency
 	 * @param elementNodeId element node id
 	 * @param nodeId node id that depends on element node condition changes
 	 */
-	void addNodeElementNodeDependency(const string& elementNodeId, const string& nodeId);
+	inline void addNodeElementNodeDependency(const string& elementNodeId, const string& nodeId) {
+		elementNodeToNodeMapping[elementNodeId].insert(nodeId);
+	}
 };

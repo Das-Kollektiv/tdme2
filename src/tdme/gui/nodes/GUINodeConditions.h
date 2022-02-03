@@ -88,8 +88,10 @@ public:
 	 */
 	inline bool add(const string& condition) {
 		auto conditionsChanged = has(condition) == false;
-		if (conditionsChanged == true) conditions.push_back(condition);
-		if (conditionsChanged == true) updateElementNode({condition});
+		if (conditionsChanged == true) {
+			conditions.push_back(condition);
+			updateElementNode({condition});
+		}
 		return conditionsChanged;
 	}
 
@@ -100,8 +102,10 @@ public:
 	 */
 	inline bool remove(const string& condition) {
 		auto conditionsChanged = has(condition);
-		conditions.erase(std::remove(conditions.begin(), conditions.end(), condition), conditions.end());
-		if (conditionsChanged == true) updateElementNode({});
+		if (conditionsChanged == true) {
+			conditions.erase(std::remove(conditions.begin(), conditions.end(), condition), conditions.end());
+			updateElementNode({});
+		}
 		return conditionsChanged;
 	}
 
@@ -111,8 +115,10 @@ public:
 	 */
 	inline bool removeAll() {
 		auto conditionsChanged = conditions.empty() == false;
-		conditions.clear();
-		if (conditionsChanged == true) updateElementNode({});
+		if (conditionsChanged == true) {
+			conditions.clear();
+			updateElementNode({});
+		}
 		return conditionsChanged;
 	}
 

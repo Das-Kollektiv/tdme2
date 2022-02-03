@@ -139,6 +139,7 @@ void GUIScrollAreaController::dispose()
 
 void GUIScrollAreaController::postLayout()
 {
+	//
 	{
 		auto const contentNode = required_dynamic_cast<GUIParentNode*>(node->getScreenNode()->getNodeById(node->getId() + "_inner"));
 		float elementHeight = contentNode->getComputedConstraints().height;

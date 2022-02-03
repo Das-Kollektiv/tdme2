@@ -234,18 +234,27 @@ GUINode* GUIScreenNode::forceInvalidateLayout(GUINode* node) {
 }
 
 void GUIScreenNode::invalidateLayouts() {
+	// copy our list of nodes that have to be invalidated, as its propably modified by postLayout controller calls
+	auto invalidateLayoutNodeIdsCopy = invalidateLayoutNodeIds;
+	invalidateLayoutNodeIds.clear();
+
+	// invalidate layouts and mark nodes that are required to start layouting with
+	// in a map with hierarchical id which gets sorted from root -> child node
 	map<string, GUINode*> nodesToForceLayout;
-	for (auto& nodeId: invalidateLayoutNodeIds) {
+	for (auto& nodeId: invalidateLayoutNodeIdsCopy) {
 		auto node = getNodeById(nodeId);
 		if (node == nullptr) continue;
 		auto layoutNode = forceInvalidateLayout(node);
 		if (layoutNode == nullptr) continue;
 		nodesToForceLayout[layoutNode->getHierarchicalId()] = layoutNode;
 	}
+	// force layouts
 	for (auto& nodesToForceLayoutIt: nodesToForceLayout) {
+		// check if parent node was layouted in this layout sequence already
 		auto parentNodeLayouted = false;
 		auto node = nodesToForceLayoutIt.second;
 		auto _node = node->parentNode;
+		// check if node's parent nodes were layouted
 		while (_node != nullptr) {
 			if (nodesToForceLayout.find(_node->getHierarchicalId()) != nodesToForceLayout.end()) {
 				parentNodeLayouted = true;
@@ -253,10 +262,11 @@ void GUIScreenNode::invalidateLayouts() {
 			}
 			_node = _node->parentNode;
 		}
+		// jup, skip
 		if (parentNodeLayouted == true) continue;
-		forceLayout(node); // TODO: actually the relayout should happen automatically by layouting on demand, but we have a bug here it seems
+		// otherwise layout
+		forceLayout(node);
 	}
-	invalidateLayoutNodeIds.clear();
 }
 
 void GUIScreenNode::forceLayout(GUINode* node)
@@ -535,14 +545,6 @@ void GUIScreenNode::delegateUnfocus(GUIElementNode* node) {
 	}
 }
 
-void GUIScreenNode::addTickNode(GUINode* node) {
-	tickNodesById[node->getId()] = node;
-}
-
-void GUIScreenNode::removeTickNode(GUINode* node) {
-	tickNodesById.erase(node->getId());
-}
-
 void GUIScreenNode::tick() {
 	auto now = Time::getCurrentMillis();
 	vector<int64_t> timedExpressionsToRemove;
@@ -604,10 +606,6 @@ void GUIScreenNode::setValues(const unordered_map<string, MutableString>& values
 	}
 }
 
-GUIScreenNode_SizeConstraints& GUIScreenNode::getSizeConstraints() {
-	return sizeConstraints;
-}
-
 GUIScreenNode_SizeConstraints GUIScreenNode::createSizeConstraints(const string& minWidth, const string& minHeight, const string& maxWidth, const string& maxHeight)
 {
 	GUIScreenNode_SizeConstraints constraints;
@@ -616,12 +614,4 @@ GUIScreenNode_SizeConstraints GUIScreenNode::createSizeConstraints(const string&
 	constraints.maxWidth = maxWidth.empty() == true?-1:Integer::parse(maxWidth);
 	constraints.maxHeight = maxHeight.empty() == true?-1:Integer::parse(maxHeight);
 	return constraints;
-}
-
-void GUIScreenNode::addTimedExpression(int64_t time, const string& expression) {
-	timedExpressions[time]+= timedExpressions[time].empty() == false?";" + expression:expression;
-}
-
-void GUIScreenNode::addNodeElementNodeDependency(const string& elementNodeId, const string& nodeId) {
-	elementNodeToNodeMapping[elementNodeId].insert(nodeId);
 }
