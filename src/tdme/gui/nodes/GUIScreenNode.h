@@ -13,9 +13,7 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode_SizeConstraints.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
-#include <tdme/utilities/Console.h>
 #include <tdme/utilities/MutableString.h>
-#include <tdme/utilities/RTTI.h>
 
 using std::string;
 using std::to_string;
@@ -47,9 +45,7 @@ using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIScreenNode_SizeConstraints;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::GUI;
-using tdme::utilities::Console;
 using tdme::utilities::MutableString;
-using tdme::utilities::RTTI;
 
 /**
  * GUI screen node that represents a screen that can be rendered via GUI system
@@ -307,9 +303,6 @@ public:
 	 * @return first node that requires a layout in tree
 	 */
 	inline void invalidateLayout(GUINode* node) {
-		Console::println("GUIScreenNode::invalidateLayout(): " + node->getId());
-		Console::println();
-		Console::println(RTTI::backtrace());
 		invalidateLayoutNodeIds.insert(node->getId());
 	}
 
