@@ -2458,15 +2458,47 @@ void Engine::dumpShaders() {
 					case ShaderParameter::TYPE_NONE:
 						Console::print("=none; ");
 						break;
+					case ShaderParameter::TYPE_BOOLEAN:
+						Console::print("=boolean(");
+						Console::print(getShaderParameter(shaderId, parameterName).getBooleanValue() == true?"true":"false");
+						Console::print("); ");
+						break;
+					case ShaderParameter::TYPE_INTEGER:
+						Console::print("=integer(");
+						Console::print(to_string(getShaderParameter(shaderId, parameterName).getIntegerValue()));
+						Console::print("); ");
+						break;
 					case ShaderParameter::TYPE_FLOAT:
 						Console::print("=float(");
 						Console::print(to_string(getShaderParameter(shaderId, parameterName).getFloatValue()));
 						Console::print("); ");
 						break;
+					case ShaderParameter::TYPE_VECTOR2:
+						{
+							Console::print("=Vector2(");
+							auto& shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector2Value().getArray();
+							for (auto i = 0; i < shaderParameterArray.size(); i++) {
+								if (i != 0) Console::print(",");
+								Console::print(to_string(shaderParameterArray[i]));
+							}
+							Console::print("); ");
+						}
+						break;
 					case ShaderParameter::TYPE_VECTOR3:
 						{
-							Console::print("=float(");
-							auto shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector3Value().getArray();
+							Console::print("=Vector3(");
+							auto& shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector3Value().getArray();
+							for (auto i = 0; i < shaderParameterArray.size(); i++) {
+								if (i != 0) Console::print(",");
+								Console::print(to_string(shaderParameterArray[i]));
+							}
+							Console::print("); ");
+						}
+						break;
+					case ShaderParameter::TYPE_VECTOR4:
+						{
+							Console::print("=Vector4(");
+							auto& shaderParameterArray = getShaderParameter(shaderId, parameterName).getVector4Value().getArray();
 							for (auto i = 0; i < shaderParameterArray.size(); i++) {
 								if (i != 0) Console::print(",");
 								Console::print(to_string(shaderParameterArray[i]));
