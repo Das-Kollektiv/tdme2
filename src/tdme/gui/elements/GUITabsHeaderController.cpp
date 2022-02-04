@@ -59,7 +59,6 @@ void GUITabsHeaderController::dispose()
 
 void GUITabsHeaderController::postLayout()
 {
-	selectCurrent(); // TODO: a.drewke
 }
 
 bool GUITabsHeaderController::hasFocus()

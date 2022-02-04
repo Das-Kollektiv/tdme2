@@ -234,20 +234,18 @@ GUINode* GUIScreenNode::forceInvalidateLayout(GUINode* node) {
 }
 
 void GUIScreenNode::invalidateLayouts() {
-	// copy our list of nodes that have to be invalidated, as its propably modified by postLayout controller calls
-	auto invalidateLayoutNodeIdsCopy = invalidateLayoutNodeIds;
-	invalidateLayoutNodeIds.clear();
-
 	// invalidate layouts and mark nodes that are required to start layouting with
 	// in a map with hierarchical id which gets sorted from root -> child node
 	map<string, GUINode*> nodesToForceLayout;
-	for (auto& nodeId: invalidateLayoutNodeIdsCopy) {
+	for (auto& nodeId: invalidateLayoutNodeIds) {
 		auto node = getNodeById(nodeId);
 		if (node == nullptr) continue;
 		auto layoutNode = forceInvalidateLayout(node);
 		if (layoutNode == nullptr) continue;
 		nodesToForceLayout[layoutNode->getHierarchicalId()] = layoutNode;
 	}
+	//
+	invalidateLayoutNodeIds.clear();
 	// force layouts
 	for (auto& nodesToForceLayoutIt: nodesToForceLayout) {
 		// check if parent node was layouted in this layout sequence already
