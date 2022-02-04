@@ -419,6 +419,9 @@ void GUI::render()
 	// invalidate layouts
 	for (int i = renderScreens.size() - 1; i >= 0; i--) {
 		auto screen = renderScreens[i];
+
+		if (screen->isVisible() == false) continue;
+
 		screen->invalidateLayouts();
 		screen->scrollToNodes();
 	}
