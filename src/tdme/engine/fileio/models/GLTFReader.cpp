@@ -340,6 +340,62 @@ Node* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltfM
 				// some adjustment, lets see if we can extract this later
 				specularMaterialProperties->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
 				specularMaterialProperties->setDiffuseColor(Color4(0.2f, 0.2f, 0.2f, 1.0f));
+				if (gltfMaterial.values.find("baseColorFactor") != gltfMaterial.values.end()) {
+					auto& gltfMaterialBaseColorFactor = gltfMaterial.values.find("baseColorFactor")->second;
+					Console::println(
+						"GLTFReader::parseNode(): " +
+						node->getId() + ": " +
+						"have base color factor with " +
+						to_string(gltfMaterialBaseColorFactor.number_array[0]) + ", " +
+						to_string(gltfMaterialBaseColorFactor.number_array[1]) + ", " +
+						to_string(gltfMaterialBaseColorFactor.number_array[2]) + ", " +
+						to_string(gltfMaterialBaseColorFactor.number_array[3])
+					);
+					pbrMaterialProperties->setBaseColorFactor(
+						Color4(
+							gltfMaterialBaseColorFactor.number_array[0],
+							gltfMaterialBaseColorFactor.number_array[1],
+							gltfMaterialBaseColorFactor.number_array[2],
+							gltfMaterialBaseColorFactor.number_array[3]
+						)
+					);
+					specularMaterialProperties->setAmbientColor(
+						Color4(
+							specularMaterialProperties->getAmbientColor().getRed() * gltfMaterialBaseColorFactor.number_array[0],
+							specularMaterialProperties->getAmbientColor().getGreen() * gltfMaterialBaseColorFactor.number_array[1],
+							specularMaterialProperties->getAmbientColor().getBlue() * gltfMaterialBaseColorFactor.number_array[2],
+							gltfMaterialBaseColorFactor.number_array[3]
+						)
+					);
+					specularMaterialProperties->setDiffuseColor(
+						Color4(
+							specularMaterialProperties->getDiffuseColor().getRed() * gltfMaterialBaseColorFactor.number_array[0],
+							specularMaterialProperties->getDiffuseColor().getGreen() * gltfMaterialBaseColorFactor.number_array[1],
+							specularMaterialProperties->getDiffuseColor().getBlue() * gltfMaterialBaseColorFactor.number_array[2],
+							gltfMaterialBaseColorFactor.number_array[3]
+						)
+					);
+				}
+				if (gltfMaterial.values.find("metallicFactor") != gltfMaterial.values.end()) {
+					auto& gltfMaterialMatallicFactor = gltfMaterial.values.find("metallicFactor")->second;
+					Console::println(
+						"GLTFReader::parseNode(): " +
+						node->getId() + ": " +
+						"have metallic factor with " +
+						to_string(gltfMaterialMatallicFactor.number_value)
+					);
+					pbrMaterialProperties->setMetallicFactor(gltfMaterialMatallicFactor.number_value);
+				}
+				if (gltfMaterial.values.find("roughnessFactor") != gltfMaterial.values.end()) {
+					auto& gltfMaterialRoughnessFactor = gltfMaterial.values.find("roughnessFactor")->second;
+					Console::println(
+						"GLTFReader::parseNode(): " +
+						node->getId() + ": " +
+						"have roughness factor with " +
+						to_string(gltfMaterialRoughnessFactor.number_value)
+					);
+					pbrMaterialProperties->setRoughnessFactor(gltfMaterialRoughnessFactor.number_value);
+				}
 				// we ignore for now Factor, ColorFactor, TextureScale, TextureStrength, TextureTexCoord as I do not see them feasible in Blender exported GLTF files
 				if (gltfMaterial.values.find("baseColorTexture") != gltfMaterial.values.end() &&
 					gltfMaterial.values.find("baseColorTexture")->second.TextureIndex() != -1) {
@@ -350,7 +406,7 @@ Node* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltfM
 						if (image.component != 3 && image.component != 4) throw ExceptionBase("We only support RGB or RGBA textures for now");
 						if (image.bits != 8) throw ExceptionBase("We only support 8 bit channels for now");
 						auto fileName = determineTextureFileName(image.name);
-						Console::println("GLTFReader::parseNode(): have base color texture with " + to_string(image.width) + " x " + to_string(image.height) + " x " + to_string(image.component) + " x " + to_string(image.bits) + ": " + fileName);
+						Console::println("GLTFReader::parseNode(): " + node->getId() + ": have base color texture with " + to_string(image.width) + " x " + to_string(image.height) + " x " + to_string(image.component) + " x " + to_string(image.bits) + ": " + fileName);
 						auto textureData = ByteBuffer::allocate(image.width * image.height * image.component * image.bits / 8);
 						for (int y = image.height - 1; y >= 0; y--) {
 							textureData->put(&image.image[y * image.width * image.component * image.bits / 8], image.width * image.component * image.bits / 8);
@@ -381,7 +437,7 @@ Node* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltfM
 						if (image.component != 3 && image.component != 4) throw ExceptionBase("We only support RGB or RGBA textures for now");
 						if (image.bits != 8) throw ExceptionBase("We only support 8 bit channels for now");
 						auto fileName = determineTextureFileName(image.name);
-						Console::println("GLTFReader::parseNode(): have metallic roughness texture with " + to_string(image.width) + " x " + to_string(image.height) + " x " + to_string(image.component) + " x " + to_string(image.bits) + ": " + fileName);
+						Console::println("GLTFReader::parseNode(): " + node->getId() + ": have metallic roughness texture with " + to_string(image.width) + " x " + to_string(image.height) + " x " + to_string(image.component) + " x " + to_string(image.bits) + ": " + fileName);
 						auto textureData = ByteBuffer::allocate(image.width * image.height * image.component * image.bits / 8);
 						for (int y = image.height - 1; y >= 0; y--) {
 							textureData->put(&image.image[y * image.width * image.component * image.bits / 8], image.width * image.component * image.bits / 8);
@@ -409,7 +465,7 @@ Node* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltfM
 						if (image.component != 3 && image.component != 4) throw ExceptionBase("We only support RGB or RGBA textures for now");
 						if (image.bits != 8) throw ExceptionBase("We only support 8 bit channels for now");
 						auto fileName = determineTextureFileName(image.name);
-						Console::println("GLTFReader::parseNode(): have normal texture with " + to_string(image.width) + " x " + to_string(image.height) + " x " + to_string(image.component) + " x " + to_string(image.bits) + ": " + fileName);
+						Console::println("GLTFReader::parseNode(): " + node->getId() + ": have normal texture with " + to_string(image.width) + " x " + to_string(image.height) + " x " + to_string(image.component) + " x " + to_string(image.bits) + ": " + fileName);
 						auto textureData = ByteBuffer::allocate(image.width * image.height * image.component * image.bits / 8);
 						for (int y = image.height - 1; y >= 0; y--) {
 							textureData->put(&image.image[y * image.width * image.component * image.bits / 8], image.width * image.component * image.bits / 8);
@@ -428,15 +484,8 @@ Node* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltfM
 						Console::println("GLTFReader::parseNode(): " + node->getId() + ": An error occurred: " + exception.what());
 					}
 				}
-				if (pbrMaterialProperties->getBaseColorTexture() != nullptr &&
-					pbrMaterialProperties->getMetallicRoughnessTexture() != nullptr &&
-					pbrMaterialProperties->getNormalTexture() != nullptr) {
-					material->setPBRMaterialProperties(pbrMaterialProperties);
-				} else {
-					delete pbrMaterialProperties;
-					model->setShaderModel(ShaderModel::SPECULAR);
-				}
 				material->setSpecularMaterialProperties(specularMaterialProperties);
+				material->setPBRMaterialProperties(pbrMaterialProperties);
 				model->getMaterials()[material->getId()] = material;
 			}
 		}
