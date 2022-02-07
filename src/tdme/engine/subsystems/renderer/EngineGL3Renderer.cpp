@@ -52,7 +52,10 @@ bool EngineGL3Renderer::prepareWindowSystemRendererContext(int tryIdx) {
 		glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
 	#endif
 	auto& glVersion = glVersions[tryIdx];
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, glVersion[0] == 1?GLFW_TRUE:GLFW_FALSE);
+	#if !defined(__HAIKU__)
+		// does not work for now with Haiku OS
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, glVersion[0] == 1?GLFW_TRUE:GLFW_FALSE);
+	#endif
 	glfwWindowHint(GLFW_OPENGL_PROFILE, glVersion[0] == 1?GLFW_OPENGL_CORE_PROFILE:GLFW_OPENGL_ANY_PROFILE);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, glVersion[1]);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, glVersion[2]);

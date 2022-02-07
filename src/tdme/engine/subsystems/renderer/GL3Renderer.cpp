@@ -245,11 +245,16 @@ bool GL3Renderer::isPBRAvailable()
 }
 
 bool GL3Renderer::isComputeShaderAvailable() {
-	int glMajorVersion;
-	int glMinorVersion;
-	glGetIntegerv(GL_MAJOR_VERSION, &glMajorVersion);
-	glGetIntegerv(GL_MINOR_VERSION, &glMinorVersion);
-	return (glMajorVersion == 4 && glMinorVersion >= 3) || glMajorVersion > 4;
+	#if defined(__HAIKU__)
+		// does not work for now with Haiku OS
+		return false;
+	#else
+		int glMajorVersion;
+		int glMinorVersion;
+		glGetIntegerv(GL_MAJOR_VERSION, &glMajorVersion);
+		glGetIntegerv(GL_MINOR_VERSION, &glMinorVersion);
+		return (glMajorVersion == 4 && glMinorVersion >= 3) || glMajorVersion > 4;
+	#endif
 }
 
 bool GL3Renderer::isGLCLAvailable() {
