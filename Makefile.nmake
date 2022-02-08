@@ -464,7 +464,6 @@ SRCS = \
 	src/tdme/tools/editor/views/EditorView.cpp \
 	src/tdme/tools/installer/Installer.cpp \
 	src/tdme/utilities/Base64.cpp \
-	src/tdme/utilities/Character.cpp \
 	src/tdme/utilities/Console.cpp \
 	src/tdme/utilities/ExceptionBase.cpp \
 	src/tdme/utilities/Enum.cpp \

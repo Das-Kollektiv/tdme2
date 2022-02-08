@@ -4,19 +4,21 @@
 
 #include <algorithm>
 #include <cctype>
+#include <charconv>
 #include <string>
+#include <string_view>
 
 #include <tdme/tdme.h>
-#include <tdme/utilities/Console.h>
 #include <tdme/utilities/StringTools.h>
 
-using tdme::utilities::Console;
 using tdme::utilities::StringTools;
 
 using std::find_if;
+using std::from_chars;
 using std::isdigit;
 using std::stoi;
 using std::string;
+using std::string_view;
 using std::to_string;
 
 using tdme::utilities::Integer;
@@ -27,11 +29,26 @@ bool Integer::is(const string& str) {
 		trimmedStr.empty() == false && find_if(trimmedStr.begin() + (trimmedStr[0] == '-'?1:0), trimmedStr.end(), [](char c) { return isdigit(c) == false; }) == trimmedStr.end();
 }
 
+bool Integer::viewIs(const string_view& str) {
+	auto trimmedStr = StringTools::viewTrim(str);
+	return
+		trimmedStr.empty() == false && find_if(trimmedStr.begin() + (trimmedStr[0] == '-'?1:0), trimmedStr.end(), [](char c) { return isdigit(c) == false; }) == trimmedStr.end();
+}
+
 int Integer::parse(const string& str) {
 	auto trimmedStr = StringTools::trim(str);
 	if (trimmedStr.empty() == true) return 0;
 	if (trimmedStr == "-") return -0;
 	return stoi(trimmedStr);
+}
+
+int Integer::viewParse(const string_view& str) {
+	auto trimmedStr = StringTools::viewTrim(str);
+	if (trimmedStr.empty() == true) return 0;
+	if (trimmedStr == "-") return -0;
+	int result;
+	from_chars(&trimmedStr[0], &trimmedStr[trimmedStr.size()], result);
+	return result;
 }
 
 void Integer::encode(const uint32_t decodedInt, string& encodedString) {

@@ -6,11 +6,13 @@
 #include <cmath>
 #include <limits>
 #include <string>
+#include <string_view>
 
 using std::isfinite;
 using std::isnan;
 using std::numeric_limits;
 using std::string;
+using std::string_view;
 
 /**
  * Float class
@@ -32,11 +34,25 @@ public:
 	static bool is(const string& str);
 
 	/**
+	 * Check if given string is a float string
+	 * @param str string
+	 * @return given string is float
+	 */
+	static bool viewIs(const string_view& str);
+
+	/**
 	 * Parse float
 	 * @param str string
 	 * @return float
 	 */
 	static float parse(const string& str);
+
+	/**
+	 * Parse float
+	 * @param str string
+	 * @return float
+	 */
+	static float viewParse(const string_view& str);
 
 	/**
 	 * Check if float is not a number

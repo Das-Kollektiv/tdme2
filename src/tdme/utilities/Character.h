@@ -1,5 +1,7 @@
-
 #pragma once
+
+#include <cctype>
+#include <cwctype>
 
 #include <tdme/tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
@@ -18,19 +20,33 @@ public:
 	 * @param character character
 	 * @return lower case character
 	 */
-	static char toLowerCase(char character);
+	inline static char toLowerCase(char character) {
+		return tolower(character);
+	}
 
 	/**
 	 * Convert character to upper case character
 	 * @param character character
 	 * @return upper case character
 	 */
-	static char toUpperCase(char character);
+	inline static char toUpperCase(char character) {
+		return toupper(character);
+	}
 
 	/**
 	 * Returns if character is alpha numeric
 	 * @return if character is alpha numeric
 	 */
-	static bool isAlphaNumeric(char character);
+	inline static bool isAlphaNumeric(char character) {
+		return isalnum(character) != 0;
+	}
+
+	/**
+	 * Returns if character is a white space
+	 * @return if character is a white space
+	 */
+	inline static bool isSpace(char character) {
+		return isspace(character) != 0;
+	}
 
 };

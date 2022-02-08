@@ -1,12 +1,14 @@
 #pragma once
 
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::string;
+using std::string_view;
 using std::vector;
 
 /**
@@ -24,7 +26,19 @@ public:
      * @param prefix prefix string
 	 * @return bool
 	 */
-	static const bool startsWith(const string& src, const string& prefix);
+	inline static const bool startsWith(const string& src, const string& prefix) {
+		return src.find(prefix) == 0;
+	}
+
+	/**
+	 * Checks if string starts with prefix
+	 * @param src source string
+     * @param prefix prefix string
+	 * @return bool
+	 */
+	inline static const bool viewStartsWith(const string_view& src, const string& prefix) {
+		return src.find(prefix) == 0;
+	}
 
 	/**
 	 * Checks if string ends with suffix
@@ -32,7 +46,23 @@ public:
      * @param suffix suffix string
 	 * @return bool
 	 */
-	static const bool endsWith(const string& src, const string& suffix);
+	inline static const bool endsWith(const string& src, const string& suffix) {
+		return
+			src.size() >= suffix.size() &&
+			src.compare(src.size() - suffix.size(), suffix.size(), suffix) == 0;
+	}
+
+	/**
+	 * Checks if string ends with suffix
+	 * @param src source string
+     * @param suffix suffix string
+	 * @return bool
+	 */
+	inline static const bool viewEndsWith(const string_view& src, const string& suffix) {
+		return
+			src.size() >= suffix.size() &&
+			src.compare(src.size() - suffix.size(), suffix.size(), suffix) == 0;
+	}
 
 	/**
 	 * Replace char with another char
@@ -60,7 +90,9 @@ public:
 	 * @param what what
 	 * @return index or -1 if not found
 	 */
-	static int32_t firstIndexOf(const string& src, char what);
+	inline static int32_t firstIndexOf(const string& src, char what) {
+		return src.find_first_of(what);
+	}
 
 	/**
 	 * Finds first index of characters provided within given string
@@ -68,7 +100,9 @@ public:
 	 * @param what what
 	 * @return index or -1 if not found
 	 */
-	static int32_t firstIndexOf(const string& src, const string& what);
+	inline static int32_t firstIndexOf(const string& src, const string& what) {
+		return src.find_first_of(what);
+	}
 
 	/**
 	 * Finds last index of given character
@@ -76,7 +110,9 @@ public:
 	 * @param what what
 	 * @return index or -1 if not found
 	 */
-	static int32_t lastIndexOf(const string& src, char what);
+	inline static int32_t lastIndexOf(const string& src, char what) {
+		return src.find_last_of(what);
+	}
 
 	/**
 	 * Finds last index of characters provided within given string
@@ -84,7 +120,9 @@ public:
 	 * @param what what
 	 * @return index or -1 if not found
 	 */
-	static int32_t lastIndexOf(const string& src, const string& what);
+	inline static int32_t lastIndexOf(const string& src, const string& what) {
+		return src.find_last_of(what);
+	}
 
 	/**
 	 * Returns substring of given string from begin index
@@ -92,7 +130,19 @@ public:
 	 * @param beginIndex begin index
 	 * @return new string
 	 */
-	static const string substring(const string& src, int32_t beginIndex);
+	inline static const string substring(const string& src, int32_t beginIndex) {
+		return src.substr(beginIndex);
+	}
+
+	/**
+	 * Returns substring of given string from begin index
+	 * @param src source string
+	 * @param beginIndex begin index
+	 * @return new string
+	 */
+	inline static const string_view viewSubstring(const string_view& src, int32_t beginIndex) {
+		return src.substr(beginIndex);
+	}
 
 	/**
 	 * Returns substring of given string from begin index to end index
@@ -101,7 +151,20 @@ public:
 	 * @param endIndex end index
 	 * @return new string
 	 */
-	static const string substring(const string& src, int32_t beginIndex, int32_t endIndex);
+	inline static const string substring(const string& src, int32_t beginIndex, int32_t endIndex) {
+		return src.substr(beginIndex, endIndex - beginIndex);
+	}
+
+	/**
+	 * Returns substring of given string from begin index to end index
+	 * @param src source string
+	 * @param beginIndex begin index
+	 * @param endIndex end index
+	 * @return new string
+	 */
+	inline static const string_view viewSubstring(const string_view& src, int32_t beginIndex, int32_t endIndex) {
+		return src.substr(beginIndex, endIndex - beginIndex);
+	}
 
 	/**
 	 * Checks if string equals ignoring case
@@ -117,6 +180,13 @@ public:
 	 * @return trimmed string
 	 */
 	static const string trim(const string& src);
+
+	/**
+	 * Trim string
+	 * @param src source string
+	 * @return trimmed string
+	 */
+	static const string_view viewTrim(const string_view& src);
 
 	/**
 	 * Transform string to lower case

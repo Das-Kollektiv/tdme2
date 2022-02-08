@@ -1,10 +1,12 @@
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/utilities/Console.h>
 
 using std::string;
+using std::string_view;
 using std::to_string;
 using std::vector;
 

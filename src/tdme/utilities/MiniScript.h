@@ -3,6 +3,7 @@
 #include <array>
 #include <stack>
 #include <string>
+#include <string_view>
 #include <unordered_map>
 #include <vector>
 
@@ -17,6 +18,7 @@
 using std::array;
 using std::stack;
 using std::string;
+using std::string_view;
 using std::to_string;
 using std::unordered_map;
 using std::vector;
@@ -432,6 +434,32 @@ public:
 		}
 
 		/**
+		 * Set implicit typed value given by value string
+		 * @param value value
+		 */
+		inline void setImplicitTypedValueFromStringView(const string_view& value) {
+			if (value == "true") {
+				type = TYPE_BOOLEAN;
+				booleanValue = true;
+			} else
+			if (value == "false") {
+				type = TYPE_BOOLEAN;
+				booleanValue = false;
+			} else
+			if (Integer::viewIs(value) == true) {
+				type = TYPE_INTEGER;
+				integerValue = Integer::viewParse(value);
+			} else
+			if (Float::viewIs(value) == true) {
+				type = TYPE_FLOAT;
+				floatValue = Float::viewParse(value);
+			} else {
+				type = TYPE_STRING;
+				stringValue = string(value);
+			}
+		}
+
+		/**
 		 * @return string representation of script variable type
 		 */
 		inline static const string getTypeAsString(ScriptVariableType type) {
@@ -688,6 +716,17 @@ private:
 	};
 
 	/**
+	 * Returns arguments as string placed in a vector of string_views
+	 * @param arguments arguments
+	 * @return arguments as string
+	 */
+	inline const string getArgumentsAsString(const vector<string_view>& arguments) {
+		string argumentsString;
+		for (auto& argument: arguments) argumentsString+= (argumentsString.empty() == false?", ":"") + string("'") + string(argument) + string("'");
+		return argumentsString;
+	}
+
+	/**
 	 * Execute a single script line
 	 */
 	void executeScriptLine();
@@ -699,7 +738,7 @@ private:
 	 * @param arguments arguments
 	 * @return success
 	 */
-	bool parseScriptStatement(const string& statement, string& method, vector<string>& arguments);
+	bool parseScriptStatement(const string_view& statement, string_view& method, vector<string_view>& arguments);
 
 	/**
 	 * Execute a script statement
@@ -708,7 +747,7 @@ private:
 	 * @param statement statement
 	 * @return pointer to return value
 	 */
-	ScriptVariable executeScriptStatement(const string& method, const vector<string>& argument, const ScriptStatement& statement);
+	ScriptVariable executeScriptStatement(const string_view& method, const vector<string_view>& argument, const ScriptStatement& statement);
 
 	/**
 	 * Determine script index to start

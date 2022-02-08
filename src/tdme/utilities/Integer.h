@@ -11,9 +11,11 @@
 
 #include <limits>
 #include <string>
+#include <string_view>
 
 using std::numeric_limits;
 using std::string;
+using std::string_view;
 
 /**
  * Integer class
@@ -34,11 +36,25 @@ public:
 	static bool is(const string& str);
 
 	/**
+	 * Check if given string is a integer string
+	 * @param str string
+	 * @return given string is integer
+	 */
+	static bool viewIs(const string_view& str);
+
+	/**
 	 * Parse integer
 	 * @param str string
 	 * @return integer
 	 */
 	static int parse(const string& str);
+
+	/**
+	 * Parse integer
+	 * @param str string
+	 * @return integer
+	 */
+	static int viewParse(const string_view& str);
 
 	/**
 	 * @brief Encodes an 32 bit unsigned integer to a 6 char string representation

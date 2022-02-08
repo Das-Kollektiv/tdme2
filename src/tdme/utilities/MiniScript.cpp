@@ -4,6 +4,7 @@
 #include <map>
 #include <stack>
 #include <string>
+#include <string_view>
 #include <unordered_map>
 #include <vector>
 
@@ -20,6 +21,7 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/StringTokenizer.h>
 #include <tdme/utilities/StringTools.h>
@@ -30,6 +32,7 @@ using std::remove;
 using std::sort;
 using std::stack;
 using std::string;
+using std::string_view;
 using std::to_string;
 using std::unordered_map;
 using std::vector;
@@ -45,6 +48,7 @@ using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::MiniScript;
 using tdme::utilities::StringTokenizer;
@@ -93,8 +97,8 @@ void MiniScript::executeScriptLine() {
 		setScriptState(STATE_WAIT_FOR_CONDITION);
 	}
 
-	string method;
-	vector<string> arguments;
+	string_view method;
+	vector<string_view> arguments;
 	if (parseScriptStatement(statement.statement, method, arguments) == true) {
 		auto returnValue = executeScriptStatement(method, arguments, statement);
 	} else {
@@ -103,109 +107,167 @@ void MiniScript::executeScriptLine() {
 	}
 }
 
-bool MiniScript::parseScriptStatement(const string& statement, string& method, vector<string>& arguments) {
-	if (VERBOSE == true) Console::println("MiniScript::parseScriptStatement(): '" + scriptFileName + "': '" + statement + "'");
-	auto argumentStartIdx = string::npos;
-	auto argumentEndIdx = string::npos;
+bool MiniScript::parseScriptStatement(const string_view& statement, string_view& method, vector<string_view>& arguments) {
+	if (VERBOSE == true) Console::println("MiniScript::parseScriptStatement(): '" + scriptFileName + "': '" + string(statement) + "'");
 	auto bracketCount = 0;
 	auto quote = false;
-	string argument;
-	string quotedArgument;
+	auto methodStart = string::npos;
+	auto methodEnd = string::npos;
+	auto argumentStart = string::npos;
+	auto argumentEnd = string::npos;
+	auto quotedArgumentStart = string::npos;
+	auto quotedArgumentEnd = string::npos;
 	for (auto i = 0; i < statement.size(); i++) {
 		auto c = statement[i];
 		if (c == '"') {
+			if (bracketCount == 1) {
+				if (quote == false) {
+					quotedArgumentStart = i;
+				} else {
+					quotedArgumentEnd = i;
+				}
+			} else {
+				if (quote == false) {
+					if (argumentStart == string::npos) {
+						argumentStart = i;
+					}
+				} else {
+					argumentEnd = i;
+				}
+			}
 			quote = quote == false?true:false;
-			if (bracketCount == 1) quotedArgument+= c; else argument+= c;
 		} else
 		if (quote == true) {
-			if (bracketCount == 1) quotedArgument+= c; else argument+= c;
+			if (bracketCount == 1) {
+				quotedArgumentEnd = i;
+			} else {
+				if (argumentStart == string::npos) {
+					argumentStart = i;
+				} else {
+					argumentEnd = i;
+				}
+			}
 		} else
 		if (quote == false) {
 			if (c == '(') {
 				bracketCount++;
 				if (bracketCount > 1) {
-					argument+= c;
+					if (argumentStart == string::npos) {
+						argumentStart = i + 1;
+					} else {
+						argumentEnd = i;
+					}
 				}
 			} else
 			if (c == ')') {
 				bracketCount--;
 				if (bracketCount == 0) {
-					if (quotedArgument.empty() == false || argument.empty() == false) {
-						arguments.push_back(quotedArgument.empty() == false?quotedArgument:StringTools::trim(argument));
-						argument.clear();
-						quotedArgument.clear();
+					if (quotedArgumentStart != string::npos) {
+						if (quotedArgumentEnd == string::npos) quotedArgumentEnd = i - 1;
+						auto argumentLength = quotedArgumentEnd - quotedArgumentStart + 1;
+						if (argumentLength > 0) arguments.push_back(StringTools::viewTrim(string_view(&statement[quotedArgumentStart], argumentLength)));
+						quotedArgumentStart = string::npos;
+						quotedArgumentEnd = string::npos;
+					} else
+					if (argumentStart != string::npos) {
+						if (argumentEnd == string::npos) argumentEnd = i - 1;
+						auto argumentLength = argumentEnd - argumentStart + 1;
+						if (argumentLength > 0) arguments.push_back(StringTools::viewTrim(string_view(&statement[argumentStart], argumentLength)));
+						argumentStart = string::npos;
+						argumentEnd = string::npos;
 					}
 				} else {
-					argument+= c;
+					if (argumentStart == string::npos) {
+						argumentStart = i + 1;
+					} else {
+						argumentEnd = i;
+					}
 				}
 			} else
 			if (c == ',') {
 				if (bracketCount == 1) {
-					if (quotedArgument.empty() == false || argument.empty() == false) {
-						arguments.push_back(quotedArgument.empty() == false?quotedArgument:StringTools::trim(argument));
-						argument.clear();
-						quotedArgument.clear();
+					if (quotedArgumentStart != string::npos) {
+						if (quotedArgumentEnd == string::npos) quotedArgumentEnd = i - 1;
+						auto argumentLength = quotedArgumentEnd - quotedArgumentStart + 1;
+						if (argumentLength > 0) arguments.push_back(StringTools::viewTrim(string_view(&statement[quotedArgumentStart], argumentLength)));
+						quotedArgumentStart = string::npos;
+						quotedArgumentEnd = string::npos;
+					} else
+					if (argumentStart != string::npos) {
+						if (argumentEnd == string::npos) argumentEnd = i - 1;
+						auto argumentLength = argumentEnd - argumentStart + 1;
+						if (argumentLength > 0) arguments.push_back(StringTools::viewTrim(string_view(&statement[argumentStart], argumentEnd - argumentStart + 1)));
+						argumentStart = string::npos;
+						argumentEnd = string::npos;
 					}
 				} else {
-					argument+= c;
+					if (argumentStart == string::npos) {
+						argumentStart = i + 1;
+					} else {
+						argumentEnd = i;
+					}
 				}
 			} else
 			if (bracketCount == 0) {
-				method+= c;
+				if (methodStart == string::npos) methodStart = i; else methodEnd = i;
 			} else {
-				argument+= c;
+				if (argumentStart == string::npos) {
+					if (Character::isSpace(c) == false) {
+						argumentStart = i;
+					}
+				} else {
+					argumentEnd = i;
+				}
 			}
-		} else {
-			quotedArgument+= c;
 		}
 	}
-	method = StringTools::trim(method);
+	if (methodStart != string::npos && methodEnd != string::npos) {
+		method = StringTools::viewTrim(string_view(&statement[methodStart], methodEnd - methodStart + 1));
+	}
 	if (VERBOSE == true) {
-		Console::print("MiniScript::parseScriptStatement(): '" + scriptFileName + "': method: '" + method + "', arguments: ");
+		Console::print("MiniScript::parseScriptStatement(): '" + scriptFileName + "': method: '" + string(method) + "', arguments: ");
 		int variableIdx = 0;
 		for (auto& argument: arguments) {
 			if (variableIdx > 0) Console::print(", ");
-			Console::print("'" + argument + "'");
+			Console::print("'" + string(argument) + "'");
 			variableIdx++;
 		}
 		Console::println();
 	}
 	if (bracketCount > 0) {
-		Console::println("MiniScript::parseScriptStatement(): '" + scriptFileName + "': '" + statement + "': unbalanced bracket count: " + to_string(bracketCount) + " still open");
+		Console::println("MiniScript::parseScriptStatement(): '" + scriptFileName + "': '" + string(statement) + "': unbalanced bracket count: " + to_string(bracketCount) + " still open");
 		return false;
 	}
 	return true;
 }
 
-MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& method, const vector<string>& arguments, const ScriptStatement& statement) {
-	string argumentsString;
-	for (auto& argument: arguments) argumentsString+= (argumentsString.empty() == false?",":"") + argument;
-	if (VERBOSE == true) Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': string arguments: " + method + "(" + argumentsString + ")");
+MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement) {
+	if (VERBOSE == true) Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': string arguments: " + string(method) + "(" + getArgumentsAsString(arguments) + ")");
 	vector<ScriptVariable> argumentValues;
 	ScriptVariable returnValue;
 	// check if argument is a method calls return value
 	for (auto& argument: arguments) {
 		if (argument.empty() == false &&
-			StringTools::startsWith(argument, "\"") == false &&
-			StringTools::endsWith(argument, "\"") == false &&
+			StringTools::viewStartsWith(argument, "\"") == false &&
+			StringTools::viewEndsWith(argument, "\"") == false &&
 			argument.find('(') != string::npos &&
 			argument.find(')') != string::npos) {
 			// method call, call method and put its return value into argument value
-			string subMethod;
-			vector<string> subArguments;
+			string_view subMethod;
+			vector<string_view> subArguments;
 			if (parseScriptStatement(argument, subMethod, subArguments) == true) {
 				auto argumentValue = executeScriptStatement(subMethod, subArguments, statement);
 				argumentValues.push_back(argumentValue);
 			} else {
-				Console::println("MiniScript::executeScriptStatement(): parseScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': '" + argument + "': parse error");
+				Console::println("MiniScript::executeScriptStatement(): parseScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': '" + string(argument) + "': parse error");
 				startErrorScript();
 			}
 		} else
 		// variable
-		if (StringTools::startsWith(argument, "$") == true) {
-			auto variableIt = scriptState.variables.find(argument);
+		if (StringTools::viewStartsWith(argument, "$") == true) {
+			auto variableIt = scriptState.variables.find(string(argument));
 			if (variableIt == scriptState.variables.end()) {
-				Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': " + method + "(" + argument + "): variable: '" + argument + "' does not exist");
+				Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': " + string(method) + "(" + string(argument) + "): variable: '" + string(argument) + "' does not exist");
 				argumentValues.push_back(ScriptVariable());
 			} else {
 				auto argumentValue = variableIt->second;
@@ -214,11 +276,11 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& meth
 		} else {
 			// literal
 			ScriptVariable argumentValue;
-			if (StringTools::startsWith(argument, "\"") == true &&
-				StringTools::endsWith(argument, "\"") == true) {
-				argumentValue.setValue(StringTools::substring(argument, 1, argument.size() - 1));
+			if (StringTools::viewStartsWith(argument, "\"") == true &&
+				StringTools::viewEndsWith(argument, "\"") == true) {
+				argumentValue.setValue(string(StringTools::viewSubstring(argument, 1, argument.size() - 1)));
 			} else {
-				argumentValue.setImplicitTypedValue(argument);
+				argumentValue.setImplicitTypedValueFromStringView(argument);
 			}
 			argumentValues.push_back(argumentValue);
 		}
@@ -226,9 +288,9 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& meth
 	if (VERBOSE == true) {
 		string argumentValuesString;
 		for (auto& argumentValue: argumentValues) argumentValuesString+= (argumentValuesString.empty() == false?",":"") + argumentValue.getAsString();
-		Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': " + method + "(" + argumentValuesString + ")");
+		Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': " + string(method) + "(" + argumentValuesString + ")");
 	}
-	auto scriptMethodsIt = scriptMethods.find(method);
+	auto scriptMethodsIt = scriptMethods.find(string(method));
 	if (scriptMethodsIt != scriptMethods.end()) {
 		auto scriptMethod = scriptMethodsIt->second;
 		auto argumentIdx = 0;
@@ -281,7 +343,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& meth
 						"'" + scriptFileName + "': " +
 						"@" + to_string(statement.line) +
 						": '" + statement.statement + "'" +
-						": method '" + method + "'" +
+						": method '" + string(method) + "'" +
 						": argument value @ " + to_string(argumentIdx) + ": expected " + ScriptVariable::getTypeAsString(argumentType.type) + ", but got: " + (argumentIdx < argumentValues.size()?argumentValues[argumentIdx].getAsString():"nothing"));
 				}
 				argumentIdx++;
@@ -292,7 +354,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& meth
 					"'" + scriptFileName + "': " +
 					"@" + to_string(statement.line) +
 					": '" + statement.statement + "'" +
-					": method '" + method + "'" +
+					": method '" + string(method) + "'" +
 					": too many arguments: expected: " + to_string(scriptMethod->getArgumentTypes().size()) + ", got " + to_string(argumentValues.size()));
 			}
 		}
@@ -303,12 +365,12 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string& meth
 				"'" + scriptFileName + "': " +
 				"@" + to_string(statement.line) +
 				": '" + statement.statement + "'" +
-				": method '" + method + "'" +
+				": method '" + string(method) + "'" +
 				": return value: expected " + ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType()) + ", but got: " + ScriptVariable::getTypeAsString(returnValue.getType()));
 		}
 		return returnValue;
 	} else {
-		Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': unknown method @" + to_string(statement.line) + ": '" + statement.statement + "': " + method + "(" + argumentsString + ")");
+		Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': unknown method @" + to_string(statement.line) + ": '" + statement.statement + "': " + string(method) + "(" + getArgumentsAsString(arguments) + ")");
 		startErrorScript();
 	}
 	return returnValue;
@@ -677,8 +739,8 @@ int MiniScript::determineScriptIdxToStart() {
 		} else {
 			auto conditionMet = true;
 			for (auto& condition: script.conditions) {
-				string method;
-				vector<string> arguments;
+				string_view method;
+				vector<string_view> arguments;
 				if (parseScriptStatement(condition, method, arguments) == true) {
 					auto returnValue = executeScriptStatement(
 						method,
@@ -739,8 +801,8 @@ int MiniScript::determineNamedScriptIdxToStart() {
 			} else {
 				auto conditionMet = true;
 				for (auto& condition: script.conditions) {
-					string method;
-					vector<string> arguments;
+					string_view method;
+					vector<string_view> arguments;
 					if (parseScriptStatement(condition, method, arguments) == true) {
 						auto returnValue = executeScriptStatement(
 							method,

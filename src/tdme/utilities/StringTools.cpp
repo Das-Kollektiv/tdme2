@@ -4,6 +4,7 @@
 #include <functional>
 #include <regex>
 #include <string>
+#include <string_view>
 
 #include <tdme/tdme.h>
 #include <tdme/utilities/StringTokenizer.h>
@@ -15,22 +16,13 @@ using std::regex_match;
 using std::regex_replace;
 using std::replace;
 using std::string;
+using std::string_view;
 using std::tolower;
 using std::toupper;
 using std::transform;
 
 using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
-
-const bool StringTools::startsWith(const string& src, const string& prefix) {
-    return src.find(prefix) == 0;
-}
-
-const bool StringTools::endsWith(const string& src, const string& suffix) {
-	return
-		src.size() >= suffix.size() &&
-		src.compare(src.size() - suffix.size(), suffix.size(), suffix) == 0;
-}
 
 const string StringTools::replace(const string& src, const char what, const char by, int beginIndex) {
 	string result = src;
@@ -46,30 +38,6 @@ const string StringTools::replace(const string& src, const string& what, const s
 		beginIndex += by.length();
 	}
 	return result;
-}
-
-int32_t StringTools::firstIndexOf(const string& src, char what) {
-	return src.find_first_of(what);
-}
-
-int32_t StringTools::firstIndexOf(const string& src, const string& what) {
-	return src.find_first_of(what);
-}
-
-int32_t StringTools::lastIndexOf(const string& src, char what) {
-	return src.find_last_of(what);
-}
-
-int32_t StringTools::lastIndexOf(const string& src, const string& what) {
-	return src.find_last_of(what);
-}
-
-const string StringTools::substring(const string& src, int32_t beginIndex) {
-	return src.substr(beginIndex);
-}
-
-const string StringTools::substring(const string& src, int32_t beginIndex, int32_t endIndex) {
-	return src.substr(beginIndex, endIndex - beginIndex);
 }
 
 bool StringTools::equalsIgnoreCase(const string& string1, const string& string2) {
@@ -88,7 +56,7 @@ const string StringTools::trim(const string& src) {
 			result.begin(),
 			result.end(),
 			[](int c) {
-				return !isspace(c);
+				return isspace(c) == 0;
 			}
 		)
 	);
@@ -97,12 +65,24 @@ const string StringTools::trim(const string& src) {
 			result.rbegin(),
 			result.rend(),
 			[](int c) {
-	        	return !isspace(c);
-	    	}
+				return isspace(c) == 0;
+			}
 		).base(),
 		result.end()
 	);
 	return result;
+}
+
+const string_view StringTools::viewTrim(const string_view& src) {
+	auto start = 0;
+	for (auto i = 0; i < src.size(); i++) {
+		if (isspace(src[i]) != 0) start++; else break;
+	}
+	auto end = 0;
+	for (int i = src.size() - 1; i >= 0; i--) {
+		if (isspace(src[i]) != 0) end++; else break;
+	}
+	return string_view(&src[start], src.size() - start - end);
 }
 
 const string StringTools::toLowerCase(const string& src) {

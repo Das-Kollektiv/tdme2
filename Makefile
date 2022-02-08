@@ -36,7 +36,7 @@ LDFLAG_EXT_LIB := $(EXT_NAME)
 SRCS_PLATFORM =
 
 #
-CPPVERSION = -std=gnu++11
+CPPVERSION = -std=gnu++17
 OFLAGS =
 EXTRAFLAGS = -DRAPIDJSON_HAS_STDSTRING
 INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/src/ -Iext/v-hacd/src/VHACD_Lib/inc/
@@ -583,7 +583,6 @@ SRCS = \
 	src/tdme/tools/editor/views/EditorView.cpp \
 	src/tdme/tools/installer/Installer.cpp \
 	src/tdme/utilities/Base64.cpp \
-	src/tdme/utilities/Character.cpp \
 	src/tdme/utilities/Console.cpp \
 	src/tdme/utilities/ExceptionBase.cpp \
 	src/tdme/utilities/Enum.cpp \
