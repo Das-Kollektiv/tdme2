@@ -33,11 +33,11 @@ public:
 	 * Reads FBX file
 	 * @param pathName path name
 	 * @param fileName file name
-	 * @throws model file IO exception
-	 * @throws file system exception
+	 * @throws tdme::engine::fileio::models::ModelFileIOException
+	 * @throws tdme::os::filesystem::FileSystemException
 	 * @return model instance
 	 */
-	static Model* read(const string& pathName, const string& fileName) throw (ModelFileIOException, FileSystemException);
+	static Model* read(const string& pathName, const string& fileName);
 
 private:
 	STATIC_DLL_IMPEXT static const Color4 BLENDER_AMBIENT_NONE;

@@ -63,7 +63,7 @@ using tdme::utilities::ModelTools;
 
 const Color4 FBXReader::BLENDER_AMBIENT_NONE(0.0f, 0.0f, 0.0f, 1.0f);
 
-Model* FBXReader::read(const string& pathName, const string& fileName) throw (ModelFileIOException, FileSystemException) {
+Model* FBXReader::read(const string& pathName, const string& fileName) {
 	// init fbx sdk
 	FbxManager* fbxManager = NULL;
 	FbxScene* fbxScene = NULL;
