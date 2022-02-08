@@ -7,6 +7,7 @@
 #include <string_view>
 
 #include <tdme/tdme.h>
+#include <tdme/utilities/Console.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::find_if;
@@ -18,6 +19,7 @@ using std::to_string;
 
 using tdme::utilities::Float;
 
+using tdme::utilities::Console;
 using tdme::utilities::StringTools;
 
 bool Float::is(const string& str) {
@@ -52,7 +54,11 @@ float Float::viewParse(const string_view& str) {
 	if (trimmedStr.empty() == true) return 0.0f;
 	if (trimmedStr == "-") return -0.0f;
 	// TODO: we need to do this this way as long there is no from_chars with float
-	char buf[str.size() + 1];
+	if (str.size() > 32) {
+		Console::println("Float::viewParse(): str.size() > 32, returning 0.0f");
+		return 0.0f;
+	}
+	char buf[33];
 	memcpy(buf, &trimmedStr[0], trimmedStr.size());
 	buf[str.size()] = 0;
 	return atof(buf);
