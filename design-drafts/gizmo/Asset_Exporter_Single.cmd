@@ -9,4 +9,4 @@ D:\Projekte\AScottishWarstory\tdme2\bin\tdme\tools\cli\importtmodel  D:\Projekte
 D:\Projekte\AScottishWarstory\tdme2\bin\tdme\tools\cli\importtmodel  D:\Projekte\AScottishWarstory\tdme2\resources\engine\models\gizmo_scale.tmodel D:\Projekte\AScottishWarstory\tdme2\resources\engine\models\gizmo_scale.glb
 D:\Projekte\AScottishWarstory\tdme2\bin\tdme\tools\cli\importtmodel  D:\Projekte\AScottishWarstory\tdme2\resources\engine\models\gizmo_rotate.tmodel D:\Projekte\AScottishWarstory\tdme2\resources\engine\models\gizmo_rotate.glb
 D:\Projekte\AScottishWarstory\tdme2\bin\tdme\tools\cli\importtmodel  D:\Projekte\AScottishWarstory\tdme2\resources\engine\models\gizmo_transscale.tmodel D:\Projekte\AScottishWarstory\tdme2\resources\engine\models\gizmo_transscale.glb
-rem del D:\Projekte\AScottishWarstory\tdme2\resources\engine\models\gizmo*.glb
+del D:\Projekte\AScottishWarstory\tdme2\resources\engine\models\gizmo*.glb
