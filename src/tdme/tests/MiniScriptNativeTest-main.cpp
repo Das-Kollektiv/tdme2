@@ -6,12 +6,12 @@
 using tdme::utilities::Console;
 
 int main(int argc, char *argv[]) {
-	Console::println("MiniScriptTest");
+	Console::println("MiniScriptNativeTest");
 	auto script = new MiniScriptTest();
 	script->loadScript("resources/tests/scripts", "test.tscript");
 	Console::println(script->getInformation());
 	while (script->isRunning() == true) {
-		script->execute();
+		script->executeNative();
 	}
 	delete script;
 	return 0;

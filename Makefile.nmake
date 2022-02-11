@@ -396,6 +396,7 @@ SRCS = \
 	src/tdme/tests/FlowMapTest2.cpp \
 	src/tdme/tests/FoliageTest.cpp \
 	src/tdme/tests/MathOperatorTest.cpp \
+	src/tdme/tests/MiniScriptTest.cpp \
 	src/tdme/tests/PathFindingTest.cpp \
 	src/tdme/tests/PivotTest.cpp \
 	src/tdme/tests/PhysicsTest1.cpp \
@@ -724,6 +725,7 @@ all: \
 	FoliageTest \
 	MathOperatorTest \
 	MiniScriptTest \
+	MiniScriptNativeTest \
 	PathFindingTest \
 	PhysicsTest1 PhysicsTest2 PhysicsTest3 PhysicsTest4 \
 	RayTracingTest \
@@ -926,6 +928,9 @@ MathOperatorTest:
 
 MiniScriptTest:
 	cl /FeMiniScriptTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/MiniScriptTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
+MiniScriptNativeTest:
+	cl /FeMiniScriptNativeTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/MiniScriptNativeTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 PathFindingTest:
 	cl /FePathFindingTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PathFindingTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)

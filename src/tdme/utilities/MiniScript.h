@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <array>
 #include <stack>
 #include <string>
@@ -14,8 +15,10 @@
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/Time.h>
 
 using std::array;
+using std::remove;
 using std::stack;
 using std::string;
 using std::string_view;
@@ -29,6 +32,7 @@ using tdme::utilities::Console;
 using tdme::utilities::Float;
 using tdme::utilities::Integer;
 using tdme::utilities::StringTools;
+using tdme::utilities::Time;
 
 /**
  * Miniscript
@@ -658,8 +662,15 @@ public:
 		ScriptVariableType returnValueType;
 	};
 
-private:
-	static constexpr bool VERBOSE { false };
+protected:
+	struct Script {
+		enum ConditionType { CONDITIONTYPE_ON, CONDITIONTYPE_ONENABLED };
+		ConditionType conditionType;
+		int line;
+		vector<string> conditions;
+		string name;
+		vector<ScriptStatement> statements;
+	};
 
 	struct ScriptState {
 		enum EndType { ENDTYPE_FOR, ENDTYPE_IF };
@@ -687,21 +698,30 @@ private:
 		int64_t timeEnabledConditionsCheckLast { -1LL };
 	};
 
-	struct Script {
-		enum ConditionType { CONDITIONTYPE_ON, CONDITIONTYPE_ONENABLED };
-		ConditionType conditionType;
-		int line;
-		vector<string> conditions;
-		string name;
-		vector<ScriptStatement> statements;
-	};
+	//
+	vector<Script> scripts;
+	ScriptState scriptState;
+
+	/**
+	 * Goto statement from given statements goto statement
+	 * @param statement statement
+	 */
+	void gotoStatementGoto(const ScriptStatement& statement) {
+		scriptState.statementIdx = statement.gotoStatementIdx;
+	}
+
+	/**
+	 * Execute state machine
+	 */
+	void executeStateMachine();
+
+private:
+	static constexpr bool VERBOSE { false };
 
 	//
 	STATIC_DLL_IMPEXT static string OPERATOR_CHARS;
 
 	//
-	ScriptState scriptState;
-	vector<Script> scripts;
 	unordered_map<string, ScriptMethod*> scriptMethods;
 	unordered_map<int, ScriptStateMachineState*> scriptStateMachineStates;
 	unordered_map<uint8_t, ScriptMethod*> scriptOperators;
@@ -818,7 +838,7 @@ private:
 	 * @param argumentIdx argument index
 	 * @param parentArgumentIdx parent argument index
 	 */
-	bool transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, int depth = 0, int argumentIdx = -1, int parentArgumentIdx = -1);
+	bool transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, int depth = 0, int argumentIdx = -1, int parentArgumentIdx = -1);
 public:
 	/**
 	 * Default constructor
@@ -1052,6 +1072,11 @@ public:
 	void execute();
 
 	/**
+	 * Execute
+	 */
+	void executeNative();
+
+	/**
 	 * @return is running
 	 */
 	inline bool isRunning() {
@@ -1078,5 +1103,12 @@ public:
 	 * @return success
 	 */
 	bool transpile(string& generatedCode, const string& condition, const unordered_map<string, vector<string>>& methodCodeMap);
+
+	/**
+	 * Nothing native entry
+	 * 	TODO: this is WIP and not final
+	 * 	@param miniScriptGotoStatementIdx miniScript goto statement idx
+	 */
+	virtual void nothing(int miniScriptGotoStatementIdx);
 
 };

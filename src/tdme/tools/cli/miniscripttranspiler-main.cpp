@@ -152,7 +152,7 @@ void gatherMethodCode(const vector<string>& miniScriptExtensionsCode, const stri
 }
 
 void processFile(const string& scriptFileName, const string& miniscriptExtensionsFileName) {
-	Console::println("Processing file: " + scriptFileName);
+	Console::println("Processing script: " + scriptFileName);
 
 	//
 	unordered_map<string, vector<string>> methodCodeMap;
@@ -193,11 +193,45 @@ void processFile(const string& scriptFileName, const string& miniscriptExtension
 	script->transpile(generatedCode, "nothing", methodCodeMap);
 
 	//
-	FileSystem::getInstance()->setContentFromString(
-		".",
-		Tools::removeFileEnding(miniscriptExtensionsFileName) + ".ms.inc.cpp",
-		generatedCode
-	);
+	vector<string> miniScriptClass;
+	vector<string> miniScriptClassNew;
+	FileSystem::getInstance()->getContentAsStringArray(Tools::getPathName(miniscriptExtensionsFileName), Tools::getFileName(miniscriptExtensionsFileName), miniScriptClass);
+	auto reject = false;
+	auto injectedGeneratedCode = false;
+	for (auto i = 0; i < miniScriptClass.size(); i++) {
+		auto& line = miniScriptClass[i];
+		auto trimmedLine = StringTools::trim(line);
+		if (StringTools::startsWith(trimmedLine, "//") == true) {
+			if (reject == false) miniScriptClassNew.push_back(line);
+			continue;
+		}
+		if (trimmedLine == "/*__MINISCRIPT_TRANSPILED_NOTHING_START__*/") {
+			reject = true;
+			miniScriptClassNew.push_back(line);
+		} else
+		if (trimmedLine == "/*__MINISCRIPT_TRANSPILED_NOTHING_END__*/") {
+			reject = false;
+			injectedGeneratedCode = true;
+			miniScriptClassNew.push_back(generatedCode);
+			miniScriptClassNew.push_back(line);
+		} else {
+			if (reject == false) miniScriptClassNew.push_back(line);
+		}
+	}
+
+	//
+	if (injectedGeneratedCode == false) {
+		Console::println(scriptFileName + ": Could not inject generated C++ code, are you missing the /*__MINISCRIPT_TRANSPILED_NOTHING_START__*/ and /*__MINISCRIPT_TRANSPILED_NOTHING_END__*/ markers in file " + miniscriptExtensionsFileName + "?");
+	} else {
+		//
+		FileSystem::getInstance()->setContentFromStringArray(
+			Tools::getPathName(miniscriptExtensionsFileName),
+			Tools::getFileName(miniscriptExtensionsFileName),
+			miniScriptClassNew
+		);
+		//
+		Console::println(scriptFileName + ": Injected generated C++ code in file " + miniscriptExtensionsFileName + ". Dont forget to rebuild your sources.");
+	}
 }
 
 int main(int argc, char** argv)
