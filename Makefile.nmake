@@ -744,6 +744,8 @@ all: \
 	importtmodel \
 	fixdoxygen \
 	msclib2dll \
+	makefilegenerator \
+	miniscripttranspiler \
 	optimizemodel \
 	scenefixmodelszup2yup \
 	sortincludes \
@@ -996,6 +998,9 @@ msclib2dll:
 
 makefilegenerator:
 	cl /Femakefilegenerator $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/makefilegenerator-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
+miniscripttranspiler:
+	cl /Feminiscripttranspiler $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/miniscripttranspiler-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 optimizemodel:
 	cl /Feoptimizemodel $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/optimizemodel-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)

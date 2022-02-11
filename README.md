@@ -267,6 +267,7 @@
 - documentation
 
 # 5. What is WIP or planned
+- MiniScript: MiniScript -> C++ transpiler
 - PBR: generate IBL cube maps from scene
 - Shader parameters, the system is implemented and working, now lets connect tools and shaders
 - Reflections via environment mapping(reflection intensity maps feature is missing for specular materials)
@@ -274,7 +275,6 @@
 - GUI effects via XML definitions
 - Port WarStorys "Game Foundation" to TDME2, which organizes game logics, enables communcation between them and enables to do network IO and such
 - MiniScript: more engine bindings
-- MiniScript: MiniScript -> C++ transpiler
 - Add nmake support to makefile generator for TDME2 based projects
 - Editor: complete Undo/Redo and Copy/Cut/Paste/Delete
 - Editor: Code editing with code completion, also visual code and shader editing is planned!

@@ -743,11 +743,11 @@ private:
 	/**
 	 * Execute a script statement
 	 * @param method method 
-	 * @param argument argument
+	 * @param arguments arguments
 	 * @param statement statement
-	 * @return pointer to return value
+	 * @return return value as script variablle
 	 */
-	ScriptVariable executeScriptStatement(const string_view& method, const vector<string_view>& argument, const ScriptStatement& statement);
+	ScriptVariable executeScriptStatement(const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement);
 
 	/**
 	 * Determine script index to start
@@ -806,6 +806,19 @@ private:
 	 */
 	const string doStatementPreProcessing(const string& statement);
 
+	/**
+	 * Transpile script statement
+	 * @param generatedCode generated code
+	 * @param method method
+	 * @param arguments arguments
+	 * @param statement script statement
+	 * @param statementIdx statement index
+	 * @param methodCodeMap method code map
+	 * @param depth depth
+	 * @param argumentIdx argument index
+	 * @param parentArgumentIdx parent argument index
+	 */
+	bool transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, int depth = 0, int argumentIdx = -1, int parentArgumentIdx = -1);
 public:
 	/**
 	 * Default constructor
@@ -1056,5 +1069,14 @@ public:
 	 * Get miniscript instance information
 	 */
 	const string getInformation();
+
+	/**
+	 * Transpile a script statement
+	 * @param generatedCode generated code
+	 * @param condition condition
+	 * @param methodCodeMap method code map
+	 * @return success
+	 */
+	bool transpile(string& generatedCode, const string& condition, const unordered_map<string, vector<string>>& methodCodeMap);
 
 };
