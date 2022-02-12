@@ -201,8 +201,8 @@
 	  - communication between script instances is possible by sending signals with arguments
 	  - complex logic should still be implemented by a game developer in C++ by extending MiniScript
 	  - game designers can use MiniScript + those methods to implement high level game logic
-	- can be "easily" transpiled to C++ later
 	- MiniScript methods/states know about them self, so a whole documentation for MiniScript usage can be generated later
+	- can be transpiled to C++ (this is WIP, but already working)
 - Networking module, which consists of
     - UDP server
         - n:m threading model with non blocked IO via kernel event mechanismns(epoll, kqueue or select)
