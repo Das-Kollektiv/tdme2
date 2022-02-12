@@ -923,6 +923,18 @@ public:
 	}
 
 	/**
+	 * Check if arguments contain argument with given type
+	 * @param arguments arguments
+	 * @param type type
+	 * @return has type
+	 */
+	template<std::size_t SIZE>
+	inline static bool hasType(const array<ScriptVariable, SIZE>& arguments, ScriptVariableType type) {
+		for (auto& argument: arguments) if (argument.getType() == type) return true;
+		return false;
+	}
+
+	/**
 	 * Get boolean value from given variable
 	 * @param arguments arguments
 	 * @param idx argument index
@@ -931,6 +943,21 @@ public:
 	 * @return success
 	 */
 	inline static bool getBooleanValue(const vector<ScriptVariable>& arguments, int idx, bool& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		return argument.getBooleanValue(value, optional);
+	}
+
+	/**
+	 * Get boolean value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optionalfalse
+	 * @return success
+	 */
+	template<std::size_t SIZE>
+	inline static bool getBooleanValue(const array<ScriptVariable, SIZE>& arguments, int idx, bool& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		auto& argument = arguments[idx];
 		return argument.getBooleanValue(value, optional);
@@ -951,6 +978,21 @@ public:
 	}
 
 	/**
+	 * Get integer value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optional
+	 * @return success
+	 */
+	template<std::size_t SIZE>
+	inline static bool getIntegerValue(const array<ScriptVariable, SIZE>& arguments, int idx, int64_t& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		return argument.getIntegerValue(value, optional);
+	}
+
+	/**
 	 * Get float value from given variable
 	 * @param arguments arguments
 	 * @param idx argument index
@@ -959,6 +1001,21 @@ public:
 	 * @return success
 	 */
 	inline static bool getFloatValue(const vector<ScriptVariable>& arguments, int idx, float& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		return argument.getFloatValue(value, optional);
+	}
+
+	/**
+	 * Get float value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optional
+	 * @return success
+	 */
+	template<std::size_t SIZE>
+	inline static bool getFloatValue(const array<ScriptVariable, SIZE>& arguments, int idx, float& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		auto& argument = arguments[idx];
 		return argument.getFloatValue(value, optional);
@@ -979,6 +1036,21 @@ public:
 	}
 
 	/**
+	 * Get string value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optional
+	 * @return success
+	 */
+	template<std::size_t SIZE>
+	inline static bool getStringValue(const array<ScriptVariable, SIZE>& arguments, int idx, string& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		return argument.getStringValue(value, optional);
+	}
+
+	/**
 	 * Get vector3 value from given variable
 	 * @param arguments arguments
 	 * @param idx argument index
@@ -991,6 +1063,22 @@ public:
 		auto& argument = arguments[idx];
 		return argument.getVector3Value(value, optional);
 	}
+
+	/**
+	 * Get vector3 value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optional
+	 * @return success
+	 */
+	template<std::size_t SIZE>
+	inline static bool getVector3Value(const array<ScriptVariable, SIZE>& arguments, int idx, Vector3& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		return argument.getVector3Value(value, optional);
+	}
+
 	/**
 	 * Get transformations value from given variable
 	 * @param arguments arguments
@@ -1000,6 +1088,21 @@ public:
 	 * @return success
 	 */
 	inline static bool getTransformationsValue(const vector<ScriptVariable>& arguments, int idx, Transformations& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		return argument.getTransformationsValue(value, optional);
+	}
+
+	/**
+	 * Get transformations value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optional
+	 * @return success
+	 */
+	template<std::size_t SIZE>
+	inline static bool getTransformationsValue(const array<ScriptVariable, SIZE>& arguments, int idx, Transformations& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		auto& argument = arguments[idx];
 		return argument.getTransformationsValue(value, optional);

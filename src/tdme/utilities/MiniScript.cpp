@@ -3461,8 +3461,8 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 	} else {
 		argumentValuesCode.push_back("ScriptVariable returnValue;");
 	}
-	argumentValuesCode.push_back("vector<ScriptVariable> argumentValues;");
-	argumentValuesCode.push_back("vector<ScriptVariable>& argumentValuesD" + to_string(depth) + (argumentIdx != -1?"AIDX" + to_string(argumentIdx):"") + " = argumentValues;");
+	argumentValuesCode.push_back("array<ScriptVariable, " + to_string(arguments.size()) + "> argumentValues;");
+	argumentValuesCode.push_back("array<ScriptVariable, " + to_string(arguments.size()) + ">& argumentValuesD" + to_string(depth) + (argumentIdx != -1?"AIDX" + to_string(argumentIdx):"") + " = argumentValues;");
 
 	// argument values header
 	generatedCode+= minIndentString + depthIndentString + "{" + "\n";
@@ -3492,19 +3492,19 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 				StringTools::viewEndsWith(argument, "\"") == false &&
 				argument.find('(') != string::npos &&
 				argument.find(')') != string::npos) {
-				argumentValuesCode.push_back("argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of " + string(argument));
+				argumentValuesCode.push_back("// argumentValues[" + to_string(subArgumentIdx) + "] --> returnValue of " + string(argument));
 			} else
 			// variable
 			if (StringTools::viewStartsWith(argument, "$") == true) {
 				// method call, call method and put its return value into argument value
 				string generatedStatement = "getVariable(\"" + string(argument) + "\")";
-				argumentValuesCode.push_back("argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of " + string(generatedStatement));
+				argumentValuesCode.push_back("// argumentValues[" + to_string(subArgumentIdx) + "] --> returnValue of " + string(generatedStatement));
 			} else {
 				// literal
 				ScriptVariable argumentValue;
 				if (StringTools::viewStartsWith(argument, "\"") == true &&
 					StringTools::viewEndsWith(argument, "\"") == true) {
-					argumentValuesCode.push_back("argumentValues.push_back(MiniScript::ScriptVariable(string(\"" + string(StringTools::viewSubstring(argument, 1, argument.size() - 1)) + "\")));");
+					argumentValuesCode.push_back("argumentValues[" + to_string(subArgumentIdx) + "].setValue(string(\"" + string(StringTools::viewSubstring(argument, 1, argument.size() - 1)) + "\"));");
 				} else {
 					MiniScript::ScriptVariable argumentValue;
 					argumentValue.setImplicitTypedValueFromStringView(argument);
@@ -3515,28 +3515,28 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 							{
 								bool value;
 								argumentValue.getBooleanValue(value);
-								argumentValuesCode.push_back(string() + "argumentValues.push_back(MiniScript::ScriptVariable(" + (value == true?"true":"false") + "));");
+								argumentValuesCode.push_back(string() + "argumentValues[" + to_string(subArgumentIdx) + "].setValue(" + (value == true?"true":"false") + ");");
 							}
 							break;
 						case TYPE_INTEGER:
 							{
 								int64_t value;
 								argumentValue.getIntegerValue(value);
-								argumentValuesCode.push_back("argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(" + to_string(value) + ")));");
+								argumentValuesCode.push_back("argumentValues[" + to_string(subArgumentIdx) + "].setValue(static_cast<int64_t>(" + to_string(value) + "));");
 							}
 							break;
 						case TYPE_FLOAT:
 							{
 								float value;
 								argumentValue.getFloatValue(value);
-								argumentValuesCode.push_back("argumentValues.push_back(MiniScript::ScriptVariable(" + to_string(value) + "f));");
+								argumentValuesCode.push_back("argumentValues[" + to_string(subArgumentIdx) + "].setValue(" + to_string(value) + "f);");
 							}
 							break;
 						case TYPE_STRING:
 							{
 								string value;
 								argumentValue.getStringValue(value);
-								argumentValuesCode.push_back("argumentValues.push_back(MiniScript::ScriptVariable(string(\"" + value + "\")));");
+								argumentValuesCode.push_back("argumentValues[" + to_string(subArgumentIdx) + "].setValue(string(\"" + value + "\"));");
 							}
 							break;
 						default:

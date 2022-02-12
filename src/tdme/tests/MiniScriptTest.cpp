@@ -43,9 +43,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("---------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("---------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -67,9 +67,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("Nothing")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("Nothing"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -91,9 +91,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("----------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("----------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -115,8 +115,8 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
+		array<ScriptVariable, 0> argumentValues;
+		array<ScriptVariable, 0>& argumentValuesD0 = argumentValues;
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -138,9 +138,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("-----------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("-----------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -162,9 +162,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("Check bool operations")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("Check bool operations"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -186,9 +186,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("-----------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("-----------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -210,34 +210,34 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("MiniScript will do the job: and(or(equals(MiniScript will do the job, MiniScript will not do the job), equals(it will, it will)), true): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of and(or(equals(MiniScript will do the job, MiniScript will not do the job), equals(it will, it will)), true)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("MiniScript will do the job: and(or(equals(MiniScript will do the job, MiniScript will not do the job), equals(it will, it will)), true): "));
+		// argumentValues[1] --> returnValue of and(or(equals(MiniScript will do the job, MiniScript will not do the job), equals(it will, it will)), true)
 		// depth = 1 / argument index = 1: and(or(equals(MiniScript will do the job, MiniScript will not do the job), equals(it will, it will)), true)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of or(equals(MiniScript will do the job, MiniScript will not do the job), equals(it will, it will))
-			argumentValues.push_back(MiniScript::ScriptVariable(true));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of or(equals(MiniScript will do the job, MiniScript will not do the job), equals(it will, it will))
+			argumentValues[1].setValue(true);
 			// depth = 2 / argument index = 0: or(equals(MiniScript will do the job, MiniScript will not do the job), equals(it will, it will))
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of equals(MiniScript will do the job, MiniScript will not do the job)
-				argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of equals(it will, it will)
+				array<ScriptVariable, 2> argumentValues;
+				array<ScriptVariable, 2>& argumentValuesD2AIDX0 = argumentValues;
+				// argumentValues[0] --> returnValue of equals(MiniScript will do the job, MiniScript will not do the job)
+				// argumentValues[1] --> returnValue of equals(it will, it will)
 				// depth = 3 / argument index = 0: equals(MiniScript will do the job, MiniScript will not do the job)
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX0[0];
-					vector<ScriptVariable> argumentValues;
-					vector<ScriptVariable>& argumentValuesD3AIDX0 = argumentValues;
-					argumentValues.push_back(MiniScript::ScriptVariable(string("MiniScript will do the job")));
-					argumentValues.push_back(MiniScript::ScriptVariable(string("MiniScript will not do the job")));
+					array<ScriptVariable, 2> argumentValues;
+					array<ScriptVariable, 2>& argumentValuesD3AIDX0 = argumentValues;
+					argumentValues[0].setValue(string("MiniScript will do the job"));
+					argumentValues[1].setValue(string("MiniScript will not do the job"));
 					// method code: equals
 					returnValue.setValue(true);
 					for (auto i = 1; i < argumentValues.size(); i++) {
@@ -251,10 +251,10 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX0[1];
-					vector<ScriptVariable> argumentValues;
-					vector<ScriptVariable>& argumentValuesD3AIDX1 = argumentValues;
-					argumentValues.push_back(MiniScript::ScriptVariable(string("it will")));
-					argumentValues.push_back(MiniScript::ScriptVariable(string("it will")));
+					array<ScriptVariable, 2> argumentValues;
+					array<ScriptVariable, 2>& argumentValuesD3AIDX1 = argumentValues;
+					argumentValues[0].setValue(string("it will"));
+					argumentValues[1].setValue(string("it will"));
 					// method code: equals
 					returnValue.setValue(true);
 					for (auto i = 1; i < argumentValues.size(); i++) {
@@ -313,9 +313,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("-----------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("-----------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -337,9 +337,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("Check int computation")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("Check int computation"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -361,9 +361,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("-----------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("-----------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -385,27 +385,27 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("sub(add(1, 2, 3), 1)): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of sub(add(1, 2, 3), 1)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("sub(add(1, 2, 3), 1)): "));
+		// argumentValues[1] --> returnValue of sub(add(1, 2, 3), 1)
 		// depth = 1 / argument index = 1: sub(add(1, 2, 3), 1)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of add(1, 2, 3)
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(1)));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of add(1, 2, 3)
+			argumentValues[1].setValue(static_cast<int64_t>(1));
 			// depth = 2 / argument index = 0: add(1, 2, 3)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(1)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(2)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(3)));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(1));
+				argumentValues[1].setValue(static_cast<int64_t>(2));
+				argumentValues[2].setValue(static_cast<int64_t>(3));
 				// method code: add
 				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_STRING) == true) {
 					string result;
@@ -587,18 +587,18 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("div(20, 2): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of div(20, 2)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("div(20, 2): "));
+		// argumentValues[1] --> returnValue of div(20, 2)
 		// depth = 1 / argument index = 1: div(20, 2)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(20)));
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(2)));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(static_cast<int64_t>(20));
+			argumentValues[1].setValue(static_cast<int64_t>(2));
 			// method code: div
 			if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
 				auto valid = true;
@@ -722,18 +722,18 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("mul(11, 10): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of mul(11, 10)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("mul(11, 10): "));
+		// argumentValues[1] --> returnValue of mul(11, 10)
 		// depth = 1 / argument index = 1: mul(11, 10)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(11)));
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(10)));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(static_cast<int64_t>(11));
+			argumentValues[1].setValue(static_cast<int64_t>(10));
 			// method code: mul
 			if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
 				auto valid = true;
@@ -857,18 +857,18 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("greater(2, 1): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of greater(2, 1)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("greater(2, 1): "));
+		// argumentValues[1] --> returnValue of greater(2, 1)
 		// depth = 1 / argument index = 1: greater(2, 1)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(2)));
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(1)));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(static_cast<int64_t>(2));
+			argumentValues[1].setValue(static_cast<int64_t>(1));
 			// method code: greater
 			float floatValueA;
 			float floatValueB;
@@ -901,18 +901,18 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("lesser(2, 1): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of lesser(2, 1)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("lesser(2, 1): "));
+		// argumentValues[1] --> returnValue of lesser(2, 1)
 		// depth = 1 / argument index = 1: lesser(2, 1)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(2)));
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(1)));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(static_cast<int64_t>(2));
+			argumentValues[1].setValue(static_cast<int64_t>(1));
 			// method code: lesser
 			float floatValueA;
 			float floatValueB;
@@ -945,9 +945,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("---------------------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("---------------------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -969,9 +969,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("Check int computation (Operators)")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("Check int computation (Operators)"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -993,9 +993,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("---------------------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("---------------------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -1017,34 +1017,34 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("1 + 2 + 3 - 1: ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of sub(add(1,add(2, 3)), 1)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("1 + 2 + 3 - 1: "));
+		// argumentValues[1] --> returnValue of sub(add(1,add(2, 3)), 1)
 		// depth = 1 / argument index = 1: sub(add(1,add(2, 3)), 1)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of add(1,add(2, 3))
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(1)));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of add(1,add(2, 3))
+			argumentValues[1].setValue(static_cast<int64_t>(1));
 			// depth = 2 / argument index = 0: add(1, add(2, 3))
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(1)));
-				argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of add(2, 3)
+				array<ScriptVariable, 2> argumentValues;
+				array<ScriptVariable, 2>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(1));
+				// argumentValues[1] --> returnValue of add(2, 3)
 				// depth = 3 / argument index = 1: add(2, 3)
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX0[1];
-					vector<ScriptVariable> argumentValues;
-					vector<ScriptVariable>& argumentValuesD3AIDX1 = argumentValues;
-					argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(2)));
-					argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(3)));
+					array<ScriptVariable, 2> argumentValues;
+					array<ScriptVariable, 2>& argumentValuesD3AIDX1 = argumentValues;
+					argumentValues[0].setValue(static_cast<int64_t>(2));
+					argumentValues[1].setValue(static_cast<int64_t>(3));
 					// method code: add
 					if (MiniScript::hasType(argumentValues, MiniScript::TYPE_STRING) == true) {
 						string result;
@@ -1289,18 +1289,18 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("20 / 2: ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of div(20, 2)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("20 / 2: "));
+		// argumentValues[1] --> returnValue of div(20, 2)
 		// depth = 1 / argument index = 1: div(20, 2)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(20)));
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(2)));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(static_cast<int64_t>(20));
+			argumentValues[1].setValue(static_cast<int64_t>(2));
 			// method code: div
 			if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
 				auto valid = true;
@@ -1424,18 +1424,18 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("11 * 10: ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of mul(11, 10)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("11 * 10: "));
+		// argumentValues[1] --> returnValue of mul(11, 10)
 		// depth = 1 / argument index = 1: mul(11, 10)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(11)));
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(10)));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(static_cast<int64_t>(11));
+			argumentValues[1].setValue(static_cast<int64_t>(10));
 			// method code: mul
 			if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
 				auto valid = true;
@@ -1559,18 +1559,18 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("2 > 1: ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of greater(2, 1)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("2 > 1: "));
+		// argumentValues[1] --> returnValue of greater(2, 1)
 		// depth = 1 / argument index = 1: greater(2, 1)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(2)));
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(1)));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(static_cast<int64_t>(2));
+			argumentValues[1].setValue(static_cast<int64_t>(1));
 			// method code: greater
 			float floatValueA;
 			float floatValueB;
@@ -1603,18 +1603,18 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("2 < 1: ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of lesser(2, 1)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("2 < 1: "));
+		// argumentValues[1] --> returnValue of lesser(2, 1)
 		// depth = 1 / argument index = 1: lesser(2, 1)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(2)));
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(1)));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(static_cast<int64_t>(2));
+			argumentValues[1].setValue(static_cast<int64_t>(1));
 			// method code: lesser
 			float floatValueA;
 			float floatValueB;
@@ -1647,9 +1647,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("-------------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("-------------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -1671,9 +1671,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("Check float computation")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("Check float computation"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -1695,9 +1695,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("-------------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("-------------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -1719,27 +1719,27 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("sub(add(1.1, 2.2, 3.3), 1.2)): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of sub(add(1.1, 2.2, 3.3), 1.2)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("sub(add(1.1, 2.2, 3.3), 1.2)): "));
+		// argumentValues[1] --> returnValue of sub(add(1.1, 2.2, 3.3), 1.2)
 		// depth = 1 / argument index = 1: sub(add(1.1, 2.2, 3.3), 1.2)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of add(1.1, 2.2, 3.3)
-			argumentValues.push_back(MiniScript::ScriptVariable(1.200000f));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of add(1.1, 2.2, 3.3)
+			argumentValues[1].setValue(1.200000f);
 			// depth = 2 / argument index = 0: add(1.1, 2.2, 3.3)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(1.100000f));
-				argumentValues.push_back(MiniScript::ScriptVariable(2.200000f));
-				argumentValues.push_back(MiniScript::ScriptVariable(3.300000f));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(1.100000f);
+				argumentValues[1].setValue(2.200000f);
+				argumentValues[2].setValue(3.300000f);
 				// method code: add
 				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_STRING) == true) {
 					string result;
@@ -1921,18 +1921,18 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("div(20, 1.5): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of div(20, 1.5)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("div(20, 1.5): "));
+		// argumentValues[1] --> returnValue of div(20, 1.5)
 		// depth = 1 / argument index = 1: div(20, 1.5)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(20)));
-			argumentValues.push_back(MiniScript::ScriptVariable(1.500000f));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(static_cast<int64_t>(20));
+			argumentValues[1].setValue(1.500000f);
 			// method code: div
 			if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
 				auto valid = true;
@@ -2056,18 +2056,18 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("mul(11.5, 10.5): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of mul(11.5, 10.5)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("mul(11.5, 10.5): "));
+		// argumentValues[1] --> returnValue of mul(11.5, 10.5)
 		// depth = 1 / argument index = 1: mul(11.5, 10.5)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(11.500000f));
-			argumentValues.push_back(MiniScript::ScriptVariable(10.500000f));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(11.500000f);
+			argumentValues[1].setValue(10.500000f);
 			// method code: mul
 			if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
 				auto valid = true;
@@ -2191,18 +2191,18 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("greater(2.2, 1.3): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of greater(2.2, 1.3)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("greater(2.2, 1.3): "));
+		// argumentValues[1] --> returnValue of greater(2.2, 1.3)
 		// depth = 1 / argument index = 1: greater(2.2, 1.3)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(2.200000f));
-			argumentValues.push_back(MiniScript::ScriptVariable(1.300000f));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(2.200000f);
+			argumentValues[1].setValue(1.300000f);
 			// method code: greater
 			float floatValueA;
 			float floatValueB;
@@ -2235,18 +2235,18 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("lesser(2.5, 1.2): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of lesser(2.5, 1.2)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("lesser(2.5, 1.2): "));
+		// argumentValues[1] --> returnValue of lesser(2.5, 1.2)
 		// depth = 1 / argument index = 1: lesser(2.5, 1.2)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(2.500000f));
-			argumentValues.push_back(MiniScript::ScriptVariable(1.200000f));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(2.500000f);
+			argumentValues[1].setValue(1.200000f);
 			// method code: lesser
 			float floatValueA;
 			float floatValueB;
@@ -2279,9 +2279,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("-----------------------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("-----------------------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -2303,9 +2303,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("Check float computation (Operators)")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("Check float computation (Operators)"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -2327,9 +2327,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("-----------------------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("-----------------------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -2351,34 +2351,34 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("(1.1 + 2.2 + 3.3) - 1.2: ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of sub(add(1.1,add(2.2, 3.3)), 1.2)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("(1.1 + 2.2 + 3.3) - 1.2: "));
+		// argumentValues[1] --> returnValue of sub(add(1.1,add(2.2, 3.3)), 1.2)
 		// depth = 1 / argument index = 1: sub(add(1.1,add(2.2, 3.3)), 1.2)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of add(1.1,add(2.2, 3.3))
-			argumentValues.push_back(MiniScript::ScriptVariable(1.200000f));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of add(1.1,add(2.2, 3.3))
+			argumentValues[1].setValue(1.200000f);
 			// depth = 2 / argument index = 0: add(1.1, add(2.2, 3.3))
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(1.100000f));
-				argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of add(2.2, 3.3)
+				array<ScriptVariable, 2> argumentValues;
+				array<ScriptVariable, 2>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(1.100000f);
+				// argumentValues[1] --> returnValue of add(2.2, 3.3)
 				// depth = 3 / argument index = 1: add(2.2, 3.3)
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX0[1];
-					vector<ScriptVariable> argumentValues;
-					vector<ScriptVariable>& argumentValuesD3AIDX1 = argumentValues;
-					argumentValues.push_back(MiniScript::ScriptVariable(2.200000f));
-					argumentValues.push_back(MiniScript::ScriptVariable(3.300000f));
+					array<ScriptVariable, 2> argumentValues;
+					array<ScriptVariable, 2>& argumentValuesD3AIDX1 = argumentValues;
+					argumentValues[0].setValue(2.200000f);
+					argumentValues[1].setValue(3.300000f);
 					// method code: add
 					if (MiniScript::hasType(argumentValues, MiniScript::TYPE_STRING) == true) {
 						string result;
@@ -2623,18 +2623,18 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("20 / 1.5: ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of div(20, 1.5)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("20 / 1.5: "));
+		// argumentValues[1] --> returnValue of div(20, 1.5)
 		// depth = 1 / argument index = 1: div(20, 1.5)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(20)));
-			argumentValues.push_back(MiniScript::ScriptVariable(1.500000f));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(static_cast<int64_t>(20));
+			argumentValues[1].setValue(1.500000f);
 			// method code: div
 			if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
 				auto valid = true;
@@ -2758,18 +2758,18 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("11.5 * 10.5: ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of mul(11.5, 10.5)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("11.5 * 10.5: "));
+		// argumentValues[1] --> returnValue of mul(11.5, 10.5)
 		// depth = 1 / argument index = 1: mul(11.5, 10.5)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(11.500000f));
-			argumentValues.push_back(MiniScript::ScriptVariable(10.500000f));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(11.500000f);
+			argumentValues[1].setValue(10.500000f);
 			// method code: mul
 			if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
 				auto valid = true;
@@ -2893,18 +2893,18 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("2.2 > 1.3: ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of greater(2.2, 1.3)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("2.2 > 1.3: "));
+		// argumentValues[1] --> returnValue of greater(2.2, 1.3)
 		// depth = 1 / argument index = 1: greater(2.2, 1.3)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(2.200000f));
-			argumentValues.push_back(MiniScript::ScriptVariable(1.300000f));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(2.200000f);
+			argumentValues[1].setValue(1.300000f);
 			// method code: greater
 			float floatValueA;
 			float floatValueB;
@@ -2937,18 +2937,18 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("2.5 < 1.2: ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of lesser(2.5, 1.2)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("2.5 < 1.2: "));
+		// argumentValues[1] --> returnValue of lesser(2.5, 1.2)
 		// depth = 1 / argument index = 1: lesser(2.5, 1.2)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(2.500000f));
-			argumentValues.push_back(MiniScript::ScriptVariable(1.200000f));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(2.500000f);
+			argumentValues[1].setValue(1.200000f);
 			// method code: lesser
 			float floatValueA;
 			float floatValueB;
@@ -2981,9 +2981,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("-------------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("-------------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -3005,9 +3005,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("Check vector3 computation")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("Check vector3 computation"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -3029,9 +3029,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("-------------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("-------------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -3053,34 +3053,34 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("sub(add(vec3(1.1, 2.2, 3.3)), vec3(1.2, 1.0, 1.0))): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of sub(add(vec3(1.1, 2.2, 3.3)), vec3(1.2, 1.0, 1.0))
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("sub(add(vec3(1.1, 2.2, 3.3)), vec3(1.2, 1.0, 1.0))): "));
+		// argumentValues[1] --> returnValue of sub(add(vec3(1.1, 2.2, 3.3)), vec3(1.2, 1.0, 1.0))
 		// depth = 1 / argument index = 1: sub(add(vec3(1.1, 2.2, 3.3)), vec3(1.2, 1.0, 1.0))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of add(vec3(1.1, 2.2, 3.3))
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(1.2, 1.0, 1.0)
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of add(vec3(1.1, 2.2, 3.3))
+			// argumentValues[1] --> returnValue of vec3(1.2, 1.0, 1.0)
 			// depth = 2 / argument index = 0: add(vec3(1.1, 2.2, 3.3))
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(1.1, 2.2, 3.3)
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				// argumentValues[0] --> returnValue of vec3(1.1, 2.2, 3.3)
 				// depth = 3 / argument index = 0: vec3(1.1, 2.2, 3.3)
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX0[0];
-					vector<ScriptVariable> argumentValues;
-					vector<ScriptVariable>& argumentValuesD3AIDX0 = argumentValues;
-					argumentValues.push_back(MiniScript::ScriptVariable(1.100000f));
-					argumentValues.push_back(MiniScript::ScriptVariable(2.200000f));
-					argumentValues.push_back(MiniScript::ScriptVariable(3.300000f));
+					array<ScriptVariable, 3> argumentValues;
+					array<ScriptVariable, 3>& argumentValuesD3AIDX0 = argumentValues;
+					argumentValues[0].setValue(1.100000f);
+					argumentValues[1].setValue(2.200000f);
+					argumentValues[2].setValue(3.300000f);
 					// method code: vec3
 					Vector3 result;
 					float xValue;
@@ -3162,11 +3162,11 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX1 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(1.200000f));
-				argumentValues.push_back(MiniScript::ScriptVariable(1.000000f));
-				argumentValues.push_back(MiniScript::ScriptVariable(1.000000f));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX1 = argumentValues;
+				argumentValues[0].setValue(1.200000f);
+				argumentValues[1].setValue(1.000000f);
+				argumentValues[2].setValue(1.000000f);
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -3299,27 +3299,27 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("div(vec3(20, 10, 5), vec3(1.5, 2.5, 3.5)): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of div(vec3(20, 10, 5), vec3(1.5, 2.5, 3.5))
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("div(vec3(20, 10, 5), vec3(1.5, 2.5, 3.5)): "));
+		// argumentValues[1] --> returnValue of div(vec3(20, 10, 5), vec3(1.5, 2.5, 3.5))
 		// depth = 1 / argument index = 1: div(vec3(20, 10, 5), vec3(1.5, 2.5, 3.5))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(20, 10, 5)
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(1.5, 2.5, 3.5)
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of vec3(20, 10, 5)
+			// argumentValues[1] --> returnValue of vec3(1.5, 2.5, 3.5)
 			// depth = 2 / argument index = 0: vec3(20, 10, 5)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(20)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(10)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(5)));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(20));
+				argumentValues[1].setValue(static_cast<int64_t>(10));
+				argumentValues[2].setValue(static_cast<int64_t>(5));
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -3338,11 +3338,11 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX1 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(1.500000f));
-				argumentValues.push_back(MiniScript::ScriptVariable(2.500000f));
-				argumentValues.push_back(MiniScript::ScriptVariable(3.500000f));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX1 = argumentValues;
+				argumentValues[0].setValue(1.500000f);
+				argumentValues[1].setValue(2.500000f);
+				argumentValues[2].setValue(3.500000f);
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -3480,27 +3480,27 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("mul(vec3(20, 10, 5), vec3(1.5, 2.5, 3.5)): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of mul(vec3(20, 10, 5), vec3(1.5, 2.5, 3.5))
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("mul(vec3(20, 10, 5), vec3(1.5, 2.5, 3.5)): "));
+		// argumentValues[1] --> returnValue of mul(vec3(20, 10, 5), vec3(1.5, 2.5, 3.5))
 		// depth = 1 / argument index = 1: mul(vec3(20, 10, 5), vec3(1.5, 2.5, 3.5))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(20, 10, 5)
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(1.5, 2.5, 3.5)
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of vec3(20, 10, 5)
+			// argumentValues[1] --> returnValue of vec3(1.5, 2.5, 3.5)
 			// depth = 2 / argument index = 0: vec3(20, 10, 5)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(20)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(10)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(5)));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(20));
+				argumentValues[1].setValue(static_cast<int64_t>(10));
+				argumentValues[2].setValue(static_cast<int64_t>(5));
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -3519,11 +3519,11 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX1 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(1.500000f));
-				argumentValues.push_back(MiniScript::ScriptVariable(2.500000f));
-				argumentValues.push_back(MiniScript::ScriptVariable(3.500000f));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX1 = argumentValues;
+				argumentValues[0].setValue(1.500000f);
+				argumentValues[1].setValue(2.500000f);
+				argumentValues[2].setValue(3.500000f);
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -3661,27 +3661,27 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("div(vec3(20, 10, 5), 2): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of div(vec3(20, 10, 5), 2)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("div(vec3(20, 10, 5), 2): "));
+		// argumentValues[1] --> returnValue of div(vec3(20, 10, 5), 2)
 		// depth = 1 / argument index = 1: div(vec3(20, 10, 5), 2)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(20, 10, 5)
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(2)));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of vec3(20, 10, 5)
+			argumentValues[1].setValue(static_cast<int64_t>(2));
 			// depth = 2 / argument index = 0: vec3(20, 10, 5)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(20)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(10)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(5)));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(20));
+				argumentValues[1].setValue(static_cast<int64_t>(10));
+				argumentValues[2].setValue(static_cast<int64_t>(5));
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -3819,27 +3819,27 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("mul(vec3(20, 10, 5), 2): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of mul(vec3(20, 10, 5), 2)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("mul(vec3(20, 10, 5), 2): "));
+		// argumentValues[1] --> returnValue of mul(vec3(20, 10, 5), 2)
 		// depth = 1 / argument index = 1: mul(vec3(20, 10, 5), 2)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(20, 10, 5)
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(2)));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of vec3(20, 10, 5)
+			argumentValues[1].setValue(static_cast<int64_t>(2));
 			// depth = 2 / argument index = 0: vec3(20, 10, 5)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(20)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(10)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(5)));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(20));
+				argumentValues[1].setValue(static_cast<int64_t>(10));
+				argumentValues[2].setValue(static_cast<int64_t>(5));
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -3977,26 +3977,26 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("vec3.computeLength(vec3(20, 10, 5)): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3.computeLength(vec3(20, 10, 5))
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("vec3.computeLength(vec3(20, 10, 5)): "));
+		// argumentValues[1] --> returnValue of vec3.computeLength(vec3(20, 10, 5))
 		// depth = 1 / argument index = 1: vec3.computeLength(vec3(20, 10, 5))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(20, 10, 5)
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of vec3(20, 10, 5)
 			// depth = 2 / argument index = 0: vec3(20, 10, 5)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(20)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(10)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(5)));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(20));
+				argumentValues[1].setValue(static_cast<int64_t>(10));
+				argumentValues[2].setValue(static_cast<int64_t>(5));
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -4041,26 +4041,26 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("vec3.computeLengthSquared(vec3(20, 10, 5)): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3.computeLengthSquared(vec3(20, 10, 5))
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("vec3.computeLengthSquared(vec3(20, 10, 5)): "));
+		// argumentValues[1] --> returnValue of vec3.computeLengthSquared(vec3(20, 10, 5))
 		// depth = 1 / argument index = 1: vec3.computeLengthSquared(vec3(20, 10, 5))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(20, 10, 5)
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of vec3(20, 10, 5)
 			// depth = 2 / argument index = 0: vec3(20, 10, 5)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(20)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(10)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(5)));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(20));
+				argumentValues[1].setValue(static_cast<int64_t>(10));
+				argumentValues[2].setValue(static_cast<int64_t>(5));
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -4105,27 +4105,27 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("vec3.computeDotProduct(vec3(0, 0, 1), vec3(0, 0, -1)): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3.computeDotProduct(vec3(0, 0, 1), vec3(0, 0, -1))
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("vec3.computeDotProduct(vec3(0, 0, 1), vec3(0, 0, -1)): "));
+		// argumentValues[1] --> returnValue of vec3.computeDotProduct(vec3(0, 0, 1), vec3(0, 0, -1))
 		// depth = 1 / argument index = 1: vec3.computeDotProduct(vec3(0, 0, 1), vec3(0, 0, -1))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(0, 0, 1)
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(0, 0, -1)
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of vec3(0, 0, 1)
+			// argumentValues[1] --> returnValue of vec3(0, 0, -1)
 			// depth = 2 / argument index = 0: vec3(0, 0, 1)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(0)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(0)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(1)));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(0));
+				argumentValues[1].setValue(static_cast<int64_t>(0));
+				argumentValues[2].setValue(static_cast<int64_t>(1));
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -4144,11 +4144,11 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX1 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(0)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(0)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(-1)));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX1 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(0));
+				argumentValues[1].setValue(static_cast<int64_t>(0));
+				argumentValues[2].setValue(static_cast<int64_t>(-1));
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -4195,27 +4195,27 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("vec3.computeCrossProduct(vec3(1, 0, 0), vec3(0, 1, 0)): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3.computeCrossProduct(vec3(1, 0, 0), vec3(0, 1, 0))
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("vec3.computeCrossProduct(vec3(1, 0, 0), vec3(0, 1, 0)): "));
+		// argumentValues[1] --> returnValue of vec3.computeCrossProduct(vec3(1, 0, 0), vec3(0, 1, 0))
 		// depth = 1 / argument index = 1: vec3.computeCrossProduct(vec3(1, 0, 0), vec3(0, 1, 0))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(1, 0, 0)
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(0, 1, 0)
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of vec3(1, 0, 0)
+			// argumentValues[1] --> returnValue of vec3(0, 1, 0)
 			// depth = 2 / argument index = 0: vec3(1, 0, 0)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(1)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(0)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(0)));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(1));
+				argumentValues[1].setValue(static_cast<int64_t>(0));
+				argumentValues[2].setValue(static_cast<int64_t>(0));
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -4234,11 +4234,11 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX1 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(0)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(1)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(0)));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX1 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(0));
+				argumentValues[1].setValue(static_cast<int64_t>(1));
+				argumentValues[2].setValue(static_cast<int64_t>(0));
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -4285,26 +4285,26 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("vec3.normalize(vec3(1, 2, 3)): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3.normalize(vec3(1, 2, 3))
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("vec3.normalize(vec3(1, 2, 3)): "));
+		// argumentValues[1] --> returnValue of vec3.normalize(vec3(1, 2, 3))
 		// depth = 1 / argument index = 1: vec3.normalize(vec3(1, 2, 3))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(1, 2, 3)
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of vec3(1, 2, 3)
 			// depth = 2 / argument index = 0: vec3(1, 2, 3)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(1)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(2)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(3)));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(1));
+				argumentValues[1].setValue(static_cast<int64_t>(2));
+				argumentValues[2].setValue(static_cast<int64_t>(3));
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -4349,28 +4349,28 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("vec3.computeAngle(vec3(0, 0, 1), vec3(1, 0, 0), vec3(0, 1, 0)): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3.computeAngle(vec3(0, 0, 1), vec3(1, 0, 0), vec3(0, 1, 0))
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("vec3.computeAngle(vec3(0, 0, 1), vec3(1, 0, 0), vec3(0, 1, 0)): "));
+		// argumentValues[1] --> returnValue of vec3.computeAngle(vec3(0, 0, 1), vec3(1, 0, 0), vec3(0, 1, 0))
 		// depth = 1 / argument index = 1: vec3.computeAngle(vec3(0, 0, 1), vec3(1, 0, 0), vec3(0, 1, 0))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(0, 0, 1)
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(1, 0, 0)
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(0, 1, 0)
+			array<ScriptVariable, 3> argumentValues;
+			array<ScriptVariable, 3>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of vec3(0, 0, 1)
+			// argumentValues[1] --> returnValue of vec3(1, 0, 0)
+			// argumentValues[2] --> returnValue of vec3(0, 1, 0)
 			// depth = 2 / argument index = 0: vec3(0, 0, 1)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(0)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(0)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(1)));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(0));
+				argumentValues[1].setValue(static_cast<int64_t>(0));
+				argumentValues[2].setValue(static_cast<int64_t>(1));
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -4389,11 +4389,11 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX1 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(1)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(0)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(0)));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX1 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(1));
+				argumentValues[1].setValue(static_cast<int64_t>(0));
+				argumentValues[2].setValue(static_cast<int64_t>(0));
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -4412,11 +4412,11 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[2];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX2 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(0)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(1)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(0)));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX2 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(0));
+				argumentValues[1].setValue(static_cast<int64_t>(1));
+				argumentValues[2].setValue(static_cast<int64_t>(0));
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -4465,26 +4465,26 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("vec3.getX(vec3(1, 2, 3)): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3.getX(vec3(1, 2, 3))
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("vec3.getX(vec3(1, 2, 3)): "));
+		// argumentValues[1] --> returnValue of vec3.getX(vec3(1, 2, 3))
 		// depth = 1 / argument index = 1: vec3.getX(vec3(1, 2, 3))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(1, 2, 3)
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of vec3(1, 2, 3)
 			// depth = 2 / argument index = 0: vec3(1, 2, 3)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(1)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(2)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(3)));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(1));
+				argumentValues[1].setValue(static_cast<int64_t>(2));
+				argumentValues[2].setValue(static_cast<int64_t>(3));
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -4529,26 +4529,26 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("vec3.getY(vec3(1, 2, 3)): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3.getY(vec3(1, 2, 3))
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("vec3.getY(vec3(1, 2, 3)): "));
+		// argumentValues[1] --> returnValue of vec3.getY(vec3(1, 2, 3))
 		// depth = 1 / argument index = 1: vec3.getY(vec3(1, 2, 3))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(1, 2, 3)
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of vec3(1, 2, 3)
 			// depth = 2 / argument index = 0: vec3(1, 2, 3)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(1)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(2)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(3)));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(1));
+				argumentValues[1].setValue(static_cast<int64_t>(2));
+				argumentValues[2].setValue(static_cast<int64_t>(3));
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -4593,26 +4593,26 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("vec3.getZ(vec3(1, 2, 3)): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3.getZ(vec3(1, 2, 3))
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("vec3.getZ(vec3(1, 2, 3)): "));
+		// argumentValues[1] --> returnValue of vec3.getZ(vec3(1, 2, 3))
 		// depth = 1 / argument index = 1: vec3.getZ(vec3(1, 2, 3))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(1, 2, 3)
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of vec3(1, 2, 3)
 			// depth = 2 / argument index = 0: vec3(1, 2, 3)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(1)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(2)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(3)));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(1));
+				argumentValues[1].setValue(static_cast<int64_t>(2));
+				argumentValues[2].setValue(static_cast<int64_t>(3));
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -4657,9 +4657,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("-------------------------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("-------------------------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -4681,9 +4681,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("Check vector3 computation (Operators)")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("Check vector3 computation (Operators)"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -4705,9 +4705,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("-------------------------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("-------------------------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -4729,27 +4729,27 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("vec3(1.1, 2.2, 3.3) - vec3(1.2, 1.0, 1.0): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of sub(vec3(1.1, 2.2, 3.3), vec3(1.2, 1.0, 1.0))
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("vec3(1.1, 2.2, 3.3) - vec3(1.2, 1.0, 1.0): "));
+		// argumentValues[1] --> returnValue of sub(vec3(1.1, 2.2, 3.3), vec3(1.2, 1.0, 1.0))
 		// depth = 1 / argument index = 1: sub(vec3(1.1, 2.2, 3.3), vec3(1.2, 1.0, 1.0))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(1.1, 2.2, 3.3)
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(1.2, 1.0, 1.0)
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of vec3(1.1, 2.2, 3.3)
+			// argumentValues[1] --> returnValue of vec3(1.2, 1.0, 1.0)
 			// depth = 2 / argument index = 0: vec3(1.1, 2.2, 3.3)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(1.100000f));
-				argumentValues.push_back(MiniScript::ScriptVariable(2.200000f));
-				argumentValues.push_back(MiniScript::ScriptVariable(3.300000f));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(1.100000f);
+				argumentValues[1].setValue(2.200000f);
+				argumentValues[2].setValue(3.300000f);
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -4768,11 +4768,11 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX1 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(1.200000f));
-				argumentValues.push_back(MiniScript::ScriptVariable(1.000000f));
-				argumentValues.push_back(MiniScript::ScriptVariable(1.000000f));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX1 = argumentValues;
+				argumentValues[0].setValue(1.200000f);
+				argumentValues[1].setValue(1.000000f);
+				argumentValues[2].setValue(1.000000f);
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -4905,27 +4905,27 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("vec3(20, 10, 5) / vec3(1.5, 2.5, 3.5): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of div(vec3(20, 10, 5), vec3(1.5, 2.5, 3.5))
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("vec3(20, 10, 5) / vec3(1.5, 2.5, 3.5): "));
+		// argumentValues[1] --> returnValue of div(vec3(20, 10, 5), vec3(1.5, 2.5, 3.5))
 		// depth = 1 / argument index = 1: div(vec3(20, 10, 5), vec3(1.5, 2.5, 3.5))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(20, 10, 5)
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(1.5, 2.5, 3.5)
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of vec3(20, 10, 5)
+			// argumentValues[1] --> returnValue of vec3(1.5, 2.5, 3.5)
 			// depth = 2 / argument index = 0: vec3(20, 10, 5)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(20)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(10)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(5)));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(20));
+				argumentValues[1].setValue(static_cast<int64_t>(10));
+				argumentValues[2].setValue(static_cast<int64_t>(5));
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -4944,11 +4944,11 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX1 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(1.500000f));
-				argumentValues.push_back(MiniScript::ScriptVariable(2.500000f));
-				argumentValues.push_back(MiniScript::ScriptVariable(3.500000f));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX1 = argumentValues;
+				argumentValues[0].setValue(1.500000f);
+				argumentValues[1].setValue(2.500000f);
+				argumentValues[2].setValue(3.500000f);
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -5086,27 +5086,27 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("vec3(20, 10, 5) * vec3(1.5, 2.5, 3.5)): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of mul(vec3(20, 10, 5), vec3(1.5, 2.5, 3.5))
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("vec3(20, 10, 5) * vec3(1.5, 2.5, 3.5)): "));
+		// argumentValues[1] --> returnValue of mul(vec3(20, 10, 5), vec3(1.5, 2.5, 3.5))
 		// depth = 1 / argument index = 1: mul(vec3(20, 10, 5), vec3(1.5, 2.5, 3.5))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(20, 10, 5)
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(1.5, 2.5, 3.5)
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of vec3(20, 10, 5)
+			// argumentValues[1] --> returnValue of vec3(1.5, 2.5, 3.5)
 			// depth = 2 / argument index = 0: vec3(20, 10, 5)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(20)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(10)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(5)));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(20));
+				argumentValues[1].setValue(static_cast<int64_t>(10));
+				argumentValues[2].setValue(static_cast<int64_t>(5));
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -5125,11 +5125,11 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX1 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(1.500000f));
-				argumentValues.push_back(MiniScript::ScriptVariable(2.500000f));
-				argumentValues.push_back(MiniScript::ScriptVariable(3.500000f));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX1 = argumentValues;
+				argumentValues[0].setValue(1.500000f);
+				argumentValues[1].setValue(2.500000f);
+				argumentValues[2].setValue(3.500000f);
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -5267,27 +5267,27 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("vec3(20, 10, 5) / 2): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of div(vec3(20, 10, 5), 2)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("vec3(20, 10, 5) / 2): "));
+		// argumentValues[1] --> returnValue of div(vec3(20, 10, 5), 2)
 		// depth = 1 / argument index = 1: div(vec3(20, 10, 5), 2)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(20, 10, 5)
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(2)));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of vec3(20, 10, 5)
+			argumentValues[1].setValue(static_cast<int64_t>(2));
 			// depth = 2 / argument index = 0: vec3(20, 10, 5)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(20)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(10)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(5)));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(20));
+				argumentValues[1].setValue(static_cast<int64_t>(10));
+				argumentValues[2].setValue(static_cast<int64_t>(5));
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -5425,27 +5425,27 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("vec3(20, 10, 5) * 2): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of mul(vec3(20, 10, 5), 2)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("vec3(20, 10, 5) * 2): "));
+		// argumentValues[1] --> returnValue of mul(vec3(20, 10, 5), 2)
 		// depth = 1 / argument index = 1: mul(vec3(20, 10, 5), 2)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(20, 10, 5)
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(2)));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of vec3(20, 10, 5)
+			argumentValues[1].setValue(static_cast<int64_t>(2));
 			// depth = 2 / argument index = 0: vec3(20, 10, 5)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(20)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(10)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(5)));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(20));
+				argumentValues[1].setValue(static_cast<int64_t>(10));
+				argumentValues[2].setValue(static_cast<int64_t>(5));
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -5583,9 +5583,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("-----------------------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("-----------------------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -5607,9 +5607,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("Check transformations computation")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("Check transformations computation"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -5631,9 +5631,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("-----------------------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("-----------------------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -5655,28 +5655,28 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("$transformations")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0))
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$transformations"));
+		// argumentValues[1] --> returnValue of transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0))
 		// depth = 1 / argument index = 1: transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(1,2,3)
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(2, 3, 4)
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(0, 1, 0)
+			array<ScriptVariable, 3> argumentValues;
+			array<ScriptVariable, 3>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of vec3(1,2,3)
+			// argumentValues[1] --> returnValue of vec3(2, 3, 4)
+			// argumentValues[2] --> returnValue of vec3(0, 1, 0)
 			// depth = 2 / argument index = 0: vec3(1, 2, 3)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(1)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(2)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(3)));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(1));
+				argumentValues[1].setValue(static_cast<int64_t>(2));
+				argumentValues[2].setValue(static_cast<int64_t>(3));
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -5695,11 +5695,11 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX1 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(2)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(3)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(4)));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX1 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(2));
+				argumentValues[1].setValue(static_cast<int64_t>(3));
+				argumentValues[2].setValue(static_cast<int64_t>(4));
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -5718,11 +5718,11 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[2];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX2 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(0)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(1)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(0)));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX2 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(0));
+				argumentValues[1].setValue(static_cast<int64_t>(1));
+				argumentValues[2].setValue(static_cast<int64_t>(0));
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -5793,26 +5793,26 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("$transformations")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of transformations.setRotationAngle($transformations, 0, 90)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$transformations"));
+		// argumentValues[1] --> returnValue of transformations.setRotationAngle($transformations, 0, 90)
 		// depth = 1 / argument index = 1: transformations.setRotationAngle($transformations, 0, 90)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$transformations")
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(0)));
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(90)));
+			array<ScriptVariable, 3> argumentValues;
+			array<ScriptVariable, 3>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$transformations")
+			argumentValues[1].setValue(static_cast<int64_t>(0));
+			argumentValues[2].setValue(static_cast<int64_t>(90));
 			// depth = 2 / argument index = 0: getVariable("$transformations")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(string("$transformations")));
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$transformations"));
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -5873,17 +5873,17 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$transformations")
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)): "));
+		// argumentValues[1] --> returnValue of getVariable("$transformations")
 		// depth = 1 / argument index = 1: getVariable("$transformations")
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(string("$transformations")));
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(string("$transformations"));
 			// method code: getVariable
 			string variable;
 			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -5919,24 +5919,24 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getTranslation(): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of transformations.getTranslation($transformations)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getTranslation(): "));
+		// argumentValues[1] --> returnValue of transformations.getTranslation($transformations)
 		// depth = 1 / argument index = 1: transformations.getTranslation($transformations)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$transformations")
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$transformations")
 			// depth = 2 / argument index = 0: getVariable("$transformations")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(string("$transformations")));
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$transformations"));
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -5981,25 +5981,25 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setTranslation(vec3(-1,-2,-3)): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of transformations.setTranslation($transformations, vec3(-1,-2,-3))
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setTranslation(vec3(-1,-2,-3)): "));
+		// argumentValues[1] --> returnValue of transformations.setTranslation($transformations, vec3(-1,-2,-3))
 		// depth = 1 / argument index = 1: transformations.setTranslation($transformations, vec3(-1,-2,-3))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$transformations")
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(-1,-2,-3)
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$transformations")
+			// argumentValues[1] --> returnValue of vec3(-1,-2,-3)
 			// depth = 2 / argument index = 0: getVariable("$transformations")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(string("$transformations")));
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$transformations"));
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -6018,11 +6018,11 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX1 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(-1)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(-2)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(-3)));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX1 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(-1));
+				argumentValues[1].setValue(static_cast<int64_t>(-2));
+				argumentValues[2].setValue(static_cast<int64_t>(-3));
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -6071,24 +6071,24 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getScale(): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of transformations.getScale($transformations)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getScale(): "));
+		// argumentValues[1] --> returnValue of transformations.getScale($transformations)
 		// depth = 1 / argument index = 1: transformations.getScale($transformations)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$transformations")
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$transformations")
 			// depth = 2 / argument index = 0: getVariable("$transformations")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(string("$transformations")));
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$transformations"));
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -6133,25 +6133,25 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setScale(): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of transformations.setScale($transformations, vec3(-2,-3,-4))
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setScale(): "));
+		// argumentValues[1] --> returnValue of transformations.setScale($transformations, vec3(-2,-3,-4))
 		// depth = 1 / argument index = 1: transformations.setScale($transformations, vec3(-2,-3,-4))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$transformations")
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(-2,-3,-4)
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$transformations")
+			// argumentValues[1] --> returnValue of vec3(-2,-3,-4)
 			// depth = 2 / argument index = 0: getVariable("$transformations")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(string("$transformations")));
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$transformations"));
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -6170,11 +6170,11 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX1 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(-2)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(-3)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(-4)));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX1 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(-2));
+				argumentValues[1].setValue(static_cast<int64_t>(-3));
+				argumentValues[2].setValue(static_cast<int64_t>(-4));
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -6223,25 +6223,25 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getRotationAxis(): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of transformations.getRotationAxis($transformations, 0)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getRotationAxis(): "));
+		// argumentValues[1] --> returnValue of transformations.getRotationAxis($transformations, 0)
 		// depth = 1 / argument index = 1: transformations.getRotationAxis($transformations, 0)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$transformations")
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(0)));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$transformations")
+			argumentValues[1].setValue(static_cast<int64_t>(0));
 			// depth = 2 / argument index = 0: getVariable("$transformations")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(string("$transformations")));
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$transformations"));
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -6293,25 +6293,25 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getRotationAngle(): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of transformations.getRotationAngle($transformations, 0)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getRotationAngle(): "));
+		// argumentValues[1] --> returnValue of transformations.getRotationAngle($transformations, 0)
 		// depth = 1 / argument index = 1: transformations.getRotationAngle($transformations, 0)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$transformations")
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(0)));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$transformations")
+			argumentValues[1].setValue(static_cast<int64_t>(0));
 			// depth = 2 / argument index = 0: getVariable("$transformations")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(string("$transformations")));
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$transformations"));
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -6363,26 +6363,26 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setRotationAngle(): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of transformations.setRotationAngle($transformations, 0, 90)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setRotationAngle(): "));
+		// argumentValues[1] --> returnValue of transformations.setRotationAngle($transformations, 0, 90)
 		// depth = 1 / argument index = 1: transformations.setRotationAngle($transformations, 0, 90)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$transformations")
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(0)));
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(90)));
+			array<ScriptVariable, 3> argumentValues;
+			array<ScriptVariable, 3>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$transformations")
+			argumentValues[1].setValue(static_cast<int64_t>(0));
+			argumentValues[2].setValue(static_cast<int64_t>(90));
 			// depth = 2 / argument index = 0: getVariable("$transformations")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(string("$transformations")));
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$transformations"));
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -6438,25 +6438,25 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).multiply(vec3(0,0,0)): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of transformations.multiply($transformations, vec3(0,0,0))
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).multiply(vec3(0,0,0)): "));
+		// argumentValues[1] --> returnValue of transformations.multiply($transformations, vec3(0,0,0))
 		// depth = 1 / argument index = 1: transformations.multiply($transformations, vec3(0,0,0))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$transformations")
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(0,0,0)
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$transformations")
+			// argumentValues[1] --> returnValue of vec3(0,0,0)
 			// depth = 2 / argument index = 0: getVariable("$transformations")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(string("$transformations")));
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$transformations"));
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -6475,11 +6475,11 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX1 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(0)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(0)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(0)));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX1 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(0));
+				argumentValues[1].setValue(static_cast<int64_t>(0));
+				argumentValues[2].setValue(static_cast<int64_t>(0));
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -6526,25 +6526,25 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).rotate(vec3(0,0,1)): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of transformations.rotate($transformations, vec3(0,0,1))
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).rotate(vec3(0,0,1)): "));
+		// argumentValues[1] --> returnValue of transformations.rotate($transformations, vec3(0,0,1))
 		// depth = 1 / argument index = 1: transformations.rotate($transformations, vec3(0,0,1))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$transformations")
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of vec3(0,0,1)
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$transformations")
+			// argumentValues[1] --> returnValue of vec3(0,0,1)
 			// depth = 2 / argument index = 0: getVariable("$transformations")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(string("$transformations")));
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$transformations"));
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -6563,11 +6563,11 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX1 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(0)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(0)));
-				argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(1)));
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX1 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(0));
+				argumentValues[1].setValue(static_cast<int64_t>(0));
+				argumentValues[2].setValue(static_cast<int64_t>(1));
 				// method code: vec3
 				Vector3 result;
 				float xValue;
@@ -6614,9 +6614,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("------------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("------------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -6638,9 +6638,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("Check string functions")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("Check string functions"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -6662,9 +6662,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("------------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("------------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -6686,17 +6686,17 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of space(0)
-		argumentValues.push_back(MiniScript::ScriptVariable(string("1")));
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of space(0)
+		argumentValues[1].setValue(string("1"));
 		// depth = 1 / argument index = 0: space(0)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX0 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(0)));
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX0 = argumentValues;
+			argumentValues[0].setValue(static_cast<int64_t>(0));
 			// method code: space
 			int64_t spaces = 1;
 			if (MiniScript::getIntegerValue(argumentValues, 0, spaces, true) == false) {
@@ -6729,17 +6729,17 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of space(2)
-		argumentValues.push_back(MiniScript::ScriptVariable(string("1.1")));
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of space(2)
+		argumentValues[1].setValue(string("1.1"));
 		// depth = 1 / argument index = 0: space(2)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX0 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(2)));
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX0 = argumentValues;
+			argumentValues[0].setValue(static_cast<int64_t>(2));
 			// method code: space
 			int64_t spaces = 1;
 			if (MiniScript::getIntegerValue(argumentValues, 0, spaces, true) == false) {
@@ -6772,17 +6772,17 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of space(2)
-		argumentValues.push_back(MiniScript::ScriptVariable(string("1.2")));
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of space(2)
+		argumentValues[1].setValue(string("1.2"));
 		// depth = 1 / argument index = 0: space(2)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX0 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(2)));
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX0 = argumentValues;
+			argumentValues[0].setValue(static_cast<int64_t>(2));
 			// method code: space
 			int64_t spaces = 1;
 			if (MiniScript::getIntegerValue(argumentValues, 0, spaces, true) == false) {
@@ -6815,16 +6815,16 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of toUpperCase("xxxyyyzzz")
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of toUpperCase("xxxyyyzzz")
 		// depth = 1 / argument index = 0: toUpperCase("xxxyyyzzz")
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX0 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(string("xxxyyyzzz")));
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX0 = argumentValues;
+			argumentValues[0].setValue(string("xxxyyyzzz"));
 			// method code: toUpperCase
 			string stringValue;
 			if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == true) {
@@ -6855,16 +6855,16 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of toLowerCase("XXXYYYZZZ")
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of toLowerCase("XXXYYYZZZ")
 		// depth = 1 / argument index = 0: toLowerCase("XXXYYYZZZ")
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX0 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(string("XXXYYYZZZ")));
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX0 = argumentValues;
+			argumentValues[0].setValue(string("XXXYYYZZZ"));
 			// method code: toLowerCase
 			string stringValue;
 			if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == true) {
@@ -6895,18 +6895,18 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of concatenate("abc", "def", "ghi")
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of concatenate("abc", "def", "ghi")
 		// depth = 1 / argument index = 0: concatenate("abc", "def", "ghi")
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX0 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(string("abc")));
-			argumentValues.push_back(MiniScript::ScriptVariable(string("def")));
-			argumentValues.push_back(MiniScript::ScriptVariable(string("ghi")));
+			array<ScriptVariable, 3> argumentValues;
+			array<ScriptVariable, 3>& argumentValuesD1AIDX0 = argumentValues;
+			argumentValues[0].setValue(string("abc"));
+			argumentValues[1].setValue(string("def"));
+			argumentValues[2].setValue(string("ghi"));
 			// method code: concatenate
 			string result;
 			for (auto& argumentValue: argumentValues) {
@@ -6935,9 +6935,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("------------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("------------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -6959,9 +6959,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("Check string functions (Operators)")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("Check string functions (Operators)"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -6983,25 +6983,25 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of add("abc",add("def", "ghi"))
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of add("abc",add("def", "ghi"))
 		// depth = 1 / argument index = 0: add("abc", add("def", "ghi"))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX0 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(string("abc")));
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of add("def", "ghi")
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX0 = argumentValues;
+			argumentValues[0].setValue(string("abc"));
+			// argumentValues[1] --> returnValue of add("def", "ghi")
 			// depth = 2 / argument index = 1: add("def", "ghi")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX0[1];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX1 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(string("def")));
-				argumentValues.push_back(MiniScript::ScriptVariable(string("ghi")));
+				array<ScriptVariable, 2> argumentValues;
+				array<ScriptVariable, 2>& argumentValuesD2AIDX1 = argumentValues;
+				argumentValues[0].setValue(string("def"));
+				argumentValues[1].setValue(string("ghi"));
 				// method code: add
 				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_STRING) == true) {
 					string result;
@@ -7149,9 +7149,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("------------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("------------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -7173,9 +7173,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("------------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("------------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -7197,9 +7197,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("Variable")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("Variable"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -7221,9 +7221,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("------------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("------------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -7245,17 +7245,17 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("$variable")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of string("1234")
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$variable"));
+		// argumentValues[1] --> returnValue of string("1234")
 		// depth = 1 / argument index = 1: string("1234")
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(string("1234")));
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(string("1234"));
 			// method code: string
 			string stringValue;
 			if (MiniScript::getStringValue(argumentValues, 0, stringValue, false) == true) {
@@ -7291,16 +7291,16 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$variable")
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of getVariable("$variable")
 		// depth = 1 / argument index = 0: getVariable("$variable")
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX0 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(string("$variable")));
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX0 = argumentValues;
+			argumentValues[0].setValue(string("$variable"));
 			// method code: getVariable
 			string variable;
 			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -7336,9 +7336,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("--------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("--------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -7360,9 +7360,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("Lets check forTime")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("Lets check forTime"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -7384,9 +7384,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("--------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("--------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -7408,10 +7408,10 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("$i")));
-		argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(1)));
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$i"));
+		argumentValues[1].setValue(static_cast<int64_t>(1));
 		// method code: setVariable
 		string variable;
 		if (argumentValues.size() != 2 ||
@@ -7438,9 +7438,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(2000)));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(static_cast<int64_t>(2000));
 		// method code: forTime
 		int64_t time;
 		if (miniScript->getIntegerValue(argumentValues, 0, time) == false) {
@@ -7481,17 +7481,17 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$i")
-		argumentValues.push_back(MiniScript::ScriptVariable(string(": Hello World")));
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of getVariable("$i")
+		argumentValues[1].setValue(string(": Hello World"));
 		// depth = 1 / argument index = 0: getVariable("$i")
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX0 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(string("$i")));
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX0 = argumentValues;
+			argumentValues[0].setValue(string("$i"));
 			// method code: getVariable
 			string variable;
 			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -7527,9 +7527,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(500)));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(static_cast<int64_t>(500));
 		// method code: script.wait
 		int64_t time;
 		if (miniScript->getIntegerValue(argumentValues, 0, time) == true) {
@@ -7555,25 +7555,25 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("$i")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of add($i, 1)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$i"));
+		// argumentValues[1] --> returnValue of add($i, 1)
 		// depth = 1 / argument index = 1: add($i, 1)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$i")
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(1)));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$i")
+			argumentValues[1].setValue(static_cast<int64_t>(1));
 			// depth = 2 / argument index = 0: getVariable("$i")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(string("$i")));
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$i"));
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -7677,8 +7677,8 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
+		array<ScriptVariable, 0> argumentValues;
+		array<ScriptVariable, 0>& argumentValuesD0 = argumentValues;
 		// method code: end
 		if (miniScript->scriptState.endTypeStack.empty() == true) {
 			if (miniScript->scriptState.statementIdx < miniScript->scripts[miniScript->scriptState.scriptIdx].statements.size() - 1) {
@@ -7717,9 +7717,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("-------------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("-------------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -7741,9 +7741,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("Lets check forCondition")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("Lets check forCondition"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -7765,9 +7765,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("-------------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("-------------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -7789,10 +7789,10 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("$i")));
-		argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(1)));
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$i"));
+		argumentValues[1].setValue(static_cast<int64_t>(1));
 		// method code: setVariable
 		string variable;
 		if (argumentValues.size() != 2 ||
@@ -7819,24 +7819,24 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of notequal($i, 6)
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of notequal($i, 6)
 		// depth = 1 / argument index = 0: notequal($i, 6)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX0 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$i")
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(6)));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX0 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$i")
+			argumentValues[1].setValue(static_cast<int64_t>(6));
 			// depth = 2 / argument index = 0: getVariable("$i")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX0[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(string("$i")));
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$i"));
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -7891,17 +7891,17 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$i")
-		argumentValues.push_back(MiniScript::ScriptVariable(string(": Hello World")));
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of getVariable("$i")
+		argumentValues[1].setValue(string(": Hello World"));
 		// depth = 1 / argument index = 0: getVariable("$i")
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX0 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(string("$i")));
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX0 = argumentValues;
+			argumentValues[0].setValue(string("$i"));
 			// method code: getVariable
 			string variable;
 			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -7937,9 +7937,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(500)));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(static_cast<int64_t>(500));
 		// method code: script.wait
 		int64_t time;
 		if (miniScript->getIntegerValue(argumentValues, 0, time) == true) {
@@ -7965,25 +7965,25 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("$i")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of add($i, 1)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$i"));
+		// argumentValues[1] --> returnValue of add($i, 1)
 		// depth = 1 / argument index = 1: add($i, 1)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$i")
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(1)));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$i")
+			argumentValues[1].setValue(static_cast<int64_t>(1));
 			// depth = 2 / argument index = 0: getVariable("$i")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(string("$i")));
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$i"));
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -8087,8 +8087,8 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
+		array<ScriptVariable, 0> argumentValues;
+		array<ScriptVariable, 0>& argumentValuesD0 = argumentValues;
 		// method code: end
 		if (miniScript->scriptState.endTypeStack.empty() == true) {
 			if (miniScript->scriptState.statementIdx < miniScript->scripts[miniScript->scriptState.scriptIdx].statements.size() - 1) {
@@ -8127,17 +8127,17 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("i -> ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$i")
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("i -> "));
+		// argumentValues[1] --> returnValue of getVariable("$i")
 		// depth = 1 / argument index = 1: getVariable("$i")
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(string("$i")));
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(string("$i"));
 			// method code: getVariable
 			string variable;
 			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -8173,9 +8173,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("---------------------------------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("---------------------------------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -8197,9 +8197,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("Lets check forCondition with if/elseif/else")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("Lets check forCondition with if/elseif/else"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -8221,9 +8221,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("---------------------------------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("---------------------------------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -8245,10 +8245,10 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("$i")));
-		argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(1)));
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$i"));
+		argumentValues[1].setValue(static_cast<int64_t>(1));
 		// method code: setVariable
 		string variable;
 		if (argumentValues.size() != 2 ||
@@ -8275,24 +8275,24 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of lesser($i, 5)
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of lesser($i, 5)
 		// depth = 1 / argument index = 0: lesser($i, 5)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX0 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$i")
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(5)));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX0 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$i")
+			argumentValues[1].setValue(static_cast<int64_t>(5));
 			// depth = 2 / argument index = 0: getVariable("$i")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX0[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(string("$i")));
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$i"));
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -8349,17 +8349,17 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$i")
-		argumentValues.push_back(MiniScript::ScriptVariable(string(":")));
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of getVariable("$i")
+		argumentValues[1].setValue(string(":"));
 		// depth = 1 / argument index = 0: getVariable("$i")
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX0 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(string("$i")));
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX0 = argumentValues;
+			argumentValues[0].setValue(string("$i"));
 			// method code: getVariable
 			string variable;
 			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -8395,24 +8395,24 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of equals($i, 0)
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of equals($i, 0)
 		// depth = 1 / argument index = 0: equals($i, 0)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX0 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$i")
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(0)));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX0 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$i")
+			argumentValues[1].setValue(static_cast<int64_t>(0));
 			// depth = 2 / argument index = 0: getVariable("$i")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX0[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(string("$i")));
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$i"));
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -8467,9 +8467,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("i -> 0")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("i -> 0"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -8491,24 +8491,24 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of equals($i, 1)
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of equals($i, 1)
 		// depth = 1 / argument index = 0: equals($i, 1)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX0 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$i")
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(1)));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX0 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$i")
+			argumentValues[1].setValue(static_cast<int64_t>(1));
 			// depth = 2 / argument index = 0: getVariable("$i")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX0[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(string("$i")));
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$i"));
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -8569,9 +8569,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("i -> 1")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("i -> 1"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -8593,24 +8593,24 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of equals($i, 2)
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of equals($i, 2)
 		// depth = 1 / argument index = 0: equals($i, 2)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX0 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$i")
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(2)));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX0 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$i")
+			argumentValues[1].setValue(static_cast<int64_t>(2));
 			// depth = 2 / argument index = 0: getVariable("$i")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX0[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(string("$i")));
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$i"));
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -8671,9 +8671,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("i -> 2")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("i -> 2"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -8695,24 +8695,24 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of equals($i, 3)
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of equals($i, 3)
 		// depth = 1 / argument index = 0: equals($i, 3)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX0 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$i")
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(3)));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX0 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$i")
+			argumentValues[1].setValue(static_cast<int64_t>(3));
 			// depth = 2 / argument index = 0: getVariable("$i")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX0[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(string("$i")));
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$i"));
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -8773,9 +8773,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("i -> 3")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("i -> 3"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -8797,8 +8797,8 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
+		array<ScriptVariable, 0> argumentValues;
+		array<ScriptVariable, 0>& argumentValuesD0 = argumentValues;
 		// method code: else
 		if (miniScript->scriptState.conditionStack.empty() == true) {
 			Console::println("ScriptMethodElse::executeMethod(): else without if");
@@ -8826,17 +8826,17 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("else: ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$i")
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("else: "));
+		// argumentValues[1] --> returnValue of getVariable("$i")
 		// depth = 1 / argument index = 1: getVariable("$i")
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(string("$i")));
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(string("$i"));
 			// method code: getVariable
 			string variable;
 			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -8872,8 +8872,8 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
+		array<ScriptVariable, 0> argumentValues;
+		array<ScriptVariable, 0>& argumentValuesD0 = argumentValues;
 		// method code: end
 		if (miniScript->scriptState.endTypeStack.empty() == true) {
 			if (miniScript->scriptState.statementIdx < miniScript->scripts[miniScript->scriptState.scriptIdx].statements.size() - 1) {
@@ -8911,25 +8911,25 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("$i")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of add($i, 1)
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$i"));
+		// argumentValues[1] --> returnValue of add($i, 1)
 		// depth = 1 / argument index = 1: add($i, 1)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$i")
-			argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(1)));
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$i")
+			argumentValues[1].setValue(static_cast<int64_t>(1));
 			// depth = 2 / argument index = 0: getVariable("$i")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable(string("$i")));
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$i"));
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -9033,8 +9033,8 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
+		array<ScriptVariable, 0> argumentValues;
+		array<ScriptVariable, 0>& argumentValuesD0 = argumentValues;
 		// method code: end
 		if (miniScript->scriptState.endTypeStack.empty() == true) {
 			if (miniScript->scriptState.statementIdx < miniScript->scripts[miniScript->scriptState.scriptIdx].statements.size() - 1) {
@@ -9073,10 +9073,10 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("$i")));
-		argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(1)));
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$i"));
+		argumentValues[1].setValue(static_cast<int64_t>(1));
 		// method code: setVariable
 		string variable;
 		if (argumentValues.size() != 2 ||
@@ -9103,10 +9103,10 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("$j")));
-		argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(2)));
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$j"));
+		argumentValues[1].setValue(static_cast<int64_t>(2));
 		// method code: setVariable
 		string variable;
 		if (argumentValues.size() != 2 ||
@@ -9133,10 +9133,10 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("$k")));
-		argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(3)));
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$k"));
+		argumentValues[1].setValue(static_cast<int64_t>(3));
 		// method code: setVariable
 		string variable;
 		if (argumentValues.size() != 2 ||
@@ -9163,32 +9163,32 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of or(equals(getVariable("$i"), $j),equals(getVariable("$i"), $k))
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of or(equals(getVariable("$i"), $j),equals(getVariable("$i"), $k))
 		// depth = 1 / argument index = 0: or(equals(getVariable("$i"), $j), equals(getVariable("$i"), $k))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX0 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of equals(getVariable("$i"), $j)
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of equals(getVariable("$i"), $k)
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX0 = argumentValues;
+			// argumentValues[0] --> returnValue of equals(getVariable("$i"), $j)
+			// argumentValues[1] --> returnValue of equals(getVariable("$i"), $k)
 			// depth = 2 / argument index = 0: equals(getVariable("$i"), $j)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX0[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$i")
-				argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$j")
+				array<ScriptVariable, 2> argumentValues;
+				array<ScriptVariable, 2>& argumentValuesD2AIDX0 = argumentValues;
+				// argumentValues[0] --> returnValue of getVariable("$i")
+				// argumentValues[1] --> returnValue of getVariable("$j")
 				// depth = 3 / argument index = 0: getVariable("$i")
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX0[0];
-					vector<ScriptVariable> argumentValues;
-					vector<ScriptVariable>& argumentValuesD3AIDX0 = argumentValues;
-					argumentValues.push_back(MiniScript::ScriptVariable(string("$i")));
+					array<ScriptVariable, 1> argumentValues;
+					array<ScriptVariable, 1>& argumentValuesD3AIDX0 = argumentValues;
+					argumentValues[0].setValue(string("$i"));
 					// method code: getVariable
 					string variable;
 					if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -9207,9 +9207,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX0[1];
-					vector<ScriptVariable> argumentValues;
-					vector<ScriptVariable>& argumentValuesD3AIDX1 = argumentValues;
-					argumentValues.push_back(MiniScript::ScriptVariable(string("$j")));
+					array<ScriptVariable, 1> argumentValues;
+					array<ScriptVariable, 1>& argumentValuesD3AIDX1 = argumentValues;
+					argumentValues[0].setValue(string("$j"));
 					// method code: getVariable
 					string variable;
 					if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -9237,17 +9237,17 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX0[1];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX1 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$i")
-				argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$k")
+				array<ScriptVariable, 2> argumentValues;
+				array<ScriptVariable, 2>& argumentValuesD2AIDX1 = argumentValues;
+				// argumentValues[0] --> returnValue of getVariable("$i")
+				// argumentValues[1] --> returnValue of getVariable("$k")
 				// depth = 3 / argument index = 0: getVariable("$i")
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX1[0];
-					vector<ScriptVariable> argumentValues;
-					vector<ScriptVariable>& argumentValuesD3AIDX0 = argumentValues;
-					argumentValues.push_back(MiniScript::ScriptVariable(string("$i")));
+					array<ScriptVariable, 1> argumentValues;
+					array<ScriptVariable, 1>& argumentValuesD3AIDX0 = argumentValues;
+					argumentValues[0].setValue(string("$i"));
 					// method code: getVariable
 					string variable;
 					if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -9266,9 +9266,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX1[1];
-					vector<ScriptVariable> argumentValues;
-					vector<ScriptVariable>& argumentValuesD3AIDX1 = argumentValues;
-					argumentValues.push_back(MiniScript::ScriptVariable(string("$k")));
+					array<ScriptVariable, 1> argumentValues;
+					array<ScriptVariable, 1>& argumentValuesD3AIDX1 = argumentValues;
+					argumentValues[0].setValue(string("$k"));
 					// method code: getVariable
 					string variable;
 					if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -9337,9 +9337,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("This should not happen, but look ok in preprocessor processed output")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("This should not happen, but look ok in preprocessor processed output"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -9361,8 +9361,8 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
+		array<ScriptVariable, 0> argumentValues;
+		array<ScriptVariable, 0>& argumentValuesD0 = argumentValues;
 		// method code: end
 		if (miniScript->scriptState.endTypeStack.empty() == true) {
 			if (miniScript->scriptState.statementIdx < miniScript->scripts[miniScript->scriptState.scriptIdx].statements.size() - 1) {
@@ -9400,9 +9400,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("-------------------------------------------------------------------------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("-------------------------------------------------------------------------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -9424,32 +9424,32 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of add("Test: string concatenation with brackets in string literals: ",add($i,add("(",add($j, ")"))))
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of add("Test: string concatenation with brackets in string literals: ",add($i,add("(",add($j, ")"))))
 		// depth = 1 / argument index = 0: add("Test: string concatenation with brackets in string literals: ", add($i,add("(",add($j, ")"))))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX0 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable(string("Test: string concatenation with brackets in string literals: ")));
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of add($i,add("(",add($j, ")")))
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX0 = argumentValues;
+			argumentValues[0].setValue(string("Test: string concatenation with brackets in string literals: "));
+			// argumentValues[1] --> returnValue of add($i,add("(",add($j, ")")))
 			// depth = 2 / argument index = 1: add($i, add("(",add($j, ")")))
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX0[1];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX1 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$i")
-				argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of add("(",add($j, ")"))
+				array<ScriptVariable, 2> argumentValues;
+				array<ScriptVariable, 2>& argumentValuesD2AIDX1 = argumentValues;
+				// argumentValues[0] --> returnValue of getVariable("$i")
+				// argumentValues[1] --> returnValue of add("(",add($j, ")"))
 				// depth = 3 / argument index = 0: getVariable("$i")
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX1[0];
-					vector<ScriptVariable> argumentValues;
-					vector<ScriptVariable>& argumentValuesD3AIDX0 = argumentValues;
-					argumentValues.push_back(MiniScript::ScriptVariable(string("$i")));
+					array<ScriptVariable, 1> argumentValues;
+					array<ScriptVariable, 1>& argumentValuesD3AIDX0 = argumentValues;
+					argumentValues[0].setValue(string("$i"));
 					// method code: getVariable
 					string variable;
 					if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -9468,25 +9468,25 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX1[1];
-					vector<ScriptVariable> argumentValues;
-					vector<ScriptVariable>& argumentValuesD3AIDX1 = argumentValues;
-					argumentValues.push_back(MiniScript::ScriptVariable(string("(")));
-					argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of add($j, ")")
+					array<ScriptVariable, 2> argumentValues;
+					array<ScriptVariable, 2>& argumentValuesD3AIDX1 = argumentValues;
+					argumentValues[0].setValue(string("("));
+					// argumentValues[1] --> returnValue of add($j, ")")
 					// depth = 4 / argument index = 1: add($j, ")")
 					{
 						// required method code arguments
 						ScriptVariable& returnValue = argumentValuesD3AIDX1[1];
-						vector<ScriptVariable> argumentValues;
-						vector<ScriptVariable>& argumentValuesD4AIDX1 = argumentValues;
-						argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of getVariable("$j")
-						argumentValues.push_back(MiniScript::ScriptVariable(string(")")));
+						array<ScriptVariable, 2> argumentValues;
+						array<ScriptVariable, 2>& argumentValuesD4AIDX1 = argumentValues;
+						// argumentValues[0] --> returnValue of getVariable("$j")
+						argumentValues[1].setValue(string(")"));
 						// depth = 5 / argument index = 0: getVariable("$j")
 						{
 							// required method code arguments
 							ScriptVariable& returnValue = argumentValuesD4AIDX1[0];
-							vector<ScriptVariable> argumentValues;
-							vector<ScriptVariable>& argumentValuesD5AIDX0 = argumentValues;
-							argumentValues.push_back(MiniScript::ScriptVariable(string("$j")));
+							array<ScriptVariable, 1> argumentValues;
+							array<ScriptVariable, 1>& argumentValuesD5AIDX0 = argumentValues;
+							argumentValues[0].setValue(string("$j"));
 							// method code: getVariable
 							string variable;
 							if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -9774,9 +9774,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("-------------------------------------------------------------------------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("-------------------------------------------------------------------------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -9798,35 +9798,35 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("(4.0 + 2.0) / 2.0 + (20.0 / 10.0 * (2.0 + 5)): ")));
-		argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of add(div(add(4.0, 2.0), 2.0),mul(div(20.0, 10.0), add(2.0, 5)))
-		argumentValues.push_back(MiniScript::ScriptVariable(string(" = 17")));
+		array<ScriptVariable, 3> argumentValues;
+		array<ScriptVariable, 3>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("(4.0 + 2.0) / 2.0 + (20.0 / 10.0 * (2.0 + 5)): "));
+		// argumentValues[1] --> returnValue of add(div(add(4.0, 2.0), 2.0),mul(div(20.0, 10.0), add(2.0, 5)))
+		argumentValues[2].setValue(string(" = 17"));
 		// depth = 1 / argument index = 1: add(div(add(4.0, 2.0), 2.0), mul(div(20.0, 10.0), add(2.0, 5)))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			vector<ScriptVariable> argumentValues;
-			vector<ScriptVariable>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of div(add(4.0, 2.0), 2.0)
-			argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of mul(div(20.0, 10.0), add(2.0, 5))
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of div(add(4.0, 2.0), 2.0)
+			// argumentValues[1] --> returnValue of mul(div(20.0, 10.0), add(2.0, 5))
 			// depth = 2 / argument index = 0: div(add(4.0, 2.0), 2.0)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of add(4.0, 2.0)
-				argumentValues.push_back(MiniScript::ScriptVariable(2.000000f));
+				array<ScriptVariable, 2> argumentValues;
+				array<ScriptVariable, 2>& argumentValuesD2AIDX0 = argumentValues;
+				// argumentValues[0] --> returnValue of add(4.0, 2.0)
+				argumentValues[1].setValue(2.000000f);
 				// depth = 3 / argument index = 0: add(4.0, 2.0)
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX0[0];
-					vector<ScriptVariable> argumentValues;
-					vector<ScriptVariable>& argumentValuesD3AIDX0 = argumentValues;
-					argumentValues.push_back(MiniScript::ScriptVariable(4.000000f));
-					argumentValues.push_back(MiniScript::ScriptVariable(2.000000f));
+					array<ScriptVariable, 2> argumentValues;
+					array<ScriptVariable, 2>& argumentValuesD3AIDX0 = argumentValues;
+					argumentValues[0].setValue(4.000000f);
+					argumentValues[1].setValue(2.000000f);
 					// method code: add
 					if (MiniScript::hasType(argumentValues, MiniScript::TYPE_STRING) == true) {
 						string result;
@@ -9996,18 +9996,18 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
-				vector<ScriptVariable> argumentValues;
-				vector<ScriptVariable>& argumentValuesD2AIDX1 = argumentValues;
-				argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of div(20.0, 10.0)
-				argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of add(2.0, 5)
+				array<ScriptVariable, 2> argumentValues;
+				array<ScriptVariable, 2>& argumentValuesD2AIDX1 = argumentValues;
+				// argumentValues[0] --> returnValue of div(20.0, 10.0)
+				// argumentValues[1] --> returnValue of add(2.0, 5)
 				// depth = 3 / argument index = 0: div(20.0, 10.0)
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX1[0];
-					vector<ScriptVariable> argumentValues;
-					vector<ScriptVariable>& argumentValuesD3AIDX0 = argumentValues;
-					argumentValues.push_back(MiniScript::ScriptVariable(20.000000f));
-					argumentValues.push_back(MiniScript::ScriptVariable(10.000000f));
+					array<ScriptVariable, 2> argumentValues;
+					array<ScriptVariable, 2>& argumentValuesD3AIDX0 = argumentValues;
+					argumentValues[0].setValue(20.000000f);
+					argumentValues[1].setValue(10.000000f);
 					// method code: div
 					if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
 						auto valid = true;
@@ -10114,10 +10114,10 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX1[1];
-					vector<ScriptVariable> argumentValues;
-					vector<ScriptVariable>& argumentValuesD3AIDX1 = argumentValues;
-					argumentValues.push_back(MiniScript::ScriptVariable(2.000000f));
-					argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(5)));
+					array<ScriptVariable, 2> argumentValues;
+					array<ScriptVariable, 2>& argumentValuesD3AIDX1 = argumentValues;
+					argumentValues[0].setValue(2.000000f);
+					argumentValues[1].setValue(static_cast<int64_t>(5));
 					// method code: add
 					if (MiniScript::hasType(argumentValues, MiniScript::TYPE_STRING) == true) {
 						string result;
@@ -10367,9 +10367,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("--------------------------------------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("--------------------------------------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -10391,9 +10391,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("Test if enabled naming condition will be emitted")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("Test if enabled naming condition will be emitted"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -10415,9 +10415,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("--------------------------------------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("--------------------------------------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -10439,9 +10439,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("named_condition_1")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("named_condition_1"));
 		// method code: script.enableNamedCondition
 		string name;
 		if (MiniScript::getStringValue(argumentValues, 0, name, false) == true) {
@@ -10474,9 +10474,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(2000)));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(static_cast<int64_t>(2000));
 		// method code: script.wait
 		int64_t time;
 		if (miniScript->getIntegerValue(argumentValues, 0, time) == true) {
@@ -10502,9 +10502,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("named_condition_1")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("named_condition_1"));
 		// method code: script.disableNamedCondition
 		string name;
 		if (MiniScript::getStringValue(argumentValues, 0, name, false) == true) {
@@ -10536,9 +10536,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("---------------------------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("---------------------------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -10560,9 +10560,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("Naming condition has not been emitted")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("Naming condition has not been emitted"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -10584,9 +10584,9 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
-		argumentValues.push_back(MiniScript::ScriptVariable(string("---------------------------------------")));
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("---------------------------------------"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -10608,8 +10608,8 @@ void MiniScriptTest::nothing(int miniScriptGotoStatementIdx) {
 		};
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		ScriptVariable returnValue;
-		vector<ScriptVariable> argumentValues;
-		vector<ScriptVariable>& argumentValuesD0 = argumentValues;
+		array<ScriptVariable, 0> argumentValues;
+		array<ScriptVariable, 0>& argumentValuesD0 = argumentValues;
 		// method code: end
 		if (miniScript->scriptState.endTypeStack.empty() == true) {
 			if (miniScript->scriptState.statementIdx < miniScript->scripts[miniScript->scriptState.scriptIdx].statements.size() - 1) {
