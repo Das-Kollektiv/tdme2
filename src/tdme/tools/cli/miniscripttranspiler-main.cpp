@@ -11,6 +11,7 @@
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MiniScript.h>
 #include <tdme/utilities/StringTools.h>
 
@@ -26,6 +27,7 @@ using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::editor::misc::Tools;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::Integer;
 using tdme::utilities::MiniScript;
 using tdme::utilities::StringTools;
 
@@ -135,6 +137,26 @@ void gatherMethodCode(const vector<string>& miniScriptExtensionsCode, const stri
 				methodName+= c;
 			}
 		}
+	}
+
+	// find min indent from method code and depth indent
+	int minIndent = Integer::MAX_VALUE;
+	for (auto& codeLine: executeMethodCode) {
+		auto indent = 0;
+		for (auto i = 0; i < codeLine.size(); i++) {
+			auto c = codeLine[i];
+			if (c == '\t') {
+				indent++;
+			} else {
+				break;
+			}
+		}
+		minIndent = Math::min(minIndent, indent);
+	}
+
+	// remove indent
+	for (auto& codeLine: executeMethodCode) {
+		codeLine = StringTools::substring(codeLine, minIndent);
 	}
 
 	//

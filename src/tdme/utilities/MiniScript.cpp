@@ -3437,22 +3437,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 	}
 	auto& methodCode = methodCodeMapIt->second;
 
-	// find min indent from method code and depth indent
-	int minIndent = 100;
-	for (auto& codeLine: methodCode) {
-		auto indent = 0;
-		for (auto i = 0; i < codeLine.size(); i++) {
-			auto c = codeLine[i];
-			if (c == '\t') {
-				indent++;
-			} else {
-				break;
-			}
-		}
-		minIndent = Math::min(minIndent, indent);
-	}
-	string minIndentString;
-	for (auto i = 0; i < minIndent; i++) minIndentString+= "\t";
+	string minIndentString = "\t";
 	string depthIndentString;
 	for (auto i = 0; i < depth; i++) depthIndentString+= "\t";
 
@@ -3480,12 +3465,13 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 	argumentValuesCode.push_back("vector<ScriptVariable>& argumentValuesD" + to_string(depth) + (argumentIdx != -1?"AIDX" + to_string(argumentIdx):"") + " = argumentValues;");
 
 	// argument values header
-	generatedCode+= minIndentString + depthIndentString + "{\n";
+	generatedCode+= minIndentString + depthIndentString + "{" + "\n";
+	generatedCode+= minIndentString + depthIndentString + "\t" + "// required method code arguments" + "\n";
 	// statement
 	if (depth == 0) {
 		generatedCode+= minIndentString + depthIndentString + "\t" + "const MiniScript::ScriptStatement statement = {" + "\n";
-		generatedCode+= minIndentString + depthIndentString + "\t\t" + ".line = " + to_string(statement.line) + ", " + "\n";
-		generatedCode+= minIndentString + depthIndentString + "\t\t" + ".statementIdx = " + to_string(statement.statementIdx) + ", " + "\n";
+		generatedCode+= minIndentString + depthIndentString + "\t\t" + ".line = " + to_string(statement.line) + "," + "\n";
+		generatedCode+= minIndentString + depthIndentString + "\t\t" + ".statementIdx = " + to_string(statement.statementIdx) + "," + "\n";
 		generatedCode+= minIndentString + depthIndentString + "\t\t" + ".statement = \"<unavailable>\"," + "\n";
 		generatedCode+= minIndentString + depthIndentString + "\t\t" + ".gotoStatementIdx = " + to_string(statement.gotoStatementIdx) + "\n";
 		generatedCode+= minIndentString + depthIndentString + "\t};" + "\n";
@@ -3614,6 +3600,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 	}
 
 	// generate code
+	generatedCode+= minIndentString + depthIndentString + "\t" + "// method code: " + string(method) + "\n";
 	for (auto& codeLine: methodCode) {
 		// replace returns with gotos
 		if (StringTools::regexMatch(codeLine, "[\\ \\t]*return[\\ \\t]*;.*") == true) {
@@ -3634,19 +3621,19 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 				}
 				string indentString;
 				for (auto i = 0; i < indent; i++) indentString+= "\t";
-				generatedCode+= indentString + depthIndentString + "\t" + "goto statement_" + to_string(statement.gotoStatementIdx) + ";\n";
+				generatedCode+= minIndentString + indentString + depthIndentString + "\t" + "goto miniscript_statement_" + to_string(statement.gotoStatementIdx) + ";\n";
 			}
 		} else {
 			if (StringTools::regexMatch(codeLine, ".*[\\ \\t]*miniScript[\\ \\t]*->[\\ \\t]*setScriptState[\\ \\t]*\\([\\ \\t]*[a-zA-Z0-9_]+[\\ \\t]*\\);.*") == true) {
 				scriptStateChanged = true;
 			}
 			string _codeLine = StringTools::replace(codeLine, "getMethodName()", "string(\"" + string(method) + "\")");
-			generatedCode+= depthIndentString + "\t" + _codeLine + "\n";
+			generatedCode+= minIndentString + depthIndentString + "\t" + _codeLine + "\n";
 		}
 	}
 
 	//
-	generatedCode+= minIndentString + depthIndentString + "}\n";
+	generatedCode+= minIndentString + depthIndentString + "}" + "\n";
 
 	//
 	return true;
@@ -3672,8 +3659,9 @@ bool MiniScript::transpile(string& generatedCode, const string& condition, const
 	}
 	auto statementIdx = 0;
 	string generatedCodeHeader;
-	generatedCodeHeader+= string() + "auto miniScript = this;" + "\n";
-	generatedCodeHeader+= "miniScript->scriptState.scriptIdx = " + to_string(scriptIdx) + ";" + "\n";
+	string minIndentString = "\t";
+	generatedCodeHeader+= minIndentString + "auto miniScript = this;" + "\n";
+	generatedCodeHeader+= minIndentString +"miniScript->scriptState.scriptIdx = " + to_string(scriptIdx) + ";" + "\n";
 	bool scriptStateChanged = false;
 	for (auto scriptStatement: scripts[scriptIdx].statements) {
 		//
@@ -3686,15 +3674,17 @@ bool MiniScript::transpile(string& generatedCode, const string& condition, const
 		//
 		if (scriptStateChanged == true) {
 			scriptStateChanged = false;
-			generatedCodeHeader+= string() + "if (miniScriptGotoStatementIdx == " + to_string(scriptStatement.statementIdx)  + ") goto statement_" + to_string(scriptStatement.statementIdx) + "; else" + "\n";
+			generatedCodeHeader+= minIndentString + "if (miniScriptGotoStatementIdx == " + to_string(scriptStatement.statementIdx)  + ") goto miniscript_statement_" + to_string(scriptStatement.statementIdx) + "; else" + "\n";
 		}
 		// statement_xyz goto label
-		generatedCode+= "statement_" + to_string(scriptStatement.statementIdx) + ":" + "\n";
+		generatedCode+= "\n";
+		generatedCode+= minIndentString + "// Statement: " + to_string(scriptStatement.statementIdx) + "\n";
+		generatedCode+= minIndentString + "miniscript_statement_" + to_string(scriptStatement.statementIdx) + ":" + "\n";
 		transpileScriptStatement(generatedCode, method, arguments, scriptStatement, statementIdx, methodCodeMap, scriptStateChanged);
-		generatedCode+= string() + "while (scriptState.state.state != STATE_NEXT_STATEMENT) miniScript->executeStateMachine();" + "\n";
+		generatedCode+= minIndentString + "while (scriptState.state.state != STATE_NEXT_STATEMENT) miniScript->executeStateMachine();" + "\n";
 	}
 	//
-	generatedCodeHeader+= string() + "if (miniScriptGotoStatementIdx != 0) Console::println(\"MiniScript::" + condition + "(): Can not go to statement \" + to_string(miniScriptGotoStatementIdx));" + "\n";
+	generatedCodeHeader+= minIndentString + "if (miniScriptGotoStatementIdx != 0) Console::println(\"MiniScript::" + condition + "(): Can not go to statement \" + to_string(miniScriptGotoStatementIdx));" + "\n";
 	//
 	generatedCode = generatedCodeHeader + generatedCode;
 	return true;
