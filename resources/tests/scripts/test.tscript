@@ -5,6 +5,7 @@ on: initialize
 	console.log("------------")
 	console.log()
 end
+
 # if no condition is met, nothing will be executed, lol :D
 on: nothing
 	console.log("---------")
@@ -162,6 +163,7 @@ on: nothing
 	console.log("---------------------------------------")
 	console.log("Naming condition has not been emitted")
 	console.log("---------------------------------------")
+	script.stop()
 end
 # an error has occurred
 on: error

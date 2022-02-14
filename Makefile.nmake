@@ -725,7 +725,6 @@ all: \
 	FoliageTest \
 	MathOperatorTest \
 	MiniScriptTest \
-	MiniScriptNativeTest \
 	PathFindingTest \
 	PhysicsTest1 PhysicsTest2 PhysicsTest3 PhysicsTest4 \
 	RayTracingTest \
@@ -928,9 +927,6 @@ MathOperatorTest:
 
 MiniScriptTest:
 	cl /FeMiniScriptTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/MiniScriptTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
-
-MiniScriptNativeTest:
-	cl /FeMiniScriptNativeTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/MiniScriptNativeTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 PathFindingTest:
 	cl /FePathFindingTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PathFindingTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)

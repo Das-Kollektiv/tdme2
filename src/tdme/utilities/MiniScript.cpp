@@ -413,6 +413,7 @@ void MiniScript::emit(const string& condition) {
 }
 
 void MiniScript::executeStateMachine() {
+	auto native = isNative();
 	while (true == true) {
 		// determine state machine state if it did change
 		if (scriptState.state.lastStateMachineState == nullptr || scriptState.state.state != scriptState.state.lastState) {
@@ -426,14 +427,24 @@ void MiniScript::executeStateMachine() {
 
 		// execute state machine
 		if (scriptState.state.lastStateMachineState != nullptr) {
-			scriptState.state.lastStateMachineState->execute();
+			if (native == true && scriptState.state.state == STATE_NEXT_STATEMENT) {
+				// ignore STATE_NEXT_STATEMENT on native
+			} else {
+				scriptState.state.lastStateMachineState->execute();
+			}
 		} else {
 			Console::println("MiniScript::execute(): '" + scriptFileName + "': unknown state with id: " + to_string(scriptState.state.state));
 			break;
 		}
 
-		// break if no next statement but other state machine state or not running
-		if (scriptState.state.state != STATE_NEXT_STATEMENT || scriptState.running == false) break;
+		//
+		if (native == true) {
+			// break if next is next statement or not running
+			if (scriptState.state.state == STATE_NEXT_STATEMENT || scriptState.running == false) break;
+		} else {
+			// break if no next statement but other state machine state or not running
+			if (scriptState.state.state != STATE_NEXT_STATEMENT || scriptState.running == false) break;
+		}
 	}
 }
 
@@ -464,13 +475,6 @@ void MiniScript::execute() {
 	executeStateMachine();
 }
 
-void MiniScript::executeNative() {
-	if (scriptState.state.state == STATE_NONE) return;
-
-	//
-	nothing(0);
-}
-
 void MiniScript::loadScript(const string& pathName, const string& fileName) {
 	scriptValid = true;
 	scriptPathName = pathName;
@@ -497,8 +501,10 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 
 	//
 	registerStateMachineStates();
-	registerMethods();
+	registerMethods(); // TODO: we can remove this later if we store some script meta data
 	registerVariables();
+
+	// TODO: if is native, we need to store some meta data about scripts and dont allow to load script (except the compiled original one)
 
 	//
 	vector<string> scriptLines;
@@ -740,8 +746,7 @@ int MiniScript::determineScriptIdxToStart() {
 			nothingScriptIdx = scriptIdx;
 			// no op
 		} else
-		if (script.condition.find('(') == string::npos &&
-			script.condition.rfind(')') == string::npos) {
+		if (StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true) {
 			// user emit condition
 		} else {
 			auto conditionMet = true;
@@ -1069,68 +1074,74 @@ const string MiniScript::getInformation() {
 	result+= "\n";
 
 	//
-	result+= "Methods:\n";
-	{
-		vector<string> methods;
-		for (auto& scriptMethodIt: scriptMethods) {
-			auto scriptMethod = scriptMethodIt.second;
-			string method;
-			method+= scriptMethod->getMethodName();
-			method+= "(";
-			auto argumentIdx = 0;
-			if (scriptMethod->isVariadic() == true) {
-				method+="...";
-			} else {
-				for (auto& argumentType: scriptMethod->getArgumentTypes()) {
-					if (argumentIdx > 0) method+= ", ";
-					method+= argumentType.name + ": " + ScriptVariable::getTypeAsString(argumentType.type);
-					if (argumentType.optional == true) {
-						method+= "(OPTIONAL)";
+	if (isNative() == false) {
+		//
+		result+= "Methods:\n";
+		{
+			vector<string> methods;
+			for (auto& scriptMethodIt: scriptMethods) {
+				auto scriptMethod = scriptMethodIt.second;
+				string method;
+				method+= scriptMethod->getMethodName();
+				method+= "(";
+				auto argumentIdx = 0;
+				if (scriptMethod->isVariadic() == true) {
+					method+="...";
+				} else {
+					for (auto& argumentType: scriptMethod->getArgumentTypes()) {
+						if (argumentIdx > 0) method+= ", ";
+						method+= argumentType.name + ": " + ScriptVariable::getTypeAsString(argumentType.type);
+						if (argumentType.optional == true) {
+							method+= "(OPTIONAL)";
+						}
+						argumentIdx++;
 					}
-					argumentIdx++;
 				}
+				method+= "): ";
+				method+= scriptMethod->isMixedReturnValue() == true?"Mixed":ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType());
+				methods.push_back(method);
 			}
-			method+= "): ";
-			method+= scriptMethod->isMixedReturnValue() == true?"Mixed":ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType());
-			methods.push_back(method);
+			sort(methods.begin(), methods.end());
+			for (auto& method: methods) result+= method + "\n";
 		}
-		sort(methods.begin(), methods.end());
-		for (auto& method: methods) result+= method + "\n";
-	}
-	result+= "\n";
+		result+= "\n";
 
-	//
-	result+= "Operators:\n";
-	{
-		vector<string> operators;
-		for (auto& scriptOperatorIt: scriptOperators) {
-			auto method = scriptOperatorIt.second;
-			string operatorString;
-			operatorString+= getOperatorAsString(method->getOperator());
-			operatorString+= " --> ";
-			operatorString+= method->getMethodName();
-			operatorString+= "(";
-			auto argumentIdx = 0;
-			if (method->isVariadic() == true) {
-				operatorString+="...";
-			} else {
-				for (auto& argumentType: method->getArgumentTypes()) {
-					if (argumentIdx > 0) operatorString+= ", ";
-					operatorString+= argumentType.name + ": " + ScriptVariable::getTypeAsString(argumentType.type);
-					if (argumentType.optional == true) {
-						operatorString+= "(OPTIONAL)";
+		//
+		result+= "Operators:\n";
+		{
+			vector<string> operators;
+			for (auto& scriptOperatorIt: scriptOperators) {
+				auto method = scriptOperatorIt.second;
+				string operatorString;
+				operatorString+= getOperatorAsString(method->getOperator());
+				operatorString+= " --> ";
+				operatorString+= method->getMethodName();
+				operatorString+= "(";
+				auto argumentIdx = 0;
+				if (method->isVariadic() == true) {
+					operatorString+="...";
+				} else {
+					for (auto& argumentType: method->getArgumentTypes()) {
+						if (argumentIdx > 0) operatorString+= ", ";
+						operatorString+= argumentType.name + ": " + ScriptVariable::getTypeAsString(argumentType.type);
+						if (argumentType.optional == true) {
+							operatorString+= "(OPTIONAL)";
+						}
+						argumentIdx++;
 					}
-					argumentIdx++;
 				}
+				operatorString+= "): ";
+				operatorString+= method->isMixedReturnValue() == true?"Mixed":ScriptVariable::getTypeAsString(method->getReturnValueType());
+				operators.push_back(operatorString);
 			}
-			operatorString+= "): ";
-			operatorString+= method->isMixedReturnValue() == true?"Mixed":ScriptVariable::getTypeAsString(method->getReturnValueType());
-			operators.push_back(operatorString);
+			sort(operators.begin(), operators.end());
+			for (auto& method: operators) result+= method + "\n";
 		}
-		sort(operators.begin(), operators.end());
-		for (auto& method: operators) result+= method + "\n";
+		result+= "\n";
+	} else {
+		result+= "Methods:\n\trunning natively\n\n";
+		result+= "Operators:\n\trunning natively\n\n";
 	}
-	result+= "\n";
 
 	//
 	result+= "Variables:\n";
@@ -1172,7 +1183,7 @@ void MiniScript::registerStateMachineStates() {
 					miniScript->setScriptState(STATE_WAIT_FOR_CONDITION);
 					return;
 				}
-				miniScript->executeScriptLine();
+				if (miniScript->isNative() == false) miniScript->executeScriptLine();
 			}
 		};
 		registerStateMachineState(new ScriptStateNextStatement(this));
@@ -3410,7 +3421,7 @@ void MiniScript::registerMethods() {
 void MiniScript::registerVariables() {
 }
 
-bool MiniScript::transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, int depth, int argumentIdx, int parentArgumentIdx) {
+bool MiniScript::transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, int depth, int argumentIdx, int parentArgumentIdx, const string& injectCode) {
 	//
 	statementIdx++;
 	auto currentStatementIdx = statementIdx;
@@ -3423,9 +3434,8 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 	}
 	auto& methodCode = methodCodeMapIt->second;
 
-	// min indent from method code and depth indent
+	// indenting
 	string minIndentString = "\t";
-	// for (auto i = 0; i < minIndent; i++) minIndentString+= "\t";
 	string depthIndentString;
 	for (auto i = 0; i < depth; i++) depthIndentString+= "\t";
 
@@ -3449,16 +3459,17 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 	} else {
 		argumentValuesCode.push_back("ScriptVariable returnValue;");
 	}
-	argumentValuesCode.push_back("vector<ScriptVariable> argumentValues;");
-	argumentValuesCode.push_back("vector<ScriptVariable>& argumentValuesD" + to_string(depth) + (argumentIdx != -1?"AIDX" + to_string(argumentIdx):"") + " = argumentValues;");
+	argumentValuesCode.push_back("array<ScriptVariable, " + to_string(arguments.size()) + "> argumentValues;");
+	argumentValuesCode.push_back("array<ScriptVariable, " + to_string(arguments.size()) + ">& argumentValuesD" + to_string(depth) + (argumentIdx != -1?"AIDX" + to_string(argumentIdx):"") + " = argumentValues;");
 
 	// argument values header
-	generatedCode+= minIndentString + depthIndentString + "{\n";
+	generatedCode+= minIndentString + depthIndentString + "{" + "\n";
+	generatedCode+= minIndentString + depthIndentString + "\t" + "// required method code arguments" + "\n";
 	// statement
 	if (depth == 0) {
 		generatedCode+= minIndentString + depthIndentString + "\t" + "const MiniScript::ScriptStatement statement = {" + "\n";
-		generatedCode+= minIndentString + depthIndentString + "\t\t" + ".line = " + to_string(statement.line) + ", " + "\n";
-		generatedCode+= minIndentString + depthIndentString + "\t\t" + ".statementIdx = " + to_string(statement.statementIdx) + ", " + "\n";
+		generatedCode+= minIndentString + depthIndentString + "\t\t" + ".line = " + to_string(statement.line) + "," + "\n";
+		generatedCode+= minIndentString + depthIndentString + "\t\t" + ".statementIdx = " + to_string(statement.statementIdx) + "," + "\n";
 		generatedCode+= minIndentString + depthIndentString + "\t\t" + ".statement = \"<unavailable>\"," + "\n";
 		generatedCode+= minIndentString + depthIndentString + "\t\t" + ".gotoStatementIdx = " + to_string(statement.gotoStatementIdx) + "\n";
 		generatedCode+= minIndentString + depthIndentString + "\t};" + "\n";
@@ -3479,19 +3490,19 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 				StringTools::viewEndsWith(argument, "\"") == false &&
 				argument.find('(') != string::npos &&
 				argument.find(')') != string::npos) {
-				argumentValuesCode.push_back("argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of " + string(argument));
+				argumentValuesCode.push_back("// argumentValues[" + to_string(subArgumentIdx) + "] --> returnValue of " + string(argument));
 			} else
 			// variable
 			if (StringTools::viewStartsWith(argument, "$") == true) {
 				// method call, call method and put its return value into argument value
 				string generatedStatement = "getVariable(\"" + string(argument) + "\")";
-				argumentValuesCode.push_back("argumentValues.push_back(MiniScript::ScriptVariable()); // returnValue of " + string(generatedStatement));
+				argumentValuesCode.push_back("// argumentValues[" + to_string(subArgumentIdx) + "] --> returnValue of " + string(generatedStatement));
 			} else {
 				// literal
 				ScriptVariable argumentValue;
 				if (StringTools::viewStartsWith(argument, "\"") == true &&
 					StringTools::viewEndsWith(argument, "\"") == true) {
-					argumentValuesCode.push_back("argumentValues.push_back(MiniScript::ScriptVariable(string(\"" + string(StringTools::viewSubstring(argument, 1, argument.size() - 1)) + "\")));");
+					argumentValuesCode.push_back("argumentValues[" + to_string(subArgumentIdx) + "].setValue(string(\"" + string(StringTools::viewSubstring(argument, 1, argument.size() - 1)) + "\"));");
 				} else {
 					MiniScript::ScriptVariable argumentValue;
 					argumentValue.setImplicitTypedValueFromStringView(argument);
@@ -3502,28 +3513,28 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 							{
 								bool value;
 								argumentValue.getBooleanValue(value);
-								argumentValuesCode.push_back(string() + "argumentValues.push_back(MiniScript::ScriptVariable(" + (value == true?"true":"false") + "));");
+								argumentValuesCode.push_back(string() + "argumentValues[" + to_string(subArgumentIdx) + "].setValue(" + (value == true?"true":"false") + ");");
 							}
 							break;
 						case TYPE_INTEGER:
 							{
 								int64_t value;
 								argumentValue.getIntegerValue(value);
-								argumentValuesCode.push_back("argumentValues.push_back(MiniScript::ScriptVariable(static_cast<int64_t>(" + to_string(value) + ")));");
+								argumentValuesCode.push_back("argumentValues[" + to_string(subArgumentIdx) + "].setValue(static_cast<int64_t>(" + to_string(value) + "));");
 							}
 							break;
 						case TYPE_FLOAT:
 							{
 								float value;
 								argumentValue.getFloatValue(value);
-								argumentValuesCode.push_back("argumentValues.push_back(MiniScript::ScriptVariable(" + to_string(value) + "f));");
+								argumentValuesCode.push_back("argumentValues[" + to_string(subArgumentIdx) + "].setValue(" + to_string(value) + "f);");
 							}
 							break;
 						case TYPE_STRING:
 							{
 								string value;
 								argumentValue.getStringValue(value);
-								argumentValuesCode.push_back("argumentValues.push_back(MiniScript::ScriptVariable(string(\"" + value + "\")));");
+								argumentValuesCode.push_back("argumentValues[" + to_string(subArgumentIdx) + "].setValue(string(\"" + value + "\"));");
 							}
 							break;
 						default:
@@ -3587,7 +3598,9 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 	}
 
 	// generate code
-	for (auto& codeLine: methodCode) {
+	generatedCode+= minIndentString + depthIndentString + "\t" + "// method code: " + string(method) + "\n";
+	for (auto codeLine: methodCode) {
+		codeLine = StringTools::replace(codeLine, "getMethodName()", "string(\"" + string(method) + "\")");
 		// replace returns with gotos
 		if (StringTools::regexMatch(codeLine, "[\\ \\t]*return[\\ \\t]*;.*") == true) {
 			Console::println("MiniScript::transpileScriptStatement(): method '" + string(method) + "': return statement not supported!");
@@ -3607,19 +3620,29 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 				}
 				string indentString;
 				for (auto i = 0; i < indent; i++) indentString+= "\t";
-				generatedCode+= indentString + depthIndentString + "\t" + "goto statement_" + to_string(statement.gotoStatementIdx) + ";\n";
+				generatedCode+= minIndentString + indentString + depthIndentString + "\t" + "goto miniscript_statement_" + to_string(statement.gotoStatementIdx) + ";\n";
 			}
+		} else
+		if (StringTools::regexMatch(codeLine, "[\\ \\t]*miniScript[\\ \\t]*->startErrorScript[\\ \\t]*\\([\\ \\t]*\\)[\\ \\t]*;[\\ \\t]*") == true) {
+			generatedCode+= minIndentString + depthIndentString + "\t" + codeLine + " return;\n";
+		} else
+		if (StringTools::regexMatch(codeLine, "[\\ \\t]*miniScript[\\ \\t]*->emit[\\ \\t]*\\([\\ \\t]*[a-zA-Z0-9]*[\\ \\t]*\\)[\\ \\t]*;[\\ \\t]*") == true) {
+			generatedCode+= minIndentString + depthIndentString + "\t" + codeLine + " return;\n";
 		} else {
 			if (StringTools::regexMatch(codeLine, ".*[\\ \\t]*miniScript[\\ \\t]*->[\\ \\t]*setScriptState[\\ \\t]*\\([\\ \\t]*[a-zA-Z0-9_]+[\\ \\t]*\\);.*") == true) {
 				scriptStateChanged = true;
 			}
-			string _codeLine = StringTools::replace(codeLine, "getMethodName()", "string(\"" + string(method) + "\")");
-			generatedCode+= depthIndentString + "\t" + _codeLine + "\n";
+			generatedCode+= minIndentString + depthIndentString + "\t" + codeLine + "\n";
 		}
 	}
 
+	// inject code if we have any to inject
+	if (injectCode.empty() == false) {
+		generatedCode+= minIndentString + depthIndentString + "\t" + injectCode + "\n";
+	}
+
 	//
-	generatedCode+= minIndentString + depthIndentString + "}\n";
+	generatedCode+= minIndentString + depthIndentString + "}" + "\n";
 
 	//
 	return true;
@@ -3630,12 +3653,30 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 		Console::println("MiniScript::transpile(): invalid script index");
 		return false;
 	}
+	//
 	Console::println("MiniScript::transpile(): transpiling code for condition = '" + scripts[scriptIdx].condition + "', with name '" + scripts[scriptIdx].name + "'");
 	auto statementIdx = 0;
 	string methodIndent = "\t";
 	string generatedCodeHeader;
+
+	// TODO: move me into a method
+	generatedCodeHeader+= methodIndent + "if (miniScriptGotoStatementIdx == -1) {" + "\n";
+	generatedCodeHeader+= methodIndent + "\t" + "scriptState.forTimeStarted.clear();" + "\n";
+	generatedCodeHeader+= methodIndent + "\t" + "while (scriptState.conditionStack.empty() == false) scriptState.conditionStack.pop();" + "\n";
+	generatedCodeHeader+= methodIndent + "\t" + "while (scriptState.endTypeStack.empty() == false) scriptState.endTypeStack.pop();" + "\n";
+	generatedCodeHeader+= methodIndent + "\t" + "scriptState.enabledConditionNames.clear();" + "\n";
+	generatedCodeHeader+= methodIndent + "\t" + "scriptState.id.clear();" + "\n";
+	generatedCodeHeader+= methodIndent + "\t" + "scriptState.scriptIdx = " + to_string(scriptIdx) + ";" + "\n";
+	generatedCodeHeader+= methodIndent + "\t" + "scriptState.statementIdx = 0;" + "\n";
+	generatedCodeHeader+= methodIndent + "\t" + "scriptState.timeWaitStarted = Time::getCurrentMillis();" + "\n";
+	generatedCodeHeader+= methodIndent + "\t" + "scriptState.timeWaitTime = 0LL;" + "\n";
+	generatedCodeHeader+= methodIndent + "\t" + "setScriptState(STATE_NEXT_STATEMENT);" + "\n";
+	generatedCodeHeader+= methodIndent + "}" + "\n";
+	// TODO: end
 	generatedCodeHeader+= methodIndent + "auto miniScript = this;" + "\n";
 	generatedCodeHeader+= methodIndent + "miniScript->scriptState.scriptIdx = " + to_string(scriptIdx) + ";" + "\n";
+
+	//
 	bool scriptStateChanged = false;
 	for (auto scriptStatement: scripts[scriptIdx].statements) {
 		//
@@ -3648,19 +3689,61 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 		//
 		if (scriptStateChanged == true) {
 			scriptStateChanged = false;
-			generatedCodeHeader+= string() + "if (miniScriptGotoStatementIdx == " + to_string(scriptStatement.statementIdx)  + ") goto statement_" + to_string(scriptStatement.statementIdx) + "; else" + "\n";
+			generatedCodeHeader+= methodIndent + "if (miniScriptGotoStatementIdx == " + to_string(scriptStatement.statementIdx)  + ") goto miniscript_statement_" + to_string(scriptStatement.statementIdx) + "; else" + "\n";
 		}
 		// statement_xyz goto label
-		generatedCode+= methodIndent + "statement_" + to_string(scriptStatement.statementIdx) + ":" + "\n";
+		generatedCode+= "\n";
+		generatedCode+= methodIndent + "// Statement: " + to_string(scriptStatement.statementIdx) + "\n";
+		generatedCode+= methodIndent + "miniscript_statement_" + to_string(scriptStatement.statementIdx) + ":" + "\n";
 		transpileScriptStatement(generatedCode, method, arguments, scriptStatement, statementIdx, methodCodeMap, scriptStateChanged);
-		generatedCode+= methodIndent + "while (scriptState.state.state != STATE_NEXT_STATEMENT) miniScript->executeStateMachine();" + "\n";
+		generatedCode+= methodIndent + "if (scriptState.state.state != STATE_NEXT_STATEMENT) {" + "\n";
+		generatedCode+= methodIndent + "\t" + "miniScript->scriptState.statementIdx++;" + "\n";
+		generatedCode+= methodIndent + "\t" + "return;" + "\n";
+		generatedCode+= methodIndent + "}" + "\n";
 	}
+	generatedCode+= methodIndent + "scriptState.scriptIdx = -1;" + "\n";
+	generatedCode+= methodIndent + "scriptState.statementIdx = -1;" + "\n";
+	generatedCode+= methodIndent + "setScriptState(STATE_WAIT_FOR_CONDITION);" + "\n";
+
 	//
-	generatedCodeHeader+= methodIndent + "if (miniScriptGotoStatementIdx != 0) Console::println(\"MiniScript::" + scripts[scriptIdx].condition + "(): Can not go to statement \" + to_string(miniScriptGotoStatementIdx));" + "\n";
+	generatedCodeHeader+= methodIndent + "if (miniScriptGotoStatementIdx != 0) Console::println(\"MiniScript::nativeXYZ(): Can not go to statement \" + to_string(miniScriptGotoStatementIdx));" + "\n";
 	//
 	generatedCode = generatedCodeHeader + generatedCode;
 	return true;
 }
 
-void MiniScript::nothing(int miniScriptGotoStatementIdx) {
+bool MiniScript::transpileScriptCondition(string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap, const string& injectCode) {
+	if (scriptIdx < 0 || scriptIdx >= scripts.size()) {
+		Console::println("MiniScript::transpile(): invalid script index");
+		return false;
+	}
+
+	//
+	Console::println("MiniScript::transpile(): transpiling code condition for condition = '" + scripts[scriptIdx].condition + "', with name '" + scripts[scriptIdx].name + "'");
+	auto statementIdx = 0;
+	string methodIndent = "\t";
+
+	const MiniScript::ScriptStatement scriptStatement = {
+		.line = scripts[scriptIdx].line,
+		.statementIdx = 0,
+		.statement = scripts[scriptIdx].condition,
+		.gotoStatementIdx = -1
+	};
+
+	//
+	string_view method;
+	vector<string_view> arguments;
+	if (parseScriptStatement(scriptStatement.statement, method, arguments) == false) {
+		Console::println("MiniScript::transpileScriptStatement(): '" + scriptFileName + "': " + scriptStatement.statement + "@" + to_string(scriptStatement.line) + ": failed to parse statement");
+		return false;
+	}
+
+	//
+	auto scriptStateChanged = false;
+	generatedCode+= "\n";
+	generatedCode+= methodIndent + "// Statement: " + to_string(scriptStatement.statementIdx) + "\n";
+	transpileScriptStatement(generatedCode, method, arguments, scriptStatement, statementIdx, methodCodeMap, scriptStateChanged, 0, -1, -1, injectCode);
+
+	//
+	return true;
 }

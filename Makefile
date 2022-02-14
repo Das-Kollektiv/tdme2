@@ -845,7 +845,6 @@ endif
 
 MAIN_SRCS = \
 	src/tdme/tests/MiniScriptTest-main.cpp \
-	src/tdme/tests/MiniScriptNativeTest-main.cpp \
 	src/tdme/tools/cli/miniscripttranspiler-main.cpp \
 
 MAINS = $(MAIN_SRCS:$(SRC)/%-main.cpp=$(BIN)/%)

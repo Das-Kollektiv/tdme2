@@ -11,6 +11,7 @@
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MiniScript.h>
 #include <tdme/utilities/StringTools.h>
 
@@ -26,6 +27,7 @@ using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::editor::misc::Tools;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::Integer;
 using tdme::utilities::MiniScript;
 using tdme::utilities::StringTools;
 
@@ -137,6 +139,26 @@ void gatherMethodCode(const vector<string>& miniScriptExtensionsCode, const stri
 		}
 	}
 
+	// find min indent from method code and depth indent
+	int minIndent = Integer::MAX_VALUE;
+	for (auto& codeLine: executeMethodCode) {
+		auto indent = 0;
+		for (auto i = 0; i < codeLine.size(); i++) {
+			auto c = codeLine[i];
+			if (c == '\t') {
+				indent++;
+			} else {
+				break;
+			}
+		}
+		minIndent = Math::min(minIndent, indent);
+	}
+
+	// remove indent
+	for (auto& codeLine: executeMethodCode) {
+		codeLine = StringTools::substring(codeLine, minIndent);
+	}
+
 	//
 	auto methodCodeMapIt = methodCodeMap.find(methodName);
 	if (methodCodeMapIt != methodCodeMap.end()) {
@@ -183,63 +205,229 @@ void processFile(const string& scriptFileName, const string& miniscriptExtension
 	}
 
 	//
-	MiniScript* script = new MiniScript();
-	script->loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName));
+	MiniScript* scriptInstance = new MiniScript();
+	scriptInstance->loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName));
+	Console::println(scriptInstance->getInformation());
 
-	Console::println(script->getInformation());
-
-	auto scripts = script->getScripts();
-	for (auto& script: scripts) {
-		Console::println(string() + (script.conditionType == MiniScript::Script::CONDITIONTYPE_ON?"ON":"ON-ENABLED") + ": " + script.condition + " (" + script.name + ")");
+	//
+	string headerIndent = "\t";
+	auto scripts = scriptInstance->getScripts();
+	string generatedExecuteCode;
+	{
+		auto scriptIdx = 0;
+		for (auto& script: scripts) {
+			// method name
+			string methodName =
+				(script.conditionType == MiniScript::Script::CONDITIONTYPE_ON?"on_":"on_enabled_") +
+				(script.name.empty() == false?script.name:(
+					StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true?
+						script.condition:
+						to_string(scriptIdx)
+					)
+				);
+			//
+			generatedExecuteCode+= headerIndent + "\t\t" + "if (scriptState.scriptIdx == " + to_string(scriptIdx) + ") " + methodName + "(scriptState.statementIdx);" + "\n";
+			scriptIdx++;
+		}
 	}
 
 	//
-	string generatedCode;
-	//generatedCode+= string() + "\t" + "// initialize" + "\n";
-	//script->transpile(generatedCode, "initialize", methodCodeMap);
-	script->transpile(generatedCode, 0, methodCodeMap);
-	//generatedCode+= string() + "\t" + "// error" + "\n";
-	//script->transpile(generatedCode, "error", methodCodeMap);
+	string miniScriptClassName = Tools::removeFileEnding(Tools::getFileName(miniscriptExtensionsFileName));
+	string generatedDeclarations = "\n";
+	generatedDeclarations+= string() + "public:" + "\n";
+	generatedDeclarations+= headerIndent + "// overriden methods" + "\n";
+	generatedDeclarations+= headerIndent + "inline virtual bool isNative() {" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "return true;" + "\n";
+	generatedDeclarations+= headerIndent + "}" + "\n";
+	generatedDeclarations+= headerIndent + "void emit(const string& condition) override;" + "\n";
+	generatedDeclarations+= headerIndent + "inline void startScript() override {" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "scriptState.variables.clear();" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "scriptState.running = true;" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "registerVariables();" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "emit(\"initialize\");" + "\n";
+	generatedDeclarations+= headerIndent + "}" + "\n";
+	generatedDeclarations+= headerIndent + "inline void execute() override {" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "if (scriptState.running == false) return;" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "// execute while having statements to be processed" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "if (scriptState.state.state == STATE_NEXT_STATEMENT) {" + "\n";
+	generatedDeclarations+= generatedExecuteCode;
+	generatedDeclarations+= headerIndent + "\t" + "}" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "if (scriptState.running == false) return;" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "executeStateMachine();" + "\n";
+	generatedDeclarations+= headerIndent + "};" + "\n";
+	generatedDeclarations+= "\n";
+	generatedDeclarations+= string() + "protected:" + "\n";
+	generatedDeclarations+= headerIndent + "// overriden methods" + "\n";
+	generatedDeclarations+= headerIndent + "int determineScriptIdxToStart() override;" + "\n";
+	generatedDeclarations+= "\n";
 
 	//
-	vector<string> miniScriptClass;
-	vector<string> miniScriptClassNew;
-	FileSystem::getInstance()->getContentAsStringArray(Tools::getPathName(miniscriptExtensionsFileName), Tools::getFileName(miniscriptExtensionsFileName), miniScriptClass);
-	auto reject = false;
-	auto injectedGeneratedCode = false;
-	for (auto i = 0; i < miniScriptClass.size(); i++) {
-		auto& line = miniScriptClass[i];
-		auto trimmedLine = StringTools::trim(line);
-		if (StringTools::startsWith(trimmedLine, "//") == true) {
-			if (reject == false) miniScriptClassNew.push_back(line);
-			continue;
+	string overriddenDefinition;
+	overriddenDefinition+= "void " + miniScriptClassName + "::emit(const string& condition) {" + "\n";
+	string generatedDefinitions = "\n";
+	string generatedDetermineScriptIdxToStartDefinition = "\n";
+	generatedDetermineScriptIdxToStartDefinition+= "int " + miniScriptClassName + "::determineScriptIdxToStart() {" + "\n";
+	generatedDetermineScriptIdxToStartDefinition+= string() + "\t" + "auto miniScript = this;" + "\n";
+	string generatedDetermineNamedScriptIdxToStartDefinition = "\n";
+	auto nothingScriptIdx = -1;
+	{
+		auto scriptIdx = 0;
+		for (auto& script: scripts) {
+			// method name
+			string methodName =
+				(script.conditionType == MiniScript::Script::CONDITIONTYPE_ON?"on_":"on_enabled_") +
+				(script.name.empty() == false?script.name:(
+					StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true?
+						script.condition:
+						to_string(scriptIdx)
+					)
+				);
+
+			string emitName =
+				(script.name.empty() == false?script.name:(
+					StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true?
+						script.condition:
+						to_string(scriptIdx)
+					)
+				);
+
+			// emit code
+			if (script.conditionType == MiniScript::Script::CONDITIONTYPE_ON && StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true) {
+				string emitDefinitionIndent = "\t";
+				overriddenDefinition+= emitDefinitionIndent + "if (condition == \"" + emitName + "\") {" + "\n";
+				overriddenDefinition+= emitDefinitionIndent + "\t" + methodName + "(-1);" + "\n";
+				overriddenDefinition+= emitDefinitionIndent + "\t" + "return;" + "\n";
+				overriddenDefinition+= emitDefinitionIndent + "}" + "\n";
+			}
+
+			// declaration
+			generatedDeclarations+= headerIndent + "/**" + "\n";
+			generatedDeclarations+= headerIndent + " * Miniscript transpilation of: " + (script.conditionType == MiniScript::Script::CONDITIONTYPE_ON?"ON":"ON-ENABLED") + ": " + script.condition + " (" + script.name + ")" + "\n";
+			generatedDeclarations+= headerIndent + " * @param miniScriptGotoStatementIdx MiniScript goto statement index" + "\n";
+			generatedDeclarations+= headerIndent + " */" + "\n";
+			generatedDeclarations+= headerIndent + "void " + methodName + "(int miniScriptGotoStatementIdx);" + "\n";
+			generatedDeclarations+= "\n";
+
+			// transpile definition
+			generatedDefinitions+= "void " + miniScriptClassName + "::" + methodName + "(int miniScriptGotoStatementIdx) {" + "\n";
+			string generatedSubCode;
+			scriptInstance->transpile(generatedSubCode, scriptIdx, methodCodeMap);
+			generatedDefinitions+= generatedSubCode;
+			generatedDefinitions+= string() + "}" + "\n\n";
+
+			//
+			if (StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == false) {
+				scriptInstance->transpileScriptCondition(
+					script.conditionType == MiniScript::Script::CONDITIONTYPE_ON?generatedDetermineScriptIdxToStartDefinition:generatedDetermineNamedScriptIdxToStartDefinition,
+					scriptIdx,
+					methodCodeMap,
+					"bool returnValueBool; returnValue.getBooleanValue(returnValueBool); if (returnValueBool == true) return " + to_string(scriptIdx) + ";"
+				);
+			} else {
+				if (script.condition == "nothing") nothingScriptIdx = scriptIdx;
+			}
+
+			//
+			scriptIdx++;
 		}
-		if (trimmedLine == "/*__MINISCRIPT_TRANSPILED_NOTHING_START__*/") {
-			reject = true;
-			miniScriptClassNew.push_back(line);
-		} else
-		if (trimmedLine == "/*__MINISCRIPT_TRANSPILED_NOTHING_END__*/") {
-			reject = false;
-			injectedGeneratedCode = true;
-			miniScriptClassNew.push_back(generatedCode);
-			miniScriptClassNew.push_back(line);
+	}
+
+	//
+	generatedDetermineScriptIdxToStartDefinition+= string() + "\t" + "return " + to_string(nothingScriptIdx) + ";" + "\n";
+	generatedDetermineScriptIdxToStartDefinition+= string() + "}" + "\n";
+
+	//
+	overriddenDefinition+= string() + "}" + "\n";
+
+	// add emit code
+	generatedDefinitions = generatedDetermineScriptIdxToStartDefinition + "\n" + overriddenDefinition + generatedDefinitions;
+
+	// inject C++ definition code
+	{
+		vector<string> miniScriptClass;
+		vector<string> miniScriptClassNew;
+		FileSystem::getInstance()->getContentAsStringArray(Tools::getPathName(miniscriptExtensionsFileName), Tools::getFileName(miniscriptExtensionsFileName), miniScriptClass);
+		auto reject = false;
+		auto injectedGeneratedCode = false;
+		for (auto i = 0; i < miniScriptClass.size(); i++) {
+			auto& line = miniScriptClass[i];
+			auto trimmedLine = StringTools::trim(line);
+			if (StringTools::startsWith(trimmedLine, "//") == true) {
+				if (reject == false) miniScriptClassNew.push_back(line);
+				continue;
+			}
+			if (trimmedLine == "/*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DEFINITIONS_START__*/") {
+				reject = true;
+				miniScriptClassNew.push_back(line);
+			} else
+			if (trimmedLine == "/*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DEFINITIONS_END__*/") {
+				reject = false;
+				injectedGeneratedCode = true;
+				miniScriptClassNew.push_back(generatedDefinitions);
+				miniScriptClassNew.push_back(line);
+			} else {
+				if (reject == false) miniScriptClassNew.push_back(line);
+			}
+		}
+
+		//
+		if (injectedGeneratedCode == false) {
+			Console::println(scriptFileName + ": Could not inject generated C++ code, are you missing the /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DEFINITIONS_START__*/ and /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DEFINITIONS_END__*/ markers in file " + miniscriptExtensionsFileName + "?");
 		} else {
-			if (reject == false) miniScriptClassNew.push_back(line);
+			//
+			FileSystem::getInstance()->setContentFromStringArray(
+				Tools::getPathName(miniscriptExtensionsFileName),
+				Tools::getFileName(miniscriptExtensionsFileName),
+				miniScriptClassNew
+			);
+			//
+			Console::println(scriptFileName + ": Injected generated C++ code in file " + miniscriptExtensionsFileName + ". Dont forget to rebuild your sources.");
 		}
 	}
 
 	//
-	if (injectedGeneratedCode == false) {
-		Console::println(scriptFileName + ": Could not inject generated C++ code, are you missing the /*__MINISCRIPT_TRANSPILED_NOTHING_START__*/ and /*__MINISCRIPT_TRANSPILED_NOTHING_END__*/ markers in file " + miniscriptExtensionsFileName + "?");
-	} else {
+	// inject C++ declaration code / header
+	{
+		vector<string> miniScriptClassHeader;
+		vector<string> miniScriptClassHeaderNew;
+		auto miniscriptExtensionsHeaderFileName = Tools::getPathName(miniscriptExtensionsFileName) + "/" + Tools::removeFileEnding(Tools::getFileName(miniscriptExtensionsFileName)) + ".h";
+		FileSystem::getInstance()->getContentAsStringArray(Tools::getPathName(miniscriptExtensionsHeaderFileName), Tools::getFileName(miniscriptExtensionsHeaderFileName), miniScriptClassHeader);
+		auto reject = false;
+		auto injectedGeneratedCode = false;
+		for (auto i = 0; i < miniScriptClassHeader.size(); i++) {
+			auto& line = miniScriptClassHeader[i];
+			auto trimmedLine = StringTools::trim(line);
+			if (StringTools::startsWith(trimmedLine, "//") == true) {
+				if (reject == false) miniScriptClassHeaderNew.push_back(line);
+				continue;
+			}
+			if (trimmedLine == "/*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DECLARATIONS_START__*/") {
+				reject = true;
+				miniScriptClassHeaderNew.push_back(line);
+			} else
+			if (trimmedLine == "/*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DECLARATIONS_END__*/") {
+				reject = false;
+				injectedGeneratedCode = true;
+				miniScriptClassHeaderNew.push_back(generatedDeclarations);
+				miniScriptClassHeaderNew.push_back(line);
+			} else {
+				if (reject == false) miniScriptClassHeaderNew.push_back(line);
+			}
+		}
+
 		//
-		FileSystem::getInstance()->setContentFromStringArray(
-			Tools::getPathName(miniscriptExtensionsFileName),
-			Tools::getFileName(miniscriptExtensionsFileName),
-			miniScriptClassNew
-		);
-		//
-		Console::println(scriptFileName + ": Injected generated C++ code in file " + miniscriptExtensionsFileName + ". Dont forget to rebuild your sources.");
+		if (injectedGeneratedCode == false) {
+			Console::println(scriptFileName + ": Could not inject generated C++ code, are you missing the /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DECLARATIONS_START__*/ and /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DECLARATIONS_END__*/ markers in file " + miniscriptExtensionsFileName + "?");
+		} else {
+			//
+			FileSystem::getInstance()->setContentFromStringArray(
+				Tools::getPathName(miniscriptExtensionsHeaderFileName),
+				Tools::getFileName(miniscriptExtensionsHeaderFileName),
+				miniScriptClassHeaderNew
+			);
+			//
+			Console::println(scriptFileName + ": Injected generated C++ code in header file " + miniscriptExtensionsHeaderFileName + ". Dont forget to rebuild your sources.");
+		}
 	}
 }
 

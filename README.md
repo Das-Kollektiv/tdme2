@@ -201,8 +201,8 @@
 	  - communication between script instances is possible by sending signals with arguments
 	  - complex logic should still be implemented by a game developer in C++ by extending MiniScript
 	  - game designers can use MiniScript + those methods to implement high level game logic
-	- can be "easily" transpiled to C++ later
 	- MiniScript methods/states know about them self, so a whole documentation for MiniScript usage can be generated later
+	- can be transpiled to C++ (this is WIP, but already working)
 - Networking module, which consists of
     - UDP server
         - n:m threading model with non blocked IO via kernel event mechanismns(epoll, kqueue or select)
@@ -256,6 +256,7 @@
     - generatelicenses tool to generate complete engine or project licenses from ./ext folders
     - importtmodel tool to generate TDME2 tmodel prototype files using model and bounding volumes models
     - makefilegenerator tool to generate Makefiles for TDME2 based projects
+    - miniscripttranspiler tool to transpile MiniScript code to C++ code
     - optimizemodel tool to generate texture atlases and bake down model mesh nodes into a few one to reduce GL/VK (render/compute) calls
     - sortincludes tool to sort "include" and "using" source code statements
     - others ...

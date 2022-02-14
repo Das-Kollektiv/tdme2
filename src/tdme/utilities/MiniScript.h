@@ -736,6 +736,18 @@ protected:
 		scriptState.state.lastStateMachineState = nullptr;
 	}
 
+	/**
+	 * Determine script index to start
+	 * @return script index or -1 if no script to start
+	 */
+	virtual int determineScriptIdxToStart();
+
+	/**
+	 * Determine named script index to start
+	 * @return script index or -1 if no script to start
+	 */
+	virtual int determineNamedScriptIdxToStart();
+
 private:
 	static constexpr bool VERBOSE { false };
 
@@ -789,18 +801,6 @@ private:
 	 * @return return value as script variablle
 	 */
 	ScriptVariable executeScriptStatement(const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement);
-
-	/**
-	 * Determine script index to start
-	 * @return script index or -1 if no script to start
-	 */
-	int determineScriptIdxToStart();
-
-	/**
-	 * Determine named script index to start
-	 * @return script index or -1 if no script to start
-	 */
-	int determineNamedScriptIdxToStart();
 
 	/**
 	 * Returns if char is operator char
@@ -859,7 +859,7 @@ private:
 	 * @param argumentIdx argument index
 	 * @param parentArgumentIdx parent argument index
 	 */
-	bool transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, int depth = 0, int argumentIdx = -1, int parentArgumentIdx = -1);
+	bool transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, int depth = 0, int argumentIdx = -1, int parentArgumentIdx = -1, const string& injectCode = string());
 
 public:
 	/**
@@ -871,6 +871,13 @@ public:
 	 * Destructor
 	 */
 	virtual ~MiniScript();
+
+	/**
+	 * @return if running native
+	 */
+	inline virtual bool isNative() {
+		return false;
+	}
 
 	/**
 	 * @return scripts
@@ -941,6 +948,18 @@ public:
 	}
 
 	/**
+	 * Check if arguments contain argument with given type
+	 * @param arguments arguments
+	 * @param type type
+	 * @return has type
+	 */
+	template<std::size_t SIZE>
+	inline static bool hasType(const array<ScriptVariable, SIZE>& arguments, ScriptVariableType type) {
+		for (auto& argument: arguments) if (argument.getType() == type) return true;
+		return false;
+	}
+
+	/**
 	 * Get boolean value from given variable
 	 * @param arguments arguments
 	 * @param idx argument index
@@ -949,6 +968,21 @@ public:
 	 * @return success
 	 */
 	inline static bool getBooleanValue(const vector<ScriptVariable>& arguments, int idx, bool& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		return argument.getBooleanValue(value, optional);
+	}
+
+	/**
+	 * Get boolean value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optionalfalse
+	 * @return success
+	 */
+	template<std::size_t SIZE>
+	inline static bool getBooleanValue(const array<ScriptVariable, SIZE>& arguments, int idx, bool& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		auto& argument = arguments[idx];
 		return argument.getBooleanValue(value, optional);
@@ -969,6 +1003,21 @@ public:
 	}
 
 	/**
+	 * Get integer value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optional
+	 * @return success
+	 */
+	template<std::size_t SIZE>
+	inline static bool getIntegerValue(const array<ScriptVariable, SIZE>& arguments, int idx, int64_t& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		return argument.getIntegerValue(value, optional);
+	}
+
+	/**
 	 * Get float value from given variable
 	 * @param arguments arguments
 	 * @param idx argument index
@@ -977,6 +1026,21 @@ public:
 	 * @return success
 	 */
 	inline static bool getFloatValue(const vector<ScriptVariable>& arguments, int idx, float& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		return argument.getFloatValue(value, optional);
+	}
+
+	/**
+	 * Get float value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optional
+	 * @return success
+	 */
+	template<std::size_t SIZE>
+	inline static bool getFloatValue(const array<ScriptVariable, SIZE>& arguments, int idx, float& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		auto& argument = arguments[idx];
 		return argument.getFloatValue(value, optional);
@@ -997,6 +1061,21 @@ public:
 	}
 
 	/**
+	 * Get string value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optional
+	 * @return success
+	 */
+	template<std::size_t SIZE>
+	inline static bool getStringValue(const array<ScriptVariable, SIZE>& arguments, int idx, string& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		return argument.getStringValue(value, optional);
+	}
+
+	/**
 	 * Get vector3 value from given variable
 	 * @param arguments arguments
 	 * @param idx argument index
@@ -1009,6 +1088,22 @@ public:
 		auto& argument = arguments[idx];
 		return argument.getVector3Value(value, optional);
 	}
+
+	/**
+	 * Get vector3 value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optional
+	 * @return success
+	 */
+	template<std::size_t SIZE>
+	inline static bool getVector3Value(const array<ScriptVariable, SIZE>& arguments, int idx, Vector3& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		return argument.getVector3Value(value, optional);
+	}
+
 	/**
 	 * Get transformations value from given variable
 	 * @param arguments arguments
@@ -1018,6 +1113,21 @@ public:
 	 * @return success
 	 */
 	inline static bool getTransformationsValue(const vector<ScriptVariable>& arguments, int idx, Transformations& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		return argument.getTransformationsValue(value, optional);
+	}
+
+	/**
+	 * Get transformations value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optional
+	 * @return success
+	 */
+	template<std::size_t SIZE>
+	inline static bool getTransformationsValue(const array<ScriptVariable, SIZE>& arguments, int idx, Transformations& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		auto& argument = arguments[idx];
 		return argument.getTransformationsValue(value, optional);
@@ -1076,23 +1186,18 @@ public:
 	/**
 	 * Start script
 	 */
-	void startScript();
+	virtual void startScript();
 
 	/**
 	 * Emit
 	 * @param condition condition
 	 */
-	void emit(const string& condition);
+	virtual void emit(const string& condition);
 
 	/**
 	 * Execute
 	 */
-	void execute();
-
-	/**
-	 * Execute
-	 */
-	void executeNative();
+	virtual void execute();
 
 	/**
 	 * @return is running
@@ -1116,10 +1221,13 @@ public:
 	bool transpile(string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap);
 
 	/**
-	 * Nothing native entry
-	 * 	TODO: this is WIP and not final
-	 * 	@param miniScriptGotoStatementIdx miniScript goto statement idx
+	 * Transpile a script condition
+	 * @param generatedCode generated code
+	 * @param scriptIdx script index
+	 * @param methodCodeMap method code map
+	 * @param injectCode inject code
+	 * @return success
 	 */
-	virtual void nothing(int miniScriptGotoStatementIdx);
+	bool transpileScriptCondition(string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap, const string& injectCode);
 
 };
