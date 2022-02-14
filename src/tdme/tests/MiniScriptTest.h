@@ -40,25 +40,25 @@ protected:
 	int determineScriptIdxToStart() override;
 
 	/**
-	 * Miniscript transpilation of: ON: initialize ()
+	 * Miniscript transpilation of: ON: initialize
 	 * @param miniScriptGotoStatementIdx MiniScript goto statement index
 	 */
 	void on_initialize(int miniScriptGotoStatementIdx);
 
 	/**
-	 * Miniscript transpilation of: ON: nothing ()
+	 * Miniscript transpilation of: ON: nothing
 	 * @param miniScriptGotoStatementIdx MiniScript goto statement index
 	 */
 	void on_nothing(int miniScriptGotoStatementIdx);
 
 	/**
-	 * Miniscript transpilation of: ON: error ()
+	 * Miniscript transpilation of: ON: error
 	 * @param miniScriptGotoStatementIdx MiniScript goto statement index
 	 */
 	void on_error(int miniScriptGotoStatementIdx);
 
 	/**
-	 * Miniscript transpilation of: ON: emittest ()
+	 * Miniscript transpilation of: ON: emittest
 	 * @param miniScriptGotoStatementIdx MiniScript goto statement index
 	 */
 	void on_emittest(int miniScriptGotoStatementIdx);

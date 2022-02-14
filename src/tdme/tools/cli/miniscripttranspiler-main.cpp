@@ -317,7 +317,7 @@ void processFile(const string& scriptFileName, const string& miniscriptExtension
 
 			// declaration
 			generatedDeclarations+= headerIndent + "/**" + "\n";
-			generatedDeclarations+= headerIndent + " * Miniscript transpilation of: " + (script.conditionType == MiniScript::Script::CONDITIONTYPE_ON?"ON":"ON-ENABLED") + ": " + script.condition + " (" + script.name + ")" + "\n";
+			generatedDeclarations+= headerIndent + " * Miniscript transpilation of: " + (script.conditionType == MiniScript::Script::CONDITIONTYPE_ON?"ON":"ON-ENABLED") + ": " + script.condition + (script.name.empty() == false?" (" + script.name + ")":"") + "\n";
 			generatedDeclarations+= headerIndent + " * @param miniScriptGotoStatementIdx MiniScript goto statement index" + "\n";
 			generatedDeclarations+= headerIndent + " */" + "\n";
 			generatedDeclarations+= headerIndent + "void " + methodName + "(int miniScriptGotoStatementIdx);" + "\n";
