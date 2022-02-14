@@ -580,6 +580,18 @@ public:
 	};
 
 	/**
+	 * Script
+	 */
+	struct Script {
+		enum ConditionType { CONDITIONTYPE_ON, CONDITIONTYPE_ONENABLED };
+		ConditionType conditionType;
+		int line;
+		string condition;
+		string name;
+		vector<ScriptStatement> statements;
+	};
+
+	/**
 	 * Script method
 	 */
 	class ScriptMethod {
@@ -663,15 +675,6 @@ public:
 	};
 
 protected:
-	struct Script {
-		enum ConditionType { CONDITIONTYPE_ON, CONDITIONTYPE_ONENABLED };
-		ConditionType conditionType;
-		int line;
-		vector<string> conditions;
-		string name;
-		vector<ScriptStatement> statements;
-	};
-
 	struct ScriptState {
 		enum EndType { ENDTYPE_FOR, ENDTYPE_IF };
 		enum ConditionType {
@@ -714,6 +717,24 @@ protected:
 	 * Execute state machine
 	 */
 	void executeStateMachine();
+
+	/**
+	 * @return script state machine state
+	 */
+	inline int getScriptState() {
+		return scriptState.state.state;
+	}
+
+	/**
+	 * Set script state machine state
+	 * @param state state
+	 */
+	inline void setScriptState(int state) {
+		if (scriptState.state.state == state) return;
+		scriptState.state.state = state;
+		scriptState.state.lastState = -1;
+		scriptState.state.lastStateMachineState = nullptr;
+	}
 
 private:
 	static constexpr bool VERBOSE { false };
@@ -839,6 +860,7 @@ private:
 	 * @param parentArgumentIdx parent argument index
 	 */
 	bool transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, int depth = 0, int argumentIdx = -1, int parentArgumentIdx = -1);
+
 public:
 	/**
 	 * Default constructor
@@ -851,21 +873,17 @@ public:
 	virtual ~MiniScript();
 
 	/**
+	 * @return scripts
+	 */
+	const vector<Script>& getScripts() {
+		return scripts;
+	}
+
+	/**
 	 * Start error script
 	 */
 	inline void startErrorScript() {
 		emit("error");
-	}
-
-	/**
-	 * Set script state machine state
-	 * @param state state
-	 */
-	inline void setScriptState(int state) {
-		if (scriptState.state.state == state) return;
-		scriptState.state.state = state;
-		scriptState.state.lastState = -1;
-		scriptState.state.lastStateMachineState = nullptr;
 	}
 
 	/**
@@ -1084,13 +1102,6 @@ public:
 	}
 
 	/**
-	 * @return script state machine state
-	 */
-	inline int getScriptState() {
-		return scriptState.state.state;
-	}
-
-	/**
 	 * Get miniscript instance information
 	 */
 	const string getInformation();
@@ -1098,11 +1109,11 @@ public:
 	/**
 	 * Transpile a script statement
 	 * @param generatedCode generated code
-	 * @param condition condition
+	 * @param scriptIdx script index
 	 * @param methodCodeMap method code map
 	 * @return success
 	 */
-	bool transpile(string& generatedCode, const string& condition, const unordered_map<string, vector<string>>& methodCodeMap);
+	bool transpile(string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap);
 
 	/**
 	 * Nothing native entry

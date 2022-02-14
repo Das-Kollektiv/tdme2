@@ -384,7 +384,7 @@ void MiniScript::emit(const string& condition) {
 		if (script.name.empty() == false && script.name == condition) {
 			break;
 		} else
-		if (script.conditions.size() == 1 && script.conditions[0] == condition) {
+		if (script.condition == condition) {
 			break;
 		} else {
 			scriptIdx++;
@@ -536,16 +536,13 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 					name = StringTools::trim(StringTools::substring(scriptLine, scriptLineNameSeparatorIdx + 2));
 					scriptLine = StringTools::trim(StringTools::substring(scriptLine, 0, scriptLineNameSeparatorIdx));
 				}
-				vector<string> conditions;
-				StringTokenizer t1;
-				t1.tokenize(scriptLine, ";");
-				while (t1.hasMoreTokens()) conditions.push_back(doStatementPreProcessing(StringTools::trim(t1.nextToken())));
+				auto condition = doStatementPreProcessing(StringTools::trim(scriptLine));
 				statementIdx = 0;
 				scripts.push_back(
 					{
 						.conditionType = conditionType,
 						.line = line,
-						.conditions = conditions,
+						.condition = condition,
 						.name = name,
 						.statements = {}
 					}
@@ -700,10 +697,10 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 		if (script.conditionType == Script::CONDITIONTYPE_ONENABLED) {
 			// no op
 		} else
-		if (script.conditions.size() == 1 && script.conditions[0] == "initialize") {
+		if (script.condition == "initialize") {
 			haveInitializeScript = true;
 		} else
-		if (script.conditions.size() == 1 && script.conditions[0] == "error") {
+		if (script.condition == "error") {
 			haveErrorScript = true;
 		}
 	}
@@ -739,55 +736,49 @@ int MiniScript::determineScriptIdxToStart() {
 		if (script.conditionType == Script::CONDITIONTYPE_ONENABLED) {
 			// no op
 		} else
-		if (script.conditions.size() == 1 && script.conditions[0] == "nothing") {
+		if (script.condition == "nothing") {
 			nothingScriptIdx = scriptIdx;
 			// no op
 		} else
-		if (script.conditions.size() == 1 &&
-			script.conditions[0].find('(') == string::npos &&
-			script.conditions[0].rfind(')') == string::npos) {
+		if (script.condition.find('(') == string::npos &&
+			script.condition.rfind(')') == string::npos) {
 			// user emit condition
 		} else {
 			auto conditionMet = true;
-			for (auto& condition: script.conditions) {
-				string_view method;
-				vector<string_view> arguments;
-				if (parseScriptStatement(condition, method, arguments) == true) {
-					auto returnValue = executeScriptStatement(
-						method,
-						arguments,
-						{
-							.line = script.line,
-							.statementIdx = 0,
-							.statement = condition,
-							.gotoStatementIdx = -1
-						}
-					);
-					auto returnValueBoolValue = false;
-					if (returnValue.getBooleanValue(returnValueBoolValue, false) == false) {
-						Console::println("MiniScript::determineScriptIdxToStart(): '" + condition + "': expecting boolean return value, but got: " + returnValue.getAsString());
-						conditionMet = false;
-						break;
-					} else
-					if (returnValueBoolValue == false) {
-						conditionMet = false;
-						break;
+			auto& condition = script.condition;
+			string_view method;
+			vector<string_view> arguments;
+			if (parseScriptStatement(condition, method, arguments) == true) {
+				auto returnValue = executeScriptStatement(
+					method,
+					arguments,
+					{
+						.line = script.line,
+						.statementIdx = 0,
+						.statement = condition,
+						.gotoStatementIdx = -1
 					}
-				} else {
-					Console::println("MiniScript::determineScriptIdxToStart(): '" + scriptFileName + "': @" + to_string(script.line) + ": '" + condition + "': parse error");
+				);
+				auto returnValueBoolValue = false;
+				if (returnValue.getBooleanValue(returnValueBoolValue, false) == false) {
+					Console::println("MiniScript::determineScriptIdxToStart(): '" + condition + "': expecting boolean return value, but got: " + returnValue.getAsString());
+					conditionMet = false;
+					break;
+				} else
+				if (returnValueBoolValue == false) {
+					conditionMet = false;
+					break;
 				}
+			} else {
+				Console::println("MiniScript::determineScriptIdxToStart(): '" + scriptFileName + "': @" + to_string(script.line) + ": '" + condition + "': parse error");
 			}
 			if (conditionMet == false) {
 				if (VERBOSE == true) {
-					Console::print("MiniScript::determineScriptIdxToStart(): ");
-					for (auto& condition: script.conditions) Console::print(condition + "; ");
-					Console::println(": FAILED");
+					Console::print("MiniScript::determineScriptIdxToStart(): " + condition + ": FAILED");
 				}	
 			} else {
 				if (VERBOSE == true) {
-					Console::print("MiniScript::determineScriptIdxToStart(): ");
-					for (auto& condition: script.conditions) Console::print(condition + "; ");
-					Console::println(": OK");
+					Console::print("MiniScript::determineScriptIdxToStart(): " + condition + ": OK");
 				}
 				scriptState.state = currentScriptStateScript;
 				return scriptIdx;
@@ -811,45 +802,40 @@ int MiniScript::determineNamedScriptIdxToStart() {
 				// no op
 			} else {
 				auto conditionMet = true;
-				for (auto& condition: script.conditions) {
-					string_view method;
-					vector<string_view> arguments;
-					if (parseScriptStatement(condition, method, arguments) == true) {
-						auto returnValue = executeScriptStatement(
-							method,
-							arguments,
-							{
-								.line = script.line,
-								.statementIdx = 0,
-								.statement = condition,
-								.gotoStatementIdx = -1
-							}
-						);
-						auto returnValueBoolValue = false;
-						if (returnValue.getBooleanValue(returnValueBoolValue, false) == false) {
-							Console::println("MiniScript::determineNamedScriptIdxToStart(): '" + condition + "': expecting boolean return value, but got: " + returnValue.getAsString());
-							conditionMet = false;
-							break;
-						} else
-						if (returnValueBoolValue == false) {
-							conditionMet = false;
-							break;
+				auto& condition = script.condition;
+				string_view method;
+				vector<string_view> arguments;
+				if (parseScriptStatement(condition, method, arguments) == true) {
+					auto returnValue = executeScriptStatement(
+						method,
+						arguments,
+						{
+							.line = script.line,
+							.statementIdx = 0,
+							.statement = condition,
+							.gotoStatementIdx = -1
 						}
-					} else {
-						Console::println("MiniScript::determineNamedScriptIdxToStart(): '" + scriptFileName + "': @" + to_string(script.line) + ": '" + condition + "': parse error");
+					);
+					auto returnValueBoolValue = false;
+					if (returnValue.getBooleanValue(returnValueBoolValue, false) == false) {
+						Console::println("MiniScript::determineNamedScriptIdxToStart(): '" + condition + "': expecting boolean return value, but got: " + returnValue.getAsString());
+						conditionMet = false;
+						break;
+					} else
+					if (returnValueBoolValue == false) {
+						conditionMet = false;
+						break;
 					}
+				} else {
+					Console::println("MiniScript::determineNamedScriptIdxToStart(): '" + scriptFileName + "': @" + to_string(script.line) + ": '" + condition + "': parse error");
 				}
 				if (conditionMet == false) {
 					if (VERBOSE == true) {
-						Console::print("MiniScript::determineNamedScriptIdxToStart(): ");
-						for (auto& condition: script.conditions) Console::print(condition + "; ");
-						Console::println(": FAILED");
+						Console::print("MiniScript::determineNamedScriptIdxToStart(): " + condition + ": FAILED");
 					}
 				} else {
 					if (VERBOSE == true) {
-						Console::print("MiniScript::determineNamedScriptIdxToStart(): ");
-						for (auto& condition: script.conditions) Console::print(condition + "; ");
-						Console::println(": OK");
+						Console::print("MiniScript::determineNamedScriptIdxToStart(): " + condition + ": OK");
 					}
 					scriptState.state = currentScriptStateState;
 					return scriptIdx;
@@ -1055,8 +1041,8 @@ const string MiniScript::getInformation() {
 			case Script::CONDITIONTYPE_ON: result+= "on: "; break;
 			case Script::CONDITIONTYPE_ONENABLED: result+= "on-enabled: "; break;
 		}
-		for (auto& condition: script.conditions)
-			result+= condition + "; ";
+		if (script.condition.empty() == false)
+			result+= script.condition + "; ";
 		if (script.name.empty() == false) {
 			result+= "name = '" + script.name + "';\n";
 		} else {
@@ -3437,22 +3423,9 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 	}
 	auto& methodCode = methodCodeMapIt->second;
 
-	// find min indent from method code and depth indent
-	int minIndent = 100;
-	for (auto& codeLine: methodCode) {
-		auto indent = 0;
-		for (auto i = 0; i < codeLine.size(); i++) {
-			auto c = codeLine[i];
-			if (c == '\t') {
-				indent++;
-			} else {
-				break;
-			}
-		}
-		minIndent = Math::min(minIndent, indent);
-	}
-	string minIndentString;
-	for (auto i = 0; i < minIndent; i++) minIndentString+= "\t";
+	// min indent from method code and depth indent
+	string minIndentString = "\t";
+	// for (auto i = 0; i < minIndent; i++) minIndentString+= "\t";
 	string depthIndentString;
 	for (auto i = 0; i < depth; i++) depthIndentString+= "\t";
 
@@ -3652,28 +3625,17 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 	return true;
 }
 
-bool MiniScript::transpile(string& generatedCode, const string& condition, const unordered_map<string, vector<string>>& methodCodeMap) {
-	Console::println("MiniScript::transpile(): transpiling code for condition = '" + condition + "'");
-	auto scriptIdx = 0;
-	for (auto& script: scripts) {
-		auto conditionMet = true;
-		if (script.name.empty() == false && script.name == condition) {
-			break;
-		} else
-		if (script.conditions.size() == 1 && script.conditions[0] == condition) {
-			break;
-		} else {
-			scriptIdx++;
-		}
-	}
-	if (scriptIdx == scripts.size()) {
-		scriptIdx = -1;
+bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap) {
+	if (scriptIdx < 0 || scriptIdx >= scripts.size()) {
+		Console::println("MiniScript::transpile(): invalid script index");
 		return false;
 	}
+	Console::println("MiniScript::transpile(): transpiling code for condition = '" + scripts[scriptIdx].condition + "', with name '" + scripts[scriptIdx].name + "'");
 	auto statementIdx = 0;
+	string methodIndent = "\t";
 	string generatedCodeHeader;
-	generatedCodeHeader+= string() + "auto miniScript = this;" + "\n";
-	generatedCodeHeader+= "miniScript->scriptState.scriptIdx = " + to_string(scriptIdx) + ";" + "\n";
+	generatedCodeHeader+= methodIndent + "auto miniScript = this;" + "\n";
+	generatedCodeHeader+= methodIndent + "miniScript->scriptState.scriptIdx = " + to_string(scriptIdx) + ";" + "\n";
 	bool scriptStateChanged = false;
 	for (auto scriptStatement: scripts[scriptIdx].statements) {
 		//
@@ -3689,12 +3651,12 @@ bool MiniScript::transpile(string& generatedCode, const string& condition, const
 			generatedCodeHeader+= string() + "if (miniScriptGotoStatementIdx == " + to_string(scriptStatement.statementIdx)  + ") goto statement_" + to_string(scriptStatement.statementIdx) + "; else" + "\n";
 		}
 		// statement_xyz goto label
-		generatedCode+= "statement_" + to_string(scriptStatement.statementIdx) + ":" + "\n";
+		generatedCode+= methodIndent + "statement_" + to_string(scriptStatement.statementIdx) + ":" + "\n";
 		transpileScriptStatement(generatedCode, method, arguments, scriptStatement, statementIdx, methodCodeMap, scriptStateChanged);
-		generatedCode+= string() + "while (scriptState.state.state != STATE_NEXT_STATEMENT) miniScript->executeStateMachine();" + "\n";
+		generatedCode+= methodIndent + "while (scriptState.state.state != STATE_NEXT_STATEMENT) miniScript->executeStateMachine();" + "\n";
 	}
 	//
-	generatedCodeHeader+= string() + "if (miniScriptGotoStatementIdx != 0) Console::println(\"MiniScript::" + condition + "(): Can not go to statement \" + to_string(miniScriptGotoStatementIdx));" + "\n";
+	generatedCodeHeader+= methodIndent + "if (miniScriptGotoStatementIdx != 0) Console::println(\"MiniScript::" + scripts[scriptIdx].condition + "(): Can not go to statement \" + to_string(miniScriptGotoStatementIdx));" + "\n";
 	//
 	generatedCode = generatedCodeHeader + generatedCode;
 	return true;

@@ -188,9 +188,18 @@ void processFile(const string& scriptFileName, const string& miniscriptExtension
 
 	Console::println(script->getInformation());
 
+	auto scripts = script->getScripts();
+	for (auto& script: scripts) {
+		Console::println(string() + (script.conditionType == MiniScript::Script::CONDITIONTYPE_ON?"ON":"ON-ENABLED") + ": " + script.condition + " (" + script.name + ")");
+	}
+
 	//
 	string generatedCode;
-	script->transpile(generatedCode, "nothing", methodCodeMap);
+	//generatedCode+= string() + "\t" + "// initialize" + "\n";
+	//script->transpile(generatedCode, "initialize", methodCodeMap);
+	script->transpile(generatedCode, 0, methodCodeMap);
+	//generatedCode+= string() + "\t" + "// error" + "\n";
+	//script->transpile(generatedCode, "error", methodCodeMap);
 
 	//
 	vector<string> miniScriptClass;
