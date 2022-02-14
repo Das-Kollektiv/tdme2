@@ -702,8 +702,24 @@ protected:
 	};
 
 	//
+	bool native;
 	vector<Script> scripts;
 	ScriptState scriptState;
+
+	/**
+	 * @return if this script was compiled to C++ and is executed nativly
+	 */
+	inline bool getNative() {
+		return native;
+	}
+
+	/**
+	 * Set native
+	 * @param native native
+	 */
+	inline void setNative(bool native) {
+		this->native = native;
+	}
 
 	/**
 	 * Goto statement from given statements goto statement
@@ -876,8 +892,10 @@ private:
 	 * @param depth depth
 	 * @param argumentIdx argument index
 	 * @param parentArgumentIdx parent argument index
+	 * @param injectCode code to additionally inject
+	 * @param additionalIndent additional indent
 	 */
-	bool transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, int depth = 0, int argumentIdx = -1, int parentArgumentIdx = -1, const string& injectCode = string());
+	bool transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, int depth = 0, int argumentIdx = -1, int parentArgumentIdx = -1, const string& injectCode = string(), int additionalIndent = 0);
 
 public:
 	/**
@@ -889,13 +907,6 @@ public:
 	 * Destructor
 	 */
 	virtual ~MiniScript();
-
-	/**
-	 * @return if running native
-	 */
-	inline virtual bool isNative() {
-		return false;
-	}
 
 	/**
 	 * @return scripts
@@ -1246,6 +1257,6 @@ public:
 	 * @param injectCode inject code
 	 * @return success
 	 */
-	bool transpileScriptCondition(string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap, const string& injectCode);
+	bool transpileScriptCondition(string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap, const string& injectCode, int depth = 0);
 
 };

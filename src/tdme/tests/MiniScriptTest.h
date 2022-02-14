@@ -10,10 +10,12 @@ class MiniScriptTest: public MiniScript {
 	/*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DECLARATIONS_START__*/
 
 public:
+	/**
+	 * Public constructor
+	 */
+	MiniScriptTest();
+
 	// overriden methods
-	inline virtual bool isNative() override {
-		return true;
-	}
 	void emit(const string& condition) override;
 	inline void startScript() override {
 		scriptState.variables.clear();
@@ -38,6 +40,7 @@ public:
 protected:
 	// overriden methods
 	int determineScriptIdxToStart() override;
+	int determineNamedScriptIdxToStart() override;
 
 	/**
 	 * Miniscript transpilation of: ON: initialize

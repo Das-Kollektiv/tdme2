@@ -251,10 +251,12 @@ void processFile(const string& scriptFileName, const string& miniscriptExtension
 	string miniScriptClassName = Tools::removeFileEnding(Tools::getFileName(miniscriptExtensionsFileName));
 	string generatedDeclarations = "\n";
 	generatedDeclarations+= string() + "public:" + "\n";
+	generatedDeclarations+= headerIndent + "/**" + "\n";
+	generatedDeclarations+= headerIndent + " * Public constructor" + "\n";
+	generatedDeclarations+= headerIndent + " */" + "\n";
+	generatedDeclarations+= headerIndent + miniScriptClassName + "();" + "\n";
+	generatedDeclarations+= "\n";
 	generatedDeclarations+= headerIndent + "// overriden methods" + "\n";
-	generatedDeclarations+= headerIndent + "inline virtual bool isNative() override {" + "\n";
-	generatedDeclarations+= headerIndent + "\t" + "return true;" + "\n";
-	generatedDeclarations+= headerIndent + "}" + "\n";
 	generatedDeclarations+= headerIndent + "void emit(const string& condition) override;" + "\n";
 	generatedDeclarations+= headerIndent + "inline void startScript() override {" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "scriptState.variables.clear();" + "\n";
@@ -275,16 +277,24 @@ void processFile(const string& scriptFileName, const string& miniscriptExtension
 	generatedDeclarations+= string() + "protected:" + "\n";
 	generatedDeclarations+= headerIndent + "// overriden methods" + "\n";
 	generatedDeclarations+= headerIndent + "int determineScriptIdxToStart() override;" + "\n";
+	generatedDeclarations+= headerIndent + "int determineNamedScriptIdxToStart() override;" + "\n";
 	generatedDeclarations+= "\n";
 
 	//
-	string overriddenDefinition;
-	overriddenDefinition+= "void " + miniScriptClassName + "::emit(const string& condition) {" + "\n";
+	string emitDefinition;
+	emitDefinition+= "void " + miniScriptClassName + "::emit(const string& condition) {" + "\n";
 	string generatedDefinitions = "\n";
+	string constructorDefinition;
+	constructorDefinition+= miniScriptClassName + "::" + miniScriptClassName + "(): MiniScript() {" + "\n";
+	constructorDefinition+= string() + "\t" + "setNative(true);" + "\n";
+	constructorDefinition+= string() + "}" + "\n";
 	string generatedDetermineScriptIdxToStartDefinition = "\n";
 	generatedDetermineScriptIdxToStartDefinition+= "int " + miniScriptClassName + "::determineScriptIdxToStart() {" + "\n";
 	generatedDetermineScriptIdxToStartDefinition+= string() + "\t" + "auto miniScript = this;" + "\n";
 	string generatedDetermineNamedScriptIdxToStartDefinition = "\n";
+	generatedDetermineNamedScriptIdxToStartDefinition+= "int " + miniScriptClassName + "::determineNamedScriptIdxToStart() {" + "\n";
+	generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "auto miniScript = this;" + "\n";
+	generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "for (auto& enabledConditionName: scriptState.enabledConditionNames) {" + "\n";
 	{
 		auto scriptIdx = 0;
 		for (auto& script: scripts) {
@@ -309,10 +319,10 @@ void processFile(const string& scriptFileName, const string& miniscriptExtension
 			// emit code
 			if (script.conditionType == MiniScript::Script::CONDITIONTYPE_ON && StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true) {
 				string emitDefinitionIndent = "\t";
-				overriddenDefinition+= emitDefinitionIndent + "if (condition == \"" + emitName + "\") {" + "\n";
-				overriddenDefinition+= emitDefinitionIndent + "\t" + methodName + "(-1);" + "\n";
-				overriddenDefinition+= emitDefinitionIndent + "\t" + "return;" + "\n";
-				overriddenDefinition+= emitDefinitionIndent + "}" + "\n";
+				emitDefinition+= emitDefinitionIndent + "if (condition == \"" + emitName + "\") {" + "\n";
+				emitDefinition+= emitDefinitionIndent + "\t" + methodName + "(-1);" + "\n";
+				emitDefinition+= emitDefinitionIndent + "\t" + "return;" + "\n";
+				emitDefinition+= emitDefinitionIndent + "}" + "\n";
 			}
 
 			// declaration
@@ -332,12 +342,21 @@ void processFile(const string& scriptFileName, const string& miniscriptExtension
 
 			//
 			if (StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == false) {
+				if (script.conditionType == MiniScript::Script::CONDITIONTYPE_ONENABLED) {
+					generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\n";
+					generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "\t" + "// next statements belong to tested enabled named condition with name \"" + script.name + "\"" + "\n";
+					generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "\t" + "if (enabledConditionName == \"" + script.name + "\")" + "\n";
+				}
 				scriptInstance->transpileScriptCondition(
 					script.conditionType == MiniScript::Script::CONDITIONTYPE_ON?generatedDetermineScriptIdxToStartDefinition:generatedDetermineNamedScriptIdxToStartDefinition,
 					scriptIdx,
 					methodCodeMap,
-					"bool returnValueBool; returnValue.getBooleanValue(returnValueBool); if (returnValueBool == true) return " + to_string(scriptIdx) + ";"
+					"bool returnValueBool; returnValue.getBooleanValue(returnValueBool); if (returnValueBool == true) return " + to_string(scriptIdx) + ";",
+					script.conditionType == MiniScript::Script::CONDITIONTYPE_ONENABLED?1:0
 				);
+				if (script.conditionType == MiniScript::Script::CONDITIONTYPE_ONENABLED) {
+					generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "}" + "\n";
+				}
 			}
 
 			//
@@ -346,14 +365,21 @@ void processFile(const string& scriptFileName, const string& miniscriptExtension
 	}
 
 	//
+	generatedDetermineScriptIdxToStartDefinition+= "\n";
+	generatedDetermineScriptIdxToStartDefinition+= string() + "\t" + "//" + "\n";
 	generatedDetermineScriptIdxToStartDefinition+= string() + "\t" + "return " + to_string(nothingScriptIdx) + ";" + "\n";
 	generatedDetermineScriptIdxToStartDefinition+= string() + "}" + "\n";
+	//
+	generatedDetermineNamedScriptIdxToStartDefinition+= "\n";
+	generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "//" + "\n";
+	generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "return -1;" + "\n";
+	generatedDetermineNamedScriptIdxToStartDefinition+= string() + "}" + "\n";
 
 	//
-	overriddenDefinition+= string() + "}" + "\n";
+	emitDefinition+= string() + "}" + "\n";
 
 	// add emit code
-	generatedDefinitions = generatedDetermineScriptIdxToStartDefinition + "\n" + overriddenDefinition + generatedDefinitions;
+	generatedDefinitions = constructorDefinition + generatedDetermineScriptIdxToStartDefinition + generatedDetermineNamedScriptIdxToStartDefinition + "\n" + emitDefinition + generatedDefinitions;
 
 	// inject C++ definition code
 	{

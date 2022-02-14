@@ -27,6 +27,7 @@
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
 
+using std::find;
 using std::map;
 using std::remove;
 using std::sort;
@@ -58,6 +59,7 @@ using tdme::utilities::Time;
 string MiniScript::OPERATOR_CHARS = "!*/%+-<>&|=";
 
 MiniScript::MiniScript() {
+	setNative(false);
 }
 
 MiniScript::~MiniScript() {
@@ -404,7 +406,6 @@ void MiniScript::emit(const string& condition) {
 }
 
 void MiniScript::executeStateMachine() {
-	auto native = isNative();
 	while (true == true) {
 		// determine state machine state if it did change
 		if (scriptState.state.lastStateMachineState == nullptr || scriptState.state.state != scriptState.state.lastState) {
@@ -430,8 +431,19 @@ void MiniScript::executeStateMachine() {
 
 		//
 		if (native == true) {
-			// break if next is next statement or not running
-			if (scriptState.state.state == STATE_NEXT_STATEMENT || scriptState.running == false) break;
+			// check named conditions
+			auto now = Time::getCurrentMillis();
+			if (scriptState.enabledConditionNames.empty() == false &&
+				(scriptState.timeEnabledConditionsCheckLast == -1LL || now >= scriptState.timeEnabledConditionsCheckLast + 100LL)) {
+				auto scriptIdxToStart = determineNamedScriptIdxToStart();
+				if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
+					//
+					resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
+				}
+				scriptState.timeEnabledConditionsCheckLast = now;
+			}
+			// stop here
+			break;
 		} else {
 			// break if no next statement but other state machine state or not running
 			if (scriptState.state.state != STATE_NEXT_STATEMENT || scriptState.running == false) break;
@@ -1014,7 +1026,7 @@ const string MiniScript::doStatementPreProcessing(const string& statement) {
 
 const string MiniScript::getInformation() {
 	string result;
-	result+= "Script: " + scriptPathName + "/" + scriptFileName + "\n\n";
+	result+= "Script: " + scriptPathName + "/" + scriptFileName + " (runs " + (native == true?"natively":"interpreted") + ")" + "\n\n";
 	for (auto& script: scripts) {
 		switch(script.conditionType) {
 			case Script::CONDITIONTYPE_ON: result+= "on: "; break;
@@ -1048,7 +1060,7 @@ const string MiniScript::getInformation() {
 	result+= "\n";
 
 	//
-	if (isNative() == false) {
+	if (native == false) {
 		//
 		result+= "Methods:\n";
 		{
@@ -1157,7 +1169,7 @@ void MiniScript::registerStateMachineStates() {
 					miniScript->setScriptState(STATE_WAIT_FOR_CONDITION);
 					return;
 				}
-				if (miniScript->isNative() == false) miniScript->executeScriptLine();
+				if (miniScript->native == false) miniScript->executeScriptLine();
 			}
 		};
 		registerStateMachineState(new ScriptStateNextStatement(this));
@@ -3378,7 +3390,7 @@ void MiniScript::registerMethods() {
 void MiniScript::registerVariables() {
 }
 
-bool MiniScript::transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, int depth, int argumentIdx, int parentArgumentIdx, const string& injectCode) {
+bool MiniScript::transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, int depth, int argumentIdx, int parentArgumentIdx, const string& injectCode, int additionalIndent) {
 	//
 	statementIdx++;
 	auto currentStatementIdx = statementIdx;
@@ -3394,7 +3406,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 	// indenting
 	string minIndentString = "\t";
 	string depthIndentString;
-	for (auto i = 0; i < depth; i++) depthIndentString+= "\t";
+	for (auto i = 0; i < depth + additionalIndent; i++) depthIndentString+= "\t";
 
 	// comment about current statement
 	generatedCode+= minIndentString + depthIndentString;
@@ -3653,6 +3665,19 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 			scriptStateChanged = false;
 			generatedCodeHeader+= methodIndent + "if (miniScriptGotoStatementIdx == " + to_string(scriptStatement.statementIdx)  + ") goto miniscript_statement_" + to_string(scriptStatement.statementIdx) + "; else" + "\n";
 		}
+
+		// enabled named conditions
+		generatedCode+= "\n";
+		generatedCode+= methodIndent + "// enabled named conditions" + "\n";
+		generatedCode+= methodIndent + "if (scriptState.enabledConditionNames.empty() == false) {" + "\n";
+		generatedCode+= methodIndent + "\t" + "auto scriptIdxToStart = determineNamedScriptIdxToStart();" + "\n";
+		generatedCode+= methodIndent + "\t" + "if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {" + "\n";
+		generatedCode+= methodIndent + "\t" + "\t" + "resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);" + "\n";
+		generatedCode+= methodIndent + "\t" + "\t" + "scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();" + "\n";
+		generatedCode+= methodIndent + "\t" + "\t" + "return;" + "\n";
+		generatedCode+= methodIndent + "\t" + "}" + "\n";
+		generatedCode+= methodIndent + "}" + "\n";
+
 		// statement_xyz goto label
 		generatedCode+= "\n";
 		generatedCode+= methodIndent + "// Statement: " + to_string(scriptStatement.statementIdx) + "\n";
@@ -3668,13 +3693,13 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 	generatedCode+= methodIndent + "setScriptState(STATE_WAIT_FOR_CONDITION);" + "\n";
 
 	//
-	generatedCodeHeader+= methodIndent + "if (miniScriptGotoStatementIdx != 0) Console::println(\"MiniScript::" + methodName + "(): Can not go to statement \" + to_string(miniScriptGotoStatementIdx));" + "\n";
+	generatedCodeHeader+= methodIndent + "if (miniScriptGotoStatementIdx != -1 && miniScriptGotoStatementIdx != 0) Console::println(\"MiniScript::" + methodName + "(): Can not go to statement \" + to_string(miniScriptGotoStatementIdx));" + "\n";
 	//
 	generatedCode = generatedCodeHeader + generatedCode;
 	return true;
 }
 
-bool MiniScript::transpileScriptCondition(string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap, const string& injectCode) {
+bool MiniScript::transpileScriptCondition(string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap, const string& injectCode, int depth) {
 	if (scriptIdx < 0 || scriptIdx >= scripts.size()) {
 		Console::println("MiniScript::transpile(): invalid script index");
 		return false;
@@ -3702,9 +3727,7 @@ bool MiniScript::transpileScriptCondition(string& generatedCode, int scriptIdx, 
 
 	//
 	auto scriptStateChanged = false;
-	generatedCode+= "\n";
-	generatedCode+= methodIndent + "// Statement: " + to_string(scriptStatement.statementIdx) + "\n";
-	transpileScriptStatement(generatedCode, method, arguments, scriptStatement, statementIdx, methodCodeMap, scriptStateChanged, 0, -1, -1, injectCode);
+	transpileScriptStatement(generatedCode, method, arguments, scriptStatement, statementIdx, methodCodeMap, scriptStateChanged, 0, -1, -1, injectCode, depth);
 
 	//
 	return true;
