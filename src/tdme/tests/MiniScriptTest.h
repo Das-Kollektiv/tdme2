@@ -11,7 +11,7 @@ class MiniScriptTest: public MiniScript {
 
 public:
 	// overriden methods
-	inline virtual bool isNative() {
+	inline virtual bool isNative() override {
 		return true;
 	}
 	void emit(const string& condition) override;
@@ -19,7 +19,7 @@ public:
 		scriptState.variables.clear();
 		scriptState.running = true;
 		registerVariables();
-		emit("initialize");
+		resetScriptExecutationState(0, STATE_NEXT_STATEMENT);
 	}
 	inline void execute() override {
 		if (scriptState.running == false) return;

@@ -231,12 +231,28 @@ void processFile(const string& scriptFileName, const string& miniscriptExtension
 		}
 	}
 
+	// determine "initialize" and "nothing" script indices
+	auto initializeScriptIdx = -1;
+	auto nothingScriptIdx = -1;
+	{
+		auto scriptIdx = 0;
+		for (auto& script: scripts) {
+			//
+			if (StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true) {
+				if (script.condition == "nothing") nothingScriptIdx = scriptIdx;
+				if (script.condition == "initialize") initializeScriptIdx = scriptIdx;
+			}
+			//
+			scriptIdx++;
+		}
+	}
+
 	//
 	string miniScriptClassName = Tools::removeFileEnding(Tools::getFileName(miniscriptExtensionsFileName));
 	string generatedDeclarations = "\n";
 	generatedDeclarations+= string() + "public:" + "\n";
 	generatedDeclarations+= headerIndent + "// overriden methods" + "\n";
-	generatedDeclarations+= headerIndent + "inline virtual bool isNative() {" + "\n";
+	generatedDeclarations+= headerIndent + "inline virtual bool isNative() override {" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "return true;" + "\n";
 	generatedDeclarations+= headerIndent + "}" + "\n";
 	generatedDeclarations+= headerIndent + "void emit(const string& condition) override;" + "\n";
@@ -244,7 +260,7 @@ void processFile(const string& scriptFileName, const string& miniscriptExtension
 	generatedDeclarations+= headerIndent + "\t" + "scriptState.variables.clear();" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "scriptState.running = true;" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "registerVariables();" + "\n";
-	generatedDeclarations+= headerIndent + "\t" + "emit(\"initialize\");" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "resetScriptExecutationState(" + to_string(initializeScriptIdx) + ", STATE_NEXT_STATEMENT);" + "\n";
 	generatedDeclarations+= headerIndent + "}" + "\n";
 	generatedDeclarations+= headerIndent + "inline void execute() override {" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "if (scriptState.running == false) return;" + "\n";
@@ -269,7 +285,6 @@ void processFile(const string& scriptFileName, const string& miniscriptExtension
 	generatedDetermineScriptIdxToStartDefinition+= "int " + miniScriptClassName + "::determineScriptIdxToStart() {" + "\n";
 	generatedDetermineScriptIdxToStartDefinition+= string() + "\t" + "auto miniScript = this;" + "\n";
 	string generatedDetermineNamedScriptIdxToStartDefinition = "\n";
-	auto nothingScriptIdx = -1;
 	{
 		auto scriptIdx = 0;
 		for (auto& script: scripts) {
@@ -323,8 +338,6 @@ void processFile(const string& scriptFileName, const string& miniscriptExtension
 					methodCodeMap,
 					"bool returnValueBool; returnValue.getBooleanValue(returnValueBool); if (returnValueBool == true) return " + to_string(scriptIdx) + ";"
 				);
-			} else {
-				if (script.condition == "nothing") nothingScriptIdx = scriptIdx;
 			}
 
 			//

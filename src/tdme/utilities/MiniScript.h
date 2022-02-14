@@ -719,6 +719,24 @@ protected:
 	void executeStateMachine();
 
 	/**
+	 * Reset script execution state
+	 * @param scriptIdx script index
+	 * @param stateMachineState state machine state
+	 */
+	inline void resetScriptExecutationState(int scriptIdx, StateMachineState stateMachineState) {
+		scriptState.enabledConditionNames.clear();
+		scriptState.forTimeStarted.clear();
+		while (scriptState.conditionStack.empty() == false) scriptState.conditionStack.pop();
+		while (scriptState.endTypeStack.empty() == false) scriptState.endTypeStack.pop();
+		scriptState.id.clear();
+		scriptState.scriptIdx = scriptIdx;
+		scriptState.statementIdx = 0;
+		scriptState.timeWaitStarted = Time::getCurrentMillis();
+		scriptState.timeWaitTime = 0LL;
+		setScriptState(stateMachineState);
+	}
+
+	/**
 	 * @return script state machine state
 	 */
 	inline int getScriptState() {

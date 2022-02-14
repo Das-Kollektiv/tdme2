@@ -32,20 +32,11 @@ void MiniScriptTest::emit(const string& condition) {
 
 void MiniScriptTest::on_initialize(int miniScriptGotoStatementIdx) {
 	if (miniScriptGotoStatementIdx == -1) {
-		scriptState.forTimeStarted.clear();
-		while (scriptState.conditionStack.empty() == false) scriptState.conditionStack.pop();
-		while (scriptState.endTypeStack.empty() == false) scriptState.endTypeStack.pop();
-		scriptState.enabledConditionNames.clear();
-		scriptState.id.clear();
-		scriptState.scriptIdx = 0;
-		scriptState.statementIdx = 0;
-		scriptState.timeWaitStarted = Time::getCurrentMillis();
-		scriptState.timeWaitTime = 0LL;
-		setScriptState(STATE_NEXT_STATEMENT);
+		resetScriptExecutationState(0, STATE_NEXT_STATEMENT);
 	}
 	auto miniScript = this;
 	miniScript->scriptState.scriptIdx = 0;
-	if (miniScriptGotoStatementIdx != 0) Console::println("MiniScript::nativeXYZ(): Can not go to statement " + to_string(miniScriptGotoStatementIdx));
+	if (miniScriptGotoStatementIdx != 0) Console::println("MiniScript::on_initialize(): Can not go to statement " + to_string(miniScriptGotoStatementIdx));
 
 	// Statement: 0
 	miniscript_statement_0:
@@ -202,16 +193,7 @@ void MiniScriptTest::on_initialize(int miniScriptGotoStatementIdx) {
 
 void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	if (miniScriptGotoStatementIdx == -1) {
-		scriptState.forTimeStarted.clear();
-		while (scriptState.conditionStack.empty() == false) scriptState.conditionStack.pop();
-		while (scriptState.endTypeStack.empty() == false) scriptState.endTypeStack.pop();
-		scriptState.enabledConditionNames.clear();
-		scriptState.id.clear();
-		scriptState.scriptIdx = 1;
-		scriptState.statementIdx = 0;
-		scriptState.timeWaitStarted = Time::getCurrentMillis();
-		scriptState.timeWaitTime = 0LL;
-		setScriptState(STATE_NEXT_STATEMENT);
+		resetScriptExecutationState(1, STATE_NEXT_STATEMENT);
 	}
 	auto miniScript = this;
 	miniScript->scriptState.scriptIdx = 1;
@@ -232,8 +214,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	if (miniScriptGotoStatementIdx == 140) goto miniscript_statement_140; else
 	if (miniScriptGotoStatementIdx == 142) goto miniscript_statement_142; else
 	if (miniScriptGotoStatementIdx == 151) goto miniscript_statement_151; else
-	if (miniScriptGotoStatementIdx == 156) goto miniscript_statement_156; else
-	if (miniScriptGotoStatementIdx != 0) Console::println("MiniScript::nativeXYZ(): Can not go to statement " + to_string(miniScriptGotoStatementIdx));
+	if (miniScriptGotoStatementIdx != 0) Console::println("MiniScript::on_nothing(): Can not go to statement " + to_string(miniScriptGotoStatementIdx));
 
 	// Statement: 0
 	miniscript_statement_0:
@@ -11281,19 +11262,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 0> argumentValues;
 		array<ScriptVariable, 0>& argumentValuesD0 = argumentValues;
 		// method code: script.stop
+		//
 		miniScript->scriptState.running = false;
-		miniScript->scriptState.scriptIdx = -1;
-		miniScript->scriptState.statementIdx = 0;
-		miniScript->scriptState.timeWaitStarted = -1LL;
-		miniScript->scriptState.timeWaitTime = 0LL;
-		miniScript->scriptState.id.clear();
 		miniScript->scriptState.variables.clear();
-		miniScript->scriptState.forTimeStarted.clear();
-		while (miniScript->scriptState.conditionStack.empty() == false) miniScript->scriptState.conditionStack.pop();
-		while (miniScript->scriptState.endTypeStack.empty() == false) miniScript->scriptState.endTypeStack.pop();
-		miniScript->scriptState.enabledConditionNames.clear();
 		miniScript->scriptState.timeEnabledConditionsCheckLast = -1LL;
-		miniScript->setScriptState(STATE_NONE);
+		miniScript->resetScriptExecutationState(-1, STATE_NONE);
 	}
 	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
@@ -11348,21 +11321,12 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 
 void MiniScriptTest::on_error(int miniScriptGotoStatementIdx) {
 	if (miniScriptGotoStatementIdx == -1) {
-		scriptState.forTimeStarted.clear();
-		while (scriptState.conditionStack.empty() == false) scriptState.conditionStack.pop();
-		while (scriptState.endTypeStack.empty() == false) scriptState.endTypeStack.pop();
-		scriptState.enabledConditionNames.clear();
-		scriptState.id.clear();
-		scriptState.scriptIdx = 2;
-		scriptState.statementIdx = 0;
-		scriptState.timeWaitStarted = Time::getCurrentMillis();
-		scriptState.timeWaitTime = 0LL;
-		setScriptState(STATE_NEXT_STATEMENT);
+		resetScriptExecutationState(2, STATE_NEXT_STATEMENT);
 	}
 	auto miniScript = this;
 	miniScript->scriptState.scriptIdx = 2;
 	if (miniScriptGotoStatementIdx == 2) goto miniscript_statement_2; else
-	if (miniScriptGotoStatementIdx != 0) Console::println("MiniScript::nativeXYZ(): Can not go to statement " + to_string(miniScriptGotoStatementIdx));
+	if (miniScriptGotoStatementIdx != 0) Console::println("MiniScript::on_error(): Can not go to statement " + to_string(miniScriptGotoStatementIdx));
 
 	// Statement: 0
 	miniscript_statement_0:
@@ -11470,21 +11434,11 @@ void MiniScriptTest::on_error(int miniScriptGotoStatementIdx) {
 
 void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 	if (miniScriptGotoStatementIdx == -1) {
-		scriptState.forTimeStarted.clear();
-		while (scriptState.conditionStack.empty() == false) scriptState.conditionStack.pop();
-		while (scriptState.endTypeStack.empty() == false) scriptState.endTypeStack.pop();
-		scriptState.enabledConditionNames.clear();
-		scriptState.id.clear();
-		scriptState.scriptIdx = 3;
-		scriptState.statementIdx = 0;
-		scriptState.timeWaitStarted = Time::getCurrentMillis();
-		scriptState.timeWaitTime = 0LL;
-		setScriptState(STATE_NEXT_STATEMENT);
+		resetScriptExecutationState(3, STATE_NEXT_STATEMENT);
 	}
 	auto miniScript = this;
 	miniScript->scriptState.scriptIdx = 3;
-	if (miniScriptGotoStatementIdx == 5) goto miniscript_statement_5; else
-	if (miniScriptGotoStatementIdx != 0) Console::println("MiniScript::nativeXYZ(): Can not go to statement " + to_string(miniScriptGotoStatementIdx));
+	if (miniScriptGotoStatementIdx != 0) Console::println("MiniScript::on_emittest(): Can not go to statement " + to_string(miniScriptGotoStatementIdx));
 
 	// Statement: 0
 	miniscript_statement_0:
@@ -11609,19 +11563,11 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 0> argumentValues;
 		array<ScriptVariable, 0>& argumentValuesD0 = argumentValues;
 		// method code: script.stop
+		//
 		miniScript->scriptState.running = false;
-		miniScript->scriptState.scriptIdx = -1;
-		miniScript->scriptState.statementIdx = 0;
-		miniScript->scriptState.timeWaitStarted = -1LL;
-		miniScript->scriptState.timeWaitTime = 0LL;
-		miniScript->scriptState.id.clear();
 		miniScript->scriptState.variables.clear();
-		miniScript->scriptState.forTimeStarted.clear();
-		while (miniScript->scriptState.conditionStack.empty() == false) miniScript->scriptState.conditionStack.pop();
-		while (miniScript->scriptState.endTypeStack.empty() == false) miniScript->scriptState.endTypeStack.pop();
-		miniScript->scriptState.enabledConditionNames.clear();
 		miniScript->scriptState.timeEnabledConditionsCheckLast = -1LL;
-		miniScript->setScriptState(STATE_NONE);
+		miniScript->resetScriptExecutationState(-1, STATE_NONE);
 	}
 	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
@@ -11676,20 +11622,11 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 
 void MiniScriptTest::on_enabled_named_condition_1(int miniScriptGotoStatementIdx) {
 	if (miniScriptGotoStatementIdx == -1) {
-		scriptState.forTimeStarted.clear();
-		while (scriptState.conditionStack.empty() == false) scriptState.conditionStack.pop();
-		while (scriptState.endTypeStack.empty() == false) scriptState.endTypeStack.pop();
-		scriptState.enabledConditionNames.clear();
-		scriptState.id.clear();
-		scriptState.scriptIdx = 4;
-		scriptState.statementIdx = 0;
-		scriptState.timeWaitStarted = Time::getCurrentMillis();
-		scriptState.timeWaitTime = 0LL;
-		setScriptState(STATE_NEXT_STATEMENT);
+		resetScriptExecutationState(4, STATE_NEXT_STATEMENT);
 	}
 	auto miniScript = this;
 	miniScript->scriptState.scriptIdx = 4;
-	if (miniScriptGotoStatementIdx != 0) Console::println("MiniScript::nativeXYZ(): Can not go to statement " + to_string(miniScriptGotoStatementIdx));
+	if (miniScriptGotoStatementIdx != 0) Console::println("MiniScript::on_enabled_named_condition_1(): Can not go to statement " + to_string(miniScriptGotoStatementIdx));
 
 	// Statement: 0
 	miniscript_statement_0:
