@@ -702,8 +702,10 @@ protected:
 	};
 
 	//
+	string hash;
 	bool native;
 	vector<Script> scripts;
+	vector<Script> nativeScripts;
 	ScriptState scriptState;
 
 	/**
@@ -722,11 +724,34 @@ protected:
 	}
 
 	/**
+	 * Set hash
+	 * @param hash hash
+	 */
+	inline void setHash(const string& hash) {
+		this->hash = hash;
+	}
+
+	/**
 	 * Goto statement from given statements goto statement
 	 * @param statement statement
 	 */
 	void gotoStatementGoto(const ScriptStatement& statement) {
 		scriptState.statementIdx = statement.gotoStatementIdx;
+	}
+
+	/**
+	 * @return native script
+	 */
+	inline vector<Script> getNativeScripts() {
+		return nativeScripts;
+	}
+
+	/**
+	 * Set native scripts
+	 * @param native native scripts
+	 */
+	inline void setNativeScripts(const vector<Script>& nativeScripts) {
+		this->nativeScripts = nativeScripts;
 	}
 
 	/**
@@ -887,6 +912,7 @@ private:
 	 * @param method method
 	 * @param arguments arguments
 	 * @param statement script statement
+	 * @param scriptIdx script index
 	 * @param statementIdx statement index
 	 * @param methodCodeMap method code map
 	 * @param scriptStateChanged script state changed
@@ -897,7 +923,7 @@ private:
 	 * @param injectCode code to additionally inject
 	 * @param additionalIndent additional indent
 	 */
-	bool transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, vector<string>& enabledNamedConditions, int depth = 0, int argumentIdx = -1, int parentArgumentIdx = -1, const string& injectCode = string(), int additionalIndent = 0);
+	bool transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, vector<string>& enabledNamedConditions, int depth = 0, int argumentIdx = -1, int parentArgumentIdx = -1, const string& injectCode = string(), int additionalIndent = 0);
 
 public:
 	/**
@@ -909,6 +935,13 @@ public:
 	 * Destructor
 	 */
 	virtual ~MiniScript();
+
+	/**
+	 * @return script hash
+	 */
+	inline const string& getHash() {
+		return hash;
+	}
 
 	/**
 	 * @return scripts

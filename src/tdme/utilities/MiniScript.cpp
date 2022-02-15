@@ -6,6 +6,7 @@
 #include <string>
 #include <string_view>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -23,6 +24,7 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/SHA256.h>
 #include <tdme/utilities/StringTokenizer.h>
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
@@ -36,6 +38,7 @@ using std::string;
 using std::string_view;
 using std::to_string;
 using std::unordered_map;
+using std::unordered_set;
 using std::vector;
 
 using tdme::engine::physics::Body;
@@ -51,6 +54,7 @@ using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
+using tdme::utilities::SHA256;
 using tdme::utilities::MiniScript;
 using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
@@ -487,10 +491,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 
 	//
 	registerStateMachineStates();
-	registerMethods(); // TODO: we can remove this later if we store some script meta data
 	registerVariables();
-
-	// TODO: if is native, we need to store some meta data about scripts and dont allow to load script (except the compiled original one)
 
 	//
 	vector<string> scriptLines;
@@ -499,6 +500,28 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 	} catch (FileSystemException& fse)	{
 		Console::println("MiniScript::loadScript(): " + pathName + "/" + fileName + ": an error occurred: " + fse.what());
 	}
+
+	//
+	{
+		string scriptAsString;
+		for (auto& scriptLine: scriptLines) scriptAsString+= scriptLine + "\n";
+		auto scriptHash = SHA256::encode(scriptAsString);
+		if (native == true) {
+			if (scriptHash == hash) {
+				scripts = nativeScripts;
+				startScript();
+				return;
+			} else {
+				Console::println("MiniScript::loadScript(): " + pathName + "/" + fileName + ": Compiled script outdated!");
+			}
+		}
+		hash = scriptHash;
+	}
+
+	//
+	registerMethods();
+
+	//
 	auto haveCondition = false;
 	auto line = 1;
 	auto statementIdx = 1;
@@ -3390,7 +3413,7 @@ void MiniScript::registerMethods() {
 void MiniScript::registerVariables() {
 }
 
-bool MiniScript::transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, vector<string>& enabledNamedConditions, int depth, int argumentIdx, int parentArgumentIdx, const string& injectCode, int additionalIndent) {
+bool MiniScript::transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, vector<string>& enabledNamedConditions, int depth, int argumentIdx, int parentArgumentIdx, const string& injectCode, int additionalIndent) {
 	//
 	statementIdx++;
 	auto currentStatementIdx = statementIdx;
@@ -3433,17 +3456,22 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 
 	// argument values header
 	generatedCode+= minIndentString + depthIndentString + "{" + "\n";
-	generatedCode+= minIndentString + depthIndentString + "\t" + "// required method code arguments" + "\n";
 	// statement
 	if (depth == 0) {
-		generatedCode+= minIndentString + depthIndentString + "\t" + "const MiniScript::ScriptStatement statement = {" + "\n";
-		generatedCode+= minIndentString + depthIndentString + "\t\t" + ".line = " + to_string(statement.line) + "," + "\n";
-		generatedCode+= minIndentString + depthIndentString + "\t\t" + ".statementIdx = " + to_string(statement.statementIdx) + "," + "\n";
-		generatedCode+= minIndentString + depthIndentString + "\t\t" + ".statement = \"<unavailable>\"," + "\n";
-		generatedCode+= minIndentString + depthIndentString + "\t\t" + ".gotoStatementIdx = " + to_string(statement.gotoStatementIdx) + "\n";
-		generatedCode+= minIndentString + depthIndentString + "\t};" + "\n";
+		if (scriptIdx == -1) {
+			generatedCode+= minIndentString + depthIndentString + "\t" + "const ScriptStatement statement = {" + "\n";
+			generatedCode+= minIndentString + depthIndentString + "\t\t" + ".line = " + to_string(statement.line) + "," + "\n";
+			generatedCode+= minIndentString + depthIndentString + "\t\t" + ".statementIdx = " + to_string(statement.statementIdx) + "," + "\n";
+			generatedCode+= minIndentString + depthIndentString + "\t\t" + ".statement = \"<unavailable>\"," + "\n";
+			generatedCode+= minIndentString + depthIndentString + "\t\t" + ".gotoStatementIdx = " + to_string(statement.gotoStatementIdx) + "\n";
+			generatedCode+= minIndentString + depthIndentString + "\t};" + "\n";
+		} else {
+			generatedCode+= minIndentString + depthIndentString + "\t" + "const ScriptStatement& statement = scripts[" + to_string(scriptIdx) + "].statements[" + to_string(statement.statementIdx) + "];" + "\n";
+		}
+		// TODO: this next one
 		generatedCode+= minIndentString + depthIndentString + "\t" + "miniScript->scriptState.statementIdx = statement.statementIdx;" + "\n";
 	}
+	generatedCode+= minIndentString + depthIndentString + "\t" + "// required method code arguments" + "\n";
 	// argument/return values
 	for (auto& codeLine: argumentValuesCode) {
 		generatedCode+= minIndentString + depthIndentString + "\t" + codeLine + "\n";
@@ -3570,7 +3598,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 				string_view subMethod;
 				vector<string_view> subArguments;
 				if (parseScriptStatement(argument, subMethod, subArguments) == true) {
-					if (transpileScriptStatement(generatedCode, subMethod, subArguments, statement, statementIdx, methodCodeMap, scriptStateChanged, enabledNamedConditions, depth + 1, subArgumentIdx, argumentIdx) == false) {
+					if (transpileScriptStatement(generatedCode, subMethod, subArguments, statement, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, enabledNamedConditions, depth + 1, subArgumentIdx, argumentIdx) == false) {
 						Console::println("MiniScript::transpileScriptStatement(): transpileScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': '" + string(argument) + "': parse error");
 					}
 				} else {
@@ -3585,7 +3613,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 				string_view subMethod;
 				vector<string_view> subArguments;
 				if (parseScriptStatement(generatedStatement, subMethod, subArguments) == true) {
-					if (transpileScriptStatement(generatedCode, subMethod, subArguments, statement, statementIdx, methodCodeMap, scriptStateChanged, enabledNamedConditions, depth + 1, subArgumentIdx, argumentIdx) == false) {
+					if (transpileScriptStatement(generatedCode, subMethod, subArguments, statement, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, enabledNamedConditions, depth + 1, subArgumentIdx, argumentIdx) == false) {
 						Console::println("MiniScript::transpileScriptStatement(): transpileScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': '" + string(argument) + "' --> '" + generatedStatement + "': parse error");
 					}
 				} else {
@@ -3666,6 +3694,7 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 	string generatedCodeHeader;
 
 	// TODO: move me into a method
+	generatedCodeHeader+= methodIndent + "// -1 means complete method call" + "\n";
 	generatedCodeHeader+= methodIndent + "if (miniScriptGotoStatementIdx == -1) {" + "\n";
 	generatedCodeHeader+= methodIndent + "\t" + "resetScriptExecutationState(" + to_string(scriptIdx) + ", STATE_NEXT_STATEMENT);" + "\n";
 	generatedCodeHeader+= methodIndent + "}" + "\n";
@@ -3684,6 +3713,10 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 		);
 
 	//
+	unordered_set<int> gotoStatementIdxSet;
+	for (auto scriptStatement: script.statements) gotoStatementIdxSet.insert(scriptStatement.gotoStatementIdx);
+
+	//
 	vector<string> enabledNamedConditions;
 	bool scriptStateChanged = false;
 	for (auto scriptStatement: script.statements) {
@@ -3697,7 +3730,6 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 		//
 		if (scriptStateChanged == true) {
 			generatedCodeHeader+= methodIndent + "if (miniScriptGotoStatementIdx == " + to_string(scriptStatement.statementIdx)  + ") goto miniscript_statement_" + to_string(scriptStatement.statementIdx) + "; else" + "\n";
-			scriptStateChanged = false;
 		}
 
 		// enabled named conditions
@@ -3717,8 +3749,11 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 		// statement_xyz goto label
 		generatedCode+= "\n";
 		generatedCode+= methodIndent + "// Statement: " + to_string(scriptStatement.statementIdx) + "\n";
-		generatedCode+= methodIndent + "miniscript_statement_" + to_string(scriptStatement.statementIdx) + ":" + "\n";
-		transpileScriptStatement(generatedCode, method, arguments, scriptStatement, statementIdx, methodCodeMap, scriptStateChanged, enabledNamedConditions);
+		if (scriptStateChanged == true || gotoStatementIdxSet.find(scriptStatement.statementIdx) != gotoStatementIdxSet.end()) {
+			generatedCode+= methodIndent + "miniscript_statement_" + to_string(scriptStatement.statementIdx) + ":" + "\n";
+		}
+		scriptStateChanged = false;
+		transpileScriptStatement(generatedCode, method, arguments, scriptStatement, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, enabledNamedConditions);
 		if (scriptStateChanged == true) {
 			generatedCode+= methodIndent + "if (scriptState.state.state != STATE_NEXT_STATEMENT) {" + "\n";
 			generatedCode+= methodIndent + "\t" + "miniScript->scriptState.statementIdx++;" + "\n";
@@ -3766,7 +3801,10 @@ bool MiniScript::transpileScriptCondition(string& generatedCode, int scriptIdx, 
 	//
 	auto scriptStateChanged = false;
 	vector<string >enabledNamedConditions;
-	transpileScriptStatement(generatedCode, method, arguments, scriptStatement, statementIdx, methodCodeMap, scriptStateChanged, enabledNamedConditions, 0, -1, -1, injectCode, depth);
+	transpileScriptStatement(generatedCode, method, arguments, scriptStatement, -1, statementIdx, methodCodeMap, scriptStateChanged, enabledNamedConditions, 0, -1, -1, injectCode, depth + 1);
+
+	//
+	generatedCode+= methodIndent + "\n";
 
 	//
 	return true;

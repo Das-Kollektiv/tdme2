@@ -211,6 +211,7 @@ void processFile(const string& scriptFileName, const string& miniscriptExtension
 
 	//
 	string headerIndent = "\t";
+	string methodCodeIndent = "\t";
 	auto scripts = scriptInstance->getScripts();
 	string generatedExecuteCode;
 	{
@@ -286,8 +287,39 @@ void processFile(const string& scriptFileName, const string& miniscriptExtension
 	string generatedDefinitions = "\n";
 	string constructorDefinition;
 	constructorDefinition+= miniScriptClassName + "::" + miniScriptClassName + "(): MiniScript() {" + "\n";
-	constructorDefinition+= string() + "\t" + "setNative(true);" + "\n";
+	constructorDefinition+= methodCodeIndent + "setNative(true);" + "\n";
+	constructorDefinition+= methodCodeIndent + "setHash(\"" + scriptInstance->getHash() + "\");" + "\n";
+	constructorDefinition+= methodCodeIndent + "setNativeScripts(" + "\n";
+	constructorDefinition+= methodCodeIndent + "\t" + "{" + "\n";
+	{
+		auto scriptIdx = 0;
+		for (auto& script: scripts) {
+			constructorDefinition+= methodCodeIndent + "\t" + "\t" + "{" + "\n";
+			constructorDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".conditionType = " + (script.conditionType == MiniScript::Script::CONDITIONTYPE_ON?"Script::CONDITIONTYPE_ON":"Script::CONDITIONTYPE_ONENABLED") + "," + "\n";
+			constructorDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".line = " + to_string(script.line) + "," + "\n";
+			constructorDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".condition = \"" + StringTools::replace(script.condition, "\"", "\\\"") + "\"," + "\n";
+			constructorDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".name = \"" + script.name + "\"," + "\n";
+			constructorDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".statements = {" + "\n";
+			auto statementIdx = 0;
+			for (auto& statement: script.statements) {
+				constructorDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "{" + "\n";
+				constructorDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + ".line = " + to_string(statement.line) + "," + "\n";
+				constructorDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + ".statementIdx = " + to_string(statement.statementIdx) + "," + "\n";
+				constructorDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + ".statement = \"" + StringTools::replace(statement.statement, "\"", "\\\"") + "\"," + "\n";
+				constructorDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + ".gotoStatementIdx = " + to_string(statement.gotoStatementIdx) + "\n";
+				constructorDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "}" + (statementIdx < script.statements.size() - 1?",":"") + "\n";
+				statementIdx++;
+			}
+			constructorDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "}" + "\n";
+			constructorDefinition+= methodCodeIndent + "\t" + "\t" + "}" + (scriptIdx < scripts.size() - 1?",":"") + "\n";
+			scriptIdx++;
+		}
+	}
+	constructorDefinition+= methodCodeIndent + "\t" + "}" + "\n";
+	constructorDefinition+= methodCodeIndent + ");" + "\n";
 	constructorDefinition+= string() + "}" + "\n";
+
+	//
 	string generatedDetermineScriptIdxToStartDefinition = "\n";
 	generatedDetermineScriptIdxToStartDefinition+= "int " + miniScriptClassName + "::determineScriptIdxToStart() {" + "\n";
 	generatedDetermineScriptIdxToStartDefinition+= string() + "\t" + "auto miniScript = this;" + "\n";
@@ -354,9 +386,6 @@ void processFile(const string& scriptFileName, const string& miniscriptExtension
 					"bool returnValueBool; returnValue.getBooleanValue(returnValueBool); if (returnValueBool == true) return " + to_string(scriptIdx) + ";",
 					script.conditionType == MiniScript::Script::CONDITIONTYPE_ONENABLED?1:0
 				);
-				if (script.conditionType == MiniScript::Script::CONDITIONTYPE_ONENABLED) {
-					generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "}" + "\n";
-				}
 			}
 
 			//
@@ -366,13 +395,14 @@ void processFile(const string& scriptFileName, const string& miniscriptExtension
 
 	//
 	generatedDetermineScriptIdxToStartDefinition+= "\n";
-	generatedDetermineScriptIdxToStartDefinition+= string() + "\t" + "//" + "\n";
-	generatedDetermineScriptIdxToStartDefinition+= string() + "\t" + "return " + to_string(nothingScriptIdx) + ";" + "\n";
+	generatedDetermineScriptIdxToStartDefinition+= methodCodeIndent + "//" + "\n";
+	generatedDetermineScriptIdxToStartDefinition+= methodCodeIndent + "return " + to_string(nothingScriptIdx) + ";" + "\n";
 	generatedDetermineScriptIdxToStartDefinition+= string() + "}" + "\n";
 	//
+	generatedDetermineNamedScriptIdxToStartDefinition+= methodCodeIndent + "}" + "\n";
 	generatedDetermineNamedScriptIdxToStartDefinition+= "\n";
-	generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "//" + "\n";
-	generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "return -1;" + "\n";
+	generatedDetermineNamedScriptIdxToStartDefinition+= methodCodeIndent + "//" + "\n";
+	generatedDetermineNamedScriptIdxToStartDefinition+= methodCodeIndent + "return -1;" + "\n";
 	generatedDetermineNamedScriptIdxToStartDefinition+= string() + "}" + "\n";
 
 	//
