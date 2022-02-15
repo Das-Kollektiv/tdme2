@@ -18,12 +18,20 @@ public:
 	// overriden methods
 	void emit(const string& condition) override;
 	inline void startScript() override {
+		if (native == false) {
+			MiniScript::startScript();
+			return;
+		}
 		scriptState.variables.clear();
 		scriptState.running = true;
 		registerVariables();
 		resetScriptExecutationState(0, STATE_NEXT_STATEMENT);
 	}
 	inline void execute() override {
+		if (native == false) {
+			MiniScript::execute();
+			return;
+		}
 		if (scriptState.running == false) return;
 		// execute while having statements to be processed
 		if (scriptState.state.state == STATE_NEXT_STATEMENT) {

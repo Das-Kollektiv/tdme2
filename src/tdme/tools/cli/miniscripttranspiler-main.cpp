@@ -260,12 +260,20 @@ void processFile(const string& scriptFileName, const string& miniscriptExtension
 	generatedDeclarations+= headerIndent + "// overriden methods" + "\n";
 	generatedDeclarations+= headerIndent + "void emit(const string& condition) override;" + "\n";
 	generatedDeclarations+= headerIndent + "inline void startScript() override {" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "if (native == false) {" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "\t" + "MiniScript::startScript();" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "\t" + "return;" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "}" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "scriptState.variables.clear();" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "scriptState.running = true;" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "registerVariables();" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "resetScriptExecutationState(" + to_string(initializeScriptIdx) + ", STATE_NEXT_STATEMENT);" + "\n";
 	generatedDeclarations+= headerIndent + "}" + "\n";
 	generatedDeclarations+= headerIndent + "inline void execute() override {" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "if (native == false) {" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "\t" + "MiniScript::execute();" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "\t" + "return;" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "}" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "if (scriptState.running == false) return;" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "// execute while having statements to be processed" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "if (scriptState.state.state == STATE_NEXT_STATEMENT) {" + "\n";
@@ -284,6 +292,10 @@ void processFile(const string& scriptFileName, const string& miniscriptExtension
 	//
 	string emitDefinition;
 	emitDefinition+= "void " + miniScriptClassName + "::emit(const string& condition) {" + "\n";
+	emitDefinition+= methodCodeIndent + "if (native == false) {" + "\n";
+	emitDefinition+= methodCodeIndent + "\t" + "MiniScript::emit(condition);" + "\n";
+	emitDefinition+= methodCodeIndent + "\t" + "return;" + "\n";
+	emitDefinition+= methodCodeIndent + "}" + "\n";
 	string generatedDefinitions = "\n";
 	string constructorDefinition;
 	constructorDefinition+= miniScriptClassName + "::" + miniScriptClassName + "(): MiniScript() {" + "\n";
@@ -322,9 +334,11 @@ void processFile(const string& scriptFileName, const string& miniscriptExtension
 	//
 	string generatedDetermineScriptIdxToStartDefinition = "\n";
 	generatedDetermineScriptIdxToStartDefinition+= "int " + miniScriptClassName + "::determineScriptIdxToStart() {" + "\n";
+	generatedDetermineScriptIdxToStartDefinition+= string() + "\t" + "if (native == false) return MiniScript::determineScriptIdxToStart();" + "\n";
 	generatedDetermineScriptIdxToStartDefinition+= string() + "\t" + "auto miniScript = this;" + "\n";
 	string generatedDetermineNamedScriptIdxToStartDefinition = "\n";
 	generatedDetermineNamedScriptIdxToStartDefinition+= "int " + miniScriptClassName + "::determineNamedScriptIdxToStart() {" + "\n";
+	generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "if (native == false) return MiniScript::determineNamedScriptIdxToStart();" + "\n";
 	generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "auto miniScript = this;" + "\n";
 	generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "for (auto& enabledNamedCondition: scriptState.enabledNamedConditions) {" + "\n";
 	{

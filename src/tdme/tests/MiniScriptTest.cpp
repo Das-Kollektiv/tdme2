@@ -1147,6 +1147,7 @@ MiniScriptTest::MiniScriptTest(): MiniScript() {
 }
 
 int MiniScriptTest::determineScriptIdxToStart() {
+	if (native == false) return MiniScript::determineScriptIdxToStart();
 	auto miniScript = this;
 
 	//
@@ -1154,6 +1155,7 @@ int MiniScriptTest::determineScriptIdxToStart() {
 }
 
 int MiniScriptTest::determineNamedScriptIdxToStart() {
+	if (native == false) return MiniScript::determineNamedScriptIdxToStart();
 	auto miniScript = this;
 	for (auto& enabledNamedCondition: scriptState.enabledNamedConditions) {
 
@@ -1192,6 +1194,10 @@ int MiniScriptTest::determineNamedScriptIdxToStart() {
 }
 
 void MiniScriptTest::emit(const string& condition) {
+	if (native == false) {
+		MiniScript::emit(condition);
+		return;
+	}
 	if (condition == "initialize") {
 		on_initialize(-1);
 		return;

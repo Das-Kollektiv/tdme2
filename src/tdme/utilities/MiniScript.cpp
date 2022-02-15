@@ -512,7 +512,8 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 				startScript();
 				return;
 			} else {
-				Console::println("MiniScript::loadScript(): " + pathName + "/" + fileName + ": Compiled script outdated!");
+				Console::println("MiniScript::loadScript(): " + pathName + "/" + fileName + ": Script has changed. Script will be run in interpreted mode. Recompile your script if you want to run it natively.");
+				native = false;
 			}
 		}
 		hash = scriptHash;
