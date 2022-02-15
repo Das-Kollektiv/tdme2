@@ -257,7 +257,7 @@ void processFile(const string& scriptFileName, const string& miniscriptExtension
 	generatedDeclarations+= headerIndent + " */" + "\n";
 	generatedDeclarations+= headerIndent + miniScriptClassName + "();" + "\n";
 	generatedDeclarations+= "\n";
-	generatedDeclarations+= headerIndent + "// overriden methods" + "\n";
+	generatedDeclarations+= headerIndent + "// overridden methods" + "\n";
 	generatedDeclarations+= headerIndent + "void emit(const string& condition) override;" + "\n";
 	generatedDeclarations+= headerIndent + "inline void startScript() override {" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "if (native == false) {" + "\n";
@@ -284,7 +284,7 @@ void processFile(const string& scriptFileName, const string& miniscriptExtension
 	generatedDeclarations+= headerIndent + "};" + "\n";
 	generatedDeclarations+= "\n";
 	generatedDeclarations+= string() + "protected:" + "\n";
-	generatedDeclarations+= headerIndent + "// overriden methods" + "\n";
+	generatedDeclarations+= headerIndent + "// overridden methods" + "\n";
 	generatedDeclarations+= headerIndent + "int determineScriptIdxToStart() override;" + "\n";
 	generatedDeclarations+= headerIndent + "int determineNamedScriptIdxToStart() override;" + "\n";
 	generatedDeclarations+= "\n";
