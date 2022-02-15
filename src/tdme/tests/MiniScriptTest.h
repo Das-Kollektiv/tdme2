@@ -15,7 +15,7 @@ public:
 	 */
 	MiniScriptTest();
 
-	// overriden methods
+	// overridden methods
 	void emit(const string& condition) override;
 	inline void startScript() override {
 		if (native == false) {
@@ -46,7 +46,7 @@ public:
 	};
 
 protected:
-	// overriden methods
+	// overridden methods
 	int determineScriptIdxToStart() override;
 	int determineNamedScriptIdxToStart() override;
 
