@@ -202,7 +202,7 @@
 	  - complex logic should still be implemented by a game developer in C++ by extending MiniScript
 	  - game designers can use MiniScript + those methods to implement high level game logic
 	- MiniScript methods/states know about them self, so a whole documentation for MiniScript usage can be generated later
-	- can be transpiled to C++ (this is WIP, but already working)
+	- can be transpiled to C++
 - Networking module, which consists of
     - UDP server
         - n:m threading model with non blocked IO via kernel event mechanismns(epoll, kqueue or select)
@@ -268,7 +268,6 @@
 - documentation
 
 # 5. What is WIP or planned
-- MiniScript: MiniScript -> C++ transpiler
 - PBR: generate IBL cube maps from scene
 - Shader parameters, the system is implemented and working, now lets connect tools and shaders
 - Reflections via environment mapping(reflection intensity maps feature is missing for specular materials)
