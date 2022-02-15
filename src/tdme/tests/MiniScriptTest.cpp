@@ -18,10 +18,10 @@ int MiniScriptTest::determineScriptIdxToStart() {
 
 int MiniScriptTest::determineNamedScriptIdxToStart() {
 	auto miniScript = this;
-	for (auto& enabledConditionName: scriptState.enabledConditionNames) {
+	for (auto& enabledNamedCondition: scriptState.enabledNamedConditions) {
 
 		// next statements belong to tested enabled named condition with name "named_condition_1"
-		if (enabledConditionName == "named_condition_1")
+		if (enabledNamedCondition == "named_condition_1")
 		// equals(1, 1)
 		{
 			// required method code arguments
@@ -80,16 +80,6 @@ void MiniScriptTest::on_initialize(int miniScriptGotoStatementIdx) {
 	miniScript->scriptState.scriptIdx = 0;
 	if (miniScriptGotoStatementIdx != -1 && miniScriptGotoStatementIdx != 0) Console::println("MiniScript::on_initialize(): Can not go to statement " + to_string(miniScriptGotoStatementIdx));
 
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
-
 	// Statement: 0
 	miniscript_statement_0:
 	// console.log("------------")
@@ -111,20 +101,6 @@ void MiniScriptTest::on_initialize(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 1
@@ -149,20 +125,6 @@ void MiniScriptTest::on_initialize(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 2
 	miniscript_statement_2:
@@ -186,20 +148,6 @@ void MiniScriptTest::on_initialize(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 3
 	miniscript_statement_3:
@@ -221,20 +169,6 @@ void MiniScriptTest::on_initialize(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 4
@@ -308,16 +242,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	if (miniScriptGotoStatementIdx == 151) goto miniscript_statement_151; else
 	if (miniScriptGotoStatementIdx != -1 && miniScriptGotoStatementIdx != 0) Console::println("MiniScript::on_nothing(): Can not go to statement " + to_string(miniScriptGotoStatementIdx));
 
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
-
 	// Statement: 0
 	miniscript_statement_0:
 	// console.log("---------")
@@ -339,20 +263,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 1
@@ -377,20 +287,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 2
 	miniscript_statement_2:
@@ -414,20 +310,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 3
 	miniscript_statement_3:
@@ -449,20 +331,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 4
@@ -487,20 +355,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 5
 	miniscript_statement_5:
@@ -524,20 +378,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 6
 	miniscript_statement_6:
@@ -560,20 +400,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 7
@@ -677,20 +503,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 8
 	miniscript_statement_8:
@@ -713,20 +525,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 9
@@ -751,20 +549,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 10
 	miniscript_statement_10:
@@ -787,20 +571,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 11
@@ -1003,20 +773,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 12
 	miniscript_statement_12:
@@ -1150,20 +906,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 13
@@ -1299,20 +1041,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 14
 	miniscript_statement_14:
@@ -1355,20 +1083,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 15
@@ -1413,20 +1127,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 16
 	miniscript_statement_16:
@@ -1449,20 +1149,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 17
@@ -1487,20 +1173,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 18
 	miniscript_statement_18:
@@ -1523,20 +1195,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 19
@@ -1809,20 +1467,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 20
 	miniscript_statement_20:
@@ -1956,20 +1600,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 21
@@ -2105,20 +1735,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 22
 	miniscript_statement_22:
@@ -2161,20 +1777,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 23
@@ -2219,20 +1821,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 24
 	miniscript_statement_24:
@@ -2255,20 +1843,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 25
@@ -2293,20 +1867,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 26
 	miniscript_statement_26:
@@ -2329,20 +1889,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 27
@@ -2545,20 +2091,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 28
 	miniscript_statement_28:
@@ -2692,20 +2224,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 29
@@ -2841,20 +2359,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 30
 	miniscript_statement_30:
@@ -2897,20 +2401,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 31
@@ -2955,20 +2445,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 32
 	miniscript_statement_32:
@@ -2991,20 +2467,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 33
@@ -3029,20 +2491,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 34
 	miniscript_statement_34:
@@ -3065,20 +2513,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 35
@@ -3351,20 +2785,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 36
 	miniscript_statement_36:
@@ -3498,20 +2918,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 37
@@ -3647,20 +3053,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 38
 	miniscript_statement_38:
@@ -3703,20 +3095,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 39
@@ -3761,20 +3139,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 40
 	miniscript_statement_40:
@@ -3797,20 +3161,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 41
@@ -3835,20 +3185,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 42
 	miniscript_statement_42:
@@ -3871,20 +3207,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 43
@@ -4131,20 +3453,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 44
 	miniscript_statement_44:
@@ -4324,20 +3632,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 45
@@ -4519,20 +3813,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 46
 	miniscript_statement_46:
@@ -4689,20 +3969,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 47
@@ -4861,20 +4127,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 48
 	miniscript_statement_48:
@@ -4938,20 +4190,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 49
 	miniscript_statement_49:
@@ -5014,20 +4252,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 50
@@ -5118,20 +4342,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 51
 	miniscript_statement_51:
@@ -5221,20 +4431,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 52
 	miniscript_statement_52:
@@ -5297,20 +4493,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 53
@@ -5427,20 +4609,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 54
 	miniscript_statement_54:
@@ -5503,20 +4671,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 55
@@ -5581,20 +4735,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 56
 	miniscript_statement_56:
@@ -5658,20 +4798,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 57
 	miniscript_statement_57:
@@ -5694,20 +4820,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 58
@@ -5732,20 +4844,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 59
 	miniscript_statement_59:
@@ -5768,20 +4866,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 60
@@ -5957,20 +5041,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 61
@@ -6152,20 +5222,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 62
 	miniscript_statement_62:
@@ -6346,20 +5402,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 63
 	miniscript_statement_63:
@@ -6516,20 +5558,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 64
@@ -6688,20 +5716,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 65
 	miniscript_statement_65:
@@ -6724,20 +5738,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 66
@@ -6762,20 +5762,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 67
 	miniscript_statement_67:
@@ -6798,20 +5784,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 68
@@ -6950,20 +5922,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			returnValue = argumentValues[1];
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 69
 	miniscript_statement_69:
@@ -7043,20 +6001,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			returnValue = argumentValues[1];
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 70
 	miniscript_statement_70:
@@ -7101,20 +6045,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 71
@@ -7176,20 +6106,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 72
@@ -7280,20 +6196,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 73
 	miniscript_statement_73:
@@ -7354,20 +6256,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 74
@@ -7458,20 +6346,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 75
 	miniscript_statement_75:
@@ -7541,20 +6415,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 76
 	miniscript_statement_76:
@@ -7623,20 +6483,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 77
@@ -7711,20 +6557,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 78
@@ -7813,20 +6645,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 79
 	miniscript_statement_79:
@@ -7914,20 +6732,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 80
 	miniscript_statement_80:
@@ -7950,20 +6754,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 81
@@ -7988,20 +6778,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 82
 	miniscript_statement_82:
@@ -8024,20 +6800,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 83
@@ -8081,20 +6843,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 84
 	miniscript_statement_84:
@@ -8136,20 +6884,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 85
@@ -8193,20 +6927,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 86
 	miniscript_statement_86:
@@ -8245,20 +6965,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 87
@@ -8299,20 +7005,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 88
 	miniscript_statement_88:
@@ -8352,20 +7044,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 89
 	miniscript_statement_89:
@@ -8389,20 +7067,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 90
 	miniscript_statement_90:
@@ -8425,20 +7089,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 91
@@ -8605,20 +7255,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 92
 	miniscript_statement_92:
@@ -8641,20 +7277,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 93
@@ -8679,20 +7301,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 94
 	miniscript_statement_94:
@@ -8716,20 +7324,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 95
 	miniscript_statement_95:
@@ -8752,20 +7346,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 96
@@ -8812,20 +7392,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			returnValue = argumentValues[1];
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 97
 	miniscript_statement_97:
@@ -8870,20 +7436,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 98
 	miniscript_statement_98:
@@ -8906,20 +7458,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 99
@@ -8944,20 +7482,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 100
 	miniscript_statement_100:
@@ -8980,20 +7504,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 101
@@ -9022,20 +7532,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		} else {
 			miniScript->setVariable(variable, argumentValues[1]);
 			returnValue = argumentValues[1];
-		}
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
 		}
 	}
 
@@ -9085,16 +7581,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
-
 	// Statement: 103
 	miniscript_statement_103:
 	// console.log($i, ": Hello World")
@@ -9139,20 +7625,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 104
 	miniscript_statement_104:
@@ -9183,16 +7655,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 105
@@ -9315,20 +7777,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			returnValue = argumentValues[1];
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 106
 	miniscript_statement_106:
@@ -9373,16 +7821,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
-
 	// Statement: 107
 	miniscript_statement_107:
 	// console.log("-------------------------")
@@ -9404,20 +7842,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 108
@@ -9442,20 +7866,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 109
 	miniscript_statement_109:
@@ -9478,20 +7888,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 110
@@ -9520,20 +7916,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		} else {
 			miniScript->setVariable(variable, argumentValues[1]);
 			returnValue = argumentValues[1];
-		}
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
 		}
 	}
 
@@ -9612,16 +7994,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
-
 	// Statement: 112
 	miniscript_statement_112:
 	// console.log($i, ": Hello World")
@@ -9666,20 +8038,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 113
 	miniscript_statement_113:
@@ -9710,16 +8068,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 114
@@ -9842,20 +8190,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			returnValue = argumentValues[1];
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 115
 	miniscript_statement_115:
@@ -9898,16 +8232,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 116
@@ -9954,20 +8278,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 117
 	miniscript_statement_117:
@@ -9990,20 +8300,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 118
@@ -10028,20 +8324,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 119
 	miniscript_statement_119:
@@ -10064,20 +8346,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 120
@@ -10106,20 +8374,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		} else {
 			miniScript->setVariable(variable, argumentValues[1]);
 			returnValue = argumentValues[1];
-		}
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
 		}
 	}
 
@@ -10200,16 +8454,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
-
 	// Statement: 122
 	miniscript_statement_122:
 	// console.log($i, ":")
@@ -10253,20 +8497,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 123
@@ -10344,16 +8574,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
-
 	// Statement: 124
 	miniscript_statement_124:
 	// console.log("i -> 0")
@@ -10375,20 +8595,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 125
@@ -10472,16 +8678,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
-
 	// Statement: 126
 	miniscript_statement_126:
 	// console.log("i -> 1")
@@ -10503,20 +8699,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 127
@@ -10600,16 +8782,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
-
 	// Statement: 128
 	miniscript_statement_128:
 	// console.log("i -> 2")
@@ -10631,20 +8803,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 129
@@ -10728,16 +8886,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
-
 	// Statement: 130
 	miniscript_statement_130:
 	// console.log("i -> 3")
@@ -10759,20 +8907,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 131
@@ -10805,16 +8939,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 132
@@ -10861,20 +8985,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 133
 	miniscript_statement_133:
@@ -10916,16 +9026,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 134
@@ -11048,20 +9148,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			returnValue = argumentValues[1];
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 135
 	miniscript_statement_135:
@@ -11106,16 +9192,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
-
 	// Statement: 136
 	miniscript_statement_136:
 	// setVariable("$i", 1)
@@ -11142,20 +9218,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		} else {
 			miniScript->setVariable(variable, argumentValues[1]);
 			returnValue = argumentValues[1];
-		}
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
 		}
 	}
 
@@ -11187,20 +9249,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			returnValue = argumentValues[1];
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 138
 	miniscript_statement_138:
@@ -11228,20 +9276,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		} else {
 			miniScript->setVariable(variable, argumentValues[1]);
 			returnValue = argumentValues[1];
-		}
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
 		}
 	}
 
@@ -11422,16 +9456,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
-
 	// Statement: 140
 	miniscript_statement_140:
 	// console.log("This should not happen, but look ok in preprocessor processed output")
@@ -11453,20 +9477,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 141
@@ -11511,16 +9521,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
-
 	// Statement: 142
 	miniscript_statement_142:
 	// console.log("-------------------------------------------------------------------------------------")
@@ -11542,20 +9542,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 143
@@ -11906,20 +9892,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 144
 	miniscript_statement_144:
@@ -11942,20 +9914,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 145
@@ -12525,20 +10483,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 146
 	miniscript_statement_146:
@@ -12561,20 +10505,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 147
@@ -12599,20 +10529,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 148
 	miniscript_statement_148:
@@ -12636,20 +10552,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 149
 	miniscript_statement_149:
@@ -12670,32 +10572,28 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		// method code: script.enableNamedCondition
 		string name;
 		if (MiniScript::getStringValue(argumentValues, 0, name, false) == true) {
-			miniScript->scriptState.enabledConditionNames.erase(
+			miniScript->scriptState.enabledNamedConditions.erase(
 				remove(
-					miniScript->scriptState.enabledConditionNames.begin(),
-					miniScript->scriptState.enabledConditionNames.end(),
+					miniScript->scriptState.enabledNamedConditions.begin(),
+					miniScript->scriptState.enabledNamedConditions.end(),
 					name
 				),
-				miniScript->scriptState.enabledConditionNames.end()
+				miniScript->scriptState.enabledNamedConditions.end()
 			);
-			miniScript->scriptState.enabledConditionNames.push_back(name);
+			miniScript->scriptState.enabledNamedConditions.push_back(name);
 		} else {
 			Console::println("ScriptMethodScriptWait::executeMethod(): " + string("script.enableNamedCondition") + "(): parameter type mismatch @ argument 0: string expected");
 			miniScript->startErrorScript(); return;
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
 
 	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
+	{
 		auto scriptIdxToStart = determineNamedScriptIdxToStart();
 		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
+		resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
+		scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
+		return;
 		}
 	}
 
@@ -12731,12 +10629,12 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
+	{
 		auto scriptIdxToStart = determineNamedScriptIdxToStart();
 		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
+		resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
+		scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
+		return;
 		}
 	}
 
@@ -12759,31 +10657,17 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		// method code: script.disableNamedCondition
 		string name;
 		if (MiniScript::getStringValue(argumentValues, 0, name, false) == true) {
-			miniScript->scriptState.enabledConditionNames.erase(
+			miniScript->scriptState.enabledNamedConditions.erase(
 				remove(
-					miniScript->scriptState.enabledConditionNames.begin(),
-					miniScript->scriptState.enabledConditionNames.end(),
+					miniScript->scriptState.enabledNamedConditions.begin(),
+					miniScript->scriptState.enabledNamedConditions.end(),
 					name
 				),
-				miniScript->scriptState.enabledConditionNames.end()
+				miniScript->scriptState.enabledNamedConditions.end()
 			);
 		} else {
 			Console::println("ScriptMethodScriptWait::executeMethod(): " + string("script.disableNamedCondition") + "(): parameter type mismatch @ argument 0: string expected");
 			miniScript->startErrorScript(); return;
-		}
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
 		}
 	}
 
@@ -12809,20 +10693,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 153
 	miniscript_statement_153:
@@ -12845,20 +10715,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 154
@@ -12883,20 +10739,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 155
 	miniscript_statement_155:
@@ -12919,20 +10761,6 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		miniScript->scriptState.variables.clear();
 		miniScript->scriptState.timeEnabledConditionsCheckLast = -1LL;
 		miniScript->resetScriptExecutationState(-1, STATE_NONE);
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 156
@@ -12990,16 +10818,6 @@ void MiniScriptTest::on_error(int miniScriptGotoStatementIdx) {
 	if (miniScriptGotoStatementIdx == 2) goto miniscript_statement_2; else
 	if (miniScriptGotoStatementIdx != -1 && miniScriptGotoStatementIdx != 0) Console::println("MiniScript::on_error(): Can not go to statement " + to_string(miniScriptGotoStatementIdx));
 
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
-
 	// Statement: 0
 	miniscript_statement_0:
 	// console.log("An error occurred")
@@ -13021,20 +10839,6 @@ void MiniScriptTest::on_error(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 1
@@ -13066,16 +10870,6 @@ void MiniScriptTest::on_error(int miniScriptGotoStatementIdx) {
 	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 2
@@ -13132,16 +10926,6 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 	miniScript->scriptState.scriptIdx = 3;
 	if (miniScriptGotoStatementIdx != -1 && miniScriptGotoStatementIdx != 0) Console::println("MiniScript::on_emittest(): Can not go to statement " + to_string(miniScriptGotoStatementIdx));
 
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
-
 	// Statement: 0
 	miniscript_statement_0:
 	// console.log("---------------------------------")
@@ -13163,20 +10947,6 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 1
@@ -13201,20 +10971,6 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 2
 	miniscript_statement_2:
@@ -13238,20 +10994,6 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 3
 	miniscript_statement_3:
@@ -13273,20 +11015,6 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 4
@@ -13310,20 +11038,6 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 		miniScript->scriptState.variables.clear();
 		miniScript->scriptState.timeEnabledConditionsCheckLast = -1LL;
 		miniScript->resetScriptExecutationState(-1, STATE_NONE);
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 5
@@ -13380,16 +11094,6 @@ void MiniScriptTest::on_enabled_named_condition_1(int miniScriptGotoStatementIdx
 	miniScript->scriptState.scriptIdx = 4;
 	if (miniScriptGotoStatementIdx != -1 && miniScriptGotoStatementIdx != 0) Console::println("MiniScript::on_enabled_named_condition_1(): Can not go to statement " + to_string(miniScriptGotoStatementIdx));
 
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
-
 	// Statement: 0
 	miniscript_statement_0:
 	// script.disableNamedCondition("named_condition_1")
@@ -13409,31 +11113,17 @@ void MiniScriptTest::on_enabled_named_condition_1(int miniScriptGotoStatementIdx
 		// method code: script.disableNamedCondition
 		string name;
 		if (MiniScript::getStringValue(argumentValues, 0, name, false) == true) {
-			miniScript->scriptState.enabledConditionNames.erase(
+			miniScript->scriptState.enabledNamedConditions.erase(
 				remove(
-					miniScript->scriptState.enabledConditionNames.begin(),
-					miniScript->scriptState.enabledConditionNames.end(),
+					miniScript->scriptState.enabledNamedConditions.begin(),
+					miniScript->scriptState.enabledNamedConditions.end(),
 					name
 				),
-				miniScript->scriptState.enabledConditionNames.end()
+				miniScript->scriptState.enabledNamedConditions.end()
 			);
 		} else {
 			Console::println("ScriptMethodScriptWait::executeMethod(): " + string("script.disableNamedCondition") + "(): parameter type mismatch @ argument 0: string expected");
 			miniScript->startErrorScript(); return;
-		}
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
 		}
 	}
 
@@ -13459,20 +11149,6 @@ void MiniScriptTest::on_enabled_named_condition_1(int miniScriptGotoStatementIdx
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 2
 	miniscript_statement_2:
@@ -13495,20 +11171,6 @@ void MiniScriptTest::on_enabled_named_condition_1(int miniScriptGotoStatementIdx
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 3
@@ -13533,20 +11195,6 @@ void MiniScriptTest::on_enabled_named_condition_1(int miniScriptGotoStatementIdx
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 4
 	miniscript_statement_4:
@@ -13568,20 +11216,6 @@ void MiniScriptTest::on_enabled_named_condition_1(int miniScriptGotoStatementIdx
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 5
@@ -13606,20 +11240,6 @@ void MiniScriptTest::on_enabled_named_condition_1(int miniScriptGotoStatementIdx
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 6
 	miniscript_statement_6:
@@ -13642,20 +11262,6 @@ void MiniScriptTest::on_enabled_named_condition_1(int miniScriptGotoStatementIdx
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 7
@@ -13680,20 +11286,6 @@ void MiniScriptTest::on_enabled_named_condition_1(int miniScriptGotoStatementIdx
 		}
 		Console::println();
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
-	}
 
 	// Statement: 8
 	miniscript_statement_8:
@@ -13715,20 +11307,6 @@ void MiniScriptTest::on_enabled_named_condition_1(int miniScriptGotoStatementIdx
 			Console::print(argumentValue.getValueString());
 		}
 		Console::println();
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
-		}
 	}
 
 	// Statement: 9
@@ -13754,20 +11332,6 @@ void MiniScriptTest::on_enabled_named_condition_1(int miniScriptGotoStatementIdx
 		} else {
 			Console::println("ScriptMethodScriptWait::executeMethod(): " + string("script.emit") + "(): parameter type mismatch @ argument 0: string expected");
 			miniScript->startErrorScript(); return;
-		}
-	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
-		miniScript->scriptState.statementIdx++;
-		return;
-	}
-
-	// enabled named conditions
-	if (scriptState.enabledConditionNames.empty() == false) {
-		auto scriptIdxToStart = determineNamedScriptIdxToStart();
-		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
-			resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
-			scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();
-			return;
 		}
 	}
 

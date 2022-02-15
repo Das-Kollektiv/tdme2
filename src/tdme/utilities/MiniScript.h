@@ -697,7 +697,7 @@ protected:
 		stack<bool> conditionStack;
 		stack<EndType> endTypeStack;
 		StateMachineState state;
-		vector<string> enabledConditionNames;
+		vector<string> enabledNamedConditions;
 		int64_t timeEnabledConditionsCheckLast { -1LL };
 	};
 
@@ -740,7 +740,7 @@ protected:
 	 * @param stateMachineState state machine state
 	 */
 	inline void resetScriptExecutationState(int scriptIdx, StateMachineState stateMachineState) {
-		scriptState.enabledConditionNames.clear();
+		scriptState.enabledNamedConditions.clear();
 		scriptState.forTimeStarted.clear();
 		while (scriptState.conditionStack.empty() == false) scriptState.conditionStack.pop();
 		while (scriptState.endTypeStack.empty() == false) scriptState.endTypeStack.pop();
@@ -889,13 +889,15 @@ private:
 	 * @param statement script statement
 	 * @param statementIdx statement index
 	 * @param methodCodeMap method code map
+	 * @param scriptStateChanged script state changed
+	 * @param enabledNamedConditions enabled named conditions
 	 * @param depth depth
 	 * @param argumentIdx argument index
 	 * @param parentArgumentIdx parent argument index
 	 * @param injectCode code to additionally inject
 	 * @param additionalIndent additional indent
 	 */
-	bool transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, int depth = 0, int argumentIdx = -1, int parentArgumentIdx = -1, const string& injectCode = string(), int additionalIndent = 0);
+	bool transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, vector<string>& enabledNamedConditions, int depth = 0, int argumentIdx = -1, int parentArgumentIdx = -1, const string& injectCode = string(), int additionalIndent = 0);
 
 public:
 	/**

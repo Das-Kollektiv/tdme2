@@ -294,7 +294,7 @@ void processFile(const string& scriptFileName, const string& miniscriptExtension
 	string generatedDetermineNamedScriptIdxToStartDefinition = "\n";
 	generatedDetermineNamedScriptIdxToStartDefinition+= "int " + miniScriptClassName + "::determineNamedScriptIdxToStart() {" + "\n";
 	generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "auto miniScript = this;" + "\n";
-	generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "for (auto& enabledConditionName: scriptState.enabledConditionNames) {" + "\n";
+	generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "for (auto& enabledNamedCondition: scriptState.enabledNamedConditions) {" + "\n";
 	{
 		auto scriptIdx = 0;
 		for (auto& script: scripts) {
@@ -345,7 +345,7 @@ void processFile(const string& scriptFileName, const string& miniscriptExtension
 				if (script.conditionType == MiniScript::Script::CONDITIONTYPE_ONENABLED) {
 					generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\n";
 					generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "\t" + "// next statements belong to tested enabled named condition with name \"" + script.name + "\"" + "\n";
-					generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "\t" + "if (enabledConditionName == \"" + script.name + "\")" + "\n";
+					generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "\t" + "if (enabledNamedCondition == \"" + script.name + "\")" + "\n";
 				}
 				scriptInstance->transpileScriptCondition(
 					script.conditionType == MiniScript::Script::CONDITIONTYPE_ON?generatedDetermineScriptIdxToStartDefinition:generatedDetermineNamedScriptIdxToStartDefinition,

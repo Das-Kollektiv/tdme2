@@ -433,7 +433,7 @@ void MiniScript::executeStateMachine() {
 		if (native == true) {
 			// check named conditions
 			auto now = Time::getCurrentMillis();
-			if (scriptState.enabledConditionNames.empty() == false &&
+			if (scriptState.enabledNamedConditions.empty() == false &&
 				(scriptState.timeEnabledConditionsCheckLast == -1LL || now >= scriptState.timeEnabledConditionsCheckLast + 100LL)) {
 				auto scriptIdxToStart = determineNamedScriptIdxToStart();
 				if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
@@ -456,7 +456,7 @@ void MiniScript::execute() {
 
 	// check named conditions
 	auto now = Time::getCurrentMillis();
-	if (scriptState.enabledConditionNames.empty() == false &&
+	if (scriptState.enabledNamedConditions.empty() == false &&
 		(scriptState.timeEnabledConditionsCheckLast == -1LL || now >= scriptState.timeEnabledConditionsCheckLast + 100LL)) {
 		auto scriptIdxToStart = determineNamedScriptIdxToStart();
 		if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {
@@ -785,7 +785,7 @@ int MiniScript::determineNamedScriptIdxToStart() {
 	if (VERBOSE == true) Console::println("MiniScript::determineNamedScriptIdxToStart()");
 	auto currentScriptStateState = scriptState.state;
 	// TODO: we could have a hash map here to speed up enabledConditionName -> script lookup
-	for (auto& enabledConditionName: scriptState.enabledConditionNames) {
+	for (auto& enabledConditionName: scriptState.enabledNamedConditions) {
 		auto scriptIdx = 0;
 		for (auto& script: scripts) {
 			if (script.conditionType != Script::CONDITIONTYPE_ONENABLED ||
@@ -1164,7 +1164,7 @@ void MiniScript::registerStateMachineStates() {
 			}
 			virtual void execute() override {
 				if (miniScript->scriptState.statementIdx == -1) {
-					miniScript->scriptState.enabledConditionNames.clear();
+					miniScript->scriptState.enabledNamedConditions.clear();
 					miniScript->scriptState.timeEnabledConditionsCheckLast = -1LL;
 					miniScript->setScriptState(STATE_WAIT_FOR_CONDITION);
 					return;
@@ -1538,15 +1538,15 @@ void MiniScript::registerMethods() {
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string name;
 				if (MiniScript::getStringValue(argumentValues, 0, name, false) == true) {
-					miniScript->scriptState.enabledConditionNames.erase(
+					miniScript->scriptState.enabledNamedConditions.erase(
 						remove(
-							miniScript->scriptState.enabledConditionNames.begin(),
-							miniScript->scriptState.enabledConditionNames.end(),
+							miniScript->scriptState.enabledNamedConditions.begin(),
+							miniScript->scriptState.enabledNamedConditions.end(),
 							name
 						),
-						miniScript->scriptState.enabledConditionNames.end()
+						miniScript->scriptState.enabledNamedConditions.end()
 					);
-					miniScript->scriptState.enabledConditionNames.push_back(name);
+					miniScript->scriptState.enabledNamedConditions.push_back(name);
 				} else {
 					Console::println("ScriptMethodScriptWait::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript();
@@ -1574,13 +1574,13 @@ void MiniScript::registerMethods() {
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string name;
 				if (MiniScript::getStringValue(argumentValues, 0, name, false) == true) {
-					miniScript->scriptState.enabledConditionNames.erase(
+					miniScript->scriptState.enabledNamedConditions.erase(
 						remove(
-							miniScript->scriptState.enabledConditionNames.begin(),
-							miniScript->scriptState.enabledConditionNames.end(),
+							miniScript->scriptState.enabledNamedConditions.begin(),
+							miniScript->scriptState.enabledNamedConditions.end(),
 							name
 						),
-						miniScript->scriptState.enabledConditionNames.end()
+						miniScript->scriptState.enabledNamedConditions.end()
 					);
 				} else {
 					Console::println("ScriptMethodScriptWait::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: string expected");
@@ -1604,7 +1604,7 @@ void MiniScript::registerMethods() {
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string result;
-				for (auto& namedCondition: miniScript->scriptState.enabledConditionNames) {
+				for (auto& namedCondition: miniScript->scriptState.enabledNamedConditions) {
 					result+= result.empty() == false?",":namedCondition;
 				}
 				returnValue.setValue(result);
@@ -3390,7 +3390,7 @@ void MiniScript::registerMethods() {
 void MiniScript::registerVariables() {
 }
 
-bool MiniScript::transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, int depth, int argumentIdx, int parentArgumentIdx, const string& injectCode, int additionalIndent) {
+bool MiniScript::transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, vector<string>& enabledNamedConditions, int depth, int argumentIdx, int parentArgumentIdx, const string& injectCode, int additionalIndent) {
 	//
 	statementIdx++;
 	auto currentStatementIdx = statementIdx;
@@ -3524,6 +3524,39 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 	}
 	argumentValuesCode.clear();
 
+	// enabled named conditions
+	if (method == "script.enableNamedCondition" && arguments.size()) {
+		if (arguments.size() != 1) {
+			Console::println("MiniScript::transpileScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': script.enableNamedCondition(): expected string argument @ 0");
+		} else {
+			string name = string(arguments[0]);
+			enabledNamedConditions.erase(
+				remove(
+					enabledNamedConditions.begin(),
+					enabledNamedConditions.end(),
+					name
+				),
+				enabledNamedConditions.end()
+			);
+			enabledNamedConditions.push_back(name);
+		}
+	} else
+	if (method == "script.disableNamedCondition") {
+		if (arguments.size() != 1) {
+			Console::println("MiniScript::transpileScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': script.disableNamedCondition(): expected string argument @ 0");
+		} else {
+			string name = string(arguments[0]);
+			enabledNamedConditions.erase(
+				remove(
+					enabledNamedConditions.begin(),
+					enabledNamedConditions.end(),
+					name
+				),
+				enabledNamedConditions.end()
+			);
+		}
+	}
+
 	// check arguments that require a method call
 	{
 		auto subArgumentIdx = 0;
@@ -3537,7 +3570,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 				string_view subMethod;
 				vector<string_view> subArguments;
 				if (parseScriptStatement(argument, subMethod, subArguments) == true) {
-					if (transpileScriptStatement(generatedCode, subMethod, subArguments, statement, statementIdx, methodCodeMap, scriptStateChanged, depth + 1, subArgumentIdx, argumentIdx) == false) {
+					if (transpileScriptStatement(generatedCode, subMethod, subArguments, statement, statementIdx, methodCodeMap, scriptStateChanged, enabledNamedConditions, depth + 1, subArgumentIdx, argumentIdx) == false) {
 						Console::println("MiniScript::transpileScriptStatement(): transpileScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': '" + string(argument) + "': parse error");
 					}
 				} else {
@@ -3552,7 +3585,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 				string_view subMethod;
 				vector<string_view> subArguments;
 				if (parseScriptStatement(generatedStatement, subMethod, subArguments) == true) {
-					if (transpileScriptStatement(generatedCode, subMethod, subArguments, statement, statementIdx, methodCodeMap, scriptStateChanged, depth + 1, subArgumentIdx, argumentIdx) == false) {
+					if (transpileScriptStatement(generatedCode, subMethod, subArguments, statement, statementIdx, methodCodeMap, scriptStateChanged, enabledNamedConditions, depth + 1, subArgumentIdx, argumentIdx) == false) {
 						Console::println("MiniScript::transpileScriptStatement(): transpileScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': '" + string(argument) + "' --> '" + generatedStatement + "': parse error");
 					}
 				} else {
@@ -3651,6 +3684,7 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 		);
 
 	//
+	vector<string> enabledNamedConditions;
 	bool scriptStateChanged = false;
 	for (auto scriptStatement: script.statements) {
 		//
@@ -3662,31 +3696,35 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 		}
 		//
 		if (scriptStateChanged == true) {
-			scriptStateChanged = false;
 			generatedCodeHeader+= methodIndent + "if (miniScriptGotoStatementIdx == " + to_string(scriptStatement.statementIdx)  + ") goto miniscript_statement_" + to_string(scriptStatement.statementIdx) + "; else" + "\n";
+			scriptStateChanged = false;
 		}
 
 		// enabled named conditions
-		generatedCode+= "\n";
-		generatedCode+= methodIndent + "// enabled named conditions" + "\n";
-		generatedCode+= methodIndent + "if (scriptState.enabledConditionNames.empty() == false) {" + "\n";
-		generatedCode+= methodIndent + "\t" + "auto scriptIdxToStart = determineNamedScriptIdxToStart();" + "\n";
-		generatedCode+= methodIndent + "\t" + "if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {" + "\n";
-		generatedCode+= methodIndent + "\t" + "\t" + "resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);" + "\n";
-		generatedCode+= methodIndent + "\t" + "\t" + "scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();" + "\n";
-		generatedCode+= methodIndent + "\t" + "\t" + "return;" + "\n";
-		generatedCode+= methodIndent + "\t" + "}" + "\n";
-		generatedCode+= methodIndent + "}" + "\n";
+		if (enabledNamedConditions.empty() == false) {
+			generatedCode+= "\n";
+			generatedCode+= methodIndent + "// enabled named conditions" + "\n";
+			generatedCode+= methodIndent + "{" + "\n";
+			generatedCode+= methodIndent + "\t" + "auto scriptIdxToStart = determineNamedScriptIdxToStart();" + "\n";
+			generatedCode+= methodIndent + "\t" + "if (scriptIdxToStart != -1 && scriptIdxToStart != scriptState.scriptIdx) {" + "\n";
+			generatedCode+= methodIndent + "\t" + "resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);" + "\n";
+			generatedCode+= methodIndent + "\t" + "scriptState.timeEnabledConditionsCheckLast = Time::getCurrentMillis();" + "\n";
+			generatedCode+= methodIndent + "\t" + "return;" + "\n";
+			generatedCode+= methodIndent + "\t" + "}" + "\n";
+			generatedCode+= methodIndent + "}" + "\n";
+		}
 
 		// statement_xyz goto label
 		generatedCode+= "\n";
 		generatedCode+= methodIndent + "// Statement: " + to_string(scriptStatement.statementIdx) + "\n";
 		generatedCode+= methodIndent + "miniscript_statement_" + to_string(scriptStatement.statementIdx) + ":" + "\n";
-		transpileScriptStatement(generatedCode, method, arguments, scriptStatement, statementIdx, methodCodeMap, scriptStateChanged);
-		generatedCode+= methodIndent + "if (scriptState.state.state != STATE_NEXT_STATEMENT) {" + "\n";
-		generatedCode+= methodIndent + "\t" + "miniScript->scriptState.statementIdx++;" + "\n";
-		generatedCode+= methodIndent + "\t" + "return;" + "\n";
-		generatedCode+= methodIndent + "}" + "\n";
+		transpileScriptStatement(generatedCode, method, arguments, scriptStatement, statementIdx, methodCodeMap, scriptStateChanged, enabledNamedConditions);
+		if (scriptStateChanged == true) {
+			generatedCode+= methodIndent + "if (scriptState.state.state != STATE_NEXT_STATEMENT) {" + "\n";
+			generatedCode+= methodIndent + "\t" + "miniScript->scriptState.statementIdx++;" + "\n";
+			generatedCode+= methodIndent + "\t" + "return;" + "\n";
+			generatedCode+= methodIndent + "}" + "\n";
+		}
 	}
 	generatedCode+= methodIndent + "scriptState.scriptIdx = -1;" + "\n";
 	generatedCode+= methodIndent + "scriptState.statementIdx = -1;" + "\n";
@@ -3727,7 +3765,8 @@ bool MiniScript::transpileScriptCondition(string& generatedCode, int scriptIdx, 
 
 	//
 	auto scriptStateChanged = false;
-	transpileScriptStatement(generatedCode, method, arguments, scriptStatement, statementIdx, methodCodeMap, scriptStateChanged, 0, -1, -1, injectCode, depth);
+	vector<string >enabledNamedConditions;
+	transpileScriptStatement(generatedCode, method, arguments, scriptStatement, statementIdx, methodCodeMap, scriptStateChanged, enabledNamedConditions, 0, -1, -1, injectCode, depth);
 
 	//
 	return true;
