@@ -35,10 +35,10 @@ public:
 		if (scriptState.running == false) return;
 		// execute while having statements to be processed
 		if (scriptState.state.state == STATE_NEXT_STATEMENT) {
-			if (scriptState.scriptIdx == 0) on_initialize(scriptState.statementIdx);
-			if (scriptState.scriptIdx == 1) on_nothing(scriptState.statementIdx);
-			if (scriptState.scriptIdx == 2) on_error(scriptState.statementIdx);
-			if (scriptState.scriptIdx == 3) on_emittest(scriptState.statementIdx);
+			if (scriptState.scriptIdx == 0) on_initialize(scriptState.statementIdx); else
+			if (scriptState.scriptIdx == 1) on_nothing(scriptState.statementIdx); else
+			if (scriptState.scriptIdx == 2) on_error(scriptState.statementIdx); else
+			if (scriptState.scriptIdx == 3) on_emittest(scriptState.statementIdx); else
 			if (scriptState.scriptIdx == 4) on_enabled_named_condition_1(scriptState.statementIdx);
 		}
 		if (scriptState.running == false) return;

@@ -227,7 +227,7 @@ void processFile(const string& scriptFileName, const string& miniscriptExtension
 					)
 				);
 			//
-			generatedExecuteCode+= headerIndent + "\t\t" + "if (scriptState.scriptIdx == " + to_string(scriptIdx) + ") " + methodName + "(scriptState.statementIdx);" + "\n";
+			generatedExecuteCode+= headerIndent + "\t\t" + "if (scriptState.scriptIdx == " + to_string(scriptIdx) + ") " + methodName + "(scriptState.statementIdx);" + (scriptIdx < scripts.size() - 1?" else":"") + "\n";
 			scriptIdx++;
 		}
 	}
