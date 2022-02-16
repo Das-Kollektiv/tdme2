@@ -191,7 +191,7 @@ on: emittest
 		$i = $i + 1
 		$j = $j + 1
 		if ($j == 2)
-			$j == 0
+			$j = 0
 		end
 	end
 	$endTime = time.getCurrentMillis()
