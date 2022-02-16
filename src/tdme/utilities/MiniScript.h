@@ -778,6 +778,17 @@ protected:
 	}
 
 	/**
+	 * Stop script execution
+	 */
+	inline void stopScriptExecutation() {
+		//
+		scriptState.running = false;
+		scriptState.variables.clear();
+		scriptState.timeEnabledConditionsCheckLast = -1LL;
+		resetScriptExecutationState(-1, STATE_NONE);
+	}
+
+	/**
 	 * @return script state machine state
 	 */
 	inline int getScriptState() {
@@ -915,7 +926,8 @@ private:
 	 * @param scriptIdx script index
 	 * @param statementIdx statement index
 	 * @param methodCodeMap method code map
-	 * @param scriptStateChanged script state changed
+	 * @param scriptStateChanged script could have state changed
+	 * @param scriptStopped script could have been stopped
 	 * @param enabledNamedConditions enabled named conditions
 	 * @param depth depth
 	 * @param argumentIdx argument index
@@ -923,7 +935,7 @@ private:
 	 * @param injectCode code to additionally inject
 	 * @param additionalIndent additional indent
 	 */
-	bool transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, vector<string>& enabledNamedConditions, int depth = 0, int argumentIdx = -1, int parentArgumentIdx = -1, const string& injectCode = string(), int additionalIndent = 0);
+	bool transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth = 0, int argumentIdx = -1, int parentArgumentIdx = -1, const string& injectCode = string(), int additionalIndent = 0);
 
 public:
 	/**

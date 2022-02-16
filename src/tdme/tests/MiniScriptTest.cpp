@@ -11083,10 +11083,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 0>& argumentValuesD0 = argumentValues;
 		// method code: script.stop
 		//
-		miniScript->scriptState.running = false;
-		miniScript->scriptState.variables.clear();
-		miniScript->scriptState.timeEnabledConditionsCheckLast = -1LL;
-		miniScript->resetScriptExecutationState(-1, STATE_NONE);
+		miniScript->stopScriptExecutation();
+	}
+	if (scriptState.running == false) {
+		return;
 	}
 
 	// Statement: 156
@@ -13029,10 +13029,10 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 0>& argumentValuesD0 = argumentValues;
 		// method code: script.stop
 		//
-		miniScript->scriptState.running = false;
-		miniScript->scriptState.variables.clear();
-		miniScript->scriptState.timeEnabledConditionsCheckLast = -1LL;
-		miniScript->resetScriptExecutationState(-1, STATE_NONE);
+		miniScript->stopScriptExecutation();
+	}
+	if (scriptState.running == false) {
+		return;
 	}
 
 	// Statement: 25

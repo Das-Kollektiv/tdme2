@@ -1670,10 +1670,7 @@ void MiniScript::registerMethods() {
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				//
-				miniScript->scriptState.running = false;
-				miniScript->scriptState.variables.clear();
-				miniScript->scriptState.timeEnabledConditionsCheckLast = -1LL;
-				miniScript->resetScriptExecutationState(-1, STATE_NONE);
+				miniScript->stopScriptExecutation();
 			}
 		};
 		registerMethod(new ScriptMethodStringStop(this));
@@ -3414,7 +3411,7 @@ void MiniScript::registerMethods() {
 void MiniScript::registerVariables() {
 }
 
-bool MiniScript::transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, vector<string>& enabledNamedConditions, int depth, int argumentIdx, int parentArgumentIdx, const string& injectCode, int additionalIndent) {
+bool MiniScript::transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth, int argumentIdx, int parentArgumentIdx, const string& injectCode, int additionalIndent) {
 	//
 	statementIdx++;
 	auto currentStatementIdx = statementIdx;
@@ -3599,7 +3596,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 				string_view subMethod;
 				vector<string_view> subArguments;
 				if (parseScriptStatement(argument, subMethod, subArguments) == true) {
-					if (transpileScriptStatement(generatedCode, subMethod, subArguments, statement, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, enabledNamedConditions, depth + 1, subArgumentIdx, argumentIdx) == false) {
+					if (transpileScriptStatement(generatedCode, subMethod, subArguments, statement, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, depth + 1, subArgumentIdx, argumentIdx) == false) {
 						Console::println("MiniScript::transpileScriptStatement(): transpileScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': '" + string(argument) + "': parse error");
 					}
 				} else {
@@ -3614,7 +3611,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 				string_view subMethod;
 				vector<string_view> subArguments;
 				if (parseScriptStatement(generatedStatement, subMethod, subArguments) == true) {
-					if (transpileScriptStatement(generatedCode, subMethod, subArguments, statement, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, enabledNamedConditions, depth + 1, subArgumentIdx, argumentIdx) == false) {
+					if (transpileScriptStatement(generatedCode, subMethod, subArguments, statement, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, depth + 1, subArgumentIdx, argumentIdx) == false) {
 						Console::println("MiniScript::transpileScriptStatement(): transpileScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': '" + string(argument) + "' --> '" + generatedStatement + "': parse error");
 					}
 				} else {
@@ -3662,6 +3659,9 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 		} else {
 			if (StringTools::regexMatch(codeLine, ".*[\\ \\t]*miniScript[\\ \\t]*->[\\ \\t]*setScriptState[\\ \\t]*\\([\\ \\t]*[a-zA-Z0-9_]+[\\ \\t]*\\);.*") == true) {
 				scriptStateChanged = true;
+			}
+			if (StringTools::regexMatch(codeLine, ".*[\\ \\t]*miniScript[\\ \\t]*->[\\ \\t]*stopScriptExecutation[\\ \\t]*\\([\\ \\t]*\\);.*") == true) {
+				scriptStopped = true;
 			}
 			generatedCode+= minIndentString + depthIndentString + "\t" + codeLine + "\n";
 		}
@@ -3719,7 +3719,7 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 
 	//
 	vector<string> enabledNamedConditions;
-	bool scriptStateChanged = false;
+	auto scriptStateChanged = false;
 	for (auto scriptStatement: script.statements) {
 		//
 		string_view method;
@@ -3754,7 +3754,13 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 			generatedCode+= methodIndent + "miniscript_statement_" + to_string(scriptStatement.statementIdx) + ":" + "\n";
 		}
 		scriptStateChanged = false;
-		transpileScriptStatement(generatedCode, method, arguments, scriptStatement, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, enabledNamedConditions);
+		auto scriptStopped = false;
+		transpileScriptStatement(generatedCode, method, arguments, scriptStatement, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions);
+		if (scriptStopped == true) {
+			generatedCode+= methodIndent + "if (scriptState.running == false) {" + "\n";
+			generatedCode+= methodIndent + "\t" + "return;" + "\n";
+			generatedCode+= methodIndent + "}" + "\n";
+		}
 		if (scriptStateChanged == true) {
 			generatedCode+= methodIndent + "if (scriptState.state.state != STATE_NEXT_STATEMENT) {" + "\n";
 			generatedCode+= methodIndent + "\t" + "miniScript->scriptState.statementIdx++;" + "\n";
@@ -3801,8 +3807,9 @@ bool MiniScript::transpileScriptCondition(string& generatedCode, int scriptIdx, 
 
 	//
 	auto scriptStateChanged = false;
+	auto scriptStopped = false;
 	vector<string >enabledNamedConditions;
-	transpileScriptStatement(generatedCode, method, arguments, scriptStatement, -1, statementIdx, methodCodeMap, scriptStateChanged, enabledNamedConditions, 0, -1, -1, injectCode, depth + 1);
+	transpileScriptStatement(generatedCode, method, arguments, scriptStatement, -1, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, 0, -1, -1, injectCode, depth + 1);
 
 	//
 	generatedCode+= methodIndent + "\n";
