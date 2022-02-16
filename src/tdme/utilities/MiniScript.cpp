@@ -69,6 +69,7 @@ MiniScript::MiniScript() {
 MiniScript::~MiniScript() {
 	for (auto& scriptMethodIt: scriptMethods) delete scriptMethodIt.second;
 	for (auto& scriptStateMachineStateIt: scriptStateMachineStates) delete scriptStateMachineStateIt.second;
+	for (auto& scriptVariableIt: scriptState.variables) delete scriptVariableIt.second;
 }
 
 void MiniScript::registerStateMachineState(ScriptStateMachineState* state) {
@@ -276,7 +277,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string_view&
 				Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': " + string(method) + "(" + string(argument) + "): variable: '" + string(argument) + "' does not exist");
 				argumentValues.push_back(ScriptVariable());
 			} else {
-				auto argumentValue = variableIt->second;
+				auto argumentValue = *variableIt->second;
 				argumentValues.push_back(argumentValue);
 			}
 		} else {
@@ -483,11 +484,12 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 	// shutdown methods and machine states
 	for (auto& scriptMethodIt: scriptMethods) delete scriptMethodIt.second;
 	for (auto& scriptStateMachineStateIt: scriptStateMachineStates) delete scriptStateMachineStateIt.second;
+	for (auto& scriptVariableIt: scriptState.variables) delete scriptVariableIt.second;
 	scriptMethods.clear();
 	scriptStateMachineStates.clear();
+	scriptState.variables.clear();
 
 	// shutdown script state
-	scriptState.variables.clear();
 	resetScriptExecutationState(-1, STATE_WAIT_FOR_CONDITION);
 
 	//
@@ -739,6 +741,7 @@ void MiniScript::startScript() {
 		Console::println("MiniScript::startScript(): '" + scriptFileName + "': script not valid: not starting");
 		return;
 	}
+	for (auto& scriptVariableIt: scriptState.variables) delete scriptVariableIt.second;
 	scriptState.variables.clear();
 	scriptState.running = true;
 	registerVariables();
@@ -1161,7 +1164,7 @@ const string MiniScript::getInformation() {
 		vector<string> variables;
 		for (auto& scriptVariableIt: scriptState.variables) {
 			string variable;
-			auto& scriptVariable = scriptVariableIt.second;
+			auto& scriptVariable = *scriptVariableIt.second;
 			variable+= scriptVariableIt.first + " = " + scriptVariable.getAsString();
 			variables.push_back(variable);
 		}
@@ -3323,12 +3326,7 @@ void MiniScript::registerMethods() {
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-					auto variableIt = miniScript->scriptState.variables.find(variable);
-					if (variableIt == miniScript->scriptState.variables.end()) {
-						Console::println("ScriptMethodGetVariable::executeMethod(): " + getMethodName() + "(): variable not found: '" + variable + "'");
-					} else {
-						returnValue = variableIt->second;
-					}
+					returnValue = miniScript->getVariable(variable);
 				} else {
 					Console::println("ScriptMethodGetVariable::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript();

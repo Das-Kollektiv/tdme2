@@ -6775,12 +6775,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-					auto variableIt = miniScript->scriptState.variables.find(variable);
-					if (variableIt == miniScript->scriptState.variables.end()) {
-						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-					} else {
-						returnValue = variableIt->second;
-					}
+					returnValue = miniScript->getVariable(variable);
 				} else {
 					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript(); return;
@@ -6839,12 +6834,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			// method code: getVariable
 			string variable;
 			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-				auto variableIt = miniScript->scriptState.variables.find(variable);
-				if (variableIt == miniScript->scriptState.variables.end()) {
-					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-				} else {
-					returnValue = variableIt->second;
-				}
+				returnValue = miniScript->getVariable(variable);
 			} else {
 				Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 				miniScript->startErrorScript(); return;
@@ -6885,12 +6875,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-					auto variableIt = miniScript->scriptState.variables.find(variable);
-					if (variableIt == miniScript->scriptState.variables.end()) {
-						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-					} else {
-						returnValue = variableIt->second;
-					}
+					returnValue = miniScript->getVariable(variable);
 				} else {
 					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript(); return;
@@ -6941,12 +6926,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-					auto variableIt = miniScript->scriptState.variables.find(variable);
-					if (variableIt == miniScript->scriptState.variables.end()) {
-						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-					} else {
-						returnValue = variableIt->second;
-					}
+					returnValue = miniScript->getVariable(variable);
 				} else {
 					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript(); return;
@@ -7023,12 +7003,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-					auto variableIt = miniScript->scriptState.variables.find(variable);
-					if (variableIt == miniScript->scriptState.variables.end()) {
-						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-					} else {
-						returnValue = variableIt->second;
-					}
+					returnValue = miniScript->getVariable(variable);
 				} else {
 					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript(); return;
@@ -7079,12 +7054,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-					auto variableIt = miniScript->scriptState.variables.find(variable);
-					if (variableIt == miniScript->scriptState.variables.end()) {
-						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-					} else {
-						returnValue = variableIt->second;
-					}
+					returnValue = miniScript->getVariable(variable);
 				} else {
 					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript(); return;
@@ -7162,12 +7132,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-					auto variableIt = miniScript->scriptState.variables.find(variable);
-					if (variableIt == miniScript->scriptState.variables.end()) {
-						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-					} else {
-						returnValue = variableIt->second;
-					}
+					returnValue = miniScript->getVariable(variable);
 				} else {
 					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript(); return;
@@ -7225,12 +7190,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-					auto variableIt = miniScript->scriptState.variables.find(variable);
-					if (variableIt == miniScript->scriptState.variables.end()) {
-						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-					} else {
-						returnValue = variableIt->second;
-					}
+					returnValue = miniScript->getVariable(variable);
 				} else {
 					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript(); return;
@@ -7289,12 +7249,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-					auto variableIt = miniScript->scriptState.variables.find(variable);
-					if (variableIt == miniScript->scriptState.variables.end()) {
-						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-					} else {
-						returnValue = variableIt->second;
-					}
+					returnValue = miniScript->getVariable(variable);
 				} else {
 					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript(); return;
@@ -7356,12 +7311,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-					auto variableIt = miniScript->scriptState.variables.find(variable);
-					if (variableIt == miniScript->scriptState.variables.end()) {
-						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-					} else {
-						returnValue = variableIt->second;
-					}
+					returnValue = miniScript->getVariable(variable);
 				} else {
 					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript(); return;
@@ -7437,12 +7387,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-					auto variableIt = miniScript->scriptState.variables.find(variable);
-					if (variableIt == miniScript->scriptState.variables.end()) {
-						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-					} else {
-						returnValue = variableIt->second;
-					}
+					returnValue = miniScript->getVariable(variable);
 				} else {
 					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript(); return;
@@ -8067,12 +8012,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			// method code: getVariable
 			string variable;
 			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-				auto variableIt = miniScript->scriptState.variables.find(variable);
-				if (variableIt == miniScript->scriptState.variables.end()) {
-					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-				} else {
-					returnValue = variableIt->second;
-				}
+				returnValue = miniScript->getVariable(variable);
 			} else {
 				Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 				miniScript->startErrorScript(); return;
@@ -8222,12 +8162,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			// method code: getVariable
 			string variable;
 			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-				auto variableIt = miniScript->scriptState.variables.find(variable);
-				if (variableIt == miniScript->scriptState.variables.end()) {
-					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-				} else {
-					returnValue = variableIt->second;
-				}
+				returnValue = miniScript->getVariable(variable);
 			} else {
 				Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 				miniScript->startErrorScript(); return;
@@ -8295,12 +8230,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-					auto variableIt = miniScript->scriptState.variables.find(variable);
-					if (variableIt == miniScript->scriptState.variables.end()) {
-						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-					} else {
-						returnValue = variableIt->second;
-					}
+					returnValue = miniScript->getVariable(variable);
 				} else {
 					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript(); return;
@@ -8522,12 +8452,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-					auto variableIt = miniScript->scriptState.variables.find(variable);
-					if (variableIt == miniScript->scriptState.variables.end()) {
-						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-					} else {
-						returnValue = variableIt->second;
-					}
+					returnValue = miniScript->getVariable(variable);
 				} else {
 					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript(); return;
@@ -8585,12 +8510,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			// method code: getVariable
 			string variable;
 			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-				auto variableIt = miniScript->scriptState.variables.find(variable);
-				if (variableIt == miniScript->scriptState.variables.end()) {
-					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-				} else {
-					returnValue = variableIt->second;
-				}
+				returnValue = miniScript->getVariable(variable);
 			} else {
 				Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 				miniScript->startErrorScript(); return;
@@ -8658,12 +8578,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-					auto variableIt = miniScript->scriptState.variables.find(variable);
-					if (variableIt == miniScript->scriptState.variables.end()) {
-						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-					} else {
-						returnValue = variableIt->second;
-					}
+					returnValue = miniScript->getVariable(variable);
 				} else {
 					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript(); return;
@@ -8803,12 +8718,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			// method code: getVariable
 			string variable;
 			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-				auto variableIt = miniScript->scriptState.variables.find(variable);
-				if (variableIt == miniScript->scriptState.variables.end()) {
-					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-				} else {
-					returnValue = variableIt->second;
-				}
+				returnValue = miniScript->getVariable(variable);
 			} else {
 				Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 				miniScript->startErrorScript(); return;
@@ -8924,12 +8834,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-					auto variableIt = miniScript->scriptState.variables.find(variable);
-					if (variableIt == miniScript->scriptState.variables.end()) {
-						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-					} else {
-						returnValue = variableIt->second;
-					}
+					returnValue = miniScript->getVariable(variable);
 				} else {
 					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript(); return;
@@ -8989,12 +8894,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			// method code: getVariable
 			string variable;
 			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-				auto variableIt = miniScript->scriptState.variables.find(variable);
-				if (variableIt == miniScript->scriptState.variables.end()) {
-					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-				} else {
-					returnValue = variableIt->second;
-				}
+				returnValue = miniScript->getVariable(variable);
 			} else {
 				Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 				miniScript->startErrorScript(); return;
@@ -9035,12 +8935,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-					auto variableIt = miniScript->scriptState.variables.find(variable);
-					if (variableIt == miniScript->scriptState.variables.end()) {
-						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-					} else {
-						returnValue = variableIt->second;
-					}
+					returnValue = miniScript->getVariable(variable);
 				} else {
 					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript(); return;
@@ -9123,12 +9018,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-					auto variableIt = miniScript->scriptState.variables.find(variable);
-					if (variableIt == miniScript->scriptState.variables.end()) {
-						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-					} else {
-						returnValue = variableIt->second;
-					}
+					returnValue = miniScript->getVariable(variable);
 				} else {
 					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript(); return;
@@ -9217,12 +9107,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-					auto variableIt = miniScript->scriptState.variables.find(variable);
-					if (variableIt == miniScript->scriptState.variables.end()) {
-						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-					} else {
-						returnValue = variableIt->second;
-					}
+					returnValue = miniScript->getVariable(variable);
 				} else {
 					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript(); return;
@@ -9311,12 +9196,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-					auto variableIt = miniScript->scriptState.variables.find(variable);
-					if (variableIt == miniScript->scriptState.variables.end()) {
-						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-					} else {
-						returnValue = variableIt->second;
-					}
+					returnValue = miniScript->getVariable(variable);
 				} else {
 					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript(); return;
@@ -9425,12 +9305,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			// method code: getVariable
 			string variable;
 			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-				auto variableIt = miniScript->scriptState.variables.find(variable);
-				if (variableIt == miniScript->scriptState.variables.end()) {
-					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-				} else {
-					returnValue = variableIt->second;
-				}
+				returnValue = miniScript->getVariable(variable);
 			} else {
 				Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 				miniScript->startErrorScript(); return;
@@ -9510,12 +9385,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-					auto variableIt = miniScript->scriptState.variables.find(variable);
-					if (variableIt == miniScript->scriptState.variables.end()) {
-						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-					} else {
-						returnValue = variableIt->second;
-					}
+					returnValue = miniScript->getVariable(variable);
 				} else {
 					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript(); return;
@@ -9739,12 +9609,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 					// method code: getVariable
 					string variable;
 					if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-						auto variableIt = miniScript->scriptState.variables.find(variable);
-						if (variableIt == miniScript->scriptState.variables.end()) {
-							Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-						} else {
-							returnValue = variableIt->second;
-						}
+						returnValue = miniScript->getVariable(variable);
 					} else {
 						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 						miniScript->startErrorScript(); return;
@@ -9760,12 +9625,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 					// method code: getVariable
 					string variable;
 					if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-						auto variableIt = miniScript->scriptState.variables.find(variable);
-						if (variableIt == miniScript->scriptState.variables.end()) {
-							Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-						} else {
-							returnValue = variableIt->second;
-						}
+						returnValue = miniScript->getVariable(variable);
 					} else {
 						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 						miniScript->startErrorScript(); return;
@@ -9798,12 +9658,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 					// method code: getVariable
 					string variable;
 					if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-						auto variableIt = miniScript->scriptState.variables.find(variable);
-						if (variableIt == miniScript->scriptState.variables.end()) {
-							Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-						} else {
-							returnValue = variableIt->second;
-						}
+						returnValue = miniScript->getVariable(variable);
 					} else {
 						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 						miniScript->startErrorScript(); return;
@@ -9819,12 +9674,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 					// method code: getVariable
 					string variable;
 					if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-						auto variableIt = miniScript->scriptState.variables.find(variable);
-						if (variableIt == miniScript->scriptState.variables.end()) {
-							Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-						} else {
-							returnValue = variableIt->second;
-						}
+						returnValue = miniScript->getVariable(variable);
 					} else {
 						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 						miniScript->startErrorScript(); return;
@@ -9983,12 +9833,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 					// method code: getVariable
 					string variable;
 					if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-						auto variableIt = miniScript->scriptState.variables.find(variable);
-						if (variableIt == miniScript->scriptState.variables.end()) {
-							Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-						} else {
-							returnValue = variableIt->second;
-						}
+						returnValue = miniScript->getVariable(variable);
 					} else {
 						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 						miniScript->startErrorScript(); return;
@@ -10020,12 +9865,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 							// method code: getVariable
 							string variable;
 							if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-								auto variableIt = miniScript->scriptState.variables.find(variable);
-								if (variableIt == miniScript->scriptState.variables.end()) {
-									Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-								} else {
-									returnValue = variableIt->second;
-								}
+								returnValue = miniScript->getVariable(variable);
 							} else {
 								Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 								miniScript->startErrorScript(); return;
@@ -11485,12 +11325,7 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-					auto variableIt = miniScript->scriptState.variables.find(variable);
-					if (variableIt == miniScript->scriptState.variables.end()) {
-						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-					} else {
-						returnValue = variableIt->second;
-					}
+					returnValue = miniScript->getVariable(variable);
 				} else {
 					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript(); return;
@@ -12157,12 +11992,7 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-					auto variableIt = miniScript->scriptState.variables.find(variable);
-					if (variableIt == miniScript->scriptState.variables.end()) {
-						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-					} else {
-						returnValue = variableIt->second;
-					}
+					returnValue = miniScript->getVariable(variable);
 				} else {
 					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript(); return;
@@ -12228,12 +12058,7 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-					auto variableIt = miniScript->scriptState.variables.find(variable);
-					if (variableIt == miniScript->scriptState.variables.end()) {
-						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-					} else {
-						returnValue = variableIt->second;
-					}
+					returnValue = miniScript->getVariable(variable);
 				} else {
 					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript(); return;
@@ -12381,12 +12206,7 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-					auto variableIt = miniScript->scriptState.variables.find(variable);
-					if (variableIt == miniScript->scriptState.variables.end()) {
-						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-					} else {
-						returnValue = variableIt->second;
-					}
+					returnValue = miniScript->getVariable(variable);
 				} else {
 					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript(); return;
@@ -12496,12 +12316,7 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-					auto variableIt = miniScript->scriptState.variables.find(variable);
-					if (variableIt == miniScript->scriptState.variables.end()) {
-						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-					} else {
-						returnValue = variableIt->second;
-					}
+					returnValue = miniScript->getVariable(variable);
 				} else {
 					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript(); return;
@@ -12610,12 +12425,7 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-					auto variableIt = miniScript->scriptState.variables.find(variable);
-					if (variableIt == miniScript->scriptState.variables.end()) {
-						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-					} else {
-						returnValue = variableIt->second;
-					}
+					returnValue = miniScript->getVariable(variable);
 				} else {
 					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript(); return;
@@ -12819,12 +12629,7 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 					// method code: getVariable
 					string variable;
 					if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-						auto variableIt = miniScript->scriptState.variables.find(variable);
-						if (variableIt == miniScript->scriptState.variables.end()) {
-							Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-						} else {
-							returnValue = variableIt->second;
-						}
+						returnValue = miniScript->getVariable(variable);
 					} else {
 						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 						miniScript->startErrorScript(); return;
@@ -12840,12 +12645,7 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 					// method code: getVariable
 					string variable;
 					if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-						auto variableIt = miniScript->scriptState.variables.find(variable);
-						if (variableIt == miniScript->scriptState.variables.end()) {
-							Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-						} else {
-							returnValue = variableIt->second;
-						}
+						returnValue = miniScript->getVariable(variable);
 					} else {
 						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
 						miniScript->startErrorScript(); return;

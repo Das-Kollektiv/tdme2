@@ -692,7 +692,7 @@ protected:
 		int64_t timeWaitStarted { -1LL };
 		int64_t timeWaitTime { -1LL };
 		string id;
-		unordered_map<string, ScriptVariable> variables;
+		unordered_map<string, ScriptVariable*> variables;
 		unordered_map<int, int64_t> forTimeStarted;
 		stack<bool> conditionStack;
 		stack<EndType> endTypeStack;
@@ -783,6 +783,7 @@ protected:
 	inline void stopScriptExecutation() {
 		//
 		scriptState.running = false;
+		for (auto& scriptVariableIt: scriptState.variables) delete scriptVariableIt.second;
 		scriptState.variables.clear();
 		scriptState.timeEnabledConditionsCheckLast = -1LL;
 		resetScriptExecutationState(-1, STATE_NONE);
@@ -1227,12 +1228,16 @@ public:
 	 * @return variable
 	 */
 	inline const ScriptVariable getVariable(const string& name) {
+		if (StringTools::startsWith(name, "$") == false) {
+			Console::println("MiniScript::getVariable(): '" + scriptFileName + "': variable with name '" + name + "' does not exist: variable names must start with '$'");
+			return ScriptVariable();
+		}
 		auto scriptVariableIt = scriptState.variables.find(name);
 		if (scriptVariableIt == scriptState.variables.end()) {
 			Console::println("MiniScript::getVariable(): '" + scriptFileName + "': variable with name '" + name + "' does not exist.");
 			return ScriptVariable();
 		}
-		return scriptVariableIt->second;
+		return *scriptVariableIt->second;
 	}
 
 	/**
@@ -1241,7 +1246,19 @@ public:
 	 * @param variable variable
 	 */
 	inline void setVariable(const string& name, const ScriptVariable& variable) {
-		scriptState.variables[name] = variable;
+		if (StringTools::startsWith(name, "$") == false) {
+			Console::println("MiniScript::setVariable(): '" + scriptFileName + "': variable name '" + name + "': variable names must start with '$'");
+			return;
+		}
+		auto scriptVariableIt = scriptState.variables.find(name);
+		if (scriptVariableIt != scriptState.variables.end()) {
+			*scriptVariableIt->second = variable;
+			return;
+		} else {
+			auto scriptVariable = new ScriptVariable();
+			*scriptVariable = variable;
+			scriptState.variables[name] = scriptVariable;
+		}
 	}
 
 	/**
@@ -1249,7 +1266,14 @@ public:
 	 * @param name name
 	 */
 	inline void unsetVariable(const string& name) {
-		scriptState.variables.erase(name);
+		if (StringTools::startsWith(name, "$") == false) {
+			Console::println("MiniScript::unsetVariable(): '" + scriptFileName + "': variable name '" + name + "': variable names must start with '$'");
+			return;
+		}
+		auto scriptVariableIt = scriptState.variables.find(name);
+		if (scriptVariableIt == scriptState.variables.end()) return;
+		delete scriptVariableIt->second;
+		scriptState.variables.erase(scriptVariableIt);
 	}
 
 	/**
