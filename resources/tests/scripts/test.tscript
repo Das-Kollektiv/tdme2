@@ -176,6 +176,26 @@ on: emittest
 	console.log("SCRIPT JUST EMITTED A CONDITION")
 	console.log("---------------------------------")
 	console.log()
+	console.log("----------")
+	console.log("Benchmark ")
+	console.log("----------")
+	$startTime = time.getCurrentMillis()
+	$i = 0
+	$j = 0
+	$k = 0
+	forCondition($i < 500000)
+		$a = 123 + 456 * (25 / 12) + (7.5 * 12.25) - 8
+		if ($j == 0)
+			$k = $k + 1
+		end
+		$i = $i + 1
+		$j = $j + 1
+		if ($j == 2)
+			$j == 0
+		end
+	end
+	$endTime = time.getCurrentMillis()
+	console.log("Finished. Time: " + ($endTime - $startTime))
 	script.stop()
 end
 # on-enabled with named conditions

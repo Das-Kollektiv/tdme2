@@ -7,7 +7,7 @@
 /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DEFINITIONS_START__*/
 MiniScriptTest::MiniScriptTest(): MiniScript() {
 	setNative(true);
-	setHash("1b31c672adf901403288e779b3a2e8e35af56fb277d4d9f42133454810623acf");
+	setHash("e8e4f3ec6808add5270cdc94876d82f35697a9887b7e43f7b2409502721788aa");
 	setNativeScripts(
 		{
 			{
@@ -1057,12 +1057,132 @@ MiniScriptTest::MiniScriptTest(): MiniScript() {
 					{
 						.line = 179,
 						.statementIdx = 4,
-						.statement = "script.stop()",
+						.statement = "console.log(\"----------\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 180,
 						.statementIdx = 5,
+						.statement = "console.log(\"Benchmark \")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 181,
+						.statementIdx = 6,
+						.statement = "console.log(\"----------\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 182,
+						.statementIdx = 7,
+						.statement = "setVariable(\"$startTime\", time.getCurrentMillis())",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 183,
+						.statementIdx = 8,
+						.statement = "setVariable(\"$i\", 0)",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 184,
+						.statementIdx = 9,
+						.statement = "setVariable(\"$j\", 0)",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 185,
+						.statementIdx = 10,
+						.statement = "setVariable(\"$k\", 0)",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 186,
+						.statementIdx = 11,
+						.statement = "forCondition(lesser($i, 500000))",
+						.gotoStatementIdx = 22
+					},
+					{
+						.line = 187,
+						.statementIdx = 12,
+						.statement = "setVariable(\"$a\",sub(add(123,add(mul(456,div(25, 12)),mul(7.5, 12.25))), 8))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 188,
+						.statementIdx = 13,
+						.statement = "if (equals($j, 0))",
+						.gotoStatementIdx = 15
+					},
+					{
+						.line = 189,
+						.statementIdx = 14,
+						.statement = "setVariable(\"$k\",add($k, 1))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 190,
+						.statementIdx = 15,
+						.statement = "end",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 191,
+						.statementIdx = 16,
+						.statement = "setVariable(\"$i\",add($i, 1))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 192,
+						.statementIdx = 17,
+						.statement = "setVariable(\"$j\",add($j, 1))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 193,
+						.statementIdx = 18,
+						.statement = "if (equals($j, 2))",
+						.gotoStatementIdx = 20
+					},
+					{
+						.line = 194,
+						.statementIdx = 19,
+						.statement = "equals($j, 0)",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 195,
+						.statementIdx = 20,
+						.statement = "end",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 196,
+						.statementIdx = 21,
+						.statement = "end",
+						.gotoStatementIdx = 11
+					},
+					{
+						.line = 197,
+						.statementIdx = 22,
+						.statement = "setVariable(\"$endTime\", time.getCurrentMillis())",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 198,
+						.statementIdx = 23,
+						.statement = "console.log(add(\"Finished. Time: \", sub($endTime, $startTime)))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 199,
+						.statementIdx = 24,
+						.statement = "script.stop()",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 200,
+						.statementIdx = 25,
 						.statement = "end",
 						.gotoStatementIdx = -1
 					}
@@ -1070,72 +1190,72 @@ MiniScriptTest::MiniScriptTest(): MiniScript() {
 			},
 			{
 				.conditionType = Script::CONDITIONTYPE_ONENABLED,
-				.line = 182,
+				.line = 202,
 				.condition = "equals(1,1)",
 				.name = "named_condition_1",
 				.statements = {
 					{
-						.line = 183,
+						.line = 203,
 						.statementIdx = 0,
 						.statement = "script.disableNamedCondition(\"named_condition_1\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 184,
+						.line = 204,
 						.statementIdx = 1,
 						.statement = "console.log(\"------------------------------------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 185,
+						.line = 205,
 						.statementIdx = 2,
 						.statement = "console.log(\"named_condition_1 has been emitted\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 186,
+						.line = 206,
 						.statementIdx = 3,
 						.statement = "console.log(\"------------------------------------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 187,
+						.line = 207,
 						.statementIdx = 4,
 						.statement = "console.log()",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 188,
+						.line = 208,
 						.statementIdx = 5,
 						.statement = "console.log(\"-----------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 189,
+						.line = 209,
 						.statementIdx = 6,
 						.statement = "console.log(\"Test emit\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 190,
+						.line = 210,
 						.statementIdx = 7,
 						.statement = "console.log(\"-----------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 191,
+						.line = 211,
 						.statementIdx = 8,
 						.statement = "console.log()",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 192,
+						.line = 212,
 						.statementIdx = 9,
 						.statement = "script.emit(emittest)",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 193,
+						.line = 213,
 						.statementIdx = 10,
 						.statement = "end",
 						.gotoStatementIdx = -1
@@ -1164,7 +1284,7 @@ int MiniScriptTest::determineNamedScriptIdxToStart() {
 			// equals(1, 1)
 			{
 				const ScriptStatement statement = {
-					.line = 182,
+					.line = 202,
 					.statementIdx = 0,
 					.statement = "<unavailable>",
 					.gotoStatementIdx = -1
@@ -11109,6 +11229,12 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 	}
 	auto miniScript = this;
 	miniScript->scriptState.scriptIdx = 3;
+	if (miniScriptGotoStatementIdx == 12) goto miniscript_statement_12; else
+	if (miniScriptGotoStatementIdx == 14) goto miniscript_statement_14; else
+	if (miniScriptGotoStatementIdx == 16) goto miniscript_statement_16; else
+	if (miniScriptGotoStatementIdx == 19) goto miniscript_statement_19; else
+	if (miniScriptGotoStatementIdx == 21) goto miniscript_statement_21; else
+	if (miniScriptGotoStatementIdx == 22) goto miniscript_statement_22; else
 	if (miniScriptGotoStatementIdx != -1 && miniScriptGotoStatementIdx != 0) Console::println("MiniScript::on_emittest(): Can not go to statement " + to_string(miniScriptGotoStatementIdx));
 
 	// Statement: 0
@@ -11179,9 +11305,1742 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 4
-	// script.stop()
+	// console.log("----------")
 	{
 		const ScriptStatement& statement = scripts[3].statements[4];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("----------"));
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 5
+	// console.log("Benchmark ")
+	{
+		const ScriptStatement& statement = scripts[3].statements[5];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("Benchmark "));
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 6
+	// console.log("----------")
+	{
+		const ScriptStatement& statement = scripts[3].statements[6];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("----------"));
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 7
+	// setVariable("$startTime", time.getCurrentMillis())
+	{
+		const ScriptStatement& statement = scripts[3].statements[7];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$startTime"));
+		// argumentValues[1] --> returnValue of time.getCurrentMillis()
+		// depth = 1 / argument index = 1: time.getCurrentMillis()
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 0> argumentValues;
+			array<ScriptVariable, 0>& argumentValuesD1AIDX1 = argumentValues;
+			// method code: time.getCurrentMillis
+			returnValue.setValue(Time::getCurrentMillis());
+		}
+		// method code: setVariable
+		string variable;
+		if (argumentValues.size() != 2 ||
+			MiniScript::getStringValue(argumentValues, 0, variable, false) == false) {
+			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			miniScript->setVariable(variable, argumentValues[1]);
+			returnValue = argumentValues[1];
+		}
+	}
+
+	// Statement: 8
+	// setVariable("$i", 0)
+	{
+		const ScriptStatement& statement = scripts[3].statements[8];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$i"));
+		argumentValues[1].setValue(static_cast<int64_t>(0));
+		// method code: setVariable
+		string variable;
+		if (argumentValues.size() != 2 ||
+			MiniScript::getStringValue(argumentValues, 0, variable, false) == false) {
+			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			miniScript->setVariable(variable, argumentValues[1]);
+			returnValue = argumentValues[1];
+		}
+	}
+
+	// Statement: 9
+	// setVariable("$j", 0)
+	{
+		const ScriptStatement& statement = scripts[3].statements[9];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$j"));
+		argumentValues[1].setValue(static_cast<int64_t>(0));
+		// method code: setVariable
+		string variable;
+		if (argumentValues.size() != 2 ||
+			MiniScript::getStringValue(argumentValues, 0, variable, false) == false) {
+			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			miniScript->setVariable(variable, argumentValues[1]);
+			returnValue = argumentValues[1];
+		}
+	}
+
+	// Statement: 10
+	// setVariable("$k", 0)
+	{
+		const ScriptStatement& statement = scripts[3].statements[10];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$k"));
+		argumentValues[1].setValue(static_cast<int64_t>(0));
+		// method code: setVariable
+		string variable;
+		if (argumentValues.size() != 2 ||
+			MiniScript::getStringValue(argumentValues, 0, variable, false) == false) {
+			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			miniScript->setVariable(variable, argumentValues[1]);
+			returnValue = argumentValues[1];
+		}
+	}
+
+	// Statement: 11
+	miniscript_statement_11:
+	// forCondition(lesser($i, 500000))
+	{
+		const ScriptStatement& statement = scripts[3].statements[11];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of lesser($i, 500000)
+		// depth = 1 / argument index = 0: lesser($i, 500000)
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[0];
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX0 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$i")
+			argumentValues[1].setValue(static_cast<int64_t>(500000));
+			// depth = 2 / argument index = 0: getVariable("$i")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX0[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$i"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					auto variableIt = miniScript->scriptState.variables.find(variable);
+					if (variableIt == miniScript->scriptState.variables.end()) {
+						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
+					} else {
+						returnValue = variableIt->second;
+					}
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: lesser
+			float floatValueA;
+			float floatValueB;
+			if (MiniScript::getFloatValue(argumentValues, 0, floatValueA, false) == true &&
+				MiniScript::getFloatValue(argumentValues, 1, floatValueB, false) == true) {
+				returnValue.setValue(floatValueA < floatValueB);
+			} else {
+				Console::println("ScriptMethodFLesser::executeMethod(): " + string("lesser") + "(): parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
+				miniScript->startErrorScript(); return;
+			}
+		}
+		// method code: forCondition
+		bool booleanValue;
+		if (miniScript->getBooleanValue(argumentValues, 0, booleanValue, false) == false) {
+			Console::println("ScriptMethodForCondition::executeMethod(): " + string("forCondition") + "(): parameter type mismatch @ argument 0: boolean expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			//
+			auto now = Time::getCurrentMillis();
+			if (booleanValue == false) {
+				miniScript->setScriptState(STATE_NEXT_STATEMENT);
+				goto miniscript_statement_22;
+			} else {
+				miniScript->scriptState.endTypeStack.push(ScriptState::ENDTYPE_FOR);
+			}
+		}
+	}
+	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+		miniScript->scriptState.statementIdx++;
+		return;
+	}
+
+	// Statement: 12
+	miniscript_statement_12:
+	// setVariable("$a", sub(add(123,add(mul(456,div(25, 12)),mul(7.5, 12.25))), 8))
+	{
+		const ScriptStatement& statement = scripts[3].statements[12];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$a"));
+		// argumentValues[1] --> returnValue of sub(add(123,add(mul(456,div(25, 12)),mul(7.5, 12.25))), 8)
+		// depth = 1 / argument index = 1: sub(add(123,add(mul(456,div(25, 12)),mul(7.5, 12.25))), 8)
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of add(123,add(mul(456,div(25, 12)),mul(7.5, 12.25)))
+			argumentValues[1].setValue(static_cast<int64_t>(8));
+			// depth = 2 / argument index = 0: add(123, add(mul(456,div(25, 12)),mul(7.5, 12.25)))
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 2> argumentValues;
+				array<ScriptVariable, 2>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(123));
+				// argumentValues[1] --> returnValue of add(mul(456,div(25, 12)),mul(7.5, 12.25))
+				// depth = 3 / argument index = 1: add(mul(456,div(25, 12)), mul(7.5, 12.25))
+				{
+					// required method code arguments
+					ScriptVariable& returnValue = argumentValuesD2AIDX0[1];
+					array<ScriptVariable, 2> argumentValues;
+					array<ScriptVariable, 2>& argumentValuesD3AIDX1 = argumentValues;
+					// argumentValues[0] --> returnValue of mul(456,div(25, 12))
+					// argumentValues[1] --> returnValue of mul(7.5, 12.25)
+					// depth = 4 / argument index = 0: mul(456, div(25, 12))
+					{
+						// required method code arguments
+						ScriptVariable& returnValue = argumentValuesD3AIDX1[0];
+						array<ScriptVariable, 2> argumentValues;
+						array<ScriptVariable, 2>& argumentValuesD4AIDX0 = argumentValues;
+						argumentValues[0].setValue(static_cast<int64_t>(456));
+						// argumentValues[1] --> returnValue of div(25, 12)
+						// depth = 5 / argument index = 1: div(25, 12)
+						{
+							// required method code arguments
+							ScriptVariable& returnValue = argumentValuesD4AIDX0[1];
+							array<ScriptVariable, 2> argumentValues;
+							array<ScriptVariable, 2>& argumentValuesD5AIDX1 = argumentValues;
+							argumentValues[0].setValue(static_cast<int64_t>(25));
+							argumentValues[1].setValue(static_cast<int64_t>(12));
+							// method code: div
+							if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
+								auto valid = true;
+								Vector3 result;
+								if (argumentValues[0].getType() == MiniScript::TYPE_VECTOR3) {
+									Vector3 vec3Value;
+									if (MiniScript::getVector3Value(argumentValues, 0, vec3Value, false) == true) {
+										result = vec3Value;
+									} else {
+										Console::println("ScriptMethodDiv::executeMethod(): " + string("div") + "(): parameter type mismatch @ argument " + to_string(0) + ": vector3 expected");
+										miniScript->startErrorScript(); return;
+										valid = false;
+									}
+								} else {
+									float floatValue;
+									if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
+										result = Vector3(floatValue, floatValue, floatValue);
+									} else {
+										Console::println("ScriptMethodDiv::executeMethod(): " + string("div") + "(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
+										miniScript->startErrorScript(); return;
+										valid = false;
+									}
+								}
+								if (valid == true) {
+									for (auto i = 1; i < argumentValues.size(); i++) {
+										if (argumentValues[i].getType() == MiniScript::TYPE_VECTOR3) {
+											Vector3 vec3Value;
+											if (MiniScript::getVector3Value(argumentValues, i, vec3Value, false) == true) {
+												result/= vec3Value;
+											} else {
+												Console::println("ScriptMethodDiv::executeMethod(): " + string("div") + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
+												miniScript->startErrorScript(); return;
+												break;
+											}
+										} else {
+											float floatValue;
+											if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+												result/= Vector3(floatValue, floatValue, floatValue);
+											} else {
+												Console::println("ScriptMethodDiv::executeMethod(): " + string("div") + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+												miniScript->startErrorScript(); return;
+												break;
+											}
+										}
+									}
+									returnValue.setValue(result);
+								}
+							} else
+							if (MiniScript::hasType(argumentValues, MiniScript::TYPE_FLOAT) == true) {
+								auto valid = true;
+								float result = 0.0f;
+								{
+									float floatValue;
+									if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
+										result = floatValue;
+									} else {
+										Console::println("ScriptMethodDiv::executeMethod(): " + string("div") + "(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
+										miniScript->startErrorScript(); return;
+										valid = false;
+									}
+								}
+								if (valid == true) {
+									for (auto i = 1; i < argumentValues.size(); i++) {
+										float floatValue;
+										if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+											result/= floatValue;
+										} else {
+											Console::println("ScriptMethodDiv::executeMethod(): " + string("div") + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+											miniScript->startErrorScript(); return;
+											break;
+										}
+									}
+									returnValue.setValue(result);
+								}
+							} else {
+								auto valid = true;
+								int64_t result = 0LL;
+								{
+									int64_t intValue;
+									if (MiniScript::getIntegerValue(argumentValues, 0, intValue, false) == true) {
+										result = intValue;
+									} else {
+										Console::println("ScriptMethodDiv::executeMethod(): " + string("div") + "(): parameter type mismatch @ argument " + to_string(0) + ": integer expected");
+										miniScript->startErrorScript(); return;
+										valid = false;
+									}
+								}
+								if (valid == true) {
+									for (auto i = 1; i < argumentValues.size(); i++) {
+										int64_t intValue;
+										if (MiniScript::getIntegerValue(argumentValues, i, intValue, false) == true) {
+											result/= intValue;
+										} else {
+											Console::println("ScriptMethodDiv::executeMethod(): " + string("div") + "(): parameter type mismatch @ argument " + to_string(i) + ": integer expected");
+											miniScript->startErrorScript(); return;
+											break;
+										}
+									}
+									returnValue.setValue(result);
+								}
+							}
+						}
+						// method code: mul
+						if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
+							auto valid = true;
+							Vector3 result;
+							if (argumentValues[0].getType() == MiniScript::TYPE_VECTOR3) {
+								Vector3 vec3Value;
+								if (MiniScript::getVector3Value(argumentValues, 0, vec3Value, false) == true) {
+									result = vec3Value;
+								} else {
+									Console::println("ScriptMethodMul::executeMethod(): " + string("mul") + "(): parameter type mismatch @ argument " + to_string(0) + ": vector3 expected");
+									miniScript->startErrorScript(); return;
+									valid = false;
+								}
+							} else {
+								float floatValue;
+								if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
+									result = Vector3(floatValue, floatValue, floatValue);
+								} else {
+									Console::println("ScriptMethodMul::executeMethod(): " + string("mul") + "(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
+									miniScript->startErrorScript(); return;
+									valid = false;
+								}
+							}
+							if (valid == true) {
+								for (auto i = 1; i < argumentValues.size(); i++) {
+									if (argumentValues[i].getType() == MiniScript::TYPE_VECTOR3) {
+										Vector3 vec3Value;
+										if (MiniScript::getVector3Value(argumentValues, i, vec3Value, false) == true) {
+											result*= vec3Value;
+										} else {
+											Console::println("ScriptMethodMul::executeMethod(): " + string("mul") + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
+											miniScript->startErrorScript(); return;
+											break;
+										}
+									} else {
+										float floatValue;
+										if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+											result*= Vector3(floatValue, floatValue, floatValue);
+										} else {
+											Console::println("ScriptMethodMul::executeMethod(): " + string("mul") + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+											miniScript->startErrorScript(); return;
+											break;
+										}
+									}
+								}
+								returnValue.setValue(result);
+							}
+						} else
+						if (MiniScript::hasType(argumentValues, MiniScript::TYPE_FLOAT) == true) {
+							auto valid = true;
+							float result = 0.0f;
+							{
+								float floatValue;
+								if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
+									result = floatValue;
+								} else {
+									Console::println("ScriptMethodMul::executeMethod(): " + string("mul") + "(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
+									miniScript->startErrorScript(); return;
+									valid = false;
+								}
+							}
+							if (valid == true) {
+								for (auto i = 1; i < argumentValues.size(); i++) {
+									float floatValue;
+									if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+										result*= floatValue;
+									} else {
+										Console::println("ScriptMethodMul::executeMethod(): " + string("mul") + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+										miniScript->startErrorScript(); return;
+										break;
+									}
+								}
+								returnValue.setValue(result);
+							}
+						} else {
+							auto valid = true;
+							int64_t result = 0LL;
+							{
+								int64_t intValue;
+								if (MiniScript::getIntegerValue(argumentValues, 0, intValue, false) == true) {
+									result = intValue;
+								} else {
+									Console::println("ScriptMethodMul::executeMethod(): " + string("mul") + "(): parameter type mismatch @ argument " + to_string(0) + ": integer expected");
+									miniScript->startErrorScript(); return;
+									valid = false;
+								}
+							}
+							if (valid == true) {
+								for (auto i = 1; i < argumentValues.size(); i++) {
+									int64_t intValue;
+									if (MiniScript::getIntegerValue(argumentValues, i, intValue, false) == true) {
+										result*= intValue;
+									} else {
+										Console::println("ScriptMethodMul::executeMethod(): " + string("mul") + "(): parameter type mismatch @ argument " + to_string(i) + ": integer expected");
+										miniScript->startErrorScript(); return;
+										break;
+									}
+								}
+								returnValue.setValue(result);
+							}
+						}
+					}
+					// depth = 4 / argument index = 1: mul(7.5, 12.25)
+					{
+						// required method code arguments
+						ScriptVariable& returnValue = argumentValuesD3AIDX1[1];
+						array<ScriptVariable, 2> argumentValues;
+						array<ScriptVariable, 2>& argumentValuesD4AIDX1 = argumentValues;
+						argumentValues[0].setValue(7.500000f);
+						argumentValues[1].setValue(12.250000f);
+						// method code: mul
+						if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
+							auto valid = true;
+							Vector3 result;
+							if (argumentValues[0].getType() == MiniScript::TYPE_VECTOR3) {
+								Vector3 vec3Value;
+								if (MiniScript::getVector3Value(argumentValues, 0, vec3Value, false) == true) {
+									result = vec3Value;
+								} else {
+									Console::println("ScriptMethodMul::executeMethod(): " + string("mul") + "(): parameter type mismatch @ argument " + to_string(0) + ": vector3 expected");
+									miniScript->startErrorScript(); return;
+									valid = false;
+								}
+							} else {
+								float floatValue;
+								if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
+									result = Vector3(floatValue, floatValue, floatValue);
+								} else {
+									Console::println("ScriptMethodMul::executeMethod(): " + string("mul") + "(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
+									miniScript->startErrorScript(); return;
+									valid = false;
+								}
+							}
+							if (valid == true) {
+								for (auto i = 1; i < argumentValues.size(); i++) {
+									if (argumentValues[i].getType() == MiniScript::TYPE_VECTOR3) {
+										Vector3 vec3Value;
+										if (MiniScript::getVector3Value(argumentValues, i, vec3Value, false) == true) {
+											result*= vec3Value;
+										} else {
+											Console::println("ScriptMethodMul::executeMethod(): " + string("mul") + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
+											miniScript->startErrorScript(); return;
+											break;
+										}
+									} else {
+										float floatValue;
+										if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+											result*= Vector3(floatValue, floatValue, floatValue);
+										} else {
+											Console::println("ScriptMethodMul::executeMethod(): " + string("mul") + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+											miniScript->startErrorScript(); return;
+											break;
+										}
+									}
+								}
+								returnValue.setValue(result);
+							}
+						} else
+						if (MiniScript::hasType(argumentValues, MiniScript::TYPE_FLOAT) == true) {
+							auto valid = true;
+							float result = 0.0f;
+							{
+								float floatValue;
+								if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
+									result = floatValue;
+								} else {
+									Console::println("ScriptMethodMul::executeMethod(): " + string("mul") + "(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
+									miniScript->startErrorScript(); return;
+									valid = false;
+								}
+							}
+							if (valid == true) {
+								for (auto i = 1; i < argumentValues.size(); i++) {
+									float floatValue;
+									if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+										result*= floatValue;
+									} else {
+										Console::println("ScriptMethodMul::executeMethod(): " + string("mul") + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+										miniScript->startErrorScript(); return;
+										break;
+									}
+								}
+								returnValue.setValue(result);
+							}
+						} else {
+							auto valid = true;
+							int64_t result = 0LL;
+							{
+								int64_t intValue;
+								if (MiniScript::getIntegerValue(argumentValues, 0, intValue, false) == true) {
+									result = intValue;
+								} else {
+									Console::println("ScriptMethodMul::executeMethod(): " + string("mul") + "(): parameter type mismatch @ argument " + to_string(0) + ": integer expected");
+									miniScript->startErrorScript(); return;
+									valid = false;
+								}
+							}
+							if (valid == true) {
+								for (auto i = 1; i < argumentValues.size(); i++) {
+									int64_t intValue;
+									if (MiniScript::getIntegerValue(argumentValues, i, intValue, false) == true) {
+										result*= intValue;
+									} else {
+										Console::println("ScriptMethodMul::executeMethod(): " + string("mul") + "(): parameter type mismatch @ argument " + to_string(i) + ": integer expected");
+										miniScript->startErrorScript(); return;
+										break;
+									}
+								}
+								returnValue.setValue(result);
+							}
+						}
+					}
+					// method code: add
+					if (MiniScript::hasType(argumentValues, MiniScript::TYPE_STRING) == true) {
+						string result;
+						for (auto i = 0; i < argumentValues.size(); i++) {
+							string stringValue;
+							if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
+								result+= stringValue;
+							} else {
+								Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": string expected");
+								miniScript->startErrorScript(); return;
+							}
+						}
+						returnValue.setValue(result);
+					} else
+					if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
+						Vector3 result;
+						for (auto i = 0; i < argumentValues.size(); i++) {
+							if (argumentValues[i].getType() == MiniScript::TYPE_VECTOR3) {
+								Vector3 vec3Value;
+								if (MiniScript::getVector3Value(argumentValues, i, vec3Value, false) == true) {
+									result+= vec3Value;
+								} else {
+									Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
+									miniScript->startErrorScript(); return;
+								}
+							} else {
+								float floatValue;
+								if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+									result+= Vector3(floatValue, floatValue, floatValue);
+								} else {
+									Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+									miniScript->startErrorScript(); return;
+								}
+							}
+						}
+						returnValue.setValue(result);
+					} else
+					if (MiniScript::hasType(argumentValues, MiniScript::TYPE_FLOAT) == true) {
+						float result = 0.0f;
+						for (auto i = 0; i < argumentValues.size(); i++) {
+							float floatValue;
+							if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+								result+= floatValue;
+							} else {
+								Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+								miniScript->startErrorScript(); return;
+							}
+						}
+						returnValue.setValue(result);
+					} else {
+						int64_t result = 0.0f;
+						for (auto i = 0; i < argumentValues.size(); i++) {
+							int64_t intValue;
+							if (MiniScript::getIntegerValue(argumentValues, i, intValue, false) == true) {
+								result+= intValue;
+							} else {
+								Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": integer expected");
+								miniScript->startErrorScript(); return;
+							}
+						}
+						returnValue.setValue(result);
+					}
+				}
+				// method code: add
+				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_STRING) == true) {
+					string result;
+					for (auto i = 0; i < argumentValues.size(); i++) {
+						string stringValue;
+						if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
+							result+= stringValue;
+						} else {
+							Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": string expected");
+							miniScript->startErrorScript(); return;
+						}
+					}
+					returnValue.setValue(result);
+				} else
+				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
+					Vector3 result;
+					for (auto i = 0; i < argumentValues.size(); i++) {
+						if (argumentValues[i].getType() == MiniScript::TYPE_VECTOR3) {
+							Vector3 vec3Value;
+							if (MiniScript::getVector3Value(argumentValues, i, vec3Value, false) == true) {
+								result+= vec3Value;
+							} else {
+								Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
+								miniScript->startErrorScript(); return;
+							}
+						} else {
+							float floatValue;
+							if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+								result+= Vector3(floatValue, floatValue, floatValue);
+							} else {
+								Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+								miniScript->startErrorScript(); return;
+							}
+						}
+					}
+					returnValue.setValue(result);
+				} else
+				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_FLOAT) == true) {
+					float result = 0.0f;
+					for (auto i = 0; i < argumentValues.size(); i++) {
+						float floatValue;
+						if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+							result+= floatValue;
+						} else {
+							Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+							miniScript->startErrorScript(); return;
+						}
+					}
+					returnValue.setValue(result);
+				} else {
+					int64_t result = 0.0f;
+					for (auto i = 0; i < argumentValues.size(); i++) {
+						int64_t intValue;
+						if (MiniScript::getIntegerValue(argumentValues, i, intValue, false) == true) {
+							result+= intValue;
+						} else {
+							Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": integer expected");
+							miniScript->startErrorScript(); return;
+						}
+					}
+					returnValue.setValue(result);
+				}
+			}
+			// method code: sub
+			if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
+				Vector3 result;
+				if (argumentValues[0].getType() == MiniScript::TYPE_VECTOR3) {
+					Vector3 vec3Value;
+					if (MiniScript::getVector3Value(argumentValues, 0, vec3Value, false) == true) {
+						result = vec3Value;
+					} else {
+						Console::println("ScriptMethodSub::executeMethod(): " + string("sub") + "(): parameter type mismatch @ argument " + to_string(0) + ": vector3 expected");
+						miniScript->startErrorScript(); return;
+					}
+				} else {
+					float floatValue;
+					if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
+						result = Vector3(floatValue, floatValue, floatValue);
+					} else {
+						Console::println("ScriptMethodSub::executeMethod(): " + string("sub") + "(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
+						miniScript->startErrorScript(); return;
+					}
+				}
+				for (auto i = 1; i < argumentValues.size(); i++) {
+					if (argumentValues[i].getType() == MiniScript::TYPE_VECTOR3) {
+						Vector3 vec3Value;
+						if (MiniScript::getVector3Value(argumentValues, i, vec3Value, false) == true) {
+							result-= vec3Value;
+						} else {
+							Console::println("ScriptMethodSub::executeMethod(): " + string("sub") + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
+							miniScript->startErrorScript(); return;
+							break;
+						}
+					} else {
+						float floatValue;
+						if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+							result-= Vector3(floatValue, floatValue, floatValue);
+						} else {
+							Console::println("ScriptMethodSub::executeMethod(): " + string("sub") + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+							miniScript->startErrorScript(); return;
+							break;
+						}
+					}
+				}
+				returnValue.setValue(result);
+			} else
+			if (MiniScript::hasType(argumentValues, MiniScript::TYPE_FLOAT) == true) {
+				bool valid = true;
+				float result = 0.0f;
+				{
+					float floatValue;
+					if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
+						result = floatValue;
+					} else {
+						Console::println("ScriptMethodSub::executeMethod(): " + string("sub") + "(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
+						miniScript->startErrorScript(); return;
+						valid = false;
+					}
+				}
+				if (valid == true) {
+					for (auto i = 1; i < argumentValues.size(); i++) {
+						float floatValue;
+						if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+							result-= floatValue;
+						} else {
+							Console::println("ScriptMethodSub::executeMethod(): " + string("sub") + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+							miniScript->startErrorScript(); return;
+							break;
+						}
+					}
+					returnValue.setValue(result);
+				}
+			} else {
+				bool valid = true;
+				int64_t result = 0LL;
+				{
+					int64_t intValue;
+					if (MiniScript::getIntegerValue(argumentValues, 0, intValue, false) == true) {
+						result = intValue;
+					} else {
+						Console::println("ScriptMethodSub::executeMethod(): " + string("sub") + "(): parameter type mismatch @ argument " + to_string(0) + ": integer expected");
+						miniScript->startErrorScript(); return;
+						valid = false;
+					}
+				}
+				if (valid == true) {
+					for (auto i = 1; i < argumentValues.size(); i++) {
+						int64_t intValue;
+						if (MiniScript::getIntegerValue(argumentValues, i, intValue, false) == true) {
+							result-= intValue;
+						} else {
+							Console::println("ScriptMethodSub::executeMethod(): " + string("sub") + "(): parameter type mismatch @ argument " + to_string(i) + ": integer expected");
+							miniScript->startErrorScript(); return;
+							break;
+						}
+					}
+					returnValue.setValue(result);
+				}
+			}
+		}
+		// method code: setVariable
+		string variable;
+		if (argumentValues.size() != 2 ||
+			MiniScript::getStringValue(argumentValues, 0, variable, false) == false) {
+			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			miniScript->setVariable(variable, argumentValues[1]);
+			returnValue = argumentValues[1];
+		}
+	}
+
+	// Statement: 13
+	// if(equals($j, 0))
+	{
+		const ScriptStatement& statement = scripts[3].statements[13];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of equals($j, 0)
+		// depth = 1 / argument index = 0: equals($j, 0)
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[0];
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX0 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$j")
+			argumentValues[1].setValue(static_cast<int64_t>(0));
+			// depth = 2 / argument index = 0: getVariable("$j")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX0[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$j"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					auto variableIt = miniScript->scriptState.variables.find(variable);
+					if (variableIt == miniScript->scriptState.variables.end()) {
+						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
+					} else {
+						returnValue = variableIt->second;
+					}
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: equals
+			returnValue.setValue(true);
+			for (auto i = 1; i < argumentValues.size(); i++) {
+				if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
+					returnValue.setValue(false);
+					break;
+				}
+			}
+		}
+		// method code: if
+		bool booleanValue;
+		if (miniScript->getBooleanValue(argumentValues, 0, booleanValue, false) == false) {
+			Console::println("ScriptMethodIfCondition::executeMethod(): " + string("if") + "(): parameter type mismatch @ argument 0: boolean expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			//
+			miniScript->scriptState.endTypeStack.push(ScriptState::ENDTYPE_IF);
+			//
+			miniScript->scriptState.conditionStack.push(booleanValue);
+			if (booleanValue == false) {
+				miniScript->setScriptState(STATE_NEXT_STATEMENT);
+				goto miniscript_statement_15;
+			}
+		}
+	}
+	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+		miniScript->scriptState.statementIdx++;
+		return;
+	}
+
+	// Statement: 14
+	miniscript_statement_14:
+	// setVariable("$k", add($k, 1))
+	{
+		const ScriptStatement& statement = scripts[3].statements[14];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$k"));
+		// argumentValues[1] --> returnValue of add($k, 1)
+		// depth = 1 / argument index = 1: add($k, 1)
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$k")
+			argumentValues[1].setValue(static_cast<int64_t>(1));
+			// depth = 2 / argument index = 0: getVariable("$k")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$k"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					auto variableIt = miniScript->scriptState.variables.find(variable);
+					if (variableIt == miniScript->scriptState.variables.end()) {
+						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
+					} else {
+						returnValue = variableIt->second;
+					}
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: add
+			if (MiniScript::hasType(argumentValues, MiniScript::TYPE_STRING) == true) {
+				string result;
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					string stringValue;
+					if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
+						result+= stringValue;
+					} else {
+						Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": string expected");
+						miniScript->startErrorScript(); return;
+					}
+				}
+				returnValue.setValue(result);
+			} else
+			if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
+				Vector3 result;
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					if (argumentValues[i].getType() == MiniScript::TYPE_VECTOR3) {
+						Vector3 vec3Value;
+						if (MiniScript::getVector3Value(argumentValues, i, vec3Value, false) == true) {
+							result+= vec3Value;
+						} else {
+							Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
+							miniScript->startErrorScript(); return;
+						}
+					} else {
+						float floatValue;
+						if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+							result+= Vector3(floatValue, floatValue, floatValue);
+						} else {
+							Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+							miniScript->startErrorScript(); return;
+						}
+					}
+				}
+				returnValue.setValue(result);
+			} else
+			if (MiniScript::hasType(argumentValues, MiniScript::TYPE_FLOAT) == true) {
+				float result = 0.0f;
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					float floatValue;
+					if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+						result+= floatValue;
+					} else {
+						Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+						miniScript->startErrorScript(); return;
+					}
+				}
+				returnValue.setValue(result);
+			} else {
+				int64_t result = 0.0f;
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					int64_t intValue;
+					if (MiniScript::getIntegerValue(argumentValues, i, intValue, false) == true) {
+						result+= intValue;
+					} else {
+						Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": integer expected");
+						miniScript->startErrorScript(); return;
+					}
+				}
+				returnValue.setValue(result);
+			}
+		}
+		// method code: setVariable
+		string variable;
+		if (argumentValues.size() != 2 ||
+			MiniScript::getStringValue(argumentValues, 0, variable, false) == false) {
+			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			miniScript->setVariable(variable, argumentValues[1]);
+			returnValue = argumentValues[1];
+		}
+	}
+
+	// Statement: 15
+	miniscript_statement_15:
+	// end()
+	{
+		const ScriptStatement& statement = scripts[3].statements[15];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 0> argumentValues;
+		array<ScriptVariable, 0>& argumentValuesD0 = argumentValues;
+		// method code: end
+		if (miniScript->scriptState.endTypeStack.empty() == true) {
+			if (miniScript->scriptState.statementIdx < miniScript->scripts[miniScript->scriptState.scriptIdx].statements.size() - 1) {
+				Console::println("ScriptMethodEnd::executeMethod(): end without forXXX/if");
+				miniScript->startErrorScript(); return;
+			}
+		} else {
+			auto endType = miniScript->scriptState.endTypeStack.top();
+			miniScript->scriptState.endTypeStack.pop();
+			switch(endType) {
+				case ScriptState::ENDTYPE_FOR:
+					// no op
+					break;
+				case ScriptState::ENDTYPE_IF:
+					miniScript->scriptState.conditionStack.pop();
+					break;
+			}
+			if (statement.gotoStatementIdx != STATE_NONE) {
+				miniScript->setScriptState(STATE_NEXT_STATEMENT);
+			}
+		}
+	}
+	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+		miniScript->scriptState.statementIdx++;
+		return;
+	}
+
+	// Statement: 16
+	miniscript_statement_16:
+	// setVariable("$i", add($i, 1))
+	{
+		const ScriptStatement& statement = scripts[3].statements[16];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$i"));
+		// argumentValues[1] --> returnValue of add($i, 1)
+		// depth = 1 / argument index = 1: add($i, 1)
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$i")
+			argumentValues[1].setValue(static_cast<int64_t>(1));
+			// depth = 2 / argument index = 0: getVariable("$i")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$i"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					auto variableIt = miniScript->scriptState.variables.find(variable);
+					if (variableIt == miniScript->scriptState.variables.end()) {
+						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
+					} else {
+						returnValue = variableIt->second;
+					}
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: add
+			if (MiniScript::hasType(argumentValues, MiniScript::TYPE_STRING) == true) {
+				string result;
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					string stringValue;
+					if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
+						result+= stringValue;
+					} else {
+						Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": string expected");
+						miniScript->startErrorScript(); return;
+					}
+				}
+				returnValue.setValue(result);
+			} else
+			if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
+				Vector3 result;
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					if (argumentValues[i].getType() == MiniScript::TYPE_VECTOR3) {
+						Vector3 vec3Value;
+						if (MiniScript::getVector3Value(argumentValues, i, vec3Value, false) == true) {
+							result+= vec3Value;
+						} else {
+							Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
+							miniScript->startErrorScript(); return;
+						}
+					} else {
+						float floatValue;
+						if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+							result+= Vector3(floatValue, floatValue, floatValue);
+						} else {
+							Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+							miniScript->startErrorScript(); return;
+						}
+					}
+				}
+				returnValue.setValue(result);
+			} else
+			if (MiniScript::hasType(argumentValues, MiniScript::TYPE_FLOAT) == true) {
+				float result = 0.0f;
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					float floatValue;
+					if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+						result+= floatValue;
+					} else {
+						Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+						miniScript->startErrorScript(); return;
+					}
+				}
+				returnValue.setValue(result);
+			} else {
+				int64_t result = 0.0f;
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					int64_t intValue;
+					if (MiniScript::getIntegerValue(argumentValues, i, intValue, false) == true) {
+						result+= intValue;
+					} else {
+						Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": integer expected");
+						miniScript->startErrorScript(); return;
+					}
+				}
+				returnValue.setValue(result);
+			}
+		}
+		// method code: setVariable
+		string variable;
+		if (argumentValues.size() != 2 ||
+			MiniScript::getStringValue(argumentValues, 0, variable, false) == false) {
+			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			miniScript->setVariable(variable, argumentValues[1]);
+			returnValue = argumentValues[1];
+		}
+	}
+
+	// Statement: 17
+	// setVariable("$j", add($j, 1))
+	{
+		const ScriptStatement& statement = scripts[3].statements[17];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$j"));
+		// argumentValues[1] --> returnValue of add($j, 1)
+		// depth = 1 / argument index = 1: add($j, 1)
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$j")
+			argumentValues[1].setValue(static_cast<int64_t>(1));
+			// depth = 2 / argument index = 0: getVariable("$j")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$j"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					auto variableIt = miniScript->scriptState.variables.find(variable);
+					if (variableIt == miniScript->scriptState.variables.end()) {
+						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
+					} else {
+						returnValue = variableIt->second;
+					}
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: add
+			if (MiniScript::hasType(argumentValues, MiniScript::TYPE_STRING) == true) {
+				string result;
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					string stringValue;
+					if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
+						result+= stringValue;
+					} else {
+						Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": string expected");
+						miniScript->startErrorScript(); return;
+					}
+				}
+				returnValue.setValue(result);
+			} else
+			if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
+				Vector3 result;
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					if (argumentValues[i].getType() == MiniScript::TYPE_VECTOR3) {
+						Vector3 vec3Value;
+						if (MiniScript::getVector3Value(argumentValues, i, vec3Value, false) == true) {
+							result+= vec3Value;
+						} else {
+							Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
+							miniScript->startErrorScript(); return;
+						}
+					} else {
+						float floatValue;
+						if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+							result+= Vector3(floatValue, floatValue, floatValue);
+						} else {
+							Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+							miniScript->startErrorScript(); return;
+						}
+					}
+				}
+				returnValue.setValue(result);
+			} else
+			if (MiniScript::hasType(argumentValues, MiniScript::TYPE_FLOAT) == true) {
+				float result = 0.0f;
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					float floatValue;
+					if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+						result+= floatValue;
+					} else {
+						Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+						miniScript->startErrorScript(); return;
+					}
+				}
+				returnValue.setValue(result);
+			} else {
+				int64_t result = 0.0f;
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					int64_t intValue;
+					if (MiniScript::getIntegerValue(argumentValues, i, intValue, false) == true) {
+						result+= intValue;
+					} else {
+						Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": integer expected");
+						miniScript->startErrorScript(); return;
+					}
+				}
+				returnValue.setValue(result);
+			}
+		}
+		// method code: setVariable
+		string variable;
+		if (argumentValues.size() != 2 ||
+			MiniScript::getStringValue(argumentValues, 0, variable, false) == false) {
+			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			miniScript->setVariable(variable, argumentValues[1]);
+			returnValue = argumentValues[1];
+		}
+	}
+
+	// Statement: 18
+	// if(equals($j, 2))
+	{
+		const ScriptStatement& statement = scripts[3].statements[18];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of equals($j, 2)
+		// depth = 1 / argument index = 0: equals($j, 2)
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[0];
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX0 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$j")
+			argumentValues[1].setValue(static_cast<int64_t>(2));
+			// depth = 2 / argument index = 0: getVariable("$j")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX0[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$j"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					auto variableIt = miniScript->scriptState.variables.find(variable);
+					if (variableIt == miniScript->scriptState.variables.end()) {
+						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
+					} else {
+						returnValue = variableIt->second;
+					}
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: equals
+			returnValue.setValue(true);
+			for (auto i = 1; i < argumentValues.size(); i++) {
+				if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
+					returnValue.setValue(false);
+					break;
+				}
+			}
+		}
+		// method code: if
+		bool booleanValue;
+		if (miniScript->getBooleanValue(argumentValues, 0, booleanValue, false) == false) {
+			Console::println("ScriptMethodIfCondition::executeMethod(): " + string("if") + "(): parameter type mismatch @ argument 0: boolean expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			//
+			miniScript->scriptState.endTypeStack.push(ScriptState::ENDTYPE_IF);
+			//
+			miniScript->scriptState.conditionStack.push(booleanValue);
+			if (booleanValue == false) {
+				miniScript->setScriptState(STATE_NEXT_STATEMENT);
+				goto miniscript_statement_20;
+			}
+		}
+	}
+	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+		miniScript->scriptState.statementIdx++;
+		return;
+	}
+
+	// Statement: 19
+	miniscript_statement_19:
+	// equals($j, 0)
+	{
+		const ScriptStatement& statement = scripts[3].statements[19];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of getVariable("$j")
+		argumentValues[1].setValue(static_cast<int64_t>(0));
+		// depth = 1 / argument index = 0: getVariable("$j")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[0];
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX0 = argumentValues;
+			argumentValues[0].setValue(string("$j"));
+			// method code: getVariable
+			string variable;
+			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+				auto variableIt = miniScript->scriptState.variables.find(variable);
+				if (variableIt == miniScript->scriptState.variables.end()) {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
+				} else {
+					returnValue = variableIt->second;
+				}
+			} else {
+				Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+				miniScript->startErrorScript(); return;
+			}
+		}
+		// method code: equals
+		returnValue.setValue(true);
+		for (auto i = 1; i < argumentValues.size(); i++) {
+			if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
+				returnValue.setValue(false);
+				break;
+			}
+		}
+	}
+
+	// Statement: 20
+	miniscript_statement_20:
+	// end()
+	{
+		const ScriptStatement& statement = scripts[3].statements[20];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 0> argumentValues;
+		array<ScriptVariable, 0>& argumentValuesD0 = argumentValues;
+		// method code: end
+		if (miniScript->scriptState.endTypeStack.empty() == true) {
+			if (miniScript->scriptState.statementIdx < miniScript->scripts[miniScript->scriptState.scriptIdx].statements.size() - 1) {
+				Console::println("ScriptMethodEnd::executeMethod(): end without forXXX/if");
+				miniScript->startErrorScript(); return;
+			}
+		} else {
+			auto endType = miniScript->scriptState.endTypeStack.top();
+			miniScript->scriptState.endTypeStack.pop();
+			switch(endType) {
+				case ScriptState::ENDTYPE_FOR:
+					// no op
+					break;
+				case ScriptState::ENDTYPE_IF:
+					miniScript->scriptState.conditionStack.pop();
+					break;
+			}
+			if (statement.gotoStatementIdx != STATE_NONE) {
+				miniScript->setScriptState(STATE_NEXT_STATEMENT);
+			}
+		}
+	}
+	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+		miniScript->scriptState.statementIdx++;
+		return;
+	}
+
+	// Statement: 21
+	miniscript_statement_21:
+	// end()
+	{
+		const ScriptStatement& statement = scripts[3].statements[21];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 0> argumentValues;
+		array<ScriptVariable, 0>& argumentValuesD0 = argumentValues;
+		// method code: end
+		if (miniScript->scriptState.endTypeStack.empty() == true) {
+			if (miniScript->scriptState.statementIdx < miniScript->scripts[miniScript->scriptState.scriptIdx].statements.size() - 1) {
+				Console::println("ScriptMethodEnd::executeMethod(): end without forXXX/if");
+				miniScript->startErrorScript(); return;
+			}
+		} else {
+			auto endType = miniScript->scriptState.endTypeStack.top();
+			miniScript->scriptState.endTypeStack.pop();
+			switch(endType) {
+				case ScriptState::ENDTYPE_FOR:
+					// no op
+					break;
+				case ScriptState::ENDTYPE_IF:
+					miniScript->scriptState.conditionStack.pop();
+					break;
+			}
+			if (statement.gotoStatementIdx != STATE_NONE) {
+				miniScript->setScriptState(STATE_NEXT_STATEMENT);
+				goto miniscript_statement_11;
+			}
+		}
+	}
+	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+		miniScript->scriptState.statementIdx++;
+		return;
+	}
+
+	// Statement: 22
+	miniscript_statement_22:
+	// setVariable("$endTime", time.getCurrentMillis())
+	{
+		const ScriptStatement& statement = scripts[3].statements[22];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$endTime"));
+		// argumentValues[1] --> returnValue of time.getCurrentMillis()
+		// depth = 1 / argument index = 1: time.getCurrentMillis()
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 0> argumentValues;
+			array<ScriptVariable, 0>& argumentValuesD1AIDX1 = argumentValues;
+			// method code: time.getCurrentMillis
+			returnValue.setValue(Time::getCurrentMillis());
+		}
+		// method code: setVariable
+		string variable;
+		if (argumentValues.size() != 2 ||
+			MiniScript::getStringValue(argumentValues, 0, variable, false) == false) {
+			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			miniScript->setVariable(variable, argumentValues[1]);
+			returnValue = argumentValues[1];
+		}
+	}
+
+	// Statement: 23
+	// console.log(add("Finished. Time: ", sub($endTime, $startTime)))
+	{
+		const ScriptStatement& statement = scripts[3].statements[23];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of add("Finished. Time: ", sub($endTime, $startTime))
+		// depth = 1 / argument index = 0: add("Finished. Time: ", sub($endTime, $startTime))
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[0];
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX0 = argumentValues;
+			argumentValues[0].setValue(string("Finished. Time: "));
+			// argumentValues[1] --> returnValue of sub($endTime, $startTime)
+			// depth = 2 / argument index = 1: sub($endTime, $startTime)
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX0[1];
+				array<ScriptVariable, 2> argumentValues;
+				array<ScriptVariable, 2>& argumentValuesD2AIDX1 = argumentValues;
+				// argumentValues[0] --> returnValue of getVariable("$endTime")
+				// argumentValues[1] --> returnValue of getVariable("$startTime")
+				// depth = 3 / argument index = 0: getVariable("$endTime")
+				{
+					// required method code arguments
+					ScriptVariable& returnValue = argumentValuesD2AIDX1[0];
+					array<ScriptVariable, 1> argumentValues;
+					array<ScriptVariable, 1>& argumentValuesD3AIDX0 = argumentValues;
+					argumentValues[0].setValue(string("$endTime"));
+					// method code: getVariable
+					string variable;
+					if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+						auto variableIt = miniScript->scriptState.variables.find(variable);
+						if (variableIt == miniScript->scriptState.variables.end()) {
+							Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
+						} else {
+							returnValue = variableIt->second;
+						}
+					} else {
+						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+						miniScript->startErrorScript(); return;
+					}
+				}
+				// depth = 3 / argument index = 1: getVariable("$startTime")
+				{
+					// required method code arguments
+					ScriptVariable& returnValue = argumentValuesD2AIDX1[1];
+					array<ScriptVariable, 1> argumentValues;
+					array<ScriptVariable, 1>& argumentValuesD3AIDX1 = argumentValues;
+					argumentValues[0].setValue(string("$startTime"));
+					// method code: getVariable
+					string variable;
+					if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+						auto variableIt = miniScript->scriptState.variables.find(variable);
+						if (variableIt == miniScript->scriptState.variables.end()) {
+							Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
+						} else {
+							returnValue = variableIt->second;
+						}
+					} else {
+						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+						miniScript->startErrorScript(); return;
+					}
+				}
+				// method code: sub
+				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
+					Vector3 result;
+					if (argumentValues[0].getType() == MiniScript::TYPE_VECTOR3) {
+						Vector3 vec3Value;
+						if (MiniScript::getVector3Value(argumentValues, 0, vec3Value, false) == true) {
+							result = vec3Value;
+						} else {
+							Console::println("ScriptMethodSub::executeMethod(): " + string("sub") + "(): parameter type mismatch @ argument " + to_string(0) + ": vector3 expected");
+							miniScript->startErrorScript(); return;
+						}
+					} else {
+						float floatValue;
+						if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
+							result = Vector3(floatValue, floatValue, floatValue);
+						} else {
+							Console::println("ScriptMethodSub::executeMethod(): " + string("sub") + "(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
+							miniScript->startErrorScript(); return;
+						}
+					}
+					for (auto i = 1; i < argumentValues.size(); i++) {
+						if (argumentValues[i].getType() == MiniScript::TYPE_VECTOR3) {
+							Vector3 vec3Value;
+							if (MiniScript::getVector3Value(argumentValues, i, vec3Value, false) == true) {
+								result-= vec3Value;
+							} else {
+								Console::println("ScriptMethodSub::executeMethod(): " + string("sub") + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
+								miniScript->startErrorScript(); return;
+								break;
+							}
+						} else {
+							float floatValue;
+							if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+								result-= Vector3(floatValue, floatValue, floatValue);
+							} else {
+								Console::println("ScriptMethodSub::executeMethod(): " + string("sub") + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+								miniScript->startErrorScript(); return;
+								break;
+							}
+						}
+					}
+					returnValue.setValue(result);
+				} else
+				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_FLOAT) == true) {
+					bool valid = true;
+					float result = 0.0f;
+					{
+						float floatValue;
+						if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
+							result = floatValue;
+						} else {
+							Console::println("ScriptMethodSub::executeMethod(): " + string("sub") + "(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
+							miniScript->startErrorScript(); return;
+							valid = false;
+						}
+					}
+					if (valid == true) {
+						for (auto i = 1; i < argumentValues.size(); i++) {
+							float floatValue;
+							if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+								result-= floatValue;
+							} else {
+								Console::println("ScriptMethodSub::executeMethod(): " + string("sub") + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+								miniScript->startErrorScript(); return;
+								break;
+							}
+						}
+						returnValue.setValue(result);
+					}
+				} else {
+					bool valid = true;
+					int64_t result = 0LL;
+					{
+						int64_t intValue;
+						if (MiniScript::getIntegerValue(argumentValues, 0, intValue, false) == true) {
+							result = intValue;
+						} else {
+							Console::println("ScriptMethodSub::executeMethod(): " + string("sub") + "(): parameter type mismatch @ argument " + to_string(0) + ": integer expected");
+							miniScript->startErrorScript(); return;
+							valid = false;
+						}
+					}
+					if (valid == true) {
+						for (auto i = 1; i < argumentValues.size(); i++) {
+							int64_t intValue;
+							if (MiniScript::getIntegerValue(argumentValues, i, intValue, false) == true) {
+								result-= intValue;
+							} else {
+								Console::println("ScriptMethodSub::executeMethod(): " + string("sub") + "(): parameter type mismatch @ argument " + to_string(i) + ": integer expected");
+								miniScript->startErrorScript(); return;
+								break;
+							}
+						}
+						returnValue.setValue(result);
+					}
+				}
+			}
+			// method code: add
+			if (MiniScript::hasType(argumentValues, MiniScript::TYPE_STRING) == true) {
+				string result;
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					string stringValue;
+					if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
+						result+= stringValue;
+					} else {
+						Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": string expected");
+						miniScript->startErrorScript(); return;
+					}
+				}
+				returnValue.setValue(result);
+			} else
+			if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
+				Vector3 result;
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					if (argumentValues[i].getType() == MiniScript::TYPE_VECTOR3) {
+						Vector3 vec3Value;
+						if (MiniScript::getVector3Value(argumentValues, i, vec3Value, false) == true) {
+							result+= vec3Value;
+						} else {
+							Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
+							miniScript->startErrorScript(); return;
+						}
+					} else {
+						float floatValue;
+						if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+							result+= Vector3(floatValue, floatValue, floatValue);
+						} else {
+							Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+							miniScript->startErrorScript(); return;
+						}
+					}
+				}
+				returnValue.setValue(result);
+			} else
+			if (MiniScript::hasType(argumentValues, MiniScript::TYPE_FLOAT) == true) {
+				float result = 0.0f;
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					float floatValue;
+					if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+						result+= floatValue;
+					} else {
+						Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+						miniScript->startErrorScript(); return;
+					}
+				}
+				returnValue.setValue(result);
+			} else {
+				int64_t result = 0.0f;
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					int64_t intValue;
+					if (MiniScript::getIntegerValue(argumentValues, i, intValue, false) == true) {
+						result+= intValue;
+					} else {
+						Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": integer expected");
+						miniScript->startErrorScript(); return;
+					}
+				}
+				returnValue.setValue(result);
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 24
+	// script.stop()
+	{
+		const ScriptStatement& statement = scripts[3].statements[24];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -11195,10 +13054,10 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 		miniScript->resetScriptExecutationState(-1, STATE_NONE);
 	}
 
-	// Statement: 5
+	// Statement: 25
 	// end()
 	{
-		const ScriptStatement& statement = scripts[3].statements[5];
+		const ScriptStatement& statement = scripts[3].statements[25];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
