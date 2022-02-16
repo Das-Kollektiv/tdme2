@@ -475,6 +475,7 @@ void MiniScript::execute() {
 }
 
 void MiniScript::loadScript(const string& pathName, const string& fileName) {
+	//
 	scriptValid = true;
 	scriptPathName = pathName;
 	scriptFileName = fileName;
@@ -490,7 +491,6 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 	resetScriptExecutationState(-1, STATE_WAIT_FOR_CONDITION);
 
 	//
-	registerStateMachineStates();
 	registerVariables();
 
 	//
@@ -509,6 +509,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 		if (native == true) {
 			if (scriptHash == hash) {
 				scripts = nativeScripts;
+				registerStateMachineStates();
 				startScript();
 				return;
 			} else {
@@ -520,6 +521,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 	}
 
 	//
+	registerStateMachineStates();
 	registerMethods();
 
 	//
@@ -1173,7 +1175,7 @@ const string MiniScript::getInformation() {
 
 void MiniScript::registerStateMachineStates() {
 	// base
-	{
+	if (native == false) {
 		//
 		class ScriptStateNextStatement: public ScriptStateMachineState {
 		private:
