@@ -7,7 +7,7 @@
 /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DEFINITIONS_START__*/
 MiniScriptTest::MiniScriptTest(): MiniScript() {
 	setNative(true);
-	setHash("e8e4f3ec6808add5270cdc94876d82f35697a9887b7e43f7b2409502721788aa");
+	setHash("0243aed9774865712440865f6bb2de968923d804ea940733a8141079a4de12ab");
 	setNativeScripts(
 		{
 			{
@@ -1147,7 +1147,7 @@ MiniScriptTest::MiniScriptTest(): MiniScript() {
 					{
 						.line = 194,
 						.statementIdx = 19,
-						.statement = "equals($j, 0)",
+						.statement = "setVariable(\"$j\", 0)",
 						.gotoStatementIdx = -1
 					},
 					{
@@ -12653,7 +12653,7 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 
 	// Statement: 19
 	miniscript_statement_19:
-	// equals($j, 0)
+	// setVariable("$j", 0)
 	{
 		const ScriptStatement& statement = scripts[3].statements[19];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
@@ -12661,36 +12661,17 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
-		// argumentValues[0] --> returnValue of getVariable("$j")
+		argumentValues[0].setValue(string("$j"));
 		argumentValues[1].setValue(static_cast<int64_t>(0));
-		// depth = 1 / argument index = 0: getVariable("$j")
-		{
-			// required method code arguments
-			ScriptVariable& returnValue = argumentValuesD0[0];
-			array<ScriptVariable, 1> argumentValues;
-			array<ScriptVariable, 1>& argumentValuesD1AIDX0 = argumentValues;
-			argumentValues[0].setValue(string("$j"));
-			// method code: getVariable
-			string variable;
-			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
-				auto variableIt = miniScript->scriptState.variables.find(variable);
-				if (variableIt == miniScript->scriptState.variables.end()) {
-					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): variable not found: '" + variable + "'");
-				} else {
-					returnValue = variableIt->second;
-				}
-			} else {
-				Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
-				miniScript->startErrorScript(); return;
-			}
-		}
-		// method code: equals
-		returnValue.setValue(true);
-		for (auto i = 1; i < argumentValues.size(); i++) {
-			if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
-				returnValue.setValue(false);
-				break;
-			}
+		// method code: setVariable
+		string variable;
+		if (argumentValues.size() != 2 ||
+			MiniScript::getStringValue(argumentValues, 0, variable, false) == false) {
+			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			miniScript->setVariable(variable, argumentValues[1]);
+			returnValue = argumentValues[1];
 		}
 	}
 
