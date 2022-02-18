@@ -783,11 +783,9 @@ int MiniScript::determineScriptIdxToStart() {
 				if (returnValue.getBooleanValue(returnValueBoolValue, false) == false) {
 					Console::println("MiniScript::determineScriptIdxToStart(): '" + condition + "': expecting boolean return value, but got: " + returnValue.getAsString());
 					conditionMet = false;
-					break;
 				} else
 				if (returnValueBoolValue == false) {
 					conditionMet = false;
-					break;
 				}
 			} else {
 				Console::println("MiniScript::determineScriptIdxToStart(): '" + scriptFileName + "': @" + to_string(script.line) + ": '" + condition + "': parse error");
@@ -840,11 +838,9 @@ int MiniScript::determineNamedScriptIdxToStart() {
 					if (returnValue.getBooleanValue(returnValueBoolValue, false) == false) {
 						Console::println("MiniScript::determineNamedScriptIdxToStart(): '" + condition + "': expecting boolean return value, but got: " + returnValue.getAsString());
 						conditionMet = false;
-						break;
 					} else
 					if (returnValueBoolValue == false) {
 						conditionMet = false;
-						break;
 					}
 				} else {
 					Console::println("MiniScript::determineNamedScriptIdxToStart(): '" + scriptFileName + "': @" + to_string(script.line) + ": '" + condition + "': parse error");
