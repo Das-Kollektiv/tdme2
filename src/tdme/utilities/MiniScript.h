@@ -790,13 +790,6 @@ protected:
 	}
 
 	/**
-	 * @return script state machine state
-	 */
-	inline int getScriptState() {
-		return scriptState.state.state;
-	}
-
-	/**
 	 * Set script state machine state
 	 * @param state state
 	 */
@@ -961,6 +954,13 @@ public:
 	 */
 	const vector<Script>& getScripts() {
 		return scripts;
+	}
+
+	/**
+	 * @return script state machine state
+	 */
+	inline int getScriptState() {
+		return scriptState.state.state;
 	}
 
 	/**
