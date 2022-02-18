@@ -311,6 +311,7 @@ void processFile(const string& scriptFileName, const string& miniscriptExtension
 			constructorDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".line = " + to_string(script.line) + "," + "\n";
 			constructorDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".condition = \"" + StringTools::replace(script.condition, "\"", "\\\"") + "\"," + "\n";
 			constructorDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".name = \"" + script.name + "\"," + "\n";
+			constructorDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".emitCondition = " + (script.emitCondition == true?"true":"false") + "," + "\n";
 			constructorDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".statements = {" + "\n";
 			auto statementIdx = 0;
 			for (auto& statement: script.statements) {

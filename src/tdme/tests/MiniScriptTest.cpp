@@ -15,6 +15,7 @@ MiniScriptTest::MiniScriptTest(): MiniScript() {
 				.line = 2,
 				.condition = "initialize",
 				.name = "",
+				.emitCondition = true,
 				.statements = {
 					{
 						.line = 3,
@@ -53,6 +54,7 @@ MiniScriptTest::MiniScriptTest(): MiniScript() {
 				.line = 10,
 				.condition = "nothing",
 				.name = "",
+				.emitCondition = true,
 				.statements = {
 					{
 						.line = 11,
@@ -1003,6 +1005,7 @@ MiniScriptTest::MiniScriptTest(): MiniScript() {
 				.line = 169,
 				.condition = "error",
 				.name = "",
+				.emitCondition = true,
 				.statements = {
 					{
 						.line = 170,
@@ -1029,6 +1032,7 @@ MiniScriptTest::MiniScriptTest(): MiniScript() {
 				.line = 174,
 				.condition = "emittest",
 				.name = "",
+				.emitCondition = true,
 				.statements = {
 					{
 						.line = 175,
@@ -1193,6 +1197,7 @@ MiniScriptTest::MiniScriptTest(): MiniScript() {
 				.line = 202,
 				.condition = "equals(1,1)",
 				.name = "named_condition_1",
+				.emitCondition = false,
 				.statements = {
 					{
 						.line = 203,

@@ -557,6 +557,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 					scriptLine = StringTools::trim(StringTools::substring(scriptLine, 0, scriptLineNameSeparatorIdx));
 				}
 				auto condition = doStatementPreProcessing(StringTools::trim(scriptLine));
+				auto emitCondition = StringTools::regexMatch(condition, "[a-zA-Z0-9]+");
 				statementIdx = 0;
 				scripts.push_back(
 					{
@@ -564,7 +565,8 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 						.line = line,
 						.condition = condition,
 						.name = name,
-						.statements = {}
+						.emitCondition = emitCondition,
+						.statements = {},
 					}
 				);
 			} else {
@@ -757,12 +759,12 @@ int MiniScript::determineScriptIdxToStart() {
 		if (script.conditionType == Script::CONDITIONTYPE_ONENABLED) {
 			// no op
 		} else
-		if (script.condition == "nothing") {
+		if (script.emitCondition == true && script.condition == "nothing") {
 			nothingScriptIdx = scriptIdx;
 			// no op
 		} else
-		if (StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true) {
-			// user emit condition
+		if (script.emitCondition == true) {
+			// emit condition
 		} else {
 			auto conditionMet = true;
 			auto& condition = script.condition;

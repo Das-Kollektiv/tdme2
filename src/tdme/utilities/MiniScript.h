@@ -588,6 +588,7 @@ public:
 		int line;
 		string condition;
 		string name;
+		bool emitCondition;
 		vector<ScriptStatement> statements;
 	};
 
