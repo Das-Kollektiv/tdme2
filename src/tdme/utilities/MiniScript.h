@@ -710,6 +710,11 @@ protected:
 	ScriptState scriptState;
 
 	/**
+	 * Initialize native mini script
+	 */
+	virtual void initializeNative();
+
+	/**
 	 * @return if this script was compiled to C++ and is executed nativly
 	 */
 	inline bool getNative() {
@@ -927,10 +932,11 @@ private:
 	 * @param depth depth
 	 * @param argumentIdx argument index
 	 * @param parentArgumentIdx parent argument index
+	 * @param returnValue return value
 	 * @param injectCode code to additionally inject
 	 * @param additionalIndent additional indent
 	 */
-	bool transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth = 0, int argumentIdx = -1, int parentArgumentIdx = -1, const string& injectCode = string(), int additionalIndent = 0);
+	bool transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth = 0, int argumentIdx = -1, int parentArgumentIdx = -1, const string& returnValue = string(), const string& injectCode = string(), int additionalIndent = 0);
 
 public:
 	/**
@@ -1326,9 +1332,10 @@ public:
 	 * @param generatedCode generated code
 	 * @param scriptIdx script index
 	 * @param methodCodeMap method code map
+	 * @param returnValue return value
 	 * @param injectCode inject code
 	 * @return success
 	 */
-	bool transpileScriptCondition(string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap, const string& injectCode, int depth = 0);
+	bool transpileScriptCondition(string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap, const string& returnValue, const string& injectCode, int depth = 0);
 
 };

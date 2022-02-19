@@ -81,6 +81,9 @@ void MiniScript::registerStateMachineState(ScriptStateMachineState* state) {
 	scriptStateMachineStates[state->getId()] = state;
 }
 
+void MiniScript::initializeNative() {
+}
+
 void MiniScript::registerMethod(ScriptMethod* method) {
 	auto scriptMethodsIt = scriptMethods.find(method->getMethodName());
 	if (scriptMethodsIt != scriptMethods.end()) {
@@ -3409,7 +3412,7 @@ void MiniScript::registerMethods() {
 void MiniScript::registerVariables() {
 }
 
-bool MiniScript::transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth, int argumentIdx, int parentArgumentIdx, const string& injectCode, int additionalIndent) {
+bool MiniScript::transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth, int argumentIdx, int parentArgumentIdx, const string& returnValue, const string& injectCode, int additionalIndent) {
 	//
 	statementIdx++;
 	auto currentStatementIdx = statementIdx;
@@ -3594,7 +3597,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 				string_view subMethod;
 				vector<string_view> subArguments;
 				if (parseScriptStatement(argument, subMethod, subArguments) == true) {
-					if (transpileScriptStatement(generatedCode, subMethod, subArguments, statement, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, depth + 1, subArgumentIdx, argumentIdx) == false) {
+					if (transpileScriptStatement(generatedCode, subMethod, subArguments, statement, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, depth + 1, subArgumentIdx, argumentIdx, returnValue) == false) {
 						Console::println("MiniScript::transpileScriptStatement(): transpileScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': '" + string(argument) + "': parse error");
 					}
 				} else {
@@ -3609,7 +3612,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 				string_view subMethod;
 				vector<string_view> subArguments;
 				if (parseScriptStatement(generatedStatement, subMethod, subArguments) == true) {
-					if (transpileScriptStatement(generatedCode, subMethod, subArguments, statement, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, depth + 1, subArgumentIdx, argumentIdx) == false) {
+					if (transpileScriptStatement(generatedCode, subMethod, subArguments, statement, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, depth + 1, subArgumentIdx, argumentIdx, returnValue) == false) {
 						Console::println("MiniScript::transpileScriptStatement(): transpileScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': '" + string(argument) + "' --> '" + generatedStatement + "': parse error");
 					}
 				} else {
@@ -3650,10 +3653,10 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 			}
 		} else
 		if (StringTools::regexMatch(codeLine, "[\\ \\t]*miniScript[\\ \\t]*->startErrorScript[\\ \\t]*\\([\\ \\t]*\\)[\\ \\t]*;[\\ \\t]*") == true) {
-			generatedCode+= minIndentString + depthIndentString + "\t" + codeLine + " return;\n";
+			generatedCode+= minIndentString + depthIndentString + "\t" + codeLine + " return" + (returnValue.empty() == false?" " + returnValue:"") + ";\n";
 		} else
 		if (StringTools::regexMatch(codeLine, "[\\ \\t]*miniScript[\\ \\t]*->emit[\\ \\t]*\\([\\ \\t]*[a-zA-Z0-9]*[\\ \\t]*\\)[\\ \\t]*;[\\ \\t]*") == true) {
-			generatedCode+= minIndentString + depthIndentString + "\t" + codeLine + " return;\n";
+			generatedCode+= minIndentString + depthIndentString + "\t" + codeLine + " return" + (returnValue.empty() == false?" " + returnValue:"") + ";\n";
 		} else {
 			if (StringTools::regexMatch(codeLine, ".*[\\ \\t]*miniScript[\\ \\t]*->[\\ \\t]*setScriptState[\\ \\t]*\\([\\ \\t]*[a-zA-Z0-9_]+[\\ \\t]*\\);.*") == true) {
 				scriptStateChanged = true;
@@ -3777,7 +3780,7 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 	return true;
 }
 
-bool MiniScript::transpileScriptCondition(string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap, const string& injectCode, int depth) {
+bool MiniScript::transpileScriptCondition(string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap, const string& returnValue, const string& injectCode, int depth) {
 	if (scriptIdx < 0 || scriptIdx >= scripts.size()) {
 		Console::println("MiniScript::transpile(): invalid script index");
 		return false;
@@ -3807,7 +3810,7 @@ bool MiniScript::transpileScriptCondition(string& generatedCode, int scriptIdx, 
 	auto scriptStateChanged = false;
 	auto scriptStopped = false;
 	vector<string >enabledNamedConditions;
-	transpileScriptStatement(generatedCode, method, arguments, scriptStatement, -1, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, 0, -1, -1, injectCode, depth + 1);
+	transpileScriptStatement(generatedCode, method, arguments, scriptStatement, -1, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, 0, -1, -1, returnValue, injectCode, depth + 1);
 
 	//
 	generatedCode+= methodIndent + "\n";

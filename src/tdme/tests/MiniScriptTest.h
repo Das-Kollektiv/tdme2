@@ -7,14 +7,15 @@ using tdme::utilities::MiniScript;
 
 class MiniScriptTest: public MiniScript {
 
-	/*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DECLARATIONS_START__*/
-
 public:
 	/**
 	 * Public constructor
 	 */
 	MiniScriptTest();
 
+	/*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DECLARATIONS_START__*/
+
+public:
 	// overridden methods
 	void emit(const string& condition) override;
 	inline void startScript() override {
@@ -47,6 +48,7 @@ public:
 
 protected:
 	// overridden methods
+	void initializeNative() override;
 	int determineScriptIdxToStart() override;
 	int determineNamedScriptIdxToStart() override;
 

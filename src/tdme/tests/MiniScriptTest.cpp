@@ -4,8 +4,12 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/MiniScript.h>
 
-/*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DEFINITIONS_START__*/
 MiniScriptTest::MiniScriptTest(): MiniScript() {
+	initializeNative();
+}
+
+/*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DEFINITIONS_START__*/
+void MiniScriptTest::initializeNative() {
 	setNative(true);
 	setHash("0243aed9774865712440865f6bb2de968923d804ea940733a8141079a4de12ab");
 	setNativeScripts(
