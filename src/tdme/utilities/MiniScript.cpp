@@ -3658,7 +3658,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 		if (StringTools::regexMatch(codeLine, "[\\ \\t]*miniScript[\\ \\t]*->emit[\\ \\t]*\\([\\ \\t]*[a-zA-Z0-9]*[\\ \\t]*\\)[\\ \\t]*;[\\ \\t]*") == true) {
 			generatedCode+= minIndentString + depthIndentString + "\t" + codeLine + " return" + (returnValue.empty() == false?" " + returnValue:"") + ";\n";
 		} else {
-			if (StringTools::regexMatch(codeLine, ".*[\\ \\t]*miniScript[\\ \\t]*->[\\ \\t]*setScriptState[\\ \\t]*\\([\\ \\t]*[a-zA-Z0-9_]+[\\ \\t]*\\);.*") == true) {
+			if (StringTools::regexMatch(codeLine, ".*[\\ \\t]*miniScript[\\ \\t]*->[\\ \\t]*setScriptState[\\ \\t]*\\([\\ \\t]*.+[\\ \\t]*\\);.*") == true) {
 				scriptStateChanged = true;
 			}
 			if (StringTools::regexMatch(codeLine, ".*[\\ \\t]*miniScript[\\ \\t]*->[\\ \\t]*stopScriptExecutation[\\ \\t]*\\([\\ \\t]*\\);.*") == true) {
