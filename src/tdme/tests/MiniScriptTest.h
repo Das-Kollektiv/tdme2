@@ -23,6 +23,7 @@ public:
 			MiniScript::startScript();
 			return;
 		}
+		for (auto& scriptVariableIt: scriptState.variables) delete scriptVariableIt.second;
 		scriptState.variables.clear();
 		scriptState.running = true;
 		registerVariables();

@@ -264,6 +264,7 @@ void processFile(const string& scriptFileName, const string& miniscriptTranspila
 	generatedDeclarations+= headerIndent + "\t" + "\t" + "MiniScript::startScript();" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "\t" + "return;" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "}" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "for (auto& scriptVariableIt: scriptState.variables) delete scriptVariableIt.second;" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "scriptState.variables.clear();" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "scriptState.running = true;" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "registerVariables();" + "\n";
