@@ -69,6 +69,7 @@ private:
 	vector<int32_t> pbrMaterialNormalTextureIdsByEntities;
 	Object3DNodeRenderer* renderer { nullptr };
 	Object3DNodeMesh* mesh { nullptr };
+	bool nodeTransformationsMatrixUpdate { false };
 	Matrix4x4* nodeTransformationsMatrix { nullptr };
 
 	/**
@@ -123,4 +124,17 @@ public:
 	 * Destructor
 	 */
 	~Object3DNode();
+
+	/**
+	 * @return needs node transformations matrix
+	 */
+	inline bool needsNodeTransformationsMatrix() {
+		return nodeTransformationsMatrixUpdate == true;
+	}
+
+	/**
+	 * Update node transformations matrix
+	 */
+	void updateNodeTransformationsMatrix();
+
 };

@@ -280,7 +280,9 @@ void PrototypePhysicsSubView::handleInputEvents(Prototype* prototype, const Vect
 		if (event.getButton() == MOUSE_BUTTON_LEFT) {
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 				auto selectedEntity = engine->getEntity("tdme.prototype.bv.editing");
-				if (selectedEntity != nullptr) applyBoundingVolumeTransformations(prototype, displayBoundingVolumeIdx, selectedEntity->getTransformations(), objectScale, false);
+				if (selectedEntity != nullptr) {
+					applyBoundingVolumeTransformations(prototype, displayBoundingVolumeIdx, selectedEntity->getTransformations(), objectScale, false);
+				}
 				if (getGizmoMode() != GIZMOMODE_NONE) {
 					setGizmoMode(GIZMOMODE_NONE);
 					updateGizmo(prototype);
@@ -320,14 +322,21 @@ void PrototypePhysicsSubView::handleInputEvents(Prototype* prototype, const Vect
 						if (gizmoEntity != nullptr && selectedEntity != nullptr) {
 							selectedEntity->setTranslation(selectedEntity->getTranslation().clone().add(deltaTranslation));
 							selectedEntity->setScale(selectedEntity->getScale().clone().scale(deltaScale));
-							if (selectedEntity->getRotationCount() == 0) {
-								selectedEntity->addRotation(Rotation::Z_AXIS, 0.0f);
-								selectedEntity->addRotation(Rotation::Y_AXIS, 0.0f);
-								selectedEntity->addRotation(Rotation::X_AXIS, 0.0f);
+							if (deltaRotation.computeLengthSquared() > Math::square(Math::EPSILON) * 3.0f) {
+								if (selectedEntity->getRotationCount() == 0) {
+									selectedEntity->addRotation(Rotation::Z_AXIS, 0.0f);
+									selectedEntity->addRotation(Rotation::Y_AXIS, 0.0f);
+									selectedEntity->addRotation(Rotation::X_AXIS, 0.0f);
+								}
+								if (selectedEntity->getRotationCount() == 3) {
+									selectedEntity->addRotation(Rotation::Z_AXIS, 0.0f);
+									selectedEntity->addRotation(Rotation::Y_AXIS, 0.0f);
+									selectedEntity->addRotation(Rotation::X_AXIS, 0.0f);
+								}
+								selectedEntity->setRotationAngle(3, selectedEntity->getRotationAngle(3) + deltaRotation[2]);
+								selectedEntity->setRotationAngle(4, selectedEntity->getRotationAngle(4) + deltaRotation[1]);
+								selectedEntity->setRotationAngle(5, selectedEntity->getRotationAngle(5) + deltaRotation[0]);
 							}
-							selectedEntity->setRotationAngle(0, selectedEntity->getRotationAngle(0) + deltaRotation[2]);
-							selectedEntity->setRotationAngle(1, selectedEntity->getRotationAngle(1) + deltaRotation[1]);
-							selectedEntity->setRotationAngle(2, selectedEntity->getRotationAngle(2) + deltaRotation[0]);
 							selectedEntity->update();
 							setGizmoRotation(prototype, selectedEntity->getTransformations());
 							applyBoundingVolumeTransformations(prototype, displayBoundingVolumeIdx, selectedEntity->getTransformations(), objectScale, true);

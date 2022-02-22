@@ -24,7 +24,7 @@ public:
 	static constexpr int32_t FRAMEBUFFER_DEPTHBUFFER { 1 };
 	static constexpr int32_t FRAMEBUFFER_COLORBUFFER { 2 };
 
-	static constexpr int32_t CUBEMAPTEXTUREID_NONE { 0 };
+	static constexpr int32_t TEXTUREID_NONE { 0 };
 
 	static constexpr int32_t CUBEMAPTEXTUREINDEX_NONE { 0 };
 	static constexpr int32_t CUBEMAPTEXTUREINDEX_NEGATIVE_X { 1 };
@@ -35,14 +35,16 @@ public:
 	static constexpr int32_t CUBEMAPTEXTUREINDEX_NEGATIVE_Z { 6 };
 
 private:
+	int32_t buffers;
 	int32_t width;
 	int32_t height;
 	int32_t frameBufferId;
 	int32_t depthBufferTextureId;
 	int32_t colorBufferTextureId;
-	int32_t buffers;
 	int32_t cubeMapTextureId;
 	int32_t cubeMapTextureIndex;
+	bool ownsDepthBufferTexture;
+	bool ownsColorBufferTexture;
 
 	/**
 	 * Render given depth texture and color buffer texture to screen
@@ -61,7 +63,7 @@ public:
 	 * @param cubeMapTextureId cube map texture id
 	 * @param cubeMapTextureIndex cube map texture index
 	 */
-	FrameBuffer(int32_t width, int32_t height, int32_t buffers, int32_t cubeMapTextureId = CUBEMAPTEXTUREID_NONE, int32_t cubeMapTextureIndex = CUBEMAPTEXTUREINDEX_NONE);
+	FrameBuffer(int32_t width, int32_t height, int32_t buffers, int32_t cubeMapTextureId = TEXTUREID_NONE, int32_t cubeMapTextureIndex = TEXTUREID_NONE);
 
 	/**
 	 * @return width
@@ -92,10 +94,26 @@ public:
 	}
 
 	/**
+	 * Set depth buffer texture id
+	 * @param texture id depth buffer texture id
+	 */
+	inline void setDepthBufferTextureId(int32_t textureId) {
+		depthBufferTextureId = textureId;
+	}
+
+	/**
 	 * @return color buffer texture id
 	 */
 	inline int32_t getColorBufferTextureId() {
 		return colorBufferTextureId;
+	}
+
+	/**
+	 * Set color buffer texture id
+	 * @param textureId color buffer texture id
+	 */
+	inline void setColorBufferTextureId(int32_t textureId) {
+		colorBufferTextureId = textureId;
 	}
 
 	/**

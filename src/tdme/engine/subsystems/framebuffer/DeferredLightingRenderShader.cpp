@@ -249,7 +249,7 @@ void DeferredLightingRenderShader::useProgram(Engine* engine)
 		renderer->setProgramUniformFloat(contextIdx, uniformSpecularLightQuadraticAttenuation[lightId], light->getQuadraticAttenuation());
 		renderer->setProgramUniformFloat(contextIdx, uniformSpecularLightRadius[lightId], light->getRadius());
 	}
-	renderer->setProgramUniformFloatMatrix4x4(contextIdx, uniformCameraMatrix, engine->getCamera()->getModelViewMatrix().getArray());
+	renderer->setProgramUniformFloatMatrix4x4(contextIdx, uniformCameraMatrix, engine->getCamera()->getCameraMatrix().getArray());
 
 	// PBR
 	renderer->setProgramUniformFloatVec3(contextIdx, uniformCamera, renderer->getCameraPosition().getArray());

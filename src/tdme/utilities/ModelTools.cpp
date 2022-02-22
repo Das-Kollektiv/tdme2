@@ -26,6 +26,7 @@
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Matrix4x4Negative.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/ByteBuffer.h>
@@ -58,6 +59,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::Transformations;
 using tdme::math::Matrix4x4;
+using tdme::math::Matrix4x4Negative;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::utilities::ByteBuffer;
@@ -716,16 +718,13 @@ int ModelTools::determineFaceCount(Node* node) {
 
 void ModelTools::prepareForShader(Model* model, const string& shader) {
 	if (shader == "foliage" || shader == "pbr-foliage" || shader == "tree" || shader == "pbr-tree") {
-		for (auto nodeIt: model->getSubNodes()) prepareForFoliageTreeShader(nodeIt.second, model->getImportTransformationsMatrix(), shader);
-		model->setImportTransformationsMatrix(Matrix4x4().identity());
-		model->setUpVector(UpVector::Y_UP);
-	} else
-	if (shader == "water") {
-		for (auto nodeIt: model->getSubNodes()) prepareForWaterShader(nodeIt.second, model->getImportTransformationsMatrix());
+		for (auto nodeIt: model->getSubNodes()) prepareForFoliageShader(nodeIt.second, model->getImportTransformationsMatrix(), shader);
 		model->setImportTransformationsMatrix(Matrix4x4().identity());
 		model->setUpVector(UpVector::Y_UP);
 	} else {
-		for (auto nodeIt: model->getSubNodes()) prepareForDefaultShader(nodeIt.second);
+		for (auto nodeIt: model->getSubNodes()) prepareForStandardShader(nodeIt.second, model->getImportTransformationsMatrix());
+		model->setImportTransformationsMatrix(Matrix4x4().identity());
+		model->setUpVector(UpVector::Y_UP);
 	}
 }
 
@@ -737,7 +736,8 @@ void ModelTools::prepareForDefaultShader(Node* node) {
 	}
 }
 
-void ModelTools::prepareForFoliageTreeShader(Node* node, const Matrix4x4& parentTransformationsMatrix, const string& shader) {
+void ModelTools::prepareForFoliageShader(Node* node, const Matrix4x4& parentTransformationsMatrix, const string& shader) {
+	// apply transformations matrix to vertices, ..., also create origins
 	vector<Vector3> objectOrigins;
 	objectOrigins.resize(node->getVertices().size());
 	auto transformationsMatrix = node->getTransformationsMatrix().clone().multiply(parentTransformationsMatrix);
@@ -777,13 +777,18 @@ void ModelTools::prepareForFoliageTreeShader(Node* node, const Matrix4x4& parent
 	}
 	node->setTransformationsMatrix(Matrix4x4().identity());
 	node->setOrigins(objectOrigins);
+	// check if we need to change front face
+	Matrix4x4Negative matrix4x4Negative;
+	if (matrix4x4Negative.isNegative(transformationsMatrix) == true) changeFrontFace(node, false);
+	//
 	for (auto nodeIt: node->getSubNodes()) {
-		prepareForFoliageTreeShader(nodeIt.second, transformationsMatrix, shader);
+		prepareForFoliageShader(nodeIt.second, transformationsMatrix, shader);
 	}
 }
 
-void ModelTools::prepareForWaterShader(Node* node, const Matrix4x4& parentTransformationsMatrix) {
+void ModelTools::prepareForStandardShader(Node* node, const Matrix4x4& parentTransformationsMatrix) {
 	auto transformationsMatrix = node->getTransformationsMatrix().clone().multiply(parentTransformationsMatrix);
+	// apply transformations matrix to vertices, ...
 	{
 		auto vertices = node->getVertices();
 		auto vertexIdx = 0;
@@ -817,8 +822,12 @@ void ModelTools::prepareForWaterShader(Node* node, const Matrix4x4& parentTransf
 		node->setBitangents(bitangents);
 	}
 	node->setTransformationsMatrix(Matrix4x4().identity());
+	// check if we need to change front face
+	Matrix4x4Negative matrix4x4Negative;
+	if (matrix4x4Negative.isNegative(transformationsMatrix) == true) changeFrontFace(node, false);
+	//
 	for (auto nodeIt: node->getSubNodes()) {
-		prepareForWaterShader(nodeIt.second, transformationsMatrix);
+		prepareForStandardShader(nodeIt.second, transformationsMatrix);
 	}
 }
 
@@ -1428,5 +1437,26 @@ void ModelTools::createTangentsAndBitangents(Node* node)
 		//
 		node->setTangents(tangents);
 		node->setBitangents(bitangents);
+	}
+}
+
+void ModelTools::changeFrontFace(Node* node, bool applyToSubNodes) {
+	auto facesEntities = node->getFacesEntities();
+	for (auto& facesEntity: facesEntities) {
+		auto faces = facesEntity.getFaces();
+		for (auto& face: faces) face.changeFrontFace();
+		facesEntity.setFaces(faces);
+	}
+	node->setFacesEntities(facesEntities);
+	if (applyToSubNodes == true) {
+		for (auto& subNodeIt: node->getSubNodes()) {
+			changeFrontFace(subNodeIt.second, true);
+		}
+	}
+}
+
+void ModelTools::changeFrontFace(Model* model) {
+	for (auto& subNodeIt: model->getSubNodes()) {
+		changeFrontFace(subNodeIt.second, true);
 	}
 }

@@ -131,7 +131,7 @@ private:
 	vector<SceneEntity*> copiedEntities;
 	EntityPickingFilter* entityPickingFilterNoGrid { nullptr };
 	EntityPickingFilter* entityPickingFilterPlacing { nullptr };
-	bool needGizmoUpdate { false };
+	bool needsGizmoUpdate { false };
 
 	Vector3 multipleSelectionTranslation;
 	Vector3 multipleSelectionRotation;

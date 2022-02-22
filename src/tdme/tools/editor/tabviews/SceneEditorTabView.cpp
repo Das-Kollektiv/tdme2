@@ -242,18 +242,18 @@ void SceneEditorTabView::handleInputEvents()
 		}
 		if (Character::toLowerCase(event.getKeyChar()) == '2' && isKeyDown == true) {
 			setGizmoType(GIZMOTYPE_TRANSLATE);
-			event.setProcessed(true);
 			updateGizmo();
+			event.setProcessed(true);
 		}
 		if (Character::toLowerCase(event.getKeyChar()) == '3' && isKeyDown == true) {
 			setGizmoType(GIZMOTYPE_ROTATE);
-			event.setProcessed(true);
 			updateGizmo();
+			event.setProcessed(true);
 		}
 		if (Character::toLowerCase(event.getKeyChar()) == '4' && isKeyDown == true) {
 			setGizmoType(GIZMOTYPE_SCALE);
-			event.setProcessed(true);
 			updateGizmo();
+			event.setProcessed(true);
 		}
 	}
 	for (auto i = 0; i < engine->getGUI()->getMouseEvents().size(); i++) {
@@ -297,8 +297,23 @@ void SceneEditorTabView::handleInputEvents()
 				if (placeEntityMode == true && placeEntityValid == true) {
 					placeEntity();
 					if (keyShift == false) unsetPlaceEntityMode(false);
-				} else {
+				} else
+				if (getGizmoMode() != GIZMOMODE_NONE) {
+					for (auto selectedEntityId: selectedEntityIds) {
+						auto _selectedEntity = engine->getEntity(selectedEntityId);
+						if (_selectedEntity == nullptr) continue;
+						auto sceneEntity = scene->getEntity(_selectedEntity->getId());
+						if (sceneEntity == nullptr) continue;
+						auto rotationEuler = _selectedEntity->getTransformationsMatrix().computeEulerAngles();
+						_selectedEntity->setRotationAngle(scene->getRotationOrder()->getAxisXIndex(), rotationEuler[0]);
+						_selectedEntity->setRotationAngle(scene->getRotationOrder()->getAxisYIndex(), rotationEuler[1]);
+						_selectedEntity->setRotationAngle(scene->getRotationOrder()->getAxisZIndex(), rotationEuler[2]);
+						while (_selectedEntity->getRotationCount() > 3) _selectedEntity->removeRotation(_selectedEntity->getRotationCount() - 1);
+						_selectedEntity->update();
+						sceneEntity->getTransformations().fromTransformations(_selectedEntity->getTransformations());
+					}
 					setGizmoMode(GIZMOMODE_NONE);
+					updateGizmo();
 				}
 				event.setProcessed(true);
 			} else
@@ -313,34 +328,32 @@ void SceneEditorTabView::handleInputEvents()
 					if (determineGizmoDeltaTransformations(mouseDownLastX, mouseDownLastY, event.getXUnscaled(), event.getYUnscaled(), deltaTranslation, deltaRotation, absoluteScale) == true) {
 						auto gizmoEntity = getGizmoObject3D();
 						if (gizmoEntity != nullptr) {
-							Transformations rotations;
-							rotations.addRotation(scene->getRotationOrder()->getAxis0(), deltaRotation[scene->getRotationOrder()->getAxis0VectorIndex()]);
-							rotations.addRotation(scene->getRotationOrder()->getAxis1(), deltaRotation[scene->getRotationOrder()->getAxis1VectorIndex()]);
-							rotations.addRotation(scene->getRotationOrder()->getAxis2(), deltaRotation[scene->getRotationOrder()->getAxis2VectorIndex()]);
-							rotations.update();
 							for (auto selectedEntityId: selectedEntityIds) {
 								auto _selectedEntity = engine->getEntity(selectedEntityId);
 								if (_selectedEntity != nullptr && StringTools::startsWith(_selectedEntity->getId(), "tdme.sceneeditor.") == false) {
 									auto sceneEntity = scene->getEntity(_selectedEntity->getId());
 									if (sceneEntity == nullptr) continue;
-									auto translation = sceneEntity->getTransformations().getTranslation();
-									translation = gizmoEntity->getTranslation().clone().add(rotations.getRotationsQuaternion().multiply(translation.clone().sub(gizmoEntity->getTranslation())));
-									sceneEntity->getTransformations().setTranslation(translation.clone().add(deltaTranslation));
-									auto scale = sceneEntity->getTransformations().getScale().clone().scale(absoluteScale);
+									_selectedEntity->setTranslation(_selectedEntity->getTransformations().getTranslation().clone().add(deltaTranslation));
+									auto scale = _selectedEntity->getScale().clone().scale(absoluteScale);
 									if (Math::abs(scale.getX()) < 0.01f) scale.setX(Math::sign(scale.getX()) * 0.01f);
 									if (Math::abs(scale.getY()) < 0.01f) scale.setY(Math::sign(scale.getY()) * 0.01f);
 									if (Math::abs(scale.getZ()) < 0.01f) scale.setZ(Math::sign(scale.getZ()) * 0.01f);
 									if (Math::abs(scale.getX()) > 100.0f) scale.setX(Math::sign(scale.getX()) * 100.0f);
 									if (Math::abs(scale.getY()) > 100.0f) scale.setY(Math::sign(scale.getY()) * 100.0f);
 									if (Math::abs(scale.getZ()) > 100.0f) scale.setZ(Math::sign(scale.getZ()) * 100.0f);
-									sceneEntity->getTransformations().setScale(scale);
-									if ((sceneEntity->getPrototype()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == Gizmo::GIZMOTYPE_ROTATE) {
-										sceneEntity->getTransformations().setRotationAngle(scene->getRotationOrder()->getAxisXIndex(), sceneEntity->getTransformations().getRotationAngle(scene->getRotationOrder()->getAxisXIndex()) + deltaRotation[0]);
-										sceneEntity->getTransformations().setRotationAngle(scene->getRotationOrder()->getAxisYIndex(), sceneEntity->getTransformations().getRotationAngle(scene->getRotationOrder()->getAxisYIndex()) + deltaRotation[1]);
-										sceneEntity->getTransformations().setRotationAngle(scene->getRotationOrder()->getAxisZIndex(), sceneEntity->getTransformations().getRotationAngle(scene->getRotationOrder()->getAxisZIndex()) + deltaRotation[2]);
+									_selectedEntity->setScale(scale);
+									if ((sceneEntity->getPrototype()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == Gizmo::GIZMOTYPE_ROTATE &&
+										deltaRotation.computeLengthSquared() > Math::square(Math::EPSILON) * 3.0f) {
+										if (_selectedEntity->getRotationCount() == 3) {
+											_selectedEntity->addRotation(scene->getRotationOrder()->getAxis0(), 0.0f);
+											_selectedEntity->addRotation(scene->getRotationOrder()->getAxis1(), 0.0f);
+											_selectedEntity->addRotation(scene->getRotationOrder()->getAxis2(), 0.0f);
+										}
+										_selectedEntity->setRotationAngle(3 + scene->getRotationOrder()->getAxisXIndex(), _selectedEntity->getRotationAngle(3 + scene->getRotationOrder()->getAxisXIndex()) + deltaRotation[0]);
+										_selectedEntity->setRotationAngle(3 + scene->getRotationOrder()->getAxisYIndex(), _selectedEntity->getRotationAngle(3 + scene->getRotationOrder()->getAxisYIndex()) + deltaRotation[1]);
+										_selectedEntity->setRotationAngle(3 + scene->getRotationOrder()->getAxisZIndex(), _selectedEntity->getRotationAngle(3 + scene->getRotationOrder()->getAxisZIndex()) + deltaRotation[2]);
 									}
-									sceneEntity->getTransformations().update();
-									_selectedEntity->fromTransformations(sceneEntity->getTransformations());
+									_selectedEntity->update();
 								}
 							}
 							if (selectedEntityIds.size() == 1) {
@@ -457,11 +470,6 @@ void SceneEditorTabView::handleInputEvents()
 
 void SceneEditorTabView::display()
 {
-	if (needGizmoUpdate == true) {
-		updateGizmo();
-		needGizmoUpdate = false;
-	}
-
 	updateSkyPosition();
 
 	if ((placeEntityMode == true || pasteMode == true) && keyEscape == true) {
@@ -528,6 +536,12 @@ void SceneEditorTabView::display()
 
 	//
 	engine->display();
+
+	//
+	if (needsGizmoUpdate == true) {
+		updateGizmo();
+		needsGizmoUpdate = false;
+	}
 }
 
 void SceneEditorTabView::initialize()
@@ -622,15 +636,15 @@ void SceneEditorTabView::reloadOutliner(const string& outlinerNode) {
 }
 
 void SceneEditorTabView::onCameraTranslation() {
-	needGizmoUpdate = true;
+	needsGizmoUpdate = true;
 }
 
 void SceneEditorTabView::onCameraRotation() {
-	needGizmoUpdate = true;
+	needsGizmoUpdate = true;
 }
 
 void SceneEditorTabView::onCameraScale() {
-	needGizmoUpdate = true;
+	needsGizmoUpdate = true;
 }
 
 void SceneEditorTabView::removeSky() {
@@ -1114,7 +1128,7 @@ void SceneEditorTabView::updateGizmo() {
 		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.sceneeditor.") == false) {
 			auto sceneEntity = scene->getEntity(selectedEntity->getId());
 			if (sceneEntity == nullptr) continue;
-			gizmoCenter.add(sceneEntity->getTransformations().getTranslation());
+			gizmoCenter.add(selectedEntity->getTranslation());
 			entityCount++;
 		}
 	}

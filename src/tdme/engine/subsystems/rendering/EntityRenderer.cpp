@@ -442,6 +442,8 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>
 	Vector3 boundEnvironmentMappingCubeMapPosition;
 	for (auto object3DNodeIdx = 0; object3DNodeIdx < firstObject->object3dNodes.size(); object3DNodeIdx++) {
 		auto object3DNode = firstObject->object3dNodes[object3DNodeIdx];
+		// TODO: check me to remove this update here later
+		if (object3DNode->nodeTransformationsMatrixUpdate == true) object3DNode->updateNodeTransformationsMatrix();
 		// render each faces entity
 		auto& facesEntities = object3DNode->node->getFacesEntities();
 		auto faceIdx = 0;
@@ -727,6 +729,8 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 	// all objects share the same object 3d node structure, so we just take the first one
 	for (auto object3DNodeIdx = 0; object3DNodeIdx < firstObject->object3dNodes.size(); object3DNodeIdx++) {
 		auto object3DNode = firstObject->object3dNodes[object3DNodeIdx];
+		// TODO: check me to remove this update here later
+		if (object3DNode->nodeTransformationsMatrixUpdate == true) object3DNode->updateNodeTransformationsMatrix();
 		// render each faces entity
 		auto& facesEntities = object3DNode->node->getFacesEntities();
 		auto faceIdx = 0;

@@ -6,6 +6,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/Transformations.h>
+#include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 
@@ -16,6 +17,7 @@ using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Object3D;
 using tdme::engine::Transformations;
+using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
 /**
@@ -54,11 +56,15 @@ public:
 private:
 	Engine* engine { nullptr };
 	string id;
+	int32_t gizmoTypeMask;
 	GizmoType gizmoType;
 	GizmoMode gizmoMode;
-	Vector3 gizmoLastResult;
-	bool gizmoLastResultAvailable;
-	int32_t gizmoTypeMask;
+	Matrix4x4 rotationsMatrix;
+	Vector3 gizmoTranslation;
+	bool gizmoMovementLastResultAvailable;
+	Vector3 gizmoMovementLastResult;
+	bool gizmoRotationLastResultAvailable;
+	Vector3 gizmoRotationLastResult;
 
 public:
 	/**
@@ -127,7 +133,7 @@ public:
 	 */
 	inline void setGizmoMode(GizmoMode gizmoMode) {
 		this->gizmoMode = gizmoMode;
-		if (this->gizmoMode == GIZMOMODE_NONE) gizmoLastResultAvailable = false;
+		if (this->gizmoMode == GIZMOMODE_NONE) gizmoMovementLastResultAvailable = false;
 	}
 
 	/**
@@ -158,6 +164,17 @@ public:
 	bool determineGizmoMovement(int mouseX, int mouseY, vector<Vector3> vertices, Vector3& deltaMovement);
 
 	/**
+	 * Determine rotation on a plane given by 4 vertices
+	 * @param mouseX current mouse X position
+	 * @param mouseY current mouse Y position
+	 * @param vertices 4 vertices that span a plane
+	 * @param planeNormal plane normal to test rotation against
+	 * @param deltaRotation delta rotation result
+	 * @return success
+	 */
+	bool determineGizmoRotation(int mouseX, int mouseY, vector<Vector3> vertices, const Vector3& planeNormal, float& deltaRotation);
+
+	/**
 	 * Determine GIZMO delta transformations
 	 * @param mouseLastX last mouse X position
 	 * @param mouseLastY last mouse Y position
@@ -175,6 +192,13 @@ public:
 	 * @param selectedEntityNode selected entity node
 	 */
 	bool determineGizmoMode(Entity* selectedEntity, Node* selectedEntityNode);
+
+	/**
+	 * @return gizmo translation
+	 */
+	inline Vector3 getGizmoTranslation() {
+		return gizmoTranslation;
+	}
 
 	/**
 	 * Set gizmo rotation

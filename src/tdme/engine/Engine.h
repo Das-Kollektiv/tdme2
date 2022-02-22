@@ -228,6 +228,7 @@ private:
 		vector<Object3D*> objectsForwardShading;
 		vector<Object3D*> objectsPostPostProcessing;
 		vector<Object3D*> objectsNoDepthTest;
+		vector<Object3D*> objectsGizmo;
 		vector<LODObject3D*> lodObjects;
 		vector<LODObject3DImposter*> lodObjectsImposter;
 		vector<ObjectParticleSystem*> opses;
@@ -251,6 +252,7 @@ private:
 	GUI* gui { nullptr };
 	Timing* timing { nullptr };
 	Camera* camera { nullptr };
+	Camera* gizmoCamera { nullptr };
 
 	Partition* partition { nullptr };
 
@@ -258,6 +260,7 @@ private:
 	Color4 sceneColor;
 	GeometryBuffer* geometryBuffer { nullptr };
 	FrameBuffer* frameBuffer { nullptr };
+	FrameBuffer* gizmoFrameBuffer { nullptr };
 	FrameBuffer* postProcessingFrameBuffer1 { nullptr };
 	FrameBuffer* postProcessingFrameBuffer2{ nullptr };
 	FrameBuffer* postProcessingTemporaryFrameBuffer { nullptr };
@@ -1039,13 +1042,26 @@ public:
 	void display();
 
 	/**
+	 * Compute gizmo coordinate from mouse position and z value
+	 * @param mouseX mouse x
+	 * @param mouseY mouse y
+	 * @param z z
+	 * @param gizmoCoordinate gizmo coordinate
+	 */
+	inline void computeGizmoCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3& gizmoCoordinate) {
+		computeWorldCoordinateByMousePosition(mouseX, mouseY, z, gizmoCoordinate, gizmoCamera);
+	}
+
+	/**
 	 * Compute world coordinate from mouse position and z value
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
 	 * @param z z
 	 * @param worldCoordinate world coordinate
 	 */
-	void computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3& worldCoordinate);
+	inline void computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3& worldCoordinate) {
+		computeWorldCoordinateByMousePosition(mouseX, mouseY, z, worldCoordinate, camera);
+	}
 
 	/**
 	 * Compute world coordinate from mouse position
@@ -1055,7 +1071,9 @@ public:
 	 * @param mouseY mouse y
 	 * @param worldCoordinate world coordinate
 	 */
-	void computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& worldCoordinate);
+	inline void computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& worldCoordinate) {
+		computeWorldCoordinateByMousePosition(mouseX, mouseY, worldCoordinate);
+	}
 
 	/**
 	 * Retrieves entity by mouse position
@@ -1191,6 +1209,27 @@ public:
 
 private:
 	/**
+	 * Compute world coordinate from mouse position and z value
+	 * @param mouseX mouse x
+	 * @param mouseY mouse y
+	 * @param z z
+	 * @param worldCoordinate world coordinate
+	 * @param camera camera or engine camera
+	 */
+	void computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3& worldCoordinate, Camera* camera);
+
+	/**
+	 * Compute world coordinate from mouse position
+	 * TODO:
+	 * this does not work with GLES2
+	 * @param mouseX mouse x
+	 * @param mouseY mouse y
+	 * @param worldCoordinate world coordinate
+	 * @param camera camera or engine camera
+	 */
+	void computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& worldCoordinate, Camera* camera);
+
+	/**
 	 * Retrieves entity by mouse position
 	 * @param decomposedEntities decomposed entities
 	 * @param forcePicking override picking to be always enabled
@@ -1254,6 +1293,7 @@ private:
 	 * Do a render/effect pass
 	 * @param renderFrameBuffer render frame buffer
 	 * @param renderGeometryBuffer render geometry buffer
+	 * @param rendererCamera renderer camera
 	 * @param visibleDecomposedEntities visible decomposed entities
 	 * @param effectPass effect pass
 	 * @param renderPassMask render pass mask
@@ -1265,7 +1305,7 @@ private:
 	 * @param doRenderParticleSystems if to render particle systems
 	 * @param renderTypes render types
 	 */
-	void render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeometryBuffer, DecomposedEntities& visibleDecomposedEntities, int32_t effectPass, int32_t renderPassMask, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes);
+	void render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeometryBuffer, Camera* rendererCamera, DecomposedEntities& visibleDecomposedEntities, int32_t effectPass, int32_t renderPassMask, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes);
 
 	/**
 	 * Render light sources

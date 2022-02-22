@@ -261,11 +261,11 @@ public:
 	static void computeNormals(Model* model, ProgressCallback* progressCallback = nullptr);
 
 	/**
-	 * Prepare model for foliage shader
+	 * Prepare model for specific shader
 	 * @param model model
-	 * @param shader shader
+	 * @param shader optional shader
 	 */
-	static void prepareForShader(Model* model, const string& shader);
+	static void prepareForShader(Model* model, const string& shader = string());
 
 	/**
 	 * @returns if model has been optimized
@@ -286,6 +286,19 @@ public:
 	 */
 	static void createTangentsAndBitangents(Node* node);
 
+	/**
+	 * Change front face from counter clock wise to clock wise or clock wise to counter clock wise
+	 * @param node node
+	 * @param applyToSubNodes apply to sub nodes
+	 */
+	static void changeFrontFace(Node* node, bool applyToSubNodes);
+
+	/**
+	 * Change front face from counter clock wise to clock wise or clock wise to counter clock wise
+	 * @param model model
+	 */
+	static void changeFrontFace(Model* model);
+
 private:
 
 	/**
@@ -300,14 +313,14 @@ private:
 	 * @param parentTransformationsMatrix parent transformations matrix
 	 * @param shader shader
 	 */
-	static void prepareForFoliageTreeShader(Node* node, const Matrix4x4& parentTransformationsMatrix, const string& shader);
+	static void prepareForFoliageShader(Node* node, const Matrix4x4& parentTransformationsMatrix, const string& shader);
 
 	/**
 	 * Prepare node for water shader
 	 * @param node node
 	 * @param parentTransformationsMatrix parent transformations matrix
 	 */
-	static void prepareForWaterShader(Node* node, const Matrix4x4& parentTransformationsMatrix);
+	static void prepareForStandardShader(Node* node, const Matrix4x4& parentTransformationsMatrix);
 
 	/**
 	 * Check for optimization

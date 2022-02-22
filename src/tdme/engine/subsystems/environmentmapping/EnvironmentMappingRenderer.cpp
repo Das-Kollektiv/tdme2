@@ -184,6 +184,7 @@ void EnvironmentMappingRenderer::render(const Vector3& position)
 			engine->render(
 				frameBuffers[renderCubeMapTextureIdx][i],
 				geometryBuffer,
+				camera,
 				visibleDecomposedEntities,
 				Engine::EFFECTPASS_NONE,
 				renderPassMask,

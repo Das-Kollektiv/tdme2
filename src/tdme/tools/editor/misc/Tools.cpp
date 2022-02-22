@@ -15,6 +15,7 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/Node.h>
 #include <tdme/engine/model/RotationOrder.h>
+#include <tdme/engine/model/ShaderModel.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/model/UpVector.h>
@@ -70,6 +71,7 @@ using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::model::RotationOrder;
+using tdme::engine::model::ShaderModel;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
@@ -600,6 +602,9 @@ void Tools::loadSettings(Application* application) {
 Model* Tools::getGizmoAll() {
 	if (gizmoAll == nullptr) {
 		gizmoAll = ModelReader::read("resources/engine/models", "gizmo_all.tm");
+		ModelTools::prepareForShader(gizmoAll);
+		ModelTools::changeFrontFace(gizmoAll); // TODO: why is this needed currently
+		gizmoAll->setShaderModel(ShaderModel::SPECULAR);
 	}
 	return gizmoAll;
 }
@@ -607,6 +612,9 @@ Model* Tools::getGizmoAll() {
 Model* Tools::getGizmoTranslationScale() {
 	if (gizmoTranslationScale == nullptr) {
 		gizmoTranslationScale = ModelReader::read("resources/engine/models", "gizmo_transscale.tm");
+		ModelTools::prepareForShader(gizmoTranslationScale);
+		ModelTools::changeFrontFace(gizmoTranslationScale); // TODO: why is this needed currently
+		gizmoTranslationScale->setShaderModel(ShaderModel::SPECULAR);
 	}
 	return gizmoTranslationScale;
 }
@@ -614,6 +622,9 @@ Model* Tools::getGizmoTranslationScale() {
 Model* Tools::getGizmoTranslation() {
 	if (gizmoTranslation == nullptr) {
 		gizmoTranslation = ModelReader::read("resources/engine/models", "gizmo_translate.tm");
+		ModelTools::prepareForShader(gizmoTranslation);
+		ModelTools::changeFrontFace(gizmoTranslation); // TODO: why is this needed currently
+		gizmoTranslation->setShaderModel(ShaderModel::SPECULAR);
 	}
 	return gizmoTranslation;
 }
@@ -621,6 +632,9 @@ Model* Tools::getGizmoTranslation() {
 Model* Tools::getGizmoScale() {
 	if (gizmoScale == nullptr) {
 		gizmoScale = ModelReader::read("resources/engine/models", "gizmo_scale.tm");
+		ModelTools::prepareForShader(gizmoScale);
+		ModelTools::changeFrontFace(gizmoScale); // TODO: why is this needed currently
+		gizmoScale->setShaderModel(ShaderModel::SPECULAR);
 	}
 	return gizmoScale;
 }
@@ -628,6 +642,9 @@ Model* Tools::getGizmoScale() {
 Model* Tools::getGizmoRotations() {
 	if (gizmoRotations == nullptr) {
 		gizmoRotations = ModelReader::read("resources/engine/models", "gizmo_rotate.tm");
+		ModelTools::prepareForShader(gizmoRotations);
+		ModelTools::changeFrontFace(gizmoRotations); // TODO: why is this needed currently
+		gizmoRotations->setShaderModel(ShaderModel::SPECULAR);
 	}
 	return gizmoRotations;
 }

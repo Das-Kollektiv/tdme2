@@ -139,7 +139,9 @@ void ParticleSystemEditorTabView::handleInputEvents()
 					auto psg = dynamic_cast<ParticleSystemGroup*>(selectedEntity);
 					if (psg != nullptr) selectedEntity = psg->getParticleSystems()[particleSystemIdx];
 					if (getGizmoMode() != GIZMOMODE_NONE) {
-						if (selectedEntity != nullptr) applyParticleSystemTransformations(dynamic_cast<ParticleSystemEntity*>(selectedEntity), false);
+						if (selectedEntity != nullptr) {
+							applyParticleSystemTransformations(dynamic_cast<ParticleSystemEntity*>(selectedEntity), false);
+						}
 						setGizmoMode(GIZMOMODE_NONE);
 						updateGizmo();
 					}
@@ -193,14 +195,21 @@ void ParticleSystemEditorTabView::handleInputEvents()
 								selectedEntity->update();
 								auto localTransformations = dynamic_cast<ParticleSystemEntity*>(selectedEntity)->getLocalTransformations();
 								localTransformations.setScale(localTransformations.getScale().clone().scale(deltaScale));
-								if (localTransformations.getRotationCount() == 0) {
-									localTransformations.addRotation(Rotation::Z_AXIS, 0.0f);
-									localTransformations.addRotation(Rotation::Y_AXIS, 0.0f);
-									localTransformations.addRotation(Rotation::X_AXIS, 0.0f);
+								if (deltaRotation.computeLengthSquared() > Math::square(Math::EPSILON) * 3.0f) {
+									if (localTransformations.getRotationCount() == 0) {
+										localTransformations.addRotation(Rotation::Z_AXIS, 0.0f);
+										localTransformations.addRotation(Rotation::Y_AXIS, 0.0f);
+										localTransformations.addRotation(Rotation::X_AXIS, 0.0f);
+									}
+									if (selectedEntity->getRotationCount() == 3) {
+										localTransformations.addRotation(Rotation::Z_AXIS, 0.0f);
+										localTransformations.addRotation(Rotation::Y_AXIS, 0.0f);
+										localTransformations.addRotation(Rotation::X_AXIS, 0.0f);
+									}
+									localTransformations.setRotationAngle(3, localTransformations.getRotationAngle(3) + deltaRotation[2]);
+									localTransformations.setRotationAngle(4, localTransformations.getRotationAngle(4) + deltaRotation[1]);
+									localTransformations.setRotationAngle(5, localTransformations.getRotationAngle(5) + deltaRotation[0]);
 								}
-								localTransformations.setRotationAngle(0, localTransformations.getRotationAngle(0) + deltaRotation[2]);
-								localTransformations.setRotationAngle(1, localTransformations.getRotationAngle(1) + deltaRotation[1]);
-								localTransformations.setRotationAngle(2, localTransformations.getRotationAngle(2) + deltaRotation[0]);
 								localTransformations.update();
 								dynamic_cast<ParticleSystemEntity*>(selectedEntity)->setLocalTransformations(localTransformations);
 								setGizmoRotation(localTransformations);
@@ -287,9 +296,13 @@ void ParticleSystemEditorTabView::reloadOutliner() {
 }
 
 void ParticleSystemEditorTabView::onCameraRotation() {
+	if (prototypePhysicsView->isEditingBoundingVolume(prototype) == true) prototypePhysicsView->updateGizmo(prototype);
+	if (getParticleSystemIndex() != -1) updateGizmo();
 }
 
 void ParticleSystemEditorTabView::onCameraScale() {
+	if (prototypePhysicsView->isEditingBoundingVolume(prototype) == true) prototypePhysicsView->updateGizmo(prototype);
+	if (getParticleSystemIndex() != -1) updateGizmo();
 }
 
 void ParticleSystemEditorTabView::playSound(const string& soundId) {
