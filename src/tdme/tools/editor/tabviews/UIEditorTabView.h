@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -41,7 +42,7 @@ private:
 	PopUps* popUps { nullptr };
 	UIEditorTabController* uiTabController { nullptr };
 	TabView::OutlinerState outlinerState;
-	GUIScreenNode* uiScreenNode { nullptr };
+	vector<GUIScreenNode*> screenNodes;
 
 public:
 	/**
@@ -79,11 +80,33 @@ public:
 	}
 
 	/**
-	 * @return UI screen node
+	 * @return screen nodes
 	 */
-	inline GUIScreenNode* getUIScreenNode() {
-		return uiScreenNode;
+	inline vector<GUIScreenNode*>& getScreenNodes() {
+		return screenNodes;
 	}
+
+	/**
+	 * Add screen
+	 */
+	void addScreen();
+
+	/**
+	 * Unset screen
+	 * @param screenIdx screen index
+	 */
+	void unsetScreen(int screenIdx);
+
+	/**
+	 * Remove screen
+	 * @param screenIdx screen index
+	 */
+	void removeScreen(int screenIdx);
+
+	/**
+	 * Readd screens
+	 */
+	void reAddScreens();
 
 	// overridden methods
 	void handleInputEvents() override;

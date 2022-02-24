@@ -197,6 +197,7 @@ void GUI::removeScreen(const string& id)
 {
 	auto screensIt = screens.find(id);
 	if (screensIt != screens.end()) {
+		removeRenderScreen(id);
 		auto screen = screensIt->second;
 		screens.erase(screensIt);
 		mouseOutCandidateEventNodeIds.erase(id);

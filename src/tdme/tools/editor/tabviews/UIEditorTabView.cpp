@@ -31,16 +31,11 @@ UIEditorTabView::UIEditorTabView(EditorView* editorView, const string& tabId, GU
 	this->editorView = editorView;
 	this->tabId = tabId;
 	this->popUps = editorView->getPopUps();
-	this->uiScreenNode = screenNode;
+	screenNodes.push_back(screenNode);
 	engine = Engine::createOffScreenInstance(1920, 1080, false, false, false);
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
-	screenNode->getSizeConstraints().minWidth = -1;
-	screenNode->getSizeConstraints().minHeight = -1;
-	screenNode->getSizeConstraints().maxWidth = -1;
-	screenNode->getSizeConstraints().maxHeight = -1;
-	engine->getGUI()->addScreen(screenNode->getId(), screenNode);
-	engine->getGUI()->addRenderScreen(screenNode->getId());
-	outlinerState.expandedOutlinerParentOptionValues.push_back("0");
+	outlinerState.expandedOutlinerParentOptionValues.push_back("0.0");
+	reAddScreens();
 }
 
 UIEditorTabView::~UIEditorTabView() {
@@ -99,3 +94,37 @@ void UIEditorTabView::reloadOutliner() {
 	editorView->getScreenController()->setDetailsContent(string());
 }
 
+void UIEditorTabView::addScreen() {
+	screenNodes.push_back(nullptr);
+}
+
+void UIEditorTabView::unsetScreen(int screenIdx) {
+	if (screenIdx < 0 || screenIdx >= screenNodes.size()) return;
+	auto screenNode = screenNodes[screenIdx];
+	if (screenNode != nullptr) {
+		engine->getGUI()->removeScreen(screenNode->getId());
+		screenNodes[screenIdx] = nullptr;
+	}
+}
+
+void UIEditorTabView::removeScreen(int screenIdx) {
+	if (screenIdx < 0 || screenIdx >= screenNodes.size()) return;
+	auto screenNode = screenNodes[screenIdx];
+	if (screenNode != nullptr) {
+		engine->getGUI()->removeScreen(screenNode->getId());
+		screenNodes.erase(screenNodes.begin() + screenIdx);
+	}
+}
+
+void UIEditorTabView::reAddScreens() {
+	engine->getGUI()->resetRenderScreens();
+	for (auto screenNode: screenNodes) {
+		if (screenNode == nullptr) continue;
+		screenNode->getSizeConstraints().minWidth = -1;
+		screenNode->getSizeConstraints().minHeight = -1;
+		screenNode->getSizeConstraints().maxWidth = -1;
+		screenNode->getSizeConstraints().maxHeight = -1;
+		engine->getGUI()->addScreen(screenNode->getId(), screenNode);
+		engine->getGUI()->addRenderScreen(screenNode->getId());
+	}
+}

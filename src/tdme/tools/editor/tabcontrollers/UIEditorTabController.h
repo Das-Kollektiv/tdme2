@@ -43,7 +43,6 @@ class tdme::tools::editor::tabcontrollers::UIEditorTabController final
 
 private:
 	UIEditorTabView* view { nullptr };
-	string screenXML;
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
 
@@ -84,9 +83,10 @@ public:
 	 * Create outliner GUI parent node nodes xml
 	 * @param xmlParentNode XML parent node
 	 * @param xml xml
+	 * @param screenIdx screen index
 	 * @param nodeIdx node index
 	 */
-	void createOutlinerParentNodeNodesXML(TiXmlElement* xmlParentNode, string& xml, int& nodeIdx);
+	void createOutlinerParentNodeNodesXML(TiXmlElement* xmlParentNode, string& xml, int screenIdx, int& nodeIdx);
 
 	/**
 	 * Set outliner content
@@ -97,6 +97,32 @@ public:
 	 * Set outliner add drop down content
 	 */
 	void setOutlinerAddDropDownContent();
+
+	/**
+	 * Update details panel
+	 * @param outlinerNode outliner node
+	 */
+	void updateDetails(const string& outlinerNode);
+
+	/**
+	 * Update screen details
+	 */
+	void updateScreenDetails();
+
+	/**
+	 * On load screen
+	 */
+	void onLoadScreen();
+
+	/**
+	 * On remove screen
+	 */
+	void onUnsetScreen();
+
+	/**
+	 * Reload screens
+	 */
+	void reloadScreens();
 
 	/**
 	 * Shows the error pop up
