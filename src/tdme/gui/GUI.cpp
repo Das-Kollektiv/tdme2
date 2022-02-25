@@ -537,15 +537,11 @@ void GUI::handleKeyboardEvent(GUIKeyboardEvent* event) {
 		case (GUIKeyboardEvent::KEYCODE_TAB):
 			{
 				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
-					focusNextNode();
-				}
-				event->setProcessed(true);
-				break;
-			}
-		case (GUIKeyboardEvent::KEYCODE_TAB_SHIFT):
-			{
-				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
-					focusPreviousNode();
+					if (event->isShiftDown() == true) {
+						focusPreviousNode();
+					} else {
+						focusNextNode();
+					}
 				}
 				event->setProcessed(true);
 				break;
