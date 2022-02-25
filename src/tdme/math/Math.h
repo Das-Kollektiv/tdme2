@@ -71,6 +71,7 @@ public:
 	 * @return -1 if value is negative or +1 if positive
 	 */
 	inline static float sign(float value) {
+		if (abs(value) < EPSILON) return 1.0f;
 		return value / Math::abs(value);
 	}
 

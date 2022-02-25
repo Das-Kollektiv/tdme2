@@ -61,6 +61,7 @@ private:
 	GizmoMode gizmoMode;
 	Matrix4x4 rotationsMatrix;
 	Vector3 gizmoTranslation;
+	Vector3 orthogonalGizmoTranslation;
 	bool gizmoMovementLastResultAvailable;
 	Vector3 gizmoMovementLastResult;
 	bool gizmoRotationLastResultAvailable;
@@ -159,9 +160,10 @@ public:
 	 * @param mouseY current mouse Y position
 	 * @param vertices 4 vertices that span a plane
 	 * @param deltaMovement delta movement result
+	 * @param direction which +1.0f for getting away from center and -1.0f for getting towards center
 	 * @return success
 	 */
-	bool determineGizmoMovement(int mouseX, int mouseY, vector<Vector3> vertices, Vector3& deltaMovement);
+	bool determineGizmoMovement(int mouseX, int mouseY, vector<Vector3> vertices, Vector3& deltaMovement, float& direction);
 
 	/**
 	 * Determine rotation on a plane given by 4 vertices
