@@ -221,7 +221,7 @@ void EditorScreenController::onValueChanged(GUIElementNode* node)
 	}
 	// forward onValueChanged to active tab tab controller
 	auto selectedTab = getSelectedTab();
-	if (selectedTab != nullptr) selectedTab->getTabController()->onValueChanged(node);
+	if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onValueChanged(node);
 }
 
 void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
@@ -292,19 +292,19 @@ void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIEl
 	}
 	// forward onActionPerformed to active tab tab controller
 	auto selectedTab = getSelectedTab();
-	if (selectedTab != nullptr) selectedTab->getTabController()->onActionPerformed(type, node);
+	if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onActionPerformed(type, node);
 }
 
 void EditorScreenController::onFocus(GUIElementNode* node) {
 	// forward onFocus to active tab tab controller
 	auto selectedTab = getSelectedTab();
-	if (selectedTab != nullptr) selectedTab->getTabController()->onFocus(node);
+	if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onFocus(node);
 }
 
 void EditorScreenController::onUnfocus(GUIElementNode* node) {
 	// forward onFocus to active tab tab controller
 	auto selectedTab = getSelectedTab();
-	if (selectedTab != nullptr) selectedTab->getTabController()->onUnfocus(node);
+	if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onUnfocus(node);
 }
 
 void EditorScreenController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
@@ -363,7 +363,7 @@ void EditorScreenController::onContextMenuRequested(GUIElementNode* node, int mo
 	}
 	// forward onContextMenuRequested to active tab tab controller
 	auto selectedTab = getSelectedTab();
-	if (selectedTab != nullptr) selectedTab->getTabController()->onContextMenuRequested(node, mouseX, mouseY);
+	if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onContextMenuRequested(node, mouseX, mouseY);
 }
 
 void EditorScreenController::openProject(const string& path) {
@@ -1500,7 +1500,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 		if (Engine::getInstance()->getGraphicsRendererType() != Renderer::RENDERERTYPE_VULKAN) {
 			required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer"))->setTextureMatrix((new Matrix2D3x3())->identity().scale(Vector2(1.0f, -1.0f)));
 		}
-		tabViews[tabId] = EditorTabView(tabId, tabType, tabView, tabView->getTabController(), tabView->getEngine(), required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));
+		tabViews[tabId] = EditorTabView(tabId, tabType, tabView, required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));
 		tabs->getController()->setValue(MutableString(tabId));
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::onOpenFileFinish(): An error occurred: "));
@@ -1608,20 +1608,20 @@ void EditorScreenController::setFullScreen(bool fullScreen) {
 void EditorScreenController::onSaveCurrentTab() {
 	// forward save to active tab tab controller
 	auto selectedTab = getSelectedTab();
-	if (selectedTab != nullptr) selectedTab->getTabController()->save();
+	if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->save();
 }
 
 void EditorScreenController::onSaveAsCurrentTab() {
 	// forward saveAs to active tab tab controller
 	auto selectedTab = getSelectedTab();
-	if (selectedTab != nullptr) selectedTab->getTabController()->saveAs();
+	if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->saveAs();
 }
 
 void EditorScreenController::onSaveAllTabs() {
 	// forward saveAs to active tab tab controller
 	for (auto& tabViewIt: tabViews) {
 		auto& tab = tabViewIt.second;
-		tab.getTabController()->save();
+		tab.getTabView()->getTabController()->save();
 	}
 }
 

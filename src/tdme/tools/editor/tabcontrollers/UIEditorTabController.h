@@ -45,6 +45,8 @@ private:
 	UIEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
+	string modelFileName;
+	string modelMeshNode;
 
 public:
 	/**
@@ -110,6 +112,11 @@ public:
 	void updateScreenDetails();
 
 	/**
+	 * Update screens details
+	 */
+	void updateScreensDetails();
+
+	/**
 	 * On load screen
 	 */
 	void onLoadScreen();
@@ -123,6 +130,16 @@ public:
 	 * Reload screens
 	 */
 	void reloadScreens();
+
+	/**
+	 * On load model
+	 */
+	void onLoadModel();
+
+	/**
+	 * On load model
+	 */
+	void onRemoveModel();
 
 	/**
 	 * Shows the error pop up

@@ -3,10 +3,15 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/fileio/models/ModelReader.h>
+#include <tdme/engine/model/Model.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/Object3D.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
+#include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/UIEditorTabController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
@@ -17,10 +22,14 @@ using std::string;
 
 using tdme::tools::editor::tabviews::UIEditorTabView;
 
+using tdme::engine::fileio::models::ModelReader;
+using tdme::engine::model::Model;
 using tdme::engine::Engine;
+using tdme::engine::Object3D;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
 using tdme::tools::editor::controllers::EditorScreenController;
+using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::UIEditorTabController;
 using tdme::tools::editor::views::EditorView;
 using tdme::utilities::Console;
@@ -32,26 +41,28 @@ UIEditorTabView::UIEditorTabView(EditorView* editorView, const string& tabId, GU
 	this->tabId = tabId;
 	this->popUps = editorView->getPopUps();
 	screenNodes.push_back(screenNode);
-	engine = Engine::createOffScreenInstance(1920, 1080, false, false, false);
-	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
+	guiEngine = Engine::createOffScreenInstance(1920, 1080, false, false, false);
+	guiEngine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	outlinerState.expandedOutlinerParentOptionValues.push_back("0.0");
 	reAddScreens();
 }
 
 UIEditorTabView::~UIEditorTabView() {
 	delete uiTabController;
-	delete engine;
+	delete guiEngine;
+	if (projectedUi == true) delete engine;
 }
 
 void UIEditorTabView::handleInputEvents()
 {
-	engine->getGUI()->handleEvents();
+	guiEngine->getGUI()->handleEvents();
 }
 
 void UIEditorTabView::display()
 {
-	engine->display();
-	engine->getGUI()->render();
+	guiEngine->display();
+	guiEngine->getGUI()->render();
+	if (projectedUi == true) engine->display();
 }
 
 void UIEditorTabView::initialize()
@@ -68,14 +79,19 @@ void UIEditorTabView::initialize()
 
 void UIEditorTabView::dispose()
 {
-	engine->dispose();
+	guiEngine->dispose();
+	if (projectedUi == true) engine->dispose();
 }
 
 void UIEditorTabView::updateRendering() {
 }
 
+inline bool UIEditorTabView::hasFixedSize() {
+	return projectedUi == false;
+}
+
 Engine* UIEditorTabView::getEngine() {
-	return engine;
+	return projectedUi == true?engine:guiEngine;
 }
 
 void UIEditorTabView::activate() {
@@ -102,7 +118,7 @@ void UIEditorTabView::unsetScreen(int screenIdx) {
 	if (screenIdx < 0 || screenIdx >= screenNodes.size()) return;
 	auto screenNode = screenNodes[screenIdx];
 	if (screenNode != nullptr) {
-		engine->getGUI()->removeScreen(screenNode->getId());
+		guiEngine->getGUI()->removeScreen(screenNode->getId());
 		screenNodes[screenIdx] = nullptr;
 	}
 }
@@ -111,20 +127,77 @@ void UIEditorTabView::removeScreen(int screenIdx) {
 	if (screenIdx < 0 || screenIdx >= screenNodes.size()) return;
 	auto screenNode = screenNodes[screenIdx];
 	if (screenNode != nullptr) {
-		engine->getGUI()->removeScreen(screenNode->getId());
+		guiEngine->getGUI()->removeScreen(screenNode->getId());
 		screenNodes.erase(screenNodes.begin() + screenIdx);
 	}
 }
 
 void UIEditorTabView::reAddScreens() {
-	engine->getGUI()->resetRenderScreens();
+	guiEngine->getGUI()->resetRenderScreens();
 	for (auto screenNode: screenNodes) {
 		if (screenNode == nullptr) continue;
 		screenNode->getSizeConstraints().minWidth = -1;
 		screenNode->getSizeConstraints().minHeight = -1;
 		screenNode->getSizeConstraints().maxWidth = -1;
 		screenNode->getSizeConstraints().maxHeight = -1;
-		engine->getGUI()->addScreen(screenNode->getId(), screenNode);
-		engine->getGUI()->addRenderScreen(screenNode->getId());
+		guiEngine->getGUI()->addScreen(screenNode->getId(), screenNode);
+		guiEngine->getGUI()->addRenderScreen(screenNode->getId());
 	}
+}
+
+Model* UIEditorTabView::getModel() {
+	return model;
+}
+
+Model* UIEditorTabView::loadModel(const string& pathName, const string& fileName, const string& modelMeshNode) {
+	//
+	if (projectedUi == true) engine->reset();
+	if (model != nullptr) delete model;
+	model = nullptr;
+
+	//
+	try {
+		model = ModelReader::read(pathName, fileName);
+	} catch (Exception& exception) {
+		Console::print(string("UIEditorTabView::loadModel(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+
+	//
+	if (projectedUi == false) {
+		engine = Engine::createOffScreenInstance(512, 512, true, true, false);
+		engine->initialize();
+		engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
+		engine->getCamera()->setLookFrom(Vector3(0.0f, 2.5f, 0.1f));
+		engine->getCamera()->setLookAt(Vector3(0.0f, 0.0f, 0.0f));
+		engine->getCamera()->setUpVector(engine->getCamera()->computeUpVector(engine->getCamera()->getLookFrom(), engine->getCamera()->getLookAt()));
+		Tools::setDefaultLight(engine->getLightAt(0));
+		projectedUi = true;
+	}
+
+	//
+	auto modelEntity = new Object3D("model", model);
+	modelEntity->bindDiffuseTexture(guiEngine->getFrameBuffer(), modelMeshNode);
+	engine->addEntity(modelEntity);
+
+	//
+	return model;
+}
+
+void UIEditorTabView::setModelMeshNode(const string& modelMeshNode) {
+	if (projectedUi == false) return;
+	auto modelEntity = dynamic_cast<Object3D*>(engine->getEntity("model"));
+	modelEntity->bindDiffuseTexture(guiEngine->getFrameBuffer(), modelMeshNode);
+}
+
+void UIEditorTabView::removeModel() {
+	//
+	if (projectedUi == true) {
+		engine->dispose();
+		delete engine;
+		engine = nullptr;
+		projectedUi = false;
+	}
+	if (model != nullptr) delete model;
+	model = nullptr;
 }

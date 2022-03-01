@@ -5,7 +5,7 @@
 			
 			<space height="5" />	
 			
-			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="screen" type="Screen" />
+			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="projectedui_model" type="Model" />
 			
 			<space height="5" />
 			<menu-separator />

@@ -1268,6 +1268,9 @@ void Engine::computeTransformations(Camera* camera, DecomposedEntities& decompos
 
 void Engine::display()
 {
+	// set current engine
+	currentEngine = this;
+
 	// execute enqueued actions
 	for (auto action: actions) {
 		action->performAction();
@@ -1277,9 +1280,6 @@ void Engine::display()
 
 	// finish last frame
 	if (this == Engine::instance) Engine::renderer->finishFrame();
-
-	// set current engine
-	currentEngine = this;
 
 	// init frame
 	if (this == Engine::instance) Engine::renderer->initializeFrame();

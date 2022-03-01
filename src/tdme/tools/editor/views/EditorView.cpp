@@ -116,14 +116,14 @@ void EditorView::handleInputEvents()
 			event.setY(eventY);
 			event.setXUnscaled(eventX);
 			event.setYUnscaled(eventY);
-			tabView->getEngine()->getGUI()->getMouseEvents().push_back(event);
+			tabView->getTabView()->getEngine()->getGUI()->getMouseEvents().push_back(event);
 		}
 		for (auto& event: Engine::getInstance()->getGUI()->getKeyboardEvents()) {
-			tabView->getEngine()->getGUI()->getKeyboardEvents().push_back(event);
+			tabView->getTabView()->getEngine()->getGUI()->getKeyboardEvents().push_back(event);
 		}
 		tabView->getTabView()->handleInputEvents();
-		tabView->getEngine()->getGUI()->getMouseEvents().clear();
-		tabView->getEngine()->getGUI()->getKeyboardEvents().clear();
+		tabView->getTabView()->getEngine()->getGUI()->getMouseEvents().clear();
+		tabView->getTabView()->getEngine()->getGUI()->getKeyboardEvents().clear();
 		lastSelectedTabId = tabView->getId();
 	} else {
 		auto lastTabView = editorScreenController->getTab(lastSelectedTabId);
@@ -139,11 +139,11 @@ void EditorView::display()
 		int left, top, width, height;
 		getViewPort(tabView->getFrameBufferNode(), left, top, width, height);
 		if (tabView->getTabView()->hasFixedSize() == false &&
-			(tabView->getEngine()->getWidth() != width || tabView->getEngine()->getHeight() != height)) {
-			tabView->getEngine()->reshape(width, height);
+			(tabView->getTabView()->getEngine()->getWidth() != width || tabView->getTabView()->getEngine()->getHeight() != height)) {
+			tabView->getTabView()->getEngine()->reshape(width, height);
 		}
 		tabView->getTabView()->display();
-		tabView->getFrameBufferNode()->setFrameBuffer(tabView->getEngine()->getFrameBuffer());
+		tabView->getFrameBufferNode()->setFrameBuffer(tabView->getTabView()->getEngine()->getFrameBuffer());
 	}
 	//
 	Audio::getInstance()->update();

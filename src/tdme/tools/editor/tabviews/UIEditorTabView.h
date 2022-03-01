@@ -5,6 +5,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/tabcontrollers/fwd-tdme.h>
@@ -18,6 +19,7 @@ using std::string;
 
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
+using tdme::engine::model::Model;;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::TabController;
@@ -34,7 +36,10 @@ class tdme::tools::editor::tabviews::UIEditorTabView final
 	: public TabView
 {
 protected:
+	Engine* guiEngine { nullptr };
 	Engine* engine { nullptr };
+	bool projectedUi { false };
+	Model* model { nullptr };
 
 private:
 	EditorView* editorView { nullptr };
@@ -108,6 +113,31 @@ public:
 	 */
 	void reAddScreens();
 
+	/**
+	 * @return model
+	 */
+	Model* getModel();
+
+	/**
+	 * Load model
+	 * @param pathName path name
+	 * @param fileName file name
+	 * @param modelMeshNode model mesh node
+	 * @return model
+	 */
+	Model* loadModel(const string& pathName, const string& fileName, const string& modelMeshNode);
+
+	/**
+	 * Set model mesh node
+	 * @param modelMeshNode model mesh node
+	 */
+	void setModelMeshNode(const string& modelMeshNode);
+
+	/**
+	 * Remove model
+	 */
+	void removeModel();
+
 	// overridden methods
 	void handleInputEvents() override;
 	void display() override;
@@ -120,7 +150,7 @@ public:
 	void activate() override;
 	void deactivate() override;
 	void reloadOutliner() override;
-	inline bool hasFixedSize() override{ return true; };
+	inline bool hasFixedSize() override;
 	void updateRendering() override;
 
 };

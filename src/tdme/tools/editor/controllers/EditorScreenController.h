@@ -96,8 +96,6 @@ public:
 		string id;
 		TabType type { TABTYPE_UNKNOWN };
 		TabView* tabView { nullptr };
-		TabController* tabController { nullptr };
-		Engine* engine { nullptr };
 		GUIFrameBufferNode* frameBufferNode { nullptr };
 
 	public:
@@ -111,23 +109,17 @@ public:
 		 * @param id id
 		 * @param type type
 		 * @param tabView tab view
-		 * @param tabController tab controller
-		 * @param engine engine
 		 * @param frameBufferNode frame buffer node
 		 */
 		EditorTabView(
 			string id,
 			TabType type,
 			TabView* tabView,
-			TabController* tabController,
-			Engine* engine,
 			GUIFrameBufferNode* frameBufferNode
 		):
 			id(id),
 			type(type),
 			tabView(tabView),
-			tabController(tabController),
-			engine(engine),
 			frameBufferNode(frameBufferNode)
 		{}
 
@@ -150,20 +142,6 @@ public:
 		 */
 		inline TabView* getTabView() {
 			return tabView;
-		}
-
-		/**
-		 * @return tab controller
-		 */
-		inline TabController* getTabController() {
-			return tabController;
-		}
-
-		/**
-		 * @return engine
-		 */
-		inline Engine* getEngine() {
-			return engine;
 		}
 
 		/**
