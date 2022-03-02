@@ -5,7 +5,7 @@
 			
 			<space height="5" />	
 			
-			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="projectedui_model" type="Model" />
+			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="projectedui_prototype" type="Prototype" />
 			
 			<space height="5" />
 			<menu-separator />
@@ -16,6 +16,18 @@
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
 					<dropdown id="projectedui_meshnode" width="100%" height="auto" text="Test">
 						<scrollarea id="projectedui_meshnode_scrollarea" width="100%" height="70">
+						</scrollarea>
+					</dropdown>
+				</layout>
+			</layout>
+
+			<space height="5" />
+
+			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+				<text font="{$font.default}" color="{$color.font_normal}" text="Animation" width="*" height="auto" />
+				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
+					<dropdown id="projectedui_animation" width="100%" height="auto" text="Test">
+						<scrollarea id="projectedui_animation_scrollarea" width="100%" height="70">
 						</scrollarea>
 					</dropdown>
 				</layout>

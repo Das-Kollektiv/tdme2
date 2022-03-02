@@ -5,8 +5,9 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/model/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/tools/editor/misc/CameraRotationInputHandlerEventHandler.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/tabcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
@@ -19,8 +20,10 @@ using std::string;
 
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
-using tdme::engine::model::Model;;
+using tdme::engine::prototype::Prototype;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::tools::editor::misc::CameraRotationInputHandler;
+using tdme::tools::editor::misc::CameraRotationInputHandlerEventHandler;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabcontrollers::UIEditorTabController;
@@ -32,14 +35,13 @@ using tdme::tools::editor::views::EditorView;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::editor::tabviews::UIEditorTabView final
-	: public TabView
+class tdme::tools::editor::tabviews::UIEditorTabView final: public TabView, protected CameraRotationInputHandlerEventHandler
 {
 protected:
 	Engine* guiEngine { nullptr };
 	Engine* engine { nullptr };
 	bool projectedUi { false };
-	Model* model { nullptr };
+	Prototype* prototype { nullptr };
 
 private:
 	EditorView* editorView { nullptr };
@@ -48,6 +50,12 @@ private:
 	UIEditorTabController* uiTabController { nullptr };
 	TabView::OutlinerState outlinerState;
 	vector<GUIScreenNode*> screenNodes;
+	CameraRotationInputHandler* cameraRotationInputHandler { nullptr };
+
+	// overridden methods
+	void onCameraRotation() override;
+	void onCameraScale() override;
+
 
 public:
 	/**
@@ -114,18 +122,19 @@ public:
 	void reAddScreens();
 
 	/**
-	 * @return model
+	 * @return prototype
 	 */
-	Model* getModel();
+	Prototype* getPrototype();
 
 	/**
-	 * Load model
+	 * Load prototype
 	 * @param pathName path name
 	 * @param fileName file name
 	 * @param modelMeshNode model mesh node
+	 * @param modelMeshAnimation model mesh animation
 	 * @return model
 	 */
-	Model* loadModel(const string& pathName, const string& fileName, const string& modelMeshNode);
+	Prototype* loadPrototype(const string& pathName, const string& fileName, const string& modelMeshNode, const string& modelMeshAnimation);
 
 	/**
 	 * Set model mesh node
@@ -134,9 +143,15 @@ public:
 	void setModelMeshNode(const string& modelMeshNode);
 
 	/**
+	 * Set model mesh animation
+	 * @param modelMeshAnimation model mesh animation
+	 */
+	void setModelMeshAnimation(const string& modelMeshAnimation);
+
+	/**
 	 * Remove model
 	 */
-	void removeModel();
+	void removePrototype();
 
 	// overridden methods
 	void handleInputEvents() override;

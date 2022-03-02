@@ -107,6 +107,7 @@ void EditorView::handleInputEvents()
 			auto lastTabView = lastSelectedTabId.empty() == true?nullptr:editorScreenController->getTab(lastSelectedTabId);
 			if (lastTabView != nullptr) lastTabView->getTabView()->deactivate();
 			tabView->getTabView()->activate();
+			editorScreenController->getScreenNode()->invalidateLayout(editorScreenController->getScreenNode()->getNodeById(tabView->getFrameBufferNode()->getId()));
 		}
 		for (auto event: Engine::getInstance()->getGUI()->getMouseEvents()) {
 			auto eventX = (event.getXUnscaled() - left + offsetX) / xScale;
@@ -137,13 +138,18 @@ void EditorView::display()
 	auto tabView = editorScreenController->getSelectedTab();
 	if (tabView != nullptr){
 		int left, top, width, height;
-		getViewPort(tabView->getFrameBufferNode(), left, top, width, height);
+		getViewPort(tabView->getFrameBufferNode()->getParentNode(), left, top, width, height);
+		auto reshaped = false;
 		if (tabView->getTabView()->hasFixedSize() == false &&
 			(tabView->getTabView()->getEngine()->getWidth() != width || tabView->getTabView()->getEngine()->getHeight() != height)) {
 			tabView->getTabView()->getEngine()->reshape(width, height);
+			reshaped = true;
 		}
 		tabView->getTabView()->display();
 		tabView->getFrameBufferNode()->setFrameBuffer(tabView->getTabView()->getEngine()->getFrameBuffer());
+		if (reshaped == true) {
+			editorScreenController->getScreenNode()->invalidateLayout(editorScreenController->getScreenNode()->getNodeById(tabView->getFrameBufferNode()->getId()));
+		}
 	}
 	//
 	Audio::getInstance()->update();

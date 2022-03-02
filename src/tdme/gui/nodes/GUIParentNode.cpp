@@ -617,7 +617,7 @@ void GUIParentNode::determineMouseEventNodes(GUIMouseEvent* event, bool floating
 				float nodeWidth = this->computedConstraints.width;
 				float contentWidth = this->getContentWidth();
 				auto scrollableWidth = contentWidth - nodeWidth;
-				if (nodeWidth > contentWidth) {
+				if (static_cast<int>(nodeWidth) >= static_cast<int>(contentWidth)) {
 					childrenRenderOffsetX = 0.0f;
 				} else {
 					if (childrenRenderOffsetX < 0) childrenRenderOffsetX = 0;
@@ -632,7 +632,7 @@ void GUIParentNode::determineMouseEventNodes(GUIMouseEvent* event, bool floating
 				float nodeHeight = this->computedConstraints.height;
 				float contentHeight = this->getContentHeight();
 				auto scrollableHeight = contentHeight - nodeHeight;
-				if (nodeHeight > contentHeight) {
+				if (static_cast<int>(nodeHeight) >= static_cast<int>(contentHeight)) {
 					childrenRenderOffsetY = 0.0f;
 				} else {
 					if (childrenRenderOffsetY < 0.0f) childrenRenderOffsetY = 0.0f;

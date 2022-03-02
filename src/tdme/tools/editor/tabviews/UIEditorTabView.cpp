@@ -3,14 +3,17 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fileio/models/ModelReader.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Object3D.h>
+#include <tdme/engine/SimplePartition.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
+#include <tdme/tools/editor/misc/CameraRotationInputHandler.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/UIEditorTabController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
@@ -22,13 +25,15 @@ using std::string;
 
 using tdme::tools::editor::tabviews::UIEditorTabView;
 
-using tdme::engine::fileio::models::ModelReader;
-using tdme::engine::model::Model;
+using tdme::engine::fileio::prototypes::PrototypeReader;
+using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
 using tdme::engine::Object3D;
+using tdme::engine::SimplePartition;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
 using tdme::tools::editor::controllers::EditorScreenController;
+using tdme::tools::editor::misc::CameraInputHandler;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::UIEditorTabController;
 using tdme::tools::editor::views::EditorView;
@@ -50,12 +55,28 @@ UIEditorTabView::UIEditorTabView(EditorView* editorView, const string& tabId, GU
 UIEditorTabView::~UIEditorTabView() {
 	delete uiTabController;
 	delete guiEngine;
-	if (projectedUi == true) delete engine;
+	if (projectedUi == true) {
+		delete cameraRotationInputHandler;
+		delete engine;
+	}
+}
+
+void UIEditorTabView::onCameraRotation() {
+	// no op
+}
+
+void UIEditorTabView::onCameraScale() {
+	// no op
 }
 
 void UIEditorTabView::handleInputEvents()
 {
-	guiEngine->getGUI()->handleEvents();
+	if (projectedUi == true) {
+		cameraRotationInputHandler->handleInputEvents();
+		//engine->getGUI()->handleEvents();
+	} else {
+		guiEngine->getGUI()->handleEvents();
+	}
 }
 
 void UIEditorTabView::display()
@@ -80,7 +101,9 @@ void UIEditorTabView::initialize()
 void UIEditorTabView::dispose()
 {
 	guiEngine->dispose();
-	if (projectedUi == true) engine->dispose();
+	if (projectedUi == true) {
+		engine->dispose();
+	}
 }
 
 void UIEditorTabView::updateRendering() {
@@ -145,59 +168,77 @@ void UIEditorTabView::reAddScreens() {
 	}
 }
 
-Model* UIEditorTabView::getModel() {
-	return model;
+Prototype* UIEditorTabView::getPrototype() {
+	return prototype;
 }
 
-Model* UIEditorTabView::loadModel(const string& pathName, const string& fileName, const string& modelMeshNode) {
+Prototype* UIEditorTabView::loadPrototype(const string& pathName, const string& fileName, const string& modelMeshNode, const string& modelMeshAnimation) {
 	//
 	if (projectedUi == true) engine->reset();
-	if (model != nullptr) delete model;
-	model = nullptr;
+	if (prototype != nullptr) delete prototype;
+	prototype = nullptr;
 
 	//
 	try {
-		model = ModelReader::read(pathName, fileName);
+		prototype = PrototypeReader::read(pathName, fileName);
 	} catch (Exception& exception) {
-		Console::print(string("UIEditorTabView::loadModel(): An error occurred: "));
+		Console::print(string("UIEditorTabView::loadPrototype(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 
 	//
+	auto projectedUiLast = projectedUi;
 	if (projectedUi == false) {
 		engine = Engine::createOffScreenInstance(512, 512, true, true, false);
-		engine->initialize();
+		engine->setPartition(new SimplePartition());
+		engine->setShadowMapLightEyeDistanceScale(0.1f);
 		engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
-		engine->getCamera()->setLookFrom(Vector3(0.0f, 2.5f, 0.1f));
-		engine->getCamera()->setLookAt(Vector3(0.0f, 0.0f, 0.0f));
-		engine->getCamera()->setUpVector(engine->getCamera()->computeUpVector(engine->getCamera()->getLookFrom(), engine->getCamera()->getLookAt()));
-		Tools::setDefaultLight(engine->getLightAt(0));
+		cameraRotationInputHandler = new CameraRotationInputHandler(engine, this);
 		projectedUi = true;
+	}
+	Vector3 objectScale;
+	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), 1, objectScale, cameraRotationInputHandler, 1.5f, projectedUiLast == true);
+
+	//
+	auto modelEntity = dynamic_cast<Object3D*>(engine->getEntity("model"));
+	if (modelEntity != nullptr) {
+		modelEntity->bindDiffuseTexture(guiEngine->getFrameBuffer(), modelMeshNode);
+		modelEntity->setAnimation(modelMeshAnimation);
 	}
 
 	//
-	auto modelEntity = new Object3D("model", model);
-	modelEntity->bindDiffuseTexture(guiEngine->getFrameBuffer(), modelMeshNode);
-	engine->addEntity(modelEntity);
-
-	//
-	return model;
+	return prototype;
 }
 
 void UIEditorTabView::setModelMeshNode(const string& modelMeshNode) {
 	if (projectedUi == false) return;
+	//
 	auto modelEntity = dynamic_cast<Object3D*>(engine->getEntity("model"));
-	modelEntity->bindDiffuseTexture(guiEngine->getFrameBuffer(), modelMeshNode);
+	if (modelEntity != nullptr) {
+		modelEntity->unbindDiffuseTexture();
+		if (modelMeshNode.empty() == false) modelEntity->bindDiffuseTexture(guiEngine->getFrameBuffer(), modelMeshNode);
+	}
 }
 
-void UIEditorTabView::removeModel() {
+void UIEditorTabView::setModelMeshAnimation(const string& modelMeshAnimation) {
+	if (projectedUi == false) return;
+	//
+	auto modelEntity = dynamic_cast<Object3D*>(engine->getEntity("model"));
+	if (modelEntity != nullptr) {
+		modelEntity->setAnimation(modelMeshAnimation);
+	}
+}
+
+void UIEditorTabView::removePrototype() {
 	//
 	if (projectedUi == true) {
 		engine->dispose();
 		delete engine;
+		delete cameraRotationInputHandler;
 		engine = nullptr;
+		cameraRotationInputHandler = nullptr;
 		projectedUi = false;
 	}
-	if (model != nullptr) delete model;
-	model = nullptr;
+	if (prototype != nullptr) delete prototype;
+	prototype = nullptr;
 }
