@@ -7,6 +7,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/math/Matrix4x4.h>
 #include <tdme/tools/editor/misc/CameraRotationInputHandlerEventHandler.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/tabcontrollers/fwd-tdme.h>
@@ -15,6 +16,7 @@
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
+#include <tdme/utilities/Float.h>
 
 using std::string;
 
@@ -22,6 +24,7 @@ using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::engine::prototype::Prototype;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::math::Matrix4x4;
 using tdme::tools::editor::misc::CameraRotationInputHandler;
 using tdme::tools::editor::misc::CameraRotationInputHandlerEventHandler;
 using tdme::tools::editor::misc::PopUps;
@@ -29,6 +32,7 @@ using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabcontrollers::UIEditorTabController;
 using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
+using tdme::utilities::Float;
 
 /**
  * UI editor tab view
@@ -42,6 +46,12 @@ protected:
 	Engine* engine { nullptr };
 	bool projectedUi { false };
 	Prototype* prototype { nullptr };
+	string modelMeshNode;
+	float projectedUiMinX { Float::MAX_VALUE };
+	float projectedUiMinZ { Float::MAX_VALUE };
+	float projectedUiMaxX { Float::MIN_VALUE };
+	float projectedUiMaxZ { Float::MIN_VALUE };
+
 
 private:
 	EditorView* editorView { nullptr };
@@ -55,7 +65,6 @@ private:
 	// overridden methods
 	void onCameraRotation() override;
 	void onCameraScale() override;
-
 
 public:
 	/**

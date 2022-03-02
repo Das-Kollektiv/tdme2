@@ -1,10 +1,18 @@
 #include <tdme/tools/editor/tabviews/UIEditorTabView.h>
 
 #include <string>
+#include <unordered_set>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
+#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/model/Face.h>
+#include <tdme/engine/model/FacesEntity.h>
+#include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/Node.h>
+#include <tdme/engine/model/PBRMaterialProperties.h>
+#include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Object3D.h>
@@ -22,11 +30,20 @@
 #include <tdme/utilities/Exception.h>
 
 using std::string;
+using std::unordered_set;
 
 using tdme::tools::editor::tabviews::UIEditorTabView;
 
 using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::prototype::Prototype;
+using tdme::engine::model::Color4;
+using tdme::engine::model::Face;
+using tdme::engine::model::FacesEntity;
+using tdme::engine::model::Material;
+using tdme::engine::model::Model;
+using tdme::engine::model::Node;
+using tdme::engine::model::PBRMaterialProperties;
+using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::Engine;
 using tdme::engine::Object3D;
 using tdme::engine::SimplePartition;
@@ -72,8 +89,35 @@ void UIEditorTabView::onCameraScale() {
 void UIEditorTabView::handleInputEvents()
 {
 	if (projectedUi == true) {
+		//
+		auto modelEntity = dynamic_cast<Object3D*>(engine->getEntity("model"));
+		if (modelEntity != nullptr && modelMeshNode.empty() == false && modelEntity->getModel()->getNodeById(modelMeshNode) != nullptr) {
+			auto modelEntityWorldMatrix = modelEntity->getNodeTransformationsMatrix(modelMeshNode);
+			auto modelEntityModelImportMatrixInverted = modelEntity->getModel()->getImportTransformationsMatrix().clone().invert();
+			auto modelEntityWorldMatrixInverted = modelEntityWorldMatrix.clone().multiply(modelEntity->getTransformationsMatrix()).multiply(modelEntityModelImportMatrixInverted).invert();
+			// handle mouse events
+			for (auto& event: engine->getGUI()->getMouseEvents()) {
+				if (event.isProcessed() == true) continue;
+				// push event to gui engine if in book space
+				Vector3 mouseWorldCoordinate;
+				engine->computeWorldCoordinateByMousePosition(event.getXUnscaled(), event.getYUnscaled(), mouseWorldCoordinate);
+				auto bookLocalCoordinate = modelEntityWorldMatrixInverted.multiply(mouseWorldCoordinate);
+				auto clonedEvent = event;
+				clonedEvent.setX((bookLocalCoordinate.getX() - projectedUiMinX) * (guiEngine->getWidth() / (projectedUiMaxX - projectedUiMinX)));
+				clonedEvent.setY((bookLocalCoordinate.getZ() - projectedUiMinZ) * (guiEngine->getHeight() / (projectedUiMaxZ - projectedUiMinZ)));
+				clonedEvent.setXUnscaled(clonedEvent.getX());
+				clonedEvent.setYUnscaled(clonedEvent.getY());
+				if (clonedEvent.getX() >= 0 && clonedEvent.getX() < guiEngine->getWidth() &&
+					clonedEvent.getY() >= 0 && clonedEvent.getY() < guiEngine->getHeight()) {
+					guiEngine->getGUI()->getMouseEvents().push_back(clonedEvent);
+					event.setProcessed(true);
+				}
+			}
+		}
+		guiEngine->getGUI()->handleEvents();
 		cameraRotationInputHandler->handleInputEvents();
-		//engine->getGUI()->handleEvents();
+		engine->getGUI()->getMouseEvents().clear();
+		engine->getGUI()->getKeyboardEvents().clear();
 	} else {
 		guiEngine->getGUI()->handleEvents();
 	}
@@ -193,6 +237,7 @@ Prototype* UIEditorTabView::loadPrototype(const string& pathName, const string& 
 		engine->setPartition(new SimplePartition());
 		engine->setShadowMapLightEyeDistanceScale(0.1f);
 		engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
+		guiEngine->setSceneColor(Color4(0.0f, 0.0f, 0.0f, 0.0f));
 		cameraRotationInputHandler = new CameraRotationInputHandler(engine, this);
 		projectedUi = true;
 	}
@@ -207,6 +252,9 @@ Prototype* UIEditorTabView::loadPrototype(const string& pathName, const string& 
 	}
 
 	//
+	setModelMeshNode(modelMeshNode);
+
+	//
 	return prototype;
 }
 
@@ -217,6 +265,39 @@ void UIEditorTabView::setModelMeshNode(const string& modelMeshNode) {
 	if (modelEntity != nullptr) {
 		modelEntity->unbindDiffuseTexture();
 		if (modelMeshNode.empty() == false) modelEntity->bindDiffuseTexture(guiEngine->getFrameBuffer(), modelMeshNode);
+	}
+
+	this->modelMeshNode = modelMeshNode;
+	projectedUiMinX = Float::MAX_VALUE;
+	projectedUiMinZ = Float::MAX_VALUE;
+	projectedUiMaxX = Float::MIN_VALUE;
+	projectedUiMaxZ = Float::MIN_VALUE;
+
+	auto model = prototype->getModel();
+	if (model == nullptr || model->getNodeById(modelMeshNode) == nullptr) return;
+
+	//
+	auto& modelMeshNodeFacesEntities = model->getNodeById(modelMeshNode)->getFacesEntities();
+	unordered_set<string> materialIds;
+	for (auto& facesEntity: modelMeshNodeFacesEntities) {
+		if (facesEntity.getMaterial() != nullptr) materialIds.insert(facesEntity.getMaterial()->getId());
+		for (auto& face: facesEntity.getFaces()) {
+			for (auto i = 0; i < 3; i++) {
+				projectedUiMinZ = Math::min(projectedUiMinZ, face.getNode()->getVertices()[face.getVertexIndices()[i]].getZ());
+				projectedUiMinX = Math::min(projectedUiMinX, face.getNode()->getVertices()[face.getVertexIndices()[i]].getX());
+				projectedUiMaxZ = Math::max(projectedUiMaxZ, face.getNode()->getVertices()[face.getVertexIndices()[i]].getZ());
+				projectedUiMaxX = Math::max(projectedUiMaxX, face.getNode()->getVertices()[face.getVertexIndices()[i]].getX());
+			}
+		}
+	}
+
+	//
+	for (auto& materialId: materialIds) {
+		auto materialIt = model->getMaterials().find(materialId);
+		auto material = materialIt != model->getMaterials().end()?materialIt->second:nullptr;
+		if (material == nullptr) continue;
+		material->getSpecularMaterialProperties()->setDiffuseColor(Color4(0.8f, 0.8f, 0.8f, 0.9999f));
+		if (material->getPBRMaterialProperties() != nullptr) material->getPBRMaterialProperties()->setBaseColorFactor(Color4(1.0f, 1.0f, 1.0f, 0.9999f));
 	}
 }
 
@@ -241,4 +322,7 @@ void UIEditorTabView::removePrototype() {
 	}
 	if (prototype != nullptr) delete prototype;
 	prototype = nullptr;
+
+	//
+	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 }
