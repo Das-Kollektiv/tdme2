@@ -14,6 +14,8 @@
 			<text font="{$font}" color="white" text="+*-" width="auto" height="auto" />
 			<space height="20" />
 			<text font="{$font}" color="white" text="<>|#" width="auto" height="auto" />
+			<space height="20" />
+			<text font="{$font}" color="white" text=",;.:" width="auto" height="auto" />
 		</scrollarea>
 	</layout>
 </screen>

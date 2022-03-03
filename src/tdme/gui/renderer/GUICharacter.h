@@ -22,14 +22,14 @@ public:
 	 * @param xAdvance the amount to move the current position after drawing the character
 	 */
 	inline GUICharacter(
-		int id,
-		int x,
-		int y,
-		int width,
-		int height,
-		int xOffset,
-		int yOffset,
-		int xAdvance
+		float id,
+		float x,
+		float y,
+		float width,
+		float height,
+		float xOffset,
+		float yOffset,
+		float xAdvance
 	):
 		id(id),
 		x(x),
@@ -46,66 +46,66 @@ public:
 	/**
 	 * @return id
 	 */
-	int getId() {
+	float getId() {
 		return id;
 	}
 
 	/**
 	 * @return x location on the sprite sheet
 	 */
-	int getX() {
+	float getX() {
 		return x;
 	}
 
 	/**
 	 * @return y location on the sprite sheet
 	 */
-	int getY() {
+	float getY() {
 		return y;
 	}
 
 	/**
 	 * @return width of the character image
 	 */
-	int getWidth() {
+	float getWidth() {
 		return width;
 	}
 
 	/**
 	 * @return height of the character image
 	 */
-	int getHeight() {
+	float getHeight() {
 		return height;
 	}
 
 	/**
 	 * @return the amount the x position should be offset when drawing the image
 	 */
-	int getXOffset() {
+	float getXOffset() {
 		return xOffset;
 	}
 
 	/**
 	 * @return the amount the y position should be offset when drawing the image
 	 */
-	int getYOffset() {
+	float getYOffset() {
 		return yOffset;
 	}
 
 	/**
 	 * @return the amount to move the current position after drawing the character
 	 */
-	int getXAdvance() {
+	float getXAdvance() {
 		return xAdvance;
 	}
 
 private:
-	int id { -1 };
-	int x { -1 };
-	int y { -1 };
-	int width { -1 };
-	int height { -1 };
-	int xOffset { -1 };
-	int yOffset { -1 };
-	int xAdvance { -1 };
+	float id;
+	float x;
+	float y;
+	float width;
+	float height;
+	float xOffset;
+	float yOffset;
+	float xAdvance;
 };

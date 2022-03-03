@@ -14,6 +14,7 @@
 #include <tdme/math/Math.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTokenizer.h>
@@ -33,6 +34,7 @@ using tdme::gui::renderer::GUIRenderer;
 using tdme::math::Math;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::utilities::Float;
 using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTokenizer;
@@ -63,37 +65,64 @@ GUIFont* GUIFont::parse(const string& pathName, const string& fileName)
 		false,
 		false
 	);
-	auto done = false;
+	// parse "common" line which contains line height and base line
+	{
+		StringTokenizer t;
+		t.tokenize(common, "= ");
+		enum ParseMode { MODE_PARSEMODE, MODE_IGNORE, MODE_LINEHEIGHT, MODE_BASE };
+		ParseMode parseMode = MODE_PARSEMODE;
+		while (t.hasMoreTokens()) {
+			auto token = StringTools::toLowerCase(StringTools::trim(t.nextToken()));
+			if (parseMode == MODE_PARSEMODE) {
+				if (token == "common") {
+					parseMode = MODE_PARSEMODE;
+				} else
+				if (token == "lineheight") {
+					parseMode = MODE_LINEHEIGHT;
+				} else
+				if (token == "base") {
+					parseMode = MODE_BASE;
+				} else {
+					parseMode = MODE_IGNORE;
+				}
+			} else
+			if (parseMode == MODE_IGNORE) {
+				// no op
+			} else
+			if (parseMode == MODE_LINEHEIGHT) {
+				font->lineHeight = Float::parse(token);
+				parseMode = MODE_PARSEMODE;
+			} else
+			if (parseMode == MODE_BASE) {
+				font->baseLine = Float::parse(token);
+				parseMode = MODE_PARSEMODE;
+			}
+		}
+	}
 	while (lineIdx < lines.size()) {
 		auto line = lines[lineIdx++];
-		if (StringTools::startsWith(line, "chars c")) {
+		if (StringTools::startsWith(line, "chars c ")) {
 		} else
-		if (StringTools::startsWith(line, "char")) {
+		if (StringTools::startsWith(line, "char ")) {
 			auto def = font->parseCharacter(line);
 			font->chars[def->getId()] = def;
-		}
-		if (StringTools::startsWith(line, "kernings c")) {
 		} else
-		if (StringTools::startsWith(line, "kerning")) {
+		if (StringTools::startsWith(line, "kernings c ")) {
+		} else
+		if (StringTools::startsWith(line, "kerning ")) {
 			/*
 			// TODO: not yet supported in the moment
 			StringTokenizer t;
 			t.tokenize(line, " =");
 			t.nextToken();
 			t.nextToken();
-			auto first = Integer::parseInt(t.nextToken());
+			auto first = Float::parseInt(t.nextToken());
 			t.nextToken();
-			auto second = Integer::parseInt(t.nextToken());
+			auto second = Float::parseInt(t.nextToken());
 			t.nextToken();
-			auto offset = Integer::parseInt(t.nextToken());
+			auto offset = Float::parseInt(t.nextToken());
 			*/
 		}
-	}
-	font->yOffsetMin = 10000;
-	for (auto& fontIt: font->chars) {
-		auto character = fontIt.second;
-		if (character->getYOffset() < font->yOffsetMin) font->yOffsetMin = character->getYOffset();
-		if (character->getHeight() + character->getYOffset() > font->lineHeight) font->lineHeight = character->getHeight() + character->getYOffset();
 	}
 	return font;
 }
@@ -104,24 +133,21 @@ GUICharacter* GUIFont::parseCharacter(const string& line)
 	t.tokenize(line, " =");
 	t.nextToken();
 	t.nextToken();
-	auto id = Integer::parse(t.nextToken());
+	auto id = Float::parse(t.nextToken());
 	t.nextToken();
-	auto x = Integer::parse(t.nextToken());
+	auto x = Float::parse(t.nextToken());
 	t.nextToken();
-	auto y = Integer::parse(t.nextToken());
+	auto y = Float::parse(t.nextToken());
 	t.nextToken();
-	auto width = Integer::parse(t.nextToken());
+	auto width = Float::parse(t.nextToken());
 	t.nextToken();
-	auto height = Integer::parse(t.nextToken());
+	auto height = Float::parse(t.nextToken());
 	t.nextToken();
-	auto xOffset = Integer::parse(t.nextToken());
+	auto xOffset = Float::parse(t.nextToken());
 	t.nextToken();
-	auto yOffset = Integer::parse(t.nextToken());
+	auto yOffset = Float::parse(t.nextToken());
 	t.nextToken();
-	auto xAdvance = Integer::parse(t.nextToken());
-	if (id != ' ') {
-		lineHeight = Math::max(height + yOffset, lineHeight); // TODO
-	}
+	auto xAdvance = Float::parse(t.nextToken());
 	return new GUICharacter(
 		id,
 		x,
@@ -146,7 +172,6 @@ void GUIFont::dispose()
 
 void GUIFont::drawString(GUIRenderer* guiRenderer, int x, int y, const MutableString& text, int offset, int length, const GUIColor& color, int selectionStartIndex, int selectionEndIndex, const GUIColor& backgroundColor)
 {
-	y-= yOffsetMin - 1;
 	if (length == 0) length = text.size();
 	auto inSelection = false;
 	auto currentColor = color;
@@ -270,11 +295,11 @@ inline void GUIFont::drawCharacter(GUIRenderer* guiRenderer, GUICharacter* chara
 		((left) / (screenWidth / 2.0f)) - 1.0f,
 		((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
 		fontColor[0], fontColor[1], fontColor[2], fontColor[3],
-		(textureCharLeft) / textureWidth, (textureCharTop) / textureHeight,
+		textureCharLeft / textureWidth, textureCharTop / textureHeight,
 		((left + width) / (screenWidth / 2.0f)) - 1.0f,
 		((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
 		fontColor[0], fontColor[1], fontColor[2], fontColor[3],
-		(textureCharLeft + textureCharWidth) / textureWidth, (textureCharTop) / textureHeight,
+		(textureCharLeft + textureCharWidth) / textureWidth, textureCharTop / textureHeight,
 		((left + width) / (screenWidth / 2.0f)) - 1.0f,
 		((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
 		fontColor[0], fontColor[1], fontColor[2], fontColor[3],
@@ -290,9 +315,9 @@ inline void GUIFont::drawCharacter(GUIRenderer* guiRenderer, GUICharacter* chara
 inline void GUIFont::drawCharacterBackground(GUIRenderer* guiRenderer, GUICharacter* character, int x, int y, int lineHeight, const GUIColor& color) {
 	float screenWidth = guiRenderer->getScreenNode()->getScreenWidth();
 	float screenHeight = guiRenderer->getScreenNode()->getScreenHeight();
-	float left = x + character->getXOffset();
+	float left = x;
 	float top = y;
-	float width = character->getWidth();
+	float width = character->getXAdvance();
 	float height = lineHeight;
 	auto& backgroundColor = color.getArray();
 	guiRenderer->addQuad(

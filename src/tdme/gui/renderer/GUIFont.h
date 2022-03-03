@@ -50,8 +50,8 @@ private:
 	Texture* texture { nullptr };
 	int32_t textureId { -1 };
 	unordered_map<uint32_t, GUICharacter*> chars;
-	int lineHeight { 0 };
-	int yOffsetMin { 0 };
+	int lineHeight { -1 };
+	int baseLine { -1 };
 
 	/**
 	 * Parse a single character line from the definition
