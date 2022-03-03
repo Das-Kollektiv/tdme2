@@ -7,6 +7,7 @@
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
+#include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
@@ -19,7 +20,8 @@ using std::unordered_map;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::gui::nodes::GUIColor;
-using tdme::gui::renderer::GUIFont_CharacterDefinition;
+using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::renderer::GUICharacter;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::os::filesystem::FileSystemException;
 using tdme::utilities::MutableString;
@@ -44,12 +46,10 @@ using tdme::utilities::MutableString;
  */
 class tdme::gui::renderer::GUIFont final
 {
-	friend class GUIFont_CharacterDefinition;
-
 private:
 	Texture* texture { nullptr };
 	int32_t textureId { -1 };
-	unordered_map<uint32_t, GUIFont_CharacterDefinition*> chars;
+	unordered_map<uint32_t, GUICharacter*> chars;
 	int lineHeight { 0 };
 	int yOffsetMin { 0 };
 
@@ -58,18 +58,39 @@ private:
 	 * @param line line The line to be parsed
 	 * @return The character definition from the line
 	 */
-	GUIFont_CharacterDefinition* parseCharacter(const string& line);
+	GUICharacter* parseCharacter(const string& line);
 
 	/**
 	 * Get character defintion
 	 * @param charId character id
 	 * @return character definition
 	 */
-	inline GUIFont_CharacterDefinition* getCharacter(uint32_t charId) {
+	inline GUICharacter* getCharacter(uint32_t charId) {
 		auto charIt = chars.find(charId);
 		if (charIt != chars.end()) return charIt->second;
 		return nullptr;
 	}
+
+	/**
+	 * Draw character
+	 * @param guiRenderer gui renderer
+	 * @param character character
+	 * @param x x
+	 * @param y y
+	 * @param color color
+	 */
+	void drawCharacter(GUIRenderer* guiRenderer, GUICharacter* character, int x, int y, const GUIColor& color = GUIColor::GUICOLOR_WHITE);
+
+	/**
+	 * Draw background
+	 * @param guiRenderer gui renderer
+	 * @param character character
+	 * @param x x
+	 * @param y y
+	 * @param lineHeight line height
+	 * @param color color
+	 */
+	void drawCharacterBackground(GUIRenderer* guiRenderer, GUICharacter* character, int x, int y, int lineHeight, const GUIColor& color);
 
 public:
 	/**
@@ -99,6 +120,13 @@ public:
 	 * Dispose
 	 */
 	void dispose();
+
+	/**
+	 * @return texture
+	 */
+	inline Texture* getTexture() {
+		return texture;
+	}
 
 	/**
 	 * Draw string

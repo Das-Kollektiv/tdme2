@@ -9,7 +9,7 @@
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/gui/renderer/GUIFont_CharacterDefinition.h>
+#include <tdme/gui/renderer/GUICharacter.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/math/Math.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -28,7 +28,7 @@ using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::Engine;
 using tdme::gui::renderer::GUIFont;
-using tdme::gui::renderer::GUIFont_CharacterDefinition;
+using tdme::gui::renderer::GUICharacter;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::math::Math;
 using tdme::os::filesystem::FileSystem;
@@ -70,7 +70,7 @@ GUIFont* GUIFont::parse(const string& pathName, const string& fileName)
 		} else
 		if (StringTools::startsWith(line, "char")) {
 			auto def = font->parseCharacter(line);
-			font->chars[def->id] = def;
+			font->chars[def->getId()] = def;
 		}
 		if (StringTools::startsWith(line, "kernings c")) {
 		} else
@@ -91,39 +91,47 @@ GUIFont* GUIFont::parse(const string& pathName, const string& fileName)
 	}
 	font->yOffsetMin = 10000;
 	for (auto& fontIt: font->chars) {
-		auto characterDefinition = fontIt.second;
-		if (characterDefinition->yOffset < font->yOffsetMin) font->yOffsetMin = characterDefinition->yOffset;
-		if (characterDefinition->height + characterDefinition->yOffset > font->lineHeight) font->lineHeight = characterDefinition->height + characterDefinition->yOffset;
+		auto character = fontIt.second;
+		if (character->getYOffset() < font->yOffsetMin) font->yOffsetMin = character->getYOffset();
+		if (character->getHeight() + character->getYOffset() > font->lineHeight) font->lineHeight = character->getHeight() + character->getYOffset();
 	}
 	return font;
 }
 
-GUIFont_CharacterDefinition* GUIFont::parseCharacter(const string& line)
+GUICharacter* GUIFont::parseCharacter(const string& line)
 {
-	auto characterDefinition = new GUIFont_CharacterDefinition(this);
 	StringTokenizer t;
 	t.tokenize(line, " =");
 	t.nextToken();
 	t.nextToken();
-	characterDefinition->id = Integer::parse(t.nextToken());
+	auto id = Integer::parse(t.nextToken());
 	t.nextToken();
-	characterDefinition->x = Integer::parse(t.nextToken());
+	auto x = Integer::parse(t.nextToken());
 	t.nextToken();
-	characterDefinition->y = Integer::parse(t.nextToken());
+	auto y = Integer::parse(t.nextToken());
 	t.nextToken();
-	characterDefinition->width = Integer::parse(t.nextToken());
+	auto width = Integer::parse(t.nextToken());
 	t.nextToken();
-	characterDefinition->height = Integer::parse(t.nextToken());
+	auto height = Integer::parse(t.nextToken());
 	t.nextToken();
-	characterDefinition->xOffset = Integer::parse(t.nextToken());
+	auto xOffset = Integer::parse(t.nextToken());
 	t.nextToken();
-	characterDefinition->yOffset = Integer::parse(t.nextToken());
+	auto yOffset = Integer::parse(t.nextToken());
 	t.nextToken();
-	characterDefinition->xAdvance = Integer::parse(t.nextToken());
-	if (characterDefinition->id != u' ') {
-		lineHeight = Math::max(characterDefinition->height + characterDefinition->yOffset, lineHeight);
+	auto xAdvance = Integer::parse(t.nextToken());
+	if (id != ' ') {
+		lineHeight = Math::max(height + yOffset, lineHeight); // TODO
 	}
-	return characterDefinition;
+	return new GUICharacter(
+		id,
+		x,
+		y,
+		width,
+		height,
+		xOffset,
+		yOffset,
+		xAdvance
+	);
 }
 
 void GUIFont::initialize()
@@ -147,8 +155,8 @@ void GUIFont::drawString(GUIRenderer* guiRenderer, int x, int y, const MutableSt
 		auto currentX = x;
 		for (auto i = offset; i < text.size() && i < length; i++) {
 			auto characterId = text.charAt(i);
-			auto characterDefinition = getCharacter(characterId);
-			if (characterDefinition == nullptr) continue;
+			auto character = getCharacter(characterId);
+			if (character == nullptr) continue;
 			auto currentInSelection = i >= selectionStartIndex && i < selectionEndIndex;
 			if (currentInSelection != inSelection) {
 				guiRenderer->render();
@@ -156,8 +164,8 @@ void GUIFont::drawString(GUIRenderer* guiRenderer, int x, int y, const MutableSt
 				currentColor = inSelection == true?backgroundColor:color;
 				currentBackgroundColor = inSelection == true?color:backgroundColor;
 			}
-			characterDefinition->drawBackground(guiRenderer, currentX, y, lineHeight, currentBackgroundColor);
-			currentX += characterDefinition->xAdvance;
+			drawCharacterBackground(guiRenderer, character, currentX, y, lineHeight, currentBackgroundColor);
+			currentX += character->getXAdvance();
 		}
 		guiRenderer->render();
 	}
@@ -166,8 +174,8 @@ void GUIFont::drawString(GUIRenderer* guiRenderer, int x, int y, const MutableSt
 	auto currentX = x;
 	for (auto i = offset; i < text.size() && i < length; i++) {
 		auto characterId = text.charAt(i);
-		auto characterDefinitions = getCharacter(characterId);
-		if (characterDefinitions == nullptr) continue;
+		auto character = getCharacter(characterId);
+		if (character == nullptr) continue;
 		auto currentInSelection = i >= selectionStartIndex && i < selectionEndIndex;
 		if (currentInSelection != inSelection) {
 			guiRenderer->setFontColor(currentColor);
@@ -176,8 +184,8 @@ void GUIFont::drawString(GUIRenderer* guiRenderer, int x, int y, const MutableSt
 			currentColor = inSelection == true?backgroundColor:color;
 			currentBackgroundColor = inSelection == true?color:backgroundColor;
 		}
-		characterDefinitions->draw(guiRenderer, currentX, y);
-		currentX += characterDefinitions->xAdvance;
+		drawCharacter(guiRenderer, character, currentX, y);
+		currentX += character->getXAdvance();
 	}
 	guiRenderer->setFontColor(currentColor);
 	guiRenderer->render();
@@ -190,9 +198,9 @@ int GUIFont::getTextIndexX(const MutableString& text, int offset, int length, in
 	auto x = 0;
 	for (auto i = offset; i < index && i < text.size() && i < length; i++) {
 		auto characterId = text.charAt(i);
-		auto characterDefinition = getCharacter(characterId);
-		if (characterDefinition == nullptr) continue;
-		x += characterDefinition->xAdvance;
+		auto character = getCharacter(characterId);
+		if (character == nullptr) continue;
+		x += character->getXAdvance();
 	}
 	return x;
 }
@@ -204,9 +212,9 @@ int GUIFont::getTextIndexByX(const MutableString& text, int offset, int length, 
 	if (length == 0) length = text.size();
 	for (; index < text.size() && index < length; index++) {
 		auto characterId = text.charAt(index);
-		auto characterDefinition = getCharacter(characterId);
-		if (characterDefinition == nullptr) continue;
-		auto xAdvance = characterDefinition->xAdvance;
+		auto character = getCharacter(characterId);
+		if (character == nullptr) continue;
+		auto xAdvance = character->getXAdvance();
 		x += xAdvance;
 		if (x - xAdvance / 2 > textX) {
 			return index;
@@ -220,9 +228,9 @@ int GUIFont::getTextWidth(const MutableString& text)
 	auto width = 0;
 	for (auto i = 0; i < text.size(); i++) {
 		auto characterId = text.charAt(i);
-		auto characterDefinition = getCharacter(characterId);
-		if (characterDefinition == nullptr) continue;
-		width += characterDefinition->xAdvance;
+		auto character = getCharacter(characterId);
+		if (character == nullptr) continue;
+		width += character->getXAdvance();
 	}
 	return width;
 }
@@ -231,9 +239,9 @@ int GUIFont::getTextIndexXAtWidth(const MutableString& text, int width) {
 	auto x = 0;
 	for (auto i = 0; i < text.size(); i++) {
 		auto characterId = text.charAt(i);
-		auto characterDefinition = getCharacter(characterId);
-		if (characterDefinition == nullptr) continue;
-		x += characterDefinition->xAdvance;
+		auto character = getCharacter(characterId);
+		if (character == nullptr) continue;
+		x += character->getXAdvance();
 		if (x > width) return i;
 	}
 	return text.size() - 1;
@@ -242,4 +250,70 @@ int GUIFont::getTextIndexXAtWidth(const MutableString& text, int width) {
 int GUIFont::getLineHeight()
 {
 	return lineHeight;
+}
+
+inline void GUIFont::drawCharacter(GUIRenderer* guiRenderer, GUICharacter* character, int x, int y, const GUIColor& color) {
+	float screenWidth = guiRenderer->getScreenNode()->getScreenWidth();
+	float screenHeight = guiRenderer->getScreenNode()->getScreenHeight();
+	float left = x + character->getXOffset();
+	float top = y + character->getYOffset();
+	float width = character->getWidth();
+	float height = character->getHeight();
+	float textureWidth = texture->getTextureWidth();
+	float textureHeight = texture->getTextureHeight();
+	float textureCharLeft = character->getX();
+	float textureCharTop = character->getY();
+	float textureCharWidth = character->getWidth();
+	float textureCharHeight = character->getHeight();
+	auto& fontColor = color.getArray();
+	guiRenderer->addQuad(
+		((left) / (screenWidth / 2.0f)) - 1.0f,
+		((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+		fontColor[0], fontColor[1], fontColor[2], fontColor[3],
+		(textureCharLeft) / textureWidth, (textureCharTop) / textureHeight,
+		((left + width) / (screenWidth / 2.0f)) - 1.0f,
+		((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+		fontColor[0], fontColor[1], fontColor[2], fontColor[3],
+		(textureCharLeft + textureCharWidth) / textureWidth, (textureCharTop) / textureHeight,
+		((left + width) / (screenWidth / 2.0f)) - 1.0f,
+		((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
+		fontColor[0], fontColor[1], fontColor[2], fontColor[3],
+		(textureCharLeft + textureCharWidth) / textureWidth,
+		(textureCharTop + textureCharHeight) / textureHeight,
+		((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
+		fontColor[0], fontColor[1], fontColor[2], fontColor[3],
+		(textureCharLeft) / textureWidth,
+		(textureCharTop + textureCharHeight) / textureHeight
+	);
+}
+
+inline void GUIFont::drawCharacterBackground(GUIRenderer* guiRenderer, GUICharacter* character, int x, int y, int lineHeight, const GUIColor& color) {
+	float screenWidth = guiRenderer->getScreenNode()->getScreenWidth();
+	float screenHeight = guiRenderer->getScreenNode()->getScreenHeight();
+	float left = x + character->getXOffset();
+	float top = y;
+	float width = character->getWidth();
+	float height = lineHeight;
+	auto& backgroundColor = color.getArray();
+	guiRenderer->addQuad(
+		((left) / (screenWidth / 2.0f)) - 1.0f,
+		((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+		backgroundColor[0], backgroundColor[1], backgroundColor[2], backgroundColor[3],
+		0.0f,
+		1.0f,
+		((left + width) / (screenWidth / 2.0f)) - 1.0f,
+		((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+		backgroundColor[0], backgroundColor[1], backgroundColor[2], backgroundColor[3],
+		1.0f,
+		1.0f,
+		((left + width) / (screenWidth / 2.0f)) - 1.0f,
+		((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
+		backgroundColor[0], backgroundColor[1], backgroundColor[2], backgroundColor[3],
+		1.0f,
+		0.0f,
+		((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
+		backgroundColor[0], backgroundColor[1], backgroundColor[2], backgroundColor[3],
+		0.0f,
+		0.0f
+	);
 }

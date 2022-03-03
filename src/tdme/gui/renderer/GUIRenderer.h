@@ -38,8 +38,6 @@ using tdme::utilities::ShortBuffer;
  */
 class tdme::gui::renderer::GUIRenderer final
 {
-	friend class GUIFont_CharacterDefinition;
-
 public:
 	static constexpr float SCREEN_LEFT { -1.0f };
 	static constexpr float SCREEN_TOP { 1.0f };
@@ -130,6 +128,13 @@ public:
 	 * Done rendering
 	 */
 	void doneRendering();
+
+	/**
+	 * @return GUI screen node
+	 */
+	inline GUIScreenNode* getScreenNode() {
+		return screenNode;
+	}
 
 	/**
 	 * Init screen
