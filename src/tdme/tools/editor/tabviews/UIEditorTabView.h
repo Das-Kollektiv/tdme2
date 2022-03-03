@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <string>
 #include <vector>
 
@@ -18,6 +19,7 @@
 #include <tdme/tools/editor/views/fwd-tdme.h>
 #include <tdme/utilities/Float.h>
 
+using std::array;
 using std::string;
 
 using tdme::engine::Engine;
@@ -52,7 +54,6 @@ protected:
 	float projectedUiMaxX { Float::MIN_VALUE };
 	float projectedUiMaxZ { Float::MIN_VALUE };
 
-
 private:
 	EditorView* editorView { nullptr };
 	string tabId;
@@ -60,6 +61,7 @@ private:
 	UIEditorTabController* uiTabController { nullptr };
 	TabView::OutlinerState outlinerState;
 	vector<GUIScreenNode*> screenNodes;
+	vector<array<int, 2>> screenDimensions;
 	CameraRotationInputHandler* cameraRotationInputHandler { nullptr };
 
 	// overridden methods
@@ -104,7 +106,7 @@ public:
 	/**
 	 * @return screen nodes
 	 */
-	inline vector<GUIScreenNode*>& getScreenNodes() {
+	inline const vector<GUIScreenNode*>& getScreenNodes() {
 		return screenNodes;
 	}
 
@@ -112,6 +114,13 @@ public:
 	 * Add screen
 	 */
 	void addScreen();
+
+	/**
+	 * Set screen
+	 * @param screenIdx screen index
+	 * @param screenNode screen node
+	 */
+	void setScreen(int screenIdx, GUIScreenNode* screenNode);
 
 	/**
 	 * Unset screen

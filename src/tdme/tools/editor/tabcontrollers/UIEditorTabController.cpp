@@ -428,7 +428,7 @@ void UIEditorTabController::onLoadScreen() {
 					auto view = uiEditorTabController->getView();
 					view->unsetScreen(screenIdx);
 					try {
-						view->getScreenNodes()[screenIdx] = GUIParser::parse(pathName, fileName);
+						view->setScreen(screenIdx, GUIParser::parse(pathName, fileName));
 					} catch (Exception& exception) {
 						Console::println(
 							string() +
@@ -527,9 +527,12 @@ void UIEditorTabController::reloadScreens() {
 				auto fileName = screenNode->getFileName();
 				view->unsetScreen(screenIdx);
 				try {
-					view->getScreenNodes()[screenIdx] = GUIParser::parse(
-						Tools::getPathName(fileName),
-						Tools::getFileName(fileName)
+					view->setScreen(
+						screenIdx,
+						GUIParser::parse(
+							Tools::getPathName(fileName),
+							Tools::getFileName(fileName)
+						)
 					);
 				} catch (Exception& exception) {
 					Console::println(

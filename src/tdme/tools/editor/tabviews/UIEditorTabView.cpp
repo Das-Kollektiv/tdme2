@@ -63,6 +63,7 @@ UIEditorTabView::UIEditorTabView(EditorView* editorView, const string& tabId, GU
 	this->tabId = tabId;
 	this->popUps = editorView->getPopUps();
 	screenNodes.push_back(screenNode);
+	screenDimensions.push_back({ screenNode->getSizeConstraints().maxWidth, screenNode->getSizeConstraints().maxHeight });
 	guiEngine = Engine::createOffScreenInstance(1920, 1080, false, false, false);
 	guiEngine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	outlinerState.expandedOutlinerParentOptionValues.push_back("0.0");
@@ -179,6 +180,13 @@ void UIEditorTabView::reloadOutliner() {
 
 void UIEditorTabView::addScreen() {
 	screenNodes.push_back(nullptr);
+	screenDimensions.push_back({ -1, -1});
+}
+
+void UIEditorTabView::setScreen(int screenIdx, GUIScreenNode* screenNode) {
+	if (screenIdx < 0 || screenIdx >= screenNodes.size()) return;
+	screenNodes[screenIdx] = screenNode;
+	screenDimensions[screenIdx] = { screenNode->getSizeConstraints().maxWidth, screenNode->getSizeConstraints().maxHeight };
 }
 
 void UIEditorTabView::unsetScreen(int screenIdx) {
@@ -187,6 +195,7 @@ void UIEditorTabView::unsetScreen(int screenIdx) {
 	if (screenNode != nullptr) {
 		guiEngine->getGUI()->removeScreen(screenNode->getId());
 		screenNodes[screenIdx] = nullptr;
+		screenDimensions[screenIdx] = { -1, -1 };
 	}
 }
 
@@ -196,19 +205,33 @@ void UIEditorTabView::removeScreen(int screenIdx) {
 	if (screenNode != nullptr) {
 		guiEngine->getGUI()->removeScreen(screenNode->getId());
 		screenNodes.erase(screenNodes.begin() + screenIdx);
+		screenDimensions.erase(screenDimensions.begin() + screenIdx);
 	}
 }
 
 void UIEditorTabView::reAddScreens() {
 	guiEngine->getGUI()->resetRenderScreens();
-	for (auto screenNode: screenNodes) {
+	auto screensMaxWidth = -1;
+	auto screensMaxHeight = -1;
+	for (auto i = 0; i < screenNodes.size(); i++) {
+		auto screenNode = screenNodes[i];
+		auto& screenDimensionsEntity = screenDimensions[i];
 		if (screenNode == nullptr) continue;
+		auto screenMaxWidth = screenDimensionsEntity[0];
+		auto screenMaxHeight = screenDimensionsEntity[1];
+		if (screenMaxWidth > screensMaxWidth) screensMaxWidth = screenMaxWidth;
+		if (screenMaxHeight > screensMaxHeight) screensMaxHeight = screenMaxHeight;
 		screenNode->getSizeConstraints().minWidth = -1;
 		screenNode->getSizeConstraints().minHeight = -1;
 		screenNode->getSizeConstraints().maxWidth = -1;
 		screenNode->getSizeConstraints().maxHeight = -1;
 		guiEngine->getGUI()->addScreen(screenNode->getId(), screenNode);
 		guiEngine->getGUI()->addRenderScreen(screenNode->getId());
+	}
+	if (screensMaxWidth == -1) screensMaxWidth = 1920;
+	if (screensMaxHeight == -1) screensMaxHeight = 1080;
+	if (guiEngine->getWidth() != screensMaxWidth || guiEngine->getHeight() != screensMaxHeight) {
+		guiEngine->reshape(screensMaxWidth, screensMaxHeight);
 	}
 }
 
