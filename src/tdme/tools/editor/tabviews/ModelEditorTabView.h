@@ -239,7 +239,7 @@ public:
 	void playSound(const string& soundId) override;
 	void stopSound() override;
 	void updateRendering() override;
-	inline bool hasFixedSize() override{ return false; };
+	inline bool hasFixedSize() override { return false; };
 
 	/**
 	 * Play animation

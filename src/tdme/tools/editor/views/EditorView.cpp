@@ -97,8 +97,8 @@ void EditorView::handleInputEvents()
 	//
 	auto tabView = editorScreenController->getSelectedTab();
 	if (tabView != nullptr) {
-		auto xScale = tabView->getTabView()->hasFixedSize() == false?1.0f:static_cast<float>(engine->getWidth()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenWidth());
-		auto yScale = tabView->getTabView()->hasFixedSize() == false?1.0f:static_cast<float>(engine->getHeight()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenHeight());
+		auto xScale = static_cast<float>(engine->getWidth()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenWidth());
+		auto yScale = static_cast<float>(engine->getHeight()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenHeight());
 		int left, top, width, height;
 		getViewPort(tabView->getFrameBufferNode(), left, top, width, height);
 		auto offsetX = tabView->getFrameBufferNode()->computeParentChildrenRenderOffsetXTotal();
@@ -136,17 +136,21 @@ void EditorView::handleInputEvents()
 void EditorView::display()
 {
 	auto tabView = editorScreenController->getSelectedTab();
-	if (tabView != nullptr){
+	if (tabView != nullptr) {
+		auto xScale = static_cast<float>(engine->getWidth()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenWidth());
+		auto yScale = static_cast<float>(engine->getHeight()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenHeight());
 		int left, top, width, height;
 		getViewPort(tabView->getFrameBufferNode()->getParentNode(), left, top, width, height);
+		width/= xScale;
+		height/= yScale;
 		auto reshaped = false;
 		if (tabView->getTabView()->hasFixedSize() == false &&
 			(tabView->getTabView()->getEngine()->getWidth() != width || tabView->getTabView()->getEngine()->getHeight() != height)) {
 			tabView->getTabView()->getEngine()->reshape(width, height);
 			reshaped = true;
 		}
-		tabView->getTabView()->display();
 		tabView->getFrameBufferNode()->setFrameBuffer(tabView->getTabView()->getEngine()->getFrameBuffer());
+		tabView->getTabView()->display();
 		if (reshaped == true) {
 			editorScreenController->getScreenNode()->invalidateLayout(editorScreenController->getScreenNode()->getNodeById(tabView->getFrameBufferNode()->getId()));
 		}
