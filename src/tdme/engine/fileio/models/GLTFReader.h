@@ -46,7 +46,51 @@ private:
 	/**
 	 * @return component byte size
 	 */
-	static size_t getComponentTypeByteSize(int type);
+	inline static size_t getComponentTypeByteSize(int type) {
+		switch (type) {
+			case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
+			case TINYGLTF_COMPONENT_TYPE_BYTE:
+				return sizeof(char);
+			case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
+			case TINYGLTF_COMPONENT_TYPE_SHORT:
+				return sizeof(short);
+			case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:
+			case TINYGLTF_COMPONENT_TYPE_INT:
+				return sizeof(int);
+			case TINYGLTF_COMPONENT_TYPE_FLOAT:
+				return sizeof(float);
+			case TINYGLTF_COMPONENT_TYPE_DOUBLE:
+				return sizeof(double);
+			default:
+				return 0;
+		}
+	}
+
+	/**
+	 * @return component type string
+	 */
+	inline static string getComponentTypeString(int type) {
+		switch (type) {
+			case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
+				return "uint8_t";
+			case TINYGLTF_COMPONENT_TYPE_BYTE:
+				return "int8_t";
+			case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
+				return "uint16_t";
+			case TINYGLTF_COMPONENT_TYPE_SHORT:
+				return "int16_t";
+			case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:
+				return "uint32_t";
+			case TINYGLTF_COMPONENT_TYPE_INT:
+				return "int32_t";
+			case TINYGLTF_COMPONENT_TYPE_FLOAT:
+				return "float";
+			case TINYGLTF_COMPONENT_TYPE_DOUBLE:
+				return "double";
+			default:
+				return 0;
+		}
+	}
 
 	/**
 	 * Interpolate key frames to our internal 30fps format
@@ -77,18 +121,6 @@ private:
 	 * @param parentNode TDME parent node
 	 */
 	static void parseNodeChildren(const string& pathName, const tinygltf::Model& gltfModel, const vector<int>& gltfNodeChildrenIdx, Node* parentNode);
-
-	/**
-	 * Write PNG from memory
-	 * @param pathName path name
-	 * @param fileName file name
-	 * @param channels channel count, whereas 3 is RGB and 4 is RGBA
-	 * @param bitsPerChannel bits per color channel
-	 * @param width width
-	 * @param height height
-	 * @param pixels pixels
-	 */
-	static bool writePNG(const string& pathName, const string& fileName, int channels, int bitsPerChannel, int width, int height, const uint8_t* pixels);
 
 	/**
 	 * Determine texture file name
