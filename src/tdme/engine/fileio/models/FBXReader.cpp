@@ -831,7 +831,6 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 			FbxAMatrix transformLinkMatrix;
 			fbxCluster->GetTransformMatrix(transformMatrix);
 			fbxCluster->GetTransformLinkMatrix(transformLinkMatrix);
-			Matrix4x4 bindShapeMatrixArray;
 			Joint joint(fbxJointName);
 			Matrix4x4 bindMatrix;
 			bindMatrix.set(
