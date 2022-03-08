@@ -7,7 +7,7 @@ OBJ_DEBUG = obj-debug
 # determine platform
 OSSHORT := $(shell sh -c 'uname -o 2>/dev/null')
 OS := $(shell sh -c 'uname -s 2>/dev/null')
-ARCH := $(shell sh -c 'uname -m 2>/dev/null')
+MACHINE := $(shell sh -c 'uname -m 2>/dev/null')
 
 #
 NAME = tdme2
@@ -104,15 +104,24 @@ else ifeq ($(OS), Haiku)
 	OFLAGS := -O2
 else ifeq ($(OS), Linux)
 	# Linux
-	SRCS_PLATFORM := $(SRCS_PLATFORM) \
-		src/tdme/os/network/platform/linux/KernelEventMechanism.cpp \
-		src/tdme/engine/fileio/models/ModelReader.cpp
 	INCLUDES := $(INCLUDES) -L/usr/lib64
 	OPENGL_RENDERER_LDFLAGS := -lGLEW -lGL -lglfw
 	VULKAN_RENDERER_LDFLAGS := -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -lGLESv2 -lEGL -lglfw
-	LIBS_LDFLAGS := -L/mingw64/lib -ldl -lglfw -lopenal
+	LIBS_LDFLAGS := -ldl -lglfw -lopenal
 	OFLAGS := -O2
+	ifeq ($(MACHINE), x86_64)
+		SRCS_PLATFORM := $(SRCS_PLATFORM) \
+			src/tdme/os/network/platform/linux/KernelEventMechanism.cpp \
+			src/tdme/engine/fileio/models/FBXReader.cpp \
+			src/tdme/engine/fileio/models/ModelReaderFBX.cpp
+		INCLUDES := $(INCLUDES) -Iext/fbx/linux/include
+		LIBS_LDFLAGS := $(LIBS_LDFLAGS) -Lext/fbx/linux/lib -lfbxsdk -lxml2
+	else
+		SRCS_PLATFORM := $(SRCS_PLATFORM) \
+			src/tdme/os/network/platform/linux/KernelEventMechanism.cpp \
+			src/tdme/engine/fileio/models/ModelReader.cpp
+	endif
 else
 	# Windows
 	SRCS_PLATFORM:= $(SRCS_PLATFORM) \
