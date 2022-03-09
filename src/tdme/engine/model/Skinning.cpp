@@ -43,8 +43,8 @@ void Skinning::setVerticesJointsWeights(const vector<vector<JointWeight>>& verti
 {
 	this->verticesJointsWeights.resize(verticesJointsWeights.size());
 	for (auto i = 0; i < verticesJointsWeights.size(); i++) {
-		this->verticesJointsWeights[i].resize(verticesJointsWeights.at(i).size());
-		for (auto j = 0; j < verticesJointsWeights.at(i).size(); j++) {
+		this->verticesJointsWeights[i].resize(verticesJointsWeights[i].size());
+		for (auto j = 0; j < verticesJointsWeights[i].size(); j++) {
 			this->verticesJointsWeights[i][j] = verticesJointsWeights[i][j];
 		}
 	}

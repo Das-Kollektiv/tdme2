@@ -88,6 +88,34 @@ private:
 			case TINYGLTF_COMPONENT_TYPE_DOUBLE:
 				return "double";
 			default:
+				return "unknown";
+		}
+	}
+
+	/**
+	 * @return type string
+	 */
+	inline static string getTypeString(int type) {
+		switch (type) {
+			case TINYGLTF_TYPE_VEC2:
+				return "Vector2";
+			case TINYGLTF_TYPE_VEC3:
+				return "Vector3";
+			case TINYGLTF_TYPE_VEC4:
+				return "Vector4";
+			case TINYGLTF_TYPE_MAT2:
+				return "Matrix2x2";
+			case TINYGLTF_TYPE_MAT3:
+				return "Matrix3x3";
+			case TINYGLTF_TYPE_MAT4:
+				return "Matrix4x4";
+			case TINYGLTF_TYPE_SCALAR:
+				return "Scalar";
+			case TINYGLTF_TYPE_VECTOR:
+				return "Vector";
+			case TINYGLTF_TYPE_MATRIX:
+				return "Matrix";
+			default:
 				return 0;
 		}
 	}
