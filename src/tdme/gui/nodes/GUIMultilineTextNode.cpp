@@ -401,6 +401,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 	string tabString3 = "   ";
 	string tabString4 = "    ";
 	vector<int> lineCharIdxs;
+	vector<int> lineBreakIdxs;
 	auto boundTexture = -1;
 	GUIColor lastColor = color;
 	for (auto i = charStartIdx; i < charEndIdx;) {
@@ -445,6 +446,8 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 		auto lineWidth = 0.0f;
 
 		//
+		lineBreakIdxs.clear();
+		lineBreakIdxs.push_back(-1);
 		{
 			Style* textStyle = nullptr;
 			auto _font = font;
@@ -489,12 +492,19 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 				} else {
 					_font = font;
 				}
+				if (line[k] == ' ') lineBreakIdxs[lineBreakIdxs.size() - 1] = k;
 				auto character = _font->getCharacter(line[k]);
 				if (character != nullptr) {
 					lineWidth+= character->getXAdvance();
+					if (lineWidth > computedConstraints.width - (border.left + border.right + padding.left + padding.right)) {
+						if (lineBreakIdxs[lineBreakIdxs.size() - 1] == -1) lineBreakIdxs[lineBreakIdxs.size() - 1] = k - 1;
+						lineBreakIdxs.push_back(-1);
+						lineWidth = 0;
+					}
 				}
 			}
 		}
+		lineBreakIdxs[lineBreakIdxs.size() - 1] = -1;
 
 		//
 		{
@@ -536,6 +546,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 						}
 					}
 				}
+				// apply text style or defaults
 				if (textStyle != nullptr) {
 					_font = textStyle->font != nullptr?textStyle->font:font;
 					_color = textStyle->color;
@@ -543,11 +554,18 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 					_font = font;
 					_color = color;
 				}
+				// do line break
+				for (auto& lineBreakIdx: lineBreakIdxs) {
+					if (k == lineBreakIdx) {
+						x = 0;
+						y+= lineHeight;
+						break;
+					}
+				}
+				// draw character
 				auto character = _font->getCharacter(line[k]);
 				if (character != nullptr) {
 					float left = x + xIndentLeft;
-					// 30 LineHeight, 24 Baseline
-					// 19 LineHeight, 15 Baseline
 					float top = y + yIndentTop + (baseLine - _font->getBaseLine());
 					if (boundTexture == -1) {
 						boundTexture = _font->getTextureId();
