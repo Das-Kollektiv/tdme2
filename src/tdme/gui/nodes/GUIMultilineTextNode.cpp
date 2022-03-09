@@ -2,8 +2,12 @@
 
 #include <list>
 #include <string>
+#include <string_view>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUINode_AlignmentHorizontal.h>
 #include <tdme/gui/nodes/GUINode_AlignmentVertical.h>
@@ -23,8 +27,12 @@
 
 using std::list;
 using std::string;
+using std::string_view;
 using std::to_string;
 
+using tdme::engine::Engine;
+using tdme::engine::fileio::textures::Texture;
+using tdme::engine::subsystems::manager::TextureManager;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIMultilineTextNode;
 using tdme::gui::nodes::GUINode_AlignmentHorizontal;
@@ -67,7 +75,6 @@ GUIMultilineTextNode::GUIMultilineTextNode(
 {
 	this->font = font.empty() == true?nullptr:GUI::getFont(screenNode->getApplicationRootPathName(), font);
 	this->color = color.empty() == true || color.length() == 0?GUIColor():GUIColor(color);
-	this->text.set(text);
 	this->autoWidth = 0;
 	this->autoHeight = 0;
 	this->parentOffsetsChanged = true;
@@ -80,6 +87,7 @@ GUIMultilineTextNode::GUIMultilineTextNode(
 	this->heightLast = -1;
 	this->startTextStyleIdx = -1;
 	if (this->font != nullptr) this->font->initialize();
+	setText(text);
 }
 
 const string GUIMultilineTextNode::getNodeType()
@@ -193,7 +201,6 @@ void GUIMultilineTextNode::computeContentAlignment() {
 }
 
 void GUIMultilineTextNode::setText(const MutableString& text) {
-	this->text = text;
 	this->parentOffsetsChanged = true;
 	this->parentXOffsetLast = 0.0f;
 	this->parentYOffsetLast = 0.0f;
@@ -204,10 +211,127 @@ void GUIMultilineTextNode::setText(const MutableString& text) {
 	this->heightLast = -1;
 	this->startTextStyleIdx = -1;
 	screenNode->invalidateLayout(this);
+	disposeStyles();
+	this->text.reset();
+	// TODO: parse BBCode styles
+	/*
+	[font=schriftart]Text[/font]
+	[color=farbe]farbiger Text[/color]
+	[url=http://example.com/]Linktext[/url]
+	[image]example.com/bild.jpg[/image] (Bearbeitet)
+	*/
+	string styleFont;
+	string styleColor;
+	string styleUrl;
+	string styleImage;
+	//
+	auto parseStyle = false;
+	auto parseImage = false;
+	string currentStyle;
+	int styleStartIdx = -1;
+	char lc = 0;
+	for (auto i = 0; i < text.size(); i++) {
+		auto c = text.charAt(i);
+		if (parseStyle == true) {
+			// end of style
+			if (c == ']' && lc != '\\') {
+				auto styleTokenized = StringTools::tokenize(currentStyle, "=");
+				// apply style until current text size
+				if (styleStartIdx != -1 &&
+					(styleFont.empty() == false ||
+					styleColor.empty() == false ||
+					styleUrl.empty() == false)) {
+					if (styleColor.empty() == false) {
+						setTextStyle(styleStartIdx, this->text.size() - 1, GUIColor(styleColor), styleFont, styleUrl);
+					} else {
+						setTextStyle(styleStartIdx, this->text.size() - 1, styleFont, styleUrl);
+					}
+				}
+				if (styleTokenized.size() == 2) {
+					auto command = StringTools::toLowerCase(StringTools::trim(styleTokenized[0]));
+					auto argument = StringTools::trim(styleTokenized[1]);
+					if (command == "font") {
+						styleFont = argument;
+						styleStartIdx = this->text.size();
+					} else
+					if (command == "color") {
+						styleColor = argument;
+						styleStartIdx = this->text.size();
+					} else
+					if (command == "url") {
+						styleUrl = argument;
+						styleStartIdx = this->text.size();
+					} else {
+						Console::println("GUIMultilineTextNode::setText(): unknown style command: " + currentStyle);
+					}
+				} else
+				if (styleTokenized.size() == 1) {
+					auto command = StringTools::toLowerCase(StringTools::trim(styleTokenized[0]));
+					if (command == "/font") {
+						styleFont.clear();
+					} else
+					if (command == "/color") {
+						styleColor.clear();
+					} else
+					if (command == "/url") {
+						styleUrl.clear();
+					} else
+					if (command == "image") {
+						parseImage = true;
+					} else
+					if (command == "/image") {
+						Console::println(styleImage);
+						parseImage = false;
+					} else {
+						Console::println("GUIMultilineTextNode::setText(): unknown style command: " + currentStyle);
+					}
+				} else {
+					Console::println("GUIMultilineTextNode::setText(): unknown style command: " + currentStyle);
+				}
+				//
+				currentStyle.clear();
+				parseStyle = false;
+				if (styleFont.empty() == false ||
+					styleColor.empty() == false ||
+					styleUrl.empty() == false) {
+					styleStartIdx = this->text.size();
+				}
+			} else {
+				// style command
+				currentStyle+= c;
+			}
+		} else
+		// start of style
+		if (c == '[' && lc != '\\') {
+			parseStyle = true;
+		} else {
+			if (parseImage == true) {
+				// image
+				styleImage+= c;
+			} else {
+				// ordinary text
+				this->text.append(c);
+			}
+		}
+		//
+		lc = c;
+	}
+	// apply style until current text size
+	if (styleStartIdx != -1 &&
+		(styleFont.empty() == false ||
+		styleColor.empty() == false ||
+		styleUrl.empty() == false)) {
+		if (styleColor.empty() == false) {
+			setTextStyle(styleStartIdx, this->text.size() - 1, GUIColor(styleColor), styleFont, styleUrl);
+		} else {
+			setTextStyle(styleStartIdx, this->text.size() - 1, styleFont, styleUrl);
+		}
+	}
 }
 
 void GUIMultilineTextNode::dispose()
 {
+	disposeStyles();
 	if (font != nullptr) font->dispose();
 	GUINode::dispose();
 }
@@ -270,17 +394,95 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 	auto _charStartIdx = charStartIdx;
 	auto _y = y;
 	auto j = charStartIdx;
-	for (auto i = charStartIdx; i <= charEndIdx; i++) {
-		//
-		auto c = text.charAt(i);
-		// last char
-		auto lastChar = i == charEndIdx;
-		// check for separation char or last char
-		if (c == '\n' || c == ' ' || c == '\t' || lastChar == true) {
-			// if last char add it to current word
-			if (lastChar == true) word+= c;
-			// determine current line width + word width
-			auto lineWidth = font->getTextWidth(MutableString(line)) + font->getTextWidth(MutableString(word));
+	auto currentFont = font;
+	string spaceString = " ";
+	string tabString3 = "   ";
+	string tabString4 = "    ";
+	vector<int> lineCharIdxs;
+	for (auto i = charStartIdx; i < charEndIdx;) {
+		// determine line to render
+		{
+			line.clear();
+			lineCharIdxs.clear();
+			auto k = i;
+			for (; k < charEndIdx; k++) {
+				auto c = text.charAt(k);
+				// line finished?
+				if (c == '\n') {
+					break;
+				} else
+				if (line.empty() == false && c == ' ' && StringTools::endsWith(line, spaceString) == true) {
+					// no op as we have a line which already has a space at the end
+				} else
+				if (c == '\t') {
+					// extend tab to 4 spaces if line is not empty
+					if (line.empty() == false) {
+						if (StringTools::endsWith(line, spaceString) == true) {
+							line+= tabString3;
+						} else {
+							line+= tabString4;
+						}
+						lineCharIdxs.push_back(k);
+						lineCharIdxs.push_back(k);
+						lineCharIdxs.push_back(k);
+						lineCharIdxs.push_back(k);
+					}
+				} else {
+					line+= c;
+					lineCharIdxs.push_back(k);
+				}
+			}
+			i = k + 1;
+		}
+
+		// determine baseline and part of line to render
+		Style* textStyle = nullptr;
+		auto baseLine = font->getBaseLine();
+		auto lineHeight = font->getLineHeight();
+		for (auto k = 0; k < line.size(); k++) {
+			Style* validTextStyle = nullptr;
+			if (styles.empty() == false) {
+				// find style to start with, aligned with last line start, if we do not have a start yet
+				if (textStyleIdx == -1) {
+					textStyleIdx = 0;
+					for (auto l = 0; l < styles.size(); l++) {
+						auto textStyle = &styles[l];
+						if (textStyle->startIdx > lineCharIdxs[k]) {
+							textStyleIdx = l - 1;
+							break;
+						}
+					}
+				}
+				// ok proceed to find correct style for character in text, based on our text style index
+				auto textStyle = textStyleIdx < styles.size()?&styles[textStyleIdx]:nullptr;
+				if (textStyle != nullptr && lineCharIdxs[k] >= textStyle->startIdx) {
+					if (lineCharIdxs[k] > textStyle->endIdx) {
+						// invalid text style, check next text style
+						textStyleIdx++;
+						textStyle = textStyleIdx < styles.size()?&styles[textStyleIdx]:nullptr;
+						if (textStyle != nullptr && lineCharIdxs[k] >= textStyle->startIdx) {
+							if (lineCharIdxs[k] <= textStyle->endIdx) {
+								// valid text style
+								validTextStyle = textStyle;
+							}
+						}
+					} else
+					if (lineCharIdxs[k] <= textStyle->endIdx) {
+						// valid text style
+						validTextStyle = textStyle;
+					}
+				}
+			}
+			textStyle = validTextStyle;
+			if (textStyle != nullptr && textStyle->font != nullptr) {
+				baseLine = Math::max(baseLine, textStyle->font->getBaseLine());
+				lineHeight = Math::max(lineHeight, textStyle->font->getLineHeight());
+			}
+		}
+
+		/*
+			// check for separation char or last char
+			auto lineWidth = currentFont->getTextWidth(MutableString(line)) + currentFont->getTextWidth(MutableString(word));
 			// check if too long
 			auto tooLong =
 				requestedConstraints.widthType != GUINode_RequestedConstraints_RequestedConstraintsType::AUTO && // TODO: check with <multi... width="auto" />
@@ -304,17 +506,17 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 				auto k = 0;
 
 				//
-				TextStyle* textStyleLast = nullptr;
-				TextStyle* textStyle = nullptr;
+				Style* textStyleLast = nullptr;
+				Style* textStyle = nullptr;
 
 				//
 				do {
 					//
-					auto separationAt = font->getTextIndexXAtWidth(MutableString(lineToRender), computedConstraints.width - (border.left + border.right + padding.left + padding.right));
+					auto separationAt = currentFont->getTextIndexXAtWidth(MutableString(lineToRender), computedConstraints.width - (border.left + border.right + padding.left + padding.right));
 					lineLeft = StringTools::substring(lineToRender, separationAt + 1);
 					lineToRender = StringTools::substring(lineToRender, 0, separationAt + 1);
 					// determine current line width
-					lineWidth = font->getTextWidth(MutableString(lineToRender));
+					lineWidth = currentFont->getTextWidth(MutableString(lineToRender));
 					// horizontal alignment
 					auto x = 0;
 					if (alignments.horizontal == GUINode_AlignmentHorizontal::LEFT) {
@@ -330,7 +532,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 						float left = x + xIndentLeft;
 						float top = y + yIndentTop;
 						float width = lineWidth;
-						float height = font->getLineHeight();
+						float height = currentFont->getLineHeight();
 						if (guiRenderer->isQuadVisible(
 								((left) / (screenWidth / 2.0f)) - 1.0f,
 								((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
@@ -344,13 +546,13 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 							string textToRender;
 							auto _startTextStyleIdx = textStyleIdx;
 							for (auto l = 0; l < lineToRender.size(); l++) {
-								TextStyle* validTextStyle = nullptr;
-								if (textStyles.empty() == false) {
+								Style* validTextStyle = nullptr;
+								if (styles.empty() == false) {
 									// find style to start with, aligned with last line start
 									if (textStyleIdx == -1) {
 										textStyleIdx = 0;
-										for (auto i = 0; i < textStyles.size(); i++) {
-											auto textStyle = &textStyles[i];
+										for (auto i = 0; i < styles.size(); i++) {
+											auto textStyle = &styles[i];
 											if (textStyle->startIdx > j) {
 												textStyleIdx = i - 1;
 												break;
@@ -359,12 +561,12 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 										_startTextStyleIdx = textStyleIdx;
 									}
 									//
-									textStyle = textStyleIdx < textStyles.size()?&textStyles[textStyleIdx]:nullptr;
+									textStyle = textStyleIdx < styles.size()?&styles[textStyleIdx]:nullptr;
 									if (textStyle != nullptr && j + k + l >= textStyle->startIdx) {
 										if (j + k + l >= textStyle->endIdx) {
 											// invalid text style, check next text style
 											textStyleIdx++;
-											textStyle = textStyleIdx < textStyles.size()?&textStyles[textStyleIdx]:nullptr;
+											textStyle = textStyleIdx < styles.size()?&styles[textStyleIdx]:nullptr;
 											if (textStyle != nullptr && j + k + l >= textStyle->startIdx) {
 												if (j + k + l < textStyle->endIdx) {
 													// valid text style
@@ -380,7 +582,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 								}
 								if (textToRender.empty() == false && textStyleLast != validTextStyle) {
 									// flush/draw to screen
-									font->drawString(
+									currentFont->drawString(
 										guiRenderer,
 										left,
 										top,
@@ -389,16 +591,17 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 										0,
 										textStyleLast != nullptr?textStyleLast->color:color
 									);
-									left+= font->getTextWidth(textToRender);
+									left+= currentFont->getTextWidth(textToRender);
 									textToRender.clear();
 								}
 								//
 								textToRender+= lineToRender[l];
 								textStyleLast = validTextStyle;
+								currentFont = validTextStyle != nullptr && validTextStyle->font != nullptr?validTextStyle->font:font;
 							}
 							if (textToRender.empty() == false) {
 								// flush/draw to screen
-								font->drawString(
+								currentFont->drawString(
 									guiRenderer,
 									left,
 									top,
@@ -407,7 +610,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 									0,
 									textStyleLast != nullptr?textStyleLast->color:color
 								);
-								left+= font->getTextWidth(textToRender);
+								left+= currentFont->getTextWidth(textToRender);
 								textToRender.clear();
 							}
 							if (visible == false) {
@@ -423,7 +626,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 						}
 					}
 					// move y
-					y+= font->getLineHeight();
+					y+= currentFont->getLineHeight();
 					//
 					k+= lineToRender.size();
 					lineToRender = lineLeft;
@@ -456,48 +659,80 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 			// regular character
 			word+= c;
 		}
+		*/
 	}
 }
 
-void GUIMultilineTextNode::removeTextStyle(int startIdx, int endIdx) {
+void GUIMultilineTextNode::unsetTextStyle(int startIdx, int endIdx) {
 	// TODO: a.drewke
 }
 
-void GUIMultilineTextNode::addTextStyle(int startIdx, int endIdx, const GUIColor& color) {
-	removeTextStyle(startIdx, endIdx);
-
+void GUIMultilineTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor& color, const string& font, const string& url) {
+	unsetTextStyle(startIdx, endIdx);
 	// TODO: a.drewke
-
-	//
-	startTextStyleIdx = -1;
-	TextStyle* textStyleFirst = nullptr;
-	// 0->4 6->8
-	// 5
-	// 2
-	/*
-	auto textStyleIt = textStyles.begin();
-	for (auto& textStyle: textStyles) {
-		if (textStyleFirst == nullptr) textStyleFirst = &textStyle;
-		if (startIdx > textStyle.endIdx) {
-			textStyles.insert(
-				textStyleIt,
-				{
-					.startIdx = startIdx,
-					.endIdx = endIdx,
-					.color = color
-				}
-			);
-			return;
-		}
-		textStyleIt++;
-	}
-	*/
-	textStyles.insert(
-		/*textStyleFirst != nullptr && startIdx < textStyleFirst->startIdx?textStyles.begin():*/textStyles.end(),
+	auto _font = font.empty() == true?nullptr:GUI::getFont(screenNode->getApplicationRootPathName(), font);;
+	if (_font != nullptr) _font->initialize();
+	styles.insert(
+		styles.end(),
 		{
 			.startIdx = startIdx,
 			.endIdx = endIdx,
-			.color = color
+			.color = color,
+			.font = _font,
+			.url = url,
+			.image = nullptr,
+			.textureId = -1,
+			.width = -1,
+			.height = -1
 		}
 	);
+}
+
+void GUIMultilineTextNode::setTextStyle(int startIdx, int endIdx, const string& font, const string& url) {
+	unsetTextStyle(startIdx, endIdx);
+	// TODO: a.drewke
+	auto _font = font.empty() == true?nullptr:GUI::getFont(screenNode->getApplicationRootPathName(), font);;
+	if (_font != nullptr) _font->initialize();
+	styles.insert(
+		styles.end(),
+		{
+			.startIdx = startIdx,
+			.endIdx = endIdx,
+			.color = color,
+			.font = _font,
+			.url = url,
+			.image = nullptr,
+			.textureId = -1,
+			.width = -1,
+			.height = -1
+		}
+	);
+}
+
+void GUIMultilineTextNode::setImage(int idx, const string& image, const string& url, int width, int height) {
+	unsetTextStyle(idx,idx);
+	// TODO: a.drewke
+	auto _image = image.empty() == true?nullptr:GUI::getImage(screenNode->getApplicationRootPathName(), image);
+	styles.insert(
+		styles.end(),
+		{
+			.startIdx = idx,
+			.endIdx = idx,
+			.color = color,
+			.font = nullptr,
+			.url = url,
+			.image = _image,
+			.textureId = Engine::getInstance()->getTextureManager()->addTexture(_image, 0),
+			.width = width == -1?_image->getWidth():width,
+			.height = height == -1?_image->getHeight():height,
+		}
+	);
+}
+
+void GUIMultilineTextNode::disposeStyles() {
+	for (auto& style: styles) {
+		if (style.font != nullptr) font->dispose();
+		if (style.image != nullptr) Engine::getInstance()->getTextureManager()->removeTexture(style.image->getId());
+	}
+	styles.clear();
 }

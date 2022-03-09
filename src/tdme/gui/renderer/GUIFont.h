@@ -61,17 +61,6 @@ private:
 	GUICharacter* parseCharacter(const string& line);
 
 	/**
-	 * Get character defintion
-	 * @param charId character id
-	 * @return character definition
-	 */
-	inline GUICharacter* getCharacter(uint32_t charId) {
-		auto charIt = chars.find(charId);
-		if (charIt != chars.end()) return charIt->second;
-		return nullptr;
-	}
-
-	/**
 	 * Draw character
 	 * @param guiRenderer gui renderer
 	 * @param character character
@@ -129,6 +118,31 @@ public:
 	}
 
 	/**
+	 * Get character defintion
+	 * @param charId character id
+	 * @return character definition
+	 */
+	inline GUICharacter* getCharacter(uint32_t charId) {
+		auto charIt = chars.find(charId);
+		if (charIt != chars.end()) return charIt->second;
+		return nullptr;
+	}
+
+	/**
+	 * @return line height
+	 */
+	inline int getLineHeight() {
+		return lineHeight;
+	}
+
+	/**
+	 * @return base line
+	 */
+	inline int getBaseLine() {
+		return baseLine;
+	}
+
+	/**
 	 * Draw string
 	 * @param guiRenderer gui renderer
 	 * @param x x
@@ -176,10 +190,5 @@ public:
 	 * @return text width
 	 */
 	int getTextIndexXAtWidth(const MutableString& text, int width);
-
-	/**
-	 * @return line height
-	 */
-	int getLineHeight();
 
 };

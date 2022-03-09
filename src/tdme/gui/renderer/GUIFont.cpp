@@ -272,11 +272,6 @@ int GUIFont::getTextIndexXAtWidth(const MutableString& text, int width) {
 	return text.size() - 1;
 }
 
-int GUIFont::getLineHeight()
-{
-	return lineHeight;
-}
-
 inline void GUIFont::drawCharacter(GUIRenderer* guiRenderer, GUICharacter* character, int x, int y, const GUIColor& color) {
 	float screenWidth = guiRenderer->getScreenNode()->getScreenWidth();
 	float screenHeight = guiRenderer->getScreenNode()->getScreenHeight();

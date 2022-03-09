@@ -45,10 +45,16 @@ class tdme::gui::nodes::GUIMultilineTextNode final
 	friend class tdme::gui::GUIParser;
 
 private:
-	struct TextStyle {
+	struct Style {
 		int startIdx;
 		int endIdx;
 		GUIColor color;
+		GUIFont* font;
+		string url;
+		Texture* image;
+		int textureId;
+		int width;
+		int height;
 	};
 
 	GUIFont* font { nullptr };
@@ -67,7 +73,7 @@ private:
 	int widthLast;
 	int heightLast;
 
-	vector<TextStyle> textStyles;
+	vector<Style> styles;
 	int startTextStyleIdx { -1 };
 
 protected:
@@ -114,6 +120,11 @@ protected:
 		const MutableString& text
 	);
 
+	/**
+	 * Dispose styles
+	 */
+	void disposeStyles();
+
 	// overridden methods
 	const string getNodeType() override;
 	bool isContentNode() override;
@@ -140,18 +151,39 @@ public:
 	void setText(const MutableString& text);
 
 	/**
-	 * Remove text style
+	 * Unset text style
 	 * @param startIdx text start index
 	 * @param endIdx text end index
 	 */
-	void removeTextStyle(int startIdx, int endIdx);
+	void unsetTextStyle(int startIdx, int endIdx);
 
 	/**
-	 * Add text style
+	 * Set text style
 	 * @param startIdx text start index
 	 * @param endIdx text end index
 	 * @param color color
+	 * @param font font
+	 * @param url url
 	 */
-	void addTextStyle(int startIdx, int endIdx, const GUIColor& color);
+	void setTextStyle(int startIdx, int endIdx, const GUIColor& color, const string& font = string(), const string& url = string());
+
+	/**
+	 * Set text style
+	 * @param startIdx text start index
+	 * @param endIdx text end index
+	 * @param font font
+	 * @param url url
+	 */
+	void setTextStyle(int startIdx, int endIdx, const string& font, const string& url = string());
+
+	/**
+	 * Set image
+	 * @param idx index
+	 * @param image image
+	 * @param url url
+	 * @param width width or -1 for original image width
+	 * @param height height or -1 for original image height
+	 */
+	void setImage(int idx, const string& image, const string& url = string(), int width = -1, int height = -1);
 
 };
