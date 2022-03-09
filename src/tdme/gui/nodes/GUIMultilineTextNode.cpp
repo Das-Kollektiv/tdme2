@@ -16,6 +16,7 @@
 #include <tdme/gui/nodes/GUINode_Padding.h>
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/renderer/GUICharacter.h>
 #include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/gui/GUI.h>
@@ -42,6 +43,7 @@ using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::renderer::GUICharacter;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::GUI;
@@ -327,6 +329,7 @@ void GUIMultilineTextNode::setText(const MutableString& text) {
 			setTextStyle(styleStartIdx, this->text.size() - 1, styleFont, styleUrl);
 		}
 	}
+	//
 }
 
 void GUIMultilineTextNode::dispose()
@@ -380,7 +383,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 		parentXOffsetLast = parentXOffset;
 		parentYOffsetLast = parentYOffset;
 		charStartIdx = 0;
-		charEndIdx = text.size() - 1;
+		charEndIdx = text.size();
 		startTextStyleIdx = -1;
 		parentOffsetsChanged = false;
 		yLast = 0;
@@ -394,11 +397,12 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 	auto _charStartIdx = charStartIdx;
 	auto _y = y;
 	auto j = charStartIdx;
-	auto currentFont = font;
 	string spaceString = " ";
 	string tabString3 = "   ";
 	string tabString4 = "    ";
 	vector<int> lineCharIdxs;
+	auto boundTexture = -1;
+	GUIColor lastColor = color;
 	for (auto i = charStartIdx; i < charEndIdx;) {
 		// determine line to render
 		{
@@ -436,49 +440,141 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 		}
 
 		// determine baseline and part of line to render
-		Style* textStyle = nullptr;
 		auto baseLine = font->getBaseLine();
 		auto lineHeight = font->getLineHeight();
-		for (auto k = 0; k < line.size(); k++) {
-			Style* validTextStyle = nullptr;
-			if (styles.empty() == false) {
-				// find style to start with, aligned with last line start, if we do not have a start yet
-				if (textStyleIdx == -1) {
-					textStyleIdx = 0;
-					for (auto l = 0; l < styles.size(); l++) {
-						auto textStyle = &styles[l];
-						if (textStyle->startIdx > lineCharIdxs[k]) {
-							textStyleIdx = l - 1;
-							break;
-						}
-					}
-				}
-				// ok proceed to find correct style for character in text, based on our text style index
-				auto textStyle = textStyleIdx < styles.size()?&styles[textStyleIdx]:nullptr;
-				if (textStyle != nullptr && lineCharIdxs[k] >= textStyle->startIdx) {
-					if (lineCharIdxs[k] > textStyle->endIdx) {
-						// invalid text style, check next text style
-						textStyleIdx++;
-						textStyle = textStyleIdx < styles.size()?&styles[textStyleIdx]:nullptr;
-						if (textStyle != nullptr && lineCharIdxs[k] >= textStyle->startIdx) {
-							if (lineCharIdxs[k] <= textStyle->endIdx) {
-								// valid text style
-								validTextStyle = textStyle;
+		auto lineWidth = 0.0f;
+
+		//
+		{
+			Style* textStyle = nullptr;
+			auto _font = font;
+			auto _textStyleIdx = textStyleIdx;
+			for (auto k = 0; k < line.size(); k++) {
+				if (styles.empty() == false) {
+					// find style to start with, aligned with last line start, if we do not have a start yet
+					if (_textStyleIdx == -1) {
+						_textStyleIdx = 0;
+						for (auto l = 0; l < styles.size(); l++) {
+							auto textStyle = &styles[l];
+							if (textStyle->startIdx > lineCharIdxs[k]) {
+								_textStyleIdx = l - 1;
+								break;
 							}
 						}
-					} else
-					if (lineCharIdxs[k] <= textStyle->endIdx) {
-						// valid text style
-						validTextStyle = textStyle;
+					}
+					// ok proceed to find correct style for character in text, based on our text style index
+					auto _textStyle = _textStyleIdx < styles.size()?&styles[_textStyleIdx]:nullptr;
+					if (_textStyle != nullptr && lineCharIdxs[k] >= _textStyle->startIdx) {
+						if (lineCharIdxs[k] > _textStyle->endIdx) {
+							// invalid text style, check next text style
+							_textStyleIdx++;
+							_textStyle = _textStyleIdx < styles.size()?&styles[_textStyleIdx]:nullptr;
+							if (_textStyle != nullptr && lineCharIdxs[k] >= _textStyle->startIdx) {
+								if (lineCharIdxs[k] <= _textStyle->endIdx) {
+									// valid text style
+									textStyle = _textStyle;
+								}
+							}
+						} else
+						if (lineCharIdxs[k] <= _textStyle->endIdx) {
+							// valid text style
+							textStyle = _textStyle;
+						}
 					}
 				}
-			}
-			textStyle = validTextStyle;
-			if (textStyle != nullptr && textStyle->font != nullptr) {
-				baseLine = Math::max(baseLine, textStyle->font->getBaseLine());
-				lineHeight = Math::max(lineHeight, textStyle->font->getLineHeight());
+				if (textStyle != nullptr && textStyle->font != nullptr) {
+					_font = textStyle->font;
+					baseLine = Math::max(baseLine, _font->getBaseLine());
+					lineHeight = Math::max(lineHeight, _font->getLineHeight());
+				} else {
+					_font = font;
+				}
+				auto character = _font->getCharacter(line[k]);
+				if (character != nullptr) {
+					lineWidth+= character->getXAdvance();
+				}
 			}
 		}
+
+		//
+		{
+			auto _color = color;
+			auto _font = font;
+			Style* textStyle = nullptr;
+			auto& _textStyleIdx = textStyleIdx;
+			auto x = 0;
+			for (auto k = 0; k < line.size(); k++) {
+				if (styles.empty() == false) {
+					// find style to start with, aligned with last line start, if we do not have a start yet
+					if (_textStyleIdx == -1) {
+						_textStyleIdx = 0;
+						for (auto l = 0; l < styles.size(); l++) {
+							auto textStyle = &styles[l];
+							if (textStyle->startIdx > lineCharIdxs[k]) {
+								_textStyleIdx = l - 1;
+								break;
+							}
+						}
+					}
+					// ok proceed to find correct style for character in text, based on our text style index
+					auto _textStyle = _textStyleIdx < styles.size()?&styles[_textStyleIdx]:nullptr;
+					if (_textStyle != nullptr && lineCharIdxs[k] >= _textStyle->startIdx) {
+						if (lineCharIdxs[k] > _textStyle->endIdx) {
+							// invalid text style, check next text style
+							_textStyleIdx++;
+							_textStyle = _textStyleIdx < styles.size()?&styles[_textStyleIdx]:nullptr;
+							if (_textStyle != nullptr && lineCharIdxs[k] >= _textStyle->startIdx) {
+								if (lineCharIdxs[k] <= _textStyle->endIdx) {
+									// valid text style
+									textStyle = _textStyle;
+								}
+							}
+						} else
+						if (lineCharIdxs[k] <= _textStyle->endIdx) {
+							// valid text style
+							textStyle = _textStyle;
+						}
+					}
+				}
+				if (textStyle != nullptr) {
+					_font = textStyle->font != nullptr?textStyle->font:font;
+					_color = textStyle->color;
+				} else {
+					_font = font;
+					_color = color;
+				}
+				auto character = _font->getCharacter(line[k]);
+				if (character != nullptr) {
+					float left = x + xIndentLeft;
+					// 30 LineHeight, 24 Baseline
+					// 19 LineHeight, 15 Baseline
+					float top = y + yIndentTop + (baseLine - _font->getBaseLine());
+					if (boundTexture == -1) {
+						boundTexture = _font->getTextureId();
+						guiRenderer->bindTexture(boundTexture);
+						lastColor = _color;
+					} else
+					if (boundTexture != _font->getTextureId()) {
+						boundTexture = _font->getTextureId();
+						guiRenderer->render();
+						guiRenderer->bindTexture(boundTexture);
+						lastColor = _color;
+					} else
+					if (_color.equals(lastColor) == false) {
+						guiRenderer->render();
+						lastColor = _color;
+					}
+					_font->drawCharacter(guiRenderer, character, left, top, _color);
+					x+= character->getXAdvance();
+				}
+			}
+		}
+
+		//
+		guiRenderer->render();
+
+		//
+		y+= lineHeight;
 
 		/*
 			// check for separation char or last char
@@ -661,6 +757,8 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 		}
 		*/
 	}
+	//
+	guiRenderer->bindTexture(0);
 }
 
 void GUIMultilineTextNode::unsetTextStyle(int startIdx, int endIdx) {

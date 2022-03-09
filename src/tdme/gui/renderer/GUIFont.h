@@ -60,27 +60,6 @@ private:
 	 */
 	GUICharacter* parseCharacter(const string& line);
 
-	/**
-	 * Draw character
-	 * @param guiRenderer gui renderer
-	 * @param character character
-	 * @param x x
-	 * @param y y
-	 * @param color color
-	 */
-	void drawCharacter(GUIRenderer* guiRenderer, GUICharacter* character, int x, int y, const GUIColor& color = GUIColor::GUICOLOR_WHITE);
-
-	/**
-	 * Draw background
-	 * @param guiRenderer gui renderer
-	 * @param character character
-	 * @param x x
-	 * @param y y
-	 * @param lineHeight line height
-	 * @param color color
-	 */
-	void drawCharacterBackground(GUIRenderer* guiRenderer, GUICharacter* character, int x, int y, int lineHeight, const GUIColor& color);
-
 public:
 	/**
 	 * Parse the font definition file
@@ -118,6 +97,13 @@ public:
 	}
 
 	/**
+	 * @return texture id
+	 */
+	inline int32_t getTextureId() {
+		return textureId;
+	}
+
+	/**
 	 * Get character defintion
 	 * @param charId character id
 	 * @return character definition
@@ -141,21 +127,6 @@ public:
 	inline int getBaseLine() {
 		return baseLine;
 	}
-
-	/**
-	 * Draw string
-	 * @param guiRenderer gui renderer
-	 * @param x x
-	 * @param y y
-	 * @param text text
-	 * @param offset offset
-	 * @param length length or 0 if full length
-	 * @param color color
-	 * @param selectionStartIndex selection start index
-	 * @param selectionEndIndex selection end index
-	 * @param backgroundColor background color
-	 */
-	void drawString(GUIRenderer* guiRenderer, int x, int y, const MutableString& text, int offset, int length, const GUIColor& color, int selectionStartIndex = -1, int selectionEndIndex = -1, const GUIColor& backgroundColor = GUIColor::GUICOLOR_TRANSPARENT);
 
 	/**
 	 * Get text index X of given text and index
@@ -190,5 +161,41 @@ public:
 	 * @return text width
 	 */
 	int getTextIndexXAtWidth(const MutableString& text, int width);
+
+	/**
+	 * Draw character
+	 * @param guiRenderer gui renderer
+	 * @param character character
+	 * @param x x
+	 * @param y y
+	 * @param color color
+	 */
+	void drawCharacter(GUIRenderer* guiRenderer, GUICharacter* character, int x, int y, const GUIColor& color = GUIColor::GUICOLOR_WHITE);
+
+	/**
+	 * Draw background
+	 * @param guiRenderer gui renderer
+	 * @param character character
+	 * @param x x
+	 * @param y y
+	 * @param lineHeight line height
+	 * @param color color
+	 */
+	void drawCharacterBackground(GUIRenderer* guiRenderer, GUICharacter* character, int x, int y, int lineHeight, const GUIColor& color);
+
+	/**
+	 * Draw string
+	 * @param guiRenderer gui renderer
+	 * @param x x
+	 * @param y y
+	 * @param text text
+	 * @param offset offset
+	 * @param length length or 0 if full length
+	 * @param color color
+	 * @param selectionStartIndex selection start index
+	 * @param selectionEndIndex selection end index
+	 * @param backgroundColor background color
+	 */
+	void drawString(GUIRenderer* guiRenderer, int x, int y, const MutableString& text, int offset, int length, const GUIColor& color, int selectionStartIndex = -1, int selectionEndIndex = -1, const GUIColor& backgroundColor = GUIColor::GUICOLOR_TRANSPARENT);
 
 };

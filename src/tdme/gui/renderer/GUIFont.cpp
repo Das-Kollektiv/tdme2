@@ -170,53 +170,6 @@ void GUIFont::dispose()
 	Engine::getInstance()->getTextureManager()->removeTexture(texture->getId());
 }
 
-void GUIFont::drawString(GUIRenderer* guiRenderer, int x, int y, const MutableString& text, int offset, int length, const GUIColor& color, int selectionStartIndex, int selectionEndIndex, const GUIColor& backgroundColor)
-{
-	if (length == 0) length = text.size();
-	auto inSelection = false;
-	auto currentColor = color;
-	auto currentBackgroundColor = backgroundColor;
-	if (selectionStartIndex != -1 && selectionEndIndex != -1) {
-		auto currentX = x;
-		for (auto i = offset; i < text.size() && i < length; i++) {
-			auto characterId = text.charAt(i);
-			auto character = getCharacter(characterId);
-			if (character == nullptr) continue;
-			auto currentInSelection = i >= selectionStartIndex && i < selectionEndIndex;
-			if (currentInSelection != inSelection) {
-				guiRenderer->render();
-				inSelection = currentInSelection;
-				currentColor = inSelection == true?backgroundColor:color;
-				currentBackgroundColor = inSelection == true?color:backgroundColor;
-			}
-			drawCharacterBackground(guiRenderer, character, currentX, y, lineHeight, currentBackgroundColor);
-			currentX += character->getXAdvance();
-		}
-		guiRenderer->render();
-	}
-	guiRenderer->render();
-	guiRenderer->bindTexture(textureId);
-	auto currentX = x;
-	for (auto i = offset; i < text.size() && i < length; i++) {
-		auto characterId = text.charAt(i);
-		auto character = getCharacter(characterId);
-		if (character == nullptr) continue;
-		auto currentInSelection = i >= selectionStartIndex && i < selectionEndIndex;
-		if (currentInSelection != inSelection) {
-			guiRenderer->setFontColor(currentColor);
-			guiRenderer->render();
-			inSelection = currentInSelection;
-			currentColor = inSelection == true?backgroundColor:color;
-			currentBackgroundColor = inSelection == true?color:backgroundColor;
-		}
-		drawCharacter(guiRenderer, character, currentX, y);
-		currentX += character->getXAdvance();
-	}
-	guiRenderer->setFontColor(currentColor);
-	guiRenderer->render();
-	guiRenderer->bindTexture(0);
-}
-
 int GUIFont::getTextIndexX(const MutableString& text, int offset, int length, int index)
 {
 	if (length == 0) length = text.size();
@@ -272,7 +225,7 @@ int GUIFont::getTextIndexXAtWidth(const MutableString& text, int width) {
 	return text.size() - 1;
 }
 
-inline void GUIFont::drawCharacter(GUIRenderer* guiRenderer, GUICharacter* character, int x, int y, const GUIColor& color) {
+void GUIFont::drawCharacter(GUIRenderer* guiRenderer, GUICharacter* character, int x, int y, const GUIColor& color) {
 	float screenWidth = guiRenderer->getScreenNode()->getScreenWidth();
 	float screenHeight = guiRenderer->getScreenNode()->getScreenHeight();
 	float left = x + character->getXOffset();
@@ -307,7 +260,7 @@ inline void GUIFont::drawCharacter(GUIRenderer* guiRenderer, GUICharacter* chara
 	);
 }
 
-inline void GUIFont::drawCharacterBackground(GUIRenderer* guiRenderer, GUICharacter* character, int x, int y, int lineHeight, const GUIColor& color) {
+void GUIFont::drawCharacterBackground(GUIRenderer* guiRenderer, GUICharacter* character, int x, int y, int lineHeight, const GUIColor& color) {
 	float screenWidth = guiRenderer->getScreenNode()->getScreenWidth();
 	float screenHeight = guiRenderer->getScreenNode()->getScreenHeight();
 	float left = x;
@@ -336,4 +289,51 @@ inline void GUIFont::drawCharacterBackground(GUIRenderer* guiRenderer, GUICharac
 		0.0f,
 		0.0f
 	);
+}
+
+void GUIFont::drawString(GUIRenderer* guiRenderer, int x, int y, const MutableString& text, int offset, int length, const GUIColor& color, int selectionStartIndex, int selectionEndIndex, const GUIColor& backgroundColor)
+{
+	if (length == 0) length = text.size();
+	auto inSelection = false;
+	auto currentColor = color;
+	auto currentBackgroundColor = backgroundColor;
+	if (selectionStartIndex != -1 && selectionEndIndex != -1) {
+		auto currentX = x;
+		for (auto i = offset; i < text.size() && i < length; i++) {
+			auto characterId = text.charAt(i);
+			auto character = getCharacter(characterId);
+			if (character == nullptr) continue;
+			auto currentInSelection = i >= selectionStartIndex && i < selectionEndIndex;
+			if (currentInSelection != inSelection) {
+				guiRenderer->render();
+				inSelection = currentInSelection;
+				currentColor = inSelection == true?backgroundColor:color;
+				currentBackgroundColor = inSelection == true?color:backgroundColor;
+			}
+			drawCharacterBackground(guiRenderer, character, currentX, y, lineHeight, currentBackgroundColor);
+			currentX += character->getXAdvance();
+		}
+		guiRenderer->render();
+	}
+	guiRenderer->render();
+	guiRenderer->bindTexture(textureId);
+	auto currentX = x;
+	for (auto i = offset; i < text.size() && i < length; i++) {
+		auto characterId = text.charAt(i);
+		auto character = getCharacter(characterId);
+		if (character == nullptr) continue;
+		auto currentInSelection = i >= selectionStartIndex && i < selectionEndIndex;
+		if (currentInSelection != inSelection) {
+			guiRenderer->setFontColor(currentColor);
+			guiRenderer->render();
+			inSelection = currentInSelection;
+			currentColor = inSelection == true?backgroundColor:color;
+			currentBackgroundColor = inSelection == true?color:backgroundColor;
+		}
+		drawCharacter(guiRenderer, character, currentX, y);
+		currentX += character->getXAdvance();
+	}
+	guiRenderer->setFontColor(currentColor);
+	guiRenderer->render();
+	guiRenderer->bindTexture(0);
 }
