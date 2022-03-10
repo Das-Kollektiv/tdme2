@@ -391,7 +391,13 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 		y = yLast;
 	}
 
+	struct Line {
+		int idx;
+		float width;
+		bool spaceWrap;
+	};
 	//
+	auto maxLineWidth = computedConstraints.width - (border.left + border.right + padding.left + padding.right);
 	auto textStyleIdx = startTextStyleIdx;
 	bool visible = false;
 	auto _charStartIdx = charStartIdx;
@@ -401,7 +407,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 	string tabString3 = "   ";
 	string tabString4 = "    ";
 	vector<int> lineCharIdxs;
-	vector<int> lineBreakIdxs;
+	vector<Line> lines;
 	auto boundTexture = -1;
 	GUIColor lastColor = color;
 	for (auto i = charStartIdx; i < charEndIdx;) {
@@ -446,8 +452,14 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 		auto lineWidth = 0.0f;
 
 		//
-		lineBreakIdxs.clear();
-		lineBreakIdxs.push_back(-1);
+		lines.clear();
+		lines.push_back(
+			{
+				idx: -1,
+				width: 0.0f,
+				spaceWrap: false
+			}
+		);
 		{
 			Style* textStyle = nullptr;
 			auto _font = font;
@@ -492,27 +504,75 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 				} else {
 					_font = font;
 				}
-				if (line[k] == ' ') lineBreakIdxs[lineBreakIdxs.size() - 1] = k;
+				if (line[k] == ' ') {
+					Console::println("a: " + to_string(k) + " / " + to_string(lineWidth));
+					lines[lines.size() - 1] = {
+						idx: k,
+						width: lineWidth,
+						spaceWrap: true
+					};
+				}
 				auto character = _font->getCharacter(line[k]);
 				if (character != nullptr) {
-					lineWidth+= character->getXAdvance();
-					if (lineWidth > computedConstraints.width - (border.left + border.right + padding.left + padding.right)) {
-						if (lineBreakIdxs[lineBreakIdxs.size() - 1] == -1) lineBreakIdxs[lineBreakIdxs.size() - 1] = k - 1;
-						lineBreakIdxs.push_back(-1);
-						lineWidth = 0;
+					if (lines[lines.size() - 1].spaceWrap == false) {
+						Console::println("b: " + to_string(k) + " / " + to_string(lineWidth));
+						lines[lines.size() - 1] = {
+							idx: k,
+							width: lineWidth,
+							spaceWrap: false
+						};
 					}
+					if (lineWidth > maxLineWidth) {
+						lineWidth = 0.0f;
+						lines.push_back(
+							{
+								idx: -1,
+								width: 0.0f,
+								spaceWrap: false
+							}
+						);
+						Console::println("d: " + to_string(k) + " / " + to_string(lineWidth));
+					}
+					lineWidth+= character->getXAdvance();
 				}
 			}
 		}
-		lineBreakIdxs[lineBreakIdxs.size() - 1] = -1;
 
 		//
+		lines[lines.size() - 1] = {
+			idx: line.size(),
+			width: lineWidth,
+			spaceWrap: false
+		};
+
+		//
+		{
+			auto l = 0;
+			for (auto k = 0; k < lines.size(); k++) {
+				string linePart;
+				for (auto j = l; j < lines[k].idx; j++) linePart+= line[j];
+				Console::println("line@" + to_string(k) + ": " + line + "': '" + linePart + "': " + to_string(lines[k].idx) + " / " + to_string(lines[k].width) + " / " + to_string(maxLineWidth));
+				l = lines[k].idx + 1;
+			}
+		}
+
+		//
+		auto lineIdx = 0;
 		{
 			auto _color = color;
 			auto _font = font;
 			Style* textStyle = nullptr;
 			auto& _textStyleIdx = textStyleIdx;
 			auto x = 0;
+			if (alignments.horizontal == GUINode_AlignmentHorizontal::LEFT) {
+				// no op
+			} else
+			if (alignments.horizontal == GUINode_AlignmentHorizontal::CENTER) {
+				x = (maxLineWidth - lines[lineIdx].width) / 2;
+			} else
+			if (alignments.horizontal == GUINode_AlignmentHorizontal::RIGHT) {
+				x = maxLineWidth - lines[lineIdx].width;
+			}
 			for (auto k = 0; k < line.size(); k++) {
 				if (styles.empty() == false) {
 					// find style to start with, aligned with last line start, if we do not have a start yet
@@ -555,12 +615,19 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 					_color = color;
 				}
 				// do line break
-				for (auto& lineBreakIdx: lineBreakIdxs) {
-					if (k == lineBreakIdx) {
-						x = 0;
-						y+= lineHeight;
-						break;
+				if (k == lines[lineIdx].idx) {
+					lineIdx++;
+					x = 0;
+					if (alignments.horizontal == GUINode_AlignmentHorizontal::LEFT) {
+						// no op
+					} else
+					if (alignments.horizontal == GUINode_AlignmentHorizontal::CENTER) {
+						x = (maxLineWidth - lines[lineIdx].width) / 2;
+					} else
+					if (alignments.horizontal == GUINode_AlignmentHorizontal::RIGHT) {
+						x = maxLineWidth - lines[lineIdx].width;
 					}
+					y+= lineHeight;
 				}
 				// draw character
 				auto character = _font->getCharacter(line[k]);
