@@ -599,6 +599,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 			};
 		}
 
+		/*
 		{
 			auto l = 0;
 			for (auto k = 0; k < lines.size(); k++) {
@@ -621,6 +622,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 				l = lines[k].idx + 1;
 			}
 		}
+		*/
 
 		//
 		auto lineIdx = 0;
@@ -654,7 +656,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 					guiRenderer->render();
 					guiRenderer->bindTexture(textStyle->textureId);
 					float left = x + xIndentLeft;
-					float top = y + yIndentTop + (lines[lineIdx].height - textStyle->height);
+					float top = y + yIndentTop + (lines[lineIdx].baseLine - textStyle->height) + (lines[lineIdx].height - lines[lineIdx].lineHeight);
 					float width = textStyle->width;
 					float height = textStyle->height;
 					guiRenderer->addQuad(
