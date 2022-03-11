@@ -19,24 +19,3 @@ AudioDecoder::AudioDecoder()
 
 AudioDecoder::~AudioDecoder() {
 }
-
-int32_t AudioDecoder::getChannels()
-{
-	return channels;
-}
-
-int32_t AudioDecoder::getSampleRate()
-{
-	return sampleRate;
-}
-
-int32_t AudioDecoder::getBitsPerSample()
-{
-	return bitsPerSample;
-}
-
-int32_t AudioDecoder::getSamples()
-{
-	return samples;
-}
-

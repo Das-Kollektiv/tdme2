@@ -248,8 +248,12 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 							// delimiter
 							if (language.keywordDelimiters.find(c) != string::npos) {
 								endIdx = i;
+							} else
+							if (i == code.size() - 1) {
+								endIdx = code.size();
 							}
 							if (startIdx != -1 && endIdx != -1 && startIdx != endIdx) {
+								while (code[startIdx] == ' ' || code[startIdx] == '\t') startIdx++;
 								auto word = StringTools::trim(StringTools::substring(code, startIdx, endIdx));
 								if (word.empty() == true) continue;
 								auto literalWord = word;
