@@ -456,7 +456,19 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 		// remove trailing space
 		while (StringTools::endsWith(line, spaceString) == true) line.erase(line.begin() + line.size() - 1);
 
-		{
+		if (line.empty() == true) {
+			//
+			lines.push_back(
+				{
+					idx: 0,
+					width: 0.0f,
+					height: font->getLineHeight(),
+					lineHeight: font->getLineHeight(),
+					baseLine: font->getBaseLine(),
+					spaceWrap: true
+				}
+			);
+		} else {
 			// determine baseline and part of line to render
 			auto baseLine = 0.0f;
 			auto lineHeight = 0.0f;
