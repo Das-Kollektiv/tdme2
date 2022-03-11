@@ -239,7 +239,8 @@
 						<multiline-text font="{$font.default}" color="{$color.font_normal}" width="100%" height="auto" horizontal-align="left">
 							<![CDATA[
 								[font=resources/engine/fonts/Roboto_bold_30.fnt]Andreas[/font] ist [color=#ff0000]total[/color] lieb.
-								[image]resources/engine/textures/groundplate.png[/image]
+								
+								[image]resources/engine/textures/groundplate.png[/image] Hallo dem!!!
 								
 								Oder was????
 								

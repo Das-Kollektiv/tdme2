@@ -282,8 +282,9 @@ void GUIMultilineTextNode::setText(const MutableString& text) {
 						parseImage = true;
 					} else
 					if (command == "/image") {
-						Console::println(styleImage);
 						parseImage = false;
+						this->text.append(static_cast<char>(0));
+						setImage(this->text.size() - 1, styleImage, styleUrl, -1, -1);
 					} else {
 						Console::println("GUIMultilineTextNode::setText(): unknown style command: " + currentStyle);
 					}
@@ -394,6 +395,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 	struct Line {
 		int idx;
 		float width;
+		float height;
 		bool spaceWrap;
 	};
 	//
@@ -456,6 +458,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 		auto lineHeight = font->getLineHeight();
 		auto lineWidth = 0.0f;
 		auto lineWidthSpaceWrap = 0.0f;
+		auto imageHeight = 0.0f;
 
 		//
 		lines.clear();
@@ -463,6 +466,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 			{
 				idx: -1,
 				width: 0.0f,
+				height: 0.0f,
 				spaceWrap: false
 			}
 		);
@@ -511,36 +515,67 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 				} else {
 					_font = font;
 				}
-				if (line[k] == ' ') {
-					lines[lines.size() - 1] = {
-						idx: k,
-						width: lineWidth,
-						spaceWrap: true
-					};
-					lineWidthSpaceWrap = 0.0f;
-				}
-				auto character = _font->getCharacter(line[k]);
-				if (character != nullptr) {
+				if (textStyle != nullptr && textStyle->image != nullptr) {
 					if (lines[lines.size() - 1].spaceWrap == false) {
 						lines[lines.size() - 1] = {
 							idx: k,
 							width: lineWidth,
+							height: Math::max(lineHeight, baseLine + imageHeight),
 							spaceWrap: false
 						};
 						lineWidthSpaceWrap = 0.0f;
 					}
 					if (lineWidth > maxLineWidth) {
+						imageHeight = 0.0f;
 						lineWidth = lineWidthSpaceWrap;
 						lines.push_back(
 							{
 								idx: -1,
 								width: 0.0f,
+								height: 0.0f,
 								spaceWrap: false
 							}
 						);
 					}
-					lineWidth+= character->getXAdvance();
-					lineWidthSpaceWrap+= lineWidthSpaceWrap < Math::EPSILON && line[k] == ' '?0.0f:character->getXAdvance();
+					lineWidth+= textStyle->width;
+					lineWidthSpaceWrap+= textStyle->width;
+					imageHeight = Math::max(imageHeight, static_cast<float>(textStyle->height));
+				} else {
+					if (line[k] == ' ') {
+						lines[lines.size() - 1] = {
+							idx: k,
+							width: lineWidth,
+							height: Math::max(lineHeight, baseLine + imageHeight),
+							spaceWrap: true
+						};
+						lineWidthSpaceWrap = 0.0f;
+					}
+					auto character = _font->getCharacter(line[k]);
+					if (character != nullptr) {
+						if (lines[lines.size() - 1].spaceWrap == false) {
+							lines[lines.size() - 1] = {
+								idx: k,
+								width: lineWidth,
+								height: Math::max(lineHeight, baseLine + imageHeight),
+								spaceWrap: false
+							};
+							lineWidthSpaceWrap = 0.0f;
+						}
+						if (lineWidth > maxLineWidth) {
+							imageHeight = 0.0f;
+							lineWidth = lineWidthSpaceWrap;
+							lines.push_back(
+								{
+									idx: -1,
+									width: 0.0f,
+									height: 0.0f,
+									spaceWrap: false
+								}
+							);
+						}
+						lineWidth+= character->getXAdvance();
+						lineWidthSpaceWrap+= lineWidthSpaceWrap < Math::EPSILON && line[k] == ' '?0.0f:character->getXAdvance();
+					}
 				}
 			}
 		}
@@ -549,20 +584,25 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 		lines[lines.size() - 1] = {
 			idx: static_cast<int>(line.size()),
 			width: lineWidth,
+			height: Math::max(lineHeight, baseLine + imageHeight),
 			spaceWrap: false
 		};
 
-		/*
 		{
 			auto l = 0;
 			for (auto k = 0; k < lines.size(); k++) {
 				string linePart;
-				for (auto j = l; j < lines[k].idx; j++) linePart += line[j];
-				Console::println("line@" + to_string(k) + ": " + line + "': '" + linePart + "': " + to_string(lines[k].idx) + " / " + to_string(lines[k].width) + " / " + to_string(maxLineWidth));
+				for (auto j = l; j < lines[k].idx; j++) {
+					if (line[j] == 0) {
+						linePart += "[image]";
+					} else {
+						linePart += line[j];
+					}
+				}
+				Console::println("line@" + to_string(k) + ": '" + line + "': '" + linePart + "': " + to_string(lines[k].idx) + " / " + to_string(lines[k].width) + " / " + to_string(maxLineWidth));
 				l = lines[k].idx + 1;
 			}
 		}
-		*/
 
 		//
 		auto lineIdx = 0;
@@ -624,54 +664,87 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 					_font = font;
 					_color = color;
 				}
-				// do line break
-				if (k == lines[lineIdx].idx) {
-					lineIdx++;
-					x = 0;
-					if (alignments.horizontal == GUINode_AlignmentHorizontal::LEFT) {
-						// no op
-					} else
-					if (alignments.horizontal == GUINode_AlignmentHorizontal::CENTER) {
-						x = (maxLineWidth - lines[lineIdx].width) / 2;
-					} else
-					if (alignments.horizontal == GUINode_AlignmentHorizontal::RIGHT) {
-						x = maxLineWidth - lines[lineIdx].width;
-					}
-					y+= lineHeight;
-					if (lines[lineIdx - 1].spaceWrap == true) {
-						skipSpaces = true;
-					}
-				}
-				// skip spaces if requested
-				if (skipSpaces == true) {
-					if (line[k] == ' ') {
-						continue;
-					} else {
-						skipSpaces = false;
-					}
-				}
-				// otherwise draw
-				auto character = _font->getCharacter(line[k]);
-				if (character != nullptr) {
+				if (textStyle != nullptr && textStyle->image != nullptr) {
+					guiRenderer->bindTexture(textStyle->textureId);
 					float left = x + xIndentLeft;
 					float top = y + yIndentTop + (baseLine - _font->getBaseLine());
-					if (boundTexture == -1) {
-						boundTexture = _font->getTextureId();
-						guiRenderer->bindTexture(boundTexture);
-						lastColor = _color;
-					} else
-					if (boundTexture != _font->getTextureId()) {
-						boundTexture = _font->getTextureId();
-						guiRenderer->render();
-						guiRenderer->bindTexture(boundTexture);
-						lastColor = _color;
-					} else
-					if (_color.equals(lastColor) == false) {
-						guiRenderer->render();
-						lastColor = _color;
+					float width = textStyle->width;
+					float height = textStyle->height;
+					guiRenderer->addQuad(
+						((left) / (screenWidth / 2.0f)) - 1.0f,
+						((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+						1.0f, 1.0f, 1.0f, 1.0f,
+						0.0f,
+						0.0f,
+						((left + width) / (screenWidth / 2.0f)) - 1.0f,
+						((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+						1.0f, 1.0f, 1.0f, 1.0f,
+						1.0f,
+						0.0f,
+						((left + width) / (screenWidth / 2.0f)) - 1.0f,
+						((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
+						1.0f, 1.0f, 1.0f, 1.0f,
+						1.0f,
+						1.0f,
+						((left) / (screenWidth / 2.0f)) - 1.0f,
+						((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
+						1.0f, 1.0f, 1.0f, 1.0f,
+						0.0f,
+						1.0f
+					);
+					guiRenderer->render();
+					guiRenderer->bindTexture(boundTexture);
+					x+= textStyle->width;
+				} else {
+					// do line break
+					if (k == lines[lineIdx].idx) {
+						y+= lines[lineIdx].height;
+						lineIdx++;
+						x = 0;
+						if (alignments.horizontal == GUINode_AlignmentHorizontal::LEFT) {
+							// no op
+						} else
+						if (alignments.horizontal == GUINode_AlignmentHorizontal::CENTER) {
+							x = (maxLineWidth - lines[lineIdx].width) / 2;
+						} else
+						if (alignments.horizontal == GUINode_AlignmentHorizontal::RIGHT) {
+							x = maxLineWidth - lines[lineIdx].width;
+						}
+						if (lines[lineIdx - 1].spaceWrap == true) {
+							skipSpaces = true;
+						}
 					}
-					_font->drawCharacter(guiRenderer, character, left, top, _color);
-					x+= character->getXAdvance();
+					// skip spaces if requested
+					if (skipSpaces == true) {
+						if (line[k] == ' ') {
+							continue;
+						} else {
+							skipSpaces = false;
+						}
+					}
+					// otherwise draw
+					auto character = _font->getCharacter(line[k]);
+					if (character != nullptr) {
+						float left = x + xIndentLeft;
+						float top = y + yIndentTop + (baseLine - _font->getBaseLine());
+						if (boundTexture == -1) {
+							boundTexture = _font->getTextureId();
+							guiRenderer->bindTexture(boundTexture);
+							lastColor = _color;
+						} else
+						if (boundTexture != _font->getTextureId()) {
+							boundTexture = _font->getTextureId();
+							guiRenderer->render();
+							guiRenderer->bindTexture(boundTexture);
+							lastColor = _color;
+						} else
+						if (_color.equals(lastColor) == false) {
+							guiRenderer->render();
+							lastColor = _color;
+						}
+						_font->drawCharacter(guiRenderer, character, left, top, _color);
+						x+= character->getXAdvance();
+					}
 				}
 			}
 		}
@@ -680,7 +753,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 		guiRenderer->render();
 
 		//
-		y+= lineHeight;
+		y+= lines[lines.size() - 1].height;
 
 		/*
 			// check for separation char or last char

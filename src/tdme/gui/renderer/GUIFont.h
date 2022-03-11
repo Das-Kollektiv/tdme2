@@ -50,8 +50,8 @@ private:
 	Texture* texture { nullptr };
 	int32_t textureId { -1 };
 	unordered_map<uint32_t, GUICharacter*> chars;
-	int lineHeight { -1 };
-	int baseLine { -1 };
+	float lineHeight { 0.0f };
+	float baseLine { 0.0f };
 
 	/**
 	 * Parse a single character line from the definition
@@ -117,14 +117,14 @@ public:
 	/**
 	 * @return line height
 	 */
-	inline int getLineHeight() {
+	inline float getLineHeight() {
 		return lineHeight;
 	}
 
 	/**
 	 * @return base line
 	 */
-	inline int getBaseLine() {
+	inline float getBaseLine() {
 		return baseLine;
 	}
 
