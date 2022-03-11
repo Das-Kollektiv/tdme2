@@ -425,6 +425,9 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 				if (line.empty() == false && c == ' ' && StringTools::endsWith(line, spaceString) == true) {
 					// no op as we have a line which already has a space at the end
 				} else
+				if (line.empty() == true && (c == ' ' || c == '\t')) {
+					// no op
+				} else
 				if (c == '\t') {
 					// extend tab to 4 spaces if line is not empty
 					if (line.empty() == false) {
