@@ -69,6 +69,7 @@ GUIMultilineTextNode::GUIMultilineTextNode(
 	const GUINode_Padding& padding,
 	const GUINodeConditions& showOn,
 	const GUINodeConditions& hideOn,
+	bool preformatted,
 	const string& font,
 	const string& color,
 	const MutableString& text
@@ -88,6 +89,7 @@ GUIMultilineTextNode::GUIMultilineTextNode(
 	this->widthLast = -1;
 	this->heightLast = -1;
 	this->startTextStyleIdx = -1;
+	this->preformatted = preformatted;
 	if (this->font != nullptr) this->font->initialize();
 	setText(text);
 }
@@ -417,7 +419,30 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 	GUIColor lastColor = color;
 	for (auto i = charStartIdx; i < charEndIdx;) {
 		// determine line to render
-		{
+		if (preformatted == true) {
+			line.clear();
+			lineCharIdxs.clear();
+			auto k = i;
+			for (; k < charEndIdx; k++) {
+				auto c = text.charAt(k);
+				// line finished?
+				if (c == '\n') {
+					break;
+				} else
+				if (c == '\t') {
+					// extend tab to 4 spaces if line is not empty
+					line+= tabString3;
+					lineCharIdxs.push_back(k);
+					lineCharIdxs.push_back(k);
+					lineCharIdxs.push_back(k);
+					lineCharIdxs.push_back(k);
+				} else {
+					line+= c;
+					lineCharIdxs.push_back(k);
+				}
+			}
+			i = k + 1;
+		} else {
 			line.clear();
 			lineCharIdxs.clear();
 			auto k = i;

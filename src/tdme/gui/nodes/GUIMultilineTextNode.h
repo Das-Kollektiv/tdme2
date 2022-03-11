@@ -57,6 +57,7 @@ private:
 		int height;
 	};
 
+	bool preformatted;
 	GUIFont* font { nullptr };
 	GUIColor color;
 	MutableString text;
@@ -137,6 +138,7 @@ protected:
 	 * @param padding padding
 	 * @param showOn show on
 	 * @param hideOn hide on
+	 * @param preformatted preformatted
 	 * @param font font
 	 * @param color color
 	 * @param text text
@@ -158,6 +160,7 @@ protected:
 		const GUINode_Padding& padding,
 		const GUINodeConditions& showOn,
 		const GUINodeConditions& hideOn,
+		bool preformatted,
 		const string& font,
 		const string& color,
 		const MutableString& text
