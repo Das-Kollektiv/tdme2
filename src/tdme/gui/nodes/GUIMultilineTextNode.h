@@ -45,7 +45,7 @@ class tdme::gui::nodes::GUIMultilineTextNode final
 	friend class tdme::gui::GUIParser;
 
 private:
-	struct Style {
+	struct TextStyle {
 		int startIdx;
 		int endIdx;
 		GUIColor color;
@@ -73,8 +73,51 @@ private:
 	int widthLast;
 	int heightLast;
 
-	vector<Style> styles;
+	vector<TextStyle> styles;
 	int startTextStyleIdx { -1 };
+
+	/**
+	 * Get text style for
+	 * @param lineCharIdxs line character indices
+	 * @param lineCharIdx line character idx
+	 * @param textStyleIdx text style to start looking up with, will also be written
+	 * @return text style
+	 */
+	inline TextStyle* getTextStyle(const vector<int>& lineCharIdxs, int lineCharIdx, int& textStyleIdx) {
+		if (styles.empty() == true) return nullptr;
+		TextStyle* textStyle = nullptr;
+		// find style to start with, aligned with last line start, if we do not have a start yet
+		if (textStyleIdx == -1) {
+			textStyleIdx = 0;
+			for (auto l = 0; l < styles.size(); l++) {
+				auto textStyle = &styles[l];
+				if (textStyle->startIdx > lineCharIdxs[lineCharIdx]) {
+					textStyleIdx = l - 1;
+					break;
+				}
+			}
+		}
+		// ok proceed to find correct style for character in text, based on our text style index
+		auto _textStyle = textStyleIdx < styles.size()?&styles[textStyleIdx]:nullptr;
+		if (_textStyle != nullptr && lineCharIdxs[lineCharIdx] >= _textStyle->startIdx) {
+			if (lineCharIdxs[lineCharIdx] > _textStyle->endIdx) {
+				// invalid text style, check next text style
+				textStyleIdx++;
+				_textStyle = textStyleIdx < styles.size()?&styles[textStyleIdx]:nullptr;
+				if (_textStyle != nullptr && lineCharIdxs[lineCharIdx] >= _textStyle->startIdx) {
+					if (lineCharIdxs[lineCharIdx] <= _textStyle->endIdx) {
+						// valid text style
+						textStyle = _textStyle;
+					}
+				}
+			} else
+			if (lineCharIdxs[lineCharIdx] <= _textStyle->endIdx) {
+				// valid text style
+				textStyle = _textStyle;
+			}
+		}
+		return textStyle;
+	}
 
 protected:
 	/**

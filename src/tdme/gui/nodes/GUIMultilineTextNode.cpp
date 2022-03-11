@@ -397,6 +397,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 		int idx;
 		float width;
 		float height;
+		float lineHeight;
 		bool spaceWrap;
 	};
 	//
@@ -472,43 +473,11 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 			}
 		);
 		{
-			Style* textStyle = nullptr;
+			TextStyle* textStyle = nullptr;
 			auto _font = font;
 			auto _textStyleIdx = textStyleIdx;
 			for (auto k = 0; k < line.size(); k++) {
-				if (styles.empty() == false) {
-					// find style to start with, aligned with last line start, if we do not have a start yet
-					if (_textStyleIdx == -1) {
-						_textStyleIdx = 0;
-						for (auto l = 0; l < styles.size(); l++) {
-							auto textStyle = &styles[l];
-							if (textStyle->startIdx > lineCharIdxs[k]) {
-								_textStyleIdx = l - 1;
-								break;
-							}
-						}
-					}
-					// ok proceed to find correct style for character in text, based on our text style index
-					textStyle = nullptr;
-					auto _textStyle = _textStyleIdx < styles.size()?&styles[_textStyleIdx]:nullptr;
-					if (_textStyle != nullptr && lineCharIdxs[k] >= _textStyle->startIdx) {
-						if (lineCharIdxs[k] > _textStyle->endIdx) {
-							// invalid text style, check next text style
-							_textStyleIdx++;
-							_textStyle = _textStyleIdx < styles.size()?&styles[_textStyleIdx]:nullptr;
-							if (_textStyle != nullptr && lineCharIdxs[k] >= _textStyle->startIdx) {
-								if (lineCharIdxs[k] <= _textStyle->endIdx) {
-									// valid text style
-									textStyle = _textStyle;
-								}
-							}
-						} else
-						if (lineCharIdxs[k] <= _textStyle->endIdx) {
-							// valid text style
-							textStyle = _textStyle;
-						}
-					}
-				}
+				auto textStyle = getTextStyle(lineCharIdxs, k, _textStyleIdx);
 				if (textStyle != nullptr && textStyle->font != nullptr) {
 					_font = textStyle->font;
 					baseLine = Math::max(baseLine, _font->getBaseLine());
@@ -522,6 +491,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 							idx: k,
 							width: lineWidth,
 							height: Math::max(lineHeight, baseLine + imageHeight),
+							lineHeight: lineHeight,
 							spaceWrap: false
 						};
 						lineWidthSpaceWrap = 0.0f;
@@ -547,6 +517,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 							idx: k,
 							width: lineWidth,
 							height: Math::max(lineHeight, baseLine + imageHeight),
+							lineHeight: lineHeight,
 							spaceWrap: true
 						};
 						lineWidthSpaceWrap = 0.0f;
@@ -558,6 +529,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 								idx: k,
 								width: lineWidth,
 								height: Math::max(lineHeight, baseLine + imageHeight),
+								lineHeight: lineHeight,
 								spaceWrap: false
 							};
 							lineWidthSpaceWrap = 0.0f;
@@ -570,6 +542,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 									idx: -1,
 									width: 0.0f,
 									height: 0.0f,
+									lineHeight: 0.0f,
 									spaceWrap: false
 								}
 							);
@@ -586,6 +559,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 			idx: static_cast<int>(line.size()),
 			width: lineWidth,
 			height: Math::max(lineHeight, baseLine + imageHeight),
+			lineHeight: lineHeight,
 			spaceWrap: false
 		};
 
@@ -600,7 +574,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 						linePart += line[j];
 					}
 				}
-				Console::println("line@" + to_string(k) + ": '" + line + "': '" + linePart + "': " + to_string(lines[k].idx) + " / " + to_string(lines[k].width) + " / " + to_string(maxLineWidth));
+				Console::println("line@" + to_string(k) + ": '" + line + "': '" + linePart + "': " + to_string(lines[k].idx) + "; width = " + to_string(lines[k].width) + " / " + to_string(maxLineWidth) + ", line height = " + to_string(lines[k].lineHeight) + ", height " + to_string(lines[k].height));
 				l = lines[k].idx + 1;
 			}
 		}
@@ -611,7 +585,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 			auto skipSpaces = false;
 			auto _color = color;
 			auto _font = font;
-			Style* textStyle = nullptr;
+			TextStyle* textStyle = nullptr;
 			auto& _textStyleIdx = textStyleIdx;
 			auto x = 0;
 			if (alignments.horizontal == GUINode_AlignmentHorizontal::LEFT) {
@@ -624,39 +598,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 				x = maxLineWidth - lines[lineIdx].width;
 			}
 			for (auto k = 0; k < line.size(); k++) {
-				if (styles.empty() == false) {
-					// find style to start with, aligned with last line start, if we do not have a start yet
-					if (_textStyleIdx == -1) {
-						_textStyleIdx = 0;
-						for (auto l = 0; l < styles.size(); l++) {
-							auto textStyle = &styles[l];
-							if (textStyle->startIdx > lineCharIdxs[k]) {
-								_textStyleIdx = l - 1;
-								break;
-							}
-						}
-					}
-					// ok proceed to find correct style for character in text, based on our text style index
-					textStyle = nullptr;
-					auto _textStyle = _textStyleIdx < styles.size()?&styles[_textStyleIdx]:nullptr;
-					if (_textStyle != nullptr && lineCharIdxs[k] >= _textStyle->startIdx) {
-						if (lineCharIdxs[k] > _textStyle->endIdx) {
-							// invalid text style, check next text style
-							_textStyleIdx++;
-							_textStyle = _textStyleIdx < styles.size()?&styles[_textStyleIdx]:nullptr;
-							if (_textStyle != nullptr && lineCharIdxs[k] >= _textStyle->startIdx) {
-								if (lineCharIdxs[k] <= _textStyle->endIdx) {
-									// valid text style
-									textStyle = _textStyle;
-								}
-							}
-						} else
-						if (lineCharIdxs[k] <= _textStyle->endIdx) {
-							// valid text style
-							textStyle = _textStyle;
-						}
-					}
-				}
+				auto textStyle = getTextStyle(lineCharIdxs, k, _textStyleIdx);
 				// apply text style or defaults
 				if (textStyle != nullptr) {
 					_font = textStyle->font != nullptr?textStyle->font:font;
@@ -669,7 +611,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 					guiRenderer->render();
 					guiRenderer->bindTexture(textStyle->textureId);
 					float left = x + xIndentLeft;
-					float top = y + yIndentTop + (baseLine - _font->getBaseLine());
+					float top = y + yIndentTop + (lines[lineIdx].height - textStyle->height);
 					float width = textStyle->width;
 					float height = textStyle->height;
 					guiRenderer->addQuad(
@@ -728,7 +670,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 					auto character = _font->getCharacter(line[k]);
 					if (character != nullptr) {
 						float left = x + xIndentLeft;
-						float top = y + yIndentTop + (baseLine - _font->getBaseLine());
+						float top = y + yIndentTop + (baseLine - _font->getBaseLine()) + (lines[lineIdx].height - lines[lineIdx].lineHeight);
 						if (boundTexture == -1) {
 							boundTexture = _font->getTextureId();
 							guiRenderer->bindTexture(boundTexture);
