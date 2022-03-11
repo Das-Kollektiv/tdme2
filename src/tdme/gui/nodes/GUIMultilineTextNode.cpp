@@ -285,6 +285,7 @@ void GUIMultilineTextNode::setText(const MutableString& text) {
 						parseImage = false;
 						this->text.append(static_cast<char>(0));
 						setImage(this->text.size() - 1, styleImage, styleUrl, -1, -1);
+						styleImage.clear();
 					} else {
 						Console::println("GUIMultilineTextNode::setText(): unknown style command: " + currentStyle);
 					}
@@ -665,6 +666,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 					_color = color;
 				}
 				if (textStyle != nullptr && textStyle->image != nullptr) {
+					guiRenderer->render();
 					guiRenderer->bindTexture(textStyle->textureId);
 					float left = x + xIndentLeft;
 					float top = y + yIndentTop + (baseLine - _font->getBaseLine());
