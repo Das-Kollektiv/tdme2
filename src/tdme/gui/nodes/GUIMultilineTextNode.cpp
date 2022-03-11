@@ -450,6 +450,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 		auto baseLine = font->getBaseLine();
 		auto lineHeight = font->getLineHeight();
 		auto lineWidth = 0.0f;
+		auto lineWidthSpaceWrap = 0.0f;
 
 		//
 		lines.clear();
@@ -505,25 +506,25 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 					_font = font;
 				}
 				if (line[k] == ' ') {
-					Console::println("a: " + to_string(k) + " / " + to_string(lineWidth));
 					lines[lines.size() - 1] = {
 						idx: k,
 						width: lineWidth,
 						spaceWrap: true
 					};
+					lineWidthSpaceWrap = 0.0f;
 				}
 				auto character = _font->getCharacter(line[k]);
 				if (character != nullptr) {
 					if (lines[lines.size() - 1].spaceWrap == false) {
-						Console::println("b: " + to_string(k) + " / " + to_string(lineWidth));
 						lines[lines.size() - 1] = {
 							idx: k,
 							width: lineWidth,
 							spaceWrap: false
 						};
+						lineWidthSpaceWrap = 0.0f;
 					}
 					if (lineWidth > maxLineWidth) {
-						lineWidth = 0.0f;
+						lineWidth = lineWidthSpaceWrap;
 						lines.push_back(
 							{
 								idx: -1,
@@ -531,26 +532,25 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 								spaceWrap: false
 							}
 						);
-						Console::println("d: " + to_string(k) + " / " + to_string(lineWidth));
 					}
 					lineWidth+= character->getXAdvance();
+					lineWidthSpaceWrap+= character->getXAdvance();
 				}
 			}
 		}
 
 		//
 		lines[lines.size() - 1] = {
-			idx: line.size(),
+			idx: static_cast<int>(line.size()),
 			width: lineWidth,
 			spaceWrap: false
 		};
 
-		//
 		{
 			auto l = 0;
 			for (auto k = 0; k < lines.size(); k++) {
 				string linePart;
-				for (auto j = l; j < lines[k].idx; j++) linePart+= line[j];
+				for (auto j = l; j < lines[k].idx; j++) linePart += line[j];
 				Console::println("line@" + to_string(k) + ": " + line + "': '" + linePart + "': " + to_string(lines[k].idx) + " / " + to_string(lines[k].width) + " / " + to_string(maxLineWidth));
 				l = lines[k].idx + 1;
 			}
@@ -628,6 +628,10 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 						x = maxLineWidth - lines[lineIdx].width;
 					}
 					y+= lineHeight;
+					if (lines[lineIdx - 1].spaceWrap == true) {
+						while (k < line.size() && line[k] == ' ') k++;
+						if (k == line.size()) break;
+					}
 				}
 				// draw character
 				auto character = _font->getCharacter(line[k]);
