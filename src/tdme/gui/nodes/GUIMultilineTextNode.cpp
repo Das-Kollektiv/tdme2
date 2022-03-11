@@ -445,6 +445,8 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 			}
 			i = k + 1;
 		}
+		// remove trailing space
+		while (StringTools::endsWith(line, spaceString) == true) line.erase(line.begin() + line.size() - 1);
 
 		// determine baseline and part of line to render
 		auto baseLine = font->getBaseLine();
@@ -534,7 +536,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 						);
 					}
 					lineWidth+= character->getXAdvance();
-					lineWidthSpaceWrap+= character->getXAdvance();
+					lineWidthSpaceWrap+= lineWidthSpaceWrap < Math::EPSILON && line[k] == ' '?0.0f:character->getXAdvance();
 				}
 			}
 		}
@@ -546,6 +548,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 			spaceWrap: false
 		};
 
+		/*
 		{
 			auto l = 0;
 			for (auto k = 0; k < lines.size(); k++) {
@@ -555,6 +558,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 				l = lines[k].idx + 1;
 			}
 		}
+		*/
 
 		//
 		auto lineIdx = 0;

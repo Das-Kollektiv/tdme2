@@ -57,7 +57,7 @@ void AboutDialogScreenController::initialize()
 		screenNode->addActionListener(this);
 		required_dynamic_cast<GUITextNode*>(screenNode->getNodeById("about_version"))->setText(MutableString(Version::getVersion()));
 		required_dynamic_cast<GUITextNode*>(screenNode->getNodeById("about_platform"))->setText(MutableString("Platform: " + Application::getOSName() + "/" + Application::getCPUName()));
-		required_dynamic_cast<GUIMultilineTextNode*>(screenNode->getNodeById("about_graphics"))->setText(MutableString("Graphics: " + Engine::getInstance()->getGraphicsRenderer() + " abc, bef, hans, julian, bernd, graphifckarten und penisse und bernsteinzimmer, penisse.    kross    "));
+		required_dynamic_cast<GUIMultilineTextNode*>(screenNode->getNodeById("about_graphics"))->setText(MutableString("Graphics: " + Engine::getInstance()->getGraphicsRenderer()));
 	} catch (Exception& exception) {
 		Console::print(string("AboutDialogScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
