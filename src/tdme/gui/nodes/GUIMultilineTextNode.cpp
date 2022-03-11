@@ -484,6 +484,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 						}
 					}
 					// ok proceed to find correct style for character in text, based on our text style index
+					textStyle = nullptr;
 					auto _textStyle = _textStyleIdx < styles.size()?&styles[_textStyleIdx]:nullptr;
 					if (_textStyle != nullptr && lineCharIdxs[k] >= _textStyle->startIdx) {
 						if (lineCharIdxs[k] > _textStyle->endIdx) {
@@ -566,6 +567,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 		//
 		auto lineIdx = 0;
 		{
+			auto skipSpaces = false;
 			auto _color = color;
 			auto _font = font;
 			Style* textStyle = nullptr;
@@ -594,6 +596,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 						}
 					}
 					// ok proceed to find correct style for character in text, based on our text style index
+					textStyle = nullptr;
 					auto _textStyle = _textStyleIdx < styles.size()?&styles[_textStyleIdx]:nullptr;
 					if (_textStyle != nullptr && lineCharIdxs[k] >= _textStyle->startIdx) {
 						if (lineCharIdxs[k] > _textStyle->endIdx) {
@@ -636,11 +639,18 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 					}
 					y+= lineHeight;
 					if (lines[lineIdx - 1].spaceWrap == true) {
-						while (k < line.size() && line[k] == ' ') k++;
-						if (k == line.size()) break;
+						skipSpaces = true;
 					}
 				}
-				// draw character
+				// skip spaces if requested
+				if (skipSpaces == true) {
+					if (line[k] == ' ') {
+						continue;
+					} else {
+						skipSpaces = false;
+					}
+				}
+				// otherwise draw
 				auto character = _font->getCharacter(line[k]);
 				if (character != nullptr) {
 					float left = x + xIndentLeft;
@@ -862,6 +872,12 @@ void GUIMultilineTextNode::unsetTextStyle(int startIdx, int endIdx) {
 }
 
 void GUIMultilineTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor& color, const string& font, const string& url) {
+	Console::print("GUIMultilineTextNode::setTextStyle(): " + to_string(startIdx) + " ... " + to_string(endIdx) + ": '");
+	for (auto i = startIdx; i <= endIdx; i++) Console::print(string() + text.charAt(i));
+	Console::print("'");
+	Console::print(", color = " + to_string(color.getRed()) + ", " + to_string(color.getGreen()) + ", " + to_string(color.getBlue()) + ", " + to_string(color.getAlpha()));
+	Console::print(", url = '" + url + "'");
+	Console::println();
 	unsetTextStyle(startIdx, endIdx);
 	// TODO: a.drewke
 	auto _font = font.empty() == true?nullptr:GUI::getFont(screenNode->getApplicationRootPathName(), font);;
@@ -883,6 +899,11 @@ void GUIMultilineTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor
 }
 
 void GUIMultilineTextNode::setTextStyle(int startIdx, int endIdx, const string& font, const string& url) {
+	Console::print("GUIMultilineTextNode::setTextStyle(): " + to_string(startIdx) + " ... " + to_string(endIdx) + ": '");
+	for (auto i = startIdx; i <= endIdx; i++) Console::print(string() + text.charAt(i));
+	Console::print("'");
+	Console::print(", url = '" + url + "'");
+	Console::println();
 	unsetTextStyle(startIdx, endIdx);
 	// TODO: a.drewke
 	auto _font = font.empty() == true?nullptr:GUI::getFont(screenNode->getApplicationRootPathName(), font);;
@@ -904,6 +925,7 @@ void GUIMultilineTextNode::setTextStyle(int startIdx, int endIdx, const string& 
 }
 
 void GUIMultilineTextNode::setImage(int idx, const string& image, const string& url, int width, int height) {
+	Console::println("GUIMultilineTextNode::setImage(): " + to_string(idx) + ": " + image + ", url = '" + url + "', width = " + to_string(width) + ", height = " + to_string(height));
 	unsetTextStyle(idx,idx);
 	// TODO: a.drewke
 	auto _image = image.empty() == true?nullptr:GUI::getImage(screenNode->getApplicationRootPathName(), image);
