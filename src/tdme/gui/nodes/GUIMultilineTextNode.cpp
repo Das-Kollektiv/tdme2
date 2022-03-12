@@ -374,8 +374,6 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 	}
 
 	//
-	string line;
-	string word;
 	bool hadBreak = false;
 	auto parentXOffset = computeParentChildrenRenderOffsetXTotal();
 	auto parentYOffset = computeParentChildrenRenderOffsetYTotal();
@@ -395,14 +393,6 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 		y = yLast;
 	}
 
-	struct Line {
-		int idx;
-		float width;
-		float height;
-		float lineHeight;
-		float baseLine;
-		bool spaceWrap;
-	};
 	//
 	auto maxLineWidth = computedConstraints.width - (border.left + border.right + padding.left + padding.right);
 	auto textStyleIdx = startTextStyleIdx;
@@ -410,11 +400,6 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 	auto _charStartIdx = charStartIdx;
 	auto _y = y;
 	auto j = charStartIdx;
-	string spaceString = " ";
-	string tabString3 = "   ";
-	string tabString4 = "    ";
-	vector<int> lineCharIdxs;
-	vector<Line> lines;
 	auto boundTexture = -1;
 	GUIColor lastColor = color;
 	for (auto i = charStartIdx; i < charEndIdx;) {
@@ -945,7 +930,13 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 			word+= c;
 		}
 		*/
+
+		//
+		line.clear();
+		lineCharIdxs.clear();
+		lines.clear();
 	}
+
 	//
 	guiRenderer->bindTexture(0);
 }

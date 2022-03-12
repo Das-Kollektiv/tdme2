@@ -77,6 +77,22 @@ private:
 	vector<TextStyle> styles;
 	int startTextStyleIdx { -1 };
 
+	struct Line {
+		int idx;
+		float width;
+		float height;
+		float lineHeight;
+		float baseLine;
+		bool spaceWrap;
+	};
+
+	string spaceString { " " };
+	string tabString3 { "   " };
+	string tabString4 { "    " };
+	string line;
+	vector<int> lineCharIdxs;
+	vector<Line> lines;
+
 	/**
 	 * Get text style for
 	 * @param lineCharIdxs line character indices
