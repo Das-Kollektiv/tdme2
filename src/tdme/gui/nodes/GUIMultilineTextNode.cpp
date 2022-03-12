@@ -188,12 +188,17 @@ void GUIMultilineTextNode::setText(const MutableString& text) {
 	auto parseImage = false;
 	string currentStyle;
 	int styleStartIdx = -1;
-	char lc = 0;
-	for (auto i = 0; i < text.size(); i++) {
-		auto c = text.charAt(i);
+	for (auto i = -1; i < text.size(); i++) {
+		auto c = i == -1?static_cast<char>(0):text.charAt(i);
+		auto nc = i + 1 < text.size()?text.charAt(i + 1):static_cast<char>(0);
 		if (parseStyle == true) {
 			// end of style
-			if (c == ']' && lc != '\\') {
+			if (c != '\\' && nc == ']') {
+				currentStyle+= c;
+				i++;
+				//
+				currentStyle = StringTools::replace(currentStyle, "\\]", "]");
+				Console::println(currentStyle);
 				auto styleTokenized = StringTools::tokenize(currentStyle, "=");
 				// apply style until current text size
 				if (styleStartIdx != -1 &&
@@ -239,6 +244,7 @@ void GUIMultilineTextNode::setText(const MutableString& text) {
 						parseImage = true;
 					} else
 					if (command == "/image") {
+						Console::println("xxx: " + styleImage);
 						parseImage = false;
 						this->text.append(static_cast<char>(0));
 						setImage(this->text.size() - 1, styleImage, styleUrl, -1, -1);
@@ -257,25 +263,36 @@ void GUIMultilineTextNode::setText(const MutableString& text) {
 					styleUrl.empty() == false) {
 					styleStartIdx = this->text.size();
 				}
+			} else
+			if (c == '\\' && nc == ']') {
+				i++;
+				currentStyle+= "]";
 			} else {
 				// style command
 				currentStyle+= c;
 			}
 		} else
 		// start of style
-		if (c == '[' && lc != '\\') {
-			parseStyle = true;
-		} else {
-			if (parseImage == true) {
-				// image
-				styleImage+= c;
+		if (nc == '[') {
+			i++;
+			if (c == '\\') {
+				if (parseImage == true) styleImage+= nc; else this->text.append(nc);
 			} else {
-				// ordinary text
-				this->text.append(c);
+				if (parseImage == true) styleImage+= c; else this->text.append(c);
+				parseStyle = true;
 			}
+		} else
+		if (nc == ']') {
+			i++;
+			if (c == '\\') {
+				if (parseImage == true) styleImage+= nc; else this->text.append(nc);
+			} else {
+				if (parseImage == true) styleImage+= c; else this->text.append(c);
+			}
+		} else
+		if (c != 0) {
+			if (parseImage == true) styleImage+= c; else this->text.append(c);
 		}
-		//
-		lc = c;
 	}
 	// apply style until current text size
 	if (styleStartIdx != -1 &&
@@ -572,8 +589,8 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 		//
 		determineNextLineConstraints(i, charEndIdx, textStyleIdx);
 
-		//
 		/*
+		//
 		{
 			auto l = 0;
 			for (auto k = 0; k < lineConstraints.size(); k++) {

@@ -1391,7 +1391,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 						auto screenNode = GUIParser::parse(
 							"resources/engine/gui/",
 							"tab_text.xml",
-							{{ "text", text }}
+							{{ "text", StringTools::replace(StringTools::replace(text, "[", "\\["), "]", "\\]") }}
 						);
 						tabType = EditorTabView::TABTYPE_TEXT;
 						tabView = new TextEditorTabView(view, tabId, screenNode, StringTools::substring(fileNameLowerCase, fileNameLowerCase.rfind('.') + 1, fileNameLowerCase.size()));
@@ -1461,7 +1461,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 					auto screenNode = GUIParser::parse(
 						"resources/engine/gui/",
 						"tab_text.xml",
-						{{ "text", text }}
+						{{ "text", StringTools::replace(StringTools::replace(text, "[", "\\["), "]", "\\]") }}
 					);
 					tabType = EditorTabView::TABTYPE_TEXT;
 					tabView = new TextEditorTabView(view, tabId, screenNode, StringTools::substring(fileNameLowerCase, fileNameLowerCase.rfind('.') + 1, fileNameLowerCase.size()));
