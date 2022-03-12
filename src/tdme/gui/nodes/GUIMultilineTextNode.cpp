@@ -23,6 +23,7 @@
 #include <tdme/math/Math.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Float.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
 
@@ -50,6 +51,7 @@ using tdme::gui::GUI;
 using tdme::math::Math;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
+using tdme::utilities::Float;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 
@@ -132,70 +134,23 @@ void GUIMultilineTextNode::computeContentAlignment() {
 	//
 	autoWidth = 0;
 	autoHeight = 0;
-	string line;
-	string word;
-	bool hadBreak = false;
-	for (auto i = 0; i < text.size(); i++) {
-		auto c = text.charAt(i);
-		// last char
-		auto lastChar = i == text.size() - 1;
-		// check for separation char or last char
-		if (c == '\n' || c == ' ' || c == '\t' || lastChar == true) {
-			// if last char add it to current word
-			if (lastChar == true) word+= c;
-			// determine current line width + word width
-			auto lineWidth = font->getTextWidth(MutableString(line)) + font->getTextWidth(MutableString(word));
-			// check if too long
-			auto tooLong =
-				requestedConstraints.widthType != GUINode_RequestedConstraints_RequestedConstraintsType::AUTO && // TODO: check with <multi... width="auto" />
-				lineWidth >= computedConstraints.width - (border.left + border.right + padding.left + padding.right);
-			// if not auto and too long then draw current line and do a new line or flush last text
-			if (tooLong == true ||
-				c == '\n' ||
-				lastChar == true) {
-				// add word to line if required
-				if ((tooLong == true && hadBreak == false) || lastChar == true || c == '\n') {
-					line+= word;
-					word.clear();
-				}
-				//
-				string lineToRender = line;
-				string lineLeft;
-				//
-				do {
-					//
-					auto separationAt = font->getTextIndexXAtWidth(MutableString(lineToRender), computedConstraints.width - (border.left + border.right + padding.left + padding.right));
-					lineLeft = StringTools::substring(lineToRender, separationAt + 1);
-					lineToRender = StringTools::substring(lineToRender, 0, separationAt + 1);
-					// determine current line width
-					lineWidth = font->getTextWidth(MutableString(lineToRender));
-					// track dimension
-					if (lineWidth > autoWidth) autoWidth = lineWidth;
-					autoHeight+= font->getLineHeight();
-					//
-					lineToRender = lineLeft;
-					lineLeft.clear();
-				} while (lineToRender.empty() == false);
-				// new line is current word
-				line = word;
-				// add white space if we have one
-				if (c != '\n') line+= c;
-				// empty word
-				word.clear();
-				// reset
-				hadBreak = false;
-			} else
-			if (c != '\n') {
-				// no flush yet, add word to line
-				line+= word + c;
-				// reset
-				word.clear();
-				hadBreak = lastChar == false;
-			}
-		} else {
-			// regular character
-			word+= c;
+
+	//
+	auto textStyleIdx = 0;
+	for (auto i = 0; i < text.size(); ) {
+		//
+		determineNextLineConstraints(i, text.size(), textStyleIdx);
+
+		//
+		for (auto& lineConstraintsEntity: lineConstraints) {
+			if (lineConstraintsEntity.width > autoWidth) autoWidth = lineConstraintsEntity.width;
+			autoHeight+= lineConstraintsEntity.height;
 		}
+
+		//
+		line.clear();
+		lineCharIdxs.clear();
+		lineConstraints.clear();
 	}
 
 	//
@@ -345,7 +300,7 @@ void GUIMultilineTextNode::dispose()
 
 void GUIMultilineTextNode::determineNextLineConstraints(int& i, int charEndIdx, int textStyleIdx) {
 	//
-	auto maxLineWidth = computedConstraints.width - (border.left + border.right + padding.left + padding.right);
+	auto maxLineWidth = requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO?Float::MAX_VALUE:computedConstraints.width - (border.left + border.right + padding.left + padding.right);
 
 	// determine line to render
 	if (preformatted == true) {
@@ -605,7 +560,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 	}
 
 	//
-	auto maxLineWidth = computedConstraints.width - (border.left + border.right + padding.left + padding.right);
+	auto maxLineWidth = getAutoWidth();
 	auto textStyleIdx = startTextStyleIdx;
 	bool visible = false;
 	auto _charStartIdx = charStartIdx;
@@ -617,12 +572,13 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 		//
 		determineNextLineConstraints(i, charEndIdx, textStyleIdx);
 
+		//
 		/*
 		{
 			auto l = 0;
-			for (auto k = 0; k < lines.size(); k++) {
+			for (auto k = 0; k < lineConstraints.size(); k++) {
 				string linePart;
-				for (auto j = l; j < lines[k].idx; j++) {
+				for (auto j = l; j < lineConstraints[k].idx; j++) {
 					if (line[j] == 0) {
 						linePart += "[image]";
 					} else {
@@ -631,13 +587,13 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 				}
 			Console::println(
 					"line@" + to_string(k) + ": '" + line + "': '" + linePart
-							+ "': " + to_string(lines[k].idx) + "; width = "
-							+ to_string(lines[k].width) + " / "
+							+ "': " + to_string(lineConstraints[k].idx) + "; width = "
+							+ to_string(lineConstraints[k].width) + " / "
 							+ to_string(maxLineWidth) + ", line height = "
-							+ to_string(lines[k].lineHeight) + ", height "
-							+ to_string(lines[k].height) + ", base line: "
-							+ to_string(lines[k].baseLine));
-				l = lines[k].idx;
+							+ to_string(lineConstraints[k].lineHeight) + ", height "
+							+ to_string(lineConstraints[k].height) + ", base line: "
+							+ to_string(lineConstraints[k].baseLine));
+				l = lineConstraints[k].idx;
 			}
 		}
 		*/
