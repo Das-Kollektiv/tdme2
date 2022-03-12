@@ -589,10 +589,12 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 								baseLineSpaceWrap = 0.0f;
 							}
 							if (lineWidth > maxLineWidth) {
-								imageHeight = 0.0f;
 								lineWidth = lineWidthSpaceWrap;
-								lineHeight = lineHeightSpaceWrap;
-								baseLine = baseLineSpaceWrap;
+								if (k != line.size() - 1) {
+									imageHeight = 0.0f;
+									lineHeight = lineHeightSpaceWrap;
+									baseLine = baseLineSpaceWrap;
+								}
 								lines.push_back(
 									{
 										idx: -1,
@@ -622,6 +624,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 			};
 		}
 
+		/*
 		{
 			auto l = 0;
 			for (auto k = 0; k < lines.size(); k++) {
@@ -641,9 +644,10 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 							+ to_string(lines[k].lineHeight) + ", height "
 							+ to_string(lines[k].height) + ", base line: "
 							+ to_string(lines[k].baseLine));
-				l = lines[k].idx + 1;
+				l = lines[k].idx;
 			}
 		}
+		*/
 
 		//
 		auto lineIdx = 0;
