@@ -516,12 +516,10 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 				}
 			);
 			{
-				TextStyle* textStyle = nullptr;
-				auto currentFont = font;
 				auto currentTextStyleIdx = textStyleIdx;
 				for (auto k = 0; k < line.size(); k++) {
 					auto textStyle = getTextStyle(lineCharIdxs, k, currentTextStyleIdx);
-					currentFont = textStyle != nullptr && textStyle->font != nullptr?textStyle->font:font;
+					auto currentFont = textStyle != nullptr && textStyle->font != nullptr?textStyle->font:font;
 					baseLine = Math::max(baseLine, currentFont->getBaseLine());
 					baseLineSpaceWrap = Math::max(baseLineSpaceWrap, currentFont->getBaseLine());
 					lineHeight = Math::max(lineHeight, currentFont->getLineHeight());
@@ -624,7 +622,6 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 			};
 		}
 
-		/*
 		{
 			auto l = 0;
 			for (auto k = 0; k < lines.size(); k++) {
@@ -647,15 +644,11 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 				l = lines[k].idx + 1;
 			}
 		}
-		*/
 
 		//
 		auto lineIdx = 0;
 		{
 			auto skipSpaces = false;
-			auto currentColor = color;
-			auto currentFont = font;
-			TextStyle* textStyle = nullptr;
 			auto& currentTextStyleIdx = textStyleIdx;
 			auto x = 0;
 			if (alignments.horizontal == GUINode_AlignmentHorizontal::LEFT) {
@@ -669,13 +662,12 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 			}
 			for (auto k = 0; k < line.size(); k++) {
 				auto textStyle = getTextStyle(lineCharIdxs, k, currentTextStyleIdx);
+				Color4 currentColor = color;
+				GUIFont* currentFont = font;
 				// apply text style or defaults
 				if (textStyle != nullptr) {
 					currentFont = textStyle->font != nullptr?textStyle->font:font;
 					currentColor = textStyle->color;
-				} else {
-					currentFont = font;
-					currentColor = color;
 				}
 				if (textStyle != nullptr && textStyle->image != nullptr) {
 					guiRenderer->render();
