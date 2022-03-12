@@ -343,6 +343,217 @@ void GUIMultilineTextNode::dispose()
 	GUINode::dispose();
 }
 
+void GUIMultilineTextNode::determineNextLineConstraints(int& i, int charEndIdx, int textStyleIdx) {
+	//
+	auto maxLineWidth = computedConstraints.width - (border.left + border.right + padding.left + padding.right);
+
+	// determine line to render
+	if (preformatted == true) {
+		line.clear();
+		lineCharIdxs.clear();
+		auto k = i;
+		for (; k < charEndIdx; k++) {
+			auto c = text.charAt(k);
+			// line finished?
+			if (c == '\n') {
+				break;
+			} else
+			if (c == '\t') {
+				// extend tab to 4 spaces if line is not empty
+				line+= tabString3;
+				lineCharIdxs.push_back(k);
+				lineCharIdxs.push_back(k);
+				lineCharIdxs.push_back(k);
+				lineCharIdxs.push_back(k);
+			} else {
+				line+= c;
+				lineCharIdxs.push_back(k);
+			}
+		}
+		i = k + 1;
+	} else {
+		line.clear();
+		lineCharIdxs.clear();
+		auto k = i;
+		for (; k < charEndIdx; k++) {
+			auto c = text.charAt(k);
+			// line finished?
+			if (c == '\n') {
+				break;
+			} else
+			if (line.empty() == false && c == ' ' && StringTools::endsWith(line, spaceString) == true) {
+				// no op as we have a line which already has a space at the end
+			} else
+			if (line.empty() == true && (c == ' ' || c == '\t')) {
+				// no op
+			} else
+			if (c == '\t') {
+				// extend tab to 4 spaces if line is not empty
+				if (line.empty() == false) {
+					if (StringTools::endsWith(line, spaceString) == true) {
+						line+= tabString3;
+					} else {
+						line+= tabString4;
+					}
+					lineCharIdxs.push_back(k);
+					lineCharIdxs.push_back(k);
+					lineCharIdxs.push_back(k);
+					lineCharIdxs.push_back(k);
+				}
+			} else {
+				line+= c;
+				lineCharIdxs.push_back(k);
+			}
+		}
+		i = k + 1;
+	}
+	// remove trailing space
+	while (StringTools::endsWith(line, spaceString) == true) line.erase(line.begin() + line.size() - 1);
+
+	if (line.empty() == true) {
+		//
+		lineConstraints.push_back(
+			{
+				idx: 0,
+				width: 0.0f,
+				height: font->getLineHeight(),
+				lineHeight: font->getLineHeight(),
+				baseLine: font->getBaseLine(),
+				spaceWrap: true
+			}
+		);
+	} else {
+		// determine baseline and part of line to render
+		auto baseLine = 0.0f;
+		auto lineHeight = 0.0f;
+		auto lineWidth = 0.0f;
+		auto lineWidthSpaceWrap = 0.0f;
+		auto lineHeightSpaceWrap = 0.0f;
+		auto baseLineSpaceWrap = 0.0f;
+		auto imageHeight = 0.0f;
+
+		//
+		lineConstraints.clear();
+		lineConstraints.push_back(
+			{
+				idx: -1,
+				width: 0.0f,
+				height: 0.0f,
+				lineHeight: 0.0f,
+				baseLine: 0.0f,
+				spaceWrap: false
+			}
+		);
+		{
+			auto currentTextStyleIdx = textStyleIdx;
+			for (auto k = 0; k < line.size(); k++) {
+				auto textStyle = getTextStyle(lineCharIdxs, k, currentTextStyleIdx);
+				auto currentFont = textStyle != nullptr && textStyle->font != nullptr?textStyle->font:font;
+				baseLine = Math::max(baseLine, currentFont->getBaseLine());
+				baseLineSpaceWrap = Math::max(baseLineSpaceWrap, currentFont->getBaseLine());
+				lineHeight = Math::max(lineHeight, currentFont->getLineHeight());
+				lineHeightSpaceWrap = Math::max(lineHeightSpaceWrap, currentFont->getLineHeight());
+				// render a image
+				if (textStyle != nullptr && textStyle->image != nullptr) {
+					if (lineConstraints[lineConstraints.size() - 1].spaceWrap == false) {
+						lineConstraints[lineConstraints.size() - 1] = {
+							idx: k,
+							width: lineWidth,
+							height: Math::max(lineHeight, baseLine + imageHeight),
+							lineHeight: lineHeight,
+							baseLine: baseLine,
+							spaceWrap: false
+						};
+						lineWidthSpaceWrap = 0.0f;
+						lineHeightSpaceWrap = 0.0f;
+						baseLineSpaceWrap = 0.0f;
+					}
+					if (lineWidth > maxLineWidth) {
+						imageHeight = 0.0f;
+						lineWidth = lineWidthSpaceWrap;
+						lineHeight = lineHeightSpaceWrap;
+						baseLine = baseLineSpaceWrap;
+						lineConstraints.push_back(
+							{
+								idx: -1,
+								width: 0.0f,
+								height: 0.0f,
+								lineHeight: 0.0f,
+								baseLine: 0.0f,
+								spaceWrap: false
+							}
+						);
+					}
+					lineWidth+= textStyle->width;
+					lineWidthSpaceWrap+= textStyle->width;
+					imageHeight = Math::max(imageHeight, static_cast<float>(textStyle->height));
+				} else {
+					// render text
+					if (line[k] == ' ') {
+						lineConstraints[lineConstraints.size() - 1] = {
+							idx: k,
+							width: lineWidth,
+							height: Math::max(lineHeight, baseLine + imageHeight),
+							lineHeight: lineHeight,
+							baseLine: baseLine,
+							spaceWrap: true
+						};
+						lineWidthSpaceWrap = 0.0f;
+						lineHeightSpaceWrap = 0.0f;
+						baseLineSpaceWrap = 0.0f;
+					}
+					auto character = currentFont->getCharacter(line[k]);
+					if (character != nullptr) {
+						if (lineConstraints[lineConstraints.size() - 1].spaceWrap == false) {
+							lineConstraints[lineConstraints.size() - 1] = {
+								idx: k,
+								width: lineWidth,
+								height: Math::max(lineHeight, baseLine + imageHeight),
+								lineHeight: lineHeight,
+								baseLine: baseLine,
+								spaceWrap: false
+							};
+							lineWidthSpaceWrap = 0.0f;
+							lineHeightSpaceWrap = 0.0f;
+							baseLineSpaceWrap = 0.0f;
+						}
+						if (lineWidth > maxLineWidth) {
+							lineWidth = lineWidthSpaceWrap;
+							if (k != line.size() - 1) {
+								imageHeight = 0.0f;
+								lineHeight = lineHeightSpaceWrap;
+								baseLine = baseLineSpaceWrap;
+							}
+							lineConstraints.push_back(
+								{
+									idx: -1,
+									width: 0.0f,
+									height: 0.0f,
+									lineHeight: 0.0f,
+									baseLine: 0.0f,
+									spaceWrap: false
+								}
+							);
+						}
+						lineWidth+= character->getXAdvance();
+						lineWidthSpaceWrap+= lineWidthSpaceWrap < Math::EPSILON && line[k] == ' '?0.0f:character->getXAdvance();
+					}
+				}
+			}
+		}
+
+		//
+		lineConstraints[lineConstraints.size() - 1] = {
+			idx: static_cast<int>(line.size()),
+			width: lineWidth,
+			height: Math::max(lineHeight, baseLine + imageHeight),
+			lineHeight: lineHeight,
+			baseLine: baseLine,
+			spaceWrap: false
+		};
+	}
+}
+
 void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 {
 	if (shouldRender() == false) return;
@@ -403,211 +614,8 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 	auto boundTexture = -1;
 	GUIColor lastColor = color;
 	for (auto i = charStartIdx; i < charEndIdx;) {
-		// determine line to render
-		if (preformatted == true) {
-			line.clear();
-			lineCharIdxs.clear();
-			auto k = i;
-			for (; k < charEndIdx; k++) {
-				auto c = text.charAt(k);
-				// line finished?
-				if (c == '\n') {
-					break;
-				} else
-				if (c == '\t') {
-					// extend tab to 4 spaces if line is not empty
-					line+= tabString3;
-					lineCharIdxs.push_back(k);
-					lineCharIdxs.push_back(k);
-					lineCharIdxs.push_back(k);
-					lineCharIdxs.push_back(k);
-				} else {
-					line+= c;
-					lineCharIdxs.push_back(k);
-				}
-			}
-			i = k + 1;
-		} else {
-			line.clear();
-			lineCharIdxs.clear();
-			auto k = i;
-			for (; k < charEndIdx; k++) {
-				auto c = text.charAt(k);
-				// line finished?
-				if (c == '\n') {
-					break;
-				} else
-				if (line.empty() == false && c == ' ' && StringTools::endsWith(line, spaceString) == true) {
-					// no op as we have a line which already has a space at the end
-				} else
-				if (line.empty() == true && (c == ' ' || c == '\t')) {
-					// no op
-				} else
-				if (c == '\t') {
-					// extend tab to 4 spaces if line is not empty
-					if (line.empty() == false) {
-						if (StringTools::endsWith(line, spaceString) == true) {
-							line+= tabString3;
-						} else {
-							line+= tabString4;
-						}
-						lineCharIdxs.push_back(k);
-						lineCharIdxs.push_back(k);
-						lineCharIdxs.push_back(k);
-						lineCharIdxs.push_back(k);
-					}
-				} else {
-					line+= c;
-					lineCharIdxs.push_back(k);
-				}
-			}
-			i = k + 1;
-		}
-		// remove trailing space
-		while (StringTools::endsWith(line, spaceString) == true) line.erase(line.begin() + line.size() - 1);
-
-		if (line.empty() == true) {
-			//
-			lines.push_back(
-				{
-					idx: 0,
-					width: 0.0f,
-					height: font->getLineHeight(),
-					lineHeight: font->getLineHeight(),
-					baseLine: font->getBaseLine(),
-					spaceWrap: true
-				}
-			);
-		} else {
-			// determine baseline and part of line to render
-			auto baseLine = 0.0f;
-			auto lineHeight = 0.0f;
-			auto lineWidth = 0.0f;
-			auto lineWidthSpaceWrap = 0.0f;
-			auto lineHeightSpaceWrap = 0.0f;
-			auto baseLineSpaceWrap = 0.0f;
-			auto imageHeight = 0.0f;
-
-			//
-			lines.clear();
-			lines.push_back(
-				{
-					idx: -1,
-					width: 0.0f,
-					height: 0.0f,
-					lineHeight: 0.0f,
-					baseLine: 0.0f,
-					spaceWrap: false
-				}
-			);
-			{
-				auto currentTextStyleIdx = textStyleIdx;
-				for (auto k = 0; k < line.size(); k++) {
-					auto textStyle = getTextStyle(lineCharIdxs, k, currentTextStyleIdx);
-					auto currentFont = textStyle != nullptr && textStyle->font != nullptr?textStyle->font:font;
-					baseLine = Math::max(baseLine, currentFont->getBaseLine());
-					baseLineSpaceWrap = Math::max(baseLineSpaceWrap, currentFont->getBaseLine());
-					lineHeight = Math::max(lineHeight, currentFont->getLineHeight());
-					lineHeightSpaceWrap = Math::max(lineHeightSpaceWrap, currentFont->getLineHeight());
-					// render a image
-					if (textStyle != nullptr && textStyle->image != nullptr) {
-						if (lines[lines.size() - 1].spaceWrap == false) {
-							lines[lines.size() - 1] = {
-								idx: k,
-								width: lineWidth,
-								height: Math::max(lineHeight, baseLine + imageHeight),
-								lineHeight: lineHeight,
-								baseLine: baseLine,
-								spaceWrap: false
-							};
-							lineWidthSpaceWrap = 0.0f;
-							lineHeightSpaceWrap = 0.0f;
-							baseLineSpaceWrap = 0.0f;
-						}
-						if (lineWidth > maxLineWidth) {
-							imageHeight = 0.0f;
-							lineWidth = lineWidthSpaceWrap;
-							lineHeight = lineHeightSpaceWrap;
-							baseLine = baseLineSpaceWrap;
-							lines.push_back(
-								{
-									idx: -1,
-									width: 0.0f,
-									height: 0.0f,
-									lineHeight: 0.0f,
-									baseLine: 0.0f,
-									spaceWrap: false
-								}
-							);
-						}
-						lineWidth+= textStyle->width;
-						lineWidthSpaceWrap+= textStyle->width;
-						imageHeight = Math::max(imageHeight, static_cast<float>(textStyle->height));
-					} else {
-						// render text
-						if (line[k] == ' ') {
-							lines[lines.size() - 1] = {
-								idx: k,
-								width: lineWidth,
-								height: Math::max(lineHeight, baseLine + imageHeight),
-								lineHeight: lineHeight,
-								baseLine: baseLine,
-								spaceWrap: true
-							};
-							lineWidthSpaceWrap = 0.0f;
-							lineHeightSpaceWrap = 0.0f;
-							baseLineSpaceWrap = 0.0f;
-						}
-						auto character = currentFont->getCharacter(line[k]);
-						if (character != nullptr) {
-							if (lines[lines.size() - 1].spaceWrap == false) {
-								lines[lines.size() - 1] = {
-									idx: k,
-									width: lineWidth,
-									height: Math::max(lineHeight, baseLine + imageHeight),
-									lineHeight: lineHeight,
-									baseLine: baseLine,
-									spaceWrap: false
-								};
-								lineWidthSpaceWrap = 0.0f;
-								lineHeightSpaceWrap = 0.0f;
-								baseLineSpaceWrap = 0.0f;
-							}
-							if (lineWidth > maxLineWidth) {
-								lineWidth = lineWidthSpaceWrap;
-								if (k != line.size() - 1) {
-									imageHeight = 0.0f;
-									lineHeight = lineHeightSpaceWrap;
-									baseLine = baseLineSpaceWrap;
-								}
-								lines.push_back(
-									{
-										idx: -1,
-										width: 0.0f,
-										height: 0.0f,
-										lineHeight: 0.0f,
-										baseLine: 0.0f,
-										spaceWrap: false
-									}
-								);
-							}
-							lineWidth+= character->getXAdvance();
-							lineWidthSpaceWrap+= lineWidthSpaceWrap < Math::EPSILON && line[k] == ' '?0.0f:character->getXAdvance();
-						}
-					}
-				}
-			}
-
-			//
-			lines[lines.size() - 1] = {
-				idx: static_cast<int>(line.size()),
-				width: lineWidth,
-				height: Math::max(lineHeight, baseLine + imageHeight),
-				lineHeight: lineHeight,
-				baseLine: baseLine,
-				spaceWrap: false
-			};
-		}
+		//
+		determineNextLineConstraints(i, charEndIdx, textStyleIdx);
 
 		/*
 		{
@@ -634,7 +642,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 		}
 		*/
 
-		//
+		// render
 		auto lineIdx = 0;
 		{
 			auto skipSpaces = false;
@@ -644,10 +652,10 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 				// no op
 			} else
 			if (alignments.horizontal == GUINode_AlignmentHorizontal::CENTER) {
-				x = (maxLineWidth - lines[lineIdx].width) / 2;
+				x = (maxLineWidth - lineConstraints[lineIdx].width) / 2;
 			} else
 			if (alignments.horizontal == GUINode_AlignmentHorizontal::RIGHT) {
-				x = maxLineWidth - lines[lineIdx].width;
+				x = maxLineWidth - lineConstraints[lineIdx].width;
 			}
 			for (auto k = 0; k < line.size(); k++) {
 				auto textStyle = getTextStyle(lineCharIdxs, k, currentTextStyleIdx);
@@ -662,7 +670,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 					guiRenderer->render();
 					guiRenderer->bindTexture(textStyle->textureId);
 					float left = x + xIndentLeft;
-					float top = y + yIndentTop + (lines[lineIdx].baseLine - textStyle->height) + (lines[lineIdx].height - lines[lineIdx].lineHeight);
+					float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - textStyle->height) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
 					float width = textStyle->width;
 					float height = textStyle->height;
 					guiRenderer->addQuad(
@@ -692,20 +700,20 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 					x+= textStyle->width;
 				} else {
 					// do line break
-					if (k == lines[lineIdx].idx) {
-						y+= lines[lineIdx].height;
+					if (k == lineConstraints[lineIdx].idx) {
+						y+= lineConstraints[lineIdx].height;
 						lineIdx++;
 						x = 0;
 						if (alignments.horizontal == GUINode_AlignmentHorizontal::LEFT) {
 							// no op
 						} else
 						if (alignments.horizontal == GUINode_AlignmentHorizontal::CENTER) {
-							x = (maxLineWidth - lines[lineIdx].width) / 2;
+							x = (maxLineWidth - lineConstraints[lineIdx].width) / 2;
 						} else
 						if (alignments.horizontal == GUINode_AlignmentHorizontal::RIGHT) {
-							x = maxLineWidth - lines[lineIdx].width;
+							x = maxLineWidth - lineConstraints[lineIdx].width;
 						}
-						if (lines[lineIdx - 1].spaceWrap == true) {
+						if (lineConstraints[lineIdx - 1].spaceWrap == true) {
 							skipSpaces = true;
 						}
 					}
@@ -721,7 +729,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 					auto character = currentFont->getCharacter(line[k]);
 					if (character != nullptr) {
 						float left = x + xIndentLeft;
-						float top = y + yIndentTop + (lines[lineIdx].baseLine - currentFont->getBaseLine()) + (lines[lineIdx].height - lines[lineIdx].lineHeight);
+						float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - currentFont->getBaseLine()) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
 						if (boundTexture == -1) {
 							boundTexture = currentFont->getTextureId();
 							guiRenderer->bindTexture(boundTexture);
@@ -748,7 +756,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 		guiRenderer->render();
 
 		//
-		y+= lines[lines.size() - 1].height;
+		y+= lineConstraints[lineConstraints.size() - 1].height;
 
 		/*
 			// check for separation char or last char
@@ -934,7 +942,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 		//
 		line.clear();
 		lineCharIdxs.clear();
-		lines.clear();
+		lineConstraints.clear();
 	}
 
 	//

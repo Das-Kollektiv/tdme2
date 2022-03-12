@@ -91,7 +91,7 @@ private:
 	string tabString4 { "    " };
 	string line;
 	vector<int> lineCharIdxs;
-	vector<Line> lines;
+	vector<Line> lineConstraints;
 
 	/**
 	 * Get text style for
@@ -136,6 +136,13 @@ private:
 		return textStyle;
 	}
 
+	/**
+	 * Determine next line constraints
+	 * @param i current loop index
+	 * @param charEndIdx character end index
+	 * @param textStyleIdx text style index to start with
+	 */
+	void determineNextLineConstraints(int& i, int charEndIdx, int textStyleIdx);
 protected:
 	/**
 	 * Constructor
