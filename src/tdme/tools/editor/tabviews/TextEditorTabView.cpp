@@ -232,12 +232,12 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 					if (inlineComment == false && lineComment == false && preprocessorLine == false && quote == '\0') {
 						if (language.commentLine.empty() == false && (language.commentLine.size() == 1 || c == language.commentLine[0]) && nc == language.commentLine[language.commentLine.size() - 1]) {
 							lineComment = true;
-							startIdx = i - 1;
+							startIdx = i;
 							endIdx = -1;
 						} else
 						if (language.commentInlineStart.empty() == false && (language.commentInlineStart.size() == 1 || c == language.commentInlineStart[0]) && nc == language.commentInlineStart[language.commentInlineStart.size() - 1]) {
 							inlineComment = true;
-							startIdx = i - 1;
+							startIdx = i;
 							endIdx = -1;
 						} else
 						if (quote == '\0' && language.keywordQuotes.find(c) != string::npos) {
