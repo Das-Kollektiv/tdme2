@@ -8,13 +8,10 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/physics/CollisionDetection.h>
 #include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Frustum.h>
 #include <tdme/math/Math.h>
-#include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/VectorIteratorMultiple.h>
 
@@ -26,14 +23,11 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
-using tdme::engine::physics::CollisionDetection;
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::Entity;
 using tdme::engine::Frustum;
 using tdme::engine::OctTreePartition;
 using tdme::math::Math;
-using tdme::math::Vector3;
 using tdme::utilities::Console;
 using tdme::utilities::VectorIteratorMultiple;
 

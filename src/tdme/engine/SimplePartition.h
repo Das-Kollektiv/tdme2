@@ -4,21 +4,15 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/primitives/fwd-tdme.h>
-#include <tdme/engine/Entity.h>
 #include <tdme/engine/Partition.h>
-#include <tdme/math/fwd-tdme.h>
-#include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/VectorIteratorMultiple.h>
 
 using std::vector;
 
-using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::Entity;
 using tdme::engine::Frustum;
 using tdme::engine::Partition;
-using tdme::math::Vector3;
 using tdme::utilities::VectorIteratorMultiple;
 
 /**
