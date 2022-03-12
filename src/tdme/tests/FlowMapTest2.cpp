@@ -119,8 +119,7 @@ void FlowMapTest2::display()
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
 	if (mouseClicked == true) {
 		mouseClicked = false;
-		Vector3 worldClickPosition;
-		engine->computeWorldCoordinateByMousePosition(mouseClickPosition[0], mouseClickPosition[1], worldClickPosition);
+		auto worldClickPosition = engine->computeWorldCoordinateByMousePosition(mouseClickPosition[0], mouseClickPosition[1]);
 		Console::println(
 			"FlowMapTest2::display(): " +
 			to_string(worldClickPosition.getX()) + ", " +

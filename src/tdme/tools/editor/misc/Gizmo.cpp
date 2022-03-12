@@ -219,11 +219,9 @@ void Gizmo::removeGizmo() {
 bool Gizmo::determineGizmoMovement(int mouseX, int mouseY, vector<Vector3> vertices, Vector3& deltaMovement) {
 	auto gizmoEntity = getGizmoObject3D();
 	if (gizmoEntity == nullptr) return false;
-	Vector3 tmpVector3a;
-	Vector3 tmpVector3b;
-	Vector3 tmpVector3e;
-	engine->computeWorldCoordinateByMousePosition(mouseX, mouseY, 0.0f, tmpVector3a);
-	engine->computeWorldCoordinateByMousePosition(mouseX, mouseY, 1.0f, tmpVector3b);
+	auto nearPlaneWorldCoordinate = engine->computeWorldCoordinateByMousePosition(mouseX, mouseY, 0.0f);
+	auto farPlaneWorldCoordinate = engine->computeWorldCoordinateByMousePosition(mouseX, mouseY, 1.0f);
+	Vector3 lineTriangleContact;
 	for (auto& vertex: vertices) {
 		vertex.add(gizmoEntity->getTranslation());
 	}
@@ -231,22 +229,22 @@ bool Gizmo::determineGizmoMovement(int mouseX, int mouseY, vector<Vector3> verti
 		vertices[0],
 		vertices[1],
 		vertices[2],
-		tmpVector3a,
-		tmpVector3b,
-		tmpVector3e) == true ||
+		nearPlaneWorldCoordinate,
+		farPlaneWorldCoordinate,
+		lineTriangleContact) == true ||
 		LineSegment::doesLineSegmentCollideWithTriangle(
 		vertices[2],
 		vertices[3],
 		vertices[0],
-		tmpVector3a,
-		tmpVector3b,
-		tmpVector3e) == true
+		nearPlaneWorldCoordinate,
+		farPlaneWorldCoordinate,
+		lineTriangleContact) == true
 	) {
 		auto success = gizmoLastResultAvailable == true;
 		if (success == true) {
-			deltaMovement = tmpVector3e.clone().sub(gizmoLastResult);
+			deltaMovement = lineTriangleContact.clone().sub(gizmoLastResult);
 		}
-		gizmoLastResult = tmpVector3e;
+		gizmoLastResult = lineTriangleContact;
 		gizmoLastResultAvailable = true;
 		return success;
 	}

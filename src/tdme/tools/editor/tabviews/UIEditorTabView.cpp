@@ -100,8 +100,7 @@ void UIEditorTabView::handleInputEvents()
 			for (auto& event: engine->getGUI()->getMouseEvents()) {
 				if (event.isProcessed() == true) continue;
 				// push event to gui engine if in book space
-				Vector3 mouseWorldCoordinate;
-				engine->computeWorldCoordinateByMousePosition(event.getXUnscaled(), event.getYUnscaled(), mouseWorldCoordinate);
+				Vector3 mouseWorldCoordinate = engine->computeWorldCoordinateByMousePosition(event.getXUnscaled(), event.getYUnscaled());
 				auto bookLocalCoordinate = modelEntityWorldMatrixInverted.multiply(mouseWorldCoordinate);
 				auto clonedEvent = event;
 				clonedEvent.setX((bookLocalCoordinate.getX() - projectedUiMinX) * (guiEngine->getWidth() / (projectedUiMaxX - projectedUiMinX)));

@@ -1356,7 +1356,6 @@ void ModelTools::createTangentsAndBitangents(Node* node)
 	Vector3 deltaPos2;
 	Vector2 deltaUV1;
 	Vector2 deltaUV2;
-	Vector3 tmpVector3;
 	// create it
 	auto facesEntities = node->getFacesEntities();
 	auto& vertices = node->getVertices();
@@ -1386,8 +1385,8 @@ void ModelTools::createTangentsAndBitangents(Node* node)
 			deltaUV2.set(uv2).sub(uv0);
 			// compute tangent and bitangent
 			auto r = 1.0f / (deltaUV1.getX() * deltaUV2.getY() - deltaUV1.getY() * deltaUV2.getX());
-			auto tangent = deltaPos1.clone().scale(deltaUV2.getY()).sub(tmpVector3.set(deltaPos2).scale(deltaUV1.getY())).scale(r);
-			auto bitangent = deltaPos2.clone().scale(deltaUV1.getX()).sub(tmpVector3.set(deltaPos1).scale(deltaUV2.getX())).scale(r);
+			auto tangent = deltaPos1.clone().scale(deltaUV2.getY()).sub(deltaPos2.clone().scale(deltaUV1.getY())).scale(r);
+			auto bitangent = deltaPos2.clone().scale(deltaUV1.getX()).sub(deltaPos1.clone().scale(deltaUV2.getX())).scale(r);
 			// set up tangent face indices
 			face.setTangentIndices(tangents.size() + 0, tangents.size() + 1, tangents.size() + 2);
 			// set up bitangent face indices
@@ -1415,7 +1414,7 @@ void ModelTools::createTangentsAndBitangents(Node* node)
 					auto normal = normals[face.getNormalIndices()[i]];
 					auto& tangent = tangents[face.getTangentIndices()[i]];
 					auto& bitangent = bitangents[face.getBitangentIndices()[i]];
-					tangent.sub(tmpVector3.set(normal).scale(Vector3::computeDotProduct(normal, tangent))).normalize();
+					tangent.sub(normal.clone().scale(Vector3::computeDotProduct(normal, tangent))).normalize();
 					if (Vector3::computeDotProduct(Vector3::computeCrossProduct(normal, tangent), bitangent) < 0.0f) {
 						tangent.scale(-1.0f);
 					}

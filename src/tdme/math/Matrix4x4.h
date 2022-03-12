@@ -280,16 +280,12 @@ public:
 	 * @return this matrix
 	 */
 	inline void getScale(Vector3& scale) const {
-		Vector3 tmpVector3;
 		// x axis
-		tmpVector3.set(data[0], data[1], data[2]);
-		scale.data[0] = tmpVector3.computeLength();
+		scale.data[0] = Vector3(data[0], data[1], data[2]).computeLength();
 		// y axis
-		tmpVector3.set(data[4], data[5], data[6]);
-		scale.data[1] = tmpVector3.computeLength();
+		scale.data[1] = Vector3(data[4], data[5], data[6]).computeLength();
 		// z axis
-		tmpVector3.set(data[8], data[9], data[10]);
-		scale.data[2] = tmpVector3.computeLength();
+		scale.data[2] = Vector3(data[8], data[9], data[10]).computeLength();
 	}
 
 	/**
@@ -298,28 +294,28 @@ public:
 	 * @return this matrix
 	 */
 	inline Matrix4x4& setScale(const Vector3& scale) {
-		Vector3 tmpVector3;
+		Vector3 axisVector;
 		// x axis
-		tmpVector3.set(data[0], data[1], data[2]);
-		tmpVector3.normalize();
-		tmpVector3.scale(scale.data[0]);
-		data[0] = tmpVector3.data[0];
-		data[1] = tmpVector3.data[1];
-		data[2] = tmpVector3.data[2];
+		axisVector.set(data[0], data[1], data[2]);
+		axisVector.normalize();
+		axisVector.scale(scale.data[0]);
+		data[0] = axisVector.data[0];
+		data[1] = axisVector.data[1];
+		data[2] = axisVector.data[2];
 		// y axis
-		tmpVector3.set(data[4], data[5], data[6]);
-		tmpVector3.normalize();
-		tmpVector3.scale(scale.data[1]);
-		data[4] = tmpVector3.data[0];
-		data[5] = tmpVector3.data[1];
-		data[6] = tmpVector3.data[2];
+		axisVector.set(data[4], data[5], data[6]);
+		axisVector.normalize();
+		axisVector.scale(scale.data[1]);
+		data[4] = axisVector.data[0];
+		data[5] = axisVector.data[1];
+		data[6] = axisVector.data[2];
 		// z axis
-		tmpVector3.set(data[8], data[9], data[10]);
-		tmpVector3.normalize();
-		tmpVector3.scale(scale.data[2]);
-		data[8] = tmpVector3.data[0];
-		data[9] = tmpVector3.data[1];
-		data[10] = tmpVector3.data[2];
+		axisVector.set(data[8], data[9], data[10]);
+		axisVector.normalize();
+		axisVector.scale(scale.data[2]);
+		data[8] = axisVector.data[0];
+		data[9] = axisVector.data[1];
+		data[10] = axisVector.data[2];
 		return *this;
 	}
 

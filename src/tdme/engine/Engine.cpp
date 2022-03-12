@@ -1466,7 +1466,7 @@ void Engine::display()
 	camera->update(renderer->CONTEXTINDEX_DEFAULT, _width, _height);
 }
 
-void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3& worldCoordinate)
+Vector3 Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z)
 {
 	auto scaleFactorWidth = static_cast<float>(scaledWidth != -1?scaledWidth:width) / static_cast<float>(width);
 	auto scaleFactorHeight = static_cast<float>(scaledHeight != -1?scaledHeight:height) / static_cast<float>(height);
@@ -1482,14 +1482,14 @@ void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouse
 		)
 	);
 	worldCoordinate4.scale(1.0f / worldCoordinate4.getW());
-	worldCoordinate.set(
+	return Vector3(
 		worldCoordinate4.getX(),
 		worldCoordinate4.getY(),
 		worldCoordinate4.getZ()
 	);
 }
 
-void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& worldCoordinate)
+Vector3 Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY)
 {
 	// use framebuffer if we have one
 	if (frameBuffer != nullptr)
@@ -1507,7 +1507,7 @@ void Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouse
 		FrameBuffer::disableFrameBuffer();
 
 	//
-	computeWorldCoordinateByMousePosition(mouseX, mouseY, z, worldCoordinate);
+	return computeWorldCoordinateByMousePosition(mouseX, mouseY, z);
 }
 
 Entity* Engine::getEntityByMousePosition(
@@ -1520,13 +1520,11 @@ Entity* Engine::getEntityByMousePosition(
 	ParticleSystemEntity** particleSystemEntity
 ) {
 	// get world position of mouse position at near and far plane
-	Vector3 tmpVector3a;
-	Vector3 tmpVector3b;
-	Vector3 tmpVector3c;
-	Vector3 tmpVector3d;
-	Vector3 tmpVector3e;
-	computeWorldCoordinateByMousePosition(mouseX, mouseY, 0.0f, tmpVector3a);
-	computeWorldCoordinateByMousePosition(mouseX, mouseY, 1.0f, tmpVector3b);
+	auto nearPlaneWorldCoordinate = computeWorldCoordinateByMousePosition(mouseX, mouseY, 0.0f);
+	auto farPlaneWorldCoordinate = computeWorldCoordinateByMousePosition(mouseX, mouseY, 1.0f);
+	Vector3 boundingBoxLineContactMin;
+	Vector3 boundingBoxLineContactMax;
+	Vector3 lineTriangleContact;
 
 	// selected entity
 	auto selectedEntityDistance = Float::MAX_VALUE;
@@ -1540,11 +1538,11 @@ Entity* Engine::getEntityByMousePosition(
 		if (forcePicking == false && entity->isPickable() == false) continue;
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
 		// do the collision test
-		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
+		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), nearPlaneWorldCoordinate, farPlaneWorldCoordinate, boundingBoxLineContactMin, boundingBoxLineContactMax) == true) {
 			for (auto it = entity->getTransformedFacesIterator()->iterator(); it->hasNext();) {
 				auto& vertices = it->next();
-				if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], tmpVector3a, tmpVector3b, tmpVector3e) == true) {
-					auto entityDistance = tmpVector3e.sub(tmpVector3a).computeLengthSquared();
+				if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], nearPlaneWorldCoordinate, farPlaneWorldCoordinate, lineTriangleContact) == true) {
+					auto entityDistance = lineTriangleContact.sub(nearPlaneWorldCoordinate).computeLengthSquared();
 					// check if match or better match
 					if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 						selectedEntity = entity;
@@ -1571,8 +1569,8 @@ Entity* Engine::getEntityByMousePosition(
 		if (forcePicking == false && entity->isPickable() == false) continue;
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
 		// do the collision test
-		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
-			auto entityDistance = tmpVector3e.set(entity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLengthSquared();
+		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), nearPlaneWorldCoordinate, farPlaneWorldCoordinate, boundingBoxLineContactMin, boundingBoxLineContactMax) == true) {
+			auto entityDistance = lineTriangleContact.set(entity->getBoundingBoxTransformed()->getCenter()).sub(nearPlaneWorldCoordinate).computeLengthSquared();
 			// check if match or better match
 			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 				selectedEntity = entity;
@@ -1589,8 +1587,8 @@ Entity* Engine::getEntityByMousePosition(
 		if (forcePicking == false && entity->isPickable() == false) continue;
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
 		// do the collision test
-		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
-			auto entityDistance = tmpVector3e.set(entity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLengthSquared();
+		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), nearPlaneWorldCoordinate, farPlaneWorldCoordinate, boundingBoxLineContactMin, boundingBoxLineContactMax) == true) {
+			auto entityDistance = lineTriangleContact.set(entity->getBoundingBoxTransformed()->getCenter()).sub(nearPlaneWorldCoordinate).computeLengthSquared();
 			// check if match or better match
 			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 				selectedEntity = entity;
@@ -1607,8 +1605,8 @@ Entity* Engine::getEntityByMousePosition(
 		if (forcePicking == false && entity->isPickable() == false) continue;
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
 		// do the collision test
-		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
-			auto entityDistance = tmpVector3e.set(entity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLengthSquared();
+		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), nearPlaneWorldCoordinate, farPlaneWorldCoordinate, boundingBoxLineContactMin, boundingBoxLineContactMax) == true) {
+			auto entityDistance = lineTriangleContact.set(entity->getBoundingBoxTransformed()->getCenter()).sub(nearPlaneWorldCoordinate).computeLengthSquared();
 			// check if match or better match
 			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 				selectedEntity = entity;
@@ -1618,8 +1616,8 @@ Entity* Engine::getEntityByMousePosition(
 				auto selectedSubEntityDistance = Float::MAX_VALUE;
 				// iterate sub partition systems, check if ray with given mouse position from near plane to far plane collides with bounding volume
 				for (auto subEntity: entity->getParticleSystems()) {
-					if (LineSegment::doesBoundingBoxCollideWithLineSegment(subEntity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
-						auto subEntityDistance = tmpVector3e.set(subEntity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLengthSquared();
+					if (LineSegment::doesBoundingBoxCollideWithLineSegment(subEntity->getBoundingBoxTransformed(), nearPlaneWorldCoordinate, farPlaneWorldCoordinate, boundingBoxLineContactMin, boundingBoxLineContactMax) == true) {
+						auto subEntityDistance = lineTriangleContact.set(subEntity->getBoundingBoxTransformed()->getCenter()).sub(nearPlaneWorldCoordinate).computeLengthSquared();
 						// check if match or better match
 						if (selectedParticleSystem == nullptr || subEntityDistance < selectedSubEntityDistance) {
 							selectedSubEntityDistance = subEntityDistance;
@@ -1637,8 +1635,8 @@ Entity* Engine::getEntityByMousePosition(
 		if (forcePicking == false && entity->isPickable() == false) continue;
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
 		// do the collision test
-		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
-			auto entityDistance = tmpVector3e.set(entity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLengthSquared();
+		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), nearPlaneWorldCoordinate, farPlaneWorldCoordinate, boundingBoxLineContactMin, boundingBoxLineContactMax) == true) {
+			auto entityDistance = lineTriangleContact.set(entity->getBoundingBoxTransformed()->getCenter()).sub(nearPlaneWorldCoordinate).computeLengthSquared();
 			// check if match or better match
 			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 				selectedEntity = entity;
@@ -1657,11 +1655,11 @@ Entity* Engine::getEntityByMousePosition(
 			if (forcePicking == false && entity->isPickable() == false) continue;
 			if (filter != nullptr && filter->filterEntity(entity) == false) continue;
 			// do the collision test
-			if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
+			if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), nearPlaneWorldCoordinate, farPlaneWorldCoordinate, boundingBoxLineContactMin, boundingBoxLineContactMax) == true) {
 				for (auto it = entity->getTransformedFacesIterator()->iterator(); it->hasNext();) {
 					auto& vertices = it->next();
-					if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], tmpVector3a, tmpVector3b, tmpVector3e) == true) {
-						auto entityDistance = tmpVector3e.sub(tmpVector3a).computeLengthSquared();
+					if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], nearPlaneWorldCoordinate, farPlaneWorldCoordinate, lineTriangleContact) == true) {
+						auto entityDistance = lineTriangleContact.sub(nearPlaneWorldCoordinate).computeLengthSquared();
 						// check if match or better match
 						if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 							selectedEntity = entity;
@@ -1681,13 +1679,13 @@ Entity* Engine::getEntityByMousePosition(
 		if (forcePicking == false && entity->isPickable() == false) continue;
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
 		// do the collision test
-		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
+		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), nearPlaneWorldCoordinate, farPlaneWorldCoordinate, boundingBoxLineContactMin, boundingBoxLineContactMax) == true) {
 			auto object = entity->getLODObject();
 			if (object != nullptr) {
 				for (auto it = object->getTransformedFacesIterator()->iterator(); it->hasNext();) {
 					auto& vertices = it->next();
-					if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], tmpVector3a, tmpVector3b, tmpVector3e) == true) {
-						auto entityDistance = tmpVector3e.sub(tmpVector3a).computeLengthSquared();
+					if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], nearPlaneWorldCoordinate, farPlaneWorldCoordinate, lineTriangleContact) == true) {
+						auto entityDistance = lineTriangleContact.sub(nearPlaneWorldCoordinate).computeLengthSquared();
 						// check if match or better match
 						if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 							selectedEntity = entity;
@@ -1707,7 +1705,7 @@ Entity* Engine::getEntityByMousePosition(
 		if (forcePicking == false && entity->isPickable() == false) continue;
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
 		// do the collision test
-		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), tmpVector3a, tmpVector3b, tmpVector3c, tmpVector3d) == true) {
+		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), nearPlaneWorldCoordinate, farPlaneWorldCoordinate, boundingBoxLineContactMin, boundingBoxLineContactMax) == true) {
 			DecomposedEntities decomposedEntitiesEH;
 			Node* object3DNodeEH = nullptr;
 			ParticleSystemEntity* particleSystemEntityEH = nullptr;
@@ -1725,7 +1723,7 @@ Entity* Engine::getEntityByMousePosition(
 				&particleSystemEntityEH
 			);
 			if (subEntity != nullptr) {
-				auto entityDistance = tmpVector3e.set(subEntity->getBoundingBoxTransformed()->getCenter()).sub(tmpVector3a).computeLengthSquared();
+				auto entityDistance = lineTriangleContact.set(subEntity->getBoundingBoxTransformed()->getCenter()).sub(nearPlaneWorldCoordinate).computeLengthSquared();
 				// check if match or better match
 				if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 					selectedEntity = entity;
@@ -1758,10 +1756,8 @@ Entity* Engine::getEntityByMousePosition(
 
 Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& contactPoint, EntityPickingFilter* filter, Node** object3DNode, ParticleSystemEntity** particleSystemEntity) {
 	// get world position of mouse position at near and far plane
-	Vector3 startPoint;
-	Vector3 endPoint;
-	computeWorldCoordinateByMousePosition(mouseX, mouseY, 0.0f, startPoint);
-	computeWorldCoordinateByMousePosition(mouseX, mouseY, 1.0f, endPoint);
+	auto startPoint = computeWorldCoordinateByMousePosition(mouseX, mouseY, 0.0f);
+	auto endPoint = computeWorldCoordinateByMousePosition(mouseX, mouseY, 1.0f);
 
 	//
 	return doRayCasting(startPoint, endPoint, contactPoint, filter);// TODO: object 3d node, particle system entity
@@ -1774,9 +1770,9 @@ Entity* Engine::doRayCasting(
 	const Vector3& endPoint,
 	Vector3& contactPoint,
 	EntityPickingFilter* filter) {
-	Vector3 tmpVector3c;
-	Vector3 tmpVector3d;
-	Vector3 tmpVector3e;
+	Vector3 boundingBoxLineContactMin;
+	Vector3 boundingBoxLineContactMax;
+	Vector3 lineTriangleContact;
 
 	// selected entity
 	auto selectedEntityDistance = Float::MAX_VALUE;
@@ -1788,16 +1784,16 @@ Entity* Engine::doRayCasting(
 		if (forcePicking == false && entity->isPickable() == false) continue;
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
 		// do the collision test
-		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), startPoint, endPoint, tmpVector3c, tmpVector3d) == true) {
+		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), startPoint, endPoint, boundingBoxLineContactMin, boundingBoxLineContactMax) == true) {
 			for (auto it = entity->getTransformedFacesIterator()->iterator(); it->hasNext();) {
 				auto& vertices = it->next();
-				if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], startPoint, endPoint, tmpVector3e) == true) {
-					auto entityDistance = tmpVector3e.clone().sub(startPoint).computeLengthSquared();
+				if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], startPoint, endPoint, lineTriangleContact) == true) {
+					auto entityDistance = lineTriangleContact.clone().sub(startPoint).computeLengthSquared();
 					// check if match or better match
 					if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 						selectedEntity = entity;
 						selectedEntityDistance = entityDistance;
-						contactPoint = tmpVector3e;
+						contactPoint = lineTriangleContact;
 					}
 				}
 			}
@@ -1816,16 +1812,16 @@ Entity* Engine::doRayCasting(
 			if (forcePicking == false && entity->isPickable() == false) continue;
 			if (filter != nullptr && filter->filterEntity(entity) == false) continue;
 			// do the collision test
-			if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), startPoint, endPoint, tmpVector3c, tmpVector3d) == true) {
+			if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), startPoint, endPoint, boundingBoxLineContactMin, boundingBoxLineContactMax) == true) {
 				for (auto it = entity->getTransformedFacesIterator()->iterator(); it->hasNext();) {
 					auto& vertices = it->next();
-					if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], startPoint, endPoint, tmpVector3e) == true) {
-						auto entityDistance = tmpVector3e.clone().sub(startPoint).computeLengthSquared();
+					if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], startPoint, endPoint, lineTriangleContact) == true) {
+						auto entityDistance = lineTriangleContact.clone().sub(startPoint).computeLengthSquared();
 						// check if match or better match
 						if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 							selectedEntity = entity;
 							selectedEntityDistance = entityDistance;
-							contactPoint = tmpVector3e;
+							contactPoint = lineTriangleContact;
 						}
 					}
 				}
@@ -1839,18 +1835,18 @@ Entity* Engine::doRayCasting(
 		if (forcePicking == false && entity->isPickable() == false) continue;
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
 		// do the collision test
-		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), startPoint, endPoint, tmpVector3c, tmpVector3d) == true) {
+		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), startPoint, endPoint, boundingBoxLineContactMin, boundingBoxLineContactMax) == true) {
 			auto object = entity->getLODObject();
 			if (object != nullptr) {
 				for (auto it = object->getTransformedFacesIterator()->iterator(); it->hasNext();) {
 					auto& vertices = it->next();
-					if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], startPoint, endPoint, tmpVector3e) == true) {
-						auto entityDistance = tmpVector3e.sub(startPoint).computeLengthSquared();
+					if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], startPoint, endPoint, lineTriangleContact) == true) {
+						auto entityDistance = lineTriangleContact.sub(startPoint).computeLengthSquared();
 						// check if match or better match
 						if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 							selectedEntity = entity;
 							selectedEntityDistance = entityDistance;
-							contactPoint = tmpVector3e;
+							contactPoint = lineTriangleContact;
 						}
 					}
 				}
@@ -1864,7 +1860,7 @@ Entity* Engine::doRayCasting(
 		if (forcePicking == false && entity->isPickable() == false) continue;
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
 		// do the collision test
-		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), startPoint, endPoint, tmpVector3c, tmpVector3d) == true) {
+		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), startPoint, endPoint, boundingBoxLineContactMin, boundingBoxLineContactMax) == true) {
 			DecomposedEntities decomposedEntitiesEH;
 			decomposeEntityTypes(
 				entity->getEntities(),
@@ -1880,7 +1876,7 @@ Entity* Engine::doRayCasting(
 				filter
 			);
 			if (entity != nullptr) {
-				auto entityDistance = tmpVector3e.sub(startPoint).computeLengthSquared();
+				auto entityDistance = lineTriangleContact.sub(startPoint).computeLengthSquared();
 				// check if match or better match
 				if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 					selectedEntity = entity;

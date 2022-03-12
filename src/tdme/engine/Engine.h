@@ -1043,19 +1043,18 @@ public:
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
 	 * @param z z
-	 * @param worldCoordinate world coordinate
+	 * @return world coordinate
 	 */
-	void computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3& worldCoordinate);
+	Vector3 computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z);
 
 	/**
 	 * Compute world coordinate from mouse position
-	 * TODO:
-	 * this does not work with GLES2
+	 * Note: this does not work with GLES2 as reading from depth buffer is not available
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
-	 * @param worldCoordinate world coordinate
+	 * @return coordinate
 	 */
-	void computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& worldCoordinate);
+	Vector3 computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY);
 
 	/**
 	 * Retrieves entity by mouse position

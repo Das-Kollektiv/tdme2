@@ -131,7 +131,6 @@ void Object3DRenderGroup::combineNode(Node* sourceNode, const vector<Vector3>& o
 				transformationsMatrix.multiply(objectParentTransformationsMatrix);
 
 				//
-				Vector3 tmpVector3;
 				for (auto& vertex: sourceNode->getVertices()) {
 					combinedModelNodeOrigins.push_back(origins[i]);
 					combinedModelNodeVertices.push_back(transformationsMatrix.multiply(vertex));
@@ -148,6 +147,7 @@ void Object3DRenderGroup::combineNode(Node* sourceNode, const vector<Vector3>& o
 				for (auto& bitangent: sourceNode->getBitangents()) {
 					combinedModelNodeBitangents.push_back(transformationsMatrix.multiplyNoTranslation(bitangent));
 				}
+
 				//
 				i++;
 			}

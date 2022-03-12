@@ -70,7 +70,7 @@ private:
 		auto nodeTransformedVertices = object3DNode->mesh->vertices;
 		// objects we will use for calculations
 		float distanceFromCamera;
-		Vector3 tmpVector3;
+		Vector3 faceCenter;
 		// create transparent render faces
 		for (auto i = 0; i < faces.size(); i++) {
 			// check for pool overflow
@@ -80,13 +80,13 @@ private:
 			}
 			// set up face
 			auto faceVertexIndices = faces[i].getVertexIndices();
-			tmpVector3.set(0.0f, 0.0f, 0.0f);
-			tmpVector3.add((*nodeTransformedVertices)[faceVertexIndices[0]]);
-			tmpVector3.add((*nodeTransformedVertices)[faceVertexIndices[1]]);
-			tmpVector3.add((*nodeTransformedVertices)[faceVertexIndices[2]]);
-			tmpVector3.scale(1.0f / 3.0f);
-			tmpVector3 = modelViewMatrix.multiply(tmpVector3);
-			distanceFromCamera = -tmpVector3.getZ();
+			faceCenter.set(0.0f, 0.0f, 0.0f);
+			faceCenter.add((*nodeTransformedVertices)[faceVertexIndices[0]]);
+			faceCenter.add((*nodeTransformedVertices)[faceVertexIndices[1]]);
+			faceCenter.add((*nodeTransformedVertices)[faceVertexIndices[2]]);
+			faceCenter.scale(1.0f / 3.0f);
+			faceCenter = modelViewMatrix.multiply(faceCenter);
+			distanceFromCamera = -faceCenter.getZ();
 			// create transparent render face
 			auto transparentRenderFace = transparentRenderFacesPool.allocate();
 			transparentRenderFace->object3DNode = object3DNode;
