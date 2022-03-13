@@ -85,7 +85,7 @@ GUIMultilineTextNode::GUIMultilineTextNode(
 	this->parentOffsetsChanged = true;
 	this->parentXOffsetLast = 0.0f;
 	this->parentYOffsetLast = 0.0f;
-	this->yLast = 0.0f;
+	this->startRenderY = 0.0f;
 	this->charStartIdx = 0;
 	this->charEndIdx = text.size() - 1;
 	this->widthLast = -1;
@@ -165,7 +165,7 @@ void GUIMultilineTextNode::setText(const MutableString& text) {
 	this->parentYOffsetLast = 0.0f;
 	this->charStartIdx = 0;
 	this->charEndIdx = text.size() - 1;
-	this->yLast = 0.0f;
+	this->startRenderY = 0.0f;
 	this->widthLast = -1;
 	this->heightLast = -1;
 	this->startTextStyleIdx = -1;
@@ -571,22 +571,23 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 		charEndIdx = text.size();
 		startTextStyleIdx = -1;
 		parentOffsetsChanged = false;
-		yLast = 0;
+		startRenderY = 0;
 	} else {
-		y = yLast;
+		y = startRenderY;
 	}
 
 	//
 	auto maxLineWidth = getAutoWidth();
 	auto textStyleIdx = startTextStyleIdx;
 	bool visible = false;
-	auto _charStartIdx = charStartIdx;
-	auto _y = y;
+	auto currentCharStartIdx = charStartIdx;
 	auto j = charStartIdx;
 	auto boundTexture = -1;
 	GUIColor lastColor = color;
+	// Console::println("char start idx: " + to_string(charStartIdx) + ", char end idx: " + to_string(charEndIdx) + ", chars: " + to_string(text.size()) + ", start text style idx: " + to_string(startTextStyleIdx) + ", start render y: " + to_string(startRenderY));
 	for (auto i = charStartIdx; i < charEndIdx;) {
 		//
+		currentCharStartIdx = i;
 		determineNextLineConstraints(i, charEndIdx, textStyleIdx);
 
 		/*
@@ -618,6 +619,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 		// render
 		auto lineIdx = 0;
 		{
+			//
 			auto skipSpaces = false;
 			auto& currentTextStyleIdx = textStyleIdx;
 			auto x = 0;
@@ -630,96 +632,160 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 			if (alignments.horizontal == GUINode_AlignmentHorizontal::RIGHT) {
 				x = maxLineWidth - lineConstraints[lineIdx].width;
 			}
-			for (auto k = 0; k < line.size(); k++) {
-				auto textStyle = getTextStyle(lineCharIdxs, k, currentTextStyleIdx);
-				Color4 currentColor = color;
-				GUIFont* currentFont = font;
-				// apply text style or defaults
-				if (textStyle != nullptr) {
-					currentFont = textStyle->font != nullptr?textStyle->font:font;
-					currentColor = textStyle->color;
+			// determine visibility of (sub) lines
+			for (lineIdx = 0; lineIdx < lineConstraints.size(); lineIdx++) {
+				float left = x + xIndentLeft;
+				float top = y + yIndentTop;
+				float width = lineConstraints[lineIdx].width;
+				float height = lineConstraints[lineIdx].height;
+				if (guiRenderer->isQuadVisible(
+						((left) / (screenWidth / 2.0f)) - 1.0f,
+						((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+						((left + width) / (screenWidth / 2.0f)) - 1.0f,
+						((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+						((left + width) / (screenWidth / 2.0f)) - 1.0f,
+						((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
+						((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f) == true) {
+					// break if visible
+					break;
 				}
-				if (textStyle != nullptr && textStyle->image != nullptr) {
-					guiRenderer->render();
-					guiRenderer->bindTexture(textStyle->textureId);
-					float left = x + xIndentLeft;
-					float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - textStyle->height) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
-					float width = textStyle->width;
-					float height = textStyle->height;
-					guiRenderer->addQuad(
-						((left) / (screenWidth / 2.0f)) - 1.0f,
-						((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
-						1.0f, 1.0f, 1.0f, 1.0f,
-						0.0f,
-						0.0f,
-						((left + width) / (screenWidth / 2.0f)) - 1.0f,
-						((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
-						1.0f, 1.0f, 1.0f, 1.0f,
-						1.0f,
-						0.0f,
-						((left + width) / (screenWidth / 2.0f)) - 1.0f,
-						((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
-						1.0f, 1.0f, 1.0f, 1.0f,
-						1.0f,
-						1.0f,
-						((left) / (screenWidth / 2.0f)) - 1.0f,
-						((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
-						1.0f, 1.0f, 1.0f, 1.0f,
-						0.0f,
-						1.0f
-					);
-					guiRenderer->render();
-					guiRenderer->bindTexture(boundTexture);
-					x+= textStyle->width;
-				} else {
-					// do line break
-					if (k == lineConstraints[lineIdx].idx) {
-						y+= lineConstraints[lineIdx].height;
-						lineIdx++;
-						x = 0;
-						if (alignments.horizontal == GUINode_AlignmentHorizontal::LEFT) {
-							// no op
-						} else
-						if (alignments.horizontal == GUINode_AlignmentHorizontal::CENTER) {
-							x = (maxLineWidth - lineConstraints[lineIdx].width) / 2;
-						} else
-						if (alignments.horizontal == GUINode_AlignmentHorizontal::RIGHT) {
-							x = maxLineWidth - lineConstraints[lineIdx].width;
-						}
-						if (lineConstraints[lineIdx - 1].spaceWrap == true) {
-							skipSpaces = true;
-						}
+				// increment y by line height
+				y+= lineConstraints[lineIdx].height;
+				// iterate text style
+				for (auto k = lineIdx == 0?0:lineConstraints[lineIdx - 1].idx + 1; k < lineConstraints[lineIdx].idx; k++)
+					getTextStyle(lineCharIdxs, k, currentTextStyleIdx);
+			}
+			// render
+			if (lineIdx == lineConstraints.size()) {
+				// subtract last line height from y, as we add that later, after current loop
+				y-= lineConstraints[lineConstraints.size() - 1].height;
+				// was visible, then store text render end values
+				if (visible == true) {
+					visible = false;
+					charEndIdx = lineCharIdxs[0];
+				}
+			} else {
+				// if text was not visible before store text render start values
+				if (visible == false) {
+					visible = true;
+					charStartIdx = lineCharIdxs[lineIdx == 0?0:lineConstraints[lineIdx - 1].idx + 1];
+					startTextStyleIdx = currentTextStyleIdx;
+					startRenderY = y;
+				}
+				// render
+				for (auto k = lineIdx == 0?0:lineConstraints[lineIdx - 1].idx + 1; k < line.size(); k++) {
+					auto textStyle = getTextStyle(lineCharIdxs, k, currentTextStyleIdx);
+					Color4 currentColor = color;
+					GUIFont* currentFont = font;
+					// apply text style or defaults
+					if (textStyle != nullptr) {
+						currentFont = textStyle->font != nullptr?textStyle->font:font;
+						currentColor = textStyle->color;
 					}
-					// skip spaces if requested
-					if (skipSpaces == true) {
-						if (line[k] == ' ') {
-							continue;
-						} else {
-							skipSpaces = false;
-						}
-					}
-					// otherwise draw
-					auto character = currentFont->getCharacter(line[k]);
-					if (character != nullptr) {
+					if (textStyle != nullptr && textStyle->image != nullptr) {
+						guiRenderer->render();
+						guiRenderer->bindTexture(textStyle->textureId);
 						float left = x + xIndentLeft;
-						float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - currentFont->getBaseLine()) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
-						if (boundTexture == -1) {
-							boundTexture = currentFont->getTextureId();
-							guiRenderer->bindTexture(boundTexture);
-							lastColor = currentColor;
-						} else
-						if (boundTexture != currentFont->getTextureId()) {
-							boundTexture = currentFont->getTextureId();
-							guiRenderer->render();
-							guiRenderer->bindTexture(boundTexture);
-							lastColor = currentColor;
-						} else
-						if (currentColor.equals(lastColor) == false) {
-							guiRenderer->render();
-							lastColor = currentColor;
+						float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - textStyle->height) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
+						float width = textStyle->width;
+						float height = textStyle->height;
+						guiRenderer->addQuad(
+							((left) / (screenWidth / 2.0f)) - 1.0f,
+							((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+							1.0f, 1.0f, 1.0f, 1.0f,
+							0.0f,
+							0.0f,
+							((left + width) / (screenWidth / 2.0f)) - 1.0f,
+							((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+							1.0f, 1.0f, 1.0f, 1.0f,
+							1.0f,
+							0.0f,
+							((left + width) / (screenWidth / 2.0f)) - 1.0f,
+							((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
+							1.0f, 1.0f, 1.0f, 1.0f,
+							1.0f,
+							1.0f,
+							((left) / (screenWidth / 2.0f)) - 1.0f,
+							((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
+							1.0f, 1.0f, 1.0f, 1.0f,
+							0.0f,
+							1.0f
+						);
+						guiRenderer->render();
+						guiRenderer->bindTexture(boundTexture);
+						x+= textStyle->width;
+					} else {
+						// do line break
+						if (k == lineConstraints[lineIdx].idx) {
+							y+= lineConstraints[lineIdx].height;
+							lineIdx++;
+							x = 0;
+							if (alignments.horizontal == GUINode_AlignmentHorizontal::LEFT) {
+								// no op
+							} else
+							if (alignments.horizontal == GUINode_AlignmentHorizontal::CENTER) {
+								x = (maxLineWidth - lineConstraints[lineIdx].width) / 2;
+							} else
+							if (alignments.horizontal == GUINode_AlignmentHorizontal::RIGHT) {
+								x = maxLineWidth - lineConstraints[lineIdx].width;
+							}
+							if (lineConstraints[lineIdx - 1].spaceWrap == true) {
+								skipSpaces = true;
+							}
+							//
+							{
+								float left = x + xIndentLeft;
+								float top = y + yIndentTop;
+								float width = lineConstraints[lineIdx].width;
+								float height = lineConstraints[lineIdx].height;
+								if (guiRenderer->isQuadVisible(
+										((left) / (screenWidth / 2.0f)) - 1.0f,
+										((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+										((left + width) / (screenWidth / 2.0f)) - 1.0f,
+										((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+										((left + width) / (screenWidth / 2.0f)) - 1.0f,
+										((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
+										((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f) == false) {
+									//
+									if (visible == true) {
+										visible = false;
+										charEndIdx = lineCharIdxs[lineIdx == 0?0:lineConstraints[lineIdx - 1].idx + 1];
+										break;
+									}
+								}
+							}
 						}
-						currentFont->drawCharacter(guiRenderer, character, left, top, currentColor);
-						x+= character->getXAdvance();
+						// skip spaces if requested
+						if (skipSpaces == true) {
+							if (line[k] == ' ') {
+								continue;
+							} else {
+								skipSpaces = false;
+							}
+						}
+						// otherwise draw
+						auto character = currentFont->getCharacter(line[k]);
+						if (character != nullptr) {
+							float left = x + xIndentLeft;
+							float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - currentFont->getBaseLine()) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
+							if (boundTexture == -1) {
+								boundTexture = currentFont->getTextureId();
+								guiRenderer->bindTexture(boundTexture);
+								lastColor = currentColor;
+							} else
+							if (boundTexture != currentFont->getTextureId()) {
+								boundTexture = currentFont->getTextureId();
+								guiRenderer->render();
+								guiRenderer->bindTexture(boundTexture);
+								lastColor = currentColor;
+							} else
+							if (currentColor.equals(lastColor) == false) {
+								guiRenderer->render();
+								lastColor = currentColor;
+							}
+							currentFont->drawCharacter(guiRenderer, character, left, top, currentColor);
+							x+= character->getXAdvance();
+						}
 					}
 				}
 			}
@@ -730,187 +796,6 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 
 		//
 		y+= lineConstraints[lineConstraints.size() - 1].height;
-
-		/*
-			// check for separation char or last char
-			auto lineWidth = currentFont->getTextWidth(MutableString(line)) + currentFont->getTextWidth(MutableString(word));
-			// check if too long
-			auto tooLong =
-				requestedConstraints.widthType != GUINode_RequestedConstraints_RequestedConstraintsType::AUTO && // TODO: check with <multi... width="auto" />
-				lineWidth >= computedConstraints.width - (border.left + border.right + padding.left + padding.right);
-			// if not auto and too long then draw current line and do a new line or flush last text
-			if (tooLong == true ||
-				c == '\n' ||
-				lastChar == true) {
-
-				// add word to line if required
-				if ((tooLong == true && hadBreak == false) || lastChar == true || c == '\n') {
-					line+= word;
-					word.clear();
-				}
-
-				//
-				string lineToRender = line;
-				string lineLeft;
-
-				//
-				auto k = 0;
-
-				//
-				Style* textStyleLast = nullptr;
-				Style* textStyle = nullptr;
-
-				//
-				do {
-					//
-					auto separationAt = currentFont->getTextIndexXAtWidth(MutableString(lineToRender), computedConstraints.width - (border.left + border.right + padding.left + padding.right));
-					lineLeft = StringTools::substring(lineToRender, separationAt + 1);
-					lineToRender = StringTools::substring(lineToRender, 0, separationAt + 1);
-					// determine current line width
-					lineWidth = currentFont->getTextWidth(MutableString(lineToRender));
-					// horizontal alignment
-					auto x = 0;
-					if (alignments.horizontal == GUINode_AlignmentHorizontal::LEFT) {
-						// no op
-					} else
-					if (alignments.horizontal == GUINode_AlignmentHorizontal::CENTER) {
-						x = (computedConstraints.width - (border.left + border.right + padding.left + padding.right) - lineWidth) / 2;
-					} else
-					if (alignments.horizontal == GUINode_AlignmentHorizontal::RIGHT) {
-						x = (computedConstraints.width - (border.left + border.right + padding.left + padding.right) - lineWidth);
-					}
-					{
-						float left = x + xIndentLeft;
-						float top = y + yIndentTop;
-						float width = lineWidth;
-						float height = currentFont->getLineHeight();
-						if (guiRenderer->isQuadVisible(
-								((left) / (screenWidth / 2.0f)) - 1.0f,
-								((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
-								((left + width) / (screenWidth / 2.0f)) - 1.0f,
-								((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
-								((left + width) / (screenWidth / 2.0f)) - 1.0f,
-								((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
-								((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f) == true) {
-
-							auto styleFontColor = color;
-							string textToRender;
-							auto _startTextStyleIdx = textStyleIdx;
-							for (auto l = 0; l < lineToRender.size(); l++) {
-								Style* validTextStyle = nullptr;
-								if (styles.empty() == false) {
-									// find style to start with, aligned with last line start
-									if (textStyleIdx == -1) {
-										textStyleIdx = 0;
-										for (auto i = 0; i < styles.size(); i++) {
-											auto textStyle = &styles[i];
-											if (textStyle->startIdx > j) {
-												textStyleIdx = i - 1;
-												break;
-											}
-										}
-										_startTextStyleIdx = textStyleIdx;
-									}
-									//
-									textStyle = textStyleIdx < styles.size()?&styles[textStyleIdx]:nullptr;
-									if (textStyle != nullptr && j + k + l >= textStyle->startIdx) {
-										if (j + k + l >= textStyle->endIdx) {
-											// invalid text style, check next text style
-											textStyleIdx++;
-											textStyle = textStyleIdx < styles.size()?&styles[textStyleIdx]:nullptr;
-											if (textStyle != nullptr && j + k + l >= textStyle->startIdx) {
-												if (j + k + l < textStyle->endIdx) {
-													// valid text style
-													validTextStyle = textStyle;
-												}
-											}
-										} else
-										if (j + k + l < textStyle->endIdx) {
-											// valid text style
-											validTextStyle = textStyle;
-										}
-									}
-								}
-								if (textToRender.empty() == false && textStyleLast != validTextStyle) {
-									// flush/draw to screen
-									currentFont->drawString(
-										guiRenderer,
-										left,
-										top,
-										textToRender,
-										0,
-										0,
-										textStyleLast != nullptr?textStyleLast->color:color
-									);
-									left+= currentFont->getTextWidth(textToRender);
-									textToRender.clear();
-								}
-								//
-								textToRender+= lineToRender[l];
-								textStyleLast = validTextStyle;
-								currentFont = validTextStyle != nullptr && validTextStyle->font != nullptr?validTextStyle->font:font;
-							}
-							if (textToRender.empty() == false) {
-								// flush/draw to screen
-								currentFont->drawString(
-									guiRenderer,
-									left,
-									top,
-									textToRender,
-									0,
-									0,
-									textStyleLast != nullptr?textStyleLast->color:color
-								);
-								left+= currentFont->getTextWidth(textToRender);
-								textToRender.clear();
-							}
-							if (visible == false) {
-								visible = true;
-								charStartIdx = _charStartIdx;
-								startTextStyleIdx = _startTextStyleIdx;
-								yLast = _y;
-							}
-						} else
-						if (visible == true) {
-							visible = false;
-							charEndIdx = i;
-						}
-					}
-					// move y
-					y+= currentFont->getLineHeight();
-					//
-					k+= lineToRender.size();
-					lineToRender = lineLeft;
-					lineLeft.clear();
-				} while (lineToRender.empty() == false);
-				// new line is current word
-				line = word;
-				// add white space if we have one
-				if (c != '\n') line+= c;
-				// empty word
-				word.clear();
-				// reset
-				hadBreak = false;
-				//
-				if (c == '\n') {
-					_charStartIdx = i + 1;
-					_y = y;
-				}
-				//
-				j = i + 1 - line.size();
-			} else
-			if (c != '\n') {
-				// no flush yet, add word to line
-				line+= word + c;
-				// reset
-				word.clear();
-				hadBreak = lastChar == false;
-			}
-		} else {
-			// regular character
-			word+= c;
-		}
-		*/
 
 		//
 		line.clear();
