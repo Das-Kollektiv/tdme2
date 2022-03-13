@@ -20,7 +20,10 @@
 
 # 2. Features
 - Application
-    - creates main window and initializes OpenGL/Vulkan context and does HID via GLFW3
+    - initialization
+      - loads and initializes renderer backend plugin
+      - creates main window and OpenGL/Vulkan context using GLFW3
+    - handles HID
     - supports
       - setting window position and dimension
       - setting full screen or windowed, borderless windowed mode
