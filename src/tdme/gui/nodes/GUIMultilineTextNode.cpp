@@ -172,8 +172,8 @@ void GUIMultilineTextNode::setText(const MutableString& text) {
 	screenNode->invalidateLayout(this);
 	disposeStyles();
 	this->text.reset();
-	// TODO: parse BBCode styles
 	/*
+	// Currently supported BBCode like tags
 	[font=schriftart]Text[/font]
 	[color=farbe]farbiger Text[/color]
 	[url=http://example.com/]Linktext[/url]
@@ -188,111 +188,107 @@ void GUIMultilineTextNode::setText(const MutableString& text) {
 	auto parseImage = false;
 	string currentStyle;
 	int styleStartIdx = -1;
-	for (auto i = -1; i < text.size(); i++) {
-		auto c = i == -1?static_cast<char>(0):text.charAt(i);
-		auto nc = i + 1 < text.size()?text.charAt(i + 1):static_cast<char>(0);
+	char lc = 0;
+	for (auto i = 0; i < text.size(); i++) {
+		auto c = text.charAt(i);
 		if (parseStyle == true) {
 			// end of style
-			if (c != '\\' && nc == ']') {
-				currentStyle+= c;
-				i++;
-				//
-				currentStyle = StringTools::replace(currentStyle, "\\]", "]");
-				Console::println(currentStyle);
-				auto styleTokenized = StringTools::tokenize(currentStyle, "=");
-				// apply style until current text size
-				if (styleStartIdx != -1 &&
-					(styleFont.empty() == false ||
-					styleColor.empty() == false ||
-					styleUrl.empty() == false)) {
-					if (styleColor.empty() == false) {
-						setTextStyle(styleStartIdx, this->text.size() - 1, GUIColor(styleColor), styleFont, styleUrl);
-					} else {
-						setTextStyle(styleStartIdx, this->text.size() - 1, styleFont, styleUrl);
+			if (c == ']') {
+				if (lc != '\\') {
+					auto styleTokenized = StringTools::tokenize(currentStyle, "=");
+					// apply style until current text size
+					if (styleStartIdx != -1 &&
+						(styleFont.empty() == false ||
+						styleColor.empty() == false ||
+						styleUrl.empty() == false)) {
+						if (styleColor.empty() == false) {
+							setTextStyle(styleStartIdx, this->text.size() - 1, GUIColor(styleColor), styleFont, styleUrl);
+						} else {
+							setTextStyle(styleStartIdx, this->text.size() - 1, styleFont, styleUrl);
+						}
 					}
-				}
-				if (styleTokenized.size() == 2) {
-					auto command = StringTools::toLowerCase(StringTools::trim(styleTokenized[0]));
-					auto argument = StringTools::trim(styleTokenized[1]);
-					if (command == "font") {
-						styleFont = argument;
-						styleStartIdx = this->text.size();
+					if (styleTokenized.size() == 2) {
+						auto command = StringTools::toLowerCase(StringTools::trim(styleTokenized[0]));
+						auto argument = StringTools::trim(styleTokenized[1]);
+						if (command == "font") {
+							styleFont = argument;
+							styleStartIdx = this->text.size();
+						} else
+						if (command == "color") {
+							styleColor = argument;
+							styleStartIdx = this->text.size();
+						} else
+						if (command == "url") {
+							styleUrl = argument;
+							styleStartIdx = this->text.size();
+						} else {
+							Console::println("GUIMultilineTextNode::setText(): unknown style command: " + currentStyle);
+						}
 					} else
-					if (command == "color") {
-						styleColor = argument;
-						styleStartIdx = this->text.size();
-					} else
-					if (command == "url") {
-						styleUrl = argument;
-						styleStartIdx = this->text.size();
+					if (styleTokenized.size() == 1) {
+						auto command = StringTools::toLowerCase(StringTools::trim(styleTokenized[0]));
+						if (command == "/font") {
+							styleFont.clear();
+						} else
+						if (command == "/color") {
+							styleColor.clear();
+						} else
+						if (command == "/url") {
+							styleUrl.clear();
+						} else
+						if (command == "image") {
+							parseImage = true;
+						} else
+						if (command == "/image") {
+							parseImage = false;
+							this->text.append(static_cast<char>(0));
+							setImage(this->text.size() - 1, styleImage, styleUrl, -1, -1);
+							styleImage.clear();
+						} else {
+							Console::println("GUIMultilineTextNode::setText(): unknown style command: " + currentStyle);
+						}
 					} else {
 						Console::println("GUIMultilineTextNode::setText(): unknown style command: " + currentStyle);
 					}
-				} else
-				if (styleTokenized.size() == 1) {
-					auto command = StringTools::toLowerCase(StringTools::trim(styleTokenized[0]));
-					if (command == "/font") {
-						styleFont.clear();
-					} else
-					if (command == "/color") {
-						styleColor.clear();
-					} else
-					if (command == "/url") {
-						styleUrl.clear();
-					} else
-					if (command == "image") {
-						parseImage = true;
-					} else
-					if (command == "/image") {
-						Console::println("xxx: " + styleImage);
-						parseImage = false;
-						this->text.append(static_cast<char>(0));
-						setImage(this->text.size() - 1, styleImage, styleUrl, -1, -1);
-						styleImage.clear();
-					} else {
-						Console::println("GUIMultilineTextNode::setText(): unknown style command: " + currentStyle);
+					//
+					currentStyle.clear();
+					parseStyle = false;
+					if (styleFont.empty() == false ||
+						styleColor.empty() == false ||
+						styleUrl.empty() == false) {
+						styleStartIdx = this->text.size();
 					}
 				} else {
-					Console::println("GUIMultilineTextNode::setText(): unknown style command: " + currentStyle);
+					this->text.remove(this->text.size() - 1, 1);
+					currentStyle+= c;
 				}
-				//
-				currentStyle.clear();
-				parseStyle = false;
-				if (styleFont.empty() == false ||
-					styleColor.empty() == false ||
-					styleUrl.empty() == false) {
-					styleStartIdx = this->text.size();
-				}
-			} else
-			if (c == '\\' && nc == ']') {
-				i++;
-				currentStyle+= "]";
 			} else {
 				// style command
 				currentStyle+= c;
 			}
 		} else
 		// start of style
-		if (nc == '[') {
-			i++;
-			if (c == '\\') {
-				if (parseImage == true) styleImage+= nc; else this->text.append(nc);
-			} else {
-				if (parseImage == true) styleImage+= c; else this->text.append(c);
+		if (c == '[') {
+			if (lc != '\\') {
 				parseStyle = true;
-			}
-		} else
-		if (nc == ']') {
-			i++;
-			if (c == '\\') {
-				if (parseImage == true) styleImage+= nc; else this->text.append(nc);
 			} else {
-				if (parseImage == true) styleImage+= c; else this->text.append(c);
+				this->text.remove(this->text.size() - 1, 1);
+				this->text.append(c);
 			}
-		} else
-		if (c != 0) {
-			if (parseImage == true) styleImage+= c; else this->text.append(c);
+		} else {
+			if (c == ']' && lc == '\\') {
+				this->text.remove(this->text.size() - 1, 1);
+			}
+			if (parseImage == true) {
+				// image
+				styleImage+= c;
+			} else {
+				// ordinary text
+				this->text.append(c);
+			}
 		}
+		//
+		lc = c;
 	}
 	// apply style until current text size
 	if (styleStartIdx != -1 &&
