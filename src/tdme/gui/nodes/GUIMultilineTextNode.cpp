@@ -330,6 +330,7 @@ void GUIMultilineTextNode::setText(const MutableString& text) {
 		}
 	}
 	//
+	Console::println("'" + this->text.getString() + "'");
 }
 
 void GUIMultilineTextNode::dispose()
@@ -691,9 +692,6 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 				}
 				// increment y by line height
 				y+= lineConstraints[lineIdx].height;
-				// iterate text style
-				for (auto k = lineIdx == 0?0:lineConstraints[lineIdx - 1].idx; k < lineConstraints[lineIdx].idx; k++)
-					getTextStyle(lineCharIdxs, k, currentTextStyleIdx);
 			}
 			// render
 			if (lineIdx == lineConstraints.size()) {
@@ -781,7 +779,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 							if (alignments.horizontal == GUINode_AlignmentHorizontal::RIGHT) {
 								x = maxLineWidth - lineConstraints[lineIdx].width;
 							}
-							if (lineConstraints[lineIdx - 1].spaceWrap == true) {
+							if (preformatted == false && lineConstraints[lineIdx - 1].spaceWrap == true) {
 								skipSpaces = true;
 							}
 							//
