@@ -411,12 +411,12 @@ void GUIStyledTextNode::determineNextLineConstraints(int& i, int charEndIdx, int
 		//
 		lineConstraints.push_back(
 			{
-				idx: 0,
-				width: 0.0f,
-				height: font->getLineHeight(),
-				lineHeight: font->getLineHeight(),
-				baseLine: font->getBaseLine(),
-				spaceWrap: true
+				.idx = 0,
+				.width = 0.0f,
+				.height = font->getLineHeight(),
+				.lineHeight = font->getLineHeight(),
+				.baseLine = font->getBaseLine(),
+				.spaceWrap = true
 			}
 		);
 	} else {
@@ -541,12 +541,12 @@ void GUIStyledTextNode::determineNextLineConstraints(int& i, int charEndIdx, int
 
 		//
 		lineConstraints[lineConstraints.size() - 1] = {
-			idx: static_cast<int>(line.size()),
-			width: lineWidth,
-			height: Math::max(lineHeight, baseLine + imageHeight),
-			lineHeight: lineHeight,
-			baseLine: baseLine,
-			spaceWrap: false
+			.idx = static_cast<int>(line.size()),
+			.width = lineWidth,
+			.height = Math::max(lineHeight, baseLine + imageHeight),
+			.lineHeight = lineHeight,
+			.baseLine = baseLine,
+			.spaceWrap = false
 		};
 	}
 }
