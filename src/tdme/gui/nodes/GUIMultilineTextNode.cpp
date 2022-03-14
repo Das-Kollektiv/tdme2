@@ -230,9 +230,9 @@ void GUIMultilineTextNode::setText(const MutableString& text) {
 						styleColor.empty() == false ||
 						styleUrl.empty() == false)) {
 						if (styleColor.empty() == false) {
-							setTextStyle(styleStartIdx, this->text.size() - 1, GUIColor(styleColor), styleFont, styleUrl);
+							if (this->text.size() > styleStartIdx) setTextStyle(styleStartIdx, this->text.size() - 1, GUIColor(styleColor), styleFont, styleUrl);
 						} else {
-							setTextStyle(styleStartIdx, this->text.size() - 1, styleFont, styleUrl);
+							if (this->text.size() > styleStartIdx) setTextStyle(styleStartIdx, this->text.size() - 1, styleFont, styleUrl);
 						}
 					}
 					if (styleTokenized.size() == 2) {
@@ -324,9 +324,9 @@ void GUIMultilineTextNode::setText(const MutableString& text) {
 		styleColor.empty() == false ||
 		styleUrl.empty() == false)) {
 		if (styleColor.empty() == false) {
-			setTextStyle(styleStartIdx, this->text.size() - 1, GUIColor(styleColor), styleFont, styleUrl);
+			if (this->text.size() > styleStartIdx) setTextStyle(styleStartIdx, this->text.size() - 1, GUIColor(styleColor), styleFont, styleUrl);
 		} else {
-			setTextStyle(styleStartIdx, this->text.size() - 1, styleFont, styleUrl);
+			if (this->text.size() > styleStartIdx) setTextStyle(styleStartIdx, this->text.size() - 1, styleFont, styleUrl);
 		}
 	}
 	//

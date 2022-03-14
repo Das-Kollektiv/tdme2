@@ -242,7 +242,7 @@
 
 [color={$color.font_highlight}][font=resources/engine/fonts/Roboto_bold_30.fnt]MIT License[/font][/color]
 
-[color=#ff0000]Developed 2012-2022 by Andreas Drewke, Dominik Hepp, Mathias Lenz,
+[color={$color.font_highlight}]Developed 2012-2022 by Andreas Drewke, Dominik Hepp, Mathias Lenz,
 Kolja Gumpert, drewke.net, mindty.com, github.com/mahula
 
 Copyright 2012...2021 Andreas Drewke and others if not stated differently in 
@@ -327,7 +327,7 @@ in this repository.
         any discrepancy between this copy and the notices in the file png.h that is
         included in the libpng distribution, the latter shall prevail.
 
-        COPYRIGHT NOTICE, DISCLAIMER, and LICENSE[/font]:
+        COPYRIGHT NOTICE, DISCLAIMER, and LICENSE
 
         If you modify libpng you may insert additional notices immediately following
         this sentence.
@@ -427,7 +427,7 @@ in this repository.
         source code in a product, acknowledgment is not required but would be
         appreciated.
 
-        END OF COPYRIGHT NOTICE, DISCLAIMER, and LICENSE[/font].
+        END OF COPYRIGHT NOTICE, DISCLAIMER, and LICENSE.
 
         TRADEMARK:
 
@@ -897,8 +897,8 @@ in this repository.
     [font=resources/engine/fonts/Roboto_20.fnt]ext/windows-msc/glew/LICENSE[/font]
     
         The OpenGL Extension Wrangler Library
-        Copyright (C) 2002-2007, Milan Ikits <milan ikits[]ieee org>
-        Copyright (C) 2002-2007, Marcelo E. Magallon <mmagallo[]debian org>
+        Copyright (C) 2002-2007, Milan Ikits <milan ikits\[\]ieee org>
+        Copyright (C) 2002-2007, Marcelo E. Magallon <mmagallo\[\]debian org>
         Copyright (C) 2002, Lev Povalahev
         All rights reserved.
 
@@ -972,7 +972,7 @@ in this repository.
 
     [font=resources/engine/fonts/Roboto_20.fnt]ext/windows-msc/openal-soft/LICENSE[/font]
     
-                  GNU LIBRARY GENERAL PUBLIC LICENSE[/font]
+                  GNU LIBRARY GENERAL PUBLIC LICENSE
                        Version 2, June 1991
 
 
@@ -981,8 +981,8 @@ in this repository.
          Everyone is permitted to copy and distribute verbatim copies
          of this license document, but changing it is not allowed.
 
-        [This is the first released version of the library GPL.  It is
-         numbered 2 because it goes with version 2 of the ordinary GPL.]
+        \[This is the first released version of the library GPL.  It is
+         numbered 2 because it goes with version 2 of the ordinary GPL.\]
 
                         Preamble
 
@@ -1074,7 +1074,7 @@ in this repository.
           Note that it is possible for a library to be covered by the ordinary
         General Public License rather than by this special one.
 
-                  GNU LIBRARY GENERAL PUBLIC LICENSE[/font]
+                  GNU LIBRARY GENERAL PUBLIC LICENSE
            TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
 
           0. This License Agreement applies to any software library which
@@ -1388,7 +1388,7 @@ in this repository.
 
                         NO WARRANTY
 
-          15. BECAUSE THE LIBRARY IS LICENSE[/font]D FREE OF CHARGE, THERE IS NO
+          15. BECAUSE THE LIBRARY IS LICENSED FREE OF CHARGE, THERE IS NO
         WARRANTY FOR THE LIBRARY, TO THE EXTENT PERMITTED BY APPLICABLE LAW.
         EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR
         OTHER PARTIES PROVIDE THE LIBRARY "AS IS" WITHOUT WARRANTY OF ANY
@@ -1842,7 +1842,7 @@ in this repository.
            APPENDIX: How to apply the Apache License to your work.
 
               To apply the Apache License to your work, attach the following
-              boilerplate notice, with the fields enclosed by brackets "[]"
+              boilerplate notice, with the fields enclosed by brackets "\[\]"
               replaced with your own identifying information. (Don't include
               the brackets!)  The text should be enclosed in the appropriate
               comment syntax for the file format. We also recommend that a
@@ -1850,13 +1850,13 @@ in this repository.
               same "printed page" as the copyright notice for easier
               identification within third-party archives.
 
-           Copyright [yyyy] [name of copyright owner]
+           Copyright \[yyyy\] \[name of copyright owner\]
 
            Licensed under the Apache License, Version 2.0 (the "License");
            you may not use this file except in compliance with the License.
            You may obtain a copy of the License at
 
-               http://www.apache.org/licenses/LICENSE[/font]-2.0
+               http://www.apache.org/licenses/LICENSE-2.0
 
            Unless required by applicable law or agreed to in writing, software
            distributed under the License is distributed on an "AS IS" BASIS,
@@ -2046,7 +2046,7 @@ in this repository.
            APPENDIX: How to apply the Apache License to your work.
 
               To apply the Apache License to your work, attach the following
-              boilerplate notice, with the fields enclosed by brackets "[]"
+              boilerplate notice, with the fields enclosed by brackets "\[\]"
               replaced with your own identifying information. (Don't include
               the brackets!)  The text should be enclosed in the appropriate
               comment syntax for the file format. We also recommend that a
@@ -2054,13 +2054,13 @@ in this repository.
               same "printed page" as the copyright notice for easier
               identification within third-party archives.
 
-           Copyright [yyyy] [name of copyright owner]
+           Copyright \[yyyy\] \[name of copyright owner\]
 
            Licensed under the Apache License, Version 2.0 (the "License");
            you may not use this file except in compliance with the License.
            You may obtain a copy of the License at
 
-               http://www.apache.org/licenses/LICENSE[/font]-2.0
+               http://www.apache.org/licenses/LICENSE-2.0
 
            Unless required by applicable law or agreed to in writing, software
            distributed under the License is distributed on an "AS IS" BASIS,
@@ -2250,7 +2250,7 @@ in this repository.
            APPENDIX: How to apply the Apache License to your work.
 
               To apply the Apache License to your work, attach the following
-              boilerplate notice, with the fields enclosed by brackets "[]"
+              boilerplate notice, with the fields enclosed by brackets "\[\]"
               replaced with your own identifying information. (Don't include
               the brackets!)  The text should be enclosed in the appropriate
               comment syntax for the file format. We also recommend that a
@@ -2258,13 +2258,13 @@ in this repository.
               same "printed page" as the copyright notice for easier
               identification within third-party archives.
 
-           Copyright [yyyy] [name of copyright owner]
+           Copyright \[yyyy\] \[name of copyright owner\]
 
            Licensed under the Apache License, Version 2.0 (the "License");
            you may not use this file except in compliance with the License.
            You may obtain a copy of the License at
 
-               http://www.apache.org/licenses/LICENSE[/font]-2.0
+               http://www.apache.org/licenses/LICENSE-2.0
 
            Unless required by applicable law or agreed to in writing, software
            distributed under the License is distributed on an "AS IS" BASIS,
@@ -2489,7 +2489,7 @@ in this repository.
            APPENDIX: How to apply the Apache License to your work.
 
               To apply the Apache License to your work, attach the following
-              boilerplate notice, with the fields enclosed by brackets "[]"
+              boilerplate notice, with the fields enclosed by brackets "\[\]"
               replaced with your own identifying information. (Don't include
               the brackets!)  The text should be enclosed in the appropriate
               comment syntax for the file format. We also recommend that a
@@ -2497,13 +2497,13 @@ in this repository.
               same "printed page" as the copyright notice for easier
               identification within third-party archives.
 
-           Copyright [yyyy] [name of copyright owner]
+           Copyright \[yyyy\] \[name of copyright owner\]
 
            Licensed under the Apache License, Version 2.0 (the "License");
            you may not use this file except in compliance with the License.
            You may obtain a copy of the License at
 
-               http://www.apache.org/licenses/LICENSE[/font]-2.0
+               http://www.apache.org/licenses/LICENSE-2.0
 
            Unless required by applicable law or agreed to in writing, software
            distributed under the License is distributed on an "AS IS" BASIS,
