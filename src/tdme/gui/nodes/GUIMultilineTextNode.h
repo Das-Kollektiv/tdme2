@@ -104,17 +104,36 @@ private:
 		if (styles.empty() == true) return nullptr;
 		TextStyle* textStyle = nullptr;
 		// find style to start with, aligned with last line start, if we do not have a start yet
-		if (textStyleIdx == -1) textStyleIdx = 0;
-		for (auto i = textStyleIdx; i < styles.size(); i++) {
-			textStyle = &styles[i];
-			if (lineCharIdxs[lineCharIdx] >= textStyle->startIdx) {
-				if (lineCharIdxs[lineCharIdx] <= textStyle->endIdx) {
-					textStyleIdx = i;
-					return textStyle;
+		if (textStyleIdx == -1) {
+			textStyleIdx = 0;
+			for (auto l = 0; l < styles.size(); l++) {
+				auto textStyle = &styles[l];
+				if (textStyle->startIdx > lineCharIdxs[lineCharIdx]) {
+					textStyleIdx = l - 1;
+					break;
 				}
 			}
 		}
-		return nullptr;
+		// ok proceed to find correct style for character in text, based on our text style index
+		auto _textStyle = textStyleIdx < styles.size()?&styles[textStyleIdx]:nullptr;
+		if (_textStyle != nullptr && lineCharIdxs[lineCharIdx] >= _textStyle->startIdx) {
+			if (lineCharIdxs[lineCharIdx] > _textStyle->endIdx) {
+				// invalid text style, check next text style
+				textStyleIdx++;
+				_textStyle = textStyleIdx < styles.size()?&styles[textStyleIdx]:nullptr;
+				if (_textStyle != nullptr && lineCharIdxs[lineCharIdx] >= _textStyle->startIdx) {
+					if (lineCharIdxs[lineCharIdx] <= _textStyle->endIdx) {
+						// valid text style
+						textStyle = _textStyle;
+					}
+				}
+			} else
+			if (lineCharIdxs[lineCharIdx] <= _textStyle->endIdx) {
+				// valid text style
+				textStyle = _textStyle;
+			}
+		}
+		return textStyle;
 	}
 
 	/**
