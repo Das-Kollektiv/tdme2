@@ -85,7 +85,7 @@ GUIMultilineTextNode::GUIMultilineTextNode(
 	this->parentOffsetsChanged = true;
 	this->parentXOffsetLast = 0.0f;
 	this->parentYOffsetLast = 0.0f;
-	this->startRenderY = 0.0f;
+	this->startRenderY = 0;
 	this->charStartIdx = 0;
 	this->charEndIdx = text.size() - 1;
 	this->widthLast = -1;
@@ -132,6 +132,9 @@ void GUIMultilineTextNode::computeContentAlignment() {
 	if (font == nullptr) return;
 
 	//
+	auto maxLineWidth = getAutoWidth();
+
+	//
 	autoWidth = 0;
 	autoHeight = 0;
 
@@ -140,6 +143,31 @@ void GUIMultilineTextNode::computeContentAlignment() {
 	for (auto i = 0; i < text.size(); ) {
 		//
 		determineNextLineConstraints(i, text.size(), textStyleIdx);
+
+		/*
+		{
+			auto l = 0;
+			for (auto k = 0; k < lineConstraints.size(); k++) {
+				string linePart;
+				for (auto j = l; j < lineConstraints[k].idx; j++) {
+					if (line[j] == 0) {
+						linePart += "[image]";
+					} else {
+						linePart += line[j];
+					}
+				}
+				Console::println(
+					"auto line@" + to_string(k) + ": '" + line + "': '" + linePart
+							+ "': " + to_string(lineConstraints[k].idx) + "; width = "
+							+ to_string(lineConstraints[k].width) + " / "
+							+ to_string(maxLineWidth) + ", line height = "
+							+ to_string(lineConstraints[k].lineHeight) + ", height "
+							+ to_string(lineConstraints[k].height) + ", base line: "
+							+ to_string(lineConstraints[k].baseLine) + ": Y = " + to_string(autoHeight));
+				l = lineConstraints[k].idx;
+			}
+		}
+		*/
 
 		//
 		for (auto& lineConstraintsEntity: lineConstraints) {
@@ -165,7 +193,7 @@ void GUIMultilineTextNode::setText(const MutableString& text) {
 	this->parentYOffsetLast = 0.0f;
 	this->charStartIdx = 0;
 	this->charEndIdx = text.size() - 1;
-	this->startRenderY = 0.0f;
+	this->startRenderY = 0;
 	this->widthLast = -1;
 	this->heightLast = -1;
 	this->startTextStyleIdx = -1;
@@ -553,9 +581,9 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 	}
 
 	//
-	bool hadBreak = false;
 	auto parentXOffset = computeParentChildrenRenderOffsetXTotal();
 	auto parentYOffset = computeParentChildrenRenderOffsetYTotal();
+	bool visible = false;
 
 	// did a scrolling appear, then reset bounds to work with
 	if (parentOffsetsChanged == true ||
@@ -570,24 +598,38 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 		startRenderY = 0;
 	} else {
 		y = startRenderY;
+		visible = true;
 	}
+
+	// Console::println("char start idx: " + to_string(charStartIdx) + ", char end idx: " + to_string(charEndIdx) + ", chars: " + to_string(text.size()) + ", start text style idx: " + to_string(startTextStyleIdx) + ", start render y: " + to_string(startRenderY) + ", auto width: " + to_string(autoWidth) + ", auto height = " + to_string(autoHeight))
 
 	//
 	auto maxLineWidth = getAutoWidth();
 	auto textStyleIdx = startTextStyleIdx;
-	bool visible = false;
 	auto currentCharStartIdx = charStartIdx;
 	auto j = charStartIdx;
 	auto boundTexture = -1;
 	GUIColor lastColor = color;
-	// Console::println("char start idx: " + to_string(charStartIdx) + ", char end idx: " + to_string(charEndIdx) + ", chars: " + to_string(text.size()) + ", start text style idx: " + to_string(startTextStyleIdx) + ", start render y: " + to_string(startRenderY));
 	for (auto i = charStartIdx; i < charEndIdx;) {
 		//
 		currentCharStartIdx = i;
 		determineNextLineConstraints(i, charEndIdx, textStyleIdx);
 
-		/*
+		// empty lines are cheap, handle them immediatly
+		if (line.empty() == true) {
+			for (auto& lineConstraint: lineConstraints) {
+				y+= lineConstraint.height;
+			}
+			//
+			line.clear();
+			lineCharIdxs.clear();
+			lineConstraints.clear();
+			//
+			continue;
+		}
+
 		//
+		/*
 		{
 			auto l = 0;
 			for (auto k = 0; k < lineConstraints.size(); k++) {
@@ -600,13 +642,13 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 					}
 				}
 			Console::println(
-					"line@" + to_string(k) + ": '" + line + "': '" + linePart
+					"render line@" + to_string(k) + ": '" + line + "': '" + linePart
 							+ "': " + to_string(lineConstraints[k].idx) + "; width = "
 							+ to_string(lineConstraints[k].width) + " / "
 							+ to_string(maxLineWidth) + ", line height = "
 							+ to_string(lineConstraints[k].lineHeight) + ", height "
 							+ to_string(lineConstraints[k].height) + ", base line: "
-							+ to_string(lineConstraints[k].baseLine));
+							+ to_string(lineConstraints[k].baseLine) + ": Y = " + to_string(y));
 				l = lineConstraints[k].idx;
 			}
 		}
@@ -619,17 +661,19 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 			auto skipSpaces = false;
 			auto& currentTextStyleIdx = textStyleIdx;
 			auto x = 0;
-			if (alignments.horizontal == GUINode_AlignmentHorizontal::LEFT) {
-				// no op
-			} else
-			if (alignments.horizontal == GUINode_AlignmentHorizontal::CENTER) {
-				x = (maxLineWidth - lineConstraints[lineIdx].width) / 2;
-			} else
-			if (alignments.horizontal == GUINode_AlignmentHorizontal::RIGHT) {
-				x = maxLineWidth - lineConstraints[lineIdx].width;
-			}
 			// determine visibility of (sub) lines
 			for (lineIdx = 0; lineIdx < lineConstraints.size(); lineIdx++) {
+				// x alignment
+				if (alignments.horizontal == GUINode_AlignmentHorizontal::LEFT) {
+					x = 0;
+				} else
+				if (alignments.horizontal == GUINode_AlignmentHorizontal::CENTER) {
+					x = (maxLineWidth - lineConstraints[lineIdx].width) / 2;
+				} else
+				if (alignments.horizontal == GUINode_AlignmentHorizontal::RIGHT) {
+					x = maxLineWidth - lineConstraints[lineIdx].width;
+				}
+				//
 				float left = x + xIndentLeft;
 				float top = y + yIndentTop;
 				float width = lineConstraints[lineIdx].width;
@@ -648,28 +692,38 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 				// increment y by line height
 				y+= lineConstraints[lineIdx].height;
 				// iterate text style
-				for (auto k = lineIdx == 0?0:lineConstraints[lineIdx - 1].idx + 1; k < lineConstraints[lineIdx].idx; k++)
+				for (auto k = lineIdx == 0?0:lineConstraints[lineIdx - 1].idx; k < lineConstraints[lineIdx].idx; k++)
 					getTextStyle(lineCharIdxs, k, currentTextStyleIdx);
 			}
 			// render
 			if (lineIdx == lineConstraints.size()) {
-				// subtract last line height from y, as we add that later, after current loop
-				y-= lineConstraints[lineConstraints.size() - 1].height;
 				// was visible, then store text render end values
 				if (visible == true) {
 					visible = false;
 					charEndIdx = lineCharIdxs[0];
+					break;
 				}
 			} else {
 				// if text was not visible before store text render start values
 				if (visible == false) {
 					visible = true;
-					charStartIdx = lineCharIdxs[lineIdx == 0?0:lineConstraints[lineIdx - 1].idx + 1];
+					charStartIdx = lineCharIdxs[lineIdx == 0?0:lineConstraints[lineIdx - 1].idx];
 					startTextStyleIdx = currentTextStyleIdx;
 					startRenderY = y;
 				}
+				// x alignment
+				if (alignments.horizontal == GUINode_AlignmentHorizontal::LEFT) {
+					// no op
+					x = 0;
+				} else
+				if (alignments.horizontal == GUINode_AlignmentHorizontal::CENTER) {
+					x = (maxLineWidth - lineConstraints[lineIdx].width) / 2;
+				} else
+				if (alignments.horizontal == GUINode_AlignmentHorizontal::RIGHT) {
+					x = maxLineWidth - lineConstraints[lineIdx].width;
+				}
 				// render
-				for (auto k = lineIdx == 0?0:lineConstraints[lineIdx - 1].idx + 1; k < line.size(); k++) {
+				for (auto k = lineIdx == 0?0:lineConstraints[lineIdx - 1].idx; k < line.size(); k++) {
 					auto textStyle = getTextStyle(lineCharIdxs, k, currentTextStyleIdx);
 					Color4 currentColor = color;
 					GUIFont* currentFont = font;
@@ -715,6 +769,8 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 						if (k == lineConstraints[lineIdx].idx) {
 							y+= lineConstraints[lineIdx].height;
 							lineIdx++;
+							if (lineIdx == lineConstraints.size()) break;
+							//
 							x = 0;
 							if (alignments.horizontal == GUINode_AlignmentHorizontal::LEFT) {
 								// no op
@@ -745,7 +801,7 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 									//
 									if (visible == true) {
 										visible = false;
-										charEndIdx = lineCharIdxs[lineIdx == 0?0:lineConstraints[lineIdx - 1].idx + 1];
+										charEndIdx = lineCharIdxs[lineIdx == 0?0:lineConstraints[lineIdx - 1].idx];
 										break;
 									}
 								}
@@ -784,6 +840,10 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 						}
 					}
 				}
+				//
+				if (lineConstraints[lineConstraints.size() - 1].idx == line.size()) {
+					y+= lineConstraints[lineConstraints.size() - 1].height;
+				}
 			}
 		}
 
@@ -791,13 +851,13 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 		guiRenderer->render();
 
 		//
-		y+= lineConstraints[lineConstraints.size() - 1].height;
-
-		//
 		line.clear();
 		lineCharIdxs.clear();
 		lineConstraints.clear();
 	}
+
+	//
+	// Console::println("y: " + to_string(y) + " / " + to_string(autoHeight));
 
 	//
 	guiRenderer->bindTexture(0);
