@@ -20,7 +20,7 @@
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
-#include <tdme/gui/nodes/GUIMultilineTextNode.h>
+#include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -71,7 +71,7 @@ using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUIMultilineTextNode;
+using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
@@ -162,7 +162,7 @@ void Installer::initializeScreens() {
 				parameters
 			)
 		);
-		dynamic_cast<GUIMultilineTextNode*>(engine->getGUI()->getScreen("installer_license")->getNodeById("licence_text"))->setText(MutableString(FileSystem::getInstance()->getContentAsString(".", "LICENSE")));
+		dynamic_cast<GUIStyledTextNode*>(engine->getGUI()->getScreen("installer_license")->getNodeById("licence_text"))->setText(MutableString(FileSystem::getInstance()->getContentAsString(".", "LICENSE")));
 		engine->getGUI()->addScreen(
 			"installer_components",
 			GUIParser::parse(
@@ -1288,7 +1288,7 @@ void Installer::onActionPerformed(GUIActionListenerType type, GUIElementNode* no
 		} else
 		if (StringTools::startsWith(node->getId(), "component") == true) {
 			auto componentIdx = Integer::parse(StringTools::substring(node->getId(), string("component").size()));
-			dynamic_cast<GUIMultilineTextNode*>(engine->getGUI()->getScreen("installer_components")->getNodeById("component_description"))->setText(MutableString(installerProperties.get("component" + to_string(componentIdx) + "_description", "No detail description.")));
+			dynamic_cast<GUIStyledTextNode*>(engine->getGUI()->getScreen("installer_components")->getNodeById("component_description"))->setText(MutableString(installerProperties.get("component" + to_string(componentIdx) + "_description", "No detail description.")));
 		}
 	}
 }

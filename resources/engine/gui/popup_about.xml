@@ -18,11 +18,11 @@
 							
 							<space height="5" />
 							
-							<multiline-text id="about_graphics" font="{$font.default}" color="{$color.font_disabled}" width="100%" height="auto" horizontal-align="center">
+							<styled-text id="about_graphics" font="{$font.default}" color="{$color.font_disabled}" width="100%" height="auto" horizontal-align="center">
 								<![CDATA[
 									Graphics:
 								]]>
-							</multiline-text>
+							</styled-text>
 							
 							<space height="10" />					
 						

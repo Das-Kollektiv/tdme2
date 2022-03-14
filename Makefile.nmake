@@ -327,7 +327,6 @@ SRCS = \
 	src/tdme/gui/nodes/GUILayerNode.cpp \
 	src/tdme/gui/nodes/GUILayoutNode.cpp \
 	src/tdme/gui/nodes/GUILayoutNode_Alignment.cpp \
-	src/tdme/gui/nodes/GUIMultilineTextNode.cpp \
 	src/tdme/gui/nodes/GUINode.cpp \
 	src/tdme/gui/nodes/GUINodeConditions.cpp \
 	src/tdme/gui/nodes/GUINodeController.cpp \
@@ -340,6 +339,7 @@ SRCS = \
 	src/tdme/gui/nodes/GUIParentNode_Overflow.cpp \
 	src/tdme/gui/nodes/GUIScreenNode.cpp \
 	src/tdme/gui/nodes/GUISpaceNode.cpp \
+	src/tdme/gui/nodes/GUIStyledTextNode.cpp \
 	src/tdme/gui/nodes/GUITableNode.cpp \
 	src/tdme/gui/nodes/GUITableCellNode.cpp \
 	src/tdme/gui/nodes/GUITableRowNode.cpp \

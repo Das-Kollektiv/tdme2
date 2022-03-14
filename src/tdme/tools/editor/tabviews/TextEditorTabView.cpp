@@ -6,7 +6,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/nodes/GUIColor.h>
-#include <tdme/gui/nodes/GUIMultilineTextNode.h>
+#include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
@@ -25,7 +25,7 @@ using tdme::tools::editor::tabviews::TextEditorTabView;
 
 using tdme::engine::Engine;
 using tdme::gui::nodes::GUIColor;
-using tdme::gui::nodes::GUIMultilineTextNode;
+using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
 using tdme::tools::editor::controllers::EditorScreenController;
@@ -46,7 +46,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	engine->getGUI()->addScreen(screenNode->getId(), screenNode);
 	engine->getGUI()->addRenderScreen(screenNode->getId());
-	auto multiLineTextNode = required_dynamic_cast<GUIMultilineTextNode*>(screenNode->getNodeById("text"));
+	auto multiLineTextNode = required_dynamic_cast<GUIStyledTextNode*>(screenNode->getNodeById("text"));
 	if (std::find(xmlLanguage.extensions.begin(), xmlLanguage.extensions.end(), extension) != xmlLanguage.extensions.end()) {
 		auto& language = xmlLanguage;
 		auto code = multiLineTextNode->getText().getString();

@@ -236,7 +236,7 @@
 				</tab-content>
 				<tab-content tab-id="tab6" horizontal-align="center" vertical-align="center">
 					<scrollarea width="80%" height="80%" padding="5" border="1">
-						<multiline-text font="{$font.default}" color="{$color.font_normal}" width="100%" height="auto" horizontal-align="left" preformatted="true">
+						<styled-text font="{$font.default}" color="{$color.font_normal}" width="100%" height="auto" horizontal-align="left" preformatted="true">
 							<![CDATA[
 [image]resources/github/tdme2-logo.png[/image]
 
@@ -2548,7 +2548,7 @@ in this repository.
          POSSIBILITY OF SUCH DAMAGE.
 
 ]]>						
-						</multiline-text>
+						</styled-text>
 					</scrollarea>
 				</tab-content>
 				<tab-content tab-id="tab7" vertical-align="top">

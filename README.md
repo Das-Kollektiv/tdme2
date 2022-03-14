@@ -165,7 +165,7 @@
         - scrollbars
         - space
         - table
-        - text + multiline text
+        - text + multiline/styled text
     - supports custom templates and compound elements defined by templates and its controllers
         - compound elements
             - button

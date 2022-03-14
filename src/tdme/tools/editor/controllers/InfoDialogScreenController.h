@@ -14,7 +14,7 @@ using std::string;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUIMultilineTextNode;
+using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::tools::editor::controllers::ScreenController;
@@ -33,7 +33,7 @@ class tdme::tools::editor::controllers::InfoDialogScreenController final
 private:
 	GUIScreenNode* screenNode { nullptr };
 	GUIElementNode* tabsHeaderNode { nullptr };
-	GUIMultilineTextNode* messageNode { nullptr };
+	GUIStyledTextNode* messageNode { nullptr };
 
 public:
 	/**

@@ -35,11 +35,11 @@ using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
 
 /**
- * GUI multi line text node
+ * GUI styled text node
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::nodes::GUIMultilineTextNode final
+class tdme::gui::nodes::GUIStyledTextNode final
 	: public GUINode
 {
 	friend class tdme::gui::GUIParser;
@@ -167,7 +167,7 @@ protected:
 	 * @param text text
 	 * @throws tdme::gui::GUIParserException
 	 */
-	GUIMultilineTextNode(
+	GUIStyledTextNode(
 		GUIScreenNode* screenNode,
 		GUIParentNode* parentNode,
 		const string& id,

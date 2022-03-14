@@ -20,7 +20,6 @@ namespace nodes {
 	class GUILayerNode;
 	class GUILayoutNode;
 	class GUILayoutNode_Alignment;
-	class GUIMultilineTextNode;
 	class GUINode;
 	class GUINodeConditions;
 	class GUINodeController;
@@ -41,6 +40,7 @@ namespace nodes {
 	class GUIScreenNode;
 	struct GUIScreenNode_SizeConstraints;
 	class GUISpaceNode;
+	class GUIStyledTextNode;
 	class GUITableNode;
 	class GUITableCellNode;
 	class GUITableRowNode;

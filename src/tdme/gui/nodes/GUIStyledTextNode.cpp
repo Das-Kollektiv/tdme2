@@ -1,4 +1,4 @@
-#include <tdme/gui/nodes/GUIMultilineTextNode.h>
+#include <tdme/gui/nodes/GUIStyledTextNode.h>
 
 #include <list>
 #include <string>
@@ -36,7 +36,7 @@ using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::gui::nodes::GUIColor;
-using tdme::gui::nodes::GUIMultilineTextNode;
+using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUINode_AlignmentHorizontal;
 using tdme::gui::nodes::GUINode_AlignmentVertical;
 using tdme::gui::nodes::GUINode_Border;
@@ -55,7 +55,7 @@ using tdme::utilities::Float;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 
-GUIMultilineTextNode::GUIMultilineTextNode(
+GUIStyledTextNode::GUIStyledTextNode(
 	GUIScreenNode* screenNode,
 	GUIParentNode* parentNode,
 	const string& id,
@@ -96,17 +96,17 @@ GUIMultilineTextNode::GUIMultilineTextNode(
 	setText(text);
 }
 
-const string GUIMultilineTextNode::getNodeType()
+const string GUIStyledTextNode::getNodeType()
 {
 	return "multiline-text";
 }
 
-bool GUIMultilineTextNode::isContentNode()
+bool GUIStyledTextNode::isContentNode()
 {
 	return true;
 }
 
-int GUIMultilineTextNode::getContentWidth()
+int GUIStyledTextNode::getContentWidth()
 {
 	if (requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
 		return font != nullptr?autoWidth + border.left + border.right + padding.left + padding.right:0;
@@ -115,7 +115,7 @@ int GUIMultilineTextNode::getContentWidth()
 	}
 }
 
-int GUIMultilineTextNode::getContentHeight()
+int GUIStyledTextNode::getContentHeight()
 {	if (requestedConstraints.heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
 		return font != nullptr?autoHeight + border.top + border.bottom + padding.top + padding.bottom:0;
 	} else {
@@ -123,7 +123,7 @@ int GUIMultilineTextNode::getContentHeight()
 	}
 }
 
-void GUIMultilineTextNode::computeContentAlignment() {
+void GUIStyledTextNode::computeContentAlignment() {
 	// If fixed width requested and no computed constraints yet, abort
 	if (requestedConstraints.widthType != GUINode_RequestedConstraints_RequestedConstraintsType::AUTO && computedConstraints.width == -1) return;
 	// width did not change, but relayout has been requested
@@ -187,7 +187,7 @@ void GUIMultilineTextNode::computeContentAlignment() {
 	this->heightLast = computedConstraints.height;
 }
 
-void GUIMultilineTextNode::setText(const MutableString& text) {
+void GUIStyledTextNode::setText(const MutableString& text) {
 	this->parentOffsetsChanged = true;
 	this->parentXOffsetLast = 0.0f;
 	this->parentYOffsetLast = 0.0f;
@@ -250,7 +250,7 @@ void GUIMultilineTextNode::setText(const MutableString& text) {
 							styleUrl = argument;
 							styleStartIdx = this->text.size();
 						} else {
-							Console::println("GUIMultilineTextNode::setText(): unknown style command: " + currentStyle);
+							Console::println("GUIStyledTextNode::setText(): unknown style command: " + currentStyle);
 						}
 					} else
 					if (styleTokenized.size() == 1) {
@@ -273,10 +273,10 @@ void GUIMultilineTextNode::setText(const MutableString& text) {
 							setImage(this->text.size() - 1, styleImage, styleUrl, -1, -1);
 							styleImage.clear();
 						} else {
-							Console::println("GUIMultilineTextNode::setText(): unknown style command: " + currentStyle);
+							Console::println("GUIStyledTextNode::setText(): unknown style command: " + currentStyle);
 						}
 					} else {
-						Console::println("GUIMultilineTextNode::setText(): unknown style command: " + currentStyle);
+						Console::println("GUIStyledTextNode::setText(): unknown style command: " + currentStyle);
 					}
 					//
 					currentStyle.clear();
@@ -333,14 +333,14 @@ void GUIMultilineTextNode::setText(const MutableString& text) {
 	Console::println("'" + this->text.getString() + "'");
 }
 
-void GUIMultilineTextNode::dispose()
+void GUIStyledTextNode::dispose()
 {
 	disposeStyles();
 	if (font != nullptr) font->dispose();
 	GUINode::dispose();
 }
 
-void GUIMultilineTextNode::determineNextLineConstraints(int& i, int charEndIdx, int textStyleIdx) {
+void GUIStyledTextNode::determineNextLineConstraints(int& i, int charEndIdx, int textStyleIdx) {
 	//
 	auto maxLineWidth = requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO?Float::MAX_VALUE:computedConstraints.width - (border.left + border.right + padding.left + padding.right);
 
@@ -551,7 +551,7 @@ void GUIMultilineTextNode::determineNextLineConstraints(int& i, int charEndIdx, 
 	}
 }
 
-void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
+void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 {
 	if (shouldRender() == false) return;
 
@@ -864,12 +864,12 @@ void GUIMultilineTextNode::render(GUIRenderer* guiRenderer)
 	guiRenderer->bindTexture(0);
 }
 
-void GUIMultilineTextNode::unsetTextStyle(int startIdx, int endIdx) {
+void GUIStyledTextNode::unsetTextStyle(int startIdx, int endIdx) {
 	// TODO: a.drewke
 }
 
-void GUIMultilineTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor& color, const string& font, const string& url) {
-	Console::print("GUIMultilineTextNode::setTextStyle(): " + to_string(startIdx) + " ... " + to_string(endIdx) + ": '");
+void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor& color, const string& font, const string& url) {
+	Console::print("GUIStyledTextNode::setTextStyle(): " + to_string(startIdx) + " ... " + to_string(endIdx) + ": '");
 	for (auto i = startIdx; i <= endIdx; i++) Console::print(string() + text.charAt(i));
 	Console::print("'");
 	Console::print(", color = " + to_string(color.getRed()) + ", " + to_string(color.getGreen()) + ", " + to_string(color.getBlue()) + ", " + to_string(color.getAlpha()));
@@ -895,8 +895,8 @@ void GUIMultilineTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor
 	);
 }
 
-void GUIMultilineTextNode::setTextStyle(int startIdx, int endIdx, const string& font, const string& url) {
-	Console::print("GUIMultilineTextNode::setTextStyle(): " + to_string(startIdx) + " ... " + to_string(endIdx) + ": '");
+void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const string& font, const string& url) {
+	Console::print("GUIStyledTextNode::setTextStyle(): " + to_string(startIdx) + " ... " + to_string(endIdx) + ": '");
 	for (auto i = startIdx; i <= endIdx; i++) Console::print(string() + text.charAt(i));
 	Console::print("'");
 	Console::print(", url = '" + url + "'");
@@ -921,8 +921,8 @@ void GUIMultilineTextNode::setTextStyle(int startIdx, int endIdx, const string& 
 	);
 }
 
-void GUIMultilineTextNode::setImage(int idx, const string& image, const string& url, int width, int height) {
-	Console::println("GUIMultilineTextNode::setImage(): " + to_string(idx) + ": " + image + ", url = '" + url + "', width = " + to_string(width) + ", height = " + to_string(height));
+void GUIStyledTextNode::setImage(int idx, const string& image, const string& url, int width, int height) {
+	Console::println("GUIStyledTextNode::setImage(): " + to_string(idx) + ": " + image + ", url = '" + url + "', width = " + to_string(width) + ", height = " + to_string(height));
 	unsetTextStyle(idx,idx);
 	// TODO: a.drewke
 	auto _image = image.empty() == true?nullptr:GUI::getImage(screenNode->getApplicationRootPathName(), image);
@@ -942,7 +942,7 @@ void GUIMultilineTextNode::setImage(int idx, const string& image, const string& 
 	);
 }
 
-void GUIMultilineTextNode::disposeStyles() {
+void GUIStyledTextNode::disposeStyles() {
 	for (auto& style: styles) {
 		if (style.font != nullptr) font->dispose();
 		if (style.image != nullptr) Engine::getInstance()->getTextureManager()->removeTexture(style.image->getId());

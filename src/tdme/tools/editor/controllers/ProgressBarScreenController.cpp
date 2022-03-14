@@ -21,7 +21,7 @@ using std::string;
 using tdme::application::Application;
 using tdme::engine::Engine;
 using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUIMultilineTextNode;
+using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;

@@ -14,11 +14,11 @@
 			</layout>
 		</layer>
 		<space height="5" hide-on="empty('{$filename}')"/>
-		<multiline-text font="{$font.default}" color="{$color.font_normal}" width="{$size}" height="auto" horizontal-align="center">
+		<styled-text font="{$font.default}" color="{$color.font_normal}" width="{$size}" height="auto" horizontal-align="center">
 			<![CDATA[
 			{$filename}
 			]]>
-		</multiline-text>
+		</styled-text>
 	</layout>
 	<!-- mouse over -->
 	<layout width="auto" height="auto" padding="10" hide-on="click" show-on="mouseover" alignment="vertical" horizontal-align="center" vertical-align="center" background-color="{$color.focus}">
@@ -35,11 +35,11 @@
 			</layout>
 		</layer>
 		<space height="5" hide-on="empty('{$filename}')"/>
-		<multiline-text font="{$font.default}" color="{$color.font_highlight}" width="{$size}" height="auto" horizontal-align="center">
+		<styled-text font="{$font.default}" color="{$color.font_highlight}" width="{$size}" height="auto" horizontal-align="center">
 			<![CDATA[
 			{$filename}
 			]]>
-		</multiline-text>
+		</styled-text>
 	</layout>
 	<!-- clicked -->
 	<layout width="auto" height="auto" padding="10" show-on="click" alignment="vertical" horizontal-align="center" vertical-align="center" background-color="{$color.selected}">
@@ -56,10 +56,10 @@
 			</layout>
 		</layer>
 		<space height="5" hide-on="empty('{$filename}')"/>
-		<multiline-text font="{$font.default}" color="{$color.font_normal}" width="{$size}" height="auto" horizontal-align="center">
+		<styled-text font="{$font.default}" color="{$color.font_normal}" width="{$size}" height="auto" horizontal-align="center">
 			<![CDATA[
 			{$filename}
 			]]>
-		</multiline-text>
+		</styled-text>
 	</layout>
 </element>

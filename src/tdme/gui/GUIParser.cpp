@@ -44,7 +44,6 @@
 #include <tdme/gui/nodes/GUIInputInternalNode.h>
 #include <tdme/gui/nodes/GUILayerNode.h>
 #include <tdme/gui/nodes/GUILayoutNode.h>
-#include <tdme/gui/nodes/GUIMultilineTextNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINode_Alignments.h>
 #include <tdme/gui/nodes/GUINode_AlignmentHorizontal.h>
@@ -53,6 +52,7 @@
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUISpaceNode.h>
+#include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/nodes/GUITableCellNode.h>
 #include <tdme/gui/nodes/GUITableNode.h>
 #include <tdme/gui/nodes/GUITableRowNode.h>
@@ -119,13 +119,13 @@ using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUIInputInternalNode;
 using tdme::gui::nodes::GUILayerNode;
 using tdme::gui::nodes::GUILayoutNode;
-using tdme::gui::nodes::GUIMultilineTextNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIPanelNode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUISpaceNode;
+using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUITableCellNode;
 using tdme::gui::nodes::GUITableNode;
 using tdme::gui::nodes::GUITableRowNode;
@@ -1097,8 +1097,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 				}
 				parseEffects(guiTextNode, node);
 			} else
-			if (nodeTagName == "multiline-text") {
-				auto guiTextNode = new GUIMultilineTextNode(
+			if (nodeTagName == "styled-text") {
+				auto guiTextNode = new GUIStyledTextNode(
 					guiParentNode->getScreenNode(),
 					guiParentNode,
 					string(node->Attribute("id") == nullptr?guiParentNode->getScreenNode()->allocateNodeId():node->Attribute("id")),
