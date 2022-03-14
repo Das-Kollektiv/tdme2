@@ -433,12 +433,12 @@ void GUIStyledTextNode::determineNextLineConstraints(int& i, int charEndIdx, int
 		lineConstraints.clear();
 		lineConstraints.push_back(
 			{
-				idx: -1,
-				width: 0.0f,
-				height: 0.0f,
-				lineHeight: 0.0f,
-				baseLine: 0.0f,
-				spaceWrap: false
+				.idx = -1,
+				.width = 0.0f,
+				.height = 0.0f,
+				.lineHeight = 0.0f,
+				.baseLine = 0.0f,
+				.spaceWrap = false
 			}
 		);
 		{
@@ -454,12 +454,12 @@ void GUIStyledTextNode::determineNextLineConstraints(int& i, int charEndIdx, int
 				if (textStyle != nullptr && textStyle->image != nullptr) {
 					if (lineConstraints[lineConstraints.size() - 1].spaceWrap == false) {
 						lineConstraints[lineConstraints.size() - 1] = {
-							idx: k,
-							width: lineWidth,
-							height: Math::max(lineHeight, baseLine + imageHeight),
-							lineHeight: lineHeight,
-							baseLine: baseLine,
-							spaceWrap: false
+							.idx = k,
+							.width = lineWidth,
+							.height = Math::max(lineHeight, baseLine + imageHeight),
+							.lineHeight = lineHeight,
+							.baseLine = baseLine,
+							.spaceWrap = false
 						};
 						lineWidthSpaceWrap = 0.0f;
 						lineHeightSpaceWrap = 0.0f;
@@ -472,12 +472,12 @@ void GUIStyledTextNode::determineNextLineConstraints(int& i, int charEndIdx, int
 						baseLine = baseLineSpaceWrap;
 						lineConstraints.push_back(
 							{
-								idx: -1,
-								width: 0.0f,
-								height: 0.0f,
-								lineHeight: 0.0f,
-								baseLine: 0.0f,
-								spaceWrap: false
+								.idx = -1,
+								.width = 0.0f,
+								.height = 0.0f,
+								.lineHeight = 0.0f,
+								.baseLine = 0.0f,
+								.spaceWrap = false
 							}
 						);
 					}
@@ -488,12 +488,12 @@ void GUIStyledTextNode::determineNextLineConstraints(int& i, int charEndIdx, int
 					// render text
 					if (line[k] == ' ') {
 						lineConstraints[lineConstraints.size() - 1] = {
-							idx: k,
-							width: lineWidth,
-							height: Math::max(lineHeight, baseLine + imageHeight),
-							lineHeight: lineHeight,
-							baseLine: baseLine,
-							spaceWrap: true
+							.idx = k,
+							.width = lineWidth,
+							.height = Math::max(lineHeight, baseLine + imageHeight),
+							.lineHeight = lineHeight,
+							.baseLine = baseLine,
+							.spaceWrap = true
 						};
 						lineWidthSpaceWrap = 0.0f;
 						lineHeightSpaceWrap = 0.0f;
@@ -503,12 +503,12 @@ void GUIStyledTextNode::determineNextLineConstraints(int& i, int charEndIdx, int
 					if (character != nullptr) {
 						if (lineConstraints[lineConstraints.size() - 1].spaceWrap == false) {
 							lineConstraints[lineConstraints.size() - 1] = {
-								idx: k,
-								width: lineWidth,
-								height: Math::max(lineHeight, baseLine + imageHeight),
-								lineHeight: lineHeight,
-								baseLine: baseLine,
-								spaceWrap: false
+								.idx = k,
+								.width = lineWidth,
+								.height = Math::max(lineHeight, baseLine + imageHeight),
+								.lineHeight = lineHeight,
+								.baseLine = baseLine,
+								.spaceWrap = false
 							};
 							lineWidthSpaceWrap = 0.0f;
 							lineHeightSpaceWrap = 0.0f;
@@ -523,12 +523,12 @@ void GUIStyledTextNode::determineNextLineConstraints(int& i, int charEndIdx, int
 							}
 							lineConstraints.push_back(
 								{
-									idx: -1,
-									width: 0.0f,
-									height: 0.0f,
-									lineHeight: 0.0f,
-									baseLine: 0.0f,
-									spaceWrap: false
+									.idx = -1,
+									.width = 0.0f,
+									.height = 0.0f,
+									.lineHeight = 0.0f,
+									.baseLine = 0.0f,
+									.spaceWrap = false
 								}
 							);
 						}
