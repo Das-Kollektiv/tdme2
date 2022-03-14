@@ -32,10 +32,10 @@ using std::unordered_map;
 using std::vector;
 
 using tdme::engine::fileio::textures::Texture;
-using tdme::engine::Engine;
-using tdme::engine::FrameBuffer;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
+using tdme::engine::Engine;
+using tdme::engine::FrameBuffer;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;

@@ -24,9 +24,9 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
-#include <tdme/utilities/SHA256.h>
 #include <tdme/utilities/StringTokenizer.h>
 #include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/SHA256.h>
 #include <tdme/utilities/Time.h>
 
 using std::find;
@@ -54,10 +54,10 @@ using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
-using tdme::utilities::SHA256;
 using tdme::utilities::MiniScript;
 using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
+using tdme::utilities::SHA256;
 using tdme::utilities::Time;
 
 string MiniScript::OPERATOR_CHARS = "!*/%+-<>&|=";

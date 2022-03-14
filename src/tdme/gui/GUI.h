@@ -40,7 +40,6 @@ using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::os::filesystem::FileSystemException;

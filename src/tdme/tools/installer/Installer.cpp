@@ -20,10 +20,10 @@
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
-#include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
@@ -71,10 +71,10 @@ using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUI;
 using tdme::gui::GUIParser;

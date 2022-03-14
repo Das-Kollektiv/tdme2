@@ -2,10 +2,10 @@
 
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
-#include <tdme/engine/Version.h>
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
+#include <tdme/engine/Version.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>
@@ -14,10 +14,10 @@
 using std::string;
 
 using tdme::application::Application;
-using tdme::engine::Version;
 using tdme::engine::fileio::textures::PNGTextureWriter;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
+using tdme::engine::Version;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;

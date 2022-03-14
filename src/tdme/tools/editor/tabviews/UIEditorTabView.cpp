@@ -35,7 +35,6 @@ using std::unordered_set;
 using tdme::tools::editor::tabviews::UIEditorTabView;
 
 using tdme::engine::fileio::prototypes::PrototypeReader;
-using tdme::engine::prototype::Prototype;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
@@ -44,6 +43,7 @@ using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::SpecularMaterialProperties;
+using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
 using tdme::engine::Object3D;
 using tdme::engine::SimplePartition;

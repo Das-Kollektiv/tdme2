@@ -6,8 +6,8 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/nodes/GUIColor.h>
-#include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/tabcontrollers/TextEditorTabController.h>
@@ -25,8 +25,8 @@ using tdme::tools::editor::tabviews::TextEditorTabView;
 
 using tdme::engine::Engine;
 using tdme::gui::nodes::GUIColor;
-using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::GUI;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::tabcontrollers::TextEditorTabController;

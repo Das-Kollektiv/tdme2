@@ -4,8 +4,8 @@
 #include <cstring>
 
 #include <tdme/tdme.h>
-#include <tdme/utilities/SHA256.h>
 #include <ext/sha256/sha256.h>
+#include <tdme/utilities/SHA256.h>
 
 using std::string;
 using std::vector;

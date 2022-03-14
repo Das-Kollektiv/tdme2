@@ -5,9 +5,9 @@
 #include <string_view>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUINode_AlignmentHorizontal.h>
 #include <tdme/gui/nodes/GUINode_AlignmentVertical.h>
@@ -32,11 +32,10 @@ using std::string;
 using std::string_view;
 using std::to_string;
 
-using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::manager::TextureManager;
+using tdme::engine::Engine;
 using tdme::gui::nodes::GUIColor;
-using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUINode_AlignmentHorizontal;
 using tdme::gui::nodes::GUINode_AlignmentVertical;
 using tdme::gui::nodes::GUINode_Border;
@@ -44,6 +43,7 @@ using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::renderer::GUICharacter;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;

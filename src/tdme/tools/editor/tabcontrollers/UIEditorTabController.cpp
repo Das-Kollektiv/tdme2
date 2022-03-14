@@ -3,10 +3,10 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Engine.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/Node.h>
 #include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -41,9 +41,9 @@ using tdme::tools::editor::tabcontrollers::UIEditorTabController;
 
 using std::string;
 
-using tdme::engine::Engine;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
+using tdme::engine::Engine;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIImageNode;

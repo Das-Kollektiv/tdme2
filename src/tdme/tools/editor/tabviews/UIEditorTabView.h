@@ -22,9 +22,9 @@
 using std::array;
 using std::string;
 
+using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
-using tdme::engine::prototype::Prototype;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Matrix4x4;
 using tdme::tools::editor::misc::CameraRotationInputHandler;

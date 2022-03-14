@@ -8,10 +8,10 @@
 #include <tdme/gui/events/GUIFocusListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIImageNode.h>
-#include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
@@ -35,10 +35,10 @@ using tdme::gui::events::GUIChangeListener;
 using tdme::gui::events::GUIFocusListener;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIImageNode;
-using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
 using tdme::tools::editor::controllers::ColorPickerImageController;

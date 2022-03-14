@@ -28,9 +28,9 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/Properties.h>
-#include <tdme/utilities/SHA256.h>
 #include <tdme/utilities/StringTokenizer.h>
 #include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/SHA256.h>
 
 using std::to_string;
 
@@ -51,9 +51,9 @@ using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;
 using tdme::utilities::Integer;
 using tdme::utilities::Properties;
-using tdme::utilities::SHA256;
 using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
+using tdme::utilities::SHA256;
 
 void VKGL3CoreShaderProgram::shaderInitResources(TBuiltInResource &resources) {
     resources.maxLights = 32;
