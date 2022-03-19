@@ -1154,6 +1154,9 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					MutableString(unescapeQuotes(StringTools::trim(AVOID_NULLPTR_STRING(node->GetText()))))
 				);
 				guiParentNode->addSubNode(guiStyledTextNode);
+				// TODO: we dont support element controllers here, actually later element controllers should
+				//	only be attachable to element nodes
+				//	here we attach the StyledText controller
 				guiStyledTextNode->setController(new GUIStyledTextNodeController(guiStyledTextNode));
 				parseEffects(guiStyledTextNode, node);
 			} else
