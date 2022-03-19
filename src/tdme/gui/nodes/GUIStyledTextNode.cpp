@@ -599,7 +599,6 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 		startRenderY = 0;
 	} else {
 		y = startRenderY;
-		visible = true;
 	}
 
 	// Console::println("char start idx: " + to_string(charStartIdx) + ", char end idx: " + to_string(charEndIdx) + ", chars: " + to_string(text.size()) + ", start text style idx: " + to_string(startTextStyleIdx) + ", start render y: " + to_string(startRenderY) + ", auto width: " + to_string(autoWidth) + ", auto height = " + to_string(autoHeight))
@@ -607,13 +606,16 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 	//
 	auto maxLineWidth = getAutoWidth();
 	auto textStyleIdx = startTextStyleIdx;
-	auto currentCharStartIdx = charStartIdx;
-	auto j = charStartIdx;
 	auto boundTexture = -1;
 	GUIColor lastColor = color;
 	for (auto i = charStartIdx; i < charEndIdx;) {
+
 		//
-		currentCharStartIdx = i;
+		auto nextCharStartIdx = i;
+		auto nextStartTextStyleIdx = textStyleIdx;
+		auto nextStartRenderY = y;
+
+		//
 		determineNextLineConstraints(i, charEndIdx, textStyleIdx);
 
 		// empty lines are cheap, handle them immediatly
@@ -643,7 +645,7 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 					}
 				}
 			Console::println(
-					"render line@" + to_string(k) + ": '" + line + "': '" + linePart
+					"render line@" + to_string(k) + ": '" + linePart
 							+ "': " + to_string(lineConstraints[k].idx) + "; width = "
 							+ to_string(lineConstraints[k].width) + " / "
 							+ to_string(maxLineWidth) + ", line height = "
@@ -708,9 +710,10 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 				// if text was not visible before store text render start values
 				if (visible == false) {
 					visible = true;
-					charStartIdx = lineCharIdxs[lineIdx == 0?0:lineConstraints[lineIdx - 1].idx];
-					startTextStyleIdx = currentTextStyleIdx;
-					startRenderY = y;
+					//
+					charStartIdx = nextCharStartIdx;
+					startTextStyleIdx = nextStartTextStyleIdx;
+					startRenderY = nextStartRenderY;
 				}
 				// x alignment
 				if (alignments.horizontal == GUINode_AlignmentHorizontal::LEFT) {
