@@ -3,19 +3,19 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
+#include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/utilities/MutableString.h>
 
 using std::string;
 
-using tdme::gui::GUIParser;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
+using tdme::gui::GUIParser;
 using tdme::utilities::MutableString;
 
 /**
