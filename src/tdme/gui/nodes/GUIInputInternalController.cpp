@@ -57,14 +57,6 @@ constexpr int64_t GUIInputInternalController::DRAGGING_CALMDOWN;
 GUIInputInternalController::GUIInputInternalController(GUINode* node)
 	: GUINodeController(node)
 {
-	this->cursorModeStarted = -1LL;
-	this->cursorMode = CURSORMODE_SHOW;
-	this->index = 0;
-	this->offset = 0;
-	this->mouseDraggingSlideValueActive = false;
-	this->mouseDraggingInit = false;
-	this->mouseDragPosition = {{ -1, -1 }};
-	this->mouseOriginalPosition = {{ -1, -1 }};
 }
 
 bool GUIInputInternalController::isDisabled()

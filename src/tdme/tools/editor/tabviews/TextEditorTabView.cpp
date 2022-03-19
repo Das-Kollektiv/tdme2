@@ -38,7 +38,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	engine->getGUI()->addScreen(screenNode->getId(), screenNode);
 	engine->getGUI()->addRenderScreen(screenNode->getId());
-	CodeFormatter::getInstance()->format(extension, required_dynamic_cast<GUIStyledTextNode*>(screenNode->getNodeById("text")));
+	CodeFormatter::getInstance()->format(extension, required_dynamic_cast<GUIStyledTextNode*>(screenNode->getInnerNodeById("text")));
 }
 
 TextEditorTabView::~TextEditorTabView() {

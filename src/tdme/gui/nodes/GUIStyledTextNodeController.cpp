@@ -10,6 +10,7 @@
 #include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/Time.h>
 
 using std::string;
 
@@ -21,12 +22,31 @@ using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUIStyledTextNodeController;
 using tdme::gui::GUI;
 using tdme::utilities::StringTools;
+using tdme::utilities::Time;
 
 GUIStyledTextNodeController::GUIStyledTextNodeController(GUINode* node)
 	: GUINodeController(node)
 {
 }
 
+void GUIStyledTextNodeController::resetCursorMode()
+{
+	cursorModeStarted = Time::getCurrentMillis();
+	cursorMode = CURSORMODE_SHOW;
+}
+
+GUIStyledTextNodeController::CursorMode GUIStyledTextNodeController::getCursorMode()
+{
+	if (cursorModeStarted == -1) {
+		resetCursorMode();
+		return cursorMode;
+	}
+	if (Time::getCurrentMillis() - cursorModeStarted > CURSOR_MODE_DURATION) {
+		cursorMode = cursorMode == CURSORMODE_SHOW?CURSORMODE_HIDE:CURSORMODE_SHOW;
+		cursorModeStarted = Time::getCurrentMillis();
+	}
+	return cursorMode;
+}
 
 bool GUIStyledTextNodeController::isDisabled()
 {
@@ -122,11 +142,14 @@ bool GUIStyledTextNodeController::hasValue()
 
 const MutableString& GUIStyledTextNodeController::getValue()
 {
-	return value;
+	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
+	return styledTextNode->getText();
 }
 
 void GUIStyledTextNodeController::setValue(const MutableString& value)
 {
+	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
+	styledTextNode->setText(value);
 }
 
 void GUIStyledTextNodeController::onSubTreeChange()

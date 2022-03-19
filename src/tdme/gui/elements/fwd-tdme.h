@@ -49,6 +49,7 @@ namespace elements {
 	class GUISliderHController;
 	class GUISliderV;
 	class GUISliderVController;
+	class GUIStyledInput;
 	class GUITab;
 	class GUITabContent;
 	class GUITabContentController;

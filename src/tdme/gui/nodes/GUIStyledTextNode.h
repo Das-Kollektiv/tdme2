@@ -103,6 +103,22 @@ private:
 	};
 	vector<URLArea> urlAreas;
 
+	bool editMode { false };
+
+	/**
+	 * @return edit mode
+	 */
+	inline bool isEditMode() {
+		return editMode;
+	}
+
+	/**
+	 * @return edit mode
+	 */
+	inline void setEditMode(bool editMode) {
+		this->editMode = editMode;
+	}
+
 	/**
 	 * @return URL areas
 	 */

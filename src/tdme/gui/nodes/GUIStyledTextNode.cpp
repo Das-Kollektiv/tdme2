@@ -16,6 +16,7 @@
 #include <tdme/gui/nodes/GUINode_Padding.h>
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/nodes/GUIStyledTextNodeController.h>
 #include <tdme/gui/renderer/GUICharacter.h>
 #include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
@@ -32,6 +33,8 @@ using std::string;
 using std::string_view;
 using std::to_string;
 
+using tdme::gui::nodes::GUIStyledTextNode;
+
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::Engine;
@@ -43,7 +46,7 @@ using tdme::gui::nodes::GUINode_ComputedConstraints;
 using tdme::gui::nodes::GUINode_Padding;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::nodes::GUIStyledTextNode;
+using tdme::gui::nodes::GUIStyledTextNodeController;
 using tdme::gui::renderer::GUICharacter;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
@@ -604,6 +607,19 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 	// Console::println("char start idx: " + to_string(charStartIdx) + ", char end idx: " + to_string(charEndIdx) + ", chars: " + to_string(text.size()) + ", start text style idx: " + to_string(startTextStyleIdx) + ", start render y: " + to_string(startRenderY) + ", auto width: " + to_string(autoWidth) + ", auto height = " + to_string(autoHeight))
 
 	//
+	auto cursorMode = GUIStyledTextNodeController::CURSORMODE_HIDE;
+	auto cursorIndex = -1;
+	auto cursorSelectionIndex = -1;
+	/*
+	if (editMode == true) {
+		auto styledTextController = required_dynamic_cast<GUIStyledTextNodeController*>(controller);
+		auto cursorMode = styledTextController->getCursorMode();
+		auto cursorIndex = styledTextController->getIndex();
+		auto cursorSelectionIndex = styledTextController->getSelectionIndex();
+	}
+	*/
+
+	//
 	urlAreas.clear();
 
 	//
@@ -623,19 +639,6 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 
 		//
 		determineNextLineConstraints(i, charEndIdx, textStyleIdx);
-
-		// empty lines are cheap, handle them immediatly
-		if (line.empty() == true) {
-			for (auto& lineConstraint: lineConstraints) {
-				y+= lineConstraint.height;
-			}
-			//
-			line.clear();
-			lineCharIdxs.clear();
-			lineConstraints.clear();
-			//
-			continue;
-		}
 
 		//
 		/*
@@ -747,33 +750,64 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 						// draw
 						guiRenderer->render();
 						guiRenderer->bindTexture(textStyle->textureId);
-						float left = x + xIndentLeft;
-						float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - textStyle->height) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
-						float width = textStyle->width;
-						float height = textStyle->height;
-						guiRenderer->addQuad(
-							((left) / (screenWidth / 2.0f)) - 1.0f,
-							((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
-							1.0f, 1.0f, 1.0f, 1.0f,
-							0.0f,
-							0.0f,
-							((left + width) / (screenWidth / 2.0f)) - 1.0f,
-							((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
-							1.0f, 1.0f, 1.0f, 1.0f,
-							1.0f,
-							0.0f,
-							((left + width) / (screenWidth / 2.0f)) - 1.0f,
-							((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
-							1.0f, 1.0f, 1.0f, 1.0f,
-							1.0f,
-							1.0f,
-							((left) / (screenWidth / 2.0f)) - 1.0f,
-							((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
-							1.0f, 1.0f, 1.0f, 1.0f,
-							0.0f,
-							1.0f
-						);
-						guiRenderer->render();
+						{
+							float left = x + xIndentLeft;
+							float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - textStyle->height) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
+							float width = textStyle->width;
+							float height = textStyle->height;
+							guiRenderer->addQuad(
+								((left) / (screenWidth / 2.0f)) - 1.0f,
+								((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+								1.0f, 1.0f, 1.0f, 1.0f,
+								0.0f,
+								0.0f,
+								((left + width) / (screenWidth / 2.0f)) - 1.0f,
+								((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+								1.0f, 1.0f, 1.0f, 1.0f,
+								1.0f,
+								0.0f,
+								((left + width) / (screenWidth / 2.0f)) - 1.0f,
+								((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
+								1.0f, 1.0f, 1.0f, 1.0f,
+								1.0f,
+								1.0f,
+								((left) / (screenWidth / 2.0f)) - 1.0f,
+								((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
+								1.0f, 1.0f, 1.0f, 1.0f,
+								0.0f,
+								1.0f
+							);
+							guiRenderer->render();
+						}
+						//
+						if (cursorMode == GUIStyledTextNodeController::CURSORMODE_SHOW && cursorIndex == lineCharIdxs[k]) {
+							float left = x + xIndentLeft;
+							float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - textStyle->height) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
+							float width = 2;
+							float height = textStyle->height;
+							auto& colorData = color.getArray();
+							guiRenderer->bindTexture(0);
+							guiRenderer->addQuad(
+								((left) / (screenWidth / 2.0f)) - 1.0f,
+								((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+								colorData[0], colorData[1], colorData[2], colorData[3],
+								0.0f, 1.0f,
+								((left + width) / (screenWidth / 2.0f)) - 1.0f,
+								((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+								colorData[0], colorData[1], colorData[2], colorData[3],
+								1.0f, 1.0f,
+								((left + width) / (screenWidth / 2.0f)) - 1.0f,
+								((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
+								colorData[0], colorData[1], colorData[2], colorData[3],
+								1.0f, 0.0f,
+								((left) / (screenWidth / 2.0f)) - 1.0f,
+								((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
+								colorData[0], colorData[1], colorData[2], colorData[3],
+								0.0f, 0.0f
+							);
+							guiRenderer->render();
+						}
+						//
 						guiRenderer->bindTexture(boundTexture);
 						// flush current URL
 						if (currentURL.empty() == false && urlAreas.empty() == false) {
@@ -788,8 +822,8 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 								{
 									.left = static_cast<int>(x),
 									.top = static_cast<int>(y),
-									.width = static_cast<int>(width),
-									.height = static_cast<int>(height),
+									.width = static_cast<int>(textStyle->width),
+									.height = static_cast<int>(textStyle->height),
 									.url = textStyle->url
 								}
 							);
@@ -859,25 +893,58 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 						// otherwise draw
 						auto character = currentFont->getCharacter(line[k]);
 						if (character != nullptr) {
-							// draw
-							float left = x + xIndentLeft;
-							float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - currentFont->getBaseLine()) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
-							if (boundTexture == -1) {
-								boundTexture = currentFont->getTextureId();
-								guiRenderer->bindTexture(boundTexture);
-								lastColor = currentColor;
-							} else
-							if (boundTexture != currentFont->getTextureId()) {
-								boundTexture = currentFont->getTextureId();
-								guiRenderer->render();
-								guiRenderer->bindTexture(boundTexture);
-								lastColor = currentColor;
-							} else
-							if (currentColor.equals(lastColor) == false) {
-								guiRenderer->render();
-								lastColor = currentColor;
+							{
+								// draw
+								float left = x + xIndentLeft;
+								float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - currentFont->getBaseLine()) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
+								if (boundTexture == -1) {
+									boundTexture = currentFont->getTextureId();
+									guiRenderer->bindTexture(boundTexture);
+									lastColor = currentColor;
+								} else
+								if (boundTexture != currentFont->getTextureId()) {
+									boundTexture = currentFont->getTextureId();
+									guiRenderer->render();
+									guiRenderer->bindTexture(boundTexture);
+									lastColor = currentColor;
+								} else
+								if (currentColor.equals(lastColor) == false) {
+									guiRenderer->render();
+									lastColor = currentColor;
+								}
+								currentFont->drawCharacter(guiRenderer, character, left, top, currentColor);
 							}
-							currentFont->drawCharacter(guiRenderer, character, left, top, currentColor);
+							//
+							if (cursorMode == GUIStyledTextNodeController::CURSORMODE_SHOW && cursorIndex == lineCharIdxs[k]) {
+								float left = x + xIndentLeft;
+								float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - currentFont->getBaseLine()) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
+								float width = 2;
+								float height = lineConstraints[lineIdx].lineHeight;
+								auto& colorData = color.getArray();
+								guiRenderer->render();
+								guiRenderer->bindTexture(0);
+								guiRenderer->addQuad(
+									((left) / (screenWidth / 2.0f)) - 1.0f,
+									((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+									colorData[0], colorData[1], colorData[2], colorData[3],
+									0.0f, 1.0f,
+									((left + width) / (screenWidth / 2.0f)) - 1.0f,
+									((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
+									colorData[0], colorData[1], colorData[2], colorData[3],
+									1.0f, 1.0f,
+									((left + width) / (screenWidth / 2.0f)) - 1.0f,
+									((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
+									colorData[0], colorData[1], colorData[2], colorData[3],
+									1.0f, 0.0f,
+									((left) / (screenWidth / 2.0f)) - 1.0f,
+									((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
+									colorData[0], colorData[1], colorData[2], colorData[3],
+									0.0f, 0.0f
+								);
+								guiRenderer->render();
+								guiRenderer->bindTexture(boundTexture);
+							}
+
 							// if URL did change, create URL areas
 							if (styleURL != currentURL) {
 								if (currentURL.empty() == false && urlAreas.empty() == false) {

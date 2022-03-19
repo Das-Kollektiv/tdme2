@@ -27,8 +27,45 @@ class tdme::gui::nodes::GUIStyledTextNodeController
 	: public GUINodeController
 {
 	friend class tdme::gui::GUIParser;
+	friend class GUIStyledTextNode;
 private:
-	MutableString value;
+	static constexpr int64_t CURSOR_MODE_DURATION { 500LL };
+	int64_t cursorModeStarted { -1LL };
+	enum CursorMode { CURSORMODE_HIDE, CURSORMODE_SHOW};
+	CursorMode cursorMode { CURSORMODE_SHOW };
+	int index { 0 };
+	int selectionIndex { -1 };
+
+	/**
+	 * @return index
+	 */
+	inline int getIndex() {
+		return index;
+	}
+
+	/**
+	 * @return selection index
+	 */
+	inline int getSelectionIndex() {
+		return selectionIndex;
+	}
+
+	/**
+	 * @return must show cursor
+	 */
+	inline bool isShowCursor() {
+		return true;
+	}
+
+	/**
+	 * Reset cursor mode
+	 */
+	void resetCursorMode();
+
+	/**
+	 * @return cursor mode
+	 */
+	CursorMode getCursorMode();
 
 protected:
 	/**

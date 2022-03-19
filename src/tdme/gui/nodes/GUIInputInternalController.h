@@ -42,8 +42,8 @@ private:
 	bool mouseDraggingInit { false };
 	bool mouseDraggingSlideValueActive { false };
 	bool mouseDraggingSelectionActive { false };
-	array<int, 2> mouseDragPosition;
-	array<int, 2> mouseOriginalPosition;
+	array<int, 2> mouseDragPosition {{ -1, -1 }};
+	array<int, 2> mouseOriginalPosition {{ -1, -1 }};
 	MutableString value;
 
 	enum Type { TYPE_STRING, TYPE_FLOAT, TYPE_INT};

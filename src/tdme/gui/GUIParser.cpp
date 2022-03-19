@@ -30,6 +30,7 @@
 #include <tdme/gui/elements/GUISelectBoxParentOption.h>
 #include <tdme/gui/elements/GUISliderH.h>
 #include <tdme/gui/elements/GUISliderV.h>
+#include <tdme/gui/elements/GUIStyledInput.h>
 #include <tdme/gui/elements/GUITab.h>
 #include <tdme/gui/elements/GUITabs.h>
 #include <tdme/gui/elements/GUITabsContent.h>
@@ -106,6 +107,7 @@ using tdme::gui::elements::GUISelectBoxOption;
 using tdme::gui::elements::GUISelectBoxParentOption;
 using tdme::gui::elements::GUISliderH;
 using tdme::gui::elements::GUISliderV;
+using tdme::gui::elements::GUIStyledInput;
 using tdme::gui::elements::GUITab;
 using tdme::gui::elements::GUITabs;
 using tdme::gui::elements::GUITabsContent;
@@ -352,7 +354,7 @@ void GUIParser::parseEffect(GUINode* guiNode, const string& effectPrefix, bool r
 }
 
 void GUIParser::parseEffects(GUINode* guiNode, TiXmlElement* xmlParentNode) {
-	for (auto* node = xmlParentNode->FirstChildElement(); node != nullptr; node = node->NextSiblingElement()) {
+	for (auto node = xmlParentNode->FirstChildElement(); node != nullptr; node = node->NextSiblingElement()) {
 		string nodeTagName = string(node->Value());
 		if (nodeTagName == "effect-in") {
 			parseEffect(guiNode, "tdme.xmleffect.in", true, node);
@@ -372,7 +374,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 	GUINodeController* guiElementController = nullptr;
 	auto guiElementControllerInstalled = false;
 	parseEffects(guiParentNode, xmlParentNode);
-	for (auto* node = xmlParentNode->FirstChildElement(); node != nullptr; node = node->NextSiblingElement()) {
+	for (auto node = xmlParentNode->FirstChildElement(); node != nullptr; node = node->NextSiblingElement()) {
 		{
 			string nodeTagName = string(node->Value());
 			if (nodeTagName == "effect-in") {
@@ -1716,7 +1718,7 @@ int GUIParser::parseFactor(GUIParentNode* guiParentNode, const string& factor) {
 const vector<TiXmlElement*> GUIParser::getChildrenByTagName(TiXmlElement* parent, const char* name)
 {
 	vector<TiXmlElement*> elementList;
-	for (auto *child = parent->FirstChildElement(name); child != nullptr; child = child->NextSiblingElement(name)) {
+	for (auto child = parent->FirstChildElement(name); child != nullptr; child = child->NextSiblingElement(name)) {
 		elementList.push_back(child);
 	}
 	return elementList;
@@ -1725,8 +1727,13 @@ const vector<TiXmlElement*> GUIParser::getChildrenByTagName(TiXmlElement* parent
 const string GUIParser::getInnerXml(TiXmlElement* node)
 {
 	std::stringstream ss;
-	for (auto *childNode = node->FirstChildElement(); childNode != nullptr; childNode = childNode->NextSiblingElement()) {
-		ss << (*childNode);
+	auto firstChildNode = node->FirstChildElement();
+	if (firstChildNode == nullptr) {
+		ss << node->GetText();
+	} else {
+		for (auto childNode = firstChildNode; childNode != nullptr; childNode = childNode->NextSiblingElement()) {
+			ss << *childNode;
+		}
 	}
 	return ss.str();
 }
@@ -1774,196 +1781,210 @@ void GUIParser::initialize()
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUICheckbox();
+		auto guiElement = new GUICheckbox();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUIRadioButton();
+		auto guiElement = new GUIRadioButton();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUISelectBox();
+		auto guiElement = new GUISelectBox();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUISelectBoxOption();
+		auto guiElement = new GUISelectBoxOption();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUISelectBoxParentOption();
+		auto guiElement = new GUISelectBoxParentOption();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUIDropDown();
+		auto guiElement = new GUIDropDown();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUIDropDownOption();
+		auto guiElement = new GUIDropDownOption();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUITabs();
+		auto guiElement = new GUITabs();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUITabsHeader();
+		auto guiElement = new GUITabsHeader();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUITab();
+		auto guiElement = new GUITab();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUITabsContent();
+		auto guiElement = new GUITabsContent();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUITabContent();
+		auto guiElement = new GUITabContent();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUIButton();
+		auto guiElement = new GUIButton();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUIInput();
+		auto guiElement = new GUIInput();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUIScrollArea();
+		auto guiElement = new GUIScrollArea();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUISliderH();
+		auto guiElement = new GUISliderH();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUISliderV();
+		auto guiElement = new GUISliderV();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUIKnob();
+		auto guiElement = new GUISliderV();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUIImageButton();
+		auto guiElement = new GUIKnob();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUIProgressBar();
+		auto guiElement = new GUIImageButton();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUIMenuHeader();
+		auto guiElement = new GUIProgressBar();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUIMenuHeaderItem();
+		auto guiElement = new GUIMenuHeader();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUIMenuItem();
+		auto guiElement = new GUIMenuHeaderItem();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUIMenuSeparator();
+		auto guiElement = new GUIMenuItem();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUIContextMenu();
+		auto guiElement = new GUIMenuSeparator();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUIContextMenuItem();
+		auto guiElement = new GUIContextMenu();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUISelectorH();
+		auto guiElement = new GUIContextMenuItem();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
 	try {
-		GUIElement* guiElement = new GUISelectorHOption();
+		auto guiElement = new GUISelectorH();
+		addElement(guiElement);
+	} catch (Exception& exception) {
+		Console::print(string("GUIParser::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+	try {
+		auto guiElement = new GUISelectorHOption();
+		addElement(guiElement);
+	} catch (Exception& exception) {
+		Console::print(string("GUIParser::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+	try {
+		auto guiElement = new GUIStyledInput();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));
