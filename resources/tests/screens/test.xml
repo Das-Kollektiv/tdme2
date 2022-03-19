@@ -238,12 +238,12 @@
 					<scrollarea width="80%" height="80%" padding="5" border="1">
 						<styled-text font="{$font.default}" color="{$color.font_normal}" width="100%" height="auto" horizontal-align="left" preformatted="true">
 							<![CDATA[
-[image]resources/github/tdme2-logo.png[/image]
+[url=https://github.com/andreasdr/tdme2.git][image]resources/github/tdme2-logo.png[/image][/url]
 
 [color={$color.font_highlight}][font=resources/engine/fonts/Roboto_bold_30.fnt]MIT License[/font][/color]
 
-[color={$color.font_highlight}]Developed 2012-2022 by Andreas Drewke, Dominik Hepp, Mathias Lenz,
-Kolja Gumpert, drewke.net, mindty.com, github.com/mahula
+[color={$color.font_highlight}]Developed 2012-2022 by [url=https://drewke.net]Andreas Drewke[/url], [url=https://www.mindty.com/dominikhepp]Dominik Hepp[/url], [url=https://github.com/mahula]Mathias Lenz[/url],
+[url=https://www.mindty.com/koljagumpert]Kolja Gumpert[/url], [url=https://drewke.net]drewke.net[/url], [url=https://mindty.com]mindty.com[/url], [url=https://github.com/mahula]github.com/mahula[/url]
 
 Copyright 2012...2021 Andreas Drewke and others if not stated differently in 
 header file.[/color]

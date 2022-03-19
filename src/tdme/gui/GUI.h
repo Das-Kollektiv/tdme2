@@ -64,12 +64,7 @@ static T required_dynamic_cast(U u)
  */
 class tdme::gui::GUI final: public virtual InputEventHandler
 {
-	friend class tdme::gui::elements::GUIDropDownController;
-	friend class tdme::gui::elements::GUIMenuHeaderItemController;
-	friend class tdme::gui::nodes::GUIElementController;
-	friend class tdme::gui::nodes::GUIHorizontalScrollbarInternalController;
 	friend class tdme::gui::nodes::GUIScreenNode;
-	friend class tdme::gui::nodes::GUIVerticalScrollbarInternalController;
 
 private:
 	STATIC_DLL_IMPEXT static unordered_map<string, GUIFont*>* fontCache;
@@ -102,22 +97,6 @@ private:
 	bool altDown { false };
 	bool controlDown { false };
 	bool shiftDown { false };
-
-	/**
-	 * Add node that is a possible mouse out candidate as it received a mouse over
-	 * @param node element node
-	 */
-	inline void addMouseOutCandidateElementNode(GUINode* node) {
-		mouseOutCandidateEventNodeIds[node->getScreenNode()->getId()].insert(node->getId());
-	}
-
-	/**
-	 * Add node that is a possible mouse click out candidate as it received a mouse click
-	 * @param node element node
-	 */
-	inline void addMouseOutClickCandidateElementNode(GUINode* node) {
-		mouseOutClickCandidateEventNodeIds[node->getScreenNode()->getId()].insert(node->getId());
-	}
 
 	/**
 	 * Determine focussed nodes
@@ -339,6 +318,22 @@ public:
 	 * Focus next node
 	 */
 	void focusPreviousNode();
+
+	/**
+	 * Add node that is a possible mouse out candidate as it received a mouse over
+	 * @param node element node
+	 */
+	inline void addMouseOutCandidateNode(GUINode* node) {
+		mouseOutCandidateEventNodeIds[node->getScreenNode()->getId()].insert(node->getId());
+	}
+
+	/**
+	 * Add node that is a possible mouse click out candidate as it received a mouse click
+	 * @param node element node
+	 */
+	inline void addMouseOutClickCandidateNode(GUINode* node) {
+		mouseOutClickCandidateEventNodeIds[node->getScreenNode()->getId()].insert(node->getId());
+	}
 
 	/**
 	 * Render GUIs

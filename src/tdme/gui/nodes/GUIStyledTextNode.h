@@ -43,6 +43,7 @@ class tdme::gui::nodes::GUIStyledTextNode final
 	: public GUINode
 {
 	friend class tdme::gui::GUIParser;
+	friend class tdme::gui::nodes::GUIStyledTextNodeController;
 
 private:
 	struct TextStyle {
@@ -92,6 +93,22 @@ private:
 	string line;
 	vector<int> lineCharIdxs;
 	vector<Line> lineConstraints;
+
+	struct URLArea {
+		int left;
+		int top;
+		int width;
+		int height;
+		string url;
+	};
+	vector<URLArea> urlAreas;
+
+	/**
+	 * @return URL areas
+	 */
+	inline const vector<URLArea>& getURLAreas() {
+		return urlAreas;
+	}
 
 	/**
 	 * Get text style for

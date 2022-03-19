@@ -134,7 +134,7 @@ void GUIElementController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 			if (elementNode->getOptionValue("mouse-cursor") == "hand") Application::setMouseCursor(MOUSE_CURSOR_HAND);
 			node->getScreenNode()->delegateMouseOver(elementNode);
 			elementNode->getActiveConditions().add(GUIElementNode::CONDITION_ONMOUSEOVER);
-			node->getScreenNode()->getGUI()->addMouseOutCandidateElementNode(elementNode);
+			node->getScreenNode()->getGUI()->addMouseOutCandidateNode(elementNode);
 			auto onMouseOverExpression = elementNode->getOnMouseOverExpression();
 			if (onMouseOverExpression.size() > 0) GUIElementNode::executeExpression(elementNode->getScreenNode(), onMouseOverExpression);
 		} else {

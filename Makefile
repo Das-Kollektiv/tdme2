@@ -468,6 +468,7 @@ SRCS = \
 	src/tdme/gui/nodes/GUIScreenNode.cpp \
 	src/tdme/gui/nodes/GUISpaceNode.cpp \
 	src/tdme/gui/nodes/GUIStyledTextNode.cpp \
+	src/tdme/gui/nodes/GUIStyledTextNodeController.cpp \
 	src/tdme/gui/nodes/GUITableNode.cpp \
 	src/tdme/gui/nodes/GUITableCellNode.cpp \
 	src/tdme/gui/nodes/GUITableRowNode.cpp \

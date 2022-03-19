@@ -88,6 +88,8 @@ int Application::glfwMouseButtonLast = -1;
 bool Application::glfwCapsLockEnabled = false;
 GLFWcursor* Application::glfwHandCursor = nullptr;
 
+int Application::mouseCursor = MOUSE_CURSOR_ENABLED;
+
 string Application::execute(const string& command) {
 	// see: https://stackoverflow.com/questions/478898/how-to-execute-a-command-and-get-output-of-command-within-c-using-posix
 	array<char, 128> buffer;
@@ -480,6 +482,7 @@ void Application::setMouseCursor(int mouseCursor) {
 		glfwSetCursor(glfwWindow, glfwHandCursor);
 		glfwSetInputMode(glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
+	Application::mouseCursor = mouseCursor;
 }
 
 int Application::getMousePositionX() {

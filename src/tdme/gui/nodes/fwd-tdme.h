@@ -41,6 +41,7 @@ namespace nodes {
 	struct GUIScreenNode_SizeConstraints;
 	class GUISpaceNode;
 	class GUIStyledTextNode;
+	class GUIStyledTextNodeController;
 	class GUITableNode;
 	class GUITableCellNode;
 	class GUITableRowNode;

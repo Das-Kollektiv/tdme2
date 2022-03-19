@@ -53,6 +53,7 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUISpaceNode.h>
 #include <tdme/gui/nodes/GUIStyledTextNode.h>
+#include <tdme/gui/nodes/GUIStyledTextNodeController.h>
 #include <tdme/gui/nodes/GUITableCellNode.h>
 #include <tdme/gui/nodes/GUITableNode.h>
 #include <tdme/gui/nodes/GUITableRowNode.h>
@@ -126,6 +127,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUISpaceNode;
 using tdme::gui::nodes::GUIStyledTextNode;
+using tdme::gui::nodes::GUIStyledTextNodeController;
 using tdme::gui::nodes::GUITableCellNode;
 using tdme::gui::nodes::GUITableNode;
 using tdme::gui::nodes::GUITableRowNode;
@@ -1098,7 +1100,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 				parseEffects(guiTextNode, node);
 			} else
 			if (nodeTagName == "styled-text") {
-				auto guiTextNode = new GUIStyledTextNode(
+				auto guiStyledTextNode = new GUIStyledTextNode(
 					guiParentNode->getScreenNode(),
 					guiParentNode,
 					string(node->Attribute("id") == nullptr?guiParentNode->getScreenNode()->allocateNodeId():node->Attribute("id")),
@@ -1151,15 +1153,9 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					string(AVOID_NULLPTR_STRING(node->Attribute("color"))),
 					MutableString(unescapeQuotes(StringTools::trim(AVOID_NULLPTR_STRING(node->GetText()))))
 				);
-				guiParentNode->addSubNode(guiTextNode);
-				if (guiElement != nullptr && guiElementControllerInstalled == false) {
-					guiElementController = guiElement->createController(guiTextNode);
-					if (guiElementController != nullptr) {
-						guiTextNode->setController(guiElementController);
-					}
-					guiElementControllerInstalled = true;
-				}
-				parseEffects(guiTextNode, node);
+				guiParentNode->addSubNode(guiStyledTextNode);
+				guiStyledTextNode->setController(new GUIStyledTextNodeController(guiStyledTextNode));
+				parseEffects(guiStyledTextNode, node);
 			} else
 			if (nodeTagName == "table") {
 				auto guiTableNode = new GUITableNode(

@@ -604,10 +604,16 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 	// Console::println("char start idx: " + to_string(charStartIdx) + ", char end idx: " + to_string(charEndIdx) + ", chars: " + to_string(text.size()) + ", start text style idx: " + to_string(startTextStyleIdx) + ", start render y: " + to_string(startRenderY) + ", auto width: " + to_string(autoWidth) + ", auto height = " + to_string(autoHeight))
 
 	//
+	urlAreas.clear();
+
+	//
 	auto maxLineWidth = getAutoWidth();
 	auto textStyleIdx = startTextStyleIdx;
 	auto boundTexture = -1;
 	GUIColor lastColor = color;
+	string currentURL;
+	string styleURL;
+	int x = 0;
 	for (auto i = charStartIdx; i < charEndIdx;) {
 
 		//
@@ -663,7 +669,6 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 			//
 			auto skipSpaces = false;
 			auto& currentTextStyleIdx = textStyleIdx;
-			auto x = 0;
 			// determine visibility of (sub) lines
 			for (lineIdx = 0; lineIdx < lineConstraints.size(); lineIdx++) {
 				// x alignment
@@ -731,12 +736,15 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 					auto textStyle = getTextStyle(lineCharIdxs, k, currentTextStyleIdx);
 					Color4 currentColor = color;
 					GUIFont* currentFont = font;
+					styleURL.clear();
 					// apply text style or defaults
 					if (textStyle != nullptr) {
 						currentFont = textStyle->font != nullptr?textStyle->font:font;
 						currentColor = textStyle->color;
+						styleURL = textStyle->url;
 					}
 					if (textStyle != nullptr && textStyle->image != nullptr) {
+						// draw
 						guiRenderer->render();
 						guiRenderer->bindTexture(textStyle->textureId);
 						float left = x + xIndentLeft;
@@ -767,10 +775,39 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 						);
 						guiRenderer->render();
 						guiRenderer->bindTexture(boundTexture);
+						// flush current URL
+						if (currentURL.empty() == false && urlAreas.empty() == false) {
+							auto& urlArea = urlAreas[urlAreas.size() - 1];
+							urlArea.width = x - urlArea.left;
+							urlArea.height = lineConstraints[lineIdx].lineHeight;
+						}
+						currentURL.clear();
+						// add url area if URL is given
+						if (textStyle->url.empty() == false) {
+							urlAreas.push_back(
+								{
+									.left = static_cast<int>(x),
+									.top = static_cast<int>(y),
+									.width = static_cast<int>(width),
+									.height = static_cast<int>(height),
+									.url = textStyle->url
+								}
+							);
+						}
+						//
 						x+= textStyle->width;
 					} else {
 						// do line break
 						if (k == lineConstraints[lineIdx].idx) {
+							// flush current URL
+							if (currentURL.empty() == false && urlAreas.empty() == false) {
+								auto& urlArea = urlAreas[urlAreas.size() - 1];
+								urlArea.width = x - urlArea.left;
+								urlArea.height = lineConstraints[lineIdx].lineHeight;
+							}
+							//
+							currentURL.clear();
+							//
 							y+= lineConstraints[lineIdx].height;
 							lineIdx++;
 							if (lineIdx == lineConstraints.size()) break;
@@ -822,6 +859,7 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 						// otherwise draw
 						auto character = currentFont->getCharacter(line[k]);
 						if (character != nullptr) {
+							// draw
 							float left = x + xIndentLeft;
 							float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - currentFont->getBaseLine()) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
 							if (boundTexture == -1) {
@@ -840,6 +878,27 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 								lastColor = currentColor;
 							}
 							currentFont->drawCharacter(guiRenderer, character, left, top, currentColor);
+							// if URL did change, create URL areas
+							if (styleURL != currentURL) {
+								if (currentURL.empty() == false && urlAreas.empty() == false) {
+									auto& urlArea = urlAreas[urlAreas.size() - 1];
+									urlArea.width = x - urlArea.left;
+									urlArea.height = lineConstraints[lineIdx].lineHeight;
+								}
+								if (styleURL.empty() == false) {
+									urlAreas.push_back(
+										{
+											.left = static_cast<int>(x),
+											.top = static_cast<int>(y),
+											.width = -1,
+											.height = 1,
+											.url = styleURL
+										}
+									);
+								}
+								currentURL = styleURL;
+							}
+							// advance X
 							x+= character->getXAdvance();
 						}
 					}
@@ -848,6 +907,14 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 				if (lineConstraints[lineConstraints.size() - 1].idx == line.size()) {
 					y+= lineConstraints[lineConstraints.size() - 1].height;
 				}
+
+				// flush current URL
+				if (currentURL.empty() == false && urlAreas.empty() == false) {
+					auto& urlArea = urlAreas[urlAreas.size() - 1];
+					urlArea.width = x - urlArea.left;
+					urlArea.height = lineConstraints[lineIdx].lineHeight;
+				}
+				currentURL.clear();
 			}
 		}
 
