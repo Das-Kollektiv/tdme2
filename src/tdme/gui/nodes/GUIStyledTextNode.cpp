@@ -198,7 +198,7 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 	this->heightLast = -1;
 	this->startTextStyleIdx = -1;
 	screenNode->invalidateLayout(this);
-	disposeStyles();
+	unsetStyles();
 	this->text.reset();
 	/*
 	// Currently supported BBCode like tags
@@ -335,7 +335,7 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 
 void GUIStyledTextNode::dispose()
 {
-	disposeStyles();
+	unsetStyles();
 	if (font != nullptr) font->dispose();
 	GUINode::dispose();
 }
@@ -934,6 +934,15 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 	guiRenderer->bindTexture(0);
 }
 
+void GUIStyledTextNode::unsetStyles() {
+	for (auto& style: styles) {
+		if (style.font != nullptr) font->dispose();
+		if (style.image != nullptr) Engine::getInstance()->getTextureManager()->removeTexture(style.image->getId());
+	}
+	styles.clear();
+	startTextStyleIdx = -1;
+}
+
 void GUIStyledTextNode::unsetTextStyle(int startIdx, int endIdx) {
 	// TODO: a.drewke
 }
@@ -1010,12 +1019,4 @@ void GUIStyledTextNode::setImage(int idx, const string& image, const string& url
 			.height = height == -1?_image->getHeight():height,
 		}
 	);
-}
-
-void GUIStyledTextNode::disposeStyles() {
-	for (auto& style: styles) {
-		if (style.font != nullptr) font->dispose();
-		if (style.image != nullptr) Engine::getInstance()->getTextureManager()->removeTexture(style.image->getId());
-	}
-	styles.clear();
 }

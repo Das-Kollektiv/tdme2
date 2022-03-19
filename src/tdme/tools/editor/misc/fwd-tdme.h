@@ -14,6 +14,7 @@ namespace misc {
 	class GenerateImposterLOD;
 	class Gizmo;
 	class PopUps;
+	class CodeFormatter;
 	class Tools;
 }  // namespace misc
 }  // namespace editor

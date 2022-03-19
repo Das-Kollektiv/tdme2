@@ -206,11 +206,6 @@ protected:
 		const MutableString& text
 	);
 
-	/**
-	 * Dispose styles
-	 */
-	void disposeStyles();
-
 	// overridden methods
 	const string getNodeType() override;
 	bool isContentNode() override;
@@ -229,6 +224,11 @@ public:
 	inline const MutableString& getText() const {
 		return text;
 	}
+
+	/**
+	 * Unset/dispose styles
+	 */
+	void unsetStyles();
 
 	/**
 	 * Set text
