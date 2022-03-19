@@ -4,36 +4,23 @@
 
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
-#include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
-#include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
-#include <tdme/gui/nodes/GUINodeConditions.h>
-#include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/GUI.h>
-#include <tdme/utilities/Console.h>
 #include <tdme/utilities/StringTools.h>
-#include <tdme/utilities/Time.h>
 
 using std::string;
-using std::to_string;
 
 using tdme::application::Application;
-using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
-using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
-using tdme::gui::nodes::GUINodeConditions;
-using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUIStyledTextNodeController;
 using tdme::gui::GUI;
-using tdme::utilities::Console;
 using tdme::utilities::StringTools;
-using tdme::utilities::Time;
 
 GUIStyledTextNodeController::GUIStyledTextNodeController(GUINode* node)
 	: GUINodeController(node)
