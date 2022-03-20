@@ -332,6 +332,7 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 			if (this->text.size() > styleStartIdx) setTextStyle(styleStartIdx, this->text.size() - 1, styleFont, styleUrl);
 		}
 	}
+
 	//
 	Console::println("'" + this->text.getString() + "'");
 }
@@ -610,14 +611,12 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 	auto cursorMode = GUIStyledTextNodeController::CURSORMODE_HIDE;
 	auto cursorIndex = -1;
 	auto cursorSelectionIndex = -1;
-	/*
 	if (editMode == true) {
 		auto styledTextController = required_dynamic_cast<GUIStyledTextNodeController*>(controller);
-		auto cursorMode = styledTextController->getCursorMode();
-		auto cursorIndex = styledTextController->getIndex();
-		auto cursorSelectionIndex = styledTextController->getSelectionIndex();
+		cursorMode = styledTextController->getCursorMode();
+		cursorIndex = styledTextController->getIndex();
+		cursorSelectionIndex = styledTextController->getSelectionIndex();
 	}
-	*/
 
 	//
 	urlAreas.clear();

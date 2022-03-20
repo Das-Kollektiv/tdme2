@@ -5,6 +5,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/gui/fwd-tdme.h>
+#include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -43,6 +44,7 @@ class tdme::gui::nodes::GUIStyledTextNode final
 	: public GUINode
 {
 	friend class tdme::gui::GUIParser;
+	friend class tdme::gui::elements::GUIStyledInputController;
 	friend class tdme::gui::nodes::GUIStyledTextNodeController;
 
 private:
@@ -117,6 +119,13 @@ private:
 	 */
 	inline void setEditMode(bool editMode) {
 		this->editMode = editMode;
+	}
+
+	/**
+	 * @return non const text
+	 */
+	inline MutableString& getMutableText() {
+		return text;
 	}
 
 	/**

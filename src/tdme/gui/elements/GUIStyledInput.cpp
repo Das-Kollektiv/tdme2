@@ -4,6 +4,7 @@
 #include <unordered_map>
 
 #include <tdme/tdme.h>
+#include <tdme/gui/elements/GUIStyledInputController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -13,6 +14,7 @@ using tdme::gui::elements::GUIStyledInput;
 using std::string;
 using std::unordered_map;
 
+using tdme::gui::elements::GUIStyledInputController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
@@ -44,6 +46,6 @@ unordered_map<string, string> GUIStyledInput::getAttributes(GUIScreenNode* scree
 
 GUINodeController* GUIStyledInput::createController(GUINode* node)
 {
-	return nullptr;
+	return new GUIStyledInputController(node);
 }
 

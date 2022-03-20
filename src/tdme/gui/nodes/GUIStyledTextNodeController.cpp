@@ -9,6 +9,7 @@
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/utilities/Character.h>
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
 
@@ -21,6 +22,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUIStyledTextNodeController;
 using tdme::gui::GUI;
+using tdme::utilities::Character;
 using tdme::utilities::StringTools;
 using tdme::utilities::Time;
 
@@ -121,6 +123,189 @@ void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 
 void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 {
+	//
+	auto maxLength = 0;
+	auto disabled = false;
+	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
+	auto keyControl = event->isControlDown();
+	auto keyChar = event->getKeyChar();
+	if (disabled == false &&
+		keyControl == false &&
+		keyChar >= 32 && keyChar < 127) {
+		event->setProcessed(true);
+		if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) {
+			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
+				styledTextNode->getMutableText().remove(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+				index = Math::min(index, selectionIndex);
+				selectionIndex = -1;
+			}
+			if (maxLength == 0 || styledTextNode->getMutableText().size() < maxLength) {
+				styledTextNode->getMutableText().insert(index, event->getKeyChar());
+				index++;
+				resetCursorMode();
+			}
+		}
+	} else {
+		auto keyControlX = false;
+		auto keyControlC = false;
+		auto keyControlV = false;
+		auto isKeyDown = event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
+		// copy, paste, cut
+		{
+			if (event->getKeyChar() == 24) {
+				keyControlX = isKeyDown;
+				event->setProcessed(true);
+			}
+			if (event->getKeyChar() == 3) {
+				keyControlC = isKeyDown;
+				event->setProcessed(true);
+			}
+			if (event->getKeyChar() == 22) {
+				keyControlV = isKeyDown;
+				event->setProcessed(true);
+			}
+			if (Character::toLowerCase(event->getKeyChar()) == 'x' && keyControl == true) {
+				keyControlX = isKeyDown;
+				event->setProcessed(true);
+			}
+			if (Character::toLowerCase(event->getKeyChar()) == 'c' && keyControl == true) {
+				keyControlC = isKeyDown;
+				event->setProcessed(true);
+			}
+			if (Character::toLowerCase(event->getKeyChar()) == 'v' && keyControl == true) {
+				keyControlV = isKeyDown;
+				event->setProcessed(true);
+			}
+		}
+		if (keyControlX == true) {
+			Application::getApplication()->setClipboardContent(StringTools::substring(styledTextNode->getMutableText().getString(), Math::min(index, selectionIndex), Math::max(index, selectionIndex)));
+			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
+				styledTextNode->getMutableText().remove(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+				index = Math::min(index, selectionIndex);
+				selectionIndex = -1;
+			}
+		} else
+		if (keyControlC == true) {
+			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
+				Application::getApplication()->setClipboardContent(StringTools::substring(styledTextNode->getMutableText().getString(), Math::min(index, selectionIndex), Math::max(index, selectionIndex)));
+			}
+		} else
+		if (keyControlV == true) {
+			auto clipboardContent = Application::getApplication()->getClipboardContent();
+			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
+				if (maxLength == 0 || styledTextNode->getMutableText().size() - Math::abs(index - selectionIndex) + clipboardContent.size() < maxLength) {
+					styledTextNode->getMutableText().remove(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+					index = Math::min(index, selectionIndex);
+					selectionIndex = -1;
+				}
+			}
+			if (maxLength == 0 || styledTextNode->getMutableText().size() + clipboardContent.size() < maxLength) {
+				styledTextNode->getMutableText().insert(index, clipboardContent);
+				index+= clipboardContent.size();
+			}
+		} else {
+			// navigation, delete, return
+			switch (event->getKeyCode()) {
+			case GUIKeyboardEvent::KEYCODE_LEFT: {
+					event->setProcessed(true);
+					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+						if (event->isShiftDown() == false) {
+							selectionIndex = -1;
+						} else {
+							if (selectionIndex == -1) selectionIndex = index;
+						}
+						if (index > 0) {
+							Console::println("xxx");
+							index--;
+							resetCursorMode();
+						}
+					}
+				}
+				break;
+			case GUIKeyboardEvent::KEYCODE_RIGHT: {
+					event->setProcessed(true);
+					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+						if (event->isShiftDown() == false) {
+							selectionIndex = -1;
+						} else {
+							if (selectionIndex == -1) selectionIndex = index;
+						}
+						if (index < styledTextNode->getMutableText().size()) {
+							index++;
+							resetCursorMode();
+						}
+					}
+				}
+				break;
+			case GUIKeyboardEvent::KEYCODE_BACKSPACE: {
+					if (disabled == false) {
+						event->setProcessed(true);
+						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+							if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
+								styledTextNode->getMutableText().remove(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+								index = Math::min(index, selectionIndex);
+								selectionIndex = -1;
+							} else
+							if (index > 0) {
+								styledTextNode->getMutableText().remove(index - 1, 1);
+								index--;
+								resetCursorMode();
+							}
+						}
+					}
+				}
+				break;
+			case GUIKeyboardEvent::KEYCODE_DELETE: {
+					if (disabled == false) {
+						event->setProcessed(true);
+						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+							if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
+								styledTextNode->getMutableText().remove(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+								index = Math::min(index, selectionIndex);
+								selectionIndex = -1;
+							} else
+							if (index < styledTextNode->getMutableText().size()) {
+								styledTextNode->getMutableText().remove(index, 1);
+								resetCursorMode();
+							}
+						}
+					}
+				}
+				break;
+			case GUIKeyboardEvent::KEYCODE_RETURN: {
+					if (disabled == false) {
+						event->setProcessed(true);
+					}
+				}
+				break;
+			case GUIKeyboardEvent::KEYCODE_POS1: {
+					if (disabled == false) {
+						event->setProcessed(true);
+						resetCursorMode();
+						if (event->isShiftDown() == false) {
+							selectionIndex = -1;
+						} else {
+							if (selectionIndex == -1) selectionIndex = index;
+						}
+						index = 0;
+					}
+				}
+				break;
+			case GUIKeyboardEvent::KEYCODE_END: {
+					if (disabled == false) {
+						resetCursorMode();
+						if (event->isShiftDown() == false) {
+							selectionIndex = -1;
+						} else {
+							if (selectionIndex == -1) selectionIndex = index;
+						}
+						index = styledTextNode->getMutableText().size();
+					}
+				}
+				break;
+			}
+		}
+	}
 }
 
 void GUIStyledTextNodeController::tick()

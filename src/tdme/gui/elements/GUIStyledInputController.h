@@ -3,8 +3,8 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
-#include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/utilities/MutableString.h>
@@ -15,65 +15,25 @@ using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
-using tdme::gui::GUIParser;
+using tdme::gui::nodes::GUIStyledTextNodeController;
 using tdme::utilities::MutableString;
 
 /**
- * GUI styled text node controller
+ * GUI styled input controller
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::gui::nodes::GUIStyledTextNodeController
+class tdme::gui::elements::GUIStyledInputController final
 	: public GUINodeController
 {
-	friend class tdme::gui::GUIParser;
-	friend class GUIStyledTextNode;
+	friend class GUIStyledInput;
 
 private:
-	static constexpr int64_t CURSOR_MODE_DURATION { 500LL };
-	int64_t cursorModeStarted { -1LL };
-	enum CursorMode { CURSORMODE_HIDE, CURSORMODE_SHOW};
-	CursorMode cursorMode { CURSORMODE_SHOW };
-	int index { 0 };
-	int selectionIndex { -1 };
-
 	/**
-	 * @return index
-	 */
-	inline int getIndex() {
-		return index;
-	}
-
-	/**
-	 * @return selection index
-	 */
-	inline int getSelectionIndex() {
-		return selectionIndex;
-	}
-
-	/**
-	 * @return must show cursor
-	 */
-	inline bool isShowCursor() {
-		return true;
-	}
-
-	/**
-	 * Reset cursor mode
-	 */
-	void resetCursorMode();
-
-	/**
-	 * @return cursor mode
-	 */
-	CursorMode getCursorMode();
-
-protected:
-	/**
-	 * Constructor
+	 * Private constructor
 	 * @param node node
 	 */
-	GUIStyledTextNodeController(GUINode* node);
+	GUIStyledInputController(GUINode* node);
 
 public:
 	// overridden methods
@@ -91,4 +51,7 @@ public:
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
 	void onSubTreeChange() override;
+
+private:
+	GUIStyledTextNodeController* styledTextNodeController { nullptr };
 };
