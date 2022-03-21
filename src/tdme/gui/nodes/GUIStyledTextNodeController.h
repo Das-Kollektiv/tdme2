@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
@@ -10,6 +11,7 @@
 #include <tdme/utilities/MutableString.h>
 
 using std::string;
+using std::vector;
 
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
@@ -29,6 +31,35 @@ class tdme::gui::nodes::GUIStyledTextNodeController
 	friend class tdme::gui::GUIParser;
 	friend class GUIStyledTextNode;
 
+public:
+
+	/**
+	 * Change listener interface
+	 * @author Andreas Drewke
+	 * @version $Id$
+	 */
+	struct ChangeListener {
+
+		/**
+		 * Destructor
+		 */
+		virtual ~ChangeListener() {}
+
+		/**
+		 * On remove text
+		 * @param idx index
+		 * @param count count
+		 */
+		virtual void onRemoveText(int idx, int count) = 0;
+
+		/**
+		 * On remove text
+		 * @param idx index
+		 * @param count count
+		 */
+		virtual void onInsertText(int idx, int count) = 0;
+	};
+
 private:
 	static constexpr int64_t CURSOR_MODE_DURATION { 500LL };
 	int64_t cursorModeStarted { -1LL };
@@ -36,6 +67,7 @@ private:
 	CursorMode cursorMode { CURSORMODE_SHOW };
 	int index { 0 };
 	int selectionIndex { -1 };
+	vector<ChangeListener*> changeListeners;
 
 	/**
 	 * @return index
@@ -68,6 +100,28 @@ private:
 	 */
 	CursorMode getCursorMode();
 
+	/**
+	 * Forward remove text
+	 * @param idx index
+	 * @param count count
+	 */
+	inline void forwardRemoveText(int idx, int count) {
+		for (auto i = 0; i < changeListeners.size(); i++) {
+			changeListeners[i]->onRemoveText(idx, count);
+		}
+	}
+
+	/**
+	 * Forward insert text
+	 * @param idx index
+	 * @param count count
+	 */
+	inline void forwardInsertText(int idx, int count) {
+		for (auto i = 0; i < changeListeners.size(); i++) {
+			changeListeners[i]->onInsertText(idx, count);
+		}
+	}
+
 protected:
 	/**
 	 * Constructor
@@ -76,6 +130,7 @@ protected:
 	GUIStyledTextNodeController(GUINode* node);
 
 public:
+
 	// overridden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;
@@ -91,4 +146,17 @@ public:
 	const MutableString& getValue() override;
 	void setValue(const MutableString& value) override;
 	void onSubTreeChange() override;
+
+	/**
+	 * Add change listener
+	 * @param listener listener
+	 */
+	void addChangeListener(ChangeListener* listener);
+
+	/**
+	 * Remove change listener
+	 * @param listener listener
+	 */
+	void removeChangeListener(ChangeListener* listener);
+
 };

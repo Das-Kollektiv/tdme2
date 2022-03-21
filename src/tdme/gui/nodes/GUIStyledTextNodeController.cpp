@@ -1,6 +1,8 @@
 #include <tdme/gui/nodes/GUIStyledTextNodeController.h>
 
+#include <algorithm>
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
@@ -15,8 +17,10 @@
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
 
+using std::remove;
 using std::string;
 using std::to_string;
+using std::vector;
 
 using tdme::application::Application;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -140,11 +144,13 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 		if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) {
 			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
 				styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+				forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 				index = Math::min(index, selectionIndex);
 				selectionIndex = -1;
 			}
 			if (maxLength == 0 || styledTextNode->getTextSize() < maxLength) {
 				styledTextNode->insertText(index, event->getKeyChar());
+				forwardInsertText(index, 1);
 				index++;
 				resetCursorMode();
 			}
@@ -185,6 +191,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 			Application::getApplication()->setClipboardContent(StringTools::substring(styledTextNode->getText().getString(), Math::min(index, selectionIndex), Math::max(index, selectionIndex)));
 			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
 				styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+				forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 				index = Math::min(index, selectionIndex);
 				selectionIndex = -1;
 			}
@@ -199,12 +206,14 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
 				if (maxLength == 0 || styledTextNode->getTextSize() - Math::abs(index - selectionIndex) + clipboardContent.size() < maxLength) {
 					styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+					forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 					index = Math::min(index, selectionIndex);
 					selectionIndex = -1;
 				}
 			}
 			if (maxLength == 0 || styledTextNode->getTextSize() + clipboardContent.size() < maxLength) {
 				styledTextNode->insertText(index, clipboardContent);
+				forwardInsertText(index, clipboardContent.size());
 				index+= clipboardContent.size();
 			}
 		} else {
@@ -299,11 +308,13 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 							if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
 								styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+								forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 								index = Math::min(index, selectionIndex);
 								selectionIndex = -1;
 							} else
 							if (index > 0) {
 								styledTextNode->removeText(index - 1, 1);
+								forwardRemoveText(index - 1, 1);
 								index--;
 								resetCursorMode();
 							}
@@ -317,11 +328,13 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 							if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
 								styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+								forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 								index = Math::min(index, selectionIndex);
 								selectionIndex = -1;
 							} else
 							if (index < styledTextNode->getTextSize()) {
 								styledTextNode->removeText(index, 1);
+								forwardRemoveText(index, 1);
 								resetCursorMode();
 							}
 						}
@@ -334,11 +347,13 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 							if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
 								styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+								forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 								index = Math::min(index, selectionIndex);
 								selectionIndex = -1;
 							}
 							if (maxLength == 0 || styledTextNode->getTextSize() < maxLength) {
 								styledTextNode->insertText(index, '\n');
+								forwardInsertText(index, 1);
 								index++;
 								resetCursorMode();
 							}
@@ -424,4 +439,15 @@ void GUIStyledTextNodeController::setValue(const MutableString& value)
 
 void GUIStyledTextNodeController::onSubTreeChange()
 {
+}
+
+void GUIStyledTextNodeController::addChangeListener(ChangeListener* listener)
+{
+	removeChangeListener(listener);
+	changeListeners.push_back(listener);
+}
+
+void GUIStyledTextNodeController::removeChangeListener(ChangeListener* listener)
+{
+	changeListeners.erase(std::remove(changeListeners.begin(), changeListeners.end(), listener), changeListeners.end());
 }
