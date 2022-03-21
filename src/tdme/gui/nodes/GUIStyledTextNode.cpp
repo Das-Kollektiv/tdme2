@@ -1012,6 +1012,24 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 							// otherwise draw
 							auto character = currentFont->getCharacter(line[k]);
 							if (character != nullptr) {
+								//
+								auto hasSelection = false;
+								if (editMode == true && cursorSelectionIndex != -1) {
+									auto selectionStartIndex = Math::min(cursorIndex, cursorSelectionIndex);
+									auto selectionEndIndex = Math::max(cursorIndex, cursorSelectionIndex);
+									if (lineCharIdxs[k] >= selectionStartIndex && lineCharIdxs[k] < selectionEndIndex) {
+										// TODO: optimize me render wise, each character with background has now 2 rendercalls, lol
+										guiRenderer->render();
+										boundTexture = currentFont->getTextureId();
+										if (boundTexture != 0) guiRenderer->bindTexture(0);
+										float left = x + xIndentLeft;
+										float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - currentFont->getBaseLine()) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
+										currentFont->drawCharacterBackground(guiRenderer, character, left, top, lineConstraints[lineIdx].lineHeight, selectionBackgroundColor);
+										guiRenderer->render();
+										if (boundTexture != 0) guiRenderer->bindTexture(boundTexture);
+										hasSelection = true;
+									}
+								}
 								// draw character
 								{
 									float left = x + xIndentLeft;
@@ -1031,7 +1049,11 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 										guiRenderer->render();
 										lastColor = currentColor;
 									}
-									currentFont->drawCharacter(guiRenderer, character, left, top, currentColor);
+									if (hasSelection == true) {
+										currentFont->drawCharacter(guiRenderer, character, left, top, selectionTextColor);
+									} else {
+										currentFont->drawCharacter(guiRenderer, character, left, top, currentColor);
+									}
 								}
 
 								// draw cursor

@@ -106,6 +106,9 @@ private:
 	};
 	vector<URLArea> urlAreas;
 
+	GUIColor selectionTextColor { "#a0a0a0" };
+	GUIColor selectionBackgroundColor { "#5050d0" };
+
 	bool editMode { false };
 
 	/**
