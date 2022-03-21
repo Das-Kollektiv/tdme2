@@ -8,6 +8,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUIStyledTextNode.h>
+#include <tdme/gui/nodes/GUIStyledTextNodeController.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/misc/CodeFormatter.h>
@@ -35,16 +36,42 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 	this->tabId = tabId;
 	this->popUps = editorView->getPopUps();
 	this->tabScreenNode = screenNode;
+	this->extension = extension;
+	this->textNode = required_dynamic_cast<GUIStyledTextNode*>(screenNode->getInnerNodeById("text"));
 	engine = Engine::createOffScreenInstance(512, 512, false, false, false);
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	engine->getGUI()->addScreen(screenNode->getId(), screenNode);
 	engine->getGUI()->addRenderScreen(screenNode->getId());
-	CodeFormatter::getInstance()->format(extension, required_dynamic_cast<GUIStyledTextNode*>(screenNode->getInnerNodeById("text")));
+
+	// initial text format
+	CodeFormatter::getInstance()->format(extension, textNode);
+	//
+
+	// add text node change listener
+	class TextChangeListener: public GUIStyledTextNodeController::ChangeListener {
+	public:
+		TextChangeListener(TextEditorTabView* textEditorTabView): textEditorTabView(textEditorTabView) {
+		}
+
+		virtual ~TextChangeListener() {
+		}
+
+		virtual void onRemoveText(int idx, int count) override {
+			CodeFormatter::getInstance()->format(textEditorTabView->extension, textEditorTabView->textNode);
+		}
+		virtual void onInsertText(int idx, int count) override {
+			CodeFormatter::getInstance()->format(textEditorTabView->extension, textEditorTabView->textNode);
+		}
+	private:
+		TextEditorTabView* textEditorTabView;
+	};
+	required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->addChangeListener(textNodeChangeListener = new TextChangeListener(this));
 }
 
 TextEditorTabView::~TextEditorTabView() {
 	delete textEditorTabController;
 	delete engine;
+	delete textNodeChangeListener;
 }
 
 void TextEditorTabView::handleInputEvents()
@@ -72,6 +99,7 @@ void TextEditorTabView::initialize()
 
 void TextEditorTabView::dispose()
 {
+	required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->removeChangeListener(textNodeChangeListener);
 	engine->dispose();
 }
 

@@ -4,6 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/gui/nodes/GUIStyledTextNodeController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabcontrollers/TextEditorTabController.h>
@@ -13,6 +14,8 @@
 using std::string;
 
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::nodes::GUIStyledTextNode;
+using tdme::gui::nodes::GUIStyledTextNodeController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabcontrollers::TextEditorTabController;
@@ -37,6 +40,9 @@ private:
 	TextEditorTabController* textEditorTabController { nullptr };
 	TabView::OutlinerState outlinerState;
 	GUIScreenNode* tabScreenNode { nullptr };
+	string extension;
+	GUIStyledTextNode* textNode { nullptr };
+	GUIStyledTextNodeController::ChangeListener* textNodeChangeListener { nullptr };
 
 public:
 	/**
