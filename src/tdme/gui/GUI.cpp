@@ -428,10 +428,6 @@ void GUI::render()
 	}
 
 	//
-	if (focussedNodeScreenId.empty() == true || focussedNodeNodeId.empty() == true) {
-		focusNextNode();
-	}
-
 	guiRenderer->setGUI(this);
 	engine->initGUIMode();
 	guiRenderer->initRendering();

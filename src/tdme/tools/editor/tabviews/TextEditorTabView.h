@@ -36,6 +36,7 @@ private:
 	PopUps* popUps { nullptr };
 	TextEditorTabController* textEditorTabController { nullptr };
 	TabView::OutlinerState outlinerState;
+	GUIScreenNode* tabScreenNode { nullptr };
 
 public:
 	/**
@@ -57,6 +58,13 @@ public:
 	 */
 	inline EditorView* getEditorView() {
 		return editorView;
+	}
+
+	/**
+	 * @return tab screen node
+	 */
+	inline GUIScreenNode* getTabScreenNode() {
+		return tabScreenNode;
 	}
 
 	/**
