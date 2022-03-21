@@ -331,6 +331,18 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 			case GUIKeyboardEvent::KEYCODE_RETURN: {
 					if (disabled == false) {
 						event->setProcessed(true);
+						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+							if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
+								styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+								index = Math::min(index, selectionIndex);
+								selectionIndex = -1;
+							}
+							if (maxLength == 0 || styledTextNode->getTextSize() < maxLength) {
+								styledTextNode->insertText(index, '\n');
+								index++;
+								resetCursorMode();
+							}
+						}
 					}
 				}
 				break;

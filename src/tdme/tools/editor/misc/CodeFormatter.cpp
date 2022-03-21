@@ -19,7 +19,7 @@ using tdme::utilities::StringTools;
 
 CodeFormatter* CodeFormatter::instance = nullptr;
 
-void CodeFormatter::format(const string& extension, GUIStyledTextNode* textNode) {
+void CodeFormatter::format(const string& extension, GUIStyledTextNode* textNode, int charStartIdx, int charEndIdx) {
 	textNode->unsetStyles();
 	if (std::find(xmlLanguage.extensions.begin(), xmlLanguage.extensions.end(), extension) != xmlLanguage.extensions.end()) {
 		auto& language = xmlLanguage;
@@ -200,7 +200,9 @@ void CodeFormatter::format(const string& extension, GUIStyledTextNode* textNode)
 				auto lineComment = false;
 				auto preprocessorLine = false;
 				auto quote = '\0';
-				for (auto i = 0; i < code.size(); i++) {
+				if (charStartIdx == -1) charStartIdx = 0;
+				if (charEndIdx == -1) charEndIdx = code.size() - 1;
+				for (auto i = charStartIdx; i >= 0 && i <= charEndIdx; i++) {
 					auto c = code[i];
 					auto nc = i + 1 < code.size()?code[i + 1]:'\0';
 					if (inlineComment == false && lineComment == false && preprocessorLine == false && quote == '\0') {

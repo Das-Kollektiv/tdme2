@@ -108,6 +108,8 @@ public:
 	 * Format given styled text node according to extension
 	 * @param extension extension
 	 * @param textNode text node
+	 * @param charStartIdx character start index
+	 * @param charEndIdx character end index
 	 */
-	void format(const string& extension, GUIStyledTextNode* textNode);
+	void format(const string& extension, GUIStyledTextNode* textNode, int charStartIdx = -1, int charEndIdx = -1);
 };
