@@ -101,6 +101,29 @@ GUIStyledTextNode::GUIStyledTextNode(
 
 void GUIStyledTextNode::removeText(int32_t idx, int32_t count) {
 	text.remove(idx, count);
+	auto adaptNextStyles = false;
+	for (auto& style: styles) {
+		// adapting styles after specific style change for all succeeding styles
+		if (adaptNextStyles == true) {
+			style.startIdx-= count;
+			style.endIdx-= count;
+		} else
+		// adapting styles for all succeeding styles
+		if (idx < style.startIdx) {
+			style.startIdx-= count;
+			style.endIdx-= count;
+			adaptNextStyles = true;
+		} else {
+			// our index >= style start and index <= style end
+			if (idx <= style.endIdx) {
+				// idx < end idx
+				style.endIdx-= count;
+				adaptNextStyles = true;
+			}
+		}
+	}
+	charEndIdx-= count;
+	startTextStyleIdx = -1;
 }
 
 void GUIStyledTextNode::insertText(int32_t idx, char c) {
