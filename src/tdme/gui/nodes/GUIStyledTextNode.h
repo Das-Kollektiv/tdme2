@@ -92,6 +92,7 @@ private:
 	string spaceString { " " };
 	string tabString3 { "   " };
 	string tabString4 { "    " };
+	string newLine { "\n" };
 	string line;
 	vector<int> lineCharIdxs;
 	vector<Line> lineConstraints;
