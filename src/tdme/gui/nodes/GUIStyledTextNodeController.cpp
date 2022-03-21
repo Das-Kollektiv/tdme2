@@ -9,11 +9,14 @@
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/math/Math.h>
+#include <tdme/utilities/Console.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
 
 using std::string;
+using std::to_string;
 
 using tdme::application::Application;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -22,6 +25,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUIStyledTextNodeController;
 using tdme::gui::GUI;
+using tdme::utilities::Console;
 using tdme::utilities::Character;
 using tdme::utilities::StringTools;
 using tdme::utilities::Time;
@@ -233,6 +237,59 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 							index++;
 							resetCursorMode();
 						}
+					}
+				}
+				break;
+			case GUIKeyboardEvent::KEYCODE_UP: {
+					event->setProcessed(true);
+					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+						if (event->isShiftDown() == false) {
+							selectionIndex = -1;
+						} else {
+							if (selectionIndex == -1) selectionIndex = index;
+						}
+						// find index of previous newline and store difference
+						auto& text = styledTextNode->getText();
+						auto previousNewLineIndex = index;
+						while (previousNewLineIndex >= 0 && text.charAt(previousNewLineIndex) != '\n') previousNewLineIndex--;
+						previousNewLineIndex = Math::min(previousNewLineIndex + 1, text.size() - 1);
+						auto lineIndex = index - previousNewLineIndex;
+						// find index of previous newline and iterate to difference if possible
+						auto previous2NewLineIndex = Math::max(previousNewLineIndex - 2, 0);
+						while (previous2NewLineIndex >= 0 && text.charAt(previous2NewLineIndex) != '\n') previous2NewLineIndex--;
+						previous2NewLineIndex = Math::min(previous2NewLineIndex + 1, text.size() - 1);
+						//
+						index = Math::max(previous2NewLineIndex + lineIndex, 0);
+						//
+						resetCursorMode();
+					}
+				}
+				break;
+			case GUIKeyboardEvent::KEYCODE_DOWN: {
+					event->setProcessed(true);
+					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+						if (event->isShiftDown() == false) {
+							selectionIndex = -1;
+						} else {
+							if (selectionIndex == -1) selectionIndex = index;
+						}
+						// find index of previous newline and store difference
+						auto& text = styledTextNode->getText();
+						auto previousNewLineIndex = index;
+						while (previousNewLineIndex >= 0 && text.charAt(previousNewLineIndex) != '\n') previousNewLineIndex--;
+						previousNewLineIndex = Math::min(previousNewLineIndex + 1, text.size() - 1);
+						auto lineIndex = index - previousNewLineIndex;
+						// find index of next newline
+						auto nextNewLineIndex = index;
+						while (nextNewLineIndex < text.size() && text.charAt(nextNewLineIndex) != '\n') nextNewLineIndex++;
+						nextNewLineIndex = Math::min(nextNewLineIndex + 1, text.size() - 1);
+						// find index of next * 2 newline as upper bound
+						auto next2NewLineIndex = nextNewLineIndex;
+						while (next2NewLineIndex < text.size() && text.charAt(next2NewLineIndex) != '\n') next2NewLineIndex++;
+						// iterate to difference if possible
+						index = Math::min(nextNewLineIndex + lineIndex, next2NewLineIndex - 1);
+						//
+						resetCursorMode();
 					}
 				}
 				break;
