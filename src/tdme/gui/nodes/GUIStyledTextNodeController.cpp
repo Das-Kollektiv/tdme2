@@ -343,7 +343,16 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 						} else {
 							if (selectionIndex == -1) selectionIndex = index;
 						}
-						index = 0;
+						if (keyControl == true) {
+							index = 0;
+						} else {
+							// find index of previous newline and store difference
+							auto& text = styledTextNode->getText();
+							auto previousNewLineIndex = index;
+							while (previousNewLineIndex >= 0 && text.charAt(previousNewLineIndex) != '\n') previousNewLineIndex--;
+							previousNewLineIndex = Math::min(previousNewLineIndex + 1, text.size() - 1);
+							index = previousNewLineIndex;
+						}
 					}
 				}
 				break;
@@ -355,7 +364,15 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 						} else {
 							if (selectionIndex == -1) selectionIndex = index;
 						}
-						index = styledTextNode->getTextSize();
+						if (keyControl == true) {
+							index = styledTextNode->getTextSize();
+						} else {
+							// find index of next newline
+							auto& text = styledTextNode->getText();
+							auto nextNewLineIndex = index;
+							while (nextNewLineIndex < text.size() && text.charAt(nextNewLineIndex) != '\n') nextNewLineIndex++;
+							index = nextNewLineIndex;
+						}
 					}
 				}
 				break;
