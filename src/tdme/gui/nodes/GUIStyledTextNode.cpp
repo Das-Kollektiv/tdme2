@@ -99,6 +99,18 @@ GUIStyledTextNode::GUIStyledTextNode(
 	setText(text);
 }
 
+void GUIStyledTextNode::removeText(int32_t idx, int32_t count) {
+	text.remove(idx, count);
+}
+
+void GUIStyledTextNode::insertText(int32_t idx, char c) {
+	text.insert(idx, c);
+}
+
+void GUIStyledTextNode::insertText(int32_t idx, const string& s) {
+	text.insert(idx, s);
+}
+
 const string GUIStyledTextNode::getNodeType()
 {
 	return "multiline-text";

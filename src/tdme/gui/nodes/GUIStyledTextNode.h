@@ -122,11 +122,35 @@ private:
 	}
 
 	/**
-	 * @return non const text
+	 * @return text size
 	 */
-	inline MutableString& getMutableText() {
-		return text;
+	inline int getTextSize() {
+		return text.size();
 	}
+
+	/**
+	 * Remove characters at idx with given length
+	 * @param idx idx
+	 * @param count length
+	 * @return this mutable string
+	 */
+	void removeText(int32_t idx, int32_t count);
+
+	/**
+	 * Insert character c at idx
+	 * @param idx index
+	 * @param c char
+	 * @return this mutable string
+	 */
+	void insertText(int32_t idx, char c);
+
+	/**
+	 * Insert string at idx
+	 * @param idx index
+	 * @param s string
+	 * @return this mutable string
+	 */
+	void insertText(int32_t idx, const string& s);
 
 	/**
 	 * @return URL areas

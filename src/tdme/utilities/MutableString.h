@@ -3,9 +3,15 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/math/Math.h>
 #include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::string;
+using std::to_string;
+
+using tdme::math::Math;
+using tdme::utilities::StringTools;
 
 /**
  * Mutable string class
@@ -18,31 +24,37 @@ public:
 	/**
 	 * Public default constructor
 	 */
-	MutableString();
+	inline MutableString() {}
 
 	/**
 	 * Public constructor
 	 * @param s string
 	 */
-	MutableString(const string& s);
+	inline MutableString(const string& s) {
+		data = s;
+	}
 
 	/**
 	 * Public constructor
 	 * @param i integer
 	 */
-	MutableString(int i);
+	inline MutableString(int i) {
+		set(i);
+	}
 
 	/**
 	 * Public constructor
 	 * @param f f
 	 * @param decimals decimals
 	 */
-	MutableString(float f, int32_t decimals = 3);
+	inline MutableString(float f, int32_t decimals = 3) {
+		set(f, decimals);
+	}
 
 	/**
 	 * @return size
 	 */
-	inline int32_t size() const {
+	inline int size() const {
 		return data.size();
 	}
 
@@ -51,26 +63,38 @@ public:
 	 * @param idx idx
 	 * @return char
 	 */
-	char charAt(int32_t idx) const;
+	inline char charAt(int32_t idx) const {
+		return data[idx];
+	}
 
 	/**
 	 * Reset
 	 */
-	MutableString& reset();
+	inline MutableString& reset() {
+		data.clear();
+		return *this;
+	}
 
 	/**
 	 * Set character
 	 * @param c char
 	 * @return this mutable string
 	 */
-	MutableString& set(char c);
+	inline MutableString& set(char c) {
+		reset();
+		append(c);
+		return *this;
+	}
 
 	/**
 	 * Append character
 	 * @param c char
 	 * @return this mutable string
 	 */
-	MutableString& append(char c);
+	inline MutableString& append(char c) {
+		data.push_back(c);
+		return *this;
+	}
 
 	/**
 	 * Insert character c at idx
@@ -78,21 +102,31 @@ public:
 	 * @param c char
 	 * @return this mutable string
 	 */
-	MutableString& insert(int32_t idx, char c);
+	inline MutableString& insert(int32_t idx, char c) {
+		data.insert(idx, 1, c);
+		return *this;
+	}
 
 	/**
 	 * Set string
 	 * @param s s
 	 * @return this mutable string
 	 */
-	MutableString& set(const string& s);
+	inline MutableString& set(const string& s) {
+		reset();
+		append(s);
+		return *this;
+	}
 
 	/**
 	 * Append string
 	 * @param s s
 	 * @return this mutable string
 	 */
-	MutableString& append(const string& s);
+	inline MutableString& append(const string& s) {
+		data+= s;
+		return *this;
+	}
 
 	/**
 	 * Insert string at idx
@@ -100,21 +134,31 @@ public:
 	 * @param s string
 	 * @return this mutable string
 	 */
-	MutableString& insert(int32_t idx, const string& s);
+	inline MutableString& insert(int32_t idx, const string& s) {
+		data.insert(idx, s);
+		return *this;
+	}
 
 	/**
 	 * Set mutable string
 	 * @param s s
 	 * @return this mutable string
 	 */
-	MutableString& set(const MutableString& s);
+	inline MutableString& set(const MutableString& s) {
+		reset();
+		append(s);
+		return *this;
+	}
 
 	/**
 	 * Append mutable string
 	 * @param s s
 	 * @return this mutable string
 	 */
-	MutableString& append(const MutableString& s);
+	inline MutableString& append(const MutableString& s) {
+		data+= s.data;
+		return *this;
+	}
 
 	/**
 	 * Insert mutable string at idx
@@ -122,21 +166,31 @@ public:
 	 * @param s string
 	 * @return this mutable string
 	 */
-	MutableString& insert(int32_t idx, const MutableString& s);
+	inline MutableString& insert(int32_t idx, const MutableString& s) {
+		insert(idx, s.data);
+		return *this;
+	}
 
 	/**
 	 * Set integer
 	 * @param i i
 	 * @return this mutable string
 	 */
-	MutableString& set(int32_t i);
+	inline MutableString& set(int32_t i) {
+		reset();
+		append(i);
+		return *this;
+	}
 
 	/**
 	 * Append integer
 	 * @param i i
 	 * @return this mutable string
 	 */
-	MutableString& append(int32_t i);
+	inline MutableString& append(int32_t i) {
+		data+= to_string(i);
+		return *this;
+	}
 
 	/**
 	 * Insert integer at idx
@@ -144,7 +198,26 @@ public:
 	 * @param i i
 	 * @return this mutable string
 	 */
-	MutableString& insert(int32_t idx, int32_t i);
+	inline MutableString& insert(int32_t idx, int32_t i) {
+		// see: http://stackoverflow.com/questions/7123490/how-compiler-is-converting-integer-to-string-and-vice-versa
+		auto negative = false;
+		if (i < 0) {
+			negative = true;
+			i = -i;
+		}
+		while (true == true) {
+			auto remainder = i % 10;
+			i = i / 10;
+			insert(idx, static_cast< char >(('0' + remainder)));
+			if (i == 0) {
+				break;
+			}
+		}
+		if (negative == true) {
+			insert(idx, '-');
+		}
+		return *this;
+	}
 
 	/**
 	 * Set float
@@ -152,7 +225,11 @@ public:
 	 * @param decimals decimals
 	 * @return this mutable string
 	 */
-	MutableString& set(float f, int32_t decimals = 3);
+	inline MutableString& set(float f, int32_t decimals = 3) {
+		reset();
+		append(f, decimals);
+		return *this;
+	}
 
 	/**
 	 * Append float with given decimals
@@ -160,7 +237,10 @@ public:
 	 * @param decimals decimals
 	 * @return this mutable string
 	 */
-	MutableString& append(float f, int32_t decimals = 3);
+	inline MutableString& append(float f, int32_t decimals = 3) {
+		insert(data.size(), f, decimals);
+		return *this;
+	}
 
 	/**
 	 * Insert float at idx
@@ -169,7 +249,18 @@ public:
 	 * @param decimals decimals
 	 * @return this mutable string
 	 */
-	MutableString& insert(int32_t idx, float f, int32_t decimals = 3);
+	inline MutableString& insert(int32_t idx, float f, int32_t decimals = 3) {
+		// see: http://stackoverflow.com/questions/7123490/how-compiler-is-converting-integer-to-string-and-vice-versa
+		auto integer = static_cast<int>(f);
+		for (auto i = 0; i < decimals; i++) {
+			auto integerDecimal = static_cast<int>(((f - integer) * Math::pow(10.0f, static_cast<float>(i) + 1.0f))) - (10 * static_cast<int>(((f - integer) * Math::pow(10.0f, static_cast<float>(i)))));
+			insert(idx + i, Math::abs(integerDecimal));
+		}
+		insert(idx, '.');
+		insert(idx, Math::abs(integer));
+		if (f < 0.0) insert(idx, '-');
+		return *this;
+	}
 
 	/**
 	 * Remove characters at idx with given length
@@ -177,7 +268,10 @@ public:
 	 * @param count length
 	 * @return this mutable string
 	 */
-	MutableString& remove(int32_t idx, int32_t count);
+	inline MutableString& remove(int32_t idx, int32_t count) {
+		data.erase(idx, count);
+		return *this;
+	}
 
 	/**
 	 * Returns the character index where string s have been found or -1 if not found
@@ -185,14 +279,18 @@ public:
 	 * @param idx index
 	 * @return index where string has been found or -1
 	 */
-	int32_t indexOf(const MutableString& s, int32_t idx) const;
+	inline int32_t indexOf(const MutableString& s, int32_t idx) const {
+		return data.find(s.data, idx);
+	}
 
 	/**
 	 * Returns the character index where string s have been found or -1 if not found
 	 * @param s string
 	 * @return index where string has been found or -1
 	 */
-	int32_t indexOf(const MutableString& s) const;
+	inline int32_t indexOf(const MutableString& s) const {
+		return indexOf(s, 0);
+	}
 
 	/**
 	 * Replace string with another string
@@ -200,26 +298,34 @@ public:
 	 * @param by to replace by
 	 * @param beginIndex index to begin with
 	 */
-	void replace(const string& what, const string& by, int beginIndex = 0);
+	inline void replace(const string& what, const string& by, int beginIndex = 0) {
+		data = StringTools::replace(data, what, by, beginIndex);
+	}
 
 	/**
 	 * @return if mutable string is empty
 	 */
-	bool empty() const;
+	inline bool empty() const {
+		return data.empty();
+	}
 
 	/**
 	 * Equals
 	 * @param s2 string 2
 	 * @return string 2 equals this string
 	 */
-	bool equals(const string& s2) const;
+	inline bool equals(const string& s2) const {
+		return data == s2;
+	}
 
 	/**
 	 * Equals
 	 * @param s2 string 2
 	 * @return string 2 equals this string
 	 */
-	bool equals(const MutableString& s2) const;
+	inline bool equals(const MutableString& s2) const {
+		return data == s2.data;
+	}
 
 	/**
 	 * @return string
@@ -231,7 +337,9 @@ public:
 	/**
 	 * Clone
 	 */
-	MutableString clone();
+	inline MutableString clone() {
+		return MutableString(data);
+	}
 
 private:
 	string data;

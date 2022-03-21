@@ -603,7 +603,6 @@ SRCS = \
 	src/tdme/utilities/Hex.cpp \
 	src/tdme/utilities/Integer.cpp \
 	src/tdme/utilities/MiniScript.cpp \
-	src/tdme/utilities/MutableString.cpp \
 	src/tdme/utilities/ModelTools.cpp \
 	src/tdme/utilities/PathFinding.cpp \
 	src/tdme/utilities/Primitives.cpp \
