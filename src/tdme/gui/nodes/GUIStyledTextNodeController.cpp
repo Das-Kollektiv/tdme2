@@ -215,7 +215,6 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 							if (selectionIndex == -1) selectionIndex = index;
 						}
 						if (index > 0) {
-							Console::println("xxx");
 							index--;
 							resetCursorMode();
 						}

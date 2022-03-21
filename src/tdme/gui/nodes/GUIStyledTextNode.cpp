@@ -105,10 +105,58 @@ void GUIStyledTextNode::removeText(int32_t idx, int32_t count) {
 
 void GUIStyledTextNode::insertText(int32_t idx, char c) {
 	text.insert(idx, c);
+	auto count = 1;
+	auto adaptNextStyles = false;
+	for (auto& style: styles) {
+		// adapting styles after specific style change for all succeeding styles
+		if (adaptNextStyles == true) {
+			style.startIdx+= count;
+			style.endIdx+= count;
+		} else
+		// adapting styles for all succeeding styles
+		if (idx < style.startIdx) {
+			style.startIdx+= count;
+			style.endIdx+= count;
+			adaptNextStyles = true;
+		} else {
+			// our index >= style start and index <= style end
+			if (idx <= style.endIdx) {
+				// idx < end idx
+				style.endIdx+= count;
+				adaptNextStyles = true;
+			}
+		}
+	}
+	charEndIdx+= count;
+	startTextStyleIdx = -1;
 }
 
 void GUIStyledTextNode::insertText(int32_t idx, const string& s) {
 	text.insert(idx, s);
+	auto count = s.size();
+	auto adaptNextStyles = false;
+	for (auto& style: styles) {
+		// adapting styles after specific style change for all succeeding styles
+		if (adaptNextStyles == true) {
+			style.startIdx+= count;
+			style.endIdx+= count;
+		} else
+		// adapting styles for all succeeding styles
+		if (idx < style.startIdx) {
+			style.startIdx+= count;
+			style.endIdx+= count;
+			adaptNextStyles = true;
+		} else {
+			// our index >= style start and index <= style end
+			if (idx <= style.endIdx) {
+				// idx < end idx
+				style.endIdx+= count;
+				adaptNextStyles = true;
+			}
+		}
+	}
+	charEndIdx+= count;
+	startTextStyleIdx = -1;
 }
 
 const string GUIStyledTextNode::getNodeType()
