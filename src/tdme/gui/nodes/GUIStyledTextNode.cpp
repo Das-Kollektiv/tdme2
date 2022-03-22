@@ -311,9 +311,11 @@ int GUIStyledTextNode::doPageUp() {
 	}
 
 	// scroll down
-	auto renderOffsetY = parentNode->getChildrenRenderOffsetY();
-	parentOffsetsChanged = true;
-	parentNode->setChildrenRenderOffsetY(renderOffsetY - visibleHeight);
+	if (visibleHeight < autoHeight) {
+		auto renderOffsetY = parentNode->getChildrenRenderOffsetY();
+		parentOffsetsChanged = true;
+		parentNode->setChildrenRenderOffsetY(Math::max(renderOffsetY - visibleHeight, 0.0f));
+	}
 
 	// determine cursor index
 	for (int i = lines.size() - 1; i >= 0; i--) {
@@ -324,7 +326,7 @@ int GUIStyledTextNode::doPageUp() {
 	}
 
 	// otherwise fallback to previous value
-	return cursorIndex;
+	return 0;
 }
 
 int GUIStyledTextNode::doPageDown() {
@@ -382,12 +384,14 @@ int GUIStyledTextNode::doPageDown() {
 	}
 
 	// scroll down
-	auto renderOffsetY = parentNode->getChildrenRenderOffsetY();
-	parentOffsetsChanged = true;
-	parentNode->setChildrenRenderOffsetY(renderOffsetY + visibleHeight);
+	if (visibleHeight < autoHeight) {
+		auto renderOffsetY = parentNode->getChildrenRenderOffsetY();
+		parentOffsetsChanged = true;
+		parentNode->setChildrenRenderOffsetY(Math::min(renderOffsetY + visibleHeight, static_cast<float>(autoHeight - visibleHeight)));
+	}
 
 	//
-	return cursorIndex;
+	return finished == true?cursorIndex:text.size() - 1;
 }
 
 const string GUIStyledTextNode::getNodeType()
