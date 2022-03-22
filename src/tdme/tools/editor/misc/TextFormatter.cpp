@@ -198,7 +198,7 @@ void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 				nonWhitespaceCount++;
 			}
 		}
-		endIdx = code.size();
+		endIdx = charEndIdx;
 		if (commentLine == true) {
 			textNode->setTextStyle(startIdx, endIdx - 1, commentLineColor);
 		} else
@@ -209,6 +209,7 @@ void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 		auto foundLanguage = false;
 		for (auto& language: languages) {
 			if (std::find(language.extensions.begin(), language.extensions.end(), extension) != language.extensions.end()) {
+				// Console::println("void TextFormatter::format(): " + to_string(charStartIdx) + " ... " + to_string(charEndIdx));
 				foundLanguage = true;
 				auto& code = textNode->getText().getString();
 				auto keywords1 = StringTools::tokenize(language.keywords1, " ");
@@ -227,22 +228,27 @@ void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 				if (charStartIdx == -1) {
 					charStartIdx = 0;
 				} else {
+					// TODO: maybe find last quote also or last inline comment start
 					// find index of previous newline and store difference
-					auto previousNewLineIndex = charStartIdx;
+					auto previousNewLineIndex = Math::max(code[charStartIdx] == '\n'?charStartIdx - 1:charStartIdx, 0);
 					while (previousNewLineIndex >= 0 && code[previousNewLineIndex] != '\n') previousNewLineIndex--;
 					previousNewLineIndex = Math::min(previousNewLineIndex + 1, code.size() - 1);
 					charStartIdx = previousNewLineIndex;
+					startIdx = previousNewLineIndex;
 				}
 				if (charEndIdx == -1) {
 					charEndIdx = code.size() - 1;
 				} else {
+					// TODO: maybe find next quote also or next inline comment start
 					// find index of next newline
-					auto nextNewLineIndex = Math::min(code[charEndIdx] == '\n'?charEndIdx + 1:charEndIdx, code.size() - 1);
+					auto nextNewLineIndex = charEndIdx;
 					while (nextNewLineIndex < code.size() && code[nextNewLineIndex] != '\n') nextNewLineIndex++;
-					nextNewLineIndex = Math::min(nextNewLineIndex + 1, code.size() - 1);
 					charEndIdx = nextNewLineIndex;
 				}
+				// Console::println("void TextFormatter::format2(): " + to_string(charStartIdx) + " ... " + to_string(charEndIdx));
 				textNode->unsetTextStyle(charStartIdx, charEndIdx);
+				lc = charStartIdx - 1 >= 0 && charStartIdx - 1 < code.size()?code[charStartIdx - 1]:'\0';
+				llc = charStartIdx - 2 >= 0 && charStartIdx - 2 < code.size()?code[charStartIdx - 2]:'\0';
 				for (auto i = charStartIdx; i >= 0 && i <= charEndIdx; i++) {
 					auto c = code[i];
 					auto nc = i + 1 < code.size()?code[i + 1]:'\0';
@@ -266,8 +272,8 @@ void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 							if (language.keywordDelimiters.find(c) != string::npos) {
 								endIdx = i;
 							} else
-							if (i == code.size() - 1) {
-								endIdx = code.size();
+							if (i == charEndIdx) {
+								endIdx = charEndIdx;
 							}
 							if (startIdx != -1 && endIdx != -1 && startIdx != endIdx) {
 								while (code[startIdx] == ' ' || code[startIdx] == '\t') startIdx++;
@@ -300,6 +306,7 @@ void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 								if (Integer::is(literalWord) == true || Float::is(literalWord) == true) {
 									textNode->setTextStyle(startIdx, endIdx - 1, literalColor);
 								} else {
+									// Console::println("Word: '" + word + "'; " + to_string(startIdx) + " ... " + to_string(endIdx));
 									for (auto& keyword: keywords1) {
 										if (word == keyword) {
 											textNode->setTextStyle(startIdx, endIdx - 1, keyword1Color);
@@ -314,7 +321,7 @@ void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 									}
 									for (auto& keyword: preprocessorLineKeywords) {
 										if (word == keyword) {
-											if (c == '\n' || i == code.size() - 1) {
+											if (c == '\n' || i == charEndIdx) {
 												textNode->setTextStyle(startIdx, endIdx - 1, preprocessorColor);
 											} else {
 												preprocessorLine = true;
@@ -330,7 +337,7 @@ void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 						}
 					} else
 					if (lineComment == true) {
-						if (c == '\n' || i == code.size() - 1) {
+						if (c == '\n' || i == charEndIdx) {
 							lineComment = false;
 							endIdx = i;
 							textNode->setTextStyle(startIdx, endIdx, commentLineColor);
@@ -348,7 +355,7 @@ void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 						}
 					} else
 					if (preprocessorLine == true) {
-						if (c == '\n' || i == code.size() - 1) {
+						if (c == '\n' || i == charEndIdx) {
 							preprocessorLine = false;
 							endIdx = i;
 							textNode->setTextStyle(startIdx, endIdx, preprocessorColor);

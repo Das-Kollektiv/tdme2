@@ -102,22 +102,43 @@ GUIStyledTextNode::GUIStyledTextNode(
 void GUIStyledTextNode::removeText(int32_t idx, int32_t count) {
 	text.remove(idx, count);
 	auto adaptNextStyles = false;
-	for (auto& style: styles) {
+	for (auto i = 0; i < styles.size(); i++) {
+		auto& style = styles[i];
 		// adapting styles after specific style change for all succeeding styles
 		if (adaptNextStyles == true) {
 			style.startIdx-= count;
 			style.endIdx-= count;
+			if (style.startIdx < 0 && style.endIdx < 0) {
+				styles.erase(styles.begin() + i);
+				i--;
+				continue;
+			}
+			if (style.startIdx < 0) style.startIdx = 0;
+			if (style.endIdx < 0) style.endIdx = 0;
 		} else
 		// adapting styles for all succeeding styles
 		if (idx < style.startIdx) {
 			style.startIdx-= count;
 			style.endIdx-= count;
+			if (style.startIdx < 0 && style.endIdx < 0) {
+				styles.erase(styles.begin() + i);
+				i--;
+				continue;
+			}
+			if (style.startIdx < 0) style.startIdx = 0;
+			if (style.endIdx < 0) style.endIdx = 0;
 			adaptNextStyles = true;
 		} else {
 			// our index >= style start and index <= style end
 			if (idx <= style.endIdx) {
 				// idx < end idx
 				style.endIdx-= count;
+				if (style.endIdx < 0) {
+					styles.erase(styles.begin() + i);
+					i--;
+					continue;
+				}
+				if (style.endIdx < 0) style.endIdx = 0;
 				adaptNextStyles = true;
 			}
 		}
@@ -1154,32 +1175,41 @@ void GUIStyledTextNode::unsetStyles() {
 }
 
 void GUIStyledTextNode::unsetTextStyle(int startIdx, int endIdx) {
-	Console::print("GUIStyledTextNode::unsetTextStyle(): " + to_string(startIdx) + " ... " + to_string(endIdx));
-	for (auto i = startIdx; i <= endIdx; i++) Console::print(string() + text.charAt(i));
-	for (auto& style: styles) Console::println("pre: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
+	// Console::print("GUIStyledTextNode::unsetTextStyle(): " + to_string(startIdx) + " ... " + to_string(endIdx) + ": '");
+	// for (auto i = startIdx; i <= endIdx; i++) Console::print(string() + text.charAt(i));
+	// Console::println("'");
+	// for (auto& style: styles) Console::println("pre: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
 	for (auto i = 0; i < styles.size(); i++) {
 		auto& style = styles[i];
-		if (startIdx >= style.startIdx && startIdx <= style.endIdx) {
+		if (startIdx >= style.startIdx && endIdx <= style.endIdx) {
+			auto styleNext = style;
 			style.endIdx = startIdx - 1;
+			styleNext.startIdx = endIdx + 1;
+			styles.insert(styles.begin() + i + 1, styleNext);
+		} else {
+			if (startIdx >= style.startIdx && startIdx <= style.endIdx) {
+				style.endIdx = startIdx - 1;
+			}
+			if (endIdx >= style.startIdx && endIdx <= style.endIdx) {
+				style.startIdx = endIdx - 1;
+			}
 		}
-		if (endIdx >= style.startIdx && endIdx <= style.endIdx) {
-			style.startIdx = endIdx - 1;
-		}
-		if (style.startIdx > style.endIdx) {
+		if (style.startIdx > style.endIdx ||
+			(startIdx < style.startIdx && endIdx > style.endIdx)) {
 			styles.erase(styles.begin() + i);
 			i--;
 		}
 	}
-	for (auto& style: styles) Console::println("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
+	// for (auto& style: styles) Console::println("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
 }
 
 void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor& color, const string& font, const string& url) {
-	Console::print("GUIStyledTextNode::setTextStyle(): " + to_string(startIdx) + " ... " + to_string(endIdx) + ": '");
-	for (auto i = startIdx; i <= endIdx; i++) Console::print(string() + text.charAt(i));
-	Console::print("'");
-	Console::print(", color = " + to_string(color.getRed()) + ", " + to_string(color.getGreen()) + ", " + to_string(color.getBlue()) + ", " + to_string(color.getAlpha()));
-	Console::print(", url = '" + url + "'");
-	Console::println();
+	// Console::print("GUIStyledTextNode::setTextStyle(): " + to_string(startIdx) + " ... " + to_string(endIdx) + ": '");
+	// for (auto i = startIdx; i <= endIdx; i++) Console::print(string() + text.charAt(i));
+	// Console::print("'");
+	// Console::print(", color = " + to_string(color.getRed()) + ", " + to_string(color.getGreen()) + ", " + to_string(color.getBlue()) + ", " + to_string(color.getAlpha()));
+	// Console::print(", url = '" + url + "'");
+	// Console::println();
 	unsetTextStyle(startIdx, endIdx);
 	// TODO: a.drewke
 	auto _font = font.empty() == true?nullptr:GUI::getFont(screenNode->getApplicationRootPathName(), font);;
@@ -1192,9 +1222,9 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor& c
 			j = i + 1;
 		}
 	}
-	Console::println("insert@" + to_string(j));
+	// Console::println("insert@" + to_string(j));
 	if (j == -1) j = 0;
-	for (auto& style: styles) Console::println("pre: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
+	// for (auto& style: styles) Console::println("pre: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
 	// insert
 	styles.insert(
 		styles.begin() + j,
@@ -1212,15 +1242,15 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor& c
 	);
 	//
 	startTextStyleIdx = -1;
-	for (auto& style: styles) Console::println("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
+	// for (auto& style: styles) Console::println("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
 }
 
 void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const string& font, const string& url) {
-	Console::print("GUIStyledTextNode::setTextStyle(): " + to_string(startIdx) + " ... " + to_string(endIdx) + ": '");
-	for (auto i = startIdx; i <= endIdx; i++) Console::print(string() + text.charAt(i));
-	Console::print("'");
-	Console::print(", url = '" + url + "'");
-	Console::println();
+	// Console::print("GUIStyledTextNode::setTextStyle(): " + to_string(startIdx) + " ... " + to_string(endIdx) + ": '");
+	// for (auto i = startIdx; i <= endIdx; i++) Console::print(string() + text.charAt(i));
+	// Console::print("'");
+	// Console::print(", url = '" + url + "'");
+	// Console::println();
 	unsetTextStyle(startIdx, endIdx);
 	// TODO: a.drewke
 	auto _font = font.empty() == true?nullptr:GUI::getFont(screenNode->getApplicationRootPathName(), font);;
@@ -1233,8 +1263,8 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const string& fon
 			j = i + 1;
 		}
 	}
-	for (auto& style: styles) Console::println("pre: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
-	Console::println("insert@" + to_string(j));
+	// for (auto& style: styles) Console::println("pre: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
+	// Console::println("insert@" + to_string(j));
 	if (j == -1) j = 0;
 	// insert
 	styles.insert(
@@ -1253,11 +1283,11 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const string& fon
 	);
 	//
 	startTextStyleIdx = -1;
-	for (auto& style: styles) Console::println("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
+	// for (auto& style: styles) Console::println("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
 }
 
 void GUIStyledTextNode::setImage(int idx, const string& image, const string& url, int width, int height) {
-	Console::println("GUIStyledTextNode::setImage(): " + to_string(idx) + ": " + image + ", url = '" + url + "', width = " + to_string(width) + ", height = " + to_string(height));
+	// Console::println("GUIStyledTextNode::setImage(): " + to_string(idx) + ": " + image + ", url = '" + url + "', width = " + to_string(width) + ", height = " + to_string(height));
 	unsetTextStyle(idx,idx);
 	// TODO: a.drewke
 	auto _image = image.empty() == true?nullptr:GUI::getImage(screenNode->getApplicationRootPathName(), image);
@@ -1269,8 +1299,8 @@ void GUIStyledTextNode::setImage(int idx, const string& image, const string& url
 			j = i + 1;
 		}
 	}
-	for (auto& style: styles) Console::println("pre: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
-	Console::println("insert@" + to_string(j));
+	// for (auto& style: styles) Console::println("pre: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
+	// Console::println("insert@" + to_string(j));
 	if (j == -1) j = 0;
 	// insert
 	styles.insert(
@@ -1289,5 +1319,5 @@ void GUIStyledTextNode::setImage(int idx, const string& image, const string& url
 	);
 	//
 	startTextStyleIdx = -1;
-	for (auto& style: styles) Console::println("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
+	// for (auto& style: styles) Console::println("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
 }
