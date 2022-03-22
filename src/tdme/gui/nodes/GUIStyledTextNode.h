@@ -132,6 +132,13 @@ private:
 	}
 
 	/**
+	 * @return URL areas
+	 */
+	inline const vector<URLArea>& getURLAreas() {
+		return urlAreas;
+	}
+
+	/**
 	 * Remove characters at idx with given length
 	 * @param idx idx
 	 * @param count length
@@ -156,11 +163,9 @@ private:
 	void insertText(int32_t idx, const string& s);
 
 	/**
-	 * @return URL areas
+	 * Set scroll to index
 	 */
-	inline const vector<URLArea>& getURLAreas() {
-		return urlAreas;
-	}
+	void scrollToIndex();
 
 	/**
 	 * Get text style for

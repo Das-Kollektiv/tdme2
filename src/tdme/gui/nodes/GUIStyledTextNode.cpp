@@ -203,6 +203,61 @@ void GUIStyledTextNode::insertText(int32_t idx, const string& s) {
 	startTextStyleIdx = -1;
 }
 
+void GUIStyledTextNode::scrollToIndex() {
+	// no font, exit
+	if (font == nullptr) return;
+
+	//
+	auto styledTextController = required_dynamic_cast<GUIStyledTextNodeController*>(controller);
+	auto cursorIndex = styledTextController->getIndex();
+	auto yBefore = 0.0f;
+	auto y = 0.0f;
+	auto textStyleIdx = 0;
+	for (auto i = 0; i < text.size(); ) {
+		//
+		determineNextLineConstraints(i, text.size(), textStyleIdx);
+
+		//
+		for (auto& lineConstraintsEntity: lineConstraints) {
+			if (lineConstraintsEntity.width > autoWidth) autoWidth = lineConstraintsEntity.width;
+			y+= lineConstraintsEntity.height;
+		}
+
+		//
+		auto reachedCursorIndex = false;
+		for (auto idx: lineCharIdxs) {
+			if (idx == cursorIndex) {
+				reachedCursorIndex = true;
+				break;
+			}
+		}
+		if (reachedCursorIndex == true) break;
+
+		//
+		line.clear();
+		lineCharIdxs.clear();
+		lineConstraints.clear();
+
+		//
+		yBefore = y;
+	}
+
+	//
+	auto renderOffsetY = parentNode->getChildrenRenderOffsetY();
+
+	// scroll up if required
+	if (renderOffsetY > yBefore) {
+		parentOffsetsChanged = true;
+		parentNode->setChildrenRenderOffsetY(yBefore);
+	}
+
+	// scroll down if required
+	if (renderOffsetY + parentNode->getComputedConstraints().height < y) {
+		parentOffsetsChanged = true;
+		parentNode->setChildrenRenderOffsetY(y - parentNode->getComputedConstraints().height);
+	}
+}
+
 const string GUIStyledTextNode::getNodeType()
 {
 	return "multiline-text";
@@ -237,9 +292,6 @@ void GUIStyledTextNode::computeContentAlignment() {
 	if (requestedConstraints.widthType != GUINode_RequestedConstraints_RequestedConstraintsType::AUTO && widthLast == computedConstraints.width) return;
 	// no font, exit
 	if (font == nullptr) return;
-
-	//
-	auto maxLineWidth = getAutoWidth();
 
 	//
 	autoWidth = 0;
