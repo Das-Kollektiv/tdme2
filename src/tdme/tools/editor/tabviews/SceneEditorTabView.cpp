@@ -203,18 +203,7 @@ void SceneEditorTabView::handleInputEvents()
 			keyDelete = isKeyDown;
 			event.setProcessed(true);
 		}
-		if (Character::toLowerCase(event.getKeyChar()) == 24) {
-			keyControlX = isKeyDown;
-			event.setProcessed(true);
-		}
-		if (Character::toLowerCase(event.getKeyChar()) == 3) {
-			keyControlC = isKeyDown;
-			event.setProcessed(true);
-		}
-		if (Character::toLowerCase(event.getKeyChar()) == 22) {
-			keyControlV = isKeyDown;
-			event.setProcessed(true);
-		}
+		// determine cut, copy, paste
 		if (Character::toLowerCase(event.getKeyChar()) == 'x' && keyControl == true) {
 			keyControlX = isKeyDown;
 			event.setProcessed(true);
@@ -227,6 +216,7 @@ void SceneEditorTabView::handleInputEvents()
 			keyControlV = isKeyDown;
 			event.setProcessed(true);
 		}
+		// handle them
 		if (Character::toLowerCase(event.getKeyChar()) == '.' && !isKeyDown == false) {
 			placeEntityYRotation = (placeEntityYRotation + 1) % 4;
 			event.setProcessed(true);
