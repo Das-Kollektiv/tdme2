@@ -311,6 +311,32 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 					}
 				}
 				break;
+			case GUIKeyboardEvent::KEYCODE_PAGE_UP: {
+					event->setProcessed(true);
+					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+						if (event->isShiftDown() == false) {
+							selectionIndex = -1;
+						} else {
+							if (selectionIndex == -1) selectionIndex = index;
+						}
+						index = styledTextNode->doPageUp();
+						resetCursorMode();
+					}
+				}
+				break;
+			case GUIKeyboardEvent::KEYCODE_PAGE_DOWN: {
+					event->setProcessed(true);
+					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+						if (event->isShiftDown() == false) {
+							selectionIndex = -1;
+						} else {
+							if (selectionIndex == -1) selectionIndex = index;
+						}
+						index = styledTextNode->doPageDown();
+						resetCursorMode();
+					}
+				}
+				break;
 			case GUIKeyboardEvent::KEYCODE_BACKSPACE: {
 					if (disabled == false) {
 						event->setProcessed(true);

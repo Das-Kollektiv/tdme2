@@ -168,6 +168,18 @@ private:
 	void scrollToIndex();
 
 	/**
+	 * Do page up
+	 * @return cursor index
+	 */
+	int doPageUp();
+
+	/**
+	 * Do page down
+	 * @return cursor index
+	 */
+	int doPageDown();
+
+	/**
 	 * Get text style for
 	 * @param lineCharIdxs line character indices
 	 * @param lineCharIdx line character idx

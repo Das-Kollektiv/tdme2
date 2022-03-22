@@ -23,6 +23,8 @@ public:
 	static constexpr int32_t KEYCODE_UP { KEYBOARD_KEYCODE_UP };
 	static constexpr int32_t KEYCODE_RIGHT { KEYBOARD_KEYCODE_RIGHT };
 	static constexpr int32_t KEYCODE_DOWN { KEYBOARD_KEYCODE_DOWN };
+	static constexpr int32_t KEYCODE_PAGE_UP { KEYBOARD_KEYCODE_PAGE_UP };
+	static constexpr int32_t KEYCODE_PAGE_DOWN { KEYBOARD_KEYCODE_PAGE_DOWN };
 	static constexpr int32_t KEYCODE_POS1 { KEYBOARD_KEYCODE_POS1 };
 	static constexpr int32_t KEYCODE_END { KEYBOARD_KEYCODE_END };
 	static constexpr int32_t KEYCODE_ESCAPE { KEYBOARD_KEYCODE_ESCAPE };

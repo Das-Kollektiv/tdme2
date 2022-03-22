@@ -219,7 +219,6 @@ void GUIStyledTextNode::scrollToIndex() {
 
 		//
 		for (auto& lineConstraintsEntity: lineConstraints) {
-			if (lineConstraintsEntity.width > autoWidth) autoWidth = lineConstraintsEntity.width;
 			y+= lineConstraintsEntity.height;
 		}
 
@@ -256,6 +255,139 @@ void GUIStyledTextNode::scrollToIndex() {
 		parentOffsetsChanged = true;
 		parentNode->setChildrenRenderOffsetY(y - parentNode->getComputedConstraints().height);
 	}
+}
+
+int GUIStyledTextNode::doPageUp() {
+	//
+	scrollToIndex();
+
+	// no font, exit
+	if (font == nullptr) return -1;
+
+	//
+	auto styledTextController = required_dynamic_cast<GUIStyledTextNodeController*>(controller);
+	auto cursorIndex = styledTextController->getIndex();
+	auto visibleHeight = parentNode->getComputedConstraints().height;
+	auto y = 0.0f;
+	auto textStyleIdx = 0;
+	auto reachedCursorIndex = false;
+	struct LineInfo {
+		int idx;
+		float y;
+	};
+	vector<LineInfo> lines;
+	for (auto i = 0; i < text.size(); ) {
+		//
+		determineNextLineConstraints(i, text.size(), textStyleIdx);
+
+		// did we reach our corsor index
+		if (reachedCursorIndex == false) {
+			for (auto idx: lineCharIdxs) {
+				if (idx == cursorIndex) {
+					reachedCursorIndex = true;
+					break;
+				}
+			}
+		}
+
+		// if reached cursor index try to find index of a page down height
+		for (auto& lineConstraintsEntity: lineConstraints) {
+			lines.push_back(
+				{
+					.idx = lineCharIdxs[0],
+					.y = y
+				}
+			);
+			y+= lineConstraintsEntity.height;
+		}
+
+		//
+		line.clear();
+		lineCharIdxs.clear();
+		lineConstraints.clear();
+
+		//
+		if (reachedCursorIndex == true) break;
+	}
+
+	// scroll down
+	auto renderOffsetY = parentNode->getChildrenRenderOffsetY();
+	parentOffsetsChanged = true;
+	parentNode->setChildrenRenderOffsetY(renderOffsetY - visibleHeight);
+
+	// determine cursor index
+	for (int i = lines.size() - 1; i >= 0; i--) {
+		auto& line = lines[i];
+		if (y - line.y >= visibleHeight) {
+			return line.idx;
+		}
+	}
+
+	// otherwise fallback to previous value
+	return cursorIndex;
+}
+
+int GUIStyledTextNode::doPageDown() {
+	//
+	scrollToIndex();
+
+	// no font, exit
+	if (font == nullptr) return -1;
+
+	//
+	auto styledTextController = required_dynamic_cast<GUIStyledTextNodeController*>(controller);
+	auto cursorIndex = styledTextController->getIndex();
+	auto visibleHeight = parentNode->getComputedConstraints().height;
+	auto y = 0.0f;
+	auto textStyleIdx = 0;
+	auto reachedCursorIndex = false;
+	auto finished = false;
+	for (auto i = 0; i < text.size(); ) {
+		//
+		determineNextLineConstraints(i, text.size(), textStyleIdx);
+
+		// did we reach our corsor index
+		if (reachedCursorIndex == false) {
+			for (auto idx: lineCharIdxs) {
+				if (idx == cursorIndex) {
+					reachedCursorIndex = true;
+					break;
+				}
+			}
+			// then reset Y
+			if (reachedCursorIndex == true) {
+				y = 0.0f;
+			}
+		}
+
+		// if reached cursor index try to find index of a page down height
+		if (reachedCursorIndex == true) {
+			for (auto& lineConstraintsEntity: lineConstraints) {
+				y+= lineConstraintsEntity.height;
+				if (y >= visibleHeight) {
+					cursorIndex = lineCharIdxs[0];
+					finished = true;
+					break;
+				}
+			}
+		}
+
+		//
+		line.clear();
+		lineCharIdxs.clear();
+		lineConstraints.clear();
+
+		//
+		if (finished == true) break;
+	}
+
+	// scroll down
+	auto renderOffsetY = parentNode->getChildrenRenderOffsetY();
+	parentOffsetsChanged = true;
+	parentNode->setChildrenRenderOffsetY(renderOffsetY + visibleHeight);
+
+	//
+	return cursorIndex;
 }
 
 const string GUIStyledTextNode::getNodeType()
