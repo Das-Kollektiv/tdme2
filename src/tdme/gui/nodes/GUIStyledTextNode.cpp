@@ -464,14 +464,6 @@ void GUIStyledTextNode::determineNextLineConstraints(int& i, int charEndIdx, int
 				line+= c;
 				lineCharIdxs.push_back(k);
 				break;
-			} else
-			if (c == '\t') {
-				// extend tab to 4 spaces if line is not empty
-				line+= tabString4;
-				lineCharIdxs.push_back(k);
-				lineCharIdxs.push_back(k);
-				lineCharIdxs.push_back(k);
-				lineCharIdxs.push_back(k);
 			} else {
 				line+= c;
 				lineCharIdxs.push_back(k);
@@ -495,20 +487,6 @@ void GUIStyledTextNode::determineNextLineConstraints(int& i, int charEndIdx, int
 			} else
 			if (line.empty() == true && (c == ' ' || c == '\t')) {
 				// no op
-			} else
-			if (c == '\t') {
-				// extend tab to 4 spaces if line is not empty
-				if (line.empty() == false) {
-					if (StringTools::endsWith(line, spaceString) == true) {
-						line+= tabString3;
-					} else {
-						line+= tabString4;
-					}
-					lineCharIdxs.push_back(k);
-					lineCharIdxs.push_back(k);
-					lineCharIdxs.push_back(k);
-					lineCharIdxs.push_back(k);
-				}
 			} else {
 				line+= c;
 				lineCharIdxs.push_back(k);
@@ -612,7 +590,7 @@ void GUIStyledTextNode::determineNextLineConstraints(int& i, int charEndIdx, int
 						lineHeightSpaceWrap = 0.0f;
 						baseLineSpaceWrap = 0.0f;
 					}
-					auto character = currentFont->getCharacter(line[k]);
+					auto character = currentFont->getCharacter(line[k] == '\t'?' ':line[k]);
 					if (character != nullptr) {
 						if (lineConstraints[lineConstraints.size() - 1].spaceWrap == false) {
 							lineConstraints[lineConstraints.size() - 1] = {
@@ -645,8 +623,9 @@ void GUIStyledTextNode::determineNextLineConstraints(int& i, int charEndIdx, int
 								}
 							);
 						}
-						lineWidth+= character->getXAdvance();
-						lineWidthSpaceWrap+= lineWidthSpaceWrap < Math::EPSILON && line[k] == ' '?0.0f:character->getXAdvance();
+						auto charXAdvance = line[k] == '\t'?character->getXAdvance() * tabSize:character->getXAdvance();
+						lineWidth+= charXAdvance;
+						lineWidthSpaceWrap+= lineWidthSpaceWrap < Math::EPSILON && (line[k] == ' ' || line[k] == '\t')?0.0f:charXAdvance;
 					}
 				}
 			}
@@ -992,7 +971,7 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 						}
 						// skip spaces if requested
 						if (skipSpaces == true) {
-							if (line[k] == ' ') {
+							if (line[k] == ' ' || line[k] == '\t') {
 								continue;
 							} else {
 								skipSpaces = false;
@@ -1031,7 +1010,8 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 							}
 						} else {
 							// otherwise draw
-							auto character = currentFont->getCharacter(line[k]);
+							auto characterCount = line[k] == '\t'?tabSize:1;
+							auto character = currentFont->getCharacter(line[k] == '\t'?' ':line[k]);
 							if (character != nullptr) {
 								//
 								auto hasSelection = false;
@@ -1043,17 +1023,19 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 										guiRenderer->render();
 										boundTexture = currentFont->getTextureId();
 										if (boundTexture != 0) guiRenderer->bindTexture(0);
-										float left = x + xIndentLeft;
-										float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - currentFont->getBaseLine()) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
-										currentFont->drawCharacterBackground(guiRenderer, character, left, top, lineConstraints[lineIdx].lineHeight, selectionBackgroundColor);
+										for (auto l = 0; l < characterCount; l++) {
+											float left = x + xIndentLeft + (l * character->getXAdvance());
+											float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - currentFont->getBaseLine()) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
+											currentFont->drawCharacterBackground(guiRenderer, character, left, top, lineConstraints[lineIdx].lineHeight, selectionBackgroundColor);
+										}
 										guiRenderer->render();
 										if (boundTexture != 0) guiRenderer->bindTexture(boundTexture);
 										hasSelection = true;
 									}
 								}
 								// draw character
-								{
-									float left = x + xIndentLeft;
+								for (auto l = 0; l < characterCount; l++) {
+									float left = x + xIndentLeft + (l * character->getXAdvance());
 									float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - currentFont->getBaseLine()) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
 									if (boundTexture == -1) {
 										boundTexture = currentFont->getTextureId();
@@ -1129,7 +1111,7 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 									currentURL = styleURL;
 								}
 								// advance X
-								x+= character->getXAdvance();
+								x+= line[k] == '\t'?tabSize * character->getXAdvance():character->getXAdvance();
 							}
 						}
 					}

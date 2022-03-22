@@ -341,7 +341,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 					}
 				}
 				break;
-			case GUIKeyboardEvent::KEYCODE_RETURN: {
+			case GUIKeyboardEvent::KEYCODE_RETURN:{
 					if (disabled == false) {
 						event->setProcessed(true);
 						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
@@ -353,6 +353,26 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 							}
 							if (maxLength == 0 || styledTextNode->getTextSize() < maxLength) {
 								styledTextNode->insertText(index, '\n');
+								forwardInsertText(index, 1);
+								index++;
+								resetCursorMode();
+							}
+						}
+					}
+				}
+				break;
+			case GUIKeyboardEvent::KEYCODE_TAB:{
+					if (disabled == false) {
+						event->setProcessed(true);
+						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+							if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
+								styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+								forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+								index = Math::min(index, selectionIndex);
+								selectionIndex = -1;
+							}
+							if (maxLength == 0 || styledTextNode->getTextSize() < maxLength) {
+								styledTextNode->insertText(index, '\t');
 								forwardInsertText(index, 1);
 								index++;
 								resetCursorMode();

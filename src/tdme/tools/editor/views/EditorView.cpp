@@ -123,6 +123,11 @@ void EditorView::handleInputEvents()
 			tabView->getTabView()->getEngine()->getGUI()->getKeyboardEvents().push_back(event);
 		}
 		tabView->getTabView()->handleInputEvents();
+		for (auto i = 0; i < Engine::getInstance()->getGUI()->getKeyboardEvents().size(); i++) {
+			auto& srcEvent = Engine::getInstance()->getGUI()->getKeyboardEvents()[i];
+			auto& dstEvent = tabView->getTabView()->getEngine()->getGUI()->getKeyboardEvents()[i];
+			if (dstEvent.isProcessed() == true) srcEvent.setProcessed(true);
+		}
 		tabView->getTabView()->getEngine()->getGUI()->getMouseEvents().clear();
 		tabView->getTabView()->getEngine()->getGUI()->getKeyboardEvents().clear();
 		lastSelectedTabId = tabView->getId();

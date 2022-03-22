@@ -1380,14 +1380,11 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 						Console::println("EditorScreenController::openFile(): " + absoluteFileName + ": " + exception.what());
 						icon = "{$icon.type_script}";
 						colorType = "{$color.type_script}";
-						auto text = StringTools::replace(
+						auto text =
 							FileSystem::getInstance()->getContentAsString(
 								FileSystem::getInstance()->getPathName(absoluteFileName),
 								FileSystem::getInstance()->getFileName(absoluteFileName)
-							),
-							"\t",
-							"    "
-						);
+							);
 						auto screenNode = GUIParser::parse(
 							"resources/engine/gui/",
 							"tab_text.xml",
@@ -1450,14 +1447,11 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 				{
 					icon = "{$icon.type_script}";
 					colorType = "{$color.type_script}";
-					auto text = StringTools::replace(
+					auto text =
 						FileSystem::getInstance()->getContentAsString(
 							FileSystem::getInstance()->getPathName(absoluteFileName),
 							FileSystem::getInstance()->getFileName(absoluteFileName)
-						),
-						"\t",
-						"    "
-					);
+						);
 					auto screenNode = GUIParser::parse(
 						"resources/engine/gui/",
 						"tab_text.xml",

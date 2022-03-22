@@ -89,9 +89,8 @@ private:
 		bool spaceWrap;
 	};
 
+	int tabSize { 4 };
 	string spaceString { " " };
-	string tabString3 { "   " };
-	string tabString4 { "    " };
 	string newLine { "\n" };
 	string line;
 	vector<int> lineCharIdxs;
