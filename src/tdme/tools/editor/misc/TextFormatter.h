@@ -41,6 +41,10 @@ private:
 		string keywords1;
 	    string keywords2;
 	    string datatypeLiteralSuffixes;
+	    vector<string> preprocessorLineKeywordsTokenized;
+	    vector<string> keywords1Tokenized;
+	    vector<string> keywords2Tokenized;
+	    vector<string> datatypeLiteralSuffixesTokenized;
 	};
 
 	Language cpp = {
@@ -103,6 +107,11 @@ public:
 		}
 		return instance;
 	}
+
+	/**
+	 * Public constructor
+	 */
+	TextFormatter();
 
 	/**
 	 * Format given styled text node according to extension

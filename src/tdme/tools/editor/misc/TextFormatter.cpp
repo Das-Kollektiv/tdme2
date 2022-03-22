@@ -22,6 +22,15 @@ using tdme::utilities::StringTools;
 
 TextFormatter* TextFormatter::instance = nullptr;
 
+TextFormatter::TextFormatter() {
+	for (auto& language: languages) {
+		language.preprocessorLineKeywordsTokenized = StringTools::tokenize(language.preprocessorLineKeywords, " ");
+		language.keywords1Tokenized = StringTools::tokenize(language.keywords1, " ");
+		language.keywords2Tokenized = StringTools::tokenize(language.keywords2, " ");
+		language.datatypeLiteralSuffixesTokenized = StringTools::tokenize(language.datatypeLiteralSuffixes, " ");
+	}
+}
+
 void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode, int charStartIdx, int charEndIdx) {
 	if (std::find(xmlLanguage.extensions.begin(), xmlLanguage.extensions.end(), extension) != xmlLanguage.extensions.end()) {
 		textNode->unsetStyles();
@@ -212,10 +221,10 @@ void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 				// Console::println("void TextFormatter::format(): " + to_string(charStartIdx) + " ... " + to_string(charEndIdx));
 				foundLanguage = true;
 				auto& code = textNode->getText().getString();
-				auto keywords1 = StringTools::tokenize(language.keywords1, " ");
-				auto keywords2 = StringTools::tokenize(language.keywords2, " ");
-				auto preprocessorLineKeywords = StringTools::tokenize(language.preprocessorLineKeywords, " ");
-				auto datatypeLiteralSuffixes = StringTools::tokenize(language.datatypeLiteralSuffixes, " ");
+				auto& preprocessorLineKeywords = language.preprocessorLineKeywordsTokenized;
+				auto& keywords1 = language.keywords1Tokenized;
+				auto& keywords2 = language.keywords2Tokenized;
+				auto& datatypeLiteralSuffixes = language.datatypeLiteralSuffixesTokenized;
 				auto startIdx = 0;
 				auto endIdx = -1;
 				auto lc = '\0';
