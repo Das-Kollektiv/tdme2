@@ -11,7 +11,7 @@
 #include <tdme/gui/nodes/GUIStyledTextNodeController.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
-#include <tdme/tools/editor/misc/CodeFormatter.h>
+#include <tdme/tools/editor/misc/TextFormatter.h>
 #include <tdme/tools/editor/tabcontrollers/TextEditorTabController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
@@ -26,7 +26,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::GUI;
 using tdme::tools::editor::controllers::EditorScreenController;
-using tdme::tools::editor::misc::CodeFormatter;
+using tdme::tools::editor::misc::TextFormatter;
 using tdme::tools::editor::tabcontrollers::TextEditorTabController;
 using tdme::tools::editor::views::EditorView;
 
@@ -44,7 +44,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 	engine->getGUI()->addRenderScreen(screenNode->getId());
 
 	// initial text format
-	CodeFormatter::getInstance()->format(extension, textNode);
+	TextFormatter::getInstance()->format(extension, textNode);
 	//
 
 	// add text node change listener
@@ -57,10 +57,10 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 		}
 
 		virtual void onRemoveText(int idx, int count) override {
-			CodeFormatter::getInstance()->format(textEditorTabView->extension, textEditorTabView->textNode);
+			TextFormatter::getInstance()->format(textEditorTabView->extension, textEditorTabView->textNode, idx, idx + count);
 		}
 		virtual void onInsertText(int idx, int count) override {
-			CodeFormatter::getInstance()->format(textEditorTabView->extension, textEditorTabView->textNode);
+			TextFormatter::getInstance()->format(textEditorTabView->extension, textEditorTabView->textNode, idx, idx + count);
 		}
 	private:
 		TextEditorTabView* textEditorTabView;

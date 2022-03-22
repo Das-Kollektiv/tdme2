@@ -1,27 +1,30 @@
-#include <tdme/tools/editor/misc/CodeFormatter.h>
+#include <tdme/tools/editor/misc/TextFormatter.h>
 
 #include <string>
 
 #include <tdme/tdme.h>
 #include <tdme/gui/nodes/GUIStyledTextNode.h>
+#include <tdme/utilities/Console.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::string;
+using std::to_string;
 
-using tdme::tools::editor::misc::CodeFormatter;
+using tdme::tools::editor::misc::TextFormatter;
 
 using tdme::gui::nodes::GUIStyledTextNode;
+using tdme::utilities::Console;
 using tdme::utilities::Float;
 using tdme::utilities::Integer;
 using tdme::utilities::StringTools;
 
-CodeFormatter* CodeFormatter::instance = nullptr;
+TextFormatter* TextFormatter::instance = nullptr;
 
-void CodeFormatter::format(const string& extension, GUIStyledTextNode* textNode, int charStartIdx, int charEndIdx) {
-	textNode->unsetStyles();
+void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode, int charStartIdx, int charEndIdx) {
 	if (std::find(xmlLanguage.extensions.begin(), xmlLanguage.extensions.end(), extension) != xmlLanguage.extensions.end()) {
+		textNode->unsetStyles();
 		auto& language = xmlLanguage;
 		auto& code = textNode->getText().getString();
 		auto startIdx = 0;
@@ -128,14 +131,33 @@ void CodeFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 	} else
 	if (std::find(propertiesLanguage.extensions.begin(), propertiesLanguage.extensions.end(), extension) != propertiesLanguage.extensions.end()) {
 		auto& language = propertiesLanguage;
-		auto code = textNode->getText().getString();
+		auto& code = textNode->getText().getString();
 		auto commentCount = 0;
 		auto delimiterCount = 0;
 		auto nonWhitespaceCount = 0;
 		auto startIdx = -1;
 		auto endIdx = -1;
 		auto commentLine = false;
-		for (auto i = 0; i < code.size(); i++) {
+		if (charStartIdx == -1) {
+			charStartIdx = 0;
+		} else {
+			// find index of previous newline and store difference
+			auto previousNewLineIndex = charStartIdx;
+			while (previousNewLineIndex >= 0 && code[previousNewLineIndex] != '\n') previousNewLineIndex--;
+			previousNewLineIndex = Math::min(previousNewLineIndex + 1, code.size() - 1);
+			charStartIdx = previousNewLineIndex;
+		}
+		if (charEndIdx == -1) {
+			charEndIdx = code.size() - 1;
+		} else {
+			// find index of next newline
+			auto nextNewLineIndex = Math::min(code[charEndIdx] == '\n'?charEndIdx + 1:charEndIdx, code.size() - 1);
+			while (nextNewLineIndex < code.size() && code[nextNewLineIndex] != '\n') nextNewLineIndex++;
+			nextNewLineIndex = Math::min(nextNewLineIndex + 1, code.size() - 1);
+			charEndIdx = nextNewLineIndex;
+		}
+		textNode->unsetTextStyle(charStartIdx, charEndIdx);
+		for (auto i = charStartIdx; i >= 0 && i <= charEndIdx; i++) {
 			auto c = code[i];
 			if (c == '\n') {
 				endIdx = i;
@@ -184,9 +206,11 @@ void CodeFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 			textNode->setTextStyle(startIdx, endIdx - 1, literalColor);
 		}
 	} else {
+		auto foundLanguage = false;
 		for (auto& language: languages) {
 			if (std::find(language.extensions.begin(), language.extensions.end(), extension) != language.extensions.end()) {
-				auto code = textNode->getText().getString();
+				foundLanguage = true;
+				auto& code = textNode->getText().getString();
 				auto keywords1 = StringTools::tokenize(language.keywords1, " ");
 				auto keywords2 = StringTools::tokenize(language.keywords2, " ");
 				auto preprocessorLineKeywords = StringTools::tokenize(language.preprocessorLineKeywords, " ");
@@ -200,8 +224,25 @@ void CodeFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 				auto lineComment = false;
 				auto preprocessorLine = false;
 				auto quote = '\0';
-				if (charStartIdx == -1) charStartIdx = 0;
-				if (charEndIdx == -1) charEndIdx = code.size() - 1;
+				if (charStartIdx == -1) {
+					charStartIdx = 0;
+				} else {
+					// find index of previous newline and store difference
+					auto previousNewLineIndex = charStartIdx;
+					while (previousNewLineIndex >= 0 && code[previousNewLineIndex] != '\n') previousNewLineIndex--;
+					previousNewLineIndex = Math::min(previousNewLineIndex + 1, code.size() - 1);
+					charStartIdx = previousNewLineIndex;
+				}
+				if (charEndIdx == -1) {
+					charEndIdx = code.size() - 1;
+				} else {
+					// find index of next newline
+					auto nextNewLineIndex = Math::min(code[charEndIdx] == '\n'?charEndIdx + 1:charEndIdx, code.size() - 1);
+					while (nextNewLineIndex < code.size() && code[nextNewLineIndex] != '\n') nextNewLineIndex++;
+					nextNewLineIndex = Math::min(nextNewLineIndex + 1, code.size() - 1);
+					charEndIdx = nextNewLineIndex;
+				}
+				textNode->unsetTextStyle(charStartIdx, charEndIdx);
 				for (auto i = charStartIdx; i >= 0 && i <= charEndIdx; i++) {
 					auto c = code[i];
 					auto nc = i + 1 < code.size()?code[i + 1]:'\0';
@@ -332,5 +373,7 @@ void CodeFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 				break;
 			}
 		}
+		// unset styles if no language found
+		if (foundLanguage == false) textNode->unsetStyles();
 	}
 }

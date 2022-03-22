@@ -15,11 +15,11 @@ using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIStyledTextNode;
 
 /**
- * Code formatter
+ * Text formatter
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::editor::misc::CodeFormatter final
+class tdme::tools::editor::misc::TextFormatter final
 {
 private:
 	// These were grabbed from gedit, yaaaa, not sure about License
@@ -90,16 +90,16 @@ private:
 		string whitespaces = " \t";
 	} propertiesLanguage;
 
-	STATIC_DLL_IMPEXT static CodeFormatter* instance;
+	STATIC_DLL_IMPEXT static TextFormatter* instance;
 
 public:
 
 	/**
 	 * @return instance
 	 */
-	inline static CodeFormatter* getInstance() {
+	inline static TextFormatter* getInstance() {
 		if (instance == nullptr) {
-			instance = new CodeFormatter();
+			instance = new TextFormatter();
 		}
 		return instance;
 	}

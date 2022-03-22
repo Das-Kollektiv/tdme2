@@ -1154,7 +1154,23 @@ void GUIStyledTextNode::unsetStyles() {
 }
 
 void GUIStyledTextNode::unsetTextStyle(int startIdx, int endIdx) {
-	// TODO: a.drewke
+	Console::print("GUIStyledTextNode::unsetTextStyle(): " + to_string(startIdx) + " ... " + to_string(endIdx));
+	for (auto i = startIdx; i <= endIdx; i++) Console::print(string() + text.charAt(i));
+	for (auto& style: styles) Console::println("pre: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
+	for (auto i = 0; i < styles.size(); i++) {
+		auto& style = styles[i];
+		if (startIdx >= style.startIdx && startIdx <= style.endIdx) {
+			style.endIdx = startIdx - 1;
+		}
+		if (endIdx >= style.startIdx && endIdx <= style.endIdx) {
+			style.startIdx = endIdx - 1;
+		}
+		if (style.startIdx > style.endIdx) {
+			styles.erase(styles.begin() + i);
+			i--;
+		}
+	}
+	for (auto& style: styles) Console::println("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
 }
 
 void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor& color, const string& font, const string& url) {
@@ -1168,8 +1184,20 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor& c
 	// TODO: a.drewke
 	auto _font = font.empty() == true?nullptr:GUI::getFont(screenNode->getApplicationRootPathName(), font);;
 	if (_font != nullptr) _font->initialize();
+	// find position to insert
+	auto j = -1;
+	for (auto i = 0; i < styles.size(); i++) {
+		auto& style = styles[i];
+		if (startIdx > style.endIdx) {
+			j = i + 1;
+		}
+	}
+	Console::println("insert@" + to_string(j));
+	if (j == -1) j = 0;
+	for (auto& style: styles) Console::println("pre: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
+	// insert
 	styles.insert(
-		styles.end(),
+		styles.begin() + j,
 		{
 			.startIdx = startIdx,
 			.endIdx = endIdx,
@@ -1182,6 +1210,9 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor& c
 			.height = -1
 		}
 	);
+	//
+	startTextStyleIdx = -1;
+	for (auto& style: styles) Console::println("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
 }
 
 void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const string& font, const string& url) {
@@ -1194,8 +1225,20 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const string& fon
 	// TODO: a.drewke
 	auto _font = font.empty() == true?nullptr:GUI::getFont(screenNode->getApplicationRootPathName(), font);;
 	if (_font != nullptr) _font->initialize();
+	// find position to insert
+	auto j = -1;
+	for (auto i = 0; i < styles.size(); i++) {
+		auto& style = styles[i];
+		if (startIdx > style.endIdx) {
+			j = i + 1;
+		}
+	}
+	for (auto& style: styles) Console::println("pre: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
+	Console::println("insert@" + to_string(j));
+	if (j == -1) j = 0;
+	// insert
 	styles.insert(
-		styles.end(),
+		styles.begin() + j,
 		{
 			.startIdx = startIdx,
 			.endIdx = endIdx,
@@ -1208,6 +1251,9 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const string& fon
 			.height = -1
 		}
 	);
+	//
+	startTextStyleIdx = -1;
+	for (auto& style: styles) Console::println("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
 }
 
 void GUIStyledTextNode::setImage(int idx, const string& image, const string& url, int width, int height) {
@@ -1215,8 +1261,20 @@ void GUIStyledTextNode::setImage(int idx, const string& image, const string& url
 	unsetTextStyle(idx,idx);
 	// TODO: a.drewke
 	auto _image = image.empty() == true?nullptr:GUI::getImage(screenNode->getApplicationRootPathName(), image);
+	// find position to insert
+	auto j = -1;
+	for (auto i = 0; i < styles.size(); i++) {
+		auto& style = styles[i];
+		if (idx > style.endIdx) {
+			j = i + 1;
+		}
+	}
+	for (auto& style: styles) Console::println("pre: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
+	Console::println("insert@" + to_string(j));
+	if (j == -1) j = 0;
+	// insert
 	styles.insert(
-		styles.end(),
+		styles.begin() + j,
 		{
 			.startIdx = idx,
 			.endIdx = idx,
@@ -1229,4 +1287,7 @@ void GUIStyledTextNode::setImage(int idx, const string& image, const string& url
 			.height = height == -1?_image->getHeight():height,
 		}
 	);
+	//
+	startTextStyleIdx = -1;
+	for (auto& style: styles) Console::println("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
 }
