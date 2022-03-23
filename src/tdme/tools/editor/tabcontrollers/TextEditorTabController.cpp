@@ -3,8 +3,8 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Engine.h>
 #include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -31,8 +31,8 @@ using tdme::tools::editor::tabcontrollers::TextEditorTabController;
 
 using std::string;
 
-using tdme::engine::Engine;
 using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Engine;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIParentNode;

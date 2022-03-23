@@ -26,10 +26,10 @@ using tdme::math::Vector2;
 using tdme::math::Vector3;
 
 /**
- * Terrain 2 utility
+ * Terrain utility
  * @author Andreas Drewke
  */
-class tdme::utilities::Terrain2
+class tdme::utilities::Terrain
 {
 public:
 	static constexpr float STEP_SIZE { 1.0f };

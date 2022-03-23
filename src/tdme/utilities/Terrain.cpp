@@ -1,4 +1,4 @@
-#include <tdme/utilities/Terrain2.h>
+#include <tdme/utilities/Terrain.h>
 
 #include <array>
 #include <map>
@@ -42,7 +42,7 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
-using tdme::utilities::Terrain2;
+using tdme::utilities::Terrain;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
@@ -67,7 +67,7 @@ using tdme::utilities::Exception;
 using tdme::utilities::Integer;
 using tdme::utilities::ModelTools;
 
-void Terrain2::createTerrainModels(float width, float depth, float y, vector<float>& terrainHeightVector, BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels, bool createLODLevels)
+void Terrain::createTerrainModels(float width, float depth, float y, vector<float>& terrainHeightVector, BoundingBox& terrainBoundingBox, vector<Model*>& terrainModels, bool createLODLevels)
 {
 	vector<unordered_map<int, int>> partitionTerrainTriangles;
 	vector<vector<Vector3>> partitionTerrainVertices;
@@ -296,7 +296,7 @@ void Terrain2::createTerrainModels(float width, float depth, float y, vector<flo
 	}
 }
 
-inline const Vector3 Terrain2::computeTerrainVertexNormal(const vector<float>& terrainHeightVector, int verticesPerX, int verticesPerZ, int x, int z) {
+inline const Vector3 Terrain::computeTerrainVertexNormal(const vector<float>& terrainHeightVector, int verticesPerX, int verticesPerZ, int x, int z) {
 	Vector3 vertexNormal;
 
 	Vector3 vertex;
@@ -388,11 +388,11 @@ inline const Vector3 Terrain2::computeTerrainVertexNormal(const vector<float>& t
 	if (normalCount > 0) {
 		return vertexNormal.normalize();
 	}
-	Console::println("Terrain2::computeTerrainVertexNormal(): no vertex normal available: normal count == 0");
+	Console::println("Terrain::computeTerrainVertexNormal(): no vertex normal available: normal count == 0");
 	return vertexNormal.set(0.0f, 1.0f, 0.0f);
 }
 
-void Terrain2::applyBrushToTerrainModels(
+void Terrain::applyBrushToTerrainModels(
 	BoundingBox& terrainBoundingBox,
 	vector<Model*>& terrainModels,
 	vector<float>& terrainHeightVector,
@@ -733,7 +733,7 @@ void Terrain2::applyBrushToTerrainModels(
 	}
 }
 
-void Terrain2::applyRampBrushToTerrainModels(
+void Terrain::applyRampBrushToTerrainModels(
 	BoundingBox& terrainBoundingBox, // TODO: constness
 	vector<Model*>& terrainModels,
 	vector<float>& terrainHeightVector,
@@ -1052,7 +1052,7 @@ void Terrain2::applyRampBrushToTerrainModels(
 	}
 }
 
-bool Terrain2::computeWaterPositionMap(BoundingBox& terrainBoundingBox, const vector<float>& terrainHeightVector, const Vector3& brushCenterPosition, float waterHeight, unordered_map<int, unordered_set<int>>& waterPositionMap) {
+bool Terrain::computeWaterPositionMap(BoundingBox& terrainBoundingBox, const vector<float>& terrainHeightVector, const Vector3& brushCenterPosition, float waterHeight, unordered_map<int, unordered_set<int>>& waterPositionMap) {
 	auto terrainHeightVectorVerticesPerX = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getX() / STEP_SIZE));
 	auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getZ() / STEP_SIZE));
 
@@ -1064,7 +1064,7 @@ bool Terrain2::computeWaterPositionMap(BoundingBox& terrainBoundingBox, const ve
 	waterPositionMap[terrainHeightVectorZCenter].insert(terrainHeightVectorXCenter);
 
 	//
-	Console::println("Terrain2::determineWaterPositionSet: " + to_string(terrainHeightVectorXCenter) + " / " + to_string(terrainHeightVectorZCenter) + " @ " + to_string(waterHeight));
+	Console::println("Terrain::determineWaterPositionSet: " + to_string(terrainHeightVectorXCenter) + " / " + to_string(terrainHeightVectorZCenter) + " @ " + to_string(waterHeight));
 
 	//
 	determineWaterXPositionSet(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, terrainHeightVectorXCenter, terrainHeightVectorZCenter, waterHeight, waterPositionMap[terrainHeightVectorZCenter]);
@@ -1150,11 +1150,11 @@ bool Terrain2::computeWaterPositionMap(BoundingBox& terrainBoundingBox, const ve
 
 	//
 	auto haveWaterPositionSet = waterPositionMap.empty() == false;
-	Console::println("Terrain2::determineWaterPositionSet: Have water position set: " + to_string(haveWaterPositionSet));
+	Console::println("Terrain::determineWaterPositionSet: Have water position set: " + to_string(haveWaterPositionSet));
 	return haveWaterPositionSet;
 }
 
-Vector3 Terrain2::computeWaterReflectionEnvironmentMappingPosition(const unordered_map<int, unordered_set<int>>& waterPositionMap, float waterHeight) {
+Vector3 Terrain::computeWaterReflectionEnvironmentMappingPosition(const unordered_map<int, unordered_set<int>>& waterPositionMap, float waterHeight) {
 	// determine reflection environment mapping position
 	auto zMin = Integer::MAX_VALUE;
 	auto zMax = Integer::MIN_VALUE;
@@ -1177,7 +1177,7 @@ Vector3 Terrain2::computeWaterReflectionEnvironmentMappingPosition(const unorder
 	);
 }
 
-void Terrain2::createWaterModels(
+void Terrain::createWaterModels(
 	BoundingBox& terrainBoundingBox,
 	const unordered_map<int, unordered_set<int>>& waterPositionMap,
 	float waterHeight,
@@ -1329,7 +1329,7 @@ void Terrain2::createWaterModels(
 	}
 }
 
-bool Terrain2::getTerrainModelsHeight(
+bool Terrain::getTerrainModelsHeight(
 	BoundingBox& terrainBoundingBox,
 	vector<Model*>& terrainModels,
 	vector<float>& terrainHeightVector,
@@ -1352,7 +1352,7 @@ bool Terrain2::getTerrainModelsHeight(
 	return true;
 }
 
-void Terrain2::createFoliageMaps(
+void Terrain::createFoliageMaps(
 	BoundingBox& terrainBoundingBox,
 	vector<unordered_map<int, vector<Transformations>>>& foliageMaps
 ) {
@@ -1362,7 +1362,7 @@ void Terrain2::createFoliageMaps(
 	createFoliageMaps(width, depth, foliageMaps);
 }
 
-void Terrain2::createFoliageMaps(
+void Terrain::createFoliageMaps(
 	float terrainWidth,
 	float terrainDepth,
 	vector<unordered_map<int, vector<Transformations>>>& foliageMaps
@@ -1375,14 +1375,14 @@ void Terrain2::createFoliageMaps(
 	for (auto& foliageMap: foliageMaps) foliageMap.clear();
 }
 
-void Terrain2::emptyFoliageMaps(
+void Terrain::emptyFoliageMaps(
 	vector<unordered_map<int, vector<Transformations>>>& foliageMaps
 ) {
 	//
 	for (auto& foliageMap: foliageMaps) foliageMap.clear();
 }
 
-void Terrain2::applyFoliageBrush(
+void Terrain::applyFoliageBrush(
 	BoundingBox& terrainBoundingBox,
 	vector<float>& terrainHeightVector,
 	const Vector3& brushCenterPosition,
@@ -1572,7 +1572,7 @@ void Terrain2::applyFoliageBrush(
 							//
 							if (haveContact == false) {
 								Console::println(
-									"Terrain2::applyFoliageBrush(): no contact@" +
+									"Terrain::applyFoliageBrush(): no contact@" +
 									to_string(translation.getX()) + ", " +
 									to_string(translation.getZ())
 								);
@@ -1631,7 +1631,7 @@ void Terrain2::applyFoliageBrush(
 	}
 }
 
-void Terrain2::applyFoliageDeleteBrush(
+void Terrain::applyFoliageDeleteBrush(
 	BoundingBox& terrainBoundingBox, // TODO: constness
 	const Vector3& brushCenterPosition,
 	const FoliageBrush& foliageBrush,
@@ -1763,7 +1763,7 @@ void Terrain2::applyFoliageDeleteBrush(
 	}
 }
 
-void Terrain2::updateFoliageTerrainBrush(
+void Terrain::updateFoliageTerrainBrush(
 	BoundingBox& terrainBoundingBox, // TODO: constness
 	vector<float>& terrainHeightVector,
 	const Vector3& brushCenterPosition,
@@ -1893,7 +1893,7 @@ void Terrain2::updateFoliageTerrainBrush(
 						//
 						if (haveContact == false) {
 							Console::println(
-								"Terrain2::applyFoliageBrush(): no contact@" +
+								"Terrain::applyFoliageBrush(): no contact@" +
 								to_string(transformations.getTranslation().getX()) + ", " +
 								to_string(transformations.getTranslation().getZ())
 							);
@@ -1919,7 +1919,7 @@ void Terrain2::updateFoliageTerrainBrush(
 	}
 }
 
-void Terrain2::updateFoliageTerrainRampBrush(
+void Terrain::updateFoliageTerrainRampBrush(
 	BoundingBox& terrainBoundingBox, // TODO: constness
 	vector<float>& terrainHeightVector,
 	const Vector3& brushCenterPosition,
@@ -2063,7 +2063,7 @@ void Terrain2::updateFoliageTerrainRampBrush(
 						//
 						if (haveContact == false) {
 							Console::println(
-								"Terrain2::applyFoliageBrush(): no contact@" +
+								"Terrain::applyFoliageBrush(): no contact@" +
 								to_string(transformations.getTranslation().getX()) + ", " +
 								to_string(transformations.getTranslation().getZ())
 							);
@@ -2090,7 +2090,7 @@ void Terrain2::updateFoliageTerrainRampBrush(
 }
 
 
-void Terrain2::mirrorXAxis(
+void Terrain::mirrorXAxis(
 	bool flipZ,
 	float width,
 	float depth,
@@ -2186,7 +2186,7 @@ void Terrain2::mirrorXAxis(
 	foliageMaps = foliageMapsMirrored;
 }
 
-void Terrain2::mirrorZAxis(
+void Terrain::mirrorZAxis(
 	bool flipX,
 	float width,
 	float depth,

@@ -12,8 +12,8 @@
 #include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/math/Math.h>
-#include <tdme/utilities/Console.h>
 #include <tdme/utilities/Character.h>
+#include <tdme/utilities/Console.h>
 #include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/Time.h>
 
@@ -29,8 +29,8 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUIStyledTextNodeController;
 using tdme::gui::GUI;
-using tdme::utilities::Console;
 using tdme::utilities::Character;
+using tdme::utilities::Console;
 using tdme::utilities::StringTools;
 using tdme::utilities::Time;
 

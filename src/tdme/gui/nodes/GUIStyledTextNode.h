@@ -4,8 +4,8 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
+#include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUINode.h>

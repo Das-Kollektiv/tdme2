@@ -4,8 +4,8 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Engine.h>
 #include <tdme/engine/model/Color4.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/nodes/GUIStyledTextNodeController.h>
@@ -20,8 +20,8 @@ using std::string;
 
 using tdme::tools::editor::tabviews::TextEditorTabView;
 
-using tdme::engine::Engine;
 using tdme::engine::model::Color4;
+using tdme::engine::Engine;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::GUI;
