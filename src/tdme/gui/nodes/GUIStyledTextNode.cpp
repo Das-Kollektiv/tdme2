@@ -99,11 +99,21 @@ GUIStyledTextNode::GUIStyledTextNode(
 	setText(text);
 }
 
+void GUIStyledTextNode::unsetIndexMousePosition() {
+	indexMousePositionX = -1;
+	indexMousePositionY = -1;
+}
+
 void GUIStyledTextNode::setIndexMousePosition(int x, int y) {
 	auto renderOffsetX = parentNode->getChildrenRenderOffsetX();
 	auto renderOffsetY = parentNode->getChildrenRenderOffsetY();
 	indexMousePositionX = renderOffsetX + x;
 	indexMousePositionY = renderOffsetY + y;
+}
+
+void GUIStyledTextNode::unsetSelectionIndexMousePosition() {
+	selectionIndexMousePositionX = -1;
+	selectionIndexMousePositionY = -1;
 }
 
 void GUIStyledTextNode::setSelectionIndexMousePosition(int x, int y) {
@@ -1078,7 +1088,7 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 							guiRenderer->render();
 						}
 						//
-						if (cursorMode == GUIStyledTextNodeController::CURSORMODE_SHOW && cursorIndex == lineCharIdxs[k]) {
+						if (cursorMode == GUIStyledTextNodeController::CURSORMODE_SHOW && (findNewSelectionIndex == true?cursorSelectionIndex == lineCharIdxs[k]:cursorIndex == lineCharIdxs[k])) {
 							float left = x + xIndentLeft;
 							float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - textStyle->height) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
 							float width = 2;
@@ -1203,7 +1213,7 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 								cursorSelectionIndex = lineCharIdxs[k];
 							}
 							// draw cursor
-							if (cursorMode == GUIStyledTextNodeController::CURSORMODE_SHOW && cursorIndex == lineCharIdxs[k]) {
+							if (cursorMode == GUIStyledTextNodeController::CURSORMODE_SHOW && (findNewSelectionIndex == true?cursorSelectionIndex == lineCharIdxs[k]:cursorIndex == lineCharIdxs[k])) {
 								float left = x + xIndentLeft;
 								float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - currentFont->getBaseLine()) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
 								float width = 2;
@@ -1299,7 +1309,7 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 								}
 
 								// draw cursor
-								if (cursorMode == GUIStyledTextNodeController::CURSORMODE_SHOW && cursorIndex == lineCharIdxs[k]) {
+								if (cursorMode == GUIStyledTextNodeController::CURSORMODE_SHOW && (findNewSelectionIndex == true?cursorSelectionIndex == lineCharIdxs[k]:cursorIndex == lineCharIdxs[k])) {
 									float left = x + xIndentLeft;
 									float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - currentFont->getBaseLine()) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
 									float width = 2;
@@ -1404,14 +1414,11 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 	// index
 	if (findNewIndex == true) {
 		if (cursorIndex != -1) styledTextController->setIndex(cursorIndex);
-		indexMousePositionX = -1;
-		indexMousePositionY = -1;
+		unsetIndexMousePosition();
 	}
 	// selection index
 	if (findNewSelectionIndex == true) {
 		if (cursorSelectionIndex != -1) styledTextController->setSelectionIndex(cursorSelectionIndex);
-		selectionIndexMousePositionX = -1;
-		selectionIndexMousePositionY = -1;
 	}
 }
 

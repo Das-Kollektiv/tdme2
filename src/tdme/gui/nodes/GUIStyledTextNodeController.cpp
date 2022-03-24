@@ -109,6 +109,13 @@ void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 					}
 				case GUIMouseEvent::MOUSEEVENT_RELEASED:
 					{
+						styledTextNode->unsetIndexMousePosition();
+						styledTextNode->unsetSelectionIndexMousePosition();
+						if (selectionIndex != -1) {
+							auto _index = index;
+							index = selectionIndex;
+							selectionIndex = _index;
+						}
 						// find URL area that had a hit and setup corresponding cursor
 						auto& urlAreas = styledTextNode->getURLAreas();
 						const GUIStyledTextNode::URLArea* urlAreaHit = nullptr;

@@ -129,9 +129,19 @@ private:
 	}
 
 	/**
+	 * Unset index mouse position
+	 */
+	void unsetIndexMousePosition();
+
+	/**
 	 * Set index mouse position
 	 */
 	void setIndexMousePosition(int x, int y);
+
+	/**
+	 * Unset selection index mouse position
+	 */
+	void unsetSelectionIndexMousePosition();
 
 	/**
 	 * Set selection index mouse position
