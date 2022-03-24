@@ -77,10 +77,26 @@ private:
 	}
 
 	/**
+	 * Set index
+	 * @param index index
+	 */
+	inline void setIndex(int index) {
+		this->index = index;
+	}
+
+	/**
 	 * @return selection index
 	 */
 	inline int getSelectionIndex() {
 		return selectionIndex;
+	}
+
+	/**
+	 * Set selection index
+	 * @param selectionIndex selection index
+	 */
+	inline void setSelectionIndex(int selectionIndex) {
+		this->selectionIndex = selectionIndex;
 	}
 
 	/**

@@ -99,6 +99,13 @@ GUIStyledTextNode::GUIStyledTextNode(
 	setText(text);
 }
 
+void GUIStyledTextNode::setSelectionPosition(int x, int y) {
+	auto renderOffsetX = parentNode->getChildrenRenderOffsetX();
+	auto renderOffsetY = parentNode->getChildrenRenderOffsetY();
+	selectionX = renderOffsetX + x;
+	selectionY = renderOffsetY + y;
+}
+
 void GUIStyledTextNode::removeText(int32_t idx, int32_t count) {
 	text.remove(idx, count);
 	auto adaptNextStyles = false;
@@ -898,6 +905,8 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 	urlAreas.clear();
 
 	//
+	auto findNewSelectionIndex = selectionX != -1 && selectionY != -1;
+	if (findNewSelectionIndex == true) cursorIndex = -1;
 	auto maxLineWidth = getAutoWidth();
 	auto textStyleIdx = startTextStyleIdx;
 	auto boundTexture = -1;
@@ -1021,6 +1030,7 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 						currentColor = textStyle->color;
 						styleURL = textStyle->url;
 					}
+					// image rendering
 					if (textStyle != nullptr && textStyle->image != nullptr) {
 						// draw
 						guiRenderer->render();
@@ -1106,6 +1116,7 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 						//
 						x+= textStyle->width;
 					} else {
+						// text rendering
 						// do line break
 						if (k == lineConstraints[lineIdx].idx) {
 							// flush current URL

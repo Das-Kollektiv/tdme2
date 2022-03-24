@@ -86,6 +86,14 @@ void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 	if (node == styledTextNode) {
 		if (styledTextNode->isEventBelongingToNode(event, nodeMousePosition) == true) {
 			switch(event->getType()) {
+				/*
+				case GUIMouseEvent::MOUSEEVENT_PRESSED:
+				case GUIMouseEvent::MOUSEEVENT_DRAGGED:
+					{
+						styledTextNode->setSelectionPosition(event->getX(), event->getY());
+						break;
+					}
+				*/
 				case GUIMouseEvent::MOUSEEVENT_MOVED:
 				case GUIMouseEvent::MOUSEEVENT_RELEASED:
 					{
@@ -261,18 +269,17 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 						} else {
 							if (selectionIndex == -1) selectionIndex = index;
 						}
-						// find index of previous newline and store difference
-						auto& text = styledTextNode->getText();
-						auto previousNewLineIndex = index;
-						while (previousNewLineIndex >= 0 && text.charAt(previousNewLineIndex) != '\n') previousNewLineIndex--;
-						previousNewLineIndex = Math::min(previousNewLineIndex + 1, text.size() - 1);
-						auto lineIndex = index - previousNewLineIndex;
+						// find index of current line newline and store difference
+						auto lineNewLineIndex = styledTextNode->getPreviousNewLine(index) + (index == 0?0:1);
+						// current line index
+						auto lineIndex = Math::max(index - lineNewLineIndex, 0);
 						// find index of previous newline and iterate to difference if possible
-						auto previous2NewLineIndex = Math::max(previousNewLineIndex - 2, 0);
-						while (previous2NewLineIndex >= 0 && text.charAt(previous2NewLineIndex) != '\n') previous2NewLineIndex--;
-						previous2NewLineIndex = Math::min(previous2NewLineIndex + 1, text.size() - 1);
+						auto previousNewLineIndex = styledTextNode->getPreviousNewLine(styledTextNode->getPreviousNewLine(index - 1) - 1);
+						if (previousNewLineIndex != 0) previousNewLineIndex++;
+						// find next index of previous 2 newline as upper bound
+						auto nextNewLineIndex = styledTextNode->getNextNewLine(previousNewLineIndex);
 						//
-						index = Math::max(previous2NewLineIndex + lineIndex, 0);
+						index = Math::min(previousNewLineIndex + lineIndex, nextNewLineIndex);
 						styledTextNode->scrollToIndex();
 						//
 						resetCursorMode();
@@ -287,21 +294,16 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 						} else {
 							if (selectionIndex == -1) selectionIndex = index;
 						}
-						// find index of previous newline and store difference
-						auto& text = styledTextNode->getText();
-						auto previousNewLineIndex = index;
-						while (previousNewLineIndex >= 0 && text.charAt(previousNewLineIndex) != '\n') previousNewLineIndex--;
-						previousNewLineIndex = Math::min(previousNewLineIndex + 1, text.size() - 1);
-						auto lineIndex = index - previousNewLineIndex;
+						// find index of current line newline and store difference
+						auto lineNewLineIndex = styledTextNode->getPreviousNewLine(index) + (index == 0?0:1);
+						// current line index
+						auto lineIndex = Math::max(index - lineNewLineIndex, 0);
 						// find index of next newline
-						auto nextNewLineIndex = Math::min(text.charAt(index) == '\n'?index + 1:index, text.size() - 1);
-						while (nextNewLineIndex < text.size() && text.charAt(nextNewLineIndex) != '\n') nextNewLineIndex++;
-						nextNewLineIndex = Math::min(nextNewLineIndex + 1, text.size() - 1);
+						auto nextNewLineIndex = styledTextNode->getNextNewLine(index);
 						// find index of next * 2 newline as upper bound
-						auto next2NewLineIndex = Math::min(nextNewLineIndex + 1, text.size() - 1);
-						while (next2NewLineIndex < text.size() && text.charAt(next2NewLineIndex) != '\n') next2NewLineIndex++;
+						auto next2NewLineIndex = styledTextNode->getNextNewLine(nextNewLineIndex + 1);
 						// iterate to difference if possible
-						index = Math::min(nextNewLineIndex + lineIndex, next2NewLineIndex - 1);
+						index = Math::min(nextNewLineIndex + 1 + lineIndex, next2NewLineIndex);
 						//
 						styledTextNode->scrollToIndex();
 						resetCursorMode();
@@ -433,12 +435,9 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 						if (keyControl == true) {
 							index = 0;
 						} else {
-							// find index of previous newline and store difference
-							auto& text = styledTextNode->getText();
-							auto previousNewLineIndex = Math::max(text.charAt(index) == '\n'?index - 1:index, 0);
-							while (previousNewLineIndex >= 0 && text.charAt(previousNewLineIndex) != '\n') previousNewLineIndex--;
-							previousNewLineIndex = Math::min(previousNewLineIndex + 1, text.size() - 1);
-							index = previousNewLineIndex;
+							// find index of previous newline
+							index = styledTextNode->getPreviousNewLine(index - 1);
+							if (index != 0) index++;
 						}
 						styledTextNode->scrollToIndex();
 					}
@@ -456,10 +455,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 							index = styledTextNode->getTextSize() - 1;
 						} else {
 							// find index of next newline
-							auto& text = styledTextNode->getText();
-							auto nextNewLineIndex = index;
-							while (nextNewLineIndex < text.size() && text.charAt(nextNewLineIndex) != '\n') nextNewLineIndex++;
-							index = nextNewLineIndex;
+							index = styledTextNode->getNextNewLine(index);;
 						}
 						styledTextNode->scrollToIndex();
 					}

@@ -105,6 +105,8 @@ private:
 	};
 	vector<URLArea> urlAreas;
 
+	int selectionX { -1 };
+	int selectionY { -1 };
 	GUIColor selectionTextColor { "#a0a0a0" };
 	GUIColor selectionBackgroundColor { "#5050d0" };
 
@@ -123,6 +125,11 @@ private:
 	inline void setEditMode(bool editMode) {
 		this->editMode = editMode;
 	}
+
+	/**
+	 * Set selection mouse position
+	 */
+	void setSelectionPosition(int x, int y);
 
 	/**
 	 * @return text size
@@ -229,6 +236,31 @@ private:
 	 * @param textStyleIdx text style index to start with
 	 */
 	void determineNextLineConstraints(int& i, int charEndIdx, int textStyleIdx);
+
+	/**
+	 * Get previous new line
+	 * @param index index
+	 */
+	inline int getPreviousNewLine(int index) {
+		// find index of previous newline and store difference
+		auto previousNewLineIndex = index;
+		while (previousNewLineIndex >= 0 && text.charAt(previousNewLineIndex) != '\n') previousNewLineIndex--;
+		previousNewLineIndex = Math::max(previousNewLineIndex, 0);
+		return previousNewLineIndex;
+	}
+
+	/**
+	 * Get next newline
+	 * @param index index
+	 */
+	inline int getNextNewLine(int index) {
+		// find index of next newline
+		auto nextNewLineIndex = index;
+		while (nextNewLineIndex < text.size() && text.charAt(nextNewLineIndex) != '\n') nextNewLineIndex++;
+		nextNewLineIndex = Math::min(nextNewLineIndex, text.size() - 1);
+		return nextNewLineIndex;
+	}
+
 protected:
 	/**
 	 * Constructor
