@@ -99,11 +99,18 @@ GUIStyledTextNode::GUIStyledTextNode(
 	setText(text);
 }
 
-void GUIStyledTextNode::setSelectionPosition(int x, int y) {
+void GUIStyledTextNode::setIndexMousePosition(int x, int y) {
 	auto renderOffsetX = parentNode->getChildrenRenderOffsetX();
 	auto renderOffsetY = parentNode->getChildrenRenderOffsetY();
-	selectionX = renderOffsetX + x;
-	selectionY = renderOffsetY + y;
+	indexMousePositionX = renderOffsetX + x;
+	indexMousePositionY = renderOffsetY + y;
+}
+
+void GUIStyledTextNode::setSelectionIndexMousePosition(int x, int y) {
+	auto renderOffsetX = parentNode->getChildrenRenderOffsetX();
+	auto renderOffsetY = parentNode->getChildrenRenderOffsetY();
+	selectionIndexMousePositionX = renderOffsetX + x;
+	selectionIndexMousePositionY = renderOffsetY + y;
 }
 
 void GUIStyledTextNode::removeText(int32_t idx, int32_t count) {
@@ -894,8 +901,8 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 	auto cursorMode = GUIStyledTextNodeController::CURSORMODE_HIDE;
 	auto cursorIndex = -1;
 	auto cursorSelectionIndex = -1;
+	auto styledTextController = required_dynamic_cast<GUIStyledTextNodeController*>(controller);
 	if (editMode == true) {
-		auto styledTextController = required_dynamic_cast<GUIStyledTextNodeController*>(controller);
 		cursorMode = styledTextController->getCursorMode();
 		cursorIndex = styledTextController->getIndex();
 		cursorSelectionIndex = styledTextController->getSelectionIndex();
@@ -904,9 +911,15 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 	//
 	urlAreas.clear();
 
+	// do we have a mouse x and y index position
+	auto findNewIndex = editMode == true && indexMousePositionX != -1 && indexMousePositionY != -1;
+	if (findNewIndex == true) cursorIndex = -1;
+
+	// do we have a mouse x and y selection index position
+	auto findNewSelectionIndex = editMode == true && findNewIndex == false && selectionIndexMousePositionX != -1 && selectionIndexMousePositionY != -1;
+	if (findNewSelectionIndex == true) cursorSelectionIndex = -1;
+
 	//
-	auto findNewSelectionIndex = selectionX != -1 && selectionY != -1;
-	if (findNewSelectionIndex == true) cursorIndex = -1;
 	auto maxLineWidth = getAutoWidth();
 	auto textStyleIdx = startTextStyleIdx;
 	auto boundTexture = -1;
@@ -1177,6 +1190,18 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 							}
 						}
 						if (line[k] == '\n') {
+							// index
+							if (findNewIndex == true &&
+								indexMousePositionY >= y + yIndentTop && indexMousePositionY < y + yIndentTop + lineConstraints[lineIdx].height &&
+								indexMousePositionX >= x + xIndentLeft && indexMousePositionX < Math::max(computedConstraints.width, autoWidth)) {
+								cursorIndex = lineCharIdxs[k];
+							}
+							// selection index
+							if (findNewSelectionIndex == true &&
+								selectionIndexMousePositionY >= y + yIndentTop && selectionIndexMousePositionY < y + yIndentTop + lineConstraints[lineIdx].height &&
+								selectionIndexMousePositionX >= x + xIndentLeft && selectionIndexMousePositionX < Math::max(computedConstraints.width, autoWidth)) {
+								cursorSelectionIndex = lineCharIdxs[k];
+							}
 							// draw cursor
 							if (cursorMode == GUIStyledTextNodeController::CURSORMODE_SHOW && cursorIndex == lineCharIdxs[k]) {
 								float left = x + xIndentLeft;
@@ -1212,12 +1237,27 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 							auto characterCount = line[k] == '\t'?tabSize:1;
 							auto character = currentFont->getCharacter(line[k] == '\t'?' ':line[k]);
 							if (character != nullptr) {
+								// next x advance
+								auto xAdvance = line[k] == '\t'?tabSize * character->getXAdvance():character->getXAdvance();
+
+								// index
+								if (findNewIndex == true &&
+									indexMousePositionY >= y + yIndentTop && indexMousePositionY < y + yIndentTop + lineConstraints[lineIdx].height &&
+									indexMousePositionX >= x + xIndentLeft && indexMousePositionX < x + xIndentLeft + xAdvance) {
+									cursorIndex = lineCharIdxs[k];
+								}
+								// selection index
+								if (findNewSelectionIndex == true &&
+									selectionIndexMousePositionY >= y + yIndentTop && selectionIndexMousePositionY < y + yIndentTop + lineConstraints[lineIdx].height &&
+									selectionIndexMousePositionX >= x + xIndentLeft && selectionIndexMousePositionX < x + xIndentLeft + xAdvance) {
+									cursorSelectionIndex = lineCharIdxs[k];
+								}
+
 								//
 								auto hasSelection = false;
-								if (editMode == true && cursorSelectionIndex != -1) {
-									auto selectionStartIndex = Math::min(cursorIndex, cursorSelectionIndex);
-									auto selectionEndIndex = Math::max(cursorIndex, cursorSelectionIndex);
-									if (lineCharIdxs[k] >= selectionStartIndex && lineCharIdxs[k] < selectionEndIndex) {
+								if (editMode == true && (cursorSelectionIndex != -1 || findNewSelectionIndex == true)) {
+									if ((cursorSelectionIndex != -1 && lineCharIdxs[k] >= Math::min(cursorIndex, cursorSelectionIndex) && lineCharIdxs[k] < Math::max(cursorIndex, cursorSelectionIndex)) ||
+										(cursorSelectionIndex == -1 && lineCharIdxs[k] >= cursorIndex)) {
 										// TODO: optimize me render wise, each character with background has now 2 rendercalls, lol
 										guiRenderer->render();
 										boundTexture = currentFont->getTextureId();
@@ -1309,12 +1349,28 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 									}
 									currentURL = styleURL;
 								}
+
 								// advance X
-								x+= line[k] == '\t'?tabSize * character->getXAdvance():character->getXAdvance();
+								x+= xAdvance;
 							}
 						}
 					}
 				}
+
+				// index
+				if (findNewIndex == true &&
+					indexMousePositionY >= y + yIndentTop && indexMousePositionY < y + yIndentTop + lineConstraints[lineIdx].height &&
+					indexMousePositionX >= x + xIndentLeft && indexMousePositionX < Math::max(computedConstraints.width, autoWidth)) {
+					cursorIndex = lineCharIdxs[lineCharIdxs.size() - 1];
+				}
+
+				// selection index
+				if (findNewSelectionIndex == true &&
+					selectionIndexMousePositionY >= y + yIndentTop && selectionIndexMousePositionY < y + yIndentTop + lineConstraints[lineIdx].height &&
+					selectionIndexMousePositionX >= x + xIndentLeft && selectionIndexMousePositionX < Math::max(computedConstraints.width, autoWidth)) {
+					cursorSelectionIndex = lineCharIdxs[lineCharIdxs.size() - 1];
+				}
+
 				//
 				if (lineConstraints[lineConstraints.size() - 1].idx == line.size()) {
 					y+= lineConstraints[lineConstraints.size() - 1].height;
@@ -1344,6 +1400,19 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 
 	//
 	guiRenderer->bindTexture(0);
+
+	// index
+	if (findNewIndex == true) {
+		if (cursorIndex != -1) styledTextController->setIndex(cursorIndex);
+		indexMousePositionX = -1;
+		indexMousePositionY = -1;
+	}
+	// selection index
+	if (findNewSelectionIndex == true) {
+		if (cursorSelectionIndex != -1) styledTextController->setSelectionIndex(cursorSelectionIndex);
+		selectionIndexMousePositionX = -1;
+		selectionIndexMousePositionY = -1;
+	}
 }
 
 void GUIStyledTextNode::unsetStyles() {

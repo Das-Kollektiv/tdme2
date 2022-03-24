@@ -64,7 +64,7 @@ void GUIStyledInputController::handleMouseEvent(GUINode* node, GUIMouseEvent* ev
 	if ((node == this->node || node == styledTextNodeController->getNode()) &&
 		node->isEventBelongingToNode(event) && event->getButton() == MOUSE_BUTTON_LEFT) {
 		event->setProcessed(true);
-		if (event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
+		if (event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
 			node->getScreenNode()->getGUI()->setFoccussedNode(required_dynamic_cast<GUIElementNode*>(this->node));
 		}
 	}

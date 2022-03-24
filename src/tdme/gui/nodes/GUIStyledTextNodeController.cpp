@@ -86,15 +86,27 @@ void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 	if (node == styledTextNode) {
 		if (styledTextNode->isEventBelongingToNode(event, nodeMousePosition) == true) {
 			switch(event->getType()) {
-				/*
 				case GUIMouseEvent::MOUSEEVENT_PRESSED:
-				case GUIMouseEvent::MOUSEEVENT_DRAGGED:
 					{
-						styledTextNode->setSelectionPosition(event->getX(), event->getY());
+						// submit to styled text node
+						selectionIndex = -1;
+						styledTextNode->setIndexMousePosition(event->getX(), event->getY());
+						//
+						resetCursorMode();
+						//
+						event->setProcessed(true);
 						break;
 					}
-				*/
-				case GUIMouseEvent::MOUSEEVENT_MOVED:
+				case GUIMouseEvent::MOUSEEVENT_DRAGGED:
+					{
+						// submit to styled text node
+						styledTextNode->setSelectionIndexMousePosition(event->getX(), event->getY());
+						//
+						resetCursorMode();
+						//
+						event->setProcessed(true);
+						break;
+					}
 				case GUIMouseEvent::MOUSEEVENT_RELEASED:
 					{
 						// find URL area that had a hit and setup corresponding cursor

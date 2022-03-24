@@ -105,8 +105,10 @@ private:
 	};
 	vector<URLArea> urlAreas;
 
-	int selectionX { -1 };
-	int selectionY { -1 };
+	int indexMousePositionX { -1 };
+	int indexMousePositionY { -1 };
+	int selectionIndexMousePositionX { -1 };
+	int selectionIndexMousePositionY { -1 };
 	GUIColor selectionTextColor { "#a0a0a0" };
 	GUIColor selectionBackgroundColor { "#5050d0" };
 
@@ -127,9 +129,14 @@ private:
 	}
 
 	/**
-	 * Set selection mouse position
+	 * Set index mouse position
 	 */
-	void setSelectionPosition(int x, int y);
+	void setIndexMousePosition(int x, int y);
+
+	/**
+	 * Set selection index mouse position
+	 */
+	void setSelectionIndexMousePosition(int x, int y);
 
 	/**
 	 * @return text size
