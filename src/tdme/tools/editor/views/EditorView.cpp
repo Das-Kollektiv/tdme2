@@ -112,7 +112,8 @@ void EditorView::handleInputEvents()
 		for (auto event: Engine::getInstance()->getGUI()->getMouseEvents()) {
 			auto eventX = (event.getXUnscaled() - left + offsetX) / xScale;
 			auto eventY = (event.getYUnscaled() - top + offsetY) / yScale;
-			if (eventX < 0 || eventX >= width || eventY < 0 || eventY >= height) continue;
+			if ((eventX < 0 || eventX >= width || eventY < 0 || eventY >= height) &&
+				event.getType() != GUIMouseEvent::MOUSEEVENT_RELEASED) continue;
 			event.setX(eventX);
 			event.setY(eventY);
 			event.setXUnscaled(eventX);

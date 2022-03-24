@@ -68,6 +68,9 @@ private:
 	int index { 0 };
 	int selectionIndex { -1 };
 	vector<ChangeListener*> changeListeners;
+	enum ScrollMode { SCROLLMODE_NONE, SCROLLMODE_UP, SCROLLMODE_DOWN };
+	ScrollMode scrollMode { SCROLLMODE_NONE };
+	bool dragging { false };
 
 	/**
 	 * @return index

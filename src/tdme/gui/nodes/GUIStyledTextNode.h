@@ -13,6 +13,7 @@
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/Exception.h>
+#include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MutableString.h>
 
 using std::string;
@@ -33,6 +34,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::utilities::Exception;
+using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 
 /**
@@ -105,10 +107,11 @@ private:
 	};
 	vector<URLArea> urlAreas;
 
-	int indexMousePositionX { -1 };
-	int indexMousePositionY { -1 };
-	int selectionIndexMousePositionX { -1 };
-	int selectionIndexMousePositionY { -1 };
+	static constexpr int MOUSEPOSITION_NONE { Integer::MIN_VALUE };
+	int indexMousePositionX { MOUSEPOSITION_NONE };
+	int indexMousePositionY { MOUSEPOSITION_NONE };
+	int selectionIndexMousePositionX { MOUSEPOSITION_NONE };
+	int selectionIndexMousePositionY { MOUSEPOSITION_NONE };
 	GUIColor selectionTextColor { "#a0a0a0" };
 	GUIColor selectionBackgroundColor { "#5050d0" };
 
@@ -189,7 +192,17 @@ private:
 	/**
 	 * Set scroll to index
 	 */
+	void scrollToIndex(int index);
+
+	/**
+	 * Set scroll to index
+	 */
 	void scrollToIndex();
+
+	/**
+	 * Set scroll to selection index
+	 */
+	void scrollToSelectionIndex();
 
 	/**
 	 * Do page up

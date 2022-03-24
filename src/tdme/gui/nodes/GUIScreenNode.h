@@ -507,8 +507,15 @@ public:
 	void delegateUnfocus(GUIElementNode* node);
 
 	/**
+	 * @return if haveing given node registered as tick node
+	 */
+	inline bool hasTickNode(GUINode* node) {
+		return tickNodesById.find(node->getId()) != tickNodesById.end();
+	}
+
+	/**
 	 * Add tick node, registered node controllers will have a tick once per frame
-	 * @param
+	 * @param node node
 	 */
 	inline void addTickNode(GUINode* node) {
 		tickNodesById[node->getId()] = node;
@@ -516,6 +523,7 @@ public:
 
 	/**
 	 * Remove tick node
+	 * @param node node
 	 */
 	inline void removeTickNode(GUINode* node) {
 		tickNodesById.erase(node->getId());

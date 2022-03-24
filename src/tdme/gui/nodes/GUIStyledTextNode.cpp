@@ -100,27 +100,23 @@ GUIStyledTextNode::GUIStyledTextNode(
 }
 
 void GUIStyledTextNode::unsetIndexMousePosition() {
-	indexMousePositionX = -1;
-	indexMousePositionY = -1;
+	indexMousePositionX = MOUSEPOSITION_NONE;
+	indexMousePositionY = MOUSEPOSITION_NONE;
 }
 
 void GUIStyledTextNode::setIndexMousePosition(int x, int y) {
-	auto renderOffsetX = parentNode->getChildrenRenderOffsetX();
-	auto renderOffsetY = parentNode->getChildrenRenderOffsetY();
-	indexMousePositionX = renderOffsetX + x;
-	indexMousePositionY = renderOffsetY + y;
+	indexMousePositionX = x;
+	indexMousePositionY = y;
 }
 
 void GUIStyledTextNode::unsetSelectionIndexMousePosition() {
-	selectionIndexMousePositionX = -1;
-	selectionIndexMousePositionY = -1;
+	selectionIndexMousePositionX = MOUSEPOSITION_NONE;
+	selectionIndexMousePositionY = MOUSEPOSITION_NONE;
 }
 
 void GUIStyledTextNode::setSelectionIndexMousePosition(int x, int y) {
-	auto renderOffsetX = parentNode->getChildrenRenderOffsetX();
-	auto renderOffsetY = parentNode->getChildrenRenderOffsetY();
-	selectionIndexMousePositionX = renderOffsetX + x;
-	selectionIndexMousePositionY = renderOffsetY + y;
+	selectionIndexMousePositionX = x;
+	selectionIndexMousePositionY = y;
 }
 
 void GUIStyledTextNode::removeText(int32_t idx, int32_t count) {
@@ -227,13 +223,11 @@ void GUIStyledTextNode::insertText(int32_t idx, const string& s) {
 	startTextStyleIdx = -1;
 }
 
-void GUIStyledTextNode::scrollToIndex() {
+void GUIStyledTextNode::scrollToIndex(int cursorIndex) {
 	// no font, exit
 	if (font == nullptr) return;
 
 	//
-	auto styledTextController = required_dynamic_cast<GUIStyledTextNodeController*>(controller);
-	auto cursorIndex = styledTextController->getIndex();
 	auto yBefore = 0.0f;
 	auto y = 0.0f;
 	auto textStyleIdx = 0;
@@ -279,6 +273,24 @@ void GUIStyledTextNode::scrollToIndex() {
 		parentOffsetsChanged = true;
 		parentNode->setChildrenRenderOffsetY(y - parentNode->getComputedConstraints().height);
 	}
+}
+
+void GUIStyledTextNode::scrollToIndex() {
+	// no font, exit
+	if (font == nullptr) return;
+
+	//
+	auto styledTextController = required_dynamic_cast<GUIStyledTextNodeController*>(controller);
+	scrollToIndex(styledTextController->getIndex());
+}
+
+void GUIStyledTextNode::scrollToSelectionIndex() {
+	// no font, exit
+	if (font == nullptr) return;
+
+	//
+	auto styledTextController = required_dynamic_cast<GUIStyledTextNodeController*>(controller);
+	scrollToIndex(styledTextController->getSelectionIndex());
 }
 
 int GUIStyledTextNode::doPageUp() {
@@ -922,12 +934,24 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 	urlAreas.clear();
 
 	// do we have a mouse x and y index position
-	auto findNewIndex = editMode == true && indexMousePositionX != -1 && indexMousePositionY != -1;
-	if (findNewIndex == true) cursorIndex = -1;
+	auto indexMousePositionX = this->indexMousePositionX;
+	auto indexMousePositionY = this->indexMousePositionY;
+	auto findNewIndex = editMode == true && indexMousePositionX != MOUSEPOSITION_NONE && indexMousePositionY != MOUSEPOSITION_NONE;
+	if (findNewIndex == true) {
+		cursorIndex = -1;
+		indexMousePositionX+= parentNode->getChildrenRenderOffsetX();
+		indexMousePositionY+= parentNode->getChildrenRenderOffsetY();
+	}
 
 	// do we have a mouse x and y selection index position
-	auto findNewSelectionIndex = editMode == true && findNewIndex == false && selectionIndexMousePositionX != -1 && selectionIndexMousePositionY != -1;
-	if (findNewSelectionIndex == true) cursorSelectionIndex = -1;
+	auto selectionIndexMousePositionX = this->selectionIndexMousePositionX;
+	auto selectionIndexMousePositionY = this->selectionIndexMousePositionY;
+	auto findNewSelectionIndex = editMode == true && findNewIndex == false && selectionIndexMousePositionX != MOUSEPOSITION_NONE && selectionIndexMousePositionY != MOUSEPOSITION_NONE;
+	if (findNewSelectionIndex == true) {
+		cursorSelectionIndex = -1;
+		selectionIndexMousePositionX+= parentNode->getChildrenRenderOffsetX();
+		selectionIndexMousePositionY+= parentNode->getChildrenRenderOffsetY();
+	}
 
 	//
 	auto maxLineWidth = getAutoWidth();

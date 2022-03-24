@@ -81,41 +81,51 @@ void GUIStyledTextNodeController::postLayout()
 
 void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
+	auto released = false;
 	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
 	Vector2 nodeMousePosition;
 	if (node == styledTextNode) {
 		if (styledTextNode->isEventBelongingToNode(event, nodeMousePosition) == true) {
+			nodeMousePosition.sub(Vector2(styledTextNode->getParentNode()->getChildrenRenderOffsetX(), styledTextNode->getParentNode()->getChildrenRenderOffsetY()));
 			switch(event->getType()) {
 				case GUIMouseEvent::MOUSEEVENT_PRESSED:
 					{
 						// submit to styled text node
 						selectionIndex = -1;
-						styledTextNode->setIndexMousePosition(event->getX(), event->getY());
+						styledTextNode->setIndexMousePosition(nodeMousePosition.getX(), nodeMousePosition.getY());
 						//
 						resetCursorMode();
 						//
 						event->setProcessed(true);
-						break;
-					}
-				case GUIMouseEvent::MOUSEEVENT_DRAGGED:
-					{
-						// submit to styled text node
-						styledTextNode->setSelectionIndexMousePosition(event->getX(), event->getY());
 						//
-						resetCursorMode();
-						//
-						event->setProcessed(true);
 						break;
 					}
 				case GUIMouseEvent::MOUSEEVENT_RELEASED:
 					{
+						//
 						styledTextNode->unsetIndexMousePosition();
 						styledTextNode->unsetSelectionIndexMousePosition();
-						if (selectionIndex != -1) {
+
+						//
+						styledTextNode->getScreenNode()->removeTickNode(styledTextNode);
+
+						//
+						if (dragging == true && selectionIndex != -1) {
 							auto _index = index;
 							index = selectionIndex;
 							selectionIndex = _index;
 						}
+
+						//
+						released = true;
+
+						//
+						scrollMode = SCROLLMODE_NONE;
+						//
+						styledTextNode->scrollToIndex();
+						//
+						event->setProcessed(true);
+
 						// find URL area that had a hit and setup corresponding cursor
 						auto& urlAreas = styledTextNode->getURLAreas();
 						const GUIStyledTextNode::URLArea* urlAreaHit = nullptr;
@@ -152,6 +162,74 @@ void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 			}
 		} else {
 			if (Application::getMouseCursor() != MOUSE_CURSOR_ENABLED) Application::setMouseCursor(MOUSE_CURSOR_ENABLED);
+		}
+
+		//
+		// dragging, releasing
+		switch(event->getType()) {
+			case GUIMouseEvent::MOUSEEVENT_DRAGGED:
+				{
+					//
+					dragging = true;
+					//
+					if (nodeMousePosition.getY() < 50) {
+						scrollMode = SCROLLMODE_UP;
+						// unset
+						styledTextNode->unsetIndexMousePosition();
+						styledTextNode->unsetSelectionIndexMousePosition();
+						//
+						styledTextNode->getScreenNode()->addTickNode(styledTextNode);
+					} else
+					if (nodeMousePosition.getY() > styledTextNode->getParentNode()->getComputedConstraints().height - 50) {
+						scrollMode = SCROLLMODE_DOWN;
+						// unset
+						styledTextNode->unsetIndexMousePosition();
+						styledTextNode->unsetSelectionIndexMousePosition();
+						//
+						styledTextNode->getScreenNode()->addTickNode(styledTextNode);
+					} else {
+						styledTextNode->getScreenNode()->removeTickNode(styledTextNode);
+						//
+						scrollMode = SCROLLMODE_NONE;
+						// submit to styled text node
+						styledTextNode->setSelectionIndexMousePosition(nodeMousePosition.getX(), nodeMousePosition.getY());
+					}
+					//
+					resetCursorMode();
+					//
+					event->setProcessed(true);
+					break;
+				}
+			case GUIMouseEvent::MOUSEEVENT_RELEASED:
+				{
+					if (released == false) {
+						//
+						styledTextNode->unsetIndexMousePosition();
+						styledTextNode->unsetSelectionIndexMousePosition();
+
+						//
+						styledTextNode->getScreenNode()->removeTickNode(styledTextNode);
+
+						//
+						if (dragging == true && selectionIndex != -1) {
+							auto _index = index;
+							index = selectionIndex;
+							selectionIndex = _index;
+						}
+
+						//
+						scrollMode = SCROLLMODE_NONE;
+						//
+						styledTextNode->scrollToIndex();
+						//
+						event->setProcessed(true);
+						//
+						dragging = false;
+					}
+					break;
+				}
+			default:
+				break;
 		}
 	}
 }
@@ -487,6 +565,36 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 
 void GUIStyledTextNodeController::tick()
 {
+	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
+	if (scrollMode == SCROLLMODE_UP) {
+		// find index of current line newline and store difference
+		auto lineNewLineIndex = styledTextNode->getPreviousNewLine(selectionIndex) + (selectionIndex == 0?0:1);
+		// current line index
+		auto lineIndex = Math::max(selectionIndex - lineNewLineIndex, 0);
+		// find index of previous newline and iterate to difference if possible
+		auto previousNewLineIndex = styledTextNode->getPreviousNewLine(styledTextNode->getPreviousNewLine(selectionIndex - 1) - 1);
+		if (previousNewLineIndex != 0) previousNewLineIndex++;
+		// find next index of previous 2 newline as upper bound
+		auto nextNewLineIndex = styledTextNode->getNextNewLine(previousNewLineIndex);
+		//
+		selectionIndex = Math::min(previousNewLineIndex + lineIndex, nextNewLineIndex);
+		//
+		styledTextNode->scrollToSelectionIndex();
+	} else
+	if (scrollMode == SCROLLMODE_DOWN) {
+		// find index of current line newline and store difference
+		auto lineNewLineIndex = styledTextNode->getPreviousNewLine(selectionIndex) + (selectionIndex == 0?0:1);
+		// current line index
+		auto lineIndex = Math::max(selectionIndex - lineNewLineIndex, 0);
+		// find index of next newline
+		auto nextNewLineIndex = styledTextNode->getNextNewLine(selectionIndex);
+		// find index of next * 2 newline as upper bound
+		auto next2NewLineIndex = styledTextNode->getNextNewLine(nextNewLineIndex + 1);
+		// iterate to difference if possible
+		selectionIndex = Math::min(nextNewLineIndex + 1 + lineIndex, next2NewLineIndex);
+		//
+		styledTextNode->scrollToSelectionIndex();
+	}
 }
 
 void GUIStyledTextNodeController::onFocusGained()
