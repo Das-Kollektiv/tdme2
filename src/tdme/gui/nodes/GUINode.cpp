@@ -998,10 +998,8 @@ bool GUINode::isEventBelongingToNode(GUIMouseEvent* event, Vector2& position)
 		eventX < computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.width &&
 		eventY >= computedConstraints.top + computedConstraints.alignmentTop &&
 		eventY < computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.height;
-	if (belongsToElement == true) {
-		position[0] = static_cast<int>((eventX - (computedConstraints.left + computedConstraints.alignmentLeft)));
-		position[1] = static_cast<int>((eventY - (computedConstraints.top + computedConstraints.alignmentTop)));
-	}
+	position[0] = static_cast<int>((eventX - (computedConstraints.left + computedConstraints.alignmentLeft)));
+	position[1] = static_cast<int>((eventY - (computedConstraints.top + computedConstraints.alignmentTop)));
 	return belongsToElement;
 }
 

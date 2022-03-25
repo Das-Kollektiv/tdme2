@@ -536,7 +536,7 @@ public:
 	/**
 	 * Is event belonging to node
 	 * @param event event
-	 * @param position
+	 * @param position in node coordinate space
 	 * @return boolean
 	 */
 	bool isEventBelongingToNode(GUIMouseEvent* event, Vector2& position);
@@ -561,7 +561,7 @@ public:
 	 * Get event position clamped to node constraints
 	 * 	TODO: use Vector2 instead of array<float, 2>
 	 * @param event event
-	 * @param position position clamped to node constraints
+	 * @param position position in node coordinate space clamped to node constraints
 	 * @return void
 	 */
 	void getEventNodePosition(GUIMouseEvent* event, Vector2& position);
