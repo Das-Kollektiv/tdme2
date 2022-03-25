@@ -1020,7 +1020,7 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 				float top = y + yIndentTop;
 				float width = lineConstraints[lineIdx].width;
 				float height = lineConstraints[lineIdx].height;
-				if (guiRenderer->isQuadVisible(
+				if (guiRenderer->isQuadVisible2(
 						((left) / (screenWidth / 2.0f)) - 1.0f,
 						((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
 						((left + width) / (screenWidth / 2.0f)) - 1.0f,
@@ -1223,7 +1223,7 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 								float top = y + yIndentTop;
 								float width = lineConstraints[lineIdx].width;
 								float height = lineConstraints[lineIdx].height;
-								if (guiRenderer->isQuadVisible(
+								if (guiRenderer->isQuadVisible2(
 										((left) / (screenWidth / 2.0f)) - 1.0f,
 										((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
 										((left + width) / (screenWidth / 2.0f)) - 1.0f,

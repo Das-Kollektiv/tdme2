@@ -427,6 +427,31 @@ public:
 	}
 
 	/**
+	 * @return if quad is visible without taking X into account
+	 */
+	inline bool isQuadVisible2(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4) {
+		y1 += renderOffsetY;
+		y3 += renderOffsetY;
+		y1 += guiEffectOffsetY;
+		y3 += guiEffectOffsetY;
+		auto renderAreaTop = this->renderAreaTop;
+		auto renderAreaBottom = this->renderAreaBottom;
+		auto renderAreaRight = this->renderAreaRight;
+		auto renderAreaLeft = this->renderAreaLeft;
+		/*
+		// TODO: This prevented off screen rendering, but does collide with position effects and parent children viewport caches
+		renderAreaTop = Math::min(renderAreaTop + guiEffectOffsetY, SCREEN_TOP);
+		renderAreaBottom = Math::max(renderAreaBottom + guiEffectOffsetY, SCREEN_BOTTOM);
+		renderAreaRight = Math::min(renderAreaRight - guiEffectOffsetX, SCREEN_RIGHT);
+		renderAreaLeft = Math::max(renderAreaLeft - guiEffectOffsetX, SCREEN_LEFT);
+		*/
+		renderAreaTop = renderAreaTop + guiEffectOffsetY;
+		renderAreaBottom = renderAreaBottom + guiEffectOffsetY;
+		if (y3 > renderAreaTop) return false;
+		if (y1 < renderAreaBottom) return false;
+		return true;
+	}
+	/**
 	 * Add quad
 	 * Note: quad vertices order
 	 * 1    2
