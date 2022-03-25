@@ -8,6 +8,7 @@
 #include <tdme/application/Application.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
+#include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/GUI.h>
@@ -77,6 +78,24 @@ void GUIStyledTextNodeController::dispose()
 
 void GUIStyledTextNodeController::postLayout()
 {
+	// extend styledTextNode auto width to parent width if this is larger
+	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
+	if (styledTextNode->getRequestsConstraints().widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
+		auto& styledTextNodeBorder = styledTextNode->getBorder();
+		auto& styledTextNodePadding = styledTextNode->getPadding();
+		auto styledTextNodeAutoWidth = styledTextNode->getComputedConstraints().width;
+		auto parentNode = styledTextNode->getParentNode();
+		auto parentNodeWidth = parentNode->getComputedConstraints().width;
+		auto& parentNodeBorder = parentNode->getBorder();
+		auto& parentNodePadding = parentNode->getPadding();
+		if (parentNodeWidth > styledTextNodeAutoWidth) {
+			styledTextNode->setMinWidth(
+				parentNodeWidth
+					- (parentNodeBorder.left + parentNodeBorder.right + parentNodePadding.left + parentNodePadding.right)
+					- (styledTextNodeBorder.left + styledTextNodeBorder.right + styledTextNodePadding.left + styledTextNodePadding.right)
+			);
+		}
+	}
 }
 
 void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)

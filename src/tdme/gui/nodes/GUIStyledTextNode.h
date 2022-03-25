@@ -67,8 +67,9 @@ private:
 	GUIColor color;
 	MutableString text;
 
-	int autoWidth;
-	int autoHeight;
+	int autoWidth { 0 };
+	int autoHeight { 0 };
+	int minWidth { -1 };
 
 	bool parentOffsetsChanged;
 	float parentXOffsetLast;
@@ -289,6 +290,13 @@ private:
 		while (nextNewLineIndex < text.size() && text.charAt(nextNewLineIndex) != '\n') nextNewLineIndex++;
 		nextNewLineIndex = Math::min(nextNewLineIndex, text.size() - 1);
 		return nextNewLineIndex;
+	}
+
+	/**
+	 * Set auto width
+	 */
+	inline void setMinWidth(int minWidth) {
+		this->minWidth = minWidth;
 	}
 
 protected:

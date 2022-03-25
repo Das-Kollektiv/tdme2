@@ -443,7 +443,7 @@ bool GUIStyledTextNode::isContentNode()
 int GUIStyledTextNode::getContentWidth()
 {
 	if (requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
-		return font != nullptr?autoWidth + border.left + border.right + padding.left + padding.right:0;
+		return font != nullptr?Math::max(autoWidth, minWidth) + border.left + border.right + padding.left + padding.right:0;
 	} else {
 		return computedConstraints.width;
 	}
@@ -1253,13 +1253,13 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 							// 	index
 							if (findNewIndex == true &&
 								indexMousePositionY >= y + yIndentTop && indexMousePositionY < y + yIndentTop + lineConstraints[lineIdx].height &&
-								indexMousePositionX >= x + xIndentLeft && indexMousePositionX < Math::max(computedConstraints.width, autoWidth)) {
+								indexMousePositionX >= x + xIndentLeft) {
 								cursorIndex = lineCharIdxs[k];
 							}
 							// 	selection index
 							if (findNewSelectionIndex == true &&
 								selectionIndexMousePositionY >= y + yIndentTop && selectionIndexMousePositionY < y + yIndentTop + lineConstraints[lineIdx].height &&
-								selectionIndexMousePositionX >= x + xIndentLeft && selectionIndexMousePositionX < Math::max(computedConstraints.width, autoWidth)) {
+								selectionIndexMousePositionX >= x + xIndentLeft) {
 								cursorSelectionIndex = lineCharIdxs[k];
 							}
 							// draw cursor
@@ -1410,14 +1410,14 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 				// 	index
 				if (findNewIndex == true &&
 					indexMousePositionY >= y + yIndentTop && indexMousePositionY < y + yIndentTop + lineConstraints[lineIdx].height &&
-					indexMousePositionX >= x + xIndentLeft && indexMousePositionX < Math::max(computedConstraints.width, autoWidth)) {
+					indexMousePositionX >= x + xIndentLeft) {
 					cursorIndex = lineCharIdxs[lineCharIdxs.size() - 1];
 				}
 
 				// 	selection index
 				if (findNewSelectionIndex == true &&
 					selectionIndexMousePositionY >= y + yIndentTop && selectionIndexMousePositionY < y + yIndentTop + lineConstraints[lineIdx].height &&
-					selectionIndexMousePositionX >= x + xIndentLeft && selectionIndexMousePositionX < Math::max(computedConstraints.width, autoWidth)) {
+					selectionIndexMousePositionX >= x + xIndentLeft) {
 					cursorSelectionIndex = lineCharIdxs[lineCharIdxs.size() - 1];
 				}
 
