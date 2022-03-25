@@ -31,6 +31,7 @@ private:
 	GUIColor preprocessorColor { "#ab7779" };
 
 	struct Language {
+		string name;
 		vector<string> extensions;
 		string commentLine;
 		string commentInlineStart;
@@ -49,6 +50,7 @@ private:
 
 	Language cpp = {
 		// I have taken CPP keywords1+2 from NotePad++, not sure about license
+		.name = "C++",
 		.extensions = {"cpp", "hpp", "h", "c"},
 		.commentLine = "//",
 		.commentInlineStart = "/*",
@@ -63,6 +65,7 @@ private:
 
 	Language glsl = {
 		// see: https://www.lighthouse3d.com/2013/01/notepad-glsl-4-3-syntax-highlight/
+		.name = "GLSL",
 		.extensions = {"glsl", "frag", "vert"},
 		.commentLine = "//",
 		.commentInlineStart = "/*",
