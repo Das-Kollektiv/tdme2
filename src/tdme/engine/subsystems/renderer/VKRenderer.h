@@ -97,6 +97,7 @@ private:
 	static constexpr int DESC_MAX_UNCACHED { COMMANDS_MAX };
 	static constexpr int DESC_MAX_CACHED { 512 }; // TODO: make this dynamic
 	static constexpr int OBJECTS_VERTEX_BUFFER_COUNT { 10 };
+	static constexpr int GUI_VERTEX_BUFFER_COUNT { 4 };
 	static constexpr int POINTS_VERTEX_BUFFER_COUNT { 9 };
 	static constexpr int LINES_VERTEX_BUFFER_COUNT { 4 };
 	static constexpr int COMPUTE_STORAGE_BUFFER_COUNT { 8 };

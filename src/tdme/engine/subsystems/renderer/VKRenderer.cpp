@@ -981,7 +981,7 @@ void VKRenderer::initialize()
 				instanceValidationLayers,
 				instanceLayers
 			);
-			if (validationFound) {
+			if (validationFound == true) {
 				enabledLayerCount = ARRAY_SIZE(instanceValidationLayersAlt1);
 				enabledLayers[0] = "VK_LAYER_LUNARG_standard_validation";
 				validationLayerCount = 1;
@@ -2221,7 +2221,7 @@ void VKRenderer::createRenderProgram(program_type* program) {
 	}
 
 	//
-	if (program->type == PROGRAM_OBJECTS) {
+	if (program->type == PROGRAM_OBJECTS || PROGRAM_GUI) {
 		array<VkDescriptorSetLayout, DESC_MAX_CACHED> descriptorSetLayouts2;
 		descriptorSetLayouts2.fill(program->texturesDescriptorSetLayout);
 		//
@@ -3395,7 +3395,7 @@ bool VKRenderer::linkProgram(int32_t programId)
 	}
 
 	// create programs in terms of ubos and so on
-	if (program.type == PROGRAM_OBJECTS || program.type == PROGRAM_POINTS || program.type == PROGRAM_LINES) {
+	if (program.type == PROGRAM_GUI || program.type == PROGRAM_OBJECTS || program.type == PROGRAM_POINTS || program.type == PROGRAM_LINES) {
 		createRenderProgram(&program);
 	} else
 	if (program.type == PROGRAM_COMPUTE) {
@@ -6473,7 +6473,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, 
 	}
 
 	// buffers
-	vkCmdBindVertexBuffers(drawCommand, 0, OBJECTS_VERTEX_BUFFER_COUNT, currentContext.boundBuffers.data(), currentContext.boundBufferOffsets.data());
+	vkCmdBindVertexBuffers(drawCommand, 0, currentContext.program->type == PROGRAM_GUI?GUI_VERTEX_BUFFER_COUNT:OBJECTS_VERTEX_BUFFER_COUNT, currentContext.boundBuffers.data(), currentContext.boundBufferOffsets.data());
 
 	// draw
 	if (indicesBuffer != VK_NULL_HANDLE) {
