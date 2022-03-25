@@ -131,6 +131,7 @@ public:
 	void uploadIndicesBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, ShortBuffer* data) override;
 	void uploadIndicesBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, IntBuffer* data) override;
 	void bindIndicesBufferObject(int contextIdx, int32_t bufferObjectId) override;
+	void bindSolidColorsBufferObject(int contextIdx, int32_t bufferObjectId) override;
 	void bindTextureCoordinatesBufferObject(int contextIdx, int32_t bufferObjectId) override;
 	void bindVerticesBufferObject(int contextIdx, int32_t bufferObjectId) override;
 	void bindNormalsBufferObject(int contextIdx, int32_t bufferObjectId) override;

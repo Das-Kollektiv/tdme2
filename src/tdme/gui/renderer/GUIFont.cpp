@@ -272,22 +272,19 @@ void GUIFont::drawCharacterBackground(GUIRenderer* guiRenderer, GUICharacter* ch
 		((left) / (screenWidth / 2.0f)) - 1.0f,
 		((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
 		backgroundColor[0], backgroundColor[1], backgroundColor[2], backgroundColor[3],
-		0.0f,
-		1.0f,
+		0.0f, 1.0f,
 		((left + width) / (screenWidth / 2.0f)) - 1.0f,
 		((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
 		backgroundColor[0], backgroundColor[1], backgroundColor[2], backgroundColor[3],
-		1.0f,
-		1.0f,
+		1.0f, 1.0f,
 		((left + width) / (screenWidth / 2.0f)) - 1.0f,
 		((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
 		backgroundColor[0], backgroundColor[1], backgroundColor[2], backgroundColor[3],
-		1.0f,
-		0.0f,
+		1.0f, 0.0f,
 		((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
 		backgroundColor[0], backgroundColor[1], backgroundColor[2], backgroundColor[3],
-		0.0f,
-		0.0f
+		0.0f, 0.0f,
+		true
 	);
 }
 

@@ -525,6 +525,8 @@ private:
 	void startRenderPass(int contextIdx);
 	void endRenderPass(int contextIdx);
 	void createRenderProgram(program_type* program);
+	void createGUIRenderingPipeline(int contextIdx, program_type* program);
+	void setupGUIRenderingPipeline(int contextIdx, program_type* program);
 	void createObjectsRenderingPipeline(int contextIdx, program_type* program);
 	void setupObjectsRenderingPipeline(int contextIdx, program_type* program);
 	void createPointsRenderingPipeline(int contextIdx, program_type* program);
@@ -650,6 +652,7 @@ public:
 	void uploadIndicesBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, ShortBuffer* data) override;
 	void uploadIndicesBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, IntBuffer* data) override;
 	void bindIndicesBufferObject(int contextIdx, int32_t bufferObjectId) override;
+	void bindSolidColorsBufferObject(int contextIdx, int32_t bufferObjectId) override;
 	void bindTextureCoordinatesBufferObject(int contextIdx, int32_t bufferObjectId) override;
 	void bindVerticesBufferObject(int contextIdx, int32_t bufferObjectId) override;
 	void bindNormalsBufferObject(int contextIdx, int32_t bufferObjectId) override;

@@ -49,11 +49,12 @@ void GUIShader::initialize()
 	);
 	if (fragmentShaderId == 0) return;
 
-	programId = renderer->createProgram(renderer->PROGRAM_OBJECTS);
+	programId = renderer->createProgram(renderer->PROGRAM_GUI);
 	renderer->attachShaderToProgram(programId, vertexShaderId);
 	renderer->attachShaderToProgram(programId, fragmentShaderId);
 	if (renderer->isUsingProgramAttributeLocation() == true) {
 		renderer->setProgramAttributeLocation(programId, 0, "inVertex");
+		renderer->setProgramAttributeLocation(programId, 1, "inSolidColor");
 		renderer->setProgramAttributeLocation(programId, 2, "inTextureUV");
 		renderer->setProgramAttributeLocation(programId, 3, "inColor");
 	}

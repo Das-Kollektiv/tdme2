@@ -145,6 +145,7 @@ public:
 	int32_t CULLFACE_FRONT;
 	int32_t CULLFACE_BACK;
 	int32_t TEXTUREUNITS_MAX;
+	int32_t PROGRAM_GUI;
 	int32_t PROGRAM_OBJECTS;
 	int32_t PROGRAM_POINTS;
 	int32_t PROGRAM_LINES;
@@ -914,6 +915,13 @@ public:
 	 * @param bufferObjectId buffer object id
 	 */
 	virtual void bindIndicesBufferObject(int contextIdx, int32_t bufferObjectId) = 0;
+
+	/**
+	 * Bind solid colors buffer object
+	 * @param contextIdx context index
+	 * @param bufferObjectId buffer object id
+	 */
+	virtual void bindSolidColorsBufferObject(int contextIdx, int32_t bufferObjectId) = 0;
 
 	/**
 	 * Bind texture coordinates buffer object

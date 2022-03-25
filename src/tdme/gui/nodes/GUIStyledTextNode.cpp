@@ -1109,7 +1109,6 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 								0.0f,
 								1.0f
 							);
-							guiRenderer->render();
 						}
 						//
 						if (cursorMode == GUIStyledTextNodeController::CURSORMODE_SHOW && (findNewSelectionIndex == true?cursorSelectionIndex == lineCharIdxs[k]:cursorIndex == lineCharIdxs[k])) {
@@ -1118,7 +1117,6 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 							float width = 2;
 							float height = textStyle->height;
 							auto& colorData = color.getArray();
-							guiRenderer->bindTexture(0);
 							guiRenderer->addQuad(
 								((left) / (screenWidth / 2.0f)) - 1.0f,
 								((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
@@ -1135,11 +1133,12 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 								((left) / (screenWidth / 2.0f)) - 1.0f,
 								((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
 								colorData[0], colorData[1], colorData[2], colorData[3],
-								0.0f, 0.0f
+								0.0f, 0.0f,
+								true
 							);
-							guiRenderer->render();
 						}
 						//
+						guiRenderer->render();
 						guiRenderer->bindTexture(boundTexture);
 						// flush current URL
 						if (currentURL.empty() == false && urlAreas.empty() == false) {
@@ -1243,8 +1242,6 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 								float width = 2;
 								float height = lineConstraints[lineIdx].lineHeight;
 								auto& colorData = color.getArray();
-								guiRenderer->render();
-								guiRenderer->bindTexture(0);
 								guiRenderer->addQuad(
 									((left) / (screenWidth / 2.0f)) - 1.0f,
 									((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
@@ -1261,10 +1258,9 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 									((left) / (screenWidth / 2.0f)) - 1.0f,
 									((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
 									colorData[0], colorData[1], colorData[2], colorData[3],
-									0.0f, 0.0f
+									0.0f, 0.0f,
+									true
 								);
-								guiRenderer->render();
-								guiRenderer->bindTexture(boundTexture);
 							}
 						} else {
 							// otherwise draw
@@ -1292,17 +1288,11 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 								if (editMode == true && (cursorSelectionIndex != -1 || findNewSelectionIndex == true)) {
 									if ((cursorSelectionIndex != -1 && lineCharIdxs[k] >= Math::min(cursorIndex, cursorSelectionIndex) && lineCharIdxs[k] < Math::max(cursorIndex, cursorSelectionIndex)) ||
 										(cursorSelectionIndex == -1 && lineCharIdxs[k] >= cursorIndex)) {
-										// TODO: optimize me render wise, each character with background has now 2 rendercalls, lol
-										guiRenderer->render();
-										boundTexture = currentFont->getTextureId();
-										if (boundTexture != 0) guiRenderer->bindTexture(0);
 										for (auto l = 0; l < characterCount; l++) {
 											float left = x + xIndentLeft + (l * character->getXAdvance());
 											float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - currentFont->getBaseLine()) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
 											currentFont->drawCharacterBackground(guiRenderer, character, left, top, lineConstraints[lineIdx].lineHeight, selectionBackgroundColor);
 										}
-										guiRenderer->render();
-										if (boundTexture != 0) guiRenderer->bindTexture(boundTexture);
 										hasSelection = true;
 									}
 								}
@@ -1339,8 +1329,6 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 									float width = 2;
 									float height = lineConstraints[lineIdx].lineHeight;
 									auto& colorData = color.getArray();
-									guiRenderer->render();
-									guiRenderer->bindTexture(0);
 									guiRenderer->addQuad(
 										((left) / (screenWidth / 2.0f)) - 1.0f,
 										((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
@@ -1357,10 +1345,9 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 										((left) / (screenWidth / 2.0f)) - 1.0f,
 										((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
 										colorData[0], colorData[1], colorData[2], colorData[3],
-										0.0f, 0.0f
+										0.0f, 0.0f,
+										true
 									);
-									guiRenderer->render();
-									guiRenderer->bindTexture(boundTexture);
 								}
 
 								// if URL did change, create URL areas
@@ -1421,9 +1408,6 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 		}
 
 		//
-		guiRenderer->render();
-
-		//
 		line.clear();
 		lineCharIdxs.clear();
 		lineConstraints.clear();
@@ -1433,6 +1417,7 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 	// Console::println("y: " + to_string(y) + " / " + to_string(autoHeight));
 
 	//
+	guiRenderer->render();
 	guiRenderer->bindTexture(0);
 
 	// index

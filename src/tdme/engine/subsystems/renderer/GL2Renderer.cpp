@@ -879,6 +879,13 @@ void GL2Renderer::bindIndicesBufferObject(int contextIdx, int32_t bufferObjectId
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
 }
 
+void GL2Renderer::bindSolidColorsBufferObject(int contextIdx, int32_t bufferObjectId)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 1, GL_FLOAT, false, 0, 0LL);
+}
+
 void GL2Renderer::bindTextureCoordinatesBufferObject(int contextIdx, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);

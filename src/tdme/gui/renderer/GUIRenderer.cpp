@@ -46,6 +46,7 @@ GUIRenderer::GUIRenderer(Renderer* renderer)
 	sbIndicesByteBuffer = ByteBuffer::allocate(QUAD_COUNT * 6 * (renderer->isUsingShortIndices() == true?sizeof(uint16_t):sizeof(uint32_t)));
 	fbVertices = (fbVerticesByteBuffer = ByteBuffer::allocate(QUAD_COUNT * 6 * 3 * sizeof(float)))->asFloatBuffer();
 	fbColors = (fbColorsByteBuffer = ByteBuffer::allocate(QUAD_COUNT * 6 * 4 * sizeof(float)))->asFloatBuffer();
+	fbSolidColors = (fbSolidColorsByteBuffer = ByteBuffer::allocate(QUAD_COUNT * 6 * 1 * sizeof(float)))->asFloatBuffer();
 	fbTextureCoordinates = (fbTextureCoordinatesByteBuffer = ByteBuffer::allocate(QUAD_COUNT * 6 * 2 * sizeof(float)))->asFloatBuffer();
 	renderAreaLeft = 0.0f;
 	renderAreaTop = 0.0f;
@@ -61,6 +62,7 @@ GUIRenderer::~GUIRenderer() {
 	delete sbIndicesByteBuffer;
 	delete fbVerticesByteBuffer;
 	delete fbColorsByteBuffer;
+	delete fbSolidColorsByteBuffer;
 	delete fbTextureCoordinatesByteBuffer;
 }
 
@@ -68,7 +70,7 @@ void GUIRenderer::initialize()
 {
 	if (vboIds == nullptr) {
 		auto created = false;
-		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.guirenderer", 4, false, false, created);
+		auto vboManaged = Engine::getInstance()->getVBOManager()->addVBO("tdme.guirenderer", 5, false, false, created);
 		vboIds = vboManaged->getVBOIds();
 		if (renderer->isUsingShortIndices() == true) {
 			auto sbIndices = sbIndicesByteBuffer->asShortBuffer();
@@ -148,110 +150,6 @@ void GUIRenderer::setGUIEffectOffsetY(float guiEffectOffsetY)
 	screenNode->setGUIEffectOffsetY(static_cast<int>((guiEffectOffsetY * screenNode->getScreenHeight() / 2.0f)));
 }
 
-void GUIRenderer::addQuad(float x1, float y1, float colorR1, float colorG1, float colorB1, float colorA1, float tu1, float tv1, float x2, float y2, float colorR2, float colorG2, float colorB2, float colorA2, float tu2, float tv2, float x3, float y3, float colorR3, float colorG3, float colorB3, float colorA3, float tu3, float tv3, float x4, float y4, float colorR4, float colorG4, float colorB4, float colorA4, float tu4, float tv4)
-{
-	if (quadCount > QUAD_COUNT) {
-		Console::println("GUIRenderer::addQuad()::too many quads");
-		return;
-	}
-	x1 -= renderOffsetX;
-	x2 -= renderOffsetX;
-	x3 -= renderOffsetX;
-	x4 -= renderOffsetX;
-	y1 += renderOffsetY;
-	y2 += renderOffsetY;
-	y3 += renderOffsetY;
-	y4 += renderOffsetY;
-	x1 -= guiEffectOffsetX;
-	x2 -= guiEffectOffsetX;
-	x3 -= guiEffectOffsetX;
-	x4 -= guiEffectOffsetX;
-	y1 += guiEffectOffsetY;
-	y2 += guiEffectOffsetY;
-	y3 += guiEffectOffsetY;
-	y4 += guiEffectOffsetY;
-	auto renderAreaTop = this->renderAreaTop;
-	auto renderAreaBottom = this->renderAreaBottom;
-	auto renderAreaRight = this->renderAreaRight;
-	auto renderAreaLeft = this->renderAreaLeft;
-	renderAreaTop = Math::min(renderAreaTop + guiEffectOffsetY, SCREEN_TOP);
-	renderAreaBottom = Math::max(renderAreaBottom + guiEffectOffsetY, SCREEN_BOTTOM);
-	renderAreaRight = Math::min(renderAreaRight - guiEffectOffsetX, SCREEN_RIGHT);
-	renderAreaLeft = Math::max(renderAreaLeft - guiEffectOffsetX, SCREEN_LEFT);
-
-	auto quadBottom = y3;
-	if (quadBottom > renderAreaTop) return;
-	auto quadTop = y1;
-	if (quadTop < renderAreaBottom) return;
-	auto quadLeft = x1;
-	if (quadLeft > renderAreaRight) return;
-	auto quadRight = x2;
-	if (quadRight < renderAreaLeft) return;
-
-	if (quadBottom < renderAreaBottom) {
-		tv3 = tv1 + ((tv3 - tv1) * ((y1 - renderAreaBottom) / (y1 - y3)));
-		tv4 = tv2 + ((tv4 - tv2) * ((y2 - renderAreaBottom) / (y1 - y4)));
-		y3 = renderAreaBottom;
-		y4 = renderAreaBottom;
-	}
-	if (quadTop > renderAreaTop) {
-		tv1 = tv1 + ((tv3 - tv1) * ((y1 - renderAreaTop) / (y1 - y3)));
-		tv2 = tv2 + ((tv4 - tv2) * ((y2 - renderAreaTop) / (y1 - y4)));
-		y1 = renderAreaTop;
-		y2 = renderAreaTop;
-	}
-	if (quadLeft < renderAreaLeft) {
-		tu1 = tu1 + ((tu2 - tu1) * ((renderAreaLeft - x1) / (x2 - x1)));
-		tu4 = tu4 + ((tu3 - tu4) * ((renderAreaLeft - x4) / (x3 - x4)));
-		x1 = renderAreaLeft;
-		x4 = renderAreaLeft;
-	}
-	if (quadRight > renderAreaRight) {
-		tu2 = tu2 - ((tu2 - tu1) * ((x2 - renderAreaRight) / (x2 - x1)));
-		tu3 = tu3 - ((tu3 - tu4) * ((x3 - renderAreaRight) / (x3 - x4)));
-		x2 = renderAreaRight;
-		x3 = renderAreaRight;
-	}
-
-	fbVertices.put(x1);
-	fbVertices.put(y1);
-	fbVertices.put(0.0f);
-	fbColors.put(colorR1);
-	fbColors.put(colorG1);
-	fbColors.put(colorB1);
-	fbColors.put(colorA1);
-	fbTextureCoordinates.put(tu1);
-	fbTextureCoordinates.put(tv1);
-	fbVertices.put(x2);
-	fbVertices.put(y2);
-	fbVertices.put(0.0f);
-	fbColors.put(colorR2);
-	fbColors.put(colorG2);
-	fbColors.put(colorB2);
-	fbColors.put(colorA2);
-	fbTextureCoordinates.put(tu2);
-	fbTextureCoordinates.put(tv2);
-	fbVertices.put(x3);
-	fbVertices.put(y3);
-	fbVertices.put(0.0f);
-	fbColors.put(colorR3);
-	fbColors.put(colorG3);
-	fbColors.put(colorB3);
-	fbColors.put(colorA3);
-	fbTextureCoordinates.put(tu3);
-	fbTextureCoordinates.put(tv3);
-	fbVertices.put(x4);
-	fbVertices.put(y4);
-	fbVertices.put(0.0f);
-	fbColors.put(colorR4);
-	fbColors.put(colorG4);
-	fbColors.put(colorB4);
-	fbColors.put(colorA4);
-	fbTextureCoordinates.put(tu4);
-	fbTextureCoordinates.put(tv4);
-	quadCount++;
-}
-
 void GUIRenderer::setTexureMatrix(const Matrix2D3x3& textureMatrix) {
 	renderer->getTextureMatrix(renderer->CONTEXTINDEX_DEFAULT).set(textureMatrix);
 }
@@ -291,12 +189,14 @@ void GUIRenderer::render()
 	// use default context
 	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
 	renderer->uploadBufferObject(contextIdx, (*vboIds)[1], fbVertices.getPosition() * sizeof(float), &fbVertices);
-	renderer->uploadBufferObject(contextIdx, (*vboIds)[2], fbColors.getPosition() * sizeof(float), &fbColors);
+	renderer->uploadBufferObject(contextIdx, (*vboIds)[2], fbSolidColors.getPosition() * sizeof(float), &fbSolidColors);
 	renderer->uploadBufferObject(contextIdx, (*vboIds)[3], fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
+	renderer->uploadBufferObject(contextIdx, (*vboIds)[4], fbColors.getPosition() * sizeof(float), &fbColors);
 	renderer->bindIndicesBufferObject(contextIdx, (*vboIds)[0]);
 	renderer->bindVerticesBufferObject(contextIdx, (*vboIds)[1]);
-	renderer->bindColorsBufferObject(contextIdx, (*vboIds)[2]);
+	renderer->bindSolidColorsBufferObject(contextIdx, (*vboIds)[2]);
 	renderer->bindTextureCoordinatesBufferObject(contextIdx, (*vboIds)[3]);
+	renderer->bindColorsBufferObject(contextIdx, (*vboIds)[4]);
 	effectColorMulFinal[0] = guiEffectColorMul[0] * effectColorMul[0] * fontColor[0];
 	effectColorMulFinal[1] = guiEffectColorMul[1] * effectColorMul[1] * fontColor[1];
 	effectColorMulFinal[2] = guiEffectColorMul[2] * effectColorMul[2] * fontColor[2];
@@ -312,8 +212,9 @@ void GUIRenderer::render()
 	renderer->drawIndexedTrianglesFromBufferObjects(contextIdx, quadCount * 2, 0);
 	quadCount = 0;
 	fbVertices.clear();
-	fbColors.clear();
+	fbSolidColors.clear();
 	fbTextureCoordinates.clear();
+	fbColors.clear();
 	fontColor = GUIColor::GUICOLOR_WHITE.getArray();
 	effectColorMul = GUIColor::GUICOLOR_WHITE.getArray();
 	effectColorAdd = GUIColor::GUICOLOR_BLACK.getArray();
