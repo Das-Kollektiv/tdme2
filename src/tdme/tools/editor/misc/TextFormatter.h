@@ -130,6 +130,7 @@ public:
 		};
 		string name;
 		vector<CodeCompletionSymbol> symbols;
+		string delimiters;
 	};
 
 	/**

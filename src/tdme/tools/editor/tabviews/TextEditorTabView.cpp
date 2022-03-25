@@ -83,7 +83,24 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 			}
 
 			virtual void onCodeCompletion(int idx) override {
-				Console::println("TextCodeCompletionListener::onCodeCompletion() @ " + to_string(idx));
+				auto codeCompletion = textEditorTabView->codeCompletion;
+				if (codeCompletion == nullptr) return;
+				auto previousDelimiterPos = textEditorTabView->textNode->getPreviousDelimiter(idx, codeCompletion->delimiters);
+				string search = StringTools::substring(textEditorTabView->textNode->getText().getString(), previousDelimiterPos == 0?0:previousDelimiterPos + 1, idx);
+				Console::println("TextCodeCompletionListener::onCodeCompletion() @ " + to_string(idx) + "; searching for: " + search);
+				for (auto& symbol: codeCompletion->symbols) {
+					if (StringTools::startsWith(symbol.name, search) == true) {
+						Console::println("\t" + symbol.name);
+						for (auto& overload: symbol.overloadList) {
+							string parameters;
+							for (auto& parameter: overload.parameters) {
+								if (parameters.empty() == false) parameters+= ", ";
+								parameters+= parameter;
+							}
+							Console::println("\t\t" + symbol.name + "(" + parameters + ") = " + overload.returnValue);
+						}
+					}
+				}
 			}
 		private:
 			TextEditorTabView* textEditorTabView;

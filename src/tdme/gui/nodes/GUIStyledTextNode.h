@@ -269,30 +269,6 @@ private:
 	void determineNextLineConstraints(int& i, int charEndIdx, int textStyleIdx);
 
 	/**
-	 * Get previous new line
-	 * @param index index
-	 */
-	inline int getPreviousNewLine(int index) {
-		// find index of previous newline and store difference
-		auto previousNewLineIndex = index;
-		while (previousNewLineIndex >= 0 && text.charAt(previousNewLineIndex) != '\n') previousNewLineIndex--;
-		previousNewLineIndex = Math::max(previousNewLineIndex, 0);
-		return previousNewLineIndex;
-	}
-
-	/**
-	 * Get next newline
-	 * @param index index
-	 */
-	inline int getNextNewLine(int index) {
-		// find index of next newline
-		auto nextNewLineIndex = index;
-		while (nextNewLineIndex < text.size() && text.charAt(nextNewLineIndex) != '\n') nextNewLineIndex++;
-		nextNewLineIndex = Math::min(nextNewLineIndex, text.size() - 1);
-		return nextNewLineIndex;
-	}
-
-	/**
 	 * Set auto width
 	 */
 	inline void setMinWidth(int minWidth) {
@@ -362,6 +338,56 @@ public:
 	 */
 	inline const MutableString& getText() const {
 		return text;
+	}
+
+	/**
+	 * Get previous new line
+	 * @param index index
+	 */
+	inline int getPreviousNewLine(int index) {
+		// find index of previous newline and store difference
+		auto previousNewLineIndex = index;
+		while (previousNewLineIndex >= 0 && text.charAt(previousNewLineIndex) != '\n') previousNewLineIndex--;
+		previousNewLineIndex = Math::max(previousNewLineIndex, 0);
+		return previousNewLineIndex;
+	}
+
+	/**
+	 * Get next newline
+	 * @param index index
+	 */
+	inline int getNextNewLine(int index) {
+		// find index of next newline
+		auto nextNewLineIndex = index;
+		while (nextNewLineIndex < text.size() && text.charAt(nextNewLineIndex) != '\n') nextNewLineIndex++;
+		nextNewLineIndex = Math::min(nextNewLineIndex, text.size() - 1);
+		return nextNewLineIndex;
+	}
+
+	/**
+	 * Get previous delimiter
+	 * @param index index
+	 * @param delimiters delimiters
+	 */
+	inline int getPreviousDelimiter(int index, const string& delimiters) {
+		// find index of previous newline and store difference
+		auto previousDelimiterIndex = index;
+		while (previousDelimiterIndex >= 0 && delimiters.find(text.charAt(previousDelimiterIndex)) == string::npos) previousDelimiterIndex--;
+		previousDelimiterIndex = Math::max(previousDelimiterIndex, 0);
+		return previousDelimiterIndex;
+	}
+
+	/**
+	 * Get next delimiter
+	 * @param index index
+	 * @param delimiters
+	 */
+	inline int getNextDelimiter(int index, const string& delimiters) {
+		// find index of next newline
+		auto nextDelimiterIndex = index;
+		while (nextDelimiterIndex < text.size() && delimiters.find(text.charAt(nextDelimiterIndex)) == string::npos) nextDelimiterIndex++;
+		nextDelimiterIndex = Math::min(nextDelimiterIndex, text.size() - 1);
+		return nextDelimiterIndex;
 	}
 
 	/**
