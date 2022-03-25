@@ -6,6 +6,7 @@
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIStyledTextNodeController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
+#include <tdme/tools/editor/misc/TextFormatter.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabcontrollers/TextEditorTabController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
@@ -17,6 +18,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUIStyledTextNodeController;
 using tdme::tools::editor::misc::PopUps;
+using tdme::tools::editor::misc::TextFormatter;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabcontrollers::TextEditorTabController;
 using tdme::tools::editor::tabviews::TabView;
@@ -43,6 +45,7 @@ private:
 	string extension;
 	GUIStyledTextNode* textNode { nullptr };
 	GUIStyledTextNodeController::ChangeListener* textNodeChangeListener { nullptr };
+	const TextFormatter::CodeCompletion* codeCompletion { nullptr };
 
 public:
 	/**
@@ -58,6 +61,14 @@ public:
 	 * Destructor
 	 */
 	~TextEditorTabView();
+
+	/**
+	 * @return code completion
+	 * TODO: maybe move me into controller
+	 */
+	const TextFormatter::CodeCompletion* getCodeCompletion() {
+		return codeCompletion;
+	}
 
 	/**
 	 * @return editor view

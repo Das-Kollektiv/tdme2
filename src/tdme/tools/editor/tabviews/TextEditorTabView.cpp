@@ -46,7 +46,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 	// initial text format
 	TextFormatter::getInstance()->format(extension, textNode);
 	// load code completion
-	TextFormatter::getInstance()->loadCodeCompletion(extension);
+	codeCompletion = TextFormatter::getInstance()->loadCodeCompletion(extension);
 
 	// add text node change listener
 	class TextChangeListener: public GUIStyledTextNodeController::ChangeListener {
@@ -73,6 +73,7 @@ TextEditorTabView::~TextEditorTabView() {
 	delete textEditorTabController;
 	delete engine;
 	delete textNodeChangeListener;
+	if (codeCompletion != nullptr) delete codeCompletion;
 }
 
 void TextEditorTabView::handleInputEvents()

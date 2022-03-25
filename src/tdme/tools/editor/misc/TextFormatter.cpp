@@ -428,7 +428,7 @@ const vector<TiXmlElement*> TextFormatter::getChildren(TiXmlElement* parent)
 	return elementList;
 }
 
-void TextFormatter::loadCodeCompletion(const string& extension) {
+const TextFormatter::CodeCompletion* TextFormatter::loadCodeCompletion(const string& extension) {
 	Console::println("TextFormatter::loadCodeCompletion()");
 	for (auto& language: languages) {
 		if (std::find(language.extensions.begin(), language.extensions.end(), extension) != language.extensions.end()) {
@@ -439,27 +439,30 @@ void TextFormatter::loadCodeCompletion(const string& extension) {
 				TiXmlDocument xmlDocument;
 				xmlDocument.Parse(xmlContent.c_str());
 				if (xmlDocument.Error() == true) {
-					throw ExceptionBase(
-						string("Could not parse XML. Error='") + string(xmlDocument.ErrorDesc()) + string("'")
-					);
+					throw ExceptionBase(string("Could not parse XML. Error='") + string(xmlDocument.ErrorDesc()) + string("'"));
 				}
 				TiXmlElement* xmlRoot = xmlDocument.RootElement();
+				auto codeCompletion = new CodeCompletion();
+				codeCompletion->name = language.name;
 				for (auto xmlKeywordElement: getChildrenByTagName(xmlRoot, "keyword")) {
-					auto keywordName = string(AVOID_NULLPTR_STRING(xmlKeywordElement->Attribute("name")));
-					Console::println(keywordName);
+					auto symbol = CodeCompletion::CodeCompletionSymbol();
+					symbol.name = string(AVOID_NULLPTR_STRING(xmlKeywordElement->Attribute("name")));
 					for (auto xmlOverloadElement: getChildrenByTagName(xmlKeywordElement, "overload")) {
-						auto returnValue = string(AVOID_NULLPTR_STRING(xmlOverloadElement->Attribute("return-value")));
-						Console::println("\tReturn value: " + returnValue);
+						auto methodOverload = CodeCompletion::CodeCompletionSymbol::CodeCompletionMethodOverload();
+						methodOverload.returnValue = string(AVOID_NULLPTR_STRING(xmlOverloadElement->Attribute("return-value")));
 						for (auto xmlParameterElement: getChildrenByTagName(xmlOverloadElement, "parameter")) {
-							auto parameterName = string(AVOID_NULLPTR_STRING(xmlParameterElement->Attribute("name")));
-							Console::println("\t\tParameter: " + parameterName);
+							methodOverload.parameters.push_back(string(AVOID_NULLPTR_STRING(xmlParameterElement->Attribute("name"))));
 						}
+						symbol.overloadList.push_back(methodOverload);
 					}
+					codeCompletion->symbols.push_back(symbol);
 				}
+				return codeCompletion;
 			} catch (Exception &exception) {
 				Console::println("TextFormatter::loadCodeCompletion(): found language: '" + language.name + "': An error occurred: " + exception.what());
 			}
 			break;
 		}
 	}
+	return nullptr;
 }

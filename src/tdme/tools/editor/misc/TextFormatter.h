@@ -119,6 +119,18 @@ private:
 	static const vector<TiXmlElement*> getChildren(TiXmlElement* parent);
 
 public:
+	struct CodeCompletion {
+		struct CodeCompletionSymbol {
+			struct CodeCompletionMethodOverload {
+				vector<string> parameters;
+				string returnValue;
+			};
+			string name;
+			vector<CodeCompletionMethodOverload> overloadList;
+		};
+		string name;
+		vector<CodeCompletionSymbol> symbols;
+	};
 
 	/**
 	 * @return instance
@@ -147,5 +159,5 @@ public:
 	/**
 	 * Parse code completion
 	 */
-	void loadCodeCompletion(const string& extension);
+	const CodeCompletion* loadCodeCompletion(const string& extension);
 };
