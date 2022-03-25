@@ -15,6 +15,7 @@ uniform float gradientColorStarts[10];
 
 // passed from vertex shader
 in vec4 vsFragColor;
+flat in float vsSolidColor;
 in vec2 vsFragTextureUV;
 in vec2 vsFragGradientTextureUV;
 
@@ -27,6 +28,9 @@ void main(void) {
 		vec3 maskColor = texture(maskTextureUnit, vsFragTextureUV).rgb;
 		if ((maskColor.r + maskColor.g + maskColor.b) / 3.0 > maskMaxValue) discard;
 	}
+	if (vsSolidColor > 0.0) {
+		outColor = clamp(vsFragColor, 0.0, 1.0);
+	} else
 	if (gradientAvailable == 1) {
 		int gradientColorIdx = 0;
 		for (int i = gradientColorCount - 1; i >= 0; i--) {

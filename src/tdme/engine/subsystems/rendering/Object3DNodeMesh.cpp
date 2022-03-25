@@ -311,7 +311,6 @@ void Object3DNodeMesh::computeTransformations(int contextIdx, Object3DBase* obje
 		}
 	} else
 	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
-		Vector3 tmpVector3;
 		auto& nodeVertices = node->getVertices();
 		auto& nodeNormals = node->getNormals();
 		// transformations for non skinned rendering

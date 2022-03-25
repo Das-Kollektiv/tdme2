@@ -4,8 +4,10 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
+#include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
@@ -30,7 +32,9 @@ using tdme::tools::editor::tabcontrollers::TextEditorTabController;
 using std::string;
 
 using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Engine;
 using tdme::gui::events::GUIActionListenerType;
+using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
@@ -58,6 +62,7 @@ TextEditorTabController::TextEditorTabController(TextEditorTabView* view)
 {
 	this->view = view;
 	this->popUps = view->getPopUps();
+	this->view->getTabScreenNode()->addFocusListener(this);
 }
 
 TextEditorTabController::~TextEditorTabController() {
@@ -79,6 +84,7 @@ void TextEditorTabController::initialize(GUIScreenNode* screenNode)
 
 void TextEditorTabController::dispose()
 {
+	this->view->getTabScreenNode()->removeFocusListener(this);
 }
 
 void TextEditorTabController::save()
@@ -99,6 +105,16 @@ void TextEditorTabController::onValueChanged(GUIElementNode* node)
 }
 
 void TextEditorTabController::onFocus(GUIElementNode* node) {
+	// if a node in this tab gets focussed, invalidate focus in main engine GUI
+	if (node->getScreenNode() == view->getTabScreenNode()) {
+		Engine::getInstance()->getGUI()->invalidateFocussedNode();
+	} else
+	// if a node in main engine GUI got focussed, invalidate tab focus
+	if (node->getScreenNode() == screenNode) {
+		view->getEngine()->getGUI()->invalidateFocussedNode();
+	} else {
+		Console::println("TextEditorTabController::onFocus(): Unknown screen node");
+	}
 }
 
 void TextEditorTabController::onUnfocus(GUIElementNode* node) {

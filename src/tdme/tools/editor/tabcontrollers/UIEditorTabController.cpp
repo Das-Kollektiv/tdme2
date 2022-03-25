@@ -3,10 +3,14 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/Node.h>
+#include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/gui/nodes/GUIImageNode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -37,9 +41,12 @@ using tdme::tools::editor::tabcontrollers::UIEditorTabController;
 
 using std::string;
 
+using tdme::engine::model::Model;
+using tdme::engine::model::Node;
 using tdme::engine::Engine;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
@@ -112,6 +119,7 @@ void UIEditorTabController::showErrorPopUp(const string& caption, const string& 
 
 void UIEditorTabController::onValueChanged(GUIElementNode* node)
 {
+	Console::println("UIEditorTabController::onValueChanged(): " + node->getId() + " = " + node->getController()->getValue().getString());
 	if (node->getId() == "selectbox_outliner") {
 		updateDetails(node->getController()->getValue().getString());
 	} else
@@ -121,6 +129,14 @@ void UIEditorTabController::onValueChanged(GUIElementNode* node)
 			view->addScreen();
 			view->getEditorView()->reloadTabOutliner(to_string(view->getScreenNodes().size() - 1) + ".0");
 		}
+	} else
+	if (node->getId() == "projectedui_meshnode") {
+		prototypeMeshNode = node->getController()->getValue().getString();
+		view->setModelMeshNode(prototypeMeshNode);
+	} else
+	if (node->getId() == "projectedui_animation") {
+		prototypeMeshAnimation = node->getController()->getValue().getString();
+		view->setModelMeshAnimation(prototypeMeshAnimation);
 	}
 }
 
@@ -298,6 +314,9 @@ void UIEditorTabController::setOutlinerAddDropDownContent() {
 }
 
 void UIEditorTabController::updateDetails(const string& outlinerNode) {
+	if (outlinerNode == "screens") {
+		updateScreensDetails();
+	} else
 	if (StringTools::endsWith(outlinerNode, ".0") == true) {
 		updateScreenDetails();
 	} else {
@@ -313,13 +332,80 @@ void UIEditorTabController::updateScreenDetails() {
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_screen"))->getActiveConditions().add("open");
 	} catch (Exception& exception) {
-		Console::println(string("UIEditorTabController::updateDetails(): An error occurred: ") + exception.what());;
+		Console::println(string("UIEditorTabController::updateScreenDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
 }
 
-void UIEditorTabController::onLoadScreen() {
+void UIEditorTabController::updateScreensDetails() {
+	view->getEditorView()->setDetailsContent(
+		string("<template id=\"details_screens\" src=\"resources/engine/gui/template_details_projectedui.xml\" />\n")
+	);
 
+	//
+	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_screens"))->getActiveConditions().add("open");
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("projectedui_prototype"))->setSource(prototypeFileName);
+	} catch (Exception& exception) {
+		Console::println(string("UIEditorTabController::updateScreensDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+
+	//
+	auto model = view->getPrototype() != nullptr?view->getPrototype()->getModel():nullptr;
+
+	{
+		string modelMeshNodesXML;
+		modelMeshNodesXML =
+			modelMeshNodesXML +
+			"<dropdown-option text=\"<None>\" value=\"\" " + (modelMeshNodesXML.empty() == true?"selected=\"true\" ":"") + " />\n";
+		if (model != nullptr) {
+			for (auto& it: model->getNodes()) {
+				auto& nodeId = it.second->getId();
+				modelMeshNodesXML+=
+					"<dropdown-option text=\"" +
+					GUIParser::escapeQuotes(nodeId) +
+					"\" value=\"" +
+					GUIParser::escapeQuotes(nodeId) +
+					"\" " +
+					(modelMeshNodesXML == nodeId?"selected=\"true\" ":"") +
+					" />\n";
+			}
+		}
+		try {
+			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("projectedui_meshnode_scrollarea"))->replaceSubNodes(modelMeshNodesXML, true);
+		} catch (Exception& exception) {
+			Console::print(string("UIEditorTabController::updateScreensDetails(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+	}
+
+	{
+		string animationsXML;
+		animationsXML = animationsXML + "<dropdown-option text=\"<No animation>\" value=\"\" selected=\"true\" />";
+		if (model != nullptr) {
+			for (auto it: model->getAnimationSetups()) {
+				auto animationSetup = it.second;
+				if (animationSetup->isOverlayAnimationSetup() == true) continue;
+				animationsXML =
+					animationsXML + "<dropdown-option text=\"" +
+					GUIParser::escapeQuotes(animationSetup->getId()) +
+					"\" value=\"" +
+					GUIParser::escapeQuotes(animationSetup->getId()) +
+					"\" " +
+					" />\n";
+			}
+		}
+		try {
+			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("projectedui_animation_scrollarea"))->replaceSubNodes(animationsXML, true);
+		} catch (Exception& exception) {
+			Console::print(string("ModelEditorTabController::setAnimationPreviewDetails(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
+	}
+}
+
+void UIEditorTabController::onLoadScreen() {
 	class OnLoadScreen: public virtual Action
 	{
 	public:
@@ -340,17 +426,17 @@ void UIEditorTabController::onLoadScreen() {
 				}
 				virtual void performAction() {
 					auto view = uiEditorTabController->getView();
-					uiEditorTabController->getView()->unsetScreen(screenIdx);
+					view->unsetScreen(screenIdx);
 					try {
-						view->getScreenNodes()[screenIdx] = GUIParser::parse(pathName, fileName);
+						view->setScreen(screenIdx, GUIParser::parse(pathName, fileName));
 					} catch (Exception& exception) {
 						Console::println(
 							string() +
 							"UIEditorTabController::onLoadScreen(): ReloadScreensAction::performAction(): An error occurred: " + exception.what()
 						);
 					}
-					uiEditorTabController->getView()->reAddScreens();
-					uiEditorTabController->getView()->getEditorView()->reloadTabOutliner(to_string(screenIdx) + ".0");
+					view->reAddScreens();
+					view->getEditorView()->reloadTabOutliner(to_string(screenIdx) + ".0");
 				}
 			};
 			Engine::getInstance()->enqueueAction(
@@ -396,27 +482,27 @@ void UIEditorTabController::onLoadScreen() {
 
 void UIEditorTabController::onUnsetScreen() {
 	//
-	class LoadScreenAction: public Action {
+	class UnsetScreenAction: public Action {
 	private:
 		UIEditorTabController* uiEditorTabController;
 		int screenIdx;
 	public:
-		LoadScreenAction(UIEditorTabController* uiEditorTabController, int screenIdx):
+		UnsetScreenAction(UIEditorTabController* uiEditorTabController, int screenIdx):
 			uiEditorTabController(uiEditorTabController),
 			screenIdx(screenIdx) {
 		}
 		virtual void performAction() {
 			auto view = uiEditorTabController->getView();
-			uiEditorTabController->getView()->unsetScreen(screenIdx);
-			uiEditorTabController->getView()->reAddScreens();
-			uiEditorTabController->getView()->getEditorView()->reloadTabOutliner(to_string(screenIdx) + ".0");
+			view->unsetScreen(screenIdx);
+			view->reAddScreens();
+			view->getEditorView()->reloadTabOutliner(to_string(screenIdx) + ".0");
 		}
 	};
 	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 	auto screenIdx = Integer::parse(StringTools::substring(outlinerNode, 0, outlinerNode.find(".")));
 	if (screenIdx < 0 || screenIdx >= view->getScreenNodes().size()) return;
 	Engine::getInstance()->enqueueAction(
-		new LoadScreenAction(
+		new UnsetScreenAction(
 			this,
 			screenIdx
 		)
@@ -441,9 +527,12 @@ void UIEditorTabController::reloadScreens() {
 				auto fileName = screenNode->getFileName();
 				view->unsetScreen(screenIdx);
 				try {
-					view->getScreenNodes()[screenIdx] = GUIParser::parse(
-						Tools::getPathName(fileName),
-						Tools::getFileName(fileName)
+					view->setScreen(
+						screenIdx,
+						GUIParser::parse(
+							Tools::getPathName(fileName),
+							Tools::getFileName(fileName)
+						)
 					);
 				} catch (Exception& exception) {
 					Console::println(
@@ -459,6 +548,86 @@ void UIEditorTabController::reloadScreens() {
 	Engine::getInstance()->enqueueAction(new ReloadScreensAction(this));
 }
 
+void UIEditorTabController::onLoadPrototype() {
+	Console::println("UIEditorTabController::onLoadPrototype()");
+	class OnLoadPrototype: public virtual Action
+	{
+	public:
+		void performAction() override {
+			//
+			class LoadPrototypeAction: public Action {
+			private:
+				UIEditorTabController* uiEditorTabController;
+				string pathName;
+				string fileName;
+			public:
+				LoadPrototypeAction(UIEditorTabController* uiEditorTabController, const string& pathName, const string& fileName):
+					uiEditorTabController(uiEditorTabController),
+					pathName(pathName),
+					fileName(fileName) {
+				}
+				virtual void performAction() {
+					auto view = uiEditorTabController->getView();
+					if (view->loadPrototype(pathName, fileName, uiEditorTabController->prototypeMeshNode, uiEditorTabController->prototypeMeshAnimation) != nullptr) {
+						uiEditorTabController->prototypeFileName = pathName + "/" + fileName;
+						view->reAddScreens();
+						view->getEditorView()->reloadTabOutliner("screens");
+					}
+				}
+			};
+			Engine::getInstance()->enqueueAction(
+				new LoadPrototypeAction(
+					uiEditorTabController,
+					uiEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
+					uiEditorTabController->popUps->getFileDialogScreenController()->getFileName()
+				)
+			);
+			uiEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param uiEditorTabController UI editor tab controller
+		 */
+		OnLoadPrototype(UIEditorTabController* uiEditorTabController): uiEditorTabController(uiEditorTabController) {
+		}
+
+	private:
+		UIEditorTabController* uiEditorTabController;
+	};
+
+	//
+	auto pathName = screenNode != nullptr?Tools::getPathName(prototypeFileName):string();
+	auto fileName = screenNode != nullptr?Tools::getFileName(prototypeFileName):string();
+	popUps->getFileDialogScreenController()->show(
+		pathName,
+		"Load prototype from: ",
+		{ "tmodel" },
+		fileName,
+		true,
+		new OnLoadPrototype(this)
+	);
+}
+
+void UIEditorTabController::onRemovePrototype() {
+	Console::println("UIEditorTabController::onRemoveModel()");
+	//
+	class RemovePrototypeAction: public Action {
+	private:
+		UIEditorTabController* uiEditorTabController;
+	public:
+		RemovePrototypeAction(UIEditorTabController* uiEditorTabController): uiEditorTabController(uiEditorTabController) {
+		}
+		virtual void performAction() {
+			auto view = uiEditorTabController->getView();
+			view->removePrototype();
+			view->reAddScreens();
+			view->getEditorView()->reloadTabOutliner("screens");
+		}
+	};
+	Engine::getInstance()->enqueueAction(new RemovePrototypeAction(this));
+}
+
 void UIEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type != GUIActionListenerType::PERFORMED) return;
@@ -470,5 +639,12 @@ void UIEditorTabController::onActionPerformed(GUIActionListenerType type, GUIEle
 		onUnsetScreen();
 	} else
 	if (node->getId() == "screen_browseto") {
+		// TODO
+	} else
+	if (node->getId() == "projectedui_prototype_open") {
+		onLoadPrototype();
+	} else
+	if (node->getId() == "projectedui_prototype_remove") {
+		onRemovePrototype();
 	}
 }

@@ -754,24 +754,22 @@ void ModelEditorTabController::setAnimationDetails() {
 		string("\" />\n")
 	);
 
+	//
 	{
-		auto idx = 0;
 		string animationsXML;
 		animationsXML =
 			animationsXML +
-			"<dropdown-option text=\"<None>\" value=\"\" " + (idx == 0 ? "selected=\"true\" " : "") + " />\n";
-		idx++;
-		for (auto it: model->getNodes()) {
-			auto nodeId = it.second->getId();
+			"<dropdown-option text=\"<None>\" value=\"\" " + (animationSetup->getOverlayFromNodeId().empty() == true?"selected=\"true\" ":"") + " />\n";
+		for (auto& it: model->getNodes()) {
+			auto& nodeId = it.second->getId();
 			animationsXML+=
 				"<dropdown-option text=\"" +
 				GUIParser::escapeQuotes(nodeId) +
 				"\" value=\"" +
 				GUIParser::escapeQuotes(nodeId) +
 				"\" " +
-				(idx == 0 ? "selected=\"true\" " : "") +
+				(animationSetup->getOverlayFromNodeId() == nodeId?"selected=\"true\" ":"") +
 				" />\n";
-			idx++;
 		}
 		try {
 			required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("animation_overlaybone_scrollarea"))->replaceSubNodes(animationsXML, true);
@@ -781,6 +779,7 @@ void ModelEditorTabController::setAnimationDetails() {
 		}
 	}
 
+	//
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_animation"))->getActiveConditions().add("open");
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_startframe"))->getController()->setValue(animationSetup->getStartFrame());

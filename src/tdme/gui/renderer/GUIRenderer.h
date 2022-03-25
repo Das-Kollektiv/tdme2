@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <string>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -13,10 +14,13 @@
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/Console.h>
 #include <tdme/utilities/FloatBuffer.h>
 #include <tdme/utilities/ShortBuffer.h>
 
 using std::array;
+using std::string;
+using std::to_string;
 using std::vector;
 
 using tdme::engine::subsystems::renderer::Renderer;
@@ -27,6 +31,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
 using tdme::math::Math;
 using tdme::math::Matrix2D3x3;
+using tdme::utilities::Console;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::FloatBuffer;
 using tdme::utilities::ShortBuffer;
@@ -38,8 +43,6 @@ using tdme::utilities::ShortBuffer;
  */
 class tdme::gui::renderer::GUIRenderer final
 {
-	friend class GUIFont_CharacterDefinition;
-
 public:
 	static constexpr float SCREEN_LEFT { -1.0f };
 	static constexpr float SCREEN_TOP { 1.0f };
@@ -47,7 +50,7 @@ public:
 	static constexpr float SCREEN_BOTTOM { -1.0f };
 
 private:
-	static constexpr int QUAD_COUNT { 1024 };
+	static constexpr int QUAD_COUNT { 16384 };
 
 	struct GUIEffectStackEntity {
 		GUIColor guiEffectColorMul;
@@ -65,6 +68,8 @@ private:
 	FloatBuffer fbVertices;
 	ByteBuffer* fbColorsByteBuffer { nullptr };
 	FloatBuffer fbColors;
+	ByteBuffer* fbSolidColorsByteBuffer;
+	FloatBuffer fbSolidColors;
 	ByteBuffer* fbTextureCoordinatesByteBuffer;
 	FloatBuffer fbTextureCoordinates;
 	float renderAreaLeft;
@@ -130,6 +135,13 @@ public:
 	 * Done rendering
 	 */
 	void doneRendering();
+
+	/**
+	 * @return GUI screen node
+	 */
+	inline GUIScreenNode* getScreenNode() {
+		return screenNode;
+	}
 
 	/**
 	 * Init screen
@@ -455,8 +467,121 @@ public:
 	 * @param colorA4 color alpha 4
 	 * @param tu4 texture u 4
 	 * @param tv4 texture v 4
+	 * @param solidColor only render solid color
 	 */
-	void addQuad(float x1, float y1, float colorR1, float colorG1, float colorB1, float colorA1, float tu1, float tv1, float x2, float y2, float colorR2, float colorG2, float colorB2, float colorA2, float tu2, float tv2, float x3, float y3, float colorR3, float colorG3, float colorB3, float colorA3, float tu3, float tv3, float x4, float y4, float colorR4, float colorG4, float colorB4, float colorA4, float tu4, float tv4);
+	inline void addQuad(float x1, float y1, float colorR1, float colorG1, float colorB1, float colorA1, float tu1, float tv1, float x2, float y2, float colorR2, float colorG2, float colorB2, float colorA2, float tu2, float tv2, float x3, float y3, float colorR3, float colorG3, float colorB3, float colorA3, float tu3, float tv3, float x4, float y4, float colorR4, float colorG4, float colorB4, float colorA4, float tu4, float tv4, bool solidColor = false) {
+		if (quadCount > QUAD_COUNT) {
+			Console::println("GUIRenderer::addQuad()::too many quads");
+			return;
+		}
+		x1 -= renderOffsetX;
+		x2 -= renderOffsetX;
+		x3 -= renderOffsetX;
+		x4 -= renderOffsetX;
+		y1 += renderOffsetY;
+		y2 += renderOffsetY;
+		y3 += renderOffsetY;
+		y4 += renderOffsetY;
+		x1 -= guiEffectOffsetX;
+		x2 -= guiEffectOffsetX;
+		x3 -= guiEffectOffsetX;
+		x4 -= guiEffectOffsetX;
+		y1 += guiEffectOffsetY;
+		y2 += guiEffectOffsetY;
+		y3 += guiEffectOffsetY;
+		y4 += guiEffectOffsetY;
+		auto renderAreaTop = this->renderAreaTop;
+		auto renderAreaBottom = this->renderAreaBottom;
+		auto renderAreaRight = this->renderAreaRight;
+		auto renderAreaLeft = this->renderAreaLeft;
+		renderAreaTop = Math::min(renderAreaTop + guiEffectOffsetY, SCREEN_TOP);
+		renderAreaBottom = Math::max(renderAreaBottom + guiEffectOffsetY, SCREEN_BOTTOM);
+		renderAreaRight = Math::min(renderAreaRight - guiEffectOffsetX, SCREEN_RIGHT);
+		renderAreaLeft = Math::max(renderAreaLeft - guiEffectOffsetX, SCREEN_LEFT);
+
+		auto quadBottom = y3;
+		if (quadBottom > renderAreaTop) return;
+		auto quadTop = y1;
+		if (quadTop < renderAreaBottom) return;
+		auto quadLeft = x1;
+		if (quadLeft > renderAreaRight) return;
+		auto quadRight = x2;
+		if (quadRight < renderAreaLeft) return;
+
+		if (quadBottom < renderAreaBottom) {
+			tv3 = tv1 + ((tv3 - tv1) * ((y1 - renderAreaBottom) / (y1 - y3)));
+			tv4 = tv2 + ((tv4 - tv2) * ((y2 - renderAreaBottom) / (y1 - y4)));
+			y3 = renderAreaBottom;
+			y4 = renderAreaBottom;
+		}
+		if (quadTop > renderAreaTop) {
+			tv1 = tv1 + ((tv3 - tv1) * ((y1 - renderAreaTop) / (y1 - y3)));
+			tv2 = tv2 + ((tv4 - tv2) * ((y2 - renderAreaTop) / (y1 - y4)));
+			y1 = renderAreaTop;
+			y2 = renderAreaTop;
+		}
+		if (quadLeft < renderAreaLeft) {
+			tu1 = tu1 + ((tu2 - tu1) * ((renderAreaLeft - x1) / (x2 - x1)));
+			tu4 = tu4 + ((tu3 - tu4) * ((renderAreaLeft - x4) / (x3 - x4)));
+			x1 = renderAreaLeft;
+			x4 = renderAreaLeft;
+		}
+		if (quadRight > renderAreaRight) {
+			tu2 = tu2 - ((tu2 - tu1) * ((x2 - renderAreaRight) / (x2 - x1)));
+			tu3 = tu3 - ((tu3 - tu4) * ((x3 - renderAreaRight) / (x3 - x4)));
+			x2 = renderAreaRight;
+			x3 = renderAreaRight;
+		}
+
+		fbVertices.put(x1);
+		fbVertices.put(y1);
+		fbVertices.put(0.0f);
+		fbColors.put(colorR1);
+		fbColors.put(colorG1);
+		fbColors.put(colorB1);
+		fbColors.put(colorA1);
+		fbTextureCoordinates.put(tu1);
+		fbTextureCoordinates.put(tv1);
+		fbVertices.put(x2);
+		fbVertices.put(y2);
+		fbVertices.put(0.0f);
+		fbColors.put(colorR2);
+		fbColors.put(colorG2);
+		fbColors.put(colorB2);
+		fbColors.put(colorA2);
+		fbTextureCoordinates.put(tu2);
+		fbTextureCoordinates.put(tv2);
+		fbVertices.put(x3);
+		fbVertices.put(y3);
+		fbVertices.put(0.0f);
+		fbColors.put(colorR3);
+		fbColors.put(colorG3);
+		fbColors.put(colorB3);
+		fbColors.put(colorA3);
+		fbTextureCoordinates.put(tu3);
+		fbTextureCoordinates.put(tv3);
+		fbVertices.put(x4);
+		fbVertices.put(y4);
+		fbVertices.put(0.0f);
+		fbColors.put(colorR4);
+		fbColors.put(colorG4);
+		fbColors.put(colorB4);
+		fbColors.put(colorA4);
+		fbTextureCoordinates.put(tu4);
+		fbTextureCoordinates.put(tv4);
+		if (solidColor == true) {
+			fbSolidColors.put(1.0f);
+			fbSolidColors.put(1.0f);
+			fbSolidColors.put(1.0f);
+			fbSolidColors.put(1.0f);
+		} else {
+			fbSolidColors.put(0.0f);
+			fbSolidColors.put(0.0f);
+			fbSolidColors.put(0.0f);
+			fbSolidColors.put(0.0f);
+		}
+		quadCount++;
+	}
 
 	/**
 	 * Set texture matrix

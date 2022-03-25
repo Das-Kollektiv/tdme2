@@ -45,6 +45,9 @@ private:
 	UIEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
+	string prototypeFileName;
+	string prototypeMeshNode;
+	string prototypeMeshAnimation;
 
 public:
 	/**
@@ -110,6 +113,11 @@ public:
 	void updateScreenDetails();
 
 	/**
+	 * Update screens details
+	 */
+	void updateScreensDetails();
+
+	/**
 	 * On load screen
 	 */
 	void onLoadScreen();
@@ -123,6 +131,16 @@ public:
 	 * Reload screens
 	 */
 	void reloadScreens();
+
+	/**
+	 * On load prototype
+	 */
+	void onLoadPrototype();
+
+	/**
+	 * On load prototype
+	 */
+	void onRemovePrototype();
 
 	/**
 	 * Shows the error pop up

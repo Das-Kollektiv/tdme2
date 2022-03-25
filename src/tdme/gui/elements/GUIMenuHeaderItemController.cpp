@@ -247,7 +247,7 @@ void GUIMenuHeaderItemController::handleKeyboardEvent(GUIKeyboardEvent* event)
 void GUIMenuHeaderItemController::tick()
 {
 	GUIElementController::tick();
-	if (open == true) node->getScreenNode()->getGUI()->addMouseOutClickCandidateElementNode(required_dynamic_cast<GUIElementNode*>(this->node));
+	if (open == true) node->getScreenNode()->getGUI()->addMouseOutClickCandidateNode(required_dynamic_cast<GUIElementNode*>(this->node));
 }
 
 void GUIMenuHeaderItemController::onFocusGained()

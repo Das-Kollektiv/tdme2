@@ -203,7 +203,7 @@ void GUILayoutNode::layoutSubNodes()
 				for (auto i = 0; i < subNodes.size(); i++) {
 					auto guiSubNode = subNodes[i];
 					if (guiSubNode->conditionsMet == false) continue;
-					guiSubNode->computedConstraints.alignmentTop = Math::max(0, height - finalNodesHeight);
+					guiSubNode->computedConstraints.alignmentTop = Math::max(0, height - finalNodesHeight); // TODO: take bottom padding into account
 				}
 			}
 
@@ -274,7 +274,7 @@ void GUILayoutNode::layoutSubNodes()
 				for (auto i = 0; i < subNodes.size(); i++) {
 					auto guiSubNode = subNodes[i];
 					if (guiSubNode->conditionsMet == false) continue;
-					guiSubNode->computedConstraints.alignmentLeft = Math::max(0, width - finalNodesWidth);
+					guiSubNode->computedConstraints.alignmentLeft = Math::max(0, width - finalNodesWidth); // TODO: take right padding into account
 				}
 			}
 

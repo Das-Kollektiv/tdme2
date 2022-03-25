@@ -55,22 +55,30 @@ public:
 	/**
 	 * @return number of channels or CHANNELS_NONE
 	 */
-	virtual int32_t getChannels();
+	inline int32_t getChannels() {
+		return channels;
+	}
 
 	/**
 	 * @return sample rate in hz or SAMPLERATE_NONE
 	 */
-	virtual int32_t getSampleRate();
+	inline int32_t getSampleRate() {
+		return sampleRate;
+	}
 
 	/**
 	 * @return bits per sample or BITSPERSAMPLES_NONE
 	 */
-	virtual int32_t getBitsPerSample();
+	inline int32_t getBitsPerSample() {
+		return bitsPerSample;
+	}
 
 	/**
 	 * @return samples or SAMPLES_NONE
 	 */
-	virtual int32_t getSamples();
+	inline int32_t getSamples() {
+		return samples;
+	}
 
 	/**
 	 * Read raw PCM data from stream

@@ -57,14 +57,6 @@ constexpr int64_t GUIInputInternalController::DRAGGING_CALMDOWN;
 GUIInputInternalController::GUIInputInternalController(GUINode* node)
 	: GUINodeController(node)
 {
-	this->cursorModeStarted = -1LL;
-	this->cursorMode = CURSORMODE_SHOW;
-	this->index = 0;
-	this->offset = 0;
-	this->mouseDraggingSlideValueActive = false;
-	this->mouseDraggingInit = false;
-	this->mouseDragPosition = {{ -1, -1 }};
-	this->mouseOriginalPosition = {{ -1, -1 }};
 }
 
 bool GUIInputInternalController::isDisabled()
@@ -349,37 +341,33 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 			}
 		}
 	} else {
+		auto keyControlA = false;
 		auto keyControlX = false;
 		auto keyControlC = false;
 		auto keyControlV = false;
 		auto isKeyDown = event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
-		// copy, paste, cut
-		{
-			if (event->getKeyChar() == 24) {
-				keyControlX = isKeyDown;
-				event->setProcessed(true);
-			}
-			if (event->getKeyChar() == 3) {
-				keyControlC = isKeyDown;
-				event->setProcessed(true);
-			}
-			if (event->getKeyChar() == 22) {
-				keyControlV = isKeyDown;
-				event->setProcessed(true);
-			}
-			if (Character::toLowerCase(event->getKeyChar()) == 'x' && keyControl == true) {
-				keyControlX = isKeyDown;
-				event->setProcessed(true);
-			}
-			if (Character::toLowerCase(event->getKeyChar()) == 'c' && keyControl == true) {
-				keyControlC = isKeyDown;
-				event->setProcessed(true);
-			}
-			if (Character::toLowerCase(event->getKeyChar()) == 'v' && keyControl == true) {
-				keyControlV = isKeyDown;
-				event->setProcessed(true);
-			}
+		// determine select all, copy, paste, cut
+		if (Character::toLowerCase(event->getKeyChar()) == 'a' && keyControl == true) {
+			keyControlA = isKeyDown;
+			event->setProcessed(true);
 		}
+		if (Character::toLowerCase(event->getKeyChar()) == 'x' && keyControl == true) {
+			keyControlX = isKeyDown;
+			event->setProcessed(true);
+		}
+		if (Character::toLowerCase(event->getKeyChar()) == 'c' && keyControl == true) {
+			keyControlC = isKeyDown;
+			event->setProcessed(true);
+		}
+		if (Character::toLowerCase(event->getKeyChar()) == 'v' && keyControl == true) {
+			keyControlV = isKeyDown;
+			event->setProcessed(true);
+		}
+		// handle them
+		if (keyControlA == true) {
+			index = 0;
+			selectionIndex = textInputNode->getText().size();
+		} else
 		if (keyControlX == true) {
 			Application::getApplication()->setClipboardContent(StringTools::substring(textInputNode->getText().getString(), Math::min(index, selectionIndex), Math::max(index, selectionIndex)));
 			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {

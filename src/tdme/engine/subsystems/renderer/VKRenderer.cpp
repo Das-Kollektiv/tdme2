@@ -981,7 +981,7 @@ void VKRenderer::initialize()
 				instanceValidationLayers,
 				instanceLayers
 			);
-			if (validationFound) {
+			if (validationFound == true) {
 				enabledLayerCount = ARRAY_SIZE(instanceValidationLayersAlt1);
 				enabledLayers[0] = "VK_LAYER_LUNARG_standard_validation";
 				validationLayerCount = 1;
@@ -2221,7 +2221,7 @@ void VKRenderer::createRenderProgram(program_type* program) {
 	}
 
 	//
-	if (program->type == PROGRAM_OBJECTS) {
+	if (program->type == PROGRAM_OBJECTS || PROGRAM_GUI) {
 		array<VkDescriptorSetLayout, DESC_MAX_CACHED> descriptorSetLayouts2;
 		descriptorSetLayouts2.fill(program->texturesDescriptorSetLayout);
 		//
@@ -2259,6 +2259,184 @@ void VKRenderer::createRenderProgram(program_type* program) {
 	//
 	err = vkCreatePipelineLayout(device, &pipelineLayoutCreateInfo, nullptr, &program->pipelineLayout);
 	assert(!err);
+}
+
+void VKRenderer::createGUIRenderingPipeline(int contextIdx, program_type* program) {
+	auto& currentContext = contexts[contextIdx];
+
+	//
+	auto framebufferPipelines = getFramebufferPipelines(framebufferPipelinesId);
+	if (framebufferPipelines == nullptr) {
+		framebufferPipelines = createFramebufferPipelines(framebufferPipelinesId);
+	}
+
+	//
+	VkRenderPass usedRenderPass = renderPass;
+	auto haveDepthBuffer = true;
+	auto haveColorBuffer = true;
+	auto haveGeometryBuffer = false;
+	if (boundFrameBufferId != ID_NONE) {
+		auto frameBuffer = boundFrameBufferId < 0 || boundFrameBufferId >= framebuffers.size()?nullptr:framebuffers[boundFrameBufferId];
+		if (frameBuffer != nullptr) {
+			haveDepthBuffer = frameBuffer->depthTextureId != ID_NONE;
+			haveColorBuffer = frameBuffer->colorTextureId != ID_NONE;
+			haveGeometryBuffer = frameBuffer->type == framebuffer_object_type::TYPE_GEOMETRYBUFFER;
+			usedRenderPass = frameBuffer->renderPass;
+		} else {
+			if (VERBOSE == true) Console::println("VKRenderer::" + string(__FUNCTION__) + "(): framebuffer with id: " + to_string(boundFrameBufferId) + " not found!");
+		}
+	}
+
+	//
+	VkResult err;
+
+	//
+	VkGraphicsPipelineCreateInfo pipeline {};
+
+	// create pipepine
+	VkPipelineCacheCreateInfo pipelineCacheCreateInfo {};
+	VkPipelineCache pipelineCache = VK_NULL_HANDLE;
+
+	VkPipelineVertexInputStateCreateInfo vi {};
+	VkPipelineInputAssemblyStateCreateInfo ia {};
+	VkPipelineRasterizationStateCreateInfo rs {};
+	VkPipelineColorBlendStateCreateInfo cb {};
+	VkPipelineDepthStencilStateCreateInfo ds {};
+	VkPipelineViewportStateCreateInfo vp {};
+	VkPipelineMultisampleStateCreateInfo ms {};
+
+	createRasterizationStateCreateInfo(contextIdx, rs);
+	createDepthStencilStateCreateInfo(ds);
+
+	array<VkPipelineShaderStageCreateInfo, 2> shaderStages {};
+
+	// shader stages
+	auto shaderIdx = 0;
+	for (auto shader: program->shaders) {
+		shaderStages[shaderIdx].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+		shaderStages[shaderIdx].stage = shader->type;
+		shaderStages[shaderIdx].module = shader->module;
+		shaderStages[shaderIdx].pName = "main";
+		shaderIdx++;
+	}
+
+	pipeline.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+	pipeline.stageCount = shaderIdx;
+	pipeline.layout = program->pipelineLayout;
+
+	ia.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+	ia.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+
+	array<VkPipelineColorBlendAttachmentState, 8> bas;
+	if (haveColorBuffer == true) {
+		createColorBlendAttachmentState(bas[0]);
+	} else
+	if (haveGeometryBuffer == true) {
+		for (auto i = 0; i < 8; i++) {
+			createColorBlendAttachmentState(bas[i]);
+		}
+	}
+
+	cb.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+	cb.logicOpEnable = VK_FALSE;
+	cb.attachmentCount = haveColorBuffer == true?1:(haveGeometryBuffer == true?8:0);
+	cb.pAttachments = haveColorBuffer == true || haveGeometryBuffer == true?bas.data():nullptr;
+
+	vp.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+	vp.viewportCount = 1;
+	vp.pViewports = &viewport;
+	vp.scissorCount = 1;
+	vp.pScissors = &scissor;
+
+	ms.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+	ms.pSampleMask = nullptr;
+	ms.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+
+	array<VkVertexInputBindingDescription, 4> vb {};
+	array<VkVertexInputAttributeDescription, 4> va {};
+
+	// vertices
+	vb[0].binding = 0;
+	vb[0].stride = sizeof(float) * 3;
+	vb[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	va[0].binding = 0;
+	va[0].location = 0;
+	va[0].format = VK_FORMAT_R32G32B32_SFLOAT;
+	va[0].offset = 0;
+
+	// solid colors
+	vb[1].binding = 1;
+	vb[1].stride = sizeof(float) * 1;
+	vb[1].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	va[1].binding = 1;
+	va[1].location = 1;
+	va[1].format = VK_FORMAT_R32_SFLOAT;
+	va[1].offset = 0;
+
+	// texture coordinates
+	vb[2].binding = 2;
+	vb[2].stride = sizeof(float) * 2;
+	vb[2].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	va[2].binding = 2;
+	va[2].location = 2;
+	va[2].format = VK_FORMAT_R32G32_SFLOAT;
+	va[2].offset = 0;
+
+	// colors
+	vb[3].binding = 3;
+	vb[3].stride = sizeof(float) * 4;
+	vb[3].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	va[3].binding = 3;
+	va[3].location = 3;
+	va[3].format = VK_FORMAT_R32G32B32A32_SFLOAT;
+	va[3].offset = 0;
+
+	//
+	vi.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+	vi.pNext = nullptr;
+	vi.vertexBindingDescriptionCount = vb.size();
+	vi.pVertexBindingDescriptions = vb.data();
+	vi.vertexAttributeDescriptionCount = va.size();
+	vi.pVertexAttributeDescriptions = va.data();
+
+	pipeline.pVertexInputState = &vi;
+	pipeline.pInputAssemblyState = &ia;
+	pipeline.pRasterizationState = &rs;
+	pipeline.pColorBlendState = haveColorBuffer == true || haveGeometryBuffer == true?&cb:nullptr;
+	pipeline.pMultisampleState = &ms;
+	pipeline.pViewportState = &vp;
+	pipeline.pDepthStencilState = haveDepthBuffer == true?&ds:nullptr;
+	pipeline.pStages = shaderStages.data();
+	pipeline.renderPass = usedRenderPass;
+	pipeline.pDynamicState = nullptr;
+
+	pipelineCacheCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
+	err = vkCreatePipelineCache(device, &pipelineCacheCreateInfo, nullptr, &pipelineCache);
+	assert(!err);
+
+	err = vkCreateGraphicsPipelines(device, pipelineCache, 1, &pipeline, nullptr, &framebufferPipelines->pipelines[currentContext.pipelineIdx]);
+	assert(!err);
+
+	//
+	vkDestroyPipelineCache(device, pipelineCache, nullptr);
+}
+
+inline void VKRenderer::setupGUIRenderingPipeline(int contextIdx, program_type* program) {
+	auto& currentContext = contexts[contextIdx];
+	if (currentContext.pipelineIdx == ID_NONE || currentContext.pipeline == VK_NULL_HANDLE) {
+		if (currentContext.pipelineIdx == ID_NONE) currentContext.pipelineIdx = createPipelineIndex(program, contextIdx);
+		pipelinesSpinLock.lock();
+		auto pipeline = getPipelineInternal(contextIdx, program, framebufferPipelinesId, currentContext.pipelineIdx);
+		if (pipeline == VK_NULL_HANDLE) {
+			createGUIRenderingPipeline(contextIdx, program);
+			pipeline = getPipelineInternal(contextIdx, program, framebufferPipelinesId, currentContext.pipelineIdx);
+		}
+		pipelinesSpinLock.unlock();
+		//
+		auto& commandBuffer = currentContext.commandBuffers[currentContext.currentCommandBuffer];
+		vkCmdBindPipeline(commandBuffer.drawCommand, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+		currentContext.pipeline = pipeline;
+	}
 }
 
 void VKRenderer::createObjectsRenderingPipeline(int contextIdx, program_type* program) {
@@ -3217,7 +3395,7 @@ bool VKRenderer::linkProgram(int32_t programId)
 	}
 
 	// create programs in terms of ubos and so on
-	if (program.type == PROGRAM_OBJECTS || program.type == PROGRAM_POINTS || program.type == PROGRAM_LINES) {
+	if (program.type == PROGRAM_GUI || program.type == PROGRAM_OBJECTS || program.type == PROGRAM_POINTS || program.type == PROGRAM_LINES) {
 		createRenderProgram(&program);
 	} else
 	if (program.type == PROGRAM_COMPUTE) {
@@ -6008,6 +6186,12 @@ void VKRenderer::bindIndicesBufferObject(int contextIdx, int32_t bufferObjectId)
 	currentContext.boundIndicesBuffer = getBindBufferObjectInternal(bufferObjectId, bufferSize);
 }
 
+void VKRenderer::bindSolidColorsBufferObject(int contextIdx, int32_t bufferObjectId)
+{
+	auto& currentContext = contexts[contextIdx];
+	currentContext.boundBuffers[1] = getBindBufferObjectInternal(bufferObjectId, currentContext.boundBufferSizes[1]);
+}
+
 void VKRenderer::bindTextureCoordinatesBufferObject(int contextIdx, int32_t bufferObjectId)
 {
 	auto& currentContext = contexts[contextIdx];
@@ -6103,7 +6287,9 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, 
 	startRenderPass(currentContext.idx);
 
 	// pipeline
-	setupObjectsRenderingPipeline(currentContext.idx, currentContext.program);
+	if (currentContext.program->type == PROGRAM_OBJECTS) setupObjectsRenderingPipeline(currentContext.idx, currentContext.program); else
+	if (currentContext.program->type == PROGRAM_GUI) setupGUIRenderingPipeline(currentContext.idx, currentContext.program); else
+		return;
 
 	//
 	auto uboIdx = 0;
@@ -6287,7 +6473,7 @@ inline void VKRenderer::drawInstancedTrianglesFromBufferObjects(int contextIdx, 
 	}
 
 	// buffers
-	vkCmdBindVertexBuffers(drawCommand, 0, OBJECTS_VERTEX_BUFFER_COUNT, currentContext.boundBuffers.data(), currentContext.boundBufferOffsets.data());
+	vkCmdBindVertexBuffers(drawCommand, 0, currentContext.program->type == PROGRAM_GUI?GUI_VERTEX_BUFFER_COUNT:OBJECTS_VERTEX_BUFFER_COUNT, currentContext.boundBuffers.data(), currentContext.boundBufferOffsets.data());
 
 	// draw
 	if (indicesBuffer != VK_NULL_HANDLE) {

@@ -5,9 +5,9 @@
 #include <tdme/tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
-#include <tdme/gui/nodes/GUIMultilineTextNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
+#include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
@@ -20,9 +20,9 @@ using std::string;
 
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUIMultilineTextNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
@@ -52,7 +52,7 @@ void InfoDialogScreenController::initialize()
 		screenNode->setVisible(false);
 		screenNode->addActionListener(this);
 		tabsHeaderNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("infodialog_tabs-header"));
-		messageNode = dynamic_cast< GUIMultilineTextNode* >(screenNode->getNodeById("infodialog_message"));
+		messageNode = dynamic_cast<GUIStyledTextNode*>(screenNode->getNodeById("infodialog_message"));
 	} catch (Exception& exception) {
 		Console::print(string("InfoDialogScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));

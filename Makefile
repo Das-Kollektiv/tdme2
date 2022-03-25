@@ -7,7 +7,7 @@ OBJ_DEBUG = obj-debug
 # determine platform
 OSSHORT := $(shell sh -c 'uname -o 2>/dev/null')
 OS := $(shell sh -c 'uname -s 2>/dev/null')
-ARCH := $(shell sh -c 'uname -m 2>/dev/null')
+MACHINE := $(shell sh -c 'uname -m 2>/dev/null')
 
 #
 NAME = tdme2
@@ -104,15 +104,24 @@ else ifeq ($(OS), Haiku)
 	OFLAGS := -O2
 else ifeq ($(OS), Linux)
 	# Linux
-	SRCS_PLATFORM := $(SRCS_PLATFORM) \
-		src/tdme/os/network/platform/linux/KernelEventMechanism.cpp \
-		src/tdme/engine/fileio/models/ModelReader.cpp
 	INCLUDES := $(INCLUDES) -L/usr/lib64
 	OPENGL_RENDERER_LDFLAGS := -lGLEW -lGL -lglfw
 	VULKAN_RENDERER_LDFLAGS := -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -lGLESv2 -lEGL -lglfw
-	LIBS_LDFLAGS := -L/mingw64/lib -ldl -lglfw -lopenal
+	LIBS_LDFLAGS := -ldl -lglfw -lopenal
 	OFLAGS := -O2
+	ifeq ($(MACHINE), x86_64)
+		SRCS_PLATFORM := $(SRCS_PLATFORM) \
+			src/tdme/os/network/platform/linux/KernelEventMechanism.cpp \
+			src/tdme/engine/fileio/models/FBXReader.cpp \
+			src/tdme/engine/fileio/models/ModelReaderFBX.cpp
+		INCLUDES := $(INCLUDES) -Iext/fbx/linux/include
+		LIBS_LDFLAGS := $(LIBS_LDFLAGS) -Lext/fbx/linux/lib -lfbxsdk -lxml2
+	else
+		SRCS_PLATFORM := $(SRCS_PLATFORM) \
+			src/tdme/os/network/platform/linux/KernelEventMechanism.cpp \
+			src/tdme/engine/fileio/models/ModelReader.cpp
+	endif
 else
 	# Windows
 	SRCS_PLATFORM:= $(SRCS_PLATFORM) \
@@ -421,6 +430,8 @@ SRCS = \
 	src/tdme/gui/elements/GUISliderHController.cpp \
 	src/tdme/gui/elements/GUISliderV.cpp \
 	src/tdme/gui/elements/GUISliderVController.cpp \
+	src/tdme/gui/elements/GUIStyledInput.cpp \
+	src/tdme/gui/elements/GUIStyledInputController.cpp \
 	src/tdme/gui/elements/GUITab.cpp \
 	src/tdme/gui/elements/GUITabContent.cpp \
 	src/tdme/gui/elements/GUITabContentController.cpp \
@@ -446,7 +457,6 @@ SRCS = \
 	src/tdme/gui/nodes/GUILayerNode.cpp \
 	src/tdme/gui/nodes/GUILayoutNode.cpp \
 	src/tdme/gui/nodes/GUILayoutNode_Alignment.cpp \
-	src/tdme/gui/nodes/GUIMultilineTextNode.cpp \
 	src/tdme/gui/nodes/GUINode.cpp \
 	src/tdme/gui/nodes/GUINodeConditions.cpp \
 	src/tdme/gui/nodes/GUINodeController.cpp \
@@ -459,6 +469,8 @@ SRCS = \
 	src/tdme/gui/nodes/GUIParentNode_Overflow.cpp \
 	src/tdme/gui/nodes/GUIScreenNode.cpp \
 	src/tdme/gui/nodes/GUISpaceNode.cpp \
+	src/tdme/gui/nodes/GUIStyledTextNode.cpp \
+	src/tdme/gui/nodes/GUIStyledTextNodeController.cpp \
 	src/tdme/gui/nodes/GUITableNode.cpp \
 	src/tdme/gui/nodes/GUITableCellNode.cpp \
 	src/tdme/gui/nodes/GUITableRowNode.cpp \
@@ -468,7 +480,6 @@ SRCS = \
 	src/tdme/gui/nodes/GUIVerticalScrollbarInternalController.cpp \
 	src/tdme/gui/nodes/GUIVerticalScrollbarInternalNode.cpp \
 	src/tdme/gui/renderer/GUIFont.cpp \
-	src/tdme/gui/renderer/GUIFont_CharacterDefinition.cpp \
 	src/tdme/gui/renderer/GUIRenderer.cpp \
 	src/tdme/gui/renderer/GUIShader.cpp \
 	src/tdme/network/httpclient/HTTPClient.cpp \
@@ -547,6 +558,7 @@ SRCS = \
 	src/tdme/tools/editor/misc/GenerateImposterLOD.cpp \
 	src/tdme/tools/editor/misc/Gizmo.cpp \
 	src/tdme/tools/editor/misc/PopUps.cpp \
+	src/tdme/tools/editor/misc/TextFormatter.cpp \
 	src/tdme/tools/editor/misc/Tools.cpp \
 	src/tdme/tools/editor/tabcontrollers/EmptyEditorTabController.cpp \
 	src/tdme/tools/editor/tabcontrollers/EnvMapEditorTabController.cpp \
@@ -591,7 +603,6 @@ SRCS = \
 	src/tdme/utilities/Hex.cpp \
 	src/tdme/utilities/Integer.cpp \
 	src/tdme/utilities/MiniScript.cpp \
-	src/tdme/utilities/MutableString.cpp \
 	src/tdme/utilities/ModelTools.cpp \
 	src/tdme/utilities/PathFinding.cpp \
 	src/tdme/utilities/Primitives.cpp \
@@ -601,7 +612,7 @@ SRCS = \
 	src/tdme/utilities/SHA256.cpp \
 	src/tdme/utilities/StringTools.cpp \
 	src/tdme/utilities/StringTokenizer.cpp \
-	src/tdme/utilities/Terrain2.cpp \
+	src/tdme/utilities/Terrain.cpp \
 	$(SRCS_PLATFORM)
 
 EXT_TINYXML_SRCS = \

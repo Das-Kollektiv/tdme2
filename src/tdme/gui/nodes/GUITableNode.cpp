@@ -172,7 +172,7 @@ void GUITableNode::layoutSubNodes()
 			for (auto i = 0; i < subNodes.size(); i++) {
 				auto guiSubNode = subNodes[i];
 				if (guiSubNode->conditionsMet == false) continue;
-				guiSubNode->computedConstraints.alignmentTop = (height - finalNodesHeight);
+				guiSubNode->computedConstraints.alignmentTop = (height - finalNodesHeight); // TODO: take bottom padding into account
 			}
 		}
 

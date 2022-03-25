@@ -12,13 +12,13 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/subsystems/renderer/RendererPlugin.h>
 #include <tdme/engine/subsystems/renderer/GLES2Renderer.h>
+#include <tdme/engine/subsystems/renderer/RendererPlugin.h>
 
 using std::string;
 
-using tdme::engine::subsystems::renderer::RendererPlugin;
 using tdme::engine::subsystems::renderer::GLES2Renderer;
+using tdme::engine::subsystems::renderer::RendererPlugin;
 using tdme::engine::Engine;
 
 /**

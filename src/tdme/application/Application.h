@@ -234,6 +234,13 @@ public:
 	static void installExceptionHandler();
 
 	/**
+	 * @return mouse cursor
+	 */
+	inline static int getMouseCursor() {
+		return mouseCursor;
+	}
+
+	/**
 	 * Set mouse cursor
 	 * @param mouseCursor mouse cursor, see MOUSE_CURSOR_*
 	 */
@@ -332,6 +339,8 @@ private:
 	STATIC_DLL_IMPEXT static int glfwMouseButtonLast;
 	STATIC_DLL_IMPEXT static bool glfwCapsLockEnabled;
 	STATIC_DLL_IMPEXT static GLFWcursor* glfwHandCursor;
+
+	STATIC_DLL_IMPEXT static int mouseCursor;
 
 	/**
 	 * Set application icon

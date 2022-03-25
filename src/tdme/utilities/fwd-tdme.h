@@ -33,6 +33,6 @@ namespace utilities {
 	class ShortBuffer;
 	class StringTokenizer;
 	class StringTools;
-	class Terrain2;
+	class Terrain;
 }  // namespace utilities
 }  // namespace tdme

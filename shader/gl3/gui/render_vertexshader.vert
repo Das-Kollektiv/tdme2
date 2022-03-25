@@ -2,6 +2,7 @@
 
 // layout
 layout (location = 0) in vec3 inVertex;
+layout (location = 1) in float inSolidColor;
 layout (location = 2) in vec2 inTextureUV;
 layout (location = 3) in vec4 inColor;
 
@@ -11,6 +12,7 @@ uniform mat3 inverseGradientTextureMatrix;
 
 // will be passed to fragment shader
 out vec4 vsFragColor;
+flat out float vsSolidColor;
 out vec2 vsFragTextureUV;
 out vec2 vsFragGradientTextureUV;
 
@@ -18,6 +20,7 @@ out vec2 vsFragGradientTextureUV;
 void main(void) {
 	// pass to fragment shader
 	vsFragColor = inColor;
+	vsSolidColor = inSolidColor;
 	vsFragTextureUV = vec2(textureMatrix * vec3(inTextureUV, 1.0));
 	vsFragGradientTextureUV = vec2(inverseGradientTextureMatrix * vec3(inTextureUV, 1.0));
 

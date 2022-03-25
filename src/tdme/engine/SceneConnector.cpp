@@ -80,7 +80,7 @@
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/Primitives.h>
 #include <tdme/utilities/StringTools.h>
-#include <tdme/utilities/Terrain2.h>
+#include <tdme/utilities/Terrain.h>
 
 using std::map;
 using std::string;
@@ -160,7 +160,7 @@ using tdme::utilities::ModelTools;
 using tdme::utilities::MutableString;
 using tdme::utilities::Primitives;
 using tdme::utilities::StringTools;
-using tdme::utilities::Terrain2;
+using tdme::utilities::Terrain;
 
 Model* SceneConnector::emptyModel = nullptr;
 float SceneConnector::renderGroupsPartitionWidth = 64.0f;
@@ -520,7 +520,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 			// terrain
 			BoundingBox terrainBoundingBox;
 			vector<Model*> terrainModels;
-			Terrain2::createTerrainModels(width, depth, 0.0f, terrain->getHeightVector(), terrainBoundingBox, terrainModels/*, true*/); // TODO: finish LOD
+			Terrain::createTerrainModels(width, depth, 0.0f, terrain->getHeightVector(), terrainBoundingBox, terrainModels/*, true*/); // TODO: finish LOD
 			if (terrainModels.empty() == false) {
 				auto idx = 0;
 				for (auto terrainModel: terrainModels) {
@@ -543,7 +543,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 				auto waterPositionMapsIndices = terrain->getWaterPositionMapsIndices();
 				for (auto waterPositionMapIdx: waterPositionMapsIndices) {
 					vector<Model*> waterModels;
-					Terrain2::createWaterModels(
+					Terrain::createWaterModels(
 						terrainBoundingBox,
 						prototype->getTerrain()->getWaterPositionMap(waterPositionMapIdx),
 						prototype->getTerrain()->getWaterPositionMapHeight(waterPositionMapIdx),
@@ -559,7 +559,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 						waterObject3D->setReceivesShadows(false);
 						waterObject3D->setReflectionEnvironmentMappingId("sky_environment_mapping");
 						waterObject3D->setReflectionEnvironmentMappingPosition(
-							Terrain2::computeWaterReflectionEnvironmentMappingPosition(
+							Terrain::computeWaterReflectionEnvironmentMappingPosition(
 								terrain->getWaterPositionMap(waterPositionMapIdx),
 								terrain->getWaterPositionMapHeight(waterPositionMapIdx)
 							)
@@ -927,8 +927,8 @@ void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vec
 			auto terrain = prototype->getTerrain();
 			auto width = terrain->getWidth();
 			auto depth = terrain->getDepth();
-			auto terrainHeightVectorVerticesPerX = static_cast<int>(Math::ceil(width / Terrain2::STEP_SIZE));
-			auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(depth / Terrain2::STEP_SIZE));
+			auto terrainHeightVectorVerticesPerX = static_cast<int>(Math::ceil(width / Terrain::STEP_SIZE));
+			auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(depth / Terrain::STEP_SIZE));
 			// terrain
 			auto minHeight = terrain->getHeightVector()[0];
 			auto maxHeight = terrain->getHeightVector()[0];

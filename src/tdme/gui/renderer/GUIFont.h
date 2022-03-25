@@ -7,6 +7,7 @@
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
+#include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
@@ -19,7 +20,8 @@ using std::unordered_map;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::gui::nodes::GUIColor;
-using tdme::gui::renderer::GUIFont_CharacterDefinition;
+using tdme::gui::nodes::GUIScreenNode;
+using tdme::gui::renderer::GUICharacter;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::os::filesystem::FileSystemException;
 using tdme::utilities::MutableString;
@@ -44,32 +46,19 @@ using tdme::utilities::MutableString;
  */
 class tdme::gui::renderer::GUIFont final
 {
-	friend class GUIFont_CharacterDefinition;
-
 private:
 	Texture* texture { nullptr };
 	int32_t textureId { -1 };
-	unordered_map<uint32_t, GUIFont_CharacterDefinition*> chars;
-	int lineHeight { 0 };
-	int yOffsetMin { 0 };
+	unordered_map<uint32_t, GUICharacter*> chars;
+	float lineHeight { 0.0f };
+	float baseLine { 0.0f };
 
 	/**
 	 * Parse a single character line from the definition
 	 * @param line line The line to be parsed
 	 * @return The character definition from the line
 	 */
-	GUIFont_CharacterDefinition* parseCharacter(const string& line);
-
-	/**
-	 * Get character defintion
-	 * @param charId character id
-	 * @return character definition
-	 */
-	inline GUIFont_CharacterDefinition* getCharacter(uint32_t charId) {
-		auto charIt = chars.find(charId);
-		if (charIt != chars.end()) return charIt->second;
-		return nullptr;
-	}
+	GUICharacter* parseCharacter(const string& line);
 
 public:
 	/**
@@ -101,19 +90,43 @@ public:
 	void dispose();
 
 	/**
-	 * Draw string
-	 * @param guiRenderer gui renderer
-	 * @param x x
-	 * @param y y
-	 * @param text text
-	 * @param offset offset
-	 * @param length length or 0 if full length
-	 * @param color color
-	 * @param selectionStartIndex selection start index
-	 * @param selectionEndIndex selection end index
-	 * @param backgroundColor background color
+	 * @return texture
 	 */
-	void drawString(GUIRenderer* guiRenderer, int x, int y, const MutableString& text, int offset, int length, const GUIColor& color, int selectionStartIndex = -1, int selectionEndIndex = -1, const GUIColor& backgroundColor = GUIColor::GUICOLOR_TRANSPARENT);
+	inline Texture* getTexture() {
+		return texture;
+	}
+
+	/**
+	 * @return texture id
+	 */
+	inline int32_t getTextureId() {
+		return textureId;
+	}
+
+	/**
+	 * Get character defintion
+	 * @param charId character id
+	 * @return character definition
+	 */
+	inline GUICharacter* getCharacter(uint32_t charId) {
+		auto charIt = chars.find(charId);
+		if (charIt != chars.end()) return charIt->second;
+		return nullptr;
+	}
+
+	/**
+	 * @return line height
+	 */
+	inline float getLineHeight() {
+		return lineHeight;
+	}
+
+	/**
+	 * @return base line
+	 */
+	inline float getBaseLine() {
+		return baseLine;
+	}
 
 	/**
 	 * Get text index X of given text and index
@@ -150,8 +163,39 @@ public:
 	int getTextIndexXAtWidth(const MutableString& text, int width);
 
 	/**
-	 * @return line height
+	 * Draw character
+	 * @param guiRenderer gui renderer
+	 * @param character character
+	 * @param x x
+	 * @param y y
+	 * @param color color
 	 */
-	int getLineHeight();
+	void drawCharacter(GUIRenderer* guiRenderer, GUICharacter* character, int x, int y, const GUIColor& color = GUIColor::GUICOLOR_WHITE);
+
+	/**
+	 * Draw background
+	 * @param guiRenderer gui renderer
+	 * @param character character
+	 * @param x x
+	 * @param y y
+	 * @param lineHeight line height
+	 * @param color color
+	 */
+	void drawCharacterBackground(GUIRenderer* guiRenderer, GUICharacter* character, int x, int y, int lineHeight, const GUIColor& color);
+
+	/**
+	 * Draw string
+	 * @param guiRenderer gui renderer
+	 * @param x x
+	 * @param y y
+	 * @param text text
+	 * @param offset offset
+	 * @param length length or 0 if full length
+	 * @param color color
+	 * @param selectionStartIndex selection start index
+	 * @param selectionEndIndex selection end index
+	 * @param backgroundColor background color
+	 */
+	void drawString(GUIRenderer* guiRenderer, int x, int y, const MutableString& text, int offset, int length, const GUIColor& color, int selectionStartIndex = -1, int selectionEndIndex = -1, const GUIColor& backgroundColor = GUIColor::GUICOLOR_TRANSPARENT);
 
 };

@@ -104,14 +104,8 @@ private:
 	 */
 	virtual Prototype* loadModelPrototype(const string& name, const string& description, const string& pathName, const string& fileName, const Vector3& pivot);
 
-	/**
-	 * On rotation event to be overloaded
-	 */
+	// overridden methods
 	void onCameraRotation() override;
-
-	/**
-	 * On scale event to be overloaded
-	 */
 	void onCameraScale() override;
 
 public:
@@ -245,7 +239,7 @@ public:
 	void playSound(const string& soundId) override;
 	void stopSound() override;
 	void updateRendering() override;
-	inline bool hasFixedSize() override{ return false; };
+	inline bool hasFixedSize() override { return false; };
 
 	/**
 	 * Play animation

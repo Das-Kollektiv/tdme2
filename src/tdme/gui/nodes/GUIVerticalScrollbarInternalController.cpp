@@ -98,7 +98,7 @@ void GUIVerticalScrollbarInternalController::handleMouseEvent(GUINode* node, GUI
 	if (event->getType() == GUIMouseEvent::MOUSEEVENT_MOVED) {
 		if (this->node->isEventBelongingToNode(event) == true) {
 			state = STATE_MOUSEOVER;
-			this->node->getScreenNode()->getGUI()->addMouseOutCandidateElementNode(this->node);
+			this->node->getScreenNode()->getGUI()->addMouseOutCandidateNode(this->node);
 		} else {
 			state = STATE_NONE;
 		}

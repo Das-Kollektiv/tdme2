@@ -428,10 +428,6 @@ void GUI::render()
 	}
 
 	//
-	if (focussedNodeScreenId.empty() == true || focussedNodeNodeId.empty() == true) {
-		focusNextNode();
-	}
-
 	guiRenderer->setGUI(this);
 	engine->initGUIMode();
 	guiRenderer->initRendering();
@@ -529,6 +525,16 @@ void GUI::handleMouseEvent(GUINode* node, GUIMouseEvent* event, const unordered_
 }
 
 void GUI::handleKeyboardEvent(GUIKeyboardEvent* event) {
+	// skip if processed
+	if (event->isProcessed() == true) return;
+
+	// otherwise dispatch event to focussed node
+	if (focussedNodeScreenId.empty() == false && focussedNodeNodeId.empty() == false) {
+		auto focussedNodeScreen = getScreen(focussedNodeScreenId);
+		auto focussedNode = dynamic_cast<GUIElementNode*>(focussedNodeScreen != nullptr?focussedNodeScreen->getNodeById(focussedNodeNodeId):nullptr);
+		if (focussedNode != nullptr) focussedNode->handleKeyboardEvent(event);
+	}
+
 	// skip if already processed
 	if (event->isProcessed() == true) return;
 
@@ -568,16 +574,6 @@ void GUI::handleKeyboardEvent(GUIKeyboardEvent* event) {
 			{
 				break;
 			}
-	}
-
-	// skip if processed
-	if (event->isProcessed() == true) return;
-
-	// otherwise dispatch event to focussed node
-	if (focussedNodeScreenId.empty() == false && focussedNodeNodeId.empty() == false) {
-		auto focussedNodeScreen = getScreen(focussedNodeScreenId);
-		auto focussedNode = dynamic_cast<GUIElementNode*>(focussedNodeScreen != nullptr?focussedNodeScreen->getNodeById(focussedNodeNodeId):nullptr);
-		if (focussedNode != nullptr) focussedNode->handleKeyboardEvent(event);
 	}
 }
 
@@ -670,11 +666,6 @@ void GUI::handleEvents()
 		}
 	}
 
-	// handle keyboard events
-	for (auto& event: keyboardEvents) {
-		handleKeyboardEvent(&event);
-	}
-
 	// call tick and input event handler at very last
 	for (int i = renderScreensCopy.size() - 1; i >= 0; i--) {
 		auto screen = renderScreensCopy[i];
@@ -684,6 +675,11 @@ void GUI::handleEvents()
 			screen->getInputEventHandler()->handleInputEvents();
 		}
 		if (screen->isPopUp() == true) break;
+	}
+
+	// handle keyboard events
+	for (auto& event: keyboardEvents) {
+		handleKeyboardEvent(&event);
 	}
 
 	//

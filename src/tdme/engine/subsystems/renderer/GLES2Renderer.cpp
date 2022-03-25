@@ -819,6 +819,13 @@ void GLES2Renderer::bindIndicesBufferObject(int contextIdx, int32_t bufferObject
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferObjectId);
 }
 
+void GLES2Renderer::bindSolidColorsBufferObject(int contextIdx, int32_t bufferObjectId)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 1, GL_FLOAT, false, 0, 0LL);
+}
+
 void GLES2Renderer::bindTextureCoordinatesBufferObject(int contextIdx, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);

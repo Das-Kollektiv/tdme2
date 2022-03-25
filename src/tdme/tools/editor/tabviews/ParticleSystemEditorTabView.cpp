@@ -449,7 +449,6 @@ void ParticleSystemEditorTabView::applyParticleSystemTransformations(ParticleSys
 			}
 		} else
 		if (emitterType == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) {
-			Vector3 tmpVector3;
 			auto emitter = particleSystem->getCircleParticleEmitter();
 			auto center = transformations.getTranslation().clone().scale(objectScaleInverted).add(emitter->getCenter());
 			auto axis0 = emitter->getAxis0();

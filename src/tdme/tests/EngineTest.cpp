@@ -172,8 +172,7 @@ void EngineTest::display()
 		if (entityClicked != nullptr) {
 			entityClicked->setEffectColorMul(Color4(1.0f, 1.0f, 1.0f, 1.0f));
 		}
-		Vector3 clickWorldPosition;
-		engine->computeWorldCoordinateByMousePosition(mouseClickedXY[0], mouseClickedXY[1], clickWorldPosition);
+		auto clickWorldPosition = engine->computeWorldCoordinateByMousePosition(mouseClickedXY[0], mouseClickedXY[1]);
 		Console::println(
 			"EngineTest::display(): clicked@" +
 			to_string(clickWorldPosition.getX()) + ", " +

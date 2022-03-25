@@ -1046,10 +1046,10 @@ public:
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
 	 * @param z z
-	 * @param gizmoCoordinate gizmo coordinate
+	 * @return gizmo coordinate
 	 */
-	inline void computeGizmoCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3& gizmoCoordinate) {
-		computeWorldCoordinateByMousePosition(mouseX, mouseY, z, gizmoCoordinate, gizmoCamera);
+	inline Vector3 computeGizmoCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z) {
+		return computeWorldCoordinateByMousePosition(mouseX, mouseY, z, gizmoCamera);
 	}
 
 	/**
@@ -1057,23 +1057,20 @@ public:
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
 	 * @param z z
-	 * @param worldCoordinate world coordinate
+	 * @return world coordinate
 	 */
-	inline void computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3& worldCoordinate) {
-		computeWorldCoordinateByMousePosition(mouseX, mouseY, z, worldCoordinate, camera);
+	inline Vector3 computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z) {
+		return computeWorldCoordinateByMousePosition(mouseX, mouseY, z, camera);
 	}
 
 	/**
 	 * Compute world coordinate from mouse position
-	 * TODO:
-	 * this does not work with GLES2
+	 * Note: this does not work with GLES2 as reading from depth buffer is not available
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
-	 * @param worldCoordinate world coordinate
+	 * @return coordinate
 	 */
-	inline void computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& worldCoordinate) {
-		computeWorldCoordinateByMousePosition(mouseX, mouseY, worldCoordinate);
-	}
+	Vector3 computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY);
 
 	/**
 	 * Retrieves entity by mouse position
@@ -1213,21 +1210,20 @@ private:
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
 	 * @param z z
-	 * @param worldCoordinate world coordinate
 	 * @param camera camera or engine camera
+	 * @return world coordinate
 	 */
-	void computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Vector3& worldCoordinate, Camera* camera);
+	Vector3 computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Camera* camera);
 
 	/**
 	 * Compute world coordinate from mouse position
-	 * TODO:
-	 * this does not work with GLES2
+	 * TODO: this does not work with GLES2
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
-	 * @param worldCoordinate world coordinate
 	 * @param camera camera or engine camera
+	 * @return world coordinate
 	 */
-	void computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& worldCoordinate, Camera* camera);
+	Vector3 computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, Camera* camera);
 
 	/**
 	 * Retrieves entity by mouse position

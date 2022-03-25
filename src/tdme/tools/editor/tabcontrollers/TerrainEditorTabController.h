@@ -17,7 +17,7 @@
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/utilities/MutableString.h>
-#include <tdme/utilities/Terrain2.h>
+#include <tdme/utilities/Terrain.h>
 
 #include <ext/tinyxml/tinyxml.h>
 
@@ -40,7 +40,7 @@ using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubCont
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::TerrainEditorTabView;
 using tdme::utilities::MutableString;
-using tdme::utilities::Terrain2;
+using tdme::utilities::Terrain;
 
 using tinyxml::TiXmlAttribute;
 using tinyxml::TiXmlDocument;
@@ -71,15 +71,15 @@ private:
 	string currentTerrainBrushTextureFileName;
 	Texture* currentTerrainBrushTexture { nullptr };
 	Texture* rampTerrainBrushTexture { nullptr };
-	Terrain2::BrushOperation currentTerrainBrushOperation { Terrain2::BRUSHOPERATION_NONE };
-	Terrain2::BrushOperation currentFoliageBrushOperation { Terrain2::BRUSHOPERATION_NONE };
+	Terrain::BrushOperation currentTerrainBrushOperation { Terrain::BRUSHOPERATION_NONE };
+	Terrain::BrushOperation currentFoliageBrushOperation { Terrain::BRUSHOPERATION_NONE };
 
-	Terrain2::FoliageBrush foliageBrush = {
+	Terrain::FoliageBrush foliageBrush = {
 		.brushTexture = nullptr,
 		.brushScale = 1.0f,
 		.brushDensity = 1.0f
 	};
-	vector<Terrain2::FoliageBrushPrototype> foliageBrushPrototypes;
+	vector<Terrain::FoliageBrushPrototype> foliageBrushPrototypes;
 
 	array<string, 2> textureBrushApplyNodes = {
 		"terrainbrush_size",
@@ -133,14 +133,14 @@ public:
 	/**
 	 * @return current terrain brush operation
 	 */
-	inline Terrain2::BrushOperation getTerrainBrushOperation() {
+	inline Terrain::BrushOperation getTerrainBrushOperation() {
 		return currentTerrainBrushOperation;
 	}
 
 	/**
 	 * @return current foliage brush operation
 	 */
-	inline Terrain2::BrushOperation getFoliageBrushOperation() {
+	inline Terrain::BrushOperation getFoliageBrushOperation() {
 		return currentFoliageBrushOperation;
 	}
 
@@ -331,17 +331,17 @@ public:
 	/**
 	 * @return UI terrain brush operation
 	 */
-	Terrain2::BrushOperation getUITerrainBrushOperation();
+	Terrain::BrushOperation getUITerrainBrushOperation();
 
 	/**
 	 * @return UI water operation
 	 */
-	Terrain2::BrushOperation getUIWaterOperation();
+	Terrain::BrushOperation getUIWaterOperation();
 
 	/**
 	 * @return UI foliage brush operation
 	 */
-	Terrain2::BrushOperation getUIFoliageBrushOperation();
+	Terrain::BrushOperation getUIFoliageBrushOperation();
 
 	/**
 	 * Update info text line

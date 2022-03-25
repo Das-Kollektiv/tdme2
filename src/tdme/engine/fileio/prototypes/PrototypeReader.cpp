@@ -45,7 +45,7 @@
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/ModelTools.h>
 #include <tdme/utilities/StringTools.h>
-#include <tdme/utilities/Terrain2.h>
+#include <tdme/utilities/Terrain.h>
 
 #include <ext/rapidjson/document.h>
 
@@ -94,7 +94,7 @@ using tdme::utilities::Float;
 using tdme::utilities::Integer;
 using tdme::utilities::ModelTools;
 using tdme::utilities::StringTools;
-using tdme::utilities::Terrain2;
+using tdme::utilities::Terrain;
 
 using rapidjson::Document;
 using rapidjson::Value;
@@ -325,12 +325,12 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 		}
 		{
 			//
-			auto partitionsX = static_cast<int>(Math::ceil(terrain->getWidth() / Terrain2::PARTITION_SIZE));
-			auto partitionsZ = static_cast<int>(Math::ceil(terrain->getDepth() / Terrain2::PARTITION_SIZE));
+			auto partitionsX = static_cast<int>(Math::ceil(terrain->getWidth() / Terrain::PARTITION_SIZE));
+			auto partitionsZ = static_cast<int>(Math::ceil(terrain->getDepth() / Terrain::PARTITION_SIZE));
 
 			//
 			auto& foliageMaps = prototype->getTerrain()->getFoliageMaps();
-			Terrain2::createFoliageMaps(terrain->getWidth(), terrain->getDepth(), foliageMaps);
+			Terrain::createFoliageMaps(terrain->getWidth(), terrain->getDepth(), foliageMaps);
 			auto& jFoliage = jTerrain["f"];
 			for (auto jFoliagePrototypeIt = jFoliage.MemberBegin(); jFoliagePrototypeIt != jFoliage.MemberEnd(); ++jFoliagePrototypeIt) {
 				auto& jFoliagePrototype = jFoliage[jFoliagePrototypeIt->name.GetString()];
@@ -384,10 +384,10 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 						);
 						foliagePrototypeTransformations.update();
 						foliagePrototypePartitionTransformations.push_back(foliagePrototypeTransformations);
-						auto partitionLeft = partitionX * Terrain2::PARTITION_SIZE;
-						auto partitionTop = partitionZ * Terrain2::PARTITION_SIZE;
-						auto partitionRight = partitionX * Terrain2::PARTITION_SIZE + Terrain2::PARTITION_SIZE;
-						auto partitionBottom = partitionZ * Terrain2::PARTITION_SIZE + Terrain2::PARTITION_SIZE;
+						auto partitionLeft = partitionX * Terrain::PARTITION_SIZE;
+						auto partitionTop = partitionZ * Terrain::PARTITION_SIZE;
+						auto partitionRight = partitionX * Terrain::PARTITION_SIZE + Terrain::PARTITION_SIZE;
+						auto partitionBottom = partitionZ * Terrain::PARTITION_SIZE + Terrain::PARTITION_SIZE;
 						// just some debugging output if foliage is not in correct partition
 						if (foliagePrototypeTransformations.getTranslation().getX() < partitionLeft ||
 							foliagePrototypeTransformations.getTranslation().getZ() < partitionTop ||

@@ -97,6 +97,7 @@ private:
 	static constexpr int DESC_MAX_UNCACHED { COMMANDS_MAX };
 	static constexpr int DESC_MAX_CACHED { 512 }; // TODO: make this dynamic
 	static constexpr int OBJECTS_VERTEX_BUFFER_COUNT { 10 };
+	static constexpr int GUI_VERTEX_BUFFER_COUNT { 4 };
 	static constexpr int POINTS_VERTEX_BUFFER_COUNT { 9 };
 	static constexpr int LINES_VERTEX_BUFFER_COUNT { 4 };
 	static constexpr int COMPUTE_STORAGE_BUFFER_COUNT { 8 };
@@ -525,6 +526,8 @@ private:
 	void startRenderPass(int contextIdx);
 	void endRenderPass(int contextIdx);
 	void createRenderProgram(program_type* program);
+	void createGUIRenderingPipeline(int contextIdx, program_type* program);
+	void setupGUIRenderingPipeline(int contextIdx, program_type* program);
 	void createObjectsRenderingPipeline(int contextIdx, program_type* program);
 	void setupObjectsRenderingPipeline(int contextIdx, program_type* program);
 	void createPointsRenderingPipeline(int contextIdx, program_type* program);
@@ -650,6 +653,7 @@ public:
 	void uploadIndicesBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, ShortBuffer* data) override;
 	void uploadIndicesBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, IntBuffer* data) override;
 	void bindIndicesBufferObject(int contextIdx, int32_t bufferObjectId) override;
+	void bindSolidColorsBufferObject(int contextIdx, int32_t bufferObjectId) override;
 	void bindTextureCoordinatesBufferObject(int contextIdx, int32_t bufferObjectId) override;
 	void bindVerticesBufferObject(int contextIdx, int32_t bufferObjectId) override;
 	void bindNormalsBufferObject(int contextIdx, int32_t bufferObjectId) override;

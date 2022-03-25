@@ -1,7 +1,7 @@
 <screen id="popup_about" background-color="#00000080" popup="true" min-width="1024" min-height="768" max-width="3200" max-height="1800">
 	<layout alignment="vertical" horizontal-align="center" vertical-align="center" width="100%" height="100%">
 	
-			<tabs width="400" height="450">
+			<tabs width="400" height="400">
 				<tabs-header id="about_tabs-header">
 					<tab id="about_caption" image="resources/engine/images/tdme.png" text="About" closeable="true"/>
 				</tabs-header>
@@ -18,13 +18,13 @@
 							
 							<space height="5" />
 							
-							<multiline-text id="about_graphics" font="{$font.default}" color="{$color.font_disabled}" width="100%" height="auto" horizontal-align="center">
+							<styled-text id="about_graphics" font="{$font.default}" color="{$color.font_disabled}" width="100%" height="auto" horizontal-align="center">
 								<![CDATA[
 									Graphics:
 								]]>
-							</multiline-text>
+							</styled-text>
 							
-							<space height="10" />					
+							<space height="20" />
 						
 							<layout alignment="horizontal" horizontal-align="center" vertical-align="center" width="100%" height="*">
 							
@@ -77,25 +77,15 @@
 									</element>
  									-->
 									<space height="5" />
-									<element id="about_drewke_net_element" width="auto" height="auto" on-mouse-click="https://drewke.net" options="mouse-cursor=hand">
-										<layout alignment="horizontal" horizontal-align="left" vertical-align="center" width="auto" height="25">
-											<image src="resources/engine/images/weblink.png"/>
-											<space width="5"/>
-											<text id="about_drewke_net" font="{$font.default}" color="{$color.font_normal}" text="drewke.net" width="auto" />
-										</layout>
-									</element>
-									<element id="about_mindty_com_element" width="auto" height="auto" on-mouse-click="https://mindty.com" options="mouse-cursor=hand">
-										<layout alignment="horizontal" horizontal-align="left" vertical-align="center" width="auto" height="25">
-											<image src="resources/engine/images/weblink.png"/>
-											<space width="5"/>
-											<text id="about_mindty_com" font="{$font.default}" color="{$color.font_normal}" text="mindty.com" width="auto" />
-										</layout>
-									</element>
 								</layout>
 
 							</layout>
 
-							<text font="{$font.default}" color="{$color.font_disabled}" width="100%" height="auto" horizontal-align="center" text="Developed 2012-2021 by drewke.net, mindty.com" />
+							<styled-text font="{$font.default}" color="{$color.font_disabled}" width="100%" height="auto" horizontal-align="center">
+								<![CDATA[
+									Developed 2012-2021 by [url=https://drewke.net]drewke.net[/url], [url=https://mindty.com]mindty.com[/url]
+								]]>
+							 </styled-text>
 						
 						</layout>
 						

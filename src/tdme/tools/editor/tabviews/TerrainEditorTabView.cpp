@@ -33,7 +33,7 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/StringTools.h>
-#include <tdme/utilities/Terrain2.h>
+#include <tdme/utilities/Terrain.h>
 
 using std::string;
 
@@ -68,7 +68,7 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Integer;
 using tdme::utilities::StringTools;
-using tdme::utilities::Terrain2;
+using tdme::utilities::Terrain;
 
 TerrainEditorTabView::TerrainEditorTabView(EditorView* editorView, const string& tabId, Prototype* prototype)
 {
@@ -124,7 +124,7 @@ void TerrainEditorTabView::handleInputEvents()
 		if (event.getType() == GUIMouseEvent::MOUSEEVENT_MOVED) {
 			brushMoved = true;
 			engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), brushCenterPosition);
-			if (terrainEditorTabController->getTerrainBrushOperation() == Terrain2::BRUSHOPERATION_RAMP && rampMode == 0) {
+			if (terrainEditorTabController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP && rampMode == 0) {
 				rampVertices[1] = brushCenterPosition;
 				//
 				auto brushEnabled = rampVertices[1].clone().sub(rampVertices[0]).computeLength() > 0.1f;
@@ -145,7 +145,7 @@ void TerrainEditorTabView::handleInputEvents()
 		} else
 		if (event.getButton() == MOUSE_BUTTON_RIGHT) {
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
-				if (terrainEditorTabController->getTerrainBrushOperation() == Terrain2::BRUSHOPERATION_RAMP) {
+				if (terrainEditorTabController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP) {
 					rampMode = -1;
 					engine->setShaderParameter("terraineditor", "brushEnabled", false);
 					engine->setShaderParameter("terraineditor", "brushRotation", 0.0f);
@@ -156,7 +156,7 @@ void TerrainEditorTabView::handleInputEvents()
 		} else
 		if (event.getButton() == MOUSE_BUTTON_LEFT) {
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
-				if (terrainEditorTabController->getTerrainBrushOperation() == Terrain2::BRUSHOPERATION_RAMP) {
+				if (terrainEditorTabController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP) {
 					if (engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), brushCenterPosition) != nullptr &&
 						terrainEditorTabController->determineRampHeight(terrainBoundingBox, terrainModels, brushCenterPosition, rampHeight[rampMode + 1]) == true) {
 						//
@@ -195,13 +195,13 @@ void TerrainEditorTabView::handleInputEvents()
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_PRESSED ||
 				event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
 				brushMoved = true;
-				if (terrainEditorTabController->getTerrainBrushOperation() != Terrain2::BRUSHOPERATION_RAMP) {
+				if (terrainEditorTabController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_RAMP) {
 					engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), brushCenterPosition);
 				}
-				if (terrainEditorTabController->getTerrainBrushOperation() == Terrain2::BRUSHOPERATION_RAMP) {
+				if (terrainEditorTabController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP) {
 					// no op
 				} else
-				if (terrainEditorTabController->getTerrainBrushOperation() == Terrain2::BRUSHOPERATION_WATER_ADD) {
+				if (terrainEditorTabController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_WATER_ADD) {
 					if (terrainEditorTabController->determineCurrentBrushHeight(terrainBoundingBox, terrainModels, brushCenterPosition) == true) {
 						vector<Model*> waterModels;
 						Vector3 waterReflectionEnvironmentMappingPosition;
@@ -223,7 +223,7 @@ void TerrainEditorTabView::handleInputEvents()
 						}
 					}
 				} else
-				if (terrainEditorTabController->getTerrainBrushOperation() == Terrain2::BRUSHOPERATION_WATER_DELETE) {
+				if (terrainEditorTabController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_WATER_DELETE) {
 					auto selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled());
 					if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "water.") == true) {
 						auto waterBeginIdx = selectedEntity->getId().find('.', selectedEntity->getId().find('.') + 1) + 1;
@@ -247,7 +247,7 @@ void TerrainEditorTabView::handleInputEvents()
 		auto isKeyDown = event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
 		if (event.getKeyCode() == GUIKeyboardEvent::KEYCODE_ESCAPE) {
 			if (isKeyDown == true) {
-				if (terrainEditorTabController->getTerrainBrushOperation() == Terrain2::BRUSHOPERATION_RAMP) {
+				if (terrainEditorTabController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP) {
 					rampMode = -1;
 					engine->setShaderParameter("terraineditor", "brushEnabled", false);
 					engine->setShaderParameter("terraineditor", "brushRotation", 0.0f);
@@ -273,10 +273,10 @@ void TerrainEditorTabView::display()
 
 	// actually do the brushing
 	if (brushingEnabled == true && terrainEditorTabController->determineCurrentBrushHeight(terrainBoundingBox, terrainModels, brushCenterPosition) == true) {
-		if (terrainEditorTabController->getTerrainBrushOperation() != Terrain2::BRUSHOPERATION_NONE) {
+		if (terrainEditorTabController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_NONE) {
 			terrainEditorTabController->applyTerrainBrush(terrainBoundingBox, terrainModels, brushCenterPosition, engine->getTiming()->getDeltaTime());
 		}
-		if (terrainEditorTabController->getFoliageBrushOperation() != Terrain2::BRUSHOPERATION_NONE) {
+		if (terrainEditorTabController->getFoliageBrushOperation() != Terrain::BRUSHOPERATION_NONE) {
 			if (brushMoved == true) {
 				terrainEditorTabController->applyFoliageBrush(terrainBoundingBox, brushCenterPosition, engine->getTiming()->getDeltaTime());
 			}
@@ -780,14 +780,14 @@ void TerrainEditorTabView::setBrush(Texture* texture, float scale, float density
 	brushTexture = texture;
 	//
 	brushScale = scale;
-	auto _scale = terrainEditorTabController->getTerrainBrushOperation() != Terrain2::BRUSHOPERATION_RAMP?scale:1.0f;
+	auto _scale = terrainEditorTabController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_RAMP?scale:1.0f;
 	engine->setShaderParameter("terraineditor", "brushDimension", Vector2(static_cast<int>(texture->getTextureWidth()) * _scale, static_cast<int>(texture->getTextureHeight()) * _scale));
 	engine->setShaderParameter("terraineditor", "brushTexture", brushTexture == nullptr?0:engine->getTextureManager()->addTexture(brushTexture));
 	engine->setShaderParameter(
 		"terraineditor",
 		"brushEnabled",
-		(terrainEditorTabController->getTerrainBrushOperation() != Terrain2::BRUSHOPERATION_NONE && terrainEditorTabController->getTerrainBrushOperation() != Terrain2::BRUSHOPERATION_RAMP) ||
-		terrainEditorTabController->getFoliageBrushOperation() != Terrain2::BRUSHOPERATION_NONE
+		(terrainEditorTabController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_NONE && terrainEditorTabController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_RAMP) ||
+		terrainEditorTabController->getFoliageBrushOperation() != Terrain::BRUSHOPERATION_NONE
 	);
 	rampMode = -1;
 	brushDensityStrength = densityStrength;
@@ -795,9 +795,9 @@ void TerrainEditorTabView::setBrush(Texture* texture, float scale, float density
 
 void TerrainEditorTabView::setBrushScale(float scale) {
 	if (brushTexture == nullptr ||
-		terrainEditorTabController->getTerrainBrushOperation() == Terrain2::BRUSHOPERATION_RAMP ||
-		terrainEditorTabController->getTerrainBrushOperation() == Terrain2::BRUSHOPERATION_WATER_ADD ||
-		(terrainEditorTabController->getTerrainBrushOperation() == Terrain2::BRUSHOPERATION_NONE && terrainEditorTabController->getFoliageBrushOperation() == Terrain2::BRUSHOPERATION_NONE)) return;
+		terrainEditorTabController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP ||
+		terrainEditorTabController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_WATER_ADD ||
+		(terrainEditorTabController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_NONE && terrainEditorTabController->getFoliageBrushOperation() == Terrain::BRUSHOPERATION_NONE)) return;
 	engine->setShaderParameter("terraineditor", "brushDimension", Vector2(static_cast<int>(brushTexture->getTextureWidth()) * scale, static_cast<int>(brushTexture->getTextureHeight()) * scale));
 	brushScale = scale;
 	terrainEditorTabController->setBrushScale(scale);
@@ -805,9 +805,9 @@ void TerrainEditorTabView::setBrushScale(float scale) {
 
 void TerrainEditorTabView::setBrushDensityStrength(float densityStrength) {
 	if (brushTexture == nullptr ||
-		terrainEditorTabController->getTerrainBrushOperation() == Terrain2::BRUSHOPERATION_RAMP ||
-		terrainEditorTabController->getTerrainBrushOperation() == Terrain2::BRUSHOPERATION_WATER_ADD ||
-		(terrainEditorTabController->getTerrainBrushOperation() == Terrain2::BRUSHOPERATION_NONE && terrainEditorTabController->getFoliageBrushOperation() == Terrain2::BRUSHOPERATION_NONE)) return;
+		terrainEditorTabController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_RAMP ||
+		terrainEditorTabController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_WATER_ADD ||
+		(terrainEditorTabController->getTerrainBrushOperation() == Terrain::BRUSHOPERATION_NONE && terrainEditorTabController->getFoliageBrushOperation() == Terrain::BRUSHOPERATION_NONE)) return;
 	brushDensityStrength = densityStrength;
 	terrainEditorTabController->setBrushDensityStrength(densityStrength);
 }
