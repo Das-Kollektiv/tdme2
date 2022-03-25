@@ -48,31 +48,55 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 	// load code completion
 	codeCompletion = TextFormatter::getInstance()->loadCodeCompletion(extension);
 
-	// add text node change listener
-	class TextChangeListener: public GUIStyledTextNodeController::ChangeListener {
-	public:
-		TextChangeListener(TextEditorTabView* textEditorTabView): textEditorTabView(textEditorTabView) {
-		}
+	//
+	{
+		// add text node change listener
+		class TextChangeListener: public GUIStyledTextNodeController::ChangeListener {
+		public:
+			TextChangeListener(TextEditorTabView* textEditorTabView): textEditorTabView(textEditorTabView) {
+			}
 
-		virtual ~TextChangeListener() {
-		}
+			virtual ~TextChangeListener() {
+			}
 
-		virtual void onRemoveText(int idx, int count) override {
-			TextFormatter::getInstance()->format(textEditorTabView->extension, textEditorTabView->textNode, idx, idx + count);
-		}
-		virtual void onInsertText(int idx, int count) override {
-			TextFormatter::getInstance()->format(textEditorTabView->extension, textEditorTabView->textNode, idx, idx + count);
-		}
-	private:
-		TextEditorTabView* textEditorTabView;
-	};
-	required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->addChangeListener(textNodeChangeListener = new TextChangeListener(this));
+			virtual void onRemoveText(int idx, int count) override {
+				TextFormatter::getInstance()->format(textEditorTabView->extension, textEditorTabView->textNode, idx, idx + count);
+			}
+			virtual void onInsertText(int idx, int count) override {
+				TextFormatter::getInstance()->format(textEditorTabView->extension, textEditorTabView->textNode, idx, idx + count);
+			}
+		private:
+			TextEditorTabView* textEditorTabView;
+		};
+		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->addChangeListener(textNodeChangeListener = new TextChangeListener(this));
+	}
+
+	//
+	{
+		// add code completion listener
+		class TextCodeCompletionListener: public GUIStyledTextNodeController::CodeCompletionListener {
+		public:
+			TextCodeCompletionListener(TextEditorTabView* textEditorTabView): textEditorTabView(textEditorTabView) {
+			}
+
+			virtual ~TextCodeCompletionListener() {
+			}
+
+			virtual void onCodeCompletion(int idx) override {
+				Console::println("TextCodeCompletionListener::onCodeCompletion() @ " + to_string(idx));
+			}
+		private:
+			TextEditorTabView* textEditorTabView;
+		};
+		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->addCodeCompletionListener(textNodeCodeCompletionListener = new TextCodeCompletionListener(this));
+	}
 }
 
 TextEditorTabView::~TextEditorTabView() {
 	delete textEditorTabController;
 	delete engine;
 	delete textNodeChangeListener;
+	delete textNodeCodeCompletionListener;
 	if (codeCompletion != nullptr) delete codeCompletion;
 }
 

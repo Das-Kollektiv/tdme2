@@ -286,6 +286,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 		auto keyControlX = false;
 		auto keyControlC = false;
 		auto keyControlV = false;
+		auto keyControlSpace = false;
 		auto isKeyDown = event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
 		// determine select all, copy, paste, cut
 		if (Character::toLowerCase(event->getKeyChar()) == 'a' && keyControl == true) {
@@ -302,6 +303,10 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 		}
 		if (Character::toLowerCase(event->getKeyChar()) == 'v' && keyControl == true) {
 			keyControlV = isKeyDown;
+			event->setProcessed(true);
+		}
+		if (event->getKeyChar() == ' ' && keyControl == true) {
+			keyControlSpace = isKeyDown;
 			event->setProcessed(true);
 		}
 		// handle them ...
@@ -342,6 +347,9 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 				forwardInsertText(index, clipboardContent.size());
 				index+= clipboardContent.size();
 			}
+		} else
+		if (keyControlSpace == true) {
+			forwardCodeCompletion(index);
 		} else {
 			// navigation, delete, return
 			switch (event->getKeyCode()) {
@@ -654,4 +662,13 @@ void GUIStyledTextNodeController::addChangeListener(ChangeListener* listener)
 void GUIStyledTextNodeController::removeChangeListener(ChangeListener* listener)
 {
 	changeListeners.erase(std::remove(changeListeners.begin(), changeListeners.end(), listener), changeListeners.end());
+}
+
+void GUIStyledTextNodeController::addCodeCompletionListener(CodeCompletionListener* listener) {
+	removeCodeCompletionListener(listener);
+	codeCompletionListeners.push_back(listener);
+}
+
+void GUIStyledTextNodeController::removeCodeCompletionListener(CodeCompletionListener* listener) {
+	codeCompletionListeners.erase(std::remove(codeCompletionListeners.begin(), codeCompletionListeners.end(), listener), codeCompletionListeners.end());
 }

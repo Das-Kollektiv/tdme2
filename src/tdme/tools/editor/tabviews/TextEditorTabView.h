@@ -45,6 +45,7 @@ private:
 	string extension;
 	GUIStyledTextNode* textNode { nullptr };
 	GUIStyledTextNodeController::ChangeListener* textNodeChangeListener { nullptr };
+	GUIStyledTextNodeController::CodeCompletionListener* textNodeCodeCompletionListener { nullptr };
 	const TextFormatter::CodeCompletion* codeCompletion { nullptr };
 
 public:
