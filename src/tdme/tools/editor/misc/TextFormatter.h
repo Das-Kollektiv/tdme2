@@ -8,11 +8,15 @@
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 
+#include <ext/tinyxml/tinyxml.h>
+
 using std::string;
 using std::vector;
 
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIStyledTextNode;
+
+using tinyxml::TiXmlElement;
 
 /**
  * Text formatter
@@ -99,6 +103,21 @@ private:
 
 	STATIC_DLL_IMPEXT static TextFormatter* instance;
 
+	/**
+	 * Returns immediate children tags by tag name
+	 * @param parent parent
+	 * @param name name
+	 * @return matching elements
+	 */
+	static const vector<TiXmlElement*> getChildrenByTagName(TiXmlElement* parent, const char* name);
+
+	/**
+	 * Returns immediate children tags
+	 * @param parent parent
+	 * @return elements
+	 */
+	static const vector<TiXmlElement*> getChildren(TiXmlElement* parent);
+
 public:
 
 	/**
@@ -124,4 +143,9 @@ public:
 	 * @param charEndIdx character end index
 	 */
 	void format(const string& extension, GUIStyledTextNode* textNode, int charStartIdx = -1, int charEndIdx = -1);
+
+	/**
+	 * Parse code completion
+	 */
+	void loadCodeCompletion(const string& extension);
 };
