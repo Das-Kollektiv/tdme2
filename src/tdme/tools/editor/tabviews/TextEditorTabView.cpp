@@ -93,21 +93,42 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 				if (codeCompletion == nullptr) return;
 				auto previousDelimiterPos = textEditorTabView->textNode->getPreviousDelimiter(idx, codeCompletion->delimiters);
 				string search = StringTools::substring(textEditorTabView->textNode->getText().getString(), previousDelimiterPos == 0?0:previousDelimiterPos + 1, idx);
-				vector<string> codeCompletionCandidates;
+				vector<CodeCompletionSymbol> codeCompletionSymbolCandidates;
 				#define MAX_ENTRIES	40
 				for (auto& symbol: codeCompletion->symbols) {
 					if (StringTools::startsWith(symbol.name, search) == true) {
 						if (symbol.overloadList.empty() == true) {
-							if (codeCompletionCandidates.size() == MAX_ENTRIES) {
-								codeCompletionCandidates.push_back("...");
+							if (codeCompletionSymbolCandidates.size() == MAX_ENTRIES) {
+								codeCompletionSymbolCandidates.push_back(
+									{
+										.display = "...",
+										.name = {},
+										.parameters = {},
+										.returnValue = {}
+									}
+								);
 								break;
 							} else {
-								codeCompletionCandidates.push_back(symbol.name);
+								codeCompletionSymbolCandidates.push_back(
+									{
+										.display = symbol.name,
+										.name = symbol.name,
+										.parameters = {},
+										.returnValue = {}
+									}
+								);
 							}
 						} else {
 							for (auto& overload: symbol.overloadList) {
-								if (codeCompletionCandidates.size() == MAX_ENTRIES) {
-									codeCompletionCandidates.push_back("...");
+								if (codeCompletionSymbolCandidates.size() == MAX_ENTRIES) {
+									codeCompletionSymbolCandidates.push_back(
+										{
+											.display = "...",
+											.name = {},
+											.parameters = {},
+											.returnValue = {}
+										}
+									);
 									break;
 								} else {
 									string parameters;
@@ -115,10 +136,17 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 										if (parameters.empty() == false) parameters+= ", ";
 										parameters+= parameter;
 									}
-									codeCompletionCandidates.push_back(symbol.name + "(" + parameters + ") = " + overload.returnValue);
+									codeCompletionSymbolCandidates.push_back(
+										{
+											.display = symbol.name + "(" + parameters + ") = " + overload.returnValue,
+											.name = symbol.name,
+											.parameters = overload.parameters,
+											.returnValue = overload.returnValue
+										}
+									);
 								}
 							}
-							if (codeCompletionCandidates.size() == MAX_ENTRIES + 1) break;
+							if (codeCompletionSymbolCandidates.size() == MAX_ENTRIES + 1) break;
 						}
 					}
 				}
@@ -126,46 +154,47 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 				// clear
 				popUps->getContextMenuScreenController()->clear();
 				//
-				sort(codeCompletionCandidates.begin(), codeCompletionCandidates.begin() + (Math::min(codeCompletionCandidates.size(), 9)));
+				sort(codeCompletionSymbolCandidates.begin(), codeCompletionSymbolCandidates.begin() + (Math::min(codeCompletionSymbolCandidates.size(), MAX_ENTRIES)), compareCodeCompletionStruct);
 				//
 				{
 					auto i = 0;
-					for (auto& codeCompletionCandidate: codeCompletionCandidates) {
+					for (auto& codeCompletionSymbolCandidate: codeCompletionSymbolCandidates) {
 						// add light
 						class OnCodeCompletionAction: public virtual Action
 						{
 						public:
-							OnCodeCompletionAction(TextEditorTabView* textEditorTabView, int idx, const string& code): textEditorTabView(textEditorTabView), idx(idx), code(code) {}
+							OnCodeCompletionAction(TextEditorTabView* textEditorTabView, int idx, const CodeCompletionSymbol& symbol): textEditorTabView(textEditorTabView), idx(idx), symbol(symbol) {}
 							void performAction() override {
-								if (code == "...") return;
+								if (symbol.name.empty() == true) return;
 								auto codeCompletion = textEditorTabView->codeCompletion;
 								if (codeCompletion == nullptr) return;
 								auto previousDelimiterPos = textEditorTabView->textNode->getPreviousDelimiter(idx, codeCompletion->delimiters);
 								auto nextDelimiterPos = textEditorTabView->textNode->getNextDelimiter(idx, codeCompletion->delimiters);
 								textEditorTabView->textNode->removeText(previousDelimiterPos == 0?0:previousDelimiterPos + 1, nextDelimiterPos - (previousDelimiterPos == 0?0:previousDelimiterPos + 1));
-								auto codeTokens = StringTools::tokenize(code, " \t()");
-								textEditorTabView->textNode->insertText(previousDelimiterPos == 0?0:previousDelimiterPos + 1, codeTokens[0]);
+								textEditorTabView->textNode->insertText(previousDelimiterPos == 0?0:previousDelimiterPos + 1, symbol.name);
 								TextFormatter::getInstance()->format(textEditorTabView->extension, textEditorTabView->textNode, previousDelimiterPos == 0?0:previousDelimiterPos + 1, previousDelimiterPos == 0?0:previousDelimiterPos + 1);
 							}
 						private:
 							TextEditorTabView* textEditorTabView;
 							int idx;
-							string code;
+							CodeCompletionSymbol symbol;
 						};
-						popUps->getContextMenuScreenController()->addMenuItem(codeCompletionCandidate, "contextmenu_codecompletion_" + to_string(i), new OnCodeCompletionAction(textEditorTabView, idx, codeCompletionCandidate));
+						popUps->getContextMenuScreenController()->addMenuItem(codeCompletionSymbolCandidate.display, "contextmenu_codecompletion_" + to_string(i), new OnCodeCompletionAction(textEditorTabView, idx, codeCompletionSymbolCandidate));
 						//
 						i++;
 					}
 				}
-				//
-				int left, top, width, height;
-				auto selectedTab = textEditorTabView->getEditorView()->getScreenController()->getSelectedTab();
-				if (selectedTab != nullptr) {
-					textEditorTabView->getEditorView()->getViewPort(selectedTab->getFrameBufferNode(), left, top, width, height);
-					popUps->getContextMenuScreenController()->show(
-						left + textEditorTabView->textNode->getIndexPositionX(),
-						top + textEditorTabView->textNode->getIndexPositionY()
-					);
+				if (codeCompletionSymbolCandidates.empty() == false) {
+					//
+					int left, top, width, height;
+					auto selectedTab = textEditorTabView->getEditorView()->getScreenController()->getSelectedTab();
+					if (selectedTab != nullptr) {
+						textEditorTabView->getEditorView()->getViewPort(selectedTab->getFrameBufferNode(), left, top, width, height);
+						popUps->getContextMenuScreenController()->show(
+							left + textEditorTabView->textNode->getIndexPositionX(),
+							top + textEditorTabView->textNode->getIndexPositionY()
+						);
+					}
 				}
 			}
 		private:

@@ -48,6 +48,21 @@ private:
 	GUIStyledTextNodeController::CodeCompletionListener* textNodeCodeCompletionListener { nullptr };
 	const TextFormatter::CodeCompletion* codeCompletion { nullptr };
 
+	struct CodeCompletionSymbol {
+		string display;
+		string name;
+		vector<string> parameters;
+		string returnValue;
+	};
+
+	/**
+	 * Compare CodeCompletionSymbol structs
+	 * @return lhs < rhs
+	 */
+	static bool compareCodeCompletionStruct(const CodeCompletionSymbol& lhs, const CodeCompletionSymbol& rhs) {
+		return lhs.display < rhs.display;
+	}
+
 public:
 	/**
 	 * Public constructor
