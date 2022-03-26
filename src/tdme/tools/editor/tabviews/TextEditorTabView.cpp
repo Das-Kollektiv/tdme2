@@ -94,20 +94,31 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 				auto previousDelimiterPos = textEditorTabView->textNode->getPreviousDelimiter(idx, codeCompletion->delimiters);
 				string search = StringTools::substring(textEditorTabView->textNode->getText().getString(), previousDelimiterPos == 0?0:previousDelimiterPos + 1, idx);
 				vector<string> codeCompletionCandidates;
-				Console::println("TextCodeCompletionListener::onCodeCompletion() @ " + to_string(idx) + "; searching for: " + search);
+				#define MAX_ENTRIES	40
 				for (auto& symbol: codeCompletion->symbols) {
 					if (StringTools::startsWith(symbol.name, search) == true) {
 						if (symbol.overloadList.empty() == true) {
-							codeCompletionCandidates.push_back(symbol.name);
+							if (codeCompletionCandidates.size() == MAX_ENTRIES) {
+								codeCompletionCandidates.push_back("...");
+								break;
+							} else {
+								codeCompletionCandidates.push_back(symbol.name);
+							}
 						} else {
 							for (auto& overload: symbol.overloadList) {
-								string parameters;
-								for (auto& parameter: overload.parameters) {
-									if (parameters.empty() == false) parameters+= ", ";
-									parameters+= parameter;
+								if (codeCompletionCandidates.size() == MAX_ENTRIES) {
+									codeCompletionCandidates.push_back("...");
+									break;
+								} else {
+									string parameters;
+									for (auto& parameter: overload.parameters) {
+										if (parameters.empty() == false) parameters+= ", ";
+										parameters+= parameter;
+									}
+									codeCompletionCandidates.push_back(symbol.name + "(" + parameters + ") = " + overload.returnValue);
 								}
-								codeCompletionCandidates.push_back(symbol.name + "(" + parameters + ") = " + overload.returnValue);
 							}
+							if (codeCompletionCandidates.size() == MAX_ENTRIES + 1) break;
 						}
 					}
 				}
@@ -115,7 +126,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 				// clear
 				popUps->getContextMenuScreenController()->clear();
 				//
-				sort(codeCompletionCandidates.begin(), codeCompletionCandidates.end());
+				sort(codeCompletionCandidates.begin(), codeCompletionCandidates.begin() + (Math::min(codeCompletionCandidates.size(), 9)));
 				//
 				{
 					auto i = 0;
@@ -124,14 +135,24 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 						class OnCodeCompletionAction: public virtual Action
 						{
 						public:
-							OnCodeCompletionAction(TextEditorTabView* textEditorTabView): textEditorTabView(textEditorTabView) {}
+							OnCodeCompletionAction(TextEditorTabView* textEditorTabView, int idx, const string& code): textEditorTabView(textEditorTabView), idx(idx), code(code) {}
 							void performAction() override {
-								Console::println("xxx");
+								if (code == "...") return;
+								auto codeCompletion = textEditorTabView->codeCompletion;
+								if (codeCompletion == nullptr) return;
+								auto previousDelimiterPos = textEditorTabView->textNode->getPreviousDelimiter(idx, codeCompletion->delimiters);
+								auto nextDelimiterPos = textEditorTabView->textNode->getNextDelimiter(idx, codeCompletion->delimiters);
+								textEditorTabView->textNode->removeText(previousDelimiterPos == 0?0:previousDelimiterPos + 1, nextDelimiterPos - (previousDelimiterPos == 0?0:previousDelimiterPos + 1));
+								auto codeTokens = StringTools::tokenize(code, " \t()");
+								textEditorTabView->textNode->insertText(previousDelimiterPos == 0?0:previousDelimiterPos + 1, codeTokens[0]);
+								TextFormatter::getInstance()->format(textEditorTabView->extension, textEditorTabView->textNode, previousDelimiterPos == 0?0:previousDelimiterPos + 1, previousDelimiterPos == 0?0:previousDelimiterPos + 1);
 							}
 						private:
 							TextEditorTabView* textEditorTabView;
+							int idx;
+							string code;
 						};
-						popUps->getContextMenuScreenController()->addMenuItem(codeCompletionCandidate, "contextmenu_codecompletion_" + to_string(i), new OnCodeCompletionAction(textEditorTabView));
+						popUps->getContextMenuScreenController()->addMenuItem(codeCompletionCandidate, "contextmenu_codecompletion_" + to_string(i), new OnCodeCompletionAction(textEditorTabView, idx, codeCompletionCandidate));
 						//
 						i++;
 					}
