@@ -1729,7 +1729,9 @@ const string GUIParser::getInnerXml(TiXmlElement* node)
 	std::stringstream ss;
 	auto firstChildNode = node->FirstChildElement();
 	if (firstChildNode == nullptr) {
-		ss << node->GetText();
+		if (node->GetText() != nullptr) {
+			ss << node->GetText();
+		}
 	} else {
 		for (auto childNode = firstChildNode; childNode != nullptr; childNode = childNode->NextSiblingElement()) {
 			ss << *childNode;
