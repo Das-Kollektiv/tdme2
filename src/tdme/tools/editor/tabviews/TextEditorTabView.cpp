@@ -1,30 +1,36 @@
 #include <tdme/tools/editor/tabviews/TextEditorTabView.h>
 
+#include <algorithm>
 #include <cctype>
 #include <string>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/gui/nodes/GUIFrameBufferNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/nodes/GUIStyledTextNodeController.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/misc/TextFormatter.h>
 #include <tdme/tools/editor/tabcontrollers/TextEditorTabController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
 
+using std::sort;
 using std::string;
 
 using tdme::tools::editor::tabviews::TextEditorTabView;
 
 using tdme::engine::model::Color4;
 using tdme::engine::Engine;
+using tdme::gui::nodes::GUIFrameBufferNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::GUI;
+using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::misc::TextFormatter;
 using tdme::tools::editor::tabcontrollers::TextEditorTabController;
@@ -87,19 +93,58 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 				if (codeCompletion == nullptr) return;
 				auto previousDelimiterPos = textEditorTabView->textNode->getPreviousDelimiter(idx, codeCompletion->delimiters);
 				string search = StringTools::substring(textEditorTabView->textNode->getText().getString(), previousDelimiterPos == 0?0:previousDelimiterPos + 1, idx);
+				vector<string> codeCompletionCandidates;
 				Console::println("TextCodeCompletionListener::onCodeCompletion() @ " + to_string(idx) + "; searching for: " + search);
 				for (auto& symbol: codeCompletion->symbols) {
 					if (StringTools::startsWith(symbol.name, search) == true) {
-						Console::println("\t" + symbol.name);
-						for (auto& overload: symbol.overloadList) {
-							string parameters;
-							for (auto& parameter: overload.parameters) {
-								if (parameters.empty() == false) parameters+= ", ";
-								parameters+= parameter;
+						if (symbol.overloadList.empty() == true) {
+							codeCompletionCandidates.push_back(symbol.name);
+						} else {
+							for (auto& overload: symbol.overloadList) {
+								string parameters;
+								for (auto& parameter: overload.parameters) {
+									if (parameters.empty() == false) parameters+= ", ";
+									parameters+= parameter;
+								}
+								codeCompletionCandidates.push_back(symbol.name + "(" + parameters + ") = " + overload.returnValue);
 							}
-							Console::println("\t\t" + symbol.name + "(" + parameters + ") = " + overload.returnValue);
 						}
 					}
+				}
+				auto popUps = textEditorTabView->getPopUps();
+				// clear
+				popUps->getContextMenuScreenController()->clear();
+				//
+				sort(codeCompletionCandidates.begin(), codeCompletionCandidates.end());
+				//
+				{
+					auto i = 0;
+					for (auto& codeCompletionCandidate: codeCompletionCandidates) {
+						// add light
+						class OnCodeCompletionAction: public virtual Action
+						{
+						public:
+							OnCodeCompletionAction(TextEditorTabView* textEditorTabView): textEditorTabView(textEditorTabView) {}
+							void performAction() override {
+								Console::println("xxx");
+							}
+						private:
+							TextEditorTabView* textEditorTabView;
+						};
+						popUps->getContextMenuScreenController()->addMenuItem(codeCompletionCandidate, "contextmenu_codecompletion_" + to_string(i), new OnCodeCompletionAction(textEditorTabView));
+						//
+						i++;
+					}
+				}
+				//
+				int left, top, width, height;
+				auto selectedTab = textEditorTabView->getEditorView()->getScreenController()->getSelectedTab();
+				if (selectedTab != nullptr) {
+					textEditorTabView->getEditorView()->getViewPort(selectedTab->getFrameBufferNode(), left, top, width, height);
+					popUps->getContextMenuScreenController()->show(
+						left + textEditorTabView->textNode->getIndexPositionX(),
+						top + textEditorTabView->textNode->getIndexPositionY()
+					);
 				}
 			}
 		private:

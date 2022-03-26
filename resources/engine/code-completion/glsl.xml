@@ -2217,6 +2217,7 @@
 			<parameter name="out genUType lsb" />
 		</overload>
 	</keyword>
+	<keyword name="uniform" />
 	<keyword name="unpackDouble2x32" func="yes">
 		<overload return-value="uvec2" descr="[4.00] Unpacks a double-precision number into two unsigned integers">
 			<parameter name="double v" />

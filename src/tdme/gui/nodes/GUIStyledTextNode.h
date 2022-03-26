@@ -109,6 +109,8 @@ private:
 	vector<URLArea> urlAreas;
 
 	static constexpr int MOUSEPOSITION_NONE { Integer::MIN_VALUE };
+	int indexPositionX { 0 };
+	int indexPositionY { 0 };
 	int indexMousePositionX { MOUSEPOSITION_NONE };
 	int indexMousePositionY { MOUSEPOSITION_NONE };
 	int selectionIndexMousePositionX { MOUSEPOSITION_NONE };
@@ -332,6 +334,20 @@ public:
 	void computeContentAlignment() override;
 	void dispose() override;
 	void render(GUIRenderer* guiRenderer) override;
+
+	/**
+	 * @return index position x
+	 */
+	int getIndexPositionX() {
+		return indexPositionX;
+	}
+
+	/**
+	 * @return index position x
+	 */
+	int getIndexPositionY() {
+		return indexPositionY;
+	}
 
 	/**
 	 * @return text

@@ -1123,8 +1123,8 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 								1.0f
 							);
 						}
-						//
 						if (cursorMode == GUIStyledTextNodeController::CURSORMODE_SHOW && (findNewSelectionIndex == true?cursorSelectionIndex == lineCharIdxs[k]:cursorIndex == lineCharIdxs[k])) {
+							// draw cursor
 							float left = x + xIndentLeft;
 							float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - textStyle->height) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
 							float width = 2;
@@ -1149,6 +1149,9 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 								0.0f, 0.0f,
 								true
 							);
+							// store new index position
+							indexPositionX = static_cast<int>(left);
+							indexPositionY = static_cast<int>(top);
 						}
 						//
 						guiRenderer->render();
@@ -1288,6 +1291,9 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 									0.0f, 0.0f,
 									true
 								);
+								// store new index position
+								indexPositionX = static_cast<int>(left);
+								indexPositionY = static_cast<int>(top);
 							}
 						} else {
 							// otherwise draw
@@ -1376,6 +1382,9 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 										0.0f, 0.0f,
 										true
 									);
+									// store new index position
+									indexPositionX = static_cast<int>(left);
+									indexPositionY = static_cast<int>(top);
 								}
 
 								// if URL did change, create URL areas
