@@ -190,7 +190,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 										if (parameterString.empty() == false) parameterString+= ", ";
 										parameterString+= parameterTokenized[parameterTokenized.size() - 1];
 									}
-									parameterString = "(" + parameterString + ")" + codeCompletion->statementDelimiter;
+									parameterString = "(" + parameterString + ")"/* + codeCompletion->statementDelimiter*/;
 								}
 								textEditorTabView->textNode->removeText(previousDelimiterPos == 0?0:previousDelimiterPos + 1, nextDelimiterPos - (previousDelimiterPos == 0?0:previousDelimiterPos + 1));
 								textEditorTabView->textNode->insertText(previousDelimiterPos == 0?0:previousDelimiterPos + 1, symbol.name + parameterString);
