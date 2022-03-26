@@ -49,6 +49,8 @@ private:
 	const TextFormatter::CodeCompletion* codeCompletion { nullptr };
 
 	struct CodeCompletionSymbol {
+		enum Type { TYPE_NONE, TYPE_SYMBOL, TYPE_FUNCTION };
+		Type type;
 		string display;
 		string name;
 		vector<string> parameters;

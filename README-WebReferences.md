@@ -29,6 +29,7 @@
   - https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821
   - https://gist.github.com/niw/5963798
   - https://gist.github.com/Youka/4153f12cf2e17a77314c
+  - https://github.com/danielscherzer/NotepaddPP-glsl-integration.git
   - https://github.com/floooh/sokol/blob/master/sokol_app.h
   - https://github.com/KhronosGroup/Vulkan-Docs/wiki/Synchronization-Examples
   - https://github.com/KhronosGroup/glTF-WebGL-PBR/

@@ -155,13 +155,6 @@ private:
 	void setSelectionIndexMousePosition(int x, int y);
 
 	/**
-	 * @return text size
-	 */
-	inline int getTextSize() {
-		return text.size();
-	}
-
-	/**
 	 * @return URL areas
 	 */
 	inline const vector<URLArea>& getURLAreas() {
@@ -380,6 +373,13 @@ public:
 		while (nextDelimiterIndex < text.size() && delimiters.find(text.charAt(nextDelimiterIndex)) == string::npos) nextDelimiterIndex++;
 		nextDelimiterIndex = Math::min(nextDelimiterIndex, text.size() - 1);
 		return nextDelimiterIndex;
+	}
+
+	/**
+	 * @return text size
+	 */
+	inline int getTextSize() {
+		return text.size();
 	}
 
 	/**

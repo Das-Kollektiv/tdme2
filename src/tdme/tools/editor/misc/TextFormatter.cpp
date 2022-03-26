@@ -458,6 +458,7 @@ const TextFormatter::CodeCompletion* TextFormatter::loadCodeCompletion(const str
 					codeCompletion->symbols.push_back(symbol);
 				}
 				codeCompletion->delimiters = language.keywordDelimiters;
+				codeCompletion->statementDelimiter = language.statementDelimiter;
 				return codeCompletion;
 			} catch (Exception &exception) {
 				Console::println("TextFormatter::loadCodeCompletion(): found language: '" + language.name + "': An error occurred: " + exception.what());

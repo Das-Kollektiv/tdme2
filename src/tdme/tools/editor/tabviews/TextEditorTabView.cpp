@@ -91,6 +91,9 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 			virtual void onCodeCompletion(int idx) override {
 				auto codeCompletion = textEditorTabView->codeCompletion;
 				if (codeCompletion == nullptr) return;
+				if (codeCompletion->delimiters.find(textEditorTabView->textNode->getText().charAt(idx)) != string::npos) {
+					if (idx > 0) idx--;
+				}
 				auto previousDelimiterPos = textEditorTabView->textNode->getPreviousDelimiter(idx, codeCompletion->delimiters);
 				string search = StringTools::substring(textEditorTabView->textNode->getText().getString(), previousDelimiterPos == 0?0:previousDelimiterPos + 1, idx);
 				vector<CodeCompletionSymbol> codeCompletionSymbolCandidates;
@@ -101,6 +104,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 							if (codeCompletionSymbolCandidates.size() == MAX_ENTRIES) {
 								codeCompletionSymbolCandidates.push_back(
 									{
+										.type = CodeCompletionSymbol::TYPE_NONE,
 										.display = "...",
 										.name = {},
 										.parameters = {},
@@ -111,6 +115,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 							} else {
 								codeCompletionSymbolCandidates.push_back(
 									{
+										.type = CodeCompletionSymbol::TYPE_SYMBOL,
 										.display = symbol.name,
 										.name = symbol.name,
 										.parameters = {},
@@ -123,6 +128,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 								if (codeCompletionSymbolCandidates.size() == MAX_ENTRIES) {
 									codeCompletionSymbolCandidates.push_back(
 										{
+											.type = CodeCompletionSymbol::TYPE_NONE,
 											.display = "...",
 											.name = {},
 											.parameters = {},
@@ -138,6 +144,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 									}
 									codeCompletionSymbolCandidates.push_back(
 										{
+											.type = CodeCompletionSymbol::TYPE_FUNCTION,
 											.display = symbol.name + "(" + parameters + ") = " + overload.returnValue,
 											.name = symbol.name,
 											.parameters = overload.parameters,
@@ -170,9 +177,24 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 								if (codeCompletion == nullptr) return;
 								auto previousDelimiterPos = textEditorTabView->textNode->getPreviousDelimiter(idx, codeCompletion->delimiters);
 								auto nextDelimiterPos = textEditorTabView->textNode->getNextDelimiter(idx, codeCompletion->delimiters);
+								auto withoutWhiteSpaceDelimiters = codeCompletion->delimiters;
+								if (withoutWhiteSpaceDelimiters.find(' ') != string::npos) withoutWhiteSpaceDelimiters.erase(withoutWhiteSpaceDelimiters.find(' '), 1);
+								if (withoutWhiteSpaceDelimiters.find('\t') != string::npos) withoutWhiteSpaceDelimiters.erase(withoutWhiteSpaceDelimiters.find('\t'), 1);
+								if (withoutWhiteSpaceDelimiters.find('\n') != string::npos) withoutWhiteSpaceDelimiters.erase(withoutWhiteSpaceDelimiters.find('\n'), 1);
+								auto nextDelimiterPos2 = textEditorTabView->textNode->getNextDelimiter(idx, withoutWhiteSpaceDelimiters);
+								auto idxToDelimiterString = StringTools::trim(StringTools::substring(textEditorTabView->textNode->getText().getString(), idx + 1 < textEditorTabView->textNode->getTextSize()?idx + 1:idx, nextDelimiterPos2));
+								string parameterString;
+								if (symbol.type == CodeCompletionSymbol::TYPE_FUNCTION && textEditorTabView->textNode->getText().charAt(nextDelimiterPos2) != '(') {
+									for (auto parameter: symbol.parameters) {
+										auto parameterTokenized = StringTools::tokenize(parameter, " \t\n");
+										if (parameterString.empty() == false) parameterString+= ", ";
+										parameterString+= parameterTokenized[parameterTokenized.size() - 1];
+									}
+									parameterString = "(" + parameterString + ")" + codeCompletion->statementDelimiter;
+								}
 								textEditorTabView->textNode->removeText(previousDelimiterPos == 0?0:previousDelimiterPos + 1, nextDelimiterPos - (previousDelimiterPos == 0?0:previousDelimiterPos + 1));
-								textEditorTabView->textNode->insertText(previousDelimiterPos == 0?0:previousDelimiterPos + 1, symbol.name);
-								TextFormatter::getInstance()->format(textEditorTabView->extension, textEditorTabView->textNode, previousDelimiterPos == 0?0:previousDelimiterPos + 1, previousDelimiterPos == 0?0:previousDelimiterPos + 1);
+								textEditorTabView->textNode->insertText(previousDelimiterPos == 0?0:previousDelimiterPos + 1, symbol.name + parameterString);
+								TextFormatter::getInstance()->format(textEditorTabView->extension, textEditorTabView->textNode, previousDelimiterPos == 0?0:previousDelimiterPos + 1, (previousDelimiterPos == 0?0:previousDelimiterPos + 1) + symbol.name.size() + parameterString.size());
 							}
 						private:
 							TextEditorTabView* textEditorTabView;
