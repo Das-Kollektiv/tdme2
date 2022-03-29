@@ -92,6 +92,7 @@ private:
 	enum ScrollMode { SCROLLMODE_NONE, SCROLLMODE_UP, SCROLLMODE_DOWN };
 	ScrollMode scrollMode { SCROLLMODE_NONE };
 	bool dragging { false };
+	bool input { false };
 
 	/**
 	 * @return index

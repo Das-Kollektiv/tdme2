@@ -69,7 +69,6 @@ private:
 
 	int autoWidth { 0 };
 	int autoHeight { 0 };
-	int minWidth { -1 };
 
 	bool parentOffsetsChanged;
 	float parentXOffsetLast;
@@ -238,13 +237,6 @@ private:
 	 * @param textStyleIdx text style index to start with
 	 */
 	void determineNextLineConstraints(int& i, int charEndIdx, int textStyleIdx);
-
-	/**
-	 * Set auto width
-	 */
-	inline void setMinWidth(int minWidth) {
-		this->minWidth = minWidth;
-	}
 
 protected:
 	/**

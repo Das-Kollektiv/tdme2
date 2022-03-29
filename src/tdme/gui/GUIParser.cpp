@@ -1160,6 +1160,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 				//	only be attachable to element nodes
 				//	here we attach the StyledText controller
 				guiStyledTextNode->setController(new GUIStyledTextNodeController(guiStyledTextNode));
+				guiStyledTextNode->getController()->initialize();
 				parseEffects(guiStyledTextNode, node);
 			} else
 			if (nodeTagName == "table") {

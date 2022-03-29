@@ -443,7 +443,7 @@ bool GUIStyledTextNode::isContentNode()
 int GUIStyledTextNode::getContentWidth()
 {
 	if (requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
-		return font != nullptr?Math::max(autoWidth, minWidth) + border.left + border.right + padding.left + padding.right:0;
+		return font != nullptr?autoWidth + border.left + border.right + padding.left + padding.right:0;
 	} else {
 		return computedConstraints.width;
 	}
