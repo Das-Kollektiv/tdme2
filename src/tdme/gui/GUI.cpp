@@ -581,7 +581,7 @@ void GUI::handleKeyboardEvent(GUIKeyboardEvent* event) {
 	}
 }
 
-void GUI::handleEvents()
+void GUI::handleEvents(bool clearEvents)
 {
 	unordered_map<string, unordered_set<string>> _mouseOutCandidateEventNodeIds;
 	unordered_map<string, unordered_set<string>> _mouseOutClickCandidateEventNodeIds;
@@ -670,7 +670,7 @@ void GUI::handleEvents()
 		}
 	}
 
-	// call tick and input event handler at very last
+	// call tick and input event handler
 	for (int i = renderScreensCopy.size() - 1; i >= 0; i--) {
 		auto screen = renderScreensCopy[i];
 		if (screen->isVisible() == false) continue;
@@ -687,8 +687,10 @@ void GUI::handleEvents()
 	}
 
 	//
-	mouseEvents.clear();
-	keyboardEvents.clear();
+	if (clearEvents == true) {
+		mouseEvents.clear();
+		keyboardEvents.clear();
+	}
 }
 
 void GUI::onChar(unsigned int key, int x, int y) {

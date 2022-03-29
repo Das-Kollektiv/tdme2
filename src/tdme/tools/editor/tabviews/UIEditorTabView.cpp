@@ -2,6 +2,7 @@
 
 #include <string>
 #include <unordered_set>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
@@ -17,6 +18,8 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/SimplePartition.h>
+#include <tdme/gui/events/GUIKeyboardEvent.h>
+#include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/math/Vector3.h>
@@ -31,6 +34,7 @@
 
 using std::string;
 using std::unordered_set;
+using std::vector;
 
 using tdme::tools::editor::tabviews::UIEditorTabView;
 
@@ -47,6 +51,8 @@ using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
 using tdme::engine::Object3D;
 using tdme::engine::SimplePartition;
+using tdme::gui::events::GUIKeyboardEvent;
+using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
 using tdme::tools::editor::controllers::EditorScreenController;
@@ -91,15 +97,26 @@ void UIEditorTabView::handleInputEvents()
 {
 	if (projectedUi == true) {
 		//
+		// mouse wheel events that happened to route to GUI engine
+		vector<int> checkedGUIEngineMouseEventIndices;
+		vector<int> checkedEngineMouseEventIndices;
+		vector<int> unusedEngineMouseEventIndices;
+		//
 		auto modelEntity = dynamic_cast<Object3D*>(engine->getEntity("model"));
 		if (modelEntity != nullptr && modelMeshNode.empty() == false && modelEntity->getModel()->getNodeById(modelMeshNode) != nullptr) {
 			auto modelEntityWorldMatrix = modelEntity->getNodeTransformationsMatrix(modelMeshNode);
 			auto modelEntityModelImportMatrixInverted = modelEntity->getModel()->getImportTransformationsMatrix().clone().invert();
 			auto modelEntityWorldMatrixInverted = modelEntityWorldMatrix.clone().multiply(modelEntity->getTransformationsMatrix()).multiply(modelEntityModelImportMatrixInverted).invert();
 			// handle mouse events
-			for (auto& event: engine->getGUI()->getMouseEvents()) {
-				if (event.isProcessed() == true) continue;
-				// push event to gui engine if in book space
+			auto& engineMouseEvents = engine->getGUI()->getMouseEvents();
+			auto& guiEngineMouseEvents = guiEngine->getGUI()->getMouseEvents();
+			auto mouseEventIdx = 0;
+			for (auto& event: engineMouseEvents) {
+				if (event.isProcessed() == true) {
+					mouseEventIdx++;
+					continue;
+				}
+				// try to push event to gui engine if in book space
 				Vector3 mouseWorldCoordinate = engine->computeWorldCoordinateByMousePosition(event.getXUnscaled(), event.getYUnscaled());
 				auto bookLocalCoordinate = modelEntityWorldMatrixInverted.multiply(mouseWorldCoordinate);
 				auto clonedEvent = event;
@@ -109,16 +126,45 @@ void UIEditorTabView::handleInputEvents()
 				clonedEvent.setYUnscaled(clonedEvent.getY());
 				if (clonedEvent.getX() >= 0 && clonedEvent.getX() < guiEngine->getWidth() &&
 					clonedEvent.getY() >= 0 && clonedEvent.getY() < guiEngine->getHeight()) {
-					guiEngine->getGUI()->getMouseEvents().push_back(clonedEvent);
-					event.setProcessed(true);
+					checkedGUIEngineMouseEventIndices.push_back(guiEngineMouseEvents.size());
+					guiEngineMouseEvents.push_back(clonedEvent);
+					// ok we add this mouse event to our checked mouse event indices list
+					checkedEngineMouseEventIndices.push_back(mouseEventIdx);
+				} else {
+					// ok add this to unused mouse event indices list
+					unusedEngineMouseEventIndices.push_back(mouseEventIdx);
 				}
+				mouseEventIdx++;
 			}
+		} else {
+			// just add all events into unused mouse event indices
+			auto& engineMouseEvents = engine->getGUI()->getMouseEvents();
+			for (auto i = 0; i < engineMouseEvents.size(); i++) unusedEngineMouseEventIndices.push_back(i);
 		}
-		guiEngine->getGUI()->handleEvents();
+		// handle GUI engine events
+		guiEngine->getGUI()->handleEvents(false);
+		// clear mouse events of main engine
+		auto engineMouseEvents = engine->getGUI()->getMouseEvents();
+		auto& guiEngineMouseEvents = guiEngine->getGUI()->getMouseEvents();
+		engine->getGUI()->getMouseEvents().clear();
+		// TODO: we might want to sort the events by creation time or id
+		// restore mouse events of main engine from GUI engine events
+		for (auto i = 0; i < checkedEngineMouseEventIndices.size(); i++) {
+			if (guiEngineMouseEvents[checkedGUIEngineMouseEventIndices[i]].isProcessed() == false) engine->getGUI()->getMouseEvents().push_back(engineMouseEvents[checkedEngineMouseEventIndices[i]]);
+		}
+		for (auto i = 0; i < unusedEngineMouseEventIndices.size(); i++) {
+			engine->getGUI()->getMouseEvents().push_back(engineMouseEvents[unusedEngineMouseEventIndices[i]]);
+		}
+		// clear GUI engine events, as we did not do this before after handing events
+		guiEngine->getGUI()->getKeyboardEvents().clear();
+		guiEngine->getGUI()->getMouseEvents().clear();
+		// camera rotation input handler, which uses main engine events
 		cameraRotationInputHandler->handleInputEvents();
+		// clear main engine events
 		engine->getGUI()->getMouseEvents().clear();
 		engine->getGUI()->getKeyboardEvents().clear();
 	} else {
+		// just handle events from GUI engine
 		guiEngine->getGUI()->handleEvents();
 	}
 }
@@ -250,6 +296,8 @@ Prototype* UIEditorTabView::loadPrototype(const string& pathName, const string& 
 	} catch (Exception& exception) {
 		Console::print(string("UIEditorTabView::loadPrototype(): An error occurred: "));
 		Console::println(string(exception.what()));
+		//
+		return nullptr;
 	}
 
 	//

@@ -407,7 +407,8 @@ public:
 
 	/**
 	 * Handle screen events
+	 * @param clearEvents clear events
 	 */
-	void handleEvents();
+	void handleEvents(bool clearEvents = true);
 
 };
