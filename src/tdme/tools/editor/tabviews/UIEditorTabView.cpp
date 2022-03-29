@@ -266,11 +266,18 @@ Prototype* UIEditorTabView::loadPrototype(const string& pathName, const string& 
 	Vector3 objectScale;
 	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), 1, objectScale, cameraRotationInputHandler, 1.5f, projectedUiLast == true);
 
-	//
-	auto modelEntity = dynamic_cast<Object3D*>(engine->getEntity("model"));
+	// scale model, ground * 2
+	auto modelEntity = engine->getEntity("model");
 	if (modelEntity != nullptr) {
-		modelEntity->bindDiffuseTexture(guiEngine->getFrameBuffer(), modelMeshNode);
-		modelEntity->setAnimation(modelMeshAnimation);
+		modelEntity->setScale(modelEntity->getScale() * 2.0f);
+		modelEntity->update();
+		static_cast<Object3D*>(modelEntity)->bindDiffuseTexture(guiEngine->getFrameBuffer(), modelMeshNode);
+		static_cast<Object3D*>(modelEntity)->setAnimation(modelMeshAnimation);
+	}
+	auto groundEntity = engine->getEntity("ground");
+	if (groundEntity != nullptr) {
+		groundEntity->setScale(groundEntity->getScale() * 2.0f);
+		groundEntity->update();
 	}
 
 	//
@@ -346,5 +353,5 @@ void UIEditorTabView::removePrototype() {
 	prototype = nullptr;
 
 	//
-	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
+	guiEngine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 }
