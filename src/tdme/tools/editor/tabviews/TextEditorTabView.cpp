@@ -213,8 +213,8 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 					if (selectedTab != nullptr) {
 						textEditorTabView->getEditorView()->getViewPort(selectedTab->getFrameBufferNode(), left, top, width, height);
 						popUps->getContextMenuScreenController()->show(
-							left + textEditorTabView->textNode->getIndexPositionX(),
-							top + textEditorTabView->textNode->getIndexPositionY()
+							left + textEditorTabView->textNode->getIndexPositionX() - textEditorTabView->textNode->computeParentChildrenRenderOffsetXTotal(),
+							top + textEditorTabView->textNode->getIndexPositionY() - textEditorTabView->textNode->computeParentChildrenRenderOffsetYTotal()
 						);
 					}
 				}
