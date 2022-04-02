@@ -67,6 +67,30 @@ void scanDir(const string& folder, vector<string>& totalFiles) {
 void parseXMLNode(TiXmlElement* xmlParentNode, map<string, set<string>>& elementAttributeMap) {
 	for (auto* node = xmlParentNode->FirstChildElement(); node != nullptr; node = node->NextSiblingElement()) {
 		string nodeTagName = string(node->Value());
+		auto definitionFileName = "resources/engine/gui/definitions/" + nodeTagName + ".xml";
+		try {
+			auto xml =
+				FileSystem::getInstance()->getContentAsString(
+					FileSystem::getInstance()->getPathName(definitionFileName),
+					FileSystem::getInstance()->getFileName(definitionFileName)
+				);
+			Console::println("parseXMLNode(): Opened compound definition: " + definitionFileName);
+			auto i = 0;
+			while (i < xml.size()) {
+				auto attributeStartIdx = xml.find("{", i);
+				if (attributeStartIdx == string::npos) break;
+				auto attributeEndIdx = xml.find("}", attributeStartIdx);
+				if (attributeEndIdx == string::npos) break;
+				auto attributeKey = StringTools::substring(xml, attributeStartIdx + 2, attributeEndIdx);
+				if (StringTools::startsWith(attributeKey, "color.") == false &&  StringTools::startsWith(attributeKey, "font.") == false && StringTools::startsWith(attributeKey, "_TreeDepth__") == false) {
+					if (attributeKey == "_InnerXML__") attributeKey = "* accepts XML within tag";
+					elementAttributeMap[nodeTagName].insert(attributeKey);
+				}
+				i = attributeEndIdx + 1;
+			}
+		} catch (Exception& exception) {
+			// ignore silently
+		}
 		if (StringTools::endsWith(nodeTagName, "-internal") == true) continue;
 		if (elementAttributeMap.find(nodeTagName) == elementAttributeMap.end()) elementAttributeMap[nodeTagName] = {};
 		for (TiXmlAttribute* attribute = node->FirstAttribute(); attribute != nullptr; attribute = attribute->Next()) {

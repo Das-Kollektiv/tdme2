@@ -1,0 +1,362 @@
+button
+        background-image
+        disabled
+        height
+        hide-on
+        id
+        image
+        on-mouse-click
+        on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
+        show-on
+        template
+        text
+        value
+        width
+
+checkbox
+        disabled
+        height
+        id
+        image-checked
+        image-unchecked
+        name
+        on-change
+        on-mouse-click
+        on-mouse-doubleclick
+        selected
+        size
+        text
+        value
+        width
+
+context-menu
+        * accepts XML within tag
+        disabled
+        id
+        name
+        on-change
+        on-mouse-click
+        on-mouse-doubleclick
+
+dropdown
+        * accepts XML within tag
+        disabled
+        height
+        id
+        image
+        on-change
+        on-mouse-click
+        on-mouse-doubleclick
+        padding
+        template
+        text
+        width
+
+dropdown-option
+        * accepts XML within tag
+        disabled
+        id
+        on-mouse-click
+        on-mouse-doubleclick
+        selected
+        text
+        value
+
+element
+        background-color
+        border
+        border-color
+        focusable
+        height
+        horizontal-align
+        id
+        ignore-events
+        on-mouse-click
+        options
+        show-on
+        vertical-align
+        width
+
+frame-buffer
+        background-color
+        height
+        id
+        width
+
+image
+        color-effect-mul
+        effect-color-mul
+        height
+        hide-on
+        id
+        scale9
+        show-on
+        src
+        vertical-align
+        width
+
+input
+        disabled
+        height
+        hide-on
+        hint
+        id
+        image
+        maxlength
+        name
+        on-change
+        on-mouse-click
+        on-mouse-doubleclick
+        options
+        show-on
+        text
+        unit
+        width
+
+layer
+        background-color
+        border
+        border-color
+        height
+        hide-on
+        horizontal-align
+        id
+        padding
+        vertical-align
+        width
+
+layout
+        alignemnt
+        alignment
+        background-color
+        background-image
+        background-image-effect-color-mul
+        background-image-scale9
+        border
+        border-bottom
+        border-color
+        border-color-bottom
+        border-color-top
+        border-left
+        border-right
+        border-top
+        flow
+        height
+        hide-on
+        horizontal-align
+        id
+        overflow-x
+        overflow-y
+        padding
+        padding-bottom
+        padding-left
+        padding-right
+        padding-top
+        show-on
+        vertical-align
+        width
+
+menu-header
+        * accepts XML within tag
+
+menu-header-item
+        * accepts XML within tag
+        disabled
+        id
+        name
+        on-change
+        on-mouse-click
+        on-mouse-doubleclick
+        text
+
+menu-item
+        * accepts XML within tag
+        disabled
+        id
+        image
+        on-mouse-click
+        on-mouse-doubleclick
+        shortcut
+        text
+        value
+
+menu-separator
+
+panel
+        background-color
+        height
+        width
+
+progress-bar
+        id
+        show-on
+        text-on
+        value
+        width
+
+radiobutton
+        disabled
+        height
+        id
+        image
+        name
+        on-change
+        on-mouse-click
+        on-mouse-doubleclick
+        selected
+        template
+        text
+        value
+        width
+
+scrollarea
+        * accepts XML within tag
+        alignment
+        background-color
+        border
+        focusable
+        height
+        hide-on
+        horizontal-align
+        id
+        padding
+        show-on
+        vertical-align
+        width
+
+selectbox
+        * accepts XML within tag
+        boder
+        disabled
+        height
+        id
+        name
+        on-change
+        on-mouse-click
+        on-mouse-doubleclick
+        options
+        width
+
+selectbox-option
+        disabled
+        id
+        image
+        on-mouse-click
+        on-mouse-doubleclick
+        parent-id
+        selected
+        text
+        value
+
+slider-vertical
+        height
+        id
+        template
+        value
+
+space
+        alignment
+        border-bottom
+        border-color-bottom
+        factor
+        height
+        hide-on
+        horizontal-align
+        show-on
+        vertical-align
+        width
+
+styled-input
+        * accepts XML within tag
+        color
+        disabled
+        font
+        height
+        hide-on
+        id
+        on-change
+        on-mouse-click
+        on-mouse-doubleclick
+        options
+        padding
+        preformatted
+        show-on
+        width
+
+styled-text
+        color
+        editable
+        font
+        height
+        horizontal-align
+        id
+        preformatted
+        width
+
+tab
+        closeable
+        disabled
+        id
+        image
+        on-mouse-click
+        on-mouse-doubleclick
+        text
+        type-color
+        value
+
+tab-content
+        * accepts XML within tag
+        alignment
+        horizontal-align
+        tab-id
+        vertical-align
+
+tabs
+        * accepts XML within tag
+        alignment
+        height
+        id
+        ignore-events
+        width
+
+tabs-content
+        * accepts XML within tag
+        id
+        ignore-events
+
+tabs-header
+        * accepts XML within tag
+        id
+        scrollable
+
+template
+        id
+        name
+        src
+        type
+
+text
+        background-color
+        color
+        eight
+        font
+        height
+        hide-on
+        horizontal-align
+        id
+        padding-bottom
+        padding-left
+        padding-right
+        padding-top
+        show-on
+        text
+        vertical-align
+        width
+
+texture
+        height
+        id
+        src
+        width
