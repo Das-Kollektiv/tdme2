@@ -212,6 +212,14 @@ Currently supported BBCode like tags are:
 [image]image-location.png[/image]
 ```
 
+## 1.11. \<template\>
+
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| id                                | The unique node id within screen that might be passed to the template XML              | auto generated id |
+| src                               | the template XML location                                                              | none              |
+| ...                               | other attributes that might be passed to template XML                                  | none              |
+
 # 2. Compound elements
 
 ## 2.1. \<button\>
@@ -583,56 +591,63 @@ Currently supported BBCode like tags are:
 
 ## 2.13. tab
 
-### 2.13.1. \<tab\>
+### 2.13.1. \<tabs\>
 
-        closeable
-        disabled
-        id
-        image
-        on-change
-        on-initialize
-        on-mouse-click
-        on-mouse-doubleclick
-        on-mouse-out
-        on-mouse-over
-        text
-        type-color
-        value
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| id                                | The unique node id within screen                                                       | auto generated id |
+| width                             | width in %, pixel or rest(*) or auto for computed width                                | 100%              |
+| height                            | height in %, pixel or rest(*) or auto for computed height                              | *                 |
+| alignment                         | none \| horizontal \| vertical                                                         | none              |
+| ignore-events                     | true \| false                                                                          | false             |
 
-### 2.13.2. \<tab-content\>
+This element supports \<tabs-header\>,  \<tabs-content\> and others as sub elements.
 
-        * accepts XML within tag
-        alignment
-        horizontal-align
-        tab-id
-        vertical-align
+### 2.13.2. \<tabs-header\>
 
-### 2.13.3. \<tabs\>
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| id                                | The unique node id within screen                                                       | auto generated id |
+| on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
+| scrollable                        | true \| false                                                                          | false             |
 
-        * accepts XML within tag
-        alignment
-        height
-        id
-        ignore-events
-        width
+This element supports \<tab\> and others as sub elements.
+
+### 2.13.3. \<tab\>
+
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| id                                | The unique node id within screen                                                       | auto generated id |
+| disabled                          | true \| false                                                                          | false             |
+| closable                          | true \| false, which enables the closing icon to appear                                | false             |
+| image                             | tab image location                                                                     | none              |
+| text                              | tab label text                                                                         | none              |
+| type-color                        | tab type color, which is also display in tab header tab                                | transparent       |
+| on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
+| on-mouse-click                    | SimpleScript expression to be executed if a mouse click did happen                     | none              |
+| on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
+| on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
+| on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
+| on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
 
 ### 2.13.4. \<tabs-content\>
 
-        * accepts XML within tag
-        id
-        ignore-events
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| id                                | The unique node id within screen                                                       | auto generated id |
+| ignore-events                     | true \| false                                                                          | false             |
 
-### 2.13.5. \<tabs-header\>
+This element supports \<tab-content\> and others as sub elements.
 
-        * accepts XML within tag
-        id
-        on-initialize
-        scrollable
+### 2.13.5. \<tab-content\>
 
-## 2.14. \<template\>
-
-        id
-        name
-        src
-        type
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| id                                | The unique node id within screen                                                       | auto generated id |
+| tab-id                            | The unique tab node id within screen which is conntected to this content node          | none              |
+| horizontal-align                  | left \| center \| right                                                                | left              |
+| vertical-align                    | top \| center \| bottom                                                                | top               |
+| alignment                         | none \| horizontal \| vertical                                                         | none              |
+        
+This element supports all other elements as sub elements.
 
