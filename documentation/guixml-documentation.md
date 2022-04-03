@@ -5,21 +5,21 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 # 1. Primitive nodes
 
 ## 1.1. <element>
-		| Attribute Name | Description |
-		| -------------- | ----------- |
-        | background-color |      |
-        | border |      |
-        | border-color |      |
-        | focusable |      |
-        | height |      |
-        | horizontal-align |      |
-        | id |      |
-        | ignore-events |      |
-        | on-mouse-click |      |
-        | options |      |
-        | show-on |      |
-        | vertical-align |      |
-        | width |      |
+| Attribute Name | Description |
+| -------------- | ----------- |
+| background-color |      |
+| border |      |
+| border-color |      |
+| focusable |      |
+| height |      |
+| horizontal-align |      |
+| id |      |
+| ignore-events |      |
+| on-mouse-click |      |
+| options |      |
+| show-on |      |
+| vertical-align |      |
+| width |      |
 
 ## 1.2. gradient
 
