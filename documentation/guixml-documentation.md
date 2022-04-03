@@ -519,41 +519,67 @@ This element supports \<selectbox-option\> and others as sub elements.
 
 ### 2.11.1. \<slider-horizontal\>
 
-        id
-        name
-        on-change
-        value
-        width
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| id                                | The unique node id within screen                                                       | auto generated id |
+| disabled                          | true \| false                                                                          | false             |
+| width                             | width in %, pixel or rest(*)                                                           | none              |
+| on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
+| on-mouse-click                    | SimpleScript expression to be executed if a mouse click did happen                     | none              |
+| on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
+| on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
+| on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
+| on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
+| name                              | formular name of this element                                                          | none              |
+| value                             | value of this element, ranging from 0.0 <= value <= 1.0                                | none              |
+| template                          | location of template XML file to override compound element XML                         | none              |
 
 ### 2.11.2. \<slider-vertical\>
 
-        height
-        id
-        name
-        on-change
-        template
-        value
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| id                                | The unique node id within screen                                                       | auto generated id |
+| disabled                          | true \| false                                                                          | false             |
+| height                            | height in %, pixel or rest(*)                                                          | none              |
+| on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
+| on-mouse-click                    | SimpleScript expression to be executed if a mouse click did happen                     | none              |
+| on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
+| on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
+| on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
+| on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
+| name                              | formular name of this element                                                          | none              |
+| value                             | value of this element, ranging from 0.0 <= value <= 1.0                                | none              |
+| template                          | location of template XML file to override compound element XML                         | none              |
 
 ## 2.12. \<styled-input\>
 
-        * accepts XML within tag
-        color
-        disabled
-        font
-        height
-        hide-on
-        id
-        on-change
-        on-initialize
-        on-mouse-click
-        on-mouse-doubleclick
-        on-mouse-out
-        on-mouse-over
-        options
-        padding
-        preformatted
-        show-on
-        width
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| id                                | The unique node id within screen                                                       | auto generated id |
+| show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
+| hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
+| width                             | width in %, pixel or rest(*) or auto for computed width                                | auto              |
+| height                            | height in %, pixel or rest(*) or auto for computed height                              | auto              |
+| disabled                          | true \| false                                                                          | false             |
+| color                             | text rendering default color in hex notation or color name                             | none              |
+| font                              | text rendering default font location                                                   | none              |
+| preformatted                      | preformatted, means preserve new lines and white spaces                                | false             |
+| on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
+| on-mouse-click                    | SimpleScript expression to be executed if a mouse click did happen                     | none              |
+| on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
+| on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
+| on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
+| on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
+
+The <styled-text>Inner Data</styled-text> is the text that will be rendered. Also note that this element supports some sort of BBCode syntax.
+
+Currently supported BBCode like tags are:
+```
+[font=font-location.fnt]Text[/font]
+[color=#ff0000ff|red]Colored Text[/color]
+[url=http://mindty.com/]Text with Link[/url]
+[image]image-location.png[/image]
+```
 
 ## 2.13. tab
 
