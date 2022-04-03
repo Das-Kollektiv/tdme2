@@ -305,7 +305,7 @@ This element supports \<context-menu-item\> and others as sub elements.
 | disabled                          | true \| false                                                                          | false             |
 | width                             | width in %, pixel or rest(*) or auto for computed width                                | 100%              |
 | height                            | height in %, pixel or rest(*) or auto for computed height                              | auto              |
-| text                              | initial text to display
+| text                              | initial text to display                                                                | none              |
 | padding                           | padding for dropdown options                                                           | 0                 |
 | on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
 | on-mouse-click                    | SimpleScript expression to be executed if a mouse click did happen                     | none              |
@@ -324,7 +324,7 @@ This element supports \<dropdown-option\> and others as sub elements.
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | id                                | The unique node id within screen                                                       | auto generated id |
 | disabled                          | true \| false                                                                          | false             |
-| text                              | option text to display
+| text                              | option text to display                                                                 | none              |
 | selected                          | true \| false                                                                          | false             |
 | on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
 | on-mouse-click                    | SimpleScript expression to be executed if a mouse click did happen                     | none              |
