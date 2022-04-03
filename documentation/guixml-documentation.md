@@ -13,10 +13,10 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 | overflow-y                        | hidden \| downsize-children \| scroll                                                  | hidden            |
 | horizontal-align                  | left \| center \| right                                                                | left              |
 | vertical-align                    | top \| center \| bottom                                                                | top               |
-| x                                 | x position of node in %, pixel                                                         | none              |
+| x                                 | x position of node in %, pixel                                             | none              |
 | y                                 | y position of node in %, pixel                                                         | none              |
-| width                             | width in %, pixel or rest(*)                                                           | auto              |
-| height                            | height in %, pixel or rest(*)                                                          | auto              |
+| width                             | width in %, pixel or rest(*) or auto for computed width                                | auto              |
+| height                            | height in %, pixel or rest(*) or auto for computed height                              | auto              |
 | factor                            |                                                                                        | 0                 |
 | background-color                  | background color in html hex notation or color name                                    | transparent       |
 | background-image                  | background image location                                                              | none              |
