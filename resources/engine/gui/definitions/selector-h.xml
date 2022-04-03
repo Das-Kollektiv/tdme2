@@ -1,4 +1,4 @@
-<element id="{$id}" width="auto" height="auto" border="1" border-color="{$color.element_frame}" focusable="true">
+<element id="{$id}" width="auto" height="auto" border="1" border-color="{$color.element_frame}" focusable="true" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" on-change="{$on-change}">
 	<layout alignment="horizontal" width="auto" height="auto">
 		<button id="{$id}_left" width="25" height="25" image="resources/engine/images/arrow_left.png" />
 		<space width="10" />

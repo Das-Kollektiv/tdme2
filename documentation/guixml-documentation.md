@@ -4,7 +4,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 
 # 1. Primitive nodes
 
-# 1.1 Node base attributes
+## 1.1 Node base attributes
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | id                                | The unique node id within screen                                                       | auto generated id |
@@ -62,8 +62,11 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 | value                             | value of this element                                                                  |                   |
 
 ## 1.3. \<gradient\>
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| colors                            | percentAt0%=color1,..,percentAtN%=colorN; e.g. 0%=red,50%=green,100%=blue              | none              |
+| rotation                          | rotation angle                                                                         | 0.0f              |
 
-TODO
 
 ## 1.4. Frame Buffer / Image / Texture nodes
 
@@ -162,7 +165,14 @@ TODO
 
 ## 1.9 Table nodes
 
-TODO
+### 1.9.1 \<table\>
+
+### 1.9.2 \<table-row\>
+
+### 1.9.3 \<table-cell\>
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| alignment                         | none \| horizontal \| vertical                                                         | none              |
 
 ## 1.10. Text nodes
 
@@ -190,6 +200,9 @@ TODO
         hide-on
         id
         image
+        name
+        on-change
+        on-initialize
         on-mouse-click
         on-mouse-doubleclick
         on-mouse-out
@@ -208,22 +221,45 @@ TODO
         image-unchecked
         name
         on-change
+        on-initialize
         on-mouse-click
         on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
         selected
         size
         text
         value
         width
 
-## 2.3 \<context-menu\>
+## 2.3.1. Context Menu
+
+### 2.3.1. \<context-menu\>
         * accepts XML within tag
         disabled
         id
         name
         on-change
+        on-initialize
         on-mouse-click
         on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
+
+### 2.3.2. \<context-menu-item\>
+        * accepts XML within tag
+        disabled
+        id
+        image
+        on-change
+        on-initialize
+        on-mouse-click
+        on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
+        shortcut
+        text
+        value
 
 ## 2.3. dropdown
 
@@ -233,9 +269,13 @@ TODO
         height
         id
         image
+        name
         on-change
+        on-initialize
         on-mouse-click
         on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
         padding
         template
         text
@@ -245,13 +285,35 @@ TODO
         * accepts XML within tag
         disabled
         id
+        on-change
+        on-initialize
         on-mouse-click
         on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
         selected
         text
         value
 
-## 2.4. \<input\>
+## 2.4. \<image-button\>
+        disabled
+        height
+        id
+        name
+        on-change
+        on-initialize
+        on-mouse-click
+        on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
+        src-clicked
+        src-disabled
+        src-normal
+        src-over
+        value
+        width
+
+## 2.5. \<input\>
         disabled
         height
         hide-on
@@ -261,65 +323,79 @@ TODO
         maxlength
         name
         on-change
+        on-initialize
         on-mouse-click
         on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
         options
         show-on
         text
         unit
         width
 
-## 2.5. menu
+## 2.6. Menu
 
-### 2.5.1. \<menu-header\>
+### 2.6.1. \<menu-header\>
         * accepts XML within tag
 
-### 2.5.2. \<menu-header-item\>
+### 2.6.2. \<menu-header-item\>
         * accepts XML within tag
         disabled
         id
         name
         on-change
+        on-initialize
         on-mouse-click
         on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
         text
 
-### 2.5.3. \<menu-item\>
+### 2.6.3. \<menu-item\>
         * accepts XML within tag
         disabled
         id
         image
+        on-change
+        on-initialize
         on-mouse-click
         on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
         shortcut
         text
         value
 
-### 2.5.4. \<menu-separator\>
+### 2.6.4. \<menu-separator\>
 
-## 2.6. \<progress-bar\>
+## 2.7. \<progress-bar\>
         id
+        name
         show-on
         text-on
         value
         width
 
-## 2.7. \<radiobutton\>
+## 2.8. \<radiobutton\>
         disabled
         height
         id
         image
         name
         on-change
+        on-initialize
         on-mouse-click
         on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
         selected
         template
         text
         value
         width
 
-## 2.8. \<scrollarea\>
+## 2.9. \<scrollarea\>
         * accepts XML within tag
         alignment
         background-color
@@ -334,9 +410,9 @@ TODO
         vertical-align
         width
 
-## 2.9. selectbox
+## 2.10. selectbox
 
-### 2.9.1. \<selectbox\>
+### 2.10.1. \<selectbox\>
         * accepts XML within tag
         boder
         disabled
@@ -344,29 +420,47 @@ TODO
         id
         name
         on-change
+        on-initialize
         on-mouse-click
         on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
         options
         width
 
-### 2.9.2. \<selectbox-option\>
+### 2.10.2. \<selectbox-option\>
         disabled
         id
         image
+        on-change
+        on-initialize
         on-mouse-click
         on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
         parent-id
         selected
         text
         value
 
-## 2.10. \<slider-vertical\>
+## 2.11. Sliders
+
+### 2.11.1. \<slider-horizontal\>
+        id
+        name
+        on-change
+        value
+        width
+
+### 2.11.2. \<slider-vertical\>
         height
         id
+        name
+        on-change
         template
         value
 
-## 2.11. \<styled-input\>
+## 2.12. \<styled-input\>
         * accepts XML within tag
         color
         disabled
@@ -375,35 +469,42 @@ TODO
         hide-on
         id
         on-change
+        on-initialize
         on-mouse-click
         on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
         options
         padding
         preformatted
         show-on
         width
 
-## 2.12. tab
+## 2.13. tab
 
-### 2.12.1. \<tab\>
+### 2.13.1. \<tab\>
         closeable
         disabled
         id
         image
+        on-change
+        on-initialize
         on-mouse-click
         on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
         text
         type-color
         value
 
-### 2.12.2. \<tab-content\>
+### 2.13.2. \<tab-content\>
         * accepts XML within tag
         alignment
         horizontal-align
         tab-id
         vertical-align
 
-### 2.12.3. \<tabs\>
+### 2.13.3. \<tabs\>
         * accepts XML within tag
         alignment
         height
@@ -411,17 +512,18 @@ TODO
         ignore-events
         width
 
-### 2.12.4. \<tabs-content\>
+### 2.13.4. \<tabs-content\>
         * accepts XML within tag
         id
         ignore-events
 
-### 2.12.5. \<tabs-header\>
+### 2.13.5. \<tabs-header\>
         * accepts XML within tag
         id
+        on-initialize
         scrollable
 
-## 2.13. \<template\>
+## 2.14. \<template\>
         id
         name
         src

@@ -5,6 +5,9 @@ button
         hide-on
         id
         image
+        name
+        on-change
+        on-initialize
         on-mouse-click
         on-mouse-doubleclick
         on-mouse-out
@@ -23,8 +26,11 @@ checkbox
         image-unchecked
         name
         on-change
+        on-initialize
         on-mouse-click
         on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
         selected
         size
         text
@@ -37,8 +43,26 @@ context-menu
         id
         name
         on-change
+        on-initialize
         on-mouse-click
         on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
+
+context-menu-item
+        * accepts XML within tag
+        disabled
+        id
+        image
+        on-change
+        on-initialize
+        on-mouse-click
+        on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
+        shortcut
+        text
+        value
 
 dropdown
         * accepts XML within tag
@@ -46,9 +70,13 @@ dropdown
         height
         id
         image
+        name
         on-change
+        on-initialize
         on-mouse-click
         on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
         padding
         template
         text
@@ -58,13 +86,47 @@ dropdown-option
         * accepts XML within tag
         disabled
         id
+        on-change
+        on-initialize
         on-mouse-click
         on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
         selected
         text
         value
 
+effect-default
+        effect-color-add
+        effect-color-mul
+        persistant
+        time
+        type
+
+effect-in
+        effect-color-add
+        effect-color-mul
+        effect-position-x
+        on
+        persistant
+        repeat
+        start-effect-color-add
+        start-effect-color-mul
+        time
+        type
+        yoyo
+
+effect-out
+        effect-color-add
+        effect-color-mul
+        effect-position-x
+        on
+        persistant
+        time
+        type
+
 element
+        alignment
         background-color
         border
         border-color
@@ -73,7 +135,10 @@ element
         horizontal-align
         id
         ignore-events
+        on-initialize
         on-mouse-click
+        on-mouse-out
+        on-mouse-over
         options
         show-on
         vertical-align
@@ -85,16 +150,46 @@ frame-buffer
         id
         width
 
+gradient
+        colors
+        height
+        rotation
+        width
+
 image
         color-effect-mul
         effect-color-mul
         height
         hide-on
+        horizontal-align
         id
+        mask
+        mask-max-value
+        rotation
         scale9
+        scale9-left
+        scale9-right
         show-on
         src
         vertical-align
+        width
+
+image-button
+        disabled
+        height
+        id
+        name
+        on-change
+        on-initialize
+        on-mouse-click
+        on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
+        src-clicked
+        src-disabled
+        src-normal
+        src-over
+        value
         width
 
 input
@@ -107,13 +202,28 @@ input
         maxlength
         name
         on-change
+        on-initialize
         on-mouse-click
         on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
         options
         show-on
         text
         unit
         width
+
+knob
+        disabled
+        id
+        name
+        on-change
+        on-initialize
+        on-mouse-click
+        on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
+        value
 
 layer
         background-color
@@ -167,8 +277,11 @@ menu-header-item
         id
         name
         on-change
+        on-initialize
         on-mouse-click
         on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
         text
 
 menu-item
@@ -176,8 +289,12 @@ menu-item
         disabled
         id
         image
+        on-change
+        on-initialize
         on-mouse-click
         on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
         shortcut
         text
         value
@@ -191,6 +308,7 @@ panel
 
 progress-bar
         id
+        name
         show-on
         text-on
         value
@@ -203,8 +321,11 @@ radiobutton
         image
         name
         on-change
+        on-initialize
         on-mouse-click
         on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
         selected
         template
         text
@@ -234,8 +355,11 @@ selectbox
         id
         name
         on-change
+        on-initialize
         on-mouse-click
         on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
         options
         width
 
@@ -243,16 +367,51 @@ selectbox-option
         disabled
         id
         image
+        on-change
+        on-initialize
         on-mouse-click
         on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
         parent-id
         selected
         text
         value
 
+selectbox-parent-option
+        * accepts XML within tag
+        disabled
+        id
+        image
+        on-change
+        on-initialize
+        on-mouse-click
+        on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
+        parent-id
+        selected
+        text
+        value
+
+selector-horizontal
+
+selector-horizontal-option
+        text
+        value
+
+slider-horizontal
+        id
+        name
+        on-change
+        value
+        width
+
 slider-vertical
         height
         id
+        name
+        on-change
         template
         value
 
@@ -277,8 +436,11 @@ styled-input
         hide-on
         id
         on-change
+        on-initialize
         on-mouse-click
         on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
         options
         padding
         preformatted
@@ -300,8 +462,12 @@ tab
         disabled
         id
         image
+        on-change
+        on-initialize
         on-mouse-click
         on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
         text
         type-color
         value
@@ -312,6 +478,17 @@ tab-content
         horizontal-align
         tab-id
         vertical-align
+
+table
+        background-color
+        height
+        width
+
+table-cell
+        border
+        border-color
+
+table-row
 
 tabs
         * accepts XML within tag
@@ -329,10 +506,12 @@ tabs-content
 tabs-header
         * accepts XML within tag
         id
+        on-initialize
         scrollable
 
 template
         id
+        my-text
         name
         src
         type
