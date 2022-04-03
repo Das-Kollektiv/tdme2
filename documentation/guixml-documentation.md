@@ -4,7 +4,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 
 # 1. Primitive nodes
 
-## 1.1. <element>
+## 1.1. \<element\>
 | Attribute Name | Description |
 | -------------- | ----------- |
 | background-color |      |
@@ -25,13 +25,13 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 
 ## 1.3. images
 
-### 1.3.1. <frame-buffer>
+### 1.3.1. \<frame-buffer\>
         background-color
         height
         id
         width
 
-### 1.3.2. <image>
+### 1.3.2. \<image\>
         color-effect-mul
         effect-color-mul
         height
@@ -43,13 +43,13 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         vertical-align
         width
 
-### 1.3.3. <texture>
+### 1.3.3. \<texture\>
         height
         id
         src
         width
        
-## 1.4. <input>
+## 1.4. \<input\>
         disabled
         height
         hide-on
