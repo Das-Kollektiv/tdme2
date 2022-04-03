@@ -5,21 +5,50 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 # 1. Primitive nodes
 
 ## 1.1. \<element\>
-| Attribute name   | Attribute description |
-| ---------------- | ----------- |
-| background-color |             |
-| border           |             |
-| border-color     |             |
-| focusable        |             |
-| height           |             |
-| horizontal-align |             |
-| id               |             |       
-| ignore-events    |             |
-| on-mouse-click   |             |
-| options          |             |
-| show-on          |             |
-| vertical-align   |             |
-| width            |             |
+| Attribute name                    | Attribute description |
+| --------------------------------- | --------------------- |
+| id                                |                       |
+| flow                              |                       |
+| overflow-x                        |                       |
+| overflow-y                        |                       |
+| horizontal-align                  |                       |
+| vertical-align                    |                       |
+| x                                 |                       |
+| y                                 |                       |
+| width                             |                       |
+| height                            |                       |
+| factor                            |                       |
+| background-color                  |                       |
+| background-image                  |                       |
+| background-image-scale9           |                       |
+| background-image-scale9-left      |                       |
+| background-image-scale9-top       |                       |
+| background-image-scale9-right     |                       |
+| background-image-scale9-bottom    |                       |
+| background-image-effect-color-mul |                       |
+| background-image-effect-color-add |                       |
+| border                            |                       |
+| border-left                       |                       |
+| border-top                        |                       |
+| border-right                      |                       |
+| border-bottom                     |                       |
+| border-color                      |                       |
+| border-color-left                 |                       |
+| border-color-top                  |                       |
+| border-color-right                |                       |
+| border-color-bottom               |                       |
+| padding                           |                       |
+| padding-left                      |                       |
+| padding-top                       |                       |
+| padding-right                     |                       |
+| padding-bottom                    |                       |
+| show-on                           |                       |
+| hide-on                           |                       |
+|                                   |                       |
+| focusable                         |                       |
+| ignore-events                     |                       |
+| on-mouse-click                    |                       |
+| options                           |                       |
 
 ## 1.2. gradient
 
