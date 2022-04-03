@@ -194,10 +194,10 @@ The <styled-text>Inner Data</styled-text> is the text that will be rendered. Als
 
 Currently supported BBCode like tags:
 ```
-\[font=font-location.fnt\]Text\[/font\]
-\[color=#ff0000ff\|red\]Colored Text[/color\]
-\[url=http://mindty.com/\]Text with Link\[/url\]
-\[image\]image-location.png\[/image\]
+[font=font-location.fnt]Text[/font]
+[color=#ff0000ff|red]Colored Text[/color]
+[url=http://mindty.com/]Text with Link[/url]
+[image]image-location.png[/image]
 ```
 
 # 2. Compound elements
