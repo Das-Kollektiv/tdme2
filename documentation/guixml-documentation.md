@@ -142,68 +142,33 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 
 
 ## 1.7. \<panel\>
-        background-color
-        height
-        width
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| alignment                         | none \| horizontal \| vertical                                                         | none              |
+| overflow-x                        | hidden \| downsize-children \| scroll                                                  | hidden            |
+| overflow-y                        | hidden \| downsize-children \| scroll                                                  | hidden            |
 
-## 1.8. \<scrollarea\>
-        * accepts XML within tag
-        alignment
-        background-color
-        border
-        focusable
-        height
-        hide-on
-        horizontal-align
-        id
-        padding
-        show-on
-        vertical-align
-        width
+## 1.8. \<space\>
 
-## 1.9. \<space\>
-        alignment
-        border-bottom
-        border-color-bottom
-        factor
-        height
-        hide-on
-        horizontal-align
-        show-on
-        vertical-align
-        width
+## 1.9 table
+TODO
 
-## 1.10. table
+## 1.10. text
 
-## 1.11. text
+### 1.10.1. \<text\>
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| color                             | text rendering color in html hex notation or color name                                | none              |
+| font                              | font location                                                                          | none              |
+| text                              | text to be rendered                                                                    | none              |
 
-### 1.11.1. \<text\>
-        background-color
-        color
-        eight
-        font
-        height
-        hide-on
-        horizontal-align
-        id
-        padding-bottom
-        padding-left
-        padding-right
-        padding-top
-        show-on
-        text
-        vertical-align
-        width
-
-### 1.11.2. \<styled-text\>
-        color
-        editable
-        font
-        height
-        horizontal-align
-        id
-        preformatted
-        width
+### 1.10.2. \<styled-text\>
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| color                             | font location                                                                          | none              |
+| font                              | font location                                                                          | none              |
+| text                              | text to be rendered                                                                    | none              |
+| preformatted                      | preformatted, means preserve new lines and white spaces                                | false             |
 
 # 2. Compound elements
 
@@ -343,9 +308,24 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         value
         width
 
-## 2.8. selectbox
+## 2.8. \<scrollarea\>
+        * accepts XML within tag
+        alignment
+        background-color
+        border
+        focusable
+        height
+        hide-on
+        horizontal-align
+        id
+        padding
+        show-on
+        vertical-align
+        width
 
-### 2.8.1. \<selectbox\>
+## 2.9. selectbox
+
+### 2.9.1. \<selectbox\>
         * accepts XML within tag
         boder
         disabled
@@ -358,7 +338,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         options
         width
 
-### 2.8.2. \<selectbox-option\>
+### 2.9.2. \<selectbox-option\>
         disabled
         id
         image
@@ -369,13 +349,13 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         text
         value
 
-## 2.9. \<slider-vertical\>
+## 2.10. \<slider-vertical\>
         height
         id
         template
         value
 
-## 2.10. \<styled-input\>
+## 2.11. \<styled-input\>
         * accepts XML within tag
         color
         disabled
@@ -392,9 +372,9 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         show-on
         width
 
-## 2.11. tab
+## 2.12. tab
 
-### 2.11.1. \<tab\>
+### 2.12.1. \<tab\>
         closeable
         disabled
         id
@@ -405,14 +385,14 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         type-color
         value
 
-### 2.11.2. \<tab-content\>
+### 2.12.2. \<tab-content\>
         * accepts XML within tag
         alignment
         horizontal-align
         tab-id
         vertical-align
 
-### 2.11.3. \<tabs\>
+### 2.12.3. \<tabs\>
         * accepts XML within tag
         alignment
         height
@@ -420,17 +400,17 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         ignore-events
         width
 
-### 2.11.4. \<tabs-content\>
+### 2.12.4. \<tabs-content\>
         * accepts XML within tag
         id
         ignore-events
 
-### 2.11.5. \<tabs-header\>
+### 2.12.5. \<tabs-header\>
         * accepts XML within tag
         id
         scrollable
 
-## 2.12. \<template\>
+## 2.13. \<template\>
         id
         name
         src
