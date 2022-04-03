@@ -5,7 +5,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 # 1. Primitive nodes
 
 ## 1.1. \<element\>
-| Attribute name   | Attribute Description |
+| Attribute name   | Attribute description |
 | ---------------- | ----------- |
 | background-color |             |
 | border           |             |
