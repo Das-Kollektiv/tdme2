@@ -43,7 +43,6 @@ context-menu
         * accepts XML within tag
         disabled
         id
-        name
         on-change
         on-initialize
         on-mouse-click
@@ -64,7 +63,6 @@ context-menu-item
         on-mouse-over
         shortcut
         text
-        value
 
 dropdown
         * accepts XML within tag

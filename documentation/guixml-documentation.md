@@ -5,6 +5,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 # 1. Primitive nodes
 
 ## 1.1 Node base attributes
+
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | id                                | The unique node id within screen                                                       | auto generated id |
@@ -44,6 +45,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 | hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
 
 ## 1.2. \<element\>
+
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | disabled                          | true \| false                                                                          | false             |
@@ -62,6 +64,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 | value                             | value of this element                                                                  |                   |
 
 ## 1.3. \<gradient\>
+
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | colors                            | percentAt0%=color1,..,percentAtN%=colorN; e.g. 0%=red,50%=green,100%=blue              | none              |
@@ -71,6 +74,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 ## 1.4. Frame Buffer / Image / Texture nodes
 
 ### 1.4.1. \<frame-buffer\>
+
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | clipping                          | frame buffer clipping in pixels for left, top, right, bottom area                      | 0 pixel           |
@@ -94,6 +98,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 
 
 ### 1.4.2. \<image\>
+
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | clipping                          | image clipping in pixels for left, top, right, bottom area                             | 0 pixel           |
@@ -118,6 +123,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 | src                               | image location                                                                         | 0.0               |
 
 ### 1.4.3. \<texture\>
+
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | clipping                          | texture clipping in pixels for left, top, right, bottom area                           | 0 pixel           |
@@ -141,12 +147,14 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 
     
 ## 1.5. \<layer\>
+
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | overflow-x                        | hidden \| downsize-children \| scroll                                                  | hidden            |
 | overflow-y                        | hidden \| downsize-children \| scroll                                                  | hidden            |
 
 ## 1.6. \<layout\>
+
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | alignment                         | none \| horizontal \| vertical                                                         | none              |
@@ -155,6 +163,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 
 
 ## 1.7. \<panel\>
+
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | alignment                         | none \| horizontal \| vertical                                                         | none              |
@@ -170,6 +179,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 ### 1.9.2 \<table-row\>
 
 ### 1.9.3 \<table-cell\>
+
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | alignment                         | none \| horizontal \| vertical                                                         | none              |
@@ -177,6 +187,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 ## 1.10. Text nodes
 
 ### 1.10.1. \<text\>
+
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | color                             | text rendering color in html hex notation or color name                                | none              |
@@ -184,6 +195,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 | text                              | text to be rendered                                                                    | none              |
 
 ### 1.10.2. \<styled-text\>
+
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | color                             | text rendering default color in hex notation or color name                             | none              |
@@ -203,6 +215,7 @@ Currently supported BBCode like tags are:
 # 2. Compound elements
 
 ## 2.1. \<button\>
+
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | id                                | The unique node id within screen                                                       | auto generated id |
@@ -225,6 +238,7 @@ Currently supported BBCode like tags are:
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 ## 2.2. \<checkbox\>
+
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | id                                | The unique node id within screen                                                       | auto generated id |
@@ -260,10 +274,12 @@ Currently supported BBCode like tags are:
 | on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
 | on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
+| template                          | location of template XML file to override compound element XML                         | none              |
 
 This element supports \<context-menu-item\> and others as sub elements.
 
 ### 2.3.2. \<context-menu-item\>
+
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | id                                | The unique node id within screen                                                       | auto generated id |
@@ -277,40 +293,47 @@ This element supports \<context-menu-item\> and others as sub elements.
 | on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
 | on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
+| template                          | location of template XML file to override compound element XML                         | none              |
 
 ## 2.3. dropdown
 
 ### 2.3.1. \<dropdown\>
-        * accepts XML within tag
-        disabled
-        height
-        id
-        image
-        name
-        on-change
-        on-initialize
-        on-mouse-click
-        on-mouse-doubleclick
-        on-mouse-out
-        on-mouse-over
-        padding
-        template
-        text
-        width
+
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| id                                | The unique node id within screen                                                       | auto generated id |
+| disabled                          | true \| false                                                                          | false             |
+| width                             | width in %, pixel or rest(*) or auto for computed width                                | 100%              |
+| height                            | height in %, pixel or rest(*) or auto for computed height                              | auto              |
+| text                              | initial text to display
+| padding                           | padding for dropdown options                                                           | 0                 |
+| on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
+| on-mouse-click                    | SimpleScript expression to be executed if a mouse click did happen                     | none              |
+| on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
+| on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
+| on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
+| on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
+| name                              | formular name of this element                                                          | none              |
+| template                          | location of template XML file to override compound element XML                         | none              |
+
+This element supports \<dropdown-option\> and others as sub elements.
 
 ### 2.3.2. \<dropdown-option\>
-        * accepts XML within tag
-        disabled
-        id
-        on-change
-        on-initialize
-        on-mouse-click
-        on-mouse-doubleclick
-        on-mouse-out
-        on-mouse-over
-        selected
-        text
-        value
+
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| id                                | The unique node id within screen                                                       | auto generated id |
+| disabled                          | true \| false                                                                          | false             |
+| text                              | option text to display
+| selected                          | true \| false                                                                          | false             |
+| on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
+| on-mouse-click                    | SimpleScript expression to be executed if a mouse click did happen                     | none              |
+| on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
+| on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
+| on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
+| on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
+| value                             | value of this element, which will represent selection state                            | none              |
+| template                          | location of template XML file to override compound element XML                         | none              |
 
 ## 2.4. \<image-button\>
         disabled
