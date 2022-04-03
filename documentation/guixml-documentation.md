@@ -53,9 +53,11 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 | overflow-x                        | hidden \| downsize-children \| scroll                                                  | hidden            |
 | overflow-y                        | hidden \| downsize-children \| scroll                                                  | hidden            |
 
-## 1.3. gradient
+## 1.3. \<gradient\>
 
-## 1.4. images
+TODO
+
+## 1.4. Frame Buffer / Image / Texture nodes
 
 ### 1.4.1. \<frame-buffer\>
 | Attribute name                    | Attribute description                                                                  | Default           |
@@ -150,10 +152,11 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 
 ## 1.8. \<space\>
 
-## 1.9 table
+## 1.9 Table nodes
+
 TODO
 
-## 1.10. text
+## 1.10. Text nodes
 
 ### 1.10.1. \<text\>
 | Attribute name                    | Attribute description                                                                  | Default           |
