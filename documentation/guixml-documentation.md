@@ -128,47 +128,18 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 
     
 ## 1.5. \<layer\>
-        background-color
-        border
-        border-color
-        height
-        hide-on
-        horizontal-align
-        id
-        padding
-        vertical-align
-        width
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| overflow-x                        | hidden \| downsize-children \| scroll                                                  | hidden            |
+| overflow-y                        | hidden \| downsize-children \| scroll                                                  | hidden            |
 
 ## 1.6. \<layout\>
-        alignemnt
-        alignment
-        background-color
-        background-image
-        background-image-effect-color-mul
-        background-image-scale9
-        border
-        border-bottom
-        border-color
-        border-color-bottom
-        border-color-top
-        border-left
-        border-right
-        border-top
-        flow
-        height
-        hide-on
-        horizontal-align
-        id
-        overflow-x
-        overflow-y
-        padding
-        padding-bottom
-        padding-left
-        padding-right
-        padding-top
-        show-on
-        vertical-align
-        width
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| alignment                         | none \| horizontal \| vertical                                                         | none              |
+| overflow-x                        | hidden \| downsize-children \| scroll                                                  | hidden            |
+| overflow-y                        | hidden \| downsize-children \| scroll                                                  | hidden            |
+
 
 ## 1.7. \<panel\>
         background-color
