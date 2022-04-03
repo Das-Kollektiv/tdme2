@@ -471,41 +471,49 @@ This element supports \<menu-item\>and others as sub elements.
 | vertical-align                    | top \| center \| bottom                                                                | top               |
 | alignment                         | none \| horizontal \| vertical                                                         | none              |
 | padding                           | padding for content node                                                               | 0                 |
+| template                          | location of template XML file to override compound element XML                         | none              |
 
 ## 2.10. selectbox
 
 ### 2.10.1. \<selectbox\>
 
-        * accepts XML within tag
-        boder
-        disabled
-        height
-        id
-        name
-        on-change
-        on-initialize
-        on-mouse-click
-        on-mouse-doubleclick
-        on-mouse-out
-        on-mouse-over
-        options
-        width
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| id                                | The unique node id within screen                                                       | auto generated id |
+| disabled                          | true \| false                                                                          | false             |
+| width                             | width in %, pixel or rest(*) or auto for computed width                                | 100%              |
+| height                            | height in %, pixel or rest(*) or auto for computed height                              | auto              |
+| on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
+| on-mouse-click                    | SimpleScript expression to be executed if a mouse click did happen                     | none              |
+| on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
+| on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
+| on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
+| on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
+| options                           | supports optional multiple selecting by "multiple" option                              | none              |
+| name                              | formular name of this element                                                          | none              |
+| value                             | value of this element, which will represent selection state                            | none              |
+| template                          | location of template XML file to override compound element XML                         | none              |
+
+This element supports \<selectbox-option\> and others as sub elements.
 
 ### 2.10.2. \<selectbox-option\>
 
-        disabled
-        id
-        image
-        on-change
-        on-initialize
-        on-mouse-click
-        on-mouse-doubleclick
-        on-mouse-out
-        on-mouse-over
-        parent-id
-        selected
-        text
-        value
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| id                                | The unique node id within screen                                                       | auto generated id |
+| disabled                          | true \| false                                                                          | false             |
+| image                             | select box option image location                                                       | none              |
+| text                              | text to render                                                                         | none              |
+| selected                          | true \| false                                                                          | false             |
+| on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
+| on-mouse-click                    | SimpleScript expression to be executed if a mouse click did happen                     | none              |
+| on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
+| on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
+| on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
+| on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
+| parent-id                         | Used to generate hierarchical/tree like select box options                             | none              |
+| value                             | value of this element, which will represent selection state                            | none              |
+| template                          | location of template XML file to override compound element XML                         | none              |
 
 ## 2.11. Sliders
 
