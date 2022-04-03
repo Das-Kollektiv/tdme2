@@ -5,50 +5,50 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 # 1. Primitive nodes
 
 ## 1.1. \<element\>
-| Attribute name                    | Attribute description                                                                  |
-| --------------------------------- | ---------------------------------------------------------------------------------------|
-| id                                | The unique node id within screen                                                       |
-| flow                              | floating \| integrated                                                                 |
-| overflow-x                        | hidden \| downsize-children \| scroll                                                  |
-| overflow-y                        | hidden \| downsize-children \| scroll                                                  |
-| horizontal-align                  | left \| center \| right                                                                |
-| vertical-align                    | top \| center \| bottom                                                                |
-| x                                 | x position of node in %, pixel                                                         |
-| y                                 | y position of node in %, pixel                                                         |
-| width                             | width in %, pixel or rest(*)                                                           |
-| height                            | height in %, pixel or rest(*)                                                          |
-| factor                            |                                                                                        |
-| background-color                  | background color in html hex notation or color name                                    |
-| background-image                  | background image location                                                              |
-| background-image-scale9           | background image scale 9 in pixels for left, top, right, bottom area                   |
-| background-image-scale9-left      | background image scale 9 in pixels for left area                                       |
-| background-image-scale9-top       | background image scale 9 in pixels for top area                                        |
-| background-image-scale9-right     | background image scale 9 in pixels for right area                                      |
-| background-image-scale9-bottom    | background image scale 9 in pixels for bottom area                                     |
-| background-image-effect-color-mul | background image color multiplication in hex notation or color name                    |
-| background-image-effect-color-add | background image color addition in hex notation or color name                          |
-| border                            | border in pixels for left, top, right, bottom area                                     |
-| border-left                       | border in pixels for left area                                                         |
-| border-top                        | border in pixels for top area                                                          |
-| border-right                      | border in pixels for right area                                                        |
-| border-bottom                     | border in pixels for bottom area                                                       |
-| border-color                      | border color in html hex notation or color name for left, top, right, bottom area      |
-| border-color-left                 | border color in html hex notation or color name for left area                          |
-| border-color-top                  | border color in html hex notation or color name for top area                           |
-| border-color-right                | border color in html hex notation or color name for right area                         |
-| border-color-bottom               | border color in html hex notation or color name for bottom area                        |
-| padding                           | padding in pixels for left, top, right, bottom area                                    |
-| padding-left                      | padding in pixels for left area                                                        |
-| padding-top                       | padding in pixels for top area                                                         |
-| padding-right                     | padding in pixels for right area                                                       |
-| padding-bottom                    | padding in pixels for bottom area                                                      |
-| show-on                           | comma separated list for conditions that has to be met (or connection) to show node    |
-| hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    |
-|                                   |                                                                                        |
-| focusable                         | true \| false                                                                          |
-| ignore-events                     | true \| false                                                                          |
-| on-mouse-click                    | SimpleScript expression to be executed if a mouse click did happen                     |
-| options                           | options in format: "optionName0=optionValue0,...optionNameN=optionValueN               |
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| id                                | The unique node id within screen                                                       | auto generated id |
+| flow                              | floating \| integrated                                                                 | integrated        |
+| overflow-x                        | hidden \| downsize-children \| scroll                                                  | hidden            |
+| overflow-y                        | hidden \| downsize-children \| scroll                                                  | hidden            |
+| horizontal-align                  | left \| center \| right                                                                | left              |
+| vertical-align                    | top \| center \| bottom                                                                | top               |
+| x                                 | x position of node in %, pixel                                                         | none              |
+| y                                 | y position of node in %, pixel                                                         | none              |
+| width                             | width in %, pixel or rest(*)                                                           | auto              |
+| height                            | height in %, pixel or rest(*)                                                          | auto              |
+| factor                            |                                                                                        | 0                 |
+| background-color                  | background color in html hex notation or color name                                    | transparent       |
+| background-image                  | background image location                                                              | none              |
+| background-image-scale9           | background image scale 9 in pixels for left, top, right, bottom area                   | 0 pixel           |
+| background-image-scale9-left      | background image scale 9 in pixels for left area                                       | 0 pixel           |
+| background-image-scale9-top       | background image scale 9 in pixels for top area                                        | 0 pixel           |
+| background-image-scale9-right     | background image scale 9 in pixels for right area                                      | 0 pixel           |
+| background-image-scale9-bottom    | background image scale 9 in pixels for bottom area                                     | 0 pixel           |
+| background-image-effect-color-mul | background image color multiplication in hex notation or color name                    | #ffffffff         |
+| background-image-effect-color-add | background image color addition in hex notation or color name                          | #00000000         |
+| border                            | border in pixels for left, top, right, bottom area                                     | 0 pixel           |
+| border-left                       | border in pixels for left area                                                         | 0 pixel           |
+| border-top                        | border in pixels for top area                                                          | 0 pixel           |
+| border-right                      | border in pixels for right area                                                        | 0 pixel           |
+| border-bottom                     | border in pixels for bottom area                                                       | 0 pixel           |
+| border-color                      | border color in html hex notation or color name for left, top, right, bottom area      | transparent       |
+| border-color-left                 | border color in html hex notation or color name for left area                          | transparent       |
+| border-color-top                  | border color in html hex notation or color name for top area                           | transparent       |
+| border-color-right                | border color in html hex notation or color name for right area                         | transparent       |
+| border-color-bottom               | border color in html hex notation or color name for bottom area                        | transparent       |
+| padding                           | padding in pixels for left, top, right, bottom area                                    | 0 pixel           |
+| padding-left                      | padding in pixels for left area                                                        | 0 pixel           |
+| padding-top                       | padding in pixels for top area                                                         | 0 pixel           |
+| padding-right                     | padding in pixels for right area                                                       | 0 pixel           |
+| padding-bottom                    | padding in pixels for bottom area                                                      | 0 pixel           |
+| show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
+| hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
+|                                   |                                                                                        |                   |
+| focusable                         | true \| false                                                                          | false             |
+| ignore-events                     | true \| false                                                                          | false             |
+| on-mouse-click                    | SimpleScript expression to be executed if a mouse click did happen                     | none              |
+| options                           | options in format: "optionName0=optionValue0,...optionNameN=optionValueN               | none              |
 
 ## 1.2. gradient
 
