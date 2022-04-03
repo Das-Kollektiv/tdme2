@@ -4,13 +4,11 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 
 # 1. Primitive nodes
 
-## 1.1. \<element\>
+# 1.1 Node base attributes
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | id                                | The unique node id within screen                                                       | auto generated id |
 | flow                              | floating \| integrated                                                                 | integrated        |
-| overflow-x                        | hidden \| downsize-children \| scroll                                                  | hidden            |
-| overflow-y                        | hidden \| downsize-children \| scroll                                                  | hidden            |
 | horizontal-align                  | left \| center \| right                                                                | left              |
 | vertical-align                    | top \| center \| bottom                                                                | top               |
 | x                                 | x position of node in %, pixel                                             | none              |
@@ -44,41 +42,75 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 | padding-bottom                    | padding in pixels for bottom area                                                      | 0 pixel           |
 | show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
 | hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
-|                                   |                                                                                        |                   |
+
+## 1.2. \<element\>
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | focusable                         | true \| false                                                                          | false             |
 | ignore-events                     | true \| false                                                                          | false             |
 | on-mouse-click                    | SimpleScript expression to be executed if a mouse click did happen                     | none              |
 | options                           | options in format: "optionName0=optionValue0,...optionNameN=optionValueN               | none              |
+| overflow-x                        | hidden \| downsize-children \| scroll                                                  | hidden            |
+| overflow-y                        | hidden \| downsize-children \| scroll                                                  | hidden            |
 
-## 1.2. gradient
+## 1.3. gradient
 
-## 1.3. images
+## 1.4. images
 
-### 1.3.1. \<frame-buffer\>
-        background-color
-        height
-        id
-        width
+### 1.4.1. \<frame-buffer\>
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| clipping                          | frame buffer clipping in pixels for left, top, right, bottom area                      | 0 pixel           |
+| clipping-left                     | frame buffer clipping in pixels for left area                                          | 0 pixel           |
+| clipping-top                      | frame buffer clipping in pixels for top area                                           | 0 pixel           |
+| clipping-right                    | frame buffer clipping in pixels for right area                                         | 0 pixel           |
+| clipping-right                    | frame buffer clipping in pixels for bottom area                                        | 0 pixel           |
+| mask                              | frame buffer mask image location                                                       | none              |
+| mask-max-value                    | mask max value, means if mask image pixel > mask max value the fragment is discared    | none              |
+| scale9                            | frame buffer scale 9 in pixels for left, top, right, bottom area                       | 0 pixel           |
+| scale9-left                       | frame buffer scale 9 in pixels for left area                                           | 0 pixel           |
+| scale9-top                        | frame buffer scale 9 in pixels for top area                                            | 0 pixel           |
+| scale9-right                      | frame buffer scale 9 in pixels for right area                                          | 0 pixel           |
+| scale9-bottom                     | frame buffer scale 9 in pixels for bottom area                                         | 0 pixel           |
+| effect-color-mul                  | frame buffer color multiplication in hex notation or color name                        | #ffffffff         |
+| effect-color-add                  | frame buffer color addition in hex notation or color name                              | #00000000         |
+| horizontal-scale                  | float factor to scale original frame buffer width with                                 | 1.0               |
+| vertical-scale                    | float factor to scale original frame buffer width with                                 | 1.0               |
+| mirror-x                          | mirror frame buffer on x axis                                                          | false             |
+| mirror-y                          | mirror frame buffer on y axis                                                          | false             |
 
-### 1.3.2. \<image\>
-        color-effect-mul
-        effect-color-mul
-        height
-        hide-on
-        id
-        scale9
-        show-on
-        src
-        vertical-align
-        width
 
-### 1.3.3. \<texture\>
+### 1.4.2. \<image\>
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| clipping                          | frame buffer clipping in pixels for left, top, right, bottom area                      | 0 pixel           |
+| clipping-left                     | frame buffer clipping in pixels for left area                                          | 0 pixel           |
+| clipping-top                      | frame buffer clipping in pixels for top area                                           | 0 pixel           |
+| clipping-right                    | frame buffer clipping in pixels for right area                                         | 0 pixel           |
+| clipping-right                    | frame buffer clipping in pixels for bottom area                                        | 0 pixel           |
+| mask                              | frame buffer mask image location                                                       | none              |
+| mask-max-value                    | mask max value, means if mask image pixel > mask max value the fragment is discared    | none              |
+| scale9                            | frame buffer scale 9 in pixels for left, top, right, bottom area                       | 0 pixel           |
+| scale9-left                       | frame buffer scale 9 in pixels for left area                                           | 0 pixel           |
+| scale9-top                        | frame buffer scale 9 in pixels for top area                                            | 0 pixel           |
+| scale9-right                      | frame buffer scale 9 in pixels for right area                                          | 0 pixel           |
+| scale9-bottom                     | frame buffer scale 9 in pixels for bottom area                                         | 0 pixel           |
+| effect-color-mul                  | frame buffer color multiplication in hex notation or color name                        | #ffffffff         |
+| effect-color-add                  | frame buffer color addition in hex notation or color name                              | #00000000         |
+| horizontal-scale                  | float factor to scale original frame buffer width with                                 | 1.0               |
+| vertical-scale                    | float factor to scale original frame buffer width with                                 | 1.0               |
+| mirror-x                          | mirror frame buffer on x axis                                                          | false             |
+| mirror-y                          | mirror frame buffer on y axis                                                          | false             |
+| rotation                          | rotation angle                                                                         | 0.0               |
+| src                               | image location                                                                         | 0.0               |
+
+### 1.4.3. \<texture\>
         height
         id
         src
         width
        
-## 1.4. \<input\>
+## 1.5. \<input\>
         disabled
         height
         hide-on
@@ -96,7 +128,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         unit
         width
     
-## 1.5. \<layer\>
+## 1.6. \<layer\>
         background-color
         border
         border-color
@@ -108,7 +140,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         vertical-align
         width
 
-## 1.6. \<layout\>
+## 1.7. \<layout\>
         alignemnt
         alignment
         background-color
@@ -139,12 +171,12 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         vertical-align
         width
 
-## 1.7. \<panel\>
+## 1.8. \<panel\>
         background-color
         height
         width
 
-## 1.8. \<scrollarea\>
+## 1.9. \<scrollarea\>
         * accepts XML within tag
         alignment
         background-color
@@ -159,7 +191,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         vertical-align
         width
 
-## 1.9. \<space\>
+## 1.10. \<space\>
         alignment
         border-bottom
         border-color-bottom
@@ -171,11 +203,11 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         vertical-align
         width
 
-## 1.10. table
+## 1.11. table
 
-## 1.11. text
+## 1.12. text
 
-### 1.11.1. \<text\>
+### 1.12.1. \<text\>
         background-color
         color
         eight
@@ -193,7 +225,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         vertical-align
         width
 
-### 1.11.2. \<styled-text\>
+### 1.12.2. \<styled-text\>
         color
         editable
         font
