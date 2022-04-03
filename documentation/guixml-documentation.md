@@ -192,7 +192,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 
 The <styled-text>Inner Data</styled-text> is the text that will be rendered. Also note that this element supports some sort of BBCode syntax.
 
-Currently supported BBCode like tags:
+Currently supported BBCode like tags are:
 ```
 [font=font-location.fnt]Text[/font]
 [color=#ff0000ff|red]Colored Text[/color]
@@ -231,8 +231,6 @@ Currently supported BBCode like tags:
 | show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
 | hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
 | disabled                          | true \| false                                                                          | false             |
-| width                             | width in %, pixel or rest(*) or auto for computed width                                | auto              |
-| height                            | height in %, pixel or rest(*) or auto for computed height                              | auto              |
 | size                              | checked/unchecked checkbox image width and height                                      | 25 Pixel          |
 | image-checked                     | checked checkbox image location                                                        | YES               |
 | image-unchecked                   | unchecked checkbox image location                                                      | YES               |
@@ -251,31 +249,34 @@ Currently supported BBCode like tags:
 ## 2.3.1. Context Menu
 
 ### 2.3.1. \<context-menu\>
-        * accepts XML within tag
-        disabled
-        id
-        name
-        on-change
-        on-initialize
-        on-mouse-click
-        on-mouse-doubleclick
-        on-mouse-out
-        on-mouse-over
+
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| id                                | The unique node id within screen                                                       | auto generated id |
+| disabled                          | true \| false                                                                          | false             |
+| on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
+| on-mouse-click                    | SimpleScript expression to be executed if a mouse click did happen                     | none              |
+| on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
+| on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
+| on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
+| on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
+
+This element supports \<context-menu-item\> and others as sub elements.
 
 ### 2.3.2. \<context-menu-item\>
-        * accepts XML within tag
-        disabled
-        id
-        image
-        on-change
-        on-initialize
-        on-mouse-click
-        on-mouse-doubleclick
-        on-mouse-out
-        on-mouse-over
-        shortcut
-        text
-        value
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| id                                | The unique node id within screen                                                       | auto generated id |
+| disabled                          | true \| false                                                                          | false             |
+| image                             | image location                                                                         | none              |
+| shortcut                          | context menu shortcut                                                                  | none              |
+| text                              | context menu item text                                                                 | none              |
+| on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
+| on-mouse-click                    | SimpleScript expression to be executed if a mouse click did happen                     | none              |
+| on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
+| on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
+| on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
+| on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
 
 ## 2.3. dropdown
 
