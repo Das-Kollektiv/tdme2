@@ -269,7 +269,6 @@ Currently supported BBCode like tags are:
 | on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
 | on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
-| on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
 | name                              | formular name of this element                                                          | none              |
 | value                             | value of this element                                                                  | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
@@ -310,7 +309,6 @@ Currently supported BBCode like tags are:
 | on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
 | on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
-| on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 This element supports \<context-menu-item\> and others as sub elements.
@@ -329,7 +327,6 @@ This element supports \<context-menu-item\> and others as sub elements.
 | on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
 | on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
-| on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 ## 2.3. dropdown
@@ -368,7 +365,6 @@ This element supports \<dropdown-option\> and others as sub elements.
 | on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
 | on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
-| on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
 | value                             | value of this element, which will represent selection state                            | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
@@ -385,7 +381,6 @@ This element supports \<dropdown-option\> and others as sub elements.
 | on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
 | on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
-| on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
 | src-clicked                       | image location for clicked button state                                                | none              |
 | src-disabled                      | image location for disabled button state                                               | none              |
 | src-normal                        | image location for normal button state                                                 | none              |
@@ -437,7 +432,6 @@ This element supports \<menu-header-item\> and others as sub elements.
 | on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
 | on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
-| on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 This element supports \<menu-item\>and others as sub elements.
@@ -456,7 +450,6 @@ This element supports \<menu-item\>and others as sub elements.
 | on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
 | on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
-| on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 ### 2.6.4. \<menu-separator\>
@@ -547,7 +540,6 @@ This element supports \<selectbox-option\> and others as sub elements.
 | on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
 | on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
-| on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
 | parent-id                         | Used to generate hierarchical/tree like select box options                             | none              |
 | value                             | value of this element, which will represent selection state                            | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
@@ -657,7 +649,6 @@ This element supports \<tab\> and others as sub elements.
 | on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
 | on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
-| on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
 
 ### 2.13.4. \<tabs-content\>
 
