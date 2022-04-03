@@ -83,24 +83,24 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 ### 1.4.2. \<image\>
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
-| clipping                          | frame buffer clipping in pixels for left, top, right, bottom area                      | 0 pixel           |
-| clipping-left                     | frame buffer clipping in pixels for left area                                          | 0 pixel           |
-| clipping-top                      | frame buffer clipping in pixels for top area                                           | 0 pixel           |
-| clipping-right                    | frame buffer clipping in pixels for right area                                         | 0 pixel           |
-| clipping-right                    | frame buffer clipping in pixels for bottom area                                        | 0 pixel           |
-| mask                              | frame buffer mask image location                                                       | none              |
+| clipping                          | image clipping in pixels for left, top, right, bottom area                             | 0 pixel           |
+| clipping-left                     | image clipping in pixels for left area                                                 | 0 pixel           |
+| clipping-top                      | image clipping in pixels for top area                                                  | 0 pixel           |
+| clipping-right                    | image clipping in pixels for right area                                                | 0 pixel           |
+| clipping-right                    | image clipping in pixels for bottom area                                               | 0 pixel           |
+| mask                              | image mask image location                                                              | none              |
 | mask-max-value                    | mask max value, means if mask image pixel > mask max value the fragment is discared    | none              |
-| scale9                            | frame buffer scale 9 in pixels for left, top, right, bottom area                       | 0 pixel           |
-| scale9-left                       | frame buffer scale 9 in pixels for left area                                           | 0 pixel           |
-| scale9-top                        | frame buffer scale 9 in pixels for top area                                            | 0 pixel           |
-| scale9-right                      | frame buffer scale 9 in pixels for right area                                          | 0 pixel           |
-| scale9-bottom                     | frame buffer scale 9 in pixels for bottom area                                         | 0 pixel           |
-| effect-color-mul                  | frame buffer color multiplication in hex notation or color name                        | #ffffffff         |
-| effect-color-add                  | frame buffer color addition in hex notation or color name                              | #00000000         |
-| horizontal-scale                  | float factor to scale original frame buffer width with                                 | 1.0               |
-| vertical-scale                    | float factor to scale original frame buffer width with                                 | 1.0               |
-| mirror-x                          | mirror frame buffer on x axis                                                          | false             |
-| mirror-y                          | mirror frame buffer on y axis                                                          | false             |
+| scale9                            | image scale 9 in pixels for left, top, right, bottom area                              | 0 pixel           |
+| scale9-left                       | image scale 9 in pixels for left area                                                  | 0 pixel           |
+| scale9-top                        | image scale 9 in pixels for top area                                                   | 0 pixel           |
+| scale9-right                      | image scale 9 in pixels for right area                                                 | 0 pixel           |
+| scale9-bottom                     | image scale 9 in pixels for bottom area                                                | 0 pixel           |
+| effect-color-mul                  | image color multiplication in hex notation or color name                               | #ffffffff         |
+| effect-color-add                  | image color addition in hex notation or color name                                     | #00000000         |
+| horizontal-scale                  | float factor to scale original image width with                                        | 1.0               |
+| vertical-scale                    | float factor to scale original image width with                                        | 1.0               |
+| mirror-x                          | mirror image on x axis                                                                 | false             |
+| mirror-y                          | mirror image on y axis                                                                 | false             |
 | rotation                          | rotation angle                                                                         | 0.0               |
 | src                               | image location                                                                         | 0.0               |
 
