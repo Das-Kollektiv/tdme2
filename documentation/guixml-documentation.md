@@ -46,12 +46,20 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 ## 1.2. \<element\>
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| disabled                          | true \| false                                                                          | false             |
 | focusable                         | true \| false                                                                          | false             |
 | ignore-events                     | true \| false                                                                          | false             |
+| name                              | formular name of this element                                                          |                   |
+| on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
 | on-mouse-click                    | SimpleScript expression to be executed if a mouse click did happen                     | none              |
+| on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
+| on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
+| on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
+| on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
 | options                           | options in format: "optionName0=optionValue0,...optionNameN=optionValueN               | none              |
 | overflow-x                        | hidden \| downsize-children \| scroll                                                  | hidden            |
 | overflow-y                        | hidden \| downsize-children \| scroll                                                  | hidden            |
+| value                             | value of this element                                                                  |                   |
 
 ## 1.3. \<gradient\>
 
