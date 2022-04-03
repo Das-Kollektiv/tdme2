@@ -5,21 +5,21 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 # 1. Primitive nodes
 
 ## 1.1. \<element\>
-| Attribute Name | Description |
-| -------------- | ----------- |
-| background-color |      |
-| border |      |
-| border-color |      |
-| focusable |      |
-| height |      |
-| horizontal-align |      |
-| id |      |
-| ignore-events |      |
-| on-mouse-click |      |
-| options |      |
-| show-on |      |
-| vertical-align |      |
-| width |      |
+| Attribute name   | Attribute Description |
+| ---------------- | ----------- |
+| background-color |             |
+| border           |             |
+| border-color     |             |
+| focusable        |             |
+| height           |             |
+| horizontal-align |             |
+| id               |             |       
+| ignore-events    |             |
+| on-mouse-click   |             |
+| options          |             |
+| show-on          |             |
+| vertical-align   |             |
+| width            |             |
 
 ## 1.2. gradient
 
@@ -67,7 +67,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         unit
         width
     
-## 1.5. layer
+## 1.5. \<layer\>
         background-color
         border
         border-color
@@ -79,7 +79,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         vertical-align
         width
 
-## 1.6. layout
+## 1.6. \<layout\>
         alignemnt
         alignment
         background-color
@@ -110,12 +110,12 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         vertical-align
         width
 
-## 1.7. panel
+## 1.7. \<panel\>
         background-color
         height
         width
 
-## 1.8. scrollarea
+## 1.8. \<scrollarea\>
         * accepts XML within tag
         alignment
         background-color
@@ -130,7 +130,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         vertical-align
         width
 
-## 1.9. space
+## 1.9. \<space\>
         alignment
         border-bottom
         border-color-bottom
@@ -146,7 +146,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 
 ## 1.11. text
 
-### 1.11.1. text
+### 1.11.1. \<text\>
         background-color
         color
         eight
@@ -164,7 +164,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         vertical-align
         width
 
-### 1.11.2. styled-text
+### 1.11.2. \<styled-text\>
         color
         editable
         font
@@ -176,7 +176,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 
 # 2. Compound elements
 
-## 2.1. button
+## 2.1. \<button\>
         background-image
         disabled
         height
@@ -193,7 +193,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         value
         width
 
-## 2.2. checkbox
+## 2.2. \<checkbox\>
         disabled
         height
         id
@@ -209,7 +209,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         value
         width
 
-## 2.3 context-menu
+## 2.3 \<context-menu\>
         * accepts XML within tag
         disabled
         id
@@ -220,7 +220,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 
 ## 2.3. dropdown
 
-### 2.3.1. dropdown
+### 2.3.1. \<dropdown\>
         * accepts XML within tag
         disabled
         height
@@ -234,7 +234,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         text
         width
 
-### 2.3.2. dropdown-option
+### 2.3.2. \<dropdown-option\>
         * accepts XML within tag
         disabled
         id
@@ -246,10 +246,10 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 
 ## 2.4. menu
 
-### 2.4.1. menu-header
+### 2.4.1. \<menu-header\>
         * accepts XML within tag
 
-### 2.4.2. menu-header-item
+### 2.4.2. \<menu-header-item\>
         * accepts XML within tag
         disabled
         id
@@ -259,7 +259,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         on-mouse-doubleclick
         text
 
-### 2.4.3. menu-item
+### 2.4.3. \<menu-item\>
         * accepts XML within tag
         disabled
         id
@@ -270,16 +270,16 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         text
         value
 
-### 2.4.4. menu-separator
+### 2.4.4. \<menu-separator\>
 
-## 2.5. progress-bar
+## 2.5. \<progress-bar\>
         id
         show-on
         text-on
         value
         width
 
-## 2.6. radiobutton
+## 2.6. \<radiobutton\>
         disabled
         height
         id
@@ -296,7 +296,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 
 ## 2.7. selectbox
 
-### 2.7.1. selectbox
+### 2.7.1. \<selectbox\>
         * accepts XML within tag
         boder
         disabled
@@ -309,7 +309,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         options
         width
 
-### 2.7.2. selectbox-option
+### 2.7.2. \<selectbox-option\>
         disabled
         id
         image
@@ -320,13 +320,13 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         text
         value
 
-## 2.8. slider-vertical
+## 2.8. \<slider-vertical\>
         height
         id
         template
         value
 
-## 2.9. styled-input
+## 2.9. \<styled-input\>
         * accepts XML within tag
         color
         disabled
@@ -345,7 +345,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 
 ## 2.10. tab
 
-### 2.10.1. tab
+### 2.10.1. \<tab\>
         closeable
         disabled
         id
@@ -356,14 +356,14 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         type-color
         value
 
-### 2.10.2. tab-content
+### 2.10.2. \<tab-content\>
         * accepts XML within tag
         alignment
         horizontal-align
         tab-id
         vertical-align
 
-### 2.10.3. tabs
+### 2.10.3. \<tabs\>
         * accepts XML within tag
         alignment
         height
@@ -371,17 +371,17 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         ignore-events
         width
 
-### 2.10.4. tabs-content
+### 2.10.4. \<tabs-content\>
         * accepts XML within tag
         id
         ignore-events
 
-### 2.10.5. tabs-header
+### 2.10.5. \<tabs-header\>
         * accepts XML within tag
         id
         scrollable
 
-## 2.11. template
+## 2.11. \<template\>
         id
         name
         src
