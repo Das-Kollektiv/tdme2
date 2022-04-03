@@ -105,30 +105,29 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 | src                               | image location                                                                         | 0.0               |
 
 ### 1.4.3. \<texture\>
-        height
-        id
-        src
-        width
-       
-## 1.5. \<input\>
-        disabled
-        height
-        hide-on
-        hint
-        id
-        image
-        maxlength
-        name
-        on-change
-        on-mouse-click
-        on-mouse-doubleclick
-        options
-        show-on
-        text
-        unit
-        width
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| clipping                          | texture clipping in pixels for left, top, right, bottom area                           | 0 pixel           |
+| clipping-left                     | texture clipping in pixels for left area                                               | 0 pixel           |
+| clipping-top                      | texture clipping in pixels for top area                                                | 0 pixel           |
+| clipping-right                    | texture clipping in pixels for right area                                              | 0 pixel           |
+| clipping-right                    | texture clipping in pixels for bottom area                                             | 0 pixel           |
+| mask                              | texture mask texture location                                                          | none              |
+| mask-max-value                    | mask max value, means if mask texture pixel > mask max value the fragment is discared  | none              |
+| scale9                            | texture scale 9 in pixels for left, top, right, bottom area                            | 0 pixel           |
+| scale9-left                       | texture scale 9 in pixels for left area                                                | 0 pixel           |
+| scale9-top                        | texture scale 9 in pixels for top area                                                 | 0 pixel           |
+| scale9-right                      | texture scale 9 in pixels for right area                                               | 0 pixel           |
+| scale9-bottom                     | texture scale 9 in pixels for bottom area                                              | 0 pixel           |
+| effect-color-mul                  | texture color multiplication in hex notation or color name                             | #ffffffff         |
+| effect-color-add                  | texture color addition in hex notation or color name                                   | #00000000         |
+| horizontal-scale                  | float factor to scale original texture width with                                      | 1.0               |
+| vertical-scale                    | float factor to scale original texture width with                                      | 1.0               |
+| mirror-x                          | mirror texture on x axis                                                               | false             |
+| mirror-y                          | mirror texture on y axis                                                               | false             |
+
     
-## 1.6. \<layer\>
+## 1.5. \<layer\>
         background-color
         border
         border-color
@@ -140,7 +139,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         vertical-align
         width
 
-## 1.7. \<layout\>
+## 1.6. \<layout\>
         alignemnt
         alignment
         background-color
@@ -171,12 +170,12 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         vertical-align
         width
 
-## 1.8. \<panel\>
+## 1.7. \<panel\>
         background-color
         height
         width
 
-## 1.9. \<scrollarea\>
+## 1.8. \<scrollarea\>
         * accepts XML within tag
         alignment
         background-color
@@ -191,7 +190,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         vertical-align
         width
 
-## 1.10. \<space\>
+## 1.9. \<space\>
         alignment
         border-bottom
         border-color-bottom
@@ -203,11 +202,11 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         vertical-align
         width
 
-## 1.11. table
+## 1.10. table
 
-## 1.12. text
+## 1.11. text
 
-### 1.12.1. \<text\>
+### 1.11.1. \<text\>
         background-color
         color
         eight
@@ -225,7 +224,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         vertical-align
         width
 
-### 1.12.2. \<styled-text\>
+### 1.11.2. \<styled-text\>
         color
         editable
         font
@@ -305,12 +304,30 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         text
         value
 
-## 2.4. menu
+## 2.4. \<input\>
+        disabled
+        height
+        hide-on
+        hint
+        id
+        image
+        maxlength
+        name
+        on-change
+        on-mouse-click
+        on-mouse-doubleclick
+        options
+        show-on
+        text
+        unit
+        width
 
-### 2.4.1. \<menu-header\>
+## 2.5. menu
+
+### 2.5.1. \<menu-header\>
         * accepts XML within tag
 
-### 2.4.2. \<menu-header-item\>
+### 2.5.2. \<menu-header-item\>
         * accepts XML within tag
         disabled
         id
@@ -320,7 +337,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         on-mouse-doubleclick
         text
 
-### 2.4.3. \<menu-item\>
+### 2.5.3. \<menu-item\>
         * accepts XML within tag
         disabled
         id
@@ -331,16 +348,16 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         text
         value
 
-### 2.4.4. \<menu-separator\>
+### 2.5.4. \<menu-separator\>
 
-## 2.5. \<progress-bar\>
+## 2.6. \<progress-bar\>
         id
         show-on
         text-on
         value
         width
 
-## 2.6. \<radiobutton\>
+## 2.7. \<radiobutton\>
         disabled
         height
         id
@@ -355,9 +372,9 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         value
         width
 
-## 2.7. selectbox
+## 2.8. selectbox
 
-### 2.7.1. \<selectbox\>
+### 2.8.1. \<selectbox\>
         * accepts XML within tag
         boder
         disabled
@@ -370,7 +387,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         options
         width
 
-### 2.7.2. \<selectbox-option\>
+### 2.8.2. \<selectbox-option\>
         disabled
         id
         image
@@ -381,13 +398,13 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         text
         value
 
-## 2.8. \<slider-vertical\>
+## 2.9. \<slider-vertical\>
         height
         id
         template
         value
 
-## 2.9. \<styled-input\>
+## 2.10. \<styled-input\>
         * accepts XML within tag
         color
         disabled
@@ -404,9 +421,9 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         show-on
         width
 
-## 2.10. tab
+## 2.11. tab
 
-### 2.10.1. \<tab\>
+### 2.11.1. \<tab\>
         closeable
         disabled
         id
@@ -417,14 +434,14 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         type-color
         value
 
-### 2.10.2. \<tab-content\>
+### 2.11.2. \<tab-content\>
         * accepts XML within tag
         alignment
         horizontal-align
         tab-id
         vertical-align
 
-### 2.10.3. \<tabs\>
+### 2.11.3. \<tabs\>
         * accepts XML within tag
         alignment
         height
@@ -432,17 +449,17 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
         ignore-events
         width
 
-### 2.10.4. \<tabs-content\>
+### 2.11.4. \<tabs-content\>
         * accepts XML within tag
         id
         ignore-events
 
-### 2.10.5. \<tabs-header\>
+### 2.11.5. \<tabs-header\>
         * accepts XML within tag
         id
         scrollable
 
-## 2.11. \<template\>
+## 2.12. \<template\>
         id
         name
         src
