@@ -1,6 +1,6 @@
 ![LOGO](https://raw.githubusercontent.com/andreasdr/tdme2/master/resources/github/tdme2-logo.png)
 
-This is a documentation of supported TDME2-GUI XML elements and their attributes. This document is WIP.
+This is a documentation of supported TDME2-GUI XML elements and their attributes. This document is WIP (It misses effects, some more descriptions and maybe even some graphical presentation).
 
 # 1. Primitive nodes
 
@@ -44,6 +44,22 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 | show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
 | hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
 
+## 1.2. \<screen\>
+
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| alignment                         | none \| horizontal \| vertical                                                         | none              |
+| overflow-x                        | hidden \| downsize-children \| scroll                                                  | hidden            |
+| overflow-y                        | hidden \| downsize-children \| scroll                                                  | hidden            |
+| scrollable                        | true \| false                                                                          | false             |
+| popup                             | true \| false                                                                          | false             |
+| min-width                         | minimal supported screen width, if screen width < min-width, the screen gets scaled    | none              |
+| min-height                        | minimal supported screen height, if screen height < min-height, the screen gets scaled | none              |
+| max-width                         | maximal supported screen width, if screen width > max-width, the screen gets scaled    | none              |
+| max-height                        | maximal supported screen height, if screen width > max-height, the screen gets scaled  | none              |
+
+This element supports all other elements as sub elements.
+
 ## 1.2. \<element\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
@@ -62,6 +78,8 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 | overflow-y                        | hidden \| downsize-children \| scroll                                                  | hidden            |
 | name                              | formular name of this element                                                          |                   |
 | value                             | value of this element                                                                  |                   |
+
+This element supports all other elements as sub elements.
 
 ## 1.3. \<gradient\>
 
@@ -153,6 +171,8 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 | overflow-x                        | hidden \| downsize-children \| scroll                                                  | hidden            |
 | overflow-y                        | hidden \| downsize-children \| scroll                                                  | hidden            |
 
+This element supports all other elements as sub elements.
+
 ## 1.6. \<layout\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
@@ -161,6 +181,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 | overflow-x                        | hidden \| downsize-children \| scroll                                                  | hidden            |
 | overflow-y                        | hidden \| downsize-children \| scroll                                                  | hidden            |
 
+This element supports all other elements as sub elements.
 
 ## 1.7. \<panel\>
 
@@ -170,19 +191,27 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 | overflow-x                        | hidden \| downsize-children \| scroll                                                  | hidden            |
 | overflow-y                        | hidden \| downsize-children \| scroll                                                  | hidden            |
 
+This element supports all other elements as sub elements.
+
 ## 1.8. \<space\>
 
 ## 1.9 Table nodes
 
 ### 1.9.1 \<table\>
 
+This element supports \<table-row\> as sub elements.
+
 ### 1.9.2 \<table-row\>
+
+This element supports  \<table-cell\> as sub elements.
 
 ### 1.9.3 \<table-cell\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | alignment                         | none \| horizontal \| vertical                                                         | none              |
+
+This element supports all other elements as sub elements.
 
 ## 1.10. Text nodes
 
