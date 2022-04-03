@@ -1,4 +1,4 @@
-<element width="*" height="auto" focussable="true">
+<element width="*" height="auto" focussable="true" show-on="{$show-on}" hide-on="{$hide-on}">
 	<layout alignment="horizontal" width="auto" height="auto" flow="floating">
 		{__InnerXML__}
 	</layout>

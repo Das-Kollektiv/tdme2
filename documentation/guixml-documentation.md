@@ -303,6 +303,8 @@ Currently supported BBCode like tags are:
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | id                                | the unique node id within screen                                                       | auto generated id |
+| show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
+| hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
 | disabled                          | true \| false                                                                          | false             |
 | on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
 | on-mouse-click                    | SimpleScript expression to be executed if a mouse click did happen                     | none              |
@@ -318,6 +320,8 @@ This element supports \<context-menu-item\> and others as sub elements.
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | id                                | the unique node id within screen                                                       | auto generated id |
+| show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
+| hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
 | disabled                          | true \| false                                                                          | false             |
 | image                             | image location                                                                         | none              |
 | shortcut                          | context menu shortcut                                                                  | none              |
@@ -336,6 +340,8 @@ This element supports \<context-menu-item\> and others as sub elements.
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | id                                | the unique node id within screen                                                       | auto generated id |
+| show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
+| hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
 | disabled                          | true \| false                                                                          | false             |
 | width                             | width in %, pixel or rest(*) or auto for computed width                                | 100%              |
 | height                            | height in %, pixel or rest(*) or auto for computed height                              | auto              |
@@ -357,6 +363,8 @@ This element supports \<dropdown-option\> and others as sub elements.
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | id                                | the unique node id within screen                                                       | auto generated id |
+| show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
+| hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
 | disabled                          | true \| false                                                                          | false             |
 | text                              | option text to display                                                                 | none              |
 | selected                          | true \| false                                                                          | false             |
@@ -373,6 +381,8 @@ This element supports \<dropdown-option\> and others as sub elements.
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | id                                | the unique node id within screen                                                       | auto generated id |
+| show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
+| hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
 | disabled                          | true \| false                                                                          | false             |
 | width                             | width in %, pixel or rest(*) or auto for computed width                                | auto              |
 | height                            | height in %, pixel or rest(*) or auto for computed height                              | auto              |
@@ -418,6 +428,12 @@ This element supports \<dropdown-option\> and others as sub elements.
 
 ### 2.6.1. \<menu-header\>
 
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| id                                | the unique node id within screen                                                       | auto generated id |
+| show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
+| hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
+
 This element supports \<menu-header-item\> and others as sub elements.
 
 ### 2.6.2. \<menu-header-item\>
@@ -425,6 +441,8 @@ This element supports \<menu-header-item\> and others as sub elements.
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | id                                | the unique node id within screen                                                       | auto generated id |
+| show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
+| hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
 | disabled                          | true \| false                                                                          | false             |
 | text                              | item text to display                                                                   | none              |
 | on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
@@ -441,6 +459,8 @@ This element supports \<menu-item\>and others as sub elements.
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | id                                | the unique node id within screen                                                       | auto generated id |
+| show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
+| hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
 | disabled                          | true \| false                                                                          | false             |
 | image                             | menu item image location                                                               | none              |
 | shortcut                          | menu item shortcut                                                                     | none              |
@@ -510,6 +530,8 @@ This element supports \<menu-item\>and others as sub elements.
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | id                                | the unique node id within screen                                                       | auto generated id |
+| show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
+| hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
 | disabled                          | true \| false                                                                          | false             |
 | width                             | width in %, pixel or rest(*) or auto for computed width                                | 100%              |
 | height                            | height in %, pixel or rest(*) or auto for computed height                              | auto              |
@@ -531,6 +553,8 @@ This element supports \<selectbox-option\> and others as sub elements.
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | id                                | the unique node id within screen                                                       | auto generated id |
+| show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
+| hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
 | disabled                          | true \| false                                                                          | false             |
 | image                             | select box option image location                                                       | none              |
 | text                              | text to render                                                                         | none              |
@@ -551,6 +575,8 @@ This element supports \<selectbox-option\> and others as sub elements.
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | id                                | the unique node id within screen                                                       | auto generated id |
+| show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
+| hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
 | disabled                          | true \| false                                                                          | false             |
 | width                             | width in %, pixel or rest(*)                                                           | none              |
 | on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
@@ -568,6 +594,8 @@ This element supports \<selectbox-option\> and others as sub elements.
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | id                                | the unique node id within screen                                                       | auto generated id |
+| show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
+| hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
 | disabled                          | true \| false                                                                          | false             |
 | height                            | height in %, pixel or rest(*)                                                          | none              |
 | on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
@@ -617,6 +645,8 @@ Currently supported BBCode like tags are:
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | id                                | the unique node id within screen                                                       | auto generated id |
+| show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
+| hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
 | width                             | width in %, pixel or rest(*) or auto for computed width                                | 100%              |
 | height                            | height in %, pixel or rest(*) or auto for computed height                              | *                 |
 | alignment                         | none \| horizontal \| vertical                                                         | none              |
@@ -629,6 +659,8 @@ This element supports \<tabs-header\>,  \<tabs-content\> and others as sub eleme
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | id                                | the unique node id within screen                                                       | auto generated id |
+| show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
+| hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
 | on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
 | scrollable                        | true \| false                                                                          | false             |
 
@@ -639,6 +671,8 @@ This element supports \<tab\> and others as sub elements.
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | id                                | the unique node id within screen                                                       | auto generated id |
+| show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
+| hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
 | disabled                          | true \| false                                                                          | false             |
 | closable                          | true \| false, which enables the closing icon to appear                                | false             |
 | image                             | tab image location                                                                     | none              |
@@ -655,6 +689,8 @@ This element supports \<tab\> and others as sub elements.
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | id                                | the unique node id within screen                                                       | auto generated id |
+| show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
+| hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
 | ignore-events                     | true \| false                                                                          | false             |
 
 This element supports \<tab-content\> and others as sub elements.
@@ -664,10 +700,11 @@ This element supports \<tab-content\> and others as sub elements.
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | id                                | the unique node id within screen                                                       | auto generated id |
+| show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
+| hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
 | tab-id                            | the unique tab node id within screen which is conntected to this content node          | none              |
 | horizontal-align                  | left \| center \| right                                                                | left              |
 | vertical-align                    | top \| center \| bottom                                                                | top               |
 | alignment                         | none \| horizontal \| vertical                                                         | none              |
         
 This element supports all other elements as sub elements.
-
