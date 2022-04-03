@@ -424,12 +424,13 @@ This element supports \<menu-item\>and others as sub elements.
 
 ## 2.7. \<progress-bar\>
 
-        id
-        name
-        show-on
-        text-on
-        value
-        width
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| id                                | The unique node id within screen                                                       | auto generated id |
+| show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
+| hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
+| text-on                           | true \|false to enable/disable text rendering                                          | false             |
+| width                             | width in %, pixel                                                                      | 223               |
 
 ## 2.8. \<radiobutton\>
 
