@@ -275,7 +275,6 @@ menu-header-item
         * accepts XML within tag
         disabled
         id
-        name
         on-change
         on-initialize
         on-mouse-click
@@ -297,7 +296,6 @@ menu-item
         on-mouse-over
         shortcut
         text
-        value
 
 menu-separator
 
@@ -317,6 +315,7 @@ progress-bar
 radiobutton
         disabled
         height
+        hide-on
         id
         image
         name
@@ -327,6 +326,7 @@ radiobutton
         on-mouse-out
         on-mouse-over
         selected
+        show-on
         template
         text
         value
@@ -401,17 +401,29 @@ selector-horizontal-option
         value
 
 slider-horizontal
+        disabled
         id
         name
         on-change
+        on-initialize
+        on-mouse-click
+        on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
         value
         width
 
 slider-vertical
+        disabled
         height
         id
         name
         on-change
+        on-initialize
+        on-mouse-click
+        on-mouse-doubleclick
+        on-mouse-out
+        on-mouse-over
         template
         value
 
@@ -539,4 +551,3 @@ texture
         id
         src
         width
-

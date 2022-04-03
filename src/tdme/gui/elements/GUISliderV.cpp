@@ -33,7 +33,7 @@ const string& GUISliderV::getName()
 
 const string GUISliderV::getTemplate(const string& applicationPathName, const string& applicationSubPathName, const string& fileName)
 {
-	return FileSystem::getInstance()->getContentAsString(applicationPathName + "/resources/" + applicationSubPathName + "/gui/definitions", fileName.empty() == true?"slider-v.xml":fileName);
+	return FileSystem::getInstance()->getContentAsString(applicationPathName + "/resources/" + applicationSubPathName + "/gui/definitions", fileName.empty() == true?"slider-vertical.xml":fileName);
 }
 
 unordered_map<string, string> GUISliderV::getAttributes(GUIScreenNode* screenNode)
