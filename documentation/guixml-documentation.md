@@ -186,8 +186,8 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 ### 1.10.2. \<styled-text\>
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
-| color                             | font location                                                                          | none              |
-| font                              | font location                                                                          | none              |
+| color                             | text rendering default color in hex notation or color name                             | none              |
+| font                              | text rendering default font location                                                   | none              |
 | text                              | text to be rendered                                                                    | none              |
 | preformatted                      | preformatted, means preserve new lines and white spaces                                | false             |
 
