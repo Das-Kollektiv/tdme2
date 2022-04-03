@@ -21,6 +21,7 @@ button
 checkbox
         disabled
         height
+        hide-on
         id
         image-checked
         image-unchecked
@@ -32,6 +33,7 @@ checkbox
         on-mouse-out
         on-mouse-over
         selected
+        show-on
         size
         text
         value
@@ -539,3 +541,4 @@ texture
         id
         src
         width
+
