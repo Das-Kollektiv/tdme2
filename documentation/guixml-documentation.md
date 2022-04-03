@@ -336,22 +336,25 @@ This element supports \<dropdown-option\> and others as sub elements.
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 ## 2.4. \<image-button\>
-        disabled
-        height
-        id
-        name
-        on-change
-        on-initialize
-        on-mouse-click
-        on-mouse-doubleclick
-        on-mouse-out
-        on-mouse-over
-        src-clicked
-        src-disabled
-        src-normal
-        src-over
-        value
-        width
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| id                                | The unique node id within screen                                                       | auto generated id |
+| disabled                          | true \| false                                                                          | false             |
+| width                             | width in %, pixel or rest(*) or auto for computed width                                | auto              |
+| height                            | height in %, pixel or rest(*) or auto for computed height                              | auto              |
+| on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
+| on-mouse-click                    | SimpleScript expression to be executed if a mouse click did happen                     | none              |
+| on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
+| on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
+| on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
+| on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
+| src-clicked                       | image location for clicked button state                                                | none              |
+| src-disabled                      | image location for disabled button state                                               | none              |
+| src-normal                        | image location for normal button state                                                 | none              |
+| src-over                          | image location for mouse over button state                                             | none              |
+| name                              | formular name of this element                                                          | none              |
+| value                             | value of this element, which will represent selection state                            | none              |
+| template                          | location of template XML file to override compound element XML                         | none              |
 
 ## 2.5. \<input\>
         disabled
