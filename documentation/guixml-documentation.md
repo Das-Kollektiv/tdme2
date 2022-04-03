@@ -336,6 +336,7 @@ This element supports \<dropdown-option\> and others as sub elements.
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 ## 2.4. \<image-button\>
+
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | id                                | The unique node id within screen                                                       | auto generated id |
@@ -357,62 +358,72 @@ This element supports \<dropdown-option\> and others as sub elements.
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 ## 2.5. \<input\>
-        disabled
-        height
-        hide-on
-        hint
-        id
-        image
-        maxlength
-        name
-        on-change
-        on-initialize
-        on-mouse-click
-        on-mouse-doubleclick
-        on-mouse-out
-        on-mouse-over
-        options
-        show-on
-        text
-        unit
-        width
+
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| id                                | The unique node id within screen                                                       | auto generated id |
+| show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
+| hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
+| disabled                          | true \| false                                                                          | false             |
+| width                             | width in %, pixel or rest(*) or auto for computed width                                | auto              |
+| height                            | height in %, pixel or rest(*) or auto for computed height                              | auto              |
+| maxlength                         | max length input restriction                                                           | 0 or no limit     |
+| text                              | initial text                                                                           | none              |
+| hint                              | text hint to show if no text was entered yet                                           | none              |
+| image                             | location of image to display additionally                                              | none              |
+| unit                              | unit, e.g. M(eter), S(econds), ...                                                     | none              |
+| options                           | type=float|int,min=xyz,max=xyz,step=xyz,decimals=xyz, e.g. "type=int,min=0,step=1"     | none              |
+| on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
+| on-mouse-click                    | SimpleScript expression to be executed if a mouse click did happen                     | none              |
+| on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
+| on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
+| on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
+| on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
+| name                              | formular name of this element                                                          | none              |
+| value                             | value of this element, which will represent selection state                            | none              |
 
 ## 2.6. Menu
 
 ### 2.6.1. \<menu-header\>
-        * accepts XML within tag
+
+This element supports \<menu-header-item\> and others as sub elements.
 
 ### 2.6.2. \<menu-header-item\>
-        * accepts XML within tag
-        disabled
-        id
-        name
-        on-change
-        on-initialize
-        on-mouse-click
-        on-mouse-doubleclick
-        on-mouse-out
-        on-mouse-over
-        text
+
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| id                                | The unique node id within screen                                                       | auto generated id |
+| disabled                          | true \| false                                                                          | false             |
+| text                              | item text to display                                                                   | none              |
+| on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
+| on-mouse-click                    | SimpleScript expression to be executed if a mouse click did happen                     | none              |
+| on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
+| on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
+| on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
+| on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
+
+This element supports \<menu-item\>and others as sub elements.
 
 ### 2.6.3. \<menu-item\>
-        * accepts XML within tag
-        disabled
-        id
-        image
-        on-change
-        on-initialize
-        on-mouse-click
-        on-mouse-doubleclick
-        on-mouse-out
-        on-mouse-over
-        shortcut
-        text
-        value
+
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| id                                | The unique node id within screen                                                       | auto generated id |
+| disabled                          | true \| false                                                                          | false             |
+| image                             | menu item image location                                                               | none              |
+| shortcut                          | menu item shortcut                                                                     | none              |
+| text                              | menu item text                                                                         | none              |
+| on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
+| on-mouse-click                    | SimpleScript expression to be executed if a mouse click did happen                     | none              |
+| on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
+| on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
+| on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
+| on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
 
 ### 2.6.4. \<menu-separator\>
 
 ## 2.7. \<progress-bar\>
+
         id
         name
         show-on
@@ -421,6 +432,7 @@ This element supports \<dropdown-option\> and others as sub elements.
         width
 
 ## 2.8. \<radiobutton\>
+
         disabled
         height
         id
@@ -439,6 +451,7 @@ This element supports \<dropdown-option\> and others as sub elements.
         width
 
 ## 2.9. \<scrollarea\>
+
         * accepts XML within tag
         alignment
         background-color
@@ -456,6 +469,7 @@ This element supports \<dropdown-option\> and others as sub elements.
 ## 2.10. selectbox
 
 ### 2.10.1. \<selectbox\>
+
         * accepts XML within tag
         boder
         disabled
@@ -472,6 +486,7 @@ This element supports \<dropdown-option\> and others as sub elements.
         width
 
 ### 2.10.2. \<selectbox-option\>
+
         disabled
         id
         image
@@ -489,6 +504,7 @@ This element supports \<dropdown-option\> and others as sub elements.
 ## 2.11. Sliders
 
 ### 2.11.1. \<slider-horizontal\>
+
         id
         name
         on-change
@@ -496,6 +512,7 @@ This element supports \<dropdown-option\> and others as sub elements.
         width
 
 ### 2.11.2. \<slider-vertical\>
+
         height
         id
         name
@@ -504,6 +521,7 @@ This element supports \<dropdown-option\> and others as sub elements.
         value
 
 ## 2.12. \<styled-input\>
+
         * accepts XML within tag
         color
         disabled
@@ -526,6 +544,7 @@ This element supports \<dropdown-option\> and others as sub elements.
 ## 2.13. tab
 
 ### 2.13.1. \<tab\>
+
         closeable
         disabled
         id
@@ -541,6 +560,7 @@ This element supports \<dropdown-option\> and others as sub elements.
         value
 
 ### 2.13.2. \<tab-content\>
+
         * accepts XML within tag
         alignment
         horizontal-align
@@ -548,6 +568,7 @@ This element supports \<dropdown-option\> and others as sub elements.
         vertical-align
 
 ### 2.13.3. \<tabs\>
+
         * accepts XML within tag
         alignment
         height
@@ -556,17 +577,20 @@ This element supports \<dropdown-option\> and others as sub elements.
         width
 
 ### 2.13.4. \<tabs-content\>
+
         * accepts XML within tag
         id
         ignore-events
 
 ### 2.13.5. \<tabs-header\>
+
         * accepts XML within tag
         id
         on-initialize
         scrollable
 
 ## 2.14. \<template\>
+
         id
         name
         src
