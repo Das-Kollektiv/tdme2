@@ -897,6 +897,7 @@ MAIN_SRCS = \
 	src/tdme/tools/cli/makefilegenerator-main.cpp \
 	src/tdme/tools/cli/miniscripttranspiler-main.cpp \
 	src/tdme/tools/cli/optimizemodel-main.cpp \
+	src/tdme/tools/cli/parseh++-main.cpp \
 	src/tdme/tools/cli/recreatevkcache-main.cpp \
 	src/tdme/tools/cli/scenefixmodelszup2yup-main.cpp \
 	src/tdme/tools/cli/sortincludes-main.cpp

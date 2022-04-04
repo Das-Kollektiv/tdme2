@@ -750,6 +750,7 @@ all: \
 	makefilegenerator \
 	miniscripttranspiler \
 	optimizemodel \
+	parseh++ \
 	scenefixmodelszup2yup \
 	sortincludes \
 	TDMEEditor \
@@ -1007,6 +1008,9 @@ miniscripttranspiler:
 
 optimizemodel:
 	cl /Feoptimizemodel $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/optimizemodel-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
+parseh++:
+	cl /Feparseh++ $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/parseh++-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 scenefixmodelszup2yup:
 	cl /Fescenefixmodelszup2yup /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/scenefixmodelszup2yup-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
