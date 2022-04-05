@@ -333,7 +333,7 @@ This element supports \<context-menu-item\> and others as sub elements.
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
-## 2.3. dropdown
+## 2.3. Dropdown
 
 ### 2.3.1. \<dropdown\>
 
@@ -524,7 +524,7 @@ This element supports \<menu-item\>and others as sub elements.
 | padding                           | padding for content node                                                               | 0                 |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
-## 2.10. selectbox
+## 2.10. Selectbox
 
 ### 2.10.1. \<selectbox\>
 
@@ -675,7 +675,7 @@ Currently supported BBCode like tags are:
 [image]image-location.png[/image]
 ```
 
-## 2.14. tab
+## 2.14. Tabs
 
 ### 2.14.1. \<tabs\>
 
