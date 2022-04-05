@@ -60,6 +60,10 @@ private:
 		int textureId;
 		int width;
 		int height;
+		GUIColor effectColorMul;
+		GUIColor effectColorAdd;
+		float horizontalScale;
+		float verticalScale;
 	};
 
 	bool preformatted;

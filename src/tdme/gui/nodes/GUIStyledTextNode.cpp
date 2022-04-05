@@ -536,7 +536,7 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 	[font=schriftart]Text[/font]
 	[color=farbe]farbiger Text[/color]
 	[url=http://example.com/]Linktext[/url]
-	[image]example.com/bild.jpg[/image] (Bearbeitet)
+	[image=horizontal-scale:50%|0.5,vertical-scale:50%|0.5,width:100,height:100,effect-color-mul:#ff0000ff,effect-color-add:#ff000000]example.com/bild.jpg[/image]
 	*/
 	string styleFont;
 	string styleColor;
@@ -545,6 +545,8 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 	//
 	auto parseStyle = false;
 	auto parseImage = false;
+	int imageWidth = -1;
+	int imageHeight = -1;
 	string currentStyle;
 	int styleStartIdx = -1;
 	char lc = 0;
@@ -580,6 +582,34 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 						if (command == "url") {
 							styleUrl = argument;
 							styleStartIdx = this->text.size();
+						} else
+						if (command == "image") {
+							parseImage = true;
+							auto imageOptions = StringTools::tokenize(styleTokenized[1], ",");
+							for (auto& imageOption: imageOptions) {
+								auto nameValuePair = StringTools::tokenize(imageOption, ":");
+								if (nameValuePair.size() != 2) {
+									Console::println("GUIStyledTextNode::setText(): unknown image style command option: " + imageOption);
+								} else {
+									auto& name = nameValuePair[0];
+									auto& value = nameValuePair[1];
+									if (name == "width") {
+										try {
+											imageWidth = Integer::parse(value);
+										} catch (Exception& exception) {
+											Console::println("GUIStyledTextNode::setText(): unknown image style command option: width: unknown value: " + value);
+										}
+									} else
+									if (name == "height") {
+										try {
+											imageHeight = Integer::parse(value);
+										} catch (Exception& exception) {
+											Console::println("GUIStyledTextNode::setText(): unknown image style command option: height: unknown value: " + value);
+										}
+									}
+									Console::println("GUIStyledTextNode::setText(): image style command option: " + name + " = '" + value + "'");
+								}
+							}
 						} else {
 							Console::println("GUIStyledTextNode::setText(): unknown style command: " + currentStyle);
 						}
@@ -601,8 +631,10 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 						if (command == "/image") {
 							parseImage = false;
 							this->text.append(static_cast<char>(0));
-							setImage(this->text.size() - 1, styleImage, styleUrl, -1, -1);
+							setImage(this->text.size() - 1, styleImage, styleUrl, imageWidth, imageHeight);
 							styleImage.clear();
+							imageWidth = -1;
+							imageHeight = -1;
 						} else {
 							Console::println("GUIStyledTextNode::setText(): unknown style command: " + currentStyle);
 						}
@@ -1541,7 +1573,11 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor& c
 			.image = nullptr,
 			.textureId = -1,
 			.width = -1,
-			.height = -1
+			.height = -1,
+			.effectColorMul = GUIColor::GUICOLOR_EFFECT_COLOR_MUL,
+			.effectColorAdd = GUIColor::GUICOLOR_EFFECT_COLOR_ADD,
+			.horizontalScale = 1.0f,
+			.verticalScale = 1.0f
 		}
 	);
 	//
@@ -1582,7 +1618,11 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const string& fon
 			.image = nullptr,
 			.textureId = -1,
 			.width = -1,
-			.height = -1
+			.height = -1,
+			.effectColorMul = GUIColor::GUICOLOR_EFFECT_COLOR_MUL,
+			.effectColorAdd = GUIColor::GUICOLOR_EFFECT_COLOR_ADD,
+			.horizontalScale = 1.0f,
+			.verticalScale = 1.0f
 		}
 	);
 	//
@@ -1619,6 +1659,10 @@ void GUIStyledTextNode::setImage(int idx, const string& image, const string& url
 			.textureId = Engine::getInstance()->getTextureManager()->addTexture(_image, 0),
 			.width = width == -1?_image->getWidth():width,
 			.height = height == -1?_image->getHeight():height,
+			.effectColorMul = GUIColor::GUICOLOR_EFFECT_COLOR_MUL,
+			.effectColorAdd = GUIColor::GUICOLOR_EFFECT_COLOR_ADD,
+			.horizontalScale = 1.0f,
+			.verticalScale = 1.0f
 		}
 	);
 	//
