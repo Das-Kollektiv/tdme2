@@ -34,7 +34,7 @@ const string& GUISelectorH::getName()
 
 const string GUISelectorH::getTemplate(const string& applicationPathName, const string& applicationSubPathName, const string& fileName)
 {
-	return FileSystem::getInstance()->getContentAsString(applicationPathName + "/resources/" + applicationSubPathName + "/gui/definitions", fileName.empty() == true?"selector-h.xml":fileName);
+	return FileSystem::getInstance()->getContentAsString(applicationPathName + "/resources/" + applicationSubPathName + "/gui/definitions", fileName.empty() == true?"selector-horizontal.xml":fileName);
 }
 
 unordered_map<string, string> GUISelectorH::getAttributes(GUIScreenNode* screenNode)

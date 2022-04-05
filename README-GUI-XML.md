@@ -231,7 +231,7 @@ This element supports all other elements as sub elements.
 | font                              | text rendering default font location                                                   | none              |
 | preformatted                      | preformatted, means preserve new lines and white spaces                                | false             |
 
-The <styled-text>Inner Data</styled-text> is the text that will be rendered. Also note that this element supports some sort of BBCode syntax.
+The \<styled-text\>Inner Data\<\/styled-text\> is the text that will be rendered. Also note that this element supports some sort of BBCode syntax.
 
 Currently supported BBCode like tags are:
 ```
@@ -354,6 +354,7 @@ This element supports \<context-menu-item\> and others as sub elements.
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
 | on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
 | name                              | formular name of this element                                                          | none              |
+| value                             | value of this element                                                                  | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 This element supports \<dropdown-option\> and others as sub elements.
@@ -543,7 +544,7 @@ This element supports \<menu-item\>and others as sub elements.
 | on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
 | options                           | supports optional multiple selecting by "multiple" option                              | none              |
 | name                              | formular name of this element                                                          | none              |
-| value                             | value of this element, which will represent selection state                            | none              |
+| value                             | value of this element                                                                  | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 This element supports \<selectbox-option\> and others as sub elements.
@@ -568,9 +569,45 @@ This element supports \<selectbox-option\> and others as sub elements.
 | value                             | value of this element, which will represent selection state                            | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
-## 2.11. Sliders
+## 2.11. Horizontal selector
 
-### 2.11.1. \<slider-horizontal\>
+### 2.11.1. \<selector-horizontal\>
+
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| id                                | the unique node id within screen                                                       | auto generated id |
+| show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
+| hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
+| on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
+| on-mouse-click                    | SimpleScript expression to be executed if a mouse click did happen                     | none              |
+| on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
+| on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
+| on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
+| name                              | formular name of this element                                                          | none              |
+| value                             | value of this element                                                                  | none              |
+
+This element supports  \<selector-horizontal-option\> and others as sub elements.
+
+### 2.11.2. \<selector-horizontal-option\>
+
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| id                                | the unique node id within screen                                                       | auto generated id |
+| show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
+| hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
+| disabled                          | true \| false                                                                          | false             |
+| text                              | text to render                                                                         | none              |
+| selected                          | true \| false                                                                          | false             |
+| on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
+| on-mouse-click                    | SimpleScript expression to be executed if a mouse click did happen                     | none              |
+| on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
+| on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
+| on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
+| value                             | value of this element, which will represent selection state                            | none              |
+
+## 2.12. Sliders
+
+### 2.12.1. \<slider-horizontal\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -589,7 +626,7 @@ This element supports \<selectbox-option\> and others as sub elements.
 | value                             | value of this element, ranging from 0.0 <= value <= 1.0                                | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
-### 2.11.2. \<slider-vertical\>
+### 2.12.2. \<slider-vertical\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -608,7 +645,7 @@ This element supports \<selectbox-option\> and others as sub elements.
 | value                             | value of this element, ranging from 0.0 <= value <= 1.0                                | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
-## 2.12. \<styled-input\>
+## 2.13. \<styled-input\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -628,7 +665,7 @@ This element supports \<selectbox-option\> and others as sub elements.
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
 | on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
 
-The <styled-text>Inner Data</styled-text> is the text that will be rendered. Also note that this element supports some sort of BBCode syntax.
+The \<styled-text\>Inner Data\<\/styled-text\> is the text that will be rendered. Also note that this element supports some sort of BBCode syntax.
 
 Currently supported BBCode like tags are:
 ```
@@ -638,9 +675,9 @@ Currently supported BBCode like tags are:
 [image]image-location.png[/image]
 ```
 
-## 2.13. tab
+## 2.14. tab
 
-### 2.13.1. \<tabs\>
+### 2.14.1. \<tabs\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -654,7 +691,7 @@ Currently supported BBCode like tags are:
 
 This element supports \<tabs-header\>,  \<tabs-content\> and others as sub elements.
 
-### 2.13.2. \<tabs-header\>
+### 2.14.2. \<tabs-header\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -666,7 +703,7 @@ This element supports \<tabs-header\>,  \<tabs-content\> and others as sub eleme
 
 This element supports \<tab\> and others as sub elements.
 
-### 2.13.3. \<tab\>
+### 2.14.3. \<tab\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -684,7 +721,7 @@ This element supports \<tab\> and others as sub elements.
 | on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
 
-### 2.13.4. \<tabs-content\>
+### 2.14.4. \<tabs-content\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -695,7 +732,7 @@ This element supports \<tab\> and others as sub elements.
 
 This element supports \<tab-content\> and others as sub elements.
 
-### 2.13.5. \<tab-content\>
+### 2.14.5. \<tab-content\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
