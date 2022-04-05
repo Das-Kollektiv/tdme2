@@ -414,7 +414,7 @@ This element supports \<dropdown-option\> and others as sub elements.
 | hint                              | text hint to show if no text was entered yet                                           | none              |
 | image                             | location of image to display additionally                                              | none              |
 | unit                              | unit, e.g. M(eter), S(econds), ...                                                     | none              |
-| options                           | type=float|int,min=xyz,max=xyz,step=xyz,decimals=xyz, e.g. "type=int,min=0,step=1"     | none              |
+| options                           | type=float\|int,min=xyz,max=xyz,step=xyz,decimals=xyz, e.g. "type=int,min=0,step=1"    | none              |
 | on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
 | on-mouse-click                    | SimpleScript expression to be executed if a mouse click did happen                     | none              |
 | on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
