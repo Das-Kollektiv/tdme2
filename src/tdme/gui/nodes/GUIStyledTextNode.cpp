@@ -1575,9 +1575,7 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor& c
 			.width = -1,
 			.height = -1,
 			.effectColorMul = GUIColor::GUICOLOR_EFFECT_COLOR_MUL,
-			.effectColorAdd = GUIColor::GUICOLOR_EFFECT_COLOR_ADD,
-			.horizontalScale = 1.0f,
-			.verticalScale = 1.0f
+			.effectColorAdd = GUIColor::GUICOLOR_EFFECT_COLOR_ADD
 		}
 	);
 	//
@@ -1620,9 +1618,7 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const string& fon
 			.width = -1,
 			.height = -1,
 			.effectColorMul = GUIColor::GUICOLOR_EFFECT_COLOR_MUL,
-			.effectColorAdd = GUIColor::GUICOLOR_EFFECT_COLOR_ADD,
-			.horizontalScale = 1.0f,
-			.verticalScale = 1.0f
+			.effectColorAdd = GUIColor::GUICOLOR_EFFECT_COLOR_ADD
 		}
 	);
 	//
@@ -1630,7 +1626,7 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const string& fon
 	// for (auto& style: styles) Console::println("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
 }
 
-void GUIStyledTextNode::setImage(int idx, const string& image, const string& url, int width, int height) {
+void GUIStyledTextNode::setImage(int idx, const string& image, const string& url, int width, int height, float horizontalScale, float verticalScale, const GUIColor& effectColorMul, const GUIColor& effectColorAdd) {
 	// Console::println("GUIStyledTextNode::setImage(): " + to_string(idx) + ": " + image + ", url = '" + url + "', width = " + to_string(width) + ", height = " + to_string(height));
 	unsetTextStyle(idx,idx);
 	// TODO: a.drewke
@@ -1657,12 +1653,10 @@ void GUIStyledTextNode::setImage(int idx, const string& image, const string& url
 			.url = url,
 			.image = _image,
 			.textureId = Engine::getInstance()->getTextureManager()->addTexture(_image, 0),
-			.width = width == -1?_image->getWidth():width,
-			.height = height == -1?_image->getHeight():height,
+			.width = width == -1?static_cast<int>(_image->getWidth() * horizontalScale):width,
+			.height = height == -1?static_cast<int>(_image->getHeight() * verticalScale):height,
 			.effectColorMul = GUIColor::GUICOLOR_EFFECT_COLOR_MUL,
-			.effectColorAdd = GUIColor::GUICOLOR_EFFECT_COLOR_ADD,
-			.horizontalScale = 1.0f,
-			.verticalScale = 1.0f
+			.effectColorAdd = GUIColor::GUICOLOR_EFFECT_COLOR_ADD
 		}
 	);
 	//

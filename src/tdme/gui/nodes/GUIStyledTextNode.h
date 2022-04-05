@@ -62,8 +62,6 @@ private:
 		int height;
 		GUIColor effectColorMul;
 		GUIColor effectColorAdd;
-		float horizontalScale;
-		float verticalScale;
 	};
 
 	bool preformatted;
@@ -446,7 +444,21 @@ public:
 	 * @param url url
 	 * @param width width or -1 for original image width
 	 * @param height height or -1 for original image height
+	 * @param horizontalScale horizontal scale as factor
+	 * @param verticalScale vertical scale as factor
+	 * @param effectColorMul effect color mul
+	 * @param effectColorAdd effect color add
 	 */
-	void setImage(int idx, const string& image, const string& url = string(), int width = -1, int height = -1);
+	void setImage(
+		int idx,
+		const string& image,
+		const string& url = string(),
+		int width = -1,
+		int height = -1,
+		float horizontalScale = 1.0f,
+		float verticalScale = 1.0f,
+		const GUIColor& effectColorMul = GUIColor::GUICOLOR_EFFECT_COLOR_MUL,
+		const GUIColor& effectColorAdd = GUIColor::GUICOLOR_EFFECT_COLOR_ADD
+	);
 
 };
