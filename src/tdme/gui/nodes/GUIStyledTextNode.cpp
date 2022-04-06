@@ -549,6 +549,8 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 	int imageHeight = -1;
 	float imageHorizontalScale = 1.0f;
 	float imageVerticalScale = 1.0f;
+	GUIColor imageEffectColorMul = GUIColor::GUICOLOR_EFFECT_COLOR_MUL;
+	GUIColor imageEffectColorAdd = GUIColor::GUICOLOR_EFFECT_COLOR_ADD;
 	string currentStyle;
 	int styleStartIdx = -1;
 	char lc = 0;
@@ -595,6 +597,9 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 								} else {
 									auto name = StringTools::trim(nameValuePair[0]);
 									auto value = StringTools::trim(nameValuePair[1]);
+									if (name.empty() == true || value.empty() == true) {
+										Console::println("GUIStyledTextNode::setText(): unknown image style command option: name or value empty");
+									} else
 									if (name == "width") {
 										try {
 											imageWidth = Integer::parse(value);
@@ -611,12 +616,10 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 									} else
 									if (name == "horizontal-scale") {
 										try {
-											if (value.empty() == false) {
-												if (StringTools::endsWith(value, "%")) {
-													imageHorizontalScale = Float::parse(value.substr(0, value.length() - 1)) / 100.0f;
-												} else {
-													imageHorizontalScale = Float::parse(value);
-												}
+											if (StringTools::endsWith(value, "%")) {
+												imageHorizontalScale = Float::parse(value.substr(0, value.length() - 1)) / 100.0f;
+											} else {
+												imageHorizontalScale = Float::parse(value);
 											}
 										} catch (Exception& exception) {
 											Console::println("GUIStyledTextNode::setText(): unknown image style command option: horizontal-scale: unknown value: " + value);
@@ -624,15 +627,27 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 									} else
 									if (name == "vertical-scale") {
 										try {
-											if (value.empty() == false) {
-												if (StringTools::endsWith(value, "%")) {
-													imageVerticalScale = Float::parse(value.substr(0, value.length() - 1)) / 100.0f;
-												} else {
-													imageVerticalScale = Float::parse(value);
-												}
+											if (StringTools::endsWith(value, "%")) {
+												imageVerticalScale = Float::parse(value.substr(0, value.length() - 1)) / 100.0f;
+											} else {
+												imageVerticalScale = Float::parse(value);
 											}
 										} catch (Exception& exception) {
-											Console::println("GUIStyledTextNode::setText(): unknown image style command option: horizontal-scale: unknown value: " + value);
+											Console::println("GUIStyledTextNode::setText(): unknown image style command option: vertical-scale: unknown value: " + value);
+										}
+									} else
+									if (name == "effect-color-mul") {
+										try {
+											imageEffectColorMul = GUIColor(value);
+										} catch (Exception& exception) {
+											Console::println("GUIStyledTextNode::setText(): unknown image style command option: effect-color-mul: unknown value: " + value);
+										}
+									} else
+									if (name == "effect-color-add") {
+										try {
+											imageEffectColorAdd = GUIColor(value);
+										} catch (Exception& exception) {
+											Console::println("GUIStyledTextNode::setText(): unknown image style command option: effect-color-add: unknown value: " + value);
 										}
 									} else {
 										Console::println("GUIStyledTextNode::setText(): image style command option: " + name + " = '" + value + "'");
@@ -660,12 +675,14 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 						if (command == "/image") {
 							parseImage = false;
 							this->text.append(static_cast<char>(0));
-							setImage(this->text.size() - 1, styleImage, styleUrl, imageWidth, imageHeight, imageHorizontalScale, imageVerticalScale);
+							setImage(this->text.size() - 1, styleImage, styleUrl, imageWidth, imageHeight, imageHorizontalScale, imageVerticalScale, imageEffectColorMul, imageEffectColorAdd);
 							styleImage.clear();
 							imageWidth = -1;
 							imageHeight = -1;
 							imageHorizontalScale = 1.0f;
 							imageVerticalScale = 1.0f;
+							imageEffectColorMul = GUIColor::GUICOLOR_EFFECT_COLOR_MUL;
+							imageEffectColorAdd = GUIColor::GUICOLOR_EFFECT_COLOR_ADD;
 						} else {
 							Console::println("GUIStyledTextNode::setText(): unknown style command: " + currentStyle);
 						}
@@ -1157,6 +1174,10 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 					if (textStyle != nullptr && textStyle->image != nullptr) {
 						// draw
 						guiRenderer->render();
+						auto rendererEffectColorMul = guiRenderer->getGUIEffectColorMul();
+						auto rendererEffectColorAdd = guiRenderer->getGUIEffectColorAdd();
+						guiRenderer->setGUIEffectColorMul(textStyle->effectColorMul);
+						guiRenderer->setGUIEffectColorAdd(textStyle->effectColorAdd);
 						guiRenderer->bindTexture(textStyle->textureId);
 						{
 							float left = x + xIndentLeft;
@@ -1219,6 +1240,8 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 						//
 						guiRenderer->render();
 						guiRenderer->bindTexture(boundTexture);
+						guiRenderer->setGUIEffectColorMul(rendererEffectColorMul);
+						guiRenderer->setGUIEffectColorAdd(rendererEffectColorAdd);
 						// flush current URL
 						if (currentURL.empty() == false && urlAreas.empty() == false) {
 							auto& urlArea = urlAreas[urlAreas.size() - 1];
@@ -1686,8 +1709,8 @@ void GUIStyledTextNode::setImage(int idx, const string& image, const string& url
 			.textureId = Engine::getInstance()->getTextureManager()->addTexture(_image, 0),
 			.width = width == -1?static_cast<int>(_image->getWidth() * horizontalScale):static_cast<int>(width * horizontalScale),
 			.height = height == -1?static_cast<int>(_image->getHeight() * verticalScale):static_cast<int>(height * verticalScale),
-			.effectColorMul = GUIColor::GUICOLOR_EFFECT_COLOR_MUL,
-			.effectColorAdd = GUIColor::GUICOLOR_EFFECT_COLOR_ADD
+			.effectColorMul = effectColorMul,
+			.effectColorAdd = effectColorAdd
 		}
 	);
 	//
