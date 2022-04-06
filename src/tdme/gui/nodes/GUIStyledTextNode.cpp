@@ -547,6 +547,8 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 	auto parseImage = false;
 	int imageWidth = -1;
 	int imageHeight = -1;
+	float imageHorizontalScale = 1.0f;
+	float imageVerticalScale = 1.0f;
 	string currentStyle;
 	int styleStartIdx = -1;
 	char lc = 0;
@@ -591,8 +593,8 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 								if (nameValuePair.size() != 2) {
 									Console::println("GUIStyledTextNode::setText(): unknown image style command option: " + imageOption);
 								} else {
-									auto& name = nameValuePair[0];
-									auto& value = nameValuePair[1];
+									auto name = StringTools::trim(nameValuePair[0]);
+									auto value = StringTools::trim(nameValuePair[1]);
 									if (name == "width") {
 										try {
 											imageWidth = Integer::parse(value);
@@ -606,8 +608,35 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 										} catch (Exception& exception) {
 											Console::println("GUIStyledTextNode::setText(): unknown image style command option: height: unknown value: " + value);
 										}
+									} else
+									if (name == "horizontal-scale") {
+										try {
+											if (value.empty() == false) {
+												if (StringTools::endsWith(value, "%")) {
+													imageHorizontalScale = Float::parse(value.substr(0, value.length() - 1)) / 100.0f;
+												} else {
+													imageHorizontalScale = Float::parse(value);
+												}
+											}
+										} catch (Exception& exception) {
+											Console::println("GUIStyledTextNode::setText(): unknown image style command option: horizontal-scale: unknown value: " + value);
+										}
+									} else
+									if (name == "vertical-scale") {
+										try {
+											if (value.empty() == false) {
+												if (StringTools::endsWith(value, "%")) {
+													imageVerticalScale = Float::parse(value.substr(0, value.length() - 1)) / 100.0f;
+												} else {
+													imageVerticalScale = Float::parse(value);
+												}
+											}
+										} catch (Exception& exception) {
+											Console::println("GUIStyledTextNode::setText(): unknown image style command option: horizontal-scale: unknown value: " + value);
+										}
+									} else {
+										Console::println("GUIStyledTextNode::setText(): image style command option: " + name + " = '" + value + "'");
 									}
-									Console::println("GUIStyledTextNode::setText(): image style command option: " + name + " = '" + value + "'");
 								}
 							}
 						} else {
@@ -631,10 +660,12 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 						if (command == "/image") {
 							parseImage = false;
 							this->text.append(static_cast<char>(0));
-							setImage(this->text.size() - 1, styleImage, styleUrl, imageWidth, imageHeight);
+							setImage(this->text.size() - 1, styleImage, styleUrl, imageWidth, imageHeight, imageHorizontalScale, imageVerticalScale);
 							styleImage.clear();
 							imageWidth = -1;
 							imageHeight = -1;
+							imageHorizontalScale = 1.0f;
+							imageVerticalScale = 1.0f;
 						} else {
 							Console::println("GUIStyledTextNode::setText(): unknown style command: " + currentStyle);
 						}
@@ -1653,8 +1684,8 @@ void GUIStyledTextNode::setImage(int idx, const string& image, const string& url
 			.url = url,
 			.image = _image,
 			.textureId = Engine::getInstance()->getTextureManager()->addTexture(_image, 0),
-			.width = width == -1?static_cast<int>(_image->getWidth() * horizontalScale):width,
-			.height = height == -1?static_cast<int>(_image->getHeight() * verticalScale):height,
+			.width = width == -1?static_cast<int>(_image->getWidth() * horizontalScale):static_cast<int>(width * horizontalScale),
+			.height = height == -1?static_cast<int>(_image->getHeight() * verticalScale):static_cast<int>(height * verticalScale),
 			.effectColorMul = GUIColor::GUICOLOR_EFFECT_COLOR_MUL,
 			.effectColorAdd = GUIColor::GUICOLOR_EFFECT_COLOR_ADD
 		}
