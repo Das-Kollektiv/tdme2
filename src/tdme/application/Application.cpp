@@ -776,7 +776,8 @@ void Application::glfwOnKey(GLFWwindow* window, int key, int scanCode, int actio
 			keyName == nullptr?-1:((mods & GLFW_MOD_SHIFT) == 0 && glfwCapsLockEnabled == false?Character::toLowerCase(keyName[0]):keyName[0]),
 			key,
 			(int)mouseX,
-			(int)mouseY
+			(int)mouseY,
+			action == GLFW_REPEAT
 		);
 	} else
 	if (action == GLFW_RELEASE) {

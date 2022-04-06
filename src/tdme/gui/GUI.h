@@ -361,8 +361,9 @@ public:
 	 * @param keyCode key code
 	 * @param x x
 	 * @param y y
+	 * @param repeat repeat event
 	 */
-	void onKeyDown (unsigned char key, int keyCode, int x, int y) override;
+	void onKeyDown (unsigned char key, int keyCode, int x, int y, bool repeat) override;
 
 	/**
 	 * On key up

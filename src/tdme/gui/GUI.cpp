@@ -704,11 +704,12 @@ void GUI::onChar(unsigned int key, int x, int y) {
 	guiKeyboardEvent.setControlDown(controlDown);
 	guiKeyboardEvent.setAltDown(altDown);
 	guiKeyboardEvent.setShiftDown(shiftDown);
+	guiKeyboardEvent.setRepeat(false);
 	guiKeyboardEvent.setProcessed(false);
 	keyboardEvents.push_back(guiKeyboardEvent);
 }
 
-void GUI::onKeyDown (unsigned char key, int keyCode, int x, int y) {
+void GUI::onKeyDown (unsigned char key, int keyCode, int x, int y, bool repeat) {
 	fakeMouseMovedEvent();
 	GUIKeyboardEvent guiKeyboardEvent;
 	guiKeyboardEvent.setTime(Time::getCurrentMillis());
@@ -719,6 +720,7 @@ void GUI::onKeyDown (unsigned char key, int keyCode, int x, int y) {
 	guiKeyboardEvent.setControlDown(controlDown);
 	guiKeyboardEvent.setAltDown(altDown);
 	guiKeyboardEvent.setShiftDown(shiftDown);
+	guiKeyboardEvent.setRepeat(repeat);
 	guiKeyboardEvent.setProcessed(false);
 	keyboardEvents.push_back(guiKeyboardEvent);
 }
@@ -734,6 +736,7 @@ void GUI::onKeyUp(unsigned char key, int keyCode, int x, int y) {
 	guiKeyboardEvent.setControlDown(controlDown);
 	guiKeyboardEvent.setAltDown(altDown);
 	guiKeyboardEvent.setShiftDown(shiftDown);
+	guiKeyboardEvent.setRepeat(false);
 	guiKeyboardEvent.setProcessed(false);
 	keyboardEvents.push_back(guiKeyboardEvent);
 }

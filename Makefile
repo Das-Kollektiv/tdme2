@@ -441,8 +441,6 @@ SRCS = \
 	src/tdme/gui/elements/GUITabsController.cpp \
 	src/tdme/gui/elements/GUITabsHeader.cpp \
 	src/tdme/gui/elements/GUITabsHeaderController.cpp \
-	src/tdme/gui/events/GUIKeyboardEvent.cpp \
-	src/tdme/gui/events/GUIMouseEvent.cpp \
 	src/tdme/gui/nodes/GUIColor.cpp \
 	src/tdme/gui/nodes/GUIElementController.cpp \
 	src/tdme/gui/nodes/GUIElementIgnoreEventsController.cpp \

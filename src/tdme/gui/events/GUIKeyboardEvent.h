@@ -55,26 +55,29 @@ public:
 	};
 
 private:
-	int64_t time;
+	int64_t time { -1LL };
 	GUIKeyboardEventType type { KEYBOARDEVENT_NONE };
-	int32_t keyCode;
-	char keyChar;
-	bool metaDown;
-	bool controlDown;
-	bool altDown;
-	bool shiftDown;
-	bool processed;
+	int32_t keyCode { -1 };
+	char keyChar { 0 };
+	bool metaDown { false };
+	bool controlDown { false };
+	bool altDown { false };
+	bool shiftDown { false };
+	bool repeat { false };
+	bool processed { false };
 
 public:
 	/**
-	 * Public constructor
+	 * Constructor
 	 */
-	GUIKeyboardEvent();
+	inline GUIKeyboardEvent() {
+	}
 
 	/**
 	 * Destructor
 	 */
-	~GUIKeyboardEvent();
+	inline ~GUIKeyboardEvent() {
+	}
 
 	/**
 	 * @return time in milliseconds
@@ -197,6 +200,21 @@ public:
 	}
 
 	/**
+	 * @return is repeat
+	 */
+	inline bool isRepeat() {
+		return repeat;
+	}
+
+	/**
+	 * Set repeat
+	 * @param repeat repeat event
+	 */
+	inline void setRepeat(bool repeat) {
+		this->repeat = repeat;
+	}
+
+	/**
 	 * @return event has been processed already
 	 */
 	inline bool isProcessed() {
@@ -211,6 +229,4 @@ public:
 		this->processed = processed;
 	}
 
-private:
-	friend class GUIKeyboardEvent_Type;
 };
