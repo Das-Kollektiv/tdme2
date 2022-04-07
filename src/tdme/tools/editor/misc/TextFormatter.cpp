@@ -317,7 +317,7 @@ void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 													break;
 												}
 											} else
-											if (isdigit(word[j]) == false) {
+											if (isdigit(word[j]) == 0) {
 												valid = false;
 												break;
 											}
