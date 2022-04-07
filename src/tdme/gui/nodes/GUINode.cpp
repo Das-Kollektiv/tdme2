@@ -1334,7 +1334,7 @@ void GUINode::setBackgroundImage(const string& backgroundImage) {
 		backgroundTextureId = 0;
 	}
 	if (backgroundImage.length() > 0) {
-		backgroundTexture = GUI::getImage(screenNode->getApplicationRootPathName(), backgroundImage);
+		backgroundTexture = screenNode->getImage(screenNode->getApplicationRootPathName(), backgroundImage);
 		backgroundTextureId = Engine::getInstance()->getTextureManager()->addTexture(backgroundTexture, 0);
 	}
 }

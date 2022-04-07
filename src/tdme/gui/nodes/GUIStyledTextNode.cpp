@@ -81,7 +81,7 @@ GUIStyledTextNode::GUIStyledTextNode(
 ):
 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
 {
-	this->font = font.empty() == true?nullptr:GUI::getFont(screenNode->getApplicationRootPathName(), font);
+	this->font = font.empty() == true?nullptr:screenNode->getFont(screenNode->getApplicationRootPathName(), font);
 	this->color = color.empty() == true || color.length() == 0?GUIColor():GUIColor(color);
 	this->autoWidth = 0;
 	this->autoHeight = 0;
@@ -1602,7 +1602,7 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor& c
 	// Console::println();
 	unsetTextStyle(startIdx, endIdx);
 	// TODO: a.drewke
-	auto _font = font.empty() == true?nullptr:GUI::getFont(screenNode->getApplicationRootPathName(), font);;
+	auto _font = font.empty() == true?nullptr:screenNode->getFont(screenNode->getApplicationRootPathName(), font);;
 	if (_font != nullptr) _font->initialize();
 	// find position to insert
 	auto j = -1;
@@ -1645,7 +1645,7 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const string& fon
 	// Console::println();
 	unsetTextStyle(startIdx, endIdx);
 	// TODO: a.drewke
-	auto _font = font.empty() == true?nullptr:GUI::getFont(screenNode->getApplicationRootPathName(), font);;
+	auto _font = font.empty() == true?nullptr:screenNode->getFont(screenNode->getApplicationRootPathName(), font);;
 	if (_font != nullptr) _font->initialize();
 	// find position to insert
 	auto j = -1;
@@ -1684,7 +1684,7 @@ void GUIStyledTextNode::setImage(int idx, const string& image, const string& url
 	// Console::println("GUIStyledTextNode::setImage(): " + to_string(idx) + ": " + image + ", url = '" + url + "', width = " + to_string(width) + ", height = " + to_string(height));
 	unsetTextStyle(idx,idx);
 	// TODO: a.drewke
-	auto _image = image.empty() == true?nullptr:GUI::getImage(screenNode->getApplicationRootPathName(), image);
+	auto _image = image.empty() == true?nullptr:screenNode->getImage(screenNode->getApplicationRootPathName(), image);
 	// find position to insert
 	auto j = -1;
 	for (auto i = 0; i < styles.size(); i++) {

@@ -7,6 +7,8 @@
 #include <unordered_set>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/events/GUIContextMenuRequestListener.h>
@@ -25,6 +27,10 @@
 #include <tdme/gui/nodes/GUIScreenNode_SizeConstraints.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/gui/renderer/GUIFont.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemException.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MutableString.h>
 
@@ -36,6 +42,8 @@ using std::to_string;
 using std::unordered_map;
 using std::unordered_set;
 
+using tdme::engine::fileio::textures::Texture;
+using tdme::engine::fileio::textures::TextureReader;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::events::GUIInputEventHandler;
@@ -53,6 +61,10 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIScreenNode_SizeConstraints;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::GUI;
+using tdme::gui::renderer::GUIFont;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemException;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 
@@ -105,6 +117,16 @@ GUIScreenNode::~GUIScreenNode() {
 
 	// dispose
 	GUINode::dispose();
+
+	// delete chaches
+	for (auto& fontCacheIt: fontCache) {
+		delete fontCacheIt.second;
+	}
+	fontCache.clear();
+	for (auto& imageCacheIt: imageCache) {
+		imageCacheIt.second->releaseReference();
+	}
+	imageCache.clear();
 }
 
 GUI* GUIScreenNode::getGUI()
@@ -612,4 +634,83 @@ GUIScreenNode_SizeConstraints GUIScreenNode::createSizeConstraints(const string&
 	constraints.maxWidth = maxWidth.empty() == true?-1:Integer::parse(maxWidth);
 	constraints.maxHeight = maxHeight.empty() == true?-1:Integer::parse(maxHeight);
 	return constraints;
+}
+
+GUIFont* GUIScreenNode::getFont(const string& applicationRootPath, const string& fileName)
+{
+	// get canonical file name
+	string canonicalFile;
+	string path;
+	string file;
+	GUIFont* font = nullptr;
+	try {
+		if (FileSystem::getInstance()->fileExists(fileName) == true) {
+			canonicalFile = fileName;
+		} else {
+			canonicalFile = FileSystem::getInstance()->getCanonicalPath(applicationRootPath, fileName);
+		}
+		path = FileSystem::getInstance()->getPathName(canonicalFile);
+		file = FileSystem::getInstance()->getFileName(canonicalFile);
+	} catch (Exception& exception) {
+		Console::print(string("GUI::getFont(): An error occurred: "));
+		Console::println(string(exception.what()));
+		return nullptr;
+	}
+
+	// use cache or load font
+	auto fontCacheIt = fontCache.find(canonicalFile);
+	if (fontCacheIt == fontCache.end()) {
+		try {
+			font = GUIFont::parse(path, file);
+		} catch (Exception& exception) {
+			Console::print(string("GUIScreenNode::getFont(): An error occurred: "));
+			Console::println(string(exception.what()));
+			return nullptr;
+		}
+		fontCache[canonicalFile] = font;
+	} else {
+		font = fontCacheIt->second;
+	}
+	return font;
+}
+
+Texture* GUIScreenNode::getImage(const string& applicationRootPath, const string& fileName)
+{
+	// get canonical file name
+	string canonicalFile;
+	string path;
+	string file;
+	try {
+		if (FileSystem::getInstance()->fileExists(fileName) == true) {
+			canonicalFile = fileName;
+		} else {
+			canonicalFile = FileSystem::getInstance()->getCanonicalPath(applicationRootPath, fileName);
+		}
+		path = FileSystem::getInstance()->getPathName(canonicalFile);
+		file = FileSystem::getInstance()->getFileName(canonicalFile);
+	} catch (Exception& exception) {
+		Console::print(string("GUIScreenNode::getImage(): An error occurred: "));
+		Console::println(string(exception.what()));
+		return nullptr;
+	}
+
+	//
+	auto imageIt = imageCache.find("tdme.gui." + screenNode->getId() + "." + canonicalFile);
+	auto image = imageIt != imageCache.end()?imageIt->second:nullptr;
+	if (image == nullptr) {
+		try {
+			image = TextureReader::read(path, file, false, false, "tdme.gui." + screenNode->getId() + ".");
+			if (image != nullptr) {
+				image->setUseMipMap(false);
+				image->setRepeat(false);
+				image->setClampMode(Texture::CLAMPMODE_TRANSPARENTPIXEL);
+			}
+		} catch (Exception& exception) {
+			Console::print(string("GUIScreenNode::getImage(): An error occurred: "));
+			Console::println(string(exception.what()));
+			throw;
+		}
+		if (image != nullptr) imageCache[canonicalFile] = image;
+	}
+	return image;
 }

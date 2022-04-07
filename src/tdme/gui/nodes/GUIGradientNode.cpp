@@ -13,7 +13,6 @@
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
-#include <tdme/gui/GUI.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Float.h>
@@ -34,7 +33,6 @@ using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::gui::GUI;
 using tdme::math::Matrix2D3x3;
 using tdme::utilities::Console;
 using tdme::utilities::Float;
@@ -257,6 +255,6 @@ void GUIGradientNode::setMask(const string& mask) {
 		maskTexture = nullptr;
 	}
 	this->mask = mask;
-	this->maskTexture = mask.empty() == true?nullptr:GUI::getImage(screenNode->getApplicationRootPathName(), mask);
+	this->maskTexture = mask.empty() == true?nullptr:screenNode->getImage(screenNode->getApplicationRootPathName(), mask);
 	this->maskTextureId = maskTexture == nullptr?0:Engine::getInstance()->getTextureManager()->addTexture(maskTexture, 0);
 }

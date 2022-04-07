@@ -17,11 +17,11 @@
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextureBaseNode.h>
-#include <tdme/gui/GUI.h>
 #include <tdme/math/Math.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 #include <tdme/utilities/StringTools.h>
 
 using tdme::gui::nodes::GUIImageNode;
@@ -43,10 +43,10 @@ using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextureBaseNode;
-using tdme::gui::GUI;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;
+using tdme::utilities::Exception;
 using tdme::utilities::StringTools;
 
 int GUIImageNode::thumbnailTextureIdx = 0;
@@ -177,7 +177,7 @@ void GUIImageNode::setSource(const string& source) {
 				Console::println(string() + "GUIImageNode::setSource(): " + exception.what());
 			}
 		} else {
-			this->texture = source.empty() == true?nullptr:GUI::getImage(screenNode->getApplicationRootPathName(), source);
+			this->texture = source.empty() == true?nullptr:screenNode->getImage(screenNode->getApplicationRootPathName(), source);
 		}
 	}
 	this->textureId = texture == nullptr?0:Engine::getInstance()->getTextureManager()->addTexture(texture, 0);

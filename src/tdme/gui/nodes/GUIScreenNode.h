@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/fwd-tdme.h>
@@ -21,6 +22,7 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
+using tdme::engine::fileio::textures::Texture;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
@@ -44,6 +46,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIScreenNode_SizeConstraints;
 using tdme::gui::renderer::GUIRenderer;
+using tdme::gui::renderer::GUIFont;
 using tdme::gui::GUI;
 using tdme::utilities::MutableString;
 
@@ -96,6 +99,9 @@ private:
 
 	vector<ScrollToNodeStruct> scrollToNodesX;
 	vector<ScrollToNodeStruct> scrollToNodesY;
+
+	unordered_map<string, GUIFont*> fontCache;
+	unordered_map<string, Texture*> imageCache;
 
 public:
 	/**
@@ -574,4 +580,23 @@ public:
 	inline void addNodeElementNodeDependency(const string& elementNodeId, const string& nodeId) {
 		elementNodeToNodeMapping[elementNodeId].insert(nodeId);
 	}
+
+	/**
+	 * Get font
+	 * @param applicationRootPath application root path
+	 * @param fileName file name
+	 * @throws tdme::os::filesystem::FileSystemException
+	 * @return font
+	 */
+	GUIFont* getFont(const string& applicationRootPath, const string& fileName);
+
+	/**
+	 * Get image
+	 * @param applicationRootPath application root path
+	 * @param fileName file name
+	 * @throws tdme::os::filesystem::FileSystemException
+	 * @return texture
+	 */
+	Texture* getImage(const string& applicationRootPath, const string& fileName);
+
 };
