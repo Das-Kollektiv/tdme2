@@ -79,6 +79,7 @@ sudo apt-get install g++
 sudo apt-get install libopenal-dev
 sudo apt-get install libglfw3-dev
 sudo apt-get install libglew-dev
+sudo apt-get install libxml2-dev
 ```
 
 #### 1.3.1.1 Vulkan
