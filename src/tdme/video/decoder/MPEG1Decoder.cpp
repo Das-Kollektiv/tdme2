@@ -104,13 +104,11 @@ void MPEG1Decoder::close() {
 }
 
 void MPEG1Decoder::plmOnVideo(plm_t* plm, plm_frame_t *frame, void *user) {
-	Console::println("MPEG1Decoder::plmOnVideo()");
 	auto mpeg1Decoder = static_cast<MPEG1Decoder*>(user);
 	plm_frame_to_rgba(frame, mpeg1Decoder->lastFrameRGBA.data(), frame->width * 4);
 }
 
 void MPEG1Decoder::plmOnAudio(plm_t* plm, plm_samples_t *samples, void *user) {
-	Console::println("MPEG1Decoder::plmOnAudio()");
 	auto mpeg1Decoder = static_cast<MPEG1Decoder*>(user);
 	int size = sizeof(float) * samples->count * 2;
 	// TODO:

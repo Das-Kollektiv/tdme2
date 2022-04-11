@@ -148,6 +148,9 @@
     - audio entities
       - streams
       - sounds
+- Video
+    - decoder
+      - mpeg1 decoder
 - GUI system
     - borrows some ideas from Nifty-GUI regarding XML and layouting
     - borrows some ideas from AngularJS like
@@ -305,6 +308,7 @@
     - included in TDME2 repository
         - FBXSDK
         - libpng
+        - pl_mpeg
         - ReactPhysics3D
         - RapidJSON
         - sha256

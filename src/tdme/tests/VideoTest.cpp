@@ -221,6 +221,8 @@ void VideoTest::initialize()
 	engine->addEntity(entity);
 	auto farPlaneModel = modelDeleter.add(createWallModel());
 	auto farPlane = new Object3D("wall", farPlaneModel);
+	farPlane->addRotation(Rotation::Y_AXIS, 180.0f);
+	farPlane->update();
 	engine->addEntity(farPlane);
 	//
 	videoDecoder.openFile("resources/tests/video", "video.mpg");
