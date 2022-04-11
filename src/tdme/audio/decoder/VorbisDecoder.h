@@ -25,7 +25,7 @@ using tdme::utilities::ByteBuffer;
  * OGG/Vorbis audio decoder
  * @author Andreas Drewke
  */
-class tdme::audio::decoder::VorbisDecoder: public AudioDecoder
+class tdme::audio::decoder::VorbisDecoder final: public AudioDecoder
 {
 private:
 	struct OGGFileData {
@@ -46,37 +46,11 @@ public:
 		close();
 	}
 
-	/**
-	 * Open a local file
-	 * @param pathName path name
-	 * @param fileName file name
-	 * @throws tdme::os::filesystem::FileSystemException
-	 * @throws tdme::audio::decoder::AudioDecoderException
-	 */
-	virtual void openFile(const string& pathName, const string& fileName);
-
-	/**
-	 * Resets this audio decoder, if a stream was open it will be rewinded
-	 * @throws tdme::os::filesystem::FileSystemException
-	 * @throws tdme::audio::decoder::AudioDecoderException
-	 */
-	virtual void reset();
-
-	/**
-	 * Read raw PCM data from stream
-	 * @param data byte buffer
-	 * @throws tdme::os::filesystem::FileSystemException
-	 * @throws tdme::audio::decoder::AudioDecoderException
-	 * @return number of bytes read
-	 */
-	virtual int32_t readFromStream(ByteBuffer* data);
-
-	/**
-	 * Closes the audio file
-	 * @throws tdme::os::filesystem::FileSystemException
-	 * @throws tdme::audio::decoder::AudioDecoderException
-	 */
-	virtual void close();
+	// overridden methods
+	void openFile(const string& pathName, const string& fileName) override;
+	void reset() override;
+	int64_t readFromStream(ByteBuffer* data) override;
+	void close() override;
 
 private:
 	/**

@@ -64,28 +64,28 @@ public:
 	/**
 	 * @return number of channels or CHANNELS_NONE
 	 */
-	inline uint8_t getChannels() {
+	inline uint8_t getChannels() const {
 		return channels;
 	}
 
 	/**
 	 * @return sample rate in hz or SAMPLERATE_NONE
 	 */
-	inline uint32_t getSampleRate() {
+	inline uint32_t getSampleRate() const {
 		return sampleRate;
 	}
 
 	/**
 	 * @return bits per sample or BITSPERSAMPLES_NONE
 	 */
-	inline uint8_t getBitsPerSample() {
+	inline uint8_t getBitsPerSample() const {
 		return bitsPerSample;
 	}
 
 	/**
 	 * @return samples or SAMPLES_NONE
 	 */
-	inline uint64_t getSamples() {
+	inline uint64_t getSamples() const {
 		return samples;
 	}
 
@@ -96,7 +96,7 @@ public:
 	 * @throws tdme::audio::decoder::AudioDecoderException
 	 * @return number of bytes read
 	 */
-	virtual int32_t readFromStream(ByteBuffer* data) = 0;
+	virtual int64_t readFromStream(ByteBuffer* data) = 0;
 
 	/**
 	 * Closes the audio file

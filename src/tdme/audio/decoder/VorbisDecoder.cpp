@@ -124,8 +124,8 @@ void VorbisDecoder::reset() {
 	openFile(pathName, fileName);
 }
 
-int32_t VorbisDecoder::readFromStream(ByteBuffer* data) {
-	int32_t read = 0;
+int64_t VorbisDecoder::readFromStream(ByteBuffer* data) {
+	auto read = 0LL;
 	while (read < data->getCapacity()) {
 		long len = ov_read(
 			&vf,
