@@ -7,6 +7,8 @@
 #include <tdme/utilities/Time.h>
 
 #include <tdme/application/Application.h>
+#include <tdme/audio/Audio.h>
+#include <tdme/audio/PacketAudioStream.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
@@ -43,6 +45,8 @@ using std::vector;
 using tdme::tests::VideoTest;
 
 using tdme::application::Application;
+using tdme::audio::Audio;
+using tdme::audio::PacketAudioStream;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
@@ -73,6 +77,7 @@ using tdme::video::decoder::MPEG1Decoder;
 
 VideoTest::VideoTest() {
 	Application::setLimitFPS(true);
+	audio = Audio::getInstance();
 	engine = Engine::getInstance();
 }
 
@@ -158,6 +163,13 @@ void VideoTest::display()
 	if (videoDecoder.readVideoFromStream(videoTexture->getByteBuffer()) > 0) {
 		videoTexture->update();
 	}
+	videoAudioBuffer->clear();
+	if (videoDecoder.readAudioFromStream(videoAudioBuffer) > 0) {
+		videoAudioStream->addPacket(videoAudioBuffer);
+	}
+
+	// audio
+	audio->update();
 
 	// rendering
 	auto start = Time::getCurrentMillis();
@@ -186,6 +198,7 @@ void VideoTest::dispose()
 {
 	engine->dispose();
 	videoTexture->dispose();
+	delete videoAudioBuffer;
 }
 
 void VideoTest::initialize()
@@ -224,11 +237,17 @@ void VideoTest::initialize()
 	farPlane->addRotation(Rotation::Y_AXIS, 180.0f);
 	farPlane->update();
 	engine->addEntity(farPlane);
-	//
+	// video
 	videoDecoder.openFile("resources/tests/video", "video.mpg");
 	videoTexture = new DynamicColorTexture(videoDecoder.getVideoWidth(), videoDecoder.getVideoHeight());
 	videoTexture->initialize();
 	farPlane->bindDiffuseTexture(videoTexture, "wall", "wall");
+	// audio
+	videoAudioBuffer = ByteBuffer::allocate(32768);
+	videoAudioStream = new PacketAudioStream("video");
+	videoAudioStream->setParameters(videoDecoder.getAudioSampleRate(), videoDecoder.getAudioChannels(), 32768);
+	audio->addEntity(videoAudioStream);
+	videoAudioStream->play();
 }
 
 void VideoTest::reshape(int32_t width, int32_t height)

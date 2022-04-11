@@ -17,13 +17,14 @@
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
 
+using tdme::audio::AudioStream;
+
 using std::array;
 using std::string;
 using std::to_string;
 using std::vector;
 
 using tdme::audio::Audio;
-using tdme::audio::AudioStream;
 using tdme::math::Vector3;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;

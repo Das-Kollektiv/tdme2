@@ -61,11 +61,13 @@ void MPEG1Decoder::openFile(const string& pathName, const string& fileName) {
 
 	//
 	audioSampleRate = plm_get_samplerate(plm);
+	audioChannels = 2;
 	videoFrameRate = plm_get_framerate(plm);
 	videoDuration = plm_get_duration(plm);
 	videoWidth = plm_get_width(plm);
 	videoHeight = plm_get_height(plm);
-	lastFrameRGBA.resize(static_cast<int>(videoWidth) * static_cast<int>(videoHeight) * 4);
+	videoBuffer = ByteBuffer::allocate(static_cast<int>(videoWidth) * static_cast<int>(videoHeight) * 4);
+	audioBuffer = ByteBuffer::allocate(32768);
 
 	// request looping, enable audio, use stream 0
 	plm_set_loop(plm, TRUE);
@@ -96,14 +98,16 @@ void MPEG1Decoder::seek(float time) {
 
 int64_t MPEG1Decoder::readAudioFromStream(ByteBuffer* data) {
 	if (plm == nullptr) return 0LL;
-	auto read = 0LL;
+	auto read = Math::min(audioBuffer->getPosition(), data->getCapacity() - data->getPosition());
+	data->put(audioBuffer->getBuffer(), read);
+	audioBuffer->clear();
 	return read;
 }
 
 int64_t MPEG1Decoder::readVideoFromStream(ByteBuffer* data) {
 	if (plm == nullptr) return 0LL;
-	auto read = Math::min(static_cast<int64_t>(videoWidth) * static_cast<int64_t>(videoHeight) * 4, data->getCapacity() - data->getPosition());
-	data->put(lastFrameRGBA.data(), read);
+	auto read = Math::min(videoBuffer->getCapacity(), data->getCapacity() - data->getPosition());
+	data->put(videoBuffer->getBuffer(), read);
 	return read;
 }
 
@@ -111,15 +115,22 @@ void MPEG1Decoder::close() {
 	if (plm == nullptr) return;
 	plm_destroy(plm);
 	plm = nullptr;
+	if (videoBuffer != nullptr) delete videoBuffer;
+	videoBuffer = nullptr;
+	if (audioBuffer != nullptr) delete audioBuffer;
+	audioBuffer = nullptr;
 }
 
 void MPEG1Decoder::plmOnVideo(plm_t* plm, plm_frame_t *frame, void *user) {
 	auto mpeg1Decoder = static_cast<MPEG1Decoder*>(user);
-	plm_frame_to_rgba(frame, mpeg1Decoder->lastFrameRGBA.data(), frame->width * 4);
+	plm_frame_to_rgba(frame, mpeg1Decoder->videoBuffer->getBuffer(), frame->width * 4);
 }
 
 void MPEG1Decoder::plmOnAudio(plm_t* plm, plm_samples_t *samples, void *user) {
 	auto mpeg1Decoder = static_cast<MPEG1Decoder*>(user);
-	int size = sizeof(float) * samples->count * 2;
-	Console::println("MPEG1Decoder::plmOnAudio(): have " + to_string(size) + " bytes audio data");
+	int samplesToProcess = samples->count * 2;
+	for (auto i = 0LL; i < samplesToProcess; i++) {
+		auto sample = static_cast<int16_t>(samples->interleaved[i] * 32767);
+		mpeg1Decoder->audioBuffer->put((uint8_t*)&sample, sizeof(int16_t));
+	}
 }

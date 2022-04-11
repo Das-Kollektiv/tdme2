@@ -21,6 +21,8 @@
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
 
+using tdme::audio::Sound;
+
 using std::string;
 using std::to_string;
 
@@ -29,7 +31,6 @@ using tdme::audio::decoder::VorbisDecoder;
 using tdme::audio::Audio;
 using tdme::audio::AudioBufferManager;
 using tdme::audio::AudioBufferManager_AudioBufferManaged;
-using tdme::audio::Sound;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystemException;
 using tdme::utilities::ByteBuffer;

@@ -1,32 +1,32 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/audio/decoder/VorbisDecoder.h>
+#include <tdme/audio/fwd-tdme.h>
 #include <tdme/audio/AudioStream.h>
 
 using std::string;
+using std::vector;
 
-using tdme::audio::decoder::VorbisDecoder;
 using tdme::audio::AudioStream;
 using tdme::utilities::ByteBuffer;
 
 /**
- * Vorbis audio stream
+ * Packet audio stream
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::audio::VorbisAudioStream final
+class tdme::audio::PacketAudioStream final
 	: public AudioStream
 {
 	friend class Audio;
 
 private:
-	string pathName;
-	string fileName;
-	VorbisDecoder decoder;
 	bool initiated { false };
+	vector<vector<uint8_t>> packets;
+	int64_t position { 0LL };
 
 public:
 	/**
@@ -35,14 +35,17 @@ public:
 	 * @param pathName path name
 	 * @param fileName file name
 	 */
-	inline VorbisAudioStream(const string& id, const string& pathName, const string& fileName): AudioStream(id) {
-		this->pathName = pathName;
-		this->fileName = fileName;
+	inline PacketAudioStream(const string& id): AudioStream(id) {
 	}
 
 	// overridden methods
 	void rewind() override;
 
+	/**
+	 * Add audio packet
+	 * @param byteBuffer byte buffer packet
+	 */
+	void addPacket(ByteBuffer* byteBuffer);
 protected:
 	// overridden methods
 	bool initialize() override;
@@ -51,7 +54,7 @@ protected:
 	/**
 	 * Protected destructor
 	 */
-	inline virtual ~VorbisAudioStream() {
+	inline virtual ~PacketAudioStream() {
 	}
 
 	// overridden methods

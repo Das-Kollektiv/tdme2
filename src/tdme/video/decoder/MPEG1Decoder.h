@@ -48,7 +48,8 @@ public:
 
 private:
 	plm_t* plm { nullptr };
-	vector<uint8_t> lastFrameRGBA;
+	ByteBuffer* videoBuffer { nullptr };
+	ByteBuffer* audioBuffer { nullptr };
 
 	/**
 	 * PLM on video

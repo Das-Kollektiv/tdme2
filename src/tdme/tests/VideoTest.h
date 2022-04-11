@@ -3,21 +3,26 @@
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/application/InputEventHandler.h>
+#include <tdme/audio/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/tests/fwd-tdme.h>
 #include <tdme/utilities/ObjectDeleter.h>
 #include <tdme/video/decoder/MPEG1Decoder.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 using tdme::application::Application;
 using tdme::application::InputEventHandler;
+using tdme::audio::Audio;
+using tdme::audio::PacketAudioStream;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::DynamicColorTexture;
 using tdme::engine::Engine;
 using tdme::utilities::ObjectDeleter;
 using tdme::video::decoder::MPEG1Decoder;
+using tdme::utilities::ByteBuffer;
 
 /**
  * Video test
@@ -28,6 +33,7 @@ class tdme::tests::VideoTest final
 	: public virtual Application, public virtual InputEventHandler
 {
 private:
+	Audio* audio { nullptr };
 	Engine* engine { nullptr };
 
 	bool keyLeft { false };
@@ -47,6 +53,8 @@ private:
 	ObjectDeleter<BoundingVolume> bvDeleter;
 	MPEG1Decoder videoDecoder;
 	DynamicColorTexture* videoTexture { nullptr };
+	ByteBuffer* videoAudioBuffer { nullptr };
+	PacketAudioStream* videoAudioStream { nullptr };
 
 	/**
 	 * @return wall model
