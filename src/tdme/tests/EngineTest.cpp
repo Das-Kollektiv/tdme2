@@ -25,6 +25,7 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
+#include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Object3DModel.h>
@@ -68,6 +69,7 @@ using tdme::engine::subsystems::particlesystem::SphereParticleEmitter;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
+using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::Object3DModel;

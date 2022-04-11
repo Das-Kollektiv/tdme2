@@ -16,6 +16,7 @@
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/SimplePartition.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
@@ -49,6 +50,7 @@ using tdme::engine::model::PBRMaterialProperties;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
+using tdme::engine::FrameBuffer;
 using tdme::engine::Object3D;
 using tdme::engine::SimplePartition;
 using tdme::gui::events::GUIKeyboardEvent;

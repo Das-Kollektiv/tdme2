@@ -8,15 +8,15 @@
 #include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/utilities/fwd-tdme.h>
 #include <tdme/video/decoder/fwd-tdme.h>
 #include <tdme/video/decoder/VideoDecoder.h>
-#include <tdme/utilities/fwd-tdme.h>
 
 using std::string;
 using std::vector;
 
-using tdme::video::decoder::VideoDecoder;
 using tdme::utilities::ByteBuffer;
+using tdme::video::decoder::VideoDecoder;
 
 /**
  * PL_MPEG/MPEG1 video decoder

@@ -19,6 +19,7 @@ using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::rendering::Object3DAnimation;
 using tdme::engine::subsystems::rendering::Object3DBase;
+using tdme::engine::ColorTexture;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Transformations;
 using tdme::math::Matrix2D3x3;
@@ -48,6 +49,14 @@ protected:
 	 * Update bounding volume
 	 */
 	void updateBoundingBox();
+
+	/**
+	 * Bind a texture to a node and faces entity
+	 * @param textureId texture id
+	 * @param nodeId node id or empty if texture should be bound to all nodes
+	 * @param facesEntityId faces entity id or empty if texture should be bound to all faces entities
+	 */
+	void bindDiffuseTexture(int32_t textureId, const string& nodeId = string(), const string& facesEntityId = string());
 
 public:
 	/**
@@ -178,20 +187,12 @@ public:
 	}
 
 	/**
-	 * Bind a texture to a node and faces entity
-	 * @param textureId texture id
-	 * @param nodeId node id or empty if texture should be bound to all nodes
-	 * @param facesEntityId faces entity id or empty if texture should be bound to all faces entities
-	 */
-	void bindDiffuseTexture(int32_t textureId, const string& nodeId = string(), const string& facesEntityId = string());
-
-	/**
 	 * Bind frame buffer color texture to a node and faces entity of this object
 	 * @param frameBuffer frame buffer
 	 * @param nodeId node id or empty string for all
 	 * @param facesEntityId faces entity id or empty string for all
 	 */
-	void bindDiffuseTexture(FrameBuffer* frameBuffer, const string& nodeId = string(), const string& facesEntityId = string());
+	void bindDiffuseTexture(ColorTexture* texture, const string& nodeId = string(), const string& facesEntityId = string());
 
 	/**
 	 * Unbind dynamic texture to a node and faces entity of this object

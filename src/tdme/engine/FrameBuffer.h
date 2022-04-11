@@ -5,11 +5,13 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/subsystems/postprocessing/fwd-tdme.h>
+#include <tdme/engine/ColorTexture.h>
 
 using std::string;
 
 using tdme::engine::subsystems::postprocessing::PostProcessingShader;
 
+using tdme::engine::ColorTexture;
 using tdme::engine::Engine;
 
 /**
@@ -17,7 +19,7 @@ using tdme::engine::Engine;
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::engine::FrameBuffer final
+class tdme::engine::FrameBuffer final: public ColorTexture
 {
 
 public:
@@ -62,6 +64,11 @@ public:
 	 * @param cubeMapTextureIndex cube map texture index
 	 */
 	FrameBuffer(int32_t width, int32_t height, int32_t buffers, int32_t cubeMapTextureId = CUBEMAPTEXTUREID_NONE, int32_t cubeMapTextureIndex = CUBEMAPTEXTUREINDEX_NONE);
+
+	/**
+	 * Destructor
+	 */
+	virtual ~FrameBuffer();
 
 	/**
 	 * @return width
@@ -163,5 +170,10 @@ public:
 	 * @param blendToSource target = blendToSource + source
 	 */
 	static void doPostProcessing(Engine* engine, FrameBuffer* target, FrameBuffer* source, const string& programId, const string& shaderId, FrameBuffer* temporary = nullptr, FrameBuffer* blendToSource = nullptr);
+
+	// overridden methods
+	inline int32_t getColorTextureId() override {
+		return colorBufferTextureId;
+	}
 
 };

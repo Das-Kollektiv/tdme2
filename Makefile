@@ -191,6 +191,7 @@ SRCS = \
 	src/tdme/application/Application.cpp \
 	src/tdme/application/InputEventHandler.cpp \
 	src/tdme/engine/Camera.cpp \
+	src/tdme/engine/DynamicColorTexture.cpp \
 	src/tdme/engine/Engine.cpp \
 	src/tdme/engine/EntityHierarchy.cpp \
 	src/tdme/engine/EntityShaderParameters.cpp \
@@ -536,6 +537,7 @@ SRCS = \
 	src/tdme/tests/UDPServerTest_UDPServerClient.cpp \
 	src/tdme/tests/SkinningTest.cpp \
 	src/tdme/tests/TreeTest.cpp \
+	src/tdme/tests/VideoTest.cpp \
 	src/tdme/tests/WaterTest.cpp \
 	src/tdme/tools/editor/TDMEEditor.cpp \
 	src/tdme/tools/editor/controllers/AboutDialogScreenController.cpp \
@@ -877,6 +879,7 @@ MAIN_SRCS = \
 	src/tdme/tests/TreeTest-main.cpp \
 	src/tdme/tests/UDPClientTest-main.cpp \
 	src/tdme/tests/UDPServerTest-main.cpp \
+	src/tdme/tests/VideoTest-main.cpp \
 	src/tdme/tests/WaterTest-main.cpp \
 	src/tdme/tools/editor/TDMEEditor-main.cpp \
 	src/tdme/tools/installer/Installer-main.cpp \

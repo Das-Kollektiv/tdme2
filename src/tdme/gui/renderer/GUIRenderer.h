@@ -31,8 +31,8 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
 using tdme::math::Math;
 using tdme::math::Matrix2D3x3;
-using tdme::utilities::Console;
 using tdme::utilities::ByteBuffer;
+using tdme::utilities::Console;
 using tdme::utilities::FloatBuffer;
 using tdme::utilities::ShortBuffer;
 

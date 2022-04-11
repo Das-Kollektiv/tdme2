@@ -45,8 +45,8 @@ using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIParentNode_Overflow;
 using tdme::gui::nodes::GUIScreenNode_SizeConstraints;
-using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::renderer::GUIFont;
+using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::GUI;
 using tdme::utilities::MutableString;
 

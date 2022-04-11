@@ -25,9 +25,9 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode_SizeConstraints.h>
+#include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/gui/GUI.h>
-#include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -59,9 +59,9 @@ using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIScreenNode_SizeConstraints;
+using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::GUI;
-using tdme::gui::renderer::GUIFont;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;

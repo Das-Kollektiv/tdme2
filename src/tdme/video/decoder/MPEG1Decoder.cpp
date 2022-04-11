@@ -95,11 +95,12 @@ int64_t MPEG1Decoder::readAudioFromStream(ByteBuffer* data) {
 
 int64_t MPEG1Decoder::readVideoFromStream(ByteBuffer* data) {
 	auto read = Math::min(static_cast<int64_t>(videoWidth) * static_cast<int64_t>(videoHeight) * 4, data->getCapacity() - data->getPosition());
-	data->put(data->getBuffer(), read);
+	data->put(lastFrameRGBA.data(), read);
 	return read;
 }
 
 void MPEG1Decoder::close() {
+	plm_destroy(plm);
 }
 
 void MPEG1Decoder::plmOnVideo(plm_t* plm, plm_frame_t *frame, void *user) {

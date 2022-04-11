@@ -9,8 +9,8 @@
 #include <tdme/gui/elements/GUIStyledInputController.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
-#include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
 #include <tdme/gui/nodes/GUINode.h>
+#include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
 #include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/math/Math.h>

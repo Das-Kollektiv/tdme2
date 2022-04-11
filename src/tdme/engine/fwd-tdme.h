@@ -4,6 +4,8 @@
 namespace tdme {
 namespace engine {
 	class Camera;
+	class ColorTexture;
+	class DynamicColorTexture;
 	class Engine;
 	class Engine_AnimationProcessingTarget;
 	class Entity;
@@ -37,6 +39,5 @@ namespace engine {
 	class Timing;
 	class Transformations;
 	struct Version;
-	class WindowManager;
 }  // namespace engine
 }  // namespace tdme
