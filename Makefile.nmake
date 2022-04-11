@@ -483,6 +483,7 @@ SRCS = \
 	src/tdme/utilities/StringTokenizer.cpp \
 	src/tdme/utilities/Terrain.cpp \
 	src/tdme/video/decoder/MPEG1Decoder.cpp \
+	src/tdme/video/decoder/VideoDecoderException.cpp \
 	$(SRCS_PLATFORM)
 
 EXT_SRCS = \

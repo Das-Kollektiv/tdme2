@@ -30,6 +30,7 @@ SOFTWARE.
 #include <ext/pl_mpeg/pl_mpeg.h>
 
 #include <tdme/video/decoder/MPEG1Decoder.h>
+#include <tdme/video/decoder/VideoDecoderException.h>
 
 #include <string>
 
@@ -41,16 +42,18 @@ SOFTWARE.
 using tdme::video::decoder::MPEG1Decoder;
 
 using std::string;
+using std::to_string;
 
 using tdme::math::Math;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
+using tdme::video::decoder::VideoDecoderException;
 
 void MPEG1Decoder::openFile(const string& pathName, const string& fileName) {
 	plm = plm_create_with_filename((pathName + "/" + fileName).c_str());
 	if (plm == nullptr) {
 		Console::println("MPEG1Decoder::openFile(): Failed to open: " + pathName + "/" + fileName);
-		return;
+		throw VideoDecoderException("Failed to open file");
 	}
 
 	plm_set_video_decode_callback(plm, plmOnVideo, this);
@@ -77,30 +80,37 @@ void MPEG1Decoder::openFile(const string& pathName, const string& fileName) {
 }
 
 void MPEG1Decoder::reset() {
+	if (plm == nullptr) return;
 	plm_seek(plm, 0.0f, FALSE);
 }
 
 void MPEG1Decoder::update(float deltaTime) {
+	if (plm == nullptr) return;
 	plm_decode(plm, deltaTime);
 }
 
 void MPEG1Decoder::seek(float time) {
+	if (plm == nullptr) return;
 	plm_seek(plm, time, FALSE);
 }
 
 int64_t MPEG1Decoder::readAudioFromStream(ByteBuffer* data) {
+	if (plm == nullptr) return 0LL;
 	auto read = 0LL;
 	return read;
 }
 
 int64_t MPEG1Decoder::readVideoFromStream(ByteBuffer* data) {
+	if (plm == nullptr) return 0LL;
 	auto read = Math::min(static_cast<int64_t>(videoWidth) * static_cast<int64_t>(videoHeight) * 4, data->getCapacity() - data->getPosition());
 	data->put(lastFrameRGBA.data(), read);
 	return read;
 }
 
 void MPEG1Decoder::close() {
+	if (plm == nullptr) return;
 	plm_destroy(plm);
+	plm = nullptr;
 }
 
 void MPEG1Decoder::plmOnVideo(plm_t* plm, plm_frame_t *frame, void *user) {
@@ -111,6 +121,5 @@ void MPEG1Decoder::plmOnVideo(plm_t* plm, plm_frame_t *frame, void *user) {
 void MPEG1Decoder::plmOnAudio(plm_t* plm, plm_samples_t *samples, void *user) {
 	auto mpeg1Decoder = static_cast<MPEG1Decoder*>(user);
 	int size = sizeof(float) * samples->count * 2;
-	// TODO:
+	Console::println("MPEG1Decoder::plmOnAudio(): have " + to_string(size) + " bytes audio data");
 }
-

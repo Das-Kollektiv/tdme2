@@ -6,6 +6,7 @@ namespace video {
 namespace decoder {
 	class MPEG1Decoder;
 	class VideoDecoder;
+	class VideoDecoderException;
 }  // namespace decoder
 }  // namespace video
 }  // namespace tdme

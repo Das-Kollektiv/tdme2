@@ -53,7 +53,9 @@ public:
 	/**
 	 * Open a local file
 	 * @param pathName path name
-	 * @param fileName file name	 */
+	 * @param fileName file name
+	 * @throws tdme::video::decoder::VideoDecoderException
+	 */
 	virtual void openFile(const string& pathName, const string& fileName) = 0;
 
 	/**
