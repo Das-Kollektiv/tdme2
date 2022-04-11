@@ -72,16 +72,6 @@ long VorbisDecoder::oggfiledata_tell(VorbisDecoder::OGGFileData* oggFileData) {
 	return oggFileData->position;
 }
 
-VorbisDecoder::VorbisDecoder() : AudioDecoder()
-{
-	section = 0;
-}
-
-VorbisDecoder::~VorbisDecoder()
-{
-	close();
-}
-
 void VorbisDecoder::openFile(const string& pathName, const string& fileName) {
 	// read from file system
 	oggFileData = new OGGFileData();

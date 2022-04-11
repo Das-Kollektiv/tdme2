@@ -35,7 +35,11 @@ public:
 	 * @param pathName path name
 	 * @param fileName file name
 	 */
-	Sound(const string& id, const string& pathName, const string& fileName);
+	inline Sound(const string& id, const string& pathName, const string& fileName) : AudioEntity(id) {
+		this->bufferId = pathName + "/" + fileName;
+		this->pathName = pathName;
+		this->fileName = fileName;
+	}
 
 	// override methods
 	bool isPlaying() override;

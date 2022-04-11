@@ -30,7 +30,12 @@ private:
 	 * @param id id
 	 * @param alId OpenAL buffer id
 	 */
-	AudioBufferManager_AudioBufferManaged(AudioBufferManager* audioBufferManager, const string& id, int32_t alId);
+	inline AudioBufferManager_AudioBufferManaged(AudioBufferManager* audioBufferManager, const string& id, int32_t alId):
+		audioBufferManager(audioBufferManager),
+		id(id),
+		alId(alId) {
+		//
+	}
 
 	/**
 	 * @return audio buffer id

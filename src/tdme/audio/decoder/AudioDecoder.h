@@ -23,19 +23,28 @@ using tdme::utilities::ByteBuffer;
 class tdme::audio::decoder::AudioDecoder
 {
 public:
-	static constexpr int8_t CHANNELS_NONE { -1 };
-	static constexpr int32_t SAMPLERATE_NONE { -1 };
-	static constexpr int8_t BITSPERSAMPLES_NONE { -1 };
-	static constexpr int64_t SAMPLES_NONE { -1 };
+	static constexpr uint8_t CHANNELS_NONE { 0 };
+	static constexpr uint32_t SAMPLERATE_NONE { 0 };
+	static constexpr uint8_t BITSPERSAMPLES_NONE { 0 };
+	static constexpr uint64_t SAMPLES_NONE { 0 };
 
 protected:
-	int8_t channels { CHANNELS_NONE };
-	int32_t sampleRate { SAMPLERATE_NONE };
-	int8_t bitsPerSample { BITSPERSAMPLES_NONE };
-	int64_t samples { SAMPLES_NONE };
+	uint8_t channels { CHANNELS_NONE };
+	uint32_t sampleRate { SAMPLERATE_NONE };
+	uint8_t bitsPerSample { BITSPERSAMPLES_NONE };
+	uint64_t samples { SAMPLES_NONE };
+
+	/**
+	 * Constructor
+	 */
+	inline AudioDecoder() {}
+
+	/**
+	 * Destructor
+	 */
+	inline virtual ~AudioDecoder() {}
 
 public:
-
 	/**
 	 * Open a local file
 	 * @param pathName path name
@@ -55,28 +64,28 @@ public:
 	/**
 	 * @return number of channels or CHANNELS_NONE
 	 */
-	inline int8_t getChannels() {
+	inline uint8_t getChannels() {
 		return channels;
 	}
 
 	/**
 	 * @return sample rate in hz or SAMPLERATE_NONE
 	 */
-	inline int32_t getSampleRate() {
+	inline uint32_t getSampleRate() {
 		return sampleRate;
 	}
 
 	/**
 	 * @return bits per sample or BITSPERSAMPLES_NONE
 	 */
-	inline int8_t getBitsPerSample() {
+	inline uint8_t getBitsPerSample() {
 		return bitsPerSample;
 	}
 
 	/**
 	 * @return samples or SAMPLES_NONE
 	 */
-	inline int64_t getSamples() {
+	inline uint64_t getSamples() {
 		return samples;
 	}
 
@@ -96,13 +105,4 @@ public:
 	 */
 	virtual void close() = 0;
 
-	/**
-	 * Constructor
-	 */
-	inline AudioDecoder() {}
-
-	/**
-	 * Destructor
-	 */
-	inline virtual ~AudioDecoder() {}
 };

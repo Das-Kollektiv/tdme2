@@ -35,13 +35,6 @@ using tdme::os::filesystem::FileSystemException;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
 
-Sound::Sound(const string& id, const string& pathName, const string& fileName) : AudioEntity(id)
-{
-	this->bufferId = pathName + "/" + fileName;
-	this->pathName = pathName;
-	this->fileName = fileName;
-}
-
 bool Sound::isPlaying()
 {
 	ALint state;

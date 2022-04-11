@@ -19,16 +19,6 @@ using tdme::os::filesystem::FileSystemException;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
 
-VorbisAudioStream::VorbisAudioStream(const string& id, const string& pathName, const string& fileName) : AudioStream(id)
-{
-	this->pathName = pathName;
-	this->fileName = fileName;
-	this->initiated = false;
-}
-
-VorbisAudioStream::~VorbisAudioStream() {
-}
-
 void VorbisAudioStream::rewind()
 {
 	if (initiated == false) return;

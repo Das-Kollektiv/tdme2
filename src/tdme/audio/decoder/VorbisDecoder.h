@@ -34,6 +34,17 @@ private:
 	};
 
 public:
+	/**
+	 * Constructor
+	 */
+	inline VorbisDecoder() {}
+
+	/**
+	 * Destructor
+	 */
+	inline virtual ~VorbisDecoder() {
+		close();
+	}
 
 	/**
 	 * Open a local file
@@ -66,16 +77,6 @@ public:
 	 * @throws tdme::audio::decoder::AudioDecoderException
 	 */
 	virtual void close();
-
-	/**
-	 * Constructor
-	 */
-	VorbisDecoder();
-
-	/**
-	 * Destructor
-	 */
-	~VorbisDecoder();
 
 private:
 	/**
@@ -113,5 +114,5 @@ private:
 	string pathName;
 	string fileName;
 	OggVorbis_File vf;
-	int section;
+	int section { 0 };
 };

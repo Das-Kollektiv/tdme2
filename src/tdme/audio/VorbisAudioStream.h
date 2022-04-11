@@ -38,7 +38,11 @@ public:
 	 * @param pathName path name
 	 * @param fileName file name
 	 */
-	VorbisAudioStream(const string& id, const string& pathName, const string& fileName);
+	inline VorbisAudioStream(const string& id, const string& pathName, const string& fileName): AudioStream(id) {
+		this->pathName = pathName;
+		this->fileName = fileName;
+		this->initiated = false;
+	}
 
 	// overridden methods
 	void rewind() override;
@@ -49,9 +53,10 @@ protected:
 	void dispose() override;
 
 	/**
-	 * Destructor
+	 * Protected destructor
 	 */
-	virtual ~VorbisAudioStream();
+	inline virtual ~VorbisAudioStream() {
+	}
 
 	// overridden methods
 	void fillBuffer(ByteBuffer* data) override;

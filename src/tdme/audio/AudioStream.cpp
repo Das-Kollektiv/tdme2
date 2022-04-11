@@ -28,20 +28,7 @@ using tdme::math::Vector3;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
 
-AudioStream::AudioStream(const string& id) : AudioEntity(id)
-{
-	initiated = false;
-	alSourceId = Audio::ALSOURCEID_NONE;
-	sampleRate = 0;
-	channels = 0;
-	data = nullptr;
-	format = -1;
-}
-
-AudioStream::~AudioStream() {
-}
-
-void AudioStream::setParameters(uint32_t sampleRate, uint8_t channels, const uint32_t bufferSize) {
+void AudioStream::setParameters(uint32_t sampleRate, uint8_t channels, const int64_t bufferSize) {
 	this->sampleRate = sampleRate;
 	this->channels = channels;
 	if (this->data != nullptr) delete data;
