@@ -23,16 +23,16 @@ using tdme::utilities::ByteBuffer;
 class tdme::audio::decoder::AudioDecoder
 {
 public:
-	static constexpr int32_t CHANNELS_NONE { -1 };
+	static constexpr int8_t CHANNELS_NONE { -1 };
 	static constexpr int32_t SAMPLERATE_NONE { -1 };
-	static constexpr int32_t BITSPERSAMPLES_NONE { -1 };
-	static constexpr int32_t SAMPLES_NONE { -1 };
+	static constexpr int8_t BITSPERSAMPLES_NONE { -1 };
+	static constexpr int64_t SAMPLES_NONE { -1 };
 
 protected:
-	int32_t channels;
-	int32_t sampleRate;
-	int32_t bitsPerSample;
-	int32_t samples;
+	int8_t channels { CHANNELS_NONE };
+	int32_t sampleRate { SAMPLERATE_NONE };
+	int8_t bitsPerSample { BITSPERSAMPLES_NONE };
+	int64_t samples { SAMPLES_NONE };
 
 public:
 
@@ -55,7 +55,7 @@ public:
 	/**
 	 * @return number of channels or CHANNELS_NONE
 	 */
-	inline int32_t getChannels() {
+	inline int8_t getChannels() {
 		return channels;
 	}
 
@@ -69,14 +69,14 @@ public:
 	/**
 	 * @return bits per sample or BITSPERSAMPLES_NONE
 	 */
-	inline int32_t getBitsPerSample() {
+	inline int8_t getBitsPerSample() {
 		return bitsPerSample;
 	}
 
 	/**
 	 * @return samples or SAMPLES_NONE
 	 */
-	inline int32_t getSamples() {
+	inline int64_t getSamples() {
 		return samples;
 	}
 
@@ -99,10 +99,10 @@ public:
 	/**
 	 * Constructor
 	 */
-	AudioDecoder();
+	inline AudioDecoder() {}
 
 	/**
 	 * Destructor
 	 */
-	virtual ~AudioDecoder();
+	inline virtual ~AudioDecoder() {}
 };

@@ -20,14 +20,14 @@ public:
 	/**
 	 * @return capacity
 	 */
-	inline virtual int32_t getCapacity() {
+	inline virtual int64_t getCapacity() {
 		return Buffer::getCapacity() / sizeof(float);
 	}
 
 	/**
 	 * @return position
 	 */
-	inline virtual int32_t getPosition() {
+	inline virtual int64_t getPosition() {
 		return Buffer::getPosition() / sizeof(float);
 	}
 
@@ -36,12 +36,12 @@ public:
 	 * @param position position
 	 * @return value at given position
 	 */
-	inline float get(int32_t position) {
-		int32_t floatAsInt = 0;
-		floatAsInt+= (int32_t)Buffer::get(position);
-		floatAsInt+= (int32_t)Buffer::get(position + 1) << 8;
-		floatAsInt+= (int32_t)Buffer::get(position + 2) << 16;
-		floatAsInt+= (int32_t)Buffer::get(position + 3) << 24;
+	inline float get(int64_t position) {
+		uint32_t floatAsInt = 0;
+		floatAsInt+= (uint32_t)Buffer::get(position);
+		floatAsInt+= (uint32_t)Buffer::get(position + 1) << 8;
+		floatAsInt+= (uint32_t)Buffer::get(position + 2) << 16;
+		floatAsInt+= (uint32_t)Buffer::get(position + 3) << 24;
 		return *((float*)&floatAsInt);
 	}
 

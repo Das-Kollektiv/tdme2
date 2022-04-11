@@ -56,11 +56,9 @@ SRCS = \
 	src/tdme/audio/Audio.cpp \
 	src/tdme/audio/AudioBufferManager.cpp \
 	src/tdme/audio/AudioBufferManager_AudioBufferManaged.cpp \
-	src/tdme/audio/AudioEntity.cpp \
 	src/tdme/audio/AudioStream.cpp \
 	src/tdme/audio/VorbisAudioStream.cpp \
 	src/tdme/audio/Sound.cpp \
-	src/tdme/audio/decoder/AudioDecoder.cpp \
 	src/tdme/audio/decoder/AudioDecoderException.cpp \
 	src/tdme/audio/decoder/VorbisDecoder.cpp \
 	src/tdme/application/Application.cpp \

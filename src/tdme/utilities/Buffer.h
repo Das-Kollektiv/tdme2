@@ -20,7 +20,7 @@ class tdme::utilities::Buffer
 {
 private:
 	bool createdBuffer;
-	int32_t position { 0 };
+	int64_t position { 0 };
 	vector<uint8_t>* buffer { nullptr };
 
 public:
@@ -28,7 +28,7 @@ public:
 	 * Public constructor
 	 * @param capacity capacity
 	 */
-	inline Buffer(int32_t capacity) {
+	inline Buffer(int64_t capacity) {
 		this->createdBuffer = true;
 		this->position = 0;
 		this->buffer = new vector<uint8_t>(capacity);
@@ -74,14 +74,14 @@ public:
 	/**
 	 * @returns capacity
 	 */
-	inline virtual int32_t getCapacity() {
+	inline virtual int64_t getCapacity() {
 		return buffer->size();
 	}
 
 	/**
 	 * @returns position
 	 */
-	inline virtual int32_t getPosition() {
+	inline virtual int64_t getPosition() {
 		return position;
 	}
 
@@ -90,7 +90,7 @@ public:
 	 * @param position position
 	 * @returns pointer to this buffer
 	 */
-	inline virtual Buffer* setPosition(int32_t position) {
+	inline virtual Buffer* setPosition(int64_t position) {
 		this->position = position;
 		return this;
 	}
@@ -99,7 +99,7 @@ public:
 	 * @returns value at given position
 	 * @param position position
 	 */
-	inline uint8_t get(int32_t position) {
+	inline uint8_t get(int64_t position) {
 		return (*buffer)[position];
 	}
 
@@ -118,7 +118,7 @@ public:
 	 * @param size to put
 	 * @returns pointer to this buffer
 	 */
-	inline Buffer* put(const uint8_t* data, int32_t size) {
+	inline Buffer* put(const uint8_t* data, int64_t size) {
 		auto sizeUsed = Math::min(size, buffer->size() - position);
 		memcpy(&(*buffer)[position], data, sizeUsed);
 		position+= sizeUsed;

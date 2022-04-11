@@ -27,7 +27,7 @@ class tdme::audio::AudioStream
 private:
 	bool initiated { false };
 	array<uint32_t, 2> alBufferIds;
-	uint32_t alSourceId;
+	uint32_t alSourceId { 0 };
 	uint32_t sampleRate;
 	uint8_t channels;
 	ByteBuffer* data { nullptr };

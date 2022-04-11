@@ -28,7 +28,7 @@ private:
 	/**
 	 * Private constructor
 	 */
-	AudioBufferManager();
+	inline AudioBufferManager() {}
 
 	/**
 	 * Adds a audio buffer to manager / open al stack

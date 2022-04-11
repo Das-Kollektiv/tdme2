@@ -26,7 +26,7 @@ public:
 	/**
 	 * Allocate byte buffer
 	 */
-	inline static ByteBuffer* allocate(int32_t capacity) {
+	inline static ByteBuffer* allocate(int64_t capacity) {
 		return new ByteBuffer(capacity);
 	}
 
@@ -56,7 +56,7 @@ public:
 	 * Public constructor
 	 * @param capacity capacity
 	 */
-	inline ByteBuffer(int32_t capacity) : Buffer(capacity) {
+	inline ByteBuffer(int64_t capacity) : Buffer(capacity) {
 	}
 
 	/**

@@ -37,12 +37,9 @@ using tdme::utilities::Console;
 
 Sound::Sound(const string& id, const string& pathName, const string& fileName) : AudioEntity(id)
 {
-	initiated = false;
 	this->bufferId = pathName + "/" + fileName;
 	this->pathName = pathName;
 	this->fileName = fileName;
-	alBufferId = Audio::ALBUFFERID_NONE;
-	alSourceId = Audio::ALSOURCEID_NONE;
 }
 
 bool Sound::isPlaying()

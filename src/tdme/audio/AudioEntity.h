@@ -22,10 +22,10 @@ class tdme::audio::AudioEntity
 
 protected:
 	string id;
-	bool looping;
-	bool fixed;
-	float pitch;
-	float gain;
+	bool looping { false };
+	bool fixed { false };
+	float pitch { 1.0f };
+	float gain { 1.0f };
 	Vector3 sourcePosition;
 	Vector3 sourceDirection;
 	Vector3 sourceVelocity;
@@ -34,12 +34,12 @@ protected:
 	/**
 	 * Constructor
 	 */
-	AudioEntity(const string& id);
+	inline AudioEntity(const string& id): id(id) {}
 
 	/**
 	 * Constructor
 	 */
-	virtual ~AudioEntity();
+	inline virtual ~AudioEntity() {}
 
 	/**
 	 * Initiates this OpenAL entity to OpenAl

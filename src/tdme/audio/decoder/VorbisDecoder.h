@@ -108,6 +108,7 @@ private:
 	 */
 	static long oggfiledata_tell(VorbisDecoder::OGGFileData* oggFileData);
 
+	//
 	OGGFileData* oggFileData { nullptr };
 	string pathName;
 	string fileName;
