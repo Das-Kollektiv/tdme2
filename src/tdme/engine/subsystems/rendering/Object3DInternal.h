@@ -50,14 +50,6 @@ protected:
 	 */
 	void updateBoundingBox();
 
-	/**
-	 * Bind a texture to a node and faces entity
-	 * @param textureId texture id
-	 * @param nodeId node id or empty if texture should be bound to all nodes
-	 * @param facesEntityId faces entity id or empty if texture should be bound to all faces entities
-	 */
-	void bindDiffuseTexture(int32_t textureId, const string& nodeId = string(), const string& facesEntityId = string());
-
 public:
 	/**
 	 * Public constructor
@@ -185,6 +177,14 @@ public:
 	inline BoundingBox* getBoundingBoxTransformed() {
 		return &boundingBoxTransformed;
 	}
+
+	/**
+	 * Bind a texture to a node and faces entity
+	 * @param textureId texture id
+	 * @param nodeId node id or empty if texture should be bound to all nodes
+	 * @param facesEntityId faces entity id or empty if texture should be bound to all faces entities
+	 */
+	void bindDiffuseTexture(int32_t textureId, const string& nodeId = string(), const string& facesEntityId = string());
 
 	/**
 	 * Bind frame buffer color texture to a node and faces entity of this object
