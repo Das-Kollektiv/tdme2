@@ -67,16 +67,6 @@ using tdme::utilities::ObjectDeleter;
 using tdme::utilities::Primitives;
 using tdme::utilities::Time;
 
-constexpr int32_t PhysicsTest3::RIGID_TYPEID_STANDARD;
-
-constexpr int32_t PhysicsTest3::BOX_COUNT;
-
-constexpr int32_t PhysicsTest3::BOXSTACK_COUNT;
-
-constexpr int32_t PhysicsTest3::CAPSULE_COUNT;
-
-constexpr int32_t PhysicsTest3::SPHERE_COUNT;
-
 PhysicsTest3::PhysicsTest3()
 {
 	Application::setLimitFPS(true);

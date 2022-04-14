@@ -94,14 +94,6 @@ using tdme::utilities::ObjectDeleter;
 EngineTest::EngineTest()
 {
 	Application::setLimitFPS(true);
-	keyLeft = false;
-	keyRight = false;
-	keyUp = false;
-	keyW = false;
-	keyA = false;
-	keyD = false;
-	mouseClicked = false;
-	entityClicked = nullptr;
 	engine = Engine::getInstance();
 }
 

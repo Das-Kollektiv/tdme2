@@ -64,16 +64,6 @@ using tdme::utilities::Exception;
 using tdme::utilities::ObjectDeleter;
 using tdme::utilities::Primitives;
 
-constexpr int32_t PhysicsTest1::RIGID_TYPEID_STANDARD;
-
-constexpr int32_t PhysicsTest1::BOX_COUNT;
-
-constexpr int32_t PhysicsTest1::BOXSTACK_COUNT;
-
-constexpr int32_t PhysicsTest1::CAPSULE_COUNT;
-
-constexpr int32_t PhysicsTest1::SPHERE_COUNT;
-
 PhysicsTest1::PhysicsTest1()
 {
 	Application::setLimitFPS(true);

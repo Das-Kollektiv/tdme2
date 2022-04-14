@@ -42,14 +42,14 @@ private:
 	Object3D* cube { nullptr };
 	Transformations circleTransformations;
 	Entity* entityClicked { nullptr };
-	bool mouseClicked;
+	bool mouseClicked { false };
 	array<int, 2> mouseClickedXY;
-	bool keyLeft;
-	bool keyRight;
-	bool keyUp;
-	bool keyW;
-	bool keyA;
-	bool keyD;
+	bool keyLeft { false };
+	bool keyRight { false };
+	bool keyUp { false };
+	bool keyW { false };
+	bool keyA { false };
+	bool keyD { false };
 	ObjectDeleter<Model> modelDeleter;
 
 private:

@@ -54,8 +54,6 @@ using tdme::utilities::Exception;
 using tdme::utilities::Primitives;
 using tdme::utilities::Time;
 
-constexpr int32_t PhysicsTest4::RIGID_TYPEID_STANDARD;
-
 PhysicsTest4::PhysicsTest4()
 {
 	Application::setLimitFPS(true);
