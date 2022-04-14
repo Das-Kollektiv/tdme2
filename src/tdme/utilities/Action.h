@@ -11,12 +11,13 @@
 struct tdme::utilities::Action
 {
 	/**
+	 * Destructor
+	 */
+	virtual ~Action() {}
+
+	/**
 	 * Perform action
 	 */
 	virtual void performAction() = 0;
 
-	/**
-	 * Destructor
-	 */
-	virtual ~Action() {}
 };

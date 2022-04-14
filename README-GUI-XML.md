@@ -44,7 +44,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 | show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
 | hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
 
-## 1.2. \<screen\>
+## 1.2. \<screen\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -60,7 +60,7 @@ This is a documentation of supported TDME2-GUI XML elements and their attributes
 
 This element supports all other elements as sub elements.
 
-## 1.2. \<element\>
+## 1.2. \<element\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -81,7 +81,7 @@ This element supports all other elements as sub elements.
 
 This element supports all other elements as sub elements.
 
-## 1.3. \<gradient\>
+## 1.3. \<gradient\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -91,7 +91,7 @@ This element supports all other elements as sub elements.
 
 ## 1.4. Frame Buffer / Image / Texture nodes
 
-### 1.4.1. \<frame-buffer\>
+### 1.4.1. \<frame-buffer\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -115,7 +115,7 @@ This element supports all other elements as sub elements.
 | mirror-y                          | mirror frame buffer on y axis                                                          | false             |
 
 
-### 1.4.2. \<image\>
+### 1.4.2. \<image\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -140,7 +140,7 @@ This element supports all other elements as sub elements.
 | rotation                          | rotation angle                                                                         | 0.0               |
 | src                               | image location                                                                         | 0.0               |
 
-### 1.4.3. \<texture\>
+### 1.4.3. \<texture\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -164,7 +164,7 @@ This element supports all other elements as sub elements.
 | mirror-y                          | mirror texture on y axis                                                               | false             |
 
     
-## 1.5. \<layer\>
+## 1.5. \<layer\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -173,17 +173,7 @@ This element supports all other elements as sub elements.
 
 This element supports all other elements as sub elements.
 
-## 1.6. \<layout\>
-
-| Attribute name                    | Attribute description                                                                  | Default           |
-| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
-| alignment                         | none \| horizontal \| vertical                                                         | none              |
-| overflow-x                        | hidden \| downsize-children \| scroll                                                  | hidden            |
-| overflow-y                        | hidden \| downsize-children \| scroll                                                  | hidden            |
-
-This element supports all other elements as sub elements.
-
-## 1.7. \<panel\>
+## 1.6. \<layout\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -193,19 +183,29 @@ This element supports all other elements as sub elements.
 
 This element supports all other elements as sub elements.
 
-## 1.8. \<space\>
+## 1.7. \<panel\> node
+
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| alignment                         | none \| horizontal \| vertical                                                         | none              |
+| overflow-x                        | hidden \| downsize-children \| scroll                                                  | hidden            |
+| overflow-y                        | hidden \| downsize-children \| scroll                                                  | hidden            |
+
+This element supports all other elements as sub elements.
+
+## 1.8. \<space\> node
 
 ## 1.9 Table nodes
 
-### 1.9.1 \<table\>
+### 1.9.1 \<table\> node
 
 This element supports \<table-row\> as sub elements.
 
-### 1.9.2 \<table-row\>
+### 1.9.2 \<table-row\> node
 
 This element supports  \<table-cell\> as sub elements.
 
-### 1.9.3 \<table-cell\>
+### 1.9.3 \<table-cell\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -215,7 +215,7 @@ This element supports all other elements as sub elements.
 
 ## 1.10. Text nodes
 
-### 1.10.1. \<text\>
+### 1.10.1. \<text\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -223,7 +223,7 @@ This element supports all other elements as sub elements.
 | font                              | font location                                                                          | none              |
 | text                              | text to be rendered                                                                    | none              |
 
-### 1.10.2. \<styled-text\>
+### 1.10.2. \<styled-text\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
