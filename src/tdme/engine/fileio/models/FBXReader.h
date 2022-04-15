@@ -4,6 +4,8 @@
 
 #include <fbxsdk.h>
 
+#include <vector>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
@@ -11,6 +13,8 @@
 
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/os/filesystem/FileSystemException.h>
+
+using std::vector;
 
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Color4;
@@ -76,8 +80,9 @@ private:
 	 * @param fbxScene FBX scene
 	 * @param model model
 	 * @param pathName path name
+	 * @param possibleArmatureNodeIds possible armature node ids
 	 */
-	static void processScene(FbxScene* fbxScene, Model* model, const string& pathName);
+	static void processScene(FbxScene* fbxScene, Model* model, const string& pathName, vector<string>& possibleArmatureNodeIds);
 
 	/**
 	 * Process FBX node
@@ -85,8 +90,9 @@ private:
 	 * @param model model
 	 * @param parentNode parent node
 	 * @param pathName path name
+	 * @param possibleArmatureNodeIds possible armature node ids
 	 */
-	static void processNode(FbxNode* fbxNode, Model* model, Node* parentNode, const string& pathName);
+	static void processNode(FbxNode* fbxNode, Model* model, Node* parentNode, const string& pathName, vector<string>& possibleArmatureNodeIds);
 
 	/**
 	 * Process FBX mesh node
