@@ -19,7 +19,7 @@ void DynamicColorTexture::initialize()
 	colorBufferTextureId = Engine::renderer->createColorBufferTexture(width, height, Engine::renderer->ID_NONE, Engine::renderer->ID_NONE);
 	auto textureByteBuffer = ByteBuffer::allocate(width * height * 4);
 	texture = new Texture(
-		"id",
+		"dynamic-color-texture",
 		32,
 		width, height,
 		width, height,

@@ -18,6 +18,7 @@ namespace tabcontrollers {
 	class TextEditorTabController;
 	class TriggerEditorTabController;
 	class UIEditorTabController;
+	class VideoTabController;
 }  // namespace tabcontrollers
 }  // namespace editor
 }  // namespace tools

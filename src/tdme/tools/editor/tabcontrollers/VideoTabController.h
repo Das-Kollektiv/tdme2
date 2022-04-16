@@ -23,20 +23,20 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::TabController;
-using tdme::tools::editor::tabviews::TextureTabView;
+using tdme::tools::editor::tabviews::VideoTabView;
 using tdme::utilities::MutableString;
 
 /**
- * Texture tab controller
+ * Video tab controller
  * @author Andreas Drewke
  * @version $Id$
  */
-class tdme::tools::editor::tabcontrollers::TextureTabController final
+class tdme::tools::editor::tabcontrollers::VideoTabController final
 	: public TabController
 {
 
 private:
-	TextureTabView* view { nullptr };
+	VideoTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
 
@@ -45,17 +45,17 @@ public:
 	 * Public constructor
 	 * @param view view
 	 */
-	TextureTabController(TextureTabView* view);
+	VideoTabController(VideoTabView* view);
 
 	/**
 	 * Destructor
 	 */
-	virtual ~TextureTabController();
+	virtual ~VideoTabController();
 
 	/**
 	 * Get view
 	 */
-	TextureTabView* getView();
+	VideoTabView* getView();
 
 	// overridden method
 	GUIScreenNode* getScreenNode() override;

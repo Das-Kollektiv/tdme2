@@ -476,6 +476,7 @@ SRCS = \
 	src/tdme/gui/nodes/GUITextureNode.cpp \
 	src/tdme/gui/nodes/GUIVerticalScrollbarInternalController.cpp \
 	src/tdme/gui/nodes/GUIVerticalScrollbarInternalNode.cpp \
+	src/tdme/gui/nodes/GUIVideoNode.cpp \
 	src/tdme/gui/renderer/GUIFont.cpp \
 	src/tdme/gui/renderer/GUIRenderer.cpp \
 	src/tdme/gui/renderer/GUIShader.cpp \
@@ -570,6 +571,7 @@ SRCS = \
 	src/tdme/tools/editor/tabcontrollers/TextEditorTabController.cpp \
 	src/tdme/tools/editor/tabcontrollers/TriggerEditorTabController.cpp \
 	src/tdme/tools/editor/tabcontrollers/UIEditorTabController.cpp \
+	src/tdme/tools/editor/tabcontrollers/VideoTabController.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.cpp \
@@ -587,6 +589,7 @@ SRCS = \
 	src/tdme/tools/editor/tabviews/TextEditorTabView.cpp \
 	src/tdme/tools/editor/tabviews/TriggerEditorTabView.cpp \
 	src/tdme/tools/editor/tabviews/UIEditorTabView.cpp \
+	src/tdme/tools/editor/tabviews/VideoTabView.cpp \
 	src/tdme/tools/editor/tabviews/subviews/BasePropertiesSubView.cpp \
 	src/tdme/tools/editor/tabviews/subviews/PrototypeDisplaySubView.cpp \
 	src/tdme/tools/editor/tabviews/subviews/PrototypePhysicsSubView.cpp \

@@ -50,6 +50,10 @@ using tdme::utilities::Console;
 using tdme::video::decoder::VideoDecoderException;
 
 void MPEG1Decoder::openFile(const string& pathName, const string& fileName) {
+	// close old stream
+	close();
+
+	// open new stream
 	plm = plm_create_with_filename((pathName + "/" + fileName).c_str());
 	if (plm == nullptr) {
 		Console::println("MPEG1Decoder::openFile(): Failed to open: " + pathName + "/" + fileName);

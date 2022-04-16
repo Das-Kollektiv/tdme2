@@ -214,4 +214,9 @@ public:
 	 */
 	static RequestedDimensionConstraints createRequestedDimensionConstraints(const string& width, const string& height);
 
+	/**
+	 * On render texture event
+	 */
+	virtual void onRenderTexture();
+
 };

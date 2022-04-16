@@ -1,4 +1,4 @@
-#include <tdme/tools/editor/tabcontrollers/TextureTabController.h>
+#include <tdme/tools/editor/tabcontrollers/VideoTabController.h>
 
 #include <string>
 
@@ -15,14 +15,14 @@
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
-#include <tdme/tools/editor/tabviews/TextureTabView.h>
+#include <tdme/tools/editor/tabviews/VideoTabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
 
-using tdme::tools::editor::tabcontrollers::TextureTabController;
+using tdme::tools::editor::tabcontrollers::VideoTabController;
 
 using std::string;
 
@@ -37,76 +37,76 @@ using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::TabController;
-using tdme::tools::editor::tabviews::TextureTabView;
+using tdme::tools::editor::tabviews::VideoTabView;
 using tdme::tools::editor::views::EditorView;
 using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 
-TextureTabController::TextureTabController(TextureTabView* view)
+VideoTabController::VideoTabController(VideoTabView* view)
 {
 	this->view = view;
 	this->popUps = view->getPopUps();
 }
 
-TextureTabController::~TextureTabController() {
+VideoTabController::~VideoTabController() {
 }
 
-TextureTabView* TextureTabController::getView() {
+VideoTabView* VideoTabController::getView() {
 	return view;
 }
 
-GUIScreenNode* TextureTabController::getScreenNode()
+GUIScreenNode* VideoTabController::getScreenNode()
 {
 	return screenNode;
 }
 
-void TextureTabController::initialize(GUIScreenNode* screenNode)
+void VideoTabController::initialize(GUIScreenNode* screenNode)
 {
 	this->screenNode = screenNode;
 }
 
-void TextureTabController::dispose()
+void VideoTabController::dispose()
 {
 }
 
-void TextureTabController::save()
+void VideoTabController::save()
 {
 }
 
-void TextureTabController::saveAs()
+void VideoTabController::saveAs()
 {
 }
 
-void TextureTabController::showErrorPopUp(const string& caption, const string& message)
+void VideoTabController::showErrorPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
 
-void TextureTabController::onValueChanged(GUIElementNode* node)
+void VideoTabController::onValueChanged(GUIElementNode* node)
 {
 }
 
-void TextureTabController::onFocus(GUIElementNode* node) {
+void VideoTabController::onFocus(GUIElementNode* node) {
 }
 
-void TextureTabController::onUnfocus(GUIElementNode* node) {
+void VideoTabController::onUnfocus(GUIElementNode* node) {
 }
 
-void TextureTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
+void VideoTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
 }
 
-void TextureTabController::setOutlinerContent() {
+void VideoTabController::setOutlinerContent() {
 	string xml;
-	xml+= "<selectbox-option text=\"Texture\" value=\"texture\" />\n";
+	xml+= "<selectbox-option text=\"Video\" value=\"texture\" />\n";
 	view->getEditorView()->setOutlinerContent(xml);
 }
 
-void TextureTabController::setOutlinerAddDropDownContent() {
+void VideoTabController::setOutlinerAddDropDownContent() {
 	view->getEditorView()->setOutlinerAddDropDownContent(string());
 }
 
-void TextureTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void VideoTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 }

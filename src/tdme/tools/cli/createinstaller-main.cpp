@@ -74,6 +74,8 @@ static void scanPathResources(const string& path, vector<string>& totalFiles) {
 				if (StringTools::endsWith(fileNameLowerCase, ".icns") == true) return true;
 				if (StringTools::endsWith(fileNameLowerCase, ".ico") == true) return true;
 				if (StringTools::endsWith(fileNameLowerCase, ".png") == true) return true;
+				// videos
+				if (StringTools::endsWith(fileNameLowerCase, ".mpg") == true) return true;
 				// models
 				if (StringTools::endsWith(fileNameLowerCase, ".dae") == true) return true;
 				if (StringTools::endsWith(fileNameLowerCase, ".fbx") == true) return true;

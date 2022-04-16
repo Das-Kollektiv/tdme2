@@ -113,7 +113,11 @@ void GUITextureBaseNode::render(GUIRenderer* guiRenderer)
 {
 	if (shouldRender() == false) return;
 
+	//
 	GUINode::render(guiRenderer);
+
+	// on render
+	onRenderTexture();
 
 	// clipping
 	{
@@ -556,4 +560,8 @@ GUITextureBaseNode::RequestedDimensionConstraints GUITextureBaseNode::createRequ
 		}
 	}
 	return constraints;
+}
+
+void GUITextureBaseNode::onRenderTexture() {
+	// no op
 }
