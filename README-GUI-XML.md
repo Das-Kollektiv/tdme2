@@ -140,7 +140,31 @@ This element supports all other elements as sub elements.
 | rotation                          | rotation angle                                                                         | 0.0               |
 | src                               | image location                                                                         | 0.0               |
 
-### 1.4.3. \<texture\> node
+### 1.4.3. \<movie\> node
+
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| clipping                          | movie clipping in pixels for left, top, right, bottom area                             | 0 pixel           |
+| clipping-left                     | movie clipping in pixels for left area                                                 | 0 pixel           |
+| clipping-top                      | movie clipping in pixels for top area                                                  | 0 pixel           |
+| clipping-right                    | movie clipping in pixels for right area                                                | 0 pixel           |
+| clipping-right                    | movie clipping in pixels for bottom area                                               | 0 pixel           |
+| mask                              | movie mask movie location                                                              | none              |
+| mask-max-value                    | mask max value, means if mask movie pixel > mask max value the fragment is discared    | none              |
+| scale9                            | movie scale 9 in pixels for left, top, right, bottom area                              | 0 pixel           |
+| scale9-left                       | movie scale 9 in pixels for left area                                                  | 0 pixel           |
+| scale9-top                        | movie scale 9 in pixels for top area                                                   | 0 pixel           |
+| scale9-right                      | movie scale 9 in pixels for right area                                                 | 0 pixel           |
+| scale9-bottom                     | movie scale 9 in pixels for bottom area                                                | 0 pixel           |
+| effect-color-mul                  | movie color multiplication in hex notation or color name                               | #ffffffff         |
+| effect-color-add                  | movie color addition in hex notation or color name                                     | #00000000         |
+| horizontal-scale                  | float factor to scale original movie width with                                        | 1.0               |
+| vertical-scale                    | float factor to scale original movie width with                                        | 1.0               |
+| mirror-x                          | mirror movie on x axis                                                                 | false             |
+| mirror-y                          | mirror movie on y axis                                                                 | false             |
+| src                               | movie location                                                                         | 0.0               |
+
+### 1.4.4. \<texture\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -163,7 +187,6 @@ This element supports all other elements as sub elements.
 | mirror-x                          | mirror texture on x axis                                                               | false             |
 | mirror-y                          | mirror texture on y axis                                                               | false             |
 
-    
 ## 1.5. \<layer\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
