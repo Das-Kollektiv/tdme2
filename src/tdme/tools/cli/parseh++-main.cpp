@@ -29,6 +29,15 @@ using tdme::utilities::Exception;
 using tdme::utilities::Integer;
 using tdme::utilities::StringTools;
 
+void parseDeclaration(const string& description, const string& token) {
+	Console::println("parseDeclaration():");
+	auto descriptionLines = StringTools::tokenize(description, "\n");
+	Console::println("\tDescription");
+	for (auto& descriptionLine: descriptionLines) Console::println("\t\t" + descriptionLine);
+	Console::println("\tDeclaration");
+	Console::println(token);
+}
+
 void processFile(const string& hppFileName) {
 	Console::println("Processing file: " + hppFileName);
 
@@ -77,30 +86,33 @@ void processFile(const string& hppFileName) {
 			case (TOKENTYPE_CLASS_DECLARATION):
 				{
 					// class declaration + class declaration only state machine state transitions
-					if (tokenType == TOKENTYPE_CLASS_DECLARATION) {
-						if (c == '{') {
-							// TODO:
-							auto& classDeclaration = classDeclarationStack.top();
-							classDeclaration.curlyBracketCount++;
-							continue;
-						} else
-						if (c == '}') {
-							// TODO:
-							auto& classDeclaration = classDeclarationStack.top();
-							classDeclaration.curlyBracketCount--;
-							if (classDeclaration.curlyBracketCount == 0) {
-								classes[classDeclaration.name] = classDeclaration;
-								classDeclarationStack.top();
-							}
-							continue;
-						} else
-						if (c == ';') {
-							// TODO:
-							Console::println("TOKENTYPE_CLASS_DECLARATION: '" + token + "'");
-							token.clear();
-							continue;
+					if (c == '{') {
+						// TODO:
+						auto& classDeclaration = classDeclarationStack.top();
+						classDeclaration.curlyBracketCount++;
+						token+= c;
+					} else
+					if (c == '}') {
+						// TODO:
+						auto& classDeclaration = classDeclarationStack.top();
+						classDeclaration.curlyBracketCount--;
+						if (classDeclaration.curlyBracketCount == 0) {
+							classes[classDeclaration.name] = classDeclaration;
 						}
-					}
+						token+= c;
+						if (StringTools::trim(token).empty() == false) {
+							parseDeclaration(lastInlineComment, token);
+						}
+						token.clear();
+						lastInlineComment.clear();
+					} else
+					if (c == ';' && classDeclarationStack.top().curlyBracketCount == 0) {
+						if (StringTools::trim(token).empty() == false) {
+							parseDeclaration(lastInlineComment, token);
+						}
+						token.clear();
+						lastInlineComment.clear();
+					} else
 					if (c == '#') {
 						tokenTypeStack.push(TOKENTYPE_PREPROCESSOR);
 					} else
