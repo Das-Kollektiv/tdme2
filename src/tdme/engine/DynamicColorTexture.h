@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vector>
-
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -50,7 +48,14 @@ public:
 	}
 
 	/**
-	 * Access to underlying texture byte buffer, the format is currently RGBA
+	 * @return underlying texture, the format is currently RGBA
+	 */
+	inline Texture* getTexture() {
+		return texture;
+	}
+
+	/**
+	 * @return underlying texture byte buffer, the format is currently RGBA
 	 */
 	inline ByteBuffer* getByteBuffer() {
 		return texture->getTextureData();
@@ -84,6 +89,8 @@ public:
 	}
 
 private:
+	static uint32_t counter;
+
 	int32_t width { -1 };
 	int32_t height { -1 };
 	int32_t colorBufferTextureId { -1 };

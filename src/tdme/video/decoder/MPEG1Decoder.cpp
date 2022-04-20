@@ -127,7 +127,13 @@ void MPEG1Decoder::close() {
 
 void MPEG1Decoder::plmOnVideo(plm_t* plm, plm_frame_t *frame, void *user) {
 	auto mpeg1Decoder = static_cast<MPEG1Decoder*>(user);
-	plm_frame_to_rgba(frame, mpeg1Decoder->videoBuffer->getBuffer(), frame->width * 4);
+	auto frameBuffer = mpeg1Decoder->videoBuffer->getBuffer();
+	plm_frame_to_rgba(frame, frameBuffer, frame->width * 4);
+	for (auto y = 0; y < mpeg1Decoder->videoHeight; y++) {
+		for (auto x = 0; x < mpeg1Decoder->videoWidth; x++) {
+			frameBuffer[y * mpeg1Decoder->videoWidth * 4 + x * 4 + 3] = 0xff;
+		}
+	}
 }
 
 void MPEG1Decoder::plmOnAudio(plm_t* plm, plm_samples_t *samples, void *user) {
