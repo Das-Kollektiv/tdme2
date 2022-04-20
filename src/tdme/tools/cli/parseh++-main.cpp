@@ -29,7 +29,53 @@ using tdme::utilities::Exception;
 using tdme::utilities::Integer;
 using tdme::utilities::StringTools;
 
-void parseDeclaration(const string& description, const string& token) {
+struct ClassDeclaration {
+	struct ClassMemberDeclaration {
+		enum DeclarationType { DECLARATIONTYPE_NONE, DECLARATIONTYPE_CONSTEXPR, DECLARATIONTYPE_ENUM, DECLARATIONTYPE_VARIABLE, DECLARATIONTYPE_METHOD };
+		enum ModifierType { MODIFIERTYPE_PRIVATE, MODIFIERTYPE_PROTECTED, MODIFIERTYPE_PUBLIC };
+		string description;
+		string fullQualifiedName;
+		string namespaceName;
+		string name;
+		DeclarationType declarationType;
+		ModifierType modifierType { MODIFIERTYPE_PUBLIC };
+		vector<string> additionalKeywords;
+		// method only
+		struct Argument {
+			string type;
+			string name;
+		};
+		vector<Argument> arguments;
+		string returnValue;
+	};
+	string description;
+	string fullQualifiedName;
+	string namespaceName;
+	string name;
+	set<string> friendClasses;
+	vector<ClassMemberDeclaration> members;
+};
+
+struct ClassDeclarationParserValues {
+	enum ModifierType { MODIFIERTYPE_PRIVATE, MODIFIERTYPE_PROTECTED, MODIFIERTYPE_PUBLIC };
+	ModifierType currentModifier { MODIFIERTYPE_PUBLIC };
+	int curlyBracketCount { 0 };
+};
+
+enum TokenType { TOKENTYPE_NONE, TOKENTYPE_INLINECOMMENT, TOKENTYPE_PREPROCESSOR, TOKENTYPE_USING, TOKENTYPE_CLASS, TOKENTYPE_CLASS_DECLARATION, TOKENTYPE_CLASS_DECLARATION_FRIEND_CLASS };
+
+array<string, 7> TOKENTYPENAME =
+	{
+		"TOKENTYPE_NONE",
+		"TOKENTYPE_INLINECOMMENT",
+		"TOKENTYPE_PREPROCESSOR",
+		"TOKENTYPE_USING",
+		"TOKENTYPE_CLASS",
+		"TOKENTYPE_CLASS_DECLARATION",
+		"TOKENTYPE_CLASS_DECLARATION_FRIEND_CLASS"
+	};
+
+static void parseDeclaration(const string& description, const string& token) {
 	Console::println("parseDeclaration():");
 	auto descriptionLines = StringTools::tokenize(description, "\n");
 	Console::println("\tDescription");
@@ -38,31 +84,8 @@ void parseDeclaration(const string& description, const string& token) {
 	Console::println(token);
 }
 
-void processFile(const string& hppFileName) {
+static void parseHpp(const string& hppFileName) {
 	Console::println("Processing file: " + hppFileName);
-
-	array<string, 7> TOKENTYPENAME =
-		{
-			"TOKENTYPE_NONE",
-			"TOKENTYPE_INLINECOMMENT",
-			"TOKENTYPE_PREPROCESSOR",
-			"TOKENTYPE_USING",
-			"TOKENTYPE_CLASS",
-			"TOKENTYPE_CLASS_DECLARATION",
-			"TOKENTYPE_CLASS_DECLARATION_FRIEND_CLASS"
-		};
-	enum TokenType { TOKENTYPE_NONE, TOKENTYPE_INLINECOMMENT, TOKENTYPE_PREPROCESSOR, TOKENTYPE_USING, TOKENTYPE_CLASS, TOKENTYPE_CLASS_DECLARATION, TOKENTYPE_CLASS_DECLARATION_FRIEND_CLASS };
-
-	struct ClassDeclaration {
-		enum ModifierType { MODIFIERTYPE_PRIVATE, MODIFIERTYPE_PROTECTED, MODIFIERTYPE_PUBLIC };
-		string description;
-		string fullQualifiedName;
-		string namespaceName;
-		string name;
-		set<string> friendClasses;
-		ModifierType currentModifier { MODIFIERTYPE_PUBLIC };
-		int curlyBracketCount { 0 };
-	};
 
 	//
 	map<string, string> usings;
@@ -74,7 +97,7 @@ void processFile(const string& hppFileName) {
 	tokenTypeStack.push(TOKENTYPE_NONE);
 	string token;
 	stack<ClassDeclaration> classDeclarationStack;
-	int classDeclarationCurlyBrackets = 0;
+	stack<ClassDeclarationParserValues> classDeclarationParserValuesStack;
 	char quote = 0;
 	char lc = 0;
 	string lastInlineComment;
@@ -88,20 +111,21 @@ void processFile(const string& hppFileName) {
 					// class declaration + class declaration only state machine state transitions
 					if (c == '{') {
 						// TODO:
-						auto& classDeclaration = classDeclarationStack.top();
-						classDeclaration.curlyBracketCount++;
+						auto& classDeclarationParserValues = classDeclarationParserValuesStack.top();
+						classDeclarationParserValues.curlyBracketCount++;
 						token+= c;
 					} else
 					if (c == '}') {
 						// TODO:
-						auto& classDeclaration = classDeclarationStack.top();
-						classDeclaration.curlyBracketCount--;
+						auto& classDeclarationParserValues = classDeclarationParserValuesStack.top();
+						classDeclarationParserValues.curlyBracketCount--;
 						token+= c;
-						if (classDeclaration.curlyBracketCount == -1) {
+						if (classDeclarationParserValues.curlyBracketCount == -1) {
 							tokenTypeStack.pop();
 							classDeclarationStack.pop();
+							classDeclarationParserValuesStack.pop();
 						} else
-						if (classDeclaration.curlyBracketCount == 0) {
+						if (classDeclarationParserValues.curlyBracketCount == 0) {
 							if (StringTools::trim(token).empty() == false) {
 								parseDeclaration(lastInlineComment, token);
 							}
@@ -109,7 +133,7 @@ void processFile(const string& hppFileName) {
 							lastInlineComment.clear();
 						}
 					} else
-					if (c == ';' && classDeclarationStack.top().curlyBracketCount == 0) {
+					if (c == ';' && classDeclarationParserValuesStack.top().curlyBracketCount == 0) {
 						if (StringTools::trim(token).empty() == false) {
 							parseDeclaration(lastInlineComment, token);
 						}
@@ -141,18 +165,18 @@ void processFile(const string& hppFileName) {
 								token.clear();
 							} else
 							if (tokenTrimmed == "private:") {
-								auto& classDeclaration = classDeclarationStack.top();
-								classDeclaration.currentModifier = ClassDeclaration::MODIFIERTYPE_PRIVATE;
+								auto& classDeclarationValuesStack = classDeclarationParserValuesStack.top();
+								classDeclarationValuesStack.currentModifier = ClassDeclarationParserValues::MODIFIERTYPE_PRIVATE;
 								token.clear();
 							} else
 							if (tokenTrimmed == "protected:") {
-								auto& classDeclaration = classDeclarationStack.top();
-								classDeclaration.currentModifier = ClassDeclaration::MODIFIERTYPE_PROTECTED;
+								auto& classDeclarationValuesStack = classDeclarationParserValuesStack.top();
+								classDeclarationValuesStack.currentModifier = ClassDeclarationParserValues::MODIFIERTYPE_PROTECTED;
 								token.clear();
 							} else
 							if (tokenTrimmed == "public:") {
-								auto& classDeclaration = classDeclarationStack.top();
-								classDeclaration.currentModifier = ClassDeclaration::MODIFIERTYPE_PUBLIC;
+								auto& classDeclarationValuesStack = classDeclarationParserValuesStack.top();
+								classDeclarationValuesStack.currentModifier = ClassDeclarationParserValues::MODIFIERTYPE_PUBLIC;
 								token.clear();
 							} else {
 								token+= c;
@@ -221,6 +245,7 @@ void processFile(const string& hppFileName) {
 							lastInlineComment.clear();
 						}
 						classDeclarationStack.push(classDeclaration);
+						classDeclarationParserValuesStack.push(ClassDeclarationParserValues());
 						token.clear();
 						break;
 					} else {
@@ -292,5 +317,5 @@ int main(int argc, char** argv)
 	}
 
 	//
-	processFile(argv[1]);
+	parseHpp(argv[1]);
 }
