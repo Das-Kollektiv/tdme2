@@ -96,15 +96,18 @@ void processFile(const string& hppFileName) {
 						// TODO:
 						auto& classDeclaration = classDeclarationStack.top();
 						classDeclaration.curlyBracketCount--;
-						if (classDeclaration.curlyBracketCount == 0) {
-							classes[classDeclaration.name] = classDeclaration;
-						}
 						token+= c;
-						if (StringTools::trim(token).empty() == false) {
-							parseDeclaration(lastInlineComment, token);
+						if (classDeclaration.curlyBracketCount == -1) {
+							tokenTypeStack.pop();
+							classDeclarationStack.pop();
+						} else
+						if (classDeclaration.curlyBracketCount == 0) {
+							if (StringTools::trim(token).empty() == false) {
+								parseDeclaration(lastInlineComment, token);
+							}
+							token.clear();
+							lastInlineComment.clear();
 						}
-						token.clear();
-						lastInlineComment.clear();
 					} else
 					if (c == ';' && classDeclarationStack.top().curlyBracketCount == 0) {
 						if (StringTools::trim(token).empty() == false) {
