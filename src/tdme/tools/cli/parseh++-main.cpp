@@ -62,19 +62,6 @@ struct ClassDeclarationParserValues {
 	int curlyBracketCount { 0 };
 };
 
-enum TokenType { TOKENTYPE_NONE, TOKENTYPE_INLINECOMMENT, TOKENTYPE_PREPROCESSOR, TOKENTYPE_USING, TOKENTYPE_CLASS, TOKENTYPE_CLASS_DECLARATION, TOKENTYPE_CLASS_DECLARATION_FRIEND_CLASS };
-
-array<string, 7> TOKENTYPENAME =
-	{
-		"TOKENTYPE_NONE",
-		"TOKENTYPE_INLINECOMMENT",
-		"TOKENTYPE_PREPROCESSOR",
-		"TOKENTYPE_USING",
-		"TOKENTYPE_CLASS",
-		"TOKENTYPE_CLASS_DECLARATION",
-		"TOKENTYPE_CLASS_DECLARATION_FRIEND_CLASS"
-	};
-
 static void parseDeclaration(const string& description, const string& token) {
 	Console::println("parseDeclaration():");
 	auto descriptionLines = StringTools::tokenize(description, "\n");
@@ -93,6 +80,20 @@ static void parseHpp(const string& hppFileName) {
 
 	//
 	auto hppCode = FileSystem::getInstance()->getContentAsString(".", hppFileName);
+
+	//
+	enum TokenType { TOKENTYPE_NONE, TOKENTYPE_INLINECOMMENT, TOKENTYPE_PREPROCESSOR, TOKENTYPE_USING, TOKENTYPE_CLASS, TOKENTYPE_CLASS_DECLARATION, TOKENTYPE_CLASS_DECLARATION_FRIEND_CLASS };
+	array<string, 7> TOKENTYPENAME =
+		{
+			"TOKENTYPE_NONE",
+			"TOKENTYPE_INLINECOMMENT",
+			"TOKENTYPE_PREPROCESSOR",
+			"TOKENTYPE_USING",
+			"TOKENTYPE_CLASS",
+			"TOKENTYPE_CLASS_DECLARATION",
+			"TOKENTYPE_CLASS_DECLARATION_FRIEND_CLASS"
+		};
+
 	stack<TokenType> tokenTypeStack;
 	tokenTypeStack.push(TOKENTYPE_NONE);
 	string token;
