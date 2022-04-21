@@ -31,8 +31,9 @@ public:
 	 * @param keyCode key code
 	 * @param x x
 	 * @param y y
+	 * @param repeat event
 	 */
-	virtual void onKeyDown (unsigned char key, int keyCode, int x, int y) = 0;
+	virtual void onKeyDown (unsigned char key, int keyCode, int x, int y, bool repeat) = 0;
 
 	/**
 	 * On key up

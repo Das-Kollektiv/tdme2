@@ -17,6 +17,7 @@
   - you find binary alpha builds at [http://drewke.net/tdme2](http://drewke.net/tdme2)
   - here you find developer documentation including collaboration graphs and [private API](http://drewke.net/tdme2-documentation/alpha/private) as well as [public API](http://drewke.net/tdme2-documentation/alpha/public) for current alpha build
     - RapidJSON is included, but not yet integrated into documentation, please see [http://rapidjson.org/](http://rapidjson.org/)
+    - For TDME2 GUI XML documentation, see [README-GUI-XML.md](./README-GUI-XML.md)
 
 # 2. Features
 - Application
@@ -147,6 +148,9 @@
     - audio entities
       - streams
       - sounds
+- Video
+    - decoder
+      - mpeg1 decoder
 - GUI system
     - borrows some ideas from Nifty-GUI regarding XML and layouting
     - borrows some ideas from AngularJS like
@@ -304,6 +308,7 @@
     - included in TDME2 repository
         - FBXSDK
         - libpng
+        - pl_mpeg
         - ReactPhysics3D
         - RapidJSON
         - sha256

@@ -9,25 +9,16 @@
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
 
+using tdme::audio::VorbisAudioStream;
+
 using std::string;
 using std::to_string;
 
 using tdme::audio::decoder::AudioDecoderException;
 using tdme::audio::decoder::VorbisDecoder;
-using tdme::audio::VorbisAudioStream;
 using tdme::os::filesystem::FileSystemException;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
-
-VorbisAudioStream::VorbisAudioStream(const string& id, const string& pathName, const string& fileName) : AudioStream(id)
-{
-	this->pathName = pathName;
-	this->fileName = fileName;
-	this->initiated = false;
-}
-
-VorbisAudioStream::~VorbisAudioStream() {
-}
 
 void VorbisAudioStream::rewind()
 {

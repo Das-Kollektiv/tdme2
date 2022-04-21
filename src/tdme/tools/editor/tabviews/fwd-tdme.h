@@ -18,6 +18,7 @@ namespace tabviews {
 	class TextEditorTabView;
 	class TriggerEditorTabView;
 	class UIEditorTabView;
+	class VideoTabView;
 }  // namespace tabviews
 }  // namespace editor
 }  // namespace tools

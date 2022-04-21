@@ -12,8 +12,6 @@
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
-#include <ext/tinyxml/tinyxml.h>
-
 using std::string;
 
 using tdme::gui::events::GUIActionListener;
@@ -27,10 +25,6 @@ using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::TextureTabView;
 using tdme::utilities::MutableString;
-
-using tinyxml::TiXmlAttribute;
-using tinyxml::TiXmlDocument;
-using tinyxml::TiXmlElement;
 
 /**
  * Texture tab controller

@@ -998,10 +998,8 @@ bool GUINode::isEventBelongingToNode(GUIMouseEvent* event, Vector2& position)
 		eventX < computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.width &&
 		eventY >= computedConstraints.top + computedConstraints.alignmentTop &&
 		eventY < computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.height;
-	if (belongsToElement == true) {
-		position[0] = static_cast<int>((eventX - (computedConstraints.left + computedConstraints.alignmentLeft)));
-		position[1] = static_cast<int>((eventY - (computedConstraints.top + computedConstraints.alignmentTop)));
-	}
+	position[0] = static_cast<int>((eventX - (computedConstraints.left + computedConstraints.alignmentLeft)));
+	position[1] = static_cast<int>((eventY - (computedConstraints.top + computedConstraints.alignmentTop)));
 	return belongsToElement;
 }
 
@@ -1336,7 +1334,7 @@ void GUINode::setBackgroundImage(const string& backgroundImage) {
 		backgroundTextureId = 0;
 	}
 	if (backgroundImage.length() > 0) {
-		backgroundTexture = GUI::getImage(screenNode->getApplicationRootPathName(), backgroundImage);
+		backgroundTexture = screenNode->getImage(screenNode->getApplicationRootPathName(), backgroundImage);
 		backgroundTextureId = Engine::getInstance()->getTextureManager()->addTexture(backgroundTexture, 0);
 	}
 }

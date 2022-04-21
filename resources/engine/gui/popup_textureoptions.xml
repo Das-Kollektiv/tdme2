@@ -1,6 +1,6 @@
 <screen id="popup_textureoptions" popup="true" min-width="1024" min-height="768" max-width="3200" max-height="1800">
 	<layout alignment="vertical" horizontal-align="center" vertical-align="center" width="100%" height="100%">	
-		<tabs width="220" height="373">
+		<tabs width="220" height="390">
 			<tabs-header id="textureoptions_tabs-header">
 				<tab id="textureoptions_caption" image="resources/engine/images/attention.png" text="Texture Options" closeable="true"/>
 			</tabs-header>
@@ -12,6 +12,27 @@
 							<image width="200" height="200" id="textureoptions_image" src="resources/engine/textures/terrain_dirt.png" />
 						</layout>
 						<space height="5" />
+						<layout width="*" alignment="horizontal" horizontal-align="center" vertical-align="center">
+							<layout alignment="horizontal" horizontal-align="center" vertical-align="center">
+								<text font="{$font.default}" color="{$color.font_normal}" text="R"/>
+								<checkbox id="textureoptions_r" width="25" height="25" value="1"/>
+							</layout>
+							<space width="*" />
+							<layout alignment="horizontal" horizontal-align="center" vertical-align="center">
+								<text font="{$font.default}" color="{$color.font_normal}" text="G"/>
+								<checkbox id="textureoptions_g" width="25" height="25" value="1"/>
+							</layout>
+							<space width="*" />
+							<layout alignment="horizontal" horizontal-align="center" vertical-align="center">
+								<text font="{$font.default}" color="{$color.font_normal}" text="B"/>
+								<checkbox id="textureoptions_b" width="25" height="25" value="1"/>
+							</layout>
+							<space width="*" />
+							<layout alignment="horizontal" horizontal-align="center" vertical-align="center">
+								<text font="{$font.default}" color="{$color.font_normal}" text="A"/>
+								<checkbox id="textureoptions_a" width="25" height="25" value="1"/>
+							</layout>
+						</layout>
 						<menu-separator />
 						<layout padding="5" width="200" height="auto" alignment="vertical">	
 							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">

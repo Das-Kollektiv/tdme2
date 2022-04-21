@@ -11,8 +11,6 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fileio/textures/Texture.h>
-#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
@@ -24,12 +22,8 @@
 #include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/gui/GUIParserException.h>
-#include <tdme/os/filesystem/FileSystem.h>
-#include <tdme/os/filesystem/FileSystemException.h>
-#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Time.h>
@@ -41,8 +35,6 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
-using tdme::engine::fileio::textures::Texture;
-using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::Engine;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -54,19 +46,12 @@ using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::GUI;
 using tdme::gui::GUIParserException;
-using tdme::os::filesystem::FileSystem;
-using tdme::os::filesystem::FileSystemException;
-using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Time;
-
-unordered_map<string, GUIFont*>* GUI::fontCache = new unordered_map<string, GUIFont*>();
-unordered_map<string, Texture*>* GUI::imageCache = new unordered_map<string, Texture*>();
 
 GUI::GUI(Engine* engine, GUIRenderer* guiRenderer)
 {
@@ -105,84 +90,6 @@ void GUI::dispose()
 	reset();
 }
 
-GUIFont* GUI::getFont(const string& applicationRootPath, const string& fileName)
-{
-	string canonicalFile;
-	string path;
-	string file;
-	GUIFont* font = nullptr;
-	try {
-		// TODO: improve me!
-		if (FileSystem::getInstance()->fileExists(fileName) == true) {
-			canonicalFile = fileName;
-		} else {
-			canonicalFile = FileSystem::getInstance()->getCanonicalPath(applicationRootPath, fileName);
-		}
-		path = FileSystem::getInstance()->getPathName(canonicalFile);
-		file = FileSystem::getInstance()->getFileName(canonicalFile);
-	} catch (Exception& exception) {
-		Console::print(string("GUI::getFont(): An error occurred: "));
-		Console::println(string(exception.what()));
-		return nullptr;
-	}
-
-	auto fontCacheIt = fontCache->find(canonicalFile);
-	if (fontCacheIt == fontCache->end()) {
-		try {
-			font = GUIFont::parse(path, file);
-		} catch (Exception& exception) {
-			Console::print(string("GUI::getFont(): An error occurred: "));
-			Console::println(string(exception.what()));
-			return nullptr;
-		}
-		(*fontCache)[canonicalFile] = font;
-	} else {
-		font = fontCacheIt->second;
-	}
-	return font;
-}
-
-Texture* GUI::getImage(const string& applicationRootPath, const string& fileName)
-{
-	// TODO: fix me, proper get path, filename
-	string canonicalFile;
-	string path;
-	string file;
-	try {
-		// TODO: improve me!
-		if (FileSystem::getInstance()->fileExists(fileName) == true) {
-			canonicalFile = fileName;
-		} else {
-			canonicalFile = FileSystem::getInstance()->getCanonicalPath(applicationRootPath, fileName);
-		}
-		path = FileSystem::getInstance()->getPathName(canonicalFile);
-		file = FileSystem::getInstance()->getFileName(canonicalFile);
-	} catch (Exception& exception) {
-		Console::print(string("GUI::getImage(): An error occurred: "));
-		Console::println(string(exception.what()));
-		return nullptr;
-	}
-
-	auto imageIt = imageCache->find("tdme.gui." + canonicalFile);
-	auto image = imageIt != imageCache->end() ? imageIt->second : nullptr;
-	if (image == nullptr) {
-		try {
-			image = TextureReader::read(path, file, false, false, "tdme.gui.");
-			if (image != nullptr) {
-				image->setUseMipMap(false);
-				image->setRepeat(false);
-				image->setClampMode(Texture::CLAMPMODE_TRANSPARENTPIXEL);
-			}
-		} catch (Exception& exception) {
-			Console::print(string("GUI::getImage(): An error occurred: "));
-			Console::println(string(exception.what()));
-			throw;
-		}
-		if (image != nullptr) (*imageCache)[canonicalFile] = image;
-	}
-	return image;
-}
-
 void GUI::addScreen(const string& id, GUIScreenNode* screen)
 {
 	if (id != screen->getId()) {
@@ -219,17 +126,6 @@ void GUI::reset()
 		removeScreen(entitiesToRemove[i]);
 	}
 	renderScreens.clear();
-	/*
-	// TODO: fix me!
-	for (auto fontCacheIt: *fontCache) {
-		delete fontCacheIt.second;
-	}
-	fontCache->clear();
-	for (auto imageCacheIt: *imageCache) {
-		imageCacheIt.second->releaseReference();
-	}
-	imageCache->clear();
-	*/
 }
 
 void GUI::resetRenderScreens()
@@ -577,7 +473,7 @@ void GUI::handleKeyboardEvent(GUIKeyboardEvent* event) {
 	}
 }
 
-void GUI::handleEvents()
+void GUI::handleEvents(bool clearEvents)
 {
 	unordered_map<string, unordered_set<string>> _mouseOutCandidateEventNodeIds;
 	unordered_map<string, unordered_set<string>> _mouseOutClickCandidateEventNodeIds;
@@ -666,7 +562,7 @@ void GUI::handleEvents()
 		}
 	}
 
-	// call tick and input event handler at very last
+	// call tick and input event handler
 	for (int i = renderScreensCopy.size() - 1; i >= 0; i--) {
 		auto screen = renderScreensCopy[i];
 		if (screen->isVisible() == false) continue;
@@ -683,8 +579,10 @@ void GUI::handleEvents()
 	}
 
 	//
-	mouseEvents.clear();
-	keyboardEvents.clear();
+	if (clearEvents == true) {
+		mouseEvents.clear();
+		keyboardEvents.clear();
+	}
 }
 
 void GUI::onChar(unsigned int key, int x, int y) {
@@ -698,11 +596,12 @@ void GUI::onChar(unsigned int key, int x, int y) {
 	guiKeyboardEvent.setControlDown(controlDown);
 	guiKeyboardEvent.setAltDown(altDown);
 	guiKeyboardEvent.setShiftDown(shiftDown);
+	guiKeyboardEvent.setRepeat(false);
 	guiKeyboardEvent.setProcessed(false);
 	keyboardEvents.push_back(guiKeyboardEvent);
 }
 
-void GUI::onKeyDown (unsigned char key, int keyCode, int x, int y) {
+void GUI::onKeyDown (unsigned char key, int keyCode, int x, int y, bool repeat) {
 	fakeMouseMovedEvent();
 	GUIKeyboardEvent guiKeyboardEvent;
 	guiKeyboardEvent.setTime(Time::getCurrentMillis());
@@ -713,6 +612,7 @@ void GUI::onKeyDown (unsigned char key, int keyCode, int x, int y) {
 	guiKeyboardEvent.setControlDown(controlDown);
 	guiKeyboardEvent.setAltDown(altDown);
 	guiKeyboardEvent.setShiftDown(shiftDown);
+	guiKeyboardEvent.setRepeat(repeat);
 	guiKeyboardEvent.setProcessed(false);
 	keyboardEvents.push_back(guiKeyboardEvent);
 }
@@ -728,6 +628,7 @@ void GUI::onKeyUp(unsigned char key, int keyCode, int x, int y) {
 	guiKeyboardEvent.setControlDown(controlDown);
 	guiKeyboardEvent.setAltDown(altDown);
 	guiKeyboardEvent.setShiftDown(shiftDown);
+	guiKeyboardEvent.setRepeat(false);
 	guiKeyboardEvent.setProcessed(false);
 	keyboardEvents.push_back(guiKeyboardEvent);
 }

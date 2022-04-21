@@ -6,9 +6,11 @@
 
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
+#include <tdme/gui/elements/GUIStyledInputController.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUINode.h>
+#include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
 #include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/math/Math.h>
@@ -23,6 +25,7 @@ using std::to_string;
 using std::vector;
 
 using tdme::application::Application;
+using tdme::gui::elements::GUIStyledInputController;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
@@ -69,6 +72,14 @@ void GUIStyledTextNodeController::setDisabled(bool disabled)
 
 void GUIStyledTextNodeController::initialize()
 {
+	auto inputControllerNodeCandidate = node->getParentControllerNode();
+	while (inputControllerNodeCandidate != nullptr) {
+		if (dynamic_cast<GUIStyledInputController*>(inputControllerNodeCandidate->getController()) != nullptr) {
+			input = true;
+			break;
+		}
+		inputControllerNodeCandidate = inputControllerNodeCandidate->getParentControllerNode();
+	}
 }
 
 void GUIStyledTextNodeController::dispose()
@@ -77,54 +88,126 @@ void GUIStyledTextNodeController::dispose()
 
 void GUIStyledTextNodeController::postLayout()
 {
+	//
+	if (input == false) return;
+
+	// extend styledTextNode auto width to parent width if this is larger
+	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
+	if (styledTextNode->getRequestsConstraints().widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
+		auto& styledTextNodeBorder = styledTextNode->getBorder();
+		auto& styledTextNodePadding = styledTextNode->getPadding();
+		auto styledTextNodeAutoWidth = styledTextNode->getContentWidth();
+		auto parentNode = styledTextNode->getParentNode();
+		auto parentNodeWidth = parentNode->getComputedConstraints().width;
+		auto& parentNodeBorder = parentNode->getBorder();
+		auto& parentNodePadding = parentNode->getPadding();
+		if (parentNodeWidth > styledTextNodeAutoWidth) {
+			styledTextNode->getComputedConstraints().width =
+				parentNodeWidth
+					- (parentNodeBorder.left + parentNodeBorder.right + parentNodePadding.left + parentNodePadding.right)
+					- (styledTextNodeBorder.left + styledTextNodeBorder.right + styledTextNodePadding.left + styledTextNodePadding.right);
+		}
+	}
+	if (styledTextNode->getRequestsConstraints().heightType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO) {
+		auto& styledTextNodeBorder = styledTextNode->getBorder();
+		auto& styledTextNodePadding = styledTextNode->getPadding();
+		auto styledTextNodeAutoHeight = styledTextNode->getContentHeight();
+		auto parentNode = styledTextNode->getParentNode();
+		auto parentNodeHeight = parentNode->getComputedConstraints().height;
+		auto& parentNodeBorder = parentNode->getBorder();
+		auto& parentNodePadding = parentNode->getPadding();
+		if (parentNodeHeight > styledTextNodeAutoHeight) {
+			styledTextNode->getComputedConstraints().height =
+				parentNodeHeight
+					- (parentNodeBorder.top + parentNodeBorder.bottom + parentNodePadding.top + parentNodePadding.bottom)
+					- (styledTextNodeBorder.top + styledTextNodeBorder.bottom + styledTextNodePadding.top + styledTextNodePadding.bottom);
+		}
+	}
 }
 
 void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
+	//
 	auto released = false;
 	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
-	Vector2 nodeMousePosition;
 	if (node == styledTextNode) {
+		Vector2 nodeMousePosition;
+		Vector2 nodeMousePositionNoOffsets;
 		if (styledTextNode->isEventBelongingToNode(event, nodeMousePosition) == true) {
-			nodeMousePosition.sub(Vector2(styledTextNode->getParentNode()->getChildrenRenderOffsetX(), styledTextNode->getParentNode()->getChildrenRenderOffsetY()));
+			nodeMousePositionNoOffsets = nodeMousePosition.clone().sub(Vector2(styledTextNode->getParentNode()->getChildrenRenderOffsetX(), styledTextNode->getParentNode()->getChildrenRenderOffsetY()));
 			switch(event->getType()) {
 				case GUIMouseEvent::MOUSEEVENT_PRESSED:
 					{
-						// submit to styled text node
-						selectionIndex = -1;
-						styledTextNode->setIndexMousePosition(nodeMousePosition.getX(), nodeMousePosition.getY());
+						if (input == true) {
+							// submit to styled text node
+							selectionIndex = -1;
+							styledTextNode->setIndexMousePosition(nodeMousePositionNoOffsets.getX(), nodeMousePositionNoOffsets.getY());
+							//
+							resetCursorMode();
+							//
+							event->setProcessed(true);
+						}
+
 						//
-						resetCursorMode();
+						break;
+					}
+				case GUIMouseEvent::MOUSEEVENT_MOVED:
+					{
+						// find URL area that had a hit and setup corresponding cursor
+						auto& urlAreas = styledTextNode->getURLAreas();
+						const GUIStyledTextNode::URLArea* urlAreaHit = nullptr;
+						for (auto& urlArea: urlAreas) {
+							if (nodeMousePosition.getX() < urlArea.left ||
+								nodeMousePosition.getY() < urlArea.top ||
+								nodeMousePosition.getX() > urlArea.left + urlArea.width ||
+								nodeMousePosition.getY() > urlArea.top + urlArea.height) {
+								continue;
+							}
+							urlAreaHit = &urlArea;
+							if (Application::getMouseCursor() != MOUSE_CURSOR_HAND) {
+								Application::setMouseCursor(MOUSE_CURSOR_HAND);
+								Console::println("hand: " + node->getId() + "(" + urlAreaHit->url + ")");
+							}
+							break;
+						}
+						if (urlAreaHit == nullptr) {
+							if (Application::getMouseCursor() != MOUSE_CURSOR_ENABLED) {
+								Application::setMouseCursor(MOUSE_CURSOR_ENABLED);
+								Console::println("normal: " + node->getId());
+							}
+						}
+
 						//
 						event->setProcessed(true);
+
 						//
 						break;
 					}
 				case GUIMouseEvent::MOUSEEVENT_RELEASED:
 					{
-						//
-						styledTextNode->unsetIndexMousePosition();
-						styledTextNode->unsetSelectionIndexMousePosition();
+						if (input == true) {
+							//
+							styledTextNode->unsetIndexMousePosition();
+							styledTextNode->unsetSelectionIndexMousePosition();
 
-						//
-						styledTextNode->getScreenNode()->removeTickNode(styledTextNode);
+							//
+							styledTextNode->getScreenNode()->removeTickNode(styledTextNode);
 
-						//
-						if (dragging == true && selectionIndex != -1) {
-							auto _index = index;
-							index = selectionIndex;
-							selectionIndex = _index;
+							//
+							if (dragging == true && selectionIndex != -1) {
+								auto _index = index;
+								index = selectionIndex;
+								selectionIndex = _index;
+							}
+
+							//
+							released = true;
+
+							//
+							scrollMode = SCROLLMODE_NONE;
+							//
+							styledTextNode->scrollToIndex();
 						}
-
-						//
-						released = true;
-
-						//
-						scrollMode = SCROLLMODE_NONE;
-						//
-						styledTextNode->scrollToIndex();
-						//
-						event->setProcessed(true);
 
 						// find URL area that had a hit and setup corresponding cursor
 						auto& urlAreas = styledTextNode->getURLAreas();
@@ -136,21 +219,15 @@ void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 								nodeMousePosition.getY() > urlArea.top + urlArea.height) {
 								continue;
 							}
-							if (Application::getMouseCursor() != MOUSE_CURSOR_HAND) Application::setMouseCursor(MOUSE_CURSOR_HAND);
 							urlAreaHit = &urlArea;
 							break;
-						}
-						if (urlAreaHit == nullptr) {
-							if (Application::getMouseCursor() != MOUSE_CURSOR_ENABLED) Application::setMouseCursor(MOUSE_CURSOR_ENABLED);
 						}
 						// if release open browser if URL is valid
 						if (urlAreaHit != nullptr) {
 							node->getScreenNode()->getGUI()->addMouseOutCandidateNode(styledTextNode);
-							if (event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
-								if (StringTools::startsWith(urlAreaHit->url, "http://") == true || StringTools::startsWith(urlAreaHit->url, "https://") == true) {
-									Application::openBrowser(urlAreaHit->url);
-									return;
-								}
+							if (StringTools::startsWith(urlAreaHit->url, "http://") == true || StringTools::startsWith(urlAreaHit->url, "https://") == true) {
+								Application::openBrowser(urlAreaHit->url);
+								return;
 							}
 						}
 						//
@@ -160,82 +237,87 @@ void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 				default:
 					break;
 			}
-		} else {
-			if (Application::getMouseCursor() != MOUSE_CURSOR_ENABLED) Application::setMouseCursor(MOUSE_CURSOR_ENABLED);
 		}
 
 		//
-		// dragging, releasing
-		switch(event->getType()) {
-			case GUIMouseEvent::MOUSEEVENT_DRAGGED:
-				{
-					//
-					dragging = true;
-					//
-					if (nodeMousePosition.getY() < 50) {
-						scrollMode = SCROLLMODE_UP;
-						// unset
-						styledTextNode->unsetIndexMousePosition();
-						styledTextNode->unsetSelectionIndexMousePosition();
-						//
-						styledTextNode->getScreenNode()->addTickNode(styledTextNode);
-					} else
-					if (nodeMousePosition.getY() > styledTextNode->getParentNode()->getComputedConstraints().height - 50) {
-						scrollMode = SCROLLMODE_DOWN;
-						// unset
-						styledTextNode->unsetIndexMousePosition();
-						styledTextNode->unsetSelectionIndexMousePosition();
-						//
-						styledTextNode->getScreenNode()->addTickNode(styledTextNode);
-					} else {
-						styledTextNode->getScreenNode()->removeTickNode(styledTextNode);
-						//
-						scrollMode = SCROLLMODE_NONE;
-						// submit to styled text node
-						styledTextNode->setSelectionIndexMousePosition(nodeMousePosition.getX(), nodeMousePosition.getY());
-					}
-					//
-					resetCursorMode();
-					//
-					event->setProcessed(true);
-					break;
-				}
-			case GUIMouseEvent::MOUSEEVENT_RELEASED:
-				{
-					if (released == false) {
-						//
-						styledTextNode->unsetIndexMousePosition();
-						styledTextNode->unsetSelectionIndexMousePosition();
+		nodeMousePositionNoOffsets = nodeMousePosition.clone().sub(Vector2(styledTextNode->getParentNode()->getChildrenRenderOffsetX(), styledTextNode->getParentNode()->getChildrenRenderOffsetY()));
 
+		//
+		if (input == true) {
+			// dragging, releasing
+			switch(event->getType()) {
+				case GUIMouseEvent::MOUSEEVENT_DRAGGED:
+					{
 						//
-						styledTextNode->getScreenNode()->removeTickNode(styledTextNode);
-
+						dragging = true;
 						//
-						if (dragging == true && selectionIndex != -1) {
-							auto _index = index;
-							index = selectionIndex;
-							selectionIndex = _index;
+						if (nodeMousePositionNoOffsets.getY() < 50) {
+							scrollMode = SCROLLMODE_UP;
+							// unset
+							styledTextNode->unsetIndexMousePosition();
+							styledTextNode->unsetSelectionIndexMousePosition();
+							//
+							styledTextNode->getScreenNode()->addTickNode(styledTextNode);
+						} else
+						if (nodeMousePositionNoOffsets.getY() > styledTextNode->getParentNode()->getComputedConstraints().height - 50) {
+							scrollMode = SCROLLMODE_DOWN;
+							// unset
+							styledTextNode->unsetIndexMousePosition();
+							styledTextNode->unsetSelectionIndexMousePosition();
+							//
+							styledTextNode->getScreenNode()->addTickNode(styledTextNode);
+						} else {
+							styledTextNode->getScreenNode()->removeTickNode(styledTextNode);
+							//
+							scrollMode = SCROLLMODE_NONE;
+							// submit to styled text node
+							styledTextNode->setSelectionIndexMousePosition(nodeMousePositionNoOffsets.getX(), nodeMousePositionNoOffsets.getY());
 						}
-
 						//
-						scrollMode = SCROLLMODE_NONE;
-						//
-						styledTextNode->scrollToIndex();
+						resetCursorMode();
 						//
 						event->setProcessed(true);
-						//
-						dragging = false;
+						break;
 					}
+				case GUIMouseEvent::MOUSEEVENT_RELEASED:
+					{
+						if (released == false) {
+							//
+							styledTextNode->unsetIndexMousePosition();
+							styledTextNode->unsetSelectionIndexMousePosition();
+
+							//
+							styledTextNode->getScreenNode()->removeTickNode(styledTextNode);
+
+							//
+							if (dragging == true && selectionIndex != -1) {
+								auto _index = index;
+								index = selectionIndex;
+								selectionIndex = _index;
+							}
+
+							//
+							scrollMode = SCROLLMODE_NONE;
+							//
+							styledTextNode->scrollToIndex();
+							//
+							event->setProcessed(true);
+							//
+							dragging = false;
+						}
+						break;
+					}
+				default:
 					break;
-				}
-			default:
-				break;
+			}
 		}
 	}
 }
 
 void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 {
+	if (input == false) return;
+
 	//
 	auto maxLength = 0;
 	auto disabled = false;
@@ -267,6 +349,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 		auto keyControlX = false;
 		auto keyControlC = false;
 		auto keyControlV = false;
+		auto keyControlSpace = false;
 		auto isKeyDown = event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
 		// determine select all, copy, paste, cut
 		if (Character::toLowerCase(event->getKeyChar()) == 'a' && keyControl == true) {
@@ -283,6 +366,10 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 		}
 		if (Character::toLowerCase(event->getKeyChar()) == 'v' && keyControl == true) {
 			keyControlV = isKeyDown;
+			event->setProcessed(true);
+		}
+		if (event->getKeyChar() == ' ' && keyControl == true) {
+			keyControlSpace = isKeyDown;
 			event->setProcessed(true);
 		}
 		// handle them ...
@@ -323,6 +410,9 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 				forwardInsertText(index, clipboardContent.size());
 				index+= clipboardContent.size();
 			}
+		} else
+		if (keyControlSpace == true) {
+			forwardCodeCompletion(index);
 		} else {
 			// navigation, delete, return
 			switch (event->getKeyCode()) {
@@ -635,4 +725,13 @@ void GUIStyledTextNodeController::addChangeListener(ChangeListener* listener)
 void GUIStyledTextNodeController::removeChangeListener(ChangeListener* listener)
 {
 	changeListeners.erase(std::remove(changeListeners.begin(), changeListeners.end(), listener), changeListeners.end());
+}
+
+void GUIStyledTextNodeController::addCodeCompletionListener(CodeCompletionListener* listener) {
+	removeCodeCompletionListener(listener);
+	codeCompletionListeners.push_back(listener);
+}
+
+void GUIStyledTextNodeController::removeCodeCompletionListener(CodeCompletionListener* listener) {
+	codeCompletionListeners.erase(std::remove(codeCompletionListeners.begin(), codeCompletionListeners.end(), listener), codeCompletionListeners.end());
 }

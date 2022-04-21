@@ -54,8 +54,6 @@ using tdme::utilities::Exception;
 using tdme::utilities::Primitives;
 using tdme::utilities::Time;
 
-constexpr int32_t PhysicsTest4::RIGID_TYPEID_STANDARD;
-
 PhysicsTest4::PhysicsTest4()
 {
 	Application::setLimitFPS(true);
@@ -164,7 +162,7 @@ void PhysicsTest4::reshape(int32_t width, int32_t height)
 void PhysicsTest4::onChar(unsigned int key, int x, int y) {
 }
 
-void PhysicsTest4::onKeyDown (unsigned char key, int keyCode, int x, int y) {
+void PhysicsTest4::onKeyDown (unsigned char key, int keyCode, int x, int y, bool repeat) {
 }
 
 void PhysicsTest4::onKeyUp(unsigned char key, int keyCode, int x, int y) {

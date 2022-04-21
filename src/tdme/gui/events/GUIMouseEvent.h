@@ -22,27 +22,34 @@ public:
 	};
 
 private:
-	int64_t time;
+	int64_t time { -1LL };
 	GUIMouseEventType type { MOUSEEVENT_NONE };
-	int xUnscaled;
-	int yUnscaled;
-	int x;
-	int y;
-	int button;
-	float wheelX;
-	float wheelY;
-	float wheelZ;
-	bool metaDown;
-	bool controlDown;
-	bool altDown;
-	bool shiftDown;
-	bool processed;
+	int xUnscaled { -1 };
+	int yUnscaled { -1 };
+	int x { -1 };
+	int y { -1 };
+	int button { -1 };
+	float wheelX { 0.0f };
+	float wheelY { 0.0f };
+	float wheelZ { 0.0f };
+	bool metaDown { false };
+	bool controlDown { false };
+	bool altDown { false };
+	bool shiftDown { false };
+	bool processed { false };
 
 public:
 	/**
+	 * Constructor
+	 */
+	inline GUIMouseEvent() {
+	}
+
+	/**
 	 * Destructor
 	 */
-	~GUIMouseEvent();
+	inline ~GUIMouseEvent() {
+	}
 
 	/**
 	 * @return time in milliseconds
@@ -268,10 +275,5 @@ public:
 	inline void setProcessed(bool processed) {
 		this->processed = processed;
 	}
-
-	/**
-	 * Public constructor
-	 */
-	GUIMouseEvent();
 
 };

@@ -33,8 +33,8 @@ class tdme::audio::Audio final
 	friend class Sound;
 
 private:
-	static constexpr int32_t ALBUFFERID_NONE { -1 };
-	static constexpr int32_t ALSOURCEID_NONE { -1 };
+	static constexpr uint32_t ALBUFFERID_NONE { 0 };
+	static constexpr uint32_t ALSOURCEID_NONE { 0 };
 	STATIC_DLL_IMPEXT static Audio* instance;
 
 	ALCdevice* device { nullptr };

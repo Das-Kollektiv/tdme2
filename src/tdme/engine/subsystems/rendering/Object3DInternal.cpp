@@ -12,8 +12,8 @@
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/subsystems/rendering/ModelUtilitiesInternal.h>
 #include <tdme/engine/subsystems/rendering/Object3DNode.h>
+#include <tdme/engine/ColorTexture.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/engine/FrameBuffer.h>
 #include <tdme/math/Vector3.h>
 
 using std::string;
@@ -28,8 +28,8 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::subsystems::rendering::ModelUtilitiesInternal;
 using tdme::engine::subsystems::rendering::Object3DInternal;
 using tdme::engine::subsystems::rendering::Object3DNode;
+using tdme::engine::ColorTexture;
 using tdme::engine::Engine;
-using tdme::engine::FrameBuffer;
 using tdme::math::Vector3;
 
 Object3DInternal::Object3DInternal(const string& id, Model* model, int instances) :
@@ -48,9 +48,9 @@ Object3DInternal::Object3DInternal(const string& id, Model* model, int instances
 Object3DInternal::~Object3DInternal() {
 }
 
-void Object3DInternal::bindDiffuseTexture(FrameBuffer* frameBuffer, const string& nodeId, const string& facesEntityId)
+void Object3DInternal::bindDiffuseTexture(ColorTexture* texture, const string& nodeId, const string& facesEntityId)
 {
-	bindDiffuseTexture(frameBuffer->getColorBufferTextureId(), nodeId, facesEntityId);
+	bindDiffuseTexture(texture != nullptr?texture->getColorTextureId():Object3DNode::TEXTUREID_NONE, nodeId, facesEntityId);
 }
 
 void Object3DInternal::unbindDiffuseTexture(const string& nodeId, const string& facesEntityId)

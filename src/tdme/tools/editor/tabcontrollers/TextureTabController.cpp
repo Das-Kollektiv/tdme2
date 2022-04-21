@@ -22,8 +22,6 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
 
-#include <ext/tinyxml/tinyxml.h>
-
 using tdme::tools::editor::tabcontrollers::TextureTabController;
 
 using std::string;
@@ -45,12 +43,6 @@ using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
-
-using tinyxml::TiXmlAttribute;
-using tinyxml::TiXmlDocument;
-using tinyxml::TiXmlElement;
-
-#define AVOID_NULLPTR_STRING(arg) (arg == nullptr?"":arg)
 
 TextureTabController::TextureTabController(TextureTabView* view)
 {

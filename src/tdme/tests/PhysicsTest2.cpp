@@ -47,10 +47,6 @@ using tdme::math::Vector4;
 using tdme::utilities::ObjectDeleter;
 using tdme::utilities::Primitives;
 
-constexpr int32_t PhysicsTest2::RIGID_TYPEID_STANDARD;
-
-constexpr int32_t PhysicsTest2::BOX_COUNT;
-
 PhysicsTest2::PhysicsTest2()
 {
 	Application::setLimitFPS(true);

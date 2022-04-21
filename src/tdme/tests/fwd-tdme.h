@@ -22,6 +22,7 @@ namespace tests {
 	class RayTracingTest;
 	class SkinningTest;
 	class TreeTest;
+	class VideoTest;
 	class WaterTest;
 }  // namespace tests
 }  // namespace tdme

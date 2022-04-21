@@ -4,10 +4,18 @@
 
 #include <tdme/tdme.h>
 #include <tdme/gui/nodes/GUIStyledTextNode.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
+#include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/StringTools.h>
+
+#include <ext/tinyxml/tinyxml.h>
+
+#define AVOID_NULLPTR_STRING(arg) (arg == nullptr?"":arg)
 
 using std::string;
 using std::to_string;
@@ -15,10 +23,18 @@ using std::to_string;
 using tdme::tools::editor::misc::TextFormatter;
 
 using tdme::gui::nodes::GUIStyledTextNode;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;
+using tdme::utilities::Exception;
+using tdme::utilities::ExceptionBase;
 using tdme::utilities::Float;
 using tdme::utilities::Integer;
 using tdme::utilities::StringTools;
+
+using tinyxml::TiXmlAttribute;
+using tinyxml::TiXmlDocument;
+using tinyxml::TiXmlElement;
 
 TextFormatter* TextFormatter::instance = nullptr;
 
@@ -301,7 +317,7 @@ void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 													break;
 												}
 											} else
-											if (isdigit(word[j]) == false) {
+											if (isdigit(word[j]) == 0) {
 												valid = false;
 												break;
 											}
@@ -392,4 +408,63 @@ void TextFormatter::format(const string& extension, GUIStyledTextNode* textNode,
 		// unset styles if no language found
 		if (foundLanguage == false) textNode->unsetStyles();
 	}
+}
+
+const vector<TiXmlElement*> TextFormatter::getChildrenByTagName(TiXmlElement* parent, const char* name)
+{
+	vector<TiXmlElement*> elementList;
+	for (auto *child = parent->FirstChildElement(name); child != nullptr; child = child->NextSiblingElement(name)) {
+		elementList.push_back(child);
+	}
+	return elementList;
+}
+
+const vector<TiXmlElement*> TextFormatter::getChildren(TiXmlElement* parent)
+{
+	vector<TiXmlElement*> elementList;
+	for (auto *child = parent->FirstChildElement(); child != nullptr; child = child->NextSiblingElement()) {
+		elementList.push_back(child);
+	}
+	return elementList;
+}
+
+const TextFormatter::CodeCompletion* TextFormatter::loadCodeCompletion(const string& extension) {
+	Console::println("TextFormatter::loadCodeCompletion()");
+	for (auto& language: languages) {
+		if (std::find(language.extensions.begin(), language.extensions.end(), extension) != language.extensions.end()) {
+			Console::println("TextFormatter::loadCodeCompletion(): found language: '" + language.name + "'");
+			try {
+				// load dae xml document
+				auto xmlContent = FileSystem::getInstance()->getContentAsString("resources/engine/code-completion", StringTools::toLowerCase(language.name) + ".xml");
+				TiXmlDocument xmlDocument;
+				xmlDocument.Parse(xmlContent.c_str());
+				if (xmlDocument.Error() == true) {
+					throw ExceptionBase(string("Could not parse XML. Error='") + string(xmlDocument.ErrorDesc()) + string("'"));
+				}
+				TiXmlElement* xmlRoot = xmlDocument.RootElement();
+				auto codeCompletion = new CodeCompletion();
+				codeCompletion->name = language.name;
+				for (auto xmlKeywordElement: getChildrenByTagName(xmlRoot, "keyword")) {
+					auto symbol = CodeCompletion::CodeCompletionSymbol();
+					symbol.name = string(AVOID_NULLPTR_STRING(xmlKeywordElement->Attribute("name")));
+					for (auto xmlOverloadElement: getChildrenByTagName(xmlKeywordElement, "overload")) {
+						auto methodOverload = CodeCompletion::CodeCompletionSymbol::CodeCompletionMethodOverload();
+						methodOverload.returnValue = string(AVOID_NULLPTR_STRING(xmlOverloadElement->Attribute("return-value")));
+						for (auto xmlParameterElement: getChildrenByTagName(xmlOverloadElement, "parameter")) {
+							methodOverload.parameters.push_back(string(AVOID_NULLPTR_STRING(xmlParameterElement->Attribute("name"))));
+						}
+						symbol.overloadList.push_back(methodOverload);
+					}
+					codeCompletion->symbols.push_back(symbol);
+				}
+				codeCompletion->delimiters = language.keywordDelimiters;
+				codeCompletion->statementDelimiter = language.statementDelimiter;
+				return codeCompletion;
+			} catch (Exception &exception) {
+				Console::println("TextFormatter::loadCodeCompletion(): found language: '" + language.name + "': An error occurred: " + exception.what());
+			}
+			break;
+		}
+	}
+	return nullptr;
 }

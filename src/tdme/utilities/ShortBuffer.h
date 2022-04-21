@@ -29,25 +29,25 @@ public:
 	/**
 	 * @returns buffer capacity
 	 */
-	inline virtual int32_t getCapacity() {
-		return Buffer::getCapacity() / sizeof(int16_t);
+	inline virtual int64_t getCapacity() {
+		return Buffer::getCapacity() / sizeof(uint16_t);
 	}
 
 	/**
 	 * @returns buffer position
 	 */
-	inline virtual int32_t getPosition() {
-		return Buffer::getPosition() / sizeof(int16_t);
+	inline virtual int64_t getPosition() {
+		return Buffer::getPosition() / sizeof(uint16_t);
 	}
 
 	/**
 	 * Get a value at given position
 	 * @param position position
 	 */
-	inline int16_t get(int32_t position) {
-		int16_t value = 0;
-		value+= ((int16_t)Buffer::get(position)) & 0xFF;
-		value+= ((int16_t)Buffer::get(position + 1) << 8) & 0xFF;
+	inline int16_t get(int64_t position) {
+		uint16_t value = 0;
+		value+= ((uint16_t)Buffer::get(position)) & 0xFF;
+		value+= ((uint16_t)Buffer::get(position + 1) << 8) & 0xFF;
 		return value;
 	}
 
@@ -55,8 +55,8 @@ public:
 	 * Put a value into current position
 	 * @param value value
 	 */
-	inline ShortBuffer* put(int16_t value) {
-		Buffer::put((const uint8_t*)&value, sizeof(int16_t));
+	inline ShortBuffer* put(uint16_t value) {
+		Buffer::put((const uint8_t*)&value, sizeof(uint16_t));
 		return this;
 	}
 

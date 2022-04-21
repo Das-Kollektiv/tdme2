@@ -80,6 +80,7 @@ using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShader;
 using tdme::engine::subsystems::skinning::SkinningShader;
 using tdme::engine::subsystems::texture2D::Texture2DRenderShader;
 using tdme::engine::Camera;
+using tdme::engine::DynamicColorTexture;
 using tdme::engine::Entity;
 using tdme::engine::EntityHierarchy;
 using tdme::engine::EntityPickingFilter;
@@ -124,6 +125,7 @@ class tdme::engine::Engine final
 	friend class tdme::engine::subsystems::renderer::EngineGL2Renderer;
 	friend class tdme::engine::subsystems::renderer::EngineGLES2Renderer;
 	friend class tdme::engine::subsystems::renderer::EngineVKRenderer;
+	friend class DynamicColorTexture;
 	friend class EntityHierarchy;
 	friend class EnvironmentMapping;
 	friend class FogParticleSystem;

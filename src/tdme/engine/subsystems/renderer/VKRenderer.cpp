@@ -4236,10 +4236,12 @@ void VKRenderer::uploadCubeMapTexture(int contextIdx, Texture* textureLeft, Text
 	auto& texture = *textureObjectPtr;
 
 	// already uploaded
+	/*
 	if (texture.uploaded == true) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture already uploaded: " + to_string(boundTexture.id));
 		return;
 	}
+	*/
 
 	texture.type = texture_type::TYPE_CUBEMAP_TEXTURE;
 	texture.width = textureLeft->getTextureWidth();
@@ -4610,11 +4612,13 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 	auto& textureType = *textureObjectPtr;
 
 	// already uploaded
+	/*
 	if (textureType.uploaded == true) {
 		Console::println("VKRenderer::" + string(__FUNCTION__) + "(): texture already uploaded: " + to_string(boundTexture.id));
 		texturesMutex.unlock();
 		return;
 	}
+	*/
 
 	//
 	uint32_t mipLevels = 1;

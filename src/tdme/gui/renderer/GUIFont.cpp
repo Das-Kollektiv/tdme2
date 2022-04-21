@@ -56,9 +56,9 @@ GUIFont* GUIFont::parse(const string& pathName, const string& fileName)
 	auto font = new GUIFont();
 	vector<string> lines;
 	FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, lines);
-	auto info = lines[lineIdx++];
-	auto common = lines[lineIdx++];
-	auto page = lines[lineIdx++];
+	auto& info = lines[lineIdx++];
+	auto& common = lines[lineIdx++];
+	auto& page = lines[lineIdx++];
 	font->texture = TextureReader::read(
 		pathName,
 		StringTools::substring(page, page.find("file=") + string("file=\"").length(), page.find_last_of("\"")),

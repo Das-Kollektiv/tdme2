@@ -11,7 +11,6 @@
 #include <tdme/gui/nodes/GUINode_Scale9Grid.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/GUIFont.h>
-#include <tdme/gui/GUI.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/MutableString.h>
 
@@ -26,7 +25,6 @@ using tdme::gui::nodes::GUINode_Scale9Grid;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::renderer::GUIFont;
-using tdme::gui::GUI;
 using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
 
@@ -52,7 +50,7 @@ GUITextNode::GUITextNode(
 ):
 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
 {
-	this->font = font.empty() == true?nullptr:GUI::getFont(screenNode->getApplicationRootPathName(), font);
+	this->font = font.empty() == true?nullptr:screenNode->getFont(screenNode->getApplicationRootPathName(), font);
 	this->color = color.empty() == true || color.length() == 0?GUIColor():GUIColor(color);
 	this->text.set(text);
 	if (this->font != nullptr) this->font->initialize();

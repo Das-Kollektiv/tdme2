@@ -26,7 +26,7 @@ using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
 
 
-void processFile(const string& fileName) {
+void parseHpp(const string& fileName) {
 	Console::println("Processing file: " + fileName);
 	vector<string> fileContent;
 	FileSystem::getInstance()->getContentAsStringArray(".", fileName, fileContent);
@@ -69,5 +69,5 @@ int main(int argc, char** argv)
 		Application::exit(1);
 	}
 
-	processFile(argv[1]);
+	parseHpp(argv[1]);
 }

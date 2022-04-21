@@ -42,7 +42,6 @@ unordered_map<string, string> GUIProgressBar::getAttributes(GUIScreenNode* scree
 	attributes["disabled"] = "false";
 	attributes["value"] = "0.0";
 	attributes["width"] = "223"; // TODO: a.drewke
-	attributes["height"] = "53";
 	return attributes;
 }
 

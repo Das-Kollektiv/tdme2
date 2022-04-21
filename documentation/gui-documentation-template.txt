@@ -1,0 +1,598 @@
+button
+	background-image
+	disabled
+	height
+	hide-on
+	id
+	image
+	name
+	on-initialize
+	on-mouse-click
+	on-mouse-doubleclick
+	on-mouse-out
+	on-mouse-over
+	show-on
+	template
+	text
+	value
+	width
+
+checkbox
+	disabled
+	height
+	hide-on
+	id
+	image-checked
+	image-unchecked
+	name
+	on-change
+	on-initialize
+	on-mouse-click
+	on-mouse-doubleclick
+	on-mouse-out
+	on-mouse-over
+	selected
+	show-on
+	size
+	text
+	value
+	width
+
+context-menu
+	* accepts XML within tag
+	disabled
+	hide-on
+	id
+	on-initialize
+	on-mouse-click
+	on-mouse-doubleclick
+	on-mouse-out
+	on-mouse-over
+	show-on
+
+context-menu-item
+	* accepts XML within tag
+	disabled
+	hide-on
+	id
+	image
+	on-initialize
+	on-mouse-click
+	on-mouse-doubleclick
+	on-mouse-out
+	on-mouse-over
+	shortcut
+	show-on
+	text
+
+dropdown
+	* accepts XML within tag
+	disabled
+	height
+	hide-on
+	id
+	image
+	name
+	on-change
+	on-initialize
+	on-mouse-click
+	on-mouse-doubleclick
+	on-mouse-out
+	on-mouse-over
+	padding
+	show-on
+	template
+	text
+	width
+
+dropdown-option
+	* accepts XML within tag
+	disabled
+	hide-on
+	id
+	on-initialize
+	on-mouse-click
+	on-mouse-doubleclick
+	on-mouse-out
+	on-mouse-over
+	selected
+	show-on
+	text
+	value
+
+effect-default
+	effect-color-add
+	effect-color-mul
+	persistant
+	time
+	type
+
+effect-in
+	effect-color-add
+	effect-color-mul
+	effect-position-x
+	on
+	persistant
+	repeat
+	start-effect-color-add
+	start-effect-color-mul
+	time
+	type
+	yoyo
+
+effect-out
+	effect-color-add
+	effect-color-mul
+	effect-position-x
+	on
+	persistant
+	time
+	type
+
+element
+	alignment
+	background-color
+	border
+	border-color
+	focusable
+	height
+	horizontal-align
+	id
+	ignore-events
+	on-initialize
+	on-mouse-click
+	on-mouse-out
+	on-mouse-over
+	options
+	show-on
+	vertical-align
+	width
+
+frame-buffer
+	background-color
+	height
+	id
+	width
+
+gradient
+	colors
+	height
+	rotation
+	width
+
+image
+	color-effect-mul
+	effect-color-mul
+	height
+	hide-on
+	horizontal-align
+	id
+	mask
+	mask-max-value
+	rotation
+	scale9
+	scale9-left
+	scale9-right
+	show-on
+	src
+	vertical-align
+	width
+
+image-button
+	disabled
+	height
+	hide-on
+	id
+	name
+	on-initialize
+	on-mouse-click
+	on-mouse-doubleclick
+	on-mouse-out
+	on-mouse-over
+	show-on
+	src-clicked
+	src-disabled
+	src-normal
+	src-over
+	value
+	width
+
+input
+	disabled
+	height
+	hide-on
+	hint
+	id
+	image
+	maxlength
+	name
+	on-change
+	on-initialize
+	on-mouse-click
+	on-mouse-doubleclick
+	on-mouse-out
+	on-mouse-over
+	options
+	show-on
+	text
+	unit
+	width
+
+knob
+	disabled
+	id
+	name
+	on-change
+	on-initialize
+	on-mouse-click
+	on-mouse-doubleclick
+	on-mouse-out
+	on-mouse-over
+	value
+
+layer
+	background-color
+	border
+	border-color
+	height
+	hide-on
+	horizontal-align
+	id
+	padding
+	vertical-align
+	width
+
+layout
+	alignemnt
+	alignment
+	background-color
+	background-image
+	background-image-effect-color-mul
+	background-image-scale9
+	border
+	border-bottom
+	border-color
+	border-color-bottom
+	border-color-top
+	border-left
+	border-right
+	border-top
+	flow
+	height
+	hide-on
+	horizontal-align
+	id
+	overflow-x
+	overflow-y
+	padding
+	padding-bottom
+	padding-left
+	padding-right
+	padding-top
+	show-on
+	vertical-align
+	width
+
+menu-header
+	* accepts XML within tag
+	hide-on
+	show-on
+
+menu-header-item
+	* accepts XML within tag
+	disabled
+	hide-on
+	id
+	on-initialize
+	on-mouse-click
+	on-mouse-doubleclick
+	on-mouse-out
+	on-mouse-over
+	show-on
+	text
+
+menu-item
+	* accepts XML within tag
+	disabled
+	hide-on
+	id
+	image
+	on-initialize
+	on-mouse-click
+	on-mouse-doubleclick
+	on-mouse-out
+	on-mouse-over
+	shortcut
+	show-on
+	text
+
+menu-separator
+
+panel
+	background-color
+	height
+	width
+
+progress-bar
+	id
+	name
+	show-on
+	text-on
+	value
+	width
+
+radiobutton
+	disabled
+	height
+	hide-on
+	id
+	image
+	name
+	on-change
+	on-initialize
+	on-mouse-click
+	on-mouse-doubleclick
+	on-mouse-out
+	on-mouse-over
+	selected
+	show-on
+	template
+	text
+	value
+	width
+
+scrollarea
+	* accepts XML within tag
+	alignment
+	background-color
+	border
+	focusable
+	height
+	hide-on
+	horizontal-align
+	id
+	padding
+	show-on
+	vertical-align
+	width
+
+selectbox
+	* accepts XML within tag
+	boder
+	disabled
+	height
+	hide-on
+	id
+	name
+	on-change
+	on-initialize
+	on-mouse-click
+	on-mouse-doubleclick
+	on-mouse-out
+	on-mouse-over
+	options
+	show-on
+	width
+
+selectbox-option
+	disabled
+	hide-on
+	id
+	image
+	on-initialize
+	on-mouse-click
+	on-mouse-doubleclick
+	on-mouse-out
+	on-mouse-over
+	parent-id
+	selected
+	show-on
+	text
+	value
+
+selectbox-parent-option
+	* accepts XML within tag
+	disabled
+	id
+	image
+	on-change
+	on-initialize
+	on-mouse-click
+	on-mouse-doubleclick
+	on-mouse-out
+	on-mouse-over
+	parent-id
+	selected
+	text
+	value
+
+selector-horizontal
+	* accepts XML within tag
+	hide-on
+	id
+	on-change
+	on-initialize
+	on-mouse-click
+	on-mouse-doubleclick
+	on-mouse-out
+	on-mouse-over
+	show-on
+
+selector-horizontal-option
+	disabled
+	hide-on
+	id
+	on-change
+	on-initialize
+	on-mouse-click
+	on-mouse-doubleclick
+	on-mouse-out
+	on-mouse-over
+	selected
+	show-on
+	text
+	value
+
+slider-horizontal
+	disabled
+	hide-on
+	id
+	name
+	on-change
+	on-initialize
+	on-mouse-click
+	on-mouse-doubleclick
+	on-mouse-out
+	on-mouse-over
+	show-on
+	value
+	width
+
+slider-vertical
+	disabled
+	height
+	hide-on
+	id
+	name
+	on-change
+	on-initialize
+	on-mouse-click
+	on-mouse-doubleclick
+	on-mouse-out
+	on-mouse-over
+	show-on
+	template
+	value
+
+space
+	alignment
+	border-bottom
+	border-color-bottom
+	factor
+	height
+	hide-on
+	horizontal-align
+	show-on
+	vertical-align
+	width
+
+styled-input
+	* accepts XML within tag
+	color
+	disabled
+	font
+	height
+	hide-on
+	id
+	on-change
+	on-initialize
+	on-mouse-click
+	on-mouse-doubleclick
+	on-mouse-out
+	on-mouse-over
+	options
+	padding
+	preformatted
+	show-on
+	width
+
+styled-text
+	color
+	editable
+	font
+	height
+	horizontal-align
+	id
+	preformatted
+	width
+
+tab
+	closeable
+	disabled
+	hide-on
+	id
+	image
+	on-initialize
+	on-mouse-click
+	on-mouse-doubleclick
+	on-mouse-out
+	on-mouse-over
+	show-on
+	text
+	type-color
+
+tab-content
+	* accepts XML within tag
+	alignment
+	hide-on
+	horizontal-align
+	tab-id
+	vertical-align
+
+table
+	background-color
+	height
+	width
+
+table-cell
+	border
+	border-color
+
+table-row
+
+tabs
+	* accepts XML within tag
+	alignment
+	height
+	hide-on
+	id
+	ignore-events
+	show-on
+	width
+
+tabs-content
+	* accepts XML within tag
+	hide-on
+	id
+	ignore-events
+	show-on
+
+tabs-header
+	* accepts XML within tag
+	hide-on
+	id
+	on-initialize
+	scrollable
+	show-on
+
+template
+	id
+	my-text
+	name
+	src
+	type
+
+text
+	background-color
+	color
+	eight
+	font
+	height
+	hide-on
+	horizontal-align
+	id
+	padding-bottom
+	padding-left
+	padding-right
+	padding-top
+	show-on
+	text
+	vertical-align
+	width
+
+texture
+	height
+	id
+	src
+	width
+

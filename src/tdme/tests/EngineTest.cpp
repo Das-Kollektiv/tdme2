@@ -25,6 +25,7 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
+#include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object3D.h>
 #include <tdme/engine/Object3DModel.h>
@@ -68,6 +69,7 @@ using tdme::engine::subsystems::particlesystem::SphereParticleEmitter;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
+using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
 using tdme::engine::Object3D;
 using tdme::engine::Object3DModel;
@@ -92,14 +94,6 @@ using tdme::utilities::ObjectDeleter;
 EngineTest::EngineTest()
 {
 	Application::setLimitFPS(true);
-	keyLeft = false;
-	keyRight = false;
-	keyUp = false;
-	keyW = false;
-	keyA = false;
-	keyD = false;
-	mouseClicked = false;
-	entityClicked = nullptr;
 	engine = Engine::getInstance();
 }
 
@@ -390,7 +384,7 @@ void EngineTest::reshape(int32_t width, int32_t height)
 void EngineTest::onChar(unsigned int key, int x, int y) {
 }
 
-void EngineTest::onKeyDown (unsigned char key, int keyCode, int x, int y) {
+void EngineTest::onKeyDown (unsigned char key, int keyCode, int x, int y, bool repeat) {
 	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == 'w') keyW = true;
 	if (keyChar == 'a') keyA = true;

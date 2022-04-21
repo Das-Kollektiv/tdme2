@@ -54,7 +54,7 @@ void scanDir(const string& folder, vector<string>& totalFiles) {
 	}
 }
 
-void processFile(const string& fileName) {
+void parseHpp(const string& fileName) {
 	vector<string> fileContent;
 	FileSystem::getInstance()->getContentAsStringArray(".", fileName, fileContent);
 	auto methodCount = 0;
@@ -209,6 +209,6 @@ int main(int argc, char** argv)
 
 	Console::println("Processing files");
 	for (auto fileName: files) {
-		processFile(fileName);
+		parseHpp(fileName);
 	}
 }

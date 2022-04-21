@@ -90,7 +90,7 @@ static int string_compare(const string& lhs, const string& rhs) {
 	return lhs.size() < rhs.size();
 }
 
-void processFile(const string& fileName) {
+void parseHpp(const string& fileName) {
 	Console::println("Processing file: " + fileName);
 	vector<string> fileContent;
 	FileSystem::getInstance()->getContentAsStringArray(".", fileName, fileContent);
@@ -192,6 +192,6 @@ int main(int argc, char** argv)
 
 	Console::println("Processing files");
 	for (auto fileName: files) {
-		processFile(fileName);
+		parseHpp(fileName);
 	}
 }

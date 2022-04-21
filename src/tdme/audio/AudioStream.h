@@ -27,11 +27,11 @@ class tdme::audio::AudioStream
 private:
 	bool initiated { false };
 	array<uint32_t, 2> alBufferIds;
-	uint32_t alSourceId;
-	uint32_t sampleRate;
-	uint8_t channels;
+	uint32_t alSourceId { 0 };
+	uint32_t sampleRate { 0 };
+	uint8_t channels { 0 };
 	ByteBuffer* data { nullptr };
-	int32_t format;
+	int32_t format { 0 };
 	bool playing { false };
 
 protected:
@@ -39,12 +39,14 @@ protected:
 	 * Protected constructor
 	 * @param id id
 	 */
-	AudioStream(const string& id);
+	inline AudioStream(const string& id): AudioEntity(id) {
+		//
+	}
 
 	/**
 	 * Destructor
 	 */
-	virtual ~AudioStream();
+	inline virtual ~AudioStream() {}
 
 	// overridden methods
 	virtual bool initialize() override;
@@ -64,7 +66,7 @@ public:
 	 * @param channels channels
 	 * @param bufferSize buffer size
 	 */
-	virtual void setParameters(uint32_t sampleRate, uint8_t channels, const uint32_t bufferSize = 32768);
+	virtual void setParameters(uint32_t sampleRate, uint8_t channels, const int64_t bufferSize = 32768);
 
 	// overridden methods
 	virtual bool isPlaying() override;

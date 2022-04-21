@@ -128,11 +128,11 @@ void GUIShader::bindTexture(int32_t textureId)
 	if (isRunning == false) return;
 	switch(renderer->getTextureUnit(renderer->CONTEXTINDEX_DEFAULT)) {
 		case 0:
-			renderer->setProgramUniformInteger(renderer->CONTEXTINDEX_DEFAULT, uniformDiffuseTextureAvailable, textureId == 0 ? 0 : 1);
+			renderer->setProgramUniformInteger(renderer->CONTEXTINDEX_DEFAULT, uniformDiffuseTextureAvailable, textureId == 0?0:1);
 			break;
 		case 1:
 			renderer->setProgramUniformFloat(renderer->CONTEXTINDEX_DEFAULT, uniformMaskMaxValue, renderer->getMaskMaxValue(renderer->CONTEXTINDEX_DEFAULT));
-			renderer->setProgramUniformInteger(renderer->CONTEXTINDEX_DEFAULT, uniformMaskTextureAvailable, textureId == 0 ? 0 : 1);
+			renderer->setProgramUniformInteger(renderer->CONTEXTINDEX_DEFAULT, uniformMaskTextureAvailable, textureId == 0?0:1);
 			break;
 	}
 }

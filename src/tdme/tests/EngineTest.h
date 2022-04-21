@@ -42,14 +42,14 @@ private:
 	Object3D* cube { nullptr };
 	Transformations circleTransformations;
 	Entity* entityClicked { nullptr };
-	bool mouseClicked;
+	bool mouseClicked { false };
 	array<int, 2> mouseClickedXY;
-	bool keyLeft;
-	bool keyRight;
-	bool keyUp;
-	bool keyW;
-	bool keyA;
-	bool keyD;
+	bool keyLeft { false };
+	bool keyRight { false };
+	bool keyUp { false };
+	bool keyW { false };
+	bool keyA { false };
+	bool keyD { false };
 	ObjectDeleter<Model> modelDeleter;
 
 private:
@@ -93,7 +93,7 @@ public:
 	void initialize() override;
 	void reshape(int32_t width, int32_t height) override;
 	void onChar(unsigned int key, int x, int y) override;
-	void onKeyDown (unsigned char key, int keyCode, int x, int y) override;
+	void onKeyDown (unsigned char key, int keyCode, int x, int y, bool repeat) override;
 	void onKeyUp(unsigned char key, int keyCode, int x, int y) override;
 	void onMouseDragged(int x, int y) override;
 	void onMouseMoved(int x, int y) override;

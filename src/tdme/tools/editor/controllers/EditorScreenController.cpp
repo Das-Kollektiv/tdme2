@@ -60,6 +60,7 @@
 #include <tdme/tools/editor/tabviews/TextEditorTabView.h>
 #include <tdme/tools/editor/tabviews/TriggerEditorTabView.h>
 #include <tdme/tools/editor/tabviews/UIEditorTabView.h>
+#include <tdme/tools/editor/tabviews/VideoTabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/tools/editor/TDMEEditor.h>
 #include <tdme/utilities/Action.h>
@@ -127,6 +128,7 @@ using tdme::tools::editor::tabviews::TextureTabView;
 using tdme::tools::editor::tabviews::TextEditorTabView;
 using tdme::tools::editor::tabviews::TriggerEditorTabView;
 using tdme::tools::editor::tabviews::UIEditorTabView;
+using tdme::tools::editor::tabviews::VideoTabView;
 using tdme::tools::editor::views::EditorView;
 using tdme::tools::editor::TDMEEditor;
 using tdme::utilities::Action;
@@ -617,6 +619,8 @@ void EditorScreenController::ScanFilesThread::run() {
 				if (StringTools::endsWith(fileNameLowerCase, ".icns") == true) return true;
 				if (StringTools::endsWith(fileNameLowerCase, ".ico") == true) return true;
 				if (StringTools::endsWith(fileNameLowerCase, ".png") == true) return true;
+				// video
+				if (StringTools::endsWith(fileNameLowerCase, ".mpg") == true) return true;
 				// models
 				if (StringTools::endsWith(fileNameLowerCase, ".dae") == true) return true;
 				if (StringTools::endsWith(fileNameLowerCase, ".fbx") == true) return true;
@@ -1142,6 +1146,9 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 	if (StringTools::endsWith(fileNameLowerCase, ".ogg") == true) {
 		fileType = FILETYPE_SOUND;
 	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".mpg") == true) {
+		fileType = FILETYPE_VIDEO;
+	} else
 	if (StringTools::endsWith(fileNameLowerCase, ".h") == true ||
 		StringTools::endsWith(fileNameLowerCase, ".cpp") == true ||
 		StringTools::endsWith(fileNameLowerCase, ".c") == true ||
@@ -1256,6 +1263,11 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 					break;
 				}
 			case FILETYPE_TEXTURE:
+				{
+					onOpenFileFinish(tabId, fileType, absoluteFileName, nullptr, nullptr);
+					break;
+				}
+			case FILETYPE_VIDEO:
 				{
 					onOpenFileFinish(tabId, fileType, absoluteFileName, nullptr, nullptr);
 					break;
@@ -1426,6 +1438,21 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 					);
 					tabType = EditorTabView::TABTYPE_TEXTURE;
 					tabView = new TextureTabView(view, tabId, screenNode);
+					viewPortTemplate = "template_viewport_plain.xml";
+					break;
+				}
+			case FILETYPE_VIDEO:
+				{
+					icon = "{$icon.type_texture}";
+					colorType = "{$color.type_texture}";
+					auto screenNode = GUIParser::parse(
+						"resources/engine/gui/",
+						"tab_video.xml",
+						{{ "video", absoluteFileName}}
+
+					);
+					tabType = EditorTabView::TABTYPE_VIDEO;
+					tabView = new VideoTabView(view, tabId, screenNode);
 					viewPortTemplate = "template_viewport_plain.xml";
 					break;
 				}

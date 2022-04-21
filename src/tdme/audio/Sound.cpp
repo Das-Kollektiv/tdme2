@@ -21,6 +21,8 @@
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
 
+using tdme::audio::Sound;
+
 using std::string;
 using std::to_string;
 
@@ -29,21 +31,10 @@ using tdme::audio::decoder::VorbisDecoder;
 using tdme::audio::Audio;
 using tdme::audio::AudioBufferManager;
 using tdme::audio::AudioBufferManager_AudioBufferManaged;
-using tdme::audio::Sound;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystemException;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
-
-Sound::Sound(const string& id, const string& pathName, const string& fileName) : AudioEntity(id)
-{
-	initiated = false;
-	this->bufferId = pathName + "/" + fileName;
-	this->pathName = pathName;
-	this->fileName = fileName;
-	alBufferId = Audio::ALBUFFERID_NONE;
-	alSourceId = Audio::ALSOURCEID_NONE;
-}
 
 bool Sound::isPlaying()
 {

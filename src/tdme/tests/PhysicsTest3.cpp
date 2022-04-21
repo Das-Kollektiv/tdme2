@@ -67,16 +67,6 @@ using tdme::utilities::ObjectDeleter;
 using tdme::utilities::Primitives;
 using tdme::utilities::Time;
 
-constexpr int32_t PhysicsTest3::RIGID_TYPEID_STANDARD;
-
-constexpr int32_t PhysicsTest3::BOX_COUNT;
-
-constexpr int32_t PhysicsTest3::BOXSTACK_COUNT;
-
-constexpr int32_t PhysicsTest3::CAPSULE_COUNT;
-
-constexpr int32_t PhysicsTest3::SPHERE_COUNT;
-
 PhysicsTest3::PhysicsTest3()
 {
 	Application::setLimitFPS(true);
@@ -352,7 +342,7 @@ void PhysicsTest3::reshape(int32_t width, int32_t height)
 void PhysicsTest3::onChar(unsigned int key, int x, int y) {
 }
 
-void PhysicsTest3::onKeyDown (unsigned char key, int keyCode, int x, int y) {
+void PhysicsTest3::onKeyDown (unsigned char key, int keyCode, int x, int y, bool repeat) {
 	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == 'w') keyW = true;
 	if (keyChar == 'a') keyA = true;

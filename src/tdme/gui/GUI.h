@@ -7,7 +7,6 @@
 
 #include <tdme/tdme.h>
 #include <tdme/application/InputEventHandler.h>
-#include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/gui/elements/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
@@ -19,7 +18,6 @@
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/renderer/fwd-tdme.h>
-#include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -32,7 +30,6 @@ using std::unordered_set;
 using std::vector;
 
 using tdme::application::InputEventHandler;
-using tdme::engine::fileio::textures::Texture;
 using tdme::engine::Engine;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
@@ -40,9 +37,7 @@ using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
-using tdme::os::filesystem::FileSystemException;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Time;
@@ -67,9 +62,6 @@ class tdme::gui::GUI final: public virtual InputEventHandler
 	friend class tdme::gui::nodes::GUIScreenNode;
 
 private:
-	STATIC_DLL_IMPEXT static unordered_map<string, GUIFont*>* fontCache;
-	STATIC_DLL_IMPEXT static unordered_map<string, Texture*>* imageCache;
-
 	GUIRenderer* guiRenderer { nullptr };
 	Engine* engine { nullptr };
 	unordered_map<string, GUIScreenNode*> screens;
@@ -198,24 +190,6 @@ public:
 	inline vector<GUIKeyboardEvent>& getKeyboardEvents() {
 		return keyboardEvents;
 	}
-
-	/**
-	 * Get font
-	 * @param applicationRootPath application root path
-	 * @param fileName file name
-	 * @throws tdme::os::filesystem::FileSystemException
-	 * @return font
-	 */
-	static GUIFont* getFont(const string& applicationRootPath, const string& fileName);
-
-	/**
-	 * Get image
-	 * @param applicationRootPath application root path
-	 * @param fileName file name
-	 * @throws tdme::os::filesystem::FileSystemException
-	 * @return texture
-	 */
-	static Texture* getImage(const string& applicationRootPath, const string& fileName);
 
 	/**
 	 * Get screen
@@ -361,8 +335,9 @@ public:
 	 * @param keyCode key code
 	 * @param x x
 	 * @param y y
+	 * @param repeat repeat event
 	 */
-	void onKeyDown (unsigned char key, int keyCode, int x, int y) override;
+	void onKeyDown (unsigned char key, int keyCode, int x, int y, bool repeat) override;
 
 	/**
 	 * On key up
@@ -407,7 +382,8 @@ public:
 
 	/**
 	 * Handle screen events
+	 * @param clearEvents clear events
 	 */
-	void handleEvents();
+	void handleEvents(bool clearEvents = true);
 
 };

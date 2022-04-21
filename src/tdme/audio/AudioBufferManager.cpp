@@ -16,10 +16,6 @@ using tdme::audio::AudioBufferManager;
 using tdme::audio::AudioBufferManager_AudioBufferManaged;
 using tdme::utilities::Console;
 
-AudioBufferManager::AudioBufferManager()
-{
-}
-
 AudioBufferManager_AudioBufferManaged* AudioBufferManager::addAudioBuffer(const string& id)
 {
 	// check if we already manage this audio buffer

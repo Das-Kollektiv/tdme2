@@ -21,16 +21,21 @@ class tdme::audio::AudioBufferManager_AudioBufferManaged
 private:
 	AudioBufferManager* audioBufferManager;
 	string id;
-	int32_t alId;
-	int32_t referenceCounter;
+	uint32_t alId { 0 };
+	int32_t referenceCounter { 0 };
 
 	/**
 	 * Protected constructor
 	 * @param audioBufferManager audio buffer manager
 	 * @param id id
-	 * @param alId Open AL id
+	 * @param alId OpenAL buffer id
 	 */
-	AudioBufferManager_AudioBufferManaged(AudioBufferManager* audioBufferManager, const string& id, int32_t alId);
+	inline AudioBufferManager_AudioBufferManaged(AudioBufferManager* audioBufferManager, const string& id, int32_t alId):
+		audioBufferManager(audioBufferManager),
+		id(id),
+		alId(alId) {
+		//
+	}
 
 	/**
 	 * @return audio buffer id
@@ -40,17 +45,17 @@ private:
 	}
 
 	/**
-	 * @return Open AL id
+	 * @return OpenAL buffer id
 	 */
-	inline int32_t getAlId() {
+	inline uint32_t getAlId() {
 		return alId;
 	}
 
 	/**
-	 * Set up Open AL audio buffer id
-	 * @param alId al Id
+	 * Set up OpenAL audio buffer id
+	 * @param alId OpenAL buffer id
 	 */
-	inline void setAlId(int32_t alId) {
+	inline void setAlId(uint32_t alId) {
 		this->alId = alId;
 	}
 

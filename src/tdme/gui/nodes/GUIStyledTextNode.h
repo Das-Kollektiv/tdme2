@@ -60,6 +60,8 @@ private:
 		int textureId;
 		int width;
 		int height;
+		GUIColor effectColorMul;
+		GUIColor effectColorAdd;
 	};
 
 	bool preformatted;
@@ -67,8 +69,8 @@ private:
 	GUIColor color;
 	MutableString text;
 
-	int autoWidth;
-	int autoHeight;
+	int autoWidth { 0 };
+	int autoHeight { 0 };
 
 	bool parentOffsetsChanged;
 	float parentXOffsetLast;
@@ -108,6 +110,8 @@ private:
 	vector<URLArea> urlAreas;
 
 	static constexpr int MOUSEPOSITION_NONE { Integer::MIN_VALUE };
+	int indexPositionX { 0 };
+	int indexPositionY { 0 };
 	int indexMousePositionX { MOUSEPOSITION_NONE };
 	int indexMousePositionY { MOUSEPOSITION_NONE };
 	int selectionIndexMousePositionX { MOUSEPOSITION_NONE };
@@ -152,42 +156,11 @@ private:
 	void setSelectionIndexMousePosition(int x, int y);
 
 	/**
-	 * @return text size
-	 */
-	inline int getTextSize() {
-		return text.size();
-	}
-
-	/**
 	 * @return URL areas
 	 */
 	inline const vector<URLArea>& getURLAreas() {
 		return urlAreas;
 	}
-
-	/**
-	 * Remove characters at idx with given length
-	 * @param idx idx
-	 * @param count length
-	 * @return this mutable string
-	 */
-	void removeText(int32_t idx, int32_t count);
-
-	/**
-	 * Insert character c at idx
-	 * @param idx index
-	 * @param c char
-	 * @return this mutable string
-	 */
-	void insertText(int32_t idx, char c);
-
-	/**
-	 * Insert string at idx
-	 * @param idx index
-	 * @param s string
-	 * @return this mutable string
-	 */
-	void insertText(int32_t idx, const string& s);
 
 	/**
 	 * Set scroll to index
@@ -267,30 +240,6 @@ private:
 	 */
 	void determineNextLineConstraints(int& i, int charEndIdx, int textStyleIdx);
 
-	/**
-	 * Get previous new line
-	 * @param index index
-	 */
-	inline int getPreviousNewLine(int index) {
-		// find index of previous newline and store difference
-		auto previousNewLineIndex = index;
-		while (previousNewLineIndex >= 0 && text.charAt(previousNewLineIndex) != '\n') previousNewLineIndex--;
-		previousNewLineIndex = Math::max(previousNewLineIndex, 0);
-		return previousNewLineIndex;
-	}
-
-	/**
-	 * Get next newline
-	 * @param index index
-	 */
-	inline int getNextNewLine(int index) {
-		// find index of next newline
-		auto nextNewLineIndex = index;
-		while (nextNewLineIndex < text.size() && text.charAt(nextNewLineIndex) != '\n') nextNewLineIndex++;
-		nextNewLineIndex = Math::min(nextNewLineIndex, text.size() - 1);
-		return nextNewLineIndex;
-	}
-
 protected:
 	/**
 	 * Constructor
@@ -350,11 +299,106 @@ public:
 	void render(GUIRenderer* guiRenderer) override;
 
 	/**
+	 * @return index position x
+	 */
+	int getIndexPositionX() {
+		return indexPositionX;
+	}
+
+	/**
+	 * @return index position x
+	 */
+	int getIndexPositionY() {
+		return indexPositionY;
+	}
+
+	/**
 	 * @return text
 	 */
 	inline const MutableString& getText() const {
 		return text;
 	}
+
+	/**
+	 * Get previous new line
+	 * @param index index
+	 */
+	inline int getPreviousNewLine(int index) {
+		// find index of previous newline and store difference
+		auto previousNewLineIndex = index;
+		while (previousNewLineIndex >= 0 && text.charAt(previousNewLineIndex) != '\n') previousNewLineIndex--;
+		previousNewLineIndex = Math::max(previousNewLineIndex, 0);
+		return previousNewLineIndex;
+	}
+
+	/**
+	 * Get next newline
+	 * @param index index
+	 */
+	inline int getNextNewLine(int index) {
+		// find index of next newline
+		auto nextNewLineIndex = index;
+		while (nextNewLineIndex < text.size() && text.charAt(nextNewLineIndex) != '\n') nextNewLineIndex++;
+		nextNewLineIndex = Math::min(nextNewLineIndex, text.size() - 1);
+		return nextNewLineIndex;
+	}
+
+	/**
+	 * Get previous delimiter
+	 * @param index index
+	 * @param delimiters delimiters
+	 */
+	inline int getPreviousDelimiter(int index, const string& delimiters) {
+		// find index of previous newline and store difference
+		auto previousDelimiterIndex = index;
+		while (previousDelimiterIndex >= 0 && delimiters.find(text.charAt(previousDelimiterIndex)) == string::npos) previousDelimiterIndex--;
+		previousDelimiterIndex = Math::max(previousDelimiterIndex, 0);
+		return previousDelimiterIndex;
+	}
+
+	/**
+	 * Get next delimiter
+	 * @param index index
+	 * @param delimiters
+	 */
+	inline int getNextDelimiter(int index, const string& delimiters) {
+		// find index of next newline
+		auto nextDelimiterIndex = index;
+		while (nextDelimiterIndex < text.size() && delimiters.find(text.charAt(nextDelimiterIndex)) == string::npos) nextDelimiterIndex++;
+		nextDelimiterIndex = Math::min(nextDelimiterIndex, text.size() - 1);
+		return nextDelimiterIndex;
+	}
+
+	/**
+	 * @return text size
+	 */
+	inline int getTextSize() {
+		return text.size();
+	}
+
+	/**
+	 * Remove characters at idx with given length
+	 * @param idx idx
+	 * @param count length
+	 * @return this mutable string
+	 */
+	void removeText(int32_t idx, int32_t count);
+
+	/**
+	 * Insert character c at idx
+	 * @param idx index
+	 * @param c char
+	 * @return this mutable string
+	 */
+	void insertText(int32_t idx, char c);
+
+	/**
+	 * Insert string at idx
+	 * @param idx index
+	 * @param s string
+	 * @return this mutable string
+	 */
+	void insertText(int32_t idx, const string& s);
 
 	/**
 	 * Unset/dispose styles
@@ -400,7 +444,21 @@ public:
 	 * @param url url
 	 * @param width width or -1 for original image width
 	 * @param height height or -1 for original image height
+	 * @param horizontalScale horizontal scale as factor
+	 * @param verticalScale vertical scale as factor
+	 * @param effectColorMul effect color mul
+	 * @param effectColorAdd effect color add
 	 */
-	void setImage(int idx, const string& image, const string& url = string(), int width = -1, int height = -1);
+	void setImage(
+		int idx,
+		const string& image,
+		const string& url = string(),
+		int width = -1,
+		int height = -1,
+		float horizontalScale = 1.0f,
+		float verticalScale = 1.0f,
+		const GUIColor& effectColorMul = GUIColor::GUICOLOR_EFFECT_COLOR_MUL,
+		const GUIColor& effectColorAdd = GUIColor::GUICOLOR_EFFECT_COLOR_ADD
+	);
 
 };

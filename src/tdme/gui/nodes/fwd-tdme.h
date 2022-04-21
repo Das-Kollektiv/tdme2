@@ -51,6 +51,7 @@ namespace nodes {
 	class GUIVerticalScrollbarInternalController;
 	class GUIVerticalScrollbarInternalController_State;
 	class GUIVerticalScrollbarInternalNode;
+	class GUIVideoNode;
 }  // namespace nodes
 }  // namespace gui
 }  // namespace tdme

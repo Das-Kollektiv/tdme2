@@ -32,6 +32,7 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/ModelTools.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::map;
 using std::string;
@@ -60,6 +61,7 @@ using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;
 using tdme::utilities::ModelTools;
+using tdme::utilities::StringTools;
 
 const Color4 FBXReader::BLENDER_AMBIENT_NONE(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -123,8 +125,11 @@ Model* FBXReader::read(const string& pathName, const string& fileName) {
 	setupModelImportRotationMatrix(model);
 	setupModelScaleRotationMatrix(fbxScene, model);
 
+	// store possible armuature node ids (Blender only)
+	vector<string> possibleArmatureNodeIds;
+
 	// process nodes
-	processScene(fbxScene, model, pathName);
+	processScene(fbxScene, model, pathName, possibleArmatureNodeIds);
 
 	//
 	Console::println("FBXReader::read(): setting up animations");
@@ -172,8 +177,17 @@ Model* FBXReader::read(const string& pathName, const string& fileName) {
 		}
 		int startFrame = (int)Math::ceil(fbxStartTime.GetMilliSeconds() / (1000.0f * 1.0f / 30.0f));
 		int endFrame = (int)Math::ceil(fbxEndTime.GetMilliSeconds() / (1000.0f * 1.0f / 30.0f)) - 1;
+		auto animationName = string(fbxAnimStackNameArray[i]->Buffer());
+		if (possibleArmatureNodeIds.size() == 1) {
+			for (auto& possibleArmatureNodeId: possibleArmatureNodeIds) {
+				if (StringTools::startsWith(animationName, possibleArmatureNodeId + "|") == true) {
+					animationName = StringTools::substring(animationName, possibleArmatureNodeId.size() + 1, animationName.size());
+					break;
+				}
+			}
+		}
 		model->addAnimationSetup(
-			string(fbxAnimStackNameArray[i]->Buffer()),
+			animationName,
 			frameOffset + startFrame,
 			frameOffset + endFrame,
 			false
@@ -261,19 +275,24 @@ void FBXReader::setupModelScaleRotationMatrix(FbxScene* fbxScene, Model* model) 
 	model->setImportTransformationsMatrix(model->getImportTransformationsMatrix().clone().scale(static_cast<float>(fbxSceneSystemUnit.GetConversionFactorTo(FbxSystemUnit::m))));
 }
 
-void FBXReader::processScene(FbxScene* fbxScene, Model* model, const string& pathName) {
+void FBXReader::processScene(FbxScene* fbxScene, Model* model, const string& pathName, vector<string>& possibleArmatureNodeIds) {
 	FbxNode* fbxNode = fbxScene->GetRootNode();
 	if (fbxNode == nullptr) return;
 	for(auto i = 0; i < fbxNode->GetChildCount(); i++) {
-		processNode(fbxNode->GetChild(i), model, nullptr, pathName);
+		processNode(fbxNode->GetChild(i), model, nullptr, pathName, possibleArmatureNodeIds);
 	}
 }
 
-void FBXReader::processNode(FbxNode* fbxNode, Model* model, Node* parentNode, const string& pathName) {
+void FBXReader::processNode(FbxNode* fbxNode, Model* model, Node* parentNode, const string& pathName, vector<string>& possibleArmatureNodeIds) {
 	Node* node = nullptr;
 	if (fbxNode->GetNodeAttribute() != nullptr) {
 		auto fbxAttributeType = fbxNode->GetNodeAttribute()->GetAttributeType();
 		switch (fbxAttributeType) {
+			case FbxNodeAttribute::eNull:
+				{
+					possibleArmatureNodeIds.push_back(fbxNode->GetName());
+					break;
+				}
 			case FbxNodeAttribute::eMesh:
 				{
 					node = processMeshNode(fbxNode, model, parentNode, pathName);
@@ -323,12 +342,12 @@ void FBXReader::processNode(FbxNode* fbxNode, Model* model, Node* parentNode, co
 	model->getNodes()[node->getId()] = node;
 	parentNode = node;
 	for(auto i = 0; i < fbxNode->GetChildCount(); i++) {
-		processNode(fbxNode->GetChild(i), model, parentNode, pathName);
+		processNode(fbxNode->GetChild(i), model, parentNode, pathName, possibleArmatureNodeIds);
 	}
 }
 
 Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNode, const string& pathName) {
-	auto fbxNodeName = fbxNode->GetName();
+	string fbxNodeName = fbxNode->GetName();
 	FbxMesh* fbxMesh = (FbxMesh*)fbxNode->GetNodeAttribute();
 
 	auto node = new Node(model, parentNode, fbxNodeName, fbxNodeName);
@@ -423,20 +442,21 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 					fbxColor3 = ((FbxSurfacePhong*)fbxMaterial)->Diffuse;
 					fbxFactor = ((FbxSurfacePhong*)fbxMaterial)->DiffuseFactor;
 					fbxTransparency = ((FbxSurfacePhong*)fbxMaterial)->TransparencyFactor;
-					if (fbxColor3.IsValid() == true && fbxFactor.IsValid() == true && fbxTransparency.IsValid() == true)
+					if (fbxColor3.IsValid() == true && fbxFactor.IsValid() == true && fbxTransparency.IsValid() == true) {
 						specularMaterialProperties->setDiffuseColor(
-						Color4(
-							static_cast<float>(fbxColor3.Get()[0] * fbxFactor.Get()),
-							static_cast<float>(fbxColor3.Get()[1] * fbxFactor.Get()),
-							static_cast<float>(fbxColor3.Get()[2] * fbxFactor.Get()),
-							// TODO: I am not sure about this here, but it seem to work
-							(
-								1.0f - static_cast<float>(fbxTransparency) < Math::EPSILON?
-									1.0f:
-									1.0f - static_cast<float>(fbxTransparency)
+							Color4(
+								static_cast<float>(fbxColor3.Get()[0] * fbxFactor.Get()),
+								static_cast<float>(fbxColor3.Get()[1] * fbxFactor.Get()),
+								static_cast<float>(fbxColor3.Get()[2] * fbxFactor.Get()),
+								// TODO: I am not sure about this here, but it seem to work
+								(
+									1.0f - static_cast<float>(fbxTransparency) < Math::EPSILON?
+										1.0f:
+										1.0f - static_cast<float>(fbxTransparency)
+								)
 							)
-						)
-					);
+						);
+					}
 					fbxColor3 = ((FbxSurfacePhong*)fbxMaterial)->Emissive;
 					fbxFactor = ((FbxSurfacePhong*)fbxMaterial)->EmissiveFactor;
 					if (fbxColor3.IsValid() == true && fbxFactor.IsValid() == true) {
@@ -461,14 +481,14 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 							)
 						);
 					}
-					fbxShininess = ((FbxSurfacePhong*)fbxMaterial)->Reflection;
-					fbxShininessFactor = ((FbxSurfacePhong*)fbxMaterial)->ReflectionFactor;
+					fbxShininess = ((FbxSurfacePhong*)fbxMaterial)->Shininess;
 					if (fbxShininess.IsValid() == true && fbxShininessFactor.IsValid() == true) {
-						specularMaterialProperties->setShininess(static_cast<float>(fbxShininess.Get() * fbxShininessFactor.Get()));
+						specularMaterialProperties->setShininess(static_cast<float>(fbxShininess.Get()));
 					}
 					fbxReflection = ((FbxSurfacePhong*)fbxMaterial)->Reflection;
-					if (fbxReflection.IsValid() == true) {
-						specularMaterialProperties->setReflection(static_cast<float>(fbxReflection.Get()));
+					fbxFactor = ((FbxSurfacePhong*)fbxMaterial)->ReflectionFactor;
+					if (fbxReflection.IsValid() == true && fbxFactor.IsValid() == true) {
+						specularMaterialProperties->setReflection(static_cast<float>(fbxReflection.Get() * fbxFactor.Get()));
 					}
 				} else
 				if (fbxMaterial->GetClassId().Is(FbxSurfaceLambert::ClassId)) {
@@ -906,7 +926,7 @@ Node* FBXReader::processMeshNode(FbxNode* fbxNode, Model* model, Node* parentNod
 }
 
 Node* FBXReader::processSkeletonNode(FbxNode* fbxNode, Model* model, Node* parentNode, const string& pathName) {
-	auto fbxNodeName = fbxNode->GetName();
+	string fbxNodeName = fbxNode->GetName();
 	return new Node(model, parentNode, fbxNodeName, fbxNodeName);
 }
 

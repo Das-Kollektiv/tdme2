@@ -588,13 +588,17 @@ const string FileDialogScreenController::getFileImageName(const string& fileName
 		return "font";
 	} else
 	// images
-	if (StringTools::endsWith(fileNameLowerCase, ".ico") == true) {
-		return "texture";
-	} else
 	if (StringTools::endsWith(fileNameLowerCase, ".icns") == true) {
 		return "texture";
 	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".ico") == true) {
+		return "texture";
+	} else
 	if (StringTools::endsWith(fileNameLowerCase, ".png") == true) {
+		return "texture";
+	} else
+	// videos
+	if (StringTools::endsWith(fileNameLowerCase, ".mpg") == true) {
 		return "texture";
 	} else
 	// models

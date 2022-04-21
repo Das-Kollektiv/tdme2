@@ -81,7 +81,7 @@ GUIStyledTextNode::GUIStyledTextNode(
 ):
 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
 {
-	this->font = font.empty() == true?nullptr:GUI::getFont(screenNode->getApplicationRootPathName(), font);
+	this->font = font.empty() == true?nullptr:screenNode->getFont(screenNode->getApplicationRootPathName(), font);
 	this->color = color.empty() == true || color.length() == 0?GUIColor():GUIColor(color);
 	this->autoWidth = 0;
 	this->autoHeight = 0;
@@ -536,7 +536,7 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 	[font=schriftart]Text[/font]
 	[color=farbe]farbiger Text[/color]
 	[url=http://example.com/]Linktext[/url]
-	[image]example.com/bild.jpg[/image] (Bearbeitet)
+	[image=horizontal-scale:50%|0.5,vertical-scale:50%|0.5,width:100,height:100,effect-color-mul:#ff0000ff,effect-color-add:#ff000000]example.com/bild.jpg[/image]
 	*/
 	string styleFont;
 	string styleColor;
@@ -545,6 +545,12 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 	//
 	auto parseStyle = false;
 	auto parseImage = false;
+	int imageWidth = -1;
+	int imageHeight = -1;
+	float imageHorizontalScale = 1.0f;
+	float imageVerticalScale = 1.0f;
+	GUIColor imageEffectColorMul = GUIColor::GUICOLOR_EFFECT_COLOR_MUL;
+	GUIColor imageEffectColorAdd = GUIColor::GUICOLOR_EFFECT_COLOR_ADD;
 	string currentStyle;
 	int styleStartIdx = -1;
 	char lc = 0;
@@ -580,6 +586,74 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 						if (command == "url") {
 							styleUrl = argument;
 							styleStartIdx = this->text.size();
+						} else
+						if (command == "image") {
+							parseImage = true;
+							auto imageOptions = StringTools::tokenize(styleTokenized[1], ",");
+							for (auto& imageOption: imageOptions) {
+								auto nameValuePair = StringTools::tokenize(imageOption, ":");
+								if (nameValuePair.size() != 2) {
+									Console::println("GUIStyledTextNode::setText(): unknown image style command option: " + imageOption);
+								} else {
+									auto name = StringTools::trim(nameValuePair[0]);
+									auto value = StringTools::trim(nameValuePair[1]);
+									if (name.empty() == true || value.empty() == true) {
+										Console::println("GUIStyledTextNode::setText(): unknown image style command option: name or value empty");
+									} else
+									if (name == "width") {
+										try {
+											imageWidth = Integer::parse(value);
+										} catch (Exception& exception) {
+											Console::println("GUIStyledTextNode::setText(): unknown image style command option: width: unknown value: " + value);
+										}
+									} else
+									if (name == "height") {
+										try {
+											imageHeight = Integer::parse(value);
+										} catch (Exception& exception) {
+											Console::println("GUIStyledTextNode::setText(): unknown image style command option: height: unknown value: " + value);
+										}
+									} else
+									if (name == "horizontal-scale") {
+										try {
+											if (StringTools::endsWith(value, "%")) {
+												imageHorizontalScale = Float::parse(value.substr(0, value.length() - 1)) / 100.0f;
+											} else {
+												imageHorizontalScale = Float::parse(value);
+											}
+										} catch (Exception& exception) {
+											Console::println("GUIStyledTextNode::setText(): unknown image style command option: horizontal-scale: unknown value: " + value);
+										}
+									} else
+									if (name == "vertical-scale") {
+										try {
+											if (StringTools::endsWith(value, "%")) {
+												imageVerticalScale = Float::parse(value.substr(0, value.length() - 1)) / 100.0f;
+											} else {
+												imageVerticalScale = Float::parse(value);
+											}
+										} catch (Exception& exception) {
+											Console::println("GUIStyledTextNode::setText(): unknown image style command option: vertical-scale: unknown value: " + value);
+										}
+									} else
+									if (name == "effect-color-mul") {
+										try {
+											imageEffectColorMul = GUIColor(value);
+										} catch (Exception& exception) {
+											Console::println("GUIStyledTextNode::setText(): unknown image style command option: effect-color-mul: unknown value: " + value);
+										}
+									} else
+									if (name == "effect-color-add") {
+										try {
+											imageEffectColorAdd = GUIColor(value);
+										} catch (Exception& exception) {
+											Console::println("GUIStyledTextNode::setText(): unknown image style command option: effect-color-add: unknown value: " + value);
+										}
+									} else {
+										Console::println("GUIStyledTextNode::setText(): image style command option: " + name + " = '" + value + "'");
+									}
+								}
+							}
 						} else {
 							Console::println("GUIStyledTextNode::setText(): unknown style command: " + currentStyle);
 						}
@@ -601,8 +675,14 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 						if (command == "/image") {
 							parseImage = false;
 							this->text.append(static_cast<char>(0));
-							setImage(this->text.size() - 1, styleImage, styleUrl, -1, -1);
+							setImage(this->text.size() - 1, styleImage, styleUrl, imageWidth, imageHeight, imageHorizontalScale, imageVerticalScale, imageEffectColorMul, imageEffectColorAdd);
 							styleImage.clear();
+							imageWidth = -1;
+							imageHeight = -1;
+							imageHorizontalScale = 1.0f;
+							imageVerticalScale = 1.0f;
+							imageEffectColorMul = GUIColor::GUICOLOR_EFFECT_COLOR_MUL;
+							imageEffectColorAdd = GUIColor::GUICOLOR_EFFECT_COLOR_ADD;
 						} else {
 							Console::println("GUIStyledTextNode::setText(): unknown style command: " + currentStyle);
 						}
@@ -1020,7 +1100,7 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 				float top = y + yIndentTop;
 				float width = lineConstraints[lineIdx].width;
 				float height = lineConstraints[lineIdx].height;
-				if (guiRenderer->isQuadVisible(
+				if (guiRenderer->isQuadVisible2(
 						((left) / (screenWidth / 2.0f)) - 1.0f,
 						((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
 						((left + width) / (screenWidth / 2.0f)) - 1.0f,
@@ -1065,6 +1145,19 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 				if (alignments.horizontal == GUINode_AlignmentHorizontal::RIGHT) {
 					x = maxLineWidth - lineConstraints[lineIdx].width;
 				}
+				// find new indices if requested
+				// 	index
+				if (findNewIndex == true &&
+					indexMousePositionY >= y + yIndentTop && indexMousePositionY < y + yIndentTop + lineConstraints[lineIdx].height &&
+					indexMousePositionX <= x + xIndentLeft) {
+					cursorIndex = lineCharIdxs[0];
+				}
+				// 	selection index
+				if (findNewSelectionIndex == true &&
+					selectionIndexMousePositionY >= y + yIndentTop && selectionIndexMousePositionY < y + yIndentTop + lineConstraints[lineIdx].height &&
+					selectionIndexMousePositionX <= x + xIndentLeft) {
+					cursorSelectionIndex = lineCharIdxs[0];
+				}
 				// render
 				for (auto k = lineIdx == 0?0:lineConstraints[lineIdx - 1].idx; k < line.size(); k++) {
 					auto textStyle = getTextStyle(lineCharIdxs, k, currentTextStyleIdx);
@@ -1081,6 +1174,10 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 					if (textStyle != nullptr && textStyle->image != nullptr) {
 						// draw
 						guiRenderer->render();
+						auto rendererEffectColorMul = guiRenderer->getGUIEffectColorMul();
+						auto rendererEffectColorAdd = guiRenderer->getGUIEffectColorAdd();
+						guiRenderer->setGUIEffectColorMul(textStyle->effectColorMul);
+						guiRenderer->setGUIEffectColorAdd(textStyle->effectColorAdd);
 						guiRenderer->bindTexture(textStyle->textureId);
 						{
 							float left = x + xIndentLeft;
@@ -1110,8 +1207,8 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 								1.0f
 							);
 						}
-						//
 						if (cursorMode == GUIStyledTextNodeController::CURSORMODE_SHOW && (findNewSelectionIndex == true?cursorSelectionIndex == lineCharIdxs[k]:cursorIndex == lineCharIdxs[k])) {
+							// draw cursor
 							float left = x + xIndentLeft;
 							float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - textStyle->height) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
 							float width = 2;
@@ -1136,10 +1233,15 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 								0.0f, 0.0f,
 								true
 							);
+							// store new index position
+							indexPositionX = static_cast<int>(left);
+							indexPositionY = static_cast<int>(top);
 						}
 						//
 						guiRenderer->render();
 						guiRenderer->bindTexture(boundTexture);
+						guiRenderer->setGUIEffectColorMul(rendererEffectColorMul);
+						guiRenderer->setGUIEffectColorAdd(rendererEffectColorAdd);
 						// flush current URL
 						if (currentURL.empty() == false && urlAreas.empty() == false) {
 							auto& urlArea = urlAreas[urlAreas.size() - 1];
@@ -1191,13 +1293,26 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 							if (lineConstraints[lineIdx - 1].spaceWrap == true) {
 								skipSpaces = true;
 							}
+							// find new indices if requested
+							// 	index
+							if (findNewIndex == true &&
+								indexMousePositionY >= y + yIndentTop && indexMousePositionY < y + yIndentTop + lineConstraints[lineIdx].height &&
+								indexMousePositionX <= x + xIndentLeft) {
+								cursorIndex = lineCharIdxs[k];
+							}
+							// 	selection index
+							if (findNewSelectionIndex == true &&
+								selectionIndexMousePositionY >= y + yIndentTop && selectionIndexMousePositionY < y + yIndentTop + lineConstraints[lineIdx].height &&
+								selectionIndexMousePositionX <= x + xIndentLeft) {
+								cursorSelectionIndex = lineCharIdxs[k];
+							}
 							//
 							{
 								float left = x + xIndentLeft;
 								float top = y + yIndentTop;
 								float width = lineConstraints[lineIdx].width;
 								float height = lineConstraints[lineIdx].height;
-								if (guiRenderer->isQuadVisible(
+								if (guiRenderer->isQuadVisible2(
 										((left) / (screenWidth / 2.0f)) - 1.0f,
 										((screenHeight - top) / (screenHeight / 2.0f)) - 1.0f,
 										((left + width) / (screenWidth / 2.0f)) - 1.0f,
@@ -1223,16 +1338,17 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 							}
 						}
 						if (line[k] == '\n') {
-							// index
+							// find new indices if requested
+							// 	index
 							if (findNewIndex == true &&
 								indexMousePositionY >= y + yIndentTop && indexMousePositionY < y + yIndentTop + lineConstraints[lineIdx].height &&
-								indexMousePositionX >= x + xIndentLeft && indexMousePositionX < Math::max(computedConstraints.width, autoWidth)) {
+								indexMousePositionX >= x + xIndentLeft) {
 								cursorIndex = lineCharIdxs[k];
 							}
-							// selection index
+							// 	selection index
 							if (findNewSelectionIndex == true &&
 								selectionIndexMousePositionY >= y + yIndentTop && selectionIndexMousePositionY < y + yIndentTop + lineConstraints[lineIdx].height &&
-								selectionIndexMousePositionX >= x + xIndentLeft && selectionIndexMousePositionX < Math::max(computedConstraints.width, autoWidth)) {
+								selectionIndexMousePositionX >= x + xIndentLeft) {
 								cursorSelectionIndex = lineCharIdxs[k];
 							}
 							// draw cursor
@@ -1261,6 +1377,9 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 									0.0f, 0.0f,
 									true
 								);
+								// store new index position
+								indexPositionX = static_cast<int>(left);
+								indexPositionY = static_cast<int>(top);
 							}
 						} else {
 							// otherwise draw
@@ -1270,13 +1389,14 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 								// next x advance
 								auto xAdvance = line[k] == '\t'?tabSize * character->getXAdvance():character->getXAdvance();
 
-								// index
+								// find new indices if requested
+								// 	index
 								if (findNewIndex == true &&
 									indexMousePositionY >= y + yIndentTop && indexMousePositionY < y + yIndentTop + lineConstraints[lineIdx].height &&
 									indexMousePositionX >= x + xIndentLeft && indexMousePositionX < x + xIndentLeft + xAdvance) {
 									cursorIndex = lineCharIdxs[k];
 								}
-								// selection index
+								// 	selection index
 								if (findNewSelectionIndex == true &&
 									selectionIndexMousePositionY >= y + yIndentTop && selectionIndexMousePositionY < y + yIndentTop + lineConstraints[lineIdx].height &&
 									selectionIndexMousePositionX >= x + xIndentLeft && selectionIndexMousePositionX < x + xIndentLeft + xAdvance) {
@@ -1348,6 +1468,9 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 										0.0f, 0.0f,
 										true
 									);
+									// store new index position
+									indexPositionX = static_cast<int>(left);
+									indexPositionY = static_cast<int>(top);
 								}
 
 								// if URL did change, create URL areas
@@ -1378,17 +1501,18 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 					}
 				}
 
-				// index
+				// find new indices if requested
+				// 	index
 				if (findNewIndex == true &&
 					indexMousePositionY >= y + yIndentTop && indexMousePositionY < y + yIndentTop + lineConstraints[lineIdx].height &&
-					indexMousePositionX >= x + xIndentLeft && indexMousePositionX < Math::max(computedConstraints.width, autoWidth)) {
+					indexMousePositionX >= x + xIndentLeft) {
 					cursorIndex = lineCharIdxs[lineCharIdxs.size() - 1];
 				}
 
-				// selection index
+				// 	selection index
 				if (findNewSelectionIndex == true &&
 					selectionIndexMousePositionY >= y + yIndentTop && selectionIndexMousePositionY < y + yIndentTop + lineConstraints[lineIdx].height &&
-					selectionIndexMousePositionX >= x + xIndentLeft && selectionIndexMousePositionX < Math::max(computedConstraints.width, autoWidth)) {
+					selectionIndexMousePositionX >= x + xIndentLeft) {
 					cursorSelectionIndex = lineCharIdxs[lineCharIdxs.size() - 1];
 				}
 
@@ -1478,7 +1602,7 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor& c
 	// Console::println();
 	unsetTextStyle(startIdx, endIdx);
 	// TODO: a.drewke
-	auto _font = font.empty() == true?nullptr:GUI::getFont(screenNode->getApplicationRootPathName(), font);;
+	auto _font = font.empty() == true?nullptr:screenNode->getFont(screenNode->getApplicationRootPathName(), font);;
 	if (_font != nullptr) _font->initialize();
 	// find position to insert
 	auto j = -1;
@@ -1503,7 +1627,9 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor& c
 			.image = nullptr,
 			.textureId = -1,
 			.width = -1,
-			.height = -1
+			.height = -1,
+			.effectColorMul = GUIColor::GUICOLOR_EFFECT_COLOR_MUL,
+			.effectColorAdd = GUIColor::GUICOLOR_EFFECT_COLOR_ADD
 		}
 	);
 	//
@@ -1519,7 +1645,7 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const string& fon
 	// Console::println();
 	unsetTextStyle(startIdx, endIdx);
 	// TODO: a.drewke
-	auto _font = font.empty() == true?nullptr:GUI::getFont(screenNode->getApplicationRootPathName(), font);;
+	auto _font = font.empty() == true?nullptr:screenNode->getFont(screenNode->getApplicationRootPathName(), font);;
 	if (_font != nullptr) _font->initialize();
 	// find position to insert
 	auto j = -1;
@@ -1544,7 +1670,9 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const string& fon
 			.image = nullptr,
 			.textureId = -1,
 			.width = -1,
-			.height = -1
+			.height = -1,
+			.effectColorMul = GUIColor::GUICOLOR_EFFECT_COLOR_MUL,
+			.effectColorAdd = GUIColor::GUICOLOR_EFFECT_COLOR_ADD
 		}
 	);
 	//
@@ -1552,11 +1680,11 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const string& fon
 	// for (auto& style: styles) Console::println("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
 }
 
-void GUIStyledTextNode::setImage(int idx, const string& image, const string& url, int width, int height) {
+void GUIStyledTextNode::setImage(int idx, const string& image, const string& url, int width, int height, float horizontalScale, float verticalScale, const GUIColor& effectColorMul, const GUIColor& effectColorAdd) {
 	// Console::println("GUIStyledTextNode::setImage(): " + to_string(idx) + ": " + image + ", url = '" + url + "', width = " + to_string(width) + ", height = " + to_string(height));
 	unsetTextStyle(idx,idx);
 	// TODO: a.drewke
-	auto _image = image.empty() == true?nullptr:GUI::getImage(screenNode->getApplicationRootPathName(), image);
+	auto _image = image.empty() == true?nullptr:screenNode->getImage(screenNode->getApplicationRootPathName(), image);
 	// find position to insert
 	auto j = -1;
 	for (auto i = 0; i < styles.size(); i++) {
@@ -1579,8 +1707,10 @@ void GUIStyledTextNode::setImage(int idx, const string& image, const string& url
 			.url = url,
 			.image = _image,
 			.textureId = Engine::getInstance()->getTextureManager()->addTexture(_image, 0),
-			.width = width == -1?_image->getWidth():width,
-			.height = height == -1?_image->getHeight():height,
+			.width = width == -1?static_cast<int>(_image->getWidth() * horizontalScale):static_cast<int>(width * horizontalScale),
+			.height = height == -1?static_cast<int>(_image->getHeight() * verticalScale):static_cast<int>(height * verticalScale),
+			.effectColorMul = effectColorMul,
+			.effectColorAdd = effectColorAdd
 		}
 	);
 	//

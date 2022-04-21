@@ -183,17 +183,16 @@ SRCS_DEBUG =
 SRCS = \
 	src/tdme/audio/Audio.cpp \
 	src/tdme/audio/AudioBufferManager.cpp \
-	src/tdme/audio/AudioBufferManager_AudioBufferManaged.cpp \
-	src/tdme/audio/AudioEntity.cpp \
 	src/tdme/audio/AudioStream.cpp \
+	src/tdme/audio/PacketAudioStream.cpp \
 	src/tdme/audio/VorbisAudioStream.cpp \
 	src/tdme/audio/Sound.cpp \
-	src/tdme/audio/decoder/AudioDecoder.cpp \
 	src/tdme/audio/decoder/AudioDecoderException.cpp \
 	src/tdme/audio/decoder/VorbisDecoder.cpp \
 	src/tdme/application/Application.cpp \
 	src/tdme/application/InputEventHandler.cpp \
 	src/tdme/engine/Camera.cpp \
+	src/tdme/engine/DynamicColorTexture.cpp \
 	src/tdme/engine/Engine.cpp \
 	src/tdme/engine/EntityHierarchy.cpp \
 	src/tdme/engine/EntityShaderParameters.cpp \
@@ -441,8 +440,6 @@ SRCS = \
 	src/tdme/gui/elements/GUITabsController.cpp \
 	src/tdme/gui/elements/GUITabsHeader.cpp \
 	src/tdme/gui/elements/GUITabsHeaderController.cpp \
-	src/tdme/gui/events/GUIKeyboardEvent.cpp \
-	src/tdme/gui/events/GUIMouseEvent.cpp \
 	src/tdme/gui/nodes/GUIColor.cpp \
 	src/tdme/gui/nodes/GUIElementController.cpp \
 	src/tdme/gui/nodes/GUIElementIgnoreEventsController.cpp \
@@ -479,6 +476,7 @@ SRCS = \
 	src/tdme/gui/nodes/GUITextureNode.cpp \
 	src/tdme/gui/nodes/GUIVerticalScrollbarInternalController.cpp \
 	src/tdme/gui/nodes/GUIVerticalScrollbarInternalNode.cpp \
+	src/tdme/gui/nodes/GUIVideoNode.cpp \
 	src/tdme/gui/renderer/GUIFont.cpp \
 	src/tdme/gui/renderer/GUIRenderer.cpp \
 	src/tdme/gui/renderer/GUIShader.cpp \
@@ -541,6 +539,7 @@ SRCS = \
 	src/tdme/tests/UDPServerTest_UDPServerClient.cpp \
 	src/tdme/tests/SkinningTest.cpp \
 	src/tdme/tests/TreeTest.cpp \
+	src/tdme/tests/VideoTest.cpp \
 	src/tdme/tests/WaterTest.cpp \
 	src/tdme/tools/editor/TDMEEditor.cpp \
 	src/tdme/tools/editor/controllers/AboutDialogScreenController.cpp \
@@ -572,6 +571,7 @@ SRCS = \
 	src/tdme/tools/editor/tabcontrollers/TextEditorTabController.cpp \
 	src/tdme/tools/editor/tabcontrollers/TriggerEditorTabController.cpp \
 	src/tdme/tools/editor/tabcontrollers/UIEditorTabController.cpp \
+	src/tdme/tools/editor/tabcontrollers/VideoTabController.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.cpp \
@@ -589,6 +589,7 @@ SRCS = \
 	src/tdme/tools/editor/tabviews/TextEditorTabView.cpp \
 	src/tdme/tools/editor/tabviews/TriggerEditorTabView.cpp \
 	src/tdme/tools/editor/tabviews/UIEditorTabView.cpp \
+	src/tdme/tools/editor/tabviews/VideoTabView.cpp \
 	src/tdme/tools/editor/tabviews/subviews/BasePropertiesSubView.cpp \
 	src/tdme/tools/editor/tabviews/subviews/PrototypeDisplaySubView.cpp \
 	src/tdme/tools/editor/tabviews/subviews/PrototypePhysicsSubView.cpp \
@@ -613,6 +614,8 @@ SRCS = \
 	src/tdme/utilities/StringTools.cpp \
 	src/tdme/utilities/StringTokenizer.cpp \
 	src/tdme/utilities/Terrain.cpp \
+	src/tdme/video/decoder/MPEG1Decoder.cpp \
+	src/tdme/video/decoder/VideoDecoderException.cpp \
 	$(SRCS_PLATFORM)
 
 EXT_TINYXML_SRCS = \
@@ -881,6 +884,7 @@ MAIN_SRCS = \
 	src/tdme/tests/TreeTest-main.cpp \
 	src/tdme/tests/UDPClientTest-main.cpp \
 	src/tdme/tests/UDPServerTest-main.cpp \
+	src/tdme/tests/VideoTest-main.cpp \
 	src/tdme/tests/WaterTest-main.cpp \
 	src/tdme/tools/editor/TDMEEditor-main.cpp \
 	src/tdme/tools/installer/Installer-main.cpp \
@@ -897,6 +901,7 @@ MAIN_SRCS = \
 	src/tdme/tools/cli/makefilegenerator-main.cpp \
 	src/tdme/tools/cli/miniscripttranspiler-main.cpp \
 	src/tdme/tools/cli/optimizemodel-main.cpp \
+	src/tdme/tools/cli/parseh++-main.cpp \
 	src/tdme/tools/cli/recreatevkcache-main.cpp \
 	src/tdme/tools/cli/scenefixmodelszup2yup-main.cpp \
 	src/tdme/tools/cli/sortincludes-main.cpp

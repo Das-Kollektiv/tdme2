@@ -1,0 +1,2263 @@
+<?xml version="1.0" encoding="Windows-1252" ?>
+<!-- taken from: https://github.com/danielscherzer/NotepaddPP-glsl-integration.git -->
+<code-completion>
+	<keyword name="#define" />
+	<keyword name="#elif" />
+	<keyword name="#else" />
+	<keyword name="#endif" />
+	<keyword name="#extension" />		
+	<keyword name="#if" />
+	<keyword name="#ifdef" />
+	<keyword name="#ifndef" />
+	<keyword name="#include" />
+	<keyword name="#require" />
+	<keyword name="#undef" />		
+	
+	<keyword name="abs" func="yes">
+		<overload return-value="genType" >
+			<parameter name="genType x" />
+		</overload>
+	</keyword>
+	<keyword name="acos" func="yes">
+		<overload return-value="genType" descr="[1.10/-] Returns the angle whose trigonometric cosine is x, in the range [-PI/2, PI/2] for the domain [-1, 1]">
+			<parameter name="genType x" />
+		</overload>
+	</keyword>
+	<keyword name="acosh" func="yes">
+		<overload return-value="genType" descr="[1.30/-] Returns the angle whose hyperbolic cosine is x, in the range [0, PI] for the domain [-1, 1]">
+			<parameter name="genType x" />
+		</overload>
+	</keyword>
+	<keyword name="all" func="yes">
+		<overload return-value="bool" descr="[1.10] Returns true if all elements in the boolean vector v are true, false otherwise">
+			<parameter name="bvec v" />
+		</overload>
+	</keyword>
+	<keyword name="any" func="yes">
+		<overload return-value="bool" descr="[1.10] Returns true if any element in the boolean vector v is true, false otherwise">
+			<parameter name="bvec v" />
+		</overload>
+	</keyword>
+	<keyword name="asin" func="yes">
+		<overload return-value="genType" descr="[1.10/-] Returns the angle whose trigonometric sine is x, in the range [-PI/2, PI/2] for the domain [-1, 1]">
+			<parameter name="genType x" />
+		</overload>
+	</keyword>
+	<keyword name="asinh" func="yes">
+		<overload return-value="genType" descr="[1.30/-] Returns the angle whose hyperbolic sine is x, in the range [-PI/2, PI/2] for the domain [-1, 1]">
+			<parameter name="genType x" />
+		</overload>
+	</keyword>				
+	<keyword name="atan" func="yes">
+		<overload return-value="genType" descr="[1.10/-] Returns the angle whose trigonometric arctangent is XoverY where XoverY = y/x, in the range [-PI/2, PI/2]">
+			<parameter name="genType XoverY" />
+		</overload>
+		<overload return-value="genType" descr="[1.10/-] Returns the angle whose trigonometric tangent is y/x, in the range [-PI/2, PI/2]">
+			<parameter name="genType y" />
+			<parameter name="genType x" />
+		</overload>
+	</keyword>
+	<keyword name="atanh" func="yes">
+		<overload return-value="genType" descr="[1.10/-] Returns the angle whose hyperbolic tangent is x">
+			<parameter name="genType x" />
+		</overload>
+	</keyword>		
+	<keyword name="atomicAdd" func="yes">
+		<overload return-value="int/uint" descr="[4.30] Performs an atomic addition of data to mem; returns the original mem from before the addition">
+			<parameter name="int/uint mem" />
+			<parameter name="int/uint data" />
+		</overload>
+	</keyword>
+	<keyword name="atomicAnd" func="yes">
+		<overload return-value="int/uint" descr="[4.30] Performs an atomic logical AND of data and mem; returns the original mem from before the addition">
+			<parameter name="inout uint mem" />
+			<parameter name="uint data" />
+		</overload>
+	</keyword>
+	<keyword name="atomicCompSwap" func="yes">
+		<overload return-value="int/uint" descr="[4.30] Performs an atomic comparison of data and comp; if equal, data is written to mem">
+			<parameter name="int/uint mem" />
+			<parameter name="int/uint comp" />
+			<parameter name="int/uint data" />
+		</overload>
+	</keyword>
+	<keyword name="atomicCounter" func="yes">
+		<overload return-value="uint" descr="[4.30] Returns the value of atomic counter c">
+			<parameter name="atomic_uint c" />
+		</overload>
+	</keyword>
+	<keyword name="atomicCounterDecrement" func="yes">
+		<overload return-value="uint" descr="[4.30] Decrements atomic counter c and returns its new value">
+			<parameter name="atomic_uint c" />
+		</overload>
+	</keyword>
+	<keyword name="atomicCounterIncrement" func="yes">
+		<overload return-value="uint" descr="[4.30] Increments atomic counter c and returns its new value">
+			<parameter name="atomic_uint c" />
+		</overload>
+	</keyword>
+	<keyword name="atomicExchange" func="yes">
+		<overload return-value="int" descr="[4.30] Atomically exchanges the contents of data and mem; returns original contents of mem">
+			<parameter name="inout int mem" />
+			<parameter name="int data" />
+		</overload>
+	</keyword>
+	<keyword name="atomicMax" func="yes">
+		<overload return-value="int/uint" descr="[4.30] Atomically compares contents of mem and data; writes the maximum value to mem and returns its prior value">
+			<parameter name="inout int/uint mem" />
+			<parameter name="int/uint data" />
+		</overload>
+	</keyword>
+	<keyword name="atomicMin" func="yes">
+		<overload return-value="int/uint" descr="[4.30] Atomically compares contents of mem and data; writes the minimum value to mem and returns its prior value">
+			<parameter name="inout int/uint mem" />
+			<parameter name="int/uint data" />
+		</overload>
+	</keyword>
+	<keyword name="atomicOr" func="yes">
+		<overload return-value="int/uint" descr="[4.30] Performs an atomic logical OR of data and mem; writes the result to mem and returns original mem">
+			<parameter name="inout int/uint mem" />
+			<parameter name="int/uint data" />
+		</overload>
+	</keyword>
+	<keyword name="atomiXor" func="yes">
+		<overload return-value="int/uint" descr="[4.30] Performs an atomic logical XOR of data and mem; writes the result to mem and returns original mem">
+			<parameter name="inout int/uint mem" />
+			<parameter name="int/uint data" />
+		</overload>
+	</keyword>
+	<keyword name="barrier" func="yes">
+		<overload return-value="void" descr="TESSELLATION CONTROL and COMPUTE SHADERS [4.00] Provides a partially defined order of execution between shader invocations">
+		</overload>
+	</keyword>
+	<keyword name="bitCount" func="yes">
+		<overload return-value="genIType" descr="[4.00] Returns the number of set bits in value">
+			<parameter name="genIType/genUType value" />
+		</overload>
+	</keyword>
+	<keyword name="bitfieldExtract" func="yes">
+		<overload return-value="genIType/genUType" descr="[4.00] Extracts bits [offset; offset + bits + 1] from value and returns them in the LSB of the result">
+			<parameter name="genIType/genUType value" />
+			<parameter name="int offset" />
+			<parameter name="int bits" />
+		</overload>
+	</keyword>
+	<keyword name="bitfieldInsert" func="yes">
+		<overload return-value="genIType/genUType" descr="[4.00] Copies nbits bits from insert (starting at 0) into base starting at offset">
+			<parameter name="genIType/genUType base" />
+			<parameter name="genIType/genUType insert" />
+			<parameter name="int offset" />
+			<parameter name="int nbits" />
+		</overload>
+	</keyword>
+	<keyword name="bitfieldReverse" func="yes">
+		<overload return-value="genIType/genUType" descr="[4.00] Returns the bitwise reverse of value">
+			<parameter name="genIType/genUType value" />
+		</overload>
+	</keyword>		
+	<keyword name="bool" />
+	<keyword name="break" />
+	<keyword name="case" />
+	<keyword name="ceil" func="yes">
+		<overload return-value="genType" descr="[1.10/4.00] Returns the nearest integer to x that is greater than or equal to it">
+			<parameter name="genType x" />
+		</overload>
+	</keyword>
+	<keyword name="clamp" func="yes">
+		<overload return-value="genType" descr="[1.10/4.00, int/uint: 1.30] Constrains x to the range [min, max]">
+			<parameter name="genType x" />
+			<parameter name="float/genType min" />
+			<parameter name="float/genType max" />
+		</overload>
+	</keyword>
+	<keyword name="class" />
+	<keyword name="const" />
+	<keyword name="continue" />
+	<keyword name="cos" func="yes">
+		<overload return-value="genType" descr="[1.10/-] Returns the trigonometric cosine of x in the range [-1, 1]">
+			<parameter name="genType x" />
+		</overload>
+	</keyword>
+	<keyword name="cosh" func="yes">
+		<overload return-value="genType" descr="[1.10/-] Returns the hyperbolic cosine of x">
+			<parameter name="genType x" />
+		</overload>
+	</keyword>
+	<keyword name="cross" func="yes">
+		<overload return-value="vec3" descr="[1.10/4.00] Returns the cross product of vectors a and b">
+			<parameter name="vec3 a" />
+			<parameter name="vec3 b" />
+		</overload>
+	</keyword>		
+	<keyword name="degrees" func="yes">
+		<overload return-value="genType" descr="[1.10/-] Converts a quantity in radians to degrees">
+			<parameter name="genType x" />
+		</overload>
+	</keyword>
+	<keyword name="determinant" func="yes">
+		<overload return-value="float" descr="[1.50/4.00] Returns the determinant of matrix m">
+			<parameter name="mat m" />
+		</overload>
+	</keyword>		
+	<keyword name="dFdx" func="yes">
+		<overload return-value="genType" descr="FRAGMENT [1.10] Return the partial derivative of an argument with respect to x">
+			<parameter name="genType p" />
+		</overload>
+	</keyword>
+	<keyword name="dFdy" func="yes">
+		<overload return-value="genType" descr="FRAGMENT [1.10] Return the partial derivative of an argument with respect to y">
+			<parameter name="genType p" />
+		</overload>
+	</keyword>		
+	<keyword name="discard" />
+	<keyword name="distance" func="yes">
+		<overload return-value="genType" descr="[1.10/4.00] Returns the distance between points a and b">
+			<parameter name="genType a" />
+			<parameter name="genType b" />
+		</overload>
+	</keyword>		
+	<keyword name="do" />
+	<keyword name="dot" func="yes">
+		<overload return-value="genType" descr="[1.10/4.00] Returns the dot product of vectors a and b">
+			<parameter name="genType a" />
+			<parameter name="genType b" />
+		</overload>
+	</keyword>		
+	<keyword name="else" />
+	<keyword name="EmitStreamVertex" func="yes">
+		<overload return-value="void" descr="GEOMETRY SHADER [4.00] Emits the output variables to the output primitive on stream">
+			<parameter name="int stream" />
+		</overload>
+	</keyword>
+	<keyword name="EmitVertex" func="yes">
+		<overload return-value="void" descr="GEOMETRY SHADER [1.50] Emits the output variables to the output primitive (on the first stream)">
+		</overload>
+	</keyword>
+	<keyword name="EndPrimitive" func="yes">
+		<overload return-value="void" descr="GEOMETRY SHADER [1.50] Completes the current output primitive (on the first stream) and starts a new one">
+		</overload>
+	</keyword>
+	<keyword name="EndStreamPrimitive" func="yes">
+		<overload return-value="void" descr="GEOMETRY SHADER [4.00] Completes the current output primitive on stream and starts a new one">
+			<parameter name="int stream" />
+		</overload>
+	</keyword>		
+	<keyword name="enable" />
+	<keyword name="equal" func="yes">
+		<overload return-value="bvec" descr="[1.10] Returns a boolean vector of component-wise equality comparison results">
+			<parameter name="ivec/uvec/bvec v" />
+		</overload>
+	</keyword>
+	<keyword name="exp" func="yes">
+		<overload return-value="genType" descr="[1.10/-] Returns the natural exponent of x">
+			<parameter name="genType x" />
+		</overload>
+	</keyword>
+	<keyword name="exp2" func="yes">
+		<overload return-value="genType" descr="[1.10/-] Returns 2 to the power of x">
+			<parameter name="genType x" />
+		</overload>
+	</keyword>
+	<keyword name="faceforward" func="yes">
+		<overload return-value="genType" descr="[1.10/4.00] Returns N if dot(R, I) is less than 0, -N otherwise">
+			<parameter name="genType N" />
+			<parameter name="genType I" />
+			<parameter name="genType R" />
+		</overload>
+	</keyword>				
+	<keyword name="false" />
+	<keyword name="findLSB" func="yes">
+		<overload return-value="genIType/genUType" descr="[4.00] Finds the index of the first set LSB in v; returns -1 if no v is 0">
+			<parameter name="genIType/genUType v" />
+		</overload>
+	</keyword>
+	<keyword name="findMSB" func="yes">
+		<overload return-value="genIType/genUType" descr="[4.00] Finds the index of the first set MSB in v; returns -1 if no v is 0">
+			<parameter name="genIType/genUType v" />
+		</overload>
+	</keyword>
+	<keyword name="float" />		
+	<keyword name="floatBitsToInt" func="yes">
+		<overload return-value="genIType" descr="[3.30] Returns v's floating-point bit representation as a signed integer">
+			<parameter name="genType v" />
+		</overload>
+	</keyword>
+	<keyword name="floatBitsToUint" func="yes">
+		<overload return-value="genUType" descr="[3.30] Returns v's floating-point bit representation as an unsigned integer">
+			<parameter name="genType v" />
+		</overload>
+	</keyword>
+	<keyword name="floor" func="yes">
+		<overload return-value="genType" descr="[1.10/4.00] Returns the nearest integer to x that is less than or equal to it">
+			<parameter name="genType x" />
+		</overload>
+	</keyword>
+	<keyword name="fma" func="yes">
+		<overload return-value="genType" descr="[1.10/4.00] Performs a fused multiply-add operation: a * b + c">
+			<parameter name="genType a" />
+			<parameter name="genType b" />
+			<parameter name="genType c" />
+		</overload>
+	</keyword>
+	<keyword name="for" />		
+	<keyword name="fract" func="yes">
+		<overload return-value="genType" descr="[1.10/4.00] Returns the fractional part of x">
+			<parameter name="genType x" />
+		</overload>
+	</keyword>
+	<keyword name="frexp" func="yes">
+		<overload return-value="genType" descr="[4.00/4.00] Returns a floating-point significand in range [0.5; 1) and exponent exp such that: x = significand * 2^exp">
+			<parameter name="genType x" />
+			<parameter name="out genType exp" />
+		</overload>
+	</keyword>
+	<keyword name="ftransform" func="yes">
+		<overload return-value="genType" descr="VERTEX (deprecated) [1.10 to 1.30] Returns the current vertex transformed by the modelview projection matrix">
+			<parameter name="genType x" />
+		</overload>
+	</keyword>
+	<keyword name="fwidth" func="yes">
+		<overload return-value="genType" descr="FRAGMENT [1.10] Return the sum of the absolute derivatives in x and y of v: abs(dFdx(v)) + abs(dFdy(v))">
+			<parameter name="genType v" />
+		</overload>
+	</keyword>
+	<!--custom symbols-->
+	<keyword name="gdBRDFBlinnPhong" func="yes">
+		<overload return-value="vec3" descr="Blinn-Phong BRDF">
+			<parameter name="vec3 clrMatDiffuse" />
+			<parameter name="vec3 clrMatSpecular" />
+			<parameter name="vec3 clrMatEmissive" />
+		</overload>
+	</keyword>
+	<keyword name="gdBRDFMinnaert" func="yes">
+		<overload return-value="vec3" descr="Minnaert BRDF">
+			<parameter name="vec3 clrMatDiffuse" />
+			<parameter name="vec3 clrMatSpecular" />
+			<parameter name="vec3 clrMatEmissive" />
+		</overload>
+	</keyword>
+	<keyword name="gdBRDFPhong" func="yes">
+		<overload return-value="vec3" descr="Classic Phong BRDF">
+			<parameter name="vec3 clrMatDiffuse" />
+			<parameter name="vec3 clrMatSpecular" />
+			<parameter name="vec3 clrMatEmissive" />
+		</overload>
+	</keyword>
+	<keyword name="gdBRDFSimple" func="yes">
+		<overload return-value="vec3" descr="Simple pass-thru BRDF">
+			<parameter name="vec3 clrMatDiffuse" />
+			<parameter name="vec3 clrMatSpecular" />
+			<parameter name="vec3 clrMatEmissive" />
+		</overload>
+	</keyword>
+	<keyword name="gdBRDFWardAnisotropic" func="yes">
+		<overload return-value="vec3" descr="Directional Ward BRDF">
+			<parameter name="vec3 clrMatDiffuse" />
+			<parameter name="vec3 clrMatSpecular" />
+			<parameter name="vec3 clrMatEmissive" />
+		</overload>
+	</keyword>
+	<keyword name="gdBRDFWardIsotropic" func="yes">
+		<overload return-value="vec3" descr="Non-directional Ward BRDF">
+			<parameter name="vec3 clrMatDiffuse" />
+			<parameter name="vec3 clrMatSpecular" />
+			<parameter name="vec3 clrMatEmissive" />
+		</overload>
+	</keyword>		
+	<keyword name="gdLinearizeDepthFromPosition" func="yes">
+		<overload return-value="float" descr="Extracts linearized depth in range [0, 1] from the z and w components of vPosition">
+			<parameter name="vec4 vPosition" />
+		</overload>
+	</keyword>
+	<keyword name="gdProjectLinear" func="yes">
+		<overload return-value="vec4" descr="Performs linear projection on v">
+			<parameter name="vec3 v" />
+		</overload>
+	</keyword>
+	<keyword name="gdProjectParaboloid" func="yes">
+		<overload return-value="vec4" descr="Performs paraboloid projection on v; fHemisphere is either 1 or -1">
+			<parameter name="vec3 v" />
+			<parameter name="float fHemisphere" />
+		</overload>
+	</keyword>		
+	<keyword name="gd_fltFarPlane" />
+	<keyword name="gd_fltNearPlane" />
+	<keyword name="gd_InBitangent" />
+	<keyword name="gd_InColor" />
+	<keyword name="gd_InTangent" />
+	<keyword name="gd_InUVDetail" />
+	<keyword name="gd_InUVDiffuse" />
+	<keyword name="gd_InUVLightMap" />
+	<keyword name="gd_InVertex" />
+	<keyword name="gd_InVertexColor" />
+	<keyword name="gd_matInverseModel" />
+	<keyword name="gd_matInverseModelView" />
+	<keyword name="gd_matModel" />
+	<keyword name="gd_matModelView" />
+	<keyword name="gd_matModelViewProjection" />
+	<keyword name="gd_matProjection" />
+	<keyword name="gd_matView" />
+	<keyword name="gd_matViewProjection" />
+	<keyword name="gd_OutFragDepth" />		
+	<keyword name="gd_OutFragDiffuse" />
+	<keyword name="gd_OutFragMask" />
+	<keyword name="gd_OutFragNormal" />
+	<keyword name="gd_OutVertex" />
+
+	<!--not deprecated as of GLSL 4.30-->
+	<keyword name="gl_BackColor" /><!--deprecated  1.5-->
+	<keyword name="gl_BackSecondaryColor" /><!--deprecated  1.5-->
+	<keyword name="gl_ClipDistance" />
+	<keyword name="gl_ClipVertex" /><!--deprecated  1.5-->
+	<keyword name="gl_Color" />	<!--deprecated  1.5-->
+	<keyword name="gl_FogCoord" /><!--deprecated  1.5-->
+	<keyword name="gl_FogFragCoord" /><!--deprecated  1.5-->
+	<keyword name="gl_FragColor" /><!--deprecated  1.5-->
+	<keyword name="gl_FragCoord" />		
+	<keyword name="gl_FragData" /><!--deprecated 1.5-->
+	<keyword name="gl_FragDepth" />
+	<keyword name="gl_FrontColor" /><!--deprecated  1.5-->
+	<keyword name="gl_FrontFacing" />
+	<keyword name="gl_FrontSecondaryColor" /><!--deprecated  1.5-->
+	<keyword name="gl_GlobalInvocationID" />
+	<keyword name="gl_InstanceID" />
+	<keyword name="gl_InvocationID" />
+	<keyword name="gl_Layer" />
+	<keyword name="gl_LocalInvocationID" />
+	<keyword name="gl_LocalInvocationIndex" />
+	<keyword name="gl_MultiTexCoord" /><!--deprecated  1.5-->
+	<keyword name="gl_MultiTexCoord0" /><!--deprecated 1.5-->
+	<keyword name="gl_MultiTexCoord1" /><!--deprecated 1.5-->
+	<keyword name="gl_MultiTexCoord2" /><!--deprecated 1.5-->
+	<keyword name="gl_MultiTexCoord3" /><!--deprecated 1.5-->
+	<keyword name="gl_MultiTexCoord4" /><!--deprecated 1.5-->
+	<keyword name="gl_MultiTexCoord5" /><!--deprecated 1.5-->
+	<keyword name="gl_MultiTexCoord6" /><!--deprecated 1.5-->
+	<keyword name="gl_MultiTexCoord7" /><!--deprecated 1.5-->
+	<keyword name="gl_Normal" /><!--deprecated 1.5-->		
+	<keyword name="gl_NumSamples" />
+	<keyword name="gl_NumWorkGroups" />
+	<keyword name="gl_PatchVerticesIn" />
+	<keyword name="gl_PerVertex" /><!--deprecated 1.5-->
+	<keyword name="gl_PointCoord" />
+	<keyword name="gl_PointSize" />
+	<keyword name="gl_Position" />
+	<keyword name="gl_PrimitiveID" />
+	<keyword name="gl_PrimitiveIDIn" />
+	<keyword name="gl_SampleID" />
+	<keyword name="gl_SampleMask" />
+	<keyword name="gl_SampleMaskIn" />
+	<keyword name="gl_SamplePosition" />
+	<keyword name="gl_SecondaryColor" /><!--deprecated 1.5-->
+	<keyword name="gl_TessCoord" />
+	<keyword name="gl_TessLevelInner" />
+	<keyword name="gl_TessLevelOuter" />
+	<keyword name="gl_TexCoord" /><!--deprecated-->
+	<keyword name="gl_Vertex" /><!--deprecated-->
+	<keyword name="gl_VertexID" />
+	<keyword name="gl_ViewportIndex" />
+	<keyword name="gl_WorkGroupID" />
+	<keyword name="gl_WorkGroupSize" />
+	
+	<keyword name="greaterThan" func="yes">
+		<overload return-value="bvec" descr="[vec, ivec: 1.00, uvec: 1.30] Returns a boolean component-wise comparison of x and y">
+			<parameter name="vec/ivec/uvec x" />
+			<parameter name="vec/ivec/uvec y" />
+		</overload>
+	</keyword>
+	<keyword name="greaterThanEqual" func="yes">
+		<overload return-value="bvec" descr="[vec, ivec: 1.00, uvec: 1.30] Returns a boolean component-wise comparison of x and y">
+			<parameter name="vec/ivec/uvec x" />
+			<parameter name="vec/ivec/uvec y" />
+		</overload>
+	</keyword>
+	<keyword name="groupMemoryBarrier" func="yes">
+		<overload return-value="void" descr="[4.30] Waits on the completion of all memory accesses performed by an a compute shader in the same work group">
+		</overload>
+	</keyword>
+	<keyword name="if" />
+	<keyword name="imageAtomicAdd" func="yes">
+		<overload return-value="int/uint" descr="[4.20] Adds the value of data to the contents of the texel at coordinate/index P in image bound to imgunit; returns the original value">
+			<parameter name="gimage imgunit" />
+			<parameter name="int/ivec2/ivec3 P" />
+			<parameter name="int data" />
+		</overload>
+		<overload return-value="int/uint" descr="[4.20] Adds the value of data to the contents of the texel at coordinate/index P in multisample buffer nsample in image bound to imgunit; returns the original value">
+			<parameter name="gimage imgunit" />
+			<parameter name="int/ivec2/ivec3 P" />
+			<parameter name="int nsample" />
+			<parameter name="int data" />
+		</overload>
+	</keyword>
+	<keyword name="imageAtomicAnd" func="yes">
+		<overload return-value="int/uint" descr="[4.20] Stores data AND texel at coordinate/index P in image bound to imgunit; returns the original value">
+			<parameter name="gimage imgunit" />
+			<parameter name="int/ivec2/ivec3 P" />
+			<parameter name="int data" />
+		</overload>
+		<overload return-value="int/uint" descr="[4.20] Stores data AND texel at coordinate/index P in multisample buffer nsample in image bound to imgunit; returns the original value">
+			<parameter name="gimage imgunit" />
+			<parameter name="int/ivec2/ivec3 P" />
+			<parameter name="int nsample" />
+			<parameter name="int data" />
+		</overload>
+	</keyword>
+	<keyword name="imageAtomicCompSwap" func="yes">
+		<overload return-value="int/uint" descr="[4.20] Stores data at coordinate/index P in image bound to imgunit if texel == compare; returns the original value">
+			<parameter name="gimage imgunit" />
+			<parameter name="int/ivec2/ivec3 P" />
+			<parameter name="int/uint compare" />
+			<parameter name="int/uint data" />
+		</overload>
+		<overload return-value="int/uint" descr="[4.20] Stores data at coordinate/index P in multisample buffer nsample in image bound to imgunit if texel == compare; returns the original value">
+			<parameter name="gimage imgunit" />
+			<parameter name="int/ivec2/ivec3 P" />
+			<parameter name="int sample" />
+			<parameter name="int/uint compare" />
+			<parameter name="int/uint data" />
+		</overload>
+	</keyword>
+	<keyword name="imageAtomicExchange" func="yes">
+		<overload return-value="int/uint" descr="[4.20] Stores data at coordinate/index P in image bound to imgunit; returns the original value">
+			<parameter name="gimage imgunit" />
+			<parameter name="int/ivec2/ivec3 P" />
+			<parameter name="int/uint compare" />
+			<parameter name="int/uint data" />
+		</overload>
+		<overload return-value="int/uint" descr="[4.20] Stores data at coordinate/index P in multisample buffer nsample in image bound to imgunit; returns the original value">
+			<parameter name="gimage imgunit" />
+			<parameter name="int/ivec2/ivec3 P" />
+			<parameter name="int nsample" />
+			<parameter name="int/uint compare" />
+			<parameter name="int/uint data" />
+		</overload>
+	</keyword>
+	<keyword name="imageAtomicMax" func="yes">
+		<overload return-value="int/uint" descr="[4.20] Stores max(data, texel) at coordinate/index P in image bound to imgunit; returns the original value">
+			<parameter name="gimage imgunit" />
+			<parameter name="int/ivec2/ivec3 P" />
+			<parameter name="int/uint compare" />
+			<parameter name="int/uint data" />
+		</overload>
+		<overload return-value="int/uint" descr="[4.20] Stores max(data, texel) at coordinate/index P in multisample buffer nsample in image bound to imgunit; returns the original value">
+			<parameter name="gimage imgunit" />
+			<parameter name="int/ivec2/ivec3 P" />
+			<parameter name="int nsample" />
+			<parameter name="int/uint compare" />
+			<parameter name="int/uint data" />
+		</overload>
+	</keyword>
+	<keyword name="imageAtomicMin" func="yes">
+		<overload return-value="int/uint" descr="[4.20] Stores min(data, texel) at coordinate/index P in image bound to imgunit; returns the original value">
+			<parameter name="gimage imgunit" />
+			<parameter name="int/ivec2/ivec3 P" />
+			<parameter name="int/uint compare" />
+			<parameter name="int/uint data" />
+		</overload>
+		<overload return-value="int/uint" descr="[4.20] Stores min(data, texel) at coordinate/index P in multisample buffer nsample in image bound to imgunit; returns the original value">
+			<parameter name="gimage imgunit" />
+			<parameter name="int/ivec2/ivec3 P" />
+			<parameter name="int nsample" />
+			<parameter name="int/uint compare" />
+			<parameter name="int/uint data" />
+		</overload>
+	</keyword>
+	<keyword name="imageAtomicOr" func="yes">
+		<overload return-value="int/uint" descr="[4.20] Stores data OR texel at coordinate/index P in image bound to imgunit; returns the original value">
+			<parameter name="gimage imgunit" />
+			<parameter name="int/ivec2/ivec3 P" />
+			<parameter name="int/uint compare" />
+			<parameter name="int/uint data" />
+		</overload>
+		<overload return-value="int/uint" descr="[4.20] Stores data OR texel at coordinate/index P in multisample buffer nsample in image bound to imgunit; returns the original value">
+			<parameter name="gimage imgunit" />
+			<parameter name="int/ivec2/ivec3 P" />
+			<parameter name="int nsample" />
+			<parameter name="int/uint compare" />
+			<parameter name="int/uint data" />
+		</overload>
+	</keyword>
+	<keyword name="imageAtomicXor" func="yes">
+		<overload return-value="int/uint" descr="[4.20] Stores data XOR texel at coordinate/index P in image bound to imgunit; returns the original value">
+			<parameter name="gimage imgunit" />
+			<parameter name="int/ivec2/ivec3 P" />
+			<parameter name="int/uint compare" />
+			<parameter name="int/uint data" />
+		</overload>
+		<overload return-value="int/uint" descr="[4.20] Stores data XOR texel at coordinate/index P in multisample buffer nsample in image bound to imgunit; returns the original value">
+			<parameter name="gimage imgunit" />
+			<parameter name="int/ivec2/ivec3 P" />
+			<parameter name="int nsample" />
+			<parameter name="int/uint compare" />
+			<parameter name="int/uint data" />
+		</overload>
+	</keyword>
+	<keyword name="imageLoad" func="yes">
+		<overload return-value="gvec4" descr="[4.20] Loads a single sample from img at coordinate P">
+			<parameter name="image img" />
+			<parameter name="int/ivec2/ivec3 P" />
+		</overload>
+	</keyword>
+	<keyword name="imageSize" func="yes">
+		<overload return-value="int/ivec2/ivec3" descr="[4.30] Returns the dimensions of img">
+			<parameter name="image img" />
+		</overload>
+	</keyword>
+	<keyword name="imageStore" func="yes">
+		<overload return-value="void" descr="[4.20] Stores sample in img at coordinate P">
+			<parameter name="image img" />
+			<parameter name="int/ivec2/ivec3 P" />
+			<parameter name="gvec4 sample" />
+		</overload>
+	</keyword>
+	<keyword name="imulExtended" func="yes">
+		<overload return-value="void" descr="[4.00] Multiplies 32-bit x and y into a 64-bit result; returns it in msb and lsb">
+			<parameter name="genIType x" />
+			<parameter name="genIType y" />
+			<parameter name="out genIType msb" />
+			<parameter name="out genIType lsb" />
+		</overload>
+	</keyword>
+	<keyword name="in" />
+	<keyword name="int" />		
+	<keyword name="intBitsToFloat" func="yes">
+		<overload return-value="genType" descr="[3.30] Returns v's signed integer bit representation as a float">
+			<parameter name="genIType v" />
+		</overload>
+	</keyword>
+	<keyword name="interpolateAtCentroid" func="yes">
+		<overload return-value="float/vec2/vec3/vec4" descr="[4.00] Returns the value at interpolant sampled at a location inside both the pixel and the current primitive">
+			<parameter name="float/vec2/vec3/vec4 interpolant" />
+		</overload>
+	</keyword>
+	<keyword name="interpolateAtOffset" func="yes">
+		<overload return-value="float/vec2/vec3/vec4" descr="[4.00] Returns the value at interpolant sampled at offset from the center of the pixel">
+			<parameter name="float/vec2/vec3/vec4 interpolant" />
+			<parameter name="vec2 offset" />
+		</overload>
+	</keyword>
+	<keyword name="interpolateAtSample" func="yes">
+		<overload return-value="float/vec2/vec3/vec4" descr="[4.00] Returns the value at interpolant in multisample buffer msample">
+			<parameter name="float/vec2/vec3/vec4 interpolant" />
+			<parameter name="int msample" />
+		</overload>
+	</keyword>
+	<keyword name="inverse" func="yes">
+		<overload return-value="mat" descr="[1.40/4.00] Returns the inverse of matrix m">
+			<parameter name="mat m" />
+		</overload>
+	</keyword>
+	<keyword name="inversesqrt" func="yes">
+		<overload return-value="genType" descr="[1.30/4.00] Returns the inverse of the square root of v">
+			<parameter name="genType v" />
+		</overload>
+	</keyword>
+	<keyword name="isinf" func="yes">
+		<overload return-value="genBType" descr="[1.10/4.00] Returns component-wise true/false if v is (either positive or negative) infinity">
+			<parameter name="genType v" />
+		</overload>
+	</keyword>
+	<keyword name="isnan" func="yes">
+		<overload return-value="genBType" descr="[1.30/4.00] Returns component-wise true/false if v is (either positive or negative floating point) nan">
+			<parameter name="genType v" />
+		</overload>
+	</keyword>
+	<keyword name="ldexp" func="yes">
+		<overload return-value="genType" descr="[4.00/4.00] Assembles a floating-point number from value x and exponet exp: x * 2^exp">
+			<parameter name="genType x" />
+			<parameter name="genIType exp" />
+		</overload>
+	</keyword>
+	<keyword name="length" func="yes">
+		<overload return-value="genType" descr="[1.10/4.00] Returns the length of vector v">
+			<parameter name="genType v" />
+		</overload>
+	</keyword>
+	<keyword name="lessThan" func="yes">
+		<overload return-value="bvec" descr="[vec, ivec: 1.00, uvec: 1.30] Returns a boolean component-wise comparison of x and y">
+			<parameter name="vec/ivec/uvec x" />
+			<parameter name="vec/ivec/uvec y" />
+		</overload>
+	</keyword>
+	<keyword name="lessThanEqual" func="yes">
+		<overload return-value="bvec" descr="[vec, ivec: 1.00, uvec: 1.30] Returns a boolean component-wise comparison of x and y">
+			<parameter name="vec/ivec/uvec x" />
+			<parameter name="vec/ivec/uvec y" />
+		</overload>
+	</keyword>
+	<keyword name="log" func="yes">
+		<overload return-value="genType" descr="[1.10/-] Returns the natural logarithm of x">
+			<parameter name="genType x" />
+		</overload>
+	</keyword>
+	<keyword name="log2" func="yes">
+		<overload return-value="genType" descr="[1.10/-] Returns the base 2 logarithm of x">
+			<parameter name="genType x" />
+		</overload>
+	</keyword>
+	<keyword name="mat2" />
+	<keyword name="mat3" />
+	<keyword name="mat4" />
+	<keyword name="matrixCompMult">
+		<overload return-value="mat" descr="[1.10/4.00] Performs a component-wise multiplication of matrices a and b">
+			<parameter name="mat a" />
+			<parameter name="mat b" />
+		</overload>
+	</keyword>		
+	<keyword name="max">
+		<overload return-value="genType" descr="[1.10, int/uint: 1.30, double: 4.00] Returns the greater of a and b">
+			<parameter name="genType/genIType/genUType a" />
+			<parameter name="[float/int/uint]|genType/genIType/genUType b" />
+		</overload>
+	</keyword>
+	<keyword name="memoryBarrier" func="yes">
+		<overload return-value="void" descr="[4.00] Waits on the completion of all memory accesses from image or atomic variables">
+		</overload>
+	</keyword>
+	<keyword name="memoryBarrierAtomicCounter" func="yes">
+		<overload return-value="void" descr="[4.30] Waits on the completion of all memory accesses to atomic counters">
+		</overload>
+	</keyword>		
+	<keyword name="memoryBarrierBuffer" func="yes">
+		<overload return-value="void" descr="[4.30] Waits on the completion of all memory accesses to buffers">
+		</overload>
+	</keyword>
+	<keyword name="memoryBarrierImage" func="yes">
+		<overload return-value="void" descr="[4.30] Waits on the completion of all memory accesses images">
+		</overload>
+	</keyword>
+	<keyword name="memoryBarrierShared" func="yes">
+		<overload return-value="void" descr="[4.30] Waits on the completion of all memory accesses to shared variables">
+		</overload>
+	</keyword>
+	<keyword name="min">
+		<overload return-value="genType" descr="[1.10, int/uint: 1.30, double: 4.00] Returns the lesser of a and b">
+			<parameter name="genType/genIType/genUType a" />
+			<parameter name="[float/int/uint]|genType/genIType/genUType b" />
+		</overload>
+	</keyword>
+	<keyword name="mix">
+		<overload return-value="genType" descr="[1.10/4.00] Performs linear interpolation between a and b using c">
+			<parameter name="genType a" />
+			<parameter name="genType b" />
+			<parameter name="genType/float c" />
+		</overload>
+	</keyword>
+	<keyword name="mod">
+		<overload return-value="genType" descr="[1.10/4.00] Computes a modulo b: x - y * floor(x / y)">
+			<parameter name="genType a" />
+			<parameter name="float/genType b" />
+		</overload>
+	</keyword>
+	<keyword name="modf">
+		<overload return-value="genType" descr="[1.30/4.00] Computes a modulo b; returns the fraction, the integer part is stored in b">
+			<parameter name="genType a" />
+			<parameter name="out genType b" />
+		</overload>
+	</keyword>
+	<keyword name="noise1" func="yes">
+		<overload return-value="float" descr="[1.10] Returns a stochastic noise sample at coordinate v">
+			<parameter name="genType v" />
+		</overload>
+	</keyword>
+	<keyword name="noise2" func="yes">
+		<overload return-value="vec2" descr="[1.10] Returns a stochastic noise sample at coordinate v">
+			<parameter name="genType v" />
+		</overload>
+	</keyword>
+	<keyword name="noise3" func="yes">
+		<overload return-value="vec3" descr="[1.10] Returns a stochastic noise sample at coordinate v">
+			<parameter name="genType v" />
+		</overload>
+	</keyword>
+	<keyword name="noise4" func="yes">
+		<overload return-value="vec4" descr="[1.10] Returns a stochastic noise sample at coordinate v">
+			<parameter name="genType v" />
+		</overload>
+	</keyword>
+	<keyword name="normalize" func="yes">
+		<overload return-value="genType" descr="[1.10/4.00] Calculates the normalized product of v">
+			<parameter name="genType v" />
+		</overload>
+	</keyword>		
+	<keyword name="not" func="yes">
+		<overload return-value="bvec" descr="[1.10] Logically inverts a boolean vector">
+			<parameter name="bvec v" />
+		</overload>
+	</keyword>
+	<keyword name="notEqual" func="yes">
+		<overload return-value="bvec" descr="[float: 1.10, int, uint: 1.30] Returns a component-wise not-equal-to comparison of vectors x and y">
+			<parameter name="vec/ivec/uvec x" />
+			<parameter name="vec/ivec/uvec y" />
+		</overload>
+	</keyword>
+	<keyword name="out" />
+	<keyword name="outerProduct" func="yes">
+		<overload return-value="matRxC" descr="[1.20/4.00] Returns the outer product of vectors c and r (a multiplied matrix with dimensions RxC)">
+			<parameter name="vec2/vec3/vec4 C" />
+			<parameter name="vec2/vec3/vec4 R" />
+		</overload>
+	</keyword>
+	<keyword name="packDouble2x32" func="yes">
+		<overload return-value="double" descr="[4.00] Packs two unsigned integers stored in v into a double-precision number">
+			<parameter name="uvec2 v" />
+		</overload>
+	</keyword>
+	<keyword name="packHalf2x16" func="yes">
+		<overload return-value="uint" descr="[4.20] Packs two floating-point values into an unsigned integer at half precision">
+			<parameter name="vec2 v" />
+		</overload>
+	</keyword>
+	<keyword name="packSnorm2x16" func="yes">
+		<overload return-value="uint" descr="[4.20] Packs two floating-point values into an unsigned integer as 16-bit signed ints">
+			<parameter name="vec2" />
+		</overload>
+	</keyword>
+	<keyword name="packSnorm4x8" func="yes">
+		<overload return-value="uint" descr="[4.10] Packs four floating-point values into an unsigned integer as 8-bit signed ints">
+			<parameter name="vec4" />
+		</overload>
+	</keyword>
+	<keyword name="packUnorm2x16" func="yes">
+		<overload return-value="uint" descr="[4.10] Packs two floating-point values into an unsigned integer as 16-bit unsigned ints">
+			<parameter name="vec2" />
+		</overload>
+	</keyword>
+	<keyword name="packUnorm4x8" func="yes">
+		<overload return-value="uint" descr="[4.10] Packs two floating-point values into an unsigned integer as 8-bit unsigned ints">
+			<parameter name="vec4" />
+		</overload>
+	</keyword>
+	<keyword name="pow" func="yes">
+		<overload return-value="genType" descr="[1.10/-] Returns the value of x raised to the power of y">
+			<parameter name="genType x" />
+			<parameter name="genType y" />
+		</overload>
+	</keyword>
+	<keyword name="radians" func="yes">
+		<overload return-value="genType" descr="[1.10/-] Convert a quantity in degrees to radians">
+			<parameter name="genType x" />
+		</overload>
+	</keyword>				
+	<keyword name="reflect" func="yes">
+		<overload return-value="genType" descr="[1.10/4.00] Returns the reflection direction calculated as I - 2.0 * dot(N, I) * N">
+			<parameter name="genType I" />
+			<parameter name="genType N" />
+		</overload>
+	</keyword>
+	<keyword name="refract" func="yes">
+		<overload return-value="genType"  descr="[1.10/4.00] Returns the refraction vector based on ratio of indices 'eta' between an incident vector and a normal">
+			<parameter name="genType I" />
+			<parameter name="genType N" />
+			<parameter name="float eta" />
+		</overload>
+	</keyword>
+	<keyword name="return" />
+	<keyword name="round" func="yes">
+		<overload return-value="genType" descr="[1.30/4.00] Rounds x to the closes integer value (0.5 is implementation-specific)">
+			<parameter name="genType x" />
+		</overload>
+	</keyword>
+	<keyword name="roundEven" func="yes">
+		<overload return-value="genType" descr="[1.30/4.00] Rounds x to the closes even integer value">
+			<parameter name="genType x" />
+		</overload>
+	</keyword>
+	<keyword name="sign" func="yes">
+		<overload return-value="genType" descr="[1.30/4.00, integer: 1.50] Returns 1 if x is greater than 0, 0 if x == 0 and -1 if x is less than 0">
+			<parameter name="genType x" />
+		</overload>
+	</keyword>
+	<keyword name="sin" func="yes" descr="[1.10/-] Returns the sine of x in the range [-1, 1]">
+		<overload return-value="genType" >
+			<parameter name="genType x" />
+		</overload>
+	</keyword>		
+	<keyword name="sinh" func="yes">
+		<overload return-value="genType" descr="[1.30/-] Returns the hyperbolic sine of x">
+			<parameter name="genType x" />
+		</overload>
+	</keyword>
+	<keyword name="smoothstep" func="yes">
+		<overload return-value="genType" descr="[1.30/4.00] Performs smooth Hermite interpolation between 0 and 1 when x lies between edge0 and edge1">
+			<parameter name="float/genType edge0" />
+			<parameter name="float/genType edge1" />
+			<parameter name="genType x" />
+		</overload>
+	</keyword>		
+	<keyword name="sqrt" func="yes">
+		<overload return-value="genType" descr="[1.30/4.00] Returns the square root of x">
+			<parameter name="genType x" />
+		</overload>
+	</keyword>
+	<keyword name="step" func="yes">
+		<overload return-value="genType" descr="[1.30/-] Returns 0 if a is less than b, 1 otherwise">
+			<parameter name="float/genType a" />
+			<parameter name="genType b" />
+		</overload>
+	</keyword>
+	<keyword name="tan" func="yes">
+		<overload return-value="genType" descr="[1.10/-] Returns the trigonometric tangent of x in the range [-PI/2, PI/2]">
+			<parameter name="genType x" />
+		</overload>
+	</keyword>
+	<keyword name="tanh" func="yes">
+		<overload return-value="genType" descr="[1.30/-] Returns the hyperbolic tangent of x">
+			<parameter name="genType x" />
+		</overload>
+	</keyword>
+	<keyword name="texelFetch" func="yes">
+		<overload return-value="gvec4" descr="[1.30] Fetches a single texel from sampler at pixel coordinate P with LOD">
+			<parameter name="gsampler1D sampler" />
+			<parameter name="int P" />
+			<parameter name="int lod" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Fetches a single texel from sampler at pixel coordinates P with LOD">
+			<parameter name="gsampler2D sampler" />
+			<parameter name="ivec2 P" />
+			<parameter name="int lod" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Fetches a single texel from sampler at pixel coordinates P with LOD">
+			<parameter name="gsampler3D sampler" />
+			<parameter name="ivec3 P" />
+			<parameter name="int lod" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.40] Fetches a single texel from sampler at pixel coordinates P">
+			<parameter name="gsampler2DRect sampler" />
+			<parameter name="ivec2 P" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Fetches a single texel from sampler at pixel coordinates P with LOD">
+			<parameter name="gsampler1DArray sampler" />
+			<parameter name="ivec2 P" />
+			<parameter name="int lod" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Fetches a single texel from sampler at pixel coordinates P with LOD">
+			<parameter name="gsampler2DArray sampler" />
+			<parameter name="ivec3 P" />
+			<parameter name="int lod" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.40] Fetches a single element from buffer at offset P">
+			<parameter name="gsamplerBuffer sampler" />
+			<parameter name="int P" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.50] Fetches a single texel from sampler at pixel coordinates P at multisample level nsample">
+			<parameter name="gsampler2DMS sampler" />
+			<parameter name="ivec2 P" />
+			<parameter name="sample nsample" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.50] Fetches a single texel from sampler at pixel coordinates P at multisample level nsample">
+			<parameter name="gsampler2DMSArray sampler" />
+			<parameter name="ivec3 P" />
+			<parameter name="sample nsample" />
+		</overload>
+	</keyword>
+	<keyword name="texelFetchOffset" func="yes">
+		<overload return-value="gvec4" descr="[1.30] Fetches a single texel from sampler at pixel coordinate (P + offset) with LOD">
+			<parameter name="gsampler1D sampler" />
+			<parameter name="int P" />
+			<parameter name="int lod" />
+			<parameter name="int offset" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Fetches a single texel from sampler at pixel coordinates (P + offset) with LOD">
+			<parameter name="gsampler2D sampler" />
+			<parameter name="ivec2 P" />
+			<parameter name="int lod" />
+			<parameter name="int offset" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Fetches a single texel from sampler at pixel coordinates (P + offset) with LOD">
+			<parameter name="gsampler3D sampler" />
+			<parameter name="ivec3 P" />
+			<parameter name="int lod" />
+			<parameter name="int offset" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.40] Fetches a single texel from sampler at pixel coordinates (P + offset)">
+			<parameter name="gsampler2DRect sampler" />
+			<parameter name="ivec2 P" />
+			<parameter name="int offset" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Fetches a single texel from sampler at pixel coordinates (P + offset) with LOD">
+			<parameter name="gsampler1DArray sampler" />
+			<parameter name="ivec2 P" />
+			<parameter name="int lod" />
+			<parameter name="int offset" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Fetches a single texel from sampler at pixel coordinates (P + offset) with LOD">
+			<parameter name="gsampler2DArray sampler" />
+			<parameter name="ivec3 P" />
+			<parameter name="int lod" />
+			<parameter name="int offset" />
+		</overload>
+	</keyword>
+	<keyword name="texture" func="yes">
+		<overload return-value="gvec4" descr="[1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="gsampler1D sampler" />
+			<parameter name="float P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="gsampler2D sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="gsampler3D sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="gsamplerCube sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="sampler1DShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="sampler2DShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="samplerCubeShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="gsampler1DArray sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="gsampler2DArray sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="sampler1DArrayShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="sampler2DArrayShadow sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.40] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="gsampler2DRect sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="float" descr="[1.40] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="sampler2DRectShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="float" descr="[4.00] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="gsamplerCubeArrayShadow sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="[float bias]" />
+		</overload>
+	</keyword>
+	<keyword name="texture1D" func="yes">
+		<overload return-value="vec4" descr="FRAGMENT (deprecated, use texture()) [??? to 1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="sampler1D sampler" />
+			<parameter name="float P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="ivec4" descr="FRAGMENT (deprecated, use texture()) [??? to 1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="isampler1D sampler" />
+			<parameter name="float P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="uvec4" descr="FRAGMENT (deprecated, use texture()) [??? to 1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="usampler1D sampler" />
+			<parameter name="float P" />
+			<parameter name="[float bias]" />
+		</overload>			
+	</keyword>
+	<keyword name="texture1DArray" func="yes">
+		<overload return-value="vec4" descr="FRAGMENT (deprecated, use texture()) [??? to 1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="sampler1DArray sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="ivec4" descr="FRAGMENT (deprecated, use texture()) [??? to 1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="isampler1DArray sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="uvec4" descr="FRAGMENT (deprecated, use texture()) [??? to 1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="usampler1DArray sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="[float bias]" />
+		</overload>
+	</keyword>		
+	<keyword name="texture1DShadow" func="yes">
+		<overload return-value="float" descr="FRAGMENT (deprecated, use texture()) [??? to 1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="sampler1DShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="[float bias]" />
+		</overload>
+	</keyword>		
+	<keyword name="texture2D" func="yes">
+		<overload return-value="vec4" descr="FRAGMENT (deprecated, use texture()) [??? to 1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="sampler2D sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="ivec4" descr="FRAGMENT (deprecated, use texture()) [??? to 1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="isampler2D sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="uvec4" descr="FRAGMENT (deprecated, use texture()) [??? to 1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="usampler2D sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="[float bias]" />
+		</overload>			
+	</keyword>
+	<keyword name="texture2DArray" func="yes">
+		<overload return-value="vec4" descr="FRAGMENT (deprecated, use texture()) [??? to 1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="sampler2DArray sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="ivec4" descr="FRAGMENT (deprecated, use texture()) [??? to 1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="isampler2DArray sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="uvec4" descr="FRAGMENT (deprecated, use texture()) [??? to 1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="usampler2DArray sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="[float bias]" />
+		</overload>
+	</keyword>
+	<keyword name="texture2DRect" func="yes">
+		<overload return-value="vec4" descr="FRAGMENT (deprecated, use texture()) [??? to 1.40] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="sampler2DRect sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="vec4" descr="FRAGMENT (deprecated, use texture()) [??? to 1.40] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="sampler2DRectShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="ivec4" descr="FRAGMENT (deprecated, use texture()) [??? to 1.40] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="isampler2DRect sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="uvec4" descr="FRAGMENT (deprecated, use texture()) [??? to 1.40] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="usampler2DRect sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="[float bias]" />
+		</overload>
+	</keyword>
+	<keyword name="texture2DShadow" func="yes">
+		<overload return-value="float" descr="FRAGMENT (deprecated, use texture()) [??? to 1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="sampler2DShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="[float bias]" />
+		</overload>
+	</keyword>
+	<keyword name="texture3D" func="yes">
+		<overload return-value="vec4" descr="FRAGMENT (deprecated, use texture()) [??? to 1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="sampler3D sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="ivec4" descr="FRAGMENT (deprecated, use texture()) [??? to 1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="isampler3D sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="uvec4" descr="FRAGMENT (deprecated, use texture()) [??? to 1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="usampler3D sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="[float bias]" />
+		</overload>			
+	</keyword>		
+	<keyword name="textureCube" func="yes">
+		<overload return-value="vec4" descr="FRAGMENT (deprecated, use texture()) [??? to 1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="samplerCube sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="ivec4" descr="FRAGMENT (deprecated, use texture()) [??? to 1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="isamplerCube sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="uvec4" descr="FRAGMENT (deprecated, use texture()) [??? to 1.30] Retrieves texels from sampler at coordinates P with optional bias">
+			<parameter name="usamplerCube sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="[float bias]" />
+		</overload>			
+	</keyword>
+	<keyword name="textureGather" func="yes">
+		<overload return-value="gvec4" descr="[4.00] Gathers four texels from sampler at coordinates P. comp is optionally the source component index [0, 3], defaulting to 0 if not specified">
+			<parameter name="gsampler2D sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="[int comp]" />
+		</overload>
+		<overload return-value="gvec4" descr="[4.00] Gathers four texels from sampler at coordinates P. comp is optionally the source component index [0, 3], defaulting to 0 if not specified">
+			<parameter name="gsampler2DArray sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="[int comp]" />
+		</overload>
+		<overload return-value="gvec4" descr="[4.00] Gathers four texels from sampler at coordinates P. comp is optionally the source component index [0, 3], defaulting to 0 if not specified">
+			<parameter name="gsamplerCube sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="[int comp]" />
+		</overload>
+		<overload return-value="gvec4" descr="[4.00] Gathers four texels from sampler at coordinates P. comp is optionally the source component index [0, 3], defaulting to 0 if not specified">
+			<parameter name="gsamplerCubeArray sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="[int comp]" />
+		</overload>
+		<overload return-value="gvec4" descr="[4.00] Gathers four texels from sampler at coordinates P. comp is optionally the source component index [0, 3], defaulting to 0 if not specified">
+			<parameter name="gsampler2DRect sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="[int comp]" />
+		</overload>
+		<overload return-value="vec4" descr="[4.00] Gathers four texels from sampler at coordinates P. refZ is used to compare the shadow forms">
+			<parameter name="gsampler2DShadow sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="float refZ" />
+		</overload>
+		<overload return-value="vec4" descr="[4.00] Gathers four texels from sampler at coordinates P. refZ is used to compare the shadow forms">
+			<parameter name="gsampler2DShadowArray sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="float refZ" />
+		</overload>
+		<overload return-value="vec4" descr="[4.00] Gathers four texels from sampler at coordinates P. refZ is used to compare the shadow forms">
+			<parameter name="gsamplerCubeShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="float refZ" />
+		</overload>
+		<overload return-value="vec4" descr="[4.00] Gathers four texels from sampler at coordinates P. refZ is used to compare the shadow forms">
+			<parameter name="gsampler2DArrayShadow sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="float refZ" />
+		</overload>
+		<overload return-value="vec4" descr="[4.00] Gathers four texels from sampler at coordinates P. refZ is used to compare the shadow forms">
+			<parameter name="gsampler2DRectShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="float refZ" />
+		</overload>
+	</keyword>
+	<keyword name="textureGatherOffset" func="yes">
+		<overload return-value="gvec4" descr="[4.00] Gathers four texels from sampler at coordinates (P + offset). comp is optionally the source component index [0, 3], defaulting to 0 if not specified">
+			<parameter name="gsampler2D sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="ivec2 offset" />
+			<parameter name="[int comp]" />
+		</overload>
+		<overload return-value="gvec4" descr="[4.00] Gathers four texels from sampler at coordinates (P + offset). comp is optionally the source component index [0, 3], defaulting to 0 if not specified">
+			<parameter name="gsampler2DArray sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="ivec2 offset" />
+			<parameter name="[int comp]" />
+		</overload>
+		<overload return-value="gvec4" descr="[4.00] Gathers four texels from sampler at coordinates (P + offset). comp is optionally the source component index [0, 3], defaulting to 0 if not specified">
+			<parameter name="gsampler2DRect sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="ivec2 offset" />
+			<parameter name="[int comp]" />
+		</overload>
+		<overload return-value="vec4" descr="[4.00] Gathers four texels from sampler at coordinates (P + offset). refZ is used to compare the shadow forms">
+			<parameter name="gsampler2DShadow sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="float refZ" />
+			<parameter name="ivec2 offset" />
+		</overload>
+		<overload return-value="vec4" descr="[4.00] Gathers four texels from sampler at coordinates (P + offset). refZ is used to compare the shadow forms">
+			<parameter name="gsampler2DArrayShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="float refZ" />
+			<parameter name="ivec2 offset" />
+		</overload>
+		<overload return-value="vec4" descr="[4.00] Gathers four texels from sampler at coordinates (P + offset). refZ is used to compare the shadow forms">
+			<parameter name="gsampler2DRectShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="float refZ" />
+			<parameter name="ivec2 offset" />
+		</overload>
+	</keyword>
+	<keyword name="textureGatherOffsets" func="yes">
+		<overload return-value="gvec4" descr="[4.00] Gathers four texels from sampler at coordinates (P + offsets). comp is optionally the source component index [0, 3], defaulting to 0 if not specified">
+			<parameter name="gsampler2D sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="ivec2 offsets[4]" />
+			<parameter name="[int comp]" />
+		</overload>
+		<overload return-value="gvec4" descr="[4.00] Gathers four texels from sampler at coordinates (P + offsets). comp is optionally the source component index [0, 3], defaulting to 0 if not specified">
+			<parameter name="gsampler2DArray sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="ivec2 offsets[4]" />
+			<parameter name="[int comp]" />
+		</overload>
+		<overload return-value="gvec4" descr="[4.00] Gathers four texels from sampler at coordinates (P + offsets). comp is optionally the source component index [0, 3], defaulting to 0 if not specified">
+			<parameter name="gsampler2DRect sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="ivec2 offsets[4]" />
+			<parameter name="[int comp]" />
+		</overload>
+		<overload return-value="vec4" descr="[4.00] Gathers four texels from sampler at coordinates (P + offsets). refZ is used to compare the shadow forms">
+			<parameter name="gsampler2DShadow sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="float refZ" />
+			<parameter name="ivec2 offsets[4]" />
+		</overload>
+		<overload return-value="vec4" descr="[4.00] Gathers four texels from sampler at coordinates (P + offsets). refZ is used to compare the shadow forms">
+			<parameter name="gsampler2DArrayShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="float refZ" />
+			<parameter name="ivec2 offsets[4]" />
+		</overload>
+		<overload return-value="vec4" descr="[4.00] Gathers four texels from sampler at coordinates (P + offsets). refZ is used to compare the shadow forms">
+			<parameter name="gsampler2DRectShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="float refZ" />
+			<parameter name="ivec2 offsets[4]" />
+		</overload>
+	</keyword>
+	<keyword name="textureGrad" func="yes">
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with explicit gradients">
+			<parameter name="gsampler1D sampler" />
+			<parameter name="float P" />
+			<parameter name="float dPdx" />
+			<parameter name="float dPdy" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Performs a texture lookup with explicit gradients">
+			<parameter name="sampler1DShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="float dPdx" />
+			<parameter name="float dPdy" />
+		</overload>			
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with explicit gradients">
+			<parameter name="gsampler2D sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="vec2 dPdx" />
+			<parameter name="vec2 dPdy" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Performs a texture lookup with explicit gradients">
+			<parameter name="sampler2DShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="vec2 dPdx" />
+			<parameter name="vec2 dPdy" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with explicit gradients">
+			<parameter name="gsampler3D sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="vec3 dPdx" />
+			<parameter name="vec3 dPdy" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with explicit gradients">
+			<parameter name="gsamplerCube sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="vec3 dPdx" />
+			<parameter name="vec3 dPdy" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.40] Performs a texture lookup with explicit gradients">
+			<parameter name="gsampler2DRect sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="vec2 dPdx" />
+			<parameter name="vec2 dPdy" />
+		</overload>
+		<overload return-value="float" descr="[1.40] Performs a texture lookup with explicit gradients">
+			<parameter name="gsampler2DRectShadow sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="vec2 dPdx" />
+			<parameter name="vec2 dPdy" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with explicit gradients">
+			<parameter name="gsampler1DArray sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="float dPdx" />
+			<parameter name="float dPdy" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Performs a texture lookup with explicit gradients">
+			<parameter name="gsampler1DArrayShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="float dPdx" />
+			<parameter name="float dPdy" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with explicit gradients">
+			<parameter name="gsampler2DArray sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="vec2 dPdx" />
+			<parameter name="vec2 dPdy" />
+		</overload>
+		<overload return-value="gvec4" descr="[4.00] Performs a texture lookup with explicit gradients">
+			<parameter name="gsamplerCubeArray sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="vec3 dPdx" />
+			<parameter name="vec3 dPdy" />
+		</overload>
+	</keyword>
+	<keyword name="textureGradOffset" func="yes">
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with explicit gradients and offset">
+			<parameter name="gsampler1D sampler" />
+			<parameter name="float P" />
+			<parameter name="float dPdx" />
+			<parameter name="float dPdy" />
+			<parameter name="int offset" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Performs a texture lookup with explicit gradients and offset">
+			<parameter name="sampler1DShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="float dPdx" />
+			<parameter name="float dPdy" />
+			<parameter name="int offset" />
+		</overload>			
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with explicit gradients and offset">
+			<parameter name="gsampler2D sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="vec2 dPdx" />
+			<parameter name="vec2 dPdy" />
+			<parameter name="ivec2 offset" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Performs a texture lookup with explicit gradients and offset">
+			<parameter name="sampler2DShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="vec2 dPdx" />
+			<parameter name="vec2 dPdy" />
+			<parameter name="ivec2 offset" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with explicit gradients and offset">
+			<parameter name="gsampler3D sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="vec3 dPdx" />
+			<parameter name="vec3 dPdy" />
+			<parameter name="ivec3 offset" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.40] Performs a texture lookup with explicit gradients and offset">
+			<parameter name="gsampler2DRect sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="vec2 dPdx" />
+			<parameter name="vec2 dPdy" />
+			<parameter name="ivec2 offset" />
+		</overload>
+		<overload return-value="float" descr="[1.40] Performs a texture lookup with explicit gradients and offset">
+			<parameter name="gsampler2DRectShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="vec2 dPdx" />
+			<parameter name="vec2 dPdy" />
+			<parameter name="ivec2 offset" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with explicit gradients and offset">
+			<parameter name="gsampler1DArray sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="float dPdx" />
+			<parameter name="float dPdy" />
+			<parameter name="int offset" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Performs a texture lookup with explicit gradients and offset">
+			<parameter name="gsampler1DArrayShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="float dPdx" />
+			<parameter name="float dPdy" />
+			<parameter name="int offset" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with explicit gradients and offset">
+			<parameter name="gsampler2DArray sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="vec2 dPdx" />
+			<parameter name="vec2 dPdy" />
+			<parameter name="ivec2 offset" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Performs a texture lookup with explicit gradients and offset">
+			<parameter name="sampler2DArrayShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="float dPdx" />
+			<parameter name="float dPdy" />
+			<parameter name="ivec2 offset" />
+		</overload>
+	</keyword>
+	<keyword name="textureLod" func="yes">
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with explicit gradients">
+			<parameter name="gsampler1D sampler" />
+			<parameter name="float P" />
+			<parameter name="float lod" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Performs a texture lookup with explicit gradients">
+			<parameter name="sampler1DShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="float lod" />
+		</overload>			
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with explicit gradients">
+			<parameter name="gsampler2D sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="float lod" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Performs a texture lookup with explicit gradients">
+			<parameter name="sampler2DShadow sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="float lod" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with explicit gradients">
+			<parameter name="gsampler3D sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="float lod" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.40] Performs a texture lookup with explicit gradients">
+			<parameter name="gsampler2DRect sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="float lod" />
+		</overload>
+		<overload return-value="float" descr="[1.40] Performs a texture lookup with explicit gradients">
+			<parameter name="gsampler2DRectShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="float lod" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with explicit gradients">
+			<parameter name="gsampler1DArray sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="float lod" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Performs a texture lookup with explicit gradients">
+			<parameter name="sampler1DArrayShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="float lod" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with explicit gradients">
+			<parameter name="gsampler2DArray sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="float lod" />
+		</overload>
+		<overload return-value="gvec4" descr="[4.00] Performs a texture lookup with explicit gradients">
+			<parameter name="samplerCubeArrayShadow sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="float lod" />
+		</overload>
+	</keyword>
+	<keyword name="textureLodOffset" func="yes">
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with explicit gradients and offset">
+			<parameter name="gsampler1D sampler" />
+			<parameter name="float P" />
+			<parameter name="float lod" />
+			<parameter name="int offset" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Performs a texture lookup with explicit gradients and offset">
+			<parameter name="sampler1DShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="float lod" />
+			<parameter name="int offset" />
+		</overload>			
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with explicit gradients and offset">
+			<parameter name="gsampler2D sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="float lod" />
+			<parameter name="ivec2 offset" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Performs a texture lookup with explicit gradients and offset">
+			<parameter name="sampler2DShadow sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="float lod" />
+			<parameter name="ivec2 offset" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with explicit gradients and offset">
+			<parameter name="gsampler3D sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="float lod" />
+			<parameter name="ivec3 offset" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.40] Performs a texture lookup with explicit gradients">
+			<parameter name="gsampler2DRect sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="float lod" />
+			<parameter name="ivec2 offset" />
+		</overload>
+		<overload return-value="float" descr="[1.40] Performs a texture lookup with explicit gradients">
+			<parameter name="gsampler2DRectShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="float lod" />
+			<parameter name="ivec3 offset" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with explicit gradients and offset">
+			<parameter name="gsampler1DArray sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="float lod" />
+			<parameter name="int offset" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Performs a texture lookup with explicit gradients and offset">
+			<parameter name="sampler1DArrayShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="float lod" />
+			<parameter name="int offset" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with explicit gradients and offset">
+			<parameter name="gsampler2DArray sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="float lod" />
+			<parameter name="ivec2 offset" />
+		</overload>
+		<overload return-value="gvec4" descr="[4.00] Performs a texture lookup with explicit gradients and offset">
+			<parameter name="samplerCubeArray sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="float lod" />
+			<parameter name="ivec3 offset" />
+		</overload>
+	</keyword>
+	<keyword name="textureOffset" func="yes">
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with offset and optional bias">
+			<parameter name="gsampler1D sampler" />
+			<parameter name="float P" />
+			<parameter name="int offset" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Performs a texture lookup with offset and optional bias">
+			<parameter name="sampler1DShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="int offset" />
+			<parameter name="[float bias]" />
+		</overload>			
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with offset and optional bias">
+			<parameter name="gsampler2D sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="ivec2 offset" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Performs a texture lookup with offset and optional bias">
+			<parameter name="sampler2DShadow sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="ivec2 offset" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with offset and optional bias">
+			<parameter name="gsampler3D sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="ivec3 offset" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.40] Performs a texture lookup with offset">
+			<parameter name="gsampler2DRect sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="ivec2 offset" />
+		</overload>
+		<overload return-value="float" descr="[1.40] Performs a texture lookup with offset">
+			<parameter name="gsampler2DRectShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="float lod" />
+			<parameter name="ivec3 offset" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with offset and optional bias">
+			<parameter name="gsampler1DArray sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="int offset" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Performs a texture lookup with offset">
+			<parameter name="sampler1DArrayShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="int offset" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with offset and optional bias">
+			<parameter name="gsampler2DArray sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="ivec2 offset" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Performs a texture lookup with offset">
+			<parameter name="sampler2DArrayShadow sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="vec2 offset" />
+		</overload>
+	</keyword>
+	<keyword name="textureProj" func="yes">
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection (first components of P are divided by the last prior to regular lookup)">
+			<parameter name="gsampler1D sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection (first components of P are divided by the last prior to regular lookup)">
+			<parameter name="gsampler1D sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Performs a texture lookup with projection (first components of P are divided by the last prior to regular lookup)">
+			<parameter name="sampler1DShadow sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="[float bias]" />
+		</overload>			
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection (first components of P are divided by the last prior to regular lookup)">
+			<parameter name="gsampler2D sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection (first components of P are divided by the last prior to regular lookup)">
+			<parameter name="gsampler2D sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Performs a texture lookup with projection (first components of P are divided by the last prior to regular lookup)">
+			<parameter name="sampler2DShadow sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection (first components of P are divided by the last prior to regular lookup)">
+			<parameter name="gsampler3D sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.40] Performs a texture lookup with projection (first components of P are divided by the last prior to regular lookup)">
+			<parameter name="gsampler2DRect sampler" />
+			<parameter name="vec3 P" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.40] Performs a texture lookup with projection (first components of P are divided by the last prior to regular lookup)">
+			<parameter name="gsampler2DRect sampler" />
+			<parameter name="vec4 P" />
+		</overload>
+		<overload return-value="float" descr="[1.40] Performs a texture lookup with projection (first components of P are divided by the last prior to regular lookup)">
+			<parameter name="gsampler2DRectShadow sampler" />
+			<parameter name="vec4 P" />
+		</overload>
+	</keyword>
+	<keyword name="textureProjGrad" func="yes">
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection and explicit gradients">
+			<parameter name="gsampler1D sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="float pDx" />
+			<parameter name="float pDy" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection and explicit gradients">
+			<parameter name="gsampler1D sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="float pDx" />
+			<parameter name="float pDy" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Performs a texture lookup with projection and explicit gradients">
+			<parameter name="sampler1DShadow sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="float pDx" />
+			<parameter name="float pDy" />
+		</overload>			
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection and explicit gradients">
+			<parameter name="gsampler2D sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="vec2 pDx" />
+			<parameter name="vec2 pDy" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection and explicit gradients">
+			<parameter name="gsampler2D sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="vec2 pDx" />
+			<parameter name="vec2 pDy" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Performs a texture lookup with projection and explicit gradients">
+			<parameter name="sampler2DShadow sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="vec2 pDx" />
+			<parameter name="vec2 pDy" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection and explicit gradients">
+			<parameter name="gsampler3D sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="vec2 pDx" />
+			<parameter name="vec2 pDy" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.40] Performs a texture lookup with projection and explicit gradients">
+			<parameter name="gsampler2DRect sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="vec2 pDx" />
+			<parameter name="vec2 pDy" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.40] Performs a texture lookup with projection and explicit gradients">
+			<parameter name="gsampler2DRect sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="vec2 pDx" />
+			<parameter name="vec2 pDy" />
+		</overload>
+		<overload return-value="float" descr="[1.40] Performs a texture lookup with projection and explicit gradients">
+			<parameter name="gsampler2DRectShadow sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="vec2 pDx" />
+			<parameter name="vec2 pDy" />
+		</overload>
+	</keyword>
+	<keyword name="textureProjGradOffset" func="yes">
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection and explicit gradients and offset">
+			<parameter name="gsampler1D sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="float pDx" />
+			<parameter name="float pDy" />
+			<parameter name="int offset" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection and explicit gradients and offset">
+			<parameter name="gsampler1D sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="float pDx" />
+			<parameter name="float pDy" />
+			<parameter name="int offset" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Performs a texture lookup with projection and explicit gradients and offset">
+			<parameter name="sampler1DShadow sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="float pDx" />
+			<parameter name="float pDy" />
+			<parameter name="int offset" />
+		</overload>			
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection and explicit gradients and offset">
+			<parameter name="gsampler2D sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="vec2 pDx" />
+			<parameter name="vec2 pDy" />
+			<parameter name="ivec2 offset" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection and explicit gradients and offset">
+			<parameter name="gsampler2D sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="vec2 pDx" />
+			<parameter name="vec2 pDy" />
+			<parameter name="ivec2 offset" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Performs a texture lookup with projection and explicit gradients and offset">
+			<parameter name="sampler2DShadow sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="vec2 pDx" />
+			<parameter name="vec2 pDy" />
+			<parameter name="ivec2 offset" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection and explicit gradients and offset">
+			<parameter name="gsampler3D sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="vec2 pDx" />
+			<parameter name="vec2 pDy" />
+			<parameter name="ivec3 offset" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.40] Performs a texture lookup with projection and explicit gradients and offset">
+			<parameter name="gsampler2DRect sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="vec2 pDx" />
+			<parameter name="vec2 pDy" />
+			<parameter name="ivec2 offset" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.40] Performs a texture lookup with projection and explicit gradients and offset">
+			<parameter name="gsampler2DRect sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="vec2 pDx" />
+			<parameter name="vec2 pDy" />
+			<parameter name="ivec2 offset" />
+		</overload>
+		<overload return-value="float" descr="[1.40] Performs a texture lookup with projection and explicit gradients and offset">
+			<parameter name="gsampler2DRectShadow sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="vec2 pDx" />
+			<parameter name="vec2 pDy" />
+			<parameter name="ivec2 offset" />
+		</overload>
+	</keyword>
+	<keyword name="textureProjLod" func="yes">
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection and explicit LOD">
+			<parameter name="gsampler1D sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="float lod" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection and explicit LOD">
+			<parameter name="gsampler1D sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="float lod" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Performs a texture lookup with projection and explicit LOD">
+			<parameter name="sampler1DShadow sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="float lod" />
+		</overload>			
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection and explicit LOD">
+			<parameter name="gsampler2D sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="float lod" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection and explicit LOD">
+			<parameter name="gsampler2D sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="float lod" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Performs a texture lookup with projection and explicit LOD">
+			<parameter name="sampler2DShadow sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="float lod" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection and explicit LOD">
+			<parameter name="gsampler3D sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="float lod" />
+		</overload>
+	</keyword>
+	<keyword name="textureProjLodOffset" func="yes">
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection and explicit LOD and offset">
+			<parameter name="gsampler1D sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="float lod" />
+			<parameter name="int offset" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection and explicit LOD and offset">
+			<parameter name="gsampler1D sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="float lod" />
+			<parameter name="int offset" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Performs a texture lookup with projection and explicit LOD and offset">
+			<parameter name="sampler1DShadow sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="float lod" />
+			<parameter name="int offset" />
+		</overload>			
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection and explicit LOD and offset">
+			<parameter name="gsampler2D sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="float lod" />
+			<parameter name="ivec2 offset" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection and explicit LOD and offset">
+			<parameter name="gsampler2D sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="float lod" />
+			<parameter name="ivec2 offset" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Performs a texture lookup with projection and explicit LOD and offset">
+			<parameter name="sampler2DShadow sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="float lod" />
+			<parameter name="ivec2 offset" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection and explicit LOD and offset">
+			<parameter name="gsampler3D sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="float lod" />
+			<parameter name="ivec3 offset" />
+		</overload>
+	</keyword>
+	<keyword name="textureProjOffset" func="yes">
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection, offset and optional bias">
+			<parameter name="gsampler1D sampler" />
+			<parameter name="vec2 P" />
+			<parameter name="int offset" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection, offset and optional bias">
+			<parameter name="gsampler1D sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="int offset" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Performs a texture lookup with projection, offset and optional bias">
+			<parameter name="sampler1DShadow sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="int offset" />
+			<parameter name="[float bias]" />
+		</overload>			
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection, offset and optional bias">
+			<parameter name="gsampler2D sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="ivec2 offset" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection, offset and optional bias">
+			<parameter name="gsampler2D sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="ivec2 offset" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="float" descr="[1.30] Performs a texture lookup with projection, offset and optional bias">
+			<parameter name="sampler2DShadow sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="ivec2 offset" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.30] Performs a texture lookup with projection, offset and optional bias">
+			<parameter name="gsampler3D sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="ivec3 offset" />
+			<parameter name="[float bias]" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.40] Performs a texture lookup with projection, offset and optional bias">
+			<parameter name="gsampler2DRect sampler" />
+			<parameter name="vec3 P" />
+			<parameter name="ivec2 offset" />
+		</overload>
+		<overload return-value="gvec4" descr="[1.40] Performs a texture lookup with projection, offset and optional bias">
+			<parameter name="gsampler2DRect sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="ivec2 offset" />
+		</overload>
+		<overload return-value="float" descr="[1.40] Performs a texture lookup with projection, offset and optional bias">
+			<parameter name="gsampler2DRectShadow sampler" />
+			<parameter name="vec4 P" />
+			<parameter name="ivec2 offset" />
+		</overload>
+	</keyword>
+	<keyword name="textureQueryLevels" func="yes">
+		<overload return-value="vec2" descr="[4.30] Returns the number of accessible mipmap levels in a texture">
+			<parameter name="gsampler1D sampler" />
+		</overload>
+		<overload return-value="vec2" descr="[4.30] Returns the number of accessible mipmap levels in a texture">
+			<parameter name="sampler1DShadow sampler" />
+		</overload>
+		<overload return-value="vec2" descr="[4.30] Returns the number of accessible mipmap levels in a texture">
+			<parameter name="gsampler1DArray sampler" />
+		</overload>
+		<overload return-value="vec2" descr="[4.30] Returns the number of accessible mipmap levels in a texture">
+			<parameter name="gsampler1DArrayShadow sampler" />
+		</overload>
+		<overload return-value="vec2" descr="[4.30] Returns the number of accessible mipmap levels in a texture">
+			<parameter name="gsampler2D sampler" />
+		</overload>
+		<overload return-value="vec2" descr="[4.30] Returns the number of accessible mipmap levels in a texture">
+			<parameter name="sampler2DShadow sampler" />
+		</overload>
+		<overload return-value="vec2" descr="[4.30] Returns the number of accessible mipmap levels in a texture">
+			<parameter name="gsampler2DArray sampler" />
+		</overload>
+		<overload return-value="vec2" descr="[4.30] Returns the number of accessible mipmap levels in a texture">
+			<parameter name="gsampler2DShadow sampler" />
+		</overload>
+		<overload return-value="vec2" descr="[4.30] Returns the number of accessible mipmap levels in a texture">
+			<parameter name="gsampler3D sampler" />
+		</overload>
+		<overload return-value="vec2" descr="[4.30] Returns the number of accessible mipmap levels in a texture">
+			<parameter name="gsamplerCube sampler" />
+		</overload>
+		<overload return-value="vec2" descr="[4.30] Returns the number of accessible mipmap levels in a texture">
+			<parameter name="gsamplerCubeShadow sampler" />
+		</overload>
+		<overload return-value="vec2" descr="[4.30] Returns the number of accessible mipmap levels in a texture">
+			<parameter name="gsamplerCubeArray sampler" />
+		</overload>
+		<overload return-value="vec2" descr="[4.30] Returns the number of accessible mipmap levels in a texture">
+			<parameter name="gsamplerCubeArrayShadow sampler" />
+		</overload>
+	</keyword>
+	<keyword name="textureQueryLod" func="yes">
+		<overload return-value="vec2" descr="[4.00] Returns the level of detail that would be used to sample from the texture; P indicates texture coordinates">
+			<parameter name="gsampler1D sampler" />
+			<parameter name="float P" />
+		</overload>
+		<overload return-value="vec2" descr="[4.00] Returns the level of detail that would be used to sample from the texture; P indicates texture coordinates">
+			<parameter name="sampler1DShadow sampler" />
+			<parameter name="float P" />
+		</overload>
+		<overload return-value="vec2" descr="[4.00] Returns the level of detail that would be used to sample from the texture; P indicates texture coordinates">
+			<parameter name="gsampler1DArray sampler" />
+			<parameter name="float P" />
+		</overload>
+		<overload return-value="vec2" descr="[4.00] Returns the level of detail that would be used to sample from the texture; P indicates texture coordinates">
+			<parameter name="gsampler1DArrayShadow sampler" />
+			<parameter name="float P" />
+		</overload>
+		<overload return-value="vec2" descr="[4.00] Returns the level of detail that would be used to sample from the texture; P indicates texture coordinates">
+			<parameter name="gsampler2D sampler" />
+			<parameter name="vec2 P" />
+		</overload>
+		<overload return-value="vec2" descr="[4.00] Returns the level of detail that would be used to sample from the texture; P indicates texture coordinates">
+			<parameter name="sampler2DShadow sampler" />
+			<parameter name="vec2 P" />
+		</overload>
+		<overload return-value="vec2" descr="[4.00] Returns the level of detail that would be used to sample from the texture; P indicates texture coordinates">
+			<parameter name="gsampler2DArray sampler" />
+			<parameter name="vec2 P" />
+		</overload>
+		<overload return-value="vec2" descr="[4.00] Returns the level of detail that would be used to sample from the texture; P indicates texture coordinates">
+			<parameter name="gsampler2DShadow sampler" />
+			<parameter name="vec2 P" />
+		</overload>
+		<overload return-value="vec2" descr="[4.00] Returns the level of detail that would be used to sample from the texture; P indicates texture coordinates">
+			<parameter name="gsampler3D sampler" />
+			<parameter name="vec3 P" />
+		</overload>
+		<overload return-value="vec2" descr="[4.00] Returns the level of detail that would be used to sample from the texture; P indicates texture coordinates">
+			<parameter name="gsamplerCube sampler" />
+			<parameter name="vec3 P" />
+		</overload>
+		<overload return-value="vec2" descr="[4.00] Returns the level of detail that would be used to sample from the texture; P indicates texture coordinates">
+			<parameter name="gsamplerCubeShadow sampler" />
+			<parameter name="vec3 P" />
+		</overload>
+		<overload return-value="vec2" descr="[4.00] Returns the level of detail that would be used to sample from the texture; P indicates texture coordinates">
+			<parameter name="gsamplerCubeArray sampler" />
+			<parameter name="vec3 P" />
+		</overload>
+		<overload return-value="vec2" descr="[4.00] Returns the level of detail that would be used to sample from the texture; P indicates texture coordinates">
+			<parameter name="gsamplerCubeArrayShadow sampler" />
+			<parameter name="vec3 P" />
+		</overload>
+	</keyword>
+	<keyword name="textureSize" func="yes">
+		<overload return-value="int" descr="[1.30] Returns the dimensions of a texture's level">
+			<parameter name="gsampler1D sampler" />
+			<parameter name="int lod" />
+		</overload>
+		<overload return-value="int" descr="[1.30] Returns the dimensions of a texture's level">
+			<parameter name="sampler1DShadow sampler" />
+			<parameter name="int lod" />
+		</overload>
+		<overload return-value="int" descr="[1.30] Returns the dimensions of a texture's level">
+			<parameter name="gsampler1DArray sampler" />
+			<parameter name="int lod" />
+		</overload>
+		<overload return-value="int" descr="[1.30] Returns the dimensions of a texture's level">
+			<parameter name="gsampler1DArrayShadow sampler" />
+			<parameter name="int lod" />
+		</overload>
+		<overload return-value="ivec2" descr="[1.30] Returns the dimensions of a texture's level">
+			<parameter name="gsampler2D sampler" />
+			<parameter name="int lod" />
+		</overload>
+		<overload return-value="ivec2" descr="[1.30] Returns the dimensions of a texture's level">
+			<parameter name="sampler2DShadow sampler" />
+			<parameter name="int lod" />
+		</overload>
+		<overload return-value="ivec2" descr="[1.30] Returns the dimensions of a texture's level">
+			<parameter name="gsampler2DArray sampler" />
+			<parameter name="int lod" />
+		</overload>
+		<overload return-value="ivec2" descr="[1.30] Returns the dimensions of a texture's level">
+			<parameter name="gsampler2DShadow sampler" />
+			<parameter name="int lod" />
+		</overload>
+		<overload return-value="ivec3" descr="[1.30] Returns the dimensions of a texture's level">
+			<parameter name="gsampler3D sampler" />
+			<parameter name="int lod" />
+		</overload>
+		<overload return-value="ivec2" descr="[4.00] Returns the dimensions of a texture's level">
+			<parameter name="gsamplerCube sampler" />
+			<parameter name="int lod" />
+		</overload>
+		<overload return-value="ivec2" descr="[4.00] Returns the dimensions of a texture's level">
+			<parameter name="gsamplerCubeShadow sampler" />
+			<parameter name="int lod" />
+		</overload>
+		<overload return-value="ivec2" descr="[4.00] Returns the dimensions of a texture's level">
+			<parameter name="gsamplerCubeArray sampler" />
+			<parameter name="int lod" />
+		</overload>
+		<overload return-value="ivec2" descr="[4.00] Returns the dimensions of a texture's level">
+			<parameter name="gsamplerCubeArrayShadow sampler" />
+			<parameter name="int lod" />
+		</overload>
+		<overload return-value="ivec2" descr="[1.40] Returns the dimensions of a texture's level">
+			<parameter name="gsamplerRect sampler" />
+			<parameter name="int lod" />
+		</overload>
+		<overload return-value="ivec2" descr="[1.40] Returns the dimensions of a texture's level">
+			<parameter name="gsamplerRectShadow sampler" />
+			<parameter name="int lod" />
+		</overload>
+		<overload return-value="int" descr="[1.40] Returns the dimensions of a texture's level">
+			<parameter name="gsamplerBuffer sampler" />
+			<parameter name="int lod" />
+		</overload>
+		<overload return-value="ivec2" descr="[1.50?] Returns the dimensions of a texture's level">
+			<parameter name="gsampler2DMS sampler" />
+			<parameter name="int lod" />
+		</overload>
+		<overload return-value="ivec3" descr="[1.50?] Returns the dimensions of a texture's level">
+			<parameter name="gsampler2DMSArray sampler" />
+			<parameter name="int lod" />
+		</overload>
+	</keyword>
+	<keyword name="transpose" func="yes">
+		<overload return-value="mat2/dmat2" descr="[1.20/4.00] Returns the transpose of matrix m">
+			<parameter name="mat2/dmat2 m" />
+		</overload>
+		<overload return-value="mat3/dmat3" descr="[1.20/4.00] Returns the transpose of matrix m">
+			<parameter name="mat3/dmat3 m" />
+		</overload>
+		<overload return-value="mat4/dmat4" descr="[1.20/4.00] Returns the transpose of matrix m">
+			<parameter name="mat4/dmat4 m" />
+		</overload>
+		<overload return-value="mat2x3/dmat2x3" descr="[1.20/4.00] Returns the transpose of matrix m">
+			<parameter name="mat3x2/dmat3x2 m" />
+		</overload>
+		<overload return-value="mat2x4/dmat2x4" descr="[1.20/4.00] Returns the transpose of matrix m">
+			<parameter name="mat4x2/dmat4x2 m" />
+		</overload>
+		<overload return-value="mat3x2/dmat3x2" descr="[1.20/4.00] Returns the transpose of matrix m">
+			<parameter name="mat2x3/dmat2x3 m" />
+		</overload>
+		<overload return-value="mat3x4/dmat3x4" descr="[1.20/4.00] Returns the transpose of matrix m">
+			<parameter name="mat4x3/dmat4x3 m" />
+		</overload>
+		<overload return-value="mat4x2/dmat4x2" descr="[1.20/4.00] Returns the transpose of matrix m">
+			<parameter name="mat2x4/dmat2x4 m" />
+		</overload>
+		<overload return-value="mat4x3/dmat4x3" descr="[1.20/4.00] Returns the transpose of matrix m">
+			<parameter name="mat3x4/dmat3x4 m" />
+		</overload>
+	</keyword>
+	<keyword name="true" />
+	<keyword name="trunc" func="yes">
+		<overload return-value="genType" descr="[1.30/4.00] Truncates v to the nearest integer that is less than or equal to it">
+			<parameter name="genType v" />
+		</overload>
+	</keyword>
+	<keyword name="uaddCarry" func="yes">
+		<overload return-value="genUType" descr="[4.00] Adds unsigned integers x and y and returns the carry">
+			<parameter name="genUType x" />
+			<parameter name="genUType y" />
+			<parameter name="out genUType carry" />
+		</overload>
+	</keyword>
+	<keyword name="uint" />		
+	<keyword name="uintBitsToFloat" func="yes">
+		<overload return-value="genType" descr="[3.30] Returns v's unsigned integer bit representation as a float">
+			<parameter name="genIType/genUType v" />
+		</overload>
+	</keyword>
+	<keyword name="umulExtended" func="yes">
+		<overload return-value="void" descr="[4.00] Multiplies 32-bit unsigned x and y into a 64-bit result; returns it in msb and lsb">
+			<parameter name="genUType x" />
+			<parameter name="genUType y" />
+			<parameter name="out genUType msb" />
+			<parameter name="out genUType lsb" />
+		</overload>
+	</keyword>
+	<keyword name="uniform" />
+	<keyword name="unpackDouble2x32" func="yes">
+		<overload return-value="uvec2" descr="[4.00] Unpacks a double-precision number into two unsigned integers">
+			<parameter name="double v" />
+		</overload>
+	</keyword>
+	<keyword name="unpackHalf2x16" func="yes">
+		<overload return-value="vec2" descr="[4.20] Unpacks an unsigned integer into two half-precision (16-bit) floats">
+			<parameter name="uint v" />
+		</overload>
+	</keyword>
+	<keyword name="unpackSnorm2x16" func="yes">
+		<overload return-value="vec2" descr="[4.20] Unpacks an unsigned integer into two half-precision (16-bit) signed integers">
+			<parameter name="uint v" />
+		</overload>
+	</keyword>
+	<keyword name="unpackSnorm4x8" func="yes">
+		<overload return-value="vec4" descr="[4.10] Unpacks an unsigned integer into four 8-bit signed integers">
+			<parameter name="uint v" />
+		</overload>
+	</keyword>
+	<keyword name="unpackUnorm2x16" func="yes">
+		<overload return-value="vec2" descr="[4.10] Unpacks an unsigned integer into two half-precision (16-bit) unsigned integers">
+			<parameter name="uint v" />
+		</overload>
+	</keyword>
+	<keyword name="unpackUnorm4x8" func="yes">
+		<overload return-value="vec4" descr="[4.10] Unpacks an unsigned integer into four 8-bit unsigned integers">
+			<parameter name="uint v" />
+		</overload>
+	</keyword>
+	<keyword name="usubBorrow" func="yes">
+		<overload return-value="genUType" descr="[4.00] Subtracts unsigned integers x and y and returns the borrow">
+			<parameter name="genUType x" />
+			<parameter name="genUType y" />
+			<parameter name="out genUType borrow" />
+		</overload>
+	</keyword>
+	<keyword name="vec2" />
+	<keyword name="vec3" />
+	<keyword name="vec4" />
+	<keyword name="void" />
+	<keyword name="while" />
+</code-completion>

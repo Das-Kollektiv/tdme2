@@ -60,6 +60,26 @@ public:
 		virtual void onInsertText(int idx, int count) = 0;
 	};
 
+	/**
+	 * Code completion listener
+	 * @author Andreas Drewke
+	 * @version $Id$
+	 */
+	struct CodeCompletionListener {
+
+		/**
+		 * Destructor
+		 */
+		virtual ~CodeCompletionListener() {}
+
+		/**
+		 * On code completion requested
+		 * @param idx index
+		 */
+		virtual void onCodeCompletion(int idx) = 0;
+
+	};
+
 private:
 	static constexpr int64_t CURSOR_MODE_DURATION { 500LL };
 	int64_t cursorModeStarted { -1LL };
@@ -68,9 +88,11 @@ private:
 	int index { 0 };
 	int selectionIndex { -1 };
 	vector<ChangeListener*> changeListeners;
+	vector<CodeCompletionListener*> codeCompletionListeners;
 	enum ScrollMode { SCROLLMODE_NONE, SCROLLMODE_UP, SCROLLMODE_DOWN };
 	ScrollMode scrollMode { SCROLLMODE_NONE };
 	bool dragging { false };
+	bool input { false };
 
 	/**
 	 * @return index
@@ -141,6 +163,16 @@ private:
 		}
 	}
 
+	/**
+	 * Forward code completion
+	 * @param idx index
+	 */
+	inline void forwardCodeCompletion(int idx) {
+		for (auto i = 0; i < changeListeners.size(); i++) {
+			codeCompletionListeners[i]->onCodeCompletion(idx);
+		}
+	}
+
 protected:
 	/**
 	 * Constructor
@@ -177,5 +209,17 @@ public:
 	 * @param listener listener
 	 */
 	void removeChangeListener(ChangeListener* listener);
+
+	/**
+	 * Add code completion listener
+	 * @param listener listener
+	 */
+	void addCodeCompletionListener(CodeCompletionListener* listener);
+
+	/**
+	 * Remove code completion listener
+	 * @param listener listener
+	 */
+	void removeCodeCompletionListener(CodeCompletionListener* listener);
 
 };
