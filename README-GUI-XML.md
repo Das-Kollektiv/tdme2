@@ -89,7 +89,7 @@ This element supports all other elements as sub elements.
 | rotation                          | rotation angle                                                                         | 0.0f              |
 
 
-## 1.4. Frame Buffer / Image / Texture nodes
+## 1.4. Frame Buffer / Image / Texture / Video nodes
 
 ### 1.4.1. \<frame-buffer\> node
 
