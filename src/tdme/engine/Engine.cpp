@@ -16,6 +16,7 @@
 #include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/engine/subsystems/earlyzrejection/EZRShader.h>
 #include <tdme/engine/subsystems/environmentmapping/EnvironmentMappingRenderer.h>
+#include <tdme/engine/subsystems/framebuffer/BRDFLUTShader.h>
 #include <tdme/engine/subsystems/framebuffer/DeferredLightingRenderShader.h>
 #include <tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
@@ -97,6 +98,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::LineSegment;
 using tdme::engine::subsystems::earlyzrejection::EZRShader;
 using tdme::engine::subsystems::environmentmapping::EnvironmentMappingRenderer;
+using tdme::engine::subsystems::framebuffer::BRDFLUTShader;
 using tdme::engine::subsystems::framebuffer::DeferredLightingRenderShader;
 using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 using tdme::engine::subsystems::lighting::LightingShader;
@@ -166,6 +168,7 @@ TextureManager* Engine::textureManager = nullptr;
 VBOManager* Engine::vboManager = nullptr;
 MeshManager* Engine::meshManager = nullptr;
 GUIRenderer* Engine::guiRenderer = nullptr;
+BRDFLUTShader* Engine::brdfLUTShader = nullptr;
 FrameBufferRenderShader* Engine::frameBufferRenderShader = nullptr;
 DeferredLightingRenderShader* Engine::deferredLightingRenderShader = nullptr;
 PostProcessing* Engine::postProcessing = nullptr;
@@ -293,6 +296,7 @@ Engine::~Engine() {
 		delete lightingShader;
 		delete particlesShader;
 		delete linesShader;
+		if (brdfLUTShader != nullptr) delete brdfLUTShader;
 		delete frameBufferRenderShader;
 		delete deferredLightingRenderShader;
 		delete postProcessing;
@@ -742,6 +746,23 @@ void Engine::initialize()
 	// create partition
 	partition = new OctTreePartition();
 
+	// create frame buffer render shader
+	frameBufferRenderShader = new FrameBufferRenderShader(renderer);
+	frameBufferRenderShader->initialize();
+
+	// pbr brdf lut
+	if (renderer->isPBRAvailable() == true) {
+		// brdf lut render shader
+		brdfLUTShader = new BRDFLUTShader(renderer);
+		brdfLUTShader->initialize();
+	}
+
+	// deferred lighting render shader
+	if (renderer->isDeferredShadingAvailable() == true) {
+		deferredLightingRenderShader = new DeferredLightingRenderShader(renderer);
+		deferredLightingRenderShader->initialize();
+	}
+
 	// create lighting shader
 	lightingShader = new LightingShader(renderer);
 	lightingShader->initialize();
@@ -757,16 +778,6 @@ void Engine::initialize()
 	// create gui shader
 	guiShader = new GUIShader(renderer);
 	guiShader->initialize();
-
-	// create frame buffer render shader
-	frameBufferRenderShader = new FrameBufferRenderShader(renderer);
-	frameBufferRenderShader->initialize();
-
-	// deferred lighting render shader
-	if (renderer->isDeferredShadingAvailable() == true) {
-		deferredLightingRenderShader = new DeferredLightingRenderShader(renderer);
-		deferredLightingRenderShader->initialize();
-	}
 
 	// create post processing shader
 	postProcessingShader = new PostProcessingShader(renderer);
@@ -830,6 +841,9 @@ void Engine::initialize()
 	CHECK_INITIALIZED("LinesShader", linesShader);
 	CHECK_INITIALIZED("GUIShader", guiShader);
 	CHECK_INITIALIZED("FrameBufferRenderShader", frameBufferRenderShader);
+	if (brdfLUTShader != nullptr) {
+		CHECK_INITIALIZED("BRDFLUTShader", brdfLUTShader);
+	}
 	CHECK_INITIALIZED("DeferredLightingRenderShader", deferredLightingRenderShader);
 	CHECK_INITIALIZED("PostProcessingShader", postProcessingShader);
 	CHECK_INITIALIZED("Texture2DRenderShader", texture2DRenderShader);
@@ -844,6 +858,9 @@ void Engine::initialize()
 	initialized &= linesShader->isInitialized();
 	initialized &= guiShader->isInitialized();
 	initialized &= frameBufferRenderShader->isInitialized();
+	if (brdfLUTShader != nullptr) {
+		initialized &= brdfLUTShader->isInitialized();
+	}
 	initialized &= deferredLightingRenderShader != nullptr?deferredLightingRenderShader->isInitialized():true;
 	initialized &= postProcessingShader->isInitialized();
 	initialized &= texture2DRenderShader->isInitialized();
@@ -863,6 +880,14 @@ void Engine::initialize()
 		Console::println("Engine not initialized: Exiting!");
 		Application::exit(0);
 		return;
+	}
+
+	// pbr
+	if (renderer->isPBRAvailable() == true) {
+		Console::println("TDME2::PBR shaders are enabled");
+		Console::println("TDME2::Generating brdf LUT texture");
+		// brdf lut render shader
+		brdfLUTShader->generate();
 	}
 
 	//

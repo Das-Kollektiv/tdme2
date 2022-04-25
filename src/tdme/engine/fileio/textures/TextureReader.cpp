@@ -57,7 +57,7 @@ Texture* TextureReader::read(const string& pathName, const string& fileName, boo
 	// do cache look up
 	if (useCache == true) {
 		textureCacheMutex->lock();
-		auto textureCacheIt = textureCache->find(idPrefix + canonicalPathName + "/" + canonicalFileName);
+		auto textureCacheIt = textureCache->find(idPrefix + canonicalFilePath);
 		if (textureCacheIt != textureCache->end()) {
 			texture = textureCacheIt->second;
 		}
@@ -74,6 +74,54 @@ Texture* TextureReader::read(const string& pathName, const string& fileName, boo
 				FileSystem::getInstance()->getContent(pathName, fileName, data);
 
 				texture = TextureReader::readPNG(canonicalFilePath, data, powerOfTwo, idPrefix);
+				if (texture != nullptr && useCache == true) {
+					(*textureCache)[texture->getId()] = texture;
+				}
+			}
+		} catch (Exception& exception) {
+			Console::println("TextureReader::loadTexture(): Could not load texture: " + canonicalPathName + "/" + canonicalFileName + ": " + (exception.what()));
+		}
+	}
+
+	// done
+	if (texture != nullptr) texture->acquireReference();
+
+	//
+	if (useCache == true) textureCacheMutex->unlock();
+
+	// done
+	return texture;
+}
+
+Texture* TextureReader::read16(const string& pathName, const string& fileName, bool useCache, bool powerOfTwo, const string& idPrefix)
+{
+	Texture* texture = nullptr;
+
+	// make canonical
+	auto canonicalFilePath = FileSystem::getInstance()->getCanonicalPath(pathName, fileName);
+	auto canonicalPathName = FileSystem::getInstance()->getPathName(canonicalFilePath);
+	auto canonicalFileName = FileSystem::getInstance()->getFileName(canonicalFilePath);
+
+	// do cache look up
+	if (useCache == true) {
+		textureCacheMutex->lock();
+		auto textureCacheIt = textureCache->find(idPrefix + canonicalFilePath + ":16");
+		if (textureCacheIt != textureCache->end()) {
+			texture = textureCacheIt->second;
+		}
+	}
+
+	// have texture?
+	if (texture == nullptr) {
+		// nope try to load
+		try {
+			if (StringTools::endsWith(StringTools::toLowerCase(canonicalFileName), ".png") == true) {
+
+				// create PNG input stream
+				vector<uint8_t> data;
+				FileSystem::getInstance()->getContent(pathName, fileName, data);
+
+				texture = TextureReader::readPNG16(canonicalFilePath + ":16", data, powerOfTwo, idPrefix);
 				if (texture != nullptr && useCache == true) {
 					(*textureCache)[texture->getId()] = texture;
 				}
@@ -141,7 +189,7 @@ Texture* TextureReader::read2(const string& texturePathName, const string& textu
 	// yep, combine diffuse map + diffuse transparency map
 	auto textureWidth = texture->getTextureWidth();
 	auto textureHeight = texture->getTextureHeight();
-	ByteBuffer* textureByteBuffer = new ByteBuffer(textureWidth * textureHeight * 4);
+	auto textureByteBuffer = new ByteBuffer(textureWidth * textureHeight * 4);
 	auto textureWithTransparency = new Texture(
 		idPrefix + texture->getId() + "/transparency",
 		32,
@@ -175,10 +223,10 @@ Texture* TextureReader::read2(const string& texturePathName, const string& textu
 }
 
 void TextureReader::readPNGDataFromMemory(png_structp png_ptr, png_bytep outBytes, png_size_t outBytesToRead) {
-	png_voidp io_ptr = png_get_io_ptr(png_ptr);
+	auto io_ptr = png_get_io_ptr(png_ptr);
 	if (io_ptr == nullptr) return;
 
-	PNGInputStream* pngInputStream = static_cast<PNGInputStream*>(io_ptr);
+	auto pngInputStream = static_cast<PNGInputStream*>(io_ptr);
 	pngInputStream->readBytes((int8_t*)outBytes, outBytesToRead);
 }
 
@@ -196,11 +244,11 @@ Texture* TextureReader::readPNG(const string& textureId, const vector<uint8_t>& 
 	}
 
 	// create two data structures: 'png_struct' and 'png_info'
-	png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+	auto png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 	if (png == nullptr) {
 		return nullptr;
 	}
-	png_infop info = png_create_info_struct(png);
+	auto info = png_create_info_struct(png);
 	if (info == nullptr) {
 		png_destroy_read_struct(&png, nullptr, nullptr);
 		return nullptr;
@@ -239,24 +287,11 @@ Texture* TextureReader::readPNG(const string& textureId, const vector<uint8_t>& 
 				break;
 			}
 	    case PNG_COLOR_TYPE_GRAY_ALPHA:
-	    	{
-	    		bytesPerPixel = 4;
-		        png_set_gray_to_rgb(png);
-		        break;
-	    	}
-	    case PNG_COLOR_TYPE_PALETTE:
-	    	{
-				// if transparency, convert it to alpha
-	    		// does not seem to work though
-				bool alpha = false;
-				if (png_get_valid(png, info, PNG_INFO_tRNS)) {
-					alpha = true;
-					png_set_tRNS_to_alpha(png);
-				}
-				bytesPerPixel = alpha?4:3;
-				png_set_expand(png);
+			{
+				bytesPerPixel = 4;
+				png_set_gray_to_rgb(png);
 				break;
-	    	}
+			}
 	    case PNG_COLOR_TYPE_RGB:
 			{
 				bytesPerPixel = 3;
@@ -279,11 +314,11 @@ Texture* TextureReader::readPNG(const string& textureId, const vector<uint8_t>& 
 	png_read_update_info(png, info);
 
 	// allocate pixel buffer
-	ByteBuffer* pixelByteBuffer = ByteBuffer::allocate(width * height * bytesPerPixel);
+	auto pixelByteBuffer = ByteBuffer::allocate(width * height * bytesPerPixel);
 
 	// setup array with row pointers into pixel buffer
-	png_bytep* rows = new png_bytep[height];
-	uint8_t* p = (uint8_t*)pixelByteBuffer->getBuffer();
+	auto rows = new png_bytep[height];
+	auto p = (uint8_t*)pixelByteBuffer->getBuffer();
 	for(auto i = 0; i < height; i++) {
 		rows[i] = p;
 		p += width * bytesPerPixel;
@@ -311,7 +346,7 @@ Texture* TextureReader::readPNG(const string& textureId, const vector<uint8_t>& 
 		while (textureHeight < height) textureHeight*= 2;
 		if (textureWidth != width || textureHeight != height) {
 			Console::println("TextureReader::loadPNG(): " + idPrefix + textureId + ": scaling to fit power of 2: " + to_string(width) + "x" + to_string(height) + " --> " + to_string(textureWidth) + "x" + to_string(textureHeight));
-			ByteBuffer* pixelByteBufferScaled = ByteBuffer::allocate(textureWidth * textureHeight * bytesPerPixel);
+			auto pixelByteBufferScaled = ByteBuffer::allocate(textureWidth * textureHeight * bytesPerPixel);
 			auto textureYIncrement = (float)textureHeight / (float)height;
 			auto textureYPixelRest = 0.0f;
 			auto textureY = 0;
@@ -336,6 +371,161 @@ Texture* TextureReader::readPNG(const string& textureId, const vector<uint8_t>& 
 	// thats it
 	auto texture = new Texture(
 		idPrefix + textureId,
+		bytesPerPixel * 8,
+		width,
+		height,
+		textureWidth,
+		textureHeight,
+		pixelByteBuffer
+	);
+	texture->acquireReference();
+	return texture;
+}
+
+Texture* TextureReader::readPNG16(const string& textureId, const vector<uint8_t>& data, bool powerOfTwo, const string& idPrefix) {
+	// see: http://devcry.heiho.net/html/2015/20150517-libpng.html
+
+	// create PNG input stream
+	PNGInputStream pngInputStream(&data);
+
+	// check that the PNG signature is in the file header
+	unsigned char sig[8];
+	pngInputStream.readBytes((int8_t*)sig, sizeof(sig));
+	if (png_sig_cmp(sig, 0, 8)) {
+		return nullptr;
+	}
+
+	// create two data structures: 'png_struct' and 'png_info'
+	auto png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+	if (png == nullptr) {
+		return nullptr;
+	}
+	auto info = png_create_info_struct(png);
+	if (info == nullptr) {
+		png_destroy_read_struct(&png, nullptr, nullptr);
+		return nullptr;
+	}
+
+	// set up custom read function
+	png_set_read_fn(png, &pngInputStream, TextureReader::readPNGDataFromMemory);
+
+	// set libpng error handling mechanism
+	if (setjmp(png_jmpbuf(png))) {
+		png_destroy_read_struct(&png, &info, nullptr);
+		return nullptr;
+	}
+
+	// tell libpng we already read the signature
+	png_set_sig_bytes(png, sizeof(sig));
+
+	// get image information
+	png_read_info(png, info);
+
+	// dimensions
+	auto width = png_get_image_width(png, info);
+	auto height = png_get_image_height(png, info);
+
+	// set one byte per channel
+	if (png_get_bit_depth(png, info) != 16) {
+		Console::println("TextureReader::readPNG16(): Not a 16 bit PNG: " + textureId);
+		png_destroy_read_struct(&png, &info, nullptr);
+		return nullptr;
+	}
+
+	// determine bytes per pixel
+	auto bytesPerPixel = -1;
+	switch(png_get_color_type(png, info)) {
+	    case PNG_COLOR_TYPE_GRAY:
+			{
+				bytesPerPixel = 6;
+				png_set_gray_to_rgb(png);
+				break;
+			}
+	    case PNG_COLOR_TYPE_GRAY_ALPHA:
+			{
+				bytesPerPixel = 8;
+				png_set_gray_to_rgb(png);
+				break;
+			}
+	    case PNG_COLOR_TYPE_RGB:
+			{
+				bytesPerPixel = 6;
+				break;
+			}
+	    case PNG_COLOR_TYPE_RGBA:
+			{
+				bytesPerPixel = 8;
+				break;
+			}
+	    default:
+			{
+				png_destroy_read_struct(&png, &info, nullptr);
+				return nullptr;
+			}
+	}
+
+	// ... what ever :DDD
+	png_set_interlace_handling(png);
+	png_read_update_info(png, info);
+
+	// allocate pixel buffer
+	auto pixelByteBuffer = ByteBuffer::allocate(width * height * bytesPerPixel);
+
+	// setup array with row pointers into pixel buffer
+	auto rows = new png_bytep[height];
+	auto p = (uint8_t*)pixelByteBuffer->getBuffer();
+	for(auto i = 0; i < height; i++) {
+		rows[i] = p;
+		p += width * bytesPerPixel;
+	}
+
+	// read all rows (data goes into 'pixels' buffer)
+	// Note that any decoding errors will jump to the
+	// setjmp point and eventually return nullptr
+	png_read_image(png, rows);
+	png_read_end(png, nullptr);
+
+	//
+	delete [] rows;
+
+	// done
+	png_destroy_read_struct(&png, &info, nullptr);
+
+	// make width, height a power of 2
+	auto textureWidth = width;
+	auto textureHeight = height;
+	if (powerOfTwo == true) {
+		textureWidth = 1;
+		while (textureWidth < width) textureWidth*= 2;
+		textureHeight = 1;
+		while (textureHeight < height) textureHeight*= 2;
+		if (textureWidth != width || textureHeight != height) {
+			Console::println("TextureReader::loadPNG(): " + idPrefix + textureId + ": scaling to fit power of 2: " + to_string(width) + "x" + to_string(height) + " --> " + to_string(textureWidth) + "x" + to_string(textureHeight));
+			auto pixelByteBufferScaled = ByteBuffer::allocate(textureWidth * textureHeight * bytesPerPixel);
+			auto textureYIncrement = (float)textureHeight / (float)height;
+			auto textureYPixelRest = 0.0f;
+			auto textureY = 0;
+			for (auto y = 0; y < height; y++) {
+				for (auto i = 0; i < (int)textureYIncrement + (int)textureYPixelRest; i++) {
+					scaleTextureLine(pixelByteBuffer, pixelByteBufferScaled, width, textureWidth, bytesPerPixel, y);
+					textureY++;
+				}
+				textureYPixelRest-= (int)textureYPixelRest;
+				textureYPixelRest+= textureYIncrement - (int)textureYIncrement;
+
+			}
+			while (textureY < textureHeight) {
+				scaleTextureLine(pixelByteBuffer, pixelByteBufferScaled, width, textureWidth, bytesPerPixel, height - 1);
+				textureY++;
+			}
+			delete pixelByteBuffer;
+			pixelByteBuffer = pixelByteBufferScaled;
+		}
+	}
+
+	// thats it
+	auto texture = new Texture(
+		idPrefix + textureId + ":16",
 		bytesPerPixel * 8,
 		width,
 		height,

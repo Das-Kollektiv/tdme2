@@ -610,12 +610,12 @@ void GL3Renderer::uploadTexture(int contextIdx, Texture* texture)
 	glTexImage2D(
 		GL_TEXTURE_2D,
 		0,
-		texture->getDepth() == 32?GL_RGBA:GL_RGB,
+		texture->getDepth() > 32?(texture->getDepth() == 64?GL_RGBA:GL_RGB):(texture->getDepth() == 32?GL_RGBA:GL_RGB),
 		texture->getTextureWidth(),
 		texture->getTextureHeight(),
 		0,
-		texture->getDepth() == 32?GL_RGBA:GL_RGB,
-		GL_UNSIGNED_BYTE,
+		texture->getDepth() > 32?(texture->getDepth() == 64?GL_RGBA:GL_RGB):(texture->getDepth() == 32?GL_RGBA:GL_RGB),
+		texture->getDepth() > 32?GL_UNSIGNED_SHORT:GL_UNSIGNED_BYTE,
 		texture->getTextureData()->getBuffer()
 	);
 	if (texture->getAtlasSize() > 1) {
@@ -656,67 +656,67 @@ void GL3Renderer::uploadCubeMapTexture(int contextIdx, Texture* textureLeft, Tex
 	glTexImage2D(
 		GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
 		0,
-		textureLeft->getDepth() == 32?GL_RGBA:GL_RGB,
+		textureLeft->getDepth() > 32?(textureLeft->getDepth() == 64?GL_RGBA:GL_RGB):(textureLeft->getDepth() == 32?GL_RGBA:GL_RGB),
 		textureLeft->getTextureWidth(),
 		textureLeft->getTextureHeight(),
 		0,
-		textureLeft->getDepth() == 32?GL_RGBA:GL_RGB,
-		GL_UNSIGNED_BYTE,
+		textureLeft->getDepth() > 32?(textureLeft->getDepth() == 64?GL_RGBA:GL_RGB):(textureLeft->getDepth() == 32?GL_RGBA:GL_RGB),
+		textureLeft->getDepth() > 32?GL_UNSIGNED_SHORT:GL_UNSIGNED_BYTE,
 		textureLeft->getTextureData()->getBuffer()
 	);
 	glTexImage2D(
 		GL_TEXTURE_CUBE_MAP_POSITIVE_X,
 		0,
-		textureRight->getDepth() == 32?GL_RGBA:GL_RGB,
+		textureRight->getDepth() > 32?(textureRight->getDepth() == 64?GL_RGBA:GL_RGB):(textureRight->getDepth() == 32?GL_RGBA:GL_RGB),
 		textureRight->getTextureWidth(),
 		textureRight->getTextureHeight(),
 		0,
-		textureRight->getDepth() == 32?GL_RGBA:GL_RGB,
-		GL_UNSIGNED_BYTE,
+		textureRight->getDepth() > 32?(textureRight->getDepth() == 64?GL_RGBA:GL_RGB):(textureRight->getDepth() == 32?GL_RGBA:GL_RGB),
+		textureRight->getDepth() > 32?GL_UNSIGNED_SHORT:GL_UNSIGNED_BYTE,
 		textureRight->getTextureData()->getBuffer()
 	);
 	glTexImage2D(
 		GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
 		0,
-		textureTop->getDepth() == 32?GL_RGBA:GL_RGB,
+		textureTop->getDepth() > 32?(textureTop->getDepth() == 64?GL_RGBA:GL_RGB):(textureTop->getDepth() == 32?GL_RGBA:GL_RGB),
 		textureTop->getTextureWidth(),
 		textureTop->getTextureHeight(),
 		0,
-		textureTop->getDepth() == 32?GL_RGBA:GL_RGB,
-		GL_UNSIGNED_BYTE,
+		textureTop->getDepth() > 32?(textureTop->getDepth() == 64?GL_RGBA:GL_RGB):(textureTop->getDepth() == 32?GL_RGBA:GL_RGB),
+		textureTop->getDepth() > 32?GL_UNSIGNED_SHORT:GL_UNSIGNED_BYTE,
 		textureTop->getTextureData()->getBuffer()
 	);
 	glTexImage2D(
 		GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
 		0,
-		textureBottom->getDepth() == 32?GL_RGBA:GL_RGB,
+		textureBottom->getDepth() > 32?(textureBottom->getDepth() == 64?GL_RGBA:GL_RGB):(textureBottom->getDepth() == 32?GL_RGBA:GL_RGB),
 		textureBottom->getTextureWidth(),
 		textureBottom->getTextureHeight(),
 		0,
-		textureBottom->getDepth() == 32?GL_RGBA:GL_RGB,
-		GL_UNSIGNED_BYTE,
+		textureBottom->getDepth() > 32?(textureBottom->getDepth() == 64?GL_RGBA:GL_RGB):(textureBottom->getDepth() == 32?GL_RGBA:GL_RGB),
+		textureBottom->getDepth() > 32?GL_UNSIGNED_SHORT:GL_UNSIGNED_BYTE,
 		textureBottom->getTextureData()->getBuffer()
 	);
 	glTexImage2D(
 		GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
 		0,
-		textureFront->getDepth() == 32?GL_RGBA:GL_RGB,
+		textureFront->getDepth() > 32?(textureFront->getDepth() == 64?GL_RGBA:GL_RGB):(textureFront->getDepth() == 32?GL_RGBA:GL_RGB),
 		textureFront->getTextureWidth(),
 		textureFront->getTextureHeight(),
 		0,
-		textureFront->getDepth() == 32?GL_RGBA:GL_RGB,
-		GL_UNSIGNED_BYTE,
+		textureFront->getDepth() > 32?(textureFront->getDepth() == 64?GL_RGBA:GL_RGB):(textureFront->getDepth() == 32?GL_RGBA:GL_RGB),
+		textureFront->getDepth() > 32?GL_UNSIGNED_SHORT:GL_UNSIGNED_BYTE,
 		textureFront->getTextureData()->getBuffer()
 	);
 	glTexImage2D(
 		GL_TEXTURE_CUBE_MAP_NEGATIVE_Z,
 		0,
-		textureBack->getDepth() == 32?GL_RGBA:GL_RGB,
+		textureBack->getDepth() > 32?(textureBack->getDepth() == 64?GL_RGBA:GL_RGB):(textureBack->getDepth() == 32?GL_RGBA:GL_RGB),
 		textureBack->getTextureWidth(),
 		textureBack->getTextureHeight(),
 		0,
-		textureBack->getDepth() == 32?GL_RGBA:GL_RGB,
-		GL_UNSIGNED_BYTE,
+		textureBack->getDepth() > 32?(textureBack->getDepth() == 64?GL_RGBA:GL_RGB):(textureBack->getDepth() == 32?GL_RGBA:GL_RGB),
+		textureBack->getDepth() > 32?GL_UNSIGNED_SHORT:GL_UNSIGNED_BYTE,
 		textureBack->getTextureData()->getBuffer()
 	);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
