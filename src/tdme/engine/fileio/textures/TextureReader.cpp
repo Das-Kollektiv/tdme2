@@ -292,6 +292,18 @@ Texture* TextureReader::readPNG(const string& textureId, const vector<uint8_t>& 
 				png_set_gray_to_rgb(png);
 				break;
 			}
+		case PNG_COLOR_TYPE_PALETTE:
+			{
+				// if transparency, convert it to alpha
+				bool alpha = false;
+				if (png_get_valid(png, info, PNG_INFO_tRNS)) {
+					alpha = true;
+					png_set_tRNS_to_alpha(png);
+				}
+				bytesPerPixel = alpha?4:3;
+				png_set_expand(png);
+				break;
+			}
 	    case PNG_COLOR_TYPE_RGB:
 			{
 				bytesPerPixel = 3;
