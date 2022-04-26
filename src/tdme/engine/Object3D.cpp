@@ -114,7 +114,7 @@ void Object3D::initialize()
 }
 
 void Object3D::setShader(const string& id) {
-	if (model->getShaderModel() == ShaderModel::PBR) {
+	if (model->getShaderModel() == ShaderModel::PBR || model->getShaderModel() == ShaderModel::SPECULARPBR) {
 		shaderId = StringTools::startsWith(id, "pbr-") == true || id.empty() == true?id:"pbr-" + id;
 		shaderParameters.setShader(shaderId);
 	} else
@@ -134,7 +134,7 @@ void Object3D::setShader(const string& id) {
 }
 
 void Object3D::setDistanceShader(const string& id) {
-	if (model->getShaderModel() == ShaderModel::PBR) {
+	if (model->getShaderModel() == ShaderModel::PBR || model->getShaderModel() == ShaderModel::SPECULARPBR) {
 		distanceShaderId = StringTools::startsWith(id, "pbr-") == true || id.empty() == true?id:"pbr-" + id;
 		distanceShaderParameters.setShader(distanceShaderId);
 	} else

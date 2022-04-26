@@ -110,7 +110,9 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 		nullptr,
 		model::Model::AUTHORINGTOOL_UNKNOWN
 	);
-	model->setShaderModel(ShaderModel::PBR);
+	model->setShaderModel(ShaderModel::SPECULARPBR);
+	model->setEmbedSpecularTextures(true);
+	model->setEmbedPBRTextures(true);
 
 	// parse nodes aka scene
 	for (auto& gltfScene: gltfModel.scenes) {
@@ -359,9 +361,7 @@ Node* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltfM
 				material = new Material(gltfMaterial.name);
 				material->setDoubleSided(false/*TODO: enable me: gltfMaterial.doubleSided*/);
 				auto pbrMaterialProperties = new PBRMaterialProperties();
-				pbrMaterialProperties->setEmbedTextures(true);
 				auto specularMaterialProperties = new SpecularMaterialProperties();
-				specularMaterialProperties->setEmbedTextures(true);
 				// some adjustment, lets see if we can extract this later
 				specularMaterialProperties->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
 				specularMaterialProperties->setDiffuseColor(Color4(0.2f, 0.2f, 0.2f, 1.0f));

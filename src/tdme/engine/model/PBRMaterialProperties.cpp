@@ -16,7 +16,6 @@ using tdme::engine::model::PBRMaterialProperties;
 
 PBRMaterialProperties::PBRMaterialProperties()
 {
-	embedTextures = false;
 	baseColorFactor.set(1.0f, 1.0f, 1.0f, 1.0f);
 	baseColorTexture = nullptr;
 	baseColorTextureTransparency = false;

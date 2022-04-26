@@ -40,7 +40,7 @@ Prototype::Prototype(int id, Prototype_Type* entityType, const string& name, con
 		this->physics = new PrototypePhysics();
 	} else
 	if (this->type == Prototype_Type::MODEL) {
-		if (model->getShaderModel() == ShaderModel::PBR) {
+		if (model->getShaderModel() == ShaderModel::PBR || model->getShaderModel() == ShaderModel::SPECULARPBR) {
 			shaderId = StringTools::startsWith(shaderId, "pbr-") == true || shaderId.empty() == true?shaderId:"pbr-" + shaderId;
 			distanceShaderId = StringTools::startsWith(distanceShaderId, "pbr-") == true || distanceShaderId.empty() == true?distanceShaderId:"pbr-" + distanceShaderId;
 		}

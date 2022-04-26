@@ -20,7 +20,6 @@ using tdme::utilities::ByteBuffer;
 
 SpecularMaterialProperties::SpecularMaterialProperties()
 {
-	embedTextures = false;
 	ambientColor.set(0.2f, 0.2f, 0.2f, 0.0f);
 	diffuseColor.set(0.8f, 0.8f, 0.8f, 1.0f);
 	specularColor.set(0.0f, 0.0f, 0.0f, 0.0f);

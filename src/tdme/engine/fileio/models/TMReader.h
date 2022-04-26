@@ -287,12 +287,13 @@ private:
 	 * Read material
 	 * @param pathName path name
 	 * @param is input stream
+	 * @param model model
 	 * @param embeddedTextures embedded textures
 	 * @param version version
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return material
 	 */
-	static Material* readMaterial(const string& pathName, TMReaderInputStream* is, const map<string, Texture*>& embeddedTextures, const array<uint8_t, 3>& version);
+	static Material* readMaterial(const string& pathName, TMReaderInputStream* is, Model* model, const map<string, Texture*>& embeddedTextures, const array<uint8_t, 3>& version);
 
 	/**
 	 * Read animation setup

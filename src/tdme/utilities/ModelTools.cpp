@@ -282,7 +282,6 @@ Material* ModelTools::cloneMaterial(const Material* material, const string& id) 
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties != nullptr) {
 		auto clonedSpecularMaterialProperties = new SpecularMaterialProperties();
-		clonedSpecularMaterialProperties->setEmbedTextures(specularMaterialProperties->hasEmbeddedTextures());
 		clonedSpecularMaterialProperties->setAmbientColor(specularMaterialProperties->getAmbientColor());
 		clonedSpecularMaterialProperties->setDiffuseColor(specularMaterialProperties->getDiffuseColor());
 		clonedSpecularMaterialProperties->setEmissionColor(specularMaterialProperties->getEmissionColor());
@@ -291,27 +290,21 @@ Material* ModelTools::cloneMaterial(const Material* material, const string& id) 
 		clonedSpecularMaterialProperties->setTextureAtlasSize(specularMaterialProperties->getTextureAtlasSize());
 		if (specularMaterialProperties->getDiffuseTexture() != nullptr) {
 			clonedSpecularMaterialProperties->setDiffuseTexture(specularMaterialProperties->getDiffuseTexture());
-			if (specularMaterialProperties->hasEmbeddedTextures() == false) {
-				clonedSpecularMaterialProperties->setDiffuseTexturePathName(specularMaterialProperties->getDiffuseTexturePathName());
-				clonedSpecularMaterialProperties->setDiffuseTextureFileName(specularMaterialProperties->getDiffuseTextureFileName());
-			}
+			clonedSpecularMaterialProperties->setDiffuseTexturePathName(specularMaterialProperties->getDiffuseTexturePathName());
+			clonedSpecularMaterialProperties->setDiffuseTextureFileName(specularMaterialProperties->getDiffuseTextureFileName());
 		}
 		clonedSpecularMaterialProperties->setDiffuseTextureTransparency(specularMaterialProperties->hasDiffuseTextureTransparency());
 		clonedSpecularMaterialProperties->setDiffuseTextureMaskedTransparency(specularMaterialProperties->hasDiffuseTextureMaskedTransparency());
 		clonedSpecularMaterialProperties->setDiffuseTextureMaskedTransparencyThreshold(specularMaterialProperties->getDiffuseTextureMaskedTransparencyThreshold());
 		if (specularMaterialProperties->getSpecularTexture() != nullptr) {
 			clonedSpecularMaterialProperties->setSpecularTexture(specularMaterialProperties->getSpecularTexture());
-			if (specularMaterialProperties->hasEmbeddedTextures() == false) {
-				clonedSpecularMaterialProperties->setSpecularTexturePathName(specularMaterialProperties->getSpecularTexturePathName());
-				clonedSpecularMaterialProperties->setSpecularTextureFileName(specularMaterialProperties->getSpecularTextureFileName());
-			}
+			clonedSpecularMaterialProperties->setSpecularTexturePathName(specularMaterialProperties->getSpecularTexturePathName());
+			clonedSpecularMaterialProperties->setSpecularTextureFileName(specularMaterialProperties->getSpecularTextureFileName());
 		}
 		if (specularMaterialProperties->getNormalTexture() != nullptr) {
 			clonedSpecularMaterialProperties->setNormalTexture(specularMaterialProperties->getNormalTexture());
-			if (specularMaterialProperties->hasEmbeddedTextures() == false) {
-				clonedSpecularMaterialProperties->setNormalTexturePathName(specularMaterialProperties->getNormalTexturePathName());
-				clonedSpecularMaterialProperties->setNormalTextureFileName(specularMaterialProperties->getNormalTextureFileName());
-			}
+			clonedSpecularMaterialProperties->setNormalTexturePathName(specularMaterialProperties->getNormalTexturePathName());
+			clonedSpecularMaterialProperties->setNormalTextureFileName(specularMaterialProperties->getNormalTextureFileName());
 		}
 		clonedMaterial->setSpecularMaterialProperties(clonedSpecularMaterialProperties);
 	}
@@ -1205,6 +1198,8 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 	// create model with optimizations applied
 	auto optimizedModel = new Model(model->getId() + ".optimized", model->getName() + ".optimized", model->getUpVector(), model->getRotationOrder(), new BoundingBox(model->getBoundingBox()), model->getAuthoringTool());
 	optimizedModel->setImportTransformationsMatrix(model->getImportTransformationsMatrix());
+	optimizedModel->setEmbedSpecularTextures(true);
+	optimizedModel->setEmbedPBRTextures(true);
 	auto optimizedNode = new Node(optimizedModel, nullptr, "tdme.node.optimized", "tdme.node.optimized");
 	optimizedModel->getNodes()["tdme.node.optimized"] = optimizedNode;
 	optimizedModel->getSubNodes()["tdme.node.optimized"] = optimizedNode;
@@ -1226,7 +1221,6 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 	// create optimized material
 	auto optimizedMaterial = new Material("tdme.material.optimized");
 	{
-		optimizedMaterial->getSpecularMaterialProperties()->setEmbedTextures(true);
 		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTexture(diffuseAtlasTexture);
 		optimizedMaterial->getSpecularMaterialProperties()->setTextureAtlasSize(diffuseAtlasTexture->getAtlasSize());
 		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTextureTransparency(false);

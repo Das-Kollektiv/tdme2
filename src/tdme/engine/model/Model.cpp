@@ -55,6 +55,8 @@ Model::Model(const string& id, const string& name, UpVector* upVector, RotationO
 	this->boundingBox = boundingBox;
 	this->authoringTool = authoringTool;
 	this->boundingBoxUpdated = false;
+	this->embedSpecularTextures = false;
+	this->embedPBRTextures = false;
 }
 
 Model::~Model() {

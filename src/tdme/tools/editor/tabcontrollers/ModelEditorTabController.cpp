@@ -570,26 +570,90 @@ void ModelEditorTabController::showErrorPopUp(const string& caption, const strin
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
 
+void ModelEditorTabController::setMaterialBaseDetails() {
+	view->getEditorView()->setDetailsContent(
+		"<template id=\"details_material_base\" src=\"resources/engine/gui/template_details_material.xml\" />\n"
+	);
+
+	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_material_base"))->getActiveConditions().add("open");
+	} catch (Exception& exception) {
+		Console::println(string("ModelEditorTabController::setMaterialBaseDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", string(exception.what()));
+	}
+
+	//
+	updateMaterialBaseDetails();
+}
+
+void ModelEditorTabController::updateMaterialBaseDetails() {
+	auto model = getSelectedModel();
+	if (model == nullptr) return;
+
+	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("material_specular_embedtextures_enabled"))->getController()->setValue(MutableString(model->hasEmbeddedSpecularTextures() == true?"1":""));
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("material_pbr_embedtextures_enabled"))->getController()->setValue(MutableString(model->hasEmbeddedPBRTextures() == true?"1":""));
+		auto shaderModel = model->getShaderModel();
+		if (shaderModel == ShaderModel::SPECULAR) {
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("material_lightningmodel"))->getController()->setValue(MutableString("specular"));
+		} else
+		if (shaderModel == ShaderModel::PBR) {
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("material_lightningmodel"))->getController()->setValue(MutableString("pbr"));
+		} else
+		if (shaderModel == ShaderModel::SPECULARPBR) {
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("material_lightningmodel"))->getController()->setValue(MutableString("pbrspecular"));
+		}
+	} catch (Exception& exception) {
+		Console::println(string("ModelEditorTabController::updateMaterialBaseDetails(): An error occurred: ") + exception.what());
+		showErrorPopUp("Warning", string(exception.what()));
+	}
+}
+
+void ModelEditorTabController::applyMaterialBaseDetails() {
+	auto model = getSelectedModel();
+	if (model == nullptr) return;
+
+	//
+	try {
+		model->setEmbedSpecularTextures(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("material_specular_embedtextures_enabled"))->getController()->getValue().getString() == "1");
+		model->setEmbedPBRTextures(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("material_pbr_embedtextures_enabled"))->getController()->getValue().getString() == "1");
+		auto shaderModel = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("material_lightningmodel"))->getController()->getValue().getString();
+		if (shaderModel == "specular") {
+			model->setShaderModel(ShaderModel::SPECULAR);
+		} else
+		if (shaderModel == "pbr") {
+			model->setShaderModel(ShaderModel::PBR);
+		} else
+		if (shaderModel == "specularpbr") {
+			model->setShaderModel(ShaderModel::SPECULARPBR);
+		}
+	} catch (Exception& exception) {
+		Console::println(string("ModelEditorTabController::applyMaterialBaseDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+
+	//
+	view->reloadPrototype();
+}
+
 void ModelEditorTabController::setMaterialDetails() {
-	Material* material = getSelectedMaterial();
+	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
+	auto model = getSelectedModel();
+	if (model == nullptr) return;
 
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	auto pbrMaterialProperties = material->getPBRMaterialProperties();
 
 	view->getEditorView()->setDetailsContent(
-		"<template id=\"details_material_spec\" src=\"resources/engine/gui/template_details_specularmaterial.xml\" />\n"
-		"<template id=\"details_material_pbr\" src=\"resources/engine/gui/template_details_pbrmaterial.xml\" />\n"
+		string("<template id=\"details_material_spec\" src=\"resources/engine/gui/template_details_material_specular.xml\" />\n") +
+		string(model->getShaderModel() != ShaderModel::SPECULAR?"<template id=\"details_material_pbr\" src=\"resources/engine/gui/template_details_material_pbr.xml\" />\n":"")
 	);
 
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_material_spec"))->getActiveConditions().add("open");
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_material_pbr"))->getActiveConditions().add("open");
-
-		if (pbrMaterialProperties != nullptr) {
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_details"))->getActiveConditions().add("pbr");
-		} else {
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_details"))->getActiveConditions().remove("pbr");
+		if (model->getShaderModel() != ShaderModel::SPECULAR) {
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_material_pbr"))->getActiveConditions().add("open");
 		}
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::setMaterialDetails(): An error occurred: ") + exception.what());;
@@ -601,8 +665,10 @@ void ModelEditorTabController::setMaterialDetails() {
 }
 
 void ModelEditorTabController::updateMaterialDetails() {
-	Material* material = getSelectedMaterial();
+	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
+	auto model = getSelectedModel();
+	if (model == nullptr) return;
 
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	auto pbrMaterialProperties = material->getPBRMaterialProperties();
@@ -630,8 +696,7 @@ void ModelEditorTabController::updateMaterialDetails() {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("specularmaterial_reflection"))->getController()->setValue(specularMaterialProperties->getReflection());
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("specularmaterial_maskedtransparency"))->getController()->setValue(MutableString(specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true?"1":""));
 
-		if (pbrMaterialProperties != nullptr) {
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_enabled"))->getController()->setValue(MutableString("1"));
+		if (model->getShaderModel() != ShaderModel::SPECULAR && pbrMaterialProperties != nullptr) {
 			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("pbrmaterial_basecolor_texture"))->setTexture(pbrMaterialProperties->getBaseColorTexture());
 			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("pbrmaterial_metallic_roughness_texture"))->setTexture(pbrMaterialProperties->getMetallicRoughnessTexture());
 			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("pbrmaterial_normal_texture"))->setTexture(pbrMaterialProperties->getNormalTexture());
@@ -640,12 +705,10 @@ void ModelEditorTabController::updateMaterialDetails() {
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_normal_scale"))->getController()->setValue(pbrMaterialProperties->getNormalScale());
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_exposure"))->getController()->setValue(pbrMaterialProperties->getExposure());
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_maskedtransparency"))->getController()->setValue(MutableString(pbrMaterialProperties->hasBaseColorTextureMaskedTransparency() == true?"1":""));
-		} else {
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_enabled"))->getController()->setValue(MutableString());
 		}
 	} catch (Exception& exception) {
-		Console::println(string("ModelEditorTabController::updateMaterialDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		Console::println(string("ModelEditorTabController::updateMaterialDetails(): An error occurred: ") + exception.what());
+		showErrorPopUp("Warning", string(exception.what()));
 	}
 
 	//
@@ -653,7 +716,7 @@ void ModelEditorTabController::updateMaterialDetails() {
 }
 
 void ModelEditorTabController::updateMaterialColorDetails() {
-	Material* material = getSelectedMaterial();
+	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
 
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
@@ -674,9 +737,8 @@ void ModelEditorTabController::updateMaterialColorDetails() {
 	}
 }
 
-
 void ModelEditorTabController::applySpecularMaterialDetails() {
-	Material* material = getSelectedMaterial();
+	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
 
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
@@ -692,30 +754,17 @@ void ModelEditorTabController::applySpecularMaterialDetails() {
 }
 
 void ModelEditorTabController::applyPBRMaterialDetails() {
-	Material* material = getSelectedMaterial();
+	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
 
 	try {
-		if (required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_enabled"))->getController()->getValue().equals("1") == true) {
-			if (material->getPBRMaterialProperties() == nullptr) {
-				view->reloadPrototype();
-				string outlinerNodeModel;
-				Model* model = nullptr;
-				getOutlinerNodeLOD(view->getEditorView()->getScreenController()->getOutlinerSelection(), outlinerNodeModel, &model);
-				if (model != nullptr) model->setShaderModel(ShaderModel::PBR);
-				material->setPBRMaterialProperties(new PBRMaterialProperties());
-				updateMaterialDetails();
-			}
-		} else {
-			if (material->getPBRMaterialProperties() != nullptr) {
-				view->reloadPrototype();
-				Model* model = nullptr;
-				string outlinerNodeModel;
-				getOutlinerNodeLOD(view->getEditorView()->getScreenController()->getOutlinerSelection(), outlinerNodeModel, &model);
-				if (model != nullptr) model->setShaderModel(ShaderModel::SPECULAR);
-				material->setPBRMaterialProperties(nullptr);
-				updateMaterialDetails();
-			}
+		if (material->getPBRMaterialProperties() == nullptr) {
+			view->reloadPrototype();
+			string outlinerNodeModel;
+			Model* model = nullptr;
+			getOutlinerNodeLOD(view->getEditorView()->getScreenController()->getOutlinerSelection(), outlinerNodeModel, &model);
+			material->setPBRMaterialProperties(new PBRMaterialProperties());
+			updateMaterialDetails();
 		}
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::applyPBRMaterialDetails(): An error occurred: ") + exception.what());;
@@ -981,6 +1030,9 @@ void ModelEditorTabController::updateDetails(const string& outlinerNode) {
 	string outlinerNodeModel;
 	Model* model = nullptr;
 	getOutlinerNodeLOD(outlinerNode, outlinerNodeModel, &model);
+	if (StringTools::startsWith(outlinerNodeModel, "model.materials") == true) {
+		setMaterialBaseDetails();
+	} else
 	if (StringTools::startsWith(outlinerNodeModel, "model.materials.") == true) {
 		setMaterialDetails();
 	} else
@@ -1801,6 +1853,12 @@ void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 		for (auto& applyAnimationNode: applyAnimationNodes) {
 			if (node->getId() == applyAnimationNode) {
 				applyAnimationDetails();
+			}
+		}
+		for (auto& applyMaterialBaseNode: applyMaterialBaseNodes) {
+			if (node->getId() == applyMaterialBaseNode) {
+				applyMaterialBaseDetails();
+				break;
 			}
 		}
 		for (auto& applySpecularMaterialNode: applySpecularMaterialNodes) {
