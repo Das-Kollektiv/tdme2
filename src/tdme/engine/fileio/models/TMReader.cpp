@@ -286,17 +286,20 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 			if (diffuseTextureFileName.empty() == false) {
 				auto diffuseTextureTransparency = smp->getDiffuseTextureTransparency();
 				auto diffuseTextureMaskedTransparency = smp->getDiffuseTextureMaskedTransparencyThreshold();
-				smp->setDiffuseTexture(embeddedTextures.find(diffuseTextureFileName)->second);
+				auto diffuseTexture = getEmbeddedTexture(embeddedTextures, diffuseTextureFileName);
+				if (diffuseTexture != nullptr) smp->setDiffuseTexture(diffuseTexture);
 				smp->setDiffuseTextureTransparency(diffuseTextureTransparency);
 				smp->setDiffuseTextureMaskedTransparency(diffuseTextureMaskedTransparency);
 			}
 			// specular
 			if (specularTextureFileName.empty() == false) {
-				smp->setSpecularTexture(embeddedTextures.find(specularTextureFileName)->second);
+				auto specularTexture = getEmbeddedTexture(embeddedTextures, specularTextureFileName);
+				if (specularTexture != nullptr) smp->setSpecularTexture(specularTexture);
 			}
 			// normal
 			if (normalTextureFileName.empty() == false) {
-				smp->setNormalTexture(embeddedTextures.find(normalTextureFileName)->second);
+				auto normalTexture = getEmbeddedTexture(embeddedTextures, normalTextureFileName);
+				if (normalTexture != nullptr) smp->setNormalTexture(normalTexture);
 			}
 		}
 	}
@@ -340,17 +343,20 @@ Material* TMReader::readMaterial(const string& pathName, TMReaderInputStream* is
 					if (baseColorTextureFileName.empty() == false) {
 						auto baseColorTextureTransparency = pmp->hasBaseColorTextureTransparency();
 						auto baseColorTextureMaskedTransparency = pmp->hasBaseColorTextureMaskedTransparency();
-						pmp->setBaseColorTexture(embeddedTextures.find(baseColorTextureFileName)->second);
+						auto baseColorTexture = getEmbeddedTexture(embeddedTextures, baseColorTextureFileName);
+						if (baseColorTexture != nullptr) pmp->setBaseColorTexture(baseColorTexture);
 						pmp->setBaseColorTextureTransparency(baseColorTextureTransparency);
 						pmp->setBaseColorTextureMaskedTransparency(baseColorTextureMaskedTransparency);
 					}
 					// metallic roughness
 					if (metallicRoughnessTextureFileName.empty() == false) {
-						pmp->setMetallicRoughnessTexture(embeddedTextures.find(metallicRoughnessTextureFileName)->second);
+						auto metallicRoughnessTexture = getEmbeddedTexture(embeddedTextures, metallicRoughnessTextureFileName);
+						if (metallicRoughnessTexture != nullptr) pmp->setMetallicRoughnessTexture(metallicRoughnessTexture);
 					}
 					// normal
 					if (pbrNormalTextureFileName.empty() == false) {
-						pmp->setNormalTexture(embeddedTextures.find(pbrNormalTextureFileName)->second);
+						auto pbrNormalTexture = getEmbeddedTexture(embeddedTextures, pbrNormalTextureFileName);
+						if (pbrNormalTexture != nullptr) pmp->setNormalTexture(pbrNormalTexture);
 					}
 				}
 			}

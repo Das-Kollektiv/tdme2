@@ -262,6 +262,18 @@ private:
 
 	/**
 	 * Read material
+	 * @param embeddedTextures embedded textures
+	 * @param fileName file name
+	 * @return material or nullptr
+	 */
+	inline static Texture* getEmbeddedTexture(const map<string, Texture*>& embeddedTextures, const string& fileName) {
+		auto embeddedTextureIt = embeddedTextures.find(fileName);
+		if (embeddedTextureIt == embeddedTextures.end()) return nullptr;
+		return embeddedTextureIt->second;
+	}
+
+	/**
+	 * Read material
 	 * @param pathName path name
 	 * @param is input stream
 	 * @param embeddedTextures embedded textures
