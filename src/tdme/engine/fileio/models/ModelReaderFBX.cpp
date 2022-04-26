@@ -59,7 +59,7 @@ Model* ModelReader::read(const string& pathName, const string& fileName)
 			throw ModelFileIOException(string("Unsupported mode file: ") + pathName + "/" + fileName);
 		}
 	} catch (Exception& exception) {
-		Console::println("ModelReaderFBX::read(): Could not load model: " + pathName + "/" + fileName + ": " + (exception.what()));
+		Console::println("ModelReader::read(): Could not load model: " + pathName + "/" + fileName + ": " + exception.what());
 		throw;
 	}
 	return nullptr;

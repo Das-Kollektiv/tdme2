@@ -2,6 +2,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
+#include <tdme/engine/subsystems/framebuffer/BRDFLUTShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
@@ -17,6 +18,7 @@ using tdme::engine::subsystems::framebuffer::DeferredLightingRenderShader;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
+using tdme::engine::subsystems::framebuffer::BRDFLUTShader;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
@@ -211,7 +213,7 @@ void DeferredLightingRenderShader::initialize()
 			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_back.png"),
 			renderer->CONTEXTINDEX_DEFAULT
 		);
-	texturebrdfLUT = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/environments", "brdfLUT.png"), renderer->CONTEXTINDEX_DEFAULT);
+	texturebrdfLUT = Engine::getBRDFLUTShader()->getColorTextureId();
 
 	//
 	initialized = true;

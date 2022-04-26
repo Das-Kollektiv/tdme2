@@ -89,7 +89,7 @@ This element supports all other elements as sub elements.
 | rotation                          | rotation angle                                                                         | 0.0f              |
 
 
-## 1.4. Frame Buffer / Image / Texture nodes
+## 1.4. Frame Buffer / Image / Texture / Video nodes
 
 ### 1.4.1. \<frame-buffer\> node
 
@@ -140,31 +140,7 @@ This element supports all other elements as sub elements.
 | rotation                          | rotation angle                                                                         | 0.0               |
 | src                               | image location                                                                         | 0.0               |
 
-### 1.4.3. \<movie\> node
-
-| Attribute name                    | Attribute description                                                                  | Default           |
-| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
-| clipping                          | movie clipping in pixels for left, top, right, bottom area                             | 0 pixel           |
-| clipping-left                     | movie clipping in pixels for left area                                                 | 0 pixel           |
-| clipping-top                      | movie clipping in pixels for top area                                                  | 0 pixel           |
-| clipping-right                    | movie clipping in pixels for right area                                                | 0 pixel           |
-| clipping-right                    | movie clipping in pixels for bottom area                                               | 0 pixel           |
-| mask                              | movie mask movie location                                                              | none              |
-| mask-max-value                    | mask max value, means if mask movie pixel > mask max value the fragment is discared    | none              |
-| scale9                            | movie scale 9 in pixels for left, top, right, bottom area                              | 0 pixel           |
-| scale9-left                       | movie scale 9 in pixels for left area                                                  | 0 pixel           |
-| scale9-top                        | movie scale 9 in pixels for top area                                                   | 0 pixel           |
-| scale9-right                      | movie scale 9 in pixels for right area                                                 | 0 pixel           |
-| scale9-bottom                     | movie scale 9 in pixels for bottom area                                                | 0 pixel           |
-| effect-color-mul                  | movie color multiplication in hex notation or color name                               | #ffffffff         |
-| effect-color-add                  | movie color addition in hex notation or color name                                     | #00000000         |
-| horizontal-scale                  | float factor to scale original movie width with                                        | 1.0               |
-| vertical-scale                    | float factor to scale original movie width with                                        | 1.0               |
-| mirror-x                          | mirror movie on x axis                                                                 | false             |
-| mirror-y                          | mirror movie on y axis                                                                 | false             |
-| src                               | movie location                                                                         | 0.0               |
-
-### 1.4.4. \<texture\> node
+### 1.4.3. \<texture\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -186,6 +162,30 @@ This element supports all other elements as sub elements.
 | vertical-scale                    | float factor to scale original texture width with                                      | 1.0               |
 | mirror-x                          | mirror texture on x axis                                                               | false             |
 | mirror-y                          | mirror texture on y axis                                                               | false             |
+
+### 1.4.4. \<video\> node
+
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| clipping                          | video clipping in pixels for left, top, right, bottom area                             | 0 pixel           |
+| clipping-left                     | video clipping in pixels for left area                                                 | 0 pixel           |
+| clipping-top                      | video clipping in pixels for top area                                                  | 0 pixel           |
+| clipping-right                    | video clipping in pixels for right area                                                | 0 pixel           |
+| clipping-right                    | video clipping in pixels for bottom area                                               | 0 pixel           |
+| mask                              | video mask video location                                                              | none              |
+| mask-max-value                    | mask max value, means if mask video pixel > mask max value the fragment is discared    | none              |
+| scale9                            | video scale 9 in pixels for left, top, right, bottom area                              | 0 pixel           |
+| scale9-left                       | video scale 9 in pixels for left area                                                  | 0 pixel           |
+| scale9-top                        | video scale 9 in pixels for top area                                                   | 0 pixel           |
+| scale9-right                      | video scale 9 in pixels for right area                                                 | 0 pixel           |
+| scale9-bottom                     | video scale 9 in pixels for bottom area                                                | 0 pixel           |
+| effect-color-mul                  | video color multiplication in hex notation or color name                               | #ffffffff         |
+| effect-color-add                  | video color addition in hex notation or color name                                     | #00000000         |
+| horizontal-scale                  | float factor to scale original video width with                                        | 1.0               |
+| vertical-scale                    | float factor to scale original video width with                                        | 1.0               |
+| mirror-x                          | mirror video on x axis                                                                 | false             |
+| mirror-y                          | mirror video on y axis                                                                 | false             |
+| src                               | video location                                                                         | 0.0               |
 
 ## 1.5. \<layer\> node
 

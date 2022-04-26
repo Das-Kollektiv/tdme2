@@ -59,6 +59,7 @@ using tdme::engine::model::Material;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::subsystems::earlyzrejection::EZRShader;
+using tdme::engine::subsystems::framebuffer::BRDFLUTShader;
 using tdme::engine::subsystems::framebuffer::DeferredLightingRenderShader;
 using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 using tdme::engine::subsystems::lighting::LightingShader;
@@ -142,8 +143,10 @@ class tdme::engine::Engine final
 	friend class PointsParticleSystem;
 	friend class tdme::application::Application;
 	friend class tdme::engine::subsystems::environmentmapping::EnvironmentMappingRenderer;
+	friend class tdme::engine::subsystems::framebuffer::BRDFLUTShader;
 	friend class tdme::engine::subsystems::framebuffer::DeferredLightingRenderShader;
 	friend class tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
+	friend class tdme::engine::subsystems::lighting::LightingShaderPBRBaseImplementation;
 	friend class tdme::engine::subsystems::lines::LinesObject3DInternal;
 	friend class tdme::engine::subsystems::rendering::BatchRendererPoints;
 	friend class tdme::engine::subsystems::rendering::BatchRendererTriangles;
@@ -200,6 +203,7 @@ private:
 	STATIC_DLL_IMPEXT static LinesShader* linesShader;
 	STATIC_DLL_IMPEXT static SkinningShader* skinningShader;
 	STATIC_DLL_IMPEXT static GUIShader* guiShader;
+	STATIC_DLL_IMPEXT static BRDFLUTShader* brdfLUTShader;
 	STATIC_DLL_IMPEXT static FrameBufferRenderShader* frameBufferRenderShader;
 	STATIC_DLL_IMPEXT static DeferredLightingRenderShader* deferredLightingRenderShader;
 	STATIC_DLL_IMPEXT static PostProcessing* postProcessing;
@@ -446,6 +450,13 @@ private:
 	 */
 	inline static GUIShader* getGUIShader() {
 		return guiShader;
+	}
+
+	/**
+	 * @return BRDF LUT shader
+	 */
+	inline static BRDFLUTShader* getBRDFLUTShader() {
+		return brdfLUTShader;
 	}
 
 	/**

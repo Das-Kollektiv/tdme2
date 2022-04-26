@@ -39,6 +39,7 @@
   - https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_materials_pbrSpecularGlossiness/examples/convert-between-workflows/js/three.pbrUtilities.js#L34
   - https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_lights_punctual
   - https://github.com/SaschaWillems/Vulkan
+  - https://github.com/SaschaWillems/Vulkan-glTF-PBR
   - https://github.com/erich666/GraphicsGems/tree/master/gemsiv/euler_angle
   - https://github.com/glfw/glfw/blob/master/tests/vulkan.c
   - https://google.github.io/filament/Filament.md.html#materialsystem/specularbrdf/geometricshadowing(specularg)

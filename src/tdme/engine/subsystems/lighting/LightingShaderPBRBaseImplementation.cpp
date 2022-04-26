@@ -4,6 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
+#include <tdme/engine/subsystems/framebuffer/BRDFLUTShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
@@ -18,6 +19,7 @@ using std::string;
 using std::to_string;
 
 using tdme::engine::fileio::textures::TextureReader;
+using tdme::engine::subsystems::framebuffer::BRDFLUTShader;
 using tdme::engine::subsystems::lighting::LightingShaderConstants;
 using tdme::engine::subsystems::lighting::LightingShaderPBRBaseImplementation;
 using tdme::engine::subsystems::manager::TextureManager;
@@ -117,7 +119,7 @@ void LightingShaderPBRBaseImplementation::initialize()
 			TextureReader::read("resources/engine/environments/" + environmentType + "/specular", "specular_back.png"),
 			renderer->CONTEXTINDEX_DEFAULT
 		);
-	texturebrdfLUT = Engine::getInstance()->getTextureManager()->addTexture(TextureReader::read("resources/engine/environments", "brdfLUT.png"), renderer->CONTEXTINDEX_DEFAULT);
+	texturebrdfLUT = Engine::getBRDFLUTShader()->getColorTextureId();
 
 	//
 	initialized = true;
