@@ -548,38 +548,12 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 				model->getMaterials()[material->getId()] = material;
 			}
 		}
-		if (gltfPrimitive.mode != 4) {
+		if (gltfPrimitive.mode != TINYGLTF_MODE_TRIANGLES) {
 			Console::println("GLTFReader::parseNode(): " + node->getId() + ": Invalid primitive mode: " + to_string(gltfPrimitive.mode));
 			continue;
 		}
-		vector<int> indices;
-		{
-			auto& indicesAccessor = gltfModel.accessors[gltfPrimitive.indices];
-			auto& indicesBufferView = gltfModel.bufferViews[indicesAccessor.bufferView];
-			auto& indicesBuffer = gltfModel.buffers[indicesBufferView.buffer];
-			switch (indicesAccessor.componentType) {
-				case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
-					{
-						auto stride = indicesBufferView.byteStride == 0?1 * sizeof(uint16_t) / sizeof(uint16_t):indicesBufferView.byteStride / sizeof(uint16_t);
-						const uint16_t* indicesBufferData = (const uint16_t*)(indicesBuffer.data.data() + indicesAccessor.byteOffset + indicesBufferView.byteOffset);
-						for (auto i = 0; i < indicesAccessor.count; i++) {
-							indices.push_back(indicesBufferData[i * stride]);
-						}
-						break;
-					}
-				case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:
-					{
-						auto stride = indicesBufferView.byteStride == 0?1 * sizeof(uint32_t) / sizeof(uint32_t):indicesBufferView.byteStride / sizeof(uint32_t);
-						const uint32_t* indicesBufferData = (const uint32_t*)(indicesBuffer.data.data() + indicesAccessor.byteOffset + indicesBufferView.byteOffset);
-						for (auto i = 0; i < indicesAccessor.count; i++) {
-							indices.push_back(indicesBufferData[i * stride]);
-						}
-						break;
-					}
-				default:
-					Console::println("GLTFReader::parseNode(): " + node->getId() + ": Invalid indices component: " + to_string(indicesAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(indicesAccessor.componentType)));
-			}
-		}
+
+		//
 		auto start = 0;
 		bool haveVertices = false;
 		bool haveNormals = false;
@@ -682,12 +656,51 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 				Console::println("GLTFReader::parseNode(): " + node->getId() + ": Invalid buffer type: " + gltfBufferType);
 			}
 		}
-		FacesEntity facesEntity(node, node->getId() + "-" + to_string(facesEntityIdx));
-		facesEntity.setMaterial(material);
-		vector<Face> faces;
+
+		// check for vertices
 		if (haveVertices == false) {
 			throw ModelFileIOException("Missing vertices");
 		}
+
+		// indices
+		vector<int> indices;
+		{
+			if (gltfPrimitive.indices == -1) {
+				indices.resize(vertices.size());
+				for (auto i = 0; i < vertices.size(); i++) indices[i] = i;
+			} else {
+				auto& indicesAccessor = gltfModel.accessors[gltfPrimitive.indices];
+				auto& indicesBufferView = gltfModel.bufferViews[indicesAccessor.bufferView];
+				auto& indicesBuffer = gltfModel.buffers[indicesBufferView.buffer];
+				switch (indicesAccessor.componentType) {
+					case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
+						{
+							auto stride = indicesBufferView.byteStride == 0?1 * sizeof(uint16_t) / sizeof(uint16_t):indicesBufferView.byteStride / sizeof(uint16_t);
+							const uint16_t* indicesBufferData = (const uint16_t*)(indicesBuffer.data.data() + indicesAccessor.byteOffset + indicesBufferView.byteOffset);
+							for (auto i = 0; i < indicesAccessor.count; i++) {
+								indices.push_back(indicesBufferData[i * stride]);
+							}
+							break;
+						}
+					case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:
+						{
+							auto stride = indicesBufferView.byteStride == 0?1 * sizeof(uint32_t) / sizeof(uint32_t):indicesBufferView.byteStride / sizeof(uint32_t);
+							const uint32_t* indicesBufferData = (const uint32_t*)(indicesBuffer.data.data() + indicesAccessor.byteOffset + indicesBufferView.byteOffset);
+							for (auto i = 0; i < indicesAccessor.count; i++) {
+								indices.push_back(indicesBufferData[i * stride]);
+							}
+							break;
+						}
+					default:
+						Console::println("GLTFReader::parseNode(): " + node->getId() + ": Invalid indices component: " + to_string(indicesAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(indicesAccessor.componentType)));
+				}
+			}
+		}
+
+		//
+		FacesEntity facesEntity(node, node->getId() + "-" + to_string(facesEntityIdx));
+		facesEntity.setMaterial(material);
+		vector<Face> faces;
 		if (haveTextureCoordinates == true) {
 			for (auto i = 0; i < indices.size() / 3; i++) {
 				faces.push_back(

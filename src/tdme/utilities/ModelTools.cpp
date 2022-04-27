@@ -1340,7 +1340,7 @@ void ModelTools::computeTangentsAndBitangents(Node* node)
 {
 	// without texture coordinates we cant compute tangents and bitangents
 	if (node->getTextureCoordinates().empty() == true) {
-		Console::println("ModelTools::createTangentsAndBitangents(): " + node->getId() + ": No texture coordinates");
+		Console::println("ModelTools::computeTangentsAndBitangents(): " + node->getId() + ": No texture coordinates");
 		return;
 	}
 	// see: https://www.opengl-tutorial.org/intermediate-tutorials/tutorial-13-normal-mapping/
