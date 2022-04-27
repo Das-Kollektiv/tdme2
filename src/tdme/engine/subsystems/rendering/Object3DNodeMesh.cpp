@@ -211,7 +211,7 @@ Object3DNodeMesh::Object3DNodeMesh(Object3DNodeRenderer* object3DNodeRenderer, E
 					for (auto& jointWeight : jointsWeights[vertexIndex]) {
 						auto& joint = joints[jointWeight.getJointIndex()];
 						auto skinningMatrixIt = skinningMatrices[i]->find(joint.getNodeId());
-						cSkinningJointTransformationsMatrices[i][vertexIndex][jointWeightIdx] = skinningMatrixIt->second;
+						cSkinningJointTransformationsMatrices[i][vertexIndex][jointWeightIdx] = skinningMatrixIt != skinningMatrices[i]->end()?skinningMatrixIt->second:nullptr;
 						// next
 						jointWeightIdx++;
 					}

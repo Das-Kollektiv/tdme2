@@ -226,7 +226,11 @@ void SkinningShader::computeSkinning(int contextIdx, Object3DBase* object3DBase,
 			if (object3DBase->instanceEnabled[i] == false) continue;
 			object3DBase->setCurrentInstance(i);
 			for (auto jointSkinningMatrix: object3DNodeMesh->jointsSkinningMatrices[i]) {
-				fbMatrices.put((skinningMatrix.set(*jointSkinningMatrix).multiply(object3DBase->getTransformationsMatrix()).getArray()));
+				if (jointSkinningMatrix != nullptr) {
+					fbMatrices.put((skinningMatrix.set(*jointSkinningMatrix).multiply(object3DBase->getTransformationsMatrix()).getArray()));
+				} else {
+					fbMatrices.put(object3DBase->getTransformationsMatrix().getArray());
+				}
 			}
 		}
 		object3DBase->setCurrentInstance(currentInstance);
