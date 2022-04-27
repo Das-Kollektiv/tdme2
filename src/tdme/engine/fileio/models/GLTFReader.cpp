@@ -85,18 +85,31 @@ using tdme::utilities::StringTools;
 
 Model* GLTFReader::read(const string& pathName, const string& fileName)
 {
-	// load model
-	vector<uint8_t> glftBinaryData;
-	FileSystem::getInstance()->getContent(pathName, fileName, glftBinaryData);
+	// hello
+	Console::println("GLTFReader::read(): Loading model: " + pathName + "/" + fileName);
+
 	// parse model
 	string err;
 	string warn;
 	tinygltf::Model gltfModel;
 	tinygltf::TinyGLTF gltfLoader;
-	auto ret = gltfLoader.LoadBinaryFromMemory(&gltfModel, &err, &warn, glftBinaryData.data(), glftBinaryData.size());
+	auto success = false;
+	if (StringTools::endsWith(fileName, ".glb") == true) {
+		vector<uint8_t> glftBinaryData;
+		FileSystem::getInstance()->getContent(pathName, fileName, glftBinaryData);
+		success = gltfLoader.LoadBinaryFromMemory(&gltfModel, &err, &warn, glftBinaryData.data(), glftBinaryData.size());
+	} else
+	if (StringTools::endsWith(fileName, ".gltf") == true) {
+		string glftASCIIData = FileSystem::getInstance()->getContentAsString(pathName, fileName);
+		success = gltfLoader.LoadASCIIFromString(&gltfModel, &err, &warn, glftASCIIData.c_str(), glftASCIIData.size(), pathName.c_str());
+	} else {
+		Console::println("GLTFReader::read(): File not supported");
+		return nullptr;
+	}
+
 	if (warn.empty() == false) Console::println("GLTFReader::read(): warnings: " + warn);
 	if (err.empty() == false) Console::println("GLTFReader::read(): errors: " + err);
-	if (ret == false){
+	if (success == false){
 		Console::println("GLTFReader::read(): Failed to load model: " + pathName + "/" + fileName);
 		return nullptr;
 	}
@@ -673,6 +686,15 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 				auto& indicesBufferView = gltfModel.bufferViews[indicesAccessor.bufferView];
 				auto& indicesBuffer = gltfModel.buffers[indicesBufferView.buffer];
 				switch (indicesAccessor.componentType) {
+					case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
+						{
+							auto stride = indicesBufferView.byteStride == 0?1 * sizeof(uint8_t) / sizeof(uint8_t):indicesBufferView.byteStride / sizeof(uint8_t);
+							const uint8_t* indicesBufferData = (const uint8_t*)(indicesBuffer.data.data() + indicesAccessor.byteOffset + indicesBufferView.byteOffset);
+							for (auto i = 0; i < indicesAccessor.count; i++) {
+								indices.push_back(indicesBufferData[i * stride]);
+							}
+							break;
+						}
 					case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
 						{
 							auto stride = indicesBufferView.byteStride == 0?1 * sizeof(uint16_t) / sizeof(uint16_t):indicesBufferView.byteStride / sizeof(uint16_t);

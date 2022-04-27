@@ -625,6 +625,7 @@ void EditorScreenController::ScanFilesThread::run() {
 				if (StringTools::endsWith(fileNameLowerCase, ".dae") == true) return true;
 				if (StringTools::endsWith(fileNameLowerCase, ".fbx") == true) return true;
 				if (StringTools::endsWith(fileNameLowerCase, ".glb") == true) return true;
+				if (StringTools::endsWith(fileNameLowerCase, ".gltf") == true) return true;
 				if (StringTools::endsWith(fileNameLowerCase, ".tm") == true) return true;
 				// property files
 				if (StringTools::endsWith(fileNameLowerCase, ".properties") == true) return true;

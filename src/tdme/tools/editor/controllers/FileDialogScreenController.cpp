@@ -611,6 +611,9 @@ const string FileDialogScreenController::getFileImageName(const string& fileName
 	if (StringTools::endsWith(fileNameLowerCase, ".glb") == true) {
 		return "mesh";
 	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".gltf") == true) {
+		return "mesh";
+	} else
 	if (StringTools::endsWith(fileNameLowerCase, ".tm") == true) {
 		return "mesh";
 	} else
