@@ -1030,7 +1030,7 @@ void ModelEditorTabController::updateDetails(const string& outlinerNode) {
 	string outlinerNodeModel;
 	Model* model = nullptr;
 	getOutlinerNodeLOD(outlinerNode, outlinerNodeModel, &model);
-	if (StringTools::startsWith(outlinerNodeModel, "model.materials") == true) {
+	if (outlinerNodeModel == "model.materials") {
 		setMaterialBaseDetails();
 	} else
 	if (StringTools::startsWith(outlinerNodeModel, "model.materials.") == true) {

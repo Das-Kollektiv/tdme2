@@ -138,8 +138,10 @@ private:
 	 * @param gltfNodeIdx GLTF node index
 	 * @param model TDME model
 	 * @param parentNode TDME parent node
+	 * @param anonymousNodeIdx anonymous node index
+	 * @return node
 	 */
-	static Node* parseNode(const string& pathName, const tinygltf::Model& gltfModel, int gltfNodeIdx, Model* model, Node* parentNode);
+	static Node* parseNode(const string& pathName, tinygltf::Model& gltfModel, int gltfNodeIdx, Model* model, Node* parentNode, int& anonymousNodeIdx);
 
 	/**
 	 * Parse GLTF node children into TDME node
@@ -147,8 +149,9 @@ private:
 	 * @param gltfModel GLTF model
 	 * @param gltfNodeChildrenIdx GLTF node children indices
 	 * @param parentNode TDME parent node
+	 * @param anonymousNodeIdx anonymous node index
 	 */
-	static void parseNodeChildren(const string& pathName, const tinygltf::Model& gltfModel, const vector<int>& gltfNodeChildrenIdx, Node* parentNode);
+	static void parseNodeChildren(const string& pathName, tinygltf::Model& gltfModel, const vector<int>& gltfNodeChildrenIdx, Node* parentNode, int& anonymousNodeIdx);
 
 	/**
 	 * Determine texture file name
@@ -156,4 +159,10 @@ private:
 	 * @return file name
 	 */
 	static string determineTextureFileName(const string& imageName);
+
+	/**
+	 * Compute tangents and bitangents
+	 * @param node node
+	 */
+	static void computeTangentsAndBitangents(Node* node);
 };

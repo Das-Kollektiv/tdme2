@@ -267,8 +267,17 @@ void Object3DNodeMesh::computeTransformations(int contextIdx, Object3DBase* obje
 					totalWeights = 0.0f;
 					for (auto vertexJointWeightIdx = 0; vertexJointWeightIdx < jointsWeights[vertexIndex].size(); vertexJointWeightIdx++) {
 						auto weight = cSkinningJointWeight[vertexIndex][vertexJointWeightIdx];
-						// skinning transformation matrix
-						transformationsMatrix.set(*cSkinningJointTransformationsMatrices[i][vertexIndex][vertexJointWeightIdx]).multiply(object3DBase->getTransformationsMatrix());
+						/*
+						// skip on missing transformations matrix
+						if (i >= cSkinningJointTransformationsMatrices.size() ||
+							vertexIndex >= cSkinningJointTransformationsMatrices[i].size() ||
+							vertexJointWeightIdx >= cSkinningJointTransformationsMatrices[i][vertexIndex].size()) continue;
+						*/
+						// skip on missing matrix
+						auto skinningJointTransformationsMatrix = cSkinningJointTransformationsMatrices[i][vertexIndex][vertexJointWeightIdx];
+						if (skinningJointTransformationsMatrix == nullptr) continue;
+						//
+						transformationsMatrix.set(*skinningJointTransformationsMatrix).multiply(object3DBase->getTransformationsMatrix());
 						// vertex
 						transformedVertex->add(transformationsMatrix.multiply(*vertex).scale(weight));
 						// normals

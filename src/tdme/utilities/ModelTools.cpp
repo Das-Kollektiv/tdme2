@@ -1336,8 +1336,13 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 	return optimizedModel;
 }
 
-void ModelTools::createTangentsAndBitangents(Node* node)
+void ModelTools::computeTangentsAndBitangents(Node* node)
 {
+	// without texture coordinates we cant compute tangents and bitangents
+	if (node->getTextureCoordinates().empty() == true) {
+		Console::println("ModelTools::createTangentsAndBitangents(): " + node->getId() + ": No texture coordinates");
+		return;
+	}
 	// see: https://www.opengl-tutorial.org/intermediate-tutorials/tutorial-13-normal-mapping/
 	// what we need
 	vector<Vector3> tangents;

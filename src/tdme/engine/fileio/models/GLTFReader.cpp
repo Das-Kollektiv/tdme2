@@ -115,16 +115,17 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 	model->setEmbedPBRTextures(true);
 
 	// parse nodes aka scene
+	int anonymousNodeIdx = 1;
 	for (auto& gltfScene: gltfModel.scenes) {
 		for (auto gltfNodeIdx: gltfScene.nodes) {
 			auto& glTfNode = gltfModel.nodes[gltfNodeIdx];
-			auto node = parseNode(pathName, gltfModel, gltfNodeIdx, model, nullptr);
+			auto node = parseNode(pathName, gltfModel, gltfNodeIdx, model, nullptr, anonymousNodeIdx);
 			model->getNodes()[node->getId()] = node;
 			if (model->getSubNodes().find(node->getId()) != model->getSubNodes().end()) {
 				Console::println("GLTFReader::read(): node already exists: " + node->getId());
 			}
 			model->getSubNodes()[node->getId()] = node;
-			if (glTfNode.children.empty() == false) parseNodeChildren(pathName, gltfModel, glTfNode.children, node);
+			if (glTfNode.children.empty() == false) parseNodeChildren(pathName, gltfModel, glTfNode.children, node, anonymousNodeIdx);
 		}
 	}
 
@@ -138,7 +139,12 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 		for (auto& gltfAnimation: gltfModel.animations) {
 			auto frames = 0;
 			for (auto& gltfChannel: gltfAnimation.channels) {
-				auto node = model->getNodeById(gltfModel.nodes[gltfChannel.target_node].name);
+				auto gltfNodeName = gltfModel.nodes[gltfChannel.target_node].name;
+				auto node = model->getNodeById(gltfNodeName);
+				if (node == nullptr) {
+					Console::println("GLTFReader::read(): '" + gltfNodeName + "': animation: " + gltfAnimation.name + ": Could not find animation node");
+					continue;
+				}
 				animationNodes.insert(node->getId());
 				auto& gltfSample = gltfAnimation.samplers[gltfChannel.sampler];
 				// animation input: key frame time stamps
@@ -150,7 +156,7 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 					Console::println("GLTFReader::read(): " + node->getId() + ": animation: " + gltfAnimation.name + ": Invalid input attributes component: " + getComponentTypeString(animationInputAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(animationInputAccessor.componentType)));
 					continue;
 				}
-				auto channelFrames = static_cast<int32_t>(Math::ceil(animationInputBufferData[animationInputAccessor.count - 1] * 30.0f));
+				auto channelFrames = Math::max(1, static_cast<int32_t>(Math::ceil(animationInputBufferData[animationInputAccessor.count - 1] * 30.0f)));
 				// animation output: translation, rotation, scale
 				auto& animationOutputAccessor = gltfModel.accessors[gltfSample.output];
 				auto& animationOutputBufferView = gltfModel.bufferViews[animationOutputAccessor.bufferView];
@@ -169,7 +175,7 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 				if (maxFrames + channelFrames > animationTranslationMatrices[node->getId()].size()) {
 					animationTranslationMatrices[node->getId()].resize(maxFrames + channelFrames);
 				}
-				// Console::println("xxx: " + node->getId() + ": " + gltfChannel.target_path + " / maxFrames = " + to_string(maxFrames) + ", output frames: " + to_string(animationOutputAccessor.count) + ", " + to_string(animationInputBufferData[0]) + ", channel frames: " + to_string(channelFrames));
+				// Console::println("xxx: " + node->getId() + ": " + gltfChannel.target_path + " / maxFrames = " + to_string(maxFrames) + ", output frames: " + to_string(animationOutputAccessor.count) + ", " + to_string(animationInputBufferData[0]) + ", channel frames: " + to_string(channelFrames) + ", key frame count: " + to_string(animationInputAccessor.count));
 				if (gltfChannel.target_path == "translation") {
 					if (animationOutputAccessor.type != TINYGLTF_TYPE_VEC3) {
 						Console::println("GLTFReader::read(): " + node->getId() + ": animation: " + gltfAnimation.name + ": Invalid translation channel output type: " + getTypeString(animationOutputAccessor.type) + ", expected: Vector3");
@@ -211,6 +217,7 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 				}
 				if (channelFrames > frames) frames = channelFrames;
 			}
+			// Console::println("AnimationSetup: " + gltfAnimation.name + ": " + to_string(maxFrames) + " -> " + to_string(frames));
 			model->addAnimationSetup(gltfAnimation.name, maxFrames, maxFrames + frames - 1, false);
 			maxFrames+= frames;
 		}
@@ -242,7 +249,7 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 				if (animationScaleMatrices[node->getId()][i].equals(emptyTransformations) == true &&
 					animationRotationMatrices[node->getId()][i].equals(emptyTransformations) == true &&
 					animationTranslationMatrices[node->getId()][i].equals(emptyTransformations) == true) {
-					animationFinalMatrices[i] = model->getNodeById(node->getId())->getTransformationsMatrix();
+					animationFinalMatrices[i] = node->getTransformationsMatrix();
 				} else {
 					animationFinalMatrices[i].identity();
 					if (animationScaleMatrices[node->getId()][i].equals(emptyTransformations) == false) animationFinalMatrices[i].multiply(animationScaleMatrices[node->getId()][i]);
@@ -255,6 +262,29 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 			node->setAnimation(animation);
 		}
 	}
+
+	// check if to compute normals
+	{
+		auto computeNormals = false;
+		for (auto& nodeIt: model->getNodes()) {
+			auto node = nodeIt.second;
+			if (node->getVertices().size() != node->getNormals().size()) {
+				computeNormals = true;
+			}
+		}
+		if (computeNormals == true) {
+			Console::println("GLTFReader::read(): Computing normals, as they were missing or mismatching vertex count");
+			ModelTools::computeNormals(model);
+		}
+	}
+
+	// compute tangents and bitangents
+	for (auto& nodeIt: model->getSubNodes()) {
+		computeTangentsAndBitangents(nodeIt.second);
+	}
+
+	// lets prepare for indexed rendering, or disable it later, as it makes not much sense with tangents and bitangents
+	ModelTools::prepareForIndexedRendering(model);
 
 	// create default animations
 	ModelTools::createDefaultAnimation(model, maxFrames);
@@ -293,9 +323,13 @@ void GLTFReader::interpolateKeyFrames(int frameTimeCount, const float* frameTime
 	}
 }
 
-Node* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltfModel, int gltfNodeIdx, Model* model, Node* parentNode) {
+Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, int gltfNodeIdx, Model* model, Node* parentNode, int& anonymousNodeIdx) {
 	auto& gltfNode = gltfModel.nodes[gltfNodeIdx];
-	auto node = new Node(model, parentNode, gltfNode.name, gltfNode.name);
+	// this fixes nodes that have no name
+	auto nodeId = gltfNode.name.empty() == true?"<" + to_string(anonymousNodeIdx++) + ">":gltfNode.name;
+	gltfNode.name = nodeId;
+	//
+	auto node = new Node(model, parentNode, nodeId, nodeId);
 	if (gltfNode.matrix.size() == 16) {
 		node->setTransformationsMatrix(
 			Matrix4x4(
@@ -523,25 +557,22 @@ Node* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltfM
 			auto& indicesAccessor = gltfModel.accessors[gltfPrimitive.indices];
 			auto& indicesBufferView = gltfModel.bufferViews[indicesAccessor.bufferView];
 			auto& indicesBuffer = gltfModel.buffers[indicesBufferView.buffer];
-			if (indicesBufferView.byteStride != 0) {
-				Console::println("GLTFReader::parseNode(): " + node->getId() + ": Invalid stride: " + to_string(indicesBufferView.byteStride));
-			} else
 			switch (indicesAccessor.componentType) {
 				case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
 					{
-						// TODO: stride
+						auto stride = indicesBufferView.byteStride == 0?1 * sizeof(uint16_t) / sizeof(uint16_t):indicesBufferView.byteStride / sizeof(uint16_t);
 						const uint16_t* indicesBufferData = (const uint16_t*)(indicesBuffer.data.data() + indicesAccessor.byteOffset + indicesBufferView.byteOffset);
 						for (auto i = 0; i < indicesAccessor.count; i++) {
-							indices.push_back(indicesBufferData[i]);
+							indices.push_back(indicesBufferData[i * stride]);
 						}
 						break;
 					}
 				case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:
 					{
-						// TODO: stride
+						auto stride = indicesBufferView.byteStride == 0?1 * sizeof(uint32_t) / sizeof(uint32_t):indicesBufferView.byteStride / sizeof(uint32_t);
 						const uint32_t* indicesBufferData = (const uint32_t*)(indicesBuffer.data.data() + indicesAccessor.byteOffset + indicesBufferView.byteOffset);
 						for (auto i = 0; i < indicesAccessor.count; i++) {
-							indices.push_back(indicesBufferData[i]);
+							indices.push_back(indicesBufferData[i * stride]);
 						}
 						break;
 					}
@@ -558,92 +589,105 @@ Node* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltfM
 			auto& attributeAccessor = gltfModel.accessors[gltfAttributeIt.second];
 			auto& attributeBufferView = gltfModel.bufferViews[attributeAccessor.bufferView];
 			auto& attributeBuffer = gltfModel.buffers[attributeBufferView.buffer];
-			if (attributeBufferView.byteStride != 0) {
-				Console::println("GLTFReader::parseNode(): " + node->getId() + ": Invalid attributes stride: " + to_string(attributeBufferView.byteStride));
-			} else {
-				if (gltfBufferType == "POSITION") {
-					if (attributeAccessor.componentType != TINYGLTF_COMPONENT_TYPE_FLOAT) {
-						Console::println("GLTFReader::parseNode(): " + node->getId() + ": POSITION: Invalid attributes component: " + to_string(attributeAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(attributeAccessor.componentType)));
-						continue;
-					}
-					haveVertices = true;
-					start = vertices.size();
-					if (start + attributeAccessor.count > vertices.size()) vertices.resize(start + attributeAccessor.count);
-					auto bufferData = (const float*)(attributeBuffer.data.data() + attributeAccessor.byteOffset + attributeBufferView.byteOffset);
+			if (gltfBufferType == "POSITION") {
+				if (attributeAccessor.componentType != TINYGLTF_COMPONENT_TYPE_FLOAT) {
+					Console::println("GLTFReader::parseNode(): " + node->getId() + ": POSITION: Invalid attributes component: " + to_string(attributeAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(attributeAccessor.componentType)));
+					continue;
+				}
+				auto stride = attributeBufferView.byteStride == 0?3 * sizeof(float) / sizeof(float):attributeBufferView.byteStride / sizeof(float);
+				haveVertices = true;
+				start = vertices.size();
+				if (start + attributeAccessor.count > vertices.size()) vertices.resize(start + attributeAccessor.count);
+				auto bufferData = (const float*)(attributeBuffer.data.data() + attributeAccessor.byteOffset + attributeBufferView.byteOffset);
+				for (auto i = 0; i < attributeAccessor.count; i++) {
+					vertices[start + i] = Vector3(bufferData[i * stride + 0], bufferData[i * stride + 1], bufferData[i * stride + 2]);
+				}
+			} else
+			if (gltfBufferType == "NORMAL") {
+				if (attributeAccessor.componentType != TINYGLTF_COMPONENT_TYPE_FLOAT) {
+					Console::println("GLTFReader::parseNode(): " + node->getId() + ": NORMAL: Invalid attributes component: " + to_string(attributeAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(attributeAccessor.componentType)));
+					continue;
+				}
+				auto stride = attributeBufferView.byteStride == 0?3 * sizeof(float) / sizeof(float):attributeBufferView.byteStride / sizeof(float);
+				haveNormals = true;
+				auto start = normals.size();
+				if (start + attributeAccessor.count > normals.size()) normals.resize(start + attributeAccessor.count);
+				auto bufferData = (const float*)(attributeBuffer.data.data() + attributeAccessor.byteOffset + attributeBufferView.byteOffset);
+				for (auto i = 0; i < attributeAccessor.count; i++) {
+					normals[start + i] = Vector3(bufferData[i * stride + 0], bufferData[i * stride + 1], bufferData[i * stride + 2]);
+				}
+			} else
+			if (gltfBufferType == "TEXCOORD_0") {
+				if (attributeAccessor.componentType != TINYGLTF_COMPONENT_TYPE_FLOAT) {
+					Console::println("GLTFReader::parseNode(): " + node->getId() + ": TEXTCOORD_0: Invalid attributes component: " + to_string(attributeAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(attributeAccessor.componentType)));
+					continue;
+				}
+				auto stride = attributeBufferView.byteStride == 0?2 * sizeof(float) / sizeof(float):attributeBufferView.byteStride / sizeof(float);
+				haveTextureCoordinates = true;
+				auto start = textureCoordinates.size();
+				if (start + attributeAccessor.count > textureCoordinates.size()) textureCoordinates.resize(start + attributeAccessor.count);
+				auto bufferData = (const float*)(attributeBuffer.data.data() + attributeAccessor.byteOffset + attributeBufferView.byteOffset);
+				for (auto i = 0; i < attributeAccessor.count; i++) {
+					textureCoordinates[start + i] = TextureCoordinate(bufferData[i * stride + 0], bufferData[i * stride + 1]);
+				}
+			} else
+			if (gltfBufferType == "COLOR_0") {
+				// ignored for now
+			} else
+			if (gltfBufferType == "WEIGHTS_0") {
+				if (attributeAccessor.componentType != TINYGLTF_COMPONENT_TYPE_FLOAT) {
+					Console::println("GLTFReader::parseNode(): " + node->getId() + ": WEIGHTS_0: Invalid attributes component: " + to_string(attributeAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(attributeAccessor.componentType)));
+					continue;
+				}
+				auto stride = attributeBufferView.byteStride == 0?4 * sizeof(float) / sizeof(float):attributeBufferView.byteStride / sizeof(float);
+				auto start = weights.size();
+				if (start + attributeAccessor.count * 4 > weights.size()) weights.resize(start + attributeAccessor.count * 4);
+				auto bufferData = (const float*)(attributeBuffer.data.data() + attributeAccessor.byteOffset + attributeBufferView.byteOffset);
+				for (auto i = 0; i < attributeAccessor.count; i++) {
+					weights[start + i * 4 + 0] = bufferData[i * stride + 0];
+					weights[start + i * 4 + 1] = bufferData[i * stride + 1];
+					weights[start + i * 4 + 2] = bufferData[i * stride + 2];
+					weights[start + i * 4 + 3] = bufferData[i * stride + 3];
+				}
+			} else
+			if (gltfBufferType == "JOINTS_0") {
+				if (attributeAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE) {
+					auto stride = attributeBufferView.byteStride == 0?4 * sizeof(uint8_t) / sizeof(uint8_t):attributeBufferView.byteStride / sizeof(uint8_t);
+					auto start = joints.size();
+					if (start + attributeAccessor.count * 4 > joints.size()) joints.resize(start + attributeAccessor.count * 4);
+					auto bufferData = (const uint8_t*)(attributeBuffer.data.data() + attributeAccessor.byteOffset + attributeBufferView.byteOffset);
 					for (auto i = 0; i < attributeAccessor.count; i++) {
-						vertices[start + i] = Vector3(bufferData[i * 3 + 0], bufferData[i * 3 + 1], bufferData[i * 3 + 2]);
+						joints[start + i * 4 + 0] = bufferData[i * stride + 0];
+						joints[start + i * 4 + 1] = bufferData[i * stride + 1];
+						joints[start + i * 4 + 2] = bufferData[i * stride + 2];
+						joints[start + i * 4 + 3] = bufferData[i * stride + 3];
 					}
 				} else
-				if (gltfBufferType == "NORMAL") {
-					if (attributeAccessor.componentType != TINYGLTF_COMPONENT_TYPE_FLOAT) {
-						Console::println("GLTFReader::parseNode(): " + node->getId() + ": NORMAL: Invalid attributes component: " + to_string(attributeAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(attributeAccessor.componentType)));
-						continue;
-					}
-					haveNormals = true;
-					auto start = normals.size();
-					if (start + attributeAccessor.count > normals.size()) normals.resize(start + attributeAccessor.count);
-					auto bufferData = (const float*)(attributeBuffer.data.data() + attributeAccessor.byteOffset + attributeBufferView.byteOffset);
+				if (attributeAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT) {
+					auto stride = attributeBufferView.byteStride == 0?4 * sizeof(uint16_t) / sizeof(uint16_t):attributeBufferView.byteStride / sizeof(uint16_t);
+					auto start = joints.size();
+					if (start + attributeAccessor.count * 4 > joints.size()) joints.resize(start + attributeAccessor.count * 4);
+					auto bufferData = (const uint16_t*)(attributeBuffer.data.data() + attributeAccessor.byteOffset + attributeBufferView.byteOffset);
 					for (auto i = 0; i < attributeAccessor.count; i++) {
-						normals[start + i] = Vector3(bufferData[i * 3 + 0], bufferData[i * 3 + 1], bufferData[i * 3 + 2]);
-					}
-				} else
-				if (gltfBufferType == "TEXCOORD_0") {
-					if (attributeAccessor.componentType != TINYGLTF_COMPONENT_TYPE_FLOAT) {
-						Console::println("GLTFReader::parseNode(): " + node->getId() + ": TEXTCOORD_0: Invalid attributes component: " + to_string(attributeAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(attributeAccessor.componentType)));
-						continue;
-					}
-					haveTextureCoordinates = true;
-					auto start = textureCoordinates.size();
-					if (start + attributeAccessor.count > textureCoordinates.size()) textureCoordinates.resize(start + attributeAccessor.count);
-					auto bufferData = (const float*)(attributeBuffer.data.data() + attributeAccessor.byteOffset + attributeBufferView.byteOffset);
-					for (auto i = 0; i < attributeAccessor.count; i++) {
-						textureCoordinates[start + i] = TextureCoordinate(bufferData[i * 2 + 0], bufferData[i * 2 + 1]);
-					}
-				} else
-				if (gltfBufferType == "COLOR_0") {
-					// ignored for now
-				} else
-				if (gltfBufferType == "WEIGHTS_0") {
-					if (attributeAccessor.componentType != TINYGLTF_COMPONENT_TYPE_FLOAT) {
-						Console::println("GLTFReader::parseNode(): " + node->getId() + ": WEIGHTS_0: Invalid attributes component: " + to_string(attributeAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(attributeAccessor.componentType)));
-						continue;
-					}
-					auto start = weights.size();
-					if (start + attributeAccessor.count * 4 > weights.size()) weights.resize(start + attributeAccessor.count * 4);
-					auto bufferData = (const float*)(attributeBuffer.data.data() + attributeAccessor.byteOffset + attributeBufferView.byteOffset);
-					for (auto i = 0; i < attributeAccessor.count * 4; i++) {
-						weights[start + i] = bufferData[i];
-					}
-				} else
-				if (gltfBufferType == "JOINTS_0") {
-					if (attributeAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE) {
-						auto start = joints.size();
-						if (start + attributeAccessor.count * 4 > joints.size()) joints.resize(start + attributeAccessor.count * 4);
-						auto bufferData = (const uint8_t*)(attributeBuffer.data.data() + attributeAccessor.byteOffset + attributeBufferView.byteOffset);
-						for (auto i = 0; i < attributeAccessor.count * 4; i++) {
-							joints[start + i] = bufferData[i];
-						}
-					} else
-					if (attributeAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT) {
-						auto start = joints.size();
-						if (start + attributeAccessor.count * 4 > joints.size()) joints.resize(start + attributeAccessor.count * 4);
-						auto bufferData = (const uint16_t*)(attributeBuffer.data.data() + attributeAccessor.byteOffset + attributeBufferView.byteOffset);
-						for (auto i = 0; i < attributeAccessor.count * 4; i++) {
-							joints[start + i] = bufferData[i];
-						}
-					} else {
-						Console::println("GLTFReader::parseNode(): " + node->getId() + ": JOINTS_0: Invalid attributes component: " + to_string(attributeAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(attributeAccessor.componentType)));
-						continue;
+						joints[start + i * 4 + 0] = bufferData[i * stride + 0];
+						joints[start + i * 4 + 1] = bufferData[i * stride + 1];
+						joints[start + i * 4 + 2] = bufferData[i * stride + 2];
+						joints[start + i * 4 + 3] = bufferData[i * stride + 3];
 					}
 				} else {
-					Console::println("GLTFReader::parseNode(): " + node->getId() + ": Invalid buffer type: " + gltfBufferType);
+					Console::println("GLTFReader::parseNode(): " + node->getId() + ": JOINTS_0: Invalid attributes component: " + to_string(attributeAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(attributeAccessor.componentType)));
+					continue;
 				}
+			} else {
+				Console::println("GLTFReader::parseNode(): " + node->getId() + ": Invalid buffer type: " + gltfBufferType);
 			}
 		}
 		FacesEntity facesEntity(node, node->getId() + "-" + to_string(facesEntityIdx));
 		facesEntity.setMaterial(material);
 		vector<Face> faces;
-		if (haveVertices == false || haveNormals == false) throw ModelFileIOException("Missing vertices or normals");
+		if (haveVertices == false) {
+			throw ModelFileIOException("Missing vertices");
+		}
 		if (haveTextureCoordinates == true) {
 			for (auto i = 0; i < indices.size() / 3; i++) {
 				faces.push_back(
@@ -678,9 +722,7 @@ Node* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltfM
 		auto& inverseBindMatricesBufferView = gltfModel.bufferViews[inverseBindMatricesAccessor.bufferView];
 		auto& inverseBindMatricesBuffer = gltfModel.buffers[inverseBindMatricesBufferView.buffer];
 		const float* inverseBindMatricesBufferData = nullptr;
-		if (inverseBindMatricesBufferView.byteStride != 0) {
-			Console::println("GLTFReader::parseNode(): " + node->getId() + ": Invalid attributes stride: " + to_string(inverseBindMatricesBufferView.byteStride));
-		} else
+		auto stride = inverseBindMatricesBufferView.byteStride == 0?16 * sizeof(float) / sizeof(float):inverseBindMatricesBufferView.byteStride / sizeof(float);
 		if (inverseBindMatricesAccessor.componentType != TINYGLTF_COMPONENT_TYPE_FLOAT) {
 			Console::println("GLTFReader::parseNode(): " + node->getId() + ": Inverse bind matrices: Invalid attributes component: " + to_string(inverseBindMatricesAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(inverseBindMatricesAccessor.componentType)));
 		} else {
@@ -695,22 +737,22 @@ Node* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltfM
 					Joint joint(gltfModel.nodes[gltfJointNodeIdx].name);
 					joint.setBindMatrix(
 						Matrix4x4(
-							inverseBindMatricesBufferData[i * 16 + 0],
-							inverseBindMatricesBufferData[i * 16 + 1],
-							inverseBindMatricesBufferData[i * 16 + 2],
-							inverseBindMatricesBufferData[i * 16 + 3],
-							inverseBindMatricesBufferData[i * 16 + 4],
-							inverseBindMatricesBufferData[i * 16 + 5],
-							inverseBindMatricesBufferData[i * 16 + 6],
-							inverseBindMatricesBufferData[i * 16 + 7],
-							inverseBindMatricesBufferData[i * 16 + 8],
-							inverseBindMatricesBufferData[i * 16 + 9],
-							inverseBindMatricesBufferData[i * 16 + 10],
-							inverseBindMatricesBufferData[i * 16 + 11],
-							inverseBindMatricesBufferData[i * 16 + 12],
-							inverseBindMatricesBufferData[i * 16 + 13],
-							inverseBindMatricesBufferData[i * 16 + 14],
-							inverseBindMatricesBufferData[i * 16 + 15]
+							inverseBindMatricesBufferData[i * stride + 0],
+							inverseBindMatricesBufferData[i * stride + 1],
+							inverseBindMatricesBufferData[i * stride + 2],
+							inverseBindMatricesBufferData[i * stride + 3],
+							inverseBindMatricesBufferData[i * stride + 4],
+							inverseBindMatricesBufferData[i * stride + 5],
+							inverseBindMatricesBufferData[i * stride + 6],
+							inverseBindMatricesBufferData[i * stride + 7],
+							inverseBindMatricesBufferData[i * stride + 8],
+							inverseBindMatricesBufferData[i * stride + 9],
+							inverseBindMatricesBufferData[i * stride + 10],
+							inverseBindMatricesBufferData[i * stride + 11],
+							inverseBindMatricesBufferData[i * stride + 12],
+							inverseBindMatricesBufferData[i * stride + 13],
+							inverseBindMatricesBufferData[i * stride + 14],
+							inverseBindMatricesBufferData[i * stride + 15]
 						)
 					);
 					skinningJoints[i++] = joint;
@@ -742,25 +784,20 @@ Node* GLTFReader::parseNode(const string& pathName, const tinygltf::Model& gltfM
 	node->setTextureCoordinates(textureCoordinates);
 	node->setFacesEntities(facesEntities);
 
-	// create tangents and bitangets, as they seem not be delivered in GLTF files but needed for PBR
-	if (vertices.empty() == false && normals.empty() == false) {
-		ModelTools::createTangentsAndBitangents(node);
-	};
-
 	//
 	return node;
 }
 
-void GLTFReader::parseNodeChildren(const string& pathName, const tinygltf::Model& gltfModel, const vector<int>& gltfNodeChildrenIdx, Node* parentNode) {
+void GLTFReader::parseNodeChildren(const string& pathName, tinygltf::Model& gltfModel, const vector<int>& gltfNodeChildrenIdx, Node* parentNode, int& anonymousNodeIdx) {
 	for (auto gltfNodeIdx: gltfNodeChildrenIdx) {
 		auto& gltfNode = gltfModel.nodes[gltfNodeIdx];
-		auto node = parseNode(pathName, gltfModel, gltfNodeIdx, parentNode->getModel(), parentNode);
+		auto node = parseNode(pathName, gltfModel, gltfNodeIdx, parentNode->getModel(), parentNode, anonymousNodeIdx);
 		parentNode->getModel()->getNodes()[node->getId()] = node;
 		if (parentNode->getSubNodes().find(node->getId()) != parentNode->getSubNodes().end()) {
 			Console::println("GLTFReader::parseNodeChildren(): node already exists: " + node->getId());
 		}
 		parentNode->getSubNodes()[node->getId()] = node;
-		if (gltfNode.children.empty() == false) parseNodeChildren(pathName, gltfModel, gltfNode.children, node);
+		if (gltfNode.children.empty() == false) parseNodeChildren(pathName, gltfModel, gltfNode.children, node, anonymousNodeIdx);
 	}
 }
 
@@ -784,4 +821,11 @@ string GLTFReader::determineTextureFileName(const string& imageName) {
 	}
 	*/
 	return imageName + ".png";
+}
+
+void GLTFReader::computeTangentsAndBitangents(Node* node) {
+	ModelTools::computeTangentsAndBitangents(node);
+	for (auto& nodeIt: node->getSubNodes()) {
+		computeTangentsAndBitangents(nodeIt.second);
+	}
 }

@@ -281,10 +281,10 @@ public:
 	static Model* optimizeModel(Model* model, const string& texturePathName = string(), const vector<string>& excludeDiffuseTextureFileNamePatterns = vector<string>());
 
 	/**
-	 * Create tangents and bitangents for given group
+	 * Compute tangents and bitangents for given node
 	 * @param node node
 	 */
-	static void createTangentsAndBitangents(Node* node);
+	static void computeTangentsAndBitangents(Node* node);
 
 private:
 
