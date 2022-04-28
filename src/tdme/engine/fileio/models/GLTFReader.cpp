@@ -179,16 +179,21 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 					Console::println("GLTFReader::read(): " + node->getId() + ": animation: " + gltfAnimation.name + ": Invalid output attributes component: " + getComponentTypeString(animationOutputAccessor.componentType) + ", with size: " + to_string(getComponentTypeByteSize(animationOutputAccessor.componentType)));
 					continue;
 				}
-				if (maxFrames + channelFrames > animationScaleMatrices[node->getId()].size()) {
-					animationScaleMatrices[node->getId()].resize(maxFrames + channelFrames);
+				auto& scaleMatrices = animationScaleMatrices[node->getId()];
+				if (maxFrames + channelFrames > scaleMatrices.size()) {
+					auto scaleMatrix = getNodeScaleMatrix(gltfModel, node->getId());
+					while (scaleMatrices.size() < maxFrames + channelFrames) scaleMatrices.push_back(scaleMatrix);
 				}
-				if (maxFrames + channelFrames > animationRotationMatrices[node->getId()].size()) {
-					animationRotationMatrices[node->getId()].resize(maxFrames + channelFrames);
+				auto& rotationMatrices = animationRotationMatrices[node->getId()];
+				if (maxFrames + channelFrames > rotationMatrices.size()) {
+					auto rotationMatrix = getNodeRotationMatrix(gltfModel, node->getId());
+					while (rotationMatrices.size() < maxFrames + channelFrames) rotationMatrices.push_back(rotationMatrix);
 				}
-				if (maxFrames + channelFrames > animationTranslationMatrices[node->getId()].size()) {
-					animationTranslationMatrices[node->getId()].resize(maxFrames + channelFrames);
+				auto& translationMatrices = animationTranslationMatrices[node->getId()];
+				if (maxFrames + channelFrames > translationMatrices.size()) {
+					auto translationMatrix = getNodeTranslationMatrix(gltfModel, node->getId());
+					while (translationMatrices.size() < maxFrames + channelFrames) translationMatrices.push_back(translationMatrix);
 				}
-				// Console::println("xxx: " + node->getId() + ": " + gltfChannel.target_path + " / maxFrames = " + to_string(maxFrames) + ", output frames: " + to_string(animationOutputAccessor.count) + ", " + to_string(animationInputBufferData[0]) + ", channel frames: " + to_string(channelFrames) + ", key frame count: " + to_string(animationInputAccessor.count));
 				if (gltfChannel.target_path == "translation") {
 					if (animationOutputAccessor.type != TINYGLTF_TYPE_VEC3) {
 						Console::println("GLTFReader::read(): " + node->getId() + ": animation: " + gltfAnimation.name + ": Invalid translation channel output type: " + getTypeString(animationOutputAccessor.type) + ", expected: Vector3");
@@ -199,7 +204,7 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 						keyFrameMatrices[i].identity();
 						keyFrameMatrices[i].translate(Vector3(animationOutputBufferData[i * 3 + 0], animationOutputBufferData[i * 3 + 1], animationOutputBufferData[i * 3 + 2]));
 					}
-					interpolateKeyFrames(animationInputAccessor.count, animationInputBufferData, keyFrameMatrices, channelFrames, animationTranslationMatrices[node->getId()], maxFrames);
+					interpolateKeyFrames(animationInputAccessor.count, animationInputBufferData, keyFrameMatrices, channelFrames, translationMatrices, maxFrames);
 				} else
 				if (gltfChannel.target_path == "rotation") {
 					if (animationOutputAccessor.type != TINYGLTF_TYPE_VEC4) {
@@ -212,7 +217,7 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 						rotationQuaternion.set(animationOutputBufferData[i * 4 + 0], animationOutputBufferData[i * 4 + 1], animationOutputBufferData[i * 4 + 2], animationOutputBufferData[i * 4 + 3]);
 						keyFrameMatrices[i] = rotationQuaternion.computeMatrix();
 					}
-					interpolateKeyFrames(animationInputAccessor.count, animationInputBufferData, keyFrameMatrices, channelFrames, animationRotationMatrices[node->getId()], maxFrames);
+					interpolateKeyFrames(animationInputAccessor.count, animationInputBufferData, keyFrameMatrices, channelFrames, rotationMatrices, maxFrames);
 				} else
 				if (gltfChannel.target_path == "scale") {
 					if (animationOutputAccessor.type != TINYGLTF_TYPE_VEC3) {
@@ -224,29 +229,34 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 						keyFrameMatrices[i].identity();
 						keyFrameMatrices[i].scale(Vector3(animationOutputBufferData[i * 3 + 0], animationOutputBufferData[i * 3 + 1], animationOutputBufferData[i * 3 + 2]));
 					}
-					interpolateKeyFrames(animationInputAccessor.count, animationInputBufferData, keyFrameMatrices, channelFrames, animationScaleMatrices[node->getId()], maxFrames);
+					interpolateKeyFrames(animationInputAccessor.count, animationInputBufferData, keyFrameMatrices, channelFrames, scaleMatrices, maxFrames);
 				} else {
 					Console::println("GLTFReader::GLTFReader(): " + gltfAnimation.name + ": Invalid target path:" + gltfChannel.target_path);
 				}
 				if (channelFrames > frames) frames = channelFrames;
 			}
-			// Console::println("AnimationSetup: " + gltfAnimation.name + ": " + to_string(maxFrames) + " -> " + to_string(frames));
 			model->addAnimationSetup(gltfAnimation.name, maxFrames, maxFrames + frames - 1, false);
 			maxFrames+= frames;
 		}
 
 		// extend all animation matrices to max frames
 		for (auto& it: animationScaleMatrices) {
+			auto& nodeId = it.first;
 			auto& animationMatrices = it.second;
-			animationMatrices.resize(maxFrames);
+			auto scaleMatrix = getNodeScaleMatrix(gltfModel, nodeId);
+			while (animationMatrices.size() < maxFrames) animationMatrices.push_back(scaleMatrix);
 		}
 		for (auto& it: animationRotationMatrices) {
+			auto& nodeId = it.first;
 			auto& animationMatrices = it.second;
-			animationMatrices.resize(maxFrames);
+			auto rotationMatrix = getNodeRotationMatrix(gltfModel, nodeId);
+			while (animationMatrices.size() < maxFrames) animationMatrices.push_back(rotationMatrix);
 		}
 		for (auto& it: animationTranslationMatrices) {
+			auto& nodeId = it.first;
 			auto& animationMatrices = it.second;
-			animationMatrices.resize(maxFrames);
+			auto translationMatrix = getNodeTranslationMatrix(gltfModel, nodeId);
+			while (animationMatrices.size() < maxFrames) animationMatrices.push_back(translationMatrix);
 		}
 
 		// set up nodes animations if we have frames
@@ -256,25 +266,21 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 				Console::println("GLTFReader::GLTFReader(): animation: node not found:" + animationNode);
 				continue;
 			}
+			//
 			vector<Matrix4x4> animationFinalMatrices(maxFrames);
-			Matrix4x4 emptyTransformations;
 			for (auto i = 0; i < maxFrames; i++) {
-				if (animationScaleMatrices[node->getId()][i].equals(emptyTransformations) == true &&
-					animationRotationMatrices[node->getId()][i].equals(emptyTransformations) == true &&
-					animationTranslationMatrices[node->getId()][i].equals(emptyTransformations) == true) {
-					animationFinalMatrices[i] = node->getTransformationsMatrix();
-				} else {
-					animationFinalMatrices[i].identity();
-					if (animationScaleMatrices[node->getId()][i].equals(emptyTransformations) == false) animationFinalMatrices[i].multiply(animationScaleMatrices[node->getId()][i]);
-					if (animationRotationMatrices[node->getId()][i].equals(emptyTransformations) == false) animationFinalMatrices[i].multiply(animationRotationMatrices[node->getId()][i]);
-					if (animationTranslationMatrices[node->getId()][i].equals(emptyTransformations) == false) animationFinalMatrices[i].multiply(animationTranslationMatrices[node->getId()][i]);
-				}
+				animationFinalMatrices[i].set(animationScaleMatrices[node->getId()][i]);
+				animationFinalMatrices[i].multiply(animationRotationMatrices[node->getId()][i]);
+				animationFinalMatrices[i].multiply(animationTranslationMatrices[node->getId()][i]);
 			}
 			auto animation = new Animation();
 			animation->setTransformationsMatrices(animationFinalMatrices);
 			node->setAnimation(animation);
 		}
 	}
+
+	// set up joints
+	ModelTools::setupJoints(model);
 
 	// check if to compute normals
 	{
@@ -301,8 +307,7 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 
 	// create default animations
 	ModelTools::createDefaultAnimation(model, maxFrames);
-	// set up joints
-	ModelTools::setupJoints(model);
+
 	// fix animation length
 	ModelTools::fixAnimationLength(model);
 
@@ -365,26 +370,26 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 			)
 		);
 	} else {
-		Matrix4x4 nodeScaleMatrices;
-		Matrix4x4 nodeRotationMatrices;
-		Matrix4x4 nodeTranslationMatrices;
-		nodeScaleMatrices.identity();
-		nodeRotationMatrices.identity();
-		nodeTranslationMatrices.identity();
+		Matrix4x4 nodeScaleMatrix;
+		Matrix4x4 nodeRotationMatrix;
+		Matrix4x4 nodeTranslationMatrix;
+		nodeScaleMatrix.identity();
+		nodeRotationMatrix.identity();
+		nodeTranslationMatrix.identity();
 		if (gltfNode.scale.size() == 3) {
-			nodeScaleMatrices.scale(Vector3(gltfNode.scale[0], gltfNode.scale[1], gltfNode.scale[2]));
+			nodeScaleMatrix.scale(Vector3(gltfNode.scale[0], gltfNode.scale[1], gltfNode.scale[2]));
 		}
 		if (gltfNode.rotation.size() == 4) {
 			Quaternion rotationQuaternion(gltfNode.rotation[0], gltfNode.rotation[1], gltfNode.rotation[2], gltfNode.rotation[3]);
-			nodeRotationMatrices = rotationQuaternion.computeMatrix();
+			nodeRotationMatrix = rotationQuaternion.computeMatrix();
 		}
 		if (gltfNode.translation.size() == 3) {
-			nodeTranslationMatrices.translate(Vector3(gltfNode.translation[0], gltfNode.translation[1], gltfNode.translation[2]));
+			nodeTranslationMatrix.translate(Vector3(gltfNode.translation[0], gltfNode.translation[1], gltfNode.translation[2]));
 		}
 		Matrix4x4 nodeTransformationsMatrix;
-		nodeTransformationsMatrix.set(nodeScaleMatrices);
-		nodeTransformationsMatrix.multiply(nodeRotationMatrices);
-		nodeTransformationsMatrix.multiply(nodeTranslationMatrices);
+		nodeTransformationsMatrix.set(nodeScaleMatrix);
+		nodeTransformationsMatrix.multiply(nodeRotationMatrix);
+		nodeTransformationsMatrix.multiply(nodeTranslationMatrix);
 		node->setTransformationsMatrix(nodeTransformationsMatrix);
 	}
 	if (gltfNode.mesh == -1) return node;
@@ -863,4 +868,71 @@ void GLTFReader::computeTangentsAndBitangents(Node* node) {
 	for (auto& nodeIt: node->getSubNodes()) {
 		computeTangentsAndBitangents(nodeIt.second);
 	}
+}
+
+const Matrix4x4 GLTFReader::getNodeScaleMatrix(const tinygltf::Model& gltfModel, const string& nodeId) {
+	Matrix4x4 scaleMatrix;
+	scaleMatrix.identity();
+	auto foundNode = false;
+	for (auto& gltfNode: gltfModel.nodes) {
+		if (gltfNode.name == nodeId) {
+			foundNode = true;
+			//
+			if (gltfNode.scale.size() == 3) {
+				scaleMatrix.scale(Vector3(gltfNode.scale[0], gltfNode.scale[1], gltfNode.scale[2]));
+			}
+			//
+			break;
+		}
+	}
+	if (foundNode == false) {
+		Console::println("GLTFReader::GLTFReader(): getting node scale: GLTF node not found:" + nodeId);
+	}
+	//
+	return scaleMatrix;
+}
+
+const Matrix4x4 GLTFReader::getNodeRotationMatrix(const tinygltf::Model& gltfModel, const string& nodeId) {
+	Matrix4x4 rotationMatrix;
+	rotationMatrix.identity();
+	auto foundNode = false;
+	for (auto& gltfNode: gltfModel.nodes) {
+		if (gltfNode.name == nodeId) {
+			foundNode = true;
+			//
+			if (gltfNode.rotation.size() == 4) {
+				Quaternion rotationQuaternion(gltfNode.rotation[0], gltfNode.rotation[1], gltfNode.rotation[2], gltfNode.rotation[3]);
+				rotationMatrix = rotationQuaternion.computeMatrix();
+			}
+			//
+			break;
+		}
+	}
+	if (foundNode == false) {
+		Console::println("GLTFReader::GLTFReader(): getting node rotation: GLTF node not found:" + nodeId);
+	}
+	//
+	return rotationMatrix;
+}
+
+const Matrix4x4 GLTFReader::getNodeTranslationMatrix(const tinygltf::Model& gltfModel, const string& nodeId) {
+	Matrix4x4 translationMatrix;
+	translationMatrix.identity();
+	auto foundNode = false;
+	for (auto& gltfNode: gltfModel.nodes) {
+		if (gltfNode.name == nodeId) {
+			foundNode = true;
+			//
+			if (gltfNode.translation.size() == 3) {
+				translationMatrix.translate(Vector3(gltfNode.translation[0], gltfNode.translation[1], gltfNode.translation[2]));
+			}
+			//
+			break;
+		}
+	}
+	if (foundNode == false) {
+		Console::println("GLTFReader::GLTFReader(): getting node translation: GLTF node not found:" + nodeId);
+	}
+	//
+	return translationMatrix;
 }

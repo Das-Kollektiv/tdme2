@@ -8,6 +8,7 @@
 #include <tdme/engine/fileio/models/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/math/Matrix4x4.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
@@ -20,6 +21,7 @@ using std::vector;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
+using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystemException;
 
 /**
@@ -165,4 +167,29 @@ private:
 	 * @param node node
 	 */
 	static void computeTangentsAndBitangents(Node* node);
+
+	/**
+	 * Get node scale matrix
+	 * @param gltfModel GLTF model
+	 * @param nodeId node id
+	 * @return scale matrix of given node
+	 */
+	static const Matrix4x4 getNodeScaleMatrix(const tinygltf::Model& gltfModel, const string& nodeId);
+
+	/**
+	 * Get node rotation matrix
+	 * @param gltfModel GLTF model
+	 * @param nodeId node id
+	 * @return scale matrix of given node
+	 */
+	static const Matrix4x4 getNodeRotationMatrix(const tinygltf::Model& gltfModel, const string& nodeId);
+
+	/**
+	 * Get node translation matrix
+	 * @param gltfModel GLTF model
+	 * @param nodeId node id
+	 * @return scale matrix of given node
+	 */
+	static const Matrix4x4 getNodeTranslationMatrix(const tinygltf::Model& gltfModel, const string& nodeId);
+
 };
