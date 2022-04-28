@@ -90,6 +90,7 @@ private:
 	EntityShaderParameters distanceShaderParameters;
 	bool needsPreRender { false };
 	bool needsForwardShading { false };
+	bool enableTransformationsComputingLOD { false };
 
 	/**
 	 * @return if this object3d instance needs a computeTransformations() call each frame
@@ -107,11 +108,13 @@ private:
 		auto currentFrameAtTime = timing->getCurrentFrameAtTime();
 		auto currentFrame = timing->getFrame();
 		auto distanceFromCamera = (engine->getCamera()->getLookFrom() - getBoundingBoxTransformed()->computeClosestPointInBoundingBox(engine->getCamera()->getLookFrom())).computeLengthSquared();
-		if (distanceFromCamera > Math::square(Engine::getTransformationsComputingReduction2Distance())) {
-			if (frameTransformationsLast != -1LL && currentFrame - frameTransformationsLast < 4) return;
-		} else
-		if (distanceFromCamera > Math::square(Math::square(Engine::getTransformationsComputingReduction1Distance()))) {
-			if (frameTransformationsLast != -1LL && currentFrame - frameTransformationsLast < 2) return;
+		if (enableTransformationsComputingLOD == true) {
+			if (distanceFromCamera > Math::square(Engine::getTransformationsComputingReduction2Distance())) {
+				if (frameTransformationsLast != -1LL && currentFrame - frameTransformationsLast < 4) return;
+			} else
+			if (distanceFromCamera > Math::square(Math::square(Engine::getTransformationsComputingReduction1Distance()))) {
+				if (frameTransformationsLast != -1LL && currentFrame - frameTransformationsLast < 2) return;
+			}
 		}
 		computeTransformations(contextIdx, timeTransformationsLast, currentFrameAtTime);
 		frameTransformationsLast = timing->getFrame();
@@ -523,6 +526,21 @@ public:
 	 */
 	inline void setDistanceShaderParameter(const string& parameterName, const ShaderParameter& parameterValue) {
 		distanceShaderParameters.setShaderParameter(parameterName, parameterValue);
+	}
+
+	/**
+	 * @return if transformations computing LOD is enabled
+	 */
+	inline bool isEnableTransformationsComputingLOD() const {
+		return enableTransformationsComputingLOD;
+	}
+
+	/**
+	 * Set transformations computing LOD enabled
+	 * @param enableTransformationsComputingLOD enable transformations computing LOD
+	 */
+	inline void setEnableTransformationsComputingLOD(bool enableTransformationsComputingLOD) {
+		this->enableTransformationsComputingLOD = disableDepthTest;
 	}
 
 };

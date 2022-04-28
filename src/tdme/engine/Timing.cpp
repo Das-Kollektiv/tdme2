@@ -28,6 +28,7 @@ constexpr int64_t Timing::UNDEFINED;
 
 void Timing::updateTiming()
 {
+	frame++;
 	lastFrameAtTime = currentFrameAtTime;
 	currentFrameAtTime = Time::getCurrentMillis();
 	fps = 0;
@@ -42,5 +43,4 @@ void Timing::updateTiming()
 	avarageFPS = 0.0f;
 	for (auto i = 0; i < avarageFPSSequence.size(); i++) avarageFPS+= avarageFPSSequence[(avarageFPSIndex - i) % avarageFPSSequence.size()];
 	avarageFPS/= avarageFPSSequence.size();
-
 }

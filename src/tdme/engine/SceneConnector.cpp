@@ -396,6 +396,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 			);
 			entity->setParentEntity(parentEntity);
 			auto object = dynamic_cast<Object3D*>(entity);
+			object->setEnableTransformationsComputingLOD(true);
 			if (prototype->getShader() == "water" || prototype->getShader() == "pbr-water") object->setRenderPass(Entity::RENDERPASS_WATER);
 			object->setShader(prototype->getShader());
 			object->setDistanceShader(prototype->getDistanceShader());

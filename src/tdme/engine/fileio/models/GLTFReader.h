@@ -180,7 +180,7 @@ private:
 	 * Get node rotation matrix
 	 * @param gltfModel GLTF model
 	 * @param nodeId node id
-	 * @return scale matrix of given node
+	 * @return rotation matrix of given node
 	 */
 	static const Matrix4x4 getNodeRotationMatrix(const tinygltf::Model& gltfModel, const string& nodeId);
 
@@ -188,7 +188,7 @@ private:
 	 * Get node translation matrix
 	 * @param gltfModel GLTF model
 	 * @param nodeId node id
-	 * @return scale matrix of given node
+	 * @return translation matrix of given node
 	 */
 	static const Matrix4x4 getNodeTranslationMatrix(const tinygltf::Model& gltfModel, const string& nodeId);
 
