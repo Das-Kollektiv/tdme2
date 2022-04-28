@@ -448,7 +448,8 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 	} else
 	// trigger/environment mapping
 	if (prototype->getType() == Prototype_Type::TRIGGER ||
-		prototype->getType() == Prototype_Type::ENVIRONMENTMAPPING) {
+		prototype->getType() == Prototype_Type::ENVIRONMENTMAPPING ||
+		prototype->getType() == Prototype_Type::DECAL) {
 		// bounding volumes
 		auto entityBoundingVolumesHierarchy = new EntityHierarchy(id);
 		for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
@@ -459,7 +460,8 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 				entityBoundingVolumesHierarchy->addEntity(bvObject);
 			}
 		}
-		if (prototype->getType() == Prototype_Type::ENVIRONMENTMAPPING &&
+		if ((prototype->getType() == Prototype_Type::ENVIRONMENTMAPPING ||
+			prototype->getType() == Prototype_Type::DECAL) &&
 			prototype->getBoundingVolumeCount() == 1 &&
 			dynamic_cast<OrientedBoundingBox*>(prototype->getBoundingVolume(0)->getBoundingVolume()) != nullptr) {
 			BoundingBox aabb(dynamic_cast<OrientedBoundingBox*>(prototype->getBoundingVolume(0)->getBoundingVolume()));
