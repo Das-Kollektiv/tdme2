@@ -267,11 +267,16 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 				continue;
 			}
 			//
+			auto& nodeAnimationScaleMatrices = animationScaleMatrices[node->getId()];
+			auto& nodeAnimationRotationMatrices = animationRotationMatrices[node->getId()];
+			auto& nodeAnimationTranslationMatrices = animationTranslationMatrices[node->getId()];
+
+			//
 			vector<Matrix4x4> animationFinalMatrices(maxFrames);
 			for (auto i = 0; i < maxFrames; i++) {
-				animationFinalMatrices[i].set(animationScaleMatrices[node->getId()][i]);
-				animationFinalMatrices[i].multiply(animationRotationMatrices[node->getId()][i]);
-				animationFinalMatrices[i].multiply(animationTranslationMatrices[node->getId()][i]);
+				animationFinalMatrices[i].set(nodeAnimationScaleMatrices[i]);
+				animationFinalMatrices[i].multiply(nodeAnimationRotationMatrices[i]);
+				animationFinalMatrices[i].multiply(nodeAnimationTranslationMatrices[i]);
 			}
 			auto animation = new Animation();
 			animation->setTransformationsMatrices(animationFinalMatrices);
