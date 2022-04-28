@@ -20,6 +20,7 @@ Prototype_Type* tdme::engine::prototype::Prototype_Type::PARTICLESYSTEM = new Pr
 Prototype_Type* tdme::engine::prototype::Prototype_Type::TRIGGER = new Prototype_Type("TRIGGER", 3, -1, Gizmo::GIZMOTYPE_TRANSLATE | Gizmo::GIZMOTYPE_ROTATE | Gizmo::GIZMOTYPE_SCALE, true, Vector3(1.0f, 1.0f, 1.0f));
 Prototype_Type* tdme::engine::prototype::Prototype_Type::ENVIRONMENTMAPPING = new Prototype_Type("ENVIRONMENTMAPPING", 4, 1, Gizmo::GIZMOTYPE_TRANSLATE | Gizmo::GIZMOTYPE_SCALE, true, Vector3(1.0f, 1.0f, 1.0f));
 Prototype_Type* tdme::engine::prototype::Prototype_Type::TERRAIN = new Prototype_Type("TERRAIN", 5, 0, Gizmo::GIZMOTYPE_TRANSLATE | Gizmo::GIZMOTYPE_ROTATE | Gizmo::GIZMOTYPE_SCALE, false, Vector3());
+Prototype_Type* tdme::engine::prototype::Prototype_Type::DECAL = new Prototype_Type("DECAL", 4, 1, Gizmo::GIZMOTYPE_TRANSLATE | Gizmo::GIZMOTYPE_SCALE | Gizmo::GIZMOTYPE_ROTATE, false, Vector3());
 
 Prototype_Type::Prototype_Type(const string& name, int ordinal, int boundingVolumeCount, int32_t gizmoTypeMask, bool nonEditScaleDownMode, const Vector3& nonEditScaleDownModeDimension):
 	Enum(name, ordinal), boundingVolumeCount(boundingVolumeCount), gizmoTypeMask(gizmoTypeMask), nonEditScaleDownMode(nonEditScaleDownMode), nonEditScaleDownModeDimension(nonEditScaleDownModeDimension)
@@ -34,5 +35,6 @@ Prototype_Type* Prototype_Type::valueOf(const string& name)
 	if (TRIGGER->getName() == name) return TRIGGER;
 	if (ENVIRONMENTMAPPING->getName() == name) return ENVIRONMENTMAPPING;
 	if (TERRAIN->getName() == name) return TERRAIN;
+	if (DECAL->getName() == name) return DECAL;
 	return nullptr;
 }

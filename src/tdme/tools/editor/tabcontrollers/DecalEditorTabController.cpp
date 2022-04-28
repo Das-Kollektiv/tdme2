@@ -1,4 +1,4 @@
-#include <tdme/tools/editor/tabcontrollers/TriggerEditorTabController.h>
+#include <tdme/tools/editor/tabcontrollers/DecalEditorTabController.h>
 
 #include <string>
 
@@ -21,7 +21,7 @@
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/subviews/PrototypePhysicsSubView.h>
-#include <tdme/tools/editor/tabviews/TriggerEditorTabView.h>
+#include <tdme/tools/editor/tabviews/DecalEditorTabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
@@ -31,7 +31,7 @@
 
 using std::string;
 
-using tdme::tools::editor::tabcontrollers::TriggerEditorTabController;
+using tdme::tools::editor::tabcontrollers::DecalEditorTabController;
 
 using tdme::engine::prototype::Prototype;
 using tdme::gui::events::GUIActionListenerType;
@@ -49,7 +49,7 @@ using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubCo
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::subviews::PrototypePhysicsSubView;
-using tdme::tools::editor::tabviews::TriggerEditorTabView;
+using tdme::tools::editor::tabviews::DecalEditorTabView;
 using tdme::tools::editor::views::EditorView;
 using tdme::utilities::Action;
 using tdme::utilities::Console;
@@ -57,7 +57,7 @@ using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::MutableString;
 
-TriggerEditorTabController::TriggerEditorTabController(TriggerEditorTabView* view)
+DecalEditorTabController::DecalEditorTabController(DecalEditorTabView* view)
 {
 	this->view = view;
 	this->popUps = view->getPopUps();
@@ -66,22 +66,22 @@ TriggerEditorTabController::TriggerEditorTabController(TriggerEditorTabView* vie
 	this->prototypeDisplaySubController = new PrototypeDisplaySubController(view->getEditorView(), view, this->prototypePhysicsSubController->getView());
 }
 
-TriggerEditorTabController::~TriggerEditorTabController() {
+DecalEditorTabController::~DecalEditorTabController() {
 	delete prototypeDisplaySubController;
 	delete prototypePhysicsSubController;
 	delete basePropertiesSubController;
 }
 
-TriggerEditorTabView* TriggerEditorTabController::getView() {
+DecalEditorTabView* DecalEditorTabController::getView() {
 	return view;
 }
 
-GUIScreenNode* TriggerEditorTabController::getScreenNode()
+GUIScreenNode* DecalEditorTabController::getScreenNode()
 {
 	return screenNode;
 }
 
-void TriggerEditorTabController::initialize(GUIScreenNode* screenNode)
+void DecalEditorTabController::initialize(GUIScreenNode* screenNode)
 {
 	this->screenNode = screenNode;
 	basePropertiesSubController->initialize(screenNode);
@@ -89,11 +89,11 @@ void TriggerEditorTabController::initialize(GUIScreenNode* screenNode)
 	prototypePhysicsSubController->initialize(screenNode);
 }
 
-void TriggerEditorTabController::dispose()
+void DecalEditorTabController::dispose()
 {
 }
 
-void TriggerEditorTabController::save()
+void DecalEditorTabController::save()
 {
 	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
 	try {
@@ -107,31 +107,31 @@ void TriggerEditorTabController::save()
 	}
 }
 
-void TriggerEditorTabController::saveAs()
+void DecalEditorTabController::saveAs()
 {
-	class OnTriggerSave: public virtual Action
+	class OnDecalSave: public virtual Action
 	{
 	public:
 		void performAction() override {
 			try {
-				triggerEditorTabController->view->saveFile(
-					triggerEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
-					triggerEditorTabController->popUps->getFileDialogScreenController()->getFileName()
+				decalEditorTabController->view->saveFile(
+					decalEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
+					decalEditorTabController->popUps->getFileDialogScreenController()->getFileName()
 				);
 			} catch (Exception& exception) {
-				triggerEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+				decalEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
 			}
-			triggerEditorTabController->popUps->getFileDialogScreenController()->close();
+			decalEditorTabController->popUps->getFileDialogScreenController()->close();
 		}
-		OnTriggerSave(TriggerEditorTabController* triggerEditorTabController): triggerEditorTabController(triggerEditorTabController) {
+		OnDecalSave(DecalEditorTabController* decalEditorTabController): decalEditorTabController(decalEditorTabController) {
 		}
 	private:
-		TriggerEditorTabController* triggerEditorTabController;
+		DecalEditorTabController* decalEditorTabController;
 	};
 
 	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
 	vector<string> extensions = {
-		"ttrigger"
+		"tdecal"
 	};
 	popUps->getFileDialogScreenController()->show(
 		fileName.empty() == false?Tools::getPathName(fileName):string(),
@@ -139,11 +139,11 @@ void TriggerEditorTabController::saveAs()
 		extensions,
 		Tools::getFileName(fileName),
 		false,
-		new OnTriggerSave(this)
+		new OnDecalSave(this)
 	);
 }
 
-void TriggerEditorTabController::onValueChanged(GUIElementNode* node)
+void DecalEditorTabController::onValueChanged(GUIElementNode* node)
 {
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
@@ -154,26 +154,26 @@ void TriggerEditorTabController::onValueChanged(GUIElementNode* node)
 	prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
 }
 
-void TriggerEditorTabController::onFocus(GUIElementNode* node) {
+void DecalEditorTabController::onFocus(GUIElementNode* node) {
 	basePropertiesSubController->onFocus(node, view->getPrototype());
 }
 
-void TriggerEditorTabController::onUnfocus(GUIElementNode* node) {
+void DecalEditorTabController::onUnfocus(GUIElementNode* node) {
 	basePropertiesSubController->onUnfocus(node, view->getPrototype());
 }
 
-void TriggerEditorTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
+void DecalEditorTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
 	basePropertiesSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
 	prototypePhysicsSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
 }
 
-void TriggerEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void DecalEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 	basePropertiesSubController->onActionPerformed(type, node, view->getPrototype());
 	prototypePhysicsSubController->onActionPerformed(type, node, view->getPrototype());
 }
 
-void TriggerEditorTabController::setOutlinerContent() {
+void DecalEditorTabController::setOutlinerContent() {
 	string xml;
 	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Prototype") + "\" value=\"" + GUIParser::escapeQuotes("prototype") + "\">\n";
 	auto prototype = view->getPrototype();
@@ -184,14 +184,14 @@ void TriggerEditorTabController::setOutlinerContent() {
 	xml+= "</selectbox-parent-option>\n";
 	view->getEditorView()->setOutlinerContent(xml);}
 
-void TriggerEditorTabController::setOutlinerAddDropDownContent() {
+void DecalEditorTabController::setOutlinerAddDropDownContent() {
 	view->getEditorView()->setOutlinerAddDropDownContent(
 		string("<dropdown-option text=\"Property\" value=\"property\" />\n") +
 		string("<dropdown-option text=\"BV\" value=\"boundingvolume\" />\n")
 	);
 }
 
-void TriggerEditorTabController::updateDetails(const string& outlinerNode) {
+void DecalEditorTabController::updateDetails(const string& outlinerNode) {
 	view->getEditorView()->setDetailsContent(string());
 	basePropertiesSubController->updateDetails(view->getPrototype(), outlinerNode);
 	prototypeDisplaySubController->updateDetails(view->getPrototype(), outlinerNode);
@@ -199,11 +199,11 @@ void TriggerEditorTabController::updateDetails(const string& outlinerNode) {
 	prototypePhysicsSubController->getView()->setDisplayBoundingVolume(true);
 }
 
-void TriggerEditorTabController::updateInfoText(const MutableString& text) {
+void DecalEditorTabController::updateInfoText(const MutableString& text) {
 	required_dynamic_cast<GUITextNode*>(screenNode->getNodeById(view->getTabId() + "_tab_text_info"))->setText(text);
 }
 
-void TriggerEditorTabController::showErrorPopUp(const string& caption, const string& message)
+void DecalEditorTabController::showErrorPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }

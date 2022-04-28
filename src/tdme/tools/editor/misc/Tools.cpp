@@ -299,7 +299,8 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 
 	//
 	if (prototype->getType() == Prototype_Type::TRIGGER ||
-		prototype->getType() == Prototype_Type::ENVIRONMENTMAPPING) {
+		prototype->getType() == Prototype_Type::ENVIRONMENTMAPPING ||
+		prototype->getType() == Prototype_Type::DECAL) {
 		entityBoundingBox = entityBoundingVolumesHierarchy->getBoundingBox();
 	} else
 	if (prototype->getType() == Prototype_Type::PARTICLESYSTEM) {
