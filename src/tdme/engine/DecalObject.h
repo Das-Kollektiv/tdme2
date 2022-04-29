@@ -4,12 +4,10 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/decals/DecalObjectInternal.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
-#include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/math/Matrix4x4.h>
@@ -19,8 +17,8 @@
 using std::string;
 
 using tdme::engine::model::Color4;
-using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
+using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::subsystems::decals::DecalObjectInternal;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
@@ -62,9 +60,10 @@ public:
 	/**
 	 * Public constructor
 	 * @param id id
+	 * @param obb oriented bounding box
 	 * @param texture optional texture
 	 */
-	DecalObject(const string& id, Texture* texture = nullptr);
+	DecalObject(const string& id, OrientedBoundingBox* obb, Texture* texture = nullptr);
 
 	// overridden methods
 	inline EntityType getEntityType() override {
