@@ -81,6 +81,7 @@ using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShader;
 using tdme::engine::subsystems::skinning::SkinningShader;
 using tdme::engine::subsystems::texture2D::Texture2DRenderShader;
 using tdme::engine::Camera;
+using tdme::engine::DecalObject;
 using tdme::engine::DynamicColorTexture;
 using tdme::engine::Entity;
 using tdme::engine::EntityHierarchy;
@@ -126,6 +127,7 @@ class tdme::engine::Engine final
 	friend class tdme::engine::subsystems::renderer::EngineGL2Renderer;
 	friend class tdme::engine::subsystems::renderer::EngineGLES2Renderer;
 	friend class tdme::engine::subsystems::renderer::EngineVKRenderer;
+	friend class DecalObject;
 	friend class DynamicColorTexture;
 	friend class EntityHierarchy;
 	friend class EnvironmentMapping;
@@ -240,6 +242,7 @@ private:
 		vector<Entity*> ppses;
 		vector<ParticleSystemGroup*> psgs;
 		vector<LinesObject3D*> linesObjects;
+		vector<DecalObject*> decalObjects;
 		vector<Object3DRenderGroup*> objectRenderGroups;
 		vector<EntityHierarchy*> entityHierarchies;
 		vector<EnvironmentMapping*> environmentMappingEntities;

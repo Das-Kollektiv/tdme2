@@ -42,6 +42,7 @@
 #include <tdme/engine/subsystems/skinning/SkinningShader.h>
 #include <tdme/engine/subsystems/texture2D/Texture2DRenderShader.h>
 #include <tdme/engine/Camera.h>
+#include <tdme/engine/DecalObject.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/EntityPickingFilter.h>
@@ -558,6 +559,14 @@ inline void Engine::removeFromDecomposedEntities(DecomposedEntities& decomposedE
 		),
 		decomposedEntities.linesObjects.end()
 	);
+	decomposedEntities.decalObjects.erase(
+		remove(
+			decomposedEntities.decalObjects.begin(),
+			decomposedEntities.decalObjects.end(),
+			entity
+		),
+		decomposedEntities.decalObjects.end()
+	);
 	decomposedEntities.objectRenderGroups.erase(
 		remove(
 			decomposedEntities.objectRenderGroups.begin(),
@@ -1003,6 +1012,7 @@ void Engine::resetLists(DecomposedEntities& decomposedEntites) {
 	decomposedEntites.ppses.clear();
 	decomposedEntites.psgs.clear();
 	decomposedEntites.linesObjects.clear();
+	decomposedEntites.decalObjects.clear();
 	decomposedEntites.objectRenderGroups.clear();
 	decomposedEntites.entityHierarchies.clear();
 	decomposedEntites.ezrObjects.clear();
@@ -1120,6 +1130,12 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 			{
 				auto lo = static_cast<LinesObject3D*>(entity);
 				decomposedEntities.linesObjects.push_back(lo);
+			}
+			break;
+		case Entity::ENTITYTYPE_DECALOBJECT:
+			{
+				auto d = static_cast<DecalObject*>(entity);
+				decomposedEntities.decalObjects.push_back(d);
 			}
 			break;
 		case Entity::ENTITYTYPE_ENVIRONMENTMAPPING:

@@ -1,12 +1,12 @@
 #pragma once
 
 #include <tdme/tdme.h>
-#include <tdme/engine/ColorTexture.h>
 #include <tdme/engine/subsystems/framebuffer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+#include <tdme/engine/ColorTexture.h>
 
-using tdme::engine::ColorTexture;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::ColorTexture;
 
 /**
  * BRDFLUT render shader

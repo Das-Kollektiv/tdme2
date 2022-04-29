@@ -192,6 +192,7 @@ SRCS = \
 	src/tdme/application/Application.cpp \
 	src/tdme/application/InputEventHandler.cpp \
 	src/tdme/engine/Camera.cpp \
+	src/tdme/engine/DecalObject.cpp \
 	src/tdme/engine/DynamicColorTexture.cpp \
 	src/tdme/engine/Engine.cpp \
 	src/tdme/engine/EntityHierarchy.cpp \
@@ -286,6 +287,7 @@ SRCS = \
 	src/tdme/engine/scene/SceneLibrary.cpp \
 	src/tdme/engine/scene/SceneLight.cpp \
 	src/tdme/engine/scene/ScenePropertyPresets.cpp \
+	src/tdme/engine/subsystems/decals/DecalObjectInternal.cpp \
 	src/tdme/engine/subsystems/earlyzrejection/EZRShader.cpp \
 	src/tdme/engine/subsystems/earlyzrejection/EZRShaderBaseImplementation.cpp \
 	src/tdme/engine/subsystems/earlyzrejection/EZRShaderDefaultImplementation.cpp \
