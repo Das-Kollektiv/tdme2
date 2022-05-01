@@ -76,8 +76,6 @@ void SimpleTextureAtlas::update() {
 	}
 	//
 	auto textureAtlasSize = static_cast<int>(Math::ceil(Math::sqrt(atlasTextureIdxToTextureMapping.size())));
-	#define ATLAS_TEXTURE_SIZE	512
-	#define ATLAS_TEXTURE_BORDER	32
 	auto textureWidth = textureAtlasSize * ATLAS_TEXTURE_SIZE;
 	auto textureHeight = textureAtlasSize * ATLAS_TEXTURE_SIZE;
 	auto textureByteBuffer = ByteBuffer::allocate(textureWidth * textureHeight * 4);
