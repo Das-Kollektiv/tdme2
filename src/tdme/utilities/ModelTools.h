@@ -326,13 +326,6 @@ private:
 	static void prepareForOptimization(Node* node, const Matrix4x4& parentTransformationsMatrix);
 
 	/**
-	 * Create atlas texture
-	 * @param id id
-	 * @param textureAtlasTextures texture atlas textures
-	 */
-	static Texture* createAtlasTexture(const string& id, map<int, Texture*>& textureAtlasTextures);
-
-	/**
 	 * Prepare for optimization
 	 * @param sourceNode source node
 	 * @param targetModel target model

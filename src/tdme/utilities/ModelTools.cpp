@@ -30,6 +30,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/SimpleTextureAtlas.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::array;
@@ -63,6 +64,7 @@ using tdme::math::Vector3;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
 using tdme::utilities::ModelTools;
+using tdme::utilities::SimpleTextureAtlas;
 using tdme::utilities::StringTools;
 
 ModelTools::VertexOrder ModelTools::determineVertexOrder(const vector<Vector3>& vertices)
@@ -1084,68 +1086,6 @@ void ModelTools::optimizeNode(Node* sourceNode, Model* targetModel, int diffuseT
 	}
 }
 
-Texture* ModelTools::createAtlasTexture(const string& id, map<int, Texture*>& textureAtlasTextures) {
-	auto textureAtlasSize = static_cast<int>(Math::ceil(sqrt(textureAtlasTextures.size())));
-	#define ATLAS_TEXTURE_SIZE	512
-	#define ATLAS_TEXTURE_BORDER	32
-	auto textureWidth = textureAtlasSize * ATLAS_TEXTURE_SIZE;
-	auto textureHeight = textureAtlasSize * ATLAS_TEXTURE_SIZE;
-	auto textureByteBuffer = ByteBuffer::allocate(textureWidth * textureHeight * 4);
-	for (auto y = 0; y < textureHeight; y++)
-	for (auto x = 0; x < textureWidth; x++) {
-		auto atlasTextureIdxX = x / ATLAS_TEXTURE_SIZE;
-		auto atlasTextureIdxY = y / ATLAS_TEXTURE_SIZE;
-		auto materialTextureX = x - (atlasTextureIdxX * ATLAS_TEXTURE_SIZE);
-		auto materialTextureY = y - (atlasTextureIdxY * ATLAS_TEXTURE_SIZE);
-		auto materialTextureXFloat = static_cast<float>(materialTextureX) / static_cast<float>(ATLAS_TEXTURE_SIZE);
-		auto materialTextureYFloat = static_cast<float>(materialTextureY) / static_cast<float>(ATLAS_TEXTURE_SIZE);
-		auto atlasTextureIdx = atlasTextureIdxY * textureAtlasSize + atlasTextureIdxX;
-		auto materialTexture = textureAtlasTextures[atlasTextureIdx];
-		if (materialTexture != nullptr) {
-			auto materialTextureWidth = materialTexture->getTextureWidth();
-			auto materialTextureHeight = materialTexture->getTextureHeight();
-			auto materialTextureBytesPerPixel = materialTexture->getDepth() / 8;
-			auto materialTextureXInt = static_cast<int>(materialTextureXFloat * static_cast<float>(materialTextureWidth));
-			auto materialTextureYInt = static_cast<int>(materialTextureYFloat * static_cast<float>(materialTextureHeight));
-			if (materialTextureXInt < ATLAS_TEXTURE_BORDER) materialTextureXInt = 0; else
-			if (materialTextureXInt > materialTextureWidth - ATLAS_TEXTURE_BORDER) materialTextureXInt = materialTextureWidth - 1; else
-				materialTextureXInt = static_cast<int>((static_cast<float>(materialTextureXInt) - static_cast<float>(ATLAS_TEXTURE_BORDER)) * (static_cast<float>(materialTextureWidth) + static_cast<float>(ATLAS_TEXTURE_BORDER) * 2.0f) / static_cast<float>(materialTextureWidth));
-			if (materialTextureYInt < ATLAS_TEXTURE_BORDER) materialTextureYInt = 0; else
-			if (materialTextureYInt > materialTextureHeight - ATLAS_TEXTURE_BORDER) materialTextureYInt = materialTextureHeight - 1; else
-				materialTextureYInt = static_cast<int>((static_cast<float>(materialTextureYInt) - static_cast<float>(ATLAS_TEXTURE_BORDER)) * (static_cast<float>(materialTextureHeight) + static_cast<float>(ATLAS_TEXTURE_BORDER) * 2.0f) / static_cast<float>(materialTextureHeight));
-			auto materialTexturePixelOffset =
-				materialTextureYInt * materialTextureWidth * materialTextureBytesPerPixel +
-				materialTextureXInt * materialTextureBytesPerPixel;
-			auto materialPixelR = materialTexture->getTextureData()->get(materialTexturePixelOffset + 0);
-			auto materialPixelG = materialTexture->getTextureData()->get(materialTexturePixelOffset + 1);
-			auto materialPixelB = materialTexture->getTextureData()->get(materialTexturePixelOffset + 2);
-			auto materialPixelA = materialTextureBytesPerPixel == 4?materialTexture->getTextureData()->get(materialTexturePixelOffset + 3):0xff;
-			textureByteBuffer->put(materialPixelR);
-			textureByteBuffer->put(materialPixelG);
-			textureByteBuffer->put(materialPixelB);
-			textureByteBuffer->put(materialPixelA);
-		} else {
-			auto materialPixelR = 0xff;
-			auto materialPixelG = 0x00;
-			auto materialPixelB = 0x00;
-			auto materialPixelA = 0xff;
-			textureByteBuffer->put(materialPixelR);
-			textureByteBuffer->put(materialPixelG);
-			textureByteBuffer->put(materialPixelB);
-			textureByteBuffer->put(materialPixelA);
-		}
-	}
-	auto atlasTexture = new Texture(
-		id,
-		32,
-		textureWidth, textureHeight,
-		textureWidth, textureHeight,
-		textureByteBuffer
-	);
-	atlasTexture->setAtlasSize(textureAtlasSize);
-	return atlasTexture;
-}
-
 bool ModelTools::isOptimizedModel(Model* model) {
 	return model->getNodes()["tdme.node.optimized"] != nullptr;
 }
@@ -1165,17 +1105,18 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 		);
 	}
 
+	// create diffuse atlas texture
+	SimpleTextureAtlas diffuseAtlas(model->getName() + ".diffuse.atlas");
+
 	// check materials and diffuse textures
 	auto diffuseTextureCount = 0;
 	map<string, int> diffuseTextureAtlasIndices;
-	map<int, Texture*> diffuseTextureAtlasTextures;
 	map<string, Material*> atlasMaterials;
 	for (auto& materialUseCountIt: materialUseCount) {
 		auto material = model->getMaterials().find(materialUseCountIt.first)->second;
 		auto diffuseTexture = material->getSpecularMaterialProperties()->getDiffuseTexture();
 		if (diffuseTexture != nullptr) {
-			diffuseTextureAtlasIndices[material->getId()] = diffuseTextureCount;
-			diffuseTextureAtlasTextures[diffuseTextureCount] = diffuseTexture;
+			diffuseTextureAtlasIndices[material->getId()] = diffuseAtlas.addTexture(diffuseTexture);
 			diffuseTextureCount++;
 			atlasMaterials[material->getId()] = material;
 		}
@@ -1192,8 +1133,8 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 		);
 	}
 
-	// create diffuse atlas texture
-	auto diffuseAtlasTexture = createAtlasTexture(model->getName() + ".diffuse.atlas", diffuseTextureAtlasTextures);
+	// update diffuse atlas texture
+	diffuseAtlas.update();
 
 	// create model with optimizations applied
 	auto optimizedModel = new Model(model->getId() + ".optimized", model->getName() + ".optimized", model->getUpVector(), model->getRotationOrder(), new BoundingBox(model->getBoundingBox()), model->getAuthoringTool());
@@ -1221,8 +1162,8 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 	// create optimized material
 	auto optimizedMaterial = new Material("tdme.material.optimized");
 	{
-		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTexture(diffuseAtlasTexture);
-		optimizedMaterial->getSpecularMaterialProperties()->setTextureAtlasSize(diffuseAtlasTexture->getAtlasSize());
+		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTexture(diffuseAtlas.getAtlasTexture());
+		optimizedMaterial->getSpecularMaterialProperties()->setTextureAtlasSize(diffuseAtlas.getAtlasTexture()->getAtlasSize());
 		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTextureTransparency(false);
 		optimizedMaterial->getSpecularMaterialProperties()->setDiffuseTextureMaskedTransparency(false);
 		Vector4 optimizedMaterialEmission(0.0f, 0.0f, 0.0f, 0.0f);
@@ -1264,7 +1205,7 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 		auto node = subNodeIt.second;
 		if ((model->hasSkinning() == true && node->getSkinning() != nullptr) ||
 			(model->hasSkinning() == false && node->isJoint() == false)) {
-			optimizeNode(node, optimizedModel, diffuseAtlasTexture->getAtlasSize(), diffuseTextureAtlasIndices, excludeDiffuseTextureFileNamePatterns);
+			optimizeNode(node, optimizedModel, diffuseAtlas.getAtlasTexture()->getAtlasSize(), diffuseTextureAtlasIndices, excludeDiffuseTextureFileNamePatterns);
 			if (model->hasSkinning() == true) {
 				auto skinning = node->getSkinning();
 				auto optimizedSkinning = new Skinning();
