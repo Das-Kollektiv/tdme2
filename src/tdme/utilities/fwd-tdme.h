@@ -28,6 +28,7 @@ namespace utilities {
 	class Properties;
 	class Reference;
 	class RTTI;
+	class SimpleTextureAtlas;
 	class Time;
 	class SHA256;
 	class ShortBuffer;

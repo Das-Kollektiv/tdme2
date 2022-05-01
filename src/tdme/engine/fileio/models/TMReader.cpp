@@ -78,11 +78,7 @@ Model* TMReader::read(const vector<uint8_t>& data, const string& pathName, const
 	TMReaderInputStream is(&data);
 	auto fileId = is.readString();
 	if (fileId.length() == 0 || fileId != "TDME Model") {
-		throw ModelFileIOException(
-			"File is not a TDME model file, file id = '" +
-			(fileId) +
-			"'"
-		);
+		throw ModelFileIOException("File is not a TDME model file, file id = '" +fileId + "'");
 	}
 	array<uint8_t, 3> version;
 	version[0] = is.readByte();
@@ -119,6 +115,12 @@ Model* TMReader::read(const vector<uint8_t>& data, const string& pathName, const
 		(version[0] == 1 && version[1] == 9 && version[2] == 18)) {
 		shaderModel = ShaderModel::valueOf(is.readString());
 	}
+	auto embedSpecularTextures = false;
+	auto embedPBRTextures = false;
+	if (version[0] == 1 && version[1] == 9 && version[2] == 18) {
+		embedSpecularTextures = is.readBoolean();
+		embedPBRTextures = is.readBoolean();
+	}
 	array<float, 3> boundingBoxMinXYZ;
 	is.readFloatArray(boundingBoxMinXYZ);
 	array<float, 3> boundingBoxMaxXYZ;
@@ -132,10 +134,8 @@ Model* TMReader::read(const vector<uint8_t>& data, const string& pathName, const
 		boundingBox
 	);
 	model->setShaderModel(shaderModel);
-	if (version[0] == 1 && version[1] == 9 && version[2] == 18) {
-		model->setEmbedSpecularTextures(is.readBoolean());
-		model->setEmbedPBRTextures(is.readBoolean());
-	}
+	model->setEmbedSpecularTextures(embedSpecularTextures);
+	model->setEmbedPBRTextures(embedPBRTextures);
 	model->setFPS(is.readFloat());
 	array<float, 16> importTransformationsMatrixArray;
 	is.readFloatArray(importTransformationsMatrixArray);
