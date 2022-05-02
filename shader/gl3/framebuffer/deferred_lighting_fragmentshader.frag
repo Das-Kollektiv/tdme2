@@ -20,6 +20,11 @@ struct PBRLight {
 };
 #endif
 
+struct Decal {
+	int atlasTextureIdx;
+	mat4 worldToDecalSpace;
+};
+
 {$DEFINITIONS}
 
 // uniforms
@@ -33,6 +38,12 @@ uniform sampler2D colorBufferTextureUnit3;
 uniform sampler2D colorBufferTextureUnit4;
 uniform sampler2D colorBufferTextureUnit5;
 uniform sampler2D depthBufferTextureUnit;
+
+uniform int decalCount;
+uniform sampler2D decalsTextureUnit;
+uniform int decalsTextureAtlasSize;
+uniform vec2 decalsTextureAtlasPixelDimension;
+uniform Decal decals[DECAL_COUNT];
 
 // passed from vertex shader
 in vec2 vsFragTextureUV;
@@ -49,6 +60,30 @@ out vec4 outColor;
 	#define FOG_GREEN					(255.0 / 255.0)
 	#define FOG_BLUE						(255.0 / 255.0)
 #endif
+
+vec4 getDecalColor(vec3 position) {
+	for (int i = 0; i < decalCount; i++) {
+		// convert world position to decal obb space position
+		vec4 decalSpacePosition4 = vec4(position, 1.0) * decals[i].worldToDecalSpace;
+		vec3 decalSpacePosition = decalSpacePosition4.xyz / decalSpacePosition4.w;
+		vec2 decalTextureCoordinate = decalSpacePosition.xz + 0.5;
+		if (decalTextureCoordinate.x < 0.0 || decalTextureCoordinate.x >= 1.0 ||
+			decalTextureCoordinate.y < 0.0 || decalTextureCoordinate.y >= 1.0) continue;
+
+		#define ATLAS_TEXTURE_BORDER	32
+		vec2 decalTextureAtlasCoord = vec2(decals[i].atlasTextureIdx % decalsTextureAtlasSize, decals[i].atlasTextureIdx / decalsTextureAtlasSize) + decalTextureCoordinate;
+		vec2 decalsTextureAtlasTextureDimensions = vec2(1.0 / float(decalsTextureAtlasSize));
+		vec2 atlasDecalTextureCoordinate =
+			mod(decalTextureAtlasCoord, vec2(1.0 - decalsTextureAtlasPixelDimension)) /
+			float(decalsTextureAtlasSize) *
+			vec2((decalsTextureAtlasTextureDimensions - (float(ATLAS_TEXTURE_BORDER) * 2.0 * decalsTextureAtlasPixelDimension)) / decalsTextureAtlasPixelDimension) +
+			vec2(float(ATLAS_TEXTURE_BORDER) * decalsTextureAtlasPixelDimension) +
+			decalsTextureAtlasPixelDimension * decals[i].atlasTextureIdx;
+
+		return texture(decalsTextureUnit, atlasDecalTextureCoordinate);
+	}
+	return vec4(0.0, 0.0, 0.0, 0.0);
+}
 
 // main
 void main(void) {
@@ -78,6 +113,17 @@ void main(void) {
 		vec3 position = texture(geometryBufferTextureId1, vsFragTextureUV).xyz;
 		vec3 normal = texture(geometryBufferTextureId2, vsFragTextureUV).xyz;
 		vec4 diffuse = texture(colorBufferTextureUnit5, vsFragTextureUV);
+
+		// decals
+		vec4 decalColor = getDecalColor(position);
+		if (decalColor.a > 0.0) {
+			float diffuseAlpha = specularMaterial.diffuse.a;
+			specularMaterial.ambient = decalColor;
+			specularMaterial.diffuse = decalColor;
+			specularMaterial.diffuse.a = diffuseAlpha;
+		}
+
+		//
 		vec4 fragColor = specularMaterial.emission + computeSpecularLighting(normal, position, normalize(vec3(cameraMatrix * -vec4(position, 0.0))), specularMaterial);
 		outColor = clamp(fragColor * diffuse, 0.0, 1.0);
 		outColor.a = specularMaterial.diffuse.a;
@@ -119,6 +165,16 @@ void main(void) {
 
 		//
 		vec3 position = texture(geometryBufferTextureId1, vsFragTextureUV).xyz;
+
+		// decals
+		vec4 decalColor = getDecalColor(position);
+		if (decalColor.a > 0.0) {
+			float baseColorAlpha = pbrMaterial.baseColor.a;
+			pbrMaterial.baseColor = decalColor;
+			pbrMaterial.baseColor.a = baseColorAlpha;
+		}
+
+		//
 		outColor = computePBRLighting(position, pbrMaterial);
 	}
 	gl_FragDepth = texture(depthBufferTextureUnit, vsFragTextureUV).r;

@@ -1,18 +1,22 @@
 #pragma once
 
 #include <array>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/framebuffer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/Camera.h>
+#include <tdme/engine/DecalObject.h>
 #include <tdme/engine/Engine.h>
 
 using std::array;
+using std::vector;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Camera;
+using tdme::engine::DecalObject;
 using tdme::engine::Engine;
 
 /**
@@ -24,6 +28,8 @@ class tdme::engine::subsystems::framebuffer::DeferredLightingRenderShader final
 {
 
 private:
+	static constexpr int DECAL_COUNT { 100 };
+
 	Renderer* renderer { nullptr };
 	int32_t vertexShaderId { -1 };
 	int32_t fragmentShaderId { -1 };
@@ -73,6 +79,14 @@ private:
 	array<int32_t, Engine::LIGHTS_MAX> uniformPBRLightOuterConeCos;
 	array<int32_t, Engine::LIGHTS_MAX> uniformPBRLightType;
 
+	int32_t uniformDecalCount { -1 };
+	int32_t uniformDecalsTextureUnit { -1 };
+	int32_t uniformDecalsTextureAtlasSize { -1 };
+	int32_t uniformDecalsTextureAtlasPixelDimension { -1 };
+	array<int32_t, DECAL_COUNT> uniformDecalAtlasTextureIdx;
+	array<int32_t, DECAL_COUNT> uniformDecalWorldToDecalSpace;
+
+	int32_t decalsTextureAtlasTextureId { 0 };
 
 	bool initialized;
 	bool isRunning;
@@ -102,8 +116,9 @@ public:
 	/**
 	 * Use render program
 	 * @param engine engine
+	 * @param decalObjects decal objects
 	 */
-	void useProgram(Engine* engine);
+	void useProgram(Engine* engine, vector<DecalObject*>& decalObjects);
 
 	/**
 	 * Un use render program

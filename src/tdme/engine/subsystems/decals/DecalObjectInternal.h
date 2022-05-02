@@ -13,6 +13,7 @@
 #include <tdme/engine/subsystems/decals/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/Transformations.h>
+#include <tdme/math/Matrix4x4.h>
 
 using std::string;
 using std::vector;
@@ -50,11 +51,17 @@ protected:
 	bool contributesShadows;
 	bool receivesShadows;
 
+	Matrix4x4 obbMatrix;
+	Matrix4x4 obbMatrixTransformed;
+	Matrix4x4 worldToDecalSpaceMatrix;
+
 	/**
-	 * Update bounding volume
+	 * Update bounding volume and obb matrix with transform and finally world to decal space matrix
 	 */
-	inline void updateBoundingBox() {
+	inline void updateInternal() {
 		boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
+		obbMatrixTransformed = obbMatrix.multiply(this->getTransformationsMatrix());
+		worldToDecalSpaceMatrix = obbMatrixTransformed.invert();
 	}
 
 public:
@@ -218,5 +225,19 @@ public:
 	 * Dispose
 	 */
 	void dispose();
+
+	/**
+	 * @return decal texture
+	 */
+	inline Texture* getDecalTexture() {
+		return texture;
+	}
+
+	/**
+	 * @return world to decal space matrix
+	 */
+	inline const Matrix4x4& getWorldToDecalSpaceMatrix() {
+		return worldToDecalSpaceMatrix;
+	}
 
 };

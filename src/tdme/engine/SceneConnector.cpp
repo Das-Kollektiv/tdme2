@@ -55,6 +55,7 @@
 #include <tdme/engine/subsystems/particlesystem/CircleParticleEmitterPlaneVelocity.h>
 #include <tdme/engine/subsystems/particlesystem/PointParticleEmitter.h>
 #include <tdme/engine/subsystems/particlesystem/SphereParticleEmitter.h>
+#include <tdme/engine/DecalObject.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityHierarchy.h>
@@ -135,6 +136,7 @@ using tdme::engine::subsystems::particlesystem::CircleParticleEmitter;
 using tdme::engine::subsystems::particlesystem::CircleParticleEmitterPlaneVelocity;
 using tdme::engine::subsystems::particlesystem::PointParticleEmitter;
 using tdme::engine::subsystems::particlesystem::SphereParticleEmitter;
+using tdme::engine::DecalObject;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::EntityHierarchy;
@@ -460,8 +462,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 				entityBoundingVolumesHierarchy->addEntity(bvObject);
 			}
 		}
-		if ((prototype->getType() == Prototype_Type::ENVIRONMENTMAPPING ||
-			prototype->getType() == Prototype_Type::DECAL) &&
+		if (prototype->getType() == Prototype_Type::ENVIRONMENTMAPPING &&
 			prototype->getBoundingVolumeCount() == 1 &&
 			dynamic_cast<OrientedBoundingBox*>(prototype->getBoundingVolume(0)->getBoundingVolume()) != nullptr) {
 			BoundingBox aabb(dynamic_cast<OrientedBoundingBox*>(prototype->getBoundingVolume(0)->getBoundingVolume()));
@@ -469,6 +470,15 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 			environmentMapping->setRenderPassMask(prototype->getEnvironmentMapRenderPassMask());
 			environmentMapping->setTimeRenderUpdateFrequency(prototype->getEnvironmentMapTimeRenderUpdateFrequency());
 			entityBoundingVolumesHierarchy->addEntity(environmentMapping);
+		} else
+		if (prototype->getType() == Prototype_Type::DECAL && prototype->getBoundingVolumeCount() == 1 &&
+			dynamic_cast<OrientedBoundingBox*>(prototype->getBoundingVolume(0)->getBoundingVolume()) != nullptr) {
+			entityBoundingVolumesHierarchy->addEntity(
+				new DecalObject(
+					"decal",
+					dynamic_cast<OrientedBoundingBox*>(prototype->getBoundingVolume(0)->getBoundingVolume())
+				)
+			);
 		}
 		entityBoundingVolumesHierarchy->update();
 		if (entityBoundingVolumesHierarchy->getEntities().size() == 0) {

@@ -53,7 +53,7 @@ private:
 	}
 	inline void applyParentTransformations(const Transformations& parentTransformations) override {
 		Transformations::applyParentTransformations(parentTransformations);
-		updateBoundingBox();
+		updateInternal();
 	}
 
 public:
@@ -223,6 +223,20 @@ public:
 
 	inline void setRenderPass(RenderPass renderPass) override {
 		this->renderPass = renderPass;
+	}
+
+	/**
+	 * @return decal texture
+	 */
+	inline Texture* getDecalTexture() {
+		return DecalObjectInternal::getDecalTexture();
+	}
+
+	/**
+	 * @return world to decal space matrix
+	 */
+	inline const Matrix4x4& getWorldToDecalSpaceMatrix() {
+		return DecalObjectInternal::getWorldToDecalSpaceMatrix();
 	}
 
 };

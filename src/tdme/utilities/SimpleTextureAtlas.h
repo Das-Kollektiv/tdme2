@@ -84,6 +84,7 @@ private:
 	bool needsUpdate { false };
 	string atlasTextureId;
 	Texture* atlasTexture { nullptr };
+	unordered_map<Texture*, int> textureReferenceCounter;
 	unordered_map<Texture*, int> textureToAtlasTextureIdxMapping;
 	unordered_map<int, Texture*> atlasTextureIdxToTextureMapping;
 	vector<int> freeTextureIds;

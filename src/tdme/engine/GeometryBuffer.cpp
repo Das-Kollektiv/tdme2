@@ -1,10 +1,13 @@
 #include <tdme/engine/GeometryBuffer.h>
 
+#include <string>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/framebuffer/DeferredLightingRenderShader.h>
 #include <tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.h>
 #include <tdme/engine/subsystems/postprocessing/PostProcessingShader.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/DecalObject.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/math/Math.h>
 #include <tdme/utilities/Console.h>
@@ -12,9 +15,13 @@
 
 using tdme::engine::GeometryBuffer;
 
+using std::string;
+using std::to_string;
+
 using tdme::engine::subsystems::framebuffer::DeferredLightingRenderShader;
 using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::DecalObject;
 using tdme::engine::Engine;
 using tdme::math::Math;
 using tdme::utilities::Console;
@@ -104,7 +111,7 @@ void GeometryBuffer::disableGeometryBuffer()
 	Engine::renderer->updateViewPort();
 }
 
-void GeometryBuffer::renderToScreen(Engine* engine)
+void GeometryBuffer::renderToScreen(Engine* engine, vector<DecalObject*>& decalObjects)
 {
 	auto renderer = Engine::renderer;
 
@@ -121,7 +128,7 @@ void GeometryBuffer::renderToScreen(Engine* engine)
 	// use deferred lighting render shader
 	auto frameBufferRenderShader = Engine::getFrameBufferRenderShader();
 	auto deferredLightingRenderShader = Engine::getDeferredLightingRenderShader();
-	deferredLightingRenderShader->useProgram(engine);
+	deferredLightingRenderShader->useProgram(engine, decalObjects);
 
 	// bind geometry buffer textures
 	renderer->setTextureUnit(contextIdx, 0);

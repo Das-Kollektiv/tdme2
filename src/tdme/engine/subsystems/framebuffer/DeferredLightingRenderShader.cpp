@@ -1,6 +1,7 @@
 #include <tdme/engine/subsystems/framebuffer/DeferredLightingRenderShader.h>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/framebuffer/BRDFLUTShader.h>
 #include <tdme/engine/subsystems/lighting/LightingShaderConstants.h>
@@ -13,6 +14,7 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/FloatBuffer.h>
+#include <tdme/utilities/SimpleTextureAtlas.h>
 
 using tdme::engine::subsystems::framebuffer::DeferredLightingRenderShader;
 
@@ -31,6 +33,7 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::FloatBuffer;
+using tdme::utilities::SimpleTextureAtlas;
 
 DeferredLightingRenderShader::DeferredLightingRenderShader(Renderer* renderer)
 {
@@ -65,7 +68,8 @@ void DeferredLightingRenderShader::initialize()
 		"deferred_lighting_fragmentshader.frag",
 		string() +
 		"#define HAVE_DEPTH_FOG\n" +
-		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define USE_IBL\n",
+		"#define LIGHT_COUNT " + to_string(Engine::LIGHTS_MAX) + "\n#define USE_PUNCTUAL\n#define MATERIAL_METALLICROUGHNESS\n#define USE_IBL\n" +
+		"#define DECAL_COUNT " + to_string(DECAL_COUNT) + "\n" +
 		FileSystem::getInstance()->getContentAsString(
 			"shader/" + shaderVersion + "/functions/specular",
 			"specular_lighting.inc.glsl"
@@ -215,11 +219,32 @@ void DeferredLightingRenderShader::initialize()
 		);
 	texturebrdfLUT = Engine::getBRDFLUTShader()->getColorTextureId();
 
+	// 	decals
+	uniformDecalCount = renderer->getProgramUniformLocation(programId, "decalCount");
+	if (uniformDecalCount == -1) return;
+
+	uniformDecalsTextureUnit = renderer->getProgramUniformLocation(programId, "decalsTextureUnit");
+	if (uniformDecalsTextureUnit == -1) return;
+
+	uniformDecalsTextureAtlasSize = renderer->getProgramUniformLocation(programId, "decalsTextureAtlasSize");
+	if (uniformDecalsTextureAtlasSize == -1) return;
+
+	uniformDecalsTextureAtlasPixelDimension = renderer->getProgramUniformLocation(programId, "decalsTextureAtlasPixelDimension");
+	if (uniformDecalsTextureAtlasPixelDimension == -1) return;
+
+	//
+	for (auto i = 0; i < DECAL_COUNT; i++) {
+		uniformDecalAtlasTextureIdx[i] = renderer->getProgramUniformLocation(programId, "decals[" + to_string(i) + "].atlasTextureIdx");
+		if (uniformDecalAtlasTextureIdx[i] == -1) return;
+		uniformDecalWorldToDecalSpace[i] = renderer->getProgramUniformLocation(programId, "decals[" + to_string(i) + "].worldToDecalSpace");
+		if (uniformDecalWorldToDecalSpace[i] == -1) return;
+	}
+
 	//
 	initialized = true;
 }
 
-void DeferredLightingRenderShader::useProgram(Engine* engine)
+void DeferredLightingRenderShader::useProgram(Engine* engine, vector<DecalObject*>& decalObjects)
 {
 	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
 	renderer->useProgram(contextIdx, programId);
@@ -283,6 +308,41 @@ void DeferredLightingRenderShader::useProgram(Engine* engine)
 		renderer->setProgramUniformFloatVec3(contextIdx, uniformPBRLightPosition[lightId],{{ position[0], position[1], position[2] }});
 		if (uniformPBRLightType[lightId] != -1) renderer->setProgramUniformInteger(contextIdx, uniformPBRLightType[lightId], 0);
 	}
+
+	// decals
+	auto& decalsTextureAtlas = engine->getDecalsTextureAtlas();
+	if (decalsTextureAtlas.isNeedsUpdate() == true) {
+		decalsTextureAtlas.update();
+		if (decalsTextureAtlasTextureId == 0) decalsTextureAtlasTextureId = renderer->createTexture();
+		renderer->uploadTexture(contextIdx, decalsTextureAtlas.getAtlasTexture());
+	}
+	auto decalsTextureAtlasTexture = decalsTextureAtlas.getAtlasTexture();
+	auto decalCount = Math::min(DECAL_COUNT, decalObjects.size());
+	renderer->setProgramUniformInteger(contextIdx, uniformDecalCount, decalCount);
+	if (decalCount > 0) {
+		renderer->setProgramUniformInteger(contextIdx, uniformDecalsTextureUnit, 12);
+		renderer->setTextureUnit(contextIdx, 12);
+		renderer->bindTexture(contextIdx, decalsTextureAtlasTextureId);
+		renderer->setProgramUniformInteger(contextIdx, uniformDecalsTextureAtlasSize, decalsTextureAtlasTexture->getAtlasSize());
+		renderer->setProgramUniformFloatVec2(
+			contextIdx,
+			uniformDecalsTextureAtlasPixelDimension,
+			{
+				1.0f / decalsTextureAtlasTexture->getTextureWidth(),
+				1.0f / decalsTextureAtlasTexture->getTextureHeight()
+			}
+		);
+		for (auto i = 0; i < decalCount; i++) {
+			auto decalObject = decalObjects[i];
+			auto atlasTextureIdx = decalsTextureAtlas.getTextureIdx(decalObject->getDecalTexture());
+			if (atlasTextureIdx == -1) continue;
+			renderer->setProgramUniformInteger(contextIdx, uniformDecalAtlasTextureIdx[i], atlasTextureIdx);
+			renderer->setProgramUniformFloatMatrix4x4(contextIdx, uniformDecalWorldToDecalSpace[i], decalObject->getWorldToDecalSpaceMatrix().getArray());
+		}
+	}
+
+	//
+	renderer->setTextureUnit(contextIdx, 0);
 
 	//
 	isRunning = true;

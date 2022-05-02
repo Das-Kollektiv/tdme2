@@ -81,7 +81,7 @@
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Float.h>
-#include <tdme/utilities/VectorIteratorMultiple.h>
+#include <tdme/utilities/SimpleTextureAtlas.h>
 
 using std::map;
 using std::remove;
@@ -162,6 +162,7 @@ using tdme::os::threading::Thread;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
 using tdme::utilities::Float;
+using tdme::utilities::SimpleTextureAtlas;
 
 Engine* Engine::instance = nullptr;
 Renderer* Engine::renderer = nullptr;
@@ -406,6 +407,13 @@ void Engine::deregisterEntity(Entity* entity) {
 	autoEmitParticleSystemEntities.erase(entity);
 	needsComputeTransformationsEntities.erase(entity);
 	needsPreRenderEntities.erase(entity);
+
+	// decompose and deregister decal textures
+	DecomposedEntities decomposedEntities;
+	decomposeEntityType(entity, decomposedEntities, true);
+	for (auto decalObject: decomposedEntities.decalObjects) {
+		decalsTextureAtlas.removeTexture(decalObject->getDecalTexture());
+	}
 }
 
 void Engine::registerEntity(Entity* entity) {
@@ -434,7 +442,7 @@ void Engine::registerEntity(Entity* entity) {
 		autoEmitParticleSystemEntities.insert(particleSystemEntity);
 	}
 
-	// decompose to Object3D instances to do pre render
+	// decompose to engine instances to do pre render
 	DecomposedEntities decomposedEntities;
 	decomposeEntityType(entity, decomposedEntities, true);
 	array<vector<Object3D*>, 5> objectsArray = {
@@ -450,6 +458,10 @@ void Engine::registerEntity(Entity* entity) {
 			if (object3D->isNeedsPreRender() == true) needsPreRenderEntities.insert(object3D);
 			if (object3D->isNeedsComputeTransformations() == true) needsComputeTransformationsEntities.insert(object3D);
 		}
+	}
+	// register decal textures
+	for (auto decalObject: decomposedEntities.decalObjects) {
+		decalsTextureAtlas.addTexture(decalObject->getDecalTexture());
 	}
 }
 
@@ -2251,7 +2263,7 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 						renderGeometryBuffer->disableGeometryBuffer();
 						Engine::renderer->setShaderPrefix(shaderPrefix);
 						if (renderFrameBuffer != nullptr) renderFrameBuffer->enableFrameBuffer();
-						renderGeometryBuffer->renderToScreen(this);
+						renderGeometryBuffer->renderToScreen(this, visibleDecomposedEntities.decalObjects);
 						if (lightingShader != nullptr) lightingShader->useProgram(this);
 						if (visibleDecomposedEntities.objectsForwardShading.empty() == false) {
 							// TODO: use a loop maybe from TERRAIN to STANDARD, but for now it works this way too :)
