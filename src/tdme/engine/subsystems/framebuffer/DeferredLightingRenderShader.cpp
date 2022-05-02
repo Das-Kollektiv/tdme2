@@ -157,6 +157,10 @@ void DeferredLightingRenderShader::initialize()
 	uniformCameraMatrix = renderer->getProgramUniformLocation(programId, "cameraMatrix");
 	if (uniformCameraMatrix == -1) return;
 
+	// projection * view inverted
+	uniformProjectionCameraMatrixInverted = renderer->getProgramUniformLocation(programId, "projectionCameraMatrixInverted");
+	if (uniformProjectionCameraMatrixInverted == -1) return;
+
 	// PBR
 	uniformCamera = renderer->getProgramUniformLocation(programId, "u_Camera");
 	if (uniformCamera == -1) return;
@@ -259,6 +263,10 @@ void DeferredLightingRenderShader::useProgram(Engine* engine, vector<DecalObject
 	renderer->setProgramUniformInteger(contextIdx, uniformColorBufferTextureUnit5, 7);
 	renderer->setProgramUniformInteger(contextIdx, uniformDepthBufferTextureUnit, 8);
 
+	// Matrices
+	renderer->setProgramUniformFloatMatrix4x4(contextIdx, uniformCameraMatrix, engine->getCamera()->getModelViewMatrix().getArray());
+	renderer->setProgramUniformFloatMatrix4x4(contextIdx, uniformProjectionCameraMatrixInverted, engine->getCamera()->getModelViewProjectionInvertedMatrix().getArray());
+
 	// Specular
 	for (auto lightId = 0; lightId < Engine::LIGHTS_MAX; lightId++) {
 		auto light = engine->getLightAt(lightId);
@@ -276,7 +284,6 @@ void DeferredLightingRenderShader::useProgram(Engine* engine, vector<DecalObject
 		renderer->setProgramUniformFloat(contextIdx, uniformSpecularLightQuadraticAttenuation[lightId], light->getQuadraticAttenuation());
 		renderer->setProgramUniformFloat(contextIdx, uniformSpecularLightRadius[lightId], light->getRadius());
 	}
-	renderer->setProgramUniformFloatMatrix4x4(contextIdx, uniformCameraMatrix, engine->getCamera()->getModelViewMatrix().getArray());
 
 	// PBR
 	renderer->setProgramUniformFloatVec3(contextIdx, uniformCamera, renderer->getCameraPosition().getArray());
@@ -313,32 +320,40 @@ void DeferredLightingRenderShader::useProgram(Engine* engine, vector<DecalObject
 	auto& decalsTextureAtlas = engine->getDecalsTextureAtlas();
 	if (decalsTextureAtlas.isNeedsUpdate() == true) {
 		decalsTextureAtlas.update();
-		if (decalsTextureAtlasTextureId == 0) decalsTextureAtlasTextureId = renderer->createTexture();
-		renderer->uploadTexture(contextIdx, decalsTextureAtlas.getAtlasTexture());
+		if (decalsTextureAtlas.getAtlasTexture() != nullptr) {
+			if (decalsTextureAtlasTextureId == 0) decalsTextureAtlasTextureId = renderer->createTexture();
+			renderer->setTextureUnit(contextIdx, 12);
+			renderer->bindTexture(contextIdx, decalsTextureAtlasTextureId);
+			renderer->uploadTexture(contextIdx, decalsTextureAtlas.getAtlasTexture());
+		}
 	}
 	auto decalsTextureAtlasTexture = decalsTextureAtlas.getAtlasTexture();
-	auto decalCount = Math::min(DECAL_COUNT, decalObjects.size());
-	renderer->setProgramUniformInteger(contextIdx, uniformDecalCount, decalCount);
-	if (decalCount > 0) {
-		renderer->setProgramUniformInteger(contextIdx, uniformDecalsTextureUnit, 12);
-		renderer->setTextureUnit(contextIdx, 12);
-		renderer->bindTexture(contextIdx, decalsTextureAtlasTextureId);
-		renderer->setProgramUniformInteger(contextIdx, uniformDecalsTextureAtlasSize, decalsTextureAtlasTexture->getAtlasSize());
-		renderer->setProgramUniformFloatVec2(
-			contextIdx,
-			uniformDecalsTextureAtlasPixelDimension,
-			{
-				1.0f / decalsTextureAtlasTexture->getTextureWidth(),
-				1.0f / decalsTextureAtlasTexture->getTextureHeight()
+	if (decalsTextureAtlasTexture != nullptr) {
+		auto decalCount = Math::min(DECAL_COUNT, decalObjects.size());
+		renderer->setProgramUniformInteger(contextIdx, uniformDecalCount, decalCount);
+		if (decalCount > 0) {
+			renderer->setProgramUniformInteger(contextIdx, uniformDecalsTextureUnit, 12);
+			renderer->setTextureUnit(contextIdx, 12);
+			renderer->bindTexture(contextIdx, decalsTextureAtlasTextureId);
+			renderer->setProgramUniformInteger(contextIdx, uniformDecalsTextureAtlasSize, decalsTextureAtlasTexture->getAtlasSize());
+			renderer->setProgramUniformFloatVec2(
+				contextIdx,
+				uniformDecalsTextureAtlasPixelDimension,
+				{
+					1.0f / decalsTextureAtlasTexture->getTextureWidth(),
+					1.0f / decalsTextureAtlasTexture->getTextureHeight()
+				}
+			);
+			for (auto i = 0; i < decalCount && i < DECAL_COUNT; i++) {
+				auto decalObject = decalObjects[i];
+				auto atlasTextureIdx = decalsTextureAtlas.getTextureIdx(decalObject->getDecalTexture());
+				if (atlasTextureIdx == -1) continue;
+				renderer->setProgramUniformInteger(contextIdx, uniformDecalAtlasTextureIdx[i], atlasTextureIdx);
+				renderer->setProgramUniformFloatMatrix4x4(contextIdx, uniformDecalWorldToDecalSpace[i], decalObject->getWorldToDecalSpaceMatrix().getArray());
 			}
-		);
-		for (auto i = 0; i < decalCount; i++) {
-			auto decalObject = decalObjects[i];
-			auto atlasTextureIdx = decalsTextureAtlas.getTextureIdx(decalObject->getDecalTexture());
-			if (atlasTextureIdx == -1) continue;
-			renderer->setProgramUniformInteger(contextIdx, uniformDecalAtlasTextureIdx[i], atlasTextureIdx);
-			renderer->setProgramUniformFloatMatrix4x4(contextIdx, uniformDecalWorldToDecalSpace[i], decalObject->getWorldToDecalSpaceMatrix().getArray());
 		}
+	} else {
+		renderer->setProgramUniformInteger(contextIdx, uniformDecalCount, 0);
 	}
 
 	//

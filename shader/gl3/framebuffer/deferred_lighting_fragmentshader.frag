@@ -28,7 +28,9 @@ struct Decal {
 {$DEFINITIONS}
 
 // uniforms
+uniform mat4 projectionMatrix;
 uniform mat4 cameraMatrix;
+uniform mat4 projectionCameraMatrixInverted;
 uniform sampler2D geometryBufferTextureId1;
 uniform sampler2D geometryBufferTextureId2;
 uniform sampler2D geometryBufferTextureId3;
@@ -61,32 +63,39 @@ out vec4 outColor;
 	#define FOG_BLUE						(255.0 / 255.0)
 #endif
 
-vec4 getDecalColor(vec3 position) {
+vec4 getDecalColor(vec2 textureCoordinate, float depth) {
+	// generate NDC position from texture coordinate and depth
+	vec4 ndcPosition = vec4(textureCoordinate.x * 2.0 - 1.0, textureCoordinate.y * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);
+	vec4 position4 = projectionCameraMatrixInverted * ndcPosition;
+	// word position
+	vec3 position = position4.xyz / position4.w;
+	//
 	for (int i = 0; i < decalCount; i++) {
 		// convert world position to decal obb space position
-		vec4 decalSpacePosition4 = vec4(position, 1.0) * decals[i].worldToDecalSpace;
+		vec4 decalSpacePosition4 = decals[i].worldToDecalSpace * vec4(position, 1.0);
 		vec3 decalSpacePosition = decalSpacePosition4.xyz / decalSpacePosition4.w;
-		vec2 decalTextureCoordinate = decalSpacePosition.xz + 0.5;
+		vec2 decalTextureCoordinate = decalSpacePosition.xy + 0.5;
+
 		if (decalTextureCoordinate.x < 0.0 || decalTextureCoordinate.x >= 1.0 ||
 			decalTextureCoordinate.y < 0.0 || decalTextureCoordinate.y >= 1.0) continue;
 
 		#define ATLAS_TEXTURE_BORDER	32
-		vec2 decalTextureAtlasCoord = vec2(decals[i].atlasTextureIdx % decalsTextureAtlasSize, decals[i].atlasTextureIdx / decalsTextureAtlasSize) + decalTextureCoordinate;
+		vec2 decalTextureAtlasIdx  = vec2(decals[i].atlasTextureIdx % decalsTextureAtlasSize, decals[i].atlasTextureIdx / decalsTextureAtlasSize);
 		vec2 decalsTextureAtlasTextureDimensions = vec2(1.0 / float(decalsTextureAtlasSize));
 		vec2 atlasDecalTextureCoordinate =
-			mod(decalTextureAtlasCoord, vec2(1.0 - decalsTextureAtlasPixelDimension)) /
-			float(decalsTextureAtlasSize) *
+			decalTextureCoordinate / float(decalsTextureAtlasSize) *
 			vec2((decalsTextureAtlasTextureDimensions - (float(ATLAS_TEXTURE_BORDER) * 2.0 * decalsTextureAtlasPixelDimension)) / decalsTextureAtlasPixelDimension) +
 			vec2(float(ATLAS_TEXTURE_BORDER) * decalsTextureAtlasPixelDimension) +
-			decalsTextureAtlasPixelDimension * decals[i].atlasTextureIdx;
+			decalsTextureAtlasTextureDimensions * decalTextureAtlasIdx;
 
-		return texture(decalsTextureUnit, atlasDecalTextureCoordinate);
+		return textureLod(decalsTextureUnit, atlasDecalTextureCoordinate * 0.0000001 + decalTextureCoordinate, 0.0) * 0.000001 + vec4(decalTextureCoordinate.x, 0.0, 0.0, 1.0);
 	}
 	return vec4(0.0, 0.0, 0.0, 0.0);
 }
 
 // main
 void main(void) {
+	float depth = texture(depthBufferTextureUnit, vsFragTextureUV).r;
 	outColor = vec4(1.0, 0.0, 0.0, 1.0);
 	vec4 fragmentParameters = texture(geometryBufferTextureId3, vsFragTextureUV);
 	int type = int(fragmentParameters[3]);
@@ -115,12 +124,11 @@ void main(void) {
 		vec4 diffuse = texture(colorBufferTextureUnit5, vsFragTextureUV);
 
 		// decals
-		vec4 decalColor = getDecalColor(position);
+		vec4 decalColor = getDecalColor(vsFragTextureUV, depth);
 		if (decalColor.a > 0.0) {
-			float diffuseAlpha = specularMaterial.diffuse.a;
-			specularMaterial.ambient = decalColor;
-			specularMaterial.diffuse = decalColor;
-			specularMaterial.diffuse.a = diffuseAlpha;
+			float diffuseAlpha = diffuse.a;
+			diffuse = decalColor;
+			diffuse.a = diffuseAlpha;
 		}
 
 		//
@@ -167,7 +175,7 @@ void main(void) {
 		vec3 position = texture(geometryBufferTextureId1, vsFragTextureUV).xyz;
 
 		// decals
-		vec4 decalColor = getDecalColor(position);
+		vec4 decalColor = getDecalColor(vsFragTextureUV, depth);
 		if (decalColor.a > 0.0) {
 			float baseColorAlpha = pbrMaterial.baseColor.a;
 			pbrMaterial.baseColor = decalColor;
@@ -177,7 +185,7 @@ void main(void) {
 		//
 		outColor = computePBRLighting(position, pbrMaterial);
 	}
-	gl_FragDepth = texture(depthBufferTextureUnit, vsFragTextureUV).r;
+	gl_FragDepth = depth;
 	#if defined(HAVE_DEPTH_FOG)
 		if (fogStrength > 0.0) {
 			outColor = vec4(

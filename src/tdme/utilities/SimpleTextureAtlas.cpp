@@ -4,6 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/fileio/textures/PNGTextureWriter.h>
 #include <tdme/math/Math.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
@@ -11,8 +12,10 @@
 using tdme::utilities::SimpleTextureAtlas;
 
 using std::string;
+using std::to_string;
 
 using tdme::engine::fileio::textures::Texture;
+using tdme::engine::fileio::textures::PNGTextureWriter;
 using tdme::math::Math;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
@@ -80,64 +83,77 @@ void SimpleTextureAtlas::update() {
 		atlasTexture->releaseReference();
 		atlasTexture = nullptr;
 	}
+
+	if (atlasTextureIdxToTextureMapping.empty() == true) {
+		Console::println("SimpleTextureAtlas::update(): " + atlasTextureId + ": nothing to do");
+		//
+		needsUpdate = false;
+		//
+		return;
+	}
+
 	//
 	auto textureAtlasSize = static_cast<int>(Math::ceil(Math::sqrt(atlasTextureIdxToTextureMapping.size())));
-	auto textureWidth = textureAtlasSize * ATLAS_TEXTURE_SIZE;
-	auto textureHeight = textureAtlasSize * ATLAS_TEXTURE_SIZE;
-	auto textureByteBuffer = ByteBuffer::allocate(textureWidth * textureHeight * 4);
-	for (auto y = 0; y < textureHeight; y++)
-	for (auto x = 0; x < textureWidth; x++) {
+	auto atlasTextureWidth = textureAtlasSize * ATLAS_TEXTURE_SIZE;
+	auto atlasTextureHeight = textureAtlasSize * ATLAS_TEXTURE_SIZE;
+	auto atlasTextureByteBuffer = ByteBuffer::allocate(atlasTextureWidth * atlasTextureHeight * 4);
+	for (auto y = 0; y < atlasTextureHeight; y++)
+	for (auto x = 0; x < atlasTextureWidth; x++) {
 		auto atlasTextureIdxX = x / ATLAS_TEXTURE_SIZE;
 		auto atlasTextureIdxY = y / ATLAS_TEXTURE_SIZE;
-		auto materialTextureX = x - (atlasTextureIdxX * ATLAS_TEXTURE_SIZE);
-		auto materialTextureY = y - (atlasTextureIdxY * ATLAS_TEXTURE_SIZE);
-		auto materialTextureXFloat = static_cast<float>(materialTextureX) / static_cast<float>(ATLAS_TEXTURE_SIZE);
-		auto materialTextureYFloat = static_cast<float>(materialTextureY) / static_cast<float>(ATLAS_TEXTURE_SIZE);
+		auto textureX = x - (atlasTextureIdxX * ATLAS_TEXTURE_SIZE);
+		auto textureY = y - (atlasTextureIdxY * ATLAS_TEXTURE_SIZE);
+		auto textureXFloat = static_cast<float>(textureX) / static_cast<float>(ATLAS_TEXTURE_SIZE);
+		auto textureYFloat = static_cast<float>(textureY) / static_cast<float>(ATLAS_TEXTURE_SIZE);
 		auto atlasTextureIdx = atlasTextureIdxY * textureAtlasSize + atlasTextureIdxX;
-		auto materialTexture = atlasTextureIdxToTextureMapping[atlasTextureIdx];
-		if (materialTexture != nullptr) {
-			auto materialTextureWidth = materialTexture->getTextureWidth();
-			auto materialTextureHeight = materialTexture->getTextureHeight();
-			auto materialTextureBytesPerPixel = materialTexture->getDepth() / 8;
-			auto materialTextureXInt = static_cast<int>(materialTextureXFloat * static_cast<float>(materialTextureWidth));
-			auto materialTextureYInt = static_cast<int>(materialTextureYFloat * static_cast<float>(materialTextureHeight));
-			if (materialTextureXInt < ATLAS_TEXTURE_BORDER) materialTextureXInt = 0; else
-			if (materialTextureXInt > materialTextureWidth - ATLAS_TEXTURE_BORDER) materialTextureXInt = materialTextureWidth - 1; else
-				materialTextureXInt = static_cast<int>((static_cast<float>(materialTextureXInt) - static_cast<float>(ATLAS_TEXTURE_BORDER)) * (static_cast<float>(materialTextureWidth) + static_cast<float>(ATLAS_TEXTURE_BORDER) * 2.0f) / static_cast<float>(materialTextureWidth));
-			if (materialTextureYInt < ATLAS_TEXTURE_BORDER) materialTextureYInt = 0; else
-			if (materialTextureYInt > materialTextureHeight - ATLAS_TEXTURE_BORDER) materialTextureYInt = materialTextureHeight - 1; else
-				materialTextureYInt = static_cast<int>((static_cast<float>(materialTextureYInt) - static_cast<float>(ATLAS_TEXTURE_BORDER)) * (static_cast<float>(materialTextureHeight) + static_cast<float>(ATLAS_TEXTURE_BORDER) * 2.0f) / static_cast<float>(materialTextureHeight));
-			auto materialTexturePixelOffset =
-				materialTextureYInt * materialTextureWidth * materialTextureBytesPerPixel +
-				materialTextureXInt * materialTextureBytesPerPixel;
-			auto materialPixelR = materialTexture->getTextureData()->get(materialTexturePixelOffset + 0);
-			auto materialPixelG = materialTexture->getTextureData()->get(materialTexturePixelOffset + 1);
-			auto materialPixelB = materialTexture->getTextureData()->get(materialTexturePixelOffset + 2);
-			auto materialPixelA = materialTextureBytesPerPixel == 4?materialTexture->getTextureData()->get(materialTexturePixelOffset + 3):0xff;
-			textureByteBuffer->put(materialPixelR);
-			textureByteBuffer->put(materialPixelG);
-			textureByteBuffer->put(materialPixelB);
-			textureByteBuffer->put(materialPixelA);
+		auto texture = atlasTextureIdxToTextureMapping[atlasTextureIdx];
+		if (texture != nullptr) {
+			auto textureWidth = texture->getTextureWidth();
+			auto textureHeight = texture->getTextureHeight();
+			auto textureBytesPerPixel = texture->getDepth() / 8;
+			auto textureXInt = static_cast<int>(textureXFloat * static_cast<float>(textureWidth));
+			auto textureYInt = static_cast<int>(textureYFloat * static_cast<float>(textureHeight));
+			if (textureXInt < ATLAS_TEXTURE_BORDER) textureXInt = 0; else
+			if (textureXInt > textureWidth - ATLAS_TEXTURE_BORDER) textureXInt = textureWidth - 1; else
+				textureXInt = static_cast<int>((static_cast<float>(textureXInt) - static_cast<float>(ATLAS_TEXTURE_BORDER)) * (static_cast<float>(textureWidth) + static_cast<float>(ATLAS_TEXTURE_BORDER) * 2.0f) / static_cast<float>(textureWidth));
+			if (textureYInt < ATLAS_TEXTURE_BORDER) textureYInt = 0; else
+			if (textureYInt > textureHeight - ATLAS_TEXTURE_BORDER) textureYInt = textureHeight - 1; else
+				textureYInt = static_cast<int>((static_cast<float>(textureYInt) - static_cast<float>(ATLAS_TEXTURE_BORDER)) * (static_cast<float>(textureHeight) + static_cast<float>(ATLAS_TEXTURE_BORDER) * 2.0f) / static_cast<float>(textureHeight));
+			auto texturePixelOffset =
+				textureYInt * textureWidth * textureBytesPerPixel +
+				textureXInt * textureBytesPerPixel;
+			auto r = texture->getTextureData()->get(texturePixelOffset + 0);
+			auto g = texture->getTextureData()->get(texturePixelOffset + 1);
+			auto b = texture->getTextureData()->get(texturePixelOffset + 2);
+			auto a = textureBytesPerPixel == 4?texture->getTextureData()->get(texturePixelOffset + 3):0xff;
+			atlasTextureByteBuffer->put(r);
+			atlasTextureByteBuffer->put(g);
+			atlasTextureByteBuffer->put(b);
+			atlasTextureByteBuffer->put(a);
 		} else {
-			auto materialPixelR = 0xff;
-			auto materialPixelG = 0x00;
-			auto materialPixelB = 0x00;
-			auto materialPixelA = 0xff;
-			textureByteBuffer->put(materialPixelR);
-			textureByteBuffer->put(materialPixelG);
-			textureByteBuffer->put(materialPixelB);
-			textureByteBuffer->put(materialPixelA);
+			auto r = 0xff;
+			auto g = 0x00;
+			auto b = 0x00;
+			auto a = 0xff;
+			atlasTextureByteBuffer->put(r);
+			atlasTextureByteBuffer->put(g);
+			atlasTextureByteBuffer->put(b);
+			atlasTextureByteBuffer->put(a);
 		}
 	}
 	atlasTexture = new Texture(
 		atlasTextureId,
 		32,
-		textureWidth, textureHeight,
-		textureWidth, textureHeight,
-		textureByteBuffer
+		atlasTextureWidth, atlasTextureHeight,
+		atlasTextureWidth, atlasTextureHeight,
+		atlasTextureByteBuffer
 	);
 	atlasTexture->setAtlasSize(textureAtlasSize);
+	atlasTexture->setUseMipMap(false);
 	atlasTexture->acquireReference();
+
+	// TODO: improve me
+	// PNGTextureWriter::write(atlasTexture, ".", "atlas.png", true, false);
 
 	//
 	needsUpdate = false;

@@ -58,6 +58,7 @@ private:
 	array<int32_t, Engine::LIGHTS_MAX> uniformSpecularLightQuadraticAttenuation;
 	array<int32_t, Engine::LIGHTS_MAX> uniformSpecularLightRadius;
 	int32_t uniformCameraMatrix { -1 };
+	int32_t uniformProjectionCameraMatrixInverted { -1 };
 
 	// pbr
 	int32_t uniformCamera { -1 };

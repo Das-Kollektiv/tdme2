@@ -61,7 +61,7 @@ protected:
 	inline void updateInternal() {
 		boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
 		obbMatrixTransformed = obbMatrix.multiply(this->getTransformationsMatrix());
-		worldToDecalSpaceMatrix = obbMatrixTransformed.invert();
+		worldToDecalSpaceMatrix = obbMatrixTransformed.clone().invert();
 	}
 
 public:
