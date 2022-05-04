@@ -1,4 +1,4 @@
-#include <tdme/utilities/SimpleTextureAtlas.h>
+#include <tdme/utilities/TextureAtlas.h>
 
 #include <string>
 
@@ -8,7 +8,7 @@
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
 
-using tdme::utilities::SimpleTextureAtlas;
+using tdme::utilities::TextureAtlas;
 
 using std::string;
 using std::to_string;
@@ -18,18 +18,18 @@ using tdme::math::Math;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
 
-SimpleTextureAtlas::SimpleTextureAtlas(const string& id): atlasTextureId(id) {
+TextureAtlas::TextureAtlas(const string& id): atlasTextureId(id) {
 }
 
-SimpleTextureAtlas::~SimpleTextureAtlas() {
+TextureAtlas::~TextureAtlas() {
 	if (atlasTexture != nullptr) {
 		atlasTexture->releaseReference();
 		atlasTexture = nullptr;
 	}
 }
 
-int SimpleTextureAtlas::addTexture(Texture* texture) {
-	Console::println("SimpleTextureAtlas::addTexture(): texture added to atlas: " + texture->getId() + ", atlas with id: " + atlasTextureId);
+int TextureAtlas::addTexture(Texture* texture) {
+	Console::println("TextureAtlas::addTexture(): texture added to atlas: " + texture->getId() + ", atlas with id: " + atlasTextureId);
 	// check if texture had been added
 	{
 		auto textureIdx = getTextureIdx(texture);
@@ -57,11 +57,11 @@ int SimpleTextureAtlas::addTexture(Texture* texture) {
 	return textureIdx;
 }
 
-void SimpleTextureAtlas::removeTexture(Texture* texture) {
-	Console::println("SimpleTextureAtlas::removeTexture(): texture removed from atlas: " + texture->getId() + ", atlas with id: " + atlasTextureId);
+void TextureAtlas::removeTexture(Texture* texture) {
+	Console::println("TextureAtlas::removeTexture(): texture removed from atlas: " + texture->getId() + ", atlas with id: " + atlasTextureId);
 	auto textureIdx = getTextureIdx(texture);
 	if (textureIdx == TEXTURE_IDX_NONE) {
-		Console::println("SimpleTextureAtlas::removeTexture(): texture was not yet added to atlas: " + texture->getId() + ", atlas with id: " + atlasTextureId);
+		Console::println("TextureAtlas::removeTexture(): texture was not yet added to atlas: " + texture->getId() + ", atlas with id: " + atlasTextureId);
 		return;
 	}
 	textureReferenceCounter[texture]--;
@@ -74,8 +74,8 @@ void SimpleTextureAtlas::removeTexture(Texture* texture) {
 	needsUpdate = true;
 }
 
-void SimpleTextureAtlas::update() {
-	Console::println("SimpleTextureAtlas::update(): " + atlasTextureId);
+void TextureAtlas::update() {
+	Console::println("TextureAtlas::update(): " + atlasTextureId);
 	// release last atlas if we have any
 	if (atlasTexture != nullptr) {
 		atlasTexture->releaseReference();
@@ -83,7 +83,7 @@ void SimpleTextureAtlas::update() {
 	}
 
 	if (atlasTextureIdxToTextureMapping.empty() == true) {
-		Console::println("SimpleTextureAtlas::update(): " + atlasTextureId + ": nothing to do");
+		Console::println("TextureAtlas::update(): " + atlasTextureId + ": nothing to do");
 		//
 		needsUpdate = false;
 		//
@@ -95,6 +95,7 @@ void SimpleTextureAtlas::update() {
 	auto atlasTextureWidth = textureAtlasSize * ATLAS_TEXTURE_SIZE;
 	auto atlasTextureHeight = textureAtlasSize * ATLAS_TEXTURE_SIZE;
 	auto atlasTextureByteBuffer = ByteBuffer::allocate(atlasTextureWidth * atlasTextureHeight * 4);
+	/*
 	for (auto y = 0; y < atlasTextureHeight; y++)
 	for (auto x = 0; x < atlasTextureWidth; x++) {
 		auto atlasTextureIdxX = x / ATLAS_TEXTURE_SIZE;
@@ -139,6 +140,7 @@ void SimpleTextureAtlas::update() {
 			atlasTextureByteBuffer->put(a);
 		}
 	}
+	*/
 	atlasTexture = new Texture(
 		atlasTextureId,
 		32,

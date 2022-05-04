@@ -389,9 +389,6 @@ SRCS = \
 	src/tdme/os/threading/ReadWriteLock.cpp \
 	src/tdme/os/threading/SpinLock.cpp \
 	src/tdme/os/threading/Thread.cpp \
-	src/tdme/tests/AngleTest.cpp \
-	src/tdme/tests/AudioTest.cpp \
-	src/tdme/tests/CrashTest.cpp \
 	src/tdme/tests/EngineTest.cpp \
 	src/tdme/tests/EntityHierarchyTest.cpp \
 	src/tdme/tests/LODTest.cpp \
@@ -492,6 +489,7 @@ SRCS = \
 	src/tdme/utilities/StringTools.cpp \
 	src/tdme/utilities/StringTokenizer.cpp \
 	src/tdme/utilities/Terrain.cpp \
+	src/tdme/utilities/TextureAtlas.cpp \
 	src/tdme/video/decoder/MPEG1Decoder.cpp \
 	src/tdme/video/decoder/VideoDecoderException.cpp \
 	$(SRCS_PLATFORM)
@@ -722,7 +720,6 @@ all: \
 	opengl2-init opengl2-compile opengl2-link1 opengl2-link2 opengl2-clean \
 	vulkan-init vulkan-compile vulkan-link1 vulkan-link2 vulkan-clean \
 	init-mains \
-	AngleTest \
 	AudioTest \
 	ContainerTest \
 	CrashTest \
@@ -740,6 +737,7 @@ all: \
 	PhysicsTest1 PhysicsTest2 PhysicsTest3 PhysicsTest4 \
 	RayTracingTest \
 	SkinningTest \
+	TextureAtlasTest \
 	ThreadingTest \
 	TreeTest \
 	UDPClientTest \
@@ -900,9 +898,6 @@ clean-mains:
 	del /S /Q $(OBJ) >nul 2>&1
 	rmdir $(OBJ)
 
-AngleTest:
-	cl /FeAngleTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/AngleTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
-	
 AudioTest:
 	cl /FeAudioTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/AudioTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
@@ -962,6 +957,9 @@ RayTracingTest:
 
 SkinningTest:
 	cl /FeSkinningTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/SkinningTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
+TextureAtlasTest:
+	cl /FeTextureAtlasTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/TextureAtlasTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 ThreadingTest:
 	cl /FeThreadingTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/ThreadingTest-main.cpp /link $(LD_FLAGS) $(MAIN_LDFLAGS)

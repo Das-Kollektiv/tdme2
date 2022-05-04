@@ -517,9 +517,6 @@ SRCS = \
 	src/tdme/os/threading/ReadWriteLock.cpp \
 	src/tdme/os/threading/SpinLock.cpp \
 	src/tdme/os/threading/Thread.cpp \
-	src/tdme/tests/AngleTest.cpp \
-	src/tdme/tests/AudioTest.cpp \
-	src/tdme/tests/CrashTest.cpp \
 	src/tdme/tests/EngineTest.cpp \
 	src/tdme/tests/EntityHierarchyTest.cpp \
 	src/tdme/tests/LODTest.cpp \
@@ -620,6 +617,7 @@ SRCS = \
 	src/tdme/utilities/StringTools.cpp \
 	src/tdme/utilities/StringTokenizer.cpp \
 	src/tdme/utilities/Terrain.cpp \
+	src/tdme/utilities/TextureAtlas.cpp \
 	src/tdme/video/decoder/MPEG1Decoder.cpp \
 	src/tdme/video/decoder/VideoDecoderException.cpp \
 	$(SRCS_PLATFORM)
@@ -864,7 +862,6 @@ else
 endif
 
 MAIN_SRCS = \
-	src/tdme/tests/AngleTest-main.cpp \
 	src/tdme/tests/AudioTest-main.cpp \
 	src/tdme/tests/ContainerTest-main.cpp \
 	src/tdme/tests/CrashTest-main.cpp \
@@ -886,6 +883,7 @@ MAIN_SRCS = \
 	src/tdme/tests/PhysicsTest4-main.cpp \
 	src/tdme/tests/RayTracingTest-main.cpp \
 	src/tdme/tests/SkinningTest-main.cpp \
+	src/tdme/tests/TextureAtlasTest-main.cpp \
 	src/tdme/tests/ThreadingTest-main.cpp \
 	src/tdme/tests/TreeTest-main.cpp \
 	src/tdme/tests/UDPClientTest-main.cpp \
