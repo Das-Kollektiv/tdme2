@@ -228,6 +228,7 @@ void ModelEditorTabView::initModel(bool resetup)
 	}
 	prototypeFileName = prototype->getFileName().length() > 0 ? prototype->getFileName() : prototype->getModelFileName();
 	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), lodLevel, objectScale, cameraRotationInputHandler, 1.5f, resetup);
+	if (prototypePhysicsView != nullptr) prototypePhysicsView->setObjectScale(objectScale);
 	auto currentModelObject = dynamic_cast<Object3D*>(engine->getEntity("model"));
 	if (currentModelObject != nullptr) {
 		ModelStatistics modelStatistics;
@@ -395,7 +396,7 @@ void ModelEditorTabView::optimizeModel() {
 
 void ModelEditorTabView::handleInputEvents()
 {
-	prototypePhysicsView->handleInputEvents(prototype, objectScale);
+	prototypePhysicsView->handleInputEvents(prototype);
 	cameraRotationInputHandler->handleInputEvents();
 }
 
@@ -469,6 +470,8 @@ void ModelEditorTabView::initialize()
 		Console::println(string(exception.what()));
 	}
 	loadSettings();
+	//
+	if (prototypePhysicsView != nullptr) prototypePhysicsView->setObjectScale(objectScale);
 }
 
 void ModelEditorTabView::storeSettings()

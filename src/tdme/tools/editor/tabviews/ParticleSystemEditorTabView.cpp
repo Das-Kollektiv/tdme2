@@ -220,7 +220,7 @@ void ParticleSystemEditorTabView::handleInputEvents()
 			}
 		}
 	} else {
-		prototypePhysicsView->handleInputEvents(prototype, objectScale);
+		prototypePhysicsView->handleInputEvents(prototype);
 	}
 	cameraRotationInputHandler->handleInputEvents();
 }
@@ -256,6 +256,7 @@ void ParticleSystemEditorTabView::initialize()
 		Console::println(string(exception.what()));
 	}
 	// TODO: load settings
+	if (prototypePhysicsView != nullptr) prototypePhysicsView->setObjectScale(objectScale);
 }
 
 void ParticleSystemEditorTabView::dispose()
@@ -327,6 +328,7 @@ void ParticleSystemEditorTabView::stopSound() {
 
 void ParticleSystemEditorTabView::initParticleSystem() {
 	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), 1, objectScale, cameraRotationInputHandler);
+	if (prototypePhysicsView != nullptr) prototypePhysicsView->setObjectScale(objectScale);
 }
 
 void ParticleSystemEditorTabView::uninitParticleSystem() {

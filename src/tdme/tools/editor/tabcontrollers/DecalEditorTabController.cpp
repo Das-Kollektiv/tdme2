@@ -6,6 +6,7 @@
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeDecal.h>
 #include <tdme/gui/events/GUIActionListener.h>
@@ -42,6 +43,7 @@ using tdme::tools::editor::tabcontrollers::DecalEditorTabController;
 using tdme::engine::fileio::textures::PNGTextureWriter;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::fileio::textures::Texture;
+using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::prototype::Prototype;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
@@ -196,7 +198,9 @@ void DecalEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 								"/" +
 								decalEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 							);
+							//
 							if (decal->getTexture() != nullptr) {
+								// thumbnail
 								auto decalTextureThumbnail = TextureReader::scale(decal->getTexture(), 128, 128);
 								vector<uint8_t> pngData;
 								string base64PNGData;
@@ -204,6 +208,22 @@ void DecalEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 								Base64::encode(pngData, base64PNGData);
 								prototype->setThumbnail(base64PNGData);
 								decalTextureThumbnail->releaseReference();
+								// adjust oriented bounding box
+								auto physicsSubView = decalEditorTabController->prototypePhysicsSubController->getView();
+								physicsSubView->applyBoundingVolumeObb(
+									prototype,
+									0,
+									Vector3(),
+									OrientedBoundingBox::AABB_AXIS_X,
+									OrientedBoundingBox::AABB_AXIS_Y,
+									OrientedBoundingBox::AABB_AXIS_Z,
+									Vector3(
+										0.5f * (static_cast<float>(decal->getTexture()->getWidth()) / static_cast<float>(decal->getTexture()->getHeight())),
+										0.5f,
+										0.5f
+									)
+								);
+								physicsSubView->updateGizmo(prototype);
 							}
 						} catch (Exception& exception) {
 							Console::println(string() + "OnDecalTextureFileOpenAction::performAction(): An error occurred: " + exception.what());

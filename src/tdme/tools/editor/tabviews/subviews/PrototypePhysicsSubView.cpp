@@ -83,11 +83,6 @@ PrototypePhysicsSubView::PrototypePhysicsSubView(Engine* engine, PrototypePhysic
 PrototypePhysicsSubView::~PrototypePhysicsSubView() {
 }
 
-PopUps* PrototypePhysicsSubView::getPopUps()
-{
-	return popUps;
-}
-
 void PrototypePhysicsSubView::clearModelBoundingVolume(int idx) {
 	if (idx != DISPLAY_BOUNDINGVOLUMEIDX_ALL) {
 		dynamic_cast<EntityHierarchy*>(engine->getEntity("tdme.prototype.bvs"))->removeEntity("tdme.prototype.bv." + to_string(idx));
@@ -101,9 +96,6 @@ void PrototypePhysicsSubView::setupModelBoundingVolume(Prototype* prototype, int
 	if (prototypeBoundingVolume == nullptr) return;
 
 	{
-		Vector3 objectScale(0.15f, 0.15f, 0.15f); // TODO: have the default not as fixed constant here (this relates to bounding box fallback in Tools::setupPrototype() if none available)
-		auto modelEntity = engine->getEntity("model");
-		if (modelEntity != nullptr) objectScale = modelEntity->getScale();
 		auto modelBoundingVolumeEntityId = "tdme.prototype.bv." + to_string(idx);
 		if (prototypeBoundingVolume->getModel() != nullptr) {
 			auto modelBoundingVolumeEntity = new Object3D(modelBoundingVolumeEntityId, prototypeBoundingVolume->getModel());
@@ -248,7 +240,7 @@ void PrototypePhysicsSubView::display(Prototype* prototype) {
 	}
 }
 
-void PrototypePhysicsSubView::handleInputEvents(Prototype* prototype, const Vector3& objectScale) {
+void PrototypePhysicsSubView::handleInputEvents(Prototype* prototype) {
 	if (displayBoundingVolumeIdx == DISPLAY_BOUNDINGVOLUMEIDX_ALL || displayBoundingVolume == false) {
 		removeGizmo();
 		return;
@@ -272,6 +264,8 @@ void PrototypePhysicsSubView::handleInputEvents(Prototype* prototype, const Vect
 		if (Character::toLowerCase(event.getKeyChar()) == '3') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_ROTATE); updateGizmo(prototype); event.setProcessed(true); }
 		if (Character::toLowerCase(event.getKeyChar()) == '4') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_SCALE); updateGizmo(prototype); event.setProcessed(true); }
 	}
+
+	//
 	for (auto i = 0; i < engine->getGUI()->getMouseEvents().size(); i++) {
 		auto& event = engine->getGUI()->getMouseEvents()[i];
 
@@ -280,7 +274,7 @@ void PrototypePhysicsSubView::handleInputEvents(Prototype* prototype, const Vect
 		if (event.getButton() == MOUSE_BUTTON_LEFT) {
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 				auto selectedEntity = engine->getEntity("tdme.prototype.bv.editing");
-				if (selectedEntity != nullptr) applyBoundingVolumeTransformations(prototype, displayBoundingVolumeIdx, selectedEntity->getTransformations(), objectScale, false);
+				if (selectedEntity != nullptr) applyBoundingVolumeTransformations(prototype, displayBoundingVolumeIdx, selectedEntity->getTransformations(), false);
 				if (getGizmoMode() != GIZMOMODE_NONE) {
 					setGizmoMode(GIZMOMODE_NONE);
 					updateGizmo(prototype);
@@ -330,7 +324,7 @@ void PrototypePhysicsSubView::handleInputEvents(Prototype* prototype, const Vect
 							selectedEntity->setRotationAngle(2, selectedEntity->getRotationAngle(2) + deltaRotation[0]);
 							selectedEntity->update();
 							setGizmoRotation(prototype, selectedEntity->getTransformations());
-							applyBoundingVolumeTransformations(prototype, displayBoundingVolumeIdx, selectedEntity->getTransformations(), objectScale, true);
+							applyBoundingVolumeTransformations(prototype, displayBoundingVolumeIdx, selectedEntity->getTransformations(), true);
 						}
 						if (Math::abs(deltaTranslation.getX()) > Math::EPSILON ||
 							Math::abs(deltaTranslation.getY()) > Math::EPSILON ||
@@ -361,7 +355,7 @@ void PrototypePhysicsSubView::setGizmoRotation(Prototype* prototype, const Trans
 	Gizmo::setGizmoRotation(transformations);
 }
 
-void PrototypePhysicsSubView::applyBoundingVolumeTransformations(Prototype* prototype, int i, const Transformations& _transformations, const Vector3& objectScale, bool guiOnly) {
+void PrototypePhysicsSubView::applyBoundingVolumeTransformations(Prototype* prototype, int i, const Transformations& _transformations, bool guiOnly) {
 	auto modelEntity = engine->getEntity("model");
 	auto transformations = _transformations;
 	auto objectScaleInverted = Vector3(
