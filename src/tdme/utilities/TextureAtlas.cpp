@@ -236,7 +236,6 @@ void TextureAtlas::update() {
 		atlasTextureWidth, atlasTextureHeight,
 		atlasTextureByteBuffer
 	);
-	atlasTexture->setAtlasSize(atlasTextures.size());
 	atlasTexture->setUseMipMap(false);
 	atlasTexture->acquireReference();
 
