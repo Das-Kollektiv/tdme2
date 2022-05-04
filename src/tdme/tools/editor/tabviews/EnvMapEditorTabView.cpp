@@ -105,7 +105,7 @@ void EnvMapEditorTabView::initialize()
 	cam->setLookFrom(Vector3(81.296799f, 15.020234f, 101.091347f));
 	cam->setLookAt(Vector3(57.434414f, 0.695241f, 67.012329f));
 	SceneConnector::setLights(engine, scene, Vector3());
-	SceneConnector::addScene(engine, scene, true, true, true, true);
+	SceneConnector::addScene(engine, scene, false, false, false, false, false);
 	initSky();
 }
 

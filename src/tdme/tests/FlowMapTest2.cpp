@@ -439,7 +439,7 @@ void FlowMapTest2::initialize()
 	engine->initialize();
 	scene = SceneReader::read("../WarStory/resources/project/maps", "Map_TEST_SquadMovement.tscene");
 	SceneConnector::setLights(engine, scene);
-	SceneConnector::addScene(engine, scene, false, false, false, false);
+	SceneConnector::addScene(engine, scene, false, false, false, false, false);
 	SceneConnector::addScene(world, scene);
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);

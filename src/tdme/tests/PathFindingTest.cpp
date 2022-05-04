@@ -172,7 +172,7 @@ void PathFindingTest::initialize()
 	engine->initialize();
 	scene = SceneReader::read("resources/tests/levels/pathfinding", "test.tscene");
 	SceneConnector::setLights(engine, scene);
-	SceneConnector::addScene(engine, scene, false, false, false, false);
+	SceneConnector::addScene(engine, scene, false, false, false, false, false);
 	SceneConnector::addScene(world, scene);
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);

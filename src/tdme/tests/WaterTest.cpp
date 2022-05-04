@@ -151,7 +151,7 @@ void WaterTest::initialize()
 
 	scene = SceneReader::read("resources/tests/levels/water", "Level_WaterShader.tscene");
 	SceneConnector::setLights(engine, scene);
-	SceneConnector::addScene(engine, scene, false, false, false, false);
+	SceneConnector::addScene(engine, scene, false, false, false, false, false);
 
 	// load sky
 	skySpherePrototype = PrototypeReader::read("resources/engine/models", "sky_sphere.tmodel");

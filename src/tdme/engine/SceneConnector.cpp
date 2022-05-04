@@ -318,6 +318,49 @@ Entity* SceneConnector::createEmpty(const string& id, const Transformations& tra
 	return entity;
 }
 
+Entity* SceneConnector::createEditorDecalEntity(Prototype* prototype, const string& id, const Transformations& transformations, int instances, Entity* parentEntity) {
+	// decals only here :D
+	if (prototype->getType() != Prototype_Type::DECAL) return nullptr;
+
+	//
+	Entity* entity = nullptr;
+
+	// add decal OBB
+	auto entityHierarchy = new EntityHierarchy(id);
+	for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
+		auto entityBoundingVolume = prototype->getBoundingVolume(i);
+		if (entityBoundingVolume->getModel() != nullptr) {
+			auto bvObject = new Object3D("tdme.prototype.bv." + to_string(i), entityBoundingVolume->getModel());
+			bvObject->setRenderPass(Entity::RENDERPASS_POST_POSTPROCESSING);
+			entityHierarchy->addEntity(bvObject);
+		}
+	}
+	// add decal itself
+	if (prototype->getBoundingVolumeCount() == 1 &&
+		dynamic_cast<OrientedBoundingBox*>(prototype->getBoundingVolume(0)->getBoundingVolume()) != nullptr) {
+		entityHierarchy->addEntity(
+			new DecalObject(
+				"decal",
+				dynamic_cast<OrientedBoundingBox*>(prototype->getBoundingVolume(0)->getBoundingVolume()),
+				prototype->getDecal()->getTexture()
+			)
+		);
+	}
+
+	//
+	entityHierarchy->update();
+	if (entityHierarchy->getEntities().size() == 0) {
+		entityHierarchy->dispose();
+		delete entityHierarchy;
+	} else {
+		entity = entityHierarchy;
+		entity->setParentEntity(parentEntity);
+	}
+
+	// done
+	return entity;
+}
+
 Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, const Transformations& transformations, int instances, Entity* parentEntity) {
 	Entity* entity = nullptr;
 
@@ -449,18 +492,27 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 			entity->setParentEntity(parentEntity);
 		}
 	} else
+	// decal
+	if (prototype->getType() == Prototype_Type::DECAL) {
+		entity =
+			new DecalObject(
+				id,
+				dynamic_cast<OrientedBoundingBox*>(prototype->getBoundingVolume(0)->getBoundingVolume()),
+				prototype->getDecal()->getTexture()
+			);
+		entity->setParentEntity(parentEntity);
+	} else
 	// trigger/environment mapping
 	if (prototype->getType() == Prototype_Type::TRIGGER ||
-		prototype->getType() == Prototype_Type::ENVIRONMENTMAPPING ||
-		prototype->getType() == Prototype_Type::DECAL) {
+		prototype->getType() == Prototype_Type::ENVIRONMENTMAPPING) {
 		// bounding volumes
-		auto entityBoundingVolumesHierarchy = new EntityHierarchy(id);
+		auto entityHierarchy = new EntityHierarchy(id);
 		for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
 			auto entityBoundingVolume = prototype->getBoundingVolume(i);
 			if (entityBoundingVolume->getModel() != nullptr) {
 				auto bvObject = new Object3D("tdme.prototype.bv." + to_string(i), entityBoundingVolume->getModel());
 				bvObject->setRenderPass(Entity::RENDERPASS_POST_POSTPROCESSING);
-				entityBoundingVolumesHierarchy->addEntity(bvObject);
+				entityHierarchy->addEntity(bvObject);
 			}
 		}
 		if (prototype->getType() == Prototype_Type::ENVIRONMENTMAPPING &&
@@ -470,33 +522,21 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 			auto environmentMapping = new EnvironmentMapping("environmentmapping", Engine::getEnvironmentMappingWidth(), Engine::getEnvironmentMappingHeight(), aabb);
 			environmentMapping->setRenderPassMask(prototype->getEnvironmentMapRenderPassMask());
 			environmentMapping->setTimeRenderUpdateFrequency(prototype->getEnvironmentMapTimeRenderUpdateFrequency());
-			entityBoundingVolumesHierarchy->addEntity(environmentMapping);
-		} else
-		if (prototype->getType() == Prototype_Type::DECAL && prototype->getBoundingVolumeCount() == 1 &&
-			dynamic_cast<OrientedBoundingBox*>(prototype->getBoundingVolume(0)->getBoundingVolume()) != nullptr) {
-			entityBoundingVolumesHierarchy->addEntity(
-				new DecalObject(
-					"decal",
-					dynamic_cast<OrientedBoundingBox*>(prototype->getBoundingVolume(0)->getBoundingVolume()),
-					prototype->getDecal()->getTexture()
-				)
-			);
+			entityHierarchy->addEntity(environmentMapping);
 		}
-		entityBoundingVolumesHierarchy->update();
-		if (entityBoundingVolumesHierarchy->getEntities().size() == 0) {
-			entityBoundingVolumesHierarchy->dispose();
-			delete entityBoundingVolumesHierarchy;
+		entityHierarchy->update();
+		if (entityHierarchy->getEntities().size() == 0) {
+			entityHierarchy->dispose();
+			delete entityHierarchy;
 		} else {
-			entity = entityBoundingVolumesHierarchy;
+			entity = entityHierarchy;
 			entity->setParentEntity(parentEntity);
 		}
 	}
 
 	//
 	if (entity != nullptr) {
-		if (prototype->isTerrainMesh() == true) {
-			entity->setRenderPass(Entity::RENDERPASS_TERRAIN);
-		}
+		if (prototype->isTerrainMesh() == true) entity->setRenderPass(Entity::RENDERPASS_TERRAIN);
 		entity->setContributesShadows(prototype->isContributesShadows());
 		entity->setReceivesShadows(prototype->isReceivesShadows());
 		entity->fromTransformations(transformations);
@@ -504,6 +544,16 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 
 	// done
 	return entity;
+}
+
+Entity* SceneConnector::createEditorDecalEntity(SceneEntity* sceneEntity, const Vector3& translation, int instances, Entity* parentEntity) {
+	Transformations transformations;
+	transformations.fromTransformations(sceneEntity->getTransformations());
+	if (translation.equals(Vector3()) == false) {
+		transformations.setTranslation(transformations.getTranslation().clone().add(translation));
+		transformations.update();
+	}
+	return createEditorDecalEntity(sceneEntity->getPrototype(), sceneEntity->getId(), transformations, instances, parentEntity);
 }
 
 Entity* SceneConnector::createEntity(SceneEntity* sceneEntity, const Vector3& translation, int instances, Entity* parentEntity) {
@@ -516,7 +566,7 @@ Entity* SceneConnector::createEntity(SceneEntity* sceneEntity, const Vector3& tr
 	return createEntity(sceneEntity->getPrototype(), sceneEntity->getId(), transformations, instances, parentEntity);
 }
 
-void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool pickable, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
+void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool useEditorDecals, bool pickable, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
 {
 	if (progressCallback != nullptr) progressCallback->progress(0.0f);
 	// TODO: progress callbacks for terrain
@@ -705,7 +755,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 			renderGroupSceneEditorEntities[sceneEntity->getPrototype()->getModel()] = sceneEntity->getPrototype();
 			renderGroupEntitiesByShaderPartitionModel[sceneEntity->getPrototype()->getShader() + "." + sceneEntity->getPrototype()->getDistanceShader() + "." + to_string(static_cast<int>(sceneEntity->getPrototype()->getDistanceShaderDistance() / 10.0f))][to_string(partitionX) + "," + to_string(partitionY) + "," + to_string(partitionZ)][sceneEntity->getPrototype()->getModel()].push_back(&sceneEntity->getTransformations());
 		} else {
-			Entity* entity = createEntity(sceneEntity);
+			Entity* entity = sceneEntity->getPrototype()->getType() == Prototype_Type::DECAL && useEditorDecals == true?createEditorDecalEntity(sceneEntity):createEntity(sceneEntity);
 			if (entity == nullptr) continue;
 
 			entity->setTranslation(entity->getTranslation().clone().add(translation));

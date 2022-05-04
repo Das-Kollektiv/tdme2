@@ -1585,6 +1585,33 @@ Entity* Engine::getEntityByMousePosition(
 	Node* selectedObject3DNode = nullptr;
 	ParticleSystemEntity* selectedParticleSystem = nullptr;
 
+	// iterate visible object partition systems, check if ray with given mouse position from near plane to far plane collides with bounding volume
+	for (auto entity: decomposedEntities.decalObjects) {
+		// skip if not pickable or ignored by filter
+		if (forcePicking == false && entity->isPickable() == false) continue;
+		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
+		// do the collision test
+		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), nearPlaneWorldCoordinate, farPlaneWorldCoordinate, boundingBoxLineContactMin, boundingBoxLineContactMax) == true) {
+			auto entityDistance = lineTriangleContact.set(entity->getBoundingBoxTransformed()->getCenter()).sub(nearPlaneWorldCoordinate).computeLengthSquared();
+			// check if match or better match
+			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
+				selectedEntity = entity;
+				selectedEntityDistance = entityDistance;
+				selectedObject3DNode = nullptr;
+				selectedParticleSystem = nullptr;
+			}
+		}
+	}
+
+	// decals have first priority right now
+	if (selectedEntity != nullptr) {
+		if (object3DNode != nullptr) *object3DNode = selectedObject3DNode;
+		for (auto _entity = selectedEntity; _entity != nullptr; _entity = _entity->getParentEntity()) {
+			if (_entity->getParentEntity() == nullptr) return _entity;
+		}
+		return nullptr;
+	}
+
 	// iterate visible objects that have no depth test, check if ray with given mouse position from near plane to far plane collides with each object's triangles
 	for (auto entity: decomposedEntities.objectsNoDepthTest) {
 		// skip if not pickable or ignored by filter
@@ -1607,7 +1634,8 @@ Entity* Engine::getEntityByMousePosition(
 			}
 		}
 	}
-	// they have first priority right now
+
+	// objects without depth test have second priority right now
 	if (selectedEntity != nullptr) {
 		if (object3DNode != nullptr) *object3DNode = selectedObject3DNode;
 		for (auto _entity = selectedEntity; _entity != nullptr; _entity = _entity->getParentEntity()) {

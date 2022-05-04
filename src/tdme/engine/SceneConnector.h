@@ -231,6 +231,17 @@ public:
 	static Entity* createEmpty(const string& id, const Transformations& transformations);
 
 	/**
+	 * Create editor decal engine entity
+	 * @param prototype prototype
+	 * @param id id
+	 * @param transformations transformations
+	 * @param instances instances which applies only for skinned objects
+	 * @param parentEntity parent entity
+	 * @return entity
+	 */
+	static Entity* createEditorDecalEntity(Prototype* prototype, const string& id, const Transformations& transformations, int instances = 1, Entity* parentEntity = nullptr);
+
+	/**
 	 * Create engine entity
 	 * @param prototype prototype
 	 * @param id id
@@ -240,6 +251,16 @@ public:
 	 * @return entity
 	 */
 	static Entity* createEntity(Prototype* prototype, const string& id, const Transformations& transformations, int instances = 1, Entity* parentEntity = nullptr);
+
+	/**
+	 * Create editor decal engine entity
+	 * @param sceneEntity scene object
+	 * @param translation translation
+	 * @param instances instances which applies only for skinned objects
+	 * @param parentEntity parent entity
+	 * @return entity
+	 */
+	static Entity* createEditorDecalEntity(SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), int instances = 1, Entity* parentEntity = nullptr);
 
 	/**
 	 * Create engine entity
@@ -258,12 +279,13 @@ public:
 	 * @param addEmpties add empties
 	 * @param addTrigger add trigger
 	 * @param addEnvironmentMapping add environment mapping
+	 * @param useEditorDecals use editor decals
 	 * @param pickable pickable
 	 * @param enable enable
 	 * @param translation translation
 	 * @param progressCallback progress callback
 	 */
-	static void addScene(Engine* engine, Scene* scene, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool pickable, bool enable = true, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), ProgressCallback* progressCallback = nullptr);
+	static void addScene(Engine* engine, Scene* scene, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool useEditorDecals, bool pickable, bool enable = true, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), ProgressCallback* progressCallback = nullptr);
 
 	/**
 	 * Create rigid body
