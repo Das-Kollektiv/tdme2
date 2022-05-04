@@ -213,16 +213,16 @@ void TextureAtlas::update() {
 				auto b = textureData->get(y * textureWidth * textureBytesPerPixel + x * textureBytesPerPixel + 2);
 				auto a = textureBytesPerPixel == 4?textureData->get(y * textureWidth * textureBytesPerPixel + x * textureBytesPerPixel + 3):0xff;
 				if (atlasTexture.orientation == AtlasTexture::ORIENTATION_NORMAL) {
-					atlasTextureBuffer[(atlasTop + y) * atlasTextureWidth * 4 + (atlasLeft + x) * 4 + 0] = r;
-					atlasTextureBuffer[(atlasTop + y) * atlasTextureWidth * 4 + (atlasLeft + x) * 4 + 1] = g;
-					atlasTextureBuffer[(atlasTop + y) * atlasTextureWidth * 4 + (atlasLeft + x) * 4 + 2] = b;
-					atlasTextureBuffer[(atlasTop + y) * atlasTextureWidth * 4 + (atlasLeft + x) * 4 + 3] = a;
+					atlasTextureBuffer[(atlasTop + textureHeight - 1 - y) * atlasTextureWidth * 4 + (atlasLeft + x) * 4 + 0] = r;
+					atlasTextureBuffer[(atlasTop + textureHeight - 1 - y) * atlasTextureWidth * 4 + (atlasLeft + x) * 4 + 1] = g;
+					atlasTextureBuffer[(atlasTop + textureHeight - 1 - y) * atlasTextureWidth * 4 + (atlasLeft + x) * 4 + 2] = b;
+					atlasTextureBuffer[(atlasTop + textureHeight - 1 - y) * atlasTextureWidth * 4 + (atlasLeft + x) * 4 + 3] = a;
 				} else
 				if (atlasTexture.orientation == AtlasTexture::ORIENTATION_ROTATED) {
-					atlasTextureBuffer[(atlasTop + x) * atlasTextureWidth * 4 + (atlasLeft + y) * 4 + 0] = r;
-					atlasTextureBuffer[(atlasTop + x) * atlasTextureWidth * 4 + (atlasLeft + y) * 4 + 1] = g;
-					atlasTextureBuffer[(atlasTop + x) * atlasTextureWidth * 4 + (atlasLeft + y) * 4 + 2] = b;
-					atlasTextureBuffer[(atlasTop + x) * atlasTextureWidth * 4 + (atlasLeft + y) * 4 + 3] = a;
+					atlasTextureBuffer[(atlasTop + x) * atlasTextureWidth * 4 + (atlasLeft + textureHeight - 1 - y) * 4 + 0] = r;
+					atlasTextureBuffer[(atlasTop + x) * atlasTextureWidth * 4 + (atlasLeft + textureHeight - 1 - y) * 4 + 1] = g;
+					atlasTextureBuffer[(atlasTop + x) * atlasTextureWidth * 4 + (atlasLeft + textureHeight - 1 - y) * 4 + 2] = b;
+					atlasTextureBuffer[(atlasTop + x) * atlasTextureWidth * 4 + (atlasLeft + textureHeight - 1 - y) * 4 + 3] = a;
 				}
 			}
 		}

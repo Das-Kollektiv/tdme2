@@ -81,9 +81,6 @@ vec4 getDecalColor(vec2 textureCoordinate, float depth) {
 		if (decalTextureCoordinate.x < 0.0 || decalTextureCoordinate.x >= 1.0 ||
 			decalTextureCoordinate.y < 0.0 || decalTextureCoordinate.y >= 1.0) continue;
 
-		//
-		decalTextureCoordinate.y = 1.0 - decalTextureCoordinate.y;
-
 		// compute texture coordinate within atlas and rotate if required
 		if (decals[i].orientation == 2) {
 			float x = decalTextureCoordinate.x;
