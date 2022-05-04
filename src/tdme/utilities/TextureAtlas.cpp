@@ -155,6 +155,12 @@ void TextureAtlas::update() {
 				line++;
 			}
 		}
+		if (line == 0) {
+			atlasTextureWidth = left + 1;
+			auto textureWidth = 1;
+			while (textureWidth < atlasTextureWidth) textureWidth*= 2;
+			atlasTextureWidth = textureWidth;
+		}
 	}
 
 	// push upwards
@@ -206,10 +212,18 @@ void TextureAtlas::update() {
 				auto g = textureData->get(y * textureWidth * textureBytesPerPixel + x * textureBytesPerPixel + 1);
 				auto b = textureData->get(y * textureWidth * textureBytesPerPixel + x * textureBytesPerPixel + 2);
 				auto a = textureBytesPerPixel == 4?textureData->get(y * textureWidth * textureBytesPerPixel + x * textureBytesPerPixel + 3):0xff;
-				atlasTextureBuffer[(atlasTop + y) * atlasTextureWidth * 4 + (atlasLeft + x) * 4 + 0] = r;
-				atlasTextureBuffer[(atlasTop + y) * atlasTextureWidth * 4 + (atlasLeft + x) * 4 + 1] = g;
-				atlasTextureBuffer[(atlasTop + y) * atlasTextureWidth * 4 + (atlasLeft + x) * 4 + 2] = b;
-				atlasTextureBuffer[(atlasTop + y) * atlasTextureWidth * 4 + (atlasLeft + x) * 4 + 3] = a;
+				if (atlasTexture.orientation == AtlasTexture::ORIENTATION_NORMAL) {
+					atlasTextureBuffer[(atlasTop + y) * atlasTextureWidth * 4 + (atlasLeft + x) * 4 + 0] = r;
+					atlasTextureBuffer[(atlasTop + y) * atlasTextureWidth * 4 + (atlasLeft + x) * 4 + 1] = g;
+					atlasTextureBuffer[(atlasTop + y) * atlasTextureWidth * 4 + (atlasLeft + x) * 4 + 2] = b;
+					atlasTextureBuffer[(atlasTop + y) * atlasTextureWidth * 4 + (atlasLeft + x) * 4 + 3] = a;
+				} else
+				if (atlasTexture.orientation == AtlasTexture::ORIENTATION_ROTATED) {
+					atlasTextureBuffer[(atlasTop + x) * atlasTextureWidth * 4 + (atlasLeft + y) * 4 + 0] = r;
+					atlasTextureBuffer[(atlasTop + x) * atlasTextureWidth * 4 + (atlasLeft + y) * 4 + 1] = g;
+					atlasTextureBuffer[(atlasTop + x) * atlasTextureWidth * 4 + (atlasLeft + y) * 4 + 2] = b;
+					atlasTextureBuffer[(atlasTop + x) * atlasTextureWidth * 4 + (atlasLeft + y) * 4 + 3] = a;
+				}
 			}
 		}
 	}

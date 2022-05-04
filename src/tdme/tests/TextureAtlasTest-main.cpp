@@ -1,9 +1,14 @@
+#include <string>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/TextureAtlas.h>
+
+using std::string;
+using std::to_string;
 
 using tdme::engine::fileio::textures::PNGTextureWriter;
 using tdme::engine::fileio::textures::Texture;
@@ -13,7 +18,7 @@ using tdme::utilities::TextureAtlas;
 
 int main(int argc, char** argv)
 {
-	TextureAtlas atlas("textureatlas-test");
+	TextureAtlas atlas("textureatlastest");
 	atlas.addTexture(TextureReader::read("./resources/engine/images", "checkbox_gridon.png"));
 	atlas.addTexture(TextureReader::read("./resources/engine/images", "checkbox_invisible.png"));
 	atlas.addTexture(TextureReader::read("./resources/engine/images", "checkbox_unlinked.png"));
@@ -147,5 +152,21 @@ int main(int argc, char** argv)
 	atlas.addTexture(TextureReader::read("./resources/engine/textures", "groundplate.png"));
 	atlas.addTexture(TextureReader::read("./resources/engine/textures", "transparent_pixel.png"));
 	atlas.update();
-	PNGTextureWriter::write(atlas.getAtlasTexture(), ".", "textureatlas-test.png", false, false);
+
+	// dump atlas textures
+	for (auto i = 0;; i++) {
+		auto atlasTexture = atlas.getAtlasTexture(i);
+		if (atlasTexture == nullptr) break;
+		Console::println(
+			atlasTexture->texture->getId() + ": " +
+			"left: " + to_string(atlasTexture->left) + ", " +
+			"top: " + to_string(atlasTexture->left) + ", " +
+			"width: " + to_string(atlasTexture->width) + ", " +
+			"height: " + to_string(atlasTexture->height) + ", " +
+			"orientation: " + (atlasTexture->orientation == TextureAtlas::AtlasTexture::ORIENTATION_NONE?"no orientation":(atlasTexture->orientation == TextureAtlas::AtlasTexture::ORIENTATION_ROTATED?"rotated":"standard rotation"))
+		);
+	}
+
+	// write to PNG
+	PNGTextureWriter::write(atlas.getAtlasTexture(), ".", "textureatlastest.png", false, false);
 }
