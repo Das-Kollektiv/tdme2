@@ -20,11 +20,15 @@ struct PBRLight {
 };
 #endif
 
-struct Decal {
-	mat4 worldToDecalSpace;
+struct AtlasTexture {
 	int orientation;
 	vec2 position;
 	vec2 dimension;
+};
+
+struct Decal {
+	mat4 worldToDecalSpace;
+	AtlasTexture texture;
 };
 
 {$DEFINITIONS}
@@ -80,13 +84,13 @@ vec4 getDecalColor(vec2 textureCoordinate, float depth) {
 			decalTextureCoordinate.y < 0.0 || decalTextureCoordinate.y >= 1.0) continue;
 
 		// compute texture coordinate within atlas and rotate if required
-		if (decals[i].orientation == 2) {
+		if (decals[i].texture.orientation == 2) {
 			float x = decalTextureCoordinate.x;
 			decalTextureCoordinate.x = decalTextureCoordinate.y;
 			decalTextureCoordinate.y = x;
 		}
-		decalTextureCoordinate*= decals[i].dimension;
-		decalTextureCoordinate+= decals[i].position;
+		decalTextureCoordinate*= decals[i].texture.dimension;
+		decalTextureCoordinate+= decals[i].texture.position;
 
 		//
 		return textureLod(decalsTextureUnit, decalTextureCoordinate, 0.0);

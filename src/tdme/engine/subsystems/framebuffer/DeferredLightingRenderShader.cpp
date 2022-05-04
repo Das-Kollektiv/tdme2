@@ -234,12 +234,12 @@ void DeferredLightingRenderShader::initialize()
 	for (auto i = 0; i < DECAL_COUNT; i++) {
 		uniformDecalWorldToDecalSpace[i] = renderer->getProgramUniformLocation(programId, "decals[" + to_string(i) + "].worldToDecalSpace");
 		if (uniformDecalWorldToDecalSpace[i] == -1) return;
-		uniformDecalOrientation[i] = renderer->getProgramUniformLocation(programId, "decals[" + to_string(i) + "].orientation");
-		if (uniformDecalOrientation[i] == -1) return;
-		uniformDecalPosition[i] = renderer->getProgramUniformLocation(programId, "decals[" + to_string(i) + "].position");
-		if (uniformDecalPosition[i] == -1) return;
-		uniformDecalDimension[i] = renderer->getProgramUniformLocation(programId, "decals[" + to_string(i) + "].dimension");
-		if (uniformDecalDimension[i] == -1) return;
+		uniformDecalAtlasTextureOrientation[i] = renderer->getProgramUniformLocation(programId, "decals[" + to_string(i) + "].texture.orientation");
+		if (uniformDecalAtlasTextureOrientation[i] == -1) return;
+		uniformDecalAtlasTexturePosition[i] = renderer->getProgramUniformLocation(programId, "decals[" + to_string(i) + "].texture.position");
+		if (uniformDecalAtlasTexturePosition[i] == -1) return;
+		uniformDecalAtlasTextureDimension[i] = renderer->getProgramUniformLocation(programId, "decals[" + to_string(i) + "].texture.dimension");
+		if (uniformDecalAtlasTextureDimension[i] == -1) return;
 	}
 
 	//
@@ -342,10 +342,10 @@ void DeferredLightingRenderShader::useProgram(Engine* engine, vector<DecalObject
 				auto atlasTexture = decalsTextureAtlas.getAtlasTexture(atlasTextureIdx);
 				if (atlasTexture == nullptr) continue;
 				renderer->setProgramUniformFloatMatrix4x4(contextIdx, uniformDecalWorldToDecalSpace[i], decalObject->getWorldToDecalSpaceMatrix().getArray());
-				renderer->setProgramUniformInteger(contextIdx, uniformDecalOrientation[i], atlasTexture->orientation);
+				renderer->setProgramUniformInteger(contextIdx, uniformDecalAtlasTextureOrientation[i], atlasTexture->orientation);
 				renderer->setProgramUniformFloatVec2(
 					contextIdx,
-					uniformDecalPosition[i],
+					uniformDecalAtlasTexturePosition[i],
 					{
 						static_cast<float>(atlasTexture->left) / static_cast<float>(decalsTextureAtlasTextureWidth),
 						static_cast<float>(atlasTexture->top) / static_cast<float>(decalsTextureAtlasTextureHeight)
@@ -353,7 +353,7 @@ void DeferredLightingRenderShader::useProgram(Engine* engine, vector<DecalObject
 				);
 				renderer->setProgramUniformFloatVec2(
 					contextIdx,
-					uniformDecalDimension[i],
+					uniformDecalAtlasTextureDimension[i],
 					{
 						static_cast<float>(atlasTexture->width) / static_cast<float>(decalsTextureAtlasTextureWidth),
 						static_cast<float>(atlasTexture->height) / static_cast<float>(decalsTextureAtlasTextureHeight)

@@ -83,9 +83,9 @@ private:
 	int32_t uniformDecalCount { -1 };
 	int32_t uniformDecalsTextureUnit { -1 };
 	array<int32_t, DECAL_COUNT> uniformDecalWorldToDecalSpace;
-	array<int32_t, DECAL_COUNT> uniformDecalOrientation;
-	array<int32_t, DECAL_COUNT> uniformDecalPosition;
-	array<int32_t, DECAL_COUNT> uniformDecalDimension;
+	array<int32_t, DECAL_COUNT> uniformDecalAtlasTextureOrientation;
+	array<int32_t, DECAL_COUNT> uniformDecalAtlasTexturePosition;
+	array<int32_t, DECAL_COUNT> uniformDecalAtlasTextureDimension;
 
 	int32_t decalsTextureAtlasTextureId { 0 };
 
