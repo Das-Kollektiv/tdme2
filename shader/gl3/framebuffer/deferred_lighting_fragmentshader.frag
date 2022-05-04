@@ -23,10 +23,8 @@ struct PBRLight {
 struct Decal {
 	mat4 worldToDecalSpace;
 	int orientation;
-	float left;
-	float top;
-	float width;
-	float height;
+	vec2 position;
+	vec2 dimension;
 };
 
 {$DEFINITIONS}
@@ -87,10 +85,8 @@ vec4 getDecalColor(vec2 textureCoordinate, float depth) {
 			decalTextureCoordinate.x = decalTextureCoordinate.y;
 			decalTextureCoordinate.y = x;
 		}
-		decalTextureCoordinate.x*= decals[i].width;
-		decalTextureCoordinate.x+= decals[i].left;
-		decalTextureCoordinate.y*= decals[i].height;
-		decalTextureCoordinate.y+= decals[i].top;
+		decalTextureCoordinate*= decals[i].dimension;
+		decalTextureCoordinate+= decals[i].position;
 
 		//
 		return textureLod(decalsTextureUnit, decalTextureCoordinate, 0.0);

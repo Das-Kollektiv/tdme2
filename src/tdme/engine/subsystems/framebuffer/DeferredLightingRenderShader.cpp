@@ -236,14 +236,10 @@ void DeferredLightingRenderShader::initialize()
 		if (uniformDecalWorldToDecalSpace[i] == -1) return;
 		uniformDecalOrientation[i] = renderer->getProgramUniformLocation(programId, "decals[" + to_string(i) + "].orientation");
 		if (uniformDecalOrientation[i] == -1) return;
-		uniformDecalLeft[i] = renderer->getProgramUniformLocation(programId, "decals[" + to_string(i) + "].left");
-		if (uniformDecalLeft[i] == -1) return;
-		uniformDecalTop[i] = renderer->getProgramUniformLocation(programId, "decals[" + to_string(i) + "].top");
-		if (uniformDecalTop[i] == -1) return;
-		uniformDecalWidth[i] = renderer->getProgramUniformLocation(programId, "decals[" + to_string(i) + "].width");
-		if (uniformDecalWidth[i] == -1) return;
-		uniformDecalHeight[i] = renderer->getProgramUniformLocation(programId, "decals[" + to_string(i) + "].height");
-		if (uniformDecalHeight[i] == -1) return;
+		uniformDecalPosition[i] = renderer->getProgramUniformLocation(programId, "decals[" + to_string(i) + "].position");
+		if (uniformDecalPosition[i] == -1) return;
+		uniformDecalDimension[i] = renderer->getProgramUniformLocation(programId, "decals[" + to_string(i) + "].dimension");
+		if (uniformDecalDimension[i] == -1) return;
 	}
 
 	//
@@ -347,10 +343,22 @@ void DeferredLightingRenderShader::useProgram(Engine* engine, vector<DecalObject
 				if (atlasTexture == nullptr) continue;
 				renderer->setProgramUniformFloatMatrix4x4(contextIdx, uniformDecalWorldToDecalSpace[i], decalObject->getWorldToDecalSpaceMatrix().getArray());
 				renderer->setProgramUniformInteger(contextIdx, uniformDecalOrientation[i], atlasTexture->orientation);
-				renderer->setProgramUniformFloat(contextIdx, uniformDecalLeft[i], static_cast<float>(atlasTexture->left) / static_cast<float>(decalsTextureAtlasTextureWidth));
-				renderer->setProgramUniformFloat(contextIdx, uniformDecalTop[i], static_cast<float>(atlasTexture->top) / static_cast<float>(decalsTextureAtlasTextureHeight));
-				renderer->setProgramUniformFloat(contextIdx, uniformDecalWidth[i], static_cast<float>(atlasTexture->width) / static_cast<float>(decalsTextureAtlasTextureWidth));
-				renderer->setProgramUniformFloat(contextIdx, uniformDecalHeight[i], static_cast<float>(atlasTexture->height) / static_cast<float>(decalsTextureAtlasTextureHeight));
+				renderer->setProgramUniformFloatVec2(
+					contextIdx,
+					uniformDecalPosition[i],
+					{
+						static_cast<float>(atlasTexture->left) / static_cast<float>(decalsTextureAtlasTextureWidth),
+						static_cast<float>(atlasTexture->top) / static_cast<float>(decalsTextureAtlasTextureHeight)
+					}
+				);
+				renderer->setProgramUniformFloatVec2(
+					contextIdx,
+					uniformDecalDimension[i],
+					{
+						static_cast<float>(atlasTexture->width) / static_cast<float>(decalsTextureAtlasTextureWidth),
+						static_cast<float>(atlasTexture->height) / static_cast<float>(decalsTextureAtlasTextureHeight)
+					}
+				);
 			}
 		}
 	} else {
