@@ -21,8 +21,12 @@ struct PBRLight {
 #endif
 
 struct Decal {
-	int atlasTextureIdx;
 	mat4 worldToDecalSpace;
+	int orientation;
+	float left;
+	float top;
+	float width;
+	float height;
 };
 
 {$DEFINITIONS}
@@ -43,8 +47,6 @@ uniform sampler2D depthBufferTextureUnit;
 
 uniform int decalCount;
 uniform sampler2D decalsTextureUnit;
-uniform int decalsTextureAtlasSize;
-uniform vec2 decalsTextureAtlasPixelDimension;
 uniform Decal decals[DECAL_COUNT];
 
 // passed from vertex shader
@@ -79,16 +81,22 @@ vec4 getDecalColor(vec2 textureCoordinate, float depth) {
 		if (decalTextureCoordinate.x < 0.0 || decalTextureCoordinate.x >= 1.0 ||
 			decalTextureCoordinate.y < 0.0 || decalTextureCoordinate.y >= 1.0) continue;
 
-		#define ATLAS_TEXTURE_BORDER	32
-		vec2 decalTextureAtlasIdx  = vec2(decals[i].atlasTextureIdx % decalsTextureAtlasSize, decals[i].atlasTextureIdx / decalsTextureAtlasSize);
-		vec2 decalsTextureAtlasTextureDimensions = vec2(1.0 / float(decalsTextureAtlasSize));
-		vec2 atlasDecalTextureCoordinate =
-			decalTextureCoordinate / float(decalsTextureAtlasSize) *
-			vec2((decalsTextureAtlasTextureDimensions - (float(ATLAS_TEXTURE_BORDER) * 2.0 * decalsTextureAtlasPixelDimension)) / decalsTextureAtlasPixelDimension) +
-			vec2(float(ATLAS_TEXTURE_BORDER) * decalsTextureAtlasPixelDimension) +
-			decalsTextureAtlasTextureDimensions * decalTextureAtlasIdx;
+		//
+		decalTextureCoordinate.y = 1.0 - decalTextureCoordinate.y;
 
-		return textureLod(decalsTextureUnit, atlasDecalTextureCoordinate * 0.0000001 + decalTextureCoordinate, 0.0) * 0.000001 + vec4(decalTextureCoordinate.x, 0.0, 0.0, 1.0);
+		// compute texture coordinate within atlas and rotate if required
+		if (decals[i].orientation == 2) {
+			float x = decalTextureCoordinate.x;
+			decalTextureCoordinate.x = decalTextureCoordinate.y;
+			decalTextureCoordinate.y = x;
+		}
+		decalTextureCoordinate.x*= decals[i].width;
+		decalTextureCoordinate.x+= decals[i].left;
+		decalTextureCoordinate.y*= decals[i].height;
+		decalTextureCoordinate.y+= decals[i].top;
+
+		//
+		return textureLod(decalsTextureUnit, decalTextureCoordinate, 0.0);
 	}
 	return vec4(0.0, 0.0, 0.0, 0.0);
 }

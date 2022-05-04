@@ -81,7 +81,7 @@
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Float.h>
-#include <tdme/utilities/SimpleTextureAtlas.h>
+#include <tdme/utilities/TextureAtlas.h>
 
 using std::map;
 using std::remove;
@@ -162,7 +162,7 @@ using tdme::os::threading::Thread;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
 using tdme::utilities::Float;
-using tdme::utilities::SimpleTextureAtlas;
+using tdme::utilities::TextureAtlas;
 
 Engine* Engine::instance = nullptr;
 Renderer* Engine::renderer = nullptr;

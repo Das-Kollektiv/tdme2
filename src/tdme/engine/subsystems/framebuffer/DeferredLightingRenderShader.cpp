@@ -230,18 +230,20 @@ void DeferredLightingRenderShader::initialize()
 	uniformDecalsTextureUnit = renderer->getProgramUniformLocation(programId, "decalsTextureUnit");
 	if (uniformDecalsTextureUnit == -1) return;
 
-	uniformDecalsTextureAtlasSize = renderer->getProgramUniformLocation(programId, "decalsTextureAtlasSize");
-	if (uniformDecalsTextureAtlasSize == -1) return;
-
-	uniformDecalsTextureAtlasPixelDimension = renderer->getProgramUniformLocation(programId, "decalsTextureAtlasPixelDimension");
-	if (uniformDecalsTextureAtlasPixelDimension == -1) return;
-
 	//
 	for (auto i = 0; i < DECAL_COUNT; i++) {
-		uniformDecalAtlasTextureIdx[i] = renderer->getProgramUniformLocation(programId, "decals[" + to_string(i) + "].atlasTextureIdx");
-		if (uniformDecalAtlasTextureIdx[i] == -1) return;
 		uniformDecalWorldToDecalSpace[i] = renderer->getProgramUniformLocation(programId, "decals[" + to_string(i) + "].worldToDecalSpace");
 		if (uniformDecalWorldToDecalSpace[i] == -1) return;
+		uniformDecalOrientation[i] = renderer->getProgramUniformLocation(programId, "decals[" + to_string(i) + "].orientation");
+		if (uniformDecalOrientation[i] == -1) return;
+		uniformDecalLeft[i] = renderer->getProgramUniformLocation(programId, "decals[" + to_string(i) + "].left");
+		if (uniformDecalLeft[i] == -1) return;
+		uniformDecalTop[i] = renderer->getProgramUniformLocation(programId, "decals[" + to_string(i) + "].top");
+		if (uniformDecalTop[i] == -1) return;
+		uniformDecalWidth[i] = renderer->getProgramUniformLocation(programId, "decals[" + to_string(i) + "].width");
+		if (uniformDecalWidth[i] == -1) return;
+		uniformDecalHeight[i] = renderer->getProgramUniformLocation(programId, "decals[" + to_string(i) + "].height");
+		if (uniformDecalHeight[i] == -1) return;
 	}
 
 	//
@@ -332,24 +334,23 @@ void DeferredLightingRenderShader::useProgram(Engine* engine, vector<DecalObject
 		auto decalCount = Math::min(DECAL_COUNT, decalObjects.size());
 		renderer->setProgramUniformInteger(contextIdx, uniformDecalCount, decalCount);
 		if (decalCount > 0) {
+			auto decalsTextureAtlasTextureWidth = decalsTextureAtlasTexture->getTextureWidth();
+			auto decalsTextureAtlasTextureHeight = decalsTextureAtlasTexture->getTextureHeight();
 			renderer->setProgramUniformInteger(contextIdx, uniformDecalsTextureUnit, 12);
 			renderer->setTextureUnit(contextIdx, 12);
 			renderer->bindTexture(contextIdx, decalsTextureAtlasTextureId);
-			renderer->setProgramUniformInteger(contextIdx, uniformDecalsTextureAtlasSize, decalsTextureAtlasTexture->getAtlasSize());
-			renderer->setProgramUniformFloatVec2(
-				contextIdx,
-				uniformDecalsTextureAtlasPixelDimension,
-				{
-					1.0f / decalsTextureAtlasTexture->getTextureWidth(),
-					1.0f / decalsTextureAtlasTexture->getTextureHeight()
-				}
-			);
 			for (auto i = 0; i < decalCount && i < DECAL_COUNT; i++) {
 				auto decalObject = decalObjects[i];
 				auto atlasTextureIdx = decalsTextureAtlas.getTextureIdx(decalObject->getDecalTexture());
 				if (atlasTextureIdx == -1) continue;
-				renderer->setProgramUniformInteger(contextIdx, uniformDecalAtlasTextureIdx[i], atlasTextureIdx);
+				auto atlasTexture = decalsTextureAtlas.getAtlasTexture(atlasTextureIdx);
+				if (atlasTexture == nullptr) continue;
 				renderer->setProgramUniformFloatMatrix4x4(contextIdx, uniformDecalWorldToDecalSpace[i], decalObject->getWorldToDecalSpaceMatrix().getArray());
+				renderer->setProgramUniformInteger(contextIdx, uniformDecalOrientation[i], atlasTexture->orientation);
+				renderer->setProgramUniformFloat(contextIdx, uniformDecalLeft[i], static_cast<float>(atlasTexture->left) / static_cast<float>(decalsTextureAtlasTextureWidth));
+				renderer->setProgramUniformFloat(contextIdx, uniformDecalTop[i], static_cast<float>(atlasTexture->top) / static_cast<float>(decalsTextureAtlasTextureHeight));
+				renderer->setProgramUniformFloat(contextIdx, uniformDecalWidth[i], static_cast<float>(atlasTexture->width) / static_cast<float>(decalsTextureAtlasTextureWidth));
+				renderer->setProgramUniformFloat(contextIdx, uniformDecalHeight[i], static_cast<float>(atlasTexture->height) / static_cast<float>(decalsTextureAtlasTextureHeight));
 			}
 		}
 	} else {

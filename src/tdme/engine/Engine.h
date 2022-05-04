@@ -44,7 +44,7 @@
 #include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Pool.h>
-#include <tdme/utilities/SimpleTextureAtlas.h>
+#include <tdme/utilities/TextureAtlas.h>
 
 using std::array;
 using std::map;
@@ -116,7 +116,7 @@ using tdme::os::threading::Thread;
 using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Pool;
-using tdme::utilities::SimpleTextureAtlas;
+using tdme::utilities::TextureAtlas;
 
 /**
  * Engine main class
@@ -301,7 +301,7 @@ private:
 
 	map<string, map<string, ShaderParameter>> shaderParameters;
 
-	SimpleTextureAtlas decalsTextureAtlas {"tdme.decals.atlas"};
+	TextureAtlas decalsTextureAtlas {"tdme.decals.atlas"};
 
 	vector<Action*> actions;
 
@@ -494,7 +494,7 @@ private:
 	/**
 	 * @return decals texture atlas
 	 */
-	inline SimpleTextureAtlas& getDecalsTextureAtlas() {
+	inline TextureAtlas& getDecalsTextureAtlas() {
 		return decalsTextureAtlas;
 	}
 
