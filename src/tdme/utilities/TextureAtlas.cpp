@@ -1,5 +1,6 @@
 #include <tdme/utilities/TextureAtlas.h>
 
+#include <algorithm>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -10,6 +11,7 @@
 
 using tdme::utilities::TextureAtlas;
 
+using std::sort;
 using std::string;
 using std::to_string;
 
@@ -49,7 +51,16 @@ int TextureAtlas::addTexture(Texture* texture) {
 	//
 	texture->acquireReference();
 	textureToAtlasTextureIdxMapping[texture] = textureIdx;
-	atlasTextureIdxToTextureMapping[textureIdx] = texture;
+	atlasTextureIdxToAtlasTextureMapping[textureIdx] = {
+		.texture = texture,
+		.orientation = AtlasTexture::ORIENTATION_NONE,
+		.textureIdx = textureIdx,
+		.left = -1,
+		.top = -1,
+		.width = texture->getTextureWidth(),
+		.height = texture->getTextureHeight(),
+		.line = -1
+	};
 	textureReferenceCounter[texture]++;
 	//
 	needsUpdate = true;
@@ -67,7 +78,7 @@ void TextureAtlas::removeTexture(Texture* texture) {
 	textureReferenceCounter[texture]--;
 	if (textureReferenceCounter[texture] == 0) {
 		textureToAtlasTextureIdxMapping.erase(texture);
-		atlasTextureIdxToTextureMapping.erase(textureIdx);
+		atlasTextureIdxToAtlasTextureMapping.erase(textureIdx);
 	}
 	texture->releaseReference();
 	//
@@ -75,14 +86,19 @@ void TextureAtlas::removeTexture(Texture* texture) {
 }
 
 void TextureAtlas::update() {
+	// see: https://www-ui.is.s.u-tokyo.ac.jp/~takeo/papers/i3dg2001.pdf
+
+	//
 	Console::println("TextureAtlas::update(): " + atlasTextureId);
+
 	// release last atlas if we have any
 	if (atlasTexture != nullptr) {
 		atlasTexture->releaseReference();
 		atlasTexture = nullptr;
 	}
 
-	if (atlasTextureIdxToTextureMapping.empty() == true) {
+	//
+	if (atlasTextureIdxToAtlasTextureMapping.empty() == true) {
 		Console::println("TextureAtlas::update(): " + atlasTextureId + ": nothing to do");
 		//
 		needsUpdate = false;
@@ -90,57 +106,115 @@ void TextureAtlas::update() {
 		return;
 	}
 
-	//
-	auto textureAtlasSize = static_cast<int>(Math::ceil(Math::sqrt(atlasTextureIdxToTextureMapping.size())));
-	auto atlasTextureWidth = textureAtlasSize * ATLAS_TEXTURE_SIZE;
-	auto atlasTextureHeight = textureAtlasSize * ATLAS_TEXTURE_SIZE;
-	auto atlasTextureByteBuffer = ByteBuffer::allocate(atlasTextureWidth * atlasTextureHeight * 4);
-	/*
-	for (auto y = 0; y < atlasTextureHeight; y++)
-	for (auto x = 0; x < atlasTextureWidth; x++) {
-		auto atlasTextureIdxX = x / ATLAS_TEXTURE_SIZE;
-		auto atlasTextureIdxY = y / ATLAS_TEXTURE_SIZE;
-		auto textureX = x - (atlasTextureIdxX * ATLAS_TEXTURE_SIZE);
-		auto textureY = y - (atlasTextureIdxY * ATLAS_TEXTURE_SIZE);
-		auto textureXFloat = static_cast<float>(textureX) / static_cast<float>(ATLAS_TEXTURE_SIZE);
-		auto textureYFloat = static_cast<float>(textureY) / static_cast<float>(ATLAS_TEXTURE_SIZE);
-		auto atlasTextureIdx = atlasTextureIdxY * textureAtlasSize + atlasTextureIdxX;
-		auto texture = atlasTextureIdxToTextureMapping[atlasTextureIdx];
-		if (texture != nullptr) {
-			auto textureWidth = texture->getTextureWidth();
-			auto textureHeight = texture->getTextureHeight();
-			auto textureBytesPerPixel = texture->getDepth() / 8;
-			auto textureXInt = static_cast<int>(textureXFloat * static_cast<float>(textureWidth));
-			auto textureYInt = static_cast<int>(textureYFloat * static_cast<float>(textureHeight));
-			if (textureXInt < ATLAS_TEXTURE_BORDER) textureXInt = 0; else
-			if (textureXInt > textureWidth - ATLAS_TEXTURE_BORDER) textureXInt = textureWidth - 1; else
-				textureXInt = static_cast<int>((static_cast<float>(textureXInt) - static_cast<float>(ATLAS_TEXTURE_BORDER)) * (static_cast<float>(textureWidth) + static_cast<float>(ATLAS_TEXTURE_BORDER) * 2.0f) / static_cast<float>(textureWidth));
-			if (textureYInt < ATLAS_TEXTURE_BORDER) textureYInt = 0; else
-			if (textureYInt > textureHeight - ATLAS_TEXTURE_BORDER) textureYInt = textureHeight - 1; else
-				textureYInt = static_cast<int>((static_cast<float>(textureYInt) - static_cast<float>(ATLAS_TEXTURE_BORDER)) * (static_cast<float>(textureHeight) + static_cast<float>(ATLAS_TEXTURE_BORDER) * 2.0f) / static_cast<float>(textureHeight));
-			auto texturePixelOffset =
-				textureYInt * textureWidth * textureBytesPerPixel +
-				textureXInt * textureBytesPerPixel;
-			auto r = texture->getTextureData()->get(texturePixelOffset + 0);
-			auto g = texture->getTextureData()->get(texturePixelOffset + 1);
-			auto b = texture->getTextureData()->get(texturePixelOffset + 2);
-			auto a = textureBytesPerPixel == 4?texture->getTextureData()->get(texturePixelOffset + 3):0xff;
-			atlasTextureByteBuffer->put(r);
-			atlasTextureByteBuffer->put(g);
-			atlasTextureByteBuffer->put(b);
-			atlasTextureByteBuffer->put(a);
+	// create a array of registered textures
+	// rotate textures if required, aka stand up textures
+	vector<AtlasTexture> atlasTextures;
+	auto totalWidth = 0;
+	auto totalHeight = 0;
+	for (auto atlasTextureIdxToTextureMappingIt: atlasTextureIdxToAtlasTextureMapping) {
+		auto& atlasTexture = atlasTextureIdxToTextureMappingIt.second;
+		atlasTexture.left = -1;
+		atlasTexture.height = -1;
+		atlasTexture.line = -1;
+		if (atlasTexture.texture->getTextureWidth() > atlasTexture.texture->getTextureHeight()) {
+			atlasTexture.orientation = AtlasTexture::ORIENTATION_ROTATED;
+			atlasTexture.width = atlasTexture.texture->getTextureHeight();
+			atlasTexture.height = atlasTexture.texture->getTextureWidth();
 		} else {
-			auto r = 0xff;
-			auto g = 0x00;
-			auto b = 0x00;
-			auto a = 0xff;
-			atlasTextureByteBuffer->put(r);
-			atlasTextureByteBuffer->put(g);
-			atlasTextureByteBuffer->put(b);
-			atlasTextureByteBuffer->put(a);
+			atlasTexture.orientation = AtlasTexture::ORIENTATION_NORMAL;
+			atlasTexture.width = atlasTexture.texture->getTextureWidth();
+			atlasTexture.height = atlasTexture.texture->getTextureHeight();
+		}
+		totalWidth+= atlasTexture.texture->getTextureWidth();
+		totalHeight+= atlasTexture.texture->getTextureHeight();
+		atlasTextures.push_back(atlasTextureIdxToTextureMappingIt.second);
+	}
+
+	// sort by height
+	sort(atlasTextures.begin(), atlasTextures.end(), sortAtlasTexturesByHeight);
+
+	//
+	auto atlasTextureWidth = 4096; // TODO: does not seem to work: static_cast<int>(Math::sqrt(static_cast<float>(totalWidth * totalHeight) * 1.2f));
+
+	// initial layout
+	{
+		auto line = 0;
+		auto left = 0;
+		auto top = 0;
+		auto heigthColumnMax = 0;
+		for (auto& atlasTexture: atlasTextures) {
+			atlasTexture.left = left;
+			atlasTexture.top = top;
+			atlasTexture.line = line;
+			left+= atlasTexture.width;
+			heigthColumnMax = Math::max(heigthColumnMax, atlasTexture.height);
+			if (left >= atlasTextureWidth) {
+				left = 0;
+				top+= heigthColumnMax;
+				heigthColumnMax = 0;
+				line++;
+			}
 		}
 	}
-	*/
+
+	// push upwards
+	for (auto i = 0; i < atlasTextures.size(); i++) {
+		auto pushedAtlasTextureTop = -1;
+		auto& atlasTexture = atlasTextures[i];
+		// compare with previous texture height if x in range of previous texture left ... left + width
+		for (auto j = 0; j < i; j++) {
+			auto& atlasTextureCompare = atlasTextures[j];
+			if (atlasTextureCompare.line != atlasTexture.line - 1) continue;
+			//
+			if (atlasTextureCompare.left >= atlasTexture.left + atlasTexture.width) continue;
+			if (atlasTexture.left >= atlasTextureCompare.left + atlasTextureCompare.width) continue;
+			//
+			pushedAtlasTextureTop = Math::max(pushedAtlasTextureTop, atlasTextureCompare.top + atlasTextureCompare.height);
+		}
+		if (pushedAtlasTextureTop != -1) atlasTexture.top = pushedAtlasTextureTop;
+	}
+
+	// determine new height
+	auto atlasTextureHeight = 0;
+	for (auto& atlasTexture: atlasTextures) {
+		atlasTextureHeight = Math::max(atlasTextureHeight, atlasTexture.top + atlasTexture.height);
+	}
+
+	// height power of 2
+	{
+		auto textureHeight = 1;
+		while (textureHeight < atlasTextureHeight) textureHeight*= 2;
+		atlasTextureHeight = textureHeight;
+	}
+
+	//
+	auto atlasTextureByteBuffer = ByteBuffer::allocate(atlasTextureWidth * atlasTextureHeight * 4);
+	auto atlasTextureBuffer = atlasTextureByteBuffer->getBuffer();
+
+	// generate atlas
+	for (auto& atlasTexture: atlasTextures) {
+		auto atlasLeft = atlasTexture.left;
+		auto atlasTop = atlasTexture.top;
+		auto texture = atlasTexture.texture;
+		auto textureData = texture->getTextureData();
+		auto textureBytesPerPixel = texture->getDepth() / 8;
+		auto textureWidth = texture->getTextureWidth();
+		auto textureHeight = texture->getTextureHeight();
+		for (auto y = 0; y < textureHeight; y++) {
+			for (auto x = 0; x < textureWidth; x++) {
+				auto r = textureData->get(y * textureWidth * textureBytesPerPixel + x * textureBytesPerPixel + 0);
+				auto g = textureData->get(y * textureWidth * textureBytesPerPixel + x * textureBytesPerPixel + 1);
+				auto b = textureData->get(y * textureWidth * textureBytesPerPixel + x * textureBytesPerPixel + 2);
+				auto a = textureBytesPerPixel == 4?textureData->get(y * textureWidth * textureBytesPerPixel + x * textureBytesPerPixel + 3):0xff;
+				atlasTextureBuffer[(atlasTop + y) * atlasTextureWidth * 4 + (atlasLeft + x) * 4 + 0] = r;
+				atlasTextureBuffer[(atlasTop + y) * atlasTextureWidth * 4 + (atlasLeft + x) * 4 + 1] = g;
+				atlasTextureBuffer[(atlasTop + y) * atlasTextureWidth * 4 + (atlasLeft + x) * 4 + 2] = b;
+				atlasTextureBuffer[(atlasTop + y) * atlasTextureWidth * 4 + (atlasLeft + x) * 4 + 3] = a;
+			}
+		}
+	}
+
+	//
 	atlasTexture = new Texture(
 		atlasTextureId,
 		32,
@@ -148,9 +222,12 @@ void TextureAtlas::update() {
 		atlasTextureWidth, atlasTextureHeight,
 		atlasTextureByteBuffer
 	);
-	atlasTexture->setAtlasSize(textureAtlasSize);
+	atlasTexture->setAtlasSize(atlasTextures.size());
 	atlasTexture->setUseMipMap(false);
 	atlasTexture->acquireReference();
+
+	// write atlas textures back to our hash map
+	for (auto& atlasTexture: atlasTextures) atlasTextureIdxToAtlasTextureMapping[atlasTexture.textureIdx] = atlasTexture;
 
 	//
 	needsUpdate = false;

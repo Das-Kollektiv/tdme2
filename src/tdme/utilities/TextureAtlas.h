@@ -21,8 +21,21 @@ using tdme::engine::fileio::textures::Texture;
 class tdme::utilities::TextureAtlas {
 public:
 	static constexpr int TEXTURE_IDX_NONE { -1 };
-	static constexpr int ATLAS_TEXTURE_SIZE { 512 };
-	static constexpr int ATLAS_TEXTURE_BORDER { 32 };
+
+	/**
+	 * Texture Atlas Texture
+	 */
+	struct AtlasTexture {
+		enum Orientation { ORIENTATION_NONE, ORIENTATION_NORMAL, ORIENTATION_ROTATED };
+		Texture* texture { nullptr };
+		Orientation orientation { ORIENTATION_NONE };
+		int textureIdx { -1 };
+		int left { -1 };
+		int top { -1 };
+		int width { -1 };
+		int height { -1 };
+		int line { -1 };
+	};
 
 	/**
 	 * Public constructor
@@ -46,6 +59,19 @@ public:
 			return TEXTURE_IDX_NONE;
 		}
 		return it->second;
+	}
+
+	/**
+	 * Returns specific atlas texture information within atlas
+	 * @param textureIdx texture index
+	 * @return atlas texture information
+	 */
+	inline const AtlasTexture* getAtlasTexture(int textureIdx) {
+		auto it = atlasTextureIdxToAtlasTextureMapping.find(textureIdx);
+		if (it == atlasTextureIdxToAtlasTextureMapping.end()) {
+			return nullptr;
+		}
+		return &it->second;
 	}
 
 	/**
@@ -86,6 +112,16 @@ private:
 	Texture* atlasTexture { nullptr };
 	unordered_map<Texture*, int> textureReferenceCounter;
 	unordered_map<Texture*, int> textureToAtlasTextureIdxMapping;
-	unordered_map<int, Texture*> atlasTextureIdxToTextureMapping;
+	unordered_map<int, AtlasTexture> atlasTextureIdxToAtlasTextureMapping;
 	vector<int> freeTextureIds;
+
+	/**
+	 * Sort atlas textures by height
+	 * @param atlasTexture1 atlas texture 1
+	 * @param atlasTexture2 atlas texture 2
+	 */
+	inline static bool sortAtlasTexturesByHeight(const AtlasTexture& atlasTexture1, const AtlasTexture& atlasTexture2) {
+		return atlasTexture1.height > atlasTexture2.height;
+	}
+
 };
