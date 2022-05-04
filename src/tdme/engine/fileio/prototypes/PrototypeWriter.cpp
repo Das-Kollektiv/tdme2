@@ -240,6 +240,9 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 	jPrototypeRoot.AddMember("px", Value(prototype->getPivot().getX()), jAllocator);
 	jPrototypeRoot.AddMember("py", Value(prototype->getPivot().getY()), jAllocator);
 	jPrototypeRoot.AddMember("pz", Value(prototype->getPivot().getZ()), jAllocator);
+	if (prototype->getType() == Prototype_Type::DECAL) {
+		jPrototypeRoot.AddMember("df", Value(prototype->getDecalFileName(), jAllocator), jAllocator);
+	} else
 	if (prototype->getType() == Prototype_Type::PARTICLESYSTEM) {
 		Value jParticleSystems;
 		jParticleSystems.SetArray();

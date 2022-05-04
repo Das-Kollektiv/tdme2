@@ -32,7 +32,7 @@ DecalObjectInternal::DecalObjectInternal(const string& id, OrientedBoundingBox* 
 	this->contributesShadows = false;
 	this->receivesShadows = false;
 	this->obb = obb;
-	this->texture = texture != nullptr?texture:TextureReader::read("resources/github", "tdme2-logo.png");
+	this->texture = texture != nullptr?texture:TextureReader::read("resources/engine/textures", "point.png");
 	boundingBox = BoundingBox(obb);
 	obbMatrix.identity();
 	obbMatrix.translate(obb->getCenter());

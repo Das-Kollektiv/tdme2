@@ -105,6 +105,11 @@ public:
 	void setOutlinerAddDropDownContent();
 
 	/**
+	 * Set decal details
+	 */
+	void setDecalDetails();
+
+	/**
 	 * Update details panel
 	 * @param outlinerNode outliner node
 	 */

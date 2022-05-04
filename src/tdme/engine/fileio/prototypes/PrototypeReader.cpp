@@ -188,6 +188,11 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 		model,
 		pivot
 	);
+	if (prototype->getType() == Prototype_Type::DECAL) {
+		auto decalFileName = jPrototypeRoot["df"].GetString();
+		auto decalPathName = getResourcePathName(pathName, decalFileName);
+		prototype->setDecalFileName(getResourcePathName(pathName, decalFileName) + "/" + FileSystem::getInstance()->getFileName(decalFileName));
+	}
 	//
 	for (auto i = 0; i < properties.getPropertyCount(); i++) {
 		auto property = properties.getPropertyByIndex(i);

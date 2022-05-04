@@ -3,10 +3,12 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/gui/nodes/GUIImageNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUI.h>
@@ -33,9 +35,11 @@ using std::string;
 
 using tdme::tools::editor::tabcontrollers::DecalEditorTabController;
 
+using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::prototype::Prototype;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
@@ -169,6 +173,58 @@ void DecalEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 
 void DecalEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
+	if (type == GUIActionListenerType::PERFORMED) {
+		if (node->getId() == "decal_texture_open") {
+			//
+			class OnDecalTextureFileOpenAction: public virtual Action
+			{
+			public:
+				void performAction() override {
+					auto prototype = decalEditorTabController->view->getPrototype();
+					if (prototype != nullptr) {
+						prototype->setDecalFileName(
+							decalEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
+							"/" +
+							decalEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+						);
+						required_dynamic_cast<GUIImageNode*>(decalEditorTabController->screenNode->getNodeById("decal_texture"))->setSource(prototype->getDecalFileName());
+					}
+					decalEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
+				}
+
+				/**
+				 * Public constructor
+				 * @param decalEditorTabController decal editor tab controller
+				 */
+				OnDecalTextureFileOpenAction(DecalEditorTabController* decalEditorTabController): decalEditorTabController(decalEditorTabController) {
+				}
+
+			private:
+				DecalEditorTabController* decalEditorTabController;
+			};
+
+			auto prototype = view->getPrototype();
+			if (prototype == nullptr) return;
+			vector<string> extensions = TextureReader::getTextureExtensions();
+			view->getPopUps()->getFileDialogScreenController()->show(
+				prototype->getDecalFileName().empty() == false?Tools::getPathName(prototype->getDecalFileName()):string(),
+				"Load decal texture from: ",
+				extensions,
+				Tools::getFileName(prototype->getDecalFileName()),
+				true,
+				new OnDecalTextureFileOpenAction(this)
+			);
+		} else
+		if (node->getId() == "decal_texture_remove") {
+			auto prototype = view->getPrototype();
+			if (prototype == nullptr) return;
+			prototype->setDecalFileName(string());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("decal_texture"))->setSource(prototype->getDecalFileName());
+		} else
+		if (node->getId() == "decal_texture_browseto") {
+
+		}
+	}
 	basePropertiesSubController->onActionPerformed(type, node, view->getPrototype());
 	prototypePhysicsSubController->onActionPerformed(type, node, view->getPrototype());
 }
@@ -178,11 +234,13 @@ void DecalEditorTabController::setOutlinerContent() {
 	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"" + GUIParser::escapeQuotes("Prototype") + "\" value=\"" + GUIParser::escapeQuotes("prototype") + "\">\n";
 	auto prototype = view->getPrototype();
 	if (prototype != nullptr) {
+		xml+= "<selectbox-option text=\"" + GUIParser::escapeQuotes("Decal") + "\" value=\"" + GUIParser::escapeQuotes("decal") + "\" />\n";
 		basePropertiesSubController->createBasePropertiesXML(prototype, xml);
 		prototypePhysicsSubController->createOutlinerPhysicsXML(prototype, xml);
 	}
 	xml+= "</selectbox-parent-option>\n";
-	view->getEditorView()->setOutlinerContent(xml);}
+	view->getEditorView()->setOutlinerContent(xml);
+}
 
 void DecalEditorTabController::setOutlinerAddDropDownContent() {
 	view->getEditorView()->setOutlinerAddDropDownContent(
@@ -191,12 +249,34 @@ void DecalEditorTabController::setOutlinerAddDropDownContent() {
 	);
 }
 
+void DecalEditorTabController::setDecalDetails() {
+	view->getEditorView()->setDetailsContent(
+		"<template id=\"details_decal\" src=\"resources/engine/gui/template_details_decal.xml\" />\n"
+	);
+
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+
+	//
+	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_decal"))->getActiveConditions().add("open");
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("decal_texture"))->setSource(prototype->getDecalFileName());
+	} catch (Exception& exception) {
+		Console::println(string("DecalEditorTabController::setDecalDetails(): An error occurred: ") + exception.what());;
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+}
+
 void DecalEditorTabController::updateDetails(const string& outlinerNode) {
-	view->getEditorView()->setDetailsContent(string());
-	basePropertiesSubController->updateDetails(view->getPrototype(), outlinerNode);
-	prototypeDisplaySubController->updateDetails(view->getPrototype(), outlinerNode);
-	prototypePhysicsSubController->updateDetails(view->getPrototype(), outlinerNode);
-	prototypePhysicsSubController->getView()->setDisplayBoundingVolume(true);
+	if (outlinerNode == "decal") {
+		setDecalDetails();
+	} else {
+		view->getEditorView()->setDetailsContent(string());
+		basePropertiesSubController->updateDetails(view->getPrototype(), outlinerNode);
+		prototypeDisplaySubController->updateDetails(view->getPrototype(), outlinerNode);
+		prototypePhysicsSubController->updateDetails(view->getPrototype(), outlinerNode);
+		prototypePhysicsSubController->getView()->setDisplayBoundingVolume(true);
+	}
 }
 
 void DecalEditorTabController::updateInfoText(const MutableString& text) {

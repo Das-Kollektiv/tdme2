@@ -59,6 +59,7 @@ private:
 	bool embedded { true };
 	string fileName;
 	string modelFileName;
+	string decalFileName;
 	string thumbnail;
 	Model* model { nullptr };
 	Vector3 pivot;
@@ -169,6 +170,21 @@ public:
 	 */
 	inline void setModelFileName(const string& fileName) {
 		this->modelFileName = fileName;
+	}
+
+	/**
+	 * @return decal file name
+	 */
+	inline const string& getDecalFileName() {
+		return decalFileName;
+	}
+
+	/**
+	 * Set decal file name
+	 * @param fileName file name
+	 */
+	inline void setDecalFileName(const string& fileName) {
+		this->decalFileName = fileName;
 	}
 
 	/**
