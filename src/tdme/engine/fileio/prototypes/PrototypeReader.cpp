@@ -13,6 +13,7 @@
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
+#include <tdme/engine/prototype/PrototypeDecal.h>
 #include <tdme/engine/prototype/PrototypeImposterLOD.h>
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem.h>
@@ -191,7 +192,12 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 	if (prototype->getType() == Prototype_Type::DECAL) {
 		auto decalFileName = jPrototypeRoot["df"].GetString();
 		auto decalPathName = getResourcePathName(pathName, decalFileName);
-		prototype->setDecalFileName(getResourcePathName(pathName, decalFileName) + "/" + FileSystem::getInstance()->getFileName(decalFileName));
+		try {
+			prototype->getDecal()->setTextureFileName(getResourcePathName(pathName, decalFileName) + "/" + FileSystem::getInstance()->getFileName(decalFileName));
+		} catch (Exception& exception) {
+			Console::print(string("PrototypeReader::read(): An error occurred: "));
+			Console::println(string(exception.what()));
+		}
 	}
 	//
 	for (auto i = 0; i < properties.getPropertyCount(); i++) {

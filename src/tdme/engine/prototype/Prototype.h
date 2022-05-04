@@ -59,7 +59,6 @@ private:
 	bool embedded { true };
 	string fileName;
 	string modelFileName;
-	string decalFileName;
 	string thumbnail;
 	Model* model { nullptr };
 	Vector3 pivot;
@@ -83,6 +82,7 @@ private:
 	int32_t environmentMapRenderPassMask { Entity::RENDERPASS_ALL - Entity::RENDERPASS_WATER };
 	int64_t environmentMapTimeRenderUpdateFrequency { 0LL };
 	PrototypeTerrain* terrain { nullptr };
+	PrototypeDecal* decal { nullptr };
 
 	/**
 	 * Set Id
@@ -170,21 +170,6 @@ public:
 	 */
 	inline void setModelFileName(const string& fileName) {
 		this->modelFileName = fileName;
-	}
-
-	/**
-	 * @return decal file name
-	 */
-	inline const string& getDecalFileName() {
-		return decalFileName;
-	}
-
-	/**
-	 * Set decal file name
-	 * @param fileName file name
-	 */
-	inline void setDecalFileName(const string& fileName) {
-		this->decalFileName = fileName;
 	}
 
 	/**
@@ -572,10 +557,17 @@ public:
 	}
 
 	/**
-	 * @return terrain
+	 * @return terrain definitions
 	 */
 	inline PrototypeTerrain* getTerrain() {
 		return terrain;
+	}
+
+	/**
+	 * @return decal definitions
+	 */
+	inline PrototypeDecal* getDecal() {
+		return decal;
 	}
 
 };

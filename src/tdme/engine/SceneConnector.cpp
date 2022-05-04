@@ -30,6 +30,7 @@
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
+#include <tdme/engine/prototype/PrototypeDecal.h>
 #include <tdme/engine/prototype/PrototypeImposterLOD.h>
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem.h>
@@ -476,7 +477,8 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 			entityBoundingVolumesHierarchy->addEntity(
 				new DecalObject(
 					"decal",
-					dynamic_cast<OrientedBoundingBox*>(prototype->getBoundingVolume(0)->getBoundingVolume())
+					dynamic_cast<OrientedBoundingBox*>(prototype->getBoundingVolume(0)->getBoundingVolume()),
+					prototype->getDecal()->getTexture()
 				)
 			);
 		}

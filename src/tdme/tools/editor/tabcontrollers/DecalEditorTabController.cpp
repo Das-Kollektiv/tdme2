@@ -5,6 +5,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/prototype/PrototypeDecal.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -181,13 +182,19 @@ void DecalEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 			public:
 				void performAction() override {
 					auto prototype = decalEditorTabController->view->getPrototype();
-					if (prototype != nullptr) {
-						prototype->setDecalFileName(
-							decalEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
-							"/" +
-							decalEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
-						);
-						required_dynamic_cast<GUIImageNode*>(decalEditorTabController->screenNode->getNodeById("decal_texture"))->setSource(prototype->getDecalFileName());
+					auto decal = prototype != nullptr?prototype->getDecal():nullptr;
+					if (prototype != nullptr && decal != nullptr) {
+						try {
+							prototype->getDecal()->setTextureFileName(
+								decalEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
+								"/" +
+								decalEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+							);
+						} catch (Exception& exception) {
+							Console::println(string() + "OnDecalTextureFileOpenAction::performAction(): An error occurred: " + exception.what());
+							decalEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+						}
+						required_dynamic_cast<GUIImageNode*>(decalEditorTabController->screenNode->getNodeById("decal_texture"))->setSource(decal->getTextureFileName());
 					}
 					decalEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 				}
@@ -205,12 +212,14 @@ void DecalEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 
 			auto prototype = view->getPrototype();
 			if (prototype == nullptr) return;
+			auto decal = prototype->getDecal();
+			if (decal == nullptr) return;
 			vector<string> extensions = TextureReader::getTextureExtensions();
 			view->getPopUps()->getFileDialogScreenController()->show(
-				prototype->getDecalFileName().empty() == false?Tools::getPathName(prototype->getDecalFileName()):string(),
+				decal->getTextureFileName().empty() == false?Tools::getPathName(decal->getTextureFileName()):string(),
 				"Load decal texture from: ",
 				extensions,
-				Tools::getFileName(prototype->getDecalFileName()),
+				Tools::getFileName(decal->getTextureFileName()),
 				true,
 				new OnDecalTextureFileOpenAction(this)
 			);
@@ -218,8 +227,10 @@ void DecalEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 		if (node->getId() == "decal_texture_remove") {
 			auto prototype = view->getPrototype();
 			if (prototype == nullptr) return;
-			prototype->setDecalFileName(string());
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("decal_texture"))->setSource(prototype->getDecalFileName());
+			auto decal = prototype->getDecal();
+			if (decal == nullptr) return;
+			prototype->getDecal()->setTextureFileName(string());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("decal_texture"))->setSource(prototype->getDecal()->getTextureFileName());
 		} else
 		if (node->getId() == "decal_texture_browseto") {
 
@@ -256,11 +267,13 @@ void DecalEditorTabController::setDecalDetails() {
 
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return;
+	auto decal = prototype->getDecal();
+	if (decal == nullptr) return;
 
 	//
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_decal"))->getActiveConditions().add("open");
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("decal_texture"))->setSource(prototype->getDecalFileName());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("decal_texture"))->setSource(decal->getTextureFileName());
 	} catch (Exception& exception) {
 		Console::println(string("DecalEditorTabController::setDecalDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));

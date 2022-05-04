@@ -22,6 +22,7 @@ SimpleTextureAtlas::SimpleTextureAtlas(const string& id): atlasTextureId(id) {
 }
 
 SimpleTextureAtlas::~SimpleTextureAtlas() {
+	// TODO: release atlas textures
 	if (atlasTexture != nullptr) {
 		atlasTexture->releaseReference();
 		atlasTexture = nullptr;
@@ -66,10 +67,12 @@ void SimpleTextureAtlas::removeTexture(Texture* texture) {
 	}
 	textureReferenceCounter[texture]--;
 	if (textureReferenceCounter[texture] == 0) {
+		Console::println("SimpleTextureAtlas::removeTexture(): reference counter = 0, texture removed from atlas: " + texture->getId() + ", atlas with id: " + atlasTextureId);
+		textureReferenceCounter.erase(texture);
 		textureToAtlasTextureIdxMapping.erase(texture);
 		atlasTextureIdxToTextureMapping.erase(textureIdx);
+		texture->releaseReference();
 	}
-	texture->releaseReference();
 	//
 	needsUpdate = true;
 }

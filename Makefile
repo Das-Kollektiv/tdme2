@@ -266,6 +266,7 @@ SRCS = \
 	src/tdme/engine/prototype/Prototype.cpp \
 	src/tdme/engine/prototype/PrototypeAudio.cpp \
 	src/tdme/engine/prototype/PrototypeBoundingVolume.cpp \
+	src/tdme/engine/prototype/PrototypeDecal.cpp \
 	src/tdme/engine/prototype/PrototypeImposterLOD.cpp \
 	src/tdme/engine/prototype/PrototypeLODLevel.cpp \
 	src/tdme/engine/prototype/PrototypeParticleSystem.cpp \

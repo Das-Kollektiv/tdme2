@@ -22,6 +22,7 @@
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
+#include <tdme/engine/prototype/PrototypeDecal.h>
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_BoundingBoxParticleEmitter.h>
@@ -241,7 +242,7 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 	jPrototypeRoot.AddMember("py", Value(prototype->getPivot().getY()), jAllocator);
 	jPrototypeRoot.AddMember("pz", Value(prototype->getPivot().getZ()), jAllocator);
 	if (prototype->getType() == Prototype_Type::DECAL) {
-		jPrototypeRoot.AddMember("df", Value(prototype->getDecalFileName(), jAllocator), jAllocator);
+		jPrototypeRoot.AddMember("df", Value(prototype->getDecal()->getTextureFileName(), jAllocator), jAllocator);
 	} else
 	if (prototype->getType() == Prototype_Type::PARTICLESYSTEM) {
 		Value jParticleSystems;
