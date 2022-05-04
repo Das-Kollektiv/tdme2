@@ -24,10 +24,11 @@ TextureAtlas::TextureAtlas(const string& id): atlasTextureId(id) {
 }
 
 TextureAtlas::~TextureAtlas() {
-	// TODO: release atlas textures
+	for (auto& it: atlasTextureIdxToAtlasTextureMapping) {
+		it.second.texture->releaseReference();
+	}
 	if (atlasTexture != nullptr) {
 		atlasTexture->releaseReference();
-		atlasTexture = nullptr;
 	}
 }
 

@@ -22,10 +22,11 @@ SimpleTextureAtlas::SimpleTextureAtlas(const string& id): atlasTextureId(id) {
 }
 
 SimpleTextureAtlas::~SimpleTextureAtlas() {
-	// TODO: release atlas textures
+	for (auto& it: atlasTextureIdxToTextureMapping) {
+		it.second->releaseReference();
+	}
 	if (atlasTexture != nullptr) {
 		atlasTexture->releaseReference();
-		atlasTexture = nullptr;
 	}
 }
 
@@ -85,6 +86,7 @@ void SimpleTextureAtlas::update() {
 		atlasTexture = nullptr;
 	}
 
+	//
 	if (atlasTextureIdxToTextureMapping.empty() == true) {
 		Console::println("SimpleTextureAtlas::update(): " + atlasTextureId + ": nothing to do");
 		//
@@ -107,7 +109,8 @@ void SimpleTextureAtlas::update() {
 		auto textureXFloat = static_cast<float>(textureX) / static_cast<float>(ATLAS_TEXTURE_SIZE);
 		auto textureYFloat = static_cast<float>(textureY) / static_cast<float>(ATLAS_TEXTURE_SIZE);
 		auto atlasTextureIdx = atlasTextureIdxY * textureAtlasSize + atlasTextureIdxX;
-		auto texture = atlasTextureIdxToTextureMapping[atlasTextureIdx];
+		auto textureIt = atlasTextureIdxToTextureMapping.find(atlasTextureIdx);
+		auto texture = textureIt != atlasTextureIdxToTextureMapping.end()?textureIt->second:nullptr;
 		if (texture != nullptr) {
 			auto textureWidth = texture->getTextureWidth();
 			auto textureHeight = texture->getTextureHeight();
