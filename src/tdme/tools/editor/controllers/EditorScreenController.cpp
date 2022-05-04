@@ -767,7 +767,7 @@ void EditorScreenController::ScanFilesThread::run() {
 				if (StringTools::endsWith(fileNameLowerCase, ".png") == true) {
 					thumbnailTexture = TextureReader::read(pathName, fileName, false);
 				} else
-				if (((StringTools::endsWith(fileNameLowerCase, ".tmodel") == true && PrototypeReader::readThumbnail(pathName, fileName, thumbnailPNGData) == true) ||
+				if ((((StringTools::endsWith(fileNameLowerCase, ".tmodel") == true || StringTools::endsWith(fileNameLowerCase, ".tdecal") == true) && PrototypeReader::readThumbnail(pathName, fileName, thumbnailPNGData) == true) ||
 					(StringTools::endsWith(fileNameLowerCase, ".tm") == true && FileSystem::getInstance()->getThumbnailAttachment(pathName, fileName, thumbnailPNGData) == true)) &&
 					thumbnailPNGData.empty() == false) {
 					static int thumbnailIdx = 0; // TODO: improve me

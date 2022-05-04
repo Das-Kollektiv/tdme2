@@ -173,10 +173,18 @@ public:
 	}
 
 	/**
-	 * @return thumbnail PNG data
+	 * @return thumbnail base 64 PNG data
 	 */
 	inline const string& getThumbnail() {
 		return thumbnail;
+	}
+
+	/**
+	 * Set thumbnail base 64 PNG data
+	 * @param thumbnail thumbnail Base 64 PNG data
+	 */
+	inline void setThumbnail(const string& thumbnail) {
+		this->thumbnail = thumbnail;
 	}
 
 	/**

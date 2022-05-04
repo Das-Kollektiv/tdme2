@@ -3,7 +3,9 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/fileio/textures/PNGTextureWriter.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
+#include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeDecal.h>
 #include <tdme/gui/events/GUIActionListener.h>
@@ -27,6 +29,7 @@
 #include <tdme/tools/editor/tabviews/DecalEditorTabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/utilities/Action.h>
+#include <tdme/utilities/Base64.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
@@ -36,7 +39,9 @@ using std::string;
 
 using tdme::tools::editor::tabcontrollers::DecalEditorTabController;
 
+using tdme::engine::fileio::textures::PNGTextureWriter;
 using tdme::engine::fileio::textures::TextureReader;
+using tdme::engine::fileio::textures::Texture;
 using tdme::engine::prototype::Prototype;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
@@ -57,6 +62,7 @@ using tdme::tools::editor::tabviews::subviews::PrototypePhysicsSubView;
 using tdme::tools::editor::tabviews::DecalEditorTabView;
 using tdme::tools::editor::views::EditorView;
 using tdme::utilities::Action;
+using tdme::utilities::Base64;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
@@ -185,11 +191,20 @@ void DecalEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 					auto decal = prototype != nullptr?prototype->getDecal():nullptr;
 					if (prototype != nullptr && decal != nullptr) {
 						try {
-							prototype->getDecal()->setTextureFileName(
+							decal->setTextureFileName(
 								decalEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
 								"/" +
 								decalEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 							);
+							if (decal->getTexture() != nullptr) {
+								auto decalTextureThumbnail = TextureReader::scale(decal->getTexture(), 128, 128);
+								vector<uint8_t> pngData;
+								string base64PNGData;
+								PNGTextureWriter::write(decalTextureThumbnail, pngData, false, false);
+								Base64::encode(pngData, base64PNGData);
+								prototype->setThumbnail(base64PNGData);
+								decalTextureThumbnail->releaseReference();
+							}
 						} catch (Exception& exception) {
 							Console::println(string() + "OnDecalTextureFileOpenAction::performAction(): An error occurred: " + exception.what());
 							decalEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
@@ -229,7 +244,8 @@ void DecalEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 			if (prototype == nullptr) return;
 			auto decal = prototype->getDecal();
 			if (decal == nullptr) return;
-			prototype->getDecal()->setTextureFileName(string());
+			decal->setTextureFileName(string());
+			prototype->setThumbnail(string());
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("decal_texture"))->setSource(prototype->getDecal()->getTextureFileName());
 		} else
 		if (node->getId() == "decal_texture_browseto") {

@@ -178,6 +178,7 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 			jPrototypeRoot.AddMember("thumbnail", Value(base64PNGData, jAllocator), jAllocator);
 		}
 
+		//
 		jPrototypeRoot.AddMember("file", Value(modelPathName + "/" + modelFileName, jAllocator), jAllocator);
 		jPrototypeRoot.AddMember("tm", Value(prototype->isTerrainMesh()), jAllocator);
 		int lodLevelIdx = 2;
@@ -243,6 +244,7 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 	jPrototypeRoot.AddMember("pz", Value(prototype->getPivot().getZ()), jAllocator);
 	if (prototype->getType() == Prototype_Type::DECAL) {
 		jPrototypeRoot.AddMember("df", Value(prototype->getDecal()->getTextureFileName(), jAllocator), jAllocator);
+		jPrototypeRoot.AddMember("thumbnail", Value(prototype->getThumbnail(), jAllocator), jAllocator);
 	} else
 	if (prototype->getType() == Prototype_Type::PARTICLESYSTEM) {
 		Value jParticleSystems;
