@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
@@ -16,7 +15,6 @@
 #include <tdme/math/Matrix4x4.h>
 
 using std::string;
-using std::vector;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Color4;
@@ -60,7 +58,7 @@ protected:
 	 */
 	inline void updateInternal() {
 		boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
-		obbMatrixTransformed = obbMatrix.multiply(this->getTransformationsMatrix());
+		obbMatrixTransformed = obbMatrix.clone().multiply(this->getTransformationsMatrix());
 		worldToDecalSpaceMatrix = obbMatrixTransformed.clone().invert();
 	}
 

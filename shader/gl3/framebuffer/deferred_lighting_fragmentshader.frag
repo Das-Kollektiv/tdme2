@@ -78,10 +78,12 @@ vec4 getDecalColor(vec2 textureCoordinate, float depth) {
 		// convert world position to decal obb space position
 		vec4 decalSpacePosition4 = decals[i].worldToDecalSpace * vec4(position, 1.0);
 		vec3 decalSpacePosition = decalSpacePosition4.xyz / decalSpacePosition4.w;
-		vec2 decalTextureCoordinate = decalSpacePosition.xy + 0.5;
 
-		if (decalTextureCoordinate.x < 0.0 || decalTextureCoordinate.x >= 1.0 ||
-			decalTextureCoordinate.y < 0.0 || decalTextureCoordinate.y >= 1.0) continue;
+		if (decalSpacePosition.x < -0.5 || decalSpacePosition.x >= 0.5 ||
+			decalSpacePosition.y < -0.5 || decalSpacePosition.y >= 0.5 ||
+			decalSpacePosition.z < -0.5 || decalSpacePosition.z >= 0.5) continue;
+
+		vec2 decalTextureCoordinate = decalSpacePosition.xy + 0.5;
 
 		// compute texture coordinate within atlas and rotate if required
 		if (decals[i].texture.orientation == 2) {
