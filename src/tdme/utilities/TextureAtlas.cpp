@@ -156,7 +156,7 @@ void TextureAtlas::update() {
 			}
 		}
 		if (line == 0) {
-			atlasTextureWidth = left + 1;
+			atlasTextureWidth = left;
 			auto textureWidth = 1;
 			while (textureWidth < atlasTextureWidth) textureWidth*= 2;
 			atlasTextureWidth = textureWidth;
