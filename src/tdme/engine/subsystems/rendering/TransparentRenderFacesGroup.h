@@ -27,7 +27,7 @@ using tdme::engine::model::TextureCoordinate;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::BatchRendererTriangles;
 using tdme::engine::subsystems::rendering::EntityRenderer;
-using tdme::engine::subsystems::rendering::Object3DNode;
+using tdme::engine::subsystems::rendering::ObjectNode;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
@@ -40,7 +40,7 @@ using tdme::utilities::Console;
  */
 class tdme::engine::subsystems::rendering::TransparentRenderFacesGroup final
 {
-	friend class Object3DNodeMesh;
+	friend class ObjectNodeMesh;
 	friend class EntityRenderer;
 	friend class EntityRenderer_TransparentRenderFacesGroupPool;
 
@@ -48,7 +48,7 @@ private:
 	EntityRenderer* object3DRenderer { nullptr };
 	vector<BatchRendererTriangles*> batchRenderers;
 	Model* model { nullptr };
-	Object3DNode* object3DNode { nullptr };
+	ObjectNode* object3DNode { nullptr };
 	int32_t facesEntityIdx;
 
 	Color4 effectColorAdd;
@@ -76,7 +76,7 @@ private:
 	 * @param textureCoordinates texture coordinates
 	 * @param shader shader
 	 */
-	void set(EntityRenderer* object3DRenderer, Model* model, Object3DNode* object3DNode, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader);
+	void set(EntityRenderer* object3DRenderer, Model* model, ObjectNode* object3DNode, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader);
 
 	/**
 	 * Creates a key for given transparent render faces group attributes
@@ -90,7 +90,7 @@ private:
 	 * @param shader shader
 	 * @return
 	 */
-	static const string createKey(Model* model, Object3DNode* object3DNode, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader);
+	static const string createKey(Model* model, ObjectNode* object3DNode, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader);
 
 	/**
 	 * Adds a vertex to this transparent render faces group

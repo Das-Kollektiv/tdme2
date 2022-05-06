@@ -8,7 +8,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityShaderParameters.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object.h>
 #include <tdme/engine/ShaderParameter.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.h>
 
@@ -21,7 +21,7 @@ using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::EntityShaderParameters;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 using tdme::engine::ShaderParameter;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
 
@@ -35,7 +35,7 @@ PrototypeDisplaySubView::~PrototypeDisplaySubView() {
 }
 
 void PrototypeDisplaySubView::updateShaderParameters(Prototype* prototype) {
-	auto object = dynamic_cast<Object3D*>(engine->getEntity("model"));
+	auto object = dynamic_cast<Object*>(engine->getEntity("model"));
 	if (object == nullptr || prototype == nullptr) return;
 	auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
 	auto distanceShaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getDistanceShader());

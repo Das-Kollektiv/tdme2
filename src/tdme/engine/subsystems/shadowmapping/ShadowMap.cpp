@@ -13,12 +13,12 @@
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/FrameBuffer.h>
-#include <tdme/engine/ImposterObject3D.h>
+#include <tdme/engine/ImposterObject.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/LODObject3D.h>
-#include <tdme/engine/LODObject3DImposter.h>
-#include <tdme/engine/Object3D.h>
-#include <tdme/engine/Object3DRenderGroup.h>
+#include <tdme/engine/LODObject.h>
+#include <tdme/engine/LODObjectImposter.h>
+#include <tdme/engine/Object.h>
+#include <tdme/engine/ObjectRenderGroup.h>
 #include <tdme/engine/ObjectParticleSystem.h>
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/Partition.h>
@@ -39,12 +39,12 @@ using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::EntityHierarchy;
 using tdme::engine::FrameBuffer;
-using tdme::engine::ImposterObject3D;
+using tdme::engine::ImposterObject;
 using tdme::engine::Light;
-using tdme::engine::LODObject3D;
-using tdme::engine::LODObject3DImposter;
-using tdme::engine::Object3D;
-using tdme::engine::Object3DRenderGroup;
+using tdme::engine::LODObject;
+using tdme::engine::LODObjectImposter;
+using tdme::engine::Object;
+using tdme::engine::ObjectRenderGroup;
 using tdme::engine::ObjectParticleSystem;
 using tdme::engine::Partition;
 using tdme::math::Math;
@@ -197,20 +197,20 @@ void ShadowMap::createShadowMap(Light* light)
 		switch (entity->getEntityType()) {
 			case Entity::ENTITYTYPE_OBJECT3DRENDERGROUP:
 				{
-					auto org = static_cast<Object3DRenderGroup*>(entity);
+					auto org = static_cast<ObjectRenderGroup*>(entity);
 					auto orgEntity = org->getEntity();
 					if (orgEntity != nullptr) {
 						if (orgEntity->isContributesShadows() == false) continue;
 						switch(orgEntity->getEntityType()) {
 							case Entity::ENTITYTYPE_OBJECT3D:
 								{
-									auto object = static_cast<Object3D*>(orgEntity);
+									auto object = static_cast<Object*>(orgEntity);
 									visibleObjects.push_back(object);
 								}
 								break;
 							case Entity::ENTITYTYPE_LODOBJECT3D:
 								{
-									auto lodObject = static_cast<LODObject3D*>(orgEntity);
+									auto lodObject = static_cast<LODObject*>(orgEntity);
 									if (lodObject->isContributesShadows() == false) continue;
 									auto object = lodObject->getLODObject();
 									if (object != nullptr) {
@@ -226,14 +226,14 @@ void ShadowMap::createShadowMap(Light* light)
 				break;
 			case Entity::ENTITYTYPE_OBJECT3D:
 				{
-					auto object = static_cast<Object3D*>(entity);
+					auto object = static_cast<Object*>(entity);
 					if (object->isContributesShadows() == false) continue;
 					visibleObjects.push_back(object);
 				}
 				break;
 			case Entity::ENTITYTYPE_LODOBJECT3D:
 				{
-					auto lodObject = static_cast<LODObject3D*>(entity);
+					auto lodObject = static_cast<LODObject*>(entity);
 					if (lodObject->isContributesShadows() == false) continue;
 					auto object = lodObject->getLODObject();
 					if (object != nullptr) visibleObjects.push_back(object);
@@ -241,14 +241,14 @@ void ShadowMap::createShadowMap(Light* light)
 				break;
 			case Entity::ENTITYTYPE_IMPOSTEROBJECT3D:
 				{
-					auto object = static_cast<ImposterObject3D*>(entity);
+					auto object = static_cast<ImposterObject*>(entity);
 					if (object->isContributesShadows() == false) continue;
 					visibleObjects.push_back(object->getBillboardObject());
 				}
 				break;
 			case Entity::ENTITYTYPE_LODOBJECT3DIMPOSTER:
 				{
-					auto lodObjectImposter = static_cast<LODObject3DImposter*>(entity);
+					auto lodObjectImposter = static_cast<LODObjectImposter*>(entity);
 					if (lodObjectImposter->isContributesShadows() == false) continue;
 					auto object = lodObjectImposter->getLODObject();
 					if (object != nullptr) visibleObjects.push_back(object);
@@ -278,7 +278,7 @@ void ShadowMap::createShadowMap(Light* light)
 					if (eh->isContributesShadows() == false) continue;
 					for (auto entity: eh->getEntities()) {
 						if (entity->getEntityType() != Entity::ENTITYTYPE_OBJECT3D) continue;
-						auto object = static_cast<Object3D*>(entity);
+						auto object = static_cast<Object*>(entity);
 						if (object->isEnabled() == false) continue;
 						visibleObjects.push_back(object);
 					}

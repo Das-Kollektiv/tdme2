@@ -15,7 +15,7 @@ using std::vector;
 
 using tdme::engine::primitives::TerrainMesh;
 using tdme::engine::primitives::Triangle;
-using tdme::engine::Object3DModel;
+using tdme::engine::ObjectModel;
 using tdme::engine::Transformations;
 
 /**
@@ -42,7 +42,7 @@ public:
 	 * @param model model
 	 * @param transformations transformations
 	 */
-	TerrainMesh(Object3DModel* model, const Transformations& transformations = Transformations());
+	TerrainMesh(ObjectModel* model, const Transformations& transformations = Transformations());
 
 	/**
 	 * Destructor

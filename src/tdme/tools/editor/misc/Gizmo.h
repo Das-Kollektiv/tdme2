@@ -14,7 +14,7 @@ using std::vector;
 using tdme::engine::model::Node;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 using tdme::engine::Transformations;
 using tdme::math::Vector3;
 
@@ -140,7 +140,7 @@ public:
 	/**
 	 * @return GIZMO object
 	 */
-	Object3D* getGizmoObject3D();
+	Object* getGizmoObject();
 
 	/**
 	 * Remove gizmo

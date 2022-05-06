@@ -16,7 +16,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object.h>
 #include <tdme/engine/ParticleSystemEntity.h>
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/PointsParticleSystem.h>
@@ -45,7 +45,7 @@ using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::EntityHierarchy;
 using tdme::engine::Light;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 using tdme::engine::ParticleSystemEntity;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::PointsParticleSystem;
@@ -128,7 +128,7 @@ void EntityHierarchyTest::initialize()
 	auto groundModel = modelDeleter.add(Primitives::createModel(ground, "ground_model"));
 	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
 	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	entity = new Object3D("ground", groundModel);
+	entity = new Object("ground", groundModel);
 	entity->setTranslation(Vector3(0.0f, -1.0f, 0.0f));
 	entity->setReceivesShadows(true);
 	entity->update();
@@ -144,15 +144,15 @@ void EntityHierarchyTest::initialize()
 	entityHierarchy->addRotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
 	entityHierarchy->addRotation(Vector3(0.0f, 0.0f, 1.0f), 0.0f);
 	entityHierarchy->setTranslation(Vector3(-5.0f, 0.0f, 0.0f));
-	entityHierarchy->addEntity(entity = new Object3D("root", boxModel)); entity->setTranslation(Vector3(0.0f, 0.0f, 0.0f));
-	entityHierarchy->addEntity(entity = new Object3D("child1", boxModel), "root"); entity->setTranslation(Vector3(-3.0f, 2.0f, -3.0f));
-	entityHierarchy->addEntity(entity = new Object3D("child2", boxModel), "root"); entity->setTranslation(Vector3(+3.0f, 2.0f, -3.0f));
-	entityHierarchy->addEntity(entity = new Object3D("child3", boxModel), "root"); entity->setTranslation(Vector3(-3.0f, 2.0f, +3.0f));
-	entityHierarchy->addEntity(entity = new Object3D("child4", boxModel), "root"); entity->setTranslation(Vector3(+3.0f, 2.0f, +3.0f));
-	entityHierarchy->addEntity(entity = new Object3D("child1.1", boxModel), "child1"); entity->setTranslation(Vector3(-1.5f, 2.0f, -1.5f));
-	entityHierarchy->addEntity(entity = new Object3D("child1.2", boxModel), "child1"); entity->setTranslation(Vector3(+1.5f, 2.0f, -1.5f));
-	entityHierarchy->addEntity(entity = new Object3D("child1.3", boxModel), "child1"); entity->setTranslation(Vector3(-1.5f, 2.0f, +1.5f));
-	entityHierarchy->addEntity(entity = new Object3D("child1.4", boxModel), "child1"); entity->setTranslation(Vector3(+1.5f, 2.0f, +1.5f));
+	entityHierarchy->addEntity(entity = new Object("root", boxModel)); entity->setTranslation(Vector3(0.0f, 0.0f, 0.0f));
+	entityHierarchy->addEntity(entity = new Object("child1", boxModel), "root"); entity->setTranslation(Vector3(-3.0f, 2.0f, -3.0f));
+	entityHierarchy->addEntity(entity = new Object("child2", boxModel), "root"); entity->setTranslation(Vector3(+3.0f, 2.0f, -3.0f));
+	entityHierarchy->addEntity(entity = new Object("child3", boxModel), "root"); entity->setTranslation(Vector3(-3.0f, 2.0f, +3.0f));
+	entityHierarchy->addEntity(entity = new Object("child4", boxModel), "root"); entity->setTranslation(Vector3(+3.0f, 2.0f, +3.0f));
+	entityHierarchy->addEntity(entity = new Object("child1.1", boxModel), "child1"); entity->setTranslation(Vector3(-1.5f, 2.0f, -1.5f));
+	entityHierarchy->addEntity(entity = new Object("child1.2", boxModel), "child1"); entity->setTranslation(Vector3(+1.5f, 2.0f, -1.5f));
+	entityHierarchy->addEntity(entity = new Object("child1.3", boxModel), "child1"); entity->setTranslation(Vector3(-1.5f, 2.0f, +1.5f));
+	entityHierarchy->addEntity(entity = new Object("child1.4", boxModel), "child1"); entity->setTranslation(Vector3(+1.5f, 2.0f, +1.5f));
 	entityHierarchy->addEntity(
 		entity = new ParticleSystemGroup(
 			"fire",

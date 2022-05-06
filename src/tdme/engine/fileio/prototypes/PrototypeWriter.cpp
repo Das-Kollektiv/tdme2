@@ -42,7 +42,7 @@
 #include <tdme/engine/prototype/PrototypeTerrainBrushPrototype.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/EntityShaderParameters.h>
-#include <tdme/engine/LODObject3D.h>
+#include <tdme/engine/LODObject.h>
 #include <tdme/engine/ShaderParameter.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -96,7 +96,7 @@ using tdme::engine::prototype::PrototypeTerrainBrush;
 using tdme::engine::prototype::PrototypeTerrainBrushPrototype;
 using tdme::engine::Engine;
 using tdme::engine::EntityShaderParameters;
-using tdme::engine::LODObject3D;
+using tdme::engine::LODObject;
 using tdme::engine::ShaderParameter;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
@@ -135,7 +135,7 @@ void PrototypeWriter::writeLODLevelToJSON(Document& jDocument, Value& jLodLevelR
 	auto& jAllocator = jDocument.GetAllocator();
 	jLodLevelRoot.SetObject();
 	jLodLevelRoot.AddMember("t", Value(lodLevel->getType()), jAllocator);
-	if (lodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL) {
+	if (lodLevel->getType() == LODObject::LODLEVELTYPE_MODEL) {
 		//
 		auto modelPathName = Tools::getPathName(lodLevel->getFileName());
 		auto modelFileName = Tools::removeFileEnding(Tools::getFileName(lodLevel->getFileName())) + ".tm";
@@ -185,8 +185,8 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 		{
 			auto lodLevel = prototype->getLODLevel2();
 			if (lodLevel != nullptr &&
-				(lodLevel->getType() == LODObject3D::LODLEVELTYPE_IGNORE ||
-				((lodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL) &&
+				(lodLevel->getType() == LODObject::LODLEVELTYPE_IGNORE ||
+				((lodLevel->getType() == LODObject::LODLEVELTYPE_MODEL) &&
 				lodLevel->getModel() != nullptr))) {
 				//
 				Value jLodLevel;
@@ -199,8 +199,8 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 		{
 			auto lodLevel = prototype->getLODLevel3();
 			if (lodLevel != nullptr &&
-				(lodLevel->getType() == LODObject3D::LODLEVELTYPE_IGNORE ||
-				((lodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL) &&
+				(lodLevel->getType() == LODObject::LODLEVELTYPE_IGNORE ||
+				((lodLevel->getType() == LODObject::LODLEVELTYPE_MODEL) &&
 				lodLevel->getModel() != nullptr))) {
 				//
 				//

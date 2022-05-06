@@ -18,7 +18,7 @@ using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::rendering::ModelStatistics;
-using tdme::engine::subsystems::rendering::Object3DModelInternal;
+using tdme::engine::subsystems::rendering::ObjectModelInternal;
 using tdme::math::Matrix4x4;
 
 /**
@@ -55,7 +55,7 @@ public:
 	 * @param object3DModelInternal object 3d model internal
 	 * @param modelStatistics model statistics
 	 */
-	static void computeModelStatistics(Object3DModelInternal* object3DModelInternal, ModelStatistics* modelStatistics);
+	static void computeModelStatistics(ObjectModelInternal* object3DModelInternal, ModelStatistics* modelStatistics);
 
 	/**
 	 * Compute if model 1 equals model 2
@@ -71,7 +71,7 @@ public:
 	 * @param object3DModel2Internal model 2
 	 * @return model1 equals model2
 	 */
-	static bool equals(Object3DModelInternal* object3DModel1Internal, Object3DModelInternal* object3DModel2Internal);
+	static bool equals(ObjectModelInternal* object3DModel1Internal, ObjectModelInternal* object3DModel2Internal);
 
 private:
 	/**
@@ -79,14 +79,14 @@ private:
 	 * @param object3DModelInternal model
 	 * @return axis aligned bounding box
 	 */
-	static BoundingBox* createBoundingBox(Object3DModelInternal* object3DModelInternal);
+	static BoundingBox* createBoundingBox(ObjectModelInternal* object3DModelInternal);
 
 	/**
 	 * Creates a bounding box from given object3d model without mesh
 	 * @param object3DModelInternal model
 	 * @return boundingBox axis aligned bounding box
 	 */
-	static BoundingBox* createBoundingBoxNoMesh(Object3DModelInternal* object3DModelInternal);
+	static BoundingBox* createBoundingBoxNoMesh(ObjectModelInternal* object3DModelInternal);
 
 	/**
 	 * Invert normals recursive

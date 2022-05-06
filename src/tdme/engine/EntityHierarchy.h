@@ -12,10 +12,10 @@
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
-#include <tdme/engine/subsystems/rendering/Object3DInternal.h>
+#include <tdme/engine/subsystems/rendering/ObjectInternal.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Entity.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/math/fwd-tdme.h>
@@ -31,10 +31,10 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::renderer::Renderer;
-using tdme::engine::subsystems::rendering::Object3DInternal;
+using tdme::engine::subsystems::rendering::ObjectInternal;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 using tdme::engine::Rotation;
 using tdme::engine::Transformations;
 using tdme::math::Matrix4x4;

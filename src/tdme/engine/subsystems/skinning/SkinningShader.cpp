@@ -11,9 +11,9 @@
 #include <tdme/engine/subsystems/manager/VBOManager.h>
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
-#include <tdme/engine/subsystems/rendering/Object3DBase.h>
-#include <tdme/engine/subsystems/rendering/Object3DNodeMesh.h>
-#include <tdme/engine/subsystems/rendering/Object3DNodeRenderer.h>
+#include <tdme/engine/subsystems/rendering/ObjectBase.h>
+#include <tdme/engine/subsystems/rendering/ObjectNodeMesh.h>
+#include <tdme/engine/subsystems/rendering/ObjectNodeRenderer.h>
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/utilities/ByteBuffer.h>
@@ -37,9 +37,9 @@ using tdme::engine::model::Skinning;
 using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::renderer::Renderer;
-using tdme::engine::subsystems::rendering::Object3DBase;
-using tdme::engine::subsystems::rendering::Object3DNodeMesh;
-using tdme::engine::subsystems::rendering::Object3DNodeRenderer;
+using tdme::engine::subsystems::rendering::ObjectBase;
+using tdme::engine::subsystems::rendering::ObjectNodeMesh;
+using tdme::engine::subsystems::rendering::ObjectNodeRenderer;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::engine::Engine;
 using tdme::utilities::ByteBuffer;
@@ -103,7 +103,7 @@ void SkinningShader::useProgram()
 	isRunning = true;
 }
 
-void SkinningShader::computeSkinning(int contextIdx, Object3DBase* object3DBase, Object3DNodeMesh* object3DNodeMesh)
+void SkinningShader::computeSkinning(int contextIdx, ObjectBase* object3DBase, ObjectNodeMesh* object3DNodeMesh)
 {
 	//
 	auto& skinningContext = contexts[contextIdx];

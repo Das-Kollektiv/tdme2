@@ -12,7 +12,7 @@ using std::string;
 using std::unordered_map;
 
 using tdme::engine::subsystems::manager::MeshManager_MeshManaged;
-using tdme::engine::subsystems::rendering::Object3DNodeMesh;
+using tdme::engine::subsystems::rendering::ObjectNodeMesh;
 
 /**
  * Mesh manager
@@ -40,14 +40,14 @@ public:
 	 * @param meshId mesh id
 	 * @return object 3d node mesh or null
 	 */
-	Object3DNodeMesh* getMesh(const string& meshId);
+	ObjectNodeMesh* getMesh(const string& meshId);
 
 	/**
 	 * Adds a mesh to manager
 	 * @param meshId mesh id
 	 * @param mesh mesh
 	 */
-	void addMesh(const string& meshId, Object3DNodeMesh* mesh);
+	void addMesh(const string& meshId, ObjectNodeMesh* mesh);
 
 	/**
 	 * Removes a mesh from manager

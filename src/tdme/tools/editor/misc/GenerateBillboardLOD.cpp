@@ -17,8 +17,8 @@
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/engine/LODObject3D.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/LODObject.h>
+#include <tdme/engine/Object.h>
 #include <tdme/engine/SimplePartition.h>
 #include <tdme/math/Math.h>
 #include <tdme/tools/editor/misc/Tools.h>
@@ -45,8 +45,8 @@ using tdme::engine::model::RotationOrder;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::model::UpVector;
 using tdme::engine::Engine;
-using tdme::engine::LODObject3D;
-using tdme::engine::Object3D;
+using tdme::engine::LODObject;
+using tdme::engine::Object;
 using tdme::engine::SimplePartition;
 using tdme::math::Math;
 using tdme::tools::editor::misc::Tools;
@@ -85,7 +85,7 @@ Model* GenerateBillboardLOD::generate(
 	camera->setLookAt(boundingBox->getCenter());
 	camera->setLookFrom(boundingBox->getCenter().clone().add(Vector3(0.0f, 0.0f, boundingBox->getCenter().getZ() + maxAxisDimension * 1.25f)));
 	//
-	osEngine->addEntity(new Object3D("model", model));
+	osEngine->addEntity(new Object("model", model));
 	//
 	osEngine->display();
 	//

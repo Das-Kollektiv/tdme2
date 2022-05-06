@@ -25,7 +25,7 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/Timing.h>
@@ -66,7 +66,7 @@ using tdme::engine::scene::SceneEntity;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 using tdme::engine::Rotation;
 using tdme::engine::SceneConnector;
 using tdme::engine::Timing;
@@ -304,7 +304,7 @@ void FlowMapTest2::display()
 				{
 					auto flowDirectionEntityId = "flowdirectioncurrent" + to_string(combatUnit.idx);
 					auto yRotationAngle = Vector3::computeAngle(Vector3(0.0f, 0.0f, 1.0f), pathFindingNodeDirection, Vector3(0.0f, 1.0f, 0.0f));
-					auto cellObject = new Object3D(flowDirectionEntityId, emptyModel);
+					auto cellObject = new Object(flowDirectionEntityId, emptyModel);
 					cellObject->setScale(Vector3(5.0f, 5.0f, 5.0f));
 					cellObject->setTranslation(Vector3(-0.0f, 0.5f, 3.0f - (combatUnit.idx * 5.0f)));
 					cellObject->addRotation(Vector3(0.0f, 1.0f, 0.0f), yRotationAngle - 90.0f);
@@ -386,7 +386,7 @@ void FlowMapTest2::display()
 				{
 					{
 						auto pathFindingNodeId = "pathfindingnodecurrent." + to_string(combatUnit.idx);
-						auto pathFindingNodeObject = new Object3D(pathFindingNodeId, emptyModel);
+						auto pathFindingNodeObject = new Object(pathFindingNodeId, emptyModel);
 						pathFindingNodeObject->setScale(Vector3(2.0f, 2.0f, 2.0f));
 						pathFindingNodeObject->setTranslation(combatUnit.pathFindingNode + Vector3(0.0f, 0.0f, 0.0f));
 						pathFindingNodeObject->addRotation(Vector3(0.0f, 0.0f, 1.0f), 90.0f);
@@ -484,7 +484,7 @@ void FlowMapTest2::initialize()
 		combatUnit.movementDirectionRingIdx = 0;
 		combatUnit.pathIdx = 0;
 		combatUnit.rotationY = 0.0f;
-		combatUnit.object = new Object3D("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
+		combatUnit.object = new Object("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
 		combatUnit.object->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
 		combatUnit.object->setTranslation(startPosition);
 		combatUnit.object->update();
@@ -508,7 +508,7 @@ void FlowMapTest2::initialize()
 		combatUnit.movementDirectionRingIdx = 0;
 		combatUnit.pathIdx = 0;
 		combatUnit.rotationY = 0.0f;
-		combatUnit.object = new Object3D("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
+		combatUnit.object = new Object("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
 		combatUnit.object->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
 		combatUnit.object->setTranslation(startPosition);
 		combatUnit.object->update();
@@ -532,7 +532,7 @@ void FlowMapTest2::initialize()
 		combatUnit.movementDirectionRingIdx = 0;
 		combatUnit.pathIdx = 0;
 		combatUnit.rotationY = 0.0f;
-		combatUnit.object = new Object3D("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
+		combatUnit.object = new Object("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
 		combatUnit.object->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
 		combatUnit.object->setTranslation(startPosition);
 		combatUnit.object->update();
@@ -556,7 +556,7 @@ void FlowMapTest2::initialize()
 		combatUnit.movementDirectionRingIdx = 0;
 		combatUnit.pathIdx = 0;
 		combatUnit.rotationY = 0.0f;
-		combatUnit.object = new Object3D("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
+		combatUnit.object = new Object("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
 		combatUnit.object->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
 		combatUnit.object->setTranslation(startPosition);
 		combatUnit.object->update();
@@ -580,7 +580,7 @@ void FlowMapTest2::initialize()
 		combatUnit.movementDirectionRingIdx = 0;
 		combatUnit.pathIdx = 0;
 		combatUnit.rotationY = 0.0f;
-		combatUnit.object = new Object3D("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
+		combatUnit.object = new Object("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
 		combatUnit.object->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
 		combatUnit.object->setTranslation(startPosition);
 		combatUnit.object->update();
@@ -604,7 +604,7 @@ void FlowMapTest2::initialize()
 		combatUnit.movementDirectionRingIdx = 0;
 		combatUnit.pathIdx = 0;
 		combatUnit.rotationY = 0.0f;
-		combatUnit.object = new Object3D("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
+		combatUnit.object = new Object("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
 		combatUnit.object->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
 		combatUnit.object->setTranslation(startPosition);
 		combatUnit.object->update();
@@ -629,7 +629,7 @@ void FlowMapTest2::initialize()
 		combatUnit.movementDirectionRingIdx = 0;
 		combatUnit.pathIdx = 0;
 		combatUnit.rotationY = 0.0f;
-		combatUnit.object = new Object3D("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
+		combatUnit.object = new Object("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
 		combatUnit.object->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
 		combatUnit.object->setTranslation(startPosition);
 		combatUnit.object->update();
@@ -653,7 +653,7 @@ void FlowMapTest2::initialize()
 		combatUnit.movementDirectionRingIdx = 0;
 		combatUnit.pathIdx = 0;
 		combatUnit.rotationY = 0.0f;
-		combatUnit.object = new Object3D("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
+		combatUnit.object = new Object("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
 		combatUnit.object->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
 		combatUnit.object->setTranslation(startPosition);
 		combatUnit.object->update();
@@ -677,7 +677,7 @@ void FlowMapTest2::initialize()
 		combatUnit.movementDirectionRingIdx = 0;
 		combatUnit.pathIdx = 0;
 		combatUnit.rotationY = 0.0f;
-		combatUnit.object = new Object3D("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
+		combatUnit.object = new Object("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
 		combatUnit.object->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
 		combatUnit.object->setTranslation(startPosition);
 		combatUnit.object->update();
@@ -701,7 +701,7 @@ void FlowMapTest2::initialize()
 		combatUnit.movementDirectionRingIdx = 0;
 		combatUnit.pathIdx = 0;
 		combatUnit.rotationY = 0.0f;
-		combatUnit.object = new Object3D("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
+		combatUnit.object = new Object("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
 		combatUnit.object->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
 		combatUnit.object->setTranslation(startPosition);
 		combatUnit.object->update();
@@ -725,7 +725,7 @@ void FlowMapTest2::initialize()
 		combatUnit.movementDirectionRingIdx = 0;
 		combatUnit.pathIdx = 0;
 		combatUnit.rotationY = 0.0f;
-		combatUnit.object = new Object3D("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
+		combatUnit.object = new Object("combatunit." + to_string(combatUnit.idx), playerModelPrototype->getModel());
 		combatUnit.object->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
 		combatUnit.object->setTranslation(startPosition);
 		combatUnit.object->update();
@@ -922,7 +922,7 @@ void FlowMapTest2::doPathFinding(const Vector3& newEndPosition) {
 			{
 				auto flowDirectionEntityId = "flowdirection." + to_string(i);
 				auto yRotationAngle = Vector3::computeAngle(Vector3(0.0f, 0.0f, 1.0f), cell->getDirection(), Vector3(0.0f, 1.0f, 0.0f));
-				auto cellObject = new Object3D(flowDirectionEntityId, emptyModel);
+				auto cellObject = new Object(flowDirectionEntityId, emptyModel);
 				cellObject->setScale(Vector3(0.5f, 0.5f, 0.5f));
 				cellObject->setTranslation(cellPosition + Vector3(0.0f, 0.25f, 0.0f));
 				cellObject->addRotation(Vector3(0.0f, 1.0f, 0.0f), yRotationAngle - 90.0f);
@@ -938,7 +938,7 @@ void FlowMapTest2::doPathFinding(const Vector3& newEndPosition) {
 			/*
 			{
 				auto pathFindingNodeId = "pathfindingnode." + to_string(j);
-				auto pathFindingNodeObject = new Object3D(pathFindingNodeId, emptyModel);
+				auto pathFindingNodeObject = new Object(pathFindingNodeId, emptyModel);
 				pathFindingNodeObject->setScale(Vector3(2.0f, 2.0f, 2.0f));
 				pathFindingNodeObject->setTranslation(flowMap->getPath()[cell->getPathIdx()] + Vector3(0.0f, 0.4f, 0.0f));
 				pathFindingNodeObject->addRotation(Vector3(0.0f, 0.0f, 1.0f), 90.0f);

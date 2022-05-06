@@ -17,7 +17,7 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/utilities/ObjectDeleter.h>
@@ -41,7 +41,7 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::utilities::ObjectDeleter;
@@ -101,7 +101,7 @@ void PhysicsTest2::initialize()
 {
 	engine->initialize();
 	engine->addPostProcessingProgram("ssao");
-	Object3D* entity;
+	Object* entity;
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(15.0f);
@@ -124,7 +124,7 @@ void PhysicsTest2::initialize()
 	auto groundModel = modelDeleter.add(Primitives::createModel(ground, "ground_model"));
 	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
 	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	entity = new Object3D("ground", groundModel);
+	entity = new Object("ground", groundModel);
 	entity->setTranslation(Vector3(0.0f, -1.0f, 0.0f));
 	entity->update();
 	entity->setReceivesShadows(true);
@@ -135,7 +135,7 @@ void PhysicsTest2::initialize()
 	boxModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.5f, 0.5f, 1.0f));
 	boxModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
 	for (auto i = 0; i < BOX_COUNT; i++) {
-		entity = new Object3D("box" + to_string(i), boxModel);
+		entity = new Object("box" + to_string(i), boxModel);
 		entity->setContributesShadows(true);
 		entity->setReceivesShadows(true);
 		entity->setTranslation(Vector3(0.0f, i * 2.0f + 1.0f, 0.0f));

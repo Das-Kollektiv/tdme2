@@ -35,10 +35,10 @@
 #include <tdme/engine/subsystems/rendering/BatchRendererTriangles.h>
 #include <tdme/engine/subsystems/rendering/EntityRenderer_InstancedRenderFunctionParameters.h>
 #include <tdme/engine/subsystems/rendering/EntityRenderer_TransparentRenderFacesGroupPool.h>
-#include <tdme/engine/subsystems/rendering/Object3DBase.h>
-#include <tdme/engine/subsystems/rendering/Object3DNode.h>
-#include <tdme/engine/subsystems/rendering/Object3DNodeMesh.h>
-#include <tdme/engine/subsystems/rendering/Object3DNodeRenderer.h>
+#include <tdme/engine/subsystems/rendering/ObjectBase.h>
+#include <tdme/engine/subsystems/rendering/ObjectNode.h>
+#include <tdme/engine/subsystems/rendering/ObjectNodeMesh.h>
+#include <tdme/engine/subsystems/rendering/ObjectNodeRenderer.h>
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
 #include <tdme/engine/subsystems/rendering/RenderTransparentRenderPointsPool.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFace.h>
@@ -53,8 +53,8 @@
 #include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/EnvironmentMapping.h>
 #include <tdme/engine/FogParticleSystem.h>
-#include <tdme/engine/LinesObject3D.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/LinesObject.h>
+#include <tdme/engine/Object.h>
 #include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
@@ -104,10 +104,10 @@ using tdme::engine::subsystems::rendering::BatchRendererTriangles;
 using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::rendering::EntityRenderer_InstancedRenderFunctionParameters;
 using tdme::engine::subsystems::rendering::EntityRenderer_TransparentRenderFacesGroupPool;
-using tdme::engine::subsystems::rendering::Object3DBase;
-using tdme::engine::subsystems::rendering::Object3DNode;
-using tdme::engine::subsystems::rendering::Object3DNodeMesh;
-using tdme::engine::subsystems::rendering::Object3DNodeRenderer;
+using tdme::engine::subsystems::rendering::ObjectBase;
+using tdme::engine::subsystems::rendering::ObjectNode;
+using tdme::engine::subsystems::rendering::ObjectNodeMesh;
+using tdme::engine::subsystems::rendering::ObjectNodeRenderer;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::engine::subsystems::rendering::RenderTransparentRenderPointsPool;
 using tdme::engine::subsystems::rendering::TransparentRenderFace;
@@ -121,8 +121,8 @@ using tdme::engine::Entity;
 using tdme::engine::EntityHierarchy;
 using tdme::engine::EnvironmentMapping;
 using tdme::engine::FogParticleSystem;
-using tdme::engine::LinesObject3D;
-using tdme::engine::Object3D;
+using tdme::engine::LinesObject;
+using tdme::engine::Object;
 using tdme::engine::PointsParticleSystem;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
@@ -222,7 +222,7 @@ void EntityRenderer::reset()
 	objectsByShadersAndModels.clear();
 }
 
-void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes)
+void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Object*>& objects, bool renderTransparentFaces, int32_t renderTypes)
 {
 	if (renderer->isSupportingMultithreadedRendering() == false) {
 		renderFunction(0, renderPass, objects, objectsByShadersAndModels, renderTransparentFaces, renderTypes, transparentRenderFacesPool);
@@ -345,7 +345,7 @@ void EntityRenderer::prepareTransparentFaces(const vector<TransparentRenderFace*
 {
 	// all those faces should share the object and object 3d node, ...
 	auto object3DNode = transparentRenderFaces[0]->object3DNode;
-	auto object3D = static_cast<Object3D*>(object3DNode->object);
+	auto object3D = static_cast<Object*>(object3DNode->object);
 	// model view matrix to be used with given transparent render faces
 	Matrix4x4 modelViewMatrix;
 	if (object3DNode->mesh->skinning == true) {
@@ -416,7 +416,7 @@ void EntityRenderer::releaseTransparentFacesGroups()
 	transparentRenderFacesGroups.clear();
 }
 
-void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes) {
+void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object*>& objects, bool collectTransparentFaces, int32_t renderTypes) {
 	Vector3 objectCamFromAxis;
 	auto camera = engine->getCamera();
 
@@ -472,7 +472,7 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>
 					auto object = objects[objectIdx];
 					auto _object3DNode = object->object3dNodes[object3DNodeIdx];
 					// set up textures
-					Object3DNode::setupTextures(renderer, contextIdx, object3DNode, faceEntityIdx);
+					ObjectNode::setupTextures(renderer, contextIdx, object3DNode, faceEntityIdx);
 					// set up transparent render faces
 					if (collectTransparentFaces == true) {
 						transparentRenderFacesPool->createTransparentRenderFaces(
@@ -704,7 +704,7 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>
 	renderer->getModelViewMatrix().set(cameraMatrix);
 }
 
-void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes, TransparentRenderFacesPool* transparentRenderFacesPool)
+void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vector<Object*>& objects, bool collectTransparentFaces, int32_t renderTypes, TransparentRenderFacesPool* transparentRenderFacesPool)
 {
 	// contexts
 	auto& object3DRenderContext = contexts[threadIdx];
@@ -753,7 +753,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 						auto object = objects[objectIdx];
 						auto _object3DNode = object->object3dNodes[object3DNodeIdx];
 						// set up textures
-						Object3DNode::setupTextures(renderer, contextIdx, object3DNode, faceEntityIdx);
+						ObjectNode::setupTextures(renderer, contextIdx, object3DNode, faceEntityIdx);
 						// set up transparent render faces
 						if (collectTransparentFaces == true) {
 							transparentRenderFacesPool->createTransparentRenderFaces(
@@ -1140,7 +1140,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 	object3DRenderContext.objectsNotRendered.clear();
 }
 
-void EntityRenderer::setupMaterial(int contextIdx, Object3DNode* object3DNode, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey, const string& currentMaterialKey)
+void EntityRenderer::setupMaterial(int contextIdx, ObjectNode* object3DNode, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey, const string& currentMaterialKey)
 {
 	auto& facesEntities = object3DNode->node->getFacesEntities();
 	auto material = facesEntities[facesEntityIdx].getMaterial();
@@ -1153,7 +1153,7 @@ void EntityRenderer::setupMaterial(int contextIdx, Object3DNode* object3DNode, i
 	materialKey = material->getId();
 
 	// setup textures
-	Object3DNode::setupTextures(renderer, contextIdx, object3DNode, facesEntityIdx);
+	ObjectNode::setupTextures(renderer, contextIdx, object3DNode, facesEntityIdx);
 
 	//
 	if (updateOnly == false) {
@@ -1240,7 +1240,7 @@ void EntityRenderer::setupMaterial(int contextIdx, Object3DNode* object3DNode, i
 			if ((renderTypes & RENDERTYPE_TEXTURES) == RENDERTYPE_TEXTURES ||
 				specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true) {
 				auto diffuseTextureId =
-					object3DNode->specularMaterialDynamicDiffuseTextureIdsByEntities[facesEntityIdx] != Object3DNode::TEXTUREID_NONE ?
+					object3DNode->specularMaterialDynamicDiffuseTextureIdsByEntities[facesEntityIdx] != ObjectNode::TEXTUREID_NONE ?
 					object3DNode->specularMaterialDynamicDiffuseTextureIdsByEntities[facesEntityIdx] :
 					object3DNode->specularMaterialDiffuseTextureIdsByEntities[facesEntityIdx];
 				materialKey+= ",";
@@ -1442,7 +1442,7 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Entity*>
 	renderer->getModelViewMatrix().set(modelViewMatrix);
 }
 
-void EntityRenderer::render(Entity::RenderPass renderPass, const vector<LinesObject3D*>& objects) {
+void EntityRenderer::render(Entity::RenderPass renderPass, const vector<LinesObject*>& objects) {
 	// TODO: Move me into own class
 	// TODO: check me performance wise again
 	if (objects.size() == 0) return;

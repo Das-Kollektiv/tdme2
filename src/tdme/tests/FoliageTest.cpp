@@ -16,8 +16,8 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/Object3D.h>
-#include <tdme/engine/Object3DRenderGroup.h>
+#include <tdme/engine/Object.h>
+#include <tdme/engine/ObjectRenderGroup.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/ShaderParameter.h>
 #include <tdme/engine/Transformations.h>
@@ -47,8 +47,8 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
-using tdme::engine::Object3D;
-using tdme::engine::Object3DRenderGroup;
+using tdme::engine::Object;
+using tdme::engine::ObjectRenderGroup;
 using tdme::engine::Rotation;
 using tdme::engine::ShaderParameter;
 using tdme::engine::Transformations;
@@ -137,7 +137,7 @@ void FoliageTest::initialize()
 {
 	engine->initialize();
 	engine->setSceneColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	Object3D* entity;
+	Object* entity;
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(50.0f);
@@ -160,13 +160,13 @@ void FoliageTest::initialize()
 	auto groundModel = modelDeleter.add(Primitives::createModel(ground, "ground_model"));
 	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
 	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	entity = new Object3D("ground", groundModel);
+	entity = new Object("ground", groundModel);
 	entity->setTranslation(Vector3(0.0f, -1.0f, 0.0f));
 	entity->setReceivesShadows(true);
 	entity->update();
 	engine->addEntity(entity);
 	auto reedModel = modelDeleter.add(ModelReader::read("resources/tests/models/reed", "Mesh_Environment_Reed_06.fbx.tm"));
-	auto foliageObject = new Object3DRenderGroup("foliage");
+	auto foliageObject = new ObjectRenderGroup("foliage");
 	int reedIdx = 0;
 	#if defined(GLES2)
 		for (float z = -10.0f; z < 10.0f;) {

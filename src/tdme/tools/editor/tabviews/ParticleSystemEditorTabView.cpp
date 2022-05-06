@@ -184,7 +184,7 @@ void ParticleSystemEditorTabView::handleInputEvents()
 						Vector3 deltaScale;
 						if (determineGizmoDeltaTransformations(mouseDownLastX, mouseDownLastY, event.getXUnscaled(), event.getYUnscaled(), deltaTranslation, deltaRotation, deltaScale) == true) {
 							totalDeltaScale.add(deltaScale.clone().sub(Vector3(1.0f, 1.0f, 1.0f)));
-							auto gizmoEntity = getGizmoObject3D();
+							auto gizmoEntity = getGizmoObject();
 							auto selectedEntity = engine->getEntity("model");
 							auto psg = dynamic_cast<ParticleSystemGroup*>(selectedEntity);
 							if (psg != nullptr) selectedEntity = psg->getParticleSystems()[particleSystemIdx];

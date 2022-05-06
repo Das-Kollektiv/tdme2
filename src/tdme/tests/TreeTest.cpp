@@ -16,7 +16,7 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/ShaderParameter.h>
 #include <tdme/math/Math.h>
@@ -46,7 +46,7 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 using tdme::engine::Rotation;
 using tdme::engine::ShaderParameter;
 using tdme::math::Math;
@@ -147,7 +147,7 @@ void TreeTest::initialize()
 	engine->addPostProcessingProgram("light_scattering");
 	engine->setShaderParameter("light_scattering", "intensity", ShaderParameter(1.0f));
 	engine->setSceneColor(Color4(0.2f, 0.2f, 0.8f, 1.0f));
-	Object3D* entity;
+	Object* entity;
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(150.0f);
@@ -161,7 +161,7 @@ void TreeTest::initialize()
 
 	/*
 	auto _grass = modelDeleter.add(ModelReader::read("resources/tests/models/grass", "grass.dae"));
-	auto grass = new Object3D("ground", _grass);
+	auto grass = new Object("ground", _grass);
 	grass->setEnabled(true);
 	grass->setScale(Vector3(16.0f, 1.0f, 16.0f));
 	grass->setReceivesShadows(true);
@@ -172,7 +172,7 @@ void TreeTest::initialize()
 	// TODO: Looks like we have a precision issue here, using a single ground with e.g. 240m x 240m does not work yet :(
 	/*
 	auto ground = bvDeleter.add(new OrientedBoundingBox(Vector3(0.0f, 0.0f, 0.0f), OrientedBoundingBox::AABB_AXIS_X, OrientedBoundingBox::AABB_AXIS_Y, OrientedBoundingBox::AABB_AXIS_Z, Vector3(240.0f, 1.0f, 240.0f)));
-	entity = new Object3D("ground", groundModel);
+	entity = new Object("ground", groundModel);
 	entity->setTranslation(Vector3(0.0f, -1.0f, 0.0f));
 	entity->setReceivesShadows(true);
 	entity->update();
@@ -185,7 +185,7 @@ void TreeTest::initialize()
 	auto groundIdx = 0;
 	for (float z = -40.0f; z <= 40.0f; z+= 5.0f) {
 		for (float x = -40.0f; x <= 40.0f; x+= 5.0f) {
-			entity = new Object3D("ground." + to_string(groundIdx++), groundModel);
+			entity = new Object("ground." + to_string(groundIdx++), groundModel);
 			entity->setTranslation(Vector3(x, -1.0f, z));
 			entity->setReceivesShadows(true);
 			entity->update();
@@ -198,7 +198,7 @@ void TreeTest::initialize()
 	int treeIdx = 0;
 	for (float z = -20.0f; z < 20.0f; z+= 5.0f) {
 		for (float x = -20.0f; x < 20.0f; x+= 5.0f) {
-			auto entity = new Object3D(
+			auto entity = new Object(
 				"tree." + to_string(treeIdx++),
 				treePine
 			);

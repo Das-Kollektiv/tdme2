@@ -16,8 +16,8 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/LODObject3D.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/LODObject.h>
+#include <tdme/engine/Object.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Quaternion.h>
@@ -45,8 +45,8 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
-using tdme::engine::LODObject3D;
-using tdme::engine::Object3D;
+using tdme::engine::LODObject;
+using tdme::engine::Object;
 using tdme::engine::Rotation;
 using tdme::math::Math;
 using tdme::math::Vector3;
@@ -134,7 +134,7 @@ void LODTest::initialize()
 {
 	engine->initialize();
 	engine->setSceneColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	Object3D* entity;
+	Object* entity;
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(150.0f);
@@ -157,7 +157,7 @@ void LODTest::initialize()
 	auto groundModel = modelDeleter.add(Primitives::createModel(ground, "ground_model"));
 	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
 	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	entity = new Object3D("ground", groundModel);
+	entity = new Object("ground", groundModel);
 	entity->setTranslation(Vector3(0.0f, -1.0f, 0.0f));
 	entity->setReceivesShadows(true);
 	entity->update();
@@ -167,13 +167,13 @@ void LODTest::initialize()
 	int treeIdx = 0;
 	for (float z = -960.0f; z < 960.0f; z+= 5.0f)
 	for (float x = -960.0f; x < 960.0f; x+= 5.0f) {
-		auto entity = new LODObject3D(
+		auto entity = new LODObject(
 			"tree." + to_string(treeIdx++),
 			treePine,
-			LODObject3D::LODLEVELTYPE_MODEL,
+			LODObject::LODLEVELTYPE_MODEL,
 			75.0f,
 			treePineLOD2,
-			LODObject3D::LODLEVELTYPE_IGNORE,
+			LODObject::LODLEVELTYPE_IGNORE,
 			250.0f,
 			nullptr,
 			250.0f

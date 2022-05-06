@@ -21,7 +21,7 @@
 #include <tdme/engine/primitives/Triangle.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
-#include <tdme/engine/Object3DModel.h>
+#include <tdme/engine/ObjectModel.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
@@ -63,7 +63,7 @@ using tdme::engine::model::UpVector;
 using tdme::engine::primitives::Triangle;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeBoundingVolume;
-using tdme::engine::Object3DModel;
+using tdme::engine::ObjectModel;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
@@ -182,9 +182,9 @@ bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode,
 				fileName
 			);
 			{
-				Object3DModel meshObject3DModel(meshModel);
+				ObjectModel meshObjectModel(meshModel);
 				vector<Triangle> meshFaceTriangles;
-				meshObject3DModel.getTriangles(meshFaceTriangles);
+				meshObjectModel.getTriangles(meshFaceTriangles);
 				for (auto& triangle: meshFaceTriangles) {
 					meshTriangles.push_back(meshPoints.size() / 3 + 0);
 					meshTriangles.push_back(meshPoints.size() / 3 + 1);
@@ -252,10 +252,10 @@ bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode,
 				fileName
 			);
 			{
-				Object3DModel meshObject3DModel(meshModel);
-				for (auto i = 0; i < meshObject3DModel.getNodeCount(); i++) {
+				ObjectModel meshObjectModel(meshModel);
+				for (auto i = 0; i < meshObjectModel.getNodeCount(); i++) {
 					vector<Triangle> nodeTriangles;
-					meshObject3DModel.getTriangles(nodeTriangles, i);
+					meshObjectModel.getTriangles(nodeTriangles, i);
 					auto convexHullFileName = fileName + ".cm." + to_string(i) + ".tm";
 					Console::println(
 						"GenerateConvexMeshes::generateConvexMeshes(): Model: Saving convex hull@" +

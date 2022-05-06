@@ -82,14 +82,14 @@ public:
 	/**
 	 * @return objects
 	 */
-	inline const vector<Object3D*>& getObjects() {
+	inline const vector<Object*>& getObjects() {
 		return objects;
 	}
 
 	/**
 	 * @return enabled objects
 	 */
-	inline const vector<Object3D*>& getEnabledObjects() {
+	inline const vector<Object*>& getEnabledObjects() {
 		return enabledObjects;
 	}
 

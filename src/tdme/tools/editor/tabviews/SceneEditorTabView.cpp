@@ -16,7 +16,7 @@
 #include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/EntityPickingFilter.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
@@ -56,7 +56,7 @@ using tdme::engine::Engine;
 using tdme::engine::EntityHierarchy;
 using tdme::engine::EntityPickingFilter;
 using tdme::engine::Light;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 using tdme::engine::SceneConnector;
 using tdme::engine::Timing;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -303,7 +303,7 @@ void SceneEditorTabView::handleInputEvents()
 					Vector3 deltaRotation;
 					Vector3 absoluteScale;
 					if (determineGizmoDeltaTransformations(mouseDownLastX, mouseDownLastY, event.getXUnscaled(), event.getYUnscaled(), deltaTranslation, deltaRotation, absoluteScale) == true) {
-						auto gizmoEntity = getGizmoObject3D();
+						auto gizmoEntity = getGizmoObject();
 						if (gizmoEntity != nullptr) {
 							Transformations rotations;
 							rotations.addRotation(scene->getRotationOrder()->getAxis0(), deltaRotation[scene->getRotationOrder()->getAxis0VectorIndex()]);
@@ -631,7 +631,7 @@ void SceneEditorTabView::removeSky() {
 void SceneEditorTabView::updateSky() {
 	engine->removeEntity("tdme.sky");
 	if (scene->getSkyModel() == nullptr) return;
-	auto sky = new Object3D("tdme.sky", scene->getSkyModel());
+	auto sky = new Object("tdme.sky", scene->getSkyModel());
 	sky->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
 	sky->setShader("sky");
 	sky->setFrustumCulling(false);
@@ -1300,7 +1300,7 @@ void SceneEditorTabView::applyReflectionEnvironmentMappingId(const string& refle
 		auto sceneEntity = scene->getEntity(selectedEntity->getId());
 		if (sceneEntity == nullptr) continue;
 
-		auto object3D = dynamic_cast<Object3D*>(selectedEntity);
+		auto object3D = dynamic_cast<Object*>(selectedEntity);
 		if (object3D != nullptr) object3D->setReflectionEnvironmentMappingId(reflectionEnvironmentMappingId);
 		sceneEntity->setReflectionEnvironmentMappingId(reflectionEnvironmentMappingId);
 	}
@@ -1341,7 +1341,7 @@ void SceneEditorTabView::updateGrid()
 	string entityId = "tdme.sceneeditor.grid";
 	auto entity = engine->getEntity(entityId);
 	if (entity == nullptr) {
-		entity = new Object3D(entityId, gridModel);
+		entity = new Object(entityId, gridModel);
 		entity->setFrustumCulling(false);
 		entity->addRotation(scene->getRotationOrder()->getAxis0(), 0.0f);
 		entity->addRotation(scene->getRotationOrder()->getAxis1(), 0.0f);

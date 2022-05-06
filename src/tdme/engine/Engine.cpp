@@ -31,8 +31,8 @@
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/rendering/EntityRenderer.h>
 #include <tdme/engine/subsystems/rendering/EntityRenderer_InstancedRenderFunctionParameters.h>
-#include <tdme/engine/subsystems/rendering/Object3DBase_TransformedFacesIterator.h>
-#include <tdme/engine/subsystems/rendering/Object3DNodeMesh.h>
+#include <tdme/engine/subsystems/rendering/ObjectBase_TransformedFacesIterator.h>
+#include <tdme/engine/subsystems/rendering/ObjectNodeMesh.h>
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFacesPool.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMap.h>
@@ -50,13 +50,13 @@
 #include <tdme/engine/FogParticleSystem.h>
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/GeometryBuffer.h>
-#include <tdme/engine/ImposterObject3D.h>
+#include <tdme/engine/ImposterObject.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/LinesObject3D.h>
-#include <tdme/engine/LODObject3D.h>
-#include <tdme/engine/LODObject3DImposter.h>
-#include <tdme/engine/Object3D.h>
-#include <tdme/engine/Object3DRenderGroup.h>
+#include <tdme/engine/LinesObject.h>
+#include <tdme/engine/LODObject.h>
+#include <tdme/engine/LODObjectImposter.h>
+#include <tdme/engine/Object.h>
+#include <tdme/engine/ObjectRenderGroup.h>
 #include <tdme/engine/ObjectParticleSystem.h>
 #include <tdme/engine/OctTreePartition.h>
 #include <tdme/engine/ParticleSystemEntity.h>
@@ -114,7 +114,7 @@ using tdme::engine::subsystems::postprocessing::PostProcessingShader;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::rendering::EntityRenderer_InstancedRenderFunctionParameters;
-using tdme::engine::subsystems::rendering::Object3DBase_TransformedFacesIterator;
+using tdme::engine::subsystems::rendering::ObjectBase_TransformedFacesIterator;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
 using tdme::engine::subsystems::shadowmapping::ShadowMap;
@@ -131,13 +131,13 @@ using tdme::engine::EntityPickingFilter;
 using tdme::engine::FogParticleSystem;
 using tdme::engine::FrameBuffer;
 using tdme::engine::GeometryBuffer;
-using tdme::engine::ImposterObject3D;
+using tdme::engine::ImposterObject;
 using tdme::engine::Light;
-using tdme::engine::LinesObject3D;
-using tdme::engine::LODObject3D;
-using tdme::engine::LODObject3DImposter;
-using tdme::engine::Object3D;
-using tdme::engine::Object3DRenderGroup;
+using tdme::engine::LinesObject;
+using tdme::engine::LODObject;
+using tdme::engine::LODObjectImposter;
+using tdme::engine::Object;
+using tdme::engine::ObjectRenderGroup;
 using tdme::engine::ObjectParticleSystem;
 using tdme::engine::OctTreePartition;
 using tdme::engine::ParticleSystemEntity;
@@ -445,7 +445,7 @@ void Engine::registerEntity(Entity* entity) {
 	// decompose to engine instances to do pre render
 	DecomposedEntities decomposedEntities;
 	decomposeEntityType(entity, decomposedEntities, true);
-	array<vector<Object3D*>, 5> objectsArray = {
+	array<vector<Object*>, 5> objectsArray = {
 		decomposedEntities.ezrObjects,
 		decomposedEntities.objects,
 		decomposedEntities.objectsForwardShading,
@@ -643,7 +643,7 @@ void Engine::removeEntityFromLists(Entity* entity)
 	//
 	removeFromDecomposedEntities(visibleDecomposedEntities, entity);
 	if (entity->getEntityType() == Entity::ENTITYTYPE_OBJECT3DRENDERGROUP) {
-		removeEntityFromLists(static_cast<Object3DRenderGroup*>(entity)->getEntity());
+		removeEntityFromLists(static_cast<ObjectRenderGroup*>(entity)->getEntity());
 	} else
 	if (entity->getEntityType() == Entity::ENTITYTYPE_OBJECTPARTICLESYSTEM) {
 		auto ops = static_cast<ObjectParticleSystem*>(entity);
@@ -658,17 +658,17 @@ void Engine::removeEntityFromLists(Entity* entity)
 		}
 	} else
 	if (entity->getEntityType() == Entity::ENTITYTYPE_LODOBJECT3D) {
-		auto lob3d = static_cast<LODObject3D*>(entity);
+		auto lob3d = static_cast<LODObject*>(entity);
 		removeEntityFromLists(lob3d->getLOD1Object());
 		removeEntityFromLists(lob3d->getLOD2Object());
 		removeEntityFromLists(lob3d->getLOD3Object());
 	} else
 	if (entity->getEntityType() == Entity::ENTITYTYPE_IMPOSTEROBJECT3D) {
-		auto io3d = static_cast<ImposterObject3D*>(entity);
+		auto io3d = static_cast<ImposterObject*>(entity);
 		for (auto subEntity: io3d->getBillboardObjects()) removeEntityFromLists(subEntity);
 	} else
 	if (entity->getEntityType() == Entity::ENTITYTYPE_LODOBJECT3DIMPOSTER) {
-		auto lob3dImposter = static_cast<LODObject3DImposter*>(entity);
+		auto lob3dImposter = static_cast<LODObjectImposter*>(entity);
 		removeEntityFromLists(lob3dImposter->getLOD1Object());
 		for (auto subEntity: lob3dImposter->getLOD2Object()->getBillboardObjects()) removeEntityFromLists(subEntity);
 	}
@@ -1046,11 +1046,11 @@ void Engine::initRendering()
 	renderingInitiated = true;
 }
 
-void Engine::preRenderFunction(vector<Object3D*>& objects, int threadIdx) {
+void Engine::preRenderFunction(vector<Object*>& objects, int threadIdx) {
 	for (auto object: objects) object->preRender(threadIdx);
 }
 
-void Engine::computeTransformationsFunction(vector<Object3D*>& objects, int threadIdx) {
+void Engine::computeTransformationsFunction(vector<Object*>& objects, int threadIdx) {
 	for (auto object: objects) object->computeTransformations(threadIdx);
 }
 
@@ -1058,7 +1058,7 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 	switch (entity->getEntityType()) {
 		case Entity::ENTITYTYPE_OBJECT3D:
 			{
-				auto object = static_cast<Object3D*>(entity);
+				auto object = static_cast<Object*>(entity);
 				if (object->isDisableDepthTest() == true) {
 					decomposedEntities.objectsNoDepthTest.push_back(object);
 				} else
@@ -1079,7 +1079,7 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 			break;
 		case Entity::ENTITYTYPE_LODOBJECT3D:
 			{
-				auto lodObject = static_cast<LODObject3D*>(entity);
+				auto lodObject = static_cast<LODObject*>(entity);
 				if (decomposeAllEntities == true) {
 					auto lod1Object = lodObject->getLOD1Object();
 					auto lod2Object = lodObject->getLOD2Object();
@@ -1095,7 +1095,7 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 			break;
 		case Entity::ENTITYTYPE_IMPOSTEROBJECT3D:
 			{
-				auto imposterObject = static_cast<ImposterObject3D*>(entity);
+				auto imposterObject = static_cast<ImposterObject*>(entity);
 				if (decomposeAllEntities == true) {
 					for (auto subEntity: imposterObject->getBillboardObjects()) decomposeEntityType(subEntity, decomposedEntities);
 				} else {
@@ -1105,7 +1105,7 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 			break;
 		case Entity::ENTITYTYPE_LODOBJECT3DIMPOSTER:
 			{
-				auto lodObjectImposter = static_cast<LODObject3DImposter*>(entity);
+				auto lodObjectImposter = static_cast<LODObjectImposter*>(entity);
 				if (decomposeAllEntities == true) {
 					decomposeEntityType(lodObjectImposter->getLOD1Object(), decomposedEntities);
 					for (auto subEntity: lodObjectImposter->getLOD2Object()->getBillboardObjects()) decomposeEntityType(subEntity, decomposedEntities);
@@ -1140,7 +1140,7 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 			break;
 		case Entity::ENTITYTYPE_LINESOBJECT3D:
 			{
-				auto lo = static_cast<LinesObject3D*>(entity);
+				auto lo = static_cast<LinesObject*>(entity);
 				decomposedEntities.linesObjects.push_back(lo);
 			}
 			break;
@@ -1158,7 +1158,7 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 			break;
 		case Entity::ENTITYTYPE_OBJECT3DRENDERGROUP:
 			{
-				auto org = static_cast<Object3DRenderGroup*>(entity);
+				auto org = static_cast<ObjectRenderGroup*>(entity);
 				decomposedEntities.objectRenderGroups.push_back(org);
 				auto subEntity = org->getEntity();
 				if (subEntity != nullptr) decomposeEntityType(subEntity, decomposedEntities, decomposeAllEntities);
@@ -1219,7 +1219,7 @@ void Engine::computeTransformations(Camera* camera, DecomposedEntities& decompos
 		// skip on disabled entities
 		if (partition->isVisibleEntity(entity) == false) continue;
 		//
-		decomposedEntities.needsPreRenderEntities.push_back(static_cast<Object3D*>(entity));
+		decomposedEntities.needsPreRenderEntities.push_back(static_cast<Object*>(entity));
 	}
 
 	// compute transformations
@@ -1228,7 +1228,7 @@ void Engine::computeTransformations(Camera* camera, DecomposedEntities& decompos
 			// skip on disabled entities
 			if (partition->isVisibleEntity(entity) == false) continue;
 			//
-			decomposedEntities.needsComputeTransformationsEntities.push_back(static_cast<Object3D*>(entity));
+			decomposedEntities.needsComputeTransformationsEntities.push_back(static_cast<Object*>(entity));
 		}
 	}
 
@@ -1582,7 +1582,7 @@ Entity* Engine::getEntityByMousePosition(
 	// selected entity
 	auto selectedEntityDistance = Float::MAX_VALUE;
 	Entity* selectedEntity = nullptr;
-	Node* selectedObject3DNode = nullptr;
+	Node* selectedObjectNode = nullptr;
 	ParticleSystemEntity* selectedParticleSystem = nullptr;
 
 	// iterate visible object partition systems, check if ray with given mouse position from near plane to far plane collides with bounding volume
@@ -1597,7 +1597,7 @@ Entity* Engine::getEntityByMousePosition(
 			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 				selectedEntity = entity;
 				selectedEntityDistance = entityDistance;
-				selectedObject3DNode = nullptr;
+				selectedObjectNode = nullptr;
 				selectedParticleSystem = nullptr;
 			}
 		}
@@ -1605,7 +1605,7 @@ Entity* Engine::getEntityByMousePosition(
 
 	// decals have first priority right now
 	if (selectedEntity != nullptr) {
-		if (object3DNode != nullptr) *object3DNode = selectedObject3DNode;
+		if (object3DNode != nullptr) *object3DNode = selectedObjectNode;
 		for (auto _entity = selectedEntity; _entity != nullptr; _entity = _entity->getParentEntity()) {
 			if (_entity->getParentEntity() == nullptr) return _entity;
 		}
@@ -1627,7 +1627,7 @@ Entity* Engine::getEntityByMousePosition(
 					if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 						selectedEntity = entity;
 						selectedEntityDistance = entityDistance;
-						selectedObject3DNode = it->getNode();
+						selectedObjectNode = it->getNode();
 						selectedParticleSystem = nullptr;
 					}
 				}
@@ -1637,7 +1637,7 @@ Entity* Engine::getEntityByMousePosition(
 
 	// objects without depth test have second priority right now
 	if (selectedEntity != nullptr) {
-		if (object3DNode != nullptr) *object3DNode = selectedObject3DNode;
+		if (object3DNode != nullptr) *object3DNode = selectedObjectNode;
 		for (auto _entity = selectedEntity; _entity != nullptr; _entity = _entity->getParentEntity()) {
 			if (_entity->getParentEntity() == nullptr) return _entity;
 		}
@@ -1656,7 +1656,7 @@ Entity* Engine::getEntityByMousePosition(
 			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 				selectedEntity = entity;
 				selectedEntityDistance = entityDistance;
-				selectedObject3DNode = nullptr;
+				selectedObjectNode = nullptr;
 				selectedParticleSystem = nullptr;
 			}
 		}
@@ -1674,7 +1674,7 @@ Entity* Engine::getEntityByMousePosition(
 			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 				selectedEntity = entity;
 				selectedEntityDistance = entityDistance;
-				selectedObject3DNode = nullptr;
+				selectedObjectNode = nullptr;
 				selectedParticleSystem = nullptr;
 			}
 		}
@@ -1692,7 +1692,7 @@ Entity* Engine::getEntityByMousePosition(
 			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 				selectedEntity = entity;
 				selectedEntityDistance = entityDistance;
-				selectedObject3DNode = nullptr;
+				selectedObjectNode = nullptr;
 				selectedParticleSystem = nullptr;
 				auto selectedSubEntityDistance = Float::MAX_VALUE;
 				// iterate sub partition systems, check if ray with given mouse position from near plane to far plane collides with bounding volume
@@ -1722,14 +1722,14 @@ Entity* Engine::getEntityByMousePosition(
 			if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 				selectedEntity = entity;
 				selectedEntityDistance = entityDistance;
-				selectedObject3DNode = nullptr;
+				selectedObjectNode = nullptr;
 				selectedParticleSystem = nullptr;
 			}
 		}
 	}
 
 	// iterate visible objects, check if ray with given mouse position from near plane to far plane collides with each object's triangles
-	array<vector<Object3D*>, 3> objectsArray {decomposedEntities.objects, decomposedEntities.objectsForwardShading, decomposedEntities.objectsPostPostProcessing,  };
+	array<vector<Object*>, 3> objectsArray {decomposedEntities.objects, decomposedEntities.objectsForwardShading, decomposedEntities.objectsPostPostProcessing,  };
 	for (auto& objects: objectsArray) {
 		for (auto entity: objects) {
 			// skip if not pickable or ignored by filter
@@ -1745,7 +1745,7 @@ Entity* Engine::getEntityByMousePosition(
 						if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 							selectedEntity = entity;
 							selectedEntityDistance = entityDistance;
-							selectedObject3DNode = it->getNode();
+							selectedObjectNode = it->getNode();
 							selectedParticleSystem = nullptr;
 						}
 					}
@@ -1773,7 +1773,7 @@ Entity* Engine::getEntityByMousePosition(
 							selectedEntityDistance = entityDistance;
 						}
 					}
-					selectedObject3DNode = it->getNode();
+					selectedObjectNode = it->getNode();
 					selectedParticleSystem = nullptr;
 				}
 			}
@@ -1809,7 +1809,7 @@ Entity* Engine::getEntityByMousePosition(
 				if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 					selectedEntity = entity;
 					selectedEntityDistance = entityDistance;
-					selectedObject3DNode = object3DNodeEH;
+					selectedObjectNode = object3DNodeEH;
 					selectedParticleSystem = particleSystemEntityEH;
 				}
 			}
@@ -1817,7 +1817,7 @@ Entity* Engine::getEntityByMousePosition(
 	}
 
 	// store node
-	if (object3DNode != nullptr) *object3DNode = selectedObject3DNode;
+	if (object3DNode != nullptr) *object3DNode = selectedObjectNode;
 
 	// store particle system entity
 	if (particleSystemEntity != nullptr) {
@@ -1886,7 +1886,7 @@ Entity* Engine::doRayCasting(
 	}
 
 	// iterate visible objects, check if ray with given mouse position from near plane to far plane collides with each object's triangles
-	array<vector<Object3D*>, 3> objectsArray {decomposedEntities.objects, decomposedEntities.objectsForwardShading, decomposedEntities.objectsPostPostProcessing,  };
+	array<vector<Object*>, 3> objectsArray {decomposedEntities.objects, decomposedEntities.objectsForwardShading, decomposedEntities.objectsPostPostProcessing,  };
 	for (auto& objects: objectsArray) {
 		for (auto entity: objects) {
 			// skip if not pickable or ignored by filter

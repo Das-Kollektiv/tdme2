@@ -20,7 +20,7 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/Timing.h>
@@ -51,7 +51,7 @@ using tdme::engine::scene::Scene;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 using tdme::engine::Rotation;
 using tdme::engine::SceneConnector;
 using tdme::engine::Timing;
@@ -184,7 +184,7 @@ void PathFindingTest::initialize()
 	playerModelPrototype->getModel()->addAnimationSetup("walk", 0, 23, true);
 	playerModelPrototype->getModel()->addAnimationSetup("still", 24, 99, true);
 	playerModelPrototype->getModel()->addAnimationSetup("death", 109, 169, false);
-	playerObject = new Object3D("player", playerModelPrototype->getModel());
+	playerObject = new Object("player", playerModelPrototype->getModel());
 	playerObject->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
 	playerObject->setTranslation(Vector3(2.5f, 0.25f, 0.5f));
 	playerObject->update();

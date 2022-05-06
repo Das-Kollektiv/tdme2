@@ -63,11 +63,11 @@
 #include <tdme/engine/EnvironmentMapping.h>
 #include <tdme/engine/FogParticleSystem.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/LODObject3D.h>
-#include <tdme/engine/LODObject3DImposter.h>
-#include <tdme/engine/Object3D.h>
-#include <tdme/engine/Object3DModel.h>
-#include <tdme/engine/Object3DRenderGroup.h>
+#include <tdme/engine/LODObject.h>
+#include <tdme/engine/LODObjectImposter.h>
+#include <tdme/engine/Object.h>
+#include <tdme/engine/ObjectModel.h>
+#include <tdme/engine/ObjectRenderGroup.h>
 #include <tdme/engine/ObjectParticleSystem.h>
 #include <tdme/engine/ParticleSystemEntity.h>
 #include <tdme/engine/ParticleSystemGroup.h>
@@ -144,11 +144,11 @@ using tdme::engine::EntityHierarchy;
 using tdme::engine::EnvironmentMapping;
 using tdme::engine::FogParticleSystem;
 using tdme::engine::Light;
-using tdme::engine::LODObject3D;
-using tdme::engine::LODObject3DImposter;
-using tdme::engine::Object3D;
-using tdme::engine::Object3DModel;
-using tdme::engine::Object3DRenderGroup;
+using tdme::engine::LODObject;
+using tdme::engine::LODObjectImposter;
+using tdme::engine::Object;
+using tdme::engine::ObjectModel;
+using tdme::engine::ObjectRenderGroup;
 using tdme::engine::ObjectParticleSystem;
 using tdme::engine::ParticleSystemEntity;
 using tdme::engine::ParticleSystemGroup;
@@ -310,7 +310,7 @@ Entity* SceneConnector::createEmpty(const string& id, const Transformations& tra
 	if (emptyModel == nullptr) {
 		emptyModel = ModelReader::read("resources/engine/models", "empty.tm");
 	}
-	auto entity = new Object3D(
+	auto entity = new Object(
 		id,
 		SceneConnector::emptyModel
 	);
@@ -330,7 +330,7 @@ Entity* SceneConnector::createEditorDecalEntity(Prototype* prototype, const stri
 	for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
 		auto entityBoundingVolume = prototype->getBoundingVolume(i);
 		if (entityBoundingVolume->getModel() != nullptr) {
-			auto bvObject = new Object3D("tdme.prototype.bv." + to_string(i), entityBoundingVolume->getModel());
+			auto bvObject = new Object("tdme.prototype.bv." + to_string(i), entityBoundingVolume->getModel());
 			bvObject->setRenderPass(Entity::RENDERPASS_POST_POSTPROCESSING);
 			entityHierarchy->addEntity(bvObject);
 		}
@@ -371,14 +371,14 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 		auto lodLevel3 = prototype->getLODLevel3();
 		// with LOD
 		if (imposterLOD != nullptr) {
-			entity = new LODObject3DImposter(
+			entity = new LODObjectImposter(
 				id,
 				prototype->getModel(),
 				imposterLOD->getModels(),
 				imposterLOD->getMinDistance()
 			);
 			entity->setParentEntity(parentEntity);
-			auto imposterLodObject = dynamic_cast<LODObject3DImposter*>(entity);
+			auto imposterLodObject = dynamic_cast<LODObjectImposter*>(entity);
 			imposterLodObject->setEffectColorAddLOD2(imposterLOD->getColorAdd());
 			imposterLodObject->setEffectColorMulLOD2(imposterLOD->getColorMul());
 			if (prototype->getShader() == "water" || prototype->getShader() == "pbr-water") imposterLodObject->setRenderPass(Entity::RENDERPASS_WATER);
@@ -399,18 +399,18 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 			}
 		} else
 		if (lodLevel2 != nullptr) {
-			entity = new LODObject3D(
+			entity = new LODObject(
 				id,
 				prototype->getModel(),
 				lodLevel2->getType(),
 				lodLevel2->getMinDistance(),
 				lodLevel2->getModel(),
-				lodLevel3 != nullptr?lodLevel3->getType():LODObject3D::LODLEVELTYPE_NONE,
+				lodLevel3 != nullptr?lodLevel3->getType():LODObject::LODLEVELTYPE_NONE,
 				lodLevel3 != nullptr?lodLevel3->getMinDistance():0.0f,
 				lodLevel3 != nullptr?lodLevel3->getModel():nullptr
 			);
 			entity->setParentEntity(parentEntity);
-			auto lodObject = dynamic_cast<LODObject3D*>(entity);
+			auto lodObject = dynamic_cast<LODObject*>(entity);
 			lodObject->setEffectColorAddLOD2(lodLevel2->getColorAdd());
 			lodObject->setEffectColorMulLOD2(lodLevel2->getColorMul());
 			if (lodLevel3 != nullptr) {
@@ -435,13 +435,13 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 			}
 		} else {
 			// single
-			entity = new Object3D(
+			entity = new Object(
 				id,
 				prototype->getModel(),
 				instances
 			);
 			entity->setParentEntity(parentEntity);
-			auto object = dynamic_cast<Object3D*>(entity);
+			auto object = dynamic_cast<Object*>(entity);
 			object->setEnableTransformationsComputingLOD(true);
 			if (prototype->getShader() == "water" || prototype->getShader() == "pbr-water") object->setRenderPass(Entity::RENDERPASS_WATER);
 			object->setShader(prototype->getShader());
@@ -510,7 +510,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 		for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
 			auto entityBoundingVolume = prototype->getBoundingVolume(i);
 			if (entityBoundingVolume->getModel() != nullptr) {
-				auto bvObject = new Object3D("tdme.prototype.bv." + to_string(i), entityBoundingVolume->getModel());
+				auto bvObject = new Object("tdme.prototype.bv." + to_string(i), entityBoundingVolume->getModel());
 				bvObject->setRenderPass(Entity::RENDERPASS_POST_POSTPROCESSING);
 				entityHierarchy->addEntity(bvObject);
 			}
@@ -589,17 +589,17 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 			if (terrainModels.empty() == false) {
 				auto idx = 0;
 				for (auto terrainModel: terrainModels) {
-					auto terrainObject3D = new Object3D("tdme.terrain." + to_string(idx++), terrainModel);
-					terrainObject3D->setRenderPass(Entity::RENDERPASS_TERRAIN);
-					terrainObject3D->setShader("terrain");
-					terrainObject3D->setDistanceShader("terrain");
-					terrainObject3D->setContributesShadows(true);
-					terrainObject3D->setReceivesShadows(true);
-					terrainObject3D->setPickable(pickable);
-					terrainObject3D->setEnabled(enable);
-					terrainObject3D->setTranslation(translation);
-					terrainObject3D->update();
-					engine->addEntity(terrainObject3D);
+					auto terrainObject = new Object("tdme.terrain." + to_string(idx++), terrainModel);
+					terrainObject->setRenderPass(Entity::RENDERPASS_TERRAIN);
+					terrainObject->setShader("terrain");
+					terrainObject->setDistanceShader("terrain");
+					terrainObject->setContributesShadows(true);
+					terrainObject->setReceivesShadows(true);
+					terrainObject->setPickable(pickable);
+					terrainObject->setEnabled(enable);
+					terrainObject->setTranslation(translation);
+					terrainObject->update();
+					engine->addEntity(terrainObject);
 				}
 			}
 			// water
@@ -616,24 +616,24 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 						waterModels
 					);
 					for (auto waterModel: waterModels) {
-						auto waterObject3D = new Object3D("tdme.water." + to_string(idx++), waterModel);
-						waterObject3D->setRenderPass(Entity::RENDERPASS_WATER);
-						waterObject3D->setShader("water");
-						waterObject3D->setDistanceShader("water");
-						waterObject3D->setContributesShadows(false);
-						waterObject3D->setReceivesShadows(false);
-						waterObject3D->setReflectionEnvironmentMappingId("sky_environment_mapping");
-						waterObject3D->setReflectionEnvironmentMappingPosition(
+						auto waterObject = new Object("tdme.water." + to_string(idx++), waterModel);
+						waterObject->setRenderPass(Entity::RENDERPASS_WATER);
+						waterObject->setShader("water");
+						waterObject->setDistanceShader("water");
+						waterObject->setContributesShadows(false);
+						waterObject->setReceivesShadows(false);
+						waterObject->setReflectionEnvironmentMappingId("sky_environment_mapping");
+						waterObject->setReflectionEnvironmentMappingPosition(
 							Terrain::computeWaterReflectionEnvironmentMappingPosition(
 								terrain->getWaterPositionMap(waterPositionMapIdx),
 								terrain->getWaterPositionMapHeight(waterPositionMapIdx)
 							)
 						);
-						waterObject3D->setPickable(pickable);
-						waterObject3D->setEnabled(enable);
-						waterObject3D->setTranslation(translation);
-						waterObject3D->update();
-						engine->addEntity(waterObject3D);
+						waterObject->setPickable(pickable);
+						waterObject->setEnabled(enable);
+						waterObject->setTranslation(translation);
+						waterObject->update();
+						engine->addEntity(waterObject);
 					}
 				}
 			}
@@ -652,7 +652,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 						partitionPrototypeInstanceCount+= foliageMapPartitionIt.second.size();
 					}
 					if (partitionPrototypeInstanceCount > 0) {
-						unordered_map<string, Object3DRenderGroup*> object3DRenderGroupByShaderParameters;
+						unordered_map<string, ObjectRenderGroup*> object3DRenderGroupByShaderParameters;
 						for (auto& foliageMapPartitionIt: foliageMapPartition) {
 							auto prototypeIdx = foliageMapPartitionIt.first;
 							auto& transformationsVector = foliageMapPartitionIt.second;
@@ -669,17 +669,17 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 									engine->addEntity(entity);
 								}
 							} else {
-								Object3DRenderGroup* foliagePartitionObject3DRenderGroup = nullptr;
+								ObjectRenderGroup* foliagePartitionObjectRenderGroup = nullptr;
 								auto contributesShadows = foliagePrototype->isContributesShadows();
 								auto receivesShadows = foliagePrototype->isReceivesShadows();
 								auto hash = foliagePrototype->getShaderParameters().getShaderParametersHash() + "|" + foliagePrototype->getDistanceShaderParameters().getShaderParametersHash() + "|" + to_string(contributesShadows) + "|" + to_string(receivesShadows);
-								auto foliagePartitionObject3DRenderGroupIt = object3DRenderGroupByShaderParameters.find(hash);
-								if (foliagePartitionObject3DRenderGroupIt != object3DRenderGroupByShaderParameters.end()) {
-									foliagePartitionObject3DRenderGroup = foliagePartitionObject3DRenderGroupIt->second;
+								auto foliagePartitionObjectRenderGroupIt = object3DRenderGroupByShaderParameters.find(hash);
+								if (foliagePartitionObjectRenderGroupIt != object3DRenderGroupByShaderParameters.end()) {
+									foliagePartitionObjectRenderGroup = foliagePartitionObjectRenderGroupIt->second;
 								}
-								if (foliagePartitionObject3DRenderGroup == nullptr) {
-									foliagePartitionObject3DRenderGroup =
-										new Object3DRenderGroup(
+								if (foliagePartitionObjectRenderGroup == nullptr) {
+									foliagePartitionObjectRenderGroup =
+										new ObjectRenderGroup(
 											"tdme.fo3rg." + to_string(foliageRenderGroupIdx++),
 											renderGroupsLODLevels,
 											renderGroupsLOD2MinDistance,
@@ -687,26 +687,26 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 											renderGroupsLOD2ReduceBy,
 											renderGroupsLOD3ReduceBy
 										);
-									foliagePartitionObject3DRenderGroup->setContributesShadows(contributesShadows);
-									foliagePartitionObject3DRenderGroup->setReceivesShadows(receivesShadows);
-									foliagePartitionObject3DRenderGroup->setShader(foliagePrototype->getShader());
-									foliagePartitionObject3DRenderGroup->setDistanceShader(foliagePrototype->getDistanceShader());
-									foliagePartitionObject3DRenderGroup->setDistanceShaderDistance(foliagePrototype->getDistanceShaderDistance());
+									foliagePartitionObjectRenderGroup->setContributesShadows(contributesShadows);
+									foliagePartitionObjectRenderGroup->setReceivesShadows(receivesShadows);
+									foliagePartitionObjectRenderGroup->setShader(foliagePrototype->getShader());
+									foliagePartitionObjectRenderGroup->setDistanceShader(foliagePrototype->getDistanceShader());
+									foliagePartitionObjectRenderGroup->setDistanceShaderDistance(foliagePrototype->getDistanceShaderDistance());
 									auto shaderParametersDefault = Engine::getShaderParameterDefaults(foliagePrototype->getShader());
 									auto distanceShaderParametersDefault = Engine::getShaderParameterDefaults(foliagePrototype->getDistanceShader());
 									for (auto& parameterIt: shaderParametersDefault) {
 										auto& parameterName = parameterIt.first;
 										auto parameterValue = foliagePrototype->getShaderParameters().getShaderParameter(parameterName);
-										foliagePartitionObject3DRenderGroup->setShaderParameter(parameterName, parameterValue);
+										foliagePartitionObjectRenderGroup->setShaderParameter(parameterName, parameterValue);
 									}
 									for (auto& parameterIt: distanceShaderParametersDefault) {
 										auto& parameterName = parameterIt.first;
 										auto parameterValue = foliagePrototype->getDistanceShaderParameters().getShaderParameter(parameterName);
-										foliagePartitionObject3DRenderGroup->setDistanceShaderParameter(parameterName, parameterValue);
+										foliagePartitionObjectRenderGroup->setDistanceShaderParameter(parameterName, parameterValue);
 									}
-									foliagePartitionObject3DRenderGroup->setPickable(false);
-									foliagePartitionObject3DRenderGroup->setEnabled(enable);
-									object3DRenderGroupByShaderParameters[hash] = foliagePartitionObject3DRenderGroup;
+									foliagePartitionObjectRenderGroup->setPickable(false);
+									foliagePartitionObjectRenderGroup->setEnabled(enable);
+									object3DRenderGroupByShaderParameters[hash] = foliagePartitionObjectRenderGroup;
 								}
 
 								//
@@ -714,16 +714,16 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 								for (auto& transformations: transformationsVector) {
 									objectIdx++;
 									if (objectIdx % renderGroupsReduceBy != 0) continue;
-									foliagePartitionObject3DRenderGroup->addObject(foliagePrototype->getModel(), transformations);
+									foliagePartitionObjectRenderGroup->addObject(foliagePrototype->getModel(), transformations);
 								}
 							}
 						}
 						for (auto& object3DRenderGroupByShaderParametersIt: object3DRenderGroupByShaderParameters) {
-							auto foliagePartitionObject3DRenderGroup = object3DRenderGroupByShaderParametersIt.second;
-							foliagePartitionObject3DRenderGroup->updateRenderGroup();
-							foliagePartitionObject3DRenderGroup->setTranslation(translation);
-							foliagePartitionObject3DRenderGroup->update();
-							engine->addEntity(foliagePartitionObject3DRenderGroup);
+							auto foliagePartitionObjectRenderGroup = object3DRenderGroupByShaderParametersIt.second;
+							foliagePartitionObjectRenderGroup->updateRenderGroup();
+							foliagePartitionObjectRenderGroup->setTranslation(translation);
+							foliagePartitionObjectRenderGroup->update();
+							engine->addEntity(foliagePartitionObjectRenderGroup);
 						}
 					}
 					partitionIdx++;
@@ -781,7 +781,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 			entity->update();
 			entity->setEnabled(enable);
 
-			auto object = dynamic_cast<Object3D*>(entity);
+			auto object = dynamic_cast<Object*>(entity);
 			if (object != nullptr) object->setReflectionEnvironmentMappingId(sceneEntity->getReflectionEnvironmentMappingId());
 
 			engine->addEntity(entity);
@@ -805,7 +805,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 		for (auto& itShader: renderGroupEntitiesByShaderPartitionModel) {
 			Console::println("SceneConnector::addLevel(): adding render group: " + itShader.first);
 			for (auto& itPartition: itShader.second) {
-				map<string, Object3DRenderGroup*> object3DRenderGroupsByShaderParameters;
+				map<string, ObjectRenderGroup*> object3DRenderGroupsByShaderParameters;
 				for (auto& itModel: itPartition.second) {
 					if (progressCallback != nullptr) {
 						progressCallback->progress(0.5f + static_cast<float>(progressStepCurrent) / static_cast<float>(progressStepMax) * 0.5f);
@@ -817,7 +817,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 					auto hash = prototype->getShaderParameters().getShaderParametersHash() + "|" + prototype->getDistanceShaderParameters().getShaderParametersHash() + "|" + to_string(contributesShadows) + "|" + to_string(receivesShadows);
 					if (object3DRenderGroupsByShaderParameters.find(hash) == object3DRenderGroupsByShaderParameters.end()) {
 						auto object3DRenderNode =
-							new Object3DRenderGroup(
+							new ObjectRenderGroup(
 								"tdme.o3rg." + to_string(idx++),
 								renderGroupsLODLevels,
 								renderGroupsLOD2MinDistance,
@@ -889,7 +889,7 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 	} else
 	if (prototype->getType() == Prototype_Type::MODEL &&
 		prototype->isTerrainMesh() == true) {
-		Object3DModel terrainModel(prototype->getModel());
+		ObjectModel terrainModel(prototype->getModel());
 		auto terrainMesh = new TerrainMesh(&terrainModel, transformations);
 		if (physicsType == PrototypePhysics_BodyType::COLLISION_BODY) {
 			return world->addCollisionBody(
@@ -1305,7 +1305,7 @@ void SceneConnector::resetEngine(Engine* engine, Scene* scene) {
 		Entity* entity = nullptr;
 		while ((entity = engine->getEntity("tdme.terrain." + to_string(idx++))) != nullptr) {
 			Model* model = nullptr;
-			if (entity->getEntityType() == Entity::ENTITYTYPE_OBJECT3D) model = static_cast<Object3D*>(entity)->getModel();
+			if (entity->getEntityType() == Entity::ENTITYTYPE_OBJECT3D) model = static_cast<Object*>(entity)->getModel();
 			engine->removeEntity(entity->getId());
 			if (model != nullptr) delete model;
 		}
@@ -1315,7 +1315,7 @@ void SceneConnector::resetEngine(Engine* engine, Scene* scene) {
 		Entity* entity = nullptr;
 		while ((entity = engine->getEntity("tdme.water." + to_string(idx++))) != nullptr) {
 			Model* model = nullptr;
-			if (entity->getEntityType() == Entity::ENTITYTYPE_OBJECT3D) model = static_cast<Object3D*>(entity)->getModel();
+			if (entity->getEntityType() == Entity::ENTITYTYPE_OBJECT3D) model = static_cast<Object*>(entity)->getModel();
 			engine->removeEntity(entity->getId());
 			if (model != nullptr) delete model;
 		}

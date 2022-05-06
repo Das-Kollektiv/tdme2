@@ -7,8 +7,8 @@
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Node.h>
-#include <tdme/engine/subsystems/rendering/Object3DNode.h>
-#include <tdme/engine/subsystems/rendering/Object3DNodeMesh.h>
+#include <tdme/engine/subsystems/rendering/ObjectNode.h>
+#include <tdme/engine/subsystems/rendering/ObjectNodeMesh.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFace.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFacesPool_TransparentRenderFacesPool.h>
 #include <tdme/math/Matrix4x4.h>
@@ -22,8 +22,8 @@ using std::vector;
 using tdme::engine::model::Face;
 using tdme::engine::model::FacesEntity;
 using tdme::engine::model::Node;
-using tdme::engine::subsystems::rendering::Object3DNode;
-using tdme::engine::subsystems::rendering::Object3DNodeMesh;
+using tdme::engine::subsystems::rendering::ObjectNode;
+using tdme::engine::subsystems::rendering::ObjectNodeMesh;
 using tdme::engine::subsystems::rendering::TransparentRenderFace;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesPool_TransparentRenderFacesPool;

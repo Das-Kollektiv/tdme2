@@ -21,7 +21,7 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/Timing.h>
@@ -55,7 +55,7 @@ using tdme::engine::scene::Scene;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 using tdme::engine::Rotation;
 using tdme::engine::SceneConnector;
 using tdme::engine::Timing;
@@ -141,7 +141,7 @@ void FlowMapTest::initialize()
 	playerModelPrototype->getModel()->addAnimationSetup("walk", 0, 23, true);
 	playerModelPrototype->getModel()->addAnimationSetup("still", 24, 99, true);
 	playerModelPrototype->getModel()->addAnimationSetup("death", 109, 169, false);
-	startPlayerObject = new Object3D("startPlayerObject", playerModelPrototype->getModel());
+	startPlayerObject = new Object("startPlayerObject", playerModelPrototype->getModel());
 	startPlayerObject->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
 	startPlayerObject->setTranslation(Vector3(2.5f, 0.25f, 0.5f));
 	startPlayerObject->update();
@@ -149,7 +149,7 @@ void FlowMapTest::initialize()
 	startPlayerObject->setContributesShadows(playerModelPrototype->isContributesShadows());
 	startPlayerObject->setReceivesShadows(playerModelPrototype->isReceivesShadows());
 	engine->addEntity(startPlayerObject);
-	endPlayerObject1 = new Object3D("endPlayerObject1", playerModelPrototype->getModel());
+	endPlayerObject1 = new Object("endPlayerObject1", playerModelPrototype->getModel());
 	endPlayerObject1->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
 	endPlayerObject1->setTranslation(Vector3(2.5f, 0.25f, 0.5f));
 	endPlayerObject1->update();
@@ -159,7 +159,7 @@ void FlowMapTest::initialize()
 	endPlayerObject1->setEffectColorAdd(Color4(1.0f, 0.0f, 0.0f, 0.0f));
 	endPlayerObject1->setEffectColorMul(Color4(1.0f, 0.0f, 0.0f, 1.0f));
 	engine->addEntity(endPlayerObject1);
-	endPlayerObject2 = new Object3D("endPlayerObject2", playerModelPrototype->getModel());
+	endPlayerObject2 = new Object("endPlayerObject2", playerModelPrototype->getModel());
 	endPlayerObject2->addRotation(Vector3(0.0f, 1.0f, 0.0f), 90.0f);
 	endPlayerObject2->setTranslation(Vector3(2.5f, 0.25f, 0.5f));
 	endPlayerObject2->update();
@@ -238,7 +238,7 @@ void FlowMapTest::doPathFinding() {
 		if (cell == nullptr) continue;
 		auto flowDirectionEntityId = "flowdirection." + to_string(i);
 		auto yRotationAngle = Vector3::computeAngle(Vector3(0.0f, 0.0f, 1.0f), cell->getDirection(), Vector3(0.0f, 1.0f, 0.0f));
-		auto cellObject = new Object3D(flowDirectionEntityId, emptyModel);
+		auto cellObject = new Object(flowDirectionEntityId, emptyModel);
 		cellObject->setScale(Vector3(0.5f, 0.5f, 0.5f));
 		cellObject->setTranslation(cellPosition + Vector3(0.0f, 0.25f, 0.0f));
 		cellObject->addRotation(Vector3(0.0f, 1.0f, 0.0f), yRotationAngle - 90.0f);

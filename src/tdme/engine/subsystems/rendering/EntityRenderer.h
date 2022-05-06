@@ -11,10 +11,10 @@
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
-#include <tdme/engine/subsystems/rendering/Object3DNode.h>
+#include <tdme/engine/subsystems/rendering/ObjectNode.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFacesPool.h>
 #include <tdme/engine/Entity.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
@@ -34,14 +34,14 @@ using tdme::engine::model::Model;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::BatchRendererPoints;
 using tdme::engine::subsystems::rendering::BatchRendererTriangles;
-using tdme::engine::subsystems::rendering::Object3DNode;
+using tdme::engine::subsystems::rendering::ObjectNode;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesPool;
 using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::FogParticleSystem;
-using tdme::engine::LinesObject3D;
-using tdme::engine::Object3D;
+using tdme::engine::LinesObject;
+using tdme::engine::Object;
 using tdme::engine::PointsParticleSystem;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
@@ -56,7 +56,7 @@ using tdme::utilities::Pool;
  * @version $Id$
  */
 class tdme::engine::subsystems::rendering::EntityRenderer final {
-	friend class Object3DNodeRenderer;
+	friend class ObjectNodeRenderer;
 	friend class TransparentRenderFacesGroup;
 	friend class tdme::engine::Engine;
 
@@ -64,23 +64,23 @@ private:
 	static constexpr int32_t BATCHRENDERER_MAX { 256 };
 	static constexpr int32_t INSTANCEDRENDERING_OBJECTS_MAX { 16384 };
 
-	struct Object3DRenderContext {
+	struct ObjectRenderContext {
 		vector<int32_t>* vboInstancedRenderingIds { nullptr };
 		ByteBuffer* bbEffectColorMuls { nullptr };
 		ByteBuffer* bbEffectColorAdds { nullptr };
 		ByteBuffer* bbMvMatrices { nullptr };
 		Matrix4x4Negative matrix4x4Negative;
-		vector<Object3D*> objectsToRender;
-		vector<Object3D*> objectsNotRendered;
-		vector<Object3D*> objectsByModelToRender;
-		vector<Object3D*> objectsByModelNotRendered;
+		vector<Object*> objectsToRender;
+		vector<Object*> objectsNotRendered;
+		vector<Object*> objectsByModelToRender;
+		vector<Object*> objectsByModelNotRendered;
 	};
 
 	Engine* engine { nullptr };
 	Renderer* renderer { nullptr };
 
 	vector<BatchRendererTriangles*> trianglesBatchRenderers;
-	unordered_map<uint8_t, unordered_map<Model*, vector<Object3D*>>> objectsByShadersAndModels;
+	unordered_map<uint8_t, unordered_map<Model*, vector<Object*>>> objectsByShadersAndModels;
 	vector<TransparentRenderFace*> nodeTransparentRenderFaces;
 	EntityRenderer_TransparentRenderFacesGroupPool* transparentRenderFacesGroupPool { nullptr };
 	TransparentRenderFacesPool* transparentRenderFacesPool { nullptr };
@@ -88,7 +88,7 @@ private:
 	RenderTransparentRenderPointsPool* renderTransparentRenderPointsPool { nullptr };
 	BatchRendererPoints* psePointBatchRenderer { nullptr };
 	int threadCount;
-	vector<Object3DRenderContext> contexts;
+	vector<ObjectRenderContext> contexts;
 
 	/**
 	 * Renders transparent faces
@@ -117,7 +117,7 @@ private:
 	 * @param renderTypes render types
 	 * @param transparentRenderFacesPool transparent render faces pool
 	 */
-	inline void renderObjectsOfSameType(int threadIdx, const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes, TransparentRenderFacesPool* transparentRenderFacesPool) {
+	inline void renderObjectsOfSameType(int threadIdx, const vector<Object*>& objects, bool collectTransparentFaces, int32_t renderTypes, TransparentRenderFacesPool* transparentRenderFacesPool) {
 		if (renderer->isInstancedRenderingAvailable() == true) {
 			renderObjectsOfSameTypeInstanced(threadIdx, objects, collectTransparentFaces, renderTypes, transparentRenderFacesPool);
 		} else {
@@ -131,7 +131,7 @@ private:
 	 * @param collectTransparentFaces collect render faces
 	 * @param renderTypes render types
 	 */
-	void renderObjectsOfSameTypeNonInstanced(const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes);
+	void renderObjectsOfSameTypeNonInstanced(const vector<Object*>& objects, bool collectTransparentFaces, int32_t renderTypes);
 
 	/**
 	 * Renders multiple objects of same type(with same model) using instancing
@@ -140,7 +140,7 @@ private:
 	 * @param collectTransparentFaces collect render faces
 	 * @param renderTypes render types
 	 */
-	void renderObjectsOfSameTypeInstanced(int threadIdx, const vector<Object3D*>& objects, bool collectTransparentFaces, int32_t renderTypes, TransparentRenderFacesPool* transparentRenderFacesPool);
+	void renderObjectsOfSameTypeInstanced(int threadIdx, const vector<Object*>& objects, bool collectTransparentFaces, int32_t renderTypes, TransparentRenderFacesPool* transparentRenderFacesPool);
 
 	/**
 	 * Checks if a material could change when having multiple objects but same model
@@ -148,8 +148,8 @@ private:
 	 * @param facesEntityIdx faces entity idx
 	 * @param renderTypes render types
 	 */
-	inline bool checkMaterialChangable(Object3DNode* object3DNode, int32_t facesEntityIdx, int32_t renderTypes) {
-		return object3DNode->specularMaterialDynamicDiffuseTextureIdsByEntities[facesEntityIdx] != Object3DNode::TEXTUREID_NONE;
+	inline bool checkMaterialChangable(ObjectNode* object3DNode, int32_t facesEntityIdx, int32_t renderTypes) {
+		return object3DNode->specularMaterialDynamicDiffuseTextureIdsByEntities[facesEntityIdx] != ObjectNode::TEXTUREID_NONE;
 	}
 
 	/**
@@ -162,7 +162,7 @@ private:
 	 * @param materialKey material key
 	 * @param currentMaterialKey current material key or empty
 	 */
-	void setupMaterial(int contextIdx, Object3DNode* object3DNode, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey, const string& currentMaterialKey = string());
+	void setupMaterial(int contextIdx, ObjectNode* object3DNode, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey, const string& currentMaterialKey = string());
 
 	/**
 	 * Clear material for rendering
@@ -181,8 +181,8 @@ private:
 	inline void renderFunction(
 		int threadIdx,
 		Entity::RenderPass renderPass,
-		const vector<Object3D*>& objects,
-		unordered_map<uint8_t, unordered_map<Model*, vector<Object3D*>>>& objectsByShadersAndModels,
+		const vector<Object*>& objects,
+		unordered_map<uint8_t, unordered_map<Model*, vector<Object*>>>& objectsByShadersAndModels,
 		bool renderTransparentFaces,
 		int renderTypes,
 		TransparentRenderFacesPool* transparentRenderFacesPool) {
@@ -291,7 +291,7 @@ public:
 	 * @param renderTransparentFaces render transparent faces
 	 * @param renderTypes render types
 	 */
-	void render(Entity::RenderPass renderPass, const vector<Object3D*>& objects, bool renderTransparentFaces, int32_t renderTypes);
+	void render(Entity::RenderPass renderPass, const vector<Object*>& objects, bool renderTransparentFaces, int32_t renderTypes);
 
 	/**
 	 * Renders collected transparent faces
@@ -310,6 +310,6 @@ public:
 	 * @param renderPass render pass
 	 * @param objects lines objects
 	 */
-	void render(Entity::RenderPass renderPass, const vector<LinesObject3D*>& objects);
+	void render(Entity::RenderPass renderPass, const vector<LinesObject*>& objects);
 
 };

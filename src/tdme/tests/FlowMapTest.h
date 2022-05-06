@@ -9,7 +9,7 @@
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/scene/fwd-tdme.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tests/fwd-tdme.h>
 #include <tdme/utilities/FlowMap.h>
@@ -23,7 +23,7 @@ using tdme::engine::physics::World;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
 using tdme::engine::Engine;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 using tdme::math::Vector3;
 using tdme::utilities::FlowMap;
 using tdme::utilities::PathFinding;
@@ -42,11 +42,11 @@ private:
 	Scene* scene { nullptr };
 	Prototype* playerModelPrototype { nullptr };
 	Model* emptyModel { nullptr };
-	Object3D* startPlayerObject { nullptr };
+	Object* startPlayerObject { nullptr };
 	Vector3 startPlayerCellDirection;
 	Vector3 startPlayerCellPosition;
-	Object3D* endPlayerObject1 { nullptr };
-	Object3D* endPlayerObject2 { nullptr };
+	Object* endPlayerObject1 { nullptr };
+	Object* endPlayerObject2 { nullptr };
 	PathFinding* pathFinding { nullptr };
 	vector<Vector3> pathPositions;
 	int64_t timeLastUpdate;

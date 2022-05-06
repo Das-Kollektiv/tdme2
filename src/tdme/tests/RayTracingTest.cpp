@@ -20,8 +20,8 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/LinesObject3D.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/LinesObject.h>
+#include <tdme/engine/Object.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -61,8 +61,8 @@ using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
-using tdme::engine::LinesObject3D;
-using tdme::engine::Object3D;
+using tdme::engine::LinesObject;
+using tdme::engine::Object;
 using tdme::engine::Rotation;
 using tdme::engine::SceneConnector;
 using tdme::gui::nodes::GUIElementNode;
@@ -188,13 +188,13 @@ void RayTracingTest::display()
 		}
 		if (keyInfo == true) {
 			// draw ray
-			auto linesObject3D = new LinesObject3D("ray", 5.0f, { camLookFrom, traceEnd }, { 1.0f, 0.0f, 0.0f, 1.0f});
-			linesObject3D->setEffectColorMul(Color4(1.0f, 0.0f, 0.0f, 1.0f));
-			engine->addEntity(linesObject3D);
+			auto linesObject = new LinesObject("ray", 5.0f, { camLookFrom, traceEnd }, { 1.0f, 0.0f, 0.0f, 1.0f});
+			linesObject->setEffectColorMul(Color4(1.0f, 0.0f, 0.0f, 1.0f));
+			engine->addEntity(linesObject);
 
 			// draw aabb
 			if (rayTracedRigidBody != nullptr && rayTracedRigidBody->getId() != "ground") {
-				auto bvEntity = new Object3D(
+				auto bvEntity = new Object(
 					"bv",
 					entityBoundingVolumeModel
 				);
@@ -225,7 +225,7 @@ void RayTracingTest::initialize()
 {
 	engine->initialize();
 	engine->setSceneColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
-	Object3D* entity;
+	Object* entity;
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(25.0f);
@@ -248,7 +248,7 @@ void RayTracingTest::initialize()
 	auto groundModel = modelDeleter.add(Primitives::createModel(ground, "ground_model"));
 	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.25f, 0.25f, 0.25f, 1.0f));
 	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(0.5f, 0.5f, 0.5f, 1.0f));
-	entity = new Object3D("ground", groundModel);
+	entity = new Object("ground", groundModel);
 	entity->setTranslation(Vector3(0.0f, -1.0f, 0.0f));
 	entity->setReceivesShadows(true);
 	entity->update();
@@ -261,7 +261,7 @@ void RayTracingTest::initialize()
 	for (float x = -20.0f; x < 20.0f; x+= 5.0f) {
 		// engine
 		auto id = "interactionTable." + to_string(interactionTableIdx);
-		auto entity = new Object3D(
+		auto entity = new Object(
 			id,
 			interactionTable->getModel()
 		);
@@ -289,7 +289,7 @@ void RayTracingTest::initialize()
 	auto capsuleBigModel = modelDeleter.add(Primitives::createModel(capsuleBig, "capsulebig_model"));
 	capsuleBigModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(1.0f, 0.8f, 0.8f, 1.0f));
 	capsuleBigModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
-	entity = new Object3D("player", capsuleBigModel);
+	entity = new Object("player", capsuleBigModel);
 	entity->setContributesShadows(true);
 	entity->setReceivesShadows(true);
 	entity->setTranslation(Vector3(-2.0f, 0.0f, 0.0f));

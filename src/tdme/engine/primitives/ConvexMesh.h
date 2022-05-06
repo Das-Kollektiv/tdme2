@@ -17,7 +17,7 @@ using std::vector;
 
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::Triangle;
-using tdme::engine::Object3DModel;
+using tdme::engine::ObjectModel;
 using tdme::math::Vector3;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::FloatBuffer;
@@ -89,7 +89,7 @@ public:
 	 * @param model model
 	 * @param scale scale
 	 */
-	ConvexMesh(Object3DModel* model, const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f));
+	ConvexMesh(ObjectModel* model, const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f));
 
 	/**
 	 * Public denstructor

@@ -13,7 +13,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/EnvironmentMapping.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
@@ -37,7 +37,7 @@ using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::EnvironmentMapping;
 using tdme::engine::Light;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 using tdme::engine::SceneConnector;
 using tdme::engine::Timing;
 using tdme::tools::editor::controllers::EditorScreenController;
@@ -141,7 +141,7 @@ void EnvMapEditorTabView::reloadOutliner() {
 
 void EnvMapEditorTabView::initSky() {
 	// sky sphere
-	auto skySphere = new Object3D("sky_sphere", skySpherePrototype->getModel());
+	auto skySphere = new Object("sky_sphere", skySpherePrototype->getModel());
 	skySphere->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
 	skySphere->setShader("sky");
 	skySphere->setFrustumCulling(false);
@@ -154,7 +154,7 @@ void EnvMapEditorTabView::initSky() {
 	engine->addEntity(skySphere);
 
 	// sky dome
-	auto skyDome = new Object3D("sky_dome", skyDomePrototype->getModel());
+	auto skyDome = new Object("sky_dome", skyDomePrototype->getModel());
 	skyDome->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
 	skyDome->setShader("sky");
 	skyDome->setFrustumCulling(false);
@@ -169,7 +169,7 @@ void EnvMapEditorTabView::initSky() {
 	engine->addEntity(skyDome);
 
 	// sky panorama
-	auto skyPanorama = new Object3D("sky_panorama", skyPanoramaPrototype->getModel());
+	auto skyPanorama = new Object("sky_panorama", skyPanoramaPrototype->getModel());
 	skyPanorama->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
 	skyPanorama->setShader("sky");
 	skyPanorama->setFrustumCulling(false);
@@ -196,7 +196,7 @@ void EnvMapEditorTabView::updateSky() {
 	skySphere->setTranslation(engine->getCamera()->getLookFrom().clone().sub(Vector3(0.0f, 20.0f, 0.0f)));
 	skySphere->update();
 
-	auto skyDome = static_cast<Object3D*>(engine->getEntity("sky_dome"));
+	auto skyDome = static_cast<Object*>(engine->getEntity("sky_dome"));
 	skyDome->setTranslation(engine->getCamera()->getLookFrom().clone().sub(Vector3(0.0f, 20.0f, 0.0f)));
 	skyDome->setTextureMatrix((Matrix2D3x3()).identity().translate(Vector2(0.0f, skyDomeTranslation * 0.01f)));
 	skyDome->update();

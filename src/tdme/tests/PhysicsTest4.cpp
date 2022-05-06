@@ -16,8 +16,8 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/Object3D.h>
-#include <tdme/engine/Object3DModel.h>
+#include <tdme/engine/Object.h>
+#include <tdme/engine/ObjectModel.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
@@ -44,8 +44,8 @@ using tdme::engine::primitives::TerrainMesh;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
-using tdme::engine::Object3D;
-using tdme::engine::Object3DModel;
+using tdme::engine::Object;
+using tdme::engine::ObjectModel;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
@@ -106,7 +106,7 @@ void PhysicsTest4::dispose()
 void PhysicsTest4::initialize()
 {
 	engine->initialize();
-	Object3D* entity;
+	Object* entity;
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(15.0f);
@@ -129,7 +129,7 @@ void PhysicsTest4::initialize()
 	auto boxModel = modelDeleter.add(Primitives::createModel(box, "box_model"));
 	boxModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.5f, 0.5f, 1.0f));
 	boxModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
-	entity = new Object3D("box", boxModel);
+	entity = new Object("box", boxModel);
 	entity->setContributesShadows(true);
 	entity->setReceivesShadows(true);
 	entity->setTranslation(Vector3(0.0f, 3.0f, 0.0f));
@@ -139,12 +139,12 @@ void PhysicsTest4::initialize()
 	world->getBody("box")->setLinearVelocity(world->getBody("box")->getLinearVelocity().clone().setX(1.0f));
 	try {
 		auto _terrainModel = modelDeleter.add(ModelReader::read("resources/tests/models/physicstest4", "TestGround.fbx.tm"));
-		entity = new Object3D("terrain", _terrainModel);
+		entity = new Object("terrain", _terrainModel);
 		entity->setTranslation(Vector3(1.75f, 0.0f, -1.65f));
 		entity->setReceivesShadows(true);
 		entity->update();
 		engine->addEntity(entity);
-		Object3DModel terrainModel(_terrainModel);
+		ObjectModel terrainModel(_terrainModel);
 		auto terrainMesh = new TerrainMesh(&terrainModel, entity->getTransformations());
 		world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, Transformations(), 0.5f, {terrainMesh});
 	} catch (Exception& exception) {

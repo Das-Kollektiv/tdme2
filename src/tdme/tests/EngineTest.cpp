@@ -27,8 +27,8 @@
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/Object3D.h>
-#include <tdme/engine/Object3DModel.h>
+#include <tdme/engine/Object.h>
+#include <tdme/engine/ObjectModel.h>
 #include <tdme/engine/ParticleSystemEntity.h>
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/PointsParticleSystem.h>
@@ -71,8 +71,8 @@ using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
-using tdme::engine::Object3D;
-using tdme::engine::Object3DModel;
+using tdme::engine::Object;
+using tdme::engine::ObjectModel;
 using tdme::engine::ParticleSystemEntity;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::PointsParticleSystem;
@@ -267,7 +267,7 @@ void EngineTest::initialize()
 	light2->setEnabled(true);
 	try {
 		auto _barrel = modelDeleter.add(ModelReader::read("resources/tests/models/barrel", "barrel.dae"));
-		auto barrel = new Object3D("barrel", _barrel);
+		auto barrel = new Object("barrel", _barrel);
 		barrel->setTranslation(Vector3(1.5f, 0.35f, -2.0f));
 		barrel->setContributesShadows(true);
 		barrel->setReceivesShadows(true);
@@ -275,7 +275,7 @@ void EngineTest::initialize()
 		barrel->update();
 		engine->addEntity(barrel);
 		auto _farPlane = modelDeleter.add(createWallModel());
-		auto farPlane = new Object3D("wall", _farPlane);
+		auto farPlane = new Object("wall", _farPlane);
 		farPlane->setTextureMatrix(
 			(Matrix2D3x3()).identity().scale(Vector2(1.0f, -1.0f)),
 			"wall",
@@ -285,7 +285,7 @@ void EngineTest::initialize()
 		farPlane->bindDiffuseTexture(osEngine->getFrameBuffer(), "wall", "wall");
 		engine->addEntity(farPlane);
 		auto _grass = modelDeleter.add(ModelReader::read("resources/tests/models/grass", "grass.dae"));
-		auto grass = new Object3D("ground", _grass);
+		auto grass = new Object("ground", _grass);
 		grass->setEnabled(true);
 		grass->setScale(Vector3(8.0f, 1.0f, 8.0f));
 		grass->setReceivesShadows(true);
@@ -294,7 +294,7 @@ void EngineTest::initialize()
 		auto _player = ModelReader::read("resources/tests/models/mementoman/", "mementoman.dae");
 		_player->addAnimationSetup("walk", 0, 24, true);
 		_player->addAnimationSetup("still", 25, 99, true);
-		auto player1 = new Object3D("player1", _player);
+		auto player1 = new Object("player1", _player);
 		player1->setTranslation(Vector3(-1.5f, 0.0f, 0.0f));
 		player1->setAnimation("still");
 		player1->addRotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
@@ -305,7 +305,7 @@ void EngineTest::initialize()
 		player1->setReceivesShadows(true);
 		engine->addEntity(player1);
 		players.push_back(player1);
-		auto player2 = new Object3D("player2", _player);
+		auto player2 = new Object("player2", _player);
 		player2->setTranslation(Vector3(1.5f, 0.0f, 0.0f));
 		player2->setAnimation("still");
 		player2->addRotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
@@ -317,7 +317,7 @@ void EngineTest::initialize()
 		players.push_back(player2);
 		engine->addEntity(player2);
 		auto _cube = modelDeleter.add(ModelReader::read("resources/tests/models/test", "cube.dae"));
-		cube = new Object3D("cube", _cube);
+		cube = new Object("cube", _cube);
 		cube->setTranslation(Vector3(0.0f, 0.0f, 0.0f));
 		cube->setScale(Vector3(2.0f, 2.0f, 2.0f));
 		cube->update();
@@ -327,19 +327,19 @@ void EngineTest::initialize()
 		cube->setEnabled(true);
 		engine->addEntity(cube);
 		auto _wall = modelDeleter.add(ModelReader::read("resources/tests/models/wall", "wall.dae"));
-		auto wall0 = new Object3D("wall0", _wall);
+		auto wall0 = new Object("wall0", _wall);
 		wall0->setTranslation(Vector3(-1.0f, 0.0f, 3.0f));
 		wall0->update();
 		wall0->setPickable(true);
 		wall0->setEnabled(true);
 		engine->addEntity(wall0);
-		auto wall1 = new Object3D("wall1", _wall);
+		auto wall1 = new Object("wall1", _wall);
 		wall1->setTranslation(Vector3(0.0f, 0.0f, 3.0f));
 		wall1->update();
 		wall1->setPickable(true);
 		wall1->setEnabled(true);
 		engine->addEntity(wall1);
-		auto osCube = new Object3D("cube", _cube);
+		auto osCube = new Object("cube", _cube);
 		osCube->setTranslation(Vector3(0.0f, 0.0f, 0.0f));
 		osCube->setScale(Vector3(2.0f, 2.0f, 2.0f));
 		osCube->setScale(Vector3(2.0f, 2.0f, 2.0f));

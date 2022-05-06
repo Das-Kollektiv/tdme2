@@ -22,7 +22,7 @@ using tdme::application::InputEventHandler;
 using tdme::engine::model::Model;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 using tdme::engine::Transformations;
 using tdme::utilities::ObjectDeleter;
 
@@ -38,8 +38,8 @@ class tdme::tests::EngineTest final
 private:
 	Engine* engine { nullptr };
 	Engine* osEngine { nullptr };
-	vector<Object3D*> players;
-	Object3D* cube { nullptr };
+	vector<Object*> players;
+	Object* cube { nullptr };
 	Transformations circleTransformations;
 	Entity* entityClicked { nullptr };
 	bool mouseClicked { false };

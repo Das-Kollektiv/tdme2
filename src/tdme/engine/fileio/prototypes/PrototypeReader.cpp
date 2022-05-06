@@ -31,7 +31,7 @@
 #include <tdme/engine/prototype/PrototypePhysics_BodyType.h>
 #include <tdme/engine/prototype/PrototypeTerrain.h>
 #include <tdme/engine/EntityShaderParameters.h>
-#include <tdme/engine/LODObject3D.h>
+#include <tdme/engine/LODObject.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/ShaderParameter.h>
 #include <tdme/math/Vector3.h>
@@ -80,7 +80,7 @@ using tdme::engine::prototype::PrototypePhysics;
 using tdme::engine::prototype::PrototypePhysics_BodyType;
 using tdme::engine::prototype::PrototypeTerrain;
 using tdme::engine::EntityShaderParameters;
-using tdme::engine::LODObject3D;
+using tdme::engine::LODObject;
 using tdme::engine::Rotation;
 using tdme::engine::ShaderParameter;
 using tdme::math::Vector3;
@@ -564,14 +564,14 @@ PrototypeBoundingVolume* PrototypeReader::parseBoundingVolume(int idx, Prototype
 }
 
 PrototypeLODLevel* PrototypeReader::parseLODLevel(const string& pathName, Value& jLodLevel) {
-	auto lodType = static_cast<LODObject3D::LODLevelType>(jLodLevel["t"].GetInt());
+	auto lodType = static_cast<LODObject::LODLevelType>(jLodLevel["t"].GetInt());
 	auto lodLevel = new PrototypeLODLevel(
 		lodType,
-		lodType == LODObject3D::LODLEVELTYPE_MODEL?jLodLevel["f"].GetString():"",
+		lodType == LODObject::LODLEVELTYPE_MODEL?jLodLevel["f"].GetString():"",
 		nullptr,
 		static_cast<float>(jLodLevel["d"].GetFloat())
 	);
-	if (lodType == LODObject3D::LODLEVELTYPE_MODEL) {
+	if (lodType == LODObject::LODLEVELTYPE_MODEL) {
 		auto modelFileName = lodLevel->getFileName();
 		auto modelPathName = getResourcePathName(pathName, modelFileName);
 		lodLevel->setModel(

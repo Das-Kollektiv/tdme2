@@ -74,14 +74,14 @@ SRCS = \
 	src/tdme/engine/FrameBuffer.cpp \
 	src/tdme/engine/Frustum.cpp \
 	src/tdme/engine/GeometryBuffer.cpp \
-	src/tdme/engine/ImposterObject3D.cpp \
+	src/tdme/engine/ImposterObject.cpp \
 	src/tdme/engine/Light.cpp \
-	src/tdme/engine/LinesObject3D.cpp \
-	src/tdme/engine/LODObject3D.cpp \
-	src/tdme/engine/LODObject3DImposter.cpp \
-	src/tdme/engine/Object3D.cpp \
-	src/tdme/engine/Object3DModel.cpp \
-	src/tdme/engine/Object3DRenderGroup.cpp \
+	src/tdme/engine/LinesObject.cpp \
+	src/tdme/engine/LODObject.cpp \
+	src/tdme/engine/LODObjectImposter.cpp \
+	src/tdme/engine/Object.cpp \
+	src/tdme/engine/ObjectModel.cpp \
+	src/tdme/engine/ObjectRenderGroup.cpp \
 	src/tdme/engine/ObjectParticleSystem.cpp \
 	src/tdme/engine/OctTreePartition.cpp \
 	src/tdme/engine/ParticleSystemGroup.cpp \
@@ -193,7 +193,7 @@ SRCS = \
 	src/tdme/engine/subsystems/lighting/LightingShaderTreeImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderWaterImplementation.cpp \
 	src/tdme/engine/subsystems/lines/LinesShader.cpp \
-	src/tdme/engine/subsystems/lines/LinesObject3DInternal.cpp \
+	src/tdme/engine/subsystems/lines/LinesObjectInternal.cpp \
 	src/tdme/engine/subsystems/manager/MeshManager.cpp \
 	src/tdme/engine/subsystems/manager/MeshManager_MeshManaged.cpp \
 	src/tdme/engine/subsystems/manager/TextureManager.cpp \
@@ -203,14 +203,14 @@ SRCS = \
 	src/tdme/engine/subsystems/rendering/BatchRendererPoints.cpp \
 	src/tdme/engine/subsystems/rendering/BatchRendererTriangles.cpp \
 	src/tdme/engine/subsystems/rendering/ModelUtilitiesInternal.cpp \
-	src/tdme/engine/subsystems/rendering/Object3DAnimation.cpp \
-	src/tdme/engine/subsystems/rendering/Object3DBase.cpp \
-	src/tdme/engine/subsystems/rendering/Object3DBase_TransformedFacesIterator.cpp \
-	src/tdme/engine/subsystems/rendering/Object3DNode.cpp \
-	src/tdme/engine/subsystems/rendering/Object3DNodeMesh.cpp \
-	src/tdme/engine/subsystems/rendering/Object3DNodeRenderer.cpp \
-	src/tdme/engine/subsystems/rendering/Object3DInternal.cpp \
-	src/tdme/engine/subsystems/rendering/Object3DModelInternal.cpp \
+	src/tdme/engine/subsystems/rendering/ObjectAnimation.cpp \
+	src/tdme/engine/subsystems/rendering/ObjectBase.cpp \
+	src/tdme/engine/subsystems/rendering/ObjectBase_TransformedFacesIterator.cpp \
+	src/tdme/engine/subsystems/rendering/ObjectNode.cpp \
+	src/tdme/engine/subsystems/rendering/ObjectNodeMesh.cpp \
+	src/tdme/engine/subsystems/rendering/ObjectNodeRenderer.cpp \
+	src/tdme/engine/subsystems/rendering/ObjectInternal.cpp \
+	src/tdme/engine/subsystems/rendering/ObjectModelInternal.cpp \
 	src/tdme/engine/subsystems/rendering/EntityRenderer.cpp \
 	src/tdme/engine/subsystems/rendering/EntityRenderer_TransparentRenderFacesGroupPool.cpp \
 	src/tdme/engine/subsystems/rendering/ObjectBuffer.cpp \

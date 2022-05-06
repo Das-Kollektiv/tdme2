@@ -9,7 +9,7 @@
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/rendering/BatchRendererTriangles.h>
 #include <tdme/engine/subsystems/rendering/EntityRenderer.h>
-#include <tdme/engine/subsystems/rendering/Object3DNode.h>
+#include <tdme/engine/subsystems/rendering/ObjectNode.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utilities/Console.h>
 
@@ -22,7 +22,7 @@ using tdme::engine::model::Model;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::BatchRendererTriangles;
 using tdme::engine::subsystems::rendering::EntityRenderer;
-using tdme::engine::subsystems::rendering::Object3DNode;
+using tdme::engine::subsystems::rendering::ObjectNode;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesGroup;
 using tdme::math::Matrix4x4;
 using tdme::utilities::Console;
@@ -37,7 +37,7 @@ TransparentRenderFacesGroup::TransparentRenderFacesGroup()
 	this->textureCoordinates = false;
 }
 
-void TransparentRenderFacesGroup::set(EntityRenderer* object3DRenderer, Model* model, Object3DNode* object3DNode, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader)
+void TransparentRenderFacesGroup::set(EntityRenderer* object3DRenderer, Model* model, ObjectNode* object3DNode, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader)
 {
 	this->object3DRenderer = object3DRenderer;
 	this->batchRenderers.clear();
@@ -51,7 +51,7 @@ void TransparentRenderFacesGroup::set(EntityRenderer* object3DRenderer, Model* m
 	this->shader = shader;
 }
 
-const string TransparentRenderFacesGroup::createKey(Model* model, Object3DNode* object3DNode, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader)
+const string TransparentRenderFacesGroup::createKey(Model* model, ObjectNode* object3DNode, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader)
 {
 	auto& efcmData = effectColorMul.getArray();
 	auto& efcaData = effectColorAdd.getArray();

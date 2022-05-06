@@ -325,7 +325,7 @@ PrototypeLODLevel* ModelEditorTabController::getLODLevel(int level) {
 				auto prototypeLodLevel = prototype->getLODLevel2();
 				if (prototypeLodLevel == nullptr) {
 					prototypeLodLevel = new PrototypeLODLevel(
-						LODObject3D::LODLEVELTYPE_NONE,
+						LODObject::LODLEVELTYPE_NONE,
 						"",
 						nullptr,
 						75.0f
@@ -339,7 +339,7 @@ PrototypeLODLevel* ModelEditorTabController::getLODLevel(int level) {
 				auto prototypeLodLevel = prototype->getLODLevel3();
 				if (prototypeLodLevel == nullptr) {
 					prototypeLodLevel = new PrototypeLODLevel(
-						LODObject3D::LODLEVELTYPE_NONE,
+						LODObject::LODLEVELTYPE_NONE,
 						"",
 						nullptr,
 						150.0f
@@ -1621,10 +1621,10 @@ void ModelEditorTabController::createLOD() {
 				"/" +
 				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
-			lodLevel->setType(LODObject3D::LODLEVELTYPE_MODEL);
+			lodLevel->setType(LODObject::LODLEVELTYPE_MODEL);
 			try {
 				lodLevel->setModel(
-						lodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL?
+						lodLevel->getType() == LODObject::LODLEVELTYPE_MODEL?
 						ModelReader::read(
 							Tools::getPathName(lodLevel->getFileName()),
 							Tools::getFileName(lodLevel->getFileName())
@@ -1679,7 +1679,7 @@ void ModelEditorTabController::createLODNone() {
 	}
 	if (lodLevel == nullptr) return;
 
-	lodLevel->setType(LODObject3D::LODLEVELTYPE_IGNORE);
+	lodLevel->setType(LODObject::LODLEVELTYPE_IGNORE);
 	view->getEditorView()->reloadTabOutliner();
 	view->getPopUps()->getFileDialogScreenController()->close();
 }
@@ -1994,7 +1994,7 @@ void ModelEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 						if (prototype->getLODLevel2() == nullptr) {
 							prototype->setLODLevel2(
 								new PrototypeLODLevel(
-									LODObject3D::LODLEVELTYPE_MODEL,
+									LODObject::LODLEVELTYPE_MODEL,
 									billboardModelPathName + "/" + billboardModelFileName,
 									billboardLODModel,
 									75.0f
@@ -2004,7 +2004,7 @@ void ModelEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 						if (prototype->getLODLevel2() == nullptr) {
 							prototype->setLODLevel3(
 								new PrototypeLODLevel(
-									LODObject3D::LODLEVELTYPE_MODEL,
+									LODObject::LODLEVELTYPE_MODEL,
 									billboardModelPathName + "/" + billboardModelFileName,
 									billboardLODModel,
 									150.0f

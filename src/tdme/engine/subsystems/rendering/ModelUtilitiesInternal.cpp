@@ -14,9 +14,9 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/rendering/AnimationState.h>
 #include <tdme/engine/subsystems/rendering/ModelStatistics.h>
-#include <tdme/engine/subsystems/rendering/Object3DModelInternal.h>
-#include <tdme/engine/subsystems/rendering/Object3DNode.h>
-#include <tdme/engine/subsystems/rendering/Object3DNodeMesh.h>
+#include <tdme/engine/subsystems/rendering/ObjectModelInternal.h>
+#include <tdme/engine/subsystems/rendering/ObjectNode.h>
+#include <tdme/engine/subsystems/rendering/ObjectNodeMesh.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
@@ -35,23 +35,23 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::rendering::AnimationState;
 using tdme::engine::subsystems::rendering::ModelStatistics;
 using tdme::engine::subsystems::rendering::ModelUtilitiesInternal;
-using tdme::engine::subsystems::rendering::Object3DModelInternal;
-using tdme::engine::subsystems::rendering::Object3DNode;
-using tdme::engine::subsystems::rendering::Object3DNodeMesh;
+using tdme::engine::subsystems::rendering::ObjectModelInternal;
+using tdme::engine::subsystems::rendering::ObjectNode;
+using tdme::engine::subsystems::rendering::ObjectNodeMesh;
 using tdme::engine::Timing;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
 BoundingBox* ModelUtilitiesInternal::createBoundingBox(Model* model, const map<string, Matrix4x4*> overriddenNodeTransformationsMatrices)
 {
-	Object3DModelInternal object3dModel(model);
+	ObjectModelInternal object3dModel(model);
 	object3dModel.instanceAnimations[0]->overriddenTransformationsMatrices = overriddenNodeTransformationsMatrices;
 	auto boundingBox = ModelUtilitiesInternal::createBoundingBox(&object3dModel);
 	if (boundingBox == nullptr) boundingBox = ModelUtilitiesInternal::createBoundingBoxNoMesh(&object3dModel);
 	return boundingBox;
 }
 
-BoundingBox* ModelUtilitiesInternal::createBoundingBox(Object3DModelInternal* object3DModelInternal)
+BoundingBox* ModelUtilitiesInternal::createBoundingBox(ObjectModelInternal* object3DModelInternal)
 {
 	auto model = object3DModelInternal->getModel();
 	auto defaultAnimation = model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT);
@@ -70,7 +70,7 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBox(Object3DModelInternal* ob
 		auto parentTransformationsMatrix = object3DModelInternal->getModel()->getImportTransformationsMatrix();
 		parentTransformationsMatrix.multiply(object3DModelInternal->getTransformationsMatrix());
 		object3DModelInternal->instanceAnimations[0]->computeTransformationsMatrices(object3DModelInternal->instanceAnimations[0]->nodeLists[0], parentTransformationsMatrix, &animationState);
-		Object3DNode::computeTransformations(0, object3DModelInternal->object3dNodes);
+		ObjectNode::computeTransformations(0, object3DModelInternal->object3dNodes);
 		// parse through object nodes to determine min, max
 		for (auto object3DNode : object3DModelInternal->object3dNodes) {
 			for (auto& vertex : *object3DNode->mesh->vertices) {
@@ -102,7 +102,7 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBox(Object3DModelInternal* ob
 	return new BoundingBox(Vector3(minX, minY, minZ), Vector3(maxX, maxY, maxZ));
 }
 
-BoundingBox* ModelUtilitiesInternal::createBoundingBoxNoMesh(Object3DModelInternal* object3DModelInternal)
+BoundingBox* ModelUtilitiesInternal::createBoundingBoxNoMesh(ObjectModelInternal* object3DModelInternal)
 {
 	auto model = object3DModelInternal->getModel();
 	auto defaultAnimation = model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT);
@@ -173,11 +173,11 @@ void ModelUtilitiesInternal::invertNormals(const map<string, Node*>& nodes)
 
 void ModelUtilitiesInternal::computeModelStatistics(Model* model, ModelStatistics* modelStatistics)
 {
-	Object3DModelInternal object3DModelInternal(model);
+	ObjectModelInternal object3DModelInternal(model);
 	computeModelStatistics(&object3DModelInternal, modelStatistics);
 }
 
-void ModelUtilitiesInternal::computeModelStatistics(Object3DModelInternal* object3DModelInternal, ModelStatistics* modelStatistics)
+void ModelUtilitiesInternal::computeModelStatistics(ObjectModelInternal* object3DModelInternal, ModelStatistics* modelStatistics)
 {
 	map<string, int32_t> materialCountById;
 	auto opaqueFaceCount = 0;
@@ -223,12 +223,12 @@ void ModelUtilitiesInternal::computeModelStatistics(Object3DModelInternal* objec
 
 bool ModelUtilitiesInternal::equals(Model* model1, Model* model2)
 {
-	Object3DModelInternal object3DModel1(model1);
-	Object3DModelInternal object3DModel2(model2);
+	ObjectModelInternal object3DModel1(model1);
+	ObjectModelInternal object3DModel2(model2);
 	return ModelUtilitiesInternal::equals(&object3DModel1, &object3DModel2);
 }
 
-bool ModelUtilitiesInternal::equals(Object3DModelInternal* object3DModel1Internal, Object3DModelInternal* object3DModel2Internal)
+bool ModelUtilitiesInternal::equals(ObjectModelInternal* object3DModel1Internal, ObjectModelInternal* object3DModel2Internal)
 {
 	// check number of object 3d nodes
 	if (object3DModel1Internal->object3dNodes.size() != object3DModel2Internal->object3dNodes.size())
