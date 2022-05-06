@@ -6,7 +6,6 @@
 /**
  * Action Interface
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::utilities::Action
 {

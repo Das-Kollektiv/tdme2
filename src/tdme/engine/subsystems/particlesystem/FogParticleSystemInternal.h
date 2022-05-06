@@ -38,7 +38,6 @@ using tdme::math::Vector3;
 /**
  * Fog particle system
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::particlesystem::FogParticleSystemInternal
 	: public Transformations

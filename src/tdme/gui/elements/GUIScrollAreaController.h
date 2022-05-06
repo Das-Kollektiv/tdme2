@@ -17,7 +17,6 @@ using tdme::utilities::MutableString;
 /**
  * GUI scroll area controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUIScrollAreaController final: public GUINodeController
 {

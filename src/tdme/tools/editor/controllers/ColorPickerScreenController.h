@@ -27,7 +27,6 @@ using tdme::utilities::Action;
 /**
  * Color picker screen controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::controllers::ColorPickerScreenController final
 	: public ScreenController

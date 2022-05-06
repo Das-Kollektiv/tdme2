@@ -16,7 +16,6 @@ using tdme::math::Vector3;
 /**
  * Camera
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::Camera final
 {

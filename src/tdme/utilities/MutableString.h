@@ -16,7 +16,6 @@ using tdme::utilities::StringTools;
 /**
  * Mutable string class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::utilities::MutableString final
 {

@@ -33,7 +33,6 @@ using tdme::math::Vector3;
 /**
  * Lines object to be used with engine class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::LinesObject final: public LinesObjectInternal, public Entity
 {

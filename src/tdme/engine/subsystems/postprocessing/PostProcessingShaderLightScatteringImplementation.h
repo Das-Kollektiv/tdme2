@@ -12,7 +12,6 @@ using tdme::engine::Engine;
 /**
  * Post processing shader implementation
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::postprocessing::PostProcessingShaderLightScatteringImplementation: public PostProcessingShaderBaseImplementation
 {

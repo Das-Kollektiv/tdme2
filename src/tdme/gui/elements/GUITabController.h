@@ -23,7 +23,6 @@ using tdme::utilities::MutableString;
 /**
  * GUI tab controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUITabController final: public GUIElementController
 {

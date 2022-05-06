@@ -16,7 +16,6 @@ using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 /**
  * GUI node requested constraints entity
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::gui::nodes::GUINode_RequestedConstraints
 {

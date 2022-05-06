@@ -44,7 +44,6 @@ using tdme::math::Vector3;
 /**
  * Object render group for static objects that might be animated by shaders
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::ObjectRenderGroup final:
 	public Transformations,

@@ -6,7 +6,6 @@
 /**
  * View interface, this combines application logic, regarding a application view, with screen controllers
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::tools::editor::views::View
 {

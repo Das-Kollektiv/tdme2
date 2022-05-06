@@ -25,7 +25,6 @@ using tdme::math::Vector3;
 /**
  * Model node
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::engine::model::Node final
 {

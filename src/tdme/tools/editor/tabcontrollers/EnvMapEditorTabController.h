@@ -31,7 +31,6 @@ using tdme::utilities::MutableString;
 /**
  * Environ map editor screen controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabcontrollers::EnvMapEditorTabController final
 	: public TabController

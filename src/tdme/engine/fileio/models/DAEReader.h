@@ -34,7 +34,6 @@ using tinyxml::TiXmlElement;
 /**
  * Collada DAE model reader
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::fileio::models::DAEReader final
 {

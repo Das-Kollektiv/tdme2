@@ -1,5 +1,4 @@
 /**
- * @version $Id: 48c210d2bc49b9f43a27196102d30eda9d1ef12d $
  */
 
 #include <errno.h>

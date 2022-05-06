@@ -23,7 +23,6 @@ using tdme::utilities::ShortBuffer;
 /**
  * Batch renderer for points
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::rendering::BatchRendererPoints final
 {

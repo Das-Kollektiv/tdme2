@@ -10,7 +10,6 @@ using tdme::utilities::ExceptionBase;
 /**
  * Audio decoder exception
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::video::decoder::VideoDecoderException: public ExceptionBase
 {

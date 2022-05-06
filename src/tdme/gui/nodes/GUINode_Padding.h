@@ -6,7 +6,6 @@
 /**
  * GUI node padding entity
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::gui::nodes::GUINode_Padding
 {

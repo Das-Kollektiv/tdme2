@@ -18,7 +18,6 @@ using tdme::engine::FrameBuffer;
 /**
  * Post processing shader
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::postprocessing::PostProcessingShader final
 {

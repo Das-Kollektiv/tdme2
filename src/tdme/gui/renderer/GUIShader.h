@@ -16,7 +16,6 @@ using tdme::gui::nodes::GUIColor;
 /**
  * GUI shader
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::renderer::GUIShader final
 {

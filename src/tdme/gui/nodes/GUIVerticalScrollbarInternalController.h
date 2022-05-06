@@ -17,7 +17,6 @@ using tdme::utilities::MutableString;
 /**
  * GUI vertical scroll bar internal controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::nodes::GUIVerticalScrollbarInternalController
 	: public GUINodeController

@@ -10,7 +10,6 @@ using std::string;
 /**
  * Math operator test
  * @author mahula
- * @version $Id$
  */
 class tdme::tests::MathOperatorTest final
 {

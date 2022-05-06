@@ -43,7 +43,6 @@ using tdme::math::Vector3;
 /**
  * Particle system which displays objects as particles
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::particlesystem::ObjectParticleSystemInternal
 	: public Transformations

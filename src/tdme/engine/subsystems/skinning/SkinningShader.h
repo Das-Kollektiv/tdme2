@@ -24,7 +24,6 @@ using tdme::os::threading::Mutex;
 /**
  * Interface to compute shader skinning shader program
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::skinning::SkinningShader final
 {

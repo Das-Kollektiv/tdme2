@@ -13,7 +13,6 @@ using tdme::engine::fileio::textures::Texture;
 /**
  * Prototype decal definition
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::prototype::PrototypeDecal final
 {

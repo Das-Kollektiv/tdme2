@@ -13,7 +13,6 @@ using tdme::engine::model::Color4Base;
 /**
  * Color 4 definition
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::model::Color4 final
 	: public Color4Base

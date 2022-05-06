@@ -31,7 +31,6 @@ using tdme::utilities::MutableString;
 /**
  * File dialog screen controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::controllers::FileDialogScreenController final
 	: public ScreenController

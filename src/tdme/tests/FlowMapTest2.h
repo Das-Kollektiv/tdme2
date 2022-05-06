@@ -36,7 +36,6 @@ using tdme::utilities::PathFinding;
 /**
  * Flow map test 2
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::tests::FlowMapTest2 final
 	: public virtual Application, public virtual InputEventHandler

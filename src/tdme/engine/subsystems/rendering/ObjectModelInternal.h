@@ -13,7 +13,6 @@ using tdme::engine::subsystems::rendering::ObjectBase;
  * Object model
  * To be used in non engine context
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::rendering::ObjectModelInternal
 	: public ObjectBase

@@ -22,7 +22,6 @@ using tdme::math::Matrix4x4;
 /**
  * Early z rejection shader
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::earlyzrejection::EZRShader final
 {

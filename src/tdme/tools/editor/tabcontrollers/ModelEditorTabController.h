@@ -52,7 +52,6 @@ using tdme::utilities::MutableString;
 /**
  * Model editor tab controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabcontrollers::ModelEditorTabController final
 	: public TabController

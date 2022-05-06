@@ -26,7 +26,6 @@ using tdme::math::Matrix4x4;
 /**
  * Representation of a 3D model
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::engine::model::Model final
 {

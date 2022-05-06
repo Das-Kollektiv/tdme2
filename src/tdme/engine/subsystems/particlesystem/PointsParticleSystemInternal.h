@@ -41,7 +41,6 @@ using tdme::math::Vector3;
 /**
  * Points particle system
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::particlesystem::PointsParticleSystemInternal
 	: public Transformations

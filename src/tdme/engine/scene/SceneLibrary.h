@@ -21,7 +21,6 @@ using tdme::math::Vector3;
 /**
  * Scene prototype library definition
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::scene::SceneLibrary final
 {

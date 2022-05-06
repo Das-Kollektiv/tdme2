@@ -23,7 +23,6 @@ using tdme::os::filesystem::FileSystemException;
 /**
  * GUI vertical slider element
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUISliderV final: public GUIElement
 {

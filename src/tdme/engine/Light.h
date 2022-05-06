@@ -26,7 +26,6 @@ using tdme::utilities::Console;
 /**
  * Light representation
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::Light final
 {

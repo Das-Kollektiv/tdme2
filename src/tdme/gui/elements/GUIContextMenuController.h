@@ -25,7 +25,6 @@ using tdme::utilities::MutableString;
 /**
  * GUI context menu controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUIContextMenuController final
 	: public GUIElementController

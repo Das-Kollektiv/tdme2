@@ -9,7 +9,6 @@ using tdme::gui::nodes::GUIScreenNode;
 /**
  * Screen controller, which connects GUI screen definition with code
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::tools::editor::controllers::ScreenController
 {

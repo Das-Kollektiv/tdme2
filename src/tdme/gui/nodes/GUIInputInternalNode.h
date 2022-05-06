@@ -33,7 +33,6 @@ using tdme::utilities::MutableString;
 /**
  * GUI input internal node
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::nodes::GUIInputInternalNode final
 	: public GUINode

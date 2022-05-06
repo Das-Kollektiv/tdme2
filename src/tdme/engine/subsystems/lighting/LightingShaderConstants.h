@@ -6,7 +6,6 @@
 /**
  * Lighting shader constants
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::engine::subsystems::lighting::LightingShaderConstants final
 {

@@ -22,7 +22,6 @@ using tdme::utilities::MutableString;
 /**
  * GUI menu item controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUIMenuItemController final
 	: public GUIElementController

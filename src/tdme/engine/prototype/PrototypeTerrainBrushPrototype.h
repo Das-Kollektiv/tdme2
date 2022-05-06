@@ -10,7 +10,6 @@ using std::string;
 /**
  * Prototype terrain brush prototype definition
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::prototype::PrototypeTerrainBrushPrototype final
 {

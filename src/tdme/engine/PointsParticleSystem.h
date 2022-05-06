@@ -33,7 +33,6 @@ using tdme::math::Vector3;
 /**
  * Point particle system entity to be used with engine class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::PointsParticleSystem final
 	: public PointsParticleSystemInternal

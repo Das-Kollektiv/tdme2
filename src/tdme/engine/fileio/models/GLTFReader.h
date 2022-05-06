@@ -27,7 +27,6 @@ using tdme::os::filesystem::FileSystemException;
 /**
  * GLTF model reader
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::fileio::models::GLTFReader final
 {

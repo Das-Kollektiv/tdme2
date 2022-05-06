@@ -11,7 +11,6 @@ using tdme::engine::ColorTexture;
 /**
  * BRDFLUT render shader
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::framebuffer::BRDFLUTShader final: public ColorTexture
 {

@@ -33,7 +33,6 @@ using tdme::utilities::MutableString;
 /**
  * Trigger editor tab controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabcontrollers::TriggerEditorTabController final
 	: public TabController

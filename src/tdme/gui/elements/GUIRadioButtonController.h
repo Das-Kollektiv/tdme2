@@ -25,7 +25,6 @@ using tdme::utilities::MutableString;
 /**
  * GUI radio button controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUIRadioButtonController final
 	: public GUIElementController

@@ -43,7 +43,6 @@ using tdme::utilities::Console;
 /**
  * LOD object + imposter to be used with engine class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::LODObjectImposter final:
 	public Transformations,

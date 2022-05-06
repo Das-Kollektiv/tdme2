@@ -44,7 +44,6 @@ using tdme::utilities::Console;
 /**
  * Entity hierarchy to be used with engine class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::EntityHierarchy final:
 	public Transformations,

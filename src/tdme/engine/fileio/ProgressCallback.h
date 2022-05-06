@@ -6,7 +6,6 @@
 /**
  * Progress Callback
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::engine::fileio::ProgressCallback
 {

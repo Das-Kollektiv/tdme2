@@ -24,7 +24,6 @@ using tdme::math::Vector3;
 /**
  * Frustum class
  * @author Mark Morley, Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::Frustum final
 {

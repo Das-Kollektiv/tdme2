@@ -37,7 +37,6 @@ using tdme::math::Vector3;
 /**
  * Dynamic rigid/static rigid/collision body class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::physics::Body final
 {

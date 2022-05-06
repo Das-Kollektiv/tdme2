@@ -41,7 +41,6 @@ using tdme::tools::editor::views::PlayableSoundView;
 /**
  * Model editor tab view
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabviews::ModelEditorTabView final
 	: public TabView

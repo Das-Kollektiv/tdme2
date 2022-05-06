@@ -30,7 +30,6 @@ using tdme::tools::editor::views::EditorView;
 /**
  * Sound tab view
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabviews::SoundTabView final
 	: public TabView

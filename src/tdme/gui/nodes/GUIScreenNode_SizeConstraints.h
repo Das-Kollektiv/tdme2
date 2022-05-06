@@ -6,7 +6,6 @@
 /**
  * GUI screen node size constraints entity
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::gui::nodes::GUIScreenNode_SizeConstraints
 {

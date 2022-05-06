@@ -41,7 +41,6 @@ using tdme::tools::editor::views::EditorView;
 /**
  * Terrain editor tab view
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabviews::TerrainEditorTabView final
 	: public TabView

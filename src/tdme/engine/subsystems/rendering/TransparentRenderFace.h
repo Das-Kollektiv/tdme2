@@ -8,7 +8,6 @@ using tdme::engine::subsystems::rendering::ObjectNode;
 /**
  * Transparent face to be rendered
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::engine::subsystems::rendering::TransparentRenderFace final
 {

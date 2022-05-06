@@ -29,7 +29,6 @@ using tdme::utilities::ObjectDeleter;
 /**
  * Engine test
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::tests::EngineTest final
 	: public Application, public virtual InputEventHandler

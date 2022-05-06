@@ -24,7 +24,6 @@ using tdme::math::Matrix4x4;
 /**
  * Model utilities
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::rendering::ModelUtilitiesInternal
 {

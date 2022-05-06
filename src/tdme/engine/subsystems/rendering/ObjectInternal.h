@@ -27,7 +27,6 @@ using tdme::math::Matrix2D3x3;
 /**
  * Object
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::rendering::ObjectInternal
 	: public ObjectBase

@@ -19,7 +19,6 @@ using tdme::os::threading::ReadWriteLock;
 /**
  * VBO manager
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::manager::VBOManager final
 {

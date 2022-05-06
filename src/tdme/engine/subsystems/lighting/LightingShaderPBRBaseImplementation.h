@@ -23,7 +23,6 @@ using tdme::math::Matrix4x4;
 /**
  * Lighting shader implementation
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::lighting::LightingShaderPBRBaseImplementation: public LightingShaderImplementation
 {

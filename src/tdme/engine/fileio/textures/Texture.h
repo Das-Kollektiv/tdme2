@@ -14,7 +14,6 @@ using tdme::utilities::Reference;
 
 /**
  * Texture entity
- * @version $Id$
  * @author Andreas Drewke
  */
 class tdme::engine::fileio::textures::Texture final: public Reference

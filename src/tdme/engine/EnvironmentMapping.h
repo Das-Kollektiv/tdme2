@@ -32,7 +32,6 @@ using tdme::math::Vector3;
 /**
  * Environment mapping entity
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::EnvironmentMapping final: public Transformations, public Entity
 {

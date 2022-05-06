@@ -18,7 +18,6 @@ using tdme::utilities::Console;
 /**
  * Collision response entity
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::physics::CollisionResponse_Entity final
 {

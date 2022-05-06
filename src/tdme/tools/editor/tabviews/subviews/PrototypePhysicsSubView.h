@@ -25,7 +25,6 @@ using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubCo
 /**
  * Prototype physics view
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabviews::subviews::PrototypePhysicsSubView final: public Gizmo
 {

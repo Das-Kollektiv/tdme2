@@ -58,7 +58,6 @@ using tdme::utilities::MutableString;
 /**
  * Editor screen controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::controllers::EditorScreenController final
 	: public ScreenController

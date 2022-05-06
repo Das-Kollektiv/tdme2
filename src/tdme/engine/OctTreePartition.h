@@ -34,7 +34,6 @@ using tdme::utilities::VectorIteratorMultiple;
 /**
  * Oct tree partition implementation
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::OctTreePartition final: public Partition
 {

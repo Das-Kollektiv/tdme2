@@ -20,7 +20,6 @@ using tdme::math::Matrix4x4;
 /**
  * Lighting shader implementation interface
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::engine::subsystems::lighting::LightingShaderImplementation
 {

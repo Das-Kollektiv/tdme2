@@ -31,7 +31,6 @@ using tdme::math::Vector3;
 /**
  * Decal object to be used with engine class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::DecalObject final: public DecalObjectInternal, public Entity
 {

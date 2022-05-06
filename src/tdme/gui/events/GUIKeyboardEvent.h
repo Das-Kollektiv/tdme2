@@ -7,7 +7,6 @@
 /**
  * GUI keyboard event
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::events::GUIKeyboardEvent final
 {

@@ -13,7 +13,6 @@ using tdme::engine::DecalObject;
 /**
  * Geometry buffer class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::GeometryBuffer final
 {

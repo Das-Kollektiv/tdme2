@@ -33,7 +33,6 @@ using tdme::math::Matrix4x4;
 /**
  * Object node specifically for rendering
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::rendering::ObjectNode final
 {

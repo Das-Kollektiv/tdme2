@@ -11,7 +11,6 @@ using tdme::math::Vector3;
 /**
  * Simple class to determine if a transform is negative
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::math::Matrix4x4Negative
 {

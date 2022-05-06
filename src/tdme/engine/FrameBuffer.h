@@ -17,7 +17,6 @@ using tdme::engine::Engine;
 /**
  * Frame buffer class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::FrameBuffer final: public ColorTexture
 {

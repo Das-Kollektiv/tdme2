@@ -21,7 +21,6 @@ using tdme::math::Vector3;
 /**
  * Transformed faces iterator
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::rendering::ObjectBase_TransformedFacesIterator
 {

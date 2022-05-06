@@ -121,7 +121,6 @@ using tdme::utilities::TextureAtlas;
 /**
  * Engine main class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::Engine final
 {

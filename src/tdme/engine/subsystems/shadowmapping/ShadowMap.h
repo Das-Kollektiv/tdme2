@@ -24,7 +24,6 @@ using tdme::math::Vector3;
 /**
  * Shadow map
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::shadowmapping::ShadowMap final
 {

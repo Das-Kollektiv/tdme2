@@ -17,7 +17,6 @@ using tdme::utilities::ObjectDeleter;
 /**
  * Engine entity hierarchy test
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::tests::EntityHierarchyTest final
 	: public virtual Application

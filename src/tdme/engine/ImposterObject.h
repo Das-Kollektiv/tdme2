@@ -41,7 +41,6 @@ using tdme::utilities::Console;
 /**
  * Imposter object to be used with engine class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::ImposterObject final:
 	public Transformations,

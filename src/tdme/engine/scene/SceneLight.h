@@ -15,7 +15,6 @@ using tdme::math::Vector4;
 /**
  * Scene light definition
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::scene::SceneLight final
 {

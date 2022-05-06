@@ -36,7 +36,6 @@ using tdme::utilities::Console;
 /**
  * Transparent render faces group
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::rendering::TransparentRenderFacesGroup final
 {

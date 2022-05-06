@@ -16,7 +16,6 @@ using tdme::math::Vector3;
 /**
  * Oriented bounding box physics primitive
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::primitives::OrientedBoundingBox final
 	: public BoundingVolume

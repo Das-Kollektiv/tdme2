@@ -39,7 +39,6 @@ using tdme::utilities::Console;
 /**
  * LOD object to be used with engine class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::LODObject final:
 	public Transformations,

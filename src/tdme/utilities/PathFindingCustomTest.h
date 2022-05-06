@@ -9,7 +9,6 @@ using tdme::engine::primitives::BoundingVolume;
 /**
  * Path finding custom test interface
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::utilities::PathFindingCustomTest
 {

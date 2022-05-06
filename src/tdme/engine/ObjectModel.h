@@ -11,7 +11,6 @@ using tdme::engine::subsystems::rendering::ObjectModelInternal;
 /**
  * Object model
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::ObjectModel final
 	: public ObjectModelInternal

@@ -32,7 +32,6 @@ using tdme::tools::editor::misc::CameraRotationInputHandler;
 /**
  * Editor tools
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::misc::Tools final
 {

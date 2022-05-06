@@ -26,7 +26,6 @@ using tdme::utilities::IntBuffer;
 /**
  * Convex mesh physics primitive
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::primitives::ConvexMesh final
 	: public BoundingVolume

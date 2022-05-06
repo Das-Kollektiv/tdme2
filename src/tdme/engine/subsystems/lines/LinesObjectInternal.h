@@ -33,7 +33,6 @@ using tdme::math::Matrix4x4;
 /**
  * Lines object internal
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::lines::LinesObjectInternal
 	: public Transformations

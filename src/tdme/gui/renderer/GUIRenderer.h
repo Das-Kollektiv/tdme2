@@ -39,7 +39,6 @@ using tdme::utilities::ShortBuffer;
 /**
  * GUI renderer
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::renderer::GUIRenderer final
 {

@@ -22,7 +22,6 @@ using tdme::utilities::Console;
 /**
  * Render transparent render points pool
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::rendering::RenderTransparentRenderPointsPool final
 {

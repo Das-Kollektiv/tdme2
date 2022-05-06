@@ -18,7 +18,6 @@ using tdme::math::Vector3;
 /**
  * Circle particle emitter
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::particlesystem::CircleParticleEmitter final
 	: public ParticleEmitter

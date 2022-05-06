@@ -27,7 +27,6 @@ using tdme::tools::editor::views::EditorView;
 /**
  * Font tab view
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabviews::FontTabView final
 	: public TabView

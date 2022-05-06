@@ -17,7 +17,6 @@ using tdme::math::Matrix2D3x3;
 /**
  * Represents specular material properties
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::engine::model::SpecularMaterialProperties final
 {

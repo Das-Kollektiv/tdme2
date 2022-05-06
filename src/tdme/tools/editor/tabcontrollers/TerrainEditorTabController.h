@@ -49,7 +49,6 @@ using tinyxml::TiXmlElement;
 /**
  * Terrain editor tab controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabcontrollers::TerrainEditorTabController final
 	: public TabController

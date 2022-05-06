@@ -16,7 +16,6 @@ using tdme::math::Vector2;
  * 3x3 2D Matrix class
  * @see http://learnwebgl.brown37.net/10_surface_properties/texture_mapping_transforms.html
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::math::Matrix2D3x3 final
 {

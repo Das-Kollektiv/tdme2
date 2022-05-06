@@ -13,7 +13,6 @@ using tdme::math::Vector3;
 /**
  * Prototype sphere particle emitter definition
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::prototype::PrototypeParticleSystem_SphereParticleEmitter final
 {

@@ -22,7 +22,6 @@ using tdme::os::filesystem::FileSystemException;
 /**
  * GUI menu header item element
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUIMenuHeaderItem final: public GUIElement
 {

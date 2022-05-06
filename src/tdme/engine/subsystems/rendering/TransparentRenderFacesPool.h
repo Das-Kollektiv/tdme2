@@ -38,7 +38,6 @@ using tdme::utilities::Pool;
 /**
  * Transparent render faces pool
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::rendering::TransparentRenderFacesPool final
 {

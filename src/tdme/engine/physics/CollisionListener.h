@@ -9,7 +9,6 @@ using tdme::engine::physics::CollisionResponse;
 /**
  * Collision listener
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::engine::physics::CollisionListener
 {

@@ -17,7 +17,6 @@ using tdme::utilities::MutableString;
 /**
  * GUI progress bar controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUIProgressBarController final: public GUIElementController
 {

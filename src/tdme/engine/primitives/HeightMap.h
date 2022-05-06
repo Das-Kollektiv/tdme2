@@ -11,7 +11,6 @@ using tdme::math::Vector3;
 /**
  * Height map physics primitive
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::primitives::HeightMap final
 	: public BoundingVolume

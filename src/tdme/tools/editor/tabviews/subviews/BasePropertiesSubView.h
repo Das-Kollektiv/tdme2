@@ -15,7 +15,6 @@ using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubCont
 /**
  * Model base view
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabviews::subviews::BasePropertiesSubView final
 {

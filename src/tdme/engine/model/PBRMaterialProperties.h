@@ -15,7 +15,6 @@ using tdme::engine::model::Color4;
 /**
  * Represents specular material properties
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::engine::model::PBRMaterialProperties final
 {

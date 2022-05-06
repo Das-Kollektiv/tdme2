@@ -15,7 +15,6 @@ using tdme::engine::model::Color4;
 /**
  * Post processing program
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::postprocessing::PostProcessingProgram final
 {

@@ -42,7 +42,6 @@ using tdme::math::Vector3;
 /**
  * Prototype definition
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::prototype::Prototype final
 	: public BaseProperties

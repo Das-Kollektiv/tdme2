@@ -35,7 +35,6 @@ using tinyxml::TiXmlElement;
 /**
  * Text editor tab controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabcontrollers::TextEditorTabController final
 	: public TabController

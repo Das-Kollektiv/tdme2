@@ -35,7 +35,6 @@ using tinyxml::TiXmlElement;
 /**
  * Font tab controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabcontrollers::FontTabController final
 	: public TabController

@@ -24,7 +24,6 @@ using tdme::utilities::MutableString;
 /**
  * GUI tabs controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUITabsController final
 	: public GUINodeController

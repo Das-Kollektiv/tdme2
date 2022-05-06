@@ -15,7 +15,6 @@ using tdme::math::Vector3;
 /**
  * Particle emitter interface
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::engine::subsystems::particlesystem::ParticleEmitter
 {

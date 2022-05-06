@@ -13,7 +13,6 @@ using tdme::engine::fileio::textures::Texture;
 /**
  * Prototype point particle system definition
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::prototype::PrototypeParticleSystem_FogParticleSystem final
 {

@@ -34,7 +34,6 @@ using tdme::tools::editor::views::EditorView;
 /**
  * Trigger editor tab view
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabviews::TriggerEditorTabView final
 	: public TabView

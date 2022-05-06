@@ -9,7 +9,6 @@
 /**
  * Character class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::utilities::Character final
 {

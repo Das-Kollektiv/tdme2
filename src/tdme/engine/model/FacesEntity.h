@@ -22,7 +22,6 @@ using tdme::math::Vector3;
  * Node faces entity
  * A node can have multiple entities containing faces and a applied material
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::model::FacesEntity final
 {

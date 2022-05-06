@@ -28,7 +28,6 @@ using rapidjson::Value;
 /**
  * Prototype reader
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::fileio::prototypes::PrototypeReader final
 {

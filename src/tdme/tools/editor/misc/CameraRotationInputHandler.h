@@ -16,7 +16,6 @@ using tdme::tools::editor::misc::CameraRotationInputHandlerEventHandler;
 /**
  * Camera Rotation Input Handler
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::misc::CameraRotationInputHandler final
 	: public GUIInputEventHandler

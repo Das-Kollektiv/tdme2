@@ -15,7 +15,6 @@ using tdme::gui::renderer::GUIRenderer;
 /**
  * GUI position effect
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::effects::GUIPositionEffect final: public GUIEffect
 {

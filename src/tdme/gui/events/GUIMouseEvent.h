@@ -7,7 +7,6 @@
 /**
  * GUI mouse event
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::events::GUIMouseEvent final
 {

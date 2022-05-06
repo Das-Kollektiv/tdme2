@@ -25,7 +25,6 @@ using tdme::math::Vector3;
 /**
  * Engine entity
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::Entity
 {

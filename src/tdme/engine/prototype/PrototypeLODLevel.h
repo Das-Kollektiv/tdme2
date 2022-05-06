@@ -17,7 +17,6 @@ using tdme::engine::LODObject;
 /**
  * Prototype LOD level definition
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::prototype::PrototypeLODLevel final
 {

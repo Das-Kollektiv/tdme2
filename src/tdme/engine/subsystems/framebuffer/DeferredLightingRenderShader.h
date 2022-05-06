@@ -22,7 +22,6 @@ using tdme::engine::Engine;
 /**
  * Deferred lighint render shader
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::framebuffer::DeferredLightingRenderShader final
 {

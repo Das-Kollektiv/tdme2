@@ -9,7 +9,6 @@ using tdme::engine::subsystems::renderer::Renderer;
 /**
  * Frame buffer render shader
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::framebuffer::FrameBufferRenderShader final
 {

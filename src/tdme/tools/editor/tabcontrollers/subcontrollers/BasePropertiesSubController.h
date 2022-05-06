@@ -35,7 +35,6 @@ using tdme::utilities::MutableString;
 /**
  * Prototype base sub screen controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController final
 {

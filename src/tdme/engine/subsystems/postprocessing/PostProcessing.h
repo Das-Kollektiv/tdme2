@@ -14,7 +14,6 @@ using tdme::engine::subsystems::postprocessing::PostProcessingProgram;
 /**
  * Post processing
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::postprocessing::PostProcessing final
 {

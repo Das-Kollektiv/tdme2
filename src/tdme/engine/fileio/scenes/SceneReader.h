@@ -32,7 +32,6 @@ using rapidjson::Value;
 /**
  * Scene reader
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::fileio::scenes::SceneReader final
 {

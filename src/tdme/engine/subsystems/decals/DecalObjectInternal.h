@@ -28,7 +28,6 @@ using tdme::math::Matrix4x4;
 /**
  * Decal object internal
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::decals::DecalObjectInternal
 	: public Transformations

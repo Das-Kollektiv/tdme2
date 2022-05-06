@@ -7,7 +7,6 @@
 /**
  * Application input event handler interface
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::application::InputEventHandler
 {

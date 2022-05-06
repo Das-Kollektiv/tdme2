@@ -11,7 +11,6 @@ using tdme::math::Vector3;
 /**
  * Line segment helper functions
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::primitives::LineSegment final
 {

@@ -32,7 +32,6 @@ using tdme::math::Vector3;
 /**
  * Dynamic physics world class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::physics::World final
 {

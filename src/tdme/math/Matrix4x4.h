@@ -18,7 +18,6 @@ using tdme::math::Vector4;
 /**
  * 4x4 3D Matrix class
  * @author Andreas Drewke, Song Ho Ahn <song.ahn@gmail.com>
- * @version $Id$
  */
 class tdme::math::Matrix4x4 final
 {

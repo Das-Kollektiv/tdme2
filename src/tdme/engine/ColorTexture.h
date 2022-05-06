@@ -8,7 +8,6 @@
 /**
  * Color texture interface
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::engine::ColorTexture
 {

@@ -16,7 +16,6 @@ using tdme::utilities::MutableString;
 /**
  * GUI knob controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUIKnobController final: public GUIElementController
 {

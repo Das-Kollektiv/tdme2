@@ -16,7 +16,6 @@ using tdme::utilities::MutableString;
 /**
  * GUI vertical slider controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUISliderVController final: public GUIElementController
 {

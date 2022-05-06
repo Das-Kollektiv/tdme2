@@ -21,7 +21,6 @@ using tdme::utilities::MutableString;
 /**
  * GUI input controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUIInputController final
 	: public GUIElementController

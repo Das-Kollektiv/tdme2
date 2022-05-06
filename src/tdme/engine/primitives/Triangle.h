@@ -13,7 +13,6 @@ using tdme::math::Vector3;
 /**
  * Triangle entity, this is not directly connectable with physics engine
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::primitives::Triangle final
 {

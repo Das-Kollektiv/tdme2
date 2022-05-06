@@ -15,7 +15,6 @@ using tdme::math::Vector3;
 /**
  * Prototype physics body definitions
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::prototype::PrototypePhysics final
 {

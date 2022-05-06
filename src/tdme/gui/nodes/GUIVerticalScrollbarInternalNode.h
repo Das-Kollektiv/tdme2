@@ -27,7 +27,6 @@ using tdme::gui::renderer::GUIRenderer;
 /**
  * GUI vertical scroll bar internal node
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::nodes::GUIVerticalScrollbarInternalNode
 	: public GUINode

@@ -9,7 +9,6 @@ using tdme::gui::nodes::GUIElementNode;
 /**
  * GUI context menu request listener
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::gui::events::GUIContextMenuRequestListener
 {

@@ -31,7 +31,6 @@ using tdme::utilities::PathFinding;
 /**
  * Engine with physics test 2
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::tests::FlowMapTest final
 	: public virtual Application

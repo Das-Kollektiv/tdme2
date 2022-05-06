@@ -19,7 +19,6 @@ using tdme::utilities::ObjectDeleter;
 /**
  * LOD test
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::tests::SkinningTest final
 	: public virtual Application, public virtual InputEventHandler

@@ -22,7 +22,6 @@ using tdme::engine::subsystems::skinning::SkinningShader;
 /**
  * Object node VBO renderer
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::rendering::ObjectNodeRenderer final
 {

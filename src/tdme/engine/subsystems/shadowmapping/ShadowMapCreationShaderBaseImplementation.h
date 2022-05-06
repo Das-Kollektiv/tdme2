@@ -16,7 +16,6 @@ using tdme::math::Matrix4x4;
 /**
  * Shadow mapping shader base class to create shadow map
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderBaseImplementation: public ShadowMapCreationShaderImplementation
 {

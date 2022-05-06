@@ -25,7 +25,6 @@ using tdme::math::Vector3;
 /**
  * Environment mapping
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::environmentmapping::EnvironmentMappingRenderer final
 {

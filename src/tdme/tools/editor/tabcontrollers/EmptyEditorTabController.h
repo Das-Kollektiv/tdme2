@@ -31,7 +31,6 @@ using tdme::utilities::MutableString;
 /**
  * Empty editor tab controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabcontrollers::EmptyEditorTabController final
 	: public TabController

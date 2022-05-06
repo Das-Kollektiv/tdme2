@@ -15,7 +15,6 @@ namespace utilities {
 /**
  * Object deleter
  * @author Andreas Drewke
- * @version $Id$
  */
 template<typename T>
 class ObjectDeleter final

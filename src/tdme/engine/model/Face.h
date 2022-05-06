@@ -13,7 +13,6 @@ using tdme::engine::model::Node;
 /**
  * Represents a model face, consisting of vertex, normal, tangent and bitangent vectors, indices and texture coordinate
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::engine::model::Face final
 {

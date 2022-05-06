@@ -13,7 +13,6 @@ using tdme::utilities::ByteBuffer;
 /**
  * Dynamic color texture
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::DynamicColorTexture final: public ColorTexture
 {

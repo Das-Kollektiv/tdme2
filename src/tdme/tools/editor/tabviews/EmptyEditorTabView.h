@@ -29,7 +29,6 @@ using tdme::tools::editor::views::EditorView;
 /**
  * Empty editor tab view
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabviews::EmptyEditorTabView final
 	: public TabView

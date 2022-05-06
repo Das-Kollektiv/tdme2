@@ -25,7 +25,6 @@ using tdme::math::Vector3;
 /**
  * Prototype object particle system definition
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::prototype::PrototypeParticleSystem_ObjectParticleSystem final
 {

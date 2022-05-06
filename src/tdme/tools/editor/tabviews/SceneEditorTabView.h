@@ -44,7 +44,6 @@ using tdme::tools::editor::views::EditorView;
 /**
  * Scene editor tab view
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabviews::SceneEditorTabView final: public TabView, protected CameraInputHandlerEventHandler, public Gizmo
 {

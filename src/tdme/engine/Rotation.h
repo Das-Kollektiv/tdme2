@@ -12,7 +12,6 @@ using tdme::math::Vector3;
 /**
  * Rotation representation
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::Rotation final
 {

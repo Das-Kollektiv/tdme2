@@ -21,7 +21,6 @@ using tdme::engine::Transformations;
 /**
  * Terrain mesh physics primitive
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::primitives::TerrainMesh final
 	: public BoundingVolume

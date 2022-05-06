@@ -23,7 +23,6 @@ using tdme::utilities::MutableString;
 /**
  * Info dialog screen controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::controllers::InfoDialogScreenController final
 	: public ScreenController

@@ -33,7 +33,6 @@ using tinyxml::TiXmlElement;
 /**
  * GUI parser
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::GUIParser final
 {

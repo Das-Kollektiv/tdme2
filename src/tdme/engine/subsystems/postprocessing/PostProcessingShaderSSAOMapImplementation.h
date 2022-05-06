@@ -16,7 +16,6 @@ using tdme::engine::Engine;
 /**
  * Post processing shader SSAO map generation implementation
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::postprocessing::PostProcessingShaderSSAOMapImplementation: public PostProcessingShaderBaseImplementation
 {

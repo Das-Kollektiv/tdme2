@@ -17,7 +17,6 @@ using tdme::utilities::MutableString;
 /**
  * GUI horizontal slider controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUISliderHController final: public GUIElementController
 {

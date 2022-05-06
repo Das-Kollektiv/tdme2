@@ -31,7 +31,6 @@ using tdme::utilities::MutableString;
 /**
  * Scene engine/physics connector
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::SceneConnector final
 {

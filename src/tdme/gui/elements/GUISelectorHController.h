@@ -26,7 +26,6 @@ using tdme::utilities::MutableString;
 /**
  * GUI selector horizontal controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUISelectorHController final
 	: public GUIElementController

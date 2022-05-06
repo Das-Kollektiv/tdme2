@@ -13,7 +13,6 @@ using tdme::utilities::ByteBuffer;
 /**
  * Video decoder base class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::video::decoder::VideoDecoder
 {

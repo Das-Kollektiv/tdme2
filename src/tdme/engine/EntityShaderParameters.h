@@ -15,7 +15,6 @@ using tdme::engine::ShaderParameter;
 /**
  * TDME2 engine entity shader parameters
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::EntityShaderParameters
 {

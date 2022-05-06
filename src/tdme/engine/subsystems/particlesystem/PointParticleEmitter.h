@@ -19,7 +19,6 @@ using tdme::math::Vector3;
 /**
  * Point particle emitter
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::particlesystem::PointParticleEmitter final
 	: public ParticleEmitter

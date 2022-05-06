@@ -17,7 +17,6 @@ using tdme::gui::nodes::GUIScreenNode;
 /**
  * Tab controller, which connects UI with logic
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::tools::editor::tabcontrollers::TabController: public GUIActionListener, public GUIChangeListener, public GUIFocusListener, public GUIContextMenuRequestListener
 {

@@ -57,7 +57,6 @@ using tdme::math::Vector2;
 /**
  * GUI node base class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::nodes::GUINode
 {

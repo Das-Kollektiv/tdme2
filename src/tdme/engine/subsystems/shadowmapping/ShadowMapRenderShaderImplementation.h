@@ -13,7 +13,6 @@ using tdme::math::Matrix4x4;
 /**
  * Shadow mapping shader interface to render shadow map
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderImplementation
 {

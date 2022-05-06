@@ -27,7 +27,6 @@ using tdme::gui::renderer::GUIRenderer;
 /**
  * GUI space node
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::nodes::GUISpaceNode final
 	: public GUINode

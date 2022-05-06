@@ -43,7 +43,6 @@ namespace models {
 /**
  * TM reader input stream
  * @author Andreas Drewke
- * @version $Id$
  */
 class TMReaderInputStream {
 private:
@@ -225,7 +224,6 @@ public:
 /**
  * TDME model reader
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::fileio::models::TMReader
 {

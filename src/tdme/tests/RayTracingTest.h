@@ -22,7 +22,6 @@ using tdme::utilities::ObjectDeleter;
 /**
  * Ray Tracing Test
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::tests::RayTracingTest final
 	: public virtual Application, public virtual InputEventHandler

@@ -17,7 +17,6 @@ using tdme::engine::subsystems::rendering::ObjectNodeMesh;
 /**
  * Mesh manager
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::manager::MeshManager final
 {

@@ -9,7 +9,6 @@ using tdme::gui::nodes::GUIElementNode;
 /**
  * GUI focus listener interface
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::gui::events::GUIFocusListener
 {

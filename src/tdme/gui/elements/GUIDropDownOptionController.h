@@ -22,7 +22,6 @@ using tdme::utilities::MutableString;
 /**
  * GUI drop down option controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUIDropDownOptionController final
 	: public GUIElementController

@@ -22,7 +22,6 @@ using tdme::os::filesystem::FileSystemException;
 /**
  * GUI styled input element
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUIStyledInput final: public GUIElement
 {

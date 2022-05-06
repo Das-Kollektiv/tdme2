@@ -23,7 +23,6 @@ using tdme::os::filesystem::FileSystemException;
 /**
  * GUI image button element
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUIImageButton final
 	: public GUIElement

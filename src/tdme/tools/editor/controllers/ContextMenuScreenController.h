@@ -25,7 +25,6 @@ using tdme::utilities::Action;
 /**
  * Context menu screen controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::controllers::ContextMenuScreenController final
 	: public ScreenController

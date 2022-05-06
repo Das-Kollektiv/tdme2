@@ -11,7 +11,6 @@ using tdme::math::Vector3;
 /**
  * Capsule physics primitive
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::primitives::Capsule final
 	: public BoundingVolume

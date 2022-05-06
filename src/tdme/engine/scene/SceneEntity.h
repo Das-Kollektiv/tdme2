@@ -17,7 +17,6 @@ using tdme::engine::Transformations;
 /**
  * Scene entity definition
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::scene::SceneEntity final
 	: public BaseProperties

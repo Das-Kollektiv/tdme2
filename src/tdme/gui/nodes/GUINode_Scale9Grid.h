@@ -6,7 +6,6 @@
 /**
  * GUI node scale 9 grid entity
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::gui::nodes::GUINode_Scale9Grid
 {

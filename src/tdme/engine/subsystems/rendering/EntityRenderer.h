@@ -53,7 +53,6 @@ using tdme::utilities::Pool;
 /**
  * Rendering class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::rendering::EntityRenderer final {
 	friend class ObjectNodeRenderer;

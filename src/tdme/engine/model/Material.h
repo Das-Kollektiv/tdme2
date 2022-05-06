@@ -15,7 +15,6 @@ using tdme::math::Matrix2D3x3;
 /**
  * Represents a material
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::engine::model::Material final
 {

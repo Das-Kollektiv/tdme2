@@ -18,7 +18,6 @@ using tdme::utilities::MutableString;
 /**
  * GUI select box parent option controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUISelectBoxParentOptionController final: public GUISelectBoxOptionController
 {

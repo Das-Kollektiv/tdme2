@@ -30,7 +30,6 @@ using tdme::tools::editor::views::EditorView;
 /**
  * Environmap editor tab view
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabviews::EnvMapEditorTabView final
 	: public TabView

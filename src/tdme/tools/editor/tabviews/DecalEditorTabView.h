@@ -34,7 +34,6 @@ using tdme::tools::editor::views::EditorView;
 /**
  * Decal editor tab view
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabviews::DecalEditorTabView final
 	: public TabView

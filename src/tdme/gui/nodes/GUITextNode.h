@@ -35,7 +35,6 @@ using tdme::utilities::MutableString;
 /**
  * GUI text node
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::nodes::GUITextNode final
 	: public GUINode

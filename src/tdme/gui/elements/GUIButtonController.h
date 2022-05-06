@@ -11,7 +11,6 @@ using tdme::gui::nodes::GUINode;
 /**
  * GUI button controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUIButtonController final
 	: public GUIElementController

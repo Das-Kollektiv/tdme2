@@ -17,7 +17,6 @@ using std::vector;
 /**
  * Buffers used to transfer data between main memory to graphics board memory
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::rendering::ObjectBuffer final
 {
