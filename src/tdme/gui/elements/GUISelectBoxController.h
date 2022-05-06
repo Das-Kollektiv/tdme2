@@ -24,7 +24,6 @@ using tdme::utilities::MutableString;
 /**
  * GUI select box controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUISelectBoxController final
 	: public GUIElementController

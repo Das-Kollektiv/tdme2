@@ -12,7 +12,7 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
@@ -35,7 +35,7 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 using tdme::engine::Rotation;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
@@ -76,7 +76,7 @@ void PivotTest::dispose()
 void PivotTest::initialize()
 {
 	engine->initialize();
-	Object3D* entity;
+	Object* entity;
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(15.0f);
@@ -99,7 +99,7 @@ void PivotTest::initialize()
 	auto groundModel = modelDeleter.add(Primitives::createModel(ground, "ground_model"));
 	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
 	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	entity = new Object3D("ground", groundModel);
+	entity = new Object("ground", groundModel);
 	entity->setTranslation(Vector3(0.0f, -1.0f, 0.0f));
 	entity->setReceivesShadows(true);
 	entity->update();
@@ -108,7 +108,7 @@ void PivotTest::initialize()
 	auto boxModel = modelDeleter.add(Primitives::createModel(box, "box_model"));
 	boxModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.5f, 0.5f, 1.0f));
 	boxModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
-	entity = new Object3D("box", boxModel);
+	entity = new Object("box", boxModel);
 	entity->setContributesShadows(true);
 	entity->setReceivesShadows(true);
 	entity->setPivot(Vector3(0.0f, 10.0f, 0.0f));

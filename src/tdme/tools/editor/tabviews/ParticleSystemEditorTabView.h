@@ -42,7 +42,6 @@ using tdme::tools::editor::views::PlayableSoundView;
 /**
  * Particle system editor tab view
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabviews::ParticleSystemEditorTabView final
 	: public TabView

@@ -131,7 +131,7 @@ void TriggerEditorTabController::saveAs()
 
 	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
 	vector<string> extensions = {
-		"tempty"
+		"ttrigger"
 	};
 	popUps->getFileDialogScreenController()->show(
 		fileName.empty() == false?Tools::getPathName(fileName):string(),

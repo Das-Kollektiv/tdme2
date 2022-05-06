@@ -18,7 +18,6 @@ using tdme::math::Vector3;
 /**
  * Shadow mapping base shader to render shadow maps
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderBaseImplementation: public ShadowMapRenderShaderImplementation
 {

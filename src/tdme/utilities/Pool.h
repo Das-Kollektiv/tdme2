@@ -14,7 +14,6 @@ namespace utilities {
 /**
  * Pool template class
  * @author Andreas Drewke
- * @version $Id$
  * @param<E>
  */
 template<typename T>

@@ -13,9 +13,10 @@
 #include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/EntityPickingFilter.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
@@ -52,9 +53,10 @@ using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLibrary;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
+using tdme::engine::EntityHierarchy;
 using tdme::engine::EntityPickingFilter;
 using tdme::engine::Light;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 using tdme::engine::SceneConnector;
 using tdme::engine::Timing;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -316,7 +318,7 @@ void SceneEditorTabView::handleInputEvents()
 					Vector3 deltaRotation;
 					Vector3 absoluteScale;
 					if (determineGizmoDeltaTransformations(mouseDownLastX, mouseDownLastY, event.getXUnscaled(), event.getYUnscaled(), deltaTranslation, deltaRotation, absoluteScale) == true) {
-						auto gizmoEntity = getGizmoObject3D();
+						auto gizmoEntity = getGizmoObject();
 						if (gizmoEntity != nullptr) {
 							for (auto selectedEntityId: selectedEntityIds) {
 								auto _selectedEntity = engine->getEntity(selectedEntityId);
@@ -392,8 +394,7 @@ void SceneEditorTabView::handleInputEvents()
 					}
 					if (selectedEntity != nullptr) {
 						if (selectedEntityIdsById.find(selectedEntity->getId()) == selectedEntityIdsById.end()) {
-							setStandardEntityColorEffect(selectedEntity);
-							setHighlightEntityColorEffect(selectedEntity);
+							selectEntityInternal(selectedEntity);
 							selectedEntityIds.push_back(selectedEntity->getId());
 							selectedEntityIdsById.insert(selectedEntity->getId());
 							sceneEditorTabController->selectEntity(selectedEntity->getId());
@@ -482,7 +483,7 @@ void SceneEditorTabView::display()
 				transformations.addRotation(scene->getRotationOrder()->getAxis2(), 0.0f);
 				transformations.update();
 				if (selectedEngineEntity == nullptr && selectedPrototype != nullptr) {
-					selectedEngineEntity = SceneConnector::createEntity(selectedPrototype, "tdme.sceneeditor.placeentity", transformations);
+					selectedEngineEntity = createEntity(selectedPrototype, "tdme.sceneeditor.placeentity", transformations);
 					if (selectedEngineEntity != nullptr) engine->addEntity(selectedEngineEntity);
 				}
 				if (selectedEngineEntity != nullptr) {
@@ -559,7 +560,7 @@ void SceneEditorTabView::initialize()
 	light0->setEnabled(true);
 	auto cam = engine->getCamera();
 	SceneConnector::setLights(engine, scene, Vector3());
-	SceneConnector::addScene(engine, scene, true, true, true, true);
+	SceneConnector::addScene(engine, scene, true, true, true, true, true);
 	updateSky();
 	cameraInputHandler->setSceneCenter(scene->getCenter());
 	updateGrid();
@@ -611,7 +612,7 @@ void SceneEditorTabView::clearScene() {
 
 void SceneEditorTabView::reloadScene() {
 	clearScene();
-	SceneConnector::addScene(engine, scene, true, true, true, true);
+	SceneConnector::addScene(engine, scene, true, true, true, true, true);
 }
 
 void SceneEditorTabView::reloadOutliner() {
@@ -644,7 +645,7 @@ void SceneEditorTabView::removeSky() {
 void SceneEditorTabView::updateSky() {
 	engine->removeEntity("tdme.sky");
 	if (scene->getSkyModel() == nullptr) return;
-	auto sky = new Object3D("tdme.sky", scene->getSkyModel());
+	auto sky = new Object("tdme.sky", scene->getSkyModel());
 	sky->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
 	sky->setShader("sky");
 	sky->setFrustumCulling(false);
@@ -668,14 +669,20 @@ void SceneEditorTabView::updateLights() {
 	SceneConnector::setLights(engine, scene, Vector3());
 }
 
-void SceneEditorTabView::setHighlightEntityColorEffect(Entity* entity)
+void SceneEditorTabView::selectEntityInternal(Entity* entity)
 {
+	auto sceneEntity = scene->getEntity(entity->getId());
+	if (sceneEntity != nullptr && sceneEntity->getPrototype()->getType() == Prototype_Type::DECAL) {
+		auto decalEntityHierarchy = dynamic_cast<EntityHierarchy*>(entity);
+		auto decalObbEntity = decalEntityHierarchy != nullptr?decalEntityHierarchy->getEntity("tdme.prototype.bv.0"):nullptr;
+		if (decalObbEntity != nullptr) decalObbEntity->setEnabled(true);
+	}
 	auto& red = entityColors["red"];
 	entity->setEffectColorAdd(Color4(red.colorAddR, red.colorAddG, red.colorAddB, 0.0f));
 	entity->setEffectColorMul(Color4(red.colorMulR, red.colorMulG, red.colorMulB, 1.0f));
 }
 
-void SceneEditorTabView::setStandardEntityColorEffect(Entity* entity)
+void SceneEditorTabView::unselectEntityInternal(Entity* entity)
 {
 	auto& color = entityColors["none"];
 	entity->setEffectColorAdd(Color4(color.colorAddR, color.colorAddG, color.colorAddB, 0.0f));
@@ -692,11 +699,16 @@ void SceneEditorTabView::setStandardEntityColorEffect(Entity* entity)
 			entity->setEffectColorMul(Color4(entity->getEffectColorMul().getRed() * entityColor.colorMulR, entity->getEffectColorMul().getGreen() * entityColor.colorMulG, entity->getEffectColorMul().getBlue() * entityColor.colorMulB, 1.0f));
 		}
 	}
+	if (sceneEntity != nullptr && sceneEntity->getPrototype()->getType() == Prototype_Type::DECAL) {
+		auto decalEntityHierarchy = dynamic_cast<EntityHierarchy*>(entity);
+		auto decalObbEntity = decalEntityHierarchy != nullptr?decalEntityHierarchy->getEntity("tdme.prototype.bv.0"):nullptr;
+		if (decalObbEntity != nullptr) decalObbEntity->setEnabled(false);
+	}
 }
 
 void SceneEditorTabView::resetEntity(Entity* entity) {
 	if (entity == nullptr) return;
-	setStandardEntityColorEffect(entity);
+	unselectEntityInternal(entity);
 	auto sceneEntity = scene->getEntity(entity->getId());
 	if (sceneEntity == nullptr) return;
 	if (sceneEntity->getPrototype()->getType()->hasNonEditScaleDownMode() == false) return;
@@ -720,16 +732,15 @@ void SceneEditorTabView::selectEntities(const vector<string>& entityIds)
 	removeGizmo();
 	for (auto entityIdToRemove: selectedEntityIds) {
 		auto entityToRemove = engine->getEntity(entityIdToRemove);
-		if (entityToRemove != nullptr) setStandardEntityColorEffect(entityToRemove);
+		if (entityToRemove != nullptr) unselectEntityInternal(entityToRemove);
 	}
 	selectedEntityIds.clear();
 	selectedEntityIdsById.clear();
 	for (auto entityId: entityIds) {
-		Console::println(entityId);
+		Console::println("SceneEditorTabView::selectEntities(): " + entityId);
 		auto selectedEntity = engine->getEntity(entityId);
 		if (selectedEntity == nullptr) continue;
-		setStandardEntityColorEffect(selectedEntity);
-		setHighlightEntityColorEffect(selectedEntity);
+		selectEntityInternal(selectedEntity);
 		selectedEntityIds.push_back(entityId);
 		selectedEntityIdsById.insert(entityId);
 	}
@@ -752,10 +763,11 @@ void SceneEditorTabView::selectEntities(const vector<string>& entityIds)
 void SceneEditorTabView::unselectEntities()
 {
 	removeGizmo();
-	for (auto entityIdToRemove: selectedEntityIds) {
-		auto entityToRemove = engine->getEntity(entityIdToRemove);
-		if (entityToRemove == nullptr) continue;
-		resetEntity(entityToRemove);
+	for (auto entityIdToUnselect: selectedEntityIds) {
+		auto entityToUnselect = engine->getEntity(entityIdToUnselect);
+		if (entityToUnselect == nullptr) continue;
+		resetEntity(entityToUnselect);
+		Console::println("SceneEditorTabView::unselectEntities(): " + entityIdToUnselect);
 	}
 	selectedEntityIds.clear();
 	selectedEntityIdsById.clear();
@@ -837,7 +849,7 @@ void SceneEditorTabView::placeEntity()
 	);
 	scene->addEntity(sceneEntity);
 	selectedEntityIds.push_back(sceneEntity->getId());
-	auto entity = SceneConnector::createEntity(sceneEntity);
+	auto entity = createEntity(sceneEntity);
 	if (entity != nullptr) {
 		resetEntity(entity);
 		entity->setPickable(true);
@@ -968,7 +980,7 @@ void SceneEditorTabView::pasteEntities(bool displayOnly)
 				sceneEntity->addProperty(property->getName(), property->getValue());
 			}
 			scene->addEntity(sceneEntity);
-			auto entity = SceneConnector::createEntity(pastePrototype, sceneEntityId, sceneEntityTransformations);
+			auto entity = createEntity(pastePrototype, sceneEntityId, sceneEntityTransformations);
 			if (entity != nullptr) {
 				resetEntity(entity);
 				entity->setPickable(true);
@@ -981,9 +993,9 @@ void SceneEditorTabView::pasteEntities(bool displayOnly)
 			if (entity != nullptr) {
 				entity->fromTransformations(sceneEntityTransformations);
 			} else {
-				entity = SceneConnector::createEntity(pastePrototype, entityId, sceneEntityTransformations);
+				entity = createEntity(pastePrototype, entityId, sceneEntityTransformations);
 				if (entity != nullptr) {
-					setStandardEntityColorEffect(entity);
+					unselectEntityInternal(entity);
 					entity->setPickable(true);
 					engine->addEntity(entity);
 				}
@@ -1160,11 +1172,11 @@ bool SceneEditorTabView::applyBase(const string& name, const string& description
 		engine->removeEntity(oldName);
 		selectedEntityIds.clear();
 		selectedEntityIdsById.clear();
-		auto entity = SceneConnector::createEntity(sceneEntity);
+		auto entity = createEntity(sceneEntity);
 		if (entity == nullptr) {
 			return false;
 		} else {
-			setHighlightEntityColorEffect(entity);
+			selectEntityInternal(entity);
 			selectedEntityIds.push_back(entity->getId());
 			selectedEntityIdsById.insert(entity->getId());
 			entity->setPickable(true);
@@ -1302,8 +1314,8 @@ void SceneEditorTabView::applyReflectionEnvironmentMappingId(const string& refle
 		auto sceneEntity = scene->getEntity(selectedEntity->getId());
 		if (sceneEntity == nullptr) continue;
 
-		auto object3D = dynamic_cast<Object3D*>(selectedEntity);
-		if (object3D != nullptr) object3D->setReflectionEnvironmentMappingId(reflectionEnvironmentMappingId);
+		auto object = dynamic_cast<Object*>(selectedEntity);
+		if (object != nullptr) object->setReflectionEnvironmentMappingId(reflectionEnvironmentMappingId);
 		sceneEntity->setReflectionEnvironmentMappingId(reflectionEnvironmentMappingId);
 	}
 }
@@ -1343,7 +1355,7 @@ void SceneEditorTabView::updateGrid()
 	string entityId = "tdme.sceneeditor.grid";
 	auto entity = engine->getEntity(entityId);
 	if (entity == nullptr) {
-		entity = new Object3D(entityId, gridModel);
+		entity = new Object(entityId, gridModel);
 		entity->setFrustumCulling(false);
 		entity->addRotation(scene->getRotationOrder()->getAxis0(), 0.0f);
 		entity->addRotation(scene->getRotationOrder()->getAxis1(), 0.0f);
@@ -1360,9 +1372,9 @@ void SceneEditorTabView::updateGrid()
 		entity->update();
 		auto selectedEntityIdsByIdIt = selectedEntityIdsById.find(entity->getId());
 		if (selectedEntityIdsByIdIt != selectedEntityIdsById.end()) {
-			setHighlightEntityColorEffect(entity);
+			selectEntityInternal(entity);
 		} else {
-			setStandardEntityColorEffect(entity);
+			unselectEntityInternal(entity);
 		}
 		engine->addEntity(entity);
 	}
@@ -1402,7 +1414,7 @@ void SceneEditorTabView::addPrototype(Prototype* prototype) {
 			sceneLibrary->addPrototype(prototype);
 			SceneConnector::resetEngine(engine, scene);
 			SceneConnector::setLights(engine, scene, Vector3());
-			SceneConnector::addScene(engine, scene, true, true, true, true);
+			SceneConnector::addScene(engine, scene, true, true, true, true, true);
 			updateSky();
 			scene->update();
 			cameraInputHandler->setSceneCenter(scene->getCenter());
@@ -1415,4 +1427,20 @@ void SceneEditorTabView::addPrototype(Prototype* prototype) {
 		sceneEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
 	}
 	reloadOutliner("scene.prototypes." + to_string(prototype->getId()));
+}
+
+Entity* SceneEditorTabView::createEntity(Prototype* prototype, const string& id, const Transformations& transformations, int instances, Entity* parentEntity) {
+	if (prototype->getType() == Prototype_Type::DECAL) {
+		return SceneConnector::createEditorDecalEntity(prototype, id, transformations, instances, parentEntity);
+	} else {
+		return SceneConnector::createEntity(prototype, id, transformations, instances, parentEntity);
+	}
+}
+
+Entity* SceneEditorTabView::createEntity(SceneEntity* sceneEntity, const Vector3& translation, int instances, Entity* parentEntity) {
+	if (sceneEntity->getPrototype()->getType() == Prototype_Type::DECAL) {
+		return SceneConnector::createEditorDecalEntity(sceneEntity, translation, instances, parentEntity);
+	} else {
+		return SceneConnector::createEntity(sceneEntity, translation, instances, parentEntity);
+	}
 }

@@ -38,7 +38,6 @@ using tdme::utilities::PathFindingCustomTest;
 /**
  * Path finding class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::utilities::PathFinding final
 {

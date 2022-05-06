@@ -12,8 +12,7 @@ using tdme::engine::model::Model;
 /**
  * Animation setup
  * @author Andreas Drewke
- * @version $Id$
- */
+  */
 class tdme::engine::model::AnimationSetup final
 {
 	friend class Model;

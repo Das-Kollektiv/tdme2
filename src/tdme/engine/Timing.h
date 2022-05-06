@@ -11,7 +11,6 @@ using std::array;
 /**
  * Timing class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::Timing final
 {

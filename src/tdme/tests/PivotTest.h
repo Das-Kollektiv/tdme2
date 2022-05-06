@@ -18,7 +18,6 @@ using tdme::utilities::ObjectDeleter;
 /**
  * Engine with pivot test
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::tests::PivotTest final
 	: public virtual Application

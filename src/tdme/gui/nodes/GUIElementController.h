@@ -19,7 +19,6 @@ using tdme::utilities::MutableString;
 /**
  * GUI element controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::nodes::GUIElementController
 	: public GUINodeController

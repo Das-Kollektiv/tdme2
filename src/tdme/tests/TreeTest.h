@@ -18,7 +18,6 @@ using tdme::utilities::ObjectDeleter;
 /**
  * Tree test
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::tests::TreeTest final
 	: public virtual Application, public virtual InputEventHandler

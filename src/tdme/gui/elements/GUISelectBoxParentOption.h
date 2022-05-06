@@ -22,7 +22,6 @@ using tdme::os::filesystem::FileSystemException;
 /**
  * GUI select box parent option element
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUISelectBoxParentOption final
 	: public GUIElement

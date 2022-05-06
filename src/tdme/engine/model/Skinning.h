@@ -21,7 +21,6 @@ using tdme::engine::model::JointWeight;
 /**
  * Skinning definition for nodes
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::engine::model::Skinning final
 {

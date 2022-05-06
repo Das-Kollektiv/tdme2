@@ -20,7 +20,6 @@ using tdme::utilities::MutableString;
 /**
  * Color picker image controller controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::controllers::ColorPickerImageController
 	: public GUINodeController

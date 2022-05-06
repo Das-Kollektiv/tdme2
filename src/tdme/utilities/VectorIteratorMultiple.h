@@ -15,7 +15,6 @@ namespace utilities {
 /**
  * Vector iterator template to be used to iterate multiple vectors at a single invocation
  * @author Andreas Drewke
- * @version $Id$
  */
 template<typename T>
 class VectorIteratorMultiple final

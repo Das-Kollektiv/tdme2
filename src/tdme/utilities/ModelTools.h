@@ -281,10 +281,10 @@ public:
 	static Model* optimizeModel(Model* model, const string& texturePathName = string(), const vector<string>& excludeDiffuseTextureFileNamePatterns = vector<string>());
 
 	/**
-	 * Create tangents and bitangents for given group
+	 * Compute tangents and bitangents for given node
 	 * @param node node
 	 */
-	static void createTangentsAndBitangents(Node* node);
+	static void computeTangentsAndBitangents(Node* node);
 
 	/**
 	 * Change front face from counter clock wise to clock wise or clock wise to counter clock wise
@@ -337,13 +337,6 @@ private:
 	 * @param materialUseCount material use count
 	 */
 	static void prepareForOptimization(Node* node, const Matrix4x4& parentTransformationsMatrix);
-
-	/**
-	 * Create atlas texture
-	 * @param id id
-	 * @param textureAtlasTextures texture atlas textures
-	 */
-	static Texture* createAtlasTexture(const string& id, map<int, Texture*>& textureAtlasTextures);
 
 	/**
 	 * Prepare for optimization

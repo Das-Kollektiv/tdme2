@@ -5,6 +5,7 @@ namespace tdme {
 namespace tools {
 namespace editor {
 namespace tabcontrollers {
+	class DecalEditorTabController;
 	class EmptyEditorTabController;
 	class EnvMapEditorTabController;
 	class FontTabController;

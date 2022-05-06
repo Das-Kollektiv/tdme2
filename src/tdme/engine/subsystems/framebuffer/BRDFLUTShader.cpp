@@ -1,15 +1,15 @@
 #include <tdme/engine/subsystems/framebuffer/BRDFLUTShader.h>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Engine.h>
 #include <tdme/engine/subsystems/framebuffer/FrameBufferRenderShader.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
+#include <tdme/engine/Engine.h>
 
 using tdme::engine::subsystems::framebuffer::BRDFLUTShader;
 
-using tdme::engine::Engine;
 using tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 using tdme::engine::subsystems::renderer::Renderer;
+using tdme::engine::Engine;
 
 BRDFLUTShader::BRDFLUTShader(Renderer* renderer)
 {

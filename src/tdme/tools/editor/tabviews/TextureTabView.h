@@ -27,7 +27,6 @@ using tdme::tools::editor::views::EditorView;
 /**
  * Texture tab view
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabviews::TextureTabView final
 	: public TabView

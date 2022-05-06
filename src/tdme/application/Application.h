@@ -31,7 +31,6 @@ using tdme::engine::subsystems::renderer::Renderer;
 /**
  * Application base class, please make sure to allocate application on heap to have correct application shutdown working
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::application::Application
 {

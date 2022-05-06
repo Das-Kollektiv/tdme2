@@ -29,7 +29,6 @@ using tdme::engine::scene::ScenePropertyPresets;
 /**
  * Scene Property Presets
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::scene::ScenePropertyPresets final
 {

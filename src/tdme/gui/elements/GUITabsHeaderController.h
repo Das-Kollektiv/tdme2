@@ -21,7 +21,6 @@ using tdme::utilities::MutableString;
 /**
  * GUI tabs header controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUITabsHeaderController final
 	: public GUIElementController

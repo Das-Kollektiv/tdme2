@@ -44,6 +44,7 @@
 #include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Pool.h>
+#include <tdme/utilities/TextureAtlas.h>
 
 using std::array;
 using std::map;
@@ -81,6 +82,7 @@ using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShader;
 using tdme::engine::subsystems::skinning::SkinningShader;
 using tdme::engine::subsystems::texture2D::Texture2DRenderShader;
 using tdme::engine::Camera;
+using tdme::engine::DecalObject;
 using tdme::engine::DynamicColorTexture;
 using tdme::engine::Entity;
 using tdme::engine::EntityHierarchy;
@@ -90,11 +92,11 @@ using tdme::engine::FogParticleSystem;
 using tdme::engine::FrameBuffer;
 using tdme::engine::GeometryBuffer;
 using tdme::engine::Light;
-using tdme::engine::LinesObject3D;
-using tdme::engine::LODObject3D;
-using tdme::engine::LODObject3DImposter;
-using tdme::engine::Object3D;
-using tdme::engine::Object3DRenderGroup;
+using tdme::engine::LinesObject;
+using tdme::engine::LODObject;
+using tdme::engine::LODObjectImposter;
+using tdme::engine::Object;
+using tdme::engine::ObjectRenderGroup;
 using tdme::engine::ObjectParticleSystem;
 using tdme::engine::ParticleSystemEntity;
 using tdme::engine::ParticleSystemGroup;
@@ -114,11 +116,11 @@ using tdme::os::threading::Thread;
 using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Pool;
+using tdme::utilities::TextureAtlas;
 
 /**
  * Engine main class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::Engine final
 {
@@ -126,18 +128,19 @@ class tdme::engine::Engine final
 	friend class tdme::engine::subsystems::renderer::EngineGL2Renderer;
 	friend class tdme::engine::subsystems::renderer::EngineGLES2Renderer;
 	friend class tdme::engine::subsystems::renderer::EngineVKRenderer;
+	friend class DecalObject;
 	friend class DynamicColorTexture;
 	friend class EntityHierarchy;
 	friend class EnvironmentMapping;
 	friend class FogParticleSystem;
 	friend class FrameBuffer;
 	friend class GeometryBuffer;
-	friend class ImposterObject3D;
-	friend class LinesObject3D;
-	friend class LODObject3D;
-	friend class LODObject3DImposter;
-	friend class Object3D;
-	friend class Object3DRenderGroup;
+	friend class ImposterObject;
+	friend class LinesObject;
+	friend class LODObject;
+	friend class LODObjectImposter;
+	friend class Object;
+	friend class ObjectRenderGroup;
 	friend class ParticleSystemGroup;
 	friend class ObjectParticleSystem;
 	friend class PointsParticleSystem;
@@ -147,15 +150,15 @@ class tdme::engine::Engine final
 	friend class tdme::engine::subsystems::framebuffer::DeferredLightingRenderShader;
 	friend class tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 	friend class tdme::engine::subsystems::lighting::LightingShaderPBRBaseImplementation;
-	friend class tdme::engine::subsystems::lines::LinesObject3DInternal;
+	friend class tdme::engine::subsystems::lines::LinesObjectInternal;
 	friend class tdme::engine::subsystems::rendering::BatchRendererPoints;
 	friend class tdme::engine::subsystems::rendering::BatchRendererTriangles;
-	friend class tdme::engine::subsystems::rendering::Object3DBase;
-	friend class tdme::engine::subsystems::rendering::Object3DNode;
-	friend class tdme::engine::subsystems::rendering::Object3DNodeRenderer;
+	friend class tdme::engine::subsystems::rendering::ObjectBase;
+	friend class tdme::engine::subsystems::rendering::ObjectNode;
+	friend class tdme::engine::subsystems::rendering::ObjectNodeRenderer;
 	friend class tdme::engine::subsystems::rendering::EntityRenderer;
-	friend class tdme::engine::subsystems::rendering::Object3DInternal;
-	friend class tdme::engine::subsystems::rendering::Object3DNodeMesh;
+	friend class tdme::engine::subsystems::rendering::ObjectInternal;
+	friend class tdme::engine::subsystems::rendering::ObjectNodeMesh;
 	friend class tdme::engine::subsystems::rendering::ObjectBuffer;
 	friend class tdme::engine::subsystems::rendering::TransparentRenderFacesGroup;
 	friend class tdme::engine::subsystems::particlesystem::FogParticleSystemInternal;
@@ -173,7 +176,7 @@ class tdme::engine::Engine final
 
 public:
 	enum AnimationProcessingTarget { NONE, CPU, CPU_NORENDERING, GPU };
-	enum ShaderType { SHADERTYPE_OBJECT3D, SHADERTYPE_POSTPROCESSING, SHADERTYPE_MAX };
+	enum ShaderType { SHADERTYPE_OBJECT, SHADERTYPE_POSTPROCESSING, SHADERTYPE_MAX };
 	enum EffectPass { EFFECTPASS_NONE, EFFECTPASS_LIGHTSCATTERING, EFFECTPASS_COUNT };
 	static constexpr int LIGHTS_MAX { 8 };
 	// TODO: make sure one can set up this parameter also
@@ -230,23 +233,24 @@ private:
 
 	struct DecomposedEntities {
 		vector<Entity*> noFrustumCullingEntities;
-		vector<Object3D*> objects;
-		vector<Object3D*> objectsForwardShading;
-		vector<Object3D*> objectsPostPostProcessing;
-		vector<Object3D*> objectsNoDepthTest;
-		vector<Object3D*> objectsGizmo;
-		vector<LODObject3D*> lodObjects;
-		vector<LODObject3DImposter*> lodObjectsImposter;
+		vector<Object*> objects;
+		vector<Object*> objectsForwardShading;
+		vector<Object*> objectsPostPostProcessing;
+		vector<Object*> objectsNoDepthTest;
+		vector<Object*> objectsGizmo;
+		vector<LODObject*> lodObjects;
+		vector<LODObjectImposter*> lodObjectsImposter;
 		vector<ObjectParticleSystem*> opses;
 		vector<Entity*> ppses;
 		vector<ParticleSystemGroup*> psgs;
-		vector<LinesObject3D*> linesObjects;
-		vector<Object3DRenderGroup*> objectRenderGroups;
+		vector<LinesObject*> linesObjects;
+		vector<DecalObject*> decalObjects;
+		vector<ObjectRenderGroup*> objectRenderGroups;
 		vector<EntityHierarchy*> entityHierarchies;
 		vector<EnvironmentMapping*> environmentMappingEntities;
-		vector<Object3D*> ezrObjects;
-		vector<Object3D*> needsPreRenderEntities;
-		vector<Object3D*> needsComputeTransformationsEntities;
+		vector<Object*> ezrObjects;
+		vector<Object*> needsPreRenderEntities;
+		vector<Object*> needsComputeTransformationsEntities;
 	};
 
 	STATIC_DLL_IMPEXT static unordered_map<string, uint8_t> uniqueShaderIds;
@@ -299,6 +303,8 @@ private:
 
 	map<string, map<string, ShaderParameter>> shaderParameters;
 
+	TextureAtlas decalsTextureAtlas {"tdme.decals.atlas"};
+
 	vector<Action*> actions;
 
 	struct EngineThreadQueueElement {
@@ -318,7 +324,7 @@ private:
 			bool collectTransparentFaces;
 		} rendering;
 
-		vector<Object3D*> objects;
+		vector<Object*> objects;
 	};
 
 	class EngineThread: public Thread {
@@ -328,7 +334,7 @@ private:
 		int idx;
 		Queue<EngineThreadQueueElement>* queue { nullptr };
 		TransparentRenderFacesPool* transparentRenderFacesPool { nullptr };
-		unordered_map<uint8_t, unordered_map<Model*, vector<Object3D*>>> objectsByShadersAndModels;
+		unordered_map<uint8_t, unordered_map<Model*, vector<Object*>>> objectsByShadersAndModels;
 		volatile int elementsProcessed { 0 };
 
 	private:
@@ -481,10 +487,17 @@ private:
 	}
 
 	/**
-	 * @return object 3d renderer
+	 * @return entity renderer
 	 */
 	inline EntityRenderer* getEntityRenderer() {
 		return entityRenderer;
+	}
+
+	/**
+	 * @return decals texture atlas
+	 */
+	inline TextureAtlas& getDecalsTextureAtlas() {
+		return decalsTextureAtlas;
 	}
 
 	/**
@@ -517,14 +530,14 @@ private:
 	 * @param objects objects
 	 * @param threadIdx thread index
 	 */
-	void preRenderFunction(vector<Object3D*>& objects, int threadIdx);
+	void preRenderFunction(vector<Object*>& objects, int threadIdx);
 
 	/**
 	 * Computes visibility and transformations
 	 * @param objects objects
 	 * @param threadIdx thread index
 	 */
-	void computeTransformationsFunction(vector<Object3D*>& objects, int threadIdx);
+	void computeTransformationsFunction(vector<Object*>& objects, int threadIdx);
 
 	/**
 	 * Computes visibility and transformations
@@ -1090,11 +1103,11 @@ public:
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
 	 * @param filter filter
-	 * @param object3DNode pointer to store node of Object3D to if appliable
+	 * @param objectNode pointer to store node of object to if appliable
 	 * @param particleSystemEntity pointer to store sub particle system entity if having a particle system group
 	 * @return entity or nullptr
 	 */
-	inline Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter = nullptr, Node** object3DNode = nullptr, ParticleSystemEntity** particleSystemEntity = nullptr) {
+	inline Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter = nullptr, Node** objectNode = nullptr, ParticleSystemEntity** particleSystemEntity = nullptr) {
 		return
 			getEntityByMousePosition(
 				visibleDecomposedEntities,
@@ -1102,7 +1115,7 @@ public:
 				mouseX,
 				mouseY,
 				filter,
-				object3DNode,
+				objectNode,
 				particleSystemEntity
 			);
 	}
@@ -1113,11 +1126,11 @@ public:
 	 * @param mouseY mouse y
 	 * @param contactPoint world coordinate of contact point
 	 * @param filter filter
-	 * @param object3DNode pointer to store node of Object3D to if appliable
+	 * @param objectNode pointer to store node of object to if appliable
 	 * @param particleSystemEntity pointer to store sub particle system entity if having a particle system group
 	 * @return entity or nullptr
 	 */
-	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& contactPoint, EntityPickingFilter* filter = nullptr, Node** object3DNode = nullptr, ParticleSystemEntity** particleSystemEntity = nullptr);
+	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& contactPoint, EntityPickingFilter* filter = nullptr, Node** objectNode = nullptr, ParticleSystemEntity** particleSystemEntity = nullptr);
 
 	/**
 	 * Does a ray casting of visible 3d object based entities
@@ -1245,7 +1258,7 @@ private:
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
 	 * @param filter filter
-	 * @param object3DNode pointer to store node of Object3D to if appliable
+	 * @param objectNode pointer to store node of Object to if appliable
 	 * @param particleSystemEntity pointer to store sub particle system entity if having a particle system group
 	 * @return entity or nullptr
 	 */
@@ -1255,7 +1268,7 @@ private:
 		int32_t mouseX,
 		int32_t mouseY,
 		EntityPickingFilter* filter = nullptr,
-		Node** object3DNode = nullptr,
+		Node** objectNode = nullptr,
 		ParticleSystemEntity** particleSystemEntity = nullptr
 	);
 

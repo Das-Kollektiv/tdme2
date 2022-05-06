@@ -42,7 +42,6 @@ using tdme::math::Vector3;
 /**
  * Prototype definition
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::prototype::Prototype final
 	: public BaseProperties
@@ -82,6 +81,7 @@ private:
 	int32_t environmentMapRenderPassMask { Entity::RENDERPASS_ALL - Entity::RENDERPASS_WATER };
 	int64_t environmentMapTimeRenderUpdateFrequency { 0LL };
 	PrototypeTerrain* terrain { nullptr };
+	PrototypeDecal* decal { nullptr };
 
 	/**
 	 * Set Id
@@ -172,10 +172,18 @@ public:
 	}
 
 	/**
-	 * @return thumbnail PNG data
+	 * @return thumbnail base 64 PNG data
 	 */
 	inline const string& getThumbnail() {
 		return thumbnail;
+	}
+
+	/**
+	 * Set thumbnail base 64 PNG data
+	 * @param thumbnail thumbnail Base 64 PNG data
+	 */
+	inline void setThumbnail(const string& thumbnail) {
+		this->thumbnail = thumbnail;
 	}
 
 	/**
@@ -556,10 +564,17 @@ public:
 	}
 
 	/**
-	 * @return terrain
+	 * @return terrain definitions
 	 */
 	inline PrototypeTerrain* getTerrain() {
 		return terrain;
+	}
+
+	/**
+	 * @return decal definitions
+	 */
+	inline PrototypeDecal* getDecal() {
+		return decal;
 	}
 
 };

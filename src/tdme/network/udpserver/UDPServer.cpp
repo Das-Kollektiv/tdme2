@@ -1,6 +1,3 @@
-/**
- * @version $Id: baf35fe106f82d8bd3b13366cbf9d28daba32aed $
- */
 #include <math.h>
 
 #include <exception>

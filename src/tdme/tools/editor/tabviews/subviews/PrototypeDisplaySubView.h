@@ -19,7 +19,6 @@ using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubCo
 /**
  * Prototype display view
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabviews::subviews::PrototypeDisplaySubView final
 {

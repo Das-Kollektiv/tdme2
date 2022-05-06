@@ -15,7 +15,6 @@ using tdme::math::Vector3;
 /**
  * Wavefront object model writer
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::engine::fileio::models::WFObjWriter final
 {

@@ -67,7 +67,7 @@ void LightingShaderDefaultImplementation::initialize()
 }
 
 void LightingShaderDefaultImplementation::registerShader() {
-	Engine::registerShader(Engine::ShaderType::SHADERTYPE_OBJECT3D, getId());
+	Engine::registerShader(Engine::ShaderType::SHADERTYPE_OBJECT, getId());
 }
 
 void LightingShaderDefaultImplementation::updateShaderParameters(Renderer* renderer, int contextIdx) {

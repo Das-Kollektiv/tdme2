@@ -32,7 +32,6 @@ using tdme::math::Vector3;
 /**
  * Particle system group, which combines several particle systems into a group, to be used with engine class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::ParticleSystemGroup final
 	: public Transformations

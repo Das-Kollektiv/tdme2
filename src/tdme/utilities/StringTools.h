@@ -14,7 +14,6 @@ using std::vector;
 /**
  * String tools class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::utilities::StringTools final
 {

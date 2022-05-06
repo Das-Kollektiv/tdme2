@@ -35,7 +35,6 @@ using tinyxml::TiXmlElement;
 /**
  * Sound tab controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabcontrollers::SoundTabController final
 	: public TabController

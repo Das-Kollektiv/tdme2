@@ -22,7 +22,6 @@ using tdme::os::filesystem::FileSystemException;
 /**
  * GUI selector horizontal element
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUISelectorH final: public GUIElement
 {

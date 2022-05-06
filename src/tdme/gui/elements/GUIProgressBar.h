@@ -23,7 +23,6 @@ using tdme::os::filesystem::FileSystemException;
 /**
  * GUI progress bar
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUIProgressBar final: public GUIElement
 {

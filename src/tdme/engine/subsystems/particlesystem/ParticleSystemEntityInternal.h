@@ -16,7 +16,6 @@ using tdme::engine::Transformations;
 /**
  * Particle system entity internal interface
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::engine::subsystems::particlesystem::ParticleSystemEntityInternal
 {

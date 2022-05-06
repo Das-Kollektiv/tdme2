@@ -90,7 +90,7 @@ void LightingShaderFoliageImplementation::initialize()
 
 void LightingShaderFoliageImplementation::registerShader() {
 	Engine::registerShader(
-		Engine::ShaderType::SHADERTYPE_OBJECT3D,
+		Engine::ShaderType::SHADERTYPE_OBJECT,
 		getId(),
 		{
 			{ "speed", ShaderParameter(1.0f) },

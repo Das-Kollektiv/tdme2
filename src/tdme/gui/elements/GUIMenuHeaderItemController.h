@@ -25,7 +25,6 @@ using tdme::utilities::MutableString;
 /**
  * GUI menu header item controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUIMenuHeaderItemController final
 	: public GUIElementController

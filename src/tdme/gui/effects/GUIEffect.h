@@ -17,7 +17,6 @@ using tdme::utilities::Action;
 /**
  * GUI effect base class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::effects::GUIEffect
 {

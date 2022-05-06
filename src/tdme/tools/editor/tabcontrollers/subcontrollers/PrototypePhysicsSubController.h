@@ -40,7 +40,6 @@ using tdme::utilities::MutableString;
 /**
  * Prototype physics sub screen controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController final
 {

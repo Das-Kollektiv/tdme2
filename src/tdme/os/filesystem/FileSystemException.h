@@ -10,7 +10,6 @@ using tdme::utilities::ExceptionBase;
 /**
  * File system exception
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::os::filesystem::FileSystemException: public ExceptionBase
 {

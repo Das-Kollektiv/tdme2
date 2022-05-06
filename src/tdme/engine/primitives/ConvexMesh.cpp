@@ -12,7 +12,7 @@
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/engine/primitives/Triangle.h>
-#include <tdme/engine/Object3DModel.h>
+#include <tdme/engine/ObjectModel.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
@@ -36,7 +36,7 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::LineSegment;
 using tdme::engine::primitives::Triangle;
-using tdme::engine::Object3DModel;
+using tdme::engine::ObjectModel;
 using tdme::engine::Transformations;
 using tdme::math::Math;
 using tdme::math::Vector3;
@@ -157,7 +157,7 @@ void ConvexMesh::createConvexMesh(const vector<Vector3>& vertices, const vector<
 	computeBoundingBox();
 }
 
-ConvexMesh::ConvexMesh(Object3DModel* model, const Vector3& scale)
+ConvexMesh::ConvexMesh(ObjectModel* model, const Vector3& scale)
 {
 	vector<Triangle> triangles;
 	model->getTriangles(triangles);

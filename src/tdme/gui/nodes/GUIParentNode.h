@@ -36,7 +36,6 @@ using tdme::gui::GUIParserException;
 /**
  * GUI parent node base class thats supporting child nodes
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::nodes::GUIParentNode
 	: public GUINode

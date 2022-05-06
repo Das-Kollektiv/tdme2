@@ -14,7 +14,6 @@ using tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderBaseImplem
 /**
  * Shadow mapping foliage shader class to create shadow map
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::shadowmapping::ShadowMapCreationShaderFoliageImplementation: public ShadowMapCreationShaderBaseImplementation
 {

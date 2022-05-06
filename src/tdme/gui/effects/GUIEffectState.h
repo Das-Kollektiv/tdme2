@@ -9,7 +9,6 @@ using tdme::gui::nodes::GUIColor;
 /**
  * GUI effect state
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::gui::effects::GUIEffectState
 {

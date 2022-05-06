@@ -21,8 +21,8 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/Object3D.h>
-#include <tdme/engine/Object3DModel.h>
+#include <tdme/engine/Object.h>
+#include <tdme/engine/ObjectModel.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/utilities/Character.h>
@@ -53,8 +53,8 @@ using tdme::engine::primitives::Sphere;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
-using tdme::engine::Object3D;
-using tdme::engine::Object3DModel;
+using tdme::engine::Object;
+using tdme::engine::ObjectModel;
 using tdme::engine::Rotation;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
@@ -148,7 +148,7 @@ void PhysicsTest1::initialize()
 {
 	engine->initialize();
 	engine->addPostProcessingProgram("ssao");
-	Object3D* entity;
+	Object* entity;
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(15.0f);
@@ -171,7 +171,7 @@ void PhysicsTest1::initialize()
 	auto groundModel = modelDeleter.add(Primitives::createModel(ground, "ground_model"));
 	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
 	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	entity = new Object3D("ground", groundModel);
+	entity = new Object("ground", groundModel);
 	entity->setReceivesShadows(true);
 	entity->update();
 	engine->addEntity(entity);
@@ -184,24 +184,24 @@ void PhysicsTest1::initialize()
 	auto nearFarModel = modelDeleter.add(Primitives::createModel(nearFar, "far_model"));
 	nearFarModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
 	nearFarModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	entity = new Object3D("far", nearFarModel);
+	entity = new Object("far", nearFarModel);
 	entity->setTranslation(Vector3(0.0f, 0.0f, +9.0f));
 	entity->update();
 	engine->addEntity(entity);
 	world->addStaticRigidBody("far", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.5f, {nearFar});
-	entity = new Object3D("near", nearFarModel);
+	entity = new Object("near", nearFarModel);
 	entity->setTranslation(Vector3(0.0f, 0.0f, -9.0f));
 	entity->setEffectColorMul(Color4(1.0f, 1.0f, 1.0f, 0.0f));
 	entity->update();
 	entity->setEnabled(false);
 	engine->addEntity(entity);
 	world->addStaticRigidBody("near", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.5f, {nearFar});
-	entity = new Object3D("sideright", sideModel);
+	entity = new Object("sideright", sideModel);
 	entity->setTranslation(Vector3(-9.0f, 0.0f, 0.0f));
 	entity->update();
 	engine->addEntity(entity);
 	world->addStaticRigidBody("sideright", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.5f, {side});
-	entity = new Object3D("sideleft", sideModel);
+	entity = new Object("sideleft", sideModel);
 	entity->setTranslation(Vector3(9.0f, 0.0f, 0.0f));
 	entity->update();
 	engine->addEntity(entity);
@@ -211,7 +211,7 @@ void PhysicsTest1::initialize()
 	boxModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.5f, 0.5f, 1.0f));
 	boxModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
 	for (auto i = 0; i < BOX_COUNT; i++) {
-		entity = new Object3D("box" + to_string(i), boxModel);
+		entity = new Object("box" + to_string(i), boxModel);
 		entity->setContributesShadows(true);
 		entity->setReceivesShadows(true);
 		entity->setTranslation(Vector3(-2.0f + i * 0.1f, 10.0f + i * 3.0f, 0.0f));
@@ -220,7 +220,7 @@ void PhysicsTest1::initialize()
 		world->addRigidBody("box" + to_string(i), true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {box});
 	}
 	for (auto i = 0; i < BOXSTACK_COUNT; i++) {
-		entity = new Object3D("box" + to_string(BOX_COUNT + i), boxModel);
+		entity = new Object("box" + to_string(BOX_COUNT + i), boxModel);
 		entity->setContributesShadows(true);
 		entity->setReceivesShadows(true);
 		entity->setTranslation(Vector3(+3.0, 1.6f + (i * 1.2f), -5.0f));
@@ -233,7 +233,7 @@ void PhysicsTest1::initialize()
 	sphereModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.5f, 0.8f, 0.8f, 1.0f));
 	sphereModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(0.0f, 1.0f, 1.0f, 1.0f));
 	for (auto i = 0; i < SPHERE_COUNT; i++) {
-		entity = new Object3D("sphere" + to_string(i), sphereModel);
+		entity = new Object("sphere" + to_string(i), sphereModel);
 		entity->setContributesShadows(true);
 		entity->setReceivesShadows(true);
 		entity->setTranslation(Vector3(0.45f * i - 3.0f, 12.0f + (i * 1.0f), 0.1f * i - 3.0f));
@@ -246,7 +246,7 @@ void PhysicsTest1::initialize()
 	capsuleModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.0f, 0.8f, 1.0f));
 	capsuleModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.0f, 1.0f, 1.0f));
 	for (auto i = 0; i < CAPSULE_COUNT; i++) {
-		entity = new Object3D("capsule" + to_string(i), capsuleModel);
+		entity = new Object("capsule" + to_string(i), capsuleModel);
 		entity->setContributesShadows(true);
 		entity->setReceivesShadows(true);
 		entity->setTranslation(Vector3((i * 0.5f), 14.0f + (i * 2.0f), 0.0f));
@@ -258,7 +258,7 @@ void PhysicsTest1::initialize()
 	auto capsuleBigModel = modelDeleter.add(Primitives::createModel(capsuleBig, "capsulebig_model"));
 	capsuleBigModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(1.0f, 0.8f, 0.8f, 1.0f));
 	capsuleBigModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 0.0f, 0.0f, 1.0f));
-	entity = new Object3D("capsulebig1", capsuleBigModel);
+	entity = new Object("capsulebig1", capsuleBigModel);
 	entity->setContributesShadows(true);
 	entity->setReceivesShadows(true);
 	entity->setContributesShadows(true);
@@ -267,7 +267,7 @@ void PhysicsTest1::initialize()
 	entity->update();
 	engine->addEntity(entity);
 	world->addRigidBody("capsulebig1", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 80.0f, Body::getNoRotationInertiaTensor(), {capsuleBig});
-	entity = new Object3D("capsulebig2", capsuleBigModel);
+	entity = new Object("capsulebig2", capsuleBigModel);
 	entity->setContributesShadows(true);
 	entity->setReceivesShadows(true);
 	entity->setTranslation(Vector3(+2.0f, 5.0f, 0.0f));
@@ -276,8 +276,8 @@ void PhysicsTest1::initialize()
 	world->addRigidBody("capsulebig2", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, Body::getNoRotationInertiaTensor(), {capsuleBig});
 	try {
 		auto _barrel = modelDeleter.add(ModelReader::read("resources/tests/models/barrel", "barrel.dae"));
-		auto barrelBoundingVolume = bvDeleter.add(new ConvexMesh(object3DModelDeleter.add(new Object3DModel(_barrel))));
-		entity = new Object3D("barrel1", _barrel);
+		auto barrelBoundingVolume = bvDeleter.add(new ConvexMesh(objectModelDeleter.add(new ObjectModel(_barrel))));
+		entity = new Object("barrel1", _barrel);
 		entity->setContributesShadows(true);
 		entity->setReceivesShadows(true);
 		entity->setTranslation(Vector3(+4.0f, 5.0f, 0.0f));
@@ -285,7 +285,7 @@ void PhysicsTest1::initialize()
 		entity->update();
 		engine->addEntity(entity);
 		world->addRigidBody("barrel1", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {barrelBoundingVolume});
-		entity = new Object3D("barrel2", _barrel);
+		entity = new Object("barrel2", _barrel);
 		entity->setContributesShadows(true);
 		entity->setReceivesShadows(true);
 		entity->setTranslation(Vector3(+6.0f, 5.0f, 0.0f));
@@ -294,8 +294,8 @@ void PhysicsTest1::initialize()
 		engine->addEntity(entity);
 		world->addRigidBody("barrel2", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {barrelBoundingVolume});
 		auto _cone = modelDeleter.add(ModelReader::read("resources/tests/models/cone", "cone.dae"));
-		auto coneBoundingVolume = bvDeleter.add(new ConvexMesh(object3DModelDeleter.add(new Object3DModel(_cone))));
-		entity = new Object3D("cone1", _cone);
+		auto coneBoundingVolume = bvDeleter.add(new ConvexMesh(objectModelDeleter.add(new ObjectModel(_cone))));
+		entity = new Object("cone1", _cone);
 		entity->setContributesShadows(true);
 		entity->setReceivesShadows(true);
 		entity->setTranslation(Vector3(-4.0f, 5.0f, 0.0f));
@@ -303,7 +303,7 @@ void PhysicsTest1::initialize()
 		entity->update();
 		engine->addEntity(entity);
 		world->addRigidBody("cone1", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {coneBoundingVolume});
-		entity = new Object3D("cone2", _cone);
+		entity = new Object("cone2", _cone);
 		entity->setContributesShadows(true);
 		entity->setReceivesShadows(true);
 		entity->setTranslation(Vector3(-5.0f, 5.0f, 0.0f));
@@ -312,8 +312,8 @@ void PhysicsTest1::initialize()
 		engine->addEntity(entity);
 		world->addRigidBody("cone2", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {coneBoundingVolume});
 		auto _tire = modelDeleter.add(ModelReader::read("resources/tests/models/tire", "tire.dae"));
-		auto tireBoundingVolume = bvDeleter.add(new ConvexMesh(object3DModelDeleter.add(new Object3DModel(_tire))));
-		entity = new Object3D("tire1", _tire);
+		auto tireBoundingVolume = bvDeleter.add(new ConvexMesh(objectModelDeleter.add(new ObjectModel(_tire))));
+		entity = new Object("tire1", _tire);
 		entity->setContributesShadows(true);
 		entity->setReceivesShadows(true);
 		entity->addRotation(Vector3(1.0f, 0.0f, 0.0f), 90.0f);
@@ -322,7 +322,7 @@ void PhysicsTest1::initialize()
 		entity->update();
 		engine->addEntity(entity);
 		world->addRigidBody("tire1", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {tireBoundingVolume});
-		entity = new Object3D("tire2", _tire);
+		entity = new Object("tire2", _tire);
 		entity->setContributesShadows(true);
 		entity->setReceivesShadows(true);
 		entity->addRotation(Vector3(1.0f, 0.0f, 0.0f), 90.0f);

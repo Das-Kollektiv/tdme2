@@ -16,7 +16,6 @@ using tdme::utilities::Float;
 /**
  * 3D vector 3 class
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::math::Vector3 final
 {

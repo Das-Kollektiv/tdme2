@@ -1,14 +1,18 @@
 #pragma once
 
+#include <vector>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 
+using std::vector;
+
 using tdme::engine::Engine;
+using tdme::engine::DecalObject;
 
 /**
  * Geometry buffer class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::GeometryBuffer final
 {
@@ -147,7 +151,8 @@ public:
 	/**
 	 * Render to screen or bound geometry buffer
 	 * @engine engine
+	 * @param decalObjects decal objects
 	 */
-	void renderToScreen(Engine* engine);
+	void renderToScreen(Engine* engine, vector<DecalObject*>& decalObjects);
 
 };

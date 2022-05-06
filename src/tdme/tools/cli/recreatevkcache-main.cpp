@@ -28,7 +28,6 @@ namespace cli {
 /**
  * Delete VK cache
  * @author andreas.drewke
- * @version $Id$
  */
 class RecreateVKCacheApplication final
 	: public virtual Application

@@ -13,7 +13,6 @@ using tdme::math::Math;
 /**
  * Class representing texture UV coordinates data
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::engine::model::TextureCoordinate final
 {

@@ -19,7 +19,7 @@
 #include <tdme/engine/subsystems/rendering/ModelStatistics.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/ModelUtilities.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object.h>
 #include <tdme/engine/SimplePartition.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -67,7 +67,7 @@ using tdme::engine::prototype::PrototypeAudio;
 using tdme::engine::subsystems::rendering::ModelStatistics;
 using tdme::engine::Engine;
 using tdme::engine::ModelUtilities;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 using tdme::engine::SimplePartition;
 using tdme::engine::Timing;
 using tdme::gui::nodes::GUIScreenNode;
@@ -228,7 +228,8 @@ void ModelEditorTabView::initModel(bool resetup)
 	}
 	prototypeFileName = prototype->getFileName().length() > 0 ? prototype->getFileName() : prototype->getModelFileName();
 	Tools::setupPrototype(prototype, engine, cameraRotationInputHandler->getLookFromRotations(), lodLevel, objectScale, cameraRotationInputHandler, 1.5f, resetup);
-	auto currentModelObject = dynamic_cast<Object3D*>(engine->getEntity("model"));
+	if (prototypePhysicsView != nullptr) prototypePhysicsView->setObjectScale(objectScale);
+	auto currentModelObject = dynamic_cast<Object*>(engine->getEntity("model"));
 	if (currentModelObject != nullptr) {
 		ModelStatistics modelStatistics;
 		ModelUtilities::computeModelStatistics(currentModelObject->getModel(), &modelStatistics);
@@ -395,7 +396,7 @@ void ModelEditorTabView::optimizeModel() {
 
 void ModelEditorTabView::handleInputEvents()
 {
-	prototypePhysicsView->handleInputEvents(prototype, objectScale);
+	prototypePhysicsView->handleInputEvents(prototype);
 	cameraRotationInputHandler->handleInputEvents();
 }
 
@@ -409,10 +410,10 @@ void ModelEditorTabView::display()
 	}
 
 	//
-	auto model = static_cast<Object3D*>(engine->getEntity("model"));
+	auto model = static_cast<Object*>(engine->getEntity("model"));
 
 	// attachment1
-	auto attachment1 = static_cast<Object3D*>(engine->getEntity("attachment1"));
+	auto attachment1 = static_cast<Object*>(engine->getEntity("attachment1"));
 	if (model != nullptr && attachment1 != nullptr) {
 		// model attachment bone matrix
 		auto transformationsMatrix = model->getNodeTransformationsMatrix(attachment1Bone);
@@ -469,6 +470,8 @@ void ModelEditorTabView::initialize()
 		Console::println(string(exception.what()));
 	}
 	loadSettings();
+	//
+	if (prototypePhysicsView != nullptr) prototypePhysicsView->setObjectScale(objectScale);
 }
 
 void ModelEditorTabView::storeSettings()
@@ -543,7 +546,7 @@ Prototype* ModelEditorTabView::loadModelPrototype(const string& name, const stri
 }
 
 void ModelEditorTabView::playAnimation(const string& baseAnimationId, const string& overlay1AnimationId, const string& overlay2AnimationId, const string& overlay3AnimationId) {
-	auto object = dynamic_cast<Object3D*>(engine->getEntity("model"));
+	auto object = dynamic_cast<Object*>(engine->getEntity("model"));
 	if (object != nullptr) {
 		audio->removeEntity("sound");
 		object->removeOverlayAnimations();
@@ -566,7 +569,7 @@ void ModelEditorTabView::addAttachment1(const string& nodeId, const string& atta
 	}
 	if (attachment1Model != nullptr) {
 		Entity* attachment = nullptr;
-		engine->addEntity(attachment = new Object3D("attachment1", attachment1Model));
+		engine->addEntity(attachment = new Object("attachment1", attachment1Model));
 		attachment->addRotation(Vector3(0.0f, 0.0f, 1.0f), 0.0f);
 		attachment->addRotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
 		attachment->addRotation(Vector3(1.0f, 0.0f, 0.0f), 0.0f);
@@ -576,7 +579,7 @@ void ModelEditorTabView::addAttachment1(const string& nodeId, const string& atta
 
 void ModelEditorTabView::playSound(const string& soundId) {
 	audio->removeEntity("sound");
-	auto object = dynamic_cast<Object3D*>(engine->getEntity("model"));
+	auto object = dynamic_cast<Object*>(engine->getEntity("model"));
 	auto soundDefinition = prototype->getSound(soundId);
 	if (soundDefinition != nullptr && soundDefinition->getFileName().length() > 0) {
 		if (object != nullptr && soundDefinition->getAnimation().size() > 0) object->setAnimation(soundDefinition->getAnimation());
@@ -610,7 +613,7 @@ void ModelEditorTabView::stopSound() {
 }
 
 void ModelEditorTabView::updateRendering() {
-	auto object = dynamic_cast<Object3D*>(engine->getEntity("model"));
+	auto object = dynamic_cast<Object*>(engine->getEntity("model"));
 	if (object == nullptr || prototype == nullptr) return;
 	engine->removeEntity("model");
 	ModelTools::prepareForShader(prototype->getModel(), prototype->getShader());
@@ -618,7 +621,7 @@ void ModelEditorTabView::updateRendering() {
 }
 
 void ModelEditorTabView::updateShaderParemeters() {
-	auto object = dynamic_cast<Object3D*>(engine->getEntity("model"));
+	auto object = dynamic_cast<Object*>(engine->getEntity("model"));
 	if (object == nullptr || prototype == nullptr) return;
 	auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
 	auto distanceShaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getDistanceShader());

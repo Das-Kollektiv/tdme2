@@ -15,7 +15,6 @@ using std::string;
 /**
  * Time utility class
  * @author mahula
- * @version $Id$
  */
 class tdme::utilities::Time
 {

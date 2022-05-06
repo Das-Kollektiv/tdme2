@@ -20,7 +20,6 @@ using tdme::utilities::ObjectDeleter;
 /**
  * Engine with physics test 2
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::tests::PhysicsTest2 final
 	: public virtual Application

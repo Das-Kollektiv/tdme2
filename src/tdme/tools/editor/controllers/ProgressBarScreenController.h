@@ -21,7 +21,6 @@ using tdme::utilities::MutableString;
 /**
  * Progress bar screen controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::controllers::ProgressBarScreenController final
 	: public ScreenController

@@ -10,7 +10,6 @@ using tdme::utilities::ExceptionBase;
 /**
  * Model file IO exception
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::fileio::models::ModelFileIOException: public ExceptionBase
 {

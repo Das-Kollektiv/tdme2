@@ -18,7 +18,6 @@ using tdme::utilities::ByteBuffer;
 /**
  * Audio decoder base class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::audio::decoder::AudioDecoder
 {

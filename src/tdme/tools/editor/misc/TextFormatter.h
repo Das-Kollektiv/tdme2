@@ -21,7 +21,6 @@ using tinyxml::TiXmlElement;
 /**
  * Text formatter
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::misc::TextFormatter final
 {

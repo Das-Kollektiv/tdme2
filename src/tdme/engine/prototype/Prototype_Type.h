@@ -31,6 +31,7 @@ public:
 	STATIC_DLL_IMPEXT static Prototype_Type* TRIGGER;
 	STATIC_DLL_IMPEXT static Prototype_Type* ENVIRONMENTMAPPING;
 	STATIC_DLL_IMPEXT static Prototype_Type* TERRAIN;
+	STATIC_DLL_IMPEXT static Prototype_Type* DECAL;
 
 	/**
 	 * Public constructor

@@ -13,7 +13,6 @@ using tdme::math::Vector3;
 /**
  * 3D vector 4 class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::math::Vector4 final
 {

@@ -1,8 +1,25 @@
 #include <tdme/tdme.h>
-#include <tdme/tests/CrashTest.h>
+#include <tdme/application/Application.h>
+#include <tdme/utilities/Console.h>
 
-int main(int argc, char** argv)
-{
-    ::tdme::tests::CrashTest::main();
-    return 0;
+using tdme::application::Application;
+using tdme::utilities::Console;
+
+class CrashTestClass {
+public:
+	static void crash() {
+		char* i = nullptr;
+		Console::println(string("CrashTestClass::crash(): message: ") + i);
+	}
+};
+
+static void crashTestFunction() {
+	CrashTestClass::crash();
+}
+
+int main(int argc, char** argv) {
+	Application::installExceptionHandler();
+	Console::println("CrashTest: init");
+	crashTestFunction();
+	Console::println("CrashTest: done");
 }

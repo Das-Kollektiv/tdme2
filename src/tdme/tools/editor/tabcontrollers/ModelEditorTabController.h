@@ -52,7 +52,6 @@ using tdme::utilities::MutableString;
 /**
  * Model editor tab controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabcontrollers::ModelEditorTabController final
 	: public TabController
@@ -75,6 +74,12 @@ private:
 		"animation_overlaybone"
 	};
 
+	array<string, 3> applyMaterialBaseNodes = {
+		"material_specular_embedtextures_enabled",
+		"material_pbr_embedtextures_enabled",
+		"material_lightningmodel"
+	};
+
 	array<string, 3> applySpecularMaterialNodes = {
 		"specularmaterial_shininess",
 		"specularmaterial_reflection",
@@ -82,7 +87,6 @@ private:
 	};
 
 	array<string, 6> applyPBRMaterialNodes = {
-		"pbrmaterial_enabled",
 		"pbrmaterial_metallic_factor",
 		"pbrmaterial_roughness_factor",
 		"pbrmaterial_normal_scale",
@@ -261,6 +265,21 @@ public:
 	 * @param fileName file name
 	 */
 	void loadFile(const string& pathName, const string& fileName);
+
+	/**
+	 * Set material base details
+	 */
+	void setMaterialBaseDetails();
+
+	/**
+	 * Update material base details
+	 */
+	void updateMaterialBaseDetails();
+
+	/**
+	 * Apply material base details
+	 */
+	void applyMaterialBaseDetails();
 
 	/**
 	 * Set material details

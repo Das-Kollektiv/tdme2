@@ -112,7 +112,7 @@ void PrototypeDisplaySubController::setDisplayDetails(Prototype* prototype) {
 
 	string shaderXML;
 	{
-		for (auto& shader: Engine::getRegisteredShader(Engine::ShaderType::SHADERTYPE_OBJECT3D)) {
+		for (auto& shader: Engine::getRegisteredShader(Engine::ShaderType::SHADERTYPE_OBJECT)) {
 			shaderXML =
 				shaderXML +
 				"<dropdown-option text=\"" +

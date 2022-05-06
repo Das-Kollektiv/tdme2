@@ -10,7 +10,6 @@ using std::string;
 /**
  * Base property model class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::prototype::BaseProperty final
 {

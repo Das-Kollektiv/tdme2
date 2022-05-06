@@ -22,7 +22,6 @@ using std::vector;
 /**
  * GL3/Core -> Vulkan shader program
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::renderer::VKGL3CoreShaderProgram
 {

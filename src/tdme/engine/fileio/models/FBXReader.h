@@ -27,7 +27,6 @@ using tdme::os::filesystem::FileSystemException;
 /**
  * FBX model reader
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::fileio::models::FBXReader final
 {

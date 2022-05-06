@@ -6,7 +6,6 @@
 /**
  * GUI input event handler interface
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::gui::events::GUIInputEventHandler
 {

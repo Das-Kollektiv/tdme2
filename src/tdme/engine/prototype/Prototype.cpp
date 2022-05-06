@@ -6,6 +6,7 @@
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
+#include <tdme/engine/prototype/PrototypeDecal.h>
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem.h>
 #include <tdme/engine/prototype/PrototypePhysics.h>
@@ -40,7 +41,7 @@ Prototype::Prototype(int id, Prototype_Type* entityType, const string& name, con
 		this->physics = new PrototypePhysics();
 	} else
 	if (this->type == Prototype_Type::MODEL) {
-		if (model->getShaderModel() == ShaderModel::PBR) {
+		if (model->getShaderModel() == ShaderModel::PBR || model->getShaderModel() == ShaderModel::SPECULARPBR) {
 			shaderId = StringTools::startsWith(shaderId, "pbr-") == true || shaderId.empty() == true?shaderId:"pbr-" + shaderId;
 			distanceShaderId = StringTools::startsWith(distanceShaderId, "pbr-") == true || distanceShaderId.empty() == true?distanceShaderId:"pbr-" + distanceShaderId;
 		}
@@ -48,6 +49,9 @@ Prototype::Prototype(int id, Prototype_Type* entityType, const string& name, con
 	} else
 	if (this->type == Prototype_Type::TERRAIN) {
 		this->terrain = new PrototypeTerrain();
+	} else
+	if (this->type == Prototype_Type::DECAL) {
+		this->decal = new PrototypeDecal();
 	}
 }
 
@@ -60,6 +64,7 @@ Prototype::~Prototype() {
 	for (auto i = 0; i < boundingVolumes.size(); i++) delete boundingVolumes[i];
 	for (auto sound: sounds) delete sound;
 	if (terrain != nullptr) delete terrain;
+	if (decal != nullptr) delete decal;
 }
 
 void Prototype::setModel(Model* model) {

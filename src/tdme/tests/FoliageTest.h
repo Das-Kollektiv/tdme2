@@ -18,7 +18,6 @@ using tdme::utilities::ObjectDeleter;
 /**
  * Foliage test
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::tests::FoliageTest final
 	: public virtual Application, public virtual InputEventHandler

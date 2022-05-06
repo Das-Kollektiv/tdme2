@@ -82,6 +82,7 @@
 										<dropdown-option text="Empty" value="empty" />
 										<dropdown-option text="Trigger" value="trigger" />
 										<dropdown-option text="EnvMap" value="envmap" />
+										<dropdown-option text="Decal" value="decal" />
 										<dropdown-option text="Model" value="model" />
 										<dropdown-option text="Terrain" value="terrain" />
 										<dropdown-option text="Particle" value="particle" />

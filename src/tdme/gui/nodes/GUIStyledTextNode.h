@@ -40,7 +40,6 @@ using tdme::utilities::MutableString;
 /**
  * GUI styled text node
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::nodes::GUIStyledTextNode final
 	: public GUINode

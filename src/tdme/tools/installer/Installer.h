@@ -30,7 +30,6 @@ using tdme::utilities::Properties;
 /**
  * Installer
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::installer::Installer final
 	: public virtual Application, public virtual GUIActionListener, public virtual GUIChangeListener

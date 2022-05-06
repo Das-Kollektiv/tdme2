@@ -15,7 +15,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityHierarchy.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
@@ -49,7 +49,7 @@ using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::EntityHierarchy;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 using tdme::engine::Rotation;
 using tdme::engine::Transformations;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -83,11 +83,6 @@ PrototypePhysicsSubView::PrototypePhysicsSubView(Engine* engine, PrototypePhysic
 PrototypePhysicsSubView::~PrototypePhysicsSubView() {
 }
 
-PopUps* PrototypePhysicsSubView::getPopUps()
-{
-	return popUps;
-}
-
 void PrototypePhysicsSubView::clearModelBoundingVolume(int idx) {
 	if (idx != DISPLAY_BOUNDINGVOLUMEIDX_ALL) {
 		dynamic_cast<EntityHierarchy*>(engine->getEntity("tdme.prototype.bvs"))->removeEntity("tdme.prototype.bv." + to_string(idx));
@@ -101,12 +96,9 @@ void PrototypePhysicsSubView::setupModelBoundingVolume(Prototype* prototype, int
 	if (prototypeBoundingVolume == nullptr) return;
 
 	{
-		Vector3 objectScale(0.15f, 0.15f, 0.15f); // TODO: have the default not as fixed constant here (this relates to bounding box fallback in Tools::setupPrototype() if none available)
-		auto modelEntity = engine->getEntity("model");
-		if (modelEntity != nullptr) objectScale = modelEntity->getScale();
 		auto modelBoundingVolumeEntityId = "tdme.prototype.bv." + to_string(idx);
 		if (prototypeBoundingVolume->getModel() != nullptr) {
-			auto modelBoundingVolumeEntity = new Object3D(modelBoundingVolumeEntityId, prototypeBoundingVolume->getModel());
+			auto modelBoundingVolumeEntity = new Object(modelBoundingVolumeEntityId, prototypeBoundingVolume->getModel());
 			modelBoundingVolumeEntity->setScale(objectScale);
 			modelBoundingVolumeEntity->setRenderPass(Entity::RENDERPASS_POST_POSTPROCESSING);
 			modelBoundingVolumeEntity->setEnabled(false);
@@ -131,7 +123,7 @@ void PrototypePhysicsSubView::setupModelBoundingVolume(Prototype* prototype, int
 				transformations.setScale(boundingVolumesEntity->getScale().clone().scale(transformations.getScale()));
 				transformations.setTranslation(transformations.getTranslation().clone().scale(boundingVolumesEntity->getScale()));
 				transformations.update();
-				auto modelBoundingVolumeEntity = new Object3D(modelBoundingVolumeEntityId, Tools::getDefaultObb());
+				auto modelBoundingVolumeEntity = new Object(modelBoundingVolumeEntityId, Tools::getDefaultObb());
 				modelBoundingVolumeEntity->fromTransformations(transformations);
 				modelBoundingVolumeEntity->setRenderPass(Entity::RENDERPASS_POST_POSTPROCESSING);
 				modelBoundingVolumeEntity->setEnabled(false);
@@ -148,7 +140,7 @@ void PrototypePhysicsSubView::setupModelBoundingVolume(Prototype* prototype, int
 					auto b = capsule->getB();
 					pivot = capsule->getA().clone().add(capsule->getB()).scale(0.5f);
 				}
-				auto modelBoundingVolumeEntity = new Object3D(modelBoundingVolumeEntityId, prototypeBoundingVolume->getModel());
+				auto modelBoundingVolumeEntity = new Object(modelBoundingVolumeEntityId, prototypeBoundingVolume->getModel());
 				modelBoundingVolumeEntity->setRenderPass(Entity::RENDERPASS_POST_POSTPROCESSING);
 				modelBoundingVolumeEntity->setPivot(pivot);
 				modelBoundingVolumeEntity->setScale(boundingVolumesEntity->getScale());
@@ -248,7 +240,7 @@ void PrototypePhysicsSubView::display(Prototype* prototype) {
 	}
 }
 
-void PrototypePhysicsSubView::handleInputEvents(Prototype* prototype, const Vector3& objectScale) {
+void PrototypePhysicsSubView::handleInputEvents(Prototype* prototype) {
 	if (displayBoundingVolumeIdx == DISPLAY_BOUNDINGVOLUMEIDX_ALL || displayBoundingVolume == false) {
 		removeGizmo();
 		return;
@@ -272,6 +264,8 @@ void PrototypePhysicsSubView::handleInputEvents(Prototype* prototype, const Vect
 		if (Character::toLowerCase(event.getKeyChar()) == '3') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_ROTATE); updateGizmo(prototype); event.setProcessed(true); }
 		if (Character::toLowerCase(event.getKeyChar()) == '4') { if (isKeyDown == true) setGizmoType(GIZMOTYPE_SCALE); updateGizmo(prototype); event.setProcessed(true); }
 	}
+
+	//
 	for (auto i = 0; i < engine->getGUI()->getMouseEvents().size(); i++) {
 		auto& event = engine->getGUI()->getMouseEvents()[i];
 
@@ -280,9 +274,7 @@ void PrototypePhysicsSubView::handleInputEvents(Prototype* prototype, const Vect
 		if (event.getButton() == MOUSE_BUTTON_LEFT) {
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 				auto selectedEntity = engine->getEntity("tdme.prototype.bv.editing");
-				if (selectedEntity != nullptr) {
-					applyBoundingVolumeTransformations(prototype, displayBoundingVolumeIdx, selectedEntity->getTransformations(), objectScale, false);
-				}
+				if (selectedEntity != nullptr) applyBoundingVolumeTransformations(prototype, displayBoundingVolumeIdx, selectedEntity->getTransformations(), false);
 				if (getGizmoMode() != GIZMOMODE_NONE) {
 					setGizmoMode(GIZMOMODE_NONE);
 					updateGizmo(prototype);
@@ -317,7 +309,7 @@ void PrototypePhysicsSubView::handleInputEvents(Prototype* prototype, const Vect
 					Vector3 deltaScale;
 					if (determineGizmoDeltaTransformations(mouseDownLastX, mouseDownLastY, event.getXUnscaled(), event.getYUnscaled(), deltaTranslation, deltaRotation, deltaScale) == true) {
 						totalDeltaScale.add(deltaScale.clone().sub(Vector3(1.0f, 1.0f, 1.0f)));
-						auto gizmoEntity = getGizmoObject3D();
+						auto gizmoEntity = getGizmoObject();
 						auto selectedEntity = engine->getEntity("tdme.prototype.bv.editing");
 						if (gizmoEntity != nullptr && selectedEntity != nullptr) {
 							selectedEntity->setTranslation(selectedEntity->getTranslation().clone().add(deltaTranslation));
@@ -339,7 +331,7 @@ void PrototypePhysicsSubView::handleInputEvents(Prototype* prototype, const Vect
 							}
 							selectedEntity->update();
 							setGizmoRotation(prototype, selectedEntity->getTransformations());
-							applyBoundingVolumeTransformations(prototype, displayBoundingVolumeIdx, selectedEntity->getTransformations(), objectScale, true);
+							applyBoundingVolumeTransformations(prototype, displayBoundingVolumeIdx, selectedEntity->getTransformations(), true);
 						}
 						if (Math::abs(deltaTranslation.getX()) > Math::EPSILON ||
 							Math::abs(deltaTranslation.getY()) > Math::EPSILON ||
@@ -370,7 +362,7 @@ void PrototypePhysicsSubView::setGizmoRotation(Prototype* prototype, const Trans
 	Gizmo::setGizmoRotation(transformations);
 }
 
-void PrototypePhysicsSubView::applyBoundingVolumeTransformations(Prototype* prototype, int i, const Transformations& _transformations, const Vector3& objectScale, bool guiOnly) {
+void PrototypePhysicsSubView::applyBoundingVolumeTransformations(Prototype* prototype, int i, const Transformations& _transformations, bool guiOnly) {
 	auto modelEntity = engine->getEntity("model");
 	auto transformations = _transformations;
 	auto objectScaleInverted = Vector3(

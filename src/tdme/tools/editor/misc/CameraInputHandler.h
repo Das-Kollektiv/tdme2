@@ -16,7 +16,6 @@ using tdme::tools::editor::misc::CameraInputHandlerEventHandler;
 /**
  * Camera Input Handler
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::misc::CameraInputHandler final
 	: public GUIInputEventHandler

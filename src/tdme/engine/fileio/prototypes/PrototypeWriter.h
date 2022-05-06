@@ -24,7 +24,6 @@ using rapidjson::Value;
 /**
  * Prototype writer
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::fileio::prototypes::PrototypeWriter final
 {

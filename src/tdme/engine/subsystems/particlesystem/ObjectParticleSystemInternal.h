@@ -15,7 +15,7 @@
 #include <tdme/engine/subsystems/particlesystem/ParticleSystemEntityInternal.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
@@ -31,11 +31,11 @@ using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::subsystems::particlesystem::ParticleSystemEntityInternal;
 using tdme::engine::subsystems::renderer::Renderer;
-using tdme::engine::subsystems::rendering::Object3DBase;
-using tdme::engine::subsystems::rendering::Object3DInternal;
+using tdme::engine::subsystems::rendering::ObjectBase;
+using tdme::engine::subsystems::rendering::ObjectInternal;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 using tdme::engine::Transformations;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -43,7 +43,6 @@ using tdme::math::Vector3;
 /**
  * Particle system which displays objects as particles
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::particlesystem::ObjectParticleSystemInternal
 	: public Transformations
@@ -60,8 +59,8 @@ protected:
 	bool contributesShadows;
 	bool receivesShadows;
 	vector<Particle> particles;
-	vector<Object3D*> objects;
-	vector<Object3D*> enabledObjects;
+	vector<Object*> objects;
+	vector<Object*> enabledObjects;
 	BoundingBox boundingBox;
 	BoundingBox boundingBoxTransformed;
 	Transformations inverseTransformation;

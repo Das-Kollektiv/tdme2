@@ -23,7 +23,6 @@ using tdme::os::filesystem::FileSystemException;
 /**
  * GUI knob element
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUIKnob final: public GUIElement
 {

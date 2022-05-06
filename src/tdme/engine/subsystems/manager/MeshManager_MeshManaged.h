@@ -9,7 +9,7 @@
 using std::string;
 
 using tdme::engine::subsystems::manager::MeshManager;
-using tdme::engine::subsystems::rendering::Object3DNodeMesh;
+using tdme::engine::subsystems::rendering::ObjectNodeMesh;
 
 /**
  * Managed mesh entity
@@ -21,7 +21,7 @@ class tdme::engine::subsystems::manager::MeshManager_MeshManaged final
 
 private:
 	string id;
-	Object3DNodeMesh* mesh { nullptr };
+	ObjectNodeMesh* mesh { nullptr };
 	int32_t referenceCounter { 0 };
 private:
 
@@ -30,7 +30,7 @@ private:
 	 * @param id id
 	 * @param mesh mesh
 	 */
-	MeshManager_MeshManaged(const string& id, Object3DNodeMesh* mesh);
+	MeshManager_MeshManaged(const string& id, ObjectNodeMesh* mesh);
 
 	/**
 	 * Protected Denstructor
@@ -45,9 +45,9 @@ private:
 	}
 
 	/**
-	 * @return object 3d node mesh
+	 * @return object node mesh
 	 */
-	inline Object3DNodeMesh* getMesh() {
+	inline ObjectNodeMesh* getMesh() {
 		return mesh;
 	}
 

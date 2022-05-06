@@ -19,7 +19,6 @@ using tdme::os::filesystem::FileSystemException;
 /**
  * Scene writer
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::fileio::scenes::SceneWriter final
 {

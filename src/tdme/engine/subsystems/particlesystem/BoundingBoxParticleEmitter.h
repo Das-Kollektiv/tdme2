@@ -20,7 +20,6 @@ using tdme::math::Vector3;
 /**
  * Bounding box particle emitter
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::particlesystem::BoundingBoxParticleEmitter final
 	: public ParticleEmitter

@@ -17,7 +17,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Quaternion.h>
@@ -46,7 +46,7 @@ using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 using tdme::engine::Rotation;
 using tdme::math::Math;
 using tdme::math::Vector3;
@@ -133,7 +133,7 @@ void SkinningTest::initialize()
 {
 	engine->initialize();
 	engine->addPostProcessingProgram("depth_blur");
-	Object3D* entity;
+	Object* entity;
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(30.0f);
@@ -156,14 +156,14 @@ void SkinningTest::initialize()
 	auto groundModel = modelDeleter.add(Primitives::createModel(ground, "ground_model"));
 	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
 	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	entity = new Object3D("ground", groundModel);
+	entity = new Object("ground", groundModel);
 	entity->setTranslation(Vector3(0.0f, -1.0f, 0.0f));
 	entity->setReceivesShadows(true);
 	entity->update();
 	engine->addEntity(entity);
 	auto character = modelDeleter.add(ModelReader::read("resources/tests/models/mementoman", "mementoman.dae"));
 	#if defined(GLES2)
-		auto characters = new Object3D("characters", character, 5 * 5);
+		auto characters = new Object("characters", character, 5 * 5);
 		auto characterIdx = 0;
 		float z = -5.0f;
 		for (int characterZ = 0; characterZ < 5; characterZ++) {
@@ -181,7 +181,7 @@ void SkinningTest::initialize()
 		characters->setReceivesShadows(true);
 		engine->addEntity(characters);
 	#else
-		auto characters = new Object3D("characters", character, 17 * 17);
+		auto characters = new Object("characters", character, 17 * 17);
 		auto characterIdx = 0;
 		float z = -15.0f;
 		for (int characterZ = 0; characterZ < 17; characterZ++) {

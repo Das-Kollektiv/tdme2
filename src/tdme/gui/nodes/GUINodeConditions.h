@@ -17,7 +17,6 @@ using tdme::gui::nodes::GUIElementNode;
 /**
  * GUI element node conditions
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::nodes::GUINodeConditions final
 {

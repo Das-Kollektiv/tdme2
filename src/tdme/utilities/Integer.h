@@ -20,7 +20,6 @@ using std::string_view;
 /**
  * Integer class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::utilities::Integer final
 {

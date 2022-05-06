@@ -17,13 +17,11 @@ using tdme::math::Matrix2D3x3;
 /**
  * Represents specular material properties
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::engine::model::SpecularMaterialProperties final
 {
 
 private:
-	bool embedTextures;
 	Color4 ambientColor;
 	Color4 diffuseColor;
 	Color4 specularColor;
@@ -62,21 +60,6 @@ public:
 	 * Destructor
 	 */
 	~SpecularMaterialProperties();
-
-	/**
-	 * @return if textures will be embedded in model files
-	 */
-	inline bool hasEmbeddedTextures() const {
-		return embedTextures;
-	}
-
-	/**
-	 * Set if to embed textures
-	 * @param embedTextures embed textures
-	 */
-	inline void setEmbedTextures(bool embedTextures) {
-		this->embedTextures = embedTextures;
-	}
 
 	/**
 	 * @return ambient color

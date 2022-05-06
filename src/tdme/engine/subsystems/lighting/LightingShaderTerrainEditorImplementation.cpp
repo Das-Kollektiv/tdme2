@@ -60,7 +60,7 @@ void LightingShaderTerrainEditorImplementation::initialize()
 
 void LightingShaderTerrainEditorImplementation::registerShader() {
 	Engine::registerShader(
-		Engine::ShaderType::SHADERTYPE_OBJECT3D,
+		Engine::ShaderType::SHADERTYPE_OBJECT,
 		getId(),
 		{
 			{ "brushEnabled", ShaderParameter(true) },

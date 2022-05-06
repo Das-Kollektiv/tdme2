@@ -13,7 +13,6 @@ using tdme::utilities::MutableString;
 /**
  * GUI node controller base class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::nodes::GUINodeController
 {

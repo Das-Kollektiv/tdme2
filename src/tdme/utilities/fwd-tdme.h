@@ -28,11 +28,13 @@ namespace utilities {
 	class Properties;
 	class Reference;
 	class RTTI;
-	class Time;
 	class SHA256;
+	class SimpleTextureAtlas;
 	class ShortBuffer;
 	class StringTokenizer;
 	class StringTools;
+	class TextureAtlas;
+	class Time;
 	class Terrain;
 }  // namespace utilities
 }  // namespace tdme

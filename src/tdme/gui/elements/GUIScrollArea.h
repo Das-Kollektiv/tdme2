@@ -22,7 +22,6 @@ using tdme::os::filesystem::FileSystemException;
 /**
  * GUI scroll area element
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUIScrollArea final: public GUIElement
 {

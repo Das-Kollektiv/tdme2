@@ -23,9 +23,8 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
 /**
- * TDME engine entity
+ * Engine entity
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::Entity
 {
@@ -58,14 +57,15 @@ public:
 	enum RenderPass { RENDERPASS_NONE = 0, RENDERPASS_SKY = 1, RENDERPASS_NOFRUSTUMCULLING = 1, RENDERPASS_TERRAIN = 2, RENDERPASS_STANDARD = 4, RENDERPASS_WATER = 8, RENDERPASS_POST_POSTPROCESSING = 16, RENDERPASS_GIZMO = 32 };
 
 	enum EntityType {
+		ENTITYTYPE_DECALOBJECT,
 		ENTITYTYPE_ENTITYHIERARCHY,
 		ENTITYTYPE_ENVIRONMENTMAPPING,
-		ENTITYTYPE_IMPOSTEROBJECT3D,
-		ENTITYTYPE_LINESOBJECT3D,
-		ENTITYTYPE_LODOBJECT3D,
-		ENTITYTYPE_LODOBJECT3DIMPOSTER,
-		ENTITYTYPE_OBJECT3D,
-		ENTITYTYPE_OBJECT3DRENDERGROUP,
+		ENTITYTYPE_IMPOSTEROBJECT,
+		ENTITYTYPE_LINESOBJECT,
+		ENTITYTYPE_LODOBJECT,
+		ENTITYTYPE_LODOBJECTIMPOSTER,
+		ENTITYTYPE_OBJECT,
+		ENTITYTYPE_OBJECTRENDERGROUP,
 		ENTITYTYPE_FOGPARTICLESYSTEM,
 		ENTITYTYPE_OBJECTPARTICLESYSTEM,
 		ENTITYTYPE_PARTICLESYSTEMGROUP,
@@ -90,7 +90,7 @@ public:
 	virtual void setRenderer(Renderer* renderer) = 0;
 
 	/**
-	 * @return object id
+	 * @return entity id
 	 */
 	virtual const string& getId() = 0;
 
@@ -117,12 +117,12 @@ public:
 	virtual void setFrustumCulling(bool frustumCulling) = 0;
 
 	/**
-	 * @return if object is pickable
+	 * @return if entity is pickable
 	 */
 	virtual bool isPickable() = 0;
 
 	/**
-	 * Set this object pickable
+	 * Set this entity pickable
 	 * @param pickable pickable
 	 */
 	virtual void setPickable(bool pickable) = 0;
@@ -174,12 +174,12 @@ public:
 	virtual void setEffectColorAdd(const Color4& effectColorAdd) = 0;
 
 	/**
-	 * Initiates this object 3d
+	 * Initiates this entity
 	 */
 	virtual void initialize() = 0;
 
 	/**
-	 * Dispose this object 3d
+	 * Dispose this entity
 	 */
 	virtual void dispose() = 0;
 
@@ -194,7 +194,7 @@ public:
 	virtual BoundingBox* getBoundingBoxTransformed() = 0;
 
 	/**
-	 * @return object translation
+	 * @return entity translation
 	 */
 	virtual const Vector3& getTranslation() const = 0;
 
@@ -205,7 +205,7 @@ public:
 	virtual void setTranslation(const Vector3& translation) = 0;
 
 	/**
-	 * @return object scale
+	 * @return entity scale
 	 */
 	virtual const Vector3& getScale() const = 0;
 

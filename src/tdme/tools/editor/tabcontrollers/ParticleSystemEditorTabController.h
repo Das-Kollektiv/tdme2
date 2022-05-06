@@ -38,7 +38,6 @@ using tdme::utilities::MutableString;
 /**
  * Particle system editor tab controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabcontrollers::ParticleSystemEditorTabController final
 	: public TabController

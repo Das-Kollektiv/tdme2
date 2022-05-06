@@ -17,7 +17,6 @@ using std::string_view;
 /**
  * Float class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::utilities::Float final
 {

@@ -5,6 +5,7 @@ namespace tdme {
 namespace engine {
 	class Camera;
 	class ColorTexture;
+	class DecalObject;
 	class DynamicColorTexture;
 	class Engine;
 	class Engine_AnimationProcessingTarget;
@@ -17,15 +18,15 @@ namespace engine {
 	class GeometryBuffer;
 	class Frustum;
 	class FogParticleSystem;
-	class ImposterObject3D;
+	class ImposterObject;
 	class Light;
-	class LinesObject3D;
-	class LODObject3D;
-	class LODObject3DImposter;
+	class LinesObject;
+	class LODObject;
+	class LODObjectImposter;
 	class ModelUtilities;
-	class Object3D;
-	class Object3DModel;
-	class Object3DRenderGroup;
+	class Object;
+	class ObjectModel;
+	class ObjectRenderGroup;
 	class ObjectParticleSystem;
 	class OctTreePartition;
 	class ParticleSystemEntity;

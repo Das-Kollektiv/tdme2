@@ -24,7 +24,6 @@ using tdme::math::Vector4;
 /**
  * Shadow mapping module
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::shadowmapping::ShadowMapping final
 {
@@ -45,7 +44,7 @@ private:
 	vector<ShadowMap*> shadowMaps;
 	ShadowMapping_RunState runState { NONE };
 
-	vector<Object3D*> visibleObjectsReceivingShadows;
+	vector<Object*> visibleObjectsReceivingShadows;
 
 public:
 	/**
@@ -89,7 +88,7 @@ public:
 	 * Render shadow maps to world
 	 * @param visibleObjects visible objects
 	 */
-	void renderShadowMaps(const vector<Object3D*>& visibleObjects);
+	void renderShadowMaps(const vector<Object*>& visibleObjects);
 
 	/**
 	 * Dispose shadow maps

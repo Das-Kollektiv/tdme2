@@ -16,15 +16,14 @@ using std::string;
 using std::vector;
 
 using tdme::engine::subsystems::renderer::Renderer;
-using tdme::engine::subsystems::rendering::Object3DBase;
-using tdme::engine::subsystems::rendering::Object3DNodeMesh;
+using tdme::engine::subsystems::rendering::ObjectBase;
+using tdme::engine::subsystems::rendering::ObjectNodeMesh;
 using tdme::math::Matrix4x4;
 using tdme::os::threading::Mutex;
 
 /**
  * Interface to compute shader skinning shader program
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::skinning::SkinningShader final
 {
@@ -81,10 +80,10 @@ public:
 	/**
 	 * Compute skinning
 	 * @param contextIdx context index
-	 * @param object3DBase object 3D base
-	 * @param object3DNodeMesh object 3d node mesh
+	 * @param objectBase object base
+	 * @param objectNodeMesh object node mesh
 	 */
-	void computeSkinning(int contextIdx, Object3DBase* object3DBase, Object3DNodeMesh* object3DNodeMesh);
+	void computeSkinning(int contextIdx, ObjectBase* objectBase, ObjectNodeMesh* objectNodeMesh);
 
 	/**
 	 * Reset

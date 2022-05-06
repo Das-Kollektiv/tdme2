@@ -12,9 +12,9 @@
 #include <tdme/engine/model/ShaderModel.h>
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/engine/subsystems/rendering/Object3DModelInternal.h>
+#include <tdme/engine/subsystems/rendering/ObjectModelInternal.h>
 #include <tdme/engine/ModelUtilities.h>
-#include <tdme/engine/Object3DModel.h>
+#include <tdme/engine/ObjectModel.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/threading/AtomicOperations.h>
 
@@ -30,9 +30,9 @@ using tdme::engine::model::RotationOrder;
 using tdme::engine::model::ShaderModel;
 using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::subsystems::rendering::Object3DModelInternal;
+using tdme::engine::subsystems::rendering::ObjectModelInternal;
 using tdme::engine::ModelUtilities;
-using tdme::engine::Object3DModel;
+using tdme::engine::ObjectModel;
 using tdme::math::Matrix4x4;
 using tdme::os::threading::AtomicOperations;
 
@@ -55,6 +55,8 @@ Model::Model(const string& id, const string& name, UpVector* upVector, RotationO
 	this->boundingBox = boundingBox;
 	this->authoringTool = authoringTool;
 	this->boundingBoxUpdated = false;
+	this->embedSpecularTextures = false;
+	this->embedPBRTextures = false;
 }
 
 Model::~Model() {

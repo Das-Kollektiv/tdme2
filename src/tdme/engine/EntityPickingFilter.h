@@ -8,7 +8,6 @@ using tdme::engine::Entity;
 /**
  * Entity picking filter
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::engine::EntityPickingFilter
 {

@@ -17,7 +17,6 @@ using tdme::engine::prototype::BaseProperty;
 /**
  * Base properties
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::prototype::BaseProperties
 {

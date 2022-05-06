@@ -39,7 +39,6 @@ using tdme::utilities::Float;
 /**
  * UI editor tab view
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabviews::UIEditorTabView final: public TabView, protected CameraRotationInputHandlerEventHandler
 {

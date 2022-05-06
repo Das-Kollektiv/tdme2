@@ -35,7 +35,6 @@ using tdme::math::Vector3;
 /**
  * Object particle system entity to be used with engine class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::ObjectParticleSystem final
 	: public ObjectParticleSystemInternal
@@ -82,14 +81,14 @@ public:
 	/**
 	 * @return objects
 	 */
-	inline const vector<Object3D*>& getObjects() {
+	inline const vector<Object*>& getObjects() {
 		return objects;
 	}
 
 	/**
 	 * @return enabled objects
 	 */
-	inline const vector<Object3D*>& getEnabledObjects() {
+	inline const vector<Object*>& getEnabledObjects() {
 		return enabledObjects;
 	}
 

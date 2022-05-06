@@ -30,7 +30,7 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::StringTools;
 
-vector<string> ModelReader::extensions = {"dae", "glb", "tm"};
+vector<string> ModelReader::extensions = {"dae", "glb", "gltf", "tm"};
 
 const vector<string>& ModelReader::getModelExtensions() {
 	return extensions;
@@ -43,6 +43,9 @@ Model* ModelReader::read(const string& pathName, const string& fileName)
 			return DAEReader::read(pathName, fileName);
 		} else
 		if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".glb") == true) {
+			return GLTFReader::read(pathName, fileName);
+		} else
+		if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".gltf") == true) {
 			return GLTFReader::read(pathName, fileName);
 		} else
 		if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tm") == true) {

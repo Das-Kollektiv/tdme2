@@ -9,6 +9,7 @@ namespace prototype {
 	class PrototypeBoundingVolume;
 	class SceneLibrary;
 	class PrototypeImposterLOD;
+	class PrototypeDecal;
 	class PrototypeLODLevel;
 	class PrototypeParticleSystem;
 	class PrototypeParticleSystem_BoundingBoxParticleEmitter;

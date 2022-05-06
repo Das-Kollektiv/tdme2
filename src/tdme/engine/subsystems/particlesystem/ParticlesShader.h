@@ -14,7 +14,6 @@ using tdme::math::Matrix4x4;
 /**
  * Particles shader program
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::particlesystem::ParticlesShader final
 {

@@ -17,18 +17,17 @@ using std::vector;
 /**
  * Buffers used to transfer data between main memory to graphics board memory
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::rendering::ObjectBuffer final
 {
-	friend class Object3DNodeMesh;
+	friend class ObjectNodeMesh;
 	friend class EntityRenderer;
 	friend class BatchRendererTriangles;
 	friend class tdme::engine::Engine;
 	friend class tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
 	friend class tdme::engine::subsystems::framebuffer::FrameBufferRenderShader;
-	friend class tdme::engine::subsystems::lines::LinesObject3DInternal;
-	friend class tdme::engine::subsystems::rendering::Object3DNodeRenderer;
+	friend class tdme::engine::subsystems::lines::LinesObjectInternal;
+	friend class tdme::engine::subsystems::rendering::ObjectNodeRenderer;
 	friend class tdme::engine::subsystems::skinning::SkinningShader;
 
 private:

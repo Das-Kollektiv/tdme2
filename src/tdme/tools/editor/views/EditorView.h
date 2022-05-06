@@ -22,7 +22,6 @@ using tdme::tools::editor::views::View;
 /**
  * Editor View
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::views::EditorView final
 	: public View

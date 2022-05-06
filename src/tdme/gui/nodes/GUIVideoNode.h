@@ -37,7 +37,6 @@ using tdme::video::decoder::MPEG1Decoder;
 /**
  * GUI video node
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::nodes::GUIVideoNode final
 	: public GUITextureBaseNode

@@ -22,7 +22,6 @@ using tdme::os::filesystem::FileSystemException;
 /**
  * GUI menu separator element
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUIMenuSeparator final: public GUIElement
 {

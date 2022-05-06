@@ -7,7 +7,7 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/FogParticleSystem.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object.h>
 #include <tdme/engine/ObjectParticleSystem.h>
 #include <tdme/engine/ParticleSystemEntity.h>
 #include <tdme/engine/Partition.h>
@@ -20,7 +20,7 @@ using std::vector;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::Engine;
 using tdme::engine::FogParticleSystem;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 using tdme::engine::ObjectParticleSystem;
 using tdme::engine::ParticleSystemEntity;
 using tdme::engine::ParticleSystemGroup;

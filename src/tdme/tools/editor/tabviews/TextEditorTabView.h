@@ -27,7 +27,6 @@ using tdme::tools::editor::views::EditorView;
 /**
  * Text editor tab view
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabviews::TextEditorTabView final
 	: public TabView

@@ -31,7 +31,6 @@ namespace cli {
 /**
  * Convert to tm application
  * @author andreas.drewke
- * @version $Id$
  */
 class ConvertToTMApplication final
 	: public virtual Application

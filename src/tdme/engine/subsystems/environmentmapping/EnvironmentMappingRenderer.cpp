@@ -13,9 +13,9 @@
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/GeometryBuffer.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/LODObject3D.h>
-#include <tdme/engine/Object3D.h>
-#include <tdme/engine/Object3DRenderGroup.h>
+#include <tdme/engine/LODObject.h>
+#include <tdme/engine/Object.h>
+#include <tdme/engine/ObjectRenderGroup.h>
 #include <tdme/engine/ObjectParticleSystem.h>
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/Partition.h>
@@ -37,9 +37,9 @@ using tdme::engine::Entity;
 using tdme::engine::EntityHierarchy;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
-using tdme::engine::LODObject3D;
-using tdme::engine::Object3D;
-using tdme::engine::Object3DRenderGroup;
+using tdme::engine::LODObject;
+using tdme::engine::Object;
+using tdme::engine::ObjectRenderGroup;
 using tdme::engine::ObjectParticleSystem;
 using tdme::engine::Partition;
 using tdme::math::Math;

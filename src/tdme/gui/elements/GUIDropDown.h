@@ -22,7 +22,6 @@ using tdme::os::filesystem::FileSystemException;
 /**
  * GUI drop down element
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUIDropDown final: public GUIElement
 {

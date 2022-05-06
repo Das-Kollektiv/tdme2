@@ -22,7 +22,6 @@ using tdme::utilities::Console;
 /**
  * Collision response
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::physics::CollisionResponse final
 {

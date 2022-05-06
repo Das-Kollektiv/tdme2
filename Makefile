@@ -192,6 +192,7 @@ SRCS = \
 	src/tdme/application/Application.cpp \
 	src/tdme/application/InputEventHandler.cpp \
 	src/tdme/engine/Camera.cpp \
+	src/tdme/engine/DecalObject.cpp \
 	src/tdme/engine/DynamicColorTexture.cpp \
 	src/tdme/engine/Engine.cpp \
 	src/tdme/engine/EntityHierarchy.cpp \
@@ -201,14 +202,14 @@ SRCS = \
 	src/tdme/engine/FrameBuffer.cpp \
 	src/tdme/engine/Frustum.cpp \
 	src/tdme/engine/GeometryBuffer.cpp \
-	src/tdme/engine/ImposterObject3D.cpp \
+	src/tdme/engine/ImposterObject.cpp \
 	src/tdme/engine/Light.cpp \
-	src/tdme/engine/LinesObject3D.cpp \
-	src/tdme/engine/LODObject3D.cpp \
-	src/tdme/engine/LODObject3DImposter.cpp \
-	src/tdme/engine/Object3D.cpp \
-	src/tdme/engine/Object3DModel.cpp \
-	src/tdme/engine/Object3DRenderGroup.cpp \
+	src/tdme/engine/LinesObject.cpp \
+	src/tdme/engine/LODObject.cpp \
+	src/tdme/engine/LODObjectImposter.cpp \
+	src/tdme/engine/Object.cpp \
+	src/tdme/engine/ObjectModel.cpp \
+	src/tdme/engine/ObjectRenderGroup.cpp \
 	src/tdme/engine/ObjectParticleSystem.cpp \
 	src/tdme/engine/OctTreePartition.cpp \
 	src/tdme/engine/ParticleSystemGroup.cpp \
@@ -265,6 +266,7 @@ SRCS = \
 	src/tdme/engine/prototype/Prototype.cpp \
 	src/tdme/engine/prototype/PrototypeAudio.cpp \
 	src/tdme/engine/prototype/PrototypeBoundingVolume.cpp \
+	src/tdme/engine/prototype/PrototypeDecal.cpp \
 	src/tdme/engine/prototype/PrototypeImposterLOD.cpp \
 	src/tdme/engine/prototype/PrototypeLODLevel.cpp \
 	src/tdme/engine/prototype/PrototypeParticleSystem.cpp \
@@ -286,6 +288,7 @@ SRCS = \
 	src/tdme/engine/scene/SceneLibrary.cpp \
 	src/tdme/engine/scene/SceneLight.cpp \
 	src/tdme/engine/scene/ScenePropertyPresets.cpp \
+	src/tdme/engine/subsystems/decals/DecalObjectInternal.cpp \
 	src/tdme/engine/subsystems/earlyzrejection/EZRShader.cpp \
 	src/tdme/engine/subsystems/earlyzrejection/EZRShaderBaseImplementation.cpp \
 	src/tdme/engine/subsystems/earlyzrejection/EZRShaderDefaultImplementation.cpp \
@@ -318,7 +321,7 @@ SRCS = \
 	src/tdme/engine/subsystems/lighting/LightingShaderTreeImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderWaterImplementation.cpp \
 	src/tdme/engine/subsystems/lines/LinesShader.cpp \
-	src/tdme/engine/subsystems/lines/LinesObject3DInternal.cpp \
+	src/tdme/engine/subsystems/lines/LinesObjectInternal.cpp \
 	src/tdme/engine/subsystems/manager/MeshManager.cpp \
 	src/tdme/engine/subsystems/manager/MeshManager_MeshManaged.cpp \
 	src/tdme/engine/subsystems/manager/TextureManager.cpp \
@@ -328,14 +331,14 @@ SRCS = \
 	src/tdme/engine/subsystems/rendering/BatchRendererPoints.cpp \
 	src/tdme/engine/subsystems/rendering/BatchRendererTriangles.cpp \
 	src/tdme/engine/subsystems/rendering/ModelUtilitiesInternal.cpp \
-	src/tdme/engine/subsystems/rendering/Object3DAnimation.cpp \
-	src/tdme/engine/subsystems/rendering/Object3DBase.cpp \
-	src/tdme/engine/subsystems/rendering/Object3DBase_TransformedFacesIterator.cpp \
-	src/tdme/engine/subsystems/rendering/Object3DNode.cpp \
-	src/tdme/engine/subsystems/rendering/Object3DNodeMesh.cpp \
-	src/tdme/engine/subsystems/rendering/Object3DNodeRenderer.cpp \
-	src/tdme/engine/subsystems/rendering/Object3DInternal.cpp \
-	src/tdme/engine/subsystems/rendering/Object3DModelInternal.cpp \
+	src/tdme/engine/subsystems/rendering/ObjectAnimation.cpp \
+	src/tdme/engine/subsystems/rendering/ObjectBase.cpp \
+	src/tdme/engine/subsystems/rendering/ObjectBase_TransformedFacesIterator.cpp \
+	src/tdme/engine/subsystems/rendering/ObjectNode.cpp \
+	src/tdme/engine/subsystems/rendering/ObjectNodeMesh.cpp \
+	src/tdme/engine/subsystems/rendering/ObjectNodeRenderer.cpp \
+	src/tdme/engine/subsystems/rendering/ObjectInternal.cpp \
+	src/tdme/engine/subsystems/rendering/ObjectModelInternal.cpp \
 	src/tdme/engine/subsystems/rendering/EntityRenderer.cpp \
 	src/tdme/engine/subsystems/rendering/EntityRenderer_TransparentRenderFacesGroupPool.cpp \
 	src/tdme/engine/subsystems/rendering/ObjectBuffer.cpp \
@@ -515,9 +518,6 @@ SRCS = \
 	src/tdme/os/threading/ReadWriteLock.cpp \
 	src/tdme/os/threading/SpinLock.cpp \
 	src/tdme/os/threading/Thread.cpp \
-	src/tdme/tests/AngleTest.cpp \
-	src/tdme/tests/AudioTest.cpp \
-	src/tdme/tests/CrashTest.cpp \
 	src/tdme/tests/EngineTest.cpp \
 	src/tdme/tests/EntityHierarchyTest.cpp \
 	src/tdme/tests/LODTest.cpp \
@@ -560,6 +560,7 @@ SRCS = \
 	src/tdme/tools/editor/misc/PopUps.cpp \
 	src/tdme/tools/editor/misc/TextFormatter.cpp \
 	src/tdme/tools/editor/misc/Tools.cpp \
+	src/tdme/tools/editor/tabcontrollers/DecalEditorTabController.cpp \
 	src/tdme/tools/editor/tabcontrollers/EmptyEditorTabController.cpp \
 	src/tdme/tools/editor/tabcontrollers/EnvMapEditorTabController.cpp \
 	src/tdme/tools/editor/tabcontrollers/FontTabController.cpp \
@@ -578,6 +579,7 @@ SRCS = \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController_BoundingVolumeType.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeSoundsSubController.cpp \
+	src/tdme/tools/editor/tabviews/DecalEditorTabView.cpp \
 	src/tdme/tools/editor/tabviews/EmptyEditorTabView.cpp \
 	src/tdme/tools/editor/tabviews/EnvMapEditorTabView.cpp \
 	src/tdme/tools/editor/tabviews/FontTabView.cpp \
@@ -611,10 +613,12 @@ SRCS = \
 	src/tdme/utilities/Properties.cpp \
 	src/tdme/utilities/Reference.cpp \
 	src/tdme/utilities/RTTI.cpp \
+	src/tdme/utilities/SimpleTextureAtlas.cpp \
 	src/tdme/utilities/SHA256.cpp \
 	src/tdme/utilities/StringTools.cpp \
 	src/tdme/utilities/StringTokenizer.cpp \
 	src/tdme/utilities/Terrain.cpp \
+	src/tdme/utilities/TextureAtlas.cpp \
 	src/tdme/video/decoder/MPEG1Decoder.cpp \
 	src/tdme/video/decoder/VideoDecoderException.cpp \
 	$(SRCS_PLATFORM)
@@ -859,7 +863,6 @@ else
 endif
 
 MAIN_SRCS = \
-	src/tdme/tests/AngleTest-main.cpp \
 	src/tdme/tests/AudioTest-main.cpp \
 	src/tdme/tests/ContainerTest-main.cpp \
 	src/tdme/tests/CrashTest-main.cpp \
@@ -881,6 +884,7 @@ MAIN_SRCS = \
 	src/tdme/tests/PhysicsTest4-main.cpp \
 	src/tdme/tests/RayTracingTest-main.cpp \
 	src/tdme/tests/SkinningTest-main.cpp \
+	src/tdme/tests/TextureAtlasTest-main.cpp \
 	src/tdme/tests/ThreadingTest-main.cpp \
 	src/tdme/tests/TreeTest-main.cpp \
 	src/tdme/tests/UDPClientTest-main.cpp \
@@ -894,6 +898,7 @@ MAIN_SRCS = \
 	src/tdme/tools/cli/converttotm-main.cpp \
 	src/tdme/tools/cli/copyanimationsetups-main.cpp \
 	src/tdme/tools/cli/createinstaller-main.cpp \
+	src/tdme/tools/cli/dumpmodel-main.cpp \
 	src/tdme/tools/cli/imageprocessor-main.cpp \
 	src/tdme/tools/cli/msclib2dll-main.cpp \
 	src/tdme/tools/cli/fixdoxygen-main.cpp \

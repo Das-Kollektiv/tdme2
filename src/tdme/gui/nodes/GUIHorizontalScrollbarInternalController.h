@@ -18,7 +18,6 @@ using tdme::utilities::MutableString;
 /**
  * GUI scroll bar controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::nodes::GUIHorizontalScrollbarInternalController
 	: public GUINodeController

@@ -12,7 +12,6 @@ using tdme::engine::prototype::Prototype;
 /**
  * Prototype audio definition
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::prototype::PrototypeAudio final
 {

@@ -10,16 +10,15 @@
 using std::string;
 
 using tdme::engine::Entity;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 
 /**
  * Entity renderer parameters
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::engine::subsystems::rendering::EntityRenderer_InstancedRenderFunctionParameters final {
 	Entity::RenderPass renderPass;
-	vector<Object3D*> objects;
+	vector<Object*> objects;
 	uint32_t renderTypes;
 	bool collectTransparentFaces;
 };

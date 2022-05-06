@@ -21,7 +21,6 @@ using tdme::math::Vector3;
 /**
  * Sphere particle emitter
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::particlesystem::SphereParticleEmitter final
 	: public ParticleEmitter

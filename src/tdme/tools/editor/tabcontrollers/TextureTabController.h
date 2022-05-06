@@ -29,7 +29,6 @@ using tdme::utilities::MutableString;
 /**
  * Texture tab controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabcontrollers::TextureTabController final
 	: public TabController

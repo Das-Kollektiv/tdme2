@@ -17,21 +17,20 @@ using tdme::engine::subsystems::shadowmapping::ShadowMapping;
 using tdme::engine::Camera;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
 /**
  * Shadow map
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::shadowmapping::ShadowMap final
 {
 	friend class ShadowMapping;
 
 private:
-	vector<Object3D*> visibleObjects;
+	vector<Object*> visibleObjects;
 	ShadowMapping* shadowMapping { nullptr };
 	Camera* lightCamera { nullptr };
 	FrameBuffer* frameBuffer { nullptr };

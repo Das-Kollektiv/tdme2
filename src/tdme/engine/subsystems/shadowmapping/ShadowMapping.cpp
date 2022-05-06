@@ -106,7 +106,7 @@ ShadowMap* ShadowMapping::getShadowMap(int idx) {
 	return shadowMaps[idx];
 }
 
-void ShadowMapping::renderShadowMaps(const vector<Object3D*>& visibleObjects)
+void ShadowMapping::renderShadowMaps(const vector<Object*>& visibleObjects)
 {
 	// only render for objects that receives shadows
 	for (auto object: visibleObjects) {

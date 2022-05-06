@@ -26,7 +26,6 @@ using tdme::utilities::Reference;
 /**
  * Flow map
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::utilities::FlowMap final: public Reference {
 friend class PathFinding;

@@ -28,7 +28,6 @@ using tdme::utilities::ShortBuffer;
 /**
  * OpenGL 2 renderer
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::renderer::GL2Renderer: public Renderer
 {

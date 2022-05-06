@@ -25,7 +25,6 @@ using tdme::utilities::ByteBuffer;
 /**
  * Texture reader class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::fileio::textures::TextureReader final
 {

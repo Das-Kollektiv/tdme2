@@ -17,7 +17,7 @@
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/FrameBuffer.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object.h>
 #include <tdme/engine/SimplePartition.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
@@ -51,7 +51,7 @@ using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 using tdme::engine::SimplePartition;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
@@ -104,7 +104,7 @@ void UIEditorTabView::handleInputEvents()
 		vector<int> checkedEngineMouseEventIndices;
 		vector<int> unusedEngineMouseEventIndices;
 		//
-		auto modelEntity = dynamic_cast<Object3D*>(engine->getEntity("model"));
+		auto modelEntity = dynamic_cast<Object*>(engine->getEntity("model"));
 		if (modelEntity != nullptr && modelMeshNode.empty() == false && modelEntity->getModel()->getNodeById(modelMeshNode) != nullptr) {
 			auto modelEntityWorldMatrix = modelEntity->getNodeTransformationsMatrix(modelMeshNode);
 			auto modelEntityModelImportMatrixInverted = modelEntity->getModel()->getImportTransformationsMatrix().clone().invert();
@@ -321,8 +321,8 @@ Prototype* UIEditorTabView::loadPrototype(const string& pathName, const string& 
 	if (modelEntity != nullptr) {
 		modelEntity->setScale(modelEntity->getScale() * 2.0f);
 		modelEntity->update();
-		static_cast<Object3D*>(modelEntity)->bindDiffuseTexture(guiEngine->getFrameBuffer(), modelMeshNode);
-		static_cast<Object3D*>(modelEntity)->setAnimation(modelMeshAnimation);
+		static_cast<Object*>(modelEntity)->bindDiffuseTexture(guiEngine->getFrameBuffer(), modelMeshNode);
+		static_cast<Object*>(modelEntity)->setAnimation(modelMeshAnimation);
 	}
 	auto groundEntity = engine->getEntity("ground");
 	if (groundEntity != nullptr) {
@@ -340,7 +340,7 @@ Prototype* UIEditorTabView::loadPrototype(const string& pathName, const string& 
 void UIEditorTabView::setModelMeshNode(const string& modelMeshNode) {
 	if (projectedUi == false) return;
 	//
-	auto modelEntity = dynamic_cast<Object3D*>(engine->getEntity("model"));
+	auto modelEntity = dynamic_cast<Object*>(engine->getEntity("model"));
 	if (modelEntity != nullptr) {
 		modelEntity->unbindDiffuseTexture();
 		if (modelMeshNode.empty() == false) modelEntity->bindDiffuseTexture(guiEngine->getFrameBuffer(), modelMeshNode);
@@ -383,7 +383,7 @@ void UIEditorTabView::setModelMeshNode(const string& modelMeshNode) {
 void UIEditorTabView::setModelMeshAnimation(const string& modelMeshAnimation) {
 	if (projectedUi == false) return;
 	//
-	auto modelEntity = dynamic_cast<Object3D*>(engine->getEntity("model"));
+	auto modelEntity = dynamic_cast<Object*>(engine->getEntity("model"));
 	if (modelEntity != nullptr) {
 		modelEntity->setAnimation(modelMeshAnimation);
 	}

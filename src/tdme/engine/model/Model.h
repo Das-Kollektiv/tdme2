@@ -24,9 +24,8 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::math::Matrix4x4;
 
 /**
- * Representation of a 3d model
+ * Representation of a 3D model
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::engine::model::Model final
 {
@@ -56,6 +55,9 @@ private:
 	Matrix4x4 importTransformationsMatrix;
 	BoundingBox* boundingBox;
 	bool boundingBoxUpdated;
+
+	bool embedSpecularTextures;
+	bool embedPBRTextures;
 
 	/**
 	 * Delete sub nodes
@@ -340,6 +342,36 @@ public:
 		auto updated = boundingBoxUpdated;
 		boundingBoxUpdated = false;
 		return updated;
+	}
+
+	/**
+	 * @return if specular textures will be embedded in model files
+	 */
+	inline bool hasEmbeddedSpecularTextures() const {
+		return embedSpecularTextures;
+	}
+
+	/**
+	 * Set if to embed specular textures
+	 * @param embedTextures embed specular textures
+	 */
+	inline void setEmbedSpecularTextures(bool embedTextures) {
+		this->embedSpecularTextures = embedTextures;
+	}
+
+	/**
+	 * @return if PBR textures will be embedded in model files
+	 */
+	inline bool hasEmbeddedPBRTextures() const {
+		return embedPBRTextures;
+	}
+
+	/**
+	 * Set if to embed PBR textures
+	 * @param embedTextures embed PBR textures
+	 */
+	inline void setEmbedPBRTextures(bool embedTextures) {
+		this->embedPBRTextures = embedTextures;
 	}
 
 };

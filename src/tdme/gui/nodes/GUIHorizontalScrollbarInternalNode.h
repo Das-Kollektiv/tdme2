@@ -28,7 +28,6 @@ using tdme::gui::renderer::GUIRenderer;
 /**
  * GUI horizontal scroll bar internal node
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::nodes::GUIHorizontalScrollbarInternalNode
 	: public GUINode

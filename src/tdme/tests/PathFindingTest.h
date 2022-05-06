@@ -8,7 +8,7 @@
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/scene/fwd-tdme.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tests/fwd-tdme.h>
 #include <tdme/utilities/PathFinding.h>
@@ -20,14 +20,13 @@ using tdme::engine::physics::World;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
 using tdme::engine::Engine;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 using tdme::math::Vector3;
 using tdme::utilities::PathFinding;
 
 /**
  * Engine with physics test 2
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::tests::PathFindingTest final
 	: public virtual Application
@@ -37,7 +36,7 @@ private:
 	Engine* engine { nullptr };
 	Scene* scene { nullptr };
 	Prototype* playerModelPrototype { nullptr };
-	Object3D* playerObject { nullptr };
+	Object* playerObject { nullptr };
 	PathFinding* pathFinding { nullptr };
 	vector<Vector3> pathPositions;
 	vector<Vector3> path;

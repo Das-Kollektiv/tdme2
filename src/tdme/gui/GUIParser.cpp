@@ -1990,13 +1990,6 @@ void GUIParser::initialize()
 		Console::println(string(exception.what()));
 	}
 	try {
-		auto guiElement = new GUISliderV();
-		addElement(guiElement);
-	} catch (Exception& exception) {
-		Console::print(string("GUIParser::initialize(): An error occurred: "));
-		Console::println(string(exception.what()));
-	}
-	try {
 		auto guiElement = new GUIKnob();
 		addElement(guiElement);
 	} catch (Exception& exception) {

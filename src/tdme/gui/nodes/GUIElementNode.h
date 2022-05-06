@@ -32,7 +32,6 @@ using tdme::gui::nodes::GUIScreenNode;
 /**
  * GUI element node
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::nodes::GUIElementNode final: public GUILayerNode
 {

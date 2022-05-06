@@ -22,7 +22,6 @@ using tdme::math::Vector3;
 /**
  * Transformations which contain scale, rotations and translation
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::Transformations {
 private:

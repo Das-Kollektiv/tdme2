@@ -18,7 +18,6 @@ using tdme::os::filesystem::FileSystemException;
 /**
  * File system interface
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::os::filesystem::FileSystemInterface
 {

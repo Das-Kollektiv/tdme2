@@ -20,7 +20,6 @@ using tdme::engine::Engine;
 /**
  * Interface to lighting shader program
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::lighting::LightingShader final
 {

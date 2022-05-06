@@ -20,7 +20,6 @@ using tdme::os::threading::Mutex;
 /**
  * Texture manager
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::manager::TextureManager final
 {

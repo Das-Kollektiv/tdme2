@@ -13,7 +13,6 @@ using std::vector;
 /**
  * String tokenizer class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::utilities::StringTokenizer
 {

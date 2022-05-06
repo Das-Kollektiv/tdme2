@@ -34,7 +34,6 @@ using tdme::tools::editor::views::PlayableSoundView;
 /**
  * Prototype sounds sub screen controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeSoundsSubController final
 {

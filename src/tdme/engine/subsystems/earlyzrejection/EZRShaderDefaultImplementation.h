@@ -14,7 +14,6 @@ using tdme::engine::subsystems::renderer::Renderer;
 /**
  * Early z rejection default shader class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::earlyzrejection::EZRShaderDefaultImplementation: public EZRShaderBaseImplementation
 {

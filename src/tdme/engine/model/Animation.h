@@ -13,7 +13,6 @@ using tdme::math::Matrix4x4;
 /**
  * Animation entity
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::engine::model::Animation final
 {

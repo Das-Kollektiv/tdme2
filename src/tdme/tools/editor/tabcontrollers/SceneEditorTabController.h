@@ -35,7 +35,6 @@ using tdme::utilities::MutableString;
 /**
  * Scene editor tab controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabcontrollers::SceneEditorTabController final
 	: public TabController

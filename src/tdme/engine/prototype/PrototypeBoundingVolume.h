@@ -22,7 +22,6 @@ using tdme::math::Vector3;
 /**
  * Prototype bounding volume definition
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::prototype::PrototypeBoundingVolume final
 {

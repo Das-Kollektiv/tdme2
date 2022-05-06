@@ -16,7 +16,6 @@ using tdme::utilities::ByteBuffer;
 /**
  * Packet audio stream
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::audio::PacketAudioStream final
 	: public AudioStream

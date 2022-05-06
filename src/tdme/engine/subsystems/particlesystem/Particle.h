@@ -14,7 +14,6 @@ using tdme::math::Vector3;
 /**
  * Particle entity
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::engine::subsystems::particlesystem::Particle final
 {

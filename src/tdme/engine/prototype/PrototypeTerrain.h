@@ -22,7 +22,6 @@ using tdme::engine::Transformations;
 /**
  * Prototype terrain definition
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::prototype::PrototypeTerrain final
 {

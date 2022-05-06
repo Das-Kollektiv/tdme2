@@ -33,7 +33,6 @@ using tdme::math::Vector3;
 /**
  * Fog particle system entity to be used with engine class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::FogParticleSystem final
 	: public FogParticleSystemInternal

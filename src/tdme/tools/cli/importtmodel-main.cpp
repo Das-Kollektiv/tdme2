@@ -47,7 +47,6 @@ namespace cli {
 /**
  * Import tmodel application
  * @author andreas.drewke
- * @version $Id$
  */
 class ImportTModelApplication final
 	: public virtual Application

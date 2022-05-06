@@ -17,7 +17,6 @@ using tdme::engine::model::Model;
 /**
  * Prototype imposter LOD
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::prototype::PrototypeImposterLOD final
 {

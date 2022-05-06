@@ -14,7 +14,6 @@ using tdme::utilities::ExceptionBase;
 /**
  * GUI parser exception
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::GUIParserException final: public ExceptionBase
 {

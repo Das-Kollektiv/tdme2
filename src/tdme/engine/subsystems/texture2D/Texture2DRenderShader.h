@@ -14,7 +14,6 @@ using tdme::math::Vector2;
 /**
  * Texture 2D render shader
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::texture2D::Texture2DRenderShader final
 {

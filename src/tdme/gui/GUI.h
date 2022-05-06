@@ -55,7 +55,6 @@ static T required_dynamic_cast(U u)
 /**
  * GUI module class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::GUI final: public virtual InputEventHandler
 {

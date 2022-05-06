@@ -22,7 +22,6 @@ using tdme::os::filesystem::FileSystemException;
 /**
  * GUI radio button element
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUIRadioButton final: public GUIElement
 {

@@ -14,7 +14,6 @@ using tdme::engine::primitives::BoundingBox;
 /**
  * Collision detection
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::physics::CollisionDetection final
 {

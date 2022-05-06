@@ -23,7 +23,6 @@ using tdme::utilities::MutableString;
 /**
  * GUI styled text node controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::nodes::GUIStyledTextNodeController
 	: public GUINodeController
@@ -36,7 +35,6 @@ public:
 	/**
 	 * Change listener interface
 	 * @author Andreas Drewke
-	 * @version $Id$
 	 */
 	struct ChangeListener {
 
@@ -63,7 +61,6 @@ public:
 	/**
 	 * Code completion listener
 	 * @author Andreas Drewke
-	 * @version $Id$
 	 */
 	struct CodeCompletionListener {
 

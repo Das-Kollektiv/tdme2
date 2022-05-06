@@ -21,7 +21,6 @@ using tdme::os::filesystem::FileSystemException;
 /**
  * GUI check box element
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUICheckbox final
 	: public GUIElement

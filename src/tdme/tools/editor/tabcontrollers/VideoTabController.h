@@ -29,7 +29,6 @@ using tdme::utilities::MutableString;
 /**
  * Video tab controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabcontrollers::VideoTabController final
 	: public TabController

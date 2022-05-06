@@ -3,16 +3,15 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 
-using tdme::engine::subsystems::rendering::Object3DNode;
+using tdme::engine::subsystems::rendering::ObjectNode;
 
 /**
  * Transparent face to be rendered
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::engine::subsystems::rendering::TransparentRenderFace final
 {
-	Object3DNode* object3DNode;
+	ObjectNode* objectNode;
 	int32_t facesEntityIdx;
 	int32_t faceIdx;
 	float distanceFromCamera;

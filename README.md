@@ -82,6 +82,7 @@
         - entity hierarchy objects
         - environment mapping objects
           - which can be used as reflection sources of other objects
+        - decal objects
     - object/entity transformations
         - scaling
         - rotations

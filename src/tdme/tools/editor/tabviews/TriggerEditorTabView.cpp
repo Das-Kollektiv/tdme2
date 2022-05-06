@@ -67,7 +67,7 @@ TriggerEditorTabView::~TriggerEditorTabView() {
 
 void TriggerEditorTabView::handleInputEvents()
 {
-	prototypePhysicsView->handleInputEvents(prototype, objectScale);
+	prototypePhysicsView->handleInputEvents(prototype);
 	cameraRotationInputHandler->handleInputEvents();
 }
 
@@ -94,6 +94,7 @@ void TriggerEditorTabView::initialize()
 		Console::println(string(exception.what()));
 	}
 	// TODO: load settings
+	if (prototypePhysicsView != nullptr) prototypePhysicsView->setObjectScale(objectScale);
 }
 
 void TriggerEditorTabView::dispose()

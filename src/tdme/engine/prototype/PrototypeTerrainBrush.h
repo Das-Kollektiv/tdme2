@@ -15,7 +15,6 @@ using tdme::engine::prototype::PrototypeTerrainBrushPrototype;
 /**
  * Prototype terrain brush prototype definition
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::prototype::PrototypeTerrainBrush final
 {

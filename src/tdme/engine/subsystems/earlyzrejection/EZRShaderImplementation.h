@@ -17,7 +17,6 @@ using tdme::math::Matrix4x4;
 /**
  * Early z rejection shader implementation
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::engine::subsystems::earlyzrejection::EZRShaderImplementation
 {

@@ -21,7 +21,6 @@ using tdme::utilities::MutableString;
 /**
  * GUI input internal controller
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::nodes::GUIInputInternalController final
 	: public GUINodeController

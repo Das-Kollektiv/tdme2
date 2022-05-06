@@ -6,7 +6,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/Transformations.h>
 
@@ -15,7 +15,7 @@ using std::vector;
 
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::Engine;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 using tdme::engine::ObjectParticleSystem;
 using tdme::engine::Partition;
 using tdme::engine::Transformations;

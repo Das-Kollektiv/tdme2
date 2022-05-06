@@ -11,11 +11,11 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/particlesystem/Particle.h>
 #include <tdme/engine/subsystems/particlesystem/ParticleEmitter.h>
-#include <tdme/engine/subsystems/rendering/Object3DBase.h>
-#include <tdme/engine/subsystems/rendering/Object3DInternal.h>
+#include <tdme/engine/subsystems/rendering/ObjectBase.h>
+#include <tdme/engine/subsystems/rendering/ObjectInternal.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/math/Math.h>
@@ -34,11 +34,11 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::particlesystem::ObjectParticleSystemInternal;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
-using tdme::engine::subsystems::rendering::Object3DBase;
-using tdme::engine::subsystems::rendering::Object3DInternal;
+using tdme::engine::subsystems::rendering::ObjectBase;
+using tdme::engine::subsystems::rendering::ObjectInternal;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 using tdme::engine::Timing;
 using tdme::engine::Transformations;
 using tdme::math::Math;
@@ -57,7 +57,7 @@ ObjectParticleSystemInternal::ObjectParticleSystemInternal(const string& id, Mod
 	particles.resize(maxCount);
 	objects.resize(maxCount);
 	for (auto i = 0; i < objects.size(); i++) {
-		objects[i] = new Object3D(
+		objects[i] = new Object(
 			"tdme.opse." +
 				id +
 				":" +

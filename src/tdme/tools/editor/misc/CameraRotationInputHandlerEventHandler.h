@@ -6,7 +6,6 @@
 /**
  * Camera Rotation Input Handler Event Handler
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::tools::editor::misc::CameraRotationInputHandlerEventHandler
 {

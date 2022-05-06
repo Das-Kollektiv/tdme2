@@ -36,6 +36,7 @@ using tdme::utilities::Time;
 
 /**
  * Miniscript
+ * @author Andreas Drewke
  */
 class tdme::utilities::MiniScript {
 public:

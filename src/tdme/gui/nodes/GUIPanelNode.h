@@ -32,7 +32,6 @@ using tdme::gui::nodes::GUIScreenNode;
  * GUI panel node
  * TODO: remove me!
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::nodes::GUIPanelNode final
 	: public GUILayoutNode

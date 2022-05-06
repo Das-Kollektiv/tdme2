@@ -17,7 +17,6 @@ using tdme::engine::prototype::PrototypeParticleSystem_Type;
 /**
  * Prototype particle system definition
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::prototype::PrototypeParticleSystem final
 {

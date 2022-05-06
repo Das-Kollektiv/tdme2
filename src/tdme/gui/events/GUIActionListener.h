@@ -20,7 +20,6 @@ namespace events {
 /**
  * GUI action listener interface
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::gui::events::GUIActionListener
 {

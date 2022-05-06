@@ -18,7 +18,6 @@ using tdme::utilities::VectorIteratorMultiple;
 /**
  * Bogus/Simple partition implementation
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::SimplePartition final: public Partition
 {

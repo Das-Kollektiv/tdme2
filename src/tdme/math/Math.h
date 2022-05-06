@@ -15,7 +15,6 @@
 /**
  * Standard math functions
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::math::Math final
 {

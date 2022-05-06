@@ -13,7 +13,6 @@ using tdme::math::Vector3;
 /**
  * Prototype circle particle emitter plane velocity definition
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::prototype::PrototypeParticleSystem_CircleParticleEmitterPlaneVelocity final
 {

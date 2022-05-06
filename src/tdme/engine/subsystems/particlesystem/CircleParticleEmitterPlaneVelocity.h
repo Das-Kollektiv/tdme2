@@ -19,7 +19,6 @@ using tdme::math::Vector3;
 /**
  * Circle particle emitter with velocity that lives in plane only
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::particlesystem::CircleParticleEmitterPlaneVelocity final
 	: public ParticleEmitter

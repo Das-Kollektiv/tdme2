@@ -8,7 +8,6 @@ using tdme::math::Vector3;
 /**
  * Flow map cell
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::utilities::FlowMapCell final {
 	friend class PathFinding;

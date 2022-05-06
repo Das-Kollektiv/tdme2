@@ -14,7 +14,7 @@
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
-#include <tdme/engine/Object3DModel.h>
+#include <tdme/engine/ObjectModel.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -38,7 +38,7 @@ using tdme::engine::primitives::Sphere;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeBoundingVolume;
-using tdme::engine::Object3DModel;
+using tdme::engine::ObjectModel;
 using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
@@ -170,9 +170,9 @@ void PrototypeBoundingVolume::setupConvexMesh(const string& pathName, const stri
 			pathName,
 			fileName
 		);
-		auto convexMeshObject3DModel = new Object3DModel(convexMeshModel);
-		boundingVolume = new ConvexMesh(convexMeshObject3DModel);
-		delete convexMeshObject3DModel;
+		auto convexMeshObjectModel = new ObjectModel(convexMeshModel);
+		boundingVolume = new ConvexMesh(convexMeshObjectModel);
+		delete convexMeshObjectModel;
 		Primitives::setupConvexMeshModel(convexMeshModel);
 		model = convexMeshModel;
 	} catch (Exception& exception) {
@@ -196,9 +196,9 @@ void PrototypeBoundingVolume::setupConvexMesh(const vector<uint8_t>& data) {
 			FileSystem::getInstance()->getPathName(prototype->getFileName()),
 			FileSystem::getInstance()->getFileName(prototype->getFileName()) + "." + to_string(id)
 		);
-		auto convexMeshObject3DModel = new Object3DModel(convexMeshModel);
-		boundingVolume = new ConvexMesh(convexMeshObject3DModel);
-		delete convexMeshObject3DModel;
+		auto convexMeshObjectModel = new ObjectModel(convexMeshModel);
+		boundingVolume = new ConvexMesh(convexMeshObjectModel);
+		delete convexMeshObjectModel;
 		Primitives::setupConvexMeshModel(convexMeshModel);
 		model = convexMeshModel;
 	} catch (Exception& exception) {

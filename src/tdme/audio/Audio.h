@@ -24,7 +24,6 @@ using tdme::math::Vector3;
 /**
  * Interface to audio module
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::audio::Audio final
 {

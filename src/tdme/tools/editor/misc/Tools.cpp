@@ -30,9 +30,9 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityHierarchy.h>
-#include <tdme/engine/ImposterObject3D.h>
+#include <tdme/engine/ImposterObject.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/SimplePartition.h>
 #include <tdme/engine/Transformations.h>
@@ -86,9 +86,9 @@ using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::EntityHierarchy;
-using tdme::engine::ImposterObject3D;
+using tdme::engine::ImposterObject;
 using tdme::engine::Light;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 using tdme::engine::SceneConnector;
 using tdme::engine::SimplePartition;
 using tdme::engine::Transformations;
@@ -291,7 +291,7 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 	for (auto i = 0; i < prototype->getBoundingVolumeCount(); i++) {
 		auto entityBoundingVolume = prototype->getBoundingVolume(i);
 		if (entityBoundingVolume->getModel() != nullptr) {
-			auto bvObject = new Object3D("tdme.prototype.bv." + to_string(i), entityBoundingVolume->getModel());
+			auto bvObject = new Object("tdme.prototype.bv." + to_string(i), entityBoundingVolume->getModel());
 			bvObject->setEnabled(false);
 			entityBoundingVolumesHierarchy->addEntity(bvObject);
 		}
@@ -301,7 +301,8 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 
 	//
 	if (prototype->getType() == Prototype_Type::TRIGGER ||
-		prototype->getType() == Prototype_Type::ENVIRONMENTMAPPING) {
+		prototype->getType() == Prototype_Type::ENVIRONMENTMAPPING ||
+		prototype->getType() == Prototype_Type::DECAL) {
 		entityBoundingBox = entityBoundingVolumesHierarchy->getBoundingBox();
 	} else
 	if (prototype->getType() == Prototype_Type::PARTICLESYSTEM) {
@@ -339,7 +340,7 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 			{
 				auto imposterLOD = prototype->getImposterLOD();
 				if (imposterLOD != nullptr) {
-					modelEntity = new ImposterObject3D(
+					modelEntity = new ImposterObject(
 						"model",
 						imposterLOD->getModels()
 					);
@@ -348,7 +349,7 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 					modelEntity->setReceivesShadows(true);
 					modelEntity->setEffectColorMul(colorMul);
 					modelEntity->setEffectColorAdd(colorAdd);
-					auto object = dynamic_cast<ImposterObject3D*>(modelEntity);
+					auto object = dynamic_cast<ImposterObject*>(modelEntity);
 					object->setShader(prototype->getShader());
 					object->setDistanceShader(prototype->getDistanceShader());
 					object->setDistanceShaderDistance(prototype->getDistanceShaderDistance());
@@ -370,12 +371,12 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 		}
 		entityBoundingBox = prototype->getModel()->getBoundingBox();
 		if (model != nullptr) {
-			modelEntity = new Object3D("model", model);
+			modelEntity = new Object("model", model);
 			modelEntity->setContributesShadows(true);
 			modelEntity->setReceivesShadows(true);
 			modelEntity->setEffectColorMul(colorMul);
 			modelEntity->setEffectColorAdd(colorAdd);
-			auto object = dynamic_cast<Object3D*>(modelEntity);
+			auto object = dynamic_cast<Object*>(modelEntity);
 			object->setShader(prototype->getShader());
 			object->setDistanceShader(prototype->getDistanceShader());
 			object->setDistanceShaderDistance(prototype->getDistanceShaderDistance());
@@ -414,7 +415,7 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 		Math::ceil(maxAxisDimension),
 		0.0f
 	);
-	auto groundObject = new Object3D("ground", ground);
+	auto groundObject = new Object("ground", ground);
 	groundObject->setEnabled(false);
 	groundObject->setScale(objectScale);
 	groundObject->update();

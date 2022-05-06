@@ -8,7 +8,6 @@ using tdme::gui::nodes::GUINode_Clipping;
 /**
  * GUI node clipping entity
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::gui::nodes::GUINode_Clipping
 {

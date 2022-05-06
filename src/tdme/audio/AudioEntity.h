@@ -14,7 +14,6 @@ using tdme::math::Vector3;
 /**
  * Audio entity base class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::audio::AudioEntity
 {

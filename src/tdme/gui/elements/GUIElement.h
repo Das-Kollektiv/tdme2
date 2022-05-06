@@ -18,7 +18,6 @@ using tdme::gui::nodes::GUIScreenNode;
 /**
  * GUI element base class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUIElement
 {

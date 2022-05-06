@@ -28,7 +28,6 @@ using tdme::engine::primitives::Sphere;
 /**
  * Helper class to create models from physics primitive bounding volumes
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::utilities::Primitives final
 {

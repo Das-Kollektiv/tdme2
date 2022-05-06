@@ -13,7 +13,6 @@ using tdme::engine::FrameBuffer;
 /**
  * Post processing shader base implementation
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::postprocessing::PostProcessingShaderBaseImplementation: public PostProcessingShaderImplementation
 {

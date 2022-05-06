@@ -12,7 +12,6 @@ using tdme::engine::FrameBuffer;
 /**
  * Post processing shader program implementation interface
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::engine::subsystems::postprocessing::PostProcessingShaderImplementation
 {

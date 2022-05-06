@@ -32,7 +32,6 @@ using tdme::utilities::FloatBuffer;
 /**
  * Batch renderer for transparent triangles
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::rendering::BatchRendererTriangles final
 {

@@ -9,7 +9,6 @@ using tdme::engine::model::AnimationSetup;
 /**
  * Animation state entity
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::engine::subsystems::rendering::AnimationState final {
 	AnimationSetup* setup { nullptr };

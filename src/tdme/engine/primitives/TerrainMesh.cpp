@@ -9,7 +9,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/Triangle.h>
-#include <tdme/engine/Object3DModel.h>
+#include <tdme/engine/ObjectModel.h>
 #include <tdme/utilities/Console.h>
 
 using std::to_string;
@@ -18,14 +18,14 @@ using std::vector;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::TerrainMesh;
 using tdme::engine::primitives::Triangle;
-using tdme::engine::Object3DModel;
+using tdme::engine::ObjectModel;
 using tdme::utilities::Console;
 
 TerrainMesh::TerrainMesh()
 {
 }
 
-TerrainMesh::TerrainMesh(Object3DModel* model, const Transformations& transformations)
+TerrainMesh::TerrainMesh(ObjectModel* model, const Transformations& transformations)
 {
 	// fetch vertices and indices
 	vector<Triangle> triangles;

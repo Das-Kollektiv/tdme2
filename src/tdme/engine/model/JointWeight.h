@@ -6,7 +6,6 @@
 /**
  * Joint/bone weight
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::engine::model::JointWeight final
 {

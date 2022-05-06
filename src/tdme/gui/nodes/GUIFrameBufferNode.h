@@ -33,7 +33,6 @@ using tdme::gui::nodes::GUITextureBaseNode;
 /**
  * GUI frame buffer node
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::nodes::GUIFrameBufferNode final
 	: public GUITextureBaseNode

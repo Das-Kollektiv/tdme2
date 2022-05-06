@@ -47,6 +47,7 @@
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
+#include <tdme/tools/editor/tabviews/DecalEditorTabView.h>
 #include <tdme/tools/editor/tabviews/EmptyEditorTabView.h>
 #include <tdme/tools/editor/tabviews/EnvMapEditorTabView.h>
 #include <tdme/tools/editor/tabviews/FontTabView.h>
@@ -115,6 +116,7 @@ using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 using tdme::tools::editor::tabcontrollers::TabController;
+using tdme::tools::editor::tabviews::DecalEditorTabView;
 using tdme::tools::editor::tabviews::EmptyEditorTabView;
 using tdme::tools::editor::tabviews::EnvMapEditorTabView;
 using tdme::tools::editor::tabviews::FontTabView;
@@ -625,6 +627,7 @@ void EditorScreenController::ScanFilesThread::run() {
 				if (StringTools::endsWith(fileNameLowerCase, ".dae") == true) return true;
 				if (StringTools::endsWith(fileNameLowerCase, ".fbx") == true) return true;
 				if (StringTools::endsWith(fileNameLowerCase, ".glb") == true) return true;
+				if (StringTools::endsWith(fileNameLowerCase, ".gltf") == true) return true;
 				if (StringTools::endsWith(fileNameLowerCase, ".tm") == true) return true;
 				// property files
 				if (StringTools::endsWith(fileNameLowerCase, ".properties") == true) return true;
@@ -639,6 +642,8 @@ void EditorScreenController::ScanFilesThread::run() {
 				if (StringTools::endsWith(fileNameLowerCase, ".ttrigger") == true) return true;
 				// tdme envmap
 				if (StringTools::endsWith(fileNameLowerCase, ".tenvmap") == true) return true;
+				// tdme decal
+				if (StringTools::endsWith(fileNameLowerCase, ".tdecal") == true) return true;
 				// tdme model
 				if (StringTools::endsWith(fileNameLowerCase, ".tmodel") == true) return true;
 				// tdme scene
@@ -762,7 +767,7 @@ void EditorScreenController::ScanFilesThread::run() {
 				if (StringTools::endsWith(fileNameLowerCase, ".png") == true) {
 					thumbnailTexture = TextureReader::read(pathName, fileName, false);
 				} else
-				if (((StringTools::endsWith(fileNameLowerCase, ".tmodel") == true && PrototypeReader::readThumbnail(pathName, fileName, thumbnailPNGData) == true) ||
+				if ((((StringTools::endsWith(fileNameLowerCase, ".tmodel") == true || StringTools::endsWith(fileNameLowerCase, ".tdecal") == true) && PrototypeReader::readThumbnail(pathName, fileName, thumbnailPNGData) == true) ||
 					(StringTools::endsWith(fileNameLowerCase, ".tm") == true && FileSystem::getInstance()->getThumbnailAttachment(pathName, fileName, thumbnailPNGData) == true)) &&
 					thumbnailPNGData.empty() == false) {
 					static int thumbnailIdx = 0; // TODO: improve me
@@ -873,7 +878,7 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 		auto width = 1.0f;
 		auto height = 1.0f;
 		auto depth = 1.0f;
-		auto boundingBox = new BoundingBox(Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), Vector3(+width / 2.0f, height, +depth / 2.0f));
+		auto boundingBox = BoundingBox(Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), Vector3(+width / 2.0f, height, +depth / 2.0f));
 		prototype = new Prototype(
 			Prototype::ID_NONE,
 			Prototype_Type::TRIGGER,
@@ -886,13 +891,13 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			Vector3()
 		);
 		prototype->addBoundingVolume(0, new PrototypeBoundingVolume(0, prototype));
-		prototype->getBoundingVolume(0)->setupAabb(boundingBox->getMin(), boundingBox->getMax());
+		prototype->getBoundingVolume(0)->setupAabb(boundingBox.getMin(), boundingBox.getMax());
 	} else
 	if (type == "envmap") {
 		auto width = 1.0f;
 		auto height = 1.0f;
 		auto depth = 1.0f;
-		auto boundingBox = new BoundingBox(Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), Vector3(+width / 2.0f, height, +depth / 2.0f));
+		auto boundingBox = BoundingBox(Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), Vector3(+width / 2.0f, height, +depth / 2.0f));
 		prototype = new Prototype(
 			Prototype::ID_NONE,
 			Prototype_Type::ENVIRONMENTMAPPING,
@@ -905,7 +910,26 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			Vector3()
 		);
 		prototype->addBoundingVolume(0, new PrototypeBoundingVolume(0, prototype));
-		prototype->getBoundingVolume(0)->setupAabb(boundingBox->getMin(), boundingBox->getMax());
+		prototype->getBoundingVolume(0)->setupAabb(boundingBox.getMin(), boundingBox.getMax());
+	} else
+	if (type == "decal") {
+		auto width = 1.0f;
+		auto height = 1.0f;
+		auto depth = 1.0f;
+		auto boundingBox = BoundingBox(Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), Vector3(+width / 2.0f, height, +depth / 2.0f));
+		prototype = new Prototype(
+			Prototype::ID_NONE,
+			Prototype_Type::DECAL,
+			Tools::removeFileEnding(fileName),
+			Tools::removeFileEnding(fileName),
+			pathName + "/" + fileName,
+			string(),
+			string(),
+			nullptr,
+			Vector3()
+		);
+		prototype->addBoundingVolume(0, new PrototypeBoundingVolume(0, prototype));
+		prototype->getBoundingVolume(0)->setupAabb(boundingBox.getMin(), boundingBox.getMax());
 	} else
 	if (type == "model") {
 		prototype = new Prototype(
@@ -1026,6 +1050,14 @@ void EditorScreenController::FileOpenThread::run() {
 					);
 					break;
 				}
+			case FILETYPE_DECALPROTOTYPE:
+				{
+					prototype = PrototypeReader::read(
+						FileSystem::getInstance()->getPathName(absoluteFileName),
+						FileSystem::getInstance()->getFileName(absoluteFileName)
+					);
+					break;
+				}
 			case FILETYPE_MODELPROTOTYPE:
 				{
 					prototype = PrototypeReader::read(
@@ -1128,6 +1160,9 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 	if (StringTools::endsWith(fileNameLowerCase, ".tenvmap") == true) {
 		fileType = FILETYPE_ENVMAPPROTOTYPE;
 	} else
+	if (StringTools::endsWith(fileNameLowerCase, ".tdecal") == true) {
+		fileType = FILETYPE_DECALPROTOTYPE;
+	} else
 	if (StringTools::endsWith(fileNameLowerCase, ".tscene") == true) {
 		fileType = FILETYPE_SCENE;
 	} else
@@ -1220,6 +1255,13 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 			case FILETYPE_ENVMAPPROTOTYPE:
 				{
 					view->getPopUps()->getProgressBarScreenController()->show("Opening environment map prototype ...", false);
+					fileOpenThread = new FileOpenThread(tabId, fileType, absoluteFileName);
+					fileOpenThread->start();
+					break;
+				}
+			case FILETYPE_DECALPROTOTYPE:
+				{
+					view->getPopUps()->getProgressBarScreenController()->show("Opening decal prototype ...", false);
 					fileOpenThread = new FileOpenThread(tabId, fileType, absoluteFileName);
 					fileOpenThread->start();
 					break;
@@ -1337,6 +1379,15 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 					colorType = "{$color.type_scene}";
 					tabType = EditorTabView::TABTYPE_ENVMAPEDITOR;
 					tabView = new EnvMapEditorTabView(view, tabId, scene, prototype);
+					viewPortTemplate = "template_viewport_scene.xml";
+					break;
+				}
+			case FILETYPE_DECALPROTOTYPE:
+				{
+					icon = "{$icon.type_decal}";
+					colorType = "{$color.type_prototype}";
+					tabType = EditorTabView::TABTYPE_DECALEDITOR;
+					tabView = new DecalEditorTabView(view, tabId, prototype);
 					viewPortTemplate = "template_viewport_scene.xml";
 					break;
 				}

@@ -88,11 +88,13 @@ void TMWriter::write(Model* model, vector<uint8_t>& data) {
 	os.writeString("TDME Model");
 	os.writeByte(static_cast< uint8_t >(1));
 	os.writeByte(static_cast< uint8_t >(9));
-	os.writeByte(static_cast< uint8_t >(17));
+	os.writeByte(static_cast< uint8_t >(18));
 	os.writeString(model->getName());
 	os.writeString(model->getUpVector()->getName());
 	os.writeString(model->getRotationOrder()->getName());
 	os.writeString(model->getShaderModel()->getName());
+	os.writeBoolean(model->hasEmbeddedSpecularTextures());
+	os.writeBoolean(model->hasEmbeddedPBRTextures());
 	os.writeFloatArray(model->getBoundingBox()->getMin().getArray());
 	os.writeFloatArray(model->getBoundingBox()->getMax().getArray());
 	os.writeFloat(model->getFPS());
@@ -117,13 +119,13 @@ void TMWriter::writeEmbeddedTextures(TMWriterOutputStream* os, Model* m) {
 	for (auto it: m->getMaterials()) {
 		Material* material = it.second;
 		auto smp = material->getSpecularMaterialProperties();
-		if (smp != nullptr && smp->hasEmbeddedTextures() == true) {
+		if (smp != nullptr && m->hasEmbeddedSpecularTextures() == true) {
 			if (smp->getDiffuseTexture() != nullptr) embeddedTextures[smp->getDiffuseTexture()->getId()] = smp->getDiffuseTexture();
 			if (smp->getSpecularTexture() != nullptr) embeddedTextures[smp->getSpecularTexture()->getId()] = smp->getSpecularTexture();
 			if (smp->getNormalTexture() != nullptr) embeddedTextures[smp->getNormalTexture()->getId()] = smp->getNormalTexture();
 		}
 		auto pmp = material->getPBRMaterialProperties();
-		if (pmp != nullptr && pmp->hasEmbeddedTextures() == true) {
+		if (pmp != nullptr && m->hasEmbeddedPBRTextures() == true) {
 			if (pmp->getBaseColorTexture() != nullptr) embeddedTextures[pmp->getBaseColorTexture()->getId()] = pmp->getBaseColorTexture();
 			if (pmp->getMetallicRoughnessTexture() != nullptr) embeddedTextures[pmp->getMetallicRoughnessTexture()->getId()] = pmp->getMetallicRoughnessTexture();
 			if (pmp->getNormalTexture() != nullptr) embeddedTextures[pmp->getNormalTexture()->getId()] = pmp->getNormalTexture();
@@ -146,7 +148,6 @@ void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m)
 	auto smp = m->getSpecularMaterialProperties();
 	auto pmp = m->getPBRMaterialProperties();
 	os->writeString(m->getId());
-	os->writeBoolean(smp->hasEmbeddedTextures());
 	os->writeFloatArray(smp->getAmbientColor().getArray());
 	os->writeFloatArray(smp->getDiffuseColor().getArray());
 	os->writeFloatArray(smp->getSpecularColor().getArray());
@@ -170,7 +171,6 @@ void TMWriter::writeMaterial(TMWriterOutputStream* os, Material* m)
 		os->writeBoolean(false);
 	} else {
 		os->writeBoolean(true);
-		os->writeBoolean(pmp->hasEmbeddedTextures());
 		os->writeFloatArray(pmp->getBaseColorFactor().getArray());
 		os->writeString(pmp->getBaseColorTexturePathName());
 		os->writeString(pmp->getBaseColorTextureFileName());

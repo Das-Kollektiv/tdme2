@@ -25,7 +25,6 @@ using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubCo
 /**
  * Prototype physics view
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabviews::subviews::PrototypePhysicsSubView final: public Gizmo
 {
@@ -50,6 +49,8 @@ private:
 
 	int32_t boundingVolumeTypeMask;
 
+	Vector3 objectScale { 0.15f, 0.15f, 0.15f };
+
 public:
 	/**
 	 * Public constructor
@@ -65,6 +66,21 @@ public:
 	 * Destructor
 	 */
 	~PrototypePhysicsSubView();
+
+	/**
+	 * @return pop ups
+	 */
+	inline PopUps* getPopUps() {
+		return popUps;
+	}
+
+	/**
+	 * Set object scale
+	 * @param objectScale object scale
+	 */
+	void setObjectScale(const Vector3& objectScale) {
+		this->objectScale = objectScale;
+	}
 
 	/**
 	 * @return display bounding volume
@@ -95,11 +111,6 @@ public:
 	inline void setDisplayBoundingVolumeIdx(int displayBoundingVolumeIdx) {
 		this->displayBoundingVolumeIdx = displayBoundingVolumeIdx;
 	}
-
-	/**
-	 * @return pop ups
-	 */
-	PopUps* getPopUps();
 
 	/**
 	 * Clear model bounding volume
@@ -181,17 +192,15 @@ public:
 	 * @param prototype prototype
 	 * @param idx bounding volume index
 	 * @param transformations transformations
-	 * @param objectScale object scale
 	 * @param guiOnly only update GUI not the BV it self
 	 */
-	void applyBoundingVolumeTransformations(Prototype* prototype, int idx, const Transformations& transformations, const Vector3& objectScale, bool guiOnly);
+	void applyBoundingVolumeTransformations(Prototype* prototype, int idx, const Transformations& transformations, bool guiOnly);
 
 	/**
 	 * Handle input events
 	 * @param prototype prototype
-	 * @param objectScale object scale
 	 */
-	void handleInputEvents(Prototype* prototype, const Vector3& objectScale);
+	void handleInputEvents(Prototype* prototype);
 
 	/**
 	 * Display

@@ -14,7 +14,6 @@ using tdme::math::Matrix4x4;
 /**
  * Lines shader program
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::lines::LinesShader final
 {

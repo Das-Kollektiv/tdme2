@@ -13,7 +13,6 @@ using tdme::engine::subsystems::renderer::Renderer;
 /**
  * Lighting shader implementation
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::lighting::LightingShaderPBRFoliageImplementation: public LightingShaderPBRBaseImplementation
 {

@@ -22,7 +22,6 @@ using tdme::os::filesystem::FileSystemException;
 /**
  * GUI tabs element
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::elements::GUITabs final: public GUIElement
 {

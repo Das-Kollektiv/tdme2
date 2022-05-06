@@ -53,7 +53,6 @@ using tdme::utilities::MutableString;
 /**
  * GUI screen node that represents a screen that can be rendered via GUI system
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::nodes::GUIScreenNode final
 	: public GUIParentNode

@@ -44,7 +44,6 @@ namespace models {
 /**
  * TM writer output stream
  * @author Andreas Drewke
- * @version $Id$
  */
 class TMWriterOutputStream {
 private:
@@ -217,7 +216,6 @@ public:
 /**
  * TDME model writer
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::fileio::models::TMWriter
 {

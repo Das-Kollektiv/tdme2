@@ -15,7 +15,7 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
@@ -44,7 +44,7 @@ using tdme::engine::scene::Scene;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 using tdme::engine::SceneConnector;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
@@ -71,7 +71,7 @@ void WaterTest::display()
 {
 	// animate sky dome
 	{
-		auto skyDome = static_cast<Object3D*>(engine->getEntity("sky_dome"));
+		auto skyDome = static_cast<Object*>(engine->getEntity("sky_dome"));
 		skyDome->setTextureMatrix((Matrix2D3x3()).identity().translate(Vector2(0.0f, skyDomeTranslation * 0.01f)));
 
 		auto skyPanorama = engine->getEntity("sky_panorama");
@@ -151,7 +151,7 @@ void WaterTest::initialize()
 
 	scene = SceneReader::read("resources/tests/levels/water", "Level_WaterShader.tscene");
 	SceneConnector::setLights(engine, scene);
-	SceneConnector::addScene(engine, scene, false, false, false, false);
+	SceneConnector::addScene(engine, scene, false, false, false, false, false);
 
 	// load sky
 	skySpherePrototype = PrototypeReader::read("resources/engine/models", "sky_sphere.tmodel");
@@ -162,7 +162,7 @@ void WaterTest::initialize()
 	// add sky
 	{
 		// sky sphere
-		auto skySphere = new Object3D("sky_sphere", skySpherePrototype->getModel());
+		auto skySphere = new Object("sky_sphere", skySpherePrototype->getModel());
 		skySphere->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
 		skySphere->setShader("sky");
 		skySphere->setFrustumCulling(false);
@@ -175,7 +175,7 @@ void WaterTest::initialize()
 		engine->addEntity(skySphere);
 
 		// sky dome
-		auto skyDome = new Object3D("sky_dome", skyDomePrototype->getModel());
+		auto skyDome = new Object("sky_dome", skyDomePrototype->getModel());
 		skyDome->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
 		skyDome->setShader("sky");
 		skyDome->setFrustumCulling(false);
@@ -190,7 +190,7 @@ void WaterTest::initialize()
 		engine->addEntity(skyDome);
 
 		// sky panorama
-		auto skyPanorama = new Object3D("sky_panorama", skyPanoramaPrototype->getModel());
+		auto skyPanorama = new Object("sky_panorama", skyPanoramaPrototype->getModel());
 		skyPanorama->setRenderPass(Entity::RENDERPASS_NOFRUSTUMCULLING);
 		skyPanorama->setShader("sky");
 		skyPanorama->setFrustumCulling(false);
@@ -207,7 +207,7 @@ void WaterTest::initialize()
 	{
 		// sphere
 		spherePrototype->getModel()->getMaterials()["CM_Shader_Sphere_M"]->getSpecularMaterialProperties()->setReflection(1.0f);
-		auto sphere = new Object3D("sphere", spherePrototype->getModel());
+		auto sphere = new Object("sphere", spherePrototype->getModel());
 		sphere->setScale(Vector3(5.0f, 5.0f, 5.0f));
 		sphere->setTranslation(Vector3(0.0f, 20.0f, 0.0f));
 		sphere->setReflectionEnvironmentMappingId("New environment mapping_2");
@@ -218,7 +218,7 @@ void WaterTest::initialize()
 
 	{
 		// player sphere
-		auto playerSphere = new Object3D("playersphere", spherePrototype->getModel());
+		auto playerSphere = new Object("playersphere", spherePrototype->getModel());
 		playerSphere->setScale(Vector3(5.0f, 5.0f, 5.0f));
 		playerSphere->setTranslation(Vector3(0.0f, 20.0f, 0.0f));
 		playerSphere->update();

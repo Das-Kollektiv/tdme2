@@ -11,7 +11,6 @@ using tdme::math::Vector3;
 /**
  * Sphere physics primitive
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::primitives::Sphere final
 	: public BoundingVolume

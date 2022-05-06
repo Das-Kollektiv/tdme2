@@ -19,7 +19,6 @@ using tdme::utilities::ObjectDeleter;
 /**
  * Water shader test
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::tests::WaterTest final
 	: public virtual Application, public virtual InputEventHandler

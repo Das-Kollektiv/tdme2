@@ -35,7 +35,6 @@ using tdme::gui::nodes::GUITextureBaseNode;
 /**
  * GUI texture node
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::nodes::GUITextureNode final
 	: public GUITextureBaseNode

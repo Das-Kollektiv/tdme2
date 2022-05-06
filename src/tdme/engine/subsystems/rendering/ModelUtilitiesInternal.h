@@ -18,13 +18,12 @@ using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::rendering::ModelStatistics;
-using tdme::engine::subsystems::rendering::Object3DModelInternal;
+using tdme::engine::subsystems::rendering::ObjectModelInternal;
 using tdme::math::Matrix4x4;
 
 /**
  * Model utilities
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::rendering::ModelUtilitiesInternal
 {
@@ -52,10 +51,10 @@ public:
 
 	/**
 	 * Compute model statistics
-	 * @param object3DModelInternal object 3d model internal
+	 * @param objectModelInternal object model internal
 	 * @param modelStatistics model statistics
 	 */
-	static void computeModelStatistics(Object3DModelInternal* object3DModelInternal, ModelStatistics* modelStatistics);
+	static void computeModelStatistics(ObjectModelInternal* objectModelInternal, ModelStatistics* modelStatistics);
 
 	/**
 	 * Compute if model 1 equals model 2
@@ -67,26 +66,26 @@ public:
 
 	/**
 	 * Compute if model 1 equals model 2
-	 * @param object3DModel1Internal model 1
-	 * @param object3DModel2Internal model 2
+	 * @param objectModel1Internal model 1
+	 * @param objectModel2Internal model 2
 	 * @return model1 equals model2
 	 */
-	static bool equals(Object3DModelInternal* object3DModel1Internal, Object3DModelInternal* object3DModel2Internal);
+	static bool equals(ObjectModelInternal* objectModel1Internal, ObjectModelInternal* objectModel2Internal);
 
 private:
 	/**
-	 * Creates a bounding box from given object3d model
-	 * @param object3DModelInternal model
+	 * Creates a bounding box from given object model
+	 * @param objectModelInternal model
 	 * @return axis aligned bounding box
 	 */
-	static BoundingBox* createBoundingBox(Object3DModelInternal* object3DModelInternal);
+	static BoundingBox* createBoundingBox(ObjectModelInternal* objectModelInternal);
 
 	/**
-	 * Creates a bounding box from given object3d model without mesh
-	 * @param object3DModelInternal model
+	 * Creates a bounding box from given object model without mesh
+	 * @param objectModelInternal model
 	 * @return boundingBox axis aligned bounding box
 	 */
-	static BoundingBox* createBoundingBoxNoMesh(Object3DModelInternal* object3DModelInternal);
+	static BoundingBox* createBoundingBoxNoMesh(ObjectModelInternal* objectModelInternal);
 
 	/**
 	 * Invert normals recursive

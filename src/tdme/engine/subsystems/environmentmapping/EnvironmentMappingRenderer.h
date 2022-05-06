@@ -18,14 +18,13 @@ using tdme::engine::Entity;
 using tdme::engine::FrameBuffer;
 using tdme::engine::GeometryBuffer;
 using tdme::engine::Light;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
 /**
  * Environment mapping
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::environmentmapping::EnvironmentMappingRenderer final
 {

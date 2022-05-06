@@ -18,7 +18,6 @@ using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 /**
  * GUI node border entity
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::gui::nodes::GUINode_Border
 {

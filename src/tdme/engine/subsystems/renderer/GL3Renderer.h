@@ -31,7 +31,6 @@ using tdme::utilities::ShortBuffer;
 /**
  * OpenGL 3 renderer
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::renderer::GL3Renderer: public Renderer
 {

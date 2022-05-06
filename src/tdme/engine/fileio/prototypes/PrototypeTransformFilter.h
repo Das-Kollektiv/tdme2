@@ -10,7 +10,6 @@ using tdme::engine::prototype::BaseProperties;
 /**
  * Prototype transform filter
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::engine::fileio::prototypes::PrototypeTransformFilter
 {

@@ -16,7 +16,6 @@ using tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderDefaultImple
 /**
  * Shadow mapping default shader to render shadow map
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::shadowmapping::ShadowMapRenderShaderDefaultImplementation: public ShadowMapRenderShaderBaseImplementation
 {

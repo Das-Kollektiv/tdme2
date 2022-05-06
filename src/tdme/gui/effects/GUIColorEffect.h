@@ -17,7 +17,6 @@ using tdme::gui::renderer::GUIRenderer;
 /**
  * GUI color effect
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::effects::GUIColorEffect final: public GUIEffect
 {

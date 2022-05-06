@@ -20,7 +20,6 @@ using tdme::math::Vector3;
 /**
  * Bounding volume interface
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::primitives::BoundingVolume
 {

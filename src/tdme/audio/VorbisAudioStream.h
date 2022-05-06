@@ -15,7 +15,6 @@ using tdme::utilities::ByteBuffer;
 /**
  * Vorbis audio stream
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::audio::VorbisAudioStream final
 	: public AudioStream

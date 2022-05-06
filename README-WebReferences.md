@@ -30,6 +30,7 @@
   - https://gist.github.com/niw/5963798
   - https://gist.github.com/Youka/4153f12cf2e17a77314c
   - https://github.com/danielscherzer/NotepaddPP-glsl-integration.git
+  - https://github.com/diharaw/deferred-decals
   - https://github.com/floooh/sokol/blob/master/sokol_app.h
   - https://github.com/KhronosGroup/Vulkan-Docs/wiki/Synchronization-Examples
   - https://github.com/KhronosGroup/glTF-WebGL-PBR/
@@ -50,8 +51,10 @@
   - https://jogamp.org/wiki/index.php/Jogl_Tutorial
   - https://knarkowicz.wordpress.com/2016/01/06/aces-filmic-tone-mapping-curve/
   - https://learnopengl.com/Advanced-Lighting/Deferred-Shading
+  - https://martindevans.me/game-development/2015/02/27/Drawing-Stuff-On-Other-Stuff-With-Deferred-Screenspace-Decals/
   - https://www.opengl-tutorial.org/intermediate-tutorials/tutorial-13-normal-mapping/
   - https://www.reddit.com/r/vulkan/comments/4u7z7w/multiple_vkdescriptorsetlayouts_in_the/d5nkyht/
+  - https://www-ui.is.s.u-tokyo.ac.jp/~takeo/papers/i3dg2001.pdf
   - https://seblagarde.wordpress.com/2012/01/08/pi-or-not-to-pi-in-game-lighting-equation/
   - https://stackoverflow.com/questions/12280472/stackwalk64-does-not-work-with-release-build
   - https://stackoverflow.com/questions/12748103/how-to-change-freeglut-main-window-icon-in-c

@@ -22,6 +22,7 @@
 #include <tdme/engine/prototype/Prototype_Type.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
+#include <tdme/engine/prototype/PrototypeDecal.h>
 #include <tdme/engine/prototype/PrototypeLODLevel.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_BoundingBoxParticleEmitter.h>
@@ -41,7 +42,7 @@
 #include <tdme/engine/prototype/PrototypeTerrainBrushPrototype.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/EntityShaderParameters.h>
-#include <tdme/engine/LODObject3D.h>
+#include <tdme/engine/LODObject.h>
 #include <tdme/engine/ShaderParameter.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -95,7 +96,7 @@ using tdme::engine::prototype::PrototypeTerrainBrush;
 using tdme::engine::prototype::PrototypeTerrainBrushPrototype;
 using tdme::engine::Engine;
 using tdme::engine::EntityShaderParameters;
-using tdme::engine::LODObject3D;
+using tdme::engine::LODObject;
 using tdme::engine::ShaderParameter;
 using tdme::math::Vector3;
 using tdme::os::filesystem::FileSystem;
@@ -134,7 +135,7 @@ void PrototypeWriter::writeLODLevelToJSON(Document& jDocument, Value& jLodLevelR
 	auto& jAllocator = jDocument.GetAllocator();
 	jLodLevelRoot.SetObject();
 	jLodLevelRoot.AddMember("t", Value(lodLevel->getType()), jAllocator);
-	if (lodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL) {
+	if (lodLevel->getType() == LODObject::LODLEVELTYPE_MODEL) {
 		//
 		auto modelPathName = Tools::getPathName(lodLevel->getFileName());
 		auto modelFileName = Tools::removeFileEnding(Tools::getFileName(lodLevel->getFileName())) + ".tm";
@@ -177,14 +178,15 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 			jPrototypeRoot.AddMember("thumbnail", Value(base64PNGData, jAllocator), jAllocator);
 		}
 
+		//
 		jPrototypeRoot.AddMember("file", Value(modelPathName + "/" + modelFileName, jAllocator), jAllocator);
 		jPrototypeRoot.AddMember("tm", Value(prototype->isTerrainMesh()), jAllocator);
 		int lodLevelIdx = 2;
 		{
 			auto lodLevel = prototype->getLODLevel2();
 			if (lodLevel != nullptr &&
-				(lodLevel->getType() == LODObject3D::LODLEVELTYPE_IGNORE ||
-				((lodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL) &&
+				(lodLevel->getType() == LODObject::LODLEVELTYPE_IGNORE ||
+				((lodLevel->getType() == LODObject::LODLEVELTYPE_MODEL) &&
 				lodLevel->getModel() != nullptr))) {
 				//
 				Value jLodLevel;
@@ -197,8 +199,8 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 		{
 			auto lodLevel = prototype->getLODLevel3();
 			if (lodLevel != nullptr &&
-				(lodLevel->getType() == LODObject3D::LODLEVELTYPE_IGNORE ||
-				((lodLevel->getType() == LODObject3D::LODLEVELTYPE_MODEL) &&
+				(lodLevel->getType() == LODObject::LODLEVELTYPE_IGNORE ||
+				((lodLevel->getType() == LODObject::LODLEVELTYPE_MODEL) &&
 				lodLevel->getModel() != nullptr))) {
 				//
 				//
@@ -240,6 +242,10 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 	jPrototypeRoot.AddMember("px", Value(prototype->getPivot().getX()), jAllocator);
 	jPrototypeRoot.AddMember("py", Value(prototype->getPivot().getY()), jAllocator);
 	jPrototypeRoot.AddMember("pz", Value(prototype->getPivot().getZ()), jAllocator);
+	if (prototype->getType() == Prototype_Type::DECAL) {
+		jPrototypeRoot.AddMember("df", Value(prototype->getDecal()->getTextureFileName(), jAllocator), jAllocator);
+		jPrototypeRoot.AddMember("thumbnail", Value(prototype->getThumbnail(), jAllocator), jAllocator);
+	} else
 	if (prototype->getType() == Prototype_Type::PARTICLESYSTEM) {
 		Value jParticleSystems;
 		jParticleSystems.SetArray();

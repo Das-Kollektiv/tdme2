@@ -22,7 +22,6 @@ using tdme::utilities::MutableString;
 /**
  * Tab view interface
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::tools::editor::tabviews::TabView: public GUIInputEventHandler
 {

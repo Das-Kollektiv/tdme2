@@ -16,7 +16,6 @@ using tdme::engine::Transformations;
 /**
  * World listener which is about notifying adding or removing bodies
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::engine::physics::WorldListener
 {

@@ -22,7 +22,6 @@ using tdme::gui::GUIParserException;
 /**
  * GUI color
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::nodes::GUIColor final
 	: public Color4Base

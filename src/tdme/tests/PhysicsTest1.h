@@ -17,13 +17,12 @@ using tdme::engine::model::Model;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::Engine;
-using tdme::engine::Object3DModel;
+using tdme::engine::ObjectModel;
 using tdme::utilities::ObjectDeleter;
 
 /**
  * Engine with physics test 1
  * @author andreas.drewke
- * @version $Id$
  */
 class tdme::tests::PhysicsTest1 final
 	: public virtual Application, public virtual InputEventHandler
@@ -47,7 +46,7 @@ private:
 	bool keyD { false };
 	ObjectDeleter<Model> modelDeleter;
 	ObjectDeleter<BoundingVolume> bvDeleter;
-	ObjectDeleter<Object3DModel> object3DModelDeleter;
+	ObjectDeleter<ObjectModel> objectModelDeleter;
 
 public:
 

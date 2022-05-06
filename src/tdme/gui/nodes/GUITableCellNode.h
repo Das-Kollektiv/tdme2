@@ -32,7 +32,6 @@ using tdme::gui::nodes::GUIScreenNode;
 /**
  * GUI panel node
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::nodes::GUITableCellNode final
 	: public GUILayoutNode

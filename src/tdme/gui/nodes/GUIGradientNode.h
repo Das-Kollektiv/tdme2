@@ -34,7 +34,6 @@ using tdme::math::Matrix2D3x3;
 /**
  * GUI gradient node
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::nodes::GUIGradientNode
 	: public GUINode

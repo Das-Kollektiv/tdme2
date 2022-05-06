@@ -14,7 +14,6 @@ using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeSoundsSubCon
 /**
  * Prototype sounds view
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabviews::subviews::PrototypeSoundsSubView final
 {

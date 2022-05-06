@@ -13,7 +13,6 @@ using tdme::engine::Frustum;
 /**
  * Partition interface
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::engine::Partition
 {

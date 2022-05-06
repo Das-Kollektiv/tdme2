@@ -13,7 +13,6 @@ using tdme::math::Vector3;
 /**
  * Transparent point to be rendered
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::engine::subsystems::rendering::TransparentRenderPoint final
 {

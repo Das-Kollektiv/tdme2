@@ -24,7 +24,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/Object3D.h>
+#include <tdme/engine/Object.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Quaternion.h>
@@ -62,7 +62,7 @@ using tdme::engine::DynamicColorTexture;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
-using tdme::engine::Object3D;
+using tdme::engine::Object;
 using tdme::engine::Rotation;
 using tdme::math::Math;
 using tdme::math::Vector3;
@@ -204,7 +204,7 @@ void VideoTest::dispose()
 void VideoTest::initialize()
 {
 	engine->initialize();
-	Object3D* entity;
+	Object* entity;
 	auto cam = engine->getCamera();
 	cam->setZNear(0.1f);
 	cam->setZFar(30.0f);
@@ -227,13 +227,13 @@ void VideoTest::initialize()
 	auto groundModel = modelDeleter.add(Primitives::createModel(ground, "ground_model"));
 	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setAmbientColor(Color4(0.8f, 0.8f, 0.8f, 1.0f));
 	groundModel->getMaterials()["primitive"]->getSpecularMaterialProperties()->setDiffuseColor(Color4(1.0f, 1.0f, 1.0f, 1.0f));
-	entity = new Object3D("ground", groundModel);
+	entity = new Object("ground", groundModel);
 	entity->setTranslation(Vector3(0.0f, -1.0f, 0.0f));
 	entity->setReceivesShadows(true);
 	entity->update();
 	engine->addEntity(entity);
 	auto farPlaneModel = modelDeleter.add(createWallModel());
-	auto farPlane = new Object3D("wall", farPlaneModel);
+	auto farPlane = new Object("wall", farPlaneModel);
 	farPlane->addRotation(Rotation::Y_AXIS, 180.0f);
 	farPlane->update();
 	engine->addEntity(farPlane);

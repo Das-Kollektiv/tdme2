@@ -78,7 +78,6 @@ using tdme::utilities::ShortBuffer;
 /**
  * Vulkan renderer
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::subsystems::renderer::VKRenderer
 	: public Renderer

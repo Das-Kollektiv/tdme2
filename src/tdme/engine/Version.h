@@ -10,7 +10,6 @@ using std::string;
 /**
  * Version
  * @author Andreas Drewke
- * @version $Id$
  */
 struct tdme::engine::Version final
 {

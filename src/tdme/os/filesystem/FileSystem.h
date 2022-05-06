@@ -8,7 +8,6 @@ using tdme::os::filesystem::FileSystemInterface;
 /**
  * File system singleton class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::os::filesystem::FileSystem
 {

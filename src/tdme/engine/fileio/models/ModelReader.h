@@ -21,7 +21,6 @@ using tdme::os::filesystem::FileSystemException;
 /**
  * Model reader class
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::fileio::models::ModelReader final
 {

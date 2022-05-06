@@ -14,7 +14,6 @@ using tdme::audio::AudioBufferManager_AudioBufferManaged;
 /**
  * Audio buffer manager
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::audio::AudioBufferManager final
 {

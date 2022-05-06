@@ -27,7 +27,6 @@ using tdme::tools::editor::views::EditorView;
 /**
  * Video tab view
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::tools::editor::tabviews::VideoTabView final
 	: public TabView

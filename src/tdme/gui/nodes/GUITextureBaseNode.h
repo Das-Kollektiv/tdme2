@@ -36,7 +36,6 @@ using tdme::math::Matrix2D3x3;
 /**
  * GUI texture base node
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::gui::nodes::GUITextureBaseNode
 	: public GUINode

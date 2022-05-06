@@ -43,7 +43,6 @@ namespace models {
 /**
  * TM reader input stream
  * @author Andreas Drewke
- * @version $Id$
  */
 class TMReaderInputStream {
 private:
@@ -225,7 +224,6 @@ public:
 /**
  * TDME model reader
  * @author Andreas Drewke
- * @version $Id$
  */
 class tdme::engine::fileio::models::TMReader
 {
@@ -262,6 +260,18 @@ private:
 
 	/**
 	 * Read material
+	 * @param embeddedTextures embedded textures
+	 * @param fileName file name
+	 * @return material or nullptr
+	 */
+	inline static Texture* getEmbeddedTexture(const map<string, Texture*>& embeddedTextures, const string& fileName) {
+		auto embeddedTextureIt = embeddedTextures.find(fileName);
+		if (embeddedTextureIt == embeddedTextures.end()) return nullptr;
+		return embeddedTextureIt->second;
+	}
+
+	/**
+	 * Read material
 	 * @param pathName path name
 	 * @param is input stream
 	 * @param embeddedTextures embedded textures
@@ -275,12 +285,13 @@ private:
 	 * Read material
 	 * @param pathName path name
 	 * @param is input stream
+	 * @param model model
 	 * @param embeddedTextures embedded textures
 	 * @param version version
 	 * @throws tdme::engine::fileio::models::ModelFileIOException
 	 * @return material
 	 */
-	static Material* readMaterial(const string& pathName, TMReaderInputStream* is, const map<string, Texture*>& embeddedTextures, const array<uint8_t, 3>& version);
+	static Material* readMaterial(const string& pathName, TMReaderInputStream* is, Model* model, const map<string, Texture*>& embeddedTextures, const array<uint8_t, 3>& version);
 
 	/**
 	 * Read animation setup
