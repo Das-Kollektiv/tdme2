@@ -42,7 +42,7 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
 /**
- * Object 3D render group for static objects that might be animated by shaders
+ * Object render group for static objects that might be animated by shaders
  * @author Andreas Drewke
  * @version $Id$
  */

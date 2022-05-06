@@ -75,32 +75,32 @@ ObjectBase::ObjectBase(Model* model, bool useManagers, Engine::AnimationProcessi
 		instanceAnimations[i] = new ObjectAnimation(model, animationProcessingTarget);
 	}
 	transformedFacesIterator = nullptr;
-	// object 3d nodes
-	ObjectNode::createNodes(this, useManagers, animationProcessingTarget, object3dNodes);
+	// object nodes
+	ObjectNode::createNodes(this, useManagers, animationProcessingTarget, objectNodes);
 	// do initial transformations if doing CPU no rendering for deriving bounding boxes and such
-	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) ObjectNode::computeTransformations(0, object3dNodes);
+	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) ObjectNode::computeTransformations(0, objectNodes);
 }
 
 ObjectBase::~ObjectBase() {
 	for (auto i = 0; i < instances; i++) {
 		delete instanceAnimations[i];
 	}
-	for (auto i = 0; i < object3dNodes.size(); i++) {
-		delete object3dNodes[i];
+	for (auto i = 0; i < objectNodes.size(); i++) {
+		delete objectNodes[i];
 	}
 	if (transformedFacesIterator != nullptr) delete transformedFacesIterator;
 }
 
 int ObjectBase::getNodeCount() const {
-	return object3dNodes.size();
+	return objectNodes.size();
 }
 
 void ObjectBase::getTriangles(vector<Triangle>& triangles, int nodeIdx)
 {
 	if (nodeIdx == -1) {
-		for (auto object3DNode : object3dNodes) {
-			auto nodeVerticesTransformed = &object3DNode->mesh->transformedVertices;
-			for (auto& facesEntity : object3DNode->node->getFacesEntities())
+		for (auto objectNode : objectNodes) {
+			auto nodeVerticesTransformed = &objectNode->mesh->transformedVertices;
+			for (auto& facesEntity : objectNode->node->getFacesEntities())
 			for (auto& face : facesEntity.getFaces()) {
 				auto faceVertexIndices = face.getVertexIndices();
 				triangles.push_back(
@@ -113,9 +113,9 @@ void ObjectBase::getTriangles(vector<Triangle>& triangles, int nodeIdx)
 			}
 		}
 	} else {
-		auto object3DNode = object3dNodes[nodeIdx];
-		auto nodeVerticesTransformed = &object3DNode->mesh->transformedVertices;
-		for (auto& facesEntity : object3DNode->node->getFacesEntities())
+		auto objectNode = objectNodes[nodeIdx];
+		auto nodeVerticesTransformed = &objectNode->mesh->transformedVertices;
+		for (auto& facesEntity : objectNode->node->getFacesEntities())
 		for (auto& face : facesEntity.getFaces()) {
 			auto faceVertexIndices = face.getVertexIndices();
 			triangles.push_back(
@@ -140,9 +140,9 @@ ObjectBase_TransformedFacesIterator* ObjectBase::getTransformedFacesIterator()
 ObjectNodeMesh* ObjectBase::getMesh(const string& nodeId)
 {
 	// TODO: maybe rather use a hash map than an array to have a faster access
-	for (auto object3DNode : object3dNodes) {
-		if (object3DNode->node->getId() == nodeId) {
-			return object3DNode->mesh;
+	for (auto objectNode : objectNodes) {
+		if (objectNode->node->getId() == nodeId) {
+			return objectNode->mesh;
 		}
 	}
 	return nullptr;
@@ -153,33 +153,33 @@ void ObjectBase::initialize()
 	auto meshManager = Engine::getInstance()->getMeshManager();
 	//
 	// init mesh
-	for (auto i = 0; i < object3dNodes.size(); i++) {
-		auto object3DNode = object3dNodes[i];
+	for (auto i = 0; i < objectNodes.size(); i++) {
+		auto objectNode = objectNodes[i];
 		// initiate mesh if not yet done, happens usually after disposing from engine and readding to engine
-		if (object3DNode->mesh == nullptr) {
+		if (objectNode->mesh == nullptr) {
 			vector<map<string, Matrix4x4*>*> instancesTransformationsMatrices;
 			vector<map<string, Matrix4x4*>*> instancesSkinningNodesMatrices;
-			for (auto animation: object3DNode->object->instanceAnimations) {
+			for (auto animation: objectNode->object->instanceAnimations) {
 				instancesTransformationsMatrices.push_back(&animation->transformationsMatrices[0]);
-				instancesSkinningNodesMatrices.push_back(animation->getSkinningNodesMatrices(object3DNode->node));
+				instancesSkinningNodesMatrices.push_back(animation->getSkinningNodesMatrices(objectNode->node));
 			}
 			if (usesManagers == true) {
-				object3DNode->mesh = meshManager->getMesh(object3DNode->id);
-				if (object3DNode->mesh == nullptr) {
-					object3DNode->mesh = new ObjectNodeMesh(
-						object3DNode->renderer,
+				objectNode->mesh = meshManager->getMesh(objectNode->id);
+				if (objectNode->mesh == nullptr) {
+					objectNode->mesh = new ObjectNodeMesh(
+						objectNode->renderer,
 						animationProcessingTarget,
-						object3DNode->node,
+						objectNode->node,
 						instancesTransformationsMatrices,
 						instancesSkinningNodesMatrices,
 						instances
 					);
 				}
 			} else {
-				object3DNode->mesh = new ObjectNodeMesh(
-					object3DNode->renderer,
+				objectNode->mesh = new ObjectNodeMesh(
+					objectNode->renderer,
 					animationProcessingTarget,
-					object3DNode->node,
+					objectNode->node,
 					instancesTransformationsMatrices,
 					instancesSkinningNodesMatrices,
 					instances
@@ -193,19 +193,19 @@ void ObjectBase::dispose()
 {
 	auto meshManager = Engine::getInstance()->getMeshManager();
 	// dispose mesh
-	for (auto i = 0; i < object3dNodes.size(); i++) {
-		auto object3DNode = object3dNodes[i];
+	for (auto i = 0; i < objectNodes.size(); i++) {
+		auto objectNode = objectNodes[i];
 		// dispose renderer
-		object3DNode->renderer->dispose();
-		// dispose object3d node
-		object3DNode->dispose();
+		objectNode->renderer->dispose();
+		// dispose object node
+		objectNode->dispose();
 		// dispose mesh
 		if (usesManagers == true) {
-			meshManager->removeMesh(object3DNode->id);
+			meshManager->removeMesh(objectNode->id);
 		} else {
-			delete object3DNode->mesh;
+			delete objectNode->mesh;
 		}
-		object3DNode->mesh = nullptr;
+		objectNode->mesh = nullptr;
 	}
 	//
 }

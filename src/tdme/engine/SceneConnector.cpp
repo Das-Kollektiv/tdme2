@@ -652,7 +652,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 						partitionPrototypeInstanceCount+= foliageMapPartitionIt.second.size();
 					}
 					if (partitionPrototypeInstanceCount > 0) {
-						unordered_map<string, ObjectRenderGroup*> object3DRenderGroupByShaderParameters;
+						unordered_map<string, ObjectRenderGroup*> objectRenderGroupByShaderParameters;
 						for (auto& foliageMapPartitionIt: foliageMapPartition) {
 							auto prototypeIdx = foliageMapPartitionIt.first;
 							auto& transformationsVector = foliageMapPartitionIt.second;
@@ -673,8 +673,8 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 								auto contributesShadows = foliagePrototype->isContributesShadows();
 								auto receivesShadows = foliagePrototype->isReceivesShadows();
 								auto hash = foliagePrototype->getShaderParameters().getShaderParametersHash() + "|" + foliagePrototype->getDistanceShaderParameters().getShaderParametersHash() + "|" + to_string(contributesShadows) + "|" + to_string(receivesShadows);
-								auto foliagePartitionObjectRenderGroupIt = object3DRenderGroupByShaderParameters.find(hash);
-								if (foliagePartitionObjectRenderGroupIt != object3DRenderGroupByShaderParameters.end()) {
+								auto foliagePartitionObjectRenderGroupIt = objectRenderGroupByShaderParameters.find(hash);
+								if (foliagePartitionObjectRenderGroupIt != objectRenderGroupByShaderParameters.end()) {
 									foliagePartitionObjectRenderGroup = foliagePartitionObjectRenderGroupIt->second;
 								}
 								if (foliagePartitionObjectRenderGroup == nullptr) {
@@ -706,7 +706,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 									}
 									foliagePartitionObjectRenderGroup->setPickable(false);
 									foliagePartitionObjectRenderGroup->setEnabled(enable);
-									object3DRenderGroupByShaderParameters[hash] = foliagePartitionObjectRenderGroup;
+									objectRenderGroupByShaderParameters[hash] = foliagePartitionObjectRenderGroup;
 								}
 
 								//
@@ -718,8 +718,8 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 								}
 							}
 						}
-						for (auto& object3DRenderGroupByShaderParametersIt: object3DRenderGroupByShaderParameters) {
-							auto foliagePartitionObjectRenderGroup = object3DRenderGroupByShaderParametersIt.second;
+						for (auto& objectRenderGroupByShaderParametersIt: objectRenderGroupByShaderParameters) {
+							auto foliagePartitionObjectRenderGroup = objectRenderGroupByShaderParametersIt.second;
 							foliagePartitionObjectRenderGroup->updateRenderGroup();
 							foliagePartitionObjectRenderGroup->setTranslation(translation);
 							foliagePartitionObjectRenderGroup->update();
@@ -805,7 +805,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 		for (auto& itShader: renderGroupEntitiesByShaderPartitionModel) {
 			Console::println("SceneConnector::addLevel(): adding render group: " + itShader.first);
 			for (auto& itPartition: itShader.second) {
-				map<string, ObjectRenderGroup*> object3DRenderGroupsByShaderParameters;
+				map<string, ObjectRenderGroup*> objectRenderGroupsByShaderParameters;
 				for (auto& itModel: itPartition.second) {
 					if (progressCallback != nullptr) {
 						progressCallback->progress(0.5f + static_cast<float>(progressStepCurrent) / static_cast<float>(progressStepMax) * 0.5f);
@@ -815,8 +815,8 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 					auto contributesShadows = prototype->isContributesShadows();
 					auto receivesShadows = prototype->isReceivesShadows();
 					auto hash = prototype->getShaderParameters().getShaderParametersHash() + "|" + prototype->getDistanceShaderParameters().getShaderParametersHash() + "|" + to_string(contributesShadows) + "|" + to_string(receivesShadows);
-					if (object3DRenderGroupsByShaderParameters.find(hash) == object3DRenderGroupsByShaderParameters.end()) {
-						auto object3DRenderNode =
+					if (objectRenderGroupsByShaderParameters.find(hash) == objectRenderGroupsByShaderParameters.end()) {
+						auto objectRenderNode =
 							new ObjectRenderGroup(
 								"tdme.o3rg." + to_string(idx++),
 								renderGroupsLODLevels,
@@ -825,37 +825,37 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 								renderGroupsLOD2ReduceBy,
 								renderGroupsLOD3ReduceBy
 							);
-						object3DRenderNode->setContributesShadows(contributesShadows);
-						object3DRenderNode->setReceivesShadows(receivesShadows);
-						object3DRenderNode->setShader(prototype->getShader());
-						object3DRenderNode->setDistanceShader(prototype->getDistanceShader());
-						object3DRenderNode->setDistanceShaderDistance(prototype->getDistanceShaderDistance());
+						objectRenderNode->setContributesShadows(contributesShadows);
+						objectRenderNode->setReceivesShadows(receivesShadows);
+						objectRenderNode->setShader(prototype->getShader());
+						objectRenderNode->setDistanceShader(prototype->getDistanceShader());
+						objectRenderNode->setDistanceShaderDistance(prototype->getDistanceShaderDistance());
 						auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
 						auto distanceShaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getDistanceShader());
 						for (auto& parameterIt: shaderParametersDefault) {
 							auto& parameterName = parameterIt.first;
 							auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
-							object3DRenderNode->setShaderParameter(parameterName, parameterValue);
+							objectRenderNode->setShaderParameter(parameterName, parameterValue);
 						}
 						for (auto& parameterIt: distanceShaderParametersDefault) {
 							auto& parameterName = parameterIt.first;
 							auto parameterValue = prototype->getDistanceShaderParameters().getShaderParameter(parameterName);
-							object3DRenderNode->setDistanceShaderParameter(parameterName, parameterValue);
+							objectRenderNode->setDistanceShaderParameter(parameterName, parameterValue);
 						}
-						object3DRenderGroupsByShaderParameters[hash] = object3DRenderNode;
+						objectRenderGroupsByShaderParameters[hash] = objectRenderNode;
 					}
-					auto object3DRenderNode = object3DRenderGroupsByShaderParameters[hash];
+					auto objectRenderNode = objectRenderGroupsByShaderParameters[hash];
 					auto objectIdx = -1;
 					for (auto transformation: itModel.second) {
 						objectIdx++;
 						if (objectIdx % renderGroupsReduceBy != 0) continue;
-						object3DRenderNode->addObject(prototype->getModel(), *transformation);
+						objectRenderNode->addObject(prototype->getModel(), *transformation);
 					}
 				}
-				for (auto& object3DRenderGroupsByShaderParametersIt: object3DRenderGroupsByShaderParameters) {
-					auto object3DRenderNode = object3DRenderGroupsByShaderParametersIt.second;
-					object3DRenderNode->updateRenderGroup();
-					engine->addEntity(object3DRenderNode);
+				for (auto& objectRenderGroupsByShaderParametersIt: objectRenderGroupsByShaderParameters) {
+					auto objectRenderNode = objectRenderGroupsByShaderParametersIt.second;
+					objectRenderNode->updateRenderGroup();
+					engine->addEntity(objectRenderNode);
 				}
 			}
 		}

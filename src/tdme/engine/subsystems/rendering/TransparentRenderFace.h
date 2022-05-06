@@ -12,7 +12,7 @@ using tdme::engine::subsystems::rendering::ObjectNode;
  */
 struct tdme::engine::subsystems::rendering::TransparentRenderFace final
 {
-	ObjectNode* object3DNode;
+	ObjectNode* objectNode;
 	int32_t facesEntityIdx;
 	int32_t faceIdx;
 	float distanceFromCamera;

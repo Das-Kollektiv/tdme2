@@ -38,7 +38,7 @@ public:
 	/**
 	 * Get mesh from managed meshes
 	 * @param meshId mesh id
-	 * @return object 3d node mesh or null
+	 * @return object node mesh or null
 	 */
 	ObjectNodeMesh* getMesh(const string& meshId);
 

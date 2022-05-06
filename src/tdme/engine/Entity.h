@@ -23,7 +23,7 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
 /**
- * TDME engine entity
+ * Engine entity
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -91,7 +91,7 @@ public:
 	virtual void setRenderer(Renderer* renderer) = 0;
 
 	/**
-	 * @return object id
+	 * @return entity id
 	 */
 	virtual const string& getId() = 0;
 
@@ -118,12 +118,12 @@ public:
 	virtual void setFrustumCulling(bool frustumCulling) = 0;
 
 	/**
-	 * @return if object is pickable
+	 * @return if entity is pickable
 	 */
 	virtual bool isPickable() = 0;
 
 	/**
-	 * Set this object pickable
+	 * Set this entity pickable
 	 * @param pickable pickable
 	 */
 	virtual void setPickable(bool pickable) = 0;
@@ -175,12 +175,12 @@ public:
 	virtual void setEffectColorAdd(const Color4& effectColorAdd) = 0;
 
 	/**
-	 * Initiates this object 3d
+	 * Initiates this entity
 	 */
 	virtual void initialize() = 0;
 
 	/**
-	 * Dispose this object 3d
+	 * Dispose this entity
 	 */
 	virtual void dispose() = 0;
 
@@ -195,7 +195,7 @@ public:
 	virtual BoundingBox* getBoundingBoxTransformed() = 0;
 
 	/**
-	 * @return object translation
+	 * @return entity translation
 	 */
 	virtual const Vector3& getTranslation() const = 0;
 
@@ -206,7 +206,7 @@ public:
 	virtual void setTranslation(const Vector3& translation) = 0;
 
 	/**
-	 * @return object scale
+	 * @return entity scale
 	 */
 	virtual const Vector3& getScale() const = 0;
 

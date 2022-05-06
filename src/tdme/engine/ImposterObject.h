@@ -39,7 +39,7 @@ using tdme::math::Vector3;
 using tdme::utilities::Console;
 
 /**
- * Imposter object 3d to be used with engine class
+ * Imposter object to be used with engine class
  * @author Andreas Drewke
  * @version $Id$
  */

@@ -31,7 +31,7 @@ using tdme::utilities::FloatBuffer;
 using tdme::utilities::ShortBuffer;
 
 /**
- * Object 3D node mesh specifically for rendering
+ * Object node mesh specifically for rendering
  * @author Andreas Drewke
  */
 class tdme::engine::subsystems::rendering::ObjectNodeMesh final
@@ -47,7 +47,7 @@ class tdme::engine::subsystems::rendering::ObjectNodeMesh final
 
 private:
 	int instances;
-	ObjectNodeRenderer* object3DNodeRenderer { nullptr };
+	ObjectNodeRenderer* objectNodeRenderer { nullptr };
 	Node* node { nullptr };
 	int32_t faceCount;
 	const vector<Vector3>* vertices { nullptr };
@@ -78,22 +78,22 @@ private:
 	bool recreatedBuffers;
 
 	/**
-	 * Creates a object3d node mesh from node
-	 * @param object3DNodeRenderer object 3D node renderer
+	 * Creates a object node mesh from node
+	 * @param objectNodeRenderer object node renderer
 	 * @param animationProcessingTarget animation processing target
 	 * @param node node
 	 * @param transformationMatrices instances transformationm matrices
 	 * @param skinningMatrices instances skinning matrices
 	 * @param instances instances
 	 */
-	ObjectNodeMesh(ObjectNodeRenderer* object3DNodeRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Node* node, const vector<map<string, Matrix4x4*>*>& transformationMatrices, const vector<map<string, Matrix4x4*>*>& skinningMatrices, int instances);
+	ObjectNodeMesh(ObjectNodeRenderer* objectNodeRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Node* node, const vector<map<string, Matrix4x4*>*>& transformationMatrices, const vector<map<string, Matrix4x4*>*>& skinningMatrices, int instances);
 
 	/**
 	 * Computes mesh transformations
 	 * @param contextIdx context index
-	 * @param object3DBase object 3d base
+	 * @param objectBase object base
 	 */
-	void computeTransformations(int contextIdx, ObjectBase* object3DBase);
+	void computeTransformations(int contextIdx, ObjectBase* objectBase);
 
 	/**
 	 * Recreates node float buffers

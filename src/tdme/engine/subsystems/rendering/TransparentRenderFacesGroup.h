@@ -45,10 +45,10 @@ class tdme::engine::subsystems::rendering::TransparentRenderFacesGroup final
 	friend class EntityRenderer_TransparentRenderFacesGroupPool;
 
 private:
-	EntityRenderer* object3DRenderer { nullptr };
+	EntityRenderer* objectRenderer { nullptr };
 	vector<BatchRendererTriangles*> batchRenderers;
 	Model* model { nullptr };
-	ObjectNode* object3DNode { nullptr };
+	ObjectNode* objectNode { nullptr };
 	int32_t facesEntityIdx;
 
 	Color4 effectColorAdd;
@@ -66,9 +66,9 @@ private:
 
 	/**
 	 * Set transparent render faces group
-	 * @param object3DRenderer object3D renderer
+	 * @param objectRenderer object renderer
 	 * @param model model
-	 * @param object3DNode object 3D node
+	 * @param objectNode object node
 	 * @param facesEntityIdx faces entity idx
 	 * @param effectColorAdd effect color add
 	 * @param effectColorMul effect color mul
@@ -76,12 +76,12 @@ private:
 	 * @param textureCoordinates texture coordinates
 	 * @param shader shader
 	 */
-	void set(EntityRenderer* object3DRenderer, Model* model, ObjectNode* object3DNode, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader);
+	void set(EntityRenderer* objectRenderer, Model* model, ObjectNode* objectNode, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader);
 
 	/**
 	 * Creates a key for given transparent render faces group attributes
 	 * @param model model
-	 * @param object3DNode object 3D node
+	 * @param objectNode object node
 	 * @param facesEntityIdx faces entity idx
 	 * @param effectColorAdd effect color add
 	 * @param effectColorMul effect color mul
@@ -90,7 +90,7 @@ private:
 	 * @param shader shader
 	 * @return
 	 */
-	static const string createKey(Model* model, ObjectNode* object3DNode, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader);
+	static const string createKey(Model* model, ObjectNode* objectNode, int32_t facesEntityIdx, const Color4& effectColorAdd, const Color4& effectColorMul, const Material* material, bool textureCoordinates, const string& shader);
 
 	/**
 	 * Adds a vertex to this transparent render faces group
@@ -102,7 +102,7 @@ private:
 		// check if we have a batch renderer already?
 		if (batchRenderers.size() == 0) {
 			// nope, add first one
-			auto batchRendererTriangles = object3DRenderer->acquireTrianglesBatchRenderer();
+			auto batchRendererTriangles = objectRenderer->acquireTrianglesBatchRenderer();
 			if (batchRendererTriangles == nullptr) {
 				Console::println(string("TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch renderer"));
 				return;
@@ -114,7 +114,7 @@ private:
 		if (batchRendererTriangles->addVertex(vertex, normal, textureCoordinate) == true)
 			return;
 		// failed, acquire additionally one
-		batchRendererTriangles = object3DRenderer->acquireTrianglesBatchRenderer();
+		batchRendererTriangles = objectRenderer->acquireTrianglesBatchRenderer();
 		if (batchRendererTriangles == nullptr) {
 			Console::println(string("TransparentRenderFacesGroup::addVertex(): could not acquire triangles batch renderer"));
 			return;

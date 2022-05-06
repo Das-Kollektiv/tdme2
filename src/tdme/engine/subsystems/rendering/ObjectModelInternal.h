@@ -10,7 +10,7 @@ using tdme::engine::model::Model;
 using tdme::engine::subsystems::rendering::ObjectBase;
 
 /**
- * Object 3D model
+ * Object model
  * To be used in non engine context
  * @author Andreas Drewke
  * @version $Id$

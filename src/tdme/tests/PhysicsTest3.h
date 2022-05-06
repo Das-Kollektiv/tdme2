@@ -46,7 +46,7 @@ private:
 	World* world { nullptr };
 	ObjectDeleter<Model> modelDeleter;
 	ObjectDeleter<BoundingVolume> bvDeleter;
-	ObjectDeleter<ObjectModel> object3DModelDeleter;
+	ObjectDeleter<ObjectModel> objectModelDeleter;
 
 public:
 

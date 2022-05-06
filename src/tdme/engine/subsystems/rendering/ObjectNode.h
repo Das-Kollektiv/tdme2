@@ -31,7 +31,7 @@ using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
 
 /**
- * Object 3d node specifically for rendering
+ * Object node specifically for rendering
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -72,41 +72,41 @@ private:
 	Matrix4x4* nodeTransformationsMatrix { nullptr };
 
 	/**
-	 * Creates object 3d nodes from given object3d base object
-	 * @param object object 3d base
-	 * @param useManagers use mesh and object 3d renderer node managers
+	 * Creates object nodes from given object base object
+	 * @param object object base
+	 * @param useManagers use mesh and object renderer node managers
 	 * @param animationProcessingTarget animation processing target
-	 * @param object3DNodes object 3d nodes array
-	 * @return object 3d node
+	 * @param objectNodes object nodes array
+	 * @return object node
 	 */
-	static void createNodes(ObjectBase* object, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget, vector<ObjectNode*>& object3DNodes);
+	static void createNodes(ObjectBase* object, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget, vector<ObjectNode*>& objectNodes);
 
 	/**
-	 * Applies transformations to meshes for given object 3d nodes
+	 * Applies transformations to meshes for given object nodes
 	 * @param contextIdx context index
-	 * @param object3DNodes node render data list
+	 * @param objectNodes node render data list
 	 */
-	static void computeTransformations(int contextIdx, vector<ObjectNode*>& object3DNodes);
+	static void computeTransformations(int contextIdx, vector<ObjectNode*>& objectNodes);
 
 	/**
-	 * Set up textures for given object3d node and faces entity
+	 * Set up textures for given object node and faces entity
 	 * @param renderer renderer
 	 * @param contextIdx context index
-	 * @param object3DNode object 3D node
+	 * @param objectNode object node
 	 * @param facesEntityIdx faces entity idx
 	 */
-	static void setupTextures(Renderer* renderer, int contextIdx, ObjectNode* object3DNode, int32_t facesEntityIdx);
+	static void setupTextures(Renderer* renderer, int contextIdx, ObjectNode* objectNode, int32_t facesEntityIdx);
 
 	/**
-	 * Creates a object 3d nodes recursively for given node and it sub nodes
-	 * @param object3D object 3D base
+	 * Creates a object nodes recursively for given node and it sub nodes
+	 * @param object object base
 	 * @param nodes nodes
 	 * @param animated animated
-	 * @param useManagers use mesh and object 3d render node managers
+	 * @param useManagers use mesh and object render node managers
 	 * @param animationProcessingTarget animation processing target
-	 * @param object3DNodes object 3D nodes
+	 * @param objectNodes object nodes
 	 */
-	static void createNodes(ObjectBase* object3D, const map<string, Node*>& nodes, bool animated, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget, vector<ObjectNode*>& object3DNodes);
+	static void createNodes(ObjectBase* object, const map<string, Node*>& nodes, bool animated, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget, vector<ObjectNode*>& objectNodes);
 
 	/**
 	 * Dispose

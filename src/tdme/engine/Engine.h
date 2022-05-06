@@ -485,7 +485,7 @@ private:
 	}
 
 	/**
-	 * @return object 3d renderer
+	 * @return entity renderer
 	 */
 	inline EntityRenderer* getEntityRenderer() {
 		return entityRenderer;
@@ -1088,11 +1088,11 @@ public:
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
 	 * @param filter filter
-	 * @param object3DNode pointer to store node of Object to if appliable
+	 * @param objectNode pointer to store node of object to if appliable
 	 * @param particleSystemEntity pointer to store sub particle system entity if having a particle system group
 	 * @return entity or nullptr
 	 */
-	inline Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter = nullptr, Node** object3DNode = nullptr, ParticleSystemEntity** particleSystemEntity = nullptr) {
+	inline Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter = nullptr, Node** objectNode = nullptr, ParticleSystemEntity** particleSystemEntity = nullptr) {
 		return
 			getEntityByMousePosition(
 				visibleDecomposedEntities,
@@ -1100,7 +1100,7 @@ public:
 				mouseX,
 				mouseY,
 				filter,
-				object3DNode,
+				objectNode,
 				particleSystemEntity
 			);
 	}
@@ -1111,11 +1111,11 @@ public:
 	 * @param mouseY mouse y
 	 * @param contactPoint world coordinate of contact point
 	 * @param filter filter
-	 * @param object3DNode pointer to store node of Object to if appliable
+	 * @param objectNode pointer to store node of object to if appliable
 	 * @param particleSystemEntity pointer to store sub particle system entity if having a particle system group
 	 * @return entity or nullptr
 	 */
-	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& contactPoint, EntityPickingFilter* filter = nullptr, Node** object3DNode = nullptr, ParticleSystemEntity** particleSystemEntity = nullptr);
+	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& contactPoint, EntityPickingFilter* filter = nullptr, Node** objectNode = nullptr, ParticleSystemEntity** particleSystemEntity = nullptr);
 
 	/**
 	 * Does a ray casting of visible 3d object based entities
@@ -1223,7 +1223,7 @@ private:
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
 	 * @param filter filter
-	 * @param object3DNode pointer to store node of Object to if appliable
+	 * @param objectNode pointer to store node of Object to if appliable
 	 * @param particleSystemEntity pointer to store sub particle system entity if having a particle system group
 	 * @return entity or nullptr
 	 */
@@ -1233,7 +1233,7 @@ private:
 		int32_t mouseX,
 		int32_t mouseY,
 		EntityPickingFilter* filter = nullptr,
-		Node** object3DNode = nullptr,
+		Node** objectNode = nullptr,
 		ParticleSystemEntity** particleSystemEntity = nullptr
 	);
 

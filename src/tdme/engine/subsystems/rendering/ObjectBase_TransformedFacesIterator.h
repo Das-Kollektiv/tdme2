@@ -26,14 +26,14 @@ using tdme::math::Vector3;
 class tdme::engine::subsystems::rendering::ObjectBase_TransformedFacesIterator
 {
 private:
-	ObjectBase* object3DBase { nullptr };
+	ObjectBase* objectBase { nullptr };
 	Node* node { nullptr };
 	array<Vector3, 3> vertices;
 	Matrix4x4 matrix;
 	int32_t faceCount;
 	int32_t faceIdxTotal;
 	int32_t faceIdx;
-	int32_t object3DNodeIdx;
+	int32_t objectNodeIdx;
 	int32_t facesEntityIdx;
 
 private:
@@ -46,7 +46,7 @@ public:
 	/**
 	 * Public constructor
 	 */
-	ObjectBase_TransformedFacesIterator(ObjectBase* object3DBase);
+	ObjectBase_TransformedFacesIterator(ObjectBase* objectBase);
 
 	/**
 	 * Return iterator ready to iterate

@@ -47,7 +47,7 @@ private:
 
 protected:
 	Model* model;
-	vector<ObjectNode*> object3dNodes;
+	vector<ObjectNode*> objectNodes;
 	bool usesManagers;
 	int instances;
 	int enabledInstances;
@@ -60,7 +60,7 @@ protected:
 	/**
 	 * Private constructor
 	 * @param model model
-	 * @param useManagers use mesh and object 3d node renderer model manager
+	 * @param useManagers use mesh and object node renderer model manager
 	 * @param animationProcessingTarget animation processing target
 	 * @param instances instances to compute and render by duplication
 	 */
@@ -93,7 +93,7 @@ public:
 			instanceAnimations[i]->computeTransformations(contextIdx, instanceTransformations[i].getTransformationsMatrix(), lastFrameAtTime, currentFrameAtTime);
 			enabledInstances++;
 		}
-		if (enabledInstances > 0) ObjectNode::computeTransformations(contextIdx, object3dNodes);
+		if (enabledInstances > 0) ObjectNode::computeTransformations(contextIdx, objectNodes);
 	}
 
 	/**
@@ -114,19 +114,19 @@ public:
 	ObjectBase_TransformedFacesIterator* getTransformedFacesIterator();
 
 	/**
-	 * Returns object3d node mesh object
+	 * Returns object node mesh object
 	 * @param nodeId node id
-	 * @return object3d node mesh object
+	 * @return object node mesh object
 	 */
 	ObjectNodeMesh* getMesh(const string& nodeId);
 
 	/**
-	 * Initiates this object3d
+	 * Initiates this object
 	 */
 	virtual void initialize();
 
 	/**
-	 * Disposes this object3d
+	 * Disposes this object
 	 */
 	virtual void dispose();
 

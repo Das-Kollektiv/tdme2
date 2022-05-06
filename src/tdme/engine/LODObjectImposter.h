@@ -41,7 +41,7 @@ using tdme::math::Vector3;
 using tdme::utilities::Console;
 
 /**
- * LOD object 3D + imposter to be used with engine class
+ * LOD object + imposter to be used with engine class
  * @author Andreas Drewke
  * @version $Id$
  */

@@ -62,13 +62,13 @@ ObjectNode::~ObjectNode()
 	delete renderer;
 }
 
-void ObjectNode::createNodes(ObjectBase* object, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget, vector<ObjectNode*>& object3DNodes)
+void ObjectNode::createNodes(ObjectBase* object, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget, vector<ObjectNode*>& objectNodes)
 {
 	auto model = object->getModel();
-	createNodes(object, model->getSubNodes(), model->hasAnimations(), useManagers, animationProcessingTarget, object3DNodes);
+	createNodes(object, model->getSubNodes(), model->hasAnimations(), useManagers, animationProcessingTarget, objectNodes);
 }
 
-void ObjectNode::createNodes(ObjectBase* object3D, const map<string, Node*>& nodes, bool animated, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget, vector<ObjectNode*>& object3DNodes)
+void ObjectNode::createNodes(ObjectBase* object, const map<string, Node*>& nodes, bool animated, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget, vector<ObjectNode*>& objectNodes)
 {
 	for (auto it: nodes) {
 		Node* node = it.second;
@@ -81,128 +81,128 @@ void ObjectNode::createNodes(ObjectBase* object3D, const map<string, Node*>& nod
 		// skip on nodes without faces
 		if (faceCount > 0) {
 			// create node render data
-			auto object3DNode = new ObjectNode();
+			auto objectNode = new ObjectNode();
 			// add it to node render data list
-			object3DNodes.push_back(object3DNode);
+			objectNodes.push_back(objectNode);
 			// determine mesh id
-			object3DNode->id =
+			objectNode->id =
 				node->getModel()->getId() +
 				":" +
 				node->getId() +
 				":" +
 				to_string(animationProcessingTarget) +
 				":" +
-				to_string(object3D->instances);
+				to_string(object->instances);
 			if (node->getSkinning() != nullptr || (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING)) {
-				object3DNode->id =
-					object3DNode->id +
+				objectNode->id =
+					objectNode->id +
 					":" +
 					to_string(counter++);
 			}
-			object3DNode->object = object3D;
-			object3DNode->node = node;
-			object3DNode->animated = animated;
-			object3DNode->renderer = new ObjectNodeRenderer(object3DNode);
+			objectNode->object = object;
+			objectNode->node = node;
+			objectNode->animated = animated;
+			objectNode->renderer = new ObjectNodeRenderer(objectNode);
 			vector<map<string, Matrix4x4*>*> instancesTransformationsMatrices;
 			vector<map<string, Matrix4x4*>*> instancesSkinningNodesMatrices;
-			for (auto animation: object3D->instanceAnimations) {
+			for (auto animation: object->instanceAnimations) {
 				instancesTransformationsMatrices.push_back(&animation->transformationsMatrices[0]);
-				instancesSkinningNodesMatrices.push_back(animation->getSkinningNodesMatrices(object3DNode->node));
+				instancesSkinningNodesMatrices.push_back(animation->getSkinningNodesMatrices(objectNode->node));
 			}
 			if (useManagers == true) {
 				auto meshManager = Engine::getInstance()->getMeshManager();
-				object3DNode->mesh = meshManager->getMesh(object3DNode->id);
-				if (object3DNode->mesh == nullptr) {
-					object3DNode->mesh = new ObjectNodeMesh(
-						object3DNode->renderer,
+				objectNode->mesh = meshManager->getMesh(objectNode->id);
+				if (objectNode->mesh == nullptr) {
+					objectNode->mesh = new ObjectNodeMesh(
+						objectNode->renderer,
 						animationProcessingTarget,
 						node,
 						instancesTransformationsMatrices,
 						instancesSkinningNodesMatrices,
-						object3D->instances
+						object->instances
 					);
-					meshManager->addMesh(object3DNode->id, object3DNode->mesh);
+					meshManager->addMesh(objectNode->id, objectNode->mesh);
 				}
 			} else {
-				object3DNode->mesh = new ObjectNodeMesh(
-					object3DNode->renderer,
+				objectNode->mesh = new ObjectNodeMesh(
+					objectNode->renderer,
 					animationProcessingTarget,
 					node,
 					instancesTransformationsMatrices,
 					instancesSkinningNodesMatrices,
-					object3D->instances
+					object->instances
 				);
 			}
-			object3DNode->textureMatricesByEntities.resize(node->getFacesEntities().size());
+			objectNode->textureMatricesByEntities.resize(node->getFacesEntities().size());
 			for (auto j = 0; j < node->getFacesEntities().size(); j++) {
 				auto material = node->getFacesEntities()[j].getMaterial();
 				if (material != nullptr) {
-					object3DNode->textureMatricesByEntities[j].set(material->getTextureMatrix());
+					objectNode->textureMatricesByEntities[j].set(material->getTextureMatrix());
 				} else {
-					object3DNode->textureMatricesByEntities[j].identity();
+					objectNode->textureMatricesByEntities[j].identity();
 				}
 			}
-			object3DNode->specularMaterialDiffuseTextureIdsByEntities.resize(node->getFacesEntities().size());
-			object3DNode->specularMaterialDynamicDiffuseTextureIdsByEntities.resize(node->getFacesEntities().size());
-			object3DNode->specularMaterialSpecularTextureIdsByEntities.resize(node->getFacesEntities().size());
-			object3DNode->specularMaterialNormalTextureIdsByEntities.resize(node->getFacesEntities().size());
-			object3DNode->pbrMaterialBaseColorTextureIdsByEntities.resize(node->getFacesEntities().size());
-			object3DNode->pbrMaterialMetallicRoughnessTextureIdsByEntities.resize(node->getFacesEntities().size());
-			object3DNode->pbrMaterialNormalTextureIdsByEntities.resize(node->getFacesEntities().size());
+			objectNode->specularMaterialDiffuseTextureIdsByEntities.resize(node->getFacesEntities().size());
+			objectNode->specularMaterialDynamicDiffuseTextureIdsByEntities.resize(node->getFacesEntities().size());
+			objectNode->specularMaterialSpecularTextureIdsByEntities.resize(node->getFacesEntities().size());
+			objectNode->specularMaterialNormalTextureIdsByEntities.resize(node->getFacesEntities().size());
+			objectNode->pbrMaterialBaseColorTextureIdsByEntities.resize(node->getFacesEntities().size());
+			objectNode->pbrMaterialMetallicRoughnessTextureIdsByEntities.resize(node->getFacesEntities().size());
+			objectNode->pbrMaterialNormalTextureIdsByEntities.resize(node->getFacesEntities().size());
 			for (auto j = 0; j < node->getFacesEntities().size(); j++) {
-				object3DNode->specularMaterialDiffuseTextureIdsByEntities[j] = TEXTUREID_NONE;
-				object3DNode->specularMaterialDynamicDiffuseTextureIdsByEntities[j] = TEXTUREID_NONE;
-				object3DNode->specularMaterialSpecularTextureIdsByEntities[j] = TEXTUREID_NONE;
-				object3DNode->specularMaterialNormalTextureIdsByEntities[j] = TEXTUREID_NONE;
-				object3DNode->pbrMaterialBaseColorTextureIdsByEntities[j] = TEXTUREID_NONE;
-				object3DNode->pbrMaterialMetallicRoughnessTextureIdsByEntities[j] = TEXTUREID_NONE;
-				object3DNode->pbrMaterialNormalTextureIdsByEntities[j] = TEXTUREID_NONE;
+				objectNode->specularMaterialDiffuseTextureIdsByEntities[j] = TEXTUREID_NONE;
+				objectNode->specularMaterialDynamicDiffuseTextureIdsByEntities[j] = TEXTUREID_NONE;
+				objectNode->specularMaterialSpecularTextureIdsByEntities[j] = TEXTUREID_NONE;
+				objectNode->specularMaterialNormalTextureIdsByEntities[j] = TEXTUREID_NONE;
+				objectNode->pbrMaterialBaseColorTextureIdsByEntities[j] = TEXTUREID_NONE;
+				objectNode->pbrMaterialMetallicRoughnessTextureIdsByEntities[j] = TEXTUREID_NONE;
+				objectNode->pbrMaterialNormalTextureIdsByEntities[j] = TEXTUREID_NONE;
 			}
 			// determine node transformations matrix
-			object3DNode->nodeTransformationsMatrix = object3D->instanceAnimations[0]->transformationsMatrices[0].find(node->getId())->second;
+			objectNode->nodeTransformationsMatrix = object->instanceAnimations[0]->transformationsMatrices[0].find(node->getId())->second;
 		}
 		// but still check sub nodes
-		createNodes(object3D, node->getSubNodes(), animated, useManagers, animationProcessingTarget, object3DNodes);
+		createNodes(object, node->getSubNodes(), animated, useManagers, animationProcessingTarget, objectNodes);
 	}
 }
 
-void ObjectNode::computeTransformations(int contextIdx, vector<ObjectNode*>& object3DNodes)
+void ObjectNode::computeTransformations(int contextIdx, vector<ObjectNode*>& objectNodes)
 {
-	for (auto object3DNode : object3DNodes) {
-		object3DNode->mesh->computeTransformations(contextIdx, object3DNode->object);
+	for (auto objectNode : objectNodes) {
+		objectNode->mesh->computeTransformations(contextIdx, objectNode->object);
 	}
 }
 
-void ObjectNode::setupTextures(Renderer* renderer, int contextIdx, ObjectNode* object3DNode, int32_t facesEntityIdx)
+void ObjectNode::setupTextures(Renderer* renderer, int contextIdx, ObjectNode* objectNode, int32_t facesEntityIdx)
 {
-	auto& facesEntities = object3DNode->node->getFacesEntities();
+	auto& facesEntities = objectNode->node->getFacesEntities();
 	auto material = facesEntities[facesEntityIdx].getMaterial();
 	// get material or use default
 	if (material == nullptr) material = Material::getDefaultMaterial();
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties != nullptr) {
 		// load specular diffuse texture
-		if (object3DNode->specularMaterialDiffuseTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
+		if (objectNode->specularMaterialDiffuseTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
 			if (specularMaterialProperties->getDiffuseTexture() != nullptr) {
-				object3DNode->specularMaterialDiffuseTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(specularMaterialProperties->getDiffuseTexture(), contextIdx);
+				objectNode->specularMaterialDiffuseTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(specularMaterialProperties->getDiffuseTexture(), contextIdx);
 			} else {
-				object3DNode->specularMaterialDiffuseTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
+				objectNode->specularMaterialDiffuseTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
 			}
 		}
 		// load specular specular texture
-		if (renderer->isSpecularMappingAvailable() == true && object3DNode->specularMaterialSpecularTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
+		if (renderer->isSpecularMappingAvailable() == true && objectNode->specularMaterialSpecularTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
 			if (specularMaterialProperties->getSpecularTexture() != nullptr) {
-				object3DNode->specularMaterialSpecularTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(specularMaterialProperties->getSpecularTexture(), contextIdx);
+				objectNode->specularMaterialSpecularTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(specularMaterialProperties->getSpecularTexture(), contextIdx);
 			} else {
-				object3DNode->specularMaterialSpecularTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
+				objectNode->specularMaterialSpecularTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
 			}
 		}
 		// load specular normal texture
-		if (renderer->isNormalMappingAvailable() == true && object3DNode->specularMaterialNormalTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
+		if (renderer->isNormalMappingAvailable() == true && objectNode->specularMaterialNormalTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
 			if (specularMaterialProperties->getNormalTexture() != nullptr) {
-				object3DNode->specularMaterialNormalTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(specularMaterialProperties->getNormalTexture(), contextIdx);
+				objectNode->specularMaterialNormalTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(specularMaterialProperties->getNormalTexture(), contextIdx);
 			} else {
-				object3DNode->specularMaterialNormalTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
+				objectNode->specularMaterialNormalTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
 			}
 		}
 	}
@@ -210,27 +210,27 @@ void ObjectNode::setupTextures(Renderer* renderer, int contextIdx, ObjectNode* o
 	auto pbrMaterialProperties = material->getPBRMaterialProperties();
 	if (pbrMaterialProperties != nullptr && renderer->isPBRAvailable() == true) {
 		// load PBR base color texture
-		if (object3DNode->pbrMaterialBaseColorTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
+		if (objectNode->pbrMaterialBaseColorTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
 			if (pbrMaterialProperties->getBaseColorTexture() != nullptr) {
-				object3DNode->pbrMaterialBaseColorTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(pbrMaterialProperties->getBaseColorTexture(), contextIdx);
+				objectNode->pbrMaterialBaseColorTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(pbrMaterialProperties->getBaseColorTexture(), contextIdx);
 			} else {
-				object3DNode->pbrMaterialBaseColorTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
+				objectNode->pbrMaterialBaseColorTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
 			}
 		}
 		// load PBR metallic roughness texture
-		if (object3DNode->pbrMaterialMetallicRoughnessTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
+		if (objectNode->pbrMaterialMetallicRoughnessTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
 			if (pbrMaterialProperties->getMetallicRoughnessTexture() != nullptr) {
-				object3DNode->pbrMaterialMetallicRoughnessTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(pbrMaterialProperties->getMetallicRoughnessTexture(), contextIdx);
+				objectNode->pbrMaterialMetallicRoughnessTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(pbrMaterialProperties->getMetallicRoughnessTexture(), contextIdx);
 			} else {
-				object3DNode->pbrMaterialMetallicRoughnessTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
+				objectNode->pbrMaterialMetallicRoughnessTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
 			}
 		}
 		// load PBR normal texture
-		if (object3DNode->pbrMaterialNormalTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
+		if (objectNode->pbrMaterialNormalTextureIdsByEntities[facesEntityIdx] == TEXTUREID_NONE) {
 			if (pbrMaterialProperties->getNormalTexture() != nullptr) {
-				object3DNode->pbrMaterialNormalTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(pbrMaterialProperties->getNormalTexture(), contextIdx);
+				objectNode->pbrMaterialNormalTextureIdsByEntities[facesEntityIdx] = Engine::getInstance()->getTextureManager()->addTexture(pbrMaterialProperties->getNormalTexture(), contextIdx);
 			} else {
-				object3DNode->pbrMaterialNormalTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
+				objectNode->pbrMaterialNormalTextureIdsByEntities[facesEntityIdx] = TEXTUREID_NOTUSED;
 			}
 		}
 	}

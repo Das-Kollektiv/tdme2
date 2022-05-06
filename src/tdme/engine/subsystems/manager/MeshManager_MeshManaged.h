@@ -45,7 +45,7 @@ private:
 	}
 
 	/**
-	 * @return object 3d node mesh
+	 * @return object node mesh
 	 */
 	inline ObjectNodeMesh* getMesh() {
 		return mesh;

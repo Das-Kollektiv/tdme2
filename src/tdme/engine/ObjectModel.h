@@ -9,7 +9,7 @@ using tdme::engine::model::Model;
 using tdme::engine::subsystems::rendering::ObjectModelInternal;
 
 /**
- * Object 3D model
+ * Object model
  * @author Andreas Drewke
  * @version $Id$
  */

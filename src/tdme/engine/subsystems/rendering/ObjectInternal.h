@@ -25,7 +25,7 @@ using tdme::engine::Transformations;
 using tdme::math::Matrix2D3x3;
 
 /**
- * Object 3D
+ * Object
  * @author Andreas Drewke
  * @version $Id$
  */

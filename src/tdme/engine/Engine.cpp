@@ -324,7 +324,7 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 	offScreenEngine->initialized = true;
 	// create GUI
 	offScreenEngine->gui = new GUI(offScreenEngine, guiRenderer);
-	// create object 3d vbo renderer
+	// create entity renderer
 	offScreenEngine->entityRenderer = new EntityRenderer(offScreenEngine, renderer);
 	offScreenEngine->entityRenderer->initialize();
 	// TODO: geometry buffer
@@ -453,10 +453,10 @@ void Engine::registerEntity(Entity* entity) {
 		decomposedEntities.objectsPostPostProcessing,
 	};
 	for (auto& objects: objectsArray) {
-		for (auto object3D: objects) {
-			object3D->preRender(renderer->CONTEXTINDEX_DEFAULT);
-			if (object3D->isNeedsPreRender() == true) needsPreRenderEntities.insert(object3D);
-			if (object3D->isNeedsComputeTransformations() == true) needsComputeTransformationsEntities.insert(object3D);
+		for (auto object: objects) {
+			object->preRender(renderer->CONTEXTINDEX_DEFAULT);
+			if (object->isNeedsPreRender() == true) needsPreRenderEntities.insert(object);
+			if (object->isNeedsComputeTransformations() == true) needsComputeTransformationsEntities.insert(object);
 		}
 	}
 	// register decal textures
@@ -658,19 +658,19 @@ void Engine::removeEntityFromLists(Entity* entity)
 		}
 	} else
 	if (entity->getEntityType() == Entity::ENTITYTYPE_LODOBJECT) {
-		auto lob3d = static_cast<LODObject*>(entity);
-		removeEntityFromLists(lob3d->getLOD1Object());
-		removeEntityFromLists(lob3d->getLOD2Object());
-		removeEntityFromLists(lob3d->getLOD3Object());
+		auto lo = static_cast<LODObject*>(entity);
+		removeEntityFromLists(lo->getLOD1Object());
+		removeEntityFromLists(lo->getLOD2Object());
+		removeEntityFromLists(lo->getLOD3Object());
 	} else
 	if (entity->getEntityType() == Entity::ENTITYTYPE_IMPOSTEROBJECT) {
-		auto io3d = static_cast<ImposterObject*>(entity);
-		for (auto subEntity: io3d->getBillboardObjects()) removeEntityFromLists(subEntity);
+		auto io = static_cast<ImposterObject*>(entity);
+		for (auto subEntity: io->getBillboardObjects()) removeEntityFromLists(subEntity);
 	} else
 	if (entity->getEntityType() == Entity::ENTITYTYPE_LODOBJECTIMPOSTER) {
-		auto lob3dImposter = static_cast<LODObjectImposter*>(entity);
-		removeEntityFromLists(lob3dImposter->getLOD1Object());
-		for (auto subEntity: lob3dImposter->getLOD2Object()->getBillboardObjects()) removeEntityFromLists(subEntity);
+		auto loi = static_cast<LODObjectImposter*>(entity);
+		removeEntityFromLists(loi->getLOD1Object());
+		for (auto subEntity: loi->getLOD2Object()->getBillboardObjects()) removeEntityFromLists(subEntity);
 	}
 }
 
@@ -744,7 +744,7 @@ void Engine::initialize()
 	Console::println(string("TDME2::Renderer::Graphics Vendor: ") + renderer->getVendor());
 	Console::println(string("TDME2::Renderer::Graphics Renderer: ") + renderer->getRenderer());
 
-	// create object 3d renderer
+	// create entity renderer
 	entityRenderer = new EntityRenderer(this, renderer);
 	entityRenderer->initialize();
 	GUIParser::initialize();
@@ -1569,7 +1569,7 @@ Entity* Engine::getEntityByMousePosition(
 	int32_t mouseX,
 	int32_t mouseY,
 	EntityPickingFilter* filter,
-	Node** object3DNode,
+	Node** objectNode,
 	ParticleSystemEntity** particleSystemEntity
 ) {
 	// get world position of mouse position at near and far plane
@@ -1605,7 +1605,7 @@ Entity* Engine::getEntityByMousePosition(
 
 	// decals have first priority right now
 	if (selectedEntity != nullptr) {
-		if (object3DNode != nullptr) *object3DNode = selectedObjectNode;
+		if (objectNode != nullptr) *objectNode = selectedObjectNode;
 		for (auto _entity = selectedEntity; _entity != nullptr; _entity = _entity->getParentEntity()) {
 			if (_entity->getParentEntity() == nullptr) return _entity;
 		}
@@ -1637,7 +1637,7 @@ Entity* Engine::getEntityByMousePosition(
 
 	// objects without depth test have second priority right now
 	if (selectedEntity != nullptr) {
-		if (object3DNode != nullptr) *object3DNode = selectedObjectNode;
+		if (objectNode != nullptr) *objectNode = selectedObjectNode;
 		for (auto _entity = selectedEntity; _entity != nullptr; _entity = _entity->getParentEntity()) {
 			if (_entity->getParentEntity() == nullptr) return _entity;
 		}
@@ -1788,7 +1788,7 @@ Entity* Engine::getEntityByMousePosition(
 		// do the collision test
 		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), nearPlaneWorldCoordinate, farPlaneWorldCoordinate, boundingBoxLineContactMin, boundingBoxLineContactMax) == true) {
 			DecomposedEntities decomposedEntitiesEH;
-			Node* object3DNodeEH = nullptr;
+			Node* objectNodeEH = nullptr;
 			ParticleSystemEntity* particleSystemEntityEH = nullptr;
 			decomposeEntityTypes(
 				entity->getEntities(),
@@ -1800,7 +1800,7 @@ Entity* Engine::getEntityByMousePosition(
 				mouseX,
 				mouseY,
 				filter,
-				&object3DNodeEH,
+				&objectNodeEH,
 				&particleSystemEntityEH
 			);
 			if (subEntity != nullptr) {
@@ -1809,7 +1809,7 @@ Entity* Engine::getEntityByMousePosition(
 				if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
 					selectedEntity = entity;
 					selectedEntityDistance = entityDistance;
-					selectedObjectNode = object3DNodeEH;
+					selectedObjectNode = objectNodeEH;
 					selectedParticleSystem = particleSystemEntityEH;
 				}
 			}
@@ -1817,7 +1817,7 @@ Entity* Engine::getEntityByMousePosition(
 	}
 
 	// store node
-	if (object3DNode != nullptr) *object3DNode = selectedObjectNode;
+	if (objectNode != nullptr) *objectNode = selectedObjectNode;
 
 	// store particle system entity
 	if (particleSystemEntity != nullptr) {
@@ -1835,13 +1835,13 @@ Entity* Engine::getEntityByMousePosition(
 	}
 }
 
-Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& contactPoint, EntityPickingFilter* filter, Node** object3DNode, ParticleSystemEntity** particleSystemEntity) {
+Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& contactPoint, EntityPickingFilter* filter, Node** objectNode, ParticleSystemEntity** particleSystemEntity) {
 	// get world position of mouse position at near and far plane
 	auto startPoint = computeWorldCoordinateByMousePosition(mouseX, mouseY, 0.0f);
 	auto endPoint = computeWorldCoordinateByMousePosition(mouseX, mouseY, 1.0f);
 
 	//
-	return doRayCasting(startPoint, endPoint, contactPoint, filter);// TODO: object 3d node, particle system entity
+	return doRayCasting(startPoint, endPoint, contactPoint, filter);// TODO: object node, particle system entity
 }
 
 Entity* Engine::doRayCasting(
@@ -2016,7 +2016,7 @@ void Engine::dispose()
 		GUIParser::dispose();
 	}
 
-	// dispose object 3d VBO renderer
+	// dispose entity renderer
 	entityRenderer->dispose();
 
 	// dispose object buffer if main engine
@@ -2520,7 +2520,7 @@ void Engine::dumpShaders() {
 	for (auto& shaderId: getRegisteredShader(static_cast<ShaderType>(shaderType))) {
 		string shaderTypeString = "unknowm";
 		switch (shaderType) {
-			case SHADERTYPE_OBJECT: shaderTypeString = "object3d"; break;
+			case SHADERTYPE_OBJECT: shaderTypeString = "object"; break;
 			case SHADERTYPE_POSTPROCESSING: shaderTypeString = "postprocessing"; break;
 			default: break;
 		}

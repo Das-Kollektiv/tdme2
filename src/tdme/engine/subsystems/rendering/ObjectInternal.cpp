@@ -60,39 +60,39 @@ void ObjectInternal::unbindDiffuseTexture(const string& nodeId, const string& fa
 
 void ObjectInternal::bindDiffuseTexture(int32_t textureId, const string& nodeId, const string& facesEntityId)
 {
-	for (auto i = 0; i < object3dNodes.size(); i++) {
-		auto object3DNode = object3dNodes[i];
+	for (auto i = 0; i < objectNodes.size(); i++) {
+		auto objectNode = objectNodes[i];
 		// skip if a node is desired but not matching
-		if (nodeId != "" && nodeId != object3DNode->node->getId())
+		if (nodeId != "" && nodeId != objectNode->node->getId())
 			continue;
 
-		auto& facesEntities = object3DNode->node->getFacesEntities();
+		auto& facesEntities = objectNode->node->getFacesEntities();
 		for (auto facesEntityIdx = 0; facesEntityIdx < facesEntities.size(); facesEntityIdx++) {
 			auto& facesEntity = facesEntities[facesEntityIdx];
 			// skip if a faces entity is desired but not matching
 			if (facesEntityId != "" && facesEntityId != facesEntity.getId())
 				continue;
 			// set dynamic texture id
-			object3DNode->specularMaterialDynamicDiffuseTextureIdsByEntities[facesEntityIdx] = textureId;
+			objectNode->specularMaterialDynamicDiffuseTextureIdsByEntities[facesEntityIdx] = textureId;
 		}
 	}
 }
 
 void ObjectInternal::setTextureMatrix(const Matrix2D3x3& textureMatrix, const string& nodeId, const string& facesEntityId) {
-	for (auto i = 0; i < object3dNodes.size(); i++) {
-		auto object3DNode = object3dNodes[i];
+	for (auto i = 0; i < objectNodes.size(); i++) {
+		auto objectNode = objectNodes[i];
 		// skip if a node is desired but not matching
-		if (nodeId != "" && nodeId != object3DNode->node->getId())
+		if (nodeId != "" && nodeId != objectNode->node->getId())
 			continue;
 
-		auto& facesEntities = object3DNode->node->getFacesEntities();
+		auto& facesEntities = objectNode->node->getFacesEntities();
 		for (auto facesEntityIdx = 0; facesEntityIdx < facesEntities.size(); facesEntityIdx++) {
 			auto& facesEntity = facesEntities[facesEntityIdx];
 			// skip if a faces entity is desired but not matching
 			if (facesEntityId != "" && facesEntityId != facesEntity.getId())
 				continue;
 			// set dynamic texture id
-			object3DNode->textureMatricesByEntities[facesEntityIdx].set(textureMatrix);
+			objectNode->textureMatricesByEntities[facesEntityIdx].set(textureMatrix);
 		}
 	}
 }

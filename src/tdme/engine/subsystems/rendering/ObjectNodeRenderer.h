@@ -20,7 +20,7 @@ using tdme::engine::subsystems::rendering::ObjectNodeMesh;
 using tdme::engine::subsystems::skinning::SkinningShader;
 
 /**
- * Object 3D node VBO renderer
+ * Object node VBO renderer
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -32,7 +32,7 @@ class tdme::engine::subsystems::rendering::ObjectNodeRenderer final
 	friend class tdme::engine::subsystems::skinning::SkinningShader;
 
 private:
-	ObjectNode* object3DNode { nullptr };
+	ObjectNode* objectNode { nullptr };
 	VBOManager_VBOManaged* vboManagedBase { nullptr };
 	VBOManager_VBOManaged* vboManagedNormalMapping { nullptr };
 	VBOManager_VBOManaged* vboManagedOrigins { nullptr };
@@ -45,15 +45,15 @@ private:
 public:
 	/**
 	 * Constructor
-	 * @param object3DNode object 3D node
+	 * @param objectNode object node
 	 */
-	ObjectNodeRenderer(ObjectNode* object3DNode);
+	ObjectNodeRenderer(ObjectNode* objectNode);
 
 	/**
 	 * @return if preRender call is required
 	 */
 	inline bool needsPreRender() {
-		return haveVBOs == false || object3DNode->mesh->hasRecreatedBuffers() == true || object3DNode->mesh->node->hasUpdate();
+		return haveVBOs == false || objectNode->mesh->hasRecreatedBuffers() == true || objectNode->mesh->node->hasUpdate();
 	}
 
 	/**
@@ -63,7 +63,7 @@ public:
 	void preRender(int contextIdx);
 
 	/**
-	 * Disposes the object 3d node
+	 * Disposes the object node
 	 */
 	void dispose();
 

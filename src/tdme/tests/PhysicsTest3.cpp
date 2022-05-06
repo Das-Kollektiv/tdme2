@@ -272,7 +272,7 @@ void PhysicsTest3::initialize()
 		auto terrainMesh = new TerrainMesh(&terrainModel, entity->getTransformations());
 		world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, Transformations(), 0.5f, {terrainMesh});
 		auto _barrel = modelDeleter.add(ModelReader::read("resources/tests/models/barrel", "barrel.dae"));
-		auto barrelBoundingVolume = bvDeleter.add(new ConvexMesh(object3DModelDeleter.add(new ObjectModel(_barrel))));
+		auto barrelBoundingVolume = bvDeleter.add(new ConvexMesh(objectModelDeleter.add(new ObjectModel(_barrel))));
 		entity = new Object("barrel1", _barrel);
 		entity->setContributesShadows(true);
 		entity->setReceivesShadows(true);
@@ -290,7 +290,7 @@ void PhysicsTest3::initialize()
 		engine->addEntity(entity);
 		world->addRigidBody("barrel2", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {barrelBoundingVolume});
 		auto _cone = modelDeleter.add(ModelReader::read("resources/tests/models/cone", "cone.dae"));
-		auto coneBoundingVolume = bvDeleter.add(new ConvexMesh(object3DModelDeleter.add(new ObjectModel(_cone))));
+		auto coneBoundingVolume = bvDeleter.add(new ConvexMesh(objectModelDeleter.add(new ObjectModel(_cone))));
 		entity = new Object("cone1", _cone);
 		entity->setContributesShadows(true);
 		entity->setReceivesShadows(true);
@@ -308,7 +308,7 @@ void PhysicsTest3::initialize()
 		engine->addEntity(entity);
 		world->addRigidBody("cone2", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.0f, 1.0f, 100.0f, Vector3(1.0f, 1.0f, 1.0f), {coneBoundingVolume});
 		auto _tire = modelDeleter.add(ModelReader::read("resources/tests/models/tire", "tire.dae"));
-		auto tireBoundingVolume = bvDeleter.add(new ConvexMesh(object3DModelDeleter.add(new ObjectModel(_tire))));
+		auto tireBoundingVolume = bvDeleter.add(new ConvexMesh(objectModelDeleter.add(new ObjectModel(_tire))));
 		entity = new Object("tire1", _tire);
 		entity->setContributesShadows(true);
 		entity->setReceivesShadows(true);

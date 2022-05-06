@@ -173,11 +173,11 @@ void EngineTest::display()
 			to_string(clickWorldPosition.getY()) + ", " +
 			to_string(clickWorldPosition.getZ())
 		);
-		auto _object3DClicked = engine->getEntityByMousePosition(mouseClickedXY[0], mouseClickedXY[1]);
-		if (_object3DClicked != nullptr) {
-			_object3DClicked->setEffectColorMul(Color4(2.0f, 2.0f, 2.0f, 1.0f));
+		auto _objectClicked = engine->getEntityByMousePosition(mouseClickedXY[0], mouseClickedXY[1]);
+		if (_objectClicked != nullptr) {
+			_objectClicked->setEffectColorMul(Color4(2.0f, 2.0f, 2.0f, 1.0f));
 		}
-		entityClicked = _object3DClicked;
+		entityClicked = _objectClicked;
 		mouseClicked = false;
 	}
 }

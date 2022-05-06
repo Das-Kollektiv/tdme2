@@ -50,7 +50,7 @@ using tdme::math::Quaternion;
 using tdme::math::Vector3;
 
 /**
- * Object 3D to be used with engine class
+ * Object to be used with engine class
  * @author Andreas Drewke
  * @version $Id$
  */
@@ -93,7 +93,7 @@ private:
 	bool enableTransformationsComputingLOD { false };
 
 	/**
-	 * @return if this object3d instance needs a computeTransformations() call each frame
+	 * @return if this object instance needs a computeTransformations() call each frame
 	 */
 	inline bool isNeedsComputeTransformations() {
 		return model->hasSkinning() == true || model->hasAnimations() == true;
@@ -132,7 +132,7 @@ private:
 	}
 
 	/**
-	 * @return if this object3d instance needs a preRender() call each frame
+	 * @return if this object instance needs a preRender() call each frame
 	 */
 	inline bool isNeedsPreRender() {
 		return
@@ -146,15 +146,15 @@ private:
 	 */
 	inline void preRender(int contextIdx) {
 		if (model->hasBoundingBoxUpdate() == true) updateBoundingBox();
-		for (auto object3DNode: object3dNodes) {
-			if (object3DNode->renderer->needsPreRender() == true) {
-				object3DNode->renderer->preRender(contextIdx);
+		for (auto objectNode: objectNodes) {
+			if (objectNode->renderer->needsPreRender() == true) {
+				objectNode->renderer->preRender(contextIdx);
 			}
 		}
 	}
 
 	/**
-	 * @return if this object3d needs forward shading
+	 * @return if this object needs forward shading
 	 */
 	inline bool isNeedsForwardShading() {
 		return needsForwardShading == true || reflectionEnvironmentMappingId.empty() == false;
@@ -189,7 +189,7 @@ public:
 	Object(const string& id, Model* model);
 
 	/**
-	 * Set up if this object3d instance needs a preRender() call each frame
+	 * Set up if this object instance needs a preRender() call each frame
 	 */
 	inline void setNeedsPreRender(bool needsPreRender) {
 		this->needsPreRender = needsPreRender;
@@ -413,7 +413,7 @@ public:
 	}
 
 	/**
-	 * @return if object3d has a reflection environment mapping position
+	 * @return if object has a reflection environment mapping position
 	 */
 	inline bool hasReflectionEnvironmentMappingPosition() {
 		return reflectionEnvironmentMappingPositionSet;

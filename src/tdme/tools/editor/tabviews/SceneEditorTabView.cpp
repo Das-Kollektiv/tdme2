@@ -1300,8 +1300,8 @@ void SceneEditorTabView::applyReflectionEnvironmentMappingId(const string& refle
 		auto sceneEntity = scene->getEntity(selectedEntity->getId());
 		if (sceneEntity == nullptr) continue;
 
-		auto object3D = dynamic_cast<Object*>(selectedEntity);
-		if (object3D != nullptr) object3D->setReflectionEnvironmentMappingId(reflectionEnvironmentMappingId);
+		auto object = dynamic_cast<Object*>(selectedEntity);
+		if (object != nullptr) object->setReflectionEnvironmentMappingId(reflectionEnvironmentMappingId);
 		sceneEntity->setReflectionEnvironmentMappingId(reflectionEnvironmentMappingId);
 	}
 }

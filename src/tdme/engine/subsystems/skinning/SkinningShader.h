@@ -81,10 +81,10 @@ public:
 	/**
 	 * Compute skinning
 	 * @param contextIdx context index
-	 * @param object3DBase object 3D base
-	 * @param object3DNodeMesh object 3d node mesh
+	 * @param objectBase object base
+	 * @param objectNodeMesh object node mesh
 	 */
-	void computeSkinning(int contextIdx, ObjectBase* object3DBase, ObjectNodeMesh* object3DNodeMesh);
+	void computeSkinning(int contextIdx, ObjectBase* objectBase, ObjectNodeMesh* objectNodeMesh);
 
 	/**
 	 * Reset

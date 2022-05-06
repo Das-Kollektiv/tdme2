@@ -20,32 +20,32 @@ using tdme::engine::subsystems::rendering::ObjectNodeMesh;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-ObjectBase_TransformedFacesIterator::ObjectBase_TransformedFacesIterator(ObjectBase* object3DBase)
+ObjectBase_TransformedFacesIterator::ObjectBase_TransformedFacesIterator(ObjectBase* objectBase)
 {
-	this->object3DBase = object3DBase;
+	this->objectBase = objectBase;
 	reset();
 }
 
 void ObjectBase_TransformedFacesIterator::reset()
 {
 	faceCount = 0;
-	for (auto object3DNode : object3DBase->object3dNodes) {
-		for (auto& facesEntity : object3DNode->node->getFacesEntities()) {
+	for (auto objectNode : objectBase->objectNodes) {
+		for (auto& facesEntity : objectNode->node->getFacesEntities()) {
 			faceCount += facesEntity.getFaces().size();
 		}
 	}
 	faceIdx = 0;
 	faceIdxTotal = 0;
-	object3DNodeIdx = 0;
+	objectNodeIdx = 0;
 	facesEntityIdx = 0;
-	auto object3DNode = object3DBase->object3dNodes[object3DNodeIdx];
-	if (object3DNode->mesh->skinning == true) {
+	auto objectNode = objectBase->objectNodes[objectNodeIdx];
+	if (objectNode->mesh->skinning == true) {
 		matrix.identity();
 	} else {
-		matrix.set(*object3DNode->nodeTransformationsMatrix);
+		matrix.set(*objectNode->nodeTransformationsMatrix);
 	}
-	matrix.multiply(object3DBase->getTransformationsMatrix());
-	node = object3DNode->node;
+	matrix.multiply(objectBase->getTransformationsMatrix());
+	node = objectNode->node;
 }
 
 ObjectBase_TransformedFacesIterator* ObjectBase_TransformedFacesIterator::iterator() {
@@ -55,19 +55,19 @@ ObjectBase_TransformedFacesIterator* ObjectBase_TransformedFacesIterator::iterat
 
 const array<Vector3, 3>& ObjectBase_TransformedFacesIterator::next()
 {
-	auto object3DNode = object3DBase->object3dNodes[object3DNodeIdx];
-	auto& facesEntities = object3DNode->node->getFacesEntities();
+	auto objectNode = objectBase->objectNodes[objectNodeIdx];
+	auto& facesEntities = objectNode->node->getFacesEntities();
 	auto& facesEntity = facesEntities[facesEntityIdx];
 	auto& faces = facesEntity.getFaces();
 	auto& face = faces[faceIdx];
 	// compute vertices
 	auto& faceVertexIndices = face.getVertexIndices();
-	auto nodeVerticesTransformed = object3DNode->mesh->vertices;
+	auto nodeVerticesTransformed = objectNode->mesh->vertices;
 	vertices[0] = matrix.multiply((*nodeVerticesTransformed)[faceVertexIndices[0]]);
 	vertices[1] = matrix.multiply((*nodeVerticesTransformed)[faceVertexIndices[1]]);
 	vertices[2] = matrix.multiply((*nodeVerticesTransformed)[faceVertexIndices[2]]);
 	// set up current node
-	node = object3DNode->node;
+	node = objectNode->node;
 	// increment to next face
 	faceIdxTotal++;
 	faceIdx++;
@@ -78,14 +78,14 @@ const array<Vector3, 3>& ObjectBase_TransformedFacesIterator::next()
 			facesEntityIdx++;
 			if (facesEntityIdx == facesEntities.size()) {
 				facesEntityIdx = 0;
-				object3DNodeIdx++;
-				object3DNode = object3DBase->object3dNodes[object3DNodeIdx];
-				if (object3DNode->mesh->skinning == true) {
+				objectNodeIdx++;
+				objectNode = objectBase->objectNodes[objectNodeIdx];
+				if (objectNode->mesh->skinning == true) {
 					matrix.identity();
 				} else {
-					matrix.set(*object3DNode->nodeTransformationsMatrix);
+					matrix.set(*objectNode->nodeTransformationsMatrix);
 				}
-				matrix.multiply(object3DBase->getTransformationsMatrix());
+				matrix.multiply(objectBase->getTransformationsMatrix());
 			}
 		}
 	}

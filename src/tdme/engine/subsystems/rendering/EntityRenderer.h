@@ -144,25 +144,25 @@ private:
 
 	/**
 	 * Checks if a material could change when having multiple objects but same model
-	 * @param object3DNode object 3d node
+	 * @param objectNode object node
 	 * @param facesEntityIdx faces entity idx
 	 * @param renderTypes render types
 	 */
-	inline bool checkMaterialChangable(ObjectNode* object3DNode, int32_t facesEntityIdx, int32_t renderTypes) {
-		return object3DNode->specularMaterialDynamicDiffuseTextureIdsByEntities[facesEntityIdx] != ObjectNode::TEXTUREID_NONE;
+	inline bool checkMaterialChangable(ObjectNode* objectNode, int32_t facesEntityIdx, int32_t renderTypes) {
+		return objectNode->specularMaterialDynamicDiffuseTextureIdsByEntities[facesEntityIdx] != ObjectNode::TEXTUREID_NONE;
 	}
 
 	/**
 	 * Set ups a material for rendering
 	 * @param contextIdx context index
-	 * @param object3DNode object 3d node
+	 * @param objectNode object node
 	 * @param facesEntityIdx faces entity idx
 	 * @param renderTypes render types
 	 * @param updateOnly update only, means material has been set up already, only do changes
 	 * @param materialKey material key
 	 * @param currentMaterialKey current material key or empty
 	 */
-	void setupMaterial(int contextIdx, ObjectNode* object3DNode, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey, const string& currentMaterialKey = string());
+	void setupMaterial(int contextIdx, ObjectNode* objectNode, int32_t facesEntityIdx, int32_t renderTypes, bool updateOnly, string& materialKey, const string& currentMaterialKey = string());
 
 	/**
 	 * Clear material for rendering
@@ -280,7 +280,7 @@ public:
 	BatchRendererTriangles* acquireTrianglesBatchRenderer();
 
 	/**
-	 * Resets the object 3d renderer
+	 * Resets the object renderer
 	 */
 	void reset();
 

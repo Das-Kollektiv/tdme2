@@ -58,16 +58,16 @@ private:
 	/**
 	 * Creates an array of transparent render faces from
 	 * @param modelViewMatrix model view matrix
-	 * @param object3DNode object3D node
+	 * @param objectNode object node
 	 * @param facesEntityIdx faces entity index
 	 * @param faceIdx face index
 	 */
-	inline void createTransparentRenderFaces(Matrix4x4& modelViewMatrix, ObjectNode* object3DNode, int32_t facesEntityIdx, int32_t faceIdx) {
+	inline void createTransparentRenderFaces(Matrix4x4& modelViewMatrix, ObjectNode* objectNode, int32_t facesEntityIdx, int32_t faceIdx) {
 		// retrieve objects we need
-		auto& facesEntities = object3DNode->node->getFacesEntities();
+		auto& facesEntities = objectNode->node->getFacesEntities();
 		auto& facesEntity = facesEntities[facesEntityIdx];
 		auto& faces = facesEntity.getFaces();
-		auto nodeTransformedVertices = object3DNode->mesh->vertices;
+		auto nodeTransformedVertices = objectNode->mesh->vertices;
 		// objects we will use for calculations
 		float distanceFromCamera;
 		Vector3 faceCenter;
@@ -89,7 +89,7 @@ private:
 			distanceFromCamera = -faceCenter.getZ();
 			// create transparent render face
 			auto transparentRenderFace = transparentRenderFacesPool.allocate();
-			transparentRenderFace->object3DNode = object3DNode;
+			transparentRenderFace->objectNode = objectNode;
 			transparentRenderFace->facesEntityIdx = facesEntityIdx;
 			transparentRenderFace->faceIdx = faceIdx;
 			transparentRenderFace->distanceFromCamera = distanceFromCamera;

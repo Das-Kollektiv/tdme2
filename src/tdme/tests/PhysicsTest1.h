@@ -47,7 +47,7 @@ private:
 	bool keyD { false };
 	ObjectDeleter<Model> modelDeleter;
 	ObjectDeleter<BoundingVolume> bvDeleter;
-	ObjectDeleter<ObjectModel> object3DModelDeleter;
+	ObjectDeleter<ObjectModel> objectModelDeleter;
 
 public:
 

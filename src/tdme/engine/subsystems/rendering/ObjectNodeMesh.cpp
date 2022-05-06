@@ -50,11 +50,11 @@ using tdme::utilities::Console;
 using tdme::utilities::FloatBuffer;
 using tdme::utilities::ShortBuffer;
 
-ObjectNodeMesh::ObjectNodeMesh(ObjectNodeRenderer* object3DNodeRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Node* node, const vector<map<string, Matrix4x4*>*>& transformationMatrices, const vector<map<string, Matrix4x4*>*>& skinningMatrices, int instances)
+ObjectNodeMesh::ObjectNodeMesh(ObjectNodeRenderer* objectNodeRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Node* node, const vector<map<string, Matrix4x4*>*>& transformationMatrices, const vector<map<string, Matrix4x4*>*>& skinningMatrices, int instances)
 {
 	//
 	this->instances = instances;
-	this->object3DNodeRenderer = object3DNodeRenderer;
+	this->objectNodeRenderer = objectNodeRenderer;
 	this->node = node;
 	// node data
 	auto& nodeVertices = node->getVertices();
@@ -222,14 +222,14 @@ ObjectNodeMesh::ObjectNodeMesh(ObjectNodeRenderer* object3DNodeRenderer, Engine:
 	recreateBuffers();
 }
 
-void ObjectNodeMesh::computeTransformations(int contextIdx, ObjectBase* object3DBase)
+void ObjectNodeMesh::computeTransformations(int contextIdx, ObjectBase* objectBase)
 {
 	// transformations for skinned meshes
 	auto skinning = node->getSkinning();
 	if (skinning != nullptr) {
 		// compute skinning on CPU if required
 		if (animationProcessingTarget == Engine::AnimationProcessingTarget::GPU) {
-			Engine::getSkinningShader()->computeSkinning(contextIdx, object3DBase, this);
+			Engine::getSkinningShader()->computeSkinning(contextIdx, objectBase, this);
 		} else
 		if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 			auto& nodeVertices = node->getVertices();
@@ -249,10 +249,10 @@ void ObjectNodeMesh::computeTransformations(int contextIdx, ObjectBase* object3D
 			float weightNormalized;
 			auto j = 0;
 			Matrix4x4 transformationsMatrix; // TODO: try to avoid multiplying matrix with at each vertex
-			auto currentInstance = object3DBase->getCurrentInstance();
+			auto currentInstance = objectBase->getCurrentInstance();
 			for (auto i = 0; i < instances; i++) {
-				if (object3DBase->instanceEnabled[i] == false) continue;
-				object3DBase->setCurrentInstance(i);
+				if (objectBase->instanceEnabled[i] == false) continue;
+				objectBase->setCurrentInstance(i);
 				for (auto vertexIndex = 0; vertexIndex < nodeVertices.size(); vertexIndex++) {
 					// do vertices
 					vertex = &nodeVertices[vertexIndex];
@@ -277,7 +277,7 @@ void ObjectNodeMesh::computeTransformations(int contextIdx, ObjectBase* object3D
 						auto skinningJointTransformationsMatrix = cSkinningJointTransformationsMatrices[i][vertexIndex][vertexJointWeightIdx];
 						if (skinningJointTransformationsMatrix == nullptr) continue;
 						//
-						transformationsMatrix.set(*skinningJointTransformationsMatrix).multiply(object3DBase->getTransformationsMatrix());
+						transformationsMatrix.set(*skinningJointTransformationsMatrix).multiply(objectBase->getTransformationsMatrix());
 						// vertex
 						transformedVertex->add(transformationsMatrix.multiply(*vertex).scale(weight));
 						// normals
@@ -314,7 +314,7 @@ void ObjectNodeMesh::computeTransformations(int contextIdx, ObjectBase* object3D
 				}
 				j++;
 			}
-			object3DBase->setCurrentInstance(currentInstance);
+			objectBase->setCurrentInstance(currentInstance);
 			// recreate buffers
 			recreateBuffers();
 		}
