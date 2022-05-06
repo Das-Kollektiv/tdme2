@@ -92,7 +92,7 @@ void GenerateImposterLOD::generate(
 	camera->setLookFrom(boundingBox->getCenter().clone().add(Vector3(0.0f, 0.0f, boundingBox->getCenter().getZ() + maxAxisDimension * 1.25f)));
 
 	//
-	Entity* entity = new Object("model", model);
+	auto entity = new Object("model", model);
 	entity->addRotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
 	osEngine->addEntity(entity);
 
