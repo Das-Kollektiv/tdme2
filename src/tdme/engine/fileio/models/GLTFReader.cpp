@@ -321,11 +321,12 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 }
 
 void GLTFReader::interpolateKeyFrames(int frameTimeCount, const float* frameTimes, const vector<Matrix4x4>& keyFrameMatrices, int interpolatedMatrixCount, vector<Matrix4x4>& interpolatedMatrices, int frameStartIdx) {
-	auto tansformationsMatrixLast = &keyFrameMatrices[0];
 	auto keyFrameIdx = 0;
 	auto frameIdx = 0;
-	auto timeStampLast = 0.0f;
-	for (auto i = 0; i < frameTimeCount; i++) {
+	auto timeStampLast = frameTimes[keyFrameIdx];
+	auto tansformationsMatrixLast = &keyFrameMatrices[keyFrameIdx];
+	interpolatedMatrices[frameStartIdx + frameIdx++] = keyFrameMatrices[keyFrameIdx++];
+	for (auto i = 1; i < frameTimeCount; i++) {
 		auto keyFrameTime = frameTimes[i];
 		auto transformationsMatrixCurrent = &keyFrameMatrices[(keyFrameIdx) % keyFrameMatrices.size()];
 		float timeStamp;
