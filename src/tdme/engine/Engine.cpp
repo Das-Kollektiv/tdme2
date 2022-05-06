@@ -642,7 +642,7 @@ void Engine::removeEntityFromLists(Entity* entity)
 	if (entity == nullptr) return;
 	//
 	removeFromDecomposedEntities(visibleDecomposedEntities, entity);
-	if (entity->getEntityType() == Entity::ENTITYTYPE_OBJECT3DRENDERGROUP) {
+	if (entity->getEntityType() == Entity::ENTITYTYPE_OBJECTRENDERGROUP) {
 		removeEntityFromLists(static_cast<ObjectRenderGroup*>(entity)->getEntity());
 	} else
 	if (entity->getEntityType() == Entity::ENTITYTYPE_OBJECTPARTICLESYSTEM) {
@@ -657,17 +657,17 @@ void Engine::removeEntityFromLists(Entity* entity)
 			removeEntityFromLists(subEntity);
 		}
 	} else
-	if (entity->getEntityType() == Entity::ENTITYTYPE_LODOBJECT3D) {
+	if (entity->getEntityType() == Entity::ENTITYTYPE_LODOBJECT) {
 		auto lob3d = static_cast<LODObject*>(entity);
 		removeEntityFromLists(lob3d->getLOD1Object());
 		removeEntityFromLists(lob3d->getLOD2Object());
 		removeEntityFromLists(lob3d->getLOD3Object());
 	} else
-	if (entity->getEntityType() == Entity::ENTITYTYPE_IMPOSTEROBJECT3D) {
+	if (entity->getEntityType() == Entity::ENTITYTYPE_IMPOSTEROBJECT) {
 		auto io3d = static_cast<ImposterObject*>(entity);
 		for (auto subEntity: io3d->getBillboardObjects()) removeEntityFromLists(subEntity);
 	} else
-	if (entity->getEntityType() == Entity::ENTITYTYPE_LODOBJECT3DIMPOSTER) {
+	if (entity->getEntityType() == Entity::ENTITYTYPE_LODOBJECTIMPOSTER) {
 		auto lob3dImposter = static_cast<LODObjectImposter*>(entity);
 		removeEntityFromLists(lob3dImposter->getLOD1Object());
 		for (auto subEntity: lob3dImposter->getLOD2Object()->getBillboardObjects()) removeEntityFromLists(subEntity);
@@ -1056,7 +1056,7 @@ void Engine::computeTransformationsFunction(vector<Object*>& objects, int thread
 
 inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& decomposedEntities, bool decomposeAllEntities) {
 	switch (entity->getEntityType()) {
-		case Entity::ENTITYTYPE_OBJECT3D:
+		case Entity::ENTITYTYPE_OBJECT:
 			{
 				auto object = static_cast<Object*>(entity);
 				if (object->isDisableDepthTest() == true) {
@@ -1077,7 +1077,7 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 				}
 			}
 			break;
-		case Entity::ENTITYTYPE_LODOBJECT3D:
+		case Entity::ENTITYTYPE_LODOBJECT:
 			{
 				auto lodObject = static_cast<LODObject*>(entity);
 				if (decomposeAllEntities == true) {
@@ -1093,7 +1093,7 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 				}
 			}
 			break;
-		case Entity::ENTITYTYPE_IMPOSTEROBJECT3D:
+		case Entity::ENTITYTYPE_IMPOSTEROBJECT:
 			{
 				auto imposterObject = static_cast<ImposterObject*>(entity);
 				if (decomposeAllEntities == true) {
@@ -1103,7 +1103,7 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 				}
 			}
 			break;
-		case Entity::ENTITYTYPE_LODOBJECT3DIMPOSTER:
+		case Entity::ENTITYTYPE_LODOBJECTIMPOSTER:
 			{
 				auto lodObjectImposter = static_cast<LODObjectImposter*>(entity);
 				if (decomposeAllEntities == true) {
@@ -1138,7 +1138,7 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 				decomposedEntities.ppses.push_back(fpse);
 			}
 			break;
-		case Entity::ENTITYTYPE_LINESOBJECT3D:
+		case Entity::ENTITYTYPE_LINESOBJECT:
 			{
 				auto lo = static_cast<LinesObject*>(entity);
 				decomposedEntities.linesObjects.push_back(lo);
@@ -1156,7 +1156,7 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 				decomposedEntities.environmentMappingEntities.push_back(eme);
 			}
 			break;
-		case Entity::ENTITYTYPE_OBJECT3DRENDERGROUP:
+		case Entity::ENTITYTYPE_OBJECTRENDERGROUP:
 			{
 				auto org = static_cast<ObjectRenderGroup*>(entity);
 				decomposedEntities.objectRenderGroups.push_back(org);
@@ -2520,7 +2520,7 @@ void Engine::dumpShaders() {
 	for (auto& shaderId: getRegisteredShader(static_cast<ShaderType>(shaderType))) {
 		string shaderTypeString = "unknowm";
 		switch (shaderType) {
-			case SHADERTYPE_OBJECT3D: shaderTypeString = "object3d"; break;
+			case SHADERTYPE_OBJECT: shaderTypeString = "object3d"; break;
 			case SHADERTYPE_POSTPROCESSING: shaderTypeString = "postprocessing"; break;
 			default: break;
 		}

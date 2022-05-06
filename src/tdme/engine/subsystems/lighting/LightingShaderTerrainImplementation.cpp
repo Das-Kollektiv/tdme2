@@ -107,7 +107,7 @@ void LightingShaderTerrainImplementation::initialize()
 void LightingShaderTerrainImplementation::registerShader() {
 	// register shader
 	Engine::registerShader(
-		Engine::ShaderType::SHADERTYPE_OBJECT3D,
+		Engine::ShaderType::SHADERTYPE_OBJECT,
 		getId()
 	);
 }

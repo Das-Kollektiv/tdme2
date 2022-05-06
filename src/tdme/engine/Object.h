@@ -197,7 +197,7 @@ public:
 
 	// overridden methods
 	inline EntityType getEntityType() override {
-		return ENTITYTYPE_OBJECT3D;
+		return ENTITYTYPE_OBJECT;
 	}
 
 	void setEngine(Engine* engine) override;

@@ -115,7 +115,7 @@ public:
 
 	// overridden method
 	inline EntityType getEntityType() override {
-		return ENTITYTYPE_IMPOSTEROBJECT3D;
+		return ENTITYTYPE_IMPOSTEROBJECT;
 	}
 
 	/**

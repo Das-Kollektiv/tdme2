@@ -1305,7 +1305,7 @@ void SceneConnector::resetEngine(Engine* engine, Scene* scene) {
 		Entity* entity = nullptr;
 		while ((entity = engine->getEntity("tdme.terrain." + to_string(idx++))) != nullptr) {
 			Model* model = nullptr;
-			if (entity->getEntityType() == Entity::ENTITYTYPE_OBJECT3D) model = static_cast<Object*>(entity)->getModel();
+			if (entity->getEntityType() == Entity::ENTITYTYPE_OBJECT) model = static_cast<Object*>(entity)->getModel();
 			engine->removeEntity(entity->getId());
 			if (model != nullptr) delete model;
 		}
@@ -1315,7 +1315,7 @@ void SceneConnector::resetEngine(Engine* engine, Scene* scene) {
 		Entity* entity = nullptr;
 		while ((entity = engine->getEntity("tdme.water." + to_string(idx++))) != nullptr) {
 			Model* model = nullptr;
-			if (entity->getEntityType() == Entity::ENTITYTYPE_OBJECT3D) model = static_cast<Object*>(entity)->getModel();
+			if (entity->getEntityType() == Entity::ENTITYTYPE_OBJECT) model = static_cast<Object*>(entity)->getModel();
 			engine->removeEntity(entity->getId());
 			if (model != nullptr) delete model;
 		}

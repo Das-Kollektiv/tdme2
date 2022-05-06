@@ -151,7 +151,7 @@ public:
 
 	// overridden methods
 	inline EntityType getEntityType() override {
-		return ENTITYTYPE_OBJECT3DRENDERGROUP;
+		return ENTITYTYPE_OBJECTRENDERGROUP;
 	}
 
 	/**
@@ -337,11 +337,11 @@ public:
 		shaderParameters.setShader(id);
 		// TODO: put me into entity interface
 		if (combinedEntity == nullptr) return;
-		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_OBJECT3D) {
+		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_OBJECT) {
 			static_cast<Object*>(combinedEntity)->setShader(id);
 			shaderParameters.setShader(static_cast<Object*>(combinedEntity)->getShader());
 		} else
-		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_LODOBJECT3D) {
+		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_LODOBJECT) {
 			static_cast<LODObject*>(combinedEntity)->setShader(id);
 			shaderParameters.setShader(static_cast<LODObject*>(combinedEntity)->getShader());
 		}
@@ -363,11 +363,11 @@ public:
 		distanceShaderParameters.setShader(id);
 		// TODO: put me into entity interface
 		if (combinedEntity == nullptr) return;
-		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_OBJECT3D) {
+		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_OBJECT) {
 			static_cast<Object*>(combinedEntity)->setDistanceShader(id);
 			shaderParameters.setShader(static_cast<Object*>(combinedEntity)->getDistanceShader());
 		} else
-		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_LODOBJECT3D) {
+		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_LODOBJECT) {
 			static_cast<LODObject*>(combinedEntity)->setDistanceShader(id);
 			shaderParameters.setShader(static_cast<LODObject*>(combinedEntity)->getDistanceShader());
 		}
@@ -388,10 +388,10 @@ public:
 		this->distanceShaderDistance = distanceShaderDistance;
 		// TODO: put me into entity interface
 		if (combinedEntity == nullptr) return;
-		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_OBJECT3D) {
+		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_OBJECT) {
 			static_cast<Object*>(combinedEntity)->setDistanceShaderDistance(distanceShaderDistance);
 		} else
-		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_LODOBJECT3D) {
+		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_LODOBJECT) {
 			static_cast<LODObject*>(combinedEntity)->setDistanceShaderDistance(distanceShaderDistance);
 		}
 	}
@@ -430,10 +430,10 @@ public:
 	inline void setShaderParameter(const string& parameterName, const ShaderParameter& parameterValue) {
 		shaderParameters.setShaderParameter(parameterName, parameterValue);
 		if (combinedEntity == nullptr) return;
-		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_OBJECT3D) {
+		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_OBJECT) {
 			static_cast<Object*>(combinedEntity)->setShaderParameter(parameterName, parameterValue);
 		} else
-		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_LODOBJECT3D) {
+		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_LODOBJECT) {
 			static_cast<LODObject*>(combinedEntity)->setShaderParameter(parameterName, parameterValue);
 		}
 	}
@@ -457,10 +457,10 @@ public:
 	inline void setDistanceShaderParameter(const string& parameterName, const ShaderParameter& parameterValue) {
 		distanceShaderParameters.setShaderParameter(parameterName, parameterValue);
 		if (combinedEntity == nullptr) return;
-		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_OBJECT3D) {
+		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_OBJECT) {
 			static_cast<Object*>(combinedEntity)->setDistanceShaderParameter(parameterName, parameterValue);
 		} else
-		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_LODOBJECT3D) {
+		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_LODOBJECT) {
 			static_cast<LODObject*>(combinedEntity)->setDistanceShaderParameter(parameterName, parameterValue);
 		}
 	}

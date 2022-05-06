@@ -129,7 +129,7 @@ public:
 
 	// overridden method
 	inline EntityType getEntityType() override {
-		return ENTITYTYPE_LODOBJECT3DIMPOSTER;
+		return ENTITYTYPE_LODOBJECTIMPOSTER;
 	}
 
 	/**

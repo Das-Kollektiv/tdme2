@@ -24,7 +24,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::math::Matrix4x4;
 
 /**
- * Representation of a 3d model
+ * Representation of a 3D model
  * @author andreas.drewke
  * @version $Id$
  */

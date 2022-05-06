@@ -145,7 +145,7 @@ public:
 
 	// overridden method
 	inline EntityType getEntityType() override {
-		return ENTITYTYPE_LODOBJECT3D;
+		return ENTITYTYPE_LODOBJECT;
 	}
 
 	/**

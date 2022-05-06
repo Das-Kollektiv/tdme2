@@ -195,20 +195,20 @@ void ShadowMap::createShadowMap(Light* light)
 	// determine visible objects and objects that should generate a shadow
 	for (auto entity: shadowMapping->engine->getPartition()->getVisibleEntities(lightCamera->getFrustum())) {
 		switch (entity->getEntityType()) {
-			case Entity::ENTITYTYPE_OBJECT3DRENDERGROUP:
+			case Entity::ENTITYTYPE_OBJECTRENDERGROUP:
 				{
 					auto org = static_cast<ObjectRenderGroup*>(entity);
 					auto orgEntity = org->getEntity();
 					if (orgEntity != nullptr) {
 						if (orgEntity->isContributesShadows() == false) continue;
 						switch(orgEntity->getEntityType()) {
-							case Entity::ENTITYTYPE_OBJECT3D:
+							case Entity::ENTITYTYPE_OBJECT:
 								{
 									auto object = static_cast<Object*>(orgEntity);
 									visibleObjects.push_back(object);
 								}
 								break;
-							case Entity::ENTITYTYPE_LODOBJECT3D:
+							case Entity::ENTITYTYPE_LODOBJECT:
 								{
 									auto lodObject = static_cast<LODObject*>(orgEntity);
 									if (lodObject->isContributesShadows() == false) continue;
@@ -224,14 +224,14 @@ void ShadowMap::createShadowMap(Light* light)
 					}
 				}
 				break;
-			case Entity::ENTITYTYPE_OBJECT3D:
+			case Entity::ENTITYTYPE_OBJECT:
 				{
 					auto object = static_cast<Object*>(entity);
 					if (object->isContributesShadows() == false) continue;
 					visibleObjects.push_back(object);
 				}
 				break;
-			case Entity::ENTITYTYPE_LODOBJECT3D:
+			case Entity::ENTITYTYPE_LODOBJECT:
 				{
 					auto lodObject = static_cast<LODObject*>(entity);
 					if (lodObject->isContributesShadows() == false) continue;
@@ -239,14 +239,14 @@ void ShadowMap::createShadowMap(Light* light)
 					if (object != nullptr) visibleObjects.push_back(object);
 				}
 				break;
-			case Entity::ENTITYTYPE_IMPOSTEROBJECT3D:
+			case Entity::ENTITYTYPE_IMPOSTEROBJECT:
 				{
 					auto object = static_cast<ImposterObject*>(entity);
 					if (object->isContributesShadows() == false) continue;
 					visibleObjects.push_back(object->getBillboardObject());
 				}
 				break;
-			case Entity::ENTITYTYPE_LODOBJECT3DIMPOSTER:
+			case Entity::ENTITYTYPE_LODOBJECTIMPOSTER:
 				{
 					auto lodObjectImposter = static_cast<LODObjectImposter*>(entity);
 					if (lodObjectImposter->isContributesShadows() == false) continue;
@@ -277,7 +277,7 @@ void ShadowMap::createShadowMap(Light* light)
 					auto eh = static_cast<EntityHierarchy*>(entity);
 					if (eh->isContributesShadows() == false) continue;
 					for (auto entity: eh->getEntities()) {
-						if (entity->getEntityType() != Entity::ENTITYTYPE_OBJECT3D) continue;
+						if (entity->getEntityType() != Entity::ENTITYTYPE_OBJECT) continue;
 						auto object = static_cast<Object*>(entity);
 						if (object->isEnabled() == false) continue;
 						visibleObjects.push_back(object);
