@@ -26,10 +26,10 @@ using tdme::engine::Transformations;
 using tdme::math::Matrix4x4;
 
 /**
- * Decal object internal
+ * Decal entity internal
  * @author Andreas Drewke
  */
-class tdme::engine::subsystems::decals::DecalObjectInternal
+class tdme::engine::subsystems::decals::DecalInternal
 	: public Transformations
 {
 protected:
@@ -68,12 +68,12 @@ public:
 	 * @param obb oriented bounding box
 	 * @param texture optional texture
 	 */
-	DecalObjectInternal(const string& id, OrientedBoundingBox* obb, Texture* texture = nullptr);
+	DecalInternal(const string& id, OrientedBoundingBox* obb, Texture* texture = nullptr);
 
 	/**
 	 * Destructor
 	 */
-	virtual ~DecalObjectInternal();
+	virtual ~DecalInternal();
 
 	/**
 	 * @return id

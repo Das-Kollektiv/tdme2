@@ -5,7 +5,7 @@ namespace tdme {
 namespace engine {
 	class Camera;
 	class ColorTexture;
-	class DecalObject;
+	class Decal;
 	class DynamicColorTexture;
 	class Engine;
 	class Engine_AnimationProcessingTarget;
@@ -20,7 +20,7 @@ namespace engine {
 	class FogParticleSystem;
 	class ImposterObject;
 	class Light;
-	class LinesObject;
+	class Lines;
 	class LODObject;
 	class LODObjectImposter;
 	class ModelUtilities;

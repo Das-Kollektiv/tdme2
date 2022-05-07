@@ -1,4 +1,4 @@
-#include <tdme/engine/subsystems/decals/DecalObjectInternal.h>
+#include <tdme/engine/subsystems/decals/DecalInternal.h>
 
 #include <string>
 #include <vector>
@@ -19,10 +19,10 @@ using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::model::Color4;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::OrientedBoundingBox;
-using tdme::engine::subsystems::decals::DecalObjectInternal;
+using tdme::engine::subsystems::decals::DecalInternal;
 using tdme::engine::Transformations;
 
-DecalObjectInternal::DecalObjectInternal(const string& id, OrientedBoundingBox* obb, Texture* texture)
+DecalInternal::DecalInternal(const string& id, OrientedBoundingBox* obb, Texture* texture)
 {
 	this->id = id;
 	this->enabled = true;
@@ -44,28 +44,28 @@ DecalObjectInternal::DecalObjectInternal(const string& id, OrientedBoundingBox* 
 	updateInternal();
 }
 
-DecalObjectInternal::~DecalObjectInternal() {
+DecalInternal::~DecalInternal() {
 	if (texture != nullptr) {
 		texture->releaseReference();
 		texture = nullptr;
 	}
 }
 
-void DecalObjectInternal::update()
+void DecalInternal::update()
 {
 	Transformations::update();
 	updateInternal();
 }
 
-void DecalObjectInternal::fromTransformations(const Transformations& transformations)
+void DecalInternal::fromTransformations(const Transformations& transformations)
 {
 	Transformations::fromTransformations(transformations);
 	updateInternal();
 }
 
-void DecalObjectInternal::initialize() {
+void DecalInternal::initialize() {
 }
 
-void DecalObjectInternal::dispose()
+void DecalInternal::dispose()
 {
 }

@@ -31,10 +31,10 @@ using tdme::engine::Transformations;
 using tdme::math::Matrix4x4;
 
 /**
- * Lines object internal
+ * Lines entity internal
  * @author Andreas Drewke
  */
-class tdme::engine::subsystems::lines::LinesObjectInternal
+class tdme::engine::subsystems::lines::LinesInternal
 	: public Transformations
 {
 	friend class tdme::engine::subsystems::rendering::EntityRenderer;
@@ -82,12 +82,12 @@ public:
 	 * @param colors optional colors
 	 * @param texture optional texture
 	 */
-	LinesObjectInternal(const string& id, float lineWidth, const vector<Vector3>& points, const Color4& color, const vector<Color4>& colors = {}, Texture* texture = nullptr);
+	LinesInternal(const string& id, float lineWidth, const vector<Vector3>& points, const Color4& color, const vector<Color4>& colors = {}, Texture* texture = nullptr);
 
 	/**
 	 * Destructor
 	 */
-	virtual ~LinesObjectInternal();
+	virtual ~LinesInternal();
 
 	/**
 	 * @return id

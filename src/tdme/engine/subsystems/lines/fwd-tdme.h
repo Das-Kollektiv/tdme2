@@ -7,7 +7,7 @@ namespace engine {
 namespace subsystems {
 namespace lines {
 	class LinesShader;
-	class LinesObjectInternal;
+	class LinesInternal;
 }  // namespace lines
 }  // namespace subsystems
 }  // namespace engine

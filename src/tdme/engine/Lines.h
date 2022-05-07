@@ -4,10 +4,12 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
-#include <tdme/engine/subsystems/decals/DecalObjectInternal.h>
+#include <tdme/engine/subsystems/lines/LinesInternal.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
+#include <tdme/engine/subsystems/shadowmapping/fwd-tdme.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/math/Matrix4x4.h>
@@ -17,9 +19,9 @@
 using std::string;
 
 using tdme::engine::model::Color4;
+using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::primitives::OrientedBoundingBox;
-using tdme::engine::subsystems::decals::DecalObjectInternal;
+using tdme::engine::subsystems::lines::LinesInternal;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
@@ -29,10 +31,10 @@ using tdme::math::Quaternion;
 using tdme::math::Vector3;
 
 /**
- * Decal object to be used with engine class
+ * Lines entity to be used with engine class
  * @author Andreas Drewke
  */
-class tdme::engine::DecalObject final: public DecalObjectInternal, public Entity
+class tdme::engine::Lines final: public LinesInternal, public Entity
 {
 
 private:
@@ -52,39 +54,42 @@ private:
 	}
 	inline void applyParentTransformations(const Transformations& parentTransformations) override {
 		Transformations::applyParentTransformations(parentTransformations);
-		updateInternal();
+		updateBoundingBox();
 	}
 
 public:
 	/**
 	 * Public constructor
 	 * @param id id
-	 * @param obb oriented bounding box
+	 * @param lineWidth line width
+	 * @param points points
+	 * @param color color
+	 * @param colors optional colors
 	 * @param texture optional texture
 	 */
-	DecalObject(const string& id, OrientedBoundingBox* obb, Texture* texture = nullptr);
+	Lines(const string& id, float lineWidth, const vector<Vector3>& points, const Color4& color, const vector<Color4>& colors = {}, Texture* texture = nullptr);
 
 	// overridden methods
 	inline EntityType getEntityType() override {
-		return ENTITYTYPE_DECALOBJECT;
+		return ENTITYTYPE_LINES;
 	}
 
 	void setEngine(Engine* engine) override;
 
 	inline void setRenderer(Renderer* renderer) override {
-		DecalObjectInternal::setRenderer(renderer);
+		LinesInternal::setRenderer(renderer);
 	}
 
 	inline void initialize() override {
-		DecalObjectInternal::initialize();
+		LinesInternal::initialize();
 	}
 
 	inline void dispose() override {
-		DecalObjectInternal::dispose();
+		LinesInternal::dispose();
 	}
 
 	inline bool isEnabled() override {
-		return DecalObjectInternal::isEnabled();
+		return LinesInternal::isEnabled();
 	}
 
 	void setEnabled(bool enabled) override;
@@ -97,55 +102,55 @@ public:
 	void update() override;
 
 	inline BoundingBox* getBoundingBox() override {
-		return DecalObjectInternal::getBoundingBox();
+		return LinesInternal::getBoundingBox();
 	}
 
 	inline BoundingBox* getBoundingBoxTransformed() override {
-		return DecalObjectInternal::getBoundingBoxTransformed();
+		return LinesInternal::getBoundingBoxTransformed();
 	}
 
 	inline const Color4& getEffectColorAdd() const override {
-		return DecalObjectInternal::getEffectColorAdd();
+		return LinesInternal::getEffectColorAdd();
 	}
 
 	inline void setEffectColorAdd(const Color4& effectColorAdd) override {
-		return DecalObjectInternal::setEffectColorAdd(effectColorAdd);
+		return LinesInternal::setEffectColorAdd(effectColorAdd);
 	}
 
 	inline const Color4& getEffectColorMul() const override {
-		return DecalObjectInternal::getEffectColorMul();
+		return LinesInternal::getEffectColorMul();
 	}
 
 	inline void setEffectColorMul(const Color4& effectColorMul) override {
-		return DecalObjectInternal::setEffectColorMul(effectColorMul);
+		return LinesInternal::setEffectColorMul(effectColorMul);
 	}
 
 	inline const string& getId() override {
-		return DecalObjectInternal::getId();
+		return LinesInternal::getId();
 	}
 
 	inline bool isContributesShadows() override {
-		return DecalObjectInternal::isContributesShadows();
+		return LinesInternal::isContributesShadows();
 	}
 
 	inline void setContributesShadows(bool contributesShadows) override {
-		DecalObjectInternal::setContributesShadows(contributesShadows);
+		LinesInternal::setContributesShadows(contributesShadows);
 	}
 
 	inline bool isReceivesShadows() override {
-		return DecalObjectInternal::isReceivesShadows();
+		return LinesInternal::isReceivesShadows();
 	}
 
 	inline void setReceivesShadows(bool receivesShadows) override {
-		DecalObjectInternal::setReceivesShadows(receivesShadows);
+		LinesInternal::setReceivesShadows(receivesShadows);
 	}
 
 	inline bool isPickable() override {
-		return DecalObjectInternal::isPickable();
+		return LinesInternal::isPickable();
 	}
 
 	inline void setPickable(bool pickable) override {
-		DecalObjectInternal::setPickable(pickable);
+		LinesInternal::setPickable(pickable);
 	}
 
 	inline const Vector3& getTranslation() const override {
@@ -222,20 +227,6 @@ public:
 
 	inline void setRenderPass(RenderPass renderPass) override {
 		this->renderPass = renderPass;
-	}
-
-	/**
-	 * @return decal texture
-	 */
-	inline Texture* getDecalTexture() {
-		return DecalObjectInternal::getDecalTexture();
-	}
-
-	/**
-	 * @return world to decal space matrix
-	 */
-	inline const Matrix4x4& getWorldToDecalSpaceMatrix() {
-		return DecalObjectInternal::getWorldToDecalSpaceMatrix();
 	}
 
 };

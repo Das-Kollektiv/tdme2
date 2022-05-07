@@ -20,7 +20,7 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/LinesObject.h>
+#include <tdme/engine/Lines.h>
 #include <tdme/engine/Object.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/SceneConnector.h>
@@ -61,7 +61,7 @@ using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Light;
-using tdme::engine::LinesObject;
+using tdme::engine::Lines;
 using tdme::engine::Object;
 using tdme::engine::Rotation;
 using tdme::engine::SceneConnector;
@@ -188,9 +188,9 @@ void RayTracingTest::display()
 		}
 		if (keyInfo == true) {
 			// draw ray
-			auto linesObject = new LinesObject("ray", 5.0f, { camLookFrom, traceEnd }, { 1.0f, 0.0f, 0.0f, 1.0f});
-			linesObject->setEffectColorMul(Color4(1.0f, 0.0f, 0.0f, 1.0f));
-			engine->addEntity(linesObject);
+			auto linesEntity = new Lines("ray", 5.0f, { camLookFrom, traceEnd }, { 1.0f, 0.0f, 0.0f, 1.0f});
+			linesEntity->setEffectColorMul(Color4(1.0f, 0.0f, 0.0f, 1.0f));
+			engine->addEntity(linesEntity);
 
 			// draw aabb
 			if (rayTracedRigidBody != nullptr && rayTracedRigidBody->getId() != "ground") {

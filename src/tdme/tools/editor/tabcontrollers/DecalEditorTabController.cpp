@@ -4,8 +4,8 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
-#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeDecal.h>
@@ -41,8 +41,8 @@ using std::string;
 using tdme::tools::editor::tabcontrollers::DecalEditorTabController;
 
 using tdme::engine::fileio::textures::PNGTextureWriter;
-using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::fileio::textures::Texture;
+using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::prototype::Prototype;
 using tdme::gui::events::GUIActionListenerType;

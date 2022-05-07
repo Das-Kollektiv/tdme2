@@ -32,8 +32,8 @@
 #include <tdme/engine/subsystems/rendering/EntityRenderer.h>
 #include <tdme/engine/subsystems/rendering/EntityRenderer_InstancedRenderFunctionParameters.h>
 #include <tdme/engine/subsystems/rendering/ObjectBase_TransformedFacesIterator.h>
-#include <tdme/engine/subsystems/rendering/ObjectNodeMesh.h>
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
+#include <tdme/engine/subsystems/rendering/ObjectNodeMesh.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFacesPool.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMap.h>
 #include <tdme/engine/subsystems/shadowmapping/ShadowMapping.h>
@@ -42,7 +42,7 @@
 #include <tdme/engine/subsystems/skinning/SkinningShader.h>
 #include <tdme/engine/subsystems/texture2D/Texture2DRenderShader.h>
 #include <tdme/engine/Camera.h>
-#include <tdme/engine/DecalObject.h>
+#include <tdme/engine/Decal.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/EntityPickingFilter.h>
@@ -52,12 +52,12 @@
 #include <tdme/engine/GeometryBuffer.h>
 #include <tdme/engine/ImposterObject.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/LinesObject.h>
+#include <tdme/engine/Lines.h>
 #include <tdme/engine/LODObject.h>
 #include <tdme/engine/LODObjectImposter.h>
 #include <tdme/engine/Object.h>
-#include <tdme/engine/ObjectRenderGroup.h>
 #include <tdme/engine/ObjectParticleSystem.h>
+#include <tdme/engine/ObjectRenderGroup.h>
 #include <tdme/engine/OctTreePartition.h>
 #include <tdme/engine/ParticleSystemEntity.h>
 #include <tdme/engine/ParticleSystemGroup.h>
@@ -133,12 +133,12 @@ using tdme::engine::FrameBuffer;
 using tdme::engine::GeometryBuffer;
 using tdme::engine::ImposterObject;
 using tdme::engine::Light;
-using tdme::engine::LinesObject;
+using tdme::engine::Lines;
 using tdme::engine::LODObject;
 using tdme::engine::LODObjectImposter;
 using tdme::engine::Object;
-using tdme::engine::ObjectRenderGroup;
 using tdme::engine::ObjectParticleSystem;
+using tdme::engine::ObjectRenderGroup;
 using tdme::engine::OctTreePartition;
 using tdme::engine::ParticleSystemEntity;
 using tdme::engine::ParticleSystemGroup;
@@ -411,7 +411,7 @@ void Engine::deregisterEntity(Entity* entity) {
 	// decompose and deregister decal textures
 	DecomposedEntities decomposedEntities;
 	decomposeEntityType(entity, decomposedEntities, true);
-	for (auto decalObject: decomposedEntities.decalObjects) {
+	for (auto decalObject: decomposedEntities.decalEntities) {
 		decalsTextureAtlas.removeTexture(decalObject->getDecalTexture());
 	}
 }
@@ -460,7 +460,7 @@ void Engine::registerEntity(Entity* entity) {
 		}
 	}
 	// register decal textures
-	for (auto decalObject: decomposedEntities.decalObjects) {
+	for (auto decalObject: decomposedEntities.decalEntities) {
 		decalsTextureAtlas.addTexture(decalObject->getDecalTexture());
 	}
 }
@@ -563,21 +563,21 @@ inline void Engine::removeFromDecomposedEntities(DecomposedEntities& decomposedE
 		),
 		decomposedEntities.psgs.end()
 	);
-	decomposedEntities.linesObjects.erase(
+	decomposedEntities.linesEntities.erase(
 		remove(
-			decomposedEntities.linesObjects.begin(),
-			decomposedEntities.linesObjects.end(),
+			decomposedEntities.linesEntities.begin(),
+			decomposedEntities.linesEntities.end(),
 			entity
 		),
-		decomposedEntities.linesObjects.end()
+		decomposedEntities.linesEntities.end()
 	);
-	decomposedEntities.decalObjects.erase(
+	decomposedEntities.decalEntities.erase(
 		remove(
-			decomposedEntities.decalObjects.begin(),
-			decomposedEntities.decalObjects.end(),
+			decomposedEntities.decalEntities.begin(),
+			decomposedEntities.decalEntities.end(),
 			entity
 		),
-		decomposedEntities.decalObjects.end()
+		decomposedEntities.decalEntities.end()
 	);
 	decomposedEntities.objectRenderGroups.erase(
 		remove(
@@ -1023,8 +1023,8 @@ void Engine::resetLists(DecomposedEntities& decomposedEntites) {
 	decomposedEntites.opses.clear();
 	decomposedEntites.ppses.clear();
 	decomposedEntites.psgs.clear();
-	decomposedEntites.linesObjects.clear();
-	decomposedEntites.decalObjects.clear();
+	decomposedEntites.linesEntities.clear();
+	decomposedEntites.decalEntities.clear();
 	decomposedEntites.objectRenderGroups.clear();
 	decomposedEntites.entityHierarchies.clear();
 	decomposedEntites.ezrObjects.clear();
@@ -1138,16 +1138,16 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 				decomposedEntities.ppses.push_back(fpse);
 			}
 			break;
-		case Entity::ENTITYTYPE_LINESOBJECT:
+		case Entity::ENTITYTYPE_LINES:
 			{
-				auto lo = static_cast<LinesObject*>(entity);
-				decomposedEntities.linesObjects.push_back(lo);
+				auto l = static_cast<Lines*>(entity);
+				decomposedEntities.linesEntities.push_back(l);
 			}
 			break;
-		case Entity::ENTITYTYPE_DECALOBJECT:
+		case Entity::ENTITYTYPE_DECAL:
 			{
-				auto d = static_cast<DecalObject*>(entity);
-				decomposedEntities.decalObjects.push_back(d);
+				auto d = static_cast<Decal*>(entity);
+				decomposedEntities.decalEntities.push_back(d);
 			}
 			break;
 		case Entity::ENTITYTYPE_ENVIRONMENTMAPPING:
@@ -1585,8 +1585,8 @@ Entity* Engine::getEntityByMousePosition(
 	Node* selectedObjectNode = nullptr;
 	ParticleSystemEntity* selectedParticleSystem = nullptr;
 
-	// iterate visible object partition systems, check if ray with given mouse position from near plane to far plane collides with bounding volume
-	for (auto entity: decomposedEntities.decalObjects) {
+	// iterate visible entity decals, check if ray with given mouse position from near plane to far plane collides with bounding volume
+	for (auto entity: decomposedEntities.decalEntities) {
 		// skip if not pickable or ignored by filter
 		if (forcePicking == false && entity->isPickable() == false) continue;
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
@@ -1710,8 +1710,8 @@ Entity* Engine::getEntityByMousePosition(
 		}
 	}
 
-	// iterate visible line objects, check if ray with given mouse position from near plane to far plane collides with each object's triangles
-	for (auto entity: decomposedEntities.linesObjects) {
+	// iterate visible line entities, check if ray with given mouse position from near plane to far plane collides with each object's triangles
+	for (auto entity: decomposedEntities.linesEntities) {
 		// skip if not pickable or ignored by filter
 		if (forcePicking == false && entity->isPickable() == false) continue;
 		if (filter != nullptr && filter->filterEntity(entity) == false) continue;
@@ -2291,7 +2291,7 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 						renderGeometryBuffer->disableGeometryBuffer();
 						Engine::renderer->setShaderPrefix(shaderPrefix);
 						if (renderFrameBuffer != nullptr) renderFrameBuffer->enableFrameBuffer();
-						renderGeometryBuffer->renderToScreen(this, visibleDecomposedEntities.decalObjects);
+						renderGeometryBuffer->renderToScreen(this, visibleDecomposedEntities.decalEntities);
 						if (lightingShader != nullptr) lightingShader->useProgram(this);
 						if (visibleDecomposedEntities.objectsForwardShading.empty() == false) {
 							// TODO: use a loop maybe from TERRAIN to STANDARD, but for now it works this way too :)
@@ -2354,18 +2354,18 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 		}
 	}
 
-	// render lines objects
-	if (visibleDecomposedEntities.linesObjects.size() > 0) {
-		// use particle shader
+	// render lines entities
+	if (visibleDecomposedEntities.linesEntities.size() > 0) {
+		// use lines shader
 		if (linesShader != nullptr) linesShader->useProgram(renderer->CONTEXTINDEX_DEFAULT);
 
-		// render points based particle systems
+		// render lines entities
 		for (auto i = 0; i < Entity::RENDERPASS_MAX; i++) {
 			auto renderPass = static_cast<Entity::RenderPass>(Math::pow(2, i));
-			if ((renderPassMask & renderPass) == renderPass) entityRenderer->render(renderPass, visibleDecomposedEntities.linesObjects);
+			if ((renderPassMask & renderPass) == renderPass) entityRenderer->render(renderPass, visibleDecomposedEntities.linesEntities);
 		}
 
-		// unuse particle shader
+		// unuse lines shader
 		if (linesShader != nullptr) linesShader->unUseProgram(renderer->CONTEXTINDEX_DEFAULT);
 	}
 

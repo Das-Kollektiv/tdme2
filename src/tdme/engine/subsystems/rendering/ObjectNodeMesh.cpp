@@ -14,9 +14,9 @@
 #include <tdme/engine/model/TextureCoordinate.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/rendering/ObjectBase.h>
+#include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
 #include <tdme/engine/subsystems/rendering/ObjectNodeMesh.h>
 #include <tdme/engine/subsystems/rendering/ObjectNodeRenderer.h>
-#include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
 #include <tdme/engine/subsystems/skinning/SkinningShader.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
@@ -38,9 +38,9 @@ using tdme::engine::model::Skinning;
 using tdme::engine::model::TextureCoordinate;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::ObjectBase;
+using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::engine::subsystems::rendering::ObjectNodeMesh;
 using tdme::engine::subsystems::rendering::ObjectNodeRenderer;
-using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::engine::subsystems::skinning::SkinningShader;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;

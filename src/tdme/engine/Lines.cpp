@@ -1,4 +1,4 @@
-#include <tdme/engine/LinesObject.h>
+#include <tdme/engine/Lines.h>
 
 #include <string>
 
@@ -15,38 +15,38 @@
 using std::string;
 
 using tdme::engine::Engine;
-using tdme::engine::LinesObject;
+using tdme::engine::Lines;
 using tdme::engine::Partition;
 using tdme::engine::Transformations;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
 
-LinesObject::LinesObject(const string& id, float lineWidth, const vector<Vector3>& points, const Color4& color, const vector<Color4>& colors, Texture* texture):
-	LinesObjectInternal(id, lineWidth, points, color, colors, texture)
+Lines::Lines(const string& id, float lineWidth, const vector<Vector3>& points, const Color4& color, const vector<Color4>& colors, Texture* texture):
+	LinesInternal(id, lineWidth, points, color, colors, texture)
 {
 }
 
-void LinesObject::setEngine(Engine* engine) {
+void Lines::setEngine(Engine* engine) {
 	if (this->engine != nullptr) this->engine->deregisterEntity(this);
 	this->engine = engine;
 	if (engine != nullptr) engine->registerEntity(this);
-	LinesObjectInternal::setEngine(engine);
+	LinesInternal::setEngine(engine);
 }
 
-void LinesObject::fromTransformations(const Transformations& transformations)
+void Lines::fromTransformations(const Transformations& transformations)
 {
-	LinesObjectInternal::fromTransformations(transformations);
+	LinesInternal::fromTransformations(transformations);
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
-void LinesObject::update()
+void Lines::update()
 {
-	LinesObjectInternal::update();
+	LinesInternal::update();
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
-void LinesObject::setEnabled(bool enabled)
+void Lines::setEnabled(bool enabled)
 {
 	// return if enable state has not changed
 	if (this->enabled == enabled) return;
@@ -64,10 +64,10 @@ void LinesObject::setEnabled(bool enabled)
 		}
 	}
 	// call parent class::setEnabled()
-	LinesObjectInternal::setEnabled(enabled);
+	LinesInternal::setEnabled(enabled);
 }
 
-void LinesObject::setFrustumCulling(bool frustumCulling) {
+void Lines::setFrustumCulling(bool frustumCulling) {
 	// check if enabled and engine attached
 	if (enabled == true && engine != nullptr) {
 		// had frustum culling

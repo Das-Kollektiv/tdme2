@@ -56,7 +56,7 @@
 #include <tdme/engine/subsystems/particlesystem/CircleParticleEmitterPlaneVelocity.h>
 #include <tdme/engine/subsystems/particlesystem/PointParticleEmitter.h>
 #include <tdme/engine/subsystems/particlesystem/SphereParticleEmitter.h>
-#include <tdme/engine/DecalObject.h>
+#include <tdme/engine/Decal.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityHierarchy.h>
@@ -67,8 +67,8 @@
 #include <tdme/engine/LODObjectImposter.h>
 #include <tdme/engine/Object.h>
 #include <tdme/engine/ObjectModel.h>
-#include <tdme/engine/ObjectRenderGroup.h>
 #include <tdme/engine/ObjectParticleSystem.h>
+#include <tdme/engine/ObjectRenderGroup.h>
 #include <tdme/engine/ParticleSystemEntity.h>
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/PointsParticleSystem.h>
@@ -137,7 +137,7 @@ using tdme::engine::subsystems::particlesystem::CircleParticleEmitter;
 using tdme::engine::subsystems::particlesystem::CircleParticleEmitterPlaneVelocity;
 using tdme::engine::subsystems::particlesystem::PointParticleEmitter;
 using tdme::engine::subsystems::particlesystem::SphereParticleEmitter;
-using tdme::engine::DecalObject;
+using tdme::engine::Decal;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::EntityHierarchy;
@@ -148,8 +148,8 @@ using tdme::engine::LODObject;
 using tdme::engine::LODObjectImposter;
 using tdme::engine::Object;
 using tdme::engine::ObjectModel;
-using tdme::engine::ObjectRenderGroup;
 using tdme::engine::ObjectParticleSystem;
+using tdme::engine::ObjectRenderGroup;
 using tdme::engine::ParticleSystemEntity;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::PointsParticleSystem;
@@ -339,7 +339,7 @@ Entity* SceneConnector::createEditorDecalEntity(Prototype* prototype, const stri
 	if (prototype->getBoundingVolumeCount() == 1 &&
 		dynamic_cast<OrientedBoundingBox*>(prototype->getBoundingVolume(0)->getBoundingVolume()) != nullptr) {
 		entityHierarchy->addEntity(
-			new DecalObject(
+			new Decal(
 				"decal",
 				dynamic_cast<OrientedBoundingBox*>(prototype->getBoundingVolume(0)->getBoundingVolume()),
 				prototype->getDecal()->getTexture()
@@ -495,7 +495,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 	// decal
 	if (prototype->getType() == Prototype_Type::DECAL) {
 		entity =
-			new DecalObject(
+			new Decal(
 				id,
 				dynamic_cast<OrientedBoundingBox*>(prototype->getBoundingVolume(0)->getBoundingVolume()),
 				prototype->getDecal()->getTexture()

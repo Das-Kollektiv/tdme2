@@ -18,8 +18,8 @@
 #include <tdme/engine/LODObject.h>
 #include <tdme/engine/LODObjectImposter.h>
 #include <tdme/engine/Object.h>
-#include <tdme/engine/ObjectRenderGroup.h>
 #include <tdme/engine/ObjectParticleSystem.h>
+#include <tdme/engine/ObjectRenderGroup.h>
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/math/Math.h>
@@ -44,8 +44,8 @@ using tdme::engine::Light;
 using tdme::engine::LODObject;
 using tdme::engine::LODObjectImposter;
 using tdme::engine::Object;
-using tdme::engine::ObjectRenderGroup;
 using tdme::engine::ObjectParticleSystem;
+using tdme::engine::ObjectRenderGroup;
 using tdme::engine::Partition;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;

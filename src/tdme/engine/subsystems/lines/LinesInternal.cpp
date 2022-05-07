@@ -1,4 +1,4 @@
-#include <tdme/engine/subsystems/lines/LinesObjectInternal.h>
+#include <tdme/engine/subsystems/lines/LinesInternal.h>
 
 #include <string>
 #include <vector>
@@ -26,7 +26,7 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::model::Color4;
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::subsystems::lines::LinesObjectInternal;
+using tdme::engine::subsystems::lines::LinesInternal;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
@@ -38,7 +38,7 @@ using tdme::math::Vector3;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::FloatBuffer;
 
-LinesObjectInternal::LinesObjectInternal(const string& id, float lineWidth, const vector<Vector3>& points, const Color4& color, const vector<Color4>& colors, Texture* texture)
+LinesInternal::LinesInternal(const string& id, float lineWidth, const vector<Vector3>& points, const Color4& color, const vector<Color4>& colors, Texture* texture)
 {
 	this->id = id;
 	this->enabled = true;
@@ -73,22 +73,22 @@ LinesObjectInternal::LinesObjectInternal(const string& id, float lineWidth, cons
 	vboIds = nullptr;
 }
 
-LinesObjectInternal::~LinesObjectInternal() {
+LinesInternal::~LinesInternal() {
 }
 
-void LinesObjectInternal::update()
+void LinesInternal::update()
 {
 	Transformations::update();
 	updateBoundingBox();
 }
 
-void LinesObjectInternal::fromTransformations(const Transformations& transformations)
+void LinesInternal::fromTransformations(const Transformations& transformations)
 {
 	Transformations::fromTransformations(transformations);
 	updateBoundingBox();
 }
 
-void LinesObjectInternal::initialize() {
+void LinesInternal::initialize() {
 	// texture
 	this->textureId = this->texture == nullptr?engine->getTextureManager()->addTexture(this->texture = TextureReader::read("resources/engine/textures", "point.png"), renderer->CONTEXTINDEX_DEFAULT):engine->getTextureManager()->addTexture(this->texture, renderer->CONTEXTINDEX_DEFAULT);
 
@@ -119,7 +119,7 @@ void LinesObjectInternal::initialize() {
 	}
 }
 
-void LinesObjectInternal::dispose()
+void LinesInternal::dispose()
 {
 	engine->getTextureManager()->removeTexture(texture->getId());
 	Engine::getInstance()->getVBOManager()->removeVBO(id + ".vbos");

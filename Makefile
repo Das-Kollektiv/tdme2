@@ -192,7 +192,7 @@ SRCS = \
 	src/tdme/application/Application.cpp \
 	src/tdme/application/InputEventHandler.cpp \
 	src/tdme/engine/Camera.cpp \
-	src/tdme/engine/DecalObject.cpp \
+	src/tdme/engine/Decal.cpp \
 	src/tdme/engine/DynamicColorTexture.cpp \
 	src/tdme/engine/Engine.cpp \
 	src/tdme/engine/EntityHierarchy.cpp \
@@ -204,7 +204,7 @@ SRCS = \
 	src/tdme/engine/GeometryBuffer.cpp \
 	src/tdme/engine/ImposterObject.cpp \
 	src/tdme/engine/Light.cpp \
-	src/tdme/engine/LinesObject.cpp \
+	src/tdme/engine/Lines.cpp \
 	src/tdme/engine/LODObject.cpp \
 	src/tdme/engine/LODObjectImposter.cpp \
 	src/tdme/engine/Object.cpp \
@@ -288,7 +288,7 @@ SRCS = \
 	src/tdme/engine/scene/SceneLibrary.cpp \
 	src/tdme/engine/scene/SceneLight.cpp \
 	src/tdme/engine/scene/ScenePropertyPresets.cpp \
-	src/tdme/engine/subsystems/decals/DecalObjectInternal.cpp \
+	src/tdme/engine/subsystems/decals/DecalInternal.cpp \
 	src/tdme/engine/subsystems/earlyzrejection/EZRShader.cpp \
 	src/tdme/engine/subsystems/earlyzrejection/EZRShaderBaseImplementation.cpp \
 	src/tdme/engine/subsystems/earlyzrejection/EZRShaderDefaultImplementation.cpp \
@@ -321,7 +321,7 @@ SRCS = \
 	src/tdme/engine/subsystems/lighting/LightingShaderTreeImplementation.cpp \
 	src/tdme/engine/subsystems/lighting/LightingShaderWaterImplementation.cpp \
 	src/tdme/engine/subsystems/lines/LinesShader.cpp \
-	src/tdme/engine/subsystems/lines/LinesObjectInternal.cpp \
+	src/tdme/engine/subsystems/lines/LinesInternal.cpp \
 	src/tdme/engine/subsystems/manager/MeshManager.cpp \
 	src/tdme/engine/subsystems/manager/MeshManager_MeshManaged.cpp \
 	src/tdme/engine/subsystems/manager/TextureManager.cpp \

@@ -36,10 +36,10 @@
 #include <tdme/engine/subsystems/rendering/EntityRenderer_InstancedRenderFunctionParameters.h>
 #include <tdme/engine/subsystems/rendering/EntityRenderer_TransparentRenderFacesGroupPool.h>
 #include <tdme/engine/subsystems/rendering/ObjectBase.h>
+#include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
 #include <tdme/engine/subsystems/rendering/ObjectNode.h>
 #include <tdme/engine/subsystems/rendering/ObjectNodeMesh.h>
 #include <tdme/engine/subsystems/rendering/ObjectNodeRenderer.h>
-#include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
 #include <tdme/engine/subsystems/rendering/RenderTransparentRenderPointsPool.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFace.h>
 #include <tdme/engine/subsystems/rendering/TransparentRenderFacesGroup.h>
@@ -53,7 +53,7 @@
 #include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/EnvironmentMapping.h>
 #include <tdme/engine/FogParticleSystem.h>
-#include <tdme/engine/LinesObject.h>
+#include <tdme/engine/Lines.h>
 #include <tdme/engine/Object.h>
 #include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/math/Math.h>
@@ -105,10 +105,10 @@ using tdme::engine::subsystems::rendering::EntityRenderer;
 using tdme::engine::subsystems::rendering::EntityRenderer_InstancedRenderFunctionParameters;
 using tdme::engine::subsystems::rendering::EntityRenderer_TransparentRenderFacesGroupPool;
 using tdme::engine::subsystems::rendering::ObjectBase;
+using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::engine::subsystems::rendering::ObjectNode;
 using tdme::engine::subsystems::rendering::ObjectNodeMesh;
 using tdme::engine::subsystems::rendering::ObjectNodeRenderer;
-using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::engine::subsystems::rendering::RenderTransparentRenderPointsPool;
 using tdme::engine::subsystems::rendering::TransparentRenderFace;
 using tdme::engine::subsystems::rendering::TransparentRenderFacesGroup;
@@ -121,7 +121,7 @@ using tdme::engine::Entity;
 using tdme::engine::EntityHierarchy;
 using tdme::engine::EnvironmentMapping;
 using tdme::engine::FogParticleSystem;
-using tdme::engine::LinesObject;
+using tdme::engine::Lines;
 using tdme::engine::Object;
 using tdme::engine::PointsParticleSystem;
 using tdme::math::Math;
@@ -1442,10 +1442,10 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Entity*>
 	renderer->getModelViewMatrix().set(modelViewMatrix);
 }
 
-void EntityRenderer::render(Entity::RenderPass renderPass, const vector<LinesObject*>& objects) {
+void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Lines*>& linesEntities) {
 	// TODO: Move me into own class
 	// TODO: check me performance wise again
-	if (objects.size() == 0) return;
+	if (linesEntities.size() == 0) return;
 
 	// use default context
 	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
@@ -1461,7 +1461,7 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<LinesObj
 	renderer->enableBlending();
 
 	//
-	for (auto object: objects) {
+	for (auto object: linesEntities) {
 		if (object->getRenderPass() != renderPass) continue;
 
 		// 	model view matrix

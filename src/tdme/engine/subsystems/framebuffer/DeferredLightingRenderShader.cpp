@@ -246,7 +246,7 @@ void DeferredLightingRenderShader::initialize()
 	initialized = true;
 }
 
-void DeferredLightingRenderShader::useProgram(Engine* engine, vector<DecalObject*>& decalObjects)
+void DeferredLightingRenderShader::useProgram(Engine* engine, vector<Decal*>& decalEntities)
 {
 	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
 	renderer->useProgram(contextIdx, programId);
@@ -327,7 +327,7 @@ void DeferredLightingRenderShader::useProgram(Engine* engine, vector<DecalObject
 	}
 	auto decalsTextureAtlasTexture = decalsTextureAtlas.getAtlasTexture();
 	if (decalsTextureAtlasTexture != nullptr) {
-		auto decalCount = Math::min(DECAL_COUNT, decalObjects.size());
+		auto decalCount = Math::min(DECAL_COUNT, decalEntities.size());
 		renderer->setProgramUniformInteger(contextIdx, uniformDecalCount, decalCount);
 		if (decalCount > 0) {
 			auto decalsTextureAtlasTextureWidth = decalsTextureAtlasTexture->getTextureWidth();
@@ -336,7 +336,7 @@ void DeferredLightingRenderShader::useProgram(Engine* engine, vector<DecalObject
 			renderer->setTextureUnit(contextIdx, 12);
 			renderer->bindTexture(contextIdx, decalsTextureAtlasTextureId);
 			for (auto i = 0; i < decalCount && i < DECAL_COUNT; i++) {
-				auto decalObject = decalObjects[i];
+				auto decalObject = decalEntities[i];
 				auto atlasTextureIdx = decalsTextureAtlas.getTextureIdx(decalObject->getDecalTexture());
 				if (atlasTextureIdx == -1) continue;
 				auto atlasTexture = decalsTextureAtlas.getAtlasTexture(atlasTextureIdx);

@@ -40,7 +40,7 @@ using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::FogParticleSystem;
-using tdme::engine::LinesObject;
+using tdme::engine::Lines;
 using tdme::engine::Object;
 using tdme::engine::PointsParticleSystem;
 using tdme::math::Matrix2D3x3;
@@ -305,10 +305,10 @@ public:
 	void render(Entity::RenderPass renderPass, const vector<Entity*>& pses);
 
 	/**
-	 * Renders all given lines objects
+	 * Renders all given lines entities
 	 * @param renderPass render pass
-	 * @param objects lines objects
+	 * @param linesEntities lines entities
 	 */
-	void render(Entity::RenderPass renderPass, const vector<LinesObject*>& objects);
+	void render(Entity::RenderPass renderPass, const vector<Lines*>& linesEntities);
 
 };

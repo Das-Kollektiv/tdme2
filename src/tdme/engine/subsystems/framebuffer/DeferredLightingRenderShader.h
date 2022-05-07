@@ -7,7 +7,7 @@
 #include <tdme/engine/subsystems/framebuffer/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/Camera.h>
-#include <tdme/engine/DecalObject.h>
+#include <tdme/engine/Decal.h>
 #include <tdme/engine/Engine.h>
 
 using std::array;
@@ -16,7 +16,7 @@ using std::vector;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Camera;
-using tdme::engine::DecalObject;
+using tdme::engine::Decal;
 using tdme::engine::Engine;
 
 /**
@@ -116,9 +116,9 @@ public:
 	/**
 	 * Use render program
 	 * @param engine engine
-	 * @param decalObjects decal objects
+	 * @param decalEntities decal entities
 	 */
-	void useProgram(Engine* engine, vector<DecalObject*>& decalObjects);
+	void useProgram(Engine* engine, vector<Decal*>& decalEntities);
 
 	/**
 	 * Un use render program

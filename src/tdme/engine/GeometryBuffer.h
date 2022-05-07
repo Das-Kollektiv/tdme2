@@ -7,8 +7,8 @@
 
 using std::vector;
 
+using tdme::engine::Decal;
 using tdme::engine::Engine;
-using tdme::engine::DecalObject;
 
 /**
  * Geometry buffer class
@@ -151,8 +151,8 @@ public:
 	/**
 	 * Render to screen or bound geometry buffer
 	 * @engine engine
-	 * @param decalObjects decal objects
+	 * @param decalObjects decal entities
 	 */
-	void renderToScreen(Engine* engine, vector<DecalObject*>& decalObjects);
+	void renderToScreen(Engine* engine, vector<Decal*>& decalEntities);
 
 };

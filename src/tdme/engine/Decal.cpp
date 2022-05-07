@@ -1,4 +1,4 @@
-#include <tdme/engine/DecalObject.h>
+#include <tdme/engine/Decal.h>
 
 #include <string>
 
@@ -11,36 +11,36 @@
 using std::string;
 
 using tdme::engine::primitives::OrientedBoundingBox;
-using tdme::engine::DecalObject;
+using tdme::engine::Decal;
 using tdme::engine::Engine;
 using tdme::engine::Partition;
 using tdme::engine::Transformations;
 
-DecalObject::DecalObject(const string& id, OrientedBoundingBox* obb, Texture* texture):
-	DecalObjectInternal(id, obb, texture)
+Decal::Decal(const string& id, OrientedBoundingBox* obb, Texture* texture):
+	DecalInternal(id, obb, texture)
 {
 }
 
-void DecalObject::setEngine(Engine* engine) {
+void Decal::setEngine(Engine* engine) {
 	if (this->engine != nullptr) this->engine->deregisterEntity(this);
 	this->engine = engine;
 	if (engine != nullptr) engine->registerEntity(this);
-	DecalObjectInternal::setEngine(engine);
+	DecalInternal::setEngine(engine);
 }
 
-void DecalObject::fromTransformations(const Transformations& transformations)
+void Decal::fromTransformations(const Transformations& transformations)
 {
-	DecalObjectInternal::fromTransformations(transformations);
+	DecalInternal::fromTransformations(transformations);
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
-void DecalObject::update()
+void Decal::update()
 {
-	DecalObjectInternal::update();
+	DecalInternal::update();
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
-void DecalObject::setEnabled(bool enabled)
+void Decal::setEnabled(bool enabled)
 {
 	// return if enable state has not changed
 	if (this->enabled == enabled) return;
@@ -58,10 +58,10 @@ void DecalObject::setEnabled(bool enabled)
 		}
 	}
 	// call parent class::setEnabled()
-	DecalObjectInternal::setEnabled(enabled);
+	DecalInternal::setEnabled(enabled);
 }
 
-void DecalObject::setFrustumCulling(bool frustumCulling) {
+void Decal::setFrustumCulling(bool frustumCulling) {
 	// check if enabled and engine attached
 	if (enabled == true && engine != nullptr) {
 		// had frustum culling

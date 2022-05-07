@@ -5,7 +5,7 @@ namespace tdme {
 namespace engine {
 namespace subsystems {
 namespace decals {
-	class DecalObjectInternal;
+	class DecalInternal;
 }  // namespace decals
 }  // namespace subsystems
 }  // namespace engine
