@@ -21,11 +21,6 @@ struct tdme::engine::subsystems::particlesystem::ParticleSystemInternal
 {
 
 	/**
-	 * Public destructor
-	 */
-	virtual ~ParticleSystemInternal() {}
-
-	/**
 	 * @return particle emitter
 	 */
 	virtual ParticleEmitter* getEmitter() = 0;

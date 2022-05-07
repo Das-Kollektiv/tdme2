@@ -20,11 +20,6 @@ using tdme::engine::Transformations;
 struct tdme::engine::ParticleSystem: public Entity
 {
 	/**
-	 * Public destructor
-	 */
-	virtual ~ParticleSystem() {}
-
-	/**
 	 * @return particle emitter
 	 */
 	virtual ParticleEmitter* getEmitter() = 0;
