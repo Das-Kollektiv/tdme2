@@ -12,7 +12,7 @@
 #include <tdme/engine/subsystems/particlesystem/ObjectParticleSystemInternal.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/Entity.h>
-#include <tdme/engine/ParticleSystemEntity.h>
+#include <tdme/engine/ParticleSystem.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
@@ -27,7 +27,7 @@ using tdme::engine::subsystems::particlesystem::ObjectParticleSystemInternal;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
-using tdme::engine::ParticleSystemEntity;
+using tdme::engine::ParticleSystem;
 using tdme::engine::Transformations;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -38,7 +38,7 @@ using tdme::math::Vector3;
  */
 class tdme::engine::ObjectParticleSystem final
 	: public ObjectParticleSystemInternal
-	, public ParticleSystemEntity
+	, public ParticleSystem
 {
 	friend class tdme::engine::ParticleSystemGroup;
 

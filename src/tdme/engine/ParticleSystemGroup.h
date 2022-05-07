@@ -9,7 +9,7 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/ObjectParticleSystem.h>
-#include <tdme/engine/ParticleSystemEntity.h>
+#include <tdme/engine/ParticleSystem.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Math.h>
@@ -23,7 +23,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::ObjectParticleSystem;
-using tdme::engine::ParticleSystemEntity;
+using tdme::engine::ParticleSystem;
 using tdme::engine::Transformations;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
@@ -35,7 +35,7 @@ using tdme::math::Vector3;
  */
 class tdme::engine::ParticleSystemGroup final
 	: public Transformations
-	, public ParticleSystemEntity
+	, public ParticleSystem
 {
 private:
 	Engine* engine { nullptr };
@@ -53,7 +53,7 @@ private:
 	BoundingBox boundingBoxTransformed;
 	Color4 effectColorMul;
 	Color4 effectColorAdd;
-	vector<ParticleSystemEntity*> particleSystems;
+	vector<ParticleSystem*> particleSystems;
 	Transformations localTransformations;
 
 	// overridden methods
@@ -77,7 +77,7 @@ public:
 	 * @param receivesShadows receives shadows
 	 * @param particleSystems particle systems
 	 */
-	ParticleSystemGroup(const string& id, bool autoEmit, bool contributesShadows, bool receivesShadows, const vector<ParticleSystemEntity*>& particleSystems);
+	ParticleSystemGroup(const string& id, bool autoEmit, bool contributesShadows, bool receivesShadows, const vector<ParticleSystem*>& particleSystems);
 
 	/**
 	 * Destructor
@@ -92,7 +92,7 @@ public:
 	/**
 	 * @return particle systems
 	 */
-	inline const vector<ParticleSystemEntity*>& getParticleSystems() {
+	inline const vector<ParticleSystem*>& getParticleSystems() {
 		return particleSystems;
 	}
 

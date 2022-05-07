@@ -69,7 +69,7 @@
 #include <tdme/engine/ObjectModel.h>
 #include <tdme/engine/ObjectParticleSystem.h>
 #include <tdme/engine/ObjectRenderGroup.h>
-#include <tdme/engine/ParticleSystemEntity.h>
+#include <tdme/engine/ParticleSystem.h>
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/engine/Transformations.h>
@@ -150,7 +150,7 @@ using tdme::engine::Object;
 using tdme::engine::ObjectModel;
 using tdme::engine::ObjectParticleSystem;
 using tdme::engine::ObjectRenderGroup;
-using tdme::engine::ParticleSystemEntity;
+using tdme::engine::ParticleSystem;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::PointsParticleSystem;
 using tdme::engine::Transformations;
@@ -466,7 +466,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 	} else
 	// particle system
 	if (prototype->getType() == Prototype_Type::PARTICLESYSTEM) {
-		vector<ParticleSystemEntity*> particleSystems;
+		vector<ParticleSystem*> particleSystems;
 		for (auto i = 0; i < prototype->getParticleSystemsCount(); i++) {
 			auto particleSystem = createParticleSystem(
 				prototype->getParticleSystemAt(i),
@@ -474,7 +474,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 				true
 			);
 			if (particleSystem != nullptr) {
-				particleSystems.push_back(dynamic_cast<ParticleSystemEntity*>(particleSystem));
+				particleSystems.push_back(dynamic_cast<ParticleSystem*>(particleSystem));
 			}
 		}
 		if (particleSystems.size() == 1) {

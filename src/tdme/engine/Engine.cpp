@@ -59,7 +59,7 @@
 #include <tdme/engine/ObjectParticleSystem.h>
 #include <tdme/engine/ObjectRenderGroup.h>
 #include <tdme/engine/OctTreePartition.h>
-#include <tdme/engine/ParticleSystemEntity.h>
+#include <tdme/engine/ParticleSystem.h>
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/PointsParticleSystem.h>
@@ -140,7 +140,7 @@ using tdme::engine::Object;
 using tdme::engine::ObjectParticleSystem;
 using tdme::engine::ObjectRenderGroup;
 using tdme::engine::OctTreePartition;
-using tdme::engine::ParticleSystemEntity;
+using tdme::engine::ParticleSystem;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::Partition;
 using tdme::engine::PointsParticleSystem;
@@ -437,7 +437,7 @@ void Engine::registerEntity(Entity* entity) {
 	}
 
 	// add to auto emit particle system entities
-	auto particleSystemEntity = dynamic_cast<ParticleSystemEntity*>(entity);
+	auto particleSystemEntity = dynamic_cast<ParticleSystem*>(entity);
 	if (particleSystemEntity != nullptr && particleSystemEntity->isAutoEmit() == true) {
 		autoEmitParticleSystemEntities.insert(particleSystemEntity);
 	}
@@ -1197,7 +1197,7 @@ void Engine::computeTransformations(Camera* camera, DecomposedEntities& decompos
 	// do particle systems auto emit
 	if (autoEmit == true) {
 		for (auto entity: autoEmitParticleSystemEntities) {
-			auto pse = static_cast<ParticleSystemEntity*>(entity);
+			auto pse = static_cast<ParticleSystem*>(entity);
 
 			// skip on disabled entities
 			if (pse->isEnabled() == false) continue;
@@ -1570,7 +1570,7 @@ Entity* Engine::getEntityByMousePosition(
 	int32_t mouseY,
 	EntityPickingFilter* filter,
 	Node** objectNode,
-	ParticleSystemEntity** particleSystemEntity
+	ParticleSystem** particleSystemEntity
 ) {
 	// get world position of mouse position at near and far plane
 	auto nearPlaneWorldCoordinate = computeWorldCoordinateByMousePosition(mouseX, mouseY, 0.0f);
@@ -1583,7 +1583,7 @@ Entity* Engine::getEntityByMousePosition(
 	auto selectedEntityDistance = Float::MAX_VALUE;
 	Entity* selectedEntity = nullptr;
 	Node* selectedObjectNode = nullptr;
-	ParticleSystemEntity* selectedParticleSystem = nullptr;
+	ParticleSystem* selectedParticleSystem = nullptr;
 
 	// iterate visible entity decals, check if ray with given mouse position from near plane to far plane collides with bounding volume
 	for (auto entity: decomposedEntities.decalEntities) {
@@ -1789,7 +1789,7 @@ Entity* Engine::getEntityByMousePosition(
 		if (LineSegment::doesBoundingBoxCollideWithLineSegment(entity->getBoundingBoxTransformed(), nearPlaneWorldCoordinate, farPlaneWorldCoordinate, boundingBoxLineContactMin, boundingBoxLineContactMax) == true) {
 			DecomposedEntities decomposedEntitiesEH;
 			Node* objectNodeEH = nullptr;
-			ParticleSystemEntity* particleSystemEntityEH = nullptr;
+			ParticleSystem* particleSystemEntityEH = nullptr;
 			decomposeEntityTypes(
 				entity->getEntities(),
 				decomposedEntitiesEH
@@ -1835,7 +1835,7 @@ Entity* Engine::getEntityByMousePosition(
 	}
 }
 
-Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& contactPoint, EntityPickingFilter* filter, Node** objectNode, ParticleSystemEntity** particleSystemEntity) {
+Entity* Engine::getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& contactPoint, EntityPickingFilter* filter, Node** objectNode, ParticleSystem** particleSystemEntity) {
 	// get world position of mouse position at near and far plane
 	auto startPoint = computeWorldCoordinateByMousePosition(mouseX, mouseY, 0.0f);
 	auto endPoint = computeWorldCoordinateByMousePosition(mouseX, mouseY, 1.0f);

@@ -31,7 +31,7 @@
 #include <tdme/engine/subsystems/skinning/fwd-tdme.h>
 #include <tdme/engine/subsystems/texture2D/fwd-tdme.h>
 #include <tdme/engine/Light.h>
-#include <tdme/engine/ParticleSystemEntity.h>
+#include <tdme/engine/ParticleSystem.h>
 #include <tdme/engine/ShaderParameter.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
@@ -98,7 +98,7 @@ using tdme::engine::LODObjectImposter;
 using tdme::engine::Object;
 using tdme::engine::ObjectParticleSystem;
 using tdme::engine::ObjectRenderGroup;
-using tdme::engine::ParticleSystemEntity;
+using tdme::engine::ParticleSystem;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::Partition;
 using tdme::engine::PointsParticleSystem;
@@ -1091,7 +1091,7 @@ public:
 	 * @param particleSystemEntity pointer to store sub particle system entity if having a particle system group
 	 * @return entity or nullptr
 	 */
-	inline Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter = nullptr, Node** objectNode = nullptr, ParticleSystemEntity** particleSystemEntity = nullptr) {
+	inline Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, EntityPickingFilter* filter = nullptr, Node** objectNode = nullptr, ParticleSystem** particleSystemEntity = nullptr) {
 		return
 			getEntityByMousePosition(
 				visibleDecomposedEntities,
@@ -1114,7 +1114,7 @@ public:
 	 * @param particleSystemEntity pointer to store sub particle system entity if having a particle system group
 	 * @return entity or nullptr
 	 */
-	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& contactPoint, EntityPickingFilter* filter = nullptr, Node** objectNode = nullptr, ParticleSystemEntity** particleSystemEntity = nullptr);
+	Entity* getEntityByMousePosition(int32_t mouseX, int32_t mouseY, Vector3& contactPoint, EntityPickingFilter* filter = nullptr, Node** objectNode = nullptr, ParticleSystem** particleSystemEntity = nullptr);
 
 	/**
 	 * Does a ray casting of visible 3d object based entities
@@ -1233,7 +1233,7 @@ private:
 		int32_t mouseY,
 		EntityPickingFilter* filter = nullptr,
 		Node** objectNode = nullptr,
-		ParticleSystemEntity** particleSystemEntity = nullptr
+		ParticleSystem** particleSystemEntity = nullptr
 	);
 
 	/**

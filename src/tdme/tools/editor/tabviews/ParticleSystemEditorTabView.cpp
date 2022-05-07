@@ -17,7 +17,7 @@
 #include <tdme/engine/prototype/PrototypeParticleSystem_PointParticleEmitter.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem_SphereParticleEmitter.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/engine/ParticleSystemEntity.h>
+#include <tdme/engine/ParticleSystem.h>
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/Timing.h>
@@ -64,7 +64,7 @@ using tdme::engine::prototype::PrototypeParticleSystem_Emitter;
 using tdme::engine::prototype::PrototypeParticleSystem_PointParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_SphereParticleEmitter;
 using tdme::engine::Engine;
-using tdme::engine::ParticleSystemEntity;
+using tdme::engine::ParticleSystem;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::SceneConnector;
 using tdme::engine::Timing;
@@ -139,7 +139,7 @@ void ParticleSystemEditorTabView::handleInputEvents()
 					auto psg = dynamic_cast<ParticleSystemGroup*>(selectedEntity);
 					if (psg != nullptr) selectedEntity = psg->getParticleSystems()[particleSystemIdx];
 					if (getGizmoMode() != GIZMOMODE_NONE) {
-						if (selectedEntity != nullptr) applyParticleSystemTransformations(dynamic_cast<ParticleSystemEntity*>(selectedEntity), false);
+						if (selectedEntity != nullptr) applyParticleSystemTransformations(dynamic_cast<ParticleSystem*>(selectedEntity), false);
 						setGizmoMode(GIZMOMODE_NONE);
 						updateGizmo();
 					}
@@ -148,7 +148,7 @@ void ParticleSystemEditorTabView::handleInputEvents()
 				} else
 				if (event.getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
 					Node* selectedEntityNode = nullptr;
-					ParticleSystemEntity* selectedSubParticleSystem = nullptr;
+					ParticleSystem* selectedSubParticleSystem = nullptr;
 					Entity* selectedEntity = nullptr;
 					if (getGizmoMode() == GIZMOMODE_NONE) selectedEntity = engine->getEntityByMousePosition(event.getXUnscaled(), event.getYUnscaled(), nullptr, &selectedEntityNode, &selectedSubParticleSystem);
 					if (getGizmoMode() == GIZMOMODE_NONE && selectedEntity == nullptr) {
@@ -191,7 +191,7 @@ void ParticleSystemEditorTabView::handleInputEvents()
 							if (gizmoEntity != nullptr && selectedEntity != nullptr) {
 								selectedEntity->setTranslation(selectedEntity->getTranslation().clone().add(deltaTranslation));
 								selectedEntity->update();
-								auto localTransformations = dynamic_cast<ParticleSystemEntity*>(selectedEntity)->getLocalTransformations();
+								auto localTransformations = dynamic_cast<ParticleSystem*>(selectedEntity)->getLocalTransformations();
 								localTransformations.setScale(localTransformations.getScale().clone().scale(deltaScale));
 								if (localTransformations.getRotationCount() == 0) {
 									localTransformations.addRotation(Rotation::Z_AXIS, 0.0f);
@@ -202,9 +202,9 @@ void ParticleSystemEditorTabView::handleInputEvents()
 								localTransformations.setRotationAngle(1, localTransformations.getRotationAngle(1) + deltaRotation[1]);
 								localTransformations.setRotationAngle(2, localTransformations.getRotationAngle(2) + deltaRotation[0]);
 								localTransformations.update();
-								dynamic_cast<ParticleSystemEntity*>(selectedEntity)->setLocalTransformations(localTransformations);
+								dynamic_cast<ParticleSystem*>(selectedEntity)->setLocalTransformations(localTransformations);
 								setGizmoRotation(localTransformations);
-								applyParticleSystemTransformations(dynamic_cast<ParticleSystemEntity*>(selectedEntity), true);
+								applyParticleSystemTransformations(dynamic_cast<ParticleSystem*>(selectedEntity), true);
 							}
 							if (Math::abs(deltaTranslation.getX()) > Math::EPSILON ||
 								Math::abs(deltaTranslation.getY()) > Math::EPSILON ||
@@ -366,7 +366,7 @@ void ParticleSystemEditorTabView::updateGizmo() {
 	} else {
 		if (particleSystemIdx > 0) selectedEntity = nullptr;
 	}
-	auto pse = dynamic_cast<ParticleSystemEntity*>(selectedEntity);
+	auto pse = dynamic_cast<ParticleSystem*>(selectedEntity);
 	if (selectedEntity != nullptr) {
 		if (pse != nullptr) {
 			Gizmo::updateGizmo(pse->getEmitter()->getCenter().clone().scale(objectScale).add(selectedEntity->getTranslation()), selectedEntity->getTransformations());
@@ -382,7 +382,7 @@ void ParticleSystemEditorTabView::setGizmoRotation(const Transformations& transf
 	Gizmo::setGizmoRotation(transformations);
 }
 
-void ParticleSystemEditorTabView::applyParticleSystemTransformations(ParticleSystemEntity* particleSystemEntity, bool guiOnly) {
+void ParticleSystemEditorTabView::applyParticleSystemTransformations(ParticleSystem* particleSystemEntity, bool guiOnly) {
 	{
 		auto transformations = particleSystemEntity->getTransformations();
 		auto localTransformations = particleSystemEntity->getLocalTransformations();

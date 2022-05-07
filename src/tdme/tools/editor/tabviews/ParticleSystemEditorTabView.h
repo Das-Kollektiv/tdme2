@@ -24,7 +24,7 @@ using tdme::audio::Audio;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
-using tdme::engine::ParticleSystemEntity;
+using tdme::engine::ParticleSystem;
 using tdme::math::Vector3;
 using tdme::tools::editor::misc::CameraRotationInputHandler;
 using tdme::tools::editor::misc::CameraRotationInputHandlerEventHandler;
@@ -184,7 +184,7 @@ public:
 	 * @param particleSystemEntity particle system entity
 	 * @param guiOnly GUI only
 	 */
-	void applyParticleSystemTransformations(ParticleSystemEntity* particleSystemEntity, bool guiOnly);
+	void applyParticleSystemTransformations(ParticleSystem* particleSystemEntity, bool guiOnly);
 
 	/**
 	 * Saving prototype as tempty prototype

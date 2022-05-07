@@ -9,7 +9,7 @@
 #include <tdme/engine/FogParticleSystem.h>
 #include <tdme/engine/Object.h>
 #include <tdme/engine/ObjectParticleSystem.h>
-#include <tdme/engine/ParticleSystemEntity.h>
+#include <tdme/engine/ParticleSystem.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/engine/Transformations.h>
@@ -22,13 +22,13 @@ using tdme::engine::Engine;
 using tdme::engine::FogParticleSystem;
 using tdme::engine::Object;
 using tdme::engine::ObjectParticleSystem;
-using tdme::engine::ParticleSystemEntity;
+using tdme::engine::ParticleSystem;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::Partition;
 using tdme::engine::PointsParticleSystem;
 using tdme::engine::Transformations;
 
-ParticleSystemGroup::ParticleSystemGroup(const string& id, bool autoEmit, bool contributesShadows, bool receivesShadows, const vector<ParticleSystemEntity*>& particleSystems) :
+ParticleSystemGroup::ParticleSystemGroup(const string& id, bool autoEmit, bool contributesShadows, bool receivesShadows, const vector<ParticleSystem*>& particleSystems) :
 	id(id), autoEmit(autoEmit), contributesShadows(contributesShadows), receivesShadows(receivesShadows), particleSystems(particleSystems)
 {
 	this->enabled = true;

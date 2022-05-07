@@ -29,7 +29,7 @@ namespace engine {
 	class ObjectRenderGroup;
 	class ObjectParticleSystem;
 	class OctTreePartition;
-	class ParticleSystemEntity;
+	class ParticleSystem;
 	class ParticleSystemGroup;
 	class Partition;
 	class PointsParticleSystem;

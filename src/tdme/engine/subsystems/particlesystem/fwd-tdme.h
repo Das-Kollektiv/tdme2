@@ -13,7 +13,7 @@ namespace particlesystem {
 	class ObjectParticleSystemInternal;
 	class Particle;
 	struct ParticleEmitter;
-	struct ParticleSystemEntityInternal;
+	struct ParticleSystemInternal;
 	class ParticlesShader;
 	class PointParticleEmitter;
 	class PointsParticleSystemInternal;

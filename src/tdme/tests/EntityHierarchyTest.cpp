@@ -17,7 +17,7 @@
 #include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object.h>
-#include <tdme/engine/ParticleSystemEntity.h>
+#include <tdme/engine/ParticleSystem.h>
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/engine/Rotation.h>
@@ -46,7 +46,7 @@ using tdme::engine::Engine;
 using tdme::engine::EntityHierarchy;
 using tdme::engine::Light;
 using tdme::engine::Object;
-using tdme::engine::ParticleSystemEntity;
+using tdme::engine::ParticleSystem;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::PointsParticleSystem;
 using tdme::engine::Rotation;

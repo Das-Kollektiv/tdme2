@@ -17,12 +17,12 @@ using tdme::engine::Transformations;
  * Particle system entity interface
  * @author Andreas Drewke
  */
-struct tdme::engine::ParticleSystemEntity: public Entity
+struct tdme::engine::ParticleSystem: public Entity
 {
 	/**
 	 * Public destructor
 	 */
-	virtual ~ParticleSystemEntity() {}
+	virtual ~ParticleSystem() {}
 
 	/**
 	 * @return particle emitter

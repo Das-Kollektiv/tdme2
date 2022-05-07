@@ -17,13 +17,13 @@ using tdme::engine::Transformations;
  * Particle system entity internal interface
  * @author Andreas Drewke
  */
-struct tdme::engine::subsystems::particlesystem::ParticleSystemEntityInternal
+struct tdme::engine::subsystems::particlesystem::ParticleSystemInternal
 {
 
 	/**
 	 * Public destructor
 	 */
-	virtual ~ParticleSystemEntityInternal() {}
+	virtual ~ParticleSystemInternal() {}
 
 	/**
 	 * @return particle emitter

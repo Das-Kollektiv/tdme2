@@ -29,7 +29,7 @@
 #include <tdme/engine/Light.h>
 #include <tdme/engine/Object.h>
 #include <tdme/engine/ObjectModel.h>
-#include <tdme/engine/ParticleSystemEntity.h>
+#include <tdme/engine/ParticleSystem.h>
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/engine/Rotation.h>
@@ -73,7 +73,7 @@ using tdme::engine::FrameBuffer;
 using tdme::engine::Light;
 using tdme::engine::Object;
 using tdme::engine::ObjectModel;
-using tdme::engine::ParticleSystemEntity;
+using tdme::engine::ParticleSystem;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::PointsParticleSystem;
 using tdme::engine::Rotation;
@@ -157,7 +157,7 @@ void EngineTest::display()
 	}
 	circleTransformations.setTranslation(circleTranslation);
 	circleTransformations.update();
-	(dynamic_cast< ParticleSystemEntity* >(engine->getEntity("circle")))->fromTransformations(circleTransformations);
+	(dynamic_cast< ParticleSystem* >(engine->getEntity("circle")))->fromTransformations(circleTransformations);
 	doPlayerControl(0, keyLeft, keyRight, keyUp);
 	doPlayerControl(1, keyA, keyD, keyW);
 	osEngine->display();
@@ -366,9 +366,9 @@ void EngineTest::initialize()
 				}
 			)
 		);
-		(dynamic_cast< ParticleSystemEntity* >(engine->getEntity("circle")))->setPickable(false);
-		(dynamic_cast< ParticleSystemEntity* >(engine->getEntity("snow")))->setPickable(false);
-		(dynamic_cast< ParticleSystemEntity* >(engine->getEntity("fire")))->setPickable(true);
+		(dynamic_cast< ParticleSystem* >(engine->getEntity("circle")))->setPickable(false);
+		(dynamic_cast< ParticleSystem* >(engine->getEntity("snow")))->setPickable(false);
+		(dynamic_cast< ParticleSystem* >(engine->getEntity("fire")))->setPickable(true);
 	} catch (Exception& exception) {
 		Console::print(string("EngineTest::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
