@@ -171,6 +171,7 @@
         - space
         - table
         - text + multiline/styled text
+        - video
     - supports custom templates and compound elements defined by templates and its controllers
         - compound elements
             - button
