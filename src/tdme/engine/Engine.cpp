@@ -1192,7 +1192,7 @@ inline void Engine::decomposeEntityTypes(const vector<Entity*>& entities, Decomp
 	}
 }
 
-void Engine::preRender(Camera* camera, DecomposedEntities& decomposedEntities, bool autoEmit, bool computeTransform)
+void Engine::preRender(Camera* camera, DecomposedEntities& decomposedEntities, bool autoEmit, bool computeAnimations)
 {
 	// do particle systems auto emit
 	if (autoEmit == true) {
@@ -1223,7 +1223,7 @@ void Engine::preRender(Camera* camera, DecomposedEntities& decomposedEntities, b
 	}
 
 	// compute transform
-	if (computeTransform == true) {
+	if (computeAnimations == true) {
 		for (auto entity: requireComputeAnimationEntities) {
 			// skip on disabled entities
 			if (partition->isVisibleEntity(entity) == false) continue;
@@ -1258,7 +1258,7 @@ void Engine::preRender(Camera* camera, DecomposedEntities& decomposedEntities, b
 		auto queueElement = engineThreadQueueElementPool.allocate();
 		queueElement->type = Engine::EngineThreadQueueElement::TYPE_PRERENDER;
 		queueElement->engine = this;
-		queueElement->transform.computeTransform = computeTransform;
+		queueElement->animations.computeAnimations = computeAnimations;
 		for (auto i = 0; i < decomposedEntities.requirePreRenderEntities.size(); i++) {
 			queueElement->objects.push_back(decomposedEntities.requirePreRenderEntities[i]);
 			if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_PRERENDER_DISPATCH_COUNT) {
@@ -1266,7 +1266,7 @@ void Engine::preRender(Camera* camera, DecomposedEntities& decomposedEntities, b
 				queueElement = engineThreadQueueElementPool.allocate();
 				queueElement->type = Engine::EngineThreadQueueElement::TYPE_PRERENDER;
 				queueElement->engine = this;
-				queueElement->transform.computeTransform = computeTransform;
+				queueElement->animations.computeAnimations = computeAnimations;
 				elementsIssued++;
 				engineThreadsQueue->addElement(queueElementToSubmit, false);
 			}
@@ -1278,7 +1278,7 @@ void Engine::preRender(Camera* camera, DecomposedEntities& decomposedEntities, b
 		}
 		queueElement->type = Engine::EngineThreadQueueElement::TYPE_ANIMATIONS;
 		queueElement->engine = this;
-		queueElement->transform.computeTransform = computeTransform;
+		queueElement->animations.computeAnimations = computeAnimations;
 		for (auto i = 0; i < decomposedEntities.requireComputeAnimationEntities.size(); i++) {
 			queueElement->objects.push_back(decomposedEntities.requireComputeAnimationEntities[i]);
 			if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_COMPUTE_DISPATCH_COUNT) {
@@ -1286,7 +1286,7 @@ void Engine::preRender(Camera* camera, DecomposedEntities& decomposedEntities, b
 				queueElement = engineThreadQueueElementPool.allocate();
 				queueElement->type = Engine::EngineThreadQueueElement::TYPE_ANIMATIONS;
 				queueElement->engine = this;
-				queueElement->transform.computeTransform = computeTransform;
+				queueElement->animations.computeAnimations = computeAnimations;
 				elementsIssued++;
 				engineThreadsQueue->addElement(queueElementToSubmit, false);
 			}

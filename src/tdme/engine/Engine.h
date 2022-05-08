@@ -314,8 +314,8 @@ private:
 		Engine* engine { nullptr };
 
 		struct {
-			bool computeTransform { false };
-		} transform;
+			bool computeAnimations { false };
+		} animations;
 
 		struct {
 			Entity::RenderPass renderPass;
@@ -543,7 +543,7 @@ private:
 	 * @param camera camera
 	 * @param decomposedEntities decomposed entities
 	 * @param autoEmit auto emit particle systems
-	 * @param computeAnimation compute animation
+	 * @param computeAnimations compute animations
 	 */
 	void preRender(Camera* camera, DecomposedEntities& decomposedEntites, bool autoEmit, bool computeAnimations);
 
