@@ -11,7 +11,7 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
@@ -25,7 +25,7 @@ using tdme::engine::physics::WorldListener;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::Engine;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
@@ -79,7 +79,7 @@ public:
 	 * @param id id
 	 * @param enabled enabled
 	 * @param collisionTypeId collision type id
-	 * @param transformations transformations
+	 * @param transform transform
 	 * @param restitution restitution
 	 * @param friction friction
 	 * @param mass mass
@@ -87,30 +87,30 @@ public:
 	 * @param boundingVolumes bounding volumes
 	 * @return body
 	 */
-	Body* addRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Vector3& inertiaTensor, vector<BoundingVolume*> boundingVolumes);
+	Body* addRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, vector<BoundingVolume*> boundingVolumes);
 
 	/**
 	 * Add a collision body
 	 * @param id id
 	 * @param enabled enabled
 	 * @param collisionTypeId collision type id
-	 * @param transformations transformations
+	 * @param transform transform
 	 * @param boundingVolumes bounding volumes
 	 * @return body
 	 */
-	Body* addCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, vector<BoundingVolume*> boundingVolumes);
+	Body* addCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, vector<BoundingVolume*> boundingVolumes);
 
 	/**
 	 * Add a static rigid body
 	 * @param id id
 	 * @param enabled enabled
 	 * @param collisionTypeId collision type id
-	 * @param transformations transformations
+	 * @param transform transform
 	 * @param friction friction
 	 * @param boundingVolumes bounding volumes
 	 * @return body
 	 */
-	Body* addStaticRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float friction, vector<BoundingVolume*> boundingVolumes);
+	Body* addStaticRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, float friction, vector<BoundingVolume*> boundingVolumes);
 
 	/**
 	 * Returns body identified by id
@@ -172,14 +172,14 @@ public:
 	bool doesCollideWith(uint16_t collisionTypeIds, Body* body, vector<Body*>& rigidBodies);
 
 	/**
-	 * Check if world collides with given bounding volumes and its transformations, which both form a collision for method runtime
+	 * Check if world collides with given bounding volumes and its transform, which both form a collision for method runtime
 	 * @param collisionTypeIds collision type ids
-	 * @param transformations transformations
+	 * @param transform transform
 	 * @param boundingVolumes bounding volume
 	 * @param rigidBodies bodies that collide with given body
 	 * @return if collision happpened or not
 	 */
-	bool doesCollideWith(uint16_t collisionTypeIds, const Transformations& transformations, vector<BoundingVolume*> boundingVolumes, vector<Body*>& rigidBodies);
+	bool doesCollideWith(uint16_t collisionTypeIds, const Transform& transform, vector<BoundingVolume*> boundingVolumes, vector<Body*>& rigidBodies);
 
 	/**
 	 * Check if body 1 collides with body 2

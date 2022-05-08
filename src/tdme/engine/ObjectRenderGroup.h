@@ -18,7 +18,7 @@
 #include <tdme/engine/LODObject.h>
 #include <tdme/engine/Object.h>
 #include <tdme/engine/Rotation.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/fwd-tdme.h>
 
 using std::array;
@@ -37,7 +37,7 @@ using tdme::engine::EntityShaderParameters;
 using tdme::engine::LODObject;
 using tdme::engine::Object;
 using tdme::engine::Rotation;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
@@ -46,7 +46,7 @@ using tdme::math::Vector3;
  * @author Andreas Drewke
  */
 class tdme::engine::ObjectRenderGroup final:
-	public Transformations,
+	public Transform,
 	public Entity
 {
 private:
@@ -66,7 +66,7 @@ private:
 	float modelLOD2MinDistance;
 	float modelLOD3MinDistance;
 	Entity* combinedEntity;
-	map<Model*, vector<Transformations>> transformationsByModel;
+	map<Model*, vector<Transform>> transformByModel;
 	vector<Model*> combinedModels;
 	RenderPass renderPass { RENDERPASS_STANDARD };
 	string shaderId { "default" };
@@ -86,28 +86,28 @@ private:
 	inline void updateBoundingBox() {
 		if (combinedEntity == nullptr) return;
 		boundingBox.fromBoundingVolume(combinedEntity->getBoundingBox());
-		boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
+		boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
 	}
 
 	/**
 	 * Combine node into given combined model
 	 * @param sourceNode source node to combine into current model
 	 * @param origins origins
-	 * @param objectParentTransformationsMatrices object parent transformations matrix
+	 * @param objectParentTransformMatrices object parent transform matrix
 	 * @param combinedModel combined model
 	 * @param reduceFactorBy reduce factor by
 	 */
-	static void combineNode(Node* sourceNode, const vector<Vector3>& origins, const vector<Matrix4x4>& objectParentTransformationsMatrices, Model* combinedModel);
+	static void combineNode(Node* sourceNode, const vector<Vector3>& origins, const vector<Matrix4x4>& objectParentTransformMatrices, Model* combinedModel);
 
 	/**
-	 * Combine model with transformations into current model
+	 * Combine model with transform into current model
 	 * @param model model
-	 * @param transformations transformations
+	 * @param transform transform
 	 * @param combinedModel combined model
 	 * @param reduceFactorBy reduce factor by
 	 * @return model
 	 */
-	static void combineObjects(Model* model, const vector<Transformations>& objectsTransformations, Model* combinedModel);
+	static void combineObjects(Model* model, const vector<Transform>& objectsTransform, Model* combinedModel);
 
 	// overridden methods
 	inline void setParentEntity(Entity* entity) override {
@@ -116,8 +116,8 @@ private:
 	inline Entity* getParentEntity() override {
 		return parentEntity;
 	}
-	inline void applyParentTransformations(const Transformations& parentTransformations) override {
-		Transformations::applyParentTransformations(parentTransformations);
+	inline void applyParentTransform(const Transform& parentTransform) override {
+		Transform::applyParentTransform(parentTransform);
 		updateBoundingBox();
 	}
 
@@ -168,9 +168,9 @@ public:
 	/**
 	 * Adds a instance to this render group
 	 * @param model model
-	 * @param transformations transformations
+	 * @param transform transform
 	 */
-	void addObject(Model* model, const Transformations& transformations);
+	void addObject(Model* model, const Transform& transform);
 
 	// overridden methods
 	void setEngine(Engine* engine) override;
@@ -185,7 +185,7 @@ public:
 	void setEnabled(bool enabled) override;
 	bool isFrustumCulling() override;
 	void setFrustumCulling(bool frustumCulling) override;
-	void fromTransformations(const Transformations& transformations) override;
+	void fromTransform(const Transform& transform) override;
 	void update() override;
 
 	inline BoundingBox* getBoundingBox() override {
@@ -243,70 +243,70 @@ public:
 	}
 
 	inline const Vector3& getTranslation() const override {
-		return Transformations::getTranslation();
+		return Transform::getTranslation();
 	}
 
 	inline void setTranslation(const Vector3& translation) override {
-		Transformations::setTranslation(translation);
+		Transform::setTranslation(translation);
 	}
 
 	inline const Vector3& getScale() const override {
-		return Transformations::getScale();
+		return Transform::getScale();
 	}
 
 	inline void setScale(const Vector3& scale) override {
-		Transformations::setScale(scale);
+		Transform::setScale(scale);
 	}
 
 	inline const Vector3& getPivot() const override {
-		return Transformations::getPivot();
+		return Transform::getPivot();
 	}
 
 	inline void setPivot(const Vector3& pivot) override {
-		Transformations::setPivot(pivot);
+		Transform::setPivot(pivot);
 	}
 
 	inline const int getRotationCount() const override {
-		return Transformations::getRotationCount();
+		return Transform::getRotationCount();
 	}
 
 	inline Rotation& getRotation(const int idx) override {
-		return Transformations::getRotation(idx);
+		return Transform::getRotation(idx);
 	}
 
 	inline void addRotation(const Vector3& axis, const float angle) override {
-		Transformations::addRotation(axis, angle);
+		Transform::addRotation(axis, angle);
 	}
 
 	inline void removeRotation(const int idx) override {
-		Transformations::removeRotation(idx);
+		Transform::removeRotation(idx);
 	}
 
 	inline const Vector3& getRotationAxis(const int idx) const override {
-		return Transformations::getRotationAxis(idx);
+		return Transform::getRotationAxis(idx);
 	}
 
 	inline void setRotationAxis(const int idx, const Vector3& axis) override {
-		Transformations::setRotationAxis(idx, axis);
+		Transform::setRotationAxis(idx, axis);
 	}
 
 	inline const float getRotationAngle(const int idx) const override {
-		return Transformations::getRotationAngle(idx);
+		return Transform::getRotationAngle(idx);
 	}
 
 	inline void setRotationAngle(const int idx, const float angle) override {
-		Transformations::setRotationAngle(idx, angle);
+		Transform::setRotationAngle(idx, angle);
 	}
 
 	inline const Quaternion& getRotationsQuaternion() const override {
-		return Transformations::getRotationsQuaternion();
+		return Transform::getRotationsQuaternion();
 	}
 
-	inline const Matrix4x4& getTransformationsMatrix() const override {
-		return Transformations::getTransformationsMatrix();
+	inline const Matrix4x4& getTransformMatrix() const override {
+		return Transform::getTransformMatrix();
 	}
 
-	inline const Transformations& getTransformations() const override {
+	inline const Transform& getTransform() const override {
 		return *this;
 	}
 

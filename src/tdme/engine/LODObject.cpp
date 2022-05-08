@@ -6,7 +6,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Object.h>
 #include <tdme/engine/Partition.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 
 using std::string;
 
@@ -14,7 +14,7 @@ using tdme::engine::Engine;
 using tdme::engine::LODObject;
 using tdme::engine::Object;
 using tdme::engine::Partition;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 
 LODObject::LODObject(
 	const string& id,
@@ -99,13 +99,13 @@ void LODObject::setRenderer(Renderer* renderer)
 {
 }
 
-void LODObject::fromTransformations(const Transformations& transformations)
+void LODObject::fromTransform(const Transform& transform)
 {
-	Transformations::fromTransformations(transformations);
+	Transform::fromTransform(transform);
 	// delegate to LOD objects
-	if (objectLOD1 != nullptr) objectLOD1->fromTransformations(*this);
-	if (objectLOD2 != nullptr) objectLOD2->fromTransformations(*this);
-	if (objectLOD3 != nullptr) objectLOD3->fromTransformations(*this);
+	if (objectLOD1 != nullptr) objectLOD1->fromTransform(*this);
+	if (objectLOD2 != nullptr) objectLOD2->fromTransform(*this);
+	if (objectLOD3 != nullptr) objectLOD3->fromTransform(*this);
 	// update entity
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 	// reset current LOD object
@@ -114,11 +114,11 @@ void LODObject::fromTransformations(const Transformations& transformations)
 
 void LODObject::update()
 {
-	Transformations::update();
+	Transform::update();
 	// delegate to LOD objects
-	if (objectLOD1 != nullptr) objectLOD1->fromTransformations(*this);
-	if (objectLOD2 != nullptr) objectLOD2->fromTransformations(*this);
-	if (objectLOD3 != nullptr) objectLOD3->fromTransformations(*this);
+	if (objectLOD1 != nullptr) objectLOD1->fromTransform(*this);
+	if (objectLOD2 != nullptr) objectLOD2->fromTransform(*this);
+	if (objectLOD3 != nullptr) objectLOD3->fromTransform(*this);
 	// update entity
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 	// reset current LOD object

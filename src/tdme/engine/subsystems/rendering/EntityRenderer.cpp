@@ -351,7 +351,7 @@ void EntityRenderer::prepareTransparentFaces(const vector<TransparentRenderFace*
 	if (objectNode->mesh->skinning == true) {
 		modelViewMatrix.identity();
 	} else {
-		modelViewMatrix.set(*objectNode->nodeTransformationsMatrix).multiply(object->getTransformationsMatrix());
+		modelViewMatrix.set(*objectNode->nodeTransformMatrix).multiply(object->getTransformMatrix());
 	}
 	//
 	auto model = objectNode->object->getModel();
@@ -478,7 +478,7 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object*>& 
 						transparentRenderFacesPool->createTransparentRenderFaces(
 							(_objectNode->mesh->skinning == true?
 								modelViewMatrix.identity():
-								modelViewMatrix.set(*_objectNode->nodeTransformationsMatrix).multiply(object->getTransformationsMatrix())
+								modelViewMatrix.set(*_objectNode->nodeTransformMatrix).multiply(object->getTransformMatrix())
 							).multiply(cameraMatrix),
 							object->objectNodes[objectNodeIdx],
 							faceEntityIdx,
@@ -505,7 +505,7 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object*>& 
 						transparentRenderFacesPool->createTransparentRenderFaces(
 							(_objectNode->mesh->skinning == true ?
 								modelViewMatrix.identity() :
-								modelViewMatrix.set(*_objectNode->nodeTransformationsMatrix).multiply(object->getTransformationsMatrix())
+								modelViewMatrix.set(*_objectNode->nodeTransformMatrix).multiply(object->getTransformMatrix())
 							).multiply(cameraMatrix),
 							_objectNode,
 							faceEntityIdx,
@@ -610,11 +610,11 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object*>& 
 				if (currentVBOOrigins != nullptr && currentVBOOrigins != boundVBOOrigins) {
 					renderer->bindOriginsBufferObject(contextIdx, (*currentVBOOrigins)[0]);
 				}
-				// set up local -> world transformations matrix
+				// set up local -> world transform matrix
 				renderer->getModelViewMatrix().set(
 					_objectNode->mesh->skinning == true?
 						modelViewMatrix.identity():
-						modelViewMatrix.set(*_objectNode->nodeTransformationsMatrix).multiply(object->getTransformationsMatrix())
+						modelViewMatrix.set(*_objectNode->nodeTransformMatrix).multiply(object->getTransformMatrix())
 				);
 				renderer->onUpdateModelViewMatrix(contextIdx);
 				// set up front face
@@ -629,14 +629,14 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object*>& 
 					renderer->getEffectColorAdd(contextIdx) = object->effectColorAdd.getArray();
 					renderer->onUpdateEffect(contextIdx);
 				}
-				// do transformation start to shadow mapping
+				// do transform start to shadow mapping
 				if ((renderTypes & RENDERTYPE_SHADOWMAPPING) == RENDERTYPE_SHADOWMAPPING &&
 					shadowMapping != nullptr) {
-					shadowMapping->startObjectTransformations(
+					shadowMapping->startObjectTransform(
 						contextIdx,
 						_objectNode->mesh->skinning == true ?
 							modelViewMatrix.identity() :
-							modelViewMatrix.set(*_objectNode->nodeTransformationsMatrix).multiply(object->getTransformationsMatrix())
+							modelViewMatrix.set(*_objectNode->nodeTransformMatrix).multiply(object->getTransformMatrix())
 					);
 				}
 				// set up texture matrix
@@ -661,7 +661,7 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object*>& 
 					}
 					if (environmentMappingEntity != nullptr) {
 						Vector3 environmentMappingTranslation;
-						object->getTransformationsMatrix().getTranslation(environmentMappingTranslation);
+						object->getTransformMatrix().getTranslation(environmentMappingTranslation);
 						auto environmentMappingCubeMapTextureId = environmentMappingEntity->getCubeMapTextureId();
 						Vector3 environmentMappingCubeMapPosition = object->hasReflectionEnvironmentMappingPosition() == true?object->getReflectionEnvironmentMappingPosition():environmentMappingTranslation;
 						if (environmentMappingCubeMapTextureId != boundEnvironmentMappingCubeMapTextureId || environmentMappingCubeMapPosition.equals(boundEnvironmentMappingCubeMapPosition) == false) {
@@ -682,10 +682,10 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object*>& 
 				}
 				// draw
 				renderer->drawIndexedTrianglesFromBufferObjects(contextIdx, facesToRender, faceIdx);
-				// do transformations end to shadow mapping
+				// do transform end to shadow mapping
 				if ((renderTypes & RENDERTYPE_SHADOWMAPPING) == RENDERTYPE_SHADOWMAPPING &&
 					shadowMapping != nullptr) {
-					shadowMapping->endObjectTransformations();
+					shadowMapping->endObjectTransform();
 				}
 			}
 			// keep track of rendered faces
@@ -759,7 +759,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 							transparentRenderFacesPool->createTransparentRenderFaces(
 								(_objectNode->mesh->skinning == true?
 									modelViewMatrixTemp.identity() :
-									modelViewMatrixTemp.set(*_objectNode->nodeTransformationsMatrix).multiply(object->getTransformationsMatrix())
+									modelViewMatrixTemp.set(*_objectNode->nodeTransformMatrix).multiply(object->getTransformMatrix())
 								).multiply(cameraMatrix),
 								object->objectNodes[objectNodeIdx],
 								faceEntityIdx,
@@ -834,7 +834,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 							transparentRenderFacesPool->createTransparentRenderFaces(
 								(_objectNode->mesh->skinning == true ?
 									modelViewMatrixTemp.identity() :
-									modelViewMatrixTemp.set(*_objectNode->nodeTransformationsMatrix).multiply(object->getTransformationsMatrix())
+									modelViewMatrixTemp.set(*_objectNode->nodeTransformMatrix).multiply(object->getTransformMatrix())
 								).multiply(cameraMatrix),
 								_objectNode,
 								faceEntityIdx,
@@ -1006,12 +1006,12 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 						}
 					}
 
-					// set up local -> world transformations matrix
+					// set up local -> world transform matrix
 					modelViewMatrix.set(
 						_objectNode->mesh->skinning == true?
 							modelViewMatrixTemp.identity() :
-							modelViewMatrixTemp.set(*_objectNode->nodeTransformationsMatrix).
-							multiply(object->getTransformationsMatrix())
+							modelViewMatrixTemp.set(*_objectNode->nodeTransformMatrix).
+							multiply(object->getTransformMatrix())
 					);
 
 					// set up front face
@@ -1048,7 +1048,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 						}
 						if (environmentMappingEntity != nullptr) {
 							Vector3 environmentMappingTranslation;
-							object->getTransformationsMatrix().getTranslation(environmentMappingTranslation);
+							object->getTransformMatrix().getTranslation(environmentMappingTranslation);
 							auto environmentMappingCubeMapTextureId = environmentMappingEntity->getCubeMapTextureId();
 							Vector3 environmentMappingCubeMapPosition = object->hasReflectionEnvironmentMappingPosition() == true?object->getReflectionEnvironmentMappingPosition():environmentMappingTranslation;
 							if (boundEnvironmentMappingCubeMapTextureId == -1) {
@@ -1465,7 +1465,7 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Lines*>&
 		if (object->getRenderPass() != renderPass) continue;
 
 		// 	model view matrix
-		renderer->getModelViewMatrix().set(object->getTransformationsMatrix()).multiply(renderer->getCameraMatrix());
+		renderer->getModelViewMatrix().set(object->getTransformMatrix()).multiply(renderer->getCameraMatrix());
 		renderer->onUpdateModelViewMatrix(contextIdx);
 
 		// render

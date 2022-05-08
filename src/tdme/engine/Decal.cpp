@@ -6,7 +6,7 @@
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Partition.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 
 using std::string;
 
@@ -14,7 +14,7 @@ using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::Decal;
 using tdme::engine::Engine;
 using tdme::engine::Partition;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 
 Decal::Decal(const string& id, OrientedBoundingBox* obb, Texture* texture):
 	DecalInternal(id, obb, texture)
@@ -28,9 +28,9 @@ void Decal::setEngine(Engine* engine) {
 	DecalInternal::setEngine(engine);
 }
 
-void Decal::fromTransformations(const Transformations& transformations)
+void Decal::fromTransform(const Transform& transform)
 {
-	DecalInternal::fromTransformations(transformations);
+	DecalInternal::fromTransform(transform);
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 

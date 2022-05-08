@@ -137,9 +137,9 @@ Model* TMReader::read(const vector<uint8_t>& data, const string& pathName, const
 	model->setEmbedSpecularTextures(embedSpecularTextures);
 	model->setEmbedPBRTextures(embedPBRTextures);
 	model->setFPS(is.readFloat());
-	array<float, 16> importTransformationsMatrixArray;
-	is.readFloatArray(importTransformationsMatrixArray);
-	model->setImportTransformationsMatrix(importTransformationsMatrixArray);
+	array<float, 16> importTransformMatrixArray;
+	is.readFloatArray(importTransformMatrixArray);
+	model->setImportTransformMatrix(importTransformMatrixArray);
 	map<string, Texture*> embeddedTextures;
 	if ((version[0] == 1 && version[1] == 9 && version[2] == 17) ||
 		(version[0] == 1 && version[1] == 9 && version[2] == 18)) {
@@ -459,13 +459,13 @@ Animation* TMReader::readAnimation(TMReaderInputStream* is, Node* g)
 		array<float, 16> matrixArray;
 		auto frames = is->readInt();
 		auto animation = new Animation();
-		vector<Matrix4x4> transformationsMatrices;
-		transformationsMatrices.resize(frames);
-		for (auto i = 0; i < transformationsMatrices.size(); i++) {
+		vector<Matrix4x4> transformMatrices;
+		transformMatrices.resize(frames);
+		for (auto i = 0; i < transformMatrices.size(); i++) {
 			is->readFloatArray(matrixArray);
-			transformationsMatrices[i].set(matrixArray);
+			transformMatrices[i].set(matrixArray);
 		}
-		animation->setTransformationsMatrices(transformationsMatrices);
+		animation->setTransformMatrices(transformMatrices);
 		g->setAnimation(animation);
 		return g->getAnimation();
 	}
@@ -580,7 +580,7 @@ Node* TMReader::readNode(TMReaderInputStream* is, Model* model, Node* parentNode
 	node->setJoint(is->readBoolean());
 	array<float, 16> matrixArray;
 	is->readFloatArray(matrixArray);
-	node->setTransformationsMatrix(Matrix4x4(matrixArray));
+	node->setTransformMatrix(Matrix4x4(matrixArray));
 	vector<Vector3> vertices = readVertices(is);
 	node->setVertices(vertices);
 	vector<Vector3> normals = readVertices(is);

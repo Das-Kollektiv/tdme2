@@ -5,7 +5,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 #include <tdme/tools/editor/misc/Gizmo.h>
@@ -16,7 +16,7 @@ using std::string;
 
 using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Vector3;
 using tdme::tools::editor::misc::Gizmo;
 using tdme::tools::editor::misc::PopUps;
@@ -188,13 +188,13 @@ public:
 	void applyBoundingVolumeConvexMesh(Prototype* prototype, int idx, const string& fileName);
 
 	/**
-	 * Apply bounding volume transformations
+	 * Apply bounding volume transform
 	 * @param prototype prototype
 	 * @param idx bounding volume index
-	 * @param transformations transformations
+	 * @param transform transform
 	 * @param guiOnly only update GUI not the BV it self
 	 */
-	void applyBoundingVolumeTransformations(Prototype* prototype, int idx, const Transformations& transformations, bool guiOnly);
+	void applyBoundingVolumeTransform(Prototype* prototype, int idx, const Transform& transform, bool guiOnly);
 
 	/**
 	 * Handle input events
@@ -217,9 +217,9 @@ public:
 	/**
 	 * Set GIZMO rotation
 	 * @param prototype prototype
-	 * @param transformations transformations
+	 * @param transform transform
 	 */
-	void setGizmoRotation(Prototype* prototype, const Transformations& transformations);
+	void setGizmoRotation(Prototype* prototype, const Transform& transform);
 
 	/**
 	 * Start editing bounding volume

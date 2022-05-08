@@ -7,7 +7,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Object.h>
 #include <tdme/engine/Partition.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 
 using std::string;
 using std::vector;
@@ -16,7 +16,7 @@ using tdme::engine::Engine;
 using tdme::engine::ImposterObject;
 using tdme::engine::Object;
 using tdme::engine::Partition;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 
 ImposterObject::ImposterObject(
 	const string& id,
@@ -63,19 +63,19 @@ void ImposterObject::setRenderer(Renderer* renderer)
 {
 }
 
-void ImposterObject::fromTransformations(const Transformations& transformations)
+void ImposterObject::fromTransform(const Transform& transform)
 {
-	Transformations::fromTransformations(transformations);
+	Transform::fromTransform(transform);
 	// delegate to billboard objects
-	auto imposterObjectTransformations = this->getTransformations();
-	imposterObjectTransformations.addRotation(Vector3(0.0f, 1.0f, 0.0f), -(360.0f / billboardModels.size()) * 0.5f);
+	auto imposterObjectTransform = this->getTransform();
+	imposterObjectTransform.addRotation(Vector3(0.0f, 1.0f, 0.0f), -(360.0f / billboardModels.size()) * 0.5f);
 	for (auto billboardObject: billboardObjects) {
-		imposterObjectTransformations.setRotationAngle(
-			imposterObjectTransformations.getRotationCount() - 1,
-			imposterObjectTransformations.getRotationAngle(imposterObjectTransformations.getRotationCount() - 1) + 360.0f / billboardModels.size()
+		imposterObjectTransform.setRotationAngle(
+			imposterObjectTransform.getRotationCount() - 1,
+			imposterObjectTransform.getRotationAngle(imposterObjectTransform.getRotationCount() - 1) + 360.0f / billboardModels.size()
 		);
-		imposterObjectTransformations.update();
-		billboardObject->fromTransformations(imposterObjectTransformations);
+		imposterObjectTransform.update();
+		billboardObject->fromTransform(imposterObjectTransform);
 	}
 	// update entity
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
@@ -83,17 +83,17 @@ void ImposterObject::fromTransformations(const Transformations& transformations)
 
 void ImposterObject::update()
 {
-	Transformations::update();
+	Transform::update();
 	// delegate to billboard objects
-	auto imposterObjectTransformations = this->getTransformations();
-	imposterObjectTransformations.addRotation(Vector3(0.0f, 1.0f, 0.0f), -(360.0f / billboardModels.size()) * 0.5f);
+	auto imposterObjectTransform = this->getTransform();
+	imposterObjectTransform.addRotation(Vector3(0.0f, 1.0f, 0.0f), -(360.0f / billboardModels.size()) * 0.5f);
 	for (auto billboardObject: billboardObjects) {
-		imposterObjectTransformations.setRotationAngle(
-			imposterObjectTransformations.getRotationCount() - 1,
-			imposterObjectTransformations.getRotationAngle(imposterObjectTransformations.getRotationCount() - 1) + 360.0f / billboardModels.size()
+		imposterObjectTransform.setRotationAngle(
+			imposterObjectTransform.getRotationCount() - 1,
+			imposterObjectTransform.getRotationAngle(imposterObjectTransform.getRotationCount() - 1) + 360.0f / billboardModels.size()
 		);
-		imposterObjectTransformations.update();
-		billboardObject->fromTransformations(imposterObjectTransformations);
+		imposterObjectTransform.update();
+		billboardObject->fromTransform(imposterObjectTransform);
 	}
 	// update entity
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);

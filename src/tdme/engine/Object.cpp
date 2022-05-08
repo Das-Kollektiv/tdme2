@@ -7,7 +7,7 @@
 #include <tdme/engine/subsystems/lighting/LightingShader.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Partition.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
@@ -20,7 +20,7 @@ using tdme::engine::subsystems::lighting::LightingShader;
 using tdme::engine::Engine;
 using tdme::engine::Object;
 using tdme::engine::Partition;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
@@ -49,9 +49,9 @@ void Object::setRenderer(Renderer* renderer)
 {
 }
 
-void Object::fromTransformations(const Transformations& transformations)
+void Object::fromTransform(const Transform& transform)
 {
-	ObjectInternal::fromTransformations(transformations);
+	ObjectInternal::fromTransform(transform);
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
@@ -123,7 +123,7 @@ void Object::setShader(const string& id) {
 		shaderParameters.setShader(shaderId);
 	}
 	uniqueShaderId = Engine::getUniqueShaderId(shaderId);
-	needsForwardShading =
+	requiresForwardShading =
 		Engine::getLightingShader()->hasShader("defer_" + shaderId) == false ||
 		Engine::getLightingShader()->hasShader("defer_" + distanceShaderId) == false;
 	//
@@ -143,7 +143,7 @@ void Object::setDistanceShader(const string& id) {
 		distanceShaderParameters.setShader(distanceShaderId);
 	}
 	uniqueDistanceShaderId = Engine::getUniqueShaderId(distanceShaderId);
-	needsForwardShading =
+	requiresForwardShading =
 		Engine::getLightingShader()->hasShader("defer_" + shaderId) == false ||
 		Engine::getLightingShader()->hasShader("defer_" + distanceShaderId) == false;
 	//

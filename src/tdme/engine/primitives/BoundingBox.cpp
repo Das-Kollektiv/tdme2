@@ -4,7 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 
@@ -12,7 +12,7 @@ using std::vector;
 
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::OrientedBoundingBox;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
@@ -76,13 +76,13 @@ void BoundingBox::fromBoundingVolume(BoundingBox* boundingBox)
 	dimensions = boundingBox->dimensions;
 }
 
-void BoundingBox::fromBoundingVolumeWithTransformations(BoundingBox* boundingBox, const Transformations& transformations)
+void BoundingBox::fromBoundingVolumeWithTransform(BoundingBox* boundingBox, const Transform& transform)
 {
-	// apply transformations from original vertices to local vertices
-	auto& transformationsMatrix = transformations.getTransformationsMatrix();
+	// apply transform from original vertices to local vertices
+	auto& transformMatrix = transform.getTransformMatrix();
 	auto _vertices = boundingBox->getVertices();
 	for (auto i = 0; i < vertices.size(); i++) {
-		vertices[i] = transformationsMatrix.multiply(_vertices[i]);
+		vertices[i] = transformMatrix.multiply(_vertices[i]);
 	}
 	// determine axis aligned bounding box constraints based on local vertices
 	auto& vertexXYZ = vertices[0].getArray();

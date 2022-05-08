@@ -16,14 +16,14 @@
 #include <ext/reactphysics3d/src/memory/MemoryAllocator.h>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Vector3.h>
 
 using std::to_string;
 
 using tdme::engine::physics::CollisionResponse;
 using tdme::engine::primitives::BoundingVolume;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Vector3;
 
 BoundingVolume::~BoundingVolume() {
@@ -39,24 +39,24 @@ void BoundingVolume::computeBoundingBox() {
 	centerTransformed = boundingBoxTransformed.getCenter();
 }
 
-void BoundingVolume::fromTransformations(const Transformations& transformations) {
+void BoundingVolume::fromTransform(const Transform& transform) {
 	//
-	setScale(transformations.getScale());
+	setScale(transform.getScale());
 
 	// set transform
 	collisionShapeTransform.setPosition(
 		reactphysics3d::Vector3(
-			transformations.getTranslation().getX(),
-			transformations.getTranslation().getY(),
-			transformations.getTranslation().getZ()
+			transform.getTranslation().getX(),
+			transform.getTranslation().getY(),
+			transform.getTranslation().getZ()
 		)
 	);
 	collisionShapeTransform.setOrientation(
 		reactphysics3d::Quaternion(
-			transformations.getRotationsQuaternion().getX(),
-			transformations.getRotationsQuaternion().getY(),
-			transformations.getRotationsQuaternion().getZ(),
-			transformations.getRotationsQuaternion().getW()
+			transform.getRotationsQuaternion().getX(),
+			transform.getRotationsQuaternion().getY(),
+			transform.getRotationsQuaternion().getZ(),
+			transform.getRotationsQuaternion().getW()
 		)
 	);
 

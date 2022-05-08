@@ -488,7 +488,7 @@ void Primitives::setupConvexMeshModel(Model* model)
 {
 	// TODO: take bounding volume scale into account
 	//	Note: there is no hurry as LE and ME do not do scaling of bounding volumes
-	model->setImportTransformationsMatrix(model->getImportTransformationsMatrix().clone().scale(1.01f));
+	model->setImportTransformMatrix(model->getImportTransformMatrix().clone().scale(1.01f));
 	auto material = new Material("primitive");
 	auto specularMaterialProperties = new SpecularMaterialProperties();
 	specularMaterialProperties->setAmbientColor(

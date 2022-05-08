@@ -195,8 +195,8 @@ int32_t Engine::shadowMapHeight = 0;
 int32_t Engine::shadowMapRenderLookUps = 0;
 int32_t Engine::environmentMappingWidth = 1024;
 int32_t Engine::environmentMappingHeight = 1024;
-float Engine::transformationsComputingReduction1Distance = 25.0f;
-float Engine::transformationsComputingReduction2Distance = 50.0f;
+float Engine::animationComputationReduction1Distance = 25.0f;
+float Engine::animationComputationReduction2Distance = 50.0f;
 map<string, Engine::Shader> Engine::shaders;
 unordered_map<string, uint8_t> Engine::uniqueShaderIds;
 
@@ -228,8 +228,8 @@ void Engine::EngineThread::run() {
 				element->objects.clear();
 				elementsProcessed++;
 				break;
-			case EngineThreadQueueElement::TYPE_TRANSFORMATIONS:
-				element->engine->computeTransformationsFunction(
+			case EngineThreadQueueElement::TYPE_ANIMATIONS:
+				element->engine->computeAnimationsFunction(
 					element->objects,
 					idx
 				);
@@ -264,7 +264,7 @@ Engine::Engine() {
 	shadowMapping = nullptr;
 	// render process state
 	renderingInitiated = false;
-	renderingComputedTransformations = false;
+	preRenderingInitiated = false;
 	//
 	initialized = false;
 	// post processing frame buffers
@@ -405,8 +405,8 @@ void Engine::deregisterEntity(Entity* entity) {
 		),
 		visibleDecomposedEntities.noFrustumCullingEntities.end());
 	autoEmitParticleSystemEntities.erase(entity);
-	needsComputeTransformationsEntities.erase(entity);
-	needsPreRenderEntities.erase(entity);
+	requireComputeAnimationEntities.erase(entity);
+	requirePreRenderEntities.erase(entity);
 
 	// decompose and deregister decal textures
 	DecomposedEntities decomposedEntities;
@@ -455,8 +455,8 @@ void Engine::registerEntity(Entity* entity) {
 	for (auto& objects: objectsArray) {
 		for (auto object: objects) {
 			object->preRender(renderer->CONTEXTINDEX_DEFAULT);
-			if (object->isNeedsPreRender() == true) needsPreRenderEntities.insert(object);
-			if (object->isNeedsComputeTransformations() == true) needsComputeTransformationsEntities.insert(object);
+			if (object->isRequiringPreRender() == true) requirePreRenderEntities.insert(object);
+			if (object->isRequiringAnimationComputation() == true) requireComputeAnimationEntities.insert(object);
 		}
 	}
 	// register decal textures
@@ -478,8 +478,8 @@ bool Engine::removeEntity(const string& id)
 	entitiesById.erase(entityByIdIt);
 	autoEmitParticleSystemEntities.erase(entity);
 	noFrustumCullingEntities.erase(entity);
-	needsPreRenderEntities.erase(entity);
-	needsComputeTransformationsEntities.erase(entity);
+	requirePreRenderEntities.erase(entity);
+	requireComputeAnimationEntities.erase(entity);
 
 	// remove from partition if enabled and frustum culling requested
 	if (entity->isFrustumCulling() == true && entity->isEnabled() == true) partition->removeEntity(entity);
@@ -619,21 +619,21 @@ inline void Engine::removeFromDecomposedEntities(DecomposedEntities& decomposedE
 		),
 		decomposedEntities.environmentMappingEntities.end()
 	);
-	decomposedEntities.needsPreRenderEntities.erase(
+	decomposedEntities.requirePreRenderEntities.erase(
 		remove(
-			decomposedEntities.needsPreRenderEntities.begin(),
-			decomposedEntities.needsPreRenderEntities.end(),
+			decomposedEntities.requirePreRenderEntities.begin(),
+			decomposedEntities.requirePreRenderEntities.end(),
 			entity
 		),
-		decomposedEntities.needsPreRenderEntities.end()
+		decomposedEntities.requirePreRenderEntities.end()
 	);
-	decomposedEntities.needsComputeTransformationsEntities.erase(
+	decomposedEntities.requireComputeAnimationEntities.erase(
 		remove(
-			decomposedEntities.needsComputeTransformationsEntities.begin(),
-			decomposedEntities.needsComputeTransformationsEntities.end(),
+			decomposedEntities.requireComputeAnimationEntities.begin(),
+			decomposedEntities.requireComputeAnimationEntities.end(),
 			entity
 		),
-		decomposedEntities.needsComputeTransformationsEntities.end()
+		decomposedEntities.requireComputeAnimationEntities.end()
 	);
 }
 
@@ -1030,8 +1030,8 @@ void Engine::resetLists(DecomposedEntities& decomposedEntites) {
 	decomposedEntites.ezrObjects.clear();
 	decomposedEntites.noFrustumCullingEntities.clear();
 	decomposedEntites.environmentMappingEntities.clear();
-	decomposedEntites.needsPreRenderEntities.clear();
-	decomposedEntites.needsComputeTransformationsEntities.clear();
+	decomposedEntites.requirePreRenderEntities.clear();
+	decomposedEntites.requireComputeAnimationEntities.clear();
 }
 
 void Engine::initRendering()
@@ -1050,8 +1050,8 @@ void Engine::preRenderFunction(vector<Object*>& objects, int threadIdx) {
 	for (auto object: objects) object->preRender(threadIdx);
 }
 
-void Engine::computeTransformationsFunction(vector<Object*>& objects, int threadIdx) {
-	for (auto object: objects) object->computeTransformations(threadIdx);
+void Engine::computeAnimationsFunction(vector<Object*>& objects, int threadIdx) {
+	for (auto object: objects) object->computeAnimations(threadIdx);
 }
 
 inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& decomposedEntities, bool decomposeAllEntities) {
@@ -1065,7 +1065,7 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 				if (object->getRenderPass() == Entity::RENDERPASS_POST_POSTPROCESSING) {
 					decomposedEntities.objectsPostPostProcessing.push_back(object);
 				} else
-				if (object->isNeedsForwardShading() == true &&
+				if (object->isRequiringForwardShading() == true &&
 					(object->getRenderPass() == Entity::RENDERPASS_TERRAIN || object->getRenderPass() == Entity::RENDERPASS_STANDARD) &&
 					renderer->isDeferredShadingAvailable() == true) {
 					decomposedEntities.objectsForwardShading.push_back(object);
@@ -1192,7 +1192,7 @@ inline void Engine::decomposeEntityTypes(const vector<Entity*>& entities, Decomp
 	}
 }
 
-void Engine::computeTransformations(Camera* camera, DecomposedEntities& decomposedEntities, bool autoEmit, bool computeTransformations)
+void Engine::preRender(Camera* camera, DecomposedEntities& decomposedEntities, bool autoEmit, bool computeTransform)
 {
 	// do particle systems auto emit
 	if (autoEmit == true) {
@@ -1215,20 +1215,20 @@ void Engine::computeTransformations(Camera* camera, DecomposedEntities& decompos
 	);
 
 	// pre render
-	for (auto entity: needsPreRenderEntities) {
+	for (auto entity: requirePreRenderEntities) {
 		// skip on disabled entities
 		if (partition->isVisibleEntity(entity) == false) continue;
 		//
-		decomposedEntities.needsPreRenderEntities.push_back(static_cast<Object*>(entity));
+		decomposedEntities.requirePreRenderEntities.push_back(static_cast<Object*>(entity));
 	}
 
-	// compute transformations
-	if (computeTransformations == true) {
-		for (auto entity: needsComputeTransformationsEntities) {
+	// compute transform
+	if (computeTransform == true) {
+		for (auto entity: requireComputeAnimationEntities) {
 			// skip on disabled entities
 			if (partition->isVisibleEntity(entity) == false) continue;
 			//
-			decomposedEntities.needsComputeTransformationsEntities.push_back(static_cast<Object*>(entity));
+			decomposedEntities.requireComputeAnimationEntities.push_back(static_cast<Object*>(entity));
 		}
 	}
 
@@ -1251,22 +1251,22 @@ void Engine::computeTransformations(Camera* camera, DecomposedEntities& decompos
 	if (skinningShaderEnabled == true) skinningShader->useProgram();
 	if (renderer->isSupportingMultithreadedRendering() == false) {
 		//
-		preRenderFunction(decomposedEntities.needsPreRenderEntities, 0);
-		computeTransformationsFunction(decomposedEntities.needsComputeTransformationsEntities, 0);
+		preRenderFunction(decomposedEntities.requirePreRenderEntities, 0);
+		computeAnimationsFunction(decomposedEntities.requireComputeAnimationEntities, 0);
 	} else {
 		auto elementsIssued = 0;
 		auto queueElement = engineThreadQueueElementPool.allocate();
 		queueElement->type = Engine::EngineThreadQueueElement::TYPE_PRERENDER;
 		queueElement->engine = this;
-		queueElement->transformations.computeTransformations = computeTransformations;
-		for (auto i = 0; i < decomposedEntities.needsPreRenderEntities.size(); i++) {
-			queueElement->objects.push_back(decomposedEntities.needsPreRenderEntities[i]);
+		queueElement->transform.computeTransform = computeTransform;
+		for (auto i = 0; i < decomposedEntities.requirePreRenderEntities.size(); i++) {
+			queueElement->objects.push_back(decomposedEntities.requirePreRenderEntities[i]);
 			if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_PRERENDER_DISPATCH_COUNT) {
 				auto queueElementToSubmit = queueElement;
 				queueElement = engineThreadQueueElementPool.allocate();
 				queueElement->type = Engine::EngineThreadQueueElement::TYPE_PRERENDER;
 				queueElement->engine = this;
-				queueElement->transformations.computeTransformations = computeTransformations;
+				queueElement->transform.computeTransform = computeTransform;
 				elementsIssued++;
 				engineThreadsQueue->addElement(queueElementToSubmit, false);
 			}
@@ -1276,17 +1276,17 @@ void Engine::computeTransformations(Camera* camera, DecomposedEntities& decompos
 			engineThreadsQueue->addElement(queueElement, false);
 			queueElement = engineThreadQueueElementPool.allocate();
 		}
-		queueElement->type = Engine::EngineThreadQueueElement::TYPE_TRANSFORMATIONS;
+		queueElement->type = Engine::EngineThreadQueueElement::TYPE_ANIMATIONS;
 		queueElement->engine = this;
-		queueElement->transformations.computeTransformations = computeTransformations;
-		for (auto i = 0; i < decomposedEntities.needsComputeTransformationsEntities.size(); i++) {
-			queueElement->objects.push_back(decomposedEntities.needsComputeTransformationsEntities[i]);
+		queueElement->transform.computeTransform = computeTransform;
+		for (auto i = 0; i < decomposedEntities.requireComputeAnimationEntities.size(); i++) {
+			queueElement->objects.push_back(decomposedEntities.requireComputeAnimationEntities[i]);
 			if (queueElement->objects.size() == Engine::ENGINETHREADSQUEUE_COMPUTE_DISPATCH_COUNT) {
 				auto queueElementToSubmit = queueElement;
 				queueElement = engineThreadQueueElementPool.allocate();
-				queueElement->type = Engine::EngineThreadQueueElement::TYPE_TRANSFORMATIONS;
+				queueElement->type = Engine::EngineThreadQueueElement::TYPE_ANIMATIONS;
 				queueElement->engine = this;
-				queueElement->transformations.computeTransformations = computeTransformations;
+				queueElement->transform.computeTransform = computeTransform;
 				elementsIssued++;
 				engineThreadsQueue->addElement(queueElementToSubmit, false);
 			}
@@ -1316,7 +1316,7 @@ void Engine::computeTransformations(Camera* camera, DecomposedEntities& decompos
 	}
 
 	//
-	renderingComputedTransformations = true;
+	preRenderingInitiated = true;
 }
 
 void Engine::display()
@@ -1350,10 +1350,10 @@ void Engine::display()
 	camera->getFrustum()->update();
 
 	// clear pre render states
-	renderingComputedTransformations = false;
+	preRenderingInitiated = false;
 
 	// do pre rendering steps
-	computeTransformations(camera, visibleDecomposedEntities, true, true);
+	preRender(camera, visibleDecomposedEntities, true, true);
 
 	// render environment maps
 	for (auto environmentMappingEntity: visibleDecomposedEntities.environmentMappingEntities) environmentMappingEntity->render();
@@ -1508,7 +1508,7 @@ void Engine::display()
 
 	// clear pre render states
 	renderingInitiated = false;
-	renderingComputedTransformations = false;
+	preRenderingInitiated = false;
 
 	//
 	if (frameBuffer != nullptr) {

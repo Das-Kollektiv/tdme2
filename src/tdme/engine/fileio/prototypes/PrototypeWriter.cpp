@@ -714,24 +714,24 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 
 				//
 				for (auto& foliagePrototypeMapPartition: foliageMaps) {
-					auto& foliagePrototypePartitionTransformationsVector = foliagePrototypeMapPartition[foliagePrototypeIdx];
-					Value jFoliagePrototypePartitionTransformations;
-					jFoliagePrototypePartitionTransformations.SetArray();
-					for (auto& transformations: foliagePrototypePartitionTransformationsVector) {
-						Value jFoliagePrototypeTransformations;
-						jFoliagePrototypeTransformations.SetObject();
-						jFoliagePrototypeTransformations.AddMember("tx", Value(transformations.getTranslation().getX()), jAllocator);
-						jFoliagePrototypeTransformations.AddMember("ty", Value(transformations.getTranslation().getY()), jAllocator);
-						jFoliagePrototypeTransformations.AddMember("tz", Value(transformations.getTranslation().getZ()), jAllocator);
-						jFoliagePrototypeTransformations.AddMember("sx", Value(transformations.getScale().getX()), jAllocator);
-						jFoliagePrototypeTransformations.AddMember("sy", Value(transformations.getScale().getY()), jAllocator);
-						jFoliagePrototypeTransformations.AddMember("sz", Value(transformations.getScale().getZ()), jAllocator);
-						jFoliagePrototypeTransformations.AddMember("rz", Value(transformations.getRotationAngle(0)), jAllocator);
-						jFoliagePrototypeTransformations.AddMember("ry", Value(transformations.getRotationAngle(1)), jAllocator);
-						jFoliagePrototypeTransformations.AddMember("rx", Value(transformations.getRotationAngle(2)), jAllocator);
-						jFoliagePrototypePartitionTransformations.PushBack(jFoliagePrototypeTransformations, jAllocator);
+					auto& foliagePrototypePartitionTransformVector = foliagePrototypeMapPartition[foliagePrototypeIdx];
+					Value jFoliagePrototypePartitionTransform;
+					jFoliagePrototypePartitionTransform.SetArray();
+					for (auto& transform: foliagePrototypePartitionTransformVector) {
+						Value jFoliagePrototypeTransform;
+						jFoliagePrototypeTransform.SetObject();
+						jFoliagePrototypeTransform.AddMember("tx", Value(transform.getTranslation().getX()), jAllocator);
+						jFoliagePrototypeTransform.AddMember("ty", Value(transform.getTranslation().getY()), jAllocator);
+						jFoliagePrototypeTransform.AddMember("tz", Value(transform.getTranslation().getZ()), jAllocator);
+						jFoliagePrototypeTransform.AddMember("sx", Value(transform.getScale().getX()), jAllocator);
+						jFoliagePrototypeTransform.AddMember("sy", Value(transform.getScale().getY()), jAllocator);
+						jFoliagePrototypeTransform.AddMember("sz", Value(transform.getScale().getZ()), jAllocator);
+						jFoliagePrototypeTransform.AddMember("rz", Value(transform.getRotationAngle(0)), jAllocator);
+						jFoliagePrototypeTransform.AddMember("ry", Value(transform.getRotationAngle(1)), jAllocator);
+						jFoliagePrototypeTransform.AddMember("rx", Value(transform.getRotationAngle(2)), jAllocator);
+						jFoliagePrototypePartitionTransform.PushBack(jFoliagePrototypeTransform, jAllocator);
 					}
-					jFoliagePrototypePartitions.PushBack(jFoliagePrototypePartitionTransformations, jAllocator);
+					jFoliagePrototypePartitions.PushBack(jFoliagePrototypePartitionTransform, jAllocator);
 				}
 				jFoliagePrototype.AddMember("t", jFoliagePrototypePartitions, jAllocator);
 

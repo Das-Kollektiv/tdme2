@@ -9,7 +9,7 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Partition.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
@@ -21,7 +21,7 @@ using tdme::engine::subsystems::environmentmapping::EnvironmentMappingRenderer;
 using tdme::engine::Engine;
 using tdme::engine::EnvironmentMapping;
 using tdme::engine::Partition;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
@@ -51,23 +51,23 @@ void EnvironmentMapping::dispose() {
 	environmentMappingRenderer->dispose();
 }
 
-void EnvironmentMapping::fromTransformations(const Transformations& transformations)
+void EnvironmentMapping::fromTransform(const Transform& transform)
 {
-	Transformations::fromTransformations(transformations);
-	Transformations translationTransformations;
-	translationTransformations.setTranslation(getTranslation());
-	translationTransformations.update();
-	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, translationTransformations);
+	Transform::fromTransform(transform);
+	Transform translationTransform;
+	translationTransform.setTranslation(getTranslation());
+	translationTransform.update();
+	boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, translationTransform);
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
 void EnvironmentMapping::update()
 {
-	Transformations::update();
-	Transformations translationTransformations;
-	translationTransformations.setTranslation(getTranslation());
-	translationTransformations.update();
-	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, translationTransformations);
+	Transform::update();
+	Transform translationTransform;
+	translationTransform.setTranslation(getTranslation());
+	translationTransform.update();
+	boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, translationTransform);
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 

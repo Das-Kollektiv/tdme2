@@ -51,7 +51,7 @@ ObjectAnimation::ObjectAnimation(Model* model, Engine::AnimationProcessingTarget
 		skinningNodesMatrices.resize(skinningNodes.size());
 		for (auto i = 0; i < skinningNodes.size(); i++) {
 			vector<FlattenedNode> nodeListIgnored;
-			createTransformationsMatrices(skinningNodesMatrices[i], nodeListIgnored, model->getSubNodes());
+			createNodesTransformMatrices(skinningNodesMatrices[i], nodeListIgnored, model->getSubNodes());
 		}
 	}
 	hasAnimations = model->hasAnimations();
@@ -59,29 +59,29 @@ ObjectAnimation::ObjectAnimation(Model* model, Engine::AnimationProcessingTarget
 	baseAnimationIdx = 0;
 	// animation
 	setAnimation(Model::ANIMATIONSETUP_DEFAULT);
-	// create transformations matrices
-	transformationsMatrices.push_back(map<string, Matrix4x4*>());
+	// create transform matrices
+	transformMatrices.push_back(map<string, Matrix4x4*>());
 	nodeLists.push_back(vector<FlattenedNode>());
-	createTransformationsMatrices(transformationsMatrices[0], nodeLists[0], model->getSubNodes());
-	// calculate transformations matrices
-	computeTransformationsMatrices(nodeLists[0], model->getImportTransformationsMatrix(), baseAnimations.size() == 0?nullptr:&baseAnimations[0]);
+	createNodesTransformMatrices(transformMatrices[0], nodeLists[0], model->getSubNodes());
+	// calculate transform matrices
+	computeNodesTransformMatrices(nodeLists[0], model->getImportTransformMatrix(), baseAnimations.size() == 0?nullptr:&baseAnimations[0]);
 	// skinning ...
 	if (hasSkinning == true) {
 		for (auto i = 0; i < skinningNodes.size(); i++) {
 			skinningNodesNodeSkinningJoints.push_back(vector<NodeSkinningJoint>());
 			for (auto& skinningJoint: skinningNodes[i]->getSkinning()->getJoints()) {
-				auto transformationsMatrixIt = transformationsMatrices[0].find(skinningJoint.getNodeId());
-				if (transformationsMatrixIt == transformationsMatrices[0].end()) continue;
+				auto transformMatrixIt = transformMatrices[0].find(skinningJoint.getNodeId());
+				if (transformMatrixIt == transformMatrices[0].end()) continue;
 				auto skinningNodeMatrixIt = skinningNodesMatrices[i].find(skinningJoint.getNodeId());
 				if (skinningNodeMatrixIt == skinningNodesMatrices[i].end()) continue;
 				skinningNodesNodeSkinningJoints[i].push_back({
 					.joint = &skinningJoint,
-					.nodeTransformationsMatrix = transformationsMatrixIt->second,
-					.skinningNodeTransformationsMatrix = skinningNodeMatrixIt->second
+					.nodeTransformMatrix = transformMatrixIt->second,
+					.skinningNodeTransformMatrix = skinningNodeMatrixIt->second
 				});
 			}
 		}
-		updateSkinningTransformationsMatrices();
+		updateSkinningJoints();
 	}
 	// reset animation
 	if (baseAnimations.size() == 0) baseAnimations.push_back(AnimationState());
@@ -93,8 +93,8 @@ ObjectAnimation::ObjectAnimation(Model* model, Engine::AnimationProcessingTarget
 }
 
 ObjectAnimation::~ObjectAnimation() {
-	for (auto baseAnimationTransformationsMatrices: transformationsMatrices) {
-		for (auto it: baseAnimationTransformationsMatrices) {
+	for (auto baseAnimationTransformMatrices: transformMatrices) {
+		for (auto it: baseAnimationTransformMatrices) {
 			delete it.second;
 		}
 	}
@@ -103,8 +103,8 @@ ObjectAnimation::~ObjectAnimation() {
 			delete it.second;
 		}
 	}
-	for (auto overriddenTransformationsMatrixIt: overriddenTransformationsMatrices) {
-		delete overriddenTransformationsMatrixIt.second;
+	for (auto overriddenTransformMatrixIt: overriddenTransformMatrices) {
+		delete overriddenTransformMatrixIt.second;
 	}
 }
 
@@ -129,12 +129,12 @@ void ObjectAnimation::setAnimation(const string& id, float speed)
 		if (baseAnimations.size() == 1) {
 			baseAnimations.push_back(baseAnimation);
 			baseAnimationIdx = 1;
-			transformationsMatrices.push_back(map<string, Matrix4x4*>());
+			transformMatrices.push_back(map<string, Matrix4x4*>());
 			nodeLists.push_back(vector<FlattenedNode>());
-			createTransformationsMatrices(transformationsMatrices[1], nodeLists[1], model->getSubNodes());
-			transformationsMatrices.push_back(map<string, Matrix4x4*>());
+			createNodesTransformMatrices(transformMatrices[1], nodeLists[1], model->getSubNodes());
+			transformMatrices.push_back(map<string, Matrix4x4*>());
 			nodeLists.push_back(vector<FlattenedNode>());
-			createTransformationsMatrices(transformationsMatrices[2], nodeLists[2], model->getSubNodes());
+			createNodesTransformMatrices(transformMatrices[2], nodeLists[2], model->getSubNodes());
 		} else {
 			baseAnimationIdx = (baseAnimationIdx + 1) % 2;
 			baseAnimations[baseAnimationIdx] = baseAnimation;
@@ -250,59 +250,59 @@ float ObjectAnimation::getOverlayAnimationTime(const string& id)
 	return animationState == nullptr ? 1.0f : animationState->time;
 }
 
-const Matrix4x4 ObjectAnimation::getNodeTransformationsMatrix(const string& id)
+const Matrix4x4 ObjectAnimation::getNodeTransformMatrix(const string& id)
 {
-	auto overriddenTransformationsMatrixIt = overriddenTransformationsMatrices.find(id);
-	if (overriddenTransformationsMatrixIt != overriddenTransformationsMatrices.end()) {
-		return *overriddenTransformationsMatrixIt->second;
+	auto overriddenTransformMatrixIt = overriddenTransformMatrices.find(id);
+	if (overriddenTransformMatrixIt != overriddenTransformMatrices.end()) {
+		return *overriddenTransformMatrixIt->second;
 	} else {
-		auto transformationMatrixIt = transformationsMatrices[0].find(id);
-		if (transformationMatrixIt != transformationsMatrices[0].end()) {
-			return *transformationMatrixIt->second;
+		auto transformMatrixIt = transformMatrices[0].find(id);
+		if (transformMatrixIt != transformMatrices[0].end()) {
+			return *transformMatrixIt->second;
 		}
-		Console::println("ObjectAnimation::getTransformationsMatrix(): " + id + ": node not found");
+		Console::println("ObjectAnimation::getTransformMatrix(): " + id + ": node not found");
 	}
 	return Matrix4x4().identity();
 }
 
-void ObjectAnimation::setNodeTransformationsMatrix(const string& id, const Matrix4x4& matrix)
+void ObjectAnimation::setNodeTransformMatrix(const string& id, const Matrix4x4& matrix)
 {
-	auto overriddenTransformationsMatrixIt = overriddenTransformationsMatrices.find(id);
-	if (overriddenTransformationsMatrixIt != overriddenTransformationsMatrices.end()) {
-		*overriddenTransformationsMatrixIt->second = matrix;
+	auto overriddenTransformMatrixIt = overriddenTransformMatrices.find(id);
+	if (overriddenTransformMatrixIt != overriddenTransformMatrices.end()) {
+		*overriddenTransformMatrixIt->second = matrix;
 	} else {
-		overriddenTransformationsMatrices[id] = new Matrix4x4(matrix);
+		overriddenTransformMatrices[id] = new Matrix4x4(matrix);
 	}
 	//
 	updateNodeLists();
 }
 
-void ObjectAnimation::unsetNodeTransformationsMatrix(const string& id)
+void ObjectAnimation::unsetNodeTransformMatrix(const string& id)
 {
-	auto overriddenTransformationsMatrixIt = overriddenTransformationsMatrices.find(id);
-	if (overriddenTransformationsMatrixIt != overriddenTransformationsMatrices.end()) {
-		delete overriddenTransformationsMatrixIt->second;
-		overriddenTransformationsMatrices.erase(overriddenTransformationsMatrixIt);
+	auto overriddenTransformMatrixIt = overriddenTransformMatrices.find(id);
+	if (overriddenTransformMatrixIt != overriddenTransformMatrices.end()) {
+		delete overriddenTransformMatrixIt->second;
+		overriddenTransformMatrices.erase(overriddenTransformMatrixIt);
 	}
 	//
 	updateNodeLists();
 }
 
-void ObjectAnimation::createTransformationsMatrices(map<string, Matrix4x4*>& matrices, vector<FlattenedNode>& nodeList, const map<string, Node*>& nodes, Matrix4x4* parentTransformationsMatrix, AnimationState* animationState)
+void ObjectAnimation::createNodesTransformMatrices(map<string, Matrix4x4*>& matrices, vector<FlattenedNode>& nodeList, const map<string, Node*>& nodes, Matrix4x4* parentTransformMatrix, AnimationState* animationState)
 {
 	// iterate through nodes
 	for (auto it: nodes) {
 		//
 		auto nodeAnimationState = animationState;
-		// put and associate transformation matrices with node
+		// put and associate transform matrices with node
 		auto node = it.second;
 		auto matrix = new Matrix4x4();
 		matrix->identity();
 		matrices[node->getId()] = matrix;
 		// overridden matrix
-		Matrix4x4* overriddenTransformationsMatrix = nullptr;
-		auto overriddenTransformationsMatrixIt = overriddenTransformationsMatrices.find(node->getId());
-		if (overriddenTransformationsMatrixIt != overriddenTransformationsMatrices.end()) overriddenTransformationsMatrix = overriddenTransformationsMatrixIt->second;
+		Matrix4x4* overriddenTransformMatrix = nullptr;
+		auto overriddenTransformMatrixIt = overriddenTransformMatrices.find(node->getId());
+		if (overriddenTransformMatrixIt != overriddenTransformMatrices.end()) overriddenTransformMatrix = overriddenTransformMatrixIt->second;
 		// overlay animation
 		auto overlayAnimationIt = overlayAnimationsByJointId.find(node->getId());
 		if (overlayAnimationIt != overlayAnimationsByJointId.end()) {
@@ -310,17 +310,17 @@ void ObjectAnimation::createTransformationsMatrices(map<string, Matrix4x4*>& mat
 		}
 		nodeList.push_back({
 			.nodeId = node->getId(),
-			.nodeTransformationsMatrix = &node->getTransformationsMatrix(),
-			.nodeOverriddenTransformationsMatrix = overriddenTransformationsMatrix,
+			.nodeTransformMatrix = &node->getTransformMatrix(),
+			.nodeOverriddenTransformMatrix = overriddenTransformMatrix,
 			.nodeAnimation = node->getAnimation(),
 			.nodeAnimationState = animationState,
-			.parentTransformationsMatrix = parentTransformationsMatrix,
-			.transformationsMatrix = matrix
+			.parentTransformMatrix = parentTransformMatrix,
+			.transformMatrix = matrix
 		});
 		// do sub nodes
 		auto& subNodes = node->getSubNodes();
 		if (subNodes.size() > 0) {
-			createTransformationsMatrices(matrices, nodeList, subNodes, matrix, nodeAnimationState);
+			createNodesTransformMatrices(matrices, nodeList, subNodes, matrix, nodeAnimationState);
 		}
 	}
 }
@@ -330,19 +330,19 @@ void ObjectAnimation::updateNodeList(vector<FlattenedNode>& nodeList, int& nodeI
 	for (auto it: nodes) {
 		//
 		auto nodeAnimationState = animationState;
-		// put and associate transformation matrices with node
+		// put and associate transform matrices with node
 		auto node = it.second;
 		// overridden matrix
-		Matrix4x4* overriddenTransformationsMatrix = nullptr;
-		auto overriddenTransformationsMatrixIt = overriddenTransformationsMatrices.find(node->getId());
-		if (overriddenTransformationsMatrixIt != overriddenTransformationsMatrices.end()) overriddenTransformationsMatrix = overriddenTransformationsMatrixIt->second;
+		Matrix4x4* overriddenTransformMatrix = nullptr;
+		auto overriddenTransformMatrixIt = overriddenTransformMatrices.find(node->getId());
+		if (overriddenTransformMatrixIt != overriddenTransformMatrices.end()) overriddenTransformMatrix = overriddenTransformMatrixIt->second;
 		// overlay animation
 		auto overlayAnimationIt = overlayAnimationsByJointId.find(node->getId());
 		if (overlayAnimationIt != overlayAnimationsByJointId.end()) {
 			nodeAnimationState = overlayAnimationIt->second;
 		}
 		// update node list
-		nodeList[nodeIdx].nodeOverriddenTransformationsMatrix = overriddenTransformationsMatrix;
+		nodeList[nodeIdx].nodeOverriddenTransformMatrix = overriddenTransformMatrix;
 		nodeList[nodeIdx].nodeAnimationState = nodeAnimationState;
 		nodeIdx++;
 		// do sub nodes
@@ -353,17 +353,17 @@ void ObjectAnimation::updateNodeList(vector<FlattenedNode>& nodeList, int& nodeI
 	}
 }
 
-void ObjectAnimation::computeTransformationsMatrices(vector<FlattenedNode>& nodeList, const Matrix4x4 parentTransformationsMatrix, AnimationState* animationState)
+void ObjectAnimation::computeNodesTransformMatrices(vector<FlattenedNode>& nodeList, const Matrix4x4 parentTransformMatrix, AnimationState* animationState)
 {
 	// iterate through flattened nodes
-	Matrix4x4 transformationsMatrix;
+	Matrix4x4 transformMatrix;
 	for (auto& flattenedNode: nodeList) {
 		auto nodeAnimationState = flattenedNode.nodeAnimationState != nullptr?flattenedNode.nodeAnimationState:animationState;
 		// compute animation matrix if animation setups exist
 		auto animation = flattenedNode.nodeAnimation;
 		// TODO: check if its better to not compute animation matrix if finished
 		if (animation != nullptr && nodeAnimationState != nullptr && nodeAnimationState->setup != nullptr) {
-			auto& animationMatrices = animation->getTransformationsMatrices();
+			auto& animationMatrices = animation->getTransformMatrices();
 			auto frames = nodeAnimationState->setup->getFrames();
 			auto fps = model->getFPS();
 			// determine current and last matrix
@@ -378,7 +378,7 @@ void ObjectAnimation::computeTransformationsMatrices(vector<FlattenedNode>& node
 			auto matrixAtLast = static_cast<int32_t>(frameAtLast) % frames;
 			auto matrixAtCurrent = static_cast<int32_t>(frameAtCurrent) % frames;
 			nodeAnimationState->time = frames <= 1?0.0f:static_cast<float>(matrixAtCurrent) / static_cast<float>((frames - 1));
-			// compute animation transformations matrix
+			// compute animation transform matrix
 			auto t = frameAtCurrent - static_cast<float>(Math::floor(frameAtLast));
 			if (t < 1.0f) {
 				if (matrixAtLast == matrixAtCurrent) {
@@ -391,39 +391,39 @@ void ObjectAnimation::computeTransformationsMatrices(vector<FlattenedNode>& node
 						}
 					}
 				}
-				transformationsMatrix = Matrix4x4::interpolateLinear(
+				transformMatrix = Matrix4x4::interpolateLinear(
 					animationMatrices[matrixAtLast + nodeAnimationState->setup->getStartFrame()],
 					animationMatrices[matrixAtCurrent + nodeAnimationState->setup->getStartFrame()],
 					t
 				);
 			} else {
-				transformationsMatrix.set(animationMatrices[matrixAtCurrent + nodeAnimationState->setup->getStartFrame()]);
+				transformMatrix.set(animationMatrices[matrixAtCurrent + nodeAnimationState->setup->getStartFrame()]);
 			}
 		} else {
-			if (flattenedNode.nodeOverriddenTransformationsMatrix != nullptr) {
-				transformationsMatrix.set(*flattenedNode.nodeOverriddenTransformationsMatrix);
+			if (flattenedNode.nodeOverriddenTransformMatrix != nullptr) {
+				transformMatrix.set(*flattenedNode.nodeOverriddenTransformMatrix);
 			} else {
-				// no animation matrix, set up local transformation matrix up as node matrix
-				transformationsMatrix.set(*flattenedNode.nodeTransformationsMatrix);
+				// no animation matrix, set up local transform matrix up as node matrix
+				transformMatrix.set(*flattenedNode.nodeTransformMatrix);
 			}
 		}
-		// apply parent transformation matrix
-		transformationsMatrix.multiply(flattenedNode.parentTransformationsMatrix != nullptr?*flattenedNode.parentTransformationsMatrix:parentTransformationsMatrix);
-		// put and associate transformation matrices with node
-		flattenedNode.transformationsMatrix->set(transformationsMatrix);
+		// apply parent transform matrix
+		transformMatrix.multiply(flattenedNode.parentTransformMatrix != nullptr?*flattenedNode.parentTransformMatrix:parentTransformMatrix);
+		// put and associate transform matrices with node
+		flattenedNode.transformMatrix->set(transformMatrix);
 	}
 }
 
-inline void ObjectAnimation::updateSkinningTransformationsMatrices() {
+inline void ObjectAnimation::updateSkinningJoints() {
 	for (auto& skinningNodeNodeSkinningJoints: skinningNodesNodeSkinningJoints)
 	for (auto& skinningNodeNodeSkinningJoint: skinningNodeNodeSkinningJoints) {
-		skinningNodeNodeSkinningJoint.skinningNodeTransformationsMatrix->set(skinningNodeNodeSkinningJoint.joint->getBindMatrix()).multiply(*skinningNodeNodeSkinningJoint.nodeTransformationsMatrix);
+		skinningNodeNodeSkinningJoint.skinningNodeTransformMatrix->set(skinningNodeNodeSkinningJoint.joint->getBindMatrix()).multiply(*skinningNodeNodeSkinningJoint.nodeTransformMatrix);
 	}
 }
 
-void ObjectAnimation::computeTransformations(vector<FlattenedNode>& nodeList, const Matrix4x4& instanceTransformationsMatrix, AnimationState& baseAnimation, int contextIdx, int64_t lastFrameAtTime, int64_t currentFrameAtTime)
+void ObjectAnimation::computeAnimation(vector<FlattenedNode>& nodeList, const Matrix4x4& instanceTransformMatrix, AnimationState& baseAnimation, int contextIdx, int64_t lastFrameAtTime, int64_t currentFrameAtTime)
 {
-	// do transformations if we have a animation
+	// do transform if we have a animation
 	if (baseAnimation.setup != nullptr) {
 		// animation timing
 		// do progress of base animation
@@ -438,51 +438,51 @@ void ObjectAnimation::computeTransformations(vector<FlattenedNode>& nodeList, co
 			}
 			overlayAnimationState->lastAtTime = overlayAnimationState->currentAtTime;
 		}
-		// set up parent transformations matrix
-		Matrix4x4 parentTransformationsMatrix;
-		parentTransformationsMatrix.set(model->getImportTransformationsMatrix());
+		// set up parent transform matrix
+		Matrix4x4 parentTransformMatrix;
+		parentTransformMatrix.set(model->getImportTransformMatrix());
 		if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
-			parentTransformationsMatrix.multiply(instanceTransformationsMatrix);
+			parentTransformMatrix.multiply(instanceTransformMatrix);
 		}
-		// calculate transformations matrices
-		computeTransformationsMatrices(nodeList, parentTransformationsMatrix, &baseAnimation);
+		// calculate transform matrices
+		computeNodesTransformMatrices(nodeList, parentTransformMatrix, &baseAnimation);
 		//
 		baseAnimation.lastAtTime = baseAnimation.currentAtTime;
 	} else
 	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
-		// set up parent transformations matrix
-		Matrix4x4 parentTransformationsMatrix;
-		parentTransformationsMatrix.set(model->getImportTransformationsMatrix());
+		// set up parent transform matrix
+		Matrix4x4 parentTransformMatrix;
+		parentTransformMatrix.set(model->getImportTransformMatrix());
 		if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
-			parentTransformationsMatrix.multiply(instanceTransformationsMatrix);
+			parentTransformMatrix.multiply(instanceTransformMatrix);
 		}
-		// calculate transformations matrices
-		computeTransformationsMatrices(nodeList, parentTransformationsMatrix, &baseAnimation);
+		// calculate transform matrices
+		computeNodesTransformMatrices(nodeList, parentTransformMatrix, &baseAnimation);
 	}
 }
 
-void ObjectAnimation::computeTransformations(int contextIdx, const Matrix4x4& instanceTransformationsMatrix, int64_t lastFrameAtTime, int64_t currentFrameAtTime) {
+void ObjectAnimation::computeAnimation(int contextIdx, const Matrix4x4& instanceTransformMatrix, int64_t lastFrameAtTime, int64_t currentFrameAtTime) {
 	// compute last animation matrices if required
-	auto baseAnimationIdxLast = transformationsMatrices.size() > 1?(baseAnimationIdx + 1) % 2:-1;
+	auto baseAnimationIdxLast = transformMatrices.size() > 1?(baseAnimationIdx + 1) % 2:-1;
 	if (baseAnimationIdxLast != -1 &&
 		baseAnimations[baseAnimationIdxLast].lastAtTime != -1LL) {
-		computeTransformations(nodeLists[1 + baseAnimationIdxLast], instanceTransformationsMatrix, baseAnimations[baseAnimationIdxLast], contextIdx, lastFrameAtTime, currentFrameAtTime);
+		computeAnimation(nodeLists[1 + baseAnimationIdxLast], instanceTransformMatrix, baseAnimations[baseAnimationIdxLast], contextIdx, lastFrameAtTime, currentFrameAtTime);
 	} else {
 		baseAnimationIdxLast = -1;
 	}
 
 	// compute current animation matrices
-	computeTransformations(nodeLists[nodeLists.size() > 1?1 + baseAnimationIdx:baseAnimationIdx], instanceTransformationsMatrix, baseAnimations[baseAnimationIdx], contextIdx, lastFrameAtTime, currentFrameAtTime);
+	computeAnimation(nodeLists[nodeLists.size() > 1?1 + baseAnimationIdx:baseAnimationIdx], instanceTransformMatrix, baseAnimations[baseAnimationIdx], contextIdx, lastFrameAtTime, currentFrameAtTime);
 
 	// blend if required
-	if (transformationsMatrices.size() > 1) {
+	if (transformMatrices.size() > 1) {
 		for (auto i = 0; i < nodeLists[0].size(); i++) {
 			if (baseAnimationIdxLast != -1 &&
 				baseAnimations[baseAnimationIdxLast].endAtTime != -1LL) {
 				auto blendingAnimationDuration = static_cast<float>(baseAnimations[baseAnimationIdxLast].currentAtTime - baseAnimations[baseAnimationIdxLast].endAtTime) / Engine::getAnimationBlendingTime();
-				*nodeLists[0][i].transformationsMatrix = Matrix4x4::interpolateLinear(
-					*nodeLists[1 + baseAnimationIdxLast][i].transformationsMatrix,
-					*nodeLists[1 + baseAnimationIdx][i].transformationsMatrix,
+				*nodeLists[0][i].transformMatrix = Matrix4x4::interpolateLinear(
+					*nodeLists[1 + baseAnimationIdxLast][i].transformMatrix,
+					*nodeLists[1 + baseAnimationIdx][i].transformMatrix,
 					Math::min(
 						blendingAnimationDuration,
 						1.0f
@@ -498,11 +498,11 @@ void ObjectAnimation::computeTransformations(int contextIdx, const Matrix4x4& in
 					animationStateLast.time = -1LL;
 				}
 			} else {
-				nodeLists[0][i].transformationsMatrix->set(*nodeLists[1 + baseAnimationIdx][i].transformationsMatrix);
+				nodeLists[0][i].transformMatrix->set(*nodeLists[1 + baseAnimationIdx][i].transformMatrix);
 			}
 		}
 	}
-	if (hasSkinning == true) updateSkinningTransformationsMatrices();
+	if (hasSkinning == true) updateSkinningJoints();
 }
 
 int32_t ObjectAnimation::determineSkinnedNodeCount(const map<string, Node*>& nodes)
@@ -545,7 +545,7 @@ int32_t ObjectAnimation::determineSkinnedNodes(const map<string, Node*>& nodes, 
 	return idx;
 }
 
-map<string, Matrix4x4*>* ObjectAnimation::getSkinningNodesMatrices(Node* node)
+map<string, Matrix4x4*>* ObjectAnimation::getSkinningNodesTransformMatrices(Node* node)
 {
 	if (hasSkinning == false) return nullptr;
 	for (auto i = 0; i < skinningNodes.size(); i++) {

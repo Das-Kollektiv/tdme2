@@ -16,7 +16,7 @@
 #include <tdme/engine/subsystems/rendering/TransparentRenderPointsPool.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
@@ -38,7 +38,7 @@ using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
 using tdme::engine::Engine;
 using tdme::engine::Timing;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -83,13 +83,13 @@ void PointsParticleSystemInternal::initialize() {
 
 void PointsParticleSystemInternal::update()
 {
-	Transformations::update();
+	Transform::update();
 	updateInternal();
 }
 
-void PointsParticleSystemInternal::fromTransformations(const Transformations& transformations)
+void PointsParticleSystemInternal::fromTransform(const Transform& transform)
 {
-	Transformations::fromTransformations(transformations);
+	Transform::fromTransform(transform);
 	updateInternal();
 }
 
@@ -100,8 +100,8 @@ void PointsParticleSystemInternal::updateParticles()
 
 	//
 	Vector3 center;
-	auto& localTransformationsMatrix = localTransformations.getTransformationsMatrix();
-	localTransformationsMatrix.getTranslation(center);
+	auto& localTransformMatrix = localTransform.getTransformMatrix();
+	localTransformMatrix.getTranslation(center);
 	center.add(emitter->getCenter());
 	//
 	Vector3 point;
@@ -113,8 +113,8 @@ void PointsParticleSystemInternal::updateParticles()
 	auto haveBoundingBox = false;
 	// compute distance from camera
 	float distanceFromCamera;
-	// transformations
-	auto& transformationsMatrix = getTransformationsMatrix();
+	// transform
+	auto& transformMatrix = getTransformMatrix();
 	// process particles
 	pointsRenderPool->reset();
 	auto activeParticles = 0;
@@ -151,7 +151,7 @@ void PointsParticleSystemInternal::updateParticles()
 		//
 		activeParticles++;
 		// set up bounding box
-		point = localTransformationsMatrix.multiply(particle.position);
+		point = localTransformMatrix.multiply(particle.position);
 		point.add(center);
 		//
 		auto& pointXYZ = point.getArray();
@@ -167,8 +167,8 @@ void PointsParticleSystemInternal::updateParticles()
 			if (pointXYZ[1] > bbMaxXYZ[1]) bbMaxXYZ[1] = pointXYZ[1];
 			if (pointXYZ[2] > bbMaxXYZ[2]) bbMaxXYZ[2] = pointXYZ[2];
 		}
-		// transform particle according to its transformations
-		point = transformationsMatrix.multiply(point);
+		// transform particle according to its transform
+		point = transformMatrix.multiply(point);
 		// add to render points pool
 		pointsRenderPool->addPoint(point, static_cast<uint16_t>(particle.spriteIndex) % (textureHorizontalSprites * textureVerticalSprites), color, 0, this);
 	}
@@ -179,7 +179,7 @@ void PointsParticleSystemInternal::updateParticles()
 	}
 	// scale a bit up to make picking work better
 	boundingBox.update();
-	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
+	boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
 	boundingBoxTransformed.getMin().sub(0.05f + pointSize * pointSizeScale);
 	boundingBoxTransformed.getMax().add(0.05f + pointSize * pointSizeScale);
 	boundingBoxTransformed.update();

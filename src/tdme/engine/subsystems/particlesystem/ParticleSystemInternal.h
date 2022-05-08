@@ -5,13 +5,13 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/subsystems/particlesystem/fwd-tdme.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 
 using std::string;
 
 using tdme::engine::model::Color4;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 
 /**
  * Particle system entity internal interface
@@ -108,24 +108,24 @@ struct tdme::engine::subsystems::particlesystem::ParticleSystemInternal
 	virtual int32_t emitParticles() = 0;
 
 	/**
-	 * Set up this transformations from given transformations
-	 * @param transformations transformations
+	 * Set up this transform from given transform
+	 * @param transform transform
 	 */
-	virtual void fromTransformations(const Transformations& transformations) = 0;
+	virtual void fromTransform(const Transform& transform) = 0;
 
 	/**
-	 * Update transformations
+	 * Update transform
 	 */
 	virtual void update() = 0;
 
 	/**
-	 * @return local transformations
+	 * @return local transform
 	 */
-	virtual const Transformations& getLocalTransformations() = 0;
+	virtual const Transform& getLocalTransform() = 0;
 
 	/**
-	 * Set local transformations
-	 * @param transformations local transformations
+	 * Set local transform
+	 * @param transform local transform
 	 */
-	virtual void setLocalTransformations(const Transformations& transformations) = 0;
+	virtual void setLocalTransform(const Transform& transform) = 0;
 };

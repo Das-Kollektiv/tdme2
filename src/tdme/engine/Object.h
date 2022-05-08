@@ -21,7 +21,7 @@
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/Timing.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
@@ -44,7 +44,7 @@ using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::EntityShaderParameters;
 using tdme::engine::Timing;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
@@ -83,18 +83,18 @@ private:
 	Engine::EffectPass excludeFromEffectPass { Engine::EFFECTPASS_NONE };
 	bool enableEarlyZRejection { false };
 	bool disableDepthTest { false };
-	int64_t frameTransformationsLast { -1LL };
-	int64_t timeTransformationsLast { -1LL };
+	int64_t frameTransformLast { -1LL };
+	int64_t timeTransformLast { -1LL };
 	EntityShaderParameters shaderParameters;
 	EntityShaderParameters distanceShaderParameters;
-	bool needsPreRender { false };
-	bool needsForwardShading { false };
-	bool enableTransformationsComputingLOD { false };
+	bool requiresPreRender { false };
+	bool requiresForwardShading { false };
+	bool animationComputingLODEnabled { false };
 
 	/**
-	 * @return if this object instance needs a computeTransformations() call each frame
+	 * @return if this object instance requries animation computation each frame
 	 */
-	inline bool isNeedsComputeTransformations() {
+	inline bool isRequiringAnimationComputation() {
 		return model->hasSkinning() == true || model->hasAnimations() == true;
 	}
 
@@ -102,40 +102,40 @@ private:
 	 * Compute animations
 	 * @param contextIdx context index
 	 */
-	inline void computeTransformations(int contextIdx) {
+	inline void computeAnimations(int contextIdx) {
 		auto timing = engine->getTiming();
 		auto currentFrameAtTime = timing->getCurrentFrameAtTime();
 		auto currentFrame = timing->getFrame();
 		auto distanceFromCamera = (engine->getCamera()->getLookFrom() - getBoundingBoxTransformed()->computeClosestPointInBoundingBox(engine->getCamera()->getLookFrom())).computeLengthSquared();
-		if (enableTransformationsComputingLOD == true) {
-			if (distanceFromCamera > Math::square(Engine::getTransformationsComputingReduction2Distance())) {
-				if (frameTransformationsLast != -1LL && currentFrame - frameTransformationsLast < 4) return;
+		if (animationComputingLODEnabled == true) {
+			if (distanceFromCamera > Math::square(Engine::getAnimationComputationReduction2Distance())) {
+				if (frameTransformLast != -1LL && currentFrame - frameTransformLast < 4) return;
 			} else
-			if (distanceFromCamera > Math::square(Math::square(Engine::getTransformationsComputingReduction1Distance()))) {
-				if (frameTransformationsLast != -1LL && currentFrame - frameTransformationsLast < 2) return;
+			if (distanceFromCamera > Math::square(Math::square(Engine::getAnimationComputationReduction1Distance()))) {
+				if (frameTransformLast != -1LL && currentFrame - frameTransformLast < 2) return;
 			}
 		}
-		computeTransformations(contextIdx, timeTransformationsLast, currentFrameAtTime);
-		frameTransformationsLast = timing->getFrame();
-		timeTransformationsLast = currentFrameAtTime;
+		computeAnimation(contextIdx, timeTransformLast, currentFrameAtTime);
+		frameTransformLast = timing->getFrame();
+		timeTransformLast = currentFrameAtTime;
 	}
 
 	/**
-	 * Compute transformations
+	 * Compute animations
 	 * @param contextIdx context index
 	 * @param lastFrameAtTime time of last animation computation
 	 * @param currentFrameAtTime time of current animation computation
 	 */
-	inline void computeTransformations(int contextIdx, int64_t lastFrameAtTime, int64_t currentFrameAtTime) override {
-		ObjectInternal::computeTransformations(contextIdx, lastFrameAtTime, currentFrameAtTime);
+	inline void computeAnimation(int contextIdx, int64_t lastFrameAtTime, int64_t currentFrameAtTime) override {
+		ObjectInternal::computeAnimation(contextIdx, lastFrameAtTime, currentFrameAtTime);
 	}
 
 	/**
-	 * @return if this object instance needs a preRender() call each frame
+	 * @return if this object instance requires a preRender() call each frame
 	 */
-	inline bool isNeedsPreRender() {
+	inline bool isRequiringPreRender() {
 		return
-			needsPreRender == true ||
+			requiresPreRender == true ||
 			(Engine::animationProcessingTarget != Engine::GPU && model->hasSkinning() == true);
 	}
 
@@ -155,8 +155,8 @@ private:
 	/**
 	 * @return if this object needs forward shading
 	 */
-	inline bool isNeedsForwardShading() {
-		return needsForwardShading == true || reflectionEnvironmentMappingId.empty() == false;
+	inline bool isRequiringForwardShading() {
+		return requiresForwardShading == true || reflectionEnvironmentMappingId.empty() == false;
 	}
 
 	// overridden methods
@@ -166,8 +166,8 @@ private:
 	inline Entity* getParentEntity() override {
 		return parentEntity;
 	}
-	inline void applyParentTransformations(const Transformations& parentTransformations) override {
-		for (auto& transformations: instanceTransformations) transformations.applyParentTransformations(parentTransformations);
+	inline void applyParentTransform(const Transform& parentTransform) override {
+		for (auto& transform: instanceTransform) transform.applyParentTransform(parentTransform);
 		updateBoundingBox();
 	}
 
@@ -189,9 +189,10 @@ public:
 
 	/**
 	 * Set up if this object instance needs a preRender() call each frame
+	 * @param requiresPreRender requires pre render
 	 */
-	inline void setNeedsPreRender(bool needsPreRender) {
-		this->needsPreRender = needsPreRender;
+	inline void setRequiresPreRender(bool requiresPreRender) {
+		this->requiresPreRender = requiresPreRender;
 	}
 
 	// overridden methods
@@ -211,7 +212,7 @@ public:
 	void setEnabled(bool enabled) override;
 	bool isFrustumCulling() override;
 	void setFrustumCulling(bool frustumCulling) override;
-	void fromTransformations(const Transformations& transformations) override;
+	void fromTransform(const Transform& transform) override;
 	void update() override;
 
 	inline BoundingBox* getBoundingBox() override {
@@ -267,71 +268,71 @@ public:
 	}
 
 	inline const Vector3& getTranslation() const override {
-		return instanceTransformations[currentInstance].getTranslation();
+		return instanceTransform[currentInstance].getTranslation();
 	}
 
 	inline void setTranslation(const Vector3& translation) override {
-		instanceTransformations[currentInstance].setTranslation(translation);
+		instanceTransform[currentInstance].setTranslation(translation);
 	}
 
 	inline const Vector3& getScale() const override {
-		return instanceTransformations[currentInstance].getScale();
+		return instanceTransform[currentInstance].getScale();
 	}
 
 	inline void setScale(const Vector3& scale) override {
-		instanceTransformations[currentInstance].setScale(scale);
+		instanceTransform[currentInstance].setScale(scale);
 	}
 
 	inline const Vector3& getPivot() const override {
-		return instanceTransformations[currentInstance].getPivot();
+		return instanceTransform[currentInstance].getPivot();
 	}
 
 	inline void setPivot(const Vector3& pivot) override {
-		instanceTransformations[currentInstance].setPivot(pivot);
+		instanceTransform[currentInstance].setPivot(pivot);
 	}
 
 	inline const int getRotationCount() const override {
-		return instanceTransformations[currentInstance].getRotationCount();
+		return instanceTransform[currentInstance].getRotationCount();
 	}
 
 	inline Rotation& getRotation(const int idx) override {
-		return instanceTransformations[currentInstance].getRotation(idx);
+		return instanceTransform[currentInstance].getRotation(idx);
 	}
 
 	inline void addRotation(const Vector3& axis, const float angle) override {
-		instanceTransformations[currentInstance].addRotation(axis, angle);
+		instanceTransform[currentInstance].addRotation(axis, angle);
 	}
 
 	inline void removeRotation(const int idx) override {
-		instanceTransformations[currentInstance].removeRotation(idx);
+		instanceTransform[currentInstance].removeRotation(idx);
 	}
 
 	inline const Vector3& getRotationAxis(const int idx) const override {
-		return instanceTransformations[currentInstance].getRotationAxis(idx);
+		return instanceTransform[currentInstance].getRotationAxis(idx);
 	}
 
 	inline void setRotationAxis(const int idx, const Vector3& axis) override {
-		instanceTransformations[currentInstance].setRotationAxis(idx, axis);
+		instanceTransform[currentInstance].setRotationAxis(idx, axis);
 	}
 
 	inline const float getRotationAngle(const int idx) const override {
-		return instanceTransformations[currentInstance].getRotationAngle(idx);
+		return instanceTransform[currentInstance].getRotationAngle(idx);
 	}
 
 	inline void setRotationAngle(const int idx, const float angle) override {
-		instanceTransformations[currentInstance].setRotationAngle(idx, angle);
+		instanceTransform[currentInstance].setRotationAngle(idx, angle);
 	}
 
 	inline const Quaternion& getRotationsQuaternion() const override {
-		return instanceTransformations[currentInstance].getRotationsQuaternion();
+		return instanceTransform[currentInstance].getRotationsQuaternion();
 	}
 
-	inline const Matrix4x4& getTransformationsMatrix() const override {
-		return instanceTransformations[currentInstance].getTransformationsMatrix();
+	inline const Matrix4x4& getTransformMatrix() const override {
+		return instanceTransform[currentInstance].getTransformMatrix();
 	}
 
-	inline const Transformations& getTransformations() const override {
-		return instanceTransformations[currentInstance];
+	inline const Transform& getTransform() const override {
+		return instanceTransform[currentInstance];
 	}
 
 	inline RenderPass getRenderPass() const override {
@@ -528,18 +529,18 @@ public:
 	}
 
 	/**
-	 * @return if transformations computing LOD is enabled
+	 * @return if transform computing LOD is enabled
 	 */
-	inline bool isEnableTransformationsComputingLOD() const {
-		return enableTransformationsComputingLOD;
+	inline bool isAnimationComputationLODEnabled() const {
+		return animationComputingLODEnabled;
 	}
 
 	/**
-	 * Set transformations computing LOD enabled
-	 * @param enableTransformationsComputingLOD enable transformations computing LOD
+	 * Set transform computing LOD enabled
+	 * @param animationComputationLODEnabled animation computation LOD enabled
 	 */
-	inline void setEnableTransformationsComputingLOD(bool enableTransformationsComputingLOD) {
-		this->enableTransformationsComputingLOD = disableDepthTest;
+	inline void setAnimationComputationLODEnabled(bool animationComputationLODEnabled) {
+		this->animationComputingLODEnabled = animationComputationLODEnabled;
 	}
 
 };

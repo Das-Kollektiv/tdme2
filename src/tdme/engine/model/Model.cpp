@@ -51,7 +51,7 @@ Model::Model(const string& id, const string& name, UpVector* upVector, RotationO
 	this->shaderModel = ShaderModel::SPECULAR;
 	skinning = false;
 	fps = FPS_DEFAULT;
-	importTransformationsMatrix.identity();
+	importTransformMatrix.identity();
 	this->boundingBox = boundingBox;
 	this->authoringTool = authoringTool;
 	this->boundingBoxUpdated = false;
@@ -150,7 +150,7 @@ BoundingBox* Model::getBoundingBox()
 	return boundingBox;
 }
 
-bool Model::computeTransformationsMatrix(const map<string, Node*>& nodes, const Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& nodeId, Matrix4x4& transformationsMatrix)
+bool Model::computeTransformMatrix(const map<string, Node*>& nodes, const Matrix4x4& parentTransformMatrix, int32_t frame, const string& nodeId, Matrix4x4& transformMatrix)
 {
 	// iterate through nodes
 	for (auto it: nodes) {
@@ -158,15 +158,15 @@ bool Model::computeTransformationsMatrix(const map<string, Node*>& nodes, const 
 		// compute animation matrix if animation setups exist
 		auto animation = node->getAnimation();
 		if (animation != nullptr) {
-			auto& animationMatrices = animation->getTransformationsMatrices();
-			transformationsMatrix.set(animationMatrices[frame % animationMatrices.size()]);
+			auto& animationMatrices = animation->getTransformMatrices();
+			transformMatrix.set(animationMatrices[frame % animationMatrices.size()]);
 		} else {
-			// no animation matrix, set up local transformation matrix up as node matrix
-			transformationsMatrix.set(node->getTransformationsMatrix());
+			// no animation matrix, set up local transform matrix up as node matrix
+			transformMatrix.set(node->getTransformMatrix());
 		}
 
-		// apply parent transformation matrix
-		transformationsMatrix.multiply(parentTransformationsMatrix);
+		// apply parent transform matrix
+		transformMatrix.multiply(parentTransformMatrix);
 
 		// return matrix if node matches
 		if (node->getId() == nodeId) return true;
@@ -174,8 +174,8 @@ bool Model::computeTransformationsMatrix(const map<string, Node*>& nodes, const 
 		// calculate sub nodes
 		auto& subNodes = node->getSubNodes();
 		if (subNodes.size() > 0) {
-			auto haveTransformationsMatrix = computeTransformationsMatrix(subNodes, transformationsMatrix.clone(), frame, nodeId, transformationsMatrix);
-			if (haveTransformationsMatrix == true) return true;
+			auto haveTransformMatrix = computeTransformMatrix(subNodes, transformMatrix.clone(), frame, nodeId, transformMatrix);
+			if (haveTransformMatrix == true) return true;
 		}
 	}
 

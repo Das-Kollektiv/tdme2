@@ -23,7 +23,7 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/engine/Rotation.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Vector2.h>
@@ -58,7 +58,7 @@ using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::LineSegment;
 using tdme::engine::Rotation;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Vector2;
@@ -1354,7 +1354,7 @@ bool Terrain::getTerrainModelsHeight(
 
 void Terrain::createFoliageMaps(
 	BoundingBox& terrainBoundingBox,
-	vector<unordered_map<int, vector<Transformations>>>& foliageMaps
+	vector<unordered_map<int, vector<Transform>>>& foliageMaps
 ) {
 	//
 	auto width = terrainBoundingBox.getDimensions().getX();
@@ -1365,7 +1365,7 @@ void Terrain::createFoliageMaps(
 void Terrain::createFoliageMaps(
 	float terrainWidth,
 	float terrainDepth,
-	vector<unordered_map<int, vector<Transformations>>>& foliageMaps
+	vector<unordered_map<int, vector<Transform>>>& foliageMaps
 ) {
 	//
 	auto partitionsX = static_cast<int>(Math::ceil(terrainWidth / PARTITION_SIZE));
@@ -1376,7 +1376,7 @@ void Terrain::createFoliageMaps(
 }
 
 void Terrain::emptyFoliageMaps(
-	vector<unordered_map<int, vector<Transformations>>>& foliageMaps
+	vector<unordered_map<int, vector<Transform>>>& foliageMaps
 ) {
 	//
 	for (auto& foliageMap: foliageMaps) foliageMap.clear();
@@ -1389,8 +1389,8 @@ void Terrain::applyFoliageBrush(
 	const FoliageBrush& foliageBrush,
 	const vector<FoliageBrushPrototype>& foliageBrushPrototypes,
 	BrushOperation brushOperation,
-	vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
-	vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps
+	vector<unordered_map<int, vector<Transform>>>& foliageMaps,
+	vector<unordered_map<int, vector<Transform>>>& newFoliageMaps
 ) {
 	// check if we have a texture
 	if (foliageBrush.brushTexture == nullptr) return;
@@ -1585,35 +1585,35 @@ void Terrain::applyFoliageBrush(
 							if (slope < foliageBrushPrototypes[prototypeIdx].slopeMin || slope > foliageBrushPrototypes[prototypeIdx].slopeMax) continue;
 
 							//
-							Transformations transformations;
-							transformations.setTranslation(translation);
+							Transform transform;
+							transform.setTranslation(translation);
 							auto xAxisRotation = foliageBrushPrototypes[prototypeIdx].rotationXMin + ((foliageBrushPrototypes[prototypeIdx].rotationXMax - foliageBrushPrototypes[prototypeIdx].rotationXMin) * Math::random());
 							auto yAxisRotation = foliageBrushPrototypes[prototypeIdx].rotationYMin + ((foliageBrushPrototypes[prototypeIdx].rotationYMax - foliageBrushPrototypes[prototypeIdx].rotationYMin) * Math::random());
 							auto zAxisRotation = foliageBrushPrototypes[prototypeIdx].rotationZMin + ((foliageBrushPrototypes[prototypeIdx].rotationZMax - foliageBrushPrototypes[prototypeIdx].rotationZMin) * Math::random());
 							if (foliageBrushPrototypes[prototypeIdx].normalAlign == true) {
 								xAxisRotation = Vector3::computeAngle(normal, Vector3(0.0f, 1.0f, 0.0f), Vector3(-1.0f, 0.0f, 0.0f));
 								zAxisRotation = Vector3::computeAngle(normal, Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f));
-								Transformations _transformations;
-								_transformations.addRotation(Rotation::Z_AXIS, zAxisRotation);
-								_transformations.addRotation(Rotation::X_AXIS, xAxisRotation);
-								_transformations.addRotation(Rotation::Y_AXIS, yAxisRotation);
-								_transformations.update();
-								auto euler = _transformations.getTransformationsMatrix().computeEulerAngles();
+								Transform _transform;
+								_transform.addRotation(Rotation::Z_AXIS, zAxisRotation);
+								_transform.addRotation(Rotation::X_AXIS, xAxisRotation);
+								_transform.addRotation(Rotation::Y_AXIS, yAxisRotation);
+								_transform.update();
+								auto euler = _transform.getTransformMatrix().computeEulerAngles();
 								zAxisRotation = euler.getZ();
 								yAxisRotation = euler.getY();
 								xAxisRotation = euler.getX();
 							}
-							transformations.addRotation(Rotation::Z_AXIS, zAxisRotation);
-							transformations.addRotation(Rotation::Y_AXIS, yAxisRotation);
-							transformations.addRotation(Rotation::X_AXIS, xAxisRotation);
-							transformations.setScale(Vector3(prototypeScale, prototypeScale, prototypeScale));
+							transform.addRotation(Rotation::Z_AXIS, zAxisRotation);
+							transform.addRotation(Rotation::Y_AXIS, yAxisRotation);
+							transform.addRotation(Rotation::X_AXIS, xAxisRotation);
+							transform.setScale(Vector3(prototypeScale, prototypeScale, prototypeScale));
 
-							transformations.setTranslation(translation.clone().setY(contact.getY()));
-							transformations.update();
+							transform.setTranslation(translation.clone().setY(contact.getY()));
+							transform.update();
 
 							//
-							foliageMaps[partitionIdx][prototypeId].push_back(transformations);
-							newFoliageMaps[partitionIdx][prototypeId].push_back(transformations);
+							foliageMaps[partitionIdx][prototypeId].push_back(transform);
+							newFoliageMaps[partitionIdx][prototypeId].push_back(transform);
 						}
 					}
 					break;
@@ -1637,7 +1637,7 @@ void Terrain::applyFoliageDeleteBrush(
 	const FoliageBrush& foliageBrush,
 	const vector<FoliageBrushPrototype>& foliageBrushPrototypes,
 	BrushOperation brushOperation,
-	vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
+	vector<unordered_map<int, vector<Transform>>>& foliageMaps,
 	unordered_set<int>& recreateFoliagePartitions
 ) {
 	// check if we have a texture
@@ -1729,9 +1729,9 @@ void Terrain::applyFoliageDeleteBrush(
 						getTerrainVertex(terrainHeightVectorX, terrainHeightVectorZ, vertex);
 
 						for (auto& foliageMapPartitionIt: foliageMaps[partitionIdx]) {
-							auto& foliageMapPartitionPrototypeTransformations = foliageMapPartitionIt.second;
-							for (auto i = 0; i < foliageMapPartitionPrototypeTransformations.size(); i++) {
-								auto& translation = foliageMapPartitionPrototypeTransformations[i].getTranslation();
+							auto& foliageMapPartitionPrototypeTransform = foliageMapPartitionIt.second;
+							for (auto i = 0; i < foliageMapPartitionPrototypeTransform.size(); i++) {
+								auto& translation = foliageMapPartitionPrototypeTransform[i].getTranslation();
 								if (appliedDensity > 0.0f &&
 									translation.getX() >= leftVertex.getX() - 0.01f &&
 									translation.getX() <= vertex.getX() + 0.01f &&
@@ -1741,7 +1741,7 @@ void Terrain::applyFoliageDeleteBrush(
 									(translation.getY() >= heightMin &&
 									translation.getY() <= heightMax))) {
 									//
-									foliageMapPartitionPrototypeTransformations.erase(foliageMapPartitionPrototypeTransformations.begin() + i);
+									foliageMapPartitionPrototypeTransform.erase(foliageMapPartitionPrototypeTransform.begin() + i);
 									recreateFoliagePartitions.insert(partitionIdx);
 									i--;
 								}
@@ -1768,7 +1768,7 @@ void Terrain::updateFoliageTerrainBrush(
 	vector<float>& terrainHeightVector,
 	const Vector3& brushCenterPosition,
 	const FoliageBrush& foliageBrush,
-	vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
+	vector<unordered_map<int, vector<Transform>>>& foliageMaps,
 	unordered_set<int>& updateFoliagePartitions
 ) {
 	// check if we have a texture
@@ -1855,11 +1855,11 @@ void Terrain::updateFoliageTerrainBrush(
 			for (auto& foliageMapPartitionIt: foliageMaps[partitionIdx]) {
 				auto prototypeId = foliageMapPartitionIt.first;
 				if (prototypeId == -1) continue;
-				auto& foliageMapPartitionPrototypeTransformations = foliageMapPartitionIt.second;
+				auto& foliageMapPartitionPrototypeTransform = foliageMapPartitionIt.second;
 
 				//
-				for (auto& transformations: foliageMapPartitionPrototypeTransformations) {
-					auto& translation = transformations.getTranslation();
+				for (auto& transform: foliageMapPartitionPrototypeTransform) {
+					auto& translation = transform.getTranslation();
 					if (brushTextureDensity > 0.0f &&
 						translation.getX() >= leftVertex.getX() &&
 						translation.getX() <= vertex.getX() &&
@@ -1880,11 +1880,11 @@ void Terrain::updateFoliageTerrainBrush(
 							getTerrainVertex(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, _x + terrainHeightVectorX - 1, _z + terrainHeightVectorZ, leftVertex);
 							getTerrainVertex(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, _x + terrainHeightVectorX, _z + terrainHeightVectorZ, vertex);
 
-							if (LineSegment::doesLineSegmentCollideWithTriangle(topVertex, topLeftVertex, leftVertex, transformations.getTranslation().clone().setY(-10000.0f), transformations.getTranslation().clone().setY(+10000.0f), contact) == true) {
+							if (LineSegment::doesLineSegmentCollideWithTriangle(topVertex, topLeftVertex, leftVertex, transform.getTranslation().clone().setY(-10000.0f), transform.getTranslation().clone().setY(+10000.0f), contact) == true) {
 								haveContact = true;
 								break;
 							} else
-							if (LineSegment::doesLineSegmentCollideWithTriangle(leftVertex, vertex, topVertex, transformations.getTranslation().clone().setY(-10000.0f), transformations.getTranslation().clone().setY(+10000.0f), contact) == true) {
+							if (LineSegment::doesLineSegmentCollideWithTriangle(leftVertex, vertex, topVertex, transform.getTranslation().clone().setY(-10000.0f), transform.getTranslation().clone().setY(+10000.0f), contact) == true) {
 								haveContact = true;
 								break;
 							}
@@ -1894,15 +1894,15 @@ void Terrain::updateFoliageTerrainBrush(
 						if (haveContact == false) {
 							Console::println(
 								"Terrain::applyFoliageBrush(): no contact@" +
-								to_string(transformations.getTranslation().getX()) + ", " +
-								to_string(transformations.getTranslation().getZ())
+								to_string(transform.getTranslation().getX()) + ", " +
+								to_string(transform.getTranslation().getZ())
 							);
-							contact = transformations.getTranslation();
+							contact = transform.getTranslation();
 						}
 
 						//
-						transformations.setTranslation(transformations.getTranslation().clone().setY(contact.getY()));
-						transformations.update();
+						transform.setTranslation(transform.getTranslation().clone().setY(contact.getY()));
+						transform.update();
 					}
 				}
 			}
@@ -1926,7 +1926,7 @@ void Terrain::updateFoliageTerrainRampBrush(
 	Texture* brushTexture,
 	float brushRotation,
 	const Vector2& brushScale,
-	vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
+	vector<unordered_map<int, vector<Transform>>>& foliageMaps,
 	unordered_set<int>& updateFoliagePartitions
 ) {
 	// check if we have a texture
@@ -2026,11 +2026,11 @@ void Terrain::updateFoliageTerrainRampBrush(
 			for (auto& foliageMapPartitionIt: foliageMaps[partitionIdx]) {
 				auto prototypeId = foliageMapPartitionIt.first;
 				if (prototypeId == -1) continue;
-				auto& foliageMapPartitionPrototypeTransformations = foliageMapPartitionIt.second;
+				auto& foliageMapPartitionPrototypeTransform = foliageMapPartitionIt.second;
 
 				//
-				for (auto& transformations: foliageMapPartitionPrototypeTransformations) {
-					auto& translation = transformations.getTranslation();
+				for (auto& transform: foliageMapPartitionPrototypeTransform) {
+					auto& translation = transform.getTranslation();
 					if (translation.getX() >= leftVertex.getX() &&
 						translation.getX() <= vertex.getX() &&
 						translation.getZ() >= topVertex.getZ() &&
@@ -2050,11 +2050,11 @@ void Terrain::updateFoliageTerrainRampBrush(
 							getTerrainVertex(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, _x + terrainHeightVectorX - 1, _z + terrainHeightVectorZ, leftVertex);
 							getTerrainVertex(terrainHeightVector, terrainHeightVectorVerticesPerX, terreinHeightVectorVerticesPerZ, _x + terrainHeightVectorX, _z + terrainHeightVectorZ, vertex);
 
-							if (LineSegment::doesLineSegmentCollideWithTriangle(topVertex, topLeftVertex, leftVertex, transformations.getTranslation().clone().setY(-10000.0f), transformations.getTranslation().clone().setY(+10000.0f), contact) == true) {
+							if (LineSegment::doesLineSegmentCollideWithTriangle(topVertex, topLeftVertex, leftVertex, transform.getTranslation().clone().setY(-10000.0f), transform.getTranslation().clone().setY(+10000.0f), contact) == true) {
 								haveContact = true;
 								break;
 							} else
-							if (LineSegment::doesLineSegmentCollideWithTriangle(leftVertex, vertex, topVertex, transformations.getTranslation().clone().setY(-10000.0f), transformations.getTranslation().clone().setY(+10000.0f), contact) == true) {
+							if (LineSegment::doesLineSegmentCollideWithTriangle(leftVertex, vertex, topVertex, transform.getTranslation().clone().setY(-10000.0f), transform.getTranslation().clone().setY(+10000.0f), contact) == true) {
 								haveContact = true;
 								break;
 							}
@@ -2064,15 +2064,15 @@ void Terrain::updateFoliageTerrainRampBrush(
 						if (haveContact == false) {
 							Console::println(
 								"Terrain::applyFoliageBrush(): no contact@" +
-								to_string(transformations.getTranslation().getX()) + ", " +
-								to_string(transformations.getTranslation().getZ())
+								to_string(transform.getTranslation().getX()) + ", " +
+								to_string(transform.getTranslation().getZ())
 							);
-							contact = transformations.getTranslation();
+							contact = transform.getTranslation();
 						}
 
 						//
-						transformations.setTranslation(transformations.getTranslation().clone().setY(contact.getY()));
-						transformations.update();
+						transform.setTranslation(transform.getTranslation().clone().setY(contact.getY()));
+						transform.update();
 					}
 				}
 			}
@@ -2097,7 +2097,7 @@ void Terrain::mirrorXAxis(
 	vector<float>& terrainHeightVector,
 	unordered_map<int, float>& waterPositionMapsHeight,
 	unordered_map<int, unordered_map<int, unordered_set<int>>>& waterPositionMaps,
-	vector<unordered_map<int, vector<Transformations>>>& foliageMaps
+	vector<unordered_map<int, vector<Transform>>>& foliageMaps
 ) {
 	auto terrainHeightVectorVerticesPerX = static_cast<int>(Math::ceil(width / STEP_SIZE));
 	auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(depth / STEP_SIZE));
@@ -2142,43 +2142,43 @@ void Terrain::mirrorXAxis(
 	// foliage
 	auto partitionsX = static_cast<int>(Math::ceil(width * 2.0f / PARTITION_SIZE));
 	auto partitionsZ = static_cast<int>(Math::ceil(depth / PARTITION_SIZE));
-	vector<unordered_map<int, vector<Transformations>>> foliageMapsMirrored;
+	vector<unordered_map<int, vector<Transform>>> foliageMapsMirrored;
 	createFoliageMaps(width * 2.0f, depth, foliageMapsMirrored);
 	for (auto& foliageMapPartition: foliageMaps) {
 		for (auto& foliageMapPartitionIt: foliageMapPartition) {
 			auto foliagePrototypeId = foliageMapPartitionIt.first;
-			for (auto& transformations: foliageMapPartitionIt.second) {
+			for (auto& transform: foliageMapPartitionIt.second) {
 				{
 					//
-					auto partitionX = static_cast<int>((transformations.getTranslation().getX()) / PARTITION_SIZE);
-					auto partitionZ = static_cast<int>((transformations.getTranslation().getZ()) / PARTITION_SIZE);
+					auto partitionX = static_cast<int>((transform.getTranslation().getX()) / PARTITION_SIZE);
+					auto partitionZ = static_cast<int>((transform.getTranslation().getZ()) / PARTITION_SIZE);
 					auto partitionIdx = partitionZ * partitionsX + partitionX;
-					foliageMapsMirrored[partitionIdx][foliagePrototypeId].push_back(transformations);
+					foliageMapsMirrored[partitionIdx][foliagePrototypeId].push_back(transform);
 				}
 				{
-					auto transformationsMirrored = transformations;
-					transformationsMirrored.setTranslation(
+					auto transformMirrored = transform;
+					transformMirrored.setTranslation(
 						Vector3(
-							width * 2.0f - transformationsMirrored.getTranslation().getX(),
-							transformationsMirrored.getTranslation().getY(),
-							flipZ == true?depth - transformationsMirrored.getTranslation().getZ():transformationsMirrored.getTranslation().getZ()
+							width * 2.0f - transformMirrored.getTranslation().getX(),
+							transformMirrored.getTranslation().getY(),
+							flipZ == true?depth - transformMirrored.getTranslation().getZ():transformMirrored.getTranslation().getZ()
 						)
 					);
-					transformationsMirrored.addRotation(transformationsMirrored.getRotationAxis(0), -transformationsMirrored.getRotationAngle(0));
-					transformationsMirrored.update();
-					auto eulerAngles = transformationsMirrored.getTransformationsMatrix().computeEulerAngles();
-					transformationsMirrored.removeRotation(3);
-					transformationsMirrored.setRotationAngle(0, eulerAngles.getZ());
-					transformationsMirrored.setRotationAngle(1, eulerAngles.getY());
-					transformationsMirrored.setRotationAngle(2, eulerAngles.getX());
-					transformationsMirrored.update();
+					transformMirrored.addRotation(transformMirrored.getRotationAxis(0), -transformMirrored.getRotationAngle(0));
+					transformMirrored.update();
+					auto eulerAngles = transformMirrored.getTransformMatrix().computeEulerAngles();
+					transformMirrored.removeRotation(3);
+					transformMirrored.setRotationAngle(0, eulerAngles.getZ());
+					transformMirrored.setRotationAngle(1, eulerAngles.getY());
+					transformMirrored.setRotationAngle(2, eulerAngles.getX());
+					transformMirrored.update();
 					//
-					auto partitionX = static_cast<int>((transformationsMirrored.getTranslation().getX()) / PARTITION_SIZE);
-					auto partitionZ = static_cast<int>((transformationsMirrored.getTranslation().getZ()) / PARTITION_SIZE);
+					auto partitionX = static_cast<int>((transformMirrored.getTranslation().getX()) / PARTITION_SIZE);
+					auto partitionZ = static_cast<int>((transformMirrored.getTranslation().getZ()) / PARTITION_SIZE);
 					if (partitionZ >= partitionsZ) partitionZ = partitionsZ - 1; // special case if translation = x, y, 0.0
 					if (partitionX >= partitionsX) partitionX = partitionsX - 1; // special case if translation = 0.0, y, z
 					auto partitionIdx = partitionZ * partitionsX + partitionX;
-					foliageMapsMirrored[partitionIdx][foliagePrototypeId].push_back(transformationsMirrored);
+					foliageMapsMirrored[partitionIdx][foliagePrototypeId].push_back(transformMirrored);
 				}
 			}
 		}
@@ -2193,7 +2193,7 @@ void Terrain::mirrorZAxis(
 	vector<float>& terrainHeightVector,
 	unordered_map<int, float>& waterPositionMapsHeight,
 	unordered_map<int, unordered_map<int, unordered_set<int>>>& waterPositionMaps,
-	vector<unordered_map<int, vector<Transformations>>>& foliageMaps
+	vector<unordered_map<int, vector<Transform>>>& foliageMaps
 ) {
 	auto terrainHeightVectorVerticesPerX = static_cast<int>(Math::ceil(width / STEP_SIZE));
 	auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(depth / STEP_SIZE));
@@ -2238,43 +2238,43 @@ void Terrain::mirrorZAxis(
 	// foliage
 	auto partitionsX = static_cast<int>(Math::ceil(width / PARTITION_SIZE));
 	auto partitionsZ = static_cast<int>(Math::ceil(depth * 2.0f / PARTITION_SIZE));
-	vector<unordered_map<int, vector<Transformations>>> foliageMapsMirrored;
+	vector<unordered_map<int, vector<Transform>>> foliageMapsMirrored;
 	createFoliageMaps(width, depth * 2.0f, foliageMapsMirrored);
 	for (auto& foliageMapPartition: foliageMaps) {
 		for (auto& foliageMapPartitionIt: foliageMapPartition) {
 			auto foliagePrototypeId = foliageMapPartitionIt.first;
-			for (auto& transformations: foliageMapPartitionIt.second) {
+			for (auto& transform: foliageMapPartitionIt.second) {
 				{
 					//
-					auto partitionX = static_cast<int>((transformations.getTranslation().getX()) / PARTITION_SIZE);
-					auto partitionZ = static_cast<int>((transformations.getTranslation().getZ()) / PARTITION_SIZE);
+					auto partitionX = static_cast<int>((transform.getTranslation().getX()) / PARTITION_SIZE);
+					auto partitionZ = static_cast<int>((transform.getTranslation().getZ()) / PARTITION_SIZE);
 					auto partitionIdx = partitionZ * partitionsX + partitionX;
-					foliageMapsMirrored[partitionIdx][foliagePrototypeId].push_back(transformations);
+					foliageMapsMirrored[partitionIdx][foliagePrototypeId].push_back(transform);
 				}
 				{
-					auto transformationsMirrored = transformations;
-					transformationsMirrored.setTranslation(
+					auto transformMirrored = transform;
+					transformMirrored.setTranslation(
 						Vector3(
-							flipX == true?width - transformationsMirrored.getTranslation().getX():transformationsMirrored.getTranslation().getX(),
-							transformationsMirrored.getTranslation().getY(),
-							depth * 2.0f - transformationsMirrored.getTranslation().getZ()
+							flipX == true?width - transformMirrored.getTranslation().getX():transformMirrored.getTranslation().getX(),
+							transformMirrored.getTranslation().getY(),
+							depth * 2.0f - transformMirrored.getTranslation().getZ()
 						)
 					);
-					transformationsMirrored.addRotation(transformationsMirrored.getRotationAxis(2), -transformationsMirrored.getRotationAngle(2));
-					transformationsMirrored.update();
-					auto eulerAngles = transformationsMirrored.getTransformationsMatrix().computeEulerAngles();
-					transformationsMirrored.removeRotation(3);
-					transformationsMirrored.setRotationAngle(0, eulerAngles.getZ());
-					transformationsMirrored.setRotationAngle(1, eulerAngles.getY());
-					transformationsMirrored.setRotationAngle(2, eulerAngles.getX());
-					transformationsMirrored.update();
+					transformMirrored.addRotation(transformMirrored.getRotationAxis(2), -transformMirrored.getRotationAngle(2));
+					transformMirrored.update();
+					auto eulerAngles = transformMirrored.getTransformMatrix().computeEulerAngles();
+					transformMirrored.removeRotation(3);
+					transformMirrored.setRotationAngle(0, eulerAngles.getZ());
+					transformMirrored.setRotationAngle(1, eulerAngles.getY());
+					transformMirrored.setRotationAngle(2, eulerAngles.getX());
+					transformMirrored.update();
 					//
-					auto partitionX = static_cast<int>((transformationsMirrored.getTranslation().getX()) / PARTITION_SIZE);
-					auto partitionZ = static_cast<int>((transformationsMirrored.getTranslation().getZ()) / PARTITION_SIZE);
+					auto partitionX = static_cast<int>((transformMirrored.getTranslation().getX()) / PARTITION_SIZE);
+					auto partitionZ = static_cast<int>((transformMirrored.getTranslation().getZ()) / PARTITION_SIZE);
 					if (partitionX >= partitionsX) partitionX = partitionsX - 1; // special case if translation = 0.0, y, z
 					if (partitionZ >= partitionsZ) partitionZ = partitionsZ - 1; // special case if translation = x, y, 0.0
 					auto partitionIdx = partitionZ * partitionsX + partitionX;
-					foliageMapsMirrored[partitionIdx][foliagePrototypeId].push_back(transformationsMirrored);
+					foliageMapsMirrored[partitionIdx][foliagePrototypeId].push_back(transformMirrored);
 				}
 			}
 		}

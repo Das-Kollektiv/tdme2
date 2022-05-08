@@ -16,7 +16,7 @@
 #include <tdme/engine/physics/CollisionResponse.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
@@ -30,7 +30,7 @@ using tdme::engine::physics::CollisionResponse;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
@@ -69,8 +69,8 @@ private:
 	uint16_t collideTypeIds;
 	uint16_t collisionTypeId;
 	Vector3 inertiaTensor;
-	Transformations transformations;
-	Vector3 transformationsScale;
+	Transform transform;
+	Vector3 transformScale;
 	vector<BoundingVolume*> boundingVolumes;
 	vector<reactphysics3d::ProxyShape*> proxyShapes;
 	vector<CollisionListener*> collisionListener;
@@ -82,14 +82,14 @@ private:
 	 * @param type type
 	 * @param enabled enabled
 	 * @param collisionTypeId collision type id
-	 * @param transformations transformations
+	 * @param transform transform
 	 * @param restitution restitution
 	 * @param friction friction
 	 * @param mass mass in kg
 	 * @param inertiaTensor inertia tensor vector
 	 * @param boundingVolumes bounding volumes
 	 */
-	Body(World* world, const string& id, int type, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*> boundingVolumes);
+	Body(World* world, const string& id, int type, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*> boundingVolumes);
 
 	/**
 	 * Destructor
@@ -309,15 +309,15 @@ public:
 	void setAngularDamping(float angularDamping);
 
 	/**
-	 * @return transformations
+	 * @return transform
 	 */
-	const Transformations& getTransformations();
+	const Transform& getTransform();
 
 	/**
-	 * Synchronizes this rigid body with transformations
-	 * @param transformations transformations
+	 * Synchronizes this rigid body with transform
+	 * @param transform transform
 	 */
-	void fromTransformations(const Transformations& transformations);
+	void fromTransform(const Transform& transform);
 
 	/**
 	 * Add force

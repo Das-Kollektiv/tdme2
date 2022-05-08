@@ -209,7 +209,7 @@ void PathFindingTest::reshape(int32_t width, int32_t height)
 
 void PathFindingTest::doPathFinding() {
 	if (pathFinding->findPath(
-			playerObject->getTransformations().getTranslation(),
+			playerObject->getTransform().getTranslation(),
 			pathPositions[(int)(Math::random() * pathPositions.size())],
 			SceneConnector::RIGIDBODY_TYPEID_STATIC,
 			path

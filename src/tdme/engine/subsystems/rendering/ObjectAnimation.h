@@ -23,7 +23,7 @@ using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::subsystems::rendering::AnimationState;
 using tdme::engine::Engine;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Matrix4x4;
 
 /**
@@ -61,23 +61,23 @@ private:
 protected:
 	struct FlattenedNode {
 		const string nodeId;
-		const Matrix4x4* nodeTransformationsMatrix;
-		Matrix4x4* nodeOverriddenTransformationsMatrix;
+		const Matrix4x4* nodeTransformMatrix;
+		Matrix4x4* nodeOverriddenTransformMatrix;
 		const Animation* nodeAnimation;
 		AnimationState* nodeAnimationState;
-		const Matrix4x4* parentTransformationsMatrix;
-		Matrix4x4* transformationsMatrix;
+		const Matrix4x4* parentTransformMatrix;
+		Matrix4x4* transformMatrix;
 	};
 	struct NodeSkinningJoint {
 		const Joint* joint;
-		const Matrix4x4* nodeTransformationsMatrix;
-		Matrix4x4* skinningNodeTransformationsMatrix;
+		const Matrix4x4* nodeTransformMatrix;
+		Matrix4x4* skinningNodeTransformMatrix;
 	};
 
 	Model* model;
 	Engine::AnimationProcessingTarget animationProcessingTarget;
-	map<string, Matrix4x4*> overriddenTransformationsMatrices;
-	vector<map<string, Matrix4x4*>> transformationsMatrices;
+	map<string, Matrix4x4*> overriddenTransformMatrices;
+	vector<map<string, Matrix4x4*>> transformMatrices;
 	bool hasSkinning;
 	bool hasAnimations;
 	vector<map<string, Matrix4x4*>> skinningNodesMatrices;
@@ -102,14 +102,14 @@ protected:
 	virtual ~ObjectAnimation();
 
 	/**
-	 * Creates all nodes transformation matrices
+	 * Creates all nodes transform matrices
 	 * @param matrices matrices
 	 * @param nodeList flattened node list
 	 * @param nodes nodes
-	 * @param parentTransformationsMatrix parent transformations matrix
+	 * @param parentTransformMatrix parent transform matrix
 	 * @param animationState animation state
 	 */
-	void createTransformationsMatrices(map<string, Matrix4x4*>& matrices, vector<FlattenedNode>& nodeList, const map<string, Node*>& nodes, Matrix4x4* parentTransformationsMatrix = nullptr, AnimationState* animationState = nullptr);
+	void createNodesTransformMatrices(map<string, Matrix4x4*>& matrices, vector<FlattenedNode>& nodeList, const map<string, Node*>& nodes, Matrix4x4* parentTransformMatrix = nullptr, AnimationState* animationState = nullptr);
 
 	/**
 	 * Update node list
@@ -137,35 +137,35 @@ protected:
 	}
 
 	/**
-	 * Calculates all nodes transformation matrices
+	 * Comutes all nodes transform matrices
 	 * @param nodeList flattened node list
-	 * @param parentTransformationsMatrix parent transformations matrix
+	 * @param parentTransformMatrix parent transform matrix
 	 * @param animationState animation state
 	 */
-	void computeTransformationsMatrices(vector<FlattenedNode>& nodeList, const Matrix4x4 parentTransformationsMatrix, AnimationState* animationState);
+	void computeNodesTransformMatrices(vector<FlattenedNode>& nodeList, const Matrix4x4 parentTransformMatrix, AnimationState* animationState);
 
 	/**
-	 * Compute transformations for given animation state into given transformations matrices
+	 * Compute animation for given animation state into nodes transform matrices given by flattened node list
 	 * @param nodeList flattened node list
-	 * @param instanceTransformationsMatrix object transformations matrix
+	 * @param instanceTransformMatrix object transform matrix
 	 * @param baseAnimation base animation
 	 * @param contextIdx context index
 	 * @param lastFrameAtTime time of last animation computation
 	 * @param currentFrameAtTime time of current animation computation
 	 */
-	void computeTransformations(vector<FlattenedNode>& nodeList, const Matrix4x4& instanceTransformationsMatrix, AnimationState& baseAnimation, int contextIdx, int64_t lastFrameAtTime, int64_t currentFrameAtTime);
+	void computeAnimation(vector<FlattenedNode>& nodeList, const Matrix4x4& instanceTransformMatrix, AnimationState& baseAnimation, int contextIdx, int64_t lastFrameAtTime, int64_t currentFrameAtTime);
 
 	/**
-	 * Update skinning transformations matrices
+	 * Update skinning transform matrices
 	 */
-	void updateSkinningTransformationsMatrices();
+	void updateSkinningJoints();
 
 	/**
-	 * Get skinning nodes matrices
+	 * Get skinning nodes transform matrices
 	 * @param node node
 	 * @return matrices
 	 */
-	map<string, Matrix4x4*>* getSkinningNodesMatrices(Node* node);
+	map<string, Matrix4x4*>* getSkinningNodesTransformMatrices(Node* node);
 
 public:
 
@@ -230,32 +230,32 @@ public:
 	float getOverlayAnimationTime(const string& id);
 
 	/**
-	 * Returns transformation matrix for given node
+	 * Returns transform matrix for given node
 	 * @param id node id
-	 * @return transformation matrix or identity matrix if not found
+	 * @return transform matrix or identity matrix if not found
 	 */
-	const Matrix4x4 getNodeTransformationsMatrix(const string& id);
+	const Matrix4x4 getNodeTransformMatrix(const string& id);
 
 	/**
-	 * Set transformation matrix for given node
+	 * Set transform matrix for given node
 	 * @param id node id
-	 * @param matrix transformation matrix
+	 * @param matrix transform matrix
 	 */
-	void setNodeTransformationsMatrix(const string& id, const Matrix4x4& matrix);
+	void setNodeTransformMatrix(const string& id, const Matrix4x4& matrix);
 
 	/**
-	 * Unset transformation matrix for given node
+	 * Unset transform matrix for given node
 	 * @param id node id
 	 */
-	void unsetNodeTransformationsMatrix(const string& id);
+	void unsetNodeTransformMatrix(const string& id);
 
 	/**
-	 * Pre render step, computes transformations
+	 * Computes animations
 	 * @param contextIdx context index
-	 * @param objectTransformationsMatrix object transformations matrix
+	 * @param objectTransformMatrix object transform matrix
 	 * @param lastFrameAtTime time of last animation computation
 	 * @param currentFrameAtTime time of current animation computation
 	 */
-	void computeTransformations(int contextIdx, const Matrix4x4& objectTransformationsMatrix, int64_t lastFrameAtTime, int64_t currentFrameAtTime);
+	void computeAnimation(int contextIdx, const Matrix4x4& objectTransformMatrix, int64_t lastFrameAtTime, int64_t currentFrameAtTime);
 
 };

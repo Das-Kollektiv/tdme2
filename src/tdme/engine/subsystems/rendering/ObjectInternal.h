@@ -21,7 +21,7 @@ using tdme::engine::subsystems::rendering::ObjectAnimation;
 using tdme::engine::subsystems::rendering::ObjectBase;
 using tdme::engine::ColorTexture;
 using tdme::engine::FrameBuffer;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Matrix2D3x3;
 
 /**
@@ -170,7 +170,7 @@ public:
 	}
 
 	/**
-	 * Retrieves bounding sphere with transformations applied
+	 * Retrieves bounding sphere with transform applied
 	 * @return bounding sphere
 	 */
 	inline BoundingBox* getBoundingBoxTransformed() {
@@ -215,10 +215,10 @@ public:
 	inline void dispose() override {
 		ObjectBase::dispose();
 	}
-	void fromTransformations(const Transformations& transformations);
+	void fromTransform(const Transform& transform);
 	void update();
 
-	void setNodeTransformationsMatrix(const string& id, const Matrix4x4& matrix);
-	void unsetNodeTransformationsMatrix(const string& id);
+	void setNodeTransformMatrix(const string& id, const Matrix4x4& matrix);
+	void unsetNodeTransformMatrix(const string& id);
 
 };

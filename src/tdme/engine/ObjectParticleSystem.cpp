@@ -8,7 +8,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Object.h>
 #include <tdme/engine/Partition.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 
 using std::string;
 using std::vector;
@@ -18,7 +18,7 @@ using tdme::engine::Engine;
 using tdme::engine::Object;
 using tdme::engine::ObjectParticleSystem;
 using tdme::engine::Partition;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 
 ObjectParticleSystem::ObjectParticleSystem(const string& id, Model* model, const Vector3& scale, bool autoEmit, bool contributesShadows, bool receivesShadows, int32_t maxCount, ParticleEmitter* emitter) :
 	ObjectParticleSystemInternal(id, model, scale, autoEmit, contributesShadows, receivesShadows, maxCount, emitter)
@@ -30,9 +30,9 @@ void ObjectParticleSystem::initialize()
 	for (auto object: objects) object->setParentEntity(this);
 }
 
-void ObjectParticleSystem::fromTransformations(const Transformations& transformations)
+void ObjectParticleSystem::fromTransform(const Transform& transform)
 {
-	ObjectParticleSystemInternal::fromTransformations(transformations);
+	ObjectParticleSystemInternal::fromTransform(transform);
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 

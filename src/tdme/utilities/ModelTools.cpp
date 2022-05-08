@@ -24,7 +24,7 @@
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/scene/SceneEntity.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
@@ -57,7 +57,7 @@ using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::scene::SceneEntity;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
@@ -237,18 +237,18 @@ void ModelTools::fixAnimationLength(Node* root, int32_t frames)
 {
 	auto animation = root->getAnimation();
 	if (animation != nullptr) {
-		vector<Matrix4x4> newTransformationsMatrices;
-		auto oldTransformationsMatrices = root->getAnimation()->getTransformationsMatrices();
+		vector<Matrix4x4> newTransformMatrices;
+		auto oldTransformMatrices = root->getAnimation()->getTransformMatrices();
 		auto animation = new Animation();
-		newTransformationsMatrices.resize(frames);
+		newTransformMatrices.resize(frames);
 		for (auto i = 0; i < frames; i++) {
-			if (i < oldTransformationsMatrices.size()) {
-				newTransformationsMatrices[i] = oldTransformationsMatrices[i];
+			if (i < oldTransformMatrices.size()) {
+				newTransformMatrices[i] = oldTransformMatrices[i];
 			} else {
-				newTransformationsMatrices[i].identity();
+				newTransformMatrices[i].identity();
 			}
 		}
-		animation->setTransformationsMatrices(newTransformationsMatrices);
+		animation->setTransformMatrices(newTransformMatrices);
 		root->setAnimation(animation);
 	}
 	for (auto it: root->getSubNodes()) {
@@ -315,7 +315,7 @@ Material* ModelTools::cloneMaterial(const Material* material, const string& id) 
 
 void ModelTools::cloneNode(Node* sourceNode, Model* targetModel, Node* targetParentNode, bool cloneMesh) {
 	auto clonedNode = new Node(targetModel, targetParentNode, sourceNode->getId(), sourceNode->getName());
-	clonedNode->setTransformationsMatrix(sourceNode->getTransformationsMatrix());
+	clonedNode->setTransformMatrix(sourceNode->getTransformMatrix());
 	clonedNode->setJoint(sourceNode->isJoint());
 	if (cloneMesh == true) {
 		clonedNode->setVertices(sourceNode->getVertices());
@@ -344,7 +344,7 @@ void ModelTools::cloneNode(Node* sourceNode, Model* targetModel, Node* targetPar
 	}
 	if (sourceNode->getAnimation() != nullptr) {
 		auto clonedAnimation = new Animation();
-		clonedAnimation->setTransformationsMatrices(sourceNode->getAnimation()->getTransformationsMatrices());
+		clonedAnimation->setTransformMatrices(sourceNode->getAnimation()->getTransformMatrices());
 		clonedNode->setAnimation(clonedAnimation);
 	}
 	targetModel->getNodes()[clonedNode->getId()] = clonedNode;
@@ -359,13 +359,13 @@ void ModelTools::cloneNode(Node* sourceNode, Model* targetModel, Node* targetPar
 	}
 }
 
-void ModelTools::partitionNode(Node* sourceNode, map<string, Model*>& modelsByPartition, map<string, Vector3>& modelsPosition, const Matrix4x4& parentTransformationsMatrix) {
+void ModelTools::partitionNode(Node* sourceNode, map<string, Model*>& modelsByPartition, map<string, Vector3>& modelsPosition, const Matrix4x4& parentTransformMatrix) {
 	// TODO: performance: faces handling is very suboptimal currently, however this is only executed in SceneEditor if doing partitioning
 	Vector3 faceCenter;
 
-	Matrix4x4 transformationsMatrix;
-	transformationsMatrix.set(sourceNode->getTransformationsMatrix());
-	transformationsMatrix.multiply(parentTransformationsMatrix);
+	Matrix4x4 transformMatrix;
+	transformMatrix.set(sourceNode->getTransformMatrix());
+	transformMatrix.multiply(parentTransformMatrix);
 
 	Vector3 vertex0;
 	Vector3 vertex1;
@@ -440,9 +440,9 @@ void ModelTools::partitionNode(Node* sourceNode, map<string, Model*>& modelsByPa
 			}
 
 			// find out partition by transforming vertices into world coordinates
-			vertex0Transformed = transformationsMatrix.multiply(vertex0);
-			vertex1Transformed = transformationsMatrix.multiply(vertex1);
-			vertex2Transformed = transformationsMatrix.multiply(vertex2);
+			vertex0Transformed = transformMatrix.multiply(vertex0);
+			vertex1Transformed = transformMatrix.multiply(vertex1);
+			vertex2Transformed = transformMatrix.multiply(vertex2);
 			faceCenter.set(vertex0Transformed);
 			faceCenter.add(vertex1Transformed);
 			faceCenter.add(vertex2Transformed);
@@ -485,7 +485,7 @@ void ModelTools::partitionNode(Node* sourceNode, map<string, Model*>& modelsByPa
 					sourceNode->getId(),
 					sourceNode->getName()
 				);
-				partitionModelNode->setTransformationsMatrix(sourceNode->getTransformationsMatrix());
+				partitionModelNode->setTransformMatrix(sourceNode->getTransformMatrix());
 				if (sourceNode->getParentNode() == nullptr) {
 					partitionModel->getSubNodes()[partitionModelNode->getId()] = partitionModelNode;
 				} else {
@@ -587,21 +587,21 @@ void ModelTools::partitionNode(Node* sourceNode, map<string, Model*>& modelsByPa
 	}
 
 	for (auto nodeIt: sourceNode->getSubNodes()) {
-		partitionNode(nodeIt.second, modelsByPartition, modelsPosition, transformationsMatrix);
+		partitionNode(nodeIt.second, modelsByPartition, modelsPosition, transformMatrix);
 	}
 }
 
-void ModelTools::partition(Model* model, const Transformations& transformations, map<string, Model*>& modelsByPartition, map<string, Vector3>& modelsPosition) {
-	Matrix4x4 transformationsMatrix;
-	transformationsMatrix.set(model->getImportTransformationsMatrix());
-	transformationsMatrix.multiply(transformations.getTransformationsMatrix());
+void ModelTools::partition(Model* model, const Transform& transform, map<string, Model*>& modelsByPartition, map<string, Vector3>& modelsPosition) {
+	Matrix4x4 transformMatrix;
+	transformMatrix.set(model->getImportTransformMatrix());
+	transformMatrix.multiply(transform.getTransformMatrix());
 	for (auto nodeIt: model->getSubNodes()) {
-		partitionNode(nodeIt.second, modelsByPartition, modelsPosition, transformationsMatrix);
+		partitionNode(nodeIt.second, modelsByPartition, modelsPosition, transformMatrix);
 	}
 	for (auto modelsByPartitionIt: modelsByPartition) {
 		auto partitionKey = modelsByPartitionIt.first;
 		auto partitionModel = modelsByPartitionIt.second;
-		partitionModel->setImportTransformationsMatrix(model->getImportTransformationsMatrix());
+		partitionModel->setImportTransformMatrix(model->getImportTransformMatrix());
 		ModelTools::createDefaultAnimation(partitionModel, 0);
 		ModelTools::setupJoints(partitionModel);
 		ModelTools::fixAnimationLength(partitionModel);
@@ -711,13 +711,13 @@ int ModelTools::determineFaceCount(Node* node) {
 
 void ModelTools::prepareForShader(Model* model, const string& shader) {
 	if (shader == "foliage" || shader == "pbr-foliage" || shader == "tree" || shader == "pbr-tree") {
-		for (auto nodeIt: model->getSubNodes()) prepareForFoliageTreeShader(nodeIt.second, model->getImportTransformationsMatrix(), shader);
-		model->setImportTransformationsMatrix(Matrix4x4().identity());
+		for (auto nodeIt: model->getSubNodes()) prepareForFoliageTreeShader(nodeIt.second, model->getImportTransformMatrix(), shader);
+		model->setImportTransformMatrix(Matrix4x4().identity());
 		model->setUpVector(UpVector::Y_UP);
 	} else
 	if (shader == "water") {
-		for (auto nodeIt: model->getSubNodes()) prepareForWaterShader(nodeIt.second, model->getImportTransformationsMatrix());
-		model->setImportTransformationsMatrix(Matrix4x4().identity());
+		for (auto nodeIt: model->getSubNodes()) prepareForWaterShader(nodeIt.second, model->getImportTransformMatrix());
+		model->setImportTransformMatrix(Matrix4x4().identity());
 		model->setUpVector(UpVector::Y_UP);
 	} else {
 		for (auto nodeIt: model->getSubNodes()) prepareForDefaultShader(nodeIt.second);
@@ -732,15 +732,15 @@ void ModelTools::prepareForDefaultShader(Node* node) {
 	}
 }
 
-void ModelTools::prepareForFoliageTreeShader(Node* node, const Matrix4x4& parentTransformationsMatrix, const string& shader) {
+void ModelTools::prepareForFoliageTreeShader(Node* node, const Matrix4x4& parentTransformMatrix, const string& shader) {
 	vector<Vector3> objectOrigins;
 	objectOrigins.resize(node->getVertices().size());
-	auto transformationsMatrix = node->getTransformationsMatrix().clone().multiply(parentTransformationsMatrix);
+	auto transformMatrix = node->getTransformMatrix().clone().multiply(parentTransformMatrix);
 	{
 		auto vertices = node->getVertices();
 		auto vertexIdx = 0;
 		for (auto& vertex: vertices) {
-			vertex = transformationsMatrix.multiply(vertex);
+			vertex = transformMatrix.multiply(vertex);
 			if (shader == "tree" || shader == "pbr-tree") objectOrigins[vertexIdx].set(0.0f, vertex.getY(), 0.0f);
 			vertexIdx++;
 		}
@@ -749,7 +749,7 @@ void ModelTools::prepareForFoliageTreeShader(Node* node, const Matrix4x4& parent
 	{
 		auto normals = node->getNormals();
 		for (auto& normal: normals) {
-			normal = transformationsMatrix.multiplyNoTranslation(normal);
+			normal = transformMatrix.multiplyNoTranslation(normal);
 			normal.normalize();
 		}
 		node->setNormals(normals);
@@ -757,7 +757,7 @@ void ModelTools::prepareForFoliageTreeShader(Node* node, const Matrix4x4& parent
 	{
 		auto tangents = node->getTangents();
 		for (auto& tangent: tangents) {
-			tangent = transformationsMatrix.multiplyNoTranslation(tangent);
+			tangent = transformMatrix.multiplyNoTranslation(tangent);
 			tangent.normalize();
 		}
 		node->setTangents(tangents);
@@ -765,32 +765,32 @@ void ModelTools::prepareForFoliageTreeShader(Node* node, const Matrix4x4& parent
 	{
 		auto bitangents = node->getBitangents();
 		for (auto& bitangent: bitangents) {
-			bitangent = transformationsMatrix.multiplyNoTranslation(bitangent);
+			bitangent = transformMatrix.multiplyNoTranslation(bitangent);
 			bitangent.normalize();
 		}
 		node->setBitangents(bitangents);
 	}
-	node->setTransformationsMatrix(Matrix4x4().identity());
+	node->setTransformMatrix(Matrix4x4().identity());
 	node->setOrigins(objectOrigins);
 	for (auto nodeIt: node->getSubNodes()) {
-		prepareForFoliageTreeShader(nodeIt.second, transformationsMatrix, shader);
+		prepareForFoliageTreeShader(nodeIt.second, transformMatrix, shader);
 	}
 }
 
-void ModelTools::prepareForWaterShader(Node* node, const Matrix4x4& parentTransformationsMatrix) {
-	auto transformationsMatrix = node->getTransformationsMatrix().clone().multiply(parentTransformationsMatrix);
+void ModelTools::prepareForWaterShader(Node* node, const Matrix4x4& parentTransformMatrix) {
+	auto transformMatrix = node->getTransformMatrix().clone().multiply(parentTransformMatrix);
 	{
 		auto vertices = node->getVertices();
 		auto vertexIdx = 0;
 		for (auto& vertex: vertices) {
-			vertex = transformationsMatrix.multiply(vertex);
+			vertex = transformMatrix.multiply(vertex);
 		}
 		node->setVertices(vertices);
 	}
 	{
 		auto normals = node->getNormals();
 		for (auto& normal: normals) {
-			normal = transformationsMatrix.multiplyNoTranslation(normal);
+			normal = transformMatrix.multiplyNoTranslation(normal);
 			normal.normalize();
 		}
 		node->setNormals(normals);
@@ -798,7 +798,7 @@ void ModelTools::prepareForWaterShader(Node* node, const Matrix4x4& parentTransf
 	{
 		auto tangents = node->getTangents();
 		for (auto& tangent: tangents) {
-			tangent = transformationsMatrix.multiplyNoTranslation(tangent);
+			tangent = transformMatrix.multiplyNoTranslation(tangent);
 			tangent.normalize();
 		}
 		node->setTangents(tangents);
@@ -806,14 +806,14 @@ void ModelTools::prepareForWaterShader(Node* node, const Matrix4x4& parentTransf
 	{
 		auto bitangents = node->getBitangents();
 		for (auto& bitangent: bitangents) {
-			bitangent = transformationsMatrix.multiplyNoTranslation(bitangent);
+			bitangent = transformMatrix.multiplyNoTranslation(bitangent);
 			bitangent.normalize();
 		}
 		node->setBitangents(bitangents);
 	}
-	node->setTransformationsMatrix(Matrix4x4().identity());
+	node->setTransformMatrix(Matrix4x4().identity());
 	for (auto nodeIt: node->getSubNodes()) {
-		prepareForWaterShader(nodeIt.second, transformationsMatrix);
+		prepareForWaterShader(nodeIt.second, transformMatrix);
 	}
 }
 
@@ -846,26 +846,26 @@ void ModelTools::checkForOptimization(Node* node, map<string, int>& materialUseC
 	}
 }
 
-void ModelTools::prepareForOptimization(Node* node, const Matrix4x4& parentTransformationsMatrix) {
+void ModelTools::prepareForOptimization(Node* node, const Matrix4x4& parentTransformMatrix) {
 	// skip on joints as they do not have textures to display and no vertex data
 	if (node->isJoint() == true) return;
 
 	// do not transform skinning vertices and such
 	if (node->getSkinning() != nullptr) return;
 
-	// static node, apply node transformations matrix
-	auto transformationsMatrix = node->getTransformationsMatrix().clone().multiply(parentTransformationsMatrix);
+	// static node, apply node transform matrix
+	auto transformMatrix = node->getTransformMatrix().clone().multiply(parentTransformMatrix);
 	{
 		auto vertices = node->getVertices();
 		for (auto& vertex: vertices) {
-			vertex = transformationsMatrix.multiply(vertex);
+			vertex = transformMatrix.multiply(vertex);
 		}
 		node->setVertices(vertices);
 	}
 	{
 		auto normals = node->getNormals();
 		for (auto& normal: normals) {
-			normal = transformationsMatrix.multiplyNoTranslation(normal);
+			normal = transformMatrix.multiplyNoTranslation(normal);
 			normal.normalize();
 		}
 		node->setNormals(normals);
@@ -873,7 +873,7 @@ void ModelTools::prepareForOptimization(Node* node, const Matrix4x4& parentTrans
 	{
 		auto tangents = node->getTangents();
 		for (auto& tangent: tangents) {
-			tangent = transformationsMatrix.multiplyNoTranslation(tangent);
+			tangent = transformMatrix.multiplyNoTranslation(tangent);
 			tangent.normalize();
 		}
 		node->setTangents(tangents);
@@ -881,18 +881,18 @@ void ModelTools::prepareForOptimization(Node* node, const Matrix4x4& parentTrans
 	{
 		auto bitangents = node->getBitangents();
 		for (auto& bitangent: bitangents) {
-			bitangent = transformationsMatrix.multiplyNoTranslation(bitangent);
+			bitangent = transformMatrix.multiplyNoTranslation(bitangent);
 			bitangent.normalize();
 		}
 		node->setBitangents(bitangents);
 	}
 
-	// we do not set node transformations matrix as we need it later
-	// node->setTransformationsMatrix(Matrix4x4().identity());
+	// we do not set node transform matrix as we need it later
+	// node->setTransformMatrix(Matrix4x4().identity());
 
 	//
 	for (auto nodeIt: node->getSubNodes()) {
-		prepareForOptimization(nodeIt.second, transformationsMatrix);
+		prepareForOptimization(nodeIt.second, transformMatrix);
 	}
 }
 
@@ -1138,7 +1138,7 @@ Model* ModelTools::optimizeModel(Model* model, const string& texturePathName, co
 
 	// create model with optimizations applied
 	auto optimizedModel = new Model(model->getId() + ".optimized", model->getName() + ".optimized", model->getUpVector(), model->getRotationOrder(), new BoundingBox(model->getBoundingBox()), model->getAuthoringTool());
-	optimizedModel->setImportTransformationsMatrix(model->getImportTransformationsMatrix());
+	optimizedModel->setImportTransformMatrix(model->getImportTransformMatrix());
 	optimizedModel->setEmbedSpecularTextures(true);
 	optimizedModel->setEmbedPBRTextures(true);
 	auto optimizedNode = new Node(optimizedModel, nullptr, "tdme.node.optimized", "tdme.node.optimized");

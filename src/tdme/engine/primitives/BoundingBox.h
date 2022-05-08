@@ -13,7 +13,7 @@ using std::array;
 using std::vector;
 
 using tdme::engine::primitives::OrientedBoundingBox;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Vector3;
 
 /**
@@ -134,11 +134,11 @@ public:
 	void fromBoundingVolume(BoundingBox* original);
 
 	/**
-	 * Create bounding volume from given original(of same type) with applied transformations
+	 * Create bounding volume from given original(of same type) with applied transform
 	 * @param original original bounding box
-	 * @param transformations transformations
+	 * @param transform transform
 	 */
-	void fromBoundingVolumeWithTransformations(BoundingBox* original, const Transformations& transformations);
+	void fromBoundingVolumeWithTransform(BoundingBox* original, const Transform& transform);
 
 	/**
 	 * Extend bounding box with given bounding box

@@ -1,11 +1,11 @@
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 
 #include <string>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/Rotation.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
@@ -14,28 +14,28 @@ using std::to_string;
 
 using tdme::engine::model::RotationOrder;
 using tdme::engine::Rotation;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
 
-Transformations::Transformations()
+Transform::Transform()
 {
-	transformationsMatrix.identity();
+	transformMatrix.identity();
 	scale.set(1.0f, 1.0f, 1.0f);
 	rotationsQuaternion.identity();
 }
 
-Transformations::~Transformations() {
+Transform::~Transform() {
 }
 
-void Transformations::fromTransformations(const Transformations& transformations)
+void Transform::fromTransform(const Transform& transform)
 {
-	if (this == &transformations) return;
-	*this = transformations;
+	if (this == &transform) return;
+	*this = transform;
 }
 
-void Transformations::fromMatrix(const Matrix4x4& matrix, RotationOrder* rotationOrder) {
+void Transform::fromMatrix(const Matrix4x4& matrix, RotationOrder* rotationOrder) {
 	matrix.getScale(scale);
 	matrix.getTranslation(translation);
 	auto eulerAngles = matrix.computeEulerAngles();
@@ -46,7 +46,7 @@ void Transformations::fromMatrix(const Matrix4x4& matrix, RotationOrder* rotatio
 	update();
 }
 
-void Transformations::update()
+void Transform::update()
 {
 	// matrices
 	Matrix4x4 translationMatrix;
@@ -54,8 +54,8 @@ void Transformations::update()
 	Matrix4x4 rotationsMatrix;
 	Matrix4x4 rotationsTranslationsMatrix;
 
-	// transformation matrix identity
-	transformationsMatrix.identity();
+	// transform matrix identity
+	transformMatrix.identity();
 	// set up translation matrix
 	translationMatrix.identity().translate(translation);
 	// set up scale matrix
@@ -76,17 +76,17 @@ void Transformations::update()
 	//	pivot
 	rotationsTranslationsMatrix.identity().translate(pivot);
 	rotationsMatrix.multiply(rotationsTranslationsMatrix);
-	// apply to transformation matrix
-	transformationsMatrix.multiply(scaleMatrix);
-	transformationsMatrix.multiply(rotationsMatrix);
-	transformationsMatrix.multiply(translationMatrix);
+	// apply to transform matrix
+	transformMatrix.multiply(scaleMatrix);
+	transformMatrix.multiply(rotationsMatrix);
+	transformMatrix.multiply(translationMatrix);
 }
 
-void Transformations::applyParentTransformations(const Transformations& parentTransformations) {
-	transformationsMatrix.multiply(parentTransformations.getTransformationsMatrix());
+void Transform::applyParentTransform(const Transform& parentTransform) {
+	transformMatrix.multiply(parentTransform.getTransformMatrix());
 }
 
-void Transformations::invert() {
+void Transform::invert() {
 	translation.scale(-1.0f);
 	scale.setX(1.0f / scale.getX());
 	scale.setY(1.0f / scale.getY());
@@ -94,5 +94,5 @@ void Transformations::invert() {
 	for (auto& rotation: rotations) {
 		rotation.setAngle(rotation.getAngle() - 180.0f);
 	}
-	transformationsMatrix.invert();
+	transformMatrix.invert();
 }

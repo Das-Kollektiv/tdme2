@@ -371,42 +371,42 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 					auto partitionZ = foliagePrototypePartitionIdx / partitionsX;
 
 					//
-					auto jFoliagePrototypePartitionTransformations = jFoliagePrototypePartitions[foliagePrototypePartitionIdx].GetArray();
-					auto& foliagePrototypePartitionTransformations = foliageMaps[foliagePrototypePartitionIdx][foliagePrototypeIndex];
-					for (auto jFoliagePrototypePartitionTransformationsIdx = 0; jFoliagePrototypePartitionTransformationsIdx < jFoliagePrototypePartitionTransformations.Size(); jFoliagePrototypePartitionTransformationsIdx++) {
-						Value& jFoliagePrototypeTransformations = jFoliagePrototypePartitionTransformations[jFoliagePrototypePartitionTransformationsIdx];
-						Transformations foliagePrototypeTransformations;
-						foliagePrototypeTransformations.setTranslation(
+					auto jFoliagePrototypePartitionTransform = jFoliagePrototypePartitions[foliagePrototypePartitionIdx].GetArray();
+					auto& foliagePrototypePartitionTransform = foliageMaps[foliagePrototypePartitionIdx][foliagePrototypeIndex];
+					for (auto jFoliagePrototypePartitionTransformIdx = 0; jFoliagePrototypePartitionTransformIdx < jFoliagePrototypePartitionTransform.Size(); jFoliagePrototypePartitionTransformIdx++) {
+						Value& jFoliagePrototypeTransform = jFoliagePrototypePartitionTransform[jFoliagePrototypePartitionTransformIdx];
+						Transform foliagePrototypeTransform;
+						foliagePrototypeTransform.setTranslation(
 							Vector3(
-								jFoliagePrototypeTransformations["tx"].GetFloat(),
-								jFoliagePrototypeTransformations["ty"].GetFloat(),
-								jFoliagePrototypeTransformations["tz"].GetFloat()
+								jFoliagePrototypeTransform["tx"].GetFloat(),
+								jFoliagePrototypeTransform["ty"].GetFloat(),
+								jFoliagePrototypeTransform["tz"].GetFloat()
 							)
 						);
-						foliagePrototypeTransformations.addRotation(Rotation::Z_AXIS, jFoliagePrototypeTransformations["rz"].GetFloat());
-						foliagePrototypeTransformations.addRotation(Rotation::Y_AXIS, jFoliagePrototypeTransformations["ry"].GetFloat());
-						foliagePrototypeTransformations.addRotation(Rotation::X_AXIS, jFoliagePrototypeTransformations["rx"].GetFloat());
-						foliagePrototypeTransformations.setScale(
+						foliagePrototypeTransform.addRotation(Rotation::Z_AXIS, jFoliagePrototypeTransform["rz"].GetFloat());
+						foliagePrototypeTransform.addRotation(Rotation::Y_AXIS, jFoliagePrototypeTransform["ry"].GetFloat());
+						foliagePrototypeTransform.addRotation(Rotation::X_AXIS, jFoliagePrototypeTransform["rx"].GetFloat());
+						foliagePrototypeTransform.setScale(
 							Vector3(
-								jFoliagePrototypeTransformations["sx"].GetFloat(),
-								jFoliagePrototypeTransformations["sy"].GetFloat(),
-								jFoliagePrototypeTransformations["sz"].GetFloat()
+								jFoliagePrototypeTransform["sx"].GetFloat(),
+								jFoliagePrototypeTransform["sy"].GetFloat(),
+								jFoliagePrototypeTransform["sz"].GetFloat()
 							)
 						);
-						foliagePrototypeTransformations.update();
-						foliagePrototypePartitionTransformations.push_back(foliagePrototypeTransformations);
+						foliagePrototypeTransform.update();
+						foliagePrototypePartitionTransform.push_back(foliagePrototypeTransform);
 						auto partitionLeft = partitionX * Terrain::PARTITION_SIZE;
 						auto partitionTop = partitionZ * Terrain::PARTITION_SIZE;
 						auto partitionRight = partitionX * Terrain::PARTITION_SIZE + Terrain::PARTITION_SIZE;
 						auto partitionBottom = partitionZ * Terrain::PARTITION_SIZE + Terrain::PARTITION_SIZE;
 						// just some debugging output if foliage is not in correct partition
-						if (foliagePrototypeTransformations.getTranslation().getX() < partitionLeft ||
-							foliagePrototypeTransformations.getTranslation().getZ() < partitionTop ||
-							foliagePrototypeTransformations.getTranslation().getX() > partitionRight ||
-							foliagePrototypeTransformations.getTranslation().getZ() > partitionBottom) {
+						if (foliagePrototypeTransform.getTranslation().getX() < partitionLeft ||
+							foliagePrototypeTransform.getTranslation().getZ() < partitionTop ||
+							foliagePrototypeTransform.getTranslation().getX() > partitionRight ||
+							foliagePrototypeTransform.getTranslation().getZ() > partitionBottom) {
 							Console::println(
 								"PrototypeReader::read(): foliage entity not in partition: " +
-								to_string(foliagePrototypeTransformations.getTranslation().getX()) + ", " + to_string(foliagePrototypeTransformations.getTranslation().getZ()) + " ! in " +
+								to_string(foliagePrototypeTransform.getTranslation().getX()) + ", " + to_string(foliagePrototypeTransform.getTranslation().getZ()) + " ! in " +
 								to_string(partitionLeft) + ", " + to_string(partitionTop) + ", " +
 								to_string(partitionRight) + ", " + to_string(partitionBottom)
 							);

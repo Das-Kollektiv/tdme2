@@ -20,7 +20,7 @@
 #include <tdme/engine/prototype/PrototypeParticleSystem_Type.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Rotation.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIColor.h>
@@ -78,7 +78,7 @@ using tdme::engine::prototype::PrototypeParticleSystem_SphereParticleEmitter;
 using tdme::engine::prototype::PrototypeParticleSystem_Type;
 using tdme::engine::Engine;
 using tdme::engine::Rotation;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
@@ -1552,15 +1552,15 @@ void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleS
 					Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_location_z"))->getController()->getValue().getString())
 				)
 			);
-			Transformations transformations;
-			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_Z, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_rotation_z"))->getController()->getValue().getString()));
-			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_Y, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_rotation_y"))->getController()->getValue().getString()));
-			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_X, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_rotation_x"))->getController()->getValue().getString()));
-			transformations.update();
+			Transform transform;
+			transform.addRotation(OrientedBoundingBox::AABB_AXIS_Z, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_rotation_z"))->getController()->getValue().getString()));
+			transform.addRotation(OrientedBoundingBox::AABB_AXIS_Y, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_rotation_y"))->getController()->getValue().getString()));
+			transform.addRotation(OrientedBoundingBox::AABB_AXIS_X, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_rotation_x"))->getController()->getValue().getString()));
+			transform.update();
 			Vector3 obbAxis0;
 			Vector3 obbAxis1;
 			Vector3 obbAxis2;
-			transformations.getTransformationsMatrix().getAxes(obbAxis0, obbAxis1, obbAxis2);
+			transform.getTransformMatrix().getAxes(obbAxis0, obbAxis1, obbAxis2);
 			bbpe->setObbAxis0(obbAxis0);
 			bbpe->setObbAxis1(obbAxis1);
 			bbpe->setObbAxis2(obbAxis2);
@@ -1608,15 +1608,15 @@ void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleS
 				)
 			);
 
-			Transformations transformations;
-			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_Z, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_rotation_z"))->getController()->getValue().getString()));
-			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_Y, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_rotation_y"))->getController()->getValue().getString()));
-			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_X, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_rotation_x"))->getController()->getValue().getString()));
-			transformations.update();
+			Transform transform;
+			transform.addRotation(OrientedBoundingBox::AABB_AXIS_Z, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_rotation_z"))->getController()->getValue().getString()));
+			transform.addRotation(OrientedBoundingBox::AABB_AXIS_Y, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_rotation_y"))->getController()->getValue().getString()));
+			transform.addRotation(OrientedBoundingBox::AABB_AXIS_X, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_rotation_x"))->getController()->getValue().getString()));
+			transform.update();
 			Vector3 unusedAxis;
 			Vector3 axis0;
 			Vector3 axis1;
-			transformations.getTransformationsMatrix().getAxes(axis0, unusedAxis, axis1);
+			transform.getTransformMatrix().getAxes(axis0, unusedAxis, axis1);
 			cpse->setAxis0(axis0);
 			cpse->setAxis1(axis1);
 
@@ -1658,15 +1658,15 @@ void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleS
 				)
 			);
 
-			Transformations transformations;
-			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_Z, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_rotation_z"))->getController()->getValue().getString()));
-			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_Y, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_rotation_y"))->getController()->getValue().getString()));
-			transformations.addRotation(OrientedBoundingBox::AABB_AXIS_X, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_rotation_x"))->getController()->getValue().getString()));
-			transformations.update();
+			Transform transform;
+			transform.addRotation(OrientedBoundingBox::AABB_AXIS_Z, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_rotation_z"))->getController()->getValue().getString()));
+			transform.addRotation(OrientedBoundingBox::AABB_AXIS_Y, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_rotation_y"))->getController()->getValue().getString()));
+			transform.addRotation(OrientedBoundingBox::AABB_AXIS_X, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_rotation_x"))->getController()->getValue().getString()));
+			transform.update();
 			Vector3 unusedAxis;
 			Vector3 axis0;
 			Vector3 axis1;
-			transformations.getTransformationsMatrix().getAxes(axis0, unusedAxis, axis1);
+			transform.getTransformMatrix().getAxes(axis0, unusedAxis, axis1);
 			cpse->setAxis0(axis0);
 			cpse->setAxis1(axis1);
 

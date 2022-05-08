@@ -7,7 +7,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Object.h>
 #include <tdme/engine/Partition.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 
 using std::string;
 using std::vector;
@@ -16,7 +16,7 @@ using tdme::engine::Engine;
 using tdme::engine::LODObjectImposter;
 using tdme::engine::Object;
 using tdme::engine::Partition;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 
 LODObjectImposter::LODObjectImposter(
 	const string& id,
@@ -79,12 +79,12 @@ void LODObjectImposter::setRenderer(Renderer* renderer)
 {
 }
 
-void LODObjectImposter::fromTransformations(const Transformations& transformations)
+void LODObjectImposter::fromTransform(const Transform& transform)
 {
-	Transformations::fromTransformations(transformations);
+	Transform::fromTransform(transform);
 	// delegate to LOD objects
-	objectLOD1->fromTransformations(*this);
-	objectLOD2->fromTransformations(*this);
+	objectLOD1->fromTransform(*this);
+	objectLOD2->fromTransform(*this);
 	// update entity
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 	// reset current LOD object
@@ -93,10 +93,10 @@ void LODObjectImposter::fromTransformations(const Transformations& transformatio
 
 void LODObjectImposter::update()
 {
-	Transformations::update();
+	Transform::update();
 	// delegate to LOD objects
-	objectLOD1->fromTransformations(*this);
-	objectLOD2->fromTransformations(*this);
+	objectLOD1->fromTransform(*this);
+	objectLOD2->fromTransform(*this);
 	// update entity
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 	// reset current LOD object

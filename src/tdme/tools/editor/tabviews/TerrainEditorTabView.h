@@ -236,7 +236,7 @@ public:
 	 * Add temporary foliage
 	 * @param newFoliageMaps new foliage maps
 	 */
-	void addTemporaryFoliage(const vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps);
+	void addTemporaryFoliage(const vector<unordered_map<int, vector<Transform>>>& newFoliageMaps);
 
 	/**
 	 * Update temporary foliage

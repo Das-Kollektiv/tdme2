@@ -20,28 +20,28 @@ using tdme::math::Quaternion;
 using tdme::math::Vector3;
 
 /**
- * Transformations which contain scale, rotations and translation
+ * Transform which contain scale, rotations and translation
  * @author Andreas Drewke
  */
-class tdme::engine::Transformations {
+class tdme::engine::Transform {
 private:
 	Vector3 translation;
 	Vector3 scale;
 	Vector3 pivot;
 	Quaternion rotationsQuaternion;
 	vector<Rotation> rotations;
-	Matrix4x4 transformationsMatrix;
+	Matrix4x4 transformMatrix;
 
 public:
 	/**
 	 * Public constructor
 	 */
-	Transformations();
+	Transform();
 
 	/**
 	 * Destructor
 	 */
-	virtual ~Transformations();
+	virtual ~Transform();
 
 	/**
 	 * @return object translation
@@ -163,39 +163,39 @@ public:
 	}
 
 	/**
-	 * @return this transformations matrix
+	 * @return this transform matrix
 	 */
-	inline const Matrix4x4& getTransformationsMatrix() const {
-		return transformationsMatrix;
+	inline const Matrix4x4& getTransformMatrix() const {
+		return transformMatrix;
 	}
 
 	/**
-	 * Set up this transformations from given transformations
-	 * @param transformations transformations
+	 * Set up this transform from given transform
+	 * @param transform transform
 	 */
-	virtual void fromTransformations(const Transformations& transformations);
+	virtual void fromTransform(const Transform& transform);
 
 	/**
-	 * Set up this transformations from given matrix and rotation order
+	 * Set up this transform from given matrix and rotation order
 	 * @param matrix matrix
 	 * @param rotationOrder rotation order
 	 */
 	virtual void fromMatrix(const Matrix4x4& matrix, RotationOrder* rotationOrder);
 
 	/**
-	 * Computes transformation matrix
-	 * @param parentTransformations parent transformations
+	 * Computes transform matrix
+	 * @param parentTransform parent transform
 	 */
 	virtual void update();
 
 	/**
-	 * Apply parent transformations
-	 * @param parentTransformations parent transformations
+	 * Apply parent transform
+	 * @param parentTransform parent transform
 	 */
-	virtual void applyParentTransformations(const Transformations& parentTransformations);
+	virtual void applyParentTransform(const Transform& parentTransform);
 
 	/**
-	 * Invert this transformations
+	 * Invert this transform
 	 */
 	virtual void invert();
 

@@ -106,9 +106,9 @@ void UIEditorTabView::handleInputEvents()
 		//
 		auto modelEntity = dynamic_cast<Object*>(engine->getEntity("model"));
 		if (modelEntity != nullptr && modelMeshNode.empty() == false && modelEntity->getModel()->getNodeById(modelMeshNode) != nullptr) {
-			auto modelEntityWorldMatrix = modelEntity->getNodeTransformationsMatrix(modelMeshNode);
-			auto modelEntityModelImportMatrixInverted = modelEntity->getModel()->getImportTransformationsMatrix().clone().invert();
-			auto modelEntityWorldMatrixInverted = modelEntityWorldMatrix.clone().multiply(modelEntity->getTransformationsMatrix()).multiply(modelEntityModelImportMatrixInverted).invert();
+			auto modelEntityWorldMatrix = modelEntity->getNodeTransformMatrix(modelMeshNode);
+			auto modelEntityModelImportMatrixInverted = modelEntity->getModel()->getImportTransformMatrix().clone().invert();
+			auto modelEntityWorldMatrixInverted = modelEntityWorldMatrix.clone().multiply(modelEntity->getTransformMatrix()).multiply(modelEntityModelImportMatrixInverted).invert();
 			// handle mouse events
 			auto& engineMouseEvents = engine->getGUI()->getMouseEvents();
 			auto& guiEngineMouseEvents = guiEngine->getGUI()->getMouseEvents();

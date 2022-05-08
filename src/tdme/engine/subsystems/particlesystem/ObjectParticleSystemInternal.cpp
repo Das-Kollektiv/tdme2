@@ -17,7 +17,7 @@
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Object.h>
 #include <tdme/engine/Timing.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
@@ -40,7 +40,7 @@ using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Object;
 using tdme::engine::Timing;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -107,13 +107,13 @@ void ObjectParticleSystemInternal::setRenderer(Renderer* renderer)
 
 void ObjectParticleSystemInternal::update()
 {
-	Transformations::update();
+	Transform::update();
 	updateInternal();
 }
 
-void ObjectParticleSystemInternal::fromTransformations(const Transformations& transformations)
+void ObjectParticleSystemInternal::fromTransform(const Transform& transform)
 {
-	Transformations::fromTransformations(transformations);
+	Transform::fromTransform(transform);
 	updateInternal();
 }
 
@@ -163,11 +163,11 @@ void ObjectParticleSystemInternal::updateParticles()
 {
 	//
 	Vector3 center;
-	auto& localTransformationsMatrix = localTransformations.getTransformationsMatrix();
-	localTransformationsMatrix.getTranslation(center);
+	auto& localTransformMatrix = localTransform.getTransformMatrix();
+	localTransformMatrix.getTranslation(center);
 	center.add(emitter->getCenter());
-	// transformations
-	auto& transformationsMatrix = getTransformationsMatrix();
+	// transform
+	auto& transformMatrix = getTransformMatrix();
 	//
 	Vector3 point;
 	Vector3 velocityForTime;
@@ -201,10 +201,10 @@ void ObjectParticleSystemInternal::updateParticles()
 		object->setEffectColorAdd(effectColorAdd);
 		object->setEffectColorMul(effectColorMul);
 		// translation
-		point = localTransformationsMatrix.multiply(particle.position);
+		point = localTransformMatrix.multiply(particle.position);
 		point.add(center);
-		// transform particle according to its transformations
-		point = transformationsMatrix.multiply(point);
+		// transform particle according to its transform
+		point = transformMatrix.multiply(point);
 		// apply to object
 		object->setTranslation(point);
 		object->update();
@@ -225,7 +225,7 @@ void ObjectParticleSystemInternal::updateParticles()
 	}
 	// compute bounding boxes
 	boundingBoxTransformed.update();
-	boundingBox.fromBoundingVolumeWithTransformations(&boundingBoxTransformed, inverseTransformation);
+	boundingBox.fromBoundingVolumeWithTransform(&boundingBoxTransformed, inverseTransform);
 }
 
 void ObjectParticleSystemInternal::dispose()

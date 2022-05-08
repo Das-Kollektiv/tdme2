@@ -266,13 +266,13 @@ void FBXReader::setupModelImportRotationMatrix(Model* model) {
 		// no op
 	} else
 	if (model->getUpVector() == UpVector::Z_UP) {
-		model->setImportTransformationsMatrix(model->getImportTransformationsMatrix().clone().rotate(Vector3(1.0f, 0.0f, 0.0f), -90.0));
+		model->setImportTransformMatrix(model->getImportTransformMatrix().clone().rotate(Vector3(1.0f, 0.0f, 0.0f), -90.0));
 	}
 }
 
 void FBXReader::setupModelScaleRotationMatrix(FbxScene* fbxScene, Model* model) {
 	FbxSystemUnit fbxSceneSystemUnit = fbxScene->GetGlobalSettings().GetSystemUnit();
-	model->setImportTransformationsMatrix(model->getImportTransformationsMatrix().clone().scale(static_cast<float>(fbxSceneSystemUnit.GetConversionFactorTo(FbxSystemUnit::m))));
+	model->setImportTransformMatrix(model->getImportTransformMatrix().clone().scale(static_cast<float>(fbxSceneSystemUnit.GetConversionFactorTo(FbxSystemUnit::m))));
 }
 
 void FBXReader::processScene(FbxScene* fbxScene, Model* model, const string& pathName, vector<string>& possibleArmatureNodeIds) {
@@ -314,7 +314,7 @@ void FBXReader::processNode(FbxNode* fbxNode, Model* model, Node* parentNode, co
 		node = new Node(model, parentNode, fbxNodeName, fbxNodeName);
 	}
 	FbxAMatrix& fbxNodeLocalTransform = fbxNode->EvaluateLocalTransform();
-	node->setTransformationsMatrix(
+	node->setTransformMatrix(
 		Matrix4x4(
 			fbxNodeLocalTransform.Get(0,0),
 			fbxNodeLocalTransform.Get(0,1),
@@ -938,33 +938,33 @@ void FBXReader::processAnimation(FbxNode* fbxNode, const FbxTime& fbxStartFrame,
 		animation = new Animation();
 		node->setAnimation(animation);
 	}
-	auto transformationsMatrices = node->getAnimation()->getTransformationsMatrices();
-	transformationsMatrices.resize(model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT)->getFrames());
+	auto transformMatrices = node->getAnimation()->getTransformMatrices();
+	transformMatrices.resize(model->getAnimationSetup(Model::ANIMATIONSETUP_DEFAULT)->getFrames());
 	FbxTime fbxFrameTime;
 	fbxFrameTime.SetMilliSeconds(1000.0f * 1.0f / 30.0f);
 	for(auto i = fbxStartFrame; i < fbxEndFrame; i+= fbxFrameTime) {
-		FbxAMatrix& fbxTransformationMatrix = fbxNode->EvaluateLocalTransform(i);
+		FbxAMatrix& fbxTransformMatrix = fbxNode->EvaluateLocalTransform(i);
 		int frameIdx = frameOffset + (int)Math::ceil((i.GetMilliSeconds() - fbxStartFrame.GetMilliSeconds()) / (1000.0f * 1.0f / 30.0f));
-		transformationsMatrices[frameIdx].set(
-			fbxTransformationMatrix.Get(0,0),
-			fbxTransformationMatrix.Get(0,1),
-			fbxTransformationMatrix.Get(0,2),
-			fbxTransformationMatrix.Get(0,3),
-			fbxTransformationMatrix.Get(1,0),
-			fbxTransformationMatrix.Get(1,1),
-			fbxTransformationMatrix.Get(1,2),
-			fbxTransformationMatrix.Get(1,3),
-			fbxTransformationMatrix.Get(2,0),
-			fbxTransformationMatrix.Get(2,1),
-			fbxTransformationMatrix.Get(2,2),
-			fbxTransformationMatrix.Get(2,3),
-			fbxTransformationMatrix.Get(3,0),
-			fbxTransformationMatrix.Get(3,1),
-			fbxTransformationMatrix.Get(3,2),
-			fbxTransformationMatrix.Get(3,3)
+		transformMatrices[frameIdx].set(
+			fbxTransformMatrix.Get(0,0),
+			fbxTransformMatrix.Get(0,1),
+			fbxTransformMatrix.Get(0,2),
+			fbxTransformMatrix.Get(0,3),
+			fbxTransformMatrix.Get(1,0),
+			fbxTransformMatrix.Get(1,1),
+			fbxTransformMatrix.Get(1,2),
+			fbxTransformMatrix.Get(1,3),
+			fbxTransformMatrix.Get(2,0),
+			fbxTransformMatrix.Get(2,1),
+			fbxTransformMatrix.Get(2,2),
+			fbxTransformMatrix.Get(2,3),
+			fbxTransformMatrix.Get(3,0),
+			fbxTransformMatrix.Get(3,1),
+			fbxTransformMatrix.Get(3,2),
+			fbxTransformMatrix.Get(3,3)
 		);
 	}
-	node->getAnimation()->setTransformationsMatrices(transformationsMatrices);
+	node->getAnimation()->setTransformMatrices(transformMatrices);
 	for(auto i = 0; i < fbxNode->GetChildCount(); i++) {
 		processAnimation(fbxNode->GetChild(i), fbxStartFrame, fbxEndFrame, model, frameOffset);
 	}

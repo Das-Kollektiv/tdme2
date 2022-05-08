@@ -17,7 +17,7 @@
 #include <tdme/engine/LODObject.h>
 #include <tdme/engine/Object.h>
 #include <tdme/engine/Partition.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
@@ -41,7 +41,7 @@ using tdme::engine::LODObject;
 using tdme::engine::Object;
 using tdme::engine::ObjectRenderGroup;
 using tdme::engine::Partition;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -81,7 +81,7 @@ ObjectRenderGroup::~ObjectRenderGroup() {
 	}
 }
 
-void ObjectRenderGroup::combineNode(Node* sourceNode, const vector<Vector3>& origins, const vector<Matrix4x4>& objectParentTransformationsMatrices, Model* combinedModel) {
+void ObjectRenderGroup::combineNode(Node* sourceNode, const vector<Vector3>& origins, const vector<Matrix4x4>& objectParentTransformMatrices, Model* combinedModel) {
 	// create node in combined model
 	auto combinedModelNode = combinedModel->getNodeById(sourceNode->getId());
 	if (combinedModelNode == nullptr) {
@@ -125,27 +125,27 @@ void ObjectRenderGroup::combineNode(Node* sourceNode, const vector<Vector3>& ori
 		// add vertices and such from source node to new node
 		{
 			auto i = 0;
-			for (auto& objectParentTransformationsMatrix: objectParentTransformationsMatrices) {
-				Matrix4x4 transformationsMatrix;
-				transformationsMatrix.set(sourceNode->getTransformationsMatrix());
-				transformationsMatrix.multiply(objectParentTransformationsMatrix);
+			for (auto& objectParentTransformMatrix: objectParentTransformMatrices) {
+				Matrix4x4 transformMatrix;
+				transformMatrix.set(sourceNode->getTransformMatrix());
+				transformMatrix.multiply(objectParentTransformMatrix);
 
 				//
 				for (auto& vertex: sourceNode->getVertices()) {
 					combinedModelNodeOrigins.push_back(origins[i]);
-					combinedModelNodeVertices.push_back(transformationsMatrix.multiply(vertex));
+					combinedModelNodeVertices.push_back(transformMatrix.multiply(vertex));
 				}
 				for (auto& normal: sourceNode->getNormals()) {
-					combinedModelNodeNormals.push_back(transformationsMatrix.multiplyNoTranslation(normal));
+					combinedModelNodeNormals.push_back(transformMatrix.multiplyNoTranslation(normal));
 				}
 				for (auto& textureCoordinate: sourceNode->getTextureCoordinates()) {
 					combinedModelNodeTextureCoordinates.push_back(textureCoordinate);
 				}
 				for (auto& tangent: sourceNode->getTangents()) {
-					combinedModelNodeTangents.push_back(transformationsMatrix.multiplyNoTranslation(tangent));
+					combinedModelNodeTangents.push_back(transformMatrix.multiplyNoTranslation(tangent));
 				}
 				for (auto& bitangent: sourceNode->getBitangents()) {
-					combinedModelNodeBitangents.push_back(transformationsMatrix.multiplyNoTranslation(bitangent));
+					combinedModelNodeBitangents.push_back(transformMatrix.multiplyNoTranslation(bitangent));
 				}
 
 				//
@@ -191,7 +191,7 @@ void ObjectRenderGroup::combineNode(Node* sourceNode, const vector<Vector3>& ori
 			auto combinedModelNodeTextureCoordinatesIdx = combinedModelNodeTextureCoordinatesIdxStart;
 			auto combinedModelNodeTangentsIdx = combinedModelNodeTangentsIdxStart;
 			auto combinedModelNodeBitangentsIdx = combinedModelNodeBitangentsIdxStart;
-			for (auto& objectParentTransformationsMatrix: objectParentTransformationsMatrices) {
+			for (auto& objectParentTransformMatrix: objectParentTransformMatrices) {
 				// add faces
 				for (auto& face: facesEntity.getFaces()) {
 					// get face vertices and such
@@ -256,22 +256,22 @@ void ObjectRenderGroup::combineNode(Node* sourceNode, const vector<Vector3>& ori
 
 	// do child nodes
 	for (auto nodeIt: sourceNode->getSubNodes()) {
-		combineNode(nodeIt.second, origins, objectParentTransformationsMatrices, combinedModel);
+		combineNode(nodeIt.second, origins, objectParentTransformMatrices, combinedModel);
 	}
 }
 
-void ObjectRenderGroup::combineObjects(Model* model, const vector<Transformations>& objectsTransformations, Model* combinedModel) {
-	vector<Matrix4x4> objectTransformationMatrices;
+void ObjectRenderGroup::combineObjects(Model* model, const vector<Transform>& objectsTransform, Model* combinedModel) {
+	vector<Matrix4x4> objectTransformMatrices;
 	vector<Vector3> origins;
-	for (auto& objectTransformations: objectsTransformations) {
-		Matrix4x4 transformationsMatrix;
-		transformationsMatrix.set(model->getImportTransformationsMatrix());
-		transformationsMatrix.multiply(objectTransformations.getTransformationsMatrix());
-		objectTransformationMatrices.push_back(transformationsMatrix);
-		origins.push_back(objectTransformations.getTranslation());
+	for (auto& objectTransform: objectsTransform) {
+		Matrix4x4 transformMatrix;
+		transformMatrix.set(model->getImportTransformMatrix());
+		transformMatrix.multiply(objectTransform.getTransformMatrix());
+		objectTransformMatrices.push_back(transformMatrix);
+		origins.push_back(objectTransform.getTranslation());
 	}
 	for (auto nodeIt: model->getSubNodes()) {
-		combineNode(nodeIt.second, origins, objectTransformationMatrices, combinedModel);
+		combineNode(nodeIt.second, origins, objectTransformMatrices, combinedModel);
 	}
 }
 
@@ -297,24 +297,24 @@ void ObjectRenderGroup::updateRenderGroup() {
 	}
 
 	//
-	for (auto& transformationsByModelIt: transformationsByModel) {
-		auto model = transformationsByModelIt.first;
-		auto& objectsTransformations = transformationsByModelIt.second;
+	for (auto& transformByModelIt: transformByModel) {
+		auto model = transformByModelIt.first;
+		auto& objectsTransform = transformByModelIt.second;
 		auto lodLevel = 0;
 		for (auto combinedModel: combinedModels) {
 			auto reduceByFactor = lodReduceBy[lodLevel];
 			lodLevel++;
 			auto objectCount = 0;
-			vector<Transformations> reducedObjectsTransformations;
-			for (auto& objectTransformations: objectsTransformations) {
+			vector<Transform> reducedObjectsTransform;
+			for (auto& objectTransform: objectsTransform) {
 				if (objectCount % reduceByFactor != 0) {
 					objectCount++;
 					continue;
 				}
-				reducedObjectsTransformations.push_back(objectTransformations);
+				reducedObjectsTransform.push_back(objectTransform);
 				objectCount++;
 			}
-			combineObjects(model, reducedObjectsTransformations, combinedModel);
+			combineObjects(model, reducedObjectsTransform, combinedModel);
 		}
 	}
 
@@ -395,8 +395,8 @@ void ObjectRenderGroup::updateRenderGroup() {
 	update();
 }
 
-void ObjectRenderGroup::addObject(Model* model, const Transformations& transformations) {
-	transformationsByModel[model].push_back(transformations);
+void ObjectRenderGroup::addObject(Model* model, const Transform& transform) {
+	transformByModel[model].push_back(transform);
 }
 
 void ObjectRenderGroup::setEngine(Engine* engine)
@@ -411,20 +411,20 @@ void ObjectRenderGroup::setRenderer(Renderer* renderer)
 {
 }
 
-void ObjectRenderGroup::fromTransformations(const Transformations& transformations)
+void ObjectRenderGroup::fromTransform(const Transform& transform)
 {
-	Transformations::fromTransformations(transformations);
+	Transform::fromTransform(transform);
 	// update bounding box transformed
-	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
+	boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
 	// update object
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
 void ObjectRenderGroup::update()
 {
-	Transformations::update();
+	Transform::update();
 	// update bounding box transformed
-	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
+	boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
 	// update object
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }

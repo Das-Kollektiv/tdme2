@@ -10,7 +10,7 @@
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 
@@ -21,7 +21,7 @@ using std::vector;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::model::Model;
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 
@@ -290,7 +290,7 @@ public:
 		vector<float>& terrainHeightVector,
 		const Vector3& brushCenterPosition,
 		const FoliageBrush& foliageBrush,
-		vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
+		vector<unordered_map<int, vector<Transform>>>& foliageMaps,
 		unordered_set<int>& updateFoliagePartitions
 	);
 
@@ -312,7 +312,7 @@ public:
 		Texture* brushTexture,
 		float brushRotation,
 		const Vector2& brushScale,
-		vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
+		vector<unordered_map<int, vector<Transform>>>& foliageMaps,
 		unordered_set<int>& updateFoliagePartitions
 	);
 
@@ -384,7 +384,7 @@ public:
 	 */
 	static void createFoliageMaps(
 		BoundingBox& terrainBoundingBox, // TODO: constness
-		vector<unordered_map<int, vector<Transformations>>>& foliageMaps
+		vector<unordered_map<int, vector<Transform>>>& foliageMaps
 	);
 
 	/**
@@ -396,7 +396,7 @@ public:
 	static void createFoliageMaps(
 		float terrainWidth,
 		float terrainDepth,
-		vector<unordered_map<int, vector<Transformations>>>& foliageMaps
+		vector<unordered_map<int, vector<Transform>>>& foliageMaps
 	);
 
 	/**
@@ -404,7 +404,7 @@ public:
 	 * @param foliageMaps foliage maps
 	 */
 	static void emptyFoliageMaps(
-		vector<unordered_map<int, vector<Transformations>>>& foliageMaps
+		vector<unordered_map<int, vector<Transform>>>& foliageMaps
 	);
 
 	/**
@@ -426,8 +426,8 @@ public:
 		const FoliageBrush& foliageBrush,
 		const vector<FoliageBrushPrototype>& foliageBrushPrototypes,
 		BrushOperation brushOperation,
-		vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
-		vector<unordered_map<int, vector<Transformations>>>& newFoliageMaps
+		vector<unordered_map<int, vector<Transform>>>& foliageMaps,
+		vector<unordered_map<int, vector<Transform>>>& newFoliageMaps
 	);
 
 	/**
@@ -446,7 +446,7 @@ public:
 		const FoliageBrush& foliageBrush,
 		const vector<FoliageBrushPrototype>& foliageBrushPrototypes,
 		BrushOperation brushOperation,
-		vector<unordered_map<int, vector<Transformations>>>& foliageMaps,
+		vector<unordered_map<int, vector<Transform>>>& foliageMaps,
 		unordered_set<int>& recreateFoliagePartitions
 	);
 
@@ -467,7 +467,7 @@ public:
 		vector<float>& terrainHeightVector,
 		unordered_map<int, float>& waterPositionMapsHeight,
 		unordered_map<int, unordered_map<int, unordered_set<int>>>& waterPositionMaps,
-		vector<unordered_map<int, vector<Transformations>>>& foliageMaps
+		vector<unordered_map<int, vector<Transform>>>& foliageMaps
 	);
 
 	/**
@@ -487,7 +487,7 @@ public:
 		vector<float>& terrainHeightVector,
 		unordered_map<int, float>& waterPositionMapsHeight,
 		unordered_map<int, unordered_map<int, unordered_set<int>>>& waterPositionMaps,
-		vector<unordered_map<int, vector<Transformations>>>& foliageMaps
+		vector<unordered_map<int, vector<Transform>>>& foliageMaps
 	);
 
 };

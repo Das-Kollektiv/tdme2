@@ -13,7 +13,7 @@
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -58,7 +58,7 @@ using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLibrary;
 using tdme::engine::Engine;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIImageNode;
@@ -245,9 +245,9 @@ void SceneEditorTabController::onValueChanged(GUIElementNode* node)
 				try {
 					view->applyTranslation(
 						Vector3(
-							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_x"))->getController()->getValue().getString()),
-							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_y"))->getController()->getValue().getString()),
-							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_z"))->getController()->getValue().getString())
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transform_translation_x"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transform_translation_y"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transform_translation_z"))->getController()->getValue().getString())
 						)
 					);
 				} catch (Exception& exception) {
@@ -264,9 +264,9 @@ void SceneEditorTabController::onValueChanged(GUIElementNode* node)
 				try {
 					view->applyRotation(
 						Vector3(
-							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_x"))->getController()->getValue().getString()),
-							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_y"))->getController()->getValue().getString()),
-							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_z"))->getController()->getValue().getString())
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transform_rotation_x"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transform_rotation_y"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transform_rotation_z"))->getController()->getValue().getString())
 						)
 					);
 				} catch (Exception& exception) {
@@ -283,9 +283,9 @@ void SceneEditorTabController::onValueChanged(GUIElementNode* node)
 				try {
 					view->applyScale(
 						Vector3(
-							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_x"))->getController()->getValue().getString()),
-							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_y"))->getController()->getValue().getString()),
-							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_z"))->getController()->getValue().getString())
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transform_scale_x"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transform_scale_y"))->getController()->getValue().getString()),
+							Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transform_scale_z"))->getController()->getValue().getString())
 						)
 					);
 				} catch (Exception& exception) {
@@ -1032,16 +1032,16 @@ void SceneEditorTabController::setEntityDetails(const string& entityId) {
 
 	view->getEditorView()->setDetailsContent(
 		string("<template id=\"details_base\" src=\"resources/engine/gui/template_details_base.xml\" />") +
-		string("<template id=\"details_transformations\" src=\"resources/engine/gui/template_details_transformation.xml\" />") +
+		string("<template id=\"details_transform\" src=\"resources/engine/gui/template_details_transform.xml\" />") +
 		string("<template id=\"details_reflections\" src=\"resources/engine/gui/template_details_reflection.xml\" />")
 	);
 
 	//
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_base"))->getActiveConditions().add("open");
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_transformations"))->getActiveConditions().add("open");
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_transform"))->getActiveConditions().add("open");
 		if ((entity->getPrototype()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == Gizmo::GIZMOTYPE_ROTATE) {
-			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_transformations"))->getActiveConditions().add("rotation");
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_transform"))->getActiveConditions().add("rotation");
 		}
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_reflections"))->getActiveConditions().add("open");
 
@@ -1054,7 +1054,7 @@ void SceneEditorTabController::setEntityDetails(const string& entityId) {
 
 	//
 	updateReflectionEnvironmentMappingDetailsDropDown(entity->getReflectionEnvironmentMappingId());
-	updateEntityDetails(entity->getTransformations());
+	updateEntityDetails(entity->getTransform());
 }
 
 void SceneEditorTabController::setEntityDetailsMultiple(const Vector3& pivot, const string& selectedReflectionEnvironmentMappingId) {
@@ -1063,14 +1063,14 @@ void SceneEditorTabController::setEntityDetailsMultiple(const Vector3& pivot, co
 	auto scene = view->getScene();
 
 	view->getEditorView()->setDetailsContent(
-		string("<template id=\"details_transformations\" src=\"resources/engine/gui/template_details_transformation.xml\" />") +
+		string("<template id=\"details_transform\" src=\"resources/engine/gui/template_details_transform.xml\" />") +
 		string("<template id=\"details_reflections\" src=\"resources/engine/gui/template_details_reflection.xml\" />")
 	);
 
 	//
 	try {
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_transformations"))->getActiveConditions().add("open");
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_transformations"))->getActiveConditions().add("rotation");
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_transform"))->getActiveConditions().add("open");
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_transform"))->getActiveConditions().add("rotation");
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_reflections"))->getActiveConditions().add("open");
 	} catch (Exception& exception) {
 		Console::println(string("SceneEditorTabController::setEntityDetails(): An error occurred: ") + exception.what());;
@@ -1086,16 +1086,16 @@ void SceneEditorTabController::setEntityDetailsMultiple(const Vector3& pivot, co
 	);
 }
 
-void SceneEditorTabController::updateEntityDetails(const Transformations& transformations) {
+void SceneEditorTabController::updateEntityDetails(const Transform& transform) {
 	auto scene = view->getScene();
 	updateEntityDetails(
-		transformations.getTranslation(),
+		transform.getTranslation(),
 		Vector3(
-			transformations.getRotationAngle(scene->getRotationOrder()->getAxisXIndex()),
-			transformations.getRotationAngle(scene->getRotationOrder()->getAxisYIndex()),
-			transformations.getRotationAngle(scene->getRotationOrder()->getAxisZIndex())
+			transform.getRotationAngle(scene->getRotationOrder()->getAxisXIndex()),
+			transform.getRotationAngle(scene->getRotationOrder()->getAxisYIndex()),
+			transform.getRotationAngle(scene->getRotationOrder()->getAxisZIndex())
 		),
-		transformations.getScale()
+		transform.getScale()
 	);
 
 }
@@ -1103,17 +1103,17 @@ void SceneEditorTabController::updateEntityDetails(const Transformations& transf
 void SceneEditorTabController::updateEntityDetails(const Vector3& translation, const Vector3& rotation, const Vector3& scale) {
 	//
 	try {
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_x"))->getController()->setValue(translation.getX());
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_y"))->getController()->setValue(translation.getY());
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_translation_z"))->getController()->setValue(translation.getZ());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transform_translation_x"))->getController()->setValue(translation.getX());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transform_translation_y"))->getController()->setValue(translation.getY());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transform_translation_z"))->getController()->setValue(translation.getZ());
 
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_x"))->getController()->setValue(rotation.getX());
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_y"))->getController()->setValue(rotation.getY());
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_rotation_z"))->getController()->setValue(rotation.getZ());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transform_rotation_x"))->getController()->setValue(rotation.getX());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transform_rotation_y"))->getController()->setValue(rotation.getY());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transform_rotation_z"))->getController()->setValue(rotation.getZ());
 
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_x"))->getController()->setValue(scale.getX());
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_y"))->getController()->setValue(scale.getY());
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transformation_scale_z"))->getController()->setValue(scale.getZ());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transform_scale_x"))->getController()->setValue(scale.getX());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transform_scale_y"))->getController()->setValue(scale.getY());
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transform_scale_z"))->getController()->setValue(scale.getZ());
 	} catch (Exception& exception) {
 		Console::println(string("SceneEditorTabController::updateEntityDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));

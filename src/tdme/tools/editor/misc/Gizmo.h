@@ -5,7 +5,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 
@@ -15,7 +15,7 @@ using tdme::engine::model::Node;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Object;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Vector3;
 
 /**
@@ -133,9 +133,9 @@ public:
 	/**
 	 * Update gizmo
 	 * @param gizmoCenter GIZMO center
-	 * @param transformations transformations used for rotation
+	 * @param transform transform used for rotation
 	 */
-	void updateGizmo(const Vector3& gizmoCenter, const Transformations& transformations);
+	void updateGizmo(const Vector3& gizmoCenter, const Transform& transform);
 
 	/**
 	 * @return GIZMO object
@@ -158,7 +158,7 @@ public:
 	bool determineGizmoMovement(int mouseX, int mouseY, vector<Vector3> vertices, Vector3& deltaMovement);
 
 	/**
-	 * Determine GIZMO delta transformations
+	 * Determine GIZMO delta transform
 	 * @param mouseLastX last mouse X position
 	 * @param mouseLastY last mouse Y position
 	 * @param mouseX mouse X position
@@ -167,7 +167,7 @@ public:
 	 * @param deltaRotation determined delta rotations
 	 * @param deltaScale determined delta scale
 	 */
-	bool determineGizmoDeltaTransformations(int mouseLastX, int mouseLastY, int mouseX, int mouseY, Vector3& deltaTranslation, Vector3& deltaRotation, Vector3& deltaScale);
+	bool determineGizmoDeltaTransform(int mouseLastX, int mouseLastY, int mouseX, int mouseY, Vector3& deltaTranslation, Vector3& deltaRotation, Vector3& deltaScale);
 
 	/**
 	 * Select GIZMO mode
@@ -178,8 +178,8 @@ public:
 
 	/**
 	 * Set gizmo rotation
-	 * @param transformations transformations containing rotations
+	 * @param transform transform containing rotations
 	 */
-	void setGizmoRotation(const Transformations& transformations);
+	void setGizmoRotation(const Transform& transform);
 
 };

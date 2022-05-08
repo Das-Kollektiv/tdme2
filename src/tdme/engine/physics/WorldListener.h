@@ -5,13 +5,13 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 
 using std::string;
 using std::vector;
 
 using tdme::engine::primitives::BoundingVolume;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 
 /**
  * World listener which is about notifying adding or removing bodies
@@ -31,14 +31,14 @@ struct tdme::engine::physics::WorldListener
 	 * @param type body type
 	 * @param enabled enabled
 	 * @param collisionTypeId collision type id
-	 * @param transformations transformations
+	 * @param transform transform
 	 * @param restitution restitution
 	 * @param friction friction
 	 * @param mass mass
 	 * @param inertiaTensor inertia tensor
 	 * @param boundingVolumes bounding volumes
 	 */
-	virtual void onAddedBody(const string& id, int32_t type, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Vector3& inertiaTensor, vector<BoundingVolume*>& boundingVolumes) = 0;
+	virtual void onAddedBody(const string& id, int32_t type, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, vector<BoundingVolume*>& boundingVolumes) = 0;
 
 	/**
 	 * Event fired when rigid body was removed

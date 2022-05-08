@@ -17,7 +17,7 @@
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/Object.h>
 #include <tdme/engine/Rotation.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utilities/Console.h>
 
@@ -36,7 +36,7 @@ using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Object;
 using tdme::engine::Rotation;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
@@ -46,7 +46,7 @@ using tdme::utilities::Console;
  * @author Andreas Drewke
  */
 class tdme::engine::EntityHierarchy final:
-	public Transformations,
+	public Transform,
 	public Entity
 {
 private:
@@ -84,9 +84,9 @@ private:
 	inline Entity* getParentEntity() override {
 		return parentEntity;
 	}
-	inline void applyParentTransformations(const Transformations& parentTransformations) override {
-		Transformations::applyParentTransformations(parentTransformations);
-		boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
+	inline void applyParentTransform(const Transform& parentTransform) override {
+		Transform::applyParentTransform(parentTransform);
+		boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
 	}
 
 	/**
@@ -114,12 +114,12 @@ private:
 
 	/**
 	 * Update hierarchy from given entity hierarchy level ongoing
-	 * @param parentTransformations parent transformations
+	 * @param parentTransform parent transform
 	 * @param entityHierarchyLevel entity hierarchy level
 	 * @param depth depth
 	 * @param firstEntity first entity
 	 */
-	void updateHierarchy(const Transformations& parentTransformations, EntityHierarchyLevel& entityHierarchyLevel, int depth, bool& firstEntity);
+	void updateHierarchy(const Transform& parentTransform, EntityHierarchyLevel& entityHierarchyLevel, int depth, bool& firstEntity);
 
 public:
 	/**
@@ -211,7 +211,7 @@ public:
 	void setEnabled(bool enabled) override;
 	bool isFrustumCulling() override;
 	void setFrustumCulling(bool frustumCulling) override;
-	void fromTransformations(const Transformations& transformations) override;
+	void fromTransform(const Transform& transform) override;
 	void update() override;
 
 	inline BoundingBox* getBoundingBox() override {
@@ -272,70 +272,70 @@ public:
 	}
 
 	inline const Vector3& getTranslation() const override {
-		return Transformations::getTranslation();
+		return Transform::getTranslation();
 	}
 
 	inline void setTranslation(const Vector3& translation) override {
-		Transformations::setTranslation(translation);
+		Transform::setTranslation(translation);
 	}
 
 	inline const Vector3& getScale() const override {
-		return Transformations::getScale();
+		return Transform::getScale();
 	}
 
 	inline void setScale(const Vector3& scale) override {
-		Transformations::setScale(scale);
+		Transform::setScale(scale);
 	}
 
 	inline const Vector3& getPivot() const override {
-		return Transformations::getPivot();
+		return Transform::getPivot();
 	}
 
 	inline void setPivot(const Vector3& pivot) override {
-		Transformations::setPivot(pivot);
+		Transform::setPivot(pivot);
 	}
 
 	inline const int getRotationCount() const override {
-		return Transformations::getRotationCount();
+		return Transform::getRotationCount();
 	}
 
 	inline Rotation& getRotation(const int idx) override {
-		return Transformations::getRotation(idx);
+		return Transform::getRotation(idx);
 	}
 
 	inline void addRotation(const Vector3& axis, const float angle) override {
-		Transformations::addRotation(axis, angle);
+		Transform::addRotation(axis, angle);
 	}
 
 	inline void removeRotation(const int idx) override {
-		Transformations::removeRotation(idx);
+		Transform::removeRotation(idx);
 	}
 
 	inline const Vector3& getRotationAxis(const int idx) const override {
-		return Transformations::getRotationAxis(idx);
+		return Transform::getRotationAxis(idx);
 	}
 
 	inline void setRotationAxis(const int idx, const Vector3& axis) override {
-		Transformations::setRotationAxis(idx, axis);
+		Transform::setRotationAxis(idx, axis);
 	}
 
 	inline const float getRotationAngle(const int idx) const override {
-		return Transformations::getRotationAngle(idx);
+		return Transform::getRotationAngle(idx);
 	}
 
 	inline void setRotationAngle(const int idx, const float angle) override {
-		Transformations::setRotationAngle(idx, angle);
+		Transform::setRotationAngle(idx, angle);
 	}
 
 	inline const Quaternion& getRotationsQuaternion() const override {
-		return Transformations::getRotationsQuaternion();
+		return Transform::getRotationsQuaternion();
 	}
 
-	inline const Matrix4x4& getTransformationsMatrix() const override {
-		return Transformations::getTransformationsMatrix();
+	inline const Matrix4x4& getTransformMatrix() const override {
+		return Transform::getTransformMatrix();
 	}
 
-	inline const Transformations& getTransformations() const override {
+	inline const Transform& getTransform() const override {
 		return *this;
 	}
 

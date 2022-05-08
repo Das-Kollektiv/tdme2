@@ -8,7 +8,7 @@
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeTerrainBrush.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 
 using std::unordered_map;
 using std::unordered_set;
@@ -17,7 +17,7 @@ using std::vector;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeTerrainBrush;
 
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 
 /**
  * Prototype terrain definition
@@ -34,7 +34,7 @@ private:
 	unordered_map<int, unordered_map<int, unordered_set<int>>> waterPositionMaps;
 	int foliagePrototypeMapIdx { 0 };
 	unordered_map<int, Prototype*> foliageFoliagePrototypeMap;
-	vector<unordered_map<int, vector<Transformations>>> foliageMaps;
+	vector<unordered_map<int, vector<Transform>>> foliageMaps;
 	vector<PrototypeTerrainBrush*> brushes;
 
 public:
@@ -205,7 +205,7 @@ public:
 	/**
 	 * @return foliage maps
 	 */
-	inline vector<unordered_map<int, vector<Transformations>>>& getFoliageMaps() {
+	inline vector<unordered_map<int, vector<Transform>>>& getFoliageMaps() {
 		return foliageMaps;
 	}
 
@@ -219,11 +219,11 @@ public:
 		auto prototypeEntityIdx = 0;
 		for (auto& foliageMapPartition: foliageMaps) {
 			for (auto& foliageMapPartitionIt: foliageMapPartition) {
-				auto& transformationsVector = foliageMapPartition[prototypeIdx];
-				if (transformationsVector.empty() == true) continue;
+				auto& transformVector = foliageMapPartition[prototypeIdx];
+				if (transformVector.empty() == true) continue;
 				auto foliagePrototype = getFoliagePrototype(prototypeIdx);
 				if (foliagePrototype->isRenderGroups() == false) {
-					for (auto& transformations: transformationsVector) {
+					for (auto& transform: transformVector) {
 						foliagePrototypeEntityIds.push_back("tdme.foliage." + to_string(prototypeIdx) + "." + to_string(prototypeEntityIdx++));
 					}
 				}
@@ -233,24 +233,24 @@ public:
 	}
 
 	/**
-	 * Get foliage prototype entity transformations indexed by entity id
+	 * Get foliage prototype entity transform indexed by entity id
 	 * @param prototypeIdx prototype index
-	 * @return transformations indexed by entity id
+	 * @return transform indexed by entity id
 	 */
-	inline const map<string, Transformations> getFoliagePrototypeEntityTransformations(int prototypeIdx) {
-		map<string, Transformations> foliagePrototypeEntityTransformations;
+	inline const map<string, Transform> getFoliagePrototypeEntityTransform(int prototypeIdx) {
+		map<string, Transform> foliagePrototypeEntityTransform;
 		auto prototypeEntityIdx = 0;
 		for (auto& foliageMapPartition: foliageMaps) {
-			auto& transformationsVector = foliageMapPartition[prototypeIdx];
-			if (transformationsVector.empty() == true) continue;
+			auto& transformVector = foliageMapPartition[prototypeIdx];
+			if (transformVector.empty() == true) continue;
 			auto foliagePrototype = getFoliagePrototype(prototypeIdx);
 			if (foliagePrototype->isRenderGroups() == false) {
-				for (auto& transformations: transformationsVector) {
-					foliagePrototypeEntityTransformations["tdme.foliage." + to_string(prototypeIdx) + "." + to_string(prototypeEntityIdx++)] = transformations;
+				for (auto& transform: transformVector) {
+					foliagePrototypeEntityTransform["tdme.foliage." + to_string(prototypeIdx) + "." + to_string(prototypeEntityIdx++)] = transform;
 				}
 			}
 		}
-		return foliagePrototypeEntityTransformations;
+		return foliagePrototypeEntityTransform;
 	}
 
 	/**

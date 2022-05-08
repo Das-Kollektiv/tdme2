@@ -178,7 +178,7 @@ void EnvironmentMappingRenderer::render(const Vector3& position)
 			Engine::renderer->clear(engine->renderer->CLEAR_DEPTH_BUFFER_BIT | engine->renderer->CLEAR_COLOR_BUFFER_BIT);
 
 			//
-			engine->computeTransformations(camera, visibleDecomposedEntities, false, false);
+			engine->preRender(camera, visibleDecomposedEntities, false, false);
 
 			// do a render pass
 			engine->render(

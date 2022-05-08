@@ -25,7 +25,7 @@ TerrainMesh::TerrainMesh()
 {
 }
 
-TerrainMesh::TerrainMesh(ObjectModel* model, const Transformations& transformations)
+TerrainMesh::TerrainMesh(ObjectModel* model, const Transform& transform)
 {
 	// fetch vertices and indices
 	vector<Triangle> triangles;
@@ -34,7 +34,7 @@ TerrainMesh::TerrainMesh(ObjectModel* model, const Transformations& transformati
 	Vector3 vertexTransformed;
 	for (auto& triangle: triangles) {
 		for (const auto& vertex: triangle.getVertices()) {
-			vertexTransformed = transformations.getTransformationsMatrix().multiply(vertex);
+			vertexTransformed = transform.getTransformMatrix().multiply(vertex);
 			auto i = 0;
 			for (; i < indexedVertices.size(); i++) {
 				if (indexedVertices[i].equals(vertexTransformed) == true) break;
@@ -97,8 +97,8 @@ void TerrainMesh::setScale(const Vector3& scale) {
 	indices.clear();;
 }
 
-void TerrainMesh::fromTransformations(const Transformations& transformations) {
-	Console::println("TerrainMesh::fromTransformations(): Not supported!");
+void TerrainMesh::fromTransform(const Transform& transform) {
+	Console::println("TerrainMesh::fromTransform(): Not supported!");
 }
 
 TerrainMesh::BoundingVolume* TerrainMesh::clone() const {

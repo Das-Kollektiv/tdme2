@@ -16,7 +16,7 @@
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/engine/prototype/PrototypePhysics.h>
 #include <tdme/engine/prototype/PrototypePhysics_BodyType.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
@@ -66,7 +66,7 @@ using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::prototype::PrototypePhysics;
 using tdme::engine::prototype::PrototypePhysics_BodyType;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
@@ -501,7 +501,7 @@ void PrototypePhysicsSubController::applyBoundingVolumeCapsuleDetails(Prototype*
 void PrototypePhysicsSubController::applyBoundingVolumeObbDetails(Prototype* prototype, int idx)
 {
 	try {
-		Transformations rotations;
+		Transform rotations;
 		rotations.addRotation(OrientedBoundingBox::AABB_AXIS_Z, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_rotation_x"))->getController()->getValue().getString()));
 		rotations.addRotation(OrientedBoundingBox::AABB_AXIS_Y, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_rotation_y"))->getController()->getValue().getString()));
 		rotations.addRotation(OrientedBoundingBox::AABB_AXIS_X, Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_obb_rotation_z"))->getController()->getValue().getString()));
@@ -509,7 +509,7 @@ void PrototypePhysicsSubController::applyBoundingVolumeObbDetails(Prototype* pro
 		Vector3 xAxis;
 		Vector3 yAxis;
 		Vector3 zAxis;
-		rotations.getTransformationsMatrix().clone().getAxes(xAxis, yAxis, zAxis);
+		rotations.getTransformMatrix().clone().getAxes(xAxis, yAxis, zAxis);
 		view->applyBoundingVolumeObb(
 			prototype,
 			idx,

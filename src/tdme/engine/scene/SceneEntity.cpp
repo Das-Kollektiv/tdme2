@@ -6,7 +6,7 @@
 #include <tdme/engine/prototype/BaseProperties.h>
 #include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 
 using std::string;
 
@@ -14,11 +14,11 @@ using tdme::engine::prototype::BaseProperties;
 using tdme::engine::prototype::BaseProperty;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::SceneEntity;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 
-SceneEntity::SceneEntity(const string& id, const string& description, const Transformations& transformations, Prototype* prototype): BaseProperties(id, description)
+SceneEntity::SceneEntity(const string& id, const string& description, const Transform& transform, Prototype* prototype): BaseProperties(id, description)
 {
-	this->transformations.fromTransformations(transformations);
+	this->transform.fromTransform(transform);
 	this->prototype = prototype;
 }
 

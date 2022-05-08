@@ -38,7 +38,7 @@ namespace engine {
 	class SimplePartition;
 	class ShaderParameter;
 	class Timing;
-	class Transformations;
+	class Transform;
 	struct Version;
 }  // namespace engine
 }  // namespace tdme

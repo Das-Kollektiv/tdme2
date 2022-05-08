@@ -26,7 +26,7 @@
 #include <tdme/engine/model/UpVector.h>
 #include <tdme/engine/subsystems/rendering/ModelStatistics.h>
 #include <tdme/engine/ModelUtilities.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
@@ -72,7 +72,7 @@ using tdme::engine::model::TextureCoordinate;
 using tdme::engine::model::UpVector;
 using tdme::engine::subsystems::rendering::ModelStatistics;
 using tdme::engine::ModelUtilities;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -230,10 +230,10 @@ void DAEReader::setupModelImportRotationMatrix(TiXmlElement* xmlRoot, Model* mod
 			if (StringTools::equalsIgnoreCase(upAxis, "Y_UP") == true) {
 			} else
 			if (StringTools::equalsIgnoreCase(upAxis, "Z_UP") == true) {
-				model->setImportTransformationsMatrix(model->getImportTransformationsMatrix().clone().rotate(Vector3(1.0f, 0.0f, 0.0f), -90.0f));
+				model->setImportTransformMatrix(model->getImportTransformMatrix().clone().rotate(Vector3(1.0f, 0.0f, 0.0f), -90.0f));
 			} else
 			if (StringTools::equalsIgnoreCase(upAxis, "X_UP") == true) {
-				model->setImportTransformationsMatrix(model->getImportTransformationsMatrix().clone().rotate(Vector3(0.0f, 1.0f, 0.0f), -90.0f));
+				model->setImportTransformMatrix(model->getImportTransformMatrix().clone().rotate(Vector3(0.0f, 1.0f, 0.0f), -90.0f));
 			} else {
 				Console::println(string("Warning: Unknown up axis: " + upAxis));
 			}
@@ -249,7 +249,7 @@ void DAEReader::setupModelImportScaleMatrix(TiXmlElement* xmlRoot, Model* model)
 			string tmp;
 			if ((tmp = string(AVOID_NULLPTR_STRING(xmlAssetUnit->Attribute("meter")))).length() > 0) {
 				float scaleFactor = Float::parse(tmp);
-				model->setImportTransformationsMatrix(model->getImportTransformationsMatrix().clone().scale(scaleFactor));
+				model->setImportTransformMatrix(model->getImportTransformMatrix().clone().scale(scaleFactor));
 			}
 		}
 	}
@@ -274,19 +274,19 @@ Node* DAEReader::readNode(const string& pathName, Model* model, Node* parentNode
 	// create node
 	auto node = new Node(model, parentNode, xmlNodeId, xmlNodeName);
 
-	// set up local transformations matrix
+	// set up local transform matrix
 	auto xmlMatrixElements = getChildrenByTagName(xmlNode, "matrix");
 	if (xmlMatrixElements.empty() == false) {
 		StringTokenizer t;
-		Matrix4x4 transformationsMatrix;
+		Matrix4x4 transformMatrix;
 		auto xmlMatrix = string(AVOID_NULLPTR_STRING(xmlMatrixElements.at(0)->GetText()));
 		t.tokenize(xmlMatrix, " \n\r");
-		array<float, 16> transformationsMatrixArray;
-		for (auto i = 0; i < transformationsMatrixArray.size(); i++) {
-			transformationsMatrixArray[i] = Float::parse(t.nextToken());
+		array<float, 16> transformMatrixArray;
+		for (auto i = 0; i < transformMatrixArray.size(); i++) {
+			transformMatrixArray[i] = Float::parse(t.nextToken());
 		}
-		transformationsMatrix.set(transformationsMatrixArray).transpose();
-		node->setTransformationsMatrix(transformationsMatrix);
+		transformMatrix.set(transformMatrixArray).transpose();
+		node->setTransformMatrix(transformMatrix);
 	}
 
 	// parse animations
@@ -362,7 +362,7 @@ Node* DAEReader::readNode(const string& pathName, Model* model, Node* parentNode
 							vector<Matrix4x4> keyFrameMatrices;
 							keyFrameMatrices.resize(keyFrames);
 							while (t.hasMoreTokens()) {
-								// set animation transformation matrix at frame
+								// set animation transform matrix at frame
 								array<float, 16> keyFrameMatricesArray;
 								for (auto i = 0; i < keyFrameMatricesArray.size() ;i++) {
 									keyFrameMatricesArray[i] = Float::parse(t.nextToken());
@@ -376,14 +376,14 @@ Node* DAEReader::readNode(const string& pathName, Model* model, Node* parentNode
 							if (frames > 0) {
 								ModelTools::createDefaultAnimation(model, frames);
 								auto animation = new Animation();
-								vector<Matrix4x4> transformationsMatrices;
-								transformationsMatrices.resize(frames);
+								vector<Matrix4x4> transformMatrices;
+								transformMatrices.resize(frames);
 								auto tansformationsMatrixLast = &keyFrameMatrices[0];
 								keyFrameIdx = 0;
 								auto frameIdx = 0;
 								auto timeStampLast = 0.0f;
 								for (auto keyFrameTime : keyFrameTimes) {
-									auto transformationsMatrixCurrent = &keyFrameMatrices[(keyFrameIdx) % keyFrameMatrices.size()];
+									auto transformMatrixCurrent = &keyFrameMatrices[(keyFrameIdx) % keyFrameMatrices.size()];
 									float timeStamp;
 									for (timeStamp = timeStampLast; timeStamp < keyFrameTime; timeStamp += 1.0f / fps) {
 										if (frameIdx >= frames) {
@@ -392,14 +392,14 @@ Node* DAEReader::readNode(const string& pathName, Model* model, Node* parentNode
 											frameIdx++;
 											continue;
 										}
-										transformationsMatrices[frameIdx] = Matrix4x4::interpolateLinear(*tansformationsMatrixLast, *transformationsMatrixCurrent, (timeStamp - timeStampLast) / (keyFrameTime - timeStampLast));
+										transformMatrices[frameIdx] = Matrix4x4::interpolateLinear(*tansformationsMatrixLast, *transformMatrixCurrent, (timeStamp - timeStampLast) / (keyFrameTime - timeStampLast));
 										frameIdx++;
 									}
 									timeStampLast = timeStamp;
-									tansformationsMatrixLast = transformationsMatrixCurrent;
+									tansformationsMatrixLast = transformMatrixCurrent;
 									keyFrameIdx++;
 								}
-								animation->setTransformationsMatrices(transformationsMatrices);
+								animation->setTransformMatrices(transformMatrices);
 								node->setAnimation(animation);
 							}
 						}
@@ -589,7 +589,7 @@ Node* DAEReader::readVisualSceneInstanceController(const string& pathName, Model
 			auto& _joints = skinning->getJoints();
 			for (auto i = 0; i < joints.size(); i++) {
 				// The vertices are defined in model space
-				// The transformation to the local space of the joint is called the inverse bind matrix
+				// The transform to the local space of the joint is called the inverse bind matrix
 				array<float, 16> bindMatrixArray;
 				for (auto i = 0; i < bindMatrixArray.size(); i++) {
 					bindMatrixArray[i] = Float::parse(t.nextToken());

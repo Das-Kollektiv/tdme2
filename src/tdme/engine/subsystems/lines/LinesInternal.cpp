@@ -12,7 +12,7 @@
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/subsystems/rendering/ObjectBuffer.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
@@ -31,7 +31,7 @@ using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::ObjectBuffer;
 using tdme::engine::Engine;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -78,13 +78,13 @@ LinesInternal::~LinesInternal() {
 
 void LinesInternal::update()
 {
-	Transformations::update();
+	Transform::update();
 	updateBoundingBox();
 }
 
-void LinesInternal::fromTransformations(const Transformations& transformations)
+void LinesInternal::fromTransform(const Transform& transform)
 {
-	Transformations::fromTransformations(transformations);
+	Transform::fromTransform(transform);
 	updateBoundingBox();
 }
 

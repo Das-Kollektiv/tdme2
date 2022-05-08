@@ -27,7 +27,7 @@
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/primitives/TerrainMesh.h>
 #include <tdme/engine/Rotation.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
@@ -48,7 +48,7 @@ using tdme::engine::primitives::Capsule;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::primitives::TerrainMesh;
 using tdme::engine::Rotation;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
@@ -59,7 +59,7 @@ constexpr uint16_t Body::TYPEIDS_ALL;
 constexpr uint16_t Body::TYPEID_STATIC;
 constexpr uint16_t Body::TYPEID_DYNAMIC;
 
-Body::Body(World* world, const string& id, int type, bool enabled, uint16_t collisionTypeId, const Transformations& transformations, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*> boundingVolumes)
+Body::Body(World* world, const string& id, int type, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*> boundingVolumes)
 {
 	this->world = world;
 	this->id = id;
@@ -104,7 +104,7 @@ Body::Body(World* world, const string& id, int type, bool enabled, uint16_t coll
 	for (auto boundingVolume: boundingVolumes) {
 		this->boundingVolumes.push_back(dynamic_cast<TerrainMesh*>(boundingVolume) != nullptr?boundingVolume:boundingVolume->clone());
 	}
-	fromTransformations(transformations);
+	fromTransform(transform);
 	setEnabled(enabled);
 }
 
@@ -235,8 +235,8 @@ void Body::resetProxyShapes() {
 	// set up scale
 	for (auto boundingVolume: boundingVolumes) {
 		// scale bounding volume and recreate it if nessessary
-		if (boundingVolume->getScale().equals(transformations.getScale()) == false) {
-			boundingVolume->setScale(transformations.getScale());
+		if (boundingVolume->getScale().equals(transform.getScale()) == false) {
+			boundingVolume->setScale(transform.getScale());
 		}
 	}
 
@@ -454,19 +454,19 @@ void Body::setAngularDamping(float angularDamping)
 	rigidBody->setAngularDamping(angularDamping);
 }
 
-const Transformations& Body::getTransformations() {
-	return transformations;
+const Transform& Body::getTransform() {
+	return transform;
 }
 
-void Body::fromTransformations(const Transformations& transformations)
+void Body::fromTransform(const Transform& transform)
 {
-	// store engine transformations
-	this->transformations.fromTransformations(transformations);
+	// store engine transform
+	this->transform.fromTransform(transform);
 
 	// reset proxy shapes if bounding volumes do not match proxy shapes or if scaling has changed
-	if (proxyShapes.size() != boundingVolumes.size() || transformationsScale.equals(transformations.getScale()) == false) {
+	if (proxyShapes.size() != boundingVolumes.size() || transformScale.equals(transform.getScale()) == false) {
 		resetProxyShapes();
-		transformationsScale.set(transformations.getScale());
+		transformScale.set(transform.getScale());
 	}
 
 	/*
@@ -493,15 +493,15 @@ void Body::fromTransformations(const Transformations& transformations)
 	collisionBody->setTransform(
 		reactphysics3d::Transform(
 			reactphysics3d::Vector3(
-				this->transformations.getTranslation().getX(),
-				this->transformations.getTranslation().getY(),
-				this->transformations.getTranslation().getZ()
+				this->transform.getTranslation().getX(),
+				this->transform.getTranslation().getY(),
+				this->transform.getTranslation().getZ()
 			),
 			reactphysics3d::Quaternion(
-				this->transformations.getRotationsQuaternion().getX(),
-				this->transformations.getRotationsQuaternion().getY(),
-				this->transformations.getRotationsQuaternion().getZ(),
-				this->transformations.getRotationsQuaternion().getW()
+				this->transform.getRotationsQuaternion().getX(),
+				this->transform.getRotationsQuaternion().getY(),
+				this->transform.getRotationsQuaternion().getZ(),
+				this->transform.getRotationsQuaternion().getW()
 			)
 		)
 	);

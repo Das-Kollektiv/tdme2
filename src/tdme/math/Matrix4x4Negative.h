@@ -33,12 +33,12 @@ public:
 	 */
 	inline bool isNegative(Matrix4x4& matrix) {
 		// check if negative scale and rotation
-		auto& transformationsMatrixData = matrix.getArray();
+		auto& transformMatrixData = matrix.getArray();
 		// copy into x,y,z axes
-		xAxis.set(transformationsMatrixData[0], transformationsMatrixData[1], transformationsMatrixData[2]);
-		yAxis.set(transformationsMatrixData[4], transformationsMatrixData[5], transformationsMatrixData[6]);
-		zAxis.set(transformationsMatrixData[8], transformationsMatrixData[9], transformationsMatrixData[10]);
-		// check if inverted/negative transformation
+		xAxis.set(transformMatrixData[0], transformMatrixData[1], transformMatrixData[2]);
+		yAxis.set(transformMatrixData[4], transformMatrixData[5], transformMatrixData[6]);
+		zAxis.set(transformMatrixData[8], transformMatrixData[9], transformMatrixData[10]);
+		// check if inverted/negative transform
 		return Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, yAxis), zAxis) < 0.0f;
 	}
 

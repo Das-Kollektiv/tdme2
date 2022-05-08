@@ -50,7 +50,7 @@ using tdme::utilities::Console;
 using tdme::utilities::FloatBuffer;
 using tdme::utilities::ShortBuffer;
 
-ObjectNodeMesh::ObjectNodeMesh(ObjectNodeRenderer* objectNodeRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Node* node, const vector<map<string, Matrix4x4*>*>& transformationMatrices, const vector<map<string, Matrix4x4*>*>& skinningMatrices, int instances)
+ObjectNodeMesh::ObjectNodeMesh(ObjectNodeRenderer* objectNodeRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Node* node, const vector<map<string, Matrix4x4*>*>& transformMatrices, const vector<map<string, Matrix4x4*>*>& skinningMatrices, int instances)
 {
 	//
 	this->instances = instances;
@@ -66,7 +66,7 @@ ObjectNodeMesh::ObjectNodeMesh(ObjectNodeRenderer* objectNodeRenderer, Engine::A
 	faceCount = node->getFaceCount();
 	// animation processing target
 	this->animationProcessingTarget = animationProcessingTarget;
-	// transformations for skinned meshes
+	// transform for skinned meshes
 	auto skinning = node->getSkinning();
 	this->skinning = skinning != nullptr;
 	this->skinningMatrices = skinningMatrices;
@@ -140,7 +140,7 @@ ObjectNodeMesh::ObjectNodeMesh(ObjectNodeRenderer* objectNodeRenderer, Engine::A
 			}
 		}
 	} else {
-		// no transformations on CPU, we can use model data
+		// no transform on CPU, we can use model data
 		vertices = &nodeVertices;
 		normals = &nodeNormals;
 		textureCoordinates = &nodeTextureCoordinates;
@@ -172,12 +172,12 @@ ObjectNodeMesh::ObjectNodeMesh(ObjectNodeRenderer* objectNodeRenderer, Engine::A
 
 	//
 	recreatedBuffers = false;
-	// node transformations matrix
+	// node transform matrix
 	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU ||
 		animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING ||
 		animationProcessingTarget == Engine::AnimationProcessingTarget::GPU) {
-		// node transformations matrix
-		cNodeTransformationsMatrix = transformationMatrices[0]->find(node->getId())->second;
+		// node transform matrix
+		cNodeTransformMatrix = transformMatrices[0]->find(node->getId())->second;
 	}
 	// skinning
 	if ((skinning != nullptr &&
@@ -186,8 +186,8 @@ ObjectNodeMesh::ObjectNodeMesh(ObjectNodeRenderer* objectNodeRenderer, Engine::A
 		if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU || animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 			cSkinningMaxVertexWeights = 0;
 			cSkinningJointWeight.resize(nodeVertices.size());
-			cSkinningJointTransformationsMatrices.resize(instances);
-			for (auto i = 0; i < instances; i++) cSkinningJointTransformationsMatrices[i].resize(nodeVertices.size());
+			cSkinningJointTransformMatrices.resize(instances);
+			for (auto i = 0; i < instances; i++) cSkinningJointTransformMatrices[i].resize(nodeVertices.size());
 			// compute joint weight caches
 			auto& joints = skinning->getJoints();
 			auto& weights = skinning->getWeights();
@@ -196,7 +196,7 @@ ObjectNodeMesh::ObjectNodeMesh(ObjectNodeRenderer* objectNodeRenderer, Engine::A
 				auto vertexJointWeights = jointsWeights[vertexIndex].size();
 				if (vertexJointWeights > cSkinningMaxVertexWeights) cSkinningMaxVertexWeights = vertexJointWeights;
 				cSkinningJointWeight[vertexIndex].resize(vertexJointWeights);
-				for (auto i = 0; i < instances; i++) cSkinningJointTransformationsMatrices[i][vertexIndex].resize(vertexJointWeights);
+				for (auto i = 0; i < instances; i++) cSkinningJointTransformMatrices[i][vertexIndex].resize(vertexJointWeights);
 				{
 					auto jointWeightIdx = 0;
 					for (auto& jointWeight : jointsWeights[vertexIndex]) {
@@ -211,7 +211,7 @@ ObjectNodeMesh::ObjectNodeMesh(ObjectNodeRenderer* objectNodeRenderer, Engine::A
 					for (auto& jointWeight : jointsWeights[vertexIndex]) {
 						auto& joint = joints[jointWeight.getJointIndex()];
 						auto skinningMatrixIt = skinningMatrices[i]->find(joint.getNodeId());
-						cSkinningJointTransformationsMatrices[i][vertexIndex][jointWeightIdx] = skinningMatrixIt != skinningMatrices[i]->end()?skinningMatrixIt->second:nullptr;
+						cSkinningJointTransformMatrices[i][vertexIndex][jointWeightIdx] = skinningMatrixIt != skinningMatrices[i]->end()?skinningMatrixIt->second:nullptr;
 						// next
 						jointWeightIdx++;
 					}
@@ -222,9 +222,9 @@ ObjectNodeMesh::ObjectNodeMesh(ObjectNodeRenderer* objectNodeRenderer, Engine::A
 	recreateBuffers();
 }
 
-void ObjectNodeMesh::computeTransformations(int contextIdx, ObjectBase* objectBase)
+void ObjectNodeMesh::computeSkinning(int contextIdx, ObjectBase* objectBase)
 {
-	// transformations for skinned meshes
+	// transform for skinned meshes
 	auto skinning = node->getSkinning();
 	if (skinning != nullptr) {
 		// compute skinning on CPU if required
@@ -248,7 +248,7 @@ void ObjectNodeMesh::computeTransformations(int contextIdx, ObjectBase* objectBa
 			float totalWeights;
 			float weightNormalized;
 			auto j = 0;
-			Matrix4x4 transformationsMatrix; // TODO: try to avoid multiplying matrix with at each vertex
+			Matrix4x4 transformMatrix; // TODO: try to avoid multiplying matrix with at each vertex
 			auto currentInstance = objectBase->getCurrentInstance();
 			for (auto i = 0; i < instances; i++) {
 				if (objectBase->instanceEnabled[i] == false) continue;
@@ -268,27 +268,27 @@ void ObjectNodeMesh::computeTransformations(int contextIdx, ObjectBase* objectBa
 					for (auto vertexJointWeightIdx = 0; vertexJointWeightIdx < jointsWeights[vertexIndex].size(); vertexJointWeightIdx++) {
 						auto weight = cSkinningJointWeight[vertexIndex][vertexJointWeightIdx];
 						/*
-						// skip on missing transformations matrix
-						if (i >= cSkinningJointTransformationsMatrices.size() ||
-							vertexIndex >= cSkinningJointTransformationsMatrices[i].size() ||
-							vertexJointWeightIdx >= cSkinningJointTransformationsMatrices[i][vertexIndex].size()) continue;
+						// skip on missing transform matrix
+						if (i >= cSkinningJointTransformMatrices.size() ||
+							vertexIndex >= cSkinningJointTransformMatrices[i].size() ||
+							vertexJointWeightIdx >= cSkinningJointTransformMatrices[i][vertexIndex].size()) continue;
 						*/
 						// skip on missing matrix
-						auto skinningJointTransformationsMatrix = cSkinningJointTransformationsMatrices[i][vertexIndex][vertexJointWeightIdx];
-						if (skinningJointTransformationsMatrix == nullptr) continue;
+						auto skinningJointTransformMatrix = cSkinningJointTransformMatrices[i][vertexIndex][vertexJointWeightIdx];
+						if (skinningJointTransformMatrix == nullptr) continue;
 						//
-						transformationsMatrix.set(*skinningJointTransformationsMatrix).multiply(objectBase->getTransformationsMatrix());
+						transformMatrix.set(*skinningJointTransformMatrix).multiply(objectBase->getTransformMatrix());
 						// vertex
-						transformedVertex->add(transformationsMatrix.multiply(*vertex).scale(weight));
+						transformedVertex->add(transformMatrix.multiply(*vertex).scale(weight));
 						// normals
-						transformedNormal->add(transformationsMatrix.multiplyNoTranslation(*normal).scale(weight));
+						transformedNormal->add(transformMatrix.multiplyNoTranslation(*normal).scale(weight));
 						// tangent
 						if (tangent != nullptr && transformedTangent != nullptr) {
-							transformedTangent->add(transformationsMatrix.multiplyNoTranslation(*tangent).scale(weight));
+							transformedTangent->add(transformMatrix.multiplyNoTranslation(*tangent).scale(weight));
 						}
 						// bitangent
 						if (bitangent != nullptr && transformedBitangent != nullptr) {
-							transformedBitangent->add(transformationsMatrix.multiplyNoTranslation(*bitangent).scale(weight));
+							transformedBitangent->add(transformMatrix.multiplyNoTranslation(*bitangent).scale(weight));
 						}
 						//
 						totalWeights += weight;
@@ -322,14 +322,14 @@ void ObjectNodeMesh::computeTransformations(int contextIdx, ObjectBase* objectBa
 	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) {
 		auto& nodeVertices = node->getVertices();
 		auto& nodeNormals = node->getNormals();
-		// transformations for non skinned rendering
+		// transform for non skinned rendering
 		//	vertices
 		for (auto vertexIndex = 0; vertexIndex < nodeVertices.size(); vertexIndex++) {
-			transformedVertices[vertexIndex].set(cNodeTransformationsMatrix->multiply(nodeVertices[vertexIndex]));
+			transformedVertices[vertexIndex].set(cNodeTransformMatrix->multiply(nodeVertices[vertexIndex]));
 		}
 		//	normals
 		for (auto normalIndex = 0; normalIndex < nodeNormals.size(); normalIndex++) {
-			transformedNormals[normalIndex].set(cNodeTransformationsMatrix->multiplyNoTranslation(nodeNormals[normalIndex]).normalize());
+			transformedNormals[normalIndex].set(cNodeTransformMatrix->multiplyNoTranslation(nodeNormals[normalIndex]).normalize());
 		}
 		//	TODO: tangents, bitangents, but actually it is only in use for computing bounding volumes, so I am not in a hurry
 		// recreate buffers

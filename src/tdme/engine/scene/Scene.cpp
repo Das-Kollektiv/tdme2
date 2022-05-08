@@ -17,7 +17,7 @@
 #include <tdme/engine/scene/SceneEntity.h>
 #include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/engine/scene/SceneLight.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/utilities/Console.h>
@@ -39,7 +39,7 @@ using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLibrary;
 using tdme::engine::scene::SceneLight;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::utilities::Console;
@@ -97,7 +97,7 @@ void Scene::computeBoundingBox()
 		BoundingBox cbv;
 		// TODO: Implement me 100%
 		if (sceneEntity->getPrototype()->getType() == Prototype_Type::MODEL) {
-			cbv.fromBoundingVolumeWithTransformations(sceneEntity->getPrototype()->getModel()->getBoundingBox(), sceneEntity->getTransformations());
+			cbv.fromBoundingVolumeWithTransform(sceneEntity->getPrototype()->getModel()->getBoundingBox(), sceneEntity->getTransform());
 		} else {
 			continue;
 		}

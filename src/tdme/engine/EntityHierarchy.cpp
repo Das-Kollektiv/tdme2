@@ -6,7 +6,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Object.h>
 #include <tdme/engine/Partition.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 
 using std::string;
 
@@ -14,7 +14,7 @@ using tdme::engine::Engine;
 using tdme::engine::EntityHierarchy;
 using tdme::engine::Object;
 using tdme::engine::Partition;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 
 EntityHierarchy::EntityHierarchy(const string& id): id(id)
 {
@@ -125,7 +125,7 @@ const vector<Entity*> EntityHierarchy::query(const string& parentId) {
 	return entities;
 }
 
-void EntityHierarchy::updateHierarchy(const Transformations& parentTransformations, EntityHierarchyLevel& entityHierarchyLevel, int depth, bool& firstEntity) {
+void EntityHierarchy::updateHierarchy(const Transform& parentTransform, EntityHierarchyLevel& entityHierarchyLevel, int depth, bool& firstEntity) {
 	for (auto entityIt: entityHierarchyLevel.children) {
 		auto entity = entityIt.second.entity;
 		entity->update();
@@ -135,23 +135,23 @@ void EntityHierarchy::updateHierarchy(const Transformations& parentTransformatio
 		} else {
 			boundingBox.extend(entity->getBoundingBoxTransformed());
 		}
-		entity->applyParentTransformations(parentTransformations);
+		entity->applyParentTransform(parentTransform);
 	}
 	for (auto& childIt: entityHierarchyLevel.children) {
-		updateHierarchy(childIt.second.entity->getTransformations(), childIt.second, depth + 1, firstEntity);
+		updateHierarchy(childIt.second.entity->getTransform(), childIt.second, depth + 1, firstEntity);
 	}
 	if (depth == 0) {
 		// bounding boxes
 		boundingBox.update();
-		boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
+		boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
 		// update entity
 		if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 	}
 }
 
-void EntityHierarchy::fromTransformations(const Transformations& transformations)
+void EntityHierarchy::fromTransform(const Transform& transform)
 {
-	Transformations::fromTransformations(transformations);
+	Transform::fromTransform(transform);
 	// update hierarchy
 	auto firstEntity = true;
 	updateHierarchy(*this, entityRoot, 0, firstEntity);
@@ -159,7 +159,7 @@ void EntityHierarchy::fromTransformations(const Transformations& transformations
 
 void EntityHierarchy::update()
 {
-	Transformations::update();
+	Transform::update();
 	// update hierarchy
 	auto firstEntity = true;
 	updateHierarchy(*this, entityRoot, 0, firstEntity);

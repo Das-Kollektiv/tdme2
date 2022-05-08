@@ -34,7 +34,7 @@ Node::Node(Model* model, Node* parentNode, const string& id, const string& name)
 	this->parentNode = parentNode;
 	this->id = id;
 	this->name = name;
-	this->transformationsMatrix.identity();
+	this->transformMatrix.identity();
 	this->animation = nullptr;
 	this->skinning = nullptr;
 	this->joint = false;

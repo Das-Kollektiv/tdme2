@@ -24,7 +24,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
 using tdme::engine::Light;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::tools::editor::misc::CameraRotationInputHandler;
@@ -112,7 +112,7 @@ public:
 	 * @param cameraRotationInputHandler camera rotation input handler
 	 * @param resetup resetup which would mean to leave camera and lighting as is
 	 */
-	static void setupPrototype(Prototype* prototype, Engine* engine, const Transformations& lookFromRotations, int lodLevel, Vector3& objectScale, CameraRotationInputHandler* cameraRotationInputHandler = nullptr, float scale = 1.5f, bool resetup = false);
+	static void setupPrototype(Prototype* prototype, Engine* engine, const Transform& lookFromRotations, int lodLevel, Vector3& objectScale, CameraRotationInputHandler* cameraRotationInputHandler = nullptr, float scale = 1.5f, bool resetup = false);
 
 	/**
 	 * Get relative resources file name

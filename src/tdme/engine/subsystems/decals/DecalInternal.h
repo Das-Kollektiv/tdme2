@@ -11,7 +11,7 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/subsystems/decals/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Matrix4x4.h>
 
 using std::string;
@@ -22,7 +22,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Matrix4x4;
 
 /**
@@ -30,7 +30,7 @@ using tdme::math::Matrix4x4;
  * @author Andreas Drewke
  */
 class tdme::engine::subsystems::decals::DecalInternal
-	: public Transformations
+	: public Transform
 {
 protected:
 	string id;
@@ -56,8 +56,8 @@ protected:
 	 * Update bounding volume and obb matrix with transform and finally world to decal space matrix
 	 */
 	inline void updateInternal() {
-		boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
-		obbMatrixTransformed = obbMatrix.clone().multiply(this->getTransformationsMatrix());
+		boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
+		obbMatrixTransformed = obbMatrix.clone().multiply(this->getTransformMatrix());
 		worldToDecalSpaceMatrix = obbMatrixTransformed.clone().invert();
 	}
 
@@ -203,15 +203,15 @@ public:
 	}
 
 	/**
-	 * Update transformations
+	 * Update transform
 	 */
 	void update() override;
 
 	/**
-	 * From transformations
-	 * @param transformations transformations
+	 * From transform
+	 * @param transform transform
 	 */
-	void fromTransformations(const Transformations& transformations) override;
+	void fromTransform(const Transform& transform) override;
 
 	/**
 	 * Initialize

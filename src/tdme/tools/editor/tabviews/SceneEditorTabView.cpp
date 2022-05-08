@@ -302,10 +302,10 @@ void SceneEditorTabView::handleInputEvents()
 					Vector3 deltaTranslation;
 					Vector3 deltaRotation;
 					Vector3 absoluteScale;
-					if (determineGizmoDeltaTransformations(mouseDownLastX, mouseDownLastY, event.getXUnscaled(), event.getYUnscaled(), deltaTranslation, deltaRotation, absoluteScale) == true) {
+					if (determineGizmoDeltaTransform(mouseDownLastX, mouseDownLastY, event.getXUnscaled(), event.getYUnscaled(), deltaTranslation, deltaRotation, absoluteScale) == true) {
 						auto gizmoEntity = getGizmoObject();
 						if (gizmoEntity != nullptr) {
-							Transformations rotations;
+							Transform rotations;
 							rotations.addRotation(scene->getRotationOrder()->getAxis0(), deltaRotation[scene->getRotationOrder()->getAxis0VectorIndex()]);
 							rotations.addRotation(scene->getRotationOrder()->getAxis1(), deltaRotation[scene->getRotationOrder()->getAxis1VectorIndex()]);
 							rotations.addRotation(scene->getRotationOrder()->getAxis2(), deltaRotation[scene->getRotationOrder()->getAxis2VectorIndex()]);
@@ -315,31 +315,31 @@ void SceneEditorTabView::handleInputEvents()
 								if (_selectedEntity != nullptr && StringTools::startsWith(_selectedEntity->getId(), "tdme.sceneeditor.") == false) {
 									auto sceneEntity = scene->getEntity(_selectedEntity->getId());
 									if (sceneEntity == nullptr) continue;
-									auto translation = sceneEntity->getTransformations().getTranslation();
+									auto translation = sceneEntity->getTransform().getTranslation();
 									translation = gizmoEntity->getTranslation().clone().add(rotations.getRotationsQuaternion().multiply(translation.clone().sub(gizmoEntity->getTranslation())));
-									sceneEntity->getTransformations().setTranslation(translation.clone().add(deltaTranslation));
-									auto scale = sceneEntity->getTransformations().getScale().clone().scale(absoluteScale);
+									sceneEntity->getTransform().setTranslation(translation.clone().add(deltaTranslation));
+									auto scale = sceneEntity->getTransform().getScale().clone().scale(absoluteScale);
 									if (Math::abs(scale.getX()) < 0.01f) scale.setX(Math::sign(scale.getX()) * 0.01f);
 									if (Math::abs(scale.getY()) < 0.01f) scale.setY(Math::sign(scale.getY()) * 0.01f);
 									if (Math::abs(scale.getZ()) < 0.01f) scale.setZ(Math::sign(scale.getZ()) * 0.01f);
 									if (Math::abs(scale.getX()) > 100.0f) scale.setX(Math::sign(scale.getX()) * 100.0f);
 									if (Math::abs(scale.getY()) > 100.0f) scale.setY(Math::sign(scale.getY()) * 100.0f);
 									if (Math::abs(scale.getZ()) > 100.0f) scale.setZ(Math::sign(scale.getZ()) * 100.0f);
-									sceneEntity->getTransformations().setScale(scale);
+									sceneEntity->getTransform().setScale(scale);
 									if ((sceneEntity->getPrototype()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == Gizmo::GIZMOTYPE_ROTATE) {
-										sceneEntity->getTransformations().setRotationAngle(scene->getRotationOrder()->getAxisXIndex(), sceneEntity->getTransformations().getRotationAngle(scene->getRotationOrder()->getAxisXIndex()) + deltaRotation[0]);
-										sceneEntity->getTransformations().setRotationAngle(scene->getRotationOrder()->getAxisYIndex(), sceneEntity->getTransformations().getRotationAngle(scene->getRotationOrder()->getAxisYIndex()) + deltaRotation[1]);
-										sceneEntity->getTransformations().setRotationAngle(scene->getRotationOrder()->getAxisZIndex(), sceneEntity->getTransformations().getRotationAngle(scene->getRotationOrder()->getAxisZIndex()) + deltaRotation[2]);
+										sceneEntity->getTransform().setRotationAngle(scene->getRotationOrder()->getAxisXIndex(), sceneEntity->getTransform().getRotationAngle(scene->getRotationOrder()->getAxisXIndex()) + deltaRotation[0]);
+										sceneEntity->getTransform().setRotationAngle(scene->getRotationOrder()->getAxisYIndex(), sceneEntity->getTransform().getRotationAngle(scene->getRotationOrder()->getAxisYIndex()) + deltaRotation[1]);
+										sceneEntity->getTransform().setRotationAngle(scene->getRotationOrder()->getAxisZIndex(), sceneEntity->getTransform().getRotationAngle(scene->getRotationOrder()->getAxisZIndex()) + deltaRotation[2]);
 									}
-									sceneEntity->getTransformations().update();
-									_selectedEntity->fromTransformations(sceneEntity->getTransformations());
+									sceneEntity->getTransform().update();
+									_selectedEntity->fromTransform(sceneEntity->getTransform());
 								}
 							}
 							if (selectedEntityIds.size() == 1) {
 								auto _selectedEntity = engine->getEntity(selectedEntityIds[0]);
 								if (_selectedEntity != nullptr) {
-									sceneEditorTabController->updateEntityDetails(_selectedEntity->getTransformations());
-									setGizmoRotation(_selectedEntity->getTransformations());
+									sceneEditorTabController->updateEntityDetails(_selectedEntity->getTransform());
+									setGizmoRotation(_selectedEntity->getTransform());
 								}
 							} else {
 								multipleSelectionTranslation+= deltaTranslation;
@@ -397,13 +397,13 @@ void SceneEditorTabView::handleInputEvents()
 						if (selectedEntityIds.size() == 1) {
 							auto sceneEntity = scene->getEntity(selectedEntity->getId());
 							if (sceneEntity != nullptr && sceneEntity->getPrototype()->getType()->hasNonEditScaleDownMode() == true) {
-								selectedEntity->fromTransformations(sceneEntity->getTransformations());
+								selectedEntity->fromTransform(sceneEntity->getTransform());
 							}
-							setGizmoRotation(selectedEntity->getTransformations());
+							setGizmoRotation(selectedEntity->getTransform());
 							sceneEditorTabController->setEntityDetails(selectedEntity->getId());
 						} else
 						if (selectedEntityIds.size() > 1) {
-							setGizmoRotation(Transformations());
+							setGizmoRotation(Transform());
 							multipleSelectionTranslation = computeMultipleSelectionPivot();
 							multipleSelectionRotation.set(0.0f, 0.0f, 0.0f);
 							multipleSelectionScale.set(1.0f, 1.0f, 1.0f);
@@ -468,14 +468,14 @@ void SceneEditorTabView::display()
 		pasteModeValid = false;
 		if ((placeEntityMode == true || pasteMode == true) && engine->getEntityByMousePosition(placeEntityMouseX, placeEntityMouseY, worldCoordinate, entityPickingFilterPlacing) != nullptr) {
 			if (placeEntityMode == true) {
-				Transformations transformations;
-				transformations.setTranslation(worldCoordinate);
-				transformations.addRotation(scene->getRotationOrder()->getAxis0(), 0.0f);
-				transformations.addRotation(scene->getRotationOrder()->getAxis1(), 0.0f);
-				transformations.addRotation(scene->getRotationOrder()->getAxis2(), 0.0f);
-				transformations.update();
+				Transform transform;
+				transform.setTranslation(worldCoordinate);
+				transform.addRotation(scene->getRotationOrder()->getAxis0(), 0.0f);
+				transform.addRotation(scene->getRotationOrder()->getAxis1(), 0.0f);
+				transform.addRotation(scene->getRotationOrder()->getAxis2(), 0.0f);
+				transform.update();
 				if (selectedEngineEntity == nullptr && selectedPrototype != nullptr) {
-					selectedEngineEntity = createEntity(selectedPrototype, "tdme.sceneeditor.placeentity", transformations);
+					selectedEngineEntity = createEntity(selectedPrototype, "tdme.sceneeditor.placeentity", transform);
 					if (selectedEngineEntity != nullptr) engine->addEntity(selectedEngineEntity);
 				}
 				if (selectedEngineEntity != nullptr) {
@@ -487,11 +487,11 @@ void SceneEditorTabView::display()
 							worldCoordinate = snappedWorldCoordinate;
 						}
 					}
-					transformations.setTranslation(worldCoordinate);
-					transformations.setRotationAngle(scene->getRotationOrder()->getAxisYIndex(), static_cast<float>(placeEntityYRotation) * 90.0f);
-					transformations.update();
-					selectedEngineEntity->fromTransformations(transformations);
-					placeEntityTranslation = transformations.getTranslation();
+					transform.setTranslation(worldCoordinate);
+					transform.setRotationAngle(scene->getRotationOrder()->getAxisYIndex(), static_cast<float>(placeEntityYRotation) * 90.0f);
+					transform.update();
+					selectedEngineEntity->fromTransform(transform);
+					placeEntityTranslation = transform.getTranslation();
 					placeEntityValid = true;
 				}
 			} else
@@ -698,15 +698,15 @@ void SceneEditorTabView::resetEntity(Entity* entity) {
 	auto sceneEntity = scene->getEntity(entity->getId());
 	if (sceneEntity == nullptr) return;
 	if (sceneEntity->getPrototype()->getType()->hasNonEditScaleDownMode() == false) return;
-	entity->fromTransformations(sceneEntity->getTransformations());
+	entity->fromTransform(sceneEntity->getTransform());
 	entity->setScale(
 		sceneEntity->getPrototype()->getType()->getNonEditScaleDownModeDimension().
 		clone().
 		scale(
 			Vector3(
-				1.0f / (sceneEntity->getTransformations().getScale().getX() * entity->getBoundingBox()->getDimensions().getX()),
-				1.0f / (sceneEntity->getTransformations().getScale().getY() * entity->getBoundingBox()->getDimensions().getY()),
-				1.0f / (sceneEntity->getTransformations().getScale().getZ() * entity->getBoundingBox()->getDimensions().getZ())
+				1.0f / (sceneEntity->getTransform().getScale().getX() * entity->getBoundingBox()->getDimensions().getX()),
+				1.0f / (sceneEntity->getTransform().getScale().getY() * entity->getBoundingBox()->getDimensions().getY()),
+				1.0f / (sceneEntity->getTransform().getScale().getZ() * entity->getBoundingBox()->getDimensions().getZ())
 			)
 		)
 	);
@@ -734,12 +734,12 @@ void SceneEditorTabView::selectEntities(const vector<string>& entityIds)
 	if (entityIds.size() == 1) {
 		auto selectedEntity = engine->getEntity(entityIds[0]);
 		if (selectedEntity != nullptr) {
-			setGizmoRotation(selectedEntity->getTransformations());
+			setGizmoRotation(selectedEntity->getTransform());
 			sceneEditorTabController->setEntityDetails(selectedEntity->getId());
 		}
 	} else
 	if (entityIds.size() > 1) {
-		setGizmoRotation(Transformations());
+		setGizmoRotation(Transform());
 		multipleSelectionTranslation = computeMultipleSelectionPivot();
 		sceneEditorTabController->setEntityDetailsMultiple(multipleSelectionTranslation, getSelectedReflectionEnvironmentMappingId());
 	}
@@ -812,25 +812,25 @@ void SceneEditorTabView::placeEntity()
 {
 	if (selectedPrototype == nullptr) return;
 
-	Transformations sceneEntityTransformations;
-	sceneEntityTransformations.setTranslation(placeEntityTranslation);
-	sceneEntityTransformations.setScale(Vector3(1.0f, 1.0f, 1.0f));
-	sceneEntityTransformations.setPivot(selectedPrototype->getPivot());
-	sceneEntityTransformations.addRotation(scene->getRotationOrder()->getAxis0(), 0.0f);
-	sceneEntityTransformations.addRotation(scene->getRotationOrder()->getAxis1(), 0.0f);
-	sceneEntityTransformations.addRotation(scene->getRotationOrder()->getAxis2(), 0.0f);
-	sceneEntityTransformations.setRotationAngle(scene->getRotationOrder()->getAxisYIndex(), placeEntityYRotation * 90.0f);
-	sceneEntityTransformations.update();
+	Transform sceneEntityTransform;
+	sceneEntityTransform.setTranslation(placeEntityTranslation);
+	sceneEntityTransform.setScale(Vector3(1.0f, 1.0f, 1.0f));
+	sceneEntityTransform.setPivot(selectedPrototype->getPivot());
+	sceneEntityTransform.addRotation(scene->getRotationOrder()->getAxis0(), 0.0f);
+	sceneEntityTransform.addRotation(scene->getRotationOrder()->getAxis1(), 0.0f);
+	sceneEntityTransform.addRotation(scene->getRotationOrder()->getAxis2(), 0.0f);
+	sceneEntityTransform.setRotationAngle(scene->getRotationOrder()->getAxisYIndex(), placeEntityYRotation * 90.0f);
+	sceneEntityTransform.update();
 	for (auto i = 0; i < scene->getEntityCount(); i++) {
 		auto sceneEntity = scene->getEntityAt(i);
-		if (sceneEntity->getPrototype() == selectedPrototype && sceneEntity->getTransformations().getTranslation().equals(sceneEntityTransformations.getTranslation())) {
+		if (sceneEntity->getPrototype() == selectedPrototype && sceneEntity->getTransform().getTranslation().equals(sceneEntityTransform.getTranslation())) {
 			return;
 		}
 	}
 	auto sceneEntity = new SceneEntity(
 		selectedPrototype->getName() + "_" + to_string(scene->allocateEntityId()),
 		"",
-		sceneEntityTransformations,
+		sceneEntityTransform,
 		selectedPrototype
 	);
 	scene->addEntity(sceneEntity);
@@ -914,7 +914,7 @@ void SceneEditorTabView::pasteEntities(bool displayOnly)
 		auto entity = engine->getEntity(copiedEntity->getId());
 		if (entity == nullptr) continue;
 		BoundingBox cbv;
-		cbv.fromBoundingVolumeWithTransformations(entity->getBoundingBox(), copiedEntity->getTransformations());
+		cbv.fromBoundingVolumeWithTransform(entity->getBoundingBox(), copiedEntity->getTransform());
 		auto& entityBBMinXYZ = cbv.getMin().getArray();
 		if (entityBBMinXYZ[0] < pasteEntitiesMinX) pasteEntitiesMinX = entityBBMinXYZ[0];
 		if (entityBBMinXYZ[1] < pasteEntitiesMinY) pasteEntitiesMinY = entityBBMinXYZ[1];
@@ -930,23 +930,23 @@ void SceneEditorTabView::pasteEntities(bool displayOnly)
 	vector<string> entitiesToSelect;
 	for (auto copiedEntity: copiedEntities) {
 		auto pastePrototype = copiedEntity->getPrototype();
-		Transformations sceneEntityTransformations;
-		sceneEntityTransformations.fromTransformations(copiedEntity->getTransformations());
-		auto entityDiffX = copiedEntity->getTransformations().getTranslation().getX() - pasteEntitiesMinX;
-		auto entityDiffY = copiedEntity->getTransformations().getTranslation().getY() - pasteEntitiesMinY;
-		auto entityDiffZ = copiedEntity->getTransformations().getTranslation().getZ() - pasteEntitiesMinZ;
-		sceneEntityTransformations.setTranslation(
+		Transform sceneEntityTransform;
+		sceneEntityTransform.fromTransform(copiedEntity->getTransform());
+		auto entityDiffX = copiedEntity->getTransform().getTranslation().getX() - pasteEntitiesMinX;
+		auto entityDiffY = copiedEntity->getTransform().getTranslation().getY() - pasteEntitiesMinY;
+		auto entityDiffZ = copiedEntity->getTransform().getTranslation().getZ() - pasteEntitiesMinZ;
+		sceneEntityTransform.setTranslation(
 			Vector3(
 				placeEntityTranslation.getX() + entityDiffX - centerX,
 				placeEntityTranslation.getY() + entityDiffY,
 				placeEntityTranslation.getZ() + entityDiffZ - centerZ
 			)
 		);
-		sceneEntityTransformations.update();
+		sceneEntityTransform.update();
 		if (displayOnly == false) {
 			for (auto i = 0; i < scene->getEntityCount(); i++) {
 				auto sceneEntity = scene->getEntityAt(i);
-				if (sceneEntity->getPrototype() == pastePrototype && sceneEntity->getTransformations().getTranslation().equals(sceneEntityTransformations.getTranslation())) {
+				if (sceneEntity->getPrototype() == pastePrototype && sceneEntity->getTransform().getTranslation().equals(sceneEntityTransform.getTranslation())) {
 					continue;
 				}
 			}
@@ -957,7 +957,7 @@ void SceneEditorTabView::pasteEntities(bool displayOnly)
 			auto sceneEntity = new SceneEntity(
 				sceneEntityId,
 				"",
-				sceneEntityTransformations,
+				sceneEntityTransform,
 				pastePrototype
 			 );
 			BaseProperties* properties = copiedEntity;
@@ -966,7 +966,7 @@ void SceneEditorTabView::pasteEntities(bool displayOnly)
 				sceneEntity->addProperty(property->getName(), property->getValue());
 			}
 			scene->addEntity(sceneEntity);
-			auto entity = createEntity(pastePrototype, sceneEntityId, sceneEntityTransformations);
+			auto entity = createEntity(pastePrototype, sceneEntityId, sceneEntityTransform);
 			if (entity != nullptr) {
 				resetEntity(entity);
 				entity->setPickable(true);
@@ -977,9 +977,9 @@ void SceneEditorTabView::pasteEntities(bool displayOnly)
 			auto entityId = "tdme.sceneeditor.paste." + pastePrototype->getName() + "." + to_string(pasteEntitiesIdx);
 			auto entity = engine->getEntity(entityId);
 			if (entity != nullptr) {
-				entity->fromTransformations(sceneEntityTransformations);
+				entity->fromTransform(sceneEntityTransform);
 			} else {
-				entity = createEntity(pastePrototype, entityId, sceneEntityTransformations);
+				entity = createEntity(pastePrototype, entityId, sceneEntityTransform);
 				if (entity != nullptr) {
 					unselectEntityInternal(entity);
 					entity->setPickable(true);
@@ -1023,7 +1023,7 @@ const Vector3 SceneEditorTabView::computeMultipleSelectionPivot() {
 		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.sceneeditor.") == false) {
 			auto sceneEntity = scene->getEntity(selectedEntity->getId());
 			if (sceneEntity == nullptr) continue;
-			pivot.add(sceneEntity->getTransformations().getTranslation());
+			pivot.add(sceneEntity->getTransform().getTranslation());
 			entityCount++;
 		}
 	}
@@ -1106,7 +1106,7 @@ void SceneEditorTabView::updateGizmo() {
 	}
 
 	// rotation for gizmo
-	Transformations transformations;
+	Transform transform;
 
 	//
 	Vector3 gizmoCenter;
@@ -1116,7 +1116,7 @@ void SceneEditorTabView::updateGizmo() {
 		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.sceneeditor.") == false) {
 			auto sceneEntity = scene->getEntity(selectedEntity->getId());
 			if (sceneEntity == nullptr) continue;
-			gizmoCenter.add(sceneEntity->getTransformations().getTranslation());
+			gizmoCenter.add(sceneEntity->getTransform().getTranslation());
 			entityCount++;
 		}
 	}
@@ -1127,7 +1127,7 @@ void SceneEditorTabView::updateGizmo() {
 	if (entityCount == 1) {
 		auto selectedSceneEntity = scene->getEntity(selectedEntityIds[0]);
 		auto selectedPrototype = selectedSceneEntity != nullptr?selectedSceneEntity->getPrototype():nullptr;
-		if (selectedSceneEntity != nullptr) transformations.fromTransformations(selectedSceneEntity->getTransformations());
+		if (selectedSceneEntity != nullptr) transform.fromTransform(selectedSceneEntity->getTransform());
 		if (selectedPrototype != nullptr) setGizmoTypeMask(selectedPrototype->getType()->getGizmoTypeMask());
 		if (selectedSceneEntity == nullptr || selectedPrototype == nullptr) {
 			removeGizmo();
@@ -1137,7 +1137,7 @@ void SceneEditorTabView::updateGizmo() {
 	}
 
 	//
-	Gizmo::updateGizmo(gizmoCenter, transformations);
+	Gizmo::updateGizmo(gizmoCenter, transform);
 }
 
 bool SceneEditorTabView::applyBase(const string& name, const string& description) {
@@ -1198,9 +1198,9 @@ void SceneEditorTabView::applyTranslation(const Vector3& translation) {
 		auto sceneEntity = scene->getEntity(selectedEntity->getId());
 		if (sceneEntity == nullptr) return;
 
-		sceneEntity->getTransformations().setTranslation(translation);
-		sceneEntity->getTransformations().update();
-		selectedEntity->fromTransformations(sceneEntity->getTransformations());
+		sceneEntity->getTransform().setTranslation(translation);
+		sceneEntity->getTransform().update();
+		selectedEntity->fromTransform(sceneEntity->getTransform());
 	} else
 	if (selectedEntityIds.size() > 1) {
 		for (auto selectedEntityId: selectedEntityIds) {
@@ -1209,11 +1209,11 @@ void SceneEditorTabView::applyTranslation(const Vector3& translation) {
 			auto sceneEntity = scene->getEntity(selectedEntity->getId());
 			if (sceneEntity == nullptr) continue;
 
-			sceneEntity->getTransformations().setTranslation(
-				sceneEntity->getTransformations().getTranslation().clone().add(translation.clone().sub(multipleSelectionTranslation))
+			sceneEntity->getTransform().setTranslation(
+				sceneEntity->getTransform().getTranslation().clone().add(translation.clone().sub(multipleSelectionTranslation))
 			);
-			sceneEntity->getTransformations().update();
-			selectedEntity->fromTransformations(sceneEntity->getTransformations());
+			sceneEntity->getTransform().update();
+			selectedEntity->fromTransform(sceneEntity->getTransform());
 		}
 		multipleSelectionTranslation.add(translation.clone().sub(multipleSelectionTranslation));
 	}
@@ -1231,11 +1231,11 @@ void SceneEditorTabView::applyRotation(const Vector3& rotation) {
 		if (selectedEntity == nullptr) return;
 		auto sceneEntity = scene->getEntity(selectedEntity->getId());
 		if (sceneEntity == nullptr) return;
-		sceneEntity->getTransformations().getRotation(scene->getRotationOrder()->getAxisXIndex()).setAngle(rotation.getX());
-		sceneEntity->getTransformations().getRotation(scene->getRotationOrder()->getAxisYIndex()).setAngle(rotation.getY());
-		sceneEntity->getTransformations().getRotation(scene->getRotationOrder()->getAxisZIndex()).setAngle(rotation.getZ());
-		sceneEntity->getTransformations().update();
-		selectedEntity->fromTransformations(sceneEntity->getTransformations());
+		sceneEntity->getTransform().getRotation(scene->getRotationOrder()->getAxisXIndex()).setAngle(rotation.getX());
+		sceneEntity->getTransform().getRotation(scene->getRotationOrder()->getAxisYIndex()).setAngle(rotation.getY());
+		sceneEntity->getTransform().getRotation(scene->getRotationOrder()->getAxisZIndex()).setAngle(rotation.getZ());
+		sceneEntity->getTransform().update();
+		selectedEntity->fromTransform(sceneEntity->getTransform());
 	} else
 	if (selectedEntityIds.size() > 1) {
 		for (auto selectedEntityId: selectedEntityIds) {
@@ -1244,12 +1244,12 @@ void SceneEditorTabView::applyRotation(const Vector3& rotation) {
 			auto sceneEntity = scene->getEntity(selectedEntity->getId());
 			if (sceneEntity == nullptr) continue;
 			if ((sceneEntity->getPrototype()->getType()->getGizmoTypeMask() & Gizmo::GIZMOTYPE_ROTATE) == Gizmo::GIZMOTYPE_ROTATE) {
-				sceneEntity->getTransformations().getRotation(scene->getRotationOrder()->getAxisXIndex()).setAngle(sceneEntity->getTransformations().getRotation(scene->getRotationOrder()->getAxisXIndex()).getAngle() + (rotation.getX() - multipleSelectionRotation.getX()));
-				sceneEntity->getTransformations().getRotation(scene->getRotationOrder()->getAxisYIndex()).setAngle(sceneEntity->getTransformations().getRotation(scene->getRotationOrder()->getAxisYIndex()).getAngle() + (rotation.getY() - multipleSelectionRotation.getY()));
-				sceneEntity->getTransformations().getRotation(scene->getRotationOrder()->getAxisZIndex()).setAngle(sceneEntity->getTransformations().getRotation(scene->getRotationOrder()->getAxisZIndex()).getAngle() + (rotation.getZ() - multipleSelectionRotation.getZ()));
+				sceneEntity->getTransform().getRotation(scene->getRotationOrder()->getAxisXIndex()).setAngle(sceneEntity->getTransform().getRotation(scene->getRotationOrder()->getAxisXIndex()).getAngle() + (rotation.getX() - multipleSelectionRotation.getX()));
+				sceneEntity->getTransform().getRotation(scene->getRotationOrder()->getAxisYIndex()).setAngle(sceneEntity->getTransform().getRotation(scene->getRotationOrder()->getAxisYIndex()).getAngle() + (rotation.getY() - multipleSelectionRotation.getY()));
+				sceneEntity->getTransform().getRotation(scene->getRotationOrder()->getAxisZIndex()).setAngle(sceneEntity->getTransform().getRotation(scene->getRotationOrder()->getAxisZIndex()).getAngle() + (rotation.getZ() - multipleSelectionRotation.getZ()));
 			}
-			sceneEntity->getTransformations().update();
-			selectedEntity->fromTransformations(sceneEntity->getTransformations());
+			sceneEntity->getTransform().update();
+			selectedEntity->fromTransform(sceneEntity->getTransform());
 		}
 		multipleSelectionRotation.add(rotation.clone().sub(multipleSelectionRotation));
 	}
@@ -1268,9 +1268,9 @@ void SceneEditorTabView::applyScale(const Vector3& scale) {
 		auto sceneEntity = scene->getEntity(selectedEntity->getId());
 		if (sceneEntity == nullptr) return;
 
-		sceneEntity->getTransformations().setScale(Vector3(scale));
-		sceneEntity->getTransformations().update();
-		selectedEntity->fromTransformations(sceneEntity->getTransformations());
+		sceneEntity->getTransform().setScale(Vector3(scale));
+		sceneEntity->getTransform().update();
+		selectedEntity->fromTransform(sceneEntity->getTransform());
 	} else
 	if (selectedEntityIds.size() > 1) {
 		for (auto selectedEntityId: selectedEntityIds) {
@@ -1279,9 +1279,9 @@ void SceneEditorTabView::applyScale(const Vector3& scale) {
 			auto sceneEntity = scene->getEntity(selectedEntity->getId());
 			if (sceneEntity == nullptr) continue;
 
-			sceneEntity->getTransformations().setScale(sceneEntity->getTransformations().getScale().clone().scale(scale / multipleSelectionScale));
-			sceneEntity->getTransformations().update();
-			selectedEntity->fromTransformations(sceneEntity->getTransformations());
+			sceneEntity->getTransform().setScale(sceneEntity->getTransform().getScale().clone().scale(scale / multipleSelectionScale));
+			sceneEntity->getTransform().update();
+			selectedEntity->fromTransform(sceneEntity->getTransform());
 		}
 		multipleSelectionScale*= scale / multipleSelectionScale;
 	}
@@ -1415,11 +1415,11 @@ void SceneEditorTabView::addPrototype(Prototype* prototype) {
 	reloadOutliner("scene.prototypes." + to_string(prototype->getId()));
 }
 
-Entity* SceneEditorTabView::createEntity(Prototype* prototype, const string& id, const Transformations& transformations, int instances, Entity* parentEntity) {
+Entity* SceneEditorTabView::createEntity(Prototype* prototype, const string& id, const Transform& transform, int instances, Entity* parentEntity) {
 	if (prototype->getType() == Prototype_Type::DECAL) {
-		return SceneConnector::createEditorDecalEntity(prototype, id, transformations, instances, parentEntity);
+		return SceneConnector::createEditorDecalEntity(prototype, id, transform, instances, parentEntity);
 	} else {
-		return SceneConnector::createEntity(prototype, id, transformations, instances, parentEntity);
+		return SceneConnector::createEntity(prototype, id, transform, instances, parentEntity);
 	}
 }
 

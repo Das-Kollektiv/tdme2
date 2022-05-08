@@ -156,7 +156,7 @@
     - entities, which are instances from prototypes
          - set up name, description
          - see prototype name, center
-    - setting up entity transformations for a single or multiple entities
+    - setting up entity transform for a single or multiple entities
          - translation
          - scaling
          - rotation

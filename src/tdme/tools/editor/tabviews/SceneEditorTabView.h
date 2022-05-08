@@ -427,12 +427,12 @@ public:
 	 * Create engine entity
 	 * @param prototype prototype
 	 * @param id id
-	 * @param transformations transformations
+	 * @param transform transform
 	 * @param instances instances which applies only for skinned objects
 	 * @param parentEntity parent entity
 	 * @return entity
 	 */
-	static Entity* createEntity(Prototype* prototype, const string& id, const Transformations& transformations, int instances = 1, Entity* parentEntity = nullptr);
+	static Entity* createEntity(Prototype* prototype, const string& id, const Transform& transform, int instances = 1, Entity* parentEntity = nullptr);
 
 	/**
 	 * Create engine entity

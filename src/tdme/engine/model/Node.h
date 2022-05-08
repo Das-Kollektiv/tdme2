@@ -34,7 +34,7 @@ private:
 	string id;
 	string name;
 	bool joint;
-	Matrix4x4 transformationsMatrix;
+	Matrix4x4 transformMatrix;
 	vector<Vector3> vertices;
 	vector<Vector3> normals;
 	vector<TextureCoordinate> textureCoordinates;
@@ -115,17 +115,17 @@ public:
 	}
 
 	/**
-	 * @return transformations matrix related to parent node
+	 * @return transform matrix related to parent node
 	 */
-	inline const Matrix4x4& getTransformationsMatrix() const {
-		return transformationsMatrix;
+	inline const Matrix4x4& getTransformMatrix() const {
+		return transformMatrix;
 	}
 
 	/**
-	 * @return transformations matrix related to parent node
+	 * @return transform matrix related to parent node
 	 */
-	inline void setTransformationsMatrix(const Matrix4x4& transformationsMatrix) {
-		this->transformationsMatrix = transformationsMatrix;
+	inline void setTransformMatrix(const Matrix4x4& transformMatrix) {
+		this->transformMatrix = transformMatrix;
 	}
 
 	/**

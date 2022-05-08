@@ -42,10 +42,10 @@ using tdme::engine::Timing;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
-BoundingBox* ModelUtilitiesInternal::createBoundingBox(Model* model, const map<string, Matrix4x4*> overriddenNodeTransformationsMatrices)
+BoundingBox* ModelUtilitiesInternal::createBoundingBox(Model* model, const map<string, Matrix4x4*> overriddenNodeTransformMatrices)
 {
 	ObjectModelInternal objectModel(model);
-	objectModel.instanceAnimations[0]->overriddenTransformationsMatrices = overriddenNodeTransformationsMatrices;
+	objectModel.instanceAnimations[0]->overriddenTransformMatrices = overriddenNodeTransformMatrices;
 	auto boundingBox = ModelUtilitiesInternal::createBoundingBox(&objectModel);
 	if (boundingBox == nullptr) boundingBox = ModelUtilitiesInternal::createBoundingBoxNoMesh(&objectModel);
 	return boundingBox;
@@ -66,11 +66,11 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBox(ObjectModelInternal* obje
 	animationState.time = 0.0f;
 	animationState.finished = false;
 	for (auto t = 0.0f; t <= (defaultAnimation != nullptr ? static_cast<float>(defaultAnimation->getFrames()) : 0.0f) / model->getFPS(); t += 1.0f / model->getFPS()) {
-		// calculate transformations matrices without world transformations
-		auto parentTransformationsMatrix = objectModelInternal->getModel()->getImportTransformationsMatrix();
-		parentTransformationsMatrix.multiply(objectModelInternal->getTransformationsMatrix());
-		objectModelInternal->instanceAnimations[0]->computeTransformationsMatrices(objectModelInternal->instanceAnimations[0]->nodeLists[0], parentTransformationsMatrix, &animationState);
-		ObjectNode::computeTransformations(0, objectModelInternal->objectNodes);
+		// calculate transform matrices without world transform
+		auto parentTransformMatrix = objectModelInternal->getModel()->getImportTransformMatrix();
+		parentTransformMatrix.multiply(objectModelInternal->getTransformMatrix());
+		objectModelInternal->instanceAnimations[0]->computeNodesTransformMatrices(objectModelInternal->instanceAnimations[0]->nodeLists[0], parentTransformMatrix, &animationState);
+		ObjectNode::computeAnimation(0, objectModelInternal->objectNodes);
 		// parse through object nodes to determine min, max
 		for (auto objectNode : objectModelInternal->objectNodes) {
 			for (auto& vertex : *objectNode->mesh->vertices) {
@@ -118,12 +118,12 @@ BoundingBox* ModelUtilitiesInternal::createBoundingBoxNoMesh(ObjectModelInternal
 	animationState.finished = false;
 	Vector3 vertex;
 	for (auto t = 0.0f; t <= (defaultAnimation != nullptr ? static_cast<float>(defaultAnimation->getFrames()) : 0.0f) / model->getFPS(); t += 1.0f / model->getFPS()) {
-		// calculate transformations matrices without world transformations
-		auto parentTransformationsMatrix = objectModelInternal->getModel()->getImportTransformationsMatrix();
-		parentTransformationsMatrix.multiply(objectModelInternal->getTransformationsMatrix());
-		objectModelInternal->instanceAnimations[0]->computeTransformationsMatrices(objectModelInternal->instanceAnimations[0]->nodeLists[0], parentTransformationsMatrix, &animationState);
+		// calculate transform matrices without world transform
+		auto parentTransformMatrix = objectModelInternal->getModel()->getImportTransformMatrix();
+		parentTransformMatrix.multiply(objectModelInternal->getTransformMatrix());
+		objectModelInternal->instanceAnimations[0]->computeNodesTransformMatrices(objectModelInternal->instanceAnimations[0]->nodeLists[0], parentTransformMatrix, &animationState);
 		for (auto nodeIt: model->getNodes()) {
-			auto& transformedNodeMatrix = objectModelInternal->getNodeTransformationsMatrix(nodeIt.second->getId());
+			auto& transformedNodeMatrix = objectModelInternal->getNodeTransformMatrix(nodeIt.second->getId());
 			vertex = transformedNodeMatrix.multiply(vertex.set(0.0f, 0.0f, 0.0f));
 			if (firstVertex == true) {
 				minX = vertex[0];
@@ -241,8 +241,8 @@ bool ModelUtilitiesInternal::equals(ObjectModelInternal* objectModel1Internal, O
 		auto node2 = objectModel2Internal->objectNodes[i]->node;
 		auto& facesEntitiesModel1 = objectNodeModel1->node->getFacesEntities();
 		auto& facesEntitiesModel2 = objectNodeModel2->node->getFacesEntities();
-		// check transformation matrix
-		if (objectNodeModel1->node->getTransformationsMatrix().equals(objectNodeModel2->node->getTransformationsMatrix()) == false)
+		// check transform matrix
+		if (objectNodeModel1->node->getTransformMatrix().equals(objectNodeModel2->node->getTransformMatrix()) == false)
 			return false;
 		// check vertices count
 		if (node1->getVertices().size() != node2->getVertices().size())

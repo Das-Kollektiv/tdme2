@@ -12,7 +12,7 @@
 #include <tdme/engine/ParticleSystem.h>
 #include <tdme/engine/Partition.h>
 #include <tdme/engine/PointsParticleSystem.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 
 using std::string;
 using std::vector;
@@ -26,7 +26,7 @@ using tdme::engine::ParticleSystem;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::Partition;
 using tdme::engine::PointsParticleSystem;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 
 ParticleSystemGroup::ParticleSystemGroup(const string& id, bool autoEmit, bool contributesShadows, bool receivesShadows, const vector<ParticleSystem*>& particleSystems) :
 	id(id), autoEmit(autoEmit), contributesShadows(contributesShadows), receivesShadows(receivesShadows), particleSystems(particleSystems)
@@ -57,24 +57,24 @@ void ParticleSystemGroup::initialize()
 	for (auto particleSystem: particleSystems) dynamic_cast<Entity*>(particleSystem)->initialize();
 }
 
-void ParticleSystemGroup::fromTransformations(const Transformations& transformations)
+void ParticleSystemGroup::fromTransform(const Transform& transform)
 {
-	Transformations::fromTransformations(transformations);
+	Transform::fromTransform(transform);
 	//
-	for (auto particleSystem: particleSystems) dynamic_cast<Entity*>(particleSystem)->fromTransformations(transformations);
+	for (auto particleSystem: particleSystems) dynamic_cast<Entity*>(particleSystem)->fromTransform(transform);
 	// update bounding box transformed
-	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
+	boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
 	// update object
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 
 void ParticleSystemGroup::update()
 {
-	Transformations::update();
+	Transform::update();
 	//
-	for (auto particleSystem: particleSystems) dynamic_cast<Entity*>(particleSystem)->fromTransformations(*this);
+	for (auto particleSystem: particleSystems) dynamic_cast<Entity*>(particleSystem)->fromTransform(*this);
 	// update bounding box transformed
-	boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
+	boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
 	// update object
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }

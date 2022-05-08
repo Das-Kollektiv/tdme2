@@ -98,7 +98,7 @@ void TMWriter::write(Model* model, vector<uint8_t>& data) {
 	os.writeFloatArray(model->getBoundingBox()->getMin().getArray());
 	os.writeFloatArray(model->getBoundingBox()->getMax().getArray());
 	os.writeFloat(model->getFPS());
-	os.writeFloatArray(model->getImportTransformationsMatrix().getArray());
+	os.writeFloatArray(model->getImportTransformMatrix().getArray());
 	writeEmbeddedTextures(&os, model);
 	os.writeInt(model->getMaterials().size());
 	for (auto it: model->getMaterials()) {
@@ -237,9 +237,9 @@ void TMWriter::writeAnimation(TMWriterOutputStream* os, Animation* a)
 		os->writeBoolean(false);
 	} else {
 		os->writeBoolean(true);
-		os->writeInt(a->getTransformationsMatrices().size());
-		for (auto i = 0; i < a->getTransformationsMatrices().size(); i++) {
-			os->writeFloatArray(a->getTransformationsMatrices()[i].getArray());
+		os->writeInt(a->getTransformMatrices().size());
+		for (auto i = 0; i < a->getTransformMatrices().size(); i++) {
+			os->writeFloatArray(a->getTransformMatrices()[i].getArray());
 		}
 	}
 }
@@ -315,7 +315,7 @@ void TMWriter::writeNode(TMWriterOutputStream* os, Node* g)
 	os->writeString(g->getId());
 	os->writeString(g->getName());
 	os->writeBoolean(g->isJoint());
-	os->writeFloatArray(g->getTransformationsMatrix().getArray());
+	os->writeFloatArray(g->getTransformMatrix().getArray());
 	writeVertices(os, g->getVertices());
 	writeVertices(os, g->getNormals());
 	writeTextureCoordinates(os, g->getTextureCoordinates());

@@ -459,7 +459,7 @@ void MiniScriptTest::initializeNative() {
 					{
 						.line = 77,
 						.statementIdx = 66,
-						.statement = "console.log(\"Check transformations computation\")",
+						.statement = "console.log(\"Check transform computation\")",
 						.gotoStatementIdx = -1
 					},
 					{
@@ -471,73 +471,73 @@ void MiniScriptTest::initializeNative() {
 					{
 						.line = 79,
 						.statementIdx = 68,
-						.statement = "setVariable(\"$transformations\", transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)))",
+						.statement = "setVariable(\"$transform\", transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 80,
 						.statementIdx = 69,
-						.statement = "setVariable(\"$transformations\", transformations.setRotationAngle($transformations, 0, 90)));",
+						.statement = "setVariable(\"$transform\", transform.setRotationAngle($transform, 0, 90)));",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 81,
 						.statementIdx = 70,
-						.statement = "console.log(\"transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)): \", $transformations)",
+						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)): \", $transform)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 82,
 						.statementIdx = 71,
-						.statement = "console.log(\"transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getTranslation(): \", transformations.getTranslation($transformations))",
+						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getTranslation(): \", transform.getTranslation($transform))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 83,
 						.statementIdx = 72,
-						.statement = "console.log(\"transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setTranslation(vec3(-1,-2,-3)): \", transformations.setTranslation($transformations, vec3(-1,-2,-3)))",
+						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setTranslation(vec3(-1,-2,-3)): \", transform.setTranslation($transform, vec3(-1,-2,-3)))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 84,
 						.statementIdx = 73,
-						.statement = "console.log(\"transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getScale(): \", transformations.getScale($transformations))",
+						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getScale(): \", transform.getScale($transform))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 85,
 						.statementIdx = 74,
-						.statement = "console.log(\"transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setScale(): \", transformations.setScale($transformations, vec3(-2,-3,-4)))",
+						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setScale(): \", transform.setScale($transform, vec3(-2,-3,-4)))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 86,
 						.statementIdx = 75,
-						.statement = "console.log(\"transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getRotationAxis(): \", transformations.getRotationAxis($transformations, 0))",
+						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getRotationAxis(): \", transform.getRotationAxis($transform, 0))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 87,
 						.statementIdx = 76,
-						.statement = "console.log(\"transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getRotationAngle(): \", transformations.getRotationAngle($transformations, 0))",
+						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getRotationAngle(): \", transform.getRotationAngle($transform, 0))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 88,
 						.statementIdx = 77,
-						.statement = "console.log(\"transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setRotationAngle(): \", transformations.setRotationAngle($transformations, 0, 90))",
+						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setRotationAngle(): \", transform.setRotationAngle($transform, 0, 90))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 89,
 						.statementIdx = 78,
-						.statement = "console.log(\"transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).multiply(vec3(0,0,0)): \", transformations.multiply($transformations, vec3(0,0,0)))",
+						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).multiply(vec3(0,0,0)): \", transform.multiply($transform, vec3(0,0,0)))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 90,
 						.statementIdx = 79,
-						.statement = "console.log(\"transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).rotate(vec3(0,0,1)): \", transformations.rotate($transformations, vec3(0,0,1)))",
+						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).rotate(vec3(0,0,1)): \", transform.rotate($transform, vec3(0,0,1)))",
 						.gotoStatementIdx = -1
 					},
 					{
@@ -6590,7 +6590,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 66
-	// console.log("Check transformations computation")
+	// console.log("Check transform computation")
 	{
 		const ScriptStatement& statement = scripts[1].statements[66];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
@@ -6598,7 +6598,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 1> argumentValues;
 		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
-		argumentValues[0].setValue(string("Check transformations computation"));
+		argumentValues[0].setValue(string("Check transform computation"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -6624,7 +6624,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 68
-	// setVariable("$transformations", transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)))
+	// setVariable("$transform", transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[68];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
@@ -6632,9 +6632,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
-		argumentValues[0].setValue(string("$transformations"));
-		// argumentValues[1] --> returnValue of transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0))
-		// depth = 1 / argument index = 1: transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0))
+		argumentValues[0].setValue(string("$transform"));
+		// argumentValues[1] --> returnValue of transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0))
+		// depth = 1 / argument index = 1: transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -6712,35 +6712,35 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// method code: transformations
-			Transformations transformations;
+			// method code: transform
+			Transform transform;
 			Vector3 vec3Value;
 			if (argumentValues.size() >= 1) {
 				if (MiniScript::getVector3Value(argumentValues, 0, vec3Value, true) == true) {
-					transformations.setTranslation(vec3Value);
+					transform.setTranslation(vec3Value);
 				} else {
-					Console::println("ScriptMethodTransformations::executeMethod(): " + string("transformations") + "(): parameter type mismatch @ argument 0: vector3 expected");
+					Console::println("ScriptMethodTransform::executeMethod(): " + string("transform") + "(): parameter type mismatch @ argument 0: vector3 expected");
 					miniScript->startErrorScript(); return;
 				}
 			}
 			if (argumentValues.size() >= 2) {
 				if (MiniScript::getVector3Value(argumentValues, 1, vec3Value, true) == true) {
-					transformations.setScale(vec3Value);
+					transform.setScale(vec3Value);
 				} else {
-					Console::println("ScriptMethodTransformations::executeMethod(): " + string("transformations") + "(): parameter type mismatch @ argument 1: vector3 expected");
+					Console::println("ScriptMethodTransform::executeMethod(): " + string("transform") + "(): parameter type mismatch @ argument 1: vector3 expected");
 					miniScript->startErrorScript(); return;
 				}
 			}
 			for (auto i = 2; i < argumentValues.size(); i++) {
 				if (MiniScript::getVector3Value(argumentValues, i, vec3Value, true) == true) {
-					transformations.addRotation(vec3Value, 0.0f);
+					transform.addRotation(vec3Value, 0.0f);
 				} else {
-					Console::println("ScriptMethodTransformations::executeMethod(): " + string("transformations") + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
+					Console::println("ScriptMethodTransform::executeMethod(): " + string("transform") + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
 					miniScript->startErrorScript(); return;
 				}
 			}
-			transformations.update();
-			returnValue.setValue(transformations);
+			transform.update();
+			returnValue.setValue(transform);
 		}
 		// method code: setVariable
 		string variable;
@@ -6755,7 +6755,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 69
-	// setVariable("$transformations", transformations.setRotationAngle($transformations, 0, 90))
+	// setVariable("$transform", transform.setRotationAngle($transform, 0, 90))
 	{
 		const ScriptStatement& statement = scripts[1].statements[69];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
@@ -6763,24 +6763,24 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
-		argumentValues[0].setValue(string("$transformations"));
-		// argumentValues[1] --> returnValue of transformations.setRotationAngle($transformations, 0, 90)
-		// depth = 1 / argument index = 1: transformations.setRotationAngle($transformations, 0, 90)
+		argumentValues[0].setValue(string("$transform"));
+		// argumentValues[1] --> returnValue of transform.setRotationAngle($transform, 0, 90)
+		// depth = 1 / argument index = 1: transform.setRotationAngle($transform, 0, 90)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 3> argumentValues;
 			array<ScriptVariable, 3>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of getVariable("$transformations")
+			// argumentValues[0] --> returnValue of getVariable("$transform")
 			argumentValues[1].setValue(static_cast<int64_t>(0));
 			argumentValues[2].setValue(static_cast<int64_t>(90));
-			// depth = 2 / argument index = 0: getVariable("$transformations")
+			// depth = 2 / argument index = 0: getVariable("$transform")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
 				array<ScriptVariable, 1> argumentValues;
 				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues[0].setValue(string("$transformations"));
+				argumentValues[0].setValue(string("$transform"));
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -6790,23 +6790,23 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// method code: transformations.setRotationAngle
+			// method code: transform.setRotationAngle
 			int64_t idx;
-			Transformations transformations;
+			Transform transform;
 			float angle;
-			if (MiniScript::getTransformationsValue(argumentValues, 0, transformations, false) == true &&
+			if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true &&
 				MiniScript::getIntegerValue(argumentValues, 1, idx, false) == true &&
 				MiniScript::getFloatValue(argumentValues, 2, angle, false) == true) {
-				if (idx < transformations.getRotationCount()) {
-					transformations.setRotationAngle(idx, angle);
-					transformations.update();
-					returnValue.setValue(transformations);
+				if (idx < transform.getRotationCount()) {
+					transform.setRotationAngle(idx, angle);
+					transform.update();
+					returnValue.setValue(transform);
 				} else {
-					Console::println("ScriptMethodTransformationsSetRotationAngle::executeMethod(): " + string("transformations.setRotationAngle") + "(): rotation index invalid: " + to_string(idx) + " / " + to_string(transformations.getRotationCount()));
+					Console::println("ScriptMethodTransformSetRotationAngle::executeMethod(): " + string("transform.setRotationAngle") + "(): rotation index invalid: " + to_string(idx) + " / " + to_string(transform.getRotationCount()));
 					miniScript->startErrorScript(); return;
 				}
 			} else {
-				Console::println("ScriptMethodTransformationsSetRotationAngle::executeMethod(): " + string("transformations.setRotationAngle") + "(): parameter type mismatch @ argument 0: transformations expected, @ argument 1: integer expected, @ argument 2: float expected");
+				Console::println("ScriptMethodTransformSetRotationAngle::executeMethod(): " + string("transform.setRotationAngle") + "(): parameter type mismatch @ argument 0: transform expected, @ argument 1: integer expected, @ argument 2: float expected");
 				miniScript->startErrorScript(); return;
 			}
 		}
@@ -6823,7 +6823,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 70
-	// console.log("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)): ", $transformations)
+	// console.log("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)): ", $transform)
 	{
 		const ScriptStatement& statement = scripts[1].statements[70];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
@@ -6831,15 +6831,15 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
-		argumentValues[0].setValue(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)): "));
-		// argumentValues[1] --> returnValue of getVariable("$transformations")
-		// depth = 1 / argument index = 1: getVariable("$transformations")
+		argumentValues[0].setValue(string("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)): "));
+		// argumentValues[1] --> returnValue of getVariable("$transform")
+		// depth = 1 / argument index = 1: getVariable("$transform")
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 1> argumentValues;
 			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
-			argumentValues[0].setValue(string("$transformations"));
+			argumentValues[0].setValue(string("$transform"));
 			// method code: getVariable
 			string variable;
 			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -6857,7 +6857,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 71
-	// console.log("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getTranslation(): ", transformations.getTranslation($transformations))
+	// console.log("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getTranslation(): ", transform.getTranslation($transform))
 	{
 		const ScriptStatement& statement = scripts[1].statements[71];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
@@ -6865,22 +6865,22 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
-		argumentValues[0].setValue(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getTranslation(): "));
-		// argumentValues[1] --> returnValue of transformations.getTranslation($transformations)
-		// depth = 1 / argument index = 1: transformations.getTranslation($transformations)
+		argumentValues[0].setValue(string("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getTranslation(): "));
+		// argumentValues[1] --> returnValue of transform.getTranslation($transform)
+		// depth = 1 / argument index = 1: transform.getTranslation($transform)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 1> argumentValues;
 			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of getVariable("$transformations")
-			// depth = 2 / argument index = 0: getVariable("$transformations")
+			// argumentValues[0] --> returnValue of getVariable("$transform")
+			// depth = 2 / argument index = 0: getVariable("$transform")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
 				array<ScriptVariable, 1> argumentValues;
 				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues[0].setValue(string("$transformations"));
+				argumentValues[0].setValue(string("$transform"));
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -6890,12 +6890,12 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// method code: transformations.getTranslation
-			Transformations transformations;
-			if (MiniScript::getTransformationsValue(argumentValues, 0, transformations, false) == true) {
-				returnValue.setValue(transformations.getTranslation());
+			// method code: transform.getTranslation
+			Transform transform;
+			if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true) {
+				returnValue.setValue(transform.getTranslation());
 			} else {
-				Console::println("ScriptMethodTransformationsGetTranslation::executeMethod(): " + string("transformations.getTranslation") + "(): parameter type mismatch @ argument 0: transformations expected");
+				Console::println("ScriptMethodTransformGetTranslation::executeMethod(): " + string("transform.getTranslation") + "(): parameter type mismatch @ argument 0: transform expected");
 				miniScript->startErrorScript(); return;
 			}
 		}
@@ -6907,7 +6907,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 72
-	// console.log("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setTranslation(vec3(-1,-2,-3)): ", transformations.setTranslation($transformations, vec3(-1,-2,-3)))
+	// console.log("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setTranslation(vec3(-1,-2,-3)): ", transform.setTranslation($transform, vec3(-1,-2,-3)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[72];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
@@ -6915,23 +6915,23 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
-		argumentValues[0].setValue(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setTranslation(vec3(-1,-2,-3)): "));
-		// argumentValues[1] --> returnValue of transformations.setTranslation($transformations, vec3(-1,-2,-3))
-		// depth = 1 / argument index = 1: transformations.setTranslation($transformations, vec3(-1,-2,-3))
+		argumentValues[0].setValue(string("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setTranslation(vec3(-1,-2,-3)): "));
+		// argumentValues[1] --> returnValue of transform.setTranslation($transform, vec3(-1,-2,-3))
+		// depth = 1 / argument index = 1: transform.setTranslation($transform, vec3(-1,-2,-3))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of getVariable("$transformations")
+			// argumentValues[0] --> returnValue of getVariable("$transform")
 			// argumentValues[1] --> returnValue of vec3(-1,-2,-3)
-			// depth = 2 / argument index = 0: getVariable("$transformations")
+			// depth = 2 / argument index = 0: getVariable("$transform")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
 				array<ScriptVariable, 1> argumentValues;
 				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues[0].setValue(string("$transformations"));
+				argumentValues[0].setValue(string("$transform"));
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -6964,16 +6964,16 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// method code: transformations.setTranslation
-			Transformations transformations;
+			// method code: transform.setTranslation
+			Transform transform;
 			Vector3 translation;
-			if (MiniScript::getTransformationsValue(argumentValues, 0, transformations, false) == true &&
+			if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true &&
 				MiniScript::getVector3Value(argumentValues, 1, translation, false) == true) {
-				transformations.setTranslation(translation);
-				transformations.update();
-				returnValue.setValue(transformations);
+				transform.setTranslation(translation);
+				transform.update();
+				returnValue.setValue(transform);
 			} else {
-				Console::println("ScriptMethodTransformationsSetTranslation::executeMethod(): " + string("transformations.setTranslation") + "(): parameter type mismatch @ argument 0: transformations expected, @ argument 1: vector3 expected");
+				Console::println("ScriptMethodTransformSetTranslation::executeMethod(): " + string("transform.setTranslation") + "(): parameter type mismatch @ argument 0: transform expected, @ argument 1: vector3 expected");
 				miniScript->startErrorScript(); return;
 			}
 		}
@@ -6985,7 +6985,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 73
-	// console.log("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getScale(): ", transformations.getScale($transformations))
+	// console.log("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getScale(): ", transform.getScale($transform))
 	{
 		const ScriptStatement& statement = scripts[1].statements[73];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
@@ -6993,22 +6993,22 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
-		argumentValues[0].setValue(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getScale(): "));
-		// argumentValues[1] --> returnValue of transformations.getScale($transformations)
-		// depth = 1 / argument index = 1: transformations.getScale($transformations)
+		argumentValues[0].setValue(string("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getScale(): "));
+		// argumentValues[1] --> returnValue of transform.getScale($transform)
+		// depth = 1 / argument index = 1: transform.getScale($transform)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 1> argumentValues;
 			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of getVariable("$transformations")
-			// depth = 2 / argument index = 0: getVariable("$transformations")
+			// argumentValues[0] --> returnValue of getVariable("$transform")
+			// depth = 2 / argument index = 0: getVariable("$transform")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
 				array<ScriptVariable, 1> argumentValues;
 				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues[0].setValue(string("$transformations"));
+				argumentValues[0].setValue(string("$transform"));
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -7018,12 +7018,12 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// method code: transformations.getScale
-			Transformations transformations;
-			if (MiniScript::getTransformationsValue(argumentValues, 0, transformations, false) == true) {
-				returnValue.setValue(transformations.getScale());
+			// method code: transform.getScale
+			Transform transform;
+			if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true) {
+				returnValue.setValue(transform.getScale());
 			} else {
-				Console::println("ScriptMethodTransformationsGetScale::executeMethod(): " + string("transformations.getScale") + "(): parameter type mismatch @ argument 0: transformations expected");
+				Console::println("ScriptMethodTransformGetScale::executeMethod(): " + string("transform.getScale") + "(): parameter type mismatch @ argument 0: transform expected");
 				miniScript->startErrorScript(); return;
 			}
 		}
@@ -7035,7 +7035,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 74
-	// console.log("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setScale(): ", transformations.setScale($transformations, vec3(-2,-3,-4)))
+	// console.log("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setScale(): ", transform.setScale($transform, vec3(-2,-3,-4)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[74];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
@@ -7043,23 +7043,23 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
-		argumentValues[0].setValue(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setScale(): "));
-		// argumentValues[1] --> returnValue of transformations.setScale($transformations, vec3(-2,-3,-4))
-		// depth = 1 / argument index = 1: transformations.setScale($transformations, vec3(-2,-3,-4))
+		argumentValues[0].setValue(string("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setScale(): "));
+		// argumentValues[1] --> returnValue of transform.setScale($transform, vec3(-2,-3,-4))
+		// depth = 1 / argument index = 1: transform.setScale($transform, vec3(-2,-3,-4))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of getVariable("$transformations")
+			// argumentValues[0] --> returnValue of getVariable("$transform")
 			// argumentValues[1] --> returnValue of vec3(-2,-3,-4)
-			// depth = 2 / argument index = 0: getVariable("$transformations")
+			// depth = 2 / argument index = 0: getVariable("$transform")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
 				array<ScriptVariable, 1> argumentValues;
 				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues[0].setValue(string("$transformations"));
+				argumentValues[0].setValue(string("$transform"));
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -7092,16 +7092,16 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// method code: transformations.setScale
-			Transformations transformations;
+			// method code: transform.setScale
+			Transform transform;
 			Vector3 scale;
-			if (MiniScript::getTransformationsValue(argumentValues, 0, transformations, false) == true &&
+			if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true &&
 				MiniScript::getVector3Value(argumentValues, 1, scale, false) == true) {
-				transformations.setScale(scale);
-				transformations.update();
-				returnValue.setValue(transformations);
+				transform.setScale(scale);
+				transform.update();
+				returnValue.setValue(transform);
 			} else {
-				Console::println("ScriptMethodTransformationsSetScale::executeMethod(): " + string("transformations.setScale") + "(): parameter type mismatch @ argument 0: transformations expected, @ argument 1: vector3 expected");
+				Console::println("ScriptMethodTransformSetScale::executeMethod(): " + string("transform.setScale") + "(): parameter type mismatch @ argument 0: transform expected, @ argument 1: vector3 expected");
 				miniScript->startErrorScript(); return;
 			}
 		}
@@ -7113,7 +7113,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 75
-	// console.log("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getRotationAxis(): ", transformations.getRotationAxis($transformations, 0))
+	// console.log("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getRotationAxis(): ", transform.getRotationAxis($transform, 0))
 	{
 		const ScriptStatement& statement = scripts[1].statements[75];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
@@ -7121,23 +7121,23 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
-		argumentValues[0].setValue(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getRotationAxis(): "));
-		// argumentValues[1] --> returnValue of transformations.getRotationAxis($transformations, 0)
-		// depth = 1 / argument index = 1: transformations.getRotationAxis($transformations, 0)
+		argumentValues[0].setValue(string("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getRotationAxis(): "));
+		// argumentValues[1] --> returnValue of transform.getRotationAxis($transform, 0)
+		// depth = 1 / argument index = 1: transform.getRotationAxis($transform, 0)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of getVariable("$transformations")
+			// argumentValues[0] --> returnValue of getVariable("$transform")
 			argumentValues[1].setValue(static_cast<int64_t>(0));
-			// depth = 2 / argument index = 0: getVariable("$transformations")
+			// depth = 2 / argument index = 0: getVariable("$transform")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
 				array<ScriptVariable, 1> argumentValues;
 				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues[0].setValue(string("$transformations"));
+				argumentValues[0].setValue(string("$transform"));
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -7147,19 +7147,19 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// method code: transformations.getRotationAxis
+			// method code: transform.getRotationAxis
 			int64_t idx;
-			Transformations transformations;
-			if (MiniScript::getTransformationsValue(argumentValues, 0, transformations, false) == true &&
+			Transform transform;
+			if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true &&
 				MiniScript::getIntegerValue(argumentValues, 1, idx, false) == true) {
-				if (idx < transformations.getRotationCount()) {
-					returnValue.setValue(transformations.getRotationAxis(idx));
+				if (idx < transform.getRotationCount()) {
+					returnValue.setValue(transform.getRotationAxis(idx));
 				} else {
-					Console::println("ScriptMethodTransformationsGetRotationAxis::executeMethod(): " + string("transformations.getRotationAxis") + "(): rotation index invalid: " + to_string(idx) + " / " + to_string(transformations.getRotationCount()));
+					Console::println("ScriptMethodTransformGetRotationAxis::executeMethod(): " + string("transform.getRotationAxis") + "(): rotation index invalid: " + to_string(idx) + " / " + to_string(transform.getRotationCount()));
 					miniScript->startErrorScript(); return;
 				}
 			} else {
-				Console::println("ScriptMethodTransformationsGetRotationAxis::executeMethod(): " + string("transformations.getRotationAxis") + "(): parameter type mismatch @ argument 0: transformations expected, @ argument 1: integer expected");
+				Console::println("ScriptMethodTransformGetRotationAxis::executeMethod(): " + string("transform.getRotationAxis") + "(): parameter type mismatch @ argument 0: transform expected, @ argument 1: integer expected");
 				miniScript->startErrorScript(); return;
 			}
 		}
@@ -7171,7 +7171,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 76
-	// console.log("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getRotationAngle(): ", transformations.getRotationAngle($transformations, 0))
+	// console.log("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getRotationAngle(): ", transform.getRotationAngle($transform, 0))
 	{
 		const ScriptStatement& statement = scripts[1].statements[76];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
@@ -7179,23 +7179,23 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
-		argumentValues[0].setValue(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getRotationAngle(): "));
-		// argumentValues[1] --> returnValue of transformations.getRotationAngle($transformations, 0)
-		// depth = 1 / argument index = 1: transformations.getRotationAngle($transformations, 0)
+		argumentValues[0].setValue(string("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getRotationAngle(): "));
+		// argumentValues[1] --> returnValue of transform.getRotationAngle($transform, 0)
+		// depth = 1 / argument index = 1: transform.getRotationAngle($transform, 0)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of getVariable("$transformations")
+			// argumentValues[0] --> returnValue of getVariable("$transform")
 			argumentValues[1].setValue(static_cast<int64_t>(0));
-			// depth = 2 / argument index = 0: getVariable("$transformations")
+			// depth = 2 / argument index = 0: getVariable("$transform")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
 				array<ScriptVariable, 1> argumentValues;
 				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues[0].setValue(string("$transformations"));
+				argumentValues[0].setValue(string("$transform"));
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -7205,19 +7205,19 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// method code: transformations.getRotationAngle
+			// method code: transform.getRotationAngle
 			int64_t idx;
-			Transformations transformations;
-			if (MiniScript::getTransformationsValue(argumentValues, 0, transformations, false) == true &&
+			Transform transform;
+			if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true &&
 				MiniScript::getIntegerValue(argumentValues, 1, idx, false) == true) {
-				if (idx < transformations.getRotationCount()) {
-					returnValue.setValue(transformations.getRotationAngle(idx));
+				if (idx < transform.getRotationCount()) {
+					returnValue.setValue(transform.getRotationAngle(idx));
 				} else {
-					Console::println("ScriptMethodTransformationsGetRotationAngle::executeMethod(): " + string("transformations.getRotationAngle") + "(): rotation index invalid: " + to_string(idx) + " / " + to_string(transformations.getRotationCount()));
+					Console::println("ScriptMethodTransformGetRotationAngle::executeMethod(): " + string("transform.getRotationAngle") + "(): rotation index invalid: " + to_string(idx) + " / " + to_string(transform.getRotationCount()));
 					miniScript->startErrorScript(); return;
 				}
 			} else {
-				Console::println("ScriptMethodTransformationsGetRotationAngle::executeMethod(): " + string("transformations.getRotationAngle") + "(): parameter type mismatch @ argument 0: transformations expected, @ argument 1: integer expected");
+				Console::println("ScriptMethodTransformGetRotationAngle::executeMethod(): " + string("transform.getRotationAngle") + "(): parameter type mismatch @ argument 0: transform expected, @ argument 1: integer expected");
 				miniScript->startErrorScript(); return;
 			}
 		}
@@ -7229,7 +7229,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 77
-	// console.log("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setRotationAngle(): ", transformations.setRotationAngle($transformations, 0, 90))
+	// console.log("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setRotationAngle(): ", transform.setRotationAngle($transform, 0, 90))
 	{
 		const ScriptStatement& statement = scripts[1].statements[77];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
@@ -7237,24 +7237,24 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
-		argumentValues[0].setValue(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setRotationAngle(): "));
-		// argumentValues[1] --> returnValue of transformations.setRotationAngle($transformations, 0, 90)
-		// depth = 1 / argument index = 1: transformations.setRotationAngle($transformations, 0, 90)
+		argumentValues[0].setValue(string("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setRotationAngle(): "));
+		// argumentValues[1] --> returnValue of transform.setRotationAngle($transform, 0, 90)
+		// depth = 1 / argument index = 1: transform.setRotationAngle($transform, 0, 90)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 3> argumentValues;
 			array<ScriptVariable, 3>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of getVariable("$transformations")
+			// argumentValues[0] --> returnValue of getVariable("$transform")
 			argumentValues[1].setValue(static_cast<int64_t>(0));
 			argumentValues[2].setValue(static_cast<int64_t>(90));
-			// depth = 2 / argument index = 0: getVariable("$transformations")
+			// depth = 2 / argument index = 0: getVariable("$transform")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
 				array<ScriptVariable, 1> argumentValues;
 				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues[0].setValue(string("$transformations"));
+				argumentValues[0].setValue(string("$transform"));
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -7264,23 +7264,23 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// method code: transformations.setRotationAngle
+			// method code: transform.setRotationAngle
 			int64_t idx;
-			Transformations transformations;
+			Transform transform;
 			float angle;
-			if (MiniScript::getTransformationsValue(argumentValues, 0, transformations, false) == true &&
+			if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true &&
 				MiniScript::getIntegerValue(argumentValues, 1, idx, false) == true &&
 				MiniScript::getFloatValue(argumentValues, 2, angle, false) == true) {
-				if (idx < transformations.getRotationCount()) {
-					transformations.setRotationAngle(idx, angle);
-					transformations.update();
-					returnValue.setValue(transformations);
+				if (idx < transform.getRotationCount()) {
+					transform.setRotationAngle(idx, angle);
+					transform.update();
+					returnValue.setValue(transform);
 				} else {
-					Console::println("ScriptMethodTransformationsSetRotationAngle::executeMethod(): " + string("transformations.setRotationAngle") + "(): rotation index invalid: " + to_string(idx) + " / " + to_string(transformations.getRotationCount()));
+					Console::println("ScriptMethodTransformSetRotationAngle::executeMethod(): " + string("transform.setRotationAngle") + "(): rotation index invalid: " + to_string(idx) + " / " + to_string(transform.getRotationCount()));
 					miniScript->startErrorScript(); return;
 				}
 			} else {
-				Console::println("ScriptMethodTransformationsSetRotationAngle::executeMethod(): " + string("transformations.setRotationAngle") + "(): parameter type mismatch @ argument 0: transformations expected, @ argument 1: integer expected, @ argument 2: float expected");
+				Console::println("ScriptMethodTransformSetRotationAngle::executeMethod(): " + string("transform.setRotationAngle") + "(): parameter type mismatch @ argument 0: transform expected, @ argument 1: integer expected, @ argument 2: float expected");
 				miniScript->startErrorScript(); return;
 			}
 		}
@@ -7292,7 +7292,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 78
-	// console.log("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).multiply(vec3(0,0,0)): ", transformations.multiply($transformations, vec3(0,0,0)))
+	// console.log("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).multiply(vec3(0,0,0)): ", transform.multiply($transform, vec3(0,0,0)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[78];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
@@ -7300,23 +7300,23 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
-		argumentValues[0].setValue(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).multiply(vec3(0,0,0)): "));
-		// argumentValues[1] --> returnValue of transformations.multiply($transformations, vec3(0,0,0))
-		// depth = 1 / argument index = 1: transformations.multiply($transformations, vec3(0,0,0))
+		argumentValues[0].setValue(string("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).multiply(vec3(0,0,0)): "));
+		// argumentValues[1] --> returnValue of transform.multiply($transform, vec3(0,0,0))
+		// depth = 1 / argument index = 1: transform.multiply($transform, vec3(0,0,0))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of getVariable("$transformations")
+			// argumentValues[0] --> returnValue of getVariable("$transform")
 			// argumentValues[1] --> returnValue of vec3(0,0,0)
-			// depth = 2 / argument index = 0: getVariable("$transformations")
+			// depth = 2 / argument index = 0: getVariable("$transform")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
 				array<ScriptVariable, 1> argumentValues;
 				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues[0].setValue(string("$transformations"));
+				argumentValues[0].setValue(string("$transform"));
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -7349,14 +7349,14 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// method code: transformations.multiply
-			Transformations transformations;
+			// method code: transform.multiply
+			Transform transform;
 			Vector3 vec3;
-			if (MiniScript::getTransformationsValue(argumentValues, 0, transformations, false) == true &&
+			if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true &&
 				MiniScript::getVector3Value(argumentValues, 1, vec3, false) == true) {
-				returnValue.setValue(transformations.getTransformationsMatrix() * vec3);
+				returnValue.setValue(transform.getTransformMatrix() * vec3);
 			} else {
-				Console::println("ScriptMethodTransformationsSetScale::executeMethod(): " + string("transformations.multiply") + "(): parameter type mismatch @ argument 0: transformations expected, @ argument 1: vector3 expected");
+				Console::println("ScriptMethodTransformSetScale::executeMethod(): " + string("transform.multiply") + "(): parameter type mismatch @ argument 0: transform expected, @ argument 1: vector3 expected");
 				miniScript->startErrorScript(); return;
 			}
 		}
@@ -7368,7 +7368,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 79
-	// console.log("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).rotate(vec3(0,0,1)): ", transformations.rotate($transformations, vec3(0,0,1)))
+	// console.log("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).rotate(vec3(0,0,1)): ", transform.rotate($transform, vec3(0,0,1)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[79];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
@@ -7376,23 +7376,23 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
-		argumentValues[0].setValue(string("transformations(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).rotate(vec3(0,0,1)): "));
-		// argumentValues[1] --> returnValue of transformations.rotate($transformations, vec3(0,0,1))
-		// depth = 1 / argument index = 1: transformations.rotate($transformations, vec3(0,0,1))
+		argumentValues[0].setValue(string("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).rotate(vec3(0,0,1)): "));
+		// argumentValues[1] --> returnValue of transform.rotate($transform, vec3(0,0,1))
+		// depth = 1 / argument index = 1: transform.rotate($transform, vec3(0,0,1))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of getVariable("$transformations")
+			// argumentValues[0] --> returnValue of getVariable("$transform")
 			// argumentValues[1] --> returnValue of vec3(0,0,1)
-			// depth = 2 / argument index = 0: getVariable("$transformations")
+			// depth = 2 / argument index = 0: getVariable("$transform")
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
 				array<ScriptVariable, 1> argumentValues;
 				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
-				argumentValues[0].setValue(string("$transformations"));
+				argumentValues[0].setValue(string("$transform"));
 				// method code: getVariable
 				string variable;
 				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
@@ -7425,14 +7425,14 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// method code: transformations.rotate
-			Transformations transformations;
+			// method code: transform.rotate
+			Transform transform;
 			Vector3 vec3;
-			if (MiniScript::getTransformationsValue(argumentValues, 0, transformations, false) == true &&
+			if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true &&
 				MiniScript::getVector3Value(argumentValues, 1, vec3, false) == true) {
-				returnValue.setValue(transformations.getRotationsQuaternion() * vec3);
+				returnValue.setValue(transform.getRotationsQuaternion() * vec3);
 			} else {
-				Console::println("ScriptMethodTransformationsSetScale::executeMethod(): " + string("transformations.rotate") + "(): parameter type mismatch @ argument 0: transformations expected, @ argument 1: vector3 expected");
+				Console::println("ScriptMethodTransformSetScale::executeMethod(): " + string("transform.rotate") + "(): parameter type mismatch @ argument 0: transform expected, @ argument 1: vector3 expected");
 				miniScript->startErrorScript(); return;
 			}
 		}

@@ -16,7 +16,7 @@
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/engine/scene/SceneEntity.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -340,10 +340,10 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string_view&
 							argumentOk = getVector3Value(argumentValues, argumentIdx, vector3Value, argumentType.optional);
 							break;
 						}
-					case TYPE_TRANSFORMATIONS:
+					case TYPE_TRANSFORM:
 						{
-							Transformations transformationsValue;
-							argumentOk = getTransformationsValue(argumentValues, argumentIdx, transformationsValue, argumentType.optional);
+							Transform transformValue;
+							argumentOk = getTransformValue(argumentValues, argumentIdx, transformValue, argumentType.optional);
 							break;
 						}
 				}
@@ -2688,354 +2688,354 @@ void MiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodVec3GetZ(this));
 	}
-	// transformations
+	// transform
 	{
 		//
-		class ScriptMethodTransformations: public ScriptMethod {
+		class ScriptMethodTransform: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodTransformations(MiniScript* miniScript):
+			ScriptMethodTransform(MiniScript* miniScript):
 				ScriptMethod(
 					{
 					},
-					ScriptVariableType::TYPE_TRANSFORMATIONS),
+					ScriptVariableType::TYPE_TRANSFORM),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "transformations";
+				return "transform";
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				Transformations transformations;
+				Transform transform;
 				Vector3 vec3Value;
 				if (argumentValues.size() >= 1) {
 					if (MiniScript::getVector3Value(argumentValues, 0, vec3Value, true) == true) {
-						transformations.setTranslation(vec3Value);
+						transform.setTranslation(vec3Value);
 					} else {
-						Console::println("ScriptMethodTransformations::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: vector3 expected");
+						Console::println("ScriptMethodTransform::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: vector3 expected");
 						miniScript->startErrorScript();
 					}
 				}
 				if (argumentValues.size() >= 2) {
 					if (MiniScript::getVector3Value(argumentValues, 1, vec3Value, true) == true) {
-						transformations.setScale(vec3Value);
+						transform.setScale(vec3Value);
 					} else {
-						Console::println("ScriptMethodTransformations::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 1: vector3 expected");
+						Console::println("ScriptMethodTransform::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 1: vector3 expected");
 						miniScript->startErrorScript();
 					}
 				}
 				for (auto i = 2; i < argumentValues.size(); i++) {
 					if (MiniScript::getVector3Value(argumentValues, i, vec3Value, true) == true) {
-						transformations.addRotation(vec3Value, 0.0f);
+						transform.addRotation(vec3Value, 0.0f);
 					} else {
-						Console::println("ScriptMethodTransformations::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
+						Console::println("ScriptMethodTransform::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
 						miniScript->startErrorScript();
 					}
 				}
-				transformations.update();
-				returnValue.setValue(transformations);
+				transform.update();
+				returnValue.setValue(transform);
 			}
 			bool isVariadic() override {
 				return true;
 			}
 		};
-		registerMethod(new ScriptMethodTransformations(this));
+		registerMethod(new ScriptMethodTransform(this));
 	}
 	{
 		//
-		class ScriptMethodTransformationsGetTranslation: public ScriptMethod {
+		class ScriptMethodTransformGetTranslation: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodTransformationsGetTranslation(MiniScript* miniScript):
+			ScriptMethodTransformGetTranslation(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_TRANSFORMATIONS, .name = "transformations", .optional = false },
+						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false },
 					},
 					ScriptVariableType::TYPE_VECTOR3),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "transformations.getTranslation";
+				return "transform.getTranslation";
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				Transformations transformations;
-				if (MiniScript::getTransformationsValue(argumentValues, 0, transformations, false) == true) {
-					returnValue.setValue(transformations.getTranslation());
+				Transform transform;
+				if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true) {
+					returnValue.setValue(transform.getTranslation());
 				} else {
-					Console::println("ScriptMethodTransformationsGetTranslation::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: transformations expected");
+					Console::println("ScriptMethodTransformGetTranslation::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: transform expected");
 					miniScript->startErrorScript();
 				}
 			}
 		};
-		registerMethod(new ScriptMethodTransformationsGetTranslation(this));
+		registerMethod(new ScriptMethodTransformGetTranslation(this));
 	}
 	{
 		//
-		class ScriptMethodTransformationsSetTranslation: public ScriptMethod {
+		class ScriptMethodTransformSetTranslation: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodTransformationsSetTranslation(MiniScript* miniScript):
+			ScriptMethodTransformSetTranslation(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_TRANSFORMATIONS, .name = "transformations", .optional = false },
+						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false },
 						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "translation", .optional = false },
 					},
-					ScriptVariableType::TYPE_TRANSFORMATIONS),
+					ScriptVariableType::TYPE_TRANSFORM),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "transformations.setTranslation";
+				return "transform.setTranslation";
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				Transformations transformations;
+				Transform transform;
 				Vector3 translation;
-				if (MiniScript::getTransformationsValue(argumentValues, 0, transformations, false) == true &&
+				if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true &&
 					MiniScript::getVector3Value(argumentValues, 1, translation, false) == true) {
-					transformations.setTranslation(translation);
-					transformations.update();
-					returnValue.setValue(transformations);
+					transform.setTranslation(translation);
+					transform.update();
+					returnValue.setValue(transform);
 				} else {
-					Console::println("ScriptMethodTransformationsSetTranslation::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: transformations expected, @ argument 1: vector3 expected");
+					Console::println("ScriptMethodTransformSetTranslation::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: transform expected, @ argument 1: vector3 expected");
 					miniScript->startErrorScript();
 				}
 			}
 		};
-		registerMethod(new ScriptMethodTransformationsSetTranslation(this));
+		registerMethod(new ScriptMethodTransformSetTranslation(this));
 	}
 	{
 		//
-		class ScriptMethodTransformationsGetScale: public ScriptMethod {
+		class ScriptMethodTransformGetScale: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodTransformationsGetScale(MiniScript* miniScript):
+			ScriptMethodTransformGetScale(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_TRANSFORMATIONS, .name = "transformations", .optional = false },
+						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false },
 					},
 					ScriptVariableType::TYPE_VECTOR3),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "transformations.getScale";
+				return "transform.getScale";
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				Transformations transformations;
-				if (MiniScript::getTransformationsValue(argumentValues, 0, transformations, false) == true) {
-					returnValue.setValue(transformations.getScale());
+				Transform transform;
+				if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true) {
+					returnValue.setValue(transform.getScale());
 				} else {
-					Console::println("ScriptMethodTransformationsGetScale::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: transformations expected");
+					Console::println("ScriptMethodTransformGetScale::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: transform expected");
 					miniScript->startErrorScript();
 				}
 			}
 		};
-		registerMethod(new ScriptMethodTransformationsGetScale(this));
+		registerMethod(new ScriptMethodTransformGetScale(this));
 	}
 	{
 		//
-		class ScriptMethodTransformationsSetScale: public ScriptMethod {
+		class ScriptMethodTransformSetScale: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodTransformationsSetScale(MiniScript* miniScript):
+			ScriptMethodTransformSetScale(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_TRANSFORMATIONS, .name = "transformations", .optional = false },
+						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false },
 						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "scale", .optional = false },
 					},
-					ScriptVariableType::TYPE_TRANSFORMATIONS),
+					ScriptVariableType::TYPE_TRANSFORM),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "transformations.setScale";
+				return "transform.setScale";
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				Transformations transformations;
+				Transform transform;
 				Vector3 scale;
-				if (MiniScript::getTransformationsValue(argumentValues, 0, transformations, false) == true &&
+				if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true &&
 					MiniScript::getVector3Value(argumentValues, 1, scale, false) == true) {
-					transformations.setScale(scale);
-					transformations.update();
-					returnValue.setValue(transformations);
+					transform.setScale(scale);
+					transform.update();
+					returnValue.setValue(transform);
 				} else {
-					Console::println("ScriptMethodTransformationsSetScale::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: transformations expected, @ argument 1: vector3 expected");
+					Console::println("ScriptMethodTransformSetScale::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: transform expected, @ argument 1: vector3 expected");
 					miniScript->startErrorScript();
 				}
 			}
 		};
-		registerMethod(new ScriptMethodTransformationsSetScale(this));
+		registerMethod(new ScriptMethodTransformSetScale(this));
 	}
 	{
 		//
-		class ScriptMethodTransformationsGetRotationAxis: public ScriptMethod {
+		class ScriptMethodTransformGetRotationAxis: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodTransformationsGetRotationAxis(MiniScript* miniScript):
+			ScriptMethodTransformGetRotationAxis(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_TRANSFORMATIONS, .name = "transformations", .optional = false },
+						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false },
 						{.type = ScriptVariableType::TYPE_INTEGER, .name = "idx", .optional = false },
 					},
 					ScriptVariableType::TYPE_VECTOR3),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "transformations.getRotationAxis";
+				return "transform.getRotationAxis";
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				int64_t idx;
-				Transformations transformations;
-				if (MiniScript::getTransformationsValue(argumentValues, 0, transformations, false) == true &&
+				Transform transform;
+				if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true &&
 					MiniScript::getIntegerValue(argumentValues, 1, idx, false) == true) {
-					if (idx < transformations.getRotationCount()) {
-						returnValue.setValue(transformations.getRotationAxis(idx));
+					if (idx < transform.getRotationCount()) {
+						returnValue.setValue(transform.getRotationAxis(idx));
 					} else {
-						Console::println("ScriptMethodTransformationsGetRotationAxis::executeMethod(): " + getMethodName() + "(): rotation index invalid: " + to_string(idx) + " / " + to_string(transformations.getRotationCount()));
+						Console::println("ScriptMethodTransformGetRotationAxis::executeMethod(): " + getMethodName() + "(): rotation index invalid: " + to_string(idx) + " / " + to_string(transform.getRotationCount()));
 						miniScript->startErrorScript();
 					}
 				} else {
-					Console::println("ScriptMethodTransformationsGetRotationAxis::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: transformations expected, @ argument 1: integer expected");
+					Console::println("ScriptMethodTransformGetRotationAxis::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: transform expected, @ argument 1: integer expected");
 					miniScript->startErrorScript();
 				}
 			}
 		};
-		registerMethod(new ScriptMethodTransformationsGetRotationAxis(this));
+		registerMethod(new ScriptMethodTransformGetRotationAxis(this));
 	}
 	{
 		//
-		class ScriptMethodTransformationsGetRotationAngle: public ScriptMethod {
+		class ScriptMethodTransformGetRotationAngle: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodTransformationsGetRotationAngle(MiniScript* miniScript):
+			ScriptMethodTransformGetRotationAngle(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_TRANSFORMATIONS, .name = "transformations", .optional = false },
+						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false },
 						{.type = ScriptVariableType::TYPE_INTEGER, .name = "idx", .optional = false },
 					},
 					ScriptVariableType::TYPE_FLOAT),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "transformations.getRotationAngle";
+				return "transform.getRotationAngle";
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				int64_t idx;
-				Transformations transformations;
-				if (MiniScript::getTransformationsValue(argumentValues, 0, transformations, false) == true &&
+				Transform transform;
+				if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true &&
 					MiniScript::getIntegerValue(argumentValues, 1, idx, false) == true) {
-					if (idx < transformations.getRotationCount()) {
-						returnValue.setValue(transformations.getRotationAngle(idx));
+					if (idx < transform.getRotationCount()) {
+						returnValue.setValue(transform.getRotationAngle(idx));
 					} else {
-						Console::println("ScriptMethodTransformationsGetRotationAngle::executeMethod(): " + getMethodName() + "(): rotation index invalid: " + to_string(idx) + " / " + to_string(transformations.getRotationCount()));
+						Console::println("ScriptMethodTransformGetRotationAngle::executeMethod(): " + getMethodName() + "(): rotation index invalid: " + to_string(idx) + " / " + to_string(transform.getRotationCount()));
 						miniScript->startErrorScript();
 					}
 				} else {
-					Console::println("ScriptMethodTransformationsGetRotationAngle::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: transformations expected, @ argument 1: integer expected");
+					Console::println("ScriptMethodTransformGetRotationAngle::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: transform expected, @ argument 1: integer expected");
 					miniScript->startErrorScript();
 				}
 			}
 		};
-		registerMethod(new ScriptMethodTransformationsGetRotationAngle(this));
+		registerMethod(new ScriptMethodTransformGetRotationAngle(this));
 	}
 	{
 		//
-		class ScriptMethodTransformationsSetRotationAngle: public ScriptMethod {
+		class ScriptMethodTransformSetRotationAngle: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodTransformationsSetRotationAngle(MiniScript* miniScript):
+			ScriptMethodTransformSetRotationAngle(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_TRANSFORMATIONS, .name = "transformations", .optional = false },
+						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false },
 						{.type = ScriptVariableType::TYPE_INTEGER, .name = "idx", .optional = false },
 						{.type = ScriptVariableType::TYPE_FLOAT, .name = "angle", .optional = false },
 					},
-					ScriptVariableType::TYPE_TRANSFORMATIONS),
+					ScriptVariableType::TYPE_TRANSFORM),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "transformations.setRotationAngle";
+				return "transform.setRotationAngle";
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				int64_t idx;
-				Transformations transformations;
+				Transform transform;
 				float angle;
-				if (MiniScript::getTransformationsValue(argumentValues, 0, transformations, false) == true &&
+				if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true &&
 					MiniScript::getIntegerValue(argumentValues, 1, idx, false) == true &&
 					MiniScript::getFloatValue(argumentValues, 2, angle, false) == true) {
-					if (idx < transformations.getRotationCount()) {
-						transformations.setRotationAngle(idx, angle);
-						transformations.update();
-						returnValue.setValue(transformations);
+					if (idx < transform.getRotationCount()) {
+						transform.setRotationAngle(idx, angle);
+						transform.update();
+						returnValue.setValue(transform);
 					} else {
-						Console::println("ScriptMethodTransformationsSetRotationAngle::executeMethod(): " + getMethodName() + "(): rotation index invalid: " + to_string(idx) + " / " + to_string(transformations.getRotationCount()));
+						Console::println("ScriptMethodTransformSetRotationAngle::executeMethod(): " + getMethodName() + "(): rotation index invalid: " + to_string(idx) + " / " + to_string(transform.getRotationCount()));
 						miniScript->startErrorScript();
 					}
 				} else {
-					Console::println("ScriptMethodTransformationsSetRotationAngle::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: transformations expected, @ argument 1: integer expected, @ argument 2: float expected");
+					Console::println("ScriptMethodTransformSetRotationAngle::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: transform expected, @ argument 1: integer expected, @ argument 2: float expected");
 					miniScript->startErrorScript();
 				}
 			}
 		};
-		registerMethod(new ScriptMethodTransformationsSetRotationAngle(this));
+		registerMethod(new ScriptMethodTransformSetRotationAngle(this));
 	}
 	{
 		//
-		class ScriptMethodTransformationsMultiply: public ScriptMethod {
+		class ScriptMethodTransformMultiply: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodTransformationsMultiply(MiniScript* miniScript):
+			ScriptMethodTransformMultiply(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_TRANSFORMATIONS, .name = "transformations", .optional = false },
+						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false },
 						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "vec3", .optional = false },
 					},
 					ScriptVariableType::TYPE_VECTOR3),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "transformations.multiply";
+				return "transform.multiply";
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				Transformations transformations;
+				Transform transform;
 				Vector3 vec3;
-				if (MiniScript::getTransformationsValue(argumentValues, 0, transformations, false) == true &&
+				if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true &&
 					MiniScript::getVector3Value(argumentValues, 1, vec3, false) == true) {
-					returnValue.setValue(transformations.getTransformationsMatrix() * vec3);
+					returnValue.setValue(transform.getTransformMatrix() * vec3);
 				} else {
-					Console::println("ScriptMethodTransformationsSetScale::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: transformations expected, @ argument 1: vector3 expected");
+					Console::println("ScriptMethodTransformSetScale::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: transform expected, @ argument 1: vector3 expected");
 					miniScript->startErrorScript();
 				}
 			}
 		};
-		registerMethod(new ScriptMethodTransformationsMultiply(this));
+		registerMethod(new ScriptMethodTransformMultiply(this));
 	}
 	{
 		//
-		class ScriptMethodTransformationsRotate: public ScriptMethod {
+		class ScriptMethodTransformRotate: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodTransformationsRotate(MiniScript* miniScript):
+			ScriptMethodTransformRotate(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_TRANSFORMATIONS, .name = "transformations", .optional = false },
+						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false },
 						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "vec3", .optional = false },
 					},
 					ScriptVariableType::TYPE_VECTOR3),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "transformations.rotate";
+				return "transform.rotate";
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				Transformations transformations;
+				Transform transform;
 				Vector3 vec3;
-				if (MiniScript::getTransformationsValue(argumentValues, 0, transformations, false) == true &&
+				if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true &&
 					MiniScript::getVector3Value(argumentValues, 1, vec3, false) == true) {
-					returnValue.setValue(transformations.getRotationsQuaternion() * vec3);
+					returnValue.setValue(transform.getRotationsQuaternion() * vec3);
 				} else {
-					Console::println("ScriptMethodTransformationsSetScale::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: transformations expected, @ argument 1: vector3 expected");
+					Console::println("ScriptMethodTransformSetScale::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: transform expected, @ argument 1: vector3 expected");
 					miniScript->startErrorScript();
 				}
 			}
 		};
-		registerMethod(new ScriptMethodTransformationsRotate(this));
+		registerMethod(new ScriptMethodTransformRotate(this));
 	}
 	// bool methods
 	{

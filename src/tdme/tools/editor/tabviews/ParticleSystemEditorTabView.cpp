@@ -139,7 +139,7 @@ void ParticleSystemEditorTabView::handleInputEvents()
 					auto psg = dynamic_cast<ParticleSystemGroup*>(selectedEntity);
 					if (psg != nullptr) selectedEntity = psg->getParticleSystems()[particleSystemIdx];
 					if (getGizmoMode() != GIZMOMODE_NONE) {
-						if (selectedEntity != nullptr) applyParticleSystemTransformations(dynamic_cast<ParticleSystem*>(selectedEntity), false);
+						if (selectedEntity != nullptr) applyParticleSystemTransform(dynamic_cast<ParticleSystem*>(selectedEntity), false);
 						setGizmoMode(GIZMOMODE_NONE);
 						updateGizmo();
 					}
@@ -182,7 +182,7 @@ void ParticleSystemEditorTabView::handleInputEvents()
 						Vector3 deltaTranslation;
 						Vector3 deltaRotation;
 						Vector3 deltaScale;
-						if (determineGizmoDeltaTransformations(mouseDownLastX, mouseDownLastY, event.getXUnscaled(), event.getYUnscaled(), deltaTranslation, deltaRotation, deltaScale) == true) {
+						if (determineGizmoDeltaTransform(mouseDownLastX, mouseDownLastY, event.getXUnscaled(), event.getYUnscaled(), deltaTranslation, deltaRotation, deltaScale) == true) {
 							totalDeltaScale.add(deltaScale.clone().sub(Vector3(1.0f, 1.0f, 1.0f)));
 							auto gizmoEntity = getGizmoObject();
 							auto selectedEntity = engine->getEntity("model");
@@ -191,20 +191,20 @@ void ParticleSystemEditorTabView::handleInputEvents()
 							if (gizmoEntity != nullptr && selectedEntity != nullptr) {
 								selectedEntity->setTranslation(selectedEntity->getTranslation().clone().add(deltaTranslation));
 								selectedEntity->update();
-								auto localTransformations = dynamic_cast<ParticleSystem*>(selectedEntity)->getLocalTransformations();
-								localTransformations.setScale(localTransformations.getScale().clone().scale(deltaScale));
-								if (localTransformations.getRotationCount() == 0) {
-									localTransformations.addRotation(Rotation::Z_AXIS, 0.0f);
-									localTransformations.addRotation(Rotation::Y_AXIS, 0.0f);
-									localTransformations.addRotation(Rotation::X_AXIS, 0.0f);
+								auto localTransform = dynamic_cast<ParticleSystem*>(selectedEntity)->getLocalTransform();
+								localTransform.setScale(localTransform.getScale().clone().scale(deltaScale));
+								if (localTransform.getRotationCount() == 0) {
+									localTransform.addRotation(Rotation::Z_AXIS, 0.0f);
+									localTransform.addRotation(Rotation::Y_AXIS, 0.0f);
+									localTransform.addRotation(Rotation::X_AXIS, 0.0f);
 								}
-								localTransformations.setRotationAngle(0, localTransformations.getRotationAngle(0) + deltaRotation[2]);
-								localTransformations.setRotationAngle(1, localTransformations.getRotationAngle(1) + deltaRotation[1]);
-								localTransformations.setRotationAngle(2, localTransformations.getRotationAngle(2) + deltaRotation[0]);
-								localTransformations.update();
-								dynamic_cast<ParticleSystem*>(selectedEntity)->setLocalTransformations(localTransformations);
-								setGizmoRotation(localTransformations);
-								applyParticleSystemTransformations(dynamic_cast<ParticleSystem*>(selectedEntity), true);
+								localTransform.setRotationAngle(0, localTransform.getRotationAngle(0) + deltaRotation[2]);
+								localTransform.setRotationAngle(1, localTransform.getRotationAngle(1) + deltaRotation[1]);
+								localTransform.setRotationAngle(2, localTransform.getRotationAngle(2) + deltaRotation[0]);
+								localTransform.update();
+								dynamic_cast<ParticleSystem*>(selectedEntity)->setLocalTransform(localTransform);
+								setGizmoRotation(localTransform);
+								applyParticleSystemTransform(dynamic_cast<ParticleSystem*>(selectedEntity), true);
 							}
 							if (Math::abs(deltaTranslation.getX()) > Math::EPSILON ||
 								Math::abs(deltaTranslation.getY()) > Math::EPSILON ||
@@ -369,30 +369,30 @@ void ParticleSystemEditorTabView::updateGizmo() {
 	auto pse = dynamic_cast<ParticleSystem*>(selectedEntity);
 	if (selectedEntity != nullptr) {
 		if (pse != nullptr) {
-			Gizmo::updateGizmo(pse->getEmitter()->getCenter().clone().scale(objectScale).add(selectedEntity->getTranslation()), selectedEntity->getTransformations());
+			Gizmo::updateGizmo(pse->getEmitter()->getCenter().clone().scale(objectScale).add(selectedEntity->getTranslation()), selectedEntity->getTransform());
 		} else {
-			Gizmo::updateGizmo(selectedEntity->getBoundingBoxTransformed()->getCenter(), selectedEntity->getTransformations());
+			Gizmo::updateGizmo(selectedEntity->getBoundingBoxTransformed()->getCenter(), selectedEntity->getTransform());
 		}
 	} else {
 		removeGizmo();
 	}
 }
 
-void ParticleSystemEditorTabView::setGizmoRotation(const Transformations& transformations) {
-	Gizmo::setGizmoRotation(transformations);
+void ParticleSystemEditorTabView::setGizmoRotation(const Transform& transform) {
+	Gizmo::setGizmoRotation(transform);
 }
 
-void ParticleSystemEditorTabView::applyParticleSystemTransformations(ParticleSystem* particleSystemEntity, bool guiOnly) {
+void ParticleSystemEditorTabView::applyParticleSystemTransform(ParticleSystem* particleSystemEntity, bool guiOnly) {
 	{
-		auto transformations = particleSystemEntity->getTransformations();
-		auto localTransformations = particleSystemEntity->getLocalTransformations();
+		auto transform = particleSystemEntity->getTransform();
+		auto localTransform = particleSystemEntity->getLocalTransform();
 		auto objectScaleInverted = Vector3(
 			1.0f / objectScale.getX(),
 			1.0f / objectScale.getY(),
 			1.0f / objectScale.getZ()
 		);
-		transformations.setScale(objectScaleInverted);
-		transformations.update();
+		transform.setScale(objectScaleInverted);
+		transform.update();
 		auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
 		auto emitterType = particleSystem->getEmitter();
 		if (emitterType == PrototypeParticleSystem_Emitter::NONE) {
@@ -400,7 +400,7 @@ void ParticleSystemEditorTabView::applyParticleSystemTransformations(ParticleSys
 		} else
 		if (emitterType == PrototypeParticleSystem_Emitter::POINT_PARTICLE_EMITTER) {
 			auto emitter = particleSystem->getPointParticleEmitter();
-			auto position = transformations.getTranslation().clone().scale(objectScaleInverted).add(emitter->getPosition());
+			auto position = transform.getTranslation().clone().scale(objectScaleInverted).add(emitter->getPosition());
 			if (guiOnly == false) {
 				emitter->setPosition(position);
 			} else {
@@ -409,14 +409,14 @@ void ParticleSystemEditorTabView::applyParticleSystemTransformations(ParticleSys
 		} else
 		if (emitterType == PrototypeParticleSystem_Emitter::BOUNDINGBOX_PARTICLE_EMITTER) {
 			auto emitter = particleSystem->getBoundingBoxParticleEmitters();
-			auto center = transformations.getTranslation().clone().scale(objectScaleInverted).add(emitter->getObbCenter());
+			auto center = transform.getTranslation().clone().scale(objectScaleInverted).add(emitter->getObbCenter());
 			auto axis0 = emitter->getObbAxis0().clone().scale(emitter->getObbHalfextension().getX() * 2.0f);
 			auto axis1 = emitter->getObbAxis1().clone().scale(emitter->getObbHalfextension().getY() * 2.0f);
 			auto axis2 = emitter->getObbAxis2().clone().scale(emitter->getObbHalfextension().getZ() * 2.0f);
 			auto halfExtension = emitter->getObbHalfextension();
-			axis0 = localTransformations.getTransformationsMatrix().multiplyNoTranslation(axis0);
-			axis1 = localTransformations.getTransformationsMatrix().multiplyNoTranslation(axis1);
-			axis2 = localTransformations.getTransformationsMatrix().multiplyNoTranslation(axis2);
+			axis0 = localTransform.getTransformMatrix().multiplyNoTranslation(axis0);
+			axis1 = localTransform.getTransformMatrix().multiplyNoTranslation(axis1);
+			axis2 = localTransform.getTransformMatrix().multiplyNoTranslation(axis2);
 			halfExtension.set(
 				Vector3(
 					Math::clamp(axis0.computeLength() / 2.0f, 0.01f, 1000.0f),
@@ -439,11 +439,11 @@ void ParticleSystemEditorTabView::applyParticleSystemTransformations(ParticleSys
 		} else
 		if (emitterType == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER) {
 			auto emitter = particleSystem->getCircleParticleEmitter();
-			auto center = transformations.getTranslation().clone().scale(objectScaleInverted).add(emitter->getCenter());
+			auto center = transform.getTranslation().clone().scale(objectScaleInverted).add(emitter->getCenter());
 			auto axis0 = emitter->getAxis0();
 			auto axis1 = emitter->getAxis1();
-			axis0 = localTransformations.getTransformationsMatrix().multiplyNoTranslation(axis0).normalize();
-			axis1 = localTransformations.getTransformationsMatrix().multiplyNoTranslation(axis1).normalize();
+			axis0 = localTransform.getTransformMatrix().multiplyNoTranslation(axis0).normalize();
+			axis1 = localTransform.getTransformMatrix().multiplyNoTranslation(axis1).normalize();
 			auto scale = 1.0f;
 			if (Math::abs(totalDeltaScale.getX()) > Math::abs(totalDeltaScale.getY()) &&
 				Math::abs(totalDeltaScale.getX()) > Math::abs(totalDeltaScale.getZ())) {
@@ -469,11 +469,11 @@ void ParticleSystemEditorTabView::applyParticleSystemTransformations(ParticleSys
 		} else
 		if (emitterType == PrototypeParticleSystem_Emitter::CIRCLE_PARTICLE_EMITTER_PLANE_VELOCITY) {
 			auto emitter = particleSystem->getCircleParticleEmitterPlaneVelocity();
-			auto center = transformations.getTranslation().clone().scale(objectScaleInverted).add(emitter->getCenter());
+			auto center = transform.getTranslation().clone().scale(objectScaleInverted).add(emitter->getCenter());
 			auto axis0 = emitter->getAxis0();
 			auto axis1 = emitter->getAxis1();
-			axis0 = localTransformations.getTransformationsMatrix().multiplyNoTranslation(axis0).normalize();
-			axis1 = localTransformations.getTransformationsMatrix().multiplyNoTranslation(axis1).normalize();
+			axis0 = localTransform.getTransformMatrix().multiplyNoTranslation(axis0).normalize();
+			axis1 = localTransform.getTransformMatrix().multiplyNoTranslation(axis1).normalize();
 			auto scale = 1.0f;
 			if (Math::abs(totalDeltaScale.getX()) > Math::abs(totalDeltaScale.getY()) &&
 				Math::abs(totalDeltaScale.getX()) > Math::abs(totalDeltaScale.getZ())) {
@@ -499,7 +499,7 @@ void ParticleSystemEditorTabView::applyParticleSystemTransformations(ParticleSys
 		} else
 		if (emitterType == PrototypeParticleSystem_Emitter::SPHERE_PARTICLE_EMITTER) {
 			auto emitter = particleSystem->getSphereParticleEmitter();
-			auto center = transformations.getTranslation().clone().scale(objectScaleInverted).add(emitter->getCenter());
+			auto center = transform.getTranslation().clone().scale(objectScaleInverted).add(emitter->getCenter());
 			auto scale = 1.0f;
 			if (Math::abs(totalDeltaScale.getX()) > Math::abs(totalDeltaScale.getY()) &&
 				Math::abs(totalDeltaScale.getX()) > Math::abs(totalDeltaScale.getZ())) {
@@ -523,7 +523,7 @@ void ParticleSystemEditorTabView::applyParticleSystemTransformations(ParticleSys
 		} else {
 			Console::println(
 				string(
-					"SharedParticleSystemView::applyParticleSystemTransformations(): unknown particle system emitter '" +
+					"SharedParticleSystemView::applyParticleSystemTransform(): unknown particle system emitter '" +
 					particleSystem->getEmitter()->getName() +
 					"'"
 				)
@@ -534,10 +534,10 @@ void ParticleSystemEditorTabView::applyParticleSystemTransformations(ParticleSys
 		particleSystemEditorTabController->updateDetails(editorView->getScreenController()->getOutlinerSelection());
 		auto modelEntity = engine->getEntity("model");
 		if (modelEntity != nullptr) engine->removeEntity("model");
-		Transformations transformations;
-		transformations.setScale(objectScale);
-		transformations.update();
-		modelEntity = SceneConnector::createEntity(prototype, "model", transformations);
+		Transform transform;
+		transform.setScale(objectScale);
+		transform.update();
+		modelEntity = SceneConnector::createEntity(prototype, "model", transform);
 		if (modelEntity != nullptr) {
 			modelEntity->setPickable(true);
 			engine->addEntity(modelEntity);

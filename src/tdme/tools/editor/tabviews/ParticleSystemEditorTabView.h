@@ -175,16 +175,16 @@ public:
 
 	/**
 	 * Set GIZMO rotation
-	 * @param transformations transformations
+	 * @param transform transform
 	 */
-	void setGizmoRotation(const Transformations& transformations);
+	void setGizmoRotation(const Transform& transform);
 
 	/**
-	 * Apply particle system transformations
+	 * Apply particle system transform
 	 * @param particleSystemEntity particle system entity
 	 * @param guiOnly GUI only
 	 */
-	void applyParticleSystemTransformations(ParticleSystem* particleSystemEntity, bool guiOnly);
+	void applyParticleSystemTransform(ParticleSystem* particleSystemEntity, bool guiOnly);
 
 	/**
 	 * Saving prototype as tempty prototype

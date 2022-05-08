@@ -17,7 +17,7 @@
 #include <tdme/engine/scene/SceneLibrary.h>
 #include <tdme/engine/scene/SceneLight.h>
 #include <tdme/engine/Rotation.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -42,7 +42,7 @@ using tdme::engine::scene::SceneEntity;
 using tdme::engine::scene::SceneLibrary;
 using tdme::engine::scene::SceneLight;
 using tdme::engine::Rotation;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::os::filesystem::FileSystem;
@@ -137,12 +137,12 @@ void SceneWriter::write(const string& pathName, const string& fileName, Scene* s
 		auto sceneEntity = scene->getEntityAt(i);
 		Value jObject;
 		jObject.SetObject();
-		auto& transformations = sceneEntity->getTransformations();
-		auto& translation = transformations.getTranslation();
-		auto& scale = transformations.getScale();
-		auto& rotationAroundXAxis = transformations.getRotation(scene->getRotationOrder()->getAxisXIndex());
-		auto& rotationAroundYAxis = transformations.getRotation(scene->getRotationOrder()->getAxisYIndex());
-		auto& rotationAroundZAxis = transformations.getRotation(scene->getRotationOrder()->getAxisZIndex());
+		auto& transform = sceneEntity->getTransform();
+		auto& translation = transform.getTranslation();
+		auto& scale = transform.getScale();
+		auto& rotationAroundXAxis = transform.getRotation(scene->getRotationOrder()->getAxisXIndex());
+		auto& rotationAroundYAxis = transform.getRotation(scene->getRotationOrder()->getAxisYIndex());
+		auto& rotationAroundZAxis = transform.getRotation(scene->getRotationOrder()->getAxisZIndex());
 		jObject.AddMember("id", Value(sceneEntity->getId(), jAllocator), jAllocator);
 		jObject.AddMember("descr", Value(sceneEntity->getDescription(), jAllocator), jAllocator);;
 		jObject.AddMember("mid", Value(sceneEntity->getPrototype()->getId()), jAllocator);

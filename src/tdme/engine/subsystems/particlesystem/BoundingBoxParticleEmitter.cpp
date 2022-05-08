@@ -6,7 +6,7 @@
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
 #include <tdme/engine/subsystems/particlesystem/Particle.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 
@@ -16,7 +16,7 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::subsystems::particlesystem::BoundingBoxParticleEmitter;
 using tdme::engine::subsystems::particlesystem::Particle;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Vector3;
 
@@ -73,20 +73,20 @@ void BoundingBoxParticleEmitter::emit(Particle* particle)
 		(colorEnd.getAlpha() - colorStart.getAlpha()) / particle->lifeTimeMax);
 }
 
-void BoundingBoxParticleEmitter::fromTransformations(const Transformations& transformations)
+void BoundingBoxParticleEmitter::fromTransform(const Transform& transform)
 {
 	Vector3 center;
 	Vector3 scale;
 	array<Vector3, 3> axes;
 	array<Vector3, 3> axesTransformed;
 	Vector3 halfExtension;
-	auto& transformationsMatrix = transformations.getTransformationsMatrix();
+	auto& transformMatrix = transform.getTransformMatrix();
 	// apply rotation, scale, translation
-	center = transformationsMatrix.multiply(obb->getCenter());
-	// apply transformations rotation to axis
-	axesTransformed[0] = transformationsMatrix.multiplyNoTranslation(obb->getAxes()[0]);
-	axesTransformed[1] = transformationsMatrix.multiplyNoTranslation(obb->getAxes()[1]);
-	axesTransformed[2] = transformationsMatrix.multiplyNoTranslation(obb->getAxes()[2]);
+	center = transformMatrix.multiply(obb->getCenter());
+	// apply transform rotation to axis
+	axesTransformed[0] = transformMatrix.multiplyNoTranslation(obb->getAxes()[0]);
+	axesTransformed[1] = transformMatrix.multiplyNoTranslation(obb->getAxes()[1]);
+	axesTransformed[2] = transformMatrix.multiplyNoTranslation(obb->getAxes()[2]);
 	// scale
 	scale.set(
 		axesTransformed[0].computeLength(),

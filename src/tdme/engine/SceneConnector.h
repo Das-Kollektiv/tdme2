@@ -24,7 +24,7 @@ using tdme::engine::scene::Scene;
 using tdme::engine::scene::SceneEntity;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Vector3;
 using tdme::utilities::MutableString;
 
@@ -224,32 +224,32 @@ public:
 	/**
 	 * Create engine entity
 	 * @param id id
-	 * @param transformations transformations
+	 * @param transform transform
 	 * @return entity
 	 */
-	static Entity* createEmpty(const string& id, const Transformations& transformations);
+	static Entity* createEmpty(const string& id, const Transform& transform);
 
 	/**
 	 * Create editor decal engine entity
 	 * @param prototype prototype
 	 * @param id id
-	 * @param transformations transformations
+	 * @param transform transform
 	 * @param instances instances which applies only for skinned objects
 	 * @param parentEntity parent entity
 	 * @return entity
 	 */
-	static Entity* createEditorDecalEntity(Prototype* prototype, const string& id, const Transformations& transformations, int instances = 1, Entity* parentEntity = nullptr);
+	static Entity* createEditorDecalEntity(Prototype* prototype, const string& id, const Transform& transform, int instances = 1, Entity* parentEntity = nullptr);
 
 	/**
 	 * Create engine entity
 	 * @param prototype prototype
 	 * @param id id
-	 * @param transformations transformations
+	 * @param transform transform
 	 * @param instances instances which applies only for skinned objects
 	 * @param parentEntity parent entity
 	 * @return entity
 	 */
-	static Entity* createEntity(Prototype* prototype, const string& id, const Transformations& transformations, int instances = 1, Entity* parentEntity = nullptr);
+	static Entity* createEntity(Prototype* prototype, const string& id, const Transform& transform, int instances = 1, Entity* parentEntity = nullptr);
 
 	/**
 	 * Create editor decal engine entity
@@ -291,13 +291,13 @@ public:
 	 * @param world world
 	 * @param prototype prototype
 	 * @param id id
-	 * @param transformations transformations
+	 * @param transform transform
 	 * @param collisionTypeId collision type id or 0 for default
 	 * @param index use a optional index or all bounding volumes
 	 * @param overrideType override physics type if required
 	 * @return rigid body
 	 */
-	static Body* createBody(World* world, Prototype* prototype, const string& id, const Transformations& transformations, uint16_t collisionTypeId = 0, int index = -1, PrototypePhysics_BodyType* overrideType = nullptr);
+	static Body* createBody(World* world, Prototype* prototype, const string& id, const Transform& transform, uint16_t collisionTypeId = 0, int index = -1, PrototypePhysics_BodyType* overrideType = nullptr);
 
 	/**
 	 * Create rigid body

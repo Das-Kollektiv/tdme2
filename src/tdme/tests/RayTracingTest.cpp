@@ -106,12 +106,12 @@ void RayTracingTest::main(int argc, char** argv)
 
 void RayTracingTest::display()
 {
-	auto transformations = world->getBody("player")->getTransformations();
-	auto& yRotation = transformations.getRotation(0);
+	auto transform = world->getBody("player")->getTransform();
+	auto& yRotation = transform.getRotation(0);
 	yRotation.setAxis(Rotation::Y_AXIS);
 	yRotation.setAngle(rotationY);
-	transformations.update();
-	world->getBody("player")->fromTransformations(transformations);
+	transform.update();
+	world->getBody("player")->fromTransform(transform);
 
 	// movement player
 	{
@@ -146,15 +146,15 @@ void RayTracingTest::display()
 		float trdMovemventPlayerXAxis = 0.25f;
 		float trdDistanceCamPlayer = 1.0f;
 
-		Quaternion rotationQuaternion = transformations.getRotation(0).getQuaternion();
+		Quaternion rotationQuaternion = transform.getRotation(0).getQuaternion();
 		rotationQuaternion.multiply((Quaternion().rotate(Vector3(1.0f, 0.0f, 0.0f), rotationX)));
 
-		camLookAt.set(transformations.getTranslation().clone().add(Vector3(0.0f, headYPosition, 0.0f)));
+		camLookAt.set(transform.getTranslation().clone().add(Vector3(0.0f, headYPosition, 0.0f)));
 		camLookAt.add(rotationQuaternion.multiply(Vector3(0.0f, 0.0f, 1.0f)).scale(80.0f));
 
-		camLookFrom.set(transformations.getTranslation().clone().add(Vector3(0.0f, headYPosition, 0.0f)));
+		camLookFrom.set(transform.getTranslation().clone().add(Vector3(0.0f, headYPosition, 0.0f)));
 		camLookFrom.sub(rotationQuaternion.multiply(Vector3(0.0f, 0.0f, 1.0f)).scale(trdDistanceCamPlayer));
-		camLookFrom.sub(transformations.getRotation(0).getQuaternion().multiply(Vector3(trdMovemventPlayerXAxis, 0.0f, 0.0f)));
+		camLookFrom.sub(transform.getRotation(0).getQuaternion().multiply(Vector3(trdMovemventPlayerXAxis, 0.0f, 0.0f)));
 
 		engine->getCamera()->setLookFrom(camLookFrom);
 		engine->getCamera()->setLookAt(camLookAt);
@@ -198,7 +198,7 @@ void RayTracingTest::display()
 					"bv",
 					entityBoundingVolumeModel
 				);
-				bvEntity->setTranslation(engine->getEntity(rayTracedRigidBody->getId())->getTransformations().getTranslation());
+				bvEntity->setTranslation(engine->getEntity(rayTracedRigidBody->getId())->getTransform().getTranslation());
 				bvEntity->update();
 				engine->addEntity(bvEntity);
 			} else {
@@ -211,7 +211,7 @@ void RayTracingTest::display()
 
 	// update world, display engine
 	world->update(1.0f / 60.0f);
-	engine->getEntity("player")->fromTransformations(transformations);
+	engine->getEntity("player")->fromTransform(transform);
 	engine->display();
 	engine->getGUI()->render();
 }
@@ -253,7 +253,7 @@ void RayTracingTest::initialize()
 	entity->setReceivesShadows(true);
 	entity->update();
 	engine->addEntity(entity);
-	world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, entity->getTransformations(), 0.5f, {ground});
+	world->addStaticRigidBody("ground", true, RIGID_TYPEID_STANDARD, entity->getTransform(), 0.5f, {ground});
 	auto interactionTable = prototypeDeleter.add(PrototypeReader::read("resources/tests/asw", "Mesh_Interaction_Table.tmodel"));
 	entityBoundingVolumeModel = modelDeleter.add(Primitives::createModel(interactionTable->getBoundingVolume(0)->getBoundingVolume(), "interactiontable.bv"));
 	int interactionTableIdx = 0;
@@ -276,7 +276,7 @@ void RayTracingTest::initialize()
 			world,
 			interactionTable,
 			id,
-			entity->getTransformations(),
+			entity->getTransform(),
 			SceneConnector::RIGIDBODY_TYPEID_STATIC
 		);
 
@@ -296,7 +296,7 @@ void RayTracingTest::initialize()
 	entity->addRotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
 	entity->update();
 	engine->addEntity(entity);
-	world->addRigidBody("player", true, SceneConnector::RIGIDBODY_TYPEID_DYNAMIC, entity->getTransformations(), 0.0f, 1.0f, 80.0f, Body::getNoRotationInertiaTensor(), {capsuleBig});
+	world->addRigidBody("player", true, SceneConnector::RIGIDBODY_TYPEID_DYNAMIC, entity->getTransform(), 0.0f, 1.0f, 80.0f, Body::getNoRotationInertiaTensor(), {capsuleBig});
 
 	//
 	engine->getGUI()->addScreen("crosshair", GUIParser::parse("resources/tests/screens", "crosshair.xml"));

@@ -227,9 +227,9 @@ void SkinningShader::computeSkinning(int contextIdx, ObjectBase* objectBase, Obj
 			objectBase->setCurrentInstance(i);
 			for (auto jointSkinningMatrix: objectNodeMesh->jointsSkinningMatrices[i]) {
 				if (jointSkinningMatrix != nullptr) {
-					fbMatrices.put((skinningMatrix.set(*jointSkinningMatrix).multiply(objectBase->getTransformationsMatrix()).getArray()));
+					fbMatrices.put((skinningMatrix.set(*jointSkinningMatrix).multiply(objectBase->getTransformMatrix()).getArray()));
 				} else {
-					fbMatrices.put(objectBase->getTransformationsMatrix().getArray());
+					fbMatrices.put(objectBase->getTransformMatrix().getArray());
 				}
 			}
 		}

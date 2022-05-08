@@ -31,10 +31,10 @@ public:
 	/**
 	 * Creates a bounding box from given model
 	 * @param model model
-	 * @param overriddenNodeTransformationsMatrices overridden node transformations matrices
+	 * @param overriddenNodeTransformMatrices overridden node transform matrices
 	 * @return axis aligned bounding box
 	 */
-	static BoundingBox* createBoundingBox(Model* model, const map<string, Matrix4x4*> overriddenNodeTransformationsMatrices = map<string, Matrix4x4*>());
+	static BoundingBox* createBoundingBox(Model* model, const map<string, Matrix4x4*> overriddenNodeTransformMatrices = map<string, Matrix4x4*>());
 
 	/**
 	 * Invert normals of a model

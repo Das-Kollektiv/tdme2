@@ -15,7 +15,7 @@
 #include <tdme/engine/subsystems/manager/VBOManager_VBOManaged.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 
 using std::string;
 using std::vector;
@@ -27,7 +27,7 @@ using tdme::engine::subsystems::manager::VBOManager;
 using tdme::engine::subsystems::manager::VBOManager_VBOManaged;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Matrix4x4;
 
 /**
@@ -35,7 +35,7 @@ using tdme::math::Matrix4x4;
  * @author Andreas Drewke
  */
 class tdme::engine::subsystems::lines::LinesInternal
-	: public Transformations
+	: public Transform
 {
 	friend class tdme::engine::subsystems::rendering::EntityRenderer;
 
@@ -66,7 +66,7 @@ protected:
 	 * Update bounding volume
 	 */
 	inline void updateBoundingBox() {
-		boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
+		boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
 		boundingBoxTransformed.getMin().sub(0.05f); // scale a bit up to make picking work better
 		boundingBoxTransformed.getMax().add(0.05f); // same here
 		boundingBoxTransformed.update();
@@ -231,15 +231,15 @@ public:
 	}
 
 	/**
-	 * Update transformations
+	 * Update transform
 	 */
 	void update() override;
 
 	/**
-	 * From transformations
-	 * @param transformations transformations
+	 * From transform
+	 * @param transform transform
 	 */
-	void fromTransformations(const Transformations& transformations) override;
+	void fromTransform(const Transform& transform) override;
 
 	/**
 	 * Initialize

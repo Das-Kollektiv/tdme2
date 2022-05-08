@@ -15,7 +15,7 @@
 #include <tdme/engine/EntityShaderParameters.h>
 #include <tdme/engine/Object.h>
 #include <tdme/engine/Rotation.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/utilities/Console.h>
 
@@ -33,7 +33,7 @@ using tdme::engine::Entity;
 using tdme::engine::EntityShaderParameters;
 using tdme::engine::Object;
 using tdme::engine::Rotation;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
@@ -43,7 +43,7 @@ using tdme::utilities::Console;
  * @author Andreas Drewke
  */
 class tdme::engine::ImposterObject final:
-	public Transformations,
+	public Transform,
 	public Entity
 {
 	friend class LODObjectImposter;
@@ -90,10 +90,10 @@ private:
 	}
 
 	// overridden methods
-	inline void applyParentTransformations(const Transformations& parentTransformations) override {
-		Transformations::applyParentTransformations(parentTransformations);
+	inline void applyParentTransform(const Transform& parentTransform) override {
+		Transform::applyParentTransform(parentTransform);
 		// delegate to LOD objects
-		for (auto billboardObject: billboardObjects) billboardObject->fromTransformations(*this);
+		for (auto billboardObject: billboardObjects) billboardObject->fromTransform(*this);
 	}
 
 public:
@@ -159,7 +159,7 @@ public:
 	void setEnabled(bool enabled) override;
 	bool isFrustumCulling() override;
 	void setFrustumCulling(bool frustumCulling) override;
-	void fromTransformations(const Transformations& transformations) override;
+	void fromTransform(const Transform& transform) override;
 	void update() override;
 
 	inline BoundingBox* getBoundingBox() override {
@@ -218,75 +218,75 @@ public:
 		this->pickable = pickable;
 	}
 
-	inline const Matrix4x4 getNodeTransformationsMatrix(const string& id) {
-		return billboardObject->getNodeTransformationsMatrix(id);
+	inline const Matrix4x4 getNodeTransformMatrix(const string& id) {
+		return billboardObject->getNodeTransformMatrix(id);
 	}
 
 	inline const Vector3& getTranslation() const override {
-		return Transformations::getTranslation();
+		return Transform::getTranslation();
 	}
 
 	inline void setTranslation(const Vector3& translation) override {
-		Transformations::setTranslation(translation);
+		Transform::setTranslation(translation);
 	}
 
 	inline const Vector3& getScale() const override {
-		return Transformations::getScale();
+		return Transform::getScale();
 	}
 
 	inline void setScale(const Vector3& scale) override {
-		Transformations::setScale(scale);
+		Transform::setScale(scale);
 	}
 
 	inline const Vector3& getPivot() const override {
-		return Transformations::getPivot();
+		return Transform::getPivot();
 	}
 
 	inline void setPivot(const Vector3& pivot) override {
-		Transformations::setPivot(pivot);
+		Transform::setPivot(pivot);
 	}
 
 	inline const int getRotationCount() const override {
-		return Transformations::getRotationCount();
+		return Transform::getRotationCount();
 	}
 
 	inline Rotation& getRotation(const int idx) override {
-		return Transformations::getRotation(idx);
+		return Transform::getRotation(idx);
 	}
 
 	inline void addRotation(const Vector3& axis, const float angle) override {
-		Transformations::addRotation(axis, angle);
+		Transform::addRotation(axis, angle);
 	}
 
 	inline void removeRotation(const int idx) override {
-		Transformations::removeRotation(idx);
+		Transform::removeRotation(idx);
 	}
 
 	inline const Vector3& getRotationAxis(const int idx) const override {
-		return Transformations::getRotationAxis(idx);
+		return Transform::getRotationAxis(idx);
 	}
 
 	inline void setRotationAxis(const int idx, const Vector3& axis) override {
-		Transformations::setRotationAxis(idx, axis);
+		Transform::setRotationAxis(idx, axis);
 	}
 
 	inline const float getRotationAngle(const int idx) const override {
-		return Transformations::getRotationAngle(idx);
+		return Transform::getRotationAngle(idx);
 	}
 
 	inline void setRotationAngle(const int idx, const float angle) override {
-		Transformations::setRotationAngle(idx, angle);
+		Transform::setRotationAngle(idx, angle);
 	}
 
 	inline const Quaternion& getRotationsQuaternion() const override {
-		return Transformations::getRotationsQuaternion();
+		return Transform::getRotationsQuaternion();
 	}
 
-	inline const Matrix4x4& getTransformationsMatrix() const override {
-		return Transformations::getTransformationsMatrix();
+	inline const Matrix4x4& getTransformMatrix() const override {
+		return Transform::getTransformMatrix();
 	}
 
-	inline const Transformations& getTransformations() const override {
+	inline const Transform& getTransform() const override {
 		return *this;
 	}
 

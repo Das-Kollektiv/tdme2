@@ -68,7 +68,7 @@ private:
 	vector<int32_t> pbrMaterialNormalTextureIdsByEntities;
 	ObjectNodeRenderer* renderer { nullptr };
 	ObjectNodeMesh* mesh { nullptr };
-	Matrix4x4* nodeTransformationsMatrix { nullptr };
+	Matrix4x4* nodeTransformMatrix { nullptr };
 
 	/**
 	 * Creates object nodes from given object base object
@@ -81,11 +81,11 @@ private:
 	static void createNodes(ObjectBase* object, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget, vector<ObjectNode*>& objectNodes);
 
 	/**
-	 * Applies transformations to meshes for given object nodes
+	 * Computes animation for given object nodes
 	 * @param contextIdx context index
 	 * @param objectNodes node render data list
 	 */
-	static void computeTransformations(int contextIdx, vector<ObjectNode*>& objectNodes);
+	static void computeAnimation(int contextIdx, vector<ObjectNode*>& objectNodes);
 
 	/**
 	 * Set up textures for given object node and faces entity

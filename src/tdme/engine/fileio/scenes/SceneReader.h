@@ -77,7 +77,7 @@ private:
 	struct PrototypeMeshNode {
 		string id;
 		string name;
-		Matrix4x4 transformationsMatrix;
+		Matrix4x4 transformMatrix;
 		Node* node;
 	};
 
@@ -86,8 +86,8 @@ private:
 	 * @param scene scene
 	 * @param node node
 	 * @param parentName parent node
-	 * @param parentTransformationsMatrix parent transformations matrix
+	 * @param parentTransformMatrix parent transform matrix
 	 * @param meshNodes mesh nodes
 	 */
-	static void determineMeshNodes(Scene* scene, Node* node, const string& parentName, const Matrix4x4& parentTransformationsMatrix, vector<PrototypeMeshNode>& meshNodes);
+	static void determineMeshNodes(Scene* scene, Node* node, const string& parentName, const Matrix4x4& parentTransformMatrix, vector<PrototypeMeshNode>& meshNodes);
 };

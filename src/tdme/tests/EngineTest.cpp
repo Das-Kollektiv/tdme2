@@ -34,7 +34,7 @@
 #include <tdme/engine/PointsParticleSystem.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/Timing.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector2.h>
@@ -78,7 +78,7 @@ using tdme::engine::ParticleSystemGroup;
 using tdme::engine::PointsParticleSystem;
 using tdme::engine::Rotation;
 using tdme::engine::Timing;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Quaternion;
 using tdme::math::Vector2;
@@ -148,16 +148,16 @@ Model* EngineTest::createWallModel()
 
 void EngineTest::display()
 {
-	auto circleTranslation = circleTransformations.getTranslation();
+	auto circleTranslation = circleTransform.getTranslation();
 	circleTranslation.setX(players[0]->getTranslation().getX());
 	circleTranslation.setZ(players[0]->getTranslation().getZ());
 	circleTranslation.add(Vector3(0.0f, 0.1f, 0.0f));
 	if (circleTranslation.getY() > 1.5f) {
 		circleTranslation.setY(0.0f);
 	}
-	circleTransformations.setTranslation(circleTranslation);
-	circleTransformations.update();
-	(dynamic_cast< ParticleSystem* >(engine->getEntity("circle")))->fromTransformations(circleTransformations);
+	circleTransform.setTranslation(circleTranslation);
+	circleTransform.update();
+	(dynamic_cast< ParticleSystem* >(engine->getEntity("circle")))->fromTransform(circleTransform);
 	doPlayerControl(0, keyLeft, keyRight, keyUp);
 	doPlayerControl(1, keyA, keyD, keyW);
 	osEngine->display();

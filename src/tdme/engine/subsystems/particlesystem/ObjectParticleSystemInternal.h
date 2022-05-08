@@ -16,7 +16,7 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
 #include <tdme/engine/Object.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>
@@ -36,7 +36,7 @@ using tdme::engine::subsystems::rendering::ObjectInternal;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Object;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
@@ -45,7 +45,7 @@ using tdme::math::Vector3;
  * @author Andreas Drewke
  */
 class tdme::engine::subsystems::particlesystem::ObjectParticleSystemInternal
-	: public Transformations
+	: public Transform
 	, public virtual ParticleSystemInternal
 {
 protected:
@@ -63,28 +63,28 @@ protected:
 	vector<Object*> enabledObjects;
 	BoundingBox boundingBox;
 	BoundingBox boundingBoxTransformed;
-	Transformations inverseTransformation;
+	Transform inverseTransform;
 	ParticleEmitter* emitter { nullptr };
 	bool pickable;
 	Color4 effectColorMul;
 	Color4 effectColorAdd;
 	float particlesToSpawnRemainder;
-	Transformations localTransformations;
+	Transform localTransform;
 
 	/**
 	 * Update internal
 	 */
 	inline void updateInternal() {
 		Vector3 scale;
-		getTransformationsMatrix().getScale(scale);
+		getTransformMatrix().getScale(scale);
 		scale.scale(objectScale);
-		scale.scale(localTransformations.getScale());
+		scale.scale(localTransform.getScale());
 		for (auto object: objects) {
 			object->setScale(scale);
 			object->update();
 		}
-		inverseTransformation.fromTransformations(*this);
-		inverseTransformation.invert();
+		inverseTransform.fromTransform(*this);
+		inverseTransform.invert();
 	}
 
 public:
@@ -181,19 +181,19 @@ public:
 	}
 
 	/**
-	 * Update transformations
+	 * Update transform
 	 */
 	void update() override;
-	void fromTransformations(const Transformations& transformations) override;
+	void fromTransform(const Transform& transform) override;
 	int32_t emitParticles() override;
 	void updateParticles() override;
 	void dispose();
 
-	inline const Transformations& getLocalTransformations() override {
-		return localTransformations;
+	inline const Transform& getLocalTransform() override {
+		return localTransform;
 	}
-	inline void setLocalTransformations(const Transformations& transformations) override {
-		this->localTransformations = transformations;
+	inline void setLocalTransform(const Transform& transform) override {
+		this->localTransform = transform;
 		updateInternal();
 	}
 

@@ -12,7 +12,7 @@
 #include <tdme/engine/model/Face.h>
 #include <tdme/engine/model/FacesEntity.h>
 #include <tdme/engine/model/Node.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>
@@ -27,7 +27,7 @@ using tdme::engine::fileio::ProgressCallback;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::model::Skinning;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Vector3;
 
 /**
@@ -184,9 +184,9 @@ private:
 	 * @param sourceNode source node to partition
 	 * @param modelsByPartition models by partition
 	 * @param modelsPosition models position
-	 * @param parentTransformationsMatrix parent transformations matrix
+	 * @param parentTransformMatrix parent transform matrix
 	 */
-	static void partitionNode(Node* sourceNode, map<string, Model*>& modelsByPartition, map<string, Vector3>& modelsPosition, const Matrix4x4& parentTransformationsMatrix);
+	static void partitionNode(Node* sourceNode, map<string, Model*>& modelsByPartition, map<string, Vector3>& modelsPosition, const Matrix4x4& parentTransformMatrix);
 
 	/**
 	 * Shrink to fit node
@@ -242,11 +242,11 @@ public:
 	/**
 	 * Partition model
 	 * @param model model
-	 * @param transformations transformations
+	 * @param transform transform
 	 * @param modelsByPartition models by partition
 	 * @param modelsPosition models position
 	 */
-	static void partition(Model* model, const Transformations& transformations, map<string, Model*>& modelsByPartition, map<string, Vector3>& modelsPosition);
+	static void partition(Model* model, const Transform& transform, map<string, Model*>& modelsByPartition, map<string, Vector3>& modelsPosition);
 
 	/**
 	 * Shrink to fit
@@ -297,17 +297,17 @@ private:
 	/**
 	 * Prepare node for foliage shader
 	 * @param node node
-	 * @param parentTransformationsMatrix parent transformations matrix
+	 * @param parentTransformMatrix parent transform matrix
 	 * @param shader shader
 	 */
-	static void prepareForFoliageTreeShader(Node* node, const Matrix4x4& parentTransformationsMatrix, const string& shader);
+	static void prepareForFoliageTreeShader(Node* node, const Matrix4x4& parentTransformMatrix, const string& shader);
 
 	/**
 	 * Prepare node for water shader
 	 * @param node node
-	 * @param parentTransformationsMatrix parent transformations matrix
+	 * @param parentTransformMatrix parent transform matrix
 	 */
-	static void prepareForWaterShader(Node* node, const Matrix4x4& parentTransformationsMatrix);
+	static void prepareForWaterShader(Node* node, const Matrix4x4& parentTransformMatrix);
 
 	/**
 	 * Check for optimization
@@ -320,10 +320,10 @@ private:
 	/**
 	 * Prepare for optimization
 	 * @param node node
-	 * @param parentTransformationsMatrix parent transformations matrix
+	 * @param parentTransformMatrix parent transform matrix
 	 * @param materialUseCount material use count
 	 */
-	static void prepareForOptimization(Node* node, const Matrix4x4& parentTransformationsMatrix);
+	static void prepareForOptimization(Node* node, const Matrix4x4& parentTransformMatrix);
 
 	/**
 	 * Prepare for optimization

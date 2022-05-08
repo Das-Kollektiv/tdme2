@@ -416,18 +416,18 @@ void ModelEditorTabView::display()
 	auto attachment1 = static_cast<Object*>(engine->getEntity("attachment1"));
 	if (model != nullptr && attachment1 != nullptr) {
 		// model attachment bone matrix
-		auto transformationsMatrix = model->getNodeTransformationsMatrix(attachment1Bone);
-		transformationsMatrix*= model->getTransformations().getTransformationsMatrix();
-		attachment1->setTranslation(transformationsMatrix * Vector3(0.0f, 0.0f, 0.0f));
+		auto transformMatrix = model->getNodeTransformMatrix(attachment1Bone);
+		transformMatrix*= model->getTransform().getTransformMatrix();
+		attachment1->setTranslation(transformMatrix * Vector3(0.0f, 0.0f, 0.0f));
 		// euler angles
-		auto euler = transformationsMatrix.computeEulerAngles();
+		auto euler = transformMatrix.computeEulerAngles();
 		// rotations
 		attachment1->setRotationAngle(0, euler.getZ());
 		attachment1->setRotationAngle(1, euler.getY());
 		attachment1->setRotationAngle(2, euler.getX());
 		// scale
 		Vector3 scale;
-		transformationsMatrix.getScale(scale);
+		transformMatrix.getScale(scale);
 		attachment1->setScale(scale);
 		// finally update
 		attachment1->update();

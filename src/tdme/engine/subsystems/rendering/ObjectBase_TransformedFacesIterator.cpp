@@ -42,9 +42,9 @@ void ObjectBase_TransformedFacesIterator::reset()
 	if (objectNode->mesh->skinning == true) {
 		matrix.identity();
 	} else {
-		matrix.set(*objectNode->nodeTransformationsMatrix);
+		matrix.set(*objectNode->nodeTransformMatrix);
 	}
-	matrix.multiply(objectBase->getTransformationsMatrix());
+	matrix.multiply(objectBase->getTransformMatrix());
 	node = objectNode->node;
 }
 
@@ -83,9 +83,9 @@ const array<Vector3, 3>& ObjectBase_TransformedFacesIterator::next()
 				if (objectNode->mesh->skinning == true) {
 					matrix.identity();
 				} else {
-					matrix.set(*objectNode->nodeTransformationsMatrix);
+					matrix.set(*objectNode->nodeTransformMatrix);
 				}
-				matrix.multiply(objectBase->getTransformationsMatrix());
+				matrix.multiply(objectBase->getTransformMatrix());
 			}
 		}
 	}

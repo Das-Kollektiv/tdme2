@@ -34,7 +34,7 @@
 #include <tdme/engine/Object.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/SimplePartition.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
@@ -89,7 +89,7 @@ using tdme::engine::Light;
 using tdme::engine::Object;
 using tdme::engine::SceneConnector;
 using tdme::engine::SimplePartition;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
@@ -158,7 +158,7 @@ void Tools::oseThumbnail(Prototype* prototype, vector<uint8_t>& pngData)
 {
 	oseInit();
 	Vector3 objectScale;
-	Transformations oseLookFromRotations;
+	Transform oseLookFromRotations;
 	oseLookFromRotations.addRotation(Vector3(0.0f, 1.0f, 0.0f), -45.0f);
 	oseLookFromRotations.addRotation(Vector3(1.0f, 0.0f, 0.0f), -45.0f);
 	oseLookFromRotations.addRotation(Vector3(0.0f, 0.0f, 1.0f), 0.0f);
@@ -272,7 +272,7 @@ Model* Tools::createGridModel()
 	return groundPlate;
 }
 
-void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transformations& lookFromRotations, int lodLevel, Vector3& objectScale, CameraRotationInputHandler* cameraRotationInputHandler, float scale, bool resetup)
+void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform& lookFromRotations, int lodLevel, Vector3& objectScale, CameraRotationInputHandler* cameraRotationInputHandler, float scale, bool resetup)
 {
 	if (prototype == nullptr) return;
 
@@ -304,7 +304,7 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 		entityBoundingBox = entityBoundingVolumesHierarchy->getBoundingBox();
 	} else
 	if (prototype->getType() == Prototype_Type::PARTICLESYSTEM) {
-		modelEntity = SceneConnector::createEntity(prototype, "model", Transformations());
+		modelEntity = SceneConnector::createEntity(prototype, "model", Transform());
 		if (modelEntity != nullptr) engine->addEntity(modelEntity);
 	} else
 	if (prototype->getModel() != nullptr) {
@@ -453,13 +453,13 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 		lookAt.set(entityBoundingBoxToUse->getCenter().clone().scale(objectScale));
 		Vector3 forwardVector(0.0f, 0.0f, 1.0f);
 		// TODO: a.drewke
-		Transformations _lookFromRotations;
-		_lookFromRotations.fromTransformations(lookFromRotations);
+		Transform _lookFromRotations;
+		_lookFromRotations.fromTransform(lookFromRotations);
 		if (cameraRotationInputHandler != nullptr) {
 			cameraRotationInputHandler->setDefaultScale(maxAxisDimension * scale);
 			cameraRotationInputHandler->setScale(maxAxisDimension * scale);
 		}
-		auto forwardVectorTransformed = _lookFromRotations.getTransformationsMatrix().multiply(forwardVector).scale(cameraRotationInputHandler != nullptr?cameraRotationInputHandler->getScale():maxAxisDimension * scale);
+		auto forwardVectorTransformed = _lookFromRotations.getTransformMatrix().multiply(forwardVector).scale(cameraRotationInputHandler != nullptr?cameraRotationInputHandler->getScale():maxAxisDimension * scale);
 		auto upVector = _lookFromRotations.getRotation(2).getQuaternion().multiply(Vector3(0.0f, 1.0f, 0.0f)).normalize();
 		auto lookFrom = lookAt.clone().add(forwardVectorTransformed);
 		cam->setLookFrom(lookFrom);

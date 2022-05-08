@@ -8,7 +8,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/fwd-tdme.h>
 
 using std::string;
@@ -18,7 +18,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 using tdme::engine::SceneConnector;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
@@ -46,10 +46,10 @@ private:
 	virtual void setParentEntity(Entity* entity) = 0;
 
 	/**
-	 * Apply parent transformations
-	 * @param parentTransformations parent transformations
+	 * Apply parent transform
+	 * @param parentTransform parent transform
 	 */
-	virtual void applyParentTransformations(const Transformations& parentTransformations) = 0;
+	virtual void applyParentTransform(const Transform& parentTransform) = 0;
 
 public:
 	static constexpr int RENDERPASS_MAX { 5 };
@@ -283,25 +283,25 @@ public:
 	virtual const Quaternion& getRotationsQuaternion() const = 0;
 
 	/**
-	 * @return this transformations matrix
+	 * @return this transform matrix
 	 */
-	virtual const Matrix4x4& getTransformationsMatrix() const = 0;
+	virtual const Matrix4x4& getTransformMatrix() const = 0;
 
 	/**
-	 * Set up this transformations from given transformations
-	 * @param transformations transformations
+	 * Set up this transform from given transform
+	 * @param transform transform
 	 */
-	virtual void fromTransformations(const Transformations& transformations) = 0;
+	virtual void fromTransform(const Transform& transform) = 0;
 
 	/**
-	 * Update transformations
+	 * Update transform
 	 */
 	virtual void update() = 0;
 
 	/**
-	 * @return this transformations
+	 * @return this transform
 	 */
-	virtual const Transformations& getTransformations() const = 0;
+	virtual const Transform& getTransform() const = 0;
 
 	/**
 	 * @return render pass

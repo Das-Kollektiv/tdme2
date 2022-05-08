@@ -7,7 +7,7 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Partition.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
@@ -17,7 +17,7 @@ using std::string;
 using tdme::engine::Engine;
 using tdme::engine::Lines;
 using tdme::engine::Partition;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
@@ -34,9 +34,9 @@ void Lines::setEngine(Engine* engine) {
 	LinesInternal::setEngine(engine);
 }
 
-void Lines::fromTransformations(const Transformations& transformations)
+void Lines::fromTransform(const Transform& transform)
 {
-	LinesInternal::fromTransformations(transformations);
+	LinesInternal::fromTransform(transform);
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 

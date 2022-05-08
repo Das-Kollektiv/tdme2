@@ -4,7 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
@@ -18,7 +18,7 @@
 using std::string;
 
 using tdme::engine::prototype::Prototype_Type;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
@@ -51,19 +51,19 @@ private:
 		"base_description",
 	};
 	array<string, 3> applyTranslationNodes = {
-		"transformation_translation_x",
-		"transformation_translation_y",
-		"transformation_translation_z"
+		"transform_translation_x",
+		"transform_translation_y",
+		"transform_translation_z"
 	};
 	array<string, 3> applyRotationNodes = {
-		"transformation_rotation_x",
-		"transformation_rotation_y",
-		"transformation_rotation_z"
+		"transform_rotation_x",
+		"transform_rotation_y",
+		"transform_rotation_z"
 	};
 	array<string, 3> applyScaleNodes = {
-		"transformation_scale_x",
-		"transformation_scale_y",
-		"transformation_scale_z"
+		"transform_scale_x",
+		"transform_scale_y",
+		"transform_scale_z"
 	};
 	array<string, 1> applySkyNodes = {
 		"sky_model_scale"
@@ -187,9 +187,9 @@ public:
 
 	/**
 	 * Update entity details
-	 * @param transformations transformations
+	 * @param transform transform
 	 */
-	void updateEntityDetails(const Transformations& transformations);
+	void updateEntityDetails(const Transform& transform);
 
 	/**
 	 * Update entity details

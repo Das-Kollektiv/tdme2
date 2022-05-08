@@ -16,7 +16,7 @@
 #include <tdme/engine/subsystems/particlesystem/ParticleSystemInternal.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/subsystems/rendering/fwd-tdme.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
@@ -33,7 +33,7 @@ using tdme::engine::subsystems::particlesystem::ParticleSystemInternal;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::subsystems::rendering::TransparentRenderPointsPool;
 using tdme::engine::Engine;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -43,7 +43,7 @@ using tdme::math::Vector3;
  * @author Andreas Drewke
  */
 class tdme::engine::subsystems::particlesystem::PointsParticleSystemInternal
-	: public Transformations
+	: public Transform
 	, public virtual ParticleSystemInternal
 {
 
@@ -68,23 +68,23 @@ protected:
 
 	BoundingBox boundingBox;
 	BoundingBox boundingBoxTransformed;
-	Transformations inverseTransformation;
+	Transform inverseTransform;
 	Color4 effectColorMul;
 	Color4 effectColorAdd;
 	bool pickable;
 	float particlesToSpawnRemainder;
 
-	Transformations localTransformations;
+	Transform localTransform;
 
 	/**
 	 * Update bounding volume
 	 */
 	inline void updateInternal() {
 		Vector3 scale;
-		getTransformationsMatrix().getScale(scale);
+		getTransformMatrix().getScale(scale);
 		pointSizeScale = Math::max(scale.getX(), Math::max(scale.getY(), scale.getZ()));
-		pointSizeScale*= Math::max(localTransformations.getScale().getX(), Math::max(localTransformations.getScale().getY(), localTransformations.getScale().getZ()));
-		boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
+		pointSizeScale*= Math::max(localTransform.getScale().getX(), Math::max(localTransform.getScale().getY(), localTransform.getScale().getZ()));
+		boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
 		boundingBoxTransformed.getMin().sub(0.05f); // scale a bit up to make picking work better
 		boundingBoxTransformed.getMax().add(0.05f); // same here
 		boundingBoxTransformed.update();
@@ -222,18 +222,18 @@ public:
 	}
 
 	/**
-	 * Update transformations
+	 * Update transform
 	 */
 	void update() override;
-	void fromTransformations(const Transformations& transformations) override;
+	void fromTransform(const Transform& transform) override;
 	void updateParticles() override;
 	void dispose();
 	int32_t emitParticles() override;
-	inline const Transformations& getLocalTransformations() override {
-		return localTransformations;
+	inline const Transform& getLocalTransform() override {
+		return localTransform;
 	}
-	inline void setLocalTransformations(const Transformations& transformations) override {
-		this->localTransformations = transformations;
+	inline void setLocalTransform(const Transform& transform) override {
+		this->localTransform = transform;
 		updateInternal();
 	}
 

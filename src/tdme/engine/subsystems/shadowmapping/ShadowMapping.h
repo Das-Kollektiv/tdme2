@@ -36,7 +36,7 @@ private:
 	Renderer* renderer { nullptr };
 	EntityRenderer* entityRenderer { nullptr };
 
-	Matrix4x4 shadowTransformationsMatrix;
+	Matrix4x4 shadowTransformMatrix;
 	Matrix4x4 depthBiasMVPMatrix;
 
 	Engine* engine { nullptr };
@@ -96,16 +96,16 @@ public:
 	void dispose();
 
 	/**
-	 * Start object transformations
+	 * Start object transform
 	 * @param contextIdx context index
-	 * @param transformationsMatrix transformations matrix
+	 * @param transformMatrix transform matrix
 	 */
-	void startObjectTransformations(int contextIdx, Matrix4x4& transformationsMatrix);
+	void startObjectTransform(int contextIdx, Matrix4x4& transformMatrix);
 
 	/**
-	 * End object transformations
+	 * End object transform
 	 */
-	void endObjectTransformations();
+	void endObjectTransform();
 
 	/**
 	 * Update matrices

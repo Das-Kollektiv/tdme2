@@ -9,7 +9,7 @@
 
 using tdme::engine::model::Color4;
 using tdme::engine::subsystems::particlesystem::Particle;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Vector3;
 
 /**
@@ -58,10 +58,10 @@ struct tdme::engine::subsystems::particlesystem::ParticleEmitter
 	virtual void emit(Particle* particle) = 0;
 
 	/**
-	 * Update transformation with given transformations
-	 * @param transformations transformations
+	 * Update transform with given transform
+	 * @param transform transform
 	 */
-	virtual void fromTransformations(const Transformations& transformations) = 0;
+	virtual void fromTransform(const Transform& transform) = 0;
 
 	/**
 	 * Destructor

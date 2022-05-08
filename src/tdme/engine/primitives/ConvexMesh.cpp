@@ -13,7 +13,7 @@
 #include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/engine/primitives/Triangle.h>
 #include <tdme/engine/ObjectModel.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
@@ -37,7 +37,7 @@ using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::LineSegment;
 using tdme::engine::primitives::Triangle;
 using tdme::engine::ObjectModel;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::utilities::ByteBuffer;
@@ -106,7 +106,7 @@ void ConvexMesh::createConvexMesh(const vector<Vector3>& vertices, const vector<
 	// scale collision shape local translation
 	collisionShapeLocalTranslation.scale(scale);
 
-	// local transformations
+	// local transform
 	collisionShapeLocalTransform.setPosition(reactphysics3d::Vector3(collisionShapeLocalTranslation.getX(), collisionShapeLocalTranslation.getY(), collisionShapeLocalTranslation.getZ()));
 
 	// generate vertices and indices buffers

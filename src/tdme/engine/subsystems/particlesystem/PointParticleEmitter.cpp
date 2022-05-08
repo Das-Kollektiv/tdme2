@@ -4,7 +4,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/engine/subsystems/particlesystem/Particle.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
@@ -13,7 +13,7 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::PointParticleEmitter;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -56,10 +56,10 @@ void PointParticleEmitter::emit(Particle* particle)
 	);
 }
 
-void PointParticleEmitter::fromTransformations(const Transformations& transformations)
+void PointParticleEmitter::fromTransform(const Transform& transform)
 {
 	//
-	auto& transformationsMatrix = transformations.getTransformationsMatrix();
+	auto& transformMatrix = transform.getTransformMatrix();
 	// apply translations
-	positionTransformed = transformationsMatrix.multiply(position);
+	positionTransformed = transformMatrix.multiply(position);
 }

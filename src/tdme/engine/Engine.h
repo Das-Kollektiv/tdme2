@@ -220,8 +220,8 @@ private:
 	STATIC_DLL_IMPEXT static int32_t shadowMapRenderLookUps;
 	STATIC_DLL_IMPEXT static int32_t environmentMappingWidth;
 	STATIC_DLL_IMPEXT static int32_t environmentMappingHeight;
-	STATIC_DLL_IMPEXT static float transformationsComputingReduction1Distance;
-	STATIC_DLL_IMPEXT static float transformationsComputingReduction2Distance;
+	STATIC_DLL_IMPEXT static float animationComputationReduction1Distance;
+	STATIC_DLL_IMPEXT static float animationComputationReduction2Distance;
 
 	struct Shader {
 		ShaderType type;
@@ -248,8 +248,8 @@ private:
 		vector<EntityHierarchy*> entityHierarchies;
 		vector<EnvironmentMapping*> environmentMappingEntities;
 		vector<Object*> ezrObjects;
-		vector<Object*> needsPreRenderEntities;
-		vector<Object*> needsComputeTransformationsEntities;
+		vector<Object*> requirePreRenderEntities;
+		vector<Object*> requireComputeAnimationEntities;
 	};
 
 	STATIC_DLL_IMPEXT static unordered_map<string, uint8_t> uniqueShaderIds;
@@ -280,17 +280,19 @@ private:
 
 	unordered_set<Entity*> autoEmitParticleSystemEntities;
 	unordered_set<Entity*> noFrustumCullingEntities;
-	unordered_set<Entity*> needsPreRenderEntities;
-	unordered_set<Entity*> needsComputeTransformationsEntities;
+	unordered_set<Entity*> requirePreRenderEntities;
+	unordered_set<Entity*> requireComputeAnimationEntities;
 
 	DecomposedEntities visibleDecomposedEntities;
 
 	EntityRenderer* entityRenderer { nullptr };
 
 	STATIC_DLL_IMPEXT static bool skinningShaderEnabled;
+
 	bool shadowMappingEnabled;
+
+	bool preRenderingInitiated;
 	bool renderingInitiated;
-	bool renderingComputedTransformations;
 
 	vector<string> postProcessingPrograms;
 
@@ -305,15 +307,15 @@ private:
 	vector<Action*> actions;
 
 	struct EngineThreadQueueElement {
-		enum Type { TYPE_NONE, TYPE_PRERENDER, TYPE_TRANSFORMATIONS, TYPE_RENDERING };
+		enum Type { TYPE_NONE, TYPE_PRERENDER, TYPE_ANIMATIONS, TYPE_RENDERING };
 
 		Type type { TYPE_NONE };
 
 		Engine* engine { nullptr };
 
 		struct {
-			bool computeTransformations { false };
-		} transformations;
+			bool computeTransform { false };
+		} transform;
 
 		struct {
 			Entity::RenderPass renderPass;
@@ -530,20 +532,20 @@ private:
 	void preRenderFunction(vector<Object*>& objects, int threadIdx);
 
 	/**
-	 * Computes visibility and transformations
+	 * Computes animations
 	 * @param objects objects
 	 * @param threadIdx thread index
 	 */
-	void computeTransformationsFunction(vector<Object*>& objects, int threadIdx);
+	void computeAnimationsFunction(vector<Object*>& objects, int threadIdx);
 
 	/**
-	 * Computes visibility and transformations
+	 * Computes visibility and animations and other pre render steps
 	 * @param camera camera
 	 * @param decomposedEntities decomposed entities
 	 * @param autoEmit auto emit particle systems
-	 * @param computeTransformations compute transformations
+	 * @param computeAnimation compute animation
 	 */
-	void computeTransformations(Camera* camera, DecomposedEntities& decomposedEntites, bool autoEmit, bool computeTransformations);
+	void preRender(Camera* camera, DecomposedEntities& decomposedEntites, bool autoEmit, bool computeAnimations);
 
 	/**
 	 * Set up GUI mode rendering
@@ -723,33 +725,33 @@ public:
 	}
 
 	/**
-	 * @return distance of animated object including skinned objects from which animation computation will be computed only every second frame
+	 * @return distance of animated object including skinned objects from which animation computing will be computed only every second frame
 	 */
-	inline static float getTransformationsComputingReduction1Distance() {
-		return Engine::transformationsComputingReduction1Distance;
+	inline static float getAnimationComputationReduction1Distance() {
+		return Engine::animationComputationReduction1Distance;
 	}
 
 	/**
 	 * Set distance of animated object including skinned objects from camera which animation computation will be computed only every second frame
-	 * @param skinningComputingReduction1Distance distance
+	 * @param animationComputationReduction1Distance distance
 	 */
-	inline static void setTransformationsComputingReduction1Distance(float transformationsComputingReduction1Distance) {
-		Engine::transformationsComputingReduction1Distance = transformationsComputingReduction1Distance;
+	inline static void setAnimationComputationReduction1Distance(float animationComputationReduction1Distance) {
+		Engine::animationComputationReduction1Distance = animationComputationReduction1Distance;
 	}
 
 	/**
 	 * @return distance of animated object including skinned objects from which animation computation will be computed only every forth frame
 	 */
-	inline static float getTransformationsComputingReduction2Distance() {
-		return Engine::transformationsComputingReduction2Distance;
+	inline static float getAnimationComputationReduction2Distance() {
+		return Engine::animationComputationReduction2Distance;
 	}
 
 	/**
 	 * Set distance of animated object including skinned objects from camera which animation computation will be computed only every forth frame
-	 * @param skinningComputingReduction2Distance distance
+	 * @param animationComputationReduction2Distance distance
 	 */
-	inline static void setTransformationsComputingReduction2Distance(float transformationsComputingReduction2Distance) {
-		Engine::transformationsComputingReduction2Distance = transformationsComputingReduction2Distance;
+	inline static void setAnimationComputationReduction2Distance(float animationComputationReduction2Distance) {
+		Engine::animationComputationReduction2Distance = animationComputationReduction2Distance;
 	}
 
 	/**

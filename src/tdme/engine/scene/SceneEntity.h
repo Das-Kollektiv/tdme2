@@ -6,13 +6,13 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/prototype/BaseProperties.h>
 #include <tdme/engine/scene/fwd-tdme.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 
 using std::string;
 
 using tdme::engine::prototype::BaseProperties;
 using tdme::engine::prototype::Prototype;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 
 /**
  * Scene entity definition
@@ -22,7 +22,7 @@ class tdme::engine::scene::SceneEntity final
 	: public BaseProperties
 {
 private:
-	Transformations transformations;
+	Transform transform;
 	Prototype* prototype { nullptr };
 	string reflectionEnvironmentMappingId;
 
@@ -31,10 +31,10 @@ public:
 	 * Public constructor
 	 * @param id id
 	 * @param description description
-	 * @param transformations transformations
+	 * @param transform transform
 	 * @param prototype prototype
 	 */
-	SceneEntity(const string& id, const string& description, const Transformations& transformations, Prototype* prototype);
+	SceneEntity(const string& id, const string& description, const Transform& transform, Prototype* prototype);
 
 	/**
 	 * Destructor
@@ -72,10 +72,10 @@ public:
 	}
 
 	/**
-	 * @return transformations
+	 * @return transform
 	 */
-	inline Transformations& getTransformations() {
-		return transformations;
+	inline Transform& getTransform() {
+		return transform;
 	}
 
 	/**

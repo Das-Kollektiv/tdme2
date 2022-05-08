@@ -68,9 +68,9 @@ private:
 	int32_t cSkinningMaxVertexWeights;
 	vector<vector<float>> cSkinningJointWeight;
 
-	Matrix4x4* cNodeTransformationsMatrix { nullptr };
+	Matrix4x4* cNodeTransformMatrix { nullptr };
 
-	vector<vector<vector<Matrix4x4*>>> cSkinningJointTransformationsMatrices;
+	vector<vector<vector<Matrix4x4*>>> cSkinningJointTransformMatrices;
 
 	bool skinning;
 	int32_t skinningJoints;
@@ -82,18 +82,18 @@ private:
 	 * @param objectNodeRenderer object node renderer
 	 * @param animationProcessingTarget animation processing target
 	 * @param node node
-	 * @param transformationMatrices instances transformationm matrices
+	 * @param transformMatrices instances transformm matrices
 	 * @param skinningMatrices instances skinning matrices
 	 * @param instances instances
 	 */
-	ObjectNodeMesh(ObjectNodeRenderer* objectNodeRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Node* node, const vector<map<string, Matrix4x4*>*>& transformationMatrices, const vector<map<string, Matrix4x4*>*>& skinningMatrices, int instances);
+	ObjectNodeMesh(ObjectNodeRenderer* objectNodeRenderer, Engine::AnimationProcessingTarget animationProcessingTarget, Node* node, const vector<map<string, Matrix4x4*>*>& transformMatrices, const vector<map<string, Matrix4x4*>*>& skinningMatrices, int instances);
 
 	/**
-	 * Computes mesh transformations
+	 * Computes skinning
 	 * @param contextIdx context index
 	 * @param objectBase object base
 	 */
-	void computeTransformations(int contextIdx, ObjectBase* objectBase);
+	void computeSkinning(int contextIdx, ObjectBase* objectBase);
 
 	/**
 	 * Recreates node float buffers

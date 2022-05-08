@@ -3,13 +3,13 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingBox.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::Engine;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::tools::editor::misc::CameraRotationInputHandlerEventHandler;
 
@@ -34,7 +34,7 @@ private:
 	bool keyR;
 	int mouseLastX;
 	int mouseLastY;
-	Transformations lookFromRotations;
+	Transform lookFromRotations;
 	float defaultScale;
 	float scale;
 	bool resetRequested;
@@ -57,7 +57,7 @@ public:
 	/**
 	 * @return look from rotation
 	 */
-	const Transformations& getLookFromRotations();
+	const Transform& getLookFromRotations();
 
 	/**
 	 * @return default scale

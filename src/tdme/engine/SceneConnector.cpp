@@ -72,7 +72,7 @@
 #include <tdme/engine/ParticleSystem.h>
 #include <tdme/engine/ParticleSystemGroup.h>
 #include <tdme/engine/PointsParticleSystem.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
@@ -153,7 +153,7 @@ using tdme::engine::ObjectRenderGroup;
 using tdme::engine::ParticleSystem;
 using tdme::engine::ParticleSystemGroup;
 using tdme::engine::PointsParticleSystem;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
@@ -306,7 +306,7 @@ Entity* SceneConnector::createParticleSystem(PrototypeParticleSystem* particleSy
 
 }
 
-Entity* SceneConnector::createEmpty(const string& id, const Transformations& transformations) {
+Entity* SceneConnector::createEmpty(const string& id, const Transform& transform) {
 	if (emptyModel == nullptr) {
 		emptyModel = ModelReader::read("resources/engine/models", "empty.tm");
 	}
@@ -314,11 +314,11 @@ Entity* SceneConnector::createEmpty(const string& id, const Transformations& tra
 		id,
 		SceneConnector::emptyModel
 	);
-	entity->fromTransformations(transformations);
+	entity->fromTransform(transform);
 	return entity;
 }
 
-Entity* SceneConnector::createEditorDecalEntity(Prototype* prototype, const string& id, const Transformations& transformations, int instances, Entity* parentEntity) {
+Entity* SceneConnector::createEditorDecalEntity(Prototype* prototype, const string& id, const Transform& transform, int instances, Entity* parentEntity) {
 	// decals only here :D
 	if (prototype->getType() != Prototype_Type::DECAL) return nullptr;
 
@@ -361,7 +361,7 @@ Entity* SceneConnector::createEditorDecalEntity(Prototype* prototype, const stri
 	return entity;
 }
 
-Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, const Transformations& transformations, int instances, Entity* parentEntity) {
+Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, const Transform& transform, int instances, Entity* parentEntity) {
 	Entity* entity = nullptr;
 
 	// objects
@@ -442,7 +442,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 			);
 			entity->setParentEntity(parentEntity);
 			auto object = dynamic_cast<Object*>(entity);
-			object->setEnableTransformationsComputingLOD(true);
+			object->setAnimationComputationLODEnabled(true);
 			if (prototype->getShader() == "water" || prototype->getShader() == "pbr-water") object->setRenderPass(Entity::RENDERPASS_WATER);
 			object->setShader(prototype->getShader());
 			object->setDistanceShader(prototype->getDistanceShader());
@@ -539,7 +539,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 		if (prototype->isTerrainMesh() == true) entity->setRenderPass(Entity::RENDERPASS_TERRAIN);
 		entity->setContributesShadows(prototype->isContributesShadows());
 		entity->setReceivesShadows(prototype->isReceivesShadows());
-		entity->fromTransformations(transformations);
+		entity->fromTransform(transform);
 	}
 
 	// done
@@ -547,23 +547,23 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 }
 
 Entity* SceneConnector::createEditorDecalEntity(SceneEntity* sceneEntity, const Vector3& translation, int instances, Entity* parentEntity) {
-	Transformations transformations;
-	transformations.fromTransformations(sceneEntity->getTransformations());
+	Transform transform;
+	transform.fromTransform(sceneEntity->getTransform());
 	if (translation.equals(Vector3()) == false) {
-		transformations.setTranslation(transformations.getTranslation().clone().add(translation));
-		transformations.update();
+		transform.setTranslation(transform.getTranslation().clone().add(translation));
+		transform.update();
 	}
-	return createEditorDecalEntity(sceneEntity->getPrototype(), sceneEntity->getId(), transformations, instances, parentEntity);
+	return createEditorDecalEntity(sceneEntity->getPrototype(), sceneEntity->getId(), transform, instances, parentEntity);
 }
 
 Entity* SceneConnector::createEntity(SceneEntity* sceneEntity, const Vector3& translation, int instances, Entity* parentEntity) {
-	Transformations transformations;
-	transformations.fromTransformations(sceneEntity->getTransformations());
+	Transform transform;
+	transform.fromTransform(sceneEntity->getTransform());
 	if (translation.equals(Vector3()) == false) {
-		transformations.setTranslation(transformations.getTranslation().clone().add(translation));
-		transformations.update();
+		transform.setTranslation(transform.getTranslation().clone().add(translation));
+		transform.update();
 	}
-	return createEntity(sceneEntity->getPrototype(), sceneEntity->getId(), transformations, instances, parentEntity);
+	return createEntity(sceneEntity->getPrototype(), sceneEntity->getId(), transform, instances, parentEntity);
 }
 
 void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, bool addTrigger, bool addEnvironmentMapping, bool useEditorDecals, bool pickable, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
@@ -655,12 +655,12 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 						unordered_map<string, ObjectRenderGroup*> objectRenderGroupByShaderParameters;
 						for (auto& foliageMapPartitionIt: foliageMapPartition) {
 							auto prototypeIdx = foliageMapPartitionIt.first;
-							auto& transformationsVector = foliageMapPartitionIt.second;
-							if (transformationsVector.empty() == true) continue;
+							auto& transformVector = foliageMapPartitionIt.second;
+							if (transformVector.empty() == true) continue;
 							auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
 							if (foliagePrototype->isRenderGroups() == false) {
-								for (auto& transformations: transformationsVector) {
-									auto entity = createEntity(foliagePrototype, "tdme.foliage." + to_string(prototypeIdx) + "." + to_string(prototypeEntityIdx[prototypeIdx]++), transformations);
+								for (auto& transform: transformVector) {
+									auto entity = createEntity(foliagePrototype, "tdme.foliage." + to_string(prototypeIdx) + "." + to_string(prototypeEntityIdx[prototypeIdx]++), transform);
 									if (entity == nullptr) continue;
 									entity->setTranslation(entity->getTranslation().clone().add(translation));
 									entity->setPickable(pickable);
@@ -711,10 +711,10 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 
 								//
 								auto objectIdx = -1;
-								for (auto& transformations: transformationsVector) {
+								for (auto& transform: transformVector) {
 									objectIdx++;
 									if (objectIdx % renderGroupsReduceBy != 0) continue;
-									foliagePartitionObjectRenderGroup->addObject(foliagePrototype->getModel(), transformations);
+									foliagePartitionObjectRenderGroup->addObject(foliagePrototype->getModel(), transform);
 								}
 							}
 						}
@@ -733,7 +733,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 	}
 
 	// scene entities
-	map<string, map<string, map<Model*, vector<Transformations*>>>> renderGroupEntitiesByShaderPartitionModel;
+	map<string, map<string, map<Model*, vector<Transform*>>>> renderGroupEntitiesByShaderPartitionModel;
 	map<Model*, Prototype*> renderGroupSceneEditorEntities;
 	auto progressStepCurrent = 0;
 	for (auto i = 0; i < scene->getEntityCount(); i++) {
@@ -746,14 +746,14 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 		if (addTrigger == false && sceneEntity->getPrototype()->getType() == Prototype_Type::TRIGGER) continue;
 
 		if (sceneEntity->getPrototype()->isRenderGroups() == true) {
-			auto minX = sceneEntity->getTransformations().getTranslation().getX();
-			auto minY = sceneEntity->getTransformations().getTranslation().getY();
-			auto minZ = sceneEntity->getTransformations().getTranslation().getZ();
+			auto minX = sceneEntity->getTransform().getTranslation().getX();
+			auto minY = sceneEntity->getTransform().getTranslation().getY();
+			auto minZ = sceneEntity->getTransform().getTranslation().getZ();
 			auto partitionX = (int)(minX / renderGroupsPartitionWidth);
 			auto partitionY = (int)(minY / renderGroupsPartitionHeight);
 			auto partitionZ = (int)(minZ / renderGroupsPartitionDepth);
 			renderGroupSceneEditorEntities[sceneEntity->getPrototype()->getModel()] = sceneEntity->getPrototype();
-			renderGroupEntitiesByShaderPartitionModel[sceneEntity->getPrototype()->getShader() + "." + sceneEntity->getPrototype()->getDistanceShader() + "." + to_string(static_cast<int>(sceneEntity->getPrototype()->getDistanceShaderDistance() / 10.0f))][to_string(partitionX) + "," + to_string(partitionY) + "," + to_string(partitionZ)][sceneEntity->getPrototype()->getModel()].push_back(&sceneEntity->getTransformations());
+			renderGroupEntitiesByShaderPartitionModel[sceneEntity->getPrototype()->getShader() + "." + sceneEntity->getPrototype()->getDistanceShader() + "." + to_string(static_cast<int>(sceneEntity->getPrototype()->getDistanceShaderDistance() / 10.0f))][to_string(partitionX) + "," + to_string(partitionY) + "," + to_string(partitionZ)][sceneEntity->getPrototype()->getModel()].push_back(&sceneEntity->getTransform());
 		} else {
 			auto entity = sceneEntity->getPrototype()->getType() == Prototype_Type::DECAL && useEditorDecals == true?createEditorDecalEntity(sceneEntity):createEntity(sceneEntity);
 			if (entity == nullptr) continue;
@@ -771,9 +771,9 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 					clone().
 					scale(
 						Vector3(
-							1.0f / (sceneEntity->getTransformations().getScale().getX() * entity->getBoundingBox()->getDimensions().getX()),
-							1.0f / (sceneEntity->getTransformations().getScale().getY() * entity->getBoundingBox()->getDimensions().getY()),
-							1.0f / (sceneEntity->getTransformations().getScale().getZ() * entity->getBoundingBox()->getDimensions().getZ())
+							1.0f / (sceneEntity->getTransform().getScale().getX() * entity->getBoundingBox()->getDimensions().getX()),
+							1.0f / (sceneEntity->getTransform().getScale().getY() * entity->getBoundingBox()->getDimensions().getY()),
+							1.0f / (sceneEntity->getTransform().getScale().getZ() * entity->getBoundingBox()->getDimensions().getZ())
 						)
 					)
 				);
@@ -846,10 +846,10 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 					}
 					auto objectRenderNode = objectRenderGroupsByShaderParameters[hash];
 					auto objectIdx = -1;
-					for (auto transformation: itModel.second) {
+					for (auto transform: itModel.second) {
 						objectIdx++;
 						if (objectIdx % renderGroupsReduceBy != 0) continue;
-						objectRenderNode->addObject(prototype->getModel(), *transformation);
+						objectRenderNode->addObject(prototype->getModel(), *transform);
 					}
 				}
 				for (auto& objectRenderGroupsByShaderParametersIt: objectRenderGroupsByShaderParameters) {
@@ -868,7 +868,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 	}
 }
 
-Body* SceneConnector::createBody(World* world, Prototype* prototype, const string& id, const Transformations& transformations, uint16_t collisionTypeId, int index, PrototypePhysics_BodyType* overrideType) {
+Body* SceneConnector::createBody(World* world, Prototype* prototype, const string& id, const Transform& transform, uint16_t collisionTypeId, int index, PrototypePhysics_BodyType* overrideType) {
 	if (prototype->getType() == Prototype_Type::EMPTY) return nullptr;
 
 	auto physicsType = overrideType != nullptr?overrideType:prototype->getPhysics()->getType();
@@ -883,20 +883,20 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 			id,
 			true,
 			collisionTypeId == 0?RIGIDBODY_TYPEID_TRIGGER:collisionTypeId,
-			transformations,
+			transform,
 			boundingVolumes
 		);
 	} else
 	if (prototype->getType() == Prototype_Type::MODEL &&
 		prototype->isTerrainMesh() == true) {
 		ObjectModel terrainModel(prototype->getModel());
-		auto terrainMesh = new TerrainMesh(&terrainModel, transformations);
+		auto terrainMesh = new TerrainMesh(&terrainModel, transform);
 		if (physicsType == PrototypePhysics_BodyType::COLLISION_BODY) {
 			return world->addCollisionBody(
 				id,
 				true,
 				collisionTypeId == 0?RIGIDBODY_TYPEID_COLLISION:collisionTypeId,
-				Transformations(),
+				Transform(),
 				{terrainMesh}
 			);
 		} else
@@ -905,7 +905,7 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 				id,
 				true,
 				collisionTypeId == 0?RIGIDBODY_TYPEID_STATIC:collisionTypeId,
-				Transformations(),
+				Transform(),
 				prototype->getPhysics()->getFriction(),
 				{terrainMesh}
 			);
@@ -915,7 +915,7 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 				id,
 				true,
 				collisionTypeId == 0?RIGIDBODY_TYPEID_DYNAMIC:collisionTypeId,
-				Transformations(),
+				Transform(),
 				prototype->getPhysics()->getRestitution(),
 				prototype->getPhysics()->getFriction(),
 				prototype->getPhysics()->getMass(),
@@ -935,7 +935,7 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 				id,
 				true,
 				collisionTypeId == 0?RIGIDBODY_TYPEID_COLLISION:collisionTypeId,
-				transformations,
+				transform,
 				boundingVolumes
 			);
 		} else
@@ -944,7 +944,7 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 				id,
 				true,
 				collisionTypeId == 0?RIGIDBODY_TYPEID_STATIC:collisionTypeId,
-				transformations,
+				transform,
 				prototype->getPhysics()->getFriction(),
 				boundingVolumes
 			);
@@ -954,7 +954,7 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 				id,
 				true,
 				collisionTypeId == 0?RIGIDBODY_TYPEID_DYNAMIC:collisionTypeId,
-				transformations,
+				transform,
 				prototype->getPhysics()->getRestitution(),
 				prototype->getPhysics()->getFriction(),
 				prototype->getPhysics()->getMass(),
@@ -967,13 +967,13 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 }
 
 Body* SceneConnector::createBody(World* world, SceneEntity* sceneEntity, const Vector3& translation, uint16_t collisionTypeId, int index, PrototypePhysics_BodyType* overrideType) {
-	Transformations transformations;
-	transformations.fromTransformations(sceneEntity->getTransformations());
+	Transform transform;
+	transform.fromTransform(sceneEntity->getTransform());
 	if (translation.equals(Vector3()) == false) {
-		transformations.setTranslation(transformations.getTranslation().clone().add(translation));
-		transformations.update();
+		transform.setTranslation(transform.getTranslation().clone().add(translation));
+		transform.update();
 	}
-	return createBody(world, sceneEntity->getPrototype(), sceneEntity->getId(), transformations, collisionTypeId, index, overrideType);
+	return createBody(world, sceneEntity->getPrototype(), sceneEntity->getId(), transform, collisionTypeId, index, overrideType);
 }
 
 void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vector3& translation, ProgressCallback* progressCallback)
@@ -1002,14 +1002,14 @@ void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vec
 				if (heightValue > maxHeight) maxHeight = heightValue;
 			}
 			{
-				Transformations transformations;
-				transformations.setTranslation(Vector3(width / 2.0f, (minHeight + maxHeight) / 2.0f, depth / 2.0f));
-				transformations.update();
+				Transform transform;
+				transform.setTranslation(Vector3(width / 2.0f, (minHeight + maxHeight) / 2.0f, depth / 2.0f));
+				transform.update();
 				auto rigidBody = world->addStaticRigidBody(
 					"tdme.terrain",
 					true,
 					RIGIDBODY_TYPEID_STATIC,
-					transformations,
+					transform,
 					0.5f,
 					{
 						new HeightMap(
@@ -1033,18 +1033,18 @@ void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vec
 				for (auto& foliageMapPartition: foliageMaps) {
 					for (auto& foliageMapPartitionIt: foliageMapPartition) {
 						auto prototypeIdx = foliageMapPartitionIt.first;
-						auto& transformationsVector = foliageMapPartitionIt.second;
-						if (transformationsVector.empty() == true) continue;
+						auto& transformVector = foliageMapPartitionIt.second;
+						if (transformVector.empty() == true) continue;
 						auto foliagePrototype = prototype->getTerrain()->getFoliagePrototype(prototypeIdx);
 						if (foliagePrototype->isRenderGroups() == true) continue;
-						for (auto& foliageTransformations: transformationsVector) {
-							auto body = createBody(world, foliagePrototype, "tdme.foliage." + to_string(prototypeIdx) + "." + to_string(prototypeBodyIdx[prototypeIdx]++), foliageTransformations);
+						for (auto& foliageTransform: transformVector) {
+							auto body = createBody(world, foliagePrototype, "tdme.foliage." + to_string(prototypeIdx) + "." + to_string(prototypeBodyIdx[prototypeIdx]++), foliageTransform);
 							if (body == nullptr) continue;
 							if (translation.equals(Vector3()) == false) {
-								auto transformations = foliageTransformations;
-								transformations.setTranslation(transformations.getTranslation().clone().add(translation));
-								transformations.update();
-								body->fromTransformations(transformations);
+								auto transform = foliageTransform;
+								transform.setTranslation(transform.getTranslation().clone().add(translation));
+								transform.update();
+								body->fromTransform(transform);
 							}
 							body->setEnabled(enable);
 						}
@@ -1066,10 +1066,10 @@ void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vec
 		auto rigidBody = createBody(world, sceneEntity);
 		if (rigidBody == nullptr) continue;
 		if (translation.equals(Vector3()) == false) {
-			auto transformations = sceneEntity->getTransformations();
-			transformations.setTranslation(transformations.getTranslation().clone().add(translation));
-			transformations.update();
-			rigidBody->fromTransformations(transformations);
+			auto transform = sceneEntity->getTransform();
+			transform.setTranslation(transform.getTranslation().clone().add(translation));
+			transform.update();
+			rigidBody->fromTransform(transform);
 		}
 		rigidBody->setEnabled(enable);
 	}
@@ -1243,7 +1243,7 @@ void SceneConnector::enableScene(Engine* engine, Scene* scene, const Vector3& tr
 		if (entity == nullptr)
 			continue;
 
-		entity->fromTransformations(sceneEntity->getTransformations());
+		entity->fromTransform(sceneEntity->getTransform());
 		entity->setTranslation(entity->getTranslation().clone().add(translation));
 		if (sceneEntity->getPrototype()->getType() == Prototype_Type::EMPTY) {
 			entity->setScale(Vector3(Math::sign(entity->getScale().getX()), Math::sign(entity->getScale().getY()), Math::sign(entity->getScale().getZ())));
@@ -1286,15 +1286,15 @@ void SceneConnector::enableScene(World* world, Scene* scene, const Vector3& tran
 	}
 
 	// scene entities
-	Transformations transformations;
+	Transform transform;
 	for (auto i = 0; i < scene->getEntityCount(); i++) {
 		auto sceneEntity = scene->getEntityAt(i);
 		auto rigidBody = world->getBody(sceneEntity->getId());
 		if (rigidBody == nullptr) continue;
-		transformations.fromTransformations(sceneEntity->getTransformations());
-		transformations.setTranslation(transformations.getTranslation().clone().add(translation));
-		transformations.update();
-		rigidBody->fromTransformations(transformations);
+		transform.fromTransform(sceneEntity->getTransform());
+		transform.setTranslation(transform.getTranslation().clone().add(translation));
+		transform.update();
+		rigidBody->fromTransform(transform);
 		rigidBody->setEnabled(true);
 	}
 }

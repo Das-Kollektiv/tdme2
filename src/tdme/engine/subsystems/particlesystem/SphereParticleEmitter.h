@@ -15,7 +15,7 @@ using tdme::engine::model::Color4;
 using tdme::engine::primitives::Sphere;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::ParticleEmitter;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Vector3;
 
 /**
@@ -92,6 +92,6 @@ public:
 	}
 
 	void emit(Particle* particle) override;
-	void fromTransformations(const Transformations& transformations) override;
+	void fromTransform(const Transform& transform) override;
 
 };

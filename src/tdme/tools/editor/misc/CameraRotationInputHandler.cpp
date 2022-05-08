@@ -5,7 +5,7 @@
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Entity.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/GUI.h>
@@ -17,7 +17,7 @@
 
 using tdme::engine::Camera;
 using tdme::engine::Engine;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::GUI;
@@ -56,7 +56,7 @@ CameraRotationInputHandler::CameraRotationInputHandler(Engine* engine, CameraRot
 CameraRotationInputHandler::~CameraRotationInputHandler() {
 }
 
-const Transformations& CameraRotationInputHandler::getLookFromRotations()
+const Transform& CameraRotationInputHandler::getLookFromRotations()
 {
 	return lookFromRotations;
 }
@@ -194,7 +194,7 @@ void CameraRotationInputHandler::handleInputEvents()
 		resetRequested = false;
 	}
 	Vector3 forwardVector(0.0f, 0.0f, 1.0f);
-	auto forwardVectorTransformed = lookFromRotations.getTransformationsMatrix().multiply(forwardVector).scale(scale);
+	auto forwardVectorTransformed = lookFromRotations.getTransformMatrix().multiply(forwardVector).scale(scale);
 	auto upVector = lookFromRotations.getRotation(2).getQuaternion().multiply(Vector3(0.0f, 1.0f, 0.0f)).normalize();
 	auto lookFrom = lookAt.clone().add(forwardVectorTransformed);
 	cam->setLookFrom(lookFrom);

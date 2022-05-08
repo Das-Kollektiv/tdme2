@@ -14,7 +14,7 @@
 #include <tdme/utilities/fwd-tdme.h>
 
 using tdme::engine::primitives::BoundingBox;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Vector3;
 
 /**
@@ -55,10 +55,10 @@ public:
 	virtual ~BoundingVolume();
 
 	/**
-	 * Transform bounding volume from given transformations
-	 * @param transformations transformations
+	 * Transform bounding volume from given transform
+	 * @param transform transform
 	 */
-	virtual void fromTransformations(const Transformations& transformations);
+	virtual void fromTransform(const Transform& transform);
 
 	/**
 	 * Get local scale

@@ -17,7 +17,7 @@
 #include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/Object.h>
 #include <tdme/engine/Rotation.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/GUI.h>
@@ -51,7 +51,7 @@ using tdme::engine::Entity;
 using tdme::engine::EntityHierarchy;
 using tdme::engine::Object;
 using tdme::engine::Rotation;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::GUI;
@@ -113,18 +113,18 @@ void PrototypePhysicsSubView::setupModelBoundingVolume(Prototype* prototype, int
 			auto bv = prototype->getBoundingVolume(idx);
 			if (dynamic_cast<OrientedBoundingBox*>(bv->getBoundingVolume()) != nullptr) {
 				auto obb = dynamic_cast<OrientedBoundingBox*>(bv->getBoundingVolume());
-				Transformations transformations;
-				transformations.fromMatrix(
+				Transform transform;
+				transform.fromMatrix(
 					Matrix4x4().identity().setAxes(obb->getAxes()[0], obb->getAxes()[1], obb->getAxes()[2]),
 					RotationOrder::ZYX
 				);
-				transformations.setTranslation(obb->getCenter());
-				transformations.setScale(obb->getHalfExtension().clone().scale(2.0f));
-				transformations.setScale(boundingVolumesEntity->getScale().clone().scale(transformations.getScale()));
-				transformations.setTranslation(transformations.getTranslation().clone().scale(boundingVolumesEntity->getScale()));
-				transformations.update();
+				transform.setTranslation(obb->getCenter());
+				transform.setScale(obb->getHalfExtension().clone().scale(2.0f));
+				transform.setScale(boundingVolumesEntity->getScale().clone().scale(transform.getScale()));
+				transform.setTranslation(transform.getTranslation().clone().scale(boundingVolumesEntity->getScale()));
+				transform.update();
 				auto modelBoundingVolumeEntity = new Object(modelBoundingVolumeEntityId, Tools::getDefaultObb());
-				modelBoundingVolumeEntity->fromTransformations(transformations);
+				modelBoundingVolumeEntity->fromTransform(transform);
 				modelBoundingVolumeEntity->setRenderPass(Entity::RENDERPASS_POST_POSTPROCESSING);
 				modelBoundingVolumeEntity->setEnabled(false);
 				engine->addEntity(modelBoundingVolumeEntity);
@@ -274,7 +274,7 @@ void PrototypePhysicsSubView::handleInputEvents(Prototype* prototype) {
 		if (event.getButton() == MOUSE_BUTTON_LEFT) {
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 				auto selectedEntity = engine->getEntity("tdme.prototype.bv.editing");
-				if (selectedEntity != nullptr) applyBoundingVolumeTransformations(prototype, displayBoundingVolumeIdx, selectedEntity->getTransformations(), false);
+				if (selectedEntity != nullptr) applyBoundingVolumeTransform(prototype, displayBoundingVolumeIdx, selectedEntity->getTransform(), false);
 				if (getGizmoMode() != GIZMOMODE_NONE) {
 					setGizmoMode(GIZMOMODE_NONE);
 					updateGizmo(prototype);
@@ -307,7 +307,7 @@ void PrototypePhysicsSubView::handleInputEvents(Prototype* prototype) {
 					Vector3 deltaTranslation;
 					Vector3 deltaRotation;
 					Vector3 deltaScale;
-					if (determineGizmoDeltaTransformations(mouseDownLastX, mouseDownLastY, event.getXUnscaled(), event.getYUnscaled(), deltaTranslation, deltaRotation, deltaScale) == true) {
+					if (determineGizmoDeltaTransform(mouseDownLastX, mouseDownLastY, event.getXUnscaled(), event.getYUnscaled(), deltaTranslation, deltaRotation, deltaScale) == true) {
 						totalDeltaScale.add(deltaScale.clone().sub(Vector3(1.0f, 1.0f, 1.0f)));
 						auto gizmoEntity = getGizmoObject();
 						auto selectedEntity = engine->getEntity("tdme.prototype.bv.editing");
@@ -323,8 +323,8 @@ void PrototypePhysicsSubView::handleInputEvents(Prototype* prototype) {
 							selectedEntity->setRotationAngle(1, selectedEntity->getRotationAngle(1) + deltaRotation[1]);
 							selectedEntity->setRotationAngle(2, selectedEntity->getRotationAngle(2) + deltaRotation[0]);
 							selectedEntity->update();
-							setGizmoRotation(prototype, selectedEntity->getTransformations());
-							applyBoundingVolumeTransformations(prototype, displayBoundingVolumeIdx, selectedEntity->getTransformations(), true);
+							setGizmoRotation(prototype, selectedEntity->getTransform());
+							applyBoundingVolumeTransform(prototype, displayBoundingVolumeIdx, selectedEntity->getTransform(), true);
 						}
 						if (Math::abs(deltaTranslation.getX()) > Math::EPSILON ||
 							Math::abs(deltaTranslation.getY()) > Math::EPSILON ||
@@ -344,31 +344,31 @@ void PrototypePhysicsSubView::handleInputEvents(Prototype* prototype) {
 void PrototypePhysicsSubView::updateGizmo(Prototype* prototype) {
 	auto selectedEntity = engine->getEntity("tdme.prototype.bv.editing");
 	if (selectedEntity != nullptr) {
-		Gizmo::updateGizmo(selectedEntity->getBoundingBoxTransformed()->getCenter(), selectedEntity->getTransformations());
+		Gizmo::updateGizmo(selectedEntity->getBoundingBoxTransformed()->getCenter(), selectedEntity->getTransform());
 	} else {
 		removeGizmo();
 	}
 }
 
-void PrototypePhysicsSubView::setGizmoRotation(Prototype* prototype, const Transformations& transformations) {
+void PrototypePhysicsSubView::setGizmoRotation(Prototype* prototype, const Transform& transform) {
 	if (displayBoundingVolumeIdx == DISPLAY_BOUNDINGVOLUMEIDX_ALL) return;
-	Gizmo::setGizmoRotation(transformations);
+	Gizmo::setGizmoRotation(transform);
 }
 
-void PrototypePhysicsSubView::applyBoundingVolumeTransformations(Prototype* prototype, int i, const Transformations& _transformations, bool guiOnly) {
+void PrototypePhysicsSubView::applyBoundingVolumeTransform(Prototype* prototype, int i, const Transform& _transform, bool guiOnly) {
 	auto modelEntity = engine->getEntity("model");
-	auto transformations = _transformations;
+	auto transform = _transform;
 	auto objectScaleInverted = Vector3(
 		1.0f / objectScale.getX(),
 		1.0f / objectScale.getY(),
 		1.0f / objectScale.getZ()
 	);
-	transformations.setScale(transformations.getScale().clone().scale(objectScaleInverted));
-	transformations.update();
+	transform.setScale(transform.getScale().clone().scale(objectScaleInverted));
+	transform.update();
 	auto bv = prototype->getBoundingVolume(i);
 	if (dynamic_cast<Sphere*>(bv->getBoundingVolume()) != nullptr) {
 		auto sphere = dynamic_cast<Sphere*>(bv->getBoundingVolume());
-		auto center = sphere->getCenter().clone().add(transformations.getTranslation().clone().scale(objectScaleInverted));
+		auto center = sphere->getCenter().clone().add(transform.getTranslation().clone().scale(objectScaleInverted));
 		auto scale = 1.0f;
 		if (Math::abs(totalDeltaScale.getX()) > Math::abs(totalDeltaScale.getY()) &&
 			Math::abs(totalDeltaScale.getX()) > Math::abs(totalDeltaScale.getZ())) {
@@ -390,11 +390,11 @@ void PrototypePhysicsSubView::applyBoundingVolumeTransformations(Prototype* prot
 		auto capsule = dynamic_cast<Capsule*>(bv->getBoundingVolume());
 		auto a = capsule->getA();
 		auto b = capsule->getB();
-		transformations.setTranslation(transformations.getTranslation().clone().scale(objectScaleInverted));
-		transformations.setPivot(transformations.getPivot().clone().scale(objectScaleInverted));
-		transformations.update();
-		a = transformations.getTransformationsMatrix().multiply(a);
-		b = transformations.getTransformationsMatrix().multiply(b);
+		transform.setTranslation(transform.getTranslation().clone().scale(objectScaleInverted));
+		transform.setPivot(transform.getPivot().clone().scale(objectScaleInverted));
+		transform.update();
+		a = transform.getTransformMatrix().multiply(a);
+		b = transform.getTransformMatrix().multiply(b);
 		auto scale = 1.0f;
 		if (Math::abs(totalDeltaScale.getX()) > Math::abs(totalDeltaScale.getY()) &&
 			Math::abs(totalDeltaScale.getX()) > Math::abs(totalDeltaScale.getZ())) {
@@ -414,14 +414,14 @@ void PrototypePhysicsSubView::applyBoundingVolumeTransformations(Prototype* prot
 	} else
 	if (dynamic_cast<OrientedBoundingBox*>(bv->getBoundingVolume()) != nullptr) {
 		auto obb = dynamic_cast<OrientedBoundingBox*>(bv->getBoundingVolume());
-		auto center = transformations.getTranslation().clone().scale(objectScaleInverted);
+		auto center = transform.getTranslation().clone().scale(objectScaleInverted);
 		auto axis0 = OrientedBoundingBox::AABB_AXIS_X;
 		auto axis1 = OrientedBoundingBox::AABB_AXIS_Y;
 		auto axis2 = OrientedBoundingBox::AABB_AXIS_Z;
 		auto halfExtension = obb->getHalfExtension();
-		axis0 = transformations.getTransformationsMatrix().multiplyNoTranslation(axis0);
-		axis1 = transformations.getTransformationsMatrix().multiplyNoTranslation(axis1);
-		axis2 = transformations.getTransformationsMatrix().multiplyNoTranslation(axis2);
+		axis0 = transform.getTransformMatrix().multiplyNoTranslation(axis0);
+		axis1 = transform.getTransformMatrix().multiplyNoTranslation(axis1);
+		axis2 = transform.getTransformMatrix().multiplyNoTranslation(axis2);
 		halfExtension.set(
 			Vector3(
 				Math::clamp(axis0.computeLength() / 2.0f, 0.01f, 1000.0f),

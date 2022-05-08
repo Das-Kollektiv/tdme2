@@ -103,11 +103,11 @@ void ObjectNode::createNodes(ObjectBase* object, const map<string, Node*>& nodes
 			objectNode->node = node;
 			objectNode->animated = animated;
 			objectNode->renderer = new ObjectNodeRenderer(objectNode);
-			vector<map<string, Matrix4x4*>*> instancesTransformationsMatrices;
+			vector<map<string, Matrix4x4*>*> instancesTransformMatrices;
 			vector<map<string, Matrix4x4*>*> instancesSkinningNodesMatrices;
 			for (auto animation: object->instanceAnimations) {
-				instancesTransformationsMatrices.push_back(&animation->transformationsMatrices[0]);
-				instancesSkinningNodesMatrices.push_back(animation->getSkinningNodesMatrices(objectNode->node));
+				instancesTransformMatrices.push_back(&animation->transformMatrices[0]);
+				instancesSkinningNodesMatrices.push_back(animation->getSkinningNodesTransformMatrices(objectNode->node));
 			}
 			if (useManagers == true) {
 				auto meshManager = Engine::getInstance()->getMeshManager();
@@ -117,7 +117,7 @@ void ObjectNode::createNodes(ObjectBase* object, const map<string, Node*>& nodes
 						objectNode->renderer,
 						animationProcessingTarget,
 						node,
-						instancesTransformationsMatrices,
+						instancesTransformMatrices,
 						instancesSkinningNodesMatrices,
 						object->instances
 					);
@@ -128,7 +128,7 @@ void ObjectNode::createNodes(ObjectBase* object, const map<string, Node*>& nodes
 					objectNode->renderer,
 					animationProcessingTarget,
 					node,
-					instancesTransformationsMatrices,
+					instancesTransformMatrices,
 					instancesSkinningNodesMatrices,
 					object->instances
 				);
@@ -158,18 +158,18 @@ void ObjectNode::createNodes(ObjectBase* object, const map<string, Node*>& nodes
 				objectNode->pbrMaterialMetallicRoughnessTextureIdsByEntities[j] = TEXTUREID_NONE;
 				objectNode->pbrMaterialNormalTextureIdsByEntities[j] = TEXTUREID_NONE;
 			}
-			// determine node transformations matrix
-			objectNode->nodeTransformationsMatrix = object->instanceAnimations[0]->transformationsMatrices[0].find(node->getId())->second;
+			// determine node transform matrix
+			objectNode->nodeTransformMatrix = object->instanceAnimations[0]->transformMatrices[0].find(node->getId())->second;
 		}
 		// but still check sub nodes
 		createNodes(object, node->getSubNodes(), animated, useManagers, animationProcessingTarget, objectNodes);
 	}
 }
 
-void ObjectNode::computeTransformations(int contextIdx, vector<ObjectNode*>& objectNodes)
+void ObjectNode::computeAnimation(int contextIdx, vector<ObjectNode*>& objectNodes)
 {
 	for (auto objectNode : objectNodes) {
-		objectNode->mesh->computeTransformations(contextIdx, objectNode->object);
+		objectNode->mesh->computeSkinning(contextIdx, objectNode->object);
 	}
 }
 

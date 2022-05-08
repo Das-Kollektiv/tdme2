@@ -7,7 +7,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
@@ -27,7 +27,7 @@ using std::unordered_map;
 using std::vector;
 
 using tdme::engine::fileio::textures::Texture;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
@@ -60,7 +60,7 @@ private:
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
 
-	vector<unordered_map<int, vector<Transformations>>> newFoliageMaps;
+	vector<unordered_map<int, vector<Transform>>> newFoliageMaps;
 	unordered_set<int> recreateFoliagePartitions;
 
 	bool haveCurrentTerrainBrushHeight { false };

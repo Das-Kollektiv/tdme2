@@ -4,7 +4,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
 #include <tdme/engine/subsystems/particlesystem/Particle.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
@@ -13,7 +13,7 @@ using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
 using tdme::engine::subsystems::particlesystem::CircleParticleEmitterPlaneVelocity;
 using tdme::engine::subsystems::particlesystem::Particle;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -69,16 +69,16 @@ void CircleParticleEmitterPlaneVelocity::emit(Particle* particle)
 		(colorEnd.getAlpha() - colorStart.getAlpha()) / particle->lifeTimeMax);
 }
 
-void CircleParticleEmitterPlaneVelocity::fromTransformations(const Transformations& transformations)
+void CircleParticleEmitterPlaneVelocity::fromTransform(const Transform& transform)
 {
-	auto& transformationsMatrix = transformations.getTransformationsMatrix();
+	auto& transformMatrix = transform.getTransformMatrix();
 	// apply rotation, scale, translation
-	centerTransformed = transformationsMatrix.multiply(center);
-	// apply transformations rotation + scale to axis
-	axis0Transformed = transformationsMatrix.multiplyNoTranslation(axis0);
-	axis1Transformed = transformationsMatrix.multiplyNoTranslation(axis1);
+	centerTransformed = transformMatrix.multiply(center);
+	// apply transform rotation + scale to axis
+	axis0Transformed = transformMatrix.multiplyNoTranslation(axis0);
+	axis1Transformed = transformMatrix.multiplyNoTranslation(axis1);
 	// scale and radius transformed
 	Vector3 scale;
-	transformationsMatrix.getScale(scale);
+	transformMatrix.getScale(scale);
 	radiusTransformed = radius * Math::max(scale.getX(), Math::max(scale.getY(), scale.getZ()));
 }

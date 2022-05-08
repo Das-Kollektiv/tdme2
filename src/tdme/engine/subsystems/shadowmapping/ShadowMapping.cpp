@@ -205,28 +205,28 @@ void ShadowMapping::dispose()
 	}
 }
 
-void ShadowMapping::startObjectTransformations(int contextIdx, Matrix4x4& transformationsMatrix)
+void ShadowMapping::startObjectTransform(int contextIdx, Matrix4x4& transformMatrix)
 {
 	if (runState != ShadowMapping_RunState::RENDER)
 		return;
 
     // retrieve current model view matrix and put it on stack
 	Matrix4x4 tmpMatrix;
-	shadowTransformationsMatrix.set(depthBiasMVPMatrix);
+	shadowTransformMatrix.set(depthBiasMVPMatrix);
 	// set up new model view matrix
 	tmpMatrix.set(depthBiasMVPMatrix);
-	depthBiasMVPMatrix.set(transformationsMatrix).multiply(tmpMatrix);
+	depthBiasMVPMatrix.set(transformMatrix).multiply(tmpMatrix);
 
 	//
 	updateDepthBiasMVPMatrix(contextIdx);
 }
 
-void ShadowMapping::endObjectTransformations()
+void ShadowMapping::endObjectTransform()
 {
 	if (runState != ShadowMapping_RunState::RENDER)
 		return;
 	// set up new model view matrix
-	depthBiasMVPMatrix.set(shadowTransformationsMatrix);
+	depthBiasMVPMatrix.set(shadowTransformMatrix);
 }
 
 void ShadowMapping::updateTextureMatrix(int contextIdx)

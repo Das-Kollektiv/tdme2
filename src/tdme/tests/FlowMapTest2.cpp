@@ -114,7 +114,7 @@ void FlowMapTest2::display()
 		- sometimes they move to 0/0/0
 	*/
 	auto cam = engine->getCamera();
-	cam->setLookAt(combatUnits[0].object->getTransformations().getTranslation());
+	cam->setLookAt(combatUnits[0].object->getTransform().getTranslation());
 	cam->setLookFrom(cam->getLookAt() + Vector3(0.0f, 80.0f, 0.0f));
 	cam->setUpVector(cam->computeUpVector(cam->getLookFrom(), cam->getLookAt()));
 	if (mouseClicked == true) {
@@ -139,7 +139,7 @@ void FlowMapTest2::display()
 		formationRotationQuaternion.rotate(Vector3(0.0f, 1.0f, 0.0f), formationYRotationAngle);
 		for (auto& combatUnit: combatUnits) {
 			if (combatUnit.finished == true) continue;
-			combatUnit.object->fromTransformations(combatUnit.rigidBody->getTransformations());
+			combatUnit.object->fromTransform(combatUnit.rigidBody->getTransform());
 			while (combatUnit.object->getRotationCount() > 1) {
 				combatUnit.object->removeRotation(combatUnit.object->getRotationCount() - 1);
 			}
@@ -194,7 +194,7 @@ void FlowMapTest2::display()
 				}
 				Console::println(to_string(combatUnit.idx) + ": finding path for finish");
 				if (pathFinding->findPath(
-					combatUnit.object->getTransformations().getTranslation(),
+					combatUnit.object->getTransform().getTranslation(),
 					combatUnit.endPosition,
 					SceneConnector::RIGIDBODY_TYPEID_STATIC,
 					combatUnit.path,
@@ -262,7 +262,7 @@ void FlowMapTest2::display()
 					if (combatUnit.idx == 0) {
 						combatUnit.pathFindingNode = flowMap->getPath()[combatUnit.pathFindingNodeIdx];
 					} else {
-						auto relativeFormationPosition = (combatUnitFormationTransformations[combatUnit.formationIdx].getTranslation() - combatUnitFormationTransformations[combatUnits[0].formationIdx].getTranslation());
+						auto relativeFormationPosition = (combatUnitFormationTransform[combatUnit.formationIdx].getTranslation() - combatUnitFormationTransform[combatUnits[0].formationIdx].getTranslation());
 						auto formationPosition = formationRotationQuaternion * relativeFormationPosition;
 						combatUnit.pathFindingNode = combatUnits[0].object->getTranslation() + formationPosition;
 					}
@@ -434,8 +434,8 @@ void FlowMapTest2::dispose()
 
 void FlowMapTest2::initialize()
 {
-	Engine::setTransformationsComputingReduction1Distance(175.0f);
-	Engine::setTransformationsComputingReduction2Distance(250.0f);
+	Engine::setAnimationComputationReduction1Distance(175.0f);
+	Engine::setAnimationComputationReduction2Distance(250.0f);
 	engine->initialize();
 	scene = SceneReader::read("../WarStory/resources/project/maps", "Map_TEST_SquadMovement.tscene");
 	SceneConnector::setLights(engine, scene);
@@ -467,7 +467,7 @@ void FlowMapTest2::initialize()
 					auto spawnPointPlayerGroupIdxProperty = properties.getProperty("spawnpoint.playergroup");
 					if (spawnPointPlayerGroupIdxProperty != nullptr) playerGroupIdx = Integer::parse(spawnPointPlayerGroupIdxProperty->getValue());
 				}
-				startPosition = entity->getTransformations().getTranslation();
+				startPosition = entity->getTransform().getTranslation();
 				endPosition = startPosition;
 			}
 		}
@@ -491,7 +491,7 @@ void FlowMapTest2::initialize()
 		combatUnit.object->setAnimation("idle");
 		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
 		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
-		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransformations(), Body::TYPEID_DYNAMIC);
+		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::TYPEID_DYNAMIC);
 		combatUnit.rigidBody->setCollisionTypeIds(Body::TYPEID_STATIC);
 		combatUnit.finished = true;
 		engine->addEntity(combatUnit.object);
@@ -515,7 +515,7 @@ void FlowMapTest2::initialize()
 		combatUnit.object->setAnimation("idle");
 		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
 		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
-		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransformations(), Body::TYPEID_DYNAMIC);
+		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::TYPEID_DYNAMIC);
 		combatUnit.rigidBody->setCollisionTypeIds(Body::TYPEID_STATIC);
 		combatUnit.finished = true;
 		engine->addEntity(combatUnit.object);
@@ -539,7 +539,7 @@ void FlowMapTest2::initialize()
 		combatUnit.object->setAnimation("idle");
 		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
 		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
-		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransformations(), Body::TYPEID_DYNAMIC);
+		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::TYPEID_DYNAMIC);
 		combatUnit.rigidBody->setCollisionTypeIds(Body::TYPEID_STATIC);
 		combatUnit.finished = true;
 		engine->addEntity(combatUnit.object);
@@ -563,7 +563,7 @@ void FlowMapTest2::initialize()
 		combatUnit.object->setAnimation("idle");
 		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
 		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
-		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransformations(), Body::TYPEID_DYNAMIC);
+		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::TYPEID_DYNAMIC);
 		combatUnit.rigidBody->setCollisionTypeIds(Body::TYPEID_STATIC);
 		combatUnit.finished = true;
 		engine->addEntity(combatUnit.object);
@@ -587,7 +587,7 @@ void FlowMapTest2::initialize()
 		combatUnit.object->setAnimation("idle");
 		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
 		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
-		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransformations(), Body::TYPEID_DYNAMIC);
+		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::TYPEID_DYNAMIC);
 		combatUnit.rigidBody->setCollisionTypeIds(Body::TYPEID_STATIC);
 		combatUnit.finished = true;
 		engine->addEntity(combatUnit.object);
@@ -611,7 +611,7 @@ void FlowMapTest2::initialize()
 		combatUnit.object->setAnimation("idle");
 		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
 		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
-		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransformations(), Body::TYPEID_DYNAMIC);
+		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::TYPEID_DYNAMIC);
 		combatUnit.rigidBody->setCollisionTypeIds(Body::TYPEID_STATIC);
 		combatUnit.finished = true;
 		engine->addEntity(combatUnit.object);
@@ -636,7 +636,7 @@ void FlowMapTest2::initialize()
 		combatUnit.object->setAnimation("idle");
 		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
 		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
-		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransformations(), Body::TYPEID_DYNAMIC);
+		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::TYPEID_DYNAMIC);
 		combatUnit.rigidBody->setCollisionTypeIds(Body::TYPEID_STATIC);
 		combatUnit.finished = true;
 		engine->addEntity(combatUnit.object);
@@ -660,7 +660,7 @@ void FlowMapTest2::initialize()
 		combatUnit.object->setAnimation("idle");
 		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
 		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
-		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransformations(), Body::TYPEID_DYNAMIC);
+		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::TYPEID_DYNAMIC);
 		combatUnit.rigidBody->setCollisionTypeIds(Body::TYPEID_STATIC);
 		combatUnit.finished = true;
 		engine->addEntity(combatUnit.object);
@@ -684,7 +684,7 @@ void FlowMapTest2::initialize()
 		combatUnit.object->setAnimation("idle");
 		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
 		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
-		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransformations(), Body::TYPEID_DYNAMIC);
+		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::TYPEID_DYNAMIC);
 		combatUnit.rigidBody->setCollisionTypeIds(Body::TYPEID_STATIC);
 		combatUnit.finished = true;
 		engine->addEntity(combatUnit.object);
@@ -708,7 +708,7 @@ void FlowMapTest2::initialize()
 		combatUnit.object->setAnimation("idle");
 		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
 		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
-		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransformations(), Body::TYPEID_DYNAMIC);
+		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::TYPEID_DYNAMIC);
 		combatUnit.rigidBody->setCollisionTypeIds(Body::TYPEID_STATIC);
 		combatUnit.finished = true;
 		engine->addEntity(combatUnit.object);
@@ -732,7 +732,7 @@ void FlowMapTest2::initialize()
 		combatUnit.object->setAnimation("idle");
 		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
 		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
-		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransformations(), Body::TYPEID_DYNAMIC);
+		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::TYPEID_DYNAMIC);
 		combatUnit.rigidBody->setCollisionTypeIds(Body::TYPEID_STATIC);
 		combatUnit.finished = true;
 		engine->addEntity(combatUnit.object);
@@ -741,16 +741,16 @@ void FlowMapTest2::initialize()
 	pathFinding = new PathFinding(world, true, 2000, 1.8f, 0.4f, 0.81f, 1.0f, Body::TYPEID_DYNAMIC);
 
 	//
-	for (auto i = 0; i < combatUnitFormationTransformations.size(); i++) {
+	for (auto i = 0; i < combatUnitFormationTransform.size(); i++) {
 		auto emptyName = "Waypoint_" + to_string(i);
-		Matrix4x4 transformationsMatrix;
-		if (formationLinePrototype->computeTransformationsMatrix(
+		Matrix4x4 transformMatrix;
+		if (formationLinePrototype->computeTransformMatrix(
 			emptyName,
-			formationLinePrototype->getImportTransformationsMatrix(),
-			transformationsMatrix) == false) {
+			formationLinePrototype->getImportTransformMatrix(),
+			transformMatrix) == false) {
 			Console::println("FlowMapTest2::initialize(): Missing '" + emptyName + "'");
 		}
-		combatUnitFormationTransformations[i].fromMatrix(transformationsMatrix, RotationOrder::ZYX);
+		combatUnitFormationTransform[i].fromMatrix(transformMatrix, RotationOrder::ZYX);
 	}
 
 	//
@@ -760,14 +760,14 @@ void FlowMapTest2::initialize()
 	formationYRotationAngle = Vector3::computeAngle(Vector3(0.0f, 0.0f, -1.0f), formationMovement.clone().normalize(), Vector3(0.0f, 1.0f, 0.0f));
 	formationRotationQuaternion.rotate(Vector3(0.0f, 1.0f, 0.0f), formationYRotationAngle);
 	for (auto& combatUnit: combatUnits) {
-		auto relativeFormationPosition = (combatUnitFormationTransformations[combatUnit.formationIdx].getTranslation() - combatUnitFormationTransformations[combatUnits[0].formationIdx].getTranslation());
+		auto relativeFormationPosition = (combatUnitFormationTransform[combatUnit.formationIdx].getTranslation() - combatUnitFormationTransform[combatUnits[0].formationIdx].getTranslation());
 		auto formationPosition = formationRotationQuaternion * relativeFormationPosition;
 		combatUnit.endPosition = combatUnits[0].object->getTranslation() + formationPosition;
 		combatUnit.rotationY = Vector3::computeAngle(Vector3(0.0f, 0.0f, 1.0f), combatUnit.movementDirection, Vector3(0.0f, 1.0f, 0.0f));
 		combatUnit.object->setTranslation(combatUnit.endPosition);
 		combatUnit.object->setRotationAngle(0, combatUnit.rotationY);
 		combatUnit.object->update();
-		combatUnit.rigidBody->fromTransformations(combatUnit.object->getTransformations());
+		combatUnit.rigidBody->fromTransform(combatUnit.object->getTransform());
 	}
 }
 
@@ -797,7 +797,7 @@ void FlowMapTest2::doPathFinding(const Vector3& newEndPosition) {
 	//
 	Console::println("Finding path for flow map");
 	pathFinding->findPath(
-		combatUnits[0].object->getTransformations().getTranslation(),
+		combatUnits[0].object->getTransform().getTranslation(),
 		endPosition,
 		SceneConnector::RIGIDBODY_TYPEID_STATIC,
 		path
@@ -898,7 +898,7 @@ void FlowMapTest2::doPathFinding(const Vector3& newEndPosition) {
 		if (Float::isNaN(currentFormationYRotationAngle) == false) formationYRotationAngle = currentFormationYRotationAngle;
 		formationRotationQuaternion.rotate(Vector3(0.0f, 1.0f, 0.0f), formationYRotationAngle);
 		for (auto& combatUnit: combatUnits) {
-			auto relativeFormationPosition = (combatUnitFormationTransformations[combatUnit.formationIdx].getTranslation() - combatUnitFormationTransformations[combatUnits[0].formationIdx].getTranslation());
+			auto relativeFormationPosition = (combatUnitFormationTransform[combatUnit.formationIdx].getTranslation() - combatUnitFormationTransform[combatUnits[0].formationIdx].getTranslation());
 			auto formationPosition = formationRotationQuaternion * relativeFormationPosition;
 			combatUnit.endPosition = endPosition + formationPosition;
 			combatUnit.pathIdx = 0;

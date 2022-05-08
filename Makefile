@@ -218,7 +218,7 @@ SRCS = \
 	src/tdme/engine/SceneConnector.cpp \
 	src/tdme/engine/SimplePartition.cpp \
 	src/tdme/engine/Timing.cpp \
-	src/tdme/engine/Transformations.cpp \
+	src/tdme/engine/Transform.cpp \
 	src/tdme/engine/Version.cpp \
 	src/tdme/engine/fileio/models/DAEReader.cpp \
 	src/tdme/engine/fileio/models/GLTFReader.cpp \

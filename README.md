@@ -62,7 +62,7 @@
                 - GPU via compute shaders with GL4.3+/CORE, Vulkan, GL3+/CORE via OpenCL for MacOSX
                 - which also supports several instances of the same object to reduce compute and render calls
             - both animations and skinning have some sort of configurable LOD functionality
-            - texture transformations/animations
+            - texture transforms/animations
                 - via texture matrices
         - objects with support for LOD
         - imposter objects with support for LOD
@@ -83,7 +83,7 @@
         - environment mapping objects
           - which can be used as reflection sources of other objects
         - decal objects
-    - object/entity transformations
+    - object/entity transforms
         - scaling
         - rotations
         - translation
@@ -199,7 +199,7 @@
 	- very small implementation of a scripting language without byte code, VM or what ever
 	- runs on every CPU, OS, ... due to its simplicity, so its highly portable just like TDME2 is
 	- can be easily extended by writing state machine machine states and script methods in C++
-	- only works with the following data type primitives: boolean, integer, float, string, vector3 and transformations
+	- only works with the following data type primitives: boolean, integer, float, string, vector3 and transform
 	- when calling script methods/returning from methods it does not use references or pointers but only value by copy
 	- supports operators by operator to method mapping by a preprocessor run
 	- supports loops and conditions

@@ -48,7 +48,7 @@ Gizmo::Gizmo(Engine* engine, const string& id, int32_t gizmoTypeMask)
 Gizmo::~Gizmo() {
 }
 
-void Gizmo::updateGizmo(const Vector3& gizmoCenter, const Transformations& transformations) {
+void Gizmo::updateGizmo(const Vector3& gizmoCenter, const Transform& transform) {
 	Object* gizmoEntity = nullptr;
 	auto zNearNormal = engine->getCamera()->getFrustum()->getPlanes()[Frustum::PLANE_NEAR].getNormal();
 	auto lookFrom = engine->getCamera()->getLookFrom();
@@ -197,7 +197,7 @@ void Gizmo::updateGizmo(const Vector3& gizmoCenter, const Transformations& trans
 		case GIZMOTYPE_NONE:
 			break;
 	}
-	setGizmoRotation(transformations);
+	setGizmoRotation(transform);
 }
 
 Object* Gizmo::getGizmoObject() {
@@ -251,7 +251,7 @@ bool Gizmo::determineGizmoMovement(int mouseX, int mouseY, vector<Vector3> verti
 	return false;
 }
 
-bool Gizmo::determineGizmoDeltaTransformations(int mouseLastX, int mouseLastY, int mouseX, int mouseY, Vector3& deltaTranslation, Vector3& deltaRotation, Vector3& deltaScale) {
+bool Gizmo::determineGizmoDeltaTransform(int mouseLastX, int mouseLastY, int mouseX, int mouseY, Vector3& deltaTranslation, Vector3& deltaRotation, Vector3& deltaScale) {
 	if (getGizmoMode() == GIZMOMODE_NONE) return false;
 	auto deltaX = mouseX - mouseLastX;
 	auto deltaY = mouseY - mouseLastY;
@@ -423,44 +423,44 @@ bool Gizmo::determineGizmoMode(Entity* selectedEntity, Node* selectedEntityNode)
 	return false;
 }
 
-void Gizmo::setGizmoRotation(const Transformations& transformations) {
-	auto rotationsMatrix = transformations.getRotationsQuaternion().computeMatrix();
+void Gizmo::setGizmoRotation(const Transform& transform) {
+	auto rotationsMatrix = transform.getRotationsQuaternion().computeMatrix();
 	{
 		auto gizmoEntity = dynamic_cast<Object*>(engine->getEntity(id + ".tdme.gizmo.scale"));
 		if (gizmoEntity != nullptr) {
-			gizmoEntity->setNodeTransformationsMatrix("scale_x", gizmoEntity->getModel()->getNodeById("scale_x")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
-			gizmoEntity->setNodeTransformationsMatrix("scale_y", gizmoEntity->getModel()->getNodeById("scale_y")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
-			gizmoEntity->setNodeTransformationsMatrix("scale_z", gizmoEntity->getModel()->getNodeById("scale_z")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
-			gizmoEntity->setNodeTransformationsMatrix("scale_x_plane", gizmoEntity->getModel()->getNodeById("scale_x_plane")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
-			gizmoEntity->setNodeTransformationsMatrix("scale_y_plane", gizmoEntity->getModel()->getNodeById("scale_y_plane")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
-			gizmoEntity->setNodeTransformationsMatrix("scale_z_plane", gizmoEntity->getModel()->getNodeById("scale_x_plane")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
+			gizmoEntity->setNodeTransformMatrix("scale_x", gizmoEntity->getModel()->getNodeById("scale_x")->getTransformMatrix().clone().multiply(rotationsMatrix));
+			gizmoEntity->setNodeTransformMatrix("scale_y", gizmoEntity->getModel()->getNodeById("scale_y")->getTransformMatrix().clone().multiply(rotationsMatrix));
+			gizmoEntity->setNodeTransformMatrix("scale_z", gizmoEntity->getModel()->getNodeById("scale_z")->getTransformMatrix().clone().multiply(rotationsMatrix));
+			gizmoEntity->setNodeTransformMatrix("scale_x_plane", gizmoEntity->getModel()->getNodeById("scale_x_plane")->getTransformMatrix().clone().multiply(rotationsMatrix));
+			gizmoEntity->setNodeTransformMatrix("scale_y_plane", gizmoEntity->getModel()->getNodeById("scale_y_plane")->getTransformMatrix().clone().multiply(rotationsMatrix));
+			gizmoEntity->setNodeTransformMatrix("scale_z_plane", gizmoEntity->getModel()->getNodeById("scale_x_plane")->getTransformMatrix().clone().multiply(rotationsMatrix));
 			gizmoEntity->update();
 		}
 	}
 	{
 		auto gizmoEntity = dynamic_cast<Object*>(engine->getEntity(id + ".tdme.gizmo.rotations"));
 		if (gizmoEntity != nullptr) {
-			gizmoEntity->setNodeTransformationsMatrix("rotate_x", gizmoEntity->getModel()->getNodeById("rotate_x")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
-			gizmoEntity->setNodeTransformationsMatrix("rotate_y", gizmoEntity->getModel()->getNodeById("rotate_y")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
-			gizmoEntity->setNodeTransformationsMatrix("rotate_z", gizmoEntity->getModel()->getNodeById("rotate_z")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
+			gizmoEntity->setNodeTransformMatrix("rotate_x", gizmoEntity->getModel()->getNodeById("rotate_x")->getTransformMatrix().clone().multiply(rotationsMatrix));
+			gizmoEntity->setNodeTransformMatrix("rotate_y", gizmoEntity->getModel()->getNodeById("rotate_y")->getTransformMatrix().clone().multiply(rotationsMatrix));
+			gizmoEntity->setNodeTransformMatrix("rotate_z", gizmoEntity->getModel()->getNodeById("rotate_z")->getTransformMatrix().clone().multiply(rotationsMatrix));
 			gizmoEntity->update();
 		}
 	}
 	{
 		auto gizmoEntity = dynamic_cast<Object*>(engine->getEntity(id + ".tdme.gizmo.all"));
 		if (gizmoEntity != nullptr) {
-			if (gizmoEntity->getModel()->getNodeById("all_scale_x") != nullptr) gizmoEntity->setNodeTransformationsMatrix("all_scale_x", gizmoEntity->getModel()->getNodeById("all_scale_x")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
-			if (gizmoEntity->getModel()->getNodeById("all_scale_y") != nullptr) gizmoEntity->setNodeTransformationsMatrix("all_scale_y", gizmoEntity->getModel()->getNodeById("all_scale_y")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
-			if (gizmoEntity->getModel()->getNodeById("all_scale_z") != nullptr) gizmoEntity->setNodeTransformationsMatrix("all_scale_z", gizmoEntity->getModel()->getNodeById("all_scale_z")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
-			if (gizmoEntity->getModel()->getNodeById("scale_x") != nullptr) gizmoEntity->setNodeTransformationsMatrix("scale_x", gizmoEntity->getModel()->getNodeById("scale_x")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
-			if (gizmoEntity->getModel()->getNodeById("scale_y") != nullptr) gizmoEntity->setNodeTransformationsMatrix("scale_y", gizmoEntity->getModel()->getNodeById("scale_y")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
-			if (gizmoEntity->getModel()->getNodeById("scale_z") != nullptr) gizmoEntity->setNodeTransformationsMatrix("scale_z", gizmoEntity->getModel()->getNodeById("scale_z")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
-			if (gizmoEntity->getModel()->getNodeById("scale_x_plane") != nullptr) gizmoEntity->setNodeTransformationsMatrix("scale_x_plane", gizmoEntity->getModel()->getNodeById("scale_x_plane")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
-			if (gizmoEntity->getModel()->getNodeById("scale_y_plane") != nullptr) gizmoEntity->setNodeTransformationsMatrix("scale_y_plane", gizmoEntity->getModel()->getNodeById("scale_y_plane")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
-			if (gizmoEntity->getModel()->getNodeById("scale_z_plane") != nullptr) gizmoEntity->setNodeTransformationsMatrix("scale_z_plane", gizmoEntity->getModel()->getNodeById("scale_x_plane")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
-			if (gizmoEntity->getModel()->getNodeById("rotate_x") != nullptr) gizmoEntity->setNodeTransformationsMatrix("rotate_x", gizmoEntity->getModel()->getNodeById("rotate_x")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
-			if (gizmoEntity->getModel()->getNodeById("rotate_y") != nullptr) gizmoEntity->setNodeTransformationsMatrix("rotate_y", gizmoEntity->getModel()->getNodeById("rotate_y")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
-			if (gizmoEntity->getModel()->getNodeById("rotate_z") != nullptr) gizmoEntity->setNodeTransformationsMatrix("rotate_z", gizmoEntity->getModel()->getNodeById("rotate_z")->getTransformationsMatrix().clone().multiply(rotationsMatrix));
+			if (gizmoEntity->getModel()->getNodeById("all_scale_x") != nullptr) gizmoEntity->setNodeTransformMatrix("all_scale_x", gizmoEntity->getModel()->getNodeById("all_scale_x")->getTransformMatrix().clone().multiply(rotationsMatrix));
+			if (gizmoEntity->getModel()->getNodeById("all_scale_y") != nullptr) gizmoEntity->setNodeTransformMatrix("all_scale_y", gizmoEntity->getModel()->getNodeById("all_scale_y")->getTransformMatrix().clone().multiply(rotationsMatrix));
+			if (gizmoEntity->getModel()->getNodeById("all_scale_z") != nullptr) gizmoEntity->setNodeTransformMatrix("all_scale_z", gizmoEntity->getModel()->getNodeById("all_scale_z")->getTransformMatrix().clone().multiply(rotationsMatrix));
+			if (gizmoEntity->getModel()->getNodeById("scale_x") != nullptr) gizmoEntity->setNodeTransformMatrix("scale_x", gizmoEntity->getModel()->getNodeById("scale_x")->getTransformMatrix().clone().multiply(rotationsMatrix));
+			if (gizmoEntity->getModel()->getNodeById("scale_y") != nullptr) gizmoEntity->setNodeTransformMatrix("scale_y", gizmoEntity->getModel()->getNodeById("scale_y")->getTransformMatrix().clone().multiply(rotationsMatrix));
+			if (gizmoEntity->getModel()->getNodeById("scale_z") != nullptr) gizmoEntity->setNodeTransformMatrix("scale_z", gizmoEntity->getModel()->getNodeById("scale_z")->getTransformMatrix().clone().multiply(rotationsMatrix));
+			if (gizmoEntity->getModel()->getNodeById("scale_x_plane") != nullptr) gizmoEntity->setNodeTransformMatrix("scale_x_plane", gizmoEntity->getModel()->getNodeById("scale_x_plane")->getTransformMatrix().clone().multiply(rotationsMatrix));
+			if (gizmoEntity->getModel()->getNodeById("scale_y_plane") != nullptr) gizmoEntity->setNodeTransformMatrix("scale_y_plane", gizmoEntity->getModel()->getNodeById("scale_y_plane")->getTransformMatrix().clone().multiply(rotationsMatrix));
+			if (gizmoEntity->getModel()->getNodeById("scale_z_plane") != nullptr) gizmoEntity->setNodeTransformMatrix("scale_z_plane", gizmoEntity->getModel()->getNodeById("scale_x_plane")->getTransformMatrix().clone().multiply(rotationsMatrix));
+			if (gizmoEntity->getModel()->getNodeById("rotate_x") != nullptr) gizmoEntity->setNodeTransformMatrix("rotate_x", gizmoEntity->getModel()->getNodeById("rotate_x")->getTransformMatrix().clone().multiply(rotationsMatrix));
+			if (gizmoEntity->getModel()->getNodeById("rotate_y") != nullptr) gizmoEntity->setNodeTransformMatrix("rotate_y", gizmoEntity->getModel()->getNodeById("rotate_y")->getTransformMatrix().clone().multiply(rotationsMatrix));
+			if (gizmoEntity->getModel()->getNodeById("rotate_z") != nullptr) gizmoEntity->setNodeTransformMatrix("rotate_z", gizmoEntity->getModel()->getNodeById("rotate_z")->getTransformMatrix().clone().multiply(rotationsMatrix));
 			gizmoEntity->update();
 		}
 	}

@@ -20,7 +20,7 @@
 #include <tdme/engine/ObjectRenderGroup.h>
 #include <tdme/engine/Rotation.h>
 #include <tdme/engine/ShaderParameter.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
@@ -51,7 +51,7 @@ using tdme::engine::Object;
 using tdme::engine::ObjectRenderGroup;
 using tdme::engine::Rotation;
 using tdme::engine::ShaderParameter;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
@@ -171,10 +171,10 @@ void FoliageTest::initialize()
 	#if defined(GLES2)
 		for (float z = -10.0f; z < 10.0f;) {
 			for (float x = -10.0f; x < 10.0f;) {
-				Transformations transformations;
-				transformations.setTranslation(Vector3(x, 0.0f, z));
-				transformations.update();
-				foliageObject->addObject(reedModel, transformations);
+				Transform transform;
+				transform.setTranslation(Vector3(x, 0.0f, z));
+				transform.update();
+				foliageObject->addObject(reedModel, transform);
 				x+= Math::random() * 1.0f + 1.0;
 			}
 			z+= Math::random() * 1.0f + 1.0;
@@ -182,10 +182,10 @@ void FoliageTest::initialize()
 	#else
 		for (float z = -20.0f; z < 20.0f;) {
 			for (float x = -20.0f; x < 20.0f;) {
-				Transformations transformations;
-				transformations.setTranslation(Vector3(x, 0.0f, z));
-				transformations.update();
-				foliageObject->addObject(reedModel, transformations);
+				Transform transform;
+				transform.setTranslation(Vector3(x, 0.0f, z));
+				transform.update();
+				foliageObject->addObject(reedModel, transform);
 				x+= Math::random() * 0.5f + 0.5;
 			}
 			z+= Math::random() * 0.5f + 0.5;

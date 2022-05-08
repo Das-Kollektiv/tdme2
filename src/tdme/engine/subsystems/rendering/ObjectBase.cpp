@@ -69,7 +69,7 @@ ObjectBase::ObjectBase(Model* model, bool useManagers, Engine::AnimationProcessi
 	this->currentInstance = 0;
 	instanceAnimations.resize(instances);
 	instanceEnabled.resize(instances);
-	instanceTransformations.resize(instances);
+	instanceTransform.resize(instances);
 	for (auto i = 0; i < instances; i++) {
 		instanceEnabled[i] = true;
 		instanceAnimations[i] = new ObjectAnimation(model, animationProcessingTarget);
@@ -77,8 +77,8 @@ ObjectBase::ObjectBase(Model* model, bool useManagers, Engine::AnimationProcessi
 	transformedFacesIterator = nullptr;
 	// object nodes
 	ObjectNode::createNodes(this, useManagers, animationProcessingTarget, objectNodes);
-	// do initial transformations if doing CPU no rendering for deriving bounding boxes and such
-	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) ObjectNode::computeTransformations(0, objectNodes);
+	// do initial transform if doing CPU no rendering for deriving bounding boxes and such
+	if (animationProcessingTarget == Engine::AnimationProcessingTarget::CPU_NORENDERING) ObjectNode::computeAnimation(0, objectNodes);
 }
 
 ObjectBase::~ObjectBase() {
@@ -157,11 +157,11 @@ void ObjectBase::initialize()
 		auto objectNode = objectNodes[i];
 		// initiate mesh if not yet done, happens usually after disposing from engine and readding to engine
 		if (objectNode->mesh == nullptr) {
-			vector<map<string, Matrix4x4*>*> instancesTransformationsMatrices;
+			vector<map<string, Matrix4x4*>*> instancesTransformMatrices;
 			vector<map<string, Matrix4x4*>*> instancesSkinningNodesMatrices;
 			for (auto animation: objectNode->object->instanceAnimations) {
-				instancesTransformationsMatrices.push_back(&animation->transformationsMatrices[0]);
-				instancesSkinningNodesMatrices.push_back(animation->getSkinningNodesMatrices(objectNode->node));
+				instancesTransformMatrices.push_back(&animation->transformMatrices[0]);
+				instancesSkinningNodesMatrices.push_back(animation->getSkinningNodesTransformMatrices(objectNode->node));
 			}
 			if (usesManagers == true) {
 				objectNode->mesh = meshManager->getMesh(objectNode->id);
@@ -170,7 +170,7 @@ void ObjectBase::initialize()
 						objectNode->renderer,
 						animationProcessingTarget,
 						objectNode->node,
-						instancesTransformationsMatrices,
+						instancesTransformMatrices,
 						instancesSkinningNodesMatrices,
 						instances
 					);
@@ -180,7 +180,7 @@ void ObjectBase::initialize()
 					objectNode->renderer,
 					animationProcessingTarget,
 					objectNode->node,
-					instancesTransformationsMatrices,
+					instancesTransformMatrices,
 					instancesSkinningNodesMatrices,
 					instances
 				);

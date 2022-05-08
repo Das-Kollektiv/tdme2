@@ -52,7 +52,7 @@ private:
 	bool skinning;
 	float fps;
 	map<string, AnimationSetup*> animationSetups;
-	Matrix4x4 importTransformationsMatrix;
+	Matrix4x4 importTransformMatrix;
 	BoundingBox* boundingBox;
 	bool boundingBoxUpdated;
 
@@ -74,15 +74,15 @@ private:
 	}
 
 	/**
-	 * Computes a transformations matrix at a given frame for a given node id recursivly
+	 * Computes a transform matrix at a given frame for a given node id recursivly
 	 * @param nodes nodes
-	 * @param parentTransformationsMatrix parent transformations matrix
+	 * @param parentTransformMatrix parent transform matrix
 	 * @param frame frame
 	 * @param nodeId node id
-	 * @param transformationsMatrix transformations matrix
-	 * @return target node transformations
+	 * @param transformMatrix transform matrix
+	 * @return target node transform
 	 */
-	bool computeTransformationsMatrix(const map<string, Node*>& nodes, const Matrix4x4& parentTransformationsMatrix, int32_t frame, const string& nodeId, Matrix4x4& transformationsMatrix);
+	bool computeTransformMatrix(const map<string, Node*>& nodes, const Matrix4x4& parentTransformMatrix, int32_t frame, const string& nodeId, Matrix4x4& transformMatrix);
 
 public:
 	/**
@@ -290,18 +290,18 @@ public:
 	}
 
 	/**
-	 * @return import transformations matrix like converting Z-UP to Y-UP
+	 * @return import transform matrix like converting Z-UP to Y-UP
 	 */
-	inline const Matrix4x4& getImportTransformationsMatrix() {
-		return importTransformationsMatrix;
+	inline const Matrix4x4& getImportTransformMatrix() {
+		return importTransformMatrix;
 	}
 
 	/**
-	 * Set import transformations matrix
-	 * @param importTransformationsMatrix import transformations matrix like converting Z-UP to Y-UP
+	 * Set import transform matrix
+	 * @param importTransformMatrix import transform matrix like converting Z-UP to Y-UP
 	 */
-	void setImportTransformationsMatrix(const Matrix4x4& importTransformationsMatrix) {
-		this->importTransformationsMatrix = importTransformationsMatrix;
+	void setImportTransformMatrix(const Matrix4x4& importTransformMatrix) {
+		this->importTransformMatrix = importTransformMatrix;
 	}
 
 	/**
@@ -315,24 +315,24 @@ public:
 	void invalidateBoundingBox();
 
 	/**
-	 * Computes a transformations matrix at a given frame for a given node id recursivly
+	 * Computes a transform matrix at a given frame for a given node id recursivly
 	 * @param nodeId node id
-	 * @param parentTransformationsMatrix parent transformations matrix
-	 * @param transformationsMatrix target node transformations matrix
+	 * @param parentTransformMatrix parent transform matrix
+	 * @param transformMatrix target node transform matrix
 	 * @param frame frame
 	 */
-	inline bool computeTransformationsMatrix(const string& nodeId, const Matrix4x4& parentTransformationsMatrix, Matrix4x4& transformationsMatrix, int32_t frame = 0) {
-		return computeTransformationsMatrix(subNodes, parentTransformationsMatrix, frame, nodeId, transformationsMatrix);
+	inline bool computeTransformMatrix(const string& nodeId, const Matrix4x4& parentTransformMatrix, Matrix4x4& transformMatrix, int32_t frame = 0) {
+		return computeTransformMatrix(subNodes, parentTransformMatrix, frame, nodeId, transformMatrix);
 	}
 
 	/**
-	 * Computes a transformations matrix at a given frame for a given node id recursivly
+	 * Computes a transform matrix at a given frame for a given node id recursivly
 	 * @param nodeId node id
-	 * @param transformationsMatrix target node transformations matrix
+	 * @param transformMatrix target node transform matrix
 	 * @param frame frame
 	 */
-	inline bool computeTransformationsMatrix(const string& nodeId, Matrix4x4& transformationsMatrix, int32_t frame = 0) {
-		return computeTransformationsMatrix(subNodes, importTransformationsMatrix, frame, nodeId, transformationsMatrix);
+	inline bool computeTransformMatrix(const string& nodeId, Matrix4x4& transformMatrix, int32_t frame = 0) {
+		return computeTransformMatrix(subNodes, importTransformMatrix, frame, nodeId, transformMatrix);
 	}
 
 	/**

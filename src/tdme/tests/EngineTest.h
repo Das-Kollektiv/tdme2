@@ -9,7 +9,7 @@
 #include <tdme/application/InputEventHandler.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/tests/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/ObjectDeleter.h>
@@ -23,7 +23,7 @@ using tdme::engine::model::Model;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Object;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::utilities::ObjectDeleter;
 
 /**
@@ -39,7 +39,7 @@ private:
 	Engine* osEngine { nullptr };
 	vector<Object*> players;
 	Object* cube { nullptr };
-	Transformations circleTransformations;
+	Transform circleTransform;
 	Entity* entityClicked { nullptr };
 	bool mouseClicked { false };
 	array<int, 2> mouseClickedXY;

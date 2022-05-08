@@ -9,7 +9,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Float.h>
@@ -26,7 +26,7 @@ using std::to_string;
 using std::unordered_map;
 using std::vector;
 
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
 using tdme::utilities::Float;
@@ -90,14 +90,14 @@ public:
 		TYPE_FLOAT,
 		TYPE_STRING,
 		TYPE_VECTOR3,
-		TYPE_TRANSFORMATIONS
+		TYPE_TRANSFORM
 	};
 
 	class ScriptVariable {
 	private:
 		ScriptVariableType type { TYPE_VOID };
 		string stringValue;
-		Transformations transformationsValue;
+		Transform transformValue;
 		bool booleanValue { false };
 		int64_t integerValue { 0 };
 		float floatValue { 0.0f };
@@ -154,7 +154,7 @@ public:
 		 * Constructor
 		 * @param value value
 		 */
-		inline ScriptVariable(const Transformations& value) {
+		inline ScriptVariable(const Transform& value) {
 			setValue(value);
 		}
 
@@ -194,7 +194,7 @@ public:
 					}
 				case TYPE_VECTOR3:
 					return false;
-				case TYPE_TRANSFORMATIONS:
+				case TYPE_TRANSFORM:
 					return false;
 					break;
 			}
@@ -236,7 +236,7 @@ public:
 					}
 				case TYPE_VECTOR3:
 					return optional;
-				case TYPE_TRANSFORMATIONS:
+				case TYPE_TRANSFORM:
 					return optional;
 			}
 			return false;
@@ -268,7 +268,7 @@ public:
 					return true;
 				case TYPE_VECTOR3:
 					return optional;
-				case TYPE_TRANSFORMATIONS:
+				case TYPE_TRANSFORM:
 					return optional;
 			}
 			return false;
@@ -298,7 +298,7 @@ public:
 					return true;
 				case TYPE_VECTOR3:
 					return false;
-				case TYPE_TRANSFORMATIONS:
+				case TYPE_TRANSFORM:
 					return false;
 			}
 			return false;
@@ -325,19 +325,19 @@ public:
 				case TYPE_VECTOR3:
 					value = vector3Value;
 					return true;
-				case TYPE_TRANSFORMATIONS:
+				case TYPE_TRANSFORM:
 					return optional;
 			}
 			return false;
 		}
 
 		/**
-		 * Get transformations value from given variable
+		 * Get transform value from given variable
 		 * @param value value
 		 * @param optional optional
 		 * @return success
 		 */
-		inline bool getTransformationsValue(Transformations& value, bool optional = false) const {
+		inline bool getTransformValue(Transform& value, bool optional = false) const {
 			switch(type) {
 				case TYPE_VOID:
 					return optional;
@@ -351,8 +351,8 @@ public:
 					return optional;
 				case TYPE_VECTOR3:
 					return optional;
-				case TYPE_TRANSFORMATIONS:
-					value = transformationsValue;
+				case TYPE_TRANSFORM:
+					value = transformValue;
 					return true;
 			}
 			return false;
@@ -404,12 +404,12 @@ public:
 		}
 
 		/**
-		 * Set transformations value from given value into variable
+		 * Set transform value from given value into variable
 		 * @param value value
 		 */
-		inline void setValue(const Transformations& value) {
-			type = TYPE_TRANSFORMATIONS;
-			transformationsValue = value;
+		inline void setValue(const Transform& value) {
+			type = TYPE_TRANSFORM;
+			transformValue = value;
 		}
 
 		/**
@@ -475,7 +475,7 @@ public:
 				case TYPE_FLOAT: return "Float";
 				case TYPE_STRING: return "String";
 				case TYPE_VECTOR3: return "Vector3";
-				case TYPE_TRANSFORMATIONS: return "Transformations";
+				case TYPE_TRANSFORM: return "Transform";
 			}
 			return string();
 		}
@@ -526,22 +526,22 @@ public:
 						to_string(vector3Value.getY()) + ", " +
 						to_string(vector3Value.getZ()) + ")";
 					break;
-				case TYPE_TRANSFORMATIONS:
+				case TYPE_TRANSFORM:
 					result+=
-						"Transformations(translation = Vector3(" +
-						to_string(transformationsValue.getTranslation().getX()) + ", " +
-						to_string(transformationsValue.getTranslation().getY()) + ", " +
-						to_string(transformationsValue.getTranslation().getZ()) + "), " +
+						"Transform(translation = Vector3(" +
+						to_string(transformValue.getTranslation().getX()) + ", " +
+						to_string(transformValue.getTranslation().getY()) + ", " +
+						to_string(transformValue.getTranslation().getZ()) + "), " +
 						"scale = Vector3(" +
-						to_string(transformationsValue.getScale().getX()) + ", " +
-						to_string(transformationsValue.getScale().getY()) + ", " +
-						to_string(transformationsValue.getScale().getZ()) + ")";
-					for (auto i = 0; i < transformationsValue.getRotationCount(); i++) {
+						to_string(transformValue.getScale().getX()) + ", " +
+						to_string(transformValue.getScale().getY()) + ", " +
+						to_string(transformValue.getScale().getZ()) + ")";
+					for (auto i = 0; i < transformValue.getRotationCount(); i++) {
 						result+= ", rotations = (axis = Vector3(" +
-								to_string(transformationsValue.getRotationAxis(i).getX()) + ", " +
-								to_string(transformationsValue.getRotationAxis(i).getY()) + ", " +
-								to_string(transformationsValue.getRotationAxis(i).getZ()) + "), angle = " +
-								to_string(transformationsValue.getRotationAngle(i)) + ")";
+								to_string(transformValue.getRotationAxis(i).getX()) + ", " +
+								to_string(transformValue.getRotationAxis(i).getY()) + ", " +
+								to_string(transformValue.getRotationAxis(i).getZ()) + "), angle = " +
+								to_string(transformValue.getRotationAngle(i)) + ")";
 					}
 					result+= ")";
 			}
@@ -1190,21 +1190,21 @@ public:
 	}
 
 	/**
-	 * Get transformations value from given variable
+	 * Get transform value from given variable
 	 * @param arguments arguments
 	 * @param idx argument index
 	 * @param value value
 	 * @param optional optional
 	 * @return success
 	 */
-	inline static bool getTransformationsValue(const vector<ScriptVariable>& arguments, int idx, Transformations& value, bool optional = false) {
+	inline static bool getTransformValue(const vector<ScriptVariable>& arguments, int idx, Transform& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		auto& argument = arguments[idx];
-		return argument.getTransformationsValue(value, optional);
+		return argument.getTransformValue(value, optional);
 	}
 
 	/**
-	 * Get transformations value from given variable
+	 * Get transform value from given variable
 	 * @param arguments arguments
 	 * @param idx argument index
 	 * @param value value
@@ -1212,10 +1212,10 @@ public:
 	 * @return success
 	 */
 	template<std::size_t SIZE>
-	inline static bool getTransformationsValue(const array<ScriptVariable, SIZE>& arguments, int idx, Transformations& value, bool optional = false) {
+	inline static bool getTransformValue(const array<ScriptVariable, SIZE>& arguments, int idx, Transform& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		auto& argument = arguments[idx];
-		return argument.getTransformationsValue(value, optional);
+		return argument.getTransformValue(value, optional);
 	}
 
 	/**

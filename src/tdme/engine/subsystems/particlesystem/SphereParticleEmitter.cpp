@@ -6,7 +6,7 @@
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/Sphere.h>
 #include <tdme/engine/subsystems/particlesystem/Particle.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 
@@ -16,7 +16,7 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::Sphere;
 using tdme::engine::subsystems::particlesystem::Particle;
 using tdme::engine::subsystems::particlesystem::SphereParticleEmitter;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Vector3;
 
@@ -67,16 +67,16 @@ void SphereParticleEmitter::emit(Particle* particle)
 	);
 }
 
-void SphereParticleEmitter::fromTransformations(const Transformations& transformations)
+void SphereParticleEmitter::fromTransform(const Transform& transform)
 {
-	auto& transformationsMatrix = transformations.getTransformationsMatrix();
+	auto& transformMatrix = transform.getTransformMatrix();
 	// apply translations
 	Vector3 center;
 	Vector3 axis;
 	// 	translate center
-	center = transformationsMatrix.multiply(sphere->getCenter());
+	center = transformMatrix.multiply(sphere->getCenter());
 	// scale and radius transformed
 	Vector3 scale;
-	transformationsMatrix.getScale(scale);
+	transformMatrix.getScale(scale);
 	*sphereTransformed = Sphere(center, sphere->getRadius() * Math::max(scale.getX(), Math::max(scale.getY(), scale.getZ())));
 }

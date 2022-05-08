@@ -74,8 +74,8 @@ private:
 	float formationYRotationAngle { 0.0f };
 	Vector3 formationMovement;
 
-	array<Transformations, 11> combatUnitTransformations;
-	array<Transformations, 11> combatUnitFormationTransformations;
+	array<Transform, 11> combatUnitTransform;
+	array<Transform, 11> combatUnitFormationTransform;
 
 	bool mouseClicked { false };
 	array<int, 2> mouseClickPosition;

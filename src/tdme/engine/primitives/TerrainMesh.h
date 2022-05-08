@@ -9,14 +9,14 @@
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/Triangle.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 
 using std::vector;
 
 using tdme::engine::primitives::TerrainMesh;
 using tdme::engine::primitives::Triangle;
 using tdme::engine::ObjectModel;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 
 /**
  * Terrain mesh physics primitive
@@ -39,9 +39,9 @@ public:
 	/**
 	 * Public constructor
 	 * @param model model
-	 * @param transformations transformations
+	 * @param transform transform
 	 */
-	TerrainMesh(ObjectModel* model, const Transformations& transformations = Transformations());
+	TerrainMesh(ObjectModel* model, const Transform& transform = Transform());
 
 	/**
 	 * Destructor
@@ -50,6 +50,6 @@ public:
 
 	// overrides
 	void setScale(const Vector3& scale) override;
-	void fromTransformations(const Transformations& transformations) override;
+	void fromTransform(const Transform& transform) override;
 	BoundingVolume* clone() const override;
 };

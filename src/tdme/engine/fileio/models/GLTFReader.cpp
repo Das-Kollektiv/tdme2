@@ -279,7 +279,7 @@ Model* GLTFReader::read(const string& pathName, const string& fileName)
 				animationFinalMatrices[i].multiply(nodeAnimationTranslationMatrices[i]);
 			}
 			auto animation = new Animation();
-			animation->setTransformationsMatrices(animationFinalMatrices);
+			animation->setTransformMatrices(animationFinalMatrices);
 			node->setAnimation(animation);
 		}
 	}
@@ -328,7 +328,7 @@ void GLTFReader::interpolateKeyFrames(int frameTimeCount, const float* frameTime
 	interpolatedMatrices[frameStartIdx + frameIdx++] = keyFrameMatrices[keyFrameIdx++];
 	for (auto i = 1; i < frameTimeCount; i++) {
 		auto keyFrameTime = frameTimes[i];
-		auto transformationsMatrixCurrent = &keyFrameMatrices[(keyFrameIdx) % keyFrameMatrices.size()];
+		auto transformMatrixCurrent = &keyFrameMatrices[(keyFrameIdx) % keyFrameMatrices.size()];
 		float timeStamp;
 		for (timeStamp = timeStampLast; timeStamp < keyFrameTime; timeStamp += 1.0f / 30.0f) {
 			if (frameIdx >= interpolatedMatrixCount) {
@@ -338,11 +338,11 @@ void GLTFReader::interpolateKeyFrames(int frameTimeCount, const float* frameTime
 				continue;
 			}
 			// Console::println("yyy: " + to_string(frameStartIdx +  frameIdx) + ": key frame idx: " + to_string(keyFrameIdx) + ", interpolation t: " + to_string((timeStamp - timeStampLast) / (keyFrameTime - timeStampLast)));
-			interpolatedMatrices[frameStartIdx +  frameIdx] = Matrix4x4::interpolateLinear(*tansformationsMatrixLast, *transformationsMatrixCurrent, (timeStamp - timeStampLast) / (keyFrameTime - timeStampLast));
+			interpolatedMatrices[frameStartIdx +  frameIdx] = Matrix4x4::interpolateLinear(*tansformationsMatrixLast, *transformMatrixCurrent, (timeStamp - timeStampLast) / (keyFrameTime - timeStampLast));
 			frameIdx++;
 		}
 		timeStampLast = timeStamp;
-		tansformationsMatrixLast = transformationsMatrixCurrent;
+		tansformationsMatrixLast = transformMatrixCurrent;
 		keyFrameIdx++;
 	}
 }
@@ -355,7 +355,7 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 	//
 	auto node = new Node(model, parentNode, nodeId, nodeId);
 	if (gltfNode.matrix.size() == 16) {
-		node->setTransformationsMatrix(
+		node->setTransformMatrix(
 			Matrix4x4(
 				static_cast<float>(gltfNode.matrix[0]),
 				static_cast<float>(gltfNode.matrix[1]),
@@ -392,11 +392,11 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 		if (gltfNode.translation.size() == 3) {
 			nodeTranslationMatrix.translate(Vector3(gltfNode.translation[0], gltfNode.translation[1], gltfNode.translation[2]));
 		}
-		Matrix4x4 nodeTransformationsMatrix;
-		nodeTransformationsMatrix.set(nodeScaleMatrix);
-		nodeTransformationsMatrix.multiply(nodeRotationMatrix);
-		nodeTransformationsMatrix.multiply(nodeTranslationMatrix);
-		node->setTransformationsMatrix(nodeTransformationsMatrix);
+		Matrix4x4 nodeTransformMatrix;
+		nodeTransformMatrix.set(nodeScaleMatrix);
+		nodeTransformMatrix.multiply(nodeRotationMatrix);
+		nodeTransformMatrix.multiply(nodeTranslationMatrix);
+		node->setTransformMatrix(nodeTransformMatrix);
 	}
 	if (gltfNode.mesh == -1) return node;
 	vector<int> joints;

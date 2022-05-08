@@ -23,7 +23,7 @@
 #include <tdme/engine/scene/SceneLight.h>
 #include <tdme/engine/subsystems/rendering/ModelStatistics.h>
 #include <tdme/engine/ModelUtilities.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
@@ -62,7 +62,7 @@ using tdme::engine::scene::SceneLibrary;
 using tdme::engine::scene::SceneLight;
 using tdme::engine::subsystems::rendering::ModelStatistics;
 using tdme::engine::ModelUtilities;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
@@ -225,16 +225,16 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 			continue;
 		}
 
-		Transformations transformations;
-		transformations.setPivot(prototype->getPivot());
-		transformations.setTranslation(
+		Transform transform;
+		transform.setPivot(prototype->getPivot());
+		transform.setTranslation(
 			Vector3(
 				jSceneEntity["tx"].GetFloat(),
 				jSceneEntity["ty"].GetFloat(),
 				jSceneEntity["tz"].GetFloat()
 			)
 		);
-		transformations.setScale(
+		transform.setScale(
 			Vector3(
 				jSceneEntity["sx"].GetFloat(),
 				jSceneEntity["sy"].GetFloat(),
@@ -246,16 +246,16 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 			jSceneEntity["ry"].GetFloat(),
 			jSceneEntity["rz"].GetFloat()
 		);
-		transformations.addRotation(scene->getRotationOrder()->getAxis0(), rotation.getArray()[scene->getRotationOrder()->getAxis0VectorIndex()]);
-		transformations.addRotation(scene->getRotationOrder()->getAxis1(), rotation.getArray()[scene->getRotationOrder()->getAxis1VectorIndex()]);
-		transformations.addRotation(scene->getRotationOrder()->getAxis2(), rotation.getArray()[scene->getRotationOrder()->getAxis2VectorIndex()]);
-		transformations.update();
+		transform.addRotation(scene->getRotationOrder()->getAxis0(), rotation.getArray()[scene->getRotationOrder()->getAxis0VectorIndex()]);
+		transform.addRotation(scene->getRotationOrder()->getAxis1(), rotation.getArray()[scene->getRotationOrder()->getAxis1VectorIndex()]);
+		transform.addRotation(scene->getRotationOrder()->getAxis2(), rotation.getArray()[scene->getRotationOrder()->getAxis2VectorIndex()]);
+		transform.update();
 		auto sceneEntity = new SceneEntity(
 			objectIdPrefix != "" ?
 				objectIdPrefix + jSceneEntity["id"].GetString() :
 				(jSceneEntity["id"].GetString()),
 			 jSceneEntity.FindMember("descr") != jSceneEntity.MemberEnd()?jSceneEntity["descr"].GetString() : "",
-			 transformations,
+			 transform,
 			 prototype
 		);
 		if (jSceneEntity.FindMember("properties") != jSceneEntity.MemberEnd()) {
@@ -316,7 +316,7 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 	return scene;
 }
 
-void SceneReader::determineMeshNodes(Scene* scene, Node* node, const string& parentName, const Matrix4x4& parentTransformationsMatrix, vector<PrototypeMeshNode>& meshNodes) {
+void SceneReader::determineMeshNodes(Scene* scene, Node* node, const string& parentName, const Matrix4x4& parentTransformMatrix, vector<PrototypeMeshNode>& meshNodes) {
 	auto sceneLibrary = scene->getLibrary();
 	auto nodeId = node->getId();
 	if (parentName.length() > 0) nodeId = parentName + "." + nodeId;
@@ -352,25 +352,25 @@ void SceneReader::determineMeshNodes(Scene* scene, Node* node, const string& par
 		 );
 		return;
 	}
-	Matrix4x4 transformationsMatrix;
+	Matrix4x4 transformMatrix;
 	// compute animation matrix if animation setups exist
 	auto animation = node->getAnimation();
 	if (animation != nullptr) {
-		auto& animationMatrices = animation->getTransformationsMatrices();
-		transformationsMatrix.set(animationMatrices[0 % animationMatrices.size()]);
+		auto& animationMatrices = animation->getTransformMatrices();
+		transformMatrix.set(animationMatrices[0 % animationMatrices.size()]);
 	} else {
-		// no animation matrix, set up local transformation matrix up as node matrix
-		transformationsMatrix.set(node->getTransformationsMatrix());
+		// no animation matrix, set up local transform matrix up as node matrix
+		transformMatrix.set(node->getTransformMatrix());
 	}
 
-	// apply parent transformation matrix
-	transformationsMatrix.multiply(parentTransformationsMatrix);
+	// apply parent transform matrix
+	transformMatrix.multiply(parentTransformMatrix);
 
 	// check if no mesh?
 	if (node->getVertices().size() == 0 && node->getSubNodes().size() > 0) {
 		// ok, check sub meshes
 		for (auto subNodeIt: node->getSubNodes()) {
-			determineMeshNodes(scene, subNodeIt.second, nodeId, transformationsMatrix.clone(), meshNodes);
+			determineMeshNodes(scene, subNodeIt.second, nodeId, transformMatrix.clone(), meshNodes);
 		}
 	} else {
 		// add to node meshes, even if empty as its a empty :D
@@ -378,7 +378,7 @@ void SceneReader::determineMeshNodes(Scene* scene, Node* node, const string& par
 		prototypeMeshNode.id = nodeId;
 		prototypeMeshNode.name = modelName;
 		prototypeMeshNode.node = node;
-		prototypeMeshNode.transformationsMatrix.set(transformationsMatrix);
+		prototypeMeshNode.transformMatrix.set(transformMatrix);
 		meshNodes.push_back(prototypeMeshNode);
 	}
 }
@@ -408,7 +408,7 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 	Prototype* emptyPrototype = nullptr;
 	Matrix4x4 sceneModelImportRotationMatrix;
 	Vector3 sceneModelScale;
-	sceneModelImportRotationMatrix.set(sceneModel->getImportTransformationsMatrix());
+	sceneModelImportRotationMatrix.set(sceneModel->getImportTransformMatrix());
 	sceneModelImportRotationMatrix.getScale(sceneModelScale);
 	sceneModelImportRotationMatrix.scale(Vector3(1.0f / sceneModelScale.getX(), 1.0f / sceneModelScale.getY(), 1.0f / sceneModelScale.getZ()));
 	auto progressTotal = sceneModel->getSubNodes().size();
@@ -425,35 +425,35 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 				rotationOrder,
 				nullptr
 			);
-			model->setImportTransformationsMatrix(sceneModel->getImportTransformationsMatrix());
+			model->setImportTransformMatrix(sceneModel->getImportTransformMatrix());
 			float importFixScale = 1.0f;
 			Vector3 translation, scale;
 			Vector3 xAxis, yAxis, zAxis;
-			Matrix4x4 nodeTransformationsMatrix;
-			nodeTransformationsMatrix.set(meshNode.transformationsMatrix);
-			nodeTransformationsMatrix.getAxes(xAxis, yAxis, zAxis);
-			nodeTransformationsMatrix.getTranslation(translation);
-			nodeTransformationsMatrix.getScale(scale);
+			Matrix4x4 nodeTransformMatrix;
+			nodeTransformMatrix.set(meshNode.transformMatrix);
+			nodeTransformMatrix.getAxes(xAxis, yAxis, zAxis);
+			nodeTransformMatrix.getTranslation(translation);
+			nodeTransformMatrix.getScale(scale);
 			xAxis.normalize();
 			yAxis.normalize();
 			zAxis.normalize();
-			nodeTransformationsMatrix.setAxes(xAxis, yAxis, zAxis);
+			nodeTransformMatrix.setAxes(xAxis, yAxis, zAxis);
 			if ((upVector == UpVector::Y_UP && Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, yAxis), zAxis) < 0.0f) ||
 				(upVector == UpVector::Z_UP && Vector3::computeDotProduct(Vector3::computeCrossProduct(xAxis, zAxis), yAxis) < 0.0f)) {
 				xAxis.scale(-1.0f);
 				yAxis.scale(-1.0f);
 				zAxis.scale(-1.0f);
-				nodeTransformationsMatrix.setAxes(xAxis, yAxis, zAxis);
+				nodeTransformMatrix.setAxes(xAxis, yAxis, zAxis);
 				scale.scale(-1.0f);
 			}
-			auto rotation = nodeTransformationsMatrix.computeEulerAngles();
+			auto rotation = nodeTransformMatrix.computeEulerAngles();
 			scale = sceneModelImportRotationMatrix.multiply(scale);
 			rotation = sceneModelImportRotationMatrix.multiply(rotation);
-			translation = model->getImportTransformationsMatrix().multiply(translation);
+			translation = model->getImportTransformMatrix().multiply(translation);
 
 			ModelTools::cloneNode(meshNode.node, model);
 			if (model->getSubNodes().begin() != model->getSubNodes().end()) {
-				model->getSubNodes().begin()->second->setTransformationsMatrix(Matrix4x4().identity());
+				model->getSubNodes().begin()->second->setTransformMatrix(Matrix4x4().identity());
 			}
 			model->addAnimationSetup(Model::ANIMATIONSETUP_DEFAULT, 0, 0, true);
 			ModelTools::prepareForIndexedRendering(model);
@@ -474,7 +474,7 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 						importFixScale = 1.0f / depth / 5.0f;
 					}
 				}
-				model->setImportTransformationsMatrix(model->getImportTransformationsMatrix().clone().scale(importFixScale));
+				model->setImportTransformMatrix(model->getImportTransformMatrix().clone().scale(importFixScale));
 				model->getBoundingBox()->getMin().scale(importFixScale);
 				model->getBoundingBox()->getMax().scale(importFixScale);
 				model->getBoundingBox()->update();
@@ -550,17 +550,17 @@ Scene* SceneReader::readFromModel(const string& pathName, const string& fileName
 				model = nullptr;
 				continue;
 			}
-			Transformations sceneEntityTransformations;
-			sceneEntityTransformations.setTranslation(translation);
-			sceneEntityTransformations.addRotation(rotationOrder->getAxis0(), rotation.getArray()[rotationOrder->getAxis0VectorIndex()]);
-			sceneEntityTransformations.addRotation(rotationOrder->getAxis1(), rotation.getArray()[rotationOrder->getAxis1VectorIndex()]);
-			sceneEntityTransformations.addRotation(rotationOrder->getAxis2(), rotation.getArray()[rotationOrder->getAxis2VectorIndex()]);
-			sceneEntityTransformations.setScale(scale);
-			sceneEntityTransformations.update();
+			Transform sceneEntityTransform;
+			sceneEntityTransform.setTranslation(translation);
+			sceneEntityTransform.addRotation(rotationOrder->getAxis0(), rotation.getArray()[rotationOrder->getAxis0VectorIndex()]);
+			sceneEntityTransform.addRotation(rotationOrder->getAxis1(), rotation.getArray()[rotationOrder->getAxis1VectorIndex()]);
+			sceneEntityTransform.addRotation(rotationOrder->getAxis2(), rotation.getArray()[rotationOrder->getAxis2VectorIndex()]);
+			sceneEntityTransform.setScale(scale);
+			sceneEntityTransform.update();
 			auto sceneEntity = new SceneEntity(
 				meshNode.id,
 				meshNode.id,
-				sceneEntityTransformations,
+				sceneEntityTransform,
 				prototype
 			);
 			scene->addEntity(sceneEntity);

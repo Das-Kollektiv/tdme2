@@ -10,7 +10,7 @@
 #include <tdme/engine/Entity.h>
 #include <tdme/engine/ObjectParticleSystem.h>
 #include <tdme/engine/ParticleSystem.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Math.h>
 #include <tdme/utilities/fwd-tdme.h>
@@ -24,7 +24,7 @@ using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::ObjectParticleSystem;
 using tdme::engine::ParticleSystem;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
@@ -34,7 +34,7 @@ using tdme::math::Vector3;
  * @author Andreas Drewke
  */
 class tdme::engine::ParticleSystemGroup final
-	: public Transformations
+	: public Transform
 	, public ParticleSystem
 {
 private:
@@ -54,7 +54,7 @@ private:
 	Color4 effectColorMul;
 	Color4 effectColorAdd;
 	vector<ParticleSystem*> particleSystems;
-	Transformations localTransformations;
+	Transform localTransform;
 
 	// overridden methods
 	inline void setParentEntity(Entity* entity) override {
@@ -63,9 +63,9 @@ private:
 	inline Entity* getParentEntity() override {
 		return parentEntity;
 	}
-	inline void applyParentTransformations(const Transformations& parentTransformations) override {
-		Transformations::applyParentTransformations(parentTransformations);
-		for (auto particleSystem: particleSystems) particleSystem->applyParentTransformations(parentTransformations);
+	inline void applyParentTransform(const Transform& parentTransform) override {
+		Transform::applyParentTransform(parentTransform);
+		for (auto particleSystem: particleSystems) particleSystem->applyParentTransform(parentTransform);
 	}
 
 public:
@@ -113,7 +113,7 @@ public:
 	}
 
 	void setFrustumCulling(bool frustumCulling) override;
-	void fromTransformations(const Transformations& transformations) override;
+	void fromTransform(const Transform& transform) override;
 	void update() override;
 
 	inline BoundingBox* getBoundingBox() override {
@@ -126,7 +126,7 @@ public:
 			boundingBox.update();
 
 			// update bounding box transformed
-			boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
+			boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
 		}
 
 		//
@@ -143,7 +143,7 @@ public:
 			boundingBox.update();
 
 			// update bounding box transformed
-			boundingBoxTransformed.fromBoundingVolumeWithTransformations(&boundingBox, *this);
+			boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
 		}
 
 		//
@@ -209,70 +209,70 @@ public:
 	}
 
 	inline const Vector3& getTranslation() const override {
-		return Transformations::getTranslation();
+		return Transform::getTranslation();
 	}
 
 	inline void setTranslation(const Vector3& translation) override {
-		Transformations::setTranslation(translation);
+		Transform::setTranslation(translation);
 	}
 
 	inline const Vector3& getScale() const override {
-		return Transformations::getScale();
+		return Transform::getScale();
 	}
 
 	inline void setScale(const Vector3& scale) override {
-		Transformations::setScale(scale);
+		Transform::setScale(scale);
 	}
 
 	inline const Vector3& getPivot() const override {
-		return Transformations::getPivot();
+		return Transform::getPivot();
 	}
 
 	inline void setPivot(const Vector3& pivot) override {
-		Transformations::setPivot(pivot);
+		Transform::setPivot(pivot);
 	}
 
 	inline const int getRotationCount() const override {
-		return Transformations::getRotationCount();
+		return Transform::getRotationCount();
 	}
 
 	inline Rotation& getRotation(const int idx) override {
-		return Transformations::getRotation(idx);
+		return Transform::getRotation(idx);
 	}
 
 	inline void addRotation(const Vector3& axis, const float angle) override {
-		Transformations::addRotation(axis, angle);
+		Transform::addRotation(axis, angle);
 	}
 
 	inline void removeRotation(const int idx) override {
-		Transformations::removeRotation(idx);
+		Transform::removeRotation(idx);
 	}
 
 	inline const Vector3& getRotationAxis(const int idx) const override {
-		return Transformations::getRotationAxis(idx);
+		return Transform::getRotationAxis(idx);
 	}
 
 	inline void setRotationAxis(const int idx, const Vector3& axis) override {
-		Transformations::setRotationAxis(idx, axis);
+		Transform::setRotationAxis(idx, axis);
 	}
 
 	inline const float getRotationAngle(const int idx) const override {
-		return Transformations::getRotationAngle(idx);
+		return Transform::getRotationAngle(idx);
 	}
 
 	inline void setRotationAngle(const int idx, const float angle) override {
-		Transformations::setRotationAngle(idx, angle);
+		Transform::setRotationAngle(idx, angle);
 	}
 
 	inline const Quaternion& getRotationsQuaternion() const override {
-		return Transformations::getRotationsQuaternion();
+		return Transform::getRotationsQuaternion();
 	}
 
-	inline const Matrix4x4& getTransformationsMatrix() const override {
-		return Transformations::getTransformationsMatrix();
+	inline const Matrix4x4& getTransformMatrix() const override {
+		return Transform::getTransformMatrix();
 	}
 
-	inline const Transformations& getTransformations() const override {
+	inline const Transform& getTransform() const override {
 		return *this;
 	}
 
@@ -304,13 +304,13 @@ public:
 	void setAutoEmit(bool autoEmit) override;
 	void updateParticles() override;
 
-	inline const Transformations& getLocalTransformations() override {
-		return localTransformations;
+	inline const Transform& getLocalTransform() override {
+		return localTransform;
 	}
 
-	inline void setLocalTransformations(const Transformations& transformations) override {
-		localTransformations = transformations;
-		for (auto particleSystem: particleSystems) particleSystem->setLocalTransformations(localTransformations);
+	inline void setLocalTransform(const Transform& transform) override {
+		localTransform = transform;
+		for (auto particleSystem: particleSystems) particleSystem->setLocalTransform(localTransform);
 	}
 
 };

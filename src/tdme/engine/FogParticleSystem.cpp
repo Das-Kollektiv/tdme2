@@ -7,7 +7,7 @@
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Partition.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 
 using std::string;
 
@@ -16,7 +16,7 @@ using tdme::engine::primitives::BoundingBox;
 using tdme::engine::Engine;
 using tdme::engine::FogParticleSystem;
 using tdme::engine::Partition;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 
 FogParticleSystem::FogParticleSystem(const string& id, ParticleEmitter* emitter, int32_t maxPoints, float pointSize, Texture* texture, int32_t textureHorizontalSprites, int32_t textureVerticalSprites, float fps):
 	FogParticleSystemInternal(id, emitter, maxPoints, pointSize, texture, textureHorizontalSprites, textureVerticalSprites, fps)
@@ -28,9 +28,9 @@ void FogParticleSystem::initialize()
 	FogParticleSystemInternal::initialize();
 }
 
-void FogParticleSystem::fromTransformations(const Transformations& transformations)
+void FogParticleSystem::fromTransform(const Transform& transform)
 {
-	FogParticleSystemInternal::fromTransformations(transformations);
+	FogParticleSystemInternal::fromTransform(transform);
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 

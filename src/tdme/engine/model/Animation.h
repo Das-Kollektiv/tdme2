@@ -17,7 +17,7 @@ using tdme::math::Matrix4x4;
 class tdme::engine::model::Animation final
 {
 private:
-	vector<Matrix4x4> transformationsMatrices;
+	vector<Matrix4x4> transformMatrices;
 
 public:
 	/**
@@ -30,23 +30,23 @@ public:
 	 * @return number of frames
 	 */
 	inline int getFrames() const {
-		return transformationsMatrices.size();
+		return transformMatrices.size();
 	}
 
 	/**
-	 * Returns transformation matrices
-	 * @return transformation matrices
+	 * Returns transform matrices
+	 * @return transform matrices
 	 */
-	inline const vector<Matrix4x4>& getTransformationsMatrices() const {
-		return transformationsMatrices;
+	inline const vector<Matrix4x4>& getTransformMatrices() const {
+		return transformMatrices;
 	}
 
 	/**
-	 * Set transformation matrices
-	 * @return transformationMatrices transformation matrices
+	 * Set transform matrices
+	 * @return transformMatrices transform matrices
 	 */
-	inline void setTransformationsMatrices(const vector<Matrix4x4>& transformationsMatrices) {
-		this->transformationsMatrices = transformationsMatrices;
+	inline void setTransformMatrices(const vector<Matrix4x4>& transformMatrices) {
+		this->transformMatrices = transformMatrices;
 	}
 
 };

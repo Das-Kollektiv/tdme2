@@ -13,7 +13,7 @@
 #include <tdme/engine/subsystems/rendering/ObjectNode.h>
 #include <tdme/engine/subsystems/skinning/fwd-tdme.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::map;
@@ -28,7 +28,7 @@ using tdme::engine::subsystems::rendering::ObjectBase_TransformedFacesIterator;
 using tdme::engine::subsystems::rendering::ObjectNode;
 using tdme::engine::subsystems::rendering::ObjectNodeMesh;
 using tdme::engine::Engine;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 
 /**
  * Object base class
@@ -53,7 +53,7 @@ protected:
 	int enabledInstances;
 	vector<ObjectAnimation*> instanceAnimations;
 	vector<bool> instanceEnabled;
-	vector<Transformations> instanceTransformations;
+	vector<Transform> instanceTransform;
 	int currentInstance;
 	Engine::AnimationProcessingTarget animationProcessingTarget;
 
@@ -81,19 +81,19 @@ public:
 	}
 
 	/**
-	 * Pre render step, computes transformations
+	 * Compute animation
 	 * @param contextIdx context index
 	 * @param lastFrameAtTime time of last animation computation
 	 * @param currentFrameAtTime time of current animation computation
 	 */
-	virtual inline void computeTransformations(int contextIdx, int64_t lastFrameAtTime, int64_t currentFrameAtTime){
+	virtual inline void computeAnimation(int contextIdx, int64_t lastFrameAtTime, int64_t currentFrameAtTime){
 		enabledInstances = 0;
 		for (auto i = 0; i < instances; i++) {
 			if (instanceEnabled[i] == false) continue;
-			instanceAnimations[i]->computeTransformations(contextIdx, instanceTransformations[i].getTransformationsMatrix(), lastFrameAtTime, currentFrameAtTime);
+			instanceAnimations[i]->computeAnimation(contextIdx, instanceTransform[i].getTransformMatrix(), lastFrameAtTime, currentFrameAtTime);
 			enabledInstances++;
 		}
-		if (enabledInstances > 0) ObjectNode::computeTransformations(contextIdx, objectNodes);
+		if (enabledInstances > 0) ObjectNode::computeAnimation(contextIdx, objectNodes);
 	}
 
 	/**
@@ -248,36 +248,36 @@ public:
 	}
 
 	/**
-	 * Returns transformation matrix for given node
+	 * Returns transform matrix for given node
 	 * @param id node id
-	 * @return transformation matrix or identity matrix if not found
+	 * @return transform matrix or identity matrix if not found
 	 */
-	inline const Matrix4x4 getNodeTransformationsMatrix(const string& id) {
-		return instanceAnimations[currentInstance]->getNodeTransformationsMatrix(id);
+	inline const Matrix4x4 getNodeTransformMatrix(const string& id) {
+		return instanceAnimations[currentInstance]->getNodeTransformMatrix(id);
 	}
 
 	/**
-	 * Set transformation matrix for given node
+	 * Set transform matrix for given node
 	 * @param id node id
-	 * @param matrix transformation matrix
+	 * @param matrix transform matrix
 	 */
-	inline void setNodeTransformationsMatrix(const string& id, const Matrix4x4& matrix) {
-		instanceAnimations[currentInstance]->setNodeTransformationsMatrix(id, matrix);
+	inline void setNodeTransformMatrix(const string& id, const Matrix4x4& matrix) {
+		instanceAnimations[currentInstance]->setNodeTransformMatrix(id, matrix);
 	}
 
 	/**
-	 * Unset transformation matrix for given node
+	 * Unset transform matrix for given node
 	 * @param id node id
 	 */
-	inline void unsetNodeTransformationsMatrix(const string& id) {
-		instanceAnimations[currentInstance]->unsetNodeTransformationsMatrix(id);
+	inline void unsetNodeTransformMatrix(const string& id) {
+		instanceAnimations[currentInstance]->unsetNodeTransformMatrix(id);
 	}
 
 	/**
-	 * @return this transformations matrix
+	 * @return this transform matrix
 	 */
-	inline const Matrix4x4& getTransformationsMatrix() const {
-		return instanceTransformations[currentInstance].getTransformationsMatrix();
+	inline const Matrix4x4& getTransformMatrix() const {
+		return instanceTransform[currentInstance].getTransformMatrix();
 	}
 
 };

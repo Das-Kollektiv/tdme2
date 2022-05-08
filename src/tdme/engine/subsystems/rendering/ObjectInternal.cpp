@@ -97,46 +97,46 @@ void ObjectInternal::setTextureMatrix(const Matrix2D3x3& textureMatrix, const st
 	}
 }
 
-void ObjectInternal::setNodeTransformationsMatrix(const string& id, const Matrix4x4& matrix) {
-	ObjectBase::setNodeTransformationsMatrix(id, matrix);
-	map<string, Matrix4x4*> _overriddenTransformationsMatrices;
-	for (auto overriddenTransformationsMatrixIt: instanceAnimations[currentInstance]->overriddenTransformationsMatrices) {
-		_overriddenTransformationsMatrices[overriddenTransformationsMatrixIt.first] = new Matrix4x4(*overriddenTransformationsMatrixIt.second);
+void ObjectInternal::setNodeTransformMatrix(const string& id, const Matrix4x4& matrix) {
+	ObjectBase::setNodeTransformMatrix(id, matrix);
+	map<string, Matrix4x4*> _overriddenTransformMatrices;
+	for (auto overriddenTransformMatrixIt: instanceAnimations[currentInstance]->overriddenTransformMatrices) {
+		_overriddenTransformMatrices[overriddenTransformMatrixIt.first] = new Matrix4x4(*overriddenTransformMatrixIt.second);
 	}
-	auto newBoundingBox = ModelUtilitiesInternal::createBoundingBox(this->getModel(), _overriddenTransformationsMatrices);
+	auto newBoundingBox = ModelUtilitiesInternal::createBoundingBox(this->getModel(), _overriddenTransformMatrices);
 	boundingBox.fromBoundingVolume(newBoundingBox);
 	delete newBoundingBox;
 }
 
-void ObjectInternal::unsetNodeTransformationsMatrix(const string& id) {
-	ObjectBase::unsetNodeTransformationsMatrix(id);
-	map<string, Matrix4x4*> _overriddenTransformationsMatrices;
-	for (auto overriddenTransformationsMatrixIt: instanceAnimations[currentInstance]->overriddenTransformationsMatrices) {
-		_overriddenTransformationsMatrices[overriddenTransformationsMatrixIt.first] = new Matrix4x4(*overriddenTransformationsMatrixIt.second);
+void ObjectInternal::unsetNodeTransformMatrix(const string& id) {
+	ObjectBase::unsetNodeTransformMatrix(id);
+	map<string, Matrix4x4*> _overriddenTransformMatrices;
+	for (auto overriddenTransformMatrixIt: instanceAnimations[currentInstance]->overriddenTransformMatrices) {
+		_overriddenTransformMatrices[overriddenTransformMatrixIt.first] = new Matrix4x4(*overriddenTransformMatrixIt.second);
 	}
-	auto newBoundingBox = ModelUtilitiesInternal::createBoundingBox(this->getModel(), _overriddenTransformationsMatrices);
+	auto newBoundingBox = ModelUtilitiesInternal::createBoundingBox(this->getModel(), _overriddenTransformMatrices);
 	boundingBox.fromBoundingVolume(newBoundingBox);
 	delete newBoundingBox;
 }
 
-void ObjectInternal::fromTransformations(const Transformations& transformations)
+void ObjectInternal::fromTransform(const Transform& transform)
 {
-	instanceTransformations[currentInstance].fromTransformations(transformations);
+	instanceTransform[currentInstance].fromTransform(transform);
 	updateBoundingBox();
 }
 
 void ObjectInternal::update()
 {
-	instanceTransformations[currentInstance].update();
+	instanceTransform[currentInstance].update();
 	updateBoundingBox();
 }
 
 void ObjectInternal::updateBoundingBox() {
 	BoundingBox instanceBoundingBox;
 	boundingBox.fromBoundingVolume(model->getBoundingBox());
-	boundingBoxTransformed.fromBoundingVolumeWithTransformations(model->getBoundingBox(), instanceTransformations[0]);
+	boundingBoxTransformed.fromBoundingVolumeWithTransform(model->getBoundingBox(), instanceTransform[0]);
 	for (auto i = 1; i < instances; i++) {
-		instanceBoundingBox.fromBoundingVolumeWithTransformations(model->getBoundingBox(), instanceTransformations[i]);
+		instanceBoundingBox.fromBoundingVolumeWithTransform(model->getBoundingBox(), instanceTransform[i]);
 		boundingBoxTransformed.extend(&instanceBoundingBox);
 	}
 }

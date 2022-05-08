@@ -198,8 +198,8 @@ void FlowMapTest::doPathFinding() {
 	endPlayerObject2->update();
 	vector<Vector3> path;
 	pathFinding->findPath(
-		startPlayerObject->getTransformations().getTranslation(),
-		endPlayerObject1->getTransformations().getTranslation(),
+		startPlayerObject->getTransform().getTranslation(),
+		endPlayerObject1->getTransform().getTranslation(),
 		SceneConnector::RIGIDBODY_TYPEID_STATIC,
 		path
 	);
@@ -209,8 +209,8 @@ void FlowMapTest::doPathFinding() {
 	auto width = Math::ceil(scene->getBoundingBox()->getDimensions().getX());
 	flowMap = pathFinding->createFlowMap(
 		{
-			endPlayerObject1->getTransformations().getTranslation(),
-			endPlayerObject2->getTransformations().getTranslation(),
+			endPlayerObject1->getTransform().getTranslation(),
+			endPlayerObject2->getTransform().getTranslation(),
 		},
 		center,
 		width * 2.0f,

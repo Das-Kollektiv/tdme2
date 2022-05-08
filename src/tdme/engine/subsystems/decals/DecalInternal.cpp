@@ -9,7 +9,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 
 using std::string;
 using std::vector;
@@ -20,7 +20,7 @@ using tdme::engine::model::Color4;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::OrientedBoundingBox;
 using tdme::engine::subsystems::decals::DecalInternal;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 
 DecalInternal::DecalInternal(const string& id, OrientedBoundingBox* obb, Texture* texture)
 {
@@ -53,13 +53,13 @@ DecalInternal::~DecalInternal() {
 
 void DecalInternal::update()
 {
-	Transformations::update();
+	Transform::update();
 	updateInternal();
 }
 
-void DecalInternal::fromTransformations(const Transformations& transformations)
+void DecalInternal::fromTransform(const Transform& transform)
 {
-	Transformations::fromTransformations(transformations);
+	Transform::fromTransform(transform);
 	updateInternal();
 }
 

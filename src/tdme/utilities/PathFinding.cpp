@@ -13,7 +13,7 @@
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/OrientedBoundingBox.h>
-#include <tdme/engine/Transformations.h>
+#include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
@@ -34,7 +34,7 @@ using tdme::engine::physics::Body;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::OrientedBoundingBox;
-using tdme::engine::Transformations;
+using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
@@ -132,15 +132,15 @@ bool PathFinding::isSlopeWalkableInternal(float x, float y, float z, float succe
 		}
 	}
 
-	// set up transformations
-	Transformations slopeTestTransformations;
-	slopeTestTransformations.setTranslation(center);
-	slopeTestTransformations.addRotation(Vector3(0.0f, 1.0f, 0.0f), slopeAngle);
-	slopeTestTransformations.update();
+	// set up transform
+	Transform slopeTestTransform;
+	slopeTestTransform.setTranslation(center);
+	slopeTestTransform.addRotation(Vector3(0.0f, 1.0f, 0.0f), slopeAngle);
+	slopeTestTransform.update();
 
 	// update rigid body
 	auto actorSlopeTestCollisionBody = world->getBody("tdme.pathfinding.actor.slopetest");
-	actorSlopeTestCollisionBody->fromTransformations(slopeTestTransformations);
+	actorSlopeTestCollisionBody->fromTransform(slopeTestTransform);
 
 	// check if actor collides with world
 	vector<Body*> collidedRigidBodies;
@@ -175,14 +175,14 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height, float ste
 		_z+= stepSize / 4.0f;
 	}
 
-	// set up transformations
-	Transformations actorTransformations;
-	actorTransformations.setTranslation(Vector3(x, ignoreStepUpMax == true?height + 0.2f:Math::min(y + actorStepUpMax, height + 0.2f), z));
-	actorTransformations.update();
+	// set up transform
+	Transform actorTransform;
+	actorTransform.setTranslation(Vector3(x, ignoreStepUpMax == true?height + 0.2f:Math::min(y + actorStepUpMax, height + 0.2f), z));
+	actorTransform.update();
 
 	// update rigid body
 	auto actorCollisionBody = world->getBody("tdme.pathfinding.actor");
-	actorCollisionBody->fromTransformations(actorTransformations);
+	actorCollisionBody->fromTransform(actorTransform);
 
 	// check if actor collides with world
 	vector<Body*> collidedRigidBodies;
@@ -338,7 +338,7 @@ bool PathFinding::findPathCustom(
 	//
 	this->collisionTypeIds = collisionTypeIds;
 
-	// init bounding volume, transformations, collision body
+	// init bounding volume, transform, collision body
 	actorBoundingVolume = new OrientedBoundingBox(
 		Vector3(0.0f, actorHeight / 2.0f, 0.0f),
 		OrientedBoundingBox::AABB_AXIS_X,
@@ -346,11 +346,11 @@ bool PathFinding::findPathCustom(
 		OrientedBoundingBox::AABB_AXIS_Z,
 		Vector3(stepSize * scaleActorBoundingVolumes, actorHeight / 2.0f, stepSize * scaleActorBoundingVolumes)
 	);
-	// set up transformations
-	Transformations actorTransformations;
-	actorTransformations.setTranslation(startPosition);
-	actorTransformations.update();
-	world->addCollisionBody("tdme.pathfinding.actor", true, 32768, actorTransformations, {actorBoundingVolume});
+	// set up transform
+	Transform actorTransform;
+	actorTransform.setTranslation(startPosition);
+	actorTransform.update();
+	world->addCollisionBody("tdme.pathfinding.actor", true, 32768, actorTransform, {actorBoundingVolume});
 
 	// init bounding volume for slope testcollision body
 	actorBoundingVolumeSlopeTest = new OrientedBoundingBox(
@@ -360,7 +360,7 @@ bool PathFinding::findPathCustom(
 		OrientedBoundingBox::AABB_AXIS_Z,
 		Vector3(stepSize * scaleActorBoundingVolumes * 2.5f, actorHeight / 2.0f, stepSize * scaleActorBoundingVolumes * 2.5f)
 	);
-	world->addCollisionBody("tdme.pathfinding.actor.slopetest", true, 32768, actorTransformations, {actorBoundingVolumeSlopeTest});
+	world->addCollisionBody("tdme.pathfinding.actor.slopetest", true, 32768, actorTransform, {actorBoundingVolumeSlopeTest});
 
 	//
 	bool success = false;
@@ -732,7 +732,7 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 	//
 	this->collisionTypeIds = collisionTypeIds;
 
-	// init bounding volume, transformations, collision body
+	// init bounding volume, transform, collision body
 	actorBoundingVolume = new OrientedBoundingBox(
 		Vector3(0.0f, actorHeight / 2.0f, 0.0f),
 		OrientedBoundingBox::AABB_AXIS_X,
@@ -740,11 +740,11 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 		OrientedBoundingBox::AABB_AXIS_Z,
 		Vector3(flowMapStepSize * flowMapScaleActorBoundingVolumes, actorHeight / 2.0f, flowMapStepSize * flowMapScaleActorBoundingVolumes)
 	);
-	// set up transformations
-	Transformations actorTransformations;
-	actorTransformations.setTranslation(endPositions[0]);
-	actorTransformations.update();
-	world->addCollisionBody("tdme.pathfinding.actor", true, 32768, actorTransformations, {actorBoundingVolume});
+	// set up transform
+	Transform actorTransform;
+	actorTransform.setTranslation(endPositions[0]);
+	actorTransform.update();
+	world->addCollisionBody("tdme.pathfinding.actor", true, 32768, actorTransform, {actorBoundingVolume});
 
 	// init bounding volume for slope testcollision body
 	actorBoundingVolumeSlopeTest =	new OrientedBoundingBox(
@@ -754,7 +754,7 @@ FlowMap* PathFinding::createFlowMap(const vector<Vector3>& endPositions, const V
 		OrientedBoundingBox::AABB_AXIS_Z,
 		Vector3(flowMapStepSize * flowMapScaleActorBoundingVolumes * 2.5f, actorHeight / 2.0f, flowMapStepSize * flowMapScaleActorBoundingVolumes * 2.5f)
 	);
-	world->addCollisionBody("tdme.pathfinding.actor.slopetest", true, 32768, actorTransformations, {actorBoundingVolumeSlopeTest});
+	world->addCollisionBody("tdme.pathfinding.actor.slopetest", true, 32768, actorTransform, {actorBoundingVolumeSlopeTest});
 
 	//
 	auto zMin = static_cast<int>(Math::ceil(-depth / 2.0f / flowMapStepSize));
