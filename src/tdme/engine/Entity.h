@@ -288,12 +288,6 @@ public:
 	virtual const Matrix4x4& getTransformMatrix() const = 0;
 
 	/**
-	 * Set transform
-	 * @param transform transform
-	 */
-	virtual void setTransform(const Transform& transform) = 0;
-
-	/**
 	 * Update transform
 	 */
 	virtual void update() = 0;
@@ -302,6 +296,12 @@ public:
 	 * @return transform
 	 */
 	virtual const Transform& getTransform() const = 0;
+
+	/**
+	 * Set transform
+	 * @param transform transform
+	 */
+	virtual void setTransform(const Transform& transform) = 0;
 
 	/**
 	 * @return render pass

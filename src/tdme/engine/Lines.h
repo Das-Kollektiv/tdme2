@@ -93,12 +93,12 @@ public:
 	}
 
 	void setEnabled(bool enabled) override;
+
 	inline bool isFrustumCulling() override {
 		return frustumCulling;
 	}
-	void setFrustumCulling(bool frustumCulling) override;
 
-	void setTransform(const Transform& transform) override;
+	void setFrustumCulling(bool frustumCulling) override;
 	void update() override;
 
 	inline BoundingBox* getBoundingBox() override {
@@ -220,6 +220,8 @@ public:
 	inline const Transform& getTransform() const override {
 		return *this;
 	}
+
+	void setTransform(const Transform& transform) override;
 
 	inline RenderPass getRenderPass() const override {
 		return renderPass;

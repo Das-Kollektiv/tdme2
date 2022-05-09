@@ -170,7 +170,7 @@ public:
 	}
 
 	/**
-	 * Set up this transform from given transform
+	 * Set transform
 	 * @param transform transform
 	 */
 	virtual void setTransform(const Transform& transform);
