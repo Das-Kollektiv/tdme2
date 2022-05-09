@@ -99,13 +99,13 @@ void LODObject::setRenderer(Renderer* renderer)
 {
 }
 
-void LODObject::fromTransform(const Transform& transform)
+void LODObject::setTransform(const Transform& transform)
 {
-	Transform::fromTransform(transform);
+	Transform::setTransform(transform);
 	// delegate to LOD objects
-	if (objectLOD1 != nullptr) objectLOD1->fromTransform(*this);
-	if (objectLOD2 != nullptr) objectLOD2->fromTransform(*this);
-	if (objectLOD3 != nullptr) objectLOD3->fromTransform(*this);
+	if (objectLOD1 != nullptr) objectLOD1->setTransform(*this);
+	if (objectLOD2 != nullptr) objectLOD2->setTransform(*this);
+	if (objectLOD3 != nullptr) objectLOD3->setTransform(*this);
 	// update entity
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 	// reset current LOD object
@@ -116,9 +116,9 @@ void LODObject::update()
 {
 	Transform::update();
 	// delegate to LOD objects
-	if (objectLOD1 != nullptr) objectLOD1->fromTransform(*this);
-	if (objectLOD2 != nullptr) objectLOD2->fromTransform(*this);
-	if (objectLOD3 != nullptr) objectLOD3->fromTransform(*this);
+	if (objectLOD1 != nullptr) objectLOD1->setTransform(*this);
+	if (objectLOD2 != nullptr) objectLOD2->setTransform(*this);
+	if (objectLOD3 != nullptr) objectLOD3->setTransform(*this);
 	// update entity
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 	// reset current LOD object

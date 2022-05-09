@@ -28,9 +28,9 @@ void FogParticleSystem::initialize()
 	FogParticleSystemInternal::initialize();
 }
 
-void FogParticleSystem::fromTransform(const Transform& transform)
+void FogParticleSystem::setTransform(const Transform& transform)
 {
-	FogParticleSystemInternal::fromTransform(transform);
+	FogParticleSystemInternal::setTransform(transform);
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 

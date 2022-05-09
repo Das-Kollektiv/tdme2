@@ -454,7 +454,7 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 		Vector3 forwardVector(0.0f, 0.0f, 1.0f);
 		// TODO: a.drewke
 		Transform _lookFromRotations;
-		_lookFromRotations.fromTransform(lookFromRotations);
+		_lookFromRotations.setTransform(lookFromRotations);
 		if (cameraRotationInputHandler != nullptr) {
 			cameraRotationInputHandler->setDefaultScale(maxAxisDimension * scale);
 			cameraRotationInputHandler->setScale(maxAxisDimension * scale);

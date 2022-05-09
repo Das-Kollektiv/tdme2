@@ -236,7 +236,7 @@ public:
 
 	// overridden methods
 	void update() override;
-	void fromTransform(const Transform& transform) override;
+	void setTransform(const Transform& transform) override;
 	void updateParticles() override;
 	void dispose();
 	inline int32_t emitParticles() override {

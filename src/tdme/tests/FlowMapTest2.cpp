@@ -139,7 +139,7 @@ void FlowMapTest2::display()
 		formationRotationQuaternion.rotate(Vector3(0.0f, 1.0f, 0.0f), formationYRotationAngle);
 		for (auto& combatUnit: combatUnits) {
 			if (combatUnit.finished == true) continue;
-			combatUnit.object->fromTransform(combatUnit.rigidBody->getTransform());
+			combatUnit.object->setTransform(combatUnit.rigidBody->getTransform());
 			while (combatUnit.object->getRotationCount() > 1) {
 				combatUnit.object->removeRotation(combatUnit.object->getRotationCount() - 1);
 			}
@@ -767,7 +767,7 @@ void FlowMapTest2::initialize()
 		combatUnit.object->setTranslation(combatUnit.endPosition);
 		combatUnit.object->setRotationAngle(0, combatUnit.rotationY);
 		combatUnit.object->update();
-		combatUnit.rigidBody->fromTransform(combatUnit.object->getTransform());
+		combatUnit.rigidBody->setTransform(combatUnit.object->getTransform());
 	}
 }
 

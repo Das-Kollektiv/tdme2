@@ -119,9 +119,9 @@ void ObjectInternal::unsetNodeTransformMatrix(const string& id) {
 	delete newBoundingBox;
 }
 
-void ObjectInternal::fromTransform(const Transform& transform)
+void ObjectInternal::setTransform(const Transform& transform)
 {
-	instanceTransform[currentInstance].fromTransform(transform);
+	instanceTransform[currentInstance].setTransform(transform);
 	updateBoundingBox();
 }
 

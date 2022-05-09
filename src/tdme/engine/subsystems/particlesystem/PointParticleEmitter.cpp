@@ -56,7 +56,7 @@ void PointParticleEmitter::emit(Particle* particle)
 	);
 }
 
-void PointParticleEmitter::fromTransform(const Transform& transform)
+void PointParticleEmitter::setTransform(const Transform& transform)
 {
 	//
 	auto& transformMatrix = transform.getTransformMatrix();

@@ -30,9 +30,9 @@ void ObjectParticleSystem::initialize()
 	for (auto object: objects) object->setParentEntity(this);
 }
 
-void ObjectParticleSystem::fromTransform(const Transform& transform)
+void ObjectParticleSystem::setTransform(const Transform& transform)
 {
-	ObjectParticleSystemInternal::fromTransform(transform);
+	ObjectParticleSystemInternal::setTransform(transform);
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 

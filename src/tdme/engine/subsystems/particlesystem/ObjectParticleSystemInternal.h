@@ -83,7 +83,7 @@ protected:
 			object->setScale(scale);
 			object->update();
 		}
-		inverseTransform.fromTransform(*this);
+		inverseTransform.setTransform(*this);
 		inverseTransform.invert();
 	}
 
@@ -184,7 +184,7 @@ public:
 	 * Update transform
 	 */
 	void update() override;
-	void fromTransform(const Transform& transform) override;
+	void setTransform(const Transform& transform) override;
 	int32_t emitParticles() override;
 	void updateParticles() override;
 	void dispose();

@@ -108,10 +108,10 @@ struct tdme::engine::subsystems::particlesystem::ParticleSystemInternal
 	virtual int32_t emitParticles() = 0;
 
 	/**
-	 * Set up this transform from given transform
+	 * Set transform
 	 * @param transform transform
 	 */
-	virtual void fromTransform(const Transform& transform) = 0;
+	virtual void setTransform(const Transform& transform) = 0;
 
 	/**
 	 * Update transform

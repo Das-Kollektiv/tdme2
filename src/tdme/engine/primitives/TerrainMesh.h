@@ -50,6 +50,6 @@ public:
 
 	// overrides
 	void setScale(const Vector3& scale) override;
-	void fromTransform(const Transform& transform) override;
+	void setTransform(const Transform& transform) override;
 	BoundingVolume* clone() const override;
 };

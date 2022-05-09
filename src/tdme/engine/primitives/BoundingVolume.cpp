@@ -39,7 +39,7 @@ void BoundingVolume::computeBoundingBox() {
 	centerTransformed = boundingBoxTransformed.getCenter();
 }
 
-void BoundingVolume::fromTransform(const Transform& transform) {
+void BoundingVolume::setTransform(const Transform& transform) {
 	//
 	setScale(transform.getScale());
 

@@ -28,9 +28,9 @@ void Decal::setEngine(Engine* engine) {
 	DecalInternal::setEngine(engine);
 }
 
-void Decal::fromTransform(const Transform& transform)
+void Decal::setTransform(const Transform& transform)
 {
-	DecalInternal::fromTransform(transform);
+	DecalInternal::setTransform(transform);
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 

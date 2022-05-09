@@ -74,7 +74,7 @@ void CircleParticleEmitter::emit(Particle* particle)
 	);
 }
 
-void CircleParticleEmitter::fromTransform(const Transform& transform)
+void CircleParticleEmitter::setTransform(const Transform& transform)
 {
 	auto& transformMatrix = transform.getTransformMatrix();
 	// apply rotation, scale, translation

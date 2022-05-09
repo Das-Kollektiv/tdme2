@@ -149,9 +149,9 @@ void EntityHierarchy::updateHierarchy(const Transform& parentTransform, EntityHi
 	}
 }
 
-void EntityHierarchy::fromTransform(const Transform& transform)
+void EntityHierarchy::setTransform(const Transform& transform)
 {
-	Transform::fromTransform(transform);
+	Transform::setTransform(transform);
 	// update hierarchy
 	auto firstEntity = true;
 	updateHierarchy(*this, entityRoot, 0, firstEntity);

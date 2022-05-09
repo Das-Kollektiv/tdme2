@@ -29,7 +29,7 @@ Transform::Transform()
 Transform::~Transform() {
 }
 
-void Transform::fromTransform(const Transform& transform)
+void Transform::setTransform(const Transform& transform)
 {
 	if (this == &transform) return;
 	*this = transform;

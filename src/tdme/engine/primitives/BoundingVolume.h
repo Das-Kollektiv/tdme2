@@ -58,7 +58,7 @@ public:
 	 * Transform bounding volume from given transform
 	 * @param transform transform
 	 */
-	virtual void fromTransform(const Transform& transform);
+	virtual void setTransform(const Transform& transform);
 
 	/**
 	 * Get local scale

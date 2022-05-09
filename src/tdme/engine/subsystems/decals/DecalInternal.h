@@ -211,7 +211,7 @@ public:
 	 * From transform
 	 * @param transform transform
 	 */
-	void fromTransform(const Transform& transform) override;
+	void setTransform(const Transform& transform) override;
 
 	/**
 	 * Initialize

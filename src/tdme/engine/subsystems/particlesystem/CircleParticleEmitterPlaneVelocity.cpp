@@ -69,7 +69,7 @@ void CircleParticleEmitterPlaneVelocity::emit(Particle* particle)
 		(colorEnd.getAlpha() - colorStart.getAlpha()) / particle->lifeTimeMax);
 }
 
-void CircleParticleEmitterPlaneVelocity::fromTransform(const Transform& transform)
+void CircleParticleEmitterPlaneVelocity::setTransform(const Transform& transform)
 {
 	auto& transformMatrix = transform.getTransformMatrix();
 	// apply rotation, scale, translation

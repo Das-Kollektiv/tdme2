@@ -151,9 +151,9 @@ void FogParticleSystemInternal::initialize() {
 	boundingBoxTransformed.update();
 }
 
-void FogParticleSystemInternal::fromTransform(const Transform& transform)
+void FogParticleSystemInternal::setTransform(const Transform& transform)
 {
-	Transform::fromTransform(transform);
+	Transform::setTransform(transform);
 	updateInternal();
 }
 

@@ -28,9 +28,9 @@ void PointsParticleSystem::initialize()
 	PointsParticleSystemInternal::initialize();
 }
 
-void PointsParticleSystem::fromTransform(const Transform& transform)
+void PointsParticleSystem::setTransform(const Transform& transform)
 {
-	PointsParticleSystemInternal::fromTransform(transform);
+	PointsParticleSystemInternal::setTransform(transform);
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 

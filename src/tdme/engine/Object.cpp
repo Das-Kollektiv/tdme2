@@ -49,9 +49,9 @@ void Object::setRenderer(Renderer* renderer)
 {
 }
 
-void Object::fromTransform(const Transform& transform)
+void Object::setTransform(const Transform& transform)
 {
-	ObjectInternal::fromTransform(transform);
+	ObjectInternal::setTransform(transform);
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 

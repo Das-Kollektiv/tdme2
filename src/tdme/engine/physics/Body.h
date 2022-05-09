@@ -314,10 +314,10 @@ public:
 	const Transform& getTransform();
 
 	/**
-	 * Synchronizes this rigid body with transform
+	 * Set transform
 	 * @param transform transform
 	 */
-	void fromTransform(const Transform& transform);
+	void setTransform(const Transform& transform);
 
 	/**
 	 * Add force

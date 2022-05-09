@@ -215,7 +215,7 @@ public:
 	inline void dispose() override {
 		ObjectBase::dispose();
 	}
-	void fromTransform(const Transform& transform);
+	void setTransform(const Transform& transform);
 	void update();
 
 	void setNodeTransformMatrix(const string& id, const Matrix4x4& matrix);

@@ -631,7 +631,7 @@ void TerrainEditorTabView::updateTemporaryFoliage(const unordered_set<int>& part
 			for (auto& foliageMapPartitionIt: foliageMapPartition) {
 				auto& transformVector = foliageMapPartitionIt.second;
 				for (auto i = 0; i < transformVector.size(); i++) {
-					foliagePartitionEntityHierarchy->getEntities()[foliageIdx]->fromTransform(transformVector[i]);
+					foliagePartitionEntityHierarchy->getEntities()[foliageIdx]->setTransform(transformVector[i]);
 					foliageIdx++;
 				}
 			}

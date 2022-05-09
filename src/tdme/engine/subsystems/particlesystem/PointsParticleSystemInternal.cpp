@@ -87,9 +87,9 @@ void PointsParticleSystemInternal::update()
 	updateInternal();
 }
 
-void PointsParticleSystemInternal::fromTransform(const Transform& transform)
+void PointsParticleSystemInternal::setTransform(const Transform& transform)
 {
-	Transform::fromTransform(transform);
+	Transform::setTransform(transform);
 	updateInternal();
 }
 

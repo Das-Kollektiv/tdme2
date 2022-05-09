@@ -104,7 +104,7 @@ Body::Body(World* world, const string& id, int type, bool enabled, uint16_t coll
 	for (auto boundingVolume: boundingVolumes) {
 		this->boundingVolumes.push_back(dynamic_cast<TerrainMesh*>(boundingVolume) != nullptr?boundingVolume:boundingVolume->clone());
 	}
-	fromTransform(transform);
+	setTransform(transform);
 	setEnabled(enabled);
 }
 
@@ -458,10 +458,10 @@ const Transform& Body::getTransform() {
 	return transform;
 }
 
-void Body::fromTransform(const Transform& transform)
+void Body::setTransform(const Transform& transform)
 {
 	// store engine transform
-	this->transform.fromTransform(transform);
+	this->transform.setTransform(transform);
 
 	// reset proxy shapes if bounding volumes do not match proxy shapes or if scaling has changed
 	if (proxyShapes.size() != boundingVolumes.size() || transformScale.equals(transform.getScale()) == false) {

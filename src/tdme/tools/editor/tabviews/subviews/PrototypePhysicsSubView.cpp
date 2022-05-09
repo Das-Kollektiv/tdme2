@@ -124,7 +124,7 @@ void PrototypePhysicsSubView::setupModelBoundingVolume(Prototype* prototype, int
 				transform.setTranslation(transform.getTranslation().clone().scale(boundingVolumesEntity->getScale()));
 				transform.update();
 				auto modelBoundingVolumeEntity = new Object(modelBoundingVolumeEntityId, Tools::getDefaultObb());
-				modelBoundingVolumeEntity->fromTransform(transform);
+				modelBoundingVolumeEntity->setTransform(transform);
 				modelBoundingVolumeEntity->setRenderPass(Entity::RENDERPASS_POST_POSTPROCESSING);
 				modelBoundingVolumeEntity->setEnabled(false);
 				engine->addEntity(modelBoundingVolumeEntity);

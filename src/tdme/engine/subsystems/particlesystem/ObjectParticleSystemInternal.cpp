@@ -111,9 +111,9 @@ void ObjectParticleSystemInternal::update()
 	updateInternal();
 }
 
-void ObjectParticleSystemInternal::fromTransform(const Transform& transform)
+void ObjectParticleSystemInternal::setTransform(const Transform& transform)
 {
-	Transform::fromTransform(transform);
+	Transform::setTransform(transform);
 	updateInternal();
 }
 

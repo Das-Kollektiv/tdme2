@@ -79,12 +79,12 @@ void LODObjectImposter::setRenderer(Renderer* renderer)
 {
 }
 
-void LODObjectImposter::fromTransform(const Transform& transform)
+void LODObjectImposter::setTransform(const Transform& transform)
 {
-	Transform::fromTransform(transform);
+	Transform::setTransform(transform);
 	// delegate to LOD objects
-	objectLOD1->fromTransform(*this);
-	objectLOD2->fromTransform(*this);
+	objectLOD1->setTransform(*this);
+	objectLOD2->setTransform(*this);
 	// update entity
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 	// reset current LOD object
@@ -95,8 +95,8 @@ void LODObjectImposter::update()
 {
 	Transform::update();
 	// delegate to LOD objects
-	objectLOD1->fromTransform(*this);
-	objectLOD2->fromTransform(*this);
+	objectLOD1->setTransform(*this);
+	objectLOD2->setTransform(*this);
 	// update entity
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 	// reset current LOD object

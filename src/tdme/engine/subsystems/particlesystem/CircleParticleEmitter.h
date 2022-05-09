@@ -93,6 +93,6 @@ public:
 	}
 
 	void emit(Particle* particle) override;
-	void fromTransform(const Transform& transform) override;
+	void setTransform(const Transform& transform) override;
 
 };

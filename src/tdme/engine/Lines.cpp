@@ -34,9 +34,9 @@ void Lines::setEngine(Engine* engine) {
 	LinesInternal::setEngine(engine);
 }
 
-void Lines::fromTransform(const Transform& transform)
+void Lines::setTransform(const Transform& transform)
 {
-	LinesInternal::fromTransform(transform);
+	LinesInternal::setTransform(transform);
 	if (parentEntity == nullptr && frustumCulling == true && engine != nullptr && enabled == true) engine->partition->updateEntity(this);
 }
 

@@ -288,10 +288,10 @@ public:
 	virtual const Matrix4x4& getTransformMatrix() const = 0;
 
 	/**
-	 * Set up this transform from given transform
+	 * Set transform
 	 * @param transform transform
 	 */
-	virtual void fromTransform(const Transform& transform) = 0;
+	virtual void setTransform(const Transform& transform) = 0;
 
 	/**
 	 * Update transform
@@ -299,7 +299,7 @@ public:
 	virtual void update() = 0;
 
 	/**
-	 * @return this transform
+	 * @return transform
 	 */
 	virtual const Transform& getTransform() const = 0;
 

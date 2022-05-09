@@ -82,9 +82,9 @@ void LinesInternal::update()
 	updateBoundingBox();
 }
 
-void LinesInternal::fromTransform(const Transform& transform)
+void LinesInternal::setTransform(const Transform& transform)
 {
-	Transform::fromTransform(transform);
+	Transform::setTransform(transform);
 	updateBoundingBox();
 }
 

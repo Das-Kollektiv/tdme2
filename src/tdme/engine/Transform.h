@@ -173,7 +173,7 @@ public:
 	 * Set up this transform from given transform
 	 * @param transform transform
 	 */
-	virtual void fromTransform(const Transform& transform);
+	virtual void setTransform(const Transform& transform);
 
 	/**
 	 * Set up this transform from given matrix and rotation order

@@ -57,9 +57,9 @@ void DecalInternal::update()
 	updateInternal();
 }
 
-void DecalInternal::fromTransform(const Transform& transform)
+void DecalInternal::setTransform(const Transform& transform)
 {
-	Transform::fromTransform(transform);
+	Transform::setTransform(transform);
 	updateInternal();
 }
 

@@ -157,7 +157,7 @@ void EngineTest::display()
 	}
 	circleTransform.setTranslation(circleTranslation);
 	circleTransform.update();
-	(dynamic_cast< ParticleSystem* >(engine->getEntity("circle")))->fromTransform(circleTransform);
+	(dynamic_cast< ParticleSystem* >(engine->getEntity("circle")))->setTransform(circleTransform);
 	doPlayerControl(0, keyLeft, keyRight, keyUp);
 	doPlayerControl(1, keyA, keyD, keyW);
 	osEngine->display();

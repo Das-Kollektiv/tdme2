@@ -314,7 +314,7 @@ Entity* SceneConnector::createEmpty(const string& id, const Transform& transform
 		id,
 		SceneConnector::emptyModel
 	);
-	entity->fromTransform(transform);
+	entity->setTransform(transform);
 	return entity;
 }
 
@@ -539,7 +539,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 		if (prototype->isTerrainMesh() == true) entity->setRenderPass(Entity::RENDERPASS_TERRAIN);
 		entity->setContributesShadows(prototype->isContributesShadows());
 		entity->setReceivesShadows(prototype->isReceivesShadows());
-		entity->fromTransform(transform);
+		entity->setTransform(transform);
 	}
 
 	// done
@@ -548,7 +548,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 
 Entity* SceneConnector::createEditorDecalEntity(SceneEntity* sceneEntity, const Vector3& translation, int instances, Entity* parentEntity) {
 	Transform transform;
-	transform.fromTransform(sceneEntity->getTransform());
+	transform.setTransform(sceneEntity->getTransform());
 	if (translation.equals(Vector3()) == false) {
 		transform.setTranslation(transform.getTranslation().clone().add(translation));
 		transform.update();
@@ -558,7 +558,7 @@ Entity* SceneConnector::createEditorDecalEntity(SceneEntity* sceneEntity, const 
 
 Entity* SceneConnector::createEntity(SceneEntity* sceneEntity, const Vector3& translation, int instances, Entity* parentEntity) {
 	Transform transform;
-	transform.fromTransform(sceneEntity->getTransform());
+	transform.setTransform(sceneEntity->getTransform());
 	if (translation.equals(Vector3()) == false) {
 		transform.setTranslation(transform.getTranslation().clone().add(translation));
 		transform.update();
@@ -968,7 +968,7 @@ Body* SceneConnector::createBody(World* world, Prototype* prototype, const strin
 
 Body* SceneConnector::createBody(World* world, SceneEntity* sceneEntity, const Vector3& translation, uint16_t collisionTypeId, int index, PrototypePhysics_BodyType* overrideType) {
 	Transform transform;
-	transform.fromTransform(sceneEntity->getTransform());
+	transform.setTransform(sceneEntity->getTransform());
 	if (translation.equals(Vector3()) == false) {
 		transform.setTranslation(transform.getTranslation().clone().add(translation));
 		transform.update();
@@ -1044,7 +1044,7 @@ void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vec
 								auto transform = foliageTransform;
 								transform.setTranslation(transform.getTranslation().clone().add(translation));
 								transform.update();
-								body->fromTransform(transform);
+								body->setTransform(transform);
 							}
 							body->setEnabled(enable);
 						}
@@ -1069,7 +1069,7 @@ void SceneConnector::addScene(World* world, Scene* scene, bool enable, const Vec
 			auto transform = sceneEntity->getTransform();
 			transform.setTranslation(transform.getTranslation().clone().add(translation));
 			transform.update();
-			rigidBody->fromTransform(transform);
+			rigidBody->setTransform(transform);
 		}
 		rigidBody->setEnabled(enable);
 	}
@@ -1243,7 +1243,7 @@ void SceneConnector::enableScene(Engine* engine, Scene* scene, const Vector3& tr
 		if (entity == nullptr)
 			continue;
 
-		entity->fromTransform(sceneEntity->getTransform());
+		entity->setTransform(sceneEntity->getTransform());
 		entity->setTranslation(entity->getTranslation().clone().add(translation));
 		if (sceneEntity->getPrototype()->getType() == Prototype_Type::EMPTY) {
 			entity->setScale(Vector3(Math::sign(entity->getScale().getX()), Math::sign(entity->getScale().getY()), Math::sign(entity->getScale().getZ())));
@@ -1291,10 +1291,10 @@ void SceneConnector::enableScene(World* world, Scene* scene, const Vector3& tran
 		auto sceneEntity = scene->getEntityAt(i);
 		auto rigidBody = world->getBody(sceneEntity->getId());
 		if (rigidBody == nullptr) continue;
-		transform.fromTransform(sceneEntity->getTransform());
+		transform.setTransform(sceneEntity->getTransform());
 		transform.setTranslation(transform.getTranslation().clone().add(translation));
 		transform.update();
-		rigidBody->fromTransform(transform);
+		rigidBody->setTransform(transform);
 		rigidBody->setEnabled(true);
 	}
 }

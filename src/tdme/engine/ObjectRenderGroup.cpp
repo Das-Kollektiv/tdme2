@@ -411,9 +411,9 @@ void ObjectRenderGroup::setRenderer(Renderer* renderer)
 {
 }
 
-void ObjectRenderGroup::fromTransform(const Transform& transform)
+void ObjectRenderGroup::setTransform(const Transform& transform)
 {
-	Transform::fromTransform(transform);
+	Transform::setTransform(transform);
 	// update bounding box transformed
 	boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
 	// update object

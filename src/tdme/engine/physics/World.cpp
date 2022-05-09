@@ -292,7 +292,7 @@ void World::synch(Engine* engine)
 
 		//apply inverse local transform for engine update
 		if (body->isEnabled() == true) {
-			engineEntity->fromTransform(body->transform);
+			engineEntity->setTransform(body->transform);
 		}
 	}
 }
@@ -494,7 +494,7 @@ void World::synch(Body* clonedBody, Body* body)
 	clonedBody->setCollisionTypeIds(body->getCollisionTypeIds());
 	clonedBody->setEnabled(body->isEnabled());
 	clonedBody->setMass(body->getMass());
-	clonedBody->fromTransform(body->transform);
+	clonedBody->setTransform(body->transform);
 	if (clonedBody->getType() == Body::TYPE_DYNAMIC) {
 		clonedBody->setLinearVelocity(body->getLinearVelocity());
 		clonedBody->setAngularVelocity(body->getAngularVelocity());

@@ -93,7 +93,7 @@ private:
 	inline void applyParentTransform(const Transform& parentTransform) override {
 		Transform::applyParentTransform(parentTransform);
 		// delegate to LOD objects
-		for (auto billboardObject: billboardObjects) billboardObject->fromTransform(*this);
+		for (auto billboardObject: billboardObjects) billboardObject->setTransform(*this);
 	}
 
 public:
@@ -159,7 +159,7 @@ public:
 	void setEnabled(bool enabled) override;
 	bool isFrustumCulling() override;
 	void setFrustumCulling(bool frustumCulling) override;
-	void fromTransform(const Transform& transform) override;
+	void setTransform(const Transform& transform) override;
 	void update() override;
 
 	inline BoundingBox* getBoundingBox() override {

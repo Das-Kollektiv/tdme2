@@ -97,8 +97,8 @@ void TerrainMesh::setScale(const Vector3& scale) {
 	indices.clear();;
 }
 
-void TerrainMesh::fromTransform(const Transform& transform) {
-	Console::println("TerrainMesh::fromTransform(): Not supported!");
+void TerrainMesh::setTransform(const Transform& transform) {
+	Console::println("TerrainMesh::setTransform(): Not supported!");
 }
 
 TerrainMesh::BoundingVolume* TerrainMesh::clone() const {

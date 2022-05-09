@@ -107,9 +107,9 @@ private:
 	inline void applyParentTransform(const Transform& parentTransform) override {
 		Transform::applyParentTransform(parentTransform);
 		// delegate to LOD objects
-		if (objectLOD1 != nullptr) objectLOD1->fromTransform(*this);
-		if (objectLOD2 != nullptr) objectLOD2->fromTransform(*this);
-		if (objectLOD3 != nullptr) objectLOD3->fromTransform(*this);
+		if (objectLOD1 != nullptr) objectLOD1->setTransform(*this);
+		if (objectLOD2 != nullptr) objectLOD2->setTransform(*this);
+		if (objectLOD3 != nullptr) objectLOD3->setTransform(*this);
 	}
 
 public:
@@ -325,7 +325,7 @@ public:
 	void setEnabled(bool enabled) override;
 	bool isFrustumCulling() override;
 	void setFrustumCulling(bool frustumCulling) override;
-	void fromTransform(const Transform& transform) override;
+	void setTransform(const Transform& transform) override;
 	void update() override;
 
 	inline BoundingBox* getBoundingBox() override {

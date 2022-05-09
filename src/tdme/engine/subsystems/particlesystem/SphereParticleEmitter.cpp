@@ -67,7 +67,7 @@ void SphereParticleEmitter::emit(Particle* particle)
 	);
 }
 
-void SphereParticleEmitter::fromTransform(const Transform& transform)
+void SphereParticleEmitter::setTransform(const Transform& transform)
 {
 	auto& transformMatrix = transform.getTransformMatrix();
 	// apply translations

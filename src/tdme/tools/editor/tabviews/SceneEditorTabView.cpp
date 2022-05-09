@@ -332,7 +332,7 @@ void SceneEditorTabView::handleInputEvents()
 										sceneEntity->getTransform().setRotationAngle(scene->getRotationOrder()->getAxisZIndex(), sceneEntity->getTransform().getRotationAngle(scene->getRotationOrder()->getAxisZIndex()) + deltaRotation[2]);
 									}
 									sceneEntity->getTransform().update();
-									_selectedEntity->fromTransform(sceneEntity->getTransform());
+									_selectedEntity->setTransform(sceneEntity->getTransform());
 								}
 							}
 							if (selectedEntityIds.size() == 1) {
@@ -397,7 +397,7 @@ void SceneEditorTabView::handleInputEvents()
 						if (selectedEntityIds.size() == 1) {
 							auto sceneEntity = scene->getEntity(selectedEntity->getId());
 							if (sceneEntity != nullptr && sceneEntity->getPrototype()->getType()->hasNonEditScaleDownMode() == true) {
-								selectedEntity->fromTransform(sceneEntity->getTransform());
+								selectedEntity->setTransform(sceneEntity->getTransform());
 							}
 							setGizmoRotation(selectedEntity->getTransform());
 							sceneEditorTabController->setEntityDetails(selectedEntity->getId());
@@ -490,7 +490,7 @@ void SceneEditorTabView::display()
 					transform.setTranslation(worldCoordinate);
 					transform.setRotationAngle(scene->getRotationOrder()->getAxisYIndex(), static_cast<float>(placeEntityYRotation) * 90.0f);
 					transform.update();
-					selectedEngineEntity->fromTransform(transform);
+					selectedEngineEntity->setTransform(transform);
 					placeEntityTranslation = transform.getTranslation();
 					placeEntityValid = true;
 				}
@@ -698,7 +698,7 @@ void SceneEditorTabView::resetEntity(Entity* entity) {
 	auto sceneEntity = scene->getEntity(entity->getId());
 	if (sceneEntity == nullptr) return;
 	if (sceneEntity->getPrototype()->getType()->hasNonEditScaleDownMode() == false) return;
-	entity->fromTransform(sceneEntity->getTransform());
+	entity->setTransform(sceneEntity->getTransform());
 	entity->setScale(
 		sceneEntity->getPrototype()->getType()->getNonEditScaleDownModeDimension().
 		clone().
@@ -931,7 +931,7 @@ void SceneEditorTabView::pasteEntities(bool displayOnly)
 	for (auto copiedEntity: copiedEntities) {
 		auto pastePrototype = copiedEntity->getPrototype();
 		Transform sceneEntityTransform;
-		sceneEntityTransform.fromTransform(copiedEntity->getTransform());
+		sceneEntityTransform.setTransform(copiedEntity->getTransform());
 		auto entityDiffX = copiedEntity->getTransform().getTranslation().getX() - pasteEntitiesMinX;
 		auto entityDiffY = copiedEntity->getTransform().getTranslation().getY() - pasteEntitiesMinY;
 		auto entityDiffZ = copiedEntity->getTransform().getTranslation().getZ() - pasteEntitiesMinZ;
@@ -977,7 +977,7 @@ void SceneEditorTabView::pasteEntities(bool displayOnly)
 			auto entityId = "tdme.sceneeditor.paste." + pastePrototype->getName() + "." + to_string(pasteEntitiesIdx);
 			auto entity = engine->getEntity(entityId);
 			if (entity != nullptr) {
-				entity->fromTransform(sceneEntityTransform);
+				entity->setTransform(sceneEntityTransform);
 			} else {
 				entity = createEntity(pastePrototype, entityId, sceneEntityTransform);
 				if (entity != nullptr) {
@@ -1127,7 +1127,7 @@ void SceneEditorTabView::updateGizmo() {
 	if (entityCount == 1) {
 		auto selectedSceneEntity = scene->getEntity(selectedEntityIds[0]);
 		auto selectedPrototype = selectedSceneEntity != nullptr?selectedSceneEntity->getPrototype():nullptr;
-		if (selectedSceneEntity != nullptr) transform.fromTransform(selectedSceneEntity->getTransform());
+		if (selectedSceneEntity != nullptr) transform.setTransform(selectedSceneEntity->getTransform());
 		if (selectedPrototype != nullptr) setGizmoTypeMask(selectedPrototype->getType()->getGizmoTypeMask());
 		if (selectedSceneEntity == nullptr || selectedPrototype == nullptr) {
 			removeGizmo();
@@ -1200,7 +1200,7 @@ void SceneEditorTabView::applyTranslation(const Vector3& translation) {
 
 		sceneEntity->getTransform().setTranslation(translation);
 		sceneEntity->getTransform().update();
-		selectedEntity->fromTransform(sceneEntity->getTransform());
+		selectedEntity->setTransform(sceneEntity->getTransform());
 	} else
 	if (selectedEntityIds.size() > 1) {
 		for (auto selectedEntityId: selectedEntityIds) {
@@ -1213,7 +1213,7 @@ void SceneEditorTabView::applyTranslation(const Vector3& translation) {
 				sceneEntity->getTransform().getTranslation().clone().add(translation.clone().sub(multipleSelectionTranslation))
 			);
 			sceneEntity->getTransform().update();
-			selectedEntity->fromTransform(sceneEntity->getTransform());
+			selectedEntity->setTransform(sceneEntity->getTransform());
 		}
 		multipleSelectionTranslation.add(translation.clone().sub(multipleSelectionTranslation));
 	}
@@ -1235,7 +1235,7 @@ void SceneEditorTabView::applyRotation(const Vector3& rotation) {
 		sceneEntity->getTransform().getRotation(scene->getRotationOrder()->getAxisYIndex()).setAngle(rotation.getY());
 		sceneEntity->getTransform().getRotation(scene->getRotationOrder()->getAxisZIndex()).setAngle(rotation.getZ());
 		sceneEntity->getTransform().update();
-		selectedEntity->fromTransform(sceneEntity->getTransform());
+		selectedEntity->setTransform(sceneEntity->getTransform());
 	} else
 	if (selectedEntityIds.size() > 1) {
 		for (auto selectedEntityId: selectedEntityIds) {
@@ -1249,7 +1249,7 @@ void SceneEditorTabView::applyRotation(const Vector3& rotation) {
 				sceneEntity->getTransform().getRotation(scene->getRotationOrder()->getAxisZIndex()).setAngle(sceneEntity->getTransform().getRotation(scene->getRotationOrder()->getAxisZIndex()).getAngle() + (rotation.getZ() - multipleSelectionRotation.getZ()));
 			}
 			sceneEntity->getTransform().update();
-			selectedEntity->fromTransform(sceneEntity->getTransform());
+			selectedEntity->setTransform(sceneEntity->getTransform());
 		}
 		multipleSelectionRotation.add(rotation.clone().sub(multipleSelectionRotation));
 	}
@@ -1270,7 +1270,7 @@ void SceneEditorTabView::applyScale(const Vector3& scale) {
 
 		sceneEntity->getTransform().setScale(Vector3(scale));
 		sceneEntity->getTransform().update();
-		selectedEntity->fromTransform(sceneEntity->getTransform());
+		selectedEntity->setTransform(sceneEntity->getTransform());
 	} else
 	if (selectedEntityIds.size() > 1) {
 		for (auto selectedEntityId: selectedEntityIds) {
@@ -1281,7 +1281,7 @@ void SceneEditorTabView::applyScale(const Vector3& scale) {
 
 			sceneEntity->getTransform().setScale(sceneEntity->getTransform().getScale().clone().scale(scale / multipleSelectionScale));
 			sceneEntity->getTransform().update();
-			selectedEntity->fromTransform(sceneEntity->getTransform());
+			selectedEntity->setTransform(sceneEntity->getTransform());
 		}
 		multipleSelectionScale*= scale / multipleSelectionScale;
 	}

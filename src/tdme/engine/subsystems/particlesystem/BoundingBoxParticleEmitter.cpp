@@ -73,7 +73,7 @@ void BoundingBoxParticleEmitter::emit(Particle* particle)
 		(colorEnd.getAlpha() - colorStart.getAlpha()) / particle->lifeTimeMax);
 }
 
-void BoundingBoxParticleEmitter::fromTransform(const Transform& transform)
+void BoundingBoxParticleEmitter::setTransform(const Transform& transform)
 {
 	Vector3 center;
 	Vector3 scale;

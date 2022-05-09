@@ -57,11 +57,11 @@ void ParticleSystemGroup::initialize()
 	for (auto particleSystem: particleSystems) dynamic_cast<Entity*>(particleSystem)->initialize();
 }
 
-void ParticleSystemGroup::fromTransform(const Transform& transform)
+void ParticleSystemGroup::setTransform(const Transform& transform)
 {
-	Transform::fromTransform(transform);
+	Transform::setTransform(transform);
 	//
-	for (auto particleSystem: particleSystems) dynamic_cast<Entity*>(particleSystem)->fromTransform(transform);
+	for (auto particleSystem: particleSystems) dynamic_cast<Entity*>(particleSystem)->setTransform(transform);
 	// update bounding box transformed
 	boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
 	// update object
@@ -72,7 +72,7 @@ void ParticleSystemGroup::update()
 {
 	Transform::update();
 	//
-	for (auto particleSystem: particleSystems) dynamic_cast<Entity*>(particleSystem)->fromTransform(*this);
+	for (auto particleSystem: particleSystems) dynamic_cast<Entity*>(particleSystem)->setTransform(*this);
 	// update bounding box transformed
 	boundingBoxTransformed.fromBoundingVolumeWithTransform(&boundingBox, *this);
 	// update object

@@ -140,7 +140,7 @@ bool PathFinding::isSlopeWalkableInternal(float x, float y, float z, float succe
 
 	// update rigid body
 	auto actorSlopeTestCollisionBody = world->getBody("tdme.pathfinding.actor.slopetest");
-	actorSlopeTestCollisionBody->fromTransform(slopeTestTransform);
+	actorSlopeTestCollisionBody->setTransform(slopeTestTransform);
 
 	// check if actor collides with world
 	vector<Body*> collidedRigidBodies;
@@ -182,7 +182,7 @@ bool PathFinding::isWalkable(float x, float y, float z, float& height, float ste
 
 	// update rigid body
 	auto actorCollisionBody = world->getBody("tdme.pathfinding.actor");
-	actorCollisionBody->fromTransform(actorTransform);
+	actorCollisionBody->setTransform(actorTransform);
 
 	// check if actor collides with world
 	vector<Body*> collidedRigidBodies;

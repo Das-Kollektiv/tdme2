@@ -93,7 +93,7 @@ public:
 	}
 	void setFrustumCulling(bool frustumCulling) override;
 
-	void fromTransform(const Transform& transform) override;
+	void setTransform(const Transform& transform) override;
 	void update() override;
 
 	inline BoundingBox* getBoundingBox() override {

@@ -51,9 +51,9 @@ void EnvironmentMapping::dispose() {
 	environmentMappingRenderer->dispose();
 }
 
-void EnvironmentMapping::fromTransform(const Transform& transform)
+void EnvironmentMapping::setTransform(const Transform& transform)
 {
-	Transform::fromTransform(transform);
+	Transform::setTransform(transform);
 	Transform translationTransform;
 	translationTransform.setTranslation(getTranslation());
 	translationTransform.update();

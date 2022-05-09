@@ -111,7 +111,7 @@ void RayTracingTest::display()
 	yRotation.setAxis(Rotation::Y_AXIS);
 	yRotation.setAngle(rotationY);
 	transform.update();
-	world->getBody("player")->fromTransform(transform);
+	world->getBody("player")->setTransform(transform);
 
 	// movement player
 	{
@@ -211,7 +211,7 @@ void RayTracingTest::display()
 
 	// update world, display engine
 	world->update(1.0f / 60.0f);
-	engine->getEntity("player")->fromTransform(transform);
+	engine->getEntity("player")->setTransform(transform);
 	engine->display();
 	engine->getGUI()->render();
 }
