@@ -311,8 +311,8 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 		keyControl == false &&
 		(
 			(type == TYPE_STRING && keyChar >= 32 && keyChar < 127) ||
-			(type == TYPE_FLOAT && ((keyChar >= '0' && keyChar < '9') || (keyChar == '.') || keyChar == '-')) ||
-			(type == TYPE_INT && ((keyChar >= '0' && keyChar < '9') || keyChar == '-'))
+			(type == TYPE_FLOAT && ((keyChar >= '0' && keyChar <= '9') || (keyChar == '.') || keyChar == '-')) ||
+			(type == TYPE_INT && ((keyChar >= '0' && keyChar <= '9') || keyChar == '-'))
 		)) {
 		event->setProcessed(true);
 		if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) {
