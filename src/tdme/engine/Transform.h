@@ -36,12 +36,17 @@ public:
 	/**
 	 * Public constructor
 	 */
-	Transform();
+	inline Transform() {
+		transformMatrix.identity();
+		scale.set(1.0f, 1.0f, 1.0f);
+		rotationsQuaternion.identity();
+	}
 
 	/**
 	 * Destructor
 	 */
-	virtual ~Transform();
+	virtual inline ~Transform() {
+	}
 
 	/**
 	 * @return object translation
@@ -173,7 +178,10 @@ public:
 	 * Set transform
 	 * @param transform transform
 	 */
-	virtual void setTransform(const Transform& transform);
+	inline virtual void setTransform(const Transform& transform) {
+		if (this == &transform) return;
+		*this = transform;
+	}
 
 	/**
 	 * Set up this transform from given matrix and rotation order
@@ -192,7 +200,9 @@ public:
 	 * Apply parent transform
 	 * @param parentTransform parent transform
 	 */
-	virtual void applyParentTransform(const Transform& parentTransform);
+	inline virtual void applyParentTransform(const Transform& parentTransform) {
+		transformMatrix.multiply(parentTransform.getTransformMatrix());
+	}
 
 	/**
 	 * Invert this transform

@@ -19,22 +19,6 @@ using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
 
-Transform::Transform()
-{
-	transformMatrix.identity();
-	scale.set(1.0f, 1.0f, 1.0f);
-	rotationsQuaternion.identity();
-}
-
-Transform::~Transform() {
-}
-
-void Transform::setTransform(const Transform& transform)
-{
-	if (this == &transform) return;
-	*this = transform;
-}
-
 void Transform::fromMatrix(const Matrix4x4& matrix, RotationOrder* rotationOrder) {
 	matrix.getScale(scale);
 	matrix.getTranslation(translation);
@@ -80,10 +64,6 @@ void Transform::update()
 	transformMatrix.multiply(scaleMatrix);
 	transformMatrix.multiply(rotationsMatrix);
 	transformMatrix.multiply(translationMatrix);
-}
-
-void Transform::applyParentTransform(const Transform& parentTransform) {
-	transformMatrix.multiply(parentTransform.getTransformMatrix());
 }
 
 void Transform::invert() {
