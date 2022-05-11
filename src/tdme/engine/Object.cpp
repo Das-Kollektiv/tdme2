@@ -100,7 +100,7 @@ void Object::setFrustumCulling(bool frustumCulling) {
 	}
 	this->frustumCulling = frustumCulling;
 	// delegate change to engine
-	if (engine != nullptr) engine->registerEntity(this);
+	if (engine != nullptr) engine->updateEntityRegistration(this);
 }
 
 void Object::dispose()
@@ -126,11 +126,8 @@ void Object::setShader(const string& id) {
 	requiresForwardShading =
 		Engine::getLightingShader()->hasShader("defer_" + shaderId) == false ||
 		Engine::getLightingShader()->hasShader("defer_" + distanceShaderId) == false;
-	//
-	if (engine != nullptr) {
-		engine->deregisterEntity(this);
-		engine->registerEntity(this);
-	}
+	// delegate change to engine
+	if (engine != nullptr) engine->updateEntityRegistration(this);
 }
 
 void Object::setDistanceShader(const string& id) {
@@ -146,9 +143,6 @@ void Object::setDistanceShader(const string& id) {
 	requiresForwardShading =
 		Engine::getLightingShader()->hasShader("defer_" + shaderId) == false ||
 		Engine::getLightingShader()->hasShader("defer_" + distanceShaderId) == false;
-	//
-	if (engine != nullptr) {
-		engine->deregisterEntity(this);
-		engine->registerEntity(this);
-	}
+	// delegate change to engine
+	if (engine != nullptr) engine->updateEntityRegistration(this);
 }

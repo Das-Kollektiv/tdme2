@@ -1270,6 +1270,15 @@ private:
 	void registerEntity(Entity* entity);
 
 	/**
+	 * Updates registration of engine by performing deregisterEntity() and registerEntity()
+	 * @param entity entity
+	 */
+	inline void updateEntityRegistration(Entity* entity) {
+		deregisterEntity(entity);
+		registerEntity(entity);
+	}
+
+	/**
 	 * Do post processing
 	 * @param renderPass render pass
 	 * @param postProcessingFrameBuffers frame buffers to swap, input needs to live in postProcessingFrameBuffers[0]

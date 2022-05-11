@@ -65,7 +65,7 @@ int TextureAtlas::addTexture(Texture* texture) {
 	};
 	textureReferenceCounter[texture]++;
 	//
-	needsUpdate = true;
+	requiresUpdate = true;
 	//
 	return textureIdx;
 }
@@ -86,7 +86,7 @@ void TextureAtlas::removeTexture(Texture* texture) {
 		texture->releaseReference();
 	}
 	//
-	needsUpdate = true;
+	requiresUpdate = true;
 }
 
 void TextureAtlas::update() {
@@ -105,7 +105,7 @@ void TextureAtlas::update() {
 	if (atlasTextureIdxToAtlasTextureMapping.empty() == true) {
 		Console::println("TextureAtlas::update(): " + atlasTextureId + ": nothing to do");
 		//
-		needsUpdate = false;
+		requiresUpdate = false;
 		//
 		return;
 	}
@@ -247,6 +247,19 @@ void TextureAtlas::update() {
 	for (auto& atlasTexture: atlasTextures) atlasTextureIdxToAtlasTextureMapping[atlasTexture.textureIdx] = atlasTexture;
 
 	//
-	needsUpdate = false;
+	Console::println("TextureAtlas::update(): dump textures: ");
+	for (auto atlasTextureIdxToTextureMappingIt: atlasTextureIdxToAtlasTextureMapping) {
+		auto& atlasTexture = atlasTextureIdxToTextureMappingIt.second;
+		Console::println(
+			"TextureAtlas::update(): have texture: " + atlasTexture.texture->getId() + ", " +
+			"left: " + to_string(atlasTexture.left) + ", " +
+			"top: " + to_string(atlasTexture.top) + ", " +
+			"width: " + to_string(atlasTexture.width) + ", " +
+			"height: " + to_string(atlasTexture.height)
+		);
+	}
+
+	//
+	requiresUpdate = false;
 }
 

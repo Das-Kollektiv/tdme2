@@ -67,10 +67,10 @@ public:
 	void update();
 
 	/**
-	 * @return is needing update
+	 * @return is requiring update
 	 */
-	inline bool isNeedsUpdate() {
-		return needsUpdate;
+	inline bool isRequiringUpdate() {
+		return requiresUpdate;
 	}
 
 	/**
@@ -81,7 +81,7 @@ public:
 	}
 
 private:
-	bool needsUpdate { false };
+	bool requiresUpdate { false };
 	string atlasTextureId;
 	Texture* atlasTexture { nullptr };
 	unordered_map<Texture*, int> textureReferenceCounter;

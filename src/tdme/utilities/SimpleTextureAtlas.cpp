@@ -54,7 +54,7 @@ int SimpleTextureAtlas::addTexture(Texture* texture) {
 	atlasTextureIdxToTextureMapping[textureIdx] = texture;
 	textureReferenceCounter[texture]++;
 	//
-	needsUpdate = true;
+	requiresUpdate = true;
 	//
 	return textureIdx;
 }
@@ -75,7 +75,7 @@ void SimpleTextureAtlas::removeTexture(Texture* texture) {
 		texture->releaseReference();
 	}
 	//
-	needsUpdate = true;
+	requiresUpdate = true;
 }
 
 void SimpleTextureAtlas::update() {
@@ -90,7 +90,7 @@ void SimpleTextureAtlas::update() {
 	if (atlasTextureIdxToTextureMapping.empty() == true) {
 		Console::println("SimpleTextureAtlas::update(): " + atlasTextureId + ": nothing to do");
 		//
-		needsUpdate = false;
+		requiresUpdate = false;
 		//
 		return;
 	}
@@ -157,6 +157,6 @@ void SimpleTextureAtlas::update() {
 	atlasTexture->acquireReference();
 
 	//
-	needsUpdate = false;
+	requiresUpdate = false;
 }
 

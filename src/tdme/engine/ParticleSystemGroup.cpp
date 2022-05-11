@@ -127,7 +127,7 @@ void ParticleSystemGroup::setFrustumCulling(bool frustumCulling) {
 	}
 	this->frustumCulling = frustumCulling;
 	// delegate change to engine
-	if (engine != nullptr) engine->registerEntity(this);
+	if (engine != nullptr) engine->updateEntityRegistration(this);
 }
 
 void ParticleSystemGroup::setAutoEmit(bool autoEmit) {
@@ -135,7 +135,7 @@ void ParticleSystemGroup::setAutoEmit(bool autoEmit) {
 	for (auto particleSystem: particleSystems) particleSystem->setAutoEmit(autoEmit);
 	this->autoEmit = autoEmit;
 	// delegate change to engine
-	if (engine != nullptr) engine->registerEntity(this);
+	if (engine != nullptr) engine->updateEntityRegistration(this);
 }
 
 void ParticleSystemGroup::dispose()

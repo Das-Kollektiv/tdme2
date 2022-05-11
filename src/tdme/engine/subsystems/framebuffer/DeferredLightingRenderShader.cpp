@@ -316,7 +316,7 @@ void DeferredLightingRenderShader::useProgram(Engine* engine, vector<Decal*>& de
 
 	// decals
 	auto& decalsTextureAtlas = engine->getDecalsTextureAtlas();
-	if (decalsTextureAtlas.isNeedsUpdate() == true) {
+	if (decalsTextureAtlas.isRequiringUpdate() == true) {
 		decalsTextureAtlas.update();
 		if (decalsTextureAtlas.getAtlasTexture() != nullptr) {
 			if (decalsTextureAtlasTextureId == 0) decalsTextureAtlasTextureId = renderer->createTexture();

@@ -32,6 +32,7 @@ DecalInternal::DecalInternal(const string& id, OrientedBoundingBox* obb, Texture
 	this->contributesShadows = false;
 	this->receivesShadows = false;
 	this->obb = obb;
+	if (texture != nullptr) texture->acquireReference();
 	this->texture = texture != nullptr?texture:TextureReader::read("resources/engine/textures", "point.png");
 	boundingBox = BoundingBox(obb);
 	obbMatrix.identity();

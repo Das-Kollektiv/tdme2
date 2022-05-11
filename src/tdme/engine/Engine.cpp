@@ -390,9 +390,6 @@ void Engine::addEntity(Entity* entity)
 
 	// add to partition if enabled and frustum culling requested
 	if (entity->isFrustumCulling() == true && entity->isEnabled() == true) partition->addEntity(entity);
-
-	// update
-	registerEntity(entity);
 }
 
 void Engine::deregisterEntity(Entity* entity) {

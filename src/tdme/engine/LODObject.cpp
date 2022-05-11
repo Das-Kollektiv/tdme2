@@ -163,7 +163,7 @@ void LODObject::setFrustumCulling(bool frustumCulling) {
 	}
 	this->frustumCulling = frustumCulling;
 	// delegate change to engine
-	if (engine != nullptr) engine->registerEntity(this);
+	if (engine != nullptr) engine->updateEntityRegistration(this);
 }
 
 void LODObject::dispose()
