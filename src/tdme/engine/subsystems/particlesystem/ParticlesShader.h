@@ -6,10 +6,12 @@
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/utilities/fwd-tdme.h>
 
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 using tdme::math::Matrix4x4;
+using tdme::utilities::TextureAtlas;
 
 /**
  * Particles shader program
@@ -18,21 +20,26 @@ using tdme::math::Matrix4x4;
 class tdme::engine::subsystems::particlesystem::ParticlesShader final
 {
 private:
-	int32_t renderProgramId { -1 };
-	int32_t renderFragmentShaderId { -1 };
-	int32_t renderVertexShaderId { -1 };
+	static constexpr int ATLASTEXTURE_COUNT { 128 };
+
+	int32_t programId { -1 };
+	int32_t fragmentShaderId { -1 };
+	int32_t vertexShaderId { -1 };
 	int32_t uniformMVPMatrix { -1 };
-	array<int32_t, 16> uniformDiffuseTextureUnits;
 	int32_t uniformViewPortWidth { -1 };
 	int32_t uniformViewPortHeight { -1 };
 	int32_t uniformProjectionMatrixXx { -1 };
 	int32_t uniformProjectionMatrixYy { -1 };
+	int32_t uniformTextureAtlasTextureUnit { -1 };
+	array<int32_t, ATLASTEXTURE_COUNT> uniformAtlasTextureOrientation;
+	array<int32_t, ATLASTEXTURE_COUNT> uniformAtlasTexturePosition;
+	array<int32_t, ATLASTEXTURE_COUNT> uniformAtlasTextureDimension;
+	int32_t ppsTextureAtlasTextureId { 0 };
 	Matrix4x4 mvpMatrix;
 	bool isRunning;
 	bool initialized;
 	Engine* engine { nullptr };
 	Renderer* renderer { nullptr };
-	array<int32_t, 16> boundTextureIds;
 
 public:
 	/**
@@ -77,10 +84,10 @@ public:
 	void updateMatrices(int contextIdx);
 
 	/**
-	 * Set parameters
+	 * Set texture atlas
 	 * @param contextIdx context index
-	 * @param textureIds texture ids
+	 * @param textureAtlas texture atlas
 	 */
-	void setParameters(int contextIdx, const array<int32_t, 16>& textureIds);
+	void setTextureAtlas(int contextIdx, TextureAtlas* textureAtlas);
 
 };

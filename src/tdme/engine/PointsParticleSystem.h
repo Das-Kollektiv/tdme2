@@ -244,5 +244,8 @@ public:
 	inline void setLocalTransform(const Transform& transform) override {
 		PointsParticleSystemInternal::setLocalTransform(transform);
 	}
+	inline Texture* getTexture() {
+		return PointsParticleSystemInternal::getTexture();
+	}
 
 };

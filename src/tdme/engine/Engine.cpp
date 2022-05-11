@@ -405,11 +405,25 @@ void Engine::deregisterEntity(Entity* entity) {
 	requireComputeAnimationEntities.erase(entity);
 	requirePreRenderEntities.erase(entity);
 
-	// decompose and deregister decal textures
+	// decompose and deregister decal and pps textures
 	DecomposedEntities decomposedEntities;
 	decomposeEntityType(entity, decomposedEntities, true);
-	for (auto decalObject: decomposedEntities.decalEntities) {
-		decalsTextureAtlas.removeTexture(decalObject->getDecalTexture());
+	for (auto decalEntity: decomposedEntities.decalEntities) {
+		decalsTextureAtlas.removeTexture(decalEntity->getDecalTexture());
+	}
+	// remove pps textures
+	for (auto ppsEntity: decomposedEntities.ppses) {
+		auto entityType = ppsEntity->getEntityType();
+		switch (entityType) {
+			case Entity::ENTITYTYPE_FOGPARTICLESYSTEM:
+				ppsTextureAtlas.removeTexture(static_cast<FogParticleSystem*>(ppsEntity)->getTexture());
+				break;
+			case Entity::ENTITYTYPE_POINTSPARTICLESYSTEM:
+				ppsTextureAtlas.removeTexture(static_cast<PointsParticleSystem*>(ppsEntity)->getTexture());
+				break;
+			default:
+				break;
+		}
 	}
 }
 
@@ -457,8 +471,22 @@ void Engine::registerEntity(Entity* entity) {
 		}
 	}
 	// register decal textures
-	for (auto decalObject: decomposedEntities.decalEntities) {
-		decalsTextureAtlas.addTexture(decalObject->getDecalTexture());
+	for (auto decalEntity: decomposedEntities.decalEntities) {
+		decalsTextureAtlas.addTexture(decalEntity->getDecalTexture());
+	}
+	// add pps textures
+	for (auto ppsEntity: decomposedEntities.ppses) {
+		auto entityType = ppsEntity->getEntityType();
+		switch (entityType) {
+			case Entity::ENTITYTYPE_FOGPARTICLESYSTEM:
+				ppsTextureAtlas.addTexture(static_cast<FogParticleSystem*>(ppsEntity)->getTexture());
+				break;
+			case Entity::ENTITYTYPE_POINTSPARTICLESYSTEM:
+				ppsTextureAtlas.addTexture(static_cast<PointsParticleSystem*>(ppsEntity)->getTexture());
+				break;
+			default:
+				break;
+		}
 	}
 }
 

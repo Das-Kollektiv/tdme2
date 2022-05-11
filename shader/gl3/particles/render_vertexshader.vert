@@ -3,6 +3,8 @@
 precision highp float;
 precision highp int;
 
+{$DEFINITIONS}
+
 // layout
 layout (location = 0) in vec3 inVertex;
 layout (location = 1) in uvec2 inTextureSpriteIndex;

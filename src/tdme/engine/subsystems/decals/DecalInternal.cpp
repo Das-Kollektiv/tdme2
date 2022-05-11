@@ -32,8 +32,6 @@ DecalInternal::DecalInternal(const string& id, OrientedBoundingBox* obb, Texture
 	this->contributesShadows = false;
 	this->receivesShadows = false;
 	this->obb = obb;
-	if (texture != nullptr) texture->acquireReference();
-	this->texture = texture != nullptr?texture:TextureReader::read("resources/engine/textures", "point.png");
 	boundingBox = BoundingBox(obb);
 	obbMatrix.identity();
 	obbMatrix.translate(obb->getCenter());
@@ -43,13 +41,12 @@ DecalInternal::DecalInternal(const string& id, OrientedBoundingBox* obb, Texture
 		obb->getAxes()[2] * obb->getHalfExtension()[2] * 2.0f
 	);
 	updateInternal();
+	if (texture != nullptr) texture->acquireReference();
+	this->texture = texture != nullptr?texture:TextureReader::read("resources/engine/textures", "point.png");
 }
 
 DecalInternal::~DecalInternal() {
-	if (texture != nullptr) {
-		texture->releaseReference();
-		texture = nullptr;
-	}
+	if (texture != nullptr) texture->releaseReference();
 }
 
 void DecalInternal::update()

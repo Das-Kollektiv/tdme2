@@ -56,7 +56,6 @@ protected:
 	float pointSize;
 	float pointSizeScale;
 	Texture* texture { nullptr };
-	int32_t textureId;
 	int32_t textureHorizontalSprites;
 	int32_t textureVerticalSprites;
 	float fps;
@@ -214,10 +213,10 @@ public:
 	}
 
 	/**
-	 * @return texture id
+	 * @return texture
 	 */
-	inline int32_t getTextureId() {
-		return textureId;
+	inline Texture* getTexture() {
+		return texture;
 	}
 
 	/**

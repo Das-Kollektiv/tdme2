@@ -57,19 +57,19 @@ FogParticleSystemInternal::FogParticleSystemInternal(const string& id, ParticleE
 	this->pointSize = pointSize;
 	this->pointSizeScale = 1.0f;
 	this->pointsRenderPool = nullptr;
-	this->texture = texture;
-	this->textureId = 0;
 	this->textureHorizontalSprites = textureHorizontalSprites;
 	this->textureVerticalSprites = textureVerticalSprites;
 	this->fps = fps;
+	if (texture != nullptr) texture->acquireReference();
+	this->texture = texture != nullptr?texture:TextureReader::read("resources/engine/textures", "point.png");
 }
 
 FogParticleSystemInternal::~FogParticleSystemInternal() {
 	delete emitter;
+	if (texture != nullptr) texture->releaseReference();
 }
 
 void FogParticleSystemInternal::initialize() {
-	this->textureId = this->texture == nullptr?engine->getTextureManager()->addTexture(this->texture = TextureReader::read("resources/engine/textures", "point.png"), renderer->CONTEXTINDEX_DEFAULT):engine->getTextureManager()->addTexture(this->texture, renderer->CONTEXTINDEX_DEFAULT);
 	this->pointsRenderPool = new TransparentRenderPointsPool(maxPoints);
 
 	//

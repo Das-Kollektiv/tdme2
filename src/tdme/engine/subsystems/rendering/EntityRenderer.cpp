@@ -1311,11 +1311,10 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Entity*>
 	struct PseParameters {
 		const Color4* effectColorAdd;
 		const Color4* effectColorMul;
-		int32_t textureIndex;
-		int32_t textureId;
 		int32_t textureHorizontalSprites;
 		int32_t textureVerticalSprites;
 		float pointSize;
+		int32_t atlasTextureIndex;
 	};
 	unordered_map<void*, PseParameters> rendererPseParameters;
 
@@ -1335,42 +1334,35 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Entity*>
 	// switch back to texture unit 0, TODO: check where its set to another value but not set back
 	renderer->setTextureUnit(contextIdx, 0);
 
-	// textures
-	unordered_map<int, int> textureIndices;
-
-	// find particle systems that are combined, merge those pses, transform them into camera space and sort them
+	// merge pses, transform them into camera space and sort them
 	auto& cameraMatrix = renderer->getCameraMatrix();
 	for (auto entity: pses) {
 		if (entity->getRenderPass() != renderPass) continue;
 		auto ppse = dynamic_cast<PointsParticleSystem*>(entity);
 		if (ppse != nullptr) {
-			auto textureIndexIt = textureIndices.find(ppse->getTextureId());
-			int textureIndex = textureIndexIt == textureIndices.end()?-1:textureIndexIt->second;
-			if (textureIndex == -1) textureIndices[ppse->getTextureId()] = textureIndex = textureIndices.size();
+			int atlasTextureIndex = engine->ppsTextureAtlas.getTextureIdx(ppse->getTexture());
+			if (atlasTextureIndex == TextureAtlas::TEXTURE_IDX_NONE) continue;
 			rendererPseParameters[ppse] = {
 				.effectColorAdd = &ppse->getEffectColorAdd(),
 				.effectColorMul = &ppse->getEffectColorMul(),
-				.textureIndex = textureIndex,
-				.textureId = ppse->getTextureId(),
 				.textureHorizontalSprites = ppse->getTextureHorizontalSprites(),
 				.textureVerticalSprites = ppse->getTextureVerticalSprites(),
-				.pointSize = ppse->getPointSize()
+				.pointSize = ppse->getPointSize(),
+				.atlasTextureIndex = atlasTextureIndex
 			};
 			renderTransparentRenderPointsPool->merge(ppse->getRenderPointsPool(), cameraMatrix);
 		} else {
 			auto fpse = dynamic_cast<FogParticleSystem*>(entity);
 			if (fpse != nullptr) {
-				auto textureIndexIt = textureIndices.find(fpse->getTextureId());
-				int textureIndex = textureIndexIt == textureIndices.end()?-1:textureIndexIt->second;
-				if (textureIndex == -1) textureIndices[fpse->getTextureId()] = textureIndex = textureIndices.size();
+				int atlasTextureIndex = engine->ppsTextureAtlas.getTextureIdx(fpse->getTexture());
+				if (atlasTextureIndex == TextureAtlas::TEXTURE_IDX_NONE) continue;
 				rendererPseParameters[fpse] = {
 					.effectColorAdd = &fpse->getEffectColorAdd(),
 					.effectColorMul = &fpse->getEffectColorMul(),
-					.textureIndex = textureIndex,
-					.textureId = fpse->getTextureId(),
 					.textureHorizontalSprites = fpse->getTextureHorizontalSprites(),
 					.textureVerticalSprites = fpse->getTextureVerticalSprites(),
-					.pointSize = fpse->getPointSize()
+					.pointSize = fpse->getPointSize(),
+					.atlasTextureIndex = atlasTextureIndex
 				};
 				renderTransparentRenderPointsPool->merge(fpse->getRenderPointsPool(), cameraMatrix);
 			}
@@ -1391,7 +1383,7 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Entity*>
 				}
 				psePointBatchRenderer->addPoint(
 					point,
-					pseParameters->textureIndex,
+					pseParameters->atlasTextureIndex,
 					pseParameters->pointSize,
 					*pseParameters->effectColorMul,
 					*pseParameters->effectColorAdd,
@@ -1408,7 +1400,7 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Entity*>
 				}
 				psePointBatchRenderer->addPointNoInteger(
 					point,
-					pseParameters->textureIndex,
+					pseParameters->atlasTextureIndex,
 					pseParameters->pointSize,
 					*pseParameters->effectColorMul,
 					*pseParameters->effectColorAdd,
@@ -1418,14 +1410,8 @@ void EntityRenderer::render(Entity::RenderPass renderPass, const vector<Entity*>
 			}
 		}
 
-		//
-		array<int32_t, 16> textureIds;
-		textureIds.fill(0);
-		for (auto& textureIt: textureIndices) {
-			if (textureIt.second >= 16) continue;
-			textureIds[textureIt.second] = textureIt.first;
-		}
-		engine->getParticlesShader()->setParameters(contextIdx, textureIds);
+		// texture atlas
+		engine->getParticlesShader()->setTextureAtlas(contextIdx, &engine->getPointParticleSystemTextureAtlas());
 
 		// render, clear
 		psePointBatchRenderer->render(contextIdx);

@@ -244,5 +244,8 @@ public:
 	inline void setLocalTransform(const Transform& transform) override {
 		FogParticleSystemInternal::setLocalTransform(transform);
 	}
+	inline Texture* getTexture() {
+		return FogParticleSystemInternal::getTexture();
+	}
 
 };

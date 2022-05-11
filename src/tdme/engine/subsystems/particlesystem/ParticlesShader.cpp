@@ -1,16 +1,18 @@
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/utilities/TextureAtlas.h>
 
-using tdme::engine::fileio::textures::TextureReader;
-using tdme::engine::subsystems::manager::TextureManager;
+using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 using tdme::math::Matrix4x4;
+using tdme::utilities::TextureAtlas;
 
 ParticlesShader::ParticlesShader(Engine* engine, Renderer* renderer)
 {
@@ -18,7 +20,6 @@ ParticlesShader::ParticlesShader(Engine* engine, Renderer* renderer)
 	this->renderer = renderer;
 	isRunning = false;
 	initialized = false;
-	boundTextureIds.fill(renderer->ID_NONE);
 }
 
 bool ParticlesShader::isInitialized()
@@ -30,67 +31,81 @@ void ParticlesShader::initialize()
 {
 	auto shaderVersion = renderer->getShaderVersion();
 	// particles
-	//	fragment shader
-	renderFragmentShaderId = renderer->loadShader(
-		renderer->SHADER_FRAGMENT_SHADER,
-		"shader/" + shaderVersion + "/particles",
-		"render_fragmentshader.frag",
-		"#define HAVE_DEPTH_FOG"
-	);
-	if (renderFragmentShaderId == 0) return;
 	//	vertex shader
-	renderVertexShaderId = renderer->loadShader(
+	vertexShaderId = renderer->loadShader(
 		renderer->SHADER_VERTEX_SHADER,
 		"shader/" + shaderVersion + "/particles",
 		"render_vertexshader.vert",
-		"#define HAVE_DEPTH_FOG"
+		string() +
+			"#define HAVE_DEPTH_FOG\n" +
+			"#define ATLASTEXTURE_COUNT " + to_string(ATLASTEXTURE_COUNT) + "\n"
 	);
-	if (renderVertexShaderId == 0) return;
+	if (vertexShaderId == 0) return;
+	//	fragment shader
+	fragmentShaderId = renderer->loadShader(
+		renderer->SHADER_FRAGMENT_SHADER,
+		"shader/" + shaderVersion + "/particles",
+		"render_fragmentshader.frag",
+		string() +
+			"#define HAVE_DEPTH_FOG\n" +
+			"#define ATLASTEXTURE_COUNT " + to_string(ATLASTEXTURE_COUNT) + "\n"
+	);
+	if (fragmentShaderId == 0) return;
 	// create, attach and link program
-	renderProgramId = renderer->createProgram(renderer->PROGRAM_POINTS);
-	renderer->attachShaderToProgram(renderProgramId, renderVertexShaderId);
-	renderer->attachShaderToProgram(renderProgramId, renderFragmentShaderId);
+	programId = renderer->createProgram(renderer->PROGRAM_POINTS);
+	renderer->attachShaderToProgram(programId, vertexShaderId);
+	renderer->attachShaderToProgram(programId, fragmentShaderId);
 	// map inputs to attributes
 	if (renderer->isUsingProgramAttributeLocation() == true) {
-		renderer->setProgramAttributeLocation(renderProgramId, 0, "inVertex");
-		renderer->setProgramAttributeLocation(renderProgramId, 1, "inTextureSpriteIndex");
-		renderer->setProgramAttributeLocation(renderProgramId, 3, "inColor");
-		renderer->setProgramAttributeLocation(renderProgramId, 5, "inPointSize");
-		renderer->setProgramAttributeLocation(renderProgramId, 6, "inSpriteSheetDimensions");
-		renderer->setProgramAttributeLocation(renderProgramId, 10, "inEffectColorMul");
-		renderer->setProgramAttributeLocation(renderProgramId, 11, "inEffectColorAdd");
+		renderer->setProgramAttributeLocation(programId, 0, "inVertex");
+		renderer->setProgramAttributeLocation(programId, 1, "inTextureSpriteIndex");
+		renderer->setProgramAttributeLocation(programId, 3, "inColor");
+		renderer->setProgramAttributeLocation(programId, 5, "inPointSize");
+		renderer->setProgramAttributeLocation(programId, 6, "inSpriteSheetDimensions");
+		renderer->setProgramAttributeLocation(programId, 10, "inEffectColorMul");
+		renderer->setProgramAttributeLocation(programId, 11, "inEffectColorAdd");
 	}
 	// link program
-	if (renderer->linkProgram(renderProgramId) == false) return;
+	if (renderer->linkProgram(programId) == false) return;
 
 	// get uniforms
-	uniformMVPMatrix = renderer->getProgramUniformLocation(renderProgramId, "mvpMatrix");
+	uniformMVPMatrix = renderer->getProgramUniformLocation(programId, "mvpMatrix");
 	if (uniformMVPMatrix == -1) return;
-	for (auto i = 0; i < uniformDiffuseTextureUnits.size(); i++) {
-		uniformDiffuseTextureUnits[i] = renderer->getProgramUniformLocation(renderProgramId, "diffuseTextureUnits[" + to_string(i) + "]");
-		if (i == 0 && uniformDiffuseTextureUnits[i] == -1) return;
-	}
+
 	// TODO: use ivec2 and vec2
-	uniformViewPortWidth = renderer->getProgramUniformLocation(renderProgramId, "viewPortWidth");
+	uniformViewPortWidth = renderer->getProgramUniformLocation(programId, "viewPortWidth");
 	if (uniformViewPortWidth == -1) return;
-	uniformViewPortHeight = renderer->getProgramUniformLocation(renderProgramId, "viewPortHeight");
+	uniformViewPortHeight = renderer->getProgramUniformLocation(programId, "viewPortHeight");
 	if (uniformViewPortHeight == -1) return;
-	uniformProjectionMatrixXx = renderer->getProgramUniformLocation(renderProgramId, "projectionMatrixXx");
+	uniformProjectionMatrixXx = renderer->getProgramUniformLocation(programId, "projectionMatrixXx");
 	if (uniformProjectionMatrixXx == -1) return;
-	uniformProjectionMatrixYy = renderer->getProgramUniformLocation(renderProgramId, "projectionMatrixYy");
+	uniformProjectionMatrixYy = renderer->getProgramUniformLocation(programId, "projectionMatrixYy");
 	if (uniformProjectionMatrixYy == -1) return;
+
+	//
+	uniformTextureAtlasTextureUnit = renderer->getProgramUniformLocation(programId, "textureAtlasTextureUnit");
+	if (uniformTextureAtlasTextureUnit == -1) return;
+
+	//
+	for (auto i = 0; i < ATLASTEXTURE_COUNT; i++) {
+		uniformAtlasTextureOrientation[i] = renderer->getProgramUniformLocation(programId, "atlasTextures[" + to_string(i) + "].orientation");
+		if (uniformAtlasTextureOrientation[i] == -1) return;
+		uniformAtlasTexturePosition[i] = renderer->getProgramUniformLocation(programId, "atlasTextures[" + to_string(i) + "].position");
+		if (uniformAtlasTexturePosition[i] == -1) return;
+		uniformAtlasTextureDimension[i] = renderer->getProgramUniformLocation(programId, "atlasTextures[" + to_string(i) + "].dimension");
+		if (uniformAtlasTextureDimension[i] == -1) return;
+	}
+
+	//
 	initialized = true;
 }
 
 void ParticlesShader::useProgram(int contextIdx)
 {
 	isRunning = true;
-	renderer->useProgram(contextIdx, renderProgramId);
+	renderer->useProgram(contextIdx, programId);
 	renderer->setLighting(contextIdx, renderer->LIGHTING_NONE);
-	for (auto i = 0; i < uniformDiffuseTextureUnits.size(); i++) {
-		if (uniformDiffuseTextureUnits[i] == -1) break;
-		renderer->setProgramUniformInteger(contextIdx, uniformDiffuseTextureUnits[i], i);
-	}
+	renderer->setProgramUniformInteger(contextIdx, uniformTextureAtlasTextureUnit, 0);
 }
 
 void ParticlesShader::updateEffect(int contextIdx)
@@ -102,15 +117,8 @@ void ParticlesShader::updateEffect(int contextIdx)
 void ParticlesShader::unUseProgram(int contextIdx)
 {
 	isRunning = false;
-	for (auto i = 0; i < boundTextureIds.size(); i++) {
-		if (uniformDiffuseTextureUnits[i] == -1) break;
-		auto textureId = boundTextureIds[i];
-		if (textureId == 0) continue;
-		renderer->setTextureUnit(contextIdx, i);
-		renderer->bindTexture(contextIdx, renderer->ID_NONE);
-	}
 	renderer->setTextureUnit(contextIdx, 0);
-	boundTextureIds.fill(renderer->ID_NONE);
+	renderer->bindTexture(contextIdx, renderer->ID_NONE);
 }
 
 void ParticlesShader::updateMatrices(int contextIdx)
@@ -126,21 +134,47 @@ void ParticlesShader::updateMatrices(int contextIdx)
 	renderer->setProgramUniformInteger(contextIdx, uniformViewPortHeight, renderer->getViewPortHeight());
 }
 
-void ParticlesShader::setParameters(int contextIdx, const array<int32_t, 16>& textureIds) {
-	for (auto i = 0; i < boundTextureIds.size(); i++) {
-		if (uniformDiffuseTextureUnits[i] == -1) break;
-		auto textureId = boundTextureIds[i];
-		if (textureId == renderer->ID_NONE) continue;
-		renderer->setTextureUnit(contextIdx, i);
-		renderer->bindTexture(contextIdx, renderer->ID_NONE);
+void ParticlesShader::setTextureAtlas(int contextIdx, TextureAtlas* textureAtlas) {
+	if (textureAtlas->isRequiringUpdate() == true) {
+		textureAtlas->update();
+		if (textureAtlas->getAtlasTexture() != nullptr) {
+			if (ppsTextureAtlasTextureId == renderer->ID_NONE) ppsTextureAtlasTextureId = renderer->createTexture();
+			renderer->bindTexture(contextIdx, ppsTextureAtlasTextureId);
+			renderer->uploadTexture(contextIdx, textureAtlas->getAtlasTexture());
+		} else
+		if (ppsTextureAtlasTextureId != renderer->ID_NONE) {
+			renderer->disposeTexture(ppsTextureAtlasTextureId);
+			ppsTextureAtlasTextureId = renderer->ID_NONE;
+		}
 	}
-	for (auto i = 0; i < textureIds.size(); i++) {
-		if (uniformDiffuseTextureUnits[i] == -1) break;
-		auto textureId = textureIds[i];
-		if (textureId == renderer->ID_NONE) continue;
-		renderer->setTextureUnit(contextIdx, i);
-		renderer->bindTexture(contextIdx, textureId);
+
+	//
+	auto textureAtlasTexture = textureAtlas->getAtlasTexture();
+	if (textureAtlasTexture == nullptr) return;
+
+	//
+	auto textureAtlasTextureWidth = textureAtlasTexture->getTextureWidth();
+	auto textureAtlasTextureHeight = textureAtlasTexture->getTextureHeight();
+	renderer->bindTexture(contextIdx, ppsTextureAtlasTextureId);
+	for (auto atlasTextureIdx = 0; atlasTextureIdx < ATLASTEXTURE_COUNT; atlasTextureIdx++) {
+		auto atlasTexture = textureAtlas->getAtlasTexture(atlasTextureIdx);
+		if (atlasTexture == nullptr) break;
+		renderer->setProgramUniformInteger(contextIdx, uniformAtlasTextureOrientation[atlasTextureIdx], atlasTexture->orientation);
+		renderer->setProgramUniformFloatVec2(
+			contextIdx,
+			uniformAtlasTexturePosition[atlasTextureIdx],
+			{
+				static_cast<float>(atlasTexture->left) / static_cast<float>(textureAtlasTextureWidth),
+				static_cast<float>(atlasTexture->top) / static_cast<float>(textureAtlasTextureHeight)
+			}
+		);
+		renderer->setProgramUniformFloatVec2(
+			contextIdx,
+			uniformAtlasTextureDimension[atlasTextureIdx],
+			{
+				static_cast<float>(atlasTexture->width) / static_cast<float>(textureAtlasTextureWidth),
+				static_cast<float>(atlasTexture->height) / static_cast<float>(textureAtlasTextureHeight)
+			}
+		);
 	}
-	renderer->setTextureUnit(contextIdx, 0);
-	boundTextureIds = textureIds;
 }

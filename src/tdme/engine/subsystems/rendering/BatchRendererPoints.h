@@ -78,10 +78,16 @@ private:
 	/**
 	 * Adds a transparent render point to this transparent render points
 	 * @param point transparent render point
+	 * @param atlasTextureIndex atlas texture index
+	 * @param pointSize point size
+	 * @param effectColorMul effect color mul
+	 * @param effectColorAdd effect color add
+	 * @param textureHorizontalSprites texture horizontal sprites
+	 * @param textureVerticalSprites texture vertical sprites
 	 */
-	inline void addPoint(const TransparentRenderPoint* point, int textureIndex, float pointSize, const Color4& effectColorMul, const Color4& effectColorAdd, int textureHorizontalSprites, int textureVerticalSprites) {
+	inline void addPoint(const TransparentRenderPoint* point, int atlasTextureIndex, float pointSize, const Color4& effectColorMul, const Color4& effectColorAdd, int textureHorizontalSprites, int textureVerticalSprites) {
 		fbVertices.put(point->point.getArray());
-		sbTextureSpriteIndices.put(textureIndex);
+		sbTextureSpriteIndices.put(atlasTextureIndex);
 		sbTextureSpriteIndices.put(point->spriteIndex);
 		fbColors.put(point->color.getArray());
 		fbPointSizes.put(pointSize);
@@ -94,10 +100,16 @@ private:
 	/**
 	 * Adds a transparent render point to this transparent render points
 	 * @param point transparent render point
+	 * @param atlasTextureIndex atlas texture index
+	 * @param pointSize point size
+	 * @param effectColorMul effect color mul
+	 * @param effectColorAdd effect color add
+	 * @param textureHorizontalSprites texture horizontal sprites
+	 * @param textureVerticalSprites texture vertical sprites
 	 */
-	inline void addPointNoInteger(const TransparentRenderPoint* point, int textureIndex, float pointSize, const Color4& effectColorMul, const Color4& effectColorAdd, int textureHorizontalSprites, int textureVerticalSprites) {
+	inline void addPointNoInteger(const TransparentRenderPoint* point, int atlasTextureIndex, float pointSize, const Color4& effectColorMul, const Color4& effectColorAdd, int textureHorizontalSprites, int textureVerticalSprites) {
 		fbVertices.put(point->point.getArray());
-		fbTextureSpriteIndices.put(static_cast<float>(textureIndex + 0.1f));
+		fbTextureSpriteIndices.put(static_cast<float>(atlasTextureIndex + 0.1f));
 		fbTextureSpriteIndices.put(static_cast<float>(point->spriteIndex + 0.1f));
 		fbColors.put(point->color.getArray());
 		fbPointSizes.put(pointSize);

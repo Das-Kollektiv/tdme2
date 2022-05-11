@@ -302,6 +302,7 @@ private:
 
 	map<string, map<string, ShaderParameter>> shaderParameters;
 
+	TextureAtlas ppsTextureAtlas {"tdme.pps.atlas"};
 	TextureAtlas decalsTextureAtlas {"tdme.decals.atlas"};
 
 	vector<Action*> actions;
@@ -490,6 +491,13 @@ private:
 	 */
 	inline EntityRenderer* getEntityRenderer() {
 		return entityRenderer;
+	}
+
+	/**
+	 * @return point particle system texture atlas
+	 */
+	inline TextureAtlas& getPointParticleSystemTextureAtlas() {
+		return ppsTextureAtlas;
 	}
 
 	/**

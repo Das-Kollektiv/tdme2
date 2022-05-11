@@ -27,7 +27,7 @@ class tdme::engine::subsystems::framebuffer::DeferredLightingRenderShader final
 {
 
 private:
-	static constexpr int DECAL_COUNT { 100 };
+	static constexpr int DECAL_COUNT { 128 };
 
 	Renderer* renderer { nullptr };
 	int32_t vertexShaderId { -1 };

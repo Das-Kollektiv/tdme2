@@ -319,10 +319,14 @@ void DeferredLightingRenderShader::useProgram(Engine* engine, vector<Decal*>& de
 	if (decalsTextureAtlas.isRequiringUpdate() == true) {
 		decalsTextureAtlas.update();
 		if (decalsTextureAtlas.getAtlasTexture() != nullptr) {
-			if (decalsTextureAtlasTextureId == 0) decalsTextureAtlasTextureId = renderer->createTexture();
+			if (decalsTextureAtlasTextureId == renderer->ID_NONE) decalsTextureAtlasTextureId = renderer->createTexture();
 			renderer->setTextureUnit(contextIdx, 12);
 			renderer->bindTexture(contextIdx, decalsTextureAtlasTextureId);
 			renderer->uploadTexture(contextIdx, decalsTextureAtlas.getAtlasTexture());
+		} else
+		if (decalsTextureAtlasTextureId != renderer->ID_NONE) {
+			renderer->disposeTexture(decalsTextureAtlasTextureId);
+			decalsTextureAtlasTextureId = renderer->ID_NONE;
 		}
 	}
 	auto decalsTextureAtlasTexture = decalsTextureAtlas.getAtlasTexture();
