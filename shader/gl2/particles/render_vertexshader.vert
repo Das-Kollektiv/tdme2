@@ -2,6 +2,8 @@
 
 precision highp float;
 
+{$DEFINITIONS}
+
 // attributes
 attribute vec3 inVertex;
 attribute vec2 inTextureSpriteIndex;
