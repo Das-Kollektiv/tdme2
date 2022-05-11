@@ -256,12 +256,14 @@ void GUI::setFoccussedNode(GUIElementNode* newFoccussedNode)
 {
 	auto focussedNodeScreen = getScreen(focussedNodeScreenId);
 	auto focussedNode = dynamic_cast<GUIElementNode*>(focussedNodeScreen != nullptr?focussedNodeScreen->getNodeById(focussedNodeNodeId):nullptr);
-	if (focussedNode == newFoccussedNode) return;
+	if (focussedNode == newFoccussedNode) {
+		return;
+	}
 	unfocusNode();
+	determineFocussedNodes();
 	this->focussedNodeScreenId = newFoccussedNode == nullptr?string():newFoccussedNode->getScreenNode()->getId();
 	this->focussedNodeNodeId = newFoccussedNode == nullptr?string():newFoccussedNode->getId();
 	if (newFoccussedNode != nullptr) focusNode();
-	determineFocussedNodes();
 }
 
 void GUI::focusNextNode()
@@ -566,6 +568,11 @@ void GUI::handleEvents(bool clearEvents)
 		}
 	}
 
+	// handle keyboard events
+	for (auto& event: keyboardEvents) {
+		handleKeyboardEvent(&event);
+	}
+
 	// call tick and input event handler
 	for (int i = renderScreensCopy.size() - 1; i >= 0; i--) {
 		auto screen = renderScreensCopy[i];
@@ -575,11 +582,6 @@ void GUI::handleEvents(bool clearEvents)
 			screen->getInputEventHandler()->handleInputEvents();
 		}
 		if (screen->isPopUp() == true) break;
-	}
-
-	// handle keyboard events
-	for (auto& event: keyboardEvents) {
-		handleKeyboardEvent(&event);
 	}
 
 	//
