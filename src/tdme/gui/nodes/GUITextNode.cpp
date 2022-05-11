@@ -77,6 +77,7 @@ int GUITextNode::getContentHeight()
 }
 
 void GUITextNode::setText(const MutableString& text) {
+	if (this->text.equals(text)) return;
 	this->text = text;
 	screenNode->invalidateLayout(this);
 }
