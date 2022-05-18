@@ -22,7 +22,7 @@ void StringTokenizer::tokenize(const string& str, const string& delimiters)
 			// yep, add token to elements if we have any
 			if (token.length() > 0) {
 				tokens.push_back(token);
-				token = "";
+				token.clear();
 			}
 		} else {
 			// no delimiter, add char to token
@@ -30,8 +30,7 @@ void StringTokenizer::tokenize(const string& str, const string& delimiters)
 		}
 	}
 	// do we have a token still? add it to elements
-	if (token.length() > 0) {
+	if (token.empty() == false) {
 		tokens.push_back(token);
-		token = "";
 	}
 }
