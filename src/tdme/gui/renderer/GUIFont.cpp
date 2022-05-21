@@ -1,5 +1,11 @@
 #include <tdme/gui/renderer/GUIFont.h>
 
+#include <tdme/engine/fileio/textures/PNGTextureWriter.h>
+using tdme::engine::fileio::textures::PNGTextureWriter;
+
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -7,18 +13,21 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
-#include <tdme/engine/subsystems/manager/TextureManager.h>
+#include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/renderer/GUICharacter.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/math/Math.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/utilities/ByteBuffer.h>
+#include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTokenizer.h>
 #include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/TextureAtlas.h>
 
 using std::string;
 using std::unordered_map;
@@ -26,7 +35,7 @@ using std::vector;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
-using tdme::engine::subsystems::manager::TextureManager;
+using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
 using tdme::gui::renderer::GUICharacter;
 using tdme::gui::renderer::GUIFont;
@@ -34,140 +43,161 @@ using tdme::gui::renderer::GUIRenderer;
 using tdme::math::Math;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::utilities::ByteBuffer;
+using tdme::utilities::Exception;
 using tdme::utilities::Float;
 using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTokenizer;
 using tdme::utilities::StringTools;
+using tdme::utilities::TextureAtlas;
 
-GUIFont::GUIFont()
+bool GUIFont::ftInitialized = false;
+FT_Library GUIFont::ftLibrary;
+
+GUIFont::GUIFont(const string& pathName, const string& fileName, int size): textureAtlas("font:" + pathName + "/" + fileName + "@" + to_string(size))
 {
+	// TODO: use pathName + fileName
+	if (FT_New_Face(ftLibrary, "resources/engine/fonts/Roboto-Regular.ttf", 0, &ftFace) == true) {
+		Console::println("GUIFont::parse(): Could not load font: " + pathName + "/" + fileName);
+		return;
+	}
+
+	//
+	FT_Set_Pixel_Sizes(ftFace, 0, size);
+
+	//
+	lineHeight = ftFace->size->metrics.height >> 6;
+	baseLine = ftFace->size->metrics.ascender >> 6;
 }
 
 GUIFont::~GUIFont()
 {
 	for (auto& charIt: chars) delete charIt.second;
-	if (texture != nullptr) texture->releaseReference();
+	FT_Done_Face(ftFace);
 }
 
-GUIFont* GUIFont::parse(const string& pathName, const string& fileName)
+GUIFont* GUIFont::parse(const string& pathName, const string& fileName, int size)
 {
-	int lineIdx = 0;
-	auto font = new GUIFont();
-	vector<string> lines;
-	FileSystem::getInstance()->getContentAsStringArray(pathName, fileName, lines);
-	auto& info = lines[lineIdx++];
-	auto& common = lines[lineIdx++];
-	auto& page = lines[lineIdx++];
-	font->texture = TextureReader::read(
-		pathName,
-		StringTools::substring(page, page.find("file=") + string("file=\"").length(), page.find_last_of("\"")),
-		false,
-		false
-	);
-	// parse "common" line which contains line height and base line
-	{
-		StringTokenizer t;
-		t.tokenize(common, "= ");
-		enum ParseMode { MODE_PARSEMODE, MODE_IGNORE, MODE_LINEHEIGHT, MODE_BASE };
-		ParseMode parseMode = MODE_PARSEMODE;
-		while (t.hasMoreTokens()) {
-			auto token = StringTools::toLowerCase(StringTools::trim(t.nextToken()));
-			if (parseMode == MODE_PARSEMODE) {
-				if (token == "common") {
-					parseMode = MODE_PARSEMODE;
-				} else
-				if (token == "lineheight") {
-					parseMode = MODE_LINEHEIGHT;
-				} else
-				if (token == "base") {
-					parseMode = MODE_BASE;
-				} else {
-					parseMode = MODE_IGNORE;
-				}
-			} else
-			if (parseMode == MODE_IGNORE) {
-				// no op
-			} else
-			if (parseMode == MODE_LINEHEIGHT) {
-				font->lineHeight = Float::parse(token);
-				parseMode = MODE_PARSEMODE;
-			} else
-			if (parseMode == MODE_BASE) {
-				font->baseLine = Float::parse(token);
-				parseMode = MODE_PARSEMODE;
-			}
+	// init freetype library if not yet done
+	if (ftInitialized == false) {
+		if (FT_Init_FreeType(&ftLibrary) == true) {
+			Console::println("GUIFont::parse(): Could not initialize freetype library");
+			return nullptr;
 		}
+		ftInitialized = true;
 	}
-	while (lineIdx < lines.size()) {
-		auto line = lines[lineIdx++];
-		if (StringTools::startsWith(line, "chars c ")) {
-		} else
-		if (StringTools::startsWith(line, "char ")) {
-			auto def = font->parseCharacter(line);
-			font->chars[def->getId()] = def;
-		} else
-		if (StringTools::startsWith(line, "kernings c ")) {
-		} else
-		if (StringTools::startsWith(line, "kerning ")) {
-			/*
-			// TODO: not yet supported in the moment
-			StringTokenizer t;
-			t.tokenize(line, " =");
-			t.nextToken();
-			t.nextToken();
-			auto first = Float::parseInt(t.nextToken());
-			t.nextToken();
-			auto second = Float::parseInt(t.nextToken());
-			t.nextToken();
-			auto offset = Float::parseInt(t.nextToken());
-			*/
-		}
-	}
+
+	// include standard characters in default atlas
+	auto font = new GUIFont(pathName, fileName, size);
+	// font->updateTextureAtlas("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ^0123456789°!&quot;$%&/()=?+*-<>|#,;.:'\"");
+	// Unicode: Not yet: §°!
+	font->updateTextureAtlas(" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ^0123456789&quot;$%&/()=?+*-<>|#,;.:'\"");
+
+	//
 	return font;
 }
 
-GUICharacter* GUIFont::parseCharacter(const string& line)
-{
-	StringTokenizer t;
-	t.tokenize(line, " =");
-	t.nextToken();
-	t.nextToken();
-	auto id = Float::parse(t.nextToken());
-	t.nextToken();
-	auto x = Float::parse(t.nextToken());
-	t.nextToken();
-	auto y = Float::parse(t.nextToken());
-	t.nextToken();
-	auto width = Float::parse(t.nextToken());
-	t.nextToken();
-	auto height = Float::parse(t.nextToken());
-	t.nextToken();
-	auto xOffset = Float::parse(t.nextToken());
-	t.nextToken();
-	auto yOffset = Float::parse(t.nextToken());
-	t.nextToken();
-	auto xAdvance = Float::parse(t.nextToken());
-	return new GUICharacter(
-		id,
-		x,
-		y,
-		width,
-		height,
-		xOffset,
-		yOffset,
-		xAdvance
+void GUIFont::addToTextureAtlas(uint32_t charId) {
+	Console::println("GUIFont::addToTextureAtlas(): " + (string() + (char)charId));
+	//
+	if (FT_Load_Char(ftFace, charId, FT_LOAD_RENDER))
+	{
+		Console::println("GUIFont::addToTextureAtlas(): Could not load glyph");
+	    return;
+	}
+
+	//
+	auto glyphBitmapWidth = ftFace->glyph->bitmap.width;
+	auto glyphBitmapHeight = ftFace->glyph->bitmap.rows;
+	auto glyphBitmapBuffer = ftFace->glyph->bitmap.buffer;
+	auto glyphByteBuffer = ByteBuffer::allocate(glyphBitmapWidth * glyphBitmapHeight * 4);
+	for (int y = glyphBitmapHeight - 1; y >= 0; y--) {
+	//for (auto y = 0; y < glyphBitmapHeight; y++) {
+		for (auto x = 0; x < glyphBitmapWidth; x++) {
+			auto v = glyphBitmapBuffer[y * glyphBitmapWidth + x];
+			glyphByteBuffer->put(v); // red
+			glyphByteBuffer->put(v); // green
+			glyphByteBuffer->put(v); // blue
+			glyphByteBuffer->put(v); // alpha
+		}
+	}
+
+	//
+	auto glyphTexture = new Texture(
+		to_string(charId),
+		32,
+		glyphBitmapWidth, glyphBitmapHeight,
+		glyphBitmapWidth, glyphBitmapHeight,
+		glyphByteBuffer
 	);
+	textureAtlas.addTexture(glyphTexture);
+
+	Console::println(to_string(charId) + ": " + to_string(ftFace->glyph->bitmap.rows) + " / " + to_string(ftFace->glyph->bitmap_top));
+
+	//
+	auto character = new GUICharacter(
+		charId,
+		-1,
+		-1,
+		glyphBitmapWidth,
+		glyphBitmapHeight,
+		ftFace->glyph->bitmap_left,
+		ftFace->glyph->bitmap.rows - ftFace->glyph->bitmap_top,
+		ftFace->glyph->advance.x >> 6
+	);
+	chars[charId] = character;
+}
+
+void GUIFont::updateCharacters() {
+	if (textureAtlas.isRequiringUpdate() == true) {
+		textureAtlas.update();
+		// PNGTextureWriter::write(textureAtlas.getAtlasTexture(), ".", "test.png", false, false);
+		auto renderer = Engine::getInstance()->renderer;
+		auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
+		if (textureAtlas.getAtlasTexture() != nullptr) {
+			if (textureId == renderer->ID_NONE) textureId = renderer->createTexture();
+			renderer->bindTexture(contextIdx, textureId);
+			renderer->uploadTexture(contextIdx, textureAtlas.getAtlasTexture());
+		} else
+		if (textureId != renderer->ID_NONE) {
+			renderer->disposeTexture(textureId);
+			textureId = renderer->ID_NONE;
+		}
+	}
+	for (auto i = 0;; i++) {
+		auto atlasTexture = textureAtlas.getAtlasTexture(i);
+		if (atlasTexture == nullptr) {
+			Console::println("GUIFont::updateCharacters(): breaking at " + to_string(i));
+			break;
+		}
+		// TODO: get rid of Integer::parse
+		uint32_t charId = 0;
+		try {
+			charId = Integer::parse(atlasTexture->texture->getId());
+		} catch (Exception& e)  {
+			Console::println("GUIFont::updateCharacters(): continueing at " + to_string(i));
+		}
+		if (charId == 0) {
+			continue;
+		}
+		//
+		auto character = getCharacter(charId);
+		if (character == nullptr) {
+			Console::println("GUIFont::updateCharacters(): Could not find character for font character '" + atlasTexture->texture->getId() + "'");
+			continue;
+		}
+		character->x = atlasTexture->left;
+		character->y = atlasTexture->top;
+	}
 }
 
 void GUIFont::initialize()
 {
-	textureId = Engine::getInstance()->getTextureManager()->addTexture(texture, 0);
 }
 
 void GUIFont::dispose()
 {
-	Engine::getInstance()->getTextureManager()->removeTexture(texture->getId());
 }
 
 int GUIFont::getTextIndexX(const MutableString& text, int offset, int length, int index)
@@ -232,8 +262,8 @@ void GUIFont::drawCharacter(GUIRenderer* guiRenderer, GUICharacter* character, i
 	float top = y + character->getYOffset();
 	float width = character->getWidth();
 	float height = character->getHeight();
-	float textureWidth = texture->getTextureWidth();
-	float textureHeight = texture->getTextureHeight();
+	float textureWidth = textureAtlas.getAtlasTexture()->getTextureWidth();
+	float textureHeight = textureAtlas.getAtlasTexture()->getTextureHeight();
 	float textureCharLeft = character->getX();
 	float textureCharTop = character->getY();
 	float textureCharWidth = character->getWidth();

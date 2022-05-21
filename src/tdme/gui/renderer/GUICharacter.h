@@ -8,6 +8,8 @@
  */
 class tdme::gui::renderer::GUICharacter final
 {
+	friend class GUIFont;
+
 public:
 	/**
 	 * Public constructor
@@ -21,7 +23,7 @@ public:
 	 * @param xAdvance the amount to move the current position after drawing the character
 	 */
 	inline GUICharacter(
-		float id,
+		uint32_t id,
 		float x,
 		float y,
 		float width,
@@ -45,7 +47,7 @@ public:
 	/**
 	 * @return id
 	 */
-	float getId() {
+	uint32_t getId() {
 		return id;
 	}
 
@@ -99,7 +101,7 @@ public:
 	}
 
 private:
-	float id;
+	uint32_t id;
 	float x;
 	float y;
 	float width;

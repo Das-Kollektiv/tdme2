@@ -104,11 +104,11 @@ else ifeq ($(OS), Haiku)
 	OFLAGS := -O2
 else ifeq ($(OS), Linux)
 	# Linux
-	INCLUDES := $(INCLUDES) -L/usr/lib64
-	OPENGL_RENDERER_LDFLAGS := -lGLEW -lGL -lglfw
-	VULKAN_RENDERER_LDFLAGS := -lvulkan -lglfw
-	OPENGLES2_RENDERER_LDFLAGS := -lGLESv2 -lEGL -lglfw
-	LIBS_LDFLAGS := -ldl -lglfw -lopenal
+	INCLUDES := $(INCLUDES) -I/usr/include/freetype2
+	OPENGL_RENDERER_LDFLAGS := -L/usr/lib64 -lGLEW -lGL -lglfw
+	VULKAN_RENDERER_LDFLAGS := -L/usr/lib64 -lvulkan -lglfw
+	OPENGLES2_RENDERER_LDFLAGS := -L/usr/lib64 -lGLESv2 -lEGL -lglfw
+	LIBS_LDFLAGS := -L/usr/lib64 -ldl -lglfw -lopenal -lfreetype
 	OFLAGS := -O2
 	ifeq ($(MACHINE), x86_64)
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \

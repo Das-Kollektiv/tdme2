@@ -1,5 +1,8 @@
 #pragma once
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
 #include <string>
 #include <unordered_map>
 
@@ -12,6 +15,7 @@
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/TextureAtlas.h>
 
 #include <tdme/os/filesystem/FileSystemException.h>
 
@@ -25,6 +29,7 @@ using tdme::gui::renderer::GUICharacter;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::os::filesystem::FileSystemException;
 using tdme::utilities::MutableString;
+using tdme::utilities::TextureAtlas;
 
 /**
  * GUI Font
@@ -46,32 +51,58 @@ using tdme::utilities::MutableString;
 class tdme::gui::renderer::GUIFont final
 {
 private:
-	Texture* texture { nullptr };
-	int32_t textureId { -1 };
+	static bool ftInitialized;
+	static FT_Library ftLibrary;
+	FT_Face ftFace;
+	TextureAtlas textureAtlas;
+	int32_t textureId { 0 };
 	unordered_map<uint32_t, GUICharacter*> chars;
 	float lineHeight { 0.0f };
 	float baseLine { 0.0f };
 
 	/**
 	 * Public constructor
+	 * @param pathName font path name
+	 * @param fileName font file name
+	 * @param size font pixel size
 	 */
-	GUIFont();
+	GUIFont(const string& pathName, const string& fileName, int size);
 
 	/**
-	 * Parse a single character line from the definition
-	 * @param line line The line to be parsed
-	 * @return The character definition from the line
+	 * Update texture atlas
+	 * @param text text chars to be included in atlas
 	 */
-	GUICharacter* parseCharacter(const string& line);
+	inline void updateTextureAtlas(const string& text) {
+		auto updatedTextureAtlas = false;
+		for (auto i = 0; i < text.size(); i++) {
+			if (getCharacter(text[i]) == nullptr) {
+				addToTextureAtlas(text[i]);
+				updatedTextureAtlas = true;
+			}
+		}
+		if (updatedTextureAtlas == true) updateCharacters();
+	}
+
+	/**
+	 * Add code point / character with given id to texture atlas
+	 * @param charId character id
+	 */
+	void addToTextureAtlas(uint32_t charId);
+
+	/**
+	 * Update characters
+	 */
+	void updateCharacters();
 
 public:
 	/**
 	 * Parse the font definition file
 	 * @param pathName font path name
 	 * @param fileName font file name
+	 * @param size font pixel size
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
-	static GUIFont* parse(const string& pathName, const string& fileName);
+	static GUIFont* parse(const string& pathName, const string& fileName, int size = 20);
 
 	/**
 	 * Destructor

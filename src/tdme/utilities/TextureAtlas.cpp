@@ -120,15 +120,17 @@ void TextureAtlas::update() {
 		atlasTexture.left = -1;
 		atlasTexture.height = -1;
 		atlasTexture.line = -1;
+		/*
 		if (atlasTexture.texture->getTextureWidth() > atlasTexture.texture->getTextureHeight()) {
 			atlasTexture.orientation = AtlasTexture::ORIENTATION_ROTATED;
 			atlasTexture.width = atlasTexture.texture->getTextureHeight();
 			atlasTexture.height = atlasTexture.texture->getTextureWidth();
 		} else {
+		*/
 			atlasTexture.orientation = AtlasTexture::ORIENTATION_NORMAL;
 			atlasTexture.width = atlasTexture.texture->getTextureWidth();
 			atlasTexture.height = atlasTexture.texture->getTextureHeight();
-		}
+		//}
 		totalWidth+= atlasTexture.texture->getTextureWidth();
 		totalHeight+= atlasTexture.texture->getTextureHeight();
 		atlasTextures.push_back(atlasTextureIdxToTextureMappingIt.second);
