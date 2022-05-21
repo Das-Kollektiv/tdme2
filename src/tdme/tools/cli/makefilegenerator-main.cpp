@@ -34,6 +34,10 @@ void scanDir(const string& folder, vector<string>& sourceFiles, vector<string>& 
 				if (fileName == ".") return false;
 				if (fileName == "..") return false;
 				if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) return true;
+				// skip on CPP files that gets #include ed
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".incl.cpp") == true) return false;
+				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".include.cpp") == true) return false;
+				// CPP hit, yes
 				if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".cpp") == true) return true;
 				return false;
 			}
