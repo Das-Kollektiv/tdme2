@@ -309,35 +309,34 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 	auto keyChar = event->getKeyChar();
 	if (disabled == false &&
 		keyControl == false &&
+		event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED &&
 		(
-			(type == TYPE_STRING && keyChar >= 32 && keyChar < 127) ||
+			(type == TYPE_STRING) ||
 			(type == TYPE_FLOAT && ((keyChar >= '0' && keyChar <= '9') || (keyChar == '.') || keyChar == '-')) ||
 			(type == TYPE_INT && ((keyChar >= '0' && keyChar <= '9') || keyChar == '-'))
 		)) {
 		event->setProcessed(true);
-		if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) {
-			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
-				textInputNode->getText().remove(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
-				index = Math::min(index, selectionIndex);
-				selectionIndex = -1;
-			}
-			if (textInputNode->getMaxLength() == 0 || textInputNode->getText().size() < textInputNode->getMaxLength()) {
-				if (type == TYPE_FLOAT && keyChar == '.' && textInputNode->getText().getString().find('.') != string::npos) {
-					// no op
-				} else
-				if (type == TYPE_FLOAT && keyChar == '-' && (textInputNode->getText().getString().find('-') != string::npos || index != 0)) {
-					// no op
-				} else
-				if (type == TYPE_INT && keyChar == '-' && (textInputNode->getText().getString().find('-') != string::npos || index != 0)) {
-					// no op
-				} else {
-					textInputNode->getText().insert(index, event->getKeyChar());
-					index++;
-					resetCursorMode();
-					checkOffset();
-					required_dynamic_cast<GUIInputController*>(inputNode->getController())->onValueChange();
-					node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
-				}
+		if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
+			textInputNode->getText().remove(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+			index = Math::min(index, selectionIndex);
+			selectionIndex = -1;
+		}
+		if (textInputNode->getMaxLength() == 0 || textInputNode->getText().size() < textInputNode->getMaxLength()) {
+			if (type == TYPE_FLOAT && keyChar == '.' && textInputNode->getText().getString().find('.') != string::npos) {
+				// no op
+			} else
+			if (type == TYPE_FLOAT && keyChar == '-' && (textInputNode->getText().getString().find('-') != string::npos || index != 0)) {
+				// no op
+			} else
+			if (type == TYPE_INT && keyChar == '-' && (textInputNode->getText().getString().find('-') != string::npos || index != 0)) {
+				// no op
+			} else {
+				textInputNode->getText().insert(index, Character::toString(event->getKeyChar()));
+				index++;
+				resetCursorMode();
+				checkOffset();
+				required_dynamic_cast<GUIInputController*>(inputNode->getController())->onValueChange();
+				node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
 			}
 		}
 	} else {

@@ -4,13 +4,14 @@
 
 #include <tdme/tdme.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::string;
-using std::string_view;
 using std::to_string;
 using std::vector;
 
 using tdme::utilities::Console;
+using tdme::utilities::StringTools;
 
 int main(int argc, char** argv)
 {

@@ -15,6 +15,7 @@
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/StringTools.h>
 #include <tdme/utilities/TextureAtlas.h>
 
 #include <tdme/os/filesystem/FileSystemException.h>
@@ -29,6 +30,7 @@ using tdme::gui::renderer::GUICharacter;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::os::filesystem::FileSystemException;
 using tdme::utilities::MutableString;
+using tdme::utilities::StringTools;
 using tdme::utilities::TextureAtlas;
 
 /**
@@ -69,30 +71,41 @@ private:
 	GUIFont(const string& pathName, const string& fileName, int size);
 
 	/**
+	 * Add character with given id to texture atlas
+	 * @param charId character id
+	 * @return GUI character entity
+	 */
+	GUICharacter* addToTextureAtlas(uint32_t charId);
+
+	/**
 	 * Update texture atlas
 	 * @param text text chars to be included in atlas
 	 */
-	inline void updateTextureAtlas(const string& text) {
+	inline void addCharactersToFont(const string& text) {
 		auto updatedTextureAtlas = false;
-		for (auto i = 0; i < text.size(); i++) {
-			if (getCharacter(text[i]) == nullptr) {
-				addToTextureAtlas(text[i]);
+		StringTools::UTF8CharacterIterator u8It(text);
+		while (u8It.hasNext() == true) {
+			auto characterId = u8It.next();
+			if (characterId == -1) continue;
+			if (getCharacter(characterId) == nullptr) {
+				addToTextureAtlas(characterId);
 				updatedTextureAtlas = true;
 			}
 		}
-		if (updatedTextureAtlas == true) updateCharacters();
+		if (updatedTextureAtlas == true) updateFontInternal();
 	}
 
 	/**
-	 * Add code point / character with given id to texture atlas
-	 * @param charId character id
+	 * Update font texture atlas and character definitions
 	 */
-	void addToTextureAtlas(uint32_t charId);
+	inline void updateFont() {
+		if (textureAtlas.isRequiringUpdate() == true) updateFontInternal();
+	}
 
 	/**
-	 * Update characters
+	 * Do the update work
 	 */
-	void updateCharacters();
+	void updateFontInternal();
 
 public:
 	/**
@@ -132,9 +145,15 @@ public:
 	 * @return character definition
 	 */
 	inline GUICharacter* getCharacter(uint32_t charId) {
+		// ignore -1 character
+		if (charId == -1) return nullptr;
+		// try to get char and return it
 		auto charIt = chars.find(charId);
 		if (charIt != chars.end()) return charIt->second;
-		return nullptr;
+		// no yet added, add it
+		auto character = addToTextureAtlas(charId);
+		chars[charId] = character;
+		return character;
 	}
 
 	/**

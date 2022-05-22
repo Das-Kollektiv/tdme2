@@ -21,6 +21,7 @@ using tdme::engine::fileio::textures::PNGTextureWriter;
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/ByteBuffer.h>
+#include <tdme/utilities/Character.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
@@ -44,6 +45,7 @@ using tdme::math::Math;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::ByteBuffer;
+using tdme::utilities::Character;
 using tdme::utilities::Exception;
 using tdme::utilities::Float;
 using tdme::utilities::Integer;
@@ -90,21 +92,18 @@ GUIFont* GUIFont::parse(const string& pathName, const string& fileName, int size
 
 	// include standard characters in default atlas
 	auto font = new GUIFont(pathName, fileName, size);
-	// font->updateTextureAtlas("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ^0123456789°!&quot;$%&/()=?+*-<>|#,;.:'\"");
-	// Unicode: Not yet: §°!
-	font->updateTextureAtlas(" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ^0123456789&quot;$%&/()=?+*-<>|#,;.:'\"");
+	font->addCharactersToFont(" abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ^0123456789°!&quot;$%&/()=?+*-<>|#,;.:'\"");
 
 	//
 	return font;
 }
 
-void GUIFont::addToTextureAtlas(uint32_t charId) {
-	Console::println("GUIFont::addToTextureAtlas(): " + (string() + (char)charId));
+GUICharacter* GUIFont::addToTextureAtlas(uint32_t charId) {
 	//
 	if (FT_Load_Char(ftFace, charId, FT_LOAD_RENDER))
 	{
-		Console::println("GUIFont::addToTextureAtlas(): Could not load glyph");
-	    return;
+		Console::println("GUIFont::addToTextureAtlas(): Could not load glyph: " + Character::toString(charId) + "(" + to_string(charId) + ")");
+	    return nullptr;
 	}
 
 	//
@@ -113,7 +112,6 @@ void GUIFont::addToTextureAtlas(uint32_t charId) {
 	auto glyphBitmapBuffer = ftFace->glyph->bitmap.buffer;
 	auto glyphByteBuffer = ByteBuffer::allocate(glyphBitmapWidth * glyphBitmapHeight * 4);
 	for (int y = glyphBitmapHeight - 1; y >= 0; y--) {
-	//for (auto y = 0; y < glyphBitmapHeight; y++) {
 		for (auto x = 0; x < glyphBitmapWidth; x++) {
 			auto v = glyphBitmapBuffer[y * glyphBitmapWidth + x];
 			glyphByteBuffer->put(v); // red
@@ -125,15 +123,13 @@ void GUIFont::addToTextureAtlas(uint32_t charId) {
 
 	//
 	auto glyphTexture = new Texture(
-		to_string(charId),
+		Character::toString(charId),
 		32,
 		glyphBitmapWidth, glyphBitmapHeight,
 		glyphBitmapWidth, glyphBitmapHeight,
 		glyphByteBuffer
 	);
 	textureAtlas.addTexture(glyphTexture);
-
-	Console::println(to_string(charId) + ": " + to_string(ftFace->glyph->bitmap.rows) + " / " + to_string(ftFace->glyph->bitmap_top));
 
 	//
 	auto character = new GUICharacter(
@@ -146,43 +142,33 @@ void GUIFont::addToTextureAtlas(uint32_t charId) {
 		(lineHeight - ftFace->glyph->bitmap_top) - (lineHeight - baseLine),
 		ftFace->glyph->advance.x >> 6
 	);
-	chars[charId] = character;
+
+	//
+	return character;
 }
 
-void GUIFont::updateCharacters() {
-	if (textureAtlas.isRequiringUpdate() == true) {
-		textureAtlas.update();
-		// PNGTextureWriter::write(textureAtlas.getAtlasTexture(), ".", "test.png", false, false);
-		auto renderer = Engine::getInstance()->renderer;
-		auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
-		if (textureAtlas.getAtlasTexture() != nullptr) {
-			if (textureId == renderer->ID_NONE) textureId = renderer->createTexture();
-			renderer->bindTexture(contextIdx, textureId);
-			renderer->uploadTexture(contextIdx, textureAtlas.getAtlasTexture());
-		} else
-		if (textureId != renderer->ID_NONE) {
-			renderer->disposeTexture(textureId);
-			textureId = renderer->ID_NONE;
-		}
+void GUIFont::updateFontInternal() {
+	textureAtlas.update();
+	// PNGTextureWriter::write(textureAtlas.getAtlasTexture(), ".", "test.png", false, false);
+	auto renderer = Engine::getInstance()->renderer;
+	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
+	if (textureAtlas.getAtlasTexture() != nullptr) {
+		if (textureId == renderer->ID_NONE) textureId = renderer->createTexture();
+		renderer->bindTexture(contextIdx, textureId);
+		renderer->uploadTexture(contextIdx, textureAtlas.getAtlasTexture());
+	} else
+	if (textureId != renderer->ID_NONE) {
+		renderer->disposeTexture(textureId);
+		textureId = renderer->ID_NONE;
 	}
 	for (auto i = 0;; i++) {
 		auto atlasTexture = textureAtlas.getAtlasTexture(i);
 		if (atlasTexture == nullptr) {
-			Console::println("GUIFont::updateCharacters(): breaking at " + to_string(i));
 			break;
 		}
-		// TODO: get rid of Integer::parse
-		uint32_t charId = 0;
-		try {
-			charId = Integer::parse(atlasTexture->texture->getId());
-		} catch (Exception& e)  {
-			Console::println("GUIFont::updateCharacters(): continueing at " + to_string(i));
-		}
-		if (charId == 0) {
-			continue;
-		}
 		//
-		auto character = getCharacter(charId);
+		StringTools::UTF8CharacterIterator u8It(atlasTexture->texture->getId());
+		auto character = getCharacter(u8It.next());
 		if (character == nullptr) {
 			Console::println("GUIFont::updateCharacters(): Could not find character for font character '" + atlasTexture->texture->getId() + "'");
 			continue;
@@ -202,10 +188,11 @@ void GUIFont::dispose()
 
 int GUIFont::getTextIndexX(const MutableString& text, int offset, int length, int index)
 {
-	if (length == 0) length = text.size();
+	StringTools::UTF8CharacterIterator u8It(text.getString());
+	u8It.seek(offset);
 	auto x = 0;
-	for (auto i = offset; i < index && i < text.size() && i < length; i++) {
-		auto characterId = text.charAt(i);
+	for (; u8It.hasNext() == true && (length == 0 || index < length); index++) {
+		auto characterId = u8It.next();
 		auto character = getCharacter(characterId);
 		if (character == nullptr) continue;
 		x += character->getXAdvance();
@@ -215,11 +202,13 @@ int GUIFont::getTextIndexX(const MutableString& text, int offset, int length, in
 
 int GUIFont::getTextIndexByX(const MutableString& text, int offset, int length, int textX)
 {
+	StringTools::UTF8CharacterIterator u8It(text.getString());
+	u8It.seek(offset);
 	auto x = 0;
 	auto index = offset;
 	if (length == 0) length = text.size();
-	for (; index < text.size() && index < length; index++) {
-		auto characterId = text.charAt(index);
+	for (; u8It.hasNext() == true && (length == 0 || index < length); index++) {
+		auto characterId = u8It.next();
 		auto character = getCharacter(characterId);
 		if (character == nullptr) continue;
 		auto xAdvance = character->getXAdvance();
@@ -233,9 +222,10 @@ int GUIFont::getTextIndexByX(const MutableString& text, int offset, int length, 
 
 int GUIFont::getTextWidth(const MutableString& text)
 {
+	StringTools::UTF8CharacterIterator u8It(text.getString());
 	auto width = 0;
-	for (auto i = 0; i < text.size(); i++) {
-		auto characterId = text.charAt(i);
+	for (auto i = 0; u8It.hasNext() == true; i++) {
+		auto characterId = u8It.next();
 		auto character = getCharacter(characterId);
 		if (character == nullptr) continue;
 		width += character->getXAdvance();
@@ -244,9 +234,10 @@ int GUIFont::getTextWidth(const MutableString& text)
 }
 
 int GUIFont::getTextIndexXAtWidth(const MutableString& text, int width) {
+	StringTools::UTF8CharacterIterator u8It(text.getString());
 	auto x = 0;
-	for (auto i = 0; i < text.size(); i++) {
-		auto characterId = text.charAt(i);
+	for (auto i = 0; u8It.hasNext() == true; i++) {
+		auto characterId = u8It.next();
 		auto character = getCharacter(characterId);
 		if (character == nullptr) continue;
 		x += character->getXAdvance();
@@ -256,6 +247,9 @@ int GUIFont::getTextIndexXAtWidth(const MutableString& text, int width) {
 }
 
 void GUIFont::drawCharacter(GUIRenderer* guiRenderer, GUICharacter* character, int x, int y, const GUIColor& color) {
+	//
+	updateFont();
+	//
 	float screenWidth = guiRenderer->getScreenNode()->getScreenWidth();
 	float screenHeight = guiRenderer->getScreenNode()->getScreenHeight();
 	float left = x + character->getXOffset();
@@ -291,6 +285,9 @@ void GUIFont::drawCharacter(GUIRenderer* guiRenderer, GUICharacter* character, i
 }
 
 void GUIFont::drawCharacterBackground(GUIRenderer* guiRenderer, GUICharacter* character, int x, int y, int lineHeight, const GUIColor& color) {
+	//
+	updateFont();
+	//
 	float screenWidth = guiRenderer->getScreenNode()->getScreenWidth();
 	float screenHeight = guiRenderer->getScreenNode()->getScreenHeight();
 	float left = x;
@@ -320,14 +317,18 @@ void GUIFont::drawCharacterBackground(GUIRenderer* guiRenderer, GUICharacter* ch
 
 void GUIFont::drawString(GUIRenderer* guiRenderer, int x, int y, const MutableString& text, int offset, int length, const GUIColor& color, int selectionStartIndex, int selectionEndIndex, const GUIColor& backgroundColor)
 {
-	if (length == 0) length = text.size();
+	//
+	updateFont();
+	//
 	auto inSelection = false;
 	auto currentColor = color;
 	auto currentBackgroundColor = backgroundColor;
 	if (selectionStartIndex != -1 && selectionEndIndex != -1) {
 		auto currentX = x;
-		for (auto i = offset; i < text.size() && i < length; i++) {
-			auto characterId = text.charAt(i);
+		StringTools::UTF8CharacterIterator u8It(text.getString());
+		u8It.seek(offset);
+		for (auto i = offset; u8It.hasNext() == true && (length == 0 || i < length); i++) {
+			auto characterId = u8It.next();
 			auto character = getCharacter(characterId);
 			if (character == nullptr) continue;
 			auto currentInSelection = i >= selectionStartIndex && i < selectionEndIndex;
@@ -345,8 +346,10 @@ void GUIFont::drawString(GUIRenderer* guiRenderer, int x, int y, const MutableSt
 	guiRenderer->render();
 	guiRenderer->bindTexture(textureId);
 	auto currentX = x;
-	for (auto i = offset; i < text.size() && i < length; i++) {
-		auto characterId = text.charAt(i);
+	StringTools::UTF8CharacterIterator u8It(text.getString());
+	u8It.seek(offset);
+	for (auto i = offset; u8It.hasNext() == true && (length == 0 || i < length); i++) {
+		auto characterId = u8It.next();
 		auto character = getCharacter(characterId);
 		if (character == nullptr) continue;
 		auto currentInSelection = i >= selectionStartIndex && i < selectionEndIndex;

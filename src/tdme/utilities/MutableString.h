@@ -102,7 +102,7 @@ public:
 	 * @return this mutable string
 	 */
 	inline MutableString& insert(int32_t idx, char c) {
-		data.insert(idx, 1, c);
+		data.insert(getUtf8BinaryIndex(idx), 1, c);
 		return *this;
 	}
 
@@ -134,7 +134,7 @@ public:
 	 * @return this mutable string
 	 */
 	inline MutableString& insert(int32_t idx, const string& s) {
-		data.insert(idx, s);
+		data.insert(getUtf8BinaryIndex(idx), s);
 		return *this;
 	}
 
@@ -166,7 +166,7 @@ public:
 	 * @return this mutable string
 	 */
 	inline MutableString& insert(int32_t idx, const MutableString& s) {
-		insert(idx, s.data);
+		insert(getUtf8BinaryIndex(idx), s.data);
 		return *this;
 	}
 
@@ -268,7 +268,15 @@ public:
 	 * @return this mutable string
 	 */
 	inline MutableString& remove(int32_t idx, int32_t count) {
-		data.erase(idx, count);
+
+		StringTools::UTF8CharacterIterator u8It(data);
+		u8It.seek(idx);
+		auto startIdx = u8It.getPosition();
+		for (auto i = 0; u8It.hasNext() == true &&i < count; i++) {
+			u8It.next();
+		}
+		auto endIdx = u8It.getPosition();
+		data.erase(startIdx, endIdx - startIdx);
 		return *this;
 	}
 
@@ -279,7 +287,7 @@ public:
 	 * @return index where string has been found or -1
 	 */
 	inline int32_t indexOf(const MutableString& s, int32_t idx) const {
-		return data.find(s.data, idx);
+		return data.find(s.data, getUtf8BinaryIndex(idx));
 	}
 
 	/**
@@ -342,4 +350,14 @@ public:
 
 private:
 	string data;
+
+	/**
+	 * @return Get utf8 binary index
+	 * @param idx character index
+	 */
+	int getUtf8BinaryIndex(int idx) const {
+		// TODO: Do some caching here, as processing of lots of data would take lots of time: o(n)
+		return StringTools::getUtf8BinaryIndex(data, idx);
+	}
+
 };

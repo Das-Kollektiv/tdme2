@@ -23,6 +23,7 @@
   - http://www.songho.ca/opengl/gl_matrix.html
   - http://www.songho.ca/opengl/gl_transform.html
   - http://www.wazim.com/Collada_Tutorial_1.htm
+  - http://www.zedwood.com/article/cpp-utf8-char-to-codepoint  
   - https://asmaloney.com/2017/08/code/crash-reporting-for-mingw-32-windows-and-clang-macos-with-qt/
   - https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
   - https://forum.unity.com/threads/how-do-i-find-the-closest-point-on-a-line.340058/

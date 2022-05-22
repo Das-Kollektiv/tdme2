@@ -20,6 +20,104 @@ class tdme::utilities::StringTools final
 public:
 
 	/**
+	 * UTF8 string character iterator
+	 */
+	class UTF8CharacterIterator {
+	public:
+		/**
+		 * Public constructor
+		 */
+		UTF8CharacterIterator(const string& stringReference): stringReference(stringReference) {
+			//
+		}
+
+		/**
+		 * @return underlying buffer position
+		 */
+		inline int getPosition() {
+			return position;
+		}
+
+		/**
+		 * Set underlying buffer position
+		 * @param position underlying buffer position
+		 */
+		inline void setPosition(int position) {
+			this->position = position;
+		}
+
+		/**
+		 * Seek character position
+		 * @param characterPosition character position
+		 */
+		inline void seek(int characterPosition) {
+			position = 0;
+			for (auto i = 0; i < characterPosition; i++) {
+				if (hasNext() == true) next();
+			}
+		}
+
+		/**
+		 * @return next code point available
+		 */
+		inline bool hasNext() {
+			return position < stringReference.size() && error == false;
+		}
+		/**
+		 * @return next code point
+		 */
+		int next() {
+			// see: http://www.zedwood.com/article/cpp-utf8-char-to-codepoint
+			int l = stringReference.size() - position;
+			if (l < 1) return -1;
+			unsigned char u0 = stringReference[position + 0];
+			if (u0 >= 0 && u0 <= 127) {
+				position++;
+				return u0;
+			}
+			if (l < 2) {
+				position++;
+				return -1;
+			}
+			unsigned char u1 = stringReference[position + 1];
+			if (u0 >= 192 && u0 <= 223) {
+				position+= 2;
+				return (u0 - 192) * 64 + (u1 - 128);
+			}
+			if (stringReference[position + 0] == 0xed && (stringReference[position + 1] & 0xa0) == 0xa0) {
+				position+= 2;
+				return -1; // code points, 0xd800 to 0xdfff
+			}
+			if (l < 3) {
+				position+= 2;
+				return -1;
+			}
+			unsigned char u2 = stringReference[position + 2];
+			if (u0 >= 224 && u0 <= 239) {
+				position+= 3;
+				return (u0 - 224) * 4096 + (u1 - 128) * 64 + (u2 - 128);
+			}
+			if (l < 4) {
+				position+= 3;
+				return -1;
+			}
+			unsigned char u3 = stringReference[position + 3];
+			if (u0 >= 240 && u0 <= 247) {
+				position+= 4;
+				return (u0 - 240) * 262144 + (u1 - 128) * 4096 + (u2 - 128) * 64 + (u3 - 128);
+			}
+			//
+			position+= 4;
+			return -1;
+		}
+
+	private:
+		const string& stringReference;
+		int position { 0 };
+		bool error { false };
+	};
+
+	/**
 	 * Checks if string starts with prefix
 	 * @param src source string
      * @param prefix prefix string
@@ -224,6 +322,18 @@ public:
 	 * @return tokens
 	 */
 	static const vector<string> tokenize(const string& str, const string& delimiters);
+
+	/**
+	 * Get Utf8 binary index
+	 * @param str string
+	 * @param charIdx character index
+	 * @return UTF binary buffer position from given character/code point index
+	 */
+	static inline int getUtf8BinaryIndex(const string& str, int charIdx) {
+		StringTools::UTF8CharacterIterator u8It(str);
+		u8It.seek(charIdx);
+		return u8It.getPosition();
+	}
 
 };
 

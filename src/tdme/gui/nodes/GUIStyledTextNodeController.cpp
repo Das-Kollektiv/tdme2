@@ -326,23 +326,21 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 	auto keyChar = event->getKeyChar();
 	if (disabled == false &&
 		keyControl == false &&
-		keyChar >= 32 && keyChar < 127) {
+		event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) {
 		event->setProcessed(true);
-		if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) {
-			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
-				styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
-				styledTextNode->scrollToIndex();
-				forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
-				index = Math::min(index, selectionIndex);
-				selectionIndex = -1;
-			}
-			if (maxLength == 0 || styledTextNode->getTextSize() < maxLength) {
-				styledTextNode->insertText(index, event->getKeyChar());
-				styledTextNode->scrollToIndex();
-				forwardInsertText(index, 1);
-				index++;
-				resetCursorMode();
-			}
+		if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
+			styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+			styledTextNode->scrollToIndex();
+			forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+			index = Math::min(index, selectionIndex);
+			selectionIndex = -1;
+		}
+		if (maxLength == 0 || styledTextNode->getTextSize() < maxLength) {
+			styledTextNode->insertText(index, event->getKeyChar());
+			styledTextNode->scrollToIndex();
+			forwardInsertText(index, 1);
+			index++;
+			resetCursorMode();
 		}
 	} else {
 		auto keyControlA = false;
