@@ -300,12 +300,14 @@
     - HTTP download client has its own thread
     - physics or game mechanics can also run in a separate thread(s)
 - uses 3rd party libraries
-    - needs to be installed 
+    - needs to be installed, if not using port-msc
         - OpenGL
         - OpenAL
         - glew
         - pthreads
         - GLFW3
+        - freetype2
+        - xml2(port-linux for FBXSDK)
         - Vulkan(optional)
     - included in TDME2 repository
         - FBXSDK
