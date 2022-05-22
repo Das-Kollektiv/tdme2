@@ -130,10 +130,10 @@ else
 	# TODO: No console flags: -Wl,-subsystem,windows
 	EXTRAFLAGS := $(EXTRAFLAGS)
 	#-D_GLIBCXX_DEBUG
-	INCLUDES := $(INCLUDES) -I/mingw64/include
+	INCLUDES := $(INCLUDES) -I/mingw64/include -I/mingw64/include/freetype2
 	OPENGL_RENDERER_LDFLAGS := -L/mingw64/lib -lglfw3 -lglew32 -lopengl32
 	VULKAN_RENDERER_LDFLAGS := -L/mingw64/lib -lglfw3 -Lext/vulkan/runtime/mingw64 -lvulkan-1
-	LIBS_LDFLAGS := -L/mingw64/lib -lws2_32 -ldl -lglfw3 -lopenal -ldbghelp
+	LIBS_LDFLAGS := -L/mingw64/lib -lws2_32 -ldl -lglfw3 -lopenal -lfreetype -ldbghelp
 	LDFLAG_LIB := $(NAME)$(LIB_EXT)
 	LDFLAG_EXT_LIB := $(EXT_NAME)$(LIB_EXT)
 	OFLAGS := -O2
