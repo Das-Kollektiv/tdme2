@@ -151,9 +151,7 @@ public:
 		auto charIt = chars.find(charId);
 		if (charIt != chars.end()) return charIt->second;
 		// no yet added, add it
-		auto character = addToTextureAtlas(charId);
-		chars[charId] = character;
-		return character;
+		return addToTextureAtlas(charId);
 	}
 
 	/**

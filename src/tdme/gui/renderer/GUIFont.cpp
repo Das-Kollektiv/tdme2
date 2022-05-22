@@ -142,6 +142,7 @@ GUICharacter* GUIFont::addToTextureAtlas(uint32_t charId) {
 		(lineHeight - ftFace->glyph->bitmap_top) - (lineHeight - baseLine),
 		ftFace->glyph->advance.x >> 6
 	);
+	chars[charId] = character;
 
 	//
 	return character;

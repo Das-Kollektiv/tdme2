@@ -26,20 +26,21 @@ public:
 	public:
 		/**
 		 * Public constructor
+		 * @param stringReference string reference
 		 */
 		UTF8CharacterIterator(const string& stringReference): stringReference(stringReference) {
 			//
 		}
 
 		/**
-		 * @return underlying buffer position
+		 * @return underlying binary buffer position
 		 */
 		inline int getPosition() {
 			return position;
 		}
 
 		/**
-		 * Set underlying buffer position
+		 * Set underlying binary buffer position
 		 * @param position underlying buffer position
 		 */
 		inline void setPosition(int position) {
@@ -58,13 +59,13 @@ public:
 		}
 
 		/**
-		 * @return next code point available
+		 * @return next character available
 		 */
 		inline bool hasNext() {
 			return position < stringReference.size() && error == false;
 		}
 		/**
-		 * @return next code point
+		 * @return next character or -1 if an error occurred or no string left
 		 */
 		int next() {
 			// see: http://www.zedwood.com/article/cpp-utf8-char-to-codepoint
@@ -324,7 +325,7 @@ public:
 	static const vector<string> tokenize(const string& str, const string& delimiters);
 
 	/**
-	 * Get Utf8 binary index
+	 * Get Utf8 binary buffer index
 	 * @param str string
 	 * @param charIdx character index
 	 * @return UTF binary buffer position from given character/code point index
