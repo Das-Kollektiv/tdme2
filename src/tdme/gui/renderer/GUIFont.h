@@ -102,7 +102,7 @@ public:
 	 * @param size font pixel size
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
-	static GUIFont* parse(const string& pathName, const string& fileName, int size = 20);
+	static GUIFont* parse(const string& pathName, const string& fileName, int size = 15);
 
 	/**
 	 * Destructor
