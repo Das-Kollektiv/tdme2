@@ -18,11 +18,11 @@ void StringTokenizer::tokenize(const string& str, const string& delimiters)
 	string token;
 	for (int i = 0; i < str.length(); i++) {
 		// got a delimiter?
-		if (delimiters.find(str[i]) != -1) {
+		if (delimiters.find(str[i]) != string::npos) {
 			// yep, add token to elements if we have any
 			if (token.length() > 0) {
 				tokens.push_back(token);
-				token = "";
+				token.clear();
 			}
 		} else {
 			// no delimiter, add char to token
@@ -30,8 +30,7 @@ void StringTokenizer::tokenize(const string& str, const string& delimiters)
 		}
 	}
 	// do we have a token still? add it to elements
-	if (token.length() > 0) {
+	if (token.empty() == false) {
 		tokens.push_back(token);
-		token = "";
 	}
 }

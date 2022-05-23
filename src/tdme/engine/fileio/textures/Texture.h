@@ -34,9 +34,9 @@ public:
 	 */
 	inline Texture(
 		const string& id,
-		int32_t depth,
-		int32_t width, int32_t height,
-		int32_t textureWidth, int32_t textureHeight,
+		uint8_t depth,
+		uint16_t width, uint16_t height,
+		uint16_t textureWidth, uint16_t textureHeight,
 		ByteBuffer* textureData):
 		Reference(),
 		id(id),
@@ -63,35 +63,35 @@ public:
 	/**
 	 * @return depth in bits per pixel
 	 */
-	inline int32_t getDepth() const {
+	inline uint8_t getDepth() const {
 		return depth;
 	}
 
 	/**
 	 * @return image width
 	 */
-	inline int32_t getWidth() const {
+	inline uint16_t getWidth() const {
 		return width;
 	}
 
 	/**
 	 * @return image height
 	 */
-	inline int32_t getHeight() const {
+	inline uint16_t getHeight() const {
 		return height;
 	}
 
 	/**
 	 * @return texture height
 	 */
-	inline int32_t getTextureHeight() const {
+	inline uint16_t getTextureHeight() const {
 		return textureHeight;
 	}
 
 	/**
 	 * @return texture width
 	 */
-	inline int32_t getTextureWidth() const {
+	inline uint16_t getTextureWidth() const {
 		return textureWidth;
 	}
 
@@ -150,7 +150,7 @@ public:
 	/**
 	 * @return atlas size
 	 */
-	inline int32_t getAtlasSize() const {
+	inline uint16_t getAtlasSize() const {
 		return atlasSize;
 	}
 
@@ -158,7 +158,7 @@ public:
 	 * Set atlas size
 	 * @param atlasSize atlas size
 	 */
-	inline void setAtlasSize(int32_t atlasSize) {
+	inline void setAtlasSize(uint16_t atlasSize) {
 		this->atlasSize = atlasSize;
 	}
 
@@ -167,16 +167,16 @@ public:
 
 private:
 	string id;
-	int32_t depth;
-	int32_t width;
-	int32_t height;
-	int32_t textureHeight;
-	int32_t textureWidth;
+	uint8_t depth;
+	uint16_t width;
+	uint16_t height;
+	uint16_t textureHeight;
+	uint16_t textureWidth;
 	ByteBuffer* textureData;
 	bool useMipMap;
 	bool repeat;
 	ClampMode clampMode;
-	int32_t atlasSize;
+	uint16_t atlasSize;
 
 	/**
 	 * Destructor

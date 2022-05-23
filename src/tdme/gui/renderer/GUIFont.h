@@ -53,6 +53,11 @@ private:
 	float baseLine { 0.0f };
 
 	/**
+	 * Public constructor
+	 */
+	GUIFont();
+
+	/**
 	 * Parse a single character line from the definition
 	 * @param line line The line to be parsed
 	 * @return The character definition from the line
@@ -69,11 +74,6 @@ public:
 	static GUIFont* parse(const string& pathName, const string& fileName);
 
 	/**
-	 * Public constructor
-	 */
-	GUIFont();
-
-	/**
 	 * Destructor
 	 */
 	~GUIFont();
@@ -87,13 +87,6 @@ public:
 	 * Dispose
 	 */
 	void dispose();
-
-	/**
-	 * @return texture
-	 */
-	inline Texture* getTexture() {
-		return texture;
-	}
 
 	/**
 	 * @return texture id
