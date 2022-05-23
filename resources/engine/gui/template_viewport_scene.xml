@@ -31,11 +31,11 @@
 						<checkbox id="{$id}_checkbox_snapping" image-unchecked="resources/engine/images/checkbox_snappingoff.png" image-checked="resources/engine/images/checkbox_snappingon.png" value="1" on-mouse-click="snapping_details.condition!=snapping_on" />
 						<element id="{$id}_snapping_details">
 							<layout show-on="{$id}_checkbox_snapping.checked" width="auto" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center">
-								<text font="{$font.default}" text="X" color="{$color.font_normal}" />
+								<text font="{$font.default}" size="{$fontsize.default}" text="X" color="{$color.font_normal}" />
 								<space width="5"/>
 								<input width="100" id="{$id}_snapping_x" text="1.00" unit="m" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 								<space width="10"/>
-								<text font="{$font.default}" text="Z" color="{$color.font_normal}" />
+								<text font="{$font.default}" size="{$fontsize.default}" text="Z" color="{$color.font_normal}" />
 								<space width="5"/>
 								<input width="100" id="{$id}_snapping_z" text="1.00" unit="m" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 							</layout>
@@ -44,7 +44,7 @@
 				</layout>
 			</layout>
 			<layout width="100%" height="100%" padding="5" alignment="horizontal" horizontal-align="right" vertical-align="bottom">
-				<text id="{$id}_text_info" font="{$font.default}" text="width 512 height 512 | infotext | stuff" color="{$color.font_normal}" />
+				<text id="{$id}_text_info" font="{$font.default}" size="{$fontsize.default}" text="width 512 height 512 | infotext | stuff" color="{$color.font_normal}" />
 			</layout>
 		</element>	
 	</layer>

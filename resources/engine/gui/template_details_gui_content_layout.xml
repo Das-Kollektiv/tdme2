@@ -6,7 +6,7 @@
 			<space height="5" />
 			
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="Alignment" width="*" height="auto" />
+				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Alignment" width="*" height="auto" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 					<dropdown id="content_layout_alignemnt" width="100%" height="auto">
 						<dropdown-option text="vertical" value="vertical" />

@@ -12,7 +12,7 @@
 						<layout alignment="vertical" horizontal-align="center" vertical-align="center" width="25%" height="100%">
 						
 						
-							<text font="{$font.default}" color="{$color.font_normal}" text="Drives" width="100%" height="25" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Drives" width="100%" height="25" />
 							<selectbox id="filedialog_drives" width="100%" height="55">
 								<scrollarea width="100%" height="100%" background-color="{$color.element_midground}">
 									<selectbox-option image="resources/engine/images/script.png" text="C:" value="0" />
@@ -21,7 +21,7 @@
 							</selectbox>
 							<space height="10" />
 							<layout alignment="horizontal" horizontal-align="center" vertical-align="center" width="100%" height="25">
-								<text font="{$font.default}" color="{$color.font_normal}" text="Favorites" width="*" height="25" />
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Favorites" width="*" height="25" />
 								<space width="10"/>
 								<button id="filedialog_favorites_add" width="20" height="20" image="resources/engine/images/add.png"/>
 								<space width="5"/>
@@ -35,7 +35,7 @@
 							</selectbox>
 							<space height="10" />
 							<layout alignment="horizontal" horizontal-align="center" vertical-align="center" width="100%" height="25">
-								<text font="{$font.default}" color="{$color.font_normal}" text="Recent" width="*" height="25" />
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Recent" width="*" height="25" />
 								<space width="10"/>
 								<button id="filedialog_recent_delete" width="20" height="20" image="resources/engine/images/delete.png"/>
 							</layout>
@@ -50,7 +50,7 @@
 						<space width="10"/>
 						<layout alignment="vertical" horizontal-align="center" vertical-align="center" width="*" height="100%">
 							
-							<text font="{$font.default}" color="{$color.font_normal}" text="Path" width="100%" height="25" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Path" width="100%" height="25" />
 							<input id="filedialog_path" width="100%" height="25" text="./path" />
 							<space height="10" />
 						

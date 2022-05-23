@@ -1,7 +1,7 @@
 <layout alignment="vertical" width="*" height="auto" horizontal-align="center">
 
 	<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-		<text font="{$font.default}" color="{$color.font_normal}" text="{$name}" width="*" height="auto"/>
+		<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="{$name}" width="*" height="auto"/>
 		<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 			<image id="{$id}" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>
 			<space width="5" />						

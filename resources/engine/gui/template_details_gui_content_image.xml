@@ -40,7 +40,7 @@
 							
 									<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 										<checkbox id="{$id}_image_scale9_parent" image-unchecked="resources/engine/images/arrow_right.png" image-checked="resources/engine/images/arrow_down.png" size="10" value="1" on-mouse-click="{$id}_image_scale9_panel.condition!=open"/>
-										<text font="{$font.default}" color="{$color.font_normal}" text="Scale9" width="*" height="auto" />
+										<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Scale9" width="*" height="auto" />
 										<layout alignment="horizontal" width="47%" height="auto" horizontal-align="right" vertical-align="center">								
 											<input id="{$id}_image_scale9" width="*" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />	
 										</layout>
@@ -52,7 +52,7 @@
 										
 										<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 											<space width="30"/>
-											<text font="{$font.default}" color="{$color.font_normal}" text="Left" width="*" height="auto" />
+											<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Left" width="*" height="auto" />
 											<layout alignment="horizontal" width="45%" height="auto" horizontal-align="right" vertical-align="center">								
 												<input id="{$id}_image_scale9_left" width="*" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />	
 											</layout>
@@ -62,7 +62,7 @@
 										
 										<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 											<space width="30"/>
-											<text font="{$font.default}" color="{$color.font_normal}" text="Right" width="*" height="auto" />
+											<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Right" width="*" height="auto" />
 											<layout alignment="horizontal" width="45%" height="auto" horizontal-align="right" vertical-align="center">								
 												<input id="{$id}_image_scale9_right" width="*" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />	
 											</layout>
@@ -72,7 +72,7 @@
 										
 										<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 											<space width="30"/>
-											<text font="{$font.default}" color="{$color.font_normal}" text="Top" width="*" height="auto" />
+											<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Top" width="*" height="auto" />
 											<layout alignment="horizontal" width="45%" height="auto" horizontal-align="right" vertical-align="center">								
 												<input id="{$id}_image_scale9_top" width="*" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />	
 											</layout>
@@ -82,7 +82,7 @@
 										
 										<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 											<space width="30"/>
-											<text font="{$font.default}" color="{$color.font_normal}" text="Bottom" width="*" height="auto" />
+											<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Bottom" width="*" height="auto" />
 											<layout alignment="horizontal" width="45%" height="auto" horizontal-align="right" vertical-align="center">								
 												<input id="{$id}_image_scale9_bottom" width="*" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />	
 											</layout>
@@ -105,7 +105,7 @@
 							
 									<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 										<checkbox id="{$id}_image_clipping_parent" image-unchecked="resources/engine/images/arrow_right.png" image-checked="resources/engine/images/arrow_down.png" size="10" value="1" on-mouse-click="{$id}_image_clipping_panel.condition!=open"/>
-										<text font="{$font.default}" color="{$color.font_normal}" text="Clipping" width="*" height="auto" />
+										<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Clipping" width="*" height="auto" />
 										<layout alignment="horizontal" width="47%" height="auto" horizontal-align="right" vertical-align="center">								
 											<input id="{$id}_image_clipping" width="*" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />	
 										</layout>
@@ -117,7 +117,7 @@
 										
 										<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 											<space width="30"/>
-											<text font="{$font.default}" color="{$color.font_normal}" text="Left" width="*" height="auto" />
+											<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Left" width="*" height="auto" />
 											<layout alignment="horizontal" width="45%" height="auto" horizontal-align="right" vertical-align="center">								
 												<input id="{$id}_image_clipping_left" width="*" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />	
 											</layout>
@@ -127,7 +127,7 @@
 										
 										<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 											<space width="30"/>
-											<text font="{$font.default}" color="{$color.font_normal}" text="Right" width="*" height="auto" />
+											<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Right" width="*" height="auto" />
 											<layout alignment="horizontal" width="45%" height="auto" horizontal-align="right" vertical-align="center">								
 												<input id="{$id}_image_clipping_right" width="*" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />	
 											</layout>
@@ -137,7 +137,7 @@
 										
 										<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 											<space width="30"/>
-											<text font="{$font.default}" color="{$color.font_normal}" text="Top" width="*" height="auto" />
+											<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Top" width="*" height="auto" />
 											<layout alignment="horizontal" width="45%" height="auto" horizontal-align="right" vertical-align="center">								
 												<input id="{$id}_image_clipping_top" width="*" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />	
 											</layout>
@@ -147,7 +147,7 @@
 										
 										<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 											<space width="30"/>
-											<text font="{$font.default}" color="{$color.font_normal}" text="Bottom" width="*" height="auto" />
+											<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Bottom" width="*" height="auto" />
 											<layout alignment="horizontal" width="45%" height="auto" horizontal-align="right" vertical-align="center">								
 												<input id="{$id}_image_clipping_bottom" width="*" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />	
 											</layout>

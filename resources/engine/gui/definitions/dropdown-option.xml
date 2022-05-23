@@ -3,7 +3,7 @@
 	<text
 		id="{$id}_unselected"
 		text="{$text}"	
-		font="{$font.default}"
+		font="{$font.default}" size="{$fontsize.default}"
 		color="{$color.font_highlight}"
 		
 		width="100%"
@@ -18,7 +18,7 @@
 	<text 
 		id="{$id}_unselected,mouseover"
 		text="{$text}"
-		font="{$font.default}" 
+		font="{$font.default}" size="{$fontsize.default}" 
 		color="{$color.font_highlight}"
 		 
 		width="100%"

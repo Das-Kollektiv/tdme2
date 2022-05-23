@@ -6,7 +6,7 @@
 			<space height="5" />
 			
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="Width" width="*" height="auto" />
+				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Width" width="*" height="auto" />
 				<layout alignment="horizontal" width="60%" height="auto" horizontal-align="right" vertical-align="center">								
 					<element id="width_input_panel" width="*" height="auto">
 						<input show-on="custom" id="{$id}_width_custom" width="*" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />
@@ -25,7 +25,7 @@
 			<space height="5" />
 			
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="Height" width="*" height="auto" />
+				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Height" width="*" height="auto" />
 				<layout alignment="horizontal" width="60%" height="auto" horizontal-align="right" vertical-align="center">								
 					<element id="height_input_panel" width="*" height="auto">
 						<input show-on="custom" id="{$id}_height_custom" width="*" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />
@@ -47,7 +47,7 @@
 			
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 				<space width="5" />
-				<text font="{$font.default}" color="{$color.font_normal}" text="Horizontal Align" width="*" height="auto" />
+				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Horizontal Align" width="*" height="auto" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">	
 					<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_halign_left" name="halign" width="35" height="35" value="1" image="resources/engine/images/horizontal_align_left.png" selected="true" />
 					<space width="5" />
@@ -61,7 +61,7 @@
 			
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 				<space width="5" />
-				<text font="{$font.default}" color="{$color.font_normal}" text="Vertical Align" width="*" height="auto" />
+				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Vertical Align" width="*" height="auto" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">								
 					<radiobutton template="radiobutton_template_gizmo.xml" id="{$id}_valign_left" name="valign" width="35" height="35" value="1" image="resources/engine/images/vertical_align_top.png" selected="true" />
 					<space width="5" />
@@ -81,7 +81,7 @@
 			
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 						<checkbox id="{$id}_padding_parent" image-unchecked="resources/engine/images/arrow_right.png" image-checked="resources/engine/images/arrow_down.png" size="10" value="1" on-mouse-click="{$id}_padding_panel.condition!=open"/>
-						<text font="{$font.default}" color="{$color.font_normal}" text="Padding" width="*" height="auto" />
+						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Padding" width="*" height="auto" />
 						<layout alignment="horizontal" width="47%" height="auto" horizontal-align="right" vertical-align="center">								
 							<input id="{$id}_padding" width="*" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />	
 						</layout>
@@ -93,7 +93,7 @@
 						
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 							<space width="30"/>
-							<text font="{$font.default}" color="{$color.font_normal}" text="Left" width="*" height="auto" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Left" width="*" height="auto" />
 							<layout alignment="horizontal" width="45%" height="auto" horizontal-align="right" vertical-align="center">								
 								<input id="{$id}_padding_left" width="*" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />	
 							</layout>
@@ -103,7 +103,7 @@
 						
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 							<space width="30"/>
-							<text font="{$font.default}" color="{$color.font_normal}" text="Right" width="*" height="auto" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Right" width="*" height="auto" />
 							<layout alignment="horizontal" width="45%" height="auto" horizontal-align="right" vertical-align="center">								
 								<input id="{$id}_padding_right" width="*" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />	
 							</layout>
@@ -113,7 +113,7 @@
 						
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 							<space width="30"/>
-							<text font="{$font.default}" color="{$color.font_normal}" text="Top" width="*" height="auto" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Top" width="*" height="auto" />
 							<layout alignment="horizontal" width="45%" height="auto" horizontal-align="right" vertical-align="center">								
 								<input id="{$id}_padding_top" width="*" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />	
 							</layout>
@@ -123,7 +123,7 @@
 						
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
 							<space width="30"/>
-							<text font="{$font.default}" color="{$color.font_normal}" text="Bottom" width="*" height="auto" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Bottom" width="*" height="auto" />
 							<layout alignment="horizontal" width="45%" height="auto" horizontal-align="right" vertical-align="center">								
 								<input id="{$id}_padding_bottom" width="*" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png" />	
 							</layout>

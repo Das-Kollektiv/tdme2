@@ -10,7 +10,7 @@
 			</layout>
 			<text
 				text="{$text}"
-				font="{$font.default}" 
+				font="{$font.default}" size="{$fontsize.default}" 
 				color="{$color.font_normal}"
 				
 				width="auto" 
@@ -28,7 +28,7 @@
 			</layout>
 			<text
 				text="{$text}"
-				font="{$font.default}"
+				font="{$font.default}" size="{$fontsize.default}"
 				color="{$color.font_highlight}"
 				
 				width="auto"
@@ -46,7 +46,7 @@
 			</layout>
 			<text
 				text="{$text}"
-				font="{$font.default}"
+				font="{$font.default}" size="{$fontsize.default}"
 				color="{$color.font_disabled}"
 				
 				width="auto"
@@ -59,7 +59,7 @@
 		<!-- shortcut and child -->
 		<layout width="250" height="auto" alignment="horizontal" horizontal-align="right" vertical-align="center">
 			<space width="*" />
-			<text padding-right="5" width="auto" height="25" vertical-align="center" font="{$font.default}" text="{$shortcut}" color="{$color.font_disabled}" />
+			<text padding-right="5" width="auto" height="25" vertical-align="center" font="{$font.default}" size="{$fontsize.default}" text="{$shortcut}" color="{$color.font_disabled}" />
 			<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
 				<!-- <image show-on="parent" src="resources/engine/images/arrow_right.png" /> -->
 			</layout>

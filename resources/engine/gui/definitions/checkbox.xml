@@ -5,21 +5,21 @@
 		<layout width="{$size}" height="{$size}" alignment="horizontal" horizontal-align="center" vertical-align="center">
 			<image effect-color-mul="{$color.font_normal}" src="{$image-unchecked}" />
 		</layout>
-		<text font="{$font.default}" text="{$text}" color="{$color.font_normal}" />
+		<text font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_normal}" />
 	</layout>
 	<!-- unchecked, mouse over -->
 	<layout width="auto" height="auto" padding-left="5" padding-right="5" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,checked" show-on="mouseover" >
 		<layout width="{$size}" height="{$size}" alignment="horizontal" horizontal-align="center" vertical-align="center">
 			<image effect-color-mul="{$color.font_highlight}" src="{$image-unchecked}" />
 		</layout>
-		<text font="{$font.default}" text="{$text}" color="{$color.font_highlight}" />
+		<text font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_highlight}" />
 	</layout>
 	<!-- unchecked, disabled -->
 	<layout width="auto" height="auto" padding-left="5" padding-right="5" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="checked" show-on="disabled" >
 		<layout width="{$size}" height="{$size}" alignment="horizontal" horizontal-align="center" vertical-align="center">
 			<image effect-color-mul="{$color.font_disabled}" src="{$image-unchecked}" />
 		</layout>
-		<text font="{$font.default}" text="{$text}" color="{$color.font_disabled}" />
+		<text font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_disabled}" />
 	</layout>
 
 	
@@ -28,21 +28,21 @@
 		<layout width="{$size}" height="{$size}" alignment="horizontal" horizontal-align="center" vertical-align="center">
 			<image effect-color-mul="{$color.font_normal}" src="{$image-checked}" />
 		</layout>
-		<text font="{$font.default}" text="{$text}" color="{$color.font_normal}" />
+		<text font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_normal}" />
 	</layout>
 	<!-- checked, mouse over -->
 	<layout width="auto" height="auto" padding-left="5" padding-right="5" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,unchecked" show-on="mouseover" >
 		<layout width="{$size}" height="{$size}" alignment="horizontal" horizontal-align="center" vertical-align="center">
 			<image effect-color-mul="{$color.font_highlight}" src="{$image-checked}" />
 		</layout>
-		<text font="{$font.default}" text="{$text}" color="{$color.font_highlight}" />
+		<text font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_highlight}" />
 	</layout>
 	<!-- checked, disabled -->
 	<layout width="auto" height="auto" padding-left="5" padding-right="5" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="unchecked" show-on="disabled" >
 		<layout width="{$size}" height="{$size}" alignment="horizontal" horizontal-align="center" vertical-align="center">
 			<image effect-color-mul="{$color.font_disabled}" src="{$image-checked}" />
 		</layout>
-		<text font="{$font.default}" text="{$text}" color="{$color.font_disabled}" />
+		<text font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_disabled}" />
 	</layout>
 
 </element>

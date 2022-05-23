@@ -12,7 +12,7 @@
 			<space height="5" />		
 			
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="Conditions" width="*" height="auto"/>
+				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Conditions" width="*" height="auto"/>
 				<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right">
 					<input id="{$id}_conditions" width="100%" height="auto" text=""/>
 				</layout>

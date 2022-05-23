@@ -14,7 +14,7 @@
 			<space height="5" />
 			
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="Min Distance" width="*" height="auto" horizontal-align="left" />
+				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Min Distance" width="*" height="auto" horizontal-align="left" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 					<input id="lod_min_distance" width="100%" height="auto" text="100.00" unit="m" options="type=float,min=0,step=1,decimals=2" image="resources/engine/images/inputslider.png"/>
 				</layout>

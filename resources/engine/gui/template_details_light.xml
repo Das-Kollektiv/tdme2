@@ -27,21 +27,21 @@
 						<menu-separator />
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="C. Attenuation" width="*" height="auto"/>
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="C. Attenuation" width="*" height="auto"/>
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
 								<input id="light_point_constant_attenuation"  width="75%" height="auto" text="100.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
 							</layout>
 						</layout>
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="L. Attenuation" width="*" height="auto"/>
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="L. Attenuation" width="*" height="auto"/>
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
 								<input id="light_point_linear_attenuation" width="75%" height="auto" text="100.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
 							</layout>
 						</layout>
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="Q. Attenuation" width="*" height="auto"/>
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Q. Attenuation" width="*" height="auto"/>
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
 								<input id="light_point_quadratic_attenuation" width="75%" height="auto" text="100.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
 							</layout>
@@ -52,7 +52,7 @@
 						<space height="5" />
 
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="Location" width="*" height="auto" horizontal-align="left" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Location" width="*" height="auto" horizontal-align="left" />
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<layout width="5" height="25" background-color="{$color.xaxis}" />
 								<input id="light_point_position_x" width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
@@ -60,7 +60,7 @@
 						</layout>
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<layout width="5" height="25" background-color="{$color.yaxis}" />
 								<input id="light_point_position_y"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
@@ -68,7 +68,7 @@
 						</layout>
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<layout width="5" height="25" background-color="{$color.zaxis}" />
 								<input id="light_point_position_z"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
@@ -80,7 +80,7 @@
 						<space height="5" />
 
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="Radius" width="*" height="auto"/>
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Radius" width="*" height="auto"/>
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<input id="light_point_radius" width="75%" height="auto" text="100.00" unit="m" options="type=float,min=0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
 							</layout>
@@ -100,21 +100,21 @@
 						<menu-separator />
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="C. Attenuation" width="*" height="auto"/>
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="C. Attenuation" width="*" height="auto"/>
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<input id="light_spot_constant_attenuation"  width="75%" height="auto" text="100.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
 							</layout>
 						</layout>
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="L. Attenuation" width="*" height="auto"/>
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="L. Attenuation" width="*" height="auto"/>
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<input id="light_spot_linear_attenuation" width="75%" height="auto" text="100.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
 							</layout>
 						</layout>
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="Q. Attenuation" width="*" height="auto"/>
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Q. Attenuation" width="*" height="auto"/>
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<input id="light_spot_quadratic_attenuation" width="75%" height="auto" text="100.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
 							</layout>
@@ -125,7 +125,7 @@
 						<space height="5" />
 						
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="Location" width="*" height="auto" horizontal-align="left" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Location" width="*" height="auto" horizontal-align="left" />
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<layout width="5" height="25" background-color="{$color.xaxis}" />
 								<input id="light_spot_position_x" width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
@@ -133,7 +133,7 @@
 						</layout>
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<layout width="5" height="25" background-color="{$color.yaxis}" />
 								<input id="light_spot_position_y"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
@@ -141,7 +141,7 @@
 						</layout>
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<layout width="5" height="25" background-color="{$color.zaxis}" />
 								<input id="light_spot_position_z"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
@@ -153,7 +153,7 @@
 						<space height="5" />
 						
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="Direction" width="*" height="auto" horizontal-align="left" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Direction" width="*" height="auto" horizontal-align="left" />
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<layout width="5" height="25" background-color="{$color.xaxis}" />
 								<input id="light_spot_direction_x" width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,min=-1,max=1,decimals=2" image="resources/engine/images/inputslider.png" />
@@ -161,7 +161,7 @@
 						</layout>
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<layout width="5" height="25" background-color="{$color.yaxis}" />
 								<input id="light_spot_direction_y"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,min=-1,max=1,decimals=2" image="resources/engine/images/inputslider.png" />
@@ -169,7 +169,7 @@
 						</layout>
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<layout width="5" height="25" background-color="{$color.zaxis}" />
 								<input id="light_spot_direction_z"  width="*" height="auto" text="0.0" unit="m" options="type=float,step=0.1,min=-1,max=1,decimals=2" image="resources/engine/images/inputslider.png" />
@@ -181,14 +181,14 @@
 						<space height="5" />
 						
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="Cutoff" width="*" height="auto"/>
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Cutoff" width="*" height="auto"/>
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<input id="light_spot_cutoff" width="75%" height="auto" text="100.00" unit="m" options="type=float,min=0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
 							</layout>
 						</layout>
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="Spot exponent" width="*" height="auto"/>
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Spot exponent" width="*" height="auto"/>
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<input id="light_spot_exponent" width="75%" height="auto" text="100.00" unit="m" options="type=float,min=0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
 							</layout>
@@ -208,21 +208,21 @@
 						<menu-separator />
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="C. Attenuation" width="*" height="auto"/>
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="C. Attenuation" width="*" height="auto"/>
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<input id="light_directional_constant_attenuation" width="75%" height="auto" text="100.00" options="type=float,min=0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 							</layout>
 						</layout>
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="L. Attenuation" width="*" height="auto"/>
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="L. Attenuation" width="*" height="auto"/>
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<input id="light_directional_linear_attenuation" width="75%" height="auto" text="100.00" options="type=float,min=0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
 							</layout>
 						</layout>
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="Q. Attenuation" width="*" height="auto"/>
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Q. Attenuation" width="*" height="auto"/>
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<input id="light_directional_quadratic_attenuation" width="75%" height="auto" text="100.00" options="type=float,min=0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
 							</layout>
@@ -232,7 +232,7 @@
 						<space height="5" />
 						
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="Direction" width="*" height="auto" horizontal-align="left" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Direction" width="*" height="auto" horizontal-align="left" />
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<layout width="5" height="25" background-color="{$color.xaxis}" />
 								<input id="light_directional_direction_x" width="*" height="auto" text="0.00" options="type=float,step=0.1,min=-1,max=1,decimals=2" image="resources/engine/images/inputslider.png" />
@@ -240,7 +240,7 @@
 						</layout>
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<layout width="5" height="25" background-color="{$color.yaxis}" />
 								<input id="light_directional_direction_y"  width="*" height="auto" text="0.0" options="type=float,step=0.1,min=-1,max=1,decimals=2" image="resources/engine/images/inputslider.png" /> />
@@ -248,7 +248,7 @@
 						</layout>
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<layout width="5" height="25" background-color="{$color.zaxis}" />
 								<input id="light_directional_direction_z"  width="*" height="auto" text="0.0" options="type=float,step=0.1,min=-1,max=1,decimals=2" image="resources/engine/images/inputslider.png" /> />
@@ -270,21 +270,21 @@
 						<menu-separator />
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="C. Attenuation" width="*" height="auto"/>
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="C. Attenuation" width="*" height="auto"/>
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<input id="light_ambient_constant_attenuation"  width="75%" height="auto" text="100.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
 							</layout>
 						</layout>
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="L. Attenuation" width="*" height="auto"/>
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="L. Attenuation" width="*" height="auto"/>
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<input id="light_ambient_linear_attenuation" width="75%" height="auto" text="100.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
 							</layout>
 						</layout>
 						<space height="5" />
 						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="Q. Attenuation" width="*" height="auto"/>
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Q. Attenuation" width="*" height="auto"/>
 							<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 								<input id="light_ambient_quadratic_attenuation" width="75%" height="auto" text="100.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
 							</layout>

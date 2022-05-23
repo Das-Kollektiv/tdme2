@@ -4,7 +4,7 @@
 		<layout show-on="open" width="100%" height="auto" padding="5" alignment="vertical" vertical-align="top" horizontal-align="center">			
 			<space height="5" />
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="Size" width="*" height="auto" horizontal-align="left" />
+				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Size" width="*" height="auto" horizontal-align="left" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 					<layout width="5" height="25" background-color="{$color.xaxis}" />
 					<input id="terrain_size_x" width="*" height="auto" text="0.0" unit="m" options="type=float,min=0.0,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
@@ -12,7 +12,7 @@
 			</layout>
 			<space height="5" />
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
+				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto" horizontal-align="left" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 					<layout width="5" height="25" background-color="{$color.zaxis}" />
 					<input id="terrain_size_z"  width="*" height="auto" text="0.0" unit="m" options="type=float,min=0.0,step=1,decimals=2" image="resources/engine/images/inputslider.png" />
@@ -20,7 +20,7 @@
 			</layout>
 			<space height="10" />
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto"/>
+				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto"/>
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 					<button id="terrain_create" text="Create" width="100%" height="25" />
 				</layout>
@@ -31,7 +31,7 @@
 			<space height="5" />
 			<!--
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="Grid Density" width="*" height="auto"/>
+				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Grid Density" width="*" height="auto"/>
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 					<input id="terrain_density" width="100%" height="auto" text="100" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png"/>
 				</layout>
@@ -41,7 +41,7 @@
 			<space height="5" />
 			-->
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="Mirror Mode" width="*" height="auto"/>
+				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Mirror Mode" width="*" height="auto"/>
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 					<dropdown id="terrain_mirrormode" width="100%" height="auto" text="Select Mode">
 						<dropdown-option text="Normal" selected="true" value="1" on-mouse-click="terrain_mirrormode_details.condition="/>
@@ -55,7 +55,7 @@
 				<layout show-on="oneaxis" alignment="vertical" width="100%" height="auto" horizontal-align="center" >
 					<space height="5" />
 					<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-						<text font="{$font.default}" color="{$color.font_normal}" text="Flipped" width="*" height="auto"/>
+						<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Flipped" width="*" height="auto"/>
 						<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 							<checkbox id="terrain_mirrormode_flipped" width="25" height="25" value="1" />
 						</layout>
@@ -64,7 +64,7 @@
 			</element>
 			<space height="10" />
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="" width="*" height="auto"/>
+				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="" width="*" height="auto"/>
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 					<button id="terrain_mirrormode_apply" text="Apply Mirror" width="100%" height="25" />
 				</layout>

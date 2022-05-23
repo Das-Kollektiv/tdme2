@@ -40,7 +40,7 @@
 				</layout>
 			</layout>
 			<layout width="100%" height="100%" padding="5" alignment="horizontal" horizontal-align="right" vertical-align="bottom">
-				<text id="{$id}_text_info" font="{$font.default}" text="width 512 height 512 | infotext | stuff" color="{$color.font_normal}" />
+				<text id="{$id}_text_info" font="{$font.default}" size="{$fontsize.default}" text="width 512 height 512 | infotext | stuff" color="{$color.font_normal}" />
 			</layout>
 		</element>
 	</layer>	

@@ -10,7 +10,7 @@
 			</layout>			
 			<text
 				text="{$text}"
-				font="{$font.default}"
+				font="{$font.default}" size="{$fontsize.default}"
 				color="{$color.font_normal}"
 				
 				width="auto" 
@@ -28,7 +28,7 @@
 			</layout>
 			<text
 				text="{$text}"
-				font="{$font.default}"
+				font="{$font.default}" size="{$fontsize.default}"
 				color="{$color.font_highlight}"
 				
 				width="auto" 
@@ -46,7 +46,7 @@
 			</layout>
 			<text 
 				text="{$text}"			
-				font="{$font.default}" 
+				font="{$font.default}" size="{$fontsize.default}" 
 				color="{$color.font_normal}"
 				
 				width="auto" 
@@ -64,7 +64,7 @@
 			</layout>
 			<text
 				text="{$text}"
-				font="{$font.default}"
+				font="{$font.default}" size="{$fontsize.default}"
 				color="{$color.font_disabled}"
 				
 				width="auto"
