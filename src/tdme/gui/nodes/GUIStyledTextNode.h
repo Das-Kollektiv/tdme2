@@ -330,6 +330,7 @@ public:
 	 * @param index index
 	 */
 	inline int getPreviousNewLine(int index) {
+		// TODO: UTF8
 		// find index of previous newline and store difference
 		auto previousNewLineIndex = index;
 		while (previousNewLineIndex >= 0 && text.charAt(previousNewLineIndex) != '\n') previousNewLineIndex--;
@@ -342,6 +343,7 @@ public:
 	 * @param index index
 	 */
 	inline int getNextNewLine(int index) {
+		// TODO: UTF8
 		// find index of next newline
 		auto nextNewLineIndex = index;
 		while (nextNewLineIndex < text.size() && text.charAt(nextNewLineIndex) != '\n') nextNewLineIndex++;
@@ -355,6 +357,7 @@ public:
 	 * @param delimiters delimiters
 	 */
 	inline int getPreviousDelimiter(int index, const string& delimiters) {
+		// TODO: UTF8
 		// find index of previous newline and store difference
 		auto previousDelimiterIndex = index;
 		while (previousDelimiterIndex >= 0 && delimiters.find(text.charAt(previousDelimiterIndex)) == string::npos) previousDelimiterIndex--;
@@ -368,6 +371,7 @@ public:
 	 * @param delimiters
 	 */
 	inline int getNextDelimiter(int index, const string& delimiters) {
+		// TODO: UTF8
 		// find index of next newline
 		auto nextDelimiterIndex = index;
 		while (nextDelimiterIndex < text.size() && delimiters.find(text.charAt(nextDelimiterIndex)) == string::npos) nextDelimiterIndex++;

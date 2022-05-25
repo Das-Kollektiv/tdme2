@@ -144,6 +144,7 @@ private:
 	 * @param count count
 	 */
 	inline void forwardRemoveText(int idx, int count) {
+		// TODO: UTF8
 		for (auto i = 0; i < changeListeners.size(); i++) {
 			changeListeners[i]->onRemoveText(idx, count);
 		}
@@ -155,6 +156,7 @@ private:
 	 * @param count count
 	 */
 	inline void forwardInsertText(int idx, int count) {
+		// TODO: UTF8
 		for (auto i = 0; i < changeListeners.size(); i++) {
 			changeListeners[i]->onInsertText(idx, count);
 		}
@@ -165,6 +167,7 @@ private:
 	 * @param idx index
 	 */
 	inline void forwardCodeCompletion(int idx) {
+		// TODO: UTF8
 		for (auto i = 0; i < changeListeners.size(); i++) {
 			codeCompletionListeners[i]->onCodeCompletion(idx);
 		}
