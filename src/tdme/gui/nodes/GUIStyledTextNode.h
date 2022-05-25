@@ -15,6 +15,7 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::string;
 using std::vector;
@@ -36,6 +37,7 @@ using tdme::gui::renderer::GUIRenderer;
 using tdme::utilities::Exception;
 using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
+using tdme::utilities::StringTools;
 
 /**
  * GUI styled text node
@@ -85,7 +87,8 @@ private:
 	int startTextStyleIdx { -1 };
 
 	struct Line {
-		int idx;
+		int binaryIdx;
+		int charIdx;
 		float width;
 		float height;
 		float lineHeight;
@@ -97,6 +100,7 @@ private:
 	string spaceString { " " };
 	string newLine { "\n" };
 	string line;
+	vector<int> lineCharBinaryIdxs;
 	vector<int> lineCharIdxs;
 	vector<Line> lineConstraints;
 
@@ -234,11 +238,11 @@ private:
 
 	/**
 	 * Determine next line constraints
-	 * @param i current loop index
+	 * @param u8It UTF 8 character iterator
 	 * @param charEndIdx character end index
 	 * @param textStyleIdx text style index to start with
 	 */
-	void determineNextLineConstraints(int& i, int charEndIdx, int textStyleIdx);
+	void determineNextLineConstraints(StringTools::UTF8CharacterIterator& u8It, int charEndIdx, int textStyleIdx);
 
 protected:
 	/**
@@ -392,7 +396,7 @@ public:
 	 * @param c char
 	 * @return this mutable string
 	 */
-	void insertText(int32_t idx, char c);
+	void insertText(int32_t idx, int c);
 
 	/**
 	 * Insert string at idx

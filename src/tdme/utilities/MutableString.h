@@ -265,18 +265,20 @@ public:
 	 * Remove characters at idx with given length
 	 * @param idx idx
 	 * @param count length
+	 * @param binaryCount count of binary bytes that have been removed
 	 * @return this mutable string
 	 */
-	inline MutableString& remove(int32_t idx, int32_t count) {
+	inline MutableString& remove(int32_t idx, int32_t count, int* binaryCount = nullptr) {
 
 		StringTools::UTF8CharacterIterator u8It(data);
-		u8It.seek(idx);
-		auto startIdx = u8It.getPosition();
+		u8It.seekCharacterPosition(idx);
+		auto startIdx = u8It.getBinaryPosition();
 		for (auto i = 0; u8It.hasNext() == true &&i < count; i++) {
 			u8It.next();
 		}
-		auto endIdx = u8It.getPosition();
+		auto endIdx = u8It.getBinaryPosition();
 		data.erase(startIdx, endIdx - startIdx);
+		if (binaryCount != nullptr) *binaryCount = endIdx - startIdx;
 		return *this;
 	}
 

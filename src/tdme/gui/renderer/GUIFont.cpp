@@ -190,7 +190,7 @@ void GUIFont::dispose()
 int GUIFont::getTextIndexX(const MutableString& text, int offset, int length, int index)
 {
 	StringTools::UTF8CharacterIterator u8It(text.getString());
-	u8It.seek(offset);
+	u8It.seekCharacterPosition(offset);
 	auto x = 0;
 	for (; u8It.hasNext() == true && (length == 0 || index < length); index++) {
 		auto characterId = u8It.next();
@@ -204,7 +204,7 @@ int GUIFont::getTextIndexX(const MutableString& text, int offset, int length, in
 int GUIFont::getTextIndexByX(const MutableString& text, int offset, int length, int textX)
 {
 	StringTools::UTF8CharacterIterator u8It(text.getString());
-	u8It.seek(offset);
+	u8It.seekCharacterPosition(offset);
 	auto x = 0;
 	auto index = offset;
 	if (length == 0) length = text.size();
@@ -327,7 +327,7 @@ void GUIFont::drawString(GUIRenderer* guiRenderer, int x, int y, const MutableSt
 	if (selectionStartIndex != -1 && selectionEndIndex != -1) {
 		auto currentX = x;
 		StringTools::UTF8CharacterIterator u8It(text.getString());
-		u8It.seek(offset);
+		u8It.seekCharacterPosition(offset);
 		for (auto i = offset; u8It.hasNext() == true && (length == 0 || i < length); i++) {
 			auto characterId = u8It.next();
 			auto character = getCharacter(characterId);
@@ -348,7 +348,7 @@ void GUIFont::drawString(GUIRenderer* guiRenderer, int x, int y, const MutableSt
 	guiRenderer->bindTexture(textureId);
 	auto currentX = x;
 	StringTools::UTF8CharacterIterator u8It(text.getString());
-	u8It.seek(offset);
+	u8It.seekCharacterPosition(offset);
 	for (auto i = offset; u8It.hasNext() == true && (length == 0 || i < length); i++) {
 		auto characterId = u8It.next();
 		auto character = getCharacter(characterId);

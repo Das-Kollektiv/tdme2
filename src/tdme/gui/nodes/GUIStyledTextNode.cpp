@@ -22,6 +22,7 @@
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/math/Math.h>
+#include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
@@ -52,6 +53,7 @@ using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::GUI;
 using tdme::math::Math;
+using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Float;
@@ -122,7 +124,8 @@ void GUIStyledTextNode::setSelectionIndexMousePosition(int x, int y) {
 }
 
 void GUIStyledTextNode::removeText(int32_t idx, int32_t count) {
-	text.remove(idx, count);
+
+	text.remove(idx, count, &count);
 	auto adaptNextStyles = false;
 	for (auto i = 0; i < styles.size(); i++) {
 		auto& style = styles[i];
@@ -169,9 +172,10 @@ void GUIStyledTextNode::removeText(int32_t idx, int32_t count) {
 	startTextStyleIdx = -1;
 }
 
-void GUIStyledTextNode::insertText(int32_t idx, char c) {
-	text.insert(idx, c);
-	auto count = 1;
+void GUIStyledTextNode::insertText(int32_t idx, int c) {
+	auto s = Character::toString(c);
+	text.insert(idx, s);
+	auto count = s.size();
 	auto adaptNextStyles = false;
 	for (auto& style: styles) {
 		// adapting styles after specific style change for all succeeding styles
@@ -233,9 +237,10 @@ void GUIStyledTextNode::scrollToIndex(int cursorIndex) {
 	auto yBefore = 0.0f;
 	auto y = 0.0f;
 	auto textStyleIdx = 0;
-	for (auto i = 0; i < text.size(); ) {
+	StringTools::UTF8CharacterIterator u8It(text.getString());
+	while (u8It.hasNext() == true) {
 		//
-		determineNextLineConstraints(i, text.size(), textStyleIdx);
+		determineNextLineConstraints(u8It, text.size(), textStyleIdx);
 
 		//
 		for (auto& lineConstraintsEntity: lineConstraints) {
@@ -254,6 +259,7 @@ void GUIStyledTextNode::scrollToIndex(int cursorIndex) {
 
 		//
 		line.clear();
+		lineCharBinaryIdxs.clear();
 		lineCharIdxs.clear();
 		lineConstraints.clear();
 
@@ -310,13 +316,14 @@ int GUIStyledTextNode::doPageUp() {
 	auto textStyleIdx = 0;
 	auto reachedCursorIndex = false;
 	struct LineInfo {
-		int idx;
+		int charIdx;
 		float y;
 	};
 	vector<LineInfo> lines;
-	for (auto i = 0; i < text.size(); ) {
+	StringTools::UTF8CharacterIterator u8It(text.getString());
+	while (u8It.hasNext() == true) {
 		//
-		determineNextLineConstraints(i, text.size(), textStyleIdx);
+		determineNextLineConstraints(u8It, text.size(), textStyleIdx);
 
 		// did we reach our corsor index
 		if (reachedCursorIndex == false) {
@@ -332,7 +339,7 @@ int GUIStyledTextNode::doPageUp() {
 		for (auto& lineConstraintsEntity: lineConstraints) {
 			lines.push_back(
 				{
-					.idx = lineCharIdxs[0],
+					.charIdx = lineCharIdxs[0],
 					.y = y
 				}
 			);
@@ -341,6 +348,7 @@ int GUIStyledTextNode::doPageUp() {
 
 		//
 		line.clear();
+		lineCharBinaryIdxs.clear();
 		lineCharIdxs.clear();
 		lineConstraints.clear();
 
@@ -359,7 +367,7 @@ int GUIStyledTextNode::doPageUp() {
 	for (int i = lines.size() - 1; i >= 0; i--) {
 		auto& line = lines[i];
 		if (y - line.y >= visibleHeight) {
-			return line.idx;
+			return line.charIdx;
 		}
 	}
 
@@ -382,9 +390,10 @@ int GUIStyledTextNode::doPageDown() {
 	auto textStyleIdx = 0;
 	auto reachedCursorIndex = false;
 	auto finished = false;
-	for (auto i = 0; i < text.size(); ) {
+	StringTools::UTF8CharacterIterator u8It(text.getString());
+	while (u8It.hasNext() == true) {
 		//
-		determineNextLineConstraints(i, text.size(), textStyleIdx);
+		determineNextLineConstraints(u8It, text.size(), textStyleIdx);
 
 		// did we reach our corsor index
 		if (reachedCursorIndex == false) {
@@ -414,6 +423,7 @@ int GUIStyledTextNode::doPageDown() {
 
 		//
 		line.clear();
+		lineCharBinaryIdxs.clear();
 		lineCharIdxs.clear();
 		lineConstraints.clear();
 
@@ -429,7 +439,11 @@ int GUIStyledTextNode::doPageDown() {
 	}
 
 	//
-	return finished == true?cursorIndex:text.size() - 1;
+	if (finished == true) {
+		return cursorIndex;
+	} else {
+		return u8It.getCharacterPosition() - 1;
+	}
 }
 
 const string GUIStyledTextNode::getNodeType()
@@ -473,9 +487,10 @@ void GUIStyledTextNode::computeContentAlignment() {
 
 	//
 	auto textStyleIdx = 0;
-	for (auto i = 0; i < text.size(); ) {
+	StringTools::UTF8CharacterIterator u8It(text.getString());
+	while (u8It.hasNext() == true) {
 		//
-		determineNextLineConstraints(i, text.size(), textStyleIdx);
+		determineNextLineConstraints(u8It, text.size(), textStyleIdx);
 
 		/*
 		{
@@ -510,6 +525,7 @@ void GUIStyledTextNode::computeContentAlignment() {
 
 		//
 		line.clear();
+		lineCharBinaryIdxs.clear();
 		lineCharIdxs.clear();
 		lineConstraints.clear();
 	}
@@ -766,38 +782,44 @@ void GUIStyledTextNode::dispose()
 	GUINode::dispose();
 }
 
-void GUIStyledTextNode::determineNextLineConstraints(int& i, int charEndIdx, int textStyleIdx) {
+void GUIStyledTextNode::determineNextLineConstraints(StringTools::UTF8CharacterIterator& u8It, int charEndIdx, int textStyleIdx) {
 	//
 	auto maxLineWidth = requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO?Float::MAX_VALUE:computedConstraints.width - (border.left + border.right + padding.left + padding.right);
 
 	// determine line to render
 	if (preformatted == true) {
 		line.clear();
+		lineCharBinaryIdxs.clear();
 		lineCharIdxs.clear();
-		auto k = i;
-		for (; k < charEndIdx; k++) {
-			auto c = text.charAt(k);
+		while (u8It.getBinaryPosition() < charEndIdx && u8It.hasNext() == true) {
+			auto k = u8It.getBinaryPosition();
+			auto kc = u8It.getCharacterPosition();
+			auto c = u8It.next();
 			// line finished?
 			if (c == '\n') {
-				line+= c;
-				lineCharIdxs.push_back(k);
+				Character::appendToString(line, c);
+				lineCharBinaryIdxs.push_back(k);
+				lineCharIdxs.push_back(kc);
 				break;
 			} else {
-				line+= c;
-				lineCharIdxs.push_back(k);
+				Character::appendToString(line, c);
+				lineCharBinaryIdxs.push_back(k);
+				lineCharIdxs.push_back(kc);
 			}
 		}
-		i = k + 1;
 	} else {
 		line.clear();
+		lineCharBinaryIdxs.clear();
 		lineCharIdxs.clear();
-		auto k = i;
-		for (; k < charEndIdx; k++) {
-			auto c = text.charAt(k);
+		while (u8It.getBinaryPosition() < charEndIdx && u8It.hasNext() == true) {
+			auto k = u8It.getBinaryPosition();
+			auto kc = u8It.getCharacterPosition();
+			auto c = u8It.next();
 			// line finished?
 			if (c == '\n') {
-				line+= c;
-				lineCharIdxs.push_back(k);
+				Character::appendToString(line, c);
+				lineCharBinaryIdxs.push_back(k);
+				lineCharIdxs.push_back(kc);
 				break;
 			} else
 			if (line.empty() == false && c == ' ' && StringTools::endsWith(line, spaceString) == true) {
@@ -806,11 +828,11 @@ void GUIStyledTextNode::determineNextLineConstraints(int& i, int charEndIdx, int
 			if (line.empty() == true && (c == ' ' || c == '\t')) {
 				// no op
 			} else {
-				line+= c;
-				lineCharIdxs.push_back(k);
+				Character::appendToString(line, c);
+				lineCharBinaryIdxs.push_back(k);
+				lineCharIdxs.push_back(kc);
 			}
 		}
-		i = k + 1;
 	}
 
 	// remove trailing space
@@ -820,7 +842,7 @@ void GUIStyledTextNode::determineNextLineConstraints(int& i, int charEndIdx, int
 		//
 		lineConstraints.push_back(
 			{
-				.idx = 0,
+				.binaryIdx = 0,
 				.width = 0.0f,
 				.height = font->getLineHeight(),
 				.lineHeight = font->getLineHeight(),
@@ -837,12 +859,14 @@ void GUIStyledTextNode::determineNextLineConstraints(int& i, int charEndIdx, int
 		auto lineHeightSpaceWrap = 0.0f;
 		auto baseLineSpaceWrap = 0.0f;
 		auto imageHeight = 0.0f;
+		auto charIdx = 0;
 
 		//
 		lineConstraints.clear();
 		lineConstraints.push_back(
 			{
-				.idx = -1,
+				.binaryIdx = -1,
+				.charIdx = -1,
 				.width = 0.0f,
 				.height = 0.0f,
 				.lineHeight = 0.0f,
@@ -852,8 +876,13 @@ void GUIStyledTextNode::determineNextLineConstraints(int& i, int charEndIdx, int
 		);
 		{
 			auto currentTextStyleIdx = textStyleIdx;
-			for (auto k = 0; k < line.size(); k++) {
-				auto textStyle = getTextStyle(lineCharIdxs, k, currentTextStyleIdx);
+			StringTools::UTF8CharacterIterator lineU8It(line);
+			while (lineU8It.hasNext() == true) {
+				charIdx = lineU8It.getCharacterPosition();
+				auto k = lineU8It.getBinaryPosition();
+				auto kc = charIdx;
+				auto c = lineU8It.next();
+				auto textStyle = getTextStyle(lineCharBinaryIdxs, k, currentTextStyleIdx);
 				auto currentFont = textStyle != nullptr && textStyle->font != nullptr?textStyle->font:font;
 				baseLine = Math::max(baseLine, currentFont->getBaseLine());
 				baseLineSpaceWrap = Math::max(baseLineSpaceWrap, currentFont->getBaseLine());
@@ -863,7 +892,8 @@ void GUIStyledTextNode::determineNextLineConstraints(int& i, int charEndIdx, int
 				if (textStyle != nullptr && textStyle->image != nullptr) {
 					if (lineConstraints[lineConstraints.size() - 1].spaceWrap == false) {
 						lineConstraints[lineConstraints.size() - 1] = {
-							.idx = k,
+							.binaryIdx = k,
+							.charIdx = kc,
 							.width = lineWidth,
 							.height = Math::max(lineHeight, baseLine + imageHeight),
 							.lineHeight = lineHeight,
@@ -881,7 +911,8 @@ void GUIStyledTextNode::determineNextLineConstraints(int& i, int charEndIdx, int
 						baseLine = baseLineSpaceWrap;
 						lineConstraints.push_back(
 							{
-								.idx = -1,
+								.binaryIdx = -1,
+								.charIdx = kc,
 								.width = 0.0f,
 								.height = 0.0f,
 								.lineHeight = 0.0f,
@@ -895,9 +926,10 @@ void GUIStyledTextNode::determineNextLineConstraints(int& i, int charEndIdx, int
 					imageHeight = Math::max(imageHeight, static_cast<float>(textStyle->height));
 				} else {
 					// render text
-					if (line[k] == ' ') {
+					if (c == ' ') {
 						lineConstraints[lineConstraints.size() - 1] = {
-							.idx = k,
+							.binaryIdx = k,
+							.charIdx = kc,
 							.width = lineWidth,
 							.height = Math::max(lineHeight, baseLine + imageHeight),
 							.lineHeight = lineHeight,
@@ -908,11 +940,12 @@ void GUIStyledTextNode::determineNextLineConstraints(int& i, int charEndIdx, int
 						lineHeightSpaceWrap = 0.0f;
 						baseLineSpaceWrap = 0.0f;
 					}
-					auto character = currentFont->getCharacter(line[k] == '\t'?' ':line[k]);
+					auto character = currentFont->getCharacter(c == '\t'?' ':c);
 					if (character != nullptr) {
 						if (lineConstraints[lineConstraints.size() - 1].spaceWrap == false) {
 							lineConstraints[lineConstraints.size() - 1] = {
-								.idx = k,
+								.binaryIdx = k,
+								.charIdx = kc,
 								.width = lineWidth,
 								.height = Math::max(lineHeight, baseLine + imageHeight),
 								.lineHeight = lineHeight,
@@ -925,14 +958,15 @@ void GUIStyledTextNode::determineNextLineConstraints(int& i, int charEndIdx, int
 						}
 						if (lineWidth > maxLineWidth) {
 							lineWidth = lineWidthSpaceWrap;
-							if (k != line.size() - 1) {
+							if (lineU8It.hasNext() == true) {
 								imageHeight = 0.0f;
 								lineHeight = lineHeightSpaceWrap;
 								baseLine = baseLineSpaceWrap;
 							}
 							lineConstraints.push_back(
 								{
-									.idx = -1,
+									.binaryIdx = -1,
+									.charIdx = -1,
 									.width = 0.0f,
 									.height = 0.0f,
 									.lineHeight = 0.0f,
@@ -941,9 +975,9 @@ void GUIStyledTextNode::determineNextLineConstraints(int& i, int charEndIdx, int
 								}
 							);
 						}
-						auto charXAdvance = line[k] == '\t'?character->getXAdvance() * tabSize:character->getXAdvance();
+						auto charXAdvance = c == '\t'?character->getXAdvance() * tabSize:character->getXAdvance();
 						lineWidth+= charXAdvance;
-						lineWidthSpaceWrap+= lineWidthSpaceWrap < Math::EPSILON && (line[k] == ' ' || line[k] == '\t')?0.0f:charXAdvance;
+						lineWidthSpaceWrap+= lineWidthSpaceWrap < Math::EPSILON && (c == ' ' || c == '\t')?0.0f:charXAdvance;
 					}
 				}
 			}
@@ -951,7 +985,8 @@ void GUIStyledTextNode::determineNextLineConstraints(int& i, int charEndIdx, int
 
 		//
 		lineConstraints[lineConstraints.size() - 1] = {
-			.idx = static_cast<int>(line.size()),
+			.binaryIdx = static_cast<int>(line.size()),
+			.charIdx = charIdx,
 			.width = lineWidth,
 			.height = Math::max(lineHeight, baseLine + imageHeight),
 			.lineHeight = lineHeight,
@@ -1055,15 +1090,17 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 	string currentURL;
 	string styleURL;
 	int x = 0;
-	for (auto i = charStartIdx; i < charEndIdx;) {
+	StringTools::UTF8CharacterIterator u8It(text.getString());
+	u8It.seekBinaryPosition(charStartIdx);
+	for (;u8It.hasNext() == true && u8It.getBinaryPosition() < charEndIdx;) {
 
 		//
-		auto nextCharStartIdx = i;
+		auto nextCharStartIdx = u8It.getBinaryPosition();
 		auto nextStartTextStyleIdx = textStyleIdx;
 		auto nextStartRenderY = y;
 
 		//
-		determineNextLineConstraints(i, charEndIdx, textStyleIdx);
+		determineNextLineConstraints(u8It, charEndIdx, textStyleIdx);
 
 		//
 		/*
@@ -1128,15 +1165,15 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 				// increment y by line height
 				y+= lineConstraints[lineIdx].height;
 				// iterate text style
-				for (auto k = lineIdx == 0?0:lineConstraints[lineIdx - 1].idx; k < lineConstraints[lineIdx].idx; k++)
-					getTextStyle(lineCharIdxs, k, currentTextStyleIdx);
+				for (auto k = lineIdx == 0?0:lineConstraints[lineIdx - 1].binaryIdx; k < lineConstraints[lineIdx].binaryIdx; k++)
+					getTextStyle(lineCharBinaryIdxs, k, currentTextStyleIdx);
 			}
 			// render
 			if (lineIdx == lineConstraints.size()) {
 				// was visible, then store text render end values
 				if (visible == true) {
 					visible = false;
-					charEndIdx = lineCharIdxs[0];
+					charEndIdx = lineCharBinaryIdxs[0];
 					break;
 				}
 			} else {
@@ -1173,8 +1210,13 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 					cursorSelectionIndex = lineCharIdxs[0];
 				}
 				// render
-				for (auto k = lineIdx == 0?0:lineConstraints[lineIdx - 1].idx; k < line.size(); k++) {
-					auto textStyle = getTextStyle(lineCharIdxs, k, currentTextStyleIdx);
+				StringTools::UTF8CharacterIterator lineU8It(line);
+				lineU8It.seekBinaryPosition(lineIdx == 0?0:lineConstraints[lineIdx - 1].binaryIdx);
+				while (lineU8It.hasNext() == true) {
+					auto k = lineU8It.getBinaryPosition();
+					auto kc = lineU8It.getCharacterPosition();
+					auto c = lineU8It.next();
+					auto textStyle = getTextStyle(lineCharBinaryIdxs, k, currentTextStyleIdx);
 					Color4 currentColor = color;
 					GUIFont* currentFont = font;
 					styleURL.clear();
@@ -1221,7 +1263,7 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 								1.0f
 							);
 						}
-						if (cursorMode == GUIStyledTextNodeController::CURSORMODE_SHOW && (findNewSelectionIndex == true?cursorSelectionIndex == lineCharIdxs[k]:cursorIndex == lineCharIdxs[k])) {
+						if (cursorMode == GUIStyledTextNodeController::CURSORMODE_SHOW && (findNewSelectionIndex == true?cursorSelectionIndex == lineCharIdxs[kc]:cursorIndex == lineCharIdxs[kc])) {
 							// draw cursor
 							float left = x + xIndentLeft;
 							float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - textStyle->height) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
@@ -1280,7 +1322,7 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 					} else {
 						// text rendering
 						// do line break
-						if (k == lineConstraints[lineIdx].idx) {
+						if (k == lineConstraints[lineIdx].binaryIdx) {
 							// flush current URL
 							if (currentURL.empty() == false && urlAreas.empty() == false) {
 								auto& urlArea = urlAreas[urlAreas.size() - 1];
@@ -1312,13 +1354,13 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 							if (findNewIndex == true &&
 								indexMousePositionY >= y + yIndentTop && indexMousePositionY < y + yIndentTop + lineConstraints[lineIdx].height &&
 								indexMousePositionX <= x + xIndentLeft) {
-								cursorIndex = lineCharIdxs[k];
+								cursorIndex = lineCharIdxs[kc];
 							}
 							// 	selection index
 							if (findNewSelectionIndex == true &&
 								selectionIndexMousePositionY >= y + yIndentTop && selectionIndexMousePositionY < y + yIndentTop + lineConstraints[lineIdx].height &&
 								selectionIndexMousePositionX <= x + xIndentLeft) {
-								cursorSelectionIndex = lineCharIdxs[k];
+								cursorSelectionIndex = lineCharIdxs[kc];
 							}
 							//
 							{
@@ -1337,7 +1379,9 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 									//
 									if (visible == true) {
 										visible = false;
-										charEndIdx = lineCharIdxs[lineIdx == 0?0:lineConstraints[lineIdx - 1].idx];
+										//
+
+										charEndIdx = lineCharBinaryIdxs[lineIdx == 0?0:lineConstraints[lineIdx - 1].charIdx];
 										break;
 									}
 								}
@@ -1345,28 +1389,28 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 						}
 						// skip spaces if requested
 						if (skipSpaces == true) {
-							if (line[k] == ' ' || line[k] == '\t') {
+							if (c == ' ' || c == '\t') {
 								continue;
 							} else {
 								skipSpaces = false;
 							}
 						}
-						if (line[k] == '\n') {
+						if (c == '\n') {
 							// find new indices if requested
 							// 	index
 							if (findNewIndex == true &&
 								indexMousePositionY >= y + yIndentTop && indexMousePositionY < y + yIndentTop + lineConstraints[lineIdx].height &&
 								indexMousePositionX >= x + xIndentLeft) {
-								cursorIndex = lineCharIdxs[k];
+								cursorIndex = lineCharIdxs[kc];
 							}
 							// 	selection index
 							if (findNewSelectionIndex == true &&
 								selectionIndexMousePositionY >= y + yIndentTop && selectionIndexMousePositionY < y + yIndentTop + lineConstraints[lineIdx].height &&
 								selectionIndexMousePositionX >= x + xIndentLeft) {
-								cursorSelectionIndex = lineCharIdxs[k];
+								cursorSelectionIndex = lineCharIdxs[kc];
 							}
 							// draw cursor
-							if (cursorMode == GUIStyledTextNodeController::CURSORMODE_SHOW && (findNewSelectionIndex == true?cursorSelectionIndex == lineCharIdxs[k]:cursorIndex == lineCharIdxs[k])) {
+							if (cursorMode == GUIStyledTextNodeController::CURSORMODE_SHOW && (findNewSelectionIndex == true?cursorSelectionIndex == lineCharIdxs[kc]:cursorIndex == lineCharIdxs[kc])) {
 								float left = x + xIndentLeft;
 								float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - currentFont->getBaseLine()) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
 								float width = 2;
@@ -1397,31 +1441,31 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 							}
 						} else {
 							// otherwise draw
-							auto characterCount = line[k] == '\t'?tabSize:1;
-							auto character = currentFont->getCharacter(line[k] == '\t'?' ':line[k]);
+							auto characterCount = c == '\t'?tabSize:1;
+							auto character = currentFont->getCharacter(c == '\t'?' ':c);
 							if (character != nullptr) {
 								// next x advance
-								auto xAdvance = line[k] == '\t'?tabSize * character->getXAdvance():character->getXAdvance();
+								auto xAdvance = c == '\t'?tabSize * character->getXAdvance():character->getXAdvance();
 
 								// find new indices if requested
 								// 	index
 								if (findNewIndex == true &&
 									indexMousePositionY >= y + yIndentTop && indexMousePositionY < y + yIndentTop + lineConstraints[lineIdx].height &&
 									indexMousePositionX >= x + xIndentLeft && indexMousePositionX < x + xIndentLeft + xAdvance) {
-									cursorIndex = lineCharIdxs[k];
+									cursorIndex = lineCharIdxs[kc];
 								}
 								// 	selection index
 								if (findNewSelectionIndex == true &&
 									selectionIndexMousePositionY >= y + yIndentTop && selectionIndexMousePositionY < y + yIndentTop + lineConstraints[lineIdx].height &&
 									selectionIndexMousePositionX >= x + xIndentLeft && selectionIndexMousePositionX < x + xIndentLeft + xAdvance) {
-									cursorSelectionIndex = lineCharIdxs[k];
+									cursorSelectionIndex = lineCharIdxs[kc];
 								}
 
 								//
 								auto hasSelection = false;
 								if (editMode == true && (cursorSelectionIndex != -1 || findNewSelectionIndex == true)) {
-									if ((cursorSelectionIndex != -1 && lineCharIdxs[k] >= Math::min(cursorIndex, cursorSelectionIndex) && lineCharIdxs[k] < Math::max(cursorIndex, cursorSelectionIndex)) ||
-										(cursorSelectionIndex == -1 && lineCharIdxs[k] >= cursorIndex)) {
+									if ((cursorSelectionIndex != -1 && lineCharIdxs[kc] >= Math::min(cursorIndex, cursorSelectionIndex) && lineCharIdxs[kc] < Math::max(cursorIndex, cursorSelectionIndex)) ||
+										(cursorSelectionIndex == -1 && lineCharIdxs[kc] >= cursorIndex)) {
 										for (auto l = 0; l < characterCount; l++) {
 											float left = x + xIndentLeft + (l * character->getXAdvance());
 											float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - currentFont->getBaseLine()) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
@@ -1457,7 +1501,7 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 								}
 
 								// draw cursor
-								if (cursorMode == GUIStyledTextNodeController::CURSORMODE_SHOW && (findNewSelectionIndex == true?cursorSelectionIndex == lineCharIdxs[k]:cursorIndex == lineCharIdxs[k])) {
+								if (cursorMode == GUIStyledTextNodeController::CURSORMODE_SHOW && (findNewSelectionIndex == true?cursorSelectionIndex == lineCharIdxs[kc]:cursorIndex == lineCharIdxs[kc])) {
 									float left = x + xIndentLeft;
 									float top = y + yIndentTop + (lineConstraints[lineIdx].baseLine - currentFont->getBaseLine()) + (lineConstraints[lineIdx].height - lineConstraints[lineIdx].lineHeight);
 									float width = 2;
@@ -1531,7 +1575,7 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 				}
 
 				//
-				if (lineConstraints[lineConstraints.size() - 1].idx == line.size()) {
+				if (lineConstraints[lineConstraints.size() - 1].binaryIdx == line.size()) {
 					y+= lineConstraints[lineConstraints.size() - 1].height;
 				}
 
@@ -1547,7 +1591,7 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 
 		//
 		line.clear();
-		lineCharIdxs.clear();
+		lineCharBinaryIdxs.clear();
 		lineConstraints.clear();
 	}
 
