@@ -69,7 +69,9 @@ public:
 		 * @param characterPosition character position
 		 */
 		inline void seekCharacterPosition(int characterPosition) {
-			for (auto i = 0; i < characterPosition; i++) {
+			if (this->characterPosition > characterPosition) reset();
+			auto seekCount = characterPosition - this->characterPosition;
+			for (auto i = 0; i < seekCount; i++) {
 				if (hasNext() == true) next();
 			}
 		}
