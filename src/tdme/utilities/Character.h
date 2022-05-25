@@ -64,10 +64,9 @@ public:
 	}
 
 	/**
-	 * Generates a string from given character / code point
+	 * Appends a character / code point to given string
 	 * @param string string
 	 * @param character character
-	 * @return string representation of given character
 	 */
 	inline static void appendToString(string& string, uint32_t character) {
 		// see: http://www.zedwood.com/article/cpp-utf8-char-to-codepoint
