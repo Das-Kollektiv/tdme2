@@ -3,8 +3,8 @@
 #include <tdme/tdme.h>
 
 /**
- * The definition of a single character as defined in the AngelCode file format
- * @author kevin, Andreas Drewke
+ * GUI character
+ * @author Andreas Drewke
  */
 class tdme::gui::renderer::GUICharacter final
 {

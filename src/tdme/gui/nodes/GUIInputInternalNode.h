@@ -74,6 +74,7 @@ protected:
 	 * @param showOn show on
 	 * @param hideOn hide on
 	 * @param font font
+	 * @param size font size
 	 * @param color color
 	 * @param colorDisabled color disabled
 	 * @param text text
@@ -96,6 +97,7 @@ protected:
 		const GUINodeConditions& showOn,
 		const GUINodeConditions& hideOn,
 		const string& font,
+		int size,
 		const string& color,
 		const string& colorDisabled,
 		const MutableString& text,

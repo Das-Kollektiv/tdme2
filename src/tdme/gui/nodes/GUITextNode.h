@@ -65,6 +65,7 @@ protected:
 	 * @param showOn show on
 	 * @param hideOn hide on
 	 * @param font font
+	 * @param size size
 	 * @param color color
 	 * @param text text
 	 * @throws tdme::gui::GUIParserException
@@ -86,6 +87,7 @@ protected:
 		const GUINodeConditions& showOn,
 		const GUINodeConditions& hideOn,
 		const string& font,
+		int size,
 		const string& color,
 		const MutableString& text
 	);

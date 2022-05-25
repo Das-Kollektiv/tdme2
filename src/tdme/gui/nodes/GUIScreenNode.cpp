@@ -636,7 +636,7 @@ GUIScreenNode_SizeConstraints GUIScreenNode::createSizeConstraints(const string&
 	return constraints;
 }
 
-GUIFont* GUIScreenNode::getFont(const string& applicationRootPath, const string& fileName)
+GUIFont* GUIScreenNode::getFont(const string& applicationRootPath, const string& fileName, int size)
 {
 	// get canonical file name
 	string canonicalFile;
@@ -658,16 +658,17 @@ GUIFont* GUIScreenNode::getFont(const string& applicationRootPath, const string&
 	}
 
 	// use cache or load font
-	auto fontCacheIt = fontCache.find(canonicalFile);
+	auto cacheId = canonicalFile + ":" + to_string(size);
+	auto fontCacheIt = fontCache.find(cacheId);
 	if (fontCacheIt == fontCache.end()) {
 		try {
-			font = GUIFont::parse(path, file);
+			font = GUIFont::parse(path, file, size);
 		} catch (Exception& exception) {
 			Console::print(string("GUIScreenNode::getFont(): An error occurred: "));
 			Console::println(string(exception.what()));
 			return nullptr;
 		}
-		fontCache[canonicalFile] = font;
+		fontCache[cacheId] = font;
 	} else {
 		font = fontCacheIt->second;
 	}

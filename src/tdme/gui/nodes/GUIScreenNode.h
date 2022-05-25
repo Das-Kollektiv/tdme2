@@ -584,10 +584,11 @@ public:
 	 * Get font
 	 * @param applicationRootPath application root path
 	 * @param fileName file name
+	 * @param size size
 	 * @throws tdme::os::filesystem::FileSystemException
 	 * @return font
 	 */
-	GUIFont* getFont(const string& applicationRootPath, const string& fileName);
+	GUIFont* getFont(const string& applicationRootPath, const string& fileName, int size);
 
 	/**
 	 * Get image

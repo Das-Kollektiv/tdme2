@@ -1175,6 +1175,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
 					StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("font")))),
+					parseInteger(StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("size")))), FONTSIZE_FALLBACK),
 					string(AVOID_NULLPTR_STRING(node->Attribute("color"))),
 					MutableString(unescapeQuotes(string(StringTools::trim(AVOID_NULLPTR_STRING(node->Attribute("text"))))))
 				);
@@ -1239,6 +1240,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
 					node->Attribute("preformatted") == nullptr?false:StringTools::toLowerCase(StringTools::trim(node->Attribute("preformatted"))) == "true",
 					StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("font")))),
+					parseInteger(StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("size")))), FONTSIZE_FALLBACK),
 					string(AVOID_NULLPTR_STRING(node->Attribute("color"))),
 					MutableString(unescapeQuotes(StringTools::trim(AVOID_NULLPTR_STRING(node->GetText()))))
 				);
@@ -1487,6 +1489,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
 					StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("font")))),
+					parseInteger(StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("size")))), FONTSIZE_FALLBACK),
 					string(AVOID_NULLPTR_STRING(node->Attribute("color"))),
 					string(AVOID_NULLPTR_STRING(node->Attribute("color-disabled"))),
 					MutableString(unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("text"))))),
@@ -1800,6 +1803,15 @@ int GUIParser::parseFactor(GUIParentNode* guiParentNode, const string& factor) {
 		return childIdx;
 	} else {
 		return Integer::parse(factor);
+	}
+}
+
+int GUIParser::parseInteger(const string& value, int defaultValue) {
+	try {
+		return Integer::parse(value);
+	} catch (Exception& exception) {
+		Console::println("GUIParser::parseInteger(): Unknown integer value: '" + value + "': using default value: " + to_string(defaultValue));
+		return defaultValue;
 	}
 }
 

@@ -65,6 +65,7 @@ private:
 
 	bool preformatted;
 	GUIFont* font { nullptr };
+	int size;
 	GUIColor color;
 	MutableString text;
 
@@ -259,6 +260,7 @@ protected:
 	 * @param hideOn hide on
 	 * @param preformatted preformatted
 	 * @param font font
+	 * @param size font size
 	 * @param color color
 	 * @param text text
 	 * @throws tdme::gui::GUIParserException
@@ -281,6 +283,7 @@ protected:
 		const GUINodeConditions& hideOn,
 		bool preformatted,
 		const string& font,
+		int size,
 		const string& color,
 		const MutableString& text
 	);
@@ -425,7 +428,7 @@ public:
 	 * @param font font
 	 * @param url url
 	 */
-	void setTextStyle(int startIdx, int endIdx, const GUIColor& color, const string& font = string(), const string& url = string());
+	void setTextStyle(int startIdx, int endIdx, const GUIColor& color, const string& font = string(), int size = -1, const string& url = string());
 
 	/**
 	 * Set text style
@@ -434,7 +437,7 @@ public:
 	 * @param font font
 	 * @param url url
 	 */
-	void setTextStyle(int startIdx, int endIdx, const string& font, const string& url = string());
+	void setTextStyle(int startIdx, int endIdx, const string& font, int size, const string& url = string());
 
 	/**
 	 * Set image

@@ -76,12 +76,14 @@ GUIStyledTextNode::GUIStyledTextNode(
 	const GUINodeConditions& hideOn,
 	bool preformatted,
 	const string& font,
+	int size,
 	const string& color,
 	const MutableString& text
 ):
 	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
 {
-	this->font = font.empty() == true?nullptr:screenNode->getFont(screenNode->getApplicationRootPathName(), font);
+	this->font = font.empty() == true?nullptr:screenNode->getFont(screenNode->getApplicationRootPathName(), font, size);
+	this->size = size;
 	this->color = color.empty() == true || color.length() == 0?GUIColor():GUIColor(color);
 	this->autoWidth = 0;
 	this->autoHeight = 0;
@@ -539,6 +541,7 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 	[image=horizontal-scale:50%|0.5,vertical-scale:50%|0.5,width:100,height:100,effect-color-mul:#ff0000ff,effect-color-add:#ff000000]example.com/bild.jpg[/image]
 	*/
 	string styleFont;
+	int styleSize = size;
 	string styleColor;
 	string styleUrl;
 	string styleImage;
@@ -567,9 +570,9 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 						styleColor.empty() == false ||
 						styleUrl.empty() == false)) {
 						if (styleColor.empty() == false) {
-							if (this->text.size() > styleStartIdx) setTextStyle(styleStartIdx, this->text.size() - 1, GUIColor(styleColor), styleFont, styleUrl);
+							if (this->text.size() > styleStartIdx) setTextStyle(styleStartIdx, this->text.size() - 1, GUIColor(styleColor), styleFont, styleSize, styleUrl);
 						} else {
-							if (this->text.size() > styleStartIdx) setTextStyle(styleStartIdx, this->text.size() - 1, styleFont, styleUrl);
+							if (this->text.size() > styleStartIdx) setTextStyle(styleStartIdx, this->text.size() - 1, styleFont, styleSize, styleUrl);
 						}
 					}
 					if (styleTokenized.size() == 2) {
@@ -577,6 +580,14 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 						auto argument = StringTools::trim(styleTokenized[1]);
 						if (command == "font") {
 							styleFont = argument;
+							styleStartIdx = this->text.size();
+						} else
+						if (command == "size") {
+							try {
+								styleSize = Integer::parse(argument);
+							} catch (Exception& exception) {
+								Console::println("GUIStyledTextNode::setText(): size: unknown value: " + argument);
+							}
 							styleStartIdx = this->text.size();
 						} else
 						if (command == "color") {
@@ -663,6 +674,9 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 						if (command == "/font") {
 							styleFont.clear();
 						} else
+						if (command == "/size") {
+							styleSize = size;
+						} else
 						if (command == "/color") {
 							styleColor.clear();
 						} else
@@ -735,9 +749,9 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 		styleColor.empty() == false ||
 		styleUrl.empty() == false)) {
 		if (styleColor.empty() == false) {
-			if (this->text.size() > styleStartIdx) setTextStyle(styleStartIdx, this->text.size() - 1, GUIColor(styleColor), styleFont, styleUrl);
+			if (this->text.size() > styleStartIdx) setTextStyle(styleStartIdx, this->text.size() - 1, GUIColor(styleColor), styleFont, styleSize, styleUrl);
 		} else {
-			if (this->text.size() > styleStartIdx) setTextStyle(styleStartIdx, this->text.size() - 1, styleFont, styleUrl);
+			if (this->text.size() > styleStartIdx) setTextStyle(styleStartIdx, this->text.size() - 1, styleFont, styleSize, styleUrl);
 		}
 	}
 
@@ -1593,7 +1607,7 @@ void GUIStyledTextNode::unsetTextStyle(int startIdx, int endIdx) {
 	// for (auto& style: styles) Console::println("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
 }
 
-void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor& color, const string& font, const string& url) {
+void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor& color, const string& font, int size, const string& url) {
 	// Console::print("GUIStyledTextNode::setTextStyle(): " + to_string(startIdx) + " ... " + to_string(endIdx) + ": '");
 	// for (auto i = startIdx; i <= endIdx; i++) Console::print(string() + text.charAt(i));
 	// Console::print("'");
@@ -1601,8 +1615,9 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor& c
 	// Console::print(", url = '" + url + "'");
 	// Console::println();
 	unsetTextStyle(startIdx, endIdx);
-	// TODO: a.drewke
-	auto _font = font.empty() == true?nullptr:screenNode->getFont(screenNode->getApplicationRootPathName(), font);;
+	//
+	if (size <= 0) size = this->size;
+	auto _font = font.empty() == true?nullptr:screenNode->getFont(screenNode->getApplicationRootPathName(), font, size);
 	if (_font != nullptr) _font->initialize();
 	// find position to insert
 	auto j = -1;
@@ -1637,15 +1652,16 @@ void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const GUIColor& c
 	// for (auto& style: styles) Console::println("post: " + to_string(style.startIdx) + " ... " + to_string(style.endIdx));
 }
 
-void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const string& font, const string& url) {
+void GUIStyledTextNode::setTextStyle(int startIdx, int endIdx, const string& font, int size, const string& url) {
 	// Console::print("GUIStyledTextNode::setTextStyle(): " + to_string(startIdx) + " ... " + to_string(endIdx) + ": '");
 	// for (auto i = startIdx; i <= endIdx; i++) Console::print(string() + text.charAt(i));
 	// Console::print("'");
 	// Console::print(", url = '" + url + "'");
 	// Console::println();
 	unsetTextStyle(startIdx, endIdx);
-	// TODO: a.drewke
-	auto _font = font.empty() == true?nullptr:screenNode->getFont(screenNode->getApplicationRootPathName(), font);;
+	//
+	if (size <= 0) size = this->size;
+	auto _font = font.empty() == true?nullptr:screenNode->getFont(screenNode->getApplicationRootPathName(), font, size);
 	if (_font != nullptr) _font->initialize();
 	// find position to insert
 	auto j = -1;
