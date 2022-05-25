@@ -117,7 +117,7 @@ GUICharacter* GUIFont::addToTextureAtlas(uint32_t charId) {
 			glyphByteBuffer->put(v); // red
 			glyphByteBuffer->put(v); // green
 			glyphByteBuffer->put(v); // blue
-			glyphByteBuffer->put(v); // alpha
+			glyphByteBuffer->put(v == 0?0:(v < 0xff / 2?v * 2:0xff)); // alpha
 		}
 	}
 
