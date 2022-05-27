@@ -59,8 +59,8 @@ FT_Library GUIFont::ftLibrary;
 
 GUIFont::GUIFont(const string& pathName, const string& fileName, int size): textureAtlas("font:" + pathName + "/" + fileName + "@" + to_string(size))
 {
-	// TODO: use pathName + fileName
-	if (FT_New_Face(ftLibrary, "resources/engine/fonts/Roboto-Regular.ttf", 0, &ftFace) == true) {
+	// TODO: use FileSystem here
+	if (FT_New_Face(ftLibrary, (pathName + "/" + fileName).c_str(), 0, &ftFace) == true) {
 		Console::println("GUIFont::parse(): Could not load font: " + pathName + "/" + fileName);
 		return;
 	}
