@@ -1,0 +1,47 @@
+OBJ = mscobj
+
+INCLUDES = \
+	/I "." \
+	/I "src" \
+	/I "ext" \
+	/I "ext\src" \
+	/I "ext\v-hacd\src\VHACD_Lib\inc" \
+	/I "ext\reactphysics3d\src" \
+	/I "ext\fbx\win64\include" \
+	/I "ext\glfw3\include" \
+	/I "ext\windows-msc\pthread\includes" \
+	/I "ext\windows-msc\openal-soft\includes" \
+	/I "ext\windows-msc\glew\include" \
+	/I "ext\windows-msc\dirent\include" \
+	/I "ext\windows-msc\vulkan-sdk\include" \
+	/I "ext\rapidjson\include"
+
+# For some reason this works only once LOL
+# WINDOWS_SDK_DIR = %WindowsSdkDir%Lib\%WindowsSDKLibVersion%
+WINDOWS_SDK_DIR = C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0
+
+MAIN_LDFLAGS = \
+	/LIBPATH libtdme-ext.lib \
+	/LIBPATH libtdme.lib
+
+FLAGS = /MT /MP /EHsc /O2 /std:c++20 /Zi /F 8388608 /D RAPIDJSON_HAS_STDSTRING /D GLFW_DLL
+# /NODEFAULTLIB:msvcrt
+
+LD_FLAGS =
+
+SRCS = {$source-files}
+
+all: init compile {$main-targets} clean
+
+init:
+	mkdir $(OBJ) 
+
+init-mains:
+	mkdir $(OBJ)
+
+compile: $(SRCS)
+	cl /D TDME2_DLL_IMPORT /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
+
+clean: 
+	del /S /Q $(OBJ) >nul 2>&1
+	rmdir $(OBJ)

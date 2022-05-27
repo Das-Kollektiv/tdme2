@@ -760,6 +760,7 @@ all: \
 	msclib2dll \
 	makefilegenerator \
 	miniscripttranspiler \
+	nmakefilegenerator \
 	optimizemodel \
 	parseh++ \
 	scenefixmodelszup2yup \
@@ -1205,6 +1206,13 @@ miniscripttranspiler:
 	cl /D TDME2_DLL_IMPORT /Feminiscripttranspiler $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/miniscripttranspiler-main.cpp miniscripttranspiler.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 	del miniscripttranspiler.exe.rc
 	del miniscripttranspiler.exe.res
+
+nmakefilegenerator:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc nmakefilegenerator.exe nmakefilegenerator.exe.rc
+	rc nmakefilegenerator.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fenmakefilegenerator $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/nmakefilegenerator-main.cpp nmakefilegenerator.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	del nmakefilegenerator.exe.rc
+	del nmakefilegenerator.exe.res
 
 optimizemodel:
 	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc optimizemodel.exe optimizemodel.exe.rc
