@@ -189,9 +189,21 @@ Scene* SceneReader::read(const string& pathName, const string& fileName, const s
 				prototype->setEmbedded(false);
 			}
 		} catch (Exception& exception) {
-			Console::println(string() + "SceneReader::read(): An error occurred: " + exception.what());
-			delete scene;
-			throw exception;
+			Console::println(string() + "SceneReader::read(): An error occurred: " + exception.what() + ": Using empty prototype");
+			//
+			string prototypeName = "Missing-Prototype-" + to_string(jPrototype["id"].GetInt());
+			//
+			prototype = new Prototype(
+				jPrototype["id"].GetInt(),
+				Prototype_Type::EMPTY,
+				prototypeName,
+				string(),
+				prototypeName + ".tempty",
+				"resources/engine/models/empty.tm",
+				string(),
+				ModelReader::read("resources/engine/models", "empty.tm"), // TODO: exception
+				Vector3(0.0f, 0.0f, 0.0f)
+			);
 		}
 		if (prototype == nullptr) {
 			Console::println("SceneReader::read(): Invalid prototype = " + to_string(jPrototype["id"].GetInt()));
