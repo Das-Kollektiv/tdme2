@@ -185,10 +185,11 @@ send your browser to "https://github.com/andreasdr/tdme2" and click "Clone or do
 ### 1.6.3. Build
 
 Open your Visual Studio 2022 Community command line interface app for native X64 builds and execute the following commands. 
-You need to adjust "tdme2" if you used a different folder.
+You need to adjust "tdme2" if you used a different folder. Also you need to extract ext/windows-msc/tools.zip to ext/windows-msc using 7zip or manually.
 
 ```
 cd %HOMEPATH%/tdme2
+cd ./ext/windows-msc && 7z x tools.zip && cd ../..
 nmake -f Makefile.nmake
 ```
 
