@@ -1024,7 +1024,11 @@ $(LIB_DIR)/$(EXT_LIB):
 	@mkdir -p $(dir $@)
 	@rm -f $@
 ifeq ($(OSSHORT), Msys)
-	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $(LIBS_LDFLAGS) -Wl,--out-implib,$(LIB_DIR)/$(EXT_LIB).a
+	@scripts/windows-mingw-create-library-rc.sh $@ $@.rc
+	@windres $@.rc -o coff -o $@.rc.o
+	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $@.rc.o $(LIBS_LDFLAGS) -Wl,--out-implib,$(LIB_DIR)/$(EXT_LIB).a
+	@rm $@.rc
+	@rm $@.rc.o
 else
 	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $(LIBS_LDFLAGS)
 endif
@@ -1035,7 +1039,11 @@ $(LIB_DIR)/$(LIB): $(LIB_DIR)/$(EXT_LIB)
 	@mkdir -p $(dir $@)
 	@rm -f $@
 ifeq ($(OSSHORT), Msys)
-	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $(LIBS_LDFLAGS) -Llib -l$(LDFLAG_EXT_LIB) -Wl,--out-implib,$(LIB_DIR)/$(LIB).a
+	@scripts/windows-mingw-create-library-rc.sh $@ $@.rc
+	@windres $@.rc -o coff -o $@.rc.o
+	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $@.rc.o $(LIBS_LDFLAGS) -Llib -l$(LDFLAG_EXT_LIB) -Wl,--out-implib,$(LIB_DIR)/$(LIB).a
+	@rm $@.rc
+	@rm $@.rc.o
 else
 	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $(LIBS_LDFLAGS) -Llib -l$(LDFLAG_EXT_LIB)
 endif
@@ -1045,28 +1053,60 @@ $(LIB_DIR)/$(OPENGL2_RENDERER_LIB): $(LIB_DIR)/$(EXT_LIB) $(LIB_DIR)/$(LIB)
 	@echo Creating OpenGL2 renderer library $@
 	@mkdir -p $(dir $@)
 	@rm -f $@
+ifeq ($(OSSHORT), Msys)
+	@scripts/windows-mingw-create-library-rc.sh $@ $@.rc
+	@windres $@.rc -o coff -o $@.rc.o
+	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $@.rc.o $(OPENGL_RENDERER_LDFLAGS) -L$(LIB_DIR) -l$(LDFLAG_EXT_LIB) -l$(LDFLAG_LIB)
+	@rm $@.rc
+	@rm $@.rc.o
+else
 	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $(OPENGL_RENDERER_LDFLAGS) -L$(LIB_DIR) -l$(LDFLAG_EXT_LIB) -l$(LDFLAG_LIB)
+endif
 	@echo Done $@
 
 $(LIB_DIR)/$(OPENGL3CORE_RENDERER_LIB): $(LIB_DIR)/$(EXT_LIB) $(LIB_DIR)/$(LIB)
 	@echo Creating OpenGL3/CORE renderer library $@
 	@mkdir -p $(dir $@)
 	@rm -f $@
+ifeq ($(OSSHORT), Msys)
+	@scripts/windows-mingw-create-library-rc.sh $@ $@.rc
+	@windres $@.rc -o coff -o $@.rc.o
+	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $@.rc.o $(OPENGL_RENDERER_LDFLAGS) -L$(LIB_DIR) -l$(LDFLAG_EXT_LIB) -l$(LDFLAG_LIB)
+	@rm $@.rc
+	@rm $@.rc.o
+else
 	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $(OPENGL_RENDERER_LDFLAGS) -L$(LIB_DIR) -l$(LDFLAG_EXT_LIB) -l$(LDFLAG_LIB)
+endif
 	@echo Done $@
 
 $(LIB_DIR)/$(VULKAN_RENDERER_LIB): $(LIB_DIR)/$(EXT_LIB) $(LIB_DIR)/$(LIB)
 	@echo Creating Vulkan renderer library $@
 	@mkdir -p $(dir $@)
 	@rm -f $@
+ifeq ($(OSSHORT), Msys)
+	@scripts/windows-mingw-create-library-rc.sh $@ $@.rc
+	@windres $@.rc -o coff -o $@.rc.o
+	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $@.rc.o $(VULKAN_RENDERER_LDFLAGS) -L$(LIB_DIR) -l$(LDFLAG_EXT_LIB) -l$(LDFLAG_LIB)
+	@rm $@.rc
+	@rm $@.rc.o
+else
 	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $(VULKAN_RENDERER_LDFLAGS) -L$(LIB_DIR) -l$(LDFLAG_EXT_LIB) -l$(LDFLAG_LIB)
+endif
 	@echo Done $@
 
 $(LIB_DIR)/$(OPENGLES2_RENDERER_LIB): $(LIB_DIR)/$(EXT_LIB) $(LIB_DIR)/$(LIB)
 	@echo Creating OpenGLES2 renderer library $@
 	@mkdir -p $(dir $@)
 	@rm -f $@
+ifeq ($(OSSHORT), Msys)
+	@scripts/windows-mingw-create-library-rc.sh $@ $@.rc
+	@windres $@.rc -o coff -o $@.rc.o
+	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $@.rc.o $(OPENGLES2_RENDERER_LDFLAGS) -L$(LIB_DIR) -l$(LDFLAG_EXT_LIB) -l$(LDFLAG_LIB)
+	@rm $@.rc
+	@rm $@.rc.o
+else
 	$(CXX) -shared $(patsubst %$(LIB_EXT),,$^) -o $@ $(OPENGLES2_RENDERER_LDFLAGS) -L$(LIB_DIR) -l$(LDFLAG_EXT_LIB) -l$(LDFLAG_LIB)
+endif
 	@echo Done $@
 
 $(LIB_DIR)/$(LIB): $(OBJS) $(OBJS_DEBUG)
@@ -1084,10 +1124,11 @@ $(LIB_DIR)/$(OPENGLES2_RENDERER_LIB): $(OPENGLES2_RENDERER_LIB_OBJS)
 ifeq ($(OSSHORT), Msys)
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@);
-	@EXECUTABLE=$$(echo $1 | grep -o '[a-zA-Z0-9]*-main' | sed -e 's/\-main//');
 	@scripts/windows-mingw-create-executable-rc.sh "$<" $@.rc
 	@windres $@.rc -o coff -o $@.rc.o
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $@.rc.o $< -L$(LIB_DIR) -l$(LDFLAG_EXT_LIB) -l$(LDFLAG_LIB) $(MAIN_LDFLAGS)
+	@rm $@.rc
+	@rm $@.rc.o
 else
 $(MAINS):$(BIN)/%:$(SRC)/%-main.cpp $(LIBS)
 	@mkdir -p $(dir $@);

@@ -1,4 +1,3 @@
-IDI_ICON ICON "{__ICON__}"
 1 VERSIONINFO
 FILEVERSION     1,9,9,0
 PRODUCTVERSION  1,9,9,0
@@ -8,11 +7,11 @@ BEGIN
     BLOCK "080904E4"
     BEGIN
       VALUE "CompanyName", "drewke.net"
-      VALUE "FileDescription", "TDME2 {__EXECUTABLE__}"
+      VALUE "FileDescription", "TDME2 {__LIBRARY__}"
       VALUE "FileVersion", "1.9.9"
-      VALUE "InternalName", "{__EXECUTABLE__}.exe"
+      VALUE "InternalName", "{__LIBRARY__}.dll"
       VALUE "LegalCopyright", "Copyright (c) 2012-2022 Andreas Drewke, drewke.net"
-      VALUE "OriginalFilename", "{__EXECUTABLE__}.exe"
+      VALUE "OriginalFilename", "{__LIBRARY__}.dll"
       VALUE "ProductName", "TDME2"
       VALUE "ProductVersion", "2.0"
     END
