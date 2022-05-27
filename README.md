@@ -264,7 +264,7 @@
     - createinstaller tool to generate installer application and archives
     - generatelicenses tool to generate complete engine or project licenses from ./ext folders
     - importtmodel tool to generate TDME2 tmodel prototype files using model and bounding volumes models
-    - makefilegenerator tool to generate Makefiles for TDME2 based projects
+    - makefilegenerator and nmakefilegenerator tool to generate Makefiles for TDME2 based projects
     - miniscripttranspiler tool to transpile MiniScript code to C++ code
     - optimizemodel tool to generate texture atlases and bake down model mesh nodes into a few one to reduce GL/VK (render/compute) calls
     - sortincludes tool to sort "include" and "using" source code statements
@@ -284,7 +284,6 @@
 - GUI effects via XML definitions
 - Port WarStorys "Game Foundation" to TDME2, which organizes game logics, enables communcation between them and enables to do network IO and such
 - MiniScript: more engine bindings
-- Add nmake support to makefile generator for TDME2 based projects
 - Editor: complete Undo/Redo and Copy/Cut/Paste/Delete
 - Editor: Code editing with code completion, also visual code and shader editing is planned!
 - Vulkan: Performance improvements

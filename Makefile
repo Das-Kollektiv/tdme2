@@ -898,6 +898,7 @@ MAIN_SRCS = \
 	src/tdme/tools/cli/converttotm-main.cpp \
 	src/tdme/tools/cli/copyanimationsetups-main.cpp \
 	src/tdme/tools/cli/createinstaller-main.cpp \
+	src/tdme/tools/cli/createrc-main.cpp \
 	src/tdme/tools/cli/dumpmodel-main.cpp \
 	src/tdme/tools/cli/imageprocessor-main.cpp \
 	src/tdme/tools/cli/msclib2dll-main.cpp \
@@ -906,6 +907,7 @@ MAIN_SRCS = \
 	src/tdme/tools/cli/importtmodel-main.cpp \
 	src/tdme/tools/cli/makefilegenerator-main.cpp \
 	src/tdme/tools/cli/miniscripttranspiler-main.cpp \
+	src/tdme/tools/cli/nmakefilegenerator-main.cpp \
 	src/tdme/tools/cli/optimizemodel-main.cpp \
 	src/tdme/tools/cli/parseh++-main.cpp \
 	src/tdme/tools/cli/recreatevkcache-main.cpp \
