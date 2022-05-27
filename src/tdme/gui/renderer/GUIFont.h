@@ -42,6 +42,9 @@ class tdme::gui::renderer::GUIFont final
 private:
 	static bool ftInitialized;
 	static FT_Library ftLibrary;
+	string ftPathName;
+	vector<uint8_t> ttfData;
+	FT_Open_Args ftOpenArgs;
 	FT_Face ftFace;
 	TextureAtlas textureAtlas;
 	int32_t textureId { 0 };

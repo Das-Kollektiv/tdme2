@@ -59,8 +59,22 @@ FT_Library GUIFont::ftLibrary;
 
 GUIFont::GUIFont(const string& pathName, const string& fileName, int size): textureAtlas("font:" + pathName + "/" + fileName + "@" + to_string(size))
 {
-	// TODO: use FileSystem here
-	if (FT_New_Face(ftLibrary, (pathName + "/" + fileName).c_str(), 0, &ftFace) == true) {
+	// load ttf data
+	FileSystem::getInstance()->getContent(pathName, fileName, ttfData);
+
+	// open face
+	ftPathName = pathName + "/" + fileName;
+	ftOpenArgs = {
+		.flags = FT_OPEN_MEMORY,
+		.memory_base = ttfData.data(),
+		.memory_size = (int)ttfData.size(),
+		.pathname = (char*)ftPathName.c_str(),
+		.stream = nullptr,
+		.driver = nullptr,
+		.num_params = 0,
+		.params = nullptr
+	};
+	if (FT_Open_Face(ftLibrary, &ftOpenArgs, 0, &ftFace) == true) {
 		Console::println("GUIFont::parse(): Could not load font: " + pathName + "/" + fileName);
 		return;
 	}
