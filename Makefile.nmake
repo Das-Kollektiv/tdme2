@@ -775,7 +775,7 @@ ext-init:
 	mkdir $(OBJ)
 
 ext-compile: $(EXT_SRCS)
-	cl /D TDME2_DLL_IMPORT /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
+	cl /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
 
 ext-link1: $(OBJ)/*.obj
 	lib $(LD_FLAGS) /OUT:libtdme-ext.lib $**
@@ -801,7 +801,7 @@ init-mains:
 	mkdir $(OBJ)
 
 compile: $(SRCS)
-	cl /D TDME2_DLL_IMPORT /D TDME2_DLL_EXPORT /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
+	cl /D TDME2_DLL_EXPORT /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
 
 link1: $(OBJ)/*.obj
 	lib $(LD_FLAGS) /OUT:libtdme.lib $**
@@ -827,7 +827,7 @@ opengl3core-mains:
 	mkdir $(OBJ)
 
 opengl3core-compile: $(OPENGL3CORE_RENDERER_LIB_SRCS)
-	cl /D TDME2_DLL_IMPORT /D TDME2_DLL_IMPORT /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
+	cl /D TDME2_DLL_IMPORT /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
 
 opengl3core-link1: $(OBJ)/*.obj
 	lib $(LD_FLAGS) /OUT:libopengl3corerenderer.lib $**
@@ -857,7 +857,7 @@ opengl2-mains:
 	mkdir $(OBJ)
 
 opengl2-compile: $(OPENGL2_RENDERER_LIB_SRCS)
-	cl /D TDME2_DLL_IMPORT /D TDME2_DLL_IMPORT /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
+	cl /D TDME2_DLL_IMPORT /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
 
 opengl2-link1: $(OBJ)/*.obj
 	lib $(LD_FLAGS) /OUT:libopengl2renderer.lib $**
@@ -891,7 +891,7 @@ vulkan-mains:
 	mkdir $(OBJ)
 
 vulkan-compile: $(VULKAN_RENDERER_LIB_SRCS)
-	cl /D TDME2_DLL_IMPORT /D TDME2_DLL_IMPORT /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
+	cl /D TDME2_DLL_IMPORT /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
 
 vulkan-link1: $(OBJ)/*.obj
 	lib $(LD_FLAGS) /OUT:libvulkanrenderer.lib $**
