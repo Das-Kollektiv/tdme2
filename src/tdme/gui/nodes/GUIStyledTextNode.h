@@ -429,6 +429,15 @@ public:
 	void unsetTextStyle(int startIdx, int endIdx);
 
 	/**
+	 * Unset text style using Utf8 indices
+	 * @param startIdx text start index
+	 * @param endIdx text end index
+	 */
+	inline void unsetTextStyleUtf8(int startIdx, int endIdx) {
+		unsetTextStyle(text.getUtf8BinaryIndex(startIdx), text.getUtf8BinaryIndex(endIdx));
+	}
+
+	/**
 	 * Set text style
 	 * @param startIdx text start index
 	 * @param endIdx text end index
@@ -439,6 +448,18 @@ public:
 	void setTextStyle(int startIdx, int endIdx, const GUIColor& color, const string& font = string(), int size = -1, const string& url = string());
 
 	/**
+	 * Set text style using Utf8 indices
+	 * @param startIdx text start index
+	 * @param endIdx text end index
+	 * @param color color
+	 * @param font font
+	 * @param url url
+	 */
+	inline void setTextStyleUtf8(int startIdx, int endIdx, const GUIColor& color, const string& font = string(), int size = -1, const string& url = string()) {
+		setTextStyle(text.getUtf8BinaryIndex(startIdx), text.getUtf8BinaryIndex(endIdx), color, font, size, url);
+	}
+
+	/**
 	 * Set text style
 	 * @param startIdx text start index
 	 * @param endIdx text end index
@@ -446,6 +467,17 @@ public:
 	 * @param url url
 	 */
 	void setTextStyle(int startIdx, int endIdx, const string& font, int size, const string& url = string());
+
+	/**
+	 * Set text style using Utf8 indices
+	 * @param startIdx text start index
+	 * @param endIdx text end index
+	 * @param font font
+	 * @param url url
+	 */
+	inline void setTextStyleUtf8(int startIdx, int endIdx, const string& font, int size, const string& url = string()) {
+		setTextStyleUtf8(text.getUtf8BinaryIndex(startIdx), text.getUtf8BinaryIndex(endIdx), font, size, url);
+	}
 
 	/**
 	 * Set image
@@ -470,5 +502,41 @@ public:
 		const GUIColor& effectColorMul = GUIColor::GUICOLOR_EFFECT_COLOR_MUL,
 		const GUIColor& effectColorAdd = GUIColor::GUICOLOR_EFFECT_COLOR_ADD
 	);
+
+	/**
+	 * Set image using Utf8 index
+	 * @param idx index
+	 * @param image image
+	 * @param url url
+	 * @param width width or -1 for original image width
+	 * @param height height or -1 for original image height
+	 * @param horizontalScale horizontal scale as factor
+	 * @param verticalScale vertical scale as factor
+	 * @param effectColorMul effect color mul
+	 * @param effectColorAdd effect color add
+	 */
+	inline void setImageUtf8(
+		int idx,
+		const string& image,
+		const string& url = string(),
+		int width = -1,
+		int height = -1,
+		float horizontalScale = 1.0f,
+		float verticalScale = 1.0f,
+		const GUIColor& effectColorMul = GUIColor::GUICOLOR_EFFECT_COLOR_MUL,
+		const GUIColor& effectColorAdd = GUIColor::GUICOLOR_EFFECT_COLOR_ADD
+	) {
+		setImage(
+			text.getUtf8BinaryIndex(idx),
+			image,
+			url,
+			width,
+			height,
+			horizontalScale,
+			verticalScale,
+			effectColorMul,
+			effectColorAdd
+		);
+	}
 
 };

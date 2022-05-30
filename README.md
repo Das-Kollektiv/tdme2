@@ -196,6 +196,7 @@
         - to react on events with like on-mouse-click, ... and on-change for elements
         - to manipulate conditions of elements, values of element controller and node properties
     - supports position and color based effects in combination with conditions that can also be defined via XML
+    - unicode support via UTF8
 - MiniScript
 	- very small implementation of a scripting language without byte code, VM or what ever
 	- runs on every CPU, OS, ... due to its simplicity, so its highly portable just like TDME2 is
