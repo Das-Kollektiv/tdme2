@@ -237,7 +237,7 @@ void GUIStyledTextNode::scrollToIndex(int cursorIndex) {
 	auto yBefore = 0.0f;
 	auto y = 0.0f;
 	auto textStyleIdx = 0;
-	StringTools::UTF8CharacterIterator u8It(text.getString());
+	auto u8It = text.getUTF8CharacterIterator();
 	while (u8It.hasNext() == true) {
 		//
 		determineNextLineConstraints(u8It, text.size(), textStyleIdx);
@@ -320,7 +320,7 @@ int GUIStyledTextNode::doPageUp() {
 		float y;
 	};
 	vector<LineInfo> lines;
-	StringTools::UTF8CharacterIterator u8It(text.getString());
+	auto u8It = text.getUTF8CharacterIterator();
 	while (u8It.hasNext() == true) {
 		//
 		determineNextLineConstraints(u8It, text.size(), textStyleIdx);
@@ -390,7 +390,7 @@ int GUIStyledTextNode::doPageDown() {
 	auto textStyleIdx = 0;
 	auto reachedCursorIndex = false;
 	auto finished = false;
-	StringTools::UTF8CharacterIterator u8It(text.getString());
+	auto u8It = text.getUTF8CharacterIterator();
 	while (u8It.hasNext() == true) {
 		//
 		determineNextLineConstraints(u8It, text.size(), textStyleIdx);
@@ -487,7 +487,7 @@ void GUIStyledTextNode::computeContentAlignment() {
 
 	//
 	auto textStyleIdx = 0;
-	StringTools::UTF8CharacterIterator u8It(text.getString());
+	auto u8It = text.getUTF8CharacterIterator();
 	while (u8It.hasNext() == true) {
 		//
 		determineNextLineConstraints(u8It, text.size(), textStyleIdx);
@@ -1090,7 +1090,7 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 	string currentURL;
 	string styleURL;
 	int x = 0;
-	StringTools::UTF8CharacterIterator u8It(text.getString());
+	auto u8It = text.getUTF8CharacterIterator();
 	u8It.seekBinaryPosition(charStartIdx);
 	for (;u8It.hasNext() == true && u8It.getBinaryPosition() < charEndIdx;) {
 

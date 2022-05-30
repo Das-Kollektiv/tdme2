@@ -58,16 +58,6 @@ public:
 	}
 
 	/**
-	 * @return character count
-	 */
-	inline int length() const {
-		// TODO: UTF8: Do some caching here
-		StringTools::UTF8CharacterIterator u8It(data);
-		while (u8It.hasNext() == true) u8It.next();
-		return u8It.getCharacterPosition();
-	}
-
-	/**
 	 * Get char at given binary index
 	 * @param idx idx
 	 * @return char
@@ -370,22 +360,30 @@ public:
 	}
 
 	/**
+	 * @return character count
+	 */
+	inline int length() const {
+		// TODO: Do some caching here
+		return StringTools::getUtf8Length(data);
+	}
+
+	/**
 	 * @return UTF8 character iterator
 	 */
 	StringTools::UTF8CharacterIterator getUTF8CharacterIterator() {
 		return StringTools::UTF8CharacterIterator(data);
 	}
 
-private:
-	string data;
-
 	/**
 	 * @return Get utf8 binary index
 	 * @param idx character index
 	 */
 	int getUtf8BinaryIndex(int idx) const {
-		// TODO: UTF8: Do some caching here, as processing of lots of data would take lots of time: o(n)
+		// TODO: Do some caching here, as processing of lots of data would take lots of time: o(n)
 		return StringTools::getUtf8BinaryIndex(data, idx);
 	}
+
+private:
+	string data;
 
 };

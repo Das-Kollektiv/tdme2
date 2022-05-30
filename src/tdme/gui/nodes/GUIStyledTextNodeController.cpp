@@ -377,8 +377,9 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 			selectionIndex = text.length() - 1;
 		} else
 		if (keyControlX == true) {
-			Application::getApplication()->setClipboardContent(StringTools::substring(styledTextNode->getText().getString(), Math::min(index, selectionIndex), Math::max(index, selectionIndex)));
 			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
+				auto& text = styledTextNode->getText();
+				Application::getApplication()->setClipboardContent(StringTools::substring(text.getString(), Math::min(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex)), Math::max(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex))));
 				styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 				styledTextNode->scrollToIndex();
 				forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
@@ -388,18 +389,13 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 		} else
 		if (keyControlC == true) {
 			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
-				Application::getApplication()->setClipboardContent(StringTools::substring(styledTextNode->getText().getString(), Math::min(index, selectionIndex), Math::max(index, selectionIndex)));
+				auto& text = styledTextNode->getText();
+				Application::getApplication()->setClipboardContent(StringTools::substring(text.getString(), Math::min(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex)), Math::max(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex))));
 			}
 		} else
 		if (keyControlV == true) {
 			auto clipboardContent = Application::getApplication()->getClipboardContent();
-			auto clipboardContentLength = 0;
-			{
-				StringTools::UTF8CharacterIterator u8It(clipboardContent);
-				while (u8It.hasNext() == true) u8It.next();
-				clipboardContentLength = u8It.getCharacterPosition();
-			}
-
+			auto clipboardContentLength = StringTools::getUtf8Length(clipboardContent);
 			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
 				if (maxLength == 0 || styledTextNode->getTextLength() - Math::abs(index - selectionIndex) + clipboardContentLength < maxLength) {
 					styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));

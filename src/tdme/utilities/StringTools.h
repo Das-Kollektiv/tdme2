@@ -352,12 +352,23 @@ public:
 	static const vector<string> tokenize(const string& str, const string& delimiters);
 
 	/**
+	 * Get Utf8 string length
+	 * @param str string
+	 * @return utf8 string length
+	 */
+	inline static int getUtf8Length(const string& str) {
+		UTF8CharacterIterator u8It(str);
+		while (u8It.hasNext() == true) u8It.next();
+		return u8It.getCharacterPosition();
+	}
+
+	/**
 	 * Get Utf8 binary buffer index
 	 * @param str string
 	 * @param charIdx character index
 	 * @return UTF binary buffer position from given character/code point index
 	 */
-	static inline int getUtf8BinaryIndex(const string& str, int charIdx) {
+	inline static int getUtf8BinaryIndex(const string& str, int charIdx) {
 		StringTools::UTF8CharacterIterator u8It(str);
 		u8It.seekCharacterPosition(charIdx);
 		return u8It.getBinaryPosition();

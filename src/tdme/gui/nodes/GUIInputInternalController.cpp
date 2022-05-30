@@ -368,8 +368,9 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 			selectionIndex = textInputNode->getText().length();
 		} else
 		if (keyControlX == true && disabled == false) {
-			Application::getApplication()->setClipboardContent(StringTools::substring(textInputNode->getText().getString(), Math::min(index, selectionIndex), Math::max(index, selectionIndex)));
 			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
+				auto& text = textInputNode->getText();
+				Application::getApplication()->setClipboardContent(StringTools::substring(text.getString(), Math::min(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex)), Math::max(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex))));
 				textInputNode->getText().remove(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 				index = Math::min(index, selectionIndex);
 				selectionIndex = -1;
@@ -378,18 +379,14 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 		} else
 		if (keyControlC == true || keyControlX == true) {
 			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
-				Application::getApplication()->setClipboardContent(StringTools::substring(textInputNode->getText().getString(), Math::min(index, selectionIndex), Math::max(index, selectionIndex)));
+				auto& text = textInputNode->getText();
+				Application::getApplication()->setClipboardContent(StringTools::substring(text.getString(), Math::min(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex)), Math::max(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex))));
 			}
 		} else
 		if (keyControlV == true) {
 			if (disabled == false) {
 				auto clipboardContent = Application::getApplication()->getClipboardContent();
-				auto clipboardContentLength = 0;
-				{
-					StringTools::UTF8CharacterIterator u8It(clipboardContent);
-					while (u8It.hasNext() == true) u8It.next();
-					clipboardContentLength = u8It.getCharacterPosition();
-				}
+				auto clipboardContentLength = StringTools::getUtf8Length(clipboardContent);
 				if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
 					if (textInputNode->getMaxLength() == 0 || textInputNode->getText().length() - Math::abs(index - selectionIndex) + clipboardContentLength < textInputNode->getMaxLength()) {
 						textInputNode->getText().remove(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
