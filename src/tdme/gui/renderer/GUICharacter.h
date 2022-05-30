@@ -100,6 +100,13 @@ public:
 		return xAdvance;
 	}
 
+	/**
+	 * @return if the character is rotated in texture atlas
+	 */
+	bool isRotated() {
+		return rotated;
+	}
+
 private:
 	uint32_t id;
 	float x;
@@ -109,4 +116,5 @@ private:
 	float xOffset;
 	float yOffset;
 	float xAdvance;
+	bool rotated { false };
 };

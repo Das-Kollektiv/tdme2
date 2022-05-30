@@ -190,6 +190,7 @@ void GUIFont::updateFontInternal() {
 		}
 		character->x = atlasTexture->left;
 		character->y = atlasTexture->top;
+		character->rotated = atlasTexture->orientation == TextureAtlas::AtlasTexture::ORIENTATION_ROTATED;
 	}
 }
 
@@ -275,8 +276,8 @@ void GUIFont::drawCharacter(GUIRenderer* guiRenderer, GUICharacter* character, i
 	float textureHeight = textureAtlas.getAtlasTexture()->getTextureHeight();
 	float textureCharLeft = character->getX();
 	float textureCharTop = character->getY();
-	float textureCharWidth = character->getWidth();
-	float textureCharHeight = character->getHeight();
+	float textureCharWidth = character->rotated == true?character->getHeight():character->getWidth();
+	float textureCharHeight = character->rotated == true?character->getWidth():character->getHeight();
 	auto& fontColor = color.getArray();
 	guiRenderer->addQuad(
 		((left) / (screenWidth / 2.0f)) - 1.0f,
@@ -295,7 +296,9 @@ void GUIFont::drawCharacter(GUIRenderer* guiRenderer, GUICharacter* character, i
 		((left) / (screenWidth / 2.0f)) - 1.0f, ((screenHeight - top - height) / (screenHeight / 2.0f)) - 1.0f,
 		fontColor[0], fontColor[1], fontColor[2], fontColor[3],
 		(textureCharLeft) / textureWidth,
-		(textureCharTop + textureCharHeight) / textureHeight
+		(textureCharTop + textureCharHeight) / textureHeight,
+		false,
+		character->rotated
 	);
 }
 
