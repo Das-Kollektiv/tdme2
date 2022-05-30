@@ -96,11 +96,11 @@ else ifeq ($(OS), Haiku)
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
 		src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
 		src/tdme/engine/fileio/models/ModelReader.cpp
-	INCLUDES := $(INCLUDES) -I/boot/system/develop/headers
+	INCLUDES := $(INCLUDES) -I/boot/system/develop/headers -I/boot/system/develop/headers/freetype2
 	OPENGL_RENDERER_LDFLAGS := -lGLEW -lGL -lglfw
 	VULKAN_RENDERER_LDFLAGS := -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -lGLESv2 -lEGL -lglfw
-	LIBS_LDFLAGS := -lnetwork -lglfw -lopenal
+	LIBS_LDFLAGS := -lnetwork -lglfw -lopenal -lfreetype
 	OFLAGS := -O2
 else ifeq ($(OS), Linux)
 	# Linux
