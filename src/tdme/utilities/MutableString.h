@@ -368,19 +368,19 @@ public:
 	}
 
 	/**
-	 * @return UTF8 character iterator
-	 */
-	StringTools::UTF8CharacterIterator getUTF8CharacterIterator() {
-		return StringTools::UTF8CharacterIterator(data);
-	}
-
-	/**
 	 * @return Get utf8 binary index
 	 * @param idx character index
 	 */
 	int getUtf8BinaryIndex(int idx) const {
 		// TODO: Do some caching here, as processing of lots of data would take lots of time: o(n)
 		return StringTools::getUtf8BinaryIndex(data, idx);
+	}
+
+	/**
+	 * @return UTF8 character iterator
+	 */
+	StringTools::UTF8CharacterIterator getUTF8CharacterIterator() {
+		return StringTools::UTF8CharacterIterator(data);
 	}
 
 private:

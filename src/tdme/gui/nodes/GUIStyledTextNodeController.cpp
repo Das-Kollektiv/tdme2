@@ -736,3 +736,44 @@ void GUIStyledTextNodeController::addCodeCompletionListener(CodeCompletionListen
 void GUIStyledTextNodeController::removeCodeCompletionListener(CodeCompletionListener* listener) {
 	codeCompletionListeners.erase(std::remove(codeCompletionListeners.begin(), codeCompletionListeners.end(), listener), codeCompletionListeners.end());
 }
+
+void GUIStyledTextNodeController::forwardRemoveText(int idx, int count) {
+	// determine binary start and end positions
+	// TODO: Do some caching here
+	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
+	auto& text = styledTextNode->getText();
+	auto u8It = StringTools::UTF8CharacterIterator(styledTextNode->getText().getString());
+	u8It.seekCharacterPosition(idx);
+	auto binaryStartIdx = u8It.getBinaryPosition();
+	for (auto i = 0; u8It.hasNext() == true && i < count; i++) u8It.next();
+	auto binaryEndIdx = u8It.getBinaryPosition();
+	// forward remove text
+	for (auto i = 0; i < changeListeners.size(); i++) {
+		changeListeners[i]->onRemoveText(binaryStartIdx, binaryEndIdx - binaryStartIdx);
+	}
+}
+
+void GUIStyledTextNodeController::forwardInsertText(int idx, int count) {
+	// determine binary start and end positions
+	// TODO: Do some caching here
+	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
+	auto& text = styledTextNode->getText();
+	auto u8It = StringTools::UTF8CharacterIterator(styledTextNode->getText().getString());
+	u8It.seekCharacterPosition(idx);
+	auto binaryStartIdx = u8It.getBinaryPosition();
+	for (auto i = 0; u8It.hasNext() == true && i < count; i++) u8It.next();
+	auto binaryEndIdx = u8It.getBinaryPosition();
+	//
+	for (auto i = 0; i < changeListeners.size(); i++) {
+		changeListeners[i]->onInsertText(binaryStartIdx, binaryEndIdx - binaryStartIdx);
+	}
+}
+
+void GUIStyledTextNodeController::forwardCodeCompletion(int idx) {
+	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
+	auto& text = styledTextNode->getText();
+	auto binaryIdx = text.getUtf8BinaryIndex(idx);
+	for (auto i = 0; i < changeListeners.size(); i++) {
+		codeCompletionListeners[i]->onCodeCompletion(binaryIdx);
+	}
+}

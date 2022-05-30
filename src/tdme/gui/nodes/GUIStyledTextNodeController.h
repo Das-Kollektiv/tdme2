@@ -143,35 +143,20 @@ private:
 	 * @param idx index
 	 * @param count count
 	 */
-	inline void forwardRemoveText(int idx, int count) {
-		// TODO: UTF8
-		for (auto i = 0; i < changeListeners.size(); i++) {
-			changeListeners[i]->onRemoveText(idx, count);
-		}
-	}
+	void forwardRemoveText(int idx, int count);
 
 	/**
 	 * Forward insert text
 	 * @param idx index
 	 * @param count count
 	 */
-	inline void forwardInsertText(int idx, int count) {
-		// TODO: UTF8
-		for (auto i = 0; i < changeListeners.size(); i++) {
-			changeListeners[i]->onInsertText(idx, count);
-		}
-	}
+	void forwardInsertText(int idx, int count);
 
 	/**
 	 * Forward code completion
 	 * @param idx index
 	 */
-	inline void forwardCodeCompletion(int idx) {
-		// TODO: UTF8
-		for (auto i = 0; i < changeListeners.size(); i++) {
-			codeCompletionListeners[i]->onCodeCompletion(idx);
-		}
-	}
+	void forwardCodeCompletion(int idx);
 
 protected:
 	/**
