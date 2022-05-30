@@ -458,14 +458,14 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 							if (selectionIndex == -1) selectionIndex = index;
 						}
 						// find index of current line newline and store difference
-						auto lineNewLineIndex = styledTextNode->getPreviousNewLine(index) + (index == 0?0:1);
+						auto lineNewLineIndex = styledTextNode->getPreviousNewLineUtf8(index) + (index == 0?0:1);
 						// current line index
 						auto lineIndex = Math::max(index - lineNewLineIndex, 0);
 						// find index of previous newline and iterate to difference if possible
-						auto previousNewLineIndex = styledTextNode->getPreviousNewLine(styledTextNode->getPreviousNewLine(index - 1) - 1);
+						auto previousNewLineIndex = styledTextNode->getPreviousNewLineUtf8(styledTextNode->getPreviousNewLineUtf8(index - 1) - 1);
 						if (previousNewLineIndex != 0) previousNewLineIndex++;
 						// find next index of previous 2 newline as upper bound
-						auto nextNewLineIndex = styledTextNode->getNextNewLine(previousNewLineIndex);
+						auto nextNewLineIndex = styledTextNode->getNextNewLineUtf8(previousNewLineIndex);
 						//
 						index = Math::min(previousNewLineIndex + lineIndex, nextNewLineIndex);
 						styledTextNode->scrollToIndex();
@@ -483,13 +483,13 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 							if (selectionIndex == -1) selectionIndex = index;
 						}
 						// find index of current line newline and store difference
-						auto lineNewLineIndex = styledTextNode->getPreviousNewLine(index) + (index == 0?0:1);
+						auto lineNewLineIndex = styledTextNode->getPreviousNewLineUtf8(index) + (index == 0?0:1);
 						// current line index
 						auto lineIndex = Math::max(index - lineNewLineIndex, 0);
 						// find index of next newline
-						auto nextNewLineIndex = styledTextNode->getNextNewLine(index);
+						auto nextNewLineIndex = styledTextNode->getNextNewLineUtf8(index);
 						// find index of next * 2 newline as upper bound
-						auto next2NewLineIndex = styledTextNode->getNextNewLine(nextNewLineIndex + 1);
+						auto next2NewLineIndex = styledTextNode->getNextNewLineUtf8(nextNewLineIndex + 1);
 						// iterate to difference if possible
 						index = Math::min(nextNewLineIndex + 1 + lineIndex, next2NewLineIndex);
 						//
@@ -624,7 +624,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 							index = 0;
 						} else {
 							// find index of previous newline
-							index = styledTextNode->getPreviousNewLine(index - 1);
+							index = styledTextNode->getPreviousNewLineUtf8(index - 1);
 							if (index != 0) index++;
 						}
 						styledTextNode->scrollToIndex();
@@ -643,7 +643,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 							index = styledTextNode->getTextLength() - 1;
 						} else {
 							// find index of next newline
-							index = styledTextNode->getNextNewLine(index);;
+							index = styledTextNode->getNextNewLineUtf8(index);;
 						}
 						styledTextNode->scrollToIndex();
 					}
@@ -659,14 +659,14 @@ void GUIStyledTextNodeController::tick()
 	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
 	if (scrollMode == SCROLLMODE_UP) {
 		// find index of current line newline and store difference
-		auto lineNewLineIndex = styledTextNode->getPreviousNewLine(selectionIndex) + (selectionIndex == 0?0:1);
+		auto lineNewLineIndex = styledTextNode->getPreviousNewLineUtf8(selectionIndex) + (selectionIndex == 0?0:1);
 		// current line index
 		auto lineIndex = Math::max(selectionIndex - lineNewLineIndex, 0);
 		// find index of previous newline and iterate to difference if possible
-		auto previousNewLineIndex = styledTextNode->getPreviousNewLine(styledTextNode->getPreviousNewLine(selectionIndex - 1) - 1);
+		auto previousNewLineIndex = styledTextNode->getPreviousNewLineUtf8(styledTextNode->getPreviousNewLineUtf8(selectionIndex - 1) - 1);
 		if (previousNewLineIndex != 0) previousNewLineIndex++;
 		// find next index of previous 2 newline as upper bound
-		auto nextNewLineIndex = styledTextNode->getNextNewLine(previousNewLineIndex);
+		auto nextNewLineIndex = styledTextNode->getNextNewLineUtf8(previousNewLineIndex);
 		//
 		selectionIndex = Math::min(previousNewLineIndex + lineIndex, nextNewLineIndex);
 		//
@@ -674,13 +674,13 @@ void GUIStyledTextNodeController::tick()
 	} else
 	if (scrollMode == SCROLLMODE_DOWN) {
 		// find index of current line newline and store difference
-		auto lineNewLineIndex = styledTextNode->getPreviousNewLine(selectionIndex) + (selectionIndex == 0?0:1);
+		auto lineNewLineIndex = styledTextNode->getPreviousNewLineUtf8(selectionIndex) + (selectionIndex == 0?0:1);
 		// current line index
 		auto lineIndex = Math::max(selectionIndex - lineNewLineIndex, 0);
 		// find index of next newline
-		auto nextNewLineIndex = styledTextNode->getNextNewLine(selectionIndex);
+		auto nextNewLineIndex = styledTextNode->getNextNewLineUtf8(selectionIndex);
 		// find index of next * 2 newline as upper bound
-		auto next2NewLineIndex = styledTextNode->getNextNewLine(nextNewLineIndex + 1);
+		auto next2NewLineIndex = styledTextNode->getNextNewLineUtf8(nextNewLineIndex + 1);
 		// iterate to difference if possible
 		selectionIndex = Math::min(nextNewLineIndex + 1 + lineIndex, next2NewLineIndex);
 		//
@@ -763,6 +763,7 @@ void GUIStyledTextNodeController::forwardInsertText(int idx, int count) {
 	auto binaryStartIdx = u8It.getBinaryPosition();
 	for (auto i = 0; u8It.hasNext() == true && i < count; i++) u8It.next();
 	auto binaryEndIdx = u8It.getBinaryPosition();
+
 	//
 	for (auto i = 0; i < changeListeners.size(); i++) {
 		changeListeners[i]->onInsertText(binaryStartIdx, binaryEndIdx - binaryStartIdx);

@@ -58,6 +58,14 @@ public:
 	}
 
 	/**
+	 * @return character count
+	 */
+	inline int length() const {
+		// TODO: Do some caching here
+		return StringTools::getUtf8Length(data);
+	}
+
+	/**
 	 * Get char at given binary index
 	 * @param idx idx
 	 * @return char
@@ -70,6 +78,7 @@ public:
 	 * @return utf 8 character at given character index
 	 */
 	inline int getUTF8CharAt(int32_t idx) {
+		// TODO: Do some caching here
 		auto u8It = getUTF8CharacterIterator();
 		u8It.seekBinaryPosition(getUtf8BinaryIndex(idx));
 		return u8It.hasNext() == true?u8It.next():-1;
@@ -353,18 +362,10 @@ public:
 	}
 
 	/**
-	 * Clone
+	 * @return UTF8 character iterator
 	 */
-	inline MutableString clone() {
-		return MutableString(data);
-	}
-
-	/**
-	 * @return character count
-	 */
-	inline int length() const {
-		// TODO: Do some caching here
-		return StringTools::getUtf8Length(data);
+	StringTools::UTF8CharacterIterator getUTF8CharacterIterator() {
+		return StringTools::UTF8CharacterIterator(data);
 	}
 
 	/**
@@ -377,10 +378,10 @@ public:
 	}
 
 	/**
-	 * @return UTF8 character iterator
+	 * Clone
 	 */
-	StringTools::UTF8CharacterIterator getUTF8CharacterIterator() {
-		return StringTools::UTF8CharacterIterator(data);
+	inline MutableString clone() {
+		return MutableString(data);
 	}
 
 private:

@@ -330,7 +330,6 @@ public:
 	 * @param index index
 	 */
 	inline int getPreviousNewLine(int index) {
-		// TODO: UTF8
 		// find index of previous newline and store difference
 		auto previousNewLineIndex = index;
 		while (previousNewLineIndex >= 0 && text.getCharAt(previousNewLineIndex) != '\n') previousNewLineIndex--;
@@ -339,14 +338,39 @@ public:
 	}
 
 	/**
-	 * Get next newline
+	 * Get previous new line using Utf8 indices
+	 * @param index index
+	 */
+	inline int getPreviousNewLineUtf8(int index) {
+		// find index of previous newline and store difference
+		auto previousNewLineIndex = index;
+		while (previousNewLineIndex >= 0 && text.getUTF8CharAt(previousNewLineIndex) != '\n') previousNewLineIndex--;
+		previousNewLineIndex = Math::max(previousNewLineIndex, 0);
+		return previousNewLineIndex;
+	}
+
+	/**
+	 * Get next newline using
 	 * @param index index
 	 */
 	inline int getNextNewLine(int index) {
-		// TODO: UTF8
 		// find index of next newline
 		auto nextNewLineIndex = index;
-		while (nextNewLineIndex < text.size() && text.getCharAt(nextNewLineIndex) != '\n') nextNewLineIndex++;
+		auto textSize = text.size();
+		while (nextNewLineIndex < textSize && text.getCharAt(nextNewLineIndex) != '\n') nextNewLineIndex++;
+		nextNewLineIndex = Math::min(nextNewLineIndex, text.size() - 1);
+		return nextNewLineIndex;
+	}
+
+	/**
+	 * Get next newline using Utf8 indices
+	 * @param index index
+	 */
+	inline int getNextNewLineUtf8(int index) {
+		// find index of next newline
+		auto nextNewLineIndex = index;
+		auto textLength = text.length();
+		while (nextNewLineIndex < textLength && text.getUTF8CharAt(nextNewLineIndex) != '\n') nextNewLineIndex++;
 		nextNewLineIndex = Math::min(nextNewLineIndex, text.size() - 1);
 		return nextNewLineIndex;
 	}
@@ -357,10 +381,22 @@ public:
 	 * @param delimiters delimiters
 	 */
 	inline int getPreviousDelimiter(int index, const string& delimiters) {
-		// TODO: UTF8
 		// find index of previous newline and store difference
 		auto previousDelimiterIndex = index;
 		while (previousDelimiterIndex >= 0 && delimiters.find(text.getCharAt(previousDelimiterIndex)) == string::npos) previousDelimiterIndex--;
+		previousDelimiterIndex = Math::max(previousDelimiterIndex, 0);
+		return previousDelimiterIndex;
+	}
+
+	/**
+	 * Get previous delimiter using Utf8 indices
+	 * @param index index
+	 * @param delimiters delimiters
+	 */
+	inline int getPreviousDelimiterUtf8(int index, const string& delimiters) {
+		// find index of previous newline and store difference
+		auto previousDelimiterIndex = index;
+		while (previousDelimiterIndex >= 0 && delimiters.find(text.getUTF8CharAt(previousDelimiterIndex)) == string::npos) previousDelimiterIndex--;
 		previousDelimiterIndex = Math::max(previousDelimiterIndex, 0);
 		return previousDelimiterIndex;
 	}
@@ -371,10 +407,24 @@ public:
 	 * @param delimiters
 	 */
 	inline int getNextDelimiter(int index, const string& delimiters) {
-		// TODO: UTF8
 		// find index of next newline
 		auto nextDelimiterIndex = index;
-		while (nextDelimiterIndex < text.size() && delimiters.find(text.getCharAt(nextDelimiterIndex)) == string::npos) nextDelimiterIndex++;
+		auto textSize = text.size();
+		while (nextDelimiterIndex < textSize && delimiters.find(text.getUTF8CharAt(nextDelimiterIndex)) == string::npos) nextDelimiterIndex++;
+		nextDelimiterIndex = Math::min(nextDelimiterIndex, text.size() - 1);
+		return nextDelimiterIndex;
+	}
+
+	/**
+	 * Get next delimiter using Utf8 indices
+	 * @param index index
+	 * @param delimiters
+	 */
+	inline int getNextDelimiterUtf8(int index, const string& delimiters) {
+		// find index of next newline
+		auto nextDelimiterIndex = index;
+		auto textLength = text.length();
+		while (nextDelimiterIndex < textLength && delimiters.find(text.getUTF8CharAt(nextDelimiterIndex)) == string::npos) nextDelimiterIndex++;
 		nextDelimiterIndex = Math::min(nextDelimiterIndex, text.size() - 1);
 		return nextDelimiterIndex;
 	}

@@ -126,6 +126,7 @@ void GUIStyledTextNode::setSelectionIndexMousePosition(int x, int y) {
 void GUIStyledTextNode::removeText(int32_t idx, int32_t count) {
 
 	text.remove(idx, count, &count);
+	idx = text.getUtf8BinaryIndex(idx);
 	auto adaptNextStyles = false;
 	for (auto i = 0; i < styles.size(); i++) {
 		auto& style = styles[i];
@@ -175,6 +176,7 @@ void GUIStyledTextNode::removeText(int32_t idx, int32_t count) {
 void GUIStyledTextNode::insertText(int32_t idx, int c) {
 	auto s = Character::toString(c);
 	text.insert(idx, s);
+	idx = text.getUtf8BinaryIndex(idx);
 	auto count = s.size();
 	auto adaptNextStyles = false;
 	for (auto& style: styles) {
@@ -203,6 +205,7 @@ void GUIStyledTextNode::insertText(int32_t idx, int c) {
 
 void GUIStyledTextNode::insertText(int32_t idx, const string& s) {
 	text.insert(idx, s);
+	idx = text.getUtf8BinaryIndex(idx);
 	auto count = s.size();
 	auto adaptNextStyles = false;
 	for (auto& style: styles) {
