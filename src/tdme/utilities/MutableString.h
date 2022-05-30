@@ -61,6 +61,7 @@ public:
 	 * @return character count
 	 */
 	inline int length() const {
+		// TODO: UTF8: Do some caching here
 		StringTools::UTF8CharacterIterator u8It(data);
 		while (u8It.hasNext() == true) u8It.next();
 		return u8It.getCharacterPosition();
@@ -383,7 +384,7 @@ private:
 	 * @param idx character index
 	 */
 	int getUtf8BinaryIndex(int idx) const {
-		// TODO: Do some caching here, as processing of lots of data would take lots of time: o(n)
+		// TODO: UTF8: Do some caching here, as processing of lots of data would take lots of time: o(n)
 		return StringTools::getUtf8BinaryIndex(data, idx);
 	}
 
