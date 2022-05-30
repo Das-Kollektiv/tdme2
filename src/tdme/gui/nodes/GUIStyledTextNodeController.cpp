@@ -335,7 +335,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 			index = Math::min(index, selectionIndex);
 			selectionIndex = -1;
 		}
-		if (maxLength == 0 || styledTextNode->getTextSize() < maxLength) {
+		if (maxLength == 0 || styledTextNode->getTextLength() < maxLength) {
 			styledTextNode->insertText(index, event->getKeyChar());
 			styledTextNode->scrollToIndex();
 			forwardInsertText(index, 1);
@@ -374,7 +374,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 		if (keyControlA == true) {
 			auto& text = styledTextNode->getText();
 			index = 0;
-			selectionIndex = text.size() - 1;
+			selectionIndex = text.length() - 1;
 		} else
 		if (keyControlX == true) {
 			Application::getApplication()->setClipboardContent(StringTools::substring(styledTextNode->getText().getString(), Math::min(index, selectionIndex), Math::max(index, selectionIndex)));
@@ -393,8 +393,15 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 		} else
 		if (keyControlV == true) {
 			auto clipboardContent = Application::getApplication()->getClipboardContent();
+			auto clipboardContentLength = 0;
+			{
+				StringTools::UTF8CharacterIterator u8It(clipboardContent);
+				while (u8It.hasNext() == true) u8It.next();
+				clipboardContentLength = u8It.getCharacterPosition();
+			}
+
 			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
-				if (maxLength == 0 || styledTextNode->getTextSize() - Math::abs(index - selectionIndex) + clipboardContent.size() < maxLength) {
+				if (maxLength == 0 || styledTextNode->getTextLength() - Math::abs(index - selectionIndex) + clipboardContentLength < maxLength) {
 					styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 					styledTextNode->scrollToIndex();
 					forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
@@ -402,11 +409,11 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 					selectionIndex = -1;
 				}
 			}
-			if (maxLength == 0 || styledTextNode->getTextSize() + clipboardContent.size() < maxLength) {
+			if (maxLength == 0 || styledTextNode->getTextLength() + clipboardContentLength < maxLength) {
 				styledTextNode->insertText(index, clipboardContent);
 				styledTextNode->scrollToIndex();
-				forwardInsertText(index, clipboardContent.size());
-				index+= clipboardContent.size();
+				forwardInsertText(index, clipboardContentLength);
+				index+= clipboardContentLength;
 			}
 		} else
 		if (keyControlSpace == true) {
@@ -438,7 +445,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 						} else {
 							if (selectionIndex == -1) selectionIndex = index;
 						}
-						if (index < styledTextNode->getTextSize()) {
+						if (index < styledTextNode->getTextLength()) {
 							index++;
 							styledTextNode->scrollToIndex();
 							resetCursorMode();
@@ -554,7 +561,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 								index = Math::min(index, selectionIndex);
 								selectionIndex = -1;
 							} else
-							if (index < styledTextNode->getTextSize()) {
+							if (index < styledTextNode->getTextLength()) {
 								styledTextNode->removeText(index, 1);
 								styledTextNode->scrollToIndex();
 								forwardRemoveText(index, 1);
@@ -575,7 +582,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 								index = Math::min(index, selectionIndex);
 								selectionIndex = -1;
 							}
-							if (maxLength == 0 || styledTextNode->getTextSize() < maxLength) {
+							if (maxLength == 0 || styledTextNode->getTextLength() < maxLength) {
 								styledTextNode->insertText(index, '\n');
 								styledTextNode->scrollToIndex();
 								forwardInsertText(index, 1);
@@ -597,7 +604,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 								index = Math::min(index, selectionIndex);
 								selectionIndex = -1;
 							}
-							if (maxLength == 0 || styledTextNode->getTextSize() < maxLength) {
+							if (maxLength == 0 || styledTextNode->getTextLength() < maxLength) {
 								styledTextNode->insertText(index, '\t');
 								styledTextNode->scrollToIndex();
 								forwardInsertText(index, 1);
@@ -637,7 +644,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 							if (selectionIndex == -1) selectionIndex = index;
 						}
 						if (keyControl == true) {
-							index = styledTextNode->getTextSize() - 1;
+							index = styledTextNode->getTextLength() - 1;
 						} else {
 							// find index of next newline
 							index = styledTextNode->getNextNewLine(index);;

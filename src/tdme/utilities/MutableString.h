@@ -14,7 +14,7 @@ using tdme::math::Math;
 using tdme::utilities::StringTools;
 
 /**
- * Mutable string class
+ * Mutable utf8 aware string class
  * @author Andreas Drewke
  */
 class tdme::utilities::MutableString final
@@ -51,19 +51,37 @@ public:
 	}
 
 	/**
-	 * @return size
+	 * @return binary size
 	 */
 	inline int size() const {
 		return data.size();
 	}
 
 	/**
-	 * Get char at index
+	 * @return character count
+	 */
+	inline int length() const {
+		StringTools::UTF8CharacterIterator u8It(data);
+		while (u8It.hasNext() == true) u8It.next();
+		return u8It.getCharacterPosition();
+	}
+
+	/**
+	 * Get char at given binary index
 	 * @param idx idx
 	 * @return char
 	 */
-	inline char charAt(int32_t idx) const {
+	inline char getCharAt(int32_t idx) const {
 		return data[idx];
+	}
+
+	/**
+	 * @return utf 8 character at given character index
+	 */
+	inline int getUTF8CharAt(int32_t idx) {
+		auto u8It = getUTF8CharacterIterator();
+		u8It.seekBinaryPosition(getUtf8BinaryIndex(idx));
+		return u8It.hasNext() == true?u8It.next():-1;
 	}
 
 	/**
@@ -348,6 +366,13 @@ public:
 	 */
 	inline MutableString clone() {
 		return MutableString(data);
+	}
+
+	/**
+	 * @return UTF8 character iterator
+	 */
+	StringTools::UTF8CharacterIterator getUTF8CharacterIterator() {
+		return StringTools::UTF8CharacterIterator(data);
 	}
 
 private:

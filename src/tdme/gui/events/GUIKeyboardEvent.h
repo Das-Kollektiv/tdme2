@@ -57,7 +57,7 @@ private:
 	int64_t time { -1LL };
 	GUIKeyboardEventType type { KEYBOARDEVENT_NONE };
 	int32_t keyCode { -1 };
-	int keyChar { -1 };
+	int32_t keyChar { -1 };
 	bool metaDown { false };
 	bool controlDown { false };
 	bool altDown { false };
@@ -126,7 +126,7 @@ public:
 	/**
 	 * @return key char
 	 */
-	inline int getKeyChar() {
+	inline int32_t getKeyChar() {
 		return keyChar;
 	}
 
@@ -134,7 +134,7 @@ public:
 	 * Set key char
 	 * @param keyChar key char
 	 */
-	inline void setKeyChar(int keyChar) {
+	inline void setKeyChar(int32_t keyChar) {
 		this->keyChar = keyChar;
 	}
 

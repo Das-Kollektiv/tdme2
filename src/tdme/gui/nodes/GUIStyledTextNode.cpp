@@ -574,7 +574,7 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 	int styleStartIdx = -1;
 	char lc = 0;
 	for (auto i = 0; i < text.size(); i++) {
-		auto c = text.charAt(i);
+		auto c = text.getCharAt(i);
 		if (parseStyle == true) {
 			// end of style
 			if (c == ']') {

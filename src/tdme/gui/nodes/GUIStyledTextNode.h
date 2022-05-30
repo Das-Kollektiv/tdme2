@@ -333,7 +333,7 @@ public:
 		// TODO: UTF8
 		// find index of previous newline and store difference
 		auto previousNewLineIndex = index;
-		while (previousNewLineIndex >= 0 && text.charAt(previousNewLineIndex) != '\n') previousNewLineIndex--;
+		while (previousNewLineIndex >= 0 && text.getCharAt(previousNewLineIndex) != '\n') previousNewLineIndex--;
 		previousNewLineIndex = Math::max(previousNewLineIndex, 0);
 		return previousNewLineIndex;
 	}
@@ -346,7 +346,7 @@ public:
 		// TODO: UTF8
 		// find index of next newline
 		auto nextNewLineIndex = index;
-		while (nextNewLineIndex < text.size() && text.charAt(nextNewLineIndex) != '\n') nextNewLineIndex++;
+		while (nextNewLineIndex < text.size() && text.getCharAt(nextNewLineIndex) != '\n') nextNewLineIndex++;
 		nextNewLineIndex = Math::min(nextNewLineIndex, text.size() - 1);
 		return nextNewLineIndex;
 	}
@@ -360,7 +360,7 @@ public:
 		// TODO: UTF8
 		// find index of previous newline and store difference
 		auto previousDelimiterIndex = index;
-		while (previousDelimiterIndex >= 0 && delimiters.find(text.charAt(previousDelimiterIndex)) == string::npos) previousDelimiterIndex--;
+		while (previousDelimiterIndex >= 0 && delimiters.find(text.getCharAt(previousDelimiterIndex)) == string::npos) previousDelimiterIndex--;
 		previousDelimiterIndex = Math::max(previousDelimiterIndex, 0);
 		return previousDelimiterIndex;
 	}
@@ -374,7 +374,7 @@ public:
 		// TODO: UTF8
 		// find index of next newline
 		auto nextDelimiterIndex = index;
-		while (nextDelimiterIndex < text.size() && delimiters.find(text.charAt(nextDelimiterIndex)) == string::npos) nextDelimiterIndex++;
+		while (nextDelimiterIndex < text.size() && delimiters.find(text.getCharAt(nextDelimiterIndex)) == string::npos) nextDelimiterIndex++;
 		nextDelimiterIndex = Math::min(nextDelimiterIndex, text.size() - 1);
 		return nextDelimiterIndex;
 	}
@@ -382,8 +382,8 @@ public:
 	/**
 	 * @return text size
 	 */
-	inline int getTextSize() {
-		return text.size();
+	inline int getTextLength() {
+		return text.length();
 	}
 
 	/**

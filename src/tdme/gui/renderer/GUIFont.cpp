@@ -1,8 +1,5 @@
 #include <tdme/gui/renderer/GUIFont.h>
 
-#include <tdme/engine/fileio/textures/PNGTextureWriter.h>
-using tdme::engine::fileio::textures::PNGTextureWriter;
-
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
@@ -164,7 +161,6 @@ GUICharacter* GUIFont::addToTextureAtlas(uint32_t charId) {
 
 void GUIFont::updateFontInternal() {
 	textureAtlas.update();
-	// PNGTextureWriter::write(textureAtlas.getAtlasTexture(), ".", "test.png", false, false);
 	auto renderer = Engine::getInstance()->renderer;
 	auto contextIdx = renderer->CONTEXTINDEX_DEFAULT;
 	if (textureAtlas.getAtlasTexture() != nullptr) {
@@ -206,8 +202,10 @@ int GUIFont::getTextIndexX(const MutableString& text, int offset, int length, in
 {
 	StringTools::UTF8CharacterIterator u8It(text.getString());
 	u8It.seekCharacterPosition(offset);
+	if (length == 0) length = text.length();
 	auto x = 0;
-	for (; u8It.hasNext() == true && (length == 0 || index < length); index++) {
+	auto i = offset;
+	for (; u8It.hasNext() == true && i < index && i < length; i++) {
 		auto characterId = u8It.next();
 		auto character = getCharacter(characterId);
 		if (character == nullptr) continue;
@@ -220,10 +218,10 @@ int GUIFont::getTextIndexByX(const MutableString& text, int offset, int length, 
 {
 	StringTools::UTF8CharacterIterator u8It(text.getString());
 	u8It.seekCharacterPosition(offset);
+	if (length == 0) length = text.length();
 	auto x = 0;
 	auto index = offset;
-	if (length == 0) length = text.size();
-	for (; u8It.hasNext() == true && (length == 0 || index < length); index++) {
+	for (; u8It.hasNext() == true && index < length; index++) {
 		auto characterId = u8It.next();
 		auto character = getCharacter(characterId);
 		if (character == nullptr) continue;
@@ -259,7 +257,7 @@ int GUIFont::getTextIndexXAtWidth(const MutableString& text, int width) {
 		x += character->getXAdvance();
 		if (x > width) return i;
 	}
-	return text.size() - 1;
+	return text.length() - 1;
 }
 
 void GUIFont::drawCharacter(GUIRenderer* guiRenderer, GUICharacter* character, int x, int y, const GUIColor& color) {
