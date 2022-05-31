@@ -3,11 +3,13 @@
 #include <tdme/tdme.h>
 
 /**
- * The definition of a single character as defined in the AngelCode file format
- * @author kevin, Andreas Drewke
+ * GUI character
+ * @author Andreas Drewke
  */
 class tdme::gui::renderer::GUICharacter final
 {
+	friend class GUIFont;
+
 public:
 	/**
 	 * Public constructor
@@ -21,7 +23,7 @@ public:
 	 * @param xAdvance the amount to move the current position after drawing the character
 	 */
 	inline GUICharacter(
-		float id,
+		uint32_t id,
 		float x,
 		float y,
 		float width,
@@ -45,7 +47,7 @@ public:
 	/**
 	 * @return id
 	 */
-	float getId() {
+	uint32_t getId() {
 		return id;
 	}
 
@@ -98,8 +100,15 @@ public:
 		return xAdvance;
 	}
 
+	/**
+	 * @return if the character is rotated in texture atlas
+	 */
+	bool isRotated() {
+		return rotated;
+	}
+
 private:
-	float id;
+	uint32_t id;
 	float x;
 	float y;
 	float width;
@@ -107,4 +116,5 @@ private:
 	float xOffset;
 	float yOffset;
 	float xAdvance;
+	bool rotated { false };
 };

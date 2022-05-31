@@ -14,7 +14,7 @@
 			</layout>
 		</layer>
 		<space height="5" hide-on="empty('{$filename}')"/>
-		<styled-text font="{$font.default}" color="{$color.font_normal}" width="{$size}" height="auto" horizontal-align="center">
+		<styled-text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" width="{$size}" height="auto" horizontal-align="center">
 			<![CDATA[
 			{$filename}
 			]]>
@@ -35,7 +35,7 @@
 			</layout>
 		</layer>
 		<space height="5" hide-on="empty('{$filename}')"/>
-		<styled-text font="{$font.default}" color="{$color.font_highlight}" width="{$size}" height="auto" horizontal-align="center">
+		<styled-text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_highlight}" width="{$size}" height="auto" horizontal-align="center">
 			<![CDATA[
 			{$filename}
 			]]>
@@ -56,7 +56,7 @@
 			</layout>
 		</layer>
 		<space height="5" hide-on="empty('{$filename}')"/>
-		<styled-text font="{$font.default}" color="{$color.font_normal}" width="{$size}" height="auto" horizontal-align="center">
+		<styled-text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" width="{$size}" height="auto" horizontal-align="center">
 			<![CDATA[
 			{$filename}
 			]]>

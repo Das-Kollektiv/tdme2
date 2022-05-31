@@ -12,7 +12,7 @@
 			<space height="5" />		
 		
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="Animation" width="*" height="auto" />
+				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Animation" width="*" height="auto" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
 					<dropdown id="sound_animation" width="100%" height="auto" text="Test">
 						<scrollarea id="sound_animation_scrollarea" width="100%" height="70">
@@ -26,7 +26,7 @@
 			<space height="5" />
 			
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="Gain" width="*" height="auto" />
+				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Gain" width="*" height="auto" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
 					<input id="sound_gain" width="75%" height="auto" text="10.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png" />
 				</layout>
@@ -35,7 +35,7 @@
 			<space height="5" />
 			
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="Pitch" width="*" height="auto" />
+				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Pitch" width="*" height="auto" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
 					<input id="sound_pitch" width="75%" height="auto" text="10.00" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
 				</layout>
@@ -44,7 +44,7 @@
 			<space height="5" />
 			
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="Offset" width="*" height="auto" />
+				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Offset" width="*" height="auto" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
 					<input id="sound_offset" width="75%" height="auto" text="100" unit="ms" options="type=int,min=0,step=1" image="resources/engine/images/inputslider.png"/>
 				</layout>
@@ -55,7 +55,7 @@
 			<space height="5" />
 			
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-				<text font="{$font.default}" color="{$color.font_normal}" text="Looped" width="*" height="auto" />
+				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Looped" width="*" height="auto" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
 					<checkbox id="sound_looping" width="25" height="25" value="1" />
 				</layout>
@@ -64,7 +64,7 @@
 			<space height="5" />
 			
 			<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">			
-				<text font="{$font.default}" color="{$color.font_normal}" text="Ambient" width="*" height="auto" />
+				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Ambient" width="*" height="auto" />
 				<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right" vertical-align="center">
 					<checkbox id="sound_ambient" width="25" height="25" value="1" />
 				</layout>

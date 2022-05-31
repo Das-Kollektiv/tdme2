@@ -326,23 +326,21 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 	auto keyChar = event->getKeyChar();
 	if (disabled == false &&
 		keyControl == false &&
-		keyChar >= 32 && keyChar < 127) {
+		event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) {
 		event->setProcessed(true);
-		if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) {
-			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
-				styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
-				styledTextNode->scrollToIndex();
-				forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
-				index = Math::min(index, selectionIndex);
-				selectionIndex = -1;
-			}
-			if (maxLength == 0 || styledTextNode->getTextSize() < maxLength) {
-				styledTextNode->insertText(index, event->getKeyChar());
-				styledTextNode->scrollToIndex();
-				forwardInsertText(index, 1);
-				index++;
-				resetCursorMode();
-			}
+		if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
+			styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+			styledTextNode->scrollToIndex();
+			forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+			index = Math::min(index, selectionIndex);
+			selectionIndex = -1;
+		}
+		if (maxLength == 0 || styledTextNode->getTextLength() < maxLength) {
+			styledTextNode->insertText(index, event->getKeyChar());
+			styledTextNode->scrollToIndex();
+			forwardInsertText(index, 1);
+			index++;
+			resetCursorMode();
 		}
 	} else {
 		auto keyControlA = false;
@@ -376,11 +374,12 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 		if (keyControlA == true) {
 			auto& text = styledTextNode->getText();
 			index = 0;
-			selectionIndex = text.size() - 1;
+			selectionIndex = text.length() - 1;
 		} else
 		if (keyControlX == true) {
-			Application::getApplication()->setClipboardContent(StringTools::substring(styledTextNode->getText().getString(), Math::min(index, selectionIndex), Math::max(index, selectionIndex)));
 			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
+				auto& text = styledTextNode->getText();
+				Application::getApplication()->setClipboardContent(StringTools::substring(text.getString(), Math::min(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex)), Math::max(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex))));
 				styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 				styledTextNode->scrollToIndex();
 				forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
@@ -390,13 +389,15 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 		} else
 		if (keyControlC == true) {
 			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
-				Application::getApplication()->setClipboardContent(StringTools::substring(styledTextNode->getText().getString(), Math::min(index, selectionIndex), Math::max(index, selectionIndex)));
+				auto& text = styledTextNode->getText();
+				Application::getApplication()->setClipboardContent(StringTools::substring(text.getString(), Math::min(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex)), Math::max(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex))));
 			}
 		} else
 		if (keyControlV == true) {
 			auto clipboardContent = Application::getApplication()->getClipboardContent();
+			auto clipboardContentLength = StringTools::getUtf8Length(clipboardContent);
 			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
-				if (maxLength == 0 || styledTextNode->getTextSize() - Math::abs(index - selectionIndex) + clipboardContent.size() < maxLength) {
+				if (maxLength == 0 || styledTextNode->getTextLength() - Math::abs(index - selectionIndex) + clipboardContentLength < maxLength) {
 					styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 					styledTextNode->scrollToIndex();
 					forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
@@ -404,11 +405,11 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 					selectionIndex = -1;
 				}
 			}
-			if (maxLength == 0 || styledTextNode->getTextSize() + clipboardContent.size() < maxLength) {
+			if (maxLength == 0 || styledTextNode->getTextLength() + clipboardContentLength < maxLength) {
 				styledTextNode->insertText(index, clipboardContent);
 				styledTextNode->scrollToIndex();
-				forwardInsertText(index, clipboardContent.size());
-				index+= clipboardContent.size();
+				forwardInsertText(index, clipboardContentLength);
+				index+= clipboardContentLength;
 			}
 		} else
 		if (keyControlSpace == true) {
@@ -440,7 +441,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 						} else {
 							if (selectionIndex == -1) selectionIndex = index;
 						}
-						if (index < styledTextNode->getTextSize()) {
+						if (index < styledTextNode->getTextLength()) {
 							index++;
 							styledTextNode->scrollToIndex();
 							resetCursorMode();
@@ -457,14 +458,14 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 							if (selectionIndex == -1) selectionIndex = index;
 						}
 						// find index of current line newline and store difference
-						auto lineNewLineIndex = styledTextNode->getPreviousNewLine(index) + (index == 0?0:1);
+						auto lineNewLineIndex = styledTextNode->getPreviousNewLineUtf8(index) + (index == 0?0:1);
 						// current line index
 						auto lineIndex = Math::max(index - lineNewLineIndex, 0);
 						// find index of previous newline and iterate to difference if possible
-						auto previousNewLineIndex = styledTextNode->getPreviousNewLine(styledTextNode->getPreviousNewLine(index - 1) - 1);
+						auto previousNewLineIndex = styledTextNode->getPreviousNewLineUtf8(styledTextNode->getPreviousNewLineUtf8(index - 1) - 1);
 						if (previousNewLineIndex != 0) previousNewLineIndex++;
 						// find next index of previous 2 newline as upper bound
-						auto nextNewLineIndex = styledTextNode->getNextNewLine(previousNewLineIndex);
+						auto nextNewLineIndex = styledTextNode->getNextNewLineUtf8(previousNewLineIndex);
 						//
 						index = Math::min(previousNewLineIndex + lineIndex, nextNewLineIndex);
 						styledTextNode->scrollToIndex();
@@ -482,13 +483,13 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 							if (selectionIndex == -1) selectionIndex = index;
 						}
 						// find index of current line newline and store difference
-						auto lineNewLineIndex = styledTextNode->getPreviousNewLine(index) + (index == 0?0:1);
+						auto lineNewLineIndex = styledTextNode->getPreviousNewLineUtf8(index) + (index == 0?0:1);
 						// current line index
 						auto lineIndex = Math::max(index - lineNewLineIndex, 0);
 						// find index of next newline
-						auto nextNewLineIndex = styledTextNode->getNextNewLine(index);
+						auto nextNewLineIndex = styledTextNode->getNextNewLineUtf8(index);
 						// find index of next * 2 newline as upper bound
-						auto next2NewLineIndex = styledTextNode->getNextNewLine(nextNewLineIndex + 1);
+						auto next2NewLineIndex = styledTextNode->getNextNewLineUtf8(nextNewLineIndex + 1);
 						// iterate to difference if possible
 						index = Math::min(nextNewLineIndex + 1 + lineIndex, next2NewLineIndex);
 						//
@@ -556,7 +557,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 								index = Math::min(index, selectionIndex);
 								selectionIndex = -1;
 							} else
-							if (index < styledTextNode->getTextSize()) {
+							if (index < styledTextNode->getTextLength()) {
 								styledTextNode->removeText(index, 1);
 								styledTextNode->scrollToIndex();
 								forwardRemoveText(index, 1);
@@ -577,7 +578,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 								index = Math::min(index, selectionIndex);
 								selectionIndex = -1;
 							}
-							if (maxLength == 0 || styledTextNode->getTextSize() < maxLength) {
+							if (maxLength == 0 || styledTextNode->getTextLength() < maxLength) {
 								styledTextNode->insertText(index, '\n');
 								styledTextNode->scrollToIndex();
 								forwardInsertText(index, 1);
@@ -599,7 +600,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 								index = Math::min(index, selectionIndex);
 								selectionIndex = -1;
 							}
-							if (maxLength == 0 || styledTextNode->getTextSize() < maxLength) {
+							if (maxLength == 0 || styledTextNode->getTextLength() < maxLength) {
 								styledTextNode->insertText(index, '\t');
 								styledTextNode->scrollToIndex();
 								forwardInsertText(index, 1);
@@ -623,7 +624,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 							index = 0;
 						} else {
 							// find index of previous newline
-							index = styledTextNode->getPreviousNewLine(index - 1);
+							index = styledTextNode->getPreviousNewLineUtf8(index - 1);
 							if (index != 0) index++;
 						}
 						styledTextNode->scrollToIndex();
@@ -639,10 +640,10 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 							if (selectionIndex == -1) selectionIndex = index;
 						}
 						if (keyControl == true) {
-							index = styledTextNode->getTextSize() - 1;
+							index = styledTextNode->getTextLength() - 1;
 						} else {
 							// find index of next newline
-							index = styledTextNode->getNextNewLine(index);;
+							index = styledTextNode->getNextNewLineUtf8(index);;
 						}
 						styledTextNode->scrollToIndex();
 					}
@@ -658,14 +659,14 @@ void GUIStyledTextNodeController::tick()
 	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
 	if (scrollMode == SCROLLMODE_UP) {
 		// find index of current line newline and store difference
-		auto lineNewLineIndex = styledTextNode->getPreviousNewLine(selectionIndex) + (selectionIndex == 0?0:1);
+		auto lineNewLineIndex = styledTextNode->getPreviousNewLineUtf8(selectionIndex) + (selectionIndex == 0?0:1);
 		// current line index
 		auto lineIndex = Math::max(selectionIndex - lineNewLineIndex, 0);
 		// find index of previous newline and iterate to difference if possible
-		auto previousNewLineIndex = styledTextNode->getPreviousNewLine(styledTextNode->getPreviousNewLine(selectionIndex - 1) - 1);
+		auto previousNewLineIndex = styledTextNode->getPreviousNewLineUtf8(styledTextNode->getPreviousNewLineUtf8(selectionIndex - 1) - 1);
 		if (previousNewLineIndex != 0) previousNewLineIndex++;
 		// find next index of previous 2 newline as upper bound
-		auto nextNewLineIndex = styledTextNode->getNextNewLine(previousNewLineIndex);
+		auto nextNewLineIndex = styledTextNode->getNextNewLineUtf8(previousNewLineIndex);
 		//
 		selectionIndex = Math::min(previousNewLineIndex + lineIndex, nextNewLineIndex);
 		//
@@ -673,13 +674,13 @@ void GUIStyledTextNodeController::tick()
 	} else
 	if (scrollMode == SCROLLMODE_DOWN) {
 		// find index of current line newline and store difference
-		auto lineNewLineIndex = styledTextNode->getPreviousNewLine(selectionIndex) + (selectionIndex == 0?0:1);
+		auto lineNewLineIndex = styledTextNode->getPreviousNewLineUtf8(selectionIndex) + (selectionIndex == 0?0:1);
 		// current line index
 		auto lineIndex = Math::max(selectionIndex - lineNewLineIndex, 0);
 		// find index of next newline
-		auto nextNewLineIndex = styledTextNode->getNextNewLine(selectionIndex);
+		auto nextNewLineIndex = styledTextNode->getNextNewLineUtf8(selectionIndex);
 		// find index of next * 2 newline as upper bound
-		auto next2NewLineIndex = styledTextNode->getNextNewLine(nextNewLineIndex + 1);
+		auto next2NewLineIndex = styledTextNode->getNextNewLineUtf8(nextNewLineIndex + 1);
 		// iterate to difference if possible
 		selectionIndex = Math::min(nextNewLineIndex + 1 + lineIndex, next2NewLineIndex);
 		//
@@ -734,4 +735,46 @@ void GUIStyledTextNodeController::addCodeCompletionListener(CodeCompletionListen
 
 void GUIStyledTextNodeController::removeCodeCompletionListener(CodeCompletionListener* listener) {
 	codeCompletionListeners.erase(std::remove(codeCompletionListeners.begin(), codeCompletionListeners.end(), listener), codeCompletionListeners.end());
+}
+
+void GUIStyledTextNodeController::forwardRemoveText(int idx, int count) {
+	// determine binary start and end positions
+	// TODO: Do some caching here
+	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
+	auto& text = styledTextNode->getText();
+	auto u8It = StringTools::UTF8CharacterIterator(styledTextNode->getText().getString());
+	u8It.seekCharacterPosition(idx);
+	auto binaryStartIdx = u8It.getBinaryPosition();
+	for (auto i = 0; u8It.hasNext() == true && i < count; i++) u8It.next();
+	auto binaryEndIdx = u8It.getBinaryPosition();
+	// forward remove text
+	for (auto i = 0; i < changeListeners.size(); i++) {
+		changeListeners[i]->onRemoveText(binaryStartIdx, binaryEndIdx - binaryStartIdx);
+	}
+}
+
+void GUIStyledTextNodeController::forwardInsertText(int idx, int count) {
+	// determine binary start and end positions
+	// TODO: Do some caching here
+	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
+	auto& text = styledTextNode->getText();
+	auto u8It = StringTools::UTF8CharacterIterator(styledTextNode->getText().getString());
+	u8It.seekCharacterPosition(idx);
+	auto binaryStartIdx = u8It.getBinaryPosition();
+	for (auto i = 0; u8It.hasNext() == true && i < count; i++) u8It.next();
+	auto binaryEndIdx = u8It.getBinaryPosition();
+
+	//
+	for (auto i = 0; i < changeListeners.size(); i++) {
+		changeListeners[i]->onInsertText(binaryStartIdx, binaryEndIdx - binaryStartIdx);
+	}
+}
+
+void GUIStyledTextNodeController::forwardCodeCompletion(int idx) {
+	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
+	auto& text = styledTextNode->getText();
+	auto binaryIdx = text.getUtf8BinaryIndex(idx);
+	for (auto i = 0; i < changeListeners.size(); i++) {
+		codeCompletionListeners[i]->onCodeCompletion(binaryIdx);
+	}
 }

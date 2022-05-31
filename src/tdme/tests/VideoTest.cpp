@@ -255,10 +255,10 @@ void VideoTest::reshape(int32_t width, int32_t height)
 	engine->reshape(width, height);
 }
 
-void VideoTest::onChar(unsigned int key, int x, int y) {
+void VideoTest::onChar(int key, int x, int y) {
 }
 
-void VideoTest::onKeyDown (unsigned char key, int keyCode, int x, int y, bool repeat) {
+void VideoTest::onKeyDown(int key, int keyCode, int x, int y, bool repeat) {
 	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == 'w') keyW = true;
 	if (keyChar == 'a') keyA = true;
@@ -272,7 +272,7 @@ void VideoTest::onKeyDown (unsigned char key, int keyCode, int x, int y, bool re
 	if (keyCode == KEYBOARD_KEYCODE_DOWN) keyDown = true;
 }
 
-void VideoTest::onKeyUp(unsigned char key, int keyCode, int x, int y) {
+void VideoTest::onKeyUp(int key, int keyCode, int x, int y) {
 	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == 'w') keyW = false;
 	if (keyChar == 'a') keyA = false;

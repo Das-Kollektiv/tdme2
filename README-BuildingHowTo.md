@@ -79,6 +79,7 @@ sudo apt-get install g++
 sudo apt-get install libopenal-dev
 sudo apt-get install libglfw3-dev
 sudo apt-get install libglew-dev
+sudo apt-get install libfreetype-dev
 sudo apt-get install libxml2-dev
 ```
 
@@ -146,6 +147,7 @@ pacman -S mingw-w64-x86_64-openal
 pacman -S mingw-w64-x86_64-glfw
 pacman -S mingw-w64-x86_64-glew
 pacman -S mingw-w64-x86_64-dlfcn
+pacman -S mingw-w64-x86_64-freetype
 ```
 
 #### 1.5.1.1 Vulkan
@@ -204,6 +206,7 @@ copy ext\glfw3\win64\lib\glfw3.dll .
 copy ext\windows-msc\glew\libs\glew32.dll .
 copy ext\windows-msc\openal-soft\libs\OpenAl32.dll .
 copy ext\windows-msc\pthread\libs\pthreadVC2.dll .
+copy ext\windows-msc\freetype\libs\freetype.dll .
 ```
 
 ### 1.6.4. Note

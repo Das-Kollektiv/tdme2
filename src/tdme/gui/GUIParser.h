@@ -42,6 +42,8 @@ private:
 	STATIC_DLL_IMPEXT static Properties* engineThemeProperties;
 	STATIC_DLL_IMPEXT static Properties* projectThemeProperties;
 
+	static constexpr int FONTSIZE_FALLBACK { 14 };
+
 public:
 
 	/**
@@ -159,6 +161,14 @@ private:
 	 * @return factor
 	 */
 	static int parseFactor(GUIParentNode* guiParentNode, const string& factor);
+
+	/**
+	 * Parse integer
+	 * @param value value
+	 * @param defaultValue default value
+	 * @return size
+	 */
+	static int parseInteger(const string& value, int defaultValue);
 
 public:
 

@@ -204,10 +204,10 @@ void FoliageTest::reshape(int32_t width, int32_t height)
 	engine->reshape(width, height);
 }
 
-void FoliageTest::onChar(unsigned int key, int x, int y) {
+void FoliageTest::onChar(int key, int x, int y) {
 }
 
-void FoliageTest::onKeyDown (unsigned char key, int keyCode, int x, int y, bool repeat) {
+void FoliageTest::onKeyDown(int key, int keyCode, int x, int y, bool repeat) {
 	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == 'w') keyW = true;
 	if (keyChar == 'a') keyA = true;
@@ -222,7 +222,7 @@ void FoliageTest::onKeyDown (unsigned char key, int keyCode, int x, int y, bool 
 
 }
 
-void FoliageTest::onKeyUp(unsigned char key, int keyCode, int x, int y) {
+void FoliageTest::onKeyUp(int key, int keyCode, int x, int y) {
 	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == 'w') keyW = false;
 	if (keyChar == 'a') keyA = false;

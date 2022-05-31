@@ -1,5 +1,8 @@
 #pragma once
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
 #include <string>
 #include <unordered_map>
 
@@ -12,6 +15,8 @@
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/TextureAtlas.h>
 
 #include <tdme/os/filesystem/FileSystemException.h>
 
@@ -25,53 +30,82 @@ using tdme::gui::renderer::GUICharacter;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::os::filesystem::FileSystemException;
 using tdme::utilities::MutableString;
+using tdme::utilities::StringTools;
+using tdme::utilities::TextureAtlas;
 
 /**
- * GUI Font
- * A font implementation that will parse the output of the AngelCode font tool available at:
- * @see http://www.angelcode.com/products/bmfont/
- * This implementation copes with both the font display and kerning information allowing nicer
- * looking paragraphs of text. Note that this utility only supports the text format definition
- * file.
- * This was found by google and its origin seems to be Slick2D (http://slick.ninjacave.com) which is under BSD license
- * Copyright (c) 2013, Slick2D
- * All rights reserved.
- * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
- * * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
- * * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
- * * Neither the name of the Slick2D nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS �������AS IS�������� AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * @author kevin, Andreas Drewke
+ * GUI font class
+ * @author Andreas Drewke
  */
 class tdme::gui::renderer::GUIFont final
 {
 private:
-	Texture* texture { nullptr };
-	int32_t textureId { -1 };
+	static bool ftInitialized;
+	static FT_Library ftLibrary;
+	string ftPathName;
+	vector<uint8_t> ttfData;
+	FT_Open_Args ftOpenArgs;
+	FT_Face ftFace;
+	TextureAtlas textureAtlas;
+	int32_t textureId { 0 };
 	unordered_map<uint32_t, GUICharacter*> chars;
 	float lineHeight { 0.0f };
 	float baseLine { 0.0f };
 
 	/**
 	 * Public constructor
+	 * @param pathName font path name
+	 * @param fileName font file name
+	 * @param size font pixel size
 	 */
-	GUIFont();
+	GUIFont(const string& pathName, const string& fileName, int size);
 
 	/**
-	 * Parse a single character line from the definition
-	 * @param line line The line to be parsed
-	 * @return The character definition from the line
+	 * Add character with given id to texture atlas
+	 * @param charId character id
+	 * @return GUI character entity
 	 */
-	GUICharacter* parseCharacter(const string& line);
+	GUICharacter* addToTextureAtlas(uint32_t charId);
+
+	/**
+	 * Update texture atlas
+	 * @param text text chars to be included in atlas
+	 */
+	inline void addCharactersToFont(const string& text) {
+		auto updatedTextureAtlas = false;
+		StringTools::UTF8CharacterIterator u8It(text);
+		while (u8It.hasNext() == true) {
+			auto characterId = u8It.next();
+			if (characterId == -1) continue;
+			if (getCharacter(characterId) == nullptr) {
+				addToTextureAtlas(characterId);
+				updatedTextureAtlas = true;
+			}
+		}
+		if (updatedTextureAtlas == true) updateFontInternal();
+	}
+
+	/**
+	 * Update font texture atlas and character definitions
+	 */
+	inline void updateFont() {
+		if (textureAtlas.isRequiringUpdate() == true) updateFontInternal();
+	}
+
+	/**
+	 * Do the update work
+	 */
+	void updateFontInternal();
 
 public:
 	/**
 	 * Parse the font definition file
 	 * @param pathName font path name
 	 * @param fileName font file name
+	 * @param size font pixel size
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
-	static GUIFont* parse(const string& pathName, const string& fileName);
+	static GUIFont* parse(const string& pathName, const string& fileName, int size);
 
 	/**
 	 * Destructor
@@ -101,9 +135,13 @@ public:
 	 * @return character definition
 	 */
 	inline GUICharacter* getCharacter(uint32_t charId) {
+		// ignore -1 character
+		if (charId == -1) return nullptr;
+		// try to get char and return it
 		auto charIt = chars.find(charId);
 		if (charIt != chars.end()) return charIt->second;
-		return nullptr;
+		// no yet added, add it
+		return addToTextureAtlas(charId);
 	}
 
 	/**

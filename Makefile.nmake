@@ -19,6 +19,7 @@ INCLUDES = \
 	/I "ext\windows-msc\glew\include" \
 	/I "ext\windows-msc\dirent\include" \
 	/I "ext\windows-msc\vulkan-sdk\include" \
+	/I "ext\freetype\include" \
 	/I "ext\rapidjson\include"
 
 # For some reason this works only once LOL
@@ -36,7 +37,8 @@ LIBS_LDFLAGS = \
 	/LIBPATH "ext\glfw3\win64\lib\glfw3dll.lib" \
 	/LIBPATH "ext\windows-msc\pthread\libs\pthreadVC2.lib" \
 	/LIBPATH "ext\windows-msc\openal-soft\libs\OpenAL32.lib" \
-	/LIBPATH "ext\fbx\win64\lib\libfbxsdk.lib" \
+	/LIBPATH "ext\freetype\win64\lib\freetype.lib" \
+	/LIBPATH "ext\fbx\win64\lib\libfbxsdk.lib"
 
 FLAGS = /MT /MP /EHsc /O2 /std:c++20 /Zi /F 8388608 /D RAPIDJSON_HAS_STDSTRING /D GLFW_DLL
 # /NODEFAULTLIB:msvcrt

@@ -616,7 +616,7 @@ void EditorScreenController::ScanFilesThread::run() {
 				if (StringTools::endsWith(fileNameLowerCase, ".h") == true) return true;
 				if (StringTools::endsWith(fileNameLowerCase, ".cpp") == true) return true;
 				// fonts
-				if (StringTools::endsWith(fileNameLowerCase, ".fnt") == true) return true;
+				if (StringTools::endsWith(fileNameLowerCase, ".ttf") == true) return true;
 				// images
 				if (StringTools::endsWith(fileNameLowerCase, ".icns") == true) return true;
 				if (StringTools::endsWith(fileNameLowerCase, ".ico") == true) return true;
@@ -1175,7 +1175,7 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 	if (StringTools::endsWith(fileNameLowerCase, ".tterrain") == true) {
 		fileType = FILETYPE_TERRAINPROTOTYPE;
 	} else
-	if (StringTools::endsWith(fileNameLowerCase, ".fnt") == true) {
+	if (StringTools::endsWith(fileNameLowerCase, ".ttf") == true) {
 		fileType = FILETYPE_FONT;
 	} else
 	if (StringTools::endsWith(fileNameLowerCase, ".ogg") == true) {
@@ -1514,7 +1514,10 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 					auto screenNode = GUIParser::parse(
 						"resources/engine/gui/",
 						"tab_font.xml",
-						{{ "font", absoluteFileName }}
+						{
+							{ "font", absoluteFileName },
+							{ "size", "20" }
+						}
 					);
 					tabType = EditorTabView::TABTYPE_FONT;
 					tabView = new FontTabView(view, tabId, screenNode);

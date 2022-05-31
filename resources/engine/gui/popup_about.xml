@@ -14,11 +14,11 @@
 							
 							<space height="10" />
 							
-							<text id="about_platform" font="{$font.default}" color="{$color.font_disabled}" width="100%" height="auto" horizontal-align="center" text="Platform: " />
+							<text id="about_platform" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_disabled}" width="100%" height="auto" horizontal-align="center" text="Platform: " />
 							
 							<space height="5" />
 							
-							<styled-text id="about_graphics" font="{$font.default}" color="{$color.font_disabled}" width="100%" height="auto" horizontal-align="center">
+							<styled-text id="about_graphics" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_disabled}" width="100%" height="auto" horizontal-align="center">
 								<![CDATA[
 									Graphics:
 								]]>
@@ -29,9 +29,9 @@
 							<layout alignment="horizontal" horizontal-align="center" vertical-align="center" width="100%" height="*">
 							
 								<layout alignment="vertical" horizontal-align="left" vertical-align="top" width="auto" height="125">
-									<text font="{$font.default}" color="{$color.font_normal}" text="TDME2" width="auto" height="25" />
+									<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="TDME2" width="auto" height="25" />
 									
-									<text id="about_version" font="{$font.default}" color="{$color.font_disabled}" text="v1.9.99" width="auto" height="25" />
+									<text id="about_version" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_disabled}" text="v1.9.99" width="auto" height="25" />
 								</layout>
 								
 								<space width="150"/>
@@ -42,7 +42,7 @@
 										<layout alignment="horizontal" horizontal-align="left" vertical-align="center" width="auto" height="25">
 											<image src="resources/engine/images/weblink.png"/>
 											<space width="5"/>
-											<text id="about_releasenotes" font="{$font.default}" color="{$color.font_normal}" text="Release Notes" width="auto" />
+											<text id="about_releasenotes" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Release Notes" width="auto" />
 										</layout>
 									</element>
 									 -->
@@ -50,21 +50,21 @@
 										<layout alignment="horizontal" horizontal-align="left" vertical-align="center" width="auto" height="25">
 											<image src="resources/engine/images/weblink.png"/>
 											<space width="5"/>
-											<text id="about_github" font="{$font.default}" color="{$color.font_normal}" text="GitHub" width="auto" />
+											<text id="about_github" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="GitHub" width="auto" />
 										</layout>
 									</element>										
 									<element id="about_discord_element" width="auto" height="auto" on-mouse-click="https://discord.gg/tMqrmcp23Q" options="mouse-cursor=hand">
 										<layout alignment="horizontal" horizontal-align="left" vertical-align="center" width="auto" height="25">
 											<image src="resources/engine/images/weblink.png"/>
 											<space width="5"/>
-											<text id="about_discord" font="{$font.default}" color="{$color.font_normal}" text="Discord" width="auto" />
+											<text id="about_discord" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Discord" width="auto" />
 										</layout>
 									</element>
 									<element id="about_license_element" width="auto" height="auto" on-mouse-click="https://github.com/andreasdr/tdme2/blob/master/LICENSE" options="mouse-cursor=hand">
 										<layout alignment="horizontal" horizontal-align="left" vertical-align="center" width="auto" height="25">
 											<image src="resources/engine/images/weblink.png"/>
 											<space width="5"/>
-											<text id="about_license" font="{$font.default}" color="{$color.font_normal}" text="License" width="auto" />
+											<text id="about_license" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="License" width="auto" />
 										</layout>
 									</element>
 									<!-- 								
@@ -72,7 +72,7 @@
 										<layout alignment="horizontal" horizontal-align="left" vertical-align="center" width="auto" height="25">
 											<image src="resources/engine/images/weblink.png"/>
 											<space width="5"/>
-											<text id="about_patreon" font="{$font.default}" color="{$color.font_normal}" text="Patreon" width="auto" />
+											<text id="about_patreon" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Patreon" width="auto" />
 										</layout>
 									</element>
  									-->
@@ -81,7 +81,7 @@
 
 							</layout>
 
-							<styled-text font="{$font.default}" color="{$color.font_disabled}" width="100%" height="auto" horizontal-align="center">
+							<styled-text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_disabled}" width="100%" height="auto" horizontal-align="center">
 								<![CDATA[
 									Developed 2012-2021 by [url=https://drewke.net]drewke.net[/url], [url=https://mindty.com]mindty.com[/url]
 								]]>

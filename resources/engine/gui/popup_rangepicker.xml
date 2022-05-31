@@ -36,13 +36,13 @@
 						<menu-separator />
 						<space height="5" />
 						<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="Highest Range" width="*" height="auto" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Highest Range" width="*" height="auto" />
 							<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
 								<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
 									<input id="rangepicker_highest_min" width="*" height="auto" text="10.0" options="type=float,min=0.0,step=0.1,decimals=1" image="resources/engine/images/inputslider.png" />
 								</layout>
 								<space width="5" />
-								<text font="{$font.default}" color="{$color.font_normal}" text="-"/>
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
 								<space width="5" />
 								<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
 									<input id="rangepicker_highest_max" width="*" height="auto" text="10.0"  options="type=float,min=0.0,step=0.1,decimals=1" image="resources/engine/images/inputslider.png"/>
@@ -53,13 +53,13 @@
 						</layout>
 						<space height="5" />
 						<layout  width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="Lowest Range" width="*" height="auto" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Lowest Range" width="*" height="auto" />
 							<layout alignment="horizontal" width="75%" height="auto" horizontal-align="right" vertical-align="center">
 								<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
 									<input id="rangepicker_lowest_min" width="*" height="auto" text="10.0" options="type=float,min=0.0,step=0.1,decimals=1" image="resources/engine/images/inputslider.png" />
 								</layout>
 								<space width="5" />
-								<text font="{$font.default}" color="{$color.font_normal}" text="-"/>
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="-"/>
 								<space width="5" />
 								<layout alignment="horizontal" width="34%" height="auto" horizontal-align="right">
 									<input id="rangepicker_lowest_max" width="*" height="auto" text="10.0"  options="type=float,min=0.0,step=0.1,decimals=1" image="resources/engine/images/inputslider.png"/>

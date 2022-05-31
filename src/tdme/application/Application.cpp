@@ -831,3 +831,4 @@ void Application::glfwOnClose(GLFWwindow* window) {
 
 void Application::onClose() {
 }
+

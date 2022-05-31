@@ -152,7 +152,7 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 				event->setProcessed(true);
 				if (editMode == false) {
 					index = 0;
-					selectionIndex = textInputNode->getText().size();
+					selectionIndex = textInputNode->getText().length();
 				}
 				editMode = true;
 			}
@@ -309,35 +309,34 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 	auto keyChar = event->getKeyChar();
 	if (disabled == false &&
 		keyControl == false &&
+		event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED &&
 		(
-			(type == TYPE_STRING && keyChar >= 32 && keyChar < 127) ||
+			(type == TYPE_STRING) ||
 			(type == TYPE_FLOAT && ((keyChar >= '0' && keyChar <= '9') || (keyChar == '.') || keyChar == '-')) ||
 			(type == TYPE_INT && ((keyChar >= '0' && keyChar <= '9') || keyChar == '-'))
 		)) {
 		event->setProcessed(true);
-		if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) {
-			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
-				textInputNode->getText().remove(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
-				index = Math::min(index, selectionIndex);
-				selectionIndex = -1;
-			}
-			if (textInputNode->getMaxLength() == 0 || textInputNode->getText().size() < textInputNode->getMaxLength()) {
-				if (type == TYPE_FLOAT && keyChar == '.' && textInputNode->getText().getString().find('.') != string::npos) {
-					// no op
-				} else
-				if (type == TYPE_FLOAT && keyChar == '-' && (textInputNode->getText().getString().find('-') != string::npos || index != 0)) {
-					// no op
-				} else
-				if (type == TYPE_INT && keyChar == '-' && (textInputNode->getText().getString().find('-') != string::npos || index != 0)) {
-					// no op
-				} else {
-					textInputNode->getText().insert(index, event->getKeyChar());
-					index++;
-					resetCursorMode();
-					checkOffset();
-					required_dynamic_cast<GUIInputController*>(inputNode->getController())->onValueChange();
-					node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
-				}
+		if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
+			textInputNode->getText().remove(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+			index = Math::min(index, selectionIndex);
+			selectionIndex = -1;
+		}
+		if (textInputNode->getMaxLength() == 0 || textInputNode->getText().length() < textInputNode->getMaxLength()) {
+			if (type == TYPE_FLOAT && keyChar == '.' && textInputNode->getText().getString().find('.') != string::npos) {
+				// no op
+			} else
+			if (type == TYPE_FLOAT && keyChar == '-' && (textInputNode->getText().getString().find('-') != string::npos || index != 0)) {
+				// no op
+			} else
+			if (type == TYPE_INT && keyChar == '-' && (textInputNode->getText().getString().find('-') != string::npos || index != 0)) {
+				// no op
+			} else {
+				textInputNode->getText().insert(index, Character::toString(event->getKeyChar()));
+				index++;
+				resetCursorMode();
+				checkOffset();
+				required_dynamic_cast<GUIInputController*>(inputNode->getController())->onValueChange();
+				node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
 			}
 		}
 	} else {
@@ -366,35 +365,40 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 		// handle them
 		if (keyControlA == true) {
 			index = 0;
-			selectionIndex = textInputNode->getText().size();
+			selectionIndex = textInputNode->getText().length();
 		} else
-		if (keyControlX == true) {
-			Application::getApplication()->setClipboardContent(StringTools::substring(textInputNode->getText().getString(), Math::min(index, selectionIndex), Math::max(index, selectionIndex)));
+		if (keyControlX == true && disabled == false) {
 			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
+				auto& text = textInputNode->getText();
+				Application::getApplication()->setClipboardContent(StringTools::substring(text.getString(), Math::min(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex)), Math::max(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex))));
 				textInputNode->getText().remove(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 				index = Math::min(index, selectionIndex);
 				selectionIndex = -1;
 				checkOffset();
 			}
 		} else
-		if (keyControlC == true) {
+		if (keyControlC == true || keyControlX == true) {
 			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
-				Application::getApplication()->setClipboardContent(StringTools::substring(textInputNode->getText().getString(), Math::min(index, selectionIndex), Math::max(index, selectionIndex)));
+				auto& text = textInputNode->getText();
+				Application::getApplication()->setClipboardContent(StringTools::substring(text.getString(), Math::min(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex)), Math::max(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex))));
 			}
 		} else
 		if (keyControlV == true) {
-			auto clipboardContent = Application::getApplication()->getClipboardContent();
-			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
-				if (textInputNode->getMaxLength() == 0 || textInputNode->getText().size() - Math::abs(index - selectionIndex) + clipboardContent.size() < textInputNode->getMaxLength()) {
-					textInputNode->getText().remove(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
-					index = Math::min(index, selectionIndex);
-					selectionIndex = -1;
+			if (disabled == false) {
+				auto clipboardContent = Application::getApplication()->getClipboardContent();
+				auto clipboardContentLength = StringTools::getUtf8Length(clipboardContent);
+				if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
+					if (textInputNode->getMaxLength() == 0 || textInputNode->getText().length() - Math::abs(index - selectionIndex) + clipboardContentLength < textInputNode->getMaxLength()) {
+						textInputNode->getText().remove(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+						index = Math::min(index, selectionIndex);
+						selectionIndex = -1;
+					}
 				}
-			}
-			if (textInputNode->getMaxLength() == 0 || textInputNode->getText().size() + clipboardContent.size() < textInputNode->getMaxLength()) {
-				textInputNode->getText().insert(index, clipboardContent);
-				index+= clipboardContent.size();
-				checkOffset();
+				if (textInputNode->getMaxLength() == 0 || textInputNode->getText().length() + clipboardContentLength < textInputNode->getMaxLength()) {
+					textInputNode->getText().insert(index, clipboardContent);
+					index+= clipboardContentLength;
+					checkOffset();
+				}
 			}
 		} else {
 			// navigation, delete, return
@@ -423,7 +427,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 						} else {
 							if (selectionIndex == -1) selectionIndex = index;
 						}
-						if (index < textInputNode->getText().size()) {
+						if (index < textInputNode->getText().length()) {
 							index++;
 							checkOffset();
 							resetCursorMode();
@@ -461,7 +465,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 								index = Math::min(index, selectionIndex);
 								selectionIndex = -1;
 							} else
-							if (index < textInputNode->getText().size()) {
+							if (index < textInputNode->getText().length()) {
 								textInputNode->getText().remove(index, 1);
 								resetCursorMode();
 								required_dynamic_cast<GUIInputController*>(inputNode->getController())->onValueChange();
@@ -502,7 +506,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 						} else {
 							if (selectionIndex == -1) selectionIndex = index;
 						}
-						index = textInputNode->getText().size();
+						index = textInputNode->getText().length();
 						checkOffset();
 					}
 				}
@@ -546,10 +550,10 @@ void GUIInputInternalController::onTextUpdate()
 {
 	auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
 	if (index < 0) index = 0;
-	if (index >= textInputNode->getText().size()) index = textInputNode->getText().size();
+	if (index >= textInputNode->getText().length()) index = textInputNode->getText().length();
 	if (selectionIndex != -1) {
 		if (selectionIndex < 0) selectionIndex = 0;
-		if (selectionIndex >= textInputNode->getText().size()) selectionIndex = textInputNode->getText().size();
+		if (selectionIndex >= textInputNode->getText().length()) selectionIndex = textInputNode->getText().length();
 	}
 	checkOffset();
 	resetCursorMode();

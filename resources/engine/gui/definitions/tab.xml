@@ -25,7 +25,7 @@
 		<space hide-on="empty('{$image}')" width="5"/>
 		<text
 			text="{$text}"
-			font="{$font.default}" 
+			font="{$font.default}" size="{$fontsize.default}" 
 			color="{$color.font_normal}"
 			
 			width="auto" 
@@ -62,7 +62,7 @@
 		<space hide-on="empty('{$image}')" width="5"/>
 		<text
 			text="{$text}"
-			font="{$font.default}" 
+			font="{$font.default}" size="{$fontsize.default}" 
 			color="{$color.font_normal}"
 			
 			width="auto" 
@@ -98,7 +98,7 @@
 		<space hide-on="empty('{$image}')" width="5"/>
 		<text
 			text="{$text}"
-			font="{$font.default}"
+			font="{$font.default}" size="{$fontsize.default}"
 			color="{$color.font_highlight}"
 			
 			width="auto" 
@@ -134,7 +134,7 @@
 		<space hide-on="empty('{$image}')" width="5"/>
 		<text
 			text="{$text}"
-			font="{$font.default}"
+			font="{$font.default}" size="{$fontsize.default}"
 			color="{$color.font_disabled}"
 			
 			width="auto" 

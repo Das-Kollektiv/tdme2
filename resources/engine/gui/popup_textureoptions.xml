@@ -14,36 +14,36 @@
 						<space height="5" />
 						<layout width="*" alignment="horizontal" horizontal-align="center" vertical-align="center">
 							<layout alignment="horizontal" horizontal-align="center" vertical-align="center">
-								<text font="{$font.default}" color="{$color.font_normal}" text="R"/>
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="R"/>
 								<checkbox id="textureoptions_r" width="25" height="25" value="1"/>
 							</layout>
 							<space width="*" />
 							<layout alignment="horizontal" horizontal-align="center" vertical-align="center">
-								<text font="{$font.default}" color="{$color.font_normal}" text="G"/>
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="G"/>
 								<checkbox id="textureoptions_g" width="25" height="25" value="1"/>
 							</layout>
 							<space width="*" />
 							<layout alignment="horizontal" horizontal-align="center" vertical-align="center">
-								<text font="{$font.default}" color="{$color.font_normal}" text="B"/>
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="B"/>
 								<checkbox id="textureoptions_b" width="25" height="25" value="1"/>
 							</layout>
 							<space width="*" />
 							<layout alignment="horizontal" horizontal-align="center" vertical-align="center">
-								<text font="{$font.default}" color="{$color.font_normal}" text="A"/>
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="A"/>
 								<checkbox id="textureoptions_a" width="25" height="25" value="1"/>
 							</layout>
 						</layout>
 						<menu-separator />
 						<layout padding="5" width="200" height="auto" alignment="vertical">	
 							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-								<text font="{$font.default}" color="{$color.font_normal}" text="Flip Horizontal" width="*" height="auto"/>
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Flip Horizontal" width="*" height="auto"/>
 								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 									<checkbox id="textureoptions_fliphorizontal" width="25" height="25" value="1" />
 								</layout>
 							</layout>
 							<space height="5" />
 							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-								<text font="{$font.default}" color="{$color.font_normal}" text="Flip Vertical" width="*" height="auto"/>
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Flip Vertical" width="*" height="auto"/>
 								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 									<checkbox id="textureoptions_flipvertical" width="25" height="25" value="1" />
 								</layout>

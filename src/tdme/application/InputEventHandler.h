@@ -22,7 +22,7 @@ public:
 	 * @param x x
 	 * @param y y
 	 */
-	virtual void onChar(unsigned int key, int x, int y) = 0;
+	virtual void onChar(int key, int x, int y) = 0;
 
 	/**
 	 * On key down
@@ -32,7 +32,7 @@ public:
 	 * @param y y
 	 * @param repeat event
 	 */
-	virtual void onKeyDown (unsigned char key, int keyCode, int x, int y, bool repeat) = 0;
+	virtual void onKeyDown(int key, int keyCode, int x, int y, bool repeat) = 0;
 
 	/**
 	 * On key up
@@ -41,7 +41,7 @@ public:
 	 * @param x x
 	 * @param y y
 	 */
-	virtual void onKeyUp(unsigned char key, int keyCode, int x, int y) = 0;
+	virtual void onKeyUp(int key, int keyCode, int x, int y) = 0;
 
 	/**
 	 * On mouse dragged

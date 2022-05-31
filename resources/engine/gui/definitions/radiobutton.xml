@@ -6,7 +6,7 @@
 		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
 			<image effect-color-mul="{$color.font_normal}" src="resources/engine/images/radiobutton_unselected.png" />
 		</layout>
-		<text padding-left="5" padding-top="2" padding-bottom="2"  font="{$font.default}" text="{$text}" color="{$color.font_normal}" />
+		<text padding-left="5" padding-top="2" padding-bottom="2"  font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_normal}" />
 	</layout>
 	<!-- unselected, mouse over -->
 	<layout width="auto" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="disabled,selected" show-on="mouseover" >
@@ -14,7 +14,7 @@
 		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
 			<image effect-color-mul="{$color.font_highlight}" src="resources/engine/images/radiobutton_unselected.png" />
 		</layout>
-		<text padding-left="5" padding-top="2" padding-bottom="2"  font="{$font.default}" text="{$text}" color="{$color.font_highlight}" />
+		<text padding-left="5" padding-top="2" padding-bottom="2"  font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_highlight}" />
 	</layout>
 	<!-- unselected, disabled -->
 	<layout width="auto" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="selected" show-on="disabled" >
@@ -22,7 +22,7 @@
 		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
 			<image effect-color-mul="{$color.font_disabled}" src="resources/engine/images/radiobutton_unselected.png" />
 		</layout>
-		<text padding-left="5" padding-top="2" padding-bottom="2"  font="{$font.default}" text="{$text}" color="{$color.font_disabled}" />
+		<text padding-left="5" padding-top="2" padding-bottom="2"  font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_disabled}" />
 	</layout>
 	
 	
@@ -32,7 +32,7 @@
 		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
 			<image effect-color-mul="{$color.font_normal}" src="resources/engine/images/radiobutton_selected.png" />
 		</layout>
-		<text padding-left="5" padding-top="2" padding-bottom="2"  font="{$font.default}" text="{$text}" color="{$color.font_normal}" />
+		<text padding-left="5" padding-top="2" padding-bottom="2"  font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_normal}" />
 	</layout>
 	
 	<!-- selected, mouse over -->
@@ -41,7 +41,7 @@
 		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
 			<image effect-color-mul="{$color.font_highlight}" src="resources/engine/images/radiobutton_selected.png" />
 		</layout>
-		<text padding-left="5" padding-top="2" padding-bottom="2" font="{$font.default}" text="{$text}" color="{$color.font_highlight}" />
+		<text padding-left="5" padding-top="2" padding-bottom="2" font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_highlight}" />
 	</layout>
 	<!-- selected, disabled -->
 	<layout width="auto" height="auto" alignment="horizontal" horizontal-align="left" vertical-align="center" hide-on="unselected" show-on="disabled" >
@@ -49,7 +49,7 @@
 		<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
 			<image effect-color-mul="{$color.font_disabled}" src="resources/engine/images/radiobutton_selected.png" />
 		</layout>
-		<text padding-left="5" padding-top="2" padding-bottom="2" font="{$font.default}" text="{$text}" color="{$color.font_disabled}" />
+		<text padding-left="5" padding-top="2" padding-bottom="2" font="{$font.default}" size="{$fontsize.default}" text="{$text}" color="{$color.font_disabled}" />
 	</layout>
 	
 </element>

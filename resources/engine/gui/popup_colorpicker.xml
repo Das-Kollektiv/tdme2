@@ -18,14 +18,14 @@
 						<menu-separator />
 						<layout padding="5" width="200" height="auto" alignment="vertical">	
 							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-								<text font="{$font.default}" color="{$color.font_normal}" text="New" width="*" height="auto"/>
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="New" width="*" height="auto"/>
 								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 									<image id="colorpicker_color_new" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>					
 								</layout>
 							</layout>
 							<space height="5" />
 							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-								<text font="{$font.default}" color="{$color.font_normal}" text="Old" width="*" height="auto"/>
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Old" width="*" height="auto"/>
 								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
 									<image id="colorpicker_color_old" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>					
 								</layout>
@@ -35,28 +35,28 @@
 	
 						<layout padding="5" width="*" height="auto" alignment="vertical">	
 							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-								<text font="{$font.default}" color="{$color.font_normal}" text="Red" width="45" height="auto" />
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Red" width="45" height="auto" />
 								<space width="5" />
 								<space width="*" />
 								<input id="colorpicker_red" width="60" height="auto" text="255" options="type=int,min=0,max=255,step=1" image="resources/engine/images/inputslider.png" />
 							</layout>
 							<space height="5" />
 							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-								<text font="{$font.default}" color="{$color.font_normal}" text="Green" width="45" height="auto" />
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Green" width="45" height="auto" />
 								<space width="5" />
 								<space width="*" />
 								<input id="colorpicker_green" width="60" height="auto" text="255" options="type=int,min=0,max=255,step=1" image="resources/engine/images/inputslider.png" />
 							</layout>
 							<space height="5" />
 							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-								<text font="{$font.default}" color="{$color.font_normal}" text="Blue" width="45" height="auto" />
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Blue" width="45" height="auto" />
 								<space width="5" />
 								<space width="*" />
 								<input id="colorpicker_blue" width="60" height="auto" text="255" options="type=int,min=0,max=255,step=1" image="resources/engine/images/inputslider.png" />
 							</layout>
 							<space height="5" />
 							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-								<text font="{$font.default}" color="{$color.font_normal}" text="Alpha" width="45" height="auto" />
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Alpha" width="45" height="auto" />
 								<space width="5" />
 								<space width="*" />
 								<input id="colorpicker_alpha" width="60" height="auto" text="255" options="type=int,min=0,max=255,step=1" image="resources/engine/images/inputslider.png"  />
@@ -64,7 +64,7 @@
 						</layout>
 						<menu-separator />
 						<layout padding="5" width="200" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" color="{$color.font_normal}" text="Hex" width="*" height="auto" />
+							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Hex" width="*" height="auto" />
 							<space width="5" />
 							<input id="colorpicker_hex" width="85" height="auto" text="#00000000" />
 							<space width="10" />

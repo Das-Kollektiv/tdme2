@@ -52,18 +52,18 @@ ifeq ($(OS), Darwin)
 		src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 		src/tdme/engine/fileio/models/FBXReader.cpp \
 		src/tdme/engine/fileio/models/ModelReaderFBX.cpp
-	INCLUDES := $(INCLUDES) -Iext/fbx/macosx/include -Iext/glfw3/include
+	INCLUDES := $(INCLUDES) -Iext/fbx/macosx/include -Iext/glfw3/include -Iext/freetype/include
 	OPENGL_RENDERER_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -framework OpenGL -framework OpenCL -Lext/glfw3/macosx/lib -lglfw.3
 	VULKAN_RENDERER_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -lvulkan.1 -Lext/glfw3/macosx/lib -lglfw.3
 	OPENGLES2_RENDERER_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -framework OpenGL -framework OpenCL -Lext/glfw3/macosx/lib -lglfw.3
-	LIBS_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -framework OpenAL -Lext/glfw3/macosx/lib -lglfw.3 -Lext/fbx/macosx/lib -lfbxsdk
+	LIBS_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -framework OpenAL -Lext/glfw3/macosx/lib -lglfw.3  -Lext/freetype/macosx/lib -lfreetype.6 -Lext/fbx/macosx/lib -lfbxsdk
 	OFLAGS := -O2
 else ifeq ($(OS), FreeBSD)
 	# FreeBSD
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
 		src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 		src/tdme/engine/fileio/models/ModelReader.cpp
-	INCLUDES := $(INCLUDES) -I/usr/local/include
+	INCLUDES := $(INCLUDES) -I/usr/local/include -I/usr/local/include/freetype2
 	OPENGL_RENDERER_LDFLAGS := -L/usr/local/lib -lGLEW -lGL -lglfw
 	VULKAN_RENDERER_LDFLAGS := -L/usr/local/lib -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -L/usr/local/lib -lGLESv2 -lEGL -lglfw
@@ -74,7 +74,7 @@ else ifeq ($(OS), NetBSD)
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
 		src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 		src/tdme/engine/fileio/models/ModelReader.cpp
-	INCLUDES := $(INCLUDES) -I/usr/X11R7/include -I/usr/pkg/include
+	INCLUDES := $(INCLUDES) -I/usr/X11R7/include -I/usr/pkg/include -I/usr/pkg/include/freetype2
 	OPENGL_RENDERER_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -lGLEW -lGL -lglfw
 	VULKAN_RENDERER_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -lGLESv2 -lEGL -lglfw
@@ -85,7 +85,7 @@ else ifeq ($(OS), OpenBSD)
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
 		src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 		src/tdme/engine/fileio/models/ModelReader.cpp
-	INCLUDES := $(INCLUDES) -I/usr/X11R6/include -I/usr/local/include
+	INCLUDES := $(INCLUDES) -I/usr/X11R6/include -I/usr/local/include -I/usr/local/include/freetype2
 	OPENGL_RENDERER_LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -lGLEW -lGL -lglfw
 	VULKAN_RENDERER_LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -lGLESv2 -lEGL -lglfw
@@ -96,19 +96,19 @@ else ifeq ($(OS), Haiku)
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
 		src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
 		src/tdme/engine/fileio/models/ModelReader.cpp
-	INCLUDES := $(INCLUDES) -I/boot/system/develop/headers
+	INCLUDES := $(INCLUDES) -I/boot/system/develop/headers -I/boot/system/develop/headers/freetype2
 	OPENGL_RENDERER_LDFLAGS := -lGLEW -lGL -lglfw
 	VULKAN_RENDERER_LDFLAGS := -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -lGLESv2 -lEGL -lglfw
-	LIBS_LDFLAGS := -lnetwork -lglfw -lopenal
+	LIBS_LDFLAGS := -lnetwork -lglfw -lopenal -lfreetype
 	OFLAGS := -O2
 else ifeq ($(OS), Linux)
 	# Linux
-	INCLUDES := $(INCLUDES) -L/usr/lib64
-	OPENGL_RENDERER_LDFLAGS := -lGLEW -lGL -lglfw
-	VULKAN_RENDERER_LDFLAGS := -lvulkan -lglfw
-	OPENGLES2_RENDERER_LDFLAGS := -lGLESv2 -lEGL -lglfw
-	LIBS_LDFLAGS := -ldl -lglfw -lopenal
+	INCLUDES := $(INCLUDES) -I/usr/include/freetype2
+	OPENGL_RENDERER_LDFLAGS := -L/usr/lib64 -lGLEW -lGL -lglfw
+	VULKAN_RENDERER_LDFLAGS := -L/usr/lib64 -lvulkan -lglfw
+	OPENGLES2_RENDERER_LDFLAGS := -L/usr/lib64 -lGLESv2 -lEGL -lglfw
+	LIBS_LDFLAGS := -L/usr/lib64 -ldl -lglfw -lopenal -lfreetype
 	OFLAGS := -O2
 	ifeq ($(MACHINE), x86_64)
 		SRCS_PLATFORM := $(SRCS_PLATFORM) \
@@ -130,10 +130,10 @@ else
 	# TODO: No console flags: -Wl,-subsystem,windows
 	EXTRAFLAGS := $(EXTRAFLAGS)
 	#-D_GLIBCXX_DEBUG
-	INCLUDES := $(INCLUDES) -I/mingw64/include
+	INCLUDES := $(INCLUDES) -I/mingw64/include -I/mingw64/include/freetype2
 	OPENGL_RENDERER_LDFLAGS := -L/mingw64/lib -lglfw3 -lglew32 -lopengl32
 	VULKAN_RENDERER_LDFLAGS := -L/mingw64/lib -lglfw3 -Lext/vulkan/runtime/mingw64 -lvulkan-1
-	LIBS_LDFLAGS := -L/mingw64/lib -lws2_32 -ldl -lglfw3 -lopenal -ldbghelp
+	LIBS_LDFLAGS := -L/mingw64/lib -lws2_32 -ldl -lglfw3 -lopenal -lfreetype -ldbghelp
 	LDFLAG_LIB := $(NAME)$(LIB_EXT)
 	LDFLAG_EXT_LIB := $(EXT_NAME)$(LIB_EXT)
 	OFLAGS := -O2

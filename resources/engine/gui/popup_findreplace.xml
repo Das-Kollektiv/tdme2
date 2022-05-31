@@ -11,14 +11,14 @@
 						<layout padding="10" alignment="vertical" horizontal-align="center" vertical-align="center" width="100%" height="100%">
 						
 							<layout alignment="horizontal" horizontal-align="center" vertical-align="center" width="100%" height="auto">
-								<text font="{$font.default}" color="{$color.font_normal}" text="Find:" width="140" height="25" />
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Find:" width="140" height="25" />
 								<input id="findreplace_findtext" width="*" height="25" text="" />
 							</layout>
 							
 							<space height="10" />
 							
 							<layout alignment="horizontal" horizontal-align="center" vertical-align="center" width="100%" height="auto">
-								<text font="{$font.default}" color="{$color.font_normal}" text="Replace with:" width="140" height="25" />
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Replace with:" width="140" height="25" />
 								<input id="findreplace_replacetext" width="*" height="25" text="" />
 							</layout>
 					

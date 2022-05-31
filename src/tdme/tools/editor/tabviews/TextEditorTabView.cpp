@@ -91,7 +91,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 			virtual void onCodeCompletion(int idx) override {
 				auto codeCompletion = textEditorTabView->codeCompletion;
 				if (codeCompletion == nullptr) return;
-				if (codeCompletion->delimiters.find(textEditorTabView->textNode->getText().charAt(idx)) != string::npos) {
+				if (codeCompletion->delimiters.find(textEditorTabView->textNode->getText().getCharAt(idx)) != string::npos) {
 					if (idx > 0) idx--;
 				}
 				auto previousDelimiterPos = textEditorTabView->textNode->getPreviousDelimiter(idx, codeCompletion->delimiters);
@@ -182,9 +182,9 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 								if (withoutWhiteSpaceDelimiters.find('\t') != string::npos) withoutWhiteSpaceDelimiters.erase(withoutWhiteSpaceDelimiters.find('\t'), 1);
 								if (withoutWhiteSpaceDelimiters.find('\n') != string::npos) withoutWhiteSpaceDelimiters.erase(withoutWhiteSpaceDelimiters.find('\n'), 1);
 								auto nextDelimiterPos2 = textEditorTabView->textNode->getNextDelimiter(idx, withoutWhiteSpaceDelimiters);
-								auto idxToDelimiterString = StringTools::trim(StringTools::substring(textEditorTabView->textNode->getText().getString(), idx + 1 < textEditorTabView->textNode->getTextSize()?idx + 1:idx, nextDelimiterPos2));
+								auto idxToDelimiterString = StringTools::trim(StringTools::substring(textEditorTabView->textNode->getText().getString(), idx + 1 < textEditorTabView->textNode->getTextLength()?idx + 1:idx, nextDelimiterPos2));
 								string parameterString;
-								if (symbol.type == CodeCompletionSymbol::TYPE_FUNCTION && textEditorTabView->textNode->getText().charAt(nextDelimiterPos2) != '(') {
+								if (symbol.type == CodeCompletionSymbol::TYPE_FUNCTION && textEditorTabView->textNode->getText().getCharAt(nextDelimiterPos2) != '(') {
 									for (auto parameter: symbol.parameters) {
 										auto parameterTokenized = StringTools::tokenize(parameter, " \t\n");
 										if (parameterString.empty() == false) parameterString+= ", ";

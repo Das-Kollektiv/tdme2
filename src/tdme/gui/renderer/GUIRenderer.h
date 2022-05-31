@@ -492,8 +492,9 @@ public:
 	 * @param tu4 texture u 4
 	 * @param tv4 texture v 4
 	 * @param solidColor only render solid color
+	 * @param rotated rotated
 	 */
-	inline void addQuad(float x1, float y1, float colorR1, float colorG1, float colorB1, float colorA1, float tu1, float tv1, float x2, float y2, float colorR2, float colorG2, float colorB2, float colorA2, float tu2, float tv2, float x3, float y3, float colorR3, float colorG3, float colorB3, float colorA3, float tu3, float tv3, float x4, float y4, float colorR4, float colorG4, float colorB4, float colorA4, float tu4, float tv4, bool solidColor = false) {
+	inline void addQuad(float x1, float y1, float colorR1, float colorG1, float colorB1, float colorA1, float tu1, float tv1, float x2, float y2, float colorR2, float colorG2, float colorB2, float colorA2, float tu2, float tv2, float x3, float y3, float colorR3, float colorG3, float colorB3, float colorA3, float tu3, float tv3, float x4, float y4, float colorR4, float colorG4, float colorB4, float colorA4, float tu4, float tv4, bool solidColor = false, bool rotated = false) {
 		if (quadCount > QUAD_COUNT) {
 			Console::println("GUIRenderer::addQuad()::too many quads");
 			return;
@@ -564,8 +565,6 @@ public:
 		fbColors.put(colorG1);
 		fbColors.put(colorB1);
 		fbColors.put(colorA1);
-		fbTextureCoordinates.put(tu1);
-		fbTextureCoordinates.put(tv1);
 		fbVertices.put(x2);
 		fbVertices.put(y2);
 		fbVertices.put(0.0f);
@@ -573,8 +572,6 @@ public:
 		fbColors.put(colorG2);
 		fbColors.put(colorB2);
 		fbColors.put(colorA2);
-		fbTextureCoordinates.put(tu2);
-		fbTextureCoordinates.put(tv2);
 		fbVertices.put(x3);
 		fbVertices.put(y3);
 		fbVertices.put(0.0f);
@@ -582,8 +579,6 @@ public:
 		fbColors.put(colorG3);
 		fbColors.put(colorB3);
 		fbColors.put(colorA3);
-		fbTextureCoordinates.put(tu3);
-		fbTextureCoordinates.put(tv3);
 		fbVertices.put(x4);
 		fbVertices.put(y4);
 		fbVertices.put(0.0f);
@@ -591,8 +586,25 @@ public:
 		fbColors.put(colorG4);
 		fbColors.put(colorB4);
 		fbColors.put(colorA4);
-		fbTextureCoordinates.put(tu4);
-		fbTextureCoordinates.put(tv4);
+		if (rotated == false) {
+			fbTextureCoordinates.put(tu1);
+			fbTextureCoordinates.put(tv1);
+			fbTextureCoordinates.put(tu2);
+			fbTextureCoordinates.put(tv2);
+			fbTextureCoordinates.put(tu3);
+			fbTextureCoordinates.put(tv3);
+			fbTextureCoordinates.put(tu4);
+			fbTextureCoordinates.put(tv4);
+		} else {
+			fbTextureCoordinates.put(tu1);
+			fbTextureCoordinates.put(tv1);
+			fbTextureCoordinates.put(tu4);
+			fbTextureCoordinates.put(tv4);
+			fbTextureCoordinates.put(tu3);
+			fbTextureCoordinates.put(tv3);
+			fbTextureCoordinates.put(tu2);
+			fbTextureCoordinates.put(tv2);
+		}
 		if (solidColor == true) {
 			fbSolidColors.put(1.0f);
 			fbSolidColors.put(1.0f);

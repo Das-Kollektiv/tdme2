@@ -584,7 +584,7 @@ const string FileDialogScreenController::getFileImageName(const string& fileName
 	if (StringTools::endsWith(fileNameLowerCase, ".c") == true) {
 		return "script";
 	} else
-	if (StringTools::endsWith(fileNameLowerCase, ".fnt") == true) {
+	if (StringTools::endsWith(fileNameLowerCase, ".ttf") == true) {
 		return "font";
 	} else
 	// images

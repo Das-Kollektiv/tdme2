@@ -255,7 +255,8 @@ void TextureAtlas::update() {
 			"left: " + to_string(atlasTexture.left) + ", " +
 			"top: " + to_string(atlasTexture.top) + ", " +
 			"width: " + to_string(atlasTexture.width) + ", " +
-			"height: " + to_string(atlasTexture.height)
+			"height: " + to_string(atlasTexture.height) + ", " +
+			"orientation: " + to_string(atlasTexture.orientation)
 		);
 	}
 

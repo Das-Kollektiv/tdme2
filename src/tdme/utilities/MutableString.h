@@ -14,7 +14,7 @@ using tdme::math::Math;
 using tdme::utilities::StringTools;
 
 /**
- * Mutable string class
+ * Mutable utf8 aware string class
  * @author Andreas Drewke
  */
 class tdme::utilities::MutableString final
@@ -51,19 +51,37 @@ public:
 	}
 
 	/**
-	 * @return size
+	 * @return binary size
 	 */
 	inline int size() const {
 		return data.size();
 	}
 
 	/**
-	 * Get char at index
+	 * @return character count
+	 */
+	inline int length() const {
+		// TODO: Do some caching here
+		return StringTools::getUtf8Length(data);
+	}
+
+	/**
+	 * Get char at given binary index
 	 * @param idx idx
 	 * @return char
 	 */
-	inline char charAt(int32_t idx) const {
+	inline char getCharAt(int32_t idx) const {
 		return data[idx];
+	}
+
+	/**
+	 * @return utf 8 character at given character index
+	 */
+	inline int getUTF8CharAt(int32_t idx) {
+		// TODO: Do some caching here
+		auto u8It = getUTF8CharacterIterator();
+		u8It.seekBinaryPosition(getUtf8BinaryIndex(idx));
+		return u8It.hasNext() == true?u8It.next():-1;
 	}
 
 	/**
@@ -102,7 +120,7 @@ public:
 	 * @return this mutable string
 	 */
 	inline MutableString& insert(int32_t idx, char c) {
-		data.insert(idx, 1, c);
+		data.insert(getUtf8BinaryIndex(idx), 1, c);
 		return *this;
 	}
 
@@ -134,7 +152,7 @@ public:
 	 * @return this mutable string
 	 */
 	inline MutableString& insert(int32_t idx, const string& s) {
-		data.insert(idx, s);
+		data.insert(getUtf8BinaryIndex(idx), s);
 		return *this;
 	}
 
@@ -166,7 +184,7 @@ public:
 	 * @return this mutable string
 	 */
 	inline MutableString& insert(int32_t idx, const MutableString& s) {
-		insert(idx, s.data);
+		insert(getUtf8BinaryIndex(idx), s.data);
 		return *this;
 	}
 
@@ -265,10 +283,20 @@ public:
 	 * Remove characters at idx with given length
 	 * @param idx idx
 	 * @param count length
+	 * @param binaryCount count of binary bytes that have been removed
 	 * @return this mutable string
 	 */
-	inline MutableString& remove(int32_t idx, int32_t count) {
-		data.erase(idx, count);
+	inline MutableString& remove(int32_t idx, int32_t count, int* binaryCount = nullptr) {
+
+		StringTools::UTF8CharacterIterator u8It(data);
+		u8It.seekCharacterPosition(idx);
+		auto startIdx = u8It.getBinaryPosition();
+		for (auto i = 0; u8It.hasNext() == true &&i < count; i++) {
+			u8It.next();
+		}
+		auto endIdx = u8It.getBinaryPosition();
+		data.erase(startIdx, endIdx - startIdx);
+		if (binaryCount != nullptr) *binaryCount = endIdx - startIdx;
 		return *this;
 	}
 
@@ -279,7 +307,7 @@ public:
 	 * @return index where string has been found or -1
 	 */
 	inline int32_t indexOf(const MutableString& s, int32_t idx) const {
-		return data.find(s.data, idx);
+		return data.find(s.data, getUtf8BinaryIndex(idx));
 	}
 
 	/**
@@ -334,6 +362,22 @@ public:
 	}
 
 	/**
+	 * @return UTF8 character iterator
+	 */
+	StringTools::UTF8CharacterIterator getUTF8CharacterIterator() {
+		return StringTools::UTF8CharacterIterator(data);
+	}
+
+	/**
+	 * @return Get utf8 binary index
+	 * @param idx character index
+	 */
+	int getUtf8BinaryIndex(int idx) const {
+		// TODO: Do some caching here, as processing of lots of data would take lots of time: o(n)
+		return StringTools::getUtf8BinaryIndex(data, idx);
+	}
+
+	/**
 	 * Clone
 	 */
 	inline MutableString clone() {
@@ -342,4 +386,5 @@ public:
 
 private:
 	string data;
+
 };

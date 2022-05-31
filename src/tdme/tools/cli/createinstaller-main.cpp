@@ -69,7 +69,7 @@ static void scanPathResources(const string& path, vector<string>& totalFiles) {
 				// audio
 				if (StringTools::endsWith(fileNameLowerCase, ".ogg") == true) return true;
 				// fonts
-				if (StringTools::endsWith(fileNameLowerCase, ".fnt") == true) return true;
+				if (StringTools::endsWith(fileNameLowerCase, ".ttf") == true) return true;
 				// images
 				if (StringTools::endsWith(fileNameLowerCase, ".icns") == true) return true;
 				if (StringTools::endsWith(fileNameLowerCase, ".ico") == true) return true;

@@ -3,7 +3,7 @@
 		show-on="selected"
 		id="{$id}_normal"
 		text="{$text}"	
-		font="{$font.default}"
+		font="{$font.default}" size="{$fontsize.default}"
 		color="{$color.font_highlight}"
 		width="auto"
 		height="25"
