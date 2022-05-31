@@ -46,7 +46,7 @@ CXX := $(CXX) -fPIC
 
 # set platform specific flags
 ifeq ($(OS), Darwin)
-	# MacOSX
+	# MacOSX, TODO: freetype2
 	EXTRAFLAGS := $(EXTRAFLAGS) -DHAVE_UNISTD_H
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
 		src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
@@ -63,7 +63,7 @@ else ifeq ($(OS), FreeBSD)
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
 		src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 		src/tdme/engine/fileio/models/ModelReader.cpp
-	INCLUDES := $(INCLUDES) -I/usr/local/include
+	INCLUDES := $(INCLUDES) -I/usr/local/include -I/usr/local/include/freetype2
 	OPENGL_RENDERER_LDFLAGS := -L/usr/local/lib -lGLEW -lGL -lglfw
 	VULKAN_RENDERER_LDFLAGS := -L/usr/local/lib -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -L/usr/local/lib -lGLESv2 -lEGL -lglfw
@@ -74,7 +74,7 @@ else ifeq ($(OS), NetBSD)
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
 		src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 		src/tdme/engine/fileio/models/ModelReader.cpp
-	INCLUDES := $(INCLUDES) -I/usr/X11R7/include -I/usr/pkg/include
+	INCLUDES := $(INCLUDES) -I/usr/X11R7/include -I/usr/pkg/include -I/usr/pkg/include/freetype2
 	OPENGL_RENDERER_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -lGLEW -lGL -lglfw
 	VULKAN_RENDERER_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -lGLESv2 -lEGL -lglfw
@@ -85,7 +85,7 @@ else ifeq ($(OS), OpenBSD)
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
 		src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
 		src/tdme/engine/fileio/models/ModelReader.cpp
-	INCLUDES := $(INCLUDES) -I/usr/X11R6/include -I/usr/local/include
+	INCLUDES := $(INCLUDES) -I/usr/X11R6/include -I/usr/local/include -I/usr/local/include/freetype2
 	OPENGL_RENDERER_LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -lGLEW -lGL -lglfw
 	VULKAN_RENDERER_LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -lGLESv2 -lEGL -lglfw
