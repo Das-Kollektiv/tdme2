@@ -28,6 +28,7 @@ jobs:
           mingw-w64-x86_64-glfw
           mingw-w64-x86_64-glew
           mingw-w64-x86_64-dlfcn
+          mingw-w64-x86_64-freetype
           mingw-w64-x86_64-vulkan-headers
           mingw-w64-x86_64-vulkan-loader
     - uses: actions/checkout@v2
