@@ -159,13 +159,13 @@ void PhysicsTest4::reshape(int32_t width, int32_t height)
 	engine->reshape(width, height);
 }
 
-void PhysicsTest4::onChar(unsigned int key, int x, int y) {
+void PhysicsTest4::onChar(int key, int x, int y) {
 }
 
-void PhysicsTest4::onKeyDown (unsigned char key, int keyCode, int x, int y, bool repeat) {
+void PhysicsTest4::onKeyDown(int key, int keyCode, int x, int y, bool repeat) {
 }
 
-void PhysicsTest4::onKeyUp(unsigned char key, int keyCode, int x, int y) {
+void PhysicsTest4::onKeyUp(int key, int keyCode, int x, int y) {
 }
 
 void PhysicsTest4::onMouseDragged(int x, int y) {

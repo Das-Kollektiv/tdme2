@@ -327,7 +327,7 @@ public:
 	 * @param y y
 	 */
 
-	void onChar(unsigned int key, int x, int y) override;
+	void onChar(int key, int x, int y) override;
 	/**
 	 * On key down
 	 * @param key key
@@ -336,7 +336,7 @@ public:
 	 * @param y y
 	 * @param repeat repeat event
 	 */
-	void onKeyDown (unsigned char key, int keyCode, int x, int y, bool repeat) override;
+	void onKeyDown (int key, int keyCode, int x, int y, bool repeat) override;
 
 	/**
 	 * On key up
@@ -345,7 +345,7 @@ public:
 	 * @param x x
 	 * @param y y
 	 */
-	void onKeyUp(unsigned char key, int keyCode, int x, int y) override;
+	void onKeyUp(int key, int keyCode, int x, int y) override;
 
 	/**
 	 * On mouse dragged

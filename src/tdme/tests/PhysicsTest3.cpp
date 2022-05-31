@@ -339,10 +339,10 @@ void PhysicsTest3::reshape(int32_t width, int32_t height)
 	engine->reshape(width, height);
 }
 
-void PhysicsTest3::onChar(unsigned int key, int x, int y) {
+void PhysicsTest3::onChar(int key, int x, int y) {
 }
 
-void PhysicsTest3::onKeyDown (unsigned char key, int keyCode, int x, int y, bool repeat) {
+void PhysicsTest3::onKeyDown(int key, int keyCode, int x, int y, bool repeat) {
 	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == 'w') keyW = true;
 	if (keyChar == 'a') keyA = true;
@@ -354,7 +354,7 @@ void PhysicsTest3::onKeyDown (unsigned char key, int keyCode, int x, int y, bool
 	if (keyCode == KEYBOARD_KEYCODE_DOWN) keyDown = true;
 }
 
-void PhysicsTest3::onKeyUp(unsigned char key, int keyCode, int x, int y) {
+void PhysicsTest3::onKeyUp(int key, int keyCode, int x, int y) {
 	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == 'w') keyW = false;
 	if (keyChar == 'a') keyA = false;

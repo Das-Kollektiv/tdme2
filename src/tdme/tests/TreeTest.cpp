@@ -227,10 +227,10 @@ void TreeTest::reshape(int32_t width, int32_t height)
 	engine->reshape(width, height);
 }
 
-void TreeTest::onChar(unsigned int key, int x, int y) {
+void TreeTest::onChar(int key, int x, int y) {
 }
 
-void TreeTest::onKeyDown (unsigned char key, int keyCode, int x, int y, bool repeat) {
+void TreeTest::onKeyDown(int key, int keyCode, int x, int y, bool repeat) {
 	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == 'w') keyW = true;
 	if (keyChar == 'a') keyA = true;
@@ -246,7 +246,7 @@ void TreeTest::onKeyDown (unsigned char key, int keyCode, int x, int y, bool rep
 	if (keyCode == KEYBOARD_KEYCODE_DOWN) keyDown = true;
 }
 
-void TreeTest::onKeyUp(unsigned char key, int keyCode, int x, int y) {
+void TreeTest::onKeyUp(int key, int keyCode, int x, int y) {
 	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == 'w') keyW = false;
 	if (keyChar == 'a') keyA = false;

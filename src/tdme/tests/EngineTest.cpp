@@ -381,10 +381,10 @@ void EngineTest::reshape(int32_t width, int32_t height)
 	engine->reshape(width, height);
 }
 
-void EngineTest::onChar(unsigned int key, int x, int y) {
+void EngineTest::onChar(int key, int x, int y) {
 }
 
-void EngineTest::onKeyDown (unsigned char key, int keyCode, int x, int y, bool repeat) {
+void EngineTest::onKeyDown (int key, int keyCode, int x, int y, bool repeat) {
 	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == 'w') keyW = true;
 	if (keyChar == 'a') keyA = true;
@@ -394,7 +394,7 @@ void EngineTest::onKeyDown (unsigned char key, int keyCode, int x, int y, bool r
 	if (keyCode == KEYBOARD_KEYCODE_UP) keyUp = true;
 }
 
-void EngineTest::onKeyUp(unsigned char key, int keyCode, int x, int y) {
+void EngineTest::onKeyUp(int key, int keyCode, int x, int y) {
 	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == 'w') keyW = false;
 	if (keyChar == 'a') keyA = false;

@@ -251,10 +251,10 @@ void WaterTest::reshape(int32_t width, int32_t height)
 	engine->reshape(width, height);
 }
 
-void WaterTest::onChar(unsigned int key, int x, int y) {
+void WaterTest::onChar(int key, int x, int y) {
 }
 
-void WaterTest::onKeyDown (unsigned char key, int keyCode, int x, int y, bool repeat) {
+void WaterTest::onKeyDown(int key, int keyCode, int x, int y, bool repeat) {
 	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == 'w') keyW = true;
 	if (keyChar == 'a') keyA = true;
@@ -268,7 +268,7 @@ void WaterTest::onKeyDown (unsigned char key, int keyCode, int x, int y, bool re
 	if (keyCode == KEYBOARD_KEYCODE_DOWN) keyDown = true;
 }
 
-void WaterTest::onKeyUp(unsigned char key, int keyCode, int x, int y) {
+void WaterTest::onKeyUp(int key, int keyCode, int x, int y) {
 	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == 'w') keyW = false;
 	if (keyChar == 'a') keyA = false;

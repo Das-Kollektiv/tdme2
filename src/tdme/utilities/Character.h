@@ -23,7 +23,7 @@ public:
 	 * @param character character
 	 * @return lower case character
 	 */
-	inline static char toLowerCase(uint32_t character) {
+	inline static char toLowerCase(int32_t character) {
 		return tolower(character);
 	}
 
@@ -32,7 +32,7 @@ public:
 	 * @param character character
 	 * @return upper case character
 	 */
-	inline static char toUpperCase(uint32_t character) {
+	inline static char toUpperCase(int32_t character) {
 		return toupper(character);
 	}
 
@@ -40,7 +40,7 @@ public:
 	 * Returns if character is alpha numeric
 	 * @return if character is alpha numeric
 	 */
-	inline static bool isAlphaNumeric(uint32_t character) {
+	inline static bool isAlphaNumeric(int32_t character) {
 		return isalnum(character) != 0;
 	}
 
@@ -48,7 +48,7 @@ public:
 	 * Returns if character is a white space
 	 * @return if character is a white space
 	 */
-	inline static bool isSpace(uint32_t character) {
+	inline static bool isSpace(int32_t character) {
 		return isspace(character) != 0;
 	}
 

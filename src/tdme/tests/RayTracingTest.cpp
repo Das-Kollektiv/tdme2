@@ -308,10 +308,10 @@ void RayTracingTest::reshape(int32_t width, int32_t height)
 	engine->reshape(width, height);
 }
 
-void RayTracingTest::onChar(unsigned int key, int x, int y) {
+void RayTracingTest::onChar(int key, int x, int y) {
 }
 
-void RayTracingTest::onKeyDown (unsigned char key, int keyCode, int x, int y, bool repeat) {
+void RayTracingTest::onKeyDown(int key, int keyCode, int x, int y, bool repeat) {
 	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == 'w') keyUp = true;
 	if (keyChar == 'a') keyLeft = true;
@@ -320,7 +320,7 @@ void RayTracingTest::onKeyDown (unsigned char key, int keyCode, int x, int y, bo
 	if (keyChar == 'i') keyInfo = true;
 }
 
-void RayTracingTest::onKeyUp(unsigned char key, int keyCode, int x, int y) {
+void RayTracingTest::onKeyUp(int key, int keyCode, int x, int y) {
 	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == 'w') keyUp = false;
 	if (keyChar == 'a') keyLeft = false;
