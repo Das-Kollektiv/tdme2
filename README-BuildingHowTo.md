@@ -12,6 +12,7 @@ pkg install gmake
 pkg install openal-soft
 pkg install glfw
 pkg install glew
+pkg install freetype2
 exit
 ```
 
@@ -51,6 +52,7 @@ pkg_add gmake
 pkg_add glew
 pkg_add openal
 pkg_add glfw
+pkg_add freetype2
 exit
 ```
 
