@@ -800,13 +800,17 @@ void GUIStyledTextNode::determineNextLineConstraints(StringTools::UTF8CharacterI
 			auto c = u8It.next();
 			// line finished?
 			if (c == '\n') {
+				auto l1 = line.size();
 				Character::appendToString(line, c);
-				lineCharBinaryIdxs.push_back(k);
+				auto l2 = line.size();
+				for (auto l = l1; l < l2; l++) lineCharBinaryIdxs.push_back(k);
 				lineCharIdxs.push_back(kc);
 				break;
 			} else {
+				auto l1 = line.size();
 				Character::appendToString(line, c);
-				lineCharBinaryIdxs.push_back(k);
+				auto l2 = line.size();
+				for (auto l = l1; l < l2; l++) lineCharBinaryIdxs.push_back(k);
 				lineCharIdxs.push_back(kc);
 			}
 		}
@@ -820,8 +824,10 @@ void GUIStyledTextNode::determineNextLineConstraints(StringTools::UTF8CharacterI
 			auto c = u8It.next();
 			// line finished?
 			if (c == '\n') {
+				auto l1 = line.size();
 				Character::appendToString(line, c);
-				lineCharBinaryIdxs.push_back(k);
+				auto l2 = line.size();
+				for (auto l = l1; l < l2; l++) lineCharBinaryIdxs.push_back(k);
 				lineCharIdxs.push_back(kc);
 				break;
 			} else
@@ -831,8 +837,10 @@ void GUIStyledTextNode::determineNextLineConstraints(StringTools::UTF8CharacterI
 			if (line.empty() == true && (c == ' ' || c == '\t')) {
 				// no op
 			} else {
+				auto l1 = line.size();
 				Character::appendToString(line, c);
-				lineCharBinaryIdxs.push_back(k);
+				auto l2 = line.size();
+				for (auto l = l1; l < l2; l++) lineCharBinaryIdxs.push_back(k);
 				lineCharIdxs.push_back(kc);
 			}
 		}
