@@ -106,7 +106,7 @@ public:
 				characterPosition++;
 				return (u0 - 192) * 64 + (u1 - 128);
 			}
-			if (stringReference[binaryPosition + 0] == 0xed && (stringReference[binaryPosition + 1] & 0xa0) == 0xa0) {
+			if (u0 == 0xed && (u1 & 0xa0) == 0xa0) {
 				binaryPosition+= 2;
 				characterPosition++;
 				return -1; // code points, 0xd800 to 0xdfff

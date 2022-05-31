@@ -14,6 +14,7 @@ INCLUDES = \
 	/I "ext\windows-msc\glew\include" \
 	/I "ext\windows-msc\dirent\include" \
 	/I "ext\windows-msc\vulkan-sdk\include" \
+	/I "ext\freetype\include" \
 	/I "ext\rapidjson\include"
 
 # For some reason this works only once LOL
