@@ -208,7 +208,7 @@ copy ext\glfw3\win64\lib\glfw3.dll .
 copy ext\windows-msc\glew\libs\glew32.dll .
 copy ext\windows-msc\openal-soft\libs\OpenAl32.dll .
 copy ext\windows-msc\pthread\libs\pthreadVC2.dll .
-copy ext\windows-msc\freetype\libs\freetype.dll .
+copy ext\freetype\win64\lib\freetype.dll .
 ```
 
 ### 1.6.4. Note
