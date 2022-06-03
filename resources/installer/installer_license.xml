@@ -3,10 +3,10 @@
 
 		<layout padding="20" vertical-align="center" alignment="horizontal" width="100%" height="80">
 			<layout vertical-align="center" alignment="vertical" width="auto" height="80">
-				<text font="resources/engine/fonts/Roboto-Bold.ttf" size="20" text="Licence" color="#000000" />
+				<text font="resources/engine/fonts/Roboto-Regular.ttf" size="20" text="Licence" color="#000000" />
 				<space height="10"/>
 				<layout padding-left="40" vertical-align="center" alignment="horizontal" width="auto" height="auto">
-					<text font="resources/engine/fonts/Roboto-Regular.ttf" size="20" text="Please review the licence terms before installing {$name}." color="#000000" />
+					<text font="resources/engine/fonts/Roboto-Light.ttf" size="20" text="Please review the licence terms before installing {$name}." color="#000000" />
 				</layout>
 			</layout>
 			<space width="*"/>
@@ -18,7 +18,7 @@
 
 		<layout background-color="#F8F8F8" padding-left="60" padding-right="60" padding-top="20" padding-bottom="20" alignment="vertical" width="100%" height="*">
 			
-			<text font="resources/engine/fonts/Roboto-Regular.ttf" size="20" text="Scroll down to see the rest of the agreement." color="#000000" />
+			<text font="resources/engine/fonts/Roboto-Light.ttf" size="20" text="Scroll down to see the rest of the agreement." color="#000000" />
 			
 			<space height="20"/>
 		
@@ -50,15 +50,15 @@
 			
 			<space height="20"/>
 			
-			<text font="resources/engine/fonts/Roboto-Regular.ttf" size="20" text="If you accept the terms of the agreement, click I Agree to continue. You must accept" color="#000000" />
-			<text font="resources/engine/fonts/Roboto-Regular.ttf" size="20" text="the agreement to install {$name}." color="#000000" />
+			<text font="resources/engine/fonts/Roboto-Light.ttf" size="20" text="If you accept the terms of the agreement, click I Agree to continue. You must accept" color="#000000" />
+			<text font="resources/engine/fonts/Roboto-Light.ttf" size="20" text="the agreement to install {$name}." color="#000000" />
 			
 			<!-- <space height="10"/> -->
 			
 			<!-- <layout alignment="horizontal" width="auto" height="20"> -->
 				<!-- <radiobutton background-color="{$color.font_highlight}" id="radio_decline" value="1"/> -->
 				<!-- <space width="10" /> -->
-				<!-- <text font="resources/engine/fonts/Roboto-Regular.ttf" size="20" text="Decline the licence agreement" color="#000000" /> -->
+				<!-- <text font="resources/engine/fonts/Roboto-Light.ttf" size="20" text="Decline the licence agreement" color="#000000" /> -->
 			<!-- </layout>				 -->
 		</layout>
 		

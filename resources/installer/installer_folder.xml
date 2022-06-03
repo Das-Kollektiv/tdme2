@@ -3,10 +3,10 @@
 
 		<layout padding="20" vertical-align="center" alignment="horizontal" width="100%" height="80">
 			<layout vertical-align="center" alignment="vertical" width="auto" height="80">
-				<text font="resources/engine/fonts/Roboto-Bold.ttf" size="20" text="Destination Location" color="#000000" />
+				<text font="resources/engine/fonts/Roboto-Regular.ttf" size="20" text="Destination Location" color="#000000" />
 				<space height="10"/>
 				<layout padding-left="40" vertical-align="center" alignment="horizontal" width="auto" height="auto">
-					<text font="resources/engine/fonts/Roboto-Regular.ttf" size="20" text="Where should {$name} be installed?" color="#000000" />
+					<text font="resources/engine/fonts/Roboto-Light.ttf" size="20" text="Where should {$name} be installed?" color="#000000" />
 				</layout>
 			</layout>
 			<space width="*"/>
@@ -18,9 +18,9 @@
 
 		<layout background-color="#F8F8F8" padding-left="60" padding-right="60" padding-top="20" padding-bottom="20" alignment="vertical" width="100%" height="*">
 			
-			<text font="resources/engine/fonts/Roboto-Regular.ttf" size="20" text="Setup will install {$name} into the following folder." color="#000000" />
+			<text font="resources/engine/fonts/Roboto-Light.ttf" size="20" text="Setup will install {$name} into the following folder." color="#000000" />
 			<space height="10"/>
-			<text font="resources/engine/fonts/Roboto-Regular.ttf" size="20" text="To continue, click Install. If you would like to select a different folder, click Browse." color="#000000" />
+			<text font="resources/engine/fonts/Roboto-Light.ttf" size="20" text="To continue, click Install. If you would like to select a different folder, click Browse." color="#000000" />
 			<space height="20"/>
 
 			<layout vertical-align="center" alignment="horizontal" width="100%" height="40">
@@ -33,7 +33,7 @@
 			
 			<space height="*"/>
 			
-			<text font="resources/engine/fonts/Roboto-Regular.ttf" size="20" text="At least {$diskspace} of free space is required." color="#000000" />
+			<text font="resources/engine/fonts/Roboto-Light.ttf" size="20" text="At least {$diskspace} of free space is required." color="#000000" />
 			
 		</layout>
 		
