@@ -7,19 +7,19 @@
 			</layout>
 			
 			<layout padding="20" alignment="vertical" width="67%" height="100%">
-				<text font="resources/engine/fonts/Roboto_bold_30.fnt" text="Completing the {$name} Setup Wizard" color="#000000" />
+				<text font="resources/engine/fonts/Roboto-Bold.tft" size="30" text="Completing the {$name} Setup Wizard" color="#000000" />
 				<space height="40"/>
-				<text font="resources/engine/fonts/Roboto_20.fnt" text="Setup has finished installing {$name} on your computer." color="#000000" />
+				<text ffont="resources/engine/fonts/Roboto-Regular.tft" size="20" text="Setup has finished installing {$name} on your computer." color="#000000" />
 				<space height="10"/>
-				<text font="resources/engine/fonts/Roboto_20.fnt" text="The application may be launched by selecting the installed" color="#000000" />
-				<text font="resources/engine/fonts/Roboto_20.fnt" text="shortcuts." color="#000000" />
+				<text ffont="resources/engine/fonts/Roboto-Regular.tft" size="20" text="The application may be launched by selecting the installed" color="#000000" />
+				<text ffont="resources/engine/fonts/Roboto-Regular.tft" size="20" text="shortcuts." color="#000000" />
 				<space height="20" />
-				<text font="resources/engine/fonts/Roboto_20.fnt" text="Click Finish to exit Setup." color="#000000" />
+				<text ffont="resources/engine/fonts/Roboto-Regular.tft" size="20" text="Click Finish to exit Setup." color="#000000" />
 				<space height="40" />
 				<layout alignment="horizontal" width="auto" height="20">
 					<checkbox id="checkbox_launch" value="1" selected="true" />
 					<space width="10" />
-					<text font="resources/engine/fonts/Roboto_20.fnt" text="Launch {$name}" color="#000000" />
+					<text ffont="resources/engine/fonts/Roboto-Regular.tft" size="20" text="Launch {$name}" color="#000000" />
 				</layout>
 				
 			</layout>
