@@ -140,7 +140,16 @@ GUICharacter* GUIFont::addToTextureAtlas(uint32_t charId) {
 		glyphBitmapWidth, glyphBitmapHeight,
 		glyphByteBuffer
 	);
-	textureAtlas.addTexture(glyphTexture);
+	auto glyphTextureSmoothed = TextureReader::smooth(glyphTexture, string());
+
+	//
+	glyphTexture->releaseReference();
+
+	//
+	textureAtlas.addTexture(glyphTextureSmoothed);
+
+	//
+	glyphTextureSmoothed->releaseReference();
 
 	//
 	auto character = new GUICharacter(

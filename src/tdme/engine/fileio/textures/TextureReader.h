@@ -92,25 +92,29 @@ public:
 	/**
 	 * Rotate texture around center
 	 * @param texture texture
+	 * @param rotation rotation in degree
+	 * @param idSuffix id suffix for generated texture
 	 * @return rotation rotation
 	 */
-	static Texture* rotate(Texture* texture, float rotation);
+	static Texture* rotate(Texture* texture, float rotation, const string& idSuffix = ":rotated");
 
 	/**
 	 * Scale texture
 	 * @param texture texture
 	 * @param width width
 	 * @param height height
+	 * @param idSuffix id suffix for generated texture
 	 * @return texture
 	 */
-	static Texture* scale(Texture* texture, int width, int height);
+	static Texture* scale(Texture* texture, int width, int height, const string& idSuffix = ":scaled");
 
 	/**
 	 * Smooth texture
 	 * @param texture texture
+	 * @param idSuffix id suffix for generated texture
 	 * @return texture
 	 */
-	static Texture* smooth(Texture* texture);
+	static Texture* smooth(Texture* texture, const string& idSuffix = ":smoothed");
 
 private:
 	/**
