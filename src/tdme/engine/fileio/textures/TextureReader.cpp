@@ -711,10 +711,12 @@ Texture* TextureReader::scale(Texture* texture, int width, int height, const str
 }
 
 Texture* TextureReader::smooth(Texture* texture, const string& idSuffix) {
+	auto adjacentSampleWeight = 0.05f;
 	auto textureWidth = texture->getTextureWidth();
 	auto textureHeight = texture->getTextureHeight();
 	auto textureBytesPerPixel = texture->getDepth() / 8;
 
+	//
 	auto filteredTextureByteBuffer = new ByteBuffer(textureWidth * textureHeight * 4);
 	auto filteredTexture = new Texture(
 		texture->getId() + idSuffix,
@@ -726,30 +728,35 @@ Texture* TextureReader::smooth(Texture* texture, const string& idSuffix) {
 		filteredTextureByteBuffer
 	);
 	filteredTexture->acquireReference();
-	for (auto y = 0; y < textureWidth; y++) {
-		for (auto x = 0; x < textureHeight; x++) {
+
+	//
+	for (auto y = 0; y < textureHeight; y++) {
+		for (auto x = 0; x < textureWidth; x++) {
 			auto samples = 0.0f;
 			auto red = 0.0f;
 			auto green = 0.0f;
 			auto blue = 0.0f;
 			auto alpha = 0.0f;
 			{
-				auto pixelOffset = y * textureWidth * textureBytesPerPixel + x * textureBytesPerPixel;
-				// red+= texture->getTextureData()->get(pixelOffset + 0);
-				// green+= texture->getTextureData()->get(pixelOffset + 1);
-				// blue+= texture->getTextureData()->get(pixelOffset + 2);
-				// alpha+= textureBytesPerPixel == 4?texture->getTextureData()->get(pixelOffset + 3):255.0f;
-			}
-			for (auto _y = -1; _y <= 1; _y++)
-			for (auto _x = -1; _x <= 1; _x++)
-			if ((Math::abs(_x) == 1 && Math::abs(_y) == 1) == false &&
-				(x + _x >= 0 && x + _x < textureWidth && y + _y >= 0 && y + _y < textureHeight)) {
-				auto pixelOffset = (y + _y) * textureWidth * textureBytesPerPixel + (x + _x) * textureBytesPerPixel;
+				auto pixelOffset = (y * textureWidth * textureBytesPerPixel) + (x * textureBytesPerPixel);
 				red+= texture->getTextureData()->get(pixelOffset + 0) * 1.0f;
 				green+= texture->getTextureData()->get(pixelOffset + 1) * 1.0f;
 				blue+= texture->getTextureData()->get(pixelOffset + 2) * 1.0f;
-				alpha+= textureBytesPerPixel == 4?texture->getTextureData()->get(pixelOffset + 3):255.0f;
+				alpha+= (textureBytesPerPixel == 4?texture->getTextureData()->get(pixelOffset + 3):255.0f) * 1.0f;
 				samples+=1.0f;
+			}
+			for (auto _y = -1; _y <= 1; _y++) {
+				for (auto _x = -1; _x <= 1; _x++) {
+					if ((Math::abs(_x) == 1 && Math::abs(_y) == 1) == false &&
+						(x + _x >= 0 && x + _x < textureWidth && y + _y >= 0 && y + _y < textureHeight)) {
+						auto pixelOffset = ((y + _y) * textureWidth * textureBytesPerPixel) + ((x + _x) * textureBytesPerPixel);
+						red+= texture->getTextureData()->get(pixelOffset + 0) * adjacentSampleWeight;
+						green+= texture->getTextureData()->get(pixelOffset + 1) * adjacentSampleWeight;
+						blue+= texture->getTextureData()->get(pixelOffset + 2) * adjacentSampleWeight;
+						alpha+= (textureBytesPerPixel == 4?texture->getTextureData()->get(pixelOffset + 3):255.0f) * adjacentSampleWeight;
+						samples+= adjacentSampleWeight;
+					}
+				}
 			}
 			filteredTextureByteBuffer->put(static_cast<uint8_t>(red / samples));
 			filteredTextureByteBuffer->put(static_cast<uint8_t>(green / samples));
@@ -757,5 +764,7 @@ Texture* TextureReader::smooth(Texture* texture, const string& idSuffix) {
 			filteredTextureByteBuffer->put(static_cast<uint8_t>(alpha / samples));
 		}
 	}
+
+	//
 	return filteredTexture;
 }
