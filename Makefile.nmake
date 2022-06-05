@@ -784,11 +784,15 @@ ext-link1: $(OBJ)/*.obj
 	del libtdme-ext.lib
 
 ext-link2: $(OBJ)/*.obj
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/lib.rc libtdme-ext.dll libtdme-ext.dll.rc
+	rc libtdme-ext.dll.rc
 	echo LIBRARY libtdme-ext.dll > libtdme-ext.def
 	type libtdme-ext.def.dumpbin.linkermember.def >> libtdme-ext.def
-	link $(LD_FLAGS) /DLL /DEF:libtdme-ext.def /IGNORE:4197 /IGNORE:4102 $** $(LIBS_LDFLAGS) /OUT:libtdme-ext.dll
+	link $(LD_FLAGS) /DLL /DEF:libtdme-ext.def /IGNORE:4197 /IGNORE:4102 $** libtdme-ext.dll.res $(LIBS_LDFLAGS) /OUT:libtdme-ext.dll
 	del libtdme-ext.def.dumpbin.linkermember
 	del libtdme-ext.def.dumpbin.linkermember.def
+	del libtdme-ext.dll.rc
+	del libtdme-ext.dll.res
 
 ext-clean:$(OBJ)/*.obj
 	del /S /Q $(OBJ) >nul 2>&1
@@ -810,11 +814,15 @@ link1: $(OBJ)/*.obj
 	del libtdme.lib
 
 link2: $(OBJ)/*.obj
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/lib.rc libtdme.dll libtdme.dll.rc
+	rc libtdme.dll.rc
 	echo LIBRARY libtdme.dll > libtdme.def
 	type libtdme.def.dumpbin.linkermember.def >> libtdme.def
-	link $(LD_FLAGS) /DLL /DEF:libtdme.def /IGNORE:4197 /IGNORE:4102 $** $(LIBS_LDFLAGS) /LIBPATH libtdme-ext.lib /OUT:libtdme.dll
+	link $(LD_FLAGS) /DLL /DEF:libtdme.def /IGNORE:4197 /IGNORE:4102 $** libtdme.dll.res $(LIBS_LDFLAGS) /LIBPATH libtdme-ext.lib /OUT:libtdme.dll
 	del libtdme.def.dumpbin.linkermember
 	del libtdme.def.dumpbin.linkermember.def
+	del libtdme.dll.rc
+	del libtdme.dll.res
 
 clean: 
 	del /S /Q $(OBJ) >nul 2>&1
