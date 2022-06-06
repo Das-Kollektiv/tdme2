@@ -37,7 +37,7 @@ public:
 	 * @param stringReference string reference
 	 * @param cache UTF8 position cache or nullptr if UTF8 positions should not be cached
 	 */
-	UTF8CharacterIterator(const string& stringReference, UTF8PositionCache* cache = nullptr): stringReference(stringReference), cache(cache) {
+	inline UTF8CharacterIterator(const string& stringReference, UTF8PositionCache* cache = nullptr): stringReference(stringReference), cache(cache) {
 		//
 	}
 
@@ -111,7 +111,7 @@ public:
 	/**
 	 * @return next character or -1 if an error occurred or no string left
 	 */
-	int next() const {
+	inline int next() const {
 		// see: http://www.zedwood.com/article/cpp-utf8-char-to-codepoint
 		int l = stringReference.size() - binaryPosition;
 		if (l < 1) return -1;
