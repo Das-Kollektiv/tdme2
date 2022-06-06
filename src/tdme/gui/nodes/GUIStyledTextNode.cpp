@@ -28,6 +28,7 @@
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/UTF8CharacterIterator.h>
 
 using std::list;
 using std::string;
@@ -59,6 +60,7 @@ using tdme::utilities::Exception;
 using tdme::utilities::Float;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
+using tdme::utilities::UTF8CharacterIterator;
 
 GUIStyledTextNode::GUIStyledTextNode(
 	GUIScreenNode* screenNode,
@@ -94,7 +96,7 @@ GUIStyledTextNode::GUIStyledTextNode(
 	this->parentYOffsetLast = 0.0f;
 	this->startRenderY = 0;
 	this->charStartIdx = 0;
-	this->charEndIdx = text.size() - 1;
+	this->charEndIdx = text.size();
 	this->widthLast = -1;
 	this->heightLast = -1;
 	this->startTextStyleIdx = -1;
@@ -124,7 +126,7 @@ void GUIStyledTextNode::setSelectionIndexMousePosition(int x, int y) {
 }
 
 void GUIStyledTextNode::removeText(int32_t idx, int32_t count) {
-
+	// TODO: we have new node dimension after remove
 	text.remove(idx, count, &count);
 	idx = text.getUtf8BinaryIndex(idx);
 	auto adaptNextStyles = false;
@@ -169,11 +171,12 @@ void GUIStyledTextNode::removeText(int32_t idx, int32_t count) {
 			}
 		}
 	}
-	charEndIdx-= count;
+	charEndIdx = text.size();
 	startTextStyleIdx = -1;
 }
 
 void GUIStyledTextNode::insertText(int32_t idx, int c) {
+	// TODO: we have new node dimension after remove
 	auto s = Character::toString(c);
 	text.insert(idx, s);
 	idx = text.getUtf8BinaryIndex(idx);
@@ -199,11 +202,12 @@ void GUIStyledTextNode::insertText(int32_t idx, int c) {
 			}
 		}
 	}
-	charEndIdx+= count;
+	charEndIdx = text.size();
 	startTextStyleIdx = -1;
 }
 
 void GUIStyledTextNode::insertText(int32_t idx, const string& s) {
+	// TODO: we have new node dimension after remove
 	text.insert(idx, s);
 	idx = text.getUtf8BinaryIndex(idx);
 	auto count = s.size();
@@ -228,7 +232,7 @@ void GUIStyledTextNode::insertText(int32_t idx, const string& s) {
 			}
 		}
 	}
-	charEndIdx+= count;
+	charEndIdx = text.size();
 	startTextStyleIdx = -1;
 }
 
@@ -544,7 +548,6 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 	this->parentXOffsetLast = 0.0f;
 	this->parentYOffsetLast = 0.0f;
 	this->charStartIdx = 0;
-	this->charEndIdx = text.size() - 1;
 	this->startRenderY = 0;
 	this->widthLast = -1;
 	this->heightLast = -1;
@@ -776,6 +779,9 @@ void GUIStyledTextNode::setText(const MutableString& text) {
 
 	// add a trailing newline
 	if (StringTools::endsWith(this->text.getString(), newLine) == false) this->text.append(newLine);
+
+	//
+	this->charEndIdx = text.size();
 }
 
 void GUIStyledTextNode::dispose()
@@ -785,7 +791,7 @@ void GUIStyledTextNode::dispose()
 	GUINode::dispose();
 }
 
-void GUIStyledTextNode::determineNextLineConstraints(StringTools::UTF8CharacterIterator& u8It, int charEndIdx, int textStyleIdx) {
+void GUIStyledTextNode::determineNextLineConstraints(UTF8CharacterIterator& u8It, int charEndIdx, int textStyleIdx) {
 	//
 	auto maxLineWidth = requestedConstraints.widthType == GUINode_RequestedConstraints_RequestedConstraintsType::AUTO?Float::MAX_VALUE:computedConstraints.width - (border.left + border.right + padding.left + padding.right);
 
@@ -887,7 +893,7 @@ void GUIStyledTextNode::determineNextLineConstraints(StringTools::UTF8CharacterI
 		);
 		{
 			auto currentTextStyleIdx = textStyleIdx;
-			StringTools::UTF8CharacterIterator lineU8It(line);
+			UTF8CharacterIterator lineU8It(line);
 			while (lineU8It.hasNext() == true) {
 				charIdx = lineU8It.getCharacterPosition();
 				auto k = lineU8It.getBinaryPosition();
@@ -1221,7 +1227,7 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 					cursorSelectionIndex = lineCharIdxs[0];
 				}
 				// render
-				StringTools::UTF8CharacterIterator lineU8It(line);
+				UTF8CharacterIterator lineU8It(line);
 				lineU8It.seekBinaryPosition(lineIdx == 0?0:lineConstraints[lineIdx - 1].binaryIdx);
 				while (lineU8It.hasNext() == true) {
 					auto k = lineU8It.getBinaryPosition();

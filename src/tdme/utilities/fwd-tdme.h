@@ -36,5 +36,6 @@ namespace utilities {
 	class TextureAtlas;
 	class Time;
 	class Terrain;
+	class UTF8CharacterIterator;
 }  // namespace utilities
 }  // namespace tdme

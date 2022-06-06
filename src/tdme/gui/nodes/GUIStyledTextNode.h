@@ -16,6 +16,7 @@
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/MutableString.h>
 #include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/UTF8CharacterIterator.h>
 
 using std::string;
 using std::vector;
@@ -38,6 +39,7 @@ using tdme::utilities::Exception;
 using tdme::utilities::Integer;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
+using tdme::utilities::UTF8CharacterIterator;
 
 /**
  * GUI styled text node
@@ -242,7 +244,7 @@ private:
 	 * @param charEndIdx character end index
 	 * @param textStyleIdx text style index to start with
 	 */
-	void determineNextLineConstraints(StringTools::UTF8CharacterIterator& u8It, int charEndIdx, int textStyleIdx);
+	void determineNextLineConstraints(UTF8CharacterIterator& u8It, int charEndIdx, int textStyleIdx);
 
 protected:
 	/**

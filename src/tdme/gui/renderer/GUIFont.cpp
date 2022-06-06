@@ -188,7 +188,7 @@ void GUIFont::updateFontInternal() {
 			break;
 		}
 		//
-		StringTools::UTF8CharacterIterator u8It(atlasTexture->texture->getId());
+		UTF8CharacterIterator u8It(atlasTexture->texture->getId());
 		auto character = getCharacter(u8It.next());
 		if (character == nullptr) {
 			Console::println("GUIFont::updateCharacters(): Could not find character for font character '" + atlasTexture->texture->getId() + "'");
@@ -210,7 +210,7 @@ void GUIFont::dispose()
 
 int GUIFont::getTextIndexX(const MutableString& text, int offset, int length, int index)
 {
-	StringTools::UTF8CharacterIterator u8It(text.getString());
+	auto u8It = text.getUTF8CharacterIterator();
 	u8It.seekCharacterPosition(offset);
 	if (length == 0) length = text.length();
 	auto x = 0;
@@ -226,7 +226,7 @@ int GUIFont::getTextIndexX(const MutableString& text, int offset, int length, in
 
 int GUIFont::getTextIndexByX(const MutableString& text, int offset, int length, int textX)
 {
-	StringTools::UTF8CharacterIterator u8It(text.getString());
+	auto u8It = text.getUTF8CharacterIterator();
 	u8It.seekCharacterPosition(offset);
 	if (length == 0) length = text.length();
 	auto x = 0;
@@ -246,7 +246,7 @@ int GUIFont::getTextIndexByX(const MutableString& text, int offset, int length, 
 
 int GUIFont::getTextWidth(const MutableString& text)
 {
-	StringTools::UTF8CharacterIterator u8It(text.getString());
+	auto u8It = text.getUTF8CharacterIterator();
 	auto width = 0;
 	for (auto i = 0; u8It.hasNext() == true; i++) {
 		auto characterId = u8It.next();
@@ -258,7 +258,7 @@ int GUIFont::getTextWidth(const MutableString& text)
 }
 
 int GUIFont::getTextIndexXAtWidth(const MutableString& text, int width) {
-	StringTools::UTF8CharacterIterator u8It(text.getString());
+	auto u8It = text.getUTF8CharacterIterator();
 	auto x = 0;
 	for (auto i = 0; u8It.hasNext() == true; i++) {
 		auto characterId = u8It.next();
@@ -351,7 +351,7 @@ void GUIFont::drawString(GUIRenderer* guiRenderer, int x, int y, const MutableSt
 	auto currentBackgroundColor = backgroundColor;
 	if (selectionStartIndex != -1 && selectionEndIndex != -1) {
 		auto currentX = x;
-		StringTools::UTF8CharacterIterator u8It(text.getString());
+		auto u8It = text.getUTF8CharacterIterator();
 		u8It.seekCharacterPosition(offset);
 		for (auto i = offset; u8It.hasNext() == true && (length == 0 || i < length); i++) {
 			auto characterId = u8It.next();
@@ -372,7 +372,7 @@ void GUIFont::drawString(GUIRenderer* guiRenderer, int x, int y, const MutableSt
 	guiRenderer->render();
 	guiRenderer->bindTexture(textureId);
 	auto currentX = x;
-	StringTools::UTF8CharacterIterator u8It(text.getString());
+	auto u8It = text.getUTF8CharacterIterator();
 	u8It.seekCharacterPosition(offset);
 	for (auto i = offset; u8It.hasNext() == true && (length == 0 || i < length); i++) {
 		auto characterId = u8It.next();
