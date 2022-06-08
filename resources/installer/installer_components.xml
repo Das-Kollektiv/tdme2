@@ -3,10 +3,10 @@
 
 		<layout padding="20" vertical-align="center" alignment="horizontal" width="100%" height="80">
 			<layout vertical-align="center" alignment="vertical" width="auto" height="80">
-				<text font="resources/engine/fonts/Roboto-Regular.ttf" size="20" text="Components" color="#000000" />
+				<text font="resources/installer/gui/fonts/Roboto-Regular.ttf" size="20" text="Components" color="#000000" />
 				<space height="10"/>
 				<layout padding-left="40" vertical-align="center" alignment="horizontal" width="auto" height="auto">
-					<text font="resources/engine/fonts/Roboto-Light.ttf" size="20" text="Select the components for your installation." color="#000000" />
+					<text font="resources/installer/gui/fonts/Roboto-Light.ttf" size="20" text="Select the components for your installation." color="#000000" />
 				</layout>
 			</layout>
 			<space width="*"/>
@@ -19,8 +19,8 @@
 
 			<layout background-color="#F8F8F8" padding-left="60" padding-right="10" padding-top="20" padding-bottom="20" alignment="vertical" width="100%" height="*">
 				
-				<text font="resources/engine/fonts/Roboto-Light.ttf" size="20" text="Select the components you want to install; clear the components you do not want to install." color="#000000" />
-				<text font="resources/engine/fonts/Roboto-Light.ttf" size="20" text="Click Next to continue." color="#000000" />
+				<text font="resources/installer/gui/fonts/Roboto-Light.ttf" size="20" text="Select the components you want to install; clear the components you do not want to install." color="#000000" />
+				<text font="resources/installer/gui/fonts/Roboto-Light.ttf" size="20" text="Click Next to continue." color="#000000" />
 				
 				<space height="30"/>
 				<layout alignment="horizontal" width="100%" height="*">
@@ -31,21 +31,21 @@
 								<space width="10" />
 								<checkbox name="checkbox_component1" value="1" selected="true" />
 								<space width="10" />
-								<text width="*" font="resources/engine/fonts/Roboto-Light.ttf" size="20" text="Component 1" color="#000000" height="100%" vertical-align="center" />
+								<text width="*" font="resources/installer/gui/fonts/Roboto-Light.ttf" size="20" text="Component 1" color="#000000" height="100%" vertical-align="center" />
 							</layout>
 							<layout width="100%" alignment="horizontal">
 								<space width="10" />
 								<checkbox name="checkbox_component2" value="1" selected="false" />
 								<space width="10" />
-								<text width="*" font="resources/engine/fonts/Roboto-Light.ttf" size="20" text="Component 2" color="#000000" height="100%" vertical-align="center" />
+								<text width="*" font="resources/installer/gui/fonts/Roboto-Light.ttf" size="20" text="Component 2" color="#000000" height="100%" vertical-align="center" />
 							</layout>
 						</scrollarea>
 					</layout>
 					
 					<layout padding-left="20" padding-right="20" alignment="vertical" width="60%" height="100%">
-						<text font="resources/engine/fonts/Roboto-Light.ttf" size="20" text="Click on a component to get its description." color="#000000" />
+						<text font="resources/installer/gui/fonts/Roboto-Light.ttf" size="20" text="Click on a component to get its description." color="#000000" />
 						<space height="25" />
-						<styled-text id="component_description" font="resources/engine/fonts/Roboto-Light.ttf" size="20" color="#000000" height="*" width="100%"/>
+						<styled-text id="component_description" font="resources/installer/gui/fonts/Roboto-Light.ttf" size="20" color="#000000" height="*" width="100%"/>
 					</layout>
 				</layout>
 				

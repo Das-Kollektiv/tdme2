@@ -7,14 +7,14 @@
 			</layout>
 			
 			<layout padding="20" alignment="vertical" width="66%" height="100%">
-				<text font="resources/engine/fonts/Roboto-Regular.ttf" size="30" text="Welcome to the {$name} Setup" color="#000000" />
+				<text font="resources/installer/gui/fonts/Roboto-Regular.ttf" size="30" text="Welcome to the {$name} Setup" color="#000000" />
 				<space height="40"/>
-				<text font="resources/engine/fonts/Roboto-Light.ttf" size="20" text="This will install {$name} on your computer." color="#000000" />
+				<text font="resources/installer/gui/fonts/Roboto-Light.ttf" size="20" text="This will install {$name} on your computer." color="#000000" />
 				<space height="10" />
-				<text font="resources/engine/fonts/Roboto-Light.ttf" size="20" text="It is recommended that you close all other applications" color="#000000" />
-				<text font="resources/engine/fonts/Roboto-Light.ttf" size="20" text="before continuing." color="#000000" />
+				<text font="resources/installer/gui/fonts/Roboto-Light.ttf" size="20" text="It is recommended that you close all other applications" color="#000000" />
+				<text font="resources/installer/gui/fonts/Roboto-Light.ttf" size="20" text="before continuing." color="#000000" />
 				<space height="20" />
-				<text font="resources/engine/fonts/Roboto-Light.ttf" size="20" text="Click Next to continue, or Cancel to exit Setup." color="#000000" />
+				<text font="resources/installer/gui/fonts/Roboto-Light.ttf" size="20" text="Click Next to continue, or Cancel to exit Setup." color="#000000" />
 			</layout>
 					
 		</layout>
