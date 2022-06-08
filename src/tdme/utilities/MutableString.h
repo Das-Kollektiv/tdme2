@@ -1,17 +1,19 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/math/Math.h>
 #include <tdme/utilities/fwd-tdme.h>
-#include <tdme/utilities/StringTools.h>
+#include <tdme/utilities/UTF8CharacterIterator.h>
 
 using std::string;
 using std::to_string;
+using std::vector;
 
 using tdme::math::Math;
-using tdme::utilities::StringTools;
+using tdme::utilities::UTF8CharacterIterator;
 
 /**
  * Mutable utf8 aware string class
@@ -61,8 +63,11 @@ public:
 	 * @return character count
 	 */
 	inline int length() const {
-		// TODO: Do some caching here
-		return StringTools::getUtf8Length(data);
+		if (utf8Length != -1) return utf8Length;
+		auto u8It = getUTF8CharacterIterator();
+		while (u8It.hasNext() == true) u8It.next();
+		utf8Length = u8It.getCharacterPosition();
+		return utf8Length;
 	}
 
 	/**
@@ -78,7 +83,6 @@ public:
 	 * @return utf 8 character at given character index
 	 */
 	inline int getUTF8CharAt(int32_t idx) {
-		// TODO: Do some caching here
 		auto u8It = getUTF8CharacterIterator();
 		u8It.seekBinaryPosition(getUtf8BinaryIndex(idx));
 		return u8It.hasNext() == true?u8It.next():-1;
@@ -89,6 +93,8 @@ public:
 	 */
 	inline MutableString& reset() {
 		data.clear();
+		cache.binaryCache.clear();
+		cache.characterCache.clear();
 		return *this;
 	}
 
@@ -120,7 +126,9 @@ public:
 	 * @return this mutable string
 	 */
 	inline MutableString& insert(int32_t idx, char c) {
-		data.insert(getUtf8BinaryIndex(idx), 1, c);
+		auto binaryIdx = getUtf8BinaryIndex(idx);
+		data.insert(binaryIdx, 1, c);
+		removeCache(binaryIdx, idx);
 		return *this;
 	}
 
@@ -152,7 +160,9 @@ public:
 	 * @return this mutable string
 	 */
 	inline MutableString& insert(int32_t idx, const string& s) {
-		data.insert(getUtf8BinaryIndex(idx), s);
+		auto binaryIdx = getUtf8BinaryIndex(idx);
+		data.insert(binaryIdx, s);
+		removeCache(binaryIdx, idx);
 		return *this;
 	}
 
@@ -184,7 +194,9 @@ public:
 	 * @return this mutable string
 	 */
 	inline MutableString& insert(int32_t idx, const MutableString& s) {
-		insert(getUtf8BinaryIndex(idx), s.data);
+		auto binaryIdx = getUtf8BinaryIndex(idx);
+		insert(binaryIdx, s.data);
+		removeCache(binaryIdx, idx);
 		return *this;
 	}
 
@@ -288,15 +300,16 @@ public:
 	 */
 	inline MutableString& remove(int32_t idx, int32_t count, int* binaryCount = nullptr) {
 
-		StringTools::UTF8CharacterIterator u8It(data);
+		auto u8It = getUTF8CharacterIterator();
 		u8It.seekCharacterPosition(idx);
-		auto startIdx = u8It.getBinaryPosition();
+		auto binaryStartIdx = u8It.getBinaryPosition();
 		for (auto i = 0; u8It.hasNext() == true &&i < count; i++) {
 			u8It.next();
 		}
-		auto endIdx = u8It.getBinaryPosition();
-		data.erase(startIdx, endIdx - startIdx);
-		if (binaryCount != nullptr) *binaryCount = endIdx - startIdx;
+		auto binaryEndIdx = u8It.getBinaryPosition();
+		data.erase(binaryStartIdx, binaryEndIdx - binaryStartIdx);
+		removeCache(binaryStartIdx, idx);
+		if (binaryCount != nullptr) *binaryCount = binaryEndIdx - binaryStartIdx;
 		return *this;
 	}
 
@@ -326,7 +339,16 @@ public:
 	 * @param beginIndex index to begin with
 	 */
 	inline void replace(const string& what, const string& by, int beginIndex = 0) {
-		data = StringTools::replace(data, what, by, beginIndex);
+		beginIndex = getUtf8BinaryIndex(beginIndex);
+		string result = data;
+		if (what.empty()) return;
+		while ((beginIndex = result.find(what, beginIndex)) != std::string::npos) {
+			result.replace(beginIndex, what.length(), by);
+			beginIndex += by.length();
+		}
+		// TODO: could be improved
+		cache.binaryCache.clear();
+		cache.characterCache.clear();
 	}
 
 	/**
@@ -364,8 +386,8 @@ public:
 	/**
 	 * @return UTF8 character iterator
 	 */
-	StringTools::UTF8CharacterIterator getUTF8CharacterIterator() {
-		return StringTools::UTF8CharacterIterator(data);
+	const UTF8CharacterIterator getUTF8CharacterIterator() const {
+		return UTF8CharacterIterator(data, &cache);
 	}
 
 	/**
@@ -373,8 +395,9 @@ public:
 	 * @param idx character index
 	 */
 	int getUtf8BinaryIndex(int idx) const {
-		// TODO: Do some caching here, as processing of lots of data would take lots of time: o(n)
-		return StringTools::getUtf8BinaryIndex(data, idx);
+		auto u8It = getUTF8CharacterIterator();
+		u8It.seekCharacterPosition(idx);
+		return u8It.getBinaryPosition();
 	}
 
 	/**
@@ -386,5 +409,36 @@ public:
 
 private:
 	string data;
+	mutable UTF8CharacterIterator::UTF8PositionCache cache;
+	mutable int utf8Length { -1 };
+
+	/**
+	 * Remove from cache by binary index
+	 * @param idx binary index
+	 */
+	inline void removeCache(int binaryIdx, int characterIdx) {
+		// remove succeeding entries from binary cache
+		if (binaryIdx >= UTF8CharacterIterator::UTF8PositionCache::CACHE_ENTRY_SIZE) {
+			auto& _cache = cache.binaryCache;
+			auto removeFromCacheEntryIdx = (binaryIdx / UTF8CharacterIterator::UTF8PositionCache::CACHE_ENTRY_SIZE) - 1;
+			if (removeFromCacheEntryIdx < _cache.size()) {
+				_cache.erase(_cache.begin() + removeFromCacheEntryIdx, _cache.end());
+			}
+		} else {
+			cache.binaryCache.clear();
+		}
+		// remove succeeding entries from character position cache
+		if (characterIdx >= UTF8CharacterIterator::UTF8PositionCache::CACHE_ENTRY_SIZE) {
+			auto& _cache = cache.characterCache;
+			auto removeFromCacheEntryIdx = (characterIdx / UTF8CharacterIterator::UTF8PositionCache::CACHE_ENTRY_SIZE) - 1;
+			if (removeFromCacheEntryIdx < _cache.size()) {
+				_cache.erase(_cache.begin() + removeFromCacheEntryIdx, _cache.end());
+			}
+		} else {
+			cache.characterCache.clear();
+		}
+		// we also cache the length
+		utf8Length = -1;
+	}
 
 };

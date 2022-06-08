@@ -581,7 +581,7 @@ void TextureReader::removeFromCache(Texture* texture) {
 	textureCacheMutex->unlock();
 }
 
-Texture* TextureReader::rotate(Texture* texture, float rotation) {
+Texture* TextureReader::rotate(Texture* texture, float rotation, const string& idSuffix) {
 	auto textureWidth = texture->getTextureWidth();
 	auto textureHeight = texture->getTextureHeight();
 	auto textureBytesPerPixel = texture->getDepth() / 8;
@@ -620,7 +620,7 @@ Texture* TextureReader::rotate(Texture* texture, float rotation) {
 	}
 	auto rotatedTextureByteBuffer = new ByteBuffer(textureWidthRotated * textureHeightRotated * 4);
 	auto rotatedTexture = new Texture(
-		texture->getId() + ":r=" + to_string(rotation),
+		texture->getId() + idSuffix + ":tmp",
 		32,
 		textureWidthRotated,
 		textureHeightRotated,
@@ -648,7 +648,7 @@ Texture* TextureReader::rotate(Texture* texture, float rotation) {
 				red = texture->getTextureData()->get((originalY * textureWidth * textureBytesPerPixel) + (originalX * textureBytesPerPixel) + 0);
 				green = texture->getTextureData()->get((originalY * textureWidth * textureBytesPerPixel) + (originalX * textureBytesPerPixel) + 1);
 				blue = texture->getTextureData()->get((originalY * textureWidth * textureBytesPerPixel) + (originalX * textureBytesPerPixel) + 2);
-				alpha = textureBytesPerPixel == 4?texture->getTextureData()->get((originalY * textureWidth * textureBytesPerPixel) + (originalX * textureBytesPerPixel) + 3):-1;
+				alpha = textureBytesPerPixel == 4?texture->getTextureData()->get((originalY * textureWidth * textureBytesPerPixel) + (originalX * textureBytesPerPixel) + 3):255;
 			}
 			rotatedTextureByteBuffer->put(red);
 			rotatedTextureByteBuffer->put(green);
@@ -656,47 +656,13 @@ Texture* TextureReader::rotate(Texture* texture, float rotation) {
 			rotatedTextureByteBuffer->put(alpha);
 		}
 	}
-	// TODO: should be improved
-	auto filteredTextureByteBuffer = new ByteBuffer(textureWidthRotated * textureHeightRotated * 4);
-	auto filteredTexture = new Texture(
-		texture->getId() + ":r=" + to_string(rotation) + ":bf",
-		32,
-		textureWidthRotated,
-		textureHeightRotated,
-		textureWidthRotated,
-		textureHeightRotated,
-		filteredTextureByteBuffer
-	);
-	filteredTexture->acquireReference();
-	for (auto y = 0; y < textureHeightRotated; y++) {
-		for (auto x = 0; x < textureWidthRotated; x++) {
-			auto samples = 0;
-			auto red = 0;
-			auto green = 0;
-			auto blue = 0;
-			auto alpha = 0;
-			for (auto _y = -1; _y <= 1; _y++)
-			for (auto _x = -1; _x <= 1; _x++)
-			if ((Math::abs(_x) == 1 && Math::abs(_y) == 1) == false &&
-				(x + _x >= 0 && x + _x < textureWidthRotated && y + _y >= 0 && y + _y < textureHeightRotated)) {
-				auto pixelOffset = (y + _y) * textureWidthRotated * 4 + (x + _x) * 4;
-				red+= rotatedTexture->getTextureData()->get(pixelOffset + 0);
-				green+= rotatedTexture->getTextureData()->get(pixelOffset + 1);
-				blue+= rotatedTexture->getTextureData()->get(pixelOffset + 2);
-				alpha+= rotatedTexture->getTextureData()->get(pixelOffset + 3);
-				samples++;
-			}
-			filteredTextureByteBuffer->put(red / samples);
-			filteredTextureByteBuffer->put(green / samples);
-			filteredTextureByteBuffer->put(blue / samples);
-			filteredTextureByteBuffer->put(alpha / samples);
-		}
-	}
+	// do smooooth
+	auto filteredTexture = smooth(rotatedTexture, idSuffix);
 	rotatedTexture->releaseReference();
 	return filteredTexture;
 }
 
-Texture* TextureReader::scale(Texture* texture, int width, int height) {
+Texture* TextureReader::scale(Texture* texture, int width, int height, const string& idSuffix) {
 	auto textureWidth = texture->getTextureWidth();
 	auto textureHeight = texture->getTextureHeight();
 	auto textureBytesPerPixel = texture->getDepth() / 8;
@@ -704,7 +670,7 @@ Texture* TextureReader::scale(Texture* texture, int width, int height) {
 	auto textureHeightScaled = height;
 	auto scaledTextureByteBuffer = new ByteBuffer(textureWidthScaled * textureHeightScaled * 4);
 	auto scaledTexture = new Texture(
-		texture->getId() + ":s=" + to_string(textureWidthScaled) + "x" + to_string(textureHeightScaled),
+		texture->getId() + idSuffix,
 		32,
 		textureWidthScaled,
 		textureHeightScaled,
@@ -728,7 +694,7 @@ Texture* TextureReader::scale(Texture* texture, int width, int height) {
 				red = texture->getTextureData()->get((originalY * textureWidth * textureBytesPerPixel) + (originalX * textureBytesPerPixel) + 0);
 				green = texture->getTextureData()->get((originalY * textureWidth * textureBytesPerPixel) + (originalX * textureBytesPerPixel) + 1);
 				blue = texture->getTextureData()->get((originalY * textureWidth * textureBytesPerPixel) + (originalX * textureBytesPerPixel) + 2);
-				alpha = textureBytesPerPixel == 4?texture->getTextureData()->get((originalY * textureWidth * textureBytesPerPixel) + (originalX * textureBytesPerPixel) + 3):-1;
+				alpha = textureBytesPerPixel == 4?texture->getTextureData()->get((originalY * textureWidth * textureBytesPerPixel) + (originalX * textureBytesPerPixel) + 3):255;
 			}
 			scaledTextureByteBuffer->put(red);
 			scaledTextureByteBuffer->put(green);
@@ -736,85 +702,69 @@ Texture* TextureReader::scale(Texture* texture, int width, int height) {
 			scaledTextureByteBuffer->put(alpha);
 		}
 	}
-	// no bilinear filtering if texture got smaller
+	// no smoothing if texture got smaller
 	if (textureWidthScaled < textureWidth) return scaledTexture;
-	// otherwise do bilinear filtering
-	// TODO: should be improved
-	auto filteredTextureByteBuffer = new ByteBuffer(textureWidthScaled * textureHeightScaled * 4);
-	auto filteredTexture = new Texture(
-		texture->getId() + ":s=" + to_string(textureWidthScaled) + "x" + to_string(textureHeightScaled) + ":bf",
-		32,
-		textureWidthScaled,
-		textureHeightScaled,
-		textureWidthScaled,
-		textureHeightScaled,
-		filteredTextureByteBuffer
-	);
-	filteredTexture->acquireReference();
-	for (auto y = 0; y < filteredTexture->getTextureHeight(); y++) {
-		for (auto x = 0; x < filteredTexture->getTextureWidth(); x++) {
-			auto samples = 0;
-			auto red = 0;
-			auto green = 0;
-			auto blue = 0;
-			auto alpha = 0;
-			for (auto _y = -1; _y <= 1; _y++)
-			for (auto _x = -1; _x <= 1; _x++)
-			if ((Math::abs(_x) == 1 && Math::abs(_y) == 1) == false &&
-				(x + _x >= 0 && x + _x < textureWidthScaled && y + _y >= 0 && y + _y < textureHeightScaled)) {
-				auto pixelOffset = (y + _y) * textureWidthScaled * 4 + (x + _x) * 4;
-				red+= scaledTexture->getTextureData()->get(pixelOffset + 0);
-				green+= scaledTexture->getTextureData()->get(pixelOffset + 1);
-				blue+= scaledTexture->getTextureData()->get(pixelOffset + 2);
-				alpha+= scaledTexture->getTextureData()->get(pixelOffset + 3);
-				samples++;
-			}
-			filteredTextureByteBuffer->put(red / samples);
-			filteredTextureByteBuffer->put(green / samples);
-			filteredTextureByteBuffer->put(blue / samples);
-			filteredTextureByteBuffer->put(alpha / samples);
-		}
-	}
+	// otherwise do smoothing
+	auto filteredTexture = smooth(scaledTexture, idSuffix);
 	scaledTexture->releaseReference();
 	return filteredTexture;
 }
 
-Texture* TextureReader::smooth(Texture* texture) {
-	// TODO: should be improved
-	auto filteredTextureByteBuffer = new ByteBuffer(texture->getTextureWidth() * texture->getTextureHeight() * 4);
+Texture* TextureReader::smooth(Texture* texture, const string& idSuffix) {
+	auto adjacentSampleWeight = 0.05f;
+	auto textureWidth = texture->getTextureWidth();
+	auto textureHeight = texture->getTextureHeight();
+	auto textureBytesPerPixel = texture->getDepth() / 8;
+
+	//
+	auto filteredTextureByteBuffer = new ByteBuffer(textureWidth * textureHeight * 4);
 	auto filteredTexture = new Texture(
-		texture->getId() + ":smooth",
+		texture->getId() + idSuffix,
 		32,
-		texture->getTextureWidth(),
-		texture->getTextureHeight(),
-		texture->getTextureWidth(),
-		texture->getTextureHeight(),
+		textureWidth,
+		textureHeight,
+		textureWidth,
+		textureHeight,
 		filteredTextureByteBuffer
 	);
 	filteredTexture->acquireReference();
-	for (auto y = 0; y < filteredTexture->getTextureHeight(); y++) {
-		for (auto x = 0; x < filteredTexture->getTextureWidth(); x++) {
-			auto samples = 0;
-			auto red = 0;
-			auto green = 0;
-			auto blue = 0;
-			auto alpha = 0;
-			for (auto _y = -1; _y <= 1; _y++)
-			for (auto _x = -1; _x <= 1; _x++)
-			if ((Math::abs(_x) == 1 && Math::abs(_y) == 1) == false &&
-				(x + _x >= 0 && x + _x < texture->getTextureWidth() && y + _y >= 0 && y + _y < texture->getTextureHeight())) {
-				auto pixelOffset = (y + _y) * texture->getTextureWidth() * 4 + (x + _x) * 4;
-				red+= texture->getTextureData()->get(pixelOffset + 0);
-				green+= texture->getTextureData()->get(pixelOffset + 1);
-				blue+= texture->getTextureData()->get(pixelOffset + 2);
-				alpha+= texture->getTextureData()->get(pixelOffset + 3);
-				samples++;
+
+	//
+	for (auto y = 0; y < textureHeight; y++) {
+		for (auto x = 0; x < textureWidth; x++) {
+			auto samples = 0.0f;
+			auto red = 0.0f;
+			auto green = 0.0f;
+			auto blue = 0.0f;
+			auto alpha = 0.0f;
+			{
+				auto pixelOffset = (y * textureWidth * textureBytesPerPixel) + (x * textureBytesPerPixel);
+				red+= texture->getTextureData()->get(pixelOffset + 0) * 1.0f;
+				green+= texture->getTextureData()->get(pixelOffset + 1) * 1.0f;
+				blue+= texture->getTextureData()->get(pixelOffset + 2) * 1.0f;
+				alpha+= (textureBytesPerPixel == 4?texture->getTextureData()->get(pixelOffset + 3):255.0f) * 1.0f;
+				samples+=1.0f;
 			}
-			filteredTextureByteBuffer->put(red / samples);
-			filteredTextureByteBuffer->put(green / samples);
-			filteredTextureByteBuffer->put(blue / samples);
-			filteredTextureByteBuffer->put(alpha / samples);
+			for (auto _y = -1; _y <= 1; _y++) {
+				for (auto _x = -1; _x <= 1; _x++) {
+					if ((Math::abs(_x) == 1 && Math::abs(_y) == 1) == false &&
+						(x + _x >= 0 && x + _x < textureWidth && y + _y >= 0 && y + _y < textureHeight)) {
+						auto pixelOffset = ((y + _y) * textureWidth * textureBytesPerPixel) + ((x + _x) * textureBytesPerPixel);
+						red+= texture->getTextureData()->get(pixelOffset + 0) * adjacentSampleWeight;
+						green+= texture->getTextureData()->get(pixelOffset + 1) * adjacentSampleWeight;
+						blue+= texture->getTextureData()->get(pixelOffset + 2) * adjacentSampleWeight;
+						alpha+= (textureBytesPerPixel == 4?texture->getTextureData()->get(pixelOffset + 3):255.0f) * adjacentSampleWeight;
+						samples+= adjacentSampleWeight;
+					}
+				}
+			}
+			filteredTextureByteBuffer->put(static_cast<uint8_t>(red / samples));
+			filteredTextureByteBuffer->put(static_cast<uint8_t>(green / samples));
+			filteredTextureByteBuffer->put(static_cast<uint8_t>(blue / samples));
+			filteredTextureByteBuffer->put(static_cast<uint8_t>(alpha / samples));
 		}
 	}
+
+	//
 	return filteredTexture;
 }

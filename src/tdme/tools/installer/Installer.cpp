@@ -140,7 +140,7 @@ void Installer::initializeScreens() {
 		popUps->initialize();
 
 		installerProperties.load("resources/installer", "installer.properties");
-		if (installerProperties.get("installer_version", "") != "1.9.128") throw ExceptionBase("Installer is outdated. Please uninstall and update installer");
+		if (installerProperties.get("installer_version", "") != "1.9.135") throw ExceptionBase("Installer is outdated. Please uninstall and update installer");
 		unordered_map<string, string> parameters = {
 			{"name", installerProperties.get("name", "TDME2 based application")},
 			{"diskspace", installerProperties.get("diskspace", "Unknown")},
@@ -189,7 +189,7 @@ void Installer::initializeScreens() {
 				string("		<space width=\"10\" />\n") +
 				string("		<checkbox id=\"checkbox_component" + to_string(componentIdx) + "\" name=\"checkbox_component" + to_string(componentIdx) + "\" value=\"1\" selected=\"" + (componentRequired == true || componentInstalled == true?"true":"false") + "\" disabled=\"" + (componentRequired == true?"true":"false") + "\" />\n") +
 				string("		<space width=\"10\" />\n") +
-				string("		<text width=\"*\" font=\"resources/engine/fonts/Roboto_20.fnt\" text=\"" + GUIParser::escapeQuotes(componentName) + "\" color=\"#000000\" height=\"100%\" vertical-align=\"center\" />\n") +
+				string("		<text width=\"*\" font=\"resources/engine/fonts/Roboto-Light.ttf\" size=\"20\" text=\"" + GUIParser::escapeQuotes(componentName) + "\" color=\"#000000\" height=\"100%\" vertical-align=\"center\" />\n") +
 				string("	</layout>\n") +
 				string("</element>\n");
 		}

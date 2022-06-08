@@ -612,6 +612,10 @@ void EditorScreenController::ScanFilesThread::run() {
 				if (FileSystem::getInstance()->isPath(pathName + "/" + fileName) == true) return true;
 				// audio
 				if (StringTools::endsWith(fileNameLowerCase, ".ogg") == true) return true;
+				// markdown
+				if (StringTools::endsWith(fileNameLowerCase, ".md") == true) return true;
+				// license
+				if (fileNameLowerCase == "license") return true;
 				// code
 				if (StringTools::endsWith(fileNameLowerCase, ".h") == true) return true;
 				if (StringTools::endsWith(fileNameLowerCase, ".cpp") == true) return true;
@@ -1184,7 +1188,9 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 	if (StringTools::endsWith(fileNameLowerCase, ".mpg") == true) {
 		fileType = FILETYPE_VIDEO;
 	} else
-	if (StringTools::endsWith(fileNameLowerCase, ".h") == true ||
+	if (StringTools::endsWith(fileNameLowerCase, ".md") == true ||
+		fileNameLowerCase == "license" ||
+		StringTools::endsWith(fileNameLowerCase, ".h") == true ||
 		StringTools::endsWith(fileNameLowerCase, ".cpp") == true ||
 		StringTools::endsWith(fileNameLowerCase, ".c") == true ||
 		StringTools::endsWith(fileNameLowerCase, ".properties") == true ||

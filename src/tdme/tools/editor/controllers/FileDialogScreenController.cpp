@@ -574,6 +574,14 @@ const string FileDialogScreenController::getFileImageName(const string& fileName
 	if (StringTools::endsWith(fileNameLowerCase, ".ogg") == true) {
 		return "sound";
 	} else
+	// markdown
+	if (StringTools::endsWith(fileNameLowerCase, ".md") == true) {
+		return "script";
+	} else
+	// license
+	if (fileNameLowerCase == "license") {
+		return "script";
+	} else
 	// C++/C code
 	if (StringTools::endsWith(fileNameLowerCase, ".h") == true) {
 		return "script";

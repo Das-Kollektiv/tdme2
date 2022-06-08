@@ -6,10 +6,13 @@
 
 #include <tdme/tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/UTF8CharacterIterator.h>
 
 using std::string;
 using std::string_view;
 using std::vector;
+
+using tdme::utilities::UTF8CharacterIterator;
 
 /**
  * String tools class
@@ -18,133 +21,6 @@ using std::vector;
 class tdme::utilities::StringTools final
 {
 public:
-
-	/**
-	 * UTF8 string character iterator
-	 */
-	class UTF8CharacterIterator {
-	public:
-		/**
-		 * Public constructor
-		 * @param stringReference string reference
-		 */
-		UTF8CharacterIterator(const string& stringReference): stringReference(stringReference) {
-			//
-		}
-
-		/**
-		 * Reset
-		 */
-		inline void reset() {
-			binaryPosition = 0;
-			characterPosition = 0;
-		}
-
-		/**
-		 * @return underlying binary buffer position
-		 */
-		inline int getBinaryPosition() {
-			return binaryPosition;
-		}
-
-		/**
-		 * Set underlying binary buffer position
-		 * @param position underlying buffer position
-		 */
-		inline void seekBinaryPosition(int position) {
-			while (hasNext() == true && binaryPosition < position) {
-				if (hasNext() == true) next();
-			}
-		}
-
-		/**
-		 * @return character position
-		 */
-		inline int getCharacterPosition() {
-			return characterPosition;
-		}
-
-		/**
-		 * Seek character position
-		 * @param characterPosition character position
-		 */
-		inline void seekCharacterPosition(int characterPosition) {
-			if (this->characterPosition > characterPosition) reset();
-			auto seekCount = characterPosition - this->characterPosition;
-			for (auto i = 0; i < seekCount; i++) {
-				if (hasNext() == true) next();
-			}
-		}
-
-		/**
-		 * @return next character available
-		 */
-		inline bool hasNext() {
-			return binaryPosition < stringReference.size();
-		}
-		/**
-		 * @return next character or -1 if an error occurred or no string left
-		 */
-		int next() {
-			// see: http://www.zedwood.com/article/cpp-utf8-char-to-codepoint
-			int l = stringReference.size() - binaryPosition;
-			if (l < 1) return -1;
-			unsigned char u0 = stringReference[binaryPosition + 0];
-			if (u0 >= 0 && u0 <= 127) {
-				binaryPosition++;
-				characterPosition++;
-				return u0;
-			}
-			if (l < 2) {
-				binaryPosition++;
-				characterPosition++;
-				return -1;
-			}
-			unsigned char u1 = stringReference[binaryPosition + 1];
-			if (u0 >= 192 && u0 <= 223) {
-				binaryPosition+= 2;
-				characterPosition++;
-				return (u0 - 192) * 64 + (u1 - 128);
-			}
-			if (u0 == 0xed && (u1 & 0xa0) == 0xa0) {
-				binaryPosition+= 2;
-				characterPosition++;
-				return -1; // code points, 0xd800 to 0xdfff
-			}
-			if (l < 3) {
-				binaryPosition+= 2;
-				characterPosition++;
-				return -1;
-			}
-			unsigned char u2 = stringReference[binaryPosition + 2];
-			if (u0 >= 224 && u0 <= 239) {
-				binaryPosition+= 3;
-				characterPosition++;
-				return (u0 - 224) * 4096 + (u1 - 128) * 64 + (u2 - 128);
-			}
-			if (l < 4) {
-				binaryPosition+= 3;
-				characterPosition++;
-				return -1;
-			}
-			unsigned char u3 = stringReference[binaryPosition + 3];
-			if (u0 >= 240 && u0 <= 247) {
-				binaryPosition+= 4;
-				characterPosition++;
-				return (u0 - 240) * 262144 + (u1 - 128) * 4096 + (u2 - 128) * 64 + (u3 - 128);
-			}
-			//
-			binaryPosition+= 4;
-			characterPosition++;
-			return -1;
-		}
-
-	private:
-		const string& stringReference;
-		int binaryPosition { 0 };
-		int characterPosition { 0 };
-	};
-
 	/**
 	 * Checks if string starts with prefix
 	 * @param src source string
@@ -369,7 +245,7 @@ public:
 	 * @return UTF binary buffer position from given character/code point index
 	 */
 	inline static int getUtf8BinaryIndex(const string& str, int charIdx) {
-		StringTools::UTF8CharacterIterator u8It(str);
+		UTF8CharacterIterator u8It(str);
 		u8It.seekCharacterPosition(charIdx);
 		return u8It.getBinaryPosition();
 	}

@@ -73,7 +73,7 @@ private:
 	 */
 	inline void addCharactersToFont(const string& text) {
 		auto updatedTextureAtlas = false;
-		StringTools::UTF8CharacterIterator u8It(text);
+		UTF8CharacterIterator u8It(text);
 		while (u8It.hasNext() == true) {
 			auto characterId = u8It.next();
 			if (characterId == -1) continue;
