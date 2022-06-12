@@ -261,6 +261,7 @@ The \<styled-text\>Inner Data\<\/styled-text\> is the text that will be rendered
 Currently supported BBCode like tags are:
 ```
 [font=font-location.fnt]Text[/font]
+[size=size]Sized Text[/size]
 [color=#ff0000ff|red]Colored Text[/color]
 [url=http://mindty.com/]Text with Link[/url]
 [image=horizontal-scale:50%|0.5,vertical-scale:50%|0.5,width:100,height:100,effect-color-mul:#ff0000ff,effect-color-add:#ff000000]example.com/bild.jpg[/image]
@@ -695,6 +696,7 @@ The \<styled-text\>Inner Data\<\/styled-text\> is the text that will be rendered
 Currently supported BBCode like tags are:
 ```
 [font=font-location.fnt]Text[/font]
+[size=size]Sized Text[/size]
 [color=#ff0000ff|red]Colored Text[/color]
 [url=http://mindty.com/]Text with Link[/url]
 [image=horizontal-scale:50%|0.5,vertical-scale:50%|0.5,width:100,height:100,effect-color-mul:#ff0000ff,effect-color-add:#ff000000]example.com/bild.jpg[/image]
