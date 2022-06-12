@@ -243,7 +243,8 @@ This element supports all other elements as sub elements.
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | color                             | text rendering color in html hex notation or color name                                | none              |
-| font                              | font location                                                                          | none              |
+| font                              | TTF font location                                                                      | none              |
+| size                              | TTF font size                                                                          | none              |
 | text                              | text to be rendered                                                                    | none              |
 
 ### 1.10.2. \<styled-text\> node
@@ -251,7 +252,8 @@ This element supports all other elements as sub elements.
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
 | color                             | text rendering default color in hex notation or color name                             | none              |
-| font                              | text rendering default font location                                                   | none              |
+| font                              | TTF font location                                                                      | none              |
+| size                              | TTF font size                                                                          | none              |
 | preformatted                      | preformatted, means preserve new lines and white spaces                                | false             |
 
 The \<styled-text\>Inner Data\<\/styled-text\> is the text that will be rendered. Also note that this element supports some sort of BBCode syntax.
