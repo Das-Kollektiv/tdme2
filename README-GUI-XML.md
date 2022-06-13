@@ -260,7 +260,7 @@ The \<styled-text\>Inner Data\<\/styled-text\> is the text that will be rendered
 
 Currently supported BBCode like tags are:
 ```
-[font=font-location.fnt]Text[/font]
+[font=font-location.ttf]Text[/font]
 [size=size]Sized Text[/size]
 [color=#ff0000ff|red]Colored Text[/color]
 [url=http://mindty.com/]Text with Link[/url]
@@ -695,7 +695,7 @@ The \<styled-text\>Inner Data\<\/styled-text\> is the text that will be rendered
 
 Currently supported BBCode like tags are:
 ```
-[font=font-location.fnt]Text[/font]
+[font=font-location.ttf]Text[/font]
 [size=size]Sized Text[/size]
 [color=#ff0000ff|red]Colored Text[/color]
 [url=http://mindty.com/]Text with Link[/url]
