@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include <array>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -10,7 +10,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 
-using std::vector;
+using std::array;
 
 using tdme::engine::model::Node;
 using tdme::engine::Engine;
@@ -27,6 +27,12 @@ using tdme::math::Vector3;
 class tdme::tools::editor::misc::Gizmo
 {
 public:
+	enum GizmoAxisIdx {
+		GIZMOAXISIDX_NONE = -1,
+		GIZMOAXISIDX_X = 0,
+		GIZMOAXISIDX_Y = 1,
+		GIZMOAXISIDX_Z = 2
+	};
 	enum GizmoType {
 		GIZMOTYPE_NONE = 0,
 		GIZMOTYPE_TRANSLATE = 1,
@@ -155,15 +161,26 @@ public:
 	void removeGizmo();
 
 	/**
-	 * Determine movement on a plane given by 4 vertices
+	 * Determine gizmo movement
 	 * @param mouseX current mouse X position
 	 * @param mouseY current mouse Y position
-	 * @param vertices 4 vertices that span a plane
-	 * @param deltaMovement delta movement result
-	 * @param direction which +1.0f for getting away from center and -1.0f for getting towards center
+	 * @param axisIdx vector axis index
+	 * @param axis axis to check movement on
+	  * @param deltaMovement delta movement result
 	 * @return success
 	 */
-	bool determineGizmoMovement(int mouseX, int mouseY, vector<Vector3> vertices, Vector3& deltaMovement, float& direction);
+	bool determineGizmoMovement(int mouseX, int mouseY, int axisIdx, const Vector3& axis, Vector3& deltaMovement);
+
+	/**
+	 * Determine gizmo scale
+	 * @param mouseX current mouse X position
+	 * @param mouseY current mouse Y position
+	 * @param axisIdx vector axis index
+	 * @param axis axis to check movement on
+	 * @param deltaScale delta scale result
+	 * @return success
+	 */
+	bool determineGizmoScale(int mouseX, int mouseY, int axisIdx, const Vector3& axis, Vector3& deltaScale);
 
 	/**
 	 * Determine rotation on a plane given by 4 vertices
@@ -174,7 +191,7 @@ public:
 	 * @param deltaRotation delta rotation result
 	 * @return success
 	 */
-	bool determineGizmoRotation(int mouseX, int mouseY, vector<Vector3> vertices, const Vector3& planeNormal, float& deltaRotation);
+	bool determineGizmoRotation(int mouseX, int mouseY, const array<Vector3, 4>& vertices, const Vector3& planeNormal, float& deltaRotation);
 
 	/**
 	 * Determine GIZMO delta transformations

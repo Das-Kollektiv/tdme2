@@ -296,7 +296,7 @@ void SceneEditorTabView::handleInputEvents()
 						if (_selectedEntity == nullptr) continue;
 						auto sceneEntity = scene->getEntity(_selectedEntity->getId());
 						if (sceneEntity == nullptr) continue;
-						auto rotationEuler = _selectedEntity->getTransformationsMatrix().computeEulerAngles();
+						auto rotationEuler = _selectedEntity->getRotationsQuaternion().computeMatrix().computeEulerAngles();
 						_selectedEntity->setRotationAngle(scene->getRotationOrder()->getAxisXIndex(), rotationEuler[0]);
 						_selectedEntity->setRotationAngle(scene->getRotationOrder()->getAxisYIndex(), rotationEuler[1]);
 						_selectedEntity->setRotationAngle(scene->getRotationOrder()->getAxisZIndex(), rotationEuler[2]);

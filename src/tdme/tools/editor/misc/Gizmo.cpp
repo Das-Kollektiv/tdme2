@@ -1,5 +1,7 @@
 #include <tdme/tools/editor/misc/Gizmo.h>
 
+#include <array>
+
 #include <tdme/tdme.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/Node.h>
@@ -20,6 +22,8 @@
 #include <tdme/utilities/StringTools.h>
 
 using tdme::tools::editor::misc::Gizmo;
+
+using std::array;
 
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
@@ -211,76 +215,97 @@ void Gizmo::removeGizmo() {
 	setGizmoMode(GIZMOMODE_NONE);
 }
 
-bool Gizmo::determineGizmoMovement(int mouseX, int mouseY, vector<Vector3> vertices, Vector3& deltaMovement, float& direction) {
-	auto gizmoEntity = getGizmoObject();
-	if (gizmoEntity == nullptr) return false;
-	auto& gizmoSpaceGizmoTranslation = gizmoEntity->getTranslation();
-	auto nearPlaneWorldCoordinate = engine->computeGizmoCoordinateByMousePosition(mouseX, mouseY, 0.0f);
-	auto farPlaneWorldCoordinate = engine->computeGizmoCoordinateByMousePosition(mouseX, mouseY, 1.0f);
-	Vector3 lineTriangleContact;
-	for (auto& vertex: vertices) {
-		vertex.add(gizmoSpaceGizmoTranslation);
-	}
-	if (LineSegment::doesLineSegmentCollideWithTriangle(
-		vertices[0],
-		vertices[1],
-		vertices[2],
-		nearPlaneWorldCoordinate,
-		farPlaneWorldCoordinate,
-		lineTriangleContact) == true ||
-		LineSegment::doesLineSegmentCollideWithTriangle(
-		vertices[2],
-		vertices[3],
-		vertices[0],
-		nearPlaneWorldCoordinate,
-		farPlaneWorldCoordinate,
-		lineTriangleContact) == true
-	) {
-		auto success = gizmoMovementLastResultAvailable == true;
-		if (success == true) {
-			direction = 1.0f;
-			if (gizmoMovementLastResult.clone().sub(gizmoSpaceGizmoTranslation).computeLengthSquared() > lineTriangleContact.clone().sub(gizmoSpaceGizmoTranslation).computeLengthSquared()) direction = -1.0f;
-			deltaMovement = lineTriangleContact.clone().sub(gizmoMovementLastResult);
-			Console::println(to_string(deltaMovement.getX()) + " / " + to_string(deltaMovement.getY()) + " / " + to_string(deltaMovement.getZ()));
+bool Gizmo::determineGizmoMovement(int mouseX, int mouseY, int axisIdx, const Vector3& axis, Vector3& deltaMovement) {
+	auto nearPlaneWorldCoordinate = engine->computeWorldCoordinateByMousePosition(mouseX, mouseY, 0.0f);
+	auto farPlaneWorldCoordinate = engine->computeWorldCoordinateByMousePosition(mouseX, mouseY, 1.0f);
+	Vector3 contactOnAxis;
+	Vector3 contactOnAxisTmp;
+	LineSegment::computeClosestPointsOnLineSegments(axis.clone().scale(-5000.0f), axis.clone().scale(+5000.0f), nearPlaneWorldCoordinate, farPlaneWorldCoordinate, contactOnAxis, contactOnAxisTmp);
+	auto success = gizmoMovementLastResultAvailable == true;
+	if (success == true) {
+		auto gizmoTranslationAxis = gizmoTranslation;
+		for (auto i = 0; i < 3; i++) {
+			if (i != axisIdx) {
+				gizmoTranslationAxis[i] = 0.0f;
+				contactOnAxis[i] = 0.0f;
+			}
 		}
-		gizmoMovementLastResult = lineTriangleContact;
-		gizmoMovementLastResultAvailable = true;
-		return success;
+		auto contactOnAxisDelta = contactOnAxis.clone().sub(gizmoMovementLastResult);
+		deltaMovement[axisIdx] = contactOnAxis.clone().sub(gizmoMovementLastResult)[axisIdx];
 	}
-	return false;
+	gizmoMovementLastResult = contactOnAxis;
+	gizmoMovementLastResultAvailable = true;
+	return success;
 }
 
-bool Gizmo::determineGizmoRotation(int mouseX, int mouseY, vector<Vector3> vertices, const Vector3& planeNormal, float& deltaRotation) {
-	auto gizmoEntity = getGizmoObject();
-	if (gizmoEntity == nullptr) return false;
-	auto& gizmoSpaceGizmoTranslation = gizmoEntity->getTranslation();
-	auto nearPlaneWorldCoordinate = engine->computeGizmoCoordinateByMousePosition(mouseX, mouseY, 0.0f);
-	auto farPlaneWorldCoordinate = engine->computeGizmoCoordinateByMousePosition(mouseX, mouseY, 1.0f);
+bool Gizmo::determineGizmoScale(int mouseX, int mouseY, int axisIdx, const Vector3& axis, Vector3& deltaScale) {
+	auto nearPlaneWorldCoordinate = engine->computeWorldCoordinateByMousePosition(mouseX, mouseY, 0.0f);
+	auto farPlaneWorldCoordinate = engine->computeWorldCoordinateByMousePosition(mouseX, mouseY, 1.0f);
+	Vector3 contactOnAxis;
+	Vector3 contactOnAxisTmp;
+	LineSegment::computeClosestPointsOnLineSegments(axis.clone().scale(-5000.0f), axis.clone().scale(+5000.0f), nearPlaneWorldCoordinate, farPlaneWorldCoordinate, contactOnAxis, contactOnAxisTmp);
+	auto success = gizmoMovementLastResultAvailable == true;
+	if (success == true) {
+		auto direction = 1.0f;
+		if (gizmoMovementLastResult.clone().sub(gizmoTranslation).computeLengthSquared() > contactOnAxis.clone().sub(gizmoTranslation).computeLengthSquared()) direction = -1.0f;
+		deltaScale[axisIdx] = contactOnAxis.clone().sub(gizmoMovementLastResult).computeLength() * direction;
+		/*
+		Console::println(
+			to_string(gizmoTranslation.getX()) + ", " +
+			to_string(gizmoTranslation.getY()) + ", " +
+			to_string(gizmoTranslation.getZ()) + ": " +
+			to_string(gizmoMovementLastResult.getX()) + ", " +
+			to_string(gizmoMovementLastResult.getY()) + ", " +
+			to_string(gizmoMovementLastResult.getZ()) + " --> " +
+			to_string(contactOnAxis.getX()) + ", " +
+			to_string(contactOnAxis.getY()) + ", " +
+			to_string(contactOnAxis.getZ()) + ": " +
+			to_string(gizmoMovementLastResult.clone().sub(gizmoTranslation).computeLength()) + " / " +
+			to_string(contactOnAxis.clone().sub(gizmoTranslation).computeLength()) + ", d = " + to_string(direction)
+		);
+		*/
+	}
+	gizmoMovementLastResult = contactOnAxis;
+	gizmoMovementLastResultAvailable = true;
+	return success;
+}
+
+bool Gizmo::determineGizmoRotation(int mouseX, int mouseY, const array<Vector3, 4>& vertices, const Vector3& planeNormal, float& deltaRotation) {
+	Console::println("Gizmo::determineGizmoRotation()");
+	auto nearPlaneWorldCoordinate = engine->computeWorldCoordinateByMousePosition(mouseX, mouseY, 0.0f);
+	auto farPlaneWorldCoordinate = engine->computeWorldCoordinateByMousePosition(mouseX, mouseY, 1.0f);
+	Console::println("near: " + to_string(nearPlaneWorldCoordinate.getX()) + ", " + to_string(nearPlaneWorldCoordinate.getY()) + ", " + to_string(nearPlaneWorldCoordinate.getZ()));
+	Console::println("far: " + to_string(farPlaneWorldCoordinate.getX()) + ", " + to_string(farPlaneWorldCoordinate.getY()) + ", " + to_string(farPlaneWorldCoordinate.getZ()));
 	Vector3 lineTriangleContact;
-	for (auto& vertex: vertices) {
-		vertex.add(gizmoSpaceGizmoTranslation);
+	auto transformedVertices = vertices;
+	for (auto& vertex: transformedVertices) {
+		vertex.add(gizmoTranslation);
+		Console::println("post: " + to_string(vertex.getX()) + ", " + to_string(vertex.getY()) + ", " + to_string(vertex.getZ()));
 	}
 	if (LineSegment::doesLineSegmentCollideWithTriangle(
-		vertices[0],
-		vertices[1],
-		vertices[2],
+		transformedVertices[0],
+		transformedVertices[1],
+		transformedVertices[2],
 		nearPlaneWorldCoordinate,
 		farPlaneWorldCoordinate,
 		lineTriangleContact) == true ||
 		LineSegment::doesLineSegmentCollideWithTriangle(
-		vertices[2],
-		vertices[3],
-		vertices[0],
+		transformedVertices[2],
+		transformedVertices[3],
+		transformedVertices[0],
 		nearPlaneWorldCoordinate,
 		farPlaneWorldCoordinate,
 		lineTriangleContact) == true
 	) {
+		Console::println("rot: hit");
 		auto success = gizmoRotationLastResultAvailable == true;
 		if (success == true) {
-			auto a = lineTriangleContact.clone().sub(gizmoSpaceGizmoTranslation).normalize();
-			auto b = gizmoRotationLastResult.clone().sub(gizmoSpaceGizmoTranslation).normalize();
+			Console::println("rot: success");
+			auto a = lineTriangleContact.clone().sub(gizmoTranslation).normalize();
+			auto b = gizmoRotationLastResult.clone().sub(gizmoTranslation).normalize();
 			deltaRotation = Vector3::computeAngle(a, b, planeNormal);
 			if (deltaRotation > 180.0f) deltaRotation = deltaRotation - 360.0f;
+			Console::println("rot: success: rot: " + to_string(deltaRotation));
 		}
 		gizmoRotationLastResult = lineTriangleContact;
 		gizmoRotationLastResultAvailable = true;
@@ -291,70 +316,84 @@ bool Gizmo::determineGizmoRotation(int mouseX, int mouseY, vector<Vector3> verti
 
 bool Gizmo::determineGizmoDeltaTransformations(int mouseLastX, int mouseLastY, int mouseX, int mouseY, Vector3& deltaTranslation, Vector3& deltaRotation, Vector3& deltaScale) {
 	if (getGizmoMode() == GIZMOMODE_NONE) return false;
-	auto deltaX = mouseX - mouseLastX;
-	auto deltaY = mouseY - mouseLastY;
+
 	deltaTranslation.set(0.0f, 0.0f, 0.0f);
 	deltaRotation.set(0.0f, 0.0f, 0.0f);
 	deltaScale.set(1.0f, 1.0f, 1.0f);
 	Vector3 gizmoDeltaMovement;
-	// we need to adjust planes, as currently we have a orthogonal projection just like real coordinate system
-	const vector<Vector3> planeXY =
-		{
-			Vector3(-5000.0f, -5000.0f, 0.0f),
-			Vector3(-5000.0f, 5000.0f, 0.0f),
-			Vector3(5000.0f, 5000.0f, 0.0f),
-			Vector3(5000.0f, -5000.0f, 0.0f)
-		};
-	const vector<Vector3> planeXZ =
-		{
-			Vector3(-5000.0f, 0.0f, -5000.0f),
-			Vector3(-5000.0f, 0.0f, 5000.0f),
-			Vector3(5000.0f, 0.0f, 5000.0f),
-			Vector3(5000.0f, 0.0f, -5000.0f)
-		};
-	const vector<Vector3> planeYZ =
-		{
-			Vector3(0.0f, -5000.0f, -5000.0f),
-			Vector3(0.0f, -5000.0f, 5000.0f),
-			Vector3(0.0f, 5000.0f, 5000.0f),
-			Vector3(0.0f, 5000.0f, -5000.0f)
-		};
+
+	//
+	const array<Vector3, 4> planeXY = {
+		Vector3(-5000.0f, -5000.0f, 0.0f),
+		Vector3(-5000.0f, 5000.0f, 0.0f),
+		Vector3(5000.0f, 5000.0f, 0.0f),
+		Vector3(5000.0f, -5000.0f, 0.0f)
+	};
+	const array<Vector3, 4> planeXZ = {
+		Vector3(-5000.0f, 0.0f, -5000.0f),
+		Vector3(-5000.0f, 0.0f, 5000.0f),
+		Vector3(5000.0f, 0.0f, 5000.0f),
+		Vector3(5000.0f, 0.0f, -5000.0f)
+	};
+	const array<Vector3, 4> planeYZ = {
+		Vector3(0.0f, -5000.0f, -5000.0f),
+		Vector3(0.0f, -5000.0f, 5000.0f),
+		Vector3(0.0f, 5000.0f, 5000.0f),
+		Vector3(0.0f, 5000.0f, -5000.0f)
+	};
+
+	//
+	const array<array<Vector3, 4>, 2> planesX = {{
+		planeXY,
+		planeXZ
+	}};
+	const array<array<Vector3, 4>, 2> planesY = {{
+		planeXY,
+		planeYZ
+	}};
+	const array<array<Vector3, 4>, 2> planesZ = {{
+		planeXZ,
+		planeYZ
+	}};
+	const array<Vector3, 2> planesXNormals = {
+		Vector3(0.0f, 0.0f, -1.0f),
+		Vector3(0.0f, -1.0f, 0.0f)
+	};
+	const array<Vector3, 2> planesYNormals = {{
+		Vector3(0.0f, 0.0f, -1.0f),
+		Vector3(-1.0f, 0.0f, 0.0f)
+	}};
+	const array<Vector3, 2> planesZNormals = {{
+		Vector3(0.0f, -1.0f, 0.0f),
+		Vector3(-1.0f, 0.0f, 0.0f)
+	}};
+
 	switch (getGizmoMode()) {
 		case GIZMOMODE_TRANSLATE_X:
 			{
-				// XXX
-				vector<Vector3> vertices = planeXY;
-				float direction;
-				if (determineGizmoMovement(mouseX, mouseY, vertices, gizmoDeltaMovement, direction) == true) {
+				if (determineGizmoMovement(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_X, Vector3(1.0f, 0.0, 0.0f), gizmoDeltaMovement) == true) {
 					deltaTranslation.setX(gizmoDeltaMovement.getX());
 				}
 				break;
 			}
 		case GIZMOMODE_TRANSLATE_Y:
 			{
-				// XXX
-				vector<Vector3> vertices = planeXY;
-				float direction;
-				if (determineGizmoMovement(mouseX, mouseY, vertices, gizmoDeltaMovement, direction) == true) {
+				if (determineGizmoMovement(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Y, Vector3(0.0f, 1.0, 0.0f), gizmoDeltaMovement) == true) {
 					deltaTranslation.setY(gizmoDeltaMovement.getY());
 				}
 				break;
 			}
 		case GIZMOMODE_TRANSLATE_Z:
 			{
-				// XXX
-				vector<Vector3> vertices = planeYZ;
-				float direction;
-				if (determineGizmoMovement(mouseX, mouseY, vertices, gizmoDeltaMovement, direction) == true) {
+				if (determineGizmoMovement(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Z, Vector3(0.0f, 0.0, 1.0f), gizmoDeltaMovement) == true) {
 					deltaTranslation.setZ(gizmoDeltaMovement.getZ());
 				}
 				break;
 			}
 		case GIZMOMODE_TRANSLATEPLANE_X:
 			{
-				vector<Vector3> vertices = planeYZ;
-				float direction;
-				if (determineGizmoMovement(mouseX, mouseY, vertices, gizmoDeltaMovement, direction) == true) {
+				if (determineGizmoMovement(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Y, Vector3(0.0f, 1.0, 0.0f), gizmoDeltaMovement) == true &&
+					determineGizmoMovement(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Z, Vector3(0.0f, 0.0, 1.0f), gizmoDeltaMovement) == true) {
 					deltaTranslation.setY(gizmoDeltaMovement.getY());
 					deltaTranslation.setZ(gizmoDeltaMovement.getZ());
 				}
@@ -362,9 +401,8 @@ bool Gizmo::determineGizmoDeltaTransformations(int mouseLastX, int mouseLastY, i
 			}
 		case GIZMOMODE_TRANSLATEPLANE_Y:
 			{
-				vector<Vector3> vertices = planeXZ;
-				float direction;
-				if (determineGizmoMovement(mouseX, mouseY, vertices, gizmoDeltaMovement, direction) == true) {
+				if (determineGizmoMovement(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_X, Vector3(1.0f, 0.0, 0.0f), gizmoDeltaMovement) == true &&
+					determineGizmoMovement(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Z, Vector3(0.0f, 0.0, 1.0f), gizmoDeltaMovement) == true) {
 					deltaTranslation.setX(gizmoDeltaMovement.getX());
 					deltaTranslation.setZ(gizmoDeltaMovement.getZ());
 				}
@@ -372,9 +410,8 @@ bool Gizmo::determineGizmoDeltaTransformations(int mouseLastX, int mouseLastY, i
 			}
 		case GIZMOMODE_TRANSLATEPLANE_Z:
 			{
-				vector<Vector3> vertices = planeXY;
-				float direction;
-				if (determineGizmoMovement(mouseX, mouseY, vertices, gizmoDeltaMovement, direction) == true) {
+				if (determineGizmoMovement(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_X, Vector3(1.0f, 0.0, 0.0f), gizmoDeltaMovement) == true &&
+					determineGizmoMovement(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Y, Vector3(0.0f, 1.0, 0.0f), gizmoDeltaMovement) == true) {
 					deltaTranslation.setX(gizmoDeltaMovement.getX());
 					deltaTranslation.setY(gizmoDeltaMovement.getY());
 				}
@@ -382,98 +419,100 @@ bool Gizmo::determineGizmoDeltaTransformations(int mouseLastX, int mouseLastY, i
 			}
 		case GIZMOMODE_SCALE_X:
 			{
-				vector<Vector3> vertices = planeXZ;
-				float direction;
-				if (determineGizmoMovement(mouseX, mouseY, vertices, gizmoDeltaMovement, direction) == true) {
-					deltaScale.add(Vector3(direction * (gizmoDeltaMovement.getX() * Math::sign(gizmoDeltaMovement.getX())), 0.0f, 0.0f));
+				if (determineGizmoScale(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_X, rotationsMatrix.multiply(Vector3(1.0f, 0.0, 0.0f)).normalize(), gizmoDeltaMovement) == true) {
+					deltaScale.add(gizmoDeltaMovement);
 				}
 				break;
 			}
 		case GIZMOMODE_SCALE_Y:
 			{
-				vector<Vector3> vertices =
-					(Math::abs(engine->getCamera()->getForwardVector().getZ()) >= Math::abs(engine->getCamera()->getForwardVector().getX()) || Math::abs(engine->getCamera()->getForwardVector().getZ() - engine->getCamera()->getForwardVector().getX()) < 0.01f) &&
-					(Math::abs(engine->getCamera()->getForwardVector().getZ()) >= Math::abs(engine->getCamera()->getForwardVector().getY()) || Math::abs(engine->getCamera()->getForwardVector().getZ() - engine->getCamera()->getForwardVector().getY()) < 0.01f)?
-						planeXY:
-						planeYZ;
-				float direction;
-				if (determineGizmoMovement(mouseX, mouseY, vertices, gizmoDeltaMovement, direction) == true) {
-					deltaScale.add(Vector3(0.0f, direction * (gizmoDeltaMovement.getY() * Math::sign(gizmoDeltaMovement.getY())), 0.0f));
+				if (determineGizmoScale(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Y, rotationsMatrix.multiply(Vector3(0.0f, 1.0, 0.0f)).normalize(), gizmoDeltaMovement) == true) {
+					deltaScale.add(gizmoDeltaMovement);
 				}
 				break;
 			}
 		case GIZMOMODE_SCALE_Z:
 			{
-				vector<Vector3> vertices = planeXZ;
-				float direction;
-				if (determineGizmoMovement(mouseX, mouseY, vertices, gizmoDeltaMovement, direction) == true) {
-					deltaScale.add(Vector3(0.0f, 0.0f, direction * (gizmoDeltaMovement.getZ() * Math::sign(gizmoDeltaMovement.getZ()))));
+				if (determineGizmoScale(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Z, rotationsMatrix.multiply(Vector3(0.0f, 0.0, 1.0f)).normalize(), gizmoDeltaMovement) == true) {
+					deltaScale.add(gizmoDeltaMovement);
 				}
 				break;
 			}
 		case GIZMOMODE_SCALEPLANE_X:
 			{
-				vector<Vector3> vertices = planeYZ;
-				float direction;
-				if (determineGizmoMovement(mouseX, mouseY, vertices, gizmoDeltaMovement, direction) == true) {
-					deltaScale.add(Vector3(0.0f, gizmoDeltaMovement.getY(), gizmoDeltaMovement.getZ()));
+				if (determineGizmoScale(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Y, Vector3(0.0f, 1.0, 0.0f), gizmoDeltaMovement) == true &&
+					determineGizmoScale(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Z, Vector3(0.0f, 0.0, 1.0f), gizmoDeltaMovement) == true) {
+					deltaScale.add(gizmoDeltaMovement);
 				}
 				break;
 			}
 		case GIZMOMODE_SCALEPLANE_Y:
 			{
-				vector<Vector3> vertices = planeXZ;
-				float direction;
-				if (determineGizmoMovement(mouseX, mouseY, vertices, gizmoDeltaMovement, direction) == true) {
-					deltaScale.add(Vector3(gizmoDeltaMovement.getX(), 0.0f, gizmoDeltaMovement.getZ()));
+				if (determineGizmoScale(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_X, Vector3(1.0f, 0.0, 0.0f), gizmoDeltaMovement) == true &&
+					determineGizmoScale(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Z, Vector3(0.0f, 0.0, 1.0f), gizmoDeltaMovement) == true) {
+					deltaScale.add(gizmoDeltaMovement);
 				}
 				break;
 			}
 		case GIZMOMODE_SCALEPLANE_Z:
 			{
-				vector<Vector3> vertices = planeXY;
-				float direction;
-				if (determineGizmoMovement(mouseX, mouseY, vertices, gizmoDeltaMovement, direction) == true) {
-					deltaScale.add(Vector3(gizmoDeltaMovement.getX(), gizmoDeltaMovement.getY(), 0.0f));
+				if (determineGizmoScale(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_X, Vector3(1.0f, 0.0, 0.0f), gizmoDeltaMovement) == true &&
+					determineGizmoScale(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Y, Vector3(0.0f, 1.0, 0.0f), gizmoDeltaMovement) == true) {
+					deltaScale.add(gizmoDeltaMovement);
 				}
 				break;
 			}
 		case GIZMOMODE_ROTATE_X:
 			{
-				vector<Vector3> vertices = planeYZ;
-				float gizmoDeltaRotation = 0.0f;
-				for (auto& vertex: vertices) {
-					vertex = rotationsMatrix.multiply(vertex);
-				}
-				auto planeNormal = rotationsMatrix.multiply(Vector3(-1.0f, 0.0f, 0.0f)).normalize();
-				if (determineGizmoRotation(mouseX, mouseY, vertices, planeNormal, gizmoDeltaRotation) == true) {
-					deltaRotation.setX(gizmoDeltaRotation);
+				for (auto i = 0; i < planesX.size(); i++) {
+					auto& planeVertices = planesX[i];
+					auto& planeNormal = planesXNormals[i];
+					float gizmoDeltaRotation = 0.0f;
+					auto vertices = planeVertices;
+					for (auto& vertex: vertices) {
+						vertex = rotationsMatrix.multiply(vertex);
+					}
+					auto planeNormalTransformed = rotationsMatrix.multiply(planeNormal).normalize();
+					if (determineGizmoRotation(mouseX, mouseY, vertices, planeNormalTransformed, gizmoDeltaRotation) == true) {
+						deltaRotation.setX(gizmoDeltaRotation);
+						break;
+					}
 				}
 			}
 			break;
 		case GIZMOMODE_ROTATE_Y:
 			{
-				vector<Vector3> vertices = planeXZ;
-				float gizmoDeltaRotation = 0.0f;
-				for (auto& vertex: vertices) {
-					vertex = rotationsMatrix.multiply(vertex);
-				}
-				auto planeNormal = rotationsMatrix.multiply(Vector3(0.0f, -1.0f, 0.0f)).normalize();
-				if (determineGizmoRotation(mouseX, mouseY, vertices, planeNormal, gizmoDeltaRotation) == true) {
-					deltaRotation.setY(gizmoDeltaRotation);
+				for (auto i = 0; i < planesY.size(); i++) {
+					auto& planeVertices = planesY[i];
+					auto& planeNormal = planesYNormals[i];
+					float gizmoDeltaRotation = 0.0f;
+					auto vertices = planeVertices;
+					for (auto& vertex: vertices) {
+						vertex = rotationsMatrix.multiply(vertex);
+					}
+					auto planeNormalTransformed = rotationsMatrix.multiply(planeNormal).normalize();
+					if (determineGizmoRotation(mouseX, mouseY, vertices, planeNormalTransformed, gizmoDeltaRotation) == true) {
+						deltaRotation.setY(gizmoDeltaRotation);
+						break;
+					}
 				}
 			}
 			break;
 		case GIZMOMODE_ROTATE_Z:
 			{
-				vector<Vector3> vertices = planeXY;
-				float gizmoDeltaRotation = 0.0f;
-				for (auto& vertex: vertices) {
-					vertex = rotationsMatrix.multiply(vertex);
-				}
-				auto planeNormal = rotationsMatrix.multiply(Vector3(0.0f, 0.0f, -1.0f)).normalize();
-				if (determineGizmoRotation(mouseX, mouseY, vertices, planeNormal, gizmoDeltaRotation) == true) {
-					deltaRotation.setZ(gizmoDeltaRotation);
+				for (auto i = 0; i < planesZ.size(); i++) {
+					auto& planeVertices = planesZ[i];
+					auto& planeNormal = planesZNormals[i];
+					float gizmoDeltaRotation = 0.0f;
+					auto vertices = planeVertices;
+					for (auto& vertex: vertices) {
+						vertex = rotationsMatrix.multiply(vertex);
+					}
+					auto planeNormalTransformed = rotationsMatrix.multiply(planeNormal).normalize();
+					if (determineGizmoRotation(mouseX, mouseY, vertices, planeNormalTransformed, gizmoDeltaRotation) == true) {
+						deltaRotation.setZ(gizmoDeltaRotation);
+						break;
+					}
 				}
 			}
 			break;
@@ -489,6 +528,7 @@ bool Gizmo::determineGizmoMode(Entity* selectedEntity, Node* selectedEntityNode)
 		StringTools::startsWith(selectedEntity->getId(), id + ".tdme.gizmo.") == true && selectedEntityNode != nullptr) {
 		auto selectedEntityNodeId = selectedEntityNode->getId();
 		if (StringTools::startsWith(selectedEntityNodeId, "all_") == true) selectedEntityNodeId = StringTools::substring(selectedEntityNodeId, 4);
+		Console::println("Gizmo::determineGizmoMode(): " + selectedEntityNodeId);
 		if (selectedEntityNodeId == "translate_x") setGizmoMode(GIZMOMODE_TRANSLATE_X); else
 		if (selectedEntityNodeId == "translate_y") setGizmoMode(GIZMOMODE_TRANSLATE_Y); else
 		if (selectedEntityNodeId == "translate_z") setGizmoMode(GIZMOMODE_TRANSLATE_Z); else
