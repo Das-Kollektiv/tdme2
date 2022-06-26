@@ -62,12 +62,8 @@ void Gizmo::updateGizmo(const Vector3& gizmoTranslation, const Transformations& 
 	gizmoTranslationLastResultAvailable = false;
 	gizmoRotationLastResultAvailable = false;
 	this->gizmoTranslation = gizmoTranslation;
+	orthogonalGizmoTranslation = computeOrthogonalGizmoCoordinate(gizmoTranslation);
 	Object* gizmoEntity = nullptr;
-	Vector4 orthogonalGizmoCenterNDC = engine->getCamera()->getModelViewProjectionMatrix().multiply(Vector4(gizmoTranslation, 1.0f));
-	orthogonalGizmoCenterNDC.scale(1.0f / orthogonalGizmoCenterNDC.getW());
-	orthogonalGizmoTranslation.setX(orthogonalGizmoCenterNDC.getX() * (engine->getWidth() * 0.5f));
-	orthogonalGizmoTranslation.setY(orthogonalGizmoCenterNDC.getY() * (engine->getHeight() * 0.5f));
-	orthogonalGizmoTranslation.setZ(GIZMO_ORTHO_DEFAULT_Z);
 	switch (getGizmoType()) {
 		case GIZMOTYPE_ALL:
 			{
@@ -216,7 +212,7 @@ void Gizmo::removeGizmo() {
 }
 
 bool Gizmo::determineGizmoMovement(int mouseX, int mouseY, int axisIdx, const Vector3& axis, Vector3& deltaMovement) {
-	Console::println("a: " + to_string(deltaMovement[axisIdx]));
+	// engine mouse position for near, far
 	auto nearPlaneWorldCoordinate = engine->computeWorldCoordinateByMousePosition(mouseX, mouseY, 0.0f);
 	auto farPlaneWorldCoordinate = engine->computeWorldCoordinateByMousePosition(mouseX, mouseY, 1.0f);
 	Vector3 axisMin = axis.clone().scale(-5000.0f);
@@ -238,45 +234,34 @@ bool Gizmo::determineGizmoMovement(int mouseX, int mouseY, int axisIdx, const Ve
 		}
 	}
 
-	//
-	Vector3 contactOnAxis;
-	Vector3 contactOnAxisTmp;
-	LineSegment::computeClosestPointsOnLineSegments(axisMin, axisMax, nearPlaneWorldCoordinate, farPlaneWorldCoordinate, contactOnAxis, contactOnAxisTmp);
+	// compute closest points on near, far mouse positions line segment and axis
+	Vector3 gizmoTranslationOnAxis;
+	Vector3 gizmoTranslationOnAxisTmp;
+	LineSegment::computeClosestPointsOnLineSegments(axisMin, axisMax, nearPlaneWorldCoordinate, farPlaneWorldCoordinate, gizmoTranslationOnAxis, gizmoTranslationOnAxisTmp);
 
-	//
-	// https://stackoverflow.com/questions/54987526/switching-from-perspective-to-orthogonal-keeping-the-same-view-size-of-model-and
-	// https://stackoverflow.com/questions/48187416/how-to-switch-between-perspective-and-orthographic-cameras-keeping-size-of-desir
-
-	/*
-	float aspect = width / height
-	float size_y = ratio_size_per_depth * distance;
-	float size_x = ratio_size_per_depth * distance * aspect;
-	*/
-
-	//
-	auto distance = contactOnAxis.clone().sub(engine->getCamera()->getLookFrom()).computeLength();
-	//auto ratioSizePerDepth = Math::atan((engine->getCamera()->getFovX() / 2.0) * 3.1415927f / 180.0f) * 2.0f;
-
-	/*
-	var fov_y   = 45;
-	var depht_s = Math.tan(fov_y/2.0 * Math.PI/180.0) * 2.0;
-	*/
-	auto ratioSizePerDepth = Math::atan((45.0f / 2.0f) * 3.1415927f / 180.0f) * 2.0f;
-	auto scale = distance * ratioSizePerDepth/* * (engine->getCamera()->getWidth() / engine->getCamera()->getHeight())*/;
-
-	Console::println("d: " + to_string(distance));
-	Console::println("s: " + to_string(scale));
-
-	Vector3 contactOnAxisB;
-	Vector3 contactOnAxisBTmp;
-	LineSegment::computeClosestPointsOnLineSegments(axisMin, axisMax, gizmoTranslation.clone().add(mouseDeltaPosition), gizmoTranslation.clone().add(mouseDeltaPosition), contactOnAxisB, contactOnAxisBTmp);
+	// do we already have a old result
 	auto success = gizmoTranslationLastResultAvailable == true;
 	if (success == true) {
-		deltaMovement[axisIdx] = contactOnAxis.clone().sub(gizmoTranslationLastResult)[axisIdx] * scale / ratioSizePerDepth;
+		deltaMovement[axisIdx] = gizmoTranslationOnAxis.clone().sub(gizmoTranslationLastResult)[axisIdx];
+		// movement length could by determined by mouseX, mouseY with depth from gizmo in world and one result back of the same and its length, ill try next
+		auto movementLength = 1.0f;
+		if (deltaMovement[axisIdx] < Math::EPSILON) {
+			deltaMovement[axisIdx] = -1.0f;
+			deltaMovement[axisIdx]*= movementLength;
+		} else
+		if (deltaMovement[axisIdx] > Math::EPSILON) {
+			deltaMovement[axisIdx] = 1.0f;
+			deltaMovement[axisIdx]*= movementLength;
+		} else {
+			deltaMovement[axisIdx] = 0.0f;
+		}
 	}
-	gizmoTranslationLastResult = contactOnAxis;
+
+	// what ever, we have a new one
+	gizmoTranslationLastResult = gizmoTranslationOnAxis;
 	gizmoTranslationLastResultAvailable = true;
-	Console::println("b: " + to_string(deltaMovement[axisIdx]));
+
+	//
 	return success;
 }
 

@@ -4,6 +4,8 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Camera.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/Transformations.h>
 #include <tdme/math/Matrix4x4.h>
@@ -13,6 +15,7 @@
 using std::array;
 
 using tdme::engine::model::Node;
+using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Object;
@@ -78,6 +81,21 @@ private:
 	Vector3 gizmoRotationLastResult;
 	Vector3 orthogonalGizmoTranslation;
 	Vector3 gizmoHandleDeltaPosition;
+
+	/**
+	 * Compute orthogonal gizmo coordinate
+	 * @param worldCoordinate world coordinate to compute
+	 * @return orthogonal gizmo coordinate
+	 */
+	inline Vector3 computeOrthogonalGizmoCoordinate(const Vector3& worldCoordinate) {
+		Vector4 orthogonalGizmoCoordinateNDC = engine->getCamera()->getModelViewProjectionMatrix().multiply(Vector4(worldCoordinate, 1.0f));
+		orthogonalGizmoCoordinateNDC.scale(1.0f / orthogonalGizmoCoordinateNDC.getW());
+		Vector3 orthogonalGizmoCoordinate;
+		orthogonalGizmoCoordinate.setX(orthogonalGizmoCoordinateNDC.getX() * (engine->getWidth() * 0.5f));
+		orthogonalGizmoCoordinate.setY(orthogonalGizmoCoordinateNDC.getY() * (engine->getHeight() * 0.5f));
+		orthogonalGizmoCoordinate.setZ(GIZMO_ORTHO_DEFAULT_Z);
+		return orthogonalGizmoCoordinate;
+	}
 
 public:
 	/**
