@@ -50,24 +50,24 @@ Gizmo::Gizmo(Engine* engine, const string& id, int32_t gizmoTypeMask)
 	this->gizmoTypeMask = gizmoTypeMask;
 	setGizmoType(GIZMOTYPE_ALL);
 	setGizmoMode(GIZMOMODE_NONE);
-	gizmoMovementLastResultAvailable = false;
+	gizmoTranslationLastResultAvailable = false;
 	gizmoRotationLastResultAvailable = false;
+	mouseDeltaPositionAvailable = false;
 }
 
 Gizmo::~Gizmo() {
 }
 
-void Gizmo::updateGizmo(const Vector3& gizmoCenter, const Transformations& transformations) {
-	gizmoMovementLastResultAvailable = false;
+void Gizmo::updateGizmo(const Vector3& gizmoTranslation, const Transformations& transformations) {
+	gizmoTranslationLastResultAvailable = false;
 	gizmoRotationLastResultAvailable = false;
-	this->gizmoTranslation = gizmoCenter;
+	this->gizmoTranslation = gizmoTranslation;
 	Object* gizmoEntity = nullptr;
-	auto scale = 150.0f;
-	Vector4 orthogonalGizmoCenterNDC = engine->getCamera()->getModelViewProjectionMatrix().multiply(Vector4(gizmoCenter, 1.0f));
+	Vector4 orthogonalGizmoCenterNDC = engine->getCamera()->getModelViewProjectionMatrix().multiply(Vector4(gizmoTranslation, 1.0f));
 	orthogonalGizmoCenterNDC.scale(1.0f / orthogonalGizmoCenterNDC.getW());
 	orthogonalGizmoTranslation.setX(orthogonalGizmoCenterNDC.getX() * (engine->getWidth() * 0.5f));
 	orthogonalGizmoTranslation.setY(orthogonalGizmoCenterNDC.getY() * (engine->getHeight() * 0.5f));
-	orthogonalGizmoTranslation.setZ(-200.0f);
+	orthogonalGizmoTranslation.setZ(GIZMO_ORTHO_DEFAULT_Z);
 	switch (getGizmoType()) {
 		case GIZMOTYPE_ALL:
 			{
@@ -82,7 +82,7 @@ void Gizmo::updateGizmo(const Vector3& gizmoCenter, const Transformations& trans
 					gizmoEntity->setFrustumCulling(false);
 					gizmoEntity->setRenderPass(Entity::RENDERPASS_GIZMO);
 					gizmoEntity->setTranslation(orthogonalGizmoTranslation);
-					gizmoEntity->setScale(Vector3(scale, scale, scale));
+					gizmoEntity->setScale(Vector3(GIZMO_ORTHO_DEFAULT_SCALE, GIZMO_ORTHO_DEFAULT_SCALE, GIZMO_ORTHO_DEFAULT_SCALE));
 					gizmoEntity->update();
 					gizmoEntity = dynamic_cast<Object*>(engine->getEntity(id + ".tdme.gizmo.rotations"));
 					if (gizmoEntity == nullptr) engine->addEntity(gizmoEntity = new Object(id + ".tdme.gizmo.rotations", Tools::getGizmoRotations()));
@@ -90,7 +90,7 @@ void Gizmo::updateGizmo(const Vector3& gizmoCenter, const Transformations& trans
 					gizmoEntity->setFrustumCulling(false);
 					gizmoEntity->setRenderPass(Entity::RENDERPASS_GIZMO);
 					gizmoEntity->setTranslation(orthogonalGizmoTranslation);
-					gizmoEntity->setScale(Vector3(scale, scale, scale));
+					gizmoEntity->setScale(Vector3(GIZMO_ORTHO_DEFAULT_SCALE, GIZMO_ORTHO_DEFAULT_SCALE, GIZMO_ORTHO_DEFAULT_SCALE));
 					gizmoEntity->update();
 				} else
 				if ((gizmoTypeMask & GIZMOTYPE_TRANSLATE) == GIZMOTYPE_TRANSLATE &&
@@ -104,7 +104,7 @@ void Gizmo::updateGizmo(const Vector3& gizmoCenter, const Transformations& trans
 					gizmoEntity->setFrustumCulling(false);
 					gizmoEntity->setRenderPass(Entity::RENDERPASS_GIZMO);
 					gizmoEntity->setTranslation(orthogonalGizmoTranslation);
-					gizmoEntity->setScale(Vector3(scale, scale, scale));
+					gizmoEntity->setScale(Vector3(GIZMO_ORTHO_DEFAULT_SCALE, GIZMO_ORTHO_DEFAULT_SCALE, GIZMO_ORTHO_DEFAULT_SCALE));
 					gizmoEntity->update();
 				} else {
 					if ((gizmoTypeMask & GIZMOTYPE_TRANSLATE) == GIZMOTYPE_TRANSLATE) {
@@ -117,7 +117,7 @@ void Gizmo::updateGizmo(const Vector3& gizmoCenter, const Transformations& trans
 						gizmoEntity->setFrustumCulling(false);
 						gizmoEntity->setRenderPass(Entity::RENDERPASS_GIZMO);
 						gizmoEntity->setTranslation(orthogonalGizmoTranslation);
-						gizmoEntity->setScale(Vector3(scale, scale, scale));
+						gizmoEntity->setScale(Vector3(GIZMO_ORTHO_DEFAULT_SCALE, GIZMO_ORTHO_DEFAULT_SCALE, GIZMO_ORTHO_DEFAULT_SCALE));
 						gizmoEntity->update();
 					}
 					if ((gizmoTypeMask & GIZMOTYPE_ROTATE) == GIZMOTYPE_ROTATE) {
@@ -129,7 +129,7 @@ void Gizmo::updateGizmo(const Vector3& gizmoCenter, const Transformations& trans
 						gizmoEntity->setPickable(true);
 						gizmoEntity->setRenderPass(Entity::RENDERPASS_GIZMO);
 						gizmoEntity->setTranslation(orthogonalGizmoTranslation);
-						gizmoEntity->setScale(Vector3(scale, scale, scale));
+						gizmoEntity->setScale(Vector3(GIZMO_ORTHO_DEFAULT_SCALE, GIZMO_ORTHO_DEFAULT_SCALE, GIZMO_ORTHO_DEFAULT_SCALE));
 						gizmoEntity->update();
 					}
 					if ((gizmoTypeMask & GIZMOTYPE_SCALE) == GIZMOTYPE_SCALE) {
@@ -142,7 +142,7 @@ void Gizmo::updateGizmo(const Vector3& gizmoCenter, const Transformations& trans
 						gizmoEntity->setFrustumCulling(false);
 						gizmoEntity->setRenderPass(Entity::RENDERPASS_GIZMO);
 						gizmoEntity->setTranslation(orthogonalGizmoTranslation);
-						gizmoEntity->setScale(Vector3(scale, scale, scale));
+						gizmoEntity->setScale(Vector3(GIZMO_ORTHO_DEFAULT_SCALE, GIZMO_ORTHO_DEFAULT_SCALE, GIZMO_ORTHO_DEFAULT_SCALE));
 						gizmoEntity->update();
 					}
 				}
@@ -159,7 +159,7 @@ void Gizmo::updateGizmo(const Vector3& gizmoCenter, const Transformations& trans
 				gizmoEntity->setFrustumCulling(false);
 				gizmoEntity->setRenderPass(Entity::RENDERPASS_GIZMO);
 				gizmoEntity->setTranslation(orthogonalGizmoTranslation);
-				gizmoEntity->setScale(Vector3(scale, scale, scale));
+				gizmoEntity->setScale(Vector3(GIZMO_ORTHO_DEFAULT_SCALE, GIZMO_ORTHO_DEFAULT_SCALE, GIZMO_ORTHO_DEFAULT_SCALE));
 				gizmoEntity->update();
 				break;
 			}
@@ -174,7 +174,7 @@ void Gizmo::updateGizmo(const Vector3& gizmoCenter, const Transformations& trans
 				gizmoEntity->setFrustumCulling(false);
 				gizmoEntity->setRenderPass(Entity::RENDERPASS_GIZMO);
 				gizmoEntity->setTranslation(orthogonalGizmoTranslation);
-				gizmoEntity->setScale(Vector3(scale, scale, scale));
+				gizmoEntity->setScale(Vector3(GIZMO_ORTHO_DEFAULT_SCALE, GIZMO_ORTHO_DEFAULT_SCALE, GIZMO_ORTHO_DEFAULT_SCALE));
 				gizmoEntity->update();
 				break;
 			}
@@ -189,7 +189,7 @@ void Gizmo::updateGizmo(const Vector3& gizmoCenter, const Transformations& trans
 				gizmoEntity->setFrustumCulling(false);
 				gizmoEntity->setRenderPass(Entity::RENDERPASS_GIZMO);
 				gizmoEntity->setTranslation(orthogonalGizmoTranslation);
-				gizmoEntity->setScale(Vector3(scale, scale, scale));
+				gizmoEntity->setScale(Vector3(GIZMO_ORTHO_DEFAULT_SCALE, GIZMO_ORTHO_DEFAULT_SCALE, GIZMO_ORTHO_DEFAULT_SCALE));
 				gizmoEntity->update();
 				break;
 			}
@@ -216,25 +216,67 @@ void Gizmo::removeGizmo() {
 }
 
 bool Gizmo::determineGizmoMovement(int mouseX, int mouseY, int axisIdx, const Vector3& axis, Vector3& deltaMovement) {
+	Console::println("a: " + to_string(deltaMovement[axisIdx]));
 	auto nearPlaneWorldCoordinate = engine->computeWorldCoordinateByMousePosition(mouseX, mouseY, 0.0f);
 	auto farPlaneWorldCoordinate = engine->computeWorldCoordinateByMousePosition(mouseX, mouseY, 1.0f);
-	Vector3 contactOnAxis;
-	Vector3 contactOnAxisTmp;
-	LineSegment::computeClosestPointsOnLineSegments(axis.clone().scale(-5000.0f), axis.clone().scale(+5000.0f), nearPlaneWorldCoordinate, farPlaneWorldCoordinate, contactOnAxis, contactOnAxisTmp);
-	auto success = gizmoMovementLastResultAvailable == true;
-	if (success == true) {
-		auto gizmoTranslationAxis = gizmoTranslation;
-		for (auto i = 0; i < 3; i++) {
-			if (i != axisIdx) {
-				gizmoTranslationAxis[i] = 0.0f;
-				contactOnAxis[i] = 0.0f;
+	Vector3 axisMin = axis.clone().scale(-5000.0f);
+	Vector3 axisMax = axis.clone().scale(5000.0f);
+	for (auto& plane: engine->getCamera()->getFrustum()->getPlanes()) {
+		Vector3 contact;
+		// TODO: contact == 0, 0, 0
+		if (LineSegment::doesLineSegmentCollideWithPlane(plane.getNormal(), plane.getDistance(), axisMin, axisMax, contact) == true) {
+			for (auto i = 0; i < 3; i++) {
+				if (contact[i] < -Math::EPSILON) {
+					axisMin = contact;
+					break;
+				} else
+				if (contact[i] > Math::EPSILON) {
+					axisMax = contact;
+					break;
+				}
 			}
 		}
-		auto contactOnAxisDelta = contactOnAxis.clone().sub(gizmoMovementLastResult);
-		deltaMovement[axisIdx] = contactOnAxis.clone().sub(gizmoMovementLastResult)[axisIdx];
 	}
-	gizmoMovementLastResult = contactOnAxis;
-	gizmoMovementLastResultAvailable = true;
+
+	//
+	Vector3 contactOnAxis;
+	Vector3 contactOnAxisTmp;
+	LineSegment::computeClosestPointsOnLineSegments(axisMin, axisMax, nearPlaneWorldCoordinate, farPlaneWorldCoordinate, contactOnAxis, contactOnAxisTmp);
+
+	//
+	// https://stackoverflow.com/questions/54987526/switching-from-perspective-to-orthogonal-keeping-the-same-view-size-of-model-and
+	// https://stackoverflow.com/questions/48187416/how-to-switch-between-perspective-and-orthographic-cameras-keeping-size-of-desir
+
+	/*
+	float aspect = width / height
+	float size_y = ratio_size_per_depth * distance;
+	float size_x = ratio_size_per_depth * distance * aspect;
+	*/
+
+	//
+	auto distance = contactOnAxis.clone().sub(engine->getCamera()->getLookFrom()).computeLength();
+	//auto ratioSizePerDepth = Math::atan((engine->getCamera()->getFovX() / 2.0) * 3.1415927f / 180.0f) * 2.0f;
+
+	/*
+	var fov_y   = 45;
+	var depht_s = Math.tan(fov_y/2.0 * Math.PI/180.0) * 2.0;
+	*/
+	auto ratioSizePerDepth = Math::atan((45.0f / 2.0f) * 3.1415927f / 180.0f) * 2.0f;
+	auto scale = distance * ratioSizePerDepth/* * (engine->getCamera()->getWidth() / engine->getCamera()->getHeight())*/;
+
+	Console::println("d: " + to_string(distance));
+	Console::println("s: " + to_string(scale));
+
+	Vector3 contactOnAxisB;
+	Vector3 contactOnAxisBTmp;
+	LineSegment::computeClosestPointsOnLineSegments(axisMin, axisMax, gizmoTranslation.clone().add(mouseDeltaPosition), gizmoTranslation.clone().add(mouseDeltaPosition), contactOnAxisB, contactOnAxisBTmp);
+	auto success = gizmoTranslationLastResultAvailable == true;
+	if (success == true) {
+		deltaMovement[axisIdx] = contactOnAxis.clone().sub(gizmoTranslationLastResult)[axisIdx] * scale / ;
+	}
+	gizmoTranslationLastResult = contactOnAxis;
+	gizmoTranslationLastResultAvailable = true;
+	Console::println("b: " + to_string(deltaMovement[axisIdx]));
 	return success;
 }
 
@@ -244,11 +286,11 @@ bool Gizmo::determineGizmoScale(int mouseX, int mouseY, int axisIdx, const Vecto
 	Vector3 contactOnAxis;
 	Vector3 contactOnAxisTmp;
 	LineSegment::computeClosestPointsOnLineSegments(axis.clone().scale(-5000.0f), axis.clone().scale(+5000.0f), nearPlaneWorldCoordinate, farPlaneWorldCoordinate, contactOnAxis, contactOnAxisTmp);
-	auto success = gizmoMovementLastResultAvailable == true;
+	auto success = gizmoTranslationLastResultAvailable == true;
 	if (success == true) {
 		auto direction = 1.0f;
-		if (gizmoMovementLastResult.clone().sub(gizmoTranslation).computeLengthSquared() > contactOnAxis.clone().sub(gizmoTranslation).computeLengthSquared()) direction = -1.0f;
-		deltaScale[axisIdx] = contactOnAxis.clone().sub(gizmoMovementLastResult).computeLength() * direction;
+		if (gizmoTranslationLastResult.clone().sub(gizmoTranslation).computeLengthSquared() > contactOnAxis.clone().sub(gizmoTranslation).computeLengthSquared()) direction = -1.0f;
+		deltaScale[axisIdx] = contactOnAxis.clone().sub(gizmoTranslationLastResult).computeLength() * direction;
 		/*
 		Console::println(
 			to_string(gizmoTranslation.getX()) + ", " +
@@ -262,11 +304,11 @@ bool Gizmo::determineGizmoScale(int mouseX, int mouseY, int axisIdx, const Vecto
 			to_string(contactOnAxis.getZ()) + ": " +
 			to_string(gizmoMovementLastResult.clone().sub(gizmoTranslation).computeLength()) + " / " +
 			to_string(contactOnAxis.clone().sub(gizmoTranslation).computeLength()) + ", d = " + to_string(direction)
-		);
+		);7
 		*/
 	}
-	gizmoMovementLastResult = contactOnAxis;
-	gizmoMovementLastResultAvailable = true;
+	gizmoTranslationLastResult = contactOnAxis;
+	gizmoTranslationLastResultAvailable = true;
 	return success;
 }
 
@@ -317,6 +359,20 @@ bool Gizmo::determineGizmoRotation(int mouseX, int mouseY, const array<Vector3, 
 bool Gizmo::determineGizmoDeltaTransformations(int mouseLastX, int mouseLastY, int mouseX, int mouseY, Vector3& deltaTranslation, Vector3& deltaRotation, Vector3& deltaScale) {
 	if (getGizmoMode() == GIZMOMODE_NONE) return false;
 
+	//
+	if (mouseDeltaPositionAvailable == false) {
+		auto gizmoHandleTranslationVP4 = engine->getCamera()->getModelViewProjectionMatrix().multiply(Vector4(gizmoTranslation + gizmoHandleDeltaPosition, 1.0f));
+		gizmoHandleTranslationVP4.scale(1.0f / gizmoHandleTranslationVP4.getW());
+		Vector3 gizmoHandleTranslationVP3(
+			gizmoHandleTranslationVP4.getX(),
+			gizmoHandleTranslationVP4.getY(),
+			gizmoHandleTranslationVP4.getZ()
+		);
+		mouseDeltaPosition = engine->computeWorldCoordinateByMousePosition(mouseX, mouseY, gizmoHandleTranslationVP3.getZ()).sub(gizmoTranslation);
+		mouseDeltaPositionAvailable = true;
+	}
+
+	//
 	deltaTranslation.set(0.0f, 0.0f, 0.0f);
 	deltaRotation.set(0.0f, 0.0f, 0.0f);
 	deltaScale.set(1.0f, 1.0f, 1.0f);
@@ -545,6 +601,16 @@ bool Gizmo::determineGizmoMode(Entity* selectedEntity, Node* selectedEntityNode)
 		if (selectedEntityNodeId == "scale_y_plane") setGizmoMode(GIZMOMODE_SCALEPLANE_Y); else
 		if (selectedEntityNodeId == "scale_z_plane") setGizmoMode(GIZMOMODE_SCALEPLANE_Z); else
 			setGizmoMode(GIZMOMODE_NONE);
+
+		if (gizmoMode != GIZMOMODE_NONE) {
+			gizmoHandleDeltaPosition.set(0.0f, 0.0f, 0.0f);
+			for (auto& vertex: selectedEntityNode->getVertices()) gizmoHandleDeltaPosition.add(vertex);
+			gizmoHandleDeltaPosition.scale(1.0f / static_cast<float>(selectedEntityNode->getVertices().size()));
+			// we only need Z
+			gizmoHandleDeltaPosition.setX(0.0f);
+			gizmoHandleDeltaPosition.setY(0.0f);
+		}
+		//
 		return true;
 	}
 	return false;

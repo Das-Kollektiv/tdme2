@@ -27,6 +27,9 @@ using tdme::math::Vector3;
 class tdme::tools::editor::misc::Gizmo
 {
 public:
+	static constexpr float GIZMO_ORTHO_DEFAULT_SCALE { 150.0f };
+	static constexpr float GIZMO_ORTHO_DEFAULT_Z { -200.0f };
+
 	enum GizmoAxisIdx {
 		GIZMOAXISIDX_NONE = -1,
 		GIZMOAXISIDX_X = 0,
@@ -67,11 +70,14 @@ private:
 	GizmoMode gizmoMode;
 	Matrix4x4 rotationsMatrix;
 	Vector3 gizmoTranslation;
-	Vector3 orthogonalGizmoTranslation;
-	bool gizmoMovementLastResultAvailable;
-	Vector3 gizmoMovementLastResult;
+	bool mouseDeltaPositionAvailable;
+	Vector3 mouseDeltaPosition;
+	bool gizmoTranslationLastResultAvailable;
+	Vector3 gizmoTranslationLastResult;
 	bool gizmoRotationLastResultAvailable;
 	Vector3 gizmoRotationLastResult;
+	Vector3 orthogonalGizmoTranslation;
+	Vector3 gizmoHandleDeltaPosition;
 
 public:
 	/**
@@ -139,16 +145,22 @@ public:
 	 * @param gizmoMode gizmo mode
 	 */
 	inline void setGizmoMode(GizmoMode gizmoMode) {
+		//
+		if (this->gizmoMode == gizmoMode) return;
+		//
 		this->gizmoMode = gizmoMode;
-		if (this->gizmoMode == GIZMOMODE_NONE) gizmoMovementLastResultAvailable = false;
+		//
+		gizmoTranslationLastResultAvailable = false;
+		gizmoRotationLastResultAvailable = false;
+		mouseDeltaPositionAvailable = false;
 	}
 
 	/**
 	 * Update gizmo
-	 * @param gizmoCenter GIZMO center
+	 * @param gizmoTranslation GIZMO translation
 	 * @param transformations transformations used for rotation
 	 */
-	void updateGizmo(const Vector3& gizmoCenter, const Transformations& transformations);
+	void updateGizmo(const Vector3& gizmoTranslation, const Transformations& transformations);
 
 	/**
 	 * @return GIZMO object
@@ -164,6 +176,7 @@ public:
 	 * Determine gizmo movement
 	 * @param mouseX current mouse X position
 	 * @param mouseY current mouse Y position
+	 * @param mouseDeltaPosition mouse delta position
 	 * @param axisIdx vector axis index
 	 * @param axis axis to check movement on
 	  * @param deltaMovement delta movement result

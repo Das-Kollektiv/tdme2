@@ -938,6 +938,13 @@ public:
 	}
 
 	/**
+	 * @return GIZMO Camera
+	 */
+	inline Camera* getGizmoCamera() {
+		return gizmoCamera;
+	}
+
+	/**
 	 * @return partition
 	 */
 	inline Partition* getPartition() {
