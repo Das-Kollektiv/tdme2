@@ -272,7 +272,7 @@ bool Gizmo::determineGizmoMovement(int mouseX, int mouseY, int axisIdx, const Ve
 	LineSegment::computeClosestPointsOnLineSegments(axisMin, axisMax, gizmoTranslation.clone().add(mouseDeltaPosition), gizmoTranslation.clone().add(mouseDeltaPosition), contactOnAxisB, contactOnAxisBTmp);
 	auto success = gizmoTranslationLastResultAvailable == true;
 	if (success == true) {
-		deltaMovement[axisIdx] = contactOnAxis.clone().sub(gizmoTranslationLastResult)[axisIdx] * scale / ;
+		deltaMovement[axisIdx] = contactOnAxis.clone().sub(gizmoTranslationLastResult)[axisIdx] * scale / ratioSizePerDepth;
 	}
 	gizmoTranslationLastResult = contactOnAxis;
 	gizmoTranslationLastResultAvailable = true;
