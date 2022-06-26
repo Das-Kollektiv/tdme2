@@ -95,7 +95,7 @@ public:
 	static bool doesLineSegmentCollideWithTriangle(const Vector3& p1, const Vector3& p2, const Vector3& p3, const Vector3& r1, const Vector3& r2, Vector3& contact);
 
 	/**
-	 * Does line segment collides with triangle
+	 * Does line segment collide with plane
 	 * @param n n plane normal
 	 * @param d d plane distance from origin
 	 * @param p1 p1 line segment point 1
