@@ -73,8 +73,6 @@ PrototypePhysicsSubView::PrototypePhysicsSubView(Engine* engine, PrototypePhysic
 	this->popUps = popUps;
 	this->prototypePhysicsSubController = prototypePhysicsSubController;
 	this->maxBoundingVolumeCount = maxBoundingVolumeCount;
-	this->mouseDownLastX = MOUSE_DOWN_LAST_POSITION_NONE;
-	this->mouseDownLastY = MOUSE_DOWN_LAST_POSITION_NONE;
 	this->displayBoundingVolumeIdx = DISPLAY_BOUNDINGVOLUMEIDX_ALL;
 	this->displayBoundingVolume = false;
 	this->boundingVolumeTypeMask = boundingVolumeTypeMask;
@@ -292,8 +290,6 @@ void PrototypePhysicsSubView::handleInputEvents(Prototype* prototype) {
 					event.setProcessed(true);
 				} else
 				if (determineGizmoMode(selectedEntity, selectedEntityNode) == true) {
-					mouseDownLastX = event.getXUnscaled();
-					mouseDownLastY = event.getYUnscaled();
 					event.setProcessed(true);
 				} else
 				if (selectedEntity != nullptr) {
@@ -307,7 +303,7 @@ void PrototypePhysicsSubView::handleInputEvents(Prototype* prototype) {
 					Vector3 deltaTranslation;
 					Vector3 deltaRotation;
 					Vector3 deltaScale;
-					if (determineGizmoDeltaTransformations(mouseDownLastX, mouseDownLastY, event.getXUnscaled(), event.getYUnscaled(), deltaTranslation, deltaRotation, deltaScale) == true) {
+					if (determineGizmoDeltaTransformations(event.getXUnscaled(), event.getYUnscaled(), deltaTranslation, deltaRotation, deltaScale) == true) {
 						totalDeltaScale.add(deltaScale.clone().sub(Vector3(1.0f, 1.0f, 1.0f)));
 						auto gizmoEntity = getGizmoObject();
 						auto selectedEntity = engine->getEntity("tdme.prototype.bv.editing");
@@ -339,8 +335,6 @@ void PrototypePhysicsSubView::handleInputEvents(Prototype* prototype) {
 							updateGizmo(prototype);
 						}
 					}
-					mouseDownLastX = event.getXUnscaled();
-					mouseDownLastY = event.getYUnscaled();
 					event.setProcessed(true);
 				}
 			}

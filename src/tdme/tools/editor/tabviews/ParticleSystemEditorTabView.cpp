@@ -158,8 +158,6 @@ void ParticleSystemEditorTabView::handleInputEvents()
 						event.setProcessed(true);
 					} else
 					if (determineGizmoMode(selectedEntity, selectedEntityNode) == true) {
-						mouseDownLastX = event.getXUnscaled();
-						mouseDownLastY = event.getYUnscaled();
 						event.setProcessed(true);
 					} else
 					if (selectedEntity != nullptr) {
@@ -184,7 +182,7 @@ void ParticleSystemEditorTabView::handleInputEvents()
 						Vector3 deltaTranslation;
 						Vector3 deltaRotation;
 						Vector3 deltaScale;
-						if (determineGizmoDeltaTransformations(mouseDownLastX, mouseDownLastY, event.getXUnscaled(), event.getYUnscaled(), deltaTranslation, deltaRotation, deltaScale) == true) {
+						if (determineGizmoDeltaTransformations(event.getXUnscaled(), event.getYUnscaled(), deltaTranslation, deltaRotation, deltaScale) == true) {
 							totalDeltaScale.add(deltaScale.clone().sub(Vector3(1.0f, 1.0f, 1.0f)));
 							auto gizmoEntity = getGizmoObject();
 							auto selectedEntity = engine->getEntity("model");
@@ -201,14 +199,9 @@ void ParticleSystemEditorTabView::handleInputEvents()
 										localTransformations.addRotation(Rotation::Y_AXIS, 0.0f);
 										localTransformations.addRotation(Rotation::X_AXIS, 0.0f);
 									}
-									if (selectedEntity->getRotationCount() == 3) {
-										localTransformations.addRotation(Rotation::Z_AXIS, 0.0f);
-										localTransformations.addRotation(Rotation::Y_AXIS, 0.0f);
-										localTransformations.addRotation(Rotation::X_AXIS, 0.0f);
-									}
-									localTransformations.setRotationAngle(3, localTransformations.getRotationAngle(3) + deltaRotation[2]);
-									localTransformations.setRotationAngle(4, localTransformations.getRotationAngle(4) + deltaRotation[1]);
-									localTransformations.setRotationAngle(5, localTransformations.getRotationAngle(5) + deltaRotation[0]);
+									localTransformations.setRotationAngle(0, localTransformations.getRotationAngle(0) + deltaRotation[2]);
+									localTransformations.setRotationAngle(1, localTransformations.getRotationAngle(1) + deltaRotation[1]);
+									localTransformations.setRotationAngle(2, localTransformations.getRotationAngle(2) + deltaRotation[0]);
 								}
 								localTransformations.update();
 								dynamic_cast<ParticleSystemEntity*>(selectedEntity)->setLocalTransformations(localTransformations);
@@ -221,8 +214,6 @@ void ParticleSystemEditorTabView::handleInputEvents()
 								updateGizmo();
 							}
 						}
-						mouseDownLastX = event.getXUnscaled();
-						mouseDownLastY = event.getYUnscaled();
 						event.setProcessed(true);
 					}
 				}

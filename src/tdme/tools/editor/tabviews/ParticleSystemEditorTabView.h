@@ -72,8 +72,6 @@ private:
 
 	int particleSystemIdx { -1 };
 	Vector3 totalDeltaScale;
-	int mouseDownLastX { -1 };
-	int mouseDownLastY { -1 };
 
 protected:
 	/**

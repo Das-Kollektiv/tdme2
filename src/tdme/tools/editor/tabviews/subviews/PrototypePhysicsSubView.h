@@ -40,8 +40,6 @@ private:
 
 	int maxBoundingVolumeCount;
 
-	int mouseDownLastX;
-	int mouseDownLastY;
 	Vector3 totalDeltaScale;
 
 	int displayBoundingVolumeIdx;

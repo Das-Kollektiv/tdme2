@@ -116,8 +116,6 @@ private:
 	int placeEntityMouseX;
 	int placeEntityMouseY;
 	Vector3 placeEntityTranslation;
-	int mouseDownLastX;
-	int mouseDownLastY;
 	bool mouseDragging;
 	Entity* mouseDraggingLastEntity { nullptr };
 

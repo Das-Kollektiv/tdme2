@@ -1,6 +1,6 @@
 {
    "version":"1.99",
-   "ro":"XYZ",
+   "ro":"ZYX",
    "lights":[
       {
          "id":0,

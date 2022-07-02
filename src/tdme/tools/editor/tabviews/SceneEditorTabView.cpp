@@ -92,8 +92,6 @@ SceneEditorTabView::SceneEditorTabView(EditorView* editorView, const string& tab
 	this->placeEntityYRotation = 0;
 	this->placeEntityMouseX = MOUSE_DOWN_LAST_POSITION_NONE;
 	this->placeEntityMouseY = MOUSE_DOWN_LAST_POSITION_NONE;
-	this->mouseDownLastX = MOUSE_DOWN_LAST_POSITION_NONE;
-	this->mouseDownLastY = MOUSE_DOWN_LAST_POSITION_NONE;
 	this->mouseDragging = false;
 	this->pasteMode = false;
 	this->pasteModeValid = false;
@@ -265,15 +263,11 @@ void SceneEditorTabView::handleInputEvents()
 			if (event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
 				if (mouseDragging == false) {
 					mouseDragging = true;
-					mouseDownLastX = event.getXUnscaled();
-					mouseDownLastY = event.getYUnscaled();
 					mouseDraggingLastEntity = nullptr;
 					event.setProcessed(true);
 				}
 			} else {
 				if (mouseDragging == true) {
-					mouseDownLastX = MOUSE_DOWN_LAST_POSITION_NONE;
-					mouseDownLastY = MOUSE_DOWN_LAST_POSITION_NONE;
 					mouseDragging = false;
 					mouseDraggingLastEntity = nullptr;
 					event.setProcessed(true);
@@ -317,7 +311,7 @@ void SceneEditorTabView::handleInputEvents()
 					Vector3 deltaTranslation;
 					Vector3 deltaRotation;
 					Vector3 absoluteScale;
-					if (determineGizmoDeltaTransformations(mouseDownLastX, mouseDownLastY, event.getXUnscaled(), event.getYUnscaled(), deltaTranslation, deltaRotation, absoluteScale) == true) {
+					if (determineGizmoDeltaTransformations(event.getXUnscaled(), event.getYUnscaled(), deltaTranslation, deltaRotation, absoluteScale) == true) {
 						auto gizmoEntity = getGizmoObject();
 						if (gizmoEntity != nullptr) {
 							for (auto selectedEntityId: selectedEntityIds) {
@@ -428,10 +422,6 @@ void SceneEditorTabView::handleInputEvents()
 				}
 				event.setProcessed(true);
 			}
-		}
-		if (event.getButton() != MOUSE_BUTTON_NONE) {
-			mouseDownLastX = event.getXUnscaled();
-			mouseDownLastY = event.getYUnscaled();
 		}
 	}
 	if (keyDelete == true) {

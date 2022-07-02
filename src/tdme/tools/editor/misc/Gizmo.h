@@ -75,6 +75,8 @@ private:
 	Vector3 gizmoTranslation;
 	bool mouseDeltaPositionAvailable;
 	Vector3 mouseDeltaPosition;
+	bool gizmoTranslationHandleDiffAvailable;
+	Vector3 gizmoTranslationHandleDiff;
 	bool gizmoTranslationLastResultAvailable;
 	Vector3 gizmoTranslationLastResult;
 	bool gizmoRotationLastResultAvailable;
@@ -168,6 +170,7 @@ public:
 		//
 		this->gizmoMode = gizmoMode;
 		//
+		gizmoTranslationHandleDiffAvailable = false;
 		gizmoTranslationLastResultAvailable = false;
 		gizmoRotationLastResultAvailable = false;
 		mouseDeltaPositionAvailable = false;
@@ -226,15 +229,13 @@ public:
 
 	/**
 	 * Determine GIZMO delta transformations
-	 * @param mouseLastX last mouse X position
-	 * @param mouseLastY last mouse Y position
 	 * @param mouseX mouse X position
 	 * @param mouseY mouse Y position
 	 * @param deltaTranslation determined delta translation
 	 * @param deltaRotation determined delta rotations
 	 * @param deltaScale determined delta scale
 	 */
-	bool determineGizmoDeltaTransformations(int mouseLastX, int mouseLastY, int mouseX, int mouseY, Vector3& deltaTranslation, Vector3& deltaRotation, Vector3& deltaScale);
+	bool determineGizmoDeltaTransformations(int mouseX, int mouseY, Vector3& deltaTranslation, Vector3& deltaRotation, Vector3& deltaScale);
 
 	/**
 	 * Select GIZMO mode
