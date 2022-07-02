@@ -156,8 +156,6 @@ void ParticleSystemEditorTabView::handleInputEvents()
 						event.setProcessed(true);
 					} else
 					if (determineGizmoMode(selectedEntity, selectedEntityNode) == true) {
-						mouseDownLastX = event.getXUnscaled();
-						mouseDownLastY = event.getYUnscaled();
 						event.setProcessed(true);
 					} else
 					if (selectedEntity != nullptr) {
@@ -182,7 +180,7 @@ void ParticleSystemEditorTabView::handleInputEvents()
 						Vector3 deltaTranslation;
 						Vector3 deltaRotation;
 						Vector3 deltaScale;
-						if (determineGizmoDeltaTransform(mouseDownLastX, mouseDownLastY, event.getXUnscaled(), event.getYUnscaled(), deltaTranslation, deltaRotation, deltaScale) == true) {
+						if (determineGizmoDeltaTransformations(event.getXUnscaled(), event.getYUnscaled(), deltaTranslation, deltaRotation, deltaScale) == true) {
 							totalDeltaScale.add(deltaScale.clone().sub(Vector3(1.0f, 1.0f, 1.0f)));
 							auto gizmoEntity = getGizmoObject();
 							auto selectedEntity = engine->getEntity("model");
@@ -191,19 +189,21 @@ void ParticleSystemEditorTabView::handleInputEvents()
 							if (gizmoEntity != nullptr && selectedEntity != nullptr) {
 								selectedEntity->setTranslation(selectedEntity->getTranslation().clone().add(deltaTranslation));
 								selectedEntity->update();
-								auto localTransform = dynamic_cast<ParticleSystem*>(selectedEntity)->getLocalTransform();
-								localTransform.setScale(localTransform.getScale().clone().scale(deltaScale));
-								if (localTransform.getRotationCount() == 0) {
-									localTransform.addRotation(Rotation::Z_AXIS, 0.0f);
-									localTransform.addRotation(Rotation::Y_AXIS, 0.0f);
-									localTransform.addRotation(Rotation::X_AXIS, 0.0f);
+								auto localTransformations = dynamic_cast<ParticleSystem*>(selectedEntity)->getLocalTransform();
+								localTransformations.setScale(localTransformations.getScale().clone().scale(deltaScale));
+								if (deltaRotation.computeLengthSquared() > Math::square(Math::EPSILON) * 3.0f) {
+									if (localTransformations.getRotationCount() == 0) {
+										localTransformations.addRotation(Rotation::Z_AXIS, 0.0f);
+										localTransformations.addRotation(Rotation::Y_AXIS, 0.0f);
+										localTransformations.addRotation(Rotation::X_AXIS, 0.0f);
+									}
+									localTransformations.setRotationAngle(0, localTransformations.getRotationAngle(0) + deltaRotation[2]);
+									localTransformations.setRotationAngle(1, localTransformations.getRotationAngle(1) + deltaRotation[1]);
+									localTransformations.setRotationAngle(2, localTransformations.getRotationAngle(2) + deltaRotation[0]);
 								}
-								localTransform.setRotationAngle(0, localTransform.getRotationAngle(0) + deltaRotation[2]);
-								localTransform.setRotationAngle(1, localTransform.getRotationAngle(1) + deltaRotation[1]);
-								localTransform.setRotationAngle(2, localTransform.getRotationAngle(2) + deltaRotation[0]);
-								localTransform.update();
-								dynamic_cast<ParticleSystem*>(selectedEntity)->setLocalTransform(localTransform);
-								setGizmoRotation(localTransform);
+								localTransformations.update();
+								dynamic_cast<ParticleSystem*>(selectedEntity)->setLocalTransform(localTransformations);
+								setGizmoRotation(localTransformations);
 								applyParticleSystemTransform(dynamic_cast<ParticleSystem*>(selectedEntity), true);
 							}
 							if (Math::abs(deltaTranslation.getX()) > Math::EPSILON ||
@@ -212,8 +212,6 @@ void ParticleSystemEditorTabView::handleInputEvents()
 								updateGizmo();
 							}
 						}
-						mouseDownLastX = event.getXUnscaled();
-						mouseDownLastY = event.getYUnscaled();
 						event.setProcessed(true);
 					}
 				}
@@ -288,9 +286,13 @@ void ParticleSystemEditorTabView::reloadOutliner() {
 }
 
 void ParticleSystemEditorTabView::onCameraRotation() {
+	if (prototypePhysicsView->isEditingBoundingVolume(prototype) == true) prototypePhysicsView->updateGizmo(prototype);
+	if (getParticleSystemIndex() != -1) updateGizmo();
 }
 
 void ParticleSystemEditorTabView::onCameraScale() {
+	if (prototypePhysicsView->isEditingBoundingVolume(prototype) == true) prototypePhysicsView->updateGizmo(prototype);
+	if (getParticleSystemIndex() != -1) updateGizmo();
 }
 
 void ParticleSystemEditorTabView::playSound(const string& soundId) {

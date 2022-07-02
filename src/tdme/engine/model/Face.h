@@ -141,4 +141,9 @@ public:
 		return bitangentIndices;
 	}
 
+	/**
+	 * Change front face from counter clock wise to clock wise or clock wise to counter clock wise
+	 */
+	void changeFrontFace();
+
 };

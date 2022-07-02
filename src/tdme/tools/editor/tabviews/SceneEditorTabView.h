@@ -116,8 +116,6 @@ private:
 	int placeEntityMouseX;
 	int placeEntityMouseY;
 	Vector3 placeEntityTranslation;
-	int mouseDownLastX;
-	int mouseDownLastY;
 	bool mouseDragging;
 	Entity* mouseDraggingLastEntity { nullptr };
 
@@ -130,7 +128,7 @@ private:
 	vector<SceneEntity*> copiedEntities;
 	EntityPickingFilter* entityPickingFilterNoGrid { nullptr };
 	EntityPickingFilter* entityPickingFilterPlacing { nullptr };
-	bool needGizmoUpdate { false };
+	bool needsGizmoUpdate { false };
 
 	Vector3 multipleSelectionTranslation;
 	Vector3 multipleSelectionRotation;

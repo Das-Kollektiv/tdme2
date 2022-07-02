@@ -28,7 +28,7 @@ Camera::Camera(Renderer* renderer)
 	frustumMode = FRUSTUMMODE_PERSPECTIVE;
 	orthographicFrustumScale = 1.0f;
 	upVector.set(0.0f, 1.0f, 0.0f);
-	forwardVector.set(0.0f, 0.0f, 1.0f);
+	forwardVector.set(0.0f, 0.0f, -1.0f);
 	sideVector.set(1.0f, 0.0f, 0.0f);
 	lookFrom.set(0.0f, 50.0f, 400.0f);
 	lookAt.set(0.0f, 50.0f, 0.0f);
@@ -123,7 +123,7 @@ Matrix4x4& Camera::computeModelViewMatrix()
 		sideVector = Vector3::computeCrossProduct(forwardVector, upVector).normalize();
 		tmpUp = Vector3::computeCrossProduct(sideVector, forwardVector);
 	}
-	modelViewMatrix.
+	cameraMatrix.
 		identity().
 		translate(
 			lookFrom.clone().scale(-1.0f)
@@ -148,7 +148,7 @@ Matrix4x4& Camera::computeModelViewMatrix()
 				1.0f
 			)
 		);
-	return modelViewMatrix;
+	return cameraMatrix;
 }
 
 void Camera::update(int contextIdx, int32_t width, int32_t height)
@@ -193,8 +193,8 @@ void Camera::update(int contextIdx, int32_t width, int32_t height)
 	renderer->onUpdateCameraMatrix(contextIdx);
 
 	//
-	mvpInvertedMatrix.set(modelViewMatrix).multiply(projectionMatrix).invert();
-	mvpMatrix.set(modelViewMatrix).multiply(projectionMatrix);
+	mvpInvertedMatrix.set(cameraMatrix).multiply(projectionMatrix).invert();
+	mvpMatrix.set(cameraMatrix).multiply(projectionMatrix);
 
 	// viewport
 	renderer->setViewPort(width, height);

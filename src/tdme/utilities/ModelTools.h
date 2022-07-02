@@ -261,11 +261,11 @@ public:
 	static void computeNormals(Model* model, ProgressCallback* progressCallback = nullptr);
 
 	/**
-	 * Prepare model for foliage shader
+	 * Prepare model for specific shader
 	 * @param model model
-	 * @param shader shader
+	 * @param shader optional shader
 	 */
-	static void prepareForShader(Model* model, const string& shader);
+	static void prepareForShader(Model* model, const string& shader = string());
 
 	/**
 	 * @returns if model has been optimized
@@ -286,13 +286,27 @@ public:
 	 */
 	static void computeTangentsAndBitangents(Node* node);
 
+	/**
+	 * Change front face from counter clock wise to clock wise or clock wise to counter clock wise
+	 * @param node node
+	 * @param applyToSubNodes apply to sub nodes
+	 */
+	static void changeFrontFace(Node* node, bool applyToSubNodes);
+
+	/**
+	 * Change front face from counter clock wise to clock wise or clock wise to counter clock wise
+	 * @param model model
+	 */
+	static void changeFrontFace(Model* model);
+
 private:
 
 	/**
 	 * Prepare node for default shader
 	 * @param node node
+	 * @param parentTransformMatrix parent transform matrix
 	 */
-	static void prepareForDefaultShader(Node* node);
+	static void prepareForDefaultShader(Node* node, const Matrix4x4& parentTransformMatrix);
 
 	/**
 	 * Prepare node for foliage shader

@@ -13,7 +13,6 @@ class tdme::gui::events::GUIKeyboardEvent final
 public:
 
 	static constexpr int32_t KEYCODE_TAB { KEYBOARD_KEYCODE_TAB };
-	static constexpr int32_t KEYCODE_TAB_SHIFT { KEYBOARD_KEYCODE_TAB_SHIFT };
 	static constexpr int32_t KEYCODE_BACKSPACE { KEYBOARD_KEYCODE_BACKSPACE };
 	static constexpr int32_t KEYCODE_RETURN { KEYBOARD_KEYCODE_RETURN };
 	static constexpr int32_t KEYCODE_DELETE { KEYBOARD_KEYCODE_DELETE };

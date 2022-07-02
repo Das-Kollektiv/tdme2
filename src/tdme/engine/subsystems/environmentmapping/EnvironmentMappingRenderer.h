@@ -47,7 +47,7 @@ private:
 	int renderCubeMapTextureIdx { 0 };
 	STATIC_DLL_IMPEXT static GeometryBuffer* geometryBuffer;
 	int64_t timeRenderUpdateFrequency { 100LL };
-	int32_t renderPassMask { Entity::RENDERPASS_ALL - Entity::RENDERPASS_WATER };
+	int32_t renderPassMask { Entity::RENDERPASS_ALL - Entity::RENDERPASS_WATER - Entity::RENDERPASS_GIZMO};
 	Engine::DecomposedEntities visibleDecomposedEntities;
 
 	/**

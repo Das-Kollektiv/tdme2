@@ -237,6 +237,7 @@ private:
 		vector<Object*> objectsForwardShading;
 		vector<Object*> objectsPostPostProcessing;
 		vector<Object*> objectsNoDepthTest;
+		vector<Object*> objectsGizmo;
 		vector<LODObject*> lodObjects;
 		vector<LODObjectImposter*> lodObjectsImposter;
 		vector<ObjectParticleSystem*> opses;
@@ -261,6 +262,7 @@ private:
 	GUI* gui { nullptr };
 	Timing* timing { nullptr };
 	Camera* camera { nullptr };
+	Camera* gizmoCamera { nullptr };
 
 	Partition* partition { nullptr };
 
@@ -268,6 +270,7 @@ private:
 	Color4 sceneColor;
 	GeometryBuffer* geometryBuffer { nullptr };
 	FrameBuffer* frameBuffer { nullptr };
+	FrameBuffer* gizmoFrameBuffer { nullptr };
 	FrameBuffer* postProcessingFrameBuffer1 { nullptr };
 	FrameBuffer* postProcessingFrameBuffer2{ nullptr };
 	FrameBuffer* postProcessingTemporaryFrameBuffer { nullptr };
@@ -945,6 +948,13 @@ public:
 	}
 
 	/**
+	 * @return GIZMO Camera
+	 */
+	inline Camera* getGizmoCamera() {
+		return gizmoCamera;
+	}
+
+	/**
 	 * @return partition
 	 */
 	inline Partition* getPartition() {
@@ -1075,13 +1085,26 @@ public:
 	void display();
 
 	/**
+	 * Compute gizmo coordinate from mouse position and z value
+	 * @param mouseX mouse x
+	 * @param mouseY mouse y
+	 * @param z z
+	 * @return gizmo coordinate
+	 */
+	inline Vector3 computeGizmoCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z) {
+		return computeWorldCoordinateByMousePosition(mouseX, mouseY, z, gizmoCamera);
+	}
+
+	/**
 	 * Compute world coordinate from mouse position and z value
 	 * @param mouseX mouse x
 	 * @param mouseY mouse y
 	 * @param z z
 	 * @return world coordinate
 	 */
-	Vector3 computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z);
+	inline Vector3 computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z) {
+		return computeWorldCoordinateByMousePosition(mouseX, mouseY, z, camera);
+	}
 
 	/**
 	 * Compute world coordinate from mouse position
@@ -1226,6 +1249,26 @@ public:
 
 private:
 	/**
+	 * Compute world coordinate from mouse position and z value
+	 * @param mouseX mouse x
+	 * @param mouseY mouse y
+	 * @param z z
+	 * @param camera camera or engine camera
+	 * @return world coordinate
+	 */
+	Vector3 computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Camera* camera);
+
+	/**
+	 * Compute world coordinate from mouse position
+	 * TODO: this does not work with GLES2
+	 * @param mouseX mouse x
+	 * @param mouseY mouse y
+	 * @param camera camera or engine camera
+	 * @return world coordinate
+	 */
+	Vector3 computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, Camera* camera);
+
+	/**
 	 * Retrieves entity by mouse position
 	 * @param decomposedEntities decomposed entities
 	 * @param forcePicking override picking to be always enabled
@@ -1298,6 +1341,7 @@ private:
 	 * Do a render/effect pass
 	 * @param renderFrameBuffer render frame buffer
 	 * @param renderGeometryBuffer render geometry buffer
+	 * @param rendererCamera renderer camera
 	 * @param visibleDecomposedEntities visible decomposed entities
 	 * @param effectPass effect pass
 	 * @param renderPassMask render pass mask
@@ -1309,7 +1353,7 @@ private:
 	 * @param doRenderParticleSystems if to render particle systems
 	 * @param renderTypes render types
 	 */
-	void render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeometryBuffer, DecomposedEntities& visibleDecomposedEntities, int32_t effectPass, int32_t renderPassMask, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes);
+	void render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeometryBuffer, Camera* rendererCamera, DecomposedEntities& visibleDecomposedEntities, int32_t effectPass, int32_t renderPassMask, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes);
 
 	/**
 	 * Render light sources

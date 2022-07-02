@@ -26,6 +26,8 @@ FrameBuffer::FrameBuffer(int32_t width, int32_t height, int32_t buffers, int32_t
 	frameBufferId = -1;
 	depthBufferTextureId = Engine::renderer->ID_NONE;
 	colorBufferTextureId = Engine::renderer->ID_NONE;
+	ownsDepthBufferTexture = true;
+	ownsColorBufferTexture = true;
 	this->cubeMapTextureId = cubeMapTextureId;
 	this->cubeMapTextureIndex = cubeMapTextureIndex;
 }
@@ -35,11 +37,21 @@ FrameBuffer::~FrameBuffer() {
 
 void FrameBuffer::initialize()
 {
-	if ((buffers & FRAMEBUFFER_DEPTHBUFFER) == FRAMEBUFFER_DEPTHBUFFER)
-		depthBufferTextureId = Engine::renderer->createDepthBufferTexture(width, height, cubeMapTextureId, cubeMapTextureIndex);
+	if ((buffers & FRAMEBUFFER_DEPTHBUFFER) == FRAMEBUFFER_DEPTHBUFFER) {
+		if (depthBufferTextureId == Engine::renderer->ID_NONE) {
+			depthBufferTextureId = Engine::renderer->createDepthBufferTexture(width, height, cubeMapTextureId, cubeMapTextureIndex);
+		} else {
+			ownsDepthBufferTexture = false;
+		}
+	}
 
-	if ((buffers & FRAMEBUFFER_COLORBUFFER) == FRAMEBUFFER_COLORBUFFER && (Engine::renderer->getRendererType() == Renderer::RENDERERTYPE_VULKAN || cubeMapTextureId == CUBEMAPTEXTUREID_NONE))
-		colorBufferTextureId = Engine::renderer->createColorBufferTexture(width, height, cubeMapTextureId, cubeMapTextureIndex);
+	if ((buffers & FRAMEBUFFER_COLORBUFFER) == FRAMEBUFFER_COLORBUFFER && (Engine::renderer->getRendererType() == Renderer::RENDERERTYPE_VULKAN || cubeMapTextureId == TEXTUREID_NONE)) {
+		if (colorBufferTextureId == Engine::renderer->ID_NONE) {
+			colorBufferTextureId = Engine::renderer->createColorBufferTexture(width, height, cubeMapTextureId, cubeMapTextureIndex);
+		} else {
+			ownsColorBufferTexture = false;
+		}
+	}
 
 	auto rendererCubeMapTextureIndex = -1;
 	switch(cubeMapTextureIndex) {
@@ -57,10 +69,10 @@ void FrameBuffer::initialize()
 
 void FrameBuffer::reshape(int32_t width, int32_t height)
 {
-	if ((buffers & FRAMEBUFFER_DEPTHBUFFER) == FRAMEBUFFER_DEPTHBUFFER)
+	if ((buffers & FRAMEBUFFER_DEPTHBUFFER) == FRAMEBUFFER_DEPTHBUFFER && ownsDepthBufferTexture == true)
 		Engine::renderer->resizeDepthBufferTexture(depthBufferTextureId, width, height);
 
-	if ((buffers & FRAMEBUFFER_COLORBUFFER) == FRAMEBUFFER_COLORBUFFER && cubeMapTextureId == CUBEMAPTEXTUREID_NONE)
+	if ((buffers & FRAMEBUFFER_COLORBUFFER) == FRAMEBUFFER_COLORBUFFER && cubeMapTextureId == TEXTUREID_NONE && ownsColorBufferTexture == true)
 		Engine::renderer->resizeColorBufferTexture(colorBufferTextureId, width, height);
 
 	this->width = width;
@@ -69,10 +81,10 @@ void FrameBuffer::reshape(int32_t width, int32_t height)
 
 void FrameBuffer::dispose()
 {
-	if ((buffers & FRAMEBUFFER_DEPTHBUFFER) == FRAMEBUFFER_DEPTHBUFFER)
+	if ((buffers & FRAMEBUFFER_DEPTHBUFFER) == FRAMEBUFFER_DEPTHBUFFER && ownsDepthBufferTexture == true)
 		Engine::renderer->disposeTexture(depthBufferTextureId);
 
-	if ((buffers & FRAMEBUFFER_COLORBUFFER) == FRAMEBUFFER_COLORBUFFER && cubeMapTextureId == CUBEMAPTEXTUREID_NONE)
+	if ((buffers & FRAMEBUFFER_COLORBUFFER) == FRAMEBUFFER_COLORBUFFER && cubeMapTextureId == TEXTUREID_NONE && ownsColorBufferTexture == true)
 		Engine::renderer->disposeTexture(colorBufferTextureId);
 
 	Engine::renderer->disposeFrameBufferObject(frameBufferId);

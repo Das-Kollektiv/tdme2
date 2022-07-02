@@ -72,3 +72,20 @@ void Face::setIndexedRenderingIndices(const array<int32_t, 3>& indices)
 	bitangentIndices = indices;
 }
 
+void Face::changeFrontFace() {
+	auto vertexIndicesCopy = vertexIndices;
+	auto normalIndicesCopy = normalIndices;
+	auto textureCoordinateIndicesCopy = textureCoordinateIndices;
+	auto tangentIndicesCopy = tangentIndices;;
+	auto bitangentIndicesCopy = bitangentIndices;
+	vertexIndices[0] = vertexIndicesCopy[2];
+	vertexIndices[2] = vertexIndicesCopy[0];
+	normalIndices[0] = normalIndicesCopy[2];
+	normalIndices[2] = normalIndicesCopy[0];
+	textureCoordinateIndices[0] = textureCoordinateIndicesCopy[2];
+	textureCoordinateIndices[2] = textureCoordinateIndicesCopy[0];
+	tangentIndices[0] = tangentIndicesCopy[2];
+	tangentIndices[2] = tangentIndicesCopy[0];
+	bitangentIndices[0] = bitangentIndicesCopy[2];
+	bitangentIndices[2] = bitangentIndicesCopy[0];
+}

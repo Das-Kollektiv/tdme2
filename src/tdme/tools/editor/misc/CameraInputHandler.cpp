@@ -153,6 +153,7 @@ void CameraInputHandler::handleInputEvents() {
 			camScale += -mouseWheel * 0.1f;
 			if (camScale < camScaleMin) camScale = camScaleMin;
 			if (camScale > camScaleMax) camScale = camScaleMax;
+			if (eventHandler != nullptr) eventHandler->onCameraScale();
 			event.setProcessed(true);
 		}
 	}

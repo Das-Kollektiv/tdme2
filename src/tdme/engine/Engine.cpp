@@ -257,8 +257,10 @@ void Engine::EngineThread::run() {
 Engine::Engine() {
 	timing = new Timing();
 	camera = nullptr;
+	gizmoCamera = nullptr;
 	sceneColor.set(0.0f, 0.0f, 0.0f, 1.0f);
 	frameBuffer = nullptr;
+	gizmoFrameBuffer = nullptr;
 	// shadow mapping
 	shadowMappingEnabled = false;
 	shadowMapping = nullptr;
@@ -281,9 +283,11 @@ Engine::Engine() {
 Engine::~Engine() {
 	delete timing;
 	delete camera;
+	delete gizmoCamera;
 	delete gui;
 	delete partition;
 	if (frameBuffer != nullptr) delete frameBuffer;
+	if (gizmoFrameBuffer != nullptr) delete gizmoFrameBuffer;
 	if (postProcessingFrameBuffer1 != nullptr) delete postProcessingFrameBuffer1;
 	if (postProcessingFrameBuffer2 != nullptr) delete postProcessingFrameBuffer2;
 	if (postProcessingTemporaryFrameBuffer != nullptr) delete postProcessingTemporaryFrameBuffer;
@@ -333,6 +337,14 @@ Engine* Engine::createOffScreenInstance(int32_t width, int32_t height, bool enab
 	offScreenEngine->frameBuffer->initialize();
 	// create camera, frustum partition
 	offScreenEngine->camera = new Camera(renderer);
+	offScreenEngine->gizmoCamera = new Camera(renderer);
+	offScreenEngine->gizmoCamera->setFrustumMode(Camera::FRUSTUMMODE_ORTHOGRAPHIC);
+	offScreenEngine->gizmoCamera->setCameraMode(Camera::CAMERAMODE_NONE);
+	offScreenEngine->gizmoCamera->setForwardVector(Vector3(0.0f, 0.0f, -1.0f));
+	offScreenEngine->gizmoCamera->setSideVector(Vector3(1.0f, 0.0f, 0.0f));
+	offScreenEngine->gizmoCamera->setUpVector(Vector3(0.0f, 1.0f, 0.0f));
+	offScreenEngine->gizmoCamera->setZNear(1.0f);
+	offScreenEngine->gizmoCamera->setZFar(400.0f);
 	offScreenEngine->partition = new OctTreePartition();
 	// create lights
 	for (auto i = 0; i < offScreenEngine->lights.size(); i++) {
@@ -456,12 +468,13 @@ void Engine::registerEntity(Entity* entity) {
 	// decompose to engine instances to do pre render
 	DecomposedEntities decomposedEntities;
 	decomposeEntityType(entity, decomposedEntities, true);
-	array<vector<Object*>, 5> objectsArray = {
+	array<vector<Object*>, 6> objectsArray = {
 		decomposedEntities.ezrObjects,
 		decomposedEntities.objects,
 		decomposedEntities.objectsForwardShading,
 		decomposedEntities.objectsNoDepthTest,
 		decomposedEntities.objectsPostPostProcessing,
+		decomposedEntities.objectsGizmo,
 	};
 	for (auto& objects: objectsArray) {
 		for (auto object: objects) {
@@ -555,6 +568,14 @@ inline void Engine::removeFromDecomposedEntities(DecomposedEntities& decomposedE
 			entity
 		),
 		decomposedEntities.objectsNoDepthTest.end()
+	);
+	decomposedEntities.objectsGizmo.erase(
+		remove(
+			decomposedEntities.objectsGizmo.begin(),
+			decomposedEntities.objectsGizmo.end(),
+			entity
+		),
+		decomposedEntities.objectsGizmo.end()
 	);
 	decomposedEntities.lodObjects.erase(
 		remove(
@@ -733,10 +754,13 @@ void Engine::initialize()
 		return;
 	}
 
+	//
 	shadowMappingEnabled = true;
-	if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(2048, 2048);
-	if (getShadowMapRenderLookUps() == 0) setShadowMapRenderLookUps(8);
-	shadowMappingEnabled = renderer->isBufferObjectsAvailable() == true && renderer->isDepthTextureAvailable() == true;
+	if (shadowMappingEnabled == true) {
+		if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(2048, 2048);
+		if (getShadowMapRenderLookUps() == 0) setShadowMapRenderLookUps(8);
+		shadowMappingEnabled = renderer->isBufferObjectsAvailable() == true && renderer->isDepthTextureAvailable() == true;
+	}
 	animationProcessingTarget = renderer->isGLCLAvailable() == true || renderer->isComputeShaderAvailable() == true?Engine::AnimationProcessingTarget::GPU:Engine::AnimationProcessingTarget::CPU;
 
 	// determine if we have the skinning compute shader or OpenCL program
@@ -782,6 +806,14 @@ void Engine::initialize()
 
 	// create camera
 	camera = new Camera(renderer);
+	gizmoCamera = new Camera(renderer);
+	gizmoCamera->setFrustumMode(Camera::FRUSTUMMODE_ORTHOGRAPHIC);
+	gizmoCamera->setCameraMode(Camera::CAMERAMODE_NONE);
+	gizmoCamera->setForwardVector(Vector3(0.0f, 0.0f, -1.0f));
+	gizmoCamera->setSideVector(Vector3(1.0f, 0.0f, 0.0f));
+	gizmoCamera->setUpVector(Vector3(0.0f, 1.0f, 0.0f));
+	gizmoCamera->setZNear(1.0f);
+	gizmoCamera->setZFar(300.0f);
 
 	// create lights
 	for (auto i = 0; i < lights.size(); i++) {
@@ -1044,6 +1076,7 @@ void Engine::resetLists(DecomposedEntities& decomposedEntites) {
 	decomposedEntites.objectsForwardShading.clear();
 	decomposedEntites.objectsPostPostProcessing.clear();
 	decomposedEntites.objectsNoDepthTest.clear();
+	decomposedEntites.objectsGizmo.clear();
 	decomposedEntites.lodObjects.clear();
 	decomposedEntites.opses.clear();
 	decomposedEntites.ppses.clear();
@@ -1094,6 +1127,9 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 					(object->getRenderPass() == Entity::RENDERPASS_TERRAIN || object->getRenderPass() == Entity::RENDERPASS_STANDARD) &&
 					renderer->isDeferredShadingAvailable() == true) {
 					decomposedEntities.objectsForwardShading.push_back(object);
+				} else
+				if (object->getRenderPass() == Entity::RENDERPASS_GIZMO) {
+					decomposedEntities.objectsGizmo.push_back(object);
 				} else {
 					decomposedEntities.objects.push_back(object);
 				}
@@ -1205,7 +1241,7 @@ inline void Engine::decomposeEntityType(Entity* entity, DecomposedEntities& deco
 					decomposeEntityType(entityEh, decomposedEntities, decomposeAllEntities);
 				}
 			}
-
+			break;
 		default:
 			break;
 	}
@@ -1434,6 +1470,7 @@ void Engine::display()
 				render(
 					effectPassFrameBuffers[frameBufferIdx],
 					nullptr, // TODO: we might want to use a deferred shading here for further effects
+					camera,
 					visibleDecomposedEntities,
 					effectPassIdx,
 					Entity::RENDERPASS_ALL,
@@ -1504,6 +1541,7 @@ void Engine::display()
 	render(
 		renderFrameBuffer,
 		geometryBuffer,
+		camera,
 		visibleDecomposedEntities,
 		EFFECTPASS_NONE,
 		Entity::RENDERPASS_ALL,
@@ -1544,7 +1582,7 @@ void Engine::display()
 	camera->update(renderer->CONTEXTINDEX_DEFAULT, _width, _height);
 }
 
-Vector3 Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z)
+Vector3 Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mouseY, float z, Camera* camera)
 {
 	auto scaleFactorWidth = static_cast<float>(scaledWidth != -1?scaledWidth:width) / static_cast<float>(width);
 	auto scaleFactorHeight = static_cast<float>(scaledHeight != -1?scaledHeight:height) / static_cast<float>(height);
@@ -1585,7 +1623,7 @@ Vector3 Engine::computeWorldCoordinateByMousePosition(int32_t mouseX, int32_t mo
 		FrameBuffer::disableFrameBuffer();
 
 	//
-	return computeWorldCoordinateByMousePosition(mouseX, mouseY, z);
+	return computeWorldCoordinateByMousePosition(mouseX, mouseY, z, camera);
 }
 
 Entity* Engine::getEntityByMousePosition(
@@ -1597,9 +1635,7 @@ Entity* Engine::getEntityByMousePosition(
 	Node** objectNode,
 	ParticleSystem** particleSystemEntity
 ) {
-	// get world position of mouse position at near and far plane
-	auto nearPlaneWorldCoordinate = computeWorldCoordinateByMousePosition(mouseX, mouseY, 0.0f);
-	auto farPlaneWorldCoordinate = computeWorldCoordinateByMousePosition(mouseX, mouseY, 1.0f);
+	//
 	Vector3 boundingBoxLineContactMin;
 	Vector3 boundingBoxLineContactMax;
 	Vector3 lineTriangleContact;
@@ -1609,6 +1645,49 @@ Entity* Engine::getEntityByMousePosition(
 	Entity* selectedEntity = nullptr;
 	Node* selectedObjectNode = nullptr;
 	ParticleSystem* selectedParticleSystem = nullptr;
+
+	// iterate gizmo objects that have no depth test, check if ray with given mouse position from near plane to far plane collides with each object's triangles
+	if (decomposedEntities.objectsGizmo.empty() == false) {
+		//
+		auto nearPlaneWorldCoordinate = computeGizmoCoordinateByMousePosition(mouseX, mouseY, 0.0f);
+		auto farPlaneWorldCoordinate = computeGizmoCoordinateByMousePosition(mouseX, mouseY, 1.0f);
+
+		//
+		for (auto entity: decomposedEntities.objectsGizmo) {
+			// skip if not pickable or ignored by filter
+			if (forcePicking == false && entity->isPickable() == false) continue;
+			if (filter != nullptr && filter->filterEntity(entity) == false) continue;
+			// do the collision test
+			for (auto it = entity->getTransformedFacesIterator()->iterator(); it->hasNext();) {
+				auto& vertices = it->next();
+				if (LineSegment::doesLineSegmentCollideWithTriangle(vertices[0], vertices[1], vertices[2], nearPlaneWorldCoordinate, farPlaneWorldCoordinate, lineTriangleContact) == true) {
+					auto entityDistance = lineTriangleContact.sub(nearPlaneWorldCoordinate).computeLengthSquared();
+					// check if match or better match
+					if (selectedEntity == nullptr || entityDistance < selectedEntityDistance) {
+						selectedEntity = entity;
+						selectedEntityDistance = entityDistance;
+						selectedObjectNode = it->getNode();
+						selectedParticleSystem = nullptr;
+					}
+				}
+			}
+		}
+
+		// they have first priority right now
+		if (selectedEntity != nullptr) {
+			if (objectNode != nullptr) *objectNode = selectedObjectNode;
+			for (auto _entity = selectedEntity; _entity != nullptr; _entity = _entity->getParentEntity()) {
+				if (_entity->getParentEntity() == nullptr) {
+					return _entity;
+				}
+			}
+			return nullptr;
+		}
+	}
+
+	// get world position of mouse position at near and far plane
+	auto nearPlaneWorldCoordinate = computeWorldCoordinateByMousePosition(mouseX, mouseY, 0.0f);
+	auto farPlaneWorldCoordinate = computeWorldCoordinateByMousePosition(mouseX, mouseY, 1.0f);
 
 	// iterate visible entity decals, check if ray with given mouse position from near plane to far plane collides with bounding volume
 	for (auto entity: decomposedEntities.decalEntities) {
@@ -2007,7 +2086,7 @@ bool Engine::computeScreenCoordinateByWorldCoordinate(const Vector3& worldCoordi
 	// convert to screen coordinate
 	screenCoordinate.setX((screenCoordinate4[0] + 1.0f) * _width / 2.0f);
 	screenCoordinate.setY(_height - ((screenCoordinate4[1] + 1.0f) * _height / 2.0f));
-	return camera->getModelViewMatrix().multiply(worldCoordinate).getZ() <= 0.0f;
+	return camera->getCameraMatrix().multiply(worldCoordinate).getZ() <= 0.0f;
 }
 
 void Engine::dispose()
@@ -2246,7 +2325,7 @@ const map<string, ShaderParameter> Engine::getShaderParameterDefaults(const stri
 	return shaderIt->second.parameterDefaults;
 }
 
-void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeometryBuffer, DecomposedEntities& visibleDecomposedEntities, int32_t effectPass, int32_t renderPassMask, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes) {
+void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeometryBuffer, Camera* rendererCamera, DecomposedEntities& visibleDecomposedEntities, int32_t effectPass, int32_t renderPassMask, const string& shaderPrefix, bool useEZR, bool applyShadowMapping, bool applyPostProcessing, bool doRenderLightSource, bool doRenderParticleSystems, int32_t renderTypes) {
 	//
 	Engine::renderer->setEffectPass(effectPass);
 	Engine::renderer->setShaderPrefix(shaderPrefix);
@@ -2508,6 +2587,68 @@ void Engine::render(FrameBuffer* renderFrameBuffer, GeometryBuffer* renderGeomet
 		}
 	}
 
+	// render gizmo objects
+	if (visibleDecomposedEntities.objectsGizmo.size() > 0) {
+		// default context
+		auto _width = renderFrameBuffer != nullptr?renderFrameBuffer->getWidth():(scaledWidth != -1?scaledWidth:width);
+		auto _height = renderFrameBuffer != nullptr?renderFrameBuffer->getHeight():(scaledHeight != -1?scaledHeight:height);
+
+		if (gizmoFrameBuffer == nullptr) {
+			gizmoFrameBuffer = new FrameBuffer(_width, _height, FrameBuffer::FRAMEBUFFER_DEPTHBUFFER | FrameBuffer::FRAMEBUFFER_COLORBUFFER);
+			gizmoFrameBuffer->setColorBufferTextureId(frameBuffer->getColorBufferTextureId());
+			gizmoFrameBuffer->initialize();
+		} else
+		if (gizmoFrameBuffer->getWidth() != _width || gizmoFrameBuffer->getHeight() != _height) {
+			gizmoFrameBuffer->reshape(_width, _height);
+		}
+
+		//
+		gizmoCamera->setLookFrom(rendererCamera->getLookFrom());
+		gizmoCamera->update(renderer->CONTEXTINDEX_DEFAULT, _width, _height);
+
+		//
+		gizmoFrameBuffer->enableFrameBuffer();
+		renderer->clear(renderer->CLEAR_DEPTH_BUFFER_BIT);
+
+		// use lighting shader
+		if (lightingShader != nullptr) {
+			lightingShader->useProgram(this);
+		}
+
+		// render
+		entityRenderer->render(
+			Entity::RENDERPASS_GIZMO,
+			visibleDecomposedEntities.objectsGizmo,
+			true,
+			((renderTypes & EntityRenderer::RENDERTYPE_NORMALS) == EntityRenderer::RENDERTYPE_NORMALS?EntityRenderer::RENDERTYPE_NORMALS:0) |
+			((renderTypes & EntityRenderer::RENDERTYPE_TEXTUREARRAYS) == EntityRenderer::RENDERTYPE_TEXTUREARRAYS?EntityRenderer::RENDERTYPE_TEXTUREARRAYS:0) |
+			((renderTypes & EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY) == EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY?EntityRenderer::RENDERTYPE_TEXTUREARRAYS_DIFFUSEMASKEDTRANSPARENCY:0) |
+			((renderTypes & EntityRenderer::RENDERTYPE_EFFECTCOLORS) == EntityRenderer::RENDERTYPE_EFFECTCOLORS?EntityRenderer::RENDERTYPE_EFFECTCOLORS:0) |
+			((renderTypes & EntityRenderer::RENDERTYPE_MATERIALS) == EntityRenderer::RENDERTYPE_MATERIALS?EntityRenderer::RENDERTYPE_MATERIALS:0) |
+			((renderTypes & EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY) == EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY?EntityRenderer::RENDERTYPE_MATERIALS_DIFFUSEMASKEDTRANSPARENCY:0) |
+			((renderTypes & EntityRenderer::RENDERTYPE_TEXTURES) == EntityRenderer::RENDERTYPE_TEXTURES?EntityRenderer::RENDERTYPE_TEXTURES:0) |
+			((renderTypes & EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY) == EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY?EntityRenderer::RENDERTYPE_TEXTURES_DIFFUSEMASKEDTRANSPARENCY:0)|
+			((renderTypes & EntityRenderer::RENDERTYPE_LIGHTS) == EntityRenderer::RENDERTYPE_LIGHTS?EntityRenderer::RENDERTYPE_LIGHTS:0)
+		);
+
+		// render transparent faces
+		entityRenderer->renderTransparentFaces();
+
+		//
+		if (renderFrameBuffer != nullptr) {
+			renderFrameBuffer->enableFrameBuffer();
+		} else {
+			FrameBuffer::disableFrameBuffer();
+		}
+
+		// unuse lighting shader
+		if (lightingShader != nullptr) lightingShader->unUseProgram();
+
+		//
+		rendererCamera->update(renderer->CONTEXTINDEX_DEFAULT, _width, _height);
+	}
+
+	// light sources
 	if (doRenderLightSource == true) {
 		auto _width = scaledWidth != -1?scaledWidth:width;
 		auto _height = scaledHeight != -1?scaledHeight:height;

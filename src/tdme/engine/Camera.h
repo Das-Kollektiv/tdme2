@@ -40,7 +40,7 @@ private:
 	Vector3 forwardVector;
 	Vector3 sideVector;
 	Matrix4x4 projectionMatrix;
-	Matrix4x4 modelViewMatrix;
+	Matrix4x4 cameraMatrix;
 	Matrix4x4 mvpMatrix;
 	Matrix4x4 mvpInvertedMatrix;
 	Frustum* frustum { nullptr };
@@ -237,10 +237,10 @@ public:
 	}
 
 	/**
-	 * @return model view matrix or camera matrix
+	 * @return camera matrix
 	 */
-	inline const Matrix4x4& getModelViewMatrix() const {
-		return modelViewMatrix;
+	inline const Matrix4x4& getCameraMatrix() const {
+		return cameraMatrix;
 	}
 
 	/**

@@ -1,21 +1,26 @@
 #pragma once
 
-#include <vector>
+#include <array>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/Camera.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/Transform.h>
+#include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
 
-using std::vector;
+using std::array;
 
 using tdme::engine::model::Node;
+using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Entity;
 using tdme::engine::Object;
 using tdme::engine::Transform;
+using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 
 /**
@@ -25,6 +30,15 @@ using tdme::math::Vector3;
 class tdme::tools::editor::misc::Gizmo
 {
 public:
+	static constexpr float GIZMO_ORTHO_DEFAULT_SCALE { 150.0f };
+	static constexpr float GIZMO_ORTHO_DEFAULT_Z { -200.0f };
+
+	enum GizmoAxisIdx {
+		GIZMOAXISIDX_NONE = -1,
+		GIZMOAXISIDX_X = 0,
+		GIZMOAXISIDX_Y = 1,
+		GIZMOAXISIDX_Z = 2
+	};
 	enum GizmoType {
 		GIZMOTYPE_NONE = 0,
 		GIZMOTYPE_TRANSLATE = 1,
@@ -54,11 +68,33 @@ public:
 private:
 	Engine* engine { nullptr };
 	string id;
+	int32_t gizmoTypeMask;
 	GizmoType gizmoType;
 	GizmoMode gizmoMode;
-	Vector3 gizmoLastResult;
-	bool gizmoLastResultAvailable;
-	int32_t gizmoTypeMask;
+	Matrix4x4 rotationsMatrix;
+	Vector3 gizmoTranslation;
+	bool gizmoTranslationHandleDiffAvailable;
+	Vector3 gizmoTranslationHandleDiff;
+	bool gizmoTranslationLastResultAvailable;
+	Vector3 gizmoTranslationLastResult;
+	bool gizmoRotationLastResultAvailable;
+	Vector3 gizmoRotationLastResult;
+	Vector3 orthogonalGizmoTranslation;
+
+	/**
+	 * Compute orthogonal gizmo coordinate
+	 * @param worldCoordinate world coordinate to compute
+	 * @return orthogonal gizmo coordinate
+	 */
+	inline Vector3 computeOrthogonalGizmoCoordinate(const Vector3& worldCoordinate) {
+		Vector4 orthogonalGizmoCoordinateNDC = engine->getCamera()->getModelViewProjectionMatrix().multiply(Vector4(worldCoordinate, 1.0f));
+		orthogonalGizmoCoordinateNDC.scale(1.0f / orthogonalGizmoCoordinateNDC.getW());
+		Vector3 orthogonalGizmoCoordinate;
+		orthogonalGizmoCoordinate.setX(orthogonalGizmoCoordinateNDC.getX() * (engine->getWidth() * 0.5f));
+		orthogonalGizmoCoordinate.setY(orthogonalGizmoCoordinateNDC.getY() * (engine->getHeight() * 0.5f));
+		orthogonalGizmoCoordinate.setZ(GIZMO_ORTHO_DEFAULT_Z);
+		return orthogonalGizmoCoordinate;
+	}
 
 public:
 	/**
@@ -126,16 +162,22 @@ public:
 	 * @param gizmoMode gizmo mode
 	 */
 	inline void setGizmoMode(GizmoMode gizmoMode) {
+		//
+		if (this->gizmoMode == gizmoMode) return;
+		//
 		this->gizmoMode = gizmoMode;
-		if (this->gizmoMode == GIZMOMODE_NONE) gizmoLastResultAvailable = false;
+		//
+		gizmoTranslationHandleDiffAvailable = false;
+		gizmoTranslationLastResultAvailable = false;
+		gizmoRotationLastResultAvailable = false;
 	}
 
 	/**
 	 * Update gizmo
-	 * @param gizmoCenter GIZMO center
-	 * @param transform transform used for rotation
+	 * @param gizmoTranslation GIZMO translation
+	 * @param transformations transformations used for rotation
 	 */
-	void updateGizmo(const Vector3& gizmoCenter, const Transform& transform);
+	void updateGizmo(const Vector3& gizmoTranslation, const Transform& transform);
 
 	/**
 	 * @return GIZMO object
@@ -148,26 +190,48 @@ public:
 	void removeGizmo();
 
 	/**
-	 * Determine movement on a plane given by 4 vertices
+	 * Determine gizmo movement
+	 * @param mouseX current mouse X position
+	 * @param mouseY current mouse Y position
+	 * @param mouseDeltaPosition mouse delta position
+	 * @param axisIdx vector axis index
+	 * @param axis axis to check movement on
+	  * @param deltaMovement delta movement result
+	 * @return success
+	 */
+	bool determineGizmoMovement(int mouseX, int mouseY, int axisIdx, const Vector3& axis, Vector3& deltaMovement);
+
+	/**
+	 * Determine gizmo scale
+	 * @param mouseX current mouse X position
+	 * @param mouseY current mouse Y position
+	 * @param axisIdx vector axis index
+	 * @param axis axis to check movement on
+	 * @param deltaScale delta scale result
+	 * @return success
+	 */
+	bool determineGizmoScale(int mouseX, int mouseY, int axisIdx, const Vector3& axis, Vector3& deltaScale);
+
+	/**
+	 * Determine rotation on a plane given by 4 vertices
 	 * @param mouseX current mouse X position
 	 * @param mouseY current mouse Y position
 	 * @param vertices 4 vertices that span a plane
-	 * @param deltaMovement delta movement result
+	 * @param planeNormal plane normal to test rotation against
+	 * @param deltaRotation delta rotation result
 	 * @return success
 	 */
-	bool determineGizmoMovement(int mouseX, int mouseY, vector<Vector3> vertices, Vector3& deltaMovement);
+	bool determineGizmoRotation(int mouseX, int mouseY, const array<Vector3, 4>& vertices, const Vector3& planeNormal, float& deltaRotation);
 
 	/**
 	 * Determine GIZMO delta transform
-	 * @param mouseLastX last mouse X position
-	 * @param mouseLastY last mouse Y position
 	 * @param mouseX mouse X position
 	 * @param mouseY mouse Y position
 	 * @param deltaTranslation determined delta translation
 	 * @param deltaRotation determined delta rotations
 	 * @param deltaScale determined delta scale
 	 */
-	bool determineGizmoDeltaTransform(int mouseLastX, int mouseLastY, int mouseX, int mouseY, Vector3& deltaTranslation, Vector3& deltaRotation, Vector3& deltaScale);
+	bool determineGizmoDeltaTransformations(int mouseX, int mouseY, Vector3& deltaTranslation, Vector3& deltaRotation, Vector3& deltaScale);
 
 	/**
 	 * Select GIZMO mode
@@ -175,6 +239,13 @@ public:
 	 * @param selectedEntityNode selected entity node
 	 */
 	bool determineGizmoMode(Entity* selectedEntity, Node* selectedEntityNode);
+
+	/**
+	 * @return gizmo translation
+	 */
+	inline Vector3 getGizmoTranslation() {
+		return gizmoTranslation;
+	}
 
 	/**
 	 * Set gizmo rotation

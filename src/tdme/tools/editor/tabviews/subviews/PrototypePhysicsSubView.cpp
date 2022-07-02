@@ -73,8 +73,6 @@ PrototypePhysicsSubView::PrototypePhysicsSubView(Engine* engine, PrototypePhysic
 	this->popUps = popUps;
 	this->prototypePhysicsSubController = prototypePhysicsSubController;
 	this->maxBoundingVolumeCount = maxBoundingVolumeCount;
-	this->mouseDownLastX = MOUSE_DOWN_LAST_POSITION_NONE;
-	this->mouseDownLastY = MOUSE_DOWN_LAST_POSITION_NONE;
 	this->displayBoundingVolumeIdx = DISPLAY_BOUNDINGVOLUMEIDX_ALL;
 	this->displayBoundingVolume = false;
 	this->boundingVolumeTypeMask = boundingVolumeTypeMask;
@@ -292,8 +290,6 @@ void PrototypePhysicsSubView::handleInputEvents(Prototype* prototype) {
 					event.setProcessed(true);
 				} else
 				if (determineGizmoMode(selectedEntity, selectedEntityNode) == true) {
-					mouseDownLastX = event.getXUnscaled();
-					mouseDownLastY = event.getYUnscaled();
 					event.setProcessed(true);
 				} else
 				if (selectedEntity != nullptr) {
@@ -307,21 +303,28 @@ void PrototypePhysicsSubView::handleInputEvents(Prototype* prototype) {
 					Vector3 deltaTranslation;
 					Vector3 deltaRotation;
 					Vector3 deltaScale;
-					if (determineGizmoDeltaTransform(mouseDownLastX, mouseDownLastY, event.getXUnscaled(), event.getYUnscaled(), deltaTranslation, deltaRotation, deltaScale) == true) {
+					if (determineGizmoDeltaTransformations(event.getXUnscaled(), event.getYUnscaled(), deltaTranslation, deltaRotation, deltaScale) == true) {
 						totalDeltaScale.add(deltaScale.clone().sub(Vector3(1.0f, 1.0f, 1.0f)));
 						auto gizmoEntity = getGizmoObject();
 						auto selectedEntity = engine->getEntity("tdme.prototype.bv.editing");
 						if (gizmoEntity != nullptr && selectedEntity != nullptr) {
 							selectedEntity->setTranslation(selectedEntity->getTranslation().clone().add(deltaTranslation));
 							selectedEntity->setScale(selectedEntity->getScale().clone().scale(deltaScale));
-							if (selectedEntity->getRotationCount() == 0) {
-								selectedEntity->addRotation(Rotation::Z_AXIS, 0.0f);
-								selectedEntity->addRotation(Rotation::Y_AXIS, 0.0f);
-								selectedEntity->addRotation(Rotation::X_AXIS, 0.0f);
+							if (deltaRotation.computeLengthSquared() > Math::square(Math::EPSILON) * 3.0f) {
+								if (selectedEntity->getRotationCount() == 0) {
+									selectedEntity->addRotation(Rotation::Z_AXIS, 0.0f);
+									selectedEntity->addRotation(Rotation::Y_AXIS, 0.0f);
+									selectedEntity->addRotation(Rotation::X_AXIS, 0.0f);
+								}
+								if (selectedEntity->getRotationCount() == 3) {
+									selectedEntity->addRotation(Rotation::Z_AXIS, 0.0f);
+									selectedEntity->addRotation(Rotation::Y_AXIS, 0.0f);
+									selectedEntity->addRotation(Rotation::X_AXIS, 0.0f);
+								}
+								selectedEntity->setRotationAngle(3, selectedEntity->getRotationAngle(3) + deltaRotation[2]);
+								selectedEntity->setRotationAngle(4, selectedEntity->getRotationAngle(4) + deltaRotation[1]);
+								selectedEntity->setRotationAngle(5, selectedEntity->getRotationAngle(5) + deltaRotation[0]);
 							}
-							selectedEntity->setRotationAngle(0, selectedEntity->getRotationAngle(0) + deltaRotation[2]);
-							selectedEntity->setRotationAngle(1, selectedEntity->getRotationAngle(1) + deltaRotation[1]);
-							selectedEntity->setRotationAngle(2, selectedEntity->getRotationAngle(2) + deltaRotation[0]);
 							selectedEntity->update();
 							setGizmoRotation(prototype, selectedEntity->getTransform());
 							applyBoundingVolumeTransform(prototype, displayBoundingVolumeIdx, selectedEntity->getTransform(), true);
@@ -332,8 +335,6 @@ void PrototypePhysicsSubView::handleInputEvents(Prototype* prototype) {
 							updateGizmo(prototype);
 						}
 					}
-					mouseDownLastX = event.getXUnscaled();
-					mouseDownLastY = event.getYUnscaled();
 					event.setProcessed(true);
 				}
 			}

@@ -263,6 +263,7 @@ public:
 	 */
 	inline void setNodeTransformMatrix(const string& id, const Matrix4x4& matrix) {
 		instanceAnimations[currentInstance]->setNodeTransformMatrix(id, matrix);
+		for (auto objectNode: objectNodes) objectNode->nodeTransformMatrixUpdate = true;
 	}
 
 	/**
@@ -271,6 +272,7 @@ public:
 	 */
 	inline void unsetNodeTransformMatrix(const string& id) {
 		instanceAnimations[currentInstance]->unsetNodeTransformMatrix(id);
+		for (auto objectNode: objectNodes) objectNode->nodeTransformMatrixUpdate = true;
 	}
 
 	/**

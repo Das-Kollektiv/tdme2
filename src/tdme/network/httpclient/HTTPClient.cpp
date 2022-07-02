@@ -157,6 +157,10 @@ void HTTPClient::reset() {
 }
 
 void HTTPClient::execute() {
+	//
+	return;
+
+	//
 	TCPSocket socket;
 	try {
 		if (StringTools::startsWith(url, "http://") == false) throw HTTPClientException("Invalid protocol");

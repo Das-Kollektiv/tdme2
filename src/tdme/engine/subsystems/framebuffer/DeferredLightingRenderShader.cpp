@@ -262,7 +262,7 @@ void DeferredLightingRenderShader::useProgram(Engine* engine, vector<Decal*>& de
 	renderer->setProgramUniformInteger(contextIdx, uniformDepthBufferTextureUnit, 8);
 
 	// Matrices
-	renderer->setProgramUniformFloatMatrix4x4(contextIdx, uniformCameraMatrix, engine->getCamera()->getModelViewMatrix().getArray());
+	renderer->setProgramUniformFloatMatrix4x4(contextIdx, uniformCameraMatrix, engine->getCamera()->getCameraMatrix().getArray());
 	renderer->setProgramUniformFloatMatrix4x4(contextIdx, uniformProjectionCameraMatrixInverted, engine->getCamera()->getModelViewProjectionInvertedMatrix().getArray());
 
 	// Specular

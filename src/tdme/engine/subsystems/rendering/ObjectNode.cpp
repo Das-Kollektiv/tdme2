@@ -62,6 +62,20 @@ ObjectNode::~ObjectNode()
 	delete renderer;
 }
 
+void ObjectNode::updateNodeTransformationsMatrix() {
+	nodeTransformMatrix = nullptr;
+	auto overriddenTransformationsMatricesIt = object->instanceAnimations[0]->overriddenTransformMatrices.find(node->getId());
+	if (overriddenTransformationsMatricesIt != object->instanceAnimations[0]->overriddenTransformMatrices.end()) {
+		nodeTransformMatrix = overriddenTransformationsMatricesIt->second;
+	} else {
+		auto transformationsMatricesIt = object->instanceAnimations[0]->transformMatrices[0].find(node->getId());
+		if (transformationsMatricesIt != object->instanceAnimations[0]->transformMatrices[0].end()) {
+			nodeTransformMatrix = transformationsMatricesIt->second;
+		}
+	}
+	nodeTransformMatrixUpdate = false;
+}
+
 void ObjectNode::createNodes(ObjectBase* object, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget, vector<ObjectNode*>& objectNodes)
 {
 	auto model = object->getModel();
@@ -158,8 +172,8 @@ void ObjectNode::createNodes(ObjectBase* object, const map<string, Node*>& nodes
 				objectNode->pbrMaterialMetallicRoughnessTextureIdsByEntities[j] = TEXTUREID_NONE;
 				objectNode->pbrMaterialNormalTextureIdsByEntities[j] = TEXTUREID_NONE;
 			}
-			// determine node transform matrix
-			objectNode->nodeTransformMatrix = object->instanceAnimations[0]->transformMatrices[0].find(node->getId())->second;
+			// update node transformations matrix
+			objectNode->updateNodeTransformationsMatrix();
 		}
 		// but still check sub nodes
 		createNodes(object, node->getSubNodes(), animated, useManagers, animationProcessingTarget, objectNodes);

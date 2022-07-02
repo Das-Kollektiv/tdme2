@@ -69,6 +69,7 @@ void CameraRotationInputHandler::reset()
 void CameraRotationInputHandler::handleInputEvents()
 {
 	auto scaling = false;
+	auto rotation = false;
 	for (auto i = 0; i < engine->getGUI()->getMouseEvents().size(); i++) {
 		auto& event = engine->getGUI()->getMouseEvents()[i];
 		if (event.isProcessed() == true) continue;
@@ -85,6 +86,7 @@ void CameraRotationInputHandler::handleInputEvents()
 				xRotation.setAngle(xRotationAngle);
 				yRotation.setAngle(yRotationAngle);
 				lookFromRotations.update();
+				rotation = true;
 			} else {
 				mouseDragging = false;
 			}
@@ -201,8 +203,11 @@ void CameraRotationInputHandler::handleInputEvents()
 	cam->setLookAt(lookAt);
 	cam->setUpVector(upVector);
 
-	if (scaling == true && eventHandler != nullptr) eventHandler->onCameraScale();
-	if ((keyLeft == true ||
+	if (scaling == true && eventHandler != nullptr) {
+		eventHandler->onCameraScale();
+	}
+	if ((rotation == true ||
+		keyLeft == true ||
 		keyRight == true ||
 		keyUp == true ||
 		keyDown == true ||
@@ -211,6 +216,6 @@ void CameraRotationInputHandler::handleInputEvents()
 		keyR == true ||
 		resetRequested == true) &&
 		eventHandler != nullptr) {
-		if (eventHandler != nullptr) eventHandler->onCameraRotation();
+		eventHandler->onCameraRotation();
 	}
 }

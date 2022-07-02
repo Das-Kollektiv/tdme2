@@ -247,6 +247,30 @@ public:
 	}
 
 	/**
+	 * Compute the dot product of vector v1 and v2
+	 * @param v1 v1
+	 * @param v2 v2
+	 * @return Vector3
+	 */
+	inline static float computeDotProduct(const Vector4& v1, const Vector4& v2) {
+		return (v1.data[0] * v2.data[0]) + (v1.data[1] * v2.data[1]) + (v1.data[2] * v2.data[2]) + (v1.data[3] * v2.data[3]);
+	}
+
+	/**
+	 * @return the vectors length
+	 */
+	inline float computeLength() const {
+		return Math::sqrt((data[0] * data[0]) + (data[1] * data[1]) + (data[2] * data[2]) + (data[3] * data[3]));
+	}
+
+	/**
+	 * @return the vectors length squared
+	 */
+	inline float computeLengthSquared() const {
+		return (data[0] * data[0]) + (data[1] * data[1]) + (data[2] * data[2]) + (data[3] * data[3]);
+	}
+
+	/**
 	 * Array access operator
 	 * @param i index
 	 * @return vector3 component
