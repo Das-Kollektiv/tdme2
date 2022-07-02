@@ -1120,7 +1120,7 @@ void SceneEditorTabView::updateGizmo() {
 		if (selectedEntity != nullptr && StringTools::startsWith(selectedEntity->getId(), "tdme.sceneeditor.") == false) {
 			auto sceneEntity = scene->getEntity(selectedEntity->getId());
 			if (sceneEntity == nullptr) continue;
-			gizmoCenter.add(sceneEntity->getTransform().getTranslation());
+			gizmoCenter.add(selectedEntity->getTransform().getTranslation());
 			entityCount++;
 		}
 	}
