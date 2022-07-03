@@ -73,10 +73,10 @@ private:
 	GizmoMode gizmoMode;
 	Matrix4x4 rotationsMatrix;
 	Vector3 gizmoTranslation;
-	bool gizmoTranslationHandleDiffAvailable;
-	Vector3 gizmoTranslationHandleDiff;
-	bool gizmoTranslationLastResultAvailable;
-	Vector3 gizmoTranslationLastResult;
+	array<bool, 3> gizmoTranslationHandleDiffAvailable;
+	array<Vector3, 3> gizmoTranslationHandleDiff;
+	array<bool, 3> gizmoTranslationLastResultAvailable;
+	array<Vector3, 3> gizmoTranslationLastResult;
 	bool gizmoRotationLastResultAvailable;
 	Vector3 gizmoRotationLastResult;
 	Vector3 orthogonalGizmoTranslation;
@@ -167,8 +167,12 @@ public:
 		//
 		this->gizmoMode = gizmoMode;
 		//
-		gizmoTranslationHandleDiffAvailable = false;
-		gizmoTranslationLastResultAvailable = false;
+		gizmoTranslationHandleDiffAvailable[0] = false;
+		gizmoTranslationHandleDiffAvailable[1] = false;
+		gizmoTranslationHandleDiffAvailable[2] = false;
+		gizmoTranslationLastResultAvailable[0] = false;
+		gizmoTranslationLastResultAvailable[1] = false;
+		gizmoTranslationLastResultAvailable[2] = false;
 		gizmoRotationLastResultAvailable = false;
 	}
 

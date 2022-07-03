@@ -50,8 +50,12 @@ Gizmo::Gizmo(Engine* engine, const string& id, int32_t gizmoTypeMask)
 	this->gizmoTypeMask = gizmoTypeMask;
 	setGizmoType(GIZMOTYPE_ALL);
 	setGizmoMode(GIZMOMODE_NONE);
-	gizmoTranslationHandleDiffAvailable = false;
-	gizmoTranslationLastResultAvailable = false;
+	gizmoTranslationHandleDiffAvailable[0] = false;
+	gizmoTranslationHandleDiffAvailable[1] = false;
+	gizmoTranslationHandleDiffAvailable[2] = false;
+	gizmoTranslationLastResultAvailable[0] = false;
+	gizmoTranslationLastResultAvailable[1] = false;
+	gizmoTranslationLastResultAvailable[2] = false;
 	gizmoRotationLastResultAvailable = false;
 }
 
@@ -228,16 +232,16 @@ bool Gizmo::determineGizmoMovement(int mouseX, int mouseY, int axisIdx, const Ve
 	LineSegment::computeClosestPointsOnLineSegments(axisMin, axisMax, nearPlaneWorldCoordinate, farPlaneWorldCoordinate, gizmoTranslationOnAxis, gizmoTranslationOnAxisTmp);
 
 	//
-	if (gizmoTranslationHandleDiffAvailable == false) {
-		gizmoTranslationHandleDiff = gizmoTranslationOnAxis.clone().sub(gizmoTranslation);
-		gizmoTranslationHandleDiffAvailable = true;
+	if (gizmoTranslationHandleDiffAvailable[axisIdx] == false) {
+		gizmoTranslationHandleDiff[axisIdx] = gizmoTranslationOnAxis.clone().sub(gizmoTranslation);
+		gizmoTranslationHandleDiffAvailable[axisIdx] = true;
 	}
 
 	// do we already have a old result
-	auto success = gizmoTranslationLastResultAvailable == true;
+	auto success = gizmoTranslationLastResultAvailable[axisIdx] == true;
 	if (success == true) {
-		deltaMovement[axisIdx] = gizmoTranslationOnAxis.clone().sub(gizmoTranslationLastResult)[axisIdx];
-		auto movementLength = gizmoTranslation.clone().sub(gizmoTranslationOnAxis.clone().sub(gizmoTranslationHandleDiff)).computeLength();
+		deltaMovement[axisIdx] = gizmoTranslationOnAxis.clone().sub(gizmoTranslationLastResult[axisIdx])[axisIdx];
+		auto movementLength = gizmoTranslation.clone().sub(gizmoTranslationOnAxis.clone().sub(gizmoTranslationHandleDiff[axisIdx])).computeLength();
 		if (deltaMovement[axisIdx] < Math::EPSILON) {
 			deltaMovement[axisIdx] = -1.0f;
 			deltaMovement[axisIdx]*= movementLength;
@@ -251,8 +255,8 @@ bool Gizmo::determineGizmoMovement(int mouseX, int mouseY, int axisIdx, const Ve
 	}
 
 	// what ever, we have a new one
-	gizmoTranslationLastResult = gizmoTranslationOnAxis;
-	gizmoTranslationLastResultAvailable = true;
+	gizmoTranslationLastResult[axisIdx] = gizmoTranslationOnAxis;
+	gizmoTranslationLastResultAvailable[axisIdx] = true;
 
 	//
 	return success;
@@ -274,14 +278,14 @@ bool Gizmo::determineGizmoScale(int mouseX, int mouseY, int axisIdx, const Vecto
 	Vector3 contactOnAxis;
 	Vector3 contactOnAxisTmp;
 	LineSegment::computeClosestPointsOnLineSegments(axisMin, axisMax, nearPlaneWorldCoordinate, farPlaneWorldCoordinate, contactOnAxis, contactOnAxisTmp);
-	auto success = gizmoTranslationLastResultAvailable == true;
+	auto success = gizmoTranslationLastResultAvailable[axisIdx] == true;
 	if (success == true) {
 		auto direction = 1.0f;
-		if (gizmoTranslationLastResult.clone().sub(gizmoTranslation).computeLengthSquared() > contactOnAxis.clone().sub(gizmoTranslation).computeLengthSquared()) direction = -1.0f;
-		deltaScale[axisIdx] = contactOnAxis.clone().sub(gizmoTranslationLastResult).computeLength() * direction;
+		if (gizmoTranslationLastResult[axisIdx].clone().sub(gizmoTranslation).computeLengthSquared() > contactOnAxis.clone().sub(gizmoTranslation).computeLengthSquared()) direction = -1.0f;
+		deltaScale[axisIdx] = contactOnAxis.clone().sub(gizmoTranslationLastResult[axisIdx]).computeLength() * direction;
 	}
-	gizmoTranslationLastResult = contactOnAxis;
-	gizmoTranslationLastResultAvailable = true;
+	gizmoTranslationLastResult[axisIdx] = contactOnAxis;
+	gizmoTranslationLastResultAvailable[axisIdx] = true;
 	return success;
 }
 
@@ -329,7 +333,7 @@ bool Gizmo::determineGizmoDeltaTransformations(int mouseX, int mouseY, Vector3& 
 	deltaTranslation.set(0.0f, 0.0f, 0.0f);
 	deltaRotation.set(0.0f, 0.0f, 0.0f);
 	deltaScale.set(1.0f, 1.0f, 1.0f);
-	Vector3 gizmoDeltaMovement;
+	Vector3 gizmoMovement;
 
 	//
 	const Vector3 planeXYNormal(0.0f, 0.0f, -1.0f);
@@ -362,94 +366,94 @@ bool Gizmo::determineGizmoDeltaTransformations(int mouseX, int mouseY, Vector3& 
 	switch (getGizmoMode()) {
 		case GIZMOMODE_TRANSLATE_X:
 			{
-				if (determineGizmoMovement(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_X, Vector3(1.0f, 0.0, 0.0f), gizmoDeltaMovement) == true) {
-					deltaTranslation.setX(gizmoDeltaMovement.getX());
+				if (determineGizmoMovement(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_X, Vector3(1.0f, 0.0, 0.0f), gizmoMovement) == true) {
+					deltaTranslation.setX(gizmoMovement.getX());
 				}
 				break;
 			}
 		case GIZMOMODE_TRANSLATE_Y:
 			{
-				if (determineGizmoMovement(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Y, Vector3(0.0f, 1.0, 0.0f), gizmoDeltaMovement) == true) {
-					deltaTranslation.setY(gizmoDeltaMovement.getY());
+				if (determineGizmoMovement(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Y, Vector3(0.0f, 1.0, 0.0f), gizmoMovement) == true) {
+					deltaTranslation.setY(gizmoMovement.getY());
 				}
 				break;
 			}
 		case GIZMOMODE_TRANSLATE_Z:
 			{
-				if (determineGizmoMovement(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Z, Vector3(0.0f, 0.0, 1.0f), gizmoDeltaMovement) == true) {
-					deltaTranslation.setZ(gizmoDeltaMovement.getZ());
+				if (determineGizmoMovement(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Z, Vector3(0.0f, 0.0, 1.0f), gizmoMovement) == true) {
+					deltaTranslation.setZ(gizmoMovement.getZ());
 				}
 				break;
 			}
 		case GIZMOMODE_TRANSLATEPLANE_X:
 			{
-				if (determineGizmoMovement(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Y, Vector3(0.0f, 1.0, 0.0f), gizmoDeltaMovement) == true &&
-					determineGizmoMovement(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Z, Vector3(0.0f, 0.0, 1.0f), gizmoDeltaMovement) == true) {
-					deltaTranslation.setY(gizmoDeltaMovement.getY());
-					deltaTranslation.setZ(gizmoDeltaMovement.getZ());
+				if (determineGizmoMovement(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Y, Vector3(0.0f, 1.0, 0.0f), gizmoMovement) == true &&
+					determineGizmoMovement(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Z, Vector3(0.0f, 0.0, 1.0f), gizmoMovement) == true) {
+					deltaTranslation.setY(gizmoMovement.getY());
+					deltaTranslation.setZ(gizmoMovement.getZ());
 				}
 				break;
 			}
 		case GIZMOMODE_TRANSLATEPLANE_Y:
 			{
-				if (determineGizmoMovement(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_X, Vector3(1.0f, 0.0, 0.0f), gizmoDeltaMovement) == true &&
-					determineGizmoMovement(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Z, Vector3(0.0f, 0.0, 1.0f), gizmoDeltaMovement) == true) {
-					deltaTranslation.setX(gizmoDeltaMovement.getX());
-					deltaTranslation.setZ(gizmoDeltaMovement.getZ());
+				if (determineGizmoMovement(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_X, Vector3(1.0f, 0.0, 0.0f), gizmoMovement) == true &&
+					determineGizmoMovement(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Z, Vector3(0.0f, 0.0, 1.0f), gizmoMovement) == true) {
+					deltaTranslation.setX(gizmoMovement.getX());
+					deltaTranslation.setZ(gizmoMovement.getZ());
 				}
 				break;
 			}
 		case GIZMOMODE_TRANSLATEPLANE_Z:
 			{
-				if (determineGizmoMovement(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_X, Vector3(1.0f, 0.0, 0.0f), gizmoDeltaMovement) == true &&
-					determineGizmoMovement(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Y, Vector3(0.0f, 1.0, 0.0f), gizmoDeltaMovement) == true) {
-					deltaTranslation.setX(gizmoDeltaMovement.getX());
-					deltaTranslation.setY(gizmoDeltaMovement.getY());
+				if (determineGizmoMovement(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_X, Vector3(1.0f, 0.0, 0.0f), gizmoMovement) == true &&
+					determineGizmoMovement(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Y, Vector3(0.0f, 1.0, 0.0f), gizmoMovement) == true) {
+					deltaTranslation.setX(gizmoMovement.getX());
+					deltaTranslation.setY(gizmoMovement.getY());
 				}
 				break;
 			}
 		case GIZMOMODE_SCALE_X:
 			{
-				if (determineGizmoScale(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_X, rotationsMatrix.multiply(Vector3(1.0f, 0.0, 0.0f)).normalize(), gizmoDeltaMovement) == true) {
-					deltaScale.add(gizmoDeltaMovement);
+				if (determineGizmoScale(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_X, rotationsMatrix.multiply(Vector3(1.0f, 0.0, 0.0f)).normalize(), gizmoMovement) == true) {
+					deltaScale.add(gizmoMovement);
 				}
 				break;
 			}
 		case GIZMOMODE_SCALE_Y:
 			{
-				if (determineGizmoScale(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Y, rotationsMatrix.multiply(Vector3(0.0f, 1.0, 0.0f)).normalize(), gizmoDeltaMovement) == true) {
-					deltaScale.add(gizmoDeltaMovement);
+				if (determineGizmoScale(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Y, rotationsMatrix.multiply(Vector3(0.0f, 1.0, 0.0f)).normalize(), gizmoMovement) == true) {
+					deltaScale.add(gizmoMovement);
 				}
 				break;
 			}
 		case GIZMOMODE_SCALE_Z:
 			{
-				if (determineGizmoScale(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Z, rotationsMatrix.multiply(Vector3(0.0f, 0.0, 1.0f)).normalize(), gizmoDeltaMovement) == true) {
-					deltaScale.add(gizmoDeltaMovement);
+				if (determineGizmoScale(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Z, rotationsMatrix.multiply(Vector3(0.0f, 0.0, 1.0f)).normalize(), gizmoMovement) == true) {
+					deltaScale.add(gizmoMovement);
 				}
 				break;
 			}
 		case GIZMOMODE_SCALEPLANE_X:
 			{
-				if (determineGizmoScale(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Y, Vector3(0.0f, 1.0, 0.0f), gizmoDeltaMovement) == true &&
-					determineGizmoScale(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Z, Vector3(0.0f, 0.0, 1.0f), gizmoDeltaMovement) == true) {
-					deltaScale.add(gizmoDeltaMovement);
+				if (determineGizmoScale(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Y, Vector3(0.0f, 1.0, 0.0f), gizmoMovement) == true &&
+					determineGizmoScale(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Z, Vector3(0.0f, 0.0, 1.0f), gizmoMovement) == true) {
+					deltaScale.add(gizmoMovement);
 				}
 				break;
 			}
 		case GIZMOMODE_SCALEPLANE_Y:
 			{
-				if (determineGizmoScale(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_X, Vector3(1.0f, 0.0, 0.0f), gizmoDeltaMovement) == true &&
-					determineGizmoScale(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Z, Vector3(0.0f, 0.0, 1.0f), gizmoDeltaMovement) == true) {
-					deltaScale.add(gizmoDeltaMovement);
+				if (determineGizmoScale(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_X, Vector3(1.0f, 0.0, 0.0f), gizmoMovement) == true &&
+					determineGizmoScale(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Z, Vector3(0.0f, 0.0, 1.0f), gizmoMovement) == true) {
+					deltaScale.add(gizmoMovement);
 				}
 				break;
 			}
 		case GIZMOMODE_SCALEPLANE_Z:
 			{
-				if (determineGizmoScale(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_X, Vector3(1.0f, 0.0, 0.0f), gizmoDeltaMovement) == true &&
-					determineGizmoScale(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Y, Vector3(0.0f, 1.0, 0.0f), gizmoDeltaMovement) == true) {
-					deltaScale.add(gizmoDeltaMovement);
+				if (determineGizmoScale(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_X, Vector3(1.0f, 0.0, 0.0f), gizmoMovement) == true &&
+					determineGizmoScale(mouseX, mouseY, GizmoAxisIdx::GIZMOAXISIDX_Y, Vector3(0.0f, 1.0, 0.0f), gizmoMovement) == true) {
+					deltaScale.add(gizmoMovement);
 				}
 				break;
 			}

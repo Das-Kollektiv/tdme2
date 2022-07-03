@@ -813,7 +813,7 @@ void Engine::initialize()
 	gizmoCamera->setSideVector(Vector3(1.0f, 0.0f, 0.0f));
 	gizmoCamera->setUpVector(Vector3(0.0f, 1.0f, 0.0f));
 	gizmoCamera->setZNear(1.0f);
-	gizmoCamera->setZFar(300.0f);
+	gizmoCamera->setZFar(400.0f);
 
 	// create lights
 	for (auto i = 0; i < lights.size(); i++) {
