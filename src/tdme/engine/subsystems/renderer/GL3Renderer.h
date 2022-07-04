@@ -38,7 +38,7 @@ private:
 	uint32_t engineVAO;
 	map<uint32_t, int32_t> vbosUsage;
 	int activeTextureUnit;
-	#if defined (__APPLE__)
+	#if defined (__APPLE__) && !defined(__aarch64__)
 		struct CLSkinningParameters {
 			array<int32_t, 8> boundGLBuffers { -1, -1, -1, -1, -1, -1, -1, -1 };
 			array<bool, 8> boundGLBuffersWrite { false, false, false, false, false, false, false, false };

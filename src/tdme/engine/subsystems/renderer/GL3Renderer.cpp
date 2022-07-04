@@ -3,8 +3,10 @@
 #if defined (__APPLE__)
 	#include <OpenGL/gl3.h>
 	#include <OpenGL/OpenGL.h>
-	#include <OpenCL/opencl.h>
-	#include <OpenCL/cl_gl.h>
+	#if !defined(__aarch64__)
+		#include <OpenCL/opencl.h>
+		#include <OpenCL/cl_gl.h>
+	#endif
 #elif defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__) || defined(_WIN32) || defined(__HAIKU__)
 	#define GLEW_NO_GLU
 	#include <GL/glew.h>
@@ -116,7 +118,7 @@ bool GL3Renderer::isSupportingMultithreadedRendering() {
 	return false;
 }
 
-#if defined (__APPLE__)
+#if defined (__APPLE__) && !defined(__aarch64__)
 	void GL3Renderer::clErrorCallback(const char* errorInfo, const void* privateInfo, size_t cb, void* userData) {
 		Console::println(string("GL3Renderer::clErrorCallback(): ") + errorInfo);
 	}
@@ -144,7 +146,7 @@ void GL3Renderer::initialize()
 	glGenVertexArrays(1, &engineVAO);
 	glBindVertexArray(engineVAO);
 	//
-	#if defined (__APPLE__)
+	#if defined (__APPLE__) && !defined(__aarch64__)
 		// TODO: error management
 		// shader source
 		auto skinningKernelProgramSource = FileSystem::getInstance()->getContentAsString("shader/gl3/skinning", "skinning.cl");
@@ -258,7 +260,7 @@ bool GL3Renderer::isComputeShaderAvailable() {
 }
 
 bool GL3Renderer::isGLCLAvailable() {
-	#if defined (__APPLE__)
+	#if defined (__APPLE__) && !defined(__aarch64__)
 		return true;
 	#else
 		return false;
@@ -393,7 +395,7 @@ int32_t GL3Renderer::getProgramUniformLocation(int32_t programId, const string& 
 
 void GL3Renderer::setProgramUniformInteger(int contextIdx, int32_t uniformId, int32_t value)
 {
-	#if defined (__APPLE__)
+	#if defined (__APPLE__) && !defined(__aarch64__)
 		if (uniformId == UNIFORM_CL_SKINNING_VERTEX_COUNT) {
 			clSkinningParameters.vertexCount = value;
 		} else
@@ -1247,7 +1249,7 @@ void GL3Renderer::checkGLError(int line)
 }
 
 void GL3Renderer::dispatchCompute(int contextIdx, int32_t numGroupsX, int32_t numGroupsY, int32_t numGroupsZ) {
-	#if defined (__APPLE__)
+	#if defined (__APPLE__) && !defined(__aarch64__)
 		clSkinningParameters.numGroupsX = numGroupsX;
 		clSkinningParameters.numGroupsY = numGroupsY;
 		glFinish();
@@ -1268,10 +1270,11 @@ void GL3Renderer::dispatchCompute(int contextIdx, int32_t numGroupsX, int32_t nu
 		clEnqueueReleaseGLObjects(clCommandQueue, boundCLMemObjects.size(), boundCLMemObjects.data(), 0, nullptr, nullptr);
 		clFinish(clCommandQueue);
 		clSkinningParameters = CLSkinningParameters();
-	#else
+		statistics.computeCalls++;
+	#elif !defined(__APPLE__)
 		glDispatchCompute(numGroupsX, numGroupsY, numGroupsZ);
+		statistics.computeCalls++;
 	#endif
-	statistics.computeCalls++;
 }
 
 void GL3Renderer::memoryBarrier() {
@@ -1284,12 +1287,12 @@ void GL3Renderer::memoryBarrier() {
 }
 
 void GL3Renderer::uploadSkinningBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, FloatBuffer* data) {
-	#if defined (__APPLE__)
+	#if defined (__APPLE__) && !defined(__aarch64__)
 		glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 		glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 		glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
 		statistics.bufferUploads++;
-	#else
+	#elif !defined(__APPLE__)
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, bufferObjectId);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, ID_NONE);
@@ -1298,12 +1301,12 @@ void GL3Renderer::uploadSkinningBufferObject(int contextIdx, int32_t bufferObjec
 }
 
 void GL3Renderer::uploadSkinningBufferObject(int contextIdx, int32_t bufferObjectId, int32_t size, IntBuffer* data) {
-	#if defined (__APPLE__)
+	#if defined (__APPLE__) && !defined(__aarch64__)
 		glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 		glBufferData(GL_ARRAY_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 		glBindBuffer(GL_ARRAY_BUFFER, ID_NONE);
 		statistics.bufferUploads++;
-	#else
+	#elif !defined(__APPLE__)
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, bufferObjectId);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, size, data->getBuffer(), vbosUsage[bufferObjectId]);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, ID_NONE);
@@ -1311,7 +1314,7 @@ void GL3Renderer::uploadSkinningBufferObject(int contextIdx, int32_t bufferObjec
 	#endif
 }
 
-#if defined (__APPLE__)
+#if defined (__APPLE__) && !defined(__aarch64__)
 	inline void GL3Renderer::clBindGLBuffer(int32_t idx, int32_t bufferObjectId, bool write) {
 		clSkinningParameters.boundGLBuffers[idx] = bufferObjectId;
 		clSkinningParameters.boundGLBuffersWrite[idx] = write;
@@ -1319,65 +1322,65 @@ void GL3Renderer::uploadSkinningBufferObject(int contextIdx, int32_t bufferObjec
 #endif
 
 void GL3Renderer::bindSkinningVerticesBufferObject(int contextIdx, int32_t bufferObjectId) {
-	#if defined (__APPLE__)
+	#if defined (__APPLE__) && !defined(__aarch64__)
 		clBindGLBuffer(0, bufferObjectId, false);
-	#else
+	#elif !defined(__APPLE__)
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, bufferObjectId);
 	#endif
 }
 
 void GL3Renderer::bindSkinningNormalsBufferObject(int contextIdx, int32_t bufferObjectId) {
-	#if defined (__APPLE__)
+	#if defined (__APPLE__) && !defined(__aarch64__)
 		clBindGLBuffer(1, bufferObjectId, false);
-	#else
+	#elif !defined(__APPLE__)
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, bufferObjectId);
 	#endif
 }
 
 void GL3Renderer::bindSkinningVertexJointsBufferObject(int contextIdx, int32_t bufferObjectId) {
-	#if defined (__APPLE__)
+	#if defined (__APPLE__) && !defined(__aarch64__)
 		clBindGLBuffer(2, bufferObjectId, false);
-	#else
+	#elif !defined(__APPLE__)
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, bufferObjectId);
 	#endif
 }
 
 void GL3Renderer::bindSkinningVertexJointIdxsBufferObject(int contextIdx, int32_t bufferObjectId) {
-	#if defined (__APPLE__)
+	#if defined (__APPLE__) && !defined(__aarch64__)
 		clBindGLBuffer(3, bufferObjectId, false);
-	#else
+	#elif !defined(__APPLE__)
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, bufferObjectId);
 	#endif
 }
 
 void GL3Renderer::bindSkinningVertexJointWeightsBufferObject(int contextIdx, int32_t bufferObjectId) {
-	#if defined (__APPLE__)
+	#if defined (__APPLE__) && !defined(__aarch64__)
 		clBindGLBuffer(4, bufferObjectId, false);
-	#else
+	#elif !defined(__APPLE__)
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, bufferObjectId);
 	#endif
 }
 
 void GL3Renderer::bindSkinningVerticesResultBufferObject(int contextIdx, int32_t bufferObjectId) {
-	#if defined (__APPLE__)
+	#if defined (__APPLE__) && !defined(__aarch64__)
 		clBindGLBuffer(5, bufferObjectId, true);
-	#else
+	#elif !defined(__APPLE__)
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, bufferObjectId);
 	#endif
 }
 
 void GL3Renderer::bindSkinningNormalsResultBufferObject(int contextIdx, int32_t bufferObjectId) {
-	#if defined (__APPLE__)
+	#if defined (__APPLE__) && !defined(__aarch64__)
 		clBindGLBuffer(6, bufferObjectId, true);
-	#else
+	#elif !defined(__APPLE__)
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, bufferObjectId);
 	#endif
 }
 
 void GL3Renderer::bindSkinningMatricesBufferObject(int contextIdx, int32_t bufferObjectId) {
-	#if defined (__APPLE__)
+	#if defined (__APPLE__) && !defined(__aarch64__)
 		clBindGLBuffer(7, bufferObjectId, false);
-	#else
+	#elif !defined(__APPLE__)
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, bufferObjectId);
 	#endif
 }

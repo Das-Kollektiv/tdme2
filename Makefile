@@ -49,14 +49,28 @@ ifeq ($(OS), Darwin)
 	# MacOSX
 	EXTRAFLAGS := $(EXTRAFLAGS) -DHAVE_UNISTD_H
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
-		src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp \
-		src/tdme/engine/fileio/models/FBXReader.cpp \
-		src/tdme/engine/fileio/models/ModelReaderFBX.cpp
-	INCLUDES := $(INCLUDES) -Iext/fbx/macosx/include -Iext/glfw3/include -Iext/freetype/include
-	OPENGL_RENDERER_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -framework OpenGL -framework OpenCL -Lext/glfw3/macosx/lib -lglfw.3
-	VULKAN_RENDERER_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -lvulkan.1 -Lext/glfw3/macosx/lib -lglfw.3
-	OPENGLES2_RENDERER_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -framework OpenGL -framework OpenCL -Lext/glfw3/macosx/lib -lglfw.3
-	LIBS_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -framework OpenAL -Lext/glfw3/macosx/lib -lglfw.3  -Lext/freetype/macosx/lib -lfreetype.6 -Lext/fbx/macosx/lib -lfbxsdk
+		src/tdme/os/network/platform/bsd/KernelEventMechanism.cpp
+	OPENGL_RENDERER_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -framework OpenGL -framework OpenCL
+	VULKAN_RENDERER_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -lvulkan.1
+	OPENGLES2_RENDERER_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -framework OpenGL -framework OpenCL
+	ifeq ($(MACHINE), x86_64)
+		SRCS_PLATFORM := $(SRCS_PLATFORM) \
+			src/tdme/engine/fileio/models/FBXReader.cpp \
+			src/tdme/engine/fileio/models/ModelReaderFBX.cpp
+		INCLUDES := $(INCLUDES) -Iext/fbx/macosx/include -Iext/glfw3/include -Iext/freetype/include
+		LIBS_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -framework OpenAL -Lext/glfw3/lib/macosx/x64 -lglfw.3  -Lext/freetype/lib/macosx/x64 -lfreetype.6 -Lext/fbx/macosx/lib -lfbxsdk
+		OPENGL_RENDERER_LDFLAGS := $(OPENGL_RENDERER_LDFLAGS) -Lext/glfw3/lib/macosx/x64 -lglfw.3
+		VULKAN_RENDERER_LDFLAGS := $(VULKAN_RENDERER_LDFLAGS) -Lext/glfw3/lib/macosx/x64 -lglfw.3
+		OPENGLES2_RENDERER_LDFLAGS := $(OPENGLES2_RENDERER_LDFLAGS) -Lext/glfw3/lib/macosx/x64 -lglfw.3
+	else ifeq ($(MACHINE), arm64)
+		SRCS_PLATFORM := $(SRCS_PLATFORM) \
+			src/tdme/engine/fileio/models/ModelReader.cpp
+		INCLUDES := $(INCLUDES) -Iext/glfw3/include -Iext/freetype/include
+		LIBS_LDFLAGS := -framework Cocoa -framework IOKit -framework Carbon -framework OpenAL -Lext/glfw3/lib/macosx/arm64 -lglfw.3  -Lext/freetype/lib/macosx/arm64 -lfreetype.6
+		OPENGL_RENDERER_LDFLAGS := $(OPENGL_RENDERER_LDFLAGS) -Lext/glfw3/lib/macosx/arm64 -lglfw.3
+		VULKAN_RENDERER_LDFLAGS := $(VULKAN_RENDERER_LDFLAGS) -Lext/glfw3/lib/macosx/arm64 -lglfw.3
+		OPENGLES2_RENDERER_LDFLAGS := $(OPENGLES2_RENDERER_LDFLAGS) -Lext/glfw3/lib/macosx/arm64 -lglfw.3
+	endif
 	OFLAGS := -O2
 else ifeq ($(OS), FreeBSD)
 	# FreeBSD

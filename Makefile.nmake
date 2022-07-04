@@ -34,10 +34,10 @@ LIBS_LDFLAGS = \
 	/LIBPATH "$(WINDOWS_SDK_DIR)\um\x64\user32.lib" \
 	/LIBPATH "$(WINDOWS_SDK_DIR)\um\x64\ws2_32.lib" \
 	/LIBPATH "$(WINDOWS_SDK_DIR)\um\x64\dbghelp.lib" \
-	/LIBPATH "ext\glfw3\win64\lib\glfw3dll.lib" \
+	/LIBPATH "ext\glfw3\lib\win64\glfw3dll.lib" \
 	/LIBPATH "ext\windows-msc\pthread\libs\pthreadVC2.lib" \
 	/LIBPATH "ext\windows-msc\openal-soft\libs\OpenAL32.lib" \
-	/LIBPATH "ext\freetype\win64\lib\freetype.lib" \
+	/LIBPATH "ext\freetype\lib\win64\freetype.lib" \
 	/LIBPATH "ext\fbx\win64\lib\libfbxsdk.lib"
 
 FLAGS = /MT /MP /EHsc /O2 /std:c++20 /Zi /F 8388608 /D RAPIDJSON_HAS_STDSTRING /D GLFW_DLL
