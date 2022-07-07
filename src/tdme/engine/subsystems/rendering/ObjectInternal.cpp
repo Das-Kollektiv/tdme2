@@ -42,6 +42,7 @@ ObjectInternal::ObjectInternal(const string& id, Model* model, int instances) :
 	receivesShadows = false;
 	effectColorMul.set(1.0f, 1.0f, 1.0f, 1.0f);
 	effectColorAdd.set(0.0f, 0.0f, 0.0f, 0.0f);
+	nodeTransformMatrixUpdate = false;
 	updateBoundingBox();
 }
 
@@ -98,6 +99,7 @@ void ObjectInternal::setTextureMatrix(const Matrix2D3x3& textureMatrix, const st
 }
 
 void ObjectInternal::setNodeTransformMatrix(const string& id, const Matrix4x4& matrix) {
+	nodeTransformMatrixUpdate = true;
 	ObjectBase::setNodeTransformMatrix(id, matrix);
 	map<string, Matrix4x4*> _overriddenTransformMatrices;
 	for (auto overriddenTransformMatrixIt: instanceAnimations[currentInstance]->overriddenTransformMatrices) {
@@ -109,6 +111,7 @@ void ObjectInternal::setNodeTransformMatrix(const string& id, const Matrix4x4& m
 }
 
 void ObjectInternal::unsetNodeTransformMatrix(const string& id) {
+	nodeTransformMatrixUpdate = true;
 	ObjectBase::unsetNodeTransformMatrix(id);
 	map<string, Matrix4x4*> _overriddenTransformMatrices;
 	for (auto overriddenTransformMatrixIt: instanceAnimations[currentInstance]->overriddenTransformMatrices) {
@@ -128,6 +131,12 @@ void ObjectInternal::setTransform(const Transform& transform)
 void ObjectInternal::update()
 {
 	instanceTransform[currentInstance].update();
+	if (nodeTransformMatrixUpdate == true) {
+		for (auto i = 0; i < objectNodes.size(); i++) {
+			objectNodes[i]->updateNodeTransformationsMatrix();
+		}
+		nodeTransformMatrixUpdate = false;
+	}
 	updateBoundingBox();
 }
 

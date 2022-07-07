@@ -43,6 +43,7 @@ protected:
 	Color4 effectColorAdd;
 	BoundingBox boundingBox;
 	BoundingBox boundingBoxTransformed;
+	bool nodeTransformMatrixUpdate;
 
 	/**
 	 * Update bounding volume
@@ -218,7 +219,17 @@ public:
 	void setTransform(const Transform& transform);
 	void update();
 
+	/**
+	 * Set node transform matrix
+	 * @param id id
+	 * @param matrix matrix
+	 */
 	void setNodeTransformMatrix(const string& id, const Matrix4x4& matrix);
+
+	/**
+	 * Unset node transform matrix
+	 * @param id id
+	 */
 	void unsetNodeTransformMatrix(const string& id);
 
 };

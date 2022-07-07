@@ -73,7 +73,6 @@ void ObjectNode::updateNodeTransformationsMatrix() {
 			nodeTransformMatrix = transformationsMatricesIt->second;
 		}
 	}
-	nodeTransformMatrixUpdate = false;
 }
 
 void ObjectNode::createNodes(ObjectBase* object, bool useManagers, Engine::AnimationProcessingTarget animationProcessingTarget, vector<ObjectNode*>& objectNodes)
