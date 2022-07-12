@@ -83,7 +83,7 @@ void World::reset()
 	bodyCollisionsLastFrame.clear();
 }
 
-Body* World::addRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, vector<BoundingVolume*> boundingVolumes)
+Body* World::addRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes)
 {
 	removeBody(id);
 	auto body = new Body(this, id, Body::TYPE_DYNAMIC, enabled, collisionTypeId, transform, restitution, friction, mass, inertiaTensor, boundingVolumes);
@@ -96,7 +96,7 @@ Body* World::addRigidBody(const string& id, bool enabled, uint16_t collisionType
 	return body;
 }
 
-Body* World::addCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, vector<BoundingVolume*> boundingVolumes) {
+Body* World::addCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes) {
 	removeBody(id);
 	auto body = new Body(this, id, Body::TYPE_COLLISION, enabled, collisionTypeId, transform, 0.0f, 0.0f, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);
 	bodies.push_back(body);
@@ -107,7 +107,7 @@ Body* World::addCollisionBody(const string& id, bool enabled, uint16_t collision
 	return body;
 }
 
-Body* World::addStaticRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, float friction, vector<BoundingVolume*> boundingVolumes)
+Body* World::addStaticRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, float friction, const vector<BoundingVolume*>& boundingVolumes)
 {
 	removeBody(id);
 	auto body = new Body(this, id, Body::TYPE_STATIC, enabled, collisionTypeId, transform, 0.0f, friction, 0.0f, Body::getNoRotationInertiaTensor(), boundingVolumes);

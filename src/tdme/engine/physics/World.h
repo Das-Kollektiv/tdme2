@@ -87,7 +87,7 @@ public:
 	 * @param boundingVolumes bounding volumes
 	 * @return body
 	 */
-	Body* addRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, vector<BoundingVolume*> boundingVolumes);
+	Body* addRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes);
 
 	/**
 	 * Add a collision body
@@ -98,7 +98,7 @@ public:
 	 * @param boundingVolumes bounding volumes
 	 * @return body
 	 */
-	Body* addCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, vector<BoundingVolume*> boundingVolumes);
+	Body* addCollisionBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, const vector<BoundingVolume*>& boundingVolumes);
 
 	/**
 	 * Add a static rigid body
@@ -110,7 +110,7 @@ public:
 	 * @param boundingVolumes bounding volumes
 	 * @return body
 	 */
-	Body* addStaticRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, float friction, vector<BoundingVolume*> boundingVolumes);
+	Body* addStaticRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, float friction, const vector<BoundingVolume*>& boundingVolumes);
 
 	/**
 	 * Returns body identified by id

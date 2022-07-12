@@ -7,9 +7,11 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/prototype/BaseProperties.h>
 #include <tdme/engine/prototype/PrototypeAudio.h>
+#include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/engine/prototype/PrototypeImposterLOD.h>
 #include <tdme/engine/prototype/PrototypeParticleSystem.h>
 #include <tdme/engine/scene/fwd-tdme.h>
@@ -37,6 +39,7 @@ using tdme::engine::prototype::PrototypeTerrain;
 using tdme::engine::scene::SceneLibrary;
 using tdme::engine::Entity;
 using tdme::engine::EntityShaderParameters;
+using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
 
 /**
@@ -245,6 +248,20 @@ public:
 	 * @param idx index
 	 */
 	void removeBoundingVolume(int idx);
+
+	/**
+	 * Get bounding volumes primitibves to be added to physics engine
+	 * @return bounding volume primitives
+	 */
+	inline const vector<BoundingVolume*> getBoundingVolumePrimitives() {
+		vector<BoundingVolume*> boundingVolumePrimitives;
+		for (auto boundingVolume: boundingVolumes) {
+			if (boundingVolume->getBoundingVolume() != nullptr) {
+				boundingVolumePrimitives.push_back(boundingVolume->getBoundingVolume());
+			}
+		}
+		return boundingVolumePrimitives;
+	}
 
 	/**
 	 * @return physics
