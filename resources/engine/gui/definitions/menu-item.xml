@@ -59,10 +59,13 @@
 		<!-- shortcut and child -->
 		<layout width="250" height="auto" alignment="horizontal" horizontal-align="right" vertical-align="center">
 			<space width="*" />
-			<text padding-right="5" width="auto" height="25" vertical-align="center" font="{$font.default}" size="{$fontsize.default}" text="{$shortcut}" color="{$color.font_disabled}" />
-			<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
-				<!-- <image show-on="parent" src="resources/engine/images/arrow_right.png" /> -->
-			</layout>
+			<layer>
+				<text padding-right="5" width="auto" height="25" vertical-align="center" font="{$font.default}" size="{$fontsize.default}" text="{$shortcut}" color="{$color.font_disabled}" />
+				<layout width="25" height="25" alignment="horizontal" horizontal-align="center" vertical-align="center">
+					<!-- <image show-on="parent" src="resources/engine/images/arrow_right.png" /> -->
+				</layout>
+			</layer>
+			<space width="5"/>
 		</layout>
 		
 		<!-- additional elements -->

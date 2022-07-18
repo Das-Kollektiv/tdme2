@@ -127,7 +127,7 @@ vec3 getIBLContribution(MaterialInfo materialInfo, vec3 n, vec3 v)
     vec3 diffuse = diffuseLight * materialInfo.diffuseColor;
     vec3 specular = specularLight * (materialInfo.specularColor * brdf.x + brdf.y);
 
-    return diffuse + specular;
+    return diffuse + specular * 0.00000001;
 }
 #endif
 
