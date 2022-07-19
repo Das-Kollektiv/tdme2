@@ -19,24 +19,24 @@
 						<menu-item id="menu_file_quit" image="resources/engine/images/quit.png" text="Quit" shortcut="Ctrl Q" />
 					</menu-header-item>
 					<menu-header-item text="Edit">
-						<menu-item text="Undo" id="menu_edit_undo" />
-						<menu-item text="Redo" id="menu_edit_redo" />
+						<menu-item text="Undo" id="menu_edit_undo" image="resources/engine/images/undo.png" shortcut="Ctrl Z" />
+						<menu-item text="Redo" id="menu_edit_redo" image="resources/engine/images/redo.png" shortcut="Shift Ctrl Z" />
 						<menu-separator />
-						<menu-item text="Cut" id="menu_edit_cut" />
-						<menu-item text="Copy" id="menu_edit_copy" />
-						<menu-item text="Paste" id="menu_edit_paste" />
+						<menu-item text="Cut" id="menu_edit_cut" shortcut="Ctrl X" />
+						<menu-item text="Copy" id="menu_edit_copy" shortcut="Ctrl C" />
+						<menu-item text="Paste" id="menu_edit_paste" shortcut="Ctrl V" />
 						<menu-separator />
-						<menu-item text="Delete" id="menu_edit_delete" />
+						<menu-item text="Delete" id="menu_edit_delete" image="resources/engine/images/delete.png" shortcut="Del" />
 					</menu-header-item>
 					<menu-header-item text="View">
-						<menu-item text="Full Screen" id="menu_view_fullscreen" shortcut="F11" />
+						<menu-item text="Full Screen" id="menu_view_fullscreen" image="resources/engine/images/fullscreen.png" shortcut="F11" />
 					</menu-header-item>
 					<menu-header-item text="Help">
-						<menu-item text="Documentation" id="menu_help_documentation" on-mouse-click="http://drewke.net/tdme2-documentation/alpha/public" />
-						<menu-item text="Community" id="menu_help_community" on-mouse-click="https://discord.gg/tMqrmcp23Q" />
-						<menu-item text="Bug Tracker" id="menu_help_bugtracker" on-mouse-click="https://open.codecks.io/tdme2" />
+						<menu-item id="menu_help_documentation" image="resources/engine/images/weblink.png" text="Documentation" on-mouse-click="http://drewke.net/tdme2-documentation/alpha/public" />
+						<menu-item id="menu_help_community" image="resources/engine/images/weblink.png" text="Community" on-mouse-click="https://discord.gg/tMqrmcp23Q" />
+						<menu-item id="menu_help_bugtracker" image="resources/engine/images/weblink.png" text="Bug Tracker" on-mouse-click="https://open.codecks.io/tdme2" />
 						<menu-separator />
-						<menu-item text="About" id="menu_help_about" />
+						<menu-item id="menu_help_about" image="resources/engine/images/tdme.png" text="About"  />
 					</menu-header-item>
 				</menu-header>
 			</layout>
@@ -55,7 +55,7 @@
 						
 							<layout padding="5" alignment="vertical" width="100%" height="100%">
 							
-								<input width="100%" height="auto" hint="Search" image="resources/engine/images/search.png" id="projectpaths_search" />
+								<input width="100%" height="auto" hint="path/" id="projectpaths_search" />
 								
 								<space height="5"/>
 								
