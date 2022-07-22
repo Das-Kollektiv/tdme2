@@ -4,9 +4,11 @@
 
 #include <sstream>
 #include <string>
+#include <string_view>
 
 #include <tdme/tdme.h>
 #include <tdme/network/udpclient/UDPClient.h>
+#include <tdme/network/udpclient/UDPClientPacket.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/Time.h>
@@ -15,10 +17,11 @@ using tdme::network::udpclient::UDPClientMessage;
 
 using std::ios_base;
 using std::string;
-using std::stringstream;
+using std::string_view;
 using std::to_string;
 
 using tdme::network::udpclient::UDPClient;
+using tdme::network::udpclient::UDPClientPacket;
 using tdme::utilities::Console;
 using tdme::utilities::Integer;
 using tdme::utilities::Time;
@@ -40,95 +43,52 @@ UDPClientMessage* UDPClientMessage::parse(const char message[512], const size_t 
 			Console::println("UDPClientMessage::parse(): invalid message type: '" + (string() + message[0]) + "' (" + to_string(message[0]) + ")");
 			return nullptr;
 	}
-	uint32_t clientId;
-	uint32_t messageId;
-	uint32_t retries;
-	Integer::decode(string(&message[1], 6), clientId);
-	Integer::decode(string(&message[7], 6), messageId);
-	Integer::decode(string(&message[13], 1), retries);
+
+	//
+	auto clientId = Integer::viewDecode(string_view(&message[1], 6));
+	auto messageId = Integer::viewDecode(string_view(&message[7], 6));
+	auto retries = Integer::viewDecode(string_view(&message[13], 1));
+
 	// decode data
-	stringstream* frame = nullptr;
+	UDPClientPacket* packet = nullptr;
 	if (bytes > 14) {
-		frame = new stringstream();
-		frame->write(&message[14], bytes - 14);
+		packet = new UDPClientPacket();
+		packet->putBytes((const uint8_t*)&message[14], bytes - 14);
+		packet->reset();
 	}
-	return new UDPClientMessage(messageType, clientId, messageId, retries, frame);
-}
 
-UDPClientMessage::UDPClientMessage(const MessageType messageType, const uint32_t clientId, const uint32_t messageId, const uint8_t retries, stringstream* frame) :
-	messageType(messageType),
-	clientId(clientId),
-	messageId(messageId),
-	retries(retries),
-	frame(frame)
-{
-	time = Time::getCurrentMillis();
-}
-
-UDPClientMessage::~UDPClientMessage() {
-	if (frame != nullptr) delete frame;
-}
-
-const uint64_t UDPClientMessage::getTime() {
-	return time;
-}
-
-const UDPClientMessage::MessageType UDPClientMessage::getMessageType() {
-	return messageType;
-}
-
-const uint32_t UDPClientMessage::getClientId() {
-	return clientId;
-}
-
-const uint32_t UDPClientMessage::getMessageId() {
-	return messageId;
+	// construct UDP client message
+	return new UDPClientMessage(messageType, clientId, messageId, retries, packet);
 }
 
 const int64_t UDPClientMessage::getRetryTime() {
 	return UDPClient::getRetryTime(retries);
 }
 
-const uint8_t UDPClientMessage::getRetryCount() {
-	return retries;
-}
-
-void UDPClientMessage::retry() {
-	retries++;
-}
-
-stringstream* UDPClientMessage::getFrame() {
-	return frame;
-}
-
-void UDPClientMessage::generate(char message[512], size_t& bytes) {
+void UDPClientMessage::generate(char message[512], uint16_t& bytes) {
+	UDPClientPacket generatedPacket;
 	string datagram;
 	switch(messageType) {
 		case MESSAGETYPE_ACKNOWLEDGEMENT:
-			datagram+= 'A';
+			generatedPacket.putByte('A');
 			break;
 		case MESSAGETYPE_CONNECT:
-			datagram+= 'C';
+			generatedPacket.putByte('C');
 			break;
 		case MESSAGETYPE_MESSAGE :
-			datagram+= 'M';
+			generatedPacket.putByte('M');
 			break;
 		default:
 			// FIXME
 			break;
 	}
-	string retriesEncoded;
-	string clientIdEncoded;
-	string messageIdEncoded;
-	Integer::encode(retries, retriesEncoded);
-	Integer::encode(clientId, clientIdEncoded);
-	Integer::encode(messageId, messageIdEncoded);
-	datagram+= clientIdEncoded;
-	datagram+= messageIdEncoded;
-	datagram+= retriesEncoded[retriesEncoded.length()];
-	if (frame != nullptr) {
-		datagram+= frame->str();
-	}
-	bytes = datagram.size();
-	memcpy(message, datagram.c_str(), bytes);
+	auto clientIdEncoded = Integer::encode(clientId);
+	auto messageIdEncoded = Integer::encode(messageId);
+	auto retriesEncoded = Integer::encode(retries);
+	generatedPacket.putBytes((const uint8_t*)clientIdEncoded.data(), clientIdEncoded.size());
+	generatedPacket.putBytes((const uint8_t*)messageIdEncoded.data(), messageIdEncoded.size());
+	generatedPacket.putByte(retriesEncoded[retriesEncoded.size() - 1]);
+	if (packet != nullptr) generatedPacket.putPacket(packet);
+	bytes = generatedPacket.getPosition();
+	memcpy(message, generatedPacket.getData().data(), bytes);
 }

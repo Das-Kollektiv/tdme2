@@ -77,3 +77,19 @@ bool Integer::decode(const string& encodedString, uint32_t& decodedInt) {
 	return true;
 }
 
+bool Integer::viewDecode(const string_view& encodedString, uint32_t& decodedInt) {
+	char encodingCharSet[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW-+/*.";
+	decodedInt = 0;
+	for (auto i = 0; i < encodedString.length(); i++) {
+		auto codeIdx = -1;
+		char c = encodedString[encodedString.length() - i - 1];
+		char* codePtr = strchr(encodingCharSet, c);
+		if (codePtr == NULL) {
+			return false;
+		} else {
+			codeIdx = codePtr - encodingCharSet;
+		}
+		decodedInt+= codeIdx << (i * 6);
+	}
+	return true;
+}

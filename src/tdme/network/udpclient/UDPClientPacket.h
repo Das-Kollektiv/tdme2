@@ -1,0 +1,262 @@
+#pragma once
+
+#include <array>
+#include <string>
+
+#include <tdme/tdme.h>
+#include <tdme/utilities/Console.h>
+
+#include <tdme/network/udpclient/fwd-tdme.h>
+
+using std::array;
+using std::string;
+
+using tdme::utilities::Console;
+
+/**
+ * UDP Client Packet
+ * @author Andreas Drewke
+ */
+class tdme::network::udpclient::UDPClientPacket final {
+private:
+	mutable uint16_t position { 0 };
+	array<uint8_t, 512> data;
+
+public:
+	static constexpr uint16_t PACKET_MAX_SIZE { 512 };
+
+	/**
+	 * Public constructor
+	 */
+	inline UDPClientPacket() {
+	}
+
+	/**
+	 * Get size of packet
+	 */
+	inline const uint16_t getSize() const {
+		return data.size();
+	}
+
+	/**
+	 * Get data
+	 */
+	inline const array<uint8_t, 512>& getData() const {
+		return data;
+	}
+
+	/**
+	 * Get position
+	 */
+	inline const uint16_t getPosition() const {
+		return position;
+	}
+
+	/**
+	 * Set position
+	 * @param position position
+	 * @return UDP client packet
+	 */
+	inline UDPClientPacket* setPosition(uint16_t position) {
+		this->position = position;
+		return this;
+	}
+
+	/**
+	 * Reset position for read
+	 */
+	inline void reset() const {
+		position = 0;
+	}
+
+	/**
+	 * Get a bool from packet
+	 * @return value
+	 */
+	inline bool getBool() const {
+		return getByte() == 1;
+	}
+
+	/**
+	 * Puts a bool into packet
+	 * @param value value
+	 * @return UDP client packet
+	 */
+	inline UDPClientPacket* putBool(bool value) {
+		putByte(value == true?1:0);
+		return this;
+	}
+
+	/**
+	 * Get a byte from packet
+	 * @return value
+	 */
+	inline uint8_t getByte() const {
+		if (position >= PACKET_MAX_SIZE) {
+			Console::println("UDPClientPacket::getByte(): position out of range");
+			return 0;
+		}
+		return data[position++];
+	}
+
+	/**
+	 * Puts a byte into packet
+	 * @param value value
+	 * @return UDP client packet
+	 */
+	inline UDPClientPacket* putByte(uint8_t value) {
+		if (position >= PACKET_MAX_SIZE) {
+			Console::println("UDPClientPacket::putByte(): position out of range");
+			return this;
+		}
+		data[position++] = value;
+		return this;
+	}
+
+	/**
+	 * Get a int16 from packet
+	 * @return value
+	 */
+	inline uint16_t getInt16() const {
+		uint16_t value = 0;
+		value+= (uint32_t)getByte();
+		value+= (uint32_t)getByte() << 8;
+		return value;
+	}
+
+	/**
+	 * Puts a int16 into packet
+	 * @param value value
+	 * @return UDP client packet
+	 */
+	inline UDPClientPacket* putInt16(uint16_t value) {
+		putByte((value) & 0xFF);
+		putByte((value >> 8) & 0xFF);
+		return this;
+	}
+
+	/**
+	 * Get a int from packet
+	 * @return value
+	 */
+	inline uint32_t getInt() const {
+		uint32_t value = 0;
+		value+= (uint32_t)getByte();
+		value+= (uint32_t)getByte() << 8;
+		value+= (uint32_t)getByte() << 16;
+		value+= (uint32_t)getByte() << 24;
+		return value;
+	}
+
+	/**
+	 * Puts a int into packet
+	 * @param value value
+	 * @return UDP client packet
+	 */
+	inline UDPClientPacket* putInt(uint32_t value) {
+		putByte((value) & 0xFF);
+		putByte((value >> 8) & 0xFF);
+		putByte((value >> 16) & 0xFF);
+		putByte((value >> 24) & 0xFF);
+		return this;
+	}
+
+	/**
+	 * Get a int64 from packet
+	 * @return value
+	 */
+	inline uint32_t getInt64() const {
+		uint64_t value = 0;
+		value+= (uint64_t)getByte();
+		value+= (uint64_t)getByte() << 8;
+		value+= (uint64_t)getByte() << 16;
+		value+= (uint64_t)getByte() << 24;
+		value+= (uint64_t)getByte() << 32;
+		value+= (uint64_t)getByte() << 40;
+		value+= (uint64_t)getByte() << 48;
+		value+= (uint64_t)getByte() << 56;
+		return value;
+	}
+
+	/**
+	 * Puts a int64 into packet
+	 * @param value value
+	 * @return UDP client packet
+	 */
+	inline UDPClientPacket* putInt64(uint64_t value) {
+		putByte((value) & 0xFF);
+		putByte((value >> 8) & 0xFF);
+		putByte((value >> 16) & 0xFF);
+		putByte((value >> 24) & 0xFF);
+		putByte((value >> 32) & 0xFF);
+		putByte((value >> 40) & 0xFF);
+		putByte((value >> 48) & 0xFF);
+		putByte((value >> 56) & 0xFF);
+		return this;
+	}
+
+	/**
+	 * Get a float from packet
+	 * @return value
+	 */
+	inline float getFloat() const {
+		uint32_t floatAsInt = getInt();
+		return *((float*)&floatAsInt);
+	}
+
+	/**
+	 * Puts a float into packet
+	 * @param value value
+	 * @return UDP client packet
+	 */
+	inline UDPClientPacket* putFloat(float value) {
+		uint32_t* floatAsInt = ((uint32_t*)&value);
+		putInt(*floatAsInt);
+		return this;
+	}
+
+	/**
+	 * Get a string value
+	 * @return value
+	 */
+	inline string getString() const {
+		string value;
+		uint8_t length = getByte();
+		for (auto i = 0; i < length; i++) value+= getByte();
+		return value;
+	}
+
+	/**
+	 * Puts a string into packet
+	 * @param value value
+	 * @return UDP client packet
+	 */
+	inline UDPClientPacket* putString(const string& value) {
+		putByte(value.size());
+		for (auto i = 0; i < value.size(); i++) {
+			putByte(value[i]);
+		}
+		return this;
+	}
+
+	/**
+	 * Puts raw bytes into packet
+	 * @param value value
+	 * @return UDP client packet
+	 */
+	inline UDPClientPacket* putBytes(const uint8_t* bytes, int16_t size) {
+		for (auto i = 0; i < size; i++) putByte(bytes[i]);
+		return this;
+	}
+
+	/**
+	 * Puts raw bytes into packet
+	 * @param value value
+	 * @return UDP client packet
+	 */
+	inline UDPClientPacket* putPacket(const UDPClientPacket* packet) {
+		for (auto i = 0; i < packet->getPosition(); i++) putByte(packet->data[i]);
+		return this;
+	}
+
+};

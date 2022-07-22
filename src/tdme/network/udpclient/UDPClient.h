@@ -13,6 +13,7 @@
 #include <tdme/network/udpclient/fwd-tdme.h>
 #include <tdme/network/udpclient/NetworkClientException.h>
 #include <tdme/network/udpclient/UDPClientMessage.h>
+#include <tdme/network/udpclient/UDPClientPacket.h>
 
 #include <tdme/os/network/KernelEventMechanism.h>
 #include <tdme/os/network/UDPSocket.h>
@@ -30,6 +31,7 @@ using tdme::os::threading::Thread;
 
 using tdme::network::udpclient::NetworkClientException;
 using tdme::network::udpclient::UDPClientMessage;
+using tdme::network::udpclient::UDPClientPacket;
 
 /**
  * UDP client
@@ -118,9 +120,9 @@ public:
 
 	/**
 	 * Create message
-	 * @param frame frame content
+	 * @param packet UDP client packet
 	 */
-	UDPClientMessage* createMessage(stringstream* frame);
+	UDPClientMessage* createMessage(const UDPClientPacket* packet);
 
 	/**
 	 * @returns UDP client statistics
@@ -164,7 +166,7 @@ private:
 		uint32_t messageId;
 		uint8_t retries;
 		char message[512];
-		size_t bytes;
+		uint16_t bytes;
 	};
 	typedef queue<Message*> MessageQueue;
 	typedef map<uint32_t, Message*> MessageMapAck;

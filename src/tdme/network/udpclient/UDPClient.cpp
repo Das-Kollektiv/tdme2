@@ -10,6 +10,7 @@
 #include <tdme/network/udpclient/NetworkClientException.h>
 #include <tdme/network/udpclient/UDPClient.h>
 #include <tdme/network/udpclient/UDPClientMessage.h>
+#include <tdme/network/udpclient/UDPClientPacket.h>
 #include <tdme/os/network/KernelEventMechanism.h>
 #include <tdme/os/network/NetworkSocket.h>
 #include <tdme/os/network/NIOInterest.h>
@@ -24,12 +25,11 @@ using std::ios;
 using std::map;
 using std::pair;
 using std::string;
-using std::stringstream;
-using std::to_string;
 
 using tdme::network::udpclient::NetworkClientException;
 using tdme::network::udpclient::UDPClient;
 using tdme::network::udpclient::UDPClientMessage;
+using tdme::network::udpclient::UDPClientPacket;
 using tdme::os::network::KernelEventMechanism;
 using tdme::os::network::NetworkSocket;
 using tdme::os::network::NIO_INTEREST_NONE;
@@ -178,15 +178,8 @@ void UDPClient::run() {
 										);
 										clientId = clientMessage->getClientId();
 										// read client key
-										auto frame = clientMessage->getFrame();
-										clientKey = "";
-										uint8_t clientKeySize;
-										char c;
-										frame->read((char*)&clientKeySize, 1);
-										for (uint8_t i = 0; i < clientKeySize; i++) {
-											frame->read(&c, 1);
-											clientKey+= c;
-										}
+										auto packet = clientMessage->getPacket();
+										clientKey = packet->getString();
 										delete clientMessage;
 										// we are connected
 										connected = true;
@@ -547,13 +540,13 @@ UDPClientMessage* UDPClient::receiveMessage() {
 	return message;
 }
 
-UDPClientMessage* UDPClient::createMessage(stringstream* frame) {
+UDPClientMessage* UDPClient::createMessage(const UDPClientPacket* packet) {
 	return new UDPClientMessage(
 		UDPClientMessage::MESSAGETYPE_MESSAGE,
 		clientId,
 		messageCount++,
 		0,
-		frame
+		packet
 	);
 }
 

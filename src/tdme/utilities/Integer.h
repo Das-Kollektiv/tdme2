@@ -78,6 +78,17 @@ public:
 	}
 
 	/**
+	 * @brief Decodes an 6 char string representation to a unsigned 32 bit integer
+	 * @param encodedString encoded string
+	 * @returns decodedString
+	 */
+	inline static const uint32_t viewDecode(const string_view& encodedString) {
+		uint32_t decodedInt;
+		viewDecode(encodedString, decodedInt);
+		return decodedInt;
+	}
+
+	/**
 	 * @brief Encodes an 32 bit unsigned integer to a 6 char string representation
 	 * @param decodedInt int value to encode
 	 * @param encodedString string
@@ -90,5 +101,12 @@ public:
 	 * @param decodedInt integer
 	 */
 	static bool decode(const string& encodedString, uint32_t& decodedInt);
+
+	/**
+	 * @brief Decodes an 6 char string representation to a unsigned 32 bit integer
+	 * @param encodedString encoded string
+	 * @param decodedInt integer
+	 */
+	static bool viewDecode(const string_view& encodedString, uint32_t& decodedInt);
 
 };

@@ -5,6 +5,7 @@
 #include <tdme/tdme.h>
 #include <tdme/network/udpclient/UDPClient.h>
 #include <tdme/network/udpclient/UDPClientMessage.h>
+#include <tdme/network/udpclient/UDPClientPacket.h>
 #include <tdme/os/network/Network.h>
 #include <tdme/os/threading/Thread.h>
 
@@ -18,6 +19,7 @@ using std::stringstream;
 
 using tdme::network::udpclient::UDPClient;
 using tdme::network::udpclient::UDPClientMessage;
+using tdme::network::udpclient::UDPClientPacket;
 using tdme::os::network::Network;
 using tdme::os::threading::Thread;
 using tdme::utilities::Console;
@@ -32,11 +34,11 @@ public:
 	virtual void run() {
 		while (isStopRequested() == false) {
 			string input;
-			stringstream* frame = new stringstream();
 			cin >> input;
-			*frame << input;
+			UDPClientPacket* packet = new UDPClientPacket();
+			packet->putString(input);
 			if (client != nullptr) {
-				client->sendMessage(client->createMessage(frame), true);
+				client->sendMessage(client->createMessage(packet), true);
 			}
 		}
 	}
@@ -77,7 +79,7 @@ int main(int argc, char *argv[]) {
 		UDPClientMessage* message = client->receiveMessage();
 		if (message != nullptr) {
 			if (client->processSafeMessage(message) == true) {
-				Console::println("Received message: " + message->getFrame()->str());
+				Console::println("Received message: " + message->getPacket()->getString());
 			}
 			delete message;
 		}

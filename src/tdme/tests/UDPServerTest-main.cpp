@@ -37,7 +37,9 @@ public:
 					EchoUDPServerClient* client = static_cast<EchoUDPServerClient*>(server->getClientByKey(*i));
 					if (client != NULL) {
 						stringstream* frame = client->createFrame();
-						*frame << "broadcast test";
+						string message = "broadcast test";
+						*frame << (uint8_t)message.size();
+						*frame << message;
 						client->send(frame, true);
 						client->releaseReference();
 					}
