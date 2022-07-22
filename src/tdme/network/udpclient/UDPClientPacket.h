@@ -34,7 +34,7 @@ public:
 	/**
 	 * Get size of packet
 	 */
-	inline const uint16_t getSize() const {
+	inline uint16_t getSize() const {
 		return data.size();
 	}
 
@@ -48,7 +48,7 @@ public:
 	/**
 	 * Get position
 	 */
-	inline const uint16_t getPosition() const {
+	inline uint16_t getPosition() const {
 		return position;
 	}
 

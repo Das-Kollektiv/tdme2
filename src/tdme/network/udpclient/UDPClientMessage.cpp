@@ -26,7 +26,7 @@ using tdme::utilities::Console;
 using tdme::utilities::Integer;
 using tdme::utilities::Time;
 
-UDPClientMessage* UDPClientMessage::parse(const char message[512], const size_t bytes) {
+UDPClientMessage* UDPClientMessage::parse(const char message[512], uint16_t bytes) {
 	// decode header
 	MessageType messageType = MessageType::MESSAGETYPE_NONE;
 	switch(message[0]) {

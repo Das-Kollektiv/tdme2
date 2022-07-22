@@ -84,10 +84,10 @@ public:
 private:
 	/**
 	 * Parse UDP client message
-	 * @param message message payload
-	 * @param bytes size of payload
+	 * @param message message raw data
+	 * @param bytes byte count of message raw data
 	 */
-	static UDPClientMessage* parse(const char message[512], const size_t bytes);
+	static UDPClientMessage* parse(const char message[512], uint16_t bytes);
 
 	/**
 	 * Public constructor
