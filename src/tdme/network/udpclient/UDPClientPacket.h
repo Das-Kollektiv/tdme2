@@ -10,6 +10,7 @@
 
 using std::array;
 using std::string;
+using std::to_string;
 
 using tdme::utilities::Console;
 
@@ -20,6 +21,7 @@ using tdme::utilities::Console;
 class tdme::network::udpclient::UDPClientPacket final {
 private:
 	mutable uint16_t position { 0 };
+	uint16_t size { 0 };
 	array<uint8_t, 512> data;
 
 public:
@@ -35,7 +37,7 @@ public:
 	 * Get size of packet
 	 */
 	inline uint16_t getSize() const {
-		return data.size();
+		return size;
 	}
 
 	/**
@@ -50,6 +52,16 @@ public:
 	 */
 	inline uint16_t getPosition() const {
 		return position;
+	}
+
+	/**
+	 * Set position
+	 * @param position position
+	 * @return UDP client packet
+	 */
+	inline const UDPClientPacket* setPosition(uint16_t position) const {
+		this->position = position;
+		return this;
 	}
 
 	/**
@@ -93,7 +105,11 @@ public:
 	 */
 	inline uint8_t getByte() const {
 		if (position >= PACKET_MAX_SIZE) {
-			Console::println("UDPClientPacket::getByte(): position out of range");
+			Console::println("UDPClientPacket::getByte(): position out of range: " + to_string(position) + " >= " + to_string(PACKET_MAX_SIZE));
+			return 0;
+		} else
+		if (position >= size) {
+			Console::println("UDPClientPacket::getByte(): position out of range: " + to_string(position) + " >= " + to_string(size));
 			return 0;
 		}
 		return data[position++];
@@ -106,10 +122,11 @@ public:
 	 */
 	inline UDPClientPacket* putByte(uint8_t value) {
 		if (position >= PACKET_MAX_SIZE) {
-			Console::println("UDPClientPacket::putByte(): position out of range");
+			Console::println("UDPClientPacket::putByte(): position out of range: " + to_string(position) + " >= " + to_string(PACKET_MAX_SIZE));
 			return this;
 		}
 		data[position++] = value;
+		if (position > size) size = position;
 		return this;
 	}
 
@@ -243,12 +260,35 @@ public:
 	}
 
 	/**
-	 * Puts raw bytes into packet
-	 * @param value value
+	 * Get raw bytes from packet
+	 * @param bytes bytes
+	 * @param byteCount byte count
 	 * @return UDP client packet
 	 */
-	inline UDPClientPacket* putBytes(const uint8_t* bytes, int16_t size) {
-		for (auto i = 0; i < size; i++) putByte(bytes[i]);
+	inline const UDPClientPacket* getBytes(uint8_t* bytes, uint16_t byteCount) const {
+		for (auto i = 0; i < byteCount; i++) bytes[i] = getByte();
+		return this;
+	}
+
+	/**
+	 * Get raw bytes from packet
+	 * @param bytes bytes
+	 * @param byteCount byte count
+	 * @return UDP client packet
+	 */
+	inline UDPClientPacket* getBytes(uint8_t* bytes, uint16_t byteCount) {
+		for (auto i = 0; i < byteCount; i++) bytes[i] = getByte();
+		return this;
+	}
+
+	/**
+	 * Puts raw bytes into packet
+	 * @param bytes bytes
+	 * @param byteCount byte count
+	 * @return UDP client packet
+	 */
+	inline UDPClientPacket* putBytes(const uint8_t* bytes, uint16_t byteCount) {
+		for (auto i = 0; i < byteCount; i++) putByte(bytes[i]);
 		return this;
 	}
 
@@ -258,7 +298,7 @@ public:
 	 * @return UDP client packet
 	 */
 	inline UDPClientPacket* putPacket(const UDPClientPacket* packet) {
-		for (auto i = 0; i < packet->getPosition(); i++) putByte(packet->data[i]);
+		for (auto i = 0; i < packet->getSize(); i++) putByte(packet->data[i]);
 		return this;
 	}
 

@@ -1,7 +1,6 @@
 #include <stdio.h>
 
 #include <map>
-#include <sstream>
 #include <string>
 #include <typeinfo>
 
@@ -16,7 +15,6 @@ using std::ios_base;
 using std::map;
 using std::pair;
 using std::string;
-using std::stringstream;
 
 using tdme::network::udpserver::UDPServerClient;
 using tdme::utilities::Console;
@@ -25,18 +23,15 @@ using tdme::utilities::RTTI;
 using tdme::utilities::Time;
 
 UDPServerClient::UDPServerClient(const uint32_t clientId, const string& ip, const unsigned int port) :
-	server(NULL),
-	ioThread(NULL),
+	server(nullptr),
+	ioThread(nullptr),
 	clientId(clientId),
 	ip(ip),
 	port(port),
 	shutdownRequested(false),
 	messageMapSafeMutex("nioudpserverclient_messagemapsafe") {
 	// key
-	ostringstream tmp;
-	tmp << KEY_PREFIX_UNNAMED;
-	tmp << clientId;
-	key = tmp.str();
+	key = KEY_PREFIX_UNNAMED + to_string(clientId);
 }
 
 UDPServerClient::~UDPServerClient() {
@@ -73,25 +68,15 @@ const bool UDPServerClient::setKey(const string &key) {
 	}
 }
 
-stringstream* UDPServerClient::createFrame() {
-	stringstream* frame = new stringstream();
-	frame->exceptions(std::ios_base::failbit | std::ios_base::badbit);
-	UDPServer::initializeHeader(frame);
-	return frame;
+UDPServerPacket* UDPServerClient::createPacket() {
+	auto packet = new UDPServerPacket();
+	UDPServer::initializeHeader(packet);
+	return packet;
 }
 
-void UDPServerClient::send(stringstream* frame, bool safe, bool deleteFrame) {
+void UDPServerClient::send(UDPServerPacket* packet, bool safe, bool deleteFrame) {
 	try {
-		// seek writing to end of stream
-		frame->seekp(0, ios_base::end);
-
-		// check size
-		if (frame->tellp() > 512) {
-			delete frame;
-			throw NetworkServerException("message too big");
-		}
-
-		server->sendMessage(this, frame, safe, deleteFrame, UDPServer::MESSAGETYPE_MESSAGE);
+		server->sendMessage(this, packet, safe, deleteFrame, UDPServer::MESSAGETYPE_MESSAGE);
 	} catch (NetworkServerException &exception) {
 		// shut down client
 		shutdown();
@@ -136,9 +121,9 @@ bool UDPServerClient::processSafeMessage(const uint32_t messageId) {
 	messageMapSafeMutex.unlock();
 
 	// always send acknowlegdement to client
-	stringstream* frame = createFrame();
+	auto packet = createPacket();
 	try {
-		server->sendMessage(this, frame, false, true, UDPServer::MESSAGETYPE_ACKNOWLEDGEMENT, messageId);
+		server->sendMessage(this, packet, false, true, UDPServer::MESSAGETYPE_ACKNOWLEDGEMENT, messageId);
 	} catch (NetworkServerException &exception) {
 		// shut down client
 		shutdown();
@@ -159,12 +144,10 @@ bool UDPServerClient::processSafeMessage(const uint32_t messageId) {
 }
 
 void UDPServerClient::sendConnected() {
-	stringstream* frame = createFrame();
+	auto packet = createPacket();
 	try {
-		char keySize = key.size();
-		frame->write(&keySize, 1);
-		frame->write(key.data(), keySize);
-		server->sendMessage(this, frame, true, true, UDPServer::MESSAGETYPE_CONNECT);
+		packet->putString(key);
+		server->sendMessage(this, packet, true, true, UDPServer::MESSAGETYPE_CONNECT);
 	} catch (NetworkServerException &exception) {
 		// shut down client
 		shutdown();
@@ -185,13 +168,13 @@ void UDPServerClient::shutdown() {
 	shutdownRequested = true;
 }
 
-void UDPServerClient::onFrameReceived(stringstream* frame, const uint32_t messageId, const uint8_t retries) {
+void UDPServerClient::onFrameReceived(const UDPServerPacket* packet, const uint32_t messageId, const uint8_t retries) {
 	// create request
 	ServerRequest* request = new ServerRequest(
 		ServerRequest::REQUESTTYPE_CLIENT_REQUEST,
 		this,
 		ServerRequest::EVENT_CUSTOM_NONE,
-		frame,
+		packet,
 		messageId,
 		retries
 	);
@@ -201,8 +184,8 @@ void UDPServerClient::onFrameReceived(stringstream* frame, const uint32_t messag
 		Console::println("UDPServerClient::onFrameReceived(): client request declined from '" + (ip) + "'. Shutting down client");
 		// 	release client reference
 		releaseReference();
-		// 	delete frame
-		delete frame;
+		// 	delete packet
+		delete packet;
 		// 	delete request
 		delete request;
 		// 	shutdown client
@@ -216,7 +199,7 @@ void UDPServerClient::close() {
 		ServerRequest::REQUESTTYPE_CLIENT_CLOSE,
 		this,
 		ServerRequest::EVENT_CUSTOM_NONE,
-		NULL,
+		nullptr,
 		ServerRequest::MESSAGE_ID_UNSUPPORTED,
 		ServerRequest::MESSAGE_RETRIES_NONE
 	);
@@ -235,7 +218,7 @@ void UDPServerClient::init() {
 		ServerRequest::REQUESTTYPE_CLIENT_INIT,
 		this,
 		ServerRequest::EVENT_CUSTOM_NONE,
-		NULL,
+		nullptr,
 		ServerRequest::MESSAGE_ID_UNSUPPORTED,
 		ServerRequest::MESSAGE_RETRIES_NONE
 	);
@@ -252,7 +235,7 @@ void UDPServerClient::fireEvent(const string &type) {
 		ServerRequest::REQUESTTYPE_CLIENT_CUSTOM,
 		this,
 		type,
-		NULL,
+		nullptr,
 		ServerRequest::MESSAGE_ID_UNSUPPORTED,
 		ServerRequest::MESSAGE_RETRIES_NONE
 	);

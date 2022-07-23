@@ -21,21 +21,8 @@ EchoUDPServerClient::~EchoUDPServerClient() {
 	Console::println("EchoUDPServerClient::~EchoUDPServerClient()");
 }
 
-void EchoUDPServerClient::onRequest(stringstream* frame, const uint32_t messageId, const uint8_t retries) {
-	string command;
-	char c;
-	while(true) {
-		// extract character from frame
-		frame->get(c);
-
-		// exit if eof
-		if (frame->eof() == true) {
-			break;
-		}
-
-		// no eof, add character to command
-		command+= c;
-	}
+void EchoUDPServerClient::onRequest(const UDPServerPacket* packet, const uint32_t messageId, const uint8_t retries) {
+	auto command = packet->getString();
 
 	// do the handler logic
 	static_cast<EchoUDPServer*>(server)->requestHandlerHub.handleRequest(

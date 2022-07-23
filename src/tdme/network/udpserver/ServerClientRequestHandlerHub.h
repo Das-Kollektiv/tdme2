@@ -27,7 +27,7 @@ public:
 	/**
 	 * @brief Public constructor
 	 */
-	ServerClientRequestHandlerHub() : defaultHandler(NULL) {
+	ServerClientRequestHandlerHub() : defaultHandler(nullptr) {
 	}
 
 	/**
@@ -77,7 +77,7 @@ public:
 		// handler not identified?
 		if (it == requestHandlerMap.end()) {
 			// use default / fall back if exists
-			if (defaultHandler != NULL) {
+			if (defaultHandler != nullptr) {
 				defaultHandler->handleRequest(client, request, messageId, retries);
 			} else {
 				// otherwise report an exception

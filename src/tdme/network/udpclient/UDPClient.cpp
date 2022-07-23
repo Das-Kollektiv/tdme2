@@ -262,7 +262,7 @@ void UDPClient::run() {
 								socket,
 								NIO_INTEREST_READ | NIO_INTEREST_WRITE,
 								NIO_INTEREST_READ,
-								NULL
+								nullptr
 							);
 
 							// no more data to send, so stop the loop
@@ -449,7 +449,7 @@ void UDPClient::processAckMessages() {
 					socket,
 					NIO_INTEREST_READ,
 					NIO_INTEREST_READ | NIO_INTEREST_WRITE,
-					NULL
+					nullptr
 				);
 			}
 		} while (messageQueueResend.empty() == false);

@@ -7,6 +7,8 @@
 
 using tdme::utilities::ExceptionBase;
 
+using std::string;
+
 namespace tdme {
 namespace network {
 namespace udpserver {
@@ -21,7 +23,7 @@ public:
 	 * @brief public constructor
 	 * @param &message message exception message
 	 */
-	ServerClientRequestHandlerHubException(const string &message) throw();
+	ServerClientRequestHandlerHubException(const string& message) throw();
 };
 
 };

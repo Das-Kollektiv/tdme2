@@ -1,5 +1,9 @@
+#include <string>
+
 #include <tdme/tdme.h>
 #include <tdme/network/udpclient/NetworkClientException.h>
+
+using std::string;
 
 using tdme::network::udpclient::NetworkClientException;
 

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stdint.h>
-
 #include <map>
 #include <queue>
 #include <utility>
@@ -16,12 +14,14 @@
 
 #include <tdme/network/udpserver/UDPServer.h>
 #include <tdme/network/udpserver/UDPServerClient.h>
+#include <tdme/network/udpserver/UDPServerPacket.h>
 
 using std::map;
 using std::queue;
 
 using tdme::network::udpserver::UDPServer;
 using tdme::network::udpserver::UDPServerClient;
+using tdme::network::udpserver::UDPServerPacket;
 using tdme::os::network::KernelEventMechanism;
 using tdme::os::network::UDPSocket;
 using tdme::os::threading::Mutex;
@@ -49,7 +49,7 @@ private:
 		uint32_t messageId;
 		uint8_t retries;
 		char message[512];
-		size_t bytes;
+		uint16_t bytes;
 	};
 	typedef queue<Message*> MessageQueue;
 	typedef map<uint32_t, Message*> MessageMapAck;
@@ -72,12 +72,12 @@ private:
 	 * @param client client
 	 * @param messageType message type
 	 * @param messageId message id
-	 * @param frame frame to be send
+	 * @param packet packet to be send
 	 * @param safe safe, requires ack and retransmission
 	 * @param deleteFrame delete frame
 	 * @throws tdme::network::udpserver::NetworkServerException
 	 */
-	void sendMessage(const UDPServerClient* client, const uint8_t messageType, const uint32_t messageId, stringstream* frame, const bool safe, const bool deleteFrame);
+	void sendMessage(const UDPServerClient* client, const uint8_t messageType, const uint32_t messageId, const UDPServerPacket* packet, const bool safe, const bool deleteFrame);
 
 	/**
 	 * @brief Processes an acknowlegdement reception

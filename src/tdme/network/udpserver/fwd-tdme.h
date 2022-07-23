@@ -10,6 +10,7 @@ namespace udpserver {
 	class UDPServerClient;
 	class UDPServerGroup;
 	class UDPServerIOThread;
+	class UDPServerPacket;
 } // namespace udpserver
 } // namespace network
 } // namespace tdme

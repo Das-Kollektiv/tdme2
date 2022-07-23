@@ -1,9 +1,6 @@
 #pragma once
 
-#include <stdint.h>
-
 #include <exception>
-#include <sstream>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -15,8 +12,8 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Reference.h>
 
-using std::ostringstream;;
 using std::string;
+using std::to_string;
 
 using tdme::os::threading::ReadWriteLock;
 using tdme::utilities::Exception;
@@ -36,14 +33,11 @@ public:
 	typedef std::set<std::string> ClientKeySet;
 
 	ServerGroup(const uint32_t groupId) :
-		server(NULL),
+		server(nullptr),
 		groupId(groupId),
 		clientKeyListsReadWriteLock("nioservergroup_clientlists"){
 		//
-		ostringstream tmp;
-		tmp << "unnamed.";
-		tmp << groupId;
-		key = tmp.str();
+		key = "unnamed." + to_string(groupId);
 	}
 
 	/**

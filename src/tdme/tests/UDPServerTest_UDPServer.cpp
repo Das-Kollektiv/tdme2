@@ -42,10 +42,9 @@ void CRHDefault::handleRequest(UDPServerClient *client, string& data, const uint
 	}
 
 	// otherwise echo the input
-	stringstream* outFrame = client->createFrame();
-	*outFrame << (uint8_t)data.size();
-	*outFrame << data;
-	client->send(outFrame, true);
+	auto outPacket = client->createPacket();
+	outPacket->putString(data);
+	client->send(outPacket, true);
 }
 
 EchoUDPServer::EchoUDPServer(const string& host, const unsigned int port, const unsigned int maxCCU) : UDPServer("echo", host, port, maxCCU) {

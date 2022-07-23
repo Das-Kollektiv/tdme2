@@ -4,7 +4,6 @@
 
 #include <exception>
 #include <map>
-#include <sstream>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -12,15 +11,18 @@
 #include <tdme/network/udpserver/ServerClient.h>
 #include <tdme/network/udpserver/UDPServer.h>
 #include <tdme/network/udpserver/UDPServerIOThread.h>
+#include <tdme/network/udpserver/UDPServerPacket.h>
 #include <tdme/os/network/NetworkException.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Reference.h>
 
 using std::map;
+using std::string;
 
 using tdme::network::udpserver::UDPServer;
 using tdme::network::udpserver::UDPServerIOThread;
+using tdme::network::udpserver::UDPServerPacket;
 using tdme::utilities::Exception;
 
 /**
@@ -78,18 +80,18 @@ public:
 	const bool setKey(const string &key);
 
 	/**
-	 * @brief Creates a frame to be used with send
+	 * @brief Creates a packet to be used with send
 	 * @return frame to be send
 	 */
-	static stringstream* createFrame();
+	static UDPServerPacket* createPacket();
 
 	/**
 	 * @brief Sends a frame to client, takes over ownership of frame
-	 * @param frame frame data
+	 * @param packet packet to be send
 	 * @param safe safe, requires ack and retransmission
 	 * @param deleteFrame delete frame
 	 */
-	void send(stringstream* frame, bool safe = true, bool deleteFrame = true);
+	void send(UDPServerPacket* packet, bool safe = true, bool deleteFrame = true);
 
 	/**
 	 * @brief Checks if message has already been processed and sends an acknowlegdement to client / safe client messages
@@ -120,11 +122,11 @@ protected:
 
 	/**
 	 * @brief To be overwritten with a request handler, will be called from worker
-	 * @param frame frame
+	 * @param packet packet
 	 * @param messageId message id
 	 * @param retries retries
 	 */
-	virtual void onRequest(stringstream* frame, const uint32_t messageId, const uint8_t retries) = 0;
+	virtual void onRequest(const UDPServerPacket* packet, const uint32_t messageId, const uint8_t retries) = 0;
 
 	/*
 	 * @brief event method called if client will be closed, will be called from worker
@@ -133,11 +135,11 @@ protected:
 
 	/**
 	 * @brief Event, which will be called if frame has been received, defaults to worker thread pool
-	 * @param frame frame
+	 * @param packet packet
 	 * @param messageId message id (upd server only)
 	 * @param retries retries (udp server only)
 	 */
-	virtual void onFrameReceived(stringstream* frame, const uint32_t messageId = 0, const uint8_t retries = 0);
+	virtual void onFrameReceived(const UDPServerPacket* packet, const uint32_t messageId = 0, const uint8_t retries = 0);
 
 	/**
 	 * @brief Shuts down this network client

@@ -40,7 +40,7 @@ s			 * @param maxCCU max ccu
 		host(host),
 		port(port),
 		maxCCU(maxCCU),
-		startUpBarrier(NULL),
+		startUpBarrier(nullptr),
 		clientKeyListsReadWriteLock("nioserver_clientlist"),
 		groupKeyListsReadWriteLock("nioserver_grouplist"),
 		ioThreadCount(1),
@@ -96,13 +96,13 @@ s			 * @param maxCCU max ccu
 	/**
 	 * @brief retrieve a client by key, the client reference is acquired, must be released after usage
 	 * @param clientKey client identification key
-	 * @return client or NULL
+	 * @return client or nullptr
 	 */
 	CLIENT* getClientByKey(const std::string& clientKey) {
 		clientKeyListsReadWriteLock.readLock();
 		typename ClientKeyMap::iterator it = clientKeyMap.find(clientKey);
-		CLIENT* client = it != clientKeyMap.end()?it->second:NULL;
-		if (client != NULL) {
+		CLIENT* client = it != clientKeyMap.end()?it->second:nullptr;
+		if (client != nullptr) {
 			client->acquireReference();
 		}
 		clientKeyListsReadWriteLock.unlock();
@@ -127,13 +127,13 @@ s			 * @param maxCCU max ccu
 	/**
 	 * @brief retrieve a group by key, the group reference is acquired, must be released after usage
 	 * @param groupKey group identification key
-	 * @return group or NULL
+	 * @return group or nullptr
 	 */
 	GROUP* getGroupByKey(const std::string& groupKey) {
 		groupKeyListsReadWriteLock.readLock();
 		typename GroupKeyMap::iterator it = groupKeyMap.find(groupKey);
-		GROUP* group = it != groupKeyMap.end()?it->second:NULL;
-		if (group != NULL) {
+		GROUP* group = it != groupKeyMap.end()?it->second:nullptr;
+		if (group != nullptr) {
 			group->acquireReference();
 		}
 		groupKeyListsReadWriteLock.unlock();

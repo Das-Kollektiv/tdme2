@@ -12,7 +12,7 @@ ServerWorkerThreadPool::ServerWorkerThreadPool(Barrier* startUpBarrier, const un
 
 	startUpBarrier(startUpBarrier),
 	workerCount(workerCount),
-	worker(NULL) {
+	worker(nullptr) {
 	//
 }
 

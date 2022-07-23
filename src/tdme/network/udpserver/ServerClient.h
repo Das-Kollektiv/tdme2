@@ -3,18 +3,18 @@
 #include <stdint.h>
 
 #include <exception>
-#include <sstream>
 #include <string>
 
 #include <tdme/tdme.h>
 #include <tdme/network/udpserver/fwd-tdme.h>
 #include <tdme/network/udpserver/ServerRequest.h>
+#include <tdme/network/udpserver/UDPServerPacket.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Reference.h>
 
 using std::string;
-using std::stringstream;
 
+using tdme::network::udpserver::UDPServerPacket;
 using tdme::utilities::Exception;
 using tdme::utilities::Reference;
 
@@ -62,10 +62,12 @@ public:
 	virtual const bool setKey(const string &key) = 0;
 
 	/**
-	 * @brief Creates a frame to be used with send
-	 * @return frame to be send
+	 * @brief Creates a packet to be used with send
+	 * @return packet to be send
 	 */
-	stringstream* createFrame();
+	inline UDPServerPacket* createPacket() {
+		return new UDPServerPacket();
+	}
 
 	/**
 	 * @brief Shuts down this network client
@@ -75,11 +77,11 @@ public:
 protected:
 	/**
 	 * @brief To be overwritten with a request handler, will be called from worker
-	 * @param frame frame
+	 * @param packet packet
 	 * @param messageId message id (udp server only)
 	 * @param retries retries (udp server only)
 	 */
-	virtual void onRequest(stringstream* frame, const uint32_t messageId, const uint8_t retries) = 0;
+	virtual void onRequest(const UDPServerPacket* packet, const uint32_t messageId, const uint8_t retries) = 0;
 
 	/*
 	 * @brief event method called if client will be initiated, will be called from worker
@@ -98,11 +100,11 @@ protected:
 
 	/**
 	 * @brief Event, which will be called if frame has been received, defaults to worker thread pool
-	 * @param frame frame
+	 * @param packet packet
 	 * @param messageId message id (upd server only)
 	 * @param retries retries (udp server only)
 	 */
-	virtual void onFrameReceived(stringstream* frame, const uint32_t messageId = 0, const uint8_t retries = 0) = 0;
+	virtual void onFrameReceived(const UDPServerPacket* packet, const uint32_t messageId = 0, const uint8_t retries = 0) = 0;
 
 	/**
 	 * @brief Shuts down this network client

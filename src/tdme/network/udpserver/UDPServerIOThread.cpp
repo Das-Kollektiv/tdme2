@@ -1,6 +1,5 @@
 #include <string.h>
 
-#include <iostream>
 #include <map>
 #include <string>
 #include <typeinfo>
@@ -8,6 +7,7 @@
 #include <tdme/tdme.h>
 #include <tdme/network/udpserver/ServerRequest.h>
 #include <tdme/network/udpserver/UDPServerIOThread.h>
+#include <tdme/network/udpserver/UDPServerPacket.h>
 #include <tdme/os/network/KernelEventMechanism.h>
 #include <tdme/os/network/NIOInterest.h>
 #include <tdme/os/threading/AtomicOperations.h>
@@ -26,6 +26,7 @@ using std::to_string;
 
 using tdme::network::udpserver::ServerRequest;
 using tdme::network::udpserver::UDPServerIOThread;
+using tdme::network::udpserver::UDPServerPacket;
 using tdme::os::network::KernelEventMechanism;
 using tdme::os::network::NIO_INTEREST_NONE;
 using tdme::os::network::NIO_INTEREST_READ;
@@ -64,7 +65,7 @@ void UDPServerIOThread::run() {
 
 		// initialize kernel event mechanismn
 		kem.initKernelEventMechanism(1);
-		kem.setSocketInterest(socket, NIO_INTEREST_NONE, NIO_INTEREST_READ, NULL);
+		kem.setSocketInterest(socket, NIO_INTEREST_NONE, NIO_INTEREST_READ, nullptr);
 
 		// do event loop
 		uint64_t lastMessageQueueAckTime = Time::getCurrentMillis();
@@ -105,23 +106,24 @@ void UDPServerIOThread::run() {
 						AtomicOperations::increment(server->statistics.received);
 
 						// process event, catch and handle client related exceptions
-						UDPServerClient* client = NULL;
-						UDPServerClient* clientNew = NULL;
-						stringstream* frame = NULL;
+						UDPServerClient* client = nullptr;
+						UDPServerClient* clientNew = nullptr;
+						UDPServerPacket* packet = nullptr;
 						try {
 							// transfer buffer to string stream
-							frame = new stringstream();
-							frame->write(message, bytesReceived);
+							packet = new UDPServerPacket();
+							packet->putBytes((const uint8_t*)message, bytesReceived);
+							packet->reset();
 
 							// validate datagram
-							server->validate(frame);
+							server->validate(packet);
 
 							// identify datagram
 							UDPServer::MessageType messageType;
 							uint32_t clientId;
 							uint32_t messageId;
 							uint8_t retries;
-							server->identify(frame, messageType, clientId, messageId, retries);
+							server->identify(packet, messageType, clientId, messageId, retries);
 
 							// process message depending on messageType
 							switch(messageType) {
@@ -132,10 +134,10 @@ void UDPServerIOThread::run() {
 
 										// check if client is connected already
 										client = server->getClientByIp(ip, port);
-										if (client != NULL) {
-											// delete frame
-											delete frame;
-											frame = NULL;
+										if (client != nullptr) {
+											// delete packet
+											delete packet;
+											packet = nullptr;
 											client->sendConnected();
 											client->releaseReference();
 											// we are done
@@ -155,13 +157,13 @@ void UDPServerIOThread::run() {
 										// add client to server
 										server->addClient(clientNew);
 
-										// delete frame
-										delete frame;
-										frame = NULL;
+										// delete packet
+										delete packet;
+										packet = nullptr;
 
 										// switch from client new to client
 										client = clientNew;
-										clientNew = NULL;
+										clientNew = nullptr;
 
 										// send connected ack
 										client->sendConnected();
@@ -188,23 +190,23 @@ void UDPServerIOThread::run() {
 											throw NetworkServerException("message invalid");
 										}
 										// delegate
-										client->onFrameReceived(frame, messageId, retries);
+										client->onFrameReceived(packet, messageId, retries);
 										break;
 									}
 								case(UDPServer::MESSAGETYPE_ACKNOWLEDGEMENT):
 									{
 										client = server->lookupClient(clientId);
 										server->processAckReceived(client, messageId);
-										delete frame;
-										frame = NULL;
+										delete packet;
+										packet = nullptr;
 										break;
 									}
 								default:
 									throw NetworkServerException("Invalid message type");
 							}
 						} catch(Exception& exception) {
-							// delete frame
-							if (frame != NULL) delete frame;
+							// delete packet
+							if (packet != nullptr) delete packet;
 
 							// log
 							Console::println(
@@ -216,11 +218,11 @@ void UDPServerIOThread::run() {
 								(exception.what())
 							);
 
-							if (clientNew != NULL) {
+							if (clientNew != nullptr) {
 								delete clientNew;
 							}
 							// in case it was a client related exception
-							if (client != NULL) {
+							if (client != nullptr) {
 								// otherwise shut down client
 								client->shutdown();
 							}
@@ -266,7 +268,7 @@ void UDPServerIOThread::run() {
 								socket,
 								NIO_INTEREST_READ | NIO_INTEREST_WRITE,
 								NIO_INTEREST_READ,
-								NULL
+								nullptr
 							);
 
 							// no more data to send, so stop the loop
@@ -310,14 +312,10 @@ void UDPServerIOThread::run() {
 	Console::println("UDPServerIOThread[" + to_string(id) + "]::run(): done");
 }
 
-void UDPServerIOThread::sendMessage(const UDPServerClient* client, const uint8_t messageType, const uint32_t messageId, stringstream* frame, const bool safe, const bool deleteFrame) {
+void UDPServerIOThread::sendMessage(const UDPServerClient* client, const uint8_t messageType, const uint32_t messageId, const UDPServerPacket* packet, const bool safe, const bool deleteFrame) {
 	// FIXME:
 	//	We could use lock free queues here
 	//	For now, we will go with plain mutexes
-
-	// reset stream for read
-	frame->seekg(0, ios_base::beg);
-	frame->seekp(0, ios_base::end);
 
 	// create message
 	Message* message = new Message();
@@ -328,11 +326,18 @@ void UDPServerIOThread::sendMessage(const UDPServerClient* client, const uint8_t
 	message->clientId = client->clientId;
 	message->messageId = messageId;
 	message->retries = 0;
-	message->bytes = frame->tellp();
-	if (message->bytes > 512) message->bytes = 512;
-	frame->read(message->message, message->bytes);
+	message->bytes = packet->getSize();
 
-	if (deleteFrame == true) delete frame;
+	// store current position which should be end of packet
+	auto position = packet->getPosition();
+	// reset position to be able to write header
+	packet->reset();
+	packet->getBytes((uint8_t*)message->message, message->bytes);
+	// restore position to end of stream
+	packet->setPosition(position);
+
+	// delete packet if requested
+	if (deleteFrame == true) delete packet;
 
 	// requires ack and retransmission ?
 	if (safe == true) {
@@ -377,7 +382,7 @@ void UDPServerIOThread::sendMessage(const UDPServerClient* client, const uint8_t
 			socket,
 			NIO_INTEREST_READ,
 			NIO_INTEREST_READ | NIO_INTEREST_WRITE,
-			NULL
+			nullptr
 		);
 	}
 
@@ -441,11 +446,12 @@ void UDPServerIOThread::processAckMessages() {
 			Message* message = new Message();
 			*message = *messageAck;
 
-			// recreate frame header with updated hash and retries
-			stringstream frame;
-			frame.write(message->message, message->bytes);
-			server->writeHeader(&frame, (UDPServer::MessageType)message->messageType, message->clientId, message->messageId, message->retries);
-			frame.read(message->message, message->bytes);
+			// recreate packet header with updated hash and retries
+			UDPServerPacket packet;
+			packet.putBytes((const uint8_t*)message->message, message->bytes);
+			packet.reset();
+			server->writeHeader(&packet, (UDPServer::MessageType)message->messageType, message->clientId, message->messageId, message->retries);
+			packet.getBytes((uint8_t*)message->message, message->bytes);
 
 			// and push to be resent
 			messageQueueResend.push(message);
@@ -468,7 +474,7 @@ void UDPServerIOThread::processAckMessages() {
 					socket,
 					NIO_INTEREST_READ,
 					NIO_INTEREST_READ | NIO_INTEREST_WRITE,
-					NULL
+					nullptr
 				);
 			}
 		} while (messageQueueResend.empty() == false);

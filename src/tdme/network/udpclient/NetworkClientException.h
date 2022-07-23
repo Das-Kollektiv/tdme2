@@ -10,6 +10,8 @@
 
 using tdme::os::network::NetworkException;
 
+using std::string;
+
 /**
  * Base exception class for network client exceptions
  * @author Andreas Drewke

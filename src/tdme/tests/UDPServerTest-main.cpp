@@ -1,6 +1,5 @@
 #include <signal.h>
 
-#include <sstream>
 #include <string>
 
 #include "UDPServerTest_UDPServer.h"
@@ -13,7 +12,6 @@
 #include <tdme/utilities/Console.h>
 
 using std::string;
-using std::stringstream;
 
 using tdme::os::network::Network;
 using tdme::os::threading::Queue;
@@ -36,11 +34,9 @@ public:
 				for (EchoUDPServer::ClientKeySet::iterator i = clientKeySet.begin(); i != clientKeySet.end(); ++i) {
 					EchoUDPServerClient* client = static_cast<EchoUDPServerClient*>(server->getClientByKey(*i));
 					if (client != NULL) {
-						stringstream* frame = client->createFrame();
-						string message = "broadcast test";
-						*frame << (uint8_t)message.size();
-						*frame << message;
-						client->send(frame, true);
+						auto packet = client->createPacket();
+						packet->putString("broadcast test");
+						client->send(packet, true);
 						client->releaseReference();
 					}
 				}

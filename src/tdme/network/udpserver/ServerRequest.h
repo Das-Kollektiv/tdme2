@@ -1,8 +1,5 @@
 #pragma once
 
-#include <stdint.h>
-
-#include <sstream>
 #include <string>
 
 #include <tdme/tdme.h>
@@ -10,7 +7,6 @@
 #include <tdme/network/udpserver/ServerClient.h>
 
 using std::string;
-using std::stringstream;
 
 namespace tdme {
 namespace network {
@@ -43,12 +39,12 @@ public:
 	 * @param requestType request type
 	 * @param object object
 	 * @param custom custom event type if any
-	 * @param messageFrame request frame stream
+	 * @param messagePacket request message packet
 	 * @param messageId message id (udp server only)
 	 * @param messageRetries message retries (udp server only)
 	 */
-	inline ServerRequest(const RequestType requestType, void* object, const string& custom = EVENT_CUSTOM_NONE, stringstream* messageFrame = NULL, const uint32_t messageId = MESSAGE_ID_UNSUPPORTED, const uint8_t messageRetries = MESSAGE_RETRIES_NONE) :
-		requestType(requestType), object(object), customEvent(custom), messageFrame(messageFrame), messageId(messageId), messageRetries(messageRetries) {
+	inline ServerRequest(const RequestType requestType, void* object, const string& custom = EVENT_CUSTOM_NONE, const UDPServerPacket* messagePacket = nullptr, const uint32_t messageId = MESSAGE_ID_UNSUPPORTED, const uint8_t messageRetries = MESSAGE_RETRIES_NONE) :
+		requestType(requestType), object(object), customEvent(custom), messagePacket(messagePacket), messageId(messageId), messageRetries(messageRetries) {
 		//
 	}
 
@@ -82,11 +78,11 @@ public:
 	}
 
 	/**
-	 * @brief Returns the associated request message frame stream
-	 * @return frame stream
+	 * @brief Returns the associated request message packet
+	 * @return UDP server packet
 	 */
-	inline stringstream* getMessageFrame() {
-		return messageFrame;
+	inline const UDPServerPacket* getMessagePacket() {
+		return messagePacket;
 	}
 
 	/**
@@ -108,7 +104,7 @@ private:
 	RequestType requestType;
 	void* object;
 	string customEvent;
-	stringstream* messageFrame;
+	const UDPServerPacket* messagePacket;
 	uint32_t messageId;
 	uint8_t messageRetries;
 };

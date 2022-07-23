@@ -27,7 +27,6 @@
 #include <ext/rapidjson/stringbuffer.h>
 #include <ext/rapidjson/writer.h>
 
-using std::ostringstream;
 using std::string;
 
 using tdme::engine::fileio::prototypes::PrototypeWriter;

@@ -41,23 +41,23 @@ void ServerWorkerThread::run() {
 	threadPool->startUpBarrier->wait();
 
 	ServerRequest* request;
-	while((request = threadPool->getElement()) != NULL) {
+	while((request = threadPool->getElement()) != nullptr) {
 		// get request parameter
 		ServerRequest::RequestType requestType = request->getRequestType();
-		ServerClient* client = NULL;
-		ServerGroupBase* group = NULL;
+		ServerClient* client = nullptr;
+		ServerGroupBase* group = nullptr;
 
 		// handle request types
 		switch(requestType) {
 			case(ServerRequest::REQUESTTYPE_CLIENT_REQUEST): {
 				client = (ServerClient*)request->getObject();
-				stringstream* frame = request->getMessageFrame();
-				uint32_t messageId = request->getMessageId();
-				uint8_t retries = request->getMessageRetries();
+				auto packet = request->getMessagePacket();
+				auto messageId = request->getMessageId();
+				auto retries = request->getMessageRetries();
 
 				// handle request
 				try {
-					client->onRequest(frame, messageId, retries);
+					client->onRequest(packet, messageId, retries);
 				} catch(Exception& exception) {
 					Console::println(
 						"ServerWorkerThread[" +
@@ -73,7 +73,7 @@ void ServerWorkerThread::run() {
 				}
 
 				// delete stream
-				delete frame;
+				delete packet;
 
 				//
 				break;
@@ -183,8 +183,8 @@ void ServerWorkerThread::run() {
 		}
 
 		// release reference
-		if (client != NULL) client->releaseReference();
-		if (group != NULL) group->releaseReference();
+		if (client != nullptr) client->releaseReference();
+		if (group != nullptr) group->releaseReference();
 
 		// delete request
 		delete(request);
