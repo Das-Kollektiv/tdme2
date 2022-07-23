@@ -232,8 +232,11 @@ public:
 	 * @return UDP client packet
 	 */
 	inline UDPClientPacket* putString(const string& value) {
-		putByte(value.size());
-		for (auto i = 0; i < value.size(); i++) {
+		if (value.size() > 255) {
+			Console::println("UDPClientPacket::putString(): string size out of range: string will be clamped to max length of 255 bytes");
+		}
+		putByte(value.size() > 255?255:value.size());
+		for (auto i = 0; i < value.size() && i < 256; i++) {
 			putByte(value[i]);
 		}
 		return this;
