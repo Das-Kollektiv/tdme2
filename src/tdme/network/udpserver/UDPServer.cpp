@@ -165,9 +165,6 @@ UDPServerClient* UDPServer::accept(const uint32_t clientId, const std::string& i
 }
 
 void UDPServer::identify(const UDPServerPacket* packet, MessageType& messageType, uint32_t& connectionId, uint32_t& messageId, uint8_t& retries) {
-	// reset position to be able to read header
-	packet->reset();
-
 	// format 1char_message_type,6_char_connection_id,6_char_message_id,1_char_retries
 	char inMessageType;
 	char inConnectionId[6];
