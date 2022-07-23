@@ -15,7 +15,7 @@ using std::to_string;
 using tdme::utilities::Console;
 
 /**
- * UDP Client Packet
+ * UDP Server Packet
  * @author Andreas Drewke
  */
 class tdme::network::udpserver::UDPServerPacket final {
@@ -105,11 +105,11 @@ public:
 	 */
 	inline uint8_t getByte() const {
 		if (position >= PACKET_MAX_SIZE) {
-			Console::println("UDPClientPacket::getByte(): position out of range: " + to_string(position) + " >= " + to_string(PACKET_MAX_SIZE));
+			Console::println("UDPServerPacket::getByte(): position out of range: " + to_string(position) + " >= " + to_string(PACKET_MAX_SIZE));
 			return 0;
 		} else
 		if (position >= size) {
-			Console::println("UDPClientPacket::getByte(): position out of range: " + to_string(position) + " >= " + to_string(size));
+			Console::println("UDPServerPacket::getByte(): position out of range: " + to_string(position) + " >= " + to_string(size));
 			return 0;
 		}
 		return data[position++];
@@ -122,7 +122,7 @@ public:
 	 */
 	inline UDPServerPacket* putByte(uint8_t value) {
 		if (position >= PACKET_MAX_SIZE) {
-			Console::println("UDPClientPacket::putByte(): position out of range: " + to_string(position) + " >= " + to_string(PACKET_MAX_SIZE));
+			Console::println("UDPServerPacket::putByte(): position out of range: " + to_string(position) + " >= " + to_string(PACKET_MAX_SIZE));
 			return this;
 		}
 		data[position++] = value;
