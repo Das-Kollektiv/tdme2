@@ -4,9 +4,9 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
-#include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/Transform.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>

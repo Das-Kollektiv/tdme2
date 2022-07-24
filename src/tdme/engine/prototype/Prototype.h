@@ -27,6 +27,7 @@ using std::string;
 using std::vector;
 
 using tdme::engine::model::Model;
+using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::prototype::BaseProperties;
 using tdme::engine::prototype::Prototype_Type;
 using tdme::engine::prototype::PrototypeAudio;
@@ -39,7 +40,6 @@ using tdme::engine::prototype::PrototypeTerrain;
 using tdme::engine::scene::SceneLibrary;
 using tdme::engine::Entity;
 using tdme::engine::EntityShaderParameters;
-using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
 
 /**

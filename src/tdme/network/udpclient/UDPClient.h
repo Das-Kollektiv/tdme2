@@ -10,9 +10,9 @@
 #include <queue>
 
 #include <tdme/tdme.h>
+#include <tdme/network/udp/UDPPacket.h>
 #include <tdme/network/udpclient/fwd-tdme.h>
 #include <tdme/network/udpclient/NetworkClientException.h>
-#include <tdme/network/udp/UDPPacket.h>
 #include <tdme/network/udpclient/UDPClientMessage.h>
 
 #include <tdme/os/network/KernelEventMechanism.h>
