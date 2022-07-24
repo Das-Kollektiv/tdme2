@@ -8,26 +8,26 @@
 #include <tdme/network/udpserver/fwd-tdme.h>
 
 #include <tdme/tdme.h>
+#include <tdme/network/udp/UDPPacket.h>
 #include <tdme/network/udpserver/NetworkServerException.h>
 #include <tdme/network/udpserver/Server.h>
 #include <tdme/network/udpserver/ServerWorkerThreadPool.h>
 #include <tdme/network/udpserver/UDPServerClient.h>
 #include <tdme/network/udpserver/UDPServerGroup.h>
 #include <tdme/network/udpserver/UDPServerIOThread.h>
-#include <tdme/network/udpserver/UDPServerPacket.h>
 #include <tdme/os/threading/Barrier.h>
 #include <tdme/os/threading/ReadWriteLock.h>
 #include <tdme/os/threading/Thread.h>
 
 using std::stringstream;
 
+using tdme::network::udp::UDPPacket;
 using tdme::network::udpserver::NetworkServerException;
 using tdme::network::udpserver::Server;
 using tdme::network::udpserver::ServerWorkerThreadPool;
 using tdme::network::udpserver::UDPServerClient;
 using tdme::network::udpserver::UDPServerGroup;
 using tdme::network::udpserver::UDPServerIOThread;
-using tdme::network::udpserver::UDPServerPacket;
 using tdme::os::threading::Barrier;
 using tdme::os::threading::ReadWriteLock;
 using tdme::os::threading::Thread;
@@ -97,21 +97,21 @@ protected:
 	 * @throws tdme::network::udpserver::NetworkServerException
 	 * @return client or nullptr
 	 */
-	virtual void identify(const UDPServerPacket* packet, MessageType& messageType, uint32_t& connectionId, uint32_t& messageId, uint8_t& retries);
+	virtual void identify(const UDPPacket* packet, MessageType& messageType, uint32_t& connectionId, uint32_t& messageId, uint8_t& retries);
 
 	/**
 	 * Validates a client message
 	 * @param packet packet
 	 * @throws tdme::network::udpserver::NetworkServerException
 	 */
-	virtual void validate(const UDPServerPacket* packet);
+	virtual void validate(const UDPPacket* packet);
 
 	/**
 	 * Writes a empty header to packet
 	 * @param packet packet
 	 * @throws tdme::network::udpserver::NetworkServerException
 	 */
-	static void initializeHeader(UDPServerPacket* packet);
+	static void initializeHeader(UDPPacket* packet);
 
 	/**
 	 * Writes a message header to message
@@ -122,7 +122,7 @@ protected:
 	 * @param retries retries
 	 * @throws tdme::network::udpserver::NetworkServerException
 	 */
-	virtual void writeHeader(UDPServerPacket* packet, MessageType messageType, const uint32_t clientId, const uint32_t messageId, const uint8_t retries);
+	virtual void writeHeader(UDPPacket* packet, MessageType messageType, const uint32_t clientId, const uint32_t messageId, const uint8_t retries);
 private:
 	static const uint64_t CLIENT_CLEANUP_IDLETIME = 120000L;
 	struct ClientId {
@@ -180,7 +180,7 @@ private:
 	 * @param messageId message id (only for MESSAGETYPE_MESSAGE)
 	 * @throws tdme::network::udpserver::NetworkServerException
 	 */
-	void sendMessage(const UDPServerClient* client, UDPServerPacket* packet, const bool safe, const bool deleteFrame, const MessageType messageType, const uint32_t messageId = MESSAGE_ID_NONE);
+	void sendMessage(const UDPServerClient* client, UDPPacket* packet, const bool safe, const bool deleteFrame, const MessageType messageType, const uint32_t messageId = MESSAGE_ID_NONE);
 
 	/**
 	 * @brief Processes an acknowlegdement reception

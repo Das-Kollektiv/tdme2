@@ -21,7 +21,7 @@ EchoUDPServerClient::~EchoUDPServerClient() {
 	Console::println("EchoUDPServerClient::~EchoUDPServerClient()");
 }
 
-void EchoUDPServerClient::onRequest(const UDPServerPacket* packet, const uint32_t messageId, const uint8_t retries) {
+void EchoUDPServerClient::onRequest(const UDPPacket* packet, const uint32_t messageId, const uint8_t retries) {
 	auto command = packet->getString();
 
 	// do the handler logic

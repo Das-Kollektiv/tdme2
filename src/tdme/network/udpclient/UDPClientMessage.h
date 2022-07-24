@@ -3,13 +3,13 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/network/udp/UDPPacket.h>
 #include <tdme/network/udpclient/fwd-tdme.h>
-#include <tdme/network/udpclient/UDPClientPacket.h>
 #include <tdme/utilities/Time.h>
 
 using std::string;
 
-using tdme::network::udpclient::UDPClientPacket;
+using tdme::network::udp::UDPPacket;
 using tdme::utilities::Time;
 
 /**
@@ -77,7 +77,7 @@ public:
 	/**
 	 * @return udp client packet
 	 */
-	inline const UDPClientPacket* getPacket() {
+	inline const UDPPacket* getPacket() {
 		return packet;
 	}
 
@@ -97,7 +97,7 @@ private:
 	 * @param retries retries
 	 * @param packet packet
 	 */
-	UDPClientMessage(const MessageType messageType, const uint32_t clientId, const uint32_t messageId, const uint8_t retries, const UDPClientPacket* packet):
+	UDPClientMessage(const MessageType messageType, const uint32_t clientId, const uint32_t messageId, const uint8_t retries, const UDPPacket* packet):
 		messageType(messageType),
 		clientId(clientId),
 		messageId(messageId),
@@ -128,5 +128,5 @@ private:
 	MessageType messageType;
 	uint32_t clientId;
 	uint32_t messageId;
-	const UDPClientPacket* packet;
+	const UDPPacket* packet;
 };

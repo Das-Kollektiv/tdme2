@@ -12,16 +12,16 @@
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/Thread.h>
 
+#include <tdme/network/udp/UDPPacket.h>
 #include <tdme/network/udpserver/UDPServer.h>
 #include <tdme/network/udpserver/UDPServerClient.h>
-#include <tdme/network/udpserver/UDPServerPacket.h>
 
 using std::map;
 using std::queue;
 
+using tdme::network::udp::UDPPacket;
 using tdme::network::udpserver::UDPServer;
 using tdme::network::udpserver::UDPServerClient;
-using tdme::network::udpserver::UDPServerPacket;
 using tdme::os::network::KernelEventMechanism;
 using tdme::os::network::UDPSocket;
 using tdme::os::threading::Mutex;
@@ -77,7 +77,7 @@ private:
 	 * @param deleteFrame delete frame
 	 * @throws tdme::network::udpserver::NetworkServerException
 	 */
-	void sendMessage(const UDPServerClient* client, const uint8_t messageType, const uint32_t messageId, const UDPServerPacket* packet, const bool safe, const bool deleteFrame);
+	void sendMessage(const UDPServerClient* client, const uint8_t messageType, const uint32_t messageId, const UDPPacket* packet, const bool safe, const bool deleteFrame);
 
 	/**
 	 * @brief Processes an acknowlegdement reception

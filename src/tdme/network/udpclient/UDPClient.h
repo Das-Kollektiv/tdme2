@@ -12,8 +12,8 @@
 #include <tdme/tdme.h>
 #include <tdme/network/udpclient/fwd-tdme.h>
 #include <tdme/network/udpclient/NetworkClientException.h>
+#include <tdme/network/udp/UDPPacket.h>
 #include <tdme/network/udpclient/UDPClientMessage.h>
-#include <tdme/network/udpclient/UDPClientPacket.h>
 
 #include <tdme/os/network/KernelEventMechanism.h>
 #include <tdme/os/network/UDPSocket.h>
@@ -29,9 +29,9 @@ using tdme::os::network::UDPSocket;
 using tdme::os::threading::Mutex;
 using tdme::os::threading::Thread;
 
+using tdme::network::udp::UDPPacket;
 using tdme::network::udpclient::NetworkClientException;
 using tdme::network::udpclient::UDPClientMessage;
-using tdme::network::udpclient::UDPClientPacket;
 
 /**
  * UDP client
@@ -122,7 +122,7 @@ public:
 	 * Create message
 	 * @param packet UDP client packet
 	 */
-	UDPClientMessage* createMessage(const UDPClientPacket* packet);
+	UDPClientMessage* createMessage(const UDPPacket* packet);
 
 	/**
 	 * @returns UDP client statistics

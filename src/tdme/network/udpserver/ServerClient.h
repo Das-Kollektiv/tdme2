@@ -6,15 +6,14 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/network/udpserver/fwd-tdme.h>
+#include <tdme/network/udp/UDPPacket.h>
 #include <tdme/network/udpserver/ServerRequest.h>
-#include <tdme/network/udpserver/UDPServerPacket.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Reference.h>
 
 using std::string;
 
-using tdme::network::udpserver::UDPServerPacket;
+using tdme::network::udp::UDPPacket;
 using tdme::utilities::Exception;
 using tdme::utilities::Reference;
 
@@ -65,8 +64,8 @@ public:
 	 * @brief Creates a packet to be used with send
 	 * @return packet to be send
 	 */
-	inline UDPServerPacket* createPacket() {
-		return new UDPServerPacket();
+	inline UDPPacket* createPacket() {
+		return new UDPPacket();
 	}
 
 	/**
@@ -81,7 +80,7 @@ protected:
 	 * @param messageId message id (udp server only)
 	 * @param retries retries (udp server only)
 	 */
-	virtual void onRequest(const UDPServerPacket* packet, const uint32_t messageId, const uint8_t retries) = 0;
+	virtual void onRequest(const UDPPacket* packet, const uint32_t messageId, const uint8_t retries) = 0;
 
 	/*
 	 * @brief event method called if client will be initiated, will be called from worker
@@ -104,7 +103,7 @@ protected:
 	 * @param messageId message id (upd server only)
 	 * @param retries retries (udp server only)
 	 */
-	virtual void onFrameReceived(const UDPServerPacket* packet, const uint32_t messageId = 0, const uint8_t retries = 0) = 0;
+	virtual void onFrameReceived(const UDPPacket* packet, const uint32_t messageId = 0, const uint8_t retries = 0) = 0;
 
 	/**
 	 * @brief Shuts down this network client

@@ -5,9 +5,9 @@
 #include <typeinfo>
 
 #include <tdme/tdme.h>
+#include <tdme/network/udp/UDPPacket.h>
 #include <tdme/network/udpserver/ServerRequest.h>
 #include <tdme/network/udpserver/UDPServerIOThread.h>
-#include <tdme/network/udpserver/UDPServerPacket.h>
 #include <tdme/os/network/KernelEventMechanism.h>
 #include <tdme/os/network/NIOInterest.h>
 #include <tdme/os/threading/AtomicOperations.h>
@@ -24,9 +24,9 @@ using std::pair;
 using std::string;
 using std::to_string;
 
+using tdme::network::udp::UDPPacket;
 using tdme::network::udpserver::ServerRequest;
 using tdme::network::udpserver::UDPServerIOThread;
-using tdme::network::udpserver::UDPServerPacket;
 using tdme::os::network::KernelEventMechanism;
 using tdme::os::network::NIO_INTEREST_NONE;
 using tdme::os::network::NIO_INTEREST_READ;
@@ -108,10 +108,10 @@ void UDPServerIOThread::run() {
 						// process event, catch and handle client related exceptions
 						UDPServerClient* client = nullptr;
 						UDPServerClient* clientNew = nullptr;
-						UDPServerPacket* packet = nullptr;
+						UDPPacket* packet = nullptr;
 						try {
 							// transfer buffer to string stream
-							packet = new UDPServerPacket();
+							packet = new UDPPacket();
 							packet->putBytes((const uint8_t*)message, bytesReceived);
 							packet->reset();
 
@@ -312,7 +312,7 @@ void UDPServerIOThread::run() {
 	Console::println("UDPServerIOThread[" + to_string(id) + "]::run(): done");
 }
 
-void UDPServerIOThread::sendMessage(const UDPServerClient* client, const uint8_t messageType, const uint32_t messageId, const UDPServerPacket* packet, const bool safe, const bool deleteFrame) {
+void UDPServerIOThread::sendMessage(const UDPServerClient* client, const uint8_t messageType, const uint32_t messageId, const UDPPacket* packet, const bool safe, const bool deleteFrame) {
 	// FIXME:
 	//	We could use lock free queues here
 	//	For now, we will go with plain mutexes
@@ -447,7 +447,7 @@ void UDPServerIOThread::processAckMessages() {
 			*message = *messageAck;
 
 			// recreate packet header with updated hash and retries
-			UDPServerPacket packet;
+			UDPPacket packet;
 			packet.putBytes((const uint8_t*)message->message, message->bytes);
 			packet.reset();
 			server->writeHeader(&packet, (UDPServer::MessageType)message->messageType, message->clientId, message->messageId, message->retries);

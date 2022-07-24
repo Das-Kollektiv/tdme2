@@ -3,10 +3,13 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/network/udp/UDPPacket.h>
 #include <tdme/network/udpserver/fwd-tdme.h>
 #include <tdme/network/udpserver/ServerClient.h>
 
 using std::string;
+
+using tdme::network::udp::UDPPacket;
 
 namespace tdme {
 namespace network {
@@ -43,7 +46,7 @@ public:
 	 * @param messageId message id (udp server only)
 	 * @param messageRetries message retries (udp server only)
 	 */
-	inline ServerRequest(const RequestType requestType, void* object, const string& custom = EVENT_CUSTOM_NONE, const UDPServerPacket* messagePacket = nullptr, const uint32_t messageId = MESSAGE_ID_UNSUPPORTED, const uint8_t messageRetries = MESSAGE_RETRIES_NONE) :
+	inline ServerRequest(const RequestType requestType, void* object, const string& custom = EVENT_CUSTOM_NONE, const UDPPacket* messagePacket = nullptr, const uint32_t messageId = MESSAGE_ID_UNSUPPORTED, const uint8_t messageRetries = MESSAGE_RETRIES_NONE) :
 		requestType(requestType), object(object), customEvent(custom), messagePacket(messagePacket), messageId(messageId), messageRetries(messageRetries) {
 		//
 	}
@@ -81,7 +84,7 @@ public:
 	 * @brief Returns the associated request message packet
 	 * @return UDP server packet
 	 */
-	inline const UDPServerPacket* getMessagePacket() {
+	inline const UDPPacket* getMessagePacket() {
 		return messagePacket;
 	}
 
@@ -104,7 +107,7 @@ private:
 	RequestType requestType;
 	void* object;
 	string customEvent;
-	const UDPServerPacket* messagePacket;
+	const UDPPacket* messagePacket;
 	uint32_t messageId;
 	uint8_t messageRetries;
 };

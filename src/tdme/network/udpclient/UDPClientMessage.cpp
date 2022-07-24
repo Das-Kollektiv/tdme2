@@ -7,8 +7,8 @@
 #include <string_view>
 
 #include <tdme/tdme.h>
+#include <tdme/network/udp/UDPPacket.h>
 #include <tdme/network/udpclient/UDPClient.h>
-#include <tdme/network/udpclient/UDPClientPacket.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/Time.h>
@@ -20,8 +20,8 @@ using std::string;
 using std::string_view;
 using std::to_string;
 
+using tdme::network::udp::UDPPacket;
 using tdme::network::udpclient::UDPClient;
-using tdme::network::udpclient::UDPClientPacket;
 using tdme::utilities::Console;
 using tdme::utilities::Integer;
 using tdme::utilities::Time;
@@ -50,9 +50,9 @@ UDPClientMessage* UDPClientMessage::parse(const char message[512], uint16_t byte
 	auto retries = Integer::viewDecode(string_view(&message[13], 1));
 
 	// decode data
-	UDPClientPacket* packet = nullptr;
+	UDPPacket* packet = nullptr;
 	if (bytes > 14) {
-		packet = new UDPClientPacket();
+		packet = new UDPPacket();
 		packet->putBytes((const uint8_t*)&message[14], bytes - 14);
 		packet->reset();
 	}
@@ -66,7 +66,7 @@ const int64_t UDPClientMessage::getRetryTime() {
 }
 
 void UDPClientMessage::generate(char message[512], uint16_t& bytes) {
-	UDPClientPacket generatedPacket;
+	UDPPacket generatedPacket;
 	string datagram;
 	switch(messageType) {
 		case MESSAGETYPE_ACKNOWLEDGEMENT:

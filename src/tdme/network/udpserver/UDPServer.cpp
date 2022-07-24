@@ -6,9 +6,9 @@
 
 #include <tdme/tdme.h>
 #include <tdme/math/Math.h>
+#include <tdme/network/udp/UDPPacket.h>
 #include <tdme/network/udpserver/UDPServer.h>
 #include <tdme/network/udpserver/UDPServerIOThread.h>
-#include <tdme/network/udpserver/UDPServerPacket.h>
 #include <tdme/os/threading/AtomicOperations.h>
 #include <tdme/os/threading/Barrier.h>
 #include <tdme/os/threading/ReadWriteLock.h>
@@ -24,9 +24,9 @@ using std::string_view;
 using std::to_string;
 
 using tdme::math::Math;
+using tdme::network::udp::UDPPacket;
 using tdme::network::udpserver::UDPServer;
 using tdme::network::udpserver::UDPServerIOThread;
-using tdme::network::udpserver::UDPServerPacket;
 using tdme::os::threading::AtomicOperations;
 using tdme::os::threading::Barrier;
 using tdme::os::threading::ReadWriteLock;
@@ -164,7 +164,7 @@ UDPServerClient* UDPServer::accept(const uint32_t clientId, const std::string& i
 	return nullptr;
 }
 
-void UDPServer::identify(const UDPServerPacket* packet, MessageType& messageType, uint32_t& connectionId, uint32_t& messageId, uint8_t& retries) {
+void UDPServer::identify(const UDPPacket* packet, MessageType& messageType, uint32_t& connectionId, uint32_t& messageId, uint8_t& retries) {
 	// format 1char_message_type,6_char_connection_id,6_char_message_id,1_char_retries
 	char inMessageType;
 	char inConnectionId[6];
@@ -217,10 +217,10 @@ void UDPServer::identify(const UDPServerPacket* packet, MessageType& messageType
 	retries = _retries;
 }
 
-void UDPServer::validate(const UDPServerPacket* packet) {
+void UDPServer::validate(const UDPPacket* packet) {
 }
 
-void UDPServer::initializeHeader(UDPServerPacket* packet) {
+void UDPServer::initializeHeader(UDPPacket* packet) {
 	// 14(messagetype, clientid, messageid, retries)
 	uint8_t emptyHeader[14] =
 		"\0\0\0\0\0\0\0\0\0\0"
@@ -229,7 +229,7 @@ void UDPServer::initializeHeader(UDPServerPacket* packet) {
 	packet->putBytes(emptyHeader, sizeof(emptyHeader));
 }
 
-void UDPServer::writeHeader(UDPServerPacket* packet, MessageType messageType, const uint32_t clientId, const uint32_t messageId, const uint8_t retries) {
+void UDPServer::writeHeader(UDPPacket* packet, MessageType messageType, const uint32_t clientId, const uint32_t messageId, const uint8_t retries) {
 	// store current position which should be end of packet
 	auto position = packet->getPosition();
 	// reset position to be able to write header
@@ -461,7 +461,7 @@ void UDPServer::cleanUpClients() {
 	}
 }
 
-void UDPServer::sendMessage(const UDPServerClient* client, UDPServerPacket* packet, const bool safe, const bool deleteFrame, const MessageType messageType, const uint32_t messageId) {
+void UDPServer::sendMessage(const UDPServerClient* client, UDPPacket* packet, const bool safe, const bool deleteFrame, const MessageType messageType, const uint32_t messageId) {
 
 	// determine message id by message type
 	uint32_t _messageId;

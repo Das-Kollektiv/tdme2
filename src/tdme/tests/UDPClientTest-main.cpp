@@ -3,9 +3,9 @@
 #include <iostream>
 
 #include <tdme/tdme.h>
+#include <tdme/network/udp/UDPPacket.h>
 #include <tdme/network/udpclient/UDPClient.h>
 #include <tdme/network/udpclient/UDPClientMessage.h>
-#include <tdme/network/udpclient/UDPClientPacket.h>
 #include <tdme/os/network/Network.h>
 #include <tdme/os/threading/Thread.h>
 
@@ -17,9 +17,9 @@ using std::endl;
 using std::string;
 using std::stringstream;
 
+using tdme::network::udp::UDPPacket;
 using tdme::network::udpclient::UDPClient;
 using tdme::network::udpclient::UDPClientMessage;
-using tdme::network::udpclient::UDPClientPacket;
 using tdme::os::network::Network;
 using tdme::os::threading::Thread;
 using tdme::utilities::Console;
@@ -35,7 +35,7 @@ public:
 		while (isStopRequested() == false) {
 			string input;
 			cin >> input;
-			UDPClientPacket* packet = new UDPClientPacket();
+			UDPPacket* packet = new UDPPacket();
 			packet->putString(input);
 			if (client != nullptr) {
 				client->sendMessage(client->createMessage(packet), true);

@@ -6,7 +6,7 @@
 #include <tdme/tdme.h>
 #include <tdme/utilities/Console.h>
 
-#include <tdme/network/udpclient/fwd-tdme.h>
+#include <tdme/network/udp/fwd-tdme.h>
 
 using std::array;
 using std::string;
@@ -15,10 +15,10 @@ using std::to_string;
 using tdme::utilities::Console;
 
 /**
- * UDP Client Packet
+ * UDP Packet
  * @author Andreas Drewke
  */
-class tdme::network::udpclient::UDPClientPacket final {
+class tdme::network::udp::UDPPacket final {
 private:
 	mutable uint16_t position { 0 };
 	uint16_t size { 0 };
@@ -30,7 +30,7 @@ public:
 	/**
 	 * Public constructor
 	 */
-	inline UDPClientPacket() {
+	inline UDPPacket() {
 	}
 
 	/**
@@ -59,7 +59,7 @@ public:
 	 * @param position position
 	 * @return UDP client packet
 	 */
-	inline const UDPClientPacket* setPosition(uint16_t position) const {
+	inline const UDPPacket* setPosition(uint16_t position) const {
 		this->position = position;
 		return this;
 	}
@@ -69,7 +69,7 @@ public:
 	 * @param position position
 	 * @return UDP client packet
 	 */
-	inline UDPClientPacket* setPosition(uint16_t position) {
+	inline UDPPacket* setPosition(uint16_t position) {
 		this->position = position;
 		return this;
 	}
@@ -94,7 +94,7 @@ public:
 	 * @param value value
 	 * @return UDP client packet
 	 */
-	inline UDPClientPacket* putBool(bool value) {
+	inline UDPPacket* putBool(bool value) {
 		putByte(value == true?1:0);
 		return this;
 	}
@@ -105,11 +105,11 @@ public:
 	 */
 	inline uint8_t getByte() const {
 		if (position >= PACKET_MAX_SIZE) {
-			Console::println("UDPClientPacket::getByte(): position out of range: " + to_string(position) + " >= " + to_string(PACKET_MAX_SIZE));
+			Console::println("UDPPacket::getByte(): position out of range: " + to_string(position) + " >= " + to_string(PACKET_MAX_SIZE));
 			return 0;
 		} else
 		if (position >= size) {
-			Console::println("UDPClientPacket::getByte(): position out of range: " + to_string(position) + " >= " + to_string(size));
+			Console::println("UDPPacket::getByte(): position out of range: " + to_string(position) + " >= " + to_string(size));
 			return 0;
 		}
 		return data[position++];
@@ -120,9 +120,9 @@ public:
 	 * @param value value
 	 * @return UDP client packet
 	 */
-	inline UDPClientPacket* putByte(uint8_t value) {
+	inline UDPPacket* putByte(uint8_t value) {
 		if (position >= PACKET_MAX_SIZE) {
-			Console::println("UDPClientPacket::putByte(): position out of range: " + to_string(position) + " >= " + to_string(PACKET_MAX_SIZE));
+			Console::println("UDPPacket::putByte(): position out of range: " + to_string(position) + " >= " + to_string(PACKET_MAX_SIZE));
 			return this;
 		}
 		data[position++] = value;
@@ -146,7 +146,7 @@ public:
 	 * @param value value
 	 * @return UDP client packet
 	 */
-	inline UDPClientPacket* putInt16(uint16_t value) {
+	inline UDPPacket* putInt16(uint16_t value) {
 		putByte((value) & 0xFF);
 		putByte((value >> 8) & 0xFF);
 		return this;
@@ -170,7 +170,7 @@ public:
 	 * @param value value
 	 * @return UDP client packet
 	 */
-	inline UDPClientPacket* putInt(uint32_t value) {
+	inline UDPPacket* putInt(uint32_t value) {
 		putByte((value) & 0xFF);
 		putByte((value >> 8) & 0xFF);
 		putByte((value >> 16) & 0xFF);
@@ -200,7 +200,7 @@ public:
 	 * @param value value
 	 * @return UDP client packet
 	 */
-	inline UDPClientPacket* putInt64(uint64_t value) {
+	inline UDPPacket* putInt64(uint64_t value) {
 		putByte((value) & 0xFF);
 		putByte((value >> 8) & 0xFF);
 		putByte((value >> 16) & 0xFF);
@@ -226,7 +226,7 @@ public:
 	 * @param value value
 	 * @return UDP client packet
 	 */
-	inline UDPClientPacket* putFloat(float value) {
+	inline UDPPacket* putFloat(float value) {
 		uint32_t* floatAsInt = ((uint32_t*)&value);
 		putInt(*floatAsInt);
 		return this;
@@ -248,9 +248,9 @@ public:
 	 * @param value value
 	 * @return UDP client packet
 	 */
-	inline UDPClientPacket* putString(const string& value) {
+	inline UDPPacket* putString(const string& value) {
 		if (value.size() > 255) {
-			Console::println("UDPClientPacket::putString(): string size out of range: string will be clamped to max length of 255 bytes");
+			Console::println("UDPPacket::putString(): string size out of range: string will be clamped to max length of 255 bytes");
 		}
 		putByte(value.size() > 255?255:value.size());
 		for (auto i = 0; i < value.size() && i < 256; i++) {
@@ -265,7 +265,7 @@ public:
 	 * @param byteCount byte count
 	 * @return UDP client packet
 	 */
-	inline const UDPClientPacket* getBytes(uint8_t* bytes, uint16_t byteCount) const {
+	inline const UDPPacket* getBytes(uint8_t* bytes, uint16_t byteCount) const {
 		for (auto i = 0; i < byteCount; i++) bytes[i] = getByte();
 		return this;
 	}
@@ -276,7 +276,7 @@ public:
 	 * @param byteCount byte count
 	 * @return UDP client packet
 	 */
-	inline UDPClientPacket* getBytes(uint8_t* bytes, uint16_t byteCount) {
+	inline UDPPacket* getBytes(uint8_t* bytes, uint16_t byteCount) {
 		for (auto i = 0; i < byteCount; i++) bytes[i] = getByte();
 		return this;
 	}
@@ -287,7 +287,7 @@ public:
 	 * @param byteCount byte count
 	 * @return UDP client packet
 	 */
-	inline UDPClientPacket* putBytes(const uint8_t* bytes, uint16_t byteCount) {
+	inline UDPPacket* putBytes(const uint8_t* bytes, uint16_t byteCount) {
 		for (auto i = 0; i < byteCount; i++) putByte(bytes[i]);
 		return this;
 	}
@@ -297,7 +297,7 @@ public:
 	 * @param value value
 	 * @return UDP client packet
 	 */
-	inline UDPClientPacket* putPacket(const UDPClientPacket* packet) {
+	inline UDPPacket* putPacket(const UDPPacket* packet) {
 		for (auto i = 0; i < packet->getSize(); i++) putByte(packet->data[i]);
 		return this;
 	}

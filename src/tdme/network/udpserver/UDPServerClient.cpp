@@ -5,6 +5,7 @@
 #include <typeinfo>
 
 #include <tdme/tdme.h>
+#include <tdme/network/udp/UDPPacket.h>
 #include <tdme/network/udpserver/UDPServerClient.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Integer.h>
@@ -17,6 +18,8 @@ using std::pair;
 using std::string;
 
 using tdme::network::udpserver::UDPServerClient;
+
+using tdme::network::udp::UDPPacket;
 using tdme::utilities::Console;
 using tdme::utilities::Integer;
 using tdme::utilities::RTTI;
@@ -68,13 +71,13 @@ const bool UDPServerClient::setKey(const string &key) {
 	}
 }
 
-UDPServerPacket* UDPServerClient::createPacket() {
-	auto packet = new UDPServerPacket();
+UDPPacket* UDPServerClient::createPacket() {
+	auto packet = new UDPPacket();
 	UDPServer::initializeHeader(packet);
 	return packet;
 }
 
-void UDPServerClient::send(UDPServerPacket* packet, bool safe, bool deleteFrame) {
+void UDPServerClient::send(UDPPacket* packet, bool safe, bool deleteFrame) {
 	try {
 		server->sendMessage(this, packet, safe, deleteFrame, UDPServer::MESSAGETYPE_MESSAGE);
 	} catch (NetworkServerException &exception) {
@@ -168,7 +171,7 @@ void UDPServerClient::shutdown() {
 	shutdownRequested = true;
 }
 
-void UDPServerClient::onFrameReceived(const UDPServerPacket* packet, const uint32_t messageId, const uint8_t retries) {
+void UDPServerClient::onFrameReceived(const UDPPacket* packet, const uint32_t messageId, const uint8_t retries) {
 	// create request
 	ServerRequest* request = new ServerRequest(
 		ServerRequest::REQUESTTYPE_CLIENT_REQUEST,

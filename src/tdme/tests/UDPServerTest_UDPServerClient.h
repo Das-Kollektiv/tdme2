@@ -3,6 +3,7 @@
 #include <sstream>
 
 #include <tdme/tdme.h>
+#include <tdme/network/udp/UDPPacket.h>
 #include <tdme/network/udpserver/UDPServer.h>
 #include <tdme/network/udpserver/UDPServerClient.h>
 #include <tdme/utilities/Exception.h>
@@ -11,9 +12,9 @@
 
 using std::stringstream;
 
+using tdme::network::udp::UDPPacket;
 using tdme::network::udpserver::UDPServer;
 using tdme::network::udpserver::UDPServerClient;
-using tdme::network::udpserver::UDPServerPacket;
 using tdme::utilities::Exception;
 
 class EchoUDPServerClient : public UDPServerClient {
@@ -25,7 +26,7 @@ public:
 protected:
 	virtual ~EchoUDPServerClient();
 
-	virtual void onRequest(const UDPServerPacket* packet, const uint32_t messageId, const uint8_t retries);
+	virtual void onRequest(const UDPPacket* packet, const uint32_t messageId, const uint8_t retries);
 
 	void onInit();
 	void onClose();

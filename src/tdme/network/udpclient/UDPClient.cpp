@@ -7,10 +7,10 @@
 #include <typeinfo>
 
 #include <tdme/tdme.h>
+#include <tdme/network/udp/UDPPacket.h>
 #include <tdme/network/udpclient/NetworkClientException.h>
 #include <tdme/network/udpclient/UDPClient.h>
 #include <tdme/network/udpclient/UDPClientMessage.h>
-#include <tdme/network/udpclient/UDPClientPacket.h>
 #include <tdme/os/network/KernelEventMechanism.h>
 #include <tdme/os/network/NetworkSocket.h>
 #include <tdme/os/network/NIOInterest.h>
@@ -26,10 +26,10 @@ using std::map;
 using std::pair;
 using std::string;
 
+using tdme::network::udp::UDPPacket;
 using tdme::network::udpclient::NetworkClientException;
 using tdme::network::udpclient::UDPClient;
 using tdme::network::udpclient::UDPClientMessage;
-using tdme::network::udpclient::UDPClientPacket;
 using tdme::os::network::KernelEventMechanism;
 using tdme::os::network::NetworkSocket;
 using tdme::os::network::NIO_INTEREST_NONE;
@@ -540,7 +540,7 @@ UDPClientMessage* UDPClient::receiveMessage() {
 	return message;
 }
 
-UDPClientMessage* UDPClient::createMessage(const UDPClientPacket* packet) {
+UDPClientMessage* UDPClient::createMessage(const UDPPacket* packet) {
 	return new UDPClientMessage(
 		UDPClientMessage::MESSAGETYPE_MESSAGE,
 		clientId,

@@ -7,7 +7,6 @@ namespace udpclient {
 	class NetworkClientException;
 	class UDPClient;
 	class UDPClientMessage;
-	class UDPClientPacket;
 } // namespace udpclient
 } // namespace network
 } // namespace tdme

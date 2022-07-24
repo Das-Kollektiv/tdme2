@@ -7,11 +7,11 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/network/udp/UDPPacket.h>
 #include <tdme/network/udpserver/NetworkServerException.h>
 #include <tdme/network/udpserver/ServerClient.h>
 #include <tdme/network/udpserver/UDPServer.h>
 #include <tdme/network/udpserver/UDPServerIOThread.h>
-#include <tdme/network/udpserver/UDPServerPacket.h>
 #include <tdme/os/network/NetworkException.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/utilities/Exception.h>
@@ -20,9 +20,9 @@
 using std::map;
 using std::string;
 
+using tdme::network::udp::UDPPacket;
 using tdme::network::udpserver::UDPServer;
 using tdme::network::udpserver::UDPServerIOThread;
-using tdme::network::udpserver::UDPServerPacket;
 using tdme::utilities::Exception;
 
 /**
@@ -83,7 +83,7 @@ public:
 	 * @brief Creates a packet to be used with send
 	 * @return frame to be send
 	 */
-	static UDPServerPacket* createPacket();
+	static UDPPacket* createPacket();
 
 	/**
 	 * @brief Sends a frame to client, takes over ownership of frame
@@ -91,7 +91,7 @@ public:
 	 * @param safe safe, requires ack and retransmission
 	 * @param deleteFrame delete frame
 	 */
-	void send(UDPServerPacket* packet, bool safe = true, bool deleteFrame = true);
+	void send(UDPPacket* packet, bool safe = true, bool deleteFrame = true);
 
 	/**
 	 * @brief Checks if message has already been processed and sends an acknowlegdement to client / safe client messages
@@ -126,7 +126,7 @@ protected:
 	 * @param messageId message id
 	 * @param retries retries
 	 */
-	virtual void onRequest(const UDPServerPacket* packet, const uint32_t messageId, const uint8_t retries) = 0;
+	virtual void onRequest(const UDPPacket* packet, const uint32_t messageId, const uint8_t retries) = 0;
 
 	/*
 	 * @brief event method called if client will be closed, will be called from worker
@@ -139,7 +139,7 @@ protected:
 	 * @param messageId message id (upd server only)
 	 * @param retries retries (udp server only)
 	 */
-	virtual void onFrameReceived(const UDPServerPacket* packet, const uint32_t messageId = 0, const uint8_t retries = 0);
+	virtual void onFrameReceived(const UDPPacket* packet, const uint32_t messageId = 0, const uint8_t retries = 0);
 
 	/**
 	 * @brief Shuts down this network client

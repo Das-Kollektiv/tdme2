@@ -3,22 +3,22 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/network/udp/UDPPacket.h>
 #include <tdme/network/udpserver/ServerClientRequestHandler.h>
 #include <tdme/network/udpserver/ServerClientRequestHandlerHub.h>
 #include <tdme/network/udpserver/UDPServer.h>
 #include <tdme/network/udpserver/UDPServerClient.h>
-#include <tdme/network/udpserver/UDPServerPacket.h>
 #include <tdme/utilities/Exception.h>
 
 #include "UDPServerTest_UDPServerClient.h"
 
 using std::string;
 
+using tdme::network::udp::UDPPacket;
 using tdme::network::udpserver::ServerClientRequestHandler;
 using tdme::network::udpserver::ServerClientRequestHandlerHub;
 using tdme::network::udpserver::UDPServer;
 using tdme::network::udpserver::UDPServerClient;
-using tdme::network::udpserver::UDPServerPacket;
 using tdme::utilities::Exception;
 
 class CRHShutdown : public ServerClientRequestHandler<UDPServerClient,string> {
