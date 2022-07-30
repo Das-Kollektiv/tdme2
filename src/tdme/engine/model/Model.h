@@ -319,9 +319,9 @@ public:
 	 * @param nodeId node id
 	 * @param parentTransformMatrix parent transform matrix
 	 * @param transformMatrix target node transform matrix
-	 * @param frame frame
+	 * @param frame frame or -1 for not using animation data
 	 */
-	inline bool computeTransformMatrix(const string& nodeId, const Matrix4x4& parentTransformMatrix, Matrix4x4& transformMatrix, int32_t frame = 0) {
+	inline bool computeTransformMatrix(const string& nodeId, const Matrix4x4& parentTransformMatrix, Matrix4x4& transformMatrix, int32_t frame = -1) {
 		return computeTransformMatrix(subNodes, parentTransformMatrix, frame, nodeId, transformMatrix);
 	}
 

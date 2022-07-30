@@ -152,12 +152,13 @@ BoundingBox* Model::getBoundingBox()
 
 bool Model::computeTransformMatrix(const map<string, Node*>& nodes, const Matrix4x4& parentTransformMatrix, int32_t frame, const string& nodeId, Matrix4x4& transformMatrix)
 {
+	// TODO: this should be computed from sub nodes to root node, not the other way around, also it looks broken to me right now, but works for our cases so far
 	// iterate through nodes
 	for (auto it: nodes) {
-		Node* node = it.second;
+		auto node = it.second;
 		// compute animation matrix if animation setups exist
 		auto animation = node->getAnimation();
-		if (animation != nullptr) {
+		if (animation != nullptr && frame != -1) {
 			auto& animationMatrices = animation->getTransformMatrices();
 			transformMatrix.set(animationMatrices[frame % animationMatrices.size()]);
 		} else {

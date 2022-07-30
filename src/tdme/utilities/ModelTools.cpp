@@ -725,6 +725,16 @@ void ModelTools::prepareForShader(Model* model, const string& shader) {
 
 void ModelTools::prepareForDefaultShader(Node* node, const Matrix4x4& parentTransformaMatrix) {
 	auto transformMatrix = node->getTransformMatrix().clone().multiply(parentTransformaMatrix);
+	// do not continue on non mesh datas
+	if (node->isEmpty() == true || node->isJoint() == true) {
+		node->setTransformMatrix(transformMatrix);
+		//
+		for (auto nodeIt: node->getSubNodes()) {
+			prepareForDefaultShader(nodeIt.second, transformMatrix);
+		}
+		//
+		return;
+	}
 	// apply transformations matrix to vertices, ...
 	{
 		auto vertices = node->getVertices();
@@ -769,9 +779,20 @@ void ModelTools::prepareForDefaultShader(Node* node, const Matrix4x4& parentTran
 }
 
 void ModelTools::prepareForFoliageTreeShader(Node* node, const Matrix4x4& parentTransformMatrix, const string& shader) {
+	auto transformMatrix = node->getTransformMatrix().clone().multiply(parentTransformMatrix);
+	// do not continue on non mesh datas
+	if (node->isEmpty() == true || node->isJoint() == true) {
+		node->setTransformMatrix(transformMatrix);
+		//
+		for (auto nodeIt: node->getSubNodes()) {
+			prepareForFoliageTreeShader(nodeIt.second, transformMatrix, shader);
+		}
+		//
+		return;
+	}
+	//
 	vector<Vector3> objectOrigins;
 	objectOrigins.resize(node->getVertices().size());
-	auto transformMatrix = node->getTransformMatrix().clone().multiply(parentTransformMatrix);
 	{
 		auto vertices = node->getVertices();
 		auto vertexIdx = 0;
