@@ -671,18 +671,35 @@ public:
 			nobody involved with Gems - authors, editors, publishers, or webmasters - are to be held responsible.
 			Basically, don't be a jerk, and remember that anything free comes with no guarantee.
 		*/
+		// TODO: the next step might be a candidate for some optimizations
+		// copy matrix data
+		auto _data = data;
+		// normalize all 3 axes in matrix coordinate system
+		auto axisALength = Math::sqrt((_data[0] * _data[0]) + (_data[1] * _data[1]) + (_data[2] * _data[2]));
+		_data[0]*= axisALength;
+		_data[1]*= axisALength;
+		_data[2]*= axisALength;
+		auto axisBLength = Math::sqrt((_data[4] * _data[4]) + (_data[5] * _data[5]) + (_data[6] * _data[6]));
+		_data[4]*= axisBLength;
+		_data[5]*= axisBLength;
+		_data[6]*= axisBLength;
+		auto axisCLength = Math::sqrt((_data[8] * _data[8]) + (_data[9] * _data[9]) + (_data[10] * _data[10]));
+		_data[8]*= axisCLength;
+		_data[9]*= axisCLength;
+		_data[10]*= axisCLength;
+		// compute euler angles
 		Vector3 euler;
 		auto axis0 = 0;
 		auto axis1 = 1;
 		auto axis2 = 2;
-		auto cy = static_cast<float>(Math::sqrt(data[axis0 + 4 * axis0] * data[axis0 + 4 * axis0] + data[axis1 + 4 * axis0] * data[axis1 + 4 * axis0]));
+		auto cy = static_cast<float>(Math::sqrt(_data[axis0 + 4 * axis0] * _data[axis0 + 4 * axis0] + _data[axis1 + 4 * axis0] * _data[axis1 + 4 * axis0]));
 		if (cy > 16.0f * Math::EPSILON) {
-			euler[0] = static_cast<float>((Math::atan2(data[axis2 + 4 * axis1], data[axis2 + 4 * axis2])));
-			euler[1] = static_cast<float>((Math::atan2(-data[axis2 + 4 * axis0], cy)));
-			euler[2] = static_cast<float>((Math::atan2(data[axis1 + 4 * axis0], data[axis0 + 4 * axis0])));
+			euler[0] = static_cast<float>((Math::atan2(_data[axis2 + 4 * axis1], _data[axis2 + 4 * axis2])));
+			euler[1] = static_cast<float>((Math::atan2(-_data[axis2 + 4 * axis0], cy)));
+			euler[2] = static_cast<float>((Math::atan2(_data[axis1 + 4 * axis0], _data[axis0 + 4 * axis0])));
 		} else {
-			euler[0] = static_cast<float>((Math::atan2(-data[axis1 + 4 * axis2], data[axis1 + 4 * axis1])));
-			euler[1] = static_cast<float>((Math::atan2(-data[axis2 + 4 * axis0], cy)));
+			euler[0] = static_cast<float>((Math::atan2(-_data[axis1 + 4 * axis2], _data[axis1 + 4 * axis1])));
+			euler[1] = static_cast<float>((Math::atan2(-_data[axis2 + 4 * axis0], cy)));
 			euler[2] = 0.0f;
 		}
 		euler.scale(static_cast<float>((180.0 / Math::PI)));
