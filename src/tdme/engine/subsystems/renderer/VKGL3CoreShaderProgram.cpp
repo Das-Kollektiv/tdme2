@@ -750,22 +750,66 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 			if (VERBOSE == true) Console::println("Shader UBO size: " + to_string(shader.uboSize));
 		}
 
+		// root ubo uniform names
+		unordered_set<string> uboUniformNames;
+		for (auto& uniform: shader.uniforms) {
+			auto uniformName = uniform.second->name;
+			auto uniformDotIdx = uniformName.find('.');
+			auto uniformOpenBracketIdx = uniformName.find('[');
+			if (uniformDotIdx != string::npos && uniformOpenBracketIdx == string::npos) {
+				uniformName = StringTools::substring(uniformName, 0, uniformDotIdx);
+			} else
+			if (uniformDotIdx == string::npos && uniformOpenBracketIdx != string::npos) {
+				uniformName = StringTools::substring(uniformName, 0, uniformOpenBracketIdx);
+			} else
+			if (uniformDotIdx != string::npos && uniformOpenBracketIdx != string::npos) {
+				uniformName = StringTools::substring(uniformName, 0, Math::min(static_cast<int>(uniformDotIdx), static_cast<int>(uniformOpenBracketIdx)));
+			}
+			uboUniformNames.insert(uniformName);
+		}
+
 		// construct new shader from vector and flip y, also inject uniforms
 		shaderSource.clear();
 		auto injectedUniformsAt = -1;
 		auto injectedYFlip = false;
+		auto inStruct = false;
 		// inject uniform before first method
 		for (auto i = 0; i < newShaderSourceLines.size(); i++) {
 			auto line = newShaderSourceLines[i];
 			if (StringTools::startsWith(line, "//") == true) continue;
-			if (line.find('(') != string::npos &&
+			//
+			if (inStruct == false && StringTools::startsWith(line, "struct ") == true) {
+				inStruct = true;
+			} else
+			if (inStruct == true && StringTools::startsWith(line, "};") == true) {
+				inStruct = false;
+			} else
+			if (injectedUniformsAt == -1 &&
+				line.find('(') != string::npos &&
 				line.find(')') != string::npos &&
 				StringTools::startsWith(line, "struct ") == false &&
 				StringTools::startsWith(line, "layout ") == false &&
 				StringTools::startsWith(line, "layout(") == false &&
 				StringTools::startsWith(line, "#") == false) {
 				injectedUniformsAt = i - 1;
-				break;
+			} else
+			if (inStruct == false) {
+				// rename arrays and structs to ubo uniforms
+				for (auto& uniformStructArrayName: uniformStructsArrays) {
+					// is struct/array a first level uniform
+					auto isUniform = uboUniformNames.find(uniformStructArrayName) != uboUniformNames.end();
+					if (isUniform == false) continue;
+					//
+					line = StringTools::regexReplace(
+						line,
+						"(\\b)" + uniformStructArrayName + "(\\b)([\\s]*[\\[\\.;\\)]{1})",
+						"$1ubo_generated." + uniformStructArrayName + "$2$3"
+					);
+					// TODO: this is a workaround until we have a better shader parser/adapt code
+					line = StringTools::replace(line, "ubo_generated.ubo_generated.", "ubo_generated.");
+					//
+					newShaderSourceLines[i] = line;
+				}
 			}
 		}
 		for (int i = newShaderSourceLines.size() - 1; i >= 0; i--) {
@@ -805,16 +849,6 @@ void VKGL3CoreShaderProgram::loadShader(VKRenderer::shader_type& shader, int32_t
 						// TODO: this is a workaround until we have a better shader parser/adapt code
 						line = StringTools::replace(line, "ubo_generated.ubo_generated.", "ubo_generated.");
 					}
-				}
-				// rename arrays and structs to ubo uniforms
-				for (auto& uniformName: uniformStructsArrays) {
-					line = StringTools::regexReplace(
-						line,
-						"(\\b)" + uniformName + "(\\b)",
-						"$1ubo_generated." + uniformName + "$2"
-					);
-					// TODO: this is a workaround until we have a better shader parser/adapt code
-					line = StringTools::replace(line, "ubo_generated.ubo_generated.", "ubo_generated.");
 				}
 				// inject gl_Position flip before last } from main
 				if (type == SHADER_VERTEX_SHADER && injectedYFlip == false && StringTools::startsWith(line, "}") == true) {
