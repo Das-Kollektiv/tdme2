@@ -61,6 +61,10 @@ public:
 	static constexpr bool VERBOSE { false };
 
 public:
+	/**
+	 * Path finding thread
+	 * @author Andreas Drewke
+	 */
 	class PathFindingThread: public Thread {
 	public:
 		enum State {
@@ -214,6 +218,10 @@ public:
 
 	};
 
+	/**
+	 * Path Finding
+	 * @author Andreas Drewke
+	 */
 	class PathFinding {
 	private:
 		Context* context { nullptr };
@@ -310,6 +318,9 @@ public:
 
 private:
 
+	/**
+	 * Context physics world listener
+	 */
 	class ContextWorldListener: public WorldListener {
 		friend class Context;
 	private:
@@ -351,6 +362,7 @@ protected:
 	bool server;
 
 public:
+
 	/**
 	 * Public constructor
 	 * @param server server
