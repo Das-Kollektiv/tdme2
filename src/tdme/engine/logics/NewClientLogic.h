@@ -8,7 +8,7 @@
 using std::string;
 
 /**
- * Network Logic
+ * New client logic interface
  * @author Andreas Drewke
  */
 struct tdme::engine::logics::NewClientLogic {
