@@ -132,8 +132,6 @@ public:
 		 * Public constructor
 		 * @param context context
 		 * @param idx index
-		 * @param rigidBodyTypeIdStaticMask rigid body type id static mask
-		 * @param rigidBodyTypeIdCloneMask rigid body type id clone mask
 		 */
 		PathFindingThread(Context* context, int idx);
 
@@ -228,9 +226,7 @@ public:
 		/**
 		 * Public constructor
 		 * @param context context
-		 * @param threadCount thread count
-		 * @param rigidBodyTypeIdStaticMask rigid body type id static mask
-		 * @param rigidBodyTypeIdCloneMask rigid body type id clone mask
+		 * @param threadCount thread count or 0 for default
 		 */
 		PathFinding(Context* context, int threadCount = 0);
 
