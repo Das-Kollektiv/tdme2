@@ -332,6 +332,7 @@ private:
 	int64_t timeStarted;
 
 	// path finding which is context bound too
+	uint16_t rigidBodyCollisionTypeIdMask { 1/*Body::TYPEID_STATIC*/ };
 	uint16_t skipOnRigidBodyTypeIdMask { 0 };
 	uint16_t rigidBodyTypeIdCloneMask { 1/*Body::TYPEID_STATIC*/ };
 	PathFinding pathFinding;
@@ -530,6 +531,21 @@ public:
 	 */
 	inline const vector<Logic*>& getGameLogicsNew() {
 		return gameLogicsNew;
+	}
+
+	/**
+	 * @return path finding rigid body collision type id mask
+	 */
+	inline uint16_t getRigidBodyCollisionTypeIdMask() {
+		return rigidBodyCollisionTypeIdMask;
+	}
+
+	/**
+	 * Set path finding rigid body collision type id mask
+	 * @param rigidBodyCollisionTypeIdMask rigid body collision type id mask
+	 */
+	inline void setRigidBodyCollisionTypeIdMask(uint16_t rigidBodyCollisionTypeIdMask) {
+		this->rigidBodyCollisionTypeIdMask = rigidBodyCollisionTypeIdMask;
 	}
 
 	/**

@@ -309,7 +309,7 @@ void Context::PathFindingThread::run() {
 					if (pathFinding->findFlowMapPath(
 						startPosition,
 						endPosition,
-						context->skipOnRigidBodyTypeIdMask,
+						context->rigidBodyCollisionTypeIdMask,
 						path,
 						alternativeEndSteps/*,
 						customTest*/
@@ -332,7 +332,7 @@ void Context::PathFindingThread::run() {
 							Vector3(),
 							flowMapWidth,
 							flowMapDepth,
-							context->skipOnRigidBodyTypeIdMask,
+							context->rigidBodyCollisionTypeIdMask,
 							partialPath,
 							path.size() > 20?false:true
 						);
@@ -345,7 +345,7 @@ void Context::PathFindingThread::run() {
 					if (pathFinding->findPath(
 						startPosition,
 						endPosition,
-						context->skipOnRigidBodyTypeIdMask,
+						context->rigidBodyCollisionTypeIdMask,
 						path,
 						alternativeEndSteps/*,
 						customTest*/
@@ -371,7 +371,7 @@ void Context::PathFindingThread::run() {
 						Vector3(),
 						flowMapRequest.flowMapWidth,
 						flowMapRequest.flowMapDepth,
-						context->skipOnRigidBodyTypeIdMask,
+						context->rigidBodyCollisionTypeIdMask,
 						partialPath,
 						pathIdx >= path.size()?true:false
 					);
