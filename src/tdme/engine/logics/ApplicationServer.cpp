@@ -39,7 +39,9 @@ void ApplicationServer::run() {
 	context = new Context(true);
 	context->getPathFinding()->setThreadCount(pathFindingThreadCount);
 	context->setWorld(new World());
-	// TODO: Add default game logics here
+	// set up logics
+	setupLogics();
+	//
 	context->addGameLogicsNew();
 	gameLogicThread = new ServerThread(context, this);
 	context->setGameLogicMutex(this->gameLogicThread->getMutex());

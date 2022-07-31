@@ -39,6 +39,11 @@ public:
 	 */
 	virtual ~ApplicationServer();
 
+	/**
+	 * Setup default / minumum required logics
+	 */
+	virtual void setupLogics() = 0;
+
 	// overriden methods
 	virtual void run() override;
 
