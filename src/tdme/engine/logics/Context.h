@@ -32,8 +32,8 @@ using std::vector;
 
 using tdme::audio::Audio;
 using tdme::engine::logics::Logic;
-using tdme::engine::logics::NetworkLogic;
 using tdme::engine::logics::LogicNetworkPacket;
+using tdme::engine::logics::NetworkLogic;
 using tdme::engine::physics::Body;
 using tdme::engine::physics::World;
 using tdme::engine::physics::WorldListener;

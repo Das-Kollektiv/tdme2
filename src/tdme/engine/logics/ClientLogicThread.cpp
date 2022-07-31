@@ -2,11 +2,11 @@
 #include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/logics/ClientLogicThread.h>
 #include <tdme/engine/logics/Context.h>
 #include <tdme/engine/logics/Logic.h>
-#include <tdme/engine/logics/NetworkLogic.h>
 #include <tdme/engine/logics/LogicNetworkPacket.h>
-#include <tdme/engine/logics/ClientLogicThread.h>
+#include <tdme/engine/logics/NetworkLogic.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/network/udp/UDPPacket.h>
 #include <tdme/network/udpclient/UDPClient.h>
@@ -19,12 +19,12 @@ using std::string;
 using std::to_string;
 using std::vector;
 
-using tdme::engine::physics::World;
+using tdme::engine::logics::ClientLogicThread;
 using tdme::engine::logics::Context;
 using tdme::engine::logics::Logic;
 using tdme::engine::logics::LogicNetworkPacket;
 using tdme::engine::logics::NetworkLogic;
-using tdme::engine::logics::ClientLogicThread;
+using tdme::engine::physics::World;
 using tdme::network::udp::UDPPacket;
 using tdme::network::udpclient::UDPClient;
 using tdme::os::threading::Mutex;

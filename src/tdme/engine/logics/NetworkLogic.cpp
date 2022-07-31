@@ -5,8 +5,8 @@
 #include <tdme/engine/logics/fwd-tdme.h>
 #include <tdme/engine/logics/Context.h>
 #include <tdme/engine/logics/Logic.h>
-#include <tdme/engine/logics/NetworkLogic.h>
 #include <tdme/engine/logics/LogicNetworkPacket.h>
+#include <tdme/engine/logics/NetworkLogic.h>
 #include <tdme/utilities/Console.h>
 
 using std::string;
@@ -14,8 +14,8 @@ using std::vector;
 
 using tdme::engine::logics::Context;
 using tdme::engine::logics::Logic;
-using tdme::engine::logics::NetworkLogic;
 using tdme::engine::logics::LogicNetworkPacket;
+using tdme::engine::logics::NetworkLogic;
 using tdme::utilities::Console;
 
 NetworkLogic::NetworkLogic(Context* context, const string& id, bool handlingHIDInput): Logic(context, id, handlingHIDInput) {

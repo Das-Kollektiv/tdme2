@@ -12,8 +12,8 @@
 using std::string;
 using std::vector;
 
-using tdme::engine::logics::Context;
 using tdme::engine::logics::ApplicationServer;
+using tdme::engine::logics::Context;
 using tdme::network::udp::UDPPacket;
 using tdme::os::threading::Mutex;
 using tdme::os::threading::Thread;

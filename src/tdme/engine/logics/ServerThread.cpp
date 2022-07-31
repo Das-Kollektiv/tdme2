@@ -6,9 +6,9 @@
 #include <tdme/engine/logics/ApplicationServerClient.h>
 #include <tdme/engine/logics/Context.h>
 #include <tdme/engine/logics/Logic.h>
+#include <tdme/engine/logics/LogicNetworkPacket.h>
 #include <tdme/engine/logics/NetworkLogic.h>
 #include <tdme/engine/logics/NewClientLogic.h>
-#include <tdme/engine/logics/LogicNetworkPacket.h>
 #include <tdme/engine/logics/ServerThread.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/network/udp/UDPPacket.h>
@@ -27,9 +27,9 @@ using std::vector;
 using tdme::engine::logics::ApplicationServerClient;
 using tdme::engine::logics::Context;
 using tdme::engine::logics::Logic;
+using tdme::engine::logics::LogicNetworkPacket;
 using tdme::engine::logics::NetworkLogic;
 using tdme::engine::logics::NewClientLogic;
-using tdme::engine::logics::LogicNetworkPacket;
 using tdme::engine::logics::ServerThread;
 using tdme::engine::physics::World;
 using tdme::network::udp::UDPPacket;
