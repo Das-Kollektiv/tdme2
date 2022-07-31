@@ -87,7 +87,7 @@ Context::PathFindingThread::PathFindingThread(Context* context, int idx):
 {
 	reset();
 	world = context->getWorld()->clone(context->rigidBodyTypeIdCloneMask);
-	pathFinding = new tdme::utilities::PathFinding(world, true, 1000, 1.8f, 0.4f, 0.81f, 0.4f, context->rigidBodyTypeIdStaticMask, 5, 0.5f, 2.0f);
+	pathFinding = new tdme::utilities::PathFinding(world, true, 1000, 1.8f, 0.4f, 0.81f, 0.4f, context->skipOnRigidBodyTypeIdMask, 5, 0.5f, 2.0f);
 }
 
 Context::PathFindingThread::~PathFindingThread() {
@@ -309,7 +309,7 @@ void Context::PathFindingThread::run() {
 					if (pathFinding->findFlowMapPath(
 						startPosition,
 						endPosition,
-						context->rigidBodyTypeIdStaticMask,
+						context->skipOnRigidBodyTypeIdMask,
 						path,
 						alternativeEndSteps/*,
 						customTest*/
@@ -332,7 +332,7 @@ void Context::PathFindingThread::run() {
 							Vector3(),
 							flowMapWidth,
 							flowMapDepth,
-							context->rigidBodyTypeIdStaticMask,
+							context->skipOnRigidBodyTypeIdMask,
 							partialPath,
 							path.size() > 20?false:true
 						);
@@ -345,7 +345,7 @@ void Context::PathFindingThread::run() {
 					if (pathFinding->findPath(
 						startPosition,
 						endPosition,
-						context->rigidBodyTypeIdStaticMask,
+						context->skipOnRigidBodyTypeIdMask,
 						path,
 						alternativeEndSteps/*,
 						customTest*/
@@ -371,7 +371,7 @@ void Context::PathFindingThread::run() {
 						Vector3(),
 						flowMapRequest.flowMapWidth,
 						flowMapRequest.flowMapDepth,
-						context->rigidBodyTypeIdStaticMask,
+						context->skipOnRigidBodyTypeIdMask,
 						partialPath,
 						pathIdx >= path.size()?true:false
 					);
@@ -598,14 +598,14 @@ Context::~Context() {
 
 void Context::initialize() {
 	// path finding is only required for server
-	if (server == true) { 
+	if (server == true) {
 		// world listener
 		worldListener = new ContextWorldListener(this);
 		world->addWorldListener(worldListener);
 
 		// path finding thread
 		pathFinding.start();
-	}	
+	}
 
 	//
 	timeStarted = Time::getCurrentMillis();

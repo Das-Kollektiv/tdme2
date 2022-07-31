@@ -332,7 +332,7 @@ private:
 	int64_t timeStarted;
 
 	// path finding which is context bound too
-	uint16_t rigidBodyTypeIdStaticMask { 1/*Body::TYPEID_STATIC*/ };
+	uint16_t skipOnRigidBodyTypeIdMask { 0 };
 	uint16_t rigidBodyTypeIdCloneMask { 1/*Body::TYPEID_STATIC*/ };
 	PathFinding pathFinding;
 
@@ -533,18 +533,18 @@ public:
 	}
 
 	/**
-	 * @return rigid body type id static mask
+	 * @return rigid body type id mask to skip on in path finding
 	 */
-	inline uint16_t getRigidBodyTypeIdStaticMask() {
-		return rigidBodyTypeIdStaticMask;
+	inline uint16_t getSkipOnRigidBodyTypeIdStaticMask() {
+		return skipOnRigidBodyTypeIdMask;
 	}
 
 	/**
-	 * Set rigid body type id static mask, which is used for path finding
-	 * @param rigidBodyTypeIdStaticMask rigid body type id static mask
+	 * Set rigid body type id mask to skip on in path finding
+	 * @param skipOnRigidBodyTypeIdMask skip on rigid body type id mask
 	 */
-	inline void setRigidBodyTypeIdStaticMask(uint16_t rigidBodyTypeIdStaticMask) {
-		this->rigidBodyTypeIdStaticMask = rigidBodyTypeIdStaticMask;
+	inline void setSkipOnRigidBodyTypeIdMask(uint16_t skipOnRigidBodyTypeIdMask) {
+		this->skipOnRigidBodyTypeIdMask = skipOnRigidBodyTypeIdMask;
 	}
 
 	/**
