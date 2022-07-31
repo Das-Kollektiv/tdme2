@@ -23,7 +23,7 @@ using tdme::network::udpserver::UDPServer;
 using tdme::network::udpserver::UDPServerClient;
 using tdme::utilities::Console;
 
-ApplicationServer::ApplicationServer(const string& host, const unsigned int port, const unsigned int maxCCU, int pathFindingThreadCount) : UDPServer("ws", host, port, maxCCU), pathFindingThreadCount(pathFindingThreadCount) {
+ApplicationServer::ApplicationServer(const string& name, const string& host, const unsigned int port, const unsigned int maxCCU, int pathFindingThreadCount) : UDPServer(name, host, port, maxCCU), pathFindingThreadCount(pathFindingThreadCount) {
 	setIOThreadCount(2);
 	setWorkerThreadCount(2);
 
@@ -31,12 +31,16 @@ ApplicationServer::ApplicationServer(const string& host, const unsigned int port
 	Console::println("ApplicationServer::ApplicationServer(): Starting WS UDP server @ " + host + ":" + to_string(port));
 }
 
+Context* ApplicationServer::createContext() {
+	return new Context(true);
+}
+
 void ApplicationServer::run() {
 	// init
 	Console::println("ApplicationServer::ApplicationServer(): Initializing");
 
 	//
-	context = new Context(true);
+	context = createContext();
 	context->getPathFinding()->setThreadCount(pathFindingThreadCount);
 	context->setWorld(new World());
 	// set up logics

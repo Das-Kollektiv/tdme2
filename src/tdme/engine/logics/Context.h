@@ -60,6 +60,7 @@ public:
 	static constexpr int32_t SOUNDPOOL_SIZE { 10 };
 	static constexpr bool VERBOSE { false };
 
+public:
 	class PathFindingThread: public Thread {
 	public:
 		enum State {
@@ -337,18 +338,20 @@ private:
 
 	// context main data
 	volatile bool initialized;
-	bool server;
 	Mutex* gameLogicMutex { nullptr };
-	Engine* engine { nullptr };
-	Engine* guiEngine { nullptr };
-	Audio* audio { nullptr };
-	World* world { nullptr };
 	ContextWorldListener* worldListener { nullptr };
 	Scene* scene { nullptr };
 	unordered_map<string, Logic*> gameLogicsById;
 	vector<Logic*> gameLogics;
 	vector<Logic*> gameLogicsNew;
 	unordered_map<string, PacketState> packetStates;
+
+protected:
+	Engine* engine { nullptr };
+	Engine* guiEngine { nullptr };
+	Audio* audio { nullptr };
+	World* world { nullptr };
+	bool server;
 
 public:
 	/**

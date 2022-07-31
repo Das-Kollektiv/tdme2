@@ -27,12 +27,13 @@ class tdme::engine::logics::ApplicationServer: public UDPServer {
 public:
 	/**
 	 * Public constructor
+	 * @param name name
 	 * @param host host
 	 * @param port port
 	 * @param maxCCU max CCU
 	 * @param pathFindingThreadCount path finding thread count
 	 */
-	ApplicationServer(const string& host, const unsigned int port, const unsigned int maxCCU, int pathFindingThreadCount);
+	ApplicationServer(const string& name, const string& host, const unsigned int port, const unsigned int maxCCU, int pathFindingThreadCount);
 
 	/**
 	 * Destructor
@@ -48,6 +49,14 @@ public:
 	virtual void run() override;
 
 protected:
+	Context* context { nullptr };
+
+	/**
+	 * Create context
+	 * @return context
+	 */
+	virtual Context* createContext();
+
 	/**
 	 * Accept
 	 * @param clientId client id
@@ -57,7 +66,6 @@ protected:
 	virtual UDPServerClient* accept(const uint32_t clientId, const string& ip, const unsigned int port) override;
 
 private:
-	Context* context { nullptr };
 	ServerThread* gameLogicThread { nullptr };
 	int pathFindingThreadCount;
 
