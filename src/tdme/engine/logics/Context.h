@@ -215,7 +215,7 @@ public:
 
 	};
 
-	class WSPathFinding {
+	class PathFinding {
 	private:
 		Context* context { nullptr };
 		int threadCount;
@@ -231,7 +231,7 @@ public:
 		 * @param rigidBodyTypeIdStaticMask rigid body type id static mask
 		 * @param rigidBodyTypeIdCloneMask rigid body type id clone mask
 		 */
-		WSPathFinding(Context* context, int threadCount = 0);
+		PathFinding(Context* context, int threadCount = 0);
 
 		/**
 		 * Set thread count
@@ -333,7 +333,7 @@ private:
 	// path finding which is context bound too
 	uint16_t rigidBodyTypeIdStaticMask { 1/*Body::TYPEID_STATIC*/ };
 	uint16_t rigidBodyTypeIdCloneMask { 1/*Body::TYPEID_STATIC*/ };
-	WSPathFinding pathFinding;
+	PathFinding pathFinding;
 
 	// context main data
 	volatile bool initialized;
@@ -562,7 +562,7 @@ public:
 	/**
 	 * Get path finding thread
 	 */
-	inline WSPathFinding* getPathFinding() {
+	inline PathFinding* getPathFinding() {
 		return &pathFinding;
 	}
 

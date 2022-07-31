@@ -87,7 +87,7 @@ Context::PathFindingThread::PathFindingThread(Context* context, int idx):
 {
 	reset();
 	world = context->getWorld()->clone(context->rigidBodyTypeIdCloneMask);
-	pathFinding = new PathFinding(world, true, 1000, 1.8f, 0.4f, 0.81f, 0.4f, context->rigidBodyTypeIdStaticMask, 5, 0.5f, 2.0f);
+	pathFinding = new tdme::utilities::PathFinding(world, true, 1000, 1.8f, 0.4f, 0.81f, 0.4f, context->rigidBodyTypeIdStaticMask, 5, 0.5f, 2.0f);
 }
 
 Context::PathFindingThread::~PathFindingThread() {
@@ -394,18 +394,18 @@ string Context::PathFindingThread::getActorId() {
 	return _actorId;
 }
 
-Context::WSPathFinding::WSPathFinding(Context* context, int threadCount):
+Context::PathFinding::PathFinding(Context* context, int threadCount):
 	context(context),
 	actorThreadMapMutex("wspathfinding-threadmap-mutex")
 {
 	setThreadCount(threadCount);
 }
 
-void Context::WSPathFinding::setThreadCount(int threadCount) {
+void Context::PathFinding::setThreadCount(int threadCount) {
 	this->threadCount = threadCount > 0?threadCount:Math::clamp(static_cast<int>(Math::ceil(Thread::getHardwareThreadCount() / 3)), 1, 4);
 }
 
-void Context::WSPathFinding::start() {
+void Context::PathFinding::start() {
 	threads.resize(threadCount);
 	for (auto i = 0; i < threads.size(); i++) {
 		threads[i] = new PathFindingThread(context, i);
@@ -413,22 +413,22 @@ void Context::WSPathFinding::start() {
 	for (auto thread: threads) thread->start();
 }
 
-void Context::WSPathFinding::shutdown() {
+void Context::PathFinding::shutdown() {
 	for (auto thread: threads) thread->stop();
 	for (auto thread: threads) thread->join();
 	for (auto thread: threads) delete thread;
 	threads.clear();
 }
 
-void Context::WSPathFinding::addWorldAction(const Context::PathFindingThread::WorldActionStruct& action) {
+void Context::PathFinding::addWorldAction(const Context::PathFindingThread::WorldActionStruct& action) {
 	for (auto thread: threads) thread->addWorldAction(action);
 }
 
-void Context::WSPathFinding::reset() {
+void Context::PathFinding::reset() {
 	for (auto thread: threads) thread->reset();
 }
 
-Context::PathFindingThread::State Context::WSPathFinding::findPath(
+Context::PathFindingThread::State Context::PathFinding::findPath(
 	const string& logicId, 
 	const string& actorId, 
 	const Vector3& startPosition, 
@@ -530,7 +530,7 @@ Context::PathFindingThread::State Context::WSPathFinding::findPath(
 	return Context::PathFindingThread::STATE_PATHFINDING_OTHER;
 }
 
-bool Context::WSPathFinding::getFlowMapExtension(const string& actorId, FlowMap** flowMap) {
+bool Context::PathFinding::getFlowMapExtension(const string& actorId, FlowMap** flowMap) {
 	*flowMap = nullptr;
 	for (auto thread: threads) {
 		auto lastExtensionState = thread->getFlowMapExtension(actorId, flowMap);
@@ -544,11 +544,11 @@ bool Context::WSPathFinding::getFlowMapExtension(const string& actorId, FlowMap*
 	return false;
 }
 
-void Context::WSPathFinding::cancel(const string& actorId) {
+void Context::PathFinding::cancel(const string& actorId) {
 	for (auto thread: threads) thread->cancel(actorId);
 }
 
-void Context::WSPathFinding::notifyCancel(const string& actorId) {
+void Context::PathFinding::notifyCancel(const string& actorId) {
 	actorThreadMapMutex.lock();
 	actorThreadMap.erase(actorId);
 	actorThreadMapMutex.unlock();
