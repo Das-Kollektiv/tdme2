@@ -55,10 +55,6 @@ using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
 
-constexpr uint16_t Body::TYPEIDS_ALL;
-constexpr uint16_t Body::TYPEID_STATIC;
-constexpr uint16_t Body::TYPEID_DYNAMIC;
-
 Body::Body(World* world, const string& id, int type, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*> boundingVolumes)
 {
 	this->world = world;
