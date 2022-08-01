@@ -119,7 +119,7 @@ void ClientLogicThread::run() {
 		}
 
 		//
-		context->initLogics();
+		context->initUpdateLogics();
 
 		// handle in packets
 		handleInNetworkPackets(context->getLogics(), inNetworkPackets);
@@ -164,7 +164,7 @@ void ClientLogicThread::run() {
 		}
 
 		//
-		context->doneLogics();
+		context->doneUpdateLogics();
 
 		// check if there are in packets that have not yet been processed
 		for (auto& packet: inNetworkPackets) {

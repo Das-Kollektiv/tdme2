@@ -213,7 +213,7 @@ void ServerThread::run() {
 		mutex.lock();
 
 		//
-		context->initLogics();
+		context->initUpdateLogics();
 
 		// new clients
 		vector<ApplicationServerClient*> newClients;
@@ -416,7 +416,7 @@ void ServerThread::run() {
 		}
 
 		//
-		context->doneLogics();
+		context->doneUpdateLogics();
 
 		// done
 		mutex.unlock();

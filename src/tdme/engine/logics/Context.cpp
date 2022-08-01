@@ -707,8 +707,8 @@ void Context::initUpdateEngine() {
 void Context::doneUpdateEngine() {
 }
 
-void Context::initLogics() {
+void Context::initUpdateLogics() {
 }
 
-void Context::doneLogics() {
+void Context::doneUpdateLogics() {
 }

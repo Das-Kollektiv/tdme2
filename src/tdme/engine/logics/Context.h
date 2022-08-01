@@ -652,11 +652,11 @@ public:
 	/**
 	 * Logics initialization, which is called once per logics updates
 	 */
-	virtual void initLogics();
+	virtual void initUpdateLogics();
 
 	/**
 	 * Logics finalizations, which is called once per logics updates
 	 */
-	virtual void doneLogics();
+	virtual void doneUpdateLogics();
 
 };
