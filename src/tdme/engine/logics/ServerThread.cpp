@@ -193,15 +193,19 @@ void ServerThread::run() {
 		clientNetworkPacketsUnhandled.clear();
 
 		// multicast packets to send for update
+		// TODO: reuse this vectors
 		map<string, vector<LogicNetworkPacket>> mcUpdateSafeLogicNetworkPackets;
 		map<string, vector<LogicNetworkPacket>> mcUpdateFastLogicNetworkPackets;
 		// broadcast packets to send for update
+		// TODO: reuse this vectors
 		vector<LogicNetworkPacket> bcUpdateSafeLogicNetworkPackets;
 		vector<LogicNetworkPacket> bcUpdateFastLogicNetworkPackets;
 		// multicast packets to send for initiation
+		// TODO: reuse this vectors
 		map<string, vector<LogicNetworkPacket>> mcInitialSafeLogicNetworkPackets;
 		map<string, vector<LogicNetworkPacket>> mcInitialFastLogicNetworkPackets;
 		// broadcast packets to send for initialization
+		// TODO: reuse this vectors
 		vector<LogicNetworkPacket> bcInitialSafeLogicNetworkPackets;
 		vector<LogicNetworkPacket> bcInitialFastLogicNetworkPackets;
 
@@ -422,6 +426,7 @@ void ServerThread::run() {
 			// broad cast
 			{
 				// broadcast datagrams to send for initialization
+				// TODO: reuse this vectors
 				vector<UDPPacket*> bcSendInitialPacketsSafe;
 				vector<UDPPacket*> bcSendInitialPacketsFast;
 				createDatagrams(bcInitialSafeLogicNetworkPackets, bcInitialFastLogicNetworkPackets, bcSendInitialPacketsSafe, bcSendInitialPacketsFast);
@@ -449,6 +454,7 @@ void ServerThread::run() {
 			{
 				// multi cast
 				for (auto client: newClients) {
+					// TODO: reuse this vectors
 					vector<UDPPacket*> mcSendInitialPacketsSafe;
 					vector<UDPPacket*> mcSendInitialPacketsFast;
 					auto& mcInitialSafePacketsClient = mcInitialSafeLogicNetworkPackets[client->getKey()];
@@ -481,6 +487,7 @@ void ServerThread::run() {
 			// broad cast
 			{
 				// broadcast datagrams to send for update
+				// TODO: reuse this vectors
 				vector<UDPPacket*> bcSendUpdatePacketsSafe;
 				vector<UDPPacket*> bcSendUpdatePacketsFast;
 				createDatagrams(bcUpdateSafeLogicNetworkPackets, bcUpdateFastLogicNetworkPackets, bcSendUpdatePacketsSafe, bcSendUpdatePacketsFast);
@@ -508,6 +515,7 @@ void ServerThread::run() {
 			// multi cast
 			{
 				for (auto client: clients) {
+					// TODO: reuse this vectors
 					vector<UDPPacket*> mcSendUpdatePacketsSafe;
 					vector<UDPPacket*> mcSendUpdatePacketsFast;
 					auto& mcUpdateSafePacketsClient = mcUpdateSafeLogicNetworkPackets[client->getKey()];

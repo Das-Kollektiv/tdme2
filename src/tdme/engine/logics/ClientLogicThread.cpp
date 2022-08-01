@@ -187,6 +187,7 @@ void ClientLogicThread::run() {
 			}
 		} else {
 			// We have a UDP client, so send packages
+			// TODO: reuse this vectors
 			vector<LogicNetworkPacket> safeLogicNetworkPackets;
 			vector<LogicNetworkPacket> fastLogicNetworkPackets;
 			for (auto logic: context->getLogics()) {
