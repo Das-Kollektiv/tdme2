@@ -139,7 +139,7 @@ void ClientLogicThread::run() {
 
 		// update current logics
 		for (auto logic: context->getLogics()) {
-			logic->updateGameLogic();
+			logic->updateLogic();
 		}
 
 		// handle in packets and do logics for new logics
@@ -155,12 +155,12 @@ void ClientLogicThread::run() {
 			handleInNetworkPackets(newLogics, inNetworkPackets);
 
 			// run new logics
-			for (auto newLogic: newLogics) newLogic->updateGameLogic();
+			for (auto newLogic: newLogics) newLogic->updateLogic();
 		}
 
 		//	fire on logics processed for game logics
 		for (auto logic: context->getLogics()) {
-			logic->onGameLogicsProcessed();
+			logic->onLogicsProcessed();
 		}
 
 		//

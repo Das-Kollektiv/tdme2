@@ -639,7 +639,7 @@ void Context::addLogic(Logic* logic) {
 	//
 	newLogics.push_back(logic);
 	// call event
-	logic->onGameLogicAdded();
+	logic->onLogicAdded();
 }
 
 

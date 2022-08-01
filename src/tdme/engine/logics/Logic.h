@@ -64,14 +64,14 @@ public:
 	}
 
 	/**
-	 * Update engine entities
+	 * Update engine
 	 */
 	virtual void updateEngine() = 0;
 
 	/**
-	 * Update game logic
+	 * Update logic
 	 */
-	virtual void updateGameLogic() = 0;
+	virtual void updateLogic() = 0;
 
 	/**
 	 * @return if handling human interface devices input
@@ -88,14 +88,14 @@ public:
 	virtual void handleHIDEvents(vector<GUIMouseEvent>& mouseEvents, vector<GUIKeyboardEvent>& keyEvents);
 
 	/**
-	 * On game logic added
+	 * On logic added
 	 */
-	virtual void onGameLogicAdded();
+	virtual void onLogicAdded();
 
 	/**
-	 * On game logics processed
+	 * On logics processed
 	 */
-	virtual void onGameLogicsProcessed();
+	virtual void onLogicsProcessed();
 
 	/**
 	 * TODO: updated sounds that are already playing

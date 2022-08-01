@@ -20,11 +20,11 @@ void Logic::handleHIDEvents(vector<GUIMouseEvent>& mouseEvents, vector<GUIKeyboa
 	// no op
 }
 
-void Logic::onGameLogicAdded() {
+void Logic::onLogicAdded() {
 	// no op
 }
 
-void Logic::onGameLogicsProcessed() {
+void Logic::onLogicsProcessed() {
 	// no op
 }
 

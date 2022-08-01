@@ -304,7 +304,7 @@ void ServerThread::run() {
 
 		//	do logics
 		for (auto logic: context->getLogics()) {
-			logic->updateGameLogic();
+			logic->updateLogic();
 			logic->clearQueuedSounds();
 		}
 
@@ -334,13 +334,13 @@ void ServerThread::run() {
 			}
 
 			for (auto logic: newLogics) {
-				logic->updateGameLogic();
+				logic->updateLogic();
 				logic->clearQueuedSounds();
 			}
 		}
 
 		//	fire on logics processed
-		for (auto logic: context->getLogics()) logic->onGameLogicsProcessed();
+		for (auto logic: context->getLogics()) logic->onLogicsProcessed();
 
 		// check if there are in packets that have not yet been processed
 		for (auto client: clients) {
