@@ -19,7 +19,7 @@ using tdme::os::threading::Mutex;
 using tdme::os::threading::Thread;
 
 /**
- * Application server game logic thread
+ * Application server thread
  * @author Andreas Drewke
  */
 class tdme::engine::logics::ServerThread: public Thread {
