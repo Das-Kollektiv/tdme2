@@ -38,12 +38,12 @@ public:
 
 	/**
 	 * Create datagrams
-	 * @param safeGameNetworkPackets safe game network packets
-	 * @param fastGameNetworkPackets fast game network packets
+	 * @param safeLogicNetworkPackets safe logic network packets
+	 * @param fastLogicNetworkPackets fast logic network packets
 	 * @param sendPacketsSafe send packets safe
 	 * @param sendPacketsFast send packets fast
 	 */
-	void createDatagrams(vector<LogicNetworkPacket>& safeGameNetworkPackets, vector<LogicNetworkPacket>& fastGameNetworkPackets, vector<UDPPacket*>& sendPacketsSafe, vector<UDPPacket*>& sendPacketsFast);
+	void createDatagrams(vector<LogicNetworkPacket>& safeLogicNetworkPackets, vector<LogicNetworkPacket>& fastLogicNetworkPackets, vector<UDPPacket*>& sendPacketsSafe, vector<UDPPacket*>& sendPacketsFast);
 
 	// overrided methods
 	virtual void run() override;
@@ -57,8 +57,8 @@ private:
 
 	/**
 	 * Get network packets game logic types
-	 * @param gameNetworkPackets game network packets
+	 * @param logicNetworkPackets logic network packets
 	 * @return network packet logics string
 	 */
-	string getNetworkPacketGameLogicTypes(vector<LogicNetworkPacket>& gameNetworkPackets);
+	string getLogicNetworkPacketsLogicTypes(vector<LogicNetworkPacket>& logicNetworkPackets);
 };

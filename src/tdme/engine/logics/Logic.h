@@ -27,7 +27,7 @@ class tdme::engine::logics::Logic {
 public:
 	struct QueuedSound {
 		string id;
-		bool attachedToGameLogic;
+		bool attachedToLogic;
 		Vector3 position;
 		int64_t timeIssuedAt;
 		int timeDelay;
@@ -110,7 +110,7 @@ public:
 		queuedSounds.push_back(
 			{
 				.id = id,
-				.attachedToGameLogic = true,
+				.attachedToLogic = true,
 				.position = Vector3(),
 				.timeIssuedAt = Time::getCurrentMillis(),
 				.timeDelay = delay,
@@ -135,7 +135,7 @@ public:
 		queuedSounds.push_back(
 			{
 				.id = id,
-				.attachedToGameLogic = false,
+				.attachedToLogic = false,
 				.position = position,
 				.timeIssuedAt = Time::getCurrentMillis(),
 				.timeDelay = delay,

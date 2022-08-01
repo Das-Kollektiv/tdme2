@@ -48,23 +48,23 @@ Mutex* ServerThread::getMutex() {
 	return &mutex;
 }
 
-void ServerThread::createDatagrams(vector<LogicNetworkPacket>& safeGameNetworkPackets, vector<LogicNetworkPacket>& fastGameNetworkPackets, vector<UDPPacket*>& sendPacketsSafe, vector<UDPPacket*>& sendPacketsFast) {
+void ServerThread::createDatagrams(vector<LogicNetworkPacket>& safeLogicNetworkPackets, vector<LogicNetworkPacket>& fastLogicNetworkPackets, vector<UDPPacket*>& sendPacketsSafe, vector<UDPPacket*>& sendPacketsFast) {
 	// collect safe messages
-	if (safeGameNetworkPackets.size() > 0) {
+	if (safeLogicNetworkPackets.size() > 0) {
 		auto packet = UDPServerClient::createPacket();
 		// safe packet
 		packet->putBool(true);
 		//
-		for (auto& gameNetworkPacket: safeGameNetworkPackets) {
-			// game network packet size
-			char size = gameNetworkPacket.getPosition();
+		for (auto& logicNetworkPacket: safeLogicNetworkPackets) {
+			// network packet size
+			char size = logicNetworkPacket.getPosition();
 			// datagram size
 			auto datagramSize = packet->getPosition();
 			//
 			if (datagramSize + 5 + (uint16_t)size > UDPPacket::PACKET_MAX_SIZE) {
 				//
 				if (datagramSize < UDPPacket::PACKET_MAX_SIZE) {
-					// no more game network packets
+					// no more network packets
 					packet->putByte(0);
 				}
 				sendPacketsSafe.push_back(packet);
@@ -75,17 +75,17 @@ void ServerThread::createDatagrams(vector<LogicNetworkPacket>& safeGameNetworkPa
 			}
 			// size
 			packet->putByte(size);
-			// game logic type id
-			packet->putInt(gameNetworkPacket.getLogicTypeId());
+			// logic type id
+			packet->putInt(logicNetworkPacket.getLogicTypeId());
 			// payload
-			packet->putBytes(gameNetworkPacket.getData(), gameNetworkPacket.getPosition());
+			packet->putBytes(logicNetworkPacket.getData(), logicNetworkPacket.getPosition());
 		}
 		// datagram size
 		auto datagramSize = packet->getPosition();
 		//
 		if (datagramSize > 17 + 1) {
 			if (datagramSize < UDPPacket::PACKET_MAX_SIZE) {
-				// end of game network packets
+				// end of network packets
 				packet->putByte(0);
 			}
 			//
@@ -95,20 +95,20 @@ void ServerThread::createDatagrams(vector<LogicNetworkPacket>& safeGameNetworkPa
 		}
 	}
 	// collect fast messages
-	if (fastGameNetworkPackets.size() > 0) {
+	if (fastLogicNetworkPackets.size() > 0) {
 		auto packet = UDPServerClient::createPacket();
 		// no safe packet
 		packet->putBool(false);
 		//
-		for (auto& gameNetworkPacket: fastGameNetworkPackets) {
-			// game network packet size
-			auto size = gameNetworkPacket.getPosition();
+		for (auto& logicNetworkPacket: fastLogicNetworkPackets) {
+			// network packet size
+			auto size = logicNetworkPacket.getPosition();
 			// datagram size
 			auto datagramSize = packet->getPosition();
 			//
 			if (datagramSize + 5 + (uint16_t)size > UDPPacket::PACKET_MAX_SIZE) {
 				if (datagramSize < UDPPacket::PACKET_MAX_SIZE) {
-					// no more game network packets
+					// no more network packets
 					packet->putByte(0);
 				}
 				sendPacketsFast.push_back(packet);
@@ -118,17 +118,17 @@ void ServerThread::createDatagrams(vector<LogicNetworkPacket>& safeGameNetworkPa
 			}
 			// size
 			packet->putByte(size);
-			// game logic type id
-			packet->putInt(gameNetworkPacket.getLogicTypeId());
+			// logic type id
+			packet->putInt(logicNetworkPacket.getLogicTypeId());
 			// payload
-			packet->putBytes(gameNetworkPacket.getData(), gameNetworkPacket.getPosition());
+			packet->putBytes(logicNetworkPacket.getData(), logicNetworkPacket.getPosition());
 		}
 		// datagram size
 		auto datagramSize = packet->getPosition();
 		//
 		if (datagramSize > 14 + 1) {
 			if (datagramSize < UDPPacket::PACKET_MAX_SIZE - 14) {
-				// end of game network packets
+				// end of network packets
 				packet->putByte(0);
 			}
 			//
@@ -139,11 +139,11 @@ void ServerThread::createDatagrams(vector<LogicNetworkPacket>& safeGameNetworkPa
 	}
 }
 
-string ServerThread::getNetworkPacketGameLogicTypes(vector<LogicNetworkPacket>& gameNetworkPackets) {
+string ServerThread::getLogicNetworkPacketsLogicTypes(vector<LogicNetworkPacket>& logicNetworkPackets) {
 	unordered_set<uint32_t> networkPacketTypesSet;
 	string networkPacketTypes;
-	for (auto& gameNetworkPacket: gameNetworkPackets) {
-		networkPacketTypesSet.insert(gameNetworkPacket.getLogicTypeId());
+	for (auto& logicNetworkPacket: logicNetworkPackets) {
+		networkPacketTypesSet.insert(logicNetworkPacket.getLogicTypeId());
 	}
 	for (auto& typeId: networkPacketTypesSet) {
 		if (networkPacketTypes.size() > 0) networkPacketTypes+= ", ";
@@ -193,19 +193,19 @@ void ServerThread::run() {
 		clientNetworkPacketsUnhandled.clear();
 
 		// multicast packets to send for update
-		map<string, vector<LogicNetworkPacket>> mcUpdateSafeGameNetworkPackets;
-		map<string, vector<LogicNetworkPacket>> mcUpdateFastGameNetworkPackets;
+		map<string, vector<LogicNetworkPacket>> mcUpdateSafeLogicNetworkPackets;
+		map<string, vector<LogicNetworkPacket>> mcUpdateFastLogicNetworkPackets;
 		// broadcast packets to send for update
-		vector<LogicNetworkPacket> bcUpdateSafeGameNetworkPackets;
-		vector<LogicNetworkPacket> bcUpdateFastGameNetworkPackets;
+		vector<LogicNetworkPacket> bcUpdateSafeLogicNetworkPackets;
+		vector<LogicNetworkPacket> bcUpdateFastLogicNetworkPackets;
 		// multicast packets to send for initiation
-		map<string, vector<LogicNetworkPacket>> mcInitialSafeGameNetworkPackets;
-		map<string, vector<LogicNetworkPacket>> mcInitialFastGameNetworkPackets;
+		map<string, vector<LogicNetworkPacket>> mcInitialSafeLogicNetworkPackets;
+		map<string, vector<LogicNetworkPacket>> mcInitialFastLogicNetworkPackets;
 		// broadcast packets to send for initialization
-		vector<LogicNetworkPacket> bcInitialSafeGameNetworkPackets;
-		vector<LogicNetworkPacket> bcInitialFastGameNetworkPackets;
+		vector<LogicNetworkPacket> bcInitialSafeLogicNetworkPackets;
+		vector<LogicNetworkPacket> bcInitialFastLogicNetworkPackets;
 
-		// game logic + handle network packets
+		// logic + handle network packets
 		mutex.lock();
 
 		//
@@ -235,14 +235,14 @@ void ServerThread::run() {
 		}
 
 		{
-			//	new game logics: create initial network packets for clients
-			auto gameLogicsNew = context->getNewLogics();
+			//	new logics: create initial network packets for clients
+			auto newLogics = context->getNewLogics();
 
-			//	basically add new game logics to game logics
+			//	basically add new logics to logics
 			context->addNewLogics();
 
 			//
-			for (auto gameLogic: gameLogicsNew) static_cast<NetworkLogic*>(gameLogic)->createInitialNetworkPackets();
+			for (auto newLogic: newLogics) static_cast<NetworkLogic*>(newLogic)->createInitialNetworkPackets();
 		}
 
 		// fetch client packets
@@ -254,7 +254,7 @@ void ServerThread::run() {
 					"ServerThread::run(): in: " +
 					client->getKey() + ":" +
 					to_string(clientNetworkPackets[client->getKey()].size()) + ": " +
-					"(" + getNetworkPacketGameLogicTypes(client->getNetworkPackets()) + ")"
+					"(" + getLogicNetworkPacketsLogicTypes(client->getNetworkPackets()) + ")"
 				);
 			}
 			client->getNetworkPackets().clear();
@@ -262,85 +262,85 @@ void ServerThread::run() {
 		}
 
 		// handle client packets
-		// TODO: do rather a hashmap for looking up game logics by packet type id
+		// TODO: do rather a hashmap for looking up logics by packet type id
 		for (auto client: clients) {
 			for (auto& packet: clientNetworkPackets[client->getKey()]) {
-				for (auto gameLogic: context->getLogics()) {
-					NetworkLogic* gameLogicNetwork = static_cast<NetworkLogic*>(gameLogic);
-					if (gameLogicNetwork->getNetworkPacketTypeId() == packet.getLogicTypeId()) {
+				for (auto logic: context->getLogics()) {
+					NetworkLogic* networkLogic = static_cast<NetworkLogic*>(logic);
+					if (networkLogic->getNetworkPacketTypeId() == packet.getLogicTypeId()) {
 						packet.reset();
-						gameLogicNetwork->handleNetworkPacket(packet);
+						networkLogic->handleNetworkPacket(packet);
 					}
 				}
 			}
 		}
 
-		// we propably have game logics added, create initial packets from them and handle their in packets
-		// TODO: do rather a hashmap for looking up game logics by packet type id
+		// we propably have logics added, create initial packets from them and handle their in packets
+		// TODO: do rather a hashmap for looking up logics by packet type id
 		while (true == true) {
-			//	new game logics: create initial network packets for clients
-			auto gameLogicsNew = context->getNewLogics();
+			//	new logics: create initial network packets for clients
+			auto newLogics = context->getNewLogics();
 
-			//	basically add new game logics to game logics
-			auto gameLogicsAdded = context->addNewLogics();
-			if (gameLogicsAdded == 0) break;
+			//	basically add new logics to logics
+			auto addedNewLogics = context->addNewLogics();
+			if (addedNewLogics == 0) break;
 
 			//
-			for (auto gameLogic: gameLogicsNew) static_cast<NetworkLogic*>(gameLogic)->createInitialNetworkPackets();
+			for (auto logic: newLogics) static_cast<NetworkLogic*>(logic)->createInitialNetworkPackets();
 
 			// handle client packets
 			for (auto client: clients) {
 				for (auto& packet: clientNetworkPackets[client->getKey()]) {
-					for (auto gameLogic: gameLogicsNew) {
-						NetworkLogic* gameLogicNetwork = static_cast<NetworkLogic*>(gameLogic);
-						if (gameLogicNetwork->getNetworkPacketTypeId() == packet.getLogicTypeId()) {
+					for (auto logic: newLogics) {
+						NetworkLogic* networkLogic = static_cast<NetworkLogic*>(logic);
+						if (networkLogic->getNetworkPacketTypeId() == packet.getLogicTypeId()) {
 							packet.reset();
-							gameLogicNetwork->handleNetworkPacket(packet);
+							networkLogic->handleNetworkPacket(packet);
 						}
 					}
 				}
 			}
 		}
 
-		//	do game logics
-		for (auto gameLogic: context->getLogics()) {
-			gameLogic->updateGameLogic();
-			gameLogic->clearQueuedSounds();
+		//	do logics
+		for (auto logic: context->getLogics()) {
+			logic->updateGameLogic();
+			logic->clearQueuedSounds();
 		}
 
-		// we propably have game logics added, create initial packets from them and handle their in packets
+		// we propably have logics added, create initial packets from them and handle their in packets
 		while (true == true) {
-			//	new game logics: create initial network packets for clients
-			auto gameLogicsNew = context->getNewLogics();
+			//	new logics: create initial network packets for clients
+			auto newLogics = context->getNewLogics();
 
-			//	basically add new game logics to game logics
-			auto gameLogicsAdded = context->addNewLogics();
-			if (gameLogicsAdded == 0) break;
+			//	basically add new logics to logics
+			auto addedNewLogics = context->addNewLogics();
+			if (addedNewLogics == 0) break;
 
 			//
-			for (auto gameLogic: gameLogicsNew) static_cast<NetworkLogic*>(gameLogic)->createInitialNetworkPackets();
+			for (auto logic: newLogics) static_cast<NetworkLogic*>(logic)->createInitialNetworkPackets();
 
 			// handle client packets
 			for (auto client: clients) {
 				for (auto& packet: clientNetworkPackets[client->getKey()]) {
-					for (auto gameLogic: gameLogicsNew) {
-						NetworkLogic* gameLogicNetwork = static_cast<NetworkLogic*>(gameLogic);
-						if (gameLogicNetwork->getNetworkPacketTypeId() == packet.getLogicTypeId()) {
+					for (auto logic: newLogics) {
+						NetworkLogic* networkLogic = static_cast<NetworkLogic*>(logic);
+						if (networkLogic->getNetworkPacketTypeId() == packet.getLogicTypeId()) {
 							packet.reset();
-							gameLogicNetwork->handleNetworkPacket(packet);
+							networkLogic->handleNetworkPacket(packet);
 						}
 					}
 				}
 			}
 
-			for (auto gameLogic: gameLogicsNew) {
-				gameLogic->updateGameLogic();
-				gameLogic->clearQueuedSounds();
+			for (auto logic: newLogics) {
+				logic->updateGameLogic();
+				logic->clearQueuedSounds();
 			}
 		}
 
-		//	fire on game logics processed
-		for (auto gameLogic: context->getLogics()) gameLogic->onGameLogicsProcessed();
+		//	fire on logics processed
+		for (auto logic: context->getLogics()) logic->onGameLogicsProcessed();
 
 		// check if there are in packets that have not yet been processed
 		for (auto client: clients) {
@@ -352,62 +352,62 @@ void ServerThread::run() {
 		}
 
 		// colllect broadcast network packets for update
-		for (auto gameLogic: context->getLogics()) {
-			NetworkLogic* gameLogicNetwork = static_cast<NetworkLogic*>(gameLogic);
-			for (auto& gameNetworkPacket: gameLogicNetwork->getNetworkPackets()) {
+		for (auto logic: context->getLogics()) {
+			NetworkLogic* networkLogic = static_cast<NetworkLogic*>(logic);
+			for (auto& logicNetworkPacket: networkLogic->getNetworkPackets()) {
 				// packet logic type id
-				if (gameNetworkPacket.getLogicTypeId() == LogicNetworkPacket::LOGIC_TYPEID_NONE) {
-					gameNetworkPacket.setLogicTypeId(gameLogicNetwork->getNetworkPacketTypeId());
+				if (logicNetworkPacket.getLogicTypeId() == LogicNetworkPacket::LOGIC_TYPEID_NONE) {
+					logicNetworkPacket.setLogicTypeId(networkLogic->getNetworkPacketTypeId());
 				}
 				// broadcast
-				if (gameNetworkPacket.getRecipients().size() == 0) {
-					if (gameNetworkPacket.getSafe() == true) {
-						bcUpdateSafeGameNetworkPackets.push_back(gameNetworkPacket);
+				if (logicNetworkPacket.getRecipients().size() == 0) {
+					if (logicNetworkPacket.getSafe() == true) {
+						bcUpdateSafeLogicNetworkPackets.push_back(logicNetworkPacket);
 					} else {
-						bcUpdateFastGameNetworkPackets.push_back(gameNetworkPacket);
+						bcUpdateFastLogicNetworkPackets.push_back(logicNetworkPacket);
 					}
 				} else {
 					// multicast
-					for (auto recipient: gameNetworkPacket.getRecipients()) {
-						if (gameNetworkPacket.getSafe() == true) {
-							mcUpdateSafeGameNetworkPackets[recipient].push_back(gameNetworkPacket);
+					for (auto recipient: logicNetworkPacket.getRecipients()) {
+						if (logicNetworkPacket.getSafe() == true) {
+							mcUpdateSafeLogicNetworkPackets[recipient].push_back(logicNetworkPacket);
 						} else {
-							mcUpdateFastGameNetworkPackets[recipient].push_back(gameNetworkPacket);
+							mcUpdateFastLogicNetworkPackets[recipient].push_back(logicNetworkPacket);
 						}
 					}
 				}
 			}
-			gameLogicNetwork->getNetworkPackets().clear();
+			networkLogic->getNetworkPackets().clear();
 		}
 
 		// colllect broadcast network packets for initialization
 		if (newClients.size() > 0) {
-			for (auto gameLogic: context->getLogics()) {
-				NetworkLogic* gameLogicNetwork = static_cast<NetworkLogic*>(gameLogic);
-				gameLogicNetwork->createInitialNetworkPackets();
-				for (auto& gameNetworkPacket: gameLogicNetwork->getNetworkPackets()) {
-					// set game logic type id
-					if (gameNetworkPacket.getLogicTypeId() == LogicNetworkPacket::LOGIC_TYPEID_NONE) {
-						gameNetworkPacket.setLogicTypeId(gameLogicNetwork->getNetworkPacketTypeId());
+			for (auto logic: context->getLogics()) {
+				NetworkLogic* networkLogic = static_cast<NetworkLogic*>(logic);
+				networkLogic->createInitialNetworkPackets();
+				for (auto& logicNetworkPacket: networkLogic->getNetworkPackets()) {
+					// set logic type id
+					if (logicNetworkPacket.getLogicTypeId() == LogicNetworkPacket::LOGIC_TYPEID_NONE) {
+						logicNetworkPacket.setLogicTypeId(networkLogic->getNetworkPacketTypeId());
 					}
 					// broadcast packets
-					if (gameNetworkPacket.getRecipients().size() == 0) {
-						if (gameNetworkPacket.getSafe() == true) {
-							bcInitialSafeGameNetworkPackets.push_back(gameNetworkPacket);
+					if (logicNetworkPacket.getRecipients().size() == 0) {
+						if (logicNetworkPacket.getSafe() == true) {
+							bcInitialSafeLogicNetworkPackets.push_back(logicNetworkPacket);
 						} else {
-							bcInitialFastGameNetworkPackets.push_back(gameNetworkPacket);
+							bcInitialFastLogicNetworkPackets.push_back(logicNetworkPacket);
 						}
 					} else {
-						for (auto recipient: gameNetworkPacket.getRecipients()) {
-							if (gameNetworkPacket.getSafe() == true) {
-								mcInitialSafeGameNetworkPackets[recipient].push_back(gameNetworkPacket);
+						for (auto recipient: logicNetworkPacket.getRecipients()) {
+							if (logicNetworkPacket.getSafe() == true) {
+								mcInitialSafeLogicNetworkPackets[recipient].push_back(logicNetworkPacket);
 							} else {
-								mcInitialFastGameNetworkPackets[recipient].push_back(gameNetworkPacket);
+								mcInitialFastLogicNetworkPackets[recipient].push_back(logicNetworkPacket);
 							}
 						}
 					}
 				}
-				gameLogicNetwork->getNetworkPackets().clear();
+				networkLogic->getNetworkPackets().clear();
 			}
 		}
 
@@ -424,19 +424,19 @@ void ServerThread::run() {
 				// broadcast datagrams to send for initialization
 				vector<UDPPacket*> bcSendInitialPacketsSafe;
 				vector<UDPPacket*> bcSendInitialPacketsFast;
-				createDatagrams(bcInitialSafeGameNetworkPackets, bcInitialFastGameNetworkPackets, bcSendInitialPacketsSafe, bcSendInitialPacketsFast);
+				createDatagrams(bcInitialSafeLogicNetworkPackets, bcInitialFastLogicNetworkPackets, bcSendInitialPacketsSafe, bcSendInitialPacketsFast);
 				if (VERBOSE_NETWORK == true && bcSendInitialPacketsSafe.size() > 0) {
 					Console::println(
 						"ServerThread::run(): initial: bc out: safe: " +
 						to_string(bcSendInitialPacketsSafe.size()) + ": " +
-						getNetworkPacketGameLogicTypes(bcInitialSafeGameNetworkPackets)
+						getLogicNetworkPacketsLogicTypes(bcInitialSafeLogicNetworkPackets)
 					);
 				}
 				if (VERBOSE_NETWORK == true && bcSendInitialPacketsFast.size() > 0) {
 					Console::println(
 						"ServerThread::run(): initial: bc out: fast: " +
 						to_string(bcSendInitialPacketsFast.size()) + ": " +
-						getNetworkPacketGameLogicTypes(bcInitialFastGameNetworkPackets)
+						getLogicNetworkPacketsLogicTypes(bcInitialFastLogicNetworkPackets)
 					);
 				}
 				for (auto client: newClients) {
@@ -451,15 +451,15 @@ void ServerThread::run() {
 				for (auto client: newClients) {
 					vector<UDPPacket*> mcSendInitialPacketsSafe;
 					vector<UDPPacket*> mcSendInitialPacketsFast;
-					auto& mcInitialSafePacketsClient = mcInitialSafeGameNetworkPackets[client->getKey()];
-					auto& mcInitialFastPacketsClient = mcInitialFastGameNetworkPackets[client->getKey()];
+					auto& mcInitialSafePacketsClient = mcInitialSafeLogicNetworkPackets[client->getKey()];
+					auto& mcInitialFastPacketsClient = mcInitialFastLogicNetworkPackets[client->getKey()];
 					createDatagrams(mcInitialSafePacketsClient, mcInitialFastPacketsClient, mcSendInitialPacketsSafe, mcSendInitialPacketsFast);
 					if (VERBOSE_NETWORK == true && mcSendInitialPacketsSafe.size() > 0) {
 						Console::println(
 							"ServerThread::run(): initial: mc out: " +
 							client->getKey() +
 							": safe: " + to_string(mcSendInitialPacketsSafe.size()) + ": " +
-							getNetworkPacketGameLogicTypes(mcInitialSafePacketsClient)
+							getLogicNetworkPacketsLogicTypes(mcInitialSafePacketsClient)
 						);
 					}
 					if (VERBOSE_NETWORK == true && mcSendInitialPacketsFast.size() > 0) {
@@ -467,7 +467,7 @@ void ServerThread::run() {
 							"ServerThread::run(): initial: mc out: " +
 							client->getKey() +
 							": fast: " + to_string(mcSendInitialPacketsFast.size()) + ": " +
-							getNetworkPacketGameLogicTypes(mcInitialFastPacketsClient)
+							getLogicNetworkPacketsLogicTypes(mcInitialFastPacketsClient)
 						);
 					}
 					for (auto packet: mcSendInitialPacketsSafe) client->send(packet, true);
@@ -483,19 +483,19 @@ void ServerThread::run() {
 				// broadcast datagrams to send for update
 				vector<UDPPacket*> bcSendUpdatePacketsSafe;
 				vector<UDPPacket*> bcSendUpdatePacketsFast;
-				createDatagrams(bcUpdateSafeGameNetworkPackets, bcUpdateFastGameNetworkPackets, bcSendUpdatePacketsSafe, bcSendUpdatePacketsFast);
+				createDatagrams(bcUpdateSafeLogicNetworkPackets, bcUpdateFastLogicNetworkPackets, bcSendUpdatePacketsSafe, bcSendUpdatePacketsFast);
 				if (VERBOSE_NETWORK == true && bcSendUpdatePacketsSafe.size() > 0) {
 					Console::println(
 						"ServerThread::run(): bc out: safe: " +
 						to_string(bcSendUpdatePacketsSafe.size()) + ": " +
-						getNetworkPacketGameLogicTypes(bcUpdateSafeGameNetworkPackets)
+						getLogicNetworkPacketsLogicTypes(bcUpdateSafeLogicNetworkPackets)
 					);
 				}
 				if (VERBOSE_NETWORK == true && bcSendUpdatePacketsFast.size() > 0) {
 					Console::println(
 						"ServerThread::run(): bc out: fast: " +
 						to_string(bcSendUpdatePacketsFast.size()) + ": " +
-						getNetworkPacketGameLogicTypes(bcUpdateFastGameNetworkPackets)
+						getLogicNetworkPacketsLogicTypes(bcUpdateFastLogicNetworkPackets)
 					);
 				}
 				for (auto client: updateClients) {
@@ -510,14 +510,14 @@ void ServerThread::run() {
 				for (auto client: clients) {
 					vector<UDPPacket*> mcSendUpdatePacketsSafe;
 					vector<UDPPacket*> mcSendUpdatePacketsFast;
-					auto& mcUpdateSafePacketsClient = mcUpdateSafeGameNetworkPackets[client->getKey()];
-					auto& mcUpdateFastPacketsClient = mcUpdateFastGameNetworkPackets[client->getKey()];
+					auto& mcUpdateSafePacketsClient = mcUpdateSafeLogicNetworkPackets[client->getKey()];
+					auto& mcUpdateFastPacketsClient = mcUpdateFastLogicNetworkPackets[client->getKey()];
 					if (VERBOSE_NETWORK == true && mcSendUpdatePacketsSafe.size() > 0) {
 						Console::println(
 							"ServerThread::run(): mc out: " +
 							client->getKey() + ": safe: " +
 							to_string(mcSendUpdatePacketsSafe.size()) + ": " +
-							getNetworkPacketGameLogicTypes(mcUpdateSafePacketsClient)
+							getLogicNetworkPacketsLogicTypes(mcUpdateSafePacketsClient)
 						);
 					}
 					if (VERBOSE_NETWORK == true && mcSendUpdatePacketsFast.size() > 0) {
@@ -525,7 +525,7 @@ void ServerThread::run() {
 							"ServerThread::run(): mc out: " +
 							client->getKey() + ": fast: " +
 							": fast: " + to_string(mcSendUpdatePacketsFast.size()) + ": " +
-							getNetworkPacketGameLogicTypes(mcUpdateFastPacketsClient)
+							getLogicNetworkPacketsLogicTypes(mcUpdateFastPacketsClient)
 						);
 					}
 					createDatagrams(mcUpdateSafePacketsClient, mcUpdateFastPacketsClient, mcSendUpdatePacketsSafe, mcSendUpdatePacketsFast);
