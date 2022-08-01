@@ -76,7 +76,7 @@ void ServerThread::createDatagrams(vector<LogicNetworkPacket>& safeGameNetworkPa
 			// size
 			packet->putByte(size);
 			// game logic type id
-			packet->putInt(gameNetworkPacket.getGameLogicTypeId());
+			packet->putInt(gameNetworkPacket.getLogicTypeId());
 			// payload
 			packet->putBytes(gameNetworkPacket.getData(), gameNetworkPacket.getPosition());
 		}
@@ -119,7 +119,7 @@ void ServerThread::createDatagrams(vector<LogicNetworkPacket>& safeGameNetworkPa
 			// size
 			packet->putByte(size);
 			// game logic type id
-			packet->putInt(gameNetworkPacket.getGameLogicTypeId());
+			packet->putInt(gameNetworkPacket.getLogicTypeId());
 			// payload
 			packet->putBytes(gameNetworkPacket.getData(), gameNetworkPacket.getPosition());
 		}
@@ -143,7 +143,7 @@ string ServerThread::getNetworkPacketGameLogicTypes(vector<LogicNetworkPacket>& 
 	unordered_set<uint32_t> networkPacketTypesSet;
 	string networkPacketTypes;
 	for (auto& gameNetworkPacket: gameNetworkPackets) {
-		networkPacketTypesSet.insert(gameNetworkPacket.getGameLogicTypeId());
+		networkPacketTypesSet.insert(gameNetworkPacket.getLogicTypeId());
 	}
 	for (auto& typeId: networkPacketTypesSet) {
 		if (networkPacketTypes.size() > 0) networkPacketTypes+= ", ";
@@ -184,7 +184,7 @@ void ServerThread::run() {
 		for (auto client: clients) {
 			for (auto& packet: clientNetworkPacketsUnhandled[client->getKey()]) {
 				if (timeNow - packet.getTime() > 1000L) {
-					Console::println("ServerThread::run(): unhandled IN packet: 1s late: " + client->getKey() + ": " + to_string(packet.getGameLogicTypeId()));
+					Console::println("ServerThread::run(): unhandled IN packet: 1s late: " + client->getKey() + ": " + to_string(packet.getLogicTypeId()));
 				}
 				packet.setReinjected();
 				clientNetworkPackets[client->getKey()].push_back(packet);
@@ -209,7 +209,7 @@ void ServerThread::run() {
 		mutex.lock();
 
 		//
-		context->initGameLogics();
+		context->initLogics();
 
 		// new clients
 		vector<ApplicationServerClient*> newClients;
@@ -222,7 +222,7 @@ void ServerThread::run() {
 					newClientKeysToRemove.push_back(clientKey);
 					continue;
 				}
-				if (dynamic_cast<NewClientLogic*>(context->getGameLogic("l"))->handleNewClient(clientKey, client->getIp() + ":" + to_string(client->getPort())) == true) {
+				if (dynamic_cast<NewClientLogic*>(context->getLogic("l"))->handleNewClient(clientKey, client->getIp() + ":" + to_string(client->getPort())) == true) {
 					newClientKeysToRemove.push_back(clientKey);
 					newClients.push_back(client);
 				} else {
@@ -236,10 +236,10 @@ void ServerThread::run() {
 
 		{
 			//	new game logics: create initial network packets for clients
-			auto gameLogicsNew = context->getGameLogicsNew();
+			auto gameLogicsNew = context->getNewLogics();
 
 			//	basically add new game logics to game logics
-			context->addGameLogicsNew();
+			context->addNewLogics();
 
 			//
 			for (auto gameLogic: gameLogicsNew) static_cast<NetworkLogic*>(gameLogic)->createInitialNetworkPackets();
@@ -265,9 +265,9 @@ void ServerThread::run() {
 		// TODO: do rather a hashmap for looking up game logics by packet type id
 		for (auto client: clients) {
 			for (auto& packet: clientNetworkPackets[client->getKey()]) {
-				for (auto gameLogic: context->getGameLogics()) {
+				for (auto gameLogic: context->getLogics()) {
 					NetworkLogic* gameLogicNetwork = static_cast<NetworkLogic*>(gameLogic);
-					if (gameLogicNetwork->getNetworkPacketTypeId() == packet.getGameLogicTypeId()) {
+					if (gameLogicNetwork->getNetworkPacketTypeId() == packet.getLogicTypeId()) {
 						packet.reset();
 						gameLogicNetwork->handleNetworkPacket(packet);
 					}
@@ -279,10 +279,10 @@ void ServerThread::run() {
 		// TODO: do rather a hashmap for looking up game logics by packet type id
 		while (true == true) {
 			//	new game logics: create initial network packets for clients
-			auto gameLogicsNew = context->getGameLogicsNew();
+			auto gameLogicsNew = context->getNewLogics();
 
 			//	basically add new game logics to game logics
-			auto gameLogicsAdded = context->addGameLogicsNew();
+			auto gameLogicsAdded = context->addNewLogics();
 			if (gameLogicsAdded == 0) break;
 
 			//
@@ -293,7 +293,7 @@ void ServerThread::run() {
 				for (auto& packet: clientNetworkPackets[client->getKey()]) {
 					for (auto gameLogic: gameLogicsNew) {
 						NetworkLogic* gameLogicNetwork = static_cast<NetworkLogic*>(gameLogic);
-						if (gameLogicNetwork->getNetworkPacketTypeId() == packet.getGameLogicTypeId()) {
+						if (gameLogicNetwork->getNetworkPacketTypeId() == packet.getLogicTypeId()) {
 							packet.reset();
 							gameLogicNetwork->handleNetworkPacket(packet);
 						}
@@ -303,7 +303,7 @@ void ServerThread::run() {
 		}
 
 		//	do game logics
-		for (auto gameLogic: context->getGameLogics()) {
+		for (auto gameLogic: context->getLogics()) {
 			gameLogic->updateGameLogic();
 			gameLogic->clearQueuedSounds();
 		}
@@ -311,10 +311,10 @@ void ServerThread::run() {
 		// we propably have game logics added, create initial packets from them and handle their in packets
 		while (true == true) {
 			//	new game logics: create initial network packets for clients
-			auto gameLogicsNew = context->getGameLogicsNew();
+			auto gameLogicsNew = context->getNewLogics();
 
 			//	basically add new game logics to game logics
-			auto gameLogicsAdded = context->addGameLogicsNew();
+			auto gameLogicsAdded = context->addNewLogics();
 			if (gameLogicsAdded == 0) break;
 
 			//
@@ -325,7 +325,7 @@ void ServerThread::run() {
 				for (auto& packet: clientNetworkPackets[client->getKey()]) {
 					for (auto gameLogic: gameLogicsNew) {
 						NetworkLogic* gameLogicNetwork = static_cast<NetworkLogic*>(gameLogic);
-						if (gameLogicNetwork->getNetworkPacketTypeId() == packet.getGameLogicTypeId()) {
+						if (gameLogicNetwork->getNetworkPacketTypeId() == packet.getLogicTypeId()) {
 							packet.reset();
 							gameLogicNetwork->handleNetworkPacket(packet);
 						}
@@ -340,7 +340,7 @@ void ServerThread::run() {
 		}
 
 		//	fire on game logics processed
-		for (auto gameLogic: context->getGameLogics()) gameLogic->onGameLogicsProcessed();
+		for (auto gameLogic: context->getLogics()) gameLogic->onGameLogicsProcessed();
 
 		// check if there are in packets that have not yet been processed
 		for (auto client: clients) {
@@ -352,12 +352,12 @@ void ServerThread::run() {
 		}
 
 		// colllect broadcast network packets for update
-		for (auto gameLogic: context->getGameLogics()) {
+		for (auto gameLogic: context->getLogics()) {
 			NetworkLogic* gameLogicNetwork = static_cast<NetworkLogic*>(gameLogic);
 			for (auto& gameNetworkPacket: gameLogicNetwork->getNetworkPackets()) {
 				// packet logic type id
-				if (gameNetworkPacket.getGameLogicTypeId() == LogicNetworkPacket::GAMELOGIC_TYPEID_NONE) {
-					gameNetworkPacket.setGameLogicTypeId(gameLogicNetwork->getNetworkPacketTypeId());
+				if (gameNetworkPacket.getLogicTypeId() == LogicNetworkPacket::LOGIC_TYPEID_NONE) {
+					gameNetworkPacket.setLogicTypeId(gameLogicNetwork->getNetworkPacketTypeId());
 				}
 				// broadcast
 				if (gameNetworkPacket.getRecipients().size() == 0) {
@@ -382,13 +382,13 @@ void ServerThread::run() {
 
 		// colllect broadcast network packets for initialization
 		if (newClients.size() > 0) {
-			for (auto gameLogic: context->getGameLogics()) {
+			for (auto gameLogic: context->getLogics()) {
 				NetworkLogic* gameLogicNetwork = static_cast<NetworkLogic*>(gameLogic);
 				gameLogicNetwork->createInitialNetworkPackets();
 				for (auto& gameNetworkPacket: gameLogicNetwork->getNetworkPackets()) {
 					// set game logic type id
-					if (gameNetworkPacket.getGameLogicTypeId() == LogicNetworkPacket::GAMELOGIC_TYPEID_NONE) {
-						gameNetworkPacket.setGameLogicTypeId(gameLogicNetwork->getNetworkPacketTypeId());
+					if (gameNetworkPacket.getLogicTypeId() == LogicNetworkPacket::LOGIC_TYPEID_NONE) {
+						gameNetworkPacket.setLogicTypeId(gameLogicNetwork->getNetworkPacketTypeId());
 					}
 					// broadcast packets
 					if (gameNetworkPacket.getRecipients().size() == 0) {
@@ -412,7 +412,7 @@ void ServerThread::run() {
 		}
 
 		//
-		context->doneGameLogics();
+		context->doneLogics();
 
 		// done
 		mutex.unlock();

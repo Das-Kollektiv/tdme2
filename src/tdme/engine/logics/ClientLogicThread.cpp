@@ -46,34 +46,34 @@ void ClientLogicThread::run() {
 
 	//
 	int64_t timeLast = Time::getCurrentMillis();
-	vector<LogicNetworkPacket> inGameNetworkPacketsUnhandled;
+	vector<LogicNetworkPacket> inLogicsNetworkPacketsUnhandled;
 	while(isStopRequested() == false) {
 		int64_t timeNow = Time::getCurrentMillis();
-		vector<LogicNetworkPacket> inGameNetworkPackets;
+		vector<LogicNetworkPacket> inNetworkPackets;
 
 		// push unhandlet packets to IN packets, display an warning if not handled for 1s
-		for (auto& gameNetworkPacket: inGameNetworkPacketsUnhandled) {
-			if (timeNow - gameNetworkPacket.getTime() > 1000L) {
-				string gameLogicTypeIdString;
-				gameLogicTypeIdString+= (char)((gameNetworkPacket.getGameLogicTypeId() >> 0) & 0xFF);
-				gameLogicTypeIdString+= (char)((gameNetworkPacket.getGameLogicTypeId() >> 8) & 0xFF);
-				gameLogicTypeIdString+= (char)((gameNetworkPacket.getGameLogicTypeId() >> 16) & 0xFF);
-				gameLogicTypeIdString+= (char)((gameNetworkPacket.getGameLogicTypeId() >> 24) & 0xFF);
-				Console::println("ClientLogicThread::run(): unhandled IN packet: 1s late: " + gameLogicTypeIdString);
+		for (auto& logicNetworkPacket: inLogicsNetworkPacketsUnhandled) {
+			if (timeNow - logicNetworkPacket.getTime() > 1000L) {
+				string logicTypeIdString;
+				logicTypeIdString+= (char)((logicNetworkPacket.getLogicTypeId() >> 0) & 0xFF);
+				logicTypeIdString+= (char)((logicNetworkPacket.getLogicTypeId() >> 8) & 0xFF);
+				logicTypeIdString+= (char)((logicNetworkPacket.getLogicTypeId() >> 16) & 0xFF);
+				logicTypeIdString+= (char)((logicNetworkPacket.getLogicTypeId() >> 24) & 0xFF);
+				Console::println("ClientLogicThread::run(): unhandled IN packet: 1s late: " + logicTypeIdString);
 				Console::println("Packet ASCII: ");
 				for (auto i = 0; i < 255; i++) {
-					Console::print(string() + (char)(gameNetworkPacket.getData()[i]));
+					Console::print(string() + (char)(logicNetworkPacket.getData()[i]));
 				}
 				Console::println("Packet ORD: ");
 				for (auto i = 0; i < 255; i++) {
-					Console::print(to_string(int(gameNetworkPacket.getData()[i])) + " ");
+					Console::print(to_string(int(logicNetworkPacket.getData()[i])) + " ");
 				}
 				Console::println();
 			}
-			gameNetworkPacket.setReinjected();
-			inGameNetworkPackets.push_back(gameNetworkPacket);
+			logicNetworkPacket.setReinjected();
+			inNetworkPackets.push_back(logicNetworkPacket);
 		}
-		inGameNetworkPacketsUnhandled.clear();
+		inLogicsNetworkPacketsUnhandled.clear();
 
 		// get in packets
 		mutex.lock();
@@ -100,15 +100,15 @@ void ClientLogicThread::run() {
 					// end of
 					if (size == 0) break;
 					// message logic type id
-					auto gameLogicTypeId = packet->getInt();
-					// Console::println(string("got packet logic ") + (char)gameLogicTypeId);
+					auto logicTypeId = packet->getInt();
+					// Console::println(string("got packet logic ") + (char)logicTypeId);
 					// create network packet
-					inGameNetworkPackets.push_back(
+					inNetworkPackets.push_back(
 						LogicNetworkPacket(
 							message->getMessageId(),
 							safe,
 							message->getRetryCount(),
-							gameLogicTypeId,
+							logicTypeId,
 							packet,
 							size
 						)
@@ -119,57 +119,57 @@ void ClientLogicThread::run() {
 		}
 
 		//
-		context->initGameLogics();
+		context->initLogics();
 
 		// handle in packets
-		handleInGameNetworkPackets(context->getGameLogics(), inGameNetworkPackets);
+		handleInNetworkPackets(context->getLogics(), inNetworkPackets);
 
-		// after handling network packets its possible that game logics have been added, handle in packets for those too
+		// after handling network packets its possible that logics have been added, handle in packets for those too
 		while (true == true) {
-			// get new game logics
-			auto gameLogicsNew = context->getGameLogicsNew();
+			// get new logics
+			auto newLogics = context->getNewLogics();
 
-			// basically add new game logics to game logics
-			auto gameLogicsAdded = context->addGameLogicsNew();
-			if (gameLogicsAdded == 0) break;
+			// basically add new logics to logics
+			auto addedLogics = context->addNewLogics();
+			if (addedLogics == 0) break;
 
-			// run game logics new
-			handleInGameNetworkPackets(gameLogicsNew, inGameNetworkPackets);
+			// handle in network packets for new logics
+			handleInNetworkPackets(newLogics, inNetworkPackets);
 		}
 
-		// update current game logics
-		for (auto gameLogic: context->getGameLogics()) {
-			gameLogic->updateGameLogic();
+		// update current logics
+		for (auto logic: context->getLogics()) {
+			logic->updateGameLogic();
 		}
 
-		// handle in packets and do game logics for new game logics
+		// handle in packets and do logics for new logics
 		while (true == true) {
-			// get new game logics
-			auto gameLogicsNew = context->getGameLogicsNew();
+			// get new logics
+			auto newLogics = context->getNewLogics();
 
-			// add new game logics to game logics
-			auto logicsAdded = context->addGameLogicsNew();
-			if (logicsAdded == 0) break;
+			// add new logics to logics
+			auto addedLogics = context->addNewLogics();
+			if (addedLogics == 0) break;
 
-			// run game logics new
-			handleInGameNetworkPackets(gameLogicsNew, inGameNetworkPackets);
+			// run logics new
+			handleInNetworkPackets(newLogics, inNetworkPackets);
 
-			// run game logics for new game logics
-			for (auto gameLogic: gameLogicsNew) gameLogic->updateGameLogic();
+			// run new logics
+			for (auto newLogic: newLogics) newLogic->updateGameLogic();
 		}
 
-		//	fire on game logics processed for game logics
-		for (auto gameLogic: context->getGameLogics()) {
-			gameLogic->onGameLogicsProcessed();
+		//	fire on logics processed for game logics
+		for (auto logic: context->getLogics()) {
+			logic->onGameLogicsProcessed();
 		}
 
 		//
-		context->doneGameLogics();
+		context->doneLogics();
 
 		// check if there are in packets that have not yet been processed
-		for (auto& packet: inGameNetworkPackets) {
+		for (auto& packet: inNetworkPackets) {
 			if (packet.isProcessed() == false) {
-				inGameNetworkPacketsUnhandled.push_back(packet);
+				inLogicsNetworkPacketsUnhandled.push_back(packet);
 			}
 		}
 
@@ -179,30 +179,30 @@ void ClientLogicThread::run() {
 			mutex.unlock();
 
 			// We have no UDP client, so just clear outgoing packages
-			for (auto gameLogic: context->getGameLogics()) {
-				NetworkLogic* gameLogicNetwork = dynamic_cast<NetworkLogic*>(gameLogic);
-				if (gameLogicNetwork != nullptr) {
-					gameLogicNetwork->getNetworkPackets().clear();
+			for (auto logic: context->getLogics()) {
+				NetworkLogic* networkLogic = dynamic_cast<NetworkLogic*>(logic);
+				if (networkLogic != nullptr) {
+					networkLogic->getNetworkPackets().clear();
 				}
 			}
 		} else {
 			// We have a UDP client, so send packages
-			vector<LogicNetworkPacket> safeGameNetworkPackets;
-			vector<LogicNetworkPacket> fastGameNetworkPackets;
-			for (auto gameLogic: context->getGameLogics()) {
-				NetworkLogic* gameLogicNetwork = dynamic_cast<NetworkLogic*>(gameLogic);
-				if (gameLogicNetwork != nullptr) {
-					for (auto& gameNetworkPacket: gameLogicNetwork->getNetworkPackets()) {
-						if (gameNetworkPacket.getGameLogicTypeId() == LogicNetworkPacket::GAMELOGIC_TYPEID_NONE) {
-							gameNetworkPacket.setGameLogicTypeId(gameLogicNetwork->getNetworkPacketTypeId());
+			vector<LogicNetworkPacket> safeLogicNetworkPackets;
+			vector<LogicNetworkPacket> fastLogicNetworkPackets;
+			for (auto logic: context->getLogics()) {
+				NetworkLogic* networkLogic = dynamic_cast<NetworkLogic*>(logic);
+				if (networkLogic != nullptr) {
+					for (auto& logicNetworkPacket: networkLogic->getNetworkPackets()) {
+						if (logicNetworkPacket.getLogicTypeId() == LogicNetworkPacket::LOGIC_TYPEID_NONE) {
+							logicNetworkPacket.setLogicTypeId(networkLogic->getNetworkPacketTypeId());
 						}
-						if (gameNetworkPacket.getSafe() == true) {
-							safeGameNetworkPackets.push_back(gameNetworkPacket);
+						if (logicNetworkPacket.getSafe() == true) {
+							safeLogicNetworkPackets.push_back(logicNetworkPacket);
 						} else {
-							fastGameNetworkPackets.push_back(gameNetworkPacket);
+							fastLogicNetworkPackets.push_back(logicNetworkPacket);
 						}
 					}
-					gameLogicNetwork->getNetworkPackets().clear();
+					networkLogic->getNetworkPackets().clear();
 				}
 			}
 			//	done
@@ -214,15 +214,15 @@ void ClientLogicThread::run() {
 				// safe
 				udpClientPacket->putBool(true);
 				//
-				for (auto& safeGameNetworkPacket: safeGameNetworkPackets) {
+				for (auto& safeNetworkPacket: safeLogicNetworkPackets) {
 					// size
-					auto size = safeGameNetworkPacket.getPosition();
+					auto size = safeNetworkPacket.getPosition();
 					// datagram size
 					auto datagramSize = udpClientPacket->getSize();
 					//
 					if (datagramSize + 2 + (uint16_t)size > UDPPacket::PACKET_MAX_SIZE - 17) {
 						if (datagramSize < UDPPacket::PACKET_MAX_SIZE - 17) {
-							// no more game network packets, size = 0
+							// no more network packets, size = 0
 							udpClientPacket->putByte(0);
 						}
 						udpClient->sendMessage(udpClient->createMessage(udpClientPacket), true);
@@ -232,16 +232,16 @@ void ClientLogicThread::run() {
 					}
 					// size
 					udpClientPacket->putByte(size);
-					// game logic type id
-					udpClientPacket->putInt(safeGameNetworkPacket.getGameLogicTypeId());
+					// logic type id
+					udpClientPacket->putInt(safeNetworkPacket.getLogicTypeId());
 					// payload
-					udpClientPacket->putBytes(safeGameNetworkPacket.getData(), safeGameNetworkPacket.getPosition());
+					udpClientPacket->putBytes(safeNetworkPacket.getData(), safeNetworkPacket.getPosition());
 				}
 				// datagram size
 				auto datagramSize = udpClientPacket->getSize();
 				if (datagramSize > 1) {
 					if (datagramSize < UDPPacket::PACKET_MAX_SIZE - 17) {
-						// no more game network packets, size = 0
+						// no more network packets, size = 0
 						udpClientPacket->putByte(0);
 					}
 					udpClient->sendMessage(udpClient->createMessage(udpClientPacket), true);
@@ -255,14 +255,14 @@ void ClientLogicThread::run() {
 				// safe
 				udpClientPacket->putBool(false);
 				//
-				for (auto& fastGameNetworkPacket: fastGameNetworkPackets) {
+				for (auto& fastNetworkPacket: fastLogicNetworkPackets) {
 					// size
-					auto size = fastGameNetworkPacket.getPosition();
+					auto size = fastNetworkPacket.getPosition();
 					// datagram size
 					auto datagramSize = udpClientPacket->getSize();
 					if (datagramSize + 2 + (uint16_t)size > UDPPacket::PACKET_MAX_SIZE - 17) {
 						if (datagramSize < UDPPacket::PACKET_MAX_SIZE - 17) {
-							// no more game network packets, size = 0
+							// no more network packets, size = 0
 							udpClientPacket->putByte(0);
 						}
 						udpClient->sendMessage(udpClient->createMessage(udpClientPacket), true);
@@ -273,15 +273,15 @@ void ClientLogicThread::run() {
 					// size
 					udpClientPacket->putByte(size);
 					// gmae logic type id
-					udpClientPacket->putInt(fastGameNetworkPacket.getGameLogicTypeId());
+					udpClientPacket->putInt(fastNetworkPacket.getLogicTypeId());
 					// payload
-					udpClientPacket->putBytes(fastGameNetworkPacket.getData(), fastGameNetworkPacket.getPosition());
+					udpClientPacket->putBytes(fastNetworkPacket.getData(), fastNetworkPacket.getPosition());
 				}
 				// datagram size
 				auto datagramSize = udpClientPacket->getSize();
 				if (datagramSize > 1) {
 					if (datagramSize < UDPPacket::PACKET_MAX_SIZE - 17) {
-						// no more game network packets, size = 0
+						// no more network packets, size = 0
 						udpClientPacket->putByte(0);
 					}
 					udpClient->sendMessage(udpClient->createMessage(udpClientPacket), true);
@@ -315,14 +315,15 @@ void ClientLogicThread::run() {
 	Console::println("ClientLogicThread::run(): done");
 }
 
-void ClientLogicThread::handleInGameNetworkPackets(const vector<Logic*>& gameLogics, vector<LogicNetworkPacket>& inGameNetworkPackets) {
-	for (auto& gameNetworkPacket: inGameNetworkPackets) {
-		for (auto gameLogic: gameLogics) {
-			NetworkLogic* gameLogicNetwork = dynamic_cast<NetworkLogic*>(gameLogic);
-			if (gameLogicNetwork != nullptr) {
-				if (gameLogicNetwork->getNetworkPacketTypeId() == gameNetworkPacket.getGameLogicTypeId()) {
-					gameNetworkPacket.reset();
-					gameLogicNetwork->handleNetworkPacket(gameNetworkPacket);
+void ClientLogicThread::handleInNetworkPackets(const vector<Logic*>& logics, vector<LogicNetworkPacket>& inLogicNetworkPackets) {
+	// TODO: improve me
+	for (auto& logicNetworkPacket: inLogicNetworkPackets) {
+		for (auto logic: logics) {
+			NetworkLogic* networkLogic = dynamic_cast<NetworkLogic*>(logic);
+			if (networkLogic != nullptr) {
+				if (networkLogic->getNetworkPacketTypeId() == logicNetworkPacket.getLogicTypeId()) {
+					logicNetworkPacket.reset();
+					networkLogic->handleNetworkPacket(logicNetworkPacket);
 				}
 			}
 		}

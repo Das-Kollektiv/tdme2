@@ -46,13 +46,13 @@ void ApplicationServer::run() {
 	// set up logics
 	setupLogics();
 	//
-	context->addGameLogicsNew();
-	gameLogicThread = new ServerThread(context, this);
-	context->setGameLogicMutex(this->gameLogicThread->getMutex());
+	context->addNewLogics();
+	logicsThread = new ServerThread(context, this);
+	context->setLogicsMutex(this->logicsThread->getMutex());
 
 	// starting game logic thread
 	Console::println("ApplicationServer::ApplicationServer(): Starting game logic thread");
-	gameLogicThread->start();
+	logicsThread->start();
 
 	// run NIO UDP server
 	UDPServer::run();
@@ -67,9 +67,9 @@ ApplicationServer::~ApplicationServer() {
 	context->shutdown();
 
 	//
-	gameLogicThread->stop();
-	gameLogicThread->join();
-	delete gameLogicThread;
+	logicsThread->stop();
+	logicsThread->join();
+	delete logicsThread;
 
 	//
 	delete context;

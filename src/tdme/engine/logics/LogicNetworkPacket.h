@@ -28,7 +28,7 @@ class tdme::engine::logics::LogicNetworkPacket final {
 private:
 	int64_t time;
 	bool safe { false };
-	uint32_t gameLogicTypeId { 0 };
+	uint32_t logicTypeId { 0 };
 	bool processed { false };
 	bool reinjected { false };
 	uint32_t messageId { 0 };
@@ -39,17 +39,17 @@ private:
 	set<string> recipients;
 
 public:
-	static constexpr uint32_t GAMELOGIC_TYPEID_NONE { 0 };
+	static constexpr uint32_t LOGIC_TYPEID_NONE { 0 };
 
 	/**
 	 * Public constructor, used to create a network packet
 	 * @param safe safe
-	 * @param gameLogicTypeId game logic network packet type id
+	 * @param logicTypeId logic network packet type id
 	 */
-	inline LogicNetworkPacket(bool safe, uint32_t gameLogicTypeId = GAMELOGIC_TYPEID_NONE) {
+	inline LogicNetworkPacket(bool safe, uint32_t logicTypeId = LOGIC_TYPEID_NONE) {
 		this->time = Time::getCurrentMillis();
 		this->safe = safe;
-		this->gameLogicTypeId = gameLogicTypeId;
+		this->logicTypeId = logicTypeId;
 	}
 
 	/**
@@ -57,16 +57,16 @@ public:
 	 * @param messageId message id
 	 * @param safe safe
 	 * @param retryCount retry count
-	 * @param gameLogicTypeId game logic network packet type id
+	 * @param logicTypeId logic network packet type id
 	 * @param packet packet
 	 * @param size size
 	 */
-	inline LogicNetworkPacket(uint32_t messageId, bool safe, uint8_t retryCount, uint32_t gameLogicTypeId, const UDPPacket* packet, uint8_t size) {
+	inline LogicNetworkPacket(uint32_t messageId, bool safe, uint8_t retryCount, uint32_t logicTypeId, const UDPPacket* packet, uint8_t size) {
 		this->time = Time::getCurrentMillis();
 		this->messageId = messageId;
 		this->safe = safe;
 		this->retryCount = retryCount;
-		this->gameLogicTypeId = gameLogicTypeId;
+		this->logicTypeId = logicTypeId;
 		packet->getBytes(data, size);
 	}
 
@@ -115,18 +115,18 @@ public:
 	}
 
 	/**
-	 * @return game logic type id
+	 * @return logic type id
 	 */
-	inline uint32_t getGameLogicTypeId() {
-		return gameLogicTypeId;
+	inline uint32_t getLogicTypeId() {
+		return logicTypeId;
 	}
 
 	/**
-	 * Set game logic type id
-	 * @param gameLogicTypeId game logic type id
+	 * Set logic type id
+	 * @param logicTypeId logic type id
 	 */
-	inline void setGameLogicTypeId(uint32_t gameLogicTypeId) {
-		this->gameLogicTypeId = gameLogicTypeId;
+	inline void setLogicTypeId(uint32_t logicTypeId) {
+		this->logicTypeId = logicTypeId;
 	}
 
 	/**

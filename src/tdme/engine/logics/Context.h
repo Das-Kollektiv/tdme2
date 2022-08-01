@@ -326,7 +326,12 @@ private:
 	private:
 		Context* context { nullptr };
 	public:
+		/**
+		 * Constructor
+		 * @param context context
+		 */
 		ContextWorldListener(Context* context);
+		// overridden methods
 		virtual void onAddedBody(const string& id, int32_t type, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes) override;
 		virtual void onRemovedBody(const string& id, int32_t type, uint16_t collisionTypeId) override;
 	};
@@ -346,12 +351,12 @@ private:
 
 	// context main data
 	volatile bool initialized;
-	Mutex* gameLogicMutex { nullptr };
+	Mutex* logicsMutex { nullptr };
 	ContextWorldListener* worldListener { nullptr };
 	Scene* scene { nullptr };
-	unordered_map<string, Logic*> gameLogicsById;
-	vector<Logic*> gameLogics;
-	vector<Logic*> gameLogicsNew;
+	unordered_map<string, Logic*> logicsById;
+	vector<Logic*> logics;
+	vector<Logic*> newLogics;
 	unordered_map<string, PacketState> packetStates;
 
 protected:
@@ -389,21 +394,21 @@ public:
 	}
 
 	/**
-	 * @return game logic mutex
+	 * @return logics mutex
 	 */
-	inline Mutex* getGameLogicMutex() {
-		return gameLogicMutex;
+	inline Mutex* getLogicsMutex() {
+		return logicsMutex;
 	}
 
 	/**
-	 * Set game logic mutex
+	 * Set logics mutex
 	 */
-	inline void setGameLogicMutex(Mutex* gameLogicMutex) {
-		this->gameLogicMutex = gameLogicMutex;
+	inline void setLogicsMutex(Mutex* logicsMutex) {
+		this->logicsMutex = logicsMutex;
 	}
 
 	/**
-	 * @return server
+	 * @return is context is server context
 	 */
 	inline bool isServer() {
 		return server;
@@ -455,22 +460,22 @@ public:
 	}
 
 	/**
-	 * @return world
+	 * @return physics world
 	 */
 	inline World* getWorld() {
 		return world;
 	}
 
 	/**
-	 * Set world
-	 * @param world world
+	 * Set physics world
+	 * @param world physics world
 	 */
 	inline void setWorld(World* world) {
 		this->world = world;
 	}
 
 	/**
-	 * @return level
+	 * @return scene
 	 */
 	inline Scene* getScene() {
 		return scene;
@@ -487,58 +492,59 @@ public:
 	}
 
 	/**
-	 * Initialize game logics
+	 * Initialize logics
 	 */
 	virtual void initialize();
 
 	/**
-	 * Shut down
+	 * Shut down logics
 	 */
 	virtual void shutdown();
 
 	/**
-	 * Add game logic
-	 * @param gameLogic game logic
+	 * Add logic
+	 * @param logic logic
 	 */
-	void addGameLogic(Logic* gameLogic);
+	void addLogic(Logic* logic);
 
 	/**
-	 * Get game logic
+	 * Get logic
 	 * @param id id
-	 * @return game logic or nullptr
+	 * @return logic or nullptr
 	 */
-	inline Logic* getGameLogic(const string& id) {
-		auto gameLogicIt = gameLogicsById.find(id);
-		return gameLogicIt != gameLogicsById.end()?gameLogicIt->second:nullptr;
+	inline Logic* getLogic(const string& id) {
+		auto logicIt = logicsById.find(id);
+		return logicIt != logicsById.end()?logicIt->second:nullptr;
 	}
 
 	/**
-	 * On game logics processed
+	 * Add logics that have been added and tagged as new
+	 * @return count of new logics that have been finally added to context
 	 */
-	inline int addGameLogicsNew() {
-		int gameLogicsNewCount = gameLogicsNew.size();
+	inline int addNewLogics() {
+		int newLogicsCount = newLogics.size();
 		// add new game logics
-		for (auto gameLogic: gameLogicsNew) {
+		for (auto logic: newLogics) {
 			// add game logic to lists
-			gameLogicsById[gameLogic->getId()] = gameLogic;
-			gameLogics.push_back(gameLogic);
+			logicsById[logic->getId()] = logic;
+			logics.push_back(logic);
 		}
-		gameLogicsNew.clear();
-		return gameLogicsNewCount;
+		newLogics.clear();
+		return newLogicsCount;
 	}
 
 	/**
-	 * @return game logics
+	 * @return logics
 	 */
-	inline const vector<Logic*>& getGameLogics() {
-		return gameLogics;
+	inline const vector<Logic*>& getLogics() {
+		return logics;
 	}
 
 	/**
-	 * @return game logics new
+	 * @return new logics
 	 */
-	inline const vector<Logic*>& getGameLogicsNew() {
-		return gameLogicsNew;
+	inline const vector<Logic*>& getNewLogics() {
+		return newLogics;
 	}
 
 	/**
@@ -595,62 +601,62 @@ public:
 
 	/**
 	 * Returns if to process packet or not
-	 * @param gameLogic game logic
+	 * @param logic logic
 	 * @param packet packet
 	 * @param key key
 	 * @return if to process packet
 	 */
-	bool doProcessPacket(NetworkLogic* gameLogic, LogicNetworkPacket& packet, const string& key);
+	bool doProcessPacket(NetworkLogic* logic, LogicNetworkPacket& packet, const string& key);
 
 	/**
 	 * Returns if to process packet or not
-	 * @param gameLogic game logic
+	 * @param logic logic
 	 * @param packet packet
 	 * @param line line
 	 * @param key key
 	 * @return if to process packet
 	 */
-	inline bool doProcessPacketAtLine(NetworkLogic* gameLogic, LogicNetworkPacket& packet, uint32_t line, const string& key = string()) {
-		return doProcessPacket(gameLogic, packet, to_string(line) + (key.length() == 0?"":"_" + key));
+	inline bool doProcessPacketAtLine(NetworkLogic* logic, LogicNetworkPacket& packet, uint32_t line, const string& key = string()) {
+		return doProcessPacket(logic, packet, to_string(line) + (key.length() == 0?"":"_" + key));
 	}
 
 	/**
 	 * Unsets if to process packet or not
-	 * @param gameLogic game logic
+	 * @param logic logic
 	 * @param packet packet
 	 * @param key key
 	 */
-	void unsetProcessPacket(NetworkLogic* gameLogic, LogicNetworkPacket& packet, const string& key);
+	void unsetProcessPacket(NetworkLogic* logic, LogicNetworkPacket& packet, const string& key);
 
 	/**
 	 * Unset if to process packet or not
-	 * @param gameLogic game logic
+	 * @param logic logic
 	 * @param packet packet
 	 * @param line line
 	 * @param key key
 	 */
-	inline void unsetProcessPacketAtLine(NetworkLogic* gameLogic, LogicNetworkPacket& packet, uint32_t line, const string& key = string()) {
-		unsetProcessPacket(gameLogic, packet, to_string(line) + (key.length() == 0?"":"_" + key));
+	inline void unsetProcessPacketAtLine(NetworkLogic* logic, LogicNetworkPacket& packet, uint32_t line, const string& key = string()) {
+		unsetProcessPacket(logic, packet, to_string(line) + (key.length() == 0?"":"_" + key));
 	}
 
 	/**
-	 * Update engine initialization, which is called once per frame before calling game logic updateEngine() methods
+	 * Update engine initialization, which is called once per frame before calling logic updateEngine() methods
 	 */
 	virtual void initUpdateEngine();
 
 	/**
-	 * Update engine done, which is called once per frame after calling game logic updateEngine() methods
+	 * Update engine done, which is called once per frame after calling logic updateEngine() methods
 	 */
 	virtual void doneUpdateEngine();
 
 	/**
-	 * Game logics initialization, which is called once per game logics updates
+	 * Logics initialization, which is called once per logics updates
 	 */
-	virtual void initGameLogics();
+	virtual void initLogics();
 
 	/**
-	 * Game logics finalizations, which is called once per game logics updates
+	 * Logics finalizations, which is called once per logics updates
 	 */
-	virtual void doneGameLogics();
+	virtual void doneLogics();
 
 };

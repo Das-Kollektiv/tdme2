@@ -66,7 +66,7 @@ protected:
 	virtual UDPServerClient* accept(const uint32_t clientId, const string& ip, const unsigned int port) override;
 
 private:
-	ServerThread* gameLogicThread { nullptr };
+	ServerThread* logicsThread { nullptr };
 	int pathFindingThreadCount;
 
 };

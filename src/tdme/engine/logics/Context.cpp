@@ -242,7 +242,7 @@ void Context::PathFindingThread::run() {
 	Console::println(string(context->server == true?"SERVER::":"CLIENT") + "|ws::Context::PathFindingThread[" + to_string(idx) + "]::run(): init");
 	while (isStopRequested() == false) {
 		// synch path finding physics world with world
-		context->gameLogicMutex->lock();
+		context->logicsMutex->lock();
 		worldActionsMutex.lock();
 		auto worldActionsCopy = worldActions;
 		worldActions.clear();
@@ -272,7 +272,7 @@ void Context::PathFindingThread::run() {
 			}
 		}
 		worldActions.clear();
-		context->gameLogicMutex->unlock();
+		context->logicsMutex->unlock();
 
 		// do cancelling
 		pathFindingMutex.lock();
@@ -591,7 +591,7 @@ Context::Context(bool server): pathFinding(this), world(nullptr), server(server)
 
 Context::~Context() {
 	Console::println("Context::~Context()");
-	for (auto gameLogic: gameLogics) delete gameLogic;
+	for (auto logic: logics) delete logic;
 	if (world != nullptr) delete world;
 	if (scene != nullptr) delete scene;
 }
@@ -622,28 +622,28 @@ void Context::shutdown() {
 	}
 }
 
-void Context::addGameLogic(Logic* gameLogic) {
-	if (VERBOSE == true) Console::println(string(server == true?"SERVER":"CLIENT") + "|Context::addGameLogic(): adding '" + gameLogic->getId() + "'");
+void Context::addLogic(Logic* logic) {
+	if (VERBOSE == true) Console::println(string(server == true?"SERVER":"CLIENT") + "|Context::addLogic(): adding '" + logic->getId() + "'");
 	// check if exists in current game logics
-	if (gameLogicsById.find(gameLogic->getId()) != gameLogicsById.end()) {
-		if (VERBOSE == true) Console::println(string(server == true?"SERVER":"CLIENT") + "|Context::addGameLogic(): NOT adding '" + gameLogic->getId() + "', game logic exists!");
+	if (logicsById.find(logic->getId()) != logicsById.end()) {
+		if (VERBOSE == true) Console::println(string(server == true?"SERVER":"CLIENT") + "|Context::addLogic(): NOT adding '" + logic->getId() + "', logic exists!");
 		return;
 	}
 	// check if exists in new game logics
-	for (auto gameLogicNew: gameLogicsNew) {
-		if (gameLogic->getId() == gameLogicNew->getId()) {
-			if (VERBOSE == true) Console::println(string(server == true?"SERVER":"CLIENT") + "|Context::addGameLogic(): NOT adding '" + gameLogic->getId() + "', game logic exists!");
+	for (auto newLogic: newLogics) {
+		if (logic->getId() == newLogic->getId()) {
+			if (VERBOSE == true) Console::println(string(server == true?"SERVER":"CLIENT") + "|Context::addLogic(): NOT adding '" + logic->getId() + "', logic exists!");
 			return;
 		}
 	}
 	//
-	gameLogicsNew.push_back(gameLogic);
+	newLogics.push_back(logic);
 	// call event
-	gameLogic->onGameLogicAdded();
+	logic->onGameLogicAdded();
 }
 
 
-bool Context::doProcessPacket(NetworkLogic* gameLogic, LogicNetworkPacket& packet, const string& key) {
+bool Context::doProcessPacket(NetworkLogic* logic, LogicNetworkPacket& packet, const string& key) {
 	auto now = Time::getCurrentMillis();
 
 	// clean up packet states
@@ -660,9 +660,9 @@ bool Context::doProcessPacket(NetworkLogic* gameLogic, LogicNetworkPacket& packe
 
 	// add packet state or report that we have processed it already
 	string _key;
-	_key+= gameLogic->getNetworkPacketTypeId();
+	_key+= logic->getNetworkPacketTypeId();
 	_key+= '_';
-	_key+= gameLogic->getId();
+	_key+= logic->getId();
 	_key+= '_';
 	_key+= key;
 	auto packetStateIt = packetStates.find(_key);
@@ -686,12 +686,12 @@ bool Context::doProcessPacket(NetworkLogic* gameLogic, LogicNetworkPacket& packe
 	}
 }
 
-void Context::unsetProcessPacket(NetworkLogic* gameLogic, LogicNetworkPacket& packet, const string& key) {
+void Context::unsetProcessPacket(NetworkLogic* logic, LogicNetworkPacket& packet, const string& key) {
 	// add packet state or report that we have processed it already
 	string _key;
-	_key+= gameLogic->getNetworkPacketTypeId();
+	_key+= logic->getNetworkPacketTypeId();
 	_key+= '_';
-	_key+= gameLogic->getId();
+	_key+= logic->getId();
 	_key+= '_';
 	_key+= key;
 	auto packetStateIt = packetStates.find(_key);
@@ -707,8 +707,8 @@ void Context::initUpdateEngine() {
 void Context::doneUpdateEngine() {
 }
 
-void Context::initGameLogics() {
+void Context::initLogics() {
 }
 
-void Context::doneGameLogics() {
+void Context::doneLogics() {
 }

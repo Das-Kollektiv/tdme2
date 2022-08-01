@@ -47,13 +47,13 @@ void ApplicationServerClient::onRequest(const UDPPacket* packet, const uint32_t 
 		// end of
 		if (size == 0) break;
 		// game logic type id
-		auto gameLogicTypeId = packet->getInt();
+		auto logicTypeId = packet->getInt();
 		// create network packet
 		LogicNetworkPacket gameNetworkPacket(
 			messageId,
 			safe,
 			retries,
-			gameLogicTypeId,
+			logicTypeId,
 			packet,
 			size
 		);

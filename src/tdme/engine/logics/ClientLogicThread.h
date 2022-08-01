@@ -41,11 +41,11 @@ public:
 	virtual void run() override;
 
 	/**
-	 * Handle in packets
-	 * @param gameLogics game logics
-	 * @param inGameNetworkPackets incoming game network packets
+	 * Handle in logic network packets
+	 * @param logics logics
+	 * @param inGameNetworkPackets incoming logic network packets
 	 */
-	void handleInGameNetworkPackets(const vector<Logic*>& gameLogics, vector<LogicNetworkPacket>& inGameNetworkPackets);
+	void handleInNetworkPackets(const vector<Logic*>& logics, vector<LogicNetworkPacket>& inLogicNetworkPackets);
 
 private:
 	Context* context;
