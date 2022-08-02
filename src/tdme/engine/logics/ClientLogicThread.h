@@ -37,7 +37,7 @@ public:
 	 */
 	Mutex* getMutex();
 
-	// overrided methods
+	// overridden methods
 	virtual void run() override;
 
 	/**

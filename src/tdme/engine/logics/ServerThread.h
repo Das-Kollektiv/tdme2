@@ -45,7 +45,7 @@ public:
 	 */
 	void createDatagrams(vector<LogicNetworkPacket>& safeLogicNetworkPackets, vector<LogicNetworkPacket>& fastLogicNetworkPackets, vector<UDPPacket*>& sendPacketsSafe, vector<UDPPacket*>& sendPacketsFast);
 
-	// overrided methods
+	// overridden methods
 	virtual void run() override;
 
 private:
