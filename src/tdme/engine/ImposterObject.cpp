@@ -42,8 +42,6 @@ ImposterObject::ImposterObject(
 
 	for (auto billboardObject: billboardObjects) billboardObject->setRenderPass(renderPass);
 	for (auto billboardObject: billboardObjects) billboardObject->setShader(shaderId);
-	for (auto billboardObject: billboardObjects) billboardObject->setDistanceShader(distanceShaderId);
-	for (auto billboardObject: billboardObjects) billboardObject->setDistanceShaderDistance(distanceShaderDistance);
 }
 
 ImposterObject::~ImposterObject() {

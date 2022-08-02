@@ -131,11 +131,8 @@ void PrototypeDisplaySubController::setDisplayDetails(Prototype* prototype) {
 		if (prototype->getType() == Prototype_Type::MODEL) required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_rendering"))->getActiveConditions().add("shader");
 
 		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("rendering_shader"))->replaceSubNodes(shaderXML, true);
-		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("rendering_distance_shader"))->replaceSubNodes(shaderXML, true);
 
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering_shader"))->getController()->setValue(MutableString(prototype->getShader()));
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering_distance_shader"))->getController()->setValue(MutableString(prototype->getDistanceShader()));
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering_distanceshader_distance"))->getController()->setValue(MutableString(prototype->getDistanceShaderDistance()));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering_contributes_shadows"))->getController()->setValue(MutableString(prototype->isContributesShadows() == true?"1":""));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering_receives_shadows"))->getController()->setValue(MutableString(prototype->isReceivesShadows() == true?"1":""));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering_render_groups"))->getController()->setValue(MutableString(prototype->isRenderGroups() == true?"1":""));
@@ -147,7 +144,6 @@ void PrototypeDisplaySubController::setDisplayDetails(Prototype* prototype) {
 
 	//
 	setDisplayShaderDetails(prototype);
-	setDisplayDistanceShaderDetails(prototype);
 }
 
 void PrototypeDisplaySubController::updateDetails(Prototype* prototype, const string& outlinerNode) {
@@ -157,8 +153,6 @@ void PrototypeDisplaySubController::updateDetails(Prototype* prototype, const st
 void PrototypeDisplaySubController::applyDisplayDetails(Prototype* prototype) {
 	try {
 		prototype->setShader(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering_shader"))->getController()->getValue().getString());
-		prototype->setDistanceShader(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering_distance_shader"))->getController()->getValue().getString());
-		prototype->setDistanceShaderDistance(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering_distanceshader_distance"))->getController()->getValue().getString()));
 		prototype->setContributesShadows(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering_contributes_shadows"))->getController()->getValue().getString() == "1");
 		prototype->setReceivesShadows(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering_receives_shadows"))->getController()->getValue().getString() == "1");
 		prototype->setRenderGroups(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering_render_groups"))->getController()->getValue().getString() == "1");
@@ -167,7 +161,6 @@ void PrototypeDisplaySubController::applyDisplayDetails(Prototype* prototype) {
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
 	setDisplayShaderDetails(prototype);
-	setDisplayDistanceShaderDetails(prototype);
 }
 
 void PrototypeDisplaySubController::createDisplayShaderDetailsXML(Prototype* prototype, const string& shaderParameterPrefix, const string& shader, const EntityShaderParameters& shaderParameters, string& xml) {
@@ -227,17 +220,6 @@ void PrototypeDisplaySubController::setDisplayShaderDetails(Prototype* prototype
 		required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("rendering_shader_details"))->replaceSubNodes(xml, false);
 	} catch (Exception& exception) {
 		Console::println(string("PrototypeDisplaySubController::setDisplayShaderDetails(): An error occurred: ") + exception.what());
-		showErrorPopUp("Warning", (string(exception.what())));
-	}
-}
-
-void PrototypeDisplaySubController::setDisplayDistanceShaderDetails(Prototype* prototype) {
-	string xml;
-	createDisplayShaderDetailsXML(prototype, "rendering.distanceshader.", prototype->getDistanceShader(), prototype->getDistanceShaderParameters(), xml);
-	try {
-		required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("rendering_distanceshader_details"))->replaceSubNodes(xml, false);
-	} catch (Exception& exception) {
-		Console::println(string("PrototypeDisplaySubController::setDisplayDistanceShaderDetails(): An error occurred: ") + exception.what());
 		showErrorPopUp("Warning", (string(exception.what())));
 	}
 }
@@ -332,12 +314,6 @@ void PrototypeDisplaySubController::onValueChanged(GUIElementNode* node, Prototy
 		auto shaderParameters = prototype->getShaderParameters();
 		applyDisplayShaderDetails(prototype, "rendering.shader.", StringTools::substring(node->getId(), string("rendering.shader.").size(), node->getId().size()), shaderParameters);
 		prototype->setShaderParameters(shaderParameters);
-		view->updateShaderParameters(prototype);
-	}
-	if (StringTools::startsWith(node->getId(), "rendering.distanceshader.") == true) {
-		auto distanceShaderParameters = prototype->getDistanceShaderParameters();
-		applyDisplayShaderDetails(prototype, "rendering.distanceshader.", StringTools::substring(node->getId(), string("rendering.distanceshader.").size(), node->getId().size()), distanceShaderParameters);
-		prototype->setDistanceShaderParameters(distanceShaderParameters);
 		view->updateShaderParameters(prototype);
 	}
 	if (node->getId() == tabView->getTabId() + "_tab_checkbox_grid") view->setDisplayGroundPlate(node->getController()->getValue().equals("1"));

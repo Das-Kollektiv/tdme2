@@ -196,12 +196,7 @@ private:
 			if (object->enabledInstances == 0) continue;
 			if (effectPass != 0 && object->excludeFromEffectPass == effectPass) continue;
 			if (object->renderPass != renderPass) continue;
-			auto objectUniqueShaderId = object->getDistanceShader().empty() == true?
-				object->getUniqueShaderId():
-				objectCamFromAxis.set(object->getBoundingBoxTransformed()->getCenter()).sub(camera->getLookFrom()).computeLengthSquared() < Math::square(object->getDistanceShaderDistance())?
-					object->getUniqueShaderId():
-					object->getUniqueDistanceShaderId();
-			auto& objectsByShaders = objectsByShadersAndModels[objectUniqueShaderId];
+			auto& objectsByShaders = objectsByShadersAndModels[object->getUniqueShaderId()];
 			auto& objectsByModel = objectsByShaders[object->getModel()];
 			objectsByModel.push_back(object);
 		}

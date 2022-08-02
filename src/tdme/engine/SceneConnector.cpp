@@ -383,19 +383,11 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 			imposterLodObject->setEffectColorMulLOD2(imposterLOD->getColorMul());
 			if (prototype->getShader() == "water" || prototype->getShader() == "pbr-water") imposterLodObject->setRenderPass(Entity::RENDERPASS_WATER);
 			imposterLodObject->setShader(prototype->getShader());
-			imposterLodObject->setDistanceShader(prototype->getDistanceShader());
-			imposterLodObject->setDistanceShaderDistance(prototype->getDistanceShaderDistance());
 			auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
-			auto distanceShaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getDistanceShader());
 			for (auto& parameterIt: shaderParametersDefault) {
 				auto& parameterName = parameterIt.first;
 				auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
 				imposterLodObject->setShaderParameter(parameterName, parameterValue);
-			}
-			for (auto& parameterIt: distanceShaderParametersDefault) {
-				auto& parameterName = parameterIt.first;
-				auto parameterValue = prototype->getDistanceShaderParameters().getShaderParameter(parameterName);
-				imposterLodObject->setDistanceShaderParameter(parameterName, parameterValue);
 			}
 		} else
 		if (lodLevel2 != nullptr) {
@@ -419,19 +411,11 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 			}
 			if (prototype->getShader() == "water" || prototype->getShader() == "pbr-water") lodObject->setRenderPass(Entity::RENDERPASS_WATER);
 			lodObject->setShader(prototype->getShader());
-			lodObject->setDistanceShader(prototype->getDistanceShader());
-			lodObject->setDistanceShaderDistance(prototype->getDistanceShaderDistance());
 			auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
-			auto distanceShaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getDistanceShader());
 			for (auto& parameterIt: shaderParametersDefault) {
 				auto& parameterName = parameterIt.first;
 				auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
 				lodObject->setShaderParameter(parameterName, parameterValue);
-			}
-			for (auto& parameterIt: distanceShaderParametersDefault) {
-				auto& parameterName = parameterIt.first;
-				auto parameterValue = prototype->getDistanceShaderParameters().getShaderParameter(parameterName);
-				lodObject->setDistanceShaderParameter(parameterName, parameterValue);
 			}
 		} else {
 			// single
@@ -445,19 +429,11 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 			object->setAnimationComputationLODEnabled(true);
 			if (prototype->getShader() == "water" || prototype->getShader() == "pbr-water") object->setRenderPass(Entity::RENDERPASS_WATER);
 			object->setShader(prototype->getShader());
-			object->setDistanceShader(prototype->getDistanceShader());
-			object->setDistanceShaderDistance(prototype->getDistanceShaderDistance());
 			auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
-			auto distanceShaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getDistanceShader());
 			for (auto& parameterIt: shaderParametersDefault) {
 				auto& parameterName = parameterIt.first;
 				auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
 				object->setShaderParameter(parameterName, parameterValue);
-			}
-			for (auto& parameterIt: distanceShaderParametersDefault) {
-				auto& parameterName = parameterIt.first;
-				auto parameterValue = prototype->getDistanceShaderParameters().getShaderParameter(parameterName);
-				object->setDistanceShaderParameter(parameterName, parameterValue);
 			}
 			if (enableEarlyZRejection == true && prototype->isTerrainMesh() == true) {
 				object->setEnableEarlyZRejection(true);
@@ -592,7 +568,6 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 					auto terrainObject = new Object("tdme.terrain." + to_string(idx++), terrainModel);
 					terrainObject->setRenderPass(Entity::RENDERPASS_TERRAIN);
 					terrainObject->setShader("terrain");
-					terrainObject->setDistanceShader("terrain");
 					terrainObject->setContributesShadows(true);
 					terrainObject->setReceivesShadows(true);
 					terrainObject->setPickable(pickable);
@@ -619,7 +594,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 						auto waterObject = new Object("tdme.water." + to_string(idx++), waterModel);
 						waterObject->setRenderPass(Entity::RENDERPASS_WATER);
 						waterObject->setShader("water");
-						waterObject->setDistanceShader("water");
+
 						waterObject->setContributesShadows(false);
 						waterObject->setReceivesShadows(false);
 						waterObject->setReflectionEnvironmentMappingId("sky_environment_mapping");
@@ -672,7 +647,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 								ObjectRenderGroup* foliagePartitionObjectRenderGroup = nullptr;
 								auto contributesShadows = foliagePrototype->isContributesShadows();
 								auto receivesShadows = foliagePrototype->isReceivesShadows();
-								auto hash = foliagePrototype->getShaderParameters().getShaderParametersHash() + "|" + foliagePrototype->getDistanceShaderParameters().getShaderParametersHash() + "|" + to_string(contributesShadows) + "|" + to_string(receivesShadows);
+								auto hash = foliagePrototype->getShaderParameters().getShaderParametersHash() + "|" + to_string(contributesShadows) + "|" + to_string(receivesShadows);
 								auto foliagePartitionObjectRenderGroupIt = objectRenderGroupByShaderParameters.find(hash);
 								if (foliagePartitionObjectRenderGroupIt != objectRenderGroupByShaderParameters.end()) {
 									foliagePartitionObjectRenderGroup = foliagePartitionObjectRenderGroupIt->second;
@@ -690,19 +665,11 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 									foliagePartitionObjectRenderGroup->setContributesShadows(contributesShadows);
 									foliagePartitionObjectRenderGroup->setReceivesShadows(receivesShadows);
 									foliagePartitionObjectRenderGroup->setShader(foliagePrototype->getShader());
-									foliagePartitionObjectRenderGroup->setDistanceShader(foliagePrototype->getDistanceShader());
-									foliagePartitionObjectRenderGroup->setDistanceShaderDistance(foliagePrototype->getDistanceShaderDistance());
 									auto shaderParametersDefault = Engine::getShaderParameterDefaults(foliagePrototype->getShader());
-									auto distanceShaderParametersDefault = Engine::getShaderParameterDefaults(foliagePrototype->getDistanceShader());
 									for (auto& parameterIt: shaderParametersDefault) {
 										auto& parameterName = parameterIt.first;
 										auto parameterValue = foliagePrototype->getShaderParameters().getShaderParameter(parameterName);
 										foliagePartitionObjectRenderGroup->setShaderParameter(parameterName, parameterValue);
-									}
-									for (auto& parameterIt: distanceShaderParametersDefault) {
-										auto& parameterName = parameterIt.first;
-										auto parameterValue = foliagePrototype->getDistanceShaderParameters().getShaderParameter(parameterName);
-										foliagePartitionObjectRenderGroup->setDistanceShaderParameter(parameterName, parameterValue);
 									}
 									foliagePartitionObjectRenderGroup->setPickable(false);
 									foliagePartitionObjectRenderGroup->setEnabled(enable);
@@ -753,7 +720,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 			auto partitionY = (int)(minY / renderGroupsPartitionHeight);
 			auto partitionZ = (int)(minZ / renderGroupsPartitionDepth);
 			renderGroupSceneEditorEntities[sceneEntity->getPrototype()->getModel()] = sceneEntity->getPrototype();
-			renderGroupEntitiesByShaderPartitionModel[sceneEntity->getPrototype()->getShader() + "." + sceneEntity->getPrototype()->getDistanceShader() + "." + to_string(static_cast<int>(sceneEntity->getPrototype()->getDistanceShaderDistance() / 10.0f))][to_string(partitionX) + "," + to_string(partitionY) + "," + to_string(partitionZ)][sceneEntity->getPrototype()->getModel()].push_back(&sceneEntity->getTransform());
+			renderGroupEntitiesByShaderPartitionModel[sceneEntity->getPrototype()->getShader()][to_string(partitionX) + "," + to_string(partitionY) + "," + to_string(partitionZ)][sceneEntity->getPrototype()->getModel()].push_back(&sceneEntity->getTransform());
 		} else {
 			auto entity = sceneEntity->getPrototype()->getType() == Prototype_Type::DECAL && useEditorDecals == true?createEditorDecalEntity(sceneEntity):createEntity(sceneEntity);
 			if (entity == nullptr) continue;
@@ -814,7 +781,7 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 					auto prototype = renderGroupSceneEditorEntities[itModel.first];
 					auto contributesShadows = prototype->isContributesShadows();
 					auto receivesShadows = prototype->isReceivesShadows();
-					auto hash = prototype->getShaderParameters().getShaderParametersHash() + "|" + prototype->getDistanceShaderParameters().getShaderParametersHash() + "|" + to_string(contributesShadows) + "|" + to_string(receivesShadows);
+					auto hash = prototype->getShaderParameters().getShaderParametersHash() + "|" + to_string(contributesShadows) + "|" + to_string(receivesShadows);
 					if (objectRenderGroupsByShaderParameters.find(hash) == objectRenderGroupsByShaderParameters.end()) {
 						auto objectRenderNode =
 							new ObjectRenderGroup(
@@ -828,19 +795,11 @@ void SceneConnector::addScene(Engine* engine, Scene* scene, bool addEmpties, boo
 						objectRenderNode->setContributesShadows(contributesShadows);
 						objectRenderNode->setReceivesShadows(receivesShadows);
 						objectRenderNode->setShader(prototype->getShader());
-						objectRenderNode->setDistanceShader(prototype->getDistanceShader());
-						objectRenderNode->setDistanceShaderDistance(prototype->getDistanceShaderDistance());
 						auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
-						auto distanceShaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getDistanceShader());
 						for (auto& parameterIt: shaderParametersDefault) {
 							auto& parameterName = parameterIt.first;
 							auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
 							objectRenderNode->setShaderParameter(parameterName, parameterValue);
-						}
-						for (auto& parameterIt: distanceShaderParametersDefault) {
-							auto& parameterName = parameterIt.first;
-							auto parameterValue = prototype->getDistanceShaderParameters().getShaderParameter(parameterName);
-							objectRenderNode->setDistanceShaderParameter(parameterName, parameterValue);
 						}
 						objectRenderGroupsByShaderParameters[hash] = objectRenderNode;
 					}

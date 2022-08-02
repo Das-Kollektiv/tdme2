@@ -351,19 +351,11 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 					modelEntity->setEffectColorAdd(colorAdd);
 					auto object = dynamic_cast<ImposterObject*>(modelEntity);
 					object->setShader(prototype->getShader());
-					object->setDistanceShader(prototype->getDistanceShader());
-					object->setDistanceShaderDistance(prototype->getDistanceShaderDistance());
 					auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
-					auto distanceShaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getDistanceShader());
 					for (auto& parameterIt: shaderParametersDefault) {
 						auto& parameterName = parameterIt.first;
 						auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
 						object->setShaderParameter(parameterName, parameterValue);
-					}
-					for (auto& parameterIt: distanceShaderParametersDefault) {
-						auto& parameterName = parameterIt.first;
-						auto parameterValue = prototype->getDistanceShaderParameters().getShaderParameter(parameterName);
-						object->setDistanceShaderParameter(parameterName, parameterValue);
 					}
 					engine->addEntity(modelEntity);
 				}
@@ -378,19 +370,11 @@ void Tools::setupPrototype(Prototype* prototype, Engine* engine, const Transform
 			modelEntity->setEffectColorAdd(colorAdd);
 			auto object = dynamic_cast<Object*>(modelEntity);
 			object->setShader(prototype->getShader());
-			object->setDistanceShader(prototype->getDistanceShader());
-			object->setDistanceShaderDistance(prototype->getDistanceShaderDistance());
 			auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
-			auto distanceShaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getDistanceShader());
 			for (auto& parameterIt: shaderParametersDefault) {
 				auto& parameterName = parameterIt.first;
 				auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
 				object->setShaderParameter(parameterName, parameterValue);
-			}
-			for (auto& parameterIt: distanceShaderParametersDefault) {
-				auto& parameterName = parameterIt.first;
-				auto parameterValue = prototype->getDistanceShaderParameters().getShaderParameter(parameterName);
-				object->setDistanceShaderParameter(parameterName, parameterValue);
 			}
 			engine->addEntity(modelEntity);
 		}

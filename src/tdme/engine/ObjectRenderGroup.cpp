@@ -341,13 +341,11 @@ void ObjectRenderGroup::updateRenderGroup() {
 		auto combinedObject = new Object(id + ".o3rg", combinedModels[0]);
 		combinedObject->setParentEntity(this);
 		combinedObject->setShader(shaderId);
-		combinedObject->setDistanceShader(distanceShaderId);
 		combinedObject->setContributesShadows(contributesShadows);
 		combinedObject->setReceivesShadows(receivesShadows);
 		combinedObject->setEngine(engine);
 		combinedObject->setEnableEarlyZRejection(enableEarlyZRejection);
 		combinedObject->shaderParameters = shaderParameters;
-		combinedObject->distanceShaderParameters = distanceShaderParameters;
 		combinedObject->update();
 		combinedEntity = combinedObject;
 	} else
@@ -366,25 +364,19 @@ void ObjectRenderGroup::updateRenderGroup() {
 		);
 		combinedLODObject->setParentEntity(this);
 		combinedLODObject->setShader(shaderId);
-		combinedLODObject->setDistanceShader(distanceShaderId);
-		combinedLODObject->setDistanceShaderDistance(distanceShaderDistance);
 		combinedLODObject->setContributesShadows(contributesShadows);
 		combinedLODObject->setReceivesShadows(receivesShadows);
 		combinedLODObject->setEngine(engine);
 		combinedLODObject->setEnableEarlyZRejection(enableEarlyZRejection);
 		combinedLODObject->shaderParameters = shaderParameters;
-		combinedLODObject->distanceShaderParameters = distanceShaderParameters;
 		if (combinedLODObject->objectLOD1 != nullptr) {
 			combinedLODObject->objectLOD1->shaderParameters = shaderParameters;
-			combinedLODObject->objectLOD1->distanceShaderParameters = distanceShaderParameters;
 		}
 		if (combinedLODObject->objectLOD2 != nullptr) {
 			combinedLODObject->objectLOD2->shaderParameters = shaderParameters;
-			combinedLODObject->objectLOD2->distanceShaderParameters = distanceShaderParameters;
 		}
 		if (combinedLODObject->objectLOD3 != nullptr) {
 			combinedLODObject->objectLOD3->shaderParameters = shaderParameters;
-			combinedLODObject->objectLOD3->distanceShaderParameters = distanceShaderParameters;
 		}
 		combinedLODObject->update();
 		combinedEntity = combinedLODObject;

@@ -67,12 +67,9 @@ private:
 	Color4 effectColorAdd;
 	RenderPass renderPass { RENDERPASS_STANDARD };
 	string shaderId { "default" };
-	string distanceShaderId { "" };
-	float distanceShaderDistance { 50.0f };
 	bool enableEarlyZRejection { false };
 
 	EntityShaderParameters shaderParameters;
-	EntityShaderParameters distanceShaderParameters;
 
 	/**
 	 * Set parent entity, needs to be called before adding to engine
@@ -318,39 +315,6 @@ public:
 	}
 
 	/**
-	 * @return distance shader id
-	 */
-	inline const string& getDistanceShader() {
-		return distanceShaderId;
-	}
-
-	/**
-	 * Set distance shader id
-	 * @param id shader
-	 */
-	inline void setDistanceShader(const string& id) {
-		this->distanceShaderId = id;
-		distanceShaderParameters.setShader(distanceShaderId);
-		for (auto billboardObject: billboardObjects) billboardObject->setDistanceShader(distanceShaderId);
-	}
-
-	/**
-	 * @return distance shader distance
-	 */
-	inline float getDistanceShaderDistance() {
-		return distanceShaderDistance;
-	}
-
-	/**
-	 * Set distance shader distance
-	 * @param distanceShaderDistance shader
-	 */
-	inline void setDistanceShaderDistance(float distanceShaderDistance) {
-		this->distanceShaderDistance = distanceShaderDistance;
-		for (auto billboardObject: billboardObjects) billboardObject->setDistanceShader(distanceShaderId);
-	}
-
-	/**
 	 * @return If early z rejection is enabled
 	 */
 	bool isEnableEarlyZRejection() const {
@@ -382,27 +346,6 @@ public:
 	inline void setShaderParameter(const string& parameterName, const ShaderParameter& parameterValue) {
 		shaderParameters.setShaderParameter(parameterName, parameterValue);
 		for (auto billboardObject: billboardObjects) billboardObject->setShaderParameter(parameterName, parameterValue);
-	}
-
-	/**
-	 * Returns distance shader parameter for given parameter name, if the value does not exist, the default will be returned
-	 * @param shaderId shader id
-	 * @param parameterName parameter name
-	 * @return shader parameter
-	 */
-	inline const ShaderParameter getDistanceShaderParameter(const string& parameterName) {
-		return distanceShaderParameters.getShaderParameter(parameterName);
-	}
-
-	/**
-	 * Set distance shader parameter for given parameter name
-	 * @param shaderId shader id
-	 * @param parameterName parameter name
-	 * @param paraemterValue parameter value
-	 */
-	inline void setDistanceShaderParameter(const string& parameterName, const ShaderParameter& parameterValue) {
-		distanceShaderParameters.setShaderParameter(parameterName, parameterValue);
-		for (auto billboardObject: billboardObjects) billboardObject->setDistanceShaderParameter(parameterName, parameterValue);
 	}
 
 };

@@ -51,12 +51,6 @@ LODObjectImposter::LODObjectImposter(
 	objectLOD1->setShader(shaderId);
 	objectLOD2->setShader(shaderId);
 
-	objectLOD1->setDistanceShader(distanceShaderId);
-	objectLOD2->setDistanceShader(distanceShaderId);
-
-	objectLOD1->setDistanceShaderDistance(distanceShaderDistance);
-	objectLOD2->setDistanceShaderDistance(distanceShaderDistance);
-
 	levelLOD = 1;
 }
 

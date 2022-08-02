@@ -29,13 +29,11 @@ using tdme::utilities::StringTools;
 Object::Object(const string& id, Model* model, int instances): ObjectInternal(id, model, instances)
 {
 	setShader("default");
-	setDistanceShader("default");
 }
 
 Object::Object(const string& id, Model* model): ObjectInternal(id, model, 1)
 {
 	setShader("default");
-	setDistanceShader("default");
 }
 
 void Object::setEngine(Engine* engine)
@@ -124,25 +122,8 @@ void Object::setShader(const string& id) {
 	}
 	uniqueShaderId = Engine::getUniqueShaderId(shaderId);
 	requiresForwardShading =
-		Engine::getLightingShader()->hasShader("defer_" + shaderId) == false ||
-		Engine::getLightingShader()->hasShader("defer_" + distanceShaderId) == false;
+		Engine::getLightingShader()->hasShader("defer_" + shaderId) == false;
 	// delegate change to engine
 	if (engine != nullptr) engine->updateEntityRegistration(this);
 }
 
-void Object::setDistanceShader(const string& id) {
-	if (model->getShaderModel() == ShaderModel::PBR || model->getShaderModel() == ShaderModel::SPECULARPBR) {
-		distanceShaderId = StringTools::startsWith(id, "pbr-") == true || id.empty() == true?id:"pbr-" + id;
-		distanceShaderParameters.setShader(distanceShaderId);
-	} else
-	if (model->getShaderModel() == ShaderModel::SPECULAR) {
-		distanceShaderId = StringTools::startsWith(id, "pbr-") == true?StringTools::substring(id, string("pbr-").size()):id;
-		distanceShaderParameters.setShader(distanceShaderId);
-	}
-	uniqueDistanceShaderId = Engine::getUniqueShaderId(distanceShaderId);
-	requiresForwardShading =
-		Engine::getLightingShader()->hasShader("defer_" + shaderId) == false ||
-		Engine::getLightingShader()->hasShader("defer_" + distanceShaderId) == false;
-	// delegate change to engine
-	if (engine != nullptr) engine->updateEntityRegistration(this);
-}

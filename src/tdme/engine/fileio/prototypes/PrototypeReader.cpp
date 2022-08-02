@@ -280,8 +280,6 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 	}
 	prototype->setRenderGroups(jPrototypeRoot.FindMember("rg") != jPrototypeRoot.MemberEnd()?jPrototypeRoot["rg"].GetBool():false);
 	prototype->setShader(jPrototypeRoot.FindMember("s") != jPrototypeRoot.MemberEnd()?jPrototypeRoot["s"].GetString():"default");
-	prototype->setDistanceShader(jPrototypeRoot.FindMember("sds") != jPrototypeRoot.MemberEnd()?jPrototypeRoot["sds"].GetString():"default");
-	prototype->setDistanceShaderDistance(jPrototypeRoot.FindMember("sdsd") != jPrototypeRoot.MemberEnd()?static_cast<float>(jPrototypeRoot["sdsd"].GetFloat()):10000.0f);
 	if (jPrototypeRoot.FindMember("sps") != jPrototypeRoot.MemberEnd()) {
 		Value& jShaderParameters = jPrototypeRoot["sps"];
 		EntityShaderParameters shaderParameters;
@@ -290,15 +288,6 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 			shaderParameters.setShaderParameter(jShaderParameterIt->name.GetString(), string(jShaderParameterIt->value.GetString()));
 		}
 		prototype->setShaderParameters(shaderParameters);
-	}
-	if (jPrototypeRoot.FindMember("spds") != jPrototypeRoot.MemberEnd()) {
-		Value& jDistanceShaderParameters = jPrototypeRoot["spds"];
-		EntityShaderParameters distanceShaderParameters;
-		distanceShaderParameters.setShader(prototype->getDistanceShader());
-		for (auto jDistanceShaderParameterIt = jDistanceShaderParameters.MemberBegin(); jDistanceShaderParameterIt != jDistanceShaderParameters.MemberEnd(); ++jDistanceShaderParameterIt) {
-			distanceShaderParameters.setShaderParameter(jDistanceShaderParameterIt->name.GetString(), string(jDistanceShaderParameterIt->value.GetString()));
-		}
-		prototype->setDistanceShaderParameters(distanceShaderParameters);
 	}
 	if (prototype->getType() == Prototype_Type::ENVIRONMENTMAPPING) {
 		prototype->setEnvironmentMapRenderPassMask(jPrototypeRoot["emrpm"].GetInt());

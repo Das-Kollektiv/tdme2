@@ -38,16 +38,10 @@ void PrototypeDisplaySubView::updateShaderParameters(Prototype* prototype) {
 	auto object = dynamic_cast<Object*>(engine->getEntity("model"));
 	if (object == nullptr || prototype == nullptr) return;
 	auto shaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getShader());
-	auto distanceShaderParametersDefault = Engine::getShaderParameterDefaults(prototype->getDistanceShader());
 	for (auto& parameterIt: shaderParametersDefault) {
 		auto& parameterName = parameterIt.first;
 		auto parameterValue = prototype->getShaderParameters().getShaderParameter(parameterName);
 		object->setShaderParameter(parameterName, parameterValue);
-	}
-	for (auto& parameterIt: distanceShaderParametersDefault) {
-		auto& parameterName = parameterIt.first;
-		auto parameterValue = prototype->getDistanceShaderParameters().getShaderParameter(parameterName);
-		object->setDistanceShaderParameter(parameterName, parameterValue);
 	}
 }
 

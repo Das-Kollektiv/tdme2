@@ -87,8 +87,6 @@ public:
 			// TODO: md5 or something
 			hash = shaderId + ";";
 			for (auto& it: parameters) {
-				hash+= it.first;
-				hash+= "=";
 				auto& parameterValue = it.second;
 				switch(parameterValue.getType()) {
 					case ShaderParameter::TYPE_NONE:

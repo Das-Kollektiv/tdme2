@@ -70,13 +70,10 @@ private:
 	vector<Model*> combinedModels;
 	RenderPass renderPass { RENDERPASS_STANDARD };
 	string shaderId { "default" };
-	string distanceShaderId { "" };
-	float distanceShaderDistance { 50.0f };
 	array<int, 3> lodReduceBy;
 	bool enableEarlyZRejection { false };
 
 	EntityShaderParameters shaderParameters;
-	EntityShaderParameters distanceShaderParameters;
 
 	bool optimizeModels;
 
@@ -348,55 +345,6 @@ public:
 	}
 
 	/**
-	 * @return distance shader id
-	 */
-	inline const string& getDistanceShader() {
-		return distanceShaderId;
-	}
-
-	/**
-	 * Set distance shader id
-	 * @param id shader
-	 */
-	inline void setDistanceShader(const string& id) {
-		this->distanceShaderId = id;
-		distanceShaderParameters.setShader(id);
-		// TODO: put me into entity interface
-		if (combinedEntity == nullptr) return;
-		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_OBJECT) {
-			static_cast<Object*>(combinedEntity)->setDistanceShader(id);
-			shaderParameters.setShader(static_cast<Object*>(combinedEntity)->getDistanceShader());
-		} else
-		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_LODOBJECT) {
-			static_cast<LODObject*>(combinedEntity)->setDistanceShader(id);
-			shaderParameters.setShader(static_cast<LODObject*>(combinedEntity)->getDistanceShader());
-		}
-	}
-
-	/**
-	 * @return distance shader distance
-	 */
-	inline float getDistanceShaderDistance() {
-		return distanceShaderDistance;
-	}
-
-	/**
-	 * Set distance shader distance
-	 * @param distanceShaderDistance shader
-	 */
-	inline void setDistanceShaderDistance(float distanceShaderDistance) {
-		this->distanceShaderDistance = distanceShaderDistance;
-		// TODO: put me into entity interface
-		if (combinedEntity == nullptr) return;
-		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_OBJECT) {
-			static_cast<Object*>(combinedEntity)->setDistanceShaderDistance(distanceShaderDistance);
-		} else
-		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_LODOBJECT) {
-			static_cast<LODObject*>(combinedEntity)->setDistanceShaderDistance(distanceShaderDistance);
-		}
-	}
-
-	/**
 	 * @return If early z rejection is enabled
 	 */
 	bool isEnableEarlyZRejection() const {
@@ -435,33 +383,6 @@ public:
 		} else
 		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_LODOBJECT) {
 			static_cast<LODObject*>(combinedEntity)->setShaderParameter(parameterName, parameterValue);
-		}
-	}
-
-	/**
-	 * Returns distance shader parameter for given parameter name, if the value does not exist, the default will be returned
-	 * @param shaderId shader id
-	 * @param parameterName parameter name
-	 * @return shader parameter
-	 */
-	inline const ShaderParameter getDistanceShaderParameter(const string& parameterName) {
-		return distanceShaderParameters.getShaderParameter(parameterName);
-	}
-
-	/**
-	 * Set distance shader parameter for given parameter name
-	 * @param shaderId shader id
-	 * @param parameterName parameter name
-	 * @param paraemterValue parameter value
-	 */
-	inline void setDistanceShaderParameter(const string& parameterName, const ShaderParameter& parameterValue) {
-		distanceShaderParameters.setShaderParameter(parameterName, parameterValue);
-		if (combinedEntity == nullptr) return;
-		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_OBJECT) {
-			static_cast<Object*>(combinedEntity)->setDistanceShaderParameter(parameterName, parameterValue);
-		} else
-		if (combinedEntity->getEntityType() == Entity::ENTITYTYPE_LODOBJECT) {
-			static_cast<LODObject*>(combinedEntity)->setDistanceShaderParameter(parameterName, parameterValue);
 		}
 	}
 

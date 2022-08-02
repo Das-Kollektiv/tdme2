@@ -517,15 +517,9 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object*>& 
 				}
 
 				// shader
-				auto distanceSquared = objectCamFromAxis.set(object->getBoundingBoxTransformed()->computeClosestPointInBoundingBox(camera->getLookFrom())).sub(camera->getLookFrom()).computeLengthSquared();
-				auto distanceShader = object->getDistanceShader().empty() == true?false:distanceSquared >= Math::square(object->getDistanceShaderDistance());
-				auto& objectShader =
-					distanceShader == false?
-						object->getShader():
-						object->getDistanceShader();
 				// TODO: shader parameters
-				if (renderer->getShader(contextIdx) != objectShader) {
-					renderer->setShader(contextIdx, objectShader);
+				if (renderer->getShader(contextIdx) != object->getShader()) {
+					renderer->setShader(contextIdx, object->getShader());
 					renderer->onUpdateShader(contextIdx);
 					// update lights
 					for (auto j = 0; j < engine->lights.size(); j++) engine->lights[j].update(contextIdx);
@@ -540,7 +534,7 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object*>& 
 				}
 				// shader parameters
 				if (shaderParametersHash.empty() == true || shaderParametersHash != renderer->getShaderParameters(contextIdx).getShaderParametersHash()) {
-					renderer->setShaderParameters(contextIdx, distanceShader == true?object->distanceShaderParameters:object->shaderParameters);
+					renderer->setShaderParameters(contextIdx, object->shaderParameters);
 					renderer->onUpdateShaderParameters(contextIdx);
 					shaderParametersHash = renderer->getShaderParameters(contextIdx).getShaderParametersHash();
 				}
@@ -563,6 +557,7 @@ void EntityRenderer::renderObjectsOfSameTypeNonInstanced(const vector<Object*>& 
 				}
 				auto currentVBOLods = _objectNode->renderer->vboLods;
 				if (currentVBOLods != nullptr) {
+					auto distanceSquared = objectCamFromAxis.set(object->getBoundingBoxTransformed()->computeClosestPointInBoundingBox(camera->getLookFrom())).sub(camera->getLookFrom()).computeLengthSquared();
 					// index buffer
 					auto lodLevel = 0;
 					if (currentVBOLods->size() >= 3 && distanceSquared >= Math::square(_objectNode->node->getFacesEntities()[faceEntityIdx].getLOD3Distance())) {
@@ -857,17 +852,10 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 						continue;
 					}
 
-					// check if shader did change
 					// shader
-					auto distanceSquared = objectCamFromAxis.set(object->getBoundingBoxTransformed()->computeClosestPointInBoundingBox(camera->getLookFrom())).sub(camera->getLookFrom()).computeLengthSquared();
-					auto distanceShader = object->getDistanceShader().empty() == true?false:distanceSquared >= Math::square(object->getDistanceShaderDistance());
-					auto& objectShader =
-						distanceShader == false?
-							object->getShader():
-							object->getDistanceShader();
 					if (hadShaderSetup == false) {
-						if (objectShader != renderer->getShader(contextIdx)) {
-							renderer->setShader(contextIdx, objectShader);
+						if (object->getShader() != renderer->getShader(contextIdx)) {
+							renderer->setShader(contextIdx, object->getShader());
 							renderer->onUpdateShader(contextIdx);
 							for (auto j = 0; j < engine->lights.size(); j++) engine->lights[j].update(contextIdx);
 							// issue upload matrices
@@ -877,7 +865,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 						}
 						hadShaderSetup = true;
 					} else
-					if (objectShader != renderer->getShader(contextIdx)) {
+					if (object->getShader() != renderer->getShader(contextIdx)) {
 						objectRenderContext.objectsNotRendered.push_back(object);
 						continue;
 					}
@@ -901,7 +889,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 
 					// shader parameters
 					if (shaderParametersHash.empty() == true) {
-						renderer->setShaderParameters(contextIdx, distanceShader == true?object->distanceShaderParameters:object->shaderParameters);
+						renderer->setShaderParameters(contextIdx, object->shaderParameters);
 						renderer->onUpdateShaderParameters(contextIdx);
 						shaderParametersHash = renderer->getShaderParameters(contextIdx).getShaderParametersHash();
 					} else
@@ -935,6 +923,7 @@ void EntityRenderer::renderObjectsOfSameTypeInstanced(int threadIdx, const vecto
 					}
 					auto currentVBOLods = _objectNode->renderer->vboLods;
 					if (currentVBOLods != nullptr) {
+						auto distanceSquared = objectCamFromAxis.set(object->getBoundingBoxTransformed()->computeClosestPointInBoundingBox(camera->getLookFrom())).sub(camera->getLookFrom()).computeLengthSquared();
 						// index buffer
 						auto lodLevel = 0;
 						if (currentVBOLods->size() >= 3 && distanceSquared >= Math::square(_objectNode->node->getFacesEntities()[faceEntityIdx].getLOD3Distance())) {

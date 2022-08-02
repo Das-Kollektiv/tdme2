@@ -22,28 +22,6 @@
 
 				</layout>
 
-				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Distance Shader" width="*" height="auto" />
-					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-						<dropdown id="rendering_distance_shader" width="100%" height="auto" text="Default">
-						</dropdown>
-					</layout>
-				</layout>
-				<space height="5" />
-				<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-					<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Min Distance" width="*" height="auto" />
-					<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-						<input id="rendering_distanceshader_distance" name="rendering_distance_shader_distance" width="100%" height="auto" text="1000.00" unit="m" options="type=float,min=0.0,step=0.1,decimals=2" image="resources/engine/images/inputslider.png"/>
-					</layout>
-				</layout>
-
-				<space height="5" />
-				<menu-separator />
-				<space height="5" />		
-
-				<layout id="rendering_distanceshader_details" alignment="vertical" width="100%" height="auto" horizontal-align="center">
-
-				</layout>
 
 			</layout>
 

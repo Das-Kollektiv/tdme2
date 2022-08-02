@@ -74,9 +74,6 @@ private:
 	RenderPass renderPass { RENDERPASS_STANDARD };
 	string shaderId;
 	uint8_t uniqueShaderId { 0 };
-	string distanceShaderId;
-	uint8_t uniqueDistanceShaderId { 0 };
-	float distanceShaderDistance { 50.0f };
 	string reflectionEnvironmentMappingId;
 	bool reflectionEnvironmentMappingPositionSet { false };
 	Vector3 reflectionEnvironmentMappingPosition;
@@ -86,7 +83,6 @@ private:
 	int64_t frameTransformLast { -1LL };
 	int64_t timeTransformLast { -1LL };
 	EntityShaderParameters shaderParameters;
-	EntityShaderParameters distanceShaderParameters;
 	bool requiresPreRender { false };
 	bool requiresForwardShading { false };
 	bool animationComputingLODEnabled { false };
@@ -365,41 +361,6 @@ public:
 	}
 
 	/**
-	 * @return distance shader id
-	 */
-	inline const string& getDistanceShader() {
-		return distanceShaderId;
-	}
-
-	/**
-	 * @return unique distance shader id
-	 */
-	inline uint8_t getUniqueDistanceShaderId() {
-		return uniqueDistanceShaderId;
-	}
-
-	/**
-	 * Set distance shader
-	 * @param id shader id
-	 */
-	void setDistanceShader(const string& id);
-
-	/**
-	 * @return distance shader distance
-	 */
-	inline float getDistanceShaderDistance() {
-		return distanceShaderDistance;
-	}
-
-	/**
-	 * Set distance shader distance
-	 * @param distanceShaderDistance shader
-	 */
-	inline void setDistanceShaderDistance(float distanceShaderDistance) {
-		this->distanceShaderDistance = distanceShaderDistance;
-	}
-
-	/**
 	 * @return reflection environment mapping id
 	 */
 	inline const string& getReflectionEnvironmentMappingId() {
@@ -507,26 +468,6 @@ public:
 	 */
 	inline void setShaderParameter(const string& parameterName, const ShaderParameter& parameterValue) {
 		shaderParameters.setShaderParameter(parameterName, parameterValue);
-	}
-
-	/**
-	 * Returns distance shader parameter for given parameter name, if the value does not exist, the default will be returned
-	 * @param shaderId shader id
-	 * @param parameterName parameter name
-	 * @return shader parameter
-	 */
-	inline const ShaderParameter getDistanceShaderParameter(const string& parameterName) {
-		return distanceShaderParameters.getShaderParameter(parameterName);
-	}
-
-	/**
-	 * Set distance shader parameter for given parameter name
-	 * @param shaderId shader id
-	 * @param parameterName parameter name
-	 * @param paraemterValue parameter value
-	 */
-	inline void setDistanceShaderParameter(const string& parameterName, const ShaderParameter& parameterValue) {
-		distanceShaderParameters.setShaderParameter(parameterName, parameterValue);
 	}
 
 	/**

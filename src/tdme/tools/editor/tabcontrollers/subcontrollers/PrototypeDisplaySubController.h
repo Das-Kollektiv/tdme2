@@ -53,7 +53,6 @@ private:
 	array<string, 6> applyDisplayNodes = {
 		"rendering_shader",
 		"rendering_distance_shader",
-		"rendering_distanceshader_distance",
 		"rendering_contributes_shadows",
 		"rendering_receives_shadows",
 		"rendering_render_groups"
@@ -144,12 +143,6 @@ public:
 	 * @param prototype prototype
 	 */
 	void setDisplayShaderDetails(Prototype* prototype);
-
-	/**
-	 * Set display distance shader details
-	 * @param prototype prototype
-	 */
-	void setDisplayDistanceShaderDetails(Prototype* prototype);
 
 	/**
 	 * Apply display shader details

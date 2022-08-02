@@ -615,8 +615,6 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 	jPrototypeRoot.AddMember("rs", Value(prototype->isReceivesShadows()), jAllocator);
 	jPrototypeRoot.AddMember("rg", Value(prototype->isRenderGroups()), jAllocator);
 	jPrototypeRoot.AddMember("s", Value(prototype->getShader(), jAllocator), jAllocator);
-	jPrototypeRoot.AddMember("sds", Value(prototype->getDistanceShader(), jAllocator), jAllocator);
-	jPrototypeRoot.AddMember("sdsd", Value(prototype->getDistanceShaderDistance()), jAllocator);
 	{
 		Value jShaderParameters;
 		jShaderParameters.SetObject();
@@ -625,15 +623,6 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 			jShaderParameters.AddMember(Value(shaderParameterName, jAllocator), Value(prototype->getShaderParameters().getShaderParameter(shaderParameterName).toString(), jAllocator), jAllocator);
 		}
 		jPrototypeRoot.AddMember("sps", jShaderParameters, jAllocator);
-	}
-	{
-		Value jDistanceShaderParameters;
-		jDistanceShaderParameters.SetObject();
-		for (auto& shaderParameterIt: Engine::getShaderParameterDefaults(prototype->getDistanceShader())) {
-			auto& shaderParameterName = shaderParameterIt.first;
-			jDistanceShaderParameters.AddMember(Value(shaderParameterName, jAllocator), Value(prototype->getDistanceShaderParameters().getShaderParameter(shaderParameterName).toString(), jAllocator), jAllocator);
-		}
-		jPrototypeRoot.AddMember("spds", jDistanceShaderParameters, jAllocator);
 	}
 	if (prototype->getSounds().size() > 0) {
 		Value jSounds;

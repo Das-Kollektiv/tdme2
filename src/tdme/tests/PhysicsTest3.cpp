@@ -266,7 +266,6 @@ void PhysicsTest3::initialize()
 		entity->setReceivesShadows(true);
 		entity->update();
 		entity->setShader("terrain");
-		entity->setDistanceShader("terrain");
 		engine->addEntity(entity);
 		ObjectModel terrainModel(_terrainModel);
 		auto terrainMesh = new TerrainMesh(&terrainModel, entity->getTransform());

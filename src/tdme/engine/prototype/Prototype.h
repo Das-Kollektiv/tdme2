@@ -73,12 +73,9 @@ private:
 	bool terrainMesh { false };
 	bool renderGroups { false };
 	string shaderId { "default"};
-	string distanceShaderId { "default"};
-	float distanceShaderDistance { 10000.0f };
 	bool contributesShadows { true };
 	bool receivesShadows { true };
 	EntityShaderParameters shaderParameters;
-	EntityShaderParameters distanceShaderParameters;
 	map<string, PrototypeAudio*> soundsById;
 	vector<PrototypeAudio*> sounds;
 	int32_t environmentMapRenderPassMask { Entity::RENDERPASS_ALL - Entity::RENDERPASS_WATER };
@@ -434,39 +431,6 @@ public:
 	}
 
 	/**
-	 * Get distance shader
-	 * @return shader id
-	 */
-	inline const string& getDistanceShader() {
-		return distanceShaderId;
-	}
-
-	/**
-	 * Set distance shader
-	 * @param id shader id
-	 */
-	inline void setDistanceShader(const string& id) {
-		this->distanceShaderId = id;
-		distanceShaderParameters.setShader(id);
-	}
-
-	/**
-	 * Get distance shader distance
-	 * @return distance shader distance
-	 */
-	inline float getDistanceShaderDistance() {
-		return distanceShaderDistance;
-	}
-
-	/**
-	 * Set distance shader distance
-	 * @param distance distance
-	 */
-	inline void setDistanceShaderDistance(float distance) {
-		this->distanceShaderDistance = distance;
-	}
-
-	/**
 	 * Get shader parameters
 	 * @return shader parameters
 	 */
@@ -480,22 +444,6 @@ public:
 	 */
 	inline void setShaderParameters(EntityShaderParameters& parameters) {
 		shaderParameters = parameters;
-	}
-
-	/**
-	 * Get distance shader parameters
-	 * @return shader parameters
-	 */
-	inline const EntityShaderParameters& getDistanceShaderParameters() {
-		return distanceShaderParameters;
-	}
-
-	/**
-	 * Set distance shader parameters
-	 * @param parameters distance shader parameters
-	 */
-	inline void setDistanceShaderParameters(const EntityShaderParameters& parameters) {
-		distanceShaderParameters = parameters;
 	}
 
 	/**
