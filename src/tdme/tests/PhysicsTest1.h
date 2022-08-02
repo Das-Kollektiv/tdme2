@@ -68,7 +68,7 @@ public:
 	 */
 	~PhysicsTest1();
 
-	// overriden methods
+	// overridden methods
 	void display() override;
 	void dispose() override;
 	void initialize() override;

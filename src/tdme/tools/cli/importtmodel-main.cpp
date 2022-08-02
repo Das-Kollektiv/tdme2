@@ -85,7 +85,7 @@ public:
 		importTModelApplication->run(argc, argv, "Import TModel Application", nullptr, Application::WINDOW_HINT_INVISIBLE);
 	}
 
-	// overriden methods
+	// overridden methods
 	void display() override {
 		try {
 			Prototype* prototype = nullptr;

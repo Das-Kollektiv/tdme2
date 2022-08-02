@@ -50,7 +50,7 @@ private:
 	void toggleExpandState();
 
 public:
-	// overriden methods
+	// overridden methods
 	void initialize() override;
 	void dispose() override;
 };

@@ -65,7 +65,7 @@ public:
 		convertToTMApplication->run(argc, argv, "Convert to tm Application", nullptr, Application::WINDOW_HINT_INVISIBLE);
 	}
 
-	// overriden methods
+	// overridden methods
 	void display() override {
 		try {
 			for (auto inputFileName: modelFileNames) {

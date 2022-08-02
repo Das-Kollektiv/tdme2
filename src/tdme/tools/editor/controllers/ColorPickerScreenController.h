@@ -67,7 +67,7 @@ public:
 	 */
 	virtual ~ColorPickerScreenController();
 
-	// overriden methods
+	// overridden methods
 	GUIScreenNode* getScreenNode() override;
 	void initialize() override;
 	void dispose() override;

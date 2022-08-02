@@ -45,7 +45,7 @@ public:
 	 */
 	virtual void setupLogics() = 0;
 
-	// overriden methods
+	// overridden methods
 	virtual void run() override;
 
 protected:

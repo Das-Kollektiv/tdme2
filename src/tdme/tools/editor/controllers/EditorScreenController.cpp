@@ -396,7 +396,7 @@ void EditorScreenController::onOpenProject() {
 	class OnOpenProject: public virtual Action
 	{
 	public:
-		// overriden methods
+		// overridden methods
 		void performAction() override {
 			auto projectPath = editorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName();
 			editorScreenController->openProject(projectPath);
@@ -835,7 +835,7 @@ void EditorScreenController::onAddFile(const string& type) {
 	class OnAddFile: public virtual Action
 	{
 	public:
-		// overriden methods
+		// overridden methods
 		void performAction() override {
 			editorScreenController->addFile(
 				editorScreenController->view->getPopUps()->getFileDialogScreenController()->getPathName(),

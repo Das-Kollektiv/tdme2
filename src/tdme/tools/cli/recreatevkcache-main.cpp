@@ -55,7 +55,7 @@ public:
 		recreateVKCacheApplication->run(argc, argv, "Recreate VK cache Application", nullptr, Application::WINDOW_HINT_INVISIBLE);
 	}
 
-	// overriden methods
+	// overridden methods
 	void display() override {
 		Application::exit(0);
 	}

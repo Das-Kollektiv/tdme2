@@ -90,7 +90,7 @@ public:
 	 */
 	void reset();
 
-	// overriden methods
+	// overridden methods
 	void handleInputEvents() override;
 
 };
