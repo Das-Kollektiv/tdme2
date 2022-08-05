@@ -14,7 +14,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~InputEventHandler();
+	virtual ~InputEventHandler() {}
 
 	/**
 	 * On char
