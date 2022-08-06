@@ -293,7 +293,7 @@ public:
 	}
 
 	/**
-	 * Puts raw bytes into packet
+	 * Puts another packet into this packet
 	 * @param value value
 	 * @return UDP client packet
 	 */
