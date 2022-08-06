@@ -37,10 +37,52 @@ public:
 	 */
 	Mutex* getMutex();
 
+	/**
+	 * @return audio gain
+	 */
+	inline float getAudioGain() {
+		return audioGain;
+	}
+
+	/**
+	 * Set audio gain
+	 * @param gain gain
+	 */
+	void setAudioGain(float gain) {
+		this->audioGain = gain;
+	}
+
 	// overridden methods
 	virtual void run() override;
 
+	/**
+	 * Updates engine and audio to context engine and audio instances
+	 */
+	void update();
+
 private:
+	struct QueuedSound {
+		string gameLogicId;
+		string id;
+		float gain;
+		float pitch;
+		bool ignoreIfPlaying;
+		bool attachedToLogic;
+		Vector3 position;
+		float distanceFromCamera;
+		inline static bool compare(QueuedSound& queuedSound1, QueuedSound& queuedSound2) {
+			return queuedSound1.distanceFromCamera < queuedSound2.distanceFromCamera;
+		}
+	};
+
+	struct ActiveSound {
+		string id;
+		bool attachedToLogic;
+		string gameLogicId;
+	};
+
+	vector<QueuedSound> queuedSounds;
+	unordered_map<string, ActiveSound> activeSounds;
 
 	/**
 	 * Handle in logic network packets
@@ -53,4 +95,5 @@ private:
 	Context* context { nullptr };
 	Mutex mutex;
 	UDPClient* udpClient { nullptr };
+	float audioGain { 1.0f };
 };
