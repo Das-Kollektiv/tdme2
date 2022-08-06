@@ -311,6 +311,8 @@
     - UDP server can have multiple IO threads, multiple worker threads and always has its own server thread
     - HTTP download client has its own thread
     - physics or game mechanics can also run in a separate thread(s)
+    - application server has its own thread
+    - application client has its own thread
 - uses 3rd party libraries
     - needs to be installed, if not using port-msc
         - OpenGL
