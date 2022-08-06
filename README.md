@@ -253,11 +253,11 @@
         - has easy polling like access to underlying path finding threads
         - does logics management and execution
     - logics which do live in application server context and application client context are capable of
-        - update engine entities if living in application client
+        - update engine entities if living in application client and also update UI and such
         - executing app/game logic that change logic state, which can be visualized(see point above) and/or synched by network
         - easy access to manage audio playback
         - handling HID input
-        - doing network synch
+        - doing network sync
 
 # 3. Tools
 - Editor
