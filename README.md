@@ -248,10 +248,11 @@
         - spin lock
         - thread
 - Application server and application client on top
-    - each one owns a context to store logics and app/game state at least, so context
+    - each one owns a context to store logics and global app/game state at least, so context
         - also has some additional UDP specific network functionality
         - has easy polling like access to underlying path finding threads
-        - does logics management and execution
+        - does logics management and execution in a separate thread
+	- application server and client threads also do physics computations
     - logics which do live in application server context and application client context are capable of
         - update engine entities if living in application client and also update UI and such
         - executing app/game logic that change logic state, which can be visualized(see point above) and/or synched by network
