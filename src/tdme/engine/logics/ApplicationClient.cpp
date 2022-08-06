@@ -342,14 +342,13 @@ void ApplicationClient::handleInNetworkPackets(const vector<Logic*>& logics, vec
 
 void ApplicationClient::update() {
 	auto now = Time::getCurrentMillis();
-	// execute update engine of game logics
+	// execute update engine of logics
 	mutex.lock();
 	context->initUpdateEngine();
 	vector<Logic::QueuedSound> requeueSounds;
 	for (auto logic: context->getLogics()) {
 		logic->updateEngine();
 		// fetch sounds
-		//	TODO: order by distance to player
 		auto gameLogicId = logic->getId();
 		for (auto& queuedSound: logic->getQueuedSounds()) {
 			if (now > queuedSound.timeIssuedAt + static_cast<int64_t>(queuedSound.timeDelay)) {
