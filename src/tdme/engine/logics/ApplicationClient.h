@@ -20,17 +20,17 @@ using tdme::os::threading::Mutex;
 using tdme::os::threading::Thread;
 
 /**
- * Client logic thread
+ * Application client
  * @author Andreas Drewke
  */
-class tdme::engine::logics::ClientLogicThread: public Thread {
+class tdme::engine::logics::ApplicationClient: public Thread {
 public:
 	/**
 	 * Public constructor
 	 * @param context context
 	 * @param udpClient UDP client
 	 */
-	ClientLogicThread(Context* context, UDPClient* udpClient = nullptr);
+	ApplicationClient(Context* context, UDPClient* udpClient = nullptr);
 
 	/**
 	 * @return mutex

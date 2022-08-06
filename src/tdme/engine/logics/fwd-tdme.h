@@ -6,7 +6,7 @@ namespace engine {
 namespace logics {
 	class ApplicationServer;
 	class ApplicationServerClient;
-	class ClientLogicThread;
+	class ApplicationClient;
 	class Context;
 	class Logic;
 	class LogicNetworkPacket;

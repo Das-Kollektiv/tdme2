@@ -2,7 +2,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/logics/ClientLogicThread.h>
+#include <tdme/engine/logics/ApplicationClient.h>
 #include <tdme/engine/logics/Context.h>
 #include <tdme/engine/logics/Logic.h>
 #include <tdme/engine/logics/LogicNetworkPacket.h>
@@ -19,7 +19,7 @@ using std::string;
 using std::to_string;
 using std::vector;
 
-using tdme::engine::logics::ClientLogicThread;
+using tdme::engine::logics::ApplicationClient;
 using tdme::engine::logics::Context;
 using tdme::engine::logics::Logic;
 using tdme::engine::logics::LogicNetworkPacket;
@@ -32,18 +32,18 @@ using tdme::os::threading::Thread;
 using tdme::utilities::Console;
 using tdme::utilities::Time;
 
-ClientLogicThread::ClientLogicThread(Context* context, UDPClient* udpClient) : Thread("applicationserverclientthread", 4 * 1024 * 1024), mutex("applicationserverclientthread-mutex") {
+ApplicationClient::ApplicationClient(Context* context, UDPClient* udpClient) : Thread("applicationserverclientthread", 4 * 1024 * 1024), mutex("applicationserverclientthread-mutex") {
 	this->context = context;
 	this->udpClient = udpClient;
 	this->context->setLogicsMutex(getMutex());
 }
 
-Mutex* ClientLogicThread::getMutex() {
+Mutex* ApplicationClient::getMutex() {
 	return &mutex;
 }
 
-void ClientLogicThread::run() {
-	Console::println("ClientLogicThread::run(): init");
+void ApplicationClient::run() {
+	Console::println("ApplicationClient::run(): init");
 
 	//
 	int64_t timeLast = Time::getCurrentMillis();
@@ -60,7 +60,7 @@ void ClientLogicThread::run() {
 				logicTypeIdString+= (char)((logicNetworkPacket.getLogicTypeId() >> 8) & 0xFF);
 				logicTypeIdString+= (char)((logicNetworkPacket.getLogicTypeId() >> 16) & 0xFF);
 				logicTypeIdString+= (char)((logicNetworkPacket.getLogicTypeId() >> 24) & 0xFF);
-				Console::println("ClientLogicThread::run(): unhandled IN packet: 1s late: " + logicTypeIdString);
+				Console::println("ApplicationClient::run(): unhandled IN packet: 1s late: " + logicTypeIdString);
 				Console::println("Packet ASCII: ");
 				for (auto i = 0; i < 255; i++) {
 					Console::print(string() + (char)(logicNetworkPacket.getData()[i]));
@@ -296,7 +296,7 @@ void ClientLogicThread::run() {
 		// get some rest
 		int64_t timeDelta = Time::getCurrentMillis() - timeLast;
 		if (timeDelta > 33) {
-			Console::println("ClientLogicThread::run(): time delta < 33FPS, it took " + to_string(timeDelta) + " ms to compute");
+			Console::println("ApplicationClient::run(): time delta < 33FPS, it took " + to_string(timeDelta) + " ms to compute");
 			timeDelta = 33;
 		} else
 		if (timeDelta < 16) {
@@ -314,10 +314,10 @@ void ClientLogicThread::run() {
 	}
 
 	//
-	Console::println("ClientLogicThread::run(): done");
+	Console::println("ApplicationClient::run(): done");
 }
 
-void ClientLogicThread::handleInNetworkPackets(const vector<Logic*>& logics, vector<LogicNetworkPacket>& inLogicNetworkPackets) {
+void ApplicationClient::handleInNetworkPackets(const vector<Logic*>& logics, vector<LogicNetworkPacket>& inLogicNetworkPackets) {
 	// TODO: improve me
 	for (auto& logicNetworkPacket: inLogicNetworkPackets) {
 		for (auto logic: logics) {

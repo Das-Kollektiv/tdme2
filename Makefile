@@ -246,9 +246,9 @@ SRCS = \
 	src/tdme/engine/fileio/textures/PNGTextureWriter.cpp \
 	src/tdme/engine/fileio/textures/Texture.cpp \
 	src/tdme/engine/fileio/textures/TextureReader.cpp \
+	src/tdme/engine/logics/ApplicationClient.cpp \
 	src/tdme/engine/logics/ApplicationServer.cpp \
 	src/tdme/engine/logics/ApplicationServerClient.cpp \
-	src/tdme/engine/logics/ClientLogicThread.cpp \
 	src/tdme/engine/logics/Context.cpp \
 	src/tdme/engine/logics/Logic.cpp \
 	src/tdme/engine/logics/NetworkLogic.cpp \
