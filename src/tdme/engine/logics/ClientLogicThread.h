@@ -40,6 +40,8 @@ public:
 	// overridden methods
 	virtual void run() override;
 
+private:
+
 	/**
 	 * Handle in logic network packets
 	 * @param logics logics
@@ -48,7 +50,7 @@ public:
 	void handleInNetworkPackets(const vector<Logic*>& logics, vector<LogicNetworkPacket>& inLogicNetworkPackets);
 
 private:
-	Context* context;
+	Context* context { nullptr };
 	Mutex mutex;
-	UDPClient* udpClient;
+	UDPClient* udpClient { nullptr };
 };

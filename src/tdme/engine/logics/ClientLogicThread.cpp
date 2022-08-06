@@ -35,6 +35,7 @@ using tdme::utilities::Time;
 ClientLogicThread::ClientLogicThread(Context* context, UDPClient* udpClient) : Thread("applicationserverclientthread", 4 * 1024 * 1024), mutex("applicationserverclientthread-mutex") {
 	this->context = context;
 	this->udpClient = udpClient;
+	this->context->setLogicsMutex(getMutex());
 }
 
 Mutex* ClientLogicThread::getMutex() {
