@@ -36,15 +36,6 @@ public:
 	 */
 	Mutex* getMutex();
 
-	/**
-	 * Create datagrams
-	 * @param safeLogicNetworkPackets safe logic network packets
-	 * @param fastLogicNetworkPackets fast logic network packets
-	 * @param sendPacketsSafe send packets safe
-	 * @param sendPacketsFast send packets fast
-	 */
-	void createDatagrams(vector<LogicNetworkPacket>& safeLogicNetworkPackets, vector<LogicNetworkPacket>& fastLogicNetworkPackets, vector<UDPPacket*>& sendPacketsSafe, vector<UDPPacket*>& sendPacketsFast);
-
 	// overridden methods
 	virtual void run() override;
 
@@ -54,6 +45,15 @@ private:
 	Context* context { nullptr };
 	ApplicationServer* server { nullptr };
 	Mutex mutex;
+
+	/**
+	 * Create datagrams
+	 * @param safeLogicNetworkPackets safe logic network packets
+	 * @param fastLogicNetworkPackets fast logic network packets
+	 * @param sendPacketsSafe send packets safe
+	 * @param sendPacketsFast send packets fast
+	 */
+	void createDatagrams(vector<LogicNetworkPacket>& safeLogicNetworkPackets, vector<LogicNetworkPacket>& fastLogicNetworkPackets, vector<UDPPacket*>& sendPacketsSafe, vector<UDPPacket*>& sendPacketsFast);
 
 	/**
 	 * Get network packets game logic types
