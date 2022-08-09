@@ -11,7 +11,7 @@ MiniScriptTest::MiniScriptTest(): MiniScript() {
 /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DEFINITIONS_START__*/
 void MiniScriptTest::initializeNative() {
 	setNative(true);
-	setHash("0243aed9774865712440865f6bb2de968923d804ea940733a8141079a4de12ab");
+	setHash("a35570bc50f0e82b43709f3f481aa28288ddd41cd8e82d99e0b9d1fa08875b21");
 	setNativeScripts(
 		{
 			{
@@ -1452,7 +1452,7 @@ void MiniScriptTest::on_initialize(int miniScriptGotoStatementIdx) {
 			}
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
 	}
@@ -8144,7 +8144,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			}
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
 	}
@@ -8204,7 +8204,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodScriptWait::executeMethod(): " + string("script.wait") + "(): parameter type mismatch @ argument 0: integer expected");
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
 	}
@@ -8352,7 +8352,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			}
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
 	}
@@ -8492,7 +8492,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			}
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
 	}
@@ -8552,7 +8552,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodScriptWait::executeMethod(): " + string("script.wait") + "(): parameter type mismatch @ argument 0: integer expected");
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
 	}
@@ -8700,7 +8700,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			}
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
 	}
@@ -8876,7 +8876,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			}
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
 	}
@@ -8975,7 +8975,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			}
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
 	}
@@ -9064,7 +9064,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			}
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
 	}
@@ -9153,7 +9153,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			}
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
 	}
@@ -9242,7 +9242,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			}
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
 	}
@@ -9287,7 +9287,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			}
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
 	}
@@ -9359,7 +9359,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			}
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
 	}
@@ -9507,7 +9507,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			}
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
 	}
@@ -9728,7 +9728,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			}
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
 	}
@@ -9783,7 +9783,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			}
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
 	}
@@ -10827,7 +10827,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodScriptWait::executeMethod(): " + string("script.wait") + "(): parameter type mismatch @ argument 0: integer expected");
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
 	}
@@ -10969,7 +10969,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			}
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
 	}
@@ -11025,7 +11025,7 @@ void MiniScriptTest::on_error(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodScriptWait::executeMethod(): " + string("script.wait") + "(): parameter type mismatch @ argument 0: integer expected");
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
 	}
@@ -11062,7 +11062,7 @@ void MiniScriptTest::on_error(int miniScriptGotoStatementIdx) {
 			}
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
 	}
@@ -11367,7 +11367,7 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 			}
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
 	}
@@ -12032,7 +12032,7 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 			}
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
 	}
@@ -12180,7 +12180,7 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 			}
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
 	}
@@ -12465,7 +12465,7 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 			}
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
 	}
@@ -12526,7 +12526,7 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 			}
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
 	}
@@ -12564,7 +12564,7 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 			}
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
 	}
@@ -12875,7 +12875,7 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 			}
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
 	}
@@ -13105,7 +13105,7 @@ void MiniScriptTest::on_enabled_named_condition_1(int miniScriptGotoStatementIdx
 			}
 		}
 	}
-	if (scriptState.state.state != STATE_NEXT_STATEMENT) {
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
 		miniScript->scriptState.statementIdx++;
 		return;
 	}

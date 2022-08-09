@@ -698,7 +698,7 @@ protected:
 		unordered_map<int, int64_t> forTimeStarted;
 		stack<bool> conditionStack;
 		stack<EndType> endTypeStack;
-		StateMachineState state;
+		stack<StateMachineState> stateStack;
 		vector<string> enabledNamedConditions;
 		int64_t timeEnabledConditionsCheckLast { -1LL };
 	};
@@ -801,10 +801,10 @@ protected:
 	 * @param state state
 	 */
 	inline void setScriptState(int state) {
-		if (scriptState.state.state == state) return;
-		scriptState.state.state = state;
-		scriptState.state.lastState = -1;
-		scriptState.state.lastStateMachineState = nullptr;
+		auto& stateStackTop = scriptState.stateStack.top();
+		stateStackTop.state = state;
+		stateStackTop.lastState = -1;
+		stateStackTop.lastStateMachineState = nullptr;
 	}
 
 	/**
@@ -965,10 +965,24 @@ public:
 	}
 
 	/**
+	 * Push script state
+	 */
+	inline void pushScriptState() {
+		scriptState.stateStack.push(MiniScript::ScriptState::StateMachineState());
+	}
+
+	/**
+	 * Pop script state
+	 */
+	inline void popScriptState() {
+		scriptState.stateStack.pop();
+	}
+
+	/**
 	 * @return script state machine state
 	 */
 	inline int getScriptState() {
-		return scriptState.state.state;
+		return scriptState.stateStack.top().state;
 	}
 
 	/**

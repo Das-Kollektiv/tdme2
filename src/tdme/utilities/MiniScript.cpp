@@ -64,6 +64,7 @@ string MiniScript::OPERATOR_CHARS = "!*/%+-<>&|=";
 
 MiniScript::MiniScript() {
 	setNative(false);
+	pushScriptState();
 }
 
 MiniScript::~MiniScript() {
@@ -416,24 +417,25 @@ void MiniScript::emit(const string& condition) {
 void MiniScript::executeStateMachine() {
 	while (true == true) {
 		// determine state machine state if it did change
-		if (scriptState.state.lastStateMachineState == nullptr || scriptState.state.state != scriptState.state.lastState) {
-			scriptState.state.lastState = scriptState.state.state;
-			scriptState.state.lastStateMachineState = nullptr;
-			auto scriptStateMachineStateIt = scriptStateMachineStates.find(scriptState.state.state);
+		auto& stateStackTop = scriptState.stateStack.top();
+		if (stateStackTop.lastStateMachineState == nullptr || stateStackTop.state != stateStackTop.lastState) {
+			stateStackTop.lastState = stateStackTop.state;
+			stateStackTop.lastStateMachineState = nullptr;
+			auto scriptStateMachineStateIt = scriptStateMachineStates.find(stateStackTop.state);
 			if (scriptStateMachineStateIt != scriptStateMachineStates.end()) {
-				scriptState.state.lastStateMachineState = scriptStateMachineStateIt->second;
+				stateStackTop.lastStateMachineState = scriptStateMachineStateIt->second;
 			}
 		}
 
 		// execute state machine
-		if (scriptState.state.lastStateMachineState != nullptr) {
-			if (native == true && scriptState.state.state == STATE_NEXT_STATEMENT) {
+		if (stateStackTop.lastStateMachineState != nullptr) {
+			if (native == true && stateStackTop.state == STATE_NEXT_STATEMENT) {
 				// ignore STATE_NEXT_STATEMENT on native
 			} else {
-				scriptState.state.lastStateMachineState->execute();
+				stateStackTop.lastStateMachineState->execute();
 			}
 		} else {
-			Console::println("MiniScript::execute(): '" + scriptFileName + "': unknown state with id: " + to_string(scriptState.state.state));
+			Console::println("MiniScript::execute(): '" + scriptFileName + "': unknown state with id: " + to_string(stateStackTop.state));
 			break;
 		}
 
@@ -454,13 +456,13 @@ void MiniScript::executeStateMachine() {
 			break;
 		} else {
 			// break if no next statement but other state machine state or not running
-			if (scriptState.state.state != STATE_NEXT_STATEMENT || scriptState.running == false) break;
+			if (stateStackTop.state != STATE_NEXT_STATEMENT || scriptState.running == false) break;
 		}
 	}
 }
 
 void MiniScript::execute() {
-	if (scriptState.state.state == STATE_NONE) return;
+	if (scriptState.stateStack.top().state == STATE_NONE) return;
 
 	// check named conditions
 	auto now = Time::getCurrentMillis();
@@ -755,7 +757,7 @@ void MiniScript::startScript() {
 
 int MiniScript::determineScriptIdxToStart() {
 	if (VERBOSE == true) Console::println("MiniScript::determineScriptIdxToStart()");
-	auto currentScriptStateScript = scriptState.state;
+	pushScriptState();
 	auto nothingScriptIdx = -1;
 	auto scriptIdx = 0;
 	for (auto& script: scripts) {
@@ -803,19 +805,19 @@ int MiniScript::determineScriptIdxToStart() {
 				if (VERBOSE == true) {
 					Console::print("MiniScript::determineScriptIdxToStart(): " + condition + ": OK");
 				}
-				scriptState.state = currentScriptStateScript;
+				popScriptState();
 				return scriptIdx;
 			}
 		}
 		scriptIdx++;
 	}
-	scriptState.state = currentScriptStateScript;
+	popScriptState();
 	return nothingScriptIdx;
 }
 
 int MiniScript::determineNamedScriptIdxToStart() {
 	if (VERBOSE == true) Console::println("MiniScript::determineNamedScriptIdxToStart()");
-	auto currentScriptStateState = scriptState.state;
+	pushScriptState();
 	// TODO: we could have a hash map here to speed up enabledConditionName -> script lookup
 	for (auto& enabledConditionName: scriptState.enabledNamedConditions) {
 		auto scriptIdx = 0;
@@ -858,14 +860,14 @@ int MiniScript::determineNamedScriptIdxToStart() {
 					if (VERBOSE == true) {
 						Console::print("MiniScript::determineNamedScriptIdxToStart(): " + condition + ": OK");
 					}
-					scriptState.state = currentScriptStateState;
+					popScriptState();
 					return scriptIdx;
 				}
 			}
 			scriptIdx++;
 		}
 	}
-	scriptState.state = currentScriptStateState;
+	popScriptState();
 	return -1;
 }
 
@@ -3763,7 +3765,7 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 			generatedCode+= methodIndent + "}" + "\n";
 		}
 		if (scriptStateChanged == true) {
-			generatedCode+= methodIndent + "if (scriptState.state.state != STATE_NEXT_STATEMENT) {" + "\n";
+			generatedCode+= methodIndent + "if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {" + "\n";
 			generatedCode+= methodIndent + "\t" + "miniScript->scriptState.statementIdx++;" + "\n";
 			generatedCode+= methodIndent + "\t" + "return;" + "\n";
 			generatedCode+= methodIndent + "}" + "\n";

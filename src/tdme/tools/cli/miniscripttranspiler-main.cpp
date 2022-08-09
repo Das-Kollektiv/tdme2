@@ -277,7 +277,7 @@ void processFile(const string& scriptFileName, const string& miniscriptTranspila
 	generatedDeclarations+= headerIndent + "\t" + "}" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "if (scriptState.running == false) return;" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "// execute while having statements to be processed" + "\n";
-	generatedDeclarations+= headerIndent + "\t" + "if (scriptState.state.state == STATE_NEXT_STATEMENT) {" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "if (scriptState.stateStack.top().state == STATE_NEXT_STATEMENT) {" + "\n";
 	generatedDeclarations+= generatedExecuteCode;
 	generatedDeclarations+= headerIndent + "\t" + "}" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "if (scriptState.running == false) return;" + "\n";

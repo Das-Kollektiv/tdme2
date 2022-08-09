@@ -36,7 +36,7 @@ public:
 		}
 		if (scriptState.running == false) return;
 		// execute while having statements to be processed
-		if (scriptState.state.state == STATE_NEXT_STATEMENT) {
+		if (scriptState.stateStack.top().state == STATE_NEXT_STATEMENT) {
 			if (scriptState.scriptIdx == 0) on_initialize(scriptState.statementIdx); else
 			if (scriptState.scriptIdx == 1) on_nothing(scriptState.statementIdx); else
 			if (scriptState.scriptIdx == 2) on_error(scriptState.statementIdx); else
