@@ -8,6 +8,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
+#include <tdme/utilities/MiniScript.h>
 #include <tdme/utilities/Time.h>
 
 using std::vector;
@@ -17,6 +18,7 @@ using tdme::engine::physics::World;
 using tdme::engine::Engine;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
+using tdme::utilities::MiniScript;
 using tdme::utilities::Time;
 
 /**
@@ -35,6 +37,12 @@ public:
 		float pitch;
 		bool ignoreIfPlaying;
 	};
+
+	struct SignalStruct {
+		string signal;
+		vector<MiniScript::ScriptVariable> arguments;
+	};
+	vector<SignalStruct> signals;
 
 	/**
 	 * Public constructor
@@ -166,6 +174,64 @@ public:
 	 */
 	inline void setQueuedSounds(const vector<QueuedSound>& queuedSounds) {
 		this->queuedSounds = queuedSounds;
+	}
+
+	/**
+	 * Returns if a signal is in signal queue
+	 * @return has signal
+	 */
+	inline bool hasSignal() {
+		return signals.empty() == false;
+	}
+
+	/**
+	 * Add signal
+	 * @param signal signal
+	 * @param arguments arguments
+	 */
+	inline void addSignal(const string& signal, const vector<MiniScript::ScriptVariable>& arguments) {
+		signals.push_back(
+			{
+				.signal = signal,
+				.arguments = arguments
+			}
+		);
+	}
+
+	/**
+	 * Get signal name from first signal in signal queue
+	 * @return signal name
+	 */
+	inline const string getSignalName() {
+		if (signals.empty() == true) return string();
+		return signals[0].signal;
+	}
+
+	/**
+	 * Get signal argument count
+	 * @return signal argument count
+	 */
+	inline int getSignalArgumentCount() {
+		if (signals.empty() == true) return 0;
+		return signals[0].arguments.size();
+	}
+
+	/**
+	 * Get signal argument
+	 * @return signal argument at given index
+	 */
+	inline MiniScript::ScriptVariable getSignalArgument(int idx) {
+		if (signals.empty() == true) return MiniScript::ScriptVariable();
+		if (idx >= signals[0].arguments.size()) return MiniScript::ScriptVariable();
+		return signals[0].arguments[idx];
+	}
+
+	/**
+	 * Remove first signal from signal queue
+	 */
+	inline void removeSignal() {
+		if (signals.empty() == true) return;
+		signals.erase(signals.begin());
 	}
 
 	/**

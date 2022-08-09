@@ -25,7 +25,6 @@ OPENGL2_RENDERER_LIB := libopengl2renderer$(LIB_EXT)
 OPENGL3CORE_RENDERER_LIB := libopengl3corerenderer$(LIB_EXT)
 VULKAN_RENDERER_LIB := libvulkanrenderer$(LIB_EXT)
 OPENGLES2_RENDERER_LIB := libopengles2renderer$(LIB_EXT)
-OPENGL_RENDERER_LDFLAGS =
 VULKAN_RENDERER_LDFLAGS =
 LIBS_LDFLAGS =
 MAIN_LDFLAGS =
@@ -251,6 +250,7 @@ SRCS = \
 	src/tdme/engine/logics/ApplicationServerClient.cpp \
 	src/tdme/engine/logics/Context.cpp \
 	src/tdme/engine/logics/Logic.cpp \
+	src/tdme/engine/logics/LogicMiniScript.cpp \
 	src/tdme/engine/logics/NetworkLogic.cpp \
 	src/tdme/engine/logics/ServerThread.cpp \
 	src/tdme/engine/model/Animation.cpp \
