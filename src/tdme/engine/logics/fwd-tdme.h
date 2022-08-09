@@ -11,6 +11,8 @@ namespace logics {
 	class Logic;
 	class LogicNetworkPacket;
 	class LogicMiniScript;
+	class MiniScriptLogic;
+	class MiniScriptNetworkLogic;
 	struct NewClientLogic;
 	class NetworkLogic;
 	class ServerThread;

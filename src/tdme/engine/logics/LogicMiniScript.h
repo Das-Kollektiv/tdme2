@@ -13,7 +13,7 @@ using tdme::engine::logics::Logic;
 using tdme::utilities::MiniScript;
 
 /**
- * Logic MiniScript
+ * Logic mini script
  */
 class tdme::engine::logics::LogicMiniScript: public MiniScript {
 protected:
