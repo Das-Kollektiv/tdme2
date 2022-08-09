@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include <tdme/tdme.h>
 
 #include <tdme/engine/logics/fwd-tdme.h>
@@ -7,10 +9,10 @@
 #include <tdme/engine/logics/LogicMiniScript.h>
 
 using std::string;
-using std::vector;
+
+using tdme::engine::logics::LogicMiniScript;
 
 using tdme::engine::logics::Logic;
-using tdme::engine::logics::LogicMiniScript;
 
 /**
  * Mini script logic
@@ -26,42 +28,28 @@ public:
 	 * @param handlingHIDInput handling hid input
 	 * @param miniScript logic mini script
 	 */
-	MiniScriptLogic(Context* context, const string& id, bool handlingHIDInput, LogicMiniScript* miniScript): Logic(context, id, handlingHIDInput), miniScript(miniScript) {
+	inline MiniScriptLogic(Context* context, const string& id, bool handlingHIDInput, LogicMiniScript* miniScript): Logic(context, id, handlingHIDInput), miniScript(miniScript) {
 	}
 
 	/**
 	 * Update engine
 	 */
-	inline void updateEngine() override {
-		miniScript->pushScriptState();
-		miniScript->emit("updateEngine");
-		miniScript->popScriptState();
-	}
+	void updateEngine() override;
 
 	/**
 	 * Update logic
 	 */
-	inline void updateLogic() override {
-		miniScript->emit("updateLogic");
-	}
+	void updateLogic() override;
 
 	/**
 	 * On logic added
 	 */
-	inline void onLogicAdded() {
-		miniScript->pushScriptState();
-		miniScript->emit("logicAdded");
-		miniScript->popScriptState();
-	}
+	void onLogicAdded() override;
 
 	/**
 	 * On logics processed
 	 */
-	virtual void onLogicsProcessed() {
-		miniScript->pushScriptState();
-		miniScript->emit("logicsProcessed");
-		miniScript->popScriptState();
-	}
+	void onLogicsProcessed() override;
 
 private:
 	LogicMiniScript* miniScript { nullptr };
