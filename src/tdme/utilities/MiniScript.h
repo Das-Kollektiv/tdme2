@@ -1329,6 +1329,16 @@ public:
 	}
 
 	/**
+	 * @return script methods
+	 */
+	const vector<ScriptMethod*> getMethods();
+
+	/**
+	 * @return script operator methods
+	 */
+	const vector<ScriptMethod*> getOperatorMethods();
+
+	/**
 	 * Get miniscript instance information
 	 */
 	const string getInformation();

@@ -1056,6 +1056,22 @@ const string MiniScript::doStatementPreProcessing(const string& statement) {
 	return preprocessedStatement;
 }
 
+const vector<MiniScript::ScriptMethod*> MiniScript::getMethods() {
+	vector<ScriptMethod*> methods;
+	for (auto& scriptMethodIt: scriptMethods) {
+		methods.push_back(scriptMethodIt.second);
+	}
+	return methods;
+}
+
+const vector<MiniScript::ScriptMethod*> MiniScript::getOperatorMethods() {
+	vector<ScriptMethod*> methods;
+	for (auto& scriptOperatorIt: scriptOperators) {
+		methods.push_back(scriptOperatorIt.second);
+	}
+	return methods;
+}
+
 const string MiniScript::getInformation() {
 	string result;
 	result+= "Script: " + scriptPathName + "/" + scriptFileName + " (runs " + (native == true?"natively":"interpreted") + ")" + "\n\n";

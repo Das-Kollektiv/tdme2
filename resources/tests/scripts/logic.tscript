@@ -1,0 +1,53 @@
+# initialize
+on: initialize
+	console.log("------------")
+	console.log("initialize")
+	console.log("------------")
+	console.log()
+end
+
+# update engine
+on: updateEngine
+	console.log("------------")
+	console.log("updateEngine")
+	console.log("------------")
+	console.log()
+end
+
+# update logic
+on: updateLogic
+	console.log("------------")
+	console.log("updateLogic")
+	console.log("------------")
+	console.log()
+end
+
+# logic added
+on: logicAdded
+	console.log("------------")
+	console.log("logicAdded")
+	console.log("------------")
+	console.log()
+end
+
+# logics processed
+on: logicsProcessed
+	console.log("------------")
+	console.log("logicsProcessed")
+	console.log("------------")
+	console.log()
+end
+
+# if no condition is met, nothing will be executed, lol :D
+on: nothing
+	console.log("---------")
+	console.log("Nothing")
+	console.log("----------")
+	console.log()
+end
+
+# an error has occurred
+on: error
+	console.log("An error occurred")
+	script.wait(1000)
+end

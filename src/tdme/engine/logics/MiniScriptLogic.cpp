@@ -1,5 +1,3 @@
-#pragma once
-
 #include <tdme/tdme.h>
 
 #include <tdme/engine/logics/Logic.h>
