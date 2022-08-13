@@ -595,6 +595,12 @@ void SceneEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 void SceneEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type != GUIActionListenerType::PERFORMED) return;
+	if (node->getId() == "menu_scene_run") {
+		//
+	} else
+	if (node->getId() == "menu_scene_stop") {
+		//
+	}
 	if (node->getId() == "tdme.entities.rename_input") {
 		renameEntity();
 	} else
