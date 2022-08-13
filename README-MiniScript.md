@@ -67,8 +67,8 @@ This is the documentation of MiniScript language. This document is WIP.
 
 # 2. Operators
 
-| Operators                                                                                        |
-|--------------------------------------------------------------------------------------------------|
+| Op | Method                                                                                      |
+|----|---------------------------------------------------------------------------------------------|
 | !  | not(bool: Boolean): Boolean                                                                 |
 | != | notequal(...): Boolean                                                                      |
 | && | and(...): Boolean                                                                           |
