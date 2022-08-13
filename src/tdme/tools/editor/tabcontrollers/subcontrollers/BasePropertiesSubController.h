@@ -84,60 +84,60 @@ public:
 
 	/**
 	 * Set property base details
-	 * @param prototype prototype
+	 * @param baseProperties base properties
 	 */
 	void setBasePropertiesDetails(BaseProperties* baseProperties);
 
 	/**
 	 * Apply property base details
-	 * @param prototype prototype
+	 * @param baseProperties base properties
 	 */
 	void applyPropertyDetails(BaseProperties* baseProperties);
 
 	/**
 	 * Set property details
-	 * @param prototype prototype
+	 * @param baseProperties base properties
 	 * @param propertyName property name
 	 */
 	void setPropertyDetails(BaseProperties* baseProperties, const string& propertyName);
 
 	/**
 	 * Update details panel
-	 * @param prototype prototype
+	 * @param baseProperties base properties
 	 * @param outlinerNode outliner node
 	 */
 	void updateDetails(BaseProperties* baseProperties, const string& outlinerNode);
 
 	/**
 	 * Apply property details
-	 * @param prototype prototype
+	 * @param baseProperties base properties
 	 * @param propertyName property name
 	 */
 	void applyPropertyDetails(BaseProperties* baseProperties, const string& propertyName);
 
 	/**
 	 * Create property
-	 * @param prototype prototype
+	 * @param baseProperties base properties
 	 */
 	void createProperty(BaseProperties* baseProperties);
 
 	/**
 	 * Start rename property
-	 * @param property property
+	 * @param baseProperties base properties
 	 * @param propertyName property name
 	 */
 	void startRenameProperty(BaseProperties* baseProperties, const string& propertyName);
 
 	/**
 	 * Rename property
-	 * @param prototype prototype
+	 * @param baseProperties base properties
 	 */
 	void renameProperty(BaseProperties* baseProperties);
 
 	/**
 	 * On value changed
 	 * @param node node
-	 * @param prototype prototype
+	 * @param baseProperties base properties
 	 */
 	void onValueChanged(GUIElementNode* node, BaseProperties* baseProperties);
 
@@ -145,21 +145,21 @@ public:
 	 * On action performed
 	 * @param type type
 	 * @param node node
-	 * @param prototype prototype
+	 * @param baseProperties base properties
 	 */
 	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node, BaseProperties* baseProperties);
 
 	/**
 	 * On focus
 	 * @param node node
-	 * @param prototype prototype
+	 * @param baseProperties base properties
 	 */
 	void onFocus(GUIElementNode* node, BaseProperties* baseProperties);
 
 	/**
 	 * On unfocus
 	 * @param node node
-	 * @param prototype prototype
+	 * @param baseProperties base properties
 	 */
 	void onUnfocus(GUIElementNode* node, BaseProperties* baseProperties);
 
@@ -168,13 +168,13 @@ public:
 	 * @param node node
 	 * @param mouseX unscaled mouse X position
 	 * @param mouseY unscaled mouse Y position
-	 * @param prototype prototype
+	 * @param baseProperties base properties
 	 */
 	void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY, BaseProperties* baseProperties);
 
 	/**
 	 * Apply property value
-	 * @param prototype prototype
+	 * @param baseProperties base properties
 	 */
 	void applyPropertyValue(BaseProperties* baseProperties);
 

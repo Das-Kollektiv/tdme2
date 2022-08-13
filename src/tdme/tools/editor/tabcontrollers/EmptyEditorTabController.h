@@ -24,6 +24,7 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
+using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeScriptSubController;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::EmptyEditorTabView;
 using tdme::utilities::MutableString;
@@ -38,6 +39,7 @@ class tdme::tools::editor::tabcontrollers::EmptyEditorTabController final
 
 private:
 	BasePropertiesSubController* basePropertiesSubController { nullptr };
+	PrototypeScriptSubController* prototypeScriptSubController { nullptr };
 	EmptyEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };

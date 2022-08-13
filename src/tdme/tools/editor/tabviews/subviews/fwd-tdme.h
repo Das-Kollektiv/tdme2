@@ -10,6 +10,7 @@ namespace subviews {
 	class PrototypeDisplaySubView;
 	class PrototypePhysicsSubView;
 	class PrototypeSoundsSubView;
+	class PrototypeScriptSubView;
 }  // namespace subviews
 }  // namespace tabviews
 }  // namespace editor

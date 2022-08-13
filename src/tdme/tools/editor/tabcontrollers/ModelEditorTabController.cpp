@@ -45,6 +45,7 @@
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeSoundsSubController.h>
+#include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeScriptSubController.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/ModelEditorTabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
@@ -101,6 +102,7 @@ using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubCont
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeSoundsSubController;
+using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeScriptSubController;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::ModelEditorTabView;
 using tdme::tools::editor::views::EditorView;
@@ -121,6 +123,7 @@ ModelEditorTabController::ModelEditorTabController(ModelEditorTabView* view)
 	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEditorView(), view, true);
 	this->prototypeSoundsSubController = new PrototypeSoundsSubController(view->getEditorView(), view);
 	this->prototypeDisplaySubController = new PrototypeDisplaySubController(view->getEditorView(), view, this->prototypePhysicsSubController->getView());
+	this->prototypeScriptSubController = new PrototypeScriptSubController(view->getEditorView());
 }
 
 ModelEditorTabController::~ModelEditorTabController() {
@@ -128,6 +131,7 @@ ModelEditorTabController::~ModelEditorTabController() {
 	delete prototypeDisplaySubController;
 	delete prototypePhysicsSubController;
 	delete prototypeSoundsSubController;
+	delete prototypeScriptSubController;
 }
 
 ModelEditorTabView* ModelEditorTabController::getView() {
@@ -146,6 +150,7 @@ void ModelEditorTabController::initialize(GUIScreenNode* screenNode)
 	prototypeDisplaySubController->initialize(screenNode);
 	prototypePhysicsSubController->initialize(screenNode);
 	prototypeSoundsSubController->initialize(screenNode);
+	prototypeScriptSubController->initialize(screenNode);
 }
 
 void ModelEditorTabController::dispose()
@@ -242,6 +247,7 @@ void ModelEditorTabController::setOutlinerContent() {
 	auto prototype = view->getPrototype();
 	if (prototype != nullptr) {
 		basePropertiesSubController->createBasePropertiesXML(prototype, xml);
+		prototypeScriptSubController->createScriptXML(prototype, xml);
 		prototypeDisplaySubController->createDisplayPropertiesXML(prototype, xml);
 		prototypePhysicsSubController->createOutlinerPhysicsXML(prototype, xml);
 		prototypeSoundsSubController->createOutlinerSoundsXML(prototype, xml);
@@ -1048,6 +1054,7 @@ void ModelEditorTabController::updateDetails(const string& outlinerNode) {
 		prototypeDisplaySubController->updateDetails(view->getPrototype(), outlinerNode);
 		prototypePhysicsSubController->updateDetails(view->getPrototype(), outlinerNode);
 		prototypeSoundsSubController->updateDetails(view->getPrototype(), model, outlinerNode);
+		prototypeScriptSubController->updateDetails(view->getPrototype(), outlinerNode);
 	}
 }
 
@@ -1896,6 +1903,7 @@ void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 	basePropertiesSubController->onValueChanged(node, view->getPrototype());
 	prototypeDisplaySubController->onValueChanged(node, view->getPrototype());
 	prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
+	prototypeScriptSubController->onValueChanged(node, view->getPrototype());
 	{
 		auto model = getSelectedModel();
 		if (model != nullptr) prototypeSoundsSubController->onValueChanged(node, view->getPrototype(), model);
@@ -2291,6 +2299,7 @@ void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 	basePropertiesSubController->onActionPerformed(type, node, prototype);
 	prototypePhysicsSubController->onActionPerformed(type, node, prototype);
 	prototypeSoundsSubController->onActionPerformed(type, node, prototype);
+	prototypeScriptSubController->onActionPerformed(type, node, prototype);
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId().compare("specularmaterial_diffuse_texture_open") == 0) {
 			onMaterialLoadDiffuseTexture();

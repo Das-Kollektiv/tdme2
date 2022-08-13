@@ -11,6 +11,7 @@ namespace subcontrollers {
 	class PrototypePhysicsSubController_BoundingVolumeType;
 	class PrototypePhysicsSubController;
 	class PrototypeSoundsSubController;
+	class PrototypeScriptSubController;
 }  // namespace subcontrollers
 }  // namespace tabcontrollers
 }  // namespace editor

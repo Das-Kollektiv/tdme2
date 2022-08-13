@@ -26,6 +26,7 @@ using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController;
+using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeScriptSubController;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::TriggerEditorTabView;
 using tdme::utilities::MutableString;
@@ -42,6 +43,7 @@ private:
 	BasePropertiesSubController* basePropertiesSubController { nullptr };
 	PrototypePhysicsSubController* prototypePhysicsSubController { nullptr };
 	PrototypeDisplaySubController* prototypeDisplaySubController { nullptr };
+	PrototypeScriptSubController* prototypeScriptSubController { nullptr };
 	TriggerEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };

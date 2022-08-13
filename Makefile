@@ -599,6 +599,7 @@ SRCS = \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController_BoundingVolumeType.cpp \
+	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeScriptSubController.cpp \
 	src/tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeSoundsSubController.cpp \
 	src/tdme/tools/editor/tabviews/DecalEditorTabView.cpp \
 	src/tdme/tools/editor/tabviews/EmptyEditorTabView.cpp \
@@ -617,6 +618,7 @@ SRCS = \
 	src/tdme/tools/editor/tabviews/subviews/BasePropertiesSubView.cpp \
 	src/tdme/tools/editor/tabviews/subviews/PrototypeDisplaySubView.cpp \
 	src/tdme/tools/editor/tabviews/subviews/PrototypePhysicsSubView.cpp \
+	src/tdme/tools/editor/tabviews/subviews/PrototypeScriptSubView.cpp \
 	src/tdme/tools/editor/tabviews/subviews/PrototypeSoundsSubView.cpp \
 	src/tdme/tools/editor/views/EditorView.cpp \
 	src/tdme/tools/installer/Installer.cpp \

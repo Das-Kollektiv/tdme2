@@ -19,6 +19,7 @@
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.h>
+#include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeScriptSubController.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/subviews/PrototypePhysicsSubView.h>
 #include <tdme/tools/editor/tabviews/TriggerEditorTabView.h>
@@ -47,6 +48,7 @@ using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeDisplaySubController;
 using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubController;
+using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypeScriptSubController;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::subviews::PrototypePhysicsSubView;
 using tdme::tools::editor::tabviews::TriggerEditorTabView;
@@ -64,9 +66,11 @@ TriggerEditorTabController::TriggerEditorTabController(TriggerEditorTabView* vie
 	this->basePropertiesSubController = new BasePropertiesSubController(view->getEditorView(), "prototype");
 	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEditorView(), view, false);
 	this->prototypeDisplaySubController = new PrototypeDisplaySubController(view->getEditorView(), view, this->prototypePhysicsSubController->getView());
+	this->prototypeScriptSubController = new PrototypeScriptSubController(view->getEditorView());
 }
 
 TriggerEditorTabController::~TriggerEditorTabController() {
+	delete prototypeScriptSubController;
 	delete prototypeDisplaySubController;
 	delete prototypePhysicsSubController;
 	delete basePropertiesSubController;
@@ -87,6 +91,7 @@ void TriggerEditorTabController::initialize(GUIScreenNode* screenNode)
 	basePropertiesSubController->initialize(screenNode);
 	prototypeDisplaySubController->initialize(screenNode);
 	prototypePhysicsSubController->initialize(screenNode);
+	prototypeScriptSubController->initialize(screenNode);
 }
 
 void TriggerEditorTabController::dispose()
@@ -152,6 +157,7 @@ void TriggerEditorTabController::onValueChanged(GUIElementNode* node)
 	basePropertiesSubController->onValueChanged(node, view->getPrototype());
 	prototypeDisplaySubController->onValueChanged(node, view->getPrototype());
 	prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
+	prototypeScriptSubController->onValueChanged(node, view->getPrototype());
 }
 
 void TriggerEditorTabController::onFocus(GUIElementNode* node) {
@@ -171,6 +177,7 @@ void TriggerEditorTabController::onActionPerformed(GUIActionListenerType type, G
 {
 	basePropertiesSubController->onActionPerformed(type, node, view->getPrototype());
 	prototypePhysicsSubController->onActionPerformed(type, node, view->getPrototype());
+	prototypeScriptSubController->onActionPerformed(type, node, view->getPrototype());
 }
 
 void TriggerEditorTabController::setOutlinerContent() {
@@ -179,6 +186,7 @@ void TriggerEditorTabController::setOutlinerContent() {
 	auto prototype = view->getPrototype();
 	if (prototype != nullptr) {
 		basePropertiesSubController->createBasePropertiesXML(prototype, xml);
+		prototypeScriptSubController->createScriptXML(prototype, xml);
 		prototypePhysicsSubController->createOutlinerPhysicsXML(prototype, xml);
 	}
 	xml+= "</selectbox-parent-option>\n";
@@ -197,6 +205,7 @@ void TriggerEditorTabController::updateDetails(const string& outlinerNode) {
 	prototypeDisplaySubController->updateDetails(view->getPrototype(), outlinerNode);
 	prototypePhysicsSubController->updateDetails(view->getPrototype(), outlinerNode);
 	prototypePhysicsSubController->getView()->setDisplayBoundingVolume(true);
+	prototypeScriptSubController->updateDetails(view->getPrototype(), outlinerNode);
 }
 
 void TriggerEditorTabController::updateInfoText(const MutableString& text) {

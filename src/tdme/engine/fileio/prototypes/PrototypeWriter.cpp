@@ -241,6 +241,7 @@ void PrototypeWriter::write(Document& jDocument, Value& jPrototypeRoot, Prototyp
 	jPrototypeRoot.AddMember("px", Value(prototype->getPivot().getX()), jAllocator);
 	jPrototypeRoot.AddMember("py", Value(prototype->getPivot().getY()), jAllocator);
 	jPrototypeRoot.AddMember("pz", Value(prototype->getPivot().getZ()), jAllocator);
+	jPrototypeRoot.AddMember("sc", Value(prototype->getScript(), jAllocator), jAllocator);
 	if (prototype->getType() == Prototype_Type::DECAL) {
 		jPrototypeRoot.AddMember("df", Value(prototype->getDecal()->getTextureFileName(), jAllocator), jAllocator);
 		jPrototypeRoot.AddMember("thumbnail", Value(prototype->getThumbnail(), jAllocator), jAllocator);

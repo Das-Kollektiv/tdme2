@@ -25,6 +25,7 @@
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeDisplaySubController.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypePhysicsSubController.h>
+#include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeScriptSubController.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/subviews/PrototypePhysicsSubView.h>
 #include <tdme/tools/editor/tabviews/DecalEditorTabView.h>
@@ -77,9 +78,11 @@ DecalEditorTabController::DecalEditorTabController(DecalEditorTabView* view)
 	this->basePropertiesSubController = new BasePropertiesSubController(view->getEditorView(), "prototype");
 	this->prototypePhysicsSubController = new PrototypePhysicsSubController(view->getEditorView(), view, false);
 	this->prototypeDisplaySubController = new PrototypeDisplaySubController(view->getEditorView(), view, this->prototypePhysicsSubController->getView());
+	this->prototypeScriptSubController = new PrototypeScriptSubController(view->getEditorView());
 }
 
 DecalEditorTabController::~DecalEditorTabController() {
+	delete prototypeScriptSubController;
 	delete prototypeDisplaySubController;
 	delete prototypePhysicsSubController;
 	delete basePropertiesSubController;
@@ -100,6 +103,7 @@ void DecalEditorTabController::initialize(GUIScreenNode* screenNode)
 	basePropertiesSubController->initialize(screenNode);
 	prototypeDisplaySubController->initialize(screenNode);
 	prototypePhysicsSubController->initialize(screenNode);
+	prototypeScriptSubController->initialize(screenNode);
 }
 
 void DecalEditorTabController::dispose()
@@ -165,6 +169,7 @@ void DecalEditorTabController::onValueChanged(GUIElementNode* node)
 	basePropertiesSubController->onValueChanged(node, view->getPrototype());
 	prototypeDisplaySubController->onValueChanged(node, view->getPrototype());
 	prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
+	prototypeScriptSubController->onValueChanged(node, view->getPrototype());
 }
 
 void DecalEditorTabController::onFocus(GUIElementNode* node) {
@@ -274,6 +279,7 @@ void DecalEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 	}
 	basePropertiesSubController->onActionPerformed(type, node, view->getPrototype());
 	prototypePhysicsSubController->onActionPerformed(type, node, view->getPrototype());
+	prototypeScriptSubController->onActionPerformed(type, node, view->getPrototype());
 }
 
 void DecalEditorTabController::setOutlinerContent() {
@@ -283,6 +289,7 @@ void DecalEditorTabController::setOutlinerContent() {
 	if (prototype != nullptr) {
 		xml+= "<selectbox-option text=\"" + GUIParser::escapeQuotes("Decal") + "\" value=\"" + GUIParser::escapeQuotes("decal") + "\" />\n";
 		basePropertiesSubController->createBasePropertiesXML(prototype, xml);
+		prototypeScriptSubController->createScriptXML(prototype, xml);
 		prototypePhysicsSubController->createOutlinerPhysicsXML(prototype, xml);
 	}
 	xml+= "</selectbox-parent-option>\n";
@@ -325,6 +332,7 @@ void DecalEditorTabController::updateDetails(const string& outlinerNode) {
 		prototypeDisplaySubController->updateDetails(view->getPrototype(), outlinerNode);
 		prototypePhysicsSubController->updateDetails(view->getPrototype(), outlinerNode);
 		prototypePhysicsSubController->getView()->setDisplayBoundingVolume(true);
+		prototypeScriptSubController->updateDetails(view->getPrototype(), outlinerNode);
 	}
 }
 

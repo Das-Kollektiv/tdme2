@@ -189,14 +189,28 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 		model,
 		pivot
 	);
+	if (jPrototypeRoot.FindMember("sc") != jPrototypeRoot.MemberEnd()) {
+		string scriptFileName = jPrototypeRoot["sc"].GetString();
+		if (scriptFileName.empty() == false) {
+			auto scriptPathName = getResourcePathName(pathName, scriptFileName);
+			try {
+				prototype->setScript(getResourcePathName(pathName, scriptFileName) + "/" + FileSystem::getInstance()->getFileName(scriptFileName));
+			} catch (Exception& exception) {
+				Console::print(string("PrototypeReader::read(): An error occurred: "));
+				Console::println(string(exception.what()));
+			}
+		}
+	}
 	if (prototype->getType() == Prototype_Type::DECAL) {
-		auto decalFileName = jPrototypeRoot["df"].GetString();
-		auto decalPathName = getResourcePathName(pathName, decalFileName);
-		try {
-			prototype->getDecal()->setTextureFileName(getResourcePathName(pathName, decalFileName) + "/" + FileSystem::getInstance()->getFileName(decalFileName));
-		} catch (Exception& exception) {
-			Console::print(string("PrototypeReader::read(): An error occurred: "));
-			Console::println(string(exception.what()));
+		string decalFileName = jPrototypeRoot["df"].GetString();
+		if (decalFileName.empty() == false) {
+			auto decalPathName = getResourcePathName(pathName, decalFileName);
+			try {
+				prototype->getDecal()->setTextureFileName(getResourcePathName(pathName, decalFileName) + "/" + FileSystem::getInstance()->getFileName(decalFileName));
+			} catch (Exception& exception) {
+				Console::print(string("PrototypeReader::read(): An error occurred: "));
+				Console::println(string(exception.what()));
+			}
 		}
 	}
 	//

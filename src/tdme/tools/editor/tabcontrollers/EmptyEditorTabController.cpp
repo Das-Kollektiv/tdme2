@@ -15,6 +15,7 @@
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.h>
+#include <tdme/tools/editor/tabcontrollers/subcontrollers/PrototypeScriptSubController.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/EmptyEditorTabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
@@ -52,9 +53,11 @@ EmptyEditorTabController::EmptyEditorTabController(EmptyEditorTabView* view)
 	this->view = view;
 	this->popUps = view->getPopUps();
 	this->basePropertiesSubController = new BasePropertiesSubController(view->getEditorView(), "prototype");
+	this->prototypeScriptSubController = new PrototypeScriptSubController(view->getEditorView());
 }
 
 EmptyEditorTabController::~EmptyEditorTabController() {
+	delete prototypeScriptSubController;
 	delete basePropertiesSubController;
 }
 
@@ -71,6 +74,7 @@ void EmptyEditorTabController::initialize(GUIScreenNode* screenNode)
 {
 	this->screenNode = screenNode;
 	basePropertiesSubController->initialize(screenNode);
+	prototypeScriptSubController->initialize(screenNode);
 }
 
 void EmptyEditorTabController::dispose()
@@ -130,6 +134,7 @@ void EmptyEditorTabController::saveAs()
 void EmptyEditorTabController::onValueChanged(GUIElementNode* node)
 {
 	basePropertiesSubController->onValueChanged(node, view->getPrototype());
+	prototypeScriptSubController->onValueChanged(node, view->getPrototype());
 }
 
 void EmptyEditorTabController::onFocus(GUIElementNode* node) {
@@ -148,6 +153,7 @@ void EmptyEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 {
 	auto prototype = view->getPrototype();
 	basePropertiesSubController->onActionPerformed(type, node, prototype);
+	prototypeScriptSubController->onActionPerformed(type, node, prototype);
 }
 
 void EmptyEditorTabController::setOutlinerContent() {
@@ -156,6 +162,7 @@ void EmptyEditorTabController::setOutlinerContent() {
 	auto prototype = view->getPrototype();
 	if (prototype != nullptr) {
 		basePropertiesSubController->createBasePropertiesXML(prototype, xml);
+		prototypeScriptSubController->createScriptXML(prototype, xml);
 	}
 	xml+= "</selectbox-parent-option>\n";
 	view->getEditorView()->setOutlinerContent(xml);}
@@ -169,6 +176,7 @@ void EmptyEditorTabController::setOutlinerAddDropDownContent() {
 void EmptyEditorTabController::updateDetails(const string& outlinerNode) {
 	view->getEditorView()->setDetailsContent(string());
 	basePropertiesSubController->updateDetails(view->getPrototype(), outlinerNode);
+	prototypeScriptSubController->updateDetails(view->getPrototype(), outlinerNode);
 }
 
 void EmptyEditorTabController::updateInfoText(const MutableString& text) {

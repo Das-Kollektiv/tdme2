@@ -64,6 +64,7 @@ private:
 	string thumbnail;
 	Model* model { nullptr };
 	Vector3 pivot;
+	string script;
 	PrototypeLODLevel* lodLevel2 { nullptr };
 	PrototypeLODLevel* lodLevel3 { nullptr };
 	PrototypeImposterLOD* imposterLOD { nullptr };
@@ -214,6 +215,21 @@ public:
 	 */
 	inline Vector3& getPivot() {
 		return pivot;
+	}
+
+	/**
+	 * @return prototype script name
+	 */
+	inline const string& getScript() {
+		return script;
+	}
+
+	/**
+	 * Set up prototype script
+	 * @param fileName script file name
+	 */
+	inline void setScript(const string& fileName) {
+		this->script = fileName;
 	}
 
 	/**
