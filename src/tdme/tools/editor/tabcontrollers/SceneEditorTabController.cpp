@@ -596,10 +596,10 @@ void SceneEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 {
 	if (type != GUIActionListenerType::PERFORMED) return;
 	if (node->getId() == "menu_scene_run") {
-		//
+		view->runScene();
 	} else
 	if (node->getId() == "menu_scene_stop") {
-		//
+		view->stopScene();
 	}
 	if (node->getId() == "tdme.entities.rename_input") {
 		renameEntity();

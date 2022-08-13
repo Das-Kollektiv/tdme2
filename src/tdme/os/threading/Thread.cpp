@@ -94,8 +94,3 @@ void* Thread::pThreadRun(void *thread) {
 void Thread::stop() {
 	stopRequested = true;
 }
-
-bool Thread::isStopRequested() {
-	return stopRequested;
-}
-

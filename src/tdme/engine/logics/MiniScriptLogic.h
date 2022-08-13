@@ -29,6 +29,8 @@ public:
 	 * @param miniScript logic mini script
 	 */
 	inline MiniScriptLogic(Context* context, const string& id, bool handlingHIDInput, LogicMiniScript* miniScript): Logic(context, id, handlingHIDInput), miniScript(miniScript) {
+		miniScript->setContext(context);
+		miniScript->setLogic(this);
 	}
 
 	/**

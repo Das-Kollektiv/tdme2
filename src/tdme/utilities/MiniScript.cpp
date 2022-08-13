@@ -411,6 +411,7 @@ void MiniScript::emit(const string& condition) {
 		return;
 	}
 	//
+	scriptState.running = true;
 	resetScriptExecutationState(scriptIdxToStart, STATE_NEXT_STATEMENT);
 }
 
@@ -462,7 +463,7 @@ void MiniScript::executeStateMachine() {
 }
 
 void MiniScript::execute() {
-	if (scriptState.stateStack.top().state == STATE_NONE) return;
+	if (scriptState.running == false || scriptState.stateStack.top().state == STATE_NONE) return;
 
 	// check named conditions
 	auto now = Time::getCurrentMillis();

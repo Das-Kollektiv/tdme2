@@ -4,7 +4,13 @@
 #include <unordered_set>
 
 #include <tdme/tdme.h>
+#include <tdme/audio/Audio.h>
+#include <tdme/engine/logics/ApplicationClient.h>
+#include <tdme/engine/logics/Context.h>
+#include <tdme/engine/logics/LogicMiniScript.h>
+#include <tdme/engine/logics/MiniScriptLogic.h>
 #include <tdme/engine/model/Color4.h>
+#include <tdme/engine/physics/World.h>
 #include <tdme/engine/prototype/BaseProperty.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/Prototype_Type.h>
@@ -44,7 +50,13 @@ using std::unordered_set;
 
 using tdme::tools::editor::tabviews::SceneEditorTabView;
 
+using tdme::audio::Audio;
+using tdme::engine::logics::ApplicationClient;
+using tdme::engine::logics::Context;
+using tdme::engine::logics::LogicMiniScript;
+using tdme::engine::logics::MiniScriptLogic;
 using tdme::engine::model::Color4;
+using tdme::engine::physics::World;
 using tdme::engine::prototype::BaseProperty;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;
@@ -177,6 +189,15 @@ SceneEditorTabView::~SceneEditorTabView() {
 
 void SceneEditorTabView::handleInputEvents()
 {
+	// if scene is running, no not do HID input except camera
+	if (applicationClient != nullptr) {
+		//
+		cameraInputHandler->handleInputEvents();
+		//
+		return;
+	}
+
+	//
 	auto keyControlX = false;
 	auto keyControlC = false;
 	auto keyControlV = false;
@@ -453,6 +474,18 @@ void SceneEditorTabView::display()
 {
 	updateSkyPosition();
 
+	// if scene is running, no not do HID input except camera
+	if (applicationClient != nullptr) {
+		//
+		sceneEditorTabController->updateInfoText(MutableString(engine->getTiming()->getAvarageFPS()).append(" FPS"));
+		//
+		applicationClient->update();
+		engine->display();
+		//
+		return;
+	}
+
+	//
 	if ((placeEntityMode == true || pasteMode == true) && keyEscape == true) {
 		unsetPlaceEntityMode(keyEscape == true);
 		unsetPasteMode();
@@ -559,6 +592,7 @@ void SceneEditorTabView::initialize()
 
 void SceneEditorTabView::dispose()
 {
+	stopScene();
 	engine->dispose();
 }
 
@@ -1435,4 +1469,76 @@ Entity* SceneEditorTabView::createEntity(SceneEntity* sceneEntity, const Vector3
 	} else {
 		return SceneConnector::createEntity(sceneEntity, translation, instances, parentEntity);
 	}
+}
+
+void SceneEditorTabView::runScene() {
+	// stop scene
+	stopScene();
+
+	//
+	removeGizmo();
+
+	// execute scene
+	auto world = new World();
+	SceneConnector::addScene(world, scene, true);
+	applicationContext = new Context(false);
+	applicationContext->setEngine(engine);
+	applicationContext->setAudio(Audio::getInstance());
+	applicationContext->setWorld(world);
+	applicationContext->initialize();
+	applicationClient = new ApplicationClient(applicationContext);
+
+	// add logics
+	for (auto i = 0; i < scene->getEntityCount(); i++) {
+		auto entity = scene->getEntityAt(i);
+		if (entity->getPrototype()->getScript().empty() == false) {
+			auto miniScript = new LogicMiniScript();
+			miniScript->loadScript(
+				Tools::getPathName(entity->getPrototype()->getScript()),
+				Tools::getFileName(entity->getPrototype()->getScript())
+			);
+			applicationContext->addLogic(
+				new MiniScriptLogic(
+					applicationContext,
+					entity->getId(),
+					false,
+					miniScript
+				)
+			);
+		}
+	}
+
+	// and go
+	applicationClient->start();
+}
+
+void SceneEditorTabView::stopScene() {
+	// shutdown application client
+	if (applicationClient != nullptr) {
+		applicationClient->stop();
+		applicationClient->join();
+		delete applicationClient;
+	}
+
+	// shutdown application client context
+	if (applicationContext != nullptr) {
+		applicationContext->shutdown();
+		delete applicationContext;
+	}
+
+	//
+	if (applicationClient == nullptr && applicationContext == nullptr) return;
+
+	//
+	applicationClient = nullptr;
+	applicationContext = nullptr;
+
+	// reset scene
+	SceneConnector::resetEngine(engine, scene);
+	SceneConnector::setLights(engine, scene, Vector3());
+	SceneConnector::addScene(engine, scene, true, true, true, true, true);
+	updateSky();
+	scene->update();
+	cameraInputHandler->setSceneCenter(scene->getCenter());
+	cameraInputHandler->reset();
 }

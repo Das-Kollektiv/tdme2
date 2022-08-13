@@ -59,11 +59,6 @@ public:
 	void start();
 
 	/**
-	 * @brief Abstract run() method, should be implemented by subclassed class, will be called after spawn by start()
-	 */
-	virtual void run() = 0;
-
-	/**
 	 * @brief Requests that this thread should be stopped
 	 */
 	void stop();
@@ -72,7 +67,16 @@ public:
 	 * @brief Returns if stop has been requested
 	 * @return bool
 	 */
-	bool isStopRequested();
+	inline bool isStopRequested() {
+		return stopRequested;
+	}
+
+protected:
+	/**
+	 * @brief Abstract run() method, should be implemented by subclassed class, will be called after spawn by start()
+	 */
+	virtual void run() = 0;
+
 private:
 	static void *pThreadRun(void *thread);
 	#if defined(CPPTHREADS)

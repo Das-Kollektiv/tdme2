@@ -7,6 +7,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/logics/fwd-tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/engine/scene/fwd-tdme.h>
@@ -25,6 +26,8 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
+using tdme::engine::logics::ApplicationClient;
+using tdme::engine::logics::Context;
 using tdme::engine::model::Model;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
@@ -141,6 +144,9 @@ private:
 	bool gridEnabled;
 	float gridY;
 	Model* gridModel { nullptr };
+
+	ApplicationClient* applicationClient { nullptr };
+	Context* applicationContext { nullptr };
 
 public:
 	/**
@@ -442,4 +448,13 @@ public:
 	 */
 	static Entity* createEntity(SceneEntity* sceneEntity, const Vector3& translation = Vector3(0.0f, 0.0f, 0.0f), int instances = 1, Entity* parentEntity = nullptr);
 
+	/**
+	 * Run scene
+	 */
+	void runScene();
+
+	/**
+	 * Stop scene
+	 */
+	void stopScene();
 };

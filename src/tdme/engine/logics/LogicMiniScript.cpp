@@ -20,9 +20,7 @@ using tdme::engine::logics::Logic;
 using tdme::utilities::Console;
 using tdme::utilities::MiniScript;
 
-LogicMiniScript::LogicMiniScript(Context* context, Logic* logic):
-	MiniScript(),
-	context(context) {
+LogicMiniScript::LogicMiniScript(): MiniScript() {
 }
 
 LogicMiniScript::~LogicMiniScript() {
@@ -35,6 +33,24 @@ void LogicMiniScript::registerStateMachineStates() {
 
 void LogicMiniScript::registerMethods() {
 	MiniScript::registerMethods();
+	{
+		//
+		class ScriptMethodLogicGetId: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodLogicGetId(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_STRING),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "logic.getId";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue.setValue(miniScript->logic->getId());
+			}
+		};
+		registerMethod(new ScriptMethodLogicGetId(this));
+	}
 	{
 		//
 		class ScriptMethodLogicSignalSend: public ScriptMethod {

@@ -16,6 +16,8 @@ using tdme::utilities::MiniScript;
  * Logic mini script
  */
 class tdme::engine::logics::LogicMiniScript: public MiniScript {
+	friend class MiniScriptLogic;
+
 protected:
 	Context* context { nullptr };
 	Logic* logic { nullptr };
@@ -25,14 +27,28 @@ protected:
 	void registerMethods() override;
 	void registerVariables() override;
 
+	/**
+	 * Set context
+	 * @param context context
+	 */
+	inline void setContext(Context* context) {
+		this->context = context;
+	}
+
+	/**
+	 * Set logic
+	 * @param logic logic
+	 */
+	inline void setLogic(Logic* logic) {
+		this->logic = logic;
+	}
+
 public:
 
 	/**
 	 * Public constructor
-	 * @param context context
-	 * @param logic logic
 	 */
-	LogicMiniScript(Context* context, Logic* logic);
+	LogicMiniScript();
 
 	/**
 	 * Destructor
