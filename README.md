@@ -296,7 +296,6 @@
 - Reflections via environment mapping(reflection intensity maps feature is missing for specular materials)
 - Optimizing models with specular lighting regarding render calls by reducing nodes and materials to a minumum
 - GUI effects via XML definitions
-- Port WarStorys "Game Foundation" to TDME2, which organizes game logics, enables communcation between them and enables to do network IO and such
 - MiniScript: more engine bindings
 - MiniScript: implement arrays and dictionaries
 - MiniScript: methods in MiniScript itself
