@@ -94,7 +94,7 @@ int main(int argc, char** argv)
 	}
 	sort(operators.begin(), operators.end());
 	Console::println();
-	Console::println("| Operators                                                                                        |");
-	Console::println("|--------------------------------------------------------------------------------------------------|");
+	Console::println("| Op | Method                                                                                      |");
+	Console::println("|----|---------------------------------------------------------------------------------------------|");
 	for (auto& method: operators) Console::println(method);
 }
