@@ -36,15 +36,15 @@ public:
 	 */
 	Mutex* getMutex();
 
-	// overridden methods
-	virtual void run() override;
-
 private:
 	static constexpr int32_t VERBOSE_NETWORK { false };
 
 	Context* context { nullptr };
 	ApplicationServer* server { nullptr };
 	Mutex mutex;
+
+	// overridden methods
+	virtual void run() override;
 
 	/**
 	 * Create datagrams

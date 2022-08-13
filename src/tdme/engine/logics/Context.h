@@ -131,6 +131,11 @@ public:
 		vector<WorldActionStruct> worldActions;
 		Mutex worldActionsMutex;
 
+		/**
+		 * Run
+		 */
+		virtual void run();
+
 	public:
 		/**
 		 * Public constructor
@@ -207,15 +212,9 @@ public:
 		void cancel(const string& actorId);
 
 		/**
-		 * Run
-		 */
-		virtual void run();
-
-		/**
 		 * @return current pathfinding actor id
 		 */
 		string getActorId();
-
 	};
 
 	/**

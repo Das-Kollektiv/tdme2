@@ -287,8 +287,12 @@ void Installer::performScreenAction() {
 				dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen("installer_installing")->getNodeById("progressbar"))->getController()->setValue(MutableString(0.0f, 2));
 				class CheckForUpdateThread: public Thread {
 					public:
-					CheckForUpdateThread(Installer* installer): Thread("checkforupdate-thread"), installer(installer) {
+						CheckForUpdateThread(Installer* installer): Thread("checkforupdate-thread"), installer(installer) {
 						}
+
+					private:
+						Installer* installer;
+
 						void run() {
 							Console::println("CheckForUpdateThread::run(): init");
 
@@ -456,8 +460,6 @@ void Installer::performScreenAction() {
 							Console::println("CheckForUpdateThread::run(): done");
 							delete this;
 						}
-					private:
-						Installer* installer;
 				};
 				CheckForUpdateThread* checkForUpdateThread = new CheckForUpdateThread(this);
 				checkForUpdateThread->start();

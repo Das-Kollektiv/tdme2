@@ -52,8 +52,9 @@ private:
 	public:
 		LogWriterThread();
 		~LogWriterThread();
-		void run();
 		void flush();
+	private:
+		void run();
 	};
 
 	/**

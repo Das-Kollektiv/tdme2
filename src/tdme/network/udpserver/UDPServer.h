@@ -66,11 +66,6 @@ public:
 	virtual ~UDPServer();
 
 	/**
-	 * main event loop
-	 */
-	virtual void run();
-
-	/**
 	 * @returns UDP client statistics
 	 */
 	const UDPServer_Statistics getStatistics();
@@ -134,6 +129,11 @@ private:
 	typedef std::map<string, UDPServerClient*> ClientIpMap;
 	typedef std::set<UDPServerClient*> ClientSet;
 	static const uint32_t MESSAGE_ID_NONE = 0;
+
+	/**
+	 * main event loop
+	 */
+	virtual void run();
 
 	/**
 	 * @brief maps a new client to a given client id

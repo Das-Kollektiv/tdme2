@@ -56,12 +56,12 @@ public:
 	/**
 	 * @brief Starts this objects thread
 	 */
-	void start();
+	virtual void start();
 
 	/**
 	 * @brief Requests that this thread should be stopped
 	 */
-	void stop();
+	virtual void stop();
 
 	/**
 	 * @brief Returns if stop has been requested

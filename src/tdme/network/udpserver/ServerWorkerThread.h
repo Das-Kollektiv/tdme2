@@ -32,13 +32,15 @@ public:
 	 */
 	virtual ~ServerWorkerThread();
 
+private:
+	unsigned int id;
+	ServerWorkerThreadPool *threadPool;
+
 	/**
 	 * @brief Thread run method
 	 */
 	void run();
-private:
-	unsigned int id;
-	ServerWorkerThreadPool *threadPool;
+
 };
 
 };

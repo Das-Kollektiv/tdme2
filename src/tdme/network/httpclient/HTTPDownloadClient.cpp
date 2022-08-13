@@ -123,6 +123,7 @@ void HTTPDownloadClient::start() {
 		public:
 			DownloadThread(HTTPDownloadClient* downloadClient): Thread("download-thread"), downloadClient(downloadClient) {
 			}
+		private:
 			void run() {
 				downloadClient->finished = false;
 				downloadClient->progress = 0.0f;

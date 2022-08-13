@@ -52,9 +52,6 @@ public:
 		this->audioGain = gain;
 	}
 
-	// overridden methods
-	virtual void run() override;
-
 	/**
 	 * Updates engine and audio to context engine and audio instances
 	 */
@@ -83,6 +80,10 @@ private:
 
 	vector<QueuedSound> queuedSounds;
 	unordered_map<string, ActiveSound> activeSounds;
+
+
+	// overridden methods
+	virtual void run() override;
 
 	/**
 	 * Handle in logic network packets

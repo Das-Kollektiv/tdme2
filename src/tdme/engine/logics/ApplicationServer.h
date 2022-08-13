@@ -40,14 +40,8 @@ public:
 	 */
 	virtual ~ApplicationServer();
 
-	/**
-	 * Setup default / minumum required logics
-	 */
-	virtual void setupLogics() = 0;
-
 	// overridden methods
-	virtual void run() override;
-
+	virtual void start() override;
 protected:
 	Context* context { nullptr };
 
@@ -64,6 +58,11 @@ protected:
 	 * @param port port
 	 */
 	virtual UDPServerClient* accept(const uint32_t clientId, const string& ip, const unsigned int port) override;
+
+	/**
+	 * Setup default / minumum required logics
+	 */
+	virtual void setupLogics() = 0;
 
 private:
 	ServerThread* logicsThread { nullptr };

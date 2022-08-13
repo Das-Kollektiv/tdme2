@@ -92,11 +92,6 @@ public:
 	void setClientKey(const string& clientKey);
 
 	/**
-	 * Run thread program
-	 */
-	virtual void run();
-
-	/**
 	 * Returns if a message should be processed or already have been processed
 	 * @param clientMessage client message
 	 * @return if message should be processed or not
@@ -130,6 +125,11 @@ public:
 	const UDPClient_Statistics getStatistics();
 
 private:
+	/**
+	 * Run thread program
+	 */
+	virtual void run();
+
 	/**
 	 * Processes ack reveived
 	 * @param messageId message id

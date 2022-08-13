@@ -35,7 +35,7 @@ Context* ApplicationServer::createContext() {
 	return new Context(true);
 }
 
-void ApplicationServer::run() {
+void ApplicationServer::start() {
 	// init
 	Console::println("ApplicationServer::ApplicationServer(): Initializing");
 
@@ -54,10 +54,8 @@ void ApplicationServer::run() {
 	Console::println("ApplicationServer::ApplicationServer(): Starting game logic thread");
 	logicsThread->start();
 
-	// run NIO UDP server
-	UDPServer::run();
-
-	// TODO: run shutdown logic
+	//
+	UDPServer::start();
 }
 
 ApplicationServer::~ApplicationServer() {

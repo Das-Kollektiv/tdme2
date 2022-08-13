@@ -10,10 +10,10 @@ using tdme::os::threading::Thread;
 class ConsumerThread: public Thread {
 public:
 	ConsumerThread(int id, Queue<int> *queue);
-	void run();
 
 private:
 	int id;
 	Queue<int> *queue;
 
+	void run();
 };
