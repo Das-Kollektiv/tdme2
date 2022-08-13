@@ -17,8 +17,8 @@
   - you find binary alpha builds at [http://drewke.net/tdme2](http://drewke.net/tdme2)
   - here you find developer documentation including collaboration graphs and [private API](http://drewke.net/tdme2-documentation/alpha/private) as well as [public API](http://drewke.net/tdme2-documentation/alpha/public) for current alpha build
     - RapidJSON is included, but not yet integrated into documentation, please see [http://rapidjson.org/](http://rapidjson.org/)
-    - For TDME2 GUI XML documentation, see [README-GUI-XML.md](./README-GUI-XML.md)
-    - For TDME2 MiniScript documentation, see [README-MiniScript.md](./README-MiniScript.md)
+    - For TDME2 GUI XML documentation see [README-GUI-XML.md](./README-GUI-XML.md)
+    - For TDME2 MiniScript documentation see [README-MiniScript.md](./README-MiniScript.md)
 
 # 2. Features
 - Application
