@@ -298,6 +298,8 @@
 - GUI effects via XML definitions
 - Port WarStorys "Game Foundation" to TDME2, which organizes game logics, enables communcation between them and enables to do network IO and such
 - MiniScript: more engine bindings
+- MiniScript: implement arrays and dictionaries
+- Cascaded Shadow Mapping
 - Editor: complete Undo/Redo and Copy/Cut/Paste/Delete
 - Editor: Code editing with code completion, also visual code and shader editing is planned!
 - Vulkan: Performance improvements
