@@ -64,7 +64,6 @@ This is the documentation of MiniScript language. This document is WIP.
 | vec3.getY(vec3: Vector3): Float                                                                  |
 | vec3.getZ(vec3: Vector3): Float                                                                  |
 | vec3.normalize(vec3: Vector3): Vector3                                                           |
-|--------------------------------------------------------------------------------------------------|
 
 # 2. Operators
 
@@ -83,5 +82,5 @@ This is the documentation of MiniScript language. This document is WIP.
 | == | equals(...): Boolean                                                                        |
 | >  | greater(a: Float, b: Float): Boolean                                                        |
 | >= | greaterequals(a: Float, b: Float): Boolean                                                  |
-| || | or(...): Boolean                                                                            |
-|----|---------------------------------------------------------------------------------------------|
+| \|\| | or(...): Boolean                                                                            |
+
