@@ -181,6 +181,7 @@ void EditorScreenController::initialize()
 
 		//
 		updateFullScreenMenuEntry();
+		disableSceneMenuEntry();
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -1683,6 +1684,16 @@ void EditorScreenController::setFullScreen(bool fullScreen) {
 		fullScreenTabId.clear();
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("screen_editor_screen"))->getActiveConditions().remove("fullscreen");
 	}
+}
+
+void EditorScreenController::enableSceneMenuEntry() {
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("menu_scene_run"))->getController()->setDisabled(false);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("menu_scene_stop"))->getController()->setDisabled(false);
+}
+
+void EditorScreenController::disableSceneMenuEntry() {
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("menu_scene_run"))->getController()->setDisabled(true);
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("menu_scene_stop"))->getController()->setDisabled(true);
 }
 
 void EditorScreenController::onSaveCurrentTab() {

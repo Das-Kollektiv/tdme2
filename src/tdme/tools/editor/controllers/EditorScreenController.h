@@ -557,6 +557,16 @@ public:
 	void setFullScreen(bool fullScreen);
 
 	/**
+	 * Enable scene screen menu entry
+	 */
+	void enableSceneMenuEntry();
+
+	/**
+	 * Disable scene screen menu entry
+	 */
+	void disableSceneMenuEntry();
+
+	/**
 	 * On save current tab
 	 */
 	void onSaveCurrentTab();

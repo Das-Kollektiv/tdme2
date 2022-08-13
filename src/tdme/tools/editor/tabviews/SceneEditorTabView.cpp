@@ -570,6 +570,7 @@ Engine* SceneEditorTabView::getEngine() {
 }
 
 void SceneEditorTabView::activate() {
+	editorView->getScreenController()->enableSceneMenuEntry();
 	sceneEditorTabController->setOutlinerAddDropDownContent();
 	sceneEditorTabController->setOutlinerContent();
 	editorView->getScreenController()->restoreOutlinerState(outlinerState);
@@ -577,6 +578,7 @@ void SceneEditorTabView::activate() {
 }
 
 void SceneEditorTabView::deactivate() {
+	editorView->getScreenController()->disableSceneMenuEntry();
 	editorView->getScreenController()->storeOutlinerState(outlinerState);
 }
 
