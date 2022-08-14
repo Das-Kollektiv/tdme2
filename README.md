@@ -306,6 +306,7 @@
 - GUI effects via XML definitions (already working, needs bugfixes)
 - Optimizing models with specular lighting regarding render calls by reducing nodes and materials to a minumum (working already, needs to be finished)
 - Some UI elements need some focus/disabled fixes
+- Lots of minor bug fixes and user experience improvements
 - A release plan
 - A demonstration video
 
