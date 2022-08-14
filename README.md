@@ -290,7 +290,7 @@
 - example games
 - documentation
 
-# 5. What is WIP or planned
+# 5. What is WIP or planned for first BETA
 - MiniScript: more engine bindings
 - MiniScript: implement arrays and dictionaries
 - MiniScript: methods in MiniScript itself
