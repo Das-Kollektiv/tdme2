@@ -291,18 +291,18 @@
 - documentation
 
 # 5. What is WIP or planned
-- PBR: generate IBL cube maps from scene
-- Shader parameters, the system is implemented and working, now lets connect tools and shaders
-- Reflections via environment mapping(reflection intensity maps feature is missing for specular materials)
-- Optimizing models with specular lighting regarding render calls by reducing nodes and materials to a minumum
-- GUI effects via XML definitions
 - MiniScript: more engine bindings
 - MiniScript: implement arrays and dictionaries
 - MiniScript: methods in MiniScript itself
-- Cascaded Shadow Mapping
+- Editor: Code editing with code completion, also visual code editing is planned! (wip)
+- Shaders: Implement a new more abstract shader system using e.g. shader parameter system and add a visual/code shader editor on top
 - Editor: complete Undo/Redo and Copy/Cut/Paste/Delete
-- Editor: Code editing with code completion, also visual code and shader editing is planned!
+- Cascaded Shadow Mapping
 - Vulkan: Performance improvements
+- PBR: generate IBL cube maps from scene (need to wait for WS PBR assets to finalize)
+- Reflections via environment mapping(reflection intensity maps feature is missing for specular materials)
+- GUI effects via XML definitions (already working, needs bugfixes)
+- Optimizing models with specular lighting regarding render calls by reducing nodes and materials to a minumum (working already, needs to be finished)
 - Some UI elements need some focus/disabled fixes
 - A release plan
 - A demonstration video
