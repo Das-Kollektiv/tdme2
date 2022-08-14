@@ -31,9 +31,16 @@
 					<menu-header-item text="View">
 						<menu-item text="Full Screen" id="menu_view_fullscreen" image="resources/engine/images/fullscreen.png" shortcut="F11" />
 					</menu-header-item>
-					<menu-header-item text="Scene">
-						<menu-item text="Run" image="resources/engine/images/play.png" id="menu_scene_run" />
-						<menu-item text="Stop" image="resources/engine/images/stop.png" id="menu_scene_stop" />
+					<menu-header-item text="Project">
+						<menu-item text="Run Scene" image="resources/engine/images/play.png" id="menu_project_scene_run" />
+						<menu-item text="Stop Scene" image="resources/engine/images/stop.png" id="menu_project_scene_stop" />
+						<menu-separator />
+						<menu-item text="Clean" id="menu_project_clean" />
+						<menu-item text="Build" id="menu_project_build" />
+						<menu-separator />
+						<menu-item text="Rebuild" id="menu_project_rebuild" />
+						<menu-separator />
+						<menu-item text="Run" image="resources/engine/images/play.png" id="menu_project_run" />
 					</menu-header-item>
 					<menu-header-item text="Help">
 						<menu-item id="menu_help_documentation" image="resources/engine/images/weblink.png" text="Documentation" on-mouse-click="http://drewke.net/tdme2-documentation/alpha/public" />
