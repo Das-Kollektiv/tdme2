@@ -296,6 +296,8 @@
 - MiniScript: methods in MiniScript itself
 - Editor: Code editing with code completion, also visual code editing is planned! (wip)
 - Shaders: Implement a new more abstract shader system using e.g. shader parameter system and add a visual/code shader editor on top
+- Particle System: overhaul
+- GUI: Events: some minor improvements
 - Editor: complete Undo/Redo and Copy/Cut/Paste/Delete
 - Cascaded Shadow Mapping
 - Vulkan: Performance improvements
