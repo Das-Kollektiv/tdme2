@@ -23,7 +23,7 @@ using std::to_string;
 
 using tdme::os::network::NetworkSocket;
 
-NetworkSocket& NetworkSocket::operator=(NetworkSocket& socket) {
+NetworkSocket& NetworkSocket::operator=(const NetworkSocket& socket) {
 	descriptor = socket.descriptor;
 	ip = socket.ip;
 	ipVersion = socket.ipVersion;

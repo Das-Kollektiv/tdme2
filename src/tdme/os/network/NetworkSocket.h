@@ -21,9 +21,9 @@ public:
 	enum IpVersion {IPV4, IPV6};
 
 	/**
-	 * @brief copy operator
+	 * @brief assignment operator
 	 */
-	NetworkSocket& operator=(NetworkSocket& socket);
+	NetworkSocket& operator=(const NetworkSocket& socket);
 
 	/**
 	 * Protected constructor

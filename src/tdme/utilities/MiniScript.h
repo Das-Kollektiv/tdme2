@@ -96,18 +96,218 @@ public:
 	class ScriptVariable {
 	private:
 		ScriptVariableType type { TYPE_VOID };
-		string stringValue;
-		Transform transformValue;
-		bool booleanValue { false };
-		int64_t integerValue { 0 };
-		float floatValue { 0.0f };
-		Vector3 vector3Value;
+		void* valuePtr { nullptr };
+
+		/**
+		 * @return boolean value reference
+		 */
+		inline bool& getBooleanValueReference() {
+			return *static_cast<bool*>(valuePtr);
+		}
+
+		/**
+		 * @return const boolean value reference
+		 */
+		inline const bool& getBooleanValueReference() const {
+			return *static_cast<bool*>(valuePtr);
+		}
+
+		/**
+		 * @return integer value reference
+		 */
+		inline int64_t& getIntegerValueReference() {
+			return *static_cast<int64_t*>(valuePtr);
+		}
+
+		/**
+		 * @return const integer value reference
+		 */
+		inline const int64_t& getIntegerValueReference() const {
+			return *static_cast<int64_t*>(valuePtr);
+		}
+
+		/**
+		 * @return float value reference
+		 */
+		inline float& getFloatValueReference() {
+			return *static_cast<float*>(valuePtr);
+		}
+
+		/**
+		 * @return const float value reference
+		 */
+		inline const float& getFloatValueReference() const {
+			return *static_cast<float*>(valuePtr);
+		}
+
+		/**
+		 * @return string value reference
+		 */
+		inline string& getStringValueReference() {
+			return *static_cast<string*>(valuePtr);
+		}
+
+		/**
+		 * @return const string value reference
+		 */
+		inline const string& getStringValueReference() const {
+			return *static_cast<string*>(valuePtr);
+		}
+
+		/**
+		 * @return vector3 value reference
+		 */
+		inline Vector3& getVector3ValueReference() {
+			return *static_cast<Vector3*>(valuePtr);
+		}
+
+		/**
+		 * @return const vector3 value reference
+		 */
+		inline const Vector3& getVector3ValueReference() const {
+			return *static_cast<Vector3*>(valuePtr);
+		}
+
+		/**
+		 * @return transform value reference
+		 */
+		inline Transform& getTransformValueReference() {
+			return *static_cast<Transform*>(valuePtr);
+		}
+
+		/**
+		 * @return const transform value reference
+		 */
+		inline const Transform& getTransformValueReference() const {
+			return *static_cast<Transform*>(valuePtr);
+		}
+
+		/**
+		 * Set type
+		 * @param newType new type
+		 */
+		inline void setType(ScriptVariableType newType) {
+			if (type == newType) return;
+			switch(type) {
+				case TYPE_VOID:
+					break;
+				case TYPE_BOOLEAN:
+					delete static_cast<bool*>(valuePtr);
+					break;
+				case TYPE_INTEGER:
+					delete static_cast<int64_t*>(valuePtr);
+					break;
+				case TYPE_FLOAT:
+					delete static_cast<float*>(valuePtr);
+					break;
+				case TYPE_STRING:
+					delete static_cast<string*>(valuePtr);
+					break;
+				case TYPE_VECTOR3:
+					delete static_cast<Vector3*>(valuePtr);
+					break;
+				case TYPE_TRANSFORM:
+					delete static_cast<Transform*>(valuePtr);
+					break;
+			}
+			this->valuePtr = nullptr;
+			this->type = newType;
+			switch(type) {
+				case TYPE_VOID:
+					break;
+				case TYPE_BOOLEAN:
+					valuePtr = new bool();
+					break;
+				case TYPE_INTEGER:
+					valuePtr = new int64_t();
+					break;
+				case TYPE_FLOAT:
+					valuePtr = new float();
+					break;
+				case TYPE_STRING:
+					valuePtr = new string();
+					break;
+				case TYPE_VECTOR3:
+					valuePtr = new Vector3();
+					break;
+				case TYPE_TRANSFORM:
+					valuePtr = new Transform();
+					break;
+			}
+		}
 
 	public:
+		/**
+		 * Assignment operator
+		 * @param scriptVariable script variable to copy
+		 * @return this script variable
+		 */
+		inline ScriptVariable& operator=(const ScriptVariable& scriptVariable) {
+			switch(scriptVariable.type) {
+				case TYPE_VOID:
+					break;
+				case TYPE_BOOLEAN:
+					setValue(scriptVariable.getBooleanValueReference());
+					break;
+				case TYPE_INTEGER:
+					setValue(scriptVariable.getIntegerValueReference());
+					break;
+				case TYPE_FLOAT:
+					setValue(scriptVariable.getFloatValueReference());
+					break;
+				case TYPE_STRING:
+					setValue(scriptVariable.getStringValueReference());
+					break;
+				case TYPE_VECTOR3:
+					setValue(scriptVariable.getVector3ValueReference());
+					break;
+				case TYPE_TRANSFORM:
+					setValue(scriptVariable.getTransformValueReference());
+					break;
+			}
+			return *this;
+		}
+
+		/**
+		 * Copy constructor
+		 * @param scriptVariable script variable to copy
+		 */
+		inline ScriptVariable(const ScriptVariable& scriptVariable) {
+			switch(scriptVariable.type) {
+				case TYPE_VOID:
+					break;
+				case TYPE_BOOLEAN:
+					setValue(scriptVariable.getBooleanValueReference());
+					break;
+				case TYPE_INTEGER:
+					setValue(scriptVariable.getIntegerValueReference());
+					break;
+				case TYPE_FLOAT:
+					setValue(scriptVariable.getFloatValueReference());
+					break;
+				case TYPE_STRING:
+					setValue(scriptVariable.getStringValueReference());
+					break;
+				case TYPE_VECTOR3:
+					setValue(scriptVariable.getVector3ValueReference());
+					break;
+				case TYPE_TRANSFORM:
+					setValue(scriptVariable.getTransformValueReference());
+					break;
+			}
+		}
+
 		/**
 		 * Constructor
 		 */
 		inline ScriptVariable() {
+		}
+
+		/**
+		 * Destructor
+		 */
+		inline ~ScriptVariable() {
+			setType(TYPE_VOID);
 		}
 
 		/**
@@ -176,17 +376,18 @@ public:
 				case TYPE_VOID:
 					return optional;
 				case TYPE_BOOLEAN:
-					value = booleanValue;
+					value = getBooleanValueReference();
 					return true;
 					break;
 				case TYPE_INTEGER:
-					value = integerValue != 0;
+					value = getIntegerValueReference() != 0;
 					return true;
 				case TYPE_FLOAT:
-					value = floatValue != 0.0f;
+					value = getFloatValueReference() != 0.0f;
 					return true;
 				case TYPE_STRING:
 					{
+						auto& stringValue = getStringValueReference();
 						auto lowerCaseString = StringTools::toLowerCase(stringValue);
 						if (lowerCaseString != "false" && lowerCaseString != "true" && lowerCaseString != "1" && lowerCaseString != "0") return optional;
 						value = lowerCaseString == "true" || lowerCaseString == "1";
@@ -212,27 +413,30 @@ public:
 				case TYPE_VOID:
 					return optional;
 				case TYPE_BOOLEAN:
-					value = booleanValue == true?1:0;
+					value = getBooleanValueReference() == true?1:0;
 					return true;
 					break;
 				case TYPE_INTEGER:
-					value = integerValue;
+					value = getIntegerValueReference();
 					return true;
 				case TYPE_FLOAT:
 					Console::println("MiniScript::getIntegerValue(): converting float to integer: precision loss");
-					value = floatValue;
+					value = getFloatValueReference();
 					return true;
 				case TYPE_STRING:
-					if (Integer::is(stringValue) == true) {
-						value = Integer::parse(stringValue);
-						return true;
-					} else
-					if (Float::is(stringValue) == true) {
-						Console::println("MiniScript::getIntegerValue(): converting float to integer: precision loss");
-						value = static_cast<int64_t>(Float::parse(stringValue));
-						return true;
-					} else {
-						return optional;
+					{
+						auto& stringValue = getStringValueReference();
+						if (Integer::is(stringValue) == true) {
+							value = Integer::parse(stringValue);
+							return true;
+						} else
+						if (Float::is(stringValue) == true) {
+							Console::println("MiniScript::getIntegerValue(): converting float to integer: precision loss");
+							value = static_cast<int64_t>(Float::parse(stringValue));
+							return true;
+						} else {
+							return optional;
+						}
 					}
 				case TYPE_VECTOR3:
 					return optional;
@@ -253,18 +457,21 @@ public:
 				case TYPE_VOID:
 					return optional;
 				case TYPE_BOOLEAN:
-					value = booleanValue == true?1.0f:0.0f;
+					value = getBooleanValueReference() == true?1.0f:0.0f;
 					return true;
 					break;
 				case TYPE_INTEGER:
-					value = integerValue;
+					value = getIntegerValueReference();
 					return true;
 				case TYPE_FLOAT:
-					value = floatValue;
+					value = getFloatValueReference();
 					return true;
 				case TYPE_STRING:
-					if (Float::is(stringValue) == false) return optional;
-					value = Float::parse(stringValue);
+					{
+						auto& stringValue = getStringValueReference();
+						if (Float::is(stringValue) == false) return optional;
+						value = Float::parse(stringValue);
+					}
 					return true;
 				case TYPE_VECTOR3:
 					return optional;
@@ -285,16 +492,16 @@ public:
 				case TYPE_VOID:
 					return optional;
 				case TYPE_BOOLEAN:
-					value = booleanValue == true?"true":"false";
+					value = getBooleanValueReference() == true?"true":"false";
 					return true;
 				case TYPE_INTEGER:
-					value = to_string(integerValue);
+					value = to_string(getIntegerValueReference());
 					return true;
 				case TYPE_FLOAT:
-					value = to_string(floatValue);
+					value = to_string(getFloatValueReference());
 					return true;
 				case TYPE_STRING:
-					value = stringValue;
+					value = getStringValueReference();
 					return true;
 				case TYPE_VECTOR3:
 					return false;
@@ -323,7 +530,7 @@ public:
 				case TYPE_STRING:
 					return optional;
 				case TYPE_VECTOR3:
-					value = vector3Value;
+					value = getVector3ValueReference();
 					return true;
 				case TYPE_TRANSFORM:
 					return optional;
@@ -352,7 +559,7 @@ public:
 				case TYPE_VECTOR3:
 					return optional;
 				case TYPE_TRANSFORM:
-					value = transformValue;
+					value = getTransformValueReference();
 					return true;
 			}
 			return false;
@@ -363,8 +570,8 @@ public:
 		 * @param value value
 		 */
 		inline void setValue(bool value) {
-			type = TYPE_BOOLEAN;
-			booleanValue = value;
+			setType(TYPE_BOOLEAN);
+			getBooleanValueReference() = value;
 		}
 
 		/**
@@ -372,8 +579,8 @@ public:
 		 * @param value value
 		 */
 		inline void setValue(int64_t value) {
-			type = TYPE_INTEGER;
-			integerValue = value;
+			setType(TYPE_INTEGER);
+			getIntegerValueReference() = value;
 		}
 
 		/**
@@ -381,8 +588,8 @@ public:
 		 * @param value value
 		 */
 		inline void setValue(float value) {
-			type = TYPE_FLOAT;
-			floatValue = value;
+			setType(TYPE_FLOAT);
+			getFloatValueReference() = value;
 		}
 
 		/**
@@ -390,8 +597,8 @@ public:
 		 * @param value value
 		 */
 		inline void setValue(const string& value) {
-			type = TYPE_STRING;
-			stringValue = value;
+			setType(TYPE_STRING);
+			getStringValueReference() = value;
 		}
 
 		/**
@@ -399,8 +606,8 @@ public:
 		 * @param value value
 		 */
 		inline void setValue(const Vector3& value) {
-			type = TYPE_VECTOR3;
-			vector3Value = value;
+			setType(TYPE_VECTOR3);
+			getVector3ValueReference() = value;
 		}
 
 		/**
@@ -408,8 +615,8 @@ public:
 		 * @param value value
 		 */
 		inline void setValue(const Transform& value) {
-			type = TYPE_TRANSFORM;
-			transformValue = value;
+			setType(TYPE_TRANSFORM);
+			getTransformValueReference() = value;
 		}
 
 		/**
@@ -418,23 +625,18 @@ public:
 		 */
 		inline void setImplicitTypedValue(const string& value) {
 			if (value == "true") {
-				type = TYPE_BOOLEAN;
-				booleanValue = true;
+				setValue(true);
 			} else
 			if (value == "false") {
-				type = TYPE_BOOLEAN;
-				booleanValue = false;
+				setValue(false);
 			} else
 			if (Integer::is(value) == true) {
-				type = TYPE_INTEGER;
-				integerValue = Integer::parse(value);
+				setValue(static_cast<int64_t>(Integer::parse(value)));
 			} else
 			if (Float::is(value) == true) {
-				type = TYPE_FLOAT;
-				floatValue = Float::parse(value);
+				setValue(Float::parse(value));
 			} else {
-				type = TYPE_STRING;
-				stringValue = value;
+				setValue(value);
 			}
 		}
 
@@ -444,23 +646,18 @@ public:
 		 */
 		inline void setImplicitTypedValueFromStringView(const string_view& value) {
 			if (value == "true") {
-				type = TYPE_BOOLEAN;
-				booleanValue = true;
+				setValue(true);
 			} else
 			if (value == "false") {
-				type = TYPE_BOOLEAN;
-				booleanValue = false;
+				setValue(false);
 			} else
 			if (Integer::viewIs(value) == true) {
-				type = TYPE_INTEGER;
-				integerValue = Integer::viewParse(value);
+				setValue(static_cast<int64_t>(Integer::viewParse(value)));
 			} else
 			if (Float::viewIs(value) == true) {
-				type = TYPE_FLOAT;
-				floatValue = Float::viewParse(value);
+				setValue(Float::viewParse(value));
 			} else {
-				type = TYPE_STRING;
-				stringValue = string(value);
+				setValue(string(value));
 			}
 		}
 
@@ -508,42 +705,49 @@ public:
 				case TYPE_VOID:
 					break;
 				case TYPE_BOOLEAN:
-					result+= booleanValue == true?"1":"0";
+					result+= getBooleanValueReference() == true?"1":"0";
 					break;
 				case TYPE_INTEGER:
-					result+= to_string(integerValue);
+					result+= to_string(getIntegerValueReference());
 					break;
 				case TYPE_FLOAT:
-					result+= to_string(floatValue);
+					result+= to_string(getFloatValueReference());
 					break;
 				case TYPE_STRING:
-					result+= stringValue;
+					result+= getStringValueReference();
 					break;
 				case TYPE_VECTOR3:
-					result+=
-						"Vector3(" +
-						to_string(vector3Value.getX()) + ", " +
-						to_string(vector3Value.getY()) + ", " +
-						to_string(vector3Value.getZ()) + ")";
+					{
+						auto& vector3Value = getVector3ValueReference();
+						result+=
+							"Vector3(" +
+							to_string(vector3Value.getX()) + ", " +
+							to_string(vector3Value.getY()) + ", " +
+							to_string(vector3Value.getZ()) + ")";
+					}
 					break;
 				case TYPE_TRANSFORM:
-					result+=
-						"Transform(translation = Vector3(" +
-						to_string(transformValue.getTranslation().getX()) + ", " +
-						to_string(transformValue.getTranslation().getY()) + ", " +
-						to_string(transformValue.getTranslation().getZ()) + "), " +
-						"scale = Vector3(" +
-						to_string(transformValue.getScale().getX()) + ", " +
-						to_string(transformValue.getScale().getY()) + ", " +
-						to_string(transformValue.getScale().getZ()) + ")";
-					for (auto i = 0; i < transformValue.getRotationCount(); i++) {
-						result+= ", rotations = (axis = Vector3(" +
-								to_string(transformValue.getRotationAxis(i).getX()) + ", " +
-								to_string(transformValue.getRotationAxis(i).getY()) + ", " +
-								to_string(transformValue.getRotationAxis(i).getZ()) + "), angle = " +
-								to_string(transformValue.getRotationAngle(i)) + ")";
+					{
+						auto& transformValue = getTransformValueReference();
+						result+=
+							"Transform(translation = Vector3(" +
+							to_string(transformValue.getTranslation().getX()) + ", " +
+							to_string(transformValue.getTranslation().getY()) + ", " +
+							to_string(transformValue.getTranslation().getZ()) + "), " +
+							"scale = Vector3(" +
+							to_string(transformValue.getScale().getX()) + ", " +
+							to_string(transformValue.getScale().getY()) + ", " +
+							to_string(transformValue.getScale().getZ()) + ")";
+						for (auto i = 0; i < transformValue.getRotationCount(); i++) {
+							result+= ", rotations = (axis = Vector3(" +
+									to_string(transformValue.getRotationAxis(i).getX()) + ", " +
+									to_string(transformValue.getRotationAxis(i).getY()) + ", " +
+									to_string(transformValue.getRotationAxis(i).getZ()) + "), angle = " +
+									to_string(transformValue.getRotationAngle(i)) + ")";
+						}
+						result+= ")";
 					}
-					result+= ")";
+					break;
 			}
 			return result;
 		}
