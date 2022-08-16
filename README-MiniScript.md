@@ -12,7 +12,7 @@ This is the documentation of MiniScript language. This document is WIP.
 | array.get(array: Array, index: Integer): Mixed                                                   |
 | array.length(array: Array): Integer                                                              |
 | array.push(...): Array                                                                           |
-| array.remove(...): Array                                                                         |
+| array.remove(array: Array, index: Integer): Array                                                |
 | array.set(...): Array                                                                            |
 | bool(bool: Boolean): Boolean                                                                     |
 | concatenate(...): String                                                                         |
