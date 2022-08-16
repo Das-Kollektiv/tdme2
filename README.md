@@ -202,7 +202,7 @@
 	- very small implementation of a scripting language without byte code, VM or what ever
 	- runs on every CPU, OS, ... due to its simplicity, so its highly portable just like TDME2 is
 	- can be easily extended by writing state machine machine states and script methods in C++
-	- only works with the following data type primitives: boolean, integer, float, string, vector3 and transform
+	- only works with the following data type primitives: boolean, integer, float, string, vector3, transform and array(WIP)
 	- when calling script methods/returning from methods it does not use references or pointers but only value by copy
 	- supports operators by operator to method mapping by a preprocessor run
 	- supports loops and conditions

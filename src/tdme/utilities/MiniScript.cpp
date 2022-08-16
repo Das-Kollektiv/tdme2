@@ -347,6 +347,12 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string_view&
 							argumentOk = getTransformValue(argumentValues, argumentIdx, transformValue, argumentType.optional);
 							break;
 						}
+					case TYPE_ARRAY:
+						{
+							vector<ScriptVariable> arrayValue;
+							argumentOk = getArrayValue(argumentValues, argumentIdx, arrayValue, argumentType.optional);
+							break;
+						}
 				}
 				if (argumentOk == false) {
 					Console::println(
@@ -3326,6 +3332,200 @@ void MiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodToLowerCase(this));
 	}
+	// array methods
+	{
+		//
+		class ScriptMethodArray: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodArray(MiniScript* miniScript):
+				ScriptMethod(
+					{},
+					ScriptVariableType::TYPE_ARRAY
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "array";
+			}
+			bool isVariadic() override {
+				return true;
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				for (auto& argumentValue: argumentValues) {
+					returnValue.pushValue(argumentValue);
+				}
+			}
+		};
+		registerMethod(new ScriptMethodArray(this));
+	}
+	{
+		//
+		class ScriptMethodArrayLength: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodArrayLength(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false }
+					},
+					ScriptVariableType::TYPE_INTEGER
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "array.length";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				if (argumentValues.size() != 1 || argumentValues[0].getType() != ScriptVariableType::TYPE_ARRAY) {
+					Console::println("ScriptMethodArrayLength::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: array expected");
+				} else {
+					returnValue.setValue(static_cast<int64_t>(argumentValues[0].getArraySize()));
+				}
+			}
+		};
+		registerMethod(new ScriptMethodArrayLength(this));
+	}
+	{
+		//
+		class ScriptMethodArrayPush: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodArrayPush(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false }
+					},
+					ScriptVariableType::TYPE_ARRAY
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "array.push";
+			}
+			bool isVariadic() override {
+				return true;
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				//
+				if (argumentValues.size() < 1 || argumentValues[0].getType() != ScriptVariableType::TYPE_ARRAY) {
+					Console::println("ScriptMethodArrayPush::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: array expected");
+				} else {
+					returnValue = argumentValues[0];
+					for (auto i = 1; i < argumentValues.size(); i++) {
+						returnValue.pushValue(argumentValues[i]);
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodArrayPush(this));
+	}
+	{
+		//
+		class ScriptMethodArrayGet: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodArrayGet(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false },
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "index", .optional = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "array.get";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				int64_t index;
+				if ((argumentValues.size() <= 1 || argumentValues[0].getType() != ScriptVariableType::TYPE_ARRAY) ||
+					MiniScript::getIntegerValue(argumentValues, 1, index, false) == false) {
+					Console::println("ScriptMethodArrayGet::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: array expected, @argument 1: integer expected");
+				} else {
+					returnValue = argumentValues[0].getValue(index);
+				}
+			}
+			bool isMixedReturnValue() override {
+				return true;
+			}
+		};
+		registerMethod(new ScriptMethodArrayGet(this));
+	}
+	{
+		//
+		class ScriptMethodArraySet: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodArraySet(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false },
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "index", .optional = false }
+					},
+					ScriptVariableType::TYPE_ARRAY
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "array.set";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				int64_t index;
+				if ((argumentValues.size() <= 2 || argumentValues[0].getType() != ScriptVariableType::TYPE_ARRAY) ||
+					MiniScript::getIntegerValue(argumentValues, 1, index, false) == false) {
+					Console::println("ScriptMethodArraySet::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: array expected, @argument 1: integer expected");
+				} else {
+					returnValue = argumentValues[0];
+					returnValue.setValue(index, argumentValues[2]);
+				}
+			}
+			bool isVariadic() override {
+				return true;
+			}
+		};
+		registerMethod(new ScriptMethodArraySet(this));
+	}
+	{
+		//
+		class ScriptMethodArrayRemove: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodArrayRemove(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false },
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "index", .optional = false }
+					},
+					ScriptVariableType::TYPE_ARRAY
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "array.remove";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				int64_t index;
+				if ((argumentValues.size() < 2 || argumentValues[0].getType() != ScriptVariableType::TYPE_ARRAY) ||
+					MiniScript::getIntegerValue(argumentValues, 1, index, false) == false) {
+					Console::println("ScriptMethodArraySet::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: array expected, @argument 1: integer expected");
+				} else {
+					auto& arrayValue = argumentValues[0];
+					returnValue.setType(ScriptVariableType::TYPE_ARRAY);
+					for (auto i = 0; i < arrayValue.getArraySize(); i++) {
+						if (i == index) continue;
+						returnValue.pushValue(arrayValue.getValue(i));
+					}
+				}
+			}
+			bool isVariadic() override {
+				return true;
+			}
+		};
+		registerMethod(new ScriptMethodArrayRemove(this));
+	}
+	// get variable
 	{
 		//
 		class ScriptMethodGetVariable: public ScriptMethod {
@@ -3359,7 +3559,7 @@ void MiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodGetVariable(this));
 	}
-	// set
+	// set variable
 	{
 		//
 		class ScriptMethodSetVariable: public ScriptMethod {

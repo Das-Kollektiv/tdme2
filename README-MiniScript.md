@@ -8,6 +8,12 @@ This is the documentation of MiniScript language. This document is WIP.
 |--------------------------------------------------------------------------------------------------|
 | add(...): Mixed                                                                                  |
 | and(...): Boolean                                                                                |
+| array(...): Array                                                                                |
+| array.get(array: Array, index: Integer): Mixed                                                   |
+| array.length(array: Array): Integer                                                              |
+| array.push(...): Array                                                                           |
+| array.remove(...): Array                                                                         |
+| array.set(...): Array                                                                            |
 | bool(bool: Boolean): Boolean                                                                     |
 | concatenate(...): String                                                                         |
 | console.log(...): Void                                                                           |
@@ -82,5 +88,4 @@ This is the documentation of MiniScript language. This document is WIP.
 | == | equals(...): Boolean                                                                        |
 | >  | greater(a: Float, b: Float): Boolean                                                        |
 | >= | greaterequals(a: Float, b: Float): Boolean                                                  |
-| \|\| | or(...): Boolean                                                                            |
-
+| \|\|| or(...): Boolean                                                                           |

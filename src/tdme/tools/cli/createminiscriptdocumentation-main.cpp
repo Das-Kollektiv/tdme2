@@ -8,6 +8,7 @@
 #include <tdme/engine/Version.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/MiniScript.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::set;
 using std::string;
@@ -18,6 +19,7 @@ using tdme::application::Application;
 using tdme::engine::Version;
 using tdme::utilities::Console;
 using tdme::utilities::MiniScript;
+using tdme::utilities::StringTools;
 
 int main(int argc, char** argv)
 {
@@ -68,7 +70,7 @@ int main(int argc, char** argv)
 	for (auto method: scriptOperatorMethods) {
 		string operatorString;
 		operatorString = "| ";
-		operatorString+= MiniScript::getOperatorAsString(method->getOperator());
+		operatorString+= StringTools::replace(MiniScript::getOperatorAsString(method->getOperator()), "|", "\\|");
 		while (operatorString.size() < 5) operatorString+= " ";
 		operatorString+= "| ";
 		operatorString+= method->getMethodName();

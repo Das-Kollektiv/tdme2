@@ -90,7 +90,8 @@ public:
 		TYPE_FLOAT,
 		TYPE_STRING,
 		TYPE_VECTOR3,
-		TYPE_TRANSFORM
+		TYPE_TRANSFORM,
+		TYPE_ARRAY
 	};
 
 	class ScriptVariable {
@@ -183,57 +184,17 @@ public:
 		}
 
 		/**
-		 * Set type
-		 * @param newType new type
+		 * @return array value reference
 		 */
-		inline void setType(ScriptVariableType newType) {
-			if (type == newType) return;
-			switch(type) {
-				case TYPE_VOID:
-					break;
-				case TYPE_BOOLEAN:
-					delete static_cast<bool*>(valuePtr);
-					break;
-				case TYPE_INTEGER:
-					delete static_cast<int64_t*>(valuePtr);
-					break;
-				case TYPE_FLOAT:
-					delete static_cast<float*>(valuePtr);
-					break;
-				case TYPE_STRING:
-					delete static_cast<string*>(valuePtr);
-					break;
-				case TYPE_VECTOR3:
-					delete static_cast<Vector3*>(valuePtr);
-					break;
-				case TYPE_TRANSFORM:
-					delete static_cast<Transform*>(valuePtr);
-					break;
-			}
-			this->valuePtr = nullptr;
-			this->type = newType;
-			switch(type) {
-				case TYPE_VOID:
-					break;
-				case TYPE_BOOLEAN:
-					valuePtr = new bool();
-					break;
-				case TYPE_INTEGER:
-					valuePtr = new int64_t();
-					break;
-				case TYPE_FLOAT:
-					valuePtr = new float();
-					break;
-				case TYPE_STRING:
-					valuePtr = new string();
-					break;
-				case TYPE_VECTOR3:
-					valuePtr = new Vector3();
-					break;
-				case TYPE_TRANSFORM:
-					valuePtr = new Transform();
-					break;
-			}
+		inline vector<ScriptVariable>& getArrayValueReference() {
+			return *static_cast<vector<ScriptVariable>*>(valuePtr);
+		}
+
+		/**
+		 * @return const array value reference
+		 */
+		inline const vector<ScriptVariable>& getArrayValueReference() const {
+			return *static_cast<vector<ScriptVariable>*>(valuePtr);
 		}
 
 	public:
@@ -264,6 +225,9 @@ public:
 				case TYPE_TRANSFORM:
 					setValue(scriptVariable.getTransformValueReference());
 					break;
+				case TYPE_ARRAY:
+					setValue(scriptVariable.getArrayValueReference());
+					break;
 			}
 			return *this;
 		}
@@ -293,6 +257,9 @@ public:
 					break;
 				case TYPE_TRANSFORM:
 					setValue(scriptVariable.getTransformValueReference());
+					break;
+				case TYPE_ARRAY:
+					setValue(scriptVariable.getArrayValueReference());
 					break;
 			}
 		}
@@ -359,10 +326,78 @@ public:
 		}
 
 		/**
+		 * Constructor
+		 * @param value value
+		 */
+		inline ScriptVariable(const vector<ScriptVariable>& value) {
+			setValue(value);
+		}
+
+		/**
 		 * @return type
 		 */
 		inline ScriptVariableType getType() const {
 			return type;
+		}
+
+		/**
+		 * Set type
+		 * @param newType new type
+		 */
+		inline void setType(ScriptVariableType newType) {
+			if (type == newType) return;
+			switch(type) {
+				case TYPE_VOID:
+					break;
+				case TYPE_BOOLEAN:
+					delete static_cast<bool*>(valuePtr);
+					break;
+				case TYPE_INTEGER:
+					delete static_cast<int64_t*>(valuePtr);
+					break;
+				case TYPE_FLOAT:
+					delete static_cast<float*>(valuePtr);
+					break;
+				case TYPE_STRING:
+					delete static_cast<string*>(valuePtr);
+					break;
+				case TYPE_VECTOR3:
+					delete static_cast<Vector3*>(valuePtr);
+					break;
+				case TYPE_TRANSFORM:
+					delete static_cast<Transform*>(valuePtr);
+					break;
+				case TYPE_ARRAY:
+					delete static_cast<vector<ScriptVariable>*>(valuePtr);
+					break;
+			}
+			this->valuePtr = nullptr;
+			this->type = newType;
+			switch(type) {
+				case TYPE_VOID:
+					break;
+				case TYPE_BOOLEAN:
+					valuePtr = new bool();
+					break;
+				case TYPE_INTEGER:
+					valuePtr = new int64_t();
+					break;
+				case TYPE_FLOAT:
+					valuePtr = new float();
+					break;
+				case TYPE_STRING:
+					valuePtr = new string();
+					break;
+				case TYPE_VECTOR3:
+					valuePtr = new Vector3();
+					break;
+				case TYPE_TRANSFORM:
+					valuePtr = new Transform();
+					break;
+				case TYPE_ARRAY:
+					valuePtr = new vector<ScriptVariable>();
+					break;
+			}
 		}
 
 		/**
@@ -396,6 +431,9 @@ public:
 				case TYPE_VECTOR3:
 					return false;
 				case TYPE_TRANSFORM:
+					return false;
+					break;
+				case TYPE_ARRAY:
 					return false;
 					break;
 			}
@@ -442,6 +480,8 @@ public:
 					return optional;
 				case TYPE_TRANSFORM:
 					return optional;
+				case TYPE_ARRAY:
+					return optional;
 			}
 			return false;
 		}
@@ -477,6 +517,8 @@ public:
 					return optional;
 				case TYPE_TRANSFORM:
 					return optional;
+				case TYPE_ARRAY:
+					return optional;
 			}
 			return false;
 		}
@@ -507,6 +549,8 @@ public:
 					return false;
 				case TYPE_TRANSFORM:
 					return false;
+				case TYPE_ARRAY:
+					return false;
 			}
 			return false;
 		}
@@ -534,6 +578,8 @@ public:
 					return true;
 				case TYPE_TRANSFORM:
 					return optional;
+				case TYPE_ARRAY:
+					return optional;
 			}
 			return false;
 		}
@@ -560,6 +606,37 @@ public:
 					return optional;
 				case TYPE_TRANSFORM:
 					value = getTransformValueReference();
+					return true;
+				case TYPE_ARRAY:
+					return optional;
+			}
+			return false;
+		}
+
+		/**
+		 * Get array value from given variable
+		 * @param value value
+		 * @param optional optional
+		 * @return success
+		 */
+		inline bool getArrayValue(vector<ScriptVariable>& value, bool optional = false) const {
+			switch(type) {
+				case TYPE_VOID:
+					return optional;
+				case TYPE_BOOLEAN:
+					return optional;
+				case TYPE_INTEGER:
+					return optional;
+				case TYPE_FLOAT:
+					return optional;
+				case TYPE_STRING:
+					return optional;
+				case TYPE_VECTOR3:
+					return optional;
+				case TYPE_TRANSFORM:
+					return optional;
+				case TYPE_ARRAY:
+					value = getArrayValueReference();
 					return true;
 			}
 			return false;
@@ -620,6 +697,59 @@ public:
 		}
 
 		/**
+		 * Set array value from given value into variable
+		 * @param value value
+		 */
+		inline void setValue(const vector<ScriptVariable>& value) {
+			// TODO: be verbose about misuse
+			setType(TYPE_ARRAY);
+			getArrayValueReference() = value;
+		}
+
+		/**
+		 * Get value from array with given index
+		 * @param idx index
+		 */
+		inline const ScriptVariable getValue(int idx) const {
+			// TODO: be verbose about misuse
+			if (type != TYPE_ARRAY) return ScriptVariable();
+			auto& arrayValue = getArrayValueReference();
+			if (idx < arrayValue.size()) return arrayValue[idx];
+			return ScriptVariable();
+		}
+
+		/**
+		 * Set value to array with given index
+		 * @param idx index
+		 */
+		inline void setValue(int idx, const ScriptVariable& value) {
+			// TODO: be verbose about misuse
+			setType(TYPE_ARRAY);
+			auto& arrayValue = getArrayValueReference();
+			while (arrayValue.size() <= idx) pushValue(ScriptVariable());
+			arrayValue[idx] = value;
+		}
+
+		/**
+		 * Push value to array
+		 * @param value value
+		 */
+		inline void pushValue(const ScriptVariable& value) {
+			// TODO: be verbose about misuse
+			setType(TYPE_ARRAY);
+			getArrayValueReference().push_back(value);
+		}
+
+		/**
+		 * Get array length
+		 */
+		inline int64_t getArraySize() const {
+			// TODO: be verbose about misuse
+			if (getType() != TYPE_ARRAY) return 0;
+			return getArrayValueReference().size();
+		}
+
+		/**
 		 * Set implicit typed value given by value string
 		 * @param value value
 		 */
@@ -673,6 +803,7 @@ public:
 				case TYPE_STRING: return "String";
 				case TYPE_VECTOR3: return "Vector3";
 				case TYPE_TRANSFORM: return "Transform";
+				case TYPE_ARRAY: return "Array";
 			}
 			return string();
 		}
@@ -703,6 +834,7 @@ public:
 			string result;
 			switch (type) {
 				case TYPE_VOID:
+					result+= "<VOID>";
 					break;
 				case TYPE_BOOLEAN:
 					result+= getBooleanValueReference() == true?"1":"0";
@@ -748,6 +880,18 @@ public:
 						result+= ")";
 					}
 					break;
+				case TYPE_ARRAY:
+					{
+						auto& arrayValue = getArrayValueReference();
+						result+="[";
+						string valuesString;
+						for (auto& value: arrayValue) {
+							if (valuesString.empty() == false) valuesString+= ", ";
+							valuesString+= value.getValueString();
+						}
+						result+= valuesString;
+						result+="]";
+					}
 			}
 			return result;
 		}
@@ -1434,6 +1578,35 @@ public:
 		if (idx >= arguments.size()) return optional;
 		auto& argument = arguments[idx];
 		return argument.getTransformValue(value, optional);
+	}
+
+	/**
+	 * Get array value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optional
+	 * @return success
+	 */
+	inline static bool getArrayValue(const vector<ScriptVariable>& arguments, int idx, vector<ScriptVariable>& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		return argument.getArrayValue(value, optional);
+	}
+
+	/**
+	 * Get array value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optional
+	 * @return success
+	 */
+	template<std::size_t SIZE>
+	inline static bool getArrayValue(const array<ScriptVariable, SIZE>& arguments, int idx, vector<ScriptVariable>& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		return argument.getArrayValue(value, optional);
 	}
 
 	/**

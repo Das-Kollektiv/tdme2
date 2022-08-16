@@ -8,10 +8,6 @@ end
 
 # if no condition is met, nothing will be executed, lol :D
 on: nothing
-	console.log("---------")
-	console.log("Nothing")
-	console.log("----------")
-	console.log()
 	console.log("-----------------------")
 	console.log("Check bool operations")
 	console.log("-----------------------")
@@ -154,6 +150,29 @@ on: nothing
 	console.log("Test: string concatenation with brackets in string literals: " + $i + "(" + $j + ")")
 	console.log("-------------------------------------------------------------------------------------")
 	console.log("(4.0 + 2.0) / 2.0 + (20.0 / 10.0 * (2.0 + 5)): ", (4.0 + 2.0) / 2.0 + (20.0 / 10.0 * (2.0 + 5)), " = 17")
+	console.log("---------")
+	console.log("Arrays")
+	console.log("----------")
+	$array = array(1,2,3)
+	console.log("array initialized with: $array = array(1,2,3)")
+	console.log("array now looks like: ", $array)
+	console.log("array length: ", array.length($array))
+	$array = array.push($array, 8, 9, 10)
+	console.log("array pushed 8, 9, 10: ")
+	console.log("array now looks like: ", $array)
+	console.log("array length: ", array.length($array))
+	console.log("array iteration: ")
+	$i = 0
+	forCondition($i < array.length($array))
+		console.log($i + ": " + array.get($array, $i))
+		$i = $i + 1
+	end 
+	console.log("array set at index 20 = 11: ")
+	$array = array.set($array, 20, 11)
+	console.log("array now looks like: ", $array)
+	console.log("array remove @ 20: ")
+	$array = array.remove($array, 20)
+	console.log("array now looks like: ", $array)
 	console.log("--------------------------------------------------")
 	console.log("Test if enabled naming condition will be emitted")
 	console.log("--------------------------------------------------")
