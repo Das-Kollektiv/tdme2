@@ -160,6 +160,7 @@ bool MiniScript::parseScriptStatement(const string_view& statement, string_view&
 			}
 		} else
 		if (quote == false) {
+			// TODO: guess I need to check here too for balance of [ and ] also
 			if (c == '(') {
 				bracketCount++;
 				if (bracketCount > 1) {
@@ -276,14 +277,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string_view&
 		} else
 		// variable
 		if (StringTools::viewStartsWith(argument, "$") == true) {
-			auto variableIt = scriptState.variables.find(string(argument));
-			if (variableIt == scriptState.variables.end()) {
-				Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': " + string(method) + "(" + string(argument) + "): variable: '" + string(argument) + "' does not exist");
-				argumentValues.push_back(ScriptVariable());
-			} else {
-				auto argumentValue = *variableIt->second;
-				argumentValues.push_back(argumentValue);
-			}
+			argumentValues.push_back(getVariable(string(argument), &statement));
 		} else {
 			// literal
 			ScriptVariable argumentValue;
@@ -1126,17 +1120,17 @@ const string MiniScript::getInformation() {
 				method+= scriptMethod->getMethodName();
 				method+= "(";
 				auto argumentIdx = 0;
-				if (scriptMethod->isVariadic() == true) {
-					method+="...";
-				} else {
-					for (auto& argumentType: scriptMethod->getArgumentTypes()) {
-						if (argumentIdx > 0) method+= ", ";
-						method+= argumentType.name + ": " + ScriptVariable::getTypeAsString(argumentType.type);
-						if (argumentType.optional == true) {
-							method+= "(OPTIONAL)";
-						}
-						argumentIdx++;
+				for (auto& argumentType: scriptMethod->getArgumentTypes()) {
+					if (argumentIdx > 0) method+= ", ";
+					method+= "$" + argumentType.name + ": " + ScriptVariable::getTypeAsString(argumentType.type);
+					if (argumentType.optional == true) {
+						method+= "(OPTIONAL)";
 					}
+					argumentIdx++;
+				}
+				if (scriptMethod->isVariadic() == true) {
+					if (argumentIdx > 0) method+= ", ";
+					method+="...";
 				}
 				method+= "): ";
 				method+= scriptMethod->isMixedReturnValue() == true?"Mixed":ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType());
@@ -1159,17 +1153,17 @@ const string MiniScript::getInformation() {
 				operatorString+= method->getMethodName();
 				operatorString+= "(";
 				auto argumentIdx = 0;
-				if (method->isVariadic() == true) {
-					operatorString+="...";
-				} else {
-					for (auto& argumentType: method->getArgumentTypes()) {
-						if (argumentIdx > 0) operatorString+= ", ";
-						operatorString+= argumentType.name + ": " + ScriptVariable::getTypeAsString(argumentType.type);
-						if (argumentType.optional == true) {
-							operatorString+= "(OPTIONAL)";
-						}
-						argumentIdx++;
+				for (auto& argumentType: method->getArgumentTypes()) {
+					if (argumentIdx > 0) operatorString+= ", ";
+					operatorString+= "$" + argumentType.name + ": " + ScriptVariable::getTypeAsString(argumentType.type);
+					if (argumentType.optional == true) {
+						operatorString+= "(OPTIONAL)";
 					}
+					argumentIdx++;
+				}
+				if (method->isVariadic() == true) {
+					if (argumentIdx > 0) operatorString+= ", ";
+					operatorString+="...";
 				}
 				operatorString+= "): ";
 				operatorString+= method->isMixedReturnValue() == true?"Mixed":ScriptVariable::getTypeAsString(method->getReturnValueType());
@@ -3532,7 +3526,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodGetVariable(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_STRING, .name = "variable", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "variable", .optional = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -3563,7 +3557,16 @@ void MiniScript::registerMethods() {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodSetVariable(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_VOID), miniScript(miniScript) {}
+			ScriptMethodSetVariable(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						// TODO: { .type = ScriptVariableType::TYPE_STRING, .name = "variable", .optional = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {
+				//
+			}
 			const string getMethodName() override {
 				return "setVariable";
 			}
@@ -3574,7 +3577,7 @@ void MiniScript::registerMethods() {
 					Console::println("ScriptMethodSetVariable::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 					miniScript->startErrorScript();
 				} else {
-					miniScript->setVariable(variable, argumentValues[1]);
+					miniScript->setVariable(variable, argumentValues[1], &statement);
 					returnValue = argumentValues[1];
 				}
 			}
@@ -3589,6 +3592,39 @@ void MiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodSetVariable(this));
+	}
+	// unset variable
+	{
+		//
+		class ScriptMethodUnsetVariable: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodUnsetVariable(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "variable", .optional = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {
+				//
+			}
+			const string getMethodName() override {
+				return "unsetVariable";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string variable;
+				if (argumentValues.size() != 1 ||
+					MiniScript::getStringValue(argumentValues, 0, variable, false) == false) {
+					Console::println("ScriptMethodUnsetVariable::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				} else {
+					miniScript->unsetVariable(variable, &statement);
+				}
+			}
+		};
+		registerMethod(new ScriptMethodUnsetVariable(this));
 	}
 	// time
 	{

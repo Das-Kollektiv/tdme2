@@ -60,6 +60,7 @@ This is the documentation of MiniScript language. This document is WIP.
 | transform.setRotationAngle($transform: Transform, $idx: Integer, $angle: Float): Transform       |
 | transform.setScale($transform: Transform, $scale: Vector3): Transform                            |
 | transform.setTranslation($transform: Transform, $translation: Vector3): Transform                |
+| unsetVariable($variable: String): Void                                                           |
 | vec3($x: Float, $y: Float, $z: Float): Vector3                                                   |
 | vec3.computeAngle($a: Vector3, $b: Vector3, $n: Vector3): Float                                  |
 | vec3.computeCrossProduct($a: Vector3, $b: Vector3): Vector3                                      |

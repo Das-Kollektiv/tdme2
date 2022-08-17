@@ -43,17 +43,17 @@ int main(int argc, char** argv)
 		method+= scriptMethod->getMethodName();
 		method+= "(";
 		auto argumentIdx = 0;
-		if (scriptMethod->isVariadic() == true) {
-			method+="...";
-		} else {
-			for (auto& argumentType: scriptMethod->getArgumentTypes()) {
-				if (argumentIdx > 0) method+= ", ";
-				method+= argumentType.name + ": " + MiniScript::ScriptVariable::getTypeAsString(argumentType.type);
-				if (argumentType.optional == true) {
-					method+= "(OPTIONAL)";
-				}
-				argumentIdx++;
+		for (auto& argumentType: scriptMethod->getArgumentTypes()) {
+			if (argumentIdx > 0) method+= ", ";
+			method+= "$" + argumentType.name + ": " + MiniScript::ScriptVariable::getTypeAsString(argumentType.type);
+			if (argumentType.optional == true) {
+				method+= "(OPTIONAL)";
 			}
+			argumentIdx++;
+		}
+		if (scriptMethod->isVariadic() == true) {
+			if (argumentIdx > 0) method+= ", ";
+			method+="...";
 		}
 		method+= "): ";
 		method+= scriptMethod->isMixedReturnValue() == true?"Mixed":MiniScript::ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType());
@@ -76,17 +76,17 @@ int main(int argc, char** argv)
 		operatorString+= method->getMethodName();
 		operatorString+= "(";
 		auto argumentIdx = 0;
-		if (method->isVariadic() == true) {
-			operatorString+="...";
-		} else {
-			for (auto& argumentType: method->getArgumentTypes()) {
-				if (argumentIdx > 0) operatorString+= ", ";
-				operatorString+= argumentType.name + ": " + MiniScript::ScriptVariable::getTypeAsString(argumentType.type);
-				if (argumentType.optional == true) {
-					operatorString+= "(OPTIONAL)";
-				}
-				argumentIdx++;
+		for (auto& argumentType: method->getArgumentTypes()) {
+			if (argumentIdx > 0) operatorString+= ", ";
+			operatorString+= "$" + argumentType.name + ": " + MiniScript::ScriptVariable::getTypeAsString(argumentType.type);
+			if (argumentType.optional == true) {
+				operatorString+= "(OPTIONAL)";
 			}
+			argumentIdx++;
+		}
+		if (method->isVariadic() == true) {
+			if (argumentIdx > 0) operatorString+= ", ";
+			operatorString+="...";
 		}
 		operatorString+= "): ";
 		operatorString+= method->isMixedReturnValue() == true?"Mixed":MiniScript::ScriptVariable::getTypeAsString(method->getReturnValueType());

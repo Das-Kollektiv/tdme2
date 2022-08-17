@@ -6889,7 +6889,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 			miniScript->startErrorScript(); return;
 		} else {
-			miniScript->setVariable(variable, argumentValues[1]);
+			miniScript->setVariable(variable, argumentValues[1], &statement);
 			returnValue = argumentValues[1];
 		}
 	}
@@ -6957,7 +6957,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 			miniScript->startErrorScript(); return;
 		} else {
-			miniScript->setVariable(variable, argumentValues[1]);
+			miniScript->setVariable(variable, argumentValues[1], &statement);
 			returnValue = argumentValues[1];
 		}
 	}
@@ -8136,7 +8136,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 			miniScript->startErrorScript(); return;
 		} else {
-			miniScript->setVariable(variable, argumentValues[1]);
+			miniScript->setVariable(variable, argumentValues[1], &statement);
 			returnValue = argumentValues[1];
 		}
 	}
@@ -8243,7 +8243,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 			miniScript->startErrorScript(); return;
 		} else {
-			miniScript->setVariable(variable, argumentValues[1]);
+			miniScript->setVariable(variable, argumentValues[1], &statement);
 			returnValue = argumentValues[1];
 		}
 	}
@@ -8455,7 +8455,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 			miniScript->startErrorScript(); return;
 		} else {
-			miniScript->setVariable(variable, argumentValues[1]);
+			miniScript->setVariable(variable, argumentValues[1], &statement);
 			returnValue = argumentValues[1];
 		}
 	}
@@ -8567,7 +8567,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 			miniScript->startErrorScript(); return;
 		} else {
-			miniScript->setVariable(variable, argumentValues[1]);
+			miniScript->setVariable(variable, argumentValues[1], &statement);
 			returnValue = argumentValues[1];
 		}
 	}
@@ -8803,7 +8803,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 			miniScript->startErrorScript(); return;
 		} else {
-			miniScript->setVariable(variable, argumentValues[1]);
+			miniScript->setVariable(variable, argumentValues[1], &statement);
 			returnValue = argumentValues[1];
 		}
 	}
@@ -8949,7 +8949,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 			miniScript->startErrorScript(); return;
 		} else {
-			miniScript->setVariable(variable, argumentValues[1]);
+			miniScript->setVariable(variable, argumentValues[1], &statement);
 			returnValue = argumentValues[1];
 		}
 	}
@@ -9610,7 +9610,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 			miniScript->startErrorScript(); return;
 		} else {
-			miniScript->setVariable(variable, argumentValues[1]);
+			miniScript->setVariable(variable, argumentValues[1], &statement);
 			returnValue = argumentValues[1];
 		}
 	}
@@ -9671,7 +9671,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 			miniScript->startErrorScript(); return;
 		} else {
-			miniScript->setVariable(variable, argumentValues[1]);
+			miniScript->setVariable(variable, argumentValues[1], &statement);
 			returnValue = argumentValues[1];
 		}
 	}
@@ -9694,7 +9694,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 			miniScript->startErrorScript(); return;
 		} else {
-			miniScript->setVariable(variable, argumentValues[1]);
+			miniScript->setVariable(variable, argumentValues[1], &statement);
 			returnValue = argumentValues[1];
 		}
 	}
@@ -9717,7 +9717,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 			miniScript->startErrorScript(); return;
 		} else {
-			miniScript->setVariable(variable, argumentValues[1]);
+			miniScript->setVariable(variable, argumentValues[1], &statement);
 			returnValue = argumentValues[1];
 		}
 	}
@@ -10941,7 +10941,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 			miniScript->startErrorScript(); return;
 		} else {
-			miniScript->setVariable(variable, argumentValues[1]);
+			miniScript->setVariable(variable, argumentValues[1], &statement);
 			returnValue = argumentValues[1];
 		}
 	}
@@ -11100,7 +11100,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 			miniScript->startErrorScript(); return;
 		} else {
-			miniScript->setVariable(variable, argumentValues[1]);
+			miniScript->setVariable(variable, argumentValues[1], &statement);
 			returnValue = argumentValues[1];
 		}
 	}
@@ -11239,7 +11239,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 			miniScript->startErrorScript(); return;
 		} else {
-			miniScript->setVariable(variable, argumentValues[1]);
+			miniScript->setVariable(variable, argumentValues[1], &statement);
 			returnValue = argumentValues[1];
 		}
 	}
@@ -11671,7 +11671,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 			miniScript->startErrorScript(); return;
 		} else {
-			miniScript->setVariable(variable, argumentValues[1]);
+			miniScript->setVariable(variable, argumentValues[1], &statement);
 			returnValue = argumentValues[1];
 		}
 	}
@@ -11784,7 +11784,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 			miniScript->startErrorScript(); return;
 		} else {
-			miniScript->setVariable(variable, argumentValues[1]);
+			miniScript->setVariable(variable, argumentValues[1], &statement);
 			returnValue = argumentValues[1];
 		}
 	}
@@ -11896,7 +11896,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 			miniScript->startErrorScript(); return;
 		} else {
-			miniScript->setVariable(variable, argumentValues[1]);
+			miniScript->setVariable(variable, argumentValues[1], &statement);
 			returnValue = argumentValues[1];
 		}
 	}
@@ -12448,7 +12448,7 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 			miniScript->startErrorScript(); return;
 		} else {
-			miniScript->setVariable(variable, argumentValues[1]);
+			miniScript->setVariable(variable, argumentValues[1], &statement);
 			returnValue = argumentValues[1];
 		}
 	}
@@ -12471,7 +12471,7 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 			miniScript->startErrorScript(); return;
 		} else {
-			miniScript->setVariable(variable, argumentValues[1]);
+			miniScript->setVariable(variable, argumentValues[1], &statement);
 			returnValue = argumentValues[1];
 		}
 	}
@@ -12494,7 +12494,7 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 			miniScript->startErrorScript(); return;
 		} else {
-			miniScript->setVariable(variable, argumentValues[1]);
+			miniScript->setVariable(variable, argumentValues[1], &statement);
 			returnValue = argumentValues[1];
 		}
 	}
@@ -12517,7 +12517,7 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 			miniScript->startErrorScript(); return;
 		} else {
-			miniScript->setVariable(variable, argumentValues[1]);
+			miniScript->setVariable(variable, argumentValues[1], &statement);
 			returnValue = argumentValues[1];
 		}
 	}
@@ -13185,7 +13185,7 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 			miniScript->startErrorScript(); return;
 		} else {
-			miniScript->setVariable(variable, argumentValues[1]);
+			miniScript->setVariable(variable, argumentValues[1], &statement);
 			returnValue = argumentValues[1];
 		}
 	}
@@ -13360,7 +13360,7 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 			miniScript->startErrorScript(); return;
 		} else {
-			miniScript->setVariable(variable, argumentValues[1]);
+			miniScript->setVariable(variable, argumentValues[1], &statement);
 			returnValue = argumentValues[1];
 		}
 	}
@@ -13508,7 +13508,7 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 			miniScript->startErrorScript(); return;
 		} else {
-			miniScript->setVariable(variable, argumentValues[1]);
+			miniScript->setVariable(variable, argumentValues[1], &statement);
 			returnValue = argumentValues[1];
 		}
 	}
@@ -13618,7 +13618,7 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 			miniScript->startErrorScript(); return;
 		} else {
-			miniScript->setVariable(variable, argumentValues[1]);
+			miniScript->setVariable(variable, argumentValues[1], &statement);
 			returnValue = argumentValues[1];
 		}
 	}
@@ -13706,7 +13706,7 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 			miniScript->startErrorScript(); return;
 		} else {
-			miniScript->setVariable(variable, argumentValues[1]);
+			miniScript->setVariable(variable, argumentValues[1], &statement);
 			returnValue = argumentValues[1];
 		}
 	}
@@ -13814,7 +13814,7 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
 			miniScript->startErrorScript(); return;
 		} else {
-			miniScript->setVariable(variable, argumentValues[1]);
+			miniScript->setVariable(variable, argumentValues[1], &statement);
 			returnValue = argumentValues[1];
 		}
 	}

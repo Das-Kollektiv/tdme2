@@ -1624,16 +1624,25 @@ public:
 	/**
 	 * Returns variable with given name
 	 * @param name name
+	 * @param statement optional statement the variable is read in
 	 * @return variable
 	 */
-	inline const ScriptVariable getVariable(const string& name) {
+	inline const ScriptVariable getVariable(const string& name, const ScriptStatement* statement = nullptr) {
 		if (StringTools::startsWith(name, "$") == false) {
-			Console::println("MiniScript::getVariable(): '" + scriptFileName + "': variable with name '" + name + "' does not exist: variable names must start with '$'");
+			if (statement != nullptr) {
+				Console::println("MiniScript::getVariable(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': variable names must start with an $");
+			} else {
+				Console::println("MiniScript::getVariable(): '" + scriptFileName + "': variable: '" + name + "': variable names must start with an $");
+			}
 			return ScriptVariable();
 		}
 		auto scriptVariableIt = scriptState.variables.find(name);
 		if (scriptVariableIt == scriptState.variables.end()) {
-			Console::println("MiniScript::getVariable(): '" + scriptFileName + "': variable with name '" + name + "' does not exist.");
+			if (statement != nullptr) {
+				Console::println("MiniScript::getVariable(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "' does not exist");
+			} else {
+				Console::println("MiniScript::getVariable(): '" + scriptFileName + "': variable: '" + name + "' does not exist");
+			}
 			return ScriptVariable();
 		}
 		return *scriptVariableIt->second;
@@ -1643,10 +1652,15 @@ public:
 	 * Set script variable
 	 * @param name name
 	 * @param variable variable
+	 * @param statement optional statement the variable is written in
 	 */
-	inline void setVariable(const string& name, const ScriptVariable& variable) {
+	inline void setVariable(const string& name, const ScriptVariable& variable, const ScriptStatement* statement = nullptr) {
 		if (StringTools::startsWith(name, "$") == false) {
-			Console::println("MiniScript::setVariable(): '" + scriptFileName + "': variable name '" + name + "': variable names must start with '$'");
+			if (statement != nullptr) {
+				Console::println("MiniScript::setVariable(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': variable names must start with an $");
+			} else {
+				Console::println("MiniScript::setVariable(): '" + scriptFileName + "': variable: '" + name + "': variable names must start with an $");
+			}
 			return;
 		}
 		auto scriptVariableIt = scriptState.variables.find(name);
@@ -1663,10 +1677,15 @@ public:
 	/**
 	 * Unset script variable
 	 * @param name name
+	 * @param statement optional statement the variable is unset in
 	 */
-	inline void unsetVariable(const string& name) {
+	inline void unsetVariable(const string& name, const ScriptStatement* statement = nullptr) {
 		if (StringTools::startsWith(name, "$") == false) {
-			Console::println("MiniScript::unsetVariable(): '" + scriptFileName + "': variable name '" + name + "': variable names must start with '$'");
+			if (statement != nullptr) {
+				Console::println("MiniScript::unsetVariable(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': variable names must start with an $");
+			} else {
+				Console::println("MiniScript::unsetVariable(): '" + scriptFileName + "': variable: '" + name + "': variable names must start with an $");
+			}
 			return;
 		}
 		auto scriptVariableIt = scriptState.variables.find(name);
