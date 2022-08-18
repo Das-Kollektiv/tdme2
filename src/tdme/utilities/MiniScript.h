@@ -12,6 +12,7 @@
 #include <tdme/engine/Transform.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/Integer.h>
 #include <tdme/utilities/StringTools.h>
@@ -29,6 +30,7 @@ using std::vector;
 using tdme::engine::Transform;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
+using tdme::utilities::Exception;
 using tdme::utilities::Float;
 using tdme::utilities::Integer;
 using tdme::utilities::StringTools;
@@ -94,7 +96,12 @@ public:
 		TYPE_ARRAY
 	};
 
+	/**
+	 * MiniScript script variable
+	 */
 	class ScriptVariable {
+		friend class MiniScript;
+
 	private:
 		ScriptVariableType type { TYPE_VOID };
 		void* valuePtr { nullptr };
@@ -710,11 +717,11 @@ public:
 		 * Get value from array with given index
 		 * @param idx index
 		 */
-		inline const ScriptVariable getValue(int idx) const {
+		inline const ScriptVariable getArrayValue(int idx) const {
 			// TODO: be verbose about misuse
 			if (type != TYPE_ARRAY) return ScriptVariable();
 			auto& arrayValue = getArrayValueReference();
-			if (idx < arrayValue.size()) return arrayValue[idx];
+			if (idx >= 0 && idx < arrayValue.size()) return arrayValue[idx];
 			return ScriptVariable();
 		}
 
@@ -722,11 +729,12 @@ public:
 		 * Set value to array with given index
 		 * @param idx index
 		 */
-		inline void setValue(int idx, const ScriptVariable& value) {
+		inline void setArrayValue(int idx, const ScriptVariable& value) {
 			// TODO: be verbose about misuse
 			setType(TYPE_ARRAY);
+			if (idx < 0) return;
 			auto& arrayValue = getArrayValueReference();
-			while (arrayValue.size() <= idx) pushValue(ScriptVariable());
+			while (arrayValue.size() <= idx) pushArrayValue(ScriptVariable());
 			arrayValue[idx] = value;
 		}
 
@@ -734,7 +742,7 @@ public:
 		 * Push value to array
 		 * @param value value
 		 */
-		inline void pushValue(const ScriptVariable& value) {
+		inline void pushArrayValue(const ScriptVariable& value) {
 			// TODO: be verbose about misuse
 			setType(TYPE_ARRAY);
 			getArrayValueReference().push_back(value);
@@ -1166,6 +1174,105 @@ protected:
 	 * @return script index or -1 if no script to start
 	 */
 	virtual int determineNamedScriptIdxToStart();
+
+	/**
+	 * Returns pointer of variable with given name or nullptr
+	 * @param name name
+	 * @param callerMethod caller method
+	 * @param statement optional statement the variable is read in
+	 * @return pointer to variable
+	 */
+	inline ScriptVariable* getVariableIntern(const string& name, const string& callerMethod, const ScriptStatement* statement = nullptr) {
+		// TODO: this is WIP still
+		if (StringTools::startsWith(name, "$") == false) {
+			if (statement != nullptr) {
+				Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': variable names must start with an $");
+			} else {
+				Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': variable names must start with an $");
+			}
+			return nullptr;
+		}
+		// determine left and right access operator position if there are any
+		auto arrayAccessOperatorLeftIdx = string::npos;
+		auto arrayAccessOperatorRightIdx = string::npos;
+		for (auto i = 0; i < name.length(); i++) {
+			auto c = name[i];
+			if (c == '[') {
+				if (arrayAccessOperatorLeftIdx != string::npos) {
+					if (statement != nullptr) {
+						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': unexpected char: '['");
+					} else {
+						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': variable: '" + name + "': unexpected char: '['");
+					}
+					return nullptr;
+				}
+				arrayAccessOperatorLeftIdx = i;
+			} else
+			if (c == ']') {
+				if (arrayAccessOperatorLeftIdx == string::npos || arrayAccessOperatorRightIdx != string::npos) {
+					if (statement != nullptr) {
+						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': unexpected char: ']'");
+					} else {
+						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': variable: '" + name + "': unexpected char: ']'");
+					}
+					return nullptr;
+				}
+				arrayAccessOperatorRightIdx = i;
+			}
+		}
+		// array access, if we have any, evaluate the array index
+		auto haveArrayAccess = arrayAccessOperatorLeftIdx != string::npos && arrayAccessOperatorRightIdx != string::npos;
+		auto extractedVariableName = haveArrayAccess == true?StringTools::substring(name, 0, arrayAccessOperatorLeftIdx):string();
+		int64_t arrayIdx = -1;
+		if (haveArrayAccess == true) {
+			auto arrayIdxExpressionString = string(&name.data()[arrayAccessOperatorLeftIdx + 1], arrayAccessOperatorRightIdx - arrayAccessOperatorLeftIdx - 1);
+			ScriptVariable statementReturnValue;
+			if (evaluate(string(arrayIdxExpressionString), statementReturnValue) == false || statementReturnValue.getIntegerValue(arrayIdx, false) == false) {
+				if (statement != nullptr) {
+					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': failed to evaluate expression: '" + arrayIdxExpressionString + "'");
+				} else {
+					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': failed to evaluate expression: '" + arrayIdxExpressionString + "'");
+				}
+				return nullptr;
+			}
+		}
+		// retrieve variable from variable map
+		auto scriptVariableIt = scriptState.variables.find(extractedVariableName.empty() == false?extractedVariableName:name);
+		if (scriptVariableIt == scriptState.variables.end()) {
+			if (statement != nullptr) {
+				Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "' does not exist");
+			} else {
+				Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "' does not exist");
+			}
+			return nullptr;
+		}
+		// get pointer to final variable
+		auto variablePtr = scriptVariableIt->second;
+		if (haveArrayAccess == true) {
+			if (variablePtr->getType() == MiniScript::TYPE_ARRAY) {
+				auto arrayValueReference = variablePtr->getArrayValueReference();
+				if (arrayIdx >= 0 || arrayIdx < arrayValueReference.size()) {
+					return &arrayValueReference[arrayIdx];
+				} else {
+					if (statement != nullptr) {
+						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': index out of bounds: 0 <= " + to_string(arrayIdx) + " <= " + to_string(arrayValueReference.size()));
+					} else {
+						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': index out of bounds: 0 <= " + to_string(arrayIdx) + " <= " + to_string(arrayValueReference.size()));
+					}
+					return nullptr;
+				}
+			} else {
+				if (statement != nullptr) {
+					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': array access operator, but variable is not of type array or string");
+				} else {
+					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': array access operator, but variable is not of type array or string");
+				}
+				return nullptr;
+			}
+		} else {
+			return variablePtr;
+		}
+	}
 
 private:
 	static constexpr bool VERBOSE { false };
@@ -1628,24 +1735,12 @@ public:
 	 * @return variable
 	 */
 	inline const ScriptVariable getVariable(const string& name, const ScriptStatement* statement = nullptr) {
-		if (StringTools::startsWith(name, "$") == false) {
-			if (statement != nullptr) {
-				Console::println("MiniScript::getVariable(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': variable names must start with an $");
-			} else {
-				Console::println("MiniScript::getVariable(): '" + scriptFileName + "': variable: '" + name + "': variable names must start with an $");
-			}
+		auto variablePtr = getVariableIntern(name, __FUNCTION__, statement);
+		if (variablePtr != nullptr) {
+			return *variablePtr;
+		} else {
 			return ScriptVariable();
 		}
-		auto scriptVariableIt = scriptState.variables.find(name);
-		if (scriptVariableIt == scriptState.variables.end()) {
-			if (statement != nullptr) {
-				Console::println("MiniScript::getVariable(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "' does not exist");
-			} else {
-				Console::println("MiniScript::getVariable(): '" + scriptFileName + "': variable: '" + name + "' does not exist");
-			}
-			return ScriptVariable();
-		}
-		return *scriptVariableIt->second;
 	}
 
 	/**
@@ -1655,14 +1750,13 @@ public:
 	 * @param statement optional statement the variable is written in
 	 */
 	inline void setVariable(const string& name, const ScriptVariable& variable, const ScriptStatement* statement = nullptr) {
-		if (StringTools::startsWith(name, "$") == false) {
-			if (statement != nullptr) {
-				Console::println("MiniScript::setVariable(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': variable names must start with an $");
-			} else {
-				Console::println("MiniScript::setVariable(): '" + scriptFileName + "': variable: '" + name + "': variable names must start with an $");
-			}
+		// TODO: finish me!
+		auto variablePtr = getVariableIntern(name, __FUNCTION__, statement);
+		if (variablePtr != nullptr) {
+			*variablePtr = variable;
 			return;
 		}
+		//
 		auto scriptVariableIt = scriptState.variables.find(name);
 		if (scriptVariableIt != scriptState.variables.end()) {
 			*scriptVariableIt->second = variable;
@@ -1680,18 +1774,7 @@ public:
 	 * @param statement optional statement the variable is unset in
 	 */
 	inline void unsetVariable(const string& name, const ScriptStatement* statement = nullptr) {
-		if (StringTools::startsWith(name, "$") == false) {
-			if (statement != nullptr) {
-				Console::println("MiniScript::unsetVariable(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': variable names must start with an $");
-			} else {
-				Console::println("MiniScript::unsetVariable(): '" + scriptFileName + "': variable: '" + name + "': variable names must start with an $");
-			}
-			return;
-		}
-		auto scriptVariableIt = scriptState.variables.find(name);
-		if (scriptVariableIt == scriptState.variables.end()) return;
-		delete scriptVariableIt->second;
-		scriptState.variables.erase(scriptVariableIt);
+		// TODO:
 	}
 
 	/**
@@ -1758,5 +1841,34 @@ public:
 	 * @return success
 	 */
 	bool transpileScriptCondition(string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap, const string& returnValue, const string& injectCode, int depth = 0);
+
+	/**
+	 * Evaluate given statement
+	 * @param statement
+	 * @return return value
+	 */
+	inline bool evaluate(const string& statement, ScriptVariable& returnValue) {
+		auto scriptEvaluateStatement = "script.evaluate(" + statement + ")";
+		string_view method;
+		vector<string_view> arguments;
+		pushScriptState();
+		if (parseScriptStatement(scriptEvaluateStatement, method, arguments) == true) {
+			returnValue = executeScriptStatement(
+				method,
+				arguments,
+				{
+					.line = -1,
+					.statementIdx = 0,
+					.statement = "Evaluate: " + statement,
+					.gotoStatementIdx = -1
+				}
+			);
+			popScriptState();
+			return true;
+		} else {
+			popScriptState();
+			return false;
+		}
+	}
 
 };

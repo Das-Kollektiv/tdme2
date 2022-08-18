@@ -774,19 +774,8 @@ int MiniScript::determineScriptIdxToStart() {
 		} else {
 			auto conditionMet = true;
 			auto& condition = script.condition;
-			string_view method;
-			vector<string_view> arguments;
-			if (parseScriptStatement(condition, method, arguments) == true) {
-				auto returnValue = executeScriptStatement(
-					method,
-					arguments,
-					{
-						.line = script.line,
-						.statementIdx = 0,
-						.statement = condition,
-						.gotoStatementIdx = -1
-					}
-				);
+			auto returnValue = ScriptVariable();
+			if (evaluate(condition, returnValue) == true) {
 				auto returnValueBoolValue = false;
 				if (returnValue.getBooleanValue(returnValueBoolValue, false) == false) {
 					Console::println("MiniScript::determineScriptIdxToStart(): '" + condition + "': expecting boolean return value, but got: " + returnValue.getAsString());
@@ -829,19 +818,8 @@ int MiniScript::determineNamedScriptIdxToStart() {
 			} else {
 				auto conditionMet = true;
 				auto& condition = script.condition;
-				string_view method;
-				vector<string_view> arguments;
-				if (parseScriptStatement(condition, method, arguments) == true) {
-					auto returnValue = executeScriptStatement(
-						method,
-						arguments,
-						{
-							.line = script.line,
-							.statementIdx = 0,
-							.statement = condition,
-							.gotoStatementIdx = -1
-						}
-					);
+				ScriptVariable returnValue;
+				if (evaluate(condition, returnValue) == true) {
 					auto returnValueBoolValue = false;
 					if (returnValue.getBooleanValue(returnValueBoolValue, false) == false) {
 						Console::println("MiniScript::determineNamedScriptIdxToStart(): '" + condition + "': expecting boolean return value, but got: " + returnValue.getAsString());
@@ -855,11 +833,11 @@ int MiniScript::determineNamedScriptIdxToStart() {
 				}
 				if (conditionMet == false) {
 					if (VERBOSE == true) {
-						Console::print("MiniScript::determineNamedScriptIdxToStart(): " + condition + ": FAILED");
+						Console::print("MiniScript::determineNamedScriptIdxToStart(): " + script.condition + ": FAILED");
 					}
 				} else {
 					if (VERBOSE == true) {
-						Console::print("MiniScript::determineNamedScriptIdxToStart(): " + condition + ": OK");
+						Console::print("MiniScript::determineNamedScriptIdxToStart(): " + script.condition + ": OK");
 					}
 					popScriptState();
 					return scriptIdx;
@@ -1012,6 +990,7 @@ const string MiniScript::findLeftArgument(const string statement, int position, 
 }
 
 const string MiniScript::doStatementPreProcessing(const string& statement) {
+	// TODO: support [ ]
 	auto preprocessedStatement = statement;
 	ScriptStatementOperator nextOperators;
 	while (getNextStatementOperator(preprocessedStatement, nextOperators) == true) {
@@ -1278,6 +1257,33 @@ void MiniScript::registerStateMachineStates() {
 
 void MiniScript::registerMethods() {
 	// script base methods
+	{
+		//
+		class ScriptMethodScriptEvaluate: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodScriptEvaluate(MiniScript* miniScript): ScriptMethod(), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "script.evaluate";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				if (argumentValues.size() > 1) {
+					// TODO: return array in future if finished
+				} else
+				if (argumentValues.size() == 1) {
+					returnValue = argumentValues[0];
+				}
+			}
+			bool isVariadic() override {
+				return true;
+			}
+			bool isMixedReturnValue() override {
+				return true;
+			}
+		};
+		registerMethod(new ScriptMethodScriptEvaluate(this));
+	}
 	{
 		//
 		class ScriptMethodEnd: public ScriptMethod {
@@ -1685,11 +1691,11 @@ void MiniScript::registerMethods() {
 	}
 	{
 		//
-		class ScriptMethodStringStop: public ScriptMethod {
+		class ScriptMethodScriptStop: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodStringStop(MiniScript* miniScript): ScriptMethod(), miniScript(miniScript) {}
+			ScriptMethodScriptStop(MiniScript* miniScript): ScriptMethod(), miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "script.stop";
 			}
@@ -1698,7 +1704,7 @@ void MiniScript::registerMethods() {
 				miniScript->stopScriptExecutation();
 			}
 		};
-		registerMethod(new ScriptMethodStringStop(this));
+		registerMethod(new ScriptMethodScriptStop(this));
 	}
 	// equality
 	{
@@ -3347,7 +3353,7 @@ void MiniScript::registerMethods() {
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				for (auto& argumentValue: argumentValues) {
-					returnValue.pushValue(argumentValue);
+					returnValue.pushArrayValue(argumentValue);
 				}
 			}
 		};
@@ -3407,7 +3413,7 @@ void MiniScript::registerMethods() {
 				} else {
 					returnValue = argumentValues[0];
 					for (auto i = 1; i < argumentValues.size(); i++) {
-						returnValue.pushValue(argumentValues[i]);
+						returnValue.pushArrayValue(argumentValues[i]);
 					}
 				}
 			}
@@ -3438,7 +3444,7 @@ void MiniScript::registerMethods() {
 					MiniScript::getIntegerValue(argumentValues, 1, index, false) == false) {
 					Console::println("ScriptMethodArrayGet::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: array expected, @argument 1: integer expected");
 				} else {
-					returnValue = argumentValues[0].getValue(index);
+					returnValue = argumentValues[0].getArrayValue(index);
 				}
 			}
 			bool isMixedReturnValue() override {
@@ -3472,7 +3478,7 @@ void MiniScript::registerMethods() {
 					Console::println("ScriptMethodArraySet::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: array expected, @argument 1: integer expected");
 				} else {
 					returnValue = argumentValues[0];
-					returnValue.setValue(index, argumentValues[2]);
+					returnValue.setArrayValue(index, argumentValues[2]);
 				}
 			}
 			bool isVariadic() override {
@@ -3509,7 +3515,7 @@ void MiniScript::registerMethods() {
 					returnValue.setType(ScriptVariableType::TYPE_ARRAY);
 					for (auto i = 0; i < arrayValue.getArraySize(); i++) {
 						if (i == index) continue;
-						returnValue.pushValue(arrayValue.getValue(i));
+						returnValue.pushArrayValue(arrayValue.getArrayValue(i));
 					}
 				}
 			}
