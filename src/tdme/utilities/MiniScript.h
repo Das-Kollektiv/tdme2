@@ -1179,10 +1179,11 @@ protected:
 	 * Returns pointer of variable with given name or nullptr
 	 * @param name name
 	 * @param callerMethod caller method
+	 * @param parentVariable parent variable
 	 * @param statement optional statement the variable is read in
 	 * @return pointer to variable
 	 */
-	inline ScriptVariable* getVariableIntern(const string& name, const string& callerMethod, const ScriptStatement* statement = nullptr) {
+	inline ScriptVariable* getVariableIntern(const string& name, const string& callerMethod, ScriptVariable** parentVariable = nullptr, const ScriptStatement* statement = nullptr) {
 		// TODO: this is WIP still
 		if (StringTools::startsWith(name, "$") == false) {
 			if (statement != nullptr) {
@@ -1250,6 +1251,7 @@ protected:
 		auto variablePtr = scriptVariableIt->second;
 		if (haveArrayAccess == true) {
 			if (variablePtr->getType() == MiniScript::TYPE_ARRAY) {
+				if (parentVariable != nullptr) *parentVariable = variablePtr;
 				auto& arrayValueReference = variablePtr->getArrayValueReference();
 				if (arrayIdx >= 0 && arrayIdx < arrayValueReference.size()) {
 					return &arrayValueReference[arrayIdx];
@@ -1735,7 +1737,7 @@ public:
 	 * @return variable
 	 */
 	inline const ScriptVariable getVariable(const string& name, const ScriptStatement* statement = nullptr) {
-		auto variablePtr = getVariableIntern(name, __FUNCTION__, statement);
+		auto variablePtr = getVariableIntern(name, __FUNCTION__, nullptr, statement);
 		if (variablePtr != nullptr) {
 			return *variablePtr;
 		} else {
@@ -1750,8 +1752,8 @@ public:
 	 * @param statement optional statement the variable is written in
 	 */
 	inline void setVariable(const string& name, const ScriptVariable& variable, const ScriptStatement* statement = nullptr) {
-		// TODO: finish me!
-		auto variablePtr = getVariableIntern(name, __FUNCTION__, statement);
+		ScriptVariable* parentVariable = nullptr;
+		auto variablePtr = getVariableIntern(name, __FUNCTION__, &parentVariable, statement);
 		if (variablePtr != nullptr) {
 			*variablePtr = variable;
 			return;

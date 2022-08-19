@@ -518,6 +518,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 			if (scriptHash == hash) {
 				scripts = nativeScripts;
 				registerStateMachineStates();
+				registerMethods();
 				startScript();
 				return;
 			} else {
