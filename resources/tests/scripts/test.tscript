@@ -24,6 +24,9 @@ on: nothing
 	$array[] = array(1,2,3)
 	console.log("array values added with [] operator: 123, 1234, 12345, array(1,2,3)")
 	console.log("array now looks like: ", $array)
+	console.log("array values added with [] operator to push to array of array: 50, 60")
+	$array[9][] = 50
+	$array[9][] = 60
 	console.log("array length: ", array.length($array))
 	console.log("array iteration with array.get(): ")
 	$i = 0
