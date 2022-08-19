@@ -1033,6 +1033,9 @@ public:
 	};
 
 protected:
+	static constexpr int ARRAYIDX_NONE { -1 };
+	static constexpr int ARRAYIDX_ADD { -2 };
+
 	struct ScriptState {
 		enum EndType { ENDTYPE_FOR, ENDTYPE_IF };
 		enum ConditionType {
@@ -1180,11 +1183,14 @@ protected:
 	 * @param name name
 	 * @param callerMethod caller method
 	 * @param parentVariable parent variable
+	 * @param arrayIdx array index whereas there is ARRAYIDX_ADD for [] or ARRAYIDX_NONE for no array access
 	 * @param statement optional statement the variable is read in
 	 * @param expectVariable expect variable which controls verbosity
 	 * @return pointer to variable
 	 */
-	inline ScriptVariable* getVariableIntern(const string& name, const string& callerMethod, ScriptVariable** parentVariable = nullptr, const ScriptStatement* statement = nullptr, bool expectVariable = true) {
+	inline ScriptVariable* getVariableIntern(const string& name, const string& callerMethod, ScriptVariable*& parentVariable, int64_t& arrayIdx, const ScriptStatement* statement = nullptr, bool expectVariable = true) {
+		// no array idx by default
+		arrayIdx = ARRAYIDX_NONE;
 		// TODO: this is WIP still
 		if (StringTools::startsWith(name, "$") == false) {
 			if (statement != nullptr) {
@@ -1225,17 +1231,20 @@ protected:
 		// array access, if we have any, evaluate the array index
 		auto haveArrayAccess = arrayAccessOperatorLeftIdx != string::npos && arrayAccessOperatorRightIdx != string::npos;
 		auto extractedVariableName = haveArrayAccess == true?StringTools::substring(name, 0, arrayAccessOperatorLeftIdx):string();
-		int64_t arrayIdx = -1;
 		if (haveArrayAccess == true) {
-			auto arrayIdxExpressionString = string(&name.data()[arrayAccessOperatorLeftIdx + 1], arrayAccessOperatorRightIdx - arrayAccessOperatorLeftIdx - 1);
-			ScriptVariable statementReturnValue;
-			if (evaluate(string(arrayIdxExpressionString), statementReturnValue) == false || statementReturnValue.getIntegerValue(arrayIdx, false) == false) {
-				if (statement != nullptr) {
-					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': failed to evaluate expression: '" + arrayIdxExpressionString + "'");
-				} else {
-					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': failed to evaluate expression: '" + arrayIdxExpressionString + "'");
+			auto arrayIdxExpressionStringView = StringTools::viewTrim(string_view(&name.data()[arrayAccessOperatorLeftIdx + 1], arrayAccessOperatorRightIdx - arrayAccessOperatorLeftIdx - 1));
+			if (arrayIdxExpressionStringView.empty() == false) {
+				ScriptVariable statementReturnValue;
+				if (evaluate(string(arrayIdxExpressionStringView), statementReturnValue) == false || statementReturnValue.getIntegerValue(arrayIdx, false) == false) {
+					if (statement != nullptr) {
+						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': failed to evaluate expression: '" + string(arrayIdxExpressionStringView) + "'");
+					} else {
+						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': failed to evaluate expression: '" + string(arrayIdxExpressionStringView) + "'");
+					}
+					return nullptr;
 				}
-				return nullptr;
+			} else {
+				arrayIdx = ARRAYIDX_ADD;
 			}
 		}
 		// retrieve variable from variable map
@@ -1254,16 +1263,20 @@ protected:
 		auto variablePtr = scriptVariableIt->second;
 		if (haveArrayAccess == true) {
 			if (variablePtr->getType() == MiniScript::TYPE_ARRAY) {
-				if (parentVariable != nullptr) *parentVariable = variablePtr;
-				auto& arrayValueReference = variablePtr->getArrayValueReference();
-				if (arrayIdx >= 0 && arrayIdx < arrayValueReference.size()) {
-					return &arrayValueReference[arrayIdx];
-				} else {
-					if (statement != nullptr) {
-						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': index out of bounds: 0 <= " + to_string(arrayIdx) + " < " + to_string(arrayValueReference.size()));
+				parentVariable = variablePtr;
+				if (arrayIdx != ARRAYIDX_ADD) {
+					auto& arrayValueReference = variablePtr->getArrayValueReference();
+					if (arrayIdx >= 0 && arrayIdx < arrayValueReference.size()) {
+						return &arrayValueReference[arrayIdx];
 					} else {
-						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': index out of bounds: 0 <= " + to_string(arrayIdx) + " <= " + to_string(arrayValueReference.size()));
+						if (statement != nullptr) {
+							Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': index out of bounds: 0 <= " + to_string(arrayIdx) + " < " + to_string(arrayValueReference.size()));
+						} else {
+							Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': index out of bounds: 0 <= " + to_string(arrayIdx) + " <= " + to_string(arrayValueReference.size()));
+						}
+						return nullptr;
 					}
+				} else {
 					return nullptr;
 				}
 			} else {
@@ -1740,7 +1753,9 @@ public:
 	 * @return variable
 	 */
 	inline const ScriptVariable getVariable(const string& name, const ScriptStatement* statement = nullptr) {
-		auto variablePtr = getVariableIntern(name, __FUNCTION__, nullptr, statement);
+		ScriptVariable* parentVariable = nullptr;
+		int64_t arrayIdx = ARRAYIDX_NONE;
+		auto variablePtr = getVariableIntern(name, __FUNCTION__, parentVariable, arrayIdx, statement, false);
 		if (variablePtr != nullptr) {
 			return *variablePtr;
 		} else {
@@ -1756,12 +1771,38 @@ public:
 	 */
 	inline void setVariable(const string& name, const ScriptVariable& variable, const ScriptStatement* statement = nullptr) {
 		ScriptVariable* parentVariable = nullptr;
-		auto variablePtr = getVariableIntern(name, __FUNCTION__, &parentVariable, statement, false);
+		int64_t arrayIdx = ARRAYIDX_NONE;
+		auto variablePtr = getVariableIntern(name, __FUNCTION__, parentVariable, arrayIdx, statement, false);
+		// common case
 		if (variablePtr != nullptr) {
 			*variablePtr = variable;
 			return;
+		} else
+		// array add operator
+		if (arrayIdx == ARRAYIDX_ADD) {
+			if (parentVariable == nullptr) {
+				string callerMethod = __FUNCTION__;
+				if (statement != nullptr) {
+					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': [] array push operator without array to push to");
+				} else {
+					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': [] array push operator without array to push to");
+				}
+			} else
+			if (parentVariable->getType() != MiniScript::TYPE_ARRAY) {
+				string callerMethod = __FUNCTION__;
+				if (statement != nullptr) {
+					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': [] array push operator: expected array to push to, but got " + parentVariable->getTypeAsString());
+				} else {
+					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': [] array push operator: expected array to push to, but got " + parentVariable->getTypeAsString());
+				}
+			} else {
+				// all checks passed, push variable to array
+				auto& arrayValueReference = parentVariable->getArrayValueReference();
+				arrayValueReference.push_back(variable);
+			}
 		}
-		//
+
+		// default
 		auto scriptVariableIt = scriptState.variables.find(name);
 		if (scriptVariableIt != scriptState.variables.end()) {
 			*scriptVariableIt->second = variable;

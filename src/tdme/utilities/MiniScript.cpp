@@ -1849,7 +1849,7 @@ void MiniScript::registerMethods() {
 					MiniScript::getFloatValue(argumentValues, 1, floatValueB, false) == true) {
 					returnValue.setValue(floatValueA > floatValueB);
 				} else {
-					Console::println("ScriptMethodFGreater::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
+					Console::println("ScriptMethodGreater::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -1883,7 +1883,7 @@ void MiniScript::registerMethods() {
 					MiniScript::getFloatValue(argumentValues, 1, floatValueB, false) == true) {
 					returnValue.setValue(floatValueA >= floatValueB);
 				} else {
-					Console::println("ScriptMethodFGreater::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
+					Console::println("ScriptMethodGreaterEquals::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -1917,7 +1917,7 @@ void MiniScript::registerMethods() {
 					MiniScript::getFloatValue(argumentValues, 1, floatValueB, false) == true) {
 					returnValue.setValue(floatValueA < floatValueB);
 				} else {
-					Console::println("ScriptMethodFLesser::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
+					Console::println("ScriptMethodLesser::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -1951,7 +1951,7 @@ void MiniScript::registerMethods() {
 					MiniScript::getFloatValue(argumentValues, 1, floatValueB, false) == true) {
 					returnValue.setValue(floatValueA <= floatValueB);
 				} else {
-					Console::println("ScriptMethodFLesser::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
+					Console::println("ScriptMethodLesserEquals::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -1976,6 +1976,9 @@ void MiniScript::registerMethods() {
 					string result;
 					for (auto i = 0; i < argumentValues.size(); i++) {
 						string stringValue;
+						if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
+							result+= argumentValues[i].getValueString();
+						} else
 						if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
 							result+= stringValue;
 						} else {
