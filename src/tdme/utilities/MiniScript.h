@@ -1250,12 +1250,12 @@ protected:
 		auto variablePtr = scriptVariableIt->second;
 		if (haveArrayAccess == true) {
 			if (variablePtr->getType() == MiniScript::TYPE_ARRAY) {
-				auto arrayValueReference = variablePtr->getArrayValueReference();
-				if (arrayIdx >= 0 || arrayIdx < arrayValueReference.size()) {
+				auto& arrayValueReference = variablePtr->getArrayValueReference();
+				if (arrayIdx >= 0 && arrayIdx < arrayValueReference.size()) {
 					return &arrayValueReference[arrayIdx];
 				} else {
 					if (statement != nullptr) {
-						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': index out of bounds: 0 <= " + to_string(arrayIdx) + " <= " + to_string(arrayValueReference.size()));
+						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': index out of bounds: 0 <= " + to_string(arrayIdx) + " < " + to_string(arrayValueReference.size()));
 					} else {
 						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': index out of bounds: 0 <= " + to_string(arrayIdx) + " <= " + to_string(arrayValueReference.size()));
 					}

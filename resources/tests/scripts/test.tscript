@@ -31,6 +31,12 @@ on: nothing
 	end 
 	console.log("array iteration: with array[] accessor")
 	$i = 0
+	$array[$i] = 1234
+	$i = 1
+	$array[$i] = 123
+	$i = 2
+	$array[$i] = 12
+	$i = 0
 	forCondition($i < array.length($array))
 		console.log($i + ": " + $array[$i])
 		$i = $i + 1
