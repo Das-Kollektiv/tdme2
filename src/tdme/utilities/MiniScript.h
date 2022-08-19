@@ -1181,9 +1181,10 @@ protected:
 	 * @param callerMethod caller method
 	 * @param parentVariable parent variable
 	 * @param statement optional statement the variable is read in
+	 * @param expectVariable expect variable which controls verbosity
 	 * @return pointer to variable
 	 */
-	inline ScriptVariable* getVariableIntern(const string& name, const string& callerMethod, ScriptVariable** parentVariable = nullptr, const ScriptStatement* statement = nullptr) {
+	inline ScriptVariable* getVariableIntern(const string& name, const string& callerMethod, ScriptVariable** parentVariable = nullptr, const ScriptStatement* statement = nullptr, bool expectVariable = true) {
 		// TODO: this is WIP still
 		if (StringTools::startsWith(name, "$") == false) {
 			if (statement != nullptr) {
@@ -1240,10 +1241,12 @@ protected:
 		// retrieve variable from variable map
 		auto scriptVariableIt = scriptState.variables.find(extractedVariableName.empty() == false?extractedVariableName:name);
 		if (scriptVariableIt == scriptState.variables.end()) {
-			if (statement != nullptr) {
-				Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "' does not exist");
-			} else {
-				Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "' does not exist");
+			if (expectVariable == true) {
+				if (statement != nullptr) {
+					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "' does not exist");
+				} else {
+					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "' does not exist");
+				}
 			}
 			return nullptr;
 		}
@@ -1753,7 +1756,7 @@ public:
 	 */
 	inline void setVariable(const string& name, const ScriptVariable& variable, const ScriptStatement* statement = nullptr) {
 		ScriptVariable* parentVariable = nullptr;
-		auto variablePtr = getVariableIntern(name, __FUNCTION__, &parentVariable, statement);
+		auto variablePtr = getVariableIntern(name, __FUNCTION__, &parentVariable, statement, false);
 		if (variablePtr != nullptr) {
 			*variablePtr = variable;
 			return;
