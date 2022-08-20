@@ -760,7 +760,6 @@ void MiniScript::startScript() {
 
 int MiniScript::determineScriptIdxToStart() {
 	if (VERBOSE == true) Console::println("MiniScript::determineScriptIdxToStart()");
-	pushScriptState();
 	auto nothingScriptIdx = -1;
 	auto scriptIdx = 0;
 	for (auto& script: scripts) {
@@ -797,19 +796,16 @@ int MiniScript::determineScriptIdxToStart() {
 				if (VERBOSE == true) {
 					Console::print("MiniScript::determineScriptIdxToStart(): " + condition + ": OK");
 				}
-				popScriptState();
 				return scriptIdx;
 			}
 		}
 		scriptIdx++;
 	}
-	popScriptState();
 	return nothingScriptIdx;
 }
 
 int MiniScript::determineNamedScriptIdxToStart() {
 	if (VERBOSE == true) Console::println("MiniScript::determineNamedScriptIdxToStart()");
-	pushScriptState();
 	// TODO: we could have a hash map here to speed up enabledConditionName -> script lookup
 	for (auto& enabledConditionName: scriptState.enabledNamedConditions) {
 		auto scriptIdx = 0;
@@ -841,14 +837,12 @@ int MiniScript::determineNamedScriptIdxToStart() {
 					if (VERBOSE == true) {
 						Console::print("MiniScript::determineNamedScriptIdxToStart(): " + script.condition + ": OK");
 					}
-					popScriptState();
 					return scriptIdx;
 				}
 			}
 			scriptIdx++;
 		}
 	}
-	popScriptState();
 	return -1;
 }
 
