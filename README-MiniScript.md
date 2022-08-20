@@ -10,9 +10,11 @@ This is the documentation of MiniScript language. This document is WIP.
 | and(...): Boolean                                                                                |
 | array(...): Array                                                                                |
 | array.get($array: Array, $index: Integer): Mixed                                                 |
+| array.indexOf($array: Array, $value: String, $beginIndex: Integer(OPTIONAL), ...): Integer       |
 | array.length($array: Array): Integer                                                             |
 | array.push($array: Array, ...): Array                                                            |
 | array.remove($array: Array, $index: Integer): Array                                              |
+| array.removeOf($array: Array, $value: String): Array                                             |
 | array.set($array: Array, $index: Integer, ...): Array                                            |
 | bool($bool: Boolean): Boolean                                                                    |
 | concatenate(...): String                                                                         |
@@ -39,6 +41,7 @@ This is the documentation of MiniScript language. This document is WIP.
 | script.disableNamedCondition($name: String): Void                                                |
 | script.emit($condition: String): Void                                                            |
 | script.enableNamedCondition($name: String): Void                                                 |
+| script.evaluate(...): Mixed                                                                      |
 | script.getNamedConditions(): String                                                              |
 | script.stop(): Void                                                                              |
 | script.wait($time: Integer): Void                                                                |

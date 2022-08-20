@@ -259,6 +259,11 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string_view&
 	ScriptVariable returnValue;
 	// check if argument is a method calls return value
 	for (auto& argument: arguments) {
+		// variable
+		if (StringTools::viewStartsWith(argument, "$") == true) {
+			argumentValues.push_back(getVariable(string(argument), &statement));
+		} else
+		// method call
 		if (argument.empty() == false &&
 			StringTools::viewStartsWith(argument, "\"") == false &&
 			StringTools::viewEndsWith(argument, "\"") == false &&
@@ -274,10 +279,6 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string_view&
 				Console::println("MiniScript::executeScriptStatement(): parseScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': '" + string(argument) + "': parse error");
 				startErrorScript();
 			}
-		} else
-		// variable
-		if (StringTools::viewStartsWith(argument, "$") == true) {
-			argumentValues.push_back(getVariable(string(argument), &statement));
 		} else {
 			// literal
 			ScriptVariable argumentValue;
@@ -887,8 +888,9 @@ bool MiniScript::getNextStatementOperator(const string& statement, MiniScript::S
 							continue;
 						}
 						if (priorizedOperator == OPERATOR_SUBTRACTION) {
+							string leftArgumentBrackets;
 							auto leftArgumentLeft = 0;
-							auto leftArgument = findLeftArgument(statement, i - 1, leftArgumentLeft);
+							auto leftArgument = findLeftArgument(statement, i - 1, leftArgumentLeft, leftArgumentBrackets);
 							if (leftArgument.length() == 0) continue;
 						}
 						nextOperator.idx = i;
@@ -910,15 +912,17 @@ bool MiniScript::getNextStatementOperator(const string& statement, MiniScript::S
 
 const string MiniScript::trimArgument(const string& argument) {
 	auto processedArgument = StringTools::trim(argument);
-	if (StringTools::startsWith(processedArgument, "(") == true && StringTools::endsWith(processedArgument, ")") == true) {
+	if ((StringTools::startsWith(processedArgument, "(") == true && StringTools::endsWith(processedArgument, ")")) == true ||
+		(StringTools::startsWith(processedArgument, "[") == true && StringTools::endsWith(processedArgument, "]")) == true) {
 		processedArgument = StringTools::substring(processedArgument, 1, processedArgument.size() - 1);
 	}
 	return processedArgument;
 }
 
-const string MiniScript::findRightArgument(const string statement, int position, int& length) {
+const string MiniScript::findRightArgument(const string statement, int position, int& length, string& brackets) {
 	//
 	auto bracketCount = 0;
+	auto squareBracketCount = 0;
 	auto quote = false;
 	string argument;
 	length = 0;
@@ -933,9 +937,24 @@ const string MiniScript::findRightArgument(const string statement, int position,
 				bracketCount++;
 				argument+= c;
 			} else
+			if (c == '[') {
+				squareBracketCount++;
+				argument+= c;
+			} else
 			if (c == ')') {
 				bracketCount--;
-				if (bracketCount < 0) return trimArgument(argument);
+				if (bracketCount < 0) {
+					brackets = "()";
+					return trimArgument(argument);
+				}
+				argument+= c;
+			} else
+			if (c == ']') {
+				squareBracketCount--;
+				if (squareBracketCount < 0) {
+					brackets = "[]";
+					return trimArgument(argument);
+				}
 				argument+= c;
 			} else
 			if (c == ',') {
@@ -953,9 +972,10 @@ const string MiniScript::findRightArgument(const string statement, int position,
 	return trimArgument(argument);
 }
 
-const string MiniScript::findLeftArgument(const string statement, int position, int& length) {
+const string MiniScript::findLeftArgument(const string statement, int position, int& length, string& brackets) {
 	//
 	auto bracketCount = 0;
+	auto squareBracketCount = 0;
 	auto quote = false;
 	string argument;
 	length = 0;
@@ -970,9 +990,24 @@ const string MiniScript::findLeftArgument(const string statement, int position, 
 				bracketCount++;
 				argument = c + argument;
 			} else
+			if (c == ']') {
+				squareBracketCount++;
+				argument = c + argument;
+			} else
 			if (c == '(') {
 				bracketCount--;
-				if (bracketCount < 0) return trimArgument(argument);
+				if (bracketCount < 0) {
+					brackets = "()";
+					return trimArgument(argument);
+				}
+				argument = c + argument;
+			} else
+			if (c == '[') {
+				squareBracketCount--;
+				if (squareBracketCount < 0) {
+					brackets = "[]";
+					return trimArgument(argument);
+				}
 				argument = c + argument;
 			} else
 			if (c == ',') {
@@ -1005,8 +1040,9 @@ const string MiniScript::doStatementPreProcessing(const string& statement) {
 		if (method->getArgumentTypes().size() == 1) {
 			// find the single argument right
 			auto operatorString = getOperatorAsString(nextOperators.scriptOperator);
+			string rightArgumentBrackets;
 			int rightArgumentLength = 0;
-			auto rightArgument = findRightArgument(preprocessedStatement, nextOperators.idx + operatorString.size(), rightArgumentLength);
+			auto rightArgument = findRightArgument(preprocessedStatement, nextOperators.idx + operatorString.size(), rightArgumentLength, rightArgumentBrackets);
 			// substitute with method call
 			preprocessedStatement =
 				StringTools::substring(preprocessedStatement, 0, nextOperators.idx) +
@@ -1017,11 +1053,19 @@ const string MiniScript::doStatementPreProcessing(const string& statement) {
 			method->getArgumentTypes().size() == 2) {
 			auto operatorString = getOperatorAsString(nextOperators.scriptOperator);
 			// find the first argument left
+			string leftArgumentBrackets;
 			int leftArgumentLength = 0;
-			auto leftArgument = findLeftArgument(preprocessedStatement, nextOperators.idx - 1, leftArgumentLength);
+			auto leftArgument = findLeftArgument(preprocessedStatement, nextOperators.idx - 1, leftArgumentLength, leftArgumentBrackets);
 			// find the first argument right
+			string rightArgumentBrackets;
 			int rightArgumentLength = 0;
-			auto rightArgument = findRightArgument(preprocessedStatement, nextOperators.idx + operatorString.size(), rightArgumentLength);
+			auto rightArgument = findRightArgument(preprocessedStatement, nextOperators.idx + operatorString.size(), rightArgumentLength, rightArgumentBrackets);
+			//
+			if (leftArgumentBrackets.empty() == false && rightArgumentBrackets.empty() == false && leftArgumentBrackets != rightArgumentBrackets) {
+				Console::println("MiniScript::doStatementPreProcessing(): operator found in: '" + preprocessedStatement + "'@" + to_string(nextOperators.idx) + ": unbalanced bracket usage");
+				// TODO: error handling
+				return preprocessedStatement;
+			}
 			//
 			if (nextOperators.scriptOperator == OPERATOR_SET) {
 				leftArgument = "\"" + leftArgument + "\"";
@@ -3526,6 +3570,89 @@ void MiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodArrayRemove(this));
 	}
+	{
+		//
+		class ScriptMethodArrayRemoveOf: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodArrayRemoveOf(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "value", .optional = false },
+					},
+					ScriptVariableType::TYPE_ARRAY
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "array.removeOf";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string stringValue;
+				int64_t index;
+				if (argumentValues.size() != 2 ||
+					argumentValues[0].getType() != ScriptVariableType::TYPE_ARRAY ||
+					MiniScript::getStringValue(argumentValues, 1, stringValue, false) == false) {
+					Console::println("ScriptMethodArraySet::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: array expected, @argument 1: mixed expected");
+				} else {
+					auto& array = argumentValues[0];
+					returnValue.setType(ScriptVariableType::TYPE_ARRAY);
+					for (auto i = 0; i < array.getArraySize(); i++) {
+						auto arrayValue = array.getArrayValue(i);
+						if (arrayValue.getValueString() == stringValue) continue;
+						returnValue.pushArrayValue(arrayValue);
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodArrayRemoveOf(this));
+	}
+	{
+		//
+		class ScriptMethodArrayIndexOf: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodArrayIndexOf(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "value", .optional = false },
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "beginIndex", .optional = true },
+					},
+					ScriptVariableType::TYPE_INTEGER
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "array.indexOf";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string stringValue;
+				int64_t beginIndex = 0;
+				if (argumentValues.size() < 2 ||
+					argumentValues[0].getType() != ScriptVariableType::TYPE_ARRAY ||
+					MiniScript::getStringValue(argumentValues, 1, stringValue, false) == false ||
+					MiniScript::getIntegerValue(argumentValues, 2, beginIndex, true) == false) {
+					Console::println("ScriptMethodArraySet::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: array expected, @argument 1: mixed expected");
+				} else {
+					auto& array = argumentValues[0];
+					returnValue.setValue(static_cast<int64_t>(-1));
+					for (auto i = beginIndex; i < array.getArraySize(); i++) {
+						auto arrayValue = array.getArrayValue(i);
+						if (arrayValue.getValueString() == stringValue) {
+							returnValue.setValue(static_cast<int64_t>(i));
+							break;
+						}
+					}
+				}
+			}
+			bool isVariadic() override {
+				return true;
+			}
+		};
+		registerMethod(new ScriptMethodArrayIndexOf(this));
+	}
 	// get variable
 	{
 		//
@@ -3743,18 +3870,19 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 	{
 		auto subArgumentIdx = 0;
 		for (auto& argument: arguments) {
+			// variable
+			if (StringTools::viewStartsWith(argument, "$") == true) {
+				// method call, call method and put its return value into argument value
+				string generatedStatement = "getVariable(\"" + string(argument) + "\")";
+				argumentValuesCode.push_back("// argumentValues[" + to_string(subArgumentIdx) + "] --> returnValue of " + string(generatedStatement));
+			} else
+			// method call
 			if (argument.empty() == false &&
 				StringTools::viewStartsWith(argument, "\"") == false &&
 				StringTools::viewEndsWith(argument, "\"") == false &&
 				argument.find('(') != string::npos &&
 				argument.find(')') != string::npos) {
 				argumentValuesCode.push_back("// argumentValues[" + to_string(subArgumentIdx) + "] --> returnValue of " + string(argument));
-			} else
-			// variable
-			if (StringTools::viewStartsWith(argument, "$") == true) {
-				// method call, call method and put its return value into argument value
-				string generatedStatement = "getVariable(\"" + string(argument) + "\")";
-				argumentValuesCode.push_back("// argumentValues[" + to_string(subArgumentIdx) + "] --> returnValue of " + string(generatedStatement));
 			} else {
 				// literal
 				ScriptVariable argumentValue;
@@ -3850,6 +3978,22 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 	{
 		auto subArgumentIdx = 0;
 		for (auto& argument: arguments) {
+			// variable
+			if (StringTools::viewStartsWith(argument, "$") == true) {
+				// method call, call method and put its return value into argument value
+				string generatedStatement = "getVariable(\"" + string(argument) + "\")";
+				string_view subMethod;
+				vector<string_view> subArguments;
+				if (parseScriptStatement(generatedStatement, subMethod, subArguments) == true) {
+					if (transpileScriptStatement(generatedCode, subMethod, subArguments, statement, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, depth + 1, subArgumentIdx, argumentIdx, returnValue) == false) {
+						Console::println("MiniScript::transpileScriptStatement(): transpileScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': '" + string(argument) + "' --> '" + generatedStatement + "': parse error");
+					}
+				} else {
+					Console::println("MiniScript::transpileScriptStatement(): parseScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': '" + string(argument) + "' --> '" + generatedStatement + "': parse error");
+					startErrorScript();
+				}
+			} else
+			// method call
 			if (argument.empty() == false &&
 				StringTools::viewStartsWith(argument, "\"") == false &&
 				StringTools::viewEndsWith(argument, "\"") == false &&
@@ -3864,21 +4008,6 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 					}
 				} else {
 					Console::println("MiniScript::transpileScriptStatement(): parseScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': '" + string(argument) + "': parse error");
-					startErrorScript();
-				}
-			} else
-			// variable
-			if (StringTools::viewStartsWith(argument, "$") == true) {
-				// method call, call method and put its return value into argument value
-				string generatedStatement = "getVariable(\"" + string(argument) + "\")";
-				string_view subMethod;
-				vector<string_view> subArguments;
-				if (parseScriptStatement(generatedStatement, subMethod, subArguments) == true) {
-					if (transpileScriptStatement(generatedCode, subMethod, subArguments, statement, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, depth + 1, subArgumentIdx, argumentIdx, returnValue) == false) {
-						Console::println("MiniScript::transpileScriptStatement(): transpileScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': '" + string(argument) + "' --> '" + generatedStatement + "': parse error");
-					}
-				} else {
-					Console::println("MiniScript::transpileScriptStatement(): parseScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': '" + string(argument) + "' --> '" + generatedStatement + "': parse error");
 					startErrorScript();
 				}
 			} else {
