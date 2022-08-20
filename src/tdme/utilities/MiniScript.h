@@ -1924,6 +1924,35 @@ public:
 	virtual void execute();
 
 	/**
+	 * Evaluate given statement
+	 * @param statement
+	 * @return return value
+	 */
+	inline bool evaluate(const string& statement, ScriptVariable& returnValue) {
+		auto scriptEvaluateStatement = "script.evaluate(" + statement + ")";
+		string_view method;
+		vector<string_view> arguments;
+		pushScriptState();
+		if (parseScriptStatement(scriptEvaluateStatement, method, arguments) == true) {
+			returnValue = executeScriptStatement(
+				method,
+				arguments,
+				{
+					.line = -1,
+					.statementIdx = 0,
+					.statement = "Evaluate: " + statement,
+					.gotoStatementIdx = -1
+				}
+			);
+			popScriptState();
+			return true;
+		} else {
+			popScriptState();
+			return false;
+		}
+	}
+
+	/**
 	 * @return is running
 	 */
 	inline bool isRunning() {
@@ -1964,34 +1993,5 @@ public:
 	 * @return success
 	 */
 	bool transpileScriptCondition(string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap, const string& returnValue, const string& injectCode, int depth = 0);
-
-	/**
-	 * Evaluate given statement
-	 * @param statement
-	 * @return return value
-	 */
-	inline bool evaluate(const string& statement, ScriptVariable& returnValue) {
-		auto scriptEvaluateStatement = "script.evaluate(" + statement + ")";
-		string_view method;
-		vector<string_view> arguments;
-		pushScriptState();
-		if (parseScriptStatement(scriptEvaluateStatement, method, arguments) == true) {
-			returnValue = executeScriptStatement(
-				method,
-				arguments,
-				{
-					.line = -1,
-					.statementIdx = 0,
-					.statement = "Evaluate: " + statement,
-					.gotoStatementIdx = -1
-				}
-			);
-			popScriptState();
-			return true;
-		} else {
-			popScriptState();
-			return false;
-		}
-	}
 
 };
