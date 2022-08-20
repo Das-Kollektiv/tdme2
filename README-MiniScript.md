@@ -53,7 +53,7 @@ This is the documentation of MiniScript language. This document is WIP.
 | time.getCurrentMillis(): Integer                                                                 |
 | toLowerCase($string: String): String                                                             |
 | toUpperCase($string: String): String                                                             |
-| transform(...): Transform                                                                        |
+| transform($translation: Vector3(OPTIONAL), $scale: Vector3(OPTIONAL), ...): Transform            |
 | transform.getRotationAngle($transform: Transform, $idx: Integer): Float                          |
 | transform.getRotationAxis($transform: Transform, $idx: Integer): Vector3                         |
 | transform.getScale($transform: Transform): Vector3                                               |

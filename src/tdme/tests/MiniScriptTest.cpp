@@ -11123,6 +11123,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			argumentValues[1].setValue(static_cast<int64_t>(2));
 			argumentValues[2].setValue(static_cast<int64_t>(3));
 			// method code: array
+			returnValue.setType(MiniScript::TYPE_ARRAY);
 			for (auto& argumentValue: argumentValues) {
 				returnValue.pushArrayValue(argumentValue);
 			}
@@ -11393,6 +11394,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			argumentValues[1].setValue(static_cast<int64_t>(2));
 			argumentValues[2].setValue(static_cast<int64_t>(3));
 			// method code: array
+			returnValue.setType(MiniScript::TYPE_ARRAY);
 			for (auto& argumentValue: argumentValues) {
 				returnValue.pushArrayValue(argumentValue);
 			}
