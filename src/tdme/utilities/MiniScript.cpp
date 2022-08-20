@@ -3394,6 +3394,7 @@ void MiniScript::registerMethods() {
 				return true;
 			}
 			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue.setType(MiniScript::TYPE_ARRAY);
 				for (auto& argumentValue: argumentValues) {
 					returnValue.pushArrayValue(argumentValue);
 				}

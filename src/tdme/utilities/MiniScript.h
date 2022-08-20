@@ -1440,6 +1440,12 @@ private:
 						}
 						// point variable ptr to now determined next array
 						auto& arrayValueReference = variablePtr->getArrayValueReference();
+						if (nextArrayIdx == ARRAYIDX_ADD) {
+							arrayIdx = nextArrayIdx;
+							arrayAccessOperatorLeftIdx = nextArrayAccessOperatorLeftIdx;
+							arrayAccessOperatorRightIdx = nextArrayAccessOperatorRightIdx;
+							break;
+						} else
 						if (arrayIdx >= 0 && arrayIdx < arrayValueReference.size()) {
 							variablePtr = &arrayValueReference[arrayIdx];
 							arrayIdx = nextArrayIdx;
