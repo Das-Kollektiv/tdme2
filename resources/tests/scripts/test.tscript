@@ -175,9 +175,8 @@ on: nothing
 	console.log("array length: ", array.length($array))
 	console.log("array iteration with array.get(): ")
 	$i = 0
-	forCondition($i < array.length($array) / 2)
-		console.log(($i * 2 + 0) + ": " + array.get($array, $i * 2 + 0))
-		console.log(($i * 2 + 1) + ": " + array.get($array, $i * 2 + 1))
+	forCondition($i < array.length($array))
+		console.log($i + ": " + array.get($array, $i))
 		$i = $i + 1
 	end 
 	console.log("array iteration with [] operator: ")
