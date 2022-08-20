@@ -202,7 +202,7 @@
 	- very small implementation of a scripting language without byte code, VM or what ever
 	- runs on every CPU, OS, ... due to its simplicity, so its highly portable just like TDME2 is
 	- can be easily extended by writing state machine machine states and script methods in C++
-	- only works with the following data type primitives: boolean, integer, float, string, vector3, transform and array(WIP)
+	- only works with the following data type primitives: boolean, integer, float, string, vector3, transform and array
 	- when calling script methods/returning from methods it does not use references or pointers but only value by copy
 	- supports operators by operator to method mapping by a preprocessor run
 	- supports loops and conditions
@@ -292,7 +292,7 @@
 
 # 5. What is WIP or planned for first BETA
 - MiniScript: more engine bindings
-- MiniScript: implement arrays and dictionaries
+- MiniScript: implement dictionaries
 - MiniScript: methods in MiniScript itself
 - Editor: Code editing with code completion, also visual code editing is planned! (wip)
 - Shaders: Implement a new more abstract shader system using e.g. shader parameter system and add a visual/code shader editor on top
