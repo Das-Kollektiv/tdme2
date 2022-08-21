@@ -1515,32 +1515,39 @@ private:
 	bool transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth = 0, int argumentIdx = -1, int parentArgumentIdx = -1, const string& returnValue = string(), const string& injectCode = string(), int additionalIndent = 0);
 
 	/**
-	 * Get array access operator left and right indices
+	 * Get access operator left and right indices
 	 * @param name name
 	 * @param callerMethod caller method
-	 * @param arrayAccessOperatorLeftIdx array access operator left idx
-	 * @param arrayAccessOperatorRightIdx array access operator right idx
+	 * @param accessOperatorLeftIdx access operator left idx
+	 * @param accessOperatorRightIdx access operator right idx
 	 * @param statement statement
 	 * @param startIdx startIdx
 	 */
-	inline bool getArrayAccessOperatorLeftRightIndices(const string& name, const string& callerMethod, string::size_type& arrayAccessOperatorLeftIdx, string::size_type& arrayAccessOperatorRightIdx, const ScriptStatement* statement = nullptr, int startIdx = 0) {
-		arrayAccessOperatorLeftIdx = string::npos;
-		arrayAccessOperatorRightIdx = string::npos;
+	inline bool getVariableAccessOperatorLeftRightIndices(const string& name, const string& callerMethod, string::size_type& accessOperatorLeftIdx, string::size_type& accessOperatorRightIdx, const ScriptStatement* statement = nullptr, int startIdx = 0) {
+		accessOperatorLeftIdx = string::npos;
+		accessOperatorRightIdx = string::npos;
+		auto haveKey = false;
+		// improve me!
+		if (startIdx > 0) {
+			haveKey = name[startIdx - 1] == '.';
+			if (haveKey == true) accessOperatorLeftIdx = startIdx - 1;
+		}
 		for (auto i = startIdx; i < name.length(); i++) {
 			auto c = name[i];
-			if (c == '[') {
-				if (arrayAccessOperatorLeftIdx != string::npos) {
-					if (statement != nullptr) {
-						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': unexpected char: '['");
-					} else {
-						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': variable: '" + name + "': unexpected char: '['");
-					}
-					return false;
+			if (haveKey == true) {
+				if (c == '.') {
+					//
+					accessOperatorRightIdx = i;
+					//
+					return true;
+				} else
+				if (c == '[') {
+					//
+					accessOperatorRightIdx = i;
+					//
+					return true;
 				}
-				arrayAccessOperatorLeftIdx = i;
-			} else
-			if (c == ']') {
-				if (arrayAccessOperatorLeftIdx == string::npos || arrayAccessOperatorRightIdx != string::npos) {
+				if (c == ']') {
 					if (statement != nullptr) {
 						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': unexpected char: ']'");
 					} else {
@@ -1548,26 +1555,62 @@ private:
 					}
 					return false;
 				}
-				arrayAccessOperatorRightIdx = i;
+			} else
+			if (c == '.') {
+				haveKey = true;
+				accessOperatorLeftIdx = i;
+			} else
+			if (c == '[') {
+				if (accessOperatorLeftIdx != string::npos) {
+					if (statement != nullptr) {
+						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': unexpected char: '['");
+					} else {
+						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': variable: '" + name + "': unexpected char: '['");
+					}
+					return false;
+				}
+				accessOperatorLeftIdx = i;
+			} else
+			if (c == ']') {
+				if (accessOperatorLeftIdx == string::npos || accessOperatorRightIdx != string::npos) {
+					if (statement != nullptr) {
+						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': unexpected char: ']'");
+					} else {
+						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': variable: '" + name + "': unexpected char: ']'");
+					}
+					return false;
+				}
+				accessOperatorRightIdx = i + 1;
 				//
 				return true;
 			}
 		}
+		//
+		if (haveKey == true) accessOperatorRightIdx = name.size();
+		//
 		return true;
 	}
 
 	/**
-	 * Evaluate array access array index
+	 * Evaluate access
 	 * @param name name
 	 * @param callerMethod caller method
 	 * @param arrayAccessOperatorLeftIdx array access operator left idx
 	 * @param arrayAccessOperatorRightIdx array access operator right idx
 	 * @param arrayIdx array index
+	 * @param key map key
 	 * @param statement statement
 	 */
-	inline bool evaluateArrayAccessArrayIdx(const string& name, const string& callerMethod, string::size_type& arrayAccessOperatorLeftIdx, string::size_type& arrayAccessOperatorRightIdx, int64_t& arrayIdx, const ScriptStatement* statement = nullptr) {
+	inline bool evaluateAccess(const string& name, const string& callerMethod, string::size_type& arrayAccessOperatorLeftIdx, string::size_type& arrayAccessOperatorRightIdx, int64_t& arrayIdx, string& key, const ScriptStatement* statement = nullptr) {
+		key.clear();
 		arrayIdx = ARRAYIDX_NONE;
-		auto arrayIdxExpressionStringView = StringTools::viewTrim(string_view(&name.data()[arrayAccessOperatorLeftIdx + 1], arrayAccessOperatorRightIdx - arrayAccessOperatorLeftIdx - 1));
+		// check for dot access
+		if (name.data()[arrayAccessOperatorLeftIdx] == '.') {
+			key = string(StringTools::viewTrim(string_view(&name.data()[arrayAccessOperatorLeftIdx + 1], arrayAccessOperatorRightIdx - arrayAccessOperatorLeftIdx - 1)));
+			return true;
+		}
+		// evaluate array index
+		auto arrayIdxExpressionStringView = StringTools::viewTrim(string_view(&name.data()[arrayAccessOperatorLeftIdx + 1], arrayAccessOperatorRightIdx - arrayAccessOperatorLeftIdx - 2));
 		if (arrayIdxExpressionStringView.empty() == false) {
 			ScriptVariable statementReturnValue;
 			if (evaluate(string(arrayIdxExpressionStringView), statementReturnValue) == false || statementReturnValue.getIntegerValue(arrayIdx, false) == false) {
@@ -1590,14 +1633,13 @@ private:
 	 * @param callerMethod caller method
 	 * @param parentVariable parent variable
 	 * @param arrayIdx array index whereas there is ARRAYIDX_ADD for [] or ARRAYIDX_NONE for no array access
+	 * @param key key
 	 * @param statement optional statement the variable is read in
 	 * @param expectVariable expect variable which controls verbosity
 	 * @return pointer to variable
 	 */
-	inline ScriptVariable* getVariableIntern(const string& name, const string& callerMethod, ScriptVariable*& parentVariable, int64_t& arrayIdx, const ScriptStatement* statement = nullptr, bool expectVariable = true) {
-		// no array idx by default
-		arrayIdx = ARRAYIDX_NONE;
-		// TODO: this is WIP still
+	inline ScriptVariable* getVariableIntern(const string& name, const string& callerMethod, ScriptVariable*& parentVariable, int64_t& arrayIdx, string& key, const ScriptStatement* statement = nullptr, bool expectVariable = true) {
+		//
 		if (StringTools::startsWith(name, "$") == false) {
 			if (statement != nullptr) {
 				Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': variable names must start with an $");
@@ -1606,17 +1648,21 @@ private:
 			}
 			return nullptr;
 		}
+		// get root variable
+		key.clear();
+		// no array idx by default
+		arrayIdx = ARRAYIDX_NONE;
 		// determine left and right access operator position if there are any
-		auto arrayAccessOperatorLeftIdx = string::npos;
-		auto arrayAccessOperatorRightIdx = string::npos;
-		if (getArrayAccessOperatorLeftRightIndices(name, callerMethod, arrayAccessOperatorLeftIdx, arrayAccessOperatorRightIdx, statement) == false) {
+		auto accessOperatorLeftIdx = string::npos;
+		auto accessOperatorRightIdx = string::npos;
+		if (getVariableAccessOperatorLeftRightIndices(name, callerMethod, accessOperatorLeftIdx, accessOperatorRightIdx, statement) == false) {
 			return nullptr;
 		}
-		// array access, if we have any, evaluate the array index
-		auto haveArrayAccess = arrayAccessOperatorLeftIdx != string::npos && arrayAccessOperatorRightIdx != string::npos;
-		auto extractedVariableName = haveArrayAccess == true?StringTools::substring(name, 0, arrayAccessOperatorLeftIdx):string();
-		if (haveArrayAccess == true &&
-			evaluateArrayAccessArrayIdx(name, callerMethod, arrayAccessOperatorLeftIdx, arrayAccessOperatorRightIdx, arrayIdx, statement) == false) {
+		// access operator, if we have any, evaluate the array index
+		auto haveAccessOperator = accessOperatorLeftIdx != string::npos && accessOperatorRightIdx != string::npos;
+		auto extractedVariableName = haveAccessOperator == true?StringTools::substring(name, 0, accessOperatorLeftIdx):string();
+		if (haveAccessOperator == true &&
+			evaluateAccess(name, callerMethod, accessOperatorLeftIdx, accessOperatorRightIdx, arrayIdx, key, statement) == false) {
 			return nullptr;
 		}
 		// retrieve variable from variable map
@@ -1631,60 +1677,68 @@ private:
 			}
 			return nullptr;
 		}
-		// get pointer to final variable
+		// get pointer to children variable
 		auto variablePtr = scriptVariableIt->second;
-		if (haveArrayAccess == true) {
-			if (variablePtr->getType() == MiniScript::TYPE_ARRAY) {
-				// determine next left and right access operator position if there are any
-				auto nextHaveArrayAccess = true;
-				while (nextHaveArrayAccess == true) {
-					auto nextArrayAccessOperatorLeftIdx = string::npos;
-					auto nextArrayAccessOperatorRightIdx = string::npos;
-					int64_t nextArrayIdx = ARRAYIDX_NONE;
-					if (getArrayAccessOperatorLeftRightIndices(name, callerMethod, nextArrayAccessOperatorLeftIdx, nextArrayAccessOperatorRightIdx, statement, arrayAccessOperatorRightIdx + 1) == false) {
-						// fail
+		if (haveAccessOperator == false) {
+			//
+			return variablePtr;
+		} else {
+			// resolve first parsed access pattern and repeat until resolved
+			while (haveAccessOperator == true) {
+				// map key access
+				if (key.empty() == false) {
+					if (variablePtr->getType() != TYPE_MAP) {
+						if (statement != nullptr) {
+							Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': map access operator, but variable is not of type map");
+						} else {
+							Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': map access operator, but variable is not of type map");
+						}
 						return nullptr;
 					}
-					// do we have a next array access next to previous one?
-					nextHaveArrayAccess = nextArrayAccessOperatorLeftIdx != string::npos && nextArrayAccessOperatorRightIdx != string::npos;
-					if (nextHaveArrayAccess == true) {
-						// yep, evaluate it
-						if (evaluateArrayAccessArrayIdx(name, callerMethod, nextArrayAccessOperatorLeftIdx, nextArrayAccessOperatorRightIdx, nextArrayIdx, statement) == false) {
-							return nullptr;
-						}
-						// point variable ptr to now determined next array
-						auto& arrayValueReference = variablePtr->getArrayValueReference();
-						if (nextArrayIdx == ARRAYIDX_ADD) {
-							arrayIdx = nextArrayIdx;
-							arrayAccessOperatorLeftIdx = nextArrayAccessOperatorLeftIdx;
-							arrayAccessOperatorRightIdx = nextArrayAccessOperatorRightIdx;
-							break;
-						} else
-						if (arrayIdx >= 0 && arrayIdx < arrayValueReference.size()) {
-							variablePtr = &arrayValueReference[arrayIdx];
-							arrayIdx = nextArrayIdx;
-						} else {
+					//
+					auto& mapValueReference = variablePtr->getMapValueReference();
+					// key
+					auto mapIt = mapValueReference.find(key);
+					if (mapIt != mapValueReference.end()) {
+						//
+						parentVariable = variablePtr;
+						//
+						variablePtr = &mapIt->second;
+					} else {
+						if (expectVariable == true) {
 							if (statement != nullptr) {
-								Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': index out of bounds: 0 <= " + to_string(arrayIdx) + " < " + to_string(arrayValueReference.size()));
+								Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': key not found: '" + key + "'");
 							} else {
-								Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': index out of bounds: 0 <= " + to_string(arrayIdx) + " <= " + to_string(arrayValueReference.size()));
+								Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': key not found: '" + key + "'");
 							}
-							return nullptr;
 						}
+						// we have our parent
+						parentVariable = variablePtr;
+						//
+						return nullptr;
 					}
-					arrayAccessOperatorLeftIdx = nextArrayAccessOperatorLeftIdx;
-					arrayAccessOperatorRightIdx = nextArrayAccessOperatorRightIdx;
-					// exit if no more array access
-					if (nextHaveArrayAccess == false) {
-						break;
+				} else {
+					if (variablePtr->getType() != TYPE_ARRAY) {
+						if (statement != nullptr) {
+							Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': array access operator, but variable is not of type array");
+						} else {
+							Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': array access operator, but variable is not of type array");
+						}
+						return nullptr;
 					}
-				}
-				//
-				parentVariable = variablePtr;
-				if (arrayIdx != ARRAYIDX_ADD) {
 					auto& arrayValueReference = variablePtr->getArrayValueReference();
+					// otherwise array
+					if (arrayIdx == ARRAYIDX_ADD) {
+						// we have our parent
+						parentVariable = variablePtr;
+						//
+						return nullptr;
+					} else
 					if (arrayIdx >= 0 && arrayIdx < arrayValueReference.size()) {
-						return &arrayValueReference[arrayIdx];
+						//
+						parentVariable = variablePtr;
+						//
+						variablePtr = &arrayValueReference[arrayIdx];
 					} else {
 						if (statement != nullptr) {
 							Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': index out of bounds: 0 <= " + to_string(arrayIdx) + " < " + to_string(arrayValueReference.size()));
@@ -1693,18 +1747,30 @@ private:
 						}
 						return nullptr;
 					}
-				} else {
+				}
+
+				//
+				auto accessOperatorStartIdx = accessOperatorRightIdx;
+				accessOperatorLeftIdx = string::npos;
+				accessOperatorRightIdx = string::npos;
+				if (getVariableAccessOperatorLeftRightIndices(name, callerMethod, accessOperatorLeftIdx, accessOperatorRightIdx, statement, accessOperatorStartIdx) == false) {
+					// fail
 					return nullptr;
 				}
-			} else {
-				if (statement != nullptr) {
-					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': array access operator, but variable is not of type array or string");
+
+				// do we have a next array access next to previous one?
+				haveAccessOperator = accessOperatorLeftIdx != string::npos && accessOperatorRightIdx != string::npos;
+				if (haveAccessOperator == false) {
+					return variablePtr;
 				} else {
-					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': array access operator, but variable is not of type array or string");
+					// yep, evaluate it
+					if (evaluateAccess(name, callerMethod, accessOperatorLeftIdx, accessOperatorRightIdx, arrayIdx, key, statement) == false) {
+						return nullptr;
+					}
+
 				}
-				return nullptr;
 			}
-		} else {
+			//
 			return variablePtr;
 		}
 	}
@@ -2065,8 +2131,9 @@ public:
 	 */
 	inline const ScriptVariable getVariable(const string& name, const ScriptStatement* statement = nullptr) {
 		ScriptVariable* parentVariable = nullptr;
+		string key;
 		int64_t arrayIdx = ARRAYIDX_NONE;
-		auto variablePtr = getVariableIntern(name, __FUNCTION__, parentVariable, arrayIdx, statement, false);
+		auto variablePtr = getVariableIntern(name, __FUNCTION__, parentVariable, arrayIdx, key, statement, false);
 		if (variablePtr != nullptr) {
 			return *variablePtr;
 		} else {
@@ -2082,35 +2149,61 @@ public:
 	 */
 	inline void setVariable(const string& name, const ScriptVariable& variable, const ScriptStatement* statement = nullptr) {
 		ScriptVariable* parentVariable = nullptr;
+		string key;
 		int64_t arrayIdx = ARRAYIDX_NONE;
-		auto variablePtr = getVariableIntern(name, __FUNCTION__, parentVariable, arrayIdx, statement, false);
+		auto variablePtr = getVariableIntern(name, __FUNCTION__, parentVariable, arrayIdx, key, statement, false);
 		// common case
 		if (variablePtr != nullptr) {
 			*variablePtr = variable;
 			return;
 		} else
 		// array add operator
+		if (key.empty() == false) {
+			if (parentVariable == nullptr) {
+				string callerMethod = __FUNCTION__;
+				if (statement != nullptr) {
+					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': map access operator without map: '" + key + "'");
+				} else {
+					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': map access operator without map: '" + key + "'");
+				}
+			} else
+			if (parentVariable->getType() != MiniScript::TYPE_MAP) {
+				string callerMethod = __FUNCTION__;
+				if (statement != nullptr) {
+					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': map access operator: expected map, but got " + parentVariable->getTypeAsString() + ": '" + key + "'");
+				} else {
+					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': map access operator: expected map, but got " + parentVariable->getTypeAsString() + ": '" + key + "'");
+				}
+			} else {
+				// all checks passed, push to map
+				parentVariable->setMapValue(key, variable);
+			}
+			//
+			return;
+		} else
 		if (arrayIdx == ARRAYIDX_ADD) {
 			if (parentVariable == nullptr) {
 				string callerMethod = __FUNCTION__;
 				if (statement != nullptr) {
-					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': [] array push operator without array to push to");
+					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': [] array push operator without array");
 				} else {
-					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': [] array push operator without array to push to");
+					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': [] array push operator without array");
 				}
 			} else
 			if (parentVariable->getType() != MiniScript::TYPE_ARRAY) {
 				string callerMethod = __FUNCTION__;
 				if (statement != nullptr) {
-					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': [] array push operator: expected array to push to, but got " + parentVariable->getTypeAsString());
+					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': [] array push operator: expected array , but got " + parentVariable->getTypeAsString());
 				} else {
-					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': [] array push operator: expected array to push to, but got " + parentVariable->getTypeAsString());
+					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': [] array push operator: expected array, but got " + parentVariable->getTypeAsString());
 				}
 			} else {
 				// all checks passed, push variable to array
 				auto& arrayValueReference = parentVariable->getArrayValueReference();
 				arrayValueReference.push_back(variable);
 			}
+			//
+			return;
 		}
 
 		// default
