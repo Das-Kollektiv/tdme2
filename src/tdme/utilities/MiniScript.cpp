@@ -1331,6 +1331,25 @@ void MiniScript::registerMethods() {
 	}
 	{
 		//
+		class ScriptMethodScriptEvaluate: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodScriptEvaluate(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_MAP), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "script.getVariables";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue.setType(TYPE_MAP);
+				for (auto& it: miniScript->scriptState.variables) {
+					returnValue.setMapValue(it.first, *it.second);
+				}
+			}
+		};
+		registerMethod(new ScriptMethodScriptEvaluate(this));
+	}
+	{
+		//
 		class ScriptMethodEnd: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };

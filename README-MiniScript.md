@@ -50,6 +50,7 @@ This is the documentation of MiniScript language. This document is WIP.
 | script.enableNamedCondition($name: String): Void                                                 |
 | script.evaluate(...): Mixed                                                                      |
 | script.getNamedConditions(): String                                                              |
+| script.getVariables(): Map                                                                       |
 | script.stop(): Void                                                                              |
 | script.wait($time: Integer): Void                                                                |
 | script.waitForCondition(): Void                                                                  |
