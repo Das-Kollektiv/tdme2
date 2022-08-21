@@ -1331,11 +1331,11 @@ void MiniScript::registerMethods() {
 	}
 	{
 		//
-		class ScriptMethodScriptEvaluate: public ScriptMethod {
+		class ScriptMethodScriptGetVariables: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodScriptEvaluate(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_MAP), miniScript(miniScript) {}
+			ScriptMethodScriptGetVariables(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_MAP), miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "script.getVariables";
 			}
@@ -1346,7 +1346,7 @@ void MiniScript::registerMethods() {
 				}
 			}
 		};
-		registerMethod(new ScriptMethodScriptEvaluate(this));
+		registerMethod(new ScriptMethodScriptGetVariables(this));
 	}
 	{
 		//
