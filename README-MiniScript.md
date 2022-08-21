@@ -34,6 +34,13 @@ This is the documentation of MiniScript language. This document is WIP.
 | int($int: Integer): Integer                                                                      |
 | lesser($a: Float, $b: Float): Boolean                                                            |
 | lesserequals($a: Float, $b: Float): Boolean                                                      |
+| map(): Map                                                                                       |
+| map.get($map: Map, $key: String): Mixed                                                          |
+| map.getKeys($map: Map): Array                                                                    |
+| map.getValues($map: Map): Array                                                                  |
+| map.has($map: Map, $key: String): Boolean                                                        |
+| map.remove($map: Map, $key: String): Map                                                         |
+| map.set($map: Map, $key: String, ...): Map                                                       |
 | mul(...): Mixed                                                                                  |
 | not($bool: Boolean): Boolean                                                                     |
 | notequal(...): Boolean                                                                           |

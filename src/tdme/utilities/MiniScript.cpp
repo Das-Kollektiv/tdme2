@@ -348,6 +348,12 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string_view&
 							argumentOk = getArrayValue(argumentValues, argumentIdx, arrayValue, argumentType.optional);
 							break;
 						}
+					case TYPE_MAP:
+						{
+							unordered_map<string, ScriptVariable> mapValue;
+							argumentOk = getMapValue(argumentValues, argumentIdx, mapValue, argumentType.optional);
+							break;
+						}
 				}
 				if (argumentOk == false) {
 					Console::println(
@@ -2017,6 +2023,9 @@ void MiniScript::registerMethods() {
 						if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
 							result+= argumentValues[i].getValueString();
 						} else
+						if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
+							result+= argumentValues[i].getValueString();
+						} else
 						if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
 							result+= stringValue;
 						} else {
@@ -3649,6 +3658,230 @@ void MiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodArrayIndexOf(this));
+	}
+	// map
+	{
+		//
+		class ScriptMethodMap: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodMap(MiniScript* miniScript):
+				ScriptMethod(
+					{},
+					ScriptVariableType::TYPE_MAP
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "map";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue.setType(MiniScript::TYPE_MAP);
+			}
+		};
+		registerMethod(new ScriptMethodMap(this));
+	}
+	{
+		//
+		class ScriptMethodMapSet: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodMapSet(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_MAP, .name = "map", .optional = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false }
+					},
+					ScriptVariableType::TYPE_MAP
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "map.set";
+			}
+			bool isVariadic() override {
+				return true;
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				//
+				string key;
+				if (argumentValues.size() < 3 ||
+					argumentValues[0].getType() != ScriptVariableType::TYPE_MAP ||
+					MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+					Console::println("ScriptMethodMapSet::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: map expected, @ argument 1: string, @ argument 2: mixed expected");
+				} else {
+					returnValue = argumentValues[0];
+					returnValue.setMapValue(key, argumentValues[2]);
+				}
+			}
+		};
+		registerMethod(new ScriptMethodMapSet(this));
+	}
+	{
+		//
+		class ScriptMethodMapHas: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodMapHas(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_MAP, .name = "map", .optional = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false }
+					},
+					ScriptVariableType::TYPE_BOOLEAN
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "map.has";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				//
+				string key;
+				if (argumentValues.size() < 2 ||
+					argumentValues[0].getType() != ScriptVariableType::TYPE_MAP ||
+					MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+					Console::println("ScriptMethodMapHas::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: map expected, @ argument 1: string");
+				} else {
+					returnValue.setValue(argumentValues[0].hasMapValue(key));
+				}
+			}
+		};
+		registerMethod(new ScriptMethodMapHas(this));
+	}
+	{
+		//
+		class ScriptMethodMapGet: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodMapGet(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_MAP, .name = "map", .optional = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "map.get";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				//
+				string key;
+				if (argumentValues.size() < 2 ||
+					argumentValues[0].getType() != ScriptVariableType::TYPE_MAP ||
+					MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+					Console::println("ScriptMethodMapGet::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: map expected, @ argument 1: string");
+				} else {
+					returnValue = argumentValues[0].getMapValue(key);
+				}
+			}
+			bool isMixedReturnValue() override {
+				return true;
+			}
+		};
+		registerMethod(new ScriptMethodMapGet(this));
+	}
+	{
+		//
+		class ScriptMethodMapRemove: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodMapRemove(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_MAP, .name = "map", .optional = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false }
+					},
+					ScriptVariableType::TYPE_MAP
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "map.remove";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				//
+				string key;
+				if (argumentValues.size() < 2 ||
+					argumentValues[0].getType() != ScriptVariableType::TYPE_MAP ||
+					MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+					Console::println("ScriptMethodMapHas::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: map expected, @ argument 1: string");
+				} else {
+					returnValue = argumentValues[0];
+					returnValue.removeMapValue(key);
+				}
+			}
+		};
+		registerMethod(new ScriptMethodMapRemove(this));
+	}
+	{
+		//
+		class ScriptMethodMapGetKeys: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodMapGetKeys(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_MAP, .name = "map", .optional = false },
+					},
+					ScriptVariableType::TYPE_ARRAY
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "map.getKeys";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				//
+				if (argumentValues.size() != 1 ||
+					argumentValues[0].getType() != ScriptVariableType::TYPE_MAP) {
+					Console::println("ScriptMethodMapGetKeys::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: map expected");
+				} else {
+					auto keys = argumentValues[0].getMapKeys();
+					returnValue.setType(TYPE_ARRAY);
+					for (auto& key: keys) {
+						returnValue.pushArrayValue(key);
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodMapGetKeys(this));
+	}
+	{
+		//
+		class ScriptMethodMapGetValues: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodMapGetValues(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_MAP, .name = "map", .optional = false },
+					},
+					ScriptVariableType::TYPE_ARRAY
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "map.getValues";
+			}
+			void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				//
+				if (argumentValues.size() != 1 ||
+					argumentValues[0].getType() != ScriptVariableType::TYPE_MAP) {
+					Console::println("ScriptMethodMapGetValues::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: map expected");
+				} else {
+					auto values = argumentValues[0].getMapValues();
+					returnValue.setType(TYPE_ARRAY);
+					for (auto& value: values) {
+						returnValue.pushArrayValue(value);
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodMapGetValues(this));
 	}
 	// get variable
 	{

@@ -11,7 +11,7 @@ MiniScriptTest::MiniScriptTest(): MiniScript() {
 /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DEFINITIONS_START__*/
 void MiniScriptTest::initializeNative() {
 	setNative(true);
-	setHash("6432fab247cefb1af7433a38a849858439fee0aec68736c7e3555b7d4498cac0");
+	setHash("2fc79e1210c14be4383f1cf1e6fd3b9f69a012a8d3e3423c4477a84a13ceecaa");
 	setNativeScripts(
 		{
 			{
@@ -1209,66 +1209,270 @@ void MiniScriptTest::initializeNative() {
 					{
 						.line = 202,
 						.statementIdx = 191,
-						.statement = "console.log(\"--------------------------------------------------\")",
+						.statement = "console.log(\"---------\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 203,
 						.statementIdx = 192,
-						.statement = "console.log(\"Test if enabled naming condition will be emitted\")",
+						.statement = "console.log(\"Maps\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 204,
 						.statementIdx = 193,
-						.statement = "console.log(\"--------------------------------------------------\")",
+						.statement = "console.log(\"----------\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 205,
 						.statementIdx = 194,
-						.statement = "script.enableNamedCondition(\"named_condition_1\")",
+						.statement = "setVariable(\"$map\", map())",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 206,
 						.statementIdx = 195,
-						.statement = "script.wait(2000)",
+						.statement = "console.log(\"map initialized with: $map = map()\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 207,
 						.statementIdx = 196,
-						.statement = "script.disableNamedCondition(\"named_condition_1\")",
+						.statement = "console.log(\"map now looks like: \", $map)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 208,
 						.statementIdx = 197,
-						.statement = "console.log(\"---------------------------------------\")",
+						.statement = "console.log(\"put some key value pairs into map: $map = map.set()\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 209,
 						.statementIdx = 198,
-						.statement = "console.log(\"Naming condition has not been emitted\")",
+						.statement = "setVariable(\"$map\", map.set($map, \"test1\", 123))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 210,
 						.statementIdx = 199,
-						.statement = "console.log(\"---------------------------------------\")",
+						.statement = "setVariable(\"$map\", map.set($map, \"test2\", 456))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 211,
 						.statementIdx = 200,
-						.statement = "script.stop()",
+						.statement = "setVariable(\"$map\", map.set($map, \"test3\", 789))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 212,
 						.statementIdx = 201,
+						.statement = "setVariable(\"$map\", map.set($map, \"test4\", array(1,2,3)))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 213,
+						.statementIdx = 202,
+						.statement = "setVariable(\"$map\", map.set($map, \"test5\", \"Yaaaa\"))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 214,
+						.statementIdx = 203,
+						.statement = "console.log(\"map now looks like: \", $map)",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 215,
+						.statementIdx = 204,
+						.statement = "console.log(\"remove test2 via map.remove: \")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 216,
+						.statementIdx = 205,
+						.statement = "setVariable(\"$map\", map.remove($map, \"test2\"))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 217,
+						.statementIdx = 206,
+						.statement = "console.log(\"map now looks like: \", $map)",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 218,
+						.statementIdx = 207,
+						.statement = "setVariable(\"$map\", map.set($map, \"test2\", 456))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 219,
+						.statementIdx = 208,
+						.statement = "console.log(\"readding test2: \")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 220,
+						.statementIdx = 209,
+						.statement = "console.log(\"map does have test2 key using map.has(): \", map.has($map, \"test2\"))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 221,
+						.statementIdx = 210,
+						.statement = "console.log(\"map does have test8 key using map.has(): \", map.has($map, \"test8\"))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 222,
+						.statementIdx = 211,
+						.statement = "console.log(\"map value for test1 key using map.get(): \", map.get($map, \"test1\"))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 223,
+						.statementIdx = 212,
+						.statement = "console.log(\"map value for test2 key using map.get(): \", map.get($map, \"test2\"))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 224,
+						.statementIdx = 213,
+						.statement = "console.log(\"map value for test3 key using map.get(): \", map.get($map, \"test3\"))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 225,
+						.statementIdx = 214,
+						.statement = "console.log(\"map value for test4 key using map.get(): \", map.get($map, \"test4\"))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 226,
+						.statementIdx = 215,
+						.statement = "console.log(\"map value for test5 key using map.get(): \", map.get($map, \"test5\"))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 227,
+						.statementIdx = 216,
+						.statement = "console.log(\"map keys: \", map.getKeys($map))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 228,
+						.statementIdx = 217,
+						.statement = "console.log(\"map values: \", map.getValues($map))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 229,
+						.statementIdx = 218,
+						.statement = "console.log(\"iterating keys and values using map.getKeys(): \")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 230,
+						.statementIdx = 219,
+						.statement = "setVariable(\"$mapKeys\", map.getKeys($map))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 231,
+						.statementIdx = 220,
+						.statement = "setVariable(\"$i\", 0)",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 232,
+						.statementIdx = 221,
+						.statement = "forCondition(lesser($i, array.length($mapKeys)))",
+						.gotoStatementIdx = 225
+					},
+					{
+						.line = 233,
+						.statementIdx = 222,
+						.statement = "console.log(add($mapKeys[$i],add(\" = \", map.get($map, $mapKeys[$i]))))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 234,
+						.statementIdx = 223,
+						.statement = "setVariable(\"$i\",add($i, 1))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 235,
+						.statementIdx = 224,
+						.statement = "end",
+						.gotoStatementIdx = 221
+					},
+					{
+						.line = 236,
+						.statementIdx = 225,
+						.statement = "console.log(\"--------------------------------------------------\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 237,
+						.statementIdx = 226,
+						.statement = "console.log(\"Test if enabled naming condition will be emitted\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 238,
+						.statementIdx = 227,
+						.statement = "console.log(\"--------------------------------------------------\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 239,
+						.statementIdx = 228,
+						.statement = "script.enableNamedCondition(\"named_condition_1\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 240,
+						.statementIdx = 229,
+						.statement = "script.wait(2000)",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 241,
+						.statementIdx = 230,
+						.statement = "script.disableNamedCondition(\"named_condition_1\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 242,
+						.statementIdx = 231,
+						.statement = "console.log(\"---------------------------------------\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 243,
+						.statementIdx = 232,
+						.statement = "console.log(\"Naming condition has not been emitted\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 244,
+						.statementIdx = 233,
+						.statement = "console.log(\"---------------------------------------\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 245,
+						.statementIdx = 234,
+						.statement = "script.stop()",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 246,
+						.statementIdx = 235,
 						.statement = "end",
 						.gotoStatementIdx = -1
 					}
@@ -1276,25 +1480,25 @@ void MiniScriptTest::initializeNative() {
 			},
 			{
 				.conditionType = Script::CONDITIONTYPE_ON,
-				.line = 214,
+				.line = 248,
 				.condition = "error",
 				.name = "",
 				.emitCondition = true,
 				.statements = {
 					{
-						.line = 215,
+						.line = 249,
 						.statementIdx = 0,
 						.statement = "console.log(\"An error occurred\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 216,
+						.line = 250,
 						.statementIdx = 1,
 						.statement = "script.wait(1000)",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 217,
+						.line = 251,
 						.statementIdx = 2,
 						.statement = "end",
 						.gotoStatementIdx = -1
@@ -1303,163 +1507,163 @@ void MiniScriptTest::initializeNative() {
 			},
 			{
 				.conditionType = Script::CONDITIONTYPE_ON,
-				.line = 219,
+				.line = 253,
 				.condition = "emittest",
 				.name = "",
 				.emitCondition = true,
 				.statements = {
 					{
-						.line = 220,
+						.line = 254,
 						.statementIdx = 0,
 						.statement = "console.log(\"---------------------------------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 221,
+						.line = 255,
 						.statementIdx = 1,
 						.statement = "console.log(\"SCRIPT JUST EMITTED A CONDITION\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 222,
+						.line = 256,
 						.statementIdx = 2,
 						.statement = "console.log(\"---------------------------------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 223,
+						.line = 257,
 						.statementIdx = 3,
 						.statement = "console.log()",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 224,
+						.line = 258,
 						.statementIdx = 4,
 						.statement = "console.log(\"----------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 225,
+						.line = 259,
 						.statementIdx = 5,
 						.statement = "console.log(\"Benchmark \")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 226,
+						.line = 260,
 						.statementIdx = 6,
 						.statement = "console.log(\"----------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 227,
+						.line = 261,
 						.statementIdx = 7,
 						.statement = "setVariable(\"$startTime\", time.getCurrentMillis())",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 228,
+						.line = 262,
 						.statementIdx = 8,
 						.statement = "setVariable(\"$i\", 0)",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 229,
+						.line = 263,
 						.statementIdx = 9,
 						.statement = "setVariable(\"$j\", 0)",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 230,
+						.line = 264,
 						.statementIdx = 10,
 						.statement = "setVariable(\"$k\", 0)",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 231,
+						.line = 265,
 						.statementIdx = 11,
 						.statement = "forCondition(lesser($i, 500000))",
 						.gotoStatementIdx = 22
 					},
 					{
-						.line = 232,
+						.line = 266,
 						.statementIdx = 12,
 						.statement = "setVariable(\"$a\",sub(add(123,add(mul(456,div(25, 12)),mul(7.5, 12.25))), 8))",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 233,
+						.line = 267,
 						.statementIdx = 13,
 						.statement = "if (equals($j, 0))",
 						.gotoStatementIdx = 15
 					},
 					{
-						.line = 234,
+						.line = 268,
 						.statementIdx = 14,
 						.statement = "setVariable(\"$k\",add($k, 1))",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 235,
+						.line = 269,
 						.statementIdx = 15,
 						.statement = "end",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 236,
+						.line = 270,
 						.statementIdx = 16,
 						.statement = "setVariable(\"$i\",add($i, 1))",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 237,
+						.line = 271,
 						.statementIdx = 17,
 						.statement = "setVariable(\"$j\",add($j, 1))",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 238,
+						.line = 272,
 						.statementIdx = 18,
 						.statement = "if (equals($j, 2))",
 						.gotoStatementIdx = 20
 					},
 					{
-						.line = 239,
+						.line = 273,
 						.statementIdx = 19,
 						.statement = "setVariable(\"$j\", 0)",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 240,
+						.line = 274,
 						.statementIdx = 20,
 						.statement = "end",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 241,
+						.line = 275,
 						.statementIdx = 21,
 						.statement = "end",
 						.gotoStatementIdx = 11
 					},
 					{
-						.line = 242,
+						.line = 276,
 						.statementIdx = 22,
 						.statement = "setVariable(\"$endTime\", time.getCurrentMillis())",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 243,
+						.line = 277,
 						.statementIdx = 23,
 						.statement = "console.log(add(\"Finished. Time: \", sub($endTime, $startTime)))",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 244,
+						.line = 278,
 						.statementIdx = 24,
 						.statement = "script.stop()",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 245,
+						.line = 279,
 						.statementIdx = 25,
 						.statement = "end",
 						.gotoStatementIdx = -1
@@ -1468,73 +1672,73 @@ void MiniScriptTest::initializeNative() {
 			},
 			{
 				.conditionType = Script::CONDITIONTYPE_ONENABLED,
-				.line = 247,
+				.line = 281,
 				.condition = "equals(1,1)",
 				.name = "named_condition_1",
 				.emitCondition = false,
 				.statements = {
 					{
-						.line = 248,
+						.line = 282,
 						.statementIdx = 0,
 						.statement = "script.disableNamedCondition(\"named_condition_1\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 249,
+						.line = 283,
 						.statementIdx = 1,
 						.statement = "console.log(\"------------------------------------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 250,
+						.line = 284,
 						.statementIdx = 2,
 						.statement = "console.log(\"named_condition_1 has been emitted\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 251,
+						.line = 285,
 						.statementIdx = 3,
 						.statement = "console.log(\"------------------------------------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 252,
+						.line = 286,
 						.statementIdx = 4,
 						.statement = "console.log()",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 253,
+						.line = 287,
 						.statementIdx = 5,
 						.statement = "console.log(\"-----------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 254,
+						.line = 288,
 						.statementIdx = 6,
 						.statement = "console.log(\"Test emit\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 255,
+						.line = 289,
 						.statementIdx = 7,
 						.statement = "console.log(\"-----------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 256,
+						.line = 290,
 						.statementIdx = 8,
 						.statement = "console.log()",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 257,
+						.line = 291,
 						.statementIdx = 9,
 						.statement = "script.emit(emittest)",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 258,
+						.line = 292,
 						.statementIdx = 10,
 						.statement = "end",
 						.gotoStatementIdx = -1
@@ -1563,7 +1767,7 @@ int MiniScriptTest::determineNamedScriptIdxToStart() {
 			// equals(1, 1)
 			{
 				const ScriptStatement statement = {
-					.line = 247,
+					.line = 281,
 					.statementIdx = 0,
 					.statement = "<unavailable>",
 					.gotoStatementIdx = -1
@@ -1760,7 +1964,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	if (miniScriptGotoStatementIdx == 177) goto miniscript_statement_177; else
 	if (miniScriptGotoStatementIdx == 180) goto miniscript_statement_180; else
 	if (miniScriptGotoStatementIdx == 184) goto miniscript_statement_184; else
-	if (miniScriptGotoStatementIdx == 196) goto miniscript_statement_196; else
+	if (miniScriptGotoStatementIdx == 222) goto miniscript_statement_222; else
+	if (miniScriptGotoStatementIdx == 225) goto miniscript_statement_225; else
+	if (miniScriptGotoStatementIdx == 230) goto miniscript_statement_230; else
 	if (miniScriptGotoStatementIdx != -1 && miniScriptGotoStatementIdx != 0) Console::println("MiniScript::on_nothing(): Can not go to statement " + to_string(miniScriptGotoStatementIdx));
 
 	// Statement: 0
@@ -2062,6 +2268,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 					for (auto i = 0; i < argumentValues.size(); i++) {
 						string stringValue;
 						if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
+							result+= argumentValues[i].getValueString();
+						} else
+						if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
 							result+= argumentValues[i].getValueString();
 						} else
 						if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
@@ -2650,6 +2859,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 							if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
 								result+= argumentValues[i].getValueString();
 							} else
+							if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
+								result+= argumentValues[i].getValueString();
+							} else
 							if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
 								result+= stringValue;
 							} else {
@@ -2714,6 +2926,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 					for (auto i = 0; i < argumentValues.size(); i++) {
 						string stringValue;
 						if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
+							result+= argumentValues[i].getValueString();
+						} else
+						if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
 							result+= argumentValues[i].getValueString();
 						} else
 						if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
@@ -3293,6 +3508,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 					for (auto i = 0; i < argumentValues.size(); i++) {
 						string stringValue;
 						if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
+							result+= argumentValues[i].getValueString();
+						} else
+						if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
 							result+= argumentValues[i].getValueString();
 						} else
 						if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
@@ -3881,6 +4099,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 							if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
 								result+= argumentValues[i].getValueString();
 							} else
+							if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
+								result+= argumentValues[i].getValueString();
+							} else
 							if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
 								result+= stringValue;
 							} else {
@@ -3945,6 +4166,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 					for (auto i = 0; i < argumentValues.size(); i++) {
 						string stringValue;
 						if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
+							result+= argumentValues[i].getValueString();
+						} else
+						if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
 							result+= argumentValues[i].getValueString();
 						} else
 						if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
@@ -4545,6 +4769,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 					for (auto i = 0; i < argumentValues.size(); i++) {
 						string stringValue;
 						if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
+							result+= argumentValues[i].getValueString();
+						} else
+						if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
 							result+= argumentValues[i].getValueString();
 						} else
 						if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
@@ -8066,6 +8293,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 						if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
 							result+= argumentValues[i].getValueString();
 						} else
+						if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
+							result+= argumentValues[i].getValueString();
+						} else
 						if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
 							result+= stringValue;
 						} else {
@@ -8130,6 +8360,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				for (auto i = 0; i < argumentValues.size(); i++) {
 					string stringValue;
 					if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
+						result+= argumentValues[i].getValueString();
+					} else
+					if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
 						result+= argumentValues[i].getValueString();
 					} else
 					if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
@@ -8556,6 +8789,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 					if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
 						result+= argumentValues[i].getValueString();
 					} else
+					if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
+						result+= argumentValues[i].getValueString();
+					} else
 					if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
 						result+= stringValue;
 					} else {
@@ -8905,6 +9141,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				for (auto i = 0; i < argumentValues.size(); i++) {
 					string stringValue;
 					if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
+						result+= argumentValues[i].getValueString();
+					} else
+					if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
 						result+= argumentValues[i].getValueString();
 					} else
 					if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
@@ -9717,6 +9956,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 					if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
 						result+= argumentValues[i].getValueString();
 					} else
+					if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
+						result+= argumentValues[i].getValueString();
+					} else
 					if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
 						result+= stringValue;
 					} else {
@@ -10200,6 +10442,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 								if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
 									result+= argumentValues[i].getValueString();
 								} else
+								if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
+									result+= argumentValues[i].getValueString();
+								} else
 								if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
 									result+= stringValue;
 								} else {
@@ -10264,6 +10509,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 						for (auto i = 0; i < argumentValues.size(); i++) {
 							string stringValue;
 							if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
+								result+= argumentValues[i].getValueString();
+							} else
+							if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
 								result+= argumentValues[i].getValueString();
 							} else
 							if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
@@ -10332,6 +10580,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 						if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
 							result+= argumentValues[i].getValueString();
 						} else
+						if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
+							result+= argumentValues[i].getValueString();
+						} else
 						if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
 							result+= stringValue;
 						} else {
@@ -10396,6 +10647,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				for (auto i = 0; i < argumentValues.size(); i++) {
 					string stringValue;
 					if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
+						result+= argumentValues[i].getValueString();
+					} else
+					if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
 						result+= argumentValues[i].getValueString();
 					} else
 					if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
@@ -10522,6 +10776,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 						for (auto i = 0; i < argumentValues.size(); i++) {
 							string stringValue;
 							if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
+								result+= argumentValues[i].getValueString();
+							} else
+							if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
 								result+= argumentValues[i].getValueString();
 							} else
 							if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
@@ -10818,6 +11075,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 							if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
 								result+= argumentValues[i].getValueString();
 							} else
+							if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
+								result+= argumentValues[i].getValueString();
+							} else
 							if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
 								result+= stringValue;
 							} else {
@@ -10984,6 +11244,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				for (auto i = 0; i < argumentValues.size(); i++) {
 					string stringValue;
 					if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
+						result+= argumentValues[i].getValueString();
+					} else
+					if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
 						result+= argumentValues[i].getValueString();
 					} else
 					if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
@@ -11810,6 +12073,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 						if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
 							result+= argumentValues[i].getValueString();
 						} else
+						if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
+							result+= argumentValues[i].getValueString();
+						} else
 						if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
 							result+= stringValue;
 						} else {
@@ -11874,6 +12140,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				for (auto i = 0; i < argumentValues.size(); i++) {
 					string stringValue;
 					if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
+						result+= argumentValues[i].getValueString();
+					} else
+					if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
 						result+= argumentValues[i].getValueString();
 					} else
 					if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
@@ -11982,6 +12251,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				for (auto i = 0; i < argumentValues.size(); i++) {
 					string stringValue;
 					if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
+						result+= argumentValues[i].getValueString();
+					} else
+					if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
 						result+= argumentValues[i].getValueString();
 					} else
 					if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
@@ -12296,6 +12568,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 						if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
 							result+= argumentValues[i].getValueString();
 						} else
+						if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
+							result+= argumentValues[i].getValueString();
+						} else
 						if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
 							result+= stringValue;
 						} else {
@@ -12360,6 +12635,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				for (auto i = 0; i < argumentValues.size(); i++) {
 					string stringValue;
 					if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
+						result+= argumentValues[i].getValueString();
+					} else
+					if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
 						result+= argumentValues[i].getValueString();
 					} else
 					if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
@@ -12468,6 +12746,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				for (auto i = 0; i < argumentValues.size(); i++) {
 					string stringValue;
 					if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
+						result+= argumentValues[i].getValueString();
+					} else
+					if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
 						result+= argumentValues[i].getValueString();
 					} else
 					if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
@@ -12892,6 +13173,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 						if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
 							result+= argumentValues[i].getValueString();
 						} else
+						if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
+							result+= argumentValues[i].getValueString();
+						} else
 						if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
 							result+= stringValue;
 						} else {
@@ -12956,6 +13240,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				for (auto i = 0; i < argumentValues.size(); i++) {
 					string stringValue;
 					if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
+						result+= argumentValues[i].getValueString();
+					} else
+					if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
 						result+= argumentValues[i].getValueString();
 					} else
 					if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
@@ -13089,6 +13376,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 						if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
 							result+= argumentValues[i].getValueString();
 						} else
+						if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
+							result+= argumentValues[i].getValueString();
+						} else
 						if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
 							result+= stringValue;
 						} else {
@@ -13153,6 +13443,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				for (auto i = 0; i < argumentValues.size(); i++) {
 					string stringValue;
 					if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
+						result+= argumentValues[i].getValueString();
+					} else
+					if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
 						result+= argumentValues[i].getValueString();
 					} else
 					if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
@@ -13261,6 +13554,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				for (auto i = 0; i < argumentValues.size(); i++) {
 					string stringValue;
 					if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
+						result+= argumentValues[i].getValueString();
+					} else
+					if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
 						result+= argumentValues[i].getValueString();
 					} else
 					if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
@@ -13740,9 +14036,1764 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 191
-	// console.log("--------------------------------------------------")
+	// console.log("---------")
 	{
 		const ScriptStatement& statement = scripts[1].statements[191];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("---------"));
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 192
+	// console.log("Maps")
+	{
+		const ScriptStatement& statement = scripts[1].statements[192];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("Maps"));
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 193
+	// console.log("----------")
+	{
+		const ScriptStatement& statement = scripts[1].statements[193];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("----------"));
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 194
+	// setVariable("$map", map())
+	{
+		const ScriptStatement& statement = scripts[1].statements[194];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$map"));
+		// argumentValues[1] --> returnValue of map()
+		// depth = 1 / argument index = 1: map()
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 0> argumentValues;
+			array<ScriptVariable, 0>& argumentValuesD1AIDX1 = argumentValues;
+			// method code: map
+			returnValue.setType(MiniScript::TYPE_MAP);
+		}
+		// method code: setVariable
+		string variable;
+		if (argumentValues.size() != 2 ||
+			MiniScript::getStringValue(argumentValues, 0, variable, false) == false) {
+			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			miniScript->setVariable(variable, argumentValues[1], &statement);
+			returnValue = argumentValues[1];
+		}
+	}
+
+	// Statement: 195
+	// console.log("map initialized with: $map = map()")
+	{
+		const ScriptStatement& statement = scripts[1].statements[195];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("map initialized with: $map = map()"));
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 196
+	// console.log("map now looks like: ", $map)
+	{
+		const ScriptStatement& statement = scripts[1].statements[196];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("map now looks like: "));
+		// argumentValues[1] --> returnValue of getVariable("$map")
+		// depth = 1 / argument index = 1: getVariable("$map")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(string("$map"));
+			// method code: getVariable
+			string variable;
+			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+				returnValue = miniScript->getVariable(variable);
+			} else {
+				Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+				miniScript->startErrorScript(); return;
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 197
+	// console.log("put some key value pairs into map: $map = map.set()")
+	{
+		const ScriptStatement& statement = scripts[1].statements[197];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("put some key value pairs into map: $map = map.set()"));
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 198
+	// setVariable("$map", map.set($map, "test1", 123))
+	{
+		const ScriptStatement& statement = scripts[1].statements[198];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$map"));
+		// argumentValues[1] --> returnValue of map.set($map, "test1", 123)
+		// depth = 1 / argument index = 1: map.set($map, "test1", 123)
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 3> argumentValues;
+			array<ScriptVariable, 3>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$map")
+			argumentValues[1].setValue(string("test1"));
+			argumentValues[2].setValue(static_cast<int64_t>(123));
+			// depth = 2 / argument index = 0: getVariable("$map")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$map"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					returnValue = miniScript->getVariable(variable);
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: map.set
+			//
+			string key;
+			if (argumentValues.size() < 3 ||
+				argumentValues[0].getType() != ScriptVariableType::TYPE_MAP ||
+				MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+				Console::println("ScriptMethodMapSet::executeMethod(): " + string("map.set") + "(): parameter type mismatch @ argument 0: map expected, @ argument 1: string, @ argument 2: mixed expected");
+			} else {
+				returnValue = argumentValues[0];
+				returnValue.setMapValue(key, argumentValues[2]);
+			}
+		}
+		// method code: setVariable
+		string variable;
+		if (argumentValues.size() != 2 ||
+			MiniScript::getStringValue(argumentValues, 0, variable, false) == false) {
+			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			miniScript->setVariable(variable, argumentValues[1], &statement);
+			returnValue = argumentValues[1];
+		}
+	}
+
+	// Statement: 199
+	// setVariable("$map", map.set($map, "test2", 456))
+	{
+		const ScriptStatement& statement = scripts[1].statements[199];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$map"));
+		// argumentValues[1] --> returnValue of map.set($map, "test2", 456)
+		// depth = 1 / argument index = 1: map.set($map, "test2", 456)
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 3> argumentValues;
+			array<ScriptVariable, 3>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$map")
+			argumentValues[1].setValue(string("test2"));
+			argumentValues[2].setValue(static_cast<int64_t>(456));
+			// depth = 2 / argument index = 0: getVariable("$map")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$map"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					returnValue = miniScript->getVariable(variable);
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: map.set
+			//
+			string key;
+			if (argumentValues.size() < 3 ||
+				argumentValues[0].getType() != ScriptVariableType::TYPE_MAP ||
+				MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+				Console::println("ScriptMethodMapSet::executeMethod(): " + string("map.set") + "(): parameter type mismatch @ argument 0: map expected, @ argument 1: string, @ argument 2: mixed expected");
+			} else {
+				returnValue = argumentValues[0];
+				returnValue.setMapValue(key, argumentValues[2]);
+			}
+		}
+		// method code: setVariable
+		string variable;
+		if (argumentValues.size() != 2 ||
+			MiniScript::getStringValue(argumentValues, 0, variable, false) == false) {
+			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			miniScript->setVariable(variable, argumentValues[1], &statement);
+			returnValue = argumentValues[1];
+		}
+	}
+
+	// Statement: 200
+	// setVariable("$map", map.set($map, "test3", 789))
+	{
+		const ScriptStatement& statement = scripts[1].statements[200];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$map"));
+		// argumentValues[1] --> returnValue of map.set($map, "test3", 789)
+		// depth = 1 / argument index = 1: map.set($map, "test3", 789)
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 3> argumentValues;
+			array<ScriptVariable, 3>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$map")
+			argumentValues[1].setValue(string("test3"));
+			argumentValues[2].setValue(static_cast<int64_t>(789));
+			// depth = 2 / argument index = 0: getVariable("$map")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$map"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					returnValue = miniScript->getVariable(variable);
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: map.set
+			//
+			string key;
+			if (argumentValues.size() < 3 ||
+				argumentValues[0].getType() != ScriptVariableType::TYPE_MAP ||
+				MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+				Console::println("ScriptMethodMapSet::executeMethod(): " + string("map.set") + "(): parameter type mismatch @ argument 0: map expected, @ argument 1: string, @ argument 2: mixed expected");
+			} else {
+				returnValue = argumentValues[0];
+				returnValue.setMapValue(key, argumentValues[2]);
+			}
+		}
+		// method code: setVariable
+		string variable;
+		if (argumentValues.size() != 2 ||
+			MiniScript::getStringValue(argumentValues, 0, variable, false) == false) {
+			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			miniScript->setVariable(variable, argumentValues[1], &statement);
+			returnValue = argumentValues[1];
+		}
+	}
+
+	// Statement: 201
+	// setVariable("$map", map.set($map, "test4", array(1,2,3)))
+	{
+		const ScriptStatement& statement = scripts[1].statements[201];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$map"));
+		// argumentValues[1] --> returnValue of map.set($map, "test4", array(1,2,3))
+		// depth = 1 / argument index = 1: map.set($map, "test4", array(1,2,3))
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 3> argumentValues;
+			array<ScriptVariable, 3>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$map")
+			argumentValues[1].setValue(string("test4"));
+			// argumentValues[2] --> returnValue of array(1,2,3)
+			// depth = 2 / argument index = 0: getVariable("$map")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$map"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					returnValue = miniScript->getVariable(variable);
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// depth = 2 / argument index = 2: array(1, 2, 3)
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[2];
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX2 = argumentValues;
+				argumentValues[0].setValue(static_cast<int64_t>(1));
+				argumentValues[1].setValue(static_cast<int64_t>(2));
+				argumentValues[2].setValue(static_cast<int64_t>(3));
+				// method code: array
+				returnValue.setType(MiniScript::TYPE_ARRAY);
+				for (auto& argumentValue: argumentValues) {
+					returnValue.pushArrayValue(argumentValue);
+				}
+			}
+			// method code: map.set
+			//
+			string key;
+			if (argumentValues.size() < 3 ||
+				argumentValues[0].getType() != ScriptVariableType::TYPE_MAP ||
+				MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+				Console::println("ScriptMethodMapSet::executeMethod(): " + string("map.set") + "(): parameter type mismatch @ argument 0: map expected, @ argument 1: string, @ argument 2: mixed expected");
+			} else {
+				returnValue = argumentValues[0];
+				returnValue.setMapValue(key, argumentValues[2]);
+			}
+		}
+		// method code: setVariable
+		string variable;
+		if (argumentValues.size() != 2 ||
+			MiniScript::getStringValue(argumentValues, 0, variable, false) == false) {
+			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			miniScript->setVariable(variable, argumentValues[1], &statement);
+			returnValue = argumentValues[1];
+		}
+	}
+
+	// Statement: 202
+	// setVariable("$map", map.set($map, "test5", "Yaaaa"))
+	{
+		const ScriptStatement& statement = scripts[1].statements[202];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$map"));
+		// argumentValues[1] --> returnValue of map.set($map, "test5", "Yaaaa")
+		// depth = 1 / argument index = 1: map.set($map, "test5", "Yaaaa")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 3> argumentValues;
+			array<ScriptVariable, 3>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$map")
+			argumentValues[1].setValue(string("test5"));
+			argumentValues[2].setValue(string("Yaaaa"));
+			// depth = 2 / argument index = 0: getVariable("$map")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$map"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					returnValue = miniScript->getVariable(variable);
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: map.set
+			//
+			string key;
+			if (argumentValues.size() < 3 ||
+				argumentValues[0].getType() != ScriptVariableType::TYPE_MAP ||
+				MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+				Console::println("ScriptMethodMapSet::executeMethod(): " + string("map.set") + "(): parameter type mismatch @ argument 0: map expected, @ argument 1: string, @ argument 2: mixed expected");
+			} else {
+				returnValue = argumentValues[0];
+				returnValue.setMapValue(key, argumentValues[2]);
+			}
+		}
+		// method code: setVariable
+		string variable;
+		if (argumentValues.size() != 2 ||
+			MiniScript::getStringValue(argumentValues, 0, variable, false) == false) {
+			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			miniScript->setVariable(variable, argumentValues[1], &statement);
+			returnValue = argumentValues[1];
+		}
+	}
+
+	// Statement: 203
+	// console.log("map now looks like: ", $map)
+	{
+		const ScriptStatement& statement = scripts[1].statements[203];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("map now looks like: "));
+		// argumentValues[1] --> returnValue of getVariable("$map")
+		// depth = 1 / argument index = 1: getVariable("$map")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(string("$map"));
+			// method code: getVariable
+			string variable;
+			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+				returnValue = miniScript->getVariable(variable);
+			} else {
+				Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+				miniScript->startErrorScript(); return;
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 204
+	// console.log("remove test2 via map.remove: ")
+	{
+		const ScriptStatement& statement = scripts[1].statements[204];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("remove test2 via map.remove: "));
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 205
+	// setVariable("$map", map.remove($map, "test2"))
+	{
+		const ScriptStatement& statement = scripts[1].statements[205];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$map"));
+		// argumentValues[1] --> returnValue of map.remove($map, "test2")
+		// depth = 1 / argument index = 1: map.remove($map, "test2")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$map")
+			argumentValues[1].setValue(string("test2"));
+			// depth = 2 / argument index = 0: getVariable("$map")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$map"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					returnValue = miniScript->getVariable(variable);
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: map.remove
+			//
+			string key;
+			if (argumentValues.size() < 2 ||
+				argumentValues[0].getType() != ScriptVariableType::TYPE_MAP ||
+				MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+				Console::println("ScriptMethodMapHas::executeMethod(): " + string("map.remove") + "(): parameter type mismatch @ argument 0: map expected, @ argument 1: string");
+			} else {
+				returnValue = argumentValues[0];
+				returnValue.removeMapValue(key);
+			}
+		}
+		// method code: setVariable
+		string variable;
+		if (argumentValues.size() != 2 ||
+			MiniScript::getStringValue(argumentValues, 0, variable, false) == false) {
+			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			miniScript->setVariable(variable, argumentValues[1], &statement);
+			returnValue = argumentValues[1];
+		}
+	}
+
+	// Statement: 206
+	// console.log("map now looks like: ", $map)
+	{
+		const ScriptStatement& statement = scripts[1].statements[206];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("map now looks like: "));
+		// argumentValues[1] --> returnValue of getVariable("$map")
+		// depth = 1 / argument index = 1: getVariable("$map")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(string("$map"));
+			// method code: getVariable
+			string variable;
+			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+				returnValue = miniScript->getVariable(variable);
+			} else {
+				Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+				miniScript->startErrorScript(); return;
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 207
+	// setVariable("$map", map.set($map, "test2", 456))
+	{
+		const ScriptStatement& statement = scripts[1].statements[207];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$map"));
+		// argumentValues[1] --> returnValue of map.set($map, "test2", 456)
+		// depth = 1 / argument index = 1: map.set($map, "test2", 456)
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 3> argumentValues;
+			array<ScriptVariable, 3>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$map")
+			argumentValues[1].setValue(string("test2"));
+			argumentValues[2].setValue(static_cast<int64_t>(456));
+			// depth = 2 / argument index = 0: getVariable("$map")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$map"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					returnValue = miniScript->getVariable(variable);
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: map.set
+			//
+			string key;
+			if (argumentValues.size() < 3 ||
+				argumentValues[0].getType() != ScriptVariableType::TYPE_MAP ||
+				MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+				Console::println("ScriptMethodMapSet::executeMethod(): " + string("map.set") + "(): parameter type mismatch @ argument 0: map expected, @ argument 1: string, @ argument 2: mixed expected");
+			} else {
+				returnValue = argumentValues[0];
+				returnValue.setMapValue(key, argumentValues[2]);
+			}
+		}
+		// method code: setVariable
+		string variable;
+		if (argumentValues.size() != 2 ||
+			MiniScript::getStringValue(argumentValues, 0, variable, false) == false) {
+			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			miniScript->setVariable(variable, argumentValues[1], &statement);
+			returnValue = argumentValues[1];
+		}
+	}
+
+	// Statement: 208
+	// console.log("readding test2: ")
+	{
+		const ScriptStatement& statement = scripts[1].statements[208];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("readding test2: "));
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 209
+	// console.log("map does have test2 key using map.has(): ", map.has($map, "test2"))
+	{
+		const ScriptStatement& statement = scripts[1].statements[209];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("map does have test2 key using map.has(): "));
+		// argumentValues[1] --> returnValue of map.has($map, "test2")
+		// depth = 1 / argument index = 1: map.has($map, "test2")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$map")
+			argumentValues[1].setValue(string("test2"));
+			// depth = 2 / argument index = 0: getVariable("$map")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$map"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					returnValue = miniScript->getVariable(variable);
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: map.has
+			//
+			string key;
+			if (argumentValues.size() < 2 ||
+				argumentValues[0].getType() != ScriptVariableType::TYPE_MAP ||
+				MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+				Console::println("ScriptMethodMapHas::executeMethod(): " + string("map.has") + "(): parameter type mismatch @ argument 0: map expected, @ argument 1: string");
+			} else {
+				returnValue.setValue(argumentValues[0].hasMapValue(key));
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 210
+	// console.log("map does have test8 key using map.has(): ", map.has($map, "test8"))
+	{
+		const ScriptStatement& statement = scripts[1].statements[210];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("map does have test8 key using map.has(): "));
+		// argumentValues[1] --> returnValue of map.has($map, "test8")
+		// depth = 1 / argument index = 1: map.has($map, "test8")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$map")
+			argumentValues[1].setValue(string("test8"));
+			// depth = 2 / argument index = 0: getVariable("$map")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$map"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					returnValue = miniScript->getVariable(variable);
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: map.has
+			//
+			string key;
+			if (argumentValues.size() < 2 ||
+				argumentValues[0].getType() != ScriptVariableType::TYPE_MAP ||
+				MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+				Console::println("ScriptMethodMapHas::executeMethod(): " + string("map.has") + "(): parameter type mismatch @ argument 0: map expected, @ argument 1: string");
+			} else {
+				returnValue.setValue(argumentValues[0].hasMapValue(key));
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 211
+	// console.log("map value for test1 key using map.get(): ", map.get($map, "test1"))
+	{
+		const ScriptStatement& statement = scripts[1].statements[211];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("map value for test1 key using map.get(): "));
+		// argumentValues[1] --> returnValue of map.get($map, "test1")
+		// depth = 1 / argument index = 1: map.get($map, "test1")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$map")
+			argumentValues[1].setValue(string("test1"));
+			// depth = 2 / argument index = 0: getVariable("$map")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$map"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					returnValue = miniScript->getVariable(variable);
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: map.get
+			//
+			string key;
+			if (argumentValues.size() < 2 ||
+				argumentValues[0].getType() != ScriptVariableType::TYPE_MAP ||
+				MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+				Console::println("ScriptMethodMapGet::executeMethod(): " + string("map.get") + "(): parameter type mismatch @ argument 0: map expected, @ argument 1: string");
+			} else {
+				returnValue = argumentValues[0].getMapValue(key);
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 212
+	// console.log("map value for test2 key using map.get(): ", map.get($map, "test2"))
+	{
+		const ScriptStatement& statement = scripts[1].statements[212];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("map value for test2 key using map.get(): "));
+		// argumentValues[1] --> returnValue of map.get($map, "test2")
+		// depth = 1 / argument index = 1: map.get($map, "test2")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$map")
+			argumentValues[1].setValue(string("test2"));
+			// depth = 2 / argument index = 0: getVariable("$map")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$map"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					returnValue = miniScript->getVariable(variable);
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: map.get
+			//
+			string key;
+			if (argumentValues.size() < 2 ||
+				argumentValues[0].getType() != ScriptVariableType::TYPE_MAP ||
+				MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+				Console::println("ScriptMethodMapGet::executeMethod(): " + string("map.get") + "(): parameter type mismatch @ argument 0: map expected, @ argument 1: string");
+			} else {
+				returnValue = argumentValues[0].getMapValue(key);
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 213
+	// console.log("map value for test3 key using map.get(): ", map.get($map, "test3"))
+	{
+		const ScriptStatement& statement = scripts[1].statements[213];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("map value for test3 key using map.get(): "));
+		// argumentValues[1] --> returnValue of map.get($map, "test3")
+		// depth = 1 / argument index = 1: map.get($map, "test3")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$map")
+			argumentValues[1].setValue(string("test3"));
+			// depth = 2 / argument index = 0: getVariable("$map")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$map"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					returnValue = miniScript->getVariable(variable);
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: map.get
+			//
+			string key;
+			if (argumentValues.size() < 2 ||
+				argumentValues[0].getType() != ScriptVariableType::TYPE_MAP ||
+				MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+				Console::println("ScriptMethodMapGet::executeMethod(): " + string("map.get") + "(): parameter type mismatch @ argument 0: map expected, @ argument 1: string");
+			} else {
+				returnValue = argumentValues[0].getMapValue(key);
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 214
+	// console.log("map value for test4 key using map.get(): ", map.get($map, "test4"))
+	{
+		const ScriptStatement& statement = scripts[1].statements[214];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("map value for test4 key using map.get(): "));
+		// argumentValues[1] --> returnValue of map.get($map, "test4")
+		// depth = 1 / argument index = 1: map.get($map, "test4")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$map")
+			argumentValues[1].setValue(string("test4"));
+			// depth = 2 / argument index = 0: getVariable("$map")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$map"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					returnValue = miniScript->getVariable(variable);
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: map.get
+			//
+			string key;
+			if (argumentValues.size() < 2 ||
+				argumentValues[0].getType() != ScriptVariableType::TYPE_MAP ||
+				MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+				Console::println("ScriptMethodMapGet::executeMethod(): " + string("map.get") + "(): parameter type mismatch @ argument 0: map expected, @ argument 1: string");
+			} else {
+				returnValue = argumentValues[0].getMapValue(key);
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 215
+	// console.log("map value for test5 key using map.get(): ", map.get($map, "test5"))
+	{
+		const ScriptStatement& statement = scripts[1].statements[215];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("map value for test5 key using map.get(): "));
+		// argumentValues[1] --> returnValue of map.get($map, "test5")
+		// depth = 1 / argument index = 1: map.get($map, "test5")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$map")
+			argumentValues[1].setValue(string("test5"));
+			// depth = 2 / argument index = 0: getVariable("$map")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$map"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					returnValue = miniScript->getVariable(variable);
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: map.get
+			//
+			string key;
+			if (argumentValues.size() < 2 ||
+				argumentValues[0].getType() != ScriptVariableType::TYPE_MAP ||
+				MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+				Console::println("ScriptMethodMapGet::executeMethod(): " + string("map.get") + "(): parameter type mismatch @ argument 0: map expected, @ argument 1: string");
+			} else {
+				returnValue = argumentValues[0].getMapValue(key);
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 216
+	// console.log("map keys: ", map.getKeys($map))
+	{
+		const ScriptStatement& statement = scripts[1].statements[216];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("map keys: "));
+		// argumentValues[1] --> returnValue of map.getKeys($map)
+		// depth = 1 / argument index = 1: map.getKeys($map)
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$map")
+			// depth = 2 / argument index = 0: getVariable("$map")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$map"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					returnValue = miniScript->getVariable(variable);
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: map.getKeys
+			//
+			if (argumentValues.size() != 1 ||
+				argumentValues[0].getType() != ScriptVariableType::TYPE_MAP) {
+				Console::println("ScriptMethodMapGetKeys::executeMethod(): " + string("map.getKeys") + "(): parameter type mismatch @ argument 0: map expected");
+			} else {
+				auto keys = argumentValues[0].getMapKeys();
+				returnValue.setType(TYPE_ARRAY);
+				for (auto& key: keys) {
+					returnValue.pushArrayValue(key);
+				}
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 217
+	// console.log("map values: ", map.getValues($map))
+	{
+		const ScriptStatement& statement = scripts[1].statements[217];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("map values: "));
+		// argumentValues[1] --> returnValue of map.getValues($map)
+		// depth = 1 / argument index = 1: map.getValues($map)
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$map")
+			// depth = 2 / argument index = 0: getVariable("$map")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$map"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					returnValue = miniScript->getVariable(variable);
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: map.getValues
+			//
+			if (argumentValues.size() != 1 ||
+				argumentValues[0].getType() != ScriptVariableType::TYPE_MAP) {
+				Console::println("ScriptMethodMapGetValues::executeMethod(): " + string("map.getValues") + "(): parameter type mismatch @ argument 0: map expected");
+			} else {
+				auto values = argumentValues[0].getMapValues();
+				returnValue.setType(TYPE_ARRAY);
+				for (auto& value: values) {
+					returnValue.pushArrayValue(value);
+				}
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 218
+	// console.log("iterating keys and values using map.getKeys(): ")
+	{
+		const ScriptStatement& statement = scripts[1].statements[218];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("iterating keys and values using map.getKeys(): "));
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 219
+	// setVariable("$mapKeys", map.getKeys($map))
+	{
+		const ScriptStatement& statement = scripts[1].statements[219];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$mapKeys"));
+		// argumentValues[1] --> returnValue of map.getKeys($map)
+		// depth = 1 / argument index = 1: map.getKeys($map)
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$map")
+			// depth = 2 / argument index = 0: getVariable("$map")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$map"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					returnValue = miniScript->getVariable(variable);
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: map.getKeys
+			//
+			if (argumentValues.size() != 1 ||
+				argumentValues[0].getType() != ScriptVariableType::TYPE_MAP) {
+				Console::println("ScriptMethodMapGetKeys::executeMethod(): " + string("map.getKeys") + "(): parameter type mismatch @ argument 0: map expected");
+			} else {
+				auto keys = argumentValues[0].getMapKeys();
+				returnValue.setType(TYPE_ARRAY);
+				for (auto& key: keys) {
+					returnValue.pushArrayValue(key);
+				}
+			}
+		}
+		// method code: setVariable
+		string variable;
+		if (argumentValues.size() != 2 ||
+			MiniScript::getStringValue(argumentValues, 0, variable, false) == false) {
+			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			miniScript->setVariable(variable, argumentValues[1], &statement);
+			returnValue = argumentValues[1];
+		}
+	}
+
+	// Statement: 220
+	// setVariable("$i", 0)
+	{
+		const ScriptStatement& statement = scripts[1].statements[220];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$i"));
+		argumentValues[1].setValue(static_cast<int64_t>(0));
+		// method code: setVariable
+		string variable;
+		if (argumentValues.size() != 2 ||
+			MiniScript::getStringValue(argumentValues, 0, variable, false) == false) {
+			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			miniScript->setVariable(variable, argumentValues[1], &statement);
+			returnValue = argumentValues[1];
+		}
+	}
+
+	// Statement: 221
+	miniscript_statement_221:
+	// forCondition(lesser($i, array.length($mapKeys)))
+	{
+		const ScriptStatement& statement = scripts[1].statements[221];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of lesser($i, array.length($mapKeys))
+		// depth = 1 / argument index = 0: lesser($i, array.length($mapKeys))
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[0];
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX0 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$i")
+			// argumentValues[1] --> returnValue of array.length($mapKeys)
+			// depth = 2 / argument index = 0: getVariable("$i")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX0[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$i"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					returnValue = miniScript->getVariable(variable);
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// depth = 2 / argument index = 1: array.length($mapKeys)
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX0[1];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX1 = argumentValues;
+				// argumentValues[0] --> returnValue of getVariable("$mapKeys")
+				// depth = 3 / argument index = 0: getVariable("$mapKeys")
+				{
+					// required method code arguments
+					ScriptVariable& returnValue = argumentValuesD2AIDX1[0];
+					array<ScriptVariable, 1> argumentValues;
+					array<ScriptVariable, 1>& argumentValuesD3AIDX0 = argumentValues;
+					argumentValues[0].setValue(string("$mapKeys"));
+					// method code: getVariable
+					string variable;
+					if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+						returnValue = miniScript->getVariable(variable);
+					} else {
+						Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+						miniScript->startErrorScript(); return;
+					}
+				}
+				// method code: array.length
+				if (argumentValues.size() != 1 || argumentValues[0].getType() != ScriptVariableType::TYPE_ARRAY) {
+					Console::println("ScriptMethodArrayLength::executeMethod(): " + string("array.length") + "(): parameter type mismatch @ argument 0: array expected");
+				} else {
+					returnValue.setValue(static_cast<int64_t>(argumentValues[0].getArraySize()));
+				}
+			}
+			// method code: lesser
+			float floatValueA;
+			float floatValueB;
+			if (MiniScript::getFloatValue(argumentValues, 0, floatValueA, false) == true &&
+				MiniScript::getFloatValue(argumentValues, 1, floatValueB, false) == true) {
+				returnValue.setValue(floatValueA < floatValueB);
+			} else {
+				Console::println("ScriptMethodLesser::executeMethod(): " + string("lesser") + "(): parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
+				miniScript->startErrorScript(); return;
+			}
+		}
+		// method code: forCondition
+		bool booleanValue;
+		if (miniScript->getBooleanValue(argumentValues, 0, booleanValue, false) == false) {
+			Console::println("ScriptMethodForCondition::executeMethod(): " + string("forCondition") + "(): parameter type mismatch @ argument 0: boolean expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			//
+			auto now = Time::getCurrentMillis();
+			if (booleanValue == false) {
+				miniScript->setScriptState(STATE_NEXT_STATEMENT);
+				goto miniscript_statement_225;
+			} else {
+				miniScript->scriptState.endTypeStack.push(ScriptState::ENDTYPE_FOR);
+			}
+		}
+	}
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
+		miniScript->scriptState.statementIdx++;
+		return;
+	}
+
+	// Statement: 222
+	miniscript_statement_222:
+	// console.log(add($mapKeys[$i],add(" = ", map.get($map, $mapKeys[$i]))))
+	{
+		const ScriptStatement& statement = scripts[1].statements[222];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of add($mapKeys[$i],add(" = ", map.get($map, $mapKeys[$i])))
+		// depth = 1 / argument index = 0: add($mapKeys[$i], add(" = ", map.get($map, $mapKeys[$i])))
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[0];
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX0 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$mapKeys[$i]")
+			// argumentValues[1] --> returnValue of add(" = ", map.get($map, $mapKeys[$i]))
+			// depth = 2 / argument index = 0: getVariable("$mapKeys[$i]")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX0[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$mapKeys[$i]"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					returnValue = miniScript->getVariable(variable);
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// depth = 2 / argument index = 1: add(" = ", map.get($map, $mapKeys[$i]))
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX0[1];
+				array<ScriptVariable, 2> argumentValues;
+				array<ScriptVariable, 2>& argumentValuesD2AIDX1 = argumentValues;
+				argumentValues[0].setValue(string(" = "));
+				// argumentValues[1] --> returnValue of map.get($map, $mapKeys[$i])
+				// depth = 3 / argument index = 1: map.get($map, $mapKeys[$i])
+				{
+					// required method code arguments
+					ScriptVariable& returnValue = argumentValuesD2AIDX1[1];
+					array<ScriptVariable, 2> argumentValues;
+					array<ScriptVariable, 2>& argumentValuesD3AIDX1 = argumentValues;
+					// argumentValues[0] --> returnValue of getVariable("$map")
+					// argumentValues[1] --> returnValue of getVariable("$mapKeys[$i]")
+					// depth = 4 / argument index = 0: getVariable("$map")
+					{
+						// required method code arguments
+						ScriptVariable& returnValue = argumentValuesD3AIDX1[0];
+						array<ScriptVariable, 1> argumentValues;
+						array<ScriptVariable, 1>& argumentValuesD4AIDX0 = argumentValues;
+						argumentValues[0].setValue(string("$map"));
+						// method code: getVariable
+						string variable;
+						if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+							returnValue = miniScript->getVariable(variable);
+						} else {
+							Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+							miniScript->startErrorScript(); return;
+						}
+					}
+					// depth = 4 / argument index = 1: getVariable("$mapKeys[$i]")
+					{
+						// required method code arguments
+						ScriptVariable& returnValue = argumentValuesD3AIDX1[1];
+						array<ScriptVariable, 1> argumentValues;
+						array<ScriptVariable, 1>& argumentValuesD4AIDX1 = argumentValues;
+						argumentValues[0].setValue(string("$mapKeys[$i]"));
+						// method code: getVariable
+						string variable;
+						if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+							returnValue = miniScript->getVariable(variable);
+						} else {
+							Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+							miniScript->startErrorScript(); return;
+						}
+					}
+					// method code: map.get
+					//
+					string key;
+					if (argumentValues.size() < 2 ||
+						argumentValues[0].getType() != ScriptVariableType::TYPE_MAP ||
+						MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+						Console::println("ScriptMethodMapGet::executeMethod(): " + string("map.get") + "(): parameter type mismatch @ argument 0: map expected, @ argument 1: string");
+					} else {
+						returnValue = argumentValues[0].getMapValue(key);
+					}
+				}
+				// method code: add
+				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_STRING) == true) {
+					string result;
+					for (auto i = 0; i < argumentValues.size(); i++) {
+						string stringValue;
+						if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
+							result+= argumentValues[i].getValueString();
+						} else
+						if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
+							result+= argumentValues[i].getValueString();
+						} else
+						if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
+							result+= stringValue;
+						} else {
+							Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": string expected");
+							miniScript->startErrorScript(); return;
+						}
+					}
+					returnValue.setValue(result);
+				} else
+				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
+					Vector3 result;
+					for (auto i = 0; i < argumentValues.size(); i++) {
+						if (argumentValues[i].getType() == MiniScript::TYPE_VECTOR3) {
+							Vector3 vec3Value;
+							if (MiniScript::getVector3Value(argumentValues, i, vec3Value, false) == true) {
+								result+= vec3Value;
+							} else {
+								Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
+								miniScript->startErrorScript(); return;
+							}
+						} else {
+							float floatValue;
+							if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+								result+= Vector3(floatValue, floatValue, floatValue);
+							} else {
+								Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+								miniScript->startErrorScript(); return;
+							}
+						}
+					}
+					returnValue.setValue(result);
+				} else
+				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_FLOAT) == true) {
+					float result = 0.0f;
+					for (auto i = 0; i < argumentValues.size(); i++) {
+						float floatValue;
+						if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+							result+= floatValue;
+						} else {
+							Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+							miniScript->startErrorScript(); return;
+						}
+					}
+					returnValue.setValue(result);
+				} else {
+					int64_t result = 0.0f;
+					for (auto i = 0; i < argumentValues.size(); i++) {
+						int64_t intValue;
+						if (MiniScript::getIntegerValue(argumentValues, i, intValue, false) == true) {
+							result+= intValue;
+						} else {
+							Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": integer expected");
+							miniScript->startErrorScript(); return;
+						}
+					}
+					returnValue.setValue(result);
+				}
+			}
+			// method code: add
+			if (MiniScript::hasType(argumentValues, MiniScript::TYPE_STRING) == true) {
+				string result;
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					string stringValue;
+					if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
+						result+= argumentValues[i].getValueString();
+					} else
+					if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
+						result+= argumentValues[i].getValueString();
+					} else
+					if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
+						result+= stringValue;
+					} else {
+						Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": string expected");
+						miniScript->startErrorScript(); return;
+					}
+				}
+				returnValue.setValue(result);
+			} else
+			if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
+				Vector3 result;
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					if (argumentValues[i].getType() == MiniScript::TYPE_VECTOR3) {
+						Vector3 vec3Value;
+						if (MiniScript::getVector3Value(argumentValues, i, vec3Value, false) == true) {
+							result+= vec3Value;
+						} else {
+							Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
+							miniScript->startErrorScript(); return;
+						}
+					} else {
+						float floatValue;
+						if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+							result+= Vector3(floatValue, floatValue, floatValue);
+						} else {
+							Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+							miniScript->startErrorScript(); return;
+						}
+					}
+				}
+				returnValue.setValue(result);
+			} else
+			if (MiniScript::hasType(argumentValues, MiniScript::TYPE_FLOAT) == true) {
+				float result = 0.0f;
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					float floatValue;
+					if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+						result+= floatValue;
+					} else {
+						Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+						miniScript->startErrorScript(); return;
+					}
+				}
+				returnValue.setValue(result);
+			} else {
+				int64_t result = 0.0f;
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					int64_t intValue;
+					if (MiniScript::getIntegerValue(argumentValues, i, intValue, false) == true) {
+						result+= intValue;
+					} else {
+						Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": integer expected");
+						miniScript->startErrorScript(); return;
+					}
+				}
+				returnValue.setValue(result);
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 223
+	// setVariable("$i", add($i, 1))
+	{
+		const ScriptStatement& statement = scripts[1].statements[223];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$i"));
+		// argumentValues[1] --> returnValue of add($i, 1)
+		// depth = 1 / argument index = 1: add($i, 1)
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$i")
+			argumentValues[1].setValue(static_cast<int64_t>(1));
+			// depth = 2 / argument index = 0: getVariable("$i")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$i"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					returnValue = miniScript->getVariable(variable);
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: add
+			if (MiniScript::hasType(argumentValues, MiniScript::TYPE_STRING) == true) {
+				string result;
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					string stringValue;
+					if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
+						result+= argumentValues[i].getValueString();
+					} else
+					if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
+						result+= argumentValues[i].getValueString();
+					} else
+					if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
+						result+= stringValue;
+					} else {
+						Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": string expected");
+						miniScript->startErrorScript(); return;
+					}
+				}
+				returnValue.setValue(result);
+			} else
+			if (MiniScript::hasType(argumentValues, MiniScript::TYPE_VECTOR3) == true) {
+				Vector3 result;
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					if (argumentValues[i].getType() == MiniScript::TYPE_VECTOR3) {
+						Vector3 vec3Value;
+						if (MiniScript::getVector3Value(argumentValues, i, vec3Value, false) == true) {
+							result+= vec3Value;
+						} else {
+							Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
+							miniScript->startErrorScript(); return;
+						}
+					} else {
+						float floatValue;
+						if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+							result+= Vector3(floatValue, floatValue, floatValue);
+						} else {
+							Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+							miniScript->startErrorScript(); return;
+						}
+					}
+				}
+				returnValue.setValue(result);
+			} else
+			if (MiniScript::hasType(argumentValues, MiniScript::TYPE_FLOAT) == true) {
+				float result = 0.0f;
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					float floatValue;
+					if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
+						result+= floatValue;
+					} else {
+						Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+						miniScript->startErrorScript(); return;
+					}
+				}
+				returnValue.setValue(result);
+			} else {
+				int64_t result = 0.0f;
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					int64_t intValue;
+					if (MiniScript::getIntegerValue(argumentValues, i, intValue, false) == true) {
+						result+= intValue;
+					} else {
+						Console::println("ScriptMethodAdd::executeMethod(): " + string("add") + "(): parameter type mismatch @ argument " + to_string(i) + ": integer expected");
+						miniScript->startErrorScript(); return;
+					}
+				}
+				returnValue.setValue(result);
+			}
+		}
+		// method code: setVariable
+		string variable;
+		if (argumentValues.size() != 2 ||
+			MiniScript::getStringValue(argumentValues, 0, variable, false) == false) {
+			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			miniScript->setVariable(variable, argumentValues[1], &statement);
+			returnValue = argumentValues[1];
+		}
+	}
+
+	// Statement: 224
+	// end()
+	{
+		const ScriptStatement& statement = scripts[1].statements[224];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 0> argumentValues;
+		array<ScriptVariable, 0>& argumentValuesD0 = argumentValues;
+		// method code: end
+		if (miniScript->scriptState.endTypeStack.empty() == true) {
+			if (miniScript->scriptState.statementIdx < miniScript->scripts[miniScript->scriptState.scriptIdx].statements.size() - 1) {
+				Console::println("ScriptMethodEnd::executeMethod(): end without forXXX/if");
+				miniScript->startErrorScript(); return;
+			}
+		} else {
+			auto endType = miniScript->scriptState.endTypeStack.top();
+			miniScript->scriptState.endTypeStack.pop();
+			switch(endType) {
+				case ScriptState::ENDTYPE_FOR:
+					// no op
+					break;
+				case ScriptState::ENDTYPE_IF:
+					miniScript->scriptState.conditionStack.pop();
+					break;
+			}
+			if (statement.gotoStatementIdx != STATE_NONE) {
+				miniScript->setScriptState(STATE_NEXT_STATEMENT);
+				goto miniscript_statement_221;
+			}
+		}
+	}
+	if (scriptState.stateStack.top().state != STATE_NEXT_STATEMENT) {
+		miniScript->scriptState.statementIdx++;
+		return;
+	}
+
+	// Statement: 225
+	miniscript_statement_225:
+	// console.log("--------------------------------------------------")
+	{
+		const ScriptStatement& statement = scripts[1].statements[225];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -13756,10 +15807,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 192
+	// Statement: 226
 	// console.log("Test if enabled naming condition will be emitted")
 	{
-		const ScriptStatement& statement = scripts[1].statements[192];
+		const ScriptStatement& statement = scripts[1].statements[226];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -13773,10 +15824,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 193
+	// Statement: 227
 	// console.log("--------------------------------------------------")
 	{
-		const ScriptStatement& statement = scripts[1].statements[193];
+		const ScriptStatement& statement = scripts[1].statements[227];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -13790,10 +15841,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 194
+	// Statement: 228
 	// script.enableNamedCondition("named_condition_1")
 	{
-		const ScriptStatement& statement = scripts[1].statements[194];
+		const ScriptStatement& statement = scripts[1].statements[228];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -13828,10 +15879,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 195
+	// Statement: 229
 	// script.wait(2000)
 	{
-		const ScriptStatement& statement = scripts[1].statements[195];
+		const ScriptStatement& statement = scripts[1].statements[229];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -13863,11 +15914,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 196
-	miniscript_statement_196:
+	// Statement: 230
+	miniscript_statement_230:
 	// script.disableNamedCondition("named_condition_1")
 	{
-		const ScriptStatement& statement = scripts[1].statements[196];
+		const ScriptStatement& statement = scripts[1].statements[230];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -13891,10 +15942,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 197
+	// Statement: 231
 	// console.log("---------------------------------------")
 	{
-		const ScriptStatement& statement = scripts[1].statements[197];
+		const ScriptStatement& statement = scripts[1].statements[231];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -13908,10 +15959,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 198
+	// Statement: 232
 	// console.log("Naming condition has not been emitted")
 	{
-		const ScriptStatement& statement = scripts[1].statements[198];
+		const ScriptStatement& statement = scripts[1].statements[232];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -13925,10 +15976,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 199
+	// Statement: 233
 	// console.log("---------------------------------------")
 	{
-		const ScriptStatement& statement = scripts[1].statements[199];
+		const ScriptStatement& statement = scripts[1].statements[233];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -13942,10 +15993,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 200
+	// Statement: 234
 	// script.stop()
 	{
-		const ScriptStatement& statement = scripts[1].statements[200];
+		const ScriptStatement& statement = scripts[1].statements[234];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -13959,10 +16010,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// Statement: 201
+	// Statement: 235
 	// end()
 	{
-		const ScriptStatement& statement = scripts[1].statements[201];
+		const ScriptStatement& statement = scripts[1].statements[235];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -14767,6 +16818,9 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 							if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
 								result+= argumentValues[i].getValueString();
 							} else
+							if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
+								result+= argumentValues[i].getValueString();
+							} else
 							if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
 								result+= stringValue;
 							} else {
@@ -14831,6 +16885,9 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 					for (auto i = 0; i < argumentValues.size(); i++) {
 						string stringValue;
 						if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
+							result+= argumentValues[i].getValueString();
+						} else
+						if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
 							result+= argumentValues[i].getValueString();
 						} else
 						if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
@@ -15108,6 +17165,9 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 					if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
 						result+= argumentValues[i].getValueString();
 					} else
+					if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
+						result+= argumentValues[i].getValueString();
+					} else
 					if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
 						result+= stringValue;
 					} else {
@@ -15259,6 +17319,9 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 					if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
 						result+= argumentValues[i].getValueString();
 					} else
+					if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
+						result+= argumentValues[i].getValueString();
+					} else
 					if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
 						result+= stringValue;
 					} else {
@@ -15370,6 +17433,9 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 				for (auto i = 0; i < argumentValues.size(); i++) {
 					string stringValue;
 					if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
+						result+= argumentValues[i].getValueString();
+					} else
+					if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
 						result+= argumentValues[i].getValueString();
 					} else
 					if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
@@ -15799,6 +17865,9 @@ void MiniScriptTest::on_emittest(int miniScriptGotoStatementIdx) {
 				for (auto i = 0; i < argumentValues.size(); i++) {
 					string stringValue;
 					if (argumentValues[i].getType() == MiniScript::TYPE_ARRAY) {
+						result+= argumentValues[i].getValueString();
+					} else
+					if (argumentValues[i].getType() == MiniScript::TYPE_MAP) {
 						result+= argumentValues[i].getValueString();
 					} else
 					if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {

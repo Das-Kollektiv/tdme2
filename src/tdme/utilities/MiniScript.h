@@ -93,7 +93,8 @@ public:
 		TYPE_STRING,
 		TYPE_VECTOR3,
 		TYPE_TRANSFORM,
-		TYPE_ARRAY
+		TYPE_ARRAY,
+		TYPE_MAP
 	};
 
 	/**
@@ -103,6 +104,7 @@ public:
 		friend class MiniScript;
 
 	private:
+
 		ScriptVariableType type { TYPE_VOID };
 		void* valuePtr { nullptr };
 
@@ -204,6 +206,20 @@ public:
 			return *static_cast<vector<ScriptVariable>*>(valuePtr);
 		}
 
+		/**
+		 * @return map value reference
+		 */
+		inline unordered_map<string, ScriptVariable>& getMapValueReference() {
+			return *static_cast<unordered_map<string, ScriptVariable>*>(valuePtr);
+		}
+
+		/**
+		 * @return const map value reference
+		 */
+		inline const unordered_map<string, ScriptVariable>& getMapValueReference() const {
+			return *static_cast<unordered_map<string, ScriptVariable>*>(valuePtr);
+		}
+
 	public:
 		/**
 		 * Assignment operator
@@ -234,6 +250,9 @@ public:
 					break;
 				case TYPE_ARRAY:
 					setValue(scriptVariable.getArrayValueReference());
+					break;
+				case TYPE_MAP:
+					setValue(scriptVariable.getMapValueReference());
 					break;
 			}
 			return *this;
@@ -267,6 +286,9 @@ public:
 					break;
 				case TYPE_ARRAY:
 					setValue(scriptVariable.getArrayValueReference());
+					break;
+				case TYPE_MAP:
+					setValue(scriptVariable.getMapValueReference());
 					break;
 			}
 		}
@@ -341,6 +363,14 @@ public:
 		}
 
 		/**
+		 * Constructor
+		 * @param value value
+		 */
+		inline ScriptVariable(const unordered_map<string, ScriptVariable>& value) {
+			setValue(value);
+		}
+
+		/**
 		 * @return type
 		 */
 		inline ScriptVariableType getType() const {
@@ -377,6 +407,9 @@ public:
 				case TYPE_ARRAY:
 					delete static_cast<vector<ScriptVariable>*>(valuePtr);
 					break;
+				case TYPE_MAP:
+					delete static_cast<unordered_map<string, ScriptVariable>*>(valuePtr);
+					break;
 			}
 			this->valuePtr = nullptr;
 			this->type = newType;
@@ -403,6 +436,9 @@ public:
 					break;
 				case TYPE_ARRAY:
 					valuePtr = new vector<ScriptVariable>();
+					break;
+				case TYPE_MAP:
+					valuePtr = new unordered_map<string, ScriptVariable>();
 					break;
 			}
 		}
@@ -441,6 +477,9 @@ public:
 					return false;
 					break;
 				case TYPE_ARRAY:
+					return false;
+					break;
+				case TYPE_MAP:
 					return false;
 					break;
 			}
@@ -489,6 +528,8 @@ public:
 					return optional;
 				case TYPE_ARRAY:
 					return optional;
+				case TYPE_MAP:
+					return optional;
 			}
 			return false;
 		}
@@ -526,6 +567,8 @@ public:
 					return optional;
 				case TYPE_ARRAY:
 					return optional;
+				case TYPE_MAP:
+					return optional;
 			}
 			return false;
 		}
@@ -558,6 +601,8 @@ public:
 					return false;
 				case TYPE_ARRAY:
 					return false;
+				case TYPE_MAP:
+					return false;
 			}
 			return false;
 		}
@@ -586,6 +631,8 @@ public:
 				case TYPE_TRANSFORM:
 					return optional;
 				case TYPE_ARRAY:
+					return optional;
+				case TYPE_MAP:
 					return optional;
 			}
 			return false;
@@ -616,6 +663,8 @@ public:
 					return true;
 				case TYPE_ARRAY:
 					return optional;
+				case TYPE_MAP:
+					return optional;
 			}
 			return false;
 		}
@@ -644,6 +693,39 @@ public:
 					return optional;
 				case TYPE_ARRAY:
 					value = getArrayValueReference();
+					return true;
+				case TYPE_MAP:
+					return optional;
+			}
+			return false;
+		}
+
+		/**
+		 * Get map value from given variable
+		 * @param value value
+		 * @param optional optional
+		 * @return success
+		 */
+		inline bool getMapValue(unordered_map<string, ScriptVariable>& value, bool optional = false) const {
+			switch(type) {
+				case TYPE_VOID:
+					return optional;
+				case TYPE_BOOLEAN:
+					return optional;
+				case TYPE_INTEGER:
+					return optional;
+				case TYPE_FLOAT:
+					return optional;
+				case TYPE_STRING:
+					return optional;
+				case TYPE_VECTOR3:
+					return optional;
+				case TYPE_TRANSFORM:
+					return optional;
+				case TYPE_ARRAY:
+					return optional;
+				case TYPE_MAP:
+					value = getMapValueReference();
 					return true;
 			}
 			return false;
@@ -714,8 +796,28 @@ public:
 		}
 
 		/**
+		 * Set map value from given value into variable
+		 * @param value value
+		 */
+		inline void setValue(const unordered_map<string, ScriptVariable>& value) {
+			// TODO: be verbose about misuse
+			setType(TYPE_MAP);
+			getMapValueReference() = value;
+		}
+
+		/**
+		 * Get array length
+		 */
+		inline int64_t getArraySize() const {
+			// TODO: be verbose about misuse
+			if (getType() != TYPE_ARRAY) return 0;
+			return getArrayValueReference().size();
+		}
+
+		/**
 		 * Get value from array with given index
 		 * @param idx index
+		 * @return value from array with given index
 		 */
 		inline const ScriptVariable getArrayValue(int idx) const {
 			// TODO: be verbose about misuse
@@ -749,12 +851,107 @@ public:
 		}
 
 		/**
-		 * Get array length
+		 * Remove array value at given index
+		 * @param idx index
 		 */
-		inline int64_t getArraySize() const {
+		inline void removeArrayValue(int idx) {
 			// TODO: be verbose about misuse
-			if (getType() != TYPE_ARRAY) return 0;
-			return getArrayValueReference().size();
+			if (type != TYPE_ARRAY) return;
+			auto& arrayValue = getArrayValueReference();
+			if (idx >= 0 && idx < arrayValue.size()) arrayValue.erase(arrayValue.begin() + idx);
+			return;
+		}
+
+		/**
+		 * Get map size
+		 */
+		inline int64_t getMapSize() const {
+			// TODO: be verbose about misuse
+			if (getType() != TYPE_MAP) return 0;
+			return getMapValueReference().size();
+		}
+
+		/**
+		 * Map has value with given key
+		 * @param key key
+		 * @return key exists
+		 */
+		inline bool hasMapValue(const string& key) const {
+			// TODO: be verbose about misuse
+			if (type != TYPE_MAP) return false;
+			auto& mapValue = getMapValueReference();
+			auto it = mapValue.find(key);
+			if (it != mapValue.end()) return true;
+			return false;
+		}
+
+		/**
+		 * Get value from map with given key
+		 * @param key key
+		 * @return array value with given key
+		 */
+		inline const ScriptVariable getMapValue(const string& key) const {
+			// TODO: be verbose about misuse
+			if (type != TYPE_MAP) return ScriptVariable();
+			auto& mapValue = getMapValueReference();
+			auto it = mapValue.find(key);
+			if (it != mapValue.end()) return it->second;
+			return ScriptVariable();
+		}
+
+		/**
+		 * Set value in map with given key
+		 * @param key key
+		 * @param value value
+		 */
+		inline void setMapValue(const string& key, const ScriptVariable& value) {
+			// TODO: be verbose about misuse
+			setType(TYPE_MAP);
+			getMapValueReference()[key] = value;
+		}
+
+		/**
+		 * Remove value in map with given key
+		 * @param key key
+		 */
+		inline void removeMapValue(const string& key) {
+			// TODO: be verbose about misuse
+			if (type != TYPE_MAP) return;
+			auto& mapValue = getMapValueReference();
+			auto it = mapValue.find(key);
+			if (it != mapValue.end()) {
+				mapValue.erase(it);
+			}
+		}
+
+		/**
+		 * Get map keys
+		 * @return keys
+		 */
+		inline const vector<string> getMapKeys() const {
+			vector<string> keys;
+			// TODO: be verbose about misuse
+			if (type != TYPE_MAP) return keys;
+			auto& mapValue = getMapValueReference();
+			for (auto& it: mapValue) {
+				keys.push_back(it.first);
+			}
+			return keys;
+		}
+
+		/**
+		 * Get map values
+		 * @return keys
+		 */
+		inline const vector<ScriptVariable> getMapValues() const {
+			vector<ScriptVariable> values;
+			// TODO: be verbose about misuse
+			if (type != TYPE_MAP) return values;
+			auto& mapValue = getMapValueReference();
+			for (auto& it: mapValue) {
+				values.push_back(it.second);
+			}
+			return values;
 		}
 
 		/**
@@ -812,6 +1009,8 @@ public:
 				case TYPE_VECTOR3: return "Vector3";
 				case TYPE_TRANSFORM: return "Transform";
 				case TYPE_ARRAY: return "Array";
+				case TYPE_MAP: return "Map";
+
 			}
 			return string();
 		}
@@ -899,6 +1098,20 @@ public:
 						}
 						result+= valuesString;
 						result+="]";
+						break;
+					}
+				case TYPE_MAP:
+					{
+						auto& mapValue = getMapValueReference();
+						result+="[";
+						string valuesString;
+						for (auto& it: mapValue) {
+							if (valuesString.empty() == false) valuesString+= ", ";
+							valuesString+= it.first +  " = " + it.second.getValueString();
+						}
+						result+= valuesString;
+						result+="]";
+						break;
 					}
 			}
 			return result;
@@ -1815,6 +2028,20 @@ public:
 		if (idx >= arguments.size()) return optional;
 		auto& argument = arguments[idx];
 		return argument.getArrayValue(value, optional);
+	}
+
+	/**
+	 * Get map value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optional
+	 * @return success
+	 */
+	inline static bool getMapValue(const vector<ScriptVariable>& arguments, int idx, unordered_map<string, ScriptVariable>& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		return argument.getMapValue(value, optional);
 	}
 
 	/**
