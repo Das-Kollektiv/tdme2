@@ -1527,6 +1527,7 @@ private:
 		accessOperatorLeftIdx = string::npos;
 		accessOperatorRightIdx = string::npos;
 		auto haveKey = false;
+		auto squareBracketsCount = 0;
 		// improve me!
 		if (startIdx > 0) {
 			haveKey = name[startIdx - 1] == '.';
@@ -1556,23 +1557,23 @@ private:
 					return false;
 				}
 			} else
-			if (c == '.') {
+			if (c == '.' && squareBracketsCount == 0) {
 				haveKey = true;
 				accessOperatorLeftIdx = i;
 			} else
 			if (c == '[') {
-				if (accessOperatorLeftIdx != string::npos) {
-					if (statement != nullptr) {
-						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': unexpected char: '['");
-					} else {
-						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': variable: '" + name + "': unexpected char: '['");
-					}
-					return false;
-				}
-				accessOperatorLeftIdx = i;
+				if (squareBracketsCount == 0) accessOperatorLeftIdx = i;
+				squareBracketsCount++;
 			} else
 			if (c == ']') {
-				if (accessOperatorLeftIdx == string::npos || accessOperatorRightIdx != string::npos) {
+				squareBracketsCount--;
+				if (squareBracketsCount == 0) {
+					//
+					accessOperatorRightIdx = i + 1;
+					//
+					return true;
+				} else
+				if (squareBracketsCount < 0) {
 					if (statement != nullptr) {
 						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': unexpected char: ']'");
 					} else {
@@ -1580,9 +1581,6 @@ private:
 					}
 					return false;
 				}
-				accessOperatorRightIdx = i + 1;
-				//
-				return true;
 			}
 		}
 		//

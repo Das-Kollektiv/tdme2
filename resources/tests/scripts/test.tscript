@@ -224,6 +224,15 @@ on: nothing
 	console.log("map value for test3 key using map.get(): ", map.get($map, "test3"))
 	console.log("map value for test4 key using map.get(): ", map.get($map, "test4"))
 	console.log("map value for test5 key using map.get(): ", map.get($map, "test5"))
+	console.log("map value for test1 using map dot operator: ", $map.test1)
+	console.log("map value for test2 using map dot operator: ", $map.test2)
+	console.log("map value for test3 using map dot operator: ", $map.test3)
+	console.log("map value for test4 using map dot operator: ", $map.test4)
+	console.log("map value for test5 using map dot operator: ", $map.test5)
+	console.log("adding map values using map dot operator: ")
+	$map.test6 = 666
+	$map.test7 = 770
+	$map.test8 = 890
 	console.log("map keys: ", map.getKeys($map))
 	console.log("map values: ", map.getValues($map))
 	console.log("iterating keys and values using map.getKeys(): ")
