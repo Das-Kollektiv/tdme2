@@ -806,7 +806,8 @@ public:
 		}
 
 		/**
-		 * Get array length
+		 * Get array size
+		 * @return array size
 		 */
 		inline int64_t getArraySize() const {
 			// TODO: be verbose about misuse
@@ -888,7 +889,7 @@ public:
 		/**
 		 * Get value from map with given key
 		 * @param key key
-		 * @return array value with given key
+		 * @return map value from given key
 		 */
 		inline const ScriptVariable getMapValue(const string& key) const {
 			// TODO: be verbose about misuse
@@ -941,7 +942,7 @@ public:
 
 		/**
 		 * Get map values
-		 * @return keys
+		 * @return values
 		 */
 		inline const vector<ScriptVariable> getMapValues() const {
 			vector<ScriptVariable> values;
