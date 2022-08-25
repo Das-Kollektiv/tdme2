@@ -72,6 +72,13 @@ This is the documentation of MiniScript language. This document is WIP.
 | transform.setScale($transform: Transform, $scale: Vector3): Transform                            |
 | transform.setTranslation($transform: Transform, $translation: Vector3): Transform                |
 | unsetVariable($variable: String): Void                                                           |
+| vec2($x: Float, $y: Float): Vector2                                                              |
+| vec2.computeDotProduct($a: Vector2, $b: Vector2): Float                                          |
+| vec2.computeLength($vec2: Vector2): Float                                                        |
+| vec2.computeLengthSquared($vec2: Vector2): Float                                                 |
+| vec2.getX($vec2: Vector2): Float                                                                 |
+| vec2.getY($vec2: Vector2): Float                                                                 |
+| vec2.normalize($vec2: Vector2): Vector2                                                          |
 | vec3($x: Float, $y: Float, $z: Float): Vector3                                                   |
 | vec3.computeAngle($a: Vector3, $b: Vector3, $n: Vector3): Float                                  |
 | vec3.computeCrossProduct($a: Vector3, $b: Vector3): Vector3                                      |
@@ -82,6 +89,15 @@ This is the documentation of MiniScript language. This document is WIP.
 | vec3.getY($vec3: Vector3): Float                                                                 |
 | vec3.getZ($vec3: Vector3): Float                                                                 |
 | vec3.normalize($vec3: Vector3): Vector3                                                          |
+| vec4($x: Float, $y: Float, $z: Float, $w: Float): Vector4                                        |
+| vec4.computeDotProduct($a: Vector4, $b: Vector4): Float                                          |
+| vec4.computeLength($vec4: Vector4): Float                                                        |
+| vec4.computeLengthSquared($vec4: Vector4): Float                                                 |
+| vec4.getW($vec4: Vector4): Float                                                                 |
+| vec4.getX($vec4: Vector4): Float                                                                 |
+| vec4.getY($vec4: Vector4): Float                                                                 |
+| vec4.getZ($vec4: Vector4): Float                                                                 |
+| vec4.normalize($vec4: Vector4): Vector4                                                          |
 
 # 2. Operators
 

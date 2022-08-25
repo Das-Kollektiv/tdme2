@@ -10,7 +10,9 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Transform.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/math/Vector4.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
@@ -28,7 +30,9 @@ using std::unordered_map;
 using std::vector;
 
 using tdme::engine::Transform;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
+using tdme::math::Vector4;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Float;
@@ -91,7 +95,9 @@ public:
 		TYPE_INTEGER,
 		TYPE_FLOAT,
 		TYPE_STRING,
+		TYPE_VECTOR2,
 		TYPE_VECTOR3,
+		TYPE_VECTOR4,
 		TYPE_TRANSFORM,
 		TYPE_ARRAY,
 		TYPE_MAP
@@ -165,6 +171,20 @@ public:
 		}
 
 		/**
+		 * @return vector2 value reference
+		 */
+		inline Vector2& getVector2ValueReference() {
+			return *static_cast<Vector2*>(valuePtr);
+		}
+
+		/**
+		 * @return const vector2 value reference
+		 */
+		inline const Vector2& getVector2ValueReference() const {
+			return *static_cast<Vector2*>(valuePtr);
+		}
+
+		/**
 		 * @return vector3 value reference
 		 */
 		inline Vector3& getVector3ValueReference() {
@@ -176,6 +196,20 @@ public:
 		 */
 		inline const Vector3& getVector3ValueReference() const {
 			return *static_cast<Vector3*>(valuePtr);
+		}
+
+		/**
+		 * @return vector4 value reference
+		 */
+		inline Vector4& getVector4ValueReference() {
+			return *static_cast<Vector4*>(valuePtr);
+		}
+
+		/**
+		 * @return const vector4 value reference
+		 */
+		inline const Vector4& getVector4ValueReference() const {
+			return *static_cast<Vector4*>(valuePtr);
 		}
 
 		/**
@@ -242,8 +276,14 @@ public:
 				case TYPE_STRING:
 					setValue(scriptVariable.getStringValueReference());
 					break;
+				case TYPE_VECTOR2:
+					setValue(scriptVariable.getVector2ValueReference());
+					break;
 				case TYPE_VECTOR3:
 					setValue(scriptVariable.getVector3ValueReference());
+					break;
+				case TYPE_VECTOR4:
+					setValue(scriptVariable.getVector4ValueReference());
 					break;
 				case TYPE_TRANSFORM:
 					setValue(scriptVariable.getTransformValueReference());
@@ -278,8 +318,14 @@ public:
 				case TYPE_STRING:
 					setValue(scriptVariable.getStringValueReference());
 					break;
+				case TYPE_VECTOR2:
+					setValue(scriptVariable.getVector2ValueReference());
+					break;
 				case TYPE_VECTOR3:
 					setValue(scriptVariable.getVector3ValueReference());
+					break;
+				case TYPE_VECTOR4:
+					setValue(scriptVariable.getVector4ValueReference());
 					break;
 				case TYPE_TRANSFORM:
 					setValue(scriptVariable.getTransformValueReference());
@@ -342,7 +388,23 @@ public:
 		 * Constructor
 		 * @param value value
 		 */
+		inline ScriptVariable(const Vector2& value) {
+			setValue(value);
+		}
+
+		/**
+		 * Constructor
+		 * @param value value
+		 */
 		inline ScriptVariable(const Vector3& value) {
+			setValue(value);
+		}
+
+		/**
+		 * Constructor
+		 * @param value value
+		 */
+		inline ScriptVariable(const Vector4& value) {
 			setValue(value);
 		}
 
@@ -398,8 +460,14 @@ public:
 				case TYPE_STRING:
 					delete static_cast<string*>(valuePtr);
 					break;
+				case TYPE_VECTOR2:
+					delete static_cast<Vector2*>(valuePtr);
+					break;
 				case TYPE_VECTOR3:
 					delete static_cast<Vector3*>(valuePtr);
+					break;
+				case TYPE_VECTOR4:
+					delete static_cast<Vector4*>(valuePtr);
 					break;
 				case TYPE_TRANSFORM:
 					delete static_cast<Transform*>(valuePtr);
@@ -428,8 +496,14 @@ public:
 				case TYPE_STRING:
 					valuePtr = new string();
 					break;
+				case TYPE_VECTOR2:
+					valuePtr = new Vector2();
+					break;
 				case TYPE_VECTOR3:
 					valuePtr = new Vector3();
+					break;
+				case TYPE_VECTOR4:
+					valuePtr = new Vector4();
 					break;
 				case TYPE_TRANSFORM:
 					valuePtr = new Transform();
@@ -471,7 +545,11 @@ public:
 						value = lowerCaseString == "true" || lowerCaseString == "1";
 						return true;
 					}
+				case TYPE_VECTOR2:
+					return false;
 				case TYPE_VECTOR3:
+					return false;
+				case TYPE_VECTOR4:
 					return false;
 				case TYPE_TRANSFORM:
 					return false;
@@ -522,7 +600,11 @@ public:
 							return optional;
 						}
 					}
+				case TYPE_VECTOR2:
+					return optional;
 				case TYPE_VECTOR3:
+					return optional;
+				case TYPE_VECTOR4:
 					return optional;
 				case TYPE_TRANSFORM:
 					return optional;
@@ -561,7 +643,11 @@ public:
 						value = Float::parse(stringValue);
 					}
 					return true;
+				case TYPE_VECTOR2:
+					return optional;
 				case TYPE_VECTOR3:
+					return optional;
+				case TYPE_VECTOR4:
 					return optional;
 				case TYPE_TRANSFORM:
 					return optional;
@@ -595,7 +681,11 @@ public:
 				case TYPE_STRING:
 					value = getStringValueReference();
 					return true;
+				case TYPE_VECTOR2:
+					return false;
 				case TYPE_VECTOR3:
+					return false;
+				case TYPE_VECTOR4:
 					return false;
 				case TYPE_TRANSFORM:
 					return false;
@@ -603,6 +693,41 @@ public:
 					return false;
 				case TYPE_MAP:
 					return false;
+			}
+			return false;
+		}
+
+		/**
+		 * Get vector2 value from given variable
+		 * @param value value
+		 * @param optional optional
+		 * @return success
+		 */
+		inline bool getVector2Value(Vector2& value, bool optional = false) const {
+			switch(type) {
+				case TYPE_VOID:
+					return optional;
+				case TYPE_BOOLEAN:
+					return optional;
+				case TYPE_INTEGER:
+					return optional;
+				case TYPE_FLOAT:
+					return optional;
+				case TYPE_STRING:
+					return optional;
+				case TYPE_VECTOR2:
+					value = getVector2ValueReference();
+					return true;
+				case TYPE_VECTOR3:
+					return optional;
+				case TYPE_VECTOR4:
+					return optional;
+				case TYPE_TRANSFORM:
+					return optional;
+				case TYPE_ARRAY:
+					return optional;
+				case TYPE_MAP:
+					return optional;
 			}
 			return false;
 		}
@@ -625,8 +750,47 @@ public:
 					return optional;
 				case TYPE_STRING:
 					return optional;
+				case TYPE_VECTOR2:
+					return optional;
 				case TYPE_VECTOR3:
 					value = getVector3ValueReference();
+					return true;
+				case TYPE_VECTOR4:
+					return optional;
+				case TYPE_TRANSFORM:
+					return optional;
+				case TYPE_ARRAY:
+					return optional;
+				case TYPE_MAP:
+					return optional;
+			}
+			return false;
+		}
+
+		/**
+		 * Get vector4 value from given variable
+		 * @param value value
+		 * @param optional optional
+		 * @return success
+		 */
+		inline bool getVector4Value(Vector4& value, bool optional = false) const {
+			switch(type) {
+				case TYPE_VOID:
+					return optional;
+				case TYPE_BOOLEAN:
+					return optional;
+				case TYPE_INTEGER:
+					return optional;
+				case TYPE_FLOAT:
+					return optional;
+				case TYPE_STRING:
+					return optional;
+				case TYPE_VECTOR2:
+					return optional;
+				case TYPE_VECTOR3:
+					return optional;
+				case TYPE_VECTOR4:
+					value = getVector4ValueReference();
 					return true;
 				case TYPE_TRANSFORM:
 					return optional;
@@ -656,7 +820,11 @@ public:
 					return optional;
 				case TYPE_STRING:
 					return optional;
+				case TYPE_VECTOR2:
+					return optional;
 				case TYPE_VECTOR3:
+					return optional;
+				case TYPE_VECTOR4:
 					return optional;
 				case TYPE_TRANSFORM:
 					value = getTransformValueReference();
@@ -687,7 +855,11 @@ public:
 					return optional;
 				case TYPE_STRING:
 					return optional;
+				case TYPE_VECTOR2:
+					return optional;
 				case TYPE_VECTOR3:
+					return optional;
+				case TYPE_VECTOR4:
 					return optional;
 				case TYPE_TRANSFORM:
 					return optional;
@@ -768,12 +940,30 @@ public:
 		}
 
 		/**
+		 * Set vector2 value from given value into variable
+		 * @param value value
+		 */
+		inline void setValue(const Vector2& value) {
+			setType(TYPE_VECTOR2);
+			getVector2ValueReference() = value;
+		}
+
+		/**
 		 * Set vector3 value from given value into variable
 		 * @param value value
 		 */
 		inline void setValue(const Vector3& value) {
 			setType(TYPE_VECTOR3);
 			getVector3ValueReference() = value;
+		}
+
+		/**
+		 * Set vector3 value from given value into variable
+		 * @param value value
+		 */
+		inline void setValue(const Vector4& value) {
+			setType(TYPE_VECTOR4);
+			getVector4ValueReference() = value;
 		}
 
 		/**
@@ -1007,7 +1197,9 @@ public:
 				case TYPE_INTEGER: return "Integer";
 				case TYPE_FLOAT: return "Float";
 				case TYPE_STRING: return "String";
+				case TYPE_VECTOR2: return "Vector2";
 				case TYPE_VECTOR3: return "Vector3";
+				case TYPE_VECTOR4: return "Vector4";
 				case TYPE_TRANSFORM: return "Transform";
 				case TYPE_ARRAY: return "Array";
 				case TYPE_MAP: return "Map";
@@ -1056,6 +1248,15 @@ public:
 				case TYPE_STRING:
 					result+= getStringValueReference();
 					break;
+				case TYPE_VECTOR2:
+					{
+						auto& vector2Value = getVector2ValueReference();
+						result+=
+							"Vector2(" +
+							to_string(vector2Value.getX()) + ", " +
+							to_string(vector2Value.getY()) + ")";
+					}
+					break;
 				case TYPE_VECTOR3:
 					{
 						auto& vector3Value = getVector3ValueReference();
@@ -1064,6 +1265,17 @@ public:
 							to_string(vector3Value.getX()) + ", " +
 							to_string(vector3Value.getY()) + ", " +
 							to_string(vector3Value.getZ()) + ")";
+					}
+					break;
+				case TYPE_VECTOR4:
+					{
+						auto& vector4Value = getVector4ValueReference();
+						result+=
+							"Vector4(" +
+							to_string(vector4Value.getX()) + ", " +
+							to_string(vector4Value.getY()) + ", " +
+							to_string(vector4Value.getZ()) + ", " +
+							to_string(vector4Value.getW()) + ")";
 					}
 					break;
 				case TYPE_TRANSFORM:
@@ -2009,6 +2221,35 @@ public:
 	}
 
 	/**
+	 * Get vector2 value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optional
+	 * @return success
+	 */
+	inline static bool getVector2Value(const vector<ScriptVariable>& arguments, int idx, Vector2& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		return argument.getVector2Value(value, optional);
+	}
+
+	/**
+	 * Get vector2 value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optional
+	 * @return success
+	 */
+	template<std::size_t SIZE>
+	inline static bool getVector2Value(const array<ScriptVariable, SIZE>& arguments, int idx, Vector2& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		return argument.getVector2Value(value, optional);
+	}
+
+	/**
 	 * Get vector3 value from given variable
 	 * @param arguments arguments
 	 * @param idx argument index
@@ -2035,6 +2276,35 @@ public:
 		if (idx >= arguments.size()) return optional;
 		auto& argument = arguments[idx];
 		return argument.getVector3Value(value, optional);
+	}
+
+	/**
+	 * Get vector4 value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optional
+	 * @return success
+	 */
+	inline static bool getVector4Value(const vector<ScriptVariable>& arguments, int idx, Vector4& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		return argument.getVector4Value(value, optional);
+	}
+
+	/**
+	 * Get vector4 value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optional
+	 * @return success
+	 */
+	template<std::size_t SIZE>
+	inline static bool getVector4Value(const array<ScriptVariable, SIZE>& arguments, int idx, Vector4& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		return argument.getVector4Value(value, optional);
 	}
 
 	/**

@@ -270,17 +270,6 @@ public:
 	}
 
 	/**
-	 * Convert this vector to vector with positive vector components
-	 * @return this vector
-	 */
-	inline Vector3& abs() {
-		data[0] = Math::abs(data[0]);
-		data[1] = Math::abs(data[1]);
-		data[2] = Math::abs(data[2]);
-		return *this;
-	}
-
-	/**
 	 * Normalize the vector
 	 * @return this vector
 	 */

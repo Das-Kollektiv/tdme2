@@ -194,6 +194,19 @@ public:
 	}
 
 	/**
+	 * Normalize the vector
+	 * @return this vector
+	 */
+	inline Vector4& normalize() {
+		auto length = computeLength();
+		data[0] /= length;
+		data[1] /= length;
+		data[2] /= length;
+		data[3] /= length;
+		return *this;
+	}
+
+	/**
 	 * Adds a vector
 	 * @param v v
 	 * @return this vector
@@ -363,7 +376,7 @@ public:
 	 * @param v vector to substract
 	 * @return this vector substracted by v
 	 */
-	inline Vector4& operator -=(Vector4& v) {
+	inline Vector4& operator -=(const Vector4& v) {
 		return this->sub(v);
 	}
 
@@ -372,7 +385,7 @@ public:
 	 * @param v vector to multiply by
 	 * @return this vector multiplied by v
 	 */
-	inline Vector4& operator *=(Vector4& v) {
+	inline Vector4& operator *=(const Vector4& v) {
 		return this->scale(v);
 	}
 
@@ -381,7 +394,7 @@ public:
 	 * @param v vector to devide by
 	 * @return this vector devided by v
 	 */
-	inline Vector4& operator /=(Vector4& v) {
+	inline Vector4& operator /=(const Vector4& v) {
 		auto vInverted = Vector4(1.0f / v[0], 1.0f / v[1], 1.0f / v[2], 1.0f / v[3]);
 		return this->scale(vInverted);
 	}
