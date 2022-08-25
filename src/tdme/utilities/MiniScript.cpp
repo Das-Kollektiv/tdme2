@@ -575,9 +575,9 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 		if (haveCondition == false) {
 			if (StringTools::startsWith(scriptLine, "on:") == true || StringTools::startsWith(scriptLine, "on-enabled:") == true) {
 				haveCondition = true;
-				Script::ConditionType conditionType = StringTools::startsWith(scriptLine, "on-enabled:")?Script::CONDITIONTYPE_ONENABLED:Script::CONDITIONTYPE_ON;
+				Script::ScriptType conditionType = StringTools::startsWith(scriptLine, "on-enabled:")?Script::SCRIPTTYPE_ONENABLED:Script::SCRIPTTYPE_ON;
 				scriptLine =
-					conditionType == Script::CONDITIONTYPE_ONENABLED?
+					conditionType == Script::SCRIPTTYPE_ONENABLED?
 						StringTools::trim(StringTools::substring(scriptLine, string("on-enabled:").size())):
 						StringTools::trim(StringTools::substring(scriptLine, string("on:").size()));
 				string name;
@@ -591,7 +591,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 				statementIdx = 0;
 				scripts.push_back(
 					{
-						.conditionType = conditionType,
+						.scriptType = conditionType,
 						.line = line,
 						.condition = condition,
 						.name = name,
@@ -746,7 +746,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 	auto haveInitializeScript = false;
 	auto haveErrorScript = false;
 	for (auto& script: scripts) {
-		if (script.conditionType == Script::CONDITIONTYPE_ONENABLED) {
+		if (script.scriptType == Script::SCRIPTTYPE_ONENABLED) {
 			// no op
 		} else
 		if (script.condition == "initialize") {
@@ -785,7 +785,7 @@ int MiniScript::determineScriptIdxToStart() {
 	auto nothingScriptIdx = -1;
 	auto scriptIdx = 0;
 	for (auto& script: scripts) {
-		if (script.conditionType == Script::CONDITIONTYPE_ONENABLED) {
+		if (script.scriptType == Script::SCRIPTTYPE_ONENABLED) {
 			// no op
 		} else
 		if (script.emitCondition == true && script.condition == "nothing") {
@@ -832,7 +832,7 @@ int MiniScript::determineNamedScriptIdxToStart() {
 	for (auto& enabledConditionName: scriptState.enabledNamedConditions) {
 		auto scriptIdx = 0;
 		for (auto& script: scripts) {
-			if (script.conditionType != Script::CONDITIONTYPE_ONENABLED ||
+			if (script.scriptType != Script::SCRIPTTYPE_ONENABLED ||
 				script.name != enabledConditionName) {
 				// no op
 			} else {
@@ -1117,9 +1117,9 @@ const string MiniScript::getInformation() {
 	string result;
 	result+= "Script: " + scriptPathName + "/" + scriptFileName + " (runs " + (native == true?"natively":"interpreted") + ")" + "\n\n";
 	for (auto& script: scripts) {
-		switch(script.conditionType) {
-			case Script::CONDITIONTYPE_ON: result+= "on: "; break;
-			case Script::CONDITIONTYPE_ONENABLED: result+= "on-enabled: "; break;
+		switch(script.scriptType) {
+			case Script::SCRIPTTYPE_ON: result+= "on: "; break;
+			case Script::SCRIPTTYPE_ONENABLED: result+= "on-enabled: "; break;
 		}
 		if (script.condition.empty() == false)
 			result+= script.condition + "; ";
@@ -5152,7 +5152,7 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 
 	// method name
 	string methodName =
-		(script.conditionType == MiniScript::Script::CONDITIONTYPE_ON?"on_":"on_enabled_") +
+		(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"on_":"on_enabled_") +
 		(script.name.empty() == false?script.name:(
 			StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true?
 				script.condition:

@@ -15,7 +15,7 @@ void MiniScriptTest::initializeNative() {
 	setNativeScripts(
 		{
 			{
-				.conditionType = Script::CONDITIONTYPE_ON,
+				.scriptType = Script::SCRIPTTYPE_ON,
 				.line = 2,
 				.condition = "initialize",
 				.name = "",
@@ -54,7 +54,7 @@ void MiniScriptTest::initializeNative() {
 				}
 			},
 			{
-				.conditionType = Script::CONDITIONTYPE_ON,
+				.scriptType = Script::SCRIPTTYPE_ON,
 				.line = 10,
 				.condition = "nothing",
 				.name = "",
@@ -1671,7 +1671,7 @@ void MiniScriptTest::initializeNative() {
 				}
 			},
 			{
-				.conditionType = Script::CONDITIONTYPE_ON,
+				.scriptType = Script::SCRIPTTYPE_ON,
 				.line = 280,
 				.condition = "error",
 				.name = "",
@@ -1698,7 +1698,7 @@ void MiniScriptTest::initializeNative() {
 				}
 			},
 			{
-				.conditionType = Script::CONDITIONTYPE_ON,
+				.scriptType = Script::SCRIPTTYPE_ON,
 				.line = 285,
 				.condition = "emittest",
 				.name = "",
@@ -1863,7 +1863,7 @@ void MiniScriptTest::initializeNative() {
 				}
 			},
 			{
-				.conditionType = Script::CONDITIONTYPE_ONENABLED,
+				.scriptType = Script::SCRIPTTYPE_ONENABLED,
 				.line = 313,
 				.condition = "equals(1,1)",
 				.name = "named_condition_1",

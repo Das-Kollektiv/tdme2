@@ -224,7 +224,7 @@ void processFile(const string& scriptFileName, const string& miniscriptTranspila
 		for (auto& script: scripts) {
 			// method name
 			string methodName =
-				(script.conditionType == MiniScript::Script::CONDITIONTYPE_ON?"on_":"on_enabled_") +
+				(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"on_":"on_enabled_") +
 				(script.name.empty() == false?script.name:(
 					StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true?
 						script.condition:
@@ -309,7 +309,7 @@ void processFile(const string& scriptFileName, const string& miniscriptTranspila
 		auto scriptIdx = 0;
 		for (auto& script: scripts) {
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "{" + "\n";
-			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".conditionType = " + (script.conditionType == MiniScript::Script::CONDITIONTYPE_ON?"Script::CONDITIONTYPE_ON":"Script::CONDITIONTYPE_ONENABLED") + "," + "\n";
+			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".scriptType = " + (script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"Script::SCRIPTTYPE_ON":"Script::SCRIPTTYPE_ONENABLED") + "," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".line = " + to_string(script.line) + "," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".condition = \"" + StringTools::replace(script.condition, "\"", "\\\"") + "\"," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".name = \"" + script.name + "\"," + "\n";
@@ -349,7 +349,7 @@ void processFile(const string& scriptFileName, const string& miniscriptTranspila
 		for (auto& script: scripts) {
 			// method name
 			string methodName =
-				(script.conditionType == MiniScript::Script::CONDITIONTYPE_ON?"on_":"on_enabled_") +
+				(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"on_":"on_enabled_") +
 				(script.name.empty() == false?script.name:(
 					StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true?
 						script.condition:
@@ -366,7 +366,7 @@ void processFile(const string& scriptFileName, const string& miniscriptTranspila
 				);
 
 			// emit code
-			if (script.conditionType == MiniScript::Script::CONDITIONTYPE_ON && StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true) {
+			if (script.scriptType == MiniScript::Script::SCRIPTTYPE_ON && StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true) {
 				string emitDefinitionIndent = "\t";
 				emitDefinition+= emitDefinitionIndent + "if (condition == \"" + emitName + "\") {" + "\n";
 				emitDefinition+= emitDefinitionIndent + "\t" + methodName + "(-1);" + "\n";
@@ -376,7 +376,7 @@ void processFile(const string& scriptFileName, const string& miniscriptTranspila
 
 			// declaration
 			generatedDeclarations+= headerIndent + "/**" + "\n";
-			generatedDeclarations+= headerIndent + " * Miniscript transpilation of: " + (script.conditionType == MiniScript::Script::CONDITIONTYPE_ON?"ON":"ON-ENABLED") + ": " + script.condition + (script.name.empty() == false?" (" + script.name + ")":"") + "\n";
+			generatedDeclarations+= headerIndent + " * Miniscript transpilation of: " + (script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"ON":"ON-ENABLED") + ": " + script.condition + (script.name.empty() == false?" (" + script.name + ")":"") + "\n";
 			generatedDeclarations+= headerIndent + " * @param miniScriptGotoStatementIdx MiniScript goto statement index" + "\n";
 			generatedDeclarations+= headerIndent + " */" + "\n";
 			generatedDeclarations+= headerIndent + "void " + methodName + "(int miniScriptGotoStatementIdx);" + "\n";
@@ -391,18 +391,18 @@ void processFile(const string& scriptFileName, const string& miniscriptTranspila
 
 			//
 			if (StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == false) {
-				if (script.conditionType == MiniScript::Script::CONDITIONTYPE_ONENABLED) {
+				if (script.scriptType == MiniScript::Script::SCRIPTTYPE_ONENABLED) {
 					generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\n";
 					generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "\t" + "// next statements belong to tested enabled named condition with name \"" + script.name + "\"" + "\n";
 					generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "\t" + "if (enabledNamedCondition == \"" + script.name + "\")" + "\n";
 				}
 				scriptInstance->transpileScriptCondition(
-					script.conditionType == MiniScript::Script::CONDITIONTYPE_ON?generatedDetermineScriptIdxToStartDefinition:generatedDetermineNamedScriptIdxToStartDefinition,
+					script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?generatedDetermineScriptIdxToStartDefinition:generatedDetermineNamedScriptIdxToStartDefinition,
 					scriptIdx,
 					methodCodeMap,
 					"-1",
 					"bool returnValueBool; returnValue.getBooleanValue(returnValueBool); if (returnValueBool == true) return " + to_string(scriptIdx) + ";",
-					script.conditionType == MiniScript::Script::CONDITIONTYPE_ONENABLED?1:0
+					script.scriptType == MiniScript::Script::SCRIPTTYPE_ONENABLED?1:0
 				);
 			}
 

@@ -1366,8 +1366,8 @@ public:
 	 * Script
 	 */
 	struct Script {
-		enum ConditionType { CONDITIONTYPE_ON, CONDITIONTYPE_ONENABLED };
-		ConditionType conditionType;
+		enum ScriptType { SCRIPTTYPE_ON, SCRIPTTYPE_ONENABLED };
+		ScriptType scriptType;
 		int line;
 		string condition;
 		string name;
@@ -1472,6 +1472,7 @@ protected:
 			int state { -1 };
 			int lastState { -1 };
 			ScriptStateMachineState* lastStateMachineState { nullptr };
+			ScriptVariable arguments;
 		};
 		bool running { false };
 		int scriptIdx { -1 };
