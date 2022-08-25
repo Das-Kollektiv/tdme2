@@ -3024,11 +3024,11 @@ void MiniScript::registerMethods() {
 	// vector3 methods
 	{
 		//
-		class ScriptMethodVec2: public ScriptMethod {
+		class ScriptMethodVec3: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodVec2(MiniScript* miniScript):
+			ScriptMethodVec3(MiniScript* miniScript):
 				ScriptMethod(
 					{
 						{.type = ScriptVariableType::TYPE_FLOAT, .name = "x", .optional = false },
@@ -3056,7 +3056,7 @@ void MiniScript::registerMethods() {
 				}
 			}
 		};
-		registerMethod(new ScriptMethodVec2(this));
+		registerMethod(new ScriptMethodVec3(this));
 	}
 	{
 		//
