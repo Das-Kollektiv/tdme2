@@ -172,6 +172,7 @@ on: nothing
 	console.log("array values added with [] operator to push to array of array: 50, 60")
 	$array[11][] = 50
 	$array[11][] = 60
+	$array[11][array.length($array[11]) - 1] = 61
 	console.log("array length: ", array.length($array))
 	console.log("array iteration with array.get(): ")
 	$i = 0

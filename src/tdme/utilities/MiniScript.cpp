@@ -1068,7 +1068,7 @@ const string MiniScript::doStatementPreProcessing(const string& statement) {
 			}
 			//
 			if (nextOperators.scriptOperator == OPERATOR_SET) {
-				leftArgument = "\"" + leftArgument + "\"";
+				leftArgument = "\"" + doStatementPreProcessing(leftArgument) + "\"";
 			}
 			// substitute with method call
 			preprocessedStatement =
