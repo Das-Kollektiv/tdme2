@@ -31,7 +31,12 @@ using tdme::utilities::Integer;
 using tdme::utilities::MiniScript;
 using tdme::utilities::StringTools;
 
-void gatherMethodCode(const vector<string>& miniScriptExtensionsCode, const string& className, int registerLine, unordered_map<string, vector<string>>& methodCodeMap) {
+namespace tdme {
+namespace tools {
+namespace cli {
+class MiniscriptTranspiler {
+public:
+static void gatherMethodCode(const vector<string>& miniScriptExtensionsCode, const string& className, int registerLine, unordered_map<string, vector<string>>& methodCodeMap) {
 	// TODO: this is a bit ugly and can be improved a lot, lets see and get this to work first
 	auto classDefinitionLine = -1;
 	// get class definition start line
@@ -173,7 +178,7 @@ void gatherMethodCode(const vector<string>& miniScriptExtensionsCode, const stri
 	methodCodeMap[methodName] = executeMethodCode;
 }
 
-void processFile(const string& scriptFileName, const string& miniscriptTranspilationFileName, const vector<string>& miniScriptExtensionFileNames) {
+static void processFile(const string& scriptFileName, const string& miniscriptTranspilationFileName, const vector<string>& miniScriptExtensionFileNames) {
 	Console::println("Processing script: " + scriptFileName);
 
 	//
@@ -182,6 +187,7 @@ void processFile(const string& scriptFileName, const string& miniscriptTranspila
 	//
 	vector<string> _miniScriptExtensionFileNames;
 	_miniScriptExtensionFileNames.push_back("src/tdme/utilities/MiniScript.cpp");
+	_miniScriptExtensionFileNames.push_back("src/tdme/utilities/MiniScriptMath.cpp");
 	for (auto& miniScriptExtensionFileName: miniScriptExtensionFileNames) _miniScriptExtensionFileNames.push_back(miniScriptExtensionFileName);
 	for (auto& miniScriptExtensionFileName: _miniScriptExtensionFileNames) {
 		vector<string> miniScriptExtensionsCode;
@@ -189,14 +195,14 @@ void processFile(const string& scriptFileName, const string& miniscriptTranspila
 		for (auto i = 0; i < miniScriptExtensionsCode.size(); i++) {
 			auto& line = miniScriptExtensionsCode[i];
 			auto trimmedLine = StringTools::trim(line);
-			if (StringTools::startsWith(trimmedLine, "registerMethod") == true) {
+			if (StringTools::startsWith(trimmedLine, "registerMethod") == true ||
+				StringTools::startsWith(trimmedLine, "miniScript->registerMethod") == true) {
 				auto bracketCount = 0;
 				string className;
-				auto classNameStartIdx = StringTools::firstIndexOf(StringTools::substring(trimmedLine, 14), "new");
-				if (classNameStartIdx == string::npos) {
+				if (StringTools::firstIndexOf(StringTools::substring(trimmedLine, 14), "new") == string::npos) {
 					Console::println("src/tdme/utilities/MiniScript.cpp: registerMethod @ " + to_string(i) + ": '" + trimmedLine + "': unable to determine class name");
 				} else {
-					classNameStartIdx+= 14 + 3;
+					auto classNameStartIdx = trimmedLine.find("registerMethod") + 14 + 5;
 					for (auto j = classNameStartIdx; j < trimmedLine.size(); j++) {
 						auto c = trimmedLine[j];
 						if (c == '(') break;
@@ -518,6 +524,11 @@ void processFile(const string& scriptFileName, const string& miniscriptTranspila
 	}
 }
 
+};
+}
+}
+}
+
 int main(int argc, char** argv)
 {
 	Console::println(string("miniscripttranspiler ") + Version::getVersion());
@@ -534,5 +545,5 @@ int main(int argc, char** argv)
 	for (auto i = 3; i < argc; i++) miniScriptExtensionFileNames.push_back(argv[i]);
 
 	//
-	processFile(argv[1], argv[2], miniScriptExtensionFileNames);
+	tdme::tools::cli::MiniscriptTranspiler::processFile(argv[1], argv[2], miniScriptExtensionFileNames);
 }

@@ -363,7 +363,7 @@ private:
 		/**
 		 * @return processed elements
 		 */
-		volatile inline int getProcessedElements() {
+		inline int getProcessedElements() {
 			return elementsProcessed;
 		}
 

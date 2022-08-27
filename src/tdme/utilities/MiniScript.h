@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <array>
+#include <span>
 #include <stack>
 #include <string>
 #include <string_view>
@@ -28,6 +29,7 @@ using std::string_view;
 using std::to_string;
 using std::unordered_map;
 using std::vector;
+using std::span;
 
 using tdme::engine::Transform;
 using tdme::math::Vector2;
@@ -40,11 +42,21 @@ using tdme::utilities::Integer;
 using tdme::utilities::StringTools;
 using tdme::utilities::Time;
 
+namespace tdme {
+namespace tools {
+namespace cli {
+	class MiniscriptTranspiler;
+}
+}
+}
+
 /**
  * Miniscript
  * @author Andreas Drewke
  */
 class tdme::utilities::MiniScript {
+	friend class tdme::tools::cli::MiniscriptTranspiler;
+
 public:
 	enum ScriptOperator {
 		OPERATOR_NONE,
@@ -1409,7 +1421,7 @@ public:
 		 * @param returnValue return value
 		 * @param statement statement
 		 */
-		virtual void executeMethod(const vector<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) = 0;
+		virtual void executeMethod(const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) = 0;
 
 		/**
 		 * @return arguments
@@ -1986,6 +1998,26 @@ private:
 		}
 	}
 
+	/**
+	 * Transpile a script statement
+	 * @param generatedCode generated code
+	 * @param scriptIdx script index
+	 * @param methodCodeMap method code map
+	 * @return success
+	 */
+	bool transpile(string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap);
+
+	/**
+	 * Transpile a script condition
+	 * @param generatedCode generated code
+	 * @param scriptIdx script index
+	 * @param methodCodeMap method code map
+	 * @param returnValue return value
+	 * @param injectCode inject code
+	 * @return success
+	 */
+	bool transpileScriptCondition(string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap, const string& returnValue, const string& injectCode, int depth = 0);
+
 public:
 	/**
 	 * Default constructor
@@ -2088,19 +2120,7 @@ public:
 	 * @param type type
 	 * @return has type
 	 */
-	inline static bool hasType(const vector<ScriptVariable>& arguments, ScriptVariableType type) {
-		for (auto& argument: arguments) if (argument.getType() == type) return true;
-		return false;
-	}
-
-	/**
-	 * Check if arguments contain argument with given type
-	 * @param arguments arguments
-	 * @param type type
-	 * @return has type
-	 */
-	template<std::size_t SIZE>
-	inline static bool hasType(const array<ScriptVariable, SIZE>& arguments, ScriptVariableType type) {
+	inline static bool hasType(const span<ScriptVariable>& arguments, ScriptVariableType type) {
 		for (auto& argument: arguments) if (argument.getType() == type) return true;
 		return false;
 	}
@@ -2113,22 +2133,7 @@ public:
 	 * @param optional optionalfalse
 	 * @return success
 	 */
-	inline static bool getBooleanValue(const vector<ScriptVariable>& arguments, int idx, bool& value, bool optional = false) {
-		if (idx >= arguments.size()) return optional;
-		auto& argument = arguments[idx];
-		return argument.getBooleanValue(value, optional);
-	}
-
-	/**
-	 * Get boolean value from given variable
-	 * @param arguments arguments
-	 * @param idx argument index
-	 * @param value value
-	 * @param optional optionalfalse
-	 * @return success
-	 */
-	template<std::size_t SIZE>
-	inline static bool getBooleanValue(const array<ScriptVariable, SIZE>& arguments, int idx, bool& value, bool optional = false) {
+	inline static bool getBooleanValue(const span<ScriptVariable>& arguments, int idx, bool& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		auto& argument = arguments[idx];
 		return argument.getBooleanValue(value, optional);
@@ -2142,22 +2147,7 @@ public:
 	 * @param optional optional
 	 * @return success
 	 */
-	inline static bool getIntegerValue(const vector<ScriptVariable>& arguments, int idx, int64_t& value, bool optional = false) {
-		if (idx >= arguments.size()) return optional;
-		auto& argument = arguments[idx];
-		return argument.getIntegerValue(value, optional);
-	}
-
-	/**
-	 * Get integer value from given variable
-	 * @param arguments arguments
-	 * @param idx argument index
-	 * @param value value
-	 * @param optional optional
-	 * @return success
-	 */
-	template<std::size_t SIZE>
-	inline static bool getIntegerValue(const array<ScriptVariable, SIZE>& arguments, int idx, int64_t& value, bool optional = false) {
+	inline static bool getIntegerValue(const span<ScriptVariable>& arguments, int idx, int64_t& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		auto& argument = arguments[idx];
 		return argument.getIntegerValue(value, optional);
@@ -2171,22 +2161,7 @@ public:
 	 * @param optional optional
 	 * @return success
 	 */
-	inline static bool getFloatValue(const vector<ScriptVariable>& arguments, int idx, float& value, bool optional = false) {
-		if (idx >= arguments.size()) return optional;
-		auto& argument = arguments[idx];
-		return argument.getFloatValue(value, optional);
-	}
-
-	/**
-	 * Get float value from given variable
-	 * @param arguments arguments
-	 * @param idx argument index
-	 * @param value value
-	 * @param optional optional
-	 * @return success
-	 */
-	template<std::size_t SIZE>
-	inline static bool getFloatValue(const array<ScriptVariable, SIZE>& arguments, int idx, float& value, bool optional = false) {
+	inline static bool getFloatValue(const span<ScriptVariable>& arguments, int idx, float& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		auto& argument = arguments[idx];
 		return argument.getFloatValue(value, optional);
@@ -2200,22 +2175,7 @@ public:
 	 * @param optional optional
 	 * @return success
 	 */
-	inline static bool getStringValue(const vector<ScriptVariable>& arguments, int idx, string& value, bool optional = false) {
-		if (idx >= arguments.size()) return optional;
-		auto& argument = arguments[idx];
-		return argument.getStringValue(value, optional);
-	}
-
-	/**
-	 * Get string value from given variable
-	 * @param arguments arguments
-	 * @param idx argument index
-	 * @param value value
-	 * @param optional optional
-	 * @return success
-	 */
-	template<std::size_t SIZE>
-	inline static bool getStringValue(const array<ScriptVariable, SIZE>& arguments, int idx, string& value, bool optional = false) {
+	inline static bool getStringValue(const span<ScriptVariable>& arguments, int idx, string& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		auto& argument = arguments[idx];
 		return argument.getStringValue(value, optional);
@@ -2229,22 +2189,7 @@ public:
 	 * @param optional optional
 	 * @return success
 	 */
-	inline static bool getVector2Value(const vector<ScriptVariable>& arguments, int idx, Vector2& value, bool optional = false) {
-		if (idx >= arguments.size()) return optional;
-		auto& argument = arguments[idx];
-		return argument.getVector2Value(value, optional);
-	}
-
-	/**
-	 * Get vector2 value from given variable
-	 * @param arguments arguments
-	 * @param idx argument index
-	 * @param value value
-	 * @param optional optional
-	 * @return success
-	 */
-	template<std::size_t SIZE>
-	inline static bool getVector2Value(const array<ScriptVariable, SIZE>& arguments, int idx, Vector2& value, bool optional = false) {
+	inline static bool getVector2Value(const span<ScriptVariable>& arguments, int idx, Vector2& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		auto& argument = arguments[idx];
 		return argument.getVector2Value(value, optional);
@@ -2258,22 +2203,7 @@ public:
 	 * @param optional optional
 	 * @return success
 	 */
-	inline static bool getVector3Value(const vector<ScriptVariable>& arguments, int idx, Vector3& value, bool optional = false) {
-		if (idx >= arguments.size()) return optional;
-		auto& argument = arguments[idx];
-		return argument.getVector3Value(value, optional);
-	}
-
-	/**
-	 * Get vector3 value from given variable
-	 * @param arguments arguments
-	 * @param idx argument index
-	 * @param value value
-	 * @param optional optional
-	 * @return success
-	 */
-	template<std::size_t SIZE>
-	inline static bool getVector3Value(const array<ScriptVariable, SIZE>& arguments, int idx, Vector3& value, bool optional = false) {
+	inline static bool getVector3Value(const span<ScriptVariable>& arguments, int idx, Vector3& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		auto& argument = arguments[idx];
 		return argument.getVector3Value(value, optional);
@@ -2287,22 +2217,7 @@ public:
 	 * @param optional optional
 	 * @return success
 	 */
-	inline static bool getVector4Value(const vector<ScriptVariable>& arguments, int idx, Vector4& value, bool optional = false) {
-		if (idx >= arguments.size()) return optional;
-		auto& argument = arguments[idx];
-		return argument.getVector4Value(value, optional);
-	}
-
-	/**
-	 * Get vector4 value from given variable
-	 * @param arguments arguments
-	 * @param idx argument index
-	 * @param value value
-	 * @param optional optional
-	 * @return success
-	 */
-	template<std::size_t SIZE>
-	inline static bool getVector4Value(const array<ScriptVariable, SIZE>& arguments, int idx, Vector4& value, bool optional = false) {
+	inline static bool getVector4Value(const span<ScriptVariable>& arguments, int idx, Vector4& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		auto& argument = arguments[idx];
 		return argument.getVector4Value(value, optional);
@@ -2316,22 +2231,7 @@ public:
 	 * @param optional optional
 	 * @return success
 	 */
-	inline static bool getTransformValue(const vector<ScriptVariable>& arguments, int idx, Transform& value, bool optional = false) {
-		if (idx >= arguments.size()) return optional;
-		auto& argument = arguments[idx];
-		return argument.getTransformValue(value, optional);
-	}
-
-	/**
-	 * Get transform value from given variable
-	 * @param arguments arguments
-	 * @param idx argument index
-	 * @param value value
-	 * @param optional optional
-	 * @return success
-	 */
-	template<std::size_t SIZE>
-	inline static bool getTransformValue(const array<ScriptVariable, SIZE>& arguments, int idx, Transform& value, bool optional = false) {
+	inline static bool getTransformValue(const span<ScriptVariable>& arguments, int idx, Transform& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		auto& argument = arguments[idx];
 		return argument.getTransformValue(value, optional);
@@ -2345,22 +2245,7 @@ public:
 	 * @param optional optional
 	 * @return success
 	 */
-	inline static bool getArrayValue(const vector<ScriptVariable>& arguments, int idx, vector<ScriptVariable>& value, bool optional = false) {
-		if (idx >= arguments.size()) return optional;
-		auto& argument = arguments[idx];
-		return argument.getArrayValue(value, optional);
-	}
-
-	/**
-	 * Get array value from given variable
-	 * @param arguments arguments
-	 * @param idx argument index
-	 * @param value value
-	 * @param optional optional
-	 * @return success
-	 */
-	template<std::size_t SIZE>
-	inline static bool getArrayValue(const array<ScriptVariable, SIZE>& arguments, int idx, vector<ScriptVariable>& value, bool optional = false) {
+	inline static bool getArrayValue(const span<ScriptVariable>& arguments, int idx, vector<ScriptVariable>& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		auto& argument = arguments[idx];
 		return argument.getArrayValue(value, optional);
@@ -2374,7 +2259,7 @@ public:
 	 * @param optional optional
 	 * @return success
 	 */
-	inline static bool getMapValue(const vector<ScriptVariable>& arguments, int idx, unordered_map<string, ScriptVariable>& value, bool optional = false) {
+	inline static bool getMapValue(const span<ScriptVariable>& arguments, int idx, unordered_map<string, ScriptVariable>& value, bool optional = false) {
 		if (idx >= arguments.size()) return optional;
 		auto& argument = arguments[idx];
 		return argument.getMapValue(value, optional);
@@ -2569,25 +2454,5 @@ public:
 	 * Get miniscript instance information
 	 */
 	const string getInformation();
-
-	/**
-	 * Transpile a script statement
-	 * @param generatedCode generated code
-	 * @param scriptIdx script index
-	 * @param methodCodeMap method code map
-	 * @return success
-	 */
-	bool transpile(string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap);
-
-	/**
-	 * Transpile a script condition
-	 * @param generatedCode generated code
-	 * @param scriptIdx script index
-	 * @param methodCodeMap method code map
-	 * @param returnValue return value
-	 * @param injectCode inject code
-	 * @return success
-	 */
-	bool transpileScriptCondition(string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap, const string& returnValue, const string& injectCode, int depth = 0);
 
 };

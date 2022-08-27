@@ -242,7 +242,7 @@ private:
 		/**
 		 * @return if thread has finished
 		 */
-		inline volatile bool isFinished() {
+		inline bool isFinished() {
 			return finished;
 		}
 
@@ -311,7 +311,7 @@ private:
 		/**
 		 * @return if thread has finished
 		 */
-		inline volatile bool isFinished() {
+		inline bool isFinished() {
 			return finished;
 		}
 

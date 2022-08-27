@@ -19,6 +19,7 @@ namespace utilities {
 	class IntBuffer;
 	class Integer;
 	class MiniScript;
+	class MiniScriptMath;
 	class MutableString;
 	class ModelTools;
 	class PathFinding;

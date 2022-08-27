@@ -35,7 +35,7 @@ LDFLAG_EXT_LIB := $(EXT_NAME)
 SRCS_PLATFORM =
 
 #
-CPPVERSION = -std=gnu++17
+CPPVERSION = -std=gnu++20
 OFLAGS =
 EXTRAFLAGS = -DRAPIDJSON_HAS_STDSTRING
 INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/src/ -Iext/v-hacd/src/VHACD_Lib/inc/
@@ -630,6 +630,7 @@ SRCS = \
 	src/tdme/utilities/Hex.cpp \
 	src/tdme/utilities/Integer.cpp \
 	src/tdme/utilities/MiniScript.cpp \
+	src/tdme/utilities/MiniScriptMath.cpp \
 	src/tdme/utilities/ModelTools.cpp \
 	src/tdme/utilities/PathFinding.cpp \
 	src/tdme/utilities/Primitives.cpp \
