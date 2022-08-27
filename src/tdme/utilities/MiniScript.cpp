@@ -398,6 +398,12 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string_view&
 							argumentOk = getMapValue(argumentValues, argumentIdx, mapValue, argumentType.optional);
 							break;
 						}
+					case TYPE_PSEUDO_NUMBER:
+						{
+							float floatValue;
+							argumentOk = getFloatValue(argumentValues, argumentIdx, floatValue, argumentType.optional);
+							break;
+						}
 				}
 				if (argumentOk == false) {
 					Console::println(
@@ -421,7 +427,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string_view&
 			}
 		}
 		scriptMethod->executeMethod(argumentValues, returnValue, statement);
-		if (scriptMethod->isMixedReturnValue() == false && returnValue.getType() != scriptMethod->getReturnValueType()) {
+		if (scriptMethod->isMixedReturnValue() == false && MiniScript::ScriptVariable::isExpectedType(returnValue.getType(), scriptMethod->getReturnValueType()) == false) {
 			Console::println(
 				string("MiniScript::executeScriptStatement(): ") +
 				"'" + scriptFileName + "': " +
@@ -1081,7 +1087,8 @@ const string MiniScript::doStatementPreProcessing(const string& statement) {
 			return preprocessedStatement;
 		}
 		auto method = methodIt->second;
-		if (method->getArgumentTypes().size() == 1) {
+		if (method->isVariadic() == false &&
+			method->getArgumentTypes().size() == 1) {
 			// find the single argument right
 			auto operatorString = getOperatorAsString(nextOperators.scriptOperator);
 			string rightArgumentBrackets;
@@ -1941,8 +1948,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodGreater(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_FLOAT, .name = "a", .optional = false },
-						{.type = ScriptVariableType::TYPE_FLOAT, .name = "b", .optional = false }
+						{.type = ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "a", .optional = false },
+						{.type = ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "b", .optional = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN),
 					miniScript(miniScript) {}
@@ -1975,8 +1982,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodGreaterEquals(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_FLOAT, .name = "a", .optional = false },
-						{.type = ScriptVariableType::TYPE_FLOAT, .name = "b", .optional = false }
+						{.type = ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "a", .optional = false },
+						{.type = ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "b", .optional = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN),
 					miniScript(miniScript) {}
@@ -2009,8 +2016,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodLesser(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_FLOAT, .name = "a", .optional = false },
-						{.type = ScriptVariableType::TYPE_FLOAT, .name = "b", .optional = false }
+						{.type = ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "a", .optional = false },
+						{.type = ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "b", .optional = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN),
 					miniScript(miniScript) {}
@@ -2043,8 +2050,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodLesserEquals(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_FLOAT, .name = "a", .optional = false },
-						{.type = ScriptVariableType::TYPE_FLOAT, .name = "b", .optional = false }
+						{.type = ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "a", .optional = false },
+						{.type = ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "b", .optional = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN),
 					miniScript(miniScript) {}
@@ -4633,7 +4640,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodSetVariable(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						// TODO: { .type = ScriptVariableType::TYPE_STRING, .name = "variable", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "variable", .optional = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),

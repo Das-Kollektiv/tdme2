@@ -121,7 +121,8 @@ public:
 		TYPE_MATRIX4x4,
 		TYPE_TRANSFORM,
 		TYPE_ARRAY,
-		TYPE_MAP
+		TYPE_MAP,
+		TYPE_PSEUDO_NUMBER
 	};
 
 	/**
@@ -1234,6 +1235,22 @@ public:
 		}
 
 		/**
+		 * Check if given variable type does match expected variable type
+		 * @param type type
+		 * @param expectedType expected type
+		 * @return given variable type does match expected variable type
+		 */
+		inline static bool isExpectedType(ScriptVariableType type, ScriptVariableType expectedType) {
+			if (type == expectedType) return true;
+			switch(expectedType) {
+				case TYPE_PSEUDO_NUMBER:
+					return type == TYPE_INTEGER || type == TYPE_FLOAT;
+				default:
+					return false;
+			}
+		}
+
+		/**
 		 * @return string representation of script variable type
 		 */
 		inline static const string getTypeAsString(ScriptVariableType type) {
@@ -1252,7 +1269,7 @@ public:
 				case TYPE_TRANSFORM: return "Transform";
 				case TYPE_ARRAY: return "Array";
 				case TYPE_MAP: return "Map";
-
+				case TYPE_PSEUDO_NUMBER: return "Number";
 			}
 			return string();
 		}
@@ -1425,6 +1442,9 @@ public:
 						result+="]";
 						break;
 					}
+				case TYPE_PSEUDO_NUMBER:
+					result+= "Number";
+
 			}
 			return result;
 		}

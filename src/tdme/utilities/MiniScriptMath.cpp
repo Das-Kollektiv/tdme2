@@ -547,7 +547,12 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodSign(MiniScript* miniScript): MiniScript::ScriptMethod({}, MiniScript::ScriptVariableType::TYPE_VOID), miniScript(miniScript) {}
+			ScriptMethodSign(MiniScript* miniScript): MiniScript::ScriptMethod(
+				{
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value", .optional = false },
+				},
+				MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER),
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "math.sign";
 			}
@@ -564,12 +569,6 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 					miniScript->startErrorScript();
 				}
 			}
-			bool isVariadic() override {
-				return true;
-			}
-			bool isMixedReturnValue() override {
-				return true;
-			}
 		};
 		miniScript->registerMethod(new ScriptMethodSign(miniScript));
 	}
@@ -579,7 +578,12 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodSquare(MiniScript* miniScript): MiniScript::ScriptMethod({}, MiniScript::ScriptVariableType::TYPE_VOID), miniScript(miniScript) {}
+			ScriptMethodSquare(MiniScript* miniScript): MiniScript::ScriptMethod(
+				{
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value", .optional = false },
+				},
+				MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER),
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "math.square";
 			}
@@ -596,12 +600,6 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 					miniScript->startErrorScript();
 				}
 			}
-			bool isVariadic() override {
-				return true;
-			}
-			bool isMixedReturnValue() override {
-				return true;
-			}
 		};
 		miniScript->registerMethod(new ScriptMethodSquare(miniScript));
 	}
@@ -611,7 +609,13 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodMin(MiniScript* miniScript): MiniScript::ScriptMethod({}, MiniScript::ScriptVariableType::TYPE_VOID), miniScript(miniScript) {}
+			ScriptMethodMin(MiniScript* miniScript): MiniScript::ScriptMethod(
+				{
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "a", .optional = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "b", .optional = false },
+				},
+				MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER),
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "math.min";
 			}
@@ -637,12 +641,6 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 					miniScript->startErrorScript();
 				}
 			}
-			bool isVariadic() override {
-				return true;
-			}
-			bool isMixedReturnValue() override {
-				return true;
-			}
 		};
 		miniScript->registerMethod(new ScriptMethodMin(miniScript));
 	}
@@ -652,7 +650,13 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodMax(MiniScript* miniScript): MiniScript::ScriptMethod({}, MiniScript::ScriptVariableType::TYPE_VOID), miniScript(miniScript) {}
+			ScriptMethodMax(MiniScript* miniScript): MiniScript::ScriptMethod(
+				{
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "a", .optional = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "b", .optional = false },
+				},
+				MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER),
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "math.max";
 			}
@@ -678,12 +682,6 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 					miniScript->startErrorScript();
 				}
 			}
-			bool isVariadic() override {
-				return true;
-			}
-			bool isMixedReturnValue() override {
-				return true;
-			}
 		};
 		miniScript->registerMethod(new ScriptMethodMax(miniScript));
 	}
@@ -693,7 +691,12 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodAbs(MiniScript* miniScript): MiniScript::ScriptMethod({}, MiniScript::ScriptVariableType::TYPE_VOID), miniScript(miniScript) {}
+			ScriptMethodAbs(MiniScript* miniScript): MiniScript::ScriptMethod(
+				{
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value", .optional = false },
+				},
+				MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER),
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "math.abs";
 			}
@@ -710,12 +713,6 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 					miniScript->startErrorScript();
 				}
 			}
-			bool isVariadic() override {
-				return true;
-			}
-			bool isMixedReturnValue() override {
-				return true;
-			}
 		};
 		miniScript->registerMethod(new ScriptMethodAbs(miniScript));
 	}
@@ -725,7 +722,14 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodClamp(MiniScript* miniScript): MiniScript::ScriptMethod({}, MiniScript::ScriptVariableType::TYPE_VOID), miniScript(miniScript) {}
+			ScriptMethodClamp(MiniScript* miniScript): MiniScript::ScriptMethod(
+				{
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value", .optional = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "min", .optional = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "max", .optional = false },
+				},
+				MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER),
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "math.clamp";
 			}
@@ -755,12 +759,6 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 					miniScript->startErrorScript();
 				}
 			}
-			bool isVariadic() override {
-				return true;
-			}
-			bool isMixedReturnValue() override {
-				return true;
-			}
 		};
 		miniScript->registerMethod(new ScriptMethodClamp(miniScript));
 	}
@@ -770,7 +768,13 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodPow(MiniScript* miniScript): MiniScript::ScriptMethod({}, MiniScript::ScriptVariableType::TYPE_VOID), miniScript(miniScript) {}
+			ScriptMethodPow(MiniScript* miniScript): MiniScript::ScriptMethod(
+				{
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "a", .optional = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "b", .optional = false },
+				},
+				MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER),
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "math.pow";
 			}
@@ -795,12 +799,6 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 					Console::println("ScriptMethodPow::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: float or integer expected, @ argument 1: float or integer expected");
 					miniScript->startErrorScript();
 				}
-			}
-			bool isVariadic() override {
-				return true;
-			}
-			bool isMixedReturnValue() override {
-				return true;
 			}
 		};
 		miniScript->registerMethod(new ScriptMethodPow(miniScript));
