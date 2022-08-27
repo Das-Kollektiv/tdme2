@@ -19,11 +19,10 @@
 class tdme::math::Math final
 {
 public:
-	static constexpr float E { 2.718281828459045f };
 	static constexpr float PI { 3.141592653589793f };
 	static constexpr float EPSILON { 0.0000001f };
 	static constexpr float DEG2RAD { 0.017453294f };
-	static constexpr float g { 9.80665f };
+	static constexpr float G { 9.80665f };
 
 	/**
 	 * Clamps a int value to min or max value

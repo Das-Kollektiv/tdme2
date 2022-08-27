@@ -55,6 +55,10 @@ This is the documentation of MiniScript language. This document is WIP.
 | mat4.rotate($axis: Vector3, $angle: Float): Matrix4x4                                            |
 | mat4.scale(...): Matrix4x4                                                                       |
 | mat4.translate($translation: Vector3): Matrix4x4                                                 |
+| math.DEG2RAD(): Float                                                                            |
+| math.EPSILON(): Float                                                                            |
+| math.G(): Float                                                                                  |
+| math.PI(): Float                                                                                 |
 | mul(...): Mixed                                                                                  |
 | not($bool: Boolean): Boolean                                                                     |
 | notequal(...): Boolean                                                                           |

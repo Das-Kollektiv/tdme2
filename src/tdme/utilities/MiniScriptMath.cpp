@@ -18,6 +18,7 @@ using tdme::utilities::MiniScript;
 using tdme::utilities::MiniScriptMath;
 
 void MiniScriptMath::registerMethods(MiniScript* miniScript) {
+	// operator methods
 	{
 		//
 		class ScriptMethodAdd: public MiniScript::ScriptMethod {
@@ -117,5 +118,70 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 			}
 		};
 		miniScript->registerMethod(new ScriptMethodDiv(miniScript));
+	}
+	// constants
+	{
+		//
+		class ScriptMethodPi: public MiniScript::ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodPi(MiniScript* miniScript): MiniScript::ScriptMethod({}, MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "math.PI";
+			}
+			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+				returnValue.setValue(Math::PI);
+			}
+		};
+		miniScript->registerMethod(new ScriptMethodPi(miniScript));
+	}
+	{
+		//
+		class ScriptMethodEpsilon: public MiniScript::ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEpsilon(MiniScript* miniScript): MiniScript::ScriptMethod({}, MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "math.EPSILON";
+			}
+			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+				returnValue.setValue(Math::EPSILON);
+			}
+		};
+		miniScript->registerMethod(new ScriptMethodEpsilon(miniScript));
+	}
+	{
+		//
+		class ScriptMethodEpsilon: public MiniScript::ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEpsilon(MiniScript* miniScript): MiniScript::ScriptMethod({}, MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "math.DEG2RAD";
+			}
+			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+				returnValue.setValue(Math::DEG2RAD);
+			}
+		};
+		miniScript->registerMethod(new ScriptMethodEpsilon(miniScript));
+	}
+	{
+		//
+		class ScriptMethodEpsilon: public MiniScript::ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEpsilon(MiniScript* miniScript): MiniScript::ScriptMethod({}, MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "math.G";
+			}
+			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+				returnValue.setValue(Math::G);
+			}
+		};
+		miniScript->registerMethod(new ScriptMethodEpsilon(miniScript));
 	}
 }
