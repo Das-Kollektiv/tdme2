@@ -45,6 +45,12 @@ This is the documentation of MiniScript language. This document is WIP.
 | not($bool: Boolean): Boolean                                                                     |
 | notequal(...): Boolean                                                                           |
 | or(...): Boolean                                                                                 |
+| quaternion.computeMatrix($quaternion: Quaternion): Matrix4x4                                     |
+| quaternion.identity(): Quaternion                                                                |
+| quaternion.invert($quaternion: Vector4): Quaternion                                              |
+| quaternion.multiply($quaternion: Quaternion, ...): Mixed                                         |
+| quaternion.normalize($quaternion: Quaternion): Quaternion                                        |
+| quaternion.rotate($axis: Vector3, $angle: Float): Quaternion                                     |
 | script.disableNamedCondition($name: String): Void                                                |
 | script.emit($condition: String): Void                                                            |
 | script.enableNamedCondition($name: String): Void                                                 |
