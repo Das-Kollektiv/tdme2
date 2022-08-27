@@ -15,6 +15,8 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/math/Quaternion.h>
+#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix4x4.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
@@ -37,6 +39,8 @@ using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::math::Quaternion;
+using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix4x4;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Float;
@@ -113,6 +117,8 @@ public:
 		TYPE_VECTOR3,
 		TYPE_VECTOR4,
 		TYPE_QUATERNION,
+		TYPE_MATRIX3x3,
+		TYPE_MATRIX4x4,
 		TYPE_TRANSFORM,
 		TYPE_ARRAY,
 		TYPE_MAP
@@ -239,6 +245,34 @@ public:
 		 */
 		inline const Quaternion& getQuaternionValueReference() const {
 			return *static_cast<Quaternion*>(valuePtr);
+		}
+
+		/**
+		 * @return matrix3x3 value reference
+		 */
+		inline Matrix2D3x3& getMatrix3x3ValueReference() {
+			return *static_cast<Matrix2D3x3*>(valuePtr);
+		}
+
+		/**
+		 * @return const matrix3x3 value reference
+		 */
+		inline const Matrix2D3x3& getMatrix3x3ValueReference() const {
+			return *static_cast<Matrix2D3x3*>(valuePtr);
+		}
+
+		/**
+		 * @return matrix4x4 value reference
+		 */
+		inline Matrix4x4& getMatrix4x4ValueReference() {
+			return *static_cast<Matrix4x4*>(valuePtr);
+		}
+
+		/**
+		 * @return const matrix4x4 value reference
+		 */
+		inline const Matrix4x4& getMatrix4x4ValueReference() const {
+			return *static_cast<Matrix4x4*>(valuePtr);
 		}
 
 		/**
@@ -449,6 +483,22 @@ public:
 		 * Constructor
 		 * @param value value
 		 */
+		inline ScriptVariable(const Matrix2D3x3& value) {
+			setValue(value);
+		}
+
+		/**
+		 * Constructor
+		 * @param value value
+		 */
+		inline ScriptVariable(const Matrix4x4& value) {
+			setValue(value);
+		}
+
+		/**
+		 * Constructor
+		 * @param value value
+		 */
 		inline ScriptVariable(const Transform& value) {
 			setValue(value);
 		}
@@ -509,6 +559,12 @@ public:
 				case TYPE_QUATERNION:
 					delete static_cast<Quaternion*>(valuePtr);
 					break;
+				case TYPE_MATRIX3x3:
+					delete static_cast<Matrix2D3x3*>(valuePtr);
+					break;
+				case TYPE_MATRIX4x4:
+					delete static_cast<Matrix4x4*>(valuePtr);
+					break;
 				case TYPE_TRANSFORM:
 					delete static_cast<Transform*>(valuePtr);
 					break;
@@ -547,6 +603,12 @@ public:
 					break;
 				case TYPE_QUATERNION:
 					valuePtr = new Quaternion();
+					break;
+				case TYPE_MATRIX3x3:
+					valuePtr = new Matrix2D3x3();
+					break;
+				case TYPE_MATRIX4x4:
+					valuePtr = new Matrix4x4();
 					break;
 				case TYPE_TRANSFORM:
 					valuePtr = new Transform();
@@ -758,6 +820,40 @@ public:
 		}
 
 		/**
+		 * Get matrix3x3 value from given variable
+		 * @param value value
+		 * @param optional optional
+		 * @return success
+		 */
+		inline bool getMatrix3x3Value(Matrix2D3x3& value, bool optional = false) const {
+			switch(type) {
+				case TYPE_MATRIX3x3:
+					value = getMatrix3x3ValueReference();
+					return true;
+				default:
+					return optional;
+			}
+			return false;
+		}
+
+		/**
+		 * Get matrix4x4 value from given variable
+		 * @param value value
+		 * @param optional optional
+		 * @return success
+		 */
+		inline bool getMatrix4x4Value(Matrix4x4& value, bool optional = false) const {
+			switch(type) {
+				case TYPE_MATRIX4x4:
+					value = getMatrix4x4ValueReference();
+					return true;
+				default:
+					return optional;
+			}
+			return false;
+		}
+
+		/**
 		 * Get transform value from given variable
 		 * @param value value
 		 * @param optional optional
@@ -878,6 +974,24 @@ public:
 		inline void setValue(const Quaternion& value) {
 			setType(TYPE_QUATERNION);
 			getQuaternionValueReference() = value;
+		}
+
+		/**
+		 * Set matrix3x3 value from given value into variable
+		 * @param value value
+		 */
+		inline void setValue(const Matrix2D3x3& value) {
+			setType(TYPE_MATRIX3x3);
+			getMatrix3x3ValueReference() = value;
+		}
+
+		/**
+		 * Set matrix4x4 value from given value into variable
+		 * @param value value
+		 */
+		inline void setValue(const Matrix4x4& value) {
+			setType(TYPE_MATRIX4x4);
+			getMatrix4x4ValueReference() = value;
 		}
 
 		/**
@@ -1115,6 +1229,8 @@ public:
 				case TYPE_VECTOR3: return "Vector3";
 				case TYPE_VECTOR4: return "Vector4";
 				case TYPE_QUATERNION: return "Quaternion";
+				case TYPE_MATRIX3x3: return "Matrix3x3";
+				case TYPE_MATRIX4x4: return "Matrix4x4";
 				case TYPE_TRANSFORM: return "Transform";
 				case TYPE_ARRAY: return "Array";
 				case TYPE_MAP: return "Map";
@@ -1202,6 +1318,46 @@ public:
 							to_string(quaternionValue.getY()) + ", " +
 							to_string(quaternionValue.getZ()) + ", " +
 							to_string(quaternionValue.getW()) + ")";
+					}
+					break;
+				case TYPE_MATRIX3x3:
+					{
+						auto& matrix3x3Value = getMatrix3x3ValueReference();
+						result+=
+							"Matrix3x3(" +
+							to_string(matrix3x3Value[0]) + ", " +
+							to_string(matrix3x3Value[1]) + ", " +
+							to_string(matrix3x3Value[2]) + ", " +
+							to_string(matrix3x3Value[3]) + ", " +
+							to_string(matrix3x3Value[4]) + ", " +
+							to_string(matrix3x3Value[5]) + ", " +
+							to_string(matrix3x3Value[6]) + ", " +
+							to_string(matrix3x3Value[7]) + ", " +
+							to_string(matrix3x3Value[8]) + ", " +
+							to_string(matrix3x3Value[9]) + ")";
+					}
+					break;
+				case TYPE_MATRIX4x4:
+					{
+						auto& matrix4x4Value = getMatrix4x4ValueReference();
+						result+=
+							"Matrix4x4(" +
+							to_string(matrix4x4Value[0]) + ", " +
+							to_string(matrix4x4Value[1]) + ", " +
+							to_string(matrix4x4Value[2]) + ", " +
+							to_string(matrix4x4Value[3]) + ", " +
+							to_string(matrix4x4Value[4]) + ", " +
+							to_string(matrix4x4Value[5]) + ", " +
+							to_string(matrix4x4Value[6]) + ", " +
+							to_string(matrix4x4Value[7]) + ", " +
+							to_string(matrix4x4Value[8]) + ", " +
+							to_string(matrix4x4Value[9]) + ", " +
+							to_string(matrix4x4Value[10]) + ", " +
+							to_string(matrix4x4Value[11]) + ", " +
+							to_string(matrix4x4Value[12]) + ", " +
+							to_string(matrix4x4Value[13]) + ", " +
+							to_string(matrix4x4Value[14]) + ", " +
+							to_string(matrix4x4Value[15]) + ")";
 					}
 					break;
 				case TYPE_TRANSFORM:
@@ -2149,6 +2305,34 @@ public:
 		if (idx >= arguments.size()) return optional;
 		auto& argument = arguments[idx];
 		return argument.getQuaternionValue(value, optional);
+	}
+
+	/**
+	 * Get matrix3x3 value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optional
+	 * @return success
+	 */
+	inline static bool getMatrix3x3Value(const span<ScriptVariable>& arguments, int idx, Matrix2D3x3& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		return argument.getMatrix3x3Value(value, optional);
+	}
+
+	/**
+	 * Get matrix4x4 value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optional
+	 * @return success
+	 */
+	inline static bool getMatrix4x4Value(const span<ScriptVariable>& arguments, int idx, Matrix4x4& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		return argument.getMatrix4x4Value(value, optional);
 	}
 
 	/**

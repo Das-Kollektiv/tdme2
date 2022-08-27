@@ -22,6 +22,9 @@
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
+#include <tdme/math/Quaternion.h>
+#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix4x4.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -56,6 +59,9 @@ using tdme::math::Math;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
+using tdme::math::Quaternion;
+using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix4x4;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::filesystem::FileSystemInterface;
@@ -354,6 +360,24 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string_view&
 						{
 							Vector4 vector3Value;
 							argumentOk = getVector4Value(argumentValues, argumentIdx, vector3Value, argumentType.optional);
+							break;
+						}
+					case TYPE_QUATERNION:
+						{
+							Quaternion quaternionValue;
+							argumentOk = getQuaternionValue(argumentValues, argumentIdx, quaternionValue, argumentType.optional);
+							break;
+						}
+					case TYPE_MATRIX3x3:
+						{
+							Matrix2D3x3 matrix3x3Value;
+							argumentOk = getMatrix3x3Value(argumentValues, argumentIdx, matrix3x3Value, argumentType.optional);
+							break;
+						}
+					case TYPE_MATRIX4x4:
+						{
+							Matrix4x4 matrix4x4Value;
+							argumentOk = getMatrix4x4Value(argumentValues, argumentIdx, matrix4x4Value, argumentType.optional);
 							break;
 						}
 					case TYPE_TRANSFORM:
