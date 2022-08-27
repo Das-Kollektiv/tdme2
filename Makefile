@@ -35,7 +35,7 @@ LDFLAG_EXT_LIB := $(EXT_NAME)
 SRCS_PLATFORM =
 
 #
-CPPVERSION = -std=gnu++20
+CPPVERSION = -std=c++2a
 OFLAGS =
 EXTRAFLAGS = -DRAPIDJSON_HAS_STDSTRING
 INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/src/ -Iext/v-hacd/src/VHACD_Lib/inc/
