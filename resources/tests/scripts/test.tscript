@@ -1,7 +1,6 @@
 # initialize
 on: initialize
 	console.log("------------")
-
 	console.log("Initialize")
 	console.log("------------")
 	console.log()

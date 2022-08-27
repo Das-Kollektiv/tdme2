@@ -14,6 +14,7 @@
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
+#include <tdme/math/Quaternion.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
@@ -35,6 +36,7 @@ using tdme::engine::Transform;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
+using tdme::math::Quaternion;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Float;
@@ -110,6 +112,7 @@ public:
 		TYPE_VECTOR2,
 		TYPE_VECTOR3,
 		TYPE_VECTOR4,
+		TYPE_QUATERNION,
 		TYPE_TRANSFORM,
 		TYPE_ARRAY,
 		TYPE_MAP
@@ -222,6 +225,20 @@ public:
 		 */
 		inline const Vector4& getVector4ValueReference() const {
 			return *static_cast<Vector4*>(valuePtr);
+		}
+
+		/**
+		 * @return quaternion value reference
+		 */
+		inline Quaternion& getQuaternionValueReference() {
+			return *static_cast<Quaternion*>(valuePtr);
+		}
+
+		/**
+		 * @return const quaternion value reference
+		 */
+		inline const Quaternion& getQuaternionValueReference() const {
+			return *static_cast<Quaternion*>(valuePtr);
 		}
 
 		/**
@@ -424,6 +441,14 @@ public:
 		 * Constructor
 		 * @param value value
 		 */
+		inline ScriptVariable(const Quaternion& value) {
+			setValue(value);
+		}
+
+		/**
+		 * Constructor
+		 * @param value value
+		 */
 		inline ScriptVariable(const Transform& value) {
 			setValue(value);
 		}
@@ -481,6 +506,9 @@ public:
 				case TYPE_VECTOR4:
 					delete static_cast<Vector4*>(valuePtr);
 					break;
+				case TYPE_QUATERNION:
+					delete static_cast<Quaternion*>(valuePtr);
+					break;
 				case TYPE_TRANSFORM:
 					delete static_cast<Transform*>(valuePtr);
 					break;
@@ -517,6 +545,9 @@ public:
 				case TYPE_VECTOR4:
 					valuePtr = new Vector4();
 					break;
+				case TYPE_QUATERNION:
+					valuePtr = new Quaternion();
+					break;
 				case TYPE_TRANSFORM:
 					valuePtr = new Transform();
 					break;
@@ -537,8 +568,6 @@ public:
 		 */
 		inline bool getBooleanValue(bool& value, bool optional = false) const {
 			switch(type) {
-				case TYPE_VOID:
-					return optional;
 				case TYPE_BOOLEAN:
 					value = getBooleanValueReference();
 					return true;
@@ -557,21 +586,8 @@ public:
 						value = lowerCaseString == "true" || lowerCaseString == "1";
 						return true;
 					}
-				case TYPE_VECTOR2:
-					return false;
-				case TYPE_VECTOR3:
-					return false;
-				case TYPE_VECTOR4:
-					return false;
-				case TYPE_TRANSFORM:
-					return false;
-					break;
-				case TYPE_ARRAY:
-					return false;
-					break;
-				case TYPE_MAP:
-					return false;
-					break;
+				default:
+					return optional;
 			}
 			return false;
 		}
@@ -584,8 +600,6 @@ public:
 		 */
 		inline bool getIntegerValue(int64_t& value, bool optional = false) const {
 			switch(type) {
-				case TYPE_VOID:
-					return optional;
 				case TYPE_BOOLEAN:
 					value = getBooleanValueReference() == true?1:0;
 					return true;
@@ -612,17 +626,7 @@ public:
 							return optional;
 						}
 					}
-				case TYPE_VECTOR2:
-					return optional;
-				case TYPE_VECTOR3:
-					return optional;
-				case TYPE_VECTOR4:
-					return optional;
-				case TYPE_TRANSFORM:
-					return optional;
-				case TYPE_ARRAY:
-					return optional;
-				case TYPE_MAP:
+				default:
 					return optional;
 			}
 			return false;
@@ -636,8 +640,6 @@ public:
 		 */
 		inline bool getFloatValue(float& value, bool optional = false) const {
 			switch(type) {
-				case TYPE_VOID:
-					return optional;
 				case TYPE_BOOLEAN:
 					value = getBooleanValueReference() == true?1.0f:0.0f;
 					return true;
@@ -655,17 +657,7 @@ public:
 						value = Float::parse(stringValue);
 					}
 					return true;
-				case TYPE_VECTOR2:
-					return optional;
-				case TYPE_VECTOR3:
-					return optional;
-				case TYPE_VECTOR4:
-					return optional;
-				case TYPE_TRANSFORM:
-					return optional;
-				case TYPE_ARRAY:
-					return optional;
-				case TYPE_MAP:
+				default:
 					return optional;
 			}
 			return false;
@@ -679,8 +671,6 @@ public:
 		 */
 		inline bool getStringValue(string& value, bool optional = false) const {
 			switch(type) {
-				case TYPE_VOID:
-					return optional;
 				case TYPE_BOOLEAN:
 					value = getBooleanValueReference() == true?"true":"false";
 					return true;
@@ -693,17 +683,7 @@ public:
 				case TYPE_STRING:
 					value = getStringValueReference();
 					return true;
-				case TYPE_VECTOR2:
-					return false;
-				case TYPE_VECTOR3:
-					return false;
-				case TYPE_VECTOR4:
-					return false;
-				case TYPE_TRANSFORM:
-					return false;
-				case TYPE_ARRAY:
-					return false;
-				case TYPE_MAP:
+				default:
 					return false;
 			}
 			return false;
@@ -717,28 +697,10 @@ public:
 		 */
 		inline bool getVector2Value(Vector2& value, bool optional = false) const {
 			switch(type) {
-				case TYPE_VOID:
-					return optional;
-				case TYPE_BOOLEAN:
-					return optional;
-				case TYPE_INTEGER:
-					return optional;
-				case TYPE_FLOAT:
-					return optional;
-				case TYPE_STRING:
-					return optional;
 				case TYPE_VECTOR2:
 					value = getVector2ValueReference();
 					return true;
-				case TYPE_VECTOR3:
-					return optional;
-				case TYPE_VECTOR4:
-					return optional;
-				case TYPE_TRANSFORM:
-					return optional;
-				case TYPE_ARRAY:
-					return optional;
-				case TYPE_MAP:
+				default:
 					return optional;
 			}
 			return false;
@@ -752,28 +714,10 @@ public:
 		 */
 		inline bool getVector3Value(Vector3& value, bool optional = false) const {
 			switch(type) {
-				case TYPE_VOID:
-					return optional;
-				case TYPE_BOOLEAN:
-					return optional;
-				case TYPE_INTEGER:
-					return optional;
-				case TYPE_FLOAT:
-					return optional;
-				case TYPE_STRING:
-					return optional;
-				case TYPE_VECTOR2:
-					return optional;
 				case TYPE_VECTOR3:
 					value = getVector3ValueReference();
 					return true;
-				case TYPE_VECTOR4:
-					return optional;
-				case TYPE_TRANSFORM:
-					return optional;
-				case TYPE_ARRAY:
-					return optional;
-				case TYPE_MAP:
+				default:
 					return optional;
 			}
 			return false;
@@ -787,28 +731,27 @@ public:
 		 */
 		inline bool getVector4Value(Vector4& value, bool optional = false) const {
 			switch(type) {
-				case TYPE_VOID:
-					return optional;
-				case TYPE_BOOLEAN:
-					return optional;
-				case TYPE_INTEGER:
-					return optional;
-				case TYPE_FLOAT:
-					return optional;
-				case TYPE_STRING:
-					return optional;
-				case TYPE_VECTOR2:
-					return optional;
-				case TYPE_VECTOR3:
-					return optional;
 				case TYPE_VECTOR4:
 					value = getVector4ValueReference();
 					return true;
-				case TYPE_TRANSFORM:
+				default:
 					return optional;
-				case TYPE_ARRAY:
-					return optional;
-				case TYPE_MAP:
+			}
+			return false;
+		}
+
+		/**
+		 * Get quaternion value from given variable
+		 * @param value value
+		 * @param optional optional
+		 * @return success
+		 */
+		inline bool getQuaternionValue(Quaternion& value, bool optional = false) const {
+			switch(type) {
+				case TYPE_QUATERNION:
+					value = getQuaternionValueReference();
+					return true;
+				default:
 					return optional;
 			}
 			return false;
@@ -822,28 +765,10 @@ public:
 		 */
 		inline bool getTransformValue(Transform& value, bool optional = false) const {
 			switch(type) {
-				case TYPE_VOID:
-					return optional;
-				case TYPE_BOOLEAN:
-					return optional;
-				case TYPE_INTEGER:
-					return optional;
-				case TYPE_FLOAT:
-					return optional;
-				case TYPE_STRING:
-					return optional;
-				case TYPE_VECTOR2:
-					return optional;
-				case TYPE_VECTOR3:
-					return optional;
-				case TYPE_VECTOR4:
-					return optional;
 				case TYPE_TRANSFORM:
 					value = getTransformValueReference();
 					return true;
-				case TYPE_ARRAY:
-					return optional;
-				case TYPE_MAP:
+				default:
 					return optional;
 			}
 			return false;
@@ -857,28 +782,10 @@ public:
 		 */
 		inline bool getArrayValue(vector<ScriptVariable>& value, bool optional = false) const {
 			switch(type) {
-				case TYPE_VOID:
-					return optional;
-				case TYPE_BOOLEAN:
-					return optional;
-				case TYPE_INTEGER:
-					return optional;
-				case TYPE_FLOAT:
-					return optional;
-				case TYPE_STRING:
-					return optional;
-				case TYPE_VECTOR2:
-					return optional;
-				case TYPE_VECTOR3:
-					return optional;
-				case TYPE_VECTOR4:
-					return optional;
-				case TYPE_TRANSFORM:
-					return optional;
 				case TYPE_ARRAY:
 					value = getArrayValueReference();
 					return true;
-				case TYPE_MAP:
+				default:
 					return optional;
 			}
 			return false;
@@ -892,25 +799,11 @@ public:
 		 */
 		inline bool getMapValue(unordered_map<string, ScriptVariable>& value, bool optional = false) const {
 			switch(type) {
-				case TYPE_VOID:
-					return optional;
-				case TYPE_BOOLEAN:
-					return optional;
-				case TYPE_INTEGER:
-					return optional;
-				case TYPE_FLOAT:
-					return optional;
-				case TYPE_STRING:
-					return optional;
-				case TYPE_VECTOR3:
-					return optional;
-				case TYPE_TRANSFORM:
-					return optional;
-				case TYPE_ARRAY:
-					return optional;
 				case TYPE_MAP:
 					value = getMapValueReference();
 					return true;
+				default:
+					return optional;
 			}
 			return false;
 		}
@@ -976,6 +869,15 @@ public:
 		inline void setValue(const Vector4& value) {
 			setType(TYPE_VECTOR4);
 			getVector4ValueReference() = value;
+		}
+
+		/**
+		 * Set vector3 value from given value into variable
+		 * @param value value
+		 */
+		inline void setValue(const Quaternion& value) {
+			setType(TYPE_QUATERNION);
+			getQuaternionValueReference() = value;
 		}
 
 		/**
@@ -1212,6 +1114,7 @@ public:
 				case TYPE_VECTOR2: return "Vector2";
 				case TYPE_VECTOR3: return "Vector3";
 				case TYPE_VECTOR4: return "Vector4";
+				case TYPE_QUATERNION: return "Quaternion";
 				case TYPE_TRANSFORM: return "Transform";
 				case TYPE_ARRAY: return "Array";
 				case TYPE_MAP: return "Map";
@@ -1288,6 +1191,17 @@ public:
 							to_string(vector4Value.getY()) + ", " +
 							to_string(vector4Value.getZ()) + ", " +
 							to_string(vector4Value.getW()) + ")";
+					}
+					break;
+				case TYPE_QUATERNION:
+					{
+						auto& quaternionValue = getQuaternionValueReference();
+						result+=
+							"Quaternion(" +
+							to_string(quaternionValue.getX()) + ", " +
+							to_string(quaternionValue.getY()) + ", " +
+							to_string(quaternionValue.getZ()) + ", " +
+							to_string(quaternionValue.getW()) + ")";
 					}
 					break;
 				case TYPE_TRANSFORM:
@@ -2221,6 +2135,20 @@ public:
 		if (idx >= arguments.size()) return optional;
 		auto& argument = arguments[idx];
 		return argument.getVector4Value(value, optional);
+	}
+
+	/**
+	 * Get vector4 value from given variable
+	 * @param arguments arguments
+	 * @param idx argument index
+	 * @param value value
+	 * @param optional optional
+	 * @return success
+	 */
+	inline static bool getQuaternionValue(const span<ScriptVariable>& arguments, int idx, Quaternion& value, bool optional = false) {
+		if (idx >= arguments.size()) return optional;
+		auto& argument = arguments[idx];
+		return argument.getQuaternionValue(value, optional);
 	}
 
 	/**
