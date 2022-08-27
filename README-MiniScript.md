@@ -41,6 +41,13 @@ This is the documentation of MiniScript language. This document is WIP.
 | map.has($map: Map, $key: String): Boolean                                                        |
 | map.remove($map: Map, $key: String): Map                                                         |
 | map.set($map: Map, $key: String, ...): Map                                                       |
+| mat4.computeEulerAngles($mat4: Matrix4x4): Vector3                                               |
+| mat4.identity(): Matrix4x4                                                                       |
+| mat4.invert($mat4: Matrix4x4): Matrix4x4                                                         |
+| mat4.multiply($mat4: Matrix4x4, ...): Mixed                                                      |
+| mat4.rotate($axis: Vector3, $angle: Float): Matrix4x4                                            |
+| mat4.scale(...): Matrix4x4                                                                       |
+| mat4.translate($translation: Vector3): Matrix4x4                                                 |
 | mul(...): Mixed                                                                                  |
 | not($bool: Boolean): Boolean                                                                     |
 | notequal(...): Boolean                                                                           |
@@ -104,6 +111,7 @@ This is the documentation of MiniScript language. This document is WIP.
 | vec4.getY($vec4: Vector4): Float                                                                 |
 | vec4.getZ($vec4: Vector4): Float                                                                 |
 | vec4.normalize($vec4: Vector4): Vector4                                                          |
+
 
 # 2. Operators
 

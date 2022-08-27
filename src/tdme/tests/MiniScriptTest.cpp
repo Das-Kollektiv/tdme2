@@ -16,7 +16,7 @@ MiniScriptTest::MiniScriptTest(): MiniScript() {
 /*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DEFINITIONS_START__*/
 void MiniScriptTest::initializeNative() {
 	setNative(true);
-	setHash("d58fae3ddc595706d1f7983ad54d024ca52af633d41d684a865c2f096192c620");
+	setHash("be408e70b9656476acf59f0fc5c7d743163e0bece2bc095c3678158a3ff87894");
 	setNativeScripts(
 		{
 			{
@@ -606,1124 +606,1202 @@ void MiniScriptTest::initializeNative() {
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 102,
+						.line = 101,
 						.statementIdx = 90,
 						.statement = "console.log(\"quaternion.identity(): \", quaternion.identity())",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 103,
+						.line = 102,
 						.statementIdx = 91,
 						.statement = "console.log(\"quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0): \", quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0))",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 104,
+						.line = 103,
 						.statementIdx = 92,
 						.statement = "console.log(\"quaternion.normalize(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0)): \", quaternion.normalize(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0)))",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 105,
+						.line = 104,
 						.statementIdx = 93,
 						.statement = "console.log(\"quaternion.multiply(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0), quaternion.rotate(vec3(1.0, 0.0, 0.0), 90.0)): \", quaternion.multiply(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0), quaternion.rotate(vec3(1.0, 0.0, 0.0), 90.0)))",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 106,
+						.line = 105,
 						.statementIdx = 94,
 						.statement = "console.log(\"quaternion.multiply(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0), vec3(0.0, 0.0, 1.0)): \", quaternion.multiply(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0), vec3(0.0, 0.0, 1.0)))",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 107,
+						.line = 106,
 						.statementIdx = 95,
 						.statement = "console.log(\"quaternion.computeMatrix(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0)): \", quaternion.computeMatrix(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0)))",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 110,
+						.line = 107,
 						.statementIdx = 96,
-						.statement = "console.log(\"-----------------------------------\")",
+						.statement = "console.log(\"-------------------------\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 108,
+						.statementIdx = 97,
+						.statement = "console.log(\"Check matrix4x4 math\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 109,
+						.statementIdx = 98,
+						.statement = "console.log(\"-------------------------\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 110,
+						.statementIdx = 99,
+						.statement = "console.log(\"mat4.identity(): \", mat4.identity())",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 111,
-						.statementIdx = 97,
-						.statement = "console.log(\"Check transform\")",
+						.statementIdx = 100,
+						.statement = "console.log(\"mat4.translate(vec3(1.0, 2.0, 3.0)): \", mat4.translate(vec3(1.0, 2.0, 3.0)))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 112,
-						.statementIdx = 98,
-						.statement = "console.log(\"-----------------------------------\")",
+						.statementIdx = 101,
+						.statement = "console.log(\"mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0): \", mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 113,
-						.statementIdx = 99,
-						.statement = "setVariable(\"$transform\", transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)))",
+						.statementIdx = 102,
+						.statement = "console.log(\"mat4.scale(vec3(1.0, 2.0, 3.0)): \", mat4.scale(vec3(1.0, 2.0, 3.0)))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 114,
-						.statementIdx = 100,
-						.statement = "setVariable(\"$transform\", transform.setRotationAngle($transform, 0, 90)));",
+						.statementIdx = 103,
+						.statement = "console.log(\"mat4.scale(3.0): \", mat4.scale(3.0))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 115,
-						.statementIdx = 101,
-						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)): \", $transform)",
+						.statementIdx = 104,
+						.statement = "console.log(\"mat4.invert(mat4.scale(3.0)): \", mat4.invert(mat4.scale(3.0)))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 116,
-						.statementIdx = 102,
-						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getTranslation(): \", transform.getTranslation($transform))",
+						.statementIdx = 105,
+						.statement = "console.log(\"mat4.computeEulerAngles(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0)): \", mat4.computeEulerAngles(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0)))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 117,
-						.statementIdx = 103,
-						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setTranslation(vec3(-1,-2,-3)): \", transform.setTranslation($transform, vec3(-1,-2,-3)))",
+						.statementIdx = 106,
+						.statement = "console.log(\"mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.rotate(vec3(1.0, 0.0, 0.0), 90.0)): \", mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.rotate(vec3(1.0, 0.0, 0.0), 90.0)))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 118,
-						.statementIdx = 104,
-						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getScale(): \", transform.getScale($transform))",
+						.statementIdx = 107,
+						.statement = "console.log(\"mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), vec3(0.0, 0.0, 1.0)): \", mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), vec3(0.0, 0.0, 1.0)))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 119,
-						.statementIdx = 105,
-						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setScale(): \", transform.setScale($transform, vec3(-2,-3,-4)))",
+						.statementIdx = 108,
+						.statement = "console.log(\"mat4.multiply(mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.translate(vec3(1.0, 2.0, 3.0))), vec4(0.0, 0.0, 1.0, 0.0)): \", mat4.multiply(mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.translate(vec3(1.0, 2.0, 3.0))), vec4(0.0, 0.0, 1.0, 0.0)))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 120,
-						.statementIdx = 106,
-						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getRotationAxis(): \", transform.getRotationAxis($transform, 0))",
+						.statementIdx = 109,
+						.statement = "console.log(\"-----------------------------------\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 121,
-						.statementIdx = 107,
-						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getRotationAngle(): \", transform.getRotationAngle($transform, 0))",
+						.statementIdx = 110,
+						.statement = "console.log(\"Check transform\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 122,
-						.statementIdx = 108,
-						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setRotationAngle(): \", transform.setRotationAngle($transform, 0, 90))",
+						.statementIdx = 111,
+						.statement = "console.log(\"-----------------------------------\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 123,
-						.statementIdx = 109,
-						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).multiply(vec3(0,0,0)): \", transform.multiply($transform, vec3(0,0,0)))",
+						.statementIdx = 112,
+						.statement = "setVariable(\"$transform\", transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 124,
-						.statementIdx = 110,
-						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).rotate(vec3(0,0,1)): \", transform.rotate($transform, vec3(0,0,1)))",
+						.statementIdx = 113,
+						.statement = "setVariable(\"$transform\", transform.setRotationAngle($transform, 0, 90)));",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 125,
-						.statementIdx = 111,
-						.statement = "console.log(\"------------------------\")",
+						.statementIdx = 114,
+						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)): \", $transform)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 126,
-						.statementIdx = 112,
-						.statement = "console.log(\"Check string functions\")",
+						.statementIdx = 115,
+						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getTranslation(): \", transform.getTranslation($transform))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 127,
-						.statementIdx = 113,
-						.statement = "console.log(\"------------------------\")",
+						.statementIdx = 116,
+						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setTranslation(vec3(-1,-2,-3)): \", transform.setTranslation($transform, vec3(-1,-2,-3)))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 128,
-						.statementIdx = 114,
-						.statement = "console.log(space(0), \"1\"))",
+						.statementIdx = 117,
+						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getScale(): \", transform.getScale($transform))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 129,
-						.statementIdx = 115,
-						.statement = "console.log(space(2), \"1.1\"))",
+						.statementIdx = 118,
+						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setScale(): \", transform.setScale($transform, vec3(-2,-3,-4)))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 130,
-						.statementIdx = 116,
-						.statement = "console.log(space(2), \"1.2\"))",
+						.statementIdx = 119,
+						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getRotationAxis(): \", transform.getRotationAxis($transform, 0))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 131,
-						.statementIdx = 117,
-						.statement = "console.log(toUpperCase(\"xxxyyyzzz\"))",
+						.statementIdx = 120,
+						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getRotationAngle(): \", transform.getRotationAngle($transform, 0))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 132,
-						.statementIdx = 118,
-						.statement = "console.log(toLowerCase(\"XXXYYYZZZ\"))",
+						.statementIdx = 121,
+						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setRotationAngle(): \", transform.setRotationAngle($transform, 0, 90))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 133,
-						.statementIdx = 119,
-						.statement = "console.log(concatenate(\"abc\", \"def\", \"ghi\"))",
+						.statementIdx = 122,
+						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).multiply(vec3(0,0,0)): \", transform.multiply($transform, vec3(0,0,0)))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 134,
-						.statementIdx = 120,
-						.statement = "console.log(\"------------------------\")",
+						.statementIdx = 123,
+						.statement = "console.log(\"transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).rotate(vec3(0,0,1)): \", transform.rotate($transform, vec3(0,0,1)))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 135,
-						.statementIdx = 121,
-						.statement = "console.log(\"Check string functions (Operators)\")",
-						.gotoStatementIdx = -1
-					},
-					{
-						.line = 136,
-						.statementIdx = 122,
-						.statement = "console.log(add(\"abc\",add(\"def\", \"ghi\")))",
-						.gotoStatementIdx = -1
-					},
-					{
-						.line = 137,
-						.statementIdx = 123,
-						.statement = "console.log(\"------------------------\")",
-						.gotoStatementIdx = -1
-					},
-					{
-						.line = 138,
 						.statementIdx = 124,
 						.statement = "console.log(\"------------------------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 139,
+						.line = 136,
 						.statementIdx = 125,
-						.statement = "console.log(\"Variable\")",
+						.statement = "console.log(\"Check string functions\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 140,
+						.line = 137,
 						.statementIdx = 126,
 						.statement = "console.log(\"------------------------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 141,
+						.line = 138,
 						.statementIdx = 127,
-						.statement = "setVariable(\"$variable\", string(\"1234\"))",
+						.statement = "console.log(space(0), \"1\"))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 139,
+						.statementIdx = 128,
+						.statement = "console.log(space(2), \"1.1\"))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 140,
+						.statementIdx = 129,
+						.statement = "console.log(space(2), \"1.2\"))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 141,
+						.statementIdx = 130,
+						.statement = "console.log(toUpperCase(\"xxxyyyzzz\"))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 142,
-						.statementIdx = 128,
-						.statement = "console.log(getVariable(\"$variable\"))",
+						.statementIdx = 131,
+						.statement = "console.log(toLowerCase(\"XXXYYYZZZ\"))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 143,
-						.statementIdx = 129,
-						.statement = "console.log(\"--------------------\")",
+						.statementIdx = 132,
+						.statement = "console.log(concatenate(\"abc\", \"def\", \"ghi\"))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 144,
-						.statementIdx = 130,
-						.statement = "console.log(\"Lets check forTime\")",
+						.statementIdx = 133,
+						.statement = "console.log(\"------------------------\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 145,
-						.statementIdx = 131,
-						.statement = "console.log(\"--------------------\")",
+						.statementIdx = 134,
+						.statement = "console.log(\"Check string functions (Operators)\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 146,
-						.statementIdx = 132,
-						.statement = "setVariable(\"$i\", 1)",
+						.statementIdx = 135,
+						.statement = "console.log(add(\"abc\",add(\"def\", \"ghi\")))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 147,
-						.statementIdx = 133,
-						.statement = "forTime(2000)",
-						.gotoStatementIdx = 138
+						.statementIdx = 136,
+						.statement = "console.log(\"------------------------\")",
+						.gotoStatementIdx = -1
 					},
 					{
 						.line = 148,
-						.statementIdx = 134,
-						.statement = "console.log($i, \": Hello World\")",
+						.statementIdx = 137,
+						.statement = "console.log(\"------------------------\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 149,
-						.statementIdx = 135,
-						.statement = "script.wait(500)",
+						.statementIdx = 138,
+						.statement = "console.log(\"Variable\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 150,
-						.statementIdx = 136,
-						.statement = "setVariable(\"$i\",add($i, 1))",
+						.statementIdx = 139,
+						.statement = "console.log(\"------------------------\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 151,
-						.statementIdx = 137,
-						.statement = "end",
-						.gotoStatementIdx = 133
+						.statementIdx = 140,
+						.statement = "setVariable(\"$variable\", string(\"1234\"))",
+						.gotoStatementIdx = -1
 					},
 					{
 						.line = 152,
-						.statementIdx = 138,
-						.statement = "console.log(\"-------------------------\")",
+						.statementIdx = 141,
+						.statement = "console.log(getVariable(\"$variable\"))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 153,
-						.statementIdx = 139,
-						.statement = "console.log(\"Lets check forCondition\")",
+						.statementIdx = 142,
+						.statement = "console.log(\"--------------------\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 154,
-						.statementIdx = 140,
-						.statement = "console.log(\"-------------------------\")",
+						.statementIdx = 143,
+						.statement = "console.log(\"Lets check forTime\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 155,
-						.statementIdx = 141,
-						.statement = "setVariable(\"$i\", 1)",
+						.statementIdx = 144,
+						.statement = "console.log(\"--------------------\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 156,
-						.statementIdx = 142,
-						.statement = "forCondition(notequal($i, 6))",
-						.gotoStatementIdx = 147
+						.statementIdx = 145,
+						.statement = "setVariable(\"$i\", 1)",
+						.gotoStatementIdx = -1
 					},
 					{
 						.line = 157,
-						.statementIdx = 143,
+						.statementIdx = 146,
+						.statement = "forTime(2000)",
+						.gotoStatementIdx = 151
+					},
+					{
+						.line = 158,
+						.statementIdx = 147,
 						.statement = "console.log($i, \": Hello World\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 158,
-						.statementIdx = 144,
+						.line = 159,
+						.statementIdx = 148,
 						.statement = "script.wait(500)",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 159,
-						.statementIdx = 145,
+						.line = 160,
+						.statementIdx = 149,
 						.statement = "setVariable(\"$i\",add($i, 1))",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 160,
-						.statementIdx = 146,
-						.statement = "end",
-						.gotoStatementIdx = 142
-					},
-					{
 						.line = 161,
-						.statementIdx = 147,
-						.statement = "console.log(\"i -> \", $i)",
-						.gotoStatementIdx = -1
+						.statementIdx = 150,
+						.statement = "end",
+						.gotoStatementIdx = 146
 					},
 					{
 						.line = 162,
-						.statementIdx = 148,
-						.statement = "console.log(\"---------------------------------------------\")",
+						.statementIdx = 151,
+						.statement = "console.log(\"-------------------------\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 163,
-						.statementIdx = 149,
-						.statement = "console.log(\"Lets check forCondition with if/elseif/else\")",
+						.statementIdx = 152,
+						.statement = "console.log(\"Lets check forCondition\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 164,
-						.statementIdx = 150,
-						.statement = "console.log(\"---------------------------------------------\")",
+						.statementIdx = 153,
+						.statement = "console.log(\"-------------------------\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 165,
-						.statementIdx = 151,
+						.statementIdx = 154,
 						.statement = "setVariable(\"$i\", 1)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 166,
-						.statementIdx = 152,
-						.statement = "forCondition(lesser($i, 5))",
-						.gotoStatementIdx = 167
+						.statementIdx = 155,
+						.statement = "forCondition(notequal($i, 6))",
+						.gotoStatementIdx = 160
 					},
 					{
 						.line = 167,
-						.statementIdx = 153,
-						.statement = "console.log($i, \":\")",
+						.statementIdx = 156,
+						.statement = "console.log($i, \": Hello World\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 168,
-						.statementIdx = 154,
-						.statement = "if (equals($i, 0))",
-						.gotoStatementIdx = 156
+						.statementIdx = 157,
+						.statement = "script.wait(500)",
+						.gotoStatementIdx = -1
 					},
 					{
 						.line = 169,
-						.statementIdx = 155,
-						.statement = "console.log(\"i -> 0\")",
+						.statementIdx = 158,
+						.statement = "setVariable(\"$i\",add($i, 1))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 170,
-						.statementIdx = 156,
-						.statement = "elseif (equals($i, 1))",
-						.gotoStatementIdx = 158
+						.statementIdx = 159,
+						.statement = "end",
+						.gotoStatementIdx = 155
 					},
 					{
 						.line = 171,
-						.statementIdx = 157,
-						.statement = "console.log(\"i -> 1\")",
+						.statementIdx = 160,
+						.statement = "console.log(\"i -> \", $i)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 172,
-						.statementIdx = 158,
-						.statement = "elseif (equals($i, 2))",
-						.gotoStatementIdx = 160
+						.statementIdx = 161,
+						.statement = "console.log(\"---------------------------------------------\")",
+						.gotoStatementIdx = -1
 					},
 					{
 						.line = 173,
-						.statementIdx = 159,
-						.statement = "console.log(\"i -> 2\")",
+						.statementIdx = 162,
+						.statement = "console.log(\"Lets check forCondition with if/elseif/else\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 174,
-						.statementIdx = 160,
-						.statement = "elseif (equals($i, 3))",
-						.gotoStatementIdx = 162
+						.statementIdx = 163,
+						.statement = "console.log(\"---------------------------------------------\")",
+						.gotoStatementIdx = -1
 					},
 					{
 						.line = 175,
-						.statementIdx = 161,
-						.statement = "console.log(\"i -> 3\")",
-						.gotoStatementIdx = -1
-					},
-					{
-						.line = 176,
-						.statementIdx = 162,
-						.statement = "else",
-						.gotoStatementIdx = 164
-					},
-					{
-						.line = 177,
-						.statementIdx = 163,
-						.statement = "console.log(\"else: \", $i)",
-						.gotoStatementIdx = -1
-					},
-					{
-						.line = 178,
 						.statementIdx = 164,
-						.statement = "end",
-						.gotoStatementIdx = -1
-					},
-					{
-						.line = 179,
-						.statementIdx = 165,
-						.statement = "setVariable(\"$i\",add($i, 1))",
-						.gotoStatementIdx = -1
-					},
-					{
-						.line = 180,
-						.statementIdx = 166,
-						.statement = "end",
-						.gotoStatementIdx = 152
-					},
-					{
-						.line = 181,
-						.statementIdx = 167,
 						.statement = "setVariable(\"$i\", 1)",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 182,
-						.statementIdx = 168,
-						.statement = "setVariable(\"$j\", 2)",
+						.line = 176,
+						.statementIdx = 165,
+						.statement = "forCondition(lesser($i, 5))",
+						.gotoStatementIdx = 180
+					},
+					{
+						.line = 177,
+						.statementIdx = 166,
+						.statement = "console.log($i, \":\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 183,
+						.line = 178,
+						.statementIdx = 167,
+						.statement = "if (equals($i, 0))",
+						.gotoStatementIdx = 169
+					},
+					{
+						.line = 179,
+						.statementIdx = 168,
+						.statement = "console.log(\"i -> 0\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 180,
 						.statementIdx = 169,
-						.statement = "setVariable(\"$k\", 3)",
+						.statement = "elseif (equals($i, 1))",
+						.gotoStatementIdx = 171
+					},
+					{
+						.line = 181,
+						.statementIdx = 170,
+						.statement = "console.log(\"i -> 1\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 182,
+						.statementIdx = 171,
+						.statement = "elseif (equals($i, 2))",
+						.gotoStatementIdx = 173
+					},
+					{
+						.line = 183,
+						.statementIdx = 172,
+						.statement = "console.log(\"i -> 2\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 184,
-						.statementIdx = 170,
-						.statement = "if (or(equals(getVariable(\"$i\"), $j),equals(getVariable(\"$i\"), $k)))",
-						.gotoStatementIdx = 172
+						.statementIdx = 173,
+						.statement = "elseif (equals($i, 3))",
+						.gotoStatementIdx = 175
 					},
 					{
 						.line = 185,
-						.statementIdx = 171,
-						.statement = "console.log(\"This should not happen, but look ok in preprocessor processed output\")",
+						.statementIdx = 174,
+						.statement = "console.log(\"i -> 3\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 186,
-						.statementIdx = 172,
-						.statement = "end",
-						.gotoStatementIdx = -1
+						.statementIdx = 175,
+						.statement = "else",
+						.gotoStatementIdx = 177
 					},
 					{
 						.line = 187,
-						.statementIdx = 173,
-						.statement = "console.log(\"-------------------------------------------------------------------------------------\")",
+						.statementIdx = 176,
+						.statement = "console.log(\"else: \", $i)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 188,
-						.statementIdx = 174,
-						.statement = "console.log(add(\"Test: string concatenation with brackets in string literals: \",add($i,add(\"(\",add($j, \")\")))))",
+						.statementIdx = 177,
+						.statement = "end",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 189,
-						.statementIdx = 175,
-						.statement = "console.log(\"-------------------------------------------------------------------------------------\")",
+						.statementIdx = 178,
+						.statement = "setVariable(\"$i\",add($i, 1))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 190,
-						.statementIdx = 176,
-						.statement = "console.log(\"(4.0 + 2.0) / 2.0 + (20.0 / 10.0 * (2.0 + 5)): \",add(div(add(4.0, 2.0), 2.0),mul(div(20.0, 10.0), add(2.0, 5))), \" = 17\")",
-						.gotoStatementIdx = -1
+						.statementIdx = 179,
+						.statement = "end",
+						.gotoStatementIdx = 165
 					},
 					{
 						.line = 191,
-						.statementIdx = 177,
-						.statement = "console.log(\"---------\")",
+						.statementIdx = 180,
+						.statement = "setVariable(\"$i\", 1)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 192,
-						.statementIdx = 178,
-						.statement = "console.log(\"Arrays\")",
+						.statementIdx = 181,
+						.statement = "setVariable(\"$j\", 2)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 193,
-						.statementIdx = 179,
-						.statement = "console.log(\"----------\")",
+						.statementIdx = 182,
+						.statement = "setVariable(\"$k\", 3)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 194,
-						.statementIdx = 180,
-						.statement = "setVariable(\"$array\", array(1,2,3))",
-						.gotoStatementIdx = -1
+						.statementIdx = 183,
+						.statement = "if (or(equals(getVariable(\"$i\"), $j),equals(getVariable(\"$i\"), $k)))",
+						.gotoStatementIdx = 185
 					},
 					{
 						.line = 195,
-						.statementIdx = 181,
-						.statement = "console.log(\"array initialized with: $array = array(1,2,3)\")",
+						.statementIdx = 184,
+						.statement = "console.log(\"This should not happen, but look ok in preprocessor processed output\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 196,
-						.statementIdx = 182,
-						.statement = "console.log(\"array now looks like: \", $array)",
+						.statementIdx = 185,
+						.statement = "end",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 197,
-						.statementIdx = 183,
-						.statement = "setVariable(\"$array\", array.push($array, 8, 9, 10, 99, 10))",
+						.statementIdx = 186,
+						.statement = "console.log(\"-------------------------------------------------------------------------------------\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 198,
-						.statementIdx = 184,
-						.statement = "console.log(\"array pushed values with: array.push($array, 8, 9, 10, 99, 10)\")",
+						.statementIdx = 187,
+						.statement = "console.log(add(\"Test: string concatenation with brackets in string literals: \",add($i,add(\"(\",add($j, \")\")))))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 199,
-						.statementIdx = 185,
-						.statement = "console.log(\"array now looks like: \", $array)",
+						.statementIdx = 188,
+						.statement = "console.log(\"-------------------------------------------------------------------------------------\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 200,
-						.statementIdx = 186,
-						.statement = "setVariable(\"$array[]\", 123)",
+						.statementIdx = 189,
+						.statement = "console.log(\"(4.0 + 2.0) / 2.0 + (20.0 / 10.0 * (2.0 + 5)): \",add(div(add(4.0, 2.0), 2.0),mul(div(20.0, 10.0), add(2.0, 5))), \" = 17\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 201,
-						.statementIdx = 187,
-						.statement = "setVariable(\"$array[]\", 1234)",
+						.statementIdx = 190,
+						.statement = "console.log(\"---------\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 202,
-						.statementIdx = 188,
-						.statement = "setVariable(\"$array[]\", 12345)",
+						.statementIdx = 191,
+						.statement = "console.log(\"Arrays\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 203,
-						.statementIdx = 189,
-						.statement = "setVariable(\"$array[]\", array(1,2,3))",
+						.statementIdx = 192,
+						.statement = "console.log(\"----------\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 204,
-						.statementIdx = 190,
-						.statement = "console.log(\"array values added with [] operator: 123, 1234, 12345, array(1,2,3)\")",
+						.statementIdx = 193,
+						.statement = "setVariable(\"$array\", array(1,2,3))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 205,
-						.statementIdx = 191,
-						.statement = "console.log(\"array now looks like: \", $array)",
+						.statementIdx = 194,
+						.statement = "console.log(\"array initialized with: $array = array(1,2,3)\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 206,
-						.statementIdx = 192,
-						.statement = "console.log(\"array values added with [] operator to push to array of array: 50, 60\")",
+						.statementIdx = 195,
+						.statement = "console.log(\"array now looks like: \", $array)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 207,
-						.statementIdx = 193,
-						.statement = "setVariable(\"$array[11][]\", 50)",
+						.statementIdx = 196,
+						.statement = "setVariable(\"$array\", array.push($array, 8, 9, 10, 99, 10))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 208,
-						.statementIdx = 194,
-						.statement = "setVariable(\"$array[11][]\", 60)",
+						.statementIdx = 197,
+						.statement = "console.log(\"array pushed values with: array.push($array, 8, 9, 10, 99, 10)\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 209,
-						.statementIdx = 195,
-						.statement = "setVariable(\"$array[11][sub(array.length($array[11]), 1)]\", 61)",
+						.statementIdx = 198,
+						.statement = "console.log(\"array now looks like: \", $array)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 210,
-						.statementIdx = 196,
-						.statement = "console.log(\"array length: \", array.length($array))",
+						.statementIdx = 199,
+						.statement = "setVariable(\"$array[]\", 123)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 211,
-						.statementIdx = 197,
-						.statement = "console.log(\"array iteration with array.get(): \")",
+						.statementIdx = 200,
+						.statement = "setVariable(\"$array[]\", 1234)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 212,
-						.statementIdx = 198,
-						.statement = "setVariable(\"$i\", 0)",
+						.statementIdx = 201,
+						.statement = "setVariable(\"$array[]\", 12345)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 213,
-						.statementIdx = 199,
-						.statement = "forCondition(lesser($i, array.length($array)))",
-						.gotoStatementIdx = 203
+						.statementIdx = 202,
+						.statement = "setVariable(\"$array[]\", array(1,2,3))",
+						.gotoStatementIdx = -1
 					},
 					{
 						.line = 214,
-						.statementIdx = 200,
-						.statement = "console.log(add($i,add(\": \", array.get($array, $i))))",
+						.statementIdx = 203,
+						.statement = "console.log(\"array values added with [] operator: 123, 1234, 12345, array(1,2,3)\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 215,
-						.statementIdx = 201,
-						.statement = "setVariable(\"$i\",add($i, 1))",
+						.statementIdx = 204,
+						.statement = "console.log(\"array now looks like: \", $array)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 216,
-						.statementIdx = 202,
-						.statement = "end",
-						.gotoStatementIdx = 199
+						.statementIdx = 205,
+						.statement = "console.log(\"array values added with [] operator to push to array of array: 50, 60\")",
+						.gotoStatementIdx = -1
 					},
 					{
 						.line = 217,
-						.statementIdx = 203,
-						.statement = "console.log(\"array iteration with [] operator: \")",
+						.statementIdx = 206,
+						.statement = "setVariable(\"$array[11][]\", 50)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 218,
-						.statementIdx = 204,
-						.statement = "setVariable(\"$i\", 0)",
+						.statementIdx = 207,
+						.statement = "setVariable(\"$array[11][]\", 60)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 219,
-						.statementIdx = 205,
-						.statement = "forCondition(lesser($i, array.length($array)))",
-						.gotoStatementIdx = 209
+						.statementIdx = 208,
+						.statement = "setVariable(\"$array[11][sub(array.length($array[11]), 1)]\", 61)",
+						.gotoStatementIdx = -1
 					},
 					{
 						.line = 220,
-						.statementIdx = 206,
-						.statement = "console.log(add($i,add(\": \", $array[$i])))",
+						.statementIdx = 209,
+						.statement = "console.log(\"array length: \", array.length($array))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 221,
-						.statementIdx = 207,
-						.statement = "setVariable(\"$i\",add($i, 1))",
+						.statementIdx = 210,
+						.statement = "console.log(\"array iteration with array.get(): \")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 222,
-						.statementIdx = 208,
-						.statement = "end",
-						.gotoStatementIdx = 205
-					},
-					{
-						.line = 223,
-						.statementIdx = 209,
-						.statement = "console.log(\"array iteration with [] opertator and some index math: \")",
-						.gotoStatementIdx = -1
-					},
-					{
-						.line = 224,
-						.statementIdx = 210,
+						.statementIdx = 211,
 						.statement = "setVariable(\"$i\", 0)",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 225,
-						.statementIdx = 211,
-						.statement = "forCondition(lesser($i,div(array.length($array), 2)))",
+						.line = 223,
+						.statementIdx = 212,
+						.statement = "forCondition(lesser($i, array.length($array)))",
 						.gotoStatementIdx = 216
 					},
 					{
-						.line = 226,
-						.statementIdx = 212,
-						.statement = "console.log(add($i,add(\"-a: \", $array[add(mul($i, 2), 0)])))",
-						.gotoStatementIdx = -1
-					},
-					{
-						.line = 227,
+						.line = 224,
 						.statementIdx = 213,
-						.statement = "console.log(add($i,add(\"-b: \", $array[add(mul($i, 2), 1)])))",
+						.statement = "console.log(add($i,add(\": \", array.get($array, $i))))",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 228,
+						.line = 225,
 						.statementIdx = 214,
 						.statement = "setVariable(\"$i\",add($i, 1))",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 229,
+						.line = 226,
 						.statementIdx = 215,
 						.statement = "end",
-						.gotoStatementIdx = 211
+						.gotoStatementIdx = 212
+					},
+					{
+						.line = 227,
+						.statementIdx = 216,
+						.statement = "console.log(\"array iteration with [] operator: \")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 228,
+						.statementIdx = 217,
+						.statement = "setVariable(\"$i\", 0)",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 229,
+						.statementIdx = 218,
+						.statement = "forCondition(lesser($i, array.length($array)))",
+						.gotoStatementIdx = 222
 					},
 					{
 						.line = 230,
-						.statementIdx = 216,
-						.statement = "console.log(\"array removal of 123, 1234, 12345 using array.removeOf\")",
+						.statementIdx = 219,
+						.statement = "console.log(add($i,add(\": \", $array[$i])))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 231,
-						.statementIdx = 217,
-						.statement = "setVariable(\"$array\", array.removeOf($array, 123))",
+						.statementIdx = 220,
+						.statement = "setVariable(\"$i\",add($i, 1))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 232,
-						.statementIdx = 218,
-						.statement = "setVariable(\"$array\", array.removeOf($array, 1234))",
-						.gotoStatementIdx = -1
+						.statementIdx = 221,
+						.statement = "end",
+						.gotoStatementIdx = 218
 					},
 					{
 						.line = 233,
-						.statementIdx = 219,
-						.statement = "setVariable(\"$array\", array.removeOf($array, 12345))",
+						.statementIdx = 222,
+						.statement = "console.log(\"array iteration with [] opertator and some index math: \")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 234,
-						.statementIdx = 220,
-						.statement = "console.log(\"array now looks like: \", $array)",
+						.statementIdx = 223,
+						.statement = "setVariable(\"$i\", 0)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 235,
-						.statementIdx = 221,
-						.statement = "console.log(\"array indexOf 10: \", array.indexOf($array, 10))",
-						.gotoStatementIdx = -1
+						.statementIdx = 224,
+						.statement = "forCondition(lesser($i,div(array.length($array), 2)))",
+						.gotoStatementIdx = 229
 					},
 					{
 						.line = 236,
-						.statementIdx = 222,
-						.statement = "console.log(\"array indexOf 10 beginning to search from 6: \", array.indexOf($array, 10, 6))",
+						.statementIdx = 225,
+						.statement = "console.log(add($i,add(\"-a: \", $array[add(mul($i, 2), 0)])))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 237,
-						.statementIdx = 223,
-						.statement = "console.log(\"---------\")",
+						.statementIdx = 226,
+						.statement = "console.log(add($i,add(\"-b: \", $array[add(mul($i, 2), 1)])))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 238,
-						.statementIdx = 224,
-						.statement = "console.log(\"Maps\")",
+						.statementIdx = 227,
+						.statement = "setVariable(\"$i\",add($i, 1))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 239,
-						.statementIdx = 225,
-						.statement = "console.log(\"----------\")",
-						.gotoStatementIdx = -1
+						.statementIdx = 228,
+						.statement = "end",
+						.gotoStatementIdx = 224
 					},
 					{
 						.line = 240,
-						.statementIdx = 226,
-						.statement = "setVariable(\"$map\", map())",
+						.statementIdx = 229,
+						.statement = "console.log(\"array removal of 123, 1234, 12345 using array.removeOf\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 241,
-						.statementIdx = 227,
-						.statement = "console.log(\"map initialized with: $map = map()\")",
+						.statementIdx = 230,
+						.statement = "setVariable(\"$array\", array.removeOf($array, 123))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 242,
-						.statementIdx = 228,
-						.statement = "console.log(\"map now looks like: \", $map)",
+						.statementIdx = 231,
+						.statement = "setVariable(\"$array\", array.removeOf($array, 1234))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 243,
-						.statementIdx = 229,
-						.statement = "console.log(\"put some key value pairs into map: $map = map.set()\")",
+						.statementIdx = 232,
+						.statement = "setVariable(\"$array\", array.removeOf($array, 12345))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 244,
-						.statementIdx = 230,
-						.statement = "setVariable(\"$map\", map.set($map, \"test1\", 123))",
+						.statementIdx = 233,
+						.statement = "console.log(\"array now looks like: \", $array)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 245,
-						.statementIdx = 231,
-						.statement = "setVariable(\"$map\", map.set($map, \"test2\", 456))",
+						.statementIdx = 234,
+						.statement = "console.log(\"array indexOf 10: \", array.indexOf($array, 10))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 246,
-						.statementIdx = 232,
-						.statement = "setVariable(\"$map\", map.set($map, \"test3\", 789))",
+						.statementIdx = 235,
+						.statement = "console.log(\"array indexOf 10 beginning to search from 6: \", array.indexOf($array, 10, 6))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 247,
-						.statementIdx = 233,
-						.statement = "setVariable(\"$map\", map.set($map, \"test4\", array(1,2,3)))",
+						.statementIdx = 236,
+						.statement = "console.log(\"---------\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 248,
-						.statementIdx = 234,
-						.statement = "setVariable(\"$map\", map.set($map, \"test5\", \"Yaaaa\"))",
+						.statementIdx = 237,
+						.statement = "console.log(\"Maps\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 249,
-						.statementIdx = 235,
-						.statement = "console.log(\"map now looks like: \", $map)",
+						.statementIdx = 238,
+						.statement = "console.log(\"----------\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 250,
-						.statementIdx = 236,
-						.statement = "console.log(\"remove test2 via map.remove: \")",
+						.statementIdx = 239,
+						.statement = "setVariable(\"$map\", map())",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 251,
-						.statementIdx = 237,
-						.statement = "setVariable(\"$map\", map.remove($map, \"test2\"))",
+						.statementIdx = 240,
+						.statement = "console.log(\"map initialized with: $map = map()\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 252,
-						.statementIdx = 238,
+						.statementIdx = 241,
 						.statement = "console.log(\"map now looks like: \", $map)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 253,
-						.statementIdx = 239,
-						.statement = "setVariable(\"$map\", map.set($map, \"test2\", 456))",
+						.statementIdx = 242,
+						.statement = "console.log(\"put some key value pairs into map: $map = map.set()\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 254,
-						.statementIdx = 240,
-						.statement = "console.log(\"readding test2: \")",
+						.statementIdx = 243,
+						.statement = "setVariable(\"$map\", map.set($map, \"test1\", 123))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 255,
-						.statementIdx = 241,
-						.statement = "console.log(\"map does have test2 key using map.has(): \", map.has($map, \"test2\"))",
+						.statementIdx = 244,
+						.statement = "setVariable(\"$map\", map.set($map, \"test2\", 456))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 256,
-						.statementIdx = 242,
-						.statement = "console.log(\"map does have test8 key using map.has(): \", map.has($map, \"test8\"))",
+						.statementIdx = 245,
+						.statement = "setVariable(\"$map\", map.set($map, \"test3\", 789))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 257,
-						.statementIdx = 243,
-						.statement = "console.log(\"map value for test1 key using map.get(): \", map.get($map, \"test1\"))",
+						.statementIdx = 246,
+						.statement = "setVariable(\"$map\", map.set($map, \"test4\", array(1,2,3)))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 258,
-						.statementIdx = 244,
-						.statement = "console.log(\"map value for test2 key using map.get(): \", map.get($map, \"test2\"))",
+						.statementIdx = 247,
+						.statement = "setVariable(\"$map\", map.set($map, \"test5\", \"Yaaaa\"))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 259,
-						.statementIdx = 245,
-						.statement = "console.log(\"map value for test3 key using map.get(): \", map.get($map, \"test3\"))",
+						.statementIdx = 248,
+						.statement = "console.log(\"map now looks like: \", $map)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 260,
-						.statementIdx = 246,
-						.statement = "console.log(\"map value for test4 key using map.get(): \", map.get($map, \"test4\"))",
+						.statementIdx = 249,
+						.statement = "console.log(\"remove test2 via map.remove: \")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 261,
-						.statementIdx = 247,
-						.statement = "console.log(\"map value for test5 key using map.get(): \", map.get($map, \"test5\"))",
+						.statementIdx = 250,
+						.statement = "setVariable(\"$map\", map.remove($map, \"test2\"))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 262,
-						.statementIdx = 248,
-						.statement = "console.log(\"map value for test1 using map dot operator: \", $map.test1)",
+						.statementIdx = 251,
+						.statement = "console.log(\"map now looks like: \", $map)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 263,
-						.statementIdx = 249,
-						.statement = "console.log(\"map value for test2 using map dot operator: \", $map.test2)",
+						.statementIdx = 252,
+						.statement = "setVariable(\"$map\", map.set($map, \"test2\", 456))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 264,
-						.statementIdx = 250,
-						.statement = "console.log(\"map value for test3 using map dot operator: \", $map.test3)",
+						.statementIdx = 253,
+						.statement = "console.log(\"readding test2: \")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 265,
-						.statementIdx = 251,
-						.statement = "console.log(\"map value for test4 using map dot operator: \", $map.test4)",
+						.statementIdx = 254,
+						.statement = "console.log(\"map does have test2 key using map.has(): \", map.has($map, \"test2\"))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 266,
-						.statementIdx = 252,
-						.statement = "console.log(\"map value for test5 using map dot operator: \", $map.test5)",
+						.statementIdx = 255,
+						.statement = "console.log(\"map does have test8 key using map.has(): \", map.has($map, \"test8\"))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 267,
-						.statementIdx = 253,
-						.statement = "console.log(\"adding map values using map dot operator: \")",
+						.statementIdx = 256,
+						.statement = "console.log(\"map value for test1 key using map.get(): \", map.get($map, \"test1\"))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 268,
-						.statementIdx = 254,
-						.statement = "setVariable(\"$map.test6\", 666)",
+						.statementIdx = 257,
+						.statement = "console.log(\"map value for test2 key using map.get(): \", map.get($map, \"test2\"))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 269,
-						.statementIdx = 255,
-						.statement = "setVariable(\"$map.test7\", 770)",
+						.statementIdx = 258,
+						.statement = "console.log(\"map value for test3 key using map.get(): \", map.get($map, \"test3\"))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 270,
-						.statementIdx = 256,
-						.statement = "setVariable(\"$map.test8\", 890)",
+						.statementIdx = 259,
+						.statement = "console.log(\"map value for test4 key using map.get(): \", map.get($map, \"test4\"))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 271,
-						.statementIdx = 257,
-						.statement = "console.log(\"map keys: \", map.getKeys($map))",
+						.statementIdx = 260,
+						.statement = "console.log(\"map value for test5 key using map.get(): \", map.get($map, \"test5\"))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 272,
-						.statementIdx = 258,
-						.statement = "console.log(\"map values: \", map.getValues($map))",
+						.statementIdx = 261,
+						.statement = "console.log(\"map value for test1 using map dot operator: \", $map.test1)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 273,
-						.statementIdx = 259,
-						.statement = "console.log(\"iterating keys and values using map.getKeys(): \")",
+						.statementIdx = 262,
+						.statement = "console.log(\"map value for test2 using map dot operator: \", $map.test2)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 274,
-						.statementIdx = 260,
-						.statement = "setVariable(\"$mapKeys\", map.getKeys($map))",
+						.statementIdx = 263,
+						.statement = "console.log(\"map value for test3 using map dot operator: \", $map.test3)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 275,
-						.statementIdx = 261,
-						.statement = "setVariable(\"$i\", 0)",
+						.statementIdx = 264,
+						.statement = "console.log(\"map value for test4 using map dot operator: \", $map.test4)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 276,
-						.statementIdx = 262,
-						.statement = "forCondition(lesser($i, array.length($mapKeys)))",
-						.gotoStatementIdx = 266
+						.statementIdx = 265,
+						.statement = "console.log(\"map value for test5 using map dot operator: \", $map.test5)",
+						.gotoStatementIdx = -1
 					},
 					{
 						.line = 277,
-						.statementIdx = 263,
-						.statement = "console.log(add($mapKeys[$i],add(\" = \", map.get($map, $mapKeys[$i]))))",
+						.statementIdx = 266,
+						.statement = "console.log(\"adding map values using map dot operator: \")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 278,
-						.statementIdx = 264,
-						.statement = "setVariable(\"$i\",add($i, 1))",
+						.statementIdx = 267,
+						.statement = "setVariable(\"$map.test6\", 666)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 279,
-						.statementIdx = 265,
-						.statement = "end",
-						.gotoStatementIdx = 262
+						.statementIdx = 268,
+						.statement = "setVariable(\"$map.test7\", 770)",
+						.gotoStatementIdx = -1
 					},
 					{
 						.line = 280,
-						.statementIdx = 266,
-						.statement = "console.log(\"--------------------------------------------------\")",
+						.statementIdx = 269,
+						.statement = "setVariable(\"$map.test8\", 890)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 281,
-						.statementIdx = 267,
-						.statement = "console.log(\"Test if enabled naming condition will be emitted\")",
+						.statementIdx = 270,
+						.statement = "console.log(\"map keys: \", map.getKeys($map))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 282,
-						.statementIdx = 268,
-						.statement = "console.log(\"--------------------------------------------------\")",
+						.statementIdx = 271,
+						.statement = "console.log(\"map values: \", map.getValues($map))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 283,
-						.statementIdx = 269,
-						.statement = "script.enableNamedCondition(\"named_condition_1\")",
+						.statementIdx = 272,
+						.statement = "console.log(\"iterating keys and values using map.getKeys(): \")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 284,
-						.statementIdx = 270,
-						.statement = "script.wait(2000)",
+						.statementIdx = 273,
+						.statement = "setVariable(\"$mapKeys\", map.getKeys($map))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 285,
-						.statementIdx = 271,
-						.statement = "script.disableNamedCondition(\"named_condition_1\")",
+						.statementIdx = 274,
+						.statement = "setVariable(\"$i\", 0)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 286,
-						.statementIdx = 272,
-						.statement = "console.log(\"---------------------------------------\")",
-						.gotoStatementIdx = -1
+						.statementIdx = 275,
+						.statement = "forCondition(lesser($i, array.length($mapKeys)))",
+						.gotoStatementIdx = 279
 					},
 					{
 						.line = 287,
-						.statementIdx = 273,
-						.statement = "console.log(\"Naming condition has not been emitted\")",
+						.statementIdx = 276,
+						.statement = "console.log(add($mapKeys[$i],add(\" = \", map.get($map, $mapKeys[$i]))))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 288,
-						.statementIdx = 274,
-						.statement = "console.log(\"---------------------------------------\")",
+						.statementIdx = 277,
+						.statement = "setVariable(\"$i\",add($i, 1))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 289,
-						.statementIdx = 275,
+						.statementIdx = 278,
+						.statement = "end",
+						.gotoStatementIdx = 275
+					},
+					{
+						.line = 290,
+						.statementIdx = 279,
+						.statement = "console.log(\"--------------------------------------------------\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 291,
+						.statementIdx = 280,
+						.statement = "console.log(\"Test if enabled naming condition will be emitted\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 292,
+						.statementIdx = 281,
+						.statement = "console.log(\"--------------------------------------------------\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 293,
+						.statementIdx = 282,
+						.statement = "script.enableNamedCondition(\"named_condition_1\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 294,
+						.statementIdx = 283,
+						.statement = "script.wait(2000)",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 295,
+						.statementIdx = 284,
+						.statement = "script.disableNamedCondition(\"named_condition_1\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 296,
+						.statementIdx = 285,
+						.statement = "console.log(\"---------------------------------------\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 297,
+						.statementIdx = 286,
+						.statement = "console.log(\"Naming condition has not been emitted\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 298,
+						.statementIdx = 287,
+						.statement = "console.log(\"---------------------------------------\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 299,
+						.statementIdx = 288,
 						.statement = "script.stop()",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 290,
-						.statementIdx = 276,
+						.line = 300,
+						.statementIdx = 289,
 						.statement = "end",
 						.gotoStatementIdx = -1
 					}
@@ -1731,25 +1809,25 @@ void MiniScriptTest::initializeNative() {
 			},
 			{
 				.scriptType = Script::SCRIPTTYPE_ON,
-				.line = 292,
+				.line = 302,
 				.condition = "error",
 				.name = "",
 				.emitCondition = true,
 				.statements = {
 					{
-						.line = 293,
+						.line = 303,
 						.statementIdx = 0,
 						.statement = "console.log(\"An error occurred\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 294,
+						.line = 304,
 						.statementIdx = 1,
 						.statement = "script.wait(1000)",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 295,
+						.line = 305,
 						.statementIdx = 2,
 						.statement = "end",
 						.gotoStatementIdx = -1
@@ -1758,163 +1836,163 @@ void MiniScriptTest::initializeNative() {
 			},
 			{
 				.scriptType = Script::SCRIPTTYPE_ON,
-				.line = 297,
+				.line = 307,
 				.condition = "emittest",
 				.name = "",
 				.emitCondition = true,
 				.statements = {
 					{
-						.line = 298,
+						.line = 308,
 						.statementIdx = 0,
 						.statement = "console.log(\"---------------------------------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 299,
+						.line = 309,
 						.statementIdx = 1,
 						.statement = "console.log(\"SCRIPT JUST EMITTED A CONDITION\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 300,
+						.line = 310,
 						.statementIdx = 2,
 						.statement = "console.log(\"---------------------------------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 301,
+						.line = 311,
 						.statementIdx = 3,
 						.statement = "console.log()",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 302,
+						.line = 312,
 						.statementIdx = 4,
 						.statement = "console.log(\"----------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 303,
+						.line = 313,
 						.statementIdx = 5,
 						.statement = "console.log(\"Benchmark \")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 304,
+						.line = 314,
 						.statementIdx = 6,
 						.statement = "console.log(\"----------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 305,
+						.line = 315,
 						.statementIdx = 7,
 						.statement = "setVariable(\"$startTime\", time.getCurrentMillis())",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 306,
+						.line = 316,
 						.statementIdx = 8,
 						.statement = "setVariable(\"$i\", 0)",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 307,
+						.line = 317,
 						.statementIdx = 9,
 						.statement = "setVariable(\"$j\", 0)",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 308,
+						.line = 318,
 						.statementIdx = 10,
 						.statement = "setVariable(\"$k\", 0)",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 309,
+						.line = 319,
 						.statementIdx = 11,
 						.statement = "forCondition(lesser($i, 500000))",
 						.gotoStatementIdx = 22
 					},
 					{
-						.line = 310,
+						.line = 320,
 						.statementIdx = 12,
 						.statement = "setVariable(\"$a\",sub(add(123,add(mul(456,div(25, 12)),mul(7.5, 12.25))), 8))",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 311,
+						.line = 321,
 						.statementIdx = 13,
 						.statement = "if (equals($j, 0))",
 						.gotoStatementIdx = 15
 					},
 					{
-						.line = 312,
+						.line = 322,
 						.statementIdx = 14,
 						.statement = "setVariable(\"$k\",add($k, 1))",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 313,
+						.line = 323,
 						.statementIdx = 15,
 						.statement = "end",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 314,
+						.line = 324,
 						.statementIdx = 16,
 						.statement = "setVariable(\"$i\",add($i, 1))",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 315,
+						.line = 325,
 						.statementIdx = 17,
 						.statement = "setVariable(\"$j\",add($j, 1))",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 316,
+						.line = 326,
 						.statementIdx = 18,
 						.statement = "if (equals($j, 2))",
 						.gotoStatementIdx = 20
 					},
 					{
-						.line = 317,
+						.line = 327,
 						.statementIdx = 19,
 						.statement = "setVariable(\"$j\", 0)",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 318,
+						.line = 328,
 						.statementIdx = 20,
 						.statement = "end",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 319,
+						.line = 329,
 						.statementIdx = 21,
 						.statement = "end",
 						.gotoStatementIdx = 11
 					},
 					{
-						.line = 320,
+						.line = 330,
 						.statementIdx = 22,
 						.statement = "setVariable(\"$endTime\", time.getCurrentMillis())",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 321,
+						.line = 331,
 						.statementIdx = 23,
 						.statement = "console.log(add(\"Finished. Time: \", sub($endTime, $startTime)))",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 322,
+						.line = 332,
 						.statementIdx = 24,
 						.statement = "script.stop()",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 323,
+						.line = 333,
 						.statementIdx = 25,
 						.statement = "end",
 						.gotoStatementIdx = -1
@@ -1923,73 +2001,73 @@ void MiniScriptTest::initializeNative() {
 			},
 			{
 				.scriptType = Script::SCRIPTTYPE_ONENABLED,
-				.line = 325,
+				.line = 335,
 				.condition = "equals(1,1)",
 				.name = "named_condition_1",
 				.emitCondition = false,
 				.statements = {
 					{
-						.line = 326,
+						.line = 336,
 						.statementIdx = 0,
 						.statement = "script.disableNamedCondition(\"named_condition_1\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 327,
+						.line = 337,
 						.statementIdx = 1,
 						.statement = "console.log(\"------------------------------------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 328,
+						.line = 338,
 						.statementIdx = 2,
 						.statement = "console.log(\"named_condition_1 has been emitted\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 329,
+						.line = 339,
 						.statementIdx = 3,
 						.statement = "console.log(\"------------------------------------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 330,
+						.line = 340,
 						.statementIdx = 4,
 						.statement = "console.log()",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 331,
+						.line = 341,
 						.statementIdx = 5,
 						.statement = "console.log(\"-----------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 332,
+						.line = 342,
 						.statementIdx = 6,
 						.statement = "console.log(\"Test emit\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 333,
+						.line = 343,
 						.statementIdx = 7,
 						.statement = "console.log(\"-----------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 334,
+						.line = 344,
 						.statementIdx = 8,
 						.statement = "console.log()",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 335,
+						.line = 345,
 						.statementIdx = 9,
 						.statement = "script.emit(emittest)",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 336,
+						.line = 346,
 						.statementIdx = 10,
 						.statement = "end",
 						.gotoStatementIdx = -1
@@ -2018,7 +2096,7 @@ int MiniScriptTest::determineNamedScriptIdxToStart() {
 			// equals(1, 1)
 			{
 				const ScriptStatement statement = {
-					.line = 325,
+					.line = 335,
 					.statementIdx = 0,
 					.statement = "<unavailable>",
 					.gotoStatementIdx = -1
@@ -2193,31 +2271,31 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 	auto miniScript = this;
 	miniScript->scriptState.scriptIdx = 1;
-	if (miniScriptGotoStatementIdx == 134) goto miniscript_statement_134; else
-	if (miniScriptGotoStatementIdx == 136) goto miniscript_statement_136; else
-	if (miniScriptGotoStatementIdx == 138) goto miniscript_statement_138; else
-	if (miniScriptGotoStatementIdx == 143) goto miniscript_statement_143; else
-	if (miniScriptGotoStatementIdx == 145) goto miniscript_statement_145; else
 	if (miniScriptGotoStatementIdx == 147) goto miniscript_statement_147; else
-	if (miniScriptGotoStatementIdx == 153) goto miniscript_statement_153; else
-	if (miniScriptGotoStatementIdx == 155) goto miniscript_statement_155; else
-	if (miniScriptGotoStatementIdx == 157) goto miniscript_statement_157; else
-	if (miniScriptGotoStatementIdx == 159) goto miniscript_statement_159; else
-	if (miniScriptGotoStatementIdx == 161) goto miniscript_statement_161; else
-	if (miniScriptGotoStatementIdx == 163) goto miniscript_statement_163; else
-	if (miniScriptGotoStatementIdx == 165) goto miniscript_statement_165; else
-	if (miniScriptGotoStatementIdx == 167) goto miniscript_statement_167; else
-	if (miniScriptGotoStatementIdx == 171) goto miniscript_statement_171; else
-	if (miniScriptGotoStatementIdx == 173) goto miniscript_statement_173; else
-	if (miniScriptGotoStatementIdx == 200) goto miniscript_statement_200; else
-	if (miniScriptGotoStatementIdx == 203) goto miniscript_statement_203; else
-	if (miniScriptGotoStatementIdx == 206) goto miniscript_statement_206; else
-	if (miniScriptGotoStatementIdx == 209) goto miniscript_statement_209; else
-	if (miniScriptGotoStatementIdx == 212) goto miniscript_statement_212; else
+	if (miniScriptGotoStatementIdx == 149) goto miniscript_statement_149; else
+	if (miniScriptGotoStatementIdx == 151) goto miniscript_statement_151; else
+	if (miniScriptGotoStatementIdx == 156) goto miniscript_statement_156; else
+	if (miniScriptGotoStatementIdx == 158) goto miniscript_statement_158; else
+	if (miniScriptGotoStatementIdx == 160) goto miniscript_statement_160; else
+	if (miniScriptGotoStatementIdx == 166) goto miniscript_statement_166; else
+	if (miniScriptGotoStatementIdx == 168) goto miniscript_statement_168; else
+	if (miniScriptGotoStatementIdx == 170) goto miniscript_statement_170; else
+	if (miniScriptGotoStatementIdx == 172) goto miniscript_statement_172; else
+	if (miniScriptGotoStatementIdx == 174) goto miniscript_statement_174; else
+	if (miniScriptGotoStatementIdx == 176) goto miniscript_statement_176; else
+	if (miniScriptGotoStatementIdx == 178) goto miniscript_statement_178; else
+	if (miniScriptGotoStatementIdx == 180) goto miniscript_statement_180; else
+	if (miniScriptGotoStatementIdx == 184) goto miniscript_statement_184; else
+	if (miniScriptGotoStatementIdx == 186) goto miniscript_statement_186; else
+	if (miniScriptGotoStatementIdx == 213) goto miniscript_statement_213; else
 	if (miniScriptGotoStatementIdx == 216) goto miniscript_statement_216; else
-	if (miniScriptGotoStatementIdx == 263) goto miniscript_statement_263; else
-	if (miniScriptGotoStatementIdx == 266) goto miniscript_statement_266; else
-	if (miniScriptGotoStatementIdx == 271) goto miniscript_statement_271; else
+	if (miniScriptGotoStatementIdx == 219) goto miniscript_statement_219; else
+	if (miniScriptGotoStatementIdx == 222) goto miniscript_statement_222; else
+	if (miniScriptGotoStatementIdx == 225) goto miniscript_statement_225; else
+	if (miniScriptGotoStatementIdx == 229) goto miniscript_statement_229; else
+	if (miniScriptGotoStatementIdx == 276) goto miniscript_statement_276; else
+	if (miniScriptGotoStatementIdx == 279) goto miniscript_statement_279; else
+	if (miniScriptGotoStatementIdx == 284) goto miniscript_statement_284; else
 	if (miniScriptGotoStatementIdx != -1 && miniScriptGotoStatementIdx != 0) Console::println("MiniScript::on_nothing(): Can not go to statement " + to_string(miniScriptGotoStatementIdx));
 
 	// Statement: 0
@@ -6501,9 +6579,883 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 96
-	// console.log("-----------------------------------")
+	// console.log("-------------------------")
 	{
 		const ScriptStatement& statement = scripts[1].statements[96];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("-------------------------"));
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 97
+	// console.log("Check matrix4x4 math")
+	{
+		const ScriptStatement& statement = scripts[1].statements[97];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("Check matrix4x4 math"));
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 98
+	// console.log("-------------------------")
+	{
+		const ScriptStatement& statement = scripts[1].statements[98];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("-------------------------"));
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 99
+	// console.log("mat4.identity(): ", mat4.identity())
+	{
+		const ScriptStatement& statement = scripts[1].statements[99];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("mat4.identity(): "));
+		// argumentValues[1] --> returnValue of mat4.identity()
+		// depth = 1 / argument index = 1: mat4.identity()
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 0> argumentValues;
+			array<ScriptVariable, 0>& argumentValuesD1AIDX1 = argumentValues;
+			// method code: mat4.identity
+			returnValue.setValue(Matrix4x4().identity());
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 100
+	// console.log("mat4.translate(vec3(1.0, 2.0, 3.0)): ", mat4.translate(vec3(1.0, 2.0, 3.0)))
+	{
+		const ScriptStatement& statement = scripts[1].statements[100];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("mat4.translate(vec3(1.0, 2.0, 3.0)): "));
+		// argumentValues[1] --> returnValue of mat4.translate(vec3(1.0, 2.0, 3.0))
+		// depth = 1 / argument index = 1: mat4.translate(vec3(1.0, 2.0, 3.0))
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of vec3(1.0, 2.0, 3.0)
+			// depth = 2 / argument index = 0: vec3(1.0, 2.0, 3.0)
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(1.000000f);
+				argumentValues[1].setValue(2.000000f);
+				argumentValues[2].setValue(3.000000f);
+				// method code: vec3
+				Vector3 result;
+				float xValue;
+				float yValue;
+				float zValue;
+				if (MiniScript::getFloatValue(argumentValues, 0, xValue, false) == true &&
+					MiniScript::getFloatValue(argumentValues, 1, yValue, false) == true &&
+					MiniScript::getFloatValue(argumentValues, 2, zValue, false) == true) {
+					returnValue.setValue(Vector3(xValue, yValue, zValue));
+				} else {
+					Console::println("ScriptMethodVec3::executeMethod(): " + string("vec3") + "(): parameter type mismatch @ argument 0: float expected, @ argument 1: float expected, @ argument 2: float expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: mat4.translate
+			Vector3 translation;
+			if (MiniScript::getVector3Value(argumentValues, 0, translation, false) == true) {
+				returnValue.setValue(Matrix4x4().identity().translate(translation));
+			} else {
+				Console::println("ScriptMethodMatrix4x4Translate::executeMethod(): " + string("mat4.translate") + "(): parameter type mismatch @ argument 0: vector3 expected");
+				miniScript->startErrorScript(); return;
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 101
+	// console.log("mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0): ", mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0))
+	{
+		const ScriptStatement& statement = scripts[1].statements[101];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0): "));
+		// argumentValues[1] --> returnValue of mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0)
+		// depth = 1 / argument index = 1: mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0)
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of vec3(0.0, 1.0, 0.0)
+			argumentValues[1].setValue(90.000000f);
+			// depth = 2 / argument index = 0: vec3(0.0, 1.0, 0.0)
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(0.000000f);
+				argumentValues[1].setValue(1.000000f);
+				argumentValues[2].setValue(0.000000f);
+				// method code: vec3
+				Vector3 result;
+				float xValue;
+				float yValue;
+				float zValue;
+				if (MiniScript::getFloatValue(argumentValues, 0, xValue, false) == true &&
+					MiniScript::getFloatValue(argumentValues, 1, yValue, false) == true &&
+					MiniScript::getFloatValue(argumentValues, 2, zValue, false) == true) {
+					returnValue.setValue(Vector3(xValue, yValue, zValue));
+				} else {
+					Console::println("ScriptMethodVec3::executeMethod(): " + string("vec3") + "(): parameter type mismatch @ argument 0: float expected, @ argument 1: float expected, @ argument 2: float expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: mat4.rotate
+			Vector3 axis;
+			float angle;
+			if (MiniScript::getVector3Value(argumentValues, 0, axis, false) == true &&
+				MiniScript::getFloatValue(argumentValues, 1, angle, false) == true) {
+				returnValue.setValue(Matrix4x4().identity().rotate(axis, angle));
+			} else {
+				Console::println("ScriptMethodMatrix4x4Rotate::executeMethod(): " + string("mat4.rotate") + "(): parameter type mismatch @ argument 0: vector3 expected, @ argument 1: float expected");
+				miniScript->startErrorScript(); return;
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 102
+	// console.log("mat4.scale(vec3(1.0, 2.0, 3.0)): ", mat4.scale(vec3(1.0, 2.0, 3.0)))
+	{
+		const ScriptStatement& statement = scripts[1].statements[102];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("mat4.scale(vec3(1.0, 2.0, 3.0)): "));
+		// argumentValues[1] --> returnValue of mat4.scale(vec3(1.0, 2.0, 3.0))
+		// depth = 1 / argument index = 1: mat4.scale(vec3(1.0, 2.0, 3.0))
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of vec3(1.0, 2.0, 3.0)
+			// depth = 2 / argument index = 0: vec3(1.0, 2.0, 3.0)
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(1.000000f);
+				argumentValues[1].setValue(2.000000f);
+				argumentValues[2].setValue(3.000000f);
+				// method code: vec3
+				Vector3 result;
+				float xValue;
+				float yValue;
+				float zValue;
+				if (MiniScript::getFloatValue(argumentValues, 0, xValue, false) == true &&
+					MiniScript::getFloatValue(argumentValues, 1, yValue, false) == true &&
+					MiniScript::getFloatValue(argumentValues, 2, zValue, false) == true) {
+					returnValue.setValue(Vector3(xValue, yValue, zValue));
+				} else {
+					Console::println("ScriptMethodVec3::executeMethod(): " + string("vec3") + "(): parameter type mismatch @ argument 0: float expected, @ argument 1: float expected, @ argument 2: float expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: mat4.scale
+			Vector3 vec3Value;
+			float floatValue;
+			if (MiniScript::getVector3Value(argumentValues, 0, vec3Value, false) == true) {
+				returnValue.setValue(Matrix4x4().identity().scale(vec3Value));
+			} else
+			if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
+				returnValue.setValue(Matrix4x4().identity().scale(floatValue));
+			} else {
+				Console::println("ScriptMethodMatrix4x4Scale::executeMethod(): " + string("mat4.scale") + "(): parameter type mismatch @ argument 0: vector3 or float expected");
+				miniScript->startErrorScript(); return;
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 103
+	// console.log("mat4.scale(3.0): ", mat4.scale(3.0))
+	{
+		const ScriptStatement& statement = scripts[1].statements[103];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("mat4.scale(3.0): "));
+		// argumentValues[1] --> returnValue of mat4.scale(3.0)
+		// depth = 1 / argument index = 1: mat4.scale(3.0)
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(3.000000f);
+			// method code: mat4.scale
+			Vector3 vec3Value;
+			float floatValue;
+			if (MiniScript::getVector3Value(argumentValues, 0, vec3Value, false) == true) {
+				returnValue.setValue(Matrix4x4().identity().scale(vec3Value));
+			} else
+			if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
+				returnValue.setValue(Matrix4x4().identity().scale(floatValue));
+			} else {
+				Console::println("ScriptMethodMatrix4x4Scale::executeMethod(): " + string("mat4.scale") + "(): parameter type mismatch @ argument 0: vector3 or float expected");
+				miniScript->startErrorScript(); return;
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 104
+	// console.log("mat4.invert(mat4.scale(3.0)): ", mat4.invert(mat4.scale(3.0)))
+	{
+		const ScriptStatement& statement = scripts[1].statements[104];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("mat4.invert(mat4.scale(3.0)): "));
+		// argumentValues[1] --> returnValue of mat4.invert(mat4.scale(3.0))
+		// depth = 1 / argument index = 1: mat4.invert(mat4.scale(3.0))
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of mat4.scale(3.0)
+			// depth = 2 / argument index = 0: mat4.scale(3.0)
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(3.000000f);
+				// method code: mat4.scale
+				Vector3 vec3Value;
+				float floatValue;
+				if (MiniScript::getVector3Value(argumentValues, 0, vec3Value, false) == true) {
+					returnValue.setValue(Matrix4x4().identity().scale(vec3Value));
+				} else
+				if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
+					returnValue.setValue(Matrix4x4().identity().scale(floatValue));
+				} else {
+					Console::println("ScriptMethodMatrix4x4Scale::executeMethod(): " + string("mat4.scale") + "(): parameter type mismatch @ argument 0: vector3 or float expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: mat4.invert
+			Matrix4x4 mat4;
+			if (MiniScript::getMatrix4x4Value(argumentValues, 0, mat4, false) == true) {
+				returnValue.setValue(mat4.invert());
+			} else {
+				Console::println("ScriptMethodMatrix4x4Invert::executeMethod(): " + string("mat4.invert") + "(): parameter type mismatch @ argument 0: matrix4x4 expected");
+				miniScript->startErrorScript(); return;
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 105
+	// console.log("mat4.computeEulerAngles(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0)): ", mat4.computeEulerAngles(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0)))
+	{
+		const ScriptStatement& statement = scripts[1].statements[105];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("mat4.computeEulerAngles(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0)): "));
+		// argumentValues[1] --> returnValue of mat4.computeEulerAngles(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0))
+		// depth = 1 / argument index = 1: mat4.computeEulerAngles(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0))
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0)
+			// depth = 2 / argument index = 0: mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0)
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 2> argumentValues;
+				array<ScriptVariable, 2>& argumentValuesD2AIDX0 = argumentValues;
+				// argumentValues[0] --> returnValue of vec3(0.0, 1.0, 0.0)
+				argumentValues[1].setValue(90.000000f);
+				// depth = 3 / argument index = 0: vec3(0.0, 1.0, 0.0)
+				{
+					// required method code arguments
+					ScriptVariable& returnValue = argumentValuesD2AIDX0[0];
+					array<ScriptVariable, 3> argumentValues;
+					array<ScriptVariable, 3>& argumentValuesD3AIDX0 = argumentValues;
+					argumentValues[0].setValue(0.000000f);
+					argumentValues[1].setValue(1.000000f);
+					argumentValues[2].setValue(0.000000f);
+					// method code: vec3
+					Vector3 result;
+					float xValue;
+					float yValue;
+					float zValue;
+					if (MiniScript::getFloatValue(argumentValues, 0, xValue, false) == true &&
+						MiniScript::getFloatValue(argumentValues, 1, yValue, false) == true &&
+						MiniScript::getFloatValue(argumentValues, 2, zValue, false) == true) {
+						returnValue.setValue(Vector3(xValue, yValue, zValue));
+					} else {
+						Console::println("ScriptMethodVec3::executeMethod(): " + string("vec3") + "(): parameter type mismatch @ argument 0: float expected, @ argument 1: float expected, @ argument 2: float expected");
+						miniScript->startErrorScript(); return;
+					}
+				}
+				// method code: mat4.rotate
+				Vector3 axis;
+				float angle;
+				if (MiniScript::getVector3Value(argumentValues, 0, axis, false) == true &&
+					MiniScript::getFloatValue(argumentValues, 1, angle, false) == true) {
+					returnValue.setValue(Matrix4x4().identity().rotate(axis, angle));
+				} else {
+					Console::println("ScriptMethodMatrix4x4Rotate::executeMethod(): " + string("mat4.rotate") + "(): parameter type mismatch @ argument 0: vector3 expected, @ argument 1: float expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: mat4.computeEulerAngles
+			Matrix4x4 mat4;
+			if (MiniScript::getMatrix4x4Value(argumentValues, 0, mat4, false) == true) {
+				returnValue.setValue(mat4.computeEulerAngles());
+			} else {
+				Console::println("ScriptMethodMatrix4x4EulerAngles::executeMethod(): " + string("mat4.computeEulerAngles") + "(): parameter type mismatch @ argument 0: matrix4x4 expected");
+				miniScript->startErrorScript(); return;
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 106
+	// console.log("mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.rotate(vec3(1.0, 0.0, 0.0), 90.0)): ", mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.rotate(vec3(1.0, 0.0, 0.0), 90.0)))
+	{
+		const ScriptStatement& statement = scripts[1].statements[106];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.rotate(vec3(1.0, 0.0, 0.0), 90.0)): "));
+		// argumentValues[1] --> returnValue of mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.rotate(vec3(1.0, 0.0, 0.0), 90.0))
+		// depth = 1 / argument index = 1: mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.rotate(vec3(1.0, 0.0, 0.0), 90.0))
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0)
+			// argumentValues[1] --> returnValue of mat4.rotate(vec3(1.0, 0.0, 0.0), 90.0)
+			// depth = 2 / argument index = 0: mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0)
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 2> argumentValues;
+				array<ScriptVariable, 2>& argumentValuesD2AIDX0 = argumentValues;
+				// argumentValues[0] --> returnValue of vec3(0.0, 1.0, 0.0)
+				argumentValues[1].setValue(90.000000f);
+				// depth = 3 / argument index = 0: vec3(0.0, 1.0, 0.0)
+				{
+					// required method code arguments
+					ScriptVariable& returnValue = argumentValuesD2AIDX0[0];
+					array<ScriptVariable, 3> argumentValues;
+					array<ScriptVariable, 3>& argumentValuesD3AIDX0 = argumentValues;
+					argumentValues[0].setValue(0.000000f);
+					argumentValues[1].setValue(1.000000f);
+					argumentValues[2].setValue(0.000000f);
+					// method code: vec3
+					Vector3 result;
+					float xValue;
+					float yValue;
+					float zValue;
+					if (MiniScript::getFloatValue(argumentValues, 0, xValue, false) == true &&
+						MiniScript::getFloatValue(argumentValues, 1, yValue, false) == true &&
+						MiniScript::getFloatValue(argumentValues, 2, zValue, false) == true) {
+						returnValue.setValue(Vector3(xValue, yValue, zValue));
+					} else {
+						Console::println("ScriptMethodVec3::executeMethod(): " + string("vec3") + "(): parameter type mismatch @ argument 0: float expected, @ argument 1: float expected, @ argument 2: float expected");
+						miniScript->startErrorScript(); return;
+					}
+				}
+				// method code: mat4.rotate
+				Vector3 axis;
+				float angle;
+				if (MiniScript::getVector3Value(argumentValues, 0, axis, false) == true &&
+					MiniScript::getFloatValue(argumentValues, 1, angle, false) == true) {
+					returnValue.setValue(Matrix4x4().identity().rotate(axis, angle));
+				} else {
+					Console::println("ScriptMethodMatrix4x4Rotate::executeMethod(): " + string("mat4.rotate") + "(): parameter type mismatch @ argument 0: vector3 expected, @ argument 1: float expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// depth = 2 / argument index = 1: mat4.rotate(vec3(1.0, 0.0, 0.0), 90.0)
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
+				array<ScriptVariable, 2> argumentValues;
+				array<ScriptVariable, 2>& argumentValuesD2AIDX1 = argumentValues;
+				// argumentValues[0] --> returnValue of vec3(1.0, 0.0, 0.0)
+				argumentValues[1].setValue(90.000000f);
+				// depth = 3 / argument index = 0: vec3(1.0, 0.0, 0.0)
+				{
+					// required method code arguments
+					ScriptVariable& returnValue = argumentValuesD2AIDX1[0];
+					array<ScriptVariable, 3> argumentValues;
+					array<ScriptVariable, 3>& argumentValuesD3AIDX0 = argumentValues;
+					argumentValues[0].setValue(1.000000f);
+					argumentValues[1].setValue(0.000000f);
+					argumentValues[2].setValue(0.000000f);
+					// method code: vec3
+					Vector3 result;
+					float xValue;
+					float yValue;
+					float zValue;
+					if (MiniScript::getFloatValue(argumentValues, 0, xValue, false) == true &&
+						MiniScript::getFloatValue(argumentValues, 1, yValue, false) == true &&
+						MiniScript::getFloatValue(argumentValues, 2, zValue, false) == true) {
+						returnValue.setValue(Vector3(xValue, yValue, zValue));
+					} else {
+						Console::println("ScriptMethodVec3::executeMethod(): " + string("vec3") + "(): parameter type mismatch @ argument 0: float expected, @ argument 1: float expected, @ argument 2: float expected");
+						miniScript->startErrorScript(); return;
+					}
+				}
+				// method code: mat4.rotate
+				Vector3 axis;
+				float angle;
+				if (MiniScript::getVector3Value(argumentValues, 0, axis, false) == true &&
+					MiniScript::getFloatValue(argumentValues, 1, angle, false) == true) {
+					returnValue.setValue(Matrix4x4().identity().rotate(axis, angle));
+				} else {
+					Console::println("ScriptMethodMatrix4x4Rotate::executeMethod(): " + string("mat4.rotate") + "(): parameter type mismatch @ argument 0: vector3 expected, @ argument 1: float expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: mat4.multiply
+			Matrix4x4 mat4;
+			Matrix4x4 mat4Value;
+			Vector3 vec3Value;
+			Vector4 vec4Value;
+			if (argumentValues.size() != 2) {
+				Console::println("ScriptMethodMatrix4x4Multiply::executeMethod(): " + string("mat4.multiply") + "(): parameter type mismatch @ argument 0: matrix4x4 expected, @ argument 1: vec3 or vec4 expected");
+				miniScript->startErrorScript(); return;
+			} else
+			if (MiniScript::getMatrix4x4Value(argumentValues, 0, mat4, false) == true) {
+				if (MiniScript::getMatrix4x4Value(argumentValues, 1, mat4Value, false) == true) {
+					returnValue.setValue(mat4.multiply(mat4Value));
+				} else
+				if (MiniScript::getVector3Value(argumentValues, 1, vec3Value, false) == true) {
+					returnValue.setValue(mat4.multiply(vec3Value));
+				} else
+				if (MiniScript::getVector4Value(argumentValues, 1, vec4Value, false) == true) {
+					returnValue.setValue(mat4.multiply(vec4Value));
+				} else {
+					Console::println("ScriptMethodMatrix4x4Multiply::executeMethod(): " + string("mat4.multiply") + "(): parameter type mismatch @ argument 0: matrix4x4 expected, @ argument 1: vec3 or vec4 expected");
+					miniScript->startErrorScript(); return;
+				}
+			} else {
+				Console::println("ScriptMethodMatrix4x4Multiply::executeMethod(): " + string("mat4.multiply") + "(): parameter type mismatch @ argument 0: matrix4x4 expected, @ argument 1: vec3 or vec4 expected");
+				miniScript->startErrorScript(); return;
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 107
+	// console.log("mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), vec3(0.0, 0.0, 1.0)): ", mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), vec3(0.0, 0.0, 1.0)))
+	{
+		const ScriptStatement& statement = scripts[1].statements[107];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), vec3(0.0, 0.0, 1.0)): "));
+		// argumentValues[1] --> returnValue of mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), vec3(0.0, 0.0, 1.0))
+		// depth = 1 / argument index = 1: mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), vec3(0.0, 0.0, 1.0))
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0)
+			// argumentValues[1] --> returnValue of vec3(0.0, 0.0, 1.0)
+			// depth = 2 / argument index = 0: mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0)
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 2> argumentValues;
+				array<ScriptVariable, 2>& argumentValuesD2AIDX0 = argumentValues;
+				// argumentValues[0] --> returnValue of vec3(0.0, 1.0, 0.0)
+				argumentValues[1].setValue(90.000000f);
+				// depth = 3 / argument index = 0: vec3(0.0, 1.0, 0.0)
+				{
+					// required method code arguments
+					ScriptVariable& returnValue = argumentValuesD2AIDX0[0];
+					array<ScriptVariable, 3> argumentValues;
+					array<ScriptVariable, 3>& argumentValuesD3AIDX0 = argumentValues;
+					argumentValues[0].setValue(0.000000f);
+					argumentValues[1].setValue(1.000000f);
+					argumentValues[2].setValue(0.000000f);
+					// method code: vec3
+					Vector3 result;
+					float xValue;
+					float yValue;
+					float zValue;
+					if (MiniScript::getFloatValue(argumentValues, 0, xValue, false) == true &&
+						MiniScript::getFloatValue(argumentValues, 1, yValue, false) == true &&
+						MiniScript::getFloatValue(argumentValues, 2, zValue, false) == true) {
+						returnValue.setValue(Vector3(xValue, yValue, zValue));
+					} else {
+						Console::println("ScriptMethodVec3::executeMethod(): " + string("vec3") + "(): parameter type mismatch @ argument 0: float expected, @ argument 1: float expected, @ argument 2: float expected");
+						miniScript->startErrorScript(); return;
+					}
+				}
+				// method code: mat4.rotate
+				Vector3 axis;
+				float angle;
+				if (MiniScript::getVector3Value(argumentValues, 0, axis, false) == true &&
+					MiniScript::getFloatValue(argumentValues, 1, angle, false) == true) {
+					returnValue.setValue(Matrix4x4().identity().rotate(axis, angle));
+				} else {
+					Console::println("ScriptMethodMatrix4x4Rotate::executeMethod(): " + string("mat4.rotate") + "(): parameter type mismatch @ argument 0: vector3 expected, @ argument 1: float expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// depth = 2 / argument index = 1: vec3(0.0, 0.0, 1.0)
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
+				array<ScriptVariable, 3> argumentValues;
+				array<ScriptVariable, 3>& argumentValuesD2AIDX1 = argumentValues;
+				argumentValues[0].setValue(0.000000f);
+				argumentValues[1].setValue(0.000000f);
+				argumentValues[2].setValue(1.000000f);
+				// method code: vec3
+				Vector3 result;
+				float xValue;
+				float yValue;
+				float zValue;
+				if (MiniScript::getFloatValue(argumentValues, 0, xValue, false) == true &&
+					MiniScript::getFloatValue(argumentValues, 1, yValue, false) == true &&
+					MiniScript::getFloatValue(argumentValues, 2, zValue, false) == true) {
+					returnValue.setValue(Vector3(xValue, yValue, zValue));
+				} else {
+					Console::println("ScriptMethodVec3::executeMethod(): " + string("vec3") + "(): parameter type mismatch @ argument 0: float expected, @ argument 1: float expected, @ argument 2: float expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: mat4.multiply
+			Matrix4x4 mat4;
+			Matrix4x4 mat4Value;
+			Vector3 vec3Value;
+			Vector4 vec4Value;
+			if (argumentValues.size() != 2) {
+				Console::println("ScriptMethodMatrix4x4Multiply::executeMethod(): " + string("mat4.multiply") + "(): parameter type mismatch @ argument 0: matrix4x4 expected, @ argument 1: vec3 or vec4 expected");
+				miniScript->startErrorScript(); return;
+			} else
+			if (MiniScript::getMatrix4x4Value(argumentValues, 0, mat4, false) == true) {
+				if (MiniScript::getMatrix4x4Value(argumentValues, 1, mat4Value, false) == true) {
+					returnValue.setValue(mat4.multiply(mat4Value));
+				} else
+				if (MiniScript::getVector3Value(argumentValues, 1, vec3Value, false) == true) {
+					returnValue.setValue(mat4.multiply(vec3Value));
+				} else
+				if (MiniScript::getVector4Value(argumentValues, 1, vec4Value, false) == true) {
+					returnValue.setValue(mat4.multiply(vec4Value));
+				} else {
+					Console::println("ScriptMethodMatrix4x4Multiply::executeMethod(): " + string("mat4.multiply") + "(): parameter type mismatch @ argument 0: matrix4x4 expected, @ argument 1: vec3 or vec4 expected");
+					miniScript->startErrorScript(); return;
+				}
+			} else {
+				Console::println("ScriptMethodMatrix4x4Multiply::executeMethod(): " + string("mat4.multiply") + "(): parameter type mismatch @ argument 0: matrix4x4 expected, @ argument 1: vec3 or vec4 expected");
+				miniScript->startErrorScript(); return;
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 108
+	// console.log("mat4.multiply(mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.translate(vec3(1.0, 2.0, 3.0))), vec4(0.0, 0.0, 1.0, 0.0)): ", mat4.multiply(mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.translate(vec3(1.0, 2.0, 3.0))), vec4(0.0, 0.0, 1.0, 0.0)))
+	{
+		const ScriptStatement& statement = scripts[1].statements[108];
+		miniScript->scriptState.statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("mat4.multiply(mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.translate(vec3(1.0, 2.0, 3.0))), vec4(0.0, 0.0, 1.0, 0.0)): "));
+		// argumentValues[1] --> returnValue of mat4.multiply(mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.translate(vec3(1.0, 2.0, 3.0))), vec4(0.0, 0.0, 1.0, 0.0))
+		// depth = 1 / argument index = 1: mat4.multiply(mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.translate(vec3(1.0, 2.0, 3.0))), vec4(0.0, 0.0, 1.0, 0.0))
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.translate(vec3(1.0, 2.0, 3.0)))
+			// argumentValues[1] --> returnValue of vec4(0.0, 0.0, 1.0, 0.0)
+			// depth = 2 / argument index = 0: mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.translate(vec3(1.0, 2.0, 3.0)))
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 2> argumentValues;
+				array<ScriptVariable, 2>& argumentValuesD2AIDX0 = argumentValues;
+				// argumentValues[0] --> returnValue of mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0)
+				// argumentValues[1] --> returnValue of mat4.translate(vec3(1.0, 2.0, 3.0))
+				// depth = 3 / argument index = 0: mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0)
+				{
+					// required method code arguments
+					ScriptVariable& returnValue = argumentValuesD2AIDX0[0];
+					array<ScriptVariable, 2> argumentValues;
+					array<ScriptVariable, 2>& argumentValuesD3AIDX0 = argumentValues;
+					// argumentValues[0] --> returnValue of vec3(0.0, 1.0, 0.0)
+					argumentValues[1].setValue(90.000000f);
+					// depth = 4 / argument index = 0: vec3(0.0, 1.0, 0.0)
+					{
+						// required method code arguments
+						ScriptVariable& returnValue = argumentValuesD3AIDX0[0];
+						array<ScriptVariable, 3> argumentValues;
+						array<ScriptVariable, 3>& argumentValuesD4AIDX0 = argumentValues;
+						argumentValues[0].setValue(0.000000f);
+						argumentValues[1].setValue(1.000000f);
+						argumentValues[2].setValue(0.000000f);
+						// method code: vec3
+						Vector3 result;
+						float xValue;
+						float yValue;
+						float zValue;
+						if (MiniScript::getFloatValue(argumentValues, 0, xValue, false) == true &&
+							MiniScript::getFloatValue(argumentValues, 1, yValue, false) == true &&
+							MiniScript::getFloatValue(argumentValues, 2, zValue, false) == true) {
+							returnValue.setValue(Vector3(xValue, yValue, zValue));
+						} else {
+							Console::println("ScriptMethodVec3::executeMethod(): " + string("vec3") + "(): parameter type mismatch @ argument 0: float expected, @ argument 1: float expected, @ argument 2: float expected");
+							miniScript->startErrorScript(); return;
+						}
+					}
+					// method code: mat4.rotate
+					Vector3 axis;
+					float angle;
+					if (MiniScript::getVector3Value(argumentValues, 0, axis, false) == true &&
+						MiniScript::getFloatValue(argumentValues, 1, angle, false) == true) {
+						returnValue.setValue(Matrix4x4().identity().rotate(axis, angle));
+					} else {
+						Console::println("ScriptMethodMatrix4x4Rotate::executeMethod(): " + string("mat4.rotate") + "(): parameter type mismatch @ argument 0: vector3 expected, @ argument 1: float expected");
+						miniScript->startErrorScript(); return;
+					}
+				}
+				// depth = 3 / argument index = 1: mat4.translate(vec3(1.0, 2.0, 3.0))
+				{
+					// required method code arguments
+					ScriptVariable& returnValue = argumentValuesD2AIDX0[1];
+					array<ScriptVariable, 1> argumentValues;
+					array<ScriptVariable, 1>& argumentValuesD3AIDX1 = argumentValues;
+					// argumentValues[0] --> returnValue of vec3(1.0, 2.0, 3.0)
+					// depth = 4 / argument index = 0: vec3(1.0, 2.0, 3.0)
+					{
+						// required method code arguments
+						ScriptVariable& returnValue = argumentValuesD3AIDX1[0];
+						array<ScriptVariable, 3> argumentValues;
+						array<ScriptVariable, 3>& argumentValuesD4AIDX0 = argumentValues;
+						argumentValues[0].setValue(1.000000f);
+						argumentValues[1].setValue(2.000000f);
+						argumentValues[2].setValue(3.000000f);
+						// method code: vec3
+						Vector3 result;
+						float xValue;
+						float yValue;
+						float zValue;
+						if (MiniScript::getFloatValue(argumentValues, 0, xValue, false) == true &&
+							MiniScript::getFloatValue(argumentValues, 1, yValue, false) == true &&
+							MiniScript::getFloatValue(argumentValues, 2, zValue, false) == true) {
+							returnValue.setValue(Vector3(xValue, yValue, zValue));
+						} else {
+							Console::println("ScriptMethodVec3::executeMethod(): " + string("vec3") + "(): parameter type mismatch @ argument 0: float expected, @ argument 1: float expected, @ argument 2: float expected");
+							miniScript->startErrorScript(); return;
+						}
+					}
+					// method code: mat4.translate
+					Vector3 translation;
+					if (MiniScript::getVector3Value(argumentValues, 0, translation, false) == true) {
+						returnValue.setValue(Matrix4x4().identity().translate(translation));
+					} else {
+						Console::println("ScriptMethodMatrix4x4Translate::executeMethod(): " + string("mat4.translate") + "(): parameter type mismatch @ argument 0: vector3 expected");
+						miniScript->startErrorScript(); return;
+					}
+				}
+				// method code: mat4.multiply
+				Matrix4x4 mat4;
+				Matrix4x4 mat4Value;
+				Vector3 vec3Value;
+				Vector4 vec4Value;
+				if (argumentValues.size() != 2) {
+					Console::println("ScriptMethodMatrix4x4Multiply::executeMethod(): " + string("mat4.multiply") + "(): parameter type mismatch @ argument 0: matrix4x4 expected, @ argument 1: vec3 or vec4 expected");
+					miniScript->startErrorScript(); return;
+				} else
+				if (MiniScript::getMatrix4x4Value(argumentValues, 0, mat4, false) == true) {
+					if (MiniScript::getMatrix4x4Value(argumentValues, 1, mat4Value, false) == true) {
+						returnValue.setValue(mat4.multiply(mat4Value));
+					} else
+					if (MiniScript::getVector3Value(argumentValues, 1, vec3Value, false) == true) {
+						returnValue.setValue(mat4.multiply(vec3Value));
+					} else
+					if (MiniScript::getVector4Value(argumentValues, 1, vec4Value, false) == true) {
+						returnValue.setValue(mat4.multiply(vec4Value));
+					} else {
+						Console::println("ScriptMethodMatrix4x4Multiply::executeMethod(): " + string("mat4.multiply") + "(): parameter type mismatch @ argument 0: matrix4x4 expected, @ argument 1: vec3 or vec4 expected");
+						miniScript->startErrorScript(); return;
+					}
+				} else {
+					Console::println("ScriptMethodMatrix4x4Multiply::executeMethod(): " + string("mat4.multiply") + "(): parameter type mismatch @ argument 0: matrix4x4 expected, @ argument 1: vec3 or vec4 expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// depth = 2 / argument index = 1: vec4(0.0, 0.0, 1.0, 0.0)
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
+				array<ScriptVariable, 4> argumentValues;
+				array<ScriptVariable, 4>& argumentValuesD2AIDX1 = argumentValues;
+				argumentValues[0].setValue(0.000000f);
+				argumentValues[1].setValue(0.000000f);
+				argumentValues[2].setValue(1.000000f);
+				argumentValues[3].setValue(0.000000f);
+				// method code: vec4
+				Vector3 result;
+				float xValue;
+				float yValue;
+				float zValue;
+				float wValue;
+				if (MiniScript::getFloatValue(argumentValues, 0, xValue, false) == true &&
+					MiniScript::getFloatValue(argumentValues, 1, yValue, false) == true &&
+					MiniScript::getFloatValue(argumentValues, 2, zValue, false) == true &&
+					MiniScript::getFloatValue(argumentValues, 3, wValue, false) == true) {
+					returnValue.setValue(Vector4(xValue, yValue, zValue, wValue));
+				} else {
+					Console::println("ScriptMethodVec4::executeMethod(): " + string("vec4") + "(): parameter type mismatch @ argument 0: float expected, @ argument 1: float expected, @ argument 2: float expected, @ argument 3: float expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: mat4.multiply
+			Matrix4x4 mat4;
+			Matrix4x4 mat4Value;
+			Vector3 vec3Value;
+			Vector4 vec4Value;
+			if (argumentValues.size() != 2) {
+				Console::println("ScriptMethodMatrix4x4Multiply::executeMethod(): " + string("mat4.multiply") + "(): parameter type mismatch @ argument 0: matrix4x4 expected, @ argument 1: vec3 or vec4 expected");
+				miniScript->startErrorScript(); return;
+			} else
+			if (MiniScript::getMatrix4x4Value(argumentValues, 0, mat4, false) == true) {
+				if (MiniScript::getMatrix4x4Value(argumentValues, 1, mat4Value, false) == true) {
+					returnValue.setValue(mat4.multiply(mat4Value));
+				} else
+				if (MiniScript::getVector3Value(argumentValues, 1, vec3Value, false) == true) {
+					returnValue.setValue(mat4.multiply(vec3Value));
+				} else
+				if (MiniScript::getVector4Value(argumentValues, 1, vec4Value, false) == true) {
+					returnValue.setValue(mat4.multiply(vec4Value));
+				} else {
+					Console::println("ScriptMethodMatrix4x4Multiply::executeMethod(): " + string("mat4.multiply") + "(): parameter type mismatch @ argument 0: matrix4x4 expected, @ argument 1: vec3 or vec4 expected");
+					miniScript->startErrorScript(); return;
+				}
+			} else {
+				Console::println("ScriptMethodMatrix4x4Multiply::executeMethod(): " + string("mat4.multiply") + "(): parameter type mismatch @ argument 0: matrix4x4 expected, @ argument 1: vec3 or vec4 expected");
+				miniScript->startErrorScript(); return;
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 109
+	// console.log("-----------------------------------")
+	{
+		const ScriptStatement& statement = scripts[1].statements[109];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -6517,10 +7469,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 97
+	// Statement: 110
 	// console.log("Check transform")
 	{
-		const ScriptStatement& statement = scripts[1].statements[97];
+		const ScriptStatement& statement = scripts[1].statements[110];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -6534,10 +7486,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 98
+	// Statement: 111
 	// console.log("-----------------------------------")
 	{
-		const ScriptStatement& statement = scripts[1].statements[98];
+		const ScriptStatement& statement = scripts[1].statements[111];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -6551,10 +7503,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 99
+	// Statement: 112
 	// setVariable("$transform", transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)))
 	{
-		const ScriptStatement& statement = scripts[1].statements[99];
+		const ScriptStatement& statement = scripts[1].statements[112];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -6682,10 +7634,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 100
+	// Statement: 113
 	// setVariable("$transform", transform.setRotationAngle($transform, 0, 90))
 	{
-		const ScriptStatement& statement = scripts[1].statements[100];
+		const ScriptStatement& statement = scripts[1].statements[113];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -6750,10 +7702,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 101
+	// Statement: 114
 	// console.log("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)): ", $transform)
 	{
-		const ScriptStatement& statement = scripts[1].statements[101];
+		const ScriptStatement& statement = scripts[1].statements[114];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -6784,10 +7736,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 102
+	// Statement: 115
 	// console.log("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getTranslation(): ", transform.getTranslation($transform))
 	{
-		const ScriptStatement& statement = scripts[1].statements[102];
+		const ScriptStatement& statement = scripts[1].statements[115];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -6834,10 +7786,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 103
+	// Statement: 116
 	// console.log("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setTranslation(vec3(-1,-2,-3)): ", transform.setTranslation($transform, vec3(-1,-2,-3)))
 	{
-		const ScriptStatement& statement = scripts[1].statements[103];
+		const ScriptStatement& statement = scripts[1].statements[116];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -6912,10 +7864,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 104
+	// Statement: 117
 	// console.log("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getScale(): ", transform.getScale($transform))
 	{
-		const ScriptStatement& statement = scripts[1].statements[104];
+		const ScriptStatement& statement = scripts[1].statements[117];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -6962,10 +7914,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 105
+	// Statement: 118
 	// console.log("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setScale(): ", transform.setScale($transform, vec3(-2,-3,-4)))
 	{
-		const ScriptStatement& statement = scripts[1].statements[105];
+		const ScriptStatement& statement = scripts[1].statements[118];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7040,10 +7992,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 106
+	// Statement: 119
 	// console.log("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getRotationAxis(): ", transform.getRotationAxis($transform, 0))
 	{
-		const ScriptStatement& statement = scripts[1].statements[106];
+		const ScriptStatement& statement = scripts[1].statements[119];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7098,10 +8050,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 107
+	// Statement: 120
 	// console.log("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).getRotationAngle(): ", transform.getRotationAngle($transform, 0))
 	{
-		const ScriptStatement& statement = scripts[1].statements[107];
+		const ScriptStatement& statement = scripts[1].statements[120];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7156,10 +8108,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 108
+	// Statement: 121
 	// console.log("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).setRotationAngle(): ", transform.setRotationAngle($transform, 0, 90))
 	{
-		const ScriptStatement& statement = scripts[1].statements[108];
+		const ScriptStatement& statement = scripts[1].statements[121];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7219,10 +8171,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 109
+	// Statement: 122
 	// console.log("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).multiply(vec3(0,0,0)): ", transform.multiply($transform, vec3(0,0,0)))
 	{
-		const ScriptStatement& statement = scripts[1].statements[109];
+		const ScriptStatement& statement = scripts[1].statements[122];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7295,10 +8247,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 110
+	// Statement: 123
 	// console.log("transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)).rotate(vec3(0,0,1)): ", transform.rotate($transform, vec3(0,0,1)))
 	{
-		const ScriptStatement& statement = scripts[1].statements[110];
+		const ScriptStatement& statement = scripts[1].statements[123];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7371,10 +8323,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 111
+	// Statement: 124
 	// console.log("------------------------")
 	{
-		const ScriptStatement& statement = scripts[1].statements[111];
+		const ScriptStatement& statement = scripts[1].statements[124];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7388,10 +8340,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 112
+	// Statement: 125
 	// console.log("Check string functions")
 	{
-		const ScriptStatement& statement = scripts[1].statements[112];
+		const ScriptStatement& statement = scripts[1].statements[125];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7405,10 +8357,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 113
+	// Statement: 126
 	// console.log("------------------------")
 	{
-		const ScriptStatement& statement = scripts[1].statements[113];
+		const ScriptStatement& statement = scripts[1].statements[126];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7422,10 +8374,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 114
+	// Statement: 127
 	// console.log(space(0), "1")
 	{
-		const ScriptStatement& statement = scripts[1].statements[114];
+		const ScriptStatement& statement = scripts[1].statements[127];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7458,10 +8410,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 115
+	// Statement: 128
 	// console.log(space(2), "1.1")
 	{
-		const ScriptStatement& statement = scripts[1].statements[115];
+		const ScriptStatement& statement = scripts[1].statements[128];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7494,10 +8446,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 116
+	// Statement: 129
 	// console.log(space(2), "1.2")
 	{
-		const ScriptStatement& statement = scripts[1].statements[116];
+		const ScriptStatement& statement = scripts[1].statements[129];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7530,10 +8482,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 117
+	// Statement: 130
 	// console.log(toUpperCase("xxxyyyzzz"))
 	{
-		const ScriptStatement& statement = scripts[1].statements[117];
+		const ScriptStatement& statement = scripts[1].statements[130];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7563,10 +8515,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 118
+	// Statement: 131
 	// console.log(toLowerCase("XXXYYYZZZ"))
 	{
-		const ScriptStatement& statement = scripts[1].statements[118];
+		const ScriptStatement& statement = scripts[1].statements[131];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7596,10 +8548,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 119
+	// Statement: 132
 	// console.log(concatenate("abc", "def", "ghi"))
 	{
-		const ScriptStatement& statement = scripts[1].statements[119];
+		const ScriptStatement& statement = scripts[1].statements[132];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7629,10 +8581,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 120
+	// Statement: 133
 	// console.log("------------------------")
 	{
-		const ScriptStatement& statement = scripts[1].statements[120];
+		const ScriptStatement& statement = scripts[1].statements[133];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7646,10 +8598,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 121
+	// Statement: 134
 	// console.log("Check string functions (Operators)")
 	{
-		const ScriptStatement& statement = scripts[1].statements[121];
+		const ScriptStatement& statement = scripts[1].statements[134];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7663,10 +8615,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 122
+	// Statement: 135
 	// console.log(add("abc",add("def", "ghi")))
 	{
-		const ScriptStatement& statement = scripts[1].statements[122];
+		const ScriptStatement& statement = scripts[1].statements[135];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7702,10 +8654,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 123
+	// Statement: 136
 	// console.log("------------------------")
 	{
-		const ScriptStatement& statement = scripts[1].statements[123];
+		const ScriptStatement& statement = scripts[1].statements[136];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7719,10 +8671,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 124
+	// Statement: 137
 	// console.log("------------------------")
 	{
-		const ScriptStatement& statement = scripts[1].statements[124];
+		const ScriptStatement& statement = scripts[1].statements[137];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7736,10 +8688,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 125
+	// Statement: 138
 	// console.log("Variable")
 	{
-		const ScriptStatement& statement = scripts[1].statements[125];
+		const ScriptStatement& statement = scripts[1].statements[138];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7753,10 +8705,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 126
+	// Statement: 139
 	// console.log("------------------------")
 	{
-		const ScriptStatement& statement = scripts[1].statements[126];
+		const ScriptStatement& statement = scripts[1].statements[139];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7770,10 +8722,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 127
+	// Statement: 140
 	// setVariable("$variable", string("1234"))
 	{
-		const ScriptStatement& statement = scripts[1].statements[127];
+		const ScriptStatement& statement = scripts[1].statements[140];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7809,10 +8761,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 128
+	// Statement: 141
 	// console.log(getVariable("$variable"))
 	{
-		const ScriptStatement& statement = scripts[1].statements[128];
+		const ScriptStatement& statement = scripts[1].statements[141];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7842,10 +8794,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 129
+	// Statement: 142
 	// console.log("--------------------")
 	{
-		const ScriptStatement& statement = scripts[1].statements[129];
+		const ScriptStatement& statement = scripts[1].statements[142];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7859,10 +8811,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 130
+	// Statement: 143
 	// console.log("Lets check forTime")
 	{
-		const ScriptStatement& statement = scripts[1].statements[130];
+		const ScriptStatement& statement = scripts[1].statements[143];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7876,10 +8828,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 131
+	// Statement: 144
 	// console.log("--------------------")
 	{
-		const ScriptStatement& statement = scripts[1].statements[131];
+		const ScriptStatement& statement = scripts[1].statements[144];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7893,10 +8845,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 132
+	// Statement: 145
 	// setVariable("$i", 1)
 	{
-		const ScriptStatement& statement = scripts[1].statements[132];
+		const ScriptStatement& statement = scripts[1].statements[145];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7916,11 +8868,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 133
-	miniscript_statement_133:
+	// Statement: 146
+	miniscript_statement_146:
 	// forTime(2000)
 	{
-		const ScriptStatement& statement = scripts[1].statements[133];
+		const ScriptStatement& statement = scripts[1].statements[146];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7946,7 +8898,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			if (Time::getCurrentMillis() > timeWaitStarted + time) {
 				miniScript->scriptState.forTimeStarted.erase(statement.line);
 				miniScript->setScriptState(STATE_NEXT_STATEMENT);
-				goto miniscript_statement_138;
+				goto miniscript_statement_151;
 			} else {
 				miniScript->scriptState.endTypeStack.push(ScriptState::ENDTYPE_FOR);
 			}
@@ -7957,11 +8909,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// Statement: 134
-	miniscript_statement_134:
+	// Statement: 147
+	miniscript_statement_147:
 	// console.log($i, ": Hello World")
 	{
-		const ScriptStatement& statement = scripts[1].statements[134];
+		const ScriptStatement& statement = scripts[1].statements[147];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -7992,10 +8944,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 135
+	// Statement: 148
 	// script.wait(500)
 	{
-		const ScriptStatement& statement = scripts[1].statements[135];
+		const ScriptStatement& statement = scripts[1].statements[148];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -8017,11 +8969,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// Statement: 136
-	miniscript_statement_136:
+	// Statement: 149
+	miniscript_statement_149:
 	// setVariable("$i", add($i, 1))
 	{
-		const ScriptStatement& statement = scripts[1].statements[136];
+		const ScriptStatement& statement = scripts[1].statements[149];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -8068,10 +9020,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 137
+	// Statement: 150
 	// end()
 	{
-		const ScriptStatement& statement = scripts[1].statements[137];
+		const ScriptStatement& statement = scripts[1].statements[150];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -8096,7 +9048,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			}
 			if (statement.gotoStatementIdx != STATE_NONE) {
 				miniScript->setScriptState(STATE_NEXT_STATEMENT);
-				goto miniscript_statement_133;
+				goto miniscript_statement_146;
 			}
 		}
 	}
@@ -8105,11 +9057,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// Statement: 138
-	miniscript_statement_138:
+	// Statement: 151
+	miniscript_statement_151:
 	// console.log("-------------------------")
 	{
-		const ScriptStatement& statement = scripts[1].statements[138];
+		const ScriptStatement& statement = scripts[1].statements[151];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -8123,10 +9075,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 139
+	// Statement: 152
 	// console.log("Lets check forCondition")
 	{
-		const ScriptStatement& statement = scripts[1].statements[139];
+		const ScriptStatement& statement = scripts[1].statements[152];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -8140,10 +9092,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 140
+	// Statement: 153
 	// console.log("-------------------------")
 	{
-		const ScriptStatement& statement = scripts[1].statements[140];
+		const ScriptStatement& statement = scripts[1].statements[153];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -8157,10 +9109,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 141
+	// Statement: 154
 	// setVariable("$i", 1)
 	{
-		const ScriptStatement& statement = scripts[1].statements[141];
+		const ScriptStatement& statement = scripts[1].statements[154];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -8180,11 +9132,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 142
-	miniscript_statement_142:
+	// Statement: 155
+	miniscript_statement_155:
 	// forCondition(notequal($i, 6))
 	{
-		const ScriptStatement& statement = scripts[1].statements[142];
+		const ScriptStatement& statement = scripts[1].statements[155];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -8234,7 +9186,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			auto now = Time::getCurrentMillis();
 			if (booleanValue == false) {
 				miniScript->setScriptState(STATE_NEXT_STATEMENT);
-				goto miniscript_statement_147;
+				goto miniscript_statement_160;
 			} else {
 				miniScript->scriptState.endTypeStack.push(ScriptState::ENDTYPE_FOR);
 			}
@@ -8245,11 +9197,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// Statement: 143
-	miniscript_statement_143:
+	// Statement: 156
+	miniscript_statement_156:
 	// console.log($i, ": Hello World")
 	{
-		const ScriptStatement& statement = scripts[1].statements[143];
+		const ScriptStatement& statement = scripts[1].statements[156];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -8280,10 +9232,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 144
+	// Statement: 157
 	// script.wait(500)
 	{
-		const ScriptStatement& statement = scripts[1].statements[144];
+		const ScriptStatement& statement = scripts[1].statements[157];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -8305,11 +9257,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// Statement: 145
-	miniscript_statement_145:
+	// Statement: 158
+	miniscript_statement_158:
 	// setVariable("$i", add($i, 1))
 	{
-		const ScriptStatement& statement = scripts[1].statements[145];
+		const ScriptStatement& statement = scripts[1].statements[158];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -8356,10 +9308,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 146
+	// Statement: 159
 	// end()
 	{
-		const ScriptStatement& statement = scripts[1].statements[146];
+		const ScriptStatement& statement = scripts[1].statements[159];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -8384,7 +9336,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			}
 			if (statement.gotoStatementIdx != STATE_NONE) {
 				miniScript->setScriptState(STATE_NEXT_STATEMENT);
-				goto miniscript_statement_142;
+				goto miniscript_statement_155;
 			}
 		}
 	}
@@ -8393,11 +9345,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// Statement: 147
-	miniscript_statement_147:
+	// Statement: 160
+	miniscript_statement_160:
 	// console.log("i -> ", $i)
 	{
-		const ScriptStatement& statement = scripts[1].statements[147];
+		const ScriptStatement& statement = scripts[1].statements[160];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -8428,10 +9380,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 148
+	// Statement: 161
 	// console.log("---------------------------------------------")
 	{
-		const ScriptStatement& statement = scripts[1].statements[148];
+		const ScriptStatement& statement = scripts[1].statements[161];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -8445,10 +9397,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 149
+	// Statement: 162
 	// console.log("Lets check forCondition with if/elseif/else")
 	{
-		const ScriptStatement& statement = scripts[1].statements[149];
+		const ScriptStatement& statement = scripts[1].statements[162];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -8462,10 +9414,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 150
+	// Statement: 163
 	// console.log("---------------------------------------------")
 	{
-		const ScriptStatement& statement = scripts[1].statements[150];
+		const ScriptStatement& statement = scripts[1].statements[163];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -8479,10 +9431,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 151
+	// Statement: 164
 	// setVariable("$i", 1)
 	{
-		const ScriptStatement& statement = scripts[1].statements[151];
+		const ScriptStatement& statement = scripts[1].statements[164];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -8502,11 +9454,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 152
-	miniscript_statement_152:
+	// Statement: 165
+	miniscript_statement_165:
 	// forCondition(lesser($i, 5))
 	{
-		const ScriptStatement& statement = scripts[1].statements[152];
+		const ScriptStatement& statement = scripts[1].statements[165];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -8558,7 +9510,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			auto now = Time::getCurrentMillis();
 			if (booleanValue == false) {
 				miniScript->setScriptState(STATE_NEXT_STATEMENT);
-				goto miniscript_statement_167;
+				goto miniscript_statement_180;
 			} else {
 				miniScript->scriptState.endTypeStack.push(ScriptState::ENDTYPE_FOR);
 			}
@@ -8569,11 +9521,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// Statement: 153
-	miniscript_statement_153:
+	// Statement: 166
+	miniscript_statement_166:
 	// console.log($i, ":")
 	{
-		const ScriptStatement& statement = scripts[1].statements[153];
+		const ScriptStatement& statement = scripts[1].statements[166];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -8604,10 +9556,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 154
+	// Statement: 167
 	// if(equals($i, 0))
 	{
-		const ScriptStatement& statement = scripts[1].statements[154];
+		const ScriptStatement& statement = scripts[1].statements[167];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -8659,7 +9611,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			miniScript->scriptState.conditionStack.push(booleanValue);
 			if (booleanValue == false) {
 				miniScript->setScriptState(STATE_NEXT_STATEMENT);
-				goto miniscript_statement_156;
+				goto miniscript_statement_169;
 			}
 		}
 	}
@@ -8668,11 +9620,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// Statement: 155
-	miniscript_statement_155:
+	// Statement: 168
+	miniscript_statement_168:
 	// console.log("i -> 0")
 	{
-		const ScriptStatement& statement = scripts[1].statements[155];
+		const ScriptStatement& statement = scripts[1].statements[168];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -8686,11 +9638,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 156
-	miniscript_statement_156:
+	// Statement: 169
+	miniscript_statement_169:
 	// elseif(equals($i, 1))
 	{
-		const ScriptStatement& statement = scripts[1].statements[156];
+		const ScriptStatement& statement = scripts[1].statements[169];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -8748,7 +9700,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			}
 			if (conditionStackElement == true || booleanValue == false) {
 				miniScript->setScriptState(STATE_NEXT_STATEMENT);
-				goto miniscript_statement_158;
+				goto miniscript_statement_171;
 			}
 		}
 	}
@@ -8757,11 +9709,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// Statement: 157
-	miniscript_statement_157:
+	// Statement: 170
+	miniscript_statement_170:
 	// console.log("i -> 1")
 	{
-		const ScriptStatement& statement = scripts[1].statements[157];
+		const ScriptStatement& statement = scripts[1].statements[170];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -8775,11 +9727,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 158
-	miniscript_statement_158:
+	// Statement: 171
+	miniscript_statement_171:
 	// elseif(equals($i, 2))
 	{
-		const ScriptStatement& statement = scripts[1].statements[158];
+		const ScriptStatement& statement = scripts[1].statements[171];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -8837,7 +9789,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			}
 			if (conditionStackElement == true || booleanValue == false) {
 				miniScript->setScriptState(STATE_NEXT_STATEMENT);
-				goto miniscript_statement_160;
+				goto miniscript_statement_173;
 			}
 		}
 	}
@@ -8846,11 +9798,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// Statement: 159
-	miniscript_statement_159:
+	// Statement: 172
+	miniscript_statement_172:
 	// console.log("i -> 2")
 	{
-		const ScriptStatement& statement = scripts[1].statements[159];
+		const ScriptStatement& statement = scripts[1].statements[172];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -8864,11 +9816,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 160
-	miniscript_statement_160:
+	// Statement: 173
+	miniscript_statement_173:
 	// elseif(equals($i, 3))
 	{
-		const ScriptStatement& statement = scripts[1].statements[160];
+		const ScriptStatement& statement = scripts[1].statements[173];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -8926,7 +9878,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			}
 			if (conditionStackElement == true || booleanValue == false) {
 				miniScript->setScriptState(STATE_NEXT_STATEMENT);
-				goto miniscript_statement_162;
+				goto miniscript_statement_175;
 			}
 		}
 	}
@@ -8935,11 +9887,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// Statement: 161
-	miniscript_statement_161:
+	// Statement: 174
+	miniscript_statement_174:
 	// console.log("i -> 3")
 	{
-		const ScriptStatement& statement = scripts[1].statements[161];
+		const ScriptStatement& statement = scripts[1].statements[174];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -8953,11 +9905,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 162
-	miniscript_statement_162:
+	// Statement: 175
+	miniscript_statement_175:
 	// else()
 	{
-		const ScriptStatement& statement = scripts[1].statements[162];
+		const ScriptStatement& statement = scripts[1].statements[175];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -8971,7 +9923,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			auto conditionStackElement = miniScript->scriptState.conditionStack.top();
 			if (conditionStackElement == true) {
 				miniScript->setScriptState(STATE_NEXT_STATEMENT);
-				goto miniscript_statement_164;
+				goto miniscript_statement_177;
 			}
 		}
 	}
@@ -8980,11 +9932,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// Statement: 163
-	miniscript_statement_163:
+	// Statement: 176
+	miniscript_statement_176:
 	// console.log("else: ", $i)
 	{
-		const ScriptStatement& statement = scripts[1].statements[163];
+		const ScriptStatement& statement = scripts[1].statements[176];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -9015,11 +9967,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 164
-	miniscript_statement_164:
+	// Statement: 177
+	miniscript_statement_177:
 	// end()
 	{
-		const ScriptStatement& statement = scripts[1].statements[164];
+		const ScriptStatement& statement = scripts[1].statements[177];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -9052,11 +10004,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// Statement: 165
-	miniscript_statement_165:
+	// Statement: 178
+	miniscript_statement_178:
 	// setVariable("$i", add($i, 1))
 	{
-		const ScriptStatement& statement = scripts[1].statements[165];
+		const ScriptStatement& statement = scripts[1].statements[178];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -9103,10 +10055,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 166
+	// Statement: 179
 	// end()
 	{
-		const ScriptStatement& statement = scripts[1].statements[166];
+		const ScriptStatement& statement = scripts[1].statements[179];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -9131,7 +10083,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			}
 			if (statement.gotoStatementIdx != STATE_NONE) {
 				miniScript->setScriptState(STATE_NEXT_STATEMENT);
-				goto miniscript_statement_152;
+				goto miniscript_statement_165;
 			}
 		}
 	}
@@ -9140,11 +10092,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// Statement: 167
-	miniscript_statement_167:
+	// Statement: 180
+	miniscript_statement_180:
 	// setVariable("$i", 1)
 	{
-		const ScriptStatement& statement = scripts[1].statements[167];
+		const ScriptStatement& statement = scripts[1].statements[180];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -9164,10 +10116,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 168
+	// Statement: 181
 	// setVariable("$j", 2)
 	{
-		const ScriptStatement& statement = scripts[1].statements[168];
+		const ScriptStatement& statement = scripts[1].statements[181];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -9187,10 +10139,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 169
+	// Statement: 182
 	// setVariable("$k", 3)
 	{
-		const ScriptStatement& statement = scripts[1].statements[169];
+		const ScriptStatement& statement = scripts[1].statements[182];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -9210,10 +10162,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 170
+	// Statement: 183
 	// if(or(equals(getVariable("$i"), $j),equals(getVariable("$i"), $k)))
 	{
-		const ScriptStatement& statement = scripts[1].statements[170];
+		const ScriptStatement& statement = scripts[1].statements[183];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -9352,7 +10304,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			miniScript->scriptState.conditionStack.push(booleanValue);
 			if (booleanValue == false) {
 				miniScript->setScriptState(STATE_NEXT_STATEMENT);
-				goto miniscript_statement_172;
+				goto miniscript_statement_185;
 			}
 		}
 	}
@@ -9361,11 +10313,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// Statement: 171
-	miniscript_statement_171:
+	// Statement: 184
+	miniscript_statement_184:
 	// console.log("This should not happen, but look ok in preprocessor processed output")
 	{
-		const ScriptStatement& statement = scripts[1].statements[171];
+		const ScriptStatement& statement = scripts[1].statements[184];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -9379,11 +10331,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 172
-	miniscript_statement_172:
+	// Statement: 185
+	miniscript_statement_185:
 	// end()
 	{
-		const ScriptStatement& statement = scripts[1].statements[172];
+		const ScriptStatement& statement = scripts[1].statements[185];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -9416,11 +10368,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// Statement: 173
-	miniscript_statement_173:
+	// Statement: 186
+	miniscript_statement_186:
 	// console.log("-------------------------------------------------------------------------------------")
 	{
-		const ScriptStatement& statement = scripts[1].statements[173];
+		const ScriptStatement& statement = scripts[1].statements[186];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -9434,10 +10386,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 174
+	// Statement: 187
 	// console.log(add("Test: string concatenation with brackets in string literals: ",add($i,add("(",add($j, ")")))))
 	{
-		const ScriptStatement& statement = scripts[1].statements[174];
+		const ScriptStatement& statement = scripts[1].statements[187];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -9527,10 +10479,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 175
+	// Statement: 188
 	// console.log("-------------------------------------------------------------------------------------")
 	{
-		const ScriptStatement& statement = scripts[1].statements[175];
+		const ScriptStatement& statement = scripts[1].statements[188];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -9544,10 +10496,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 176
+	// Statement: 189
 	// console.log("(4.0 + 2.0) / 2.0 + (20.0 / 10.0 * (2.0 + 5)): ", add(div(add(4.0, 2.0), 2.0),mul(div(20.0, 10.0), add(2.0, 5))), " = 17")
 	{
-		const ScriptStatement& statement = scripts[1].statements[176];
+		const ScriptStatement& statement = scripts[1].statements[189];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -9629,10 +10581,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 177
+	// Statement: 190
 	// console.log("---------")
 	{
-		const ScriptStatement& statement = scripts[1].statements[177];
+		const ScriptStatement& statement = scripts[1].statements[190];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -9646,10 +10598,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 178
+	// Statement: 191
 	// console.log("Arrays")
 	{
-		const ScriptStatement& statement = scripts[1].statements[178];
+		const ScriptStatement& statement = scripts[1].statements[191];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -9663,10 +10615,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 179
+	// Statement: 192
 	// console.log("----------")
 	{
-		const ScriptStatement& statement = scripts[1].statements[179];
+		const ScriptStatement& statement = scripts[1].statements[192];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -9680,10 +10632,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 180
+	// Statement: 193
 	// setVariable("$array", array(1,2,3))
 	{
-		const ScriptStatement& statement = scripts[1].statements[180];
+		const ScriptStatement& statement = scripts[1].statements[193];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -9718,10 +10670,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 181
+	// Statement: 194
 	// console.log("array initialized with: $array = array(1,2,3)")
 	{
-		const ScriptStatement& statement = scripts[1].statements[181];
+		const ScriptStatement& statement = scripts[1].statements[194];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -9735,10 +10687,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 182
+	// Statement: 195
 	// console.log("array now looks like: ", $array)
 	{
-		const ScriptStatement& statement = scripts[1].statements[182];
+		const ScriptStatement& statement = scripts[1].statements[195];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -9769,10 +10721,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 183
+	// Statement: 196
 	// setVariable("$array", array.push($array, 8, 9, 10, 99, 10))
 	{
-		const ScriptStatement& statement = scripts[1].statements[183];
+		const ScriptStatement& statement = scripts[1].statements[196];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -9831,10 +10783,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 184
+	// Statement: 197
 	// console.log("array pushed values with: array.push($array, 8, 9, 10, 99, 10)")
 	{
-		const ScriptStatement& statement = scripts[1].statements[184];
+		const ScriptStatement& statement = scripts[1].statements[197];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -9848,10 +10800,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 185
+	// Statement: 198
 	// console.log("array now looks like: ", $array)
 	{
-		const ScriptStatement& statement = scripts[1].statements[185];
+		const ScriptStatement& statement = scripts[1].statements[198];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -9882,10 +10834,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 186
+	// Statement: 199
 	// setVariable("$array[]", 123)
 	{
-		const ScriptStatement& statement = scripts[1].statements[186];
+		const ScriptStatement& statement = scripts[1].statements[199];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -9905,10 +10857,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 187
+	// Statement: 200
 	// setVariable("$array[]", 1234)
 	{
-		const ScriptStatement& statement = scripts[1].statements[187];
+		const ScriptStatement& statement = scripts[1].statements[200];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -9928,10 +10880,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 188
+	// Statement: 201
 	// setVariable("$array[]", 12345)
 	{
-		const ScriptStatement& statement = scripts[1].statements[188];
+		const ScriptStatement& statement = scripts[1].statements[201];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -9951,10 +10903,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 189
+	// Statement: 202
 	// setVariable("$array[]", array(1,2,3))
 	{
-		const ScriptStatement& statement = scripts[1].statements[189];
+		const ScriptStatement& statement = scripts[1].statements[202];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -9989,10 +10941,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 190
+	// Statement: 203
 	// console.log("array values added with [] operator: 123, 1234, 12345, array(1,2,3)")
 	{
-		const ScriptStatement& statement = scripts[1].statements[190];
+		const ScriptStatement& statement = scripts[1].statements[203];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -10006,10 +10958,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 191
+	// Statement: 204
 	// console.log("array now looks like: ", $array)
 	{
-		const ScriptStatement& statement = scripts[1].statements[191];
+		const ScriptStatement& statement = scripts[1].statements[204];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -10040,10 +10992,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 192
+	// Statement: 205
 	// console.log("array values added with [] operator to push to array of array: 50, 60")
 	{
-		const ScriptStatement& statement = scripts[1].statements[192];
+		const ScriptStatement& statement = scripts[1].statements[205];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -10057,10 +11009,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 193
+	// Statement: 206
 	// setVariable("$array[11][]", 50)
 	{
-		const ScriptStatement& statement = scripts[1].statements[193];
+		const ScriptStatement& statement = scripts[1].statements[206];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -10080,10 +11032,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 194
+	// Statement: 207
 	// setVariable("$array[11][]", 60)
 	{
-		const ScriptStatement& statement = scripts[1].statements[194];
+		const ScriptStatement& statement = scripts[1].statements[207];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -10103,10 +11055,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 195
+	// Statement: 208
 	// setVariable("$array[11][sub(array.length($array[11]), 1)]", 61)
 	{
-		const ScriptStatement& statement = scripts[1].statements[195];
+		const ScriptStatement& statement = scripts[1].statements[208];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -10126,10 +11078,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 196
+	// Statement: 209
 	// console.log("array length: ", array.length($array))
 	{
-		const ScriptStatement& statement = scripts[1].statements[196];
+		const ScriptStatement& statement = scripts[1].statements[209];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -10174,10 +11126,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 197
+	// Statement: 210
 	// console.log("array iteration with array.get(): ")
 	{
-		const ScriptStatement& statement = scripts[1].statements[197];
+		const ScriptStatement& statement = scripts[1].statements[210];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -10191,10 +11143,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 198
+	// Statement: 211
 	// setVariable("$i", 0)
 	{
-		const ScriptStatement& statement = scripts[1].statements[198];
+		const ScriptStatement& statement = scripts[1].statements[211];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -10214,11 +11166,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 199
-	miniscript_statement_199:
+	// Statement: 212
+	miniscript_statement_212:
 	// forCondition(lesser($i, array.length($array)))
 	{
-		const ScriptStatement& statement = scripts[1].statements[199];
+		const ScriptStatement& statement = scripts[1].statements[212];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -10300,7 +11252,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			auto now = Time::getCurrentMillis();
 			if (booleanValue == false) {
 				miniScript->setScriptState(STATE_NEXT_STATEMENT);
-				goto miniscript_statement_203;
+				goto miniscript_statement_216;
 			} else {
 				miniScript->scriptState.endTypeStack.push(ScriptState::ENDTYPE_FOR);
 			}
@@ -10311,11 +11263,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// Statement: 200
-	miniscript_statement_200:
+	// Statement: 213
+	miniscript_statement_213:
 	// console.log(add($i,add(": ", array.get($array, $i))))
 	{
-		const ScriptStatement& statement = scripts[1].statements[200];
+		const ScriptStatement& statement = scripts[1].statements[213];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -10416,10 +11368,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 201
+	// Statement: 214
 	// setVariable("$i", add($i, 1))
 	{
-		const ScriptStatement& statement = scripts[1].statements[201];
+		const ScriptStatement& statement = scripts[1].statements[214];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -10466,10 +11418,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 202
+	// Statement: 215
 	// end()
 	{
-		const ScriptStatement& statement = scripts[1].statements[202];
+		const ScriptStatement& statement = scripts[1].statements[215];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -10494,7 +11446,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			}
 			if (statement.gotoStatementIdx != STATE_NONE) {
 				miniScript->setScriptState(STATE_NEXT_STATEMENT);
-				goto miniscript_statement_199;
+				goto miniscript_statement_212;
 			}
 		}
 	}
@@ -10503,11 +11455,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// Statement: 203
-	miniscript_statement_203:
+	// Statement: 216
+	miniscript_statement_216:
 	// console.log("array iteration with [] operator: ")
 	{
-		const ScriptStatement& statement = scripts[1].statements[203];
+		const ScriptStatement& statement = scripts[1].statements[216];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -10521,10 +11473,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 204
+	// Statement: 217
 	// setVariable("$i", 0)
 	{
-		const ScriptStatement& statement = scripts[1].statements[204];
+		const ScriptStatement& statement = scripts[1].statements[217];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -10544,11 +11496,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 205
-	miniscript_statement_205:
+	// Statement: 218
+	miniscript_statement_218:
 	// forCondition(lesser($i, array.length($array)))
 	{
-		const ScriptStatement& statement = scripts[1].statements[205];
+		const ScriptStatement& statement = scripts[1].statements[218];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -10630,7 +11582,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			auto now = Time::getCurrentMillis();
 			if (booleanValue == false) {
 				miniScript->setScriptState(STATE_NEXT_STATEMENT);
-				goto miniscript_statement_209;
+				goto miniscript_statement_222;
 			} else {
 				miniScript->scriptState.endTypeStack.push(ScriptState::ENDTYPE_FOR);
 			}
@@ -10641,11 +11593,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// Statement: 206
-	miniscript_statement_206:
+	// Statement: 219
+	miniscript_statement_219:
 	// console.log(add($i,add(": ", $array[$i])))
 	{
-		const ScriptStatement& statement = scripts[1].statements[206];
+		const ScriptStatement& statement = scripts[1].statements[219];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -10713,10 +11665,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 207
+	// Statement: 220
 	// setVariable("$i", add($i, 1))
 	{
-		const ScriptStatement& statement = scripts[1].statements[207];
+		const ScriptStatement& statement = scripts[1].statements[220];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -10763,10 +11715,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 208
+	// Statement: 221
 	// end()
 	{
-		const ScriptStatement& statement = scripts[1].statements[208];
+		const ScriptStatement& statement = scripts[1].statements[221];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -10791,7 +11743,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			}
 			if (statement.gotoStatementIdx != STATE_NONE) {
 				miniScript->setScriptState(STATE_NEXT_STATEMENT);
-				goto miniscript_statement_205;
+				goto miniscript_statement_218;
 			}
 		}
 	}
@@ -10800,11 +11752,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// Statement: 209
-	miniscript_statement_209:
+	// Statement: 222
+	miniscript_statement_222:
 	// console.log("array iteration with [] opertator and some index math: ")
 	{
-		const ScriptStatement& statement = scripts[1].statements[209];
+		const ScriptStatement& statement = scripts[1].statements[222];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -10818,10 +11770,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 210
+	// Statement: 223
 	// setVariable("$i", 0)
 	{
-		const ScriptStatement& statement = scripts[1].statements[210];
+		const ScriptStatement& statement = scripts[1].statements[223];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -10841,11 +11793,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 211
-	miniscript_statement_211:
+	// Statement: 224
+	miniscript_statement_224:
 	// forCondition(lesser($i,div(array.length($array), 2)))
 	{
-		const ScriptStatement& statement = scripts[1].statements[211];
+		const ScriptStatement& statement = scripts[1].statements[224];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -10938,7 +11890,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			auto now = Time::getCurrentMillis();
 			if (booleanValue == false) {
 				miniScript->setScriptState(STATE_NEXT_STATEMENT);
-				goto miniscript_statement_216;
+				goto miniscript_statement_229;
 			} else {
 				miniScript->scriptState.endTypeStack.push(ScriptState::ENDTYPE_FOR);
 			}
@@ -10949,11 +11901,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// Statement: 212
-	miniscript_statement_212:
+	// Statement: 225
+	miniscript_statement_225:
 	// console.log(add($i,add("-a: ", $array[add(mul($i, 2), 0)])))
 	{
-		const ScriptStatement& statement = scripts[1].statements[212];
+		const ScriptStatement& statement = scripts[1].statements[225];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -11021,10 +11973,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 213
+	// Statement: 226
 	// console.log(add($i,add("-b: ", $array[add(mul($i, 2), 1)])))
 	{
-		const ScriptStatement& statement = scripts[1].statements[213];
+		const ScriptStatement& statement = scripts[1].statements[226];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -11092,10 +12044,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 214
+	// Statement: 227
 	// setVariable("$i", add($i, 1))
 	{
-		const ScriptStatement& statement = scripts[1].statements[214];
+		const ScriptStatement& statement = scripts[1].statements[227];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -11142,10 +12094,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 215
+	// Statement: 228
 	// end()
 	{
-		const ScriptStatement& statement = scripts[1].statements[215];
+		const ScriptStatement& statement = scripts[1].statements[228];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -11170,7 +12122,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			}
 			if (statement.gotoStatementIdx != STATE_NONE) {
 				miniScript->setScriptState(STATE_NEXT_STATEMENT);
-				goto miniscript_statement_211;
+				goto miniscript_statement_224;
 			}
 		}
 	}
@@ -11179,11 +12131,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// Statement: 216
-	miniscript_statement_216:
+	// Statement: 229
+	miniscript_statement_229:
 	// console.log("array removal of 123, 1234, 12345 using array.removeOf")
 	{
-		const ScriptStatement& statement = scripts[1].statements[216];
+		const ScriptStatement& statement = scripts[1].statements[229];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -11197,10 +12149,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 217
+	// Statement: 230
 	// setVariable("$array", array.removeOf($array, 123))
 	{
-		const ScriptStatement& statement = scripts[1].statements[217];
+		const ScriptStatement& statement = scripts[1].statements[230];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -11261,10 +12213,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 218
+	// Statement: 231
 	// setVariable("$array", array.removeOf($array, 1234))
 	{
-		const ScriptStatement& statement = scripts[1].statements[218];
+		const ScriptStatement& statement = scripts[1].statements[231];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -11325,10 +12277,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 219
+	// Statement: 232
 	// setVariable("$array", array.removeOf($array, 12345))
 	{
-		const ScriptStatement& statement = scripts[1].statements[219];
+		const ScriptStatement& statement = scripts[1].statements[232];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -11389,10 +12341,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 220
+	// Statement: 233
 	// console.log("array now looks like: ", $array)
 	{
-		const ScriptStatement& statement = scripts[1].statements[220];
+		const ScriptStatement& statement = scripts[1].statements[233];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -11423,10 +12375,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 221
+	// Statement: 234
 	// console.log("array indexOf 10: ", array.indexOf($array, 10))
 	{
-		const ScriptStatement& statement = scripts[1].statements[221];
+		const ScriptStatement& statement = scripts[1].statements[234];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -11485,10 +12437,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 222
+	// Statement: 235
 	// console.log("array indexOf 10 beginning to search from 6: ", array.indexOf($array, 10, 6))
 	{
-		const ScriptStatement& statement = scripts[1].statements[222];
+		const ScriptStatement& statement = scripts[1].statements[235];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -11548,10 +12500,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 223
+	// Statement: 236
 	// console.log("---------")
 	{
-		const ScriptStatement& statement = scripts[1].statements[223];
+		const ScriptStatement& statement = scripts[1].statements[236];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -11565,10 +12517,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 224
+	// Statement: 237
 	// console.log("Maps")
 	{
-		const ScriptStatement& statement = scripts[1].statements[224];
+		const ScriptStatement& statement = scripts[1].statements[237];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -11582,10 +12534,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 225
+	// Statement: 238
 	// console.log("----------")
 	{
-		const ScriptStatement& statement = scripts[1].statements[225];
+		const ScriptStatement& statement = scripts[1].statements[238];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -11599,10 +12551,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 226
+	// Statement: 239
 	// setVariable("$map", map())
 	{
-		const ScriptStatement& statement = scripts[1].statements[226];
+		const ScriptStatement& statement = scripts[1].statements[239];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -11631,10 +12583,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 227
+	// Statement: 240
 	// console.log("map initialized with: $map = map()")
 	{
-		const ScriptStatement& statement = scripts[1].statements[227];
+		const ScriptStatement& statement = scripts[1].statements[240];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -11648,10 +12600,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 228
+	// Statement: 241
 	// console.log("map now looks like: ", $map)
 	{
-		const ScriptStatement& statement = scripts[1].statements[228];
+		const ScriptStatement& statement = scripts[1].statements[241];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -11682,10 +12634,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 229
+	// Statement: 242
 	// console.log("put some key value pairs into map: $map = map.set()")
 	{
-		const ScriptStatement& statement = scripts[1].statements[229];
+		const ScriptStatement& statement = scripts[1].statements[242];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -11699,10 +12651,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 230
+	// Statement: 243
 	// setVariable("$map", map.set($map, "test1", 123))
 	{
-		const ScriptStatement& statement = scripts[1].statements[230];
+		const ScriptStatement& statement = scripts[1].statements[243];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -11759,10 +12711,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 231
+	// Statement: 244
 	// setVariable("$map", map.set($map, "test2", 456))
 	{
-		const ScriptStatement& statement = scripts[1].statements[231];
+		const ScriptStatement& statement = scripts[1].statements[244];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -11819,10 +12771,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 232
+	// Statement: 245
 	// setVariable("$map", map.set($map, "test3", 789))
 	{
-		const ScriptStatement& statement = scripts[1].statements[232];
+		const ScriptStatement& statement = scripts[1].statements[245];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -11879,10 +12831,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 233
+	// Statement: 246
 	// setVariable("$map", map.set($map, "test4", array(1,2,3)))
 	{
-		const ScriptStatement& statement = scripts[1].statements[233];
+		const ScriptStatement& statement = scripts[1].statements[246];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -11954,10 +12906,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 234
+	// Statement: 247
 	// setVariable("$map", map.set($map, "test5", "Yaaaa"))
 	{
-		const ScriptStatement& statement = scripts[1].statements[234];
+		const ScriptStatement& statement = scripts[1].statements[247];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -12014,10 +12966,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 235
+	// Statement: 248
 	// console.log("map now looks like: ", $map)
 	{
-		const ScriptStatement& statement = scripts[1].statements[235];
+		const ScriptStatement& statement = scripts[1].statements[248];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -12048,10 +13000,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 236
+	// Statement: 249
 	// console.log("remove test2 via map.remove: ")
 	{
-		const ScriptStatement& statement = scripts[1].statements[236];
+		const ScriptStatement& statement = scripts[1].statements[249];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -12065,10 +13017,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 237
+	// Statement: 250
 	// setVariable("$map", map.remove($map, "test2"))
 	{
-		const ScriptStatement& statement = scripts[1].statements[237];
+		const ScriptStatement& statement = scripts[1].statements[250];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -12124,10 +13076,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 238
+	// Statement: 251
 	// console.log("map now looks like: ", $map)
 	{
-		const ScriptStatement& statement = scripts[1].statements[238];
+		const ScriptStatement& statement = scripts[1].statements[251];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -12158,10 +13110,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 239
+	// Statement: 252
 	// setVariable("$map", map.set($map, "test2", 456))
 	{
-		const ScriptStatement& statement = scripts[1].statements[239];
+		const ScriptStatement& statement = scripts[1].statements[252];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -12218,10 +13170,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 240
+	// Statement: 253
 	// console.log("readding test2: ")
 	{
-		const ScriptStatement& statement = scripts[1].statements[240];
+		const ScriptStatement& statement = scripts[1].statements[253];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -12235,10 +13187,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 241
+	// Statement: 254
 	// console.log("map does have test2 key using map.has(): ", map.has($map, "test2"))
 	{
-		const ScriptStatement& statement = scripts[1].statements[241];
+		const ScriptStatement& statement = scripts[1].statements[254];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -12288,10 +13240,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 242
+	// Statement: 255
 	// console.log("map does have test8 key using map.has(): ", map.has($map, "test8"))
 	{
-		const ScriptStatement& statement = scripts[1].statements[242];
+		const ScriptStatement& statement = scripts[1].statements[255];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -12341,10 +13293,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 243
+	// Statement: 256
 	// console.log("map value for test1 key using map.get(): ", map.get($map, "test1"))
 	{
-		const ScriptStatement& statement = scripts[1].statements[243];
+		const ScriptStatement& statement = scripts[1].statements[256];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -12394,10 +13346,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 244
+	// Statement: 257
 	// console.log("map value for test2 key using map.get(): ", map.get($map, "test2"))
 	{
-		const ScriptStatement& statement = scripts[1].statements[244];
+		const ScriptStatement& statement = scripts[1].statements[257];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -12447,10 +13399,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 245
+	// Statement: 258
 	// console.log("map value for test3 key using map.get(): ", map.get($map, "test3"))
 	{
-		const ScriptStatement& statement = scripts[1].statements[245];
+		const ScriptStatement& statement = scripts[1].statements[258];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -12500,10 +13452,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 246
+	// Statement: 259
 	// console.log("map value for test4 key using map.get(): ", map.get($map, "test4"))
 	{
-		const ScriptStatement& statement = scripts[1].statements[246];
+		const ScriptStatement& statement = scripts[1].statements[259];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -12553,10 +13505,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 247
+	// Statement: 260
 	// console.log("map value for test5 key using map.get(): ", map.get($map, "test5"))
 	{
-		const ScriptStatement& statement = scripts[1].statements[247];
+		const ScriptStatement& statement = scripts[1].statements[260];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -12606,10 +13558,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 248
+	// Statement: 261
 	// console.log("map value for test1 using map dot operator: ", $map.test1)
 	{
-		const ScriptStatement& statement = scripts[1].statements[248];
+		const ScriptStatement& statement = scripts[1].statements[261];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -12640,10 +13592,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 249
+	// Statement: 262
 	// console.log("map value for test2 using map dot operator: ", $map.test2)
 	{
-		const ScriptStatement& statement = scripts[1].statements[249];
+		const ScriptStatement& statement = scripts[1].statements[262];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -12674,10 +13626,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 250
+	// Statement: 263
 	// console.log("map value for test3 using map dot operator: ", $map.test3)
 	{
-		const ScriptStatement& statement = scripts[1].statements[250];
+		const ScriptStatement& statement = scripts[1].statements[263];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -12708,10 +13660,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 251
+	// Statement: 264
 	// console.log("map value for test4 using map dot operator: ", $map.test4)
 	{
-		const ScriptStatement& statement = scripts[1].statements[251];
+		const ScriptStatement& statement = scripts[1].statements[264];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -12742,10 +13694,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 252
+	// Statement: 265
 	// console.log("map value for test5 using map dot operator: ", $map.test5)
 	{
-		const ScriptStatement& statement = scripts[1].statements[252];
+		const ScriptStatement& statement = scripts[1].statements[265];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -12776,10 +13728,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 253
+	// Statement: 266
 	// console.log("adding map values using map dot operator: ")
 	{
-		const ScriptStatement& statement = scripts[1].statements[253];
+		const ScriptStatement& statement = scripts[1].statements[266];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -12793,10 +13745,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 254
+	// Statement: 267
 	// setVariable("$map.test6", 666)
 	{
-		const ScriptStatement& statement = scripts[1].statements[254];
+		const ScriptStatement& statement = scripts[1].statements[267];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -12816,10 +13768,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 255
+	// Statement: 268
 	// setVariable("$map.test7", 770)
 	{
-		const ScriptStatement& statement = scripts[1].statements[255];
+		const ScriptStatement& statement = scripts[1].statements[268];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -12839,10 +13791,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 256
+	// Statement: 269
 	// setVariable("$map.test8", 890)
 	{
-		const ScriptStatement& statement = scripts[1].statements[256];
+		const ScriptStatement& statement = scripts[1].statements[269];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -12862,10 +13814,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 257
+	// Statement: 270
 	// console.log("map keys: ", map.getKeys($map))
 	{
-		const ScriptStatement& statement = scripts[1].statements[257];
+		const ScriptStatement& statement = scripts[1].statements[270];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -12916,10 +13868,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 258
+	// Statement: 271
 	// console.log("map values: ", map.getValues($map))
 	{
-		const ScriptStatement& statement = scripts[1].statements[258];
+		const ScriptStatement& statement = scripts[1].statements[271];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -12970,10 +13922,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 259
+	// Statement: 272
 	// console.log("iterating keys and values using map.getKeys(): ")
 	{
-		const ScriptStatement& statement = scripts[1].statements[259];
+		const ScriptStatement& statement = scripts[1].statements[272];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -12987,10 +13939,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 260
+	// Statement: 273
 	// setVariable("$mapKeys", map.getKeys($map))
 	{
-		const ScriptStatement& statement = scripts[1].statements[260];
+		const ScriptStatement& statement = scripts[1].statements[273];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -13046,10 +13998,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 261
+	// Statement: 274
 	// setVariable("$i", 0)
 	{
-		const ScriptStatement& statement = scripts[1].statements[261];
+		const ScriptStatement& statement = scripts[1].statements[274];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -13069,11 +14021,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 262
-	miniscript_statement_262:
+	// Statement: 275
+	miniscript_statement_275:
 	// forCondition(lesser($i, array.length($mapKeys)))
 	{
-		const ScriptStatement& statement = scripts[1].statements[262];
+		const ScriptStatement& statement = scripts[1].statements[275];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -13155,7 +14107,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			auto now = Time::getCurrentMillis();
 			if (booleanValue == false) {
 				miniScript->setScriptState(STATE_NEXT_STATEMENT);
-				goto miniscript_statement_266;
+				goto miniscript_statement_279;
 			} else {
 				miniScript->scriptState.endTypeStack.push(ScriptState::ENDTYPE_FOR);
 			}
@@ -13166,11 +14118,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// Statement: 263
-	miniscript_statement_263:
+	// Statement: 276
+	miniscript_statement_276:
 	// console.log(add($mapKeys[$i],add(" = ", map.get($map, $mapKeys[$i]))))
 	{
-		const ScriptStatement& statement = scripts[1].statements[263];
+		const ScriptStatement& statement = scripts[1].statements[276];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -13273,10 +14225,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 264
+	// Statement: 277
 	// setVariable("$i", add($i, 1))
 	{
-		const ScriptStatement& statement = scripts[1].statements[264];
+		const ScriptStatement& statement = scripts[1].statements[277];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -13323,10 +14275,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 265
+	// Statement: 278
 	// end()
 	{
-		const ScriptStatement& statement = scripts[1].statements[265];
+		const ScriptStatement& statement = scripts[1].statements[278];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -13351,7 +14303,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			}
 			if (statement.gotoStatementIdx != STATE_NONE) {
 				miniScript->setScriptState(STATE_NEXT_STATEMENT);
-				goto miniscript_statement_262;
+				goto miniscript_statement_275;
 			}
 		}
 	}
@@ -13360,11 +14312,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// Statement: 266
-	miniscript_statement_266:
+	// Statement: 279
+	miniscript_statement_279:
 	// console.log("--------------------------------------------------")
 	{
-		const ScriptStatement& statement = scripts[1].statements[266];
+		const ScriptStatement& statement = scripts[1].statements[279];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -13378,10 +14330,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 267
+	// Statement: 280
 	// console.log("Test if enabled naming condition will be emitted")
 	{
-		const ScriptStatement& statement = scripts[1].statements[267];
+		const ScriptStatement& statement = scripts[1].statements[280];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -13395,10 +14347,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 268
+	// Statement: 281
 	// console.log("--------------------------------------------------")
 	{
-		const ScriptStatement& statement = scripts[1].statements[268];
+		const ScriptStatement& statement = scripts[1].statements[281];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -13412,10 +14364,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 269
+	// Statement: 282
 	// script.enableNamedCondition("named_condition_1")
 	{
-		const ScriptStatement& statement = scripts[1].statements[269];
+		const ScriptStatement& statement = scripts[1].statements[282];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -13450,10 +14402,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 270
+	// Statement: 283
 	// script.wait(2000)
 	{
-		const ScriptStatement& statement = scripts[1].statements[270];
+		const ScriptStatement& statement = scripts[1].statements[283];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -13485,11 +14437,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 271
-	miniscript_statement_271:
+	// Statement: 284
+	miniscript_statement_284:
 	// script.disableNamedCondition("named_condition_1")
 	{
-		const ScriptStatement& statement = scripts[1].statements[271];
+		const ScriptStatement& statement = scripts[1].statements[284];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -13513,10 +14465,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 272
+	// Statement: 285
 	// console.log("---------------------------------------")
 	{
-		const ScriptStatement& statement = scripts[1].statements[272];
+		const ScriptStatement& statement = scripts[1].statements[285];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -13530,10 +14482,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 273
+	// Statement: 286
 	// console.log("Naming condition has not been emitted")
 	{
-		const ScriptStatement& statement = scripts[1].statements[273];
+		const ScriptStatement& statement = scripts[1].statements[286];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -13547,10 +14499,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 274
+	// Statement: 287
 	// console.log("---------------------------------------")
 	{
-		const ScriptStatement& statement = scripts[1].statements[274];
+		const ScriptStatement& statement = scripts[1].statements[287];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -13564,10 +14516,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 275
+	// Statement: 288
 	// script.stop()
 	{
-		const ScriptStatement& statement = scripts[1].statements[275];
+		const ScriptStatement& statement = scripts[1].statements[288];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -13581,10 +14533,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// Statement: 276
+	// Statement: 289
 	// end()
 	{
-		const ScriptStatement& statement = scripts[1].statements[276];
+		const ScriptStatement& statement = scripts[1].statements[289];
 		miniScript->scriptState.statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;

@@ -3028,6 +3028,229 @@ void MiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodQuaternionComputeMatrix(this));
 	}
+	// matrix4x4 methods
+	{
+		//
+		class ScriptMethodMatrix4x4Identity: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodMatrix4x4Identity(MiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_MATRIX4x4),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "mat4.identity";
+			}
+			void executeMethod(const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue.setValue(Matrix4x4().identity());
+			}
+		};
+		registerMethod(new ScriptMethodMatrix4x4Identity(this));
+	}
+	{
+		//
+		class ScriptMethodMatrix4x4Translate: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodMatrix4x4Translate(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "translation", .optional = false },
+					},
+					ScriptVariableType::TYPE_MATRIX4x4
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "mat4.translate";
+			}
+			void executeMethod(const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Vector3 translation;
+				if (MiniScript::getVector3Value(argumentValues, 0, translation, false) == true) {
+					returnValue.setValue(Matrix4x4().identity().translate(translation));
+				} else {
+					Console::println("ScriptMethodMatrix4x4Translate::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: vector3 expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodMatrix4x4Translate(this));
+	}
+	{
+		//
+		class ScriptMethodMatrix4x4Rotate: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodMatrix4x4Rotate(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "axis", .optional = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "angle", .optional = false },
+					},
+					ScriptVariableType::TYPE_MATRIX4x4
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "mat4.rotate";
+			}
+			void executeMethod(const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Vector3 axis;
+				float angle;
+				if (MiniScript::getVector3Value(argumentValues, 0, axis, false) == true &&
+					MiniScript::getFloatValue(argumentValues, 1, angle, false) == true) {
+					returnValue.setValue(Matrix4x4().identity().rotate(axis, angle));
+				} else {
+					Console::println("ScriptMethodMatrix4x4Rotate::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: vector3 expected, @ argument 1: float expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodMatrix4x4Rotate(this));
+	}
+	{
+		//
+		class ScriptMethodMatrix4x4Scale: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodMatrix4x4Scale(MiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_MATRIX4x4),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "mat4.scale";
+			}
+			void executeMethod(const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Vector3 vec3Value;
+				float floatValue;
+				if (MiniScript::getVector3Value(argumentValues, 0, vec3Value, false) == true) {
+					returnValue.setValue(Matrix4x4().identity().scale(vec3Value));
+				} else
+				if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
+					returnValue.setValue(Matrix4x4().identity().scale(floatValue));
+				} else {
+					Console::println("ScriptMethodMatrix4x4Scale::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: vector3 or float expected");
+					miniScript->startErrorScript();
+				}
+			}
+			bool isVariadic() override {
+				return true;
+			}
+
+		};
+		registerMethod(new ScriptMethodMatrix4x4Scale(this));
+	}
+	{
+		//
+		class ScriptMethodMatrix4x4Invert: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodMatrix4x4Invert(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_MATRIX4x4, .name = "mat4", .optional = false },
+					},
+					ScriptVariableType::TYPE_MATRIX4x4
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "mat4.invert";
+			}
+			void executeMethod(const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Matrix4x4 mat4;
+				if (MiniScript::getMatrix4x4Value(argumentValues, 0, mat4, false) == true) {
+					returnValue.setValue(mat4.invert());
+				} else {
+					Console::println("ScriptMethodMatrix4x4Invert::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: matrix4x4 expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodMatrix4x4Invert(this));
+	}
+	{
+		//
+		class ScriptMethodMatrix4x4EulerAngles: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodMatrix4x4EulerAngles(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_MATRIX4x4, .name = "mat4", .optional = false },
+					},
+					ScriptVariableType::TYPE_VECTOR3
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "mat4.computeEulerAngles";
+			}
+			void executeMethod(const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Matrix4x4 mat4;
+				if (MiniScript::getMatrix4x4Value(argumentValues, 0, mat4, false) == true) {
+					returnValue.setValue(mat4.computeEulerAngles());
+				} else {
+					Console::println("ScriptMethodMatrix4x4EulerAngles::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: matrix4x4 expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodMatrix4x4EulerAngles(this));
+	}
+	{
+		//
+		class ScriptMethodMatrix4x4Multiply: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodMatrix4x4Multiply(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_MATRIX4x4, .name = "mat4", .optional = false },
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "mat4.multiply";
+			}
+			void executeMethod(const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Matrix4x4 mat4;
+				Matrix4x4 mat4Value;
+				Vector3 vec3Value;
+				Vector4 vec4Value;
+				if (argumentValues.size() != 2) {
+					Console::println("ScriptMethodMatrix4x4Multiply::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: matrix4x4 expected, @ argument 1: vec3 or vec4 expected");
+					miniScript->startErrorScript();
+				} else
+				if (MiniScript::getMatrix4x4Value(argumentValues, 0, mat4, false) == true) {
+					if (MiniScript::getMatrix4x4Value(argumentValues, 1, mat4Value, false) == true) {
+						returnValue.setValue(mat4.multiply(mat4Value));
+					} else
+					if (MiniScript::getVector3Value(argumentValues, 1, vec3Value, false) == true) {
+						returnValue.setValue(mat4.multiply(vec3Value));
+					} else
+					if (MiniScript::getVector4Value(argumentValues, 1, vec4Value, false) == true) {
+						returnValue.setValue(mat4.multiply(vec4Value));
+					} else {
+						Console::println("ScriptMethodMatrix4x4Multiply::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: matrix4x4 expected, @ argument 1: vec3 or vec4 expected");
+						miniScript->startErrorScript();
+					}
+				} else {
+					Console::println("ScriptMethodMatrix4x4Multiply::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: matrix4x4 expected, @ argument 1: vec3 or vec4 expected");
+					miniScript->startErrorScript();
+				}
+			}
+			bool isVariadic() override {
+				return true;
+			}
+			bool isMixedReturnValue() override {
+				return true;
+			}
+		};
+		registerMethod(new ScriptMethodMatrix4x4Multiply(this));
+	}
 	// transform
 	{
 		//
