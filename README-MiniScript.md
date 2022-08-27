@@ -59,6 +59,20 @@ This is the documentation of MiniScript language. This document is WIP.
 | math.EPSILON(): Float                                                                            |
 | math.G(): Float                                                                                  |
 | math.PI(): Float                                                                                 |
+| math.acos($value: Float): Float                                                                  |
+| math.asin($value: Float): Float                                                                  |
+| math.atan($value: Float): Float                                                                  |
+| math.atan2($y: Float, $x: Float): Float                                                          |
+| math.ceil($value: Float): Float                                                                  |
+| math.cos($value: Float): Float                                                                   |
+| math.exp($value: Float): Float                                                                   |
+| math.floor($value: Float): Float                                                                 |
+| math.log($value: Float): Float                                                                   |
+| math.random(): Float                                                                             |
+| math.round($value: Float): Float                                                                 |
+| math.sin($value: Float): Float                                                                   |
+| math.sqrt($value: Float): Float                                                                  |
+| math.tan($value: Float): Float                                                                   |
 | mul(...): Mixed                                                                                  |
 | not($bool: Boolean): Boolean                                                                     |
 | notequal(...): Boolean                                                                           |

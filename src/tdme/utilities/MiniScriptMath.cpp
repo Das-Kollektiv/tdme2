@@ -184,4 +184,361 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		};
 		miniScript->registerMethod(new ScriptMethodEpsilon(miniScript));
 	}
+	{
+		//
+		class ScriptMethodAcos: public MiniScript::ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodAcos(MiniScript* miniScript): MiniScript::ScriptMethod(
+				{
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false },
+				},
+				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "math.acos";
+			}
+			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+				float value;
+				if (MiniScript::getFloatValue(argumentValues, 0, value, false) == true) {
+					returnValue.setValue(Math::acos(value));
+				} else {
+					Console::println("ScriptMethodAcos::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: float expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		miniScript->registerMethod(new ScriptMethodAcos(miniScript));
+	}
+	{
+		//
+		class ScriptMethodAsin: public MiniScript::ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodAsin(MiniScript* miniScript): MiniScript::ScriptMethod(
+				{
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false },
+				},
+				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "math.asin";
+			}
+			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+				float value;
+				if (MiniScript::getFloatValue(argumentValues, 0, value, false) == true) {
+					returnValue.setValue(Math::asin(value));
+				} else {
+					Console::println("ScriptMethodAsin::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: float expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		miniScript->registerMethod(new ScriptMethodAsin(miniScript));
+	}
+	{
+		//
+		class ScriptMethodAtan: public MiniScript::ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodAtan(MiniScript* miniScript): MiniScript::ScriptMethod(
+				{
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false },
+				},
+				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "math.atan";
+			}
+			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+				float value;
+				if (MiniScript::getFloatValue(argumentValues, 0, value, false) == true) {
+					returnValue.setValue(Math::atan(value));
+				} else {
+					Console::println("ScriptMethodAtan::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: float expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		miniScript->registerMethod(new ScriptMethodAtan(miniScript));
+	}
+	{
+		//
+		class ScriptMethodAtan2: public MiniScript::ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodAtan2(MiniScript* miniScript): MiniScript::ScriptMethod(
+				{
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "y", .optional = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "x", .optional = false },
+				},
+				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "math.atan2";
+			}
+			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+				float y;
+				float x;
+				if (MiniScript::getFloatValue(argumentValues, 0, y, false) == true &&
+					MiniScript::getFloatValue(argumentValues, 1, x, false) == true) {
+					returnValue.setValue(Math::atan2(y, x));
+				} else {
+					Console::println("ScriptMethodAtan2::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: float expected, @ argument 1: float expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		miniScript->registerMethod(new ScriptMethodAtan2(miniScript));
+	}
+	{
+		//
+		class ScriptMethodTan: public MiniScript::ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodTan(MiniScript* miniScript): MiniScript::ScriptMethod(
+				{
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false },
+				},
+				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "math.tan";
+			}
+			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+				float value;
+				if (MiniScript::getFloatValue(argumentValues, 0, value, false) == true) {
+					returnValue.setValue(Math::tan(value));
+				} else {
+					Console::println("ScriptMethodTan::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: float expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		miniScript->registerMethod(new ScriptMethodTan(miniScript));
+	}
+	{
+		//
+		class ScriptMethodCos: public MiniScript::ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodCos(MiniScript* miniScript): MiniScript::ScriptMethod(
+				{
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false },
+				},
+				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "math.cos";
+			}
+			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+				float value;
+				if (MiniScript::getFloatValue(argumentValues, 0, value, false) == true) {
+					returnValue.setValue(Math::cos(value));
+				} else {
+					Console::println("ScriptMethodCos::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: float expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		miniScript->registerMethod(new ScriptMethodCos(miniScript));
+	}
+	{
+		//
+		class ScriptMethodSin: public MiniScript::ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodSin(MiniScript* miniScript): MiniScript::ScriptMethod(
+				{
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false },
+				},
+				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "math.sin";
+			}
+			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+				float value;
+				if (MiniScript::getFloatValue(argumentValues, 0, value, false) == true) {
+					returnValue.setValue(Math::sin(value));
+				} else {
+					Console::println("ScriptMethodSin::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: float expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		miniScript->registerMethod(new ScriptMethodSin(miniScript));
+	}
+	{
+		//
+		class ScriptMethodFloor: public MiniScript::ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodFloor(MiniScript* miniScript): MiniScript::ScriptMethod(
+				{
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false },
+				},
+				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "math.floor";
+			}
+			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+				float value;
+				if (MiniScript::getFloatValue(argumentValues, 0, value, false) == true) {
+					returnValue.setValue(Math::floor(value));
+				} else {
+					Console::println("ScriptMethodCeil::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: float expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		miniScript->registerMethod(new ScriptMethodFloor(miniScript));
+	}
+	{
+		//
+		class ScriptMethodCeil: public MiniScript::ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodCeil(MiniScript* miniScript): MiniScript::ScriptMethod(
+				{
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false },
+				},
+				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "math.ceil";
+			}
+			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+				float value;
+				if (MiniScript::getFloatValue(argumentValues, 0, value, false) == true) {
+					returnValue.setValue(Math::ceil(value));
+				} else {
+					Console::println("ScriptMethodCeil::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: float expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		miniScript->registerMethod(new ScriptMethodCeil(miniScript));
+	}
+	{
+		//
+		class ScriptMethodRound: public MiniScript::ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodRound(MiniScript* miniScript): MiniScript::ScriptMethod(
+				{
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false },
+				},
+				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "math.round";
+			}
+			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+				float value;
+				if (MiniScript::getFloatValue(argumentValues, 0, value, false) == true) {
+					returnValue.setValue(Math::round(value));
+				} else {
+					Console::println("ScriptMethodRound::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: float expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		miniScript->registerMethod(new ScriptMethodRound(miniScript));
+	}
+	{
+		//
+		class ScriptMethodSqrt: public MiniScript::ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodSqrt(MiniScript* miniScript): MiniScript::ScriptMethod(
+				{
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false },
+				},
+				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "math.sqrt";
+			}
+			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+				float value;
+				if (MiniScript::getFloatValue(argumentValues, 0, value, false) == true) {
+					returnValue.setValue(Math::sqrt(value));
+				} else {
+					Console::println("ScriptMethodSqrt::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: float expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		miniScript->registerMethod(new ScriptMethodSqrt(miniScript));
+	}
+	{
+		//
+		class ScriptMethodRandom: public MiniScript::ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodRandom(MiniScript* miniScript): MiniScript::ScriptMethod({}, MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "math.random";
+			}
+			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+				returnValue.setValue(Math::random());
+			}
+		};
+		miniScript->registerMethod(new ScriptMethodRandom(miniScript));
+	}
+	{
+		//
+		class ScriptMethodExp: public MiniScript::ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodExp(MiniScript* miniScript): MiniScript::ScriptMethod(
+				{
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false },
+				},
+				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "math.exp";
+			}
+			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+				float value;
+				if (MiniScript::getFloatValue(argumentValues, 0, value, false) == true) {
+					returnValue.setValue(Math::exp(value));
+				} else {
+					Console::println("ScriptMethodExp::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: float expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		miniScript->registerMethod(new ScriptMethodExp(miniScript));
+	}
+	{
+		//
+		class ScriptMethodLog: public MiniScript::ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodLog(MiniScript* miniScript): MiniScript::ScriptMethod(
+				{
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false },
+				},
+				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "math.log";
+			}
+			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+				float value;
+				if (MiniScript::getFloatValue(argumentValues, 0, value, false) == true) {
+					returnValue.setValue(Math::log(value));
+				} else {
+					Console::println("ScriptMethodLog::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: float expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		miniScript->registerMethod(new ScriptMethodLog(miniScript));
+	}
 }
