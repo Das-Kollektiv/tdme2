@@ -348,6 +348,15 @@ public:
 				case TYPE_VECTOR4:
 					setValue(scriptVariable.getVector4ValueReference());
 					break;
+				case TYPE_QUATERNION:
+					setValue(scriptVariable.getQuaternionValueReference());
+					break;
+				case TYPE_MATRIX3x3:
+					setValue(scriptVariable.getMatrix3x3ValueReference());
+					break;
+				case TYPE_MATRIX4x4:
+					setValue(scriptVariable.getMatrix4x4ValueReference());
+					break;
 				case TYPE_TRANSFORM:
 					setValue(scriptVariable.getTransformValueReference());
 					break;
@@ -389,6 +398,15 @@ public:
 					break;
 				case TYPE_VECTOR4:
 					setValue(scriptVariable.getVector4ValueReference());
+					break;
+				case TYPE_QUATERNION:
+					setValue(scriptVariable.getQuaternionValueReference());
+					break;
+				case TYPE_MATRIX3x3:
+					setValue(scriptVariable.getMatrix3x3ValueReference());
+					break;
+				case TYPE_MATRIX4x4:
+					setValue(scriptVariable.getMatrix4x4ValueReference());
 					break;
 				case TYPE_TRANSFORM:
 					setValue(scriptVariable.getTransformValueReference());

@@ -2822,7 +2822,7 @@ void MiniScript::registerMethods() {
 			ScriptMethodVec4GetW(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_VECTOR4, .name = "vec4", .optional = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR4, .name = "vec4", .optional = false },
 					},
 					ScriptVariableType::TYPE_FLOAT),
 					miniScript(miniScript) {}
@@ -2840,6 +2840,193 @@ void MiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodVec4GetW(this));
+	}
+	// quaternion methods
+	{
+		//
+		class ScriptMethodQuaternionIdentity: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodQuaternionIdentity(MiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_QUATERNION),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "quaternion.identity";
+			}
+			void executeMethod(const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue.setValue(Quaternion().identity());
+			}
+		};
+		registerMethod(new ScriptMethodQuaternionIdentity(this));
+	}
+	{
+		//
+		class ScriptMethodQuaternionInvert: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodQuaternionInvert(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_VECTOR4, .name = "quaternion", .optional = false },
+					},
+					ScriptVariableType::TYPE_QUATERNION
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "quaternion.invert";
+			}
+			void executeMethod(const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Quaternion quaternion;
+				if (MiniScript::getQuaternionValue(argumentValues, 0, quaternion, false) == true) {
+					returnValue.setValue(quaternion.invert());
+				} else {
+					Console::println("ScriptMethodQuaternionInvert::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: quaternion expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodQuaternionInvert(this));
+	}
+	{
+		//
+		class ScriptMethodQuaternionRotate: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodQuaternionRotate(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "axis", .optional = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "angle", .optional = false }
+					},
+					ScriptVariableType::TYPE_QUATERNION
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "quaternion.rotate";
+			}
+			void executeMethod(const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Vector3 axis;
+				float angle;
+				if (MiniScript::getVector3Value(argumentValues, 0, axis, false) == true &&
+					MiniScript::getFloatValue(argumentValues, 1, angle, false) == true) {
+					returnValue.setValue(Quaternion().rotate(axis, angle));
+				} else {
+					Console::println("ScriptMethodQuaternionRotate::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: vec3 expected, @ argument 1: float expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodQuaternionRotate(this));
+	}
+	{
+		//
+		class ScriptMethodQuaternionNormalize: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodQuaternionNormalize(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_QUATERNION, .name = "quaternion", .optional = false },
+					},
+					ScriptVariableType::TYPE_QUATERNION
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "quaternion.normalize";
+			}
+			void executeMethod(const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Quaternion quaternion;
+				if (MiniScript::getQuaternionValue(argumentValues, 0, quaternion, false) == true) {
+					returnValue.setValue(quaternion.normalize());
+				} else {
+					Console::println("ScriptMethodQuaternionNormalize::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: quaternion expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodQuaternionNormalize(this));
+	}
+	{
+		//
+		class ScriptMethodQuaternionMultiply: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodQuaternionMultiply(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_QUATERNION, .name = "quaternion", .optional = false },
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "quaternion.multiply";
+			}
+			void executeMethod(const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Quaternion quaternion;
+				Quaternion quaternionValue;
+				Vector3 vec3Value;
+				if (argumentValues.size() != 2) {
+					Console::println("ScriptMethodQuaternionMultiply::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: quaternion expected, @ argument 1: quaternion or vec3 expected");
+					miniScript->startErrorScript();
+				} else
+				if (MiniScript::getQuaternionValue(argumentValues, 0, quaternion, false) == true) {
+					if (MiniScript::getQuaternionValue(argumentValues, 1, quaternionValue, false) == true) {
+						returnValue.setValue(quaternion.multiply(quaternionValue));
+					} else
+					if (MiniScript::getVector3Value(argumentValues, 1, vec3Value, false) == true) {
+						returnValue.setValue(quaternion.multiply(vec3Value));
+					} else {
+						Console::println("ScriptMethodQuaternionMultiply::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: quaternion expected, @ argument 1: quaternion or vec3 expected");
+						miniScript->startErrorScript();
+					}
+				} else {
+					Console::println("ScriptMethodQuaternionMultiply::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: quaternion expected, @ argument 1: quaternion or vec3 expected");
+					miniScript->startErrorScript();
+				}
+			}
+			bool isVariadic() override {
+				return true;
+			}
+			bool isMixedReturnValue() override {
+				return true;
+			}
+		};
+		registerMethod(new ScriptMethodQuaternionMultiply(this));
+	}
+	{
+		//
+		class ScriptMethodQuaternionComputeMatrix: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodQuaternionComputeMatrix(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_QUATERNION, .name = "quaternion", .optional = false },
+					},
+					ScriptVariableType::TYPE_MATRIX4x4
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "quaternion.computeMatrix";
+			}
+			void executeMethod(const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Quaternion quaternion;
+				if (MiniScript::getQuaternionValue(argumentValues, 0, quaternion, false) == true) {
+					returnValue.setValue(quaternion.computeMatrix());
+				} else {
+					Console::println("ScriptMethodQuaternionComputeMatrix::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: quaternion expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodQuaternionComputeMatrix(this));
 	}
 	// transform
 	{
