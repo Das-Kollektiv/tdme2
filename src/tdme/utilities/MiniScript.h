@@ -1351,8 +1351,7 @@ public:
 							to_string(matrix3x3Value[5]) + ", " +
 							to_string(matrix3x3Value[6]) + ", " +
 							to_string(matrix3x3Value[7]) + ", " +
-							to_string(matrix3x3Value[8]) + ", " +
-							to_string(matrix3x3Value[9]) + ")";
+							to_string(matrix3x3Value[8]) + ")";
 					}
 					break;
 				case TYPE_MATRIX4x4:

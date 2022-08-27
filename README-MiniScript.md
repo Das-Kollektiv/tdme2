@@ -41,6 +41,13 @@ This is the documentation of MiniScript language. This document is WIP.
 | map.has($map: Map, $key: String): Boolean                                                        |
 | map.remove($map: Map, $key: String): Map                                                         |
 | map.set($map: Map, $key: String, ...): Map                                                       |
+| mat3.identity(): Matrix3x3                                                                       |
+| mat3.multiply($mat3: Matrix3x3, ...): Mixed                                                      |
+| mat3.rotate($angle: Float): Matrix3x3                                                            |
+| mat3.rotateAroundPoint($point: Vector2, $angle: Float): Matrix3x3                                |
+| mat3.rotateAroundTextureCenter($angle: Float): Matrix3x3                                         |
+| mat3.scale(...): Matrix3x3                                                                       |
+| mat3.translate($translation: Vector2): Matrix3x3                                                 |
 | mat4.computeEulerAngles($mat4: Matrix4x4): Vector3                                               |
 | mat4.identity(): Matrix4x4                                                                       |
 | mat4.invert($mat4: Matrix4x4): Matrix4x4                                                         |
