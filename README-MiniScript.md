@@ -59,19 +59,28 @@ This is the documentation of MiniScript language. This document is WIP.
 | math.EPSILON(): Float                                                                            |
 | math.G(): Float                                                                                  |
 | math.PI(): Float                                                                                 |
+| math.abs(...): Mixed                                                                             |
+| math.absmod($value: Float, $range: Float): Float                                                 |
 | math.acos($value: Float): Float                                                                  |
 | math.asin($value: Float): Float                                                                  |
 | math.atan($value: Float): Float                                                                  |
 | math.atan2($y: Float, $x: Float): Float                                                          |
 | math.ceil($value: Float): Float                                                                  |
+| math.clamp(...): Mixed                                                                           |
 | math.cos($value: Float): Float                                                                   |
 | math.exp($value: Float): Float                                                                   |
 | math.floor($value: Float): Float                                                                 |
 | math.log($value: Float): Float                                                                   |
+| math.max(...): Mixed                                                                             |
+| math.min(...): Mixed                                                                             |
+| math.mod($value: Float, $range: Float): Float                                                    |
+| math.pow(...): Mixed                                                                             |
 | math.random(): Float                                                                             |
 | math.round($value: Float): Float                                                                 |
+| math.sign(...): Mixed                                                                            |
 | math.sin($value: Float): Float                                                                   |
 | math.sqrt($value: Float): Float                                                                  |
+| math.square(...): Mixed                                                                          |
 | math.tan($value: Float): Float                                                                   |
 | mul(...): Mixed                                                                                  |
 | not($bool: Boolean): Boolean                                                                     |

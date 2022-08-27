@@ -68,6 +68,26 @@ public:
 	 * @param value value
 	 * @return -1 if value is negative or +1 if positive
 	 */
+	inline static int sign(int value) {
+		if (abs(value) < EPSILON) return 1.0f;
+		return value / Math::abs(value);
+	}
+
+	/**
+	 * Returns sign of value
+	 * @param value value
+	 * @return -1 if value is negative or +1 if positive
+	 */
+	inline static int64_t sign(int64_t value) {
+		if (abs(value) < EPSILON) return 1.0f;
+		return value / Math::abs(value);
+	}
+
+	/**
+	 * Returns sign of value
+	 * @param value value
+	 * @return -1 if value is negative or +1 if positive
+	 */
 	inline static float sign(float value) {
 		if (abs(value) < EPSILON) return 1.0f;
 		return value / Math::abs(value);
@@ -76,7 +96,25 @@ public:
 	/**
 	 * Do the square product
 	 * @param value value
-	 * @return
+	 * @return square product
+	 */
+	inline static int square(int value) {
+		return value * value;
+	}
+
+	/**
+	 * Do the square product
+	 * @param value value
+	 * @return square product
+	 */
+	inline static int64_t square(int64_t value) {
+		return value * value;
+	}
+
+	/**
+	 * Do the square product
+	 * @param value value
+	 * @return square product
 	 */
 	inline static float square(float value) {
 		return value * value;
@@ -220,7 +258,7 @@ public:
 	 * @param value2 value 2
 	 * @return lesser value
 	 */
-	inline static int32_t min(int64_t value1, int64_t value2) {
+	inline static int64_t min(int64_t value1, int64_t value2) {
 		return value1 < value2?value1:value2;
 	}
 
@@ -250,6 +288,16 @@ public:
 	 * @return pow
 	 */
 	inline static int32_t pow(int32_t value1, int32_t value2) {
+		return std::pow(value1, value2);
+	}
+
+	/**
+	 * Returns the value of the value 1 raised to the power of value2
+	 * @param value1 value 1
+	 * @param value2 value 2
+	 * @return pow
+	 */
+	inline static int64_t pow(int64_t value1, int64_t value2) {
 		return std::pow(value1, value2);
 	}
 
