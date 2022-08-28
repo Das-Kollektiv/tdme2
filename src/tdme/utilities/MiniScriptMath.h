@@ -411,7 +411,6 @@ public:
 	}
 
 	/**
-	/**
 	 * Addition
 	 * @param miniScript mini script instance
 	 * @param argumentValues argument values

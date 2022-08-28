@@ -13,8 +13,10 @@ uint128_t::uint128_t(const char *s) {
 }
 
 uint128_t::uint128_t(const bool & b)
-    : uint128_t((uint8_t) b)
-{}
+{
+    LOWER = static_cast<uint8_t>(b);
+    UPPER = 0;
+}
 
 void uint128_t::init(const char *s) {
     if (s == NULL || s[0] == 0){
