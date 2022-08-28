@@ -31,9 +31,7 @@
 #include <tdme/os/threading/SpinLock.h>
 #include <tdme/utilities/fwd-tdme.h>
 
-#if defined(CPU_64BIT) && defined(_MSC_VER)
-	#include <ext/windows-msc/uint128_t/uint128_t.h>
-#endif
+#include <ext/uint128_t/uint128_t.h>
 
 using std::array;
 using std::list;
@@ -59,17 +57,13 @@ using tdme::utilities::ShortBuffer;
 
 #if defined(CPU_64BIT)
 	#define SAMPLER_HASH_MAX	8
-	#if defined(_MSC_VER)
-		#define SAMPLER_HASH_TYPE uint128_t
-		struct UINT128_T_Hash {
-			std::size_t operator()(uint128_t m) const {
-				std::hash<uint64_t> hashVal;
-				return hashVal(m.lower() + m.upper()); // TODO: implement me properly
-			}
-		};
-	#else
-		#define SAMPLER_HASH_TYPE __int128
-	#endif
+	#define SAMPLER_HASH_TYPE uint128_t
+	struct UINT128_T_Hash {
+		std::size_t operator()(uint128_t m) const {
+			std::hash<uint64_t> hashVal;
+			return hashVal(m.lower() + m.upper()); // TODO: implement me properly
+		}
+	};
 #else
 	#define SAMPLER_HASH_MAX 4
 	#define SAMPLER_HASH_TYPE uint64_t
@@ -205,7 +199,7 @@ private:
 		struct context {
 			uint32_t descriptorSets2Idx;
 			array<VkDescriptorSet, DESC_MAX_CACHED> descriptorSets2; // TODO: rename those fuckers
-			#if defined(CPU_64BIT) && defined(_MSC_VER)
+			#if defined(CPU_64BIT)
 				unordered_map<SAMPLER_HASH_TYPE, int, UINT128_T_Hash> texturesDescriptorSetsCache;
 				unordered_map<int32_t, unordered_set<SAMPLER_HASH_TYPE, UINT128_T_Hash>> texturesDescriptorSetsCacheTextureIds;
 			#else

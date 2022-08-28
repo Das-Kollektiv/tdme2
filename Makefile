@@ -867,7 +867,8 @@ ifeq ($(VULKAN), YES)
 	VULKAN_RENDERER_LIB_SRCS = \
 		src/tdme/engine/subsystems/renderer/EngineVKRenderer.cpp \
 		src/tdme/engine/subsystems/renderer/VKGL3CoreShaderProgram.cpp \
-		src/tdme/engine/subsystems/renderer/VKRenderer.cpp
+		src/tdme/engine/subsystems/renderer/VKRenderer.cpp \
+		ext/uint128_t/uint128_t.cpp
 	
 else
 	EXT_GLSLANG_PLATFORM_SRCS =
