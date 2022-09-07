@@ -94,10 +94,10 @@ public:
 	};
 
 	enum StateMachineState {
-		STATE_NONE = -1,
-		STATE_NEXT_STATEMENT,
-		STATE_WAIT,
-		STATE_WAIT_FOR_CONDITION
+		STATEMACHINESTATE_NONE = -1,
+		STATEMACHINESTATE_NEXT_STATEMENT,
+		STATEMACHINESTATE_WAIT,
+		STATEMACHINESTATE_WAIT_FOR_CONDITION
 	};
 
 	struct ScriptStatement {
@@ -1485,7 +1485,7 @@ public:
 	 * Script
 	 */
 	struct Script {
-		enum ScriptType { SCRIPTTYPE_ON, SCRIPTTYPE_ONENABLED };
+		enum ScriptType { SCRIPTTYPE_NONE, SCRIPTTYPE_FUNCTION, SCRIPTTYPE_ON, SCRIPTTYPE_ONENABLED };
 		ScriptType scriptType;
 		int line;
 		string condition;
@@ -1580,6 +1580,13 @@ public:
 protected:
 	static constexpr int ARRAYIDX_NONE { -1 };
 	static constexpr int ARRAYIDX_ADD { -2 };
+	static constexpr int STATE_NONE { -1 };
+	static constexpr int STATEMENTIDX_NONE { -1 };
+	static constexpr int SCRIPTIDX_NONE { -1 };
+	static constexpr int ARGUMENTIDX_NONE { -1 };
+	static constexpr int OPERATORIDX_NONE { -1 };
+	static constexpr int LINEIDX_NONE { -1 };
+	static constexpr int64_t TIME_NONE { -1LL };
 
 	struct ScriptState {
 		enum EndType { ENDTYPE_FOR, ENDTYPE_IF };
@@ -1587,25 +1594,22 @@ protected:
 			SCRIPT,
 			CONDITIONTYPE_FORTIME
 		};
-		struct StateMachineState {
-			int state { -1 };
-			int lastState { -1 };
-			ScriptStateMachineState* lastStateMachineState { nullptr };
-			ScriptVariable arguments;
-		};
+		int state { STATE_NONE };
+		int lastState { STATE_NONE };
+		ScriptStateMachineState* lastStateMachineState { nullptr };
+		ScriptVariable arguments;
 		bool running { false };
-		int scriptIdx { -1 };
-		int statementIdx { -1 };
-		int64_t timeWaitStarted { -1LL };
-		int64_t timeWaitTime { -1LL };
+		int scriptIdx { SCRIPTIDX_NONE };
+		int statementIdx { STATEMENTIDX_NONE };
+		int64_t timeWaitStarted { TIME_NONE };
+		int64_t timeWaitTime { TIME_NONE };
 		string id;
 		unordered_map<string, ScriptVariable*> variables;
 		unordered_map<int, int64_t> forTimeStarted;
 		stack<bool> conditionStack;
 		stack<EndType> endTypeStack;
-		stack<StateMachineState> stateStack;
 		vector<string> enabledNamedConditions;
-		int64_t timeEnabledConditionsCheckLast { -1LL };
+		int64_t timeEnabledConditionsCheckLast { TIME_NONE };
 	};
 
 	//
@@ -1613,7 +1617,7 @@ protected:
 	bool native;
 	vector<Script> scripts;
 	vector<Script> nativeScripts;
-	ScriptState scriptState;
+	vector<ScriptState> scriptStateStack;
 
 	/**
 	 * Initialize native mini script
@@ -1648,7 +1652,7 @@ protected:
 	 * @param statement statement
 	 */
 	void gotoStatementGoto(const ScriptStatement& statement) {
-		scriptState.statementIdx = statement.gotoStatementIdx;
+		getScriptState().statementIdx = statement.gotoStatementIdx;
 	}
 
 	/**
@@ -1677,6 +1681,7 @@ protected:
 	 * @param stateMachineState state machine state
 	 */
 	inline void resetScriptExecutationState(int scriptIdx, StateMachineState stateMachineState) {
+		auto& scriptState = getScriptState();
 		scriptState.enabledNamedConditions.clear();
 		scriptState.forTimeStarted.clear();
 		while (scriptState.conditionStack.empty() == false) scriptState.conditionStack.pop();
@@ -1686,41 +1691,63 @@ protected:
 		scriptState.statementIdx = 0;
 		scriptState.timeWaitStarted = Time::getCurrentMillis();
 		scriptState.timeWaitTime = 0LL;
-		setScriptState(stateMachineState);
+		setScriptStateState(stateMachineState);
 	}
 
 	/**
 	 * Stop script execution
 	 */
 	inline void stopScriptExecutation() {
+		auto& scriptState = getScriptState();
 		//
 		scriptState.running = false;
 		for (auto& scriptVariableIt: scriptState.variables) delete scriptVariableIt.second;
 		scriptState.variables.clear();
-		scriptState.timeEnabledConditionsCheckLast = -1LL;
-		resetScriptExecutationState(-1, STATE_NONE);
+		scriptState.timeEnabledConditionsCheckLast = TIME_NONE;
+		resetScriptExecutationState(SCRIPTIDX_NONE, STATEMACHINESTATE_NONE);
 	}
 
 	/**
 	 * Set script state machine state
 	 * @param state state
 	 */
-	inline void setScriptState(int state) {
-		auto& stateStackTop = scriptState.stateStack.top();
-		stateStackTop.state = state;
-		stateStackTop.lastState = -1;
-		stateStackTop.lastStateMachineState = nullptr;
+	inline void setScriptStateState(int state) {
+		auto& scriptState = getScriptState();
+		scriptState.state = state;
+		scriptState.lastState = STATE_NONE;
+		scriptState.lastStateMachineState = nullptr;
+	}
+
+	/**
+	 * @return is function running
+	 */
+	inline bool isFunctionRunning() {
+		return scriptStateStack.size() > 1;
+	}
+
+	/**
+	 * Push a new script state
+	 */
+	inline void pushScriptState() {
+		scriptStateStack.push_back(ScriptState());
+	}
+
+	/**
+	 * Pop script state
+	 */
+	inline void popScriptState() {
+		scriptStateStack.erase(scriptStateStack.begin() + scriptStateStack.size() - 1);
 	}
 
 	/**
 	 * Determine script index to start
-	 * @return script index or -1 if no script to start
+	 * @return script index or SCRIPTIDX_NONE if no script to start
 	 */
 	virtual int determineScriptIdxToStart();
 
 	/**
 	 * Determine named script index to start
-	 * @return script index or -1 if no script to start
+	 * @return script index or SCRIPTIDX_NONE if no script to start
 	 */
 	virtual int determineNamedScriptIdxToStart();
 
@@ -1730,7 +1757,10 @@ private:
 	//
 	STATIC_DLL_IMPEXT static string OPERATOR_CHARS;
 
-	//
+	// TODO: maybe we need a better naming for this
+	// script functions defined by script itself
+	unordered_map<string, int> scriptFunctions;
+	// script methods defined by using ScriptMethod
 	unordered_map<string, ScriptMethod*> scriptMethods;
 	unordered_map<int, ScriptStateMachineState*> scriptStateMachineStates;
 	unordered_map<uint8_t, ScriptMethod*> scriptOperators;
@@ -1740,7 +1770,7 @@ private:
 
 	//
 	struct ScriptStatementOperator {
-		int idx { -1 };
+		int idx { OPERATORIDX_NONE };
 		ScriptOperator scriptOperator;
 	};
 
@@ -1844,7 +1874,7 @@ private:
 	 * @param injectCode code to additionally inject
 	 * @param additionalIndent additional indent
 	 */
-	bool transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth = 0, int argumentIdx = -1, int parentArgumentIdx = -1, const string& returnValue = string(), const string& injectCode = string(), int additionalIndent = 0);
+	bool transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth = 0, int argumentIdx = ARGUMENTIDX_NONE, int parentArgumentIdx = ARGUMENTIDX_NONE, const string& returnValue = string(), const string& injectCode = string(), int additionalIndent = 0);
 
 	/**
 	 * Get access operator left and right indices
@@ -1957,6 +1987,7 @@ private:
 		//
 		return true;
 	}
+
 	/**
 	 * Returns pointer of variable with given name or nullptr
 	 * @param name name
@@ -1995,20 +2026,44 @@ private:
 			evaluateAccess(name, callerMethod, accessOperatorLeftIdx, accessOperatorRightIdx, arrayIdx, key, statement) == false) {
 			return nullptr;
 		}
-		// retrieve variable from variable map
-		auto scriptVariableIt = scriptState.variables.find(extractedVariableName.empty() == false?extractedVariableName:name);
-		if (scriptVariableIt == scriptState.variables.end()) {
-			if (expectVariable == true) {
-				if (statement != nullptr) {
-					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "' does not exist");
-				} else {
-					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "' does not exist");
+		// retrieve variable from function script state
+		ScriptVariable* variablePtr = nullptr;
+		{
+			auto& scriptState = getScriptState();
+			auto scriptVariableIt = scriptState.variables.find(extractedVariableName.empty() == false?extractedVariableName:name);
+			if (scriptVariableIt == scriptState.variables.end()) {
+				if (isFunctionRunning() == false) {
+					if (expectVariable == true) {
+						if (statement != nullptr) {
+							Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "' does not exist");
+						} else {
+							Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "' does not exist");
+						}
+					}
+					return nullptr;
 				}
+			} else {
+				variablePtr = scriptVariableIt->second;
 			}
-			return nullptr;
+		}
+		// if no success try to retrieve variable from root script state
+		if (variablePtr == nullptr) {
+			auto& scriptState = getRootScriptState();
+			auto scriptVariableIt = scriptState.variables.find(extractedVariableName.empty() == false?extractedVariableName:name);
+			if (scriptVariableIt == scriptState.variables.end()) {
+				if (expectVariable == true) {
+					if (statement != nullptr) {
+						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "' does not exist");
+					} else {
+						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "' does not exist");
+					}
+				}
+				return nullptr;
+			} else {
+				variablePtr = scriptVariableIt->second;
+			}
 		}
 		// get pointer to children variable
-		auto variablePtr = scriptVariableIt->second;
 		if (haveAccessOperator == false) {
 			//
 			return variablePtr;
@@ -2151,24 +2206,17 @@ public:
 	}
 
 	/**
-	 * Push script state
+	 * @return script state
 	 */
-	inline void pushScriptState() {
-		scriptState.stateStack.push(MiniScript::ScriptState::StateMachineState());
+	inline ScriptState& getRootScriptState() {
+		return scriptStateStack[0];
 	}
 
 	/**
-	 * Pop script state
+	 * @return script state
 	 */
-	inline void popScriptState() {
-		scriptState.stateStack.pop();
-	}
-
-	/**
-	 * @return script state machine state
-	 */
-	inline int getScriptState() {
-		return scriptState.stateStack.top().state;
+	inline ScriptState& getScriptState() {
+		return scriptStateStack[scriptStateStack.size() - 1];
 	}
 
 	/**
@@ -2510,6 +2558,7 @@ public:
 		}
 
 		// default
+		auto& scriptState = getScriptState();
 		auto scriptVariableIt = scriptState.variables.find(name);
 		if (scriptVariableIt != scriptState.variables.end()) {
 			*scriptVariableIt->second = variable;
@@ -2563,15 +2612,17 @@ public:
 		string_view method;
 		vector<string_view> arguments;
 		pushScriptState();
+		resetScriptExecutationState(SCRIPTIDX_NONE, STATEMACHINESTATE_NEXT_STATEMENT);
+		getScriptState().running = true;
 		if (parseScriptStatement(scriptEvaluateStatement, method, arguments) == true) {
 			returnValue = executeScriptStatement(
 				method,
 				arguments,
 				{
-					.line = -1,
+					.line = LINEIDX_NONE,
 					.statementIdx = 0,
 					.statement = "Evaluate: " + statement,
-					.gotoStatementIdx = -1
+					.gotoStatementIdx = STATEMENTIDX_NONE
 				}
 			);
 			popScriptState();
@@ -2583,10 +2634,27 @@ public:
 	}
 
 	/**
+	 * Call (script user) function
+	 * @param function (script user) function
+	 * @param argumentValues argument values
+	 * @param returnValue return value
+	 * @return return value
+	 */
+	inline void call(const string& function, const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue) {
+		auto scriptFunctionsIt = scriptFunctions.find(function);
+		if (scriptFunctionsIt == scriptFunctions.end()) {
+			Console::println("MiniScript::call(): Script user function not found: " + function);
+		}
+		pushScriptState();
+		// TODO: arguments and return value
+		resetScriptExecutationState(scriptFunctionsIt->second, STATEMACHINESTATE_NEXT_STATEMENT);
+	}
+
+	/**
 	 * @return is running
 	 */
 	inline bool isRunning() {
-		return scriptState.running;
+		return getScriptState().running;
 	}
 
 	/**

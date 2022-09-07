@@ -1,0 +1,76 @@
+# initialize
+on: initialize
+	console.log("------------")
+	console.log("Initialize")
+	console.log("------------")
+	console.log()
+end
+
+# if no condition is met, nothing will be executed, lol :D
+on: nothing
+	console.log("---------")
+	console.log("Nothing")
+	console.log("----------")
+	console.log()
+	printHelloWorld()
+	script.stop()
+end
+# an error has occurred
+on: error
+	console.log("An error occurred")
+	script.wait(1000)
+end
+
+#function: factorial
+#	if ($f.arguments[0] == 0) 
+#		return(1)
+#	end
+#	return($f.$arguments[0] * factorial($f.$arguments[0] - 1))
+#end 
+
+function: printHelloWorld
+	console.log("hello world")
+	printHelloWorld()
+end
+
+# emit test
+on: emittest
+	console.log("---------------------------------")
+	console.log("SCRIPT JUST EMITTED A CONDITION")
+	console.log("---------------------------------")
+	console.log()
+	console.log("----------")
+	console.log("Benchmark ")
+	console.log("----------")
+	$startTime = time.getCurrentMillis()
+	$i = 0
+	$j = 0
+	$k = 0
+	forCondition($i < 500000)
+		$a = 123 + 456 * (25 / 12) + (7.5 * 12.25) - 8
+		if ($j == 0)
+			$k = $k + 1
+		end
+		$i = $i + 1
+		$j = $j + 1
+		if ($j == 2)
+			$j = 0
+		end
+	end
+	$endTime = time.getCurrentMillis()
+	console.log("Finished. Time: " + ($endTime - $startTime))
+	script.stop()
+end
+# on-enabled with named conditions
+on-enabled: equals(1,1) := named_condition_1
+	script.disableNamedCondition("named_condition_1")
+	console.log("------------------------------------")
+	console.log("named_condition_1 has been emitted")
+	console.log("------------------------------------")
+	console.log()
+	console.log("-----------")
+	console.log("Test emit")
+	console.log("-----------")
+	console.log()
+	script.emit(emittest)
+end
