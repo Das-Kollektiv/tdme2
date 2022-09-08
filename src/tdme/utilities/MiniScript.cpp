@@ -1478,9 +1478,13 @@ void MiniScript::registerMethods() {
 				if (argumentValues.size() == 1) {
 					auto& scriptState = miniScript->getScriptState();
 					scriptState.returnValue = argumentValues[0];
+					scriptState.running = false;
 				} else {
 					Console::println("ScriptMethodReturn::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: mixed expected");
 				}
+			}
+			bool isVariadic() override {
+				return true;
 			}
 		};
 		registerMethod(new ScriptMethodReturn(this));
