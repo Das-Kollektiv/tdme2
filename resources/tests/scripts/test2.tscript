@@ -12,7 +12,8 @@ on: nothing
 	console.log("Nothing")
 	console.log("----------")
 	console.log()
-	printHelloWorld()
+	# printHelloWorld()
+	factorial(5)
 	script.stop()
 end
 # an error has occurred
@@ -21,12 +22,13 @@ on: error
 	script.wait(1000)
 end
 
-#function: factorial
-#	if ($f.arguments[0] == 0) 
-#		return(1)
-#	end
-#	return($f.$arguments[0] * factorial($f.$arguments[0] - 1))
-#end 
+function: factorial
+	console.log("factorial: " + $arguments[0])
+	if ($arguments[0] == 0) 
+		return(1)
+	end
+	return($arguments[0] * factorial($arguments[0] - 1))
+end 
 
 function: printHelloWorld
 	console.log("hello world")

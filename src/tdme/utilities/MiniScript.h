@@ -1608,6 +1608,8 @@ protected:
 		unordered_map<int, int64_t> forTimeStarted;
 		stack<bool> conditionStack;
 		stack<EndType> endTypeStack;
+		// applies for functions only
+		ScriptVariable returnValue;
 	};
 
 	//
@@ -1738,6 +1740,8 @@ protected:
 	 * Pop script state
 	 */
 	inline void popScriptState() {
+		auto& scriptState = getScriptState();
+		for (auto& scriptVariableIt: scriptState.variables) delete scriptVariableIt.second;
 		scriptStateStack.erase(scriptStateStack.begin() + scriptStateStack.size() - 1);
 	}
 
@@ -2640,16 +2644,55 @@ public:
 	 * @param function (script user) function
 	 * @param argumentValues argument values
 	 * @param returnValue return value
-	 * @return return value
+	 * @return success
 	 */
-	inline void call(const string& function, const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue) {
+	inline bool call(const string& function, const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue) {
 		auto scriptFunctionsIt = scriptFunctions.find(function);
 		if (scriptFunctionsIt == scriptFunctions.end()) {
 			Console::println("MiniScript::call(): Script user function not found: " + function);
+			return false;
 		}
+		//
+		auto scriptIdx = scriptFunctionsIt->second;
+		// push a new script state
 		pushScriptState();
-		// TODO: arguments and return value
-		resetScriptExecutationState(scriptFunctionsIt->second, STATEMACHINESTATE_NEXT_STATEMENT);
+		// script state vector could get modified, so
+		{
+			auto& scriptState = getScriptState();
+			auto functionArguments = new ScriptVariable();
+			functionArguments->setType(MiniScript::TYPE_ARRAY);
+			// push arguments in function context
+			for (auto& argumentValue: argumentValues) {
+				functionArguments->pushArrayValue(argumentValue);
+			}
+			//
+			scriptState.variables["$arguments"] = functionArguments;
+		}
+		//
+		resetScriptExecutationState(scriptIdx, STATEMACHINESTATE_NEXT_STATEMENT);
+		// script state vector could get modified, so
+		{
+			auto& scriptState = getScriptState();
+			// run this function dude
+			scriptState.running = true;
+		}
+		for (;true;) {
+			execute();
+			//
+			auto& scriptState = getScriptState();
+			// run this function dude
+			if (scriptState.running == false) break;
+		}
+		// get return value
+		{
+			auto& scriptState = getScriptState();
+			// run this function dude
+			returnValue = scriptState.returnValue;
+		}
+		// done, pop the function script state
+		popScriptState();
+		//
+		return true;
 	}
 
 	/**

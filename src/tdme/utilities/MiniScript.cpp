@@ -84,11 +84,7 @@ MiniScript::MiniScript() {
 MiniScript::~MiniScript() {
 	for (auto& scriptMethodIt: scriptMethods) delete scriptMethodIt.second;
 	for (auto& scriptStateMachineStateIt: scriptStateMachineStates) delete scriptStateMachineStateIt.second;
-	while (scriptStateStack.empty() == false) {
-		auto& scriptState = getScriptState();
-		for (auto& scriptVariableIt: scriptState.variables) delete scriptVariableIt.second;
-		popScriptState();
-	}
+	while (scriptStateStack.empty() == false) popScriptState();
 }
 
 void MiniScript::registerStateMachineState(ScriptStateMachineState* state) {
@@ -319,14 +315,43 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string_view&
 	{
 		auto scriptFunctionsIt = scriptFunctions.find(string(method));
 		if (scriptFunctionsIt != scriptFunctions.end()) {
+			//
+			auto scriptIdx = scriptFunctionsIt->second;
 			// push a new script state
 			pushScriptState();
-			// TODO: arguments and return value
-			resetScriptExecutationState(scriptFunctionsIt->second, STATEMACHINESTATE_NEXT_STATEMENT);
-			auto& scriptState = getScriptState();
-			// run this function dude
-			scriptState.running = true;
-			while (scriptState.running == true) execute();
+			// script state vector could get modified, so
+			{
+				auto& scriptState = getScriptState();
+				auto functionArguments = new ScriptVariable();
+				functionArguments->setType(MiniScript::TYPE_ARRAY);
+				// push arguments in function context
+				for (auto& argumentValue: argumentValues) {
+					functionArguments->pushArrayValue(argumentValue);
+				}
+				//
+				scriptState.variables["$arguments"] = functionArguments;
+			}
+			//
+			resetScriptExecutationState(scriptIdx, STATEMACHINESTATE_NEXT_STATEMENT);
+			// script state vector could get modified, so
+			{
+				auto& scriptState = getScriptState();
+				// run this function dude
+				scriptState.running = true;
+			}
+			for (;true;) {
+				execute();
+				//
+				auto& scriptState = getScriptState();
+				// run this function dude
+				if (scriptState.running == false) break;
+			}
+			// get return value
+			{
+				auto& scriptState = getScriptState();
+				// run this function dude
+				returnValue = scriptState.returnValue;
+			}
 			// done, pop the function script state
 			popScriptState();
 			//
@@ -584,13 +609,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 	for (auto& scriptStateMachineStateIt: scriptStateMachineStates) delete scriptStateMachineStateIt.second;
 	scriptMethods.clear();
 	scriptStateMachineStates.clear();
-	while (scriptStateStack.empty() == false) {
-		auto& scriptState = getScriptState();
-		// shutdown methods and machine states
-		for (auto& scriptVariableIt: scriptState.variables) delete scriptVariableIt.second;
-		//
-		popScriptState();
-	}
+	while (scriptStateStack.empty() == false) popScriptState();
 
 	// shutdown script state
 	pushScriptState();
@@ -1441,6 +1460,30 @@ void MiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodScriptEvaluate(this));
+	}
+	{
+		//
+		class ScriptMethodReturn: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodReturn(MiniScript* miniScript): ScriptMethod(), miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "return";
+			}
+			void executeMethod(const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				if (miniScript->isFunctionRunning() == false) {
+					Console::println("ScriptMethodReturn::executeMethod(): " + getMethodName() + "(): no function is being executed, return($value) has no effect");
+				} else
+				if (argumentValues.size() == 1) {
+					auto& scriptState = miniScript->getScriptState();
+					scriptState.returnValue = argumentValues[0];
+				} else {
+					Console::println("ScriptMethodReturn::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: mixed expected");
+				}
+			}
+		};
+		registerMethod(new ScriptMethodReturn(this));
 	}
 	{
 		//
