@@ -1597,7 +1597,6 @@ protected:
 		int state { STATE_NONE };
 		int lastState { STATE_NONE };
 		ScriptStateMachineState* lastStateMachineState { nullptr };
-		ScriptVariable arguments;
 		bool running { false };
 		int scriptIdx { SCRIPTIDX_NONE };
 		int statementIdx { STATEMENTIDX_NONE };
