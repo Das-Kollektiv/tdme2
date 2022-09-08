@@ -1608,8 +1608,6 @@ protected:
 		unordered_map<int, int64_t> forTimeStarted;
 		stack<bool> conditionStack;
 		stack<EndType> endTypeStack;
-		vector<string> enabledNamedConditions;
-		int64_t timeEnabledConditionsCheckLast { TIME_NONE };
 	};
 
 	//
@@ -1618,6 +1616,10 @@ protected:
 	vector<Script> scripts;
 	vector<Script> nativeScripts;
 	vector<ScriptState> scriptStateStack;
+
+	// root context variables
+	vector<string> enabledNamedConditions;
+	int64_t timeEnabledConditionsCheckLast { TIME_NONE };
 
 	/**
 	 * Initialize native mini script
@@ -1682,7 +1684,7 @@ protected:
 	 */
 	inline void resetScriptExecutationState(int scriptIdx, StateMachineState stateMachineState) {
 		auto& scriptState = getScriptState();
-		scriptState.enabledNamedConditions.clear();
+		if (isFunctionRunning() == false) enabledNamedConditions.clear();
 		scriptState.forTimeStarted.clear();
 		while (scriptState.conditionStack.empty() == false) scriptState.conditionStack.pop();
 		while (scriptState.endTypeStack.empty() == false) scriptState.endTypeStack.pop();
@@ -1703,7 +1705,7 @@ protected:
 		scriptState.running = false;
 		for (auto& scriptVariableIt: scriptState.variables) delete scriptVariableIt.second;
 		scriptState.variables.clear();
-		scriptState.timeEnabledConditionsCheckLast = TIME_NONE;
+		if (isFunctionRunning() == false) timeEnabledConditionsCheckLast = TIME_NONE;
 		resetScriptExecutationState(SCRIPTIDX_NONE, STATEMACHINESTATE_NONE);
 	}
 

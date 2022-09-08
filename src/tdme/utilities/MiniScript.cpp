@@ -532,14 +532,14 @@ void MiniScript::executeStateMachine() {
 		if (native == true && isFunctionRunning() == false) {
 			// check named conditions
 			auto now = Time::getCurrentMillis();
-			if (scriptState.enabledNamedConditions.empty() == false &&
-				(scriptState.timeEnabledConditionsCheckLast == TIME_NONE || now >= scriptState.timeEnabledConditionsCheckLast + 100LL)) {
+			if (enabledNamedConditions.empty() == false &&
+				(timeEnabledConditionsCheckLast == TIME_NONE || now >= timeEnabledConditionsCheckLast + 100LL)) {
 				auto scriptIdxToStart = determineNamedScriptIdxToStart();
 				if (scriptIdxToStart != SCRIPTIDX_NONE && scriptIdxToStart != scriptState.scriptIdx) {
 					//
 					resetScriptExecutationState(scriptIdxToStart, STATEMACHINESTATE_NEXT_STATEMENT);
 				}
-				scriptState.timeEnabledConditionsCheckLast = now;
+				timeEnabledConditionsCheckLast = now;
 			}
 			// stop here
 			break;
@@ -558,15 +558,15 @@ void MiniScript::execute() {
 
 	// check named conditions
 	auto now = Time::getCurrentMillis();
-	if (this->scriptStateStack.size() == 1 &&
-		scriptState.enabledNamedConditions.empty() == false &&
-		(scriptState.timeEnabledConditionsCheckLast == TIME_NONE || now >= scriptState.timeEnabledConditionsCheckLast + 100LL)) {
+	if (isFunctionRunning() == false &&
+		enabledNamedConditions.empty() == false &&
+		(timeEnabledConditionsCheckLast == TIME_NONE || now >= timeEnabledConditionsCheckLast + 100LL)) {
 		auto scriptIdxToStart = determineNamedScriptIdxToStart();
 		if (scriptIdxToStart != SCRIPTIDX_NONE && scriptIdxToStart != scriptState.scriptIdx) {
 			//
 			resetScriptExecutationState(scriptIdxToStart, STATEMACHINESTATE_NEXT_STATEMENT);
 		}
-		scriptState.timeEnabledConditionsCheckLast = now;
+		timeEnabledConditionsCheckLast = now;
 	}
 
 	// execute while having statements to be processed
@@ -923,7 +923,7 @@ int MiniScript::determineNamedScriptIdxToStart() {
 	if (VERBOSE == true) Console::println("MiniScript::determineNamedScriptIdxToStart()");
 	// TODO: we could have a hash map here to speed up enabledConditionName -> script lookup
 	auto& scriptState = getScriptState();
-	for (auto& enabledConditionName: scriptState.enabledNamedConditions) {
+	for (auto& enabledConditionName: enabledNamedConditions) {
 		auto scriptIdx = 0;
 		for (auto& script: scripts) {
 			if (script.scriptType != Script::SCRIPTTYPE_ONENABLED ||
@@ -1350,8 +1350,8 @@ void MiniScript::registerStateMachineStates() {
 			}
 			virtual void execute() override {
 				if (miniScript->getScriptState().statementIdx == STATEMENTIDX_NONE) {
-					miniScript->getScriptState().enabledNamedConditions.clear();
-					miniScript->getScriptState().timeEnabledConditionsCheckLast = TIME_NONE;
+					miniScript->enabledNamedConditions.clear();
+					miniScript->timeEnabledConditionsCheckLast = TIME_NONE;
 					miniScript->setScriptStateState(STATEMACHINESTATE_WAIT_FOR_CONDITION);
 					return;
 				}
@@ -1774,15 +1774,15 @@ void MiniScript::registerMethods() {
 			void executeMethod(const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string name;
 				if (MiniScript::getStringValue(argumentValues, 0, name, false) == true) {
-					miniScript->getScriptState().enabledNamedConditions.erase(
+					miniScript->enabledNamedConditions.erase(
 						remove(
-							miniScript->getScriptState().enabledNamedConditions.begin(),
-							miniScript->getScriptState().enabledNamedConditions.end(),
+							miniScript->enabledNamedConditions.begin(),
+							miniScript->enabledNamedConditions.end(),
 							name
 						),
-						miniScript->getScriptState().enabledNamedConditions.end()
+						miniScript->enabledNamedConditions.end()
 					);
-					miniScript->getScriptState().enabledNamedConditions.push_back(name);
+					miniScript->enabledNamedConditions.push_back(name);
 				} else {
 					Console::println("ScriptMethodScriptWait::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript();
@@ -1810,13 +1810,13 @@ void MiniScript::registerMethods() {
 			void executeMethod(const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string name;
 				if (MiniScript::getStringValue(argumentValues, 0, name, false) == true) {
-					miniScript->getScriptState().enabledNamedConditions.erase(
+					miniScript->enabledNamedConditions.erase(
 						remove(
-							miniScript->getScriptState().enabledNamedConditions.begin(),
-							miniScript->getScriptState().enabledNamedConditions.end(),
+							miniScript->enabledNamedConditions.begin(),
+							miniScript->enabledNamedConditions.end(),
 							name
 						),
-						miniScript->getScriptState().enabledNamedConditions.end()
+						miniScript->enabledNamedConditions.end()
 					);
 				} else {
 					Console::println("ScriptMethodScriptWait::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: string expected");
@@ -1840,7 +1840,7 @@ void MiniScript::registerMethods() {
 			}
 			void executeMethod(const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string result;
-				for (auto& namedCondition: miniScript->getScriptState().enabledNamedConditions) {
+				for (auto& namedCondition: miniScript->enabledNamedConditions) {
 					result+= result.empty() == false?",":namedCondition;
 				}
 				returnValue.setValue(result);

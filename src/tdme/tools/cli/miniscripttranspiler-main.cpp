@@ -349,7 +349,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	generatedDetermineNamedScriptIdxToStartDefinition+= "int " + miniScriptClassName + "::determineNamedScriptIdxToStart() {" + "\n";
 	generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "if (native == false) return MiniScript::determineNamedScriptIdxToStart();" + "\n";
 	generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "auto miniScript = this;" + "\n";
-	generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "for (auto& enabledNamedCondition: scriptState.enabledNamedConditions) {" + "\n";
+	generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "for (auto& enabledNamedCondition: enabledNamedConditions) {" + "\n";
 	{
 		auto scriptIdx = 0;
 		for (auto& script: scripts) {
