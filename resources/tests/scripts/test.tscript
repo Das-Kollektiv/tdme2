@@ -6,6 +6,20 @@ on: initialize
 	console.log()
 end
 
+# user script function of recursive factorial computation 
+function: factorial($value)
+	console.log("factorial(): $arguments = " + $arguments + " / $value = " + $value)
+	if ($value == 0) 
+		return(1)
+	end
+	return($value * factorial($value - 1))
+end 
+
+# user script function to just display some hello world
+function: helloWorldFunction()
+	console.log("helloWorldFunction(): Hello world")
+end
+
 # if no condition is met, nothing will be executed, lol :D
 on: nothing
 	console.log("---------")
@@ -339,6 +353,11 @@ on: nothing
 		console.log($mapKeys[$i] + " = " + map.get($map, $mapKeys[$i]))
 		$i = $i + 1
 	end
+	console.log("-----------")
+	console.log("Functions")
+	console.log("-----------")
+	helloWorldFunction()
+	console.log("factorial(5) = " + factorial(5))
 	console.log("--------------------------------------------------")
 	console.log("Test if enabled naming condition will be emitted")
 	console.log("--------------------------------------------------")
