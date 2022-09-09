@@ -136,9 +136,12 @@ void LogicMiniScript::registerMethods() {
 			LogicMiniScript* miniScript { nullptr };
 		public:
 			ScriptMethodLogicSignalGetArgument(LogicMiniScript* miniScript):
-				ScriptMethod({
-					{ .type = ScriptVariableType::TYPE_INTEGER, .name = "argumentIndex", .optional = false }
-				}),
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "argumentIndex", .optional = false }
+					},
+					ScriptVariableType::TYPE_PSEUDO_MIXED
+				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "logic.signal.getArgument";
@@ -151,9 +154,6 @@ void LogicMiniScript::registerMethods() {
 					Console::println("ScriptMethodLogicSignalGetArgument::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: integer expected");
 					miniScript->startErrorScript();
 				}
-			}
-			bool isMixedReturnValue() override {
-				return true;
 			}
 		};
 		registerMethod(new ScriptMethodLogicSignalGetArgument(this));

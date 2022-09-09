@@ -477,7 +477,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string_view&
 				}
 			}
 			scriptMethod->executeMethod(argumentValues, returnValue, statement);
-			if (scriptMethod->isMixedReturnValue() == false && MiniScript::ScriptVariable::isExpectedType(returnValue.getType(), scriptMethod->getReturnValueType()) == false) {
+			if (MiniScript::ScriptVariable::isExpectedType(returnValue.getType(), scriptMethod->getReturnValueType()) == false) {
 				Console::println(
 					string("MiniScript::executeScriptStatement(): ") +
 					"'" + scriptFileName + "': " +
@@ -1288,7 +1288,7 @@ const string MiniScript::getInformation() {
 					method+="...";
 				}
 				method+= "): ";
-				method+= scriptMethod->isMixedReturnValue() == true?"Mixed":ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType());
+				method+= ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType());
 				methods.push_back(method);
 			}
 			sort(methods.begin(), methods.end());
@@ -1321,7 +1321,7 @@ const string MiniScript::getInformation() {
 					operatorString+="...";
 				}
 				operatorString+= "): ";
-				operatorString+= method->isMixedReturnValue() == true?"Mixed":ScriptVariable::getTypeAsString(method->getReturnValueType());
+				operatorString+= ScriptVariable::getTypeAsString(method->getReturnValueType());
 				operators.push_back(operatorString);
 			}
 			sort(operators.begin(), operators.end());
@@ -1440,7 +1440,7 @@ void MiniScript::registerMethods() {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodScriptEvaluate(MiniScript* miniScript): ScriptMethod(), miniScript(miniScript) {}
+			ScriptMethodScriptEvaluate(MiniScript* miniScript): ScriptMethod({}, TYPE_PSEUDO_MIXED), miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "script.evaluate";
 			}
@@ -1453,9 +1453,6 @@ void MiniScript::registerMethods() {
 				}
 			}
 			bool isVariadic() override {
-				return true;
-			}
-			bool isMixedReturnValue() override {
 				return true;
 			}
 		};
@@ -3081,7 +3078,7 @@ void MiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_QUATERNION, .name = "quaternion", .optional = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_PSEUDO_MIXED
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -3111,9 +3108,6 @@ void MiniScript::registerMethods() {
 				}
 			}
 			bool isVariadic() override {
-				return true;
-			}
-			bool isMixedReturnValue() override {
 				return true;
 			}
 		};
@@ -3329,7 +3323,7 @@ void MiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_MATRIX3x3, .name = "mat3", .optional = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_PSEUDO_MIXED
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -3359,9 +3353,6 @@ void MiniScript::registerMethods() {
 				}
 			}
 			bool isVariadic() override {
-				return true;
-			}
-			bool isMixedReturnValue() override {
 				return true;
 			}
 		};
@@ -3548,7 +3539,7 @@ void MiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_MATRIX4x4, .name = "mat4", .optional = false },
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_PSEUDO_MIXED
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -3582,9 +3573,6 @@ void MiniScript::registerMethods() {
 				}
 			}
 			bool isVariadic() override {
-				return true;
-			}
-			bool isMixedReturnValue() override {
 				return true;
 			}
 		};
@@ -4312,7 +4300,7 @@ void MiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false },
 						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "index", .optional = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_PSEUDO_MIXED
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -4326,9 +4314,6 @@ void MiniScript::registerMethods() {
 				} else {
 					returnValue = argumentValues[0].getArrayValue(index);
 				}
-			}
-			bool isMixedReturnValue() override {
-				return true;
 			}
 		};
 		registerMethod(new ScriptMethodArrayGet(this));
@@ -4587,7 +4572,7 @@ void MiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_MAP, .name = "map", .optional = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_PSEUDO_MIXED
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -4603,9 +4588,6 @@ void MiniScript::registerMethods() {
 				} else {
 					returnValue = argumentValues[0].getMapValue(key);
 				}
-			}
-			bool isMixedReturnValue() override {
-				return true;
 			}
 		};
 		registerMethod(new ScriptMethodMapGet(this));
@@ -4721,7 +4703,7 @@ void MiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "variable", .optional = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_PSEUDO_MIXED
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -4735,9 +4717,6 @@ void MiniScript::registerMethods() {
 					Console::println("ScriptMethodGetVariable::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: string expected");
 					miniScript->startErrorScript();
 				}
-			}
-			bool isMixedReturnValue() override {
-				return true;
 			}
 
 		};
@@ -4755,7 +4734,7 @@ void MiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "variable", .optional = false }
 					},
-					ScriptVariableType::TYPE_VOID
+					ScriptVariableType::TYPE_PSEUDO_MIXED
 				),
 				miniScript(miniScript) {
 				//
@@ -4775,9 +4754,6 @@ void MiniScript::registerMethods() {
 				}
 			}
 			bool isVariadic() override {
-				return true;
-			}
-			bool isMixedReturnValue() override {
 				return true;
 			}
 			ScriptOperator getOperator() override {

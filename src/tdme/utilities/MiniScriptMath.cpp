@@ -25,7 +25,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodAdd(MiniScript* miniScript): MiniScript::ScriptMethod({}, MiniScript::ScriptVariableType::TYPE_VOID), miniScript(miniScript) {}
+			ScriptMethodAdd(MiniScript* miniScript): MiniScript::ScriptMethod({}, MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED), miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "add";
 			}
@@ -33,9 +33,6 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 				MiniScriptMath::add(miniScript, argumentValues, returnValue, statement);
 			}
 			bool isVariadic() override {
-				return true;
-			}
-			bool isMixedReturnValue() override {
 				return true;
 			}
 			MiniScript::ScriptOperator getOperator() override {
@@ -50,7 +47,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodSub(MiniScript* miniScript): MiniScript::ScriptMethod({}, MiniScript::ScriptVariableType::TYPE_VOID), miniScript(miniScript) {}
+			ScriptMethodSub(MiniScript* miniScript): MiniScript::ScriptMethod({}, MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED), miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "sub";
 			}
@@ -58,9 +55,6 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 				MiniScriptMath::sub(miniScript, argumentValues, returnValue, statement);
 			}
 			bool isVariadic() override {
-				return true;
-			}
-			bool isMixedReturnValue() override {
 				return true;
 			}
 			MiniScript::ScriptOperator getOperator() override {
@@ -75,7 +69,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodMul(MiniScript* miniScript): MiniScript::ScriptMethod({}, MiniScript::ScriptVariableType::TYPE_VOID), miniScript(miniScript) {}
+			ScriptMethodMul(MiniScript* miniScript): MiniScript::ScriptMethod({}, MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED), miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "mul";
 			}
@@ -83,9 +77,6 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 				MiniScriptMath::mul(miniScript, argumentValues, returnValue, statement);
 			}
 			bool isVariadic() override {
-				return true;
-			}
-			bool isMixedReturnValue() override {
 				return true;
 			}
 			MiniScript::ScriptOperator getOperator() override {
@@ -100,7 +91,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodDiv(MiniScript* miniScript): MiniScript::ScriptMethod({}, MiniScript::ScriptVariableType::TYPE_VOID), miniScript(miniScript) {}
+			ScriptMethodDiv(MiniScript* miniScript): MiniScript::ScriptMethod({}, MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED), miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "div";
 			}
@@ -108,9 +99,6 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 				MiniScriptMath::div(miniScript, argumentValues, returnValue, statement);
 			}
 			bool isVariadic() override {
-				return true;
-			}
-			bool isMixedReturnValue() override {
 				return true;
 			}
 			MiniScript::ScriptOperator getOperator() override {

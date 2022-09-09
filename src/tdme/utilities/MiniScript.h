@@ -1554,13 +1554,6 @@ public:
 		}
 
 		/**
-		 * @return if mixed return value
-		 */
-		virtual bool isMixedReturnValue() {
-			return false;
-		}
-
-		/**
 		 * @return operator
 		 */
 		virtual ScriptOperator getOperator() {

@@ -56,7 +56,7 @@ int main(int argc, char** argv)
 			method+="...";
 		}
 		method+= "): ";
-		method+= scriptMethod->isMixedReturnValue() == true?"Mixed":MiniScript::ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType());
+		method+= MiniScript::ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType());
 		while (method.size() < 99) method+= " ";
 		method+= "|";
 		methods.push_back(method);
@@ -89,7 +89,7 @@ int main(int argc, char** argv)
 			operatorString+="...";
 		}
 		operatorString+= "): ";
-		operatorString+= method->isMixedReturnValue() == true?"Mixed":MiniScript::ScriptVariable::getTypeAsString(method->getReturnValueType());
+		operatorString+= MiniScript::ScriptVariable::getTypeAsString(method->getReturnValueType());
 		while (operatorString.size() < 99) operatorString+= " ";
 		operatorString+= "|";
 		operators.push_back(operatorString);

@@ -92,6 +92,7 @@ This is the documentation of MiniScript language. This document is WIP.
 | quaternion.multiply($quaternion: Quaternion, ...): Mixed                                         |
 | quaternion.normalize($quaternion: Quaternion): Quaternion                                        |
 | quaternion.rotate($axis: Vector3, $angle: Float): Quaternion                                     |
+| return(...): Void                                                                                |
 | script.disableNamedCondition($name: String): Void                                                |
 | script.emit($condition: String): Void                                                            |
 | script.enableNamedCondition($name: String): Void                                                 |
