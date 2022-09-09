@@ -18,7 +18,7 @@ public:
 	 * @return renderer version
 	 */
 	inline static string getRendererVersion() {
-		return "1.9.145";
+		return "1.9.146";
 	}
 
 };
