@@ -1278,7 +1278,7 @@ const string MiniScript::getInformation() {
 					if (argumentsString.empty() == false) argumentsString+= ", ";
 					argumentsString+= argumentName;
 				}
-				if (argumentsString.empty() == false) argumentsString = "(" + argumentsString + ")";
+				argumentsString = "(" + argumentsString + ")";
 				result+= "function: "; break;
 			}
 			case Script::SCRIPTTYPE_ON: result+= "on: "; break;
@@ -1568,6 +1568,9 @@ void MiniScript::registerMethods() {
 					if (miniScript->getScriptState().statementIdx < miniScript->scripts[miniScript->getScriptState().scriptIdx].statements.size() - 1) {
 						Console::println("ScriptMethodEnd::executeMethod(): end without forXXX/if");
 						miniScript->startErrorScript();
+					} else
+					if (miniScript->isFunctionRunning() == true && miniScript->scriptStateStack.size() == 2) {
+						miniScript->getScriptState().running = false;
 					}
 				} else {
 					auto endType = miniScript->getScriptState().endTypeStack.top();
@@ -1578,10 +1581,6 @@ void MiniScript::registerMethods() {
 							break;
 						case ScriptState::ENDTYPE_IF:
 							miniScript->getScriptState().conditionStack.pop();
-							break;
-						default:
-							// TODO: have a enum here
-							miniScript->popScriptState();
 							break;
 					}
 					if (statement.gotoStatementIdx != STATEMACHINESTATE_NONE) {

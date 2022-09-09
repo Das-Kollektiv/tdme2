@@ -12,6 +12,7 @@ on: nothing
 	console.log("Nothing")
 	console.log("----------")
 	console.log()
+	helloWorldFunction()
 	console.log("factorial(5) = " + factorial(5))
 	script.stop()
 end
@@ -29,3 +30,7 @@ function: factorial($value)
 	end
 	return($arguments[0] * factorial($arguments[0] - 1))
 end 
+
+function: helloWorldFunction()
+	console.log("helloWorldFunction(): Hello world")
+end
