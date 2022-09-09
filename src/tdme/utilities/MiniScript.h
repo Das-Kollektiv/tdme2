@@ -1675,6 +1675,14 @@ protected:
 	}
 
 	/**
+	 * Set native user script functions
+	 * @param native native user script functions
+	 */
+	inline void setNativeScriptFunctions(const unordered_map<string, int> nativeScriptFunctions) {
+		this->scriptFunctions = nativeScriptFunctions;
+	}
+
+	/**
 	 * Execute state machine
 	 */
 	void executeStateMachine();
@@ -1696,6 +1704,13 @@ protected:
 		scriptState.timeWaitStarted = Time::getCurrentMillis();
 		scriptState.timeWaitTime = 0LL;
 		setScriptStateState(stateMachineState);
+	}
+
+	/**
+	 * Set running flag to false
+	 */
+	inline void stopRunning() {
+		getScriptState().running = false;
 	}
 
 	/**
@@ -1880,7 +1895,7 @@ private:
 	 * @param injectCode code to additionally inject
 	 * @param additionalIndent additional indent
 	 */
-	bool transpileScriptStatement(string& generatedCode, const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth = 0, int argumentIdx = ARGUMENTIDX_NONE, int parentArgumentIdx = ARGUMENTIDX_NONE, const string& returnValue = string(), const string& injectCode = string(), int additionalIndent = 0);
+	bool transpileScriptStatement(string& generatedCode, const string_view& method, const span<string_view>& arguments, const ScriptStatement& statement, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth = 0, int argumentIdx = ARGUMENTIDX_NONE, int parentArgumentIdx = ARGUMENTIDX_NONE, const string& returnValue = string(), const string& injectCode = string(), int additionalIndent = 0);
 
 	/**
 	 * Get access operator left and right indices
@@ -2185,6 +2200,15 @@ private:
 	 * @return success
 	 */
 	bool transpileScriptCondition(string& generatedCode, int scriptIdx, const unordered_map<string, vector<string>>& methodCodeMap, const string& returnValue, const string& injectCode, int depth = 0);
+
+	/**
+	 * Call (script user) function
+	 * @param scriptIdx script index
+	 * @param argumentValues argument values
+	 * @param returnValue return value
+	 * @return success
+	 */
+	virtual bool call(int scriptIdx, const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue);
 
 public:
 	/**
@@ -2647,6 +2671,7 @@ public:
 	 * @return success
 	 */
 	inline bool call(const string& function, const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue) {
+		// lookup function
 		auto scriptFunctionsIt = scriptFunctions.find(function);
 		if (scriptFunctionsIt == scriptFunctions.end()) {
 			Console::println("MiniScript::call(): Script user function not found: " + function);
@@ -2654,54 +2679,8 @@ public:
 		}
 		//
 		auto scriptIdx = scriptFunctionsIt->second;
-		// push a new script state
-		pushScriptState();
-		// script state vector could get modified, so
-		{
-			auto& scriptState = getScriptState();
-			auto functionArguments = new ScriptVariable();
-			functionArguments->setType(MiniScript::TYPE_ARRAY);
-			// push arguments in function context
-			for (auto& argumentValue: argumentValues) {
-				functionArguments->pushArrayValue(argumentValue);
-			}
-			// have $arguments
-			scriptState.variables["$arguments"] = functionArguments;
-			// also put named arguments into state context
-			auto i = 0;
-			for (auto& argumentName: scripts[scriptIdx].argumentNames) {
-				if (i == argumentValues.size()) {
-					break;
-				}
-				scriptState.variables[argumentName] = new ScriptVariable(argumentValues[i]);
-				i++;
-			}
-		}
-		//
-		resetScriptExecutationState(scriptIdx, STATEMACHINESTATE_NEXT_STATEMENT);
-		// script state vector could get modified, so
-		{
-			auto& scriptState = getScriptState();
-			// run this function dude
-			scriptState.running = true;
-		}
-		for (;true;) {
-			execute();
-			//
-			auto& scriptState = getScriptState();
-			// run this function dude
-			if (scriptState.running == false) break;
-		}
-		// get return value
-		{
-			auto& scriptState = getScriptState();
-			// run this function dude
-			returnValue = scriptState.returnValue;
-		}
-		// done, pop the function script state
-		popScriptState();
-		//
-		return true;
+		// call it
+		return call(scriptIdx, argumentValues, returnValue);
 	}
 
 	/**

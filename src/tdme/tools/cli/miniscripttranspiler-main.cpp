@@ -230,7 +230,10 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 		for (auto& script: scripts) {
 			// method name
 			string methodName =
-				(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"on_":"on_enabled_") +
+				(script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION?
+					"":
+					(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"on_":"on_enabled_")
+				) +
 				(script.name.empty() == false?script.name:(
 					StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true?
 						script.condition:
@@ -238,10 +241,11 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 					)
 				);
 			//
-			generatedExecuteCode+= headerIndent + "\t\t" + "if (getScriptState().scriptIdx == " + to_string(scriptIdx) + ") " + methodName + "(scriptState.statementIdx);" + (scriptIdx < scripts.size() - 1?" else":"") + "\n";
+			generatedExecuteCode+= headerIndent + "\t\t" + "if (getScriptState().scriptIdx == " + to_string(scriptIdx) + ") " + methodName + "(scriptState.statementIdx); else\n";
 			scriptIdx++;
 		}
 	}
+	if (generatedExecuteCode.empty() == false) generatedExecuteCode+= headerIndent + "\t\t\t" + ";\n";
 
 	// determine "initialize" and "nothing" script indices
 	auto initializeScriptIdx = -1;
@@ -317,7 +321,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 		auto scriptIdx = 0;
 		for (auto& script: scripts) {
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "{" + "\n";
-			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".scriptType = " + (script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"Script::SCRIPTTYPE_ON":"Script::SCRIPTTYPE_ONENABLED") + "," + "\n";
+			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".scriptType = " + (script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION?"Script::SCRIPTTYPE_FUNCTION":(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"Script::SCRIPTTYPE_ON":"Script::SCRIPTTYPE_ONENABLED")) + "," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".line = " + to_string(script.line) + "," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".condition = \"" + StringTools::replace(script.condition, "\"", "\\\"") + "\"," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".executableCondition = \"" + StringTools::replace(script.executableCondition, "\"", "\\\"") + "\"," + "\n";
@@ -335,10 +339,29 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "}" + (statementIdx < script.statements.size() - 1?",":"") + "\n";
 				statementIdx++;
 			}
+			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "}," + "\n";
+			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".argumentNames = {\n";
+			auto argumentNameIdx = 0;
+			for (auto& argumentName: script.argumentNames) {
+				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\"" + argumentName + "\"" + (argumentNameIdx != script.argumentNames.size() - 1?",":"") + "\n";
+				argumentNameIdx++;
+			}
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "}" + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "}" + (scriptIdx < scripts.size() - 1?",":"") + "\n";
 			scriptIdx++;
 		}
+	}
+	initializeNativeDefinition+= methodCodeIndent + "\t" + "}" + "\n";
+	initializeNativeDefinition+= methodCodeIndent + ");" + "\n";
+	initializeNativeDefinition+= methodCodeIndent + "setNativeScriptFunctions(" + "\n";
+	initializeNativeDefinition+= methodCodeIndent + "\t" + "{" + "\n";
+	auto scriptFunctionIdx = 0;
+	for (auto& scriptFunctionIt: scriptInstance->scriptFunctions) {
+		initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "{" + "\n";
+		initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\"" + scriptFunctionIt.first + "\"," + "\n";
+		initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + to_string(scriptFunctionIt.second) + "\n";
+		initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "}" + (scriptFunctionIdx != scriptInstance->scriptFunctions.size() - 1?",":"") + "\n";
+		scriptFunctionIdx++;
 	}
 	initializeNativeDefinition+= methodCodeIndent + "\t" + "}" + "\n";
 	initializeNativeDefinition+= methodCodeIndent + ");" + "\n";
@@ -359,7 +382,10 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 		for (auto& script: scripts) {
 			// method name
 			string methodName =
-				(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"on_":"on_enabled_") +
+				(script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION?
+					"":
+					(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"on_":"on_enabled_")
+				) +
 				(script.name.empty() == false?script.name:(
 					StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == true?
 						script.condition:
@@ -380,13 +406,12 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 				string emitDefinitionIndent = "\t";
 				emitDefinition+= emitDefinitionIndent + "if (condition == \"" + emitName + "\") {" + "\n";
 				emitDefinition+= emitDefinitionIndent + "\t" + methodName + "(-1);" + "\n";
-				emitDefinition+= emitDefinitionIndent + "\t" + "return;" + "\n";
-				emitDefinition+= emitDefinitionIndent + "}" + "\n";
+				emitDefinition+= emitDefinitionIndent + "} else" + "\n";
 			}
 
 			// declaration
 			generatedDeclarations+= headerIndent + "/**" + "\n";
-			generatedDeclarations+= headerIndent + " * Miniscript transpilation of: " + (script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"ON":"ON-ENABLED") + ": " + script.condition + (script.name.empty() == false?" (" + script.name + ")":"") + "\n";
+			generatedDeclarations+= headerIndent + " * Miniscript transpilation of: " + (script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION?"FUNCTION":(script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"ON":"ON-ENABLED")) + ": " + script.condition + (script.name.empty() == false?" (" + script.name + ")":"") + "\n";
 			generatedDeclarations+= headerIndent + " * @param miniScriptGotoStatementIdx MiniScript goto statement index" + "\n";
 			generatedDeclarations+= headerIndent + " */" + "\n";
 			generatedDeclarations+= headerIndent + "void " + methodName + "(int miniScriptGotoStatementIdx);" + "\n";
@@ -434,7 +459,13 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	generatedDetermineNamedScriptIdxToStartDefinition+= string() + "}" + "\n";
 
 	//
-	emitDefinition+= string() + "}" + "\n";
+	{
+		string emitDefinitionIndent = "\t";
+		emitDefinition+= emitDefinitionIndent + "{" + "\n";
+		emitDefinition+= emitDefinitionIndent + "\t" + "Console::println(\"" + miniScriptClassName + "::emit(): no condition with name: '\" + condition + \"'\");" + "\n";
+		emitDefinition+= emitDefinitionIndent + "}" + "\n";
+		emitDefinition+= string() + "}" + "\n";
+	}
 
 	// add emit code
 	generatedDefinitions = initializeNativeDefinition + generatedDetermineScriptIdxToStartDefinition + generatedDetermineNamedScriptIdxToStartDefinition + "\n" + emitDefinition + generatedDefinitions;

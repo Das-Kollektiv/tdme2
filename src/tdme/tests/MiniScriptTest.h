@@ -44,8 +44,9 @@ public:
 			if (getScriptState().scriptIdx == 0) on_initialize(scriptState.statementIdx); else
 			if (getScriptState().scriptIdx == 1) on_nothing(scriptState.statementIdx); else
 			if (getScriptState().scriptIdx == 2) on_error(scriptState.statementIdx); else
-			if (getScriptState().scriptIdx == 3) on_emittest(scriptState.statementIdx); else
-			if (getScriptState().scriptIdx == 4) on_enabled_named_condition_1(scriptState.statementIdx);
+			if (getScriptState().scriptIdx == 3) factorial(scriptState.statementIdx); else
+			if (getScriptState().scriptIdx == 4) helloWorldFunction(scriptState.statementIdx); else
+				;
 		}
 		if (getScriptState().running == false) return;
 		executeStateMachine();
@@ -76,16 +77,16 @@ protected:
 	void on_error(int miniScriptGotoStatementIdx);
 
 	/**
-	 * Miniscript transpilation of: ON: emittest
+	 * Miniscript transpilation of: FUNCTION: factorial
 	 * @param miniScriptGotoStatementIdx MiniScript goto statement index
 	 */
-	void on_emittest(int miniScriptGotoStatementIdx);
+	void factorial(int miniScriptGotoStatementIdx);
 
 	/**
-	 * Miniscript transpilation of: ON-ENABLED: true == true (named_condition_1)
+	 * Miniscript transpilation of: FUNCTION: helloWorldFunction
 	 * @param miniScriptGotoStatementIdx MiniScript goto statement index
 	 */
-	void on_enabled_named_condition_1(int miniScriptGotoStatementIdx);
+	void helloWorldFunction(int miniScriptGotoStatementIdx);
 
 
 	/*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DECLARATIONS_END__*/
