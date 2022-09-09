@@ -342,7 +342,6 @@ on: nothing
 	console.log("--------------------------------------------------")
 	console.log("Test if enabled naming condition will be emitted")
 	console.log("--------------------------------------------------")
-	$a = ((12337 / 4.0)
 	script.enableNamedCondition("named_condition_1")
 	script.wait(2000)
 	script.disableNamedCondition("named_condition_1")
