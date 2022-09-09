@@ -22,8 +22,8 @@ on: error
 	script.wait(1000)
 end
 
-function: factorial
-	console.log("factorial: " + $arguments[0])
+function: factorial($value)
+	console.log("factorial(): $arguments = " + $arguments + " / $value = " + $value)
 	if ($arguments[0] == 0) 
 		return(1)
 	end

@@ -328,8 +328,17 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string_view&
 				for (auto& argumentValue: argumentValues) {
 					functionArguments->pushArrayValue(argumentValue);
 				}
-				//
+				// have $arguments
 				scriptState.variables["$arguments"] = functionArguments;
+				// also put named arguments into state context
+				auto i = 0;
+				for (auto& argumentName: scripts[scriptIdx].argumentNames) {
+					if (i == argumentValues.size()) {
+						break;
+					}
+					scriptState.variables[argumentName] = new ScriptVariable(argumentValues[i]);
+					i++;
+				}
 			}
 			//
 			resetScriptExecutationState(scriptIdx, STATEMACHINESTATE_NEXT_STATEMENT);
@@ -677,6 +686,8 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 			if (scriptType != Script::SCRIPTTYPE_NONE) {
 				// yes
 				haveScript = true;
+				// functions: argument names
+				vector<string> argumentNames;
 				// determine statement
 				string statement;
 				if (scriptType == Script::SCRIPTTYPE_FUNCTION)
@@ -686,11 +697,39 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 				if (scriptType == Script::SCRIPTTYPE_ONENABLED)
 					statement = StringTools::trim(StringTools::substring(scriptLine, string("on-enabled:").size()));
 				// and name
-				string onEnabledName;
+				string name;
 				auto scriptLineNameSeparatorIdx = scriptType == Script::SCRIPTTYPE_FUNCTION?statement.rfind("function:"):statement.rfind(":=");
 				if (scriptLineNameSeparatorIdx != string::npos) {
-					onEnabledName = StringTools::trim(StringTools::substring(statement, scriptLineNameSeparatorIdx + (scriptType == Script::SCRIPTTYPE_FUNCTION?string("function").size():2)));
+					name = StringTools::trim(StringTools::substring(statement, scriptLineNameSeparatorIdx + (scriptType == Script::SCRIPTTYPE_FUNCTION?string("function").size():2)));
 					statement = StringTools::trim(StringTools::substring(statement, 0, scriptLineNameSeparatorIdx));
+				}
+				if (scriptType == Script::SCRIPTTYPE_FUNCTION) {
+					auto leftBracketIdx = statement.find('(');
+					auto rightBracketIdx = statement.find(')');
+					if (leftBracketIdx != string::npos || leftBracketIdx != string::npos) {
+						if (leftBracketIdx == string::npos) {
+							Console::println("MiniScript::MiniScript(): '" + scriptFileName + "': @" + to_string(line) + ": 'function:': unbalanced bracket count");
+							scriptValid = false;
+						} else
+						if (rightBracketIdx == string::npos) {
+							Console::println("MiniScript::MiniScript(): '" + scriptFileName + "': @" + to_string(line) + ": 'function:': unbalanced bracket count");
+							scriptValid = false;
+						} else {
+							auto argumentNamesString = StringTools::trim(StringTools::substring(statement, leftBracketIdx + 1, rightBracketIdx));
+							auto argumentNamesTokenized = StringTools::tokenize(argumentNamesString, ",");
+							statement = StringTools::substring(statement, 0, leftBracketIdx);
+							for (auto& argumentName: argumentNamesTokenized) {
+								auto argumentNameTrimmed = StringTools::trim(argumentName);
+								if (StringTools::regexMatch(argumentNameTrimmed, "\\$[a-zA-Z0-9]+") == true) {
+									argumentNames.push_back(argumentNameTrimmed);
+								} else {
+									Console::println("MiniScript::MiniScript(): '" + scriptFileName + "': @" + to_string(line) + ": 'function:': invalid argument name: '" + argumentNameTrimmed + "'");
+									scriptValid = false;
+								}
+							}
+						}
+
+					}
 				}
 				auto conditionOrNameExecutable = doStatementPreProcessing(StringTools::trim(statement));
 				auto conditionOrName = StringTools::trim(statement);
@@ -707,13 +746,14 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 						.line = line,
 						.condition = conditionOrName,
 						.executableCondition = conditionOrNameExecutable,
-						.name = onEnabledName,
+						.name = name,
 						.emitCondition = emitCondition,
 						.statements = {},
+						.argumentNames = argumentNames,
 					}
 				);
 			} else {
-				Console::println("MiniScript::MiniScript(): '" + scriptFileName + "': @" + to_string(line) + ": expecting 'on:' or 'on-enabled:' script condition");
+				Console::println("MiniScript::MiniScript(): '" + scriptFileName + "': @" + to_string(line) + ": expecting 'on:', 'on-enabled:', 'on-function:' script condition");
 				scriptValid = false;
 			}
 		} else {
@@ -1231,15 +1271,23 @@ const string MiniScript::getInformation() {
 	string result;
 	result+= "Script: " + scriptPathName + "/" + scriptFileName + " (runs " + (native == true?"natively":"interpreted") + ")" + "\n\n";
 	for (auto& script: scripts) {
+		string argumentsString;
 		switch(script.scriptType) {
-			case Script::SCRIPTTYPE_FUNCTION: result+= "function: "; break;
+			case Script::SCRIPTTYPE_FUNCTION: {
+				for (auto& argumentName: script.argumentNames) {
+					if (argumentsString.empty() == false) argumentsString+= ", ";
+					argumentsString+= argumentName;
+				}
+				if (argumentsString.empty() == false) argumentsString = "(" + argumentsString + ")";
+				result+= "function: "; break;
+			}
 			case Script::SCRIPTTYPE_ON: result+= "on: "; break;
 			case Script::SCRIPTTYPE_ONENABLED: result+= "on-enabled: "; break;
 		}
 		if (script.condition.empty() == false)
-			result+= script.condition + "; ";
+			result+= script.condition + argumentsString + "; ";
 		if (script.name.empty() == false) {
-			result+= "name = '" + script.name + "';\n";
+			result+= "name = '" + script.name + argumentsString + "';\n";
 		} else {
 			result+= "\n";
 		}

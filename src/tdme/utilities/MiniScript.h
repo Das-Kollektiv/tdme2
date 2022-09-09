@@ -1491,11 +1491,15 @@ public:
 		enum ScriptType { SCRIPTTYPE_NONE, SCRIPTTYPE_FUNCTION, SCRIPTTYPE_ON, SCRIPTTYPE_ONENABLED };
 		ScriptType scriptType;
 		int line;
+		// applies only for on and on-enabled
 		string condition;
 		string executableCondition;
+		// applies only for on-enabled
 		string name;
 		bool emitCondition;
 		vector<ScriptStatement> statements;
+		// applies only for functions
+		vector<string> argumentNames;
 	};
 
 	/**
@@ -2661,8 +2665,17 @@ public:
 			for (auto& argumentValue: argumentValues) {
 				functionArguments->pushArrayValue(argumentValue);
 			}
-			//
+			// have $arguments
 			scriptState.variables["$arguments"] = functionArguments;
+			// also put named arguments into state context
+			auto i = 0;
+			for (auto& argumentName: scripts[scriptIdx].argumentNames) {
+				if (i == argumentValues.size()) {
+					break;
+				}
+				scriptState.variables[argumentName] = new ScriptVariable(argumentValues[i]);
+				i++;
+			}
 		}
 		//
 		resetScriptExecutationState(scriptIdx, STATEMACHINESTATE_NEXT_STATEMENT);
