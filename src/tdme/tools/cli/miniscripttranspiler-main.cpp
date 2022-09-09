@@ -238,7 +238,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 					)
 				);
 			//
-			generatedExecuteCode+= headerIndent + "\t\t" + "if (scriptState.scriptIdx == " + to_string(scriptIdx) + ") " + methodName + "(scriptState.statementIdx);" + (scriptIdx < scripts.size() - 1?" else":"") + "\n";
+			generatedExecuteCode+= headerIndent + "\t\t" + "if (getScriptState().scriptIdx == " + to_string(scriptIdx) + ") " + methodName + "(scriptState.statementIdx);" + (scriptIdx < scripts.size() - 1?" else":"") + "\n";
 			scriptIdx++;
 		}
 	}
@@ -270,23 +270,25 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	generatedDeclarations+= headerIndent + "\t" + "\t" + "MiniScript::startScript();" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "\t" + "return;" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "}" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "auto& scriptState = getScriptState();" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "for (auto& scriptVariableIt: scriptState.variables) delete scriptVariableIt.second;" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "scriptState.variables.clear();" + "\n";
-	generatedDeclarations+= headerIndent + "\t" + "scriptState.running = true;" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "getScriptState().running = true;" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "registerVariables();" + "\n";
-	generatedDeclarations+= headerIndent + "\t" + "resetScriptExecutationState(" + to_string(initializeScriptIdx) + ", STATE_NEXT_STATEMENT);" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "resetScriptExecutationState(" + to_string(initializeScriptIdx) + ", STATEMACHINESTATE_NEXT_STATEMENT);" + "\n";
 	generatedDeclarations+= headerIndent + "}" + "\n";
 	generatedDeclarations+= headerIndent + "inline void execute() override {" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "if (native == false) {" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "\t" + "MiniScript::execute();" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "\t" + "return;" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "}" + "\n";
-	generatedDeclarations+= headerIndent + "\t" + "if (scriptState.running == false) return;" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "auto& scriptState = getScriptState();" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "if (getScriptState().running == false) return;" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "// execute while having statements to be processed" + "\n";
-	generatedDeclarations+= headerIndent + "\t" + "if (scriptState.stateStack.top().state == STATE_NEXT_STATEMENT) {" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "if (getScriptState().state == STATEMACHINESTATE_NEXT_STATEMENT) {" + "\n";
 	generatedDeclarations+= generatedExecuteCode;
 	generatedDeclarations+= headerIndent + "\t" + "}" + "\n";
-	generatedDeclarations+= headerIndent + "\t" + "if (scriptState.running == false) return;" + "\n";
+	generatedDeclarations+= headerIndent + "\t" + "if (getScriptState().running == false) return;" + "\n";
 	generatedDeclarations+= headerIndent + "\t" + "executeStateMachine();" + "\n";
 	generatedDeclarations+= headerIndent + "};" + "\n";
 	generatedDeclarations+= "\n";
@@ -318,6 +320,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".scriptType = " + (script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?"Script::SCRIPTTYPE_ON":"Script::SCRIPTTYPE_ONENABLED") + "," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".line = " + to_string(script.line) + "," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".condition = \"" + StringTools::replace(script.condition, "\"", "\\\"") + "\"," + "\n";
+			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".executableCondition = \"" + StringTools::replace(script.executableCondition, "\"", "\\\"") + "\"," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".name = \"" + script.name + "\"," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".emitCondition = " + (script.emitCondition == true?"true":"false") + "," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".statements = {" + "\n";

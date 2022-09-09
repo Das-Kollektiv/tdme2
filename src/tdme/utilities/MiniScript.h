@@ -1492,6 +1492,7 @@ public:
 		ScriptType scriptType;
 		int line;
 		string condition;
+		string executableCondition;
 		string name;
 		bool emitCondition;
 		vector<ScriptStatement> statements;
