@@ -125,7 +125,7 @@ void MiniScript::executeScriptLine() {
 
 	string_view method;
 	vector<string_view> arguments;
-	if (parseScriptStatement(statement.statement, method, arguments) == true) {
+	if (parseScriptStatement(statement.executableStatement, method, arguments) == true) {
 		auto returnValue = executeScriptStatement(method, arguments, statement);
 	} else {
 		Console::println("MiniScript::executeScriptLine(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': parse error");
@@ -726,31 +726,31 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 					switch(gotoStatementStackElement.type) {
 						case GOTOSTATEMENTTYPE_FOR:
 							{
-								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .gotoStatementIdx = gotoStatementStackElement.statementIdx });
+								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = scriptLine, .gotoStatementIdx = gotoStatementStackElement.statementIdx });
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
 							}
 							break;
 						case GOTOSTATEMENTTYPE_IF:
 							{
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
-								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .gotoStatementIdx = STATEMENTIDX_NONE });
+								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = scriptLine, .gotoStatementIdx = STATEMENTIDX_NONE });
 							}
 							break;
 						case GOTOSTATEMENTTYPE_ELSE:
 							{
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
-								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .gotoStatementIdx = STATEMENTIDX_NONE });
+								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = scriptLine, .gotoStatementIdx = STATEMENTIDX_NONE });
 							}
 							break;
 						case GOTOSTATEMENTTYPE_ELSEIF:
 							{
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
-								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .gotoStatementIdx = STATEMENTIDX_NONE });
+								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = scriptLine, .gotoStatementIdx = STATEMENTIDX_NONE });
 							}
 							break;
 					}
 				} else{
-					scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = "end", .gotoStatementIdx = STATEMENTIDX_NONE });
+					scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = scriptLine, .gotoStatementIdx = STATEMENTIDX_NONE });
 					haveScript = false;
 				}
 			} else
@@ -762,13 +762,13 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 						case GOTOSTATEMENTTYPE_IF:
 							{
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
-								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .gotoStatementIdx = STATEMENTIDX_NONE });
+								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = scriptLine, .gotoStatementIdx = STATEMENTIDX_NONE });
 							}
 							break;
 						case GOTOSTATEMENTTYPE_ELSEIF:
 							{
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
-								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .gotoStatementIdx = STATEMENTIDX_NONE });
+								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = scriptLine, .gotoStatementIdx = STATEMENTIDX_NONE });
 							}
 							break;
 						default:
@@ -788,7 +788,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 				}
 			} else
 			if (StringTools::regexMatch(scriptLine, "^elseif[\\s]*\\(.*\\)$") == true) {
-				scriptLine = doStatementPreProcessing(scriptLine);
+				auto executableStatement = doStatementPreProcessing(scriptLine);
 				if (gotoStatementStack.empty() == false) {
 					auto gotoStatementStackElement = gotoStatementStack.top();
 					gotoStatementStack.pop();
@@ -796,13 +796,13 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 						case GOTOSTATEMENTTYPE_IF:
 							{
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
-								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .gotoStatementIdx = STATEMENTIDX_NONE });
+								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = executableStatement, .gotoStatementIdx = STATEMENTIDX_NONE });
 							}
 							break;
 						case GOTOSTATEMENTTYPE_ELSEIF:
 							{
 								scripts[scripts.size() - 1].statements[gotoStatementStackElement.statementIdx].gotoStatementIdx = scripts[scripts.size() - 1].statements.size();
-								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .gotoStatementIdx = STATEMENTIDX_NONE });
+								scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = executableStatement, .gotoStatementIdx = STATEMENTIDX_NONE });
 							}
 							break;
 						default:
@@ -820,9 +820,9 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 					Console::println("MiniScript::MiniScript(): '" + scriptFileName + ": @" + to_string(line) + ": elseif without if");
 				}
 			} else {
-				scriptLine = doStatementPreProcessing(scriptLine);
-				if (StringTools::regexMatch(scriptLine, "^forTime[\\s]*\\(.*\\)$") == true ||
-					StringTools::regexMatch(scriptLine, "^forCondition[\\s]*\\(.*\\)$") == true) {
+				auto executableStatement = doStatementPreProcessing(scriptLine);
+				if (StringTools::regexMatch(executableStatement, "^forTime[\\s]*\\(.*\\)$") == true ||
+					StringTools::regexMatch(executableStatement, "^forCondition[\\s]*\\(.*\\)$") == true) {
 					gotoStatementStack.push(
 						{
 							.type = GOTOSTATEMENTTYPE_FOR,
@@ -830,7 +830,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 						}
 					);
 				} else
-				if (StringTools::regexMatch(scriptLine, "^if[\\s]*\\(.*\\)$") == true) {
+				if (StringTools::regexMatch(executableStatement, "^if[\\s]*\\(.*\\)$") == true) {
 					gotoStatementStack.push(
 						{
 							.type = GOTOSTATEMENTTYPE_IF,
@@ -838,7 +838,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 						}
 					);
 				}
-				scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .gotoStatementIdx = STATEMENTIDX_NONE });
+				scripts[scripts.size() - 1].statements.push_back({ .line = line, .statementIdx = statementIdx, .statement = scriptLine, .executableStatement = executableStatement, .gotoStatementIdx = STATEMENTIDX_NONE });
 			}
 			statementIdx++;
 		}

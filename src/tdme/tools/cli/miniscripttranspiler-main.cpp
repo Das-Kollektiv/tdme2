@@ -327,6 +327,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + ".line = " + to_string(statement.line) + "," + "\n";
 				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + ".statementIdx = " + to_string(statement.statementIdx) + "," + "\n";
 				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + ".statement = \"" + StringTools::replace(statement.statement, "\"", "\\\"") + "\"," + "\n";
+				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + ".executableStatement = \"" + StringTools::replace(statement.executableStatement, "\"", "\\\"") + "\"," + "\n";
 				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + ".gotoStatementIdx = " + to_string(statement.gotoStatementIdx) + "\n";
 				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "}" + (statementIdx < script.statements.size() - 1?",":"") + "\n";
 				statementIdx++;

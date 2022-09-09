@@ -104,6 +104,7 @@ public:
 		int line;
 		int statementIdx;
 		string statement;
+		string executableStatement;
 		int gotoStatementIdx;
 	};
 
