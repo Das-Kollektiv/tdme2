@@ -140,42 +140,42 @@ public:
 		 * @return boolean value reference
 		 */
 		inline bool& getBooleanValueReference() {
-			return *static_cast<bool*>(valuePtr);
+			return *(bool*)(&valuePtr);
 		}
 
 		/**
 		 * @return const boolean value reference
 		 */
 		inline const bool& getBooleanValueReference() const {
-			return *static_cast<bool*>(valuePtr);
+			return *(bool*)(&valuePtr);
 		}
 
 		/**
 		 * @return integer value reference
 		 */
 		inline int64_t& getIntegerValueReference() {
-			return *static_cast<int64_t*>(valuePtr);
+			return *(int64_t*)(&valuePtr);
 		}
 
 		/**
 		 * @return const integer value reference
 		 */
-		inline const int64_t& getIntegerValueReference() const {
-			return *static_cast<int64_t*>(valuePtr);
+		inline const int64_t getIntegerValueReference() const {
+			return *(int64_t*)(&valuePtr);
 		}
 
 		/**
 		 * @return float value reference
 		 */
 		inline float& getFloatValueReference() {
-			return *static_cast<float*>(valuePtr);
+			return *(float*)(&valuePtr);
 		}
 
 		/**
 		 * @return const float value reference
 		 */
 		inline const float& getFloatValueReference() const {
-			return *static_cast<float*>(valuePtr);
+			return *(float*)(&valuePtr);
 		}
 
 		/**
@@ -555,13 +555,10 @@ public:
 				case TYPE_VOID:
 					break;
 				case TYPE_BOOLEAN:
-					delete static_cast<bool*>(valuePtr);
 					break;
 				case TYPE_INTEGER:
-					delete static_cast<int64_t*>(valuePtr);
 					break;
 				case TYPE_FLOAT:
-					delete static_cast<float*>(valuePtr);
 					break;
 				case TYPE_STRING:
 					delete static_cast<string*>(valuePtr);
@@ -600,13 +597,10 @@ public:
 				case TYPE_VOID:
 					break;
 				case TYPE_BOOLEAN:
-					valuePtr = new bool();
 					break;
 				case TYPE_INTEGER:
-					valuePtr = new int64_t();
 					break;
 				case TYPE_FLOAT:
-					valuePtr = new float();
 					break;
 				case TYPE_STRING:
 					valuePtr = new string();
