@@ -122,7 +122,8 @@ public:
 		TYPE_TRANSFORM,
 		TYPE_ARRAY,
 		TYPE_MAP,
-		TYPE_PSEUDO_NUMBER
+		TYPE_PSEUDO_NUMBER,
+		TYPE_PSEUDO_MIXED
 	};
 
 	/**
@@ -1239,6 +1240,8 @@ public:
 			switch(expectedType) {
 				case TYPE_PSEUDO_NUMBER:
 					return type == TYPE_INTEGER || type == TYPE_FLOAT;
+				case TYPE_PSEUDO_MIXED:
+					return true;
 				default:
 					return false;
 			}
@@ -1264,6 +1267,7 @@ public:
 				case TYPE_ARRAY: return "Array";
 				case TYPE_MAP: return "Map";
 				case TYPE_PSEUDO_NUMBER: return "Number";
+				case TYPE_PSEUDO_MIXED: return "Mixed";
 			}
 			return string();
 		}
@@ -1438,6 +1442,10 @@ public:
 					}
 				case TYPE_PSEUDO_NUMBER:
 					result+= "Number";
+					break;
+				case TYPE_PSEUDO_MIXED:
+					result+= "Mixed";
+					break;
 
 			}
 			return result;
