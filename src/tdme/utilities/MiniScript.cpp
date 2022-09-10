@@ -1540,7 +1540,15 @@ void MiniScript::registerMethods() {
 				if (miniScript->getStringValue(argumentValues, 0, function) == false) {
 					Console::println("ScriptMethodReturn::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: string expected");
 				} else {
-					miniScript->call(function, span(argumentValues.begin() + 1, argumentValues.end()), returnValue);
+					#if defined (__APPLE__)
+						// MACOSX currently does not support initializing span using begin and end iterators,
+						// so we need to make a copy of argumentValues beginning from second element
+						vector<ScriptVariable> callArgumentValues;
+						for (auto i = 1; i < argumentValues.size(); i++) callArgumentValues.push_back(argumentValues[i]);
+						miniScript->call(function, callArgumentValues, returnValue);
+					#else
+						miniScript->call(function, span(argumentValues.begin() + 1, argumentValues.end()), returnValue);
+					#endif
 				}
 			}
 			bool isVariadic() override {

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cmath>
-#include <cstdlib>
 
 #include <tdme/tdme.h>
 #include <tdme/math/fwd-tdme.h>
@@ -316,7 +315,7 @@ public:
 	 * @return random value
 	 */
 	inline static float random() {
-		return (float)rand() / (float)RAND_MAX;
+		return (float)std::rand() / (float)RAND_MAX;
 	}
 
 	/**

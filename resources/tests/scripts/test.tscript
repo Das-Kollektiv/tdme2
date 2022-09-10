@@ -163,6 +163,8 @@ on: nothing
 	console.log("math.tan(1.0): ", math.tan(1.0))
 	console.log("math.sqrt(9.0): ", math.sqrt(9))
 	console.log("math.random(): ", math.random())
+	console.log("math.random(): ", math.random())
+	console.log("math.random(): ", math.random())
 	console.log("math.exp(1.0): ", math.exp(1.0))
 	console.log("math.log(2.0): ", math.log(2.0))
 	console.log("math.sign(-2): ", math.sign(-2))
