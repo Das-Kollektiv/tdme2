@@ -136,7 +136,7 @@ public:
 	private:
 
 		ScriptVariableType type { TYPE_VOID };
-		void* valuePtr { nullptr };
+		uint64_t valuePtr { 0LL };
 
 		/**
 		 * @return boolean value reference
@@ -184,140 +184,140 @@ public:
 		 * @return string value reference
 		 */
 		inline string& getStringValueReference() {
-			return *static_cast<string*>(valuePtr);
+			return *static_cast<string*>((void*)valuePtr);
 		}
 
 		/**
 		 * @return const string value reference
 		 */
 		inline const string& getStringValueReference() const {
-			return *static_cast<string*>(valuePtr);
+			return *static_cast<string*>((void*)valuePtr);
 		}
 
 		/**
 		 * @return vector2 value reference
 		 */
 		inline Vector2& getVector2ValueReference() {
-			return *static_cast<Vector2*>(valuePtr);
+			return *static_cast<Vector2*>((void*)valuePtr);
 		}
 
 		/**
 		 * @return const vector2 value reference
 		 */
 		inline const Vector2& getVector2ValueReference() const {
-			return *static_cast<Vector2*>(valuePtr);
+			return *static_cast<Vector2*>((void*)valuePtr);
 		}
 
 		/**
 		 * @return vector3 value reference
 		 */
 		inline Vector3& getVector3ValueReference() {
-			return *static_cast<Vector3*>(valuePtr);
+			return *static_cast<Vector3*>((void*)valuePtr);
 		}
 
 		/**
 		 * @return const vector3 value reference
 		 */
 		inline const Vector3& getVector3ValueReference() const {
-			return *static_cast<Vector3*>(valuePtr);
+			return *static_cast<Vector3*>((void*)valuePtr);
 		}
 
 		/**
 		 * @return vector4 value reference
 		 */
 		inline Vector4& getVector4ValueReference() {
-			return *static_cast<Vector4*>(valuePtr);
+			return *static_cast<Vector4*>((void*)valuePtr);
 		}
 
 		/**
 		 * @return const vector4 value reference
 		 */
 		inline const Vector4& getVector4ValueReference() const {
-			return *static_cast<Vector4*>(valuePtr);
+			return *static_cast<Vector4*>((void*)valuePtr);
 		}
 
 		/**
 		 * @return quaternion value reference
 		 */
 		inline Quaternion& getQuaternionValueReference() {
-			return *static_cast<Quaternion*>(valuePtr);
+			return *static_cast<Quaternion*>((void*)valuePtr);
 		}
 
 		/**
 		 * @return const quaternion value reference
 		 */
 		inline const Quaternion& getQuaternionValueReference() const {
-			return *static_cast<Quaternion*>(valuePtr);
+			return *static_cast<Quaternion*>((void*)valuePtr);
 		}
 
 		/**
 		 * @return matrix3x3 value reference
 		 */
 		inline Matrix2D3x3& getMatrix3x3ValueReference() {
-			return *static_cast<Matrix2D3x3*>(valuePtr);
+			return *static_cast<Matrix2D3x3*>((void*)valuePtr);
 		}
 
 		/**
 		 * @return const matrix3x3 value reference
 		 */
 		inline const Matrix2D3x3& getMatrix3x3ValueReference() const {
-			return *static_cast<Matrix2D3x3*>(valuePtr);
+			return *static_cast<Matrix2D3x3*>((void*)valuePtr);
 		}
 
 		/**
 		 * @return matrix4x4 value reference
 		 */
 		inline Matrix4x4& getMatrix4x4ValueReference() {
-			return *static_cast<Matrix4x4*>(valuePtr);
+			return *static_cast<Matrix4x4*>((void*)valuePtr);
 		}
 
 		/**
 		 * @return const matrix4x4 value reference
 		 */
 		inline const Matrix4x4& getMatrix4x4ValueReference() const {
-			return *static_cast<Matrix4x4*>(valuePtr);
+			return *static_cast<Matrix4x4*>((void*)valuePtr);
 		}
 
 		/**
 		 * @return transform value reference
 		 */
 		inline Transform& getTransformValueReference() {
-			return *static_cast<Transform*>(valuePtr);
+			return *static_cast<Transform*>((void*)valuePtr);
 		}
 
 		/**
 		 * @return const transform value reference
 		 */
 		inline const Transform& getTransformValueReference() const {
-			return *static_cast<Transform*>(valuePtr);
+			return *static_cast<Transform*>((void*)valuePtr);
 		}
 
 		/**
 		 * @return array value reference
 		 */
 		inline vector<ScriptVariable>& getArrayValueReference() {
-			return *static_cast<vector<ScriptVariable>*>(valuePtr);
+			return *static_cast<vector<ScriptVariable>*>((void*)valuePtr);
 		}
 
 		/**
 		 * @return const array value reference
 		 */
 		inline const vector<ScriptVariable>& getArrayValueReference() const {
-			return *static_cast<vector<ScriptVariable>*>(valuePtr);
+			return *static_cast<vector<ScriptVariable>*>((void*)valuePtr);
 		}
 
 		/**
 		 * @return map value reference
 		 */
 		inline unordered_map<string, ScriptVariable>& getMapValueReference() {
-			return *static_cast<unordered_map<string, ScriptVariable>*>(valuePtr);
+			return *static_cast<unordered_map<string, ScriptVariable>*>((void*)valuePtr);
 		}
 
 		/**
 		 * @return const map value reference
 		 */
 		inline const unordered_map<string, ScriptVariable>& getMapValueReference() const {
-			return *static_cast<unordered_map<string, ScriptVariable>*>(valuePtr);
+			return *static_cast<unordered_map<string, ScriptVariable>*>((void*)valuePtr);
 		}
 
 	public:
@@ -563,37 +563,37 @@ public:
 				case TYPE_FLOAT:
 					break;
 				case TYPE_STRING:
-					delete static_cast<string*>(valuePtr);
+					delete static_cast<string*>((void*)valuePtr);
 					break;
 				case TYPE_VECTOR2:
-					delete static_cast<Vector2*>(valuePtr);
+					delete static_cast<Vector2*>((void*)valuePtr);
 					break;
 				case TYPE_VECTOR3:
-					delete static_cast<Vector3*>(valuePtr);
+					delete static_cast<Vector3*>((void*)valuePtr);
 					break;
 				case TYPE_VECTOR4:
-					delete static_cast<Vector4*>(valuePtr);
+					delete static_cast<Vector4*>((void*)valuePtr);
 					break;
 				case TYPE_QUATERNION:
-					delete static_cast<Quaternion*>(valuePtr);
+					delete static_cast<Quaternion*>((void*)valuePtr);
 					break;
 				case TYPE_MATRIX3x3:
-					delete static_cast<Matrix2D3x3*>(valuePtr);
+					delete static_cast<Matrix2D3x3*>((void*)valuePtr);
 					break;
 				case TYPE_MATRIX4x4:
-					delete static_cast<Matrix4x4*>(valuePtr);
+					delete static_cast<Matrix4x4*>((void*)valuePtr);
 					break;
 				case TYPE_TRANSFORM:
-					delete static_cast<Transform*>(valuePtr);
+					delete static_cast<Transform*>((void*)valuePtr);
 					break;
 				case TYPE_ARRAY:
-					delete static_cast<vector<ScriptVariable>*>(valuePtr);
+					delete static_cast<vector<ScriptVariable>*>((void*)valuePtr);
 					break;
 				case TYPE_MAP:
-					delete static_cast<unordered_map<string, ScriptVariable>*>(valuePtr);
+					delete static_cast<unordered_map<string, ScriptVariable>*>((void*)valuePtr);
 					break;
 			}
-			this->valuePtr = nullptr;
+			this->valuePtr = 0LL;
 			this->type = newType;
 			switch(type) {
 				case TYPE_VOID:
@@ -605,34 +605,34 @@ public:
 				case TYPE_FLOAT:
 					break;
 				case TYPE_STRING:
-					valuePtr = new string();
+					valuePtr = (uint64_t)(new string());
 					break;
 				case TYPE_VECTOR2:
-					valuePtr = new Vector2();
+					valuePtr = (uint64_t)(new Vector2());
 					break;
 				case TYPE_VECTOR3:
-					valuePtr = new Vector3();
+					valuePtr = (uint64_t)(new Vector3());
 					break;
 				case TYPE_VECTOR4:
-					valuePtr = new Vector4();
+					valuePtr = (uint64_t)(new Vector4());
 					break;
 				case TYPE_QUATERNION:
-					valuePtr = new Quaternion();
+					valuePtr = (uint64_t)(new Quaternion());
 					break;
 				case TYPE_MATRIX3x3:
-					valuePtr = new Matrix2D3x3();
+					valuePtr = (uint64_t)(new Matrix2D3x3());
 					break;
 				case TYPE_MATRIX4x4:
-					valuePtr = new Matrix4x4();
+					valuePtr = (uint64_t)(new Matrix4x4());
 					break;
 				case TYPE_TRANSFORM:
-					valuePtr = new Transform();
+					valuePtr = (uint64_t)(new Transform());
 					break;
 				case TYPE_ARRAY:
-					valuePtr = new vector<ScriptVariable>();
+					valuePtr = (uint64_t)(new vector<ScriptVariable>());
 					break;
 				case TYPE_MAP:
-					valuePtr = new unordered_map<string, ScriptVariable>();
+					valuePtr = (uint64_t)(new unordered_map<string, ScriptVariable>());
 					break;
 			}
 		}
@@ -1668,7 +1668,7 @@ protected:
 
 	/**
 	 * Set native scripts
-	 * @param native native scripts
+	 * @param nativeScripts native scripts
 	 */
 	inline void setNativeScripts(const vector<Script>& nativeScripts) {
 		this->nativeScripts = nativeScripts;
@@ -1676,9 +1676,9 @@ protected:
 
 	/**
 	 * Set native user script functions
-	 * @param native native user script functions
+	 * @param nativeScriptFunctions native user script functions
 	 */
-	inline void setNativeScriptFunctions(const unordered_map<string, int> nativeScriptFunctions) {
+	inline void setNativeScriptFunctions(const unordered_map<string, int>& nativeScriptFunctions) {
 		this->scriptFunctions = nativeScriptFunctions;
 	}
 
@@ -2651,7 +2651,8 @@ public:
 				{
 					.line = LINEIDX_NONE,
 					.statementIdx = 0,
-					.statement = "Evaluate: " + statement,
+					.statement = "script.evaluate(" + statement + ")",
+					.executableStatement = "script.evaluate(" + statement + ")",
 					.gotoStatementIdx = STATEMENTIDX_NONE
 				}
 			);
