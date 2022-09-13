@@ -205,6 +205,7 @@
 	- works with the following data types: boolean, integer, float, string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, array and map
 	- when calling script methods/returning from methods it does not use references or pointers but only value by copy
 	- supports user script functions and recursion
+	- supports kind of references by optionally assigning back argument values to variables
 	- supports operators by operator to method mapping by a preprocessor run
 	- supports loops and conditions
 	- sort of event based
@@ -294,7 +295,7 @@
 # 5. What is WIP or planned for first BETA
 - MiniScript: more engine bindings(WIP)
 - MiniScript: implement sets
-- MiniScript: implement value by references for arguments
+- MiniScript: implement value by references for arguments(WIP)
 - Editor: Code editing with code completion, also visual code editing is planned! (wip)
 - Shaders: Implement a new more abstract shader system using e.g. shader parameter system and add a visual/code shader editor on top
 - Particle System: overhaul
