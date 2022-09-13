@@ -1488,6 +1488,10 @@ public:
 	 * Script
 	 */
 	struct Script {
+		struct ScriptArgument {
+			string name;
+			bool assignBack;
+		};
 		enum ScriptType { SCRIPTTYPE_NONE, SCRIPTTYPE_FUNCTION, SCRIPTTYPE_ON, SCRIPTTYPE_ONENABLED };
 		ScriptType scriptType;
 		int line;
@@ -1499,7 +1503,7 @@ public:
 		bool emitCondition;
 		vector<ScriptStatement> statements;
 		// applies only for functions
-		vector<string> argumentNames;
+		vector<ScriptArgument> arguments;
 	};
 
 	/**
@@ -1511,6 +1515,7 @@ public:
 			ScriptVariableType type;
 			string name;
 			bool optional;
+			bool assignBack;
 		};
 
 		/**
@@ -1536,7 +1541,7 @@ public:
 		 * @param returnValue return value
 		 * @param statement statement
 		 */
-		virtual void executeMethod(const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) = 0;
+		virtual void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) = 0;
 
 		/**
 		 * @return arguments
@@ -2067,8 +2072,8 @@ private:
 				variablePtr = scriptVariableIt->second;
 			}
 		}
-		// if no success try to retrieve variable from root script state
-		if (variablePtr == nullptr) {
+		// if no success try to retrieve variable from root script state, but only when expecting variable aka reading variable
+		if (expectVariable == true && variablePtr == nullptr) {
 			auto& scriptState = getRootScriptState();
 			auto scriptVariableIt = scriptState.variables.find(extractedVariableName.empty() == false?extractedVariableName:name);
 			if (scriptVariableIt == scriptState.variables.end()) {
@@ -2084,6 +2089,8 @@ private:
 				variablePtr = scriptVariableIt->second;
 			}
 		}
+		//
+		if (variablePtr == nullptr) return nullptr;
 		// get pointer to children variable
 		if (haveAccessOperator == false) {
 			//
@@ -2208,7 +2215,7 @@ private:
 	 * @param returnValue return value
 	 * @return success
 	 */
-	virtual bool call(int scriptIdx, const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue);
+	virtual bool call(int scriptIdx, span<ScriptVariable>& argumentValues, ScriptVariable& returnValue);
 
 public:
 	/**
@@ -2514,7 +2521,7 @@ public:
 		ScriptVariable* parentVariable = nullptr;
 		string key;
 		int64_t arrayIdx = ARRAYIDX_NONE;
-		auto variablePtr = getVariableIntern(name, __FUNCTION__, parentVariable, arrayIdx, key, statement, false);
+		auto variablePtr = getVariableIntern(name, __FUNCTION__, parentVariable, arrayIdx, key, statement, true);
 		if (variablePtr != nullptr) {
 			return *variablePtr;
 		} else {
@@ -2671,7 +2678,7 @@ public:
 	 * @param returnValue return value
 	 * @return success
 	 */
-	inline bool call(const string& function, const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue) {
+	inline bool call(const string& function, span<ScriptVariable>& argumentValues, ScriptVariable& returnValue) {
 		// lookup function
 		auto scriptFunctionsIt = scriptFunctions.find(function);
 		if (scriptFunctionsIt == scriptFunctions.end()) {

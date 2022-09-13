@@ -47,7 +47,7 @@ void LogicMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "logic.getId";
 			}
-			void executeMethod(const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue.setValue(miniScript->logic->getId());
 			}
 		};
@@ -68,7 +68,7 @@ void LogicMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "logic.signal.send";
 			}
-			void executeMethod(const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string logicId;
 				string signal;
 				if (miniScript->getStringValue(argumentValues, 0, logicId) == true &&
@@ -105,7 +105,7 @@ void LogicMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "logic.signal.has";
 			}
-			void executeMethod(const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue.setValue(miniScript->logic->hasSignal());
 			}
 		};
@@ -123,7 +123,7 @@ void LogicMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "logic.signal.getName";
 			}
-			void executeMethod(const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				returnValue.setValue(miniScript->logic->getSignalName());
 			}
 		};
@@ -146,7 +146,7 @@ void LogicMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "logic.signal.getArgument";
 			}
-			void executeMethod(const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				int64_t argumentIndex;
 				if (miniScript->getIntegerValue(argumentValues, 0, argumentIndex) == true) {
 					returnValue = miniScript->logic->getSignalArgument(argumentIndex);
@@ -170,7 +170,7 @@ void LogicMiniScript::registerMethods() {
 			const string getMethodName() override {
 				return "logic.signal.next";
 			}
-			void executeMethod(const span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				miniScript->logic->removeSignal();
 			}
 		};

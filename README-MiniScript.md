@@ -12,10 +12,10 @@ This is the documentation of MiniScript language. This document is WIP.
 | array.get($array: Array, $index: Integer): Mixed                                                 |
 | array.indexOf($array: Array, $value: String, $beginIndex: Integer(OPTIONAL), ...): Integer       |
 | array.length($array: Array): Integer                                                             |
-| array.push($array: Array, ...): Array                                                            |
-| array.remove($array: Array, $index: Integer): Array                                              |
-| array.removeOf($array: Array, $value: String): Array                                             |
-| array.set($array: Array, $index: Integer, ...): Array                                            |
+| array.push(=$array: Array, ...): Void                                                            |
+| array.remove(=$array: Array, $index: Integer): Void                                              |
+| array.removeOf(=$array: Array, $value: String): Void                                             |
+| array.set(=$array: Array, $index: Integer, ...): Void                                            |
 | bool($bool: Boolean): Boolean                                                                    |
 | concatenate(...): String                                                                         |
 | console.log(...): Void                                                                           |
@@ -39,8 +39,8 @@ This is the documentation of MiniScript language. This document is WIP.
 | map.getKeys($map: Map): Array                                                                    |
 | map.getValues($map: Map): Array                                                                  |
 | map.has($map: Map, $key: String): Boolean                                                        |
-| map.remove($map: Map, $key: String): Map                                                         |
-| map.set($map: Map, $key: String, ...): Map                                                       |
+| map.remove(=$map: Map, $key: String): Void                                                       |
+| map.set(=$map: Map, $key: String, ...): Void                                                     |
 | mat3.identity(): Matrix3x3                                                                       |
 | mat3.multiply($mat3: Matrix3x3, ...): Mixed                                                      |
 | mat3.rotate($angle: Float): Matrix3x3                                                            |
@@ -93,6 +93,7 @@ This is the documentation of MiniScript language. This document is WIP.
 | quaternion.normalize($quaternion: Quaternion): Quaternion                                        |
 | quaternion.rotate($axis: Vector3, $angle: Float): Quaternion                                     |
 | return(...): Void                                                                                |
+| script.call($function: String, ...): Mixed                                                       |
 | script.disableNamedCondition($name: String): Void                                                |
 | script.emit($condition: String): Void                                                            |
 | script.enableNamedCondition($name: String): Void                                                 |

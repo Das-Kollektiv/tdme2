@@ -29,7 +29,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 			const string getMethodName() override {
 				return "add";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				MiniScriptMath::add(miniScript, argumentValues, returnValue, statement);
 			}
 			bool isVariadic() override {
@@ -51,7 +51,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 			const string getMethodName() override {
 				return "sub";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				MiniScriptMath::sub(miniScript, argumentValues, returnValue, statement);
 			}
 			bool isVariadic() override {
@@ -73,7 +73,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 			const string getMethodName() override {
 				return "mul";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				MiniScriptMath::mul(miniScript, argumentValues, returnValue, statement);
 			}
 			bool isVariadic() override {
@@ -95,7 +95,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 			const string getMethodName() override {
 				return "div";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				MiniScriptMath::div(miniScript, argumentValues, returnValue, statement);
 			}
 			bool isVariadic() override {
@@ -118,7 +118,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 			const string getMethodName() override {
 				return "math.PI";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				returnValue.setValue(Math::PI);
 			}
 		};
@@ -134,7 +134,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 			const string getMethodName() override {
 				return "math.EPSILON";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				returnValue.setValue(Math::EPSILON);
 			}
 		};
@@ -150,7 +150,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 			const string getMethodName() override {
 				return "math.DEG2RAD";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				returnValue.setValue(Math::DEG2RAD);
 			}
 		};
@@ -166,7 +166,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 			const string getMethodName() override {
 				return "math.G";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				returnValue.setValue(Math::G);
 			}
 		};
@@ -180,13 +180,13 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodAcos(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false, .assignBack = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "math.acos";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				float value;
 				if (MiniScript::getFloatValue(argumentValues, 0, value, false) == true) {
 					returnValue.setValue(Math::acos(value));
@@ -206,13 +206,13 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodAsin(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false, .assignBack = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "math.asin";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				float value;
 				if (MiniScript::getFloatValue(argumentValues, 0, value, false) == true) {
 					returnValue.setValue(Math::asin(value));
@@ -232,13 +232,13 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodAtan(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false, .assignBack = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "math.atan";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				float value;
 				if (MiniScript::getFloatValue(argumentValues, 0, value, false) == true) {
 					returnValue.setValue(Math::atan(value));
@@ -258,14 +258,14 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodAtan2(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "y", .optional = false },
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "x", .optional = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "y", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "x", .optional = false, .assignBack = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "math.atan2";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				float y;
 				float x;
 				if (MiniScript::getFloatValue(argumentValues, 0, y, false) == true &&
@@ -287,13 +287,13 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodTan(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false, .assignBack = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "math.tan";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				float value;
 				if (MiniScript::getFloatValue(argumentValues, 0, value, false) == true) {
 					returnValue.setValue(Math::tan(value));
@@ -313,13 +313,13 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodCos(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false, .assignBack = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "math.cos";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				float value;
 				if (MiniScript::getFloatValue(argumentValues, 0, value, false) == true) {
 					returnValue.setValue(Math::cos(value));
@@ -339,13 +339,13 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodSin(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false, .assignBack = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "math.sin";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				float value;
 				if (MiniScript::getFloatValue(argumentValues, 0, value, false) == true) {
 					returnValue.setValue(Math::sin(value));
@@ -365,13 +365,13 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodFloor(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false, .assignBack = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "math.floor";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				float value;
 				if (MiniScript::getFloatValue(argumentValues, 0, value, false) == true) {
 					returnValue.setValue(Math::floor(value));
@@ -391,13 +391,13 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodCeil(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false, .assignBack = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "math.ceil";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				float value;
 				if (MiniScript::getFloatValue(argumentValues, 0, value, false) == true) {
 					returnValue.setValue(Math::ceil(value));
@@ -417,13 +417,13 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodRound(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false, .assignBack = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "math.round";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				float value;
 				if (MiniScript::getFloatValue(argumentValues, 0, value, false) == true) {
 					returnValue.setValue(Math::round(value));
@@ -443,13 +443,13 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodSqrt(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false, .assignBack = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "math.sqrt";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				float value;
 				if (MiniScript::getFloatValue(argumentValues, 0, value, false) == true) {
 					returnValue.setValue(Math::sqrt(value));
@@ -471,7 +471,7 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 			const string getMethodName() override {
 				return "math.random";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				returnValue.setValue(Math::random());
 			}
 		};
@@ -485,13 +485,13 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodExp(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false, .assignBack = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "math.exp";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				float value;
 				if (MiniScript::getFloatValue(argumentValues, 0, value, false) == true) {
 					returnValue.setValue(Math::exp(value));
@@ -511,13 +511,13 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodLog(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false, .assignBack = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_FLOAT), miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "math.log";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				float value;
 				if (MiniScript::getFloatValue(argumentValues, 0, value, false) == true) {
 					returnValue.setValue(Math::log(value));
@@ -537,14 +537,14 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodSign(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value", .optional = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value", .optional = false, .assignBack = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "math.sign";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				int64_t intValue;
 				float floatValue;
 				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_FLOAT) == true && MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
@@ -568,14 +568,14 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodSquare(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value", .optional = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value", .optional = false, .assignBack = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "math.square";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				int64_t intValue;
 				float floatValue;
 				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_FLOAT) == true && MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
@@ -599,15 +599,15 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodMin(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "a", .optional = false },
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "b", .optional = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "a", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "b", .optional = false, .assignBack = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "math.min";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				int64_t intValueA;
 				int64_t intValueB;
 				float floatValueA;
@@ -640,15 +640,15 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodMax(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "a", .optional = false },
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "b", .optional = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "a", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "b", .optional = false, .assignBack = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "math.max";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				int64_t intValueA;
 				int64_t intValueB;
 				float floatValueA;
@@ -681,14 +681,14 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodAbs(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value", .optional = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value", .optional = false, .assignBack = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "math.abs";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				int64_t intValue;
 				float floatValue;
 				if (MiniScript::hasType(argumentValues, MiniScript::TYPE_FLOAT) == true && MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
@@ -712,16 +712,16 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodClamp(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value", .optional = false },
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "min", .optional = false },
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "max", .optional = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "value", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "min", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "max", .optional = false, .assignBack = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "math.clamp";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				int64_t intValueA;
 				int64_t intValueB;
 				int64_t intValueC;
@@ -758,15 +758,15 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodPow(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "a", .optional = false },
-					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "b", .optional = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "a", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER, .name = "b", .optional = false, .assignBack = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "math.pow";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				int64_t intValueA;
 				int64_t intValueB;
 				float floatValueA;
@@ -799,15 +799,15 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodMod(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false },
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "range", .optional = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "range", .optional = false, .assignBack = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_FLOAT
 			), miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "math.mod";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				float value;
 				float range;
 				if (MiniScript::getFloatValue(argumentValues, 0, value, false) == true &&
@@ -829,15 +829,15 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 		public:
 			ScriptMethodAbsMod(MiniScript* miniScript): MiniScript::ScriptMethod(
 				{
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false },
-					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "range", .optional = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "value", .optional = false, .assignBack = false },
+					{ .type = MiniScript::ScriptVariableType::TYPE_FLOAT, .name = "range", .optional = false, .assignBack = false },
 				},
 				MiniScript::ScriptVariableType::TYPE_FLOAT
 			), miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "math.absmod";
 			}
-			void executeMethod(const span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
+			void executeMethod(span<MiniScript::ScriptVariable>& argumentValues, MiniScript::ScriptVariable& returnValue, const MiniScript::ScriptStatement& statement) override {
 				float value;
 				float range;
 				if (MiniScript::getFloatValue(argumentValues, 0, value, false) == true &&

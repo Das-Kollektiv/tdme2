@@ -341,10 +341,13 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 			}
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "}," + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".argumentNames = {\n";
-			auto argumentNameIdx = 0;
-			for (auto& argumentName: script.argumentNames) {
-				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\"" + argumentName + "\"" + (argumentNameIdx != script.argumentNames.size() - 1?",":"") + "\n";
-				argumentNameIdx++;
+			auto argumentIdx = 0;
+			for (auto& argument: script.arguments) {
+				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "{" + "\n";
+				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + ".name = \"" + argument.name + "\"," + "\n";
+				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + ".assignBack = \"" + (argument.assignBack == true?"true":"false") + "\"" + "\n";
+				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "}" + (argumentIdx != script.arguments.size() - 1?",":"") + "\n";
+				argumentIdx++;
 			}
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "}" + "\n";
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "}" + (scriptIdx < scripts.size() - 1?",":"") + "\n";
