@@ -2053,9 +2053,10 @@ private:
 	 * @param key key
 	 * @param statement optional statement the variable is read in
 	 * @param expectVariable expect variable which controls verbosity
+	 * @param global use global context instead of current context
 	 * @return pointer to variable
 	 */
-	inline ScriptVariable* getVariableIntern(const string& name, const string& callerMethod, ScriptVariable*& parentVariable, int64_t& arrayIdx, string& key, const ScriptStatement* statement = nullptr, bool expectVariable = true) {
+	inline ScriptVariable* getVariableIntern(const string& name, const string& callerMethod, ScriptVariable*& parentVariable, int64_t& arrayIdx, string& key, const ScriptStatement* statement = nullptr, bool expectVariable = true, bool global = false) {
 		//
 		if (StringTools::startsWith(name, "$") == false) {
 			if (statement != nullptr) {
@@ -2084,7 +2085,7 @@ private:
 		}
 		// retrieve variable from function script state
 		ScriptVariable* variablePtr = nullptr;
-		{
+		if (global == false) {
 			auto& scriptState = getScriptState();
 			auto scriptVariableIt = scriptState.variables.find(extractedVariableName.empty() == false?extractedVariableName:name);
 			if (scriptVariableIt == scriptState.variables.end()) {
@@ -2103,7 +2104,7 @@ private:
 			}
 		}
 		// if no success try to retrieve variable from root script state, but only when expecting variable aka reading variable
-		if (expectVariable == true && variablePtr == nullptr) {
+		if (global == true || (expectVariable == true && variablePtr == nullptr)) {
 			auto& scriptState = getRootScriptState();
 			auto scriptVariableIt = scriptState.variables.find(extractedVariableName.empty() == false?extractedVariableName:name);
 			if (scriptVariableIt == scriptState.variables.end()) {
@@ -2539,10 +2540,17 @@ public:
 	 * @return variable
 	 */
 	inline const ScriptVariable getVariable(const string& name, const ScriptStatement* statement = nullptr) {
+		// global accessor
+		string globalVariableName;
+		if (StringTools::startsWith(name, "$GLOBAL.") == true) {
+			globalVariableName = "$" + StringTools::trim(StringTools::substring(name, 8));
+		}
+
+		//
 		ScriptVariable* parentVariable = nullptr;
 		string key;
 		int64_t arrayIdx = ARRAYIDX_NONE;
-		auto variablePtr = getVariableIntern(name, __FUNCTION__, parentVariable, arrayIdx, key, statement, true);
+		auto variablePtr = getVariableIntern(globalVariableName.empty() == true?name:globalVariableName, __FUNCTION__, parentVariable, arrayIdx, key, statement, true, globalVariableName.empty() == false);
 		if (variablePtr != nullptr) {
 			return *variablePtr;
 		} else {
@@ -2557,10 +2565,17 @@ public:
 	 * @param statement optional statement the variable is written in
 	 */
 	inline void setVariable(const string& name, const ScriptVariable& variable, const ScriptStatement* statement = nullptr) {
+		// global accessor
+		string globalVariableName;
+		if (StringTools::startsWith(name, "$GLOBAL.") == true) {
+			globalVariableName = "$" + StringTools::trim(StringTools::substring(name, 8));
+		}
+
+		//
 		ScriptVariable* parentVariable = nullptr;
 		string key;
 		int64_t arrayIdx = ARRAYIDX_NONE;
-		auto variablePtr = getVariableIntern(name, __FUNCTION__, parentVariable, arrayIdx, key, statement, false);
+		auto variablePtr = getVariableIntern(globalVariableName.empty() == true?name:globalVariableName, __FUNCTION__, parentVariable, arrayIdx, key, statement, false, globalVariableName.empty() == false);
 		// common case
 		if (variablePtr != nullptr) {
 			*variablePtr = variable;
@@ -2616,15 +2631,15 @@ public:
 		}
 
 		// default
-		auto& scriptState = getScriptState();
-		auto scriptVariableIt = scriptState.variables.find(name);
+		auto& scriptState = globalVariableName.empty() == true?getScriptState():getRootScriptState();
+		auto scriptVariableIt = scriptState.variables.find(globalVariableName.empty() == true?name:globalVariableName);
 		if (scriptVariableIt != scriptState.variables.end()) {
 			*scriptVariableIt->second = variable;
 			return;
 		} else {
 			auto scriptVariable = new ScriptVariable();
 			*scriptVariable = variable;
-			scriptState.variables[name] = scriptVariable;
+			scriptState.variables[globalVariableName.empty() == true?name:globalVariableName] = scriptVariable;
 		}
 	}
 

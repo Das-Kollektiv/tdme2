@@ -27,6 +27,12 @@ function: assignTest($a, =$b, =$c)
 	$c = "c"
 end
 
+# user script function to test assign back in user functions
+function: globalVariableTest()
+	console.log("globalVariableTest(): $GLOBAL.globalTest = " + $GLOBAL.globalTest)
+	$GLOBAL.globalTest = "Been there, done that, got the t-shirt"
+end
+
 # if no condition is met, nothing will be executed, lol :D
 on: nothing
 	console.log("---------")
@@ -357,6 +363,10 @@ on: nothing
 	console.log("assignTest(): pre: $a = " + $a + ", $b = " + $b + ", $c = " + $c)
 	assignTest($a, $b, $c)
 	console.log("assignTest(): post: $a = " + $a + ", $b = " + $b + ", $c = " + $c)
+	$globalTest = "Global Test Variable"
+	console.log("globalVariableTest(): pre: $globalTest = " + $globalTest)
+	globalVariableTest()
+	console.log("globalVariableTest(): post: $globalTest = " + $globalTest)
 	console.log("--------------------------------------------------")
 	console.log("Test if enabled naming condition will be emitted")
 	console.log("--------------------------------------------------")

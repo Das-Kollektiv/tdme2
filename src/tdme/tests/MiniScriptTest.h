@@ -45,10 +45,11 @@ public:
 			if (getScriptState().scriptIdx == 1) factorial(scriptState.statementIdx); else
 			if (getScriptState().scriptIdx == 2) helloWorldFunction(scriptState.statementIdx); else
 			if (getScriptState().scriptIdx == 3) assignTest(scriptState.statementIdx); else
-			if (getScriptState().scriptIdx == 4) on_nothing(scriptState.statementIdx); else
-			if (getScriptState().scriptIdx == 5) on_error(scriptState.statementIdx); else
-			if (getScriptState().scriptIdx == 6) on_emittest(scriptState.statementIdx); else
-			if (getScriptState().scriptIdx == 7) on_enabled_named_condition_1(scriptState.statementIdx); else
+			if (getScriptState().scriptIdx == 4) globalVariableTest(scriptState.statementIdx); else
+			if (getScriptState().scriptIdx == 5) on_nothing(scriptState.statementIdx); else
+			if (getScriptState().scriptIdx == 6) on_error(scriptState.statementIdx); else
+			if (getScriptState().scriptIdx == 7) on_emittest(scriptState.statementIdx); else
+			if (getScriptState().scriptIdx == 8) on_enabled_named_condition_1(scriptState.statementIdx); else
 				;
 		}
 		if (getScriptState().running == false) return;
@@ -84,6 +85,12 @@ protected:
 	 * @param miniScriptGotoStatementIdx MiniScript goto statement index
 	 */
 	void assignTest(int miniScriptGotoStatementIdx);
+
+	/**
+	 * Miniscript transpilation of: FUNCTION: globalVariableTest
+	 * @param miniScriptGotoStatementIdx MiniScript goto statement index
+	 */
+	void globalVariableTest(int miniScriptGotoStatementIdx);
 
 	/**
 	 * Miniscript transpilation of: ON: nothing
