@@ -20,6 +20,13 @@ function: helloWorldFunction()
 	console.log("helloWorldFunction(): Hello world")
 end
 
+# user script function to test assign back in user functions
+function: assignTest($a, =$b, =$c)
+	$a = "a"
+	$b = "b"
+	$c = "c"
+end
+
 # if no condition is met, nothing will be executed, lol :D
 on: nothing
 	console.log("---------")
@@ -344,6 +351,12 @@ on: nothing
 	console.log("-----------")
 	helloWorldFunction()
 	console.log("factorial(5) = " + factorial(5))
+	$a = "0"
+	$b = "1"
+	$c = "2"
+	console.log("assignTest(): pre: $a = " + $a + ", $b = " + $b + ", $c = " + $c)
+	assignTest($a, $b, $c)
+	console.log("assignTest(): post: $a = " + $a + ", $b = " + $b + ", $c = " + $c)
 	console.log("--------------------------------------------------")
 	console.log("Test if enabled naming condition will be emitted")
 	console.log("--------------------------------------------------")

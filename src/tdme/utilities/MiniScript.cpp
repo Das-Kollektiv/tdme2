@@ -291,7 +291,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string_view&
 				auto argumentValue = executeScriptStatement(subMethod, subArguments, statement);
 				argumentValues.push_back(argumentValue);
 			} else {
-				Console::println("MiniScript::executeScriptStatement(): parseScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': '" + string(argument) + "': parse error");
+				Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': '" + string(argument) + "': parse error");
 				startErrorScript();
 			}
 		} else {
@@ -316,7 +316,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string_view&
 		auto scriptFunctionsIt = scriptFunctions.find(string(method));
 		if (scriptFunctionsIt != scriptFunctions.end()) {
 			auto scriptIdx = scriptFunctionsIt->second;
-			//
+			// call
 			span argumentValuesSpan(argumentValues);
 			call(scriptIdx, argumentValuesSpan, returnValue);
 			// assign back arguments
@@ -329,7 +329,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string_view&
 					if (StringTools::viewStartsWith(arguments[argumentIdx], "$") == true) {
 						setVariable(string(arguments[argumentIdx]), argumentValues[argumentIdx], &statement);
 					} else {
-						Console::println("MiniScript::executeScriptStatement(): parseScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + string(arguments[argumentIdx]) + "'");
+						Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + string(arguments[argumentIdx]) + "'");
 					}
 				}
 				argumentIdx++;
@@ -468,7 +468,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string_view&
 						if (StringTools::viewStartsWith(arguments[argumentIdx], "$") == true) {
 							setVariable(string(arguments[argumentIdx]), argumentValues[argumentIdx], &statement);
 						} else {
-							Console::println("MiniScript::executeScriptStatement(): parseScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + string(arguments[argumentIdx]) + "'");
+							Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + string(arguments[argumentIdx]) + "'");
 						}
 					}
 					argumentIdx++;
@@ -1602,21 +1602,44 @@ void MiniScript::registerMethods() {
 				if (miniScript->getStringValue(argumentValues, 0, function) == false) {
 					Console::println("ScriptMethodReturn::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: string expected");
 				} else {
-					#if defined (__APPLE__)
-						// MACOSX currently does not support initializing span using begin and end iterators,
-						// so we need to make a copy of argumentValues beginning from second element
-						vector<ScriptVariable> callArgumentValues;
-						for (auto i = 1; i < argumentValues.size(); i++) callArgumentValues.push_back(argumentValues[i]);
-						miniScript->call(function, callArgumentValues, returnValue);
-						// and copy back
-						for (auto i = 1; i < argumentValues.size(); i++) argumentValues[i] = callArgumentValues[i];
-					#else
-						span callArgumentValuesSpan(argumentValues.begin() + 1, argumentValues.end());
-						miniScript->call(function, callArgumentValuesSpan, returnValue);
-					#endif
+					auto scriptIdx = miniScript->getFunctionScriptIdx(function);
+					if (scriptIdx == SCRIPTIDX_NONE) {
+						Console::println("ScriptMethodReturn::executeMethod(): " + getMethodName() + "(): function not found: " + function);
+					} else {
+						#if defined (__APPLE__)
+							// MACOSX currently does not support initializing span using begin and end iterators,
+							// so we need to make a copy of argumentValues beginning from second element
+							vector<ScriptVariable> callArgumentValues;
+							for (auto i = 1; i < argumentValues.size(); i++) callArgumentValues.push_back(argumentValues[i]);
+							// call
+							miniScript->call(scriptIdx, callArgumentValues, returnValue);
+							// and copy back
+							for (auto i = 1; i < argumentValues.size(); i++) argumentValues[i] = callArgumentValues[i];
+							//
+							#if defined(__MINISCRIPT_TRANSPILATION__)
+								// copy our arguments as well
+								vector<string> callArguments;
+								for (auto i = 1; i < arguments.size(); i++) callArguments.push_back(arguments[i]);
+								// and assign back
+								assignBackFunction(scriptIdx, callArguments, callArgumentValues, statement);
+							#endif
+						#else
+							span callArgumentValuesSpan(argumentValues.begin() + 1, argumentValues.end());
+							miniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
+							//
+							#if defined(__MINISCRIPT_TRANSPILATION__)
+								// copy our arguments as well
+								span callArgumentsSpan(arguments.begin() + 1, arguments.end());
+								assignBackFunction(scriptIdx, callArgumentsSpan, callArgumentValuesSpan, statement);
+							#endif
+						#endif
+					}
 				}
 			}
 			bool isVariadic() override {
+				return true;
+			}
+			bool isRequiringArguments() override {
 				return true;
 			}
 		};
@@ -5016,6 +5039,9 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 	}
 	auto& methodCode = methodCodeMapIt->second;
 
+	// script method
+	auto scriptMethod = scriptMethods.find(string(method))->second;
+
 	// indenting
 	string minIndentString = "\t";
 	string depthIndentString;
@@ -5036,6 +5062,15 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 
 	// construct argument values
 	vector<string> argumentValuesCode;
+	if (scriptMethod->isRequiringArguments() == true) {
+		argumentValuesCode.push_back("array<string, " + to_string(arguments.size()) + "> arguments {");
+		auto argumentIdx = 0;
+		for (auto& argument: arguments) {
+			argumentValuesCode.push_back(string() + "\t" + "\"" + string(argument) + "\"" + (argumentIdx < arguments.size() - 1?",":""));
+			argumentIdx++;
+		}
+		argumentValuesCode.push_back("};");
+	}
 	if (depth > 0) {
 		argumentValuesCode.push_back("ScriptVariable& returnValue = argumentValuesD" + to_string(depth - 1) + (parentArgumentIdx != ARGUMENTIDX_NONE?"AIDX" + to_string(parentArgumentIdx):"") + "[" + to_string(argumentIdx) + "];");
 	} else {

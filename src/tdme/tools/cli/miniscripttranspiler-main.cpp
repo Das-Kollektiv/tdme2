@@ -471,7 +471,13 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	}
 
 	// add emit code
-	generatedDefinitions = initializeNativeDefinition + generatedDetermineScriptIdxToStartDefinition + generatedDetermineNamedScriptIdxToStartDefinition + "\n" + emitDefinition + generatedDefinitions;
+	generatedDefinitions =
+		string("\n#define __MINISCRIPT_TRANSPILATION__\n\n") +
+		initializeNativeDefinition +
+		generatedDetermineScriptIdxToStartDefinition +
+		generatedDetermineNamedScriptIdxToStartDefinition + "\n" +
+		emitDefinition +
+		generatedDefinitions;
 
 	// inject C++ definition code
 	{
