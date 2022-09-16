@@ -5287,7 +5287,17 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 	auto& script = scripts[scriptIdx];
 
 	//
-	Console::println("MiniScript::transpile(): transpiling code for condition = '" + script.condition + "', with name '" + script.name + "'");
+	string scriptType =
+		(script.scriptType == MiniScript::Script::SCRIPTTYPE_FUNCTION?
+			"function":
+			(
+				script.scriptType == MiniScript::Script::SCRIPTTYPE_ON?
+					"condition":
+					"named condition"
+			)
+		);
+
+	Console::println("MiniScript::transpile(): transpiling code for " + scriptType + " = '" + script.condition + "', with name '" + script.name + "'");
 	auto statementIdx = 0;
 	string methodIndent = "\t";
 	string generatedCodeHeader;

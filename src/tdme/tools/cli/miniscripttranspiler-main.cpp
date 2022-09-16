@@ -340,12 +340,12 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 				statementIdx++;
 			}
 			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "}," + "\n";
-			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".argumentNames = {\n";
+			initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + ".arguments = {\n";
 			auto argumentIdx = 0;
 			for (auto& argument: script.arguments) {
 				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "{" + "\n";
 				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + ".name = \"" + argument.name + "\"," + "\n";
-				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + ".assignBack = \"" + (argument.assignBack == true?"true":"false") + "\"" + "\n";
+				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "\t" + ".assignBack = " + (argument.assignBack == true?"true":"false") + "\n";
 				initializeNativeDefinition+= methodCodeIndent + "\t" + "\t" + "\t" + "\t" + "}" + (argumentIdx != script.arguments.size() - 1?",":"") + "\n";
 				argumentIdx++;
 			}
