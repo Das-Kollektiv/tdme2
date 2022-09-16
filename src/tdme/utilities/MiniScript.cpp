@@ -5255,6 +5255,25 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 		}
 	}
 
+	// assign back arguments code
+	string assignBackCode;
+	{
+		auto argumentIdx = 0;
+		for (auto& argumentType: scriptMethod->getArgumentTypes()) {
+			if (argumentType.assignBack == true) {
+				if (StringTools::viewStartsWith(arguments[argumentIdx], "$") == true) {
+					assignBackCode+= minIndentString + depthIndentString + "\t" + "setVariable(\"" + string(arguments[argumentIdx]) + "\", argumentValues[" + to_string(argumentIdx) + "], &statement);" + "\n";
+				} else {
+					Console::println("MiniScript::transpileScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + string(arguments[argumentIdx]) + "'");
+				}
+			}
+			argumentIdx++;
+		}
+		if (assignBackCode.empty() == false) {
+			assignBackCode = minIndentString + depthIndentString + "\t" + "// assign back" + "\n" + assignBackCode;
+		}
+	}
+
 	// generate code
 	generatedCode+= minIndentString + depthIndentString + "\t" + "// method code: " + string(method) + "\n";
 	for (auto codeLine: methodCode) {
@@ -5281,10 +5300,9 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 				generatedCode+= minIndentString + indentString + depthIndentString + "\t" + "goto miniscript_statement_" + to_string(statement.gotoStatementIdx) + ";\n";
 			}
 		} else
-		if (StringTools::regexMatch(codeLine, "[\\ \\t]*miniScript[\\ \\t]*->startErrorScript[\\ \\t]*\\([\\ \\t]*\\)[\\ \\t]*;[\\ \\t]*") == true) {
-			generatedCode+= minIndentString + depthIndentString + "\t" + codeLine + " return" + (returnValue.empty() == false?" " + returnValue:"") + ";\n";
-		} else
-		if (StringTools::regexMatch(codeLine, "[\\ \\t]*miniScript[\\ \\t]*->emit[\\ \\t]*\\([\\ \\t]*[a-zA-Z0-9]*[\\ \\t]*\\)[\\ \\t]*;[\\ \\t]*") == true) {
+		if (StringTools::regexMatch(codeLine, "[\\ \\t]*miniScript[\\ \\t]*->startErrorScript[\\ \\t]*\\([\\ \\t]*\\)[\\ \\t]*;[\\ \\t]*") == true ||
+			StringTools::regexMatch(codeLine, "[\\ \\t]*miniScript[\\ \\t]*->emit[\\ \\t]*\\([\\ \\t]*[a-zA-Z0-9]*[\\ \\t]*\\)[\\ \\t]*;[\\ \\t]*") == true) {
+			generatedCode+= assignBackCode;
 			generatedCode+= minIndentString + depthIndentString + "\t" + codeLine + " return" + (returnValue.empty() == false?" " + returnValue:"") + ";\n";
 		} else {
 			if (StringTools::regexMatch(codeLine, ".*[\\ \\t]*miniScript[\\ \\t]*->[\\ \\t]*setScriptStateState[\\ \\t]*\\([\\ \\t]*.+[\\ \\t]*\\);.*") == true) {
@@ -5304,6 +5322,9 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 	if (injectCode.empty() == false) {
 		generatedCode+= minIndentString + depthIndentString + "\t" + injectCode + "\n";
 	}
+
+	// assign back code
+	generatedCode+= assignBackCode;
 
 	//
 	generatedCode+= minIndentString + depthIndentString + "}" + "\n";

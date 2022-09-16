@@ -13826,6 +13826,8 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				argumentValues[0].pushArrayValue(argumentValues[i]);
 			}
 		}
+		// assign back
+		setVariable("$array", argumentValues[0], &statement);
 	}
 
 	// Statement: 235
@@ -15256,6 +15258,8 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				}
 			}
 		}
+		// assign back
+		setVariable("$array", argumentValues[0], &statement);
 	}
 
 	// Statement: 269
@@ -15302,6 +15306,8 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				}
 			}
 		}
+		// assign back
+		setVariable("$array", argumentValues[0], &statement);
 	}
 
 	// Statement: 270
@@ -15348,6 +15354,8 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				}
 			}
 		}
+		// assign back
+		setVariable("$array", argumentValues[0], &statement);
 	}
 
 	// Statement: 271
@@ -15698,6 +15706,8 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		} else {
 			argumentValues[0].setMapValue(key, argumentValues[2]);
 		}
+		// assign back
+		setVariable("$map", argumentValues[0], &statement);
 	}
 
 	// Statement: 282
@@ -15738,6 +15748,8 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		} else {
 			argumentValues[0].setMapValue(key, argumentValues[2]);
 		}
+		// assign back
+		setVariable("$map", argumentValues[0], &statement);
 	}
 
 	// Statement: 283
@@ -15778,6 +15790,8 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		} else {
 			argumentValues[0].setMapValue(key, argumentValues[2]);
 		}
+		// assign back
+		setVariable("$map", argumentValues[0], &statement);
 	}
 
 	// Statement: 284
@@ -15833,6 +15847,8 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		} else {
 			argumentValues[0].setMapValue(key, argumentValues[2]);
 		}
+		// assign back
+		setVariable("$map", argumentValues[0], &statement);
 	}
 
 	// Statement: 285
@@ -15873,6 +15889,8 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		} else {
 			argumentValues[0].setMapValue(key, argumentValues[2]);
 		}
+		// assign back
+		setVariable("$map", argumentValues[0], &statement);
 	}
 
 	// Statement: 286
@@ -15963,6 +15981,8 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		} else {
 			argumentValues[0].removeMapValue(key);
 		}
+		// assign back
+		setVariable("$map", argumentValues[0], &statement);
 	}
 
 	// Statement: 289
@@ -16037,6 +16057,8 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		} else {
 			argumentValues[0].setMapValue(key, argumentValues[2]);
 		}
+		// assign back
+		setVariable("$map", argumentValues[0], &statement);
 	}
 
 	// Statement: 291
