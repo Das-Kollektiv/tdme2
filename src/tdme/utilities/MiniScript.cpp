@@ -1612,7 +1612,8 @@ void MiniScript::registerMethods() {
 							vector<ScriptVariable> callArgumentValues;
 							for (auto i = 1; i < argumentValues.size(); i++) callArgumentValues.push_back(argumentValues[i]);
 							// call
-							miniScript->call(scriptIdx, callArgumentValues, returnValue);
+							span callArgumentValuesSpan(callArgumentValues);
+							miniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
 							// and copy back
 							for (auto i = 1; i < argumentValues.size(); i++) argumentValues[i] = callArgumentValues[i];
 							//
