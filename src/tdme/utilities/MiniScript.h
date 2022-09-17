@@ -2186,6 +2186,7 @@ private:
 	 * @param parentVariable parent variable
 	 * @param arrayIdx array index whereas there is ARRAYIDX_ADD for [] or ARRAYIDX_NONE for no array access
 	 * @param key key
+	 * @param setAccessBool set access bool which returns one of SETACCESSBOOL_NONE, *_TRUE, *_FALSE
 	 * @param statement optional statement the variable is read in
 	 * @param expectVariable expect variable which controls verbosity
 	 * @param global use global context instead of current context

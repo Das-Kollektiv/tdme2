@@ -378,7 +378,7 @@ on: nothing
 	console.log("set key for test3 using set dot operator: ", $set.test3)
 	console.log("set key for test4 using set dot operator: ", $set.test4)
 	console.log("set key for test5 using set dot operator: ", $set.test5)
-	console.log("inserting set values using map dot operator: ")
+	console.log("inserting set values using set dot operator: ")
 	$set.test6 = true
 	$set.test7 = true
 	$set.test8 = false

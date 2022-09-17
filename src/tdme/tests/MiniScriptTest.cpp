@@ -19,7 +19,7 @@ MiniScriptTest::MiniScriptTest(): MiniScript() {
 
 void MiniScriptTest::initializeNative() {
 	setNative(true);
-	setHash("0dc63ca2d95eeead7cf060b53b7bdc2026b695bdd315b912805c3d9c5428be99");
+	setHash("7d465d58821209bcaa1310aa3eff18e65346896ab3635c7a631c19d55ec28ba5");
 	setNativeScripts(
 		{
 			{
@@ -2650,8 +2650,8 @@ void MiniScriptTest::initializeNative() {
 					{
 						.line = 381,
 						.statementIdx = 343,
-						.statement = "console.log(\"inserting set values using map dot operator: \")",
-						.executableStatement = "console.log(\"inserting set values using map dot operator: \")",
+						.statement = "console.log(\"inserting set values using set dot operator: \")",
+						.executableStatement = "console.log(\"inserting set values using set dot operator: \")",
 						.gotoStatementIdx = -1
 					},
 					{
@@ -18540,7 +18540,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 343
-	// console.log("inserting set values using map dot operator: ")
+	// console.log("inserting set values using set dot operator: ")
 	{
 		const ScriptStatement& statement = scripts[5].statements[343];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -18548,7 +18548,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 1> argumentValues;
 		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
-		argumentValues[0].setValue(string("inserting set values using map dot operator: "));
+		argumentValues[0].setValue(string("inserting set values using set dot operator: "));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
