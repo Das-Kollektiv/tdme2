@@ -1268,9 +1268,8 @@ public:
 		}
 
 		/**
-		 * Set value in map with given key
+		 * Insert given key in set
 		 * @param key key
-		 * @param value value
 		 */
 		inline void insertSetKey(const string& key) {
 			// TODO: be verbose about misuse
@@ -1279,7 +1278,7 @@ public:
 		}
 
 		/**
-		 * Remove value in map with given key
+		 * Remove key in set with given key
 		 * @param key key
 		 */
 		inline void removeSetKey(const string& key) {
@@ -1293,7 +1292,7 @@ public:
 		}
 
 		/**
-		 * Get map keys
+		 * Get set keys
 		 * @return keys
 		 */
 		inline const vector<string> getSetKeys() const {
