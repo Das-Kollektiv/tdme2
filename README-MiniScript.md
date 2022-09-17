@@ -103,6 +103,11 @@ This is the documentation of MiniScript language. This document is WIP.
 | script.stop(): Void                                                                              |
 | script.wait($time: Integer): Void                                                                |
 | script.waitForCondition(): Void                                                                  |
+| set(): Set                                                                                       |
+| set.getKeys($set: Set): Array                                                                    |
+| set.has($set: Set, $key: String): Boolean                                                        |
+| set.insert(=$set: Set, $key: String): Void                                                       |
+| set.remove(=$set: Set, $key: String): Void                                                       |
 | setVariable($variable: String, ...): Mixed                                                       |
 | space($spaces: Integer(OPTIONAL)): String                                                        |
 | string($string: String): String                                                                  |

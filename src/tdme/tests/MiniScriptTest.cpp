@@ -19,7 +19,7 @@ MiniScriptTest::MiniScriptTest(): MiniScript() {
 
 void MiniScriptTest::initializeNative() {
 	setNative(true);
-	setHash("d6658988080d3818fb9dd2d4413da84bbbececc74415e2502f6f9bc478908961");
+	setHash("0dc63ca2d95eeead7cf060b53b7bdc2026b695bdd315b912805c3d9c5428be99");
 	setNativeScripts(
 		{
 			{
@@ -2209,8 +2209,8 @@ void MiniScriptTest::initializeNative() {
 					{
 						.line = 318,
 						.statementIdx = 280,
-						.statement = "console.log(\"put some key value pairs into map: $map = map.set()\")",
-						.executableStatement = "console.log(\"put some key value pairs into map: $map = map.set()\")",
+						.statement = "console.log(\"put some key value pairs into map: map.set()\")",
+						.executableStatement = "console.log(\"put some key value pairs into map: map.set()\")",
 						.gotoStatementIdx = -1
 					},
 					{
@@ -2468,181 +2468,405 @@ void MiniScriptTest::initializeNative() {
 					{
 						.line = 355,
 						.statementIdx = 317,
-						.statement = "console.log(\"-----------\")",
-						.executableStatement = "console.log(\"-----------\")",
+						.statement = "console.log(\"---------\")",
+						.executableStatement = "console.log(\"---------\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 356,
 						.statementIdx = 318,
-						.statement = "console.log(\"Functions\")",
-						.executableStatement = "console.log(\"Functions\")",
+						.statement = "console.log(\"Sets\")",
+						.executableStatement = "console.log(\"Sets\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 357,
 						.statementIdx = 319,
-						.statement = "console.log(\"-----------\")",
-						.executableStatement = "console.log(\"-----------\")",
+						.statement = "console.log(\"----------\")",
+						.executableStatement = "console.log(\"----------\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 358,
 						.statementIdx = 320,
-						.statement = "helloWorldFunction()",
-						.executableStatement = "helloWorldFunction()",
+						.statement = "$set = set()",
+						.executableStatement = "setVariable(\"$set\", set())",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 359,
 						.statementIdx = 321,
-						.statement = "console.log(\"factorial(5) = \" + factorial(5))",
-						.executableStatement = "console.log(add(\"factorial(5) = \", factorial(5)))",
+						.statement = "console.log(\"set initialized with: $set = set()\")",
+						.executableStatement = "console.log(\"set initialized with: $set = set()\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 360,
 						.statementIdx = 322,
-						.statement = "$a = \"0\"",
-						.executableStatement = "setVariable(\"$a\", \"0\")",
+						.statement = "console.log(\"set now looks like: \", $set)",
+						.executableStatement = "console.log(\"set now looks like: \", $set)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 361,
 						.statementIdx = 323,
-						.statement = "$b = \"1\"",
-						.executableStatement = "setVariable(\"$b\", \"1\")",
+						.statement = "console.log(\"put some keys into set: set.insert()\")",
+						.executableStatement = "console.log(\"put some keys into set: set.insert()\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 362,
 						.statementIdx = 324,
-						.statement = "$c = \"2\"",
-						.executableStatement = "setVariable(\"$c\", \"2\")",
+						.statement = "set.insert($set, \"test1\")",
+						.executableStatement = "set.insert($set, \"test1\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 363,
 						.statementIdx = 325,
-						.statement = "console.log(\"assignTest(): pre: $a = \" + $a + \", $b = \" + $b + \", $c = \" + $c)",
-						.executableStatement = "console.log(add(\"assignTest(): pre: $a = \",add($a,add(\", $b = \",add($b,add(\", $c = \", $c))))))",
+						.statement = "set.insert($set, \"test2\")",
+						.executableStatement = "set.insert($set, \"test2\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 364,
 						.statementIdx = 326,
-						.statement = "assignTest($a, $b, $c)",
-						.executableStatement = "assignTest($a, $b, $c)",
+						.statement = "set.insert($set, \"test3\")",
+						.executableStatement = "set.insert($set, \"test3\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 365,
 						.statementIdx = 327,
-						.statement = "console.log(\"assignTest(): post: $a = \" + $a + \", $b = \" + $b + \", $c = \" + $c)",
-						.executableStatement = "console.log(add(\"assignTest(): post: $a = \",add($a,add(\", $b = \",add($b,add(\", $c = \", $c))))))",
+						.statement = "set.insert($set, \"test4\")",
+						.executableStatement = "set.insert($set, \"test4\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 366,
 						.statementIdx = 328,
-						.statement = "$globalTest = \"Global Test Variable\"",
-						.executableStatement = "setVariable(\"$globalTest\", \"Global Test Variable\")",
+						.statement = "set.insert($set, \"test5\")",
+						.executableStatement = "set.insert($set, \"test5\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 367,
 						.statementIdx = 329,
-						.statement = "console.log(\"globalVariableTest(): pre: $globalTest = \" + $globalTest)",
-						.executableStatement = "console.log(add(\"globalVariableTest(): pre: $globalTest = \", $globalTest))",
+						.statement = "console.log(\"set now looks like: \", $set)",
+						.executableStatement = "console.log(\"set now looks like: \", $set)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 368,
 						.statementIdx = 330,
-						.statement = "globalVariableTest()",
-						.executableStatement = "globalVariableTest()",
+						.statement = "console.log(\"remove test2 via set.remove: \")",
+						.executableStatement = "console.log(\"remove test2 via set.remove: \")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 369,
 						.statementIdx = 331,
-						.statement = "console.log(\"globalVariableTest(): post: $globalTest = \" + $globalTest)",
-						.executableStatement = "console.log(add(\"globalVariableTest(): post: $globalTest = \", $globalTest))",
+						.statement = "set.remove($set, \"test2\")",
+						.executableStatement = "set.remove($set, \"test2\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 370,
 						.statementIdx = 332,
-						.statement = "console.log(\"--------------------------------------------------\")",
-						.executableStatement = "console.log(\"--------------------------------------------------\")",
+						.statement = "console.log(\"set now looks like: \", $set)",
+						.executableStatement = "console.log(\"set now looks like: \", $set)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 371,
 						.statementIdx = 333,
-						.statement = "console.log(\"Test if enabled naming condition will be emitted\")",
-						.executableStatement = "console.log(\"Test if enabled naming condition will be emitted\")",
+						.statement = "console.log(\"set does have test1 key using set.has(): \", set.has($set, \"test1\"))",
+						.executableStatement = "console.log(\"set does have test1 key using set.has(): \", set.has($set, \"test1\"))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 372,
 						.statementIdx = 334,
-						.statement = "console.log(\"--------------------------------------------------\")",
-						.executableStatement = "console.log(\"--------------------------------------------------\")",
+						.statement = "console.log(\"set does have test2 key using set.has(): \", set.has($set, \"test2\"))",
+						.executableStatement = "console.log(\"set does have test2 key using set.has(): \", set.has($set, \"test2\"))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 373,
 						.statementIdx = 335,
-						.statement = "script.enableNamedCondition(\"named_condition_1\")",
-						.executableStatement = "script.enableNamedCondition(\"named_condition_1\")",
+						.statement = "console.log(\"set does have test3 key using set.has(): \", set.has($set, \"test3\"))",
+						.executableStatement = "console.log(\"set does have test3 key using set.has(): \", set.has($set, \"test3\"))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 374,
 						.statementIdx = 336,
-						.statement = "script.wait(2000)",
-						.executableStatement = "script.wait(2000)",
+						.statement = "console.log(\"set does have test4 key using set.has(): \", set.has($set, \"test4\"))",
+						.executableStatement = "console.log(\"set does have test4 key using set.has(): \", set.has($set, \"test4\"))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 375,
 						.statementIdx = 337,
-						.statement = "script.disableNamedCondition(\"named_condition_1\")",
-						.executableStatement = "script.disableNamedCondition(\"named_condition_1\")",
+						.statement = "console.log(\"set does have test5 key using set.has(): \", set.has($set, \"test5\"))",
+						.executableStatement = "console.log(\"set does have test5 key using set.has(): \", set.has($set, \"test5\"))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 376,
 						.statementIdx = 338,
-						.statement = "console.log(\"---------------------------------------\")",
-						.executableStatement = "console.log(\"---------------------------------------\")",
+						.statement = "console.log(\"set key for test1 using set dot operator: \", $set.test1)",
+						.executableStatement = "console.log(\"set key for test1 using set dot operator: \", $set.test1)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 377,
 						.statementIdx = 339,
-						.statement = "console.log(\"Naming condition has not been emitted\")",
-						.executableStatement = "console.log(\"Naming condition has not been emitted\")",
+						.statement = "console.log(\"set key for test2 using set dot operator: \", $set.test2)",
+						.executableStatement = "console.log(\"set key for test2 using set dot operator: \", $set.test2)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 378,
 						.statementIdx = 340,
-						.statement = "console.log(\"---------------------------------------\")",
-						.executableStatement = "console.log(\"---------------------------------------\")",
+						.statement = "console.log(\"set key for test3 using set dot operator: \", $set.test3)",
+						.executableStatement = "console.log(\"set key for test3 using set dot operator: \", $set.test3)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 379,
 						.statementIdx = 341,
-						.statement = "script.stop()",
-						.executableStatement = "script.stop()",
+						.statement = "console.log(\"set key for test4 using set dot operator: \", $set.test4)",
+						.executableStatement = "console.log(\"set key for test4 using set dot operator: \", $set.test4)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 380,
 						.statementIdx = 342,
+						.statement = "console.log(\"set key for test5 using set dot operator: \", $set.test5)",
+						.executableStatement = "console.log(\"set key for test5 using set dot operator: \", $set.test5)",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 381,
+						.statementIdx = 343,
+						.statement = "console.log(\"inserting set values using map dot operator: \")",
+						.executableStatement = "console.log(\"inserting set values using map dot operator: \")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 382,
+						.statementIdx = 344,
+						.statement = "$set.test6 = true",
+						.executableStatement = "setVariable(\"$set.test6\", true)",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 383,
+						.statementIdx = 345,
+						.statement = "$set.test7 = true",
+						.executableStatement = "setVariable(\"$set.test7\", true)",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 384,
+						.statementIdx = 346,
+						.statement = "$set.test8 = false",
+						.executableStatement = "setVariable(\"$set.test8\", false)",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 385,
+						.statementIdx = 347,
+						.statement = "$set.test9 = true",
+						.executableStatement = "setVariable(\"$set.test9\", true)",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 386,
+						.statementIdx = 348,
+						.statement = "console.log(\"set keys: \", set.getKeys($set))",
+						.executableStatement = "console.log(\"set keys: \", set.getKeys($set))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 387,
+						.statementIdx = 349,
+						.statement = "console.log(\"-----------\")",
+						.executableStatement = "console.log(\"-----------\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 388,
+						.statementIdx = 350,
+						.statement = "console.log(\"Functions\")",
+						.executableStatement = "console.log(\"Functions\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 389,
+						.statementIdx = 351,
+						.statement = "console.log(\"-----------\")",
+						.executableStatement = "console.log(\"-----------\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 390,
+						.statementIdx = 352,
+						.statement = "helloWorldFunction()",
+						.executableStatement = "helloWorldFunction()",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 391,
+						.statementIdx = 353,
+						.statement = "console.log(\"factorial(5) = \" + factorial(5))",
+						.executableStatement = "console.log(add(\"factorial(5) = \", factorial(5)))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 392,
+						.statementIdx = 354,
+						.statement = "$a = \"0\"",
+						.executableStatement = "setVariable(\"$a\", \"0\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 393,
+						.statementIdx = 355,
+						.statement = "$b = \"1\"",
+						.executableStatement = "setVariable(\"$b\", \"1\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 394,
+						.statementIdx = 356,
+						.statement = "$c = \"2\"",
+						.executableStatement = "setVariable(\"$c\", \"2\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 395,
+						.statementIdx = 357,
+						.statement = "console.log(\"assignTest(): pre: $a = \" + $a + \", $b = \" + $b + \", $c = \" + $c)",
+						.executableStatement = "console.log(add(\"assignTest(): pre: $a = \",add($a,add(\", $b = \",add($b,add(\", $c = \", $c))))))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 396,
+						.statementIdx = 358,
+						.statement = "assignTest($a, $b, $c)",
+						.executableStatement = "assignTest($a, $b, $c)",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 397,
+						.statementIdx = 359,
+						.statement = "console.log(\"assignTest(): post: $a = \" + $a + \", $b = \" + $b + \", $c = \" + $c)",
+						.executableStatement = "console.log(add(\"assignTest(): post: $a = \",add($a,add(\", $b = \",add($b,add(\", $c = \", $c))))))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 398,
+						.statementIdx = 360,
+						.statement = "$globalTest = \"Global Test Variable\"",
+						.executableStatement = "setVariable(\"$globalTest\", \"Global Test Variable\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 399,
+						.statementIdx = 361,
+						.statement = "console.log(\"globalVariableTest(): pre: $globalTest = \" + $globalTest)",
+						.executableStatement = "console.log(add(\"globalVariableTest(): pre: $globalTest = \", $globalTest))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 400,
+						.statementIdx = 362,
+						.statement = "globalVariableTest()",
+						.executableStatement = "globalVariableTest()",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 401,
+						.statementIdx = 363,
+						.statement = "console.log(\"globalVariableTest(): post: $globalTest = \" + $globalTest)",
+						.executableStatement = "console.log(add(\"globalVariableTest(): post: $globalTest = \", $globalTest))",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 402,
+						.statementIdx = 364,
+						.statement = "console.log(\"--------------------------------------------------\")",
+						.executableStatement = "console.log(\"--------------------------------------------------\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 403,
+						.statementIdx = 365,
+						.statement = "console.log(\"Test if enabled naming condition will be emitted\")",
+						.executableStatement = "console.log(\"Test if enabled naming condition will be emitted\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 404,
+						.statementIdx = 366,
+						.statement = "console.log(\"--------------------------------------------------\")",
+						.executableStatement = "console.log(\"--------------------------------------------------\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 405,
+						.statementIdx = 367,
+						.statement = "script.enableNamedCondition(\"named_condition_1\")",
+						.executableStatement = "script.enableNamedCondition(\"named_condition_1\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 406,
+						.statementIdx = 368,
+						.statement = "script.wait(2000)",
+						.executableStatement = "script.wait(2000)",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 407,
+						.statementIdx = 369,
+						.statement = "script.disableNamedCondition(\"named_condition_1\")",
+						.executableStatement = "script.disableNamedCondition(\"named_condition_1\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 408,
+						.statementIdx = 370,
+						.statement = "console.log(\"---------------------------------------\")",
+						.executableStatement = "console.log(\"---------------------------------------\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 409,
+						.statementIdx = 371,
+						.statement = "console.log(\"Naming condition has not been emitted\")",
+						.executableStatement = "console.log(\"Naming condition has not been emitted\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 410,
+						.statementIdx = 372,
+						.statement = "console.log(\"---------------------------------------\")",
+						.executableStatement = "console.log(\"---------------------------------------\")",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 411,
+						.statementIdx = 373,
+						.statement = "script.stop()",
+						.executableStatement = "script.stop()",
+						.gotoStatementIdx = -1
+					},
+					{
+						.line = 412,
+						.statementIdx = 374,
 						.statement = "end",
 						.executableStatement = "end",
 						.gotoStatementIdx = -1
@@ -2653,28 +2877,28 @@ void MiniScriptTest::initializeNative() {
 			},
 			{
 				.scriptType = Script::SCRIPTTYPE_ON,
-				.line = 382,
+				.line = 414,
 				.condition = "error",
 				.executableCondition = "error",
 				.name = "",
 				.emitCondition = true,
 				.statements = {
 					{
-						.line = 383,
+						.line = 415,
 						.statementIdx = 0,
 						.statement = "console.log(\"An error occurred\")",
 						.executableStatement = "console.log(\"An error occurred\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 384,
+						.line = 416,
 						.statementIdx = 1,
 						.statement = "script.wait(1000)",
 						.executableStatement = "script.wait(1000)",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 385,
+						.line = 417,
 						.statementIdx = 2,
 						.statement = "end",
 						.executableStatement = "end",
@@ -2686,189 +2910,189 @@ void MiniScriptTest::initializeNative() {
 			},
 			{
 				.scriptType = Script::SCRIPTTYPE_ON,
-				.line = 387,
+				.line = 419,
 				.condition = "emittest",
 				.executableCondition = "emittest",
 				.name = "",
 				.emitCondition = true,
 				.statements = {
 					{
-						.line = 388,
+						.line = 420,
 						.statementIdx = 0,
 						.statement = "console.log(\"---------------------------------\")",
 						.executableStatement = "console.log(\"---------------------------------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 389,
+						.line = 421,
 						.statementIdx = 1,
 						.statement = "console.log(\"SCRIPT JUST EMITTED A CONDITION\")",
 						.executableStatement = "console.log(\"SCRIPT JUST EMITTED A CONDITION\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 390,
+						.line = 422,
 						.statementIdx = 2,
 						.statement = "console.log(\"---------------------------------\")",
 						.executableStatement = "console.log(\"---------------------------------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 391,
+						.line = 423,
 						.statementIdx = 3,
 						.statement = "console.log()",
 						.executableStatement = "console.log()",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 392,
+						.line = 424,
 						.statementIdx = 4,
 						.statement = "console.log(\"----------\")",
 						.executableStatement = "console.log(\"----------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 393,
+						.line = 425,
 						.statementIdx = 5,
 						.statement = "console.log(\"Benchmark \")",
 						.executableStatement = "console.log(\"Benchmark \")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 394,
+						.line = 426,
 						.statementIdx = 6,
 						.statement = "console.log(\"----------\")",
 						.executableStatement = "console.log(\"----------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 395,
+						.line = 427,
 						.statementIdx = 7,
 						.statement = "$startTime = time.getCurrentMillis()",
 						.executableStatement = "setVariable(\"$startTime\", time.getCurrentMillis())",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 396,
+						.line = 428,
 						.statementIdx = 8,
 						.statement = "$i = 0",
 						.executableStatement = "setVariable(\"$i\", 0)",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 397,
+						.line = 429,
 						.statementIdx = 9,
 						.statement = "$j = 0",
 						.executableStatement = "setVariable(\"$j\", 0)",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 398,
+						.line = 430,
 						.statementIdx = 10,
 						.statement = "$k = 0",
 						.executableStatement = "setVariable(\"$k\", 0)",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 399,
+						.line = 431,
 						.statementIdx = 11,
 						.statement = "forCondition($i < 500000)",
 						.executableStatement = "forCondition(lesser($i, 500000))",
 						.gotoStatementIdx = 22
 					},
 					{
-						.line = 400,
+						.line = 432,
 						.statementIdx = 12,
 						.statement = "$a = 123 + 456 * (25 / 12) + (7.5 * 12.25) - 8",
 						.executableStatement = "setVariable(\"$a\",sub(add(123,add(mul(456,div(25, 12)),mul(7.5, 12.25))), 8))",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 401,
+						.line = 433,
 						.statementIdx = 13,
 						.statement = "if ($j == 0)",
 						.executableStatement = "if (equals($j, 0))",
 						.gotoStatementIdx = 15
 					},
 					{
-						.line = 402,
+						.line = 434,
 						.statementIdx = 14,
 						.statement = "$k = $k + 1",
 						.executableStatement = "setVariable(\"$k\",add($k, 1))",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 403,
+						.line = 435,
 						.statementIdx = 15,
 						.statement = "end",
 						.executableStatement = "end",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 404,
+						.line = 436,
 						.statementIdx = 16,
 						.statement = "$i = $i + 1",
 						.executableStatement = "setVariable(\"$i\",add($i, 1))",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 405,
+						.line = 437,
 						.statementIdx = 17,
 						.statement = "$j = $j + 1",
 						.executableStatement = "setVariable(\"$j\",add($j, 1))",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 406,
+						.line = 438,
 						.statementIdx = 18,
 						.statement = "if ($j == 2)",
 						.executableStatement = "if (equals($j, 2))",
 						.gotoStatementIdx = 20
 					},
 					{
-						.line = 407,
+						.line = 439,
 						.statementIdx = 19,
 						.statement = "$j = 0",
 						.executableStatement = "setVariable(\"$j\", 0)",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 408,
+						.line = 440,
 						.statementIdx = 20,
 						.statement = "end",
 						.executableStatement = "end",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 409,
+						.line = 441,
 						.statementIdx = 21,
 						.statement = "end",
 						.executableStatement = "end",
 						.gotoStatementIdx = 11
 					},
 					{
-						.line = 410,
+						.line = 442,
 						.statementIdx = 22,
 						.statement = "$endTime = time.getCurrentMillis()",
 						.executableStatement = "setVariable(\"$endTime\", time.getCurrentMillis())",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 411,
+						.line = 443,
 						.statementIdx = 23,
 						.statement = "console.log(\"Finished. Time: \" + ($endTime - $startTime))",
 						.executableStatement = "console.log(add(\"Finished. Time: \", sub($endTime, $startTime)))",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 412,
+						.line = 444,
 						.statementIdx = 24,
 						.statement = "script.stop()",
 						.executableStatement = "script.stop()",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 413,
+						.line = 445,
 						.statementIdx = 25,
 						.statement = "end",
 						.executableStatement = "end",
@@ -2880,84 +3104,84 @@ void MiniScriptTest::initializeNative() {
 			},
 			{
 				.scriptType = Script::SCRIPTTYPE_ONENABLED,
-				.line = 415,
+				.line = 447,
 				.condition = "true == true",
 				.executableCondition = "equals(true, true)",
 				.name = "named_condition_1",
 				.emitCondition = false,
 				.statements = {
 					{
-						.line = 416,
+						.line = 448,
 						.statementIdx = 0,
 						.statement = "script.disableNamedCondition(\"named_condition_1\")",
 						.executableStatement = "script.disableNamedCondition(\"named_condition_1\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 417,
+						.line = 449,
 						.statementIdx = 1,
 						.statement = "console.log(\"------------------------------------\")",
 						.executableStatement = "console.log(\"------------------------------------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 418,
+						.line = 450,
 						.statementIdx = 2,
 						.statement = "console.log(\"named_condition_1 has been emitted\")",
 						.executableStatement = "console.log(\"named_condition_1 has been emitted\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 419,
+						.line = 451,
 						.statementIdx = 3,
 						.statement = "console.log(\"------------------------------------\")",
 						.executableStatement = "console.log(\"------------------------------------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 420,
+						.line = 452,
 						.statementIdx = 4,
 						.statement = "console.log()",
 						.executableStatement = "console.log()",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 421,
+						.line = 453,
 						.statementIdx = 5,
 						.statement = "console.log(\"-----------\")",
 						.executableStatement = "console.log(\"-----------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 422,
+						.line = 454,
 						.statementIdx = 6,
 						.statement = "console.log(\"Test emit\")",
 						.executableStatement = "console.log(\"Test emit\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 423,
+						.line = 455,
 						.statementIdx = 7,
 						.statement = "console.log(\"-----------\")",
 						.executableStatement = "console.log(\"-----------\")",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 424,
+						.line = 456,
 						.statementIdx = 8,
 						.statement = "console.log()",
 						.executableStatement = "console.log()",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 425,
+						.line = 457,
 						.statementIdx = 9,
 						.statement = "script.emit(emittest)",
 						.executableStatement = "script.emit(emittest)",
 						.gotoStatementIdx = -1
 					},
 					{
-						.line = 426,
+						.line = 458,
 						.statementIdx = 10,
 						.statement = "end",
 						.executableStatement = "end",
@@ -3009,7 +3233,7 @@ int MiniScriptTest::determineNamedScriptIdxToStart() {
 			// equals(true, true)
 			{
 				const ScriptStatement statement = {
-					.line = 415,
+					.line = 447,
 					.statementIdx = 0,
 					.statement = "<unavailable>",
 					.executableStatement = "<unavailable>",
@@ -3938,7 +4162,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	if (miniScriptGotoStatementIdx == 267) goto miniscript_statement_267; else
 	if (miniScriptGotoStatementIdx == 314) goto miniscript_statement_314; else
 	if (miniScriptGotoStatementIdx == 317) goto miniscript_statement_317; else
-	if (miniScriptGotoStatementIdx == 337) goto miniscript_statement_337; else
+	if (miniScriptGotoStatementIdx == 369) goto miniscript_statement_369; else
 	if (miniScriptGotoStatementIdx != STATEMENTIDX_NONE && miniScriptGotoStatementIdx != 0) Console::println("MiniScript::on_nothing(): Can not go to statement " + to_string(miniScriptGotoStatementIdx));
 
 	// Statement: 0
@@ -15840,7 +16064,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 280
-	// console.log("put some key value pairs into map: $map = map.set()")
+	// console.log("put some key value pairs into map: map.set()")
 	{
 		const ScriptStatement& statement = scripts[5].statements[280];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -15848,7 +16072,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 1> argumentValues;
 		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
-		argumentValues[0].setValue(string("put some key value pairs into map: $map = map.set()"));
+		argumentValues[0].setValue(string("put some key value pairs into map: map.set()"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -16165,7 +16389,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		if (argumentValues.size() < 2 ||
 			argumentValues[0].getType() != ScriptVariableType::TYPE_MAP ||
 			MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
-			Console::println("ScriptMethodMapHas::executeMethod(): " + string("map.remove") + "(): parameter type mismatch @ argument 0: map expected, @ argument 1: string");
+			Console::println("ScriptMethodMapRemove::executeMethod(): " + string("map.remove") + "(): parameter type mismatch @ argument 0: map expected, @ argument 1: string");
 		} else {
 			argumentValues[0].removeMapValue(key);
 		}
@@ -17399,9 +17623,1089 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 
 	// Statement: 317
 	miniscript_statement_317:
-	// console.log("-----------")
+	// console.log("---------")
 	{
 		const ScriptStatement& statement = scripts[5].statements[317];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("---------"));
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 318
+	// console.log("Sets")
+	{
+		const ScriptStatement& statement = scripts[5].statements[318];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("Sets"));
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 319
+	// console.log("----------")
+	{
+		const ScriptStatement& statement = scripts[5].statements[319];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("----------"));
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 320
+	// setVariable("$set", set())
+	{
+		const ScriptStatement& statement = scripts[5].statements[320];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$set"));
+		// argumentValues[1] --> returnValue of set()
+		// depth = 1 / argument index = 1: set()
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 0> argumentValues;
+			array<ScriptVariable, 0>& argumentValuesD1AIDX1 = argumentValues;
+			// method code: set
+			returnValue.setType(MiniScript::TYPE_SET);
+		}
+		// method code: setVariable
+		string variable;
+		if (argumentValues.size() != 2 ||
+			MiniScript::getStringValue(argumentValues, 0, variable, false) == false) {
+			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			miniScript->setVariable(variable, argumentValues[1], &statement);
+			returnValue = argumentValues[1];
+		}
+	}
+
+	// Statement: 321
+	// console.log("set initialized with: $set = set()")
+	{
+		const ScriptStatement& statement = scripts[5].statements[321];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("set initialized with: $set = set()"));
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 322
+	// console.log("set now looks like: ", $set)
+	{
+		const ScriptStatement& statement = scripts[5].statements[322];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("set now looks like: "));
+		// argumentValues[1] --> returnValue of getVariable("$set")
+		// depth = 1 / argument index = 1: getVariable("$set")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(string("$set"));
+			// method code: getVariable
+			string variable;
+			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+				returnValue = miniScript->getVariable(variable);
+			} else {
+				Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+				miniScript->startErrorScript(); return;
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 323
+	// console.log("put some keys into set: set.insert()")
+	{
+		const ScriptStatement& statement = scripts[5].statements[323];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("put some keys into set: set.insert()"));
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 324
+	// set.insert($set, "test1")
+	{
+		const ScriptStatement& statement = scripts[5].statements[324];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of getVariable("$set")
+		argumentValues[1].setValue(string("test1"));
+		// depth = 1 / argument index = 0: getVariable("$set")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[0];
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX0 = argumentValues;
+			argumentValues[0].setValue(string("$set"));
+			// method code: getVariable
+			string variable;
+			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+				returnValue = miniScript->getVariable(variable);
+			} else {
+				Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+				miniScript->startErrorScript(); return;
+			}
+		}
+		// method code: set.insert
+		//
+		string key;
+		if (argumentValues.size() != 2 ||
+			argumentValues[0].getType() != ScriptVariableType::TYPE_SET ||
+			MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+			Console::println("ScriptMethodSetInsert::executeMethod(): " + string("set.insert") + "(): parameter type mismatch @ argument 0: set expected, @ argument 1: string expected");
+		} else {
+			argumentValues[0].insertSetKey(key);
+		}
+		// assign back
+		setVariable("$set", argumentValues[0], &statement);
+	}
+
+	// Statement: 325
+	// set.insert($set, "test2")
+	{
+		const ScriptStatement& statement = scripts[5].statements[325];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of getVariable("$set")
+		argumentValues[1].setValue(string("test2"));
+		// depth = 1 / argument index = 0: getVariable("$set")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[0];
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX0 = argumentValues;
+			argumentValues[0].setValue(string("$set"));
+			// method code: getVariable
+			string variable;
+			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+				returnValue = miniScript->getVariable(variable);
+			} else {
+				Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+				miniScript->startErrorScript(); return;
+			}
+		}
+		// method code: set.insert
+		//
+		string key;
+		if (argumentValues.size() != 2 ||
+			argumentValues[0].getType() != ScriptVariableType::TYPE_SET ||
+			MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+			Console::println("ScriptMethodSetInsert::executeMethod(): " + string("set.insert") + "(): parameter type mismatch @ argument 0: set expected, @ argument 1: string expected");
+		} else {
+			argumentValues[0].insertSetKey(key);
+		}
+		// assign back
+		setVariable("$set", argumentValues[0], &statement);
+	}
+
+	// Statement: 326
+	// set.insert($set, "test3")
+	{
+		const ScriptStatement& statement = scripts[5].statements[326];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of getVariable("$set")
+		argumentValues[1].setValue(string("test3"));
+		// depth = 1 / argument index = 0: getVariable("$set")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[0];
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX0 = argumentValues;
+			argumentValues[0].setValue(string("$set"));
+			// method code: getVariable
+			string variable;
+			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+				returnValue = miniScript->getVariable(variable);
+			} else {
+				Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+				miniScript->startErrorScript(); return;
+			}
+		}
+		// method code: set.insert
+		//
+		string key;
+		if (argumentValues.size() != 2 ||
+			argumentValues[0].getType() != ScriptVariableType::TYPE_SET ||
+			MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+			Console::println("ScriptMethodSetInsert::executeMethod(): " + string("set.insert") + "(): parameter type mismatch @ argument 0: set expected, @ argument 1: string expected");
+		} else {
+			argumentValues[0].insertSetKey(key);
+		}
+		// assign back
+		setVariable("$set", argumentValues[0], &statement);
+	}
+
+	// Statement: 327
+	// set.insert($set, "test4")
+	{
+		const ScriptStatement& statement = scripts[5].statements[327];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of getVariable("$set")
+		argumentValues[1].setValue(string("test4"));
+		// depth = 1 / argument index = 0: getVariable("$set")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[0];
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX0 = argumentValues;
+			argumentValues[0].setValue(string("$set"));
+			// method code: getVariable
+			string variable;
+			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+				returnValue = miniScript->getVariable(variable);
+			} else {
+				Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+				miniScript->startErrorScript(); return;
+			}
+		}
+		// method code: set.insert
+		//
+		string key;
+		if (argumentValues.size() != 2 ||
+			argumentValues[0].getType() != ScriptVariableType::TYPE_SET ||
+			MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+			Console::println("ScriptMethodSetInsert::executeMethod(): " + string("set.insert") + "(): parameter type mismatch @ argument 0: set expected, @ argument 1: string expected");
+		} else {
+			argumentValues[0].insertSetKey(key);
+		}
+		// assign back
+		setVariable("$set", argumentValues[0], &statement);
+	}
+
+	// Statement: 328
+	// set.insert($set, "test5")
+	{
+		const ScriptStatement& statement = scripts[5].statements[328];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of getVariable("$set")
+		argumentValues[1].setValue(string("test5"));
+		// depth = 1 / argument index = 0: getVariable("$set")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[0];
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX0 = argumentValues;
+			argumentValues[0].setValue(string("$set"));
+			// method code: getVariable
+			string variable;
+			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+				returnValue = miniScript->getVariable(variable);
+			} else {
+				Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+				miniScript->startErrorScript(); return;
+			}
+		}
+		// method code: set.insert
+		//
+		string key;
+		if (argumentValues.size() != 2 ||
+			argumentValues[0].getType() != ScriptVariableType::TYPE_SET ||
+			MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+			Console::println("ScriptMethodSetInsert::executeMethod(): " + string("set.insert") + "(): parameter type mismatch @ argument 0: set expected, @ argument 1: string expected");
+		} else {
+			argumentValues[0].insertSetKey(key);
+		}
+		// assign back
+		setVariable("$set", argumentValues[0], &statement);
+	}
+
+	// Statement: 329
+	// console.log("set now looks like: ", $set)
+	{
+		const ScriptStatement& statement = scripts[5].statements[329];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("set now looks like: "));
+		// argumentValues[1] --> returnValue of getVariable("$set")
+		// depth = 1 / argument index = 1: getVariable("$set")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(string("$set"));
+			// method code: getVariable
+			string variable;
+			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+				returnValue = miniScript->getVariable(variable);
+			} else {
+				Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+				miniScript->startErrorScript(); return;
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 330
+	// console.log("remove test2 via set.remove: ")
+	{
+		const ScriptStatement& statement = scripts[5].statements[330];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("remove test2 via set.remove: "));
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 331
+	// set.remove($set, "test2")
+	{
+		const ScriptStatement& statement = scripts[5].statements[331];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		// argumentValues[0] --> returnValue of getVariable("$set")
+		argumentValues[1].setValue(string("test2"));
+		// depth = 1 / argument index = 0: getVariable("$set")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[0];
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX0 = argumentValues;
+			argumentValues[0].setValue(string("$set"));
+			// method code: getVariable
+			string variable;
+			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+				returnValue = miniScript->getVariable(variable);
+			} else {
+				Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+				miniScript->startErrorScript(); return;
+			}
+		}
+		// method code: set.remove
+		//
+		string key;
+		if (argumentValues.size() < 2 ||
+			argumentValues[0].getType() != ScriptVariableType::TYPE_SET ||
+			MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+			Console::println("ScriptMethodSetRemove::executeMethod(): " + string("set.remove") + "(): parameter type mismatch @ argument 0: set expected, @ argument 1: string");
+		} else {
+			argumentValues[0].removeSetKey(key);
+		}
+		// assign back
+		setVariable("$set", argumentValues[0], &statement);
+	}
+
+	// Statement: 332
+	// console.log("set now looks like: ", $set)
+	{
+		const ScriptStatement& statement = scripts[5].statements[332];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("set now looks like: "));
+		// argumentValues[1] --> returnValue of getVariable("$set")
+		// depth = 1 / argument index = 1: getVariable("$set")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(string("$set"));
+			// method code: getVariable
+			string variable;
+			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+				returnValue = miniScript->getVariable(variable);
+			} else {
+				Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+				miniScript->startErrorScript(); return;
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 333
+	// console.log("set does have test1 key using set.has(): ", set.has($set, "test1"))
+	{
+		const ScriptStatement& statement = scripts[5].statements[333];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("set does have test1 key using set.has(): "));
+		// argumentValues[1] --> returnValue of set.has($set, "test1")
+		// depth = 1 / argument index = 1: set.has($set, "test1")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$set")
+			argumentValues[1].setValue(string("test1"));
+			// depth = 2 / argument index = 0: getVariable("$set")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$set"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					returnValue = miniScript->getVariable(variable);
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: set.has
+			//
+			string key;
+			if (argumentValues.size() < 2 ||
+				argumentValues[0].getType() != ScriptVariableType::TYPE_SET ||
+				MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+				Console::println("ScriptMethodSetHas::executeMethod(): " + string("set.has") + "(): parameter type mismatch @ argument 0: set expected, @ argument 1: string");
+			} else {
+				returnValue.setValue(argumentValues[0].hasSetKey(key));
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 334
+	// console.log("set does have test2 key using set.has(): ", set.has($set, "test2"))
+	{
+		const ScriptStatement& statement = scripts[5].statements[334];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("set does have test2 key using set.has(): "));
+		// argumentValues[1] --> returnValue of set.has($set, "test2")
+		// depth = 1 / argument index = 1: set.has($set, "test2")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$set")
+			argumentValues[1].setValue(string("test2"));
+			// depth = 2 / argument index = 0: getVariable("$set")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$set"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					returnValue = miniScript->getVariable(variable);
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: set.has
+			//
+			string key;
+			if (argumentValues.size() < 2 ||
+				argumentValues[0].getType() != ScriptVariableType::TYPE_SET ||
+				MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+				Console::println("ScriptMethodSetHas::executeMethod(): " + string("set.has") + "(): parameter type mismatch @ argument 0: set expected, @ argument 1: string");
+			} else {
+				returnValue.setValue(argumentValues[0].hasSetKey(key));
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 335
+	// console.log("set does have test3 key using set.has(): ", set.has($set, "test3"))
+	{
+		const ScriptStatement& statement = scripts[5].statements[335];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("set does have test3 key using set.has(): "));
+		// argumentValues[1] --> returnValue of set.has($set, "test3")
+		// depth = 1 / argument index = 1: set.has($set, "test3")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$set")
+			argumentValues[1].setValue(string("test3"));
+			// depth = 2 / argument index = 0: getVariable("$set")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$set"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					returnValue = miniScript->getVariable(variable);
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: set.has
+			//
+			string key;
+			if (argumentValues.size() < 2 ||
+				argumentValues[0].getType() != ScriptVariableType::TYPE_SET ||
+				MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+				Console::println("ScriptMethodSetHas::executeMethod(): " + string("set.has") + "(): parameter type mismatch @ argument 0: set expected, @ argument 1: string");
+			} else {
+				returnValue.setValue(argumentValues[0].hasSetKey(key));
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 336
+	// console.log("set does have test4 key using set.has(): ", set.has($set, "test4"))
+	{
+		const ScriptStatement& statement = scripts[5].statements[336];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("set does have test4 key using set.has(): "));
+		// argumentValues[1] --> returnValue of set.has($set, "test4")
+		// depth = 1 / argument index = 1: set.has($set, "test4")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$set")
+			argumentValues[1].setValue(string("test4"));
+			// depth = 2 / argument index = 0: getVariable("$set")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$set"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					returnValue = miniScript->getVariable(variable);
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: set.has
+			//
+			string key;
+			if (argumentValues.size() < 2 ||
+				argumentValues[0].getType() != ScriptVariableType::TYPE_SET ||
+				MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+				Console::println("ScriptMethodSetHas::executeMethod(): " + string("set.has") + "(): parameter type mismatch @ argument 0: set expected, @ argument 1: string");
+			} else {
+				returnValue.setValue(argumentValues[0].hasSetKey(key));
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 337
+	// console.log("set does have test5 key using set.has(): ", set.has($set, "test5"))
+	{
+		const ScriptStatement& statement = scripts[5].statements[337];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("set does have test5 key using set.has(): "));
+		// argumentValues[1] --> returnValue of set.has($set, "test5")
+		// depth = 1 / argument index = 1: set.has($set, "test5")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$set")
+			argumentValues[1].setValue(string("test5"));
+			// depth = 2 / argument index = 0: getVariable("$set")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$set"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					returnValue = miniScript->getVariable(variable);
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: set.has
+			//
+			string key;
+			if (argumentValues.size() < 2 ||
+				argumentValues[0].getType() != ScriptVariableType::TYPE_SET ||
+				MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+				Console::println("ScriptMethodSetHas::executeMethod(): " + string("set.has") + "(): parameter type mismatch @ argument 0: set expected, @ argument 1: string");
+			} else {
+				returnValue.setValue(argumentValues[0].hasSetKey(key));
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 338
+	// console.log("set key for test1 using set dot operator: ", $set.test1)
+	{
+		const ScriptStatement& statement = scripts[5].statements[338];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("set key for test1 using set dot operator: "));
+		// argumentValues[1] --> returnValue of getVariable("$set.test1")
+		// depth = 1 / argument index = 1: getVariable("$set.test1")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(string("$set.test1"));
+			// method code: getVariable
+			string variable;
+			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+				returnValue = miniScript->getVariable(variable);
+			} else {
+				Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+				miniScript->startErrorScript(); return;
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 339
+	// console.log("set key for test2 using set dot operator: ", $set.test2)
+	{
+		const ScriptStatement& statement = scripts[5].statements[339];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("set key for test2 using set dot operator: "));
+		// argumentValues[1] --> returnValue of getVariable("$set.test2")
+		// depth = 1 / argument index = 1: getVariable("$set.test2")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(string("$set.test2"));
+			// method code: getVariable
+			string variable;
+			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+				returnValue = miniScript->getVariable(variable);
+			} else {
+				Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+				miniScript->startErrorScript(); return;
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 340
+	// console.log("set key for test3 using set dot operator: ", $set.test3)
+	{
+		const ScriptStatement& statement = scripts[5].statements[340];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("set key for test3 using set dot operator: "));
+		// argumentValues[1] --> returnValue of getVariable("$set.test3")
+		// depth = 1 / argument index = 1: getVariable("$set.test3")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(string("$set.test3"));
+			// method code: getVariable
+			string variable;
+			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+				returnValue = miniScript->getVariable(variable);
+			} else {
+				Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+				miniScript->startErrorScript(); return;
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 341
+	// console.log("set key for test4 using set dot operator: ", $set.test4)
+	{
+		const ScriptStatement& statement = scripts[5].statements[341];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("set key for test4 using set dot operator: "));
+		// argumentValues[1] --> returnValue of getVariable("$set.test4")
+		// depth = 1 / argument index = 1: getVariable("$set.test4")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(string("$set.test4"));
+			// method code: getVariable
+			string variable;
+			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+				returnValue = miniScript->getVariable(variable);
+			} else {
+				Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+				miniScript->startErrorScript(); return;
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 342
+	// console.log("set key for test5 using set dot operator: ", $set.test5)
+	{
+		const ScriptStatement& statement = scripts[5].statements[342];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("set key for test5 using set dot operator: "));
+		// argumentValues[1] --> returnValue of getVariable("$set.test5")
+		// depth = 1 / argument index = 1: getVariable("$set.test5")
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			argumentValues[0].setValue(string("$set.test5"));
+			// method code: getVariable
+			string variable;
+			if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+				returnValue = miniScript->getVariable(variable);
+			} else {
+				Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+				miniScript->startErrorScript(); return;
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 343
+	// console.log("inserting set values using map dot operator: ")
+	{
+		const ScriptStatement& statement = scripts[5].statements[343];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 1> argumentValues;
+		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("inserting set values using map dot operator: "));
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 344
+	// setVariable("$set.test6", true)
+	{
+		const ScriptStatement& statement = scripts[5].statements[344];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$set.test6"));
+		argumentValues[1].setValue(true);
+		// method code: setVariable
+		string variable;
+		if (argumentValues.size() != 2 ||
+			MiniScript::getStringValue(argumentValues, 0, variable, false) == false) {
+			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			miniScript->setVariable(variable, argumentValues[1], &statement);
+			returnValue = argumentValues[1];
+		}
+	}
+
+	// Statement: 345
+	// setVariable("$set.test7", true)
+	{
+		const ScriptStatement& statement = scripts[5].statements[345];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$set.test7"));
+		argumentValues[1].setValue(true);
+		// method code: setVariable
+		string variable;
+		if (argumentValues.size() != 2 ||
+			MiniScript::getStringValue(argumentValues, 0, variable, false) == false) {
+			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			miniScript->setVariable(variable, argumentValues[1], &statement);
+			returnValue = argumentValues[1];
+		}
+	}
+
+	// Statement: 346
+	// setVariable("$set.test8", false)
+	{
+		const ScriptStatement& statement = scripts[5].statements[346];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$set.test8"));
+		argumentValues[1].setValue(false);
+		// method code: setVariable
+		string variable;
+		if (argumentValues.size() != 2 ||
+			MiniScript::getStringValue(argumentValues, 0, variable, false) == false) {
+			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			miniScript->setVariable(variable, argumentValues[1], &statement);
+			returnValue = argumentValues[1];
+		}
+	}
+
+	// Statement: 347
+	// setVariable("$set.test9", true)
+	{
+		const ScriptStatement& statement = scripts[5].statements[347];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("$set.test9"));
+		argumentValues[1].setValue(true);
+		// method code: setVariable
+		string variable;
+		if (argumentValues.size() != 2 ||
+			MiniScript::getStringValue(argumentValues, 0, variable, false) == false) {
+			Console::println("ScriptMethodSetVariable::executeMethod(): " + string("setVariable") + "(): parameter type mismatch @ argument 0: string expected, @ argument 1: mixed expected");
+			miniScript->startErrorScript(); return;
+		} else {
+			miniScript->setVariable(variable, argumentValues[1], &statement);
+			returnValue = argumentValues[1];
+		}
+	}
+
+	// Statement: 348
+	// console.log("set keys: ", set.getKeys($set))
+	{
+		const ScriptStatement& statement = scripts[5].statements[348];
+		getScriptState().statementIdx = statement.statementIdx;
+		// required method code arguments
+		ScriptVariable returnValue;
+		array<ScriptVariable, 2> argumentValues;
+		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
+		argumentValues[0].setValue(string("set keys: "));
+		// argumentValues[1] --> returnValue of set.getKeys($set)
+		// depth = 1 / argument index = 1: set.getKeys($set)
+		{
+			// required method code arguments
+			ScriptVariable& returnValue = argumentValuesD0[1];
+			array<ScriptVariable, 1> argumentValues;
+			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
+			// argumentValues[0] --> returnValue of getVariable("$set")
+			// depth = 2 / argument index = 0: getVariable("$set")
+			{
+				// required method code arguments
+				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
+				array<ScriptVariable, 1> argumentValues;
+				array<ScriptVariable, 1>& argumentValuesD2AIDX0 = argumentValues;
+				argumentValues[0].setValue(string("$set"));
+				// method code: getVariable
+				string variable;
+				if (MiniScript::getStringValue(argumentValues, 0, variable, false) == true) {
+					returnValue = miniScript->getVariable(variable);
+				} else {
+					Console::println("ScriptMethodGetVariable::executeMethod(): " + string("getVariable") + "(): parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript(); return;
+				}
+			}
+			// method code: set.getKeys
+			//
+			if (argumentValues.size() != 1 ||
+				argumentValues[0].getType() != ScriptVariableType::TYPE_SET) {
+				Console::println("ScriptMethodSetGetKeys::executeMethod(): " + string("set.getKeys") + "(): parameter type mismatch @ argument 0: map expected");
+			} else {
+				auto keys = argumentValues[0].getSetKeys();
+				returnValue.setType(TYPE_ARRAY);
+				for (auto& key: keys) {
+					returnValue.pushArrayValue(key);
+				}
+			}
+		}
+		// method code: console.log
+		for (auto& argumentValue: argumentValues) {
+			Console::print(argumentValue.getValueString());
+		}
+		Console::println();
+	}
+
+	// Statement: 349
+	// console.log("-----------")
+	{
+		const ScriptStatement& statement = scripts[5].statements[349];
 		getScriptState().statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -17415,10 +18719,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 318
+	// Statement: 350
 	// console.log("Functions")
 	{
-		const ScriptStatement& statement = scripts[5].statements[318];
+		const ScriptStatement& statement = scripts[5].statements[350];
 		getScriptState().statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -17432,10 +18736,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 319
+	// Statement: 351
 	// console.log("-----------")
 	{
-		const ScriptStatement& statement = scripts[5].statements[319];
+		const ScriptStatement& statement = scripts[5].statements[351];
 		getScriptState().statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -17449,10 +18753,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 320
+	// Statement: 352
 	// script.call(helloWorldFunction)
 	{
-		const ScriptStatement& statement = scripts[5].statements[320];
+		const ScriptStatement& statement = scripts[5].statements[352];
 		getScriptState().statementIdx = statement.statementIdx;
 		// required method code arguments
 		array<string, 1> arguments {
@@ -17503,10 +18807,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 321
+	// Statement: 353
 	// console.log(add("factorial(5) = ", factorial(5)))
 	{
-		const ScriptStatement& statement = scripts[5].statements[321];
+		const ScriptStatement& statement = scripts[5].statements[353];
 		getScriptState().statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -17583,10 +18887,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 322
+	// Statement: 354
 	// setVariable("$a", "0")
 	{
-		const ScriptStatement& statement = scripts[5].statements[322];
+		const ScriptStatement& statement = scripts[5].statements[354];
 		getScriptState().statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -17606,10 +18910,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 323
+	// Statement: 355
 	// setVariable("$b", "1")
 	{
-		const ScriptStatement& statement = scripts[5].statements[323];
+		const ScriptStatement& statement = scripts[5].statements[355];
 		getScriptState().statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -17629,10 +18933,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 324
+	// Statement: 356
 	// setVariable("$c", "2")
 	{
-		const ScriptStatement& statement = scripts[5].statements[324];
+		const ScriptStatement& statement = scripts[5].statements[356];
 		getScriptState().statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -17652,10 +18956,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 325
+	// Statement: 357
 	// console.log(add("assignTest(): pre: $a = ",add($a,add(", $b = ",add($b,add(", $c = ", $c))))))
 	{
-		const ScriptStatement& statement = scripts[5].statements[325];
+		const ScriptStatement& statement = scripts[5].statements[357];
 		getScriptState().statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -17772,10 +19076,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 326
+	// Statement: 358
 	// script.call(assignTest, $a, $b, $c)
 	{
-		const ScriptStatement& statement = scripts[5].statements[326];
+		const ScriptStatement& statement = scripts[5].statements[358];
 		getScriptState().statementIdx = statement.statementIdx;
 		// required method code arguments
 		array<string, 4> arguments {
@@ -17880,10 +19184,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 327
+	// Statement: 359
 	// console.log(add("assignTest(): post: $a = ",add($a,add(", $b = ",add($b,add(", $c = ", $c))))))
 	{
-		const ScriptStatement& statement = scripts[5].statements[327];
+		const ScriptStatement& statement = scripts[5].statements[359];
 		getScriptState().statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -18000,10 +19304,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 328
+	// Statement: 360
 	// setVariable("$globalTest", "Global Test Variable")
 	{
-		const ScriptStatement& statement = scripts[5].statements[328];
+		const ScriptStatement& statement = scripts[5].statements[360];
 		getScriptState().statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -18023,10 +19327,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 329
+	// Statement: 361
 	// console.log(add("globalVariableTest(): pre: $globalTest = ", $globalTest))
 	{
-		const ScriptStatement& statement = scripts[5].statements[329];
+		const ScriptStatement& statement = scripts[5].statements[361];
 		getScriptState().statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -18067,10 +19371,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 330
+	// Statement: 362
 	// script.call(globalVariableTest)
 	{
-		const ScriptStatement& statement = scripts[5].statements[330];
+		const ScriptStatement& statement = scripts[5].statements[362];
 		getScriptState().statementIdx = statement.statementIdx;
 		// required method code arguments
 		array<string, 1> arguments {
@@ -18121,10 +19425,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 331
+	// Statement: 363
 	// console.log(add("globalVariableTest(): post: $globalTest = ", $globalTest))
 	{
-		const ScriptStatement& statement = scripts[5].statements[331];
+		const ScriptStatement& statement = scripts[5].statements[363];
 		getScriptState().statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -18165,10 +19469,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 332
+	// Statement: 364
 	// console.log("--------------------------------------------------")
 	{
-		const ScriptStatement& statement = scripts[5].statements[332];
+		const ScriptStatement& statement = scripts[5].statements[364];
 		getScriptState().statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -18182,10 +19486,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 333
+	// Statement: 365
 	// console.log("Test if enabled naming condition will be emitted")
 	{
-		const ScriptStatement& statement = scripts[5].statements[333];
+		const ScriptStatement& statement = scripts[5].statements[365];
 		getScriptState().statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -18199,10 +19503,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 334
+	// Statement: 366
 	// console.log("--------------------------------------------------")
 	{
-		const ScriptStatement& statement = scripts[5].statements[334];
+		const ScriptStatement& statement = scripts[5].statements[366];
 		getScriptState().statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -18216,10 +19520,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 335
+	// Statement: 367
 	// script.enableNamedCondition("named_condition_1")
 	{
-		const ScriptStatement& statement = scripts[5].statements[335];
+		const ScriptStatement& statement = scripts[5].statements[367];
 		getScriptState().statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -18254,10 +19558,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 336
+	// Statement: 368
 	// script.wait(2000)
 	{
-		const ScriptStatement& statement = scripts[5].statements[336];
+		const ScriptStatement& statement = scripts[5].statements[368];
 		getScriptState().statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -18289,11 +19593,11 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 337
-	miniscript_statement_337:
+	// Statement: 369
+	miniscript_statement_369:
 	// script.disableNamedCondition("named_condition_1")
 	{
-		const ScriptStatement& statement = scripts[5].statements[337];
+		const ScriptStatement& statement = scripts[5].statements[369];
 		getScriptState().statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -18317,10 +19621,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 	}
 
-	// Statement: 338
+	// Statement: 370
 	// console.log("---------------------------------------")
 	{
-		const ScriptStatement& statement = scripts[5].statements[338];
+		const ScriptStatement& statement = scripts[5].statements[370];
 		getScriptState().statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -18334,10 +19638,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 339
+	// Statement: 371
 	// console.log("Naming condition has not been emitted")
 	{
-		const ScriptStatement& statement = scripts[5].statements[339];
+		const ScriptStatement& statement = scripts[5].statements[371];
 		getScriptState().statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -18351,10 +19655,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 340
+	// Statement: 372
 	// console.log("---------------------------------------")
 	{
-		const ScriptStatement& statement = scripts[5].statements[340];
+		const ScriptStatement& statement = scripts[5].statements[372];
 		getScriptState().statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -18368,10 +19672,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		Console::println();
 	}
 
-	// Statement: 341
+	// Statement: 373
 	// script.stop()
 	{
-		const ScriptStatement& statement = scripts[5].statements[341];
+		const ScriptStatement& statement = scripts[5].statements[373];
 		getScriptState().statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;
@@ -18385,10 +19689,10 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		return;
 	}
 
-	// Statement: 342
+	// Statement: 374
 	// end()
 	{
-		const ScriptStatement& statement = scripts[5].statements[342];
+		const ScriptStatement& statement = scripts[5].statements[374];
 		getScriptState().statementIdx = statement.statementIdx;
 		// required method code arguments
 		ScriptVariable returnValue;

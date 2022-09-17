@@ -4797,7 +4797,7 @@ void MiniScript::registerMethods() {
 				if (argumentValues.size() < 2 ||
 					argumentValues[0].getType() != ScriptVariableType::TYPE_MAP ||
 					MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
-					Console::println("ScriptMethodMapHas::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: map expected, @ argument 1: string");
+					Console::println("ScriptMethodMapRemove::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: map expected, @ argument 1: string");
 				} else {
 					argumentValues[0].removeMapValue(key);
 				}
@@ -4870,6 +4870,157 @@ void MiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodMapGetValues(this));
+	}
+	// sets
+	{
+		//
+		class ScriptMethodSet: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodSet(MiniScript* miniScript):
+				ScriptMethod(
+					{},
+					ScriptVariableType::TYPE_SET
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "set";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue.setType(MiniScript::TYPE_SET);
+			}
+		};
+		registerMethod(new ScriptMethodSet(this));
+	}
+	{
+		//
+		class ScriptMethodSetInsert: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodSetInsert(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_SET, .name = "set", .optional = false, .assignBack = true },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "set.insert";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				//
+				string key;
+				if (argumentValues.size() != 2 ||
+					argumentValues[0].getType() != ScriptVariableType::TYPE_SET ||
+					MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+					Console::println("ScriptMethodSetInsert::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: set expected, @ argument 1: string expected");
+				} else {
+					argumentValues[0].insertSetKey(key);
+				}
+			}
+		};
+		registerMethod(new ScriptMethodSetInsert(this));
+	}
+	{
+		//
+		class ScriptMethodSetHas: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodSetHas(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_SET, .name = "set", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_BOOLEAN
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "set.has";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				//
+				string key;
+				if (argumentValues.size() < 2 ||
+					argumentValues[0].getType() != ScriptVariableType::TYPE_SET ||
+					MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+					Console::println("ScriptMethodSetHas::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: set expected, @ argument 1: string");
+				} else {
+					returnValue.setValue(argumentValues[0].hasSetKey(key));
+				}
+			}
+		};
+		registerMethod(new ScriptMethodSetHas(this));
+	}
+	{
+		//
+		class ScriptMethodSetRemove: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodSetRemove(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_SET, .name = "set", .optional = false, .assignBack = true },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "key", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "set.remove";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				//
+				string key;
+				if (argumentValues.size() < 2 ||
+					argumentValues[0].getType() != ScriptVariableType::TYPE_SET ||
+					MiniScript::getStringValue(argumentValues, 1, key, false) == false) {
+					Console::println("ScriptMethodSetRemove::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: set expected, @ argument 1: string");
+				} else {
+					argumentValues[0].removeSetKey(key);
+				}
+			}
+		};
+		registerMethod(new ScriptMethodSetRemove(this));
+	}
+	{
+		//
+		class ScriptMethodSetGetKeys: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodSetGetKeys(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_SET, .name = "set", .optional = false, .assignBack = false },
+					},
+					ScriptVariableType::TYPE_ARRAY
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "set.getKeys";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				//
+				if (argumentValues.size() != 1 ||
+					argumentValues[0].getType() != ScriptVariableType::TYPE_SET) {
+					Console::println("ScriptMethodSetGetKeys::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: map expected");
+				} else {
+					auto keys = argumentValues[0].getSetKeys();
+					returnValue.setType(TYPE_ARRAY);
+					for (auto& key: keys) {
+						returnValue.pushArrayValue(key);
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodSetGetKeys(this));
 	}
 	// get variable
 	{

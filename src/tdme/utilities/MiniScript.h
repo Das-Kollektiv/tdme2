@@ -7,6 +7,7 @@
 #include <string>
 #include <string_view>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include <tdme/tdme.h>
@@ -31,6 +32,7 @@ using std::string;
 using std::string_view;
 using std::to_string;
 using std::unordered_map;
+using std::unordered_set;
 using std::vector;
 using std::span;
 
@@ -123,6 +125,7 @@ public:
 		TYPE_TRANSFORM,
 		TYPE_ARRAY,
 		TYPE_MAP,
+		TYPE_SET,
 		TYPE_PSEUDO_NUMBER,
 		TYPE_PSEUDO_MIXED
 	};
@@ -320,6 +323,20 @@ public:
 			return *static_cast<unordered_map<string, ScriptVariable>*>((void*)valuePtr);
 		}
 
+		/**
+		 * @return set value reference
+		 */
+		inline unordered_set<string>& getSetValueReference() {
+			return *static_cast<unordered_set<string>*>((void*)valuePtr);
+		}
+
+		/**
+		 * @return const set value reference
+		 */
+		inline const unordered_set<string>& getSetValueReference() const {
+			return *static_cast<unordered_set<string>*>((void*)valuePtr);
+		}
+
 	public:
 		/**
 		 * Assignment operator
@@ -368,6 +385,9 @@ public:
 					break;
 				case TYPE_MAP:
 					setValue(scriptVariable.getMapValueReference());
+					break;
+				case TYPE_SET:
+					setValue(scriptVariable.getSetValueReference());
 					break;
 			}
 			return *this;
@@ -419,6 +439,9 @@ public:
 					break;
 				case TYPE_MAP:
 					setValue(scriptVariable.getMapValueReference());
+					break;
+				case TYPE_SET:
+					setValue(scriptVariable.getSetValueReference());
 					break;
 			}
 		}
@@ -592,6 +615,9 @@ public:
 				case TYPE_MAP:
 					delete static_cast<unordered_map<string, ScriptVariable>*>((void*)valuePtr);
 					break;
+				case TYPE_SET:
+					delete static_cast<unordered_set<string>*>((void*)valuePtr);
+					break;
 			}
 			this->valuePtr = 0LL;
 			this->type = newType;
@@ -633,6 +659,9 @@ public:
 					break;
 				case TYPE_MAP:
 					valuePtr = (uint64_t)(new unordered_map<string, ScriptVariable>());
+					break;
+				case TYPE_SET:
+					valuePtr = (uint64_t)(new unordered_set<string>());
 					break;
 			}
 		}
@@ -920,6 +949,23 @@ public:
 		}
 
 		/**
+		 * Get set value from given variable
+		 * @param value value
+		 * @param optional optional
+		 * @return success
+		 */
+		inline bool getSetValue(unordered_set<string>& value, bool optional = false) const {
+			switch(type) {
+				case TYPE_SET:
+					value = getSetValueReference();
+					return true;
+				default:
+					return optional;
+			}
+			return false;
+		}
+
+		/**
 		 * Set boolean value from given value into variable
 		 * @param value value
 		 */
@@ -1036,6 +1082,16 @@ public:
 			// TODO: be verbose about misuse
 			setType(TYPE_MAP);
 			getMapValueReference() = value;
+		}
+
+		/**
+		 * Set set value from given value into variable
+		 * @param value value
+		 */
+		inline void setValue(const unordered_set<string>& value) {
+			// TODO: be verbose about misuse
+			setType(TYPE_SET);
+			getSetValueReference() = value;
 		}
 
 		/**
@@ -1189,6 +1245,69 @@ public:
 		}
 
 		/**
+		 * Get set size
+		 */
+		inline int64_t getSetSize() const {
+			// TODO: be verbose about misuse
+			if (getType() != TYPE_SET) return 0;
+			return getSetValueReference().size();
+		}
+
+		/**
+		 * Set has given key
+		 * @param key key
+		 * @return key exists
+		 */
+		inline bool hasSetKey(const string& key) const {
+			// TODO: be verbose about misuse
+			if (type != TYPE_SET) return false;
+			auto& setValue = getSetValueReference();
+			auto it = setValue.find(key);
+			if (it != setValue.end()) return true;
+			return false;
+		}
+
+		/**
+		 * Set value in map with given key
+		 * @param key key
+		 * @param value value
+		 */
+		inline void insertSetKey(const string& key) {
+			// TODO: be verbose about misuse
+			setType(TYPE_SET);
+			getSetValueReference().insert(key);
+		}
+
+		/**
+		 * Remove value in map with given key
+		 * @param key key
+		 */
+		inline void removeSetKey(const string& key) {
+			// TODO: be verbose about misuse
+			if (type != TYPE_SET) return;
+			auto& setValue = getSetValueReference();
+			auto it = setValue.find(key);
+			if (it != setValue.end()) {
+				setValue.erase(it);
+			}
+		}
+
+		/**
+		 * Get map keys
+		 * @return keys
+		 */
+		inline const vector<string> getSetKeys() const {
+			vector<string> keys;
+			// TODO: be verbose about misuse
+			if (type != TYPE_SET) return keys;
+			auto& setValue = getSetValueReference();
+			for (auto& key: setValue) {
+				keys.push_back(key);
+			}
+			return keys;
+		}
+
+		/**
 		 * Set implicit typed value given by value string
 		 * @param value value
 		 */
@@ -1267,6 +1386,7 @@ public:
 				case TYPE_TRANSFORM: return "Transform";
 				case TYPE_ARRAY: return "Array";
 				case TYPE_MAP: return "Map";
+				case TYPE_SET: return "Set";
 				case TYPE_PSEUDO_NUMBER: return "Number";
 				case TYPE_PSEUDO_MIXED: return "Mixed";
 			}
@@ -1276,7 +1396,7 @@ public:
 		/**
 		 * @return string representation of script variable type
 		 */
-		inline const string getTypeAsString() {
+		inline const string getTypeAsString() const {
 			return getTypeAsString(type);
 		}
 
@@ -1431,14 +1551,27 @@ public:
 				case TYPE_MAP:
 					{
 						auto& mapValue = getMapValueReference();
-						result+="[";
+						result+="{";
 						string valuesString;
 						for (auto& it: mapValue) {
 							if (valuesString.empty() == false) valuesString+= ", ";
 							valuesString+= it.first +  " = " + it.second.getValueString();
 						}
 						result+= valuesString;
-						result+="]";
+						result+="}";
+						break;
+					}
+				case TYPE_SET:
+					{
+						auto& setValue = getSetValueReference();
+						result+="{";
+						string valuesString;
+						for (auto& key: setValue) {
+							if (valuesString.empty() == false) valuesString+= ", ";
+							valuesString+= key;
+						}
+						result+= valuesString;
+						result+="}";
 						break;
 					}
 				case TYPE_PSEUDO_NUMBER:
@@ -1591,6 +1724,9 @@ public:
 	};
 
 protected:
+	static constexpr int SETACCESSBOOL_NONE { -1 };
+	static constexpr int SETACCESSBOOL_TRUE { 0 };
+	static constexpr int SETACCESSBOOL_FALSE { 1 };
 	static constexpr int ARRAYIDX_NONE { -1 };
 	static constexpr int ARRAYIDX_ADD { -2 };
 	static constexpr int STATE_NONE { -1 };
@@ -2056,7 +2192,7 @@ private:
 	 * @param global use global context instead of current context
 	 * @return pointer to variable
 	 */
-	inline ScriptVariable* getVariableIntern(const string& name, const string& callerMethod, ScriptVariable*& parentVariable, int64_t& arrayIdx, string& key, const ScriptStatement* statement = nullptr, bool expectVariable = true, bool global = false) {
+	inline ScriptVariable* getVariableIntern(const string& name, const string& callerMethod, ScriptVariable*& parentVariable, int64_t& arrayIdx, string& key, int& setAccessBool, const ScriptStatement* statement = nullptr, bool expectVariable = true, bool global = false) {
 		//
 		if (StringTools::startsWith(name, "$") == false) {
 			if (statement != nullptr) {
@@ -2131,34 +2267,54 @@ private:
 			while (haveAccessOperator == true) {
 				// map key access
 				if (key.empty() == false) {
-					if (variablePtr->getType() != TYPE_MAP) {
-						if (statement != nullptr) {
-							Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': map access operator, but variable is not of type map");
+					if (variablePtr->getType() == TYPE_MAP) {
+						//
+						auto& mapValueReference = variablePtr->getMapValueReference();
+						// key
+						auto mapIt = mapValueReference.find(key);
+						if (mapIt != mapValueReference.end()) {
+							//
+							parentVariable = variablePtr;
+							//
+							variablePtr = &mapIt->second;
 						} else {
-							Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': map access operator, but variable is not of type map");
-						}
-						return nullptr;
-					}
-					//
-					auto& mapValueReference = variablePtr->getMapValueReference();
-					// key
-					auto mapIt = mapValueReference.find(key);
-					if (mapIt != mapValueReference.end()) {
-						//
-						parentVariable = variablePtr;
-						//
-						variablePtr = &mapIt->second;
-					} else {
-						if (expectVariable == true) {
-							if (statement != nullptr) {
-								Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': key not found: '" + key + "'");
-							} else {
-								Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': key not found: '" + key + "'");
+							if (expectVariable == true) {
+								if (statement != nullptr) {
+									Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': key not found: '" + key + "'");
+								} else {
+									Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': key not found: '" + key + "'");
+								}
 							}
+							// we have our parent
+							parentVariable = variablePtr;
+							//
+							return nullptr;
 						}
-						// we have our parent
-						parentVariable = variablePtr;
+					} else
+					if (variablePtr->getType() == TYPE_SET) {
 						//
+						auto& setValueReference = variablePtr->getSetValueReference();
+						// key
+						auto setIt = setValueReference.find(key);
+						if (setIt != setValueReference.end()) {
+							//
+							setAccessBool = SETACCESSBOOL_TRUE;
+							//
+							parentVariable = variablePtr;
+						} else {
+							//
+							setAccessBool = SETACCESSBOOL_FALSE;
+							// we have our parent
+							parentVariable = variablePtr;
+							//
+							return nullptr;
+						}
+					} else {
+						if (statement != nullptr) {
+							Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': map/set access operator, but variable is not of type map/set");
+						} else {
+							Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': map/set access operator, but variable is not of type map/set");
+						}
 						return nullptr;
 					}
 				} else {
@@ -2550,7 +2706,11 @@ public:
 		ScriptVariable* parentVariable = nullptr;
 		string key;
 		int64_t arrayIdx = ARRAYIDX_NONE;
-		auto variablePtr = getVariableIntern(globalVariableName.empty() == true?name:globalVariableName, __FUNCTION__, parentVariable, arrayIdx, key, statement, true, globalVariableName.empty() == false);
+		int setAccessBool = SETACCESSBOOL_NONE;
+		auto variablePtr = getVariableIntern(globalVariableName.empty() == true?name:globalVariableName, __FUNCTION__, parentVariable, arrayIdx, key, setAccessBool, statement, true, globalVariableName.empty() == false);
+		if (setAccessBool != SETACCESSBOOL_NONE) {
+			return ScriptVariable(setAccessBool == SETACCESSBOOL_TRUE);
+		} else
 		if (variablePtr != nullptr) {
 			return *variablePtr;
 		} else {
@@ -2575,7 +2735,8 @@ public:
 		ScriptVariable* parentVariable = nullptr;
 		string key;
 		int64_t arrayIdx = ARRAYIDX_NONE;
-		auto variablePtr = getVariableIntern(globalVariableName.empty() == true?name:globalVariableName, __FUNCTION__, parentVariable, arrayIdx, key, statement, false, globalVariableName.empty() == false);
+		int setAccessBool = SETACCESSBOOL_NONE;
+		auto variablePtr = getVariableIntern(globalVariableName.empty() == true?name:globalVariableName, __FUNCTION__, parentVariable, arrayIdx, key, setAccessBool, statement, false, globalVariableName.empty() == false);
 		// common case
 		if (variablePtr != nullptr) {
 			*variablePtr = variable;
@@ -2591,16 +2752,29 @@ public:
 					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': map access operator without map: '" + key + "'");
 				}
 			} else
-			if (parentVariable->getType() != MiniScript::TYPE_MAP) {
-				string callerMethod = __FUNCTION__;
-				if (statement != nullptr) {
-					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': map access operator: expected map, but got " + parentVariable->getTypeAsString() + ": '" + key + "'");
+			// all checks passed, push to map
+			if (parentVariable->getType() == MiniScript::TYPE_MAP) {
+				parentVariable->setMapValue(key, variable);
+			} else
+			if (parentVariable->getType() == MiniScript::TYPE_SET) {
+				bool booleanValue;
+				if (variable.getBooleanValue(booleanValue, false) == true) {
+					if (booleanValue == true) {
+						parentVariable->insertSetKey(key);
+					} else {
+						parentVariable->removeSetKey(key);
+					}
 				} else {
-					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': map access operator: expected map, but got " + parentVariable->getTypeAsString() + ": '" + key + "'");
+					string callerMethod = __FUNCTION__;
+					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': set access operator: expected boolean variable to remove/insert key in set, but got " + variable.getTypeAsString());
 				}
 			} else {
-				// all checks passed, push to map
-				parentVariable->setMapValue(key, variable);
+				string callerMethod = __FUNCTION__;
+				if (statement != nullptr) {
+					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': map/set access operator: expected map/set, but got " + parentVariable->getTypeAsString() + ": '" + key + "'");
+				} else {
+					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': map/set access operator: expected map/set, but got " + parentVariable->getTypeAsString() + ": '" + key + "'");
+				}
 			}
 			//
 			return;
