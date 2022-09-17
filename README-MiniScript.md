@@ -115,16 +115,18 @@ This is the documentation of MiniScript language. This document is WIP.
 | time.getCurrentMillis(): Integer                                                                 |
 | toLowerCase($string: String): String                                                             |
 | toUpperCase($string: String): String                                                             |
-| transform($translation: Vector3(OPTIONAL), $scale: Vector3(OPTIONAL), ...): Transform            |
+| transform($translation: Vector3(OPTIONAL), $scale: Vector3(OPTIONAL), $rotationAxis0: Vector3(OPTIONAL), $rotationAxis1: Vector3(OPTIONAL), $rotationAxis2: Vector3(OPTIONAL), ...): Transform|
+| transform.getMatrix($transform: Transform): Matrix4x4                                            |
+| transform.getQuaternion($transform: Transform): Quaternion                                       |
 | transform.getRotationAngle($transform: Transform, $idx: Integer): Float                          |
 | transform.getRotationAxis($transform: Transform, $idx: Integer): Vector3                         |
 | transform.getScale($transform: Transform): Vector3                                               |
 | transform.getTranslation($transform: Transform): Vector3                                         |
 | transform.multiply($transform: Transform, $vec3: Vector3): Vector3                               |
 | transform.rotate($transform: Transform, $vec3: Vector3): Vector3                                 |
-| transform.setRotationAngle($transform: Transform, $idx: Integer, $angle: Float): Transform       |
-| transform.setScale($transform: Transform, $scale: Vector3): Transform                            |
-| transform.setTranslation($transform: Transform, $translation: Vector3): Transform                |
+| transform.setRotationAngle(=$transform: Transform, $idx: Integer, $angle: Float): Void           |
+| transform.setScale(=$transform: Transform, $scale: Vector3): Void                                |
+| transform.setTranslation(=$transform: Transform, $translation: Vector3): Void                    |
 | unsetVariable($variable: String): Void                                                           |
 | vec2($x: Float, $y: Float): Vector2                                                              |
 | vec2.computeDotProduct($a: Vector2, $b: Vector2): Float                                          |

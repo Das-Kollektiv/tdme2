@@ -3777,7 +3777,10 @@ void MiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "translation", .optional = true, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "scale", .optional = true, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "scale", .optional = true, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "rotationAxis0", .optional = true, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "rotationAxis1", .optional = true, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "rotationAxis2", .optional = true, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_TRANSFORM),
 					miniScript(miniScript) {}
@@ -3857,10 +3860,10 @@ void MiniScript::registerMethods() {
 			ScriptMethodTransformSetTranslation(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = false },
+						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = true },
 						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "translation", .optional = false, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_TRANSFORM),
+					ScriptVariableType::TYPE_VOID),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "transform.setTranslation";
@@ -3872,7 +3875,7 @@ void MiniScript::registerMethods() {
 					MiniScript::getVector3Value(argumentValues, 1, translation, false) == true) {
 					transform.setTranslation(translation);
 					transform.update();
-					returnValue.setValue(transform);
+					argumentValues[0].setValue(transform);
 				} else {
 					Console::println("ScriptMethodTransformSetTranslation::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: transform expected, @ argument 1: vector3 expected");
 					miniScript->startErrorScript();
@@ -3918,10 +3921,10 @@ void MiniScript::registerMethods() {
 			ScriptMethodTransformSetScale(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = false },
+						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = true },
 						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "scale", .optional = false, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_TRANSFORM),
+					ScriptVariableType::TYPE_VOID),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "transform.setScale";
@@ -3933,7 +3936,7 @@ void MiniScript::registerMethods() {
 					MiniScript::getVector3Value(argumentValues, 1, scale, false) == true) {
 					transform.setScale(scale);
 					transform.update();
-					returnValue.setValue(transform);
+					argumentValues[0].setValue(transform);
 				} else {
 					Console::println("ScriptMethodTransformSetScale::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: transform expected, @ argument 1: vector3 expected");
 					miniScript->startErrorScript();
@@ -4023,11 +4026,11 @@ void MiniScript::registerMethods() {
 			ScriptMethodTransformSetRotationAngle(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = false },
+						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = true },
 						{.type = ScriptVariableType::TYPE_INTEGER, .name = "idx", .optional = false, .assignBack = false },
 						{.type = ScriptVariableType::TYPE_FLOAT, .name = "angle", .optional = false, .assignBack = false },
 					},
-					ScriptVariableType::TYPE_TRANSFORM),
+					ScriptVariableType::TYPE_VOID),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "transform.setRotationAngle";
@@ -4042,7 +4045,7 @@ void MiniScript::registerMethods() {
 					if (idx < transform.getRotationCount()) {
 						transform.setRotationAngle(idx, angle);
 						transform.update();
-						returnValue.setValue(transform);
+						argumentValues[0].setValue(transform);
 					} else {
 						Console::println("ScriptMethodTransformSetRotationAngle::executeMethod(): " + getMethodName() + "(): rotation index invalid: " + to_string(idx) + " / " + to_string(transform.getRotationCount()));
 						miniScript->startErrorScript();
@@ -4116,6 +4119,62 @@ void MiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodTransformRotate(this));
+	}
+	{
+		//
+		class ScriptMethodTransformGetMatrix: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodTransformGetMatrix(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = false },
+					},
+					ScriptVariableType::TYPE_MATRIX4x4),
+					miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "transform.getMatrix";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Transform transform;
+				if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true) {
+					returnValue.setValue(transform.getTransformMatrix());
+				} else {
+					Console::println("ScriptMethodTransformGetMatrix::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: transform expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodTransformGetMatrix(this));
+	}
+	{
+		//
+		class ScriptMethodTransformGetQuaternion: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodTransformGetQuaternion(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = false },
+					},
+					ScriptVariableType::TYPE_QUATERNION),
+					miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "transform.getQuaternion";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Transform transform;
+				if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true) {
+					returnValue.setValue(transform.getRotationsQuaternion());
+				} else {
+					Console::println("ScriptMethodTransformGetQuaternion::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: transform expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodTransformGetQuaternion(this));
 	}
 	// bool methods
 	{
