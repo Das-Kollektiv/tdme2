@@ -112,7 +112,7 @@ end
 
 ```
 ...
-	$array = array(1,2,3)
+	$array = array(1, 2, 3)
 ...
 ```
 
