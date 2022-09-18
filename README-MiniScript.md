@@ -85,11 +85,18 @@ function: assignTest($a, =$b, =$c)
 	$c = "c"
 end
 ...
+	$a = "0"
+	$b = "1"
+	$c = "2"
+	console.log("assignTest(): pre: $a = " + $a + ", $b = " + $b + ", $c = " + $c)
+	assignTest($a, $b, $c)
+	console.log("assignTest(): post: $a = " + $a + ", $b = " + $b + ", $c = " + $c)
+...
 ``` 
 
 ```
 ...
-# user script function to test assign back in user functions
+# user script function to test global variable access
 function: globalVariableTest()
 	console.log("globalVariableTest(): $GLOBAL.globalTest = " + $GLOBAL.globalTest)
 	$GLOBAL.globalTest = "Been there, done that, got the t-shirt"
