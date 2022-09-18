@@ -47,7 +47,7 @@ public:
 				if (MiniScript::getVector2Value(argumentValues, 0, vec2Value, false) == true) {
 					result = vec2Value;
 				} else {
-					Console::println("MiniScriptMath::mul(): parameter type mismatch @ argument " + to_string(0) + ": vector2 expected");
+					Console::println("MiniScriptMath::mul(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(0) + ": vector2 expected");
 					miniScript->startErrorScript();
 					return;
 				}
@@ -56,7 +56,7 @@ public:
 				if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
 					result = Vector2(floatValue, floatValue);
 				} else {
-					Console::println("MiniScriptMath::mul(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
+					Console::println("MiniScriptMath::mul(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(0) + ": float expected");
 					miniScript->startErrorScript();
 					return;
 				}
@@ -67,7 +67,7 @@ public:
 					if (MiniScript::getVector2Value(argumentValues, i, vec2Value, false) == true) {
 						result*= vec2Value;
 					} else {
-						Console::println("MiniScriptMath::mul(): parameter type mismatch @ argument " + to_string(i) + ": vector2 expected");
+						Console::println("MiniScriptMath::mul(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": vector2 expected");
 						miniScript->startErrorScript();
 						return;
 					}
@@ -76,7 +76,7 @@ public:
 					if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
 						result*= Vector2(floatValue, floatValue);
 					} else {
-						Console::println("MiniScriptMath::mul(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+						Console::println("MiniScriptMath::mul(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": float expected");
 						miniScript->startErrorScript();
 						return;
 					}
@@ -91,7 +91,7 @@ public:
 				if (MiniScript::getVector3Value(argumentValues, 0, vec3Value, false) == true) {
 					result = vec3Value;
 				} else {
-					Console::println("MiniScriptMath::mul(): parameter type mismatch @ argument " + to_string(0) + ": vector3 expected");
+					Console::println("MiniScriptMath::mul(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(0) + ": vector3 expected");
 					miniScript->startErrorScript();
 					return;
 				}
@@ -100,7 +100,7 @@ public:
 				if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
 					result = Vector3(floatValue, floatValue, floatValue);
 				} else {
-					Console::println("MiniScriptMath::mul(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
+					Console::println("MiniScriptMath::mul(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(0) + ": float expected");
 					miniScript->startErrorScript();
 					return;
 				}
@@ -111,7 +111,7 @@ public:
 					if (MiniScript::getVector3Value(argumentValues, i, vec3Value, false) == true) {
 						result*= vec3Value;
 					} else {
-						Console::println("MiniScriptMath::mul(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
+						Console::println("MiniScriptMath::mul(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
 						miniScript->startErrorScript();
 						return;
 					}
@@ -120,7 +120,7 @@ public:
 					if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
 						result*= Vector3(floatValue, floatValue, floatValue);
 					} else {
-						Console::println("MiniScriptMath::mul(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+						Console::println("MiniScriptMath::mul(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": float expected");
 						miniScript->startErrorScript();
 						return;
 					}
@@ -135,7 +135,7 @@ public:
 				if (MiniScript::getVector4Value(argumentValues, 0, vec4Value, false) == true) {
 					result = vec4Value;
 				} else {
-					Console::println("MiniScriptMath::mul(): parameter type mismatch @ argument " + to_string(0) + ": vector4 expected");
+					Console::println("MiniScriptMath::mul(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(0) + ": vector4 expected");
 					miniScript->startErrorScript();
 					return;
 				}
@@ -144,7 +144,7 @@ public:
 				if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
 					result = Vector4(floatValue, floatValue, floatValue, floatValue);
 				} else {
-					Console::println("MiniScriptMath::mul(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
+					Console::println("MiniScriptMath::mul(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(0) + ": float expected");
 					miniScript->startErrorScript();
 					return;
 				}
@@ -155,7 +155,7 @@ public:
 					if (MiniScript::getVector4Value(argumentValues, i, vec4Value, false) == true) {
 						result*= vec4Value;
 					} else {
-						Console::println("MiniScriptMath::mul(): parameter type mismatch @ argument " + to_string(i) + ": vector4 expected");
+						Console::println("MiniScriptMath::mul(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": vector4 expected");
 						miniScript->startErrorScript();
 						return;
 					}
@@ -164,7 +164,7 @@ public:
 					if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
 						result*= Vector4(floatValue, floatValue, floatValue, floatValue);
 					} else {
-						Console::println("MiniScriptMath::mul(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+						Console::println("MiniScriptMath::mul(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": float expected");
 						miniScript->startErrorScript();
 						return;
 					}
@@ -179,7 +179,7 @@ public:
 				if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
 					result = floatValue;
 				} else {
-					Console::println("MiniScriptMath::mul(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
+					Console::println("MiniScriptMath::mul(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(0) + ": float expected");
 					miniScript->startErrorScript();
 					return;
 				}
@@ -189,7 +189,7 @@ public:
 				if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
 					result*= floatValue;
 				} else {
-					Console::println("MiniScriptMath::mul(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+					Console::println("MiniScriptMath::mul(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": float expected");
 					miniScript->startErrorScript();
 					return;
 				}
@@ -202,7 +202,7 @@ public:
 				if (MiniScript::getIntegerValue(argumentValues, 0, intValue, false) == true) {
 					result = intValue;
 				} else {
-					Console::println("MiniScriptMath::mul(): parameter type mismatch @ argument " + to_string(0) + ": integer expected");
+					Console::println("MiniScriptMath::mul(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(0) + ": integer expected");
 					miniScript->startErrorScript();
 					return;
 				}
@@ -212,7 +212,7 @@ public:
 				if (MiniScript::getIntegerValue(argumentValues, i, intValue, false) == true) {
 					result*= intValue;
 				} else {
-					Console::println("MiniScriptMath::mul(): parameter type mismatch @ argument " + to_string(i) + ": integer expected");
+					Console::println("MiniScriptMath::mul(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": integer expected");
 					miniScript->startErrorScript();
 					return;
 				}
@@ -236,7 +236,7 @@ public:
 				if (MiniScript::getVector2Value(argumentValues, 0, vec2Value, false) == true) {
 					result = vec2Value;
 				} else {
-					Console::println("MiniScriptMath::div(): parameter type mismatch @ argument " + to_string(0) + ": vector2 expected");
+					Console::println("MiniScriptMath::div(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(0) + ": vector2 expected");
 					miniScript->startErrorScript();
 					return;
 				}
@@ -245,7 +245,7 @@ public:
 				if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
 					result = Vector2(floatValue, floatValue);
 				} else {
-					Console::println("MiniScriptMath::div(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
+					Console::println("MiniScriptMath::div(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(0) + ": float expected");
 					miniScript->startErrorScript();
 					return;
 				}
@@ -256,7 +256,7 @@ public:
 					if (MiniScript::getVector2Value(argumentValues, i, vec2Value, false) == true) {
 						result/= vec2Value;
 					} else {
-						Console::println("MiniScriptMath::div(): parameter type mismatch @ argument " + to_string(i) + ": vector2 expected");
+						Console::println("MiniScriptMath::div(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": vector2 expected");
 						miniScript->startErrorScript();
 						return;
 					}
@@ -265,7 +265,7 @@ public:
 					if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
 						result/= Vector2(floatValue, floatValue);
 					} else {
-						Console::println("MiniScriptMath::div(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+						Console::println("MiniScriptMath::div(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": float expected");
 						miniScript->startErrorScript();
 						return;
 					}
@@ -280,7 +280,7 @@ public:
 				if (MiniScript::getVector3Value(argumentValues, 0, vec3Value, false) == true) {
 					result = vec3Value;
 				} else {
-					Console::println("MiniScriptMath::div(): parameter type mismatch @ argument " + to_string(0) + ": vector3 expected");
+					Console::println("MiniScriptMath::div(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(0) + ": vector3 expected");
 					miniScript->startErrorScript();
 					return;
 				}
@@ -289,7 +289,7 @@ public:
 				if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
 					result = Vector3(floatValue, floatValue, floatValue);
 				} else {
-					Console::println("MiniScriptMath::div(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
+					Console::println("MiniScriptMath::div(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(0) + ": float expected");
 					miniScript->startErrorScript();
 					return;
 				}
@@ -300,7 +300,7 @@ public:
 					if (MiniScript::getVector3Value(argumentValues, i, vec3Value, false) == true) {
 						result/= vec3Value;
 					} else {
-						Console::println("MiniScriptMath::div(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
+						Console::println("MiniScriptMath::div(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
 						miniScript->startErrorScript();
 						return;
 					}
@@ -309,7 +309,7 @@ public:
 					if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
 						result/= Vector3(floatValue, floatValue, floatValue);
 					} else {
-						Console::println("MiniScriptMath::div(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+						Console::println("MiniScriptMath::div(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": float expected");
 						miniScript->startErrorScript();
 						return;
 					}
@@ -324,7 +324,7 @@ public:
 				if (MiniScript::getVector4Value(argumentValues, 0, vec4Value, false) == true) {
 					result = vec4Value;
 				} else {
-					Console::println("MiniScriptMath::div(): parameter type mismatch @ argument " + to_string(0) + ": vector4 expected");
+					Console::println("MiniScriptMath::div(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(0) + ": vector4 expected");
 					miniScript->startErrorScript();
 					return;
 				}
@@ -333,7 +333,7 @@ public:
 				if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
 					result = Vector4(floatValue, floatValue, floatValue, floatValue);
 				} else {
-					Console::println("MiniScriptMath::div(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
+					Console::println("MiniScriptMath::div(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(0) + ": float expected");
 					miniScript->startErrorScript();
 					return;
 				}
@@ -344,7 +344,7 @@ public:
 					if (MiniScript::getVector4Value(argumentValues, i, vec4Value, false) == true) {
 						result/= vec4Value;
 					} else {
-						Console::println("MiniScriptMath::div(): parameter type mismatch @ argument " + to_string(i) + ": vector4 expected");
+						Console::println("MiniScriptMath::div(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": vector4 expected");
 						miniScript->startErrorScript();
 						return;
 					}
@@ -353,7 +353,7 @@ public:
 					if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
 						result/= Vector4(floatValue, floatValue, floatValue, floatValue);
 					} else {
-						Console::println("MiniScriptMath::div(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+						Console::println("MiniScriptMath::div(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": float expected");
 						miniScript->startErrorScript();
 						return;
 					}
@@ -368,7 +368,7 @@ public:
 				if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
 					result = floatValue;
 				} else {
-					Console::println("MiniScriptMath::div(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
+					Console::println("MiniScriptMath::div(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(0) + ": float expected");
 					miniScript->startErrorScript();
 					return;
 				}
@@ -378,7 +378,7 @@ public:
 				if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
 					result/= floatValue;
 				} else {
-					Console::println("MiniScriptMath::div(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+					Console::println("MiniScriptMath::div(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": float expected");
 					miniScript->startErrorScript();
 					return;
 				}
@@ -391,7 +391,7 @@ public:
 				if (MiniScript::getIntegerValue(argumentValues, 0, intValue, false) == true) {
 					result = intValue;
 				} else {
-					Console::println("MiniScriptMath::div(): parameter type mismatch @ argument " + to_string(0) + ": integer expected");
+					Console::println("MiniScriptMath::div(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(0) + ": integer expected");
 					miniScript->startErrorScript();
 					return;
 				}
@@ -401,7 +401,7 @@ public:
 				if (MiniScript::getIntegerValue(argumentValues, i, intValue, false) == true) {
 					result/= intValue;
 				} else {
-					Console::println("MiniScriptMath::div(): parameter type mismatch @ argument " + to_string(i) + ": integer expected");
+					Console::println("MiniScriptMath::div(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": integer expected");
 					miniScript->startErrorScript();
 					return;
 				}
@@ -431,7 +431,7 @@ public:
 				if (MiniScript::getStringValue(argumentValues, i, stringValue, false) == true) {
 					result+= stringValue;
 				} else {
-					Console::println("MiniScriptMath::add(): parameter type mismatch @ argument " + to_string(i) + ": string expected");
+					Console::println("MiniScriptMath::add(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -445,7 +445,7 @@ public:
 					if (MiniScript::getVector2Value(argumentValues, i, vec2Value, false) == true) {
 						result+= vec2Value;
 					} else {
-						Console::println("MiniScriptMath::add(): parameter type mismatch @ argument " + to_string(i) + ": vector2 expected");
+						Console::println("MiniScriptMath::add(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": vector2 expected");
 						miniScript->startErrorScript();
 					}
 				} else {
@@ -453,7 +453,7 @@ public:
 					if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
 						result+= Vector2(floatValue, floatValue);
 					} else {
-						Console::println("MiniScriptMath::add(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+						Console::println("MiniScriptMath::add(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": float expected");
 						miniScript->startErrorScript();
 					}
 				}
@@ -468,7 +468,7 @@ public:
 					if (MiniScript::getVector3Value(argumentValues, i, vec3Value, false) == true) {
 						result+= vec3Value;
 					} else {
-						Console::println("MiniScriptMath::add(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
+						Console::println("MiniScriptMath::add(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
 						miniScript->startErrorScript();
 					}
 				} else {
@@ -476,7 +476,7 @@ public:
 					if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
 						result+= Vector3(floatValue, floatValue, floatValue);
 					} else {
-						Console::println("MiniScriptMath::add(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+						Console::println("MiniScriptMath::add(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": float expected");
 						miniScript->startErrorScript();
 					}
 				}
@@ -491,7 +491,7 @@ public:
 					if (MiniScript::getVector4Value(argumentValues, i, vec4Value, false) == true) {
 						result+= vec4Value;
 					} else {
-						Console::println("MiniScriptMath::add(): parameter type mismatch @ argument " + to_string(i) + ": vector4 expected");
+						Console::println("MiniScriptMath::add(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": vector4 expected");
 						miniScript->startErrorScript();
 					}
 				} else {
@@ -499,7 +499,7 @@ public:
 					if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
 						result+= Vector4(floatValue, floatValue, floatValue, floatValue);
 					} else {
-						Console::println("MiniScriptMath::add(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+						Console::println("MiniScriptMath::add(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": float expected");
 						miniScript->startErrorScript();
 					}
 				}
@@ -513,7 +513,7 @@ public:
 				if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
 					result+= floatValue;
 				} else {
-					Console::println("MiniScriptMath::add(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+					Console::println("MiniScriptMath::add(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": float expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -525,7 +525,7 @@ public:
 				if (MiniScript::getIntegerValue(argumentValues, i, intValue, false) == true) {
 					result+= intValue;
 				} else {
-					Console::println("MiniScriptMath::add(): parameter type mismatch @ argument " + to_string(i) + ": integer expected");
+					Console::println("MiniScriptMath::add(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": integer expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -548,7 +548,7 @@ public:
 				if (MiniScript::getVector2Value(argumentValues, 0, vec2Value, false) == true) {
 					result = vec2Value;
 				} else {
-					Console::println("MiniScriptMath::sub(): parameter type mismatch @ argument " + to_string(0) + ": vector2 expected");
+					Console::println("MiniScriptMath::sub(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(0) + ": vector2 expected");
 					miniScript->startErrorScript();
 				}
 			} else {
@@ -556,7 +556,7 @@ public:
 				if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
 					result = Vector2(floatValue, floatValue);
 				} else {
-					Console::println("MiniScriptMath::sub(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
+					Console::println("MiniScriptMath::sub(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(0) + ": float expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -566,7 +566,7 @@ public:
 					if (MiniScript::getVector2Value(argumentValues, i, vec2Value, false) == true) {
 						result-= vec2Value;
 					} else {
-						Console::println("MiniScriptMath::sub(): parameter type mismatch @ argument " + to_string(i) + ": vector2 expected");
+						Console::println("MiniScriptMath::sub(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": vector2 expected");
 						miniScript->startErrorScript();
 						return;
 					}
@@ -575,7 +575,7 @@ public:
 					if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
 						result-= Vector2(floatValue, floatValue);
 					} else {
-						Console::println("MiniScriptMath::sub(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+						Console::println("MiniScriptMath::sub(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": float expected");
 						miniScript->startErrorScript();
 						return;
 					}
@@ -590,7 +590,7 @@ public:
 				if (MiniScript::getVector3Value(argumentValues, 0, vec3Value, false) == true) {
 					result = vec3Value;
 				} else {
-					Console::println("MiniScriptMath::sub(): parameter type mismatch @ argument " + to_string(0) + ": vector3 expected");
+					Console::println("MiniScriptMath::sub(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(0) + ": vector3 expected");
 					miniScript->startErrorScript();
 				}
 			} else {
@@ -598,7 +598,7 @@ public:
 				if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
 					result = Vector3(floatValue, floatValue, floatValue);
 				} else {
-					Console::println("MiniScriptMath::sub(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
+					Console::println("MiniScriptMath::sub(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(0) + ": float expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -608,7 +608,7 @@ public:
 					if (MiniScript::getVector3Value(argumentValues, i, vec3Value, false) == true) {
 						result-= vec3Value;
 					} else {
-						Console::println("MiniScriptMath::sub(): parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
+						Console::println("MiniScriptMath::sub(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
 						miniScript->startErrorScript();
 						return;
 					}
@@ -617,7 +617,7 @@ public:
 					if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
 						result-= Vector3(floatValue, floatValue, floatValue);
 					} else {
-						Console::println("MiniScriptMath::sub(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+						Console::println("MiniScriptMath::sub(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": float expected");
 						miniScript->startErrorScript();
 						return;
 					}
@@ -632,7 +632,7 @@ public:
 				if (MiniScript::getVector4Value(argumentValues, 0, vec4Value, false) == true) {
 					result = vec4Value;
 				} else {
-					Console::println("MiniScriptMath::sub(): parameter type mismatch @ argument " + to_string(0) + ": vector4 expected");
+					Console::println("MiniScriptMath::sub(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(0) + ": vector4 expected");
 					miniScript->startErrorScript();
 				}
 			} else {
@@ -640,7 +640,7 @@ public:
 				if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
 					result = Vector4(floatValue, floatValue, floatValue, floatValue);
 				} else {
-					Console::println("MiniScriptMath::sub(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
+					Console::println("MiniScriptMath::sub(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(0) + ": float expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -650,7 +650,7 @@ public:
 					if (MiniScript::getVector4Value(argumentValues, i, vec4Value, false) == true) {
 						result-= vec4Value;
 					} else {
-						Console::println("MiniScriptMath::sub(): parameter type mismatch @ argument " + to_string(i) + ": vector4 expected");
+						Console::println("MiniScriptMath::sub(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": vector4 expected");
 						miniScript->startErrorScript();
 						return;
 					}
@@ -659,7 +659,7 @@ public:
 					if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
 						result-= Vector4(floatValue, floatValue, floatValue, floatValue);
 					} else {
-						Console::println("MiniScriptMath::sub(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+						Console::println("MiniScriptMath::sub(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": float expected");
 						miniScript->startErrorScript();
 						return;
 					}
@@ -674,7 +674,7 @@ public:
 				if (MiniScript::getFloatValue(argumentValues, 0, floatValue, false) == true) {
 					result = floatValue;
 				} else {
-					Console::println("MiniScriptMath::sub(): parameter type mismatch @ argument " + to_string(0) + ": float expected");
+					Console::println("MiniScriptMath::sub(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(0) + ": float expected");
 					miniScript->startErrorScript();
 					return;
 				}
@@ -684,7 +684,7 @@ public:
 				if (MiniScript::getFloatValue(argumentValues, i, floatValue, false) == true) {
 					result-= floatValue;
 				} else {
-					Console::println("MiniScriptMath::sub(): parameter type mismatch @ argument " + to_string(i) + ": float expected");
+					Console::println("MiniScriptMath::sub(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": float expected");
 					miniScript->startErrorScript();
 					return;
 				}
@@ -697,7 +697,7 @@ public:
 				if (MiniScript::getIntegerValue(argumentValues, 0, intValue, false) == true) {
 					result = intValue;
 				} else {
-					Console::println("MiniScriptMath::sub(): parameter type mismatch @ argument " + to_string(0) + ": integer expected");
+					Console::println("MiniScriptMath::sub(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(0) + ": integer expected");
 					miniScript->startErrorScript();
 					return;
 				}
@@ -707,7 +707,7 @@ public:
 				if (MiniScript::getIntegerValue(argumentValues, i, intValue, false) == true) {
 					result-= intValue;
 				} else {
-					Console::println("MiniScriptMath::sub(): parameter type mismatch @ argument " + to_string(i) + ": integer expected");
+					Console::println("MiniScriptMath::sub(): '" + miniScript->getScriptFileName() + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': parameter type mismatch @ argument " + to_string(i) + ": integer expected");
 					miniScript->startErrorScript();
 					return;
 				}

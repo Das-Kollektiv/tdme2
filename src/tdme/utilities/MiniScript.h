@@ -2407,6 +2407,13 @@ public:
 	virtual ~MiniScript();
 
 	/**
+	 * @return script file name
+	 */
+	inline const string& getScriptFileName() {
+		return scriptFileName;
+	}
+
+	/**
 	 * @return script hash
 	 */
 	inline const string& getHash() {

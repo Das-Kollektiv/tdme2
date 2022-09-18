@@ -4122,11 +4122,11 @@ void MiniScript::registerMethods() {
 	}
 	{
 		//
-		class ScriptMethodTransformGetMatrix: public ScriptMethod {
+		class ScriptMethodTransformGetTransformMatrix: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodTransformGetMatrix(MiniScript* miniScript):
+			ScriptMethodTransformGetTransformMatrix(MiniScript* miniScript):
 				ScriptMethod(
 					{
 						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = false },
@@ -4134,27 +4134,27 @@ void MiniScript::registerMethods() {
 					ScriptVariableType::TYPE_MATRIX4x4),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "transform.getMatrix";
+				return "transform.getTransformMatrix";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				Transform transform;
 				if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true) {
 					returnValue.setValue(transform.getTransformMatrix());
 				} else {
-					Console::println("ScriptMethodTransformGetMatrix::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: transform expected");
+					Console::println("ScriptMethodTransformGetTransformMatrix::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: transform expected");
 					miniScript->startErrorScript();
 				}
 			}
 		};
-		registerMethod(new ScriptMethodTransformGetMatrix(this));
+		registerMethod(new ScriptMethodTransformGetTransformMatrix(this));
 	}
 	{
 		//
-		class ScriptMethodTransformGetQuaternion: public ScriptMethod {
+		class ScriptMethodTransformGetRotationsQuaternion: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodTransformGetQuaternion(MiniScript* miniScript):
+			ScriptMethodTransformGetRotationsQuaternion(MiniScript* miniScript):
 				ScriptMethod(
 					{
 						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = false },
@@ -4162,19 +4162,19 @@ void MiniScript::registerMethods() {
 					ScriptVariableType::TYPE_QUATERNION),
 					miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "transform.getQuaternion";
+				return "transform.getRotationsQuaternion";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				Transform transform;
 				if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true) {
 					returnValue.setValue(transform.getRotationsQuaternion());
 				} else {
-					Console::println("ScriptMethodTransformGetQuaternion::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: transform expected");
+					Console::println("ScriptMethodTransformGetRotationsQuaternion::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: transform expected");
 					miniScript->startErrorScript();
 				}
 			}
 		};
-		registerMethod(new ScriptMethodTransformGetQuaternion(this));
+		registerMethod(new ScriptMethodTransformGetRotationsQuaternion(this));
 	}
 	// bool methods
 	{
@@ -5467,21 +5467,22 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 	}
 
 	// assign back arguments code
-	string assignBackCode;
+	vector<string> assignBackCodeLines;
 	{
 		auto argumentIdx = 0;
 		for (auto& argumentType: scriptMethod->getArgumentTypes()) {
 			if (argumentType.assignBack == true) {
 				if (StringTools::viewStartsWith(arguments[argumentIdx], "$") == true) {
-					assignBackCode+= minIndentString + depthIndentString + "\t" + "setVariable(\"" + string(arguments[argumentIdx]) + "\", argumentValues[" + to_string(argumentIdx) + "], &statement);" + "\n";
+					assignBackCodeLines.push_back("setVariable(\"" + string(arguments[argumentIdx]) + "\", argumentValues[" + to_string(argumentIdx) + "], &statement);");
 				} else {
 					Console::println("MiniScript::transpileScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + string(arguments[argumentIdx]) + "'");
 				}
 			}
 			argumentIdx++;
 		}
-		if (assignBackCode.empty() == false) {
-			assignBackCode = minIndentString + depthIndentString + "\t" + "// assign back" + "\n" + assignBackCode;
+		if (assignBackCodeLines.empty() == false) {
+			assignBackCodeLines.insert(assignBackCodeLines.begin(), string() + "// assign back");
+			assignBackCodeLines.insert(assignBackCodeLines.end(), string() + "//");
 		}
 	}
 
@@ -5513,7 +5514,17 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 		} else
 		if (StringTools::regexMatch(codeLine, "[\\ \\t]*miniScript[\\ \\t]*->startErrorScript[\\ \\t]*\\([\\ \\t]*\\)[\\ \\t]*;[\\ \\t]*") == true ||
 			StringTools::regexMatch(codeLine, "[\\ \\t]*miniScript[\\ \\t]*->emit[\\ \\t]*\\([\\ \\t]*[a-zA-Z0-9]*[\\ \\t]*\\)[\\ \\t]*;[\\ \\t]*") == true) {
-			generatedCode+= assignBackCode;
+			for (auto& assignBackCodeLine: assignBackCodeLines) {
+				generatedCode+= minIndentString + depthIndentString + "\t";
+				for (auto i = 0; i < codeLine.size(); i++) {
+					if (codeLine[i] == ' ' || codeLine[i] == '\t') {
+						generatedCode+= codeLine[i];
+					} else {
+						break;
+					}
+				}
+				generatedCode+= assignBackCodeLine + "\n";
+			}
 			generatedCode+= minIndentString + depthIndentString + "\t" + codeLine + " return" + (returnValue.empty() == false?" " + returnValue:"") + ";\n";
 		} else {
 			if (StringTools::regexMatch(codeLine, ".*[\\ \\t]*miniScript[\\ \\t]*->[\\ \\t]*setScriptStateState[\\ \\t]*\\([\\ \\t]*.+[\\ \\t]*\\);.*") == true) {
@@ -5535,8 +5546,9 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 	}
 
 	// assign back code
-	generatedCode+= assignBackCode;
-
+	for (auto& assignBackCodeLine: assignBackCodeLines) {
+		generatedCode+= minIndentString + depthIndentString + "\t" + assignBackCodeLine + "\n";
+	}
 	//
 	generatedCode+= minIndentString + depthIndentString + "}" + "\n";
 

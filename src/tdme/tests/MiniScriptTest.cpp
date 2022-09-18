@@ -19,7 +19,7 @@ MiniScriptTest::MiniScriptTest(): MiniScript() {
 
 void MiniScriptTest::initializeNative() {
 	setNative(true);
-	setHash("a97d083f3a20dc7362c97aad5eef45d8785fd95cf8984cfb8932e62e31b59f9f");
+	setHash("b24296d7826f29fd74cc3c36394e9a079982a38edeb7b14b597c0472d808a403");
 	setNativeScripts(
 		{
 			{
@@ -1418,15 +1418,15 @@ void MiniScriptTest::initializeNative() {
 					{
 						.line = 205,
 						.statementIdx = 167,
-						.statement = "console.log(\"transform.getMatrix($transform): \", transform.getMatrix($transform))",
-						.executableStatement = "console.log(\"transform.getMatrix($transform): \", transform.getMatrix($transform))",
+						.statement = "console.log(\"transform.getTransformMatrix($transform): \", transform.getTransformMatrix($transform))",
+						.executableStatement = "console.log(\"transform.getTransformMatrix($transform): \", transform.getTransformMatrix($transform))",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 206,
 						.statementIdx = 168,
-						.statement = "console.log(\"transform.getQuaternion($transform): \", transform.getQuaternion($transform))",
-						.executableStatement = "console.log(\"transform.getQuaternion($transform): \", transform.getQuaternion($transform))",
+						.statement = "console.log(\"transform.getRotationsQuaternion($transform): \", transform.getRotationsQuaternion($transform))",
+						.executableStatement = "console.log(\"transform.getRotationsQuaternion($transform): \", transform.getRotationsQuaternion($transform))",
 						.gotoStatementIdx = -1
 					},
 					{
@@ -11239,18 +11239,21 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 				argumentValues[0].setValue(transform);
 			} else {
 				Console::println("ScriptMethodTransformSetRotationAngle::executeMethod(): " + string("transform.setRotationAngle") + "(): rotation index invalid: " + to_string(idx) + " / " + to_string(transform.getRotationCount()));
-		// assign back
-		setVariable("$transform", argumentValues[0], &statement);
+				// assign back
+				setVariable("$transform", argumentValues[0], &statement);
+				//
 				miniScript->startErrorScript(); return;
 			}
 		} else {
 			Console::println("ScriptMethodTransformSetRotationAngle::executeMethod(): " + string("transform.setRotationAngle") + "(): parameter type mismatch @ argument 0: transform expected, @ argument 1: integer expected, @ argument 2: float expected");
-		// assign back
-		setVariable("$transform", argumentValues[0], &statement);
+			// assign back
+			setVariable("$transform", argumentValues[0], &statement);
+			//
 			miniScript->startErrorScript(); return;
 		}
 		// assign back
 		setVariable("$transform", argumentValues[0], &statement);
+		//
 	}
 
 	// Statement: 155
@@ -11438,12 +11441,14 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			argumentValues[0].setValue(transform);
 		} else {
 			Console::println("ScriptMethodTransformSetTranslation::executeMethod(): " + string("transform.setTranslation") + "(): parameter type mismatch @ argument 0: transform expected, @ argument 1: vector3 expected");
-		// assign back
-		setVariable("$transform", argumentValues[0], &statement);
+			// assign back
+			setVariable("$transform", argumentValues[0], &statement);
+			//
 			miniScript->startErrorScript(); return;
 		}
 		// assign back
 		setVariable("$transform", argumentValues[0], &statement);
+		//
 	}
 
 	// Statement: 159
@@ -11623,12 +11628,14 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 			argumentValues[0].setValue(transform);
 		} else {
 			Console::println("ScriptMethodTransformSetScale::executeMethod(): " + string("transform.setScale") + "(): parameter type mismatch @ argument 0: transform expected, @ argument 1: vector3 expected");
-		// assign back
-		setVariable("$transform", argumentValues[0], &statement);
+			// assign back
+			setVariable("$transform", argumentValues[0], &statement);
+			//
 			miniScript->startErrorScript(); return;
 		}
 		// assign back
 		setVariable("$transform", argumentValues[0], &statement);
+		//
 	}
 
 	// Statement: 163
@@ -11892,7 +11899,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 167
-	// console.log("transform.getMatrix($transform): ", transform.getMatrix($transform))
+	// console.log("transform.getTransformMatrix($transform): ", transform.getTransformMatrix($transform))
 	{
 		const ScriptStatement& statement = scripts[5].statements[167];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -11900,9 +11907,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
-		argumentValues[0].setValue(string("transform.getMatrix($transform): "));
-		// argumentValues[1] --> returnValue of transform.getMatrix($transform)
-		// depth = 1 / argument index = 1: transform.getMatrix($transform)
+		argumentValues[0].setValue(string("transform.getTransformMatrix($transform): "));
+		// argumentValues[1] --> returnValue of transform.getTransformMatrix($transform)
+		// depth = 1 / argument index = 1: transform.getTransformMatrix($transform)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -11925,12 +11932,12 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// method code: transform.getMatrix
+			// method code: transform.getTransformMatrix
 			Transform transform;
 			if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true) {
 				returnValue.setValue(transform.getTransformMatrix());
 			} else {
-				Console::println("ScriptMethodTransformGetMatrix::executeMethod(): " + string("transform.getMatrix") + "(): parameter type mismatch @ argument 0: transform expected");
+				Console::println("ScriptMethodTransformGetTransformMatrix::executeMethod(): " + string("transform.getTransformMatrix") + "(): parameter type mismatch @ argument 0: transform expected");
 				miniScript->startErrorScript(); return;
 			}
 		}
@@ -11942,7 +11949,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 168
-	// console.log("transform.getQuaternion($transform): ", transform.getQuaternion($transform))
+	// console.log("transform.getRotationsQuaternion($transform): ", transform.getRotationsQuaternion($transform))
 	{
 		const ScriptStatement& statement = scripts[5].statements[168];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -11950,9 +11957,9 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
-		argumentValues[0].setValue(string("transform.getQuaternion($transform): "));
-		// argumentValues[1] --> returnValue of transform.getQuaternion($transform)
-		// depth = 1 / argument index = 1: transform.getQuaternion($transform)
+		argumentValues[0].setValue(string("transform.getRotationsQuaternion($transform): "));
+		// argumentValues[1] --> returnValue of transform.getRotationsQuaternion($transform)
+		// depth = 1 / argument index = 1: transform.getRotationsQuaternion($transform)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -11975,12 +11982,12 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// method code: transform.getQuaternion
+			// method code: transform.getRotationsQuaternion
 			Transform transform;
 			if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true) {
 				returnValue.setValue(transform.getRotationsQuaternion());
 			} else {
-				Console::println("ScriptMethodTransformGetQuaternion::executeMethod(): " + string("transform.getQuaternion") + "(): parameter type mismatch @ argument 0: transform expected");
+				Console::println("ScriptMethodTransformGetRotationsQuaternion::executeMethod(): " + string("transform.getRotationsQuaternion") + "(): parameter type mismatch @ argument 0: transform expected");
 				miniScript->startErrorScript(); return;
 			}
 		}
@@ -14461,6 +14468,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		// assign back
 		setVariable("$array", argumentValues[0], &statement);
+		//
 	}
 
 	// Statement: 242
@@ -15893,6 +15901,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		// assign back
 		setVariable("$array", argumentValues[0], &statement);
+		//
 	}
 
 	// Statement: 276
@@ -15941,6 +15950,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		// assign back
 		setVariable("$array", argumentValues[0], &statement);
+		//
 	}
 
 	// Statement: 277
@@ -15989,6 +15999,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		// assign back
 		setVariable("$array", argumentValues[0], &statement);
+		//
 	}
 
 	// Statement: 278
@@ -16341,6 +16352,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		// assign back
 		setVariable("$map", argumentValues[0], &statement);
+		//
 	}
 
 	// Statement: 289
@@ -16383,6 +16395,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		// assign back
 		setVariable("$map", argumentValues[0], &statement);
+		//
 	}
 
 	// Statement: 290
@@ -16425,6 +16438,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		// assign back
 		setVariable("$map", argumentValues[0], &statement);
+		//
 	}
 
 	// Statement: 291
@@ -16482,6 +16496,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		// assign back
 		setVariable("$map", argumentValues[0], &statement);
+		//
 	}
 
 	// Statement: 292
@@ -16524,6 +16539,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		// assign back
 		setVariable("$map", argumentValues[0], &statement);
+		//
 	}
 
 	// Statement: 293
@@ -16616,6 +16632,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		// assign back
 		setVariable("$map", argumentValues[0], &statement);
+		//
 	}
 
 	// Statement: 296
@@ -16692,6 +16709,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		// assign back
 		setVariable("$map", argumentValues[0], &statement);
+		//
 	}
 
 	// Statement: 298
@@ -18033,6 +18051,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		// assign back
 		setVariable("$set", argumentValues[0], &statement);
+		//
 	}
 
 	// Statement: 332
@@ -18074,6 +18093,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		// assign back
 		setVariable("$set", argumentValues[0], &statement);
+		//
 	}
 
 	// Statement: 333
@@ -18115,6 +18135,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		// assign back
 		setVariable("$set", argumentValues[0], &statement);
+		//
 	}
 
 	// Statement: 334
@@ -18156,6 +18177,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		// assign back
 		setVariable("$set", argumentValues[0], &statement);
+		//
 	}
 
 	// Statement: 335
@@ -18197,6 +18219,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		// assign back
 		setVariable("$set", argumentValues[0], &statement);
+		//
 	}
 
 	// Statement: 336
@@ -18289,6 +18312,7 @@ void MiniScriptTest::on_nothing(int miniScriptGotoStatementIdx) {
 		}
 		// assign back
 		setVariable("$set", argumentValues[0], &statement);
+		//
 	}
 
 	// Statement: 339
