@@ -106,7 +106,9 @@ end
 
 #### 1.2.4.1 Primitive data types
 
-#### 1.2.4.2 Arrays
+#### 1.2.4.2 Compound math data types
+
+#### 1.2.4.3 Arrays
 
 ```
 ...
@@ -163,7 +165,7 @@ end
 ```
 
 
-#### 1.2.4.3 Maps
+#### 1.2.4.4 Maps
 
 ```
 ...
@@ -234,7 +236,7 @@ end
 ...
 ```
 
-#### 1.2.4.4 Sets
+#### 1.2.4.5 Sets
 
 ```
 ...
