@@ -285,6 +285,11 @@ end
 	$set.test7 = true
 	$set.test8 = false
 	$set.test9 = true
+...
+```
+
+```
+...
 	console.log("set keys: ", set.getKeys($set))
 ...
 ```
