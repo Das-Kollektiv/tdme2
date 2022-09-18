@@ -2,7 +2,298 @@
 
 This is the documentation of MiniScript language. This document is WIP.
 
-# 1. Methods
+# 1. Introduction
+
+## 1.1 Some notes on MiniScript language features
+- very small implementation of a scripting language without byte code, VM or what ever
+- runs on every CPU, OS, ... due to its simplicity, so its highly portable just like TDME2 is
+- can be easily extended by writing state machine machine states and script methods in C++
+- works with the following data types: boolean, integer, float, string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, array, map and set
+- when calling script methods/returning from methods it does not use references or pointers but only value by copy
+- supports user script functions and recursion
+- supports kind of references by optionally assigning back argument values to variables
+- supports operators by operator to method mapping by a preprocessor run
+- supports loops and conditions
+- supports event like programming
+- can be transpiled to C++
+
+## 1.2 Flow Control
+
+### 1.2.1. If, else, end
+
+```
+...
+	$i = 2
+	console.log($i, ":")
+	if ($i == 0)
+		console.log("i -> 0")
+	elseif ($i == 1)
+		console.log("i -> 1")
+	elseif ($i == 2)
+		console.log("i -> 2")
+	elseif ($i == 3)
+		console.log("i -> 3")
+	else
+		console.log("else: ", $i)
+	end
+...
+```
+
+### 1.2.2. forTime, forCondition
+```
+...
+	$i = 0
+	forTime(2000)
+		console.log($i, ": Hello World")
+		script.wait(500)
+		$i = $i + 1
+	end
+...
+```
+
+```
+...
+	$i = 0
+	forCondition($i < 5)
+		console.log("$ = ", $i)
+		$i = $i + 1
+	end
+...
+```
+
+### 1.2.3. Functions
+
+```
+...
+# user script function of recursive factorial computation
+function: factorial($value)
+	console.log("factorial(): $arguments = " + $arguments + " / $value = " + $value)
+	if ($value == 0) 
+		return(1)
+	end
+	return($value * factorial($value - 1))
+end
+...
+```
+
+```
+...
+# user script function to test assign back in user functions
+function: assignTest($a, =$b, =$c)
+	$a = "a"
+	$b = "b"
+	$c = "c"
+end
+...
+``` 
+
+```
+...
+# user script function to test assign back in user functions
+function: globalVariableTest()
+	console.log("globalVariableTest(): $GLOBAL.globalTest = " + $GLOBAL.globalTest)
+	$GLOBAL.globalTest = "Been there, done that, got the t-shirt"
+end
+...
+	$globalTest = "Global Test Variable"
+	console.log("globalVariableTest(): pre: $globalTest = " + $globalTest)
+	globalVariableTest()
+	console.log("globalVariableTest(): post: $globalTest = " + $globalTest)
+...
+```
+
+### 1.2.4. Data types and variables
+
+#### 1.2.4.1 Primitive data types
+
+#### 1.2.4.2 Arrays
+
+```
+...
+	$array = array(1,2,3)
+...
+```
+
+
+```
+...
+	array.push($array, 5, 6, 7)
+...
+```
+
+```
+...
+	$array[] = 8
+	$array[] = 9
+	$array[] = 10
+...
+```
+
+```
+...
+	$i = 0
+	forCondition($i < array.length($array))
+		console.log($i + ": " + array.get($array, $i))
+		$i = $i + 1
+	end
+...
+```
+
+```
+...
+	$i = 0
+	forCondition($i < array.length($array))
+		console.log($i + ": " + $array[$i])
+		$i = $i + 1
+	end
+...
+```
+
+```
+...
+	array.removeOf($array, 6)
+	array.removeOf($array, 7)
+...
+```
+
+```
+...
+	array.remove($array, 2)
+...
+```
+
+
+#### 1.2.4.3 Maps
+
+```
+...
+	$map = map()
+...
+```
+
+```
+...
+	map.set($map, "test1", 123)
+	map.set($map, "test2", 456)
+	map.set($map, "test3", array(1,2,3))
+	map.set($map, "test4", "Yaaaa")
+...
+```
+
+```
+...
+	map.remove($map, "test2")
+...
+```
+
+```
+...
+	console.log("map value for test1 key using map.get(): ", map.get($map, "test1"))
+	console.log("map value for test2 key using map.get(): ", map.get($map, "test2"))
+	console.log("map value for test3 key using map.get(): ", map.get($map, "test3"))
+	console.log("map value for test4 key using map.get(): ", map.get($map, "test4"))
+...
+```
+
+```
+...
+	console.log("map value for test1 using map dot operator: ", $map.test1)
+	console.log("map value for test2 using map dot operator: ", $map.test2)
+	console.log("map value for test3 using map dot operator: ", $map.test3)
+	console.log("map value for test4 using map dot operator: ", $map.test4)
+...
+```
+
+```
+...
+	$map.test6 = 666
+	$map.test7 = 770
+...
+```
+
+```
+...
+	console.log("map keys: ", map.getKeys($map))
+...
+```
+
+```
+...
+	console.log("map values: ", map.getValues($map))
+...
+```
+
+```
+...
+	$mapKeys = map.getKeys($map)
+	$i = 0
+	forCondition($i < array.length($mapKeys))
+		console.log($mapKeys[$i] + " = " + map.get($map, $mapKeys[$i]))
+		$i = $i + 1
+	end
+...
+```
+
+#### 1.2.4.4 Sets
+
+```
+...
+	$set = set()
+...
+```
+
+```
+...
+	set.insert($set, "test1")
+	set.insert($set, "test2")
+	set.insert($set, "test3")
+...
+```
+
+
+```
+...
+	set.remove($set, "test2")
+...
+```
+
+
+```
+...
+	console.log("set does have test1 key using set.has(): ", set.has($set, "test1"))
+	console.log("set does have test2 key using set.has(): ", set.has($set, "test2"))
+	console.log("set does have test3 key using set.has(): ", set.has($set, "test3"))
+	console.log("set does have test4 key using set.has(): ", set.has($set, "test4"))
+	console.log("set does have test5 key using set.has(): ", set.has($set, "test5"))
+...
+```
+
+
+```
+...
+	console.log("set key for test1 using set dot operator: ", $set.test1)
+	console.log("set key for test2 using set dot operator: ", $set.test2)
+	console.log("set key for test3 using set dot operator: ", $set.test3)
+	console.log("set key for test4 using set dot operator: ", $set.test4)
+	console.log("set key for test5 using set dot operator: ", $set.test5)
+...
+```
+
+```
+...
+	$set.test6 = true
+	$set.test7 = true
+	$set.test8 = false
+	$set.test9 = true
+	console.log("set keys: ", set.getKeys($set))
+...
+```
+
+
+### 1.2.5. Program structure and flow
+
+
+# 2. Methods
 
 | Methods                                                                                          |
 |--------------------------------------------------------------------------------------------------|
@@ -155,7 +446,7 @@ This is the documentation of MiniScript language. This document is WIP.
 | vec4.getZ($vec4: Vector4): Float                                                                 |
 | vec4.normalize($vec4: Vector4): Vector4                                                          |
 
-# 2. Operators
+# 3. Operators
 
 | Op | Method                                                                                      |
 |----|---------------------------------------------------------------------------------------------|
