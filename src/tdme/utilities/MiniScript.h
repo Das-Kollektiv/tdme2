@@ -2103,7 +2103,7 @@ private:
 				}
 				if (c == ']') {
 					if (statement != nullptr) {
-						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': unexpected char: ']'");
+						Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "': unexpected char: ']'");
 					} else {
 						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': variable: '" + name + "': unexpected char: ']'");
 					}
@@ -2128,7 +2128,7 @@ private:
 				} else
 				if (squareBracketsCount < 0) {
 					if (statement != nullptr) {
-						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': unexpected char: ']'");
+						Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "': unexpected char: ']'");
 					} else {
 						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': variable: '" + name + "': unexpected char: ']'");
 					}
@@ -2166,7 +2166,7 @@ private:
 			ScriptVariable statementReturnValue;
 			if (evaluate(string(arrayIdxExpressionStringView), statementReturnValue) == false || statementReturnValue.getIntegerValue(arrayIdx, false) == false) {
 				if (statement != nullptr) {
-					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': failed to evaluate expression: '" + string(arrayIdxExpressionStringView) + "'");
+					Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "': failed to evaluate expression: '" + string(arrayIdxExpressionStringView) + "'");
 				} else {
 					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': failed to evaluate expression: '" + string(arrayIdxExpressionStringView) + "'");
 				}
@@ -2196,7 +2196,7 @@ private:
 		//
 		if (StringTools::startsWith(name, "$") == false) {
 			if (statement != nullptr) {
-				Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': variable names must start with an $");
+				Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "': variable names must start with an $");
 			} else {
 				Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': variable names must start with an $");
 			}
@@ -2228,7 +2228,7 @@ private:
 				if (isFunctionRunning() == false) {
 					if (expectVariable == true) {
 						if (statement != nullptr) {
-							Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "' does not exist");
+							Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "' does not exist");
 						} else {
 							Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "' does not exist");
 						}
@@ -2246,7 +2246,7 @@ private:
 			if (scriptVariableIt == scriptState.variables.end()) {
 				if (expectVariable == true) {
 					if (statement != nullptr) {
-						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "' does not exist");
+						Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "' does not exist");
 					} else {
 						Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "' does not exist");
 					}
@@ -2280,7 +2280,7 @@ private:
 						} else {
 							if (expectVariable == true) {
 								if (statement != nullptr) {
-									Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': key not found: '" + key + "'");
+									Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "': key not found: '" + key + "'");
 								} else {
 									Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': key not found: '" + key + "'");
 								}
@@ -2311,7 +2311,7 @@ private:
 						}
 					} else {
 						if (statement != nullptr) {
-							Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': map/set access operator, but variable is not of type map/set");
+							Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "': map/set access operator, but variable is not of type map/set");
 						} else {
 							Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': map/set access operator, but variable is not of type map/set");
 						}
@@ -2320,7 +2320,7 @@ private:
 				} else {
 					if (variablePtr->getType() != TYPE_ARRAY) {
 						if (statement != nullptr) {
-							Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': array access operator, but variable is not of type array");
+							Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "': array access operator, but variable is not of type array");
 						} else {
 							Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': array access operator, but variable is not of type array");
 						}
@@ -2341,7 +2341,7 @@ private:
 						variablePtr = &arrayValueReference[arrayIdx];
 					} else {
 						if (statement != nullptr) {
-							Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': index out of bounds: 0 <= " + to_string(arrayIdx) + " < " + to_string(arrayValueReference.size()));
+							Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "': index out of bounds: 0 <= " + to_string(arrayIdx) + " < " + to_string(arrayValueReference.size()));
 						} else {
 							Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': index out of bounds: 0 <= " + to_string(arrayIdx) + " <= " + to_string(arrayValueReference.size()));
 						}
@@ -2462,6 +2462,13 @@ public:
 	 * Register variables
 	 */
 	virtual void registerVariables();
+
+	/**
+	 * @return script statement information
+	 */
+	inline const string getStatementInformation(const ScriptStatement& statement) const {
+		return "'" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "'";
+	}
 
 	/**
 	 * Get operator as string
@@ -2754,7 +2761,7 @@ public:
 			if (parentVariable == nullptr) {
 				string callerMethod = __FUNCTION__;
 				if (statement != nullptr) {
-					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': map access operator without map: '" + key + "'");
+					Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "': map access operator without map: '" + key + "'");
 				} else {
 					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': map access operator without map: '" + key + "'");
 				}
@@ -2778,7 +2785,7 @@ public:
 			} else {
 				string callerMethod = __FUNCTION__;
 				if (statement != nullptr) {
-					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': map/set access operator: expected map/set, but got " + parentVariable->getTypeAsString() + ": '" + key + "'");
+					Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "': map/set access operator: expected map/set, but got " + parentVariable->getTypeAsString() + ": '" + key + "'");
 				} else {
 					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': map/set access operator: expected map/set, but got " + parentVariable->getTypeAsString() + ": '" + key + "'");
 				}
@@ -2790,7 +2797,7 @@ public:
 			if (parentVariable == nullptr) {
 				string callerMethod = __FUNCTION__;
 				if (statement != nullptr) {
-					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': [] array push operator without array");
+					Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "': [] array push operator without array");
 				} else {
 					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': [] array push operator without array");
 				}
@@ -2798,7 +2805,7 @@ public:
 			if (parentVariable->getType() != MiniScript::TYPE_ARRAY) {
 				string callerMethod = __FUNCTION__;
 				if (statement != nullptr) {
-					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': @" + to_string(statement->line) + ": '" + statement->statement + "': variable: '" + name + "': [] array push operator: expected array , but got " + parentVariable->getTypeAsString());
+					Console::println("MiniScript::" + callerMethod + "(): " + getStatementInformation(*statement) + ": variable: '" + name + "': [] array push operator: expected array , but got " + parentVariable->getTypeAsString());
 				} else {
 					Console::println("MiniScript::" + callerMethod + "(): '" + scriptFileName + "': variable: '" + name + "': [] array push operator: expected array, but got " + parentVariable->getTypeAsString());
 				}
