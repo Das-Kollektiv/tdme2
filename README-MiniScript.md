@@ -251,7 +251,7 @@ For more math related methods just look into 2. Methods section.
 
 ## 4.3. Arrays
 
-An array is a collection of values which are indexed can be accessed by indices.
+An array is a collection/sequence of values which can be addressed by indices.
 
 Initializing an array:
 
