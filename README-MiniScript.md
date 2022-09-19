@@ -109,7 +109,7 @@ function: factorial($value)
 	return($value * factorial($value - 1))
 end
 ...
-console.log("factorial(5) = " + factorial(5))
+	console.log("factorial(5) = " + factorial(5))
 ...
 ```
 
