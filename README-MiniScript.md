@@ -95,8 +95,8 @@ See an example of forCondition():
 # 3. Functions
 
 Please see this example that shows user script functions and recursion.
-Also it gives an example of $arguments which is created in variables in function context and allows access to all function call arguments.
-Also if enlisted variable names in function declaration those variables are created in function context.
+It also shows $arguments array variable, which is created in function context and allows access to all arguments that the function was called with.
+Argument variable names in function declaration are also populated in function context.
 ```
 ...
 # user script function of recursive factorial computation
@@ -112,7 +112,7 @@ console.log("factorial(5) = " + factorial(5))
 ...
 ```
 
-If a variable is prefixed with a = operator before  variable name, those variables will be assigned back after function returns. See =$b and =$c.
+If a argument variable is prefixed with a = operator in function declaration, this variable will be assigned back after the function returns. See =$b and =$c.
 ```
 ...
 # user script function to test assign back in user functions
@@ -132,7 +132,7 @@ end
 ``` 
 
 Global variables can always be accessed by using the "$GLOBAL." accessor.
-By default variables are read from current context and if it has not been found from root context.
+By default variables are read from current context and if they have not been found from root context.
 ```
 ...
 # user script function to test global variable access
