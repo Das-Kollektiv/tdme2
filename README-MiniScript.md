@@ -126,7 +126,7 @@ MiniScript works with the following data types
 - map
 - set  
 
-## 4.1 Primitive data types
+## 4.1. Primitive data types
 
 The following primitive data types are available: boolean, integer, float, string.
 
@@ -184,7 +184,7 @@ The primitive data types can also be assigned by using initialization methods th
 ...
 ```
 
-## 4.2 Compound math data types
+## 4.2. Compound math data types
 
 MiniScript works with the following math specific data types
 - vector2
@@ -248,7 +248,7 @@ Those variables can be created the following ways:
 
 For more math related methods just look into 2. Methods section. 
 
-## 4.3 Arrays
+## 4.3. Arrays
 
 An array is a collection of values which are indexed can be accessed by indices.
 
@@ -321,7 +321,7 @@ Removing from arrays using a index with array.remove():
 ```
 
 
-## 4.4 Maps
+## 4.4. Maps
 
 A map is key, value pair storage using a underlying hash map.
 
@@ -403,7 +403,7 @@ Reading all keys and values from map using map.get() and map.getKeys()
 ...
 ```
 
-## 4.5 Sets
+## 4.5. Sets
 
 A set is value storage using a underlying hash set. Keys can only exist a single time in set.
 
