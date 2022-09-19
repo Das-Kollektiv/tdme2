@@ -4,7 +4,8 @@ This is the documentation of MiniScript language. This document is WIP.
 
 # 1. Introduction
 
-- very small implementation of a scripting language without byte code, VM or what ever
+Let me first introduce you to some MiniScript language features:
+- very small implementation of a scripting language
 - runs on every CPU, OS, ... due to its simplicity, so its highly portable just like TDME2 is
 - can be easily extended by writing state machine machine states and script methods in C++
 - works with the following data types: boolean, integer, float, string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, array, map and set

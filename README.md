@@ -199,7 +199,7 @@
     - supports position and color based effects in combination with conditions that can also be defined via XML
     - unicode support via UTF8
 - MiniScript
-	- very small implementation of a scripting language without byte code, VM or what ever
+	- very small implementation of a scripting language
 	- runs on every CPU, OS, ... due to its simplicity, so its highly portable just like TDME2 is
 	- can be easily extended by writing state machine machine states and script methods in C++
 	- works with the following data types: boolean, integer, float, string, vector2, vector3, vector4, quaternion, matrix3x3, matrix4x4, transform, array, map and set
