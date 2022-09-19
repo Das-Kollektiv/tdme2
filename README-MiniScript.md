@@ -168,6 +168,9 @@ MiniScript works with the following data types:
 - map
 - set  
 
+Variable identifiers always start with a "$", not because we love money and/or PHP, but because its the cheapest way to determine if e.g. a argument is a literal or a variable.
+Constants need also be prefixed with a "$" and should be named with uppercase letters like "$PI = 3.14". (No real constant support yet, but it is planned)
+
 ## 4.1. Primitive data types
 
 The following primitive data types are available: boolean, integer, float, string.
