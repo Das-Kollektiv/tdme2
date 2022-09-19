@@ -334,7 +334,7 @@ Setting map key, value pairs using map.set():
 ...
 	map.set($map, "test1", 123)
 	map.set($map, "test2", 456)
-	map.set($map, "test3", array(1,2,3))
+	map.set($map, "test3", array(1, 2, 3))
 	map.set($map, "test4", "Yaaaa")
 ...
 ```
