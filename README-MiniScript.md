@@ -515,11 +515,11 @@ Reading all keys as array from set:
 ...
 ```
 
+# 5. Program structure and flow
 
-# 6. Program structure and flow
+... TODO ...
 
-
-# 7. Methods
+# 6. Methods
 
 | Methods                                                                                          |
 |--------------------------------------------------------------------------------------------------|
@@ -672,7 +672,7 @@ Reading all keys as array from set:
 | vec4.getZ($vec4: Vector4): Float                                                                 |
 | vec4.normalize($vec4: Vector4): Vector4                                                          |
 
-# 8. Operators
+# 7. Operators
 
 | Op | Method                                                                                      |
 |----|---------------------------------------------------------------------------------------------|
