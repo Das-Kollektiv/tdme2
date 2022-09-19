@@ -19,7 +19,33 @@ Let me first introduce you to some MiniScript language features:
 
 # 2. Flow Control
 
-## 2.1. If, else, end
+## 2.1. If, elseif, else and end
+
+If, elseif, else and end are flow control methods. Please see the usage below.
+
+See an example of if and end:
+```
+...
+	$i = 1
+	if ($i == 1)
+		console.log("i -> 0")
+	end
+...
+```
+
+See an example of if and else and end:
+```
+...
+	$i = 2
+	if ($i == 1)
+		console.log("i -> 1")
+	else
+		console.log("else: ", $i)
+	end
+...
+```
+
+See an example of if, elseif, else and end:
 
 ```
 ...
@@ -40,6 +66,10 @@ Let me first introduce you to some MiniScript language features:
 ```
 
 ## 2.2. forTime, forCondition
+
+forTime and forCondition are loops and belong to flow control also:
+
+See an example of forTime():
 ```
 ...
 	$i = 0
@@ -51,6 +81,7 @@ Let me first introduce you to some MiniScript language features:
 ...
 ```
 
+See an example of forCondition():
 ```
 ...
 	$i = 0
@@ -63,6 +94,9 @@ Let me first introduce you to some MiniScript language features:
 
 # 3. Functions
 
+Please see this example that shows user script functions and recursion.
+Also it gives an example of $arguments which is created in variables in function context and allows access to all function call arguments.
+Also if enlisted variable names in function declaration those variables are created in function context.
 ```
 ...
 # user script function of recursive factorial computation
@@ -74,8 +108,11 @@ function: factorial($value)
 	return($value * factorial($value - 1))
 end
 ...
+console.log("factorial(5) = " + factorial(5))
+...
 ```
 
+If a variable is prefixed with a = operator before  variable name, those variables will be assigned back after function returns. See =$b and =$c.
 ```
 ...
 # user script function to test assign back in user functions
@@ -94,6 +131,8 @@ end
 ...
 ``` 
 
+Global variables can always be accessed by using the "$GLOBAL." accessor.
+By default variables are read from current context and if it has not been found from root context.
 ```
 ...
 # user script function to test global variable access
