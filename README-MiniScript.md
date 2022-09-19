@@ -17,7 +17,7 @@ Introduction to MiniScript language features:
 - supports event like programming
 - can be transpiled to C++
 
-# 2. Flow Control
+# 2. Flow control
 
 ## 2.1. If, elseif, else and end
 
