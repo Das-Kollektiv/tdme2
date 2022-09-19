@@ -28,7 +28,7 @@ See an example of if and end:
 ...
 	$i = 1
 	if ($i == 1)
-		console.log("i -> 0")
+		console.log("i -> 1")
 	end
 ...
 ```
