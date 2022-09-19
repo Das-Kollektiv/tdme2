@@ -286,7 +286,7 @@ Those variables can be created the following ways:
 ...
 ```
 
-For more math related methods just look into 2. Methods section. 
+For more math related methods just look into "7. Methods" section. 
 
 ## 4.3. Arrays
 
