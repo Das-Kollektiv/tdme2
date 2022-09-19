@@ -4,7 +4,6 @@ This is the documentation of MiniScript language. This document is WIP.
 
 # 1. Introduction
 
-## 1.1 Some notes on MiniScript language features
 - very small implementation of a scripting language without byte code, VM or what ever
 - runs on every CPU, OS, ... due to its simplicity, so its highly portable just like TDME2 is
 - can be easily extended by writing state machine machine states and script methods in C++
@@ -17,9 +16,9 @@ This is the documentation of MiniScript language. This document is WIP.
 - supports event like programming
 - can be transpiled to C++
 
-## 1.2 Flow Control
+## 2 Flow Control
 
-### 1.2.1. If, else, end
+### 2.1. If, else, end
 
 ```
 ...
@@ -39,7 +38,7 @@ This is the documentation of MiniScript language. This document is WIP.
 ...
 ```
 
-### 1.2.2. forTime, forCondition
+### 2.2. forTime, forCondition
 ```
 ...
 	$i = 0
@@ -61,7 +60,7 @@ This is the documentation of MiniScript language. This document is WIP.
 ...
 ```
 
-### 1.2.3. Functions
+### 3. Functions
 
 ```
 ...
@@ -109,7 +108,7 @@ end
 ...
 ```
 
-### 1.2.4. Data types and variables
+### 4. Data types and variables
 
 MiniScript works with the following data types
 - boolean
@@ -127,7 +126,7 @@ MiniScript works with the following data types
 - map
 - set  
 
-#### 1.2.4.1 Primitive data types
+#### 4.1 Primitive data types
 
 The following primitive data types are available: boolean, integer, float, string.
 
@@ -185,7 +184,7 @@ The primitive data types can also be assigned by using initialization methods th
 ...
 ```
 
-#### 1.2.4.2 Compound math data types
+#### 4.2 Compound math data types
 
 MiniScript works with the following math specific data types
 - vector2
@@ -249,7 +248,9 @@ Those variables can be created the following ways:
 
 For more math related methods just look into 2. Methods section. 
 
-#### 1.2.4.3 Arrays
+#### 4.3 Arrays
+
+An array is a collection of values which are indexed can be accessed by indices.
 
 Initializing an array:
 
@@ -320,7 +321,9 @@ Removing from arrays using a index with array.remove():
 ```
 
 
-#### 1.2.4.4 Maps
+#### 4.4 Maps
+
+A map is key, value pair storage using a underlying hash map.
 
 Initializing maps using map() method:
 ```
@@ -400,7 +403,9 @@ Reading all keys and values from map using map.get() and map.getKeys()
 ...
 ```
 
-#### 1.2.4.5 Sets
+#### 4.5 Sets
+
+A set is value storage using a underlying hash set. Keys can only exist a single time in set.
 
 Initializing sets using set() method:
 ```
@@ -466,10 +471,10 @@ Reading all keys as array from set:
 ```
 
 
-### 1.2.5. Program structure and flow
+### 6. Program structure and flow
 
 
-# 2. Methods
+# 7. Methods
 
 | Methods                                                                                          |
 |--------------------------------------------------------------------------------------------------|
@@ -622,7 +627,7 @@ Reading all keys as array from set:
 | vec4.getZ($vec4: Vector4): Float                                                                 |
 | vec4.normalize($vec4: Vector4): Vector4                                                          |
 
-# 3. Operators
+# 8. Operators
 
 | Op | Method                                                                                      |
 |----|---------------------------------------------------------------------------------------------|
