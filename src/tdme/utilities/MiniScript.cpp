@@ -3817,9 +3817,6 @@ void MiniScript::registerMethods() {
 				transform.update();
 				returnValue.setValue(transform);
 			}
-			bool isVariadic() override {
-				return true;
-			}
 		};
 		registerMethod(new ScriptMethodTransform(this));
 	}

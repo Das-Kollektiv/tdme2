@@ -4,7 +4,7 @@ This is the documentation of MiniScript language. This document is WIP.
 
 # 1. Introduction
 
-Let me first introduce you to some MiniScript language features:
+Introduction to MiniScript language features:
 - very small implementation of a scripting language
 - runs on every CPU, OS, ... due to its simplicity, so its highly portable just like TDME2 is
 - can be easily extended by writing state machine machine states and script methods in C++
@@ -94,9 +94,10 @@ See an example of forCondition():
 
 # 3. Functions
 
-Please see this example that shows user script functions and recursion.
+See this example that shows user script functions and recursion.
+
 It also shows $arguments array variable, which is created in function context and allows access to all arguments that the function was called with.
-Argument variable names in function declaration are also populated in function context.
+Argument variable names in function declaration are also populated in function context with corresponding values.
 ```
 ...
 # user script function of recursive factorial computation
@@ -133,6 +134,7 @@ end
 
 Global variables can always be accessed by using the "$GLOBAL." accessor.
 By default variables are read from current context and if they have not been found from root context.
+So to be sure to use a global variable in function scope, just use the "$GLOBAL." accessor.
 ```
 ...
 # user script function to test global variable access
@@ -290,7 +292,7 @@ For more math related methods just look into "7. Methods" section.
 
 ## 4.3. Arrays
 
-An array is a collection/sequence of values which can be addressed by indices.
+An array is a collection/sequence of values which can be accessed by indices.
 
 Initializing an array:
 
@@ -363,7 +365,7 @@ Removing from arrays using a index with array.remove():
 
 ## 4.4. Maps
 
-A map is key, value pair storage using a underlying hash map.
+A map is key, value pair storage using a underlying hash map. Keys can only exist once in a map.
 
 Initializing maps using map() method:
 ```
@@ -445,7 +447,7 @@ Reading all keys and values from map using map.get() and map.getKeys()
 
 ## 4.5. Sets
 
-A set is value storage using a underlying hash set. Keys can only exist a single time in set.
+A set is value storage using a underlying hash set. Keys can only exist once in a set.
 
 Initializing sets using set() method:
 ```
@@ -627,7 +629,7 @@ Reading all keys as array from set:
 | time.getCurrentMillis(): Integer                                                                 |
 | toLowerCase($string: String): String                                                             |
 | toUpperCase($string: String): String                                                             |
-| transform($translation: Vector3(OPTIONAL), $scale: Vector3(OPTIONAL), $rotationAxis0: Vector3(OPTIONAL), $rotationAxis1: Vector3(OPTIONAL), $rotationAxis2: Vector3(OPTIONAL), ...): Transform|
+| transform($translation: Vector3(OPTIONAL), $scale: Vector3(OPTIONAL), $rotationAxis0: Vector3(OPTIONAL), $rotationAxis1: Vector3(OPTIONAL), $rotationAxis2: Vector3(OPTIONAL)): Transform|
 | transform.getRotationAngle($transform: Transform, $idx: Integer): Float                          |
 | transform.getRotationAxis($transform: Transform, $idx: Integer): Vector3                         |
 | transform.getRotationsQuaternion($transform: Transform): Quaternion                              |
