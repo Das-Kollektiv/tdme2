@@ -111,25 +111,169 @@ end
 
 ### 1.2.4. Data types and variables
 
+MiniScript works with the following data types
+- boolean
+- integer
+- float
+- string
+- vector2
+- vector3
+- vector4
+- quaternion
+- matrix3x3
+- matrix4x4
+- transform
+- array
+- map
+- set  
+
 #### 1.2.4.1 Primitive data types
+
+The following primitive data types are available: boolean, integer, float, string.
+
+Variables of those types can be assigned implicitly, which means the parser know about the data type by given value. 
+
+```
+...
+	$boolean = true
+	$boolean = false
+...
+```
+
+```
+...
+	$integer = 123
+...
+```
+
+```
+...
+	$float = 456.789
+...
+```
+
+```
+...
+	$string = "This is my mighty string"
+...
+```
+
+The primitive data types can also be assigned by using initialization methods that return explicitly those primitive data types. 
+
+```
+...
+	$boolean = bool(true)
+	$boolean = bool(false)
+...
+```
+
+```
+...
+	$integer = int(123)
+...
+```
+
+```
+...
+	$float = float(456.789)
+...
+```
+
+```
+...
+	$string = string("This is my mighty string")
+...
+```
 
 #### 1.2.4.2 Compound math data types
 
+MiniScript works with the following math specific data types
+- vector2
+- vector3
+- vector4
+- quaternion
+- matrix3x3
+- matrix4x4
+- transform
+
+Those variables can be created the following ways:
+
+```
+...
+	$vector2 = vec2(-1.0, 1.0)
+...
+```
+
+```
+...
+	$vector3 = vec3(-1.0, 1.0, -2.0)
+...
+```
+
+```
+...
+	$vector4 = vec4(-1.0, 1.0, -2.0, 1.0)
+...
+```
+
+```
+...
+	$quaternion = quaternion.identity()
+...
+```
+
+```
+...
+	$matrix3 = mat3.identity()
+...
+```
+
+```
+...
+	$matrix4 = mat4.identity()
+...
+```
+
+```
+...
+	$translation = vec3(-1.0, 1.0, -2.0)
+	$scale = vec3(2.0, 2.0, 2.0)
+	$rotAxis0 = vec3(0.0, 0.0, 1.0)
+	$rotAxis1 = vec3(0.0, 1.0, 0.0)
+	$rotAxis2 = vec3(1.0, 0.0, 0.0)
+	$transform = transform($translation, $scale, $rotAxis0, $rotAxis1, $rotAxis2)
+	# or
+	$transform = transform(vec3(-1.0, 1.0, -2.0), vec3(2.0, 2.0, 2.0), $rotAxis0, $rotAxis1, $rotAxis2)
+...
+```
+
+For more math related methods just look into 2. Methods section. 
+
 #### 1.2.4.3 Arrays
 
+Initializing an array:
+
+```
+...
+	$array = array()
+...
+```
+
+... or initialize and push values to it:
 ```
 ...
 	$array = array(1, 2, 3)
 ...
 ```
 
-
+Pushing values using array.push():
 ```
 ...
 	array.push($array, 5, 6, 7)
 ...
 ```
 
+Pushing values using [] operator:
 ```
 ...
 	$array[] = 8
@@ -138,6 +282,7 @@ end
 ...
 ```
 
+Iterating arrays using array.length() and array.get():
 ```
 ...
 	$i = 0
@@ -148,6 +293,7 @@ end
 ...
 ```
 
+Iterating arrays using array.length() and [] operator:
 ```
 ...
 	$i = 0
@@ -158,6 +304,7 @@ end
 ...
 ```
 
+Removing values from arrays using array.removeOf():
 ```
 ...
 	array.removeOf($array, 6)
@@ -165,6 +312,7 @@ end
 ...
 ```
 
+Removing from arrays using a index with array.remove():
 ```
 ...
 	array.remove($array, 2)
@@ -174,12 +322,14 @@ end
 
 #### 1.2.4.4 Maps
 
+Initializing maps using map() method:
 ```
 ...
 	$map = map()
 ...
 ```
 
+Setting map key, value pairs using map.set():
 ```
 ...
 	map.set($map, "test1", 123)
@@ -189,12 +339,14 @@ end
 ...
 ```
 
+Removing from map using map.remove() and a given key:
 ```
 ...
 	map.remove($map, "test2")
 ...
 ```
 
+Reading values from map using map.get() and given keys:
 ```
 ...
 	console.log("map value for test1 key using map.get(): ", map.get($map, "test1"))
@@ -204,6 +356,7 @@ end
 ...
 ```
 
+Reading values from map using dot operator:
 ```
 ...
 	console.log("map value for test1 using map dot operator: ", $map.test1)
@@ -213,6 +366,7 @@ end
 ...
 ```
 
+Setting key, value pairs to map using dot operator:
 ```
 ...
 	$map.test6 = 666
@@ -220,18 +374,21 @@ end
 ...
 ```
 
+Reading map keys:
 ```
 ...
 	console.log("map keys: ", map.getKeys($map))
 ...
 ```
 
+Reading map values:
 ```
 ...
 	console.log("map values: ", map.getValues($map))
 ...
 ```
 
+Reading all keys and values from map using map.get() and map.getKeys()
 ```
 ...
 	$mapKeys = map.getKeys($map)
@@ -245,12 +402,14 @@ end
 
 #### 1.2.4.5 Sets
 
+Initializing sets using set() method:
 ```
 ...
 	$set = set()
 ...
 ```
 
+Inserting keys into set using set.insert():
 ```
 ...
 	set.insert($set, "test1")
@@ -259,14 +418,14 @@ end
 ...
 ```
 
-
+Removing keys from set using set.remove():
 ```
 ...
 	set.remove($set, "test2")
 ...
 ```
 
-
+Checking if keys exist in map using map.has() and given keys:
 ```
 ...
 	console.log("set does have test1 key using set.has(): ", set.has($set, "test1"))
@@ -278,6 +437,7 @@ end
 ```
 
 
+Checking if keys exist in map using dot opertator and given keys:
 ```
 ...
 	console.log("set key for test1 using set dot operator: ", $set.test1)
@@ -288,6 +448,7 @@ end
 ...
 ```
 
+Inserting/Removing set keys by using dot operator and boolean assignment:
 ```
 ...
 	$set.test6 = true
@@ -297,6 +458,7 @@ end
 ...
 ```
 
+Reading all keys as array from set:
 ```
 ...
 	console.log("set keys: ", set.getKeys($set))
