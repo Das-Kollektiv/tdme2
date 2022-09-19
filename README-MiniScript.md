@@ -150,7 +150,7 @@ end
 
 # 4. Data types and variables
 
-MiniScript works with the following data types
+MiniScript works with the following data types:
 - boolean
 - integer
 - float
@@ -170,7 +170,7 @@ MiniScript works with the following data types
 
 The following primitive data types are available: boolean, integer, float, string.
 
-Variables of those types can be assigned implicitly, which means the parser know about the data type by given value. 
+Variables of those types can be assigned implicitly, which means the parser know about the data type by given value:
 
 ```
 ...
@@ -197,7 +197,7 @@ Variables of those types can be assigned implicitly, which means the parser know
 ...
 ```
 
-The primitive data types can also be assigned by using initialization methods that return explicitly those primitive data types. 
+The primitive data types can also be assigned by using initialization methods that return explicitly those primitive data types:
 
 ```
 ...
@@ -226,7 +226,7 @@ The primitive data types can also be assigned by using initialization methods th
 
 ## 4.2. Compound math data types
 
-MiniScript works with the following math specific data types
+MiniScript works with the following math specific data types:
 - vector2
 - vector3
 - vector4
