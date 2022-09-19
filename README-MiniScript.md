@@ -69,7 +69,7 @@ See an example of if, elseif, else and end:
 
 forTime and forCondition are loops and belong to flow control also:
 
-See an example of forTime():
+forTime takes a single argument - the time to wait in milliseconds. See an example of forTime() below: 
 ```
 ...
 	$i = 0
@@ -81,7 +81,7 @@ See an example of forTime():
 ...
 ```
 
-See an example of forCondition():
+forCondition takes a single boolean value as argument. The loop will be executed as long as the argument is true. In this case "$i < 5" transpiles to "lesser($i, 5)" which results in a boolean value, which is used as the forCondition argument. See example of forCondition() below.
 ```
 ...
 	$i = 0
