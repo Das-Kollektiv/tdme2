@@ -766,6 +766,7 @@ all: \
 	converttotm \
 	copyanimationsetups \
 	createinstaller \
+	createminiscriptcodecompletion \
 	createminiscriptdocumentation \
 	createrc \
 	dumpmodel \
@@ -1161,6 +1162,13 @@ createinstaller:
 	cl /D TDME2_DLL_IMPORT /Fecreateinstaller $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/createinstaller-main.cpp createinstaller.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 	del createinstaller.exe.rc
 	del createinstaller.exe.res
+
+createminiscriptcodecompletion:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc createminiscriptcodecompletion.exe createminiscriptcodecompletion.exe.rc
+	rc createminiscriptcodecompletion.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fecreateminiscriptcodecompletion $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/createminiscriptcodecompletion-main.cpp createminiscriptcodecompletion.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	del createminiscriptcodecompletion.exe.rc
+	del createminiscriptcodecompletion.exe.res
 
 createminiscriptdocumentation:
 	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc createminiscriptdocumentation.exe createminiscriptdocumentation.exe.rc

@@ -1323,6 +1323,10 @@ const vector<MiniScript::ScriptMethod*> MiniScript::getMethods() {
 	for (auto& scriptMethodIt: scriptMethods) {
 		methods.push_back(scriptMethodIt.second);
 	}
+	struct {
+		bool operator()(ScriptMethod* a, ScriptMethod* b) const { return a->getMethodName() < b->getMethodName(); }
+	} sortFunction;
+	std::sort(methods.begin(), methods.end(), sortFunction);
 	return methods;
 }
 
