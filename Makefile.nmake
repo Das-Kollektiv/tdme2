@@ -112,7 +112,6 @@ SRCS = \
 	src/tdme/engine/logics/Context.cpp \
 	src/tdme/engine/logics/Logic.cpp \
 	src/tdme/engine/logics/LogicMiniScript.cpp \
-	src/tdme/engine/logics/MiniScriptLogic.cpp \
 	src/tdme/engine/logics/NetworkLogic.cpp \
 	src/tdme/engine/logics/ServerThread.cpp \
 	src/tdme/engine/model/Animation.cpp \

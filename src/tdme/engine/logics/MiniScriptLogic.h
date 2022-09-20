@@ -1,18 +1,24 @@
 #pragma once
 
 #include <string>
+#include <span>
 
 #include <tdme/tdme.h>
 
 #include <tdme/engine/logics/fwd-tdme.h>
 #include <tdme/engine/logics/Logic.h>
 #include <tdme/engine/logics/LogicMiniScript.h>
+#include <tdme/utilities/Console.h>
+#include <tdme/utilities/MiniScript.h>
 
+using std::span;
 using std::string;
 
 using tdme::engine::logics::LogicMiniScript;
 
 using tdme::engine::logics::Logic;
+using tdme::utilities::Console;
+using tdme::utilities::MiniScript;
 
 /**
  * Mini script logic
@@ -36,22 +42,50 @@ public:
 	/**
 	 * Update engine
 	 */
-	void updateEngine() override;
+	inline void updateEngine() override {
+		vector<MiniScript::ScriptVariable> argumentValues(0);
+		MiniScript::ScriptVariable returnValue;
+		span argumentValuesSpan(argumentValues);
+		if (miniScript->call("updateEngine", argumentValuesSpan, returnValue) == false) {
+			Console::println("MiniScriptLogic::updateEngine()(): Failed to call updateEngine() function");
+		}
+	}
 
 	/**
 	 * Update logic
 	 */
-	void updateLogic() override;
+	inline void updateLogic() override {
+		vector<MiniScript::ScriptVariable> argumentValues(0);
+		MiniScript::ScriptVariable returnValue;
+		span argumentValuesSpan(argumentValues);
+		if (miniScript->call("updateLogic", argumentValuesSpan, returnValue) == false) {
+			Console::println("MiniScriptLogic::updateLogic()(): Failed to call updateLogic() function");
+		}
+	}
 
 	/**
 	 * On logic added
 	 */
-	void onLogicAdded() override;
+	inline void onLogicAdded() override {
+		vector<MiniScript::ScriptVariable> argumentValues(0);
+		MiniScript::ScriptVariable returnValue;
+		span argumentValuesSpan(argumentValues);
+		if (miniScript->call("onLogicAdded", argumentValuesSpan, returnValue) == false) {
+			Console::println("MiniScriptLogic::onLogicAdded()(): Failed to call onLogicAdded() function");
+		}
+	}
 
 	/**
 	 * On logics processed
 	 */
-	void onLogicsProcessed() override;
+	inline void onLogicsProcessed() override {
+		vector<MiniScript::ScriptVariable> argumentValues(0);
+		MiniScript::ScriptVariable returnValue;
+		span argumentValuesSpan(argumentValues);
+		if (miniScript->call("onLogicsProcessed", argumentValuesSpan, returnValue) == false) {
+			Console::println("MiniScriptLogic::onLogicsProcessed()(): Failed to call onLogicsProcessed() function");
+		}
+	}
 
 private:
 	LogicMiniScript* miniScript { nullptr };

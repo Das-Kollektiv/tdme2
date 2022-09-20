@@ -1,43 +1,43 @@
-# initialize
-on: initialize
-	console.log("-----------------------------")
-	console.log("initialize: " + logic.getId())
-	console.log("-----------------------------")
-	console.log()
-	script.stop()
-end
-
 # update engine
-on: updateEngine
+function: updateEngine()
 	console.log("-----------------------------")
-	console.log("updateEngine: " + logic.getId())
+	console.log("updateEngine(): " + logic.getId())
 	console.log("-----------------------------")
 	console.log()
 	script.stop()
 end
 
 # update logic
-on: updateLogic
+function: updateLogic()
 	console.log("-----------------------------")
-	console.log("updateLogic: " + logic.getId())
+	console.log("updateLogic(): " + logic.getId())
 	console.log("-----------------------------")
 	console.log()
 	script.stop()
 end
 
 # logic added
-on: logicAdded
+function: onLogicAdded()
 	console.log("-----------------------------")
-	console.log("logicAdded: " + logic.getId())
+	console.log("onLogicAdded(): " + logic.getId())
 	console.log("-----------------------------")
 	console.log()
 	script.stop()
 end
 
 # logics processed
-on: logicsProcessed
+function: onLogicsProcessed()
 	console.log("-----------------------------")
-	console.log("logicsProcessed: " + logic.getId())
+	console.log("onLogicsProcessed(): " + logic.getId())
+	console.log("-----------------------------")
+	console.log()
+	script.stop()
+end
+
+# initialize
+on: initialize
+	console.log("-----------------------------")
+	console.log("initialize: " + logic.getId())
 	console.log("-----------------------------")
 	console.log()
 	script.stop()
