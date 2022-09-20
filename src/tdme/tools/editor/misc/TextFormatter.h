@@ -86,7 +86,23 @@ private:
 	    // TODO: constraints: gl_MaxComputeWorkGroupCount gl_MaxComputeWorkGroupSize gl_MaxComputeUniformComponents gl_MaxComputeTextureImageUnits gl_MaxComputeImageUniforms gl_MaxComputeAtomicCounters gl_MaxComputeAtomicCounterBuffers gl_MaxVertexAttribs gl_MaxVertexUniformComponents gl_MaxVaryingComponents gl_MaxVertexOutputComponents gl_MaxGeometryInputComponents gl_MaxGeometryOutputComponents gl_MaxFragmentInputComponents gl_MaxVertexTextureImageUnits gl_MaxCombinedTextureImageUnits gl_MaxTextureImageUnits gl_MaxImageUnits gl_MaxCombinedImageUnitsAndFragmentOutputs gl_MaxImageSamples gl_MaxVertexImageUniforms gl_MaxTessControlImageUniforms gl_MaxTessEvaluationImageUniforms gl_MaxGeometryImageUniforms gl_MaxFragmentImageUniforms gl_MaxCombinedImageUniforms gl_MaxFragmentUniformComponents gl_MaxDrawBuffers gl_MaxClipDistances gl_MaxGeometryTextureImageUnits gl_MaxGeometryOutputVertices gl_MaxGeometryTotalOutputComponents gl_MaxGeometryUniformComponents gl_MaxGeometryVaryingComponents gl_MaxTessControlInputComponents gl_MaxTessControlOutputComponents gl_MaxTessControlTextureImageUnits gl_MaxTessControlUniformComponents gl_MaxTessControlTotalOutputComponents gl_MaxTessEvaluationInputComponents gl_MaxTessEvaluationOutputComponents gl_MaxTessEvaluationTextureImageUnits gl_MaxTessEvaluationUniformComponents gl_MaxTessPatchComponents gl_MaxPatchVertices gl_MaxTessGenLevel gl_MaxViewports gl_MaxVertexUniformVectors gl_MaxFragmentUniformVectors gl_MaxVaryingVectors gl_MaxVertexAtomicCounters gl_MaxTessControlAtomicCounters gl_MaxTessEvaluationAtomicCounters gl_MaxGeometryAtomicCounters gl_MaxFragmentAtomicCounters gl_MaxCombinedAtomicCounters gl_MaxAtomicCounterBindings gl_MaxVertexAtomicCounterBuffers gl_MaxTessControlAtomicCounterBuffers gl_MaxTessEvaluationAtomicCounterBuffers gl_MaxGeometryAtomicCounterBuffers gl_MaxFragmentAtomicCounterBuffers gl_MaxCombinedAtomicCounterBuffers gl_MaxAtomicCounterBufferSize gl_MinProgramTexelOffset gl_MaxProgramTexelOffset
 	};
 
-	vector<Language> languages { cpp, glsl };
+	Language tscript = {
+		// see: https://www.lighthouse3d.com/2013/01/notepad-glsl-4-3-syntax-highlight/
+		.name = "TSCRIPT",
+		.extensions = {"tscript"},
+		.commentLine = "#",
+		.commentInlineStart = "",
+		.commentInlineEnd = "",
+		.preprocessorLineKeywords = "",
+		.keywordDelimiters = " \t\n;=-+*/%&|!~<>()[],",
+		.keywordQuotes = "\"",
+		.keywords1 = "add and array array.get array.indexOf array.length array.push array.remove array.removeOf array.set bool concatenate console.log div else elseif end equals float forCondition forTime getVariable greater greaterequals if int lesser lesserequals map map.get map.getKeys map.getValues map.has map.remove map.set mat3.identity mat3.multiply mat3.rotate mat3.rotateAroundPoint mat3.rotateAroundTextureCenter mat3.scale mat3.translate mat4.computeEulerAngles mat4.identity mat4.invert mat4.multiply mat4.rotate mat4.scale mat4.translate math.DEG2RAD math.EPSILON math.G math.PI math.abs math.absmod math.acos math.asin math.atan math.atan2 math.ceil math.clamp math.cos math.exp math.floor math.log math.max math.min math.mod math.pow math.random math.round math.sign math.sin math.sqrt math.square math.tan mul not notequal or quaternion.computeMatrix quaternion.identity quaternion.invert quaternion.multiply quaternion.normalize quaternion.rotate return script.call script.disableNamedCondition script.emit script.enableNamedCondition script.evaluate script.getNamedConditions script.getVariables script.stop script.wait script.waitForCondition set set.getKeys set.has set.insert set.remove setVariable space string sub time.getCurrentMillis toLowerCase toUpperCase transform transform.getRotationAngle transform.getRotationAxis transform.getRotationsQuaternion transform.getScale transform.getTransformMatrix transform.getTranslation transform.multiply transform.rotate transform.setRotationAngle transform.setScale transform.setTranslation unsetVariable vec2 vec2.computeDotProduct vec2.computeLength vec2.computeLengthSquared vec2.getX vec2.getY vec2.normalize vec3 vec3.computeAngle vec3.computeCrossProduct vec3.computeDotProduct vec3.computeLength vec3.computeLengthSquared vec3.getX vec3.getY vec3.getZ vec3.normalize vec4 vec4.computeDotProduct vec4.computeLength vec4.computeLengthSquared vec4.getW vec4.getX vec4.getY vec4.getZ vec4.normalize",
+	    .keywords2 = "function: on: on-enabled:",
+	    .datatypeLiteralSuffixes = "",
+	    .statementDelimiter = "\n"
+	};
+
+	vector<Language> languages { cpp, glsl, tscript };
 
 	struct XMLLanguage {
 		vector<string> extensions = { "xml" };

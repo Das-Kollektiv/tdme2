@@ -27,6 +27,15 @@ int main(int argc, char** argv)
 	auto miniScript = new MiniScript();
 	miniScript->registerMethods();
 
+	//
+	vector<string> keywords1;
+	vector<string> keywords2;
+	keywords2.push_back("function:");
+	keywords2.push_back("on:");
+	keywords2.push_back("on-enabled:");
+
+
+	//
 	vector<string> lines;
 	lines.push_back("<?xml version=\"1.0\"?>");
 	lines.push_back("<code-completion>");
@@ -35,6 +44,7 @@ int main(int argc, char** argv)
 	auto scriptMethods = miniScript->getMethods();
 	vector<string> methods;
 	for (auto scriptMethod: scriptMethods) {
+		keywords1.push_back(scriptMethod->getMethodName());
 		Console::println("Adding method: " + scriptMethod->getMethodName());
 		lines.push_back("	<keyword name=\"" + scriptMethod->getMethodName() + "\" func=\"yes\">");
 		lines.push_back("		<overload return-value=\"" + MiniScript::ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType()) + "\" descr=\"\">");
@@ -44,16 +54,27 @@ int main(int argc, char** argv)
 			argumentValueString+= MiniScript::ScriptVariable::getTypeAsString(argumentType.type) + " ";
 			argumentValueString+= string() + (argumentType.assignBack == true?"=":"") + "$" + argumentType.name;
 			if (argumentType.optional == true) argumentValueString+= "]";
-			lines.push_back("			<parameter name=\"" + argumentValueString + "\"/>");
+			lines.push_back("			<parameter name=\"" + argumentValueString + "\" />");
 		}
 		if (scriptMethod->isVariadic() == true) {
-			lines.push_back("			<parameter name=\"...\"/>");
+			lines.push_back("			<parameter name=\"...\" />");
 		}
 		lines.push_back("		</overload>");
-		lines.push_back("	</keyword");
+		lines.push_back("	</keyword>");
 	}
 	lines.push_back("</code-completion>");
 	for (auto& line: lines) Console::println(line);
+	Console::println();
+
+	// syntax highlighting
+	Console::println("Syntax highlighting: ");
+	Console::print("Syntax highlighting: keywords1: ");
+	for (auto& keyword1: keywords1) Console::print(keyword1 + " ");
+	Console::println();
+
+	Console::print("Syntax highlighting: keywords2: ");
+	for (auto& keyword2: keywords2) Console::print(keyword2 + " ");
+	Console::println();
 	Console::println();
 
 	// store
