@@ -7,8 +7,11 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/logics/Context.h>
 #include <tdme/engine/logics/Logic.h>
+#include <tdme/engine/Camera.h>
+#include <tdme/engine/Timing.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
+#include <tdme/math/Vector3.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/MiniScript.h>
@@ -22,8 +25,11 @@ using tdme::engine::logics::LogicMiniScript;
 
 using tdme::engine::logics::Context;
 using tdme::engine::logics::Logic;
+using tdme::engine::Camera;
+using tdme::engine::Timing;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
+using tdme::math::Vector3;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::MiniScript;
@@ -531,6 +537,228 @@ void LogicMiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodInputMouseGetWheelZ(this));
 	}
+	// camera
+	{
+		//
+		class ScriptMethodCameraGetLookFrom: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodCameraGetLookFrom(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_VECTOR3),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.camera.getLookFrom";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = miniScript->context->getEngine()->getCamera()->getLookFrom();
+			}
+		};
+		registerMethod(new ScriptMethodCameraGetLookFrom(this));
+	}
+	{
+		//
+		class ScriptMethodCameraSetLookFrom: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodCameraSetLookFrom(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "lookFrom", .optional = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.camera.setLookFrom";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Vector3 lookFrom;
+				if (miniScript->getVector3Value(argumentValues, 0, lookFrom) == true) {
+					miniScript->context->getEngine()->getCamera()->setLookFrom(lookFrom);
+				} else {
+					Console::println("ScriptMethodCameraSetLookFrom::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodCameraSetLookFrom(this));
+	}
+	{
+		//
+		class ScriptMethodCameraGetLookAt: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodCameraGetLookAt(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_VECTOR3),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.camera.getLookAt";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = miniScript->context->getEngine()->getCamera()->getLookAt();
+			}
+		};
+		registerMethod(new ScriptMethodCameraGetLookAt(this));
+	}
+	{
+		//
+		class ScriptMethodCameraSetLookAt: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodCameraSetLookAt(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "lookAt", .optional = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.camera.setLookAt";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Vector3 lookAt;
+				if (miniScript->getVector3Value(argumentValues, 0, lookAt) == true) {
+					miniScript->context->getEngine()->getCamera()->setLookAt(lookAt);
+				} else {
+					Console::println("ScriptMethodCameraSetLookAt::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodCameraSetLookAt(this));
+	}
+	{
+		//
+		class ScriptMethodCameraGetUpVector: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodCameraGetUpVector(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_VECTOR3),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.camera.getUpVector";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = miniScript->context->getEngine()->getCamera()->getUpVector();
+			}
+		};
+		registerMethod(new ScriptMethodCameraGetUpVector(this));
+	}
+	{
+		//
+		class ScriptMethodCameraSetUpVector: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodCameraSetUpVector(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "upVector", .optional = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.camera.setUpVector";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Vector3 upVector;
+				if (miniScript->getVector3Value(argumentValues, 0, upVector) == true) {
+					miniScript->context->getEngine()->getCamera()->setUpVector(upVector);
+				} else {
+					Console::println("ScriptMethodCameraSetUpVector::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodCameraSetUpVector(this));
+	}
+	{
+		//
+		class ScriptMethodCameraComputeUpVector: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodCameraComputeUpVector(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "lookFrom", .optional = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "lookAt", .optional = false }
+					},
+					ScriptVariableType::TYPE_VECTOR3
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.camera.computeUpVector";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Vector3 lookFrom;
+				Vector3 lookAt;
+				if (miniScript->getVector3Value(argumentValues, 0, lookFrom) == true &&
+					miniScript->getVector3Value(argumentValues, 1, lookAt) == true) {
+					returnValue = Camera::computeUpVector(lookFrom, lookAt);
+				} else {
+					Console::println("ScriptMethodCameraComputeUpVector::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected, @ argument 1: vector3 expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodCameraComputeUpVector(this));
+	}
+	{
+		//
+		class ScriptMethodCameraGetFovX: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodCameraGetFovX(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.camera.getFovX";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = miniScript->context->getEngine()->getCamera()->getFovX();
+			}
+		};
+		registerMethod(new ScriptMethodCameraGetFovX(this));
+	}
+	{
+		//
+		class ScriptMethodCameraSetFovX: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodCameraSetFovX(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "fovX", .optional = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.camera.setFovX";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				float fovX;
+				if (miniScript->getFloatValue(argumentValues, 0, fovX) == true) {
+					miniScript->context->getEngine()->getCamera()->setFovX(fovX);
+				} else {
+					Console::println("ScriptMethodCameraSetFovX::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodCameraSetFovX(this));
+	}
+	// timing
 }
 
 void LogicMiniScript::registerVariables() {

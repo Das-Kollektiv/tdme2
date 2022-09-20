@@ -676,6 +676,15 @@ Reading all keys as array from set:
 
 | MiniScript logic methods                                                                         |
 |--------------------------------------------------------------------------------------------------|
+| engine.camera.computeUpVector($lookFrom: Vector3, $lookAt: Vector3): Vector3                     |
+| engine.camera.getFovX(): Float                                                                   |
+| engine.camera.getLookAt(): Vector3                                                               |
+| engine.camera.getLookFrom(): Vector3                                                             |
+| engine.camera.getUpVector(): Vector3                                                             |
+| engine.camera.setFovX($fovX: Float): Void                                                        |
+| engine.camera.setLookAt($lookAt: Vector3): Void                                                  |
+| engine.camera.setLookFrom($lookFrom: Vector3): Void                                              |
+| engine.camera.setUpVector($upVector: Vector3): Void                                              |
 | input.keyboard.getTypedString(): String                                                          |
 | input.keyboard.isAltDown(): Boolean                                                              |
 | input.keyboard.isControlDown(): Boolean                                                          |
