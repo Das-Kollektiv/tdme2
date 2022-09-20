@@ -6,6 +6,7 @@
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/engine/Version.h>
+#include <tdme/engine/logics/LogicMiniScript.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/MiniScript.h>
 #include <tdme/utilities/StringTools.h>
@@ -17,6 +18,7 @@ using std::vector;
 
 using tdme::application::Application;
 using tdme::engine::Version;
+using tdme::engine::logics::LogicMiniScript;
 using tdme::utilities::Console;
 using tdme::utilities::MiniScript;
 using tdme::utilities::StringTools;
@@ -28,45 +30,86 @@ int main(int argc, char** argv)
 	Console::println();
 
 	//
-	auto miniScript = new MiniScript();
-	miniScript->registerMethods();
+	auto baseMiniScript = new MiniScript();
+	baseMiniScript->registerMethods();
+
+	//
+	auto logicMiniScript = new LogicMiniScript();
+	logicMiniScript->registerMethods();
+
+	// base methods
+	{
+		Console::println();
+		Console::println("| Base methods                                                                                     |");
+		Console::println("|--------------------------------------------------------------------------------------------------|");
+		auto scriptMethods = baseMiniScript->getMethods();
+		vector<string> methods;
+		for (auto scriptMethod: scriptMethods) {
+			string method;
+			method+= "| ";
+			method+= scriptMethod->getMethodName();
+			method+= "(";
+			auto argumentIdx = 0;
+			for (auto& argumentType: scriptMethod->getArgumentTypes()) {
+				if (argumentIdx > 0) method+= ", ";
+				if (argumentType.assignBack == true) method+= "=";
+				method+= "$" + argumentType.name + ": " + MiniScript::ScriptVariable::getTypeAsString(argumentType.type);
+				if (argumentType.optional == true) {
+					method+= "(OPTIONAL)";
+				}
+				argumentIdx++;
+			}
+			if (scriptMethod->isVariadic() == true) {
+				if (argumentIdx > 0) method+= ", ";
+				method+="...";
+			}
+			method+= "): ";
+			method+= MiniScript::ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType());
+			while (method.size() < 99) method+= " ";
+			method+= "|";
+			methods.push_back(method);
+		}
+		for (auto& method: methods) Console::println(method);
+	}
 
 	// methods
-	Console::println();
-	Console::println("| Methods                                                                                          |");
-	Console::println("|--------------------------------------------------------------------------------------------------|");
-	auto scriptMethods = miniScript->getMethods();
-	vector<string> methods;
-	for (auto scriptMethod: scriptMethods) {
-		string method;
-		method+= "| ";
-		method+= scriptMethod->getMethodName();
-		method+= "(";
-		auto argumentIdx = 0;
-		for (auto& argumentType: scriptMethod->getArgumentTypes()) {
-			if (argumentIdx > 0) method+= ", ";
-			if (argumentType.assignBack == true) method+= "=";
-			method+= "$" + argumentType.name + ": " + MiniScript::ScriptVariable::getTypeAsString(argumentType.type);
-			if (argumentType.optional == true) {
-				method+= "(OPTIONAL)";
+	{
+		Console::println();
+		Console::println("| MiniScript logic methods                                                                         |");
+		Console::println("|--------------------------------------------------------------------------------------------------|");
+		auto scriptMethods = logicMiniScript->getMethods();
+		vector<string> methods;
+		for (auto scriptMethod: scriptMethods) {
+			if (baseMiniScript->hasMethod(scriptMethod->getMethodName()) == true) continue;
+			string method;
+			method+= "| ";
+			method+= scriptMethod->getMethodName();
+			method+= "(";
+			auto argumentIdx = 0;
+			for (auto& argumentType: scriptMethod->getArgumentTypes()) {
+				if (argumentIdx > 0) method+= ", ";
+				if (argumentType.assignBack == true) method+= "=";
+				method+= "$" + argumentType.name + ": " + MiniScript::ScriptVariable::getTypeAsString(argumentType.type);
+				if (argumentType.optional == true) {
+					method+= "(OPTIONAL)";
+				}
+				argumentIdx++;
 			}
-			argumentIdx++;
+			if (scriptMethod->isVariadic() == true) {
+				if (argumentIdx > 0) method+= ", ";
+				method+="...";
+			}
+			method+= "): ";
+			method+= MiniScript::ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType());
+			while (method.size() < 99) method+= " ";
+			method+= "|";
+			methods.push_back(method);
 		}
-		if (scriptMethod->isVariadic() == true) {
-			if (argumentIdx > 0) method+= ", ";
-			method+="...";
-		}
-		method+= "): ";
-		method+= MiniScript::ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType());
-		while (method.size() < 99) method+= " ";
-		method+= "|";
-		methods.push_back(method);
+		for (auto& method: methods) Console::println(method);
 	}
-	sort(methods.begin(), methods.end());
-	for (auto& method: methods) Console::println(method);
 
 	// operators
-	auto scriptOperatorMethods = miniScript->getOperatorMethods();
+	auto scriptOperatorMethods = baseMiniScript->getOperatorMethods();
 	vector<string> operators;
 	for (auto method: scriptOperatorMethods) {
 		string operatorString;

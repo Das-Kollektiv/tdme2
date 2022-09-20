@@ -12,6 +12,8 @@
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Entity.h>
+#include <tdme/gui/events/GUIKeyboardEvent.h>
+#include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/network/udp/UDPPacket.h>
 #include <tdme/network/udpclient/UDPClient.h>
 #include <tdme/os/threading/Mutex.h>
@@ -33,6 +35,8 @@ using tdme::engine::logics::NetworkLogic;
 using tdme::engine::physics::World;
 using tdme::engine::Camera;
 using tdme::engine::Entity;
+using tdme::gui::events::GUIKeyboardEvent;
+using tdme::gui::events::GUIMouseEvent;
 using tdme::network::udp::UDPPacket;
 using tdme::network::udpclient::UDPClient;
 using tdme::os::threading::Mutex;
@@ -338,6 +342,17 @@ void ApplicationClient::handleInNetworkPackets(const vector<Logic*>& logics, vec
 			}
 		}
 	}
+}
+
+void ApplicationClient::handleHIDEvents(vector<GUIMouseEvent>& mouseEvents, vector<GUIKeyboardEvent>& keyEvents) {
+	mutex.lock();
+	for (auto logic: context->getLogics()) {
+		if (logic->isHandlingHIDInput() == true) {
+			logic->handleHIDEvents(mouseEvents, keyEvents);
+		}
+	}
+	//
+	mutex.unlock();
 }
 
 void ApplicationClient::update() {

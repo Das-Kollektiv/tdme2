@@ -2449,6 +2449,14 @@ public:
 	}
 
 	/**
+	 * Returns if method with given name does already exist
+	 * @param methodName method name
+	 */
+	inline bool hasMethod(const string& methodName) {
+		return scriptMethods.find(methodName) != scriptMethods.end();
+	}
+
+	/**
 	 * Register state machine states
 	 */
 	virtual void registerStateMachineStates();

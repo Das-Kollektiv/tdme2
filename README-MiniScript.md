@@ -521,7 +521,7 @@ Reading all keys as array from set:
 
 # 6. Methods
 
-| Methods                                                                                          |
+| Base methods                                                                                     |
 |--------------------------------------------------------------------------------------------------|
 | add(...): Mixed                                                                                  |
 | and(...): Boolean                                                                                |
@@ -671,6 +671,21 @@ Reading all keys as array from set:
 | vec4.getY($vec4: Vector4): Float                                                                 |
 | vec4.getZ($vec4: Vector4): Float                                                                 |
 | vec4.normalize($vec4: Vector4): Vector4                                                          |
+
+| MiniScript logic methods                                                                         |
+|--------------------------------------------------------------------------------------------------|
+| input.keyboard.getTypedString(): String                                                          |
+| input.keyboard.isAltDown(): Boolean                                                              |
+| input.keyboard.isControlDown(): Boolean                                                          |
+| input.keyboard.isKeyDown($keyCode: Integer): Boolean                                             |
+| input.keyboard.isMetaDown(): Boolean                                                             |
+| input.keyboard.isShiftDown(): Boolean                                                            |
+| logic.getId(): String                                                                            |
+| logic.signal.getArgument($argumentIndex: Integer): Mixed                                         |
+| logic.signal.getName(): String                                                                   |
+| logic.signal.has(): Boolean                                                                      |
+| logic.signal.next(): Void                                                                        |
+| logic.signal.send($logicId: String, $signal: String, ...): Void                                  |
 
 # 7. Operators
 

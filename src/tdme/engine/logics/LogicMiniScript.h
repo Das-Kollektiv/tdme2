@@ -1,15 +1,21 @@
 #pragma once
 
 #include <string>
+#include <unordered_map>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/logics/fwd-tdme.h>
+#include <tdme/gui/events/GUIKeyboardEvent.h>
+#include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/utilities/MiniScript.h>
 
 using std::string;
+using std::unordered_map;
 
 using tdme::engine::logics::Context;
 using tdme::engine::logics::Logic;
+using tdme::gui::events::GUIKeyboardEvent;
+using tdme::gui::events::GUIMouseEvent;
 using tdme::utilities::MiniScript;
 
 /**
@@ -22,10 +28,26 @@ protected:
 	Context* context { nullptr };
 	Logic* logic { nullptr };
 
-	// overridden methods
-	void registerStateMachineStates() override;
-	void registerMethods() override;
-	void registerVariables() override;
+	// keys
+	unordered_set<int32_t> keyboardKeys;
+	string keyboardChars;
+	bool keyboardMetaDown { false };
+	bool keyboardControlDown { false };
+	bool keyboardAltDown { false };
+	bool keyboardShiftDown { false };
+
+	// mouse
+	int mouseX { -1 };
+	int mouseY { -1 };
+	int mouseXUnscaled { -1 };
+	int mouseYUnscaled { -1 };
+	array<bool, 3> mouseDown {{ false, false, false }};
+	array<bool, 3> mouseUp {{ false, false, false }};
+	array<bool, 3> mouseDragging {{ false, false, false }};
+	bool mouseMoved = false;
+	float mouseWheelX { 0.0f };
+	float mouseWheelY { 0.0f };
+	float mouseWheelZ { 0.0f };
 
 	/**
 	 * Set context
@@ -54,5 +76,17 @@ public:
 	 * Destructor
 	 */
 	virtual ~LogicMiniScript();
+
+	// overridden methods
+	void registerStateMachineStates() override;
+	void registerMethods() override;
+	void registerVariables() override;
+
+	/**
+	 * Collect HID events
+	 * @param mouseEvents mouse events
+	 * @param keyEvents keyboard events
+	 */
+	void collectHIDEvents(vector<GUIMouseEvent>& mouseEvents, vector<GUIKeyboardEvent>& keyEvents);
 
 };

@@ -39,9 +39,11 @@ public:
 		miniScript->setLogic(this);
 	}
 
-	/**
-	 * Update engine
-	 */
+	// overridden methods
+	inline void handleHIDEvents(vector<GUIMouseEvent>& mouseEvents, vector<GUIKeyboardEvent>& keyEvents) {
+		miniScript->collectHIDEvents(mouseEvents, keyEvents);
+	}
+
 	inline void updateEngine() override {
 		vector<MiniScript::ScriptVariable> argumentValues(0);
 		MiniScript::ScriptVariable returnValue;
@@ -51,9 +53,6 @@ public:
 		}
 	}
 
-	/**
-	 * Update logic
-	 */
 	inline void updateLogic() override {
 		vector<MiniScript::ScriptVariable> argumentValues(0);
 		MiniScript::ScriptVariable returnValue;
@@ -63,9 +62,6 @@ public:
 		}
 	}
 
-	/**
-	 * On logic added
-	 */
 	inline void onLogicAdded() override {
 		vector<MiniScript::ScriptVariable> argumentValues(0);
 		MiniScript::ScriptVariable returnValue;
@@ -75,9 +71,6 @@ public:
 		}
 	}
 
-	/**
-	 * On logics processed
-	 */
 	inline void onLogicsProcessed() override {
 		vector<MiniScript::ScriptVariable> argumentValues(0);
 		MiniScript::ScriptVariable returnValue;

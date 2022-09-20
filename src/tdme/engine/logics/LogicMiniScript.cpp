@@ -7,6 +7,9 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/logics/Context.h>
 #include <tdme/engine/logics/Logic.h>
+#include <tdme/gui/events/GUIKeyboardEvent.h>
+#include <tdme/gui/events/GUIMouseEvent.h>
+#include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/MiniScript.h>
 
@@ -19,6 +22,9 @@ using tdme::engine::logics::LogicMiniScript;
 
 using tdme::engine::logics::Context;
 using tdme::engine::logics::Logic;
+using tdme::gui::events::GUIKeyboardEvent;
+using tdme::gui::events::GUIMouseEvent;
+using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::MiniScript;
 
@@ -75,7 +81,7 @@ void LogicMiniScript::registerMethods() {
 					miniScript->getStringValue(argumentValues, 1, signal) == true) {
 					auto logic = static_cast<Logic*>(miniScript->context->getLogic(logicId));
 					if (logic == nullptr) {
-						Console::println("ScriptMethodLogicSignalSend::executeMethod(): " + getMethodName() + "(): no logic with given id: " + logicId);
+						Console::println("ScriptMethodLogicSignalSend::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": no logic with given id: " + logicId);
 						return;
 					} else {
 						vector<ScriptVariable> arguments(argumentValues.size() - 2);
@@ -83,7 +89,7 @@ void LogicMiniScript::registerMethods() {
 						logic->addSignal(signal, arguments);
 					}
 				} else {
-					Console::println("ScriptMethodLogicSignalSend::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: string expected, argument 1: string expected");
+					Console::println("ScriptMethodLogicSignalSend::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, argument 1: string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -151,7 +157,7 @@ void LogicMiniScript::registerMethods() {
 				if (miniScript->getIntegerValue(argumentValues, 0, argumentIndex) == true) {
 					returnValue = miniScript->logic->getSignalArgument(argumentIndex);
 				} else {
-					Console::println("ScriptMethodLogicSignalGetArgument::executeMethod(): " + getMethodName() + "(): parameter type mismatch @ argument 0: integer expected");
+					Console::println("ScriptMethodLogicSignalGetArgument::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -176,9 +182,206 @@ void LogicMiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodLogicSignalNext(this));
 	}
+	// keyboard input
+	{
+		//
+		class ScriptMethodInputKeyboardIsKeyDown: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardIsKeyDown(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "keyCode", .optional = false }
+					},
+					ScriptVariableType::TYPE_BOOLEAN
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.isKeyDown";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				int64_t keyCode;
+				if (miniScript->getIntegerValue(argumentValues, 0, keyCode) == true) {
+					returnValue = miniScript->keyboardKeys.find(keyCode) != miniScript->keyboardKeys.end();
+				} else {
+					Console::println("ScriptMethodInputKeyboardIsKeyDown::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardIsKeyDown(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardGetTypedString: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardGetTypedString(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_STRING),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.getTypedString";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = miniScript->keyboardChars;
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardGetTypedString(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardIsControlDown: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardIsControlDown(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.isControlDown";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = miniScript->keyboardControlDown == true;
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardIsControlDown(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardIsMetaDown: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardIsMetaDown(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.isMetaDown";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = miniScript->keyboardControlDown == true;
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardIsMetaDown(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardIsAltDown: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardIsAltDown(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.isAltDown";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = miniScript->keyboardAltDown == true;
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardIsAltDown(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardIsShiftDown: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardIsShiftDown(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.isShiftDown";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = miniScript->keyboardShiftDown == true;
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardIsShiftDown(this));
+	}
 }
 
 void LogicMiniScript::registerVariables() {
 }
 
+void LogicMiniScript::collectHIDEvents(vector<GUIMouseEvent>& mouseEvents, vector<GUIKeyboardEvent>& keyEvents) {
+	Console::println("LogicMiniScript::collectHIDEvents()");
+	// keyboard events
+	keyboardChars.clear();
+	keyboardControlDown = false;
+	keyboardMetaDown = false;
+	keyboardAltDown = false;
+	keyboardShiftDown = false;
+	for (auto& event: keyEvents) {
+		// key pressed
+		if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+			keyboardKeys.insert(event.getKeyCode());
+		} else
+		// key released
+		if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_RELEASED) {
+			keyboardKeys.erase(event.getKeyCode());
+		} else
+		// key typed
+		if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) {
+			Character::appendToString(keyboardChars, event.getKeyChar());
+		}
+		// extra keys
+		if (event.isControlDown() == true) keyboardControlDown = true;
+		if (event.isMetaDown() == true) keyboardMetaDown = true;
+		if (event.isAltDown() == true) keyboardAltDown = true;
+		if (event.isShiftDown() == true) keyboardShiftDown = true;
+	}
 
+	// mouse
+	mouseDown.fill(false);
+	mouseUp.fill(false);
+	mouseDragging.fill(false);
+	mouseMoved = false;
+	mouseWheelX = 0.0f;
+	mouseWheelY = 0.0f;
+	mouseWheelZ = 0.0f;
+	for (auto& event: mouseEvents) {
+		// mouse move
+		if (event.getType() == GUIMouseEvent::MOUSEEVENT_MOVED) {
+			mouseMoved = true;
+		} else
+		// on press and drag
+		//	store button and mouse dragging properties
+		if (event.getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
+			if (event.getButton() != GUIMouseEvent::MOUSEEVENT_BUTTON_NONE) {
+				mouseDragging[event.getButton() - 1] = true;
+			}
+		} else
+		if (event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
+			if (event.getButton() != GUIMouseEvent::MOUSEEVENT_BUTTON_NONE) {
+				mouseDown[event.getButton() - 1] = true;
+			}
+		} else
+		// on release
+		//	store release
+		if (event.getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
+			if (event.getButton() != GUIMouseEvent::MOUSEEVENT_BUTTON_NONE) {
+				mouseUp[event.getButton() - 1] = true;
+			}
+		} else
+		// wheel
+		if (event.getType() == GUIMouseEvent::MOUSEEVENT_WHEEL_MOVED) {
+			mouseWheelX+= event.getWheelX();
+			mouseWheelY+= event.getWheelY();
+			mouseWheelZ+= event.getWheelZ();
+		}
+		// always store mouse position
+		mouseX = event.getX();
+		mouseXUnscaled = event.getXUnscaled();
+		mouseY = event.getY();
+		mouseYUnscaled = event.getYUnscaled();
+		// extra keys
+		if (event.isControlDown() == true) keyboardControlDown = true;
+		if (event.isMetaDown() == true) keyboardMetaDown = true;
+		if (event.isAltDown() == true) keyboardAltDown = true;
+		if (event.isShiftDown() == true) keyboardShiftDown = true;
+	}
+}

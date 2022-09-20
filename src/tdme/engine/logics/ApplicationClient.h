@@ -6,6 +6,8 @@
 #include <tdme/engine/logics/fwd-tdme.h>
 #include <tdme/engine/logics/Logic.h>
 #include <tdme/engine/physics/World.h>
+#include <tdme/gui/events/GUIKeyboardEvent.h>
+#include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/network/udpclient/UDPClient.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/Thread.h>
@@ -16,6 +18,8 @@ using tdme::engine::logics::Context;
 using tdme::engine::logics::Logic;
 using tdme::engine::physics::World;
 using tdme::network::udpclient::UDPClient;
+using tdme::gui::events::GUIKeyboardEvent;
+using tdme::gui::events::GUIMouseEvent;
 using tdme::os::threading::Mutex;
 using tdme::os::threading::Thread;
 
@@ -51,6 +55,13 @@ public:
 	void setAudioGain(float gain) {
 		this->audioGain = gain;
 	}
+
+	/**
+	 * Collect HID events to pass to logics that have handling HID events enabled
+	 * @param mouseEvents mouse events
+	 * @param keyEvents keyboard events
+	 */
+	void handleHIDEvents(vector<GUIMouseEvent>& mouseEvents, vector<GUIKeyboardEvent>& keyEvents);
 
 	/**
 	 * Updates engine and audio to context engine and audio instances

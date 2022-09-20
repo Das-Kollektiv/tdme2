@@ -192,7 +192,9 @@ void SceneEditorTabView::handleInputEvents()
 	// if scene is running, no not do HID input except camera
 	if (applicationClient != nullptr) {
 		//
-		cameraInputHandler->handleInputEvents();
+		applicationClient->handleHIDEvents(engine->getGUI()->getMouseEvents(), engine->getGUI()->getKeyboardEvents());
+		// TODO: only call this, if camera has not been changed or something
+		// cameraInputHandler->handleInputEvents();
 		//
 		return;
 	}
@@ -1501,7 +1503,7 @@ void SceneEditorTabView::runScene() {
 				new MiniScriptLogic(
 					applicationContext,
 					entity->getId(),
-					false,
+					true, // TODO: put me into prototype bean
 					miniScript
 				)
 			);
