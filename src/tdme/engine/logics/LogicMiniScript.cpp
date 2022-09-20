@@ -15,6 +15,7 @@
 #include <tdme/engine/Timing.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
+#include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/utilities/Character.h>
@@ -38,6 +39,7 @@ using tdme::engine::ParticleSystem;
 using tdme::engine::Timing;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
+using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::utilities::Character;
@@ -1541,6 +1543,120 @@ void LogicMiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodEntityGetOverlayAnimationTime(this));
+	}
+	{
+		//
+		class ScriptMethodEntityGetNodeTransformMatrix: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEntityGetNodeTransformMatrix(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false }
+					},
+					ScriptVariableType::TYPE_MATRIX4x4
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.entity.getNodeTransformMatrix";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string entityId;
+				string nodeId;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
+					miniScript->getStringValue(argumentValues, 1, nodeId) == true) {
+					auto object = dynamic_cast<Object*>(miniScript->context->getEngine()->getEntity(entityId));
+					if (object != nullptr) {
+						returnValue.setValue(object->getNodeTransformMatrix(nodeId));
+					} else {
+						Console::println("ScriptMethodEntityGetNodeTransformMatrix::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+					}
+				} else {
+					Console::println("ScriptMethodEntityGetNodeTransformMatrix::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodEntityGetNodeTransformMatrix(this));
+	}
+	{
+		//
+		class ScriptMethodEntitySetNodeTransformMatrix: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEntitySetNodeTransformMatrix(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false },
+						{ .type = ScriptVariableType::TYPE_MATRIX4x4, .name = "matrix", .optional = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.entity.setNodeTransformMatrix";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string entityId;
+				string nodeId;
+				Matrix4x4 matrix;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
+					miniScript->getStringValue(argumentValues, 1, nodeId) == true &&
+					miniScript->getMatrix4x4Value(argumentValues, 2, matrix) == true) {
+					auto object = dynamic_cast<Object*>(miniScript->context->getEngine()->getEntity(entityId));
+					if (object != nullptr) {
+						object->setNodeTransformMatrix(nodeId, matrix);
+					} else {
+						Console::println("ScriptMethodEntitySetNodeTransformMatrix::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+					}
+				} else {
+					Console::println("ScriptMethodEntitySetNodeTransformMatrix::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: matrix4x4 expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodEntitySetNodeTransformMatrix(this));
+	}
+	{
+		//
+		class ScriptMethodEntityUnsetNodeTransformMatrix: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEntityUnsetNodeTransformMatrix(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.entity.unsetNodeTransformMatrix";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string entityId;
+				string nodeId;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
+					miniScript->getStringValue(argumentValues, 1, nodeId) == true) {
+					auto object = dynamic_cast<Object*>(miniScript->context->getEngine()->getEntity(entityId));
+					if (object != nullptr) {
+						object->unsetNodeTransformMatrix(nodeId);
+					} else {
+						Console::println("ScriptMethodEntityUnsetNodeTransformMatrix::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+					}
+				} else {
+					Console::println("ScriptMethodEntityUnsetNodeTransformMatrix::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodEntityUnsetNodeTransformMatrix(this));
 	}
 	// physics
 	// gui

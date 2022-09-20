@@ -690,6 +690,7 @@ Reading all keys as array from set:
 | engine.entity.getAnimationTime($entityId: String): Float                                         |
 | engine.entity.getEffectColorAdd($entityId: String): Vector4                                      |
 | engine.entity.getEffectColorMul($entityId: String): Vector4                                      |
+| engine.entity.getNodeTransformMatrix($entityId: String, $nodeId: String): Matrix4x4              |
 | engine.entity.getOverlayAnimationTime($entityId: String, $animation: String): Float              |
 | engine.entity.getTransform($entityId: String): Transform                                         |
 | engine.entity.hasOverlayAnimation($entityId: String, $animation: String): Boolean                |
@@ -703,8 +704,10 @@ Reading all keys as array from set:
 | engine.entity.setEffectColorAdd($entityId: String, $effectColorAdd: Vector4): Void               |
 | engine.entity.setEffectColorMul($entityId: String, $effectColorMul: Vector4): Void               |
 | engine.entity.setEnabled($entityId: String, $enabled: Boolean): Void                             |
+| engine.entity.setNodeTransformMatrix($entityId: String, $nodeId: String, $matrix: Matrix4x4): Void|
 | engine.entity.setPickable($entityId: String, $pickable: Boolean): Void                           |
 | engine.entity.setTransform($entityId: String, $transform: Transform): Void                       |
+| engine.entity.unsetNodeTransformMatrix($entityId: String, $nodeId: String): Void                 |
 | engine.timing.getAvarageFPS(): Float                                                             |
 | engine.timing.getDeltaTime(): Integer                                                            |
 | engine.timing.getDeltaTimeSeconds(): Float                                                       |
