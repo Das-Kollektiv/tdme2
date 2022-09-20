@@ -685,9 +685,13 @@ Reading all keys as array from set:
 | engine.camera.setLookAt($lookAt: Vector3): Void                                                  |
 | engine.camera.setLookFrom($lookFrom: Vector3): Void                                              |
 | engine.camera.setUpVector($upVector: Vector3): Void                                              |
+| engine.entity.getEffectColorAdd($entityId: String): Vector4                                      |
+| engine.entity.getEffectColorMul($entityId: String): Vector4                                      |
 | engine.entity.getTransform($entityId: String): Transform                                         |
 | engine.entity.isEnabled($entityId: String): Boolean                                              |
 | engine.entity.isPickable($entityId: String): Boolean                                             |
+| engine.entity.setEffectColorAdd($entityId: String, $effectColorAdd: Vector4): Boolean            |
+| engine.entity.setEffectColorMul($entityId: String, $effectColorMul: Vector4): Boolean            |
 | engine.entity.setEnabled($entityId: String, $enabled: Boolean): Boolean                          |
 | engine.entity.setPickable($entityId: String, $pickable: Boolean): Boolean                        |
 | engine.entity.setTransform($entityId: String, $transform: Transform): Void                       |
@@ -717,7 +721,6 @@ Reading all keys as array from set:
 | logic.signal.has(): Boolean                                                                      |
 | logic.signal.next(): Void                                                                        |
 | logic.signal.send($logicId: String, $signal: String, ...): Void                                  |
-
 
 # 8. Operators
 

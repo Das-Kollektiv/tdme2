@@ -5,6 +5,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/model/Color4.h>
 #include <tdme/engine/logics/Context.h>
 #include <tdme/engine/logics/Logic.h>
 #include <tdme/engine/Camera.h>
@@ -13,6 +14,7 @@
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/math/Vector3.h>
+#include <tdme/math/Vector4.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/MiniScript.h>
@@ -24,6 +26,7 @@ using std::vector;
 
 using tdme::engine::logics::LogicMiniScript;
 
+using tdme::engine::model::Color4;
 using tdme::engine::logics::Context;
 using tdme::engine::logics::Logic;
 using tdme::engine::Camera;
@@ -32,6 +35,7 @@ using tdme::engine::Timing;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::math::Vector3;
+using tdme::math::Vector4;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::MiniScript;
@@ -1028,6 +1032,150 @@ void LogicMiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodEntitySetPickable(this));
+	}
+	{
+		//
+		class ScriptMethodEntityGetEffectColorMul: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEntityGetEffectColorMul(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false }
+					},
+					ScriptVariableType::TYPE_VECTOR4
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.entity.getEffectColorMul";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string entityId;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true) {
+					auto entity = miniScript->context->getEngine()->getEntity(entityId);
+					if (entity != nullptr) {
+						auto effectColorMul = entity->getEffectColorMul();
+						returnValue.setValue(Vector4(effectColorMul.getRed(), effectColorMul.getGreen(), effectColorMul.getBlue(), effectColorMul.getAlpha()));
+					} else {
+						Console::println("ScriptMethodEntityGetEffectColorMul::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+					}
+				} else {
+					Console::println("ScriptMethodEntityGetEffectColorMul::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodEntityGetEffectColorMul(this));
+	}
+	{
+		//
+		class ScriptMethodEntitySetEffectColorMul: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEntitySetEffectColorMul(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR4, .name = "effectColorMul", .optional = false }
+					},
+					ScriptVariableType::TYPE_BOOLEAN
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.entity.setEffectColorMul";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string entityId;
+				Vector4 effectColorMul;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
+					miniScript->getVector4Value(argumentValues, 1, effectColorMul) == true) {
+					auto entity = miniScript->context->getEngine()->getEntity(entityId);
+					if (entity != nullptr) {
+						entity->setEffectColorMul(Color4(effectColorMul.getX(), effectColorMul.getY(), effectColorMul.getZ(), effectColorMul.getW()));
+					} else {
+						Console::println("ScriptMethodEntitySetEffectColorMul::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+					}
+				} else {
+					Console::println("ScriptMethodEntitySetEffectColorMul::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: vector4 expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodEntitySetEffectColorMul(this));
+	}
+	{
+		//
+		class ScriptMethodEntityGetEffectColorAdd: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEntityGetEffectColorAdd(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false }
+					},
+					ScriptVariableType::TYPE_VECTOR4
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.entity.getEffectColorAdd";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string entityId;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true) {
+					auto entity = miniScript->context->getEngine()->getEntity(entityId);
+					if (entity != nullptr) {
+						auto effectColorMul = entity->getEffectColorAdd();
+						returnValue.setValue(Vector4(effectColorMul.getRed(), effectColorMul.getGreen(), effectColorMul.getBlue(), effectColorMul.getAlpha()));
+					} else {
+						Console::println("ScriptMethodEntityGetEffectColorAdd::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+					}
+				} else {
+					Console::println("ScriptMethodEntityGetEffectColorAdd::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodEntityGetEffectColorAdd(this));
+	}
+	{
+		//
+		class ScriptMethodEntitySetEffectColorAdd: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEntitySetEffectColorAdd(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR4, .name = "effectColorAdd", .optional = false }
+					},
+					ScriptVariableType::TYPE_BOOLEAN
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.entity.setEffectColorAdd";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string entityId;
+				Vector4 effectColorAdd;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
+					miniScript->getVector4Value(argumentValues, 1, effectColorAdd) == true) {
+					auto entity = miniScript->context->getEngine()->getEntity(entityId);
+					if (entity != nullptr) {
+						entity->setEffectColorAdd(Color4(effectColorAdd.getX(), effectColorAdd.getY(), effectColorAdd.getZ(), effectColorAdd.getW()));
+					} else {
+						Console::println("ScriptMethodEntitySetEffectColorAdd::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+					}
+				} else {
+					Console::println("ScriptMethodEntitySetEffectColorAdd::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: vector4 expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodEntitySetEffectColorAdd(this));
 	}
 	// physics
 	// gui
