@@ -619,6 +619,8 @@ void EditorScreenController::ScanFilesThread::run() {
 				// code
 				if (StringTools::endsWith(fileNameLowerCase, ".h") == true) return true;
 				if (StringTools::endsWith(fileNameLowerCase, ".cpp") == true) return true;
+				if (StringTools::endsWith(fileNameLowerCase, ".c") == true) return true;
+				if (StringTools::endsWith(fileNameLowerCase, ".tscript") == true) return true;
 				// fonts
 				if (StringTools::endsWith(fileNameLowerCase, ".ttf") == true) return true;
 				// images
@@ -656,8 +658,6 @@ void EditorScreenController::ScanFilesThread::run() {
 				if (StringTools::endsWith(fileNameLowerCase, ".tparticle") == true) return true;
 				// tdme terrain
 				if (StringTools::endsWith(fileNameLowerCase, ".tterrain") == true) return true;
-				// tdme script
-				if (StringTools::endsWith(fileNameLowerCase, ".tscript") == true) return true;
 				// xml
 				if (StringTools::endsWith(fileNameLowerCase, ".xml") == true) return true;
 				// files without ending
@@ -1193,6 +1193,7 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 		StringTools::endsWith(fileNameLowerCase, ".h") == true ||
 		StringTools::endsWith(fileNameLowerCase, ".cpp") == true ||
 		StringTools::endsWith(fileNameLowerCase, ".c") == true ||
+		StringTools::endsWith(fileNameLowerCase, ".tscript") == true ||
 		StringTools::endsWith(fileNameLowerCase, ".properties") == true ||
 		StringTools::endsWith(fileNameLowerCase, ".cl") == true ||
 		StringTools::endsWith(fileNameLowerCase, ".frag") == true ||
