@@ -759,6 +759,64 @@ void LogicMiniScript::registerMethods() {
 		registerMethod(new ScriptMethodCameraSetFovX(this));
 	}
 	// timing
+	{
+		//
+		class ScriptMethodTimingGetDeltaTime: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodTimingGetDeltaTime(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.timing.getDeltaTime";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = miniScript->context->getEngine()->getTiming()->getDeltaTime();
+			}
+		};
+		registerMethod(new ScriptMethodTimingGetDeltaTime(this));
+	}
+	{
+		//
+		class ScriptMethodTimingGetDeltaTimeSeconds: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodTimingGetDeltaTimeSeconds(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.timing.getDeltaTimeSeconds";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = miniScript->context->getEngine()->getTiming()->getDeltaTimeSeconds();
+			}
+		};
+		registerMethod(new ScriptMethodTimingGetDeltaTimeSeconds(this));
+	}
+	{
+		//
+		class ScriptMethodTimingGetAvarageFPS: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodTimingGetAvarageFPS(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.timing.getAvarageFPS";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = miniScript->context->getEngine()->getTiming()->getAvarageFPS();
+			}
+		};
+		registerMethod(new ScriptMethodTimingGetAvarageFPS(this));
+	}
+	// engine
+	// physics
+	// gui
+	// sceneconnector
 }
 
 void LogicMiniScript::registerVariables() {

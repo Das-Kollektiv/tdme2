@@ -685,6 +685,9 @@ Reading all keys as array from set:
 | engine.camera.setLookAt($lookAt: Vector3): Void                                                  |
 | engine.camera.setLookFrom($lookFrom: Vector3): Void                                              |
 | engine.camera.setUpVector($upVector: Vector3): Void                                              |
+| engine.timing.getAvarageFPS(): Float                                                             |
+| engine.timing.getDeltaTime(): Integer                                                            |
+| engine.timing.getDeltaTimeSeconds(): Float                                                       |
 | input.keyboard.getTypedString(): String                                                          |
 | input.keyboard.isAltDown(): Boolean                                                              |
 | input.keyboard.isControlDown(): Boolean                                                          |

@@ -87,6 +87,14 @@ public:
 	}
 
 	/**
+	 * Gets the time passed between last and current frame in seconds
+	 * @return delta time in seconds
+	 */
+	inline float getDeltaTimeSeconds() {
+		return static_cast<float>(getDeltaTime()) / 1000.0f;
+	}
+
+	/**
 	 * @return avarage fps
 	 */
 	inline float getFPS() {
