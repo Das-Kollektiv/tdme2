@@ -880,12 +880,154 @@ void LogicMiniScript::registerMethods() {
 						Console::println("ScriptMethodEntitySetTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntitySetTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println("ScriptMethodEntitySetTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: transform expected");
 					miniScript->startErrorScript();
 				}
 			}
 		};
 		registerMethod(new ScriptMethodEntitySetTransform(this));
+	}
+	{
+		//
+		class ScriptMethodEntityIsEnabled: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEntityIsEnabled(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false }
+					},
+					ScriptVariableType::TYPE_BOOLEAN
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.entity.isEnabled";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string entityId;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true) {
+					auto entity = miniScript->context->getEngine()->getEntity(entityId);
+					if (entity != nullptr) {
+						returnValue = entity->isEnabled();
+					} else {
+						Console::println("ScriptMethodEntityIsEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+					}
+				} else {
+					Console::println("ScriptMethodEntityIsEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodEntityIsEnabled(this));
+	}
+	{
+		//
+		class ScriptMethodEntitySetEnabled: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEntitySetEnabled(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false },
+						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "enabled", .optional = false }
+					},
+					ScriptVariableType::TYPE_BOOLEAN
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.entity.setEnabled";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string entityId;
+				bool enabled;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
+					miniScript->getBooleanValue(argumentValues, 1, enabled) == true) {
+					auto entity = miniScript->context->getEngine()->getEntity(entityId);
+					if (entity != nullptr) {
+						entity->setEnabled(enabled);
+					} else {
+						Console::println("ScriptMethodEntitySetEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+					}
+				} else {
+					Console::println("ScriptMethodEntitySetEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: boolean expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodEntitySetEnabled(this));
+	}
+	{
+		//
+		class ScriptMethodEntityIsPickable: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEntityIsPickable(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false }
+					},
+					ScriptVariableType::TYPE_BOOLEAN
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.entity.isPickable";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string entityId;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true) {
+					auto entity = miniScript->context->getEngine()->getEntity(entityId);
+					if (entity != nullptr) {
+						returnValue = entity->isPickable();
+					} else {
+						Console::println("ScriptMethodEntityIsPickable::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+					}
+				} else {
+					Console::println("ScriptMethodEntityIsPickable::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodEntityIsPickable(this));
+	}
+	{
+		//
+		class ScriptMethodEntitySetPickable: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEntitySetPickable(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false },
+						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "pickable", .optional = false }
+					},
+					ScriptVariableType::TYPE_BOOLEAN
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.entity.setPickable";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string entityId;
+				bool pickable;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
+					miniScript->getBooleanValue(argumentValues, 1, pickable) == true) {
+					auto entity = miniScript->context->getEngine()->getEntity(entityId);
+					if (entity != nullptr) {
+						entity->setEnabled(pickable);
+					} else {
+						Console::println("ScriptMethodEntitySetPickable::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+					}
+				} else {
+					Console::println("ScriptMethodEntitySetPickable::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: boolean expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodEntitySetPickable(this));
 	}
 	// physics
 	// gui

@@ -686,6 +686,10 @@ Reading all keys as array from set:
 | engine.camera.setLookFrom($lookFrom: Vector3): Void                                              |
 | engine.camera.setUpVector($upVector: Vector3): Void                                              |
 | engine.entity.getTransform($entityId: String): Transform                                         |
+| engine.entity.isEnabled($entityId: String): Boolean                                              |
+| engine.entity.isPickable($entityId: String): Boolean                                             |
+| engine.entity.setEnabled($entityId: String, $enabled: Boolean): Boolean                          |
+| engine.entity.setPickable($entityId: String, $pickable: Boolean): Boolean                        |
 | engine.entity.setTransform($entityId: String, $transform: Transform): Void                       |
 | engine.timing.getAvarageFPS(): Float                                                             |
 | engine.timing.getDeltaTime(): Integer                                                            |
