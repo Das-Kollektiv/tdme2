@@ -194,7 +194,7 @@ void ObjectAnimation::removeOverlayAnimation(const string& id)
 	updateNodeLists();
 }
 
-void ObjectAnimation::removeOverlayAnimationsFinished()
+void ObjectAnimation::removeFinishedOverlayAnimations()
 {
 	// determine finished overlay animations
 	vector<string> overlayAnimationsToRemove;

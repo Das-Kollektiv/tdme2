@@ -203,8 +203,8 @@ public:
 	/**
 	 * Removes all finished overlay animations
 	 */
-	inline void removeOverlayAnimationsFinished() {
-		instanceAnimations[currentInstance]->removeOverlayAnimationsFinished();
+	inline void removeFinishedOverlayAnimations() {
+		instanceAnimations[currentInstance]->removeFinishedOverlayAnimations();
 	}
 
 	/**

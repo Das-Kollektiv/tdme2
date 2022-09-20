@@ -197,7 +197,7 @@ public:
 	/**
 	 * Removes all finished overlay animations
 	 */
-	void removeOverlayAnimationsFinished();
+	void removeFinishedOverlayAnimations();
 
 	/**
 	 * Removes all overlay animations

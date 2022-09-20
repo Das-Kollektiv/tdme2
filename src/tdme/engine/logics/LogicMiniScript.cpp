@@ -1439,6 +1439,74 @@ void LogicMiniScript::registerMethods() {
 	}
 	{
 		//
+		class ScriptMethodEntityRemoveFinishedOverlayAnimations: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEntityRemoveFinishedOverlayAnimations(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.entity.removeFinishedOverlayAnimations";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string entityId;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true) {
+					auto object = dynamic_cast<Object*>(miniScript->context->getEngine()->getEntity(entityId));
+					if (object != nullptr) {
+						object->removeFinishedOverlayAnimations();
+					} else {
+						Console::println("ScriptMethodEntityRemoveFinishedOverlayAnimations::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+					}
+				} else {
+					Console::println("ScriptMethodEntityRemoveFinishedOverlayAnimations::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodEntityRemoveFinishedOverlayAnimations(this));
+	}
+	{
+		//
+		class ScriptMethodEntityRemoveOverlayAnimations: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEntityRemoveOverlayAnimations(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.entity.removeOverlayAnimations";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string entityId;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true) {
+					auto object = dynamic_cast<Object*>(miniScript->context->getEngine()->getEntity(entityId));
+					if (object != nullptr) {
+						object->removeOverlayAnimations();
+					} else {
+						Console::println("ScriptMethodEntityRemoveOverlayAnimations::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+					}
+				} else {
+					Console::println("ScriptMethodEntityRemoveOverlayAnimations::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodEntityRemoveOverlayAnimations(this));
+	}
+	{
+		//
 		class ScriptMethodEntityGetOverlayAnimationTime: public ScriptMethod {
 		private:
 			LogicMiniScript* miniScript { nullptr };
