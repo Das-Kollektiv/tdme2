@@ -41,6 +41,7 @@ private:
 	TextEditorTabController* textEditorTabController { nullptr };
 	TabView::OutlinerState outlinerState;
 	GUIScreenNode* tabScreenNode { nullptr };
+	string fileName;
 	string extension;
 	GUIStyledTextNode* textNode { nullptr };
 	GUIStyledTextNodeController::ChangeListener* textNodeChangeListener { nullptr };
@@ -70,14 +71,35 @@ public:
 	 * @param editorView editor view
 	 * @param tabId tab id
 	 * @param screenNode screenNode
-	 * @param extension extension
+	 * @param fileName file name
 	 */
-	TextEditorTabView(EditorView* editorView, const string& tabId, GUIScreenNode* screenNode, const string& extension);
+	TextEditorTabView(EditorView* editorView, const string& tabId, GUIScreenNode* screenNode, const string& fileName);
 
 	/**
 	 * Destructor
 	 */
 	~TextEditorTabView();
+
+	/**
+	 * @return file name
+	 */
+	inline const string& getFileName() {
+		return fileName;
+	}
+
+	/**
+	 * @return lower case extension
+	 */
+	inline const string& getExtension() {
+		return extension;
+	}
+
+	/**
+	 * Save file
+	 * @param pathName path name
+	 * @param fileName file name
+	 */
+	void saveFile(const string& pathName, const string& fileName);
 
 	/**
 	 * @return code completion

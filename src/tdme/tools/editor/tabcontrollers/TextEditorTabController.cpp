@@ -14,6 +14,7 @@
 #include <tdme/gui/GUIParser.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
@@ -41,6 +42,7 @@ using tdme::gui::GUI;
 using tdme::gui::GUIParser;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
@@ -89,10 +91,59 @@ void TextEditorTabController::dispose()
 
 void TextEditorTabController::save()
 {
+	auto fileName = view->getFileName();
+	try {
+		if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
+		view->saveFile(
+			Tools::getPathName(fileName),
+			Tools::getFileName(fileName)
+		);
+	} catch (Exception& exception) {
+		showErrorPopUp("Warning", (string(exception.what())));
+	}
+
 }
 
 void TextEditorTabController::saveAs()
 {
+	class OnTextSave: public virtual Action
+	{
+	public:
+		void performAction() override {
+			try {
+				textEditorTabController->view->saveFile(
+					textEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
+					textEditorTabController->popUps->getFileDialogScreenController()->getFileName()
+				);
+			} catch (Exception& exception) {
+				textEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+			}
+			textEditorTabController->popUps->getFileDialogScreenController()->close();
+		}
+
+		/**
+		 * Public constructor
+		 * @param textEditorTabController text editor tab controller
+		 */
+		OnTextSave(TextEditorTabController* textEditorTabController): textEditorTabController(textEditorTabController) {
+		}
+
+	private:
+		TextEditorTabController* textEditorTabController;
+	};
+
+	auto fileName = view->getFileName();
+	vector<string> extensions = {
+		view->getExtension()
+	};
+	popUps->getFileDialogScreenController()->show(
+		Tools::getPathName(fileName),
+		"Save to: ",
+		extensions,
+		Tools::getFileName(fileName),
+		false,
+		new OnTextSave(this)
+	);
 }
 
 void TextEditorTabController::showErrorPopUp(const string& caption, const string& message)

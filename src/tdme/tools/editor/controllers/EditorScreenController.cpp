@@ -1461,7 +1461,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 							{{ "text", StringTools::replace(StringTools::replace(text, "[", "\\["), "]", "\\]") }}
 						);
 						tabType = EditorTabView::TABTYPE_TEXT;
-						tabView = new TextEditorTabView(view, tabId, screenNode, StringTools::substring(fileNameLowerCase, fileNameLowerCase.rfind('.') + 1, fileNameLowerCase.size()));
+						tabView = new TextEditorTabView(view, tabId, screenNode, absoluteFileName);
 						viewPortTemplate = "template_viewport_plain.xml";
 					}
 					break;
@@ -1546,7 +1546,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 						{{ "text", StringTools::replace(StringTools::replace(text, "[", "\\["), "]", "\\]") }}
 					);
 					tabType = EditorTabView::TABTYPE_TEXT;
-					tabView = new TextEditorTabView(view, tabId, screenNode, StringTools::substring(fileNameLowerCase, fileNameLowerCase.rfind('.') + 1, fileNameLowerCase.size()));
+					tabView = new TextEditorTabView(view, tabId, screenNode, absoluteFileName);
 					viewPortTemplate = "template_viewport_plain.xml";
 					break;
 				}

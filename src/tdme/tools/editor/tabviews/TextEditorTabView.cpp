@@ -12,12 +12,16 @@
 #include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/nodes/GUIStyledTextNodeController.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
+#include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/misc/TextFormatter.h>
 #include <tdme/tools/editor/tabcontrollers/TextEditorTabController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::sort;
 using std::string;
@@ -30,13 +34,17 @@ using tdme::gui::nodes::GUIFrameBufferNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::GUI;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
+using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::TextFormatter;
 using tdme::tools::editor::tabcontrollers::TextEditorTabController;
 using tdme::tools::editor::views::EditorView;
+using tdme::utilities::StringTools;
 
-TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId, GUIScreenNode* screenNode, const string& extension)
+TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId, GUIScreenNode* screenNode, const string& fileName)
 {
 	this->editorView = editorView;
 	this->tabId = tabId;
@@ -44,6 +52,9 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 	this->tabScreenNode = screenNode;
 	this->extension = extension;
 	this->textNode = required_dynamic_cast<GUIStyledTextNode*>(screenNode->getInnerNodeById("text"));
+	this->fileName = fileName;
+	auto fileNameLowerCase = StringTools::toLowerCase(fileName);
+	this->extension = StringTools::substring(fileNameLowerCase, fileNameLowerCase.rfind('.') + 1, fileNameLowerCase.size());
 	engine = Engine::createOffScreenInstance(512, 512, false, false, false);
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	engine->getGUI()->addScreen(screenNode->getId(), screenNode);
@@ -232,6 +243,15 @@ TextEditorTabView::~TextEditorTabView() {
 	delete textNodeChangeListener;
 	delete textNodeCodeCompletionListener;
 	if (codeCompletion != nullptr) delete codeCompletion;
+}
+
+void TextEditorTabView::saveFile(const string& pathName, const string& fileName) {
+	auto text = textNode->getText().getString();
+	FileSystem::getStandardFileSystem()->setContentFromString(
+		pathName,
+		fileName,
+		text
+	);
 }
 
 void TextEditorTabView::handleInputEvents()
