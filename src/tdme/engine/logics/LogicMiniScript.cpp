@@ -8,6 +8,7 @@
 #include <tdme/engine/logics/Context.h>
 #include <tdme/engine/logics/Logic.h>
 #include <tdme/engine/Camera.h>
+#include <tdme/engine/Engine.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
@@ -26,6 +27,7 @@ using tdme::engine::logics::LogicMiniScript;
 using tdme::engine::logics::Context;
 using tdme::engine::logics::Logic;
 using tdme::engine::Camera;
+using tdme::engine::Engine;
 using tdme::engine::Timing;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
@@ -814,6 +816,77 @@ void LogicMiniScript::registerMethods() {
 		registerMethod(new ScriptMethodTimingGetAvarageFPS(this));
 	}
 	// engine
+	{
+		//
+		class ScriptMethodEntityGetTransform: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEntityGetTransform(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false }
+					},
+					ScriptVariableType::TYPE_TRANSFORM
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.entity.getTransform";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string entityId;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true) {
+					auto entity = miniScript->context->getEngine()->getEntity(entityId);
+					if (entity != nullptr) {
+						returnValue = entity->getTransform();
+					} else {
+						Console::println("ScriptMethodEntityGetTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+					}
+				} else {
+					Console::println("ScriptMethodEntityGetTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodEntityGetTransform(this));
+	}
+	{
+		//
+		class ScriptMethodEntitySetTransform: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEntitySetTransform(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false },
+						{ .type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.entity.setTransform";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string entityId;
+				Transform transform;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
+					miniScript->getTransformValue(argumentValues, 1, transform) == true) {
+					auto entity = miniScript->context->getEngine()->getEntity(entityId);
+					if (entity != nullptr) {
+						entity->setTransform(transform);
+					} else {
+						Console::println("ScriptMethodEntitySetTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+					}
+				} else {
+					Console::println("ScriptMethodEntitySetTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodEntitySetTransform(this));
+	}
 	// physics
 	// gui
 	// sceneconnector

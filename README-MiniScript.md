@@ -685,6 +685,8 @@ Reading all keys as array from set:
 | engine.camera.setLookAt($lookAt: Vector3): Void                                                  |
 | engine.camera.setLookFrom($lookFrom: Vector3): Void                                              |
 | engine.camera.setUpVector($upVector: Vector3): Void                                              |
+| engine.entity.getTransform($entityId: String): Transform                                         |
+| engine.entity.setTransform($entityId: String, $transform: Transform): Void                       |
 | engine.timing.getAvarageFPS(): Float                                                             |
 | engine.timing.getDeltaTime(): Integer                                                            |
 | engine.timing.getDeltaTimeSeconds(): Float                                                       |
@@ -711,6 +713,7 @@ Reading all keys as array from set:
 | logic.signal.has(): Boolean                                                                      |
 | logic.signal.next(): Void                                                                        |
 | logic.signal.send($logicId: String, $signal: String, ...): Void                                  |
+
 
 # 8. Operators
 
