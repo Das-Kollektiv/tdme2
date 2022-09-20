@@ -10,6 +10,8 @@
 #include <tdme/engine/logics/Logic.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/Object.h>
+#include <tdme/engine/ParticleSystem.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
@@ -31,6 +33,8 @@ using tdme::engine::logics::Context;
 using tdme::engine::logics::Logic;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
+using tdme::engine::Object;
+using tdme::engine::ParticleSystem;
 using tdme::engine::Timing;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
@@ -1176,6 +1180,80 @@ void LogicMiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodEntitySetEffectColorAdd(this));
+	}
+	{
+		//
+		class ScriptMethodEntityGetAnimation: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEntityGetAnimation(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false }
+					},
+					ScriptVariableType::TYPE_STRING
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.entity.getAnimation";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string entityId;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true) {
+					auto object = dynamic_cast<Object*>(miniScript->context->getEngine()->getEntity(entityId));
+					if (object != nullptr) {
+						returnValue.setValue(object->getAnimation());
+					} else {
+						Console::println("ScriptMethodEntityGetAnimation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+					}
+				} else {
+					Console::println("ScriptMethodEntityGetAnimation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodEntityGetAnimation(this));
+	}
+	{
+		//
+		class ScriptMethodEntitySetAnimation: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEntitySetAnimation(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "speed", .optional = true }
+					},
+					ScriptVariableType::TYPE_BOOLEAN
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.entity.setAnimation";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string entityId;
+				string animation;
+				float speed = 1.0f;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
+					miniScript->getStringValue(argumentValues, 1, animation) == true &&
+					miniScript->getFloatValue(argumentValues, 2, speed) == true) {
+					auto object = dynamic_cast<Object*>(miniScript->context->getEngine()->getEntity(entityId));
+					if (object != nullptr) {
+						object->setAnimation(animation, speed);
+					} else {
+						Console::println("ScriptMethodEntitySetAnimation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+					}
+				} else {
+					Console::println("ScriptMethodEntitySetAnimation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: optional float expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodEntitySetAnimation(this));
 	}
 	// physics
 	// gui
