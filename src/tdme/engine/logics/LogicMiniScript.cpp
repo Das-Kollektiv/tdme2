@@ -302,6 +302,235 @@ void LogicMiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodInputKeyboardIsShiftDown(this));
 	}
+	// mouse input
+	{
+		//
+		class ScriptMethodInputMouseIsButtonDown: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputMouseIsButtonDown(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "button", .optional = false }
+					},
+					ScriptVariableType::TYPE_BOOLEAN),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.mouse.isButtonDown";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				int64_t button;
+				if (miniScript->getIntegerValue(argumentValues, 0, button) == true) {
+					returnValue = button >= 0 && button <= 3?miniScript->mouseDown[button]:false;
+				} else {
+					Console::println("ScriptMethodInputMouseIsButtonDown::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodInputMouseIsButtonDown(this));
+	}
+	{
+		//
+		class ScriptMethodInputMouseIsButtonUp: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputMouseIsButtonUp(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "button", .optional = false }
+					},
+					ScriptVariableType::TYPE_BOOLEAN),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.mouse.isButtonUp";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				int64_t button;
+				if (miniScript->getIntegerValue(argumentValues, 0, button) == true) {
+					returnValue = button >= 0 && button <= 3?miniScript->mouseUp[button]:false;
+				} else {
+					Console::println("ScriptMethodInputMouseIsButtonUp::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodInputMouseIsButtonUp(this));
+	}
+	{
+		//
+		class ScriptMethodInputMouseIsDragging: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputMouseIsDragging(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "button", .optional = false }
+					},
+					ScriptVariableType::TYPE_BOOLEAN),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.mouse.isDragging";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				int64_t button;
+				if (miniScript->getIntegerValue(argumentValues, 0, button) == true) {
+					returnValue = button >= 0 && button <= 3?miniScript->mouseDragging[button]:false;
+				} else {
+					Console::println("ScriptMethodInputMouseIsDragging::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodInputMouseIsDragging(this));
+	}
+	{
+		//
+		class ScriptMethodInputMouseHasMoved: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputMouseHasMoved(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.mouse.hasMoved";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = miniScript->mouseMoved;
+			}
+		};
+		registerMethod(new ScriptMethodInputMouseHasMoved(this));
+	}
+	{
+		//
+		class ScriptMethodInputMouseGetX: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputMouseGetX(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.mouse.getX";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(miniScript->mouseX);
+			}
+		};
+		registerMethod(new ScriptMethodInputMouseGetX(this));
+	}
+	{
+		//
+		class ScriptMethodInputMouseGetXUnscaled: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputMouseGetXUnscaled(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.mouse.getXUnscaled";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(miniScript->mouseXUnscaled);
+			}
+		};
+		registerMethod(new ScriptMethodInputMouseGetXUnscaled(this));
+	}
+	{
+		//
+		class ScriptMethodInputMouseGetY: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputMouseGetY(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.mouse.getY";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(miniScript->mouseY);
+			}
+		};
+		registerMethod(new ScriptMethodInputMouseGetY(this));
+	}
+	{
+		//
+		class ScriptMethodInputMouseGetYUnscaled: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputMouseGetYUnscaled(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.mouse.getYUnscaled";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(miniScript->mouseYUnscaled);
+			}
+		};
+		registerMethod(new ScriptMethodInputMouseGetYUnscaled(this));
+	}
+	{
+		//
+		class ScriptMethodInputMouseGetWheelX: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputMouseGetWheelX(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.mouse.getWheelX";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = miniScript->mouseWheelX;
+			}
+		};
+		registerMethod(new ScriptMethodInputMouseGetWheelX(this));
+	}
+	{
+		//
+		class ScriptMethodInputMouseGetWheelY: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputMouseGetWheelY(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.mouse.getWheelY";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = miniScript->mouseWheelX;
+			}
+		};
+		registerMethod(new ScriptMethodInputMouseGetWheelY(this));
+	}
+	{
+		//
+		class ScriptMethodInputMouseGetWheelZ: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputMouseGetWheelZ(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_FLOAT),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.mouse.getWheelZ";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = miniScript->mouseWheelX;
+			}
+		};
+		registerMethod(new ScriptMethodInputMouseGetWheelZ(this));
+	}
 }
 
 void LogicMiniScript::registerVariables() {

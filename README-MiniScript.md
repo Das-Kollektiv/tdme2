@@ -682,6 +682,17 @@ Reading all keys as array from set:
 | input.keyboard.isKeyDown($keyCode: Integer): Boolean                                             |
 | input.keyboard.isMetaDown(): Boolean                                                             |
 | input.keyboard.isShiftDown(): Boolean                                                            |
+| input.mouse.getWheelX(): Float                                                                   |
+| input.mouse.getWheelY(): Float                                                                   |
+| input.mouse.getWheelZ(): Float                                                                   |
+| input.mouse.getX(): Integer                                                                      |
+| input.mouse.getXUnscaled(): Integer                                                              |
+| input.mouse.getY(): Integer                                                                      |
+| input.mouse.getYUnscaled(): Integer                                                              |
+| input.mouse.hasMoved(): Boolean                                                                  |
+| input.mouse.isButtonDown($button: Integer): Boolean                                              |
+| input.mouse.isButtonUp($button: Integer): Boolean                                                |
+| input.mouse.isDragging($button: Integer): Boolean                                                |
 | logic.getId(): String                                                                            |
 | logic.signal.getArgument($argumentIndex: Integer): Mixed                                         |
 | logic.signal.getName(): String                                                                   |
