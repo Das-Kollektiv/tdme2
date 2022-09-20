@@ -295,6 +295,7 @@
 # 5. What is WIP or planned for first BETA
 - MiniScript: more engine bindings(WIP)
 - Editor: Code editing with code completion, also visual code editing is planned! (wip)
+- Visual animation blending/system editor
 - Shaders: Implement a new more abstract shader system using e.g. shader parameter system and add a visual/code shader editor on top
 - Particle System: overhaul
 - Lights: finish implementing the light system, modernize it also a bit + bloom effect for emissive materials

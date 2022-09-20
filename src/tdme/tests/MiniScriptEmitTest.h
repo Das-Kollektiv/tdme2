@@ -6,14 +6,14 @@ using tdme::utilities::Console;
 using tdme::utilities::MiniScript;
 
 /**
- * Transpile with './bin/tdme/tools/cli/miniscripttranspiler resources/tests/scripts/test.tscript src/tdme/tests/MiniScriptTest.cpp'
+ * Transpile with './bin/tdme/tools/cli/miniscripttranspiler resources/tests/scripts/emit-test.tscript src/tdme/tests/MiniScriptEmitTest.cpp'
  */
-class MiniScriptTest: public MiniScript {
+class MiniScriptEmitTest: public MiniScript {
 public:
 	/**
 	 * Public constructor
 	 */
-	MiniScriptTest();
+	MiniScriptEmitTest();
 
 	/*__MINISCRIPT_TRANSPILEDMINISCRIPTCODE_DECLARATIONS_START__*/
 
@@ -42,14 +42,10 @@ public:
 		// execute while having statements to be processed
 		if (getScriptState().state == STATEMACHINESTATE_NEXT_STATEMENT) {
 			if (getScriptState().scriptIdx == 0) on_initialize(scriptState.statementIdx); else
-			if (getScriptState().scriptIdx == 1) factorial(scriptState.statementIdx); else
-			if (getScriptState().scriptIdx == 2) helloWorldFunction(scriptState.statementIdx); else
-			if (getScriptState().scriptIdx == 3) assignTest(scriptState.statementIdx); else
-			if (getScriptState().scriptIdx == 4) globalVariableTest(scriptState.statementIdx); else
-			if (getScriptState().scriptIdx == 5) on_nothing(scriptState.statementIdx); else
-			if (getScriptState().scriptIdx == 6) on_error(scriptState.statementIdx); else
-			if (getScriptState().scriptIdx == 7) on_emittest(scriptState.statementIdx); else
-			if (getScriptState().scriptIdx == 8) on_enabled_named_condition_1(scriptState.statementIdx); else
+			if (getScriptState().scriptIdx == 1) on_nothing(scriptState.statementIdx); else
+			if (getScriptState().scriptIdx == 2) on_error(scriptState.statementIdx); else
+			if (getScriptState().scriptIdx == 3) on_emittest(scriptState.statementIdx); else
+			if (getScriptState().scriptIdx == 4) on_enabled_named_condition_1(scriptState.statementIdx); else
 				;
 		}
 		if (getScriptState().running == false) return;
@@ -67,30 +63,6 @@ protected:
 	 * @param miniScriptGotoStatementIdx MiniScript goto statement index
 	 */
 	void on_initialize(int miniScriptGotoStatementIdx);
-
-	/**
-	 * Miniscript transpilation of: FUNCTION: factorial
-	 * @param miniScriptGotoStatementIdx MiniScript goto statement index
-	 */
-	void factorial(int miniScriptGotoStatementIdx);
-
-	/**
-	 * Miniscript transpilation of: FUNCTION: helloWorldFunction
-	 * @param miniScriptGotoStatementIdx MiniScript goto statement index
-	 */
-	void helloWorldFunction(int miniScriptGotoStatementIdx);
-
-	/**
-	 * Miniscript transpilation of: FUNCTION: assignTest
-	 * @param miniScriptGotoStatementIdx MiniScript goto statement index
-	 */
-	void assignTest(int miniScriptGotoStatementIdx);
-
-	/**
-	 * Miniscript transpilation of: FUNCTION: globalVariableTest
-	 * @param miniScriptGotoStatementIdx MiniScript goto statement index
-	 */
-	void globalVariableTest(int miniScriptGotoStatementIdx);
 
 	/**
 	 * Miniscript transpilation of: ON: nothing

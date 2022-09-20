@@ -1776,13 +1776,6 @@ protected:
 	virtual void initializeNative();
 
 	/**
-	 * @return if this script was compiled to C++ and is executed nativly
-	 */
-	inline bool getNative() {
-		return native;
-	}
-
-	/**
 	 * Set native
 	 * @param native native
 	 */
@@ -2405,6 +2398,13 @@ public:
 	 * Destructor
 	 */
 	virtual ~MiniScript();
+
+	/**
+	 * @return if this script was compiled to C++ and is executed nativly
+	 */
+	inline bool isNative() {
+		return native;
+	}
 
 	/**
 	 * @return script file name

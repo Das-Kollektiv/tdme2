@@ -13,6 +13,10 @@ namespace tests {
 	class FoliageTest;
 	class LODTest;
 	class MathOperatorTest;
+	class MiniScriptBaseTest;
+	class MiniScriptAdvancedTest;
+	class MiniScriptEmitTest;
+	class MiniScriptFunctionsTest;
 	class PathFindingTest;
 	class PivotTest;
 	class PhysicsTest1;

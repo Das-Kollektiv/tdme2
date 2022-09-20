@@ -547,7 +547,10 @@ SRCS = \
 	src/tdme/tests/FlowMapTest2.cpp \
 	src/tdme/tests/FoliageTest.cpp \
 	src/tdme/tests/MathOperatorTest.cpp \
-	src/tdme/tests/MiniScriptTest.cpp \
+	src/tdme/tests/MiniScriptAdvancedTest.cpp \
+	src/tdme/tests/MiniScriptBaseTest.cpp \
+	src/tdme/tests/MiniScriptEmitTest.cpp \
+	src/tdme/tests/MiniScriptFunctionsTest.cpp \
 	src/tdme/tests/PathFindingTest.cpp \
 	src/tdme/tests/PivotTest.cpp \
 	src/tdme/tests/PhysicsTest1.cpp \
