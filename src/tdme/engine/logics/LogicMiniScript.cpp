@@ -941,7 +941,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false },
 						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "enabled", .optional = false }
 					},
-					ScriptVariableType::TYPE_BOOLEAN
+					ScriptVariableType::TYPE_VOID
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1012,7 +1012,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false },
 						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "pickable", .optional = false }
 					},
-					ScriptVariableType::TYPE_BOOLEAN
+					ScriptVariableType::TYPE_VOID
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1084,7 +1084,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false },
 						{ .type = ScriptVariableType::TYPE_VECTOR4, .name = "effectColorMul", .optional = false }
 					},
-					ScriptVariableType::TYPE_BOOLEAN
+					ScriptVariableType::TYPE_VOID
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1156,7 +1156,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false },
 						{ .type = ScriptVariableType::TYPE_VECTOR4, .name = "effectColorAdd", .optional = false }
 					},
-					ScriptVariableType::TYPE_BOOLEAN
+					ScriptVariableType::TYPE_VOID
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -1228,7 +1228,7 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false },
 						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "speed", .optional = true }
 					},
-					ScriptVariableType::TYPE_BOOLEAN
+					ScriptVariableType::TYPE_VOID
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {

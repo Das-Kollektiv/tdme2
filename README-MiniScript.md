@@ -691,11 +691,11 @@ Reading all keys as array from set:
 | engine.entity.getTransform($entityId: String): Transform                                         |
 | engine.entity.isEnabled($entityId: String): Boolean                                              |
 | engine.entity.isPickable($entityId: String): Boolean                                             |
-| engine.entity.setAnimation($entityId: String, $animation: String, $speed: Float(OPTIONAL)): Boolean|
-| engine.entity.setEffectColorAdd($entityId: String, $effectColorAdd: Vector4): Boolean            |
-| engine.entity.setEffectColorMul($entityId: String, $effectColorMul: Vector4): Boolean            |
-| engine.entity.setEnabled($entityId: String, $enabled: Boolean): Boolean                          |
-| engine.entity.setPickable($entityId: String, $pickable: Boolean): Boolean                        |
+| engine.entity.setAnimation($entityId: String, $animation: String, $speed: Float(OPTIONAL)): Void |
+| engine.entity.setEffectColorAdd($entityId: String, $effectColorAdd: Vector4): Void               |
+| engine.entity.setEffectColorMul($entityId: String, $effectColorMul: Vector4): Void               |
+| engine.entity.setEnabled($entityId: String, $enabled: Boolean): Void                             |
+| engine.entity.setPickable($entityId: String, $pickable: Boolean): Void                           |
 | engine.entity.setTransform($entityId: String, $transform: Transform): Void                       |
 | engine.timing.getAvarageFPS(): Float                                                             |
 | engine.timing.getDeltaTime(): Integer                                                            |
