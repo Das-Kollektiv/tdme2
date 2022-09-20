@@ -81,7 +81,7 @@ forTime takes a single argument "time" - it repeats the loop until "time" in mil
 ...
 ```
 
-forCondition takes a single boolean value as argument. The loop will be executed as long as the argument is true. In this case "$i < 5" transpiles to "lesser($i, 5)" which results in a boolean value, which is used as the forCondition argument. See example of forCondition() below.
+forCondition takes a single boolean value as argument. The loop will be executed as long as the argument is true. In this case "$i < 5" translates to "lesser($i, 5)" which results in a boolean value, which is used as the forCondition argument. See example of forCondition() below.
 ```
 ...
 	$i = 0
