@@ -687,8 +687,10 @@ Reading all keys as array from set:
 | engine.camera.setUpVector($upVector: Vector3): Void                                              |
 | engine.entity.addOverlayAnimation($entityId: String, $animation: String): Void                   |
 | engine.entity.getAnimation($entityId: String): String                                            |
+| engine.entity.getAnimationTime($entityId: String): Float                                         |
 | engine.entity.getEffectColorAdd($entityId: String): Vector4                                      |
 | engine.entity.getEffectColorMul($entityId: String): Vector4                                      |
+| engine.entity.getOverlayAnimationTime($entityId: String, $animation: String): Float              |
 | engine.entity.getTransform($entityId: String): Transform                                         |
 | engine.entity.hasOverlayAnimation($entityId: String, $animation: String): Boolean                |
 | engine.entity.isEnabled($entityId: String): Boolean                                              |
