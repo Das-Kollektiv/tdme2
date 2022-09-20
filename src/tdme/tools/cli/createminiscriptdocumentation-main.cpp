@@ -40,7 +40,7 @@ int main(int argc, char** argv)
 	// base methods
 	{
 		Console::println();
-		Console::println("| Base methods                                                                                     |");
+		Console::println("| Methods                                                                                          |");
 		Console::println("|--------------------------------------------------------------------------------------------------|");
 		auto scriptMethods = baseMiniScript->getMethods();
 		vector<string> methods;

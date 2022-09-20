@@ -519,9 +519,9 @@ Reading all keys as array from set:
 
 ... TODO ...
 
-# 6. Methods
+# 6. MiniScript methods
 
-| Base methods                                                                                     |
+| Methods                                                                                          |
 |--------------------------------------------------------------------------------------------------|
 | add(...): Mixed                                                                                  |
 | and(...): Boolean                                                                                |
@@ -672,6 +672,8 @@ Reading all keys as array from set:
 | vec4.getZ($vec4: Vector4): Float                                                                 |
 | vec4.normalize($vec4: Vector4): Vector4                                                          |
 
+# 7. MiniScript logic methods
+
 | MiniScript logic methods                                                                         |
 |--------------------------------------------------------------------------------------------------|
 | input.keyboard.getTypedString(): String                                                          |
@@ -687,7 +689,7 @@ Reading all keys as array from set:
 | logic.signal.next(): Void                                                                        |
 | logic.signal.send($logicId: String, $signal: String, ...): Void                                  |
 
-# 7. Operators
+# 8. Operators
 
 | Op | Method                                                                                      |
 |----|---------------------------------------------------------------------------------------------|
