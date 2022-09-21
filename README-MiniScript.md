@@ -523,6 +523,9 @@ Reading all keys as array from set:
 
 | Methods                                                                                          |
 |--------------------------------------------------------------------------------------------------|
+| getVariable($variable: String): Mixed                                                            |
+| setVariable($variable: String, ...): Mixed                                                       |
+| unsetVariable($variable: String): Void                                                           |
 | add(...): Mixed                                                                                  |
 | and(...): Boolean                                                                                |
 | array(...): Array                                                                                |
@@ -544,7 +547,6 @@ Reading all keys as array from set:
 | float($float: Float): Float                                                                      |
 | forCondition($condition: Boolean): Void                                                          |
 | forTime($time: Integer): Void                                                                    |
-| getVariable($variable: String): Mixed                                                            |
 | greater($a: Number, $b: Number): Boolean                                                         |
 | greaterequals($a: Number, $b: Number): Boolean                                                   |
 | if($condition: Boolean): Void                                                                    |
@@ -552,9 +554,9 @@ Reading all keys as array from set:
 | lesser($a: Number, $b: Number): Boolean                                                          |
 | lesserequals($a: Number, $b: Number): Boolean                                                    |
 | map(): Map                                                                                       |
-| map.get($map: Map, $key: String): Mixed                                                          |
 | map.getKeys($map: Map): Array                                                                    |
 | map.getValues($map: Map): Array                                                                  |
+| map.get($map: Map, $key: String): Mixed                                                          |
 | map.has($map: Map, $key: String): Boolean                                                        |
 | map.remove(=$map: Map, $key: String): Void                                                       |
 | map.set(=$map: Map, $key: String, ...): Void                                                     |
@@ -610,13 +612,13 @@ Reading all keys as array from set:
 | quaternion.normalize($quaternion: Quaternion): Quaternion                                        |
 | quaternion.rotate($axis: Vector3, $angle: Float): Quaternion                                     |
 | return(...): Void                                                                                |
+| script.getNamedConditions(): String                                                              |
+| script.getVariables(): Map                                                                       |
 | script.call($function: String, ...): Mixed                                                       |
 | script.disableNamedCondition($name: String): Void                                                |
 | script.emit($condition: String): Void                                                            |
 | script.enableNamedCondition($name: String): Void                                                 |
 | script.evaluate(...): Mixed                                                                      |
-| script.getNamedConditions(): String                                                              |
-| script.getVariables(): Map                                                                       |
 | script.stop(): Void                                                                              |
 | script.wait($time: Integer): Void                                                                |
 | script.waitForCondition(): Void                                                                  |
@@ -625,7 +627,6 @@ Reading all keys as array from set:
 | set.has($set: Set, $key: String): Boolean                                                        |
 | set.insert(=$set: Set, $key: String): Void                                                       |
 | set.remove(=$set: Set, $key: String): Void                                                       |
-| setVariable($variable: String, ...): Mixed                                                       |
 | space($spaces: Integer(OPTIONAL)): String                                                        |
 | string($string: String): String                                                                  |
 | sub(...): Mixed                                                                                  |
@@ -634,17 +635,16 @@ Reading all keys as array from set:
 | toUpperCase($string: String): String                                                             |
 | transform($translation: Vector3(OPTIONAL), $scale: Vector3(OPTIONAL), $rotationAxis0: Vector3(OPTIONAL), $rotationAxis1: Vector3(OPTIONAL), $rotationAxis2: Vector3(OPTIONAL)): Transform|
 | transform.getRotationAngle($transform: Transform, $idx: Integer): Float                          |
+| transform.setRotationAngle(=$transform: Transform, $idx: Integer, $angle: Float): Void           |
 | transform.getRotationAxis($transform: Transform, $idx: Integer): Vector3                         |
 | transform.getRotationsQuaternion($transform: Transform): Quaternion                              |
 | transform.getScale($transform: Transform): Vector3                                               |
+| transform.setScale(=$transform: Transform, $scale: Vector3): Void                                |
 | transform.getTransformMatrix($transform: Transform): Matrix4x4                                   |
 | transform.getTranslation($transform: Transform): Vector3                                         |
+| transform.setTranslation(=$transform: Transform, $translation: Vector3): Void                    |
 | transform.multiply($transform: Transform, $vec3: Vector3): Vector3                               |
 | transform.rotate($transform: Transform, $vec3: Vector3): Vector3                                 |
-| transform.setRotationAngle(=$transform: Transform, $idx: Integer, $angle: Float): Void           |
-| transform.setScale(=$transform: Transform, $scale: Vector3): Void                                |
-| transform.setTranslation(=$transform: Transform, $translation: Vector3): Void                    |
-| unsetVariable($variable: String): Void                                                           |
 | vec2($x: Float, $y: Float): Vector2                                                              |
 | vec2.computeDotProduct($a: Vector2, $b: Vector2): Float                                          |
 | vec2.computeLength($vec2: Vector2): Float                                                        |
@@ -676,47 +676,51 @@ Reading all keys as array from set:
 
 | MiniScript logic methods                                                                         |
 |--------------------------------------------------------------------------------------------------|
-| engine.camera.computeUpVector($lookFrom: Vector3, $lookAt: Vector3): Vector3                     |
 | engine.camera.getFovX(): Float                                                                   |
-| engine.camera.getLookAt(): Vector3                                                               |
-| engine.camera.getLookFrom(): Vector3                                                             |
-| engine.camera.getUpVector(): Vector3                                                             |
 | engine.camera.setFovX($fovX: Float): Void                                                        |
+| engine.camera.getLookAt(): Vector3                                                               |
 | engine.camera.setLookAt($lookAt: Vector3): Void                                                  |
+| engine.camera.getLookFrom(): Vector3                                                             |
 | engine.camera.setLookFrom($lookFrom: Vector3): Void                                              |
+| engine.camera.getUpVector(): Vector3                                                             |
 | engine.camera.setUpVector($upVector: Vector3): Void                                              |
-| engine.entity.addOverlayAnimation($entityId: String, $animation: String): Void                   |
+| engine.camera.computeUpVector($lookFrom: Vector3, $lookAt: Vector3): Vector3                     |
 | engine.entity.getAnimation($entityId: String): String                                            |
+| engine.entity.setAnimation($entityId: String, $animation: String, $speed: Float(OPTIONAL)): Void |
+| engine.entity.setAnimationSpeed($entityId: String, $speed: Float): Void                          |
 | engine.entity.getAnimationTime($entityId: String): Float                                         |
 | engine.entity.getEffectColorAdd($entityId: String): Vector4                                      |
+| engine.entity.setEffectColorAdd($entityId: String, $effectColorAdd: Vector4): Void               |
 | engine.entity.getEffectColorMul($entityId: String): Vector4                                      |
-| engine.entity.getNodeTransformMatrix($entityId: String, $nodeId: String): Matrix4x4              |
-| engine.entity.getOverlayAnimationTime($entityId: String, $animation: String): Float              |
-| engine.entity.getTransform($entityId: String): Transform                                         |
-| engine.entity.hasOverlayAnimation($entityId: String, $animation: String): Boolean                |
+| engine.entity.setEffectColorMul($entityId: String, $effectColorMul: Vector4): Void               |
 | engine.entity.isEnabled($entityId: String): Boolean                                              |
+| engine.entity.setEnabled($entityId: String, $enabled: Boolean): Void                             |
+| engine.entity.getNodeTransformMatrix($entityId: String, $nodeId: String): Matrix4x4              |
+| engine.entity.setNodeTransformMatrix($entityId: String, $nodeId: String, $matrix: Matrix4x4): Void|
+| engine.entity.unsetNodeTransformMatrix($entityId: String, $nodeId: String): Void                 |
+| engine.entity.hasOverlayAnimation($entityId: String, $animation: String): Boolean                |
+| engine.entity.getOverlayAnimationTime($entityId: String, $animation: String): Float              |
 | engine.entity.isPickable($entityId: String): Boolean                                             |
+| engine.entity.setPickable($entityId: String, $pickable: Boolean): Void                           |
+| engine.entity.getTransform($entityId: String): Transform                                         |
+| engine.entity.setTransform($entityId: String, $transform: Transform): Void                       |
+| engine.entity.addOverlayAnimation($entityId: String, $animation: String): Void                   |
 | engine.entity.removeFinishedOverlayAnimations($entityId: String): Void                           |
 | engine.entity.removeOverlayAnimation($entityId: String, $animation: String): Void                |
 | engine.entity.removeOverlayAnimations($entityId: String): Void                                   |
-| engine.entity.setAnimation($entityId: String, $animation: String, $speed: Float(OPTIONAL)): Void |
-| engine.entity.setAnimationSpeed($entityId: String, $speed: Float): Void                          |
-| engine.entity.setEffectColorAdd($entityId: String, $effectColorAdd: Vector4): Void               |
-| engine.entity.setEffectColorMul($entityId: String, $effectColorMul: Vector4): Void               |
-| engine.entity.setEnabled($entityId: String, $enabled: Boolean): Void                             |
-| engine.entity.setNodeTransformMatrix($entityId: String, $nodeId: String, $matrix: Matrix4x4): Void|
-| engine.entity.setPickable($entityId: String, $pickable: Boolean): Void                           |
-| engine.entity.setTransform($entityId: String, $transform: Transform): Void                       |
-| engine.entity.unsetNodeTransformMatrix($entityId: String, $nodeId: String): Void                 |
 | engine.timing.getAvarageFPS(): Float                                                             |
 | engine.timing.getDeltaTime(): Integer                                                            |
 | engine.timing.getDeltaTimeSeconds(): Float                                                       |
-| input.keyboard.getTypedString(): String                                                          |
 | input.keyboard.isAltDown(): Boolean                                                              |
 | input.keyboard.isControlDown(): Boolean                                                          |
 | input.keyboard.isKeyDown($keyCode: Integer): Boolean                                             |
 | input.keyboard.isMetaDown(): Boolean                                                             |
 | input.keyboard.isShiftDown(): Boolean                                                            |
+| input.keyboard.getTypedString(): String                                                          |
+| input.mouse.isButtonDown($button: Integer): Boolean                                              |
+| input.mouse.isButtonUp($button: Integer): Boolean                                                |
+| input.mouse.isDragging($button: Integer): Boolean                                                |
+| input.mouse.hasMoved(): Boolean                                                                  |
 | input.mouse.getWheelX(): Float                                                                   |
 | input.mouse.getWheelY(): Float                                                                   |
 | input.mouse.getWheelZ(): Float                                                                   |
@@ -724,10 +728,6 @@ Reading all keys as array from set:
 | input.mouse.getXUnscaled(): Integer                                                              |
 | input.mouse.getY(): Integer                                                                      |
 | input.mouse.getYUnscaled(): Integer                                                              |
-| input.mouse.hasMoved(): Boolean                                                                  |
-| input.mouse.isButtonDown($button: Integer): Boolean                                              |
-| input.mouse.isButtonUp($button: Integer): Boolean                                                |
-| input.mouse.isDragging($button: Integer): Boolean                                                |
 | logic.getId(): String                                                                            |
 | logic.signal.getArgument($argumentIndex: Integer): Mixed                                         |
 | logic.signal.getName(): String                                                                   |

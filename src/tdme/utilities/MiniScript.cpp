@@ -1324,7 +1324,49 @@ const vector<MiniScript::ScriptMethod*> MiniScript::getMethods() {
 		methods.push_back(scriptMethodIt.second);
 	}
 	struct {
-		bool operator()(ScriptMethod* a, ScriptMethod* b) const { return a->getMethodName() < b->getMethodName(); }
+		bool operator()(ScriptMethod* a, ScriptMethod* b) const {
+			auto aPrefix = StringTools::substring(a->getMethodName(), 0, StringTools::lastIndexOf(a->getMethodName(), ".") + 1);
+			auto aName = StringTools::substring(a->getMethodName(), StringTools::lastIndexOf(a->getMethodName(), ".") + 1);
+			auto bPrefix = StringTools::substring(b->getMethodName(), 0, StringTools::lastIndexOf(b->getMethodName(), ".") + 1);
+			auto bName = StringTools::substring(b->getMethodName(), StringTools::lastIndexOf(b->getMethodName(), ".") + 1);
+			array<string, 6> prefixes {
+				"is",
+				"has",
+				"get",
+				"set",
+				"unset",
+				"compute"
+			};
+			array<string, 6> sortPrefixes {
+				"0",
+				"1",
+				"2",
+				"3",
+				"4",
+				"5"
+			};
+			int aPrefixIdx = 0;
+			for (auto& prefix: prefixes) {
+				if (aName != prefix && StringTools::startsWith(aName, prefix) == true) {
+					aName = StringTools::substring(aName, prefix.size());
+					break;
+				}
+				aPrefixIdx++;
+			}
+			int bPrefixIdx = 0;
+			for (auto& prefix: prefixes) {
+				if (bName != prefix && StringTools::startsWith(bName, prefix) == true) {
+					bName = StringTools::substring(bName, prefix.size());
+					break;
+				}
+				bPrefixIdx++;
+			}
+			if (aName == bName) {
+				return aPrefix + (aPrefixIdx < 6?sortPrefixes[aPrefixIdx]:"") + aName < bPrefix + (bPrefixIdx < 6?sortPrefixes[bPrefixIdx]:"") + bName;
+			} else {
+				return aPrefix + aName < bPrefix + bName;
+			}
+		}
 	} sortFunction;
 	std::sort(methods.begin(), methods.end(), sortFunction);
 	return methods;
