@@ -1347,7 +1347,7 @@ const vector<MiniScript::ScriptMethod*> MiniScript::getMethods() {
 			};
 			int aPrefixIdx = 0;
 			for (auto& prefix: prefixes) {
-				if (aName != prefix && StringTools::startsWith(aName, prefix) == true) {
+				if ((aName != prefix || aPrefix.empty() == false) && StringTools::startsWith(aName, prefix) == true) {
 					aName = StringTools::substring(aName, prefix.size());
 					break;
 				}
@@ -1355,7 +1355,7 @@ const vector<MiniScript::ScriptMethod*> MiniScript::getMethods() {
 			}
 			int bPrefixIdx = 0;
 			for (auto& prefix: prefixes) {
-				if (bName != prefix && StringTools::startsWith(bName, prefix) == true) {
+				if ((bName != prefix || bPrefix.empty() == false) && StringTools::startsWith(bName, prefix) == true) {
 					bName = StringTools::substring(bName, prefix.size());
 					break;
 				}
@@ -5165,7 +5165,8 @@ void MiniScript::registerMethods() {
 			ScriptMethodSetVariable(MiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "variable", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "variable", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "value", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_PSEUDO_MIXED
 				),
@@ -5185,9 +5186,6 @@ void MiniScript::registerMethods() {
 					miniScript->setVariable(variable, argumentValues[1], &statement);
 					returnValue = argumentValues[1];
 				}
-			}
-			bool isVariadic() override {
-				return true;
 			}
 			ScriptOperator getOperator() override {
 				return OPERATOR_SET;

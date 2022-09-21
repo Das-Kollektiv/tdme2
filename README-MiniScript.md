@@ -524,18 +524,18 @@ Reading all keys as array from set:
 | Methods                                                                                          |
 |--------------------------------------------------------------------------------------------------|
 | getVariable($variable: String): Mixed                                                            |
-| setVariable($variable: String, ...): Mixed                                                       |
+| setVariable($variable: String, $value: Mixed): Mixed                                             |
 | unsetVariable($variable: String): Void                                                           |
 | add(...): Mixed                                                                                  |
 | and(...): Boolean                                                                                |
 | array(...): Array                                                                                |
 | array.get($array: Array, $index: Integer): Mixed                                                 |
+| array.set(=$array: Array, $index: Integer, ...): Void                                            |
 | array.indexOf($array: Array, $value: String, $beginIndex: Integer(OPTIONAL), ...): Integer       |
 | array.length($array: Array): Integer                                                             |
 | array.push(=$array: Array, ...): Void                                                            |
 | array.remove(=$array: Array, $index: Integer): Void                                              |
 | array.removeOf(=$array: Array, $value: String): Void                                             |
-| array.set(=$array: Array, $index: Integer, ...): Void                                            |
 | bool($bool: Boolean): Boolean                                                                    |
 | concatenate(...): String                                                                         |
 | console.log(...): Void                                                                           |
@@ -554,12 +554,12 @@ Reading all keys as array from set:
 | lesser($a: Number, $b: Number): Boolean                                                          |
 | lesserequals($a: Number, $b: Number): Boolean                                                    |
 | map(): Map                                                                                       |
+| map.has($map: Map, $key: String): Boolean                                                        |
+| map.get($map: Map, $key: String): Mixed                                                          |
+| map.set(=$map: Map, $key: String, ...): Void                                                     |
 | map.getKeys($map: Map): Array                                                                    |
 | map.getValues($map: Map): Array                                                                  |
-| map.get($map: Map, $key: String): Mixed                                                          |
-| map.has($map: Map, $key: String): Boolean                                                        |
 | map.remove(=$map: Map, $key: String): Void                                                       |
-| map.set(=$map: Map, $key: String, ...): Void                                                     |
 | mat3.identity(): Matrix3x3                                                                       |
 | mat3.multiply($mat3: Matrix3x3, ...): Mixed                                                      |
 | mat3.rotate($angle: Float): Matrix3x3                                                            |
@@ -623,8 +623,8 @@ Reading all keys as array from set:
 | script.wait($time: Integer): Void                                                                |
 | script.waitForCondition(): Void                                                                  |
 | set(): Set                                                                                       |
-| set.getKeys($set: Set): Array                                                                    |
 | set.has($set: Set, $key: String): Boolean                                                        |
+| set.getKeys($set: Set): Array                                                                    |
 | set.insert(=$set: Set, $key: String): Void                                                       |
 | set.remove(=$set: Set, $key: String): Void                                                       |
 | space($spaces: Integer(OPTIONAL)): String                                                        |
@@ -729,9 +729,9 @@ Reading all keys as array from set:
 | input.mouse.getY(): Integer                                                                      |
 | input.mouse.getYUnscaled(): Integer                                                              |
 | logic.getId(): String                                                                            |
+| logic.signal.has(): Boolean                                                                      |
 | logic.signal.getArgument($argumentIndex: Integer): Mixed                                         |
 | logic.signal.getName(): String                                                                   |
-| logic.signal.has(): Boolean                                                                      |
 | logic.signal.next(): Void                                                                        |
 | logic.signal.send($logicId: String, $signal: String, ...): Void                                  |
 
