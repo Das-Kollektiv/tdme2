@@ -1659,6 +1659,219 @@ void LogicMiniScript::registerMethods() {
 		registerMethod(new ScriptMethodEntityUnsetNodeTransformMatrix(this));
 	}
 	// physics
+	{
+		//
+		class ScriptMethodBodyIsEnabled: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyIsEnabled(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false }
+					},
+					ScriptVariableType::TYPE_BOOLEAN
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.isEnabled";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string bodyId;
+				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true) {
+					auto body = miniScript->context->getWorld()->getBody(bodyId);
+					if (body != nullptr) {
+						returnValue = body->isEnabled();
+					} else {
+						Console::println("ScriptMethodBodyIsEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+					}
+				} else {
+					Console::println("ScriptMethodBodyIsEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodBodyIsEnabled(this));
+	}
+	{
+		//
+		class ScriptMethodBodySetEnabled: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodySetEnabled(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false },
+						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "enabled", .optional = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.setEnabled";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string bodyId;
+				bool enabled;
+				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true &&
+					miniScript->getBooleanValue(argumentValues, 1, enabled) == true) {
+					auto body = miniScript->context->getWorld()->getBody(bodyId);
+					if (body != nullptr) {
+						body->setEnabled(enabled);
+					} else {
+						Console::println("ScriptMethodBodySetEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+					}
+				} else {
+					Console::println("ScriptMethodBodySetEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: boolean expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodBodySetEnabled(this));
+	}
+	{
+		//
+		class ScriptMethodBodyGetCollisionTypeId: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyGetCollisionTypeId(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false }
+					},
+					ScriptVariableType::TYPE_INTEGER
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.getCollisionTypeId";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string bodyId;
+				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true) {
+					auto body = miniScript->context->getWorld()->getBody(bodyId);
+					if (body != nullptr) {
+						returnValue = static_cast<int64_t>(body->getCollisionTypeId());
+					} else {
+						Console::println("ScriptMethodBodyGetCollisionTypeId::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+					}
+				} else {
+					Console::println("ScriptMethodBodyGetCollisionTypeId::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodBodyGetCollisionTypeId(this));
+	}
+	{
+		//
+		class ScriptMethodBodySetCollisionTypeId: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodySetCollisionTypeId(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false },
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "collisionTypeId", .optional = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.setCollisionTypeId";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string bodyId;
+				int64_t collisionTypeId;
+				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true &&
+					miniScript->getIntegerValue(argumentValues, 1, collisionTypeId) == true) {
+					auto body = miniScript->context->getWorld()->getBody(bodyId);
+					if (body != nullptr) {
+						body->setCollisionTypeId(collisionTypeId);
+					} else {
+						Console::println("ScriptMethodBodySetCollisionTypeId::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+					}
+				} else {
+					Console::println("ScriptMethodBodySetCollisionTypeId::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: integer expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodBodySetCollisionTypeId(this));
+	}
+	{
+		//
+		class ScriptMethodBodyGetCollisionTypeIds: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyGetCollisionTypeIds(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false }
+					},
+					ScriptVariableType::TYPE_INTEGER
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.getCollisionTypeIds";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string bodyId;
+				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true) {
+					auto body = miniScript->context->getWorld()->getBody(bodyId);
+					if (body != nullptr) {
+						returnValue = static_cast<int64_t>(body->getCollisionTypeIds());
+					} else {
+						Console::println("ScriptMethodBodyGetCollisionTypeIds::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+					}
+				} else {
+					Console::println("ScriptMethodBodyGetCollisionTypeIds::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodBodyGetCollisionTypeIds(this));
+	}
+	{
+		//
+		class ScriptMethodBodySetCollisionTypeIds: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodySetCollisionTypeIds(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false },
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "collisionTypeIds", .optional = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.setCollisionTypeIds";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string bodyId;
+				int64_t collisionTypeIds;
+				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true &&
+					miniScript->getIntegerValue(argumentValues, 1, collisionTypeIds) == true) {
+					auto body = miniScript->context->getWorld()->getBody(bodyId);
+					if (body != nullptr) {
+						body->setCollisionTypeIds(collisionTypeIds);
+					} else {
+						Console::println("ScriptMethodBodySetCollisionTypeIds::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+					}
+				} else {
+					Console::println("ScriptMethodBodySetCollisionTypeIds::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: integer expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodBodySetCollisionTypeIds(this));
+	}
 	// gui
 	// sceneconnector
 }

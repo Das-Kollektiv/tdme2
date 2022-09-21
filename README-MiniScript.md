@@ -734,6 +734,13 @@ Reading all keys as array from set:
 | logic.signal.getName(): String                                                                   |
 | logic.signal.next(): Void                                                                        |
 | logic.signal.send($logicId: String, $signal: String, ...): Void                                  |
+| world.body.getCollisionTypeId($bodyId: String): Integer                                          |
+| world.body.setCollisionTypeId($bodyId: String, $collisionTypeId: Integer): Void                  |
+| world.body.getCollisionTypeIds($bodyId: String): Integer                                         |
+| world.body.setCollisionTypeIds($bodyId: String, $collisionTypeIds: Integer): Void                |
+| world.body.isEnabled($bodyId: String): Boolean                                                   |
+| world.body.setEnabled($bodyId: String, $enabled: Boolean): Void                                  |
+
 
 # 8. Operators
 
