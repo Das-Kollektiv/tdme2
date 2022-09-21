@@ -287,7 +287,7 @@ Those variables can be created the following ways:
 	$rotAxis2 = vec3(1.0, 0.0, 0.0)
 	$transform = transform($translation, $scale, $rotAxis0, $rotAxis1, $rotAxis2)
 	# or
-	$transform = transform(vec3(-1.0, 1.0, -2.0), vec3(2.0, 2.0, 2.0), vec3(0.0, 0.0, 1.0), vec3(0.0, 1.0, 0.0), $rotAxis2 = vec3(1.0, 0.0, 0.0))
+	$transform = transform(vec3(-1.0, 1.0, -2.0), vec3(2.0, 2.0, 2.0), vec3(0.0, 0.0, 1.0), vec3(0.0, 1.0, 0.0), vec3(1.0, 0.0, 0.0))
 ...
 ```
 
