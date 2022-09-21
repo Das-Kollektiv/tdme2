@@ -63,7 +63,6 @@ private:
 	reactphysics3d::CollisionBody* collisionBody { nullptr };
 	bool cloned { false };
 	string id;
-	string rootId;
 	int32_t type;
 	float mass;
 	uint16_t collideTypeIds;
@@ -148,17 +147,6 @@ public:
 	 * @return id
 	 */
 	const string& getId();
-
-	/**
-	 * @return root id
-	 */
-	const string& getRootId();
-
-	/**
-	 * Set root id
-	 * @param rootId root id
-	 */
-	void setRootId(const string& rootId);
 
 	/**
 	 * Return type, see TYPE_*

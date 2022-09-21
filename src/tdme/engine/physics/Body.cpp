@@ -59,7 +59,6 @@ Body::Body(World* world, const string& id, int type, bool enabled, uint16_t coll
 {
 	this->world = world;
 	this->id = id;
-	this->rootId = id;
 	this->inertiaTensor = inertiaTensor;
 	this->type = type;
 	this->mass = mass;
@@ -152,15 +151,6 @@ void Body::setCloned(bool cloned) {
 const string& Body::getId()
 {
 	return id;
-}
-
-const string& Body::getRootId()
-{
-	return rootId;
-}
-
-void Body::setRootId(const string& rootId) {
-	this->rootId = rootId;
 }
 
 int32_t Body::getType() {
