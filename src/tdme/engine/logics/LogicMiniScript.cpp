@@ -1872,6 +1872,148 @@ void LogicMiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodBodySetCollisionTypeIds(this));
 	}
+	{
+		//
+		class ScriptMethodBodyGetLinearVelocity: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyGetLinearVelocity(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false }
+					},
+					ScriptVariableType::TYPE_VECTOR3
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.getLinearVelocity";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string bodyId;
+				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true) {
+					auto body = miniScript->context->getWorld()->getBody(bodyId);
+					if (body != nullptr) {
+						returnValue = body->getLinearVelocity();
+					} else {
+						Console::println("ScriptMethodBodyGetLinearVelocity::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+					}
+				} else {
+					Console::println("ScriptMethodBodyGetLinearVelocity::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodBodyGetLinearVelocity(this));
+	}
+	{
+		//
+		class ScriptMethodBodySetLinearVelocity: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodySetLinearVelocity(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "linearVelocity", .optional = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.setLinearVelocity";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string bodyId;
+				Vector3 linearVelocity;
+				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true &&
+					miniScript->getVector3Value(argumentValues, 1, linearVelocity) == true) {
+					auto body = miniScript->context->getWorld()->getBody(bodyId);
+					if (body != nullptr) {
+						body->setLinearVelocity(linearVelocity);
+					} else {
+						Console::println("ScriptMethodBodySetLinearVelocity::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+					}
+				} else {
+					Console::println("ScriptMethodBodySetLinearVelocity::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: vector3 expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodBodySetLinearVelocity(this));
+	}
+	{
+		//
+		class ScriptMethodBodyGetAngularVelocity: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyGetAngularVelocity(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false }
+					},
+					ScriptVariableType::TYPE_VECTOR3
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.getAngularVelocity";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string bodyId;
+				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true) {
+					auto body = miniScript->context->getWorld()->getBody(bodyId);
+					if (body != nullptr) {
+						returnValue = body->getAngularVelocity();
+					} else {
+						Console::println("ScriptMethodBodyGetAngularVelocity::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+					}
+				} else {
+					Console::println("ScriptMethodBodyGetAngularVelocity::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodBodyGetAngularVelocity(this));
+	}
+	{
+		//
+		class ScriptMethodBodySetAngularVelocity: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodySetAngularVelocity(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "angularVelocity", .optional = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.setAngularVelocity";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string bodyId;
+				Vector3 angularVelocity;
+				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true &&
+					miniScript->getVector3Value(argumentValues, 1, angularVelocity) == true) {
+					auto body = miniScript->context->getWorld()->getBody(bodyId);
+					if (body != nullptr) {
+						body->setAngularVelocity(angularVelocity);
+					} else {
+						Console::println("ScriptMethodBodySetAngularVelocity::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+					}
+				} else {
+					Console::println("ScriptMethodBodySetAngularVelocity::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: vector3 expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodBodySetAngularVelocity(this));
+	}
 	// gui
 	// sceneconnector
 }
