@@ -734,13 +734,16 @@ Reading all keys as array from set:
 | logic.signal.getName(): String                                                                   |
 | logic.signal.next(): Void                                                                        |
 | logic.signal.send($logicId: String, $signal: String, ...): Void                                  |
+| world.body.getAngularVelocity($bodyId: String): Vector3                                          |
+| world.body.setAngularVelocity($bodyId: String, $angularVelocity: Vector3): Void                  |
 | world.body.getCollisionTypeId($bodyId: String): Integer                                          |
 | world.body.setCollisionTypeId($bodyId: String, $collisionTypeId: Integer): Void                  |
 | world.body.getCollisionTypeIds($bodyId: String): Integer                                         |
 | world.body.setCollisionTypeIds($bodyId: String, $collisionTypeIds: Integer): Void                |
 | world.body.isEnabled($bodyId: String): Boolean                                                   |
 | world.body.setEnabled($bodyId: String, $enabled: Boolean): Void                                  |
-
+| world.body.getLinearVelocity($bodyId: String): Vector3                                           |
+| world.body.setLinearVelocity($bodyId: String, $linearVelocity: Vector3): Void                    |
 
 # 8. Operators
 
