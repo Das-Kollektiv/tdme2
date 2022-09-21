@@ -1661,6 +1661,366 @@ void LogicMiniScript::registerMethods() {
 	// physics
 	{
 		//
+		class ScriptMethodBodyTYPE_STATIC: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyTYPE_STATIC(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.TYPE_STATIC";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(Body::TYPE_STATIC);
+			}
+		};
+		registerMethod(new ScriptMethodBodyTYPE_STATIC(this));
+	}
+	{
+		//
+		class ScriptMethodBodyTYPE_DYNAMIC: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyTYPE_DYNAMIC(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.TYPE_DYNAMIC";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(Body::TYPE_DYNAMIC);
+			}
+		};
+		registerMethod(new ScriptMethodBodyTYPE_DYNAMIC(this));
+	}
+	{
+		//
+		class ScriptMethodBodyTYPE_COLLISION: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyTYPE_COLLISION(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.TYPE_COLLISION";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(Body::TYPE_COLLISION);
+			}
+		};
+		registerMethod(new ScriptMethodBodyTYPE_COLLISION(this));
+	}
+	{
+		//
+		class ScriptMethodBodyCOLLISION_TYPEID_STATIC: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyCOLLISION_TYPEID_STATIC(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.COLLISION_TYPEID_STATIC";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_STATIC);
+			}
+		};
+		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_STATIC(this));
+	}
+	{
+		//
+		class ScriptMethodBodyCOLLISION_TYPEID_DYNAMIC: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyCOLLISION_TYPEID_DYNAMIC(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.COLLISION_TYPEID_DYNAMIC";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_DYNAMIC);
+			}
+		};
+		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_DYNAMIC(this));
+	}
+	{
+		//
+		class ScriptMethodBodyCOLLISION_TYPEID_3: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyCOLLISION_TYPEID_3(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.COLLISION_TYPEID_3";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_3);
+			}
+		};
+		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_3(this));
+	}
+	{
+		//
+		class ScriptMethodBodyCOLLISION_TYPEID_4: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyCOLLISION_TYPEID_4(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.COLLISION_TYPEID_4";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_4);
+			}
+		};
+		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_4(this));
+	}
+	{
+		//
+		class ScriptMethodBodyCOLLISION_TYPEID_5: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyCOLLISION_TYPEID_5(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.COLLISION_TYPEID_5";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_5);
+			}
+		};
+		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_5(this));
+	}
+	{
+		//
+		class ScriptMethodBodyCOLLISION_TYPEID_6: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyCOLLISION_TYPEID_6(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.COLLISION_TYPEID_6";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_6);
+			}
+		};
+		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_6(this));
+	}
+	{
+		//
+		class ScriptMethodBodyCOLLISION_TYPEID_7: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyCOLLISION_TYPEID_7(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.COLLISION_TYPEID_7";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_7);
+			}
+		};
+		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_7(this));
+	}
+	{
+		//
+		class ScriptMethodBodyCOLLISION_TYPEID_8: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyCOLLISION_TYPEID_8(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.COLLISION_TYPEID_8";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_8);
+			}
+		};
+		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_8(this));
+	}
+	{
+		//
+		class ScriptMethodBodyCOLLISION_TYPEID_9: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyCOLLISION_TYPEID_9(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.COLLISION_TYPEID_9";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_9);
+			}
+		};
+		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_9(this));
+	}
+	{
+		//
+		class ScriptMethodBodyCOLLISION_TYPEID_10: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyCOLLISION_TYPEID_10(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.COLLISION_TYPEID_10";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_10);
+			}
+		};
+		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_10(this));
+	}
+	{
+		//
+		class ScriptMethodBodyCOLLISION_TYPEID_11: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyCOLLISION_TYPEID_11(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.COLLISION_TYPEID_11";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_11);
+			}
+		};
+		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_11(this));
+	}
+	{
+		//
+		class ScriptMethodBodyCOLLISION_TYPEID_12: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyCOLLISION_TYPEID_12(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.COLLISION_TYPEID_12";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_12);
+			}
+		};
+		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_12(this));
+	}
+	{
+		//
+		class ScriptMethodBodyCOLLISION_TYPEID_13: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyCOLLISION_TYPEID_13(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.COLLISION_TYPEID_13";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_13);
+			}
+		};
+		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_13(this));
+	}
+	{
+		//
+		class ScriptMethodBodyCOLLISION_TYPEID_14: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyCOLLISION_TYPEID_14(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.COLLISION_TYPEID_14";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_14);
+			}
+		};
+		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_14(this));
+	}
+	{
+		//
+		class ScriptMethodBodyCOLLISION_TYPEID_15: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyCOLLISION_TYPEID_15(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.COLLISION_TYPEID_15";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_15);
+			}
+		};
+		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_15(this));
+	}
+	{
+		//
+		class ScriptMethodBodyCOLLISION_TYPEID_16: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyCOLLISION_TYPEID_16(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.COLLISION_TYPEID_16";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_16);
+			}
+		};
+		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_16(this));
+	}
+	{
+		//
+		class ScriptMethodBodyCOLLISION_TYPEID_ALL: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyCOLLISION_TYPEID_ALL(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.COLLISION_TYPEID_ALL";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(Body::COLLISION_TYPEID_ALL);
+			}
+		};
+		registerMethod(new ScriptMethodBodyCOLLISION_TYPEID_ALL(this));
+	}
+	{
+		//
 		class ScriptMethodBodyIsEnabled: public ScriptMethod {
 		private:
 			LogicMiniScript* miniScript { nullptr };
@@ -1729,6 +2089,40 @@ void LogicMiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodBodySetEnabled(this));
+	}
+	{
+		//
+		class ScriptMethodBodyGetType: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyGetType(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false }
+					},
+					ScriptVariableType::TYPE_INTEGER
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.getType";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string bodyId;
+				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true) {
+					auto body = miniScript->context->getWorld()->getBody(bodyId);
+					if (body != nullptr) {
+						returnValue = static_cast<int64_t>(body->getType());
+					} else {
+						Console::println("ScriptMethodBodyGetType::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+					}
+				} else {
+					Console::println("ScriptMethodBodyGetType::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodBodyGetType(this));
 	}
 	{
 		//

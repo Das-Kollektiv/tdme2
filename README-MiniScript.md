@@ -736,6 +736,23 @@ Reading all keys as array from set:
 | logic.signal.send($logicId: String, $signal: String, ...): Void                                  |
 | world.body.getAngularVelocity($bodyId: String): Vector3                                          |
 | world.body.setAngularVelocity($bodyId: String, $angularVelocity: Vector3): Void                  |
+| world.body.COLLISION_TYPEID_10(): Integer                                                        |
+| world.body.COLLISION_TYPEID_11(): Integer                                                        |
+| world.body.COLLISION_TYPEID_12(): Integer                                                        |
+| world.body.COLLISION_TYPEID_13(): Integer                                                        |
+| world.body.COLLISION_TYPEID_14(): Integer                                                        |
+| world.body.COLLISION_TYPEID_15(): Integer                                                        |
+| world.body.COLLISION_TYPEID_16(): Integer                                                        |
+| world.body.COLLISION_TYPEID_3(): Integer                                                         |
+| world.body.COLLISION_TYPEID_4(): Integer                                                         |
+| world.body.COLLISION_TYPEID_5(): Integer                                                         |
+| world.body.COLLISION_TYPEID_6(): Integer                                                         |
+| world.body.COLLISION_TYPEID_7(): Integer                                                         |
+| world.body.COLLISION_TYPEID_8(): Integer                                                         |
+| world.body.COLLISION_TYPEID_9(): Integer                                                         |
+| world.body.COLLISION_TYPEID_ALL(): Integer                                                       |
+| world.body.COLLISION_TYPEID_DYNAMIC(): Integer                                                   |
+| world.body.COLLISION_TYPEID_STATIC(): Integer                                                    |
 | world.body.getCollisionTypeId($bodyId: String): Integer                                          |
 | world.body.setCollisionTypeId($bodyId: String, $collisionTypeId: Integer): Void                  |
 | world.body.getCollisionTypeIds($bodyId: String): Integer                                         |
@@ -744,6 +761,11 @@ Reading all keys as array from set:
 | world.body.setEnabled($bodyId: String, $enabled: Boolean): Void                                  |
 | world.body.getLinearVelocity($bodyId: String): Vector3                                           |
 | world.body.setLinearVelocity($bodyId: String, $linearVelocity: Vector3): Void                    |
+| world.body.TYPE_COLLISION(): Integer                                                             |
+| world.body.TYPE_DYNAMIC(): Integer                                                               |
+| world.body.TYPE_STATIC(): Integer                                                                |
+| world.body.getType($bodyId: String): Integer                                                     |
+
 
 # 8. Operators
 

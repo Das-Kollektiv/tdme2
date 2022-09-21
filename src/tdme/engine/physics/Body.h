@@ -48,9 +48,23 @@ public:
 	static constexpr int32_t TYPE_KINEMATIC { 1 };
 	static constexpr int32_t TYPE_COLLISION { 3 };
 
-	static constexpr uint16_t TYPEID_STATIC { 1 };
-	static constexpr uint16_t TYPEID_DYNAMIC { 2 };
-	static constexpr uint16_t TYPEIDS_ALL { 65535 };
+	static constexpr uint16_t COLLISION_TYPEID_STATIC { 1 };
+	static constexpr uint16_t COLLISION_TYPEID_DYNAMIC { 2 };
+	static constexpr uint16_t COLLISION_TYPEID_3 { 4 };
+	static constexpr uint16_t COLLISION_TYPEID_4 { 8 };
+	static constexpr uint16_t COLLISION_TYPEID_5 { 16 };
+	static constexpr uint16_t COLLISION_TYPEID_6 { 32 };
+	static constexpr uint16_t COLLISION_TYPEID_7 { 64 };
+	static constexpr uint16_t COLLISION_TYPEID_8 { 128 };
+	static constexpr uint16_t COLLISION_TYPEID_9 { 256 };
+	static constexpr uint16_t COLLISION_TYPEID_10 { 512 };
+	static constexpr uint16_t COLLISION_TYPEID_11 { 1024 };
+	static constexpr uint16_t COLLISION_TYPEID_12 { 2048 };
+	static constexpr uint16_t COLLISION_TYPEID_13 { 4096 };
+	static constexpr uint16_t COLLISION_TYPEID_14 { 8192 };
+	static constexpr uint16_t COLLISION_TYPEID_15 { 16384 };
+	static constexpr uint16_t COLLISION_TYPEID_16 { 32768 };
+	static constexpr uint16_t COLLISION_TYPEID_ALL { 65535 };
 
 	/**
 	 * @return no rotation inertia tensor

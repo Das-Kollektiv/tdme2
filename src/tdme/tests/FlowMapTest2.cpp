@@ -491,8 +491,8 @@ void FlowMapTest2::initialize()
 		combatUnit.object->setAnimation("idle");
 		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
 		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
-		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::TYPEID_DYNAMIC);
-		combatUnit.rigidBody->setCollisionTypeIds(Body::TYPEID_STATIC);
+		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::COLLISION_TYPEID_DYNAMIC);
+		combatUnit.rigidBody->setCollisionTypeIds(Body::COLLISION_TYPEID_STATIC);
 		combatUnit.finished = true;
 		engine->addEntity(combatUnit.object);
 		combatUnits.push_back(combatUnit);
@@ -515,8 +515,8 @@ void FlowMapTest2::initialize()
 		combatUnit.object->setAnimation("idle");
 		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
 		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
-		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::TYPEID_DYNAMIC);
-		combatUnit.rigidBody->setCollisionTypeIds(Body::TYPEID_STATIC);
+		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::COLLISION_TYPEID_DYNAMIC);
+		combatUnit.rigidBody->setCollisionTypeIds(Body::COLLISION_TYPEID_STATIC);
 		combatUnit.finished = true;
 		engine->addEntity(combatUnit.object);
 		combatUnits.push_back(combatUnit);
@@ -539,8 +539,8 @@ void FlowMapTest2::initialize()
 		combatUnit.object->setAnimation("idle");
 		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
 		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
-		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::TYPEID_DYNAMIC);
-		combatUnit.rigidBody->setCollisionTypeIds(Body::TYPEID_STATIC);
+		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::COLLISION_TYPEID_DYNAMIC);
+		combatUnit.rigidBody->setCollisionTypeIds(Body::COLLISION_TYPEID_STATIC);
 		combatUnit.finished = true;
 		engine->addEntity(combatUnit.object);
 		combatUnits.push_back(combatUnit);
@@ -563,8 +563,8 @@ void FlowMapTest2::initialize()
 		combatUnit.object->setAnimation("idle");
 		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
 		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
-		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::TYPEID_DYNAMIC);
-		combatUnit.rigidBody->setCollisionTypeIds(Body::TYPEID_STATIC);
+		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::COLLISION_TYPEID_DYNAMIC);
+		combatUnit.rigidBody->setCollisionTypeIds(Body::COLLISION_TYPEID_STATIC);
 		combatUnit.finished = true;
 		engine->addEntity(combatUnit.object);
 		combatUnits.push_back(combatUnit);
@@ -587,8 +587,8 @@ void FlowMapTest2::initialize()
 		combatUnit.object->setAnimation("idle");
 		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
 		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
-		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::TYPEID_DYNAMIC);
-		combatUnit.rigidBody->setCollisionTypeIds(Body::TYPEID_STATIC);
+		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::COLLISION_TYPEID_DYNAMIC);
+		combatUnit.rigidBody->setCollisionTypeIds(Body::COLLISION_TYPEID_STATIC);
 		combatUnit.finished = true;
 		engine->addEntity(combatUnit.object);
 		combatUnits.push_back(combatUnit);
@@ -611,8 +611,8 @@ void FlowMapTest2::initialize()
 		combatUnit.object->setAnimation("idle");
 		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
 		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
-		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::TYPEID_DYNAMIC);
-		combatUnit.rigidBody->setCollisionTypeIds(Body::TYPEID_STATIC);
+		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::COLLISION_TYPEID_DYNAMIC);
+		combatUnit.rigidBody->setCollisionTypeIds(Body::COLLISION_TYPEID_STATIC);
 		combatUnit.finished = true;
 		engine->addEntity(combatUnit.object);
 		combatUnits.push_back(combatUnit);
@@ -636,8 +636,8 @@ void FlowMapTest2::initialize()
 		combatUnit.object->setAnimation("idle");
 		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
 		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
-		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::TYPEID_DYNAMIC);
-		combatUnit.rigidBody->setCollisionTypeIds(Body::TYPEID_STATIC);
+		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::COLLISION_TYPEID_DYNAMIC);
+		combatUnit.rigidBody->setCollisionTypeIds(Body::COLLISION_TYPEID_STATIC);
 		combatUnit.finished = true;
 		engine->addEntity(combatUnit.object);
 		combatUnits.push_back(combatUnit);
@@ -660,8 +660,8 @@ void FlowMapTest2::initialize()
 		combatUnit.object->setAnimation("idle");
 		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
 		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
-		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::TYPEID_DYNAMIC);
-		combatUnit.rigidBody->setCollisionTypeIds(Body::TYPEID_STATIC);
+		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::COLLISION_TYPEID_DYNAMIC);
+		combatUnit.rigidBody->setCollisionTypeIds(Body::COLLISION_TYPEID_STATIC);
 		combatUnit.finished = true;
 		engine->addEntity(combatUnit.object);
 		combatUnits.push_back(combatUnit);
@@ -684,8 +684,8 @@ void FlowMapTest2::initialize()
 		combatUnit.object->setAnimation("idle");
 		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
 		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
-		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::TYPEID_DYNAMIC);
-		combatUnit.rigidBody->setCollisionTypeIds(Body::TYPEID_STATIC);
+		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::COLLISION_TYPEID_DYNAMIC);
+		combatUnit.rigidBody->setCollisionTypeIds(Body::COLLISION_TYPEID_STATIC);
 		combatUnit.finished = true;
 		engine->addEntity(combatUnit.object);
 		combatUnits.push_back(combatUnit);
@@ -708,8 +708,8 @@ void FlowMapTest2::initialize()
 		combatUnit.object->setAnimation("idle");
 		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
 		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
-		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::TYPEID_DYNAMIC);
-		combatUnit.rigidBody->setCollisionTypeIds(Body::TYPEID_STATIC);
+		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::COLLISION_TYPEID_DYNAMIC);
+		combatUnit.rigidBody->setCollisionTypeIds(Body::COLLISION_TYPEID_STATIC);
 		combatUnit.finished = true;
 		engine->addEntity(combatUnit.object);
 		combatUnits.push_back(combatUnit);
@@ -732,13 +732,13 @@ void FlowMapTest2::initialize()
 		combatUnit.object->setAnimation("idle");
 		combatUnit.object->setContributesShadows(playerModelPrototype->isContributesShadows());
 		combatUnit.object->setReceivesShadows(playerModelPrototype->isReceivesShadows());
-		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::TYPEID_DYNAMIC);
-		combatUnit.rigidBody->setCollisionTypeIds(Body::TYPEID_STATIC);
+		combatUnit.rigidBody = SceneConnector::createBody(world, playerModelPrototype, "combatunit." + to_string(combatUnit.idx), combatUnit.object->getTransform(), Body::COLLISION_TYPEID_DYNAMIC);
+		combatUnit.rigidBody->setCollisionTypeIds(Body::COLLISION_TYPEID_STATIC);
 		combatUnit.finished = true;
 		engine->addEntity(combatUnit.object);
 		combatUnits.push_back(combatUnit);
 	}
-	pathFinding = new PathFinding(world, true, 2000, 1.8f, 0.4f, 0.81f, 1.0f, Body::TYPEID_DYNAMIC);
+	pathFinding = new PathFinding(world, true, 2000, 1.8f, 0.4f, 0.81f, 1.0f, Body::COLLISION_TYPEID_DYNAMIC);
 
 	//
 	for (auto i = 0; i < combatUnitFormationTransform.size(); i++) {
