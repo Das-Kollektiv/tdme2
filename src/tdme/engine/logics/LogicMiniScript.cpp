@@ -5,11 +5,11 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/model/Color4.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/logics/Context.h>
 #include <tdme/engine/logics/Logic.h>
 #include <tdme/engine/logics/MiniScriptLogic.h>
-#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
+#include <tdme/engine/model/Color4.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Object.h>
@@ -34,11 +34,11 @@ using std::vector;
 
 using tdme::engine::logics::LogicMiniScript;
 
-using tdme::engine::model::Color4;
+using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::logics::Context;
 using tdme::engine::logics::Logic;
 using tdme::engine::logics::MiniScriptLogic;
-using tdme::engine::fileio::prototypes::PrototypeReader;
+using tdme::engine::model::Color4;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Object;

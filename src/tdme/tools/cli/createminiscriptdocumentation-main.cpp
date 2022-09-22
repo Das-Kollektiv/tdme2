@@ -5,8 +5,8 @@
 
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
-#include <tdme/engine/Version.h>
 #include <tdme/engine/logics/LogicMiniScript.h>
+#include <tdme/engine/Version.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/MiniScript.h>
 #include <tdme/utilities/StringTools.h>
@@ -17,8 +17,8 @@ using std::unordered_map;
 using std::vector;
 
 using tdme::application::Application;
-using tdme::engine::Version;
 using tdme::engine::logics::LogicMiniScript;
+using tdme::engine::Version;
 using tdme::utilities::Console;
 using tdme::utilities::MiniScript;
 using tdme::utilities::StringTools;

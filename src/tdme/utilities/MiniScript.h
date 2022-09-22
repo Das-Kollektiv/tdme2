@@ -12,12 +12,12 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Transform.h>
+#include <tdme/math/Matrix2D3x3.h>
+#include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
-#include <tdme/math/Quaternion.h>
-#include <tdme/math/Matrix2D3x3.h>
-#include <tdme/math/Matrix4x4.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Float.h>
@@ -27,6 +27,7 @@
 
 using std::array;
 using std::remove;
+using std::span;
 using std::stack;
 using std::string;
 using std::string_view;
@@ -34,15 +35,14 @@ using std::to_string;
 using std::unordered_map;
 using std::unordered_set;
 using std::vector;
-using std::span;
 
 using tdme::engine::Transform;
+using tdme::math::Matrix2D3x3;
+using tdme::math::Matrix4x4;
+using tdme::math::Quaternion;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
-using tdme::math::Quaternion;
-using tdme::math::Matrix2D3x3;
-using tdme::math::Matrix4x4;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Float;
