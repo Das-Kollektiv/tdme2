@@ -332,9 +332,9 @@ public:
 
 	/**
 	 * Add force to center of mass
-	 * @param forceOrigin force
+	 * @param force force
 	 */
-	void addForce(const Vector3& forceOrigin);
+	void addForce(const Vector3& force);
 
 	/**
 	 * Add torque

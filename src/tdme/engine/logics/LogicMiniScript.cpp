@@ -2408,6 +2408,91 @@ void LogicMiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodBodySetAngularVelocity(this));
 	}
+	{
+		//
+		class ScriptMethodBodyAddForce: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyAddForce(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "force", .optional = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "origin", .optional = true }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.addForce";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string bodyId;
+				Vector3 force;
+				Vector3 forceOrigin;
+				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true &&
+					miniScript->getVector3Value(argumentValues, 1, force) == true &&
+					miniScript->getVector3Value(argumentValues, 2, forceOrigin, true) == true) {
+					auto body = miniScript->context->getWorld()->getBody(bodyId);
+					if (body != nullptr) {
+						if (argumentValues.size() == 2) {
+							body->addForce(force);
+						} else
+						if (argumentValues.size() == 3) {
+							body->addForce(forceOrigin, force);
+						} else {
+							Console::println("ScriptMethodBodyAddForce::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: vector3 expected, @ argument 2: optional vector3 expected");
+							miniScript->startErrorScript();
+						}
+					} else {
+						Console::println("ScriptMethodBodyAddForce::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+					}
+				} else {
+					Console::println("ScriptMethodBodyAddForce::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: vector3 expected, @ argument 2: optional vector3 expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodBodyAddForce(this));
+	}
+	{
+		//
+		class ScriptMethodBodyAddTorque: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyAddTorque(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "torque", .optional = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.addTorque";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string bodyId;
+				Vector3 torque;
+				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true &&
+					miniScript->getVector3Value(argumentValues, 1, torque) == true) {
+					auto body = miniScript->context->getWorld()->getBody(bodyId);
+					if (body != nullptr) {
+						body->addTorque(torque);
+					} else {
+						Console::println("ScriptMethodBodyAddTorque::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+					}
+				} else {
+					Console::println("ScriptMethodBodyAddTorque::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: vector3 expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodBodyAddTorque(this));
+	}
 	// gui
 	// sceneconnector
 }
