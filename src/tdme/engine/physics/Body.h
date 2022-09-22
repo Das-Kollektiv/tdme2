@@ -219,6 +219,7 @@ public:
 	void setSleeping(bool sleeping);
 
 	/**
+	 * @deprecated this method should be removed
 	 * @return bounding volumes
 	 */
 	vector<BoundingVolume*>& getBoundingVolumes();
