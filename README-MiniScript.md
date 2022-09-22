@@ -734,6 +734,7 @@ Reading all keys as array from set:
 | logic.signal.getName(): String                                                                   |
 | logic.signal.next(): Void                                                                        |
 | logic.signal.send($logicId: String, $signal: String, ...): Void                                  |
+| sceneconnector.addPrototype($pathName: String, $fileName: String, $id: String, $transform: Transform): Void|
 | world.body.getAngularDamping($bodyId: String): Float                                             |
 | world.body.setAngularDamping($bodyId: String, $angularDamping: Float): Void                      |
 | world.body.getAngularVelocity($bodyId: String): Vector3                                          |

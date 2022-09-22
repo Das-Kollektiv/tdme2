@@ -8,16 +8,20 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/logics/Context.h>
 #include <tdme/engine/logics/Logic.h>
+#include <tdme/engine/logics/MiniScriptLogic.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Object.h>
 #include <tdme/engine/ParticleSystem.h>
+#include <tdme/engine/SceneConnector.h>
 #include <tdme/engine/Timing.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
+#include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/MiniScript.h>
@@ -32,16 +36,20 @@ using tdme::engine::logics::LogicMiniScript;
 using tdme::engine::model::Color4;
 using tdme::engine::logics::Context;
 using tdme::engine::logics::Logic;
+using tdme::engine::logics::MiniScriptLogic;
+using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
 using tdme::engine::Object;
 using tdme::engine::ParticleSystem;
+using tdme::engine::SceneConnector;
 using tdme::engine::Timing;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::math::Matrix4x4;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
+using tdme::tools::editor::misc::Tools;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::MiniScript;
@@ -2903,6 +2911,65 @@ void LogicMiniScript::registerMethods() {
 	}
 	// gui
 	// sceneconnector
+	{
+		//
+		class ScriptMethodSceneConnectorAddPrototype: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodSceneConnectorAddPrototype(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "pathName", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "fileName", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "id", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "sceneconnector.addPrototype";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string pathName;
+				string fileName;
+				string id;
+				Transform transform;
+				if (miniScript->getStringValue(argumentValues, 0, pathName) == true &&
+					miniScript->getStringValue(argumentValues, 1, fileName) == true &&
+					miniScript->getStringValue(argumentValues, 2, id) == true &&
+					miniScript->getTransformValue(argumentValues, 3, transform) == true) {
+				} else {
+					try {
+						// TODO: we need to keep track of prototypes as they need to exist as long as they are used
+						auto prototype = PrototypeReader::read(pathName, fileName);
+						miniScript->context->getEngine()->addEntity(SceneConnector::createEntity(prototype, id, transform));
+						SceneConnector::createBody(miniScript->context->getWorld(), prototype, id, transform, Body::COLLISION_TYPEID_DYNAMIC);
+						if (prototype->getScript().empty() == false) {
+							auto logicMiniScript = new LogicMiniScript();
+							logicMiniScript->loadScript(
+								Tools::getPathName(prototype->getScript()),
+								Tools::getFileName(prototype->getScript())
+							);
+							miniScript->context->addLogic(
+								new MiniScriptLogic(
+									miniScript->context,
+									id,
+									true, // TODO: put me into prototype bean
+									logicMiniScript
+								)
+							);
+						}
+					} catch (Exception& exception) {
+						Console::println("ScriptMethodSceneConnectorAddPrototype::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: string expected, @ argument 3: transform expected");
+						miniScript->startErrorScript();
+					}
+				}
+			}
+		};
+		registerMethod(new ScriptMethodSceneConnectorAddPrototype(this));
+	}
 }
 
 void LogicMiniScript::registerVariables() {
