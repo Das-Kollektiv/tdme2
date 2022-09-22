@@ -773,6 +773,7 @@ Reading all keys as array from set:
 | world.body.getType($bodyId: String): Integer                                                     |
 | world.body.addForce($bodyId: String, $force: Vector3, $origin: Vector3(OPTIONAL)): Void          |
 | world.body.addTorque($bodyId: String, $torque: Vector3): Void                                    |
+| world.determineHeight($collisionTypeIds: Integer, $stepUpMax: Float, $point: Vector3, =$heightPoint: Vector3, =$bodyId: String(OPTIONAL), $minHeight: Float(OPTIONAL), $maxHeight: Float(OPTIONAL)): Boolean|
 
 # 8. Operators
 

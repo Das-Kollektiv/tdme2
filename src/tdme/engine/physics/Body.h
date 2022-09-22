@@ -203,11 +203,6 @@ public:
 	void setEnabled(bool enabled);
 
 	/**
-	 * @return object is static
-	 */
-	bool isStatic();
-
-	/**
 	 * @return if sleeping
 	 */
 	bool isSleeping();

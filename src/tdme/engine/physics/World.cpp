@@ -297,7 +297,7 @@ void World::synch(Engine* engine)
 	}
 }
 
-Body* World::determineHeight(uint16_t collisionTypeIds, float stepUpMax, const Vector3& point, Vector3& dest, float minHeight, float maxHeight)
+Body* World::determineHeight(uint16_t collisionTypeIds, float stepUpMax, const Vector3& point, Vector3& heightPoint, float minHeight, float maxHeight)
 {
 	class CustomCallbackClass : public reactphysics3d::RaycastCallback {
 	public:
@@ -330,8 +330,8 @@ Body* World::determineHeight(uint16_t collisionTypeIds, float stepUpMax, const V
 	CustomCallbackClass customCallbackObject(stepUpMax, point, maxHeight);
 	world.raycast(ray, &customCallbackObject, collisionTypeIds);
 	if (customCallbackObject.getBody() != nullptr) {
-		dest.set(point);
-		dest.setY(customCallbackObject.getHeight());
+		heightPoint.set(point);
+		heightPoint.setY(customCallbackObject.getHeight());
 		return customCallbackObject.getBody();
 	} else {
 		return nullptr;

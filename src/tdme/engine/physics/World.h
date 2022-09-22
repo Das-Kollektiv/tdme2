@@ -142,12 +142,12 @@ public:
 	 * @param collisionTypeId collision type ids
 	 * @param stepUpMax step up max
 	 * @param point point on which height should be calculated
-	 * @param dest point where height has been determined
+	 * @param heightPoint point with determined height
 	 * @param minHeight min height to determine height from
 	 * @param maxHeight max height to start raytracing from
 	 * @return body from which height was determined or null
 	 */
-	Body* determineHeight(uint16_t collisionTypeId, float stepUpMax, const Vector3& point, Vector3& dest, float minHeight = -10000.0f, float maxHeight = 10000.0f);
+	Body* determineHeight(uint16_t collisionTypeIds, float stepUpMax, const Vector3& point, Vector3& heightPoint, float minHeight = -10000.0f, float maxHeight = 10000.0f);
 
 	/**
 	 * Do a ray cast from given start to given end point, if there is any body with given collision type in between

@@ -2718,6 +2718,58 @@ void LogicMiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodBodySetTransform(this));
 	}
+	{
+		//
+		class ScriptMethodWorldDetermineHeight: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodWorldDetermineHeight(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "collisionTypeIds", .optional = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "stepUpMax", .optional = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "point", .optional = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "heightPoint", .optional = false, .assignBack = true },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = true, .assignBack = true },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "minHeight", .optional = true },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "maxHeight", .optional = true }
+					},
+					ScriptVariableType::TYPE_BOOLEAN
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.determineHeight";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				int64_t collisionTypeIds;
+				float stepUpMax;
+				Vector3 point;
+				Vector3 heightPoint;
+				float minHeight = -10000.0f;
+				float maxHeight = 10000.0f;
+				if (miniScript->getIntegerValue(argumentValues, 0, collisionTypeIds) == true &&
+					miniScript->getFloatValue(argumentValues, 1, stepUpMax) == true &&
+					miniScript->getVector3Value(argumentValues, 2, point) == true &&
+					miniScript->getVector3Value(argumentValues, 3, heightPoint) == true &&
+					miniScript->getFloatValue(argumentValues, 5, minHeight, true) == true &&
+					miniScript->getFloatValue(argumentValues, 6, maxHeight, true) == true) {
+					auto body = miniScript->context->getWorld()->determineHeight(collisionTypeIds, stepUpMax, point, heightPoint, minHeight, maxHeight);
+					if (body != nullptr) {
+						argumentValues[3] = heightPoint;
+						argumentValues[4] = body->getId();
+						returnValue = true;
+					} else {
+						returnValue = false;
+					}
+				} else {
+					Console::println("ScriptMethodWorldDetermineHeight::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected, @ argument 1: float expected, @ argument 2: vector3 expected, @ argument 3: vector3 expected, @ argument 4: string expected, @ argument 5: float expected, @ argument 6: float expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodWorldDetermineHeight(this));
+	}
 	// gui
 	// sceneconnector
 }
