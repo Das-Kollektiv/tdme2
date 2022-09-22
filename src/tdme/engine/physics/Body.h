@@ -77,7 +77,7 @@ private:
 	reactphysics3d::CollisionBody* collisionBody { nullptr };
 	bool cloned { false };
 	string id;
-	int32_t type;
+	int type;
 	float mass;
 	uint16_t collideTypeIds;
 	uint16_t collisionTypeId;
@@ -108,6 +108,17 @@ private:
 	 * Destructor
 	 */
 	~Body();
+
+	/**
+	 * @return if rigid body has been cloned from another rigid body
+	 */
+	bool isCloned();
+
+	/**
+	 * Set cloned
+	 * @param cloned cloned
+	 */
+	void setCloned(bool cloned);
 
 	/**
 	 * Reset proxy shapes
@@ -146,16 +157,6 @@ private:
 	static Matrix4x4 computeInverseInertiaMatrix(BoundingBox* boundingBox, float mass, float scaleXAxis, float scaleYAxis, float scaleZAxis);
 
 public:
-	/**
-	 * @return if rigid body has been cloned from another rigid body
-	 */
-	bool isCloned();
-
-	/**
-	 * Set cloned
-	 * @param cloned cloned
-	 */
-	void setCloned(bool cloned);
 
 	/**
 	 * @return id
