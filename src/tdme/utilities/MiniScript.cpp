@@ -3815,6 +3815,60 @@ void MiniScript::registerMethods() {
 	// transform
 	{
 		//
+		class ScriptMethodTransformAxisZ: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodTransformAxisZ(MiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_VECTOR3),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "transform.AXIS_Z";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue.setValue(Vector3(0.0f, 0.0f, 1.0f));
+			}
+		};
+		registerMethod(new ScriptMethodTransformAxisZ(this));
+	}
+	{
+		//
+		class ScriptMethodTransformAxisY: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodTransformAxisY(MiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_VECTOR3),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "transform.AXIS_Y";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue.setValue(Vector3(0.0f, 1.0f, 0.0f));
+			}
+		};
+		registerMethod(new ScriptMethodTransformAxisY(this));
+	}
+	{
+		//
+		class ScriptMethodTransformAxisX: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodTransformAxisX(MiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_VECTOR3),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "transform.AXIS_X";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue.setValue(Vector3(1.0f, 0.0f, 0.0f));
+			}
+		};
+		registerMethod(new ScriptMethodTransformAxisX(this));
+	}
+	{
+		//
 		class ScriptMethodTransform: public ScriptMethod {
 		private:
 			MiniScript* miniScript { nullptr };

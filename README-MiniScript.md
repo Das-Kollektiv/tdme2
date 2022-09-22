@@ -634,6 +634,9 @@ Reading all keys as array from set:
 | toLowerCase($string: String): String                                                             |
 | toUpperCase($string: String): String                                                             |
 | transform($translation: Vector3(OPTIONAL), $scale: Vector3(OPTIONAL), $rotationAxis0: Vector3(OPTIONAL), $rotationAxis1: Vector3(OPTIONAL), $rotationAxis2: Vector3(OPTIONAL)): Transform|
+| transform.AXIS_X(): Vector3                                                                      |
+| transform.AXIS_Y(): Vector3                                                                      |
+| transform.AXIS_Z(): Vector3                                                                      |
 | transform.getRotationAngle($transform: Transform, $idx: Integer): Float                          |
 | transform.setRotationAngle(=$transform: Transform, $idx: Integer, $angle: Float): Void           |
 | transform.getRotationAxis($transform: Transform, $idx: Integer): Vector3                         |
