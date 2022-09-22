@@ -838,6 +838,39 @@ void LogicMiniScript::registerMethods() {
 	// engine
 	{
 		//
+		class ScriptMethodEngineGetEntityIdByMousePosition: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEngineGetEntityIdByMousePosition(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "mouseX", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "mouseY", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_STRING
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.getEntityIdByMousePosition";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				int64_t mouseX;
+				int64_t mouseY;
+				if (miniScript->getIntegerValue(argumentValues, 0, mouseX) == true &&
+					miniScript->getIntegerValue(argumentValues, 1, mouseY) == true) {
+					auto entity = miniScript->context->getEngine()->getEntityByMousePosition(mouseX, mouseY);
+					returnValue = entity != nullptr?entity->getId():string();
+				} else {
+					Console::println("ScriptMethodEngineGetEntityIdByMousePosition::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected, @ argument 1: integer expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodEngineGetEntityIdByMousePosition(this));
+	}
+	{
+		//
 		class ScriptMethodEngineComputeWorldCoordinateByMousePosition: public ScriptMethod {
 		private:
 			LogicMiniScript* miniScript { nullptr };
@@ -858,10 +891,10 @@ void LogicMiniScript::registerMethods() {
 				int64_t mouseX;
 				int64_t mouseY;
 				if (miniScript->getIntegerValue(argumentValues, 0, mouseX) == true &&
-					miniScript->getIntegerValue(argumentValues, 1, mouseX) == true) {
+					miniScript->getIntegerValue(argumentValues, 1, mouseY) == true) {
 					returnValue = miniScript->context->getEngine()->computeWorldCoordinateByMousePosition(mouseX, mouseY);
 				} else {
-					Console::println("ScriptMethodEngineComputeWorldCoordinateByMousePosition::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected, @ argument 1: integer expected");
+					Console::println("ScriptMethodEngineGetEntityIdByMousePosition::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected, @ argument 1: integer expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -929,7 +962,7 @@ void LogicMiniScript::registerMethods() {
 					if (entity != nullptr) {
 						returnValue = entity->getTransform();
 					} else {
-						Console::println("ScriptMethodEngineComputeWorldCoordinateByMousePosition::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+						Console::println("ScriptMethodEngineGetEntityIdByMousePosition::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
 					}
 				} else {
 					Console::println("ScriptMethodEntityGetTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
