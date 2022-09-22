@@ -85,8 +85,8 @@ void LogicMiniScript::registerMethods() {
 		public:
 			ScriptMethodLogicSignalSend(LogicMiniScript* miniScript):
 				ScriptMethod({
-					{ .type = ScriptVariableType::TYPE_STRING, .name = "logicId", .optional = false },
-					{ .type = ScriptVariableType::TYPE_STRING, .name = "signal", .optional = false }
+					{ .type = ScriptVariableType::TYPE_STRING, .name = "logicId", .optional = false, .assignBack = false },
+					{ .type = ScriptVariableType::TYPE_STRING, .name = "signal", .optional = false, .assignBack = false }
 				}),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
@@ -162,7 +162,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodLogicSignalGetArgument(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "argumentIndex", .optional = false }
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "argumentIndex", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_PSEUDO_MIXED
 				),
@@ -210,7 +210,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodInputKeyboardIsKeyDown(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "keyCode", .optional = false }
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "keyCode", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -330,7 +330,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodInputMouseIsButtonDown(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "button", .optional = false }
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "button", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN),
 				miniScript(miniScript) {}
@@ -358,7 +358,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodInputMouseIsButtonUp(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "button", .optional = false }
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "button", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN),
 				miniScript(miniScript) {}
@@ -386,7 +386,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodInputMouseIsDragging(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "button", .optional = false }
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "button", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN),
 				miniScript(miniScript) {}
@@ -577,7 +577,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodCameraSetLookFrom(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "lookFrom", .optional = false }
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "lookFrom", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -624,7 +624,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodCameraSetLookAt(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "lookAt", .optional = false }
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "lookAt", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -671,7 +671,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodCameraSetUpVector(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "upVector", .optional = false }
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "upVector", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -700,8 +700,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodCameraComputeUpVector(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "lookFrom", .optional = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "lookAt", .optional = false }
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "lookFrom", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "lookAt", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VECTOR3
 				),
@@ -750,7 +750,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodCameraSetFovX(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "fovX", .optional = false }
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "fovX", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -835,7 +835,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntityGetTransform(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_TRANSFORM
 				),
@@ -869,8 +869,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntitySetTransform(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false },
-						{ .type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -906,7 +906,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntityIsEnabled(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -940,8 +940,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntitySetEnabled(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false },
-						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "enabled", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "enabled", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -977,7 +977,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntityIsPickable(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -1011,8 +1011,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntitySetPickable(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false },
-						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "pickable", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "pickable", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -1048,7 +1048,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntityGetEffectColorMul(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VECTOR4
 				),
@@ -1083,8 +1083,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntitySetEffectColorMul(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR4, .name = "effectColorMul", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR4, .name = "effectColorMul", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -1120,7 +1120,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntityGetEffectColorAdd(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VECTOR4
 				),
@@ -1155,8 +1155,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntitySetEffectColorAdd(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR4, .name = "effectColorAdd", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR4, .name = "effectColorAdd", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -1192,7 +1192,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntityGetAnimation(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_STRING
 				),
@@ -1226,9 +1226,9 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntitySetAnimation(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false },
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "speed", .optional = true }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "speed", .optional = true, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -1266,8 +1266,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntitySetAnimationSpeed(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false },
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "speed", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "speed", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -1303,7 +1303,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntityGetAnimationTime(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_FLOAT
 				),
@@ -1337,8 +1337,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntityHasOverlayAnimation(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -1374,8 +1374,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntityAddOverlayAnimation(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -1411,8 +1411,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntityRemoveOverlayAnimation(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -1448,7 +1448,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntityRemoveFinishedOverlayAnimations(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -1482,7 +1482,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntityRemoveOverlayAnimations(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -1516,8 +1516,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntityGetOverlayAnimationTime(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_FLOAT
 				),
@@ -1553,8 +1553,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntityGetNodeTransformMatrix(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_MATRIX4x4
 				),
@@ -1590,9 +1590,9 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntitySetNodeTransformMatrix(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false },
-						{ .type = ScriptVariableType::TYPE_MATRIX4x4, .name = "matrix", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_MATRIX4x4, .name = "matrix", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -1630,8 +1630,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntityUnsetNodeTransformMatrix(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -2028,7 +2028,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodBodyIsEnabled(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -2062,8 +2062,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodBodySetEnabled(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false },
-						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "enabled", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "enabled", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -2099,7 +2099,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodBodyGetType(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_INTEGER
 				),
@@ -2133,7 +2133,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodBodyGetCollisionTypeId(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_INTEGER
 				),
@@ -2167,8 +2167,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodBodySetCollisionTypeId(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false },
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "collisionTypeId", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "collisionTypeId", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -2204,7 +2204,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodBodyGetCollisionTypeIds(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_INTEGER
 				),
@@ -2238,8 +2238,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodBodySetCollisionTypeIds(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false },
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "collisionTypeIds", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "collisionTypeIds", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -2275,7 +2275,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodBodyGetLinearDamping(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_FLOAT
 				),
@@ -2309,8 +2309,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodBodySetLinearDamping(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false },
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "linearDamping", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "linearDamping", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -2346,7 +2346,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodBodyGetAngularDamping(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_FLOAT
 				),
@@ -2380,8 +2380,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodBodySetAngularDamping(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false },
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "angularDamping", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "angularDamping", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -2417,7 +2417,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodBodyGetLinearVelocity(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VECTOR3
 				),
@@ -2451,8 +2451,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodBodySetLinearVelocity(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "linearVelocity", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "linearVelocity", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -2488,7 +2488,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodBodyGetAngularVelocity(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VECTOR3
 				),
@@ -2522,8 +2522,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodBodySetAngularVelocity(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "angularVelocity", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "angularVelocity", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -2559,9 +2559,9 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodBodyAddForce(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "force", .optional = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "origin", .optional = true }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "force", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "origin", .optional = true, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -2607,8 +2607,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodBodyAddTorque(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "torque", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "torque", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -2644,7 +2644,7 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodBodyGetTransform(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_TRANSFORM
 				),
@@ -2690,8 +2690,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodBodySetTransform(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false },
-						{ .type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -2727,13 +2727,13 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodWorldDetermineHeight(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "collisionTypeIds", .optional = false },
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "stepUpMax", .optional = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "point", .optional = false },
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "collisionTypeIds", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "stepUpMax", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "point", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "heightPoint", .optional = false, .assignBack = true },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = true, .assignBack = true },
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "minHeight", .optional = true },
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "maxHeight", .optional = true }
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "minHeight", .optional = true, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "maxHeight", .optional = true, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
