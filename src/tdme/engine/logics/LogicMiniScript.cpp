@@ -838,6 +838,42 @@ void LogicMiniScript::registerMethods() {
 	// engine
 	{
 		//
+		class ScriptMethodEngineGetWidth: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEngineGetWidth(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.getWidth";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(miniScript->context->getEngine()->getWidth());
+			}
+		};
+		registerMethod(new ScriptMethodEngineGetWidth(this));
+	}
+	{
+		//
+		class ScriptMethodEngineGetHeight: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEngineGetHeight(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.getHeight";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(miniScript->context->getEngine()->getHeight());
+			}
+		};
+		registerMethod(new ScriptMethodEngineGetHeight(this));
+	}
+	{
+		//
 		class ScriptMethodEngineGetEntityIdByMousePosition: public ScriptMethod {
 		private:
 			LogicMiniScript* miniScript { nullptr };

@@ -677,7 +677,9 @@ Reading all keys as array from set:
 | MiniScript logic methods                                                                         |
 |--------------------------------------------------------------------------------------------------|
 | engine.getEntityIdByMousePosition($mouseX: Integer, $mouseY: Integer): String                    |
+| engine.getHeight(): Integer                                                                      |
 | engine.computeScreenCoordinateByWorldCoordinate($worldCoodinate: Vector3, =$screenCoordinate: Vector2): Boolean|
+| engine.getWidth(): Integer                                                                       |
 | engine.computeWorldCoordinateByMousePosition($mouseX: Integer, $mouseY: Integer): Vector3        |
 | engine.camera.getFovX(): Float                                                                   |
 | engine.camera.setFovX($fovX: Float): Void                                                        |
