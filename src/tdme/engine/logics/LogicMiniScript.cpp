@@ -2818,6 +2818,47 @@ void LogicMiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodWorldDoRayCasting(this));
 	}
+	{
+		//
+		class ScriptMethodWorldDoCollide: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodWorldDoCollide(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId1", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId2", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.doCollide";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string bodyId1;
+				string bodyId2;
+				if (miniScript->getStringValue(argumentValues, 0, bodyId1) == true &&
+					miniScript->getStringValue(argumentValues, 1, bodyId2) == true) {
+					auto body1 = miniScript->context->getWorld()->getBody(bodyId1);
+					auto body2 = miniScript->context->getWorld()->getBody(bodyId2);
+					if (body1 == nullptr) {
+						Console::println("ScriptMethodWorldDoCollide::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body1 not found: " + bodyId1);
+					} else
+					if (body2 == nullptr) {
+						Console::println("ScriptMethodWorldDoCollide::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body2 not found: " + bodyId2);
+					} else {
+						returnValue = miniScript->context->getWorld()->doCollide(body1, body2);
+					}
+				} else {
+					Console::println("ScriptMethodWorldDoCollide::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodWorldDoCollide(this));
+	}
 	// gui
 	// sceneconnector
 }
