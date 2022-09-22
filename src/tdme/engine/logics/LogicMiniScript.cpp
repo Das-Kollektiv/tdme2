@@ -2493,6 +2493,89 @@ void LogicMiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodBodyAddTorque(this));
 	}
+	{
+		//
+		class ScriptMethodBodyGetTransform: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyGetTransform(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false }
+					},
+					ScriptVariableType::TYPE_TRANSFORM
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.getTransform";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string bodyId;
+				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true) {
+					auto body = miniScript->context->getWorld()->getBody(bodyId);
+					if (body != nullptr) {
+						// get transform and make sure its a euler transform
+						auto transform = body->getTransform();
+						auto euler = transform.getTransformMatrix().computeEulerAngles();
+						while (transform.getRotationCount() > 3) transform.removeRotation(transform.getRotationCount() - 1);
+						while (transform.getRotationCount() < 3) transform.addRotation(Vector3(), 0.0f);
+						transform.setRotationAxis(0, Vector3(0.0f, 0.0f, 1.0f));
+						transform.setRotationAxis(1, Vector3(0.0f, 1.0f, 0.0f));
+						transform.setRotationAxis(2, Vector3(1.0f, 0.0f, 0.0f));
+						transform.setRotationAngle(0, euler.getZ());
+						transform.setRotationAngle(1, euler.getY());
+						transform.setRotationAngle(2, euler.getX());
+						transform.update();
+						returnValue = transform;
+					} else {
+						Console::println("ScriptMethodBodyGetTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+					}
+				} else {
+					Console::println("ScriptMethodBodyGetTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodBodyGetTransform(this));
+	}
+	{
+		//
+		class ScriptMethodBodySetTransform: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodySetTransform(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false },
+						{ .type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.setTransform";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string bodyId;
+				Transform transform;
+				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true &&
+					miniScript->getTransformValue(argumentValues, 1, transform) == true) {
+					auto body = miniScript->context->getWorld()->getBody(bodyId);
+					if (body != nullptr) {
+						body->setTransform(transform);
+					} else {
+						Console::println("ScriptMethodBodySetTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+					}
+				} else {
+					Console::println("ScriptMethodBodySetTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: transform expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodBodySetTransform(this));
+	}
 	// gui
 	// sceneconnector
 }

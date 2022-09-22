@@ -764,6 +764,8 @@ Reading all keys as array from set:
 | world.body.TYPE_COLLISION(): Integer                                                             |
 | world.body.TYPE_DYNAMIC(): Integer                                                               |
 | world.body.TYPE_STATIC(): Integer                                                                |
+| world.body.getTransform($bodyId: String): Transform                                              |
+| world.body.setTransform($bodyId: String, $transform: Transform): Void                            |
 | world.body.getType($bodyId: String): Integer                                                     |
 | world.body.addForce($bodyId: String, $force: Vector3, $origin: Vector3(OPTIONAL)): Void          |
 | world.body.addTorque($bodyId: String, $torque: Vector3): Void                                    |
