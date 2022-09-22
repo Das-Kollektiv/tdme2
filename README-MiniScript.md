@@ -282,12 +282,12 @@ Those variables can be created the following ways:
 ...
 	$translation = vec3(-1.0, 1.0, -2.0)
 	$scale = vec3(2.0, 2.0, 2.0)
-	$rotAxis0 = vec3(0.0, 0.0, 1.0)
-	$rotAxis1 = vec3(0.0, 1.0, 0.0)
-	$rotAxis2 = vec3(1.0, 0.0, 0.0)
-	$transform = transform($translation, $scale, $rotAxis0, $rotAxis1, $rotAxis2)
+	$rotationZ = 0.0
+	$rotationY = 90.0
+	$rotationX = 0.0
+	$transform = transform($translation, $scale, $rotationZ, $rotationY, $rotationX)
 	# or
-	$transform = transform(vec3(-1.0, 1.0, -2.0), vec3(2.0, 2.0, 2.0), vec3(0.0, 0.0, 1.0), vec3(0.0, 1.0, 0.0), vec3(1.0, 0.0, 0.0))
+	$transform = transform(vec3(-1.0, 1.0, -2.0), vec3(2.0, 2.0, 2.0), 0.0, 90.0, 0.0)
 ...
 ```
 
