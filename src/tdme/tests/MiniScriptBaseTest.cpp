@@ -19,7 +19,7 @@ MiniScriptBaseTest::MiniScriptBaseTest(): MiniScript() {
 
 void MiniScriptBaseTest::initializeNative() {
 	setNative(true);
-	setHash("674d8e7bbcdc146bb21f0baa7ab4a59e849a79c473a3fe7718ee0bb9652a36e8");
+	setHash("8901584602e47754fe3b3b9744e0767937ab71303439baa29fe4813f622d4e3f");
 	setNativeScripts(
 		{
 			{
@@ -1130,15 +1130,15 @@ void MiniScriptBaseTest::initializeNative() {
 					{
 						.line = 161,
 						.statementIdx = 150,
-						.statement = "console.log(\"$transform = transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0))\")",
-						.executableStatement = "console.log(\"$transform = transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0))\")",
+						.statement = "console.log(\"$transform = transform(vec3(1,2,3), vec3(2, 3, 4)\")",
+						.executableStatement = "console.log(\"$transform = transform(vec3(1,2,3), vec3(2, 3, 4)\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 162,
 						.statementIdx = 151,
-						.statement = "$transform = transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0))",
-						.executableStatement = "setVariable(\"$transform\", transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)))",
+						.statement = "$transform = transform(vec3(1,2,3), vec3(2, 3, 4))",
+						.executableStatement = "setVariable(\"$transform\", transform(vec3(1,2,3), vec3(2, 3, 4)))",
 						.gotoStatementIdx = -1
 					},
 					{
@@ -1151,22 +1151,22 @@ void MiniScriptBaseTest::initializeNative() {
 					{
 						.line = 164,
 						.statementIdx = 153,
-						.statement = "console.log(\"transform.setRotationAngle($transform, 0, 90)\")",
-						.executableStatement = "console.log(\"transform.setRotationAngle($transform, 0, 90)\")",
+						.statement = "console.log(\"transform.setRotationAngle($transform, 1, 90)\")",
+						.executableStatement = "console.log(\"transform.setRotationAngle($transform, 1, 90)\")",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 165,
 						.statementIdx = 154,
-						.statement = "transform.setRotationAngle($transform, 0, 90)",
-						.executableStatement = "transform.setRotationAngle($transform, 0, 90)",
+						.statement = "transform.setRotationAngle($transform, 1, 90)",
+						.executableStatement = "transform.setRotationAngle($transform, 1, 90)",
 						.gotoStatementIdx = -1
 					},
 					{
 						.line = 166,
 						.statementIdx = 155,
-						.statement = "console.log(\"transform.getRotationAngle($transform, 0): \", transform.getRotationAngle($transform, 0))",
-						.executableStatement = "console.log(\"transform.getRotationAngle($transform, 0): \", transform.getRotationAngle($transform, 0))",
+						.statement = "console.log(\"transform.getRotationAngle($transform, 1): \", transform.getRotationAngle($transform, 1))",
+						.executableStatement = "console.log(\"transform.getRotationAngle($transform, 1): \", transform.getRotationAngle($transform, 1))",
 						.gotoStatementIdx = -1
 					},
 					{
@@ -8772,7 +8772,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 150
-	// console.log("$transform = transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0))")
+	// console.log("$transform = transform(vec3(1,2,3), vec3(2, 3, 4)")
 	{
 		const ScriptStatement& statement = scripts[1].statements[150];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -8780,7 +8780,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 1> argumentValues;
 		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
-		argumentValues[0].setValue(string("$transform = transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0))"));
+		argumentValues[0].setValue(string("$transform = transform(vec3(1,2,3), vec3(2, 3, 4)"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -8789,7 +8789,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 151
-	// setVariable("$transform", transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0)))
+	// setVariable("$transform", transform(vec3(1,2,3), vec3(2, 3, 4)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[151];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -8798,16 +8798,15 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("$transform"));
-		// argumentValues[1] --> returnValue of transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0))
-		// depth = 1 / argument index = 1: transform(vec3(1,2,3), vec3(2, 3, 4), vec3(0, 1, 0))
+		// argumentValues[1] --> returnValue of transform(vec3(1,2,3), vec3(2, 3, 4))
+		// depth = 1 / argument index = 1: transform(vec3(1,2,3), vec3(2, 3, 4))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
-			array<ScriptVariable, 3> argumentValues;
-			array<ScriptVariable, 3>& argumentValuesD1AIDX1 = argumentValues;
+			array<ScriptVariable, 2> argumentValues;
+			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
 			// argumentValues[0] --> returnValue of vec3(1,2,3)
 			// argumentValues[1] --> returnValue of vec3(2, 3, 4)
-			// argumentValues[2] --> returnValue of vec3(0, 1, 0)
 			// depth = 2 / argument index = 0: vec3(1, 2, 3)
 			{
 				// required method code arguments
@@ -8854,32 +8853,11 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// depth = 2 / argument index = 2: vec3(0, 1, 0)
-			{
-				// required method code arguments
-				ScriptVariable& returnValue = argumentValuesD1AIDX1[2];
-				array<ScriptVariable, 3> argumentValues;
-				array<ScriptVariable, 3>& argumentValuesD2AIDX2 = argumentValues;
-				argumentValues[0].setValue(static_cast<int64_t>(0));
-				argumentValues[1].setValue(static_cast<int64_t>(1));
-				argumentValues[2].setValue(static_cast<int64_t>(0));
-				// method code: vec3
-				Vector3 result;
-				float xValue;
-				float yValue;
-				float zValue;
-				if (MiniScript::getFloatValue(argumentValues, 0, xValue, false) == true &&
-					MiniScript::getFloatValue(argumentValues, 1, yValue, false) == true &&
-					MiniScript::getFloatValue(argumentValues, 2, zValue, false) == true) {
-					returnValue.setValue(Vector3(xValue, yValue, zValue));
-				} else {
-					Console::println("ScriptMethodVec3::executeMethod(): " + string("vec3") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected, @ argument 1: float expected, @ argument 2: float expected");
-					miniScript->startErrorScript(); return;
-				}
-			}
 			// method code: transform
 			Transform transform;
 			Vector3 vec3Value;
+			float floatValue;
+			// translation
 			if (argumentValues.size() >= 1) {
 				if (MiniScript::getVector3Value(argumentValues, 0, vec3Value, true) == true) {
 					transform.setTranslation(vec3Value);
@@ -8888,6 +8866,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
+			// scale
 			if (argumentValues.size() >= 2) {
 				if (MiniScript::getVector3Value(argumentValues, 1, vec3Value, true) == true) {
 					transform.setScale(vec3Value);
@@ -8896,11 +8875,16 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			for (auto i = 2; i < argumentValues.size(); i++) {
-				if (MiniScript::getVector3Value(argumentValues, i, vec3Value, true) == true) {
-					transform.addRotation(vec3Value, 0.0f);
+			// rotations: we always use euler angles here
+			transform.addRotation(Vector3(0.0f, 0.0f, 1.0f), 0.0f);
+			transform.addRotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
+			transform.addRotation(Vector3(1.0f, 0.0f, 0.0f), 0.0f);
+			//
+			for (auto i = 2; i < argumentValues.size() && i < 5; i++) {
+				if (MiniScript::getFloatValue(argumentValues, i, floatValue, true) == true) {
+					transform.setRotationAngle(i - 2, floatValue);
 				} else {
-					Console::println("ScriptMethodTransform::executeMethod(): " + string("transform") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
+					Console::println("ScriptMethodTransform::executeMethod(): " + string("transform") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument " + to_string(i) + ": float expected");
 					miniScript->startErrorScript(); return;
 				}
 			}
@@ -8954,7 +8938,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 153
-	// console.log("transform.setRotationAngle($transform, 0, 90)")
+	// console.log("transform.setRotationAngle($transform, 1, 90)")
 	{
 		const ScriptStatement& statement = scripts[1].statements[153];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -8962,7 +8946,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 1> argumentValues;
 		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
-		argumentValues[0].setValue(string("transform.setRotationAngle($transform, 0, 90)"));
+		argumentValues[0].setValue(string("transform.setRotationAngle($transform, 1, 90)"));
 		// method code: console.log
 		for (auto& argumentValue: argumentValues) {
 			Console::print(argumentValue.getValueString());
@@ -8971,7 +8955,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 154
-	// transform.setRotationAngle($transform, 0, 90)
+	// transform.setRotationAngle($transform, 1, 90)
 	{
 		const ScriptStatement& statement = scripts[1].statements[154];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -8980,7 +8964,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 3> argumentValues;
 		array<ScriptVariable, 3>& argumentValuesD0 = argumentValues;
 		// argumentValues[0] --> returnValue of getVariable("$transform")
-		argumentValues[1].setValue(static_cast<int64_t>(0));
+		argumentValues[1].setValue(static_cast<int64_t>(1));
 		argumentValues[2].setValue(static_cast<int64_t>(90));
 		// depth = 1 / argument index = 0: getVariable("$transform")
 		{
@@ -9029,7 +9013,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 155
-	// console.log("transform.getRotationAngle($transform, 0): ", transform.getRotationAngle($transform, 0))
+	// console.log("transform.getRotationAngle($transform, 1): ", transform.getRotationAngle($transform, 1))
 	{
 		const ScriptStatement& statement = scripts[1].statements[155];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -9037,16 +9021,16 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
-		argumentValues[0].setValue(string("transform.getRotationAngle($transform, 0): "));
-		// argumentValues[1] --> returnValue of transform.getRotationAngle($transform, 0)
-		// depth = 1 / argument index = 1: transform.getRotationAngle($transform, 0)
+		argumentValues[0].setValue(string("transform.getRotationAngle($transform, 1): "));
+		// argumentValues[1] --> returnValue of transform.getRotationAngle($transform, 1)
+		// depth = 1 / argument index = 1: transform.getRotationAngle($transform, 1)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
 			// argumentValues[0] --> returnValue of getVariable("$transform")
-			argumentValues[1].setValue(static_cast<int64_t>(0));
+			argumentValues[1].setValue(static_cast<int64_t>(1));
 			// depth = 2 / argument index = 0: getVariable("$transform")
 			{
 				// required method code arguments

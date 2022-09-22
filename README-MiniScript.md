@@ -633,7 +633,7 @@ Reading all keys as array from set:
 | time.getCurrentMillis(): Integer                                                                 |
 | toLowerCase($string: String): String                                                             |
 | toUpperCase($string: String): String                                                             |
-| transform($translation: Vector3(OPTIONAL), $scale: Vector3(OPTIONAL), $rotationAxis0: Vector3(OPTIONAL), $rotationAxis1: Vector3(OPTIONAL), $rotationAxis2: Vector3(OPTIONAL)): Transform|
+| transform($translation: Vector3(OPTIONAL), $scale: Vector3(OPTIONAL), $rotationZ: Float(OPTIONAL), $rotationY: Float(OPTIONAL), $rotationX: Float(OPTIONAL)): Transform|
 | transform.AXIS_X(): Vector3                                                                      |
 | transform.AXIS_Y(): Vector3                                                                      |
 | transform.AXIS_Z(): Vector3                                                                      |
@@ -646,6 +646,7 @@ Reading all keys as array from set:
 | transform.getTransformMatrix($transform: Transform): Matrix4x4                                   |
 | transform.getTranslation($transform: Transform): Vector3                                         |
 | transform.setTranslation(=$transform: Transform, $translation: Vector3): Void                    |
+| transform.applyRotation(=$transform: Transform, $axis: Vector3, $angle: Float): Void             |
 | transform.multiply($transform: Transform, $vec3: Vector3): Vector3                               |
 | transform.rotate($transform: Transform, $vec3: Vector3): Vector3                                 |
 | vec2($x: Float, $y: Float): Vector2                                                              |

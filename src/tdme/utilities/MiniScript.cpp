@@ -3878,9 +3878,9 @@ void MiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "translation", .optional = true, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "scale", .optional = true, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "rotationAxis0", .optional = true, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "rotationAxis1", .optional = true, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "rotationAxis2", .optional = true, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "rotationZ", .optional = true, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "rotationY", .optional = true, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "rotationX", .optional = true, .assignBack = false },
 					},
 					ScriptVariableType::TYPE_TRANSFORM),
 					miniScript(miniScript) {}
@@ -3890,6 +3890,8 @@ void MiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				Transform transform;
 				Vector3 vec3Value;
+				float floatValue;
+				// translation
 				if (argumentValues.size() >= 1) {
 					if (MiniScript::getVector3Value(argumentValues, 0, vec3Value, true) == true) {
 						transform.setTranslation(vec3Value);
@@ -3898,6 +3900,7 @@ void MiniScript::registerMethods() {
 						miniScript->startErrorScript();
 					}
 				}
+				// scale
 				if (argumentValues.size() >= 2) {
 					if (MiniScript::getVector3Value(argumentValues, 1, vec3Value, true) == true) {
 						transform.setScale(vec3Value);
@@ -3906,11 +3909,16 @@ void MiniScript::registerMethods() {
 						miniScript->startErrorScript();
 					}
 				}
-				for (auto i = 2; i < argumentValues.size(); i++) {
-					if (MiniScript::getVector3Value(argumentValues, i, vec3Value, true) == true) {
-						transform.addRotation(vec3Value, 0.0f);
+				// rotations: we always use euler angles here
+				transform.addRotation(Vector3(0.0f, 0.0f, 1.0f), 0.0f);
+				transform.addRotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
+				transform.addRotation(Vector3(1.0f, 0.0f, 0.0f), 0.0f);
+				//
+				for (auto i = 2; i < argumentValues.size() && i < 5; i++) {
+					if (MiniScript::getFloatValue(argumentValues, i, floatValue, true) == true) {
+						transform.setRotationAngle(i - 2, floatValue);
 					} else {
-						Console::println("ScriptMethodTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument " + to_string(i) + ": vector3 expected");
+						Console::println("ScriptMethodTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument " + to_string(i) + ": float expected");
 						miniScript->startErrorScript();
 					}
 				}
@@ -4216,6 +4224,54 @@ void MiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodTransformRotate(this));
+	}
+	{
+		//
+		class ScriptMethodTransformApplyRotation: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodTransformApplyRotation(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = true },
+						{.type = ScriptVariableType::TYPE_VECTOR3, .name = "axis", .optional = false, .assignBack = false },
+						{.type = ScriptVariableType::TYPE_FLOAT, .name = "angle", .optional = false, .assignBack = false },
+					},
+					ScriptVariableType::TYPE_VOID),
+					miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "transform.applyRotation";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Transform transform;
+				Vector3 axis;
+				float angle;
+				if (MiniScript::getTransformValue(argumentValues, 0, transform, false) == true &&
+					MiniScript::getVector3Value(argumentValues, 1, axis, false) == true &&
+					MiniScript::getFloatValue(argumentValues, 2, angle, false) == true) {
+					//
+					transform.addRotation(axis, angle);
+					transform.update();
+					// get transform and make sure its a euler transform
+					auto euler = transform.getTransformMatrix().computeEulerAngles();
+					while (transform.getRotationCount() > 3) transform.removeRotation(transform.getRotationCount() - 1);
+					while (transform.getRotationCount() < 3) transform.addRotation(Vector3(), 0.0f);
+					transform.setRotationAxis(0, Vector3(0.0f, 0.0f, 1.0f));
+					transform.setRotationAxis(1, Vector3(0.0f, 1.0f, 0.0f));
+					transform.setRotationAxis(2, Vector3(1.0f, 0.0f, 0.0f));
+					transform.setRotationAngle(0, euler.getZ());
+					transform.setRotationAngle(1, euler.getY());
+					transform.setRotationAngle(2, euler.getX());
+					transform.update();
+					returnValue = transform;
+				} else {
+					Console::println("ScriptMethodTransformApplyRotation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: transform expected, @ argument 1: vector3 expected, @ argument 2: float expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodTransformApplyRotation(this));
 	}
 	{
 		//
