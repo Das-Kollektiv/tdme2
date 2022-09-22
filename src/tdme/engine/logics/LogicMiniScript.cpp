@@ -19,6 +19,7 @@
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/math/Matrix4x4.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
 #include <tdme/tools/editor/misc/Tools.h>
@@ -47,6 +48,7 @@ using tdme::engine::Timing;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::math::Matrix4x4;
+using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
 using tdme::tools::editor::misc::Tools;
@@ -836,6 +838,75 @@ void LogicMiniScript::registerMethods() {
 	// engine
 	{
 		//
+		class ScriptMethodEngineComputeWorldCoordinateByMousePosition: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEngineComputeWorldCoordinateByMousePosition(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "mouseX", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "mouseY", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_VECTOR3
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.computeWorldCoordinateByMousePosition";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				int64_t mouseX;
+				int64_t mouseY;
+				if (miniScript->getIntegerValue(argumentValues, 0, mouseX) == true &&
+					miniScript->getIntegerValue(argumentValues, 1, mouseX) == true) {
+					returnValue = miniScript->context->getEngine()->computeWorldCoordinateByMousePosition(mouseX, mouseY);
+				} else {
+					Console::println("ScriptMethodEngineComputeWorldCoordinateByMousePosition::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected, @ argument 1: integer expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodEngineComputeWorldCoordinateByMousePosition(this));
+	}
+	{
+		//
+		class ScriptMethodEngineComputeScreenCoordinateByWorldCoordinate: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEngineComputeScreenCoordinateByWorldCoordinate(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "worldCoodinate", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR2, .name = "screenCoordinate", .optional = false, .assignBack = true }
+					},
+					ScriptVariableType::TYPE_BOOLEAN
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.computeScreenCoordinateByWorldCoordinate";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Vector3 worldCoodinate;
+				if (argumentValues.size() == 2 &&
+					miniScript->getVector3Value(argumentValues, 0, worldCoodinate) == true) {
+					Vector2 screenCoordinate;
+					if (miniScript->context->getEngine()->computeScreenCoordinateByWorldCoordinate(worldCoodinate, screenCoordinate) == true) {
+						argumentValues[1] = screenCoordinate;
+						returnValue = true;
+					} else {
+						returnValue = false;
+					}
+				} else {
+					Console::println("ScriptMethodEngineComputeScreenCoordinateByWorldCoordinate::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: vector3 expected, @ argument 1: vector2 for assign back expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodEngineComputeScreenCoordinateByWorldCoordinate(this));
+	}
+	{
+		//
 		class ScriptMethodEntityGetTransform: public ScriptMethod {
 		private:
 			LogicMiniScript* miniScript { nullptr };
@@ -858,7 +929,7 @@ void LogicMiniScript::registerMethods() {
 					if (entity != nullptr) {
 						returnValue = entity->getTransform();
 					} else {
-						Console::println("ScriptMethodEntityGetTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
+						Console::println("ScriptMethodEngineComputeWorldCoordinateByMousePosition::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
 					}
 				} else {
 					Console::println("ScriptMethodEntityGetTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
