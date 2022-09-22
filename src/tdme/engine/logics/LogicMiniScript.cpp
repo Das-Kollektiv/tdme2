@@ -2770,6 +2770,54 @@ void LogicMiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodWorldDetermineHeight(this));
 	}
+	{
+		//
+		class ScriptMethodWorldDoRayCasting: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodWorldDoRayCasting(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "collisionTypeIds", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "start", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "end", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "hitPoint", .optional = false, .assignBack = true },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = true },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "actorId", .optional = true, .assignBack = false },
+					},
+					ScriptVariableType::TYPE_BOOLEAN
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.doRayCasting";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				int64_t collisionTypeIds;
+				Vector3 start;
+				Vector3 end;
+				Vector3 hitPoint;
+				string actorId;
+				if (miniScript->getIntegerValue(argumentValues, 0, collisionTypeIds) == true &&
+					miniScript->getVector3Value(argumentValues, 1, start) == true &&
+					miniScript->getVector3Value(argumentValues, 2, end) == true &&
+					miniScript->getStringValue(argumentValues, 5, actorId, true) == true) {
+					auto body = miniScript->context->getWorld()->doRayCasting(collisionTypeIds, start, end, hitPoint, actorId);
+					if (body != nullptr) {
+						argumentValues[3] = hitPoint;
+						argumentValues[4] = body->getId();
+						returnValue = true;
+					} else {
+						returnValue = false;
+					}
+				} else {
+					Console::println("ScriptMethodWorldDoRayCasting::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected, @ argument 1: vector3 expected, @ argument 2: vector3 expected, @ argument 3: vector3 expected, @ argument 4: string expected, @ argument 5: string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodWorldDoRayCasting(this));
+	}
 	// gui
 	// sceneconnector
 }
