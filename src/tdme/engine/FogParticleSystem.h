@@ -231,7 +231,7 @@ public:
 		return FogParticleSystemInternal::isAutoEmit();
 	}
 
-	inline int32_t emitParticles() override {
+	inline int emitParticles() override {
 		return FogParticleSystemInternal::emitParticles();
 	}
 

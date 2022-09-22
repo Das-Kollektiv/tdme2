@@ -710,6 +710,7 @@ Reading all keys as array from set:
 | engine.entity.getTransform($entityId: String): Transform                                         |
 | engine.entity.setTransform($entityId: String, $transform: Transform): Void                       |
 | engine.entity.addOverlayAnimation($entityId: String, $animation: String): Void                   |
+| engine.entity.emitParticles($entityId: String): Integer                                          |
 | engine.entity.removeFinishedOverlayAnimations($entityId: String): Void                           |
 | engine.entity.removeOverlayAnimation($entityId: String, $animation: String): Void                |
 | engine.entity.removeOverlayAnimations($entityId: String): Void                                   |

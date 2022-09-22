@@ -231,7 +231,7 @@ public:
 		return PointsParticleSystemInternal::isAutoEmit();
 	}
 
-	inline int32_t emitParticles() override {
+	inline int emitParticles() override {
 		return PointsParticleSystemInternal::emitParticles();
 	}
 

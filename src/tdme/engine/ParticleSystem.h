@@ -53,7 +53,7 @@ struct tdme::engine::ParticleSystem: public Entity
 	/**
 	 * Adds particles to this particle entity at given position
 	 */
-	virtual int32_t emitParticles() = 0;
+	virtual int emitParticles() = 0;
 
 	/**
 	 * @return local transform

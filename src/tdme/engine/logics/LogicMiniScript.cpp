@@ -1175,7 +1175,7 @@ void LogicMiniScript::registerMethods() {
 					miniScript->getBooleanValue(argumentValues, 1, pickable) == true) {
 					auto entity = miniScript->context->getEngine()->getEntity(entityId);
 					if (entity != nullptr) {
-						entity->setEnabled(pickable);
+						entity->setPickable(pickable);
 					} else {
 						Console::println("ScriptMethodEntitySetPickable::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
 					}
@@ -1281,8 +1281,8 @@ void LogicMiniScript::registerMethods() {
 				if (miniScript->getStringValue(argumentValues, 0, entityId) == true) {
 					auto entity = miniScript->context->getEngine()->getEntity(entityId);
 					if (entity != nullptr) {
-						auto effectColorMul = entity->getEffectColorAdd();
-						returnValue.setValue(Vector4(effectColorMul.getRed(), effectColorMul.getGreen(), effectColorMul.getBlue(), effectColorMul.getAlpha()));
+						auto effectColorAdd = entity->getEffectColorAdd();
+						returnValue.setValue(Vector4(effectColorAdd.getRed(), effectColorAdd.getGreen(), effectColorAdd.getBlue(), effectColorAdd.getAlpha()));
 					} else {
 						Console::println("ScriptMethodEntityGetEffectColorAdd::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
 					}
@@ -1805,6 +1805,40 @@ void LogicMiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodEntityUnsetNodeTransformMatrix(this));
+	}
+	{
+		//
+		class ScriptMethodEntityEmitParticles: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEntityEmitParticles(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_INTEGER
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.entity.emitParticles";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string entityId;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true) {
+					auto entity = dynamic_cast<ParticleSystem*>(miniScript->context->getEngine()->getEntity(entityId));
+					if (entity != nullptr) {
+						returnValue = static_cast<int64_t>(entity->emitParticles());
+					} else {
+						Console::println("ScriptMethodEntityEmitParticles::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": particle system entity not found: " + entityId);
+					}
+				} else {
+					Console::println("ScriptMethodEntityEmitParticles::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodEntityEmitParticles(this));
 	}
 	// physics
 	{

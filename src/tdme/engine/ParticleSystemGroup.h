@@ -296,7 +296,7 @@ public:
 		return autoEmit;
 	}
 
-	inline int32_t emitParticles() override {
+	inline int emitParticles() override {
 		auto emittedParticles = 0;
 		for (auto particleSystem: particleSystems) emittedParticles+= particleSystem->emitParticles();
 		return emittedParticles;

@@ -227,7 +227,7 @@ public:
 	void setTransform(const Transform& transform) override;
 	void updateParticles() override;
 	void dispose();
-	int32_t emitParticles() override;
+	int emitParticles() override;
 	inline const Transform& getLocalTransform() override {
 		return localTransform;
 	}

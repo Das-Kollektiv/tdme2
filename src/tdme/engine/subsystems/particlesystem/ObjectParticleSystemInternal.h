@@ -185,7 +185,7 @@ public:
 	 */
 	void update() override;
 	void setTransform(const Transform& transform) override;
-	int32_t emitParticles() override;
+	int emitParticles() override;
 	void updateParticles() override;
 	void dispose();
 

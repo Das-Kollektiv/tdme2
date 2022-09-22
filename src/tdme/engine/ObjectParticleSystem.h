@@ -248,7 +248,7 @@ public:
 		return ObjectParticleSystemInternal::isAutoEmit();
 	}
 
-	inline int32_t emitParticles() override {
+	inline int emitParticles() override {
 		return ObjectParticleSystemInternal::emitParticles();
 	}
 
