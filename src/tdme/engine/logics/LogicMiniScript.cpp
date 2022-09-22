@@ -2268,6 +2268,148 @@ void LogicMiniScript::registerMethods() {
 	}
 	{
 		//
+		class ScriptMethodBodyGetLinearDamping: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyGetLinearDamping(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false }
+					},
+					ScriptVariableType::TYPE_FLOAT
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.getLinearDamping";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string bodyId;
+				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true) {
+					auto body = miniScript->context->getWorld()->getBody(bodyId);
+					if (body != nullptr) {
+						returnValue = body->getLinearDamping();
+					} else {
+						Console::println("ScriptMethodBodyGetLinearDamping::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+					}
+				} else {
+					Console::println("ScriptMethodBodyGetLinearDamping::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodBodyGetLinearDamping(this));
+	}
+	{
+		//
+		class ScriptMethodBodySetLinearDamping: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodySetLinearDamping(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "linearDamping", .optional = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.setLinearDamping";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string bodyId;
+				float linearDamping;
+				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true &&
+					miniScript->getFloatValue(argumentValues, 1, linearDamping) == true) {
+					auto body = miniScript->context->getWorld()->getBody(bodyId);
+					if (body != nullptr) {
+						body->setLinearDamping(linearDamping);
+					} else {
+						Console::println("ScriptMethodBodySetLinearDamping::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+					}
+				} else {
+					Console::println("ScriptMethodBodySetLinearDamping::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: float expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodBodySetLinearDamping(this));
+	}
+	{
+		//
+		class ScriptMethodBodyGetAngularDamping: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodyGetAngularDamping(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false }
+					},
+					ScriptVariableType::TYPE_FLOAT
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.getAngularDamping";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string bodyId;
+				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true) {
+					auto body = miniScript->context->getWorld()->getBody(bodyId);
+					if (body != nullptr) {
+						returnValue = body->getAngularDamping();
+					} else {
+						Console::println("ScriptMethodBodyGetAngularDamping::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+					}
+				} else {
+					Console::println("ScriptMethodBodyGetAngularDamping::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodBodyGetAngularDamping(this));
+	}
+	{
+		//
+		class ScriptMethodBodySetAngularDamping: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodBodySetAngularDamping(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "angularDamping", .optional = false }
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.body.setAngularDamping";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string bodyId;
+				float angularDamping;
+				if (miniScript->getStringValue(argumentValues, 0, bodyId) == true &&
+					miniScript->getFloatValue(argumentValues, 1, angularDamping) == true) {
+					auto body = miniScript->context->getWorld()->getBody(bodyId);
+					if (body != nullptr) {
+						body->setAngularDamping(angularDamping);
+					} else {
+						Console::println("ScriptMethodBodySetAngularDamping::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+					}
+				} else {
+					Console::println("ScriptMethodBodySetAngularDamping::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: float expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodBodySetAngularDamping(this));
+	}
+	{
+		//
 		class ScriptMethodBodyGetLinearVelocity: public ScriptMethod {
 		private:
 			LogicMiniScript* miniScript { nullptr };

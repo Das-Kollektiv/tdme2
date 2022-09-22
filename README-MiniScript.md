@@ -734,6 +734,8 @@ Reading all keys as array from set:
 | logic.signal.getName(): String                                                                   |
 | logic.signal.next(): Void                                                                        |
 | logic.signal.send($logicId: String, $signal: String, ...): Void                                  |
+| world.body.getAngularDamping($bodyId: String): Float                                             |
+| world.body.setAngularDamping($bodyId: String, $angularDamping: Float): Void                      |
 | world.body.getAngularVelocity($bodyId: String): Vector3                                          |
 | world.body.setAngularVelocity($bodyId: String, $angularVelocity: Vector3): Void                  |
 | world.body.COLLISION_TYPEID_10(): Integer                                                        |
@@ -759,6 +761,8 @@ Reading all keys as array from set:
 | world.body.setCollisionTypeIds($bodyId: String, $collisionTypeIds: Integer): Void                |
 | world.body.isEnabled($bodyId: String): Boolean                                                   |
 | world.body.setEnabled($bodyId: String, $enabled: Boolean): Void                                  |
+| world.body.getLinearDamping($bodyId: String): Float                                              |
+| world.body.setLinearDamping($bodyId: String, $linearDamping: Float): Void                        |
 | world.body.getLinearVelocity($bodyId: String): Vector3                                           |
 | world.body.setLinearVelocity($bodyId: String, $linearVelocity: Vector3): Void                    |
 | world.body.TYPE_COLLISION(): Integer                                                             |
