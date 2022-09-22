@@ -166,20 +166,20 @@ public:
 	 * Check if world collides with given body
 	 * @param collisionTypeIds collision type ids
 	 * @param body body
-	 * @param rigidBodies bodies that collide with given body
+	 * @param collisionBodies bodies that collide with given body
 	 * @return if collision happpened or not
 	 */
-	bool doesCollideWith(uint16_t collisionTypeIds, Body* body, vector<Body*>& rigidBodies);
+	bool doesCollideWith(uint16_t collisionTypeIds, Body* body, vector<Body*>& collisionBodies);
 
 	/**
 	 * Check if world collides with given bounding volumes and its transform, which both form a collision for method runtime
 	 * @param collisionTypeIds collision type ids
 	 * @param transform transform
 	 * @param boundingVolumes bounding volume
-	 * @param rigidBodies bodies that collide with given body
+	 * @param collisionBodies bodies that collide with given body
 	 * @return if collision happpened or not
 	 */
-	bool doesCollideWith(uint16_t collisionTypeIds, const Transform& transform, vector<BoundingVolume*> boundingVolumes, vector<Body*>& rigidBodies);
+	bool doesCollideWith(uint16_t collisionTypeIds, const Transform& transform, vector<BoundingVolume*> boundingVolumes, vector<Body*>& collisionBodies);
 
 	/**
 	 * Check if body 1 collides with body 2

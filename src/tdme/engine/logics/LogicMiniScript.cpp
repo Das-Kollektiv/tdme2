@@ -2859,6 +2859,48 @@ void LogicMiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodWorldDoCollide(this));
 	}
+	{
+		//
+		class ScriptMethodWorldDoesCollideWith: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodWorldDoesCollideWith(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "collisionTypeIds", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "bodyId", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_ARRAY
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "world.doesCollideWith";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				int64_t collisionTypeIds;
+				string bodyId;
+				if (miniScript->getIntegerValue(argumentValues, 0, collisionTypeIds) == true &&
+					miniScript->getStringValue(argumentValues, 1, bodyId) == true) {
+					auto body = miniScript->context->getWorld()->getBody(bodyId);
+					if (body == nullptr) {
+						Console::println("ScriptMethodWorldDoesCollideWith::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": body not found: " + bodyId);
+					} else {
+						vector<Body*> collisionBodies;
+						miniScript->context->getWorld()->doesCollideWith(collisionTypeIds, body, collisionBodies);
+						returnValue.setType(MiniScript::TYPE_ARRAY);
+						for (auto collisionBody: collisionBodies) {
+							returnValue.pushArrayValue(collisionBody->getId());
+						}
+					}
+				} else {
+					Console::println("ScriptMethodWorldDoesCollideWith::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected, @ argument 1: string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodWorldDoesCollideWith(this));
+	}
 	// gui
 	// sceneconnector
 }

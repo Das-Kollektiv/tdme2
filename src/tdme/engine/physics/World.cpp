@@ -378,7 +378,7 @@ Body* World::doRayCasting(uint16_t collisionTypeIds, const Vector3& start, const
 	}
 }
 
-bool World::doesCollideWith(uint16_t collisionTypeIds, Body* body, vector<Body*>& rigidBodies) {
+bool World::doesCollideWith(uint16_t collisionTypeIds, Body* body, vector<Body*>& collisionBodies) {
 	// callback
 	class CustomOverlapCallback: public reactphysics3d::OverlapCallback {
 	    public:
@@ -393,18 +393,18 @@ bool World::doesCollideWith(uint16_t collisionTypeIds, Body* body, vector<Body*>
 	};
 
 	// do the test
-	CustomOverlapCallback customOverlapCallback(rigidBodies);
+	CustomOverlapCallback customOverlapCallback(collisionBodies);
 	world.testOverlap(body->collisionBody, &customOverlapCallback, collisionTypeIds);
 
 	// done
-	return rigidBodies.size() > 0;
+	return collisionBodies.size() > 0;
 }
 
-bool World::doesCollideWith(uint16_t collisionTypeIds, const Transform& transform, vector<BoundingVolume*> boundingVolumes, vector<Body*>& rigidBodies) {
+bool World::doesCollideWith(uint16_t collisionTypeIds, const Transform& transform, vector<BoundingVolume*> boundingVolumes, vector<Body*>& collisionBodies) {
 	auto collisionBody = addCollisionBody("tdme.world.doescollidewith", true, 32768, transform, boundingVolumes);
-	doesCollideWith(collisionTypeIds, collisionBody, rigidBodies);
+	doesCollideWith(collisionTypeIds, collisionBody, collisionBodies);
 	removeBody("tdme.world.doescollidewith");
-	return rigidBodies.size() > 0;
+	return collisionBodies.size() > 0;
 }
 
 bool World::doCollide(Body* body1, Body* body2) {

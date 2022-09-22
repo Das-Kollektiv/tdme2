@@ -776,6 +776,7 @@ Reading all keys as array from set:
 | world.determineHeight($collisionTypeIds: Integer, $stepUpMax: Float, $point: Vector3, =$heightPoint: Vector3, =$bodyId: String(OPTIONAL), $minHeight: Float(OPTIONAL), $maxHeight: Float(OPTIONAL)): Boolean|
 | world.doCollide($bodyId1: String, $bodyId2: String): Boolean                                     |
 | world.doRayCasting($collisionTypeIds: Integer, $start: Vector3, $end: Vector3, =$hitPoint: Vector3, =$bodyId: String, $actorId: String(OPTIONAL)): Boolean|
+| world.doesCollideWith($collisionTypeIds: Integer, $bodyId: String): Array                        |
 
 # 8. Operators
 
