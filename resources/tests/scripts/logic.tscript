@@ -105,8 +105,19 @@ function: updateLogic()
 	world.body.setLinearVelocity(logic.getId(), $GLOBAL.velocity)
 	# read back transform from physics object
 	$GLOBAL.transform = world.body.getTransform(logic.getId())
-	#	apply rotation angle
-	transform.setRotationAngle($GLOBAL.transform, 1, $GLOBAL.rotation)
+	# apply rotation angle and interpolate rotation
+	if (math.abs(math.absmod($GLOBAL.rotation, 360.0) - math.absmod($GLOBAL.rotationLast, 360.0)) > math.EPSILON())
+		$GLOBAL.rotationTimePassed = 0.0
+	end
+	$currentAngle = transform.getRotationAngle($GLOBAL.transform, 1)
+	$targetAngle = $GLOBAL.rotation
+	$interpolatedAngle = 0.0
+	if (transform.interpolateRotation($currentAngle, $targetAngle, $GLOBAL.rotationTimePassed, 360.0, $interpolatedAngle) == true)
+		$GLOBAL.rotationTimePassed = 0.0
+	else
+		$GLOBAL.rotationTimePassed = $GLOBAL.rotationTimePassed + engine.timing.getDeltaTimeSeconds()
+	end
+	transform.setRotationAngle($GLOBAL.transform, 1, $interpolatedAngle)
 	# path finding
 	if ($GLOBAL.pathFinding == true)
 		$GLOBAL.path = array()
@@ -120,6 +131,8 @@ function: updateLogic()
 			console.log("Pathfinding: Fail: ")
 		end
 	end
+	#
+	$GLOBAL.rotationLast = $GLOBAL.rotation
 	# rotation
 	if (math.abs(vec3.getX($GLOBAL.velocity) - 0.0) > math.EPSILON())
 		if (vec3.getX($GLOBAL.velocity) > math.EPSILON())
@@ -147,6 +160,7 @@ function: onLogicAdded()
 	$GLOBAL.velocity = vec3(0.0, 0.0, 0.0)
 	$GLOBAL.speed = 4.0
 	$GLOBAL.rotation = 180.0
+	$GLOBAL.rotationLast = 180.0
 	$GLOBAL.mouseX = -1
 	$GLOBAL.mouseY = -1
 	$GLOBAL.entityId = ""
@@ -155,6 +169,7 @@ function: onLogicAdded()
 	$GLOBAL.pathFindingEnd = vec3(0.0, 0.0, 0.0)
 	$GLOBAL.path = array()
 	$GLOBAL.pathIdx = -1
+	$GLOBAL.rotationTimePassed = 0.0
 end
 
 # logics processed

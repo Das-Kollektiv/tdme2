@@ -41,13 +41,14 @@ public:
 
 	/**
 	 * Interpolate from given rotation to target rotation taking time passed in seconds and rotation degrees per second into account
-	 * @param rotationAngle current rotation angle
-	 * @param targetRotationAngle target rotation angle
-	 * @param timeSecondsPassed time seconds passed
-	 * @param rotationDeegreePerSeconds rotation deegree per seconds
-	 * @return computed rotation angle
+	 * @param currentAngle current angle
+	 * @param targetAngle target angle
+	 * @param timePassedSeconds time passed in seconds
+	 * @param degreesPerSeconds deegrees per seconds
+	 * @param interpolatedAngle interpolated angle
+	 * @return rotation is finished
 	 */
-	static float interpolate(float rotationAngle, float targetRotationAngle, float timeSecondsPassed, float rotationDeegreePerSeconds);
+	static bool interpolate(float currentAngle, float targetAngle, float timePassedSeconds, float degreesPerSeconds, float& interpolatedAngle);
 
 	/**
 	 * @return angle

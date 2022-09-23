@@ -17,6 +17,7 @@
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/prototype/PrototypeBoundingVolume.h>
 #include <tdme/engine/scene/SceneEntity.h>
+#include <tdme/engine/Rotation.h>
 #include <tdme/engine/Transform.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix2D3x3.h>
@@ -55,6 +56,8 @@ using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::PrototypeBoundingVolume;
 using tdme::engine::scene::SceneEntity;
+using tdme::engine::Rotation;
+using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
@@ -4272,6 +4275,47 @@ void MiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodTransformApplyRotation(this));
+	}
+	{
+		//
+		class ScriptMethodTransformInterpolateRotation: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodTransformInterpolateRotation(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "currentAngle", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "targetAngle", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "timePassedSeconds", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "degreesPerSeconds", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "interpolatedAngle", .optional = false, .assignBack = true },
+					},
+					ScriptVariableType::TYPE_BOOLEAN),
+					miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "transform.interpolateRotation";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				float currentAngle;
+				float targetAngle;
+				float timePassedSeconds;
+				float degreesPerSeconds;
+				float interpolatedAngle = 0.0f;
+				if (argumentValues.size() == 5 &&
+					MiniScript::getFloatValue(argumentValues, 0, currentAngle) == true &&
+					MiniScript::getFloatValue(argumentValues, 1, targetAngle) == true &&
+					MiniScript::getFloatValue(argumentValues, 2, timePassedSeconds) == true &&
+					MiniScript::getFloatValue(argumentValues, 3, degreesPerSeconds) == true) {
+					returnValue = Rotation::interpolate(currentAngle, targetAngle, timePassedSeconds, degreesPerSeconds, interpolatedAngle);
+					argumentValues[4] = interpolatedAngle;
+				} else {
+					Console::println("ScriptMethodTransformInterpolateRotation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: float expected, @ argument 1: float expected, @ argument 2: float expected, @ argument 3: float expected, @ argument 4: float for assign back expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodTransformInterpolateRotation(this));
 	}
 	{
 		//

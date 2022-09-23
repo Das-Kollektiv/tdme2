@@ -57,36 +57,38 @@ void Rotation::update()
 	quaternion.rotate(axis, angle);
 }
 
-float Rotation::interpolate(float rotationAngle, float targetRotationAngle, float timeSecondsPassed, float rotationDeegreePerSeconds) {
-	rotationAngle = Math::absmod(rotationAngle, 360.0f);
-	targetRotationAngle = Math::absmod(targetRotationAngle, 360.0f);
-	auto targetRotationAngleA = targetRotationAngle;
-	auto targetRotationAngleB = targetRotationAngle - 360.0f;
-	auto targetRotationAngleC = targetRotationAngle + 360.0f;
-	if (Math::abs(targetRotationAngleA - rotationAngle) < Math::abs(targetRotationAngleB - rotationAngle) &&
-		Math::abs(targetRotationAngleA - rotationAngle) < Math::abs(targetRotationAngleC - rotationAngle)) {
-		targetRotationAngle = targetRotationAngleA;
+bool Rotation::interpolate(float currentAngle, float targetAngle, float timePassedSeconds, float deegreesPerSeconds, float& interpolatedAngle) {
+	currentAngle = Math::absmod(currentAngle, 360.0f);
+	targetAngle = Math::absmod(targetAngle, 360.0f);
+	auto targetRotationAngleA = targetAngle;
+	auto targetRotationAngleB = targetAngle - 360.0f;
+	auto targetRotationAngleC = targetAngle + 360.0f;
+	if (Math::abs(targetRotationAngleA - currentAngle) < Math::abs(targetRotationAngleB - currentAngle) &&
+		Math::abs(targetRotationAngleA - currentAngle) < Math::abs(targetRotationAngleC - currentAngle)) {
+		targetAngle = targetRotationAngleA;
 	} else
-	if (Math::abs(targetRotationAngleB - rotationAngle) < Math::abs(targetRotationAngleA - rotationAngle) &&
-		Math::abs(targetRotationAngleB - rotationAngle) < Math::abs(targetRotationAngleC - rotationAngle)) {
-		targetRotationAngle = targetRotationAngleB;
+	if (Math::abs(targetRotationAngleB - currentAngle) < Math::abs(targetRotationAngleA - currentAngle) &&
+		Math::abs(targetRotationAngleB - currentAngle) < Math::abs(targetRotationAngleC - currentAngle)) {
+		targetAngle = targetRotationAngleB;
 	} else
-	if (Math::abs(targetRotationAngleC - rotationAngle) < Math::abs(targetRotationAngleA - rotationAngle) &&
-		Math::abs(targetRotationAngleC - rotationAngle) < Math::abs(targetRotationAngleB - rotationAngle)) {
-		targetRotationAngle = targetRotationAngleC;
+	if (Math::abs(targetRotationAngleC - currentAngle) < Math::abs(targetRotationAngleA - currentAngle) &&
+		Math::abs(targetRotationAngleC - currentAngle) < Math::abs(targetRotationAngleB - currentAngle)) {
+		targetAngle = targetRotationAngleC;
 	}
-	if (Math::abs(rotationAngle - targetRotationAngle) < 0.1f) {
-		return targetRotationAngle;
+	if (Math::abs(currentAngle - targetAngle) < 0.49f) {
+		interpolatedAngle = targetAngle;
+		return true;
 	} else {
-		auto rotationAdd = timeSecondsPassed * rotationDeegreePerSeconds * Math::sign(targetRotationAngle - rotationAngle);
-		if (rotationAngle < targetRotationAngle && rotationAngle + rotationAdd > targetRotationAngle) {
-			rotationAngle = targetRotationAngle;
+		auto rotationAdd = timePassedSeconds * deegreesPerSeconds * Math::sign(targetAngle - currentAngle);
+		if (currentAngle < targetAngle && currentAngle + rotationAdd > targetAngle) {
+			currentAngle = targetAngle;
 		} else
-		if (rotationAngle > targetRotationAngle && rotationAngle + rotationAdd < targetRotationAngle) {
-			rotationAngle = targetRotationAngle;
+		if (currentAngle > targetAngle && currentAngle + rotationAdd < targetAngle) {
+			currentAngle = targetAngle;
 		} else {
-			rotationAngle+= rotationAdd;
+			currentAngle+= rotationAdd;
 		}
-		return rotationAngle;
+		interpolatedAngle = currentAngle;
+		return false;
 	}
 }
