@@ -3309,7 +3309,6 @@ void LogicMiniScript::registerVariables() {
 }
 
 void LogicMiniScript::collectHIDEvents(vector<GUIMouseEvent>& mouseEvents, vector<GUIKeyboardEvent>& keyEvents) {
-	Console::println("LogicMiniScript::collectHIDEvents()");
 	// keyboard events
 	keyboardTypedChars.clear();
 	keyboardControlDown = false;

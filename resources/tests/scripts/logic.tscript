@@ -1,9 +1,9 @@
 # update engine
 function: updateEngine()
-	console.log("-----------------------------")
-	console.log("updateEngine(): " + logic.getId())
-	console.log("-----------------------------")
-	console.log()
+	#console.log("-----------------------------")
+	#console.log("updateEngine(): " + logic.getId())
+	#console.log("-----------------------------")
+	#console.log()
 
 	# update object from physics
 	engine.entity.setTransform(logic.getId(), $GLOBAL.transform)
