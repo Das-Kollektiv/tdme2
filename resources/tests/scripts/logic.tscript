@@ -63,6 +63,7 @@ function: updateEngine()
 			if ($GLOBAL.entityId != "")
 				engine.entity.setEffectColorAdd($GLOBAL.entityId, vec4(1.0, 0.0, 0.0, 0.0))
 			end
+			console.log("Clicked@worldposition: ", engine.computeWorldCoordinateByMousePosition($GLOBAL.mouseX, $GLOBAL.mouseY))
 		end
 	end
 end
@@ -94,7 +95,7 @@ function: onLogicAdded()
 	$GLOBAL.rotation = 180.0
 	$GLOBAL.mouseX = -1
 	$GLOBAL.mouseY = -1
-	$GLOBAL.entityId = ""  
+	$GLOBAL.entityId = ""
 end
 
 # logics processed
