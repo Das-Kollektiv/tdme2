@@ -100,4 +100,5 @@ end
 # an error has occurred
 on: error
 	console.log("An error occurred")
+	script.stop()
 end
