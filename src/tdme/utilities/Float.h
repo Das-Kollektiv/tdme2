@@ -82,5 +82,4 @@ public:
 		return (f2 * t) + ((1.0f - t) * f1);
 	}
 
-
 };
