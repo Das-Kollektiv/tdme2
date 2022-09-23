@@ -597,15 +597,16 @@ Context::~Context() {
 }
 
 void Context::initialize() {
+	// TODO: optionally pathfinding should be set enabled in client and/or server
 	// path finding is only required for server
-	if (server == true) {
+	// if (server == true) {
 		// world listener
 		worldListener = new ContextWorldListener(this);
 		world->addWorldListener(worldListener);
 
 		// path finding thread
 		pathFinding.start();
-	}
+	// }
 
 	//
 	timeStarted = Time::getCurrentMillis();

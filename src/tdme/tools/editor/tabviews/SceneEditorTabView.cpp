@@ -1487,8 +1487,8 @@ void SceneEditorTabView::runScene() {
 	applicationContext->setEngine(engine);
 	applicationContext->setAudio(Audio::getInstance());
 	applicationContext->setWorld(world);
-	applicationContext->initialize();
 	applicationClient = new ApplicationClient(applicationContext);
+	applicationContext->initialize();
 
 	// add logics
 	for (auto i = 0; i < scene->getEntityCount(); i++) {

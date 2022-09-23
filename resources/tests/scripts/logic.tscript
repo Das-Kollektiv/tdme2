@@ -63,7 +63,11 @@ function: updateEngine()
 			if ($GLOBAL.entityId != "")
 				engine.entity.setEffectColorAdd($GLOBAL.entityId, vec4(1.0, 0.0, 0.0, 0.0))
 			end
-			console.log("Clicked@worldposition: ", engine.computeWorldCoordinateByMousePosition($GLOBAL.mouseX, $GLOBAL.mouseY))
+			$clickWorldPosition = engine.computeWorldCoordinateByMousePosition($GLOBAL.mouseX, $GLOBAL.mouseY)
+			$GLOBAL.pathFinding = true
+			$GLOBAL.pathFindingStart = transform.getTranslation($GLOBAL.transform)
+			$GLOBAL.pathFindingEnd = $clickWorldPosition
+			console.log("Clicked@worldposition: ", $clickWorldPosition)
 		end
 	end
 end
@@ -80,6 +84,19 @@ function: updateLogic()
 	$GLOBAL.transform = world.body.getTransform(logic.getId())
 	#	apply rotation angle
 	transform.setRotationAngle($GLOBAL.transform, 1, $GLOBAL.rotation)
+	# path finding
+	if ($GLOBAL.pathFinding == true)
+		$GLOBAL.path = array()
+		$state = pathfinding.findPath(logic.getId(), $GLOBAL.pathFindingStart, $GLOBAL.pathFindingEnd, $GLOBAL.path)
+		console.log($state)
+		if ($state == pathfinding.STATE_PATHFINDING_SUCCESS())
+			$GLOBAL.pathFinding = false
+			console.log("Pathfinding: Success: ", $GLOBAL.path)
+		elseif ($state == pathfinding.STATE_PATHFINDING_FAILED())
+			$GLOBAL.pathFinding = false
+			console.log("Pathfinding: Fail: ")
+		end
+	end
 end
 
 # logic added
@@ -96,6 +113,11 @@ function: onLogicAdded()
 	$GLOBAL.mouseX = -1
 	$GLOBAL.mouseY = -1
 	$GLOBAL.entityId = ""
+	$GLOBAL.pathFinding = false
+	$GLOBAL.pathFindingStart = vec3(0.0, 0.0, 0.0)
+	$GLOBAL.pathFindingEnd = vec3(0.0, 0.0, 0.0)
+	$GLOBAL.path = array()
+	$GLOBAL.pathIdx = -1
 end
 
 # logics processed
