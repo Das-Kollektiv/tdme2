@@ -5,6 +5,11 @@ function: updateEngine()
 	#console.log("-----------------------------")
 	#console.log()
 
+	# camera
+	engine.camera.setLookAt(transform.getTranslation($GLOBAL.transform))
+	engine.camera.setLookFrom(transform.getTranslation($GLOBAL.transform) + vec3(0.0, 10.0, 10.0))
+	engine.camera.setUpVector(engine.camera.computeUpVector(engine.camera.getLookFrom(), engine.camera.getLookAt())) 
+
 	# update object from physics
 	engine.entity.setTransform(logic.getId(), $GLOBAL.transform)
 
@@ -51,8 +56,13 @@ function: updateEngine()
 	end
 	if (input.mouse.isButtonDown(input.mouse.BUTTON_LEFT()) == true)
 		if ($GLOBAL.mouseX != -1 && $GLOBAL.mouseY != -1)
-			$entityId = engine.getEntityIdByMousePosition($GLOBAL.mouseX, $GLOBAL.mouseY)
-			console.log("Clicked: " + $entityId)
+			if ($GLOBAL.entityId != "")
+				engine.entity.setEffectColorAdd($GLOBAL.entityId, vec4(0.0, 0.0, 0.0, 0.0))
+			end
+			$GLOBAL.entityId = engine.getEntityIdByMousePosition($GLOBAL.mouseX, $GLOBAL.mouseY)
+			if ($GLOBAL.entityId != "")
+				engine.entity.setEffectColorAdd($GLOBAL.entityId, vec4(1.0, 0.0, 0.0, 0.0))
+			end
 		end
 	end
 end
@@ -83,7 +93,8 @@ function: onLogicAdded()
 	$GLOBAL.speed = 4.0
 	$GLOBAL.rotation = 180.0
 	$GLOBAL.mouseX = -1
-	$GLOBAL.mouseY = -1 
+	$GLOBAL.mouseY = -1
+	$GLOBAL.entityId = ""  
 end
 
 # logics processed
