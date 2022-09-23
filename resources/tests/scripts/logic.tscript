@@ -13,28 +13,40 @@ function: updateEngine()
 	# update object from physics
 	engine.entity.setTransform(logic.getId(), $GLOBAL.transform)
 
-	# update velocity based on arrow keys
-	$GLOBAL.velocity = vec3(0.0, 0.0, 0.0)
-	if (input.keyboard.isKeyDown(input.keyboard.KEYCODE_LEFT()) == true)
-		$GLOBAL.velocity = $GLOBAL.velocity + vec3(-1.0, 0.0, 0.0)
-		$GLOBAL.rotation = -90.0
-	end
-	if (input.keyboard.isKeyDown(input.keyboard.KEYCODE_RIGHT()) == true)
-		$GLOBAL.velocity = $GLOBAL.velocity + vec3(1.0, 0.0, 0.0)
-		$GLOBAL.rotation = 90.0
-	end
-	if (input.keyboard.isKeyDown(input.keyboard.KEYCODE_UP()) == true)
-		$GLOBAL.velocity = $GLOBAL.velocity + vec3(0.0, 0.0, -1.0)
-		$GLOBAL.rotation = 180.0
-	end
-	if (input.keyboard.isKeyDown(input.keyboard.KEYCODE_DOWN()) == true)
-		$GLOBAL.velocity = $GLOBAL.velocity + vec3(0.0, 0.0, 1.0)
-		$GLOBAL.rotation = 0.0
+	# if no path finding
+	if ($GLOBAL.pathIdx == -1)
+		# update velocity based on arrow keys
+		$GLOBAL.velocity = vec3(0.0, 0.0, 0.0)
+		if (input.keyboard.isKeyDown(input.keyboard.KEYCODE_LEFT()) == true)
+			$GLOBAL.velocity = $GLOBAL.velocity + vec3(-1.0, 0.0, 0.0)
+		end
+		if (input.keyboard.isKeyDown(input.keyboard.KEYCODE_RIGHT()) == true)
+			$GLOBAL.velocity = $GLOBAL.velocity + vec3(1.0, 0.0, 0.0)
+		end
+		if (input.keyboard.isKeyDown(input.keyboard.KEYCODE_UP()) == true)
+			$GLOBAL.velocity = $GLOBAL.velocity + vec3(0.0, 0.0, -1.0)
+		end
+		if (input.keyboard.isKeyDown(input.keyboard.KEYCODE_DOWN()) == true)
+			$GLOBAL.velocity = $GLOBAL.velocity + vec3(0.0, 0.0, 1.0)
+		end
+	else
+		if (input.keyboard.isKeyDown(input.keyboard.KEYCODE_LEFT()) == true)
+			$GLOBAL.pathIdx = -1
+		end
+		if (input.keyboard.isKeyDown(input.keyboard.KEYCODE_RIGHT()) == true)
+			$GLOBAL.pathIdx = -1
+		end
+		if (input.keyboard.isKeyDown(input.keyboard.KEYCODE_UP()) == true)
+			$GLOBAL.pathIdx = -1
+		end
+		if (input.keyboard.isKeyDown(input.keyboard.KEYCODE_DOWN()) == true)
+			$GLOBAL.pathIdx = -1
+		end
 	end
 
 	# switch animation
 	$currentAnimation = engine.entity.getAnimation(logic.getId())
-	if (vec3.computeLengthSquared($GLOBAL.velocity) > 0.01)
+	if (vec3.computeLengthSquared($GLOBAL.velocity) > math.EPSILON())
 		# update velocity
 		$GLOBAL.velocity = vec3.normalize($GLOBAL.velocity)
 		#	with speed
@@ -78,6 +90,17 @@ function: updateLogic()
 	#console.log("updateLogic(): " + logic.getId())
 	#console.log("-----------------------------")
 	#console.log()
+	# path finding
+	if ($GLOBAL.pathIdx >= 0)
+		$GLOBAL.velocity = getPathFindingMovementDirection() * $GLOBAL.speed 
+		if (vec3.computeLengthSquared($GLOBAL.velocity) < math.square(math.EPSILON()))
+			$GLOBAL.pathIdx = $GLOBAL.pathIdx + 1
+			if ($GLOBAL.pathIdx >= array.length($GLOBAL.path))
+				$GLOBAL.pathIdx = -1
+			end
+			$GLOBAL.velocity = getPathFindingMovementDirection() * $GLOBAL.speed 
+		end
+	end
 	# pass velocity to physics object
 	world.body.setLinearVelocity(logic.getId(), $GLOBAL.velocity)
 	# read back transform from physics object
@@ -88,13 +111,27 @@ function: updateLogic()
 	if ($GLOBAL.pathFinding == true)
 		$GLOBAL.path = array()
 		$state = pathfinding.findPath(logic.getId(), $GLOBAL.pathFindingStart, $GLOBAL.pathFindingEnd, $GLOBAL.path)
-		console.log($state)
 		if ($state == pathfinding.STATE_PATHFINDING_SUCCESS())
 			$GLOBAL.pathFinding = false
 			console.log("Pathfinding: Success: ", $GLOBAL.path)
+			$GLOBAL.pathIdx = 0
 		elseif ($state == pathfinding.STATE_PATHFINDING_FAILED())
 			$GLOBAL.pathFinding = false
 			console.log("Pathfinding: Fail: ")
+		end
+	end
+	# rotation
+	if (math.abs(vec3.getX($GLOBAL.velocity) - 0.0) > math.EPSILON())
+		if (vec3.getX($GLOBAL.velocity) > math.EPSILON())
+			$GLOBAL.rotation = 90.0
+		else
+			$GLOBAL.rotation = 270.0
+		end
+	elseif (math.abs(vec3.getZ($GLOBAL.velocity) - 0.0) > math.EPSILON())
+		if (vec3.getZ($GLOBAL.velocity) > math.EPSILON())
+			$GLOBAL.rotation = 0.0
+		else
+			$GLOBAL.rotation = 180.0
 		end
 	end
 end
@@ -149,4 +186,31 @@ end
 on: error
 	console.log("An error occurred")
 	script.stop()
+end
+
+function: getPathFindingMovementDirection()
+	if ($GLOBAL.pathIdx == -1 || $GLOBAL.pathIdx >= array.length($GLOBAL.path))
+		return(vec3(0.0, 0.0, 0.0))
+	end
+	$xDirection = 0.0
+	$zDirection = 0.0
+	$translation =  transform.getTranslation($GLOBAL.transform)
+	if (math.abs(vec3.getX($translation) - vec3.getX($GLOBAL.path[$GLOBAL.pathIdx])) < 0.1)
+		$xDirection = 0.0
+	elseif (vec3.getX($translation) < vec3.getX($GLOBAL.path[$GLOBAL.pathIdx]))
+		$xDirection = 1.0
+	elseif (vec3.getX($translation) > vec3.getX($GLOBAL.path[$GLOBAL.pathIdx]))
+		$xDirection = -1.0
+	end
+	if (math.abs($xDirection - 0.0) > math.EPSILON())
+		return(vec3($xDirection, 0.0, $zDirection))
+	end
+	if (math.abs(vec3.getZ($translation) - vec3.getZ($GLOBAL.path[$GLOBAL.pathIdx])) < 0.1)
+		$zDirection = 0.0
+	elseif (vec3.getZ($translation) < vec3.getZ($GLOBAL.path[$GLOBAL.pathIdx]))
+		$zDirection = 1.0
+	elseif (vec3.getZ($translation) > vec3.getZ($GLOBAL.path[$GLOBAL.pathIdx]))
+		$zDirection = -1.0
+	end
+	return(vec3($xDirection, 0.0, $zDirection))
 end
