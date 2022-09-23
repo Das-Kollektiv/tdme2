@@ -724,6 +724,13 @@ Reading all keys as array from set:
 | input.keyboard.isAltDown(): Boolean                                                              |
 | input.keyboard.isCharDown($charAsString: String): Boolean                                        |
 | input.keyboard.isControlDown(): Boolean                                                          |
+| input.keyboard.KEYCODE_DOWN(): Integer                                                           |
+| input.keyboard.KEYCODE_ESCAPE(): Integer                                                         |
+| input.keyboard.KEYCODE_LEFT(): Integer                                                           |
+| input.keyboard.KEYCODE_RETURN(): Integer                                                         |
+| input.keyboard.KEYCODE_RIGHT(): Integer                                                          |
+| input.keyboard.KEYCODE_SPACE(): Integer                                                          |
+| input.keyboard.KEYCODE_UP(): Integer                                                             |
 | input.keyboard.isKeyDown($keyCode: Integer): Boolean                                             |
 | input.keyboard.isMetaDown(): Boolean                                                             |
 | input.keyboard.isShiftDown(): Boolean                                                            |

@@ -215,6 +215,132 @@ void LogicMiniScript::registerMethods() {
 	// keyboard input
 	{
 		//
+		class ScriptMethodInputKeyboardKEYCODE_LEFT: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_LEFT(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_LEFT";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_LEFT);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_LEFT(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_RIGHT: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_RIGHT(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_RIGHT";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_RIGHT);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_RIGHT(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_UP: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_UP(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_UP";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_UP);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_UP(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_DOWN: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_DOWN(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_DOWN";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_DOWN);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_DOWN(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_SPACE: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_SPACE(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_SPACE";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_SPACE);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_SPACE(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_RETURN: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_RETURN(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_RETURN";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_RETURN);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_RETURN(this));
+	}
+	{
+		//
+		class ScriptMethodInputKeyboardKEYCODE_ESCAPE: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardKEYCODE_ESCAPE(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.KEYCODE_ESCAPE";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIKeyboardEvent::KEYCODE_ESCAPE);
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardKEYCODE_ESCAPE(this));
+	}
+	{
+		//
 		class ScriptMethodInputKeyboardIsKeyDown: public ScriptMethod {
 		private:
 			LogicMiniScript* miniScript { nullptr };
@@ -1423,7 +1549,7 @@ void LogicMiniScript::registerMethods() {
 				float speed = 1.0f;
 				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
 					miniScript->getStringValue(argumentValues, 1, animation) == true &&
-					miniScript->getFloatValue(argumentValues, 2, speed) == true) {
+					miniScript->getFloatValue(argumentValues, 2, speed, true) == true) {
 					auto object = dynamic_cast<Object*>(miniScript->context->getEngine()->getEntity(entityId));
 					if (object != nullptr) {
 						object->setAnimation(animation, speed);
