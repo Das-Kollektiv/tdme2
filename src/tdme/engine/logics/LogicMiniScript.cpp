@@ -3296,6 +3296,158 @@ void LogicMiniScript::registerMethods() {
 		};
 		registerMethod(new ScriptMethodWorldDoesCollideWith(this));
 	}
+	// path finding
+	{
+		//
+		class ScriptMethodPathFindingSTATE_IDLE: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodPathFindingSTATE_IDLE(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "pathfinding.STATE_IDLE";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(Context::PathFindingThread::STATE_IDLE);
+			}
+		};
+		registerMethod(new ScriptMethodPathFindingSTATE_IDLE(this));
+	}
+	{
+		//
+		class ScriptMethodPathFindingSTATE_TRYLOCK_FAILED: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodPathFindingSTATE_TRYLOCK_FAILED(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "pathfinding.STATE_TRYLOCK_FAILED";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(Context::PathFindingThread::STATE_TRYLOCK_FAILED);
+			}
+		};
+		registerMethod(new ScriptMethodPathFindingSTATE_TRYLOCK_FAILED(this));
+	}
+	{
+		//
+		class ScriptMethodPathFindingSTATE_PATHFINDING_OTHER: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodPathFindingSTATE_PATHFINDING_OTHER(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "pathfinding.STATE_PATHFINDING_OTHER";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(Context::PathFindingThread::STATE_PATHFINDING_OTHER);
+			}
+		};
+		registerMethod(new ScriptMethodPathFindingSTATE_PATHFINDING_OTHER(this));
+	}
+	{
+		//
+		class ScriptMethodPathFindingSTATE_PATHFINDING: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodPathFindingSTATE_PATHFINDING(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "pathfinding.STATE_PATHFINDING";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(Context::PathFindingThread::STATE_PATHFINDING);
+			}
+		};
+		registerMethod(new ScriptMethodPathFindingSTATE_PATHFINDING(this));
+	}
+	{
+		//
+		class ScriptMethodPathFindingSTATE_PATHFINDING_FAILED: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodPathFindingSTATE_PATHFINDING_FAILED(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "pathfinding.STATE_PATHFINDING_FAILED";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(Context::PathFindingThread::STATE_PATHFINDING_FAILED);
+			}
+		};
+		registerMethod(new ScriptMethodPathFindingSTATE_PATHFINDING_FAILED(this));
+	}
+	{
+		//
+		class ScriptMethodPathFindingSTATE_PATHFINDING_SUCCESS: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodPathFindingSTATE_PATHFINDING_SUCCESS(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "pathfinding.STATE_PATHFINDING_SUCCESS";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(Context::PathFindingThread::STATE_PATHFINDING_SUCCESS);
+			}
+		};
+		registerMethod(new ScriptMethodPathFindingSTATE_PATHFINDING_SUCCESS(this));
+	}
+	{
+		//
+		class ScriptMethodPathFindingFindPath: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodPathFindingFindPath(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "logicId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "startPosition", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_VECTOR3, .name = "endPosition", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "path", .optional = false, .assignBack = true },
+					},
+					ScriptVariableType::TYPE_INTEGER
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "pathfinding.findPath";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string logicId;
+				Vector3 startPosition;
+				Vector3 endPosition;
+				if (argumentValues.size() == 4 &&
+					miniScript->getStringValue(argumentValues, 0, logicId) == true &&
+					miniScript->getVector3Value(argumentValues, 1, startPosition) == true &&
+					miniScript->getVector3Value(argumentValues, 2, endPosition) == true) {
+					argumentValues[3].setType(MiniScript::TYPE_ARRAY);
+					vector<Vector3> path;
+					auto pathFindingState = miniScript->context->getPathFinding()->findPath(logicId, logicId, startPosition, endPosition, path);
+					returnValue = static_cast<int64_t>(pathFindingState);
+					for (auto& position: path) {
+						argumentValues[3].pushArrayValue(position);
+					};
+				} else {
+					Console::println("ScriptMethodPathFindingFindPath::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: vector3 expected, @ argument 2: vector3 expected, @ argument 3: assign back array expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodPathFindingFindPath(this));
+	}
 	// gui
 	// sceneconnector
 	{

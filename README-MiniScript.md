@@ -755,6 +755,13 @@ Reading all keys as array from set:
 | logic.signal.getName(): String                                                                   |
 | logic.signal.next(): Void                                                                        |
 | logic.signal.send($logicId: String, $signal: String, ...): Void                                  |
+| pathfinding.STATE_IDLE(): Integer                                                                |
+| pathfinding.STATE_PATHFINDING(): Integer                                                         |
+| pathfinding.STATE_PATHFINDING_FAILED(): Integer                                                  |
+| pathfinding.STATE_PATHFINDING_OTHER(): Integer                                                   |
+| pathfinding.STATE_PATHFINDING_SUCCESS(): Integer                                                 |
+| pathfinding.STATE_TRYLOCK_FAILED(): Integer                                                      |
+| pathfinding.findPath($logicId: String, $startPosition: Vector3, $endPosition: Vector3, =$path: Array): Integer|
 | sceneconnector.addPrototype($pathName: String, $fileName: String, $id: String, $transform: Transform): Void|
 | world.body.getAngularDamping($bodyId: String): Float                                             |
 | world.body.setAngularDamping($bodyId: String, $angularDamping: Float): Void                      |
