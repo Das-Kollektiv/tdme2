@@ -600,12 +600,14 @@ void Context::initialize() {
 	// TODO: optionally pathfinding should be set enabled in client and/or server
 	// path finding is only required for server
 	// if (server == true) {
-		// world listener
-		worldListener = new ContextWorldListener(this);
-		world->addWorldListener(worldListener);
 
-		// path finding thread
-		pathFinding.start();
+	// world listener
+	worldListener = new ContextWorldListener(this);
+	world->addWorldListener(worldListener);
+
+	// path finding thread
+	pathFinding.start();
+
 	// }
 
 	//
@@ -617,10 +619,9 @@ void Context::initialize() {
 
 void Context::shutdown() {
 	if (initialized == false) return;
-	if (server == true) {
-		pathFinding.shutdown();
-		world->removeWorldListener(worldListener);
-	}
+	// TODO: optionally pathfinding should be set enabled in client and/or server
+	pathFinding.shutdown();
+	world->removeWorldListener(worldListener);
 }
 
 void Context::addLogic(Logic* logic) {
