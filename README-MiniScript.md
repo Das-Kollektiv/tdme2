@@ -735,6 +735,9 @@ Reading all keys as array from set:
 | input.keyboard.isMetaDown(): Boolean                                                             |
 | input.keyboard.isShiftDown(): Boolean                                                            |
 | input.keyboard.getTypedString(): String                                                          |
+| input.mouse.BUTTON_LEFT(): Integer                                                               |
+| input.mouse.BUTTON_MIDDLE(): Integer                                                             |
+| input.mouse.BUTTON_RIGHT(): Integer                                                              |
 | input.mouse.isButtonDown($button: Integer): Boolean                                              |
 | input.mouse.isButtonUp($button: Integer): Boolean                                                |
 | input.mouse.isDragging($button: Integer): Boolean                                                |

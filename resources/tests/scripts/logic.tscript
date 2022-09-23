@@ -43,6 +43,18 @@ function: updateEngine()
 			engine.entity.setAnimation(logic.getId(), "idle")
 		end
 	end
+	
+	# mouse
+	if (input.mouse.hasMoved() == true)
+		$GLOBAL.mouseX = input.mouse.getXUnscaled()
+		$GLOBAL.mouseY = input.mouse.getYUnscaled()
+	end
+	if (input.mouse.isButtonDown(input.mouse.BUTTON_LEFT()) == true)
+		if ($GLOBAL.mouseX != -1 && $GLOBAL.mouseY != -1)
+			$entityId = engine.getEntityIdByMousePosition($GLOBAL.mouseX, $GLOBAL.mouseY)
+			console.log("Clicked: " + $entityId)
+		end
+	end
 end
 
 # update logic
@@ -70,6 +82,8 @@ function: onLogicAdded()
 	$GLOBAL.velocity = vec3(0.0, 0.0, 0.0)
 	$GLOBAL.speed = 4.0
 	$GLOBAL.rotation = 180.0
+	$GLOBAL.mouseX = -1
+	$GLOBAL.mouseY = -1 
 end
 
 # logics processed

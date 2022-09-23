@@ -492,6 +492,60 @@ void LogicMiniScript::registerMethods() {
 	// mouse input
 	{
 		//
+		class ScriptMethodInputMouseBUTTON_LEFT: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputMouseBUTTON_LEFT(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.mouse.BUTTON_LEFT";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIMouseEvent::MOUSEEVENT_BUTTON_LEFT - 1);
+			}
+		};
+		registerMethod(new ScriptMethodInputMouseBUTTON_LEFT(this));
+	}
+	{
+		//
+		class ScriptMethodInputMouseBUTTON_MIDDLE: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputMouseBUTTON_MIDDLE(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.mouse.BUTTON_MIDDLE";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIMouseEvent::MOUSEEVENT_BUTTON_MIDDLE - 1);
+			}
+		};
+		registerMethod(new ScriptMethodInputMouseBUTTON_MIDDLE(this));
+	}
+	{
+		//
+		class ScriptMethodInputMouseBUTTON_RIGHT: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputMouseBUTTON_RIGHT(LogicMiniScript* miniScript):
+				ScriptMethod({}, ScriptVariableType::TYPE_INTEGER),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.mouse.BUTTON_RIGHT";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				returnValue = static_cast<int64_t>(GUIMouseEvent::MOUSEEVENT_BUTTON_RIGHT - 1);
+			}
+		};
+		registerMethod(new ScriptMethodInputMouseBUTTON_RIGHT(this));
+	}
+	{
+		//
 		class ScriptMethodInputMouseIsButtonDown: public ScriptMethod {
 		private:
 			LogicMiniScript* miniScript { nullptr };
@@ -3354,12 +3408,12 @@ void LogicMiniScript::collectHIDEvents(vector<GUIMouseEvent>& mouseEvents, vecto
 		//	store button and mouse dragging properties
 		if (event.getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
 			if (event.getButton() != GUIMouseEvent::MOUSEEVENT_BUTTON_NONE) {
-				mouseDragging[event.getButton() - 1] = true;
+				mouseDown[event.getButton() - 1] = true;
 			}
 		} else
 		if (event.getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
 			if (event.getButton() != GUIMouseEvent::MOUSEEVENT_BUTTON_NONE) {
-				mouseDown[event.getButton() - 1] = true;
+				mouseDragging[event.getButton() - 1] = true;
 			}
 		} else
 		// on release
