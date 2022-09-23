@@ -104,7 +104,7 @@ function: updateLogic()
 	# pass velocity to physics object
 	world.body.setLinearVelocity(logic.getId(), $GLOBAL.velocity)
 	# read back transform from physics object
-	$GLOBAL.transform = world.body.getTransform(logic.getId())
+	transform.setTranslation($GLOBAL.transform, transform.getTranslation(world.body.getTransform(logic.getId())))
 	# apply rotation angle and interpolate rotation
 	if (math.abs(math.absmod($GLOBAL.rotation, 360.0) - math.absmod($GLOBAL.rotationLast, 360.0)) > math.EPSILON())
 		$GLOBAL.rotationTimePassed = 0.0
