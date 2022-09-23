@@ -722,6 +722,7 @@ Reading all keys as array from set:
 | engine.timing.getDeltaTime(): Integer                                                            |
 | engine.timing.getDeltaTimeSeconds(): Float                                                       |
 | input.keyboard.isAltDown(): Boolean                                                              |
+| input.keyboard.isCharDown($charAsString: String): Boolean                                        |
 | input.keyboard.isControlDown(): Boolean                                                          |
 | input.keyboard.isKeyDown($keyCode: Integer): Boolean                                             |
 | input.keyboard.isMetaDown(): Boolean                                                             |

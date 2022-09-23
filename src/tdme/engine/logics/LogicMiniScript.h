@@ -29,8 +29,9 @@ protected:
 	Logic* logic { nullptr };
 
 	// keys
+	unordered_set<int32_t> keyboardChars;
 	unordered_set<int32_t> keyboardKeys;
-	string keyboardChars;
+	string keyboardTypedChars;
 	bool keyboardMetaDown { false };
 	bool keyboardControlDown { false };
 	bool keyboardAltDown { false };

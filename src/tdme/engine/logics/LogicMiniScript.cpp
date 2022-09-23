@@ -26,6 +26,7 @@
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/MiniScript.h>
+#include <tdme/utilities/UTF8CharacterIterator.h>
 
 using std::span;
 using std::string;
@@ -55,6 +56,7 @@ using tdme::tools::editor::misc::Tools;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::MiniScript;
+using tdme::utilities::UTF8CharacterIterator;
 
 LogicMiniScript::LogicMiniScript(): MiniScript() {
 }
@@ -242,6 +244,37 @@ void LogicMiniScript::registerMethods() {
 	}
 	{
 		//
+		class ScriptMethodInputKeyboardIsCharDown: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodInputKeyboardIsCharDown(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "charAsString", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_BOOLEAN
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "input.keyboard.isCharDown";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string charAsString;
+				if (miniScript->getStringValue(argumentValues, 0, charAsString) == true) {
+					UTF8CharacterIterator u8It(charAsString);
+					auto keyChar = u8It.hasNext() == true?u8It.next():-1;
+					returnValue = miniScript->keyboardChars.find(keyChar) != miniScript->keyboardChars.end();
+				} else {
+					Console::println("ScriptMethodInputKeyboardIsCharDown::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: integer expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodInputKeyboardIsCharDown(this));
+	}
+	{
+		//
 		class ScriptMethodInputKeyboardGetTypedString: public ScriptMethod {
 		private:
 			LogicMiniScript* miniScript { nullptr };
@@ -253,7 +286,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.keyboard.getTypedString";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue = miniScript->keyboardChars;
+				returnValue = miniScript->keyboardTypedChars;
 			}
 		};
 		registerMethod(new ScriptMethodInputKeyboardGetTypedString(this));
@@ -3152,7 +3185,7 @@ void LogicMiniScript::registerVariables() {
 void LogicMiniScript::collectHIDEvents(vector<GUIMouseEvent>& mouseEvents, vector<GUIKeyboardEvent>& keyEvents) {
 	Console::println("LogicMiniScript::collectHIDEvents()");
 	// keyboard events
-	keyboardChars.clear();
+	keyboardTypedChars.clear();
 	keyboardControlDown = false;
 	keyboardMetaDown = false;
 	keyboardAltDown = false;
@@ -3160,15 +3193,17 @@ void LogicMiniScript::collectHIDEvents(vector<GUIMouseEvent>& mouseEvents, vecto
 	for (auto& event: keyEvents) {
 		// key pressed
 		if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+			keyboardChars.insert(event.getKeyChar());
 			keyboardKeys.insert(event.getKeyCode());
 		} else
 		// key released
 		if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_RELEASED) {
+			keyboardChars.erase(event.getKeyChar());
 			keyboardKeys.erase(event.getKeyCode());
 		} else
 		// key typed
 		if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) {
-			Character::appendToString(keyboardChars, event.getKeyChar());
+			Character::appendToString(keyboardTypedChars, event.getKeyChar());
 		}
 		// extra keys
 		if (event.isControlDown() == true) keyboardControlDown = true;
