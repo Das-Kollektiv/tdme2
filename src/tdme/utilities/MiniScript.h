@@ -1710,13 +1710,6 @@ public:
 			return OPERATOR_NONE;
 		}
 
-		/**
-		 * @return description
-		 */
-		virtual string getDescription() {
-			return "No description.";
-		}
-
 	private:
 		vector<ArgumentType> argumentTypes;
 		ScriptVariableType returnValueType;
