@@ -281,6 +281,8 @@
     - generatelicenses tool to generate complete engine or project licenses from ./ext folders
     - importtmodel tool to generate TDME2 tmodel prototype files using model and bounding volumes models
     - makefilegenerator and nmakefilegenerator tool to generate Makefiles for TDME2 based projects
+    - createminiscriptcodecompletion tool to generate code completion database for MiniScript
+    - createminiscriptdocumentation tool to generate documentation for MiniScript methods and operators
     - miniscripttranspiler tool to transpile MiniScript code to C++ code
     - optimizemodel tool to generate texture atlases and bake down model mesh nodes into a few one to reduce GL/VK (render/compute) calls
     - sortincludes tool to sort "include" and "using" source code statements
