@@ -19,7 +19,7 @@ MiniScriptFunctionsTest::MiniScriptFunctionsTest(): MiniScript() {
 
 void MiniScriptFunctionsTest::initializeNative() {
 	setNative(true);
-	setHash("b35432b960ca4756754ad71d27db32ff22dc77d9c8d43a81ed8d6699466a2684");
+	setNativeHash("b35432b960ca4756754ad71d27db32ff22dc77d9c8d43a81ed8d6699466a2684");
 	setNativeScripts(
 		{
 			{

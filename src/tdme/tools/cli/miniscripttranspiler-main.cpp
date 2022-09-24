@@ -314,7 +314,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 	string initializeNativeDefinition;
 	initializeNativeDefinition+= "void " + miniScriptClassName + "::initializeNative() {" + "\n";
 	initializeNativeDefinition+= methodCodeIndent + "setNative(true);" + "\n";
-	initializeNativeDefinition+= methodCodeIndent + "setHash(\"" + scriptInstance->getHash() + "\");" + "\n";
+	initializeNativeDefinition+= methodCodeIndent + "setNativeHash(\"" + scriptInstance->getNativeHash() + "\");" + "\n";
 	initializeNativeDefinition+= methodCodeIndent + "setNativeScripts(" + "\n";
 	initializeNativeDefinition+= methodCodeIndent + "\t" + "{" + "\n";
 	{

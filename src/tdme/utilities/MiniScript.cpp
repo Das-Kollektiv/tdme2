@@ -639,7 +639,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 		for (auto& scriptLine: scriptLines) scriptAsString+= scriptLine + "\n";
 		auto scriptHash = SHA256::encode(scriptAsString);
 		if (native == true) {
-			if (scriptHash == hash) {
+			if (scriptHash == nativeHash) {
 				scripts = nativeScripts;
 				registerStateMachineStates();
 				registerMethods();
@@ -650,7 +650,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 				native = false;
 			}
 		}
-		hash = scriptHash;
+		nativeHash = scriptHash;
 	}
 
 	//

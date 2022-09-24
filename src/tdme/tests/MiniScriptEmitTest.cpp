@@ -19,7 +19,7 @@ MiniScriptEmitTest::MiniScriptEmitTest(): MiniScript() {
 
 void MiniScriptEmitTest::initializeNative() {
 	setNative(true);
-	setHash("baee5c30615e5d8deceb2ca92aa43525ecfe6056451ff54981e0bbff70909812");
+	setNativeHash("baee5c30615e5d8deceb2ca92aa43525ecfe6056451ff54981e0bbff70909812");
 	setNativeScripts(
 		{
 			{

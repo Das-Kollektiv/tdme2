@@ -19,7 +19,7 @@ MiniScriptAdvancedTest::MiniScriptAdvancedTest(): MiniScript() {
 
 void MiniScriptAdvancedTest::initializeNative() {
 	setNative(true);
-	setHash("7c68c27f8921dfd5fbaae5e78189bf4a60e7fc7a4b42a9658e64fe907434463d");
+	setNativeHash("7c68c27f8921dfd5fbaae5e78189bf4a60e7fc7a4b42a9658e64fe907434463d");
 	setNativeScripts(
 		{
 			{

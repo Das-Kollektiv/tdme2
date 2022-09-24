@@ -1752,10 +1752,9 @@ protected:
 		ScriptVariable returnValue;
 	};
 
-	//
-	string hash;
 	bool native;
 	vector<Script> scripts;
+	string nativeHash;
 	vector<Script> nativeScripts;
 	vector<ScriptState> scriptStateStack;
 
@@ -1777,11 +1776,11 @@ protected:
 	}
 
 	/**
-	 * Set hash
-	 * @param hash hash
+	 * Set native hash
+	 * @param nativeHash native hash
 	 */
-	inline void setHash(const string& hash) {
-		this->hash = hash;
+	inline void setNativeHash(const string& nativeHash) {
+		this->nativeHash = nativeHash;
 	}
 
 	/**
@@ -2400,17 +2399,17 @@ public:
 	}
 
 	/**
+	 * @return native script hash
+	 */
+	inline const string& getNativeHash() {
+		return nativeHash;
+	}
+
+	/**
 	 * @return script file name
 	 */
 	inline const string& getScriptFileName() {
 		return scriptFileName;
-	}
-
-	/**
-	 * @return script hash
-	 */
-	inline const string& getHash() {
-		return hash;
 	}
 
 	/**
