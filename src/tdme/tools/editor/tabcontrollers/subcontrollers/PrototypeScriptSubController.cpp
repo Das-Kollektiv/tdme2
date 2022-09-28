@@ -87,6 +87,7 @@ void PrototypeScriptSubController::setScriptDetails(Prototype* prototype) {
 
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_script"))->getActiveConditions().add("open");
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("script_hid"))->getController()->setValue(MutableString(prototype->isScriptHandlingHID() == true?"1":""));
 	} catch (Exception& exception) {
 		Console::println(string("PrototypeScriptSubController::setScriptDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -94,7 +95,9 @@ void PrototypeScriptSubController::setScriptDetails(Prototype* prototype) {
 }
 
 void PrototypeScriptSubController::updateDetails(Prototype* prototype, const string& outlinerNode) {
-	setScriptDetails(prototype);
+	if (outlinerNode == "script") {
+		setScriptDetails(prototype);
+	}
 }
 
 void PrototypeScriptSubController::onValueChanged(GUIElementNode* node, Prototype* prototype)
@@ -102,6 +105,9 @@ void PrototypeScriptSubController::onValueChanged(GUIElementNode* node, Prototyp
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 		if (outlinerNode == "script") setScriptDetails(prototype);
+	} else
+	if (node->getId() == "script_hid") {
+		prototype->setScriptHandlingHID(node->getController()->getValue().equals("1"));
 	}
 }
 

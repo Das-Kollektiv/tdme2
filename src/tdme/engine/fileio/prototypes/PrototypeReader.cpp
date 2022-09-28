@@ -201,6 +201,9 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 			}
 		}
 	}
+	if (jPrototypeRoot.FindMember("sch") != jPrototypeRoot.MemberEnd()) {
+		prototype->setScriptHandlingHID(jPrototypeRoot["sch"].GetBool());
+	}
 	if (prototype->getType() == Prototype_Type::DECAL) {
 		string decalFileName = jPrototypeRoot["df"].GetString();
 		if (decalFileName.empty() == false) {

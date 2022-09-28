@@ -7,8 +7,11 @@
 			
 			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="script" type="Script" />
 			
-			<space height="5" />
+			<space height="10" />
 
+			<checkbox id="script_hid" width="25" height="25" value="1" text="Script is handling HID" />
+			
+			<space height="5" />
 		</layout>		
 	</layout>
 </element>

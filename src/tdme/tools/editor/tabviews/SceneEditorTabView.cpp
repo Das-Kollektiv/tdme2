@@ -1493,7 +1493,7 @@ void SceneEditorTabView::runScene() {
 	// add logics
 	for (auto i = 0; i < scene->getEntityCount(); i++) {
 		auto entity = scene->getEntityAt(i);
-		if (entity->getPrototype()->getScript().empty() == false) {
+		if (entity->getPrototype()->hasScript() == true) {
 			auto miniScript = new LogicMiniScript();
 			miniScript->loadScript(
 				Tools::getPathName(entity->getPrototype()->getScript()),
@@ -1503,7 +1503,7 @@ void SceneEditorTabView::runScene() {
 				new MiniScriptLogic(
 					applicationContext,
 					entity->getId(),
-					true, // TODO: put me into prototype bean
+					entity->getPrototype()->isScriptHandlingHID(),
 					miniScript
 				)
 			);

@@ -64,6 +64,7 @@ private:
 	string thumbnail;
 	Model* model { nullptr };
 	Vector3 pivot;
+	bool scriptHandlingHID { false };
 	string script;
 	PrototypeLODLevel* lodLevel2 { nullptr };
 	PrototypeLODLevel* lodLevel3 { nullptr };
@@ -218,6 +219,13 @@ public:
 	}
 
 	/**
+	 * @return script attached to prototype
+	 */
+	inline bool hasScript() {
+		return script.empty() == false;
+	}
+
+	/**
 	 * @return prototype script name
 	 */
 	inline const string& getScript() {
@@ -230,6 +238,21 @@ public:
 	 */
 	inline void setScript(const string& fileName) {
 		this->script = fileName;
+	}
+
+	/**
+	 * @return script is handling HID (input)
+	 */
+	inline bool isScriptHandlingHID() {
+		return scriptHandlingHID;
+	}
+
+	/**
+	 * Set script is handling HID (input)
+	 * @param scriptHandlingHID script handling HID
+	 */
+	inline void setScriptHandlingHID(bool scriptHandlingHID) {
+		this->scriptHandlingHID = scriptHandlingHID;
 	}
 
 	/**

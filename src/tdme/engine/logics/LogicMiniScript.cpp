@@ -3485,7 +3485,7 @@ void LogicMiniScript::registerMethods() {
 						auto prototype = PrototypeReader::read(pathName, fileName);
 						miniScript->context->getEngine()->addEntity(SceneConnector::createEntity(prototype, id, transform));
 						SceneConnector::createBody(miniScript->context->getWorld(), prototype, id, transform, Body::COLLISION_TYPEID_DYNAMIC);
-						if (prototype->getScript().empty() == false) {
+						if (prototype->hasScript() == true) {
 							auto logicMiniScript = new LogicMiniScript();
 							logicMiniScript->loadScript(
 								Tools::getPathName(prototype->getScript()),
@@ -3495,7 +3495,7 @@ void LogicMiniScript::registerMethods() {
 								new MiniScriptLogic(
 									miniScript->context,
 									id,
-									true, // TODO: put me into prototype bean
+									prototype->isScriptHandlingHID(),
 									logicMiniScript
 								)
 							);
