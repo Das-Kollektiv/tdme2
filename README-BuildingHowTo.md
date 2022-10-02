@@ -137,6 +137,9 @@ make clean && make -j HARDWARE_THREADS mains VULKAN=YES|NO
 ```
 
 ## 1.5. Windows MSYS2/MINGW64(tested on Windows 10 Pro)
+
+Note: TDME2 physics using ReactPhysics3D is currently broken with current MSYS2/MINGW64 GCC on Windows 11.  However we will switch to MSC for Windows very soon I guess.
+
 ### 1.5.1 Install packages
 Install 64 Bit MSYS2 from https://www.msys2.org/, e.g. msys2-x86_64-20190524.exe, then update your MSYS2 installation and install packages.
 
