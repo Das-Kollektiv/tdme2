@@ -207,7 +207,7 @@ You need to adjust "tdme2" if you used a different folder.
 ```
 cd %HOMEPATH%\tdme2
 copy ext\fbx\win64\lib\libfbxsdk.dll .
-copy ext\glfw3\lib\win64\glfw3.dll . .
+copy ext\glfw3\lib\win64\glfw3.dll .
 copy ext\windows-msc\glew\libs\glew32.dll .
 copy ext\windows-msc\openal-soft\libs\OpenAl32.dll .
 copy ext\windows-msc\pthread\libs\pthreadVC2.dll .
