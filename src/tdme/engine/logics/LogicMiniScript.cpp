@@ -749,7 +749,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.mouse.getWheelY";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue = miniScript->mouseWheelX;
+				returnValue = miniScript->mouseWheelY;
 			}
 		};
 		registerMethod(new ScriptMethodInputMouseGetWheelY(this));
@@ -767,7 +767,7 @@ void LogicMiniScript::registerMethods() {
 				return "input.mouse.getWheelZ";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue = miniScript->mouseWheelX;
+				returnValue = miniScript->mouseWheelZ;
 			}
 		};
 		registerMethod(new ScriptMethodInputMouseGetWheelZ(this));
