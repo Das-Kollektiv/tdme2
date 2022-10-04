@@ -647,7 +647,8 @@ Reading all keys as array from set:
 | transform.getTranslation($transform: Transform): Vector3                                         |
 | transform.setTranslation(=$transform: Transform, $translation: Vector3): Void                    |
 | transform.applyRotation(=$transform: Transform, $axis: Vector3, $angle: Float): Void             |
-| transform.interpolateRotation($currentAngle: Float, $targetAngle: Float, $timePassedSeconds: Float, $degreesPerSeconds: Float, =$interpolatedAngle: Float): Float|
+| transform.fromMatrix($transformMatrix: Matrix4x4): Transform                                     |
+| transform.interpolateRotation($currentAngle: Float, $targetAngle: Float, $timePassedSeconds: Float, $degreesPerSeconds: Float, =$interpolatedAngle: Float): Boolean|
 | transform.multiply($transform: Transform, $vec3: Vector3): Vector3                               |
 | transform.rotate($transform: Transform, $vec3: Vector3): Vector3                                 |
 | vec2($x: Float, $y: Float): Vector2                                                              |

@@ -11,6 +11,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/model/RotationOrder.h>
 #include <tdme/engine/physics/Body.h>
 #include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
@@ -50,6 +51,7 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
+using tdme::engine::model::RotationOrder;
 using tdme::engine::physics::Body;
 using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;
@@ -4372,6 +4374,36 @@ void MiniScript::registerMethods() {
 			}
 		};
 		registerMethod(new ScriptMethodTransformGetRotationsQuaternion(this));
+	}
+	{
+		//
+		class ScriptMethodTransformFromMatrix: public ScriptMethod {
+		private:
+			MiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodTransformFromMatrix(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{.type = ScriptVariableType::TYPE_MATRIX4x4, .name = "transformMatrix", .optional = false, .assignBack = false },
+					},
+					ScriptVariableType::TYPE_TRANSFORM),
+					miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "transform.fromMatrix";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				Matrix4x4 transformMatrix;
+				if (MiniScript::getMatrix4x4Value(argumentValues, 0, transformMatrix, false) == true) {
+					Transform transform;
+					transform.fromMatrix(transformMatrix, RotationOrder::ZYX);
+					returnValue.setValue(transform);
+				} else {
+					Console::println("ScriptMethodTransformFromMatrix::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: matrix4x4 expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodTransformFromMatrix(this));
 	}
 	// bool methods
 	{

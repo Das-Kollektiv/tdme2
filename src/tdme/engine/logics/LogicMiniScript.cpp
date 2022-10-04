@@ -3479,9 +3479,10 @@ void LogicMiniScript::registerMethods() {
 					miniScript->getStringValue(argumentValues, 1, fileName) == true &&
 					miniScript->getStringValue(argumentValues, 2, id) == true &&
 					miniScript->getTransformValue(argumentValues, 3, transform) == true) {
-				} else {
 					try {
 						// TODO: we need to keep track of prototypes as they need to exist as long as they are used
+						// TODO: engine entities should be spawned in engine thread
+						// TODO: physics entities needs to be spawned in physics thread
 						auto prototype = PrototypeReader::read(pathName, fileName);
 						miniScript->context->getEngine()->addEntity(SceneConnector::createEntity(prototype, id, transform));
 						SceneConnector::createBody(miniScript->context->getWorld(), prototype, id, transform, Body::COLLISION_TYPEID_DYNAMIC);
@@ -3501,9 +3502,12 @@ void LogicMiniScript::registerMethods() {
 							);
 						}
 					} catch (Exception& exception) {
-						Console::println("ScriptMethodSceneConnectorAddPrototype::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: string expected, @ argument 3: transform expected");
+						Console::println("ScriptMethodSceneConnectorAddPrototype::executeMethod(): An error occurred: " + string(exception.what()));
 						miniScript->startErrorScript();
 					}
+				} else {
+					Console::println("ScriptMethodSceneConnectorAddPrototype::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: string expected, @ argument 3: transform expected");
+					miniScript->startErrorScript();
 				}
 			}
 		};
