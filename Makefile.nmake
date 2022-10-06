@@ -1,5 +1,5 @@
-OBJ = mscobj
-BIN = mscbin
+MSCOBJ = mscobj
+MSCBIN = mscbin
 
 SRCS_PLATFORM = \
 	src/tdme/os/network/platform/fallback/KernelEventMechanism.cpp \
@@ -28,8 +28,8 @@ INCLUDES = \
 WINDOWS_SDK_DIR = C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0
 
 MAIN_LDFLAGS = \
-	/LIBPATH $(BIN)\libtdme-ext.lib \
-	/LIBPATH $(BIN)\libtdme.lib
+	/LIBPATH $(MSCBIN)\libtdme-ext.lib \
+	/LIBPATH $(MSCBIN)\libtdme.lib
 
 LIBS_LDFLAGS = \
 	/LIBPATH "$(WINDOWS_SDK_DIR)\um\x64\user32.lib" \
@@ -753,6 +753,7 @@ all: \
 	MiniScriptTest \
 	PathFindingTest \
 	PhysicsTest1 PhysicsTest2 PhysicsTest3 PhysicsTest4 \
+	PivotTest \
 	RayTracingTest \
 	SkinningTest \
 	TextureAtlasTest \
@@ -781,7 +782,7 @@ all: \
 	miniscripttranspiler \
 	nmakefilegenerator \
 	optimizemodel \
-	parseh++ \
+	parsehplusplus \
 	scenefixmodelszup2yup \
 	sortincludes \
 	TDMEEditor \
@@ -790,399 +791,488 @@ all: \
 	clean
 
 init-bin:
-	mkdir $(BIN)
+	mkdir $(MSCBIN)
 
 ext-init:
-	mkdir $(OBJ)
+	mkdir $(MSCOBJ)
 
 ext-compile: $(EXT_SRCS)
-	cl /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
+	cl /Fo$(MSCOBJ)/ /c $(FLAGS) $(INCLUDES) $**
 
-ext-link1: $(OBJ)/*.obj
-	lib $(LD_FLAGS) /OUT:$(BIN)\libtdme-ext.lib $**
-	dumpbin /LINKERMEMBER $(BIN)\libtdme-ext.lib > $(BIN)\libtdme-ext.def.dumpbin.linkermember
-	.\ext\windows-msc\tools\msclib2dll.exe $(BIN)\libtdme-ext.def.dumpbin.linkermember
-	del $(BIN)\libtdme-ext.lib
+ext-link1: $(MSCOBJ)/*.obj
+	lib $(LD_FLAGS) /OUT:$(MSCBIN)\libtdme-ext.lib $**
+	dumpbin /LINKERMEMBER $(MSCBIN)\libtdme-ext.lib > $(MSCBIN)\libtdme-ext.def.dumpbin.linkermember
+	.\ext\windows-msc\tools\msclib2dll.exe $(MSCBIN)\libtdme-ext.def.dumpbin.linkermember
+	del $(MSCBIN)\libtdme-ext.lib
 
-ext-link2: $(OBJ)/*.obj
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/lib.rc $(BIN)\libtdme-ext.dll $(BIN)\libtdme-ext.dll.rc
-	rc $(BIN)\libtdme-ext.dll.rc
-	echo LIBRARY $(BIN)\libtdme-ext.dll > $(BIN)\libtdme-ext.def
-	type $(BIN)\libtdme-ext.def.dumpbin.linkermember.def >> $(BIN)\libtdme-ext.def
-	link $(LD_FLAGS) /DLL /DEF:$(BIN)\libtdme-ext.def /IGNORE:4197 /IGNORE:4102 $** $(BIN)\libtdme-ext.dll.res $(LIBS_LDFLAGS) /OUT:$(BIN)\libtdme-ext.dll
+ext-link2: $(MSCOBJ)/*.obj
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/lib.rc $(MSCBIN)\libtdme-ext.dll $(MSCBIN)\libtdme-ext.dll.rc
+	rc $(MSCBIN)\libtdme-ext.dll.rc
+	echo LIBRARY $(MSCBIN)\libtdme-ext.dll > $(MSCBIN)\libtdme-ext.def
+	type $(MSCBIN)\libtdme-ext.def.dumpbin.linkermember.def >> $(MSCBIN)\libtdme-ext.def
+	link $(LD_FLAGS) /DLL /DEF:$(MSCBIN)\libtdme-ext.def /IGNORE:4197 /IGNORE:4102 $** $(MSCBIN)\libtdme-ext.dll.res $(LIBS_LDFLAGS) /OUT:$(MSCBIN)\libtdme-ext.dll
 
-ext-clean:$(OBJ)/*.obj
-	del /S /Q $(OBJ) >nul 2>&1
-	rmdir $(OBJ)
+ext-clean:$(MSCOBJ)/*.obj
+	del /S /Q $(MSCOBJ) >nul 2>&1
+	if exist $(MSCOBJ) rmdir $(MSCOBJ)
 
 init:
-	mkdir $(OBJ) 
+	mkdir $(MSCOBJ) 
 
 init-mains:
-	mkdir $(OBJ)
+	mkdir $(MSCOBJ)
 
 compile: $(SRCS)
-	cl /D TDME2_DLL_EXPORT /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
+	cl /D TDME2_DLL_EXPORT /Fo$(MSCOBJ)/ /c $(FLAGS) $(INCLUDES) $**
 
-link1: $(OBJ)/*.obj
-	lib $(LD_FLAGS) /OUT:$(BIN)\libtdme.lib $**
-	dumpbin /LINKERMEMBER $(BIN)\libtdme.lib > $(BIN)\libtdme.def.dumpbin.linkermember
-	.\ext\windows-msc\tools\msclib2dll.exe $(BIN)\libtdme.def.dumpbin.linkermember
-	del $(BIN)\libtdme.lib
+link1: $(MSCOBJ)/*.obj
+	lib $(LD_FLAGS) /OUT:$(MSCBIN)\libtdme.lib $**
+	dumpbin /LINKERMEMBER $(MSCBIN)\libtdme.lib > $(MSCBIN)\libtdme.def.dumpbin.linkermember
+	.\ext\windows-msc\tools\msclib2dll.exe $(MSCBIN)\libtdme.def.dumpbin.linkermember
+	del $(MSCBIN)\libtdme.lib
 
-link2: $(OBJ)/*.obj
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/lib.rc $(BIN)\libtdme.dll $(BIN)\libtdme.dll.rc
-	rc $(BIN)\libtdme.dll.rc
-	echo LIBRARY $(BIN)\libtdme.dll > $(BIN)\libtdme.def
-	type $(BIN)\libtdme.def.dumpbin.linkermember.def >> $(BIN)\libtdme.def
-	link $(LD_FLAGS) /DLL /DEF:$(BIN)\libtdme.def /IGNORE:4197 /IGNORE:4102 $** $(BIN)\libtdme.dll.res $(LIBS_LDFLAGS) /LIBPATH $(BIN)\libtdme-ext.lib /OUT:$(BIN)\libtdme.dll
+link2: $(MSCOBJ)/*.obj
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/lib.rc $(MSCBIN)\libtdme.dll $(MSCBIN)\libtdme.dll.rc
+	rc $(MSCBIN)\libtdme.dll.rc
+	echo LIBRARY $(MSCBIN)\libtdme.dll > $(MSCBIN)\libtdme.def
+	type $(MSCBIN)\libtdme.def.dumpbin.linkermember.def >> $(MSCBIN)\libtdme.def
+	link $(LD_FLAGS) /DLL /DEF:$(MSCBIN)\libtdme.def /IGNORE:4197 /IGNORE:4102 $** $(MSCBIN)\libtdme.dll.res $(LIBS_LDFLAGS) /LIBPATH $(MSCBIN)\libtdme-ext.lib /OUT:$(MSCBIN)\libtdme.dll
 
 clean: 
-	del /S /Q $(OBJ) >nul 2>&1
-	rmdir $(OBJ)
-	del /S /Q $(BIN) >nul 2>&1
-	rmdir $(BIN)
+	del /S /Q $(MSCOBJ) >nul 2>&1
+	if exist $(MSCOBJ) rmdir $(MSCOBJ)
+	del /S /Q $(MSCBIN) >nul 2>&1
+	if exist $(MSCBIN) rmdir $(MSCBIN)
 
 clean-obj: 
-	del /S /Q $(OBJ) >nul 2>&1
-	rmdir $(OBJ)
+	del /S /Q $(MSCOBJ) >nul 2>&1
+	if exist $(MSCOBJ) rmdir $(MSCOBJ)
 
 opengl3core-init:
-	mkdir $(OBJ) 
+	mkdir $(MSCOBJ) 
 
 opengl3core-mains:
-	mkdir $(OBJ)
+	mkdir $(MSCOBJ)
 
 opengl3core-compile: $(OPENGL3CORE_RENDERER_LIB_SRCS)
-	cl /D TDME2_DLL_IMPORT /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
+	cl /D TDME2_DLL_IMPORT /Fo$(MSCOBJ)/ /c $(FLAGS) $(INCLUDES) $**
 
-opengl3core-link1: $(OBJ)/*.obj
-	lib $(LD_FLAGS) /OUT:$(BIN)\libopengl3corerenderer.lib $**
-	dumpbin /LINKERMEMBER $(BIN)\libopengl3corerenderer.lib > $(BIN)\libopengl3corerenderer.def.dumpbin.linkermember
-	.\ext\windows-msc\tools\msclib2dll.exe $(BIN)\libopengl3corerenderer.def.dumpbin.linkermember
-	del $(BIN)\libopengl3corerenderer.lib
+opengl3core-link1: $(MSCOBJ)/*.obj
+	lib $(LD_FLAGS) /OUT:$(MSCBIN)\libopengl3corerenderer.lib $**
+	dumpbin /LINKERMEMBER $(MSCBIN)\libopengl3corerenderer.lib > $(MSCBIN)\libopengl3corerenderer.def.dumpbin.linkermember
+	.\ext\windows-msc\tools\msclib2dll.exe $(MSCBIN)\libopengl3corerenderer.def.dumpbin.linkermember
+	del $(MSCBIN)\libopengl3corerenderer.lib
 
-opengl3core-link2: $(OBJ)/*.obj
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/lib.rc $(BIN)\libopengl3corerenderer.dll $(BIN)\libopengl3corerenderer.dll.rc
-	rc $(BIN)\libopengl3corerenderer.dll.rc
-	echo LIBRARY $(BIN)\libopengl3corerenderer.dll > $(BIN)\libopengl3corerenderer.def
-	type $(BIN)\libopengl3corerenderer.def.dumpbin.linkermember.def >> $(BIN)\libopengl3corerenderer.def
-	link $(LD_FLAGS) /DLL /DEF:$(BIN)\libopengl3corerenderer.def /IGNORE:4197 /IGNORE:4102 $** $(BIN)\libopengl3corerenderer.dll.res $(LIBS_LDFLAGS) /LIBPATH $(BIN)\libtdme.lib /LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\opengl32.lib" /LIBPATH "ext\windows-msc\glew\libs\glew32.lib" /OUT:$(BIN)\libopengl3corerenderer.dll
+opengl3core-link2: $(MSCOBJ)/*.obj
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/lib.rc $(MSCBIN)\libopengl3corerenderer.dll $(MSCBIN)\libopengl3corerenderer.dll.rc
+	rc $(MSCBIN)\libopengl3corerenderer.dll.rc
+	echo LIBRARY $(MSCBIN)\libopengl3corerenderer.dll > $(MSCBIN)\libopengl3corerenderer.def
+	type $(MSCBIN)\libopengl3corerenderer.def.dumpbin.linkermember.def >> $(MSCBIN)\libopengl3corerenderer.def
+	link $(LD_FLAGS) /DLL /DEF:$(MSCBIN)\libopengl3corerenderer.def /IGNORE:4197 /IGNORE:4102 $** $(MSCBIN)\libopengl3corerenderer.dll.res $(LIBS_LDFLAGS) /LIBPATH $(MSCBIN)\libtdme.lib /LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\opengl32.lib" /LIBPATH "ext\windows-msc\glew\libs\glew32.lib" /OUT:$(MSCBIN)\libopengl3corerenderer.dll
 
 opengl3core-clean:
-	del /S /Q $(OBJ) >nul 2>&1
-	rmdir $(OBJ)
+	del /S /Q $(MSCOBJ) >nul 2>&1
+	if exist $(MSCOBJ) rmdir $(MSCOBJ)
 
 opengl2-init:
-	mkdir $(OBJ)
+	mkdir $(MSCOBJ)
 
 opengl2-mains:
-	mkdir $(OBJ)
+	mkdir $(MSCOBJ)
 
 opengl2-compile: $(OPENGL2_RENDERER_LIB_SRCS)
-	cl /D TDME2_DLL_IMPORT /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
+	cl /D TDME2_DLL_IMPORT /Fo$(MSCOBJ)/ /c $(FLAGS) $(INCLUDES) $**
 
-opengl2-link1: $(OBJ)/*.obj
-	lib $(LD_FLAGS) /OUT:$(BIN)\libopengl2renderer.lib $**
-	dumpbin /LINKERMEMBER $(BIN)\libopengl2renderer.lib > $(BIN)\libopengl2renderer.def.dumpbin.linkermember
-	.\ext\windows-msc\tools\msclib2dll.exe $(BIN)\libopengl2renderer.def.dumpbin.linkermember
-	del $(BIN)\libopengl2renderer.lib
+opengl2-link1: $(MSCOBJ)/*.obj
+	lib $(LD_FLAGS) /OUT:$(MSCBIN)\libopengl2renderer.lib $**
+	dumpbin /LINKERMEMBER $(MSCBIN)\libopengl2renderer.lib > $(MSCBIN)\libopengl2renderer.def.dumpbin.linkermember
+	.\ext\windows-msc\tools\msclib2dll.exe $(MSCBIN)\libopengl2renderer.def.dumpbin.linkermember
+	del $(MSCBIN)\libopengl2renderer.lib
 
-opengl2-link2: $(OBJ)/*.obj
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/lib.rc $(BIN)\libopengl2renderer.dll $(BIN)\libopengl2renderer.dll.rc
-	rc $(BIN)\libopengl2renderer.dll.rc
-	echo LIBRARY $(BIN)\libopengl2renderer.dll > $(BIN)\libopengl2renderer.def
-	type $(BIN)\libopengl2renderer.def.dumpbin.linkermember.def >> $(BIN)\libopengl2renderer.def
-	link $(LD_FLAGS) /DLL /DEF:$(BIN)\libopengl2renderer.def /IGNORE:4197 /IGNORE:4197 /IGNORE:4102 $** $(BIN)\libopengl2renderer.dll.res $(LIBS_LDFLAGS) /LIBPATH $(BIN)\libtdme.lib /LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\opengl32.lib" /LIBPATH "ext\windows-msc\glew\libs\glew32.lib" /OUT:$(BIN)\libopengl2renderer.dll
+opengl2-link2: $(MSCOBJ)/*.obj
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/lib.rc $(MSCBIN)\libopengl2renderer.dll $(MSCBIN)\libopengl2renderer.dll.rc
+	rc $(MSCBIN)\libopengl2renderer.dll.rc
+	echo LIBRARY $(MSCBIN)\libopengl2renderer.dll > $(MSCBIN)\libopengl2renderer.def
+	type $(MSCBIN)\libopengl2renderer.def.dumpbin.linkermember.def >> $(MSCBIN)\libopengl2renderer.def
+	link $(LD_FLAGS) /DLL /DEF:$(MSCBIN)\libopengl2renderer.def /IGNORE:4197 /IGNORE:4197 /IGNORE:4102 $** $(MSCBIN)\libopengl2renderer.dll.res $(LIBS_LDFLAGS) /LIBPATH $(MSCBIN)\libtdme.lib /LIBPATH "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x64\opengl32.lib" /LIBPATH "ext\windows-msc\glew\libs\glew32.lib" /OUT:$(MSCBIN)\libopengl2renderer.dll
 
 opengl2-clean:
-	del /S /Q $(OBJ) >nul 2>&1
-	rmdir $(OBJ)
+	del /S /Q $(MSCOBJ) >nul 2>&1
+	if exist $(MSCOBJ) rmdir $(MSCOBJ)
 
 vulkan-clean:
-	del /S /Q $(OBJ) >nul 2>&1
-	rmdir $(OBJ)
+	del /S /Q $(MSCOBJ) >nul 2>&1
+	if exist $(MSCOBJ) rmdir $(MSCOBJ)
 
 vulkan-init:
-	mkdir $(OBJ)
+	mkdir $(MSCOBJ)
 
 vulkan-mains:
-	mkdir $(OBJ)
+	mkdir $(MSCOBJ)
 
 vulkan-compile: $(VULKAN_RENDERER_LIB_SRCS)
-	cl /D TDME2_DLL_IMPORT /Fo$(OBJ)/ /c $(FLAGS) $(INCLUDES) $**
+	cl /D TDME2_DLL_IMPORT /Fo$(MSCOBJ)/ /c $(FLAGS) $(INCLUDES) $**
 
-vulkan-link1: $(OBJ)/*.obj
-	lib $(LD_FLAGS) /OUT:$(BIN)\libvulkanrenderer.lib $**
-	dumpbin /LINKERMEMBER $(BIN)\libvulkanrenderer.lib > $(BIN)\libvulkanrenderer.def.dumpbin.linkermember
-	.\ext\windows-msc\tools\msclib2dll.exe $(BIN)\libvulkanrenderer.def.dumpbin.linkermember
-	del $(BIN)\libvulkanrenderer.lib
+vulkan-link1: $(MSCOBJ)/*.obj
+	lib $(LD_FLAGS) /OUT:$(MSCBIN)\libvulkanrenderer.lib $**
+	dumpbin /LINKERMEMBER $(MSCBIN)\libvulkanrenderer.lib > $(MSCBIN)\libvulkanrenderer.def.dumpbin.linkermember
+	.\ext\windows-msc\tools\msclib2dll.exe $(MSCBIN)\libvulkanrenderer.def.dumpbin.linkermember
+	del $(MSCBIN)\libvulkanrenderer.lib
 
-vulkan-link2: $(OBJ)/*.obj
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/lib.rc $(BIN)\libvulkanrenderer.dll $(BIN)\libvulkanrenderer.dll.rc
-	rc $(BIN)\libvulkanrenderer.dll.rc
-	echo LIBRARY $(BIN)\libvulkanrenderer.dll > $(BIN)\libvulkanrenderer.def
-	echo DESCRIPTION $(BIN)\libvulkanrenderer >> $(BIN)\libvulkanrenderer.def
-	type $(BIN)\libvulkanrenderer.def.dumpbin.linkermember.def >> $(BIN)\libvulkanrenderer.def
-	link $(LD_FLAGS) /DLL /DEF:$(BIN)\libvulkanrenderer.def /IGNORE:4197 /IGNORE:4102 $** $(BIN)\libvulkanrenderer.dll.res $(LIBS_LDFLAGS) /LIBPATH $(BIN)\libtdme.lib /LIBPATH "ext\vulkan\runtime\msc64\vulkan-1.lib" /OUT:$(BIN)\libvulkanrenderer.dll
+vulkan-link2: $(MSCOBJ)/*.obj
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/lib.rc $(MSCBIN)\libvulkanrenderer.dll $(MSCBIN)\libvulkanrenderer.dll.rc
+	rc $(MSCBIN)\libvulkanrenderer.dll.rc
+	echo LIBRARY $(MSCBIN)\libvulkanrenderer.dll > $(MSCBIN)\libvulkanrenderer.def
+	echo DESCRIPTION $(MSCBIN)\libvulkanrenderer >> $(MSCBIN)\libvulkanrenderer.def
+	type $(MSCBIN)\libvulkanrenderer.def.dumpbin.linkermember.def >> $(MSCBIN)\libvulkanrenderer.def
+	link $(LD_FLAGS) /DLL /DEF:$(MSCBIN)\libvulkanrenderer.def /IGNORE:4197 /IGNORE:4102 $** $(MSCBIN)\libvulkanrenderer.dll.res $(LIBS_LDFLAGS) /LIBPATH $(MSCBIN)\libtdme.lib /LIBPATH "ext\vulkan\runtime\msc64\vulkan-1.lib" /OUT:$(MSCBIN)\libvulkanrenderer.dll
 
 AudioTest:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc AudioTest.exe $(BIN)\AudioTest.exe.rc
-	rc $(BIN)\AudioTest.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\AudioTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/AudioTest-main.cpp $(BIN)\AudioTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc AudioTest.exe $(MSCBIN)\AudioTest.exe.rc
+	rc $(MSCBIN)\AudioTest.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\AudioTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/AudioTest-main.cpp $(MSCBIN)\AudioTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 ContainerTest:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc ContainerTest.exe $(BIN)\ContainerTest.exe.rc
-	rc $(BIN)\ContainerTest.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\ContainerTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/ContainerTest-main.cpp $(BIN)\ContainerTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc ContainerTest.exe $(MSCBIN)\ContainerTest.exe.rc
+	rc $(MSCBIN)\ContainerTest.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\ContainerTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/ContainerTest-main.cpp $(MSCBIN)\ContainerTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 CrashTest:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc CrashTest.exe $(BIN)\CrashTest.exe.rc
-	rc $(BIN)\CrashTest.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\CrashTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/CrashTest-main.cpp $(BIN)\CrashTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc CrashTest.exe $(MSCBIN)\CrashTest.exe.rc
+	rc $(MSCBIN)\CrashTest.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\CrashTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/CrashTest-main.cpp $(MSCBIN)\CrashTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 EngineTest:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc EngineTest.exe $(BIN)\EngineTest.exe.rc
-	rc $(BIN)\EngineTest.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\EngineTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/EngineTest-main.cpp $(BIN)\EngineTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc EngineTest.exe $(MSCBIN)\EngineTest.exe.rc
+	rc $(MSCBIN)\EngineTest.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\EngineTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/EngineTest-main.cpp $(MSCBIN)\EngineTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 EntityHierarchyTest:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc EntityHierarchyTest.exe $(BIN)\EntityHierarchyTest.exe.rc
-	rc $(BIN)\EntityHierarchyTest.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\EntityHierarchyTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/EntityHierarchyTest-main.cpp $(BIN)\EntityHierarchyTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc EntityHierarchyTest.exe $(MSCBIN)\EntityHierarchyTest.exe.rc
+	rc $(MSCBIN)\EntityHierarchyTest.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\EntityHierarchyTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/EntityHierarchyTest-main.cpp $(MSCBIN)\EntityHierarchyTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 HTTPClientTest:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc HTTPClientTest.exe $(BIN)\HTTPClientTest.exe.rc
-	rc $(BIN)\HTTPClientTest.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\HTMLClientTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/HTTPClientTest-main.cpp $(BIN)\HTTPClientTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc HTTPClientTest.exe $(MSCBIN)\HTTPClientTest.exe.rc
+	rc $(MSCBIN)\HTTPClientTest.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\HTTPClientTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/HTTPClientTest-main.cpp $(MSCBIN)\HTTPClientTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 HTTPDownloadClientTest:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc HTTPDownloadClientTest.exe $(BIN)\HTTPDownloadClientTest.exe.rc
-	rc $(BIN)\HTTPDownloadClientTest.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\HTMLDownloadClientTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/HTTPDownloadClientTest-main.cpp $(BIN)\HTTPDownloadClientTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc HTTPDownloadClientTest.exe $(MSCBIN)\HTTPDownloadClientTest.exe.rc
+	rc $(MSCBIN)\HTTPDownloadClientTest.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\HTTPDownloadClientTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/HTTPDownloadClientTest-main.cpp $(MSCBIN)\HTTPDownloadClientTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 LODTest:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc LODTest.exe $(BIN)\LODTest.exe.rc
-	rc $(BIN)\LODTest.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\LODTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/LODTest-main.cpp $(BIN)\LODTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc LODTest.exe $(MSCBIN)\LODTest.exe.rc
+	rc $(MSCBIN)\LODTest.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\LODTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/LODTest-main.cpp $(MSCBIN)\LODTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 FlowMapTest:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc FlowMapTest.exe $(BIN)\FlowMapTest.exe.rc
-	rc $(BIN)\FlowMapTest.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\FlowMapTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FlowMapTest-main.cpp $(BIN)\FlowMapTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc FlowMapTest.exe $(MSCBIN)\FlowMapTest.exe.rc
+	rc $(MSCBIN)\FlowMapTest.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\FlowMapTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FlowMapTest-main.cpp $(MSCBIN)\FlowMapTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 FlowMapTest2:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc FlowMapTest2.exe $(BIN)\FlowMapTest2.exe.rc
-	rc $(BIN)\FlowMapTest2.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\FlowMapTest2 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FlowMapTest2-main.cpp $(BIN)\FlowMapTest2.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc FlowMapTest2.exe $(MSCBIN)\FlowMapTest2.exe.rc
+	rc $(MSCBIN)\FlowMapTest2.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\FlowMapTest2 /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FlowMapTest2-main.cpp $(MSCBIN)\FlowMapTest2.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 FoliageTest:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc FoliageTest.exe $(BIN)\FoliageTest.exe.rc
-	rc $(BIN)\FoliageTest.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\FoliageTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FoliageTest-main.cpp $(BIN)\FoliageTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc FoliageTest.exe $(MSCBIN)\FoliageTest.exe.rc
+	rc $(MSCBIN)\FoliageTest.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\FoliageTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/FoliageTest-main.cpp $(MSCBIN)\FoliageTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 MathOperatorTest:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc MathOperatorTest.exe $(BIN)\MathOperatorTest.exe.rc
-	rc $(BIN)\MathOperatorTest.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\MathOperatorTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/MathOperatorTest-main.cpp $(BIN)\MathOperatorTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc MathOperatorTest.exe $(MSCBIN)\MathOperatorTest.exe.rc
+	rc $(MSCBIN)\MathOperatorTest.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\MathOperatorTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/MathOperatorTest-main.cpp $(MSCBIN)\MathOperatorTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 MiniScriptTest:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc MiniScriptTest.exe $(BIN)\MiniScriptTest.exe.rc
-	rc $(BIN)\MiniScriptTest.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\MiniScriptTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/MiniScriptTest-main.cpp $(BIN)\MiniScriptTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc MiniScriptTest.exe $(MSCBIN)\MiniScriptTest.exe.rc
+	rc $(MSCBIN)\MiniScriptTest.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\MiniScriptTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/MiniScriptTest-main.cpp $(MSCBIN)\MiniScriptTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 PathFindingTest:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc PathFindingTest.exe $(BIN)\PathFindingTest.exe.rc
-	rc $(BIN)\PathFindingTest.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\PathFindingTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PathFindingTest-main.cpp $(BIN)\PathFindingTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc PathFindingTest.exe $(MSCBIN)\PathFindingTest.exe.rc
+	rc $(MSCBIN)\PathFindingTest.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\PathFindingTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PathFindingTest-main.cpp $(MSCBIN)\PathFindingTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 PhysicsTest1:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc PhysicsTest1.exe $(BIN)\PhysicsTest1.exe.rc
-	rc $(BIN)\PhysicsTest1.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\PhysicsTest1 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest1-main.cpp $(BIN)\PhysicsTest1.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc PhysicsTest1.exe $(MSCBIN)\PhysicsTest1.exe.rc
+	rc $(MSCBIN)\PhysicsTest1.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\PhysicsTest1 /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest1-main.cpp $(MSCBIN)\PhysicsTest1.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 PhysicsTest2:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc PhysicsTest2.exe $(BIN)\PhysicsTest2.exe.rc
-	rc $(BIN)\PhysicsTest2.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\PhysicsTest2 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest2-main.cpp $(BIN)\PhysicsTest2.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc PhysicsTest2.exe $(MSCBIN)\PhysicsTest2.exe.rc
+	rc $(MSCBIN)\PhysicsTest2.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\PhysicsTest2 /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest2-main.cpp $(MSCBIN)\PhysicsTest2.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 PhysicsTest3:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc PhysicsTest3.exe $(BIN)\PhysicsTest3.exe.rc
-	rc $(BIN)\PhysicsTest3.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\PhysicsTest3 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest3-main.cpp $(BIN)\PhysicsTest3.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc PhysicsTest3.exe $(MSCBIN)\PhysicsTest3.exe.rc
+	rc $(MSCBIN)\PhysicsTest3.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\PhysicsTest3 /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest3-main.cpp $(MSCBIN)\PhysicsTest3.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 PhysicsTest4:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc PhysicsTest4.exe $(BIN)\PhysicsTest4.exe.rc
-	rc $(BIN)\PhysicsTest4.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\PhysicsTest4 /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest4-main.cpp $(BIN)\PhysicsTest4.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc PhysicsTest4.exe $(MSCBIN)\PhysicsTest4.exe.rc
+	rc $(MSCBIN)\PhysicsTest4.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\PhysicsTest4 /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest4-main.cpp $(MSCBIN)\PhysicsTest4.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
+PivotTest:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc PhysicsTest1.exe $(MSCBIN)\PivotTest.exe.rc
+	rc $(MSCBIN)\PivotTest.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\PivotTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PivotTest-main.cpp $(MSCBIN)\PivotTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 RayTracingTest:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc RayTracingTest.exe $(BIN)\RayTracingTest.exe.rc
-	rc $(BIN)\RayTracingTest.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\RayTracingTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/RayTracingTest-main.cpp $(BIN)\RayTracingTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc RayTracingTest.exe $(MSCBIN)\RayTracingTest.exe.rc
+	rc $(MSCBIN)\RayTracingTest.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\RayTracingTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/RayTracingTest-main.cpp $(MSCBIN)\RayTracingTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 SkinningTest:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc SkinningTest.exe $(BIN)\SkinningTest.exe.rc
-	rc $(BIN)\SkinningTest.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\SkinningTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/SkinningTest-main.cpp $(BIN)\SkinningTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc SkinningTest.exe $(MSCBIN)\SkinningTest.exe.rc
+	rc $(MSCBIN)\SkinningTest.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\SkinningTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/SkinningTest-main.cpp $(MSCBIN)\SkinningTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 TextureAtlasTest:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc TextureAtlasTest.exe $(BIN)\TextureAtlasTest.exe.rc
-	rc $(BIN)\TextureAtlasTest.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\TextureAtlasTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/TextureAtlasTest-main.cpp $(BIN)\TextureAtlasTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc TextureAtlasTest.exe $(MSCBIN)\TextureAtlasTest.exe.rc
+	rc $(MSCBIN)\TextureAtlasTest.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\TextureAtlasTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/TextureAtlasTest-main.cpp $(MSCBIN)\TextureAtlasTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 ThreadingTest:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc ThreadingTest.exe $(BIN)\ThreadingTest.exe.rc
-	rc $(BIN)\ThreadingTest.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\ThreadingTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/ThreadingTest-main.cpp $(BIN)\ThreadingTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc ThreadingTest.exe $(MSCBIN)\ThreadingTest.exe.rc
+	rc $(MSCBIN)\ThreadingTest.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\ThreadingTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/ThreadingTest-main.cpp $(MSCBIN)\ThreadingTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 TreeTest:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc TreeTest.exe $(BIN)\TreeTest.exe.rc
-	rc $(BIN)\TreeTest.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\TreeTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/TreeTest-main.cpp $(BIN)\TreeTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc TreeTest.exe $(MSCBIN)\TreeTest.exe.rc
+	rc $(MSCBIN)\TreeTest.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\TreeTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/TreeTest-main.cpp $(MSCBIN)\TreeTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 UDPClientTest:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc UDPClientTest.exe $(BIN)\UDPClientTest.exe.rc
-	rc $(BIN)\UDPClientTest.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\UDPClientTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/UDPClientTest-main.cpp $(BIN)\UDPClientTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc UDPClientTest.exe $(MSCBIN)\UDPClientTest.exe.rc
+	rc $(MSCBIN)\UDPClientTest.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\UDPClientTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/UDPClientTest-main.cpp $(MSCBIN)\UDPClientTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 UDPServerTest:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc UDPServerTest.exe $(BIN)\UDPServerTest.exe.rc
-	rc $(BIN)\UDPServerTest.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\UDPServerTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/UDPServerTest-main.cpp $(BIN)\UDPServerTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc UDPServerTest.exe $(MSCBIN)\UDPServerTest.exe.rc
+	rc $(MSCBIN)\UDPServerTest.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\UDPServerTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/UDPServerTest-main.cpp $(MSCBIN)\UDPServerTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 VideoTest:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc VideoTest.exe $(BIN)\VideoTest.exe.rc
-	rc $(BIN)\VideoTest.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\VideoTest /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/VideoTest-main.cpp $(BIN)\VideoTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc VideoTest.exe $(MSCBIN)\VideoTest.exe.rc
+	rc $(MSCBIN)\VideoTest.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\VideoTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/VideoTest-main.cpp $(MSCBIN)\VideoTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 WaterTest:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc WaterTest.exe $(BIN)\WaterTest.exe.rc
-	rc $(BIN)\WaterTest.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\WaterTest $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tests/WaterTest-main.cpp $(BIN)\WaterTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc WaterTest.exe $(MSCBIN)\WaterTest.exe.rc
+	rc $(MSCBIN)\WaterTest.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\WaterTest $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tests/WaterTest-main.cpp $(MSCBIN)\WaterTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 archive:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc archive.exe $(BIN)\archive.exe.rc
-	rc $(BIN)\archive.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\archive $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/archive-main.cpp $(BIN)\archive.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc archive.exe $(MSCBIN)\archive.exe.rc
+	rc $(MSCBIN)\archive.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\archive $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tools/cli/archive-main.cpp $(MSCBIN)\archive.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 collectguitags:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc collectguitags.exe $(BIN)\collectguitags.exe.rc
-	rc $(BIN)\collectguitags.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\collectguitags $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/collectguitags-main.cpp $(BIN)\collectguitags.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc collectguitags.exe $(MSCBIN)\collectguitags.exe.rc
+	rc $(MSCBIN)\collectguitags.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\collectguitags $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tools/cli/collectguitags-main.cpp $(MSCBIN)\collectguitags.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 converttotm:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc converttotm.exe $(BIN)\converttotm.exe.rc
-	rc $(BIN)\converttotm.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\converttotm $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/converttotm-main.cpp $(BIN)\converttotm.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc converttotm.exe $(MSCBIN)\converttotm.exe.rc
+	rc $(MSCBIN)\converttotm.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\converttotm $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tools/cli/converttotm-main.cpp $(MSCBIN)\converttotm.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 copyanimationsetups:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc copyanimationsetups.exe $(BIN)\copyanimationsetups.exe.rc
-	rc $(BIN)\copyanimationsetups.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\copyanimationsetups /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/copyanimationsetups-main.cpp $(BIN)\copyanimationsetups.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc copyanimationsetups.exe $(MSCBIN)\copyanimationsetups.exe.rc
+	rc $(MSCBIN)\copyanimationsetups.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\copyanimationsetups /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/copyanimationsetups-main.cpp $(MSCBIN)\copyanimationsetups.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 createinstaller:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc createinstaller.exe $(BIN)\createinstaller.exe.rc
-	rc $(BIN)\createinstaller.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\createinstaller $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/createinstaller-main.cpp $(BIN)\createinstaller.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc createinstaller.exe $(MSCBIN)\createinstaller.exe.rc
+	rc $(MSCBIN)\createinstaller.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\createinstaller $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tools/cli/createinstaller-main.cpp $(MSCBIN)\createinstaller.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 createminiscriptcodecompletion:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc createminiscriptcodecompletion.exe $(BIN)\createminiscriptcodecompletion.exe.rc
-	rc $(BIN)\createminiscriptcodecompletion.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\createminiscriptcodecompletion $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/createminiscriptcodecompletion-main.cpp $(BIN)\createminiscriptcodecompletion.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc createminiscriptcodecompletion.exe $(MSCBIN)\createminiscriptcodecompletion.exe.rc
+	rc $(MSCBIN)\createminiscriptcodecompletion.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\createminiscriptcodecompletion $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tools/cli/createminiscriptcodecompletion-main.cpp $(MSCBIN)\createminiscriptcodecompletion.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 createminiscriptdocumentation:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc createminiscriptdocumentation.exe $(BIN)\createminiscriptdocumentation.exe.rc
-	rc $(BIN)\createminiscriptdocumentation.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\createminiscriptdocumentation $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/createminiscriptdocumentation-main.cpp $(BIN)\createminiscriptdocumentation.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc createminiscriptdocumentation.exe $(MSCBIN)\createminiscriptdocumentation.exe.rc
+	rc $(MSCBIN)\createminiscriptdocumentation.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\createminiscriptdocumentation $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tools/cli/createminiscriptdocumentation-main.cpp $(MSCBIN)\createminiscriptdocumentation.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 createrc:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc createrc.exe $(BIN)\createrc.exe.rc
-	rc $(BIN)\createrc.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\createrc $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/createrc-main.cpp $(BIN)\createrc.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc createrc.exe $(MSCBIN)\createrc.exe.rc
+	rc $(MSCBIN)\createrc.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\createrc $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tools/cli/createrc-main.cpp $(MSCBIN)\createrc.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 dumpmodel:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc dumpmodel.exe $(BIN)\dumpmodel.exe.rc
-	rc $(BIN)\dumpmodel.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\dumpmodel $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/dumpmodel-main.cpp $(BIN)\dumpmodel.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc dumpmodel.exe $(MSCBIN)\dumpmodel.exe.rc
+	rc $(MSCBIN)\dumpmodel.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\dumpmodel $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tools/cli/dumpmodel-main.cpp $(MSCBIN)\dumpmodel.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 imageprocessor:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc imageprocessor.exe $(BIN)\imageprocessor.exe.rc
-	rc $(BIN)\imageprocessor.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\imageprocessor $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/imageprocessor-main.cpp $(BIN)\imageprocessor.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc imageprocessor.exe $(MSCBIN)\imageprocessor.exe.rc
+	rc $(MSCBIN)\imageprocessor.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\imageprocessor $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tools/cli/imageprocessor-main.cpp $(MSCBIN)\imageprocessor.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 recreatevkcache:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc recreatevkcache.exe $(BIN)\recreatevkcache.exe.rc
-	rc $(BIN)\recreatevkcache.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\recreatevkcache $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/recreatevkcache-main.cpp $(BIN)\recreatevkcache.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc recreatevkcache.exe $(MSCBIN)\recreatevkcache.exe.rc
+	rc $(MSCBIN)\recreatevkcache.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\recreatevkcache $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tools/cli/recreatevkcache-main.cpp $(MSCBIN)\recreatevkcache.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 generatelicenses:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc generatelicenses.exe $(BIN)\generatelicenses.exe.rc
-	rc $(BIN)\generatelicenses.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\generatelicenses /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/generatelicenses-main.cpp $(BIN)\generatelicenses.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc generatelicenses.exe $(MSCBIN)\generatelicenses.exe.rc
+	rc $(MSCBIN)\generatelicenses.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\generatelicenses /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/generatelicenses-main.cpp $(MSCBIN)\generatelicenses.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 importtmodel:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc importtmodel.exe $(BIN)\importtmodel.exe.rc
-	rc $(BIN)\importtmodel.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\importtmodel /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/importtmodel-main.cpp $(BIN)\importtmodel.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc importtmodel.exe $(MSCBIN)\importtmodel.exe.rc
+	rc $(MSCBIN)\importtmodel.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\importtmodel /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/importtmodel-main.cpp $(MSCBIN)\importtmodel.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 fixdoxygen:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc fixdoxygen.exe $(BIN)\fixdoxygen.exe.rc
-	rc $(BIN)\fixdoxygen.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\fixdoxygen /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/fixdoxygen-main.cpp $(BIN)\fixdoxygen.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc fixdoxygen.exe $(MSCBIN)\fixdoxygen.exe.rc
+	rc $(MSCBIN)\fixdoxygen.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\fixdoxygen /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/fixdoxygen-main.cpp $(MSCBIN)\fixdoxygen.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 msclib2dll:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc msclib2dll.exe $(BIN)\msclib2dll.exe.rc
-	rc $(BIN)\msclib2dll.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\msclib2dll /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/msclib2dll-main.cpp $(BIN)\msclib2dll.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc msclib2dll.exe $(MSCBIN)\msclib2dll.exe.rc
+	rc $(MSCBIN)\msclib2dll.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\msclib2dll /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/msclib2dll-main.cpp $(MSCBIN)\msclib2dll.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 makefilegenerator:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc makefilegenerator.exe $(BIN)\makefilegenerator.exe.rc
-	rc $(BIN)\makefilegenerator.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\makefilegenerator $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/makefilegenerator-main.cpp $(BIN)\makefilegenerator.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc makefilegenerator.exe $(MSCBIN)\makefilegenerator.exe.rc
+	rc $(MSCBIN)\makefilegenerator.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\makefilegenerator $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tools/cli/makefilegenerator-main.cpp $(MSCBIN)\makefilegenerator.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 miniscripttranspiler:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc miniscripttranspiler.exe $(BIN)\miniscripttranspiler.exe.rc
-	rc $(BIN)\miniscripttranspiler.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\miniscripttranspiler $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/miniscripttranspiler-main.cpp $(BIN)\miniscripttranspiler.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc miniscripttranspiler.exe $(MSCBIN)\miniscripttranspiler.exe.rc
+	rc $(MSCBIN)\miniscripttranspiler.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\miniscripttranspiler $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tools/cli/miniscripttranspiler-main.cpp $(MSCBIN)\miniscripttranspiler.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 nmakefilegenerator:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc nmakefilegenerator.exe $(BIN)\nmakefilegenerator.exe.rc
-	rc $(BIN)\nmakefilegenerator.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\nmakefilegenerator $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/nmakefilegenerator-main.cpp $(BIN)\nmakefilegenerator.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc nmakefilegenerator.exe $(MSCBIN)\nmakefilegenerator.exe.rc
+	rc $(MSCBIN)\nmakefilegenerator.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\nmakefilegenerator $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tools/cli/nmakefilegenerator-main.cpp $(MSCBIN)\nmakefilegenerator.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 optimizemodel:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc optimizemodel.exe $(BIN)\optimizemodel.exe.rc
-	rc $(BIN)\optimizemodel.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\optimizemodel $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/optimizemodel-main.cpp $(BIN)\optimizemodel.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc optimizemodel.exe $(MSCBIN)\optimizemodel.exe.rc
+	rc $(MSCBIN)\optimizemodel.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\optimizemodel $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tools/cli/optimizemodel-main.cpp $(MSCBIN)\optimizemodel.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
-parseh++:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc parseh++.exe $(BIN)\parseh++.exe.rc
-	rc $(BIN)\parseh++.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\parseh++ $(FLAGS) /Fo$(OBJ)/ $(INCLUDES) src/tdme/tools/cli/parseh++-main.cpp $(BIN)\parseh++.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+parsehplusplus:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc parseh++.exe $(MSCBIN)\parseh++.exe.rc
+	rc $(MSCBIN)\parseh++.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\parseh++ $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tools/cli/parseh++-main.cpp $(MSCBIN)\parseh++.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 scenefixmodelszup2yup:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc scenefixmodelszup2yup.exe $(BIN)\scenefixmodelszup2yup.exe.rc
-	rc $(BIN)\scenefixmodelszup2yup.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\scenefixmodelszup2yup /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/scenefixmodelszup2yup-main.cpp $(BIN)\scenefixmodelszup2yup.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc scenefixmodelszup2yup.exe $(MSCBIN)\scenefixmodelszup2yup.exe.rc
+	rc $(MSCBIN)\scenefixmodelszup2yup.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\scenefixmodelszup2yup /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/scenefixmodelszup2yup-main.cpp $(MSCBIN)\scenefixmodelszup2yup.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 sortincludes:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc sortincludes.exe $(BIN)\sortincludes.exe.rc
-	rc $(BIN)\sortincludes.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\sortincludes /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/sortincludes-main.cpp $(BIN)\sortincludes.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc sortincludes.exe $(MSCBIN)\sortincludes.exe.rc
+	rc $(MSCBIN)\sortincludes.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\sortincludes /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/cli/sortincludes-main.cpp $(MSCBIN)\sortincludes.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 TDMEEditor:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc TDMEEditor.exe $(BIN)\TDMEEditor.exe.rc
-	rc $(BIN)\TDMEEditor.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\TDMEEditor /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/editor/TDMEEditor-main.cpp $(BIN)\TDMEEditor.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc TDMEEditor.exe $(MSCBIN)\TDMEEditor.exe.rc
+	rc $(MSCBIN)\TDMEEditor.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\TDMEEditor /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/editor/TDMEEditor-main.cpp $(MSCBIN)\TDMEEditor.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 InstallerApp:
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc Installer.exe $(BIN)\Installer.exe.rc
-	rc $(BIN)\Installer.exe.rc
-	cl /D TDME2_DLL_IMPORT /Fe$(BIN)\Installer /Fo$(OBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/installer/Installer-main.cpp $(BIN)\Installer.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc Installer.exe $(MSCBIN)\Installer.exe.rc
+	rc $(MSCBIN)\Installer.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\Installer /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tools/installer/Installer-main.cpp $(MSCBIN)\Installer.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 copy-executables:
-	move vc140.pdb $(BIN)\. 
-	copy $(BIN)\*.exe .
-	copy $(BIN)\*.dll .
-	copy $(BIN)\*.lib .
+	if exist bin\tdme\tools\installer del /S /Q bin\tdme\tools\installer >nul 2>&1
+	if exist bin\tdme\tools\installer rmdir bin\tdme\tools\installer 
+	if exist bin\tdme\tools\editor del /S /Q bin\tdme\tools\editor >nul 2>&1
+	if exist bin\tdme\tools\editor rmdir bin\tdme\tools\editor
+	if exist bin\tdme\tools\cli del /S /Q bin\tdme\tools\cli >nul 2>&1
+	if exist bin\tdme\tools\cli rmdir bin\tdme\tools\cli
+	if exist bin\tdme\tools del /S /Q bin\tdme\tools >nul 2>&1
+	if exist bin\tdme\tools rmdir bin\tdme\tools
+	if exist bin\tdme\tests del /S /Q bin\tdme\tests >nul 2>&1
+	if exist bin\tdme\tests rmdir bin\tdme\tests
+	if exist bin\tdme del /S /Q bin\tdme >nul 2>&1
+	if exist bin\tdme rmdir bin\tdme
+	if exist bin del /S /Q bin >nul 2>&1
+	if exist bin rmdir bin
+
+	if exist lib del /S /Q lib >nul 2>&1
+	if exist lib rmdir lib
+
+	mkdir lib
+	if exist vc140.pdb move vc140.pdb $(MSCBIN)\. 
+	copy $(MSCBIN)\*.dll lib\.
+	copy $(MSCBIN)\*.lib lib\.
+
+	mkdir bin
+	mkdir bin\tdme
+
+	mkdir bin\tdme\tests
+	
+	copy $(MSCBIN)\AudioTest.exe bin\tdme\tests\.
+	copy $(MSCBIN)\ContainerTest.exe bin\tdme\tests\.
+	copy $(MSCBIN)\CrashTest.exe bin\tdme\tests\.
+	copy $(MSCBIN)\EngineTest.exe bin\tdme\tests\.
+	copy $(MSCBIN)\EntityHierarchyTest.exe bin\tdme\tests\.
+	copy $(MSCBIN)\FlowMapTest.exe bin\tdme\tests\.
+	copy $(MSCBIN)\FlowMapTest2.exe bin\tdme\tests\.
+	copy $(MSCBIN)\FoliageTest.exe bin\tdme\tests\.
+	copy $(MSCBIN)\HTTPClientTest.exe bin\tdme\tests\.
+	copy $(MSCBIN)\HTTPDownloadClientTest.exe bin\tdme\tests\.
+	copy $(MSCBIN)\LODTest.exe bin\tdme\tests\.
+	copy $(MSCBIN)\MathOperatorTest.exe bin\tdme\tests\.
+	copy $(MSCBIN)\MiniScriptTest.exe bin\tdme\tests\.
+	copy $(MSCBIN)\PathFindingTest.exe bin\tdme\tests\.
+	copy $(MSCBIN)\PhysicsTest1.exe bin\tdme\tests\.
+	copy $(MSCBIN)\PhysicsTest2.exe bin\tdme\tests\.
+	copy $(MSCBIN)\PhysicsTest3.exe bin\tdme\tests\.
+	copy $(MSCBIN)\PhysicsTest4.exe bin\tdme\tests\.
+	copy $(MSCBIN)\PivotTest.exe bin\tdme\tests\.
+	copy $(MSCBIN)\RayTracingTest.exe bin\tdme\tests\.
+	copy $(MSCBIN)\SkinningTest.exe bin\tdme\tests\.
+	copy $(MSCBIN)\TextureAtlasTest.exe bin\tdme\tests\.
+	copy $(MSCBIN)\ThreadingTest.exe bin\tdme\tests\.
+	copy $(MSCBIN)\TreeTest.exe bin\tdme\tests\.
+	copy $(MSCBIN)\UDPClientTest.exe bin\tdme\tests\.
+	copy $(MSCBIN)\UDPServerTest.exe bin\tdme\tests\.
+	copy $(MSCBIN)\VideoTest.exe bin\tdme\tests\.
+	copy $(MSCBIN)\WaterTest.exe bin\tdme\tests\.
+	
+	mkdir bin\tdme\tools
+	mkdir bin\tdme\tools\cli
+	
+	copy $(MSCBIN)\archive.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\collectguitags.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\converttotm.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\copyanimationsetups.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\createinstaller.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\createminiscriptcodecompletion.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\createminiscriptdocumentation.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\createrc.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\dumpmodel.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\fixdoxygen.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\generatelicenses.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\imageprocessor.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\importtmodel.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\makefilegenerator.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\miniscripttranspiler.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\msclib2dll.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\nmakefilegenerator.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\optimizemodel.exe bin\tdme\tools\cli\.
+	copy "$(MSCBIN)\parseh++.exe" bin\tdme\tools\cli\.
+	copy $(MSCBIN)\recreatevkcache.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\scenefixmodelszup2yup.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\sortincludes.exe bin\tdme\tools\cli\.
+	
+	mkdir bin\tdme\tools\editor
+	copy $(MSCBIN)\TDMEEditor.exe bin\tdme\tools\editor\.
+	
+	mkdir bin\tdme\tools\installer
+	copy $(MSCBIN)\Installer.exe bin\tdme\tools\installer\.
