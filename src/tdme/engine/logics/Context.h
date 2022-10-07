@@ -340,6 +340,8 @@ private:
 		uint32_t messageId;
 	};
 
+	string applicationRootPathName;
+
 	int64_t timeStarted;
 
 	// path finding which is context bound too
@@ -377,6 +379,21 @@ public:
 	 * Destructor
 	 */
 	virtual ~Context();
+
+	/**
+	 * @return application root path name
+	 */
+	inline const string& getApplicationRootPathName() {
+		return applicationRootPathName;
+	}
+
+	/**
+	 * Set application root path name
+	 * @param applicationRootPathName application root path name
+	 */
+	inline void setApplicationRootPathName(const string& applicationRootPathName) {
+		this->applicationRootPathName = applicationRootPathName;
+	}
 
 	/**
 	 * @return time started

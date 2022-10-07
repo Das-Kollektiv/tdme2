@@ -3486,14 +3486,18 @@ void LogicMiniScript::registerMethods() {
 					miniScript->getTransformValue(argumentValues, 3, transform) == true) {
 					miniScript->prototypesToAddMutex.lock();
 					try {
+						auto _pathName = pathName;
+						if (miniScript->context->getApplicationRootPathName().empty() == false) {
+							_pathName = FileSystem::getInstance()->getCanonicalPath(miniScript->context->getApplicationRootPathName(), pathName);
+						}
 						Prototype* prototype = nullptr;
-						auto canonicalPath = FileSystem::getInstance()->getCanonicalPath(pathName, fileName);
+						auto canonicalPath = FileSystem::getInstance()->getCanonicalPath(_pathName, fileName);
 						auto prototypeIt = miniScript->prototypes.find(canonicalPath);
 						if (prototypeIt != miniScript->prototypes.end()) {
 							prototypeIt->second.counter++;
 							prototype = prototypeIt->second.prototype;
 						} else {
-							prototype = PrototypeReader::read(pathName, fileName);
+							prototype = PrototypeReader::read(_pathName, fileName);
 							miniScript->prototypes[canonicalPath] = {
 								.counter = 1,
 								.prototype = prototype

@@ -1484,6 +1484,7 @@ void SceneEditorTabView::runScene() {
 	auto world = new World();
 	SceneConnector::addScene(world, scene, true);
 	applicationContext = new Context(false);
+	applicationContext->setApplicationRootPathName(editorView->getScreenController()->getProjectPath());
 	applicationContext->setEngine(engine);
 	applicationContext->setAudio(Audio::getInstance());
 	applicationContext->setWorld(world);
