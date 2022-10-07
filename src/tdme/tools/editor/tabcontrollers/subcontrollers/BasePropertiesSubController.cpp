@@ -7,6 +7,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/prototype/BaseProperties.h>
 #include <tdme/engine/prototype/BaseProperty.h>
+#include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
@@ -35,6 +36,7 @@ using std::vector;
 
 using tdme::engine::prototype::BaseProperties;
 using tdme::engine::prototype::BaseProperty;
+using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
@@ -84,7 +86,7 @@ void BasePropertiesSubController::createBasePropertiesXML(BaseProperties* protot
 	}
 }
 
-void BasePropertiesSubController::setBasePropertiesDetails(BaseProperties* baseProperties) {
+void BasePropertiesSubController::setBasePropertiesDetails(BaseProperties* baseProperties, Prototype* prototype) {
 	editorView->setDetailsContent(
 		"<template id=\"details_base\" src=\"resources/engine/gui/template_details_base.xml\" />\n"
 	);
@@ -93,6 +95,10 @@ void BasePropertiesSubController::setBasePropertiesDetails(BaseProperties* baseP
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_base"))->getActiveConditions().add("open");
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_name"))->getController()->setValue(MutableString(baseProperties->getName()));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_description"))->getController()->setValue(MutableString(baseProperties->getDescription()));
+		if (prototype != nullptr) {
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_base"))->getActiveConditions().add("entity_hierarchy");
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_prototype_entityhierarchy"))->getController()->setValue(MutableString(prototype->isEntityHierarchy() == true?"1":""));
+		}
 	} catch (Exception& exception) {
 		Console::println(string("PrototypeBaseSubController::setPrototypeBaseDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -126,9 +132,9 @@ void BasePropertiesSubController::setPropertyDetails(BaseProperties* basePropert
 	}
 }
 
-void BasePropertiesSubController::updateDetails(BaseProperties* baseProperties, const string& outlinerNode) {
+void BasePropertiesSubController::updateDetails(BaseProperties* baseProperties, const string& outlinerNode, Prototype* prototype) {
 	if (outlinerNode == rootNodeId) {
-		setBasePropertiesDetails(baseProperties);
+		setBasePropertiesDetails(baseProperties, prototype);
 	} else
 	if (StringTools::startsWith(outlinerNode, "properties.") == true) {
 		auto selectedPropertyName = StringTools::substring(outlinerNode, string("properties.").size(), outlinerNode.size());
@@ -236,7 +242,7 @@ void BasePropertiesSubController::renameProperty(BaseProperties* baseProperties)
 	Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(editorView, "properties" + (property != nullptr?"." + property->getName():"")));
 }
 
-void BasePropertiesSubController::onValueChanged(GUIElementNode* node, BaseProperties* baseProperties)
+void BasePropertiesSubController::onValueChanged(GUIElementNode* node, BaseProperties* baseProperties, Prototype* prototype)
 {
 	if (node->getId() == "dropdown_outliner_add") {
 		auto addOutlinerType = node->getController()->getValue().getString();
@@ -250,6 +256,9 @@ void BasePropertiesSubController::onValueChanged(GUIElementNode* node, BasePrope
 			auto selectedPropertyName = StringTools::substring(outlinerNode, string("properties.").size(), outlinerNode.size());
 			setPropertyDetails(baseProperties, selectedPropertyName);
 		}
+	} else
+	if (prototype != nullptr && node->getId() == "base_prototype_entityhierarchy") {
+		prototype->setEntityHierarchy(node->getController()->getValue().equals("1"));
 	}
 }
 

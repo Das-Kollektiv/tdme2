@@ -1050,7 +1050,7 @@ void ModelEditorTabController::updateDetails(const string& outlinerNode) {
 		view->playAnimation(animationSetup == nullptr?Model::ANIMATIONSETUP_DEFAULT:animationSetup->getId());
 		setAnimationDetails();
 	} else {
-		basePropertiesSubController->updateDetails(view->getPrototype(), outlinerNode);
+		basePropertiesSubController->updateDetails(view->getPrototype(), outlinerNode, view->getPrototype());
 		prototypeDisplaySubController->updateDetails(view->getPrototype(), outlinerNode);
 		prototypePhysicsSubController->updateDetails(view->getPrototype(), outlinerNode);
 		prototypeSoundsSubController->updateDetails(view->getPrototype(), model, outlinerNode);
@@ -1900,7 +1900,7 @@ void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 			}
 		}
 	}
-	basePropertiesSubController->onValueChanged(node, view->getPrototype());
+	basePropertiesSubController->onValueChanged(node, view->getPrototype(), view->getPrototype());
 	prototypeDisplaySubController->onValueChanged(node, view->getPrototype());
 	prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
 	prototypeScriptSubController->onValueChanged(node, view->getPrototype());

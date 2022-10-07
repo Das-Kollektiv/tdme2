@@ -64,6 +64,7 @@ private:
 	string thumbnail;
 	Model* model { nullptr };
 	Vector3 pivot;
+	bool entityHierachy { false };
 	bool scriptHandlingHID { false };
 	string script;
 	PrototypeLODLevel* lodLevel2 { nullptr };
@@ -238,6 +239,21 @@ public:
 	 */
 	inline void setScript(const string& fileName) {
 		this->script = fileName;
+	}
+
+	/**
+	 * @return is entity hierarchy
+	 */
+	inline bool isEntityHierarchy() {
+		return entityHierachy;
+	}
+
+	/**
+	 * Set entity hierarchy
+	 * @param entityHierarchy entity hierarchy
+	 */
+	inline void setEntityHierarchy(bool entityHierarchy) {
+		this->entityHierachy = entityHierarchy;
 	}
 
 	/**

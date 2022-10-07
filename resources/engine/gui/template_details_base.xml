@@ -19,6 +19,11 @@
 				</layout>
 			</layout>
 
+			<layout show-on="entity_hierarchy" width="100%" height="auto" alignment="vertical">
+				<space height="10" />
+				<checkbox id="base_prototype_entityhierarchy" width="25" height="25" value="1" text="Spawn as entity hierarchy" />
+			</layout>
+
 		</layout>		
 	</layout>
 </element>

@@ -23,6 +23,7 @@ using std::vector;
 
 using tdme::engine::prototype::BaseProperties;
 using tdme::engine::prototype::BaseProperty;
+using tdme::engine::prototype::Prototype;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
@@ -50,8 +51,8 @@ private:
 	};
 
 	array<string, 2> applyBaseNodes = {
-		"prototype_name",
-		"prototype_description"
+		"base_name",
+		"base_description"
 	};
 
 	string renamePropertyName;
@@ -85,8 +86,9 @@ public:
 	/**
 	 * Set property base details
 	 * @param baseProperties base properties
+	 * @param prototype prototype or nullptr
 	 */
-	void setBasePropertiesDetails(BaseProperties* baseProperties);
+	void setBasePropertiesDetails(BaseProperties* baseProperties, Prototype* prototype = nullptr);
 
 	/**
 	 * Apply property base details
@@ -105,8 +107,9 @@ public:
 	 * Update details panel
 	 * @param baseProperties base properties
 	 * @param outlinerNode outliner node
+	 * @param prototype prototype or nullptr
 	 */
-	void updateDetails(BaseProperties* baseProperties, const string& outlinerNode);
+	void updateDetails(BaseProperties* baseProperties, const string& outlinerNode, Prototype* prototype = nullptr);
 
 	/**
 	 * Apply property details
@@ -138,8 +141,9 @@ public:
 	 * On value changed
 	 * @param node node
 	 * @param baseProperties base properties
+	 * @param prototype prototype or nullptr
 	 */
-	void onValueChanged(GUIElementNode* node, BaseProperties* baseProperties);
+	void onValueChanged(GUIElementNode* node, BaseProperties* baseProperties, Prototype* prototype = nullptr);
 
 	/**
 	 * On action performed
