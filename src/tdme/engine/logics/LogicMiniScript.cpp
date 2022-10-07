@@ -2131,7 +2131,7 @@ void LogicMiniScript::registerMethods() {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "engine.entity.setNodeTransformMatrix";
+				return "engine.entity.setNodeTransform";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string entityId;

@@ -707,6 +707,7 @@ Reading all keys as array from set:
 | engine.entity.isEnabled($entityId: String, [$childEntityId: String]): Boolean                    |
 | engine.entity.setEnabled($entityId: String, $enabled: Boolean, [$childEntityId: String]): Void   |
 | engine.entity.getNodeTransform($entityId: String, $nodeId: String, [$childEntityId: String]): Transform|
+| engine.entity.setNodeTransform($entityId: String, $nodeId: String, $transform: Transform, [$childEntityId: String]): Void|
 | engine.entity.unsetNodeTransform($entityId: String, $nodeId: String, [$childEntityId: String]): Void|
 | engine.entity.getNodeTransformMatrix($entityId: String, $nodeId: String, [$childEntityId: String]): Matrix4x4|
 | engine.entity.setNodeTransformMatrix($entityId: String, $nodeId: String, $matrix: Matrix4x4, [$childEntityId: String]): Void|
