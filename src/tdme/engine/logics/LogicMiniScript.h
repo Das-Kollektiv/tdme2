@@ -5,8 +5,11 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/logics/fwd-tdme.h>
+#include <tdme/engine/physics/fwd-tdme.h>
+#include <tdme/engine/prototype/fwd-tdme.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
+#include <tdme/os/threading/Mutex.h>
 #include <tdme/utilities/MiniScript.h>
 
 using std::string;
@@ -14,8 +17,11 @@ using std::unordered_map;
 
 using tdme::engine::logics::Context;
 using tdme::engine::logics::Logic;
+using tdme::engine::physics::Body;
+using tdme::engine::prototype::Prototype;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
+using tdme::os::threading::Mutex;
 using tdme::utilities::MiniScript;
 
 /**
@@ -49,6 +55,21 @@ protected:
 	float mouseWheelX { 0.0f };
 	float mouseWheelY { 0.0f };
 	float mouseWheelZ { 0.0f };
+
+	struct PrototypeCounter {
+		int counter;
+		Prototype* prototype { nullptr };
+	};
+	unordered_map<string, PrototypeCounter> prototypes;
+
+	struct PrototypeToAdd {
+		Prototype* prototype { nullptr };
+		string id;
+		Transform transform;
+	};
+	Mutex prototypesToAddMutex;
+	unordered_map<string, PrototypeToAdd> enginePrototypesToAdd;
+	unordered_map<string, PrototypeToAdd> physicsPrototypesToAdd;
 
 	/**
 	 * Set context

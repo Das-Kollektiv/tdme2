@@ -22,6 +22,9 @@
 #include <tdme/math/Vector2.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/math/Vector4.h>
+#include <tdme/os/filesystem/FileSystem.h>
+#include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/os/threading/Mutex.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
@@ -52,18 +55,20 @@ using tdme::math::Matrix4x4;
 using tdme::math::Vector2;
 using tdme::math::Vector3;
 using tdme::math::Vector4;
+using tdme::os::filesystem::FileSystem;
+using tdme::os::filesystem::FileSystemInterface;
+using tdme::os::threading::Mutex;
 using tdme::tools::editor::misc::Tools;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::MiniScript;
 using tdme::utilities::UTF8CharacterIterator;
 
-LogicMiniScript::LogicMiniScript(): MiniScript() {
+LogicMiniScript::LogicMiniScript(): MiniScript(), prototypesToAddMutex("prototypetoadd-mutex") {
 }
 
 LogicMiniScript::~LogicMiniScript() {
 }
-
 
 void LogicMiniScript::registerStateMachineStates() {
 	MiniScript::registerStateMachineStates();
@@ -3479,32 +3484,37 @@ void LogicMiniScript::registerMethods() {
 					miniScript->getStringValue(argumentValues, 1, fileName) == true &&
 					miniScript->getStringValue(argumentValues, 2, id) == true &&
 					miniScript->getTransformValue(argumentValues, 3, transform) == true) {
+					miniScript->prototypesToAddMutex.lock();
 					try {
-						// TODO: we need to keep track of prototypes as they need to exist as long as they are used
-						// TODO: engine entities should be spawned in engine thread
-						// TODO: physics entities needs to be spawned in physics thread
-						auto prototype = PrototypeReader::read(pathName, fileName);
-						miniScript->context->getEngine()->addEntity(SceneConnector::createEntity(prototype, id, transform));
-						SceneConnector::createBody(miniScript->context->getWorld(), prototype, id, transform, Body::COLLISION_TYPEID_DYNAMIC);
-						if (prototype->hasScript() == true) {
-							auto logicMiniScript = new LogicMiniScript();
-							logicMiniScript->loadScript(
-								Tools::getPathName(prototype->getScript()),
-								Tools::getFileName(prototype->getScript())
-							);
-							miniScript->context->addLogic(
-								new MiniScriptLogic(
-									miniScript->context,
-									id,
-									prototype->isScriptHandlingHID(),
-									logicMiniScript
-								)
-							);
+						Prototype* prototype = nullptr;
+						auto canonicalPath = FileSystem::getInstance()->getCanonicalPath(pathName, fileName);
+						auto prototypeIt = miniScript->prototypes.find(canonicalPath);
+						if (prototypeIt != miniScript->prototypes.end()) {
+							prototypeIt->second.counter++;
+							prototype = prototypeIt->second.prototype;
+						} else {
+							prototype = PrototypeReader::read(pathName, fileName);
+							miniScript->prototypes[canonicalPath] = {
+								.counter = 1,
+								.prototype = prototype
+							};
 						}
+						miniScript->enginePrototypesToAdd[id] = {
+							.prototype = prototype,
+							.id = id,
+							.transform = transform
+						};
+						miniScript->physicsPrototypesToAdd[id] = {
+							.prototype = prototype,
+							.id = id,
+							.transform = transform
+						};
 					} catch (Exception& exception) {
+						miniScript->prototypesToAddMutex.unlock();
 						Console::println("ScriptMethodSceneConnectorAddPrototype::executeMethod(): An error occurred: " + string(exception.what()));
 						miniScript->startErrorScript();
 					}
+					miniScript->prototypesToAddMutex.unlock();
 				} else {
 					Console::println("ScriptMethodSceneConnectorAddPrototype::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: string expected, @ argument 3: transform expected");
 					miniScript->startErrorScript();

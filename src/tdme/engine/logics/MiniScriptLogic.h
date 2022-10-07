@@ -8,6 +8,10 @@
 #include <tdme/engine/logics/fwd-tdme.h>
 #include <tdme/engine/logics/Logic.h>
 #include <tdme/engine/logics/LogicMiniScript.h>
+#include <tdme/engine/prototype/Prototype.h>
+#include <tdme/engine/Engine.h>
+#include <tdme/engine/SceneConnector.h>
+#include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/MiniScript.h>
 
@@ -17,6 +21,10 @@ using std::string;
 using tdme::engine::logics::LogicMiniScript;
 
 using tdme::engine::logics::Logic;
+using tdme::engine::prototype::Prototype;
+using tdme::engine::Engine;
+using tdme::engine::SceneConnector;
+using tdme::tools::editor::misc::Tools;
 using tdme::utilities::Console;
 using tdme::utilities::MiniScript;
 
@@ -45,6 +53,23 @@ public:
 	}
 
 	inline void updateEngine() override {
+		// add engine entities requested by MiniScript
+		if (miniScript->enginePrototypesToAdd.empty() == false) {
+			miniScript->prototypesToAddMutex.lock();
+			for (auto& prototypeToAddIt: miniScript->enginePrototypesToAdd) {
+				auto& prototypeToAdd = prototypeToAddIt.second;
+				context->getEngine()->addEntity(
+					SceneConnector::createEntity(
+						prototypeToAdd.prototype,
+						prototypeToAdd.id,
+						prototypeToAdd.transform
+					)
+				);
+			}
+			miniScript->enginePrototypesToAdd.clear();
+			miniScript->prototypesToAddMutex.unlock();
+		}
+		//
 		vector<MiniScript::ScriptVariable> argumentValues(0);
 		MiniScript::ScriptVariable returnValue;
 		span argumentValuesSpan(argumentValues);
@@ -54,6 +79,39 @@ public:
 	}
 
 	inline void updateLogic() override {
+		// add physics entities requested by MiniScript and scripts
+		if (miniScript->physicsPrototypesToAdd.empty() == false) {
+			miniScript->prototypesToAddMutex.lock();
+			for (auto& prototypeToAddIt: miniScript->physicsPrototypesToAdd) {
+				auto& prototypeToAdd = prototypeToAddIt.second;
+				SceneConnector::createBody(
+					context->getWorld(),
+					prototypeToAdd.prototype,
+					prototypeToAdd.id,
+					prototypeToAdd.transform,
+					Body::COLLISION_TYPEID_DYNAMIC
+				);
+				if (prototypeToAdd.prototype->hasScript() == true) {
+					auto prototype = prototypeToAdd.prototype;
+					auto logicMiniScript = new LogicMiniScript();
+					logicMiniScript->loadScript(
+						Tools::getPathName(prototype->getScript()),
+						Tools::getFileName(prototype->getScript())
+					);
+					miniScript->context->addLogic(
+						new MiniScriptLogic(
+							miniScript->context,
+							id,
+							prototype->isScriptHandlingHID(),
+							logicMiniScript
+						)
+					);
+				}
+			}
+			miniScript->physicsPrototypesToAdd.clear();
+			miniScript->prototypesToAddMutex.unlock();
+		}
+		//
 		vector<MiniScript::ScriptVariable> argumentValues(0);
 		MiniScript::ScriptVariable returnValue;
 		span argumentValuesSpan(argumentValues);
