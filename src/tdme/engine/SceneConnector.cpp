@@ -372,7 +372,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 		// with LOD
 		if (imposterLOD != nullptr) {
 			entity = new LODObjectImposter(
-				id,
+				prototype->isEntityHierarchy() == true?"root":id,
 				prototype->getModel(),
 				imposterLOD->getModels(),
 				imposterLOD->getMinDistance()
@@ -392,7 +392,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 		} else
 		if (lodLevel2 != nullptr) {
 			entity = new LODObject(
-				id,
+				prototype->isEntityHierarchy() == true?"root":id,
 				prototype->getModel(),
 				lodLevel2->getType(),
 				lodLevel2->getMinDistance(),
@@ -420,7 +420,7 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 		} else {
 			// single
 			entity = new Object(
-				id,
+				prototype->isEntityHierarchy() == true?"root":id,
 				prototype->getModel(),
 				instances
 			);
@@ -438,6 +438,12 @@ Entity* SceneConnector::createEntity(Prototype* prototype, const string& id, con
 			if (enableEarlyZRejection == true && prototype->isTerrainMesh() == true) {
 				object->setEnableEarlyZRejection(true);
 			}
+		}
+		if (prototype->isEntityHierarchy() == true) {
+			auto entityHierarchy = new EntityHierarchy(id);
+			entityHierarchy->addEntity(entity);
+			// pass on entity hierarchy as entity
+			entity = entityHierarchy;
 		}
 	} else
 	// particle system

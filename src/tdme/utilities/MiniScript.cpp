@@ -1444,13 +1444,12 @@ const string MiniScript::getInformation() {
 				auto argumentIdx = 0;
 				for (auto& argumentType: scriptMethod->getArgumentTypes()) {
 					if (argumentIdx > 0) method+= ", ";
+					if (argumentType.optional == true) method+= "[";
 					if (argumentType.assignBack == true) {
 						method+= "=";
 					}
 					method+= "$" + argumentType.name + ": " + ScriptVariable::getTypeAsString(argumentType.type);
-					if (argumentType.optional == true) {
-						method+= "(OPTIONAL)";
-					}
+					if (argumentType.optional == true) method+= "]";
 					argumentIdx++;
 				}
 				if (scriptMethod->isVariadic() == true) {
@@ -1479,14 +1478,13 @@ const string MiniScript::getInformation() {
 				operatorString+= "(";
 				auto argumentIdx = 0;
 				for (auto& argumentType: method->getArgumentTypes()) {
+					if (argumentType.optional == true) operatorString+= "[";
 					if (argumentIdx > 0) operatorString+= ", ";
 					if (argumentType.assignBack == true) {
 						operatorString+= "=";
 					}
 					operatorString+= "$" + argumentType.name + ": " + ScriptVariable::getTypeAsString(argumentType.type);
-					if (argumentType.optional == true) {
-						operatorString+= "(OPTIONAL)";
-					}
+					if (argumentType.optional == true) operatorString+= "]";
 					argumentIdx++;
 				}
 				if (method->isVariadic() == true) {

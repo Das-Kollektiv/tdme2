@@ -531,7 +531,7 @@ Reading all keys as array from set:
 | array(...): Array                                                                                |
 | array.get($array: Array, $index: Integer): Mixed                                                 |
 | array.set(=$array: Array, $index: Integer, ...): Void                                            |
-| array.indexOf($array: Array, $value: String, $beginIndex: Integer(OPTIONAL), ...): Integer       |
+| array.indexOf($array: Array, $value: String, [$beginIndex: Integer], ...): Integer               |
 | array.length($array: Array): Integer                                                             |
 | array.push(=$array: Array, ...): Void                                                            |
 | array.remove(=$array: Array, $index: Integer): Void                                              |
@@ -627,13 +627,13 @@ Reading all keys as array from set:
 | set.getKeys($set: Set): Array                                                                    |
 | set.insert(=$set: Set, $key: String): Void                                                       |
 | set.remove(=$set: Set, $key: String): Void                                                       |
-| space($spaces: Integer(OPTIONAL)): String                                                        |
+| space([$spaces: Integer]): String                                                                |
 | string($string: String): String                                                                  |
 | sub(...): Mixed                                                                                  |
 | time.getCurrentMillis(): Integer                                                                 |
 | toLowerCase($string: String): String                                                             |
 | toUpperCase($string: String): String                                                             |
-| transform($translation: Vector3(OPTIONAL), $scale: Vector3(OPTIONAL), $rotationZ: Float(OPTIONAL), $rotationY: Float(OPTIONAL), $rotationX: Float(OPTIONAL)): Transform|
+| transform([$translation: Vector3], [$scale: Vector3], [$rotationZ: Float], [$rotationY: Float], [$rotationX: Float]): Transform|
 | transform.AXIS_X(): Vector3                                                                      |
 | transform.AXIS_Y(): Vector3                                                                      |
 | transform.AXIS_Z(): Vector3                                                                      |
@@ -696,30 +696,32 @@ Reading all keys as array from set:
 | engine.camera.getUpVector(): Vector3                                                             |
 | engine.camera.setUpVector($upVector: Vector3): Void                                              |
 | engine.camera.computeUpVector($lookFrom: Vector3, $lookAt: Vector3): Vector3                     |
-| engine.entity.getAnimation($entityId: String): String                                            |
-| engine.entity.setAnimation($entityId: String, $animation: String, $speed: Float(OPTIONAL)): Void |
-| engine.entity.setAnimationSpeed($entityId: String, $speed: Float): Void                          |
-| engine.entity.getAnimationTime($entityId: String): Float                                         |
-| engine.entity.getEffectColorAdd($entityId: String): Vector4                                      |
-| engine.entity.setEffectColorAdd($entityId: String, $effectColorAdd: Vector4): Void               |
-| engine.entity.getEffectColorMul($entityId: String): Vector4                                      |
-| engine.entity.setEffectColorMul($entityId: String, $effectColorMul: Vector4): Void               |
-| engine.entity.isEnabled($entityId: String): Boolean                                              |
-| engine.entity.setEnabled($entityId: String, $enabled: Boolean): Void                             |
-| engine.entity.getNodeTransformMatrix($entityId: String, $nodeId: String): Matrix4x4              |
-| engine.entity.setNodeTransformMatrix($entityId: String, $nodeId: String, $matrix: Matrix4x4): Void|
-| engine.entity.unsetNodeTransformMatrix($entityId: String, $nodeId: String): Void                 |
-| engine.entity.hasOverlayAnimation($entityId: String, $animation: String): Boolean                |
-| engine.entity.getOverlayAnimationTime($entityId: String, $animation: String): Float              |
-| engine.entity.isPickable($entityId: String): Boolean                                             |
-| engine.entity.setPickable($entityId: String, $pickable: Boolean): Void                           |
-| engine.entity.getTransform($entityId: String): Transform                                         |
-| engine.entity.setTransform($entityId: String, $transform: Transform): Void                       |
-| engine.entity.addOverlayAnimation($entityId: String, $animation: String): Void                   |
-| engine.entity.emitParticles($entityId: String): Integer                                          |
-| engine.entity.removeFinishedOverlayAnimations($entityId: String): Void                           |
-| engine.entity.removeOverlayAnimation($entityId: String, $animation: String): Void                |
-| engine.entity.removeOverlayAnimations($entityId: String): Void                                   |
+| engine.entity.getAnimation($entityId: String, [$childEntityId: String]): String                  |
+| engine.entity.setAnimation($entityId: String, $animation: String, [$speed: Float], [$childEntityId: String]): Void|
+| engine.entity.setAnimationSpeed($entityId: String, $speed: Float, [$childEntityId: String]): Void|
+| engine.entity.getAnimationTime($entityId: String, [$childEntityId: String]): Float               |
+| engine.entity.getEffectColorAdd($entityId: String, [$childEntityId: String]): Vector4            |
+| engine.entity.setEffectColorAdd($entityId: String, $effectColorAdd: Vector4, [$childEntityId: String]): Void|
+| engine.entity.getEffectColorMul($entityId: String, [$childEntityId: String]): Vector4            |
+| engine.entity.setEffectColorMul($entityId: String, $effectColorMul: Vector4, [$childEntityId: String]): Void|
+| engine.entity.isEnabled($entityId: String, [$childEntityId: String]): Boolean                    |
+| engine.entity.setEnabled($entityId: String, $enabled: Boolean, [$childEntityId: String]): Void   |
+| engine.entity.getNodeTransform($entityId: String, $nodeId: String, [$childEntityId: String]): Transform|
+| engine.entity.unsetNodeTransform($entityId: String, $nodeId: String, [$childEntityId: String]): Void|
+| engine.entity.getNodeTransformMatrix($entityId: String, $nodeId: String, [$childEntityId: String]): Matrix4x4|
+| engine.entity.setNodeTransformMatrix($entityId: String, $nodeId: String, $matrix: Matrix4x4, [$childEntityId: String]): Void|
+| engine.entity.unsetNodeTransformMatrix($entityId: String, $nodeId: String, [$childEntityId: String]): Void|
+| engine.entity.hasOverlayAnimation($entityId: String, $animation: String, [$childEntityId: String]): Boolean|
+| engine.entity.getOverlayAnimationTime($entityId: String, $animation: String, [$childEntityId: String]): Float|
+| engine.entity.isPickable($entityId: String, [$childEntityId: String]): Boolean                   |
+| engine.entity.setPickable($entityId: String, $pickable: Boolean, [$childEntityId: String]): Void |
+| engine.entity.getTransform($entityId: String, [$childEntityId: String]): Transform               |
+| engine.entity.setTransform($entityId: String, $transform: Transform, [$childEntityId: String]): Void|
+| engine.entity.addOverlayAnimation($entityId: String, $animation: String, [$childEntityId: String]): Void|
+| engine.entity.emitParticles($entityId: String, [$childEntityId: String]): Integer                |
+| engine.entity.removeFinishedOverlayAnimations($entityId: String, [$childEntityId: String]): Void |
+| engine.entity.removeOverlayAnimation($entityId: String, $animation: String, [$childEntityId: String]): Void|
+| engine.entity.removeOverlayAnimations($entityId: String, [$childEntityId: String]): Void         |
 | engine.timing.getAvarageFPS(): Float                                                             |
 | engine.timing.getDeltaTime(): Integer                                                            |
 | engine.timing.getDeltaTimeSeconds(): Float                                                       |
@@ -764,7 +766,7 @@ Reading all keys as array from set:
 | pathfinding.STATE_PATHFINDING_SUCCESS(): Integer                                                 |
 | pathfinding.STATE_TRYLOCK_FAILED(): Integer                                                      |
 | pathfinding.findPath($logicId: String, $startPosition: Vector3, $endPosition: Vector3, =$path: Array): Integer|
-| sceneconnector.addPrototype($pathName: String, $fileName: String, $id: String, $transform: Transform): Void|
+| sceneconnector.addPrototype($pathName: String, $fileName: String, $id: String, $transform: Transform, [$entityHierarchyId: String], [$entityHierarchyParentId: String]): Void|
 | world.body.getAngularDamping($bodyId: String): Float                                             |
 | world.body.setAngularDamping($bodyId: String, $angularDamping: Float): Void                      |
 | world.body.getAngularVelocity($bodyId: String): Vector3                                          |
@@ -802,11 +804,11 @@ Reading all keys as array from set:
 | world.body.getTransform($bodyId: String): Transform                                              |
 | world.body.setTransform($bodyId: String, $transform: Transform): Void                            |
 | world.body.getType($bodyId: String): Integer                                                     |
-| world.body.addForce($bodyId: String, $force: Vector3, $origin: Vector3(OPTIONAL)): Void          |
+| world.body.addForce($bodyId: String, $force: Vector3, [$origin: Vector3]): Void                  |
 | world.body.addTorque($bodyId: String, $torque: Vector3): Void                                    |
-| world.determineHeight($collisionTypeIds: Integer, $stepUpMax: Float, $point: Vector3, =$heightPoint: Vector3, =$bodyId: String(OPTIONAL), $minHeight: Float(OPTIONAL), $maxHeight: Float(OPTIONAL)): Boolean|
+| world.determineHeight($collisionTypeIds: Integer, $stepUpMax: Float, $point: Vector3, =$heightPoint: Vector3, [=$bodyId: String], [$minHeight: Float], [$maxHeight: Float]): Boolean|
 | world.doCollide($bodyId1: String, $bodyId2: String): Boolean                                     |
-| world.doRayCasting($collisionTypeIds: Integer, $start: Vector3, $end: Vector3, =$hitPoint: Vector3, =$bodyId: String, $actorId: String(OPTIONAL)): Boolean|
+| world.doRayCasting($collisionTypeIds: Integer, $start: Vector3, $end: Vector3, =$hitPoint: Vector3, =$bodyId: String, [$actorId: String]): Boolean|
 | world.doesCollideWith($collisionTypeIds: Integer, $bodyId: String): Array                        |
 
 # 8. Operators
@@ -822,7 +824,7 @@ Reading all keys as array from set:
 | /  | div(...): Mixed                                                                             |
 | <  | lesser($a: Number, $b: Number): Boolean                                                     |
 | <= | lesserequals($a: Number, $b: Number): Boolean                                               |
-| =  | setVariable($variable: String, ...): Mixed                                                  |
+| =  | setVariable($variable: String, $value: Mixed): Mixed                                        |
 | == | equals(...): Boolean                                                                        |
 | >  | greater($a: Number, $b: Number): Boolean                                                    |
 | >= | greaterequals($a: Number, $b: Number): Boolean                                              |

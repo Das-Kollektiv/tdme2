@@ -10,6 +10,7 @@
 #include <tdme/engine/logics/LogicMiniScript.h>
 #include <tdme/engine/prototype/Prototype.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/SceneConnector.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/utilities/Console.h>
@@ -23,6 +24,7 @@ using tdme::engine::logics::LogicMiniScript;
 using tdme::engine::logics::Logic;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::Engine;
+using tdme::engine::EntityHierarchy;
 using tdme::engine::SceneConnector;
 using tdme::tools::editor::misc::Tools;
 using tdme::utilities::Console;
@@ -56,15 +58,25 @@ public:
 		// add engine entities requested by MiniScript
 		if (miniScript->enginePrototypesToAdd.empty() == false) {
 			miniScript->prototypesToAddMutex.lock();
-			for (auto& prototypeToAddIt: miniScript->enginePrototypesToAdd) {
-				auto& prototypeToAdd = prototypeToAddIt.second;
-				context->getEngine()->addEntity(
+			for (auto& prototypeToAdd: miniScript->enginePrototypesToAdd) {
+				EntityHierarchy* parentEntity = nullptr;
+				if (prototypeToAdd.entityHierarchyId.empty() == false) {
+					parentEntity = dynamic_cast<EntityHierarchy*>(context->getEngine()->getEntity(prototypeToAdd.entityHierarchyId));
+				}
+				auto entity =
 					SceneConnector::createEntity(
 						prototypeToAdd.prototype,
 						prototypeToAdd.id,
-						prototypeToAdd.transform
-					)
-				);
+						prototypeToAdd.transform,
+						1,
+						parentEntity
+					);
+				if (parentEntity == nullptr) {
+					context->getEngine()->addEntity(entity);
+				} else {
+					parentEntity->addEntity(entity, prototypeToAdd.entityHierarchyParentId);
+					parentEntity->update();
+				}
 			}
 			miniScript->enginePrototypesToAdd.clear();
 			miniScript->prototypesToAddMutex.unlock();
@@ -82,8 +94,8 @@ public:
 		// add physics entities requested by MiniScript and scripts
 		if (miniScript->physicsPrototypesToAdd.empty() == false) {
 			miniScript->prototypesToAddMutex.lock();
-			for (auto& prototypeToAddIt: miniScript->physicsPrototypesToAdd) {
-				auto& prototypeToAdd = prototypeToAddIt.second;
+			for (auto& prototypeToAdd: miniScript->physicsPrototypesToAdd) {
+				// TODO: hierarchies, I guess via fixed joints :DDD
 				SceneConnector::createBody(
 					context->getWorld(),
 					prototypeToAdd.prototype,

@@ -12,6 +12,7 @@
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/Camera.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/EntityHierarchy.h>
 #include <tdme/engine/Object.h>
 #include <tdme/engine/ParticleSystem.h>
 #include <tdme/engine/SceneConnector.h>
@@ -45,6 +46,7 @@ using tdme::engine::logics::MiniScriptLogic;
 using tdme::engine::model::Color4;
 using tdme::engine::Camera;
 using tdme::engine::Engine;
+using tdme::engine::EntityHierarchy;
 using tdme::engine::Object;
 using tdme::engine::ParticleSystem;
 using tdme::engine::SceneConnector;
@@ -68,6 +70,22 @@ LogicMiniScript::LogicMiniScript(): MiniScript(), prototypesToAddMutex("prototyp
 }
 
 LogicMiniScript::~LogicMiniScript() {
+}
+
+inline Entity* LogicMiniScript::getEntity(const string& entityId, const string& childEntityId) {
+	auto entity = context->getEngine()->getEntity(entityId);
+	if (entity == nullptr) return entity;
+	if (childEntityId.empty() == false) {
+		if (entity->getEntityType() == Entity::ENTITYTYPE_ENTITYHIERARCHY) {
+			auto entityHierarchy = static_cast<EntityHierarchy*>(entity);
+			return entityHierarchy->getEntity(childEntityId);
+		} else {
+			Console::println("LogicMiniScript::getEntity(): no entity hierarchy: can not resolve child entity by given id: " + childEntityId);
+			return nullptr;
+		}
+	} else {
+		return entity;
+	}
 }
 
 void LogicMiniScript::registerStateMachineStates() {
@@ -1201,7 +1219,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntityGetTransform(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_TRANSFORM
 				),
@@ -1211,15 +1230,17 @@ void LogicMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string entityId;
-				if (miniScript->getStringValue(argumentValues, 0, entityId) == true) {
-					auto entity = miniScript->context->getEngine()->getEntity(entityId);
+				string childEntityId;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
+					miniScript->getStringValue(argumentValues, 1, childEntityId, true) == true) {
+					auto entity = miniScript->getEntity(entityId, childEntityId);
 					if (entity != nullptr) {
 						returnValue = entity->getTransform();
 					} else {
 						Console::println("ScriptMethodEngineGetEntityIdByMousePosition::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityGetTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println("ScriptMethodEntityGetTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @argument 1: optional string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -1236,7 +1257,8 @@ void LogicMiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -1247,16 +1269,18 @@ void LogicMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string entityId;
 				Transform transform;
+				string childEntityId;
 				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
-					miniScript->getTransformValue(argumentValues, 1, transform) == true) {
-					auto entity = miniScript->context->getEngine()->getEntity(entityId);
+					miniScript->getTransformValue(argumentValues, 1, transform) == true &&
+					miniScript->getStringValue(argumentValues, 2, childEntityId, true) == true) {
+					auto entity = miniScript->getEntity(entityId, childEntityId);
 					if (entity != nullptr) {
 						entity->setTransform(transform);
 					} else {
 						Console::println("ScriptMethodEntitySetTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntitySetTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: transform expected");
+					Console::println("ScriptMethodEntitySetTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: transform expected, @argument 2: optional string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -1272,7 +1296,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntityIsEnabled(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -1282,15 +1307,17 @@ void LogicMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string entityId;
-				if (miniScript->getStringValue(argumentValues, 0, entityId) == true) {
-					auto entity = miniScript->context->getEngine()->getEntity(entityId);
+				string childEntityId;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
+					miniScript->getStringValue(argumentValues, 1, childEntityId, true) == true) {
+					auto entity = miniScript->getEntity(entityId, childEntityId);
 					if (entity != nullptr) {
 						returnValue = entity->isEnabled();
 					} else {
 						Console::println("ScriptMethodEntityIsEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityIsEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println("ScriptMethodEntityIsEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @argument 1: optional string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -1307,7 +1334,8 @@ void LogicMiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "enabled", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "enabled", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -1318,16 +1346,18 @@ void LogicMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string entityId;
 				bool enabled;
+				string childEntityId;
 				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
-					miniScript->getBooleanValue(argumentValues, 1, enabled) == true) {
-					auto entity = miniScript->context->getEngine()->getEntity(entityId);
+					miniScript->getBooleanValue(argumentValues, 1, enabled) == true &&
+					miniScript->getStringValue(argumentValues, 2, childEntityId, true) == true) {
+					auto entity = miniScript->getEntity(entityId, childEntityId);
 					if (entity != nullptr) {
 						entity->setEnabled(enabled);
 					} else {
 						Console::println("ScriptMethodEntitySetEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntitySetEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: boolean expected");
+					Console::println("ScriptMethodEntitySetEnabled::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: boolean expected, @argument 2: optional string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -1343,7 +1373,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntityIsPickable(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -1353,15 +1384,17 @@ void LogicMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string entityId;
-				if (miniScript->getStringValue(argumentValues, 0, entityId) == true) {
-					auto entity = miniScript->context->getEngine()->getEntity(entityId);
+				string childEntityId;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
+					miniScript->getStringValue(argumentValues, 1, childEntityId, true) == true) {
+					auto entity = miniScript->getEntity(entityId, childEntityId);
 					if (entity != nullptr) {
 						returnValue = entity->isPickable();
 					} else {
 						Console::println("ScriptMethodEntityIsPickable::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityIsPickable::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println("ScriptMethodEntityIsPickable::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @argument 1: optional string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -1378,7 +1411,8 @@ void LogicMiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "pickable", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "pickable", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -1389,16 +1423,18 @@ void LogicMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string entityId;
 				bool pickable;
+				string childEntityId;
 				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
-					miniScript->getBooleanValue(argumentValues, 1, pickable) == true) {
-					auto entity = miniScript->context->getEngine()->getEntity(entityId);
+					miniScript->getBooleanValue(argumentValues, 1, pickable) == true &&
+					miniScript->getStringValue(argumentValues, 2, childEntityId, true) == true) {
+					auto entity = miniScript->getEntity(entityId, childEntityId);
 					if (entity != nullptr) {
 						entity->setPickable(pickable);
 					} else {
 						Console::println("ScriptMethodEntitySetPickable::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntitySetPickable::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: boolean expected");
+					Console::println("ScriptMethodEntitySetPickable::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: boolean expected, @argument 2: optional string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -1414,7 +1450,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntityGetEffectColorMul(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VECTOR4
 				),
@@ -1424,8 +1461,10 @@ void LogicMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string entityId;
-				if (miniScript->getStringValue(argumentValues, 0, entityId) == true) {
-					auto entity = miniScript->context->getEngine()->getEntity(entityId);
+				string childEntityId;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
+					miniScript->getStringValue(argumentValues, 1, childEntityId, true) == true) {
+					auto entity = miniScript->getEntity(entityId, childEntityId);
 					if (entity != nullptr) {
 						auto effectColorMul = entity->getEffectColorMul();
 						returnValue.setValue(Vector4(effectColorMul.getRed(), effectColorMul.getGreen(), effectColorMul.getBlue(), effectColorMul.getAlpha()));
@@ -1433,7 +1472,7 @@ void LogicMiniScript::registerMethods() {
 						Console::println("ScriptMethodEntityGetEffectColorMul::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityGetEffectColorMul::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println("ScriptMethodEntityGetEffectColorMul::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @argument 1: optional string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -1450,7 +1489,8 @@ void LogicMiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR4, .name = "effectColorMul", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_VECTOR4, .name = "effectColorMul", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -1461,16 +1501,18 @@ void LogicMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string entityId;
 				Vector4 effectColorMul;
+				string childEntityId;
 				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
-					miniScript->getVector4Value(argumentValues, 1, effectColorMul) == true) {
-					auto entity = miniScript->context->getEngine()->getEntity(entityId);
+					miniScript->getVector4Value(argumentValues, 1, effectColorMul) == true &&
+					miniScript->getStringValue(argumentValues, 2, childEntityId, true) == true) {
+					auto entity = miniScript->getEntity(entityId, childEntityId);
 					if (entity != nullptr) {
 						entity->setEffectColorMul(Color4(effectColorMul.getX(), effectColorMul.getY(), effectColorMul.getZ(), effectColorMul.getW()));
 					} else {
 						Console::println("ScriptMethodEntitySetEffectColorMul::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntitySetEffectColorMul::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: vector4 expected");
+					Console::println("ScriptMethodEntitySetEffectColorMul::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: vector4 expected, @argument 2: optional string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -1486,7 +1528,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntityGetEffectColorAdd(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VECTOR4
 				),
@@ -1496,8 +1539,10 @@ void LogicMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string entityId;
-				if (miniScript->getStringValue(argumentValues, 0, entityId) == true) {
-					auto entity = miniScript->context->getEngine()->getEntity(entityId);
+				string childEntityId;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
+					miniScript->getStringValue(argumentValues, 1, childEntityId, true) == true) {
+					auto entity = miniScript->getEntity(entityId, childEntityId);
 					if (entity != nullptr) {
 						auto effectColorAdd = entity->getEffectColorAdd();
 						returnValue.setValue(Vector4(effectColorAdd.getRed(), effectColorAdd.getGreen(), effectColorAdd.getBlue(), effectColorAdd.getAlpha()));
@@ -1505,7 +1550,7 @@ void LogicMiniScript::registerMethods() {
 						Console::println("ScriptMethodEntityGetEffectColorAdd::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityGetEffectColorAdd::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println("ScriptMethodEntityGetEffectColorAdd::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @argument 1: optional string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -1522,7 +1567,8 @@ void LogicMiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_VECTOR4, .name = "effectColorAdd", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_VECTOR4, .name = "effectColorAdd", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -1533,16 +1579,18 @@ void LogicMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string entityId;
 				Vector4 effectColorAdd;
+				string childEntityId;
 				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
-					miniScript->getVector4Value(argumentValues, 1, effectColorAdd) == true) {
-					auto entity = miniScript->context->getEngine()->getEntity(entityId);
+					miniScript->getVector4Value(argumentValues, 1, effectColorAdd) == true &&
+					miniScript->getStringValue(argumentValues, 2, childEntityId, true) == true) {
+					auto entity = miniScript->getEntity(entityId, childEntityId);
 					if (entity != nullptr) {
 						entity->setEffectColorAdd(Color4(effectColorAdd.getX(), effectColorAdd.getY(), effectColorAdd.getZ(), effectColorAdd.getW()));
 					} else {
 						Console::println("ScriptMethodEntitySetEffectColorAdd::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntitySetEffectColorAdd::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: vector4 expected");
+					Console::println("ScriptMethodEntitySetEffectColorAdd::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: vector4 expected, @argument 2: optional string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -1558,7 +1606,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntityGetAnimation(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false }
 					},
 					ScriptVariableType::TYPE_STRING
 				),
@@ -1568,15 +1617,17 @@ void LogicMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string entityId;
-				if (miniScript->getStringValue(argumentValues, 0, entityId) == true) {
-					auto object = dynamic_cast<Object*>(miniScript->context->getEngine()->getEntity(entityId));
+				string childEntityId;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
+					miniScript->getStringValue(argumentValues, 1, childEntityId, true) == true) {
+					auto object = dynamic_cast<Object*>(miniScript->getEntity(entityId, childEntityId));
 					if (object != nullptr) {
 						returnValue.setValue(object->getAnimation());
 					} else {
 						Console::println("ScriptMethodEntityGetAnimation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityGetAnimation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println("ScriptMethodEntityGetAnimation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @argument 1: optional string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -1594,7 +1645,8 @@ void LogicMiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "speed", .optional = true, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "speed", .optional = true, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -1606,17 +1658,19 @@ void LogicMiniScript::registerMethods() {
 				string entityId;
 				string animation;
 				float speed = 1.0f;
+				string childEntityId;
 				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
 					miniScript->getStringValue(argumentValues, 1, animation) == true &&
-					miniScript->getFloatValue(argumentValues, 2, speed, true) == true) {
-					auto object = dynamic_cast<Object*>(miniScript->context->getEngine()->getEntity(entityId));
+					miniScript->getFloatValue(argumentValues, 2, speed, true) == true &&
+					miniScript->getStringValue(argumentValues, 3, childEntityId, true) == true) {
+					auto object = dynamic_cast<Object*>(miniScript->getEntity(entityId, childEntityId));
 					if (object != nullptr) {
 						object->setAnimation(animation, speed);
 					} else {
 						Console::println("ScriptMethodEntitySetAnimation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntitySetAnimation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: optional float expected");
+					Console::println("ScriptMethodEntitySetAnimation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: optional float expected, @argument 3: optional string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -1633,7 +1687,8 @@ void LogicMiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "speed", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_FLOAT, .name = "speed", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -1644,16 +1699,18 @@ void LogicMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string entityId;
 				float speed;
+				string childEntityId;
 				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
-					miniScript->getFloatValue(argumentValues, 1, speed) == true) {
-					auto object = dynamic_cast<Object*>(miniScript->context->getEngine()->getEntity(entityId));
+					miniScript->getFloatValue(argumentValues, 1, speed) == true &&
+					miniScript->getStringValue(argumentValues, 2, childEntityId, true) == true) {
+					auto object = dynamic_cast<Object*>(miniScript->getEntity(entityId, childEntityId));
 					if (object != nullptr) {
 						object->setAnimationSpeed(speed);
 					} else {
 						Console::println("ScriptMethodEntitySetAnimationSpeed::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntitySetAnimationSpeed::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: float expected");
+					Console::println("ScriptMethodEntitySetAnimationSpeed::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: float expected, @argument 2: optional string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -1669,7 +1726,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntityGetAnimationTime(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
 					ScriptVariableType::TYPE_FLOAT
 				),
@@ -1679,15 +1737,17 @@ void LogicMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string entityId;
-				if (miniScript->getStringValue(argumentValues, 0, entityId) == true) {
-					auto object = dynamic_cast<Object*>(miniScript->context->getEngine()->getEntity(entityId));
+				string childEntityId;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
+					miniScript->getStringValue(argumentValues, 1, childEntityId, true) == true) {
+					auto object = dynamic_cast<Object*>(miniScript->getEntity(entityId, childEntityId));
 					if (object != nullptr) {
 						returnValue.setValue(object->getAnimationTime());
 					} else {
 						Console::println("ScriptMethodEntityGetAnimationTime::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityGetAnimationTime::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println("ScriptMethodEntityGetAnimationTime::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @argument 1: optional string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -1704,7 +1764,8 @@ void LogicMiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
 					ScriptVariableType::TYPE_BOOLEAN
 				),
@@ -1715,16 +1776,18 @@ void LogicMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string entityId;
 				string animation;
+				string childEntityId;
 				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
-					miniScript->getStringValue(argumentValues, 1, animation) == true) {
-					auto object = dynamic_cast<Object*>(miniScript->context->getEngine()->getEntity(entityId));
+					miniScript->getStringValue(argumentValues, 1, animation) == true &&
+					miniScript->getStringValue(argumentValues, 2, childEntityId, true) == true) {
+					auto object = dynamic_cast<Object*>(miniScript->getEntity(entityId, childEntityId));
 					if (object != nullptr) {
 						returnValue = object->hasOverlayAnimation(animation);
 					} else {
 						Console::println("ScriptMethodEntityHasOverlayAnimation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityHasOverlayAnimation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					Console::println("ScriptMethodEntityHasOverlayAnimation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @argument 2: optional string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -1741,7 +1804,8 @@ void LogicMiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -1752,16 +1816,18 @@ void LogicMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string entityId;
 				string animation;
+				string childEntityId;
 				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
-					miniScript->getStringValue(argumentValues, 1, animation) == true) {
-					auto object = dynamic_cast<Object*>(miniScript->context->getEngine()->getEntity(entityId));
+					miniScript->getStringValue(argumentValues, 1, animation) == true &&
+					miniScript->getStringValue(argumentValues, 2, childEntityId, true) == true) {
+					auto object = dynamic_cast<Object*>(miniScript->getEntity(entityId, childEntityId));
 					if (object != nullptr) {
 						object->addOverlayAnimation(animation);
 					} else {
 						Console::println("ScriptMethodEntityAddOverlayAnimation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityAddOverlayAnimation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					Console::println("ScriptMethodEntityAddOverlayAnimation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @argument 2: optional string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -1778,7 +1844,8 @@ void LogicMiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -1789,16 +1856,18 @@ void LogicMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string entityId;
 				string animation;
+				string childEntityId;
 				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
-					miniScript->getStringValue(argumentValues, 1, animation) == true) {
-					auto object = dynamic_cast<Object*>(miniScript->context->getEngine()->getEntity(entityId));
+					miniScript->getStringValue(argumentValues, 1, animation) == true &&
+					miniScript->getStringValue(argumentValues, 2, childEntityId, true) == true) {
+					auto object = dynamic_cast<Object*>(miniScript->getEntity(entityId, childEntityId));
 					if (object != nullptr) {
 						object->removeOverlayAnimation(animation);
 					} else {
 						Console::println("ScriptMethodEntityRemoveOverlayAnimation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityRemoveOverlayAnimation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					Console::println("ScriptMethodEntityRemoveOverlayAnimation::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @argument 2: optional string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -1814,7 +1883,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntityRemoveFinishedOverlayAnimations(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -1824,15 +1894,17 @@ void LogicMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string entityId;
-				if (miniScript->getStringValue(argumentValues, 0, entityId) == true) {
-					auto object = dynamic_cast<Object*>(miniScript->context->getEngine()->getEntity(entityId));
+				string childEntityId;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
+					miniScript->getStringValue(argumentValues, 1, childEntityId, true) == true) {
+					auto object = dynamic_cast<Object*>(miniScript->getEntity(entityId, childEntityId));
 					if (object != nullptr) {
 						object->removeFinishedOverlayAnimations();
 					} else {
 						Console::println("ScriptMethodEntityRemoveFinishedOverlayAnimations::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityRemoveFinishedOverlayAnimations::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println("ScriptMethodEntityRemoveFinishedOverlayAnimations::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @argument 1: optional string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -1848,7 +1920,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntityRemoveOverlayAnimations(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -1858,15 +1931,17 @@ void LogicMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string entityId;
-				if (miniScript->getStringValue(argumentValues, 0, entityId) == true) {
-					auto object = dynamic_cast<Object*>(miniScript->context->getEngine()->getEntity(entityId));
+				string childEntityId;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
+					miniScript->getStringValue(argumentValues, 1, childEntityId, true) == true) {
+					auto object = dynamic_cast<Object*>(miniScript->getEntity(entityId, childEntityId));
 					if (object != nullptr) {
 						object->removeOverlayAnimations();
 					} else {
 						Console::println("ScriptMethodEntityRemoveOverlayAnimations::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityRemoveOverlayAnimations::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println("ScriptMethodEntityRemoveOverlayAnimations::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @argument 1: optional string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -1883,7 +1958,8 @@ void LogicMiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "animation", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
 					ScriptVariableType::TYPE_FLOAT
 				),
@@ -1894,16 +1970,18 @@ void LogicMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string entityId;
 				string animation;
+				string childEntityId;
 				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
-					miniScript->getStringValue(argumentValues, 1, animation) == true) {
-					auto object = dynamic_cast<Object*>(miniScript->context->getEngine()->getEntity(entityId));
+					miniScript->getStringValue(argumentValues, 1, animation) == true &&
+					miniScript->getStringValue(argumentValues, 2, childEntityId, true) == true) {
+					auto object = dynamic_cast<Object*>(miniScript->getEntity(entityId, childEntityId));
 					if (object != nullptr) {
 						returnValue.setValue(object->getOverlayAnimationTime(animation));
 					} else {
 						Console::println("ScriptMethodEntityGetOverlayAnimationTime::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityGetOverlayAnimationTime::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					Console::println("ScriptMethodEntityGetOverlayAnimationTime::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @argument 2: optional string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -1920,7 +1998,8 @@ void LogicMiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
 					ScriptVariableType::TYPE_MATRIX4x4
 				),
@@ -1931,21 +2010,65 @@ void LogicMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string entityId;
 				string nodeId;
+				string childEntityId;
 				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
-					miniScript->getStringValue(argumentValues, 1, nodeId) == true) {
-					auto object = dynamic_cast<Object*>(miniScript->context->getEngine()->getEntity(entityId));
+					miniScript->getStringValue(argumentValues, 1, nodeId) == true &&
+					miniScript->getStringValue(argumentValues, 2, childEntityId, true) == true) {
+					auto object = dynamic_cast<Object*>(miniScript->getEntity(entityId, childEntityId));
 					if (object != nullptr) {
 						returnValue.setValue(object->getNodeTransformMatrix(nodeId));
 					} else {
 						Console::println("ScriptMethodEntityGetNodeTransformMatrix::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityGetNodeTransformMatrix::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					Console::println("ScriptMethodEntityGetNodeTransformMatrix::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @argument 2: optional string expected");
 					miniScript->startErrorScript();
 				}
 			}
 		};
 		registerMethod(new ScriptMethodEntityGetNodeTransformMatrix(this));
+	}
+	{
+		//
+		class ScriptMethodEntityGetNodeTransform: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEntityGetNodeTransform(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
+					},
+					ScriptVariableType::TYPE_TRANSFORM
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.entity.getNodeTransform";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string entityId;
+				string nodeId;
+				string childEntityId;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
+					miniScript->getStringValue(argumentValues, 1, nodeId) == true &&
+					miniScript->getStringValue(argumentValues, 2, childEntityId, true) == true) {
+					auto object = dynamic_cast<Object*>(miniScript->getEntity(entityId, childEntityId));
+					if (object != nullptr) {
+						Transform transform;
+						transform.fromMatrix(object->getNodeTransformMatrix(nodeId), RotationOrder::ZYX);
+						returnValue.setValue(transform);
+					} else {
+						Console::println("ScriptMethodEntityGetNodeTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+					}
+				} else {
+					Console::println("ScriptMethodEntityGetNodeTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @argument 2: optional string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodEntityGetNodeTransform(this));
 	}
 	{
 		//
@@ -1958,7 +2081,8 @@ void LogicMiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_MATRIX4x4, .name = "matrix", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_MATRIX4x4, .name = "matrix", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -1970,22 +2094,67 @@ void LogicMiniScript::registerMethods() {
 				string entityId;
 				string nodeId;
 				Matrix4x4 matrix;
+				string childEntityId;
 				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
 					miniScript->getStringValue(argumentValues, 1, nodeId) == true &&
-					miniScript->getMatrix4x4Value(argumentValues, 2, matrix) == true) {
-					auto object = dynamic_cast<Object*>(miniScript->context->getEngine()->getEntity(entityId));
+					miniScript->getMatrix4x4Value(argumentValues, 2, matrix) == true &&
+					miniScript->getStringValue(argumentValues, 3, childEntityId, true) == true) {
+					auto object = dynamic_cast<Object*>(miniScript->getEntity(entityId, childEntityId));
 					if (object != nullptr) {
 						object->setNodeTransformMatrix(nodeId, matrix);
 					} else {
 						Console::println("ScriptMethodEntitySetNodeTransformMatrix::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntitySetNodeTransformMatrix::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: matrix4x4 expected");
+					Console::println("ScriptMethodEntitySetNodeTransformMatrix::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: matrix4x4 expected, @argument 3: optional string expected");
 					miniScript->startErrorScript();
 				}
 			}
 		};
 		registerMethod(new ScriptMethodEntitySetNodeTransformMatrix(this));
+	}
+	{
+		//
+		class ScriptMethodEntitySetNodeTransform: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEntitySetNodeTransform(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.entity.setNodeTransformMatrix";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string entityId;
+				string nodeId;
+				Transform transform;
+				string childEntityId;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
+					miniScript->getStringValue(argumentValues, 1, nodeId) == true &&
+					miniScript->getTransformValue(argumentValues, 2, transform) == true &&
+					miniScript->getStringValue(argumentValues, 3, childEntityId, true) == true) {
+					auto object = dynamic_cast<Object*>(miniScript->getEntity(entityId, childEntityId));
+					if (object != nullptr) {
+						object->setNodeTransformMatrix(nodeId, transform.getTransformMatrix());
+					} else {
+						Console::println("ScriptMethodEntitySetNodeTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+					}
+				} else {
+					Console::println("ScriptMethodEntitySetNodeTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @ argument 2: transform expected, @argument 3: optional string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodEntitySetNodeTransform(this));
 	}
 	{
 		//
@@ -1997,7 +2166,8 @@ void LogicMiniScript::registerMethods() {
 				ScriptMethod(
 					{
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -2008,21 +2178,63 @@ void LogicMiniScript::registerMethods() {
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string entityId;
 				string nodeId;
+				string childEntityId;
 				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
-					miniScript->getStringValue(argumentValues, 1, nodeId) == true) {
-					auto object = dynamic_cast<Object*>(miniScript->context->getEngine()->getEntity(entityId));
+					miniScript->getStringValue(argumentValues, 1, nodeId) == true &&
+					miniScript->getStringValue(argumentValues, 2, childEntityId, true) == true) {
+					auto object = dynamic_cast<Object*>(miniScript->getEntity(entityId, childEntityId));
 					if (object != nullptr) {
 						object->unsetNodeTransformMatrix(nodeId);
 					} else {
 						Console::println("ScriptMethodEntityUnsetNodeTransformMatrix::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityUnsetNodeTransformMatrix::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected");
+					Console::println("ScriptMethodEntityUnsetNodeTransformMatrix::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @argument 2: optional string expected");
 					miniScript->startErrorScript();
 				}
 			}
 		};
 		registerMethod(new ScriptMethodEntityUnsetNodeTransformMatrix(this));
+	}
+	{
+		//
+		class ScriptMethodEntityUnsetNodeTransform: public ScriptMethod {
+		private:
+			LogicMiniScript* miniScript { nullptr };
+		public:
+			ScriptMethodEntityUnsetNodeTransform(LogicMiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "nodeId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
+					},
+					ScriptVariableType::TYPE_VOID
+				),
+				miniScript(miniScript) {}
+			const string getMethodName() override {
+				return "engine.entity.unsetNodeTransform";
+			}
+			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
+				string entityId;
+				string nodeId;
+				string childEntityId;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
+					miniScript->getStringValue(argumentValues, 1, nodeId) == true &&
+					miniScript->getStringValue(argumentValues, 2, childEntityId, true) == true) {
+					auto object = dynamic_cast<Object*>(miniScript->getEntity(entityId, childEntityId));
+					if (object != nullptr) {
+						object->unsetNodeTransformMatrix(nodeId);
+					} else {
+						Console::println("ScriptMethodEntityUnsetNodeTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": object entity not found: " + entityId);
+					}
+				} else {
+					Console::println("ScriptMethodEntityUnsetNodeTransform::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @ argument 1: string expected, @argument 2: optional string expected");
+					miniScript->startErrorScript();
+				}
+			}
+		};
+		registerMethod(new ScriptMethodEntityUnsetNodeTransform(this));
 	}
 	{
 		//
@@ -2033,7 +2245,8 @@ void LogicMiniScript::registerMethods() {
 			ScriptMethodEntityEmitParticles(LogicMiniScript* miniScript):
 				ScriptMethod(
 					{
-						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityId", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "childEntityId", .optional = true, .assignBack = false },
 					},
 					ScriptVariableType::TYPE_INTEGER
 				),
@@ -2043,15 +2256,17 @@ void LogicMiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string entityId;
-				if (miniScript->getStringValue(argumentValues, 0, entityId) == true) {
-					auto entity = dynamic_cast<ParticleSystem*>(miniScript->context->getEngine()->getEntity(entityId));
+				string childEntityId;
+				if (miniScript->getStringValue(argumentValues, 0, entityId) == true &&
+					miniScript->getStringValue(argumentValues, 1, childEntityId, true) == true) {
+					auto entity = dynamic_cast<ParticleSystem*>(miniScript->getEntity(entityId, childEntityId));
 					if (entity != nullptr) {
 						returnValue = static_cast<int64_t>(entity->emitParticles());
 					} else {
 						Console::println("ScriptMethodEntityEmitParticles::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": particle system entity not found: " + entityId);
 					}
 				} else {
-					Console::println("ScriptMethodEntityEmitParticles::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected");
+					Console::println("ScriptMethodEntityEmitParticles::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: string expected, @argument 1: optional string expected");
 					miniScript->startErrorScript();
 				}
 			}
@@ -3467,7 +3682,9 @@ void LogicMiniScript::registerMethods() {
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "pathName", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "fileName", .optional = false, .assignBack = false },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "id", .optional = false, .assignBack = false },
-						{ .type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = false }
+						{ .type = ScriptVariableType::TYPE_TRANSFORM, .name = "transform", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityHierarchyId", .optional = true, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_STRING, .name = "entityHierarchyParentId", .optional = true, .assignBack = false },
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -3480,10 +3697,14 @@ void LogicMiniScript::registerMethods() {
 				string fileName;
 				string id;
 				Transform transform;
+				string entityHierarchyId;
+				string entityHierarchyParentId;
 				if (miniScript->getStringValue(argumentValues, 0, pathName) == true &&
 					miniScript->getStringValue(argumentValues, 1, fileName) == true &&
 					miniScript->getStringValue(argumentValues, 2, id) == true &&
-					miniScript->getTransformValue(argumentValues, 3, transform) == true) {
+					miniScript->getTransformValue(argumentValues, 3, transform) == true &&
+					miniScript->getStringValue(argumentValues, 4, entityHierarchyId, true) == true &&
+					miniScript->getStringValue(argumentValues, 5, entityHierarchyParentId, true) == true) {
 					miniScript->prototypesToAddMutex.lock();
 					try {
 						auto _pathName = pathName;
@@ -3503,16 +3724,23 @@ void LogicMiniScript::registerMethods() {
 								.prototype = prototype
 							};
 						}
-						miniScript->enginePrototypesToAdd[id] = {
-							.prototype = prototype,
-							.id = id,
-							.transform = transform
-						};
-						miniScript->physicsPrototypesToAdd[id] = {
-							.prototype = prototype,
-							.id = id,
-							.transform = transform
-						};
+						miniScript->enginePrototypesToAdd.push_back(
+							{
+								.prototype = prototype,
+								.id = id,
+								.transform = transform,
+								.entityHierarchyId = entityHierarchyId,
+								.entityHierarchyParentId = entityHierarchyParentId
+							}
+						);
+						miniScript->physicsPrototypesToAdd.push_back(
+							{
+								.prototype = prototype,
+								.id = id,
+								.transform = transform,
+								.entityHierarchyParentId = entityHierarchyParentId
+							}
+						);
 					} catch (Exception& exception) {
 						miniScript->prototypesToAddMutex.unlock();
 						Console::println("ScriptMethodSceneConnectorAddPrototype::executeMethod(): An error occurred: " + string(exception.what()));

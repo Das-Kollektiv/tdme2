@@ -66,10 +66,12 @@ protected:
 		Prototype* prototype { nullptr };
 		string id;
 		Transform transform;
+		string entityHierarchyId;
+		string entityHierarchyParentId;
 	};
 	Mutex prototypesToAddMutex;
-	unordered_map<string, PrototypeToAdd> enginePrototypesToAdd;
-	unordered_map<string, PrototypeToAdd> physicsPrototypesToAdd;
+	vector<PrototypeToAdd> enginePrototypesToAdd;
+	vector<PrototypeToAdd> physicsPrototypesToAdd;
 
 	/**
 	 * Set context
@@ -86,6 +88,13 @@ protected:
 	inline void setLogic(Logic* logic) {
 		this->logic = logic;
 	}
+
+	/**
+	 * Get entity by given entity id and given child entity id, the latter expects a entity hierarchy to resolve given child entity
+	 * @param entityId entity id
+	 * @param childEntityId child entity id
+	 */
+	Entity* getEntity(const string& entityId, const string& childEntityId);
 
 public:
 
