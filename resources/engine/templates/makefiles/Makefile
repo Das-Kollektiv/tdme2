@@ -7,7 +7,7 @@ ARCH := $(shell sh -c 'uname -m 2>/dev/null')
 BIN = bin
 LIB_DIR = lib
 OBJ := obj
-CPPVERSION = -std=gnu++17
+CPPVERSION = -std=c++2a
 EXTRAFLAGS = -DRAPIDJSON_HAS_STDSTRING
 OFLAGS =
 INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/src/ -Iext/v-hacd/src/VHACD_Lib/inc/

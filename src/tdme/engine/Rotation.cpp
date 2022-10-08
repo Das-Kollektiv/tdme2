@@ -75,7 +75,7 @@ bool Rotation::interpolate(float currentAngle, float targetAngle, float timePass
 		Math::abs(targetRotationAngleC - currentAngle) < Math::abs(targetRotationAngleB - currentAngle)) {
 		targetAngle = targetRotationAngleC;
 	}
-	if (Math::abs(currentAngle - targetAngle) < 0.49f) {
+	if (Math::abs(Math::absmod(currentAngle, 360.0f) - Math::absmod(targetAngle, 360.0f)) < 0.49f) {
 		interpolatedAngle = targetAngle;
 		return true;
 	} else {
