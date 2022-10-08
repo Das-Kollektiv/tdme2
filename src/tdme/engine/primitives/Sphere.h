@@ -1,10 +1,12 @@
 #pragma once
 
 #include <tdme/tdme.h>
+#include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/math/Vector3.h>
 
+using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::math::Vector3;
 
@@ -17,6 +19,9 @@ class tdme::engine::primitives::Sphere final
 {
 private:
 	float radius;
+
+	// overriden methods
+	void createCollisionShape(World* world) override;
 
 public:
 	/**

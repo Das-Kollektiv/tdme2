@@ -11,6 +11,7 @@ namespace primitives {
 	class ConvexMeshBoundingVolume;
 	class HeightMap;
 	class LineSegment;
+	class MemoryAllocator;
 	class OrientedBoundingBox;
 	class Plane;
 	class Sphere;

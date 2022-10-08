@@ -1,8 +1,8 @@
 #pragma once
 
-#include <ext/reactphysics3d/src/collision/shapes/AABB.h>
-#include <ext/reactphysics3d/src/collision/shapes/CollisionShape.h>
-#include <ext/reactphysics3d/src/mathematics/Transform.h>
+#include <reactphysics3d/collision/shapes/AABB.h>
+#include <reactphysics3d/collision/shapes/CollisionShape.h>
+#include <reactphysics3d/mathematics/Transform.h>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -13,6 +13,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>
 
+using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::Transform;
 using tdme::math::Vector3;
@@ -33,6 +34,7 @@ class tdme::engine::primitives::BoundingVolume
 	friend class tdme::utilities::Primitives;
 
 protected:
+	World* world { nullptr };
 	Vector3 scale;
 	Vector3 center;
 	Vector3 collisionShapeLocalTranslation;
@@ -47,6 +49,11 @@ protected:
 	 * Compute bounding box
 	 */
 	void computeBoundingBox();
+
+	/**
+	 * Create collision shap
+	 */
+	virtual void createCollisionShape(World* world) = 0;
 
 public:
 	/**

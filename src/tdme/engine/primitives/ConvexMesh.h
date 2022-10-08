@@ -2,11 +2,12 @@
 
 #include <vector>
 
-#include <ext/reactphysics3d/src/collision/PolygonVertexArray.h>
-#include <ext/reactphysics3d/src/collision/PolyhedronMesh.h>
+#include <reactphysics3d/collision/PolygonVertexArray.h>
+#include <reactphysics3d/collision/PolyhedronMesh.h>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/Triangle.h>
 #include <tdme/math/Vector3.h>
@@ -15,6 +16,7 @@
 
 using std::vector;
 
+using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::Triangle;
 using tdme::engine::ObjectModel;
@@ -76,6 +78,9 @@ private:
 	 * @param scale scale
 	 */
 	void createConvexMesh(const vector<Vector3>& vertices, const vector<int>& facesVerticesCount, const vector<int>& indices, const Vector3& scale);
+
+	// overriden methods
+	void createCollisionShape(World* world) override;
 
 public:
 	/**

@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2018 Daniel Chappuis                                       *
+* Copyright (c) 2010-2022 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -24,17 +24,15 @@
 ********************************************************************************/
 
 // Libraries
-#include "MemoryManager.h"
+#include <reactphysics3d/memory/MemoryManager.h>
 
 using namespace reactphysics3d;
 
-// Static variables
-DefaultAllocator MemoryManager::mDefaultAllocator;
-MemoryAllocator* MemoryManager::mBaseAllocator = &mDefaultAllocator;
-
 // Constructor
-MemoryManager::MemoryManager() {
+MemoryManager::MemoryManager(MemoryAllocator* baseAllocator, size_t initAllocatedMemory) :
+               mBaseAllocator(baseAllocator == nullptr ? &mDefaultAllocator : baseAllocator),
+               mHeapAllocator(*mBaseAllocator, initAllocatedMemory),
+               mPoolAllocator(mHeapAllocator),
+               mSingleFrameAllocator(mHeapAllocator) {
 
-    mSingleFrameAllocator = &mDefaultSingleFrameAllocator;
-    mPoolAllocator = &mDefaultPoolAllocator;
 }

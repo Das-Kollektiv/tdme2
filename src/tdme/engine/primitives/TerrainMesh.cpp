@@ -2,11 +2,12 @@
 
 #include <vector>
 
-#include <ext/reactphysics3d/src/collision/shapes/ConcaveMeshShape.h>
-#include <ext/reactphysics3d/src/collision/TriangleMesh.h>
-#include <ext/reactphysics3d/src/collision/TriangleVertexArray.h>
+#include <reactphysics3d/collision/shapes/ConcaveMeshShape.h>
+#include <reactphysics3d/collision/TriangleMesh.h>
+#include <reactphysics3d/collision/TriangleVertexArray.h>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/Triangle.h>
 #include <tdme/engine/ObjectModel.h>
@@ -15,6 +16,7 @@
 using std::to_string;
 using std::vector;
 
+using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::TerrainMesh;
 using tdme::engine::primitives::Triangle;
@@ -59,6 +61,17 @@ TerrainMesh::~TerrainMesh() {
 }
 
 void TerrainMesh::setScale(const Vector3& scale) {
+	// remove old collision shape
+	if (collisionShape != nullptr) {
+		this->world->physicsCommon.destroyConcaveMeshShape(static_cast<reactphysics3d::ConcaveMeshShape*>(collisionShape));
+		collisionShape = nullptr;
+	}
+	if (triangleMesh != nullptr) {
+		this->world->physicsCommon.destroyTriangleMesh(triangleMesh);
+		triangleMesh = nullptr;
+	}
+
+	//
 	if (scale.equals(Vector3(1.0f, 1.0f, 1.0f)) == false) {
 		Console::println("TerrainMesh::setScale(): != 1.0f: Not supported!");
 	}
@@ -69,6 +82,20 @@ void TerrainMesh::setScale(const Vector3& scale) {
 	if (collisionShape != nullptr) delete collisionShape;
 	if (triangleMesh != nullptr) delete triangleMesh;
 	if (triangleVertexArray != nullptr) delete triangleVertexArray;
+	collisionShape = nullptr;
+	triangleMesh = nullptr;
+	triangleVertexArray = nullptr;
+}
+
+void TerrainMesh::setTransform(const Transform& transform) {
+	Console::println("TerrainMesh::setTransform(): Not supported!");
+}
+
+void TerrainMesh::createCollisionShape(World* world) {
+	if (this->world != nullptr && this->world != world) {
+		Console::println("TerrainMesh::createCollisionShape(): already attached to a world.");
+	}
+	this->world = world;
 
 	// RP3D triangle vertex array
 	triangleVertexArray = new reactphysics3d::TriangleVertexArray(
@@ -83,25 +110,19 @@ void TerrainMesh::setScale(const Vector3& scale) {
 	);
 
 	// add the triangle vertex array to the triangle mesh
-	triangleMesh = new reactphysics3d::TriangleMesh();
+	triangleMesh = world->physicsCommon.createTriangleMesh();
 	triangleMesh->addSubpart(triangleVertexArray);
 
 	// create the concave mesh shape
-	collisionShape = new reactphysics3d::ConcaveMeshShape(triangleMesh);
+	collisionShape = world->physicsCommon.createConcaveMeshShape(triangleMesh);
 
 	// compute bounding box
 	computeBoundingBox();
-
-	//
-	vertices.clear();
-	indices.clear();;
-}
-
-void TerrainMesh::setTransform(const Transform& transform) {
-	Console::println("TerrainMesh::setTransform(): Not supported!");
 }
 
 TerrainMesh::BoundingVolume* TerrainMesh::clone() const {
-	Console::println("TerrainMesh::clone(): Not supported!");
-	return nullptr;
+	auto terrainMesh = new TerrainMesh();
+	terrainMesh->vertices = vertices;
+	terrainMesh->indices = indices;
+	return terrainMesh;
 }

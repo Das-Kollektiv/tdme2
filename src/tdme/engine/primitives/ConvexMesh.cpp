@@ -6,9 +6,10 @@
 #include <unordered_set>
 #include <vector>
 
-#include <ext/reactphysics3d/src/collision/shapes/ConvexMeshShape.h>
+#include <reactphysics3d/collision/shapes/ConvexMeshShape.h>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/physics/World.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/LineSegment.h>
 #include <tdme/engine/primitives/Triangle.h>
@@ -18,6 +19,7 @@
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/ByteBuffer.h>
+#include <tdme/utilities/Console.h>
 #include <tdme/utilities/Float.h>
 #include <tdme/utilities/FloatBuffer.h>
 #include <tdme/utilities/IntBuffer.h>
@@ -32,6 +34,7 @@ using std::unique;
 using std::unordered_set;
 using std::vector;
 
+using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::ConvexMesh;
 using tdme::engine::primitives::LineSegment;
@@ -41,6 +44,7 @@ using tdme::engine::Transform;
 using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::utilities::ByteBuffer;
+using tdme::utilities::Console;
 using tdme::utilities::Float;
 using tdme::utilities::FloatBuffer;
 using tdme::utilities::IntBuffer;
@@ -85,11 +89,22 @@ inline bool ConvexMesh::areTrianglesAdjacent(Triangle& triangle1, Triangle& tria
 
 void ConvexMesh::createConvexMesh(const vector<Vector3>& vertices, const vector<int>& facesVerticesCount, const vector<int>& indices, const Vector3& scale) {
 	// delete old collision shape if we have any
-	if (collisionShape != nullptr) delete collisionShape;
-	if (polyhedronMesh != nullptr) delete polyhedronMesh;
+	if (collisionShape != nullptr) {
+		this->world->physicsCommon.destroyConvexMeshShape(static_cast<reactphysics3d::ConvexMeshShape*>(collisionShape));
+		collisionShape = nullptr;
+	}
+	if (polyhedronMesh != nullptr) {
+		this->world->physicsCommon.destroyPolyhedronMesh(polyhedronMesh);
+		polyhedronMesh = nullptr;
+	}
 	if (polygonVertexArray != nullptr) delete polygonVertexArray;
 	if (verticesByteBuffer != nullptr) delete verticesByteBuffer;
 	if (indicesByteBuffer != nullptr) delete indicesByteBuffer;
+	collisionShape = nullptr;
+	polyhedronMesh = nullptr;
+	polygonVertexArray = nullptr;
+	verticesByteBuffer = nullptr;
+	indicesByteBuffer = nullptr;
 
 	// check if local translation is given
 	// determine center/position transformed
@@ -109,52 +124,8 @@ void ConvexMesh::createConvexMesh(const vector<Vector3>& vertices, const vector<
 	// local transform
 	collisionShapeLocalTransform.setPosition(reactphysics3d::Vector3(collisionShapeLocalTranslation.getX(), collisionShapeLocalTranslation.getY(), collisionShapeLocalTranslation.getZ()));
 
-	// generate vertices and indices buffers
-	verticesByteBuffer = ByteBuffer::allocate(vertices.size() * 3 * sizeof(float));
-	indicesByteBuffer = ByteBuffer::allocate(indices.size() * sizeof(int));
-	auto verticesBuffer = verticesByteBuffer->asFloatBuffer();
-	auto indicesBuffer = indicesByteBuffer->asIntBuffer();
-	Vector3 vertexTransformed;
-	for (auto& vertex: vertices) {
-		vertexTransformed.set(vertex);
-		vertexTransformed.sub(center);
-		vertexTransformed.scale(scale);
-		verticesBuffer.put(vertexTransformed.getArray());
-	}
-	for (auto& index: indices) {
-		indicesBuffer.put(index);
-	}
-	faces.clear();
-	int indexIdx = 0;
-	for (auto faceVerticesCount: facesVerticesCount) {
-		reactphysics3d::PolygonVertexArray::PolygonFace face;
-		face.nbVertices = faceVerticesCount;
-		face.indexBase = indexIdx;
-		faces.push_back(face);
-		indexIdx+= faceVerticesCount;
-	}
-
-	//
-	polygonVertexArray = new reactphysics3d::PolygonVertexArray(
-		vertices.size(),
-		verticesByteBuffer->getBuffer(),
-		3 * sizeof(float),
-		indicesByteBuffer->getBuffer(),
-		sizeof(int),
-		faces.size(),
-		faces.data(),
-		reactphysics3d::PolygonVertexArray::VertexDataType::VERTEX_FLOAT_TYPE,
-		reactphysics3d::PolygonVertexArray::IndexDataType::INDEX_INTEGER_TYPE
-	);
-	polyhedronMesh = new reactphysics3d::PolyhedronMesh(polygonVertexArray);
-	// create convex mesh shape
-	auto convexMeshShape = new reactphysics3d::ConvexMeshShape(polyhedronMesh);
-	// set up new collision shape
-	collisionShape = convexMeshShape;
 	// transform
 	collisionShapeTransform = reactphysics3d::Transform();
-	// compute bounding box
-	computeBoundingBox();
 }
 
 ConvexMesh::ConvexMesh(ObjectModel* model, const Vector3& scale)
@@ -377,6 +348,7 @@ ConvexMesh::ConvexMesh(ObjectModel* model, const Vector3& scale)
 }
 
 ConvexMesh::ConvexMesh(const vector<Vector3>& vertices, const vector<int>& facesVerticesCount, const vector<int>& indices, const Vector3& scale) {
+	Console::println("xxx: " + to_string(vertices.size()) + ", " + to_string(facesVerticesCount.size()) + ", " + to_string(indices.size()));
 	this->vertices = vertices;
 	this->facesVerticesCount = facesVerticesCount;
 	this->indices = indices;
@@ -388,6 +360,56 @@ void ConvexMesh::setScale(const Vector3& scale) {
 	this->scale.set(scale);
 	// recreate convex mesh
 	createConvexMesh(vertices, facesVerticesCount, indices, scale);
+	//
+	// generate vertices and indices buffers
+	verticesByteBuffer = ByteBuffer::allocate(vertices.size() * 3 * sizeof(float));
+	indicesByteBuffer = ByteBuffer::allocate(indices.size() * sizeof(int));
+	auto verticesBuffer = verticesByteBuffer->asFloatBuffer();
+	auto indicesBuffer = indicesByteBuffer->asIntBuffer();
+	Vector3 vertexTransformed;
+	for (auto& vertex: vertices) {
+		vertexTransformed.set(vertex);
+		vertexTransformed.sub(center);
+		vertexTransformed.scale(scale);
+		verticesBuffer.put(vertexTransformed.getArray());
+	}
+	for (auto& index: indices) {
+		indicesBuffer.put(index);
+	}
+	faces.clear();
+	int indexIdx = 0;
+	for (auto faceVerticesCount: facesVerticesCount) {
+		reactphysics3d::PolygonVertexArray::PolygonFace face;
+		face.nbVertices = faceVerticesCount;
+		face.indexBase = indexIdx;
+		faces.push_back(face);
+		indexIdx+= faceVerticesCount;
+	}
+}
+
+void ConvexMesh::createCollisionShape(World* world) {
+	if (this->world != nullptr && this->world != world) {
+		Console::println("ConvexMesh::createCollisionShape(): already attached to a world.");
+	}
+	this->world = world;
+
+	//
+	polygonVertexArray = new reactphysics3d::PolygonVertexArray(
+		vertices.size(),
+		verticesByteBuffer->getBuffer(),
+		3 * sizeof(float),
+		indicesByteBuffer->getBuffer(),
+		sizeof(int),
+		faces.size(),
+		faces.data(),
+		reactphysics3d::PolygonVertexArray::VertexDataType::VERTEX_FLOAT_TYPE,
+		reactphysics3d::PolygonVertexArray::IndexDataType::INDEX_INTEGER_TYPE
+	);
+	polyhedronMesh = world->physicsCommon.createPolyhedronMesh(polygonVertexArray);
+	// create convex mesh shape
+	collisionShape = world->physicsCommon.createConvexMeshShape(polyhedronMesh);
+	// compute bounding box
+	computeBoundingBox();
 }
 
 BoundingVolume* ConvexMesh::clone() const

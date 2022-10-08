@@ -4,10 +4,10 @@
 #include <string>
 #include <vector>
 
-#include <ext/reactphysics3d/src/body/Body.h>
-#include <ext/reactphysics3d/src/body/CollisionBody.h>
-#include <ext/reactphysics3d/src/body/RigidBody.h>
-#include <ext/reactphysics3d/src/collision/ProxyShape.h>
+#include <reactphysics3d/body/RigidBody.h>
+#include <reactphysics3d/body/CollisionBody.h>
+#include <reactphysics3d/body/RigidBody.h>
+#include <reactphysics3d/collision/shapes/CollisionShape.h>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
@@ -78,6 +78,8 @@ private:
 	bool cloned { false };
 	string id;
 	int type;
+	float restitution;
+	float friction;
 	float mass;
 	uint16_t collideTypeIds;
 	uint16_t collisionTypeId;
@@ -85,7 +87,8 @@ private:
 	Transform transform;
 	Vector3 transformScale;
 	vector<BoundingVolume*> boundingVolumes;
-	vector<reactphysics3d::ProxyShape*> proxyShapes;
+	vector<reactphysics3d::Collider*> colliders;
+	vector<reactphysics3d::CollisionShape*> collisionShapes;
 	vector<CollisionListener*> collisionListener;
 
 	/**
@@ -123,7 +126,7 @@ private:
 	/**
 	 * Reset proxy shapes
 	 */
-	void resetProxyShapes();
+	void resetColliders();
 
 	/**
 	 * Fire on collision

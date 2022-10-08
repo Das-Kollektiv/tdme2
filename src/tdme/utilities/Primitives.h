@@ -3,7 +3,7 @@
 #include <map>
 #include <string>
 
-#include <ext/reactphysics3d/src/mathematics/Vector3.h>
+#include <reactphysics3d/mathematics/Vector3.h>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/fwd-tdme.h>

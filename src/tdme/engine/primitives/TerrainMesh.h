@@ -2,17 +2,19 @@
 
 #include <vector>
 
-#include <ext/reactphysics3d/src/collision/TriangleMesh.h>
-#include <ext/reactphysics3d/src/collision/TriangleVertexArray.h>
+#include <reactphysics3d/collision/TriangleMesh.h>
+#include <reactphysics3d/collision/TriangleVertexArray.h>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/Triangle.h>
 #include <tdme/engine/Transform.h>
 
 using std::vector;
 
+using tdme::engine::physics::World;
 using tdme::engine::primitives::TerrainMesh;
 using tdme::engine::primitives::Triangle;
 using tdme::engine::ObjectModel;
@@ -30,6 +32,10 @@ private:
 	vector<int32_t> indices;
 	reactphysics3d::TriangleVertexArray* triangleVertexArray { nullptr };
 	reactphysics3d::TriangleMesh* triangleMesh { nullptr };
+
+	// overriden methods
+	void createCollisionShape(World* world) override;
+
 public:
 	/**
 	 * Public constructor

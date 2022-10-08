@@ -7,16 +7,15 @@
 #include <unordered_set>
 
 #include <tdme/tdme.h>
-#include <ext/reactphysics3d/src/collision/shapes/AABB.h>
-#include <ext/reactphysics3d/src/collision/ContactManifold.h>
-#include <ext/reactphysics3d/src/collision/OverlapCallback.h>
-#include <ext/reactphysics3d/src/collision/RaycastInfo.h>
-#include <ext/reactphysics3d/src/constraint/ContactPoint.h>
-#include <ext/reactphysics3d/src/engine/CollisionWorld.h>
-#include <ext/reactphysics3d/src/engine/DynamicsWorld.h>
-#include <ext/reactphysics3d/src/engine/EventListener.h>
-#include <ext/reactphysics3d/src/mathematics/Ray.h>
-#include <ext/reactphysics3d/src/mathematics/Vector3.h>
+#include <reactphysics3d/collision/shapes/AABB.h>
+#include <reactphysics3d/collision/ContactManifold.h>
+#include <reactphysics3d/collision/OverlapCallback.h>
+#include <reactphysics3d/collision/RaycastInfo.h>
+#include <reactphysics3d/constraint/ContactPoint.h>
+#include <reactphysics3d/engine/PhysicsWorld.h>
+#include <reactphysics3d/engine/EventListener.h>
+#include <reactphysics3d/mathematics/Ray.h>
+#include <reactphysics3d/mathematics/Vector3.h>
 #include <tdme/engine/physics/Body.h>
 #include <tdme/engine/physics/CollisionResponse.h>
 #include <tdme/engine/physics/CollisionResponse_Entity.h>
@@ -63,8 +62,9 @@ using tdme::math::Vector3;
 using tdme::utilities::Console;
 using tdme::utilities::VectorIteratorMultiple;
 
-World::World(): world(reactphysics3d::Vector3(0.0, -9.81, 0.0))
+World::World()
 {
+	world = physicsCommon.createPhysicsWorld();
 }
 
 World::~World()
@@ -72,6 +72,7 @@ World::~World()
 	for (auto worldListener: worldListeners) delete worldListener;
 	worldListeners.clear();
 	reset();
+	physicsCommon.destroyPhysicsWorld(world);
 }
 
 void World::reset()
@@ -134,9 +135,9 @@ void World::removeBody(const string& id) {
 	if (bodyByIdIt != bodiesById.end()) {
 		auto body = bodyByIdIt->second;
 		if (body->rigidBody != nullptr) {
-			world.destroyRigidBody(body->rigidBody);
+			world->destroyRigidBody(body->rigidBody);
 		} else {
-			world.destroyCollisionBody(body->collisionBody);
+			world->destroyCollisionBody(body->collisionBody);
 		}
 		bodies.erase(remove(bodies.begin(), bodies.end(), body), bodies.end());
 		rigidBodiesDynamic.erase(remove(rigidBodiesDynamic.begin(), rigidBodiesDynamic.end(), body), rigidBodiesDynamic.end());
@@ -153,14 +154,16 @@ void World::update(float deltaTime)
 	if (deltaTime < Math::EPSILON) return;
 
 	// do the job
-	world.update(deltaTime);
+	world->update(deltaTime);
 
+	/*
+	// TODO: collision events
 	// collision events
 	{
 		// fire on collision begin, on collision
 		map<string, BodyCollisionStruct> bodyCollisionsCurrentFrame;
 		CollisionResponse collision;
-		auto manifolds = world.getContactsList();
+		auto manifolds = world->getContactsList();
 		for (auto manifold: manifolds) {
 			auto body1 = static_cast<Body*>(manifold->getBody1()->getUserData());
 			auto body2 = static_cast<Body*>(manifold->getBody2()->getUserData());
@@ -226,6 +229,7 @@ void World::update(float deltaTime)
 		// swap rigid body collisions current and last frame
 		bodyCollisionsLastFrame = bodyCollisionsCurrentFrame;
 	}
+	*/
 
 	// update transform for rigid body
 	for (auto i = 0; i < rigidBodiesDynamic.size(); i++) {
@@ -329,7 +333,7 @@ Body* World::determineHeight(uint16_t collisionTypeIds, float stepUpMax, const V
 	reactphysics3d::Vector3 endPoint(point.getX(), minHeight, point.getZ());
 	reactphysics3d::Ray ray(startPoint, endPoint);
 	CustomCallbackClass customCallbackObject(stepUpMax, point, maxHeight);
-	world.raycast(ray, &customCallbackObject, collisionTypeIds);
+	world->raycast(ray, &customCallbackObject, collisionTypeIds);
 	if (customCallbackObject.getBody() != nullptr) {
 		heightPoint.set(point);
 		heightPoint.setY(customCallbackObject.getHeight());
@@ -370,7 +374,7 @@ Body* World::doRayCasting(uint16_t collisionTypeIds, const Vector3& start, const
 	reactphysics3d::Vector3 endPoint(end.getX(), end.getY(), end.getZ());
 	reactphysics3d::Ray ray(startPoint, endPoint);
 	CustomCallbackClass customCallbackObject(actorId);
-	world.raycast(ray, &customCallbackObject, collisionTypeIds);
+	world->raycast(ray, &customCallbackObject, collisionTypeIds);
 	if (customCallbackObject.getBody() != nullptr) {
 		hitPoint.set(customCallbackObject.getHitPoint());
 		return customCallbackObject.getBody();
@@ -383,33 +387,41 @@ bool World::doesCollideWith(uint16_t collisionTypeIds, Body* body, vector<Body*>
 	// callback
 	class CustomOverlapCallback: public reactphysics3d::OverlapCallback {
 	    public:
-			CustomOverlapCallback(vector<Body*>& rigidBodies): rigidBodies(rigidBodies) {
+			CustomOverlapCallback(Body* body, vector<Body*>& rigidBodies): body(body), rigidBodies(rigidBodies) {
 			}
 
-			virtual void notifyOverlap(reactphysics3d::CollisionBody* collisionBody) {
-				rigidBodies.push_back(static_cast<Body*>(collisionBody->getUserData()));
+			void onOverlap(CallbackData &callbackData) {
+				for (auto i = 0; i < callbackData.getNbOverlappingPairs(); i++) {
+					auto overlappingPair = callbackData.getOverlappingPair(i);
+					auto body1 = static_cast<Body*>(overlappingPair.getBody1()->getUserData());
+					auto body2 = static_cast<Body*>(overlappingPair.getBody1()->getUserData());
+					if (body1 != body) rigidBodies.push_back(body1);
+					if (body2 != body) rigidBodies.push_back(body2);
+				}
 			}
 	    private:
+			Body* body;
 			vector<Body*>& rigidBodies;
 	};
 
+	// TODO: check collision type ids
 	// do the test
-	CustomOverlapCallback customOverlapCallback(collisionBodies);
-	world.testOverlap(body->collisionBody, &customOverlapCallback, collisionTypeIds);
+	CustomOverlapCallback customOverlapCallback(body, collisionBodies);
+	world->testOverlap(body->collisionBody, customOverlapCallback);
 
 	// done
 	return collisionBodies.size() > 0;
 }
 
 bool World::doesCollideWith(uint16_t collisionTypeIds, const Transform& transform, vector<BoundingVolume*> boundingVolumes, vector<Body*>& collisionBodies) {
-	auto collisionBody = addCollisionBody("tdme.world.doescollidewith", true, 32768, transform, boundingVolumes);
+	auto collisionBody = addCollisionBody("tdme.world->doescollidewith", true, 32768, transform, boundingVolumes);
 	doesCollideWith(collisionTypeIds, collisionBody, collisionBodies);
-	removeBody("tdme.world.doescollidewith");
+	removeBody("tdme.world->doescollidewith");
 	return collisionBodies.size() > 0;
 }
 
 bool World::doCollide(Body* body1, Body* body2) {
-	return world.testOverlap(body1->collisionBody, body2->collisionBody);
+	return world->testOverlap(body1->collisionBody, body2->collisionBody);
 }
 
 bool World::getCollisionResponse(Body* body1, Body* body2, CollisionResponse& collision) {
@@ -419,28 +431,28 @@ bool World::getCollisionResponse(Body* body1, Body* body2, CollisionResponse& co
 			CustomCollisionCallback(CollisionResponse& collision): collision(collision) {
 			}
 
-			void notifyContact(const CollisionCallbackInfo& collisionCallbackInfo) {
-				auto manifold = collisionCallbackInfo.contactManifoldElements;
-				while (manifold != nullptr) {
-					auto contactPoint = manifold->getContactManifold()->getContactPoints();
-					while (contactPoint != nullptr) {
+			void onContact(const CallbackData &callbackData) {
+				for (auto i = 0; i < callbackData.getNbContactPairs(); i++) {
+					auto contactPair = callbackData.getContactPair(i);
+					auto body1 = contactPair.getBody1();
+					auto body2 = contactPair.getBody2();
+					auto collider1 = contactPair.getCollider1();
+					auto collider2 = contactPair.getCollider2();
+					for (auto j = 0; j < contactPair.getNbContactPoints(); j++) {
+						auto contactPoint = contactPair.getContactPoint(j);
 						// construct collision
-						auto entity = collision.addResponse(-contactPoint->getPenetrationDepth());
-						auto normal = contactPoint->getNormal();
+						auto entity = collision.addResponse(-contactPoint.getPenetrationDepth());
+						auto normal = contactPoint.getWorldNormal();
 						entity->setNormal(Vector3(normal.x, normal.y, normal.z));
-						auto shape1 = manifold->getContactManifold()->getShape1();
-						auto shape2 = manifold->getContactManifold()->getShape2();
-						auto& shapeLocalToWorldTransform1 = shape1->getLocalToWorldTransform();
-						auto& shapeLocalToWorldTransform2 = shape2->getLocalToWorldTransform();
-						auto& localPoint1 = contactPoint->getLocalPointOnShape1();
-						auto& localPoint2 = contactPoint->getLocalPointOnShape2();
-						auto worldPoint1 = shapeLocalToWorldTransform1 * localPoint1;
-						auto worldPoint2 = shapeLocalToWorldTransform2 * localPoint2;
+						auto& collider1LocalToWorldTransform1 = collider1->getLocalToWorldTransform();
+						auto& collider2LocalToWorldTransform2 = collider2->getLocalToWorldTransform();
+						auto& localPoint1 = contactPoint.getLocalPointOnCollider1();
+						auto& localPoint2 = contactPoint.getLocalPointOnCollider2();
+						auto worldPoint1 = collider1LocalToWorldTransform1 * localPoint1;
+						auto worldPoint2 = collider2LocalToWorldTransform2 * localPoint2;
 						entity->addHitPoint(Vector3(worldPoint1.x, worldPoint1.y, worldPoint1.z));
 						entity->addHitPoint(Vector3(worldPoint2.x, worldPoint2.y, worldPoint2.z));
-						contactPoint = contactPoint->getNext();
 					}
-					manifold = collisionCallbackInfo.contactManifoldElements->getNext();
 				}
 			}
 
@@ -449,7 +461,7 @@ bool World::getCollisionResponse(Body* body1, Body* body2, CollisionResponse& co
 	};
 	// do the test
 	CustomCollisionCallback customCollisionCallback(collision);
-	world.testCollision(body1->collisionBody, body2->collisionBody, &customCollisionCallback);
+	world->testCollision(body1->collisionBody, body2->collisionBody, customCollisionCallback);
 	return collision.getEntityCount() > 0;
 }
 

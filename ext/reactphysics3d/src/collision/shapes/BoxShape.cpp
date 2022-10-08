@@ -1,6 +1,6 @@
 /********************************************************************************
 * ReactPhysics3D physics library, http://www.reactphysics3d.com                 *
-* Copyright (c) 2010-2018 Daniel Chappuis                                       *
+* Copyright (c) 2010-2022 Daniel Chappuis                                       *
 *********************************************************************************
 *                                                                               *
 * This software is provided 'as-is', without any express or implied warranty.   *
@@ -24,81 +24,42 @@
 ********************************************************************************/
 
 // Libraries
-#include "BoxShape.h"
-#include "collision/ProxyShape.h"
-#include "configuration.h"
-#include "memory/MemoryManager.h"
-#include "collision/RaycastInfo.h"
+#include <reactphysics3d/collision/shapes/BoxShape.h>
+#include <reactphysics3d/collision/Collider.h>
+#include <reactphysics3d/configuration.h>
+#include <reactphysics3d/engine/PhysicsCommon.h>
+#include <reactphysics3d/memory/MemoryManager.h>
+#include <reactphysics3d/collision/RaycastInfo.h>
 #include <cassert>
 
 using namespace reactphysics3d;
 
 // Constructor
 /**
- * @param extent The vector with the three extents of the box (in meters)
+ * @param halfExtents The vector with the three half-extents of the box
  */
-BoxShape::BoxShape(const Vector3& extent)
-         : ConvexPolyhedronShape(CollisionShapeName::BOX), mExtent(extent),
-           mHalfEdgeStructure(MemoryManager::getBaseAllocator(), 6, 8, 24) {
+BoxShape::BoxShape(const Vector3& halfExtents, MemoryAllocator& allocator, PhysicsCommon& physicsCommon)
+         : ConvexPolyhedronShape(CollisionShapeName::BOX, allocator), mHalfExtents(halfExtents), mPhysicsCommon(physicsCommon) {
 
-    assert(extent.x > decimal(0.0));
-    assert(extent.y > decimal(0.0));
-    assert(extent.z > decimal(0.0));
-
-    // Vertices
-    mHalfEdgeStructure.addVertex(0);
-    mHalfEdgeStructure.addVertex(1);
-    mHalfEdgeStructure.addVertex(2);
-    mHalfEdgeStructure.addVertex(3);
-    mHalfEdgeStructure.addVertex(4);
-    mHalfEdgeStructure.addVertex(5);
-    mHalfEdgeStructure.addVertex(6);
-    mHalfEdgeStructure.addVertex(7);
-
-    MemoryAllocator& allocator = MemoryManager::getBaseAllocator();
-
-    // Faces
-    List<uint> face0(allocator, 4);
-    face0.add(0); face0.add(1); face0.add(2); face0.add(3);
-    List<uint> face1(allocator, 4);
-    face1.add(1); face1.add(5); face1.add(6); face1.add(2);
-    List<uint> face2(allocator, 4);
-    face2.add(4); face2.add(7); face2.add(6); face2.add(5);
-    List<uint> face3(allocator, 4);
-    face3.add(4); face3.add(0); face3.add(3); face3.add(7);
-    List<uint> face4(allocator, 4);
-    face4.add(4); face4.add(5); face4.add(1); face4.add(0);
-    List<uint> face5(allocator, 4);
-    face5.add(2); face5.add(6); face5.add(7); face5.add(3);
-
-    mHalfEdgeStructure.addFace(face0);
-    mHalfEdgeStructure.addFace(face1);
-    mHalfEdgeStructure.addFace(face2);
-    mHalfEdgeStructure.addFace(face3);
-    mHalfEdgeStructure.addFace(face4);
-    mHalfEdgeStructure.addFace(face5);
-
-	mHalfEdgeStructure.init();
+    assert(halfExtents.x > decimal(0.0));
+    assert(halfExtents.y > decimal(0.0));
+    assert(halfExtents.z > decimal(0.0));
 }
 
 // Return the local inertia tensor of the collision shape
 /**
- * @param[out] tensor The 3x3 inertia tensor matrix of the shape in local-space
- *                    coordinates
  * @param mass Mass to use to compute the inertia tensor of the collision shape
  */
-void BoxShape::computeLocalInertiaTensor(Matrix3x3& tensor, decimal mass) const {
-    decimal factor = (decimal(1.0) / decimal(3.0)) * mass;
-    decimal xSquare = mExtent.x * mExtent.x;
-    decimal ySquare = mExtent.y * mExtent.y;
-    decimal zSquare = mExtent.z * mExtent.z;
-    tensor.setAllValues(factor * (ySquare + zSquare), 0.0, 0.0,
-                        0.0, factor * (xSquare + zSquare), 0.0,
-                        0.0, 0.0, factor * (xSquare + ySquare));
+Vector3 BoxShape::getLocalInertiaTensor(decimal mass) const {
+    const decimal factor = (decimal(1.0) / decimal(3.0)) * mass;
+    const decimal xSquare = mHalfExtents.x * mHalfExtents.x;
+    const decimal ySquare = mHalfExtents.y * mHalfExtents.y;
+    const decimal zSquare = mHalfExtents.z * mHalfExtents.z;
+    return Vector3(factor * (ySquare + zSquare), factor * (xSquare + zSquare), factor * (xSquare + ySquare));
 }
 
 // Raycast method with feedback information
-bool BoxShape::raycast(const Ray& ray, RaycastInfo& raycastInfo, ProxyShape* proxyShape, MemoryAllocator& allocator) const {
+bool BoxShape::raycast(const Ray& ray, RaycastInfo& raycastInfo, Collider* collider, MemoryAllocator& /*allocator*/) const {
 
     Vector3 rayDirection = ray.point2 - ray.point1;
     decimal tMin = DECIMAL_SMALLEST;
@@ -113,17 +74,17 @@ bool BoxShape::raycast(const Ray& ray, RaycastInfo& raycastInfo, ProxyShape* pro
         if (std::abs(rayDirection[i]) < MACHINE_EPSILON) {
 
             // If the ray's origin is not inside the slab, there is no hit
-            if (ray.point1[i] > mExtent[i] || ray.point1[i] < -mExtent[i]) return false;
+            if (ray.point1[i] > mHalfExtents[i] || ray.point1[i] < -mHalfExtents[i]) return false;
         }
         else {
 
             // Compute the intersection of the ray with the near and far plane of the slab
             decimal oneOverD = decimal(1.0) / rayDirection[i];
-            decimal t1 = (-mExtent[i] - ray.point1[i]) * oneOverD;
-            decimal t2 = (mExtent[i] - ray.point1[i]) * oneOverD;
-            currentNormal[0] = (i == 0) ? -mExtent[i] : decimal(0.0);
-            currentNormal[1] = (i == 1) ? -mExtent[i] : decimal(0.0);
-            currentNormal[2] = (i == 2) ? -mExtent[i] : decimal(0.0);
+            decimal t1 = (-mHalfExtents[i] - ray.point1[i]) * oneOverD;
+            decimal t2 = (mHalfExtents[i] - ray.point1[i]) * oneOverD;
+            currentNormal[0] = (i == 0) ? -mHalfExtents[i] : decimal(0.0);
+            currentNormal[1] = (i == 1) ? -mHalfExtents[i] : decimal(0.0);
+            currentNormal[2] = (i == 2) ? -mHalfExtents[i] : decimal(0.0);
 
             // Swap t1 and t2 if need so that t1 is intersection with near plane and
             // t2 with far plane
@@ -153,11 +114,29 @@ bool BoxShape::raycast(const Ray& ray, RaycastInfo& raycastInfo, ProxyShape* pro
     // The ray intersects the three slabs, we compute the hit point
     Vector3 localHitPoint = ray.point1 + tMin * rayDirection;
 
-    raycastInfo.body = proxyShape->getBody();
-    raycastInfo.proxyShape = proxyShape;
+    raycastInfo.body = collider->getBody();
+    raycastInfo.collider = collider;
     raycastInfo.hitFraction = tMin;
     raycastInfo.worldPoint = localHitPoint;
     raycastInfo.worldNormal = normalDirection;
 
     return true;
+}
+
+// Return a given face of the polyhedron
+const HalfEdgeStructure::Face& BoxShape::getFace(uint32 faceIndex) const {
+    assert(faceIndex < mPhysicsCommon.mBoxShapeHalfEdgeStructure.getNbFaces());
+    return mPhysicsCommon.mBoxShapeHalfEdgeStructure.getFace(faceIndex);
+}
+
+// Return a given vertex of the polyhedron
+const HalfEdgeStructure::Vertex& BoxShape::getVertex(uint32 vertexIndex) const {
+    assert(vertexIndex < getNbVertices());
+    return mPhysicsCommon.mBoxShapeHalfEdgeStructure.getVertex(vertexIndex);
+}
+
+// Return a given half-edge of the polyhedron
+const HalfEdgeStructure::Edge& BoxShape::getHalfEdge(uint32 edgeIndex) const {
+    assert(edgeIndex < getNbHalfEdges());
+    return mPhysicsCommon.mBoxShapeHalfEdgeStructure.getHalfEdge(edgeIndex);
 }
