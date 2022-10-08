@@ -74,7 +74,7 @@ inline bool ConvexMesh::isVertexOnTrianglePlane(Triangle& triangle, const Vector
 	v2.set(triangle.getVertices()[2]).sub(triangle.getVertices()[0]).normalize();
 	v3.set(vertex).sub(triangle.getVertices()[0]);
 	auto v1Dotv2v3Cross = Vector3::computeDotProduct(v1, Vector3::computeCrossProduct(v2, v3).normalize());
-	return Math::abs(v1Dotv2v3Cross) < Math::EPSILON;
+	return Math::abs(v1Dotv2v3Cross) < 0.0063f;
 }
 
 inline bool ConvexMesh::areTrianglesAdjacent(Triangle& triangle1, Triangle& triangle2) {
@@ -100,8 +100,6 @@ void ConvexMesh::createConvexMesh(const vector<Vector3>& vertices, const vector<
 	if (polygonVertexArray != nullptr) delete polygonVertexArray;
 	if (verticesByteBuffer != nullptr) delete verticesByteBuffer;
 	if (indicesByteBuffer != nullptr) delete indicesByteBuffer;
-	collisionShape = nullptr;
-	polyhedronMesh = nullptr;
 	polygonVertexArray = nullptr;
 	verticesByteBuffer = nullptr;
 	indicesByteBuffer = nullptr;
@@ -308,10 +306,9 @@ ConvexMesh::ConvexMesh(ObjectModel* model, const Vector3& scale)
 			auto& polygonVertexOrderedLast = polygonVertices[polygonVerticesOrdered[1]];
 			Vector3 ac;
 			Vector3 bc;
-			Vector3 acbcCross;
 			ac.set(polygonVertexOrderedFirst).sub(polygonCenter);
 			bc.set(polygonVertexOrderedLast).sub(polygonCenter);
-			Vector3::computeCrossProduct(ac, bc, acbcCross);
+			auto acbcCross = Vector3::computeCrossProduct(ac, bc);
 			// counter clockwise???
 			if ((Vector3::computeDotProduct(polygonNormal, acbcCross) > 0.0f) == false) {
 				// yep, reverse
@@ -348,7 +345,6 @@ ConvexMesh::ConvexMesh(ObjectModel* model, const Vector3& scale)
 }
 
 ConvexMesh::ConvexMesh(const vector<Vector3>& vertices, const vector<int>& facesVerticesCount, const vector<int>& indices, const Vector3& scale) {
-	Console::println("xxx: " + to_string(vertices.size()) + ", " + to_string(facesVerticesCount.size()) + ", " + to_string(indices.size()));
 	this->vertices = vertices;
 	this->facesVerticesCount = facesVerticesCount;
 	this->indices = indices;

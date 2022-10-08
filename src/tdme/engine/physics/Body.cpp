@@ -69,18 +69,21 @@ Body::Body(World* world, const string& id, int type, bool enabled, uint16_t coll
 			this->rigidBody = this->world->world->createRigidBody(reactphysics3d::Transform());
 			this->rigidBody->setType(reactphysics3d::BodyType::STATIC);
 			this->rigidBody->setMass(mass);
+			this->rigidBody->setIsAllowedToSleep(true);
 			this->collisionBody = rigidBody;
 			break;
 		case TYPE_DYNAMIC:
 			this->rigidBody = this->world->world->createRigidBody(reactphysics3d::Transform());
 			this->rigidBody->setType(reactphysics3d::BodyType::DYNAMIC);
 			this->rigidBody->setMass(mass);
+			this->rigidBody->setIsAllowedToSleep(true);
 			this->collisionBody = rigidBody;
 			break;
 		case TYPE_KINEMATIC:
 			this->rigidBody = this->world->world->createRigidBody(reactphysics3d::Transform());
 			this->rigidBody->setType(reactphysics3d::BodyType::KINEMATIC);
 			this->rigidBody->setMass(mass);
+			this->rigidBody->setIsAllowedToSleep(true);
 			this->collisionBody = rigidBody;
 			break;
 		case TYPE_COLLISION:
@@ -211,7 +214,6 @@ vector<BoundingVolume*>& Body::getBoundingVolumes() {
 }
 
 void Body::resetColliders() {
-	Console::println("Body::resetColliders(): " + id);
 	// remove proxy shapes
 	for (auto collider: colliders) {
 		if (rigidBody != nullptr) {
@@ -276,8 +278,10 @@ void Body::resetColliders() {
 		reactphysics3d::Transform transform;
 		collisionBody->setTransform(transform);
 
+		//
 		auto boundingBoxTransformed = computeBoundingBoxTransformed();
 		auto& inverseInertiaMatrixArray = computeInverseInertiaMatrix(&boundingBoxTransformed, mass, inertiaTensor.getX(), inertiaTensor.getY(), inertiaTensor.getZ()).getArray();
+
 		/*
 		rigidBody->setInverseInertiaTensorLocal(
 			reactphysics3d::Matrix3x3(
@@ -439,7 +443,7 @@ void Body::setTransform(const Transform& transform)
 	this->transform.setTransform(transform);
 
 	// reset proxy shapes if bounding volumes do not match proxy shapes or if scaling has changed
-	if (collisionShapes.size() != boundingVolumes.size() || transformScale.equals(transform.getScale()) == false) {
+	if (colliders.size() != boundingVolumes.size() || transformScale.equals(transform.getScale()) == false) {
 		resetColliders();
 		transformScale.set(transform.getScale());
 	}
