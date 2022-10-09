@@ -428,20 +428,20 @@ void MiniScriptFunctionsTest::initializeNative() {
 	setNativeScriptFunctions(
 		{
 			{
-				"globalVariableTest",
-				4
-			},
-			{
 				"assignTest",
 				3
+			},
+			{
+				"factorial",
+				1
 			},
 			{
 				"helloWorldFunction",
 				2
 			},
 			{
-				"factorial",
-				1
+				"globalVariableTest",
+				4
 			}
 		}
 	);

@@ -38,7 +38,7 @@ SRCS_PLATFORM =
 CPPVERSION = -std=c++2a
 OFLAGS =
 EXTRAFLAGS = -DRAPIDJSON_HAS_STDSTRING
-INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/src/ -Iext/reactphysics3d/include/ -Iext/v-hacd/src/VHACD_Lib/inc/
+INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/v-hacd/src/VHACD_Lib/inc/
 
 #
 CXX := $(CXX) -fPIC
@@ -152,8 +152,6 @@ else
 	OFLAGS := -O2
 endif
 
-OFLAGS :=
-	
 CPPFLAGS := $(INCLUDES)
 CFLAGS := -g $(OFLAGS) $(EXTRAFLAGS) -pipe -MMD -MP -DNDEBUG
 #CFLAGS := -g $(OFLAGS) $(EXTRAFLAGS) -pipe -MMD -MP
