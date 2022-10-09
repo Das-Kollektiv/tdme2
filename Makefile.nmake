@@ -806,7 +806,7 @@ ext-link1: $(MSCOBJ)/*.obj
 	del $(MSCBIN)\libtdme-ext.lib
 
 ext-link2: $(MSCOBJ)/*.obj
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/lib.rc $(MSCBIN)\libtdme-ext.dll $(MSCBIN)\libtdme-ext.dll.rc
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/lib.rc libtdme-ext.dll $(MSCBIN)\libtdme-ext.dll.rc
 	rc $(MSCBIN)\libtdme-ext.dll.rc
 	echo LIBRARY $(MSCBIN)\libtdme-ext.dll > $(MSCBIN)\libtdme-ext.def
 	type $(MSCBIN)\libtdme-ext.def.dumpbin.linkermember.def >> $(MSCBIN)\libtdme-ext.def
@@ -832,7 +832,7 @@ link1: $(MSCOBJ)/*.obj
 	del $(MSCBIN)\libtdme.lib
 
 link2: $(MSCOBJ)/*.obj
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/lib.rc $(MSCBIN)\libtdme.dll $(MSCBIN)\libtdme.dll.rc
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/lib.rc libtdme.dll $(MSCBIN)\libtdme.dll.rc
 	rc $(MSCBIN)\libtdme.dll.rc
 	echo LIBRARY $(MSCBIN)\libtdme.dll > $(MSCBIN)\libtdme.def
 	type $(MSCBIN)\libtdme.def.dumpbin.linkermember.def >> $(MSCBIN)\libtdme.def
@@ -864,7 +864,7 @@ opengl3core-link1: $(MSCOBJ)/*.obj
 	del $(MSCBIN)\libopengl3corerenderer.lib
 
 opengl3core-link2: $(MSCOBJ)/*.obj
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/lib.rc $(MSCBIN)\libopengl3corerenderer.dll $(MSCBIN)\libopengl3corerenderer.dll.rc
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/lib.rc libopengl3corerenderer.dll $(MSCBIN)\libopengl3corerenderer.dll.rc
 	rc $(MSCBIN)\libopengl3corerenderer.dll.rc
 	echo LIBRARY $(MSCBIN)\libopengl3corerenderer.dll > $(MSCBIN)\libopengl3corerenderer.def
 	type $(MSCBIN)\libopengl3corerenderer.def.dumpbin.linkermember.def >> $(MSCBIN)\libopengl3corerenderer.def
@@ -890,7 +890,7 @@ opengl2-link1: $(MSCOBJ)/*.obj
 	del $(MSCBIN)\libopengl2renderer.lib
 
 opengl2-link2: $(MSCOBJ)/*.obj
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/lib.rc $(MSCBIN)\libopengl2renderer.dll $(MSCBIN)\libopengl2renderer.dll.rc
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/lib.rc libopengl2renderer.dll $(MSCBIN)\libopengl2renderer.dll.rc
 	rc $(MSCBIN)\libopengl2renderer.dll.rc
 	echo LIBRARY $(MSCBIN)\libopengl2renderer.dll > $(MSCBIN)\libopengl2renderer.def
 	type $(MSCBIN)\libopengl2renderer.def.dumpbin.linkermember.def >> $(MSCBIN)\libopengl2renderer.def
@@ -920,7 +920,7 @@ vulkan-link1: $(MSCOBJ)/*.obj
 	del $(MSCBIN)\libvulkanrenderer.lib
 
 vulkan-link2: $(MSCOBJ)/*.obj
-	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/lib.rc $(MSCBIN)\libvulkanrenderer.dll $(MSCBIN)\libvulkanrenderer.dll.rc
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/lib.rc libvulkanrenderer.dll $(MSCBIN)\libvulkanrenderer.dll.rc
 	rc $(MSCBIN)\libvulkanrenderer.dll.rc
 	echo LIBRARY $(MSCBIN)\libvulkanrenderer.dll > $(MSCBIN)\libvulkanrenderer.def
 	echo DESCRIPTION $(MSCBIN)\libvulkanrenderer >> $(MSCBIN)\libvulkanrenderer.def
