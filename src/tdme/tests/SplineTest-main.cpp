@@ -5,27 +5,33 @@
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/Time.h>
 
 using std::string;
 using std::to_string;
 
 using tdme::application::Application;
 using tdme::engine::fileio::textures::Texture;
+using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::fileio::textures::PNGTextureWriter;
 using tdme::utilities::ByteBuffer;
-
 using tdme::utilities::Console;
+using tdme::utilities::Time;
 
 
 int main(int argc, char** argv) {
 	Console::println("SplineTest");
 
+	//
+	auto beginTime = Time::getCurrentMillis();
+
 	// generate 100 interpolate points between the last 4 way points
 	Curve* curve = new Bezier();
-	curve->set_steps(100);
+	curve->set_steps(500);
 
 	//
 	curve->add_way_point(Vector(0, 0, 0));
@@ -41,9 +47,9 @@ int main(int argc, char** argv) {
 	}
 
 	// create png
-	auto imageWidth = 256;
-	auto imageHeight = 256;
-	auto imageScale = 256.0f / 7.0f;
+	auto imageWidth = 1024;
+	auto imageHeight = 1024;
+	auto imageScale = 1024.0f / 7.0f;
 	auto textureByteBuffer = ByteBuffer::allocate(imageWidth * imageHeight * 4);
 	auto texture = new Texture(
 		"bezier-test",
@@ -54,6 +60,7 @@ int main(int argc, char** argv) {
 		imageHeight,
 		textureByteBuffer
 	);
+	texture->acquireReference();
 
 	//
 	auto buffer = textureByteBuffer->getBuffer();
@@ -74,7 +81,7 @@ int main(int argc, char** argv) {
 			auto _y = 0.0f;
 			for (int _x = 0; Math::abs(_x) < Math::abs(xDelta); _x+= Math::sign(xDelta)) {
 				auto __x = Math::clamp(previousX + _x, 0, imageWidth - 1);
-				auto __y = Math::clamp(static_cast<int>(static_cast<float>(previousY) + _y), 0, imageHeight - 1);
+				auto __y = Math::clamp(static_cast<int>(Math::round(static_cast<float>(previousY) + _y)), 0, imageHeight - 1);
 				buffer[__y * imageWidth * 4 + __x * 4 + 0] = 0xff;
 				buffer[__y * imageWidth * 4 + __x * 4 + 1] = 0xff;
 				buffer[__y * imageWidth * 4 + __x * 4 + 2] = 0xff;
@@ -86,7 +93,7 @@ int main(int argc, char** argv) {
 			if (xDelta < 0) xAdv*= -1.0f;
 			auto _x = 0.0f;
 			for (int _y = 0; Math::abs(_y) < Math::abs(yDelta); _y+= Math::sign(yDelta)) {
-				auto __x = Math::clamp(static_cast<int>(static_cast<float>(previousX) + _x), 0, imageWidth - 1);
+				auto __x = Math::clamp(static_cast<int>(Math::round(static_cast<float>(previousX) + _x)), 0, imageWidth - 1);
 				auto __y = Math::clamp(previousY + _y, 0, imageHeight - 1);
 				buffer[__y * imageWidth * 4 + __x * 4 + 0] = 0xff;
 				buffer[__y * imageWidth * 4 + __x * 4 + 1] = 0xff;
@@ -101,8 +108,20 @@ int main(int argc, char** argv) {
 		previousY = y;
 	}
 
+
 	//
-	PNGTextureWriter::write(texture, ".", "bezier-test.png", true, false);
+	auto endTime = Time::getCurrentMillis();
+
+	//
+	Console::println("Time to generate spline+texture: " + to_string(endTime - beginTime) + "ms");
+
+	//
+	auto smoothedTexture = TextureReader::smooth(texture, ":smoothed", 0.5f);
+	PNGTextureWriter::write(smoothedTexture, ".", "bezier-test.png", true, false);
+
+	//
+	texture->releaseReference();
+	smoothedTexture->releaseReference();
 
 	//
 	delete curve;

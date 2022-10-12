@@ -112,9 +112,10 @@ public:
 	 * Smooth texture
 	 * @param texture texture
 	 * @param idSuffix id suffix for generated texture
+	 * @param adjacentSampleWeight adjacent sample weight
 	 * @return texture
 	 */
-	static Texture* smooth(Texture* texture, const string& idSuffix = ":smoothed");
+	static Texture* smooth(Texture* texture, const string& idSuffix = ":smoothed", float adjacentSampleWeight = 0.05f);
 
 private:
 	/**
