@@ -21,7 +21,8 @@ INCLUDES = \
 	/I "ext\windows-msc\dirent\include" \
 	/I "ext\windows-msc\vulkan-sdk\include" \
 	/I "ext\freetype\include" \
-	/I "ext\rapidjson\include"
+	/I "ext\rapidjson\include" \
+	/I "ext/cpp-spline/src"
 
 # For some reason this works only once LOL
 # WINDOWS_SDK_DIR = %WindowsSdkDir%Lib\%WindowsSDKLibVersion%
@@ -54,6 +55,7 @@ VORBIS = vorbis
 OGG = ogg
 VHACD = v-hacd
 REACTPHYSICS3D = reactphysics3d
+CPPSPLINE = cppspline
 
 SRCS = \
 	src/tdme/audio/Audio.cpp \
@@ -665,6 +667,13 @@ EXT_REACTPHYSICS3D_SRCS = \
 	ext/reactphysics3d/src/memory/DefaultSingleFrameAllocator.cpp \
 	ext/reactphysics3d/src/memory/DefaultPoolAllocator.cpp
 
+EXT_CPPSPLINE_SRCS = \
+	ext/cpp-spline/src/Bezier.cpp \
+	ext/cpp-spline/src/BSpline.cpp \
+	ext/cpp-spline/src/CatmullRom.cpp \
+	ext/cpp-spline/src/Curve.cpp \
+	ext/cpp-spline/src/Vector.cpp
+
 EXT_SRCS = \
 	$(EXT_TINYXML_SRCS) \
 	$(EXT_ZLIB_SRCS) \
@@ -673,7 +682,8 @@ EXT_SRCS = \
 	$(EXT_OGG_SRCS) \
 	$(EXT_SHA256_SRCS) \
 	$(EXT_VHACD_SRCS) \
-	$(EXT_REACTPHYSICS3D_SRCS)
+	$(EXT_REACTPHYSICS3D_SRCS) \
+	$(EXT_CPPSPLINE_SRCS)
 
 OPENGL3CORE_RENDERER_LIB_SRCS = \
 	src/tdme/engine/subsystems/renderer/EngineGL3Renderer.cpp \
@@ -756,6 +766,7 @@ all: \
 	PivotTest \
 	RayTracingTest \
 	SkinningTest \
+	SplineTest \
 	TextureAtlasTest \
 	ThreadingTest \
 	TreeTest \
@@ -1032,6 +1043,11 @@ SkinningTest:
 	rc $(MSCBIN)\SkinningTest.exe.rc
 	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\SkinningTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/SkinningTest-main.cpp $(MSCBIN)\SkinningTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
+SplineTest:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc SplineTest.exe $(MSCBIN)\SplineTest.exe.rc
+	rc $(MSCBIN)\SplineTest.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\SplineTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/SplineTest-main.cpp $(MSCBIN)\SplineTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
 TextureAtlasTest:
 	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc TextureAtlasTest.exe $(MSCBIN)\TextureAtlasTest.exe.rc
 	rc $(MSCBIN)\TextureAtlasTest.exe.rc
@@ -1237,6 +1253,7 @@ copy-executables:
 	copy $(MSCBIN)\PivotTest.exe bin\tdme\tests\.
 	copy $(MSCBIN)\RayTracingTest.exe bin\tdme\tests\.
 	copy $(MSCBIN)\SkinningTest.exe bin\tdme\tests\.
+	copy $(MSCBIN)\SplineTest.exe bin\tdme\tests\.
 	copy $(MSCBIN)\TextureAtlasTest.exe bin\tdme\tests\.
 	copy $(MSCBIN)\ThreadingTest.exe bin\tdme\tests\.
 	copy $(MSCBIN)\TreeTest.exe bin\tdme\tests\.
