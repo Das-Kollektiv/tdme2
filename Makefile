@@ -38,7 +38,7 @@ SRCS_PLATFORM =
 CPPVERSION = -std=c++2a
 OFLAGS =
 EXTRAFLAGS = -DRAPIDJSON_HAS_STDSTRING
-INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/v-hacd/src/VHACD_Lib/inc/
+INCLUDES = -Isrc -Iext -I. -Iext/reactphysics3d/include/ -Iext/v-hacd/src/VHACD_Lib/inc/  -Iext/cpp-spline/src
 
 #
 CXX := $(CXX) -fPIC
@@ -191,6 +191,7 @@ GLSLANG = vulkan/glslang
 OGLCOMPILERSDLL = vulkan/OGLCompilersDLL
 VMA = vulkan/vma
 UINT128_T = uint128_t
+CPPSPLINE = cpp-spline
 
 SRCS_DEBUG =
 
@@ -556,6 +557,7 @@ SRCS = \
 	src/tdme/tests/PhysicsTest2.cpp \
 	src/tdme/tests/PhysicsTest3.cpp \
 	src/tdme/tests/PhysicsTest4.cpp \
+	src/tdme/tests/PhysicsTest5.cpp \
 	src/tdme/tests/RayTracingTest.cpp \
 	src/tdme/tests/ThreadingTest_ConsumerThread.cpp \
 	src/tdme/tests/ThreadingTest_ProducerThread.cpp \
@@ -821,6 +823,13 @@ EXT_REACTPHYSICS3D_SRCS = \
 EXT_UINT128_T_SRCS = \
 	ext/uint128_t/uint128_t.cpp
 
+EXT_CPPSPLINE_SRCS = \
+	ext/cpp-spline/src/Bezier.cpp \
+	ext/cpp-spline/src/BSpline.cpp \
+	ext/cpp-spline/src/CatmullRom.cpp \
+	ext/cpp-spline/src/Curve.cpp \
+	ext/cpp-spline/src/Vector.cpp
+
 OPENGL2_RENDERER_LIB_SRCS = \
 	src/tdme/engine/subsystems/renderer/EngineGL2Renderer.cpp \
 	src/tdme/engine/subsystems/renderer/GL2Renderer.cpp
@@ -929,8 +938,10 @@ MAIN_SRCS = \
 	src/tdme/tests/PhysicsTest2-main.cpp \
 	src/tdme/tests/PhysicsTest3-main.cpp \
 	src/tdme/tests/PhysicsTest4-main.cpp \
+	src/tdme/tests/PhysicsTest5-main.cpp \
 	src/tdme/tests/RayTracingTest-main.cpp \
 	src/tdme/tests/SkinningTest-main.cpp \
+	src/tdme/tests/SplineTest-main.cpp \
 	src/tdme/tests/TextureAtlasTest-main.cpp \
 	src/tdme/tests/ThreadingTest-main.cpp \
 	src/tdme/tests/TreeTest-main.cpp \
@@ -976,6 +987,7 @@ EXT_SHA256_OBJS = $(EXT_SHA256_SRCS:ext/$(SHA256)/%.cpp=$(OBJ)/%.o)
 EXT_VHACD_OBJS = $(EXT_VHACD_SRCS:ext/$(VHACD)/%.cpp=$(OBJ)/%.o)
 EXT_REACTPHYSICS3D_OBJS = $(EXT_REACTPHYSICS3D_SRCS:ext/$(REACTPHYSICS3D)/%.cpp=$(OBJ)/%.o)
 EXT_UINT128_T_OBJS = $(EXT_UINT128_T_SRCS:ext/$(UINT128_T)/%.cpp=$(OBJ)/%.o)
+EXT_CPPSPLINE_OBJS = $(EXT_CPPSPLINE_SRCS:ext/$(CPPSPLINE)/%.cpp=$(OBJ)/%.o)
 EXT_SPIRV_OBJS = $(EXT_SPIRV_SRCS:ext/$(SPIRV)/%.cpp=$(OBJ)/vulkan/%.o)
 EXT_GLSLANG_OBJS = $(EXT_GLSLANG_SRCS:ext/$(GLSLANG)/%.cpp=$(OBJ)/vulkan/%.o)
 EXT_OGLCOMPILERSDLL_OBJS = $(EXT_OGLCOMPILERSDLL_SRCS:ext/$(OGLCOMPILERSDLL)/%.cpp=$(OBJ)/vulkan/%.o)
@@ -1042,6 +1054,9 @@ $(EXT_REACTPHYSICS3D_OBJS):$(OBJ)/%.o: ext/$(REACTPHYSICS3D)/%.cpp | print-opts
 	$(cpp-command-ext-rp3d)
 
 $(EXT_UINT128_T_OBJS):$(OBJ)/%.o: ext/$(UINT128_T)/%.cpp | print-opts
+	$(cpp-command)
+
+$(EXT_CPPSPLINE_OBJS):$(OBJ)/%.o: ext/$(CPPSPLINE)/%.cpp | print-opts
 	$(cpp-command)
 
 $(EXT_SPIRV_OBJS):$(OBJ)/vulkan/%.o: ext/$(SPIRV)/%.cpp | print-opts
@@ -1166,7 +1181,7 @@ endif
 
 $(LIB_DIR)/$(LIB): $(OBJS) $(OBJS_DEBUG)
 
-$(LIB_DIR)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_SHA256_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_UINT128_T_OBJS)
+$(LIB_DIR)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_SHA256_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_UINT128_T_OBJS) $(EXT_CPPSPLINE_OBJS)
 
 $(LIB_DIR)/$(OPENGL2_RENDERER_LIB): $(OPENGL2_RENDERER_LIB_OBJS)
 

@@ -23,6 +23,7 @@ namespace tests {
 	class PhysicsTest2;
 	class PhysicsTest3;
 	class PhysicsTest4;
+	class PhysicsTest5;
 	class RayTracingTest;
 	class SkinningTest;
 	class TreeTest;

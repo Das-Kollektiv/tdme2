@@ -21,7 +21,8 @@ INCLUDES = \
 	/I "ext\windows-msc\dirent\include" \
 	/I "ext\windows-msc\vulkan-sdk\include" \
 	/I "ext\freetype\include" \
-	/I "ext\rapidjson\include"
+	/I "ext\rapidjson\include" \
+	/I "ext\cpp-spline\src"
 
 # For some reason this works only once LOL
 # WINDOWS_SDK_DIR = %WindowsSdkDir%Lib\%WindowsSDKLibVersion%
@@ -54,6 +55,7 @@ VORBIS = vorbis
 OGG = ogg
 VHACD = v-hacd
 REACTPHYSICS3D = reactphysics3d
+CPPSPLINE = cppspline
 
 SRCS = \
 	src/tdme/audio/Audio.cpp \
@@ -417,6 +419,7 @@ SRCS = \
 	src/tdme/tests/PhysicsTest2.cpp \
 	src/tdme/tests/PhysicsTest3.cpp \
 	src/tdme/tests/PhysicsTest4.cpp \
+	src/tdme/tests/PhysicsTest5.cpp \
 	src/tdme/tests/RayTracingTest.cpp \
 	src/tdme/tests/ThreadingTest_ConsumerThread.cpp \
 	src/tdme/tests/ThreadingTest_ProducerThread.cpp \
@@ -682,6 +685,13 @@ EXT_REACTPHYSICS3D_SRCS = \
 	ext/reactphysics3d/src/utils/DefaultLogger.cpp \
 	ext/reactphysics3d/src/utils/DebugRenderer.cpp
 
+EXT_CPPSPLINE_SRCS = \
+	ext/cpp-spline/src/Bezier.cpp \
+	ext/cpp-spline/src/BSpline.cpp \
+	ext/cpp-spline/src/CatmullRom.cpp \
+	ext/cpp-spline/src/Curve.cpp \
+	ext/cpp-spline/src/Vector.cpp
+
 EXT_SRCS = \
 	$(EXT_TINYXML_SRCS) \
 	$(EXT_ZLIB_SRCS) \
@@ -690,7 +700,8 @@ EXT_SRCS = \
 	$(EXT_OGG_SRCS) \
 	$(EXT_SHA256_SRCS) \
 	$(EXT_VHACD_SRCS) \
-	$(EXT_REACTPHYSICS3D_SRCS)
+	$(EXT_REACTPHYSICS3D_SRCS) \
+	$(EXT_CPPSPLINE_SRCS)
 
 OPENGL3CORE_RENDERER_LIB_SRCS = \
 	src/tdme/engine/subsystems/renderer/EngineGL3Renderer.cpp \
@@ -769,10 +780,11 @@ all: \
 	MathOperatorTest \
 	MiniScriptTest \
 	PathFindingTest \
-	PhysicsTest1 PhysicsTest2 PhysicsTest3 PhysicsTest4 \
+	PhysicsTest1 PhysicsTest2 PhysicsTest3 PhysicsTest4 PhysicsTest5 \
 	PivotTest \
 	RayTracingTest \
 	SkinningTest \
+	SplineTest \
 	TextureAtlasTest \
 	ThreadingTest \
 	TreeTest \
@@ -1034,6 +1046,11 @@ PhysicsTest4:
 	rc $(MSCBIN)\PhysicsTest4.exe.rc
 	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\PhysicsTest4 /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest4-main.cpp $(MSCBIN)\PhysicsTest4.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
+PhysicsTest5:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc PhysicsTest5.exe $(MSCBIN)\PhysicsTest5.exe.rc
+	rc $(MSCBIN)\PhysicsTest5.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\PhysicsTest5 /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/PhysicsTest5-main.cpp $(MSCBIN)\PhysicsTest5.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
 PivotTest:
 	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc PhysicsTest1.exe $(MSCBIN)\PivotTest.exe.rc
 	rc $(MSCBIN)\PivotTest.exe.rc
@@ -1048,6 +1065,11 @@ SkinningTest:
 	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc SkinningTest.exe $(MSCBIN)\SkinningTest.exe.rc
 	rc $(MSCBIN)\SkinningTest.exe.rc
 	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\SkinningTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/SkinningTest-main.cpp $(MSCBIN)\SkinningTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
+SplineTest:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc SplineTest.exe $(MSCBIN)\SplineTest.exe.rc
+	rc $(MSCBIN)\SplineTest.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\SplineTest /Fo$(MSCOBJ)/ $(FLAGS) $(INCLUDES) src/tdme/tests/SplineTest-main.cpp $(MSCBIN)\SplineTest.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
 TextureAtlasTest:
 	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc TextureAtlasTest.exe $(MSCBIN)\TextureAtlasTest.exe.rc
@@ -1251,9 +1273,11 @@ copy-executables:
 	copy $(MSCBIN)\PhysicsTest2.exe bin\tdme\tests\.
 	copy $(MSCBIN)\PhysicsTest3.exe bin\tdme\tests\.
 	copy $(MSCBIN)\PhysicsTest4.exe bin\tdme\tests\.
+	copy $(MSCBIN)\PhysicsTest5.exe bin\tdme\tests\.
 	copy $(MSCBIN)\PivotTest.exe bin\tdme\tests\.
 	copy $(MSCBIN)\RayTracingTest.exe bin\tdme\tests\.
 	copy $(MSCBIN)\SkinningTest.exe bin\tdme\tests\.
+	copy $(MSCBIN)\SplineTest.exe bin\tdme\tests\.
 	copy $(MSCBIN)\TextureAtlasTest.exe bin\tdme\tests\.
 	copy $(MSCBIN)\ThreadingTest.exe bin\tdme\tests\.
 	copy $(MSCBIN)\TreeTest.exe bin\tdme\tests\.

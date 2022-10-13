@@ -6,16 +6,19 @@
 #include <string>
 #include <unordered_set>
 
-#include <tdme/tdme.h>
 #include <reactphysics3d/collision/shapes/AABB.h>
 #include <reactphysics3d/collision/ContactManifold.h>
 #include <reactphysics3d/collision/OverlapCallback.h>
 #include <reactphysics3d/collision/RaycastInfo.h>
 #include <reactphysics3d/constraint/ContactPoint.h>
+#include <reactphysics3d/constraint/FixedJoint.h>
+#include <reactphysics3d/constraint/Joint.h>
 #include <reactphysics3d/engine/PhysicsWorld.h>
 #include <reactphysics3d/engine/EventListener.h>
 #include <reactphysics3d/mathematics/Ray.h>
 #include <reactphysics3d/mathematics/Vector3.h>
+
+#include <tdme/tdme.h>
 #include <tdme/engine/physics/Body.h>
 #include <tdme/engine/physics/CollisionResponse.h>
 #include <tdme/engine/physics/CollisionResponse_Entity.h>
@@ -77,12 +80,24 @@ World::~World()
 
 void World::reset()
 {
-	auto _bodies = bodies;
-	for (auto body: _bodies) removeBody(body->getId());
-	bodies.clear();
-	rigidBodiesDynamic.clear();
-	bodiesById.clear();
-	bodyCollisionsLastFrame.clear();
+	// joints
+	{
+		vector<string> jointIds;
+		for (auto jointIt: jointsById) {
+			jointIds.push_back(jointIt.first);
+		}
+		for (auto& jointId: jointIds) removeJoint(jointId);
+		jointsById.clear();
+	}
+	// bodies
+	{
+		auto _bodies = bodies;
+		for (auto body: _bodies) removeBody(body->getId());
+		bodies.clear();
+		rigidBodiesDynamic.clear();
+		bodiesById.clear();
+		bodyCollisionsLastFrame.clear();
+	}
 }
 
 Body* World::addRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes)
@@ -146,6 +161,30 @@ void World::removeBody(const string& id) {
 			listener->onRemovedBody(id, body->getType(), body->getCollisionTypeId());
 		}
 		delete body;
+	}
+}
+
+void World::addFixedJoint(const string& id, Body* body1, Body* body2) {
+	removeJoint(id);
+	if (body1->rigidBody == nullptr) {
+		Console::println("World::createFixedJoint(): body1: no rigid body attached");
+		return;
+	} else
+	if (body2->rigidBody == nullptr) {
+		Console::println("World::createFixedJoint(): body2: no rigid body attached");
+		return;
+	}
+	Vector3 anchorPoint = body1->getTransform().getTranslation().clone().add(body2->getTransform().getTranslation()).scale(0.5f);
+	reactphysics3d::FixedJointInfo jointInfo(body1->rigidBody, body2->rigidBody, reactphysics3d::Vector3(anchorPoint.getX(), anchorPoint.getY(), anchorPoint.getZ()));
+	jointsById[id] = dynamic_cast<reactphysics3d::FixedJoint*>(world->createJoint(jointInfo));
+}
+
+void World::removeJoint(const string& id) {
+	auto jointByIdIt = jointsById.find(id);
+	if (jointByIdIt != jointsById.end()) {
+		auto joint = jointByIdIt->second;
+		world->destroyJoint(joint);
+		jointsById.erase(jointByIdIt);
 	}
 }
 

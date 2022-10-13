@@ -5476,6 +5476,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 	auto& methodCode = methodCodeMapIt->second;
 
 	// script method
+	Console::println(string(method));
 	auto scriptMethod = scriptMethods.find(string(method))->second;
 
 	// indenting

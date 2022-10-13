@@ -710,8 +710,7 @@ Texture* TextureReader::scale(Texture* texture, int width, int height, const str
 	return filteredTexture;
 }
 
-Texture* TextureReader::smooth(Texture* texture, const string& idSuffix) {
-	auto adjacentSampleWeight = 0.05f;
+Texture* TextureReader::smooth(Texture* texture, const string& idSuffix, float adjacentSampleWeight) {
 	auto textureWidth = texture->getTextureWidth();
 	auto textureHeight = texture->getTextureHeight();
 	auto textureBytesPerPixel = texture->getDepth() / 8;

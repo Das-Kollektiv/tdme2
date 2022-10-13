@@ -335,6 +335,7 @@
         - xml2(port-linux for FBXSDK)
         - Vulkan(optional)
     - included in TDME2 repository
+        - cpp-spline 
         - FBXSDK
         - libpng
         - pl_mpeg
