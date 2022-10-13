@@ -5,6 +5,7 @@
 #include <vector>
 
 
+#include <ext/reactphysics3d/src/constraint/Joint.h>
 #include <ext/reactphysics3d/src/engine/DynamicsWorld.h>
 
 #include <tdme/tdme.h>
@@ -48,6 +49,7 @@ private:
 	vector<Body*> bodies;
 	vector<Body*> rigidBodiesDynamic;
 	map<string, Body*> bodiesById;
+	map<string, reactphysics3d::Joint*> jointsById;
 	map<string, BodyCollisionStruct> bodyCollisionsLastFrame;
 	vector<WorldListener*> worldListeners;
 
@@ -124,6 +126,20 @@ public:
 	 * @param id id
 	 */
 	void removeBody(const string& id);
+
+	/**
+	 * Add fixed joint
+	 * @param id id
+	 * @param body1 body 1
+	 * @param body2 body 2
+	 */
+	void addFixedJoint(const string& id, Body* body1, Body* body2);
+
+	/**
+	 * Remove joint
+	 * @param id id
+	 */
+	void removeJoint(const string& id);
 
 	/**
 	 * Update world
