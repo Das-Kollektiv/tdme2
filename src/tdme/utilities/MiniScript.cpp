@@ -5470,14 +5470,18 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 	// find method code in method code map
 	auto methodCodeMapIt = methodCodeMap.find(string(method));
 	if (methodCodeMapIt == methodCodeMap.end()) {
-		Console::println("MiniScript::transpileScriptStatement(): method '" + string(method) + "' not found!");
+		Console::println("MiniScript::transpileScriptStatement(): method code not found: '" + string(method) + "'");
 		return false;
 	}
 	auto& methodCode = methodCodeMapIt->second;
 
 	// script method
-	Console::println(string(method));
-	auto scriptMethod = scriptMethods.find(string(method))->second;
+	auto scriptMethodIt = scriptMethods.find(string(method));
+	if (scriptMethodIt == scriptMethods.end()) {
+		Console::println("MiniScript::transpileScriptStatement(): method not found: '" + string(method) + "'");
+		return false;
+	}
+	auto scriptMethod = scriptMethodIt->second;
 
 	// indenting
 	string minIndentString = "\t";
