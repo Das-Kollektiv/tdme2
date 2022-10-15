@@ -1533,6 +1533,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 				}
 			case FILETYPE_TEXT:
 				{
+					auto hasVisualCode = StringTools::endsWith(fileNameLowerCase, ".tscript");
 					icon = "{$icon.type_script}";
 					colorType = "{$color.type_script}";
 					auto text =
@@ -1542,12 +1543,12 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 						);
 					auto screenNode = GUIParser::parse(
 						"resources/engine/gui/",
-						"tab_text.xml",
+						hasVisualCode == true?"tab_visualcode.xml":"tab_text.xml",
 						{{ "text", StringTools::replace(StringTools::replace(text, "[", "\\["), "]", "\\]") }}
 					);
 					tabType = EditorTabView::TABTYPE_TEXT;
 					tabView = new TextEditorTabView(view, tabId, screenNode, absoluteFileName);
-					viewPortTemplate = "template_viewport_plain.xml";
+					viewPortTemplate = hasVisualCode == true?"template_viewport_visualcode.xml":"template_viewport_plain.xml";
 					break;
 				}
 			default:

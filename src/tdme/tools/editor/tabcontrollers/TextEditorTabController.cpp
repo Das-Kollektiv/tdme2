@@ -8,6 +8,7 @@
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
@@ -25,6 +26,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
+#include <tdme/utilities/StringTools.h>
 
 #include <ext/tinyxml/tinyxml.h>
 
@@ -36,6 +38,7 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::engine::Engine;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
@@ -53,6 +56,7 @@ using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
+using tdme::utilities::StringTools;
 
 using tinyxml::TiXmlAttribute;
 using tinyxml::TiXmlDocument;
@@ -153,6 +157,14 @@ void TextEditorTabController::showErrorPopUp(const string& caption, const string
 
 void TextEditorTabController::onValueChanged(GUIElementNode* node)
 {
+	if (StringTools::endsWith(node->getId(), "_checkbox_visualcode") == true) {
+		auto visual = node->getController()->getValue().equals("1");
+		if (visual == true) {
+			view->setVisualEditor();
+		} else {
+			view->setCodeEditor();
+		}
+	}
 }
 
 void TextEditorTabController::onFocus(GUIElementNode* node) {

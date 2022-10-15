@@ -7,6 +7,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIFrameBufferNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUIStyledTextNode.h>
@@ -30,6 +31,7 @@ using tdme::tools::editor::tabviews::TextEditorTabView;
 
 using tdme::engine::model::Color4;
 using tdme::engine::Engine;
+using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIFrameBufferNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIStyledTextNode;
@@ -59,6 +61,8 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	engine->getGUI()->addScreen(screenNode->getId(), screenNode);
 	engine->getGUI()->addRenderScreen(screenNode->getId());
+	// enable code mode
+	setCodeEditor();
 
 	// initial text format
 	TextFormatter::getInstance()->format(extension, textNode);
@@ -306,3 +310,12 @@ void TextEditorTabView::reloadOutliner() {
 	editorView->getScreenController()->setDetailsContent(string());
 }
 
+void TextEditorTabView::setVisualEditor() {
+	auto editorNode = dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen(tabScreenNode->getId())->getNodeById("editor"));
+	if (editorNode != nullptr) editorNode->getActiveConditions().set("visual");
+}
+
+void TextEditorTabView::setCodeEditor() {
+	auto editorNode = dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen(tabScreenNode->getId())->getNodeById("editor"));
+	if (editorNode != nullptr) editorNode->getActiveConditions().set("text");
+}

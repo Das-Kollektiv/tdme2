@@ -137,6 +137,16 @@ public:
 		return popUps;
 	}
 
+	/**
+	 * Set visual editor
+	 */
+	void setVisualEditor();
+
+	/**
+	 * Set code editor
+	 */
+	void setCodeEditor();
+
 	// overridden methods
 	void handleInputEvents() override;
 	void display() override;
