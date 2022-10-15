@@ -89,6 +89,11 @@ public:
 	void setOutlinerAddDropDownContent();
 
 	/**
+	 * Describe mini script
+	 */
+	void describeMiniScript();
+
+	/**
 	 * Shows the error pop up
 	 * @param caption caption
 	 * @param message message

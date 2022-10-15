@@ -1,9 +1,10 @@
 # initialize
 on: initialize
 	console.log("-----------------------")
-	console.log("visual-test: Initialize")
-	console.log("-----------------------")
-	console.log()
+	#console.log("visual-test: Initialize")
+	#console.log("-----------------------")
+	#console.log()
+	console.log("11 * 10: ", 11 * 10)
 end
 
 # if no condition is met, nothing will be executed, lol :D

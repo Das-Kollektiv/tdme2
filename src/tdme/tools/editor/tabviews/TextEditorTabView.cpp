@@ -9,10 +9,12 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIFrameBufferNode.h>
+#include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/nodes/GUIStyledTextNodeController.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/gui/GUIParser.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
@@ -33,9 +35,11 @@ using tdme::engine::model::Color4;
 using tdme::engine::Engine;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIFrameBufferNode;
+using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::GUI;
+using tdme::gui::GUIParser;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
@@ -312,10 +316,120 @@ void TextEditorTabView::reloadOutliner() {
 
 void TextEditorTabView::setVisualEditor() {
 	auto editorNode = dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen(tabScreenNode->getId())->getNodeById("editor"));
-	if (editorNode != nullptr) editorNode->getActiveConditions().set("visual");
+	if (editorNode != nullptr) editorNode->getActiveConditions().set("visualization");
 }
 
 void TextEditorTabView::setCodeEditor() {
 	auto editorNode = dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen(tabScreenNode->getId())->getNodeById("editor"));
 	if (editorNode != nullptr) editorNode->getActiveConditions().set("text");
+}
+
+void TextEditorTabView::addNodeDeltaX(const string& id, const MiniScript::StatementDescription& description, GUIParentNode* parentNode, int deltaX) {
+	auto node = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("d" + id));
+	node->getRequestsConstraints().left+= deltaX;
+	for (auto i = 0; i < description.arguments.size(); i++) {
+		addNodeDeltaX(id + "." + to_string(i), description.arguments[i], parentNode, deltaX);
+	}
+}
+
+void TextEditorTabView::createNodes(const string& id, const MiniScript::StatementDescription& description, GUIParentNode* parentNode, int x, int y, int& width, int& height, int depth) {
+	//
+	int childMaxWidth = 0;
+	for (auto i = 0; i < description.arguments.size(); i++) {
+		auto childWidth = 0;
+		auto childHeight = 0;
+		createNodes(id + "." + to_string(i), description.arguments[i], parentNode, x, y, childWidth, childHeight, depth + 1);
+		if (childWidth > childMaxWidth) childMaxWidth = childWidth;
+		y+= childHeight;
+		height+= childHeight;
+	}
+	//
+	x+= childMaxWidth;
+	width+= childMaxWidth;
+
+	//
+	string xml;
+	xml+= "<layout id='d" + id + "' left='" + to_string(x) + "' top='" + to_string(y) + "' padding='5' width='auto' height='auto' alignment='vertical' background-color='#606060' border-color='black' border='1'>";
+	switch (description.type) {
+		case MiniScript::StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD:
+		case MiniScript::StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION:
+			{
+				xml+= "<text id='d" + id + "_title' font='{$font.default}' size='{$fontsize.default}' text='" + GUIParser::escapeQuotes(description.value) + "()' color='{$color.font_normal}' />";
+				xml+= "<space width='100%' height='5' />";
+				xml+= "<space height='1' width='100%' border-top='1' border-color='#202020' />";
+				xml+= "<space width='100%' height='5' />";
+				auto argumentIdx = 0;
+				if (description.method != nullptr) {
+					auto& argumentTypes = description.method->getArgumentTypes();
+					for (argumentIdx = 0; argumentIdx < argumentTypes.size(); argumentIdx++) {
+						xml+= "<text id='d" + id + "_a" + to_string(argumentIdx) + "' font='{$font.default}' size='{$fontsize.default}' text='" + argumentTypes[argumentIdx].name + ": " + MiniScript::ScriptVariable::getTypeAsString(argumentTypes[argumentIdx].type)+ "' color='{$color.font_normal}' />";
+					}
+				}
+				for (; argumentIdx < description.arguments.size(); argumentIdx++) {
+					xml+= "<text id='d" + id + "_a" + to_string(argumentIdx) + "' font='{$font.default}' size='{$fontsize.default}' text='Argument " + to_string(argumentIdx) + "' color='{$color.font_normal}' />";
+				}
+				break;
+			}
+		case MiniScript::StatementDescription::STATEMENTDESCRIPTION_LITERAL:
+			{
+				xml+= "<text id='d" + id + "_title' font='{$font.default}' size='{$fontsize.default}' text='Literal' color='{$color.font_normal}' />";
+				xml+= "<space width='100%' height='5' />";
+				xml+= "<space height='1' width='100%' border-top='1' border-color='#202020' />";
+				xml+= "<space width='100%' height='5' />";
+				xml+= "<text id='" + id + "_value' font='{$font.default}' size='{$fontsize.default}' text='" + GUIParser::escapeQuotes(description.value) + "' color='{$color.font_normal}' />";
+				break;
+			}
+	}
+	if (depth == 0) {
+		xml+= "<space width='100%' height='5' />";
+		xml+= "<space height='1' width='100%' border-top='1' border-color='#202020' />";
+		xml+= "<space width='100%' height='5' />";
+		xml+= "<text id='d" + id + "_flow' font='{$font.default}' size='{$fontsize.default}' text='Flow' color='{$color.font_normal}' width='100%' horizontal-align='right'/>";
+	}
+	xml+= "</layout>";
+
+	try {
+		GUIParser::parse(parentNode, xml);
+	} catch (Exception& exception) {
+		Console::println("TextEditorTabView::visualizeDescription(): " + string(exception.what()));
+	}
+
+	//
+	auto node = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("d" + id));
+	width+= 200; //node->getContentWidth();
+	height+= 100; //node->getContentHeight();
+
+	// post layout, move first level child argument nodes from from left to right according to the closest one
+	auto rootDistanceMax = Integer::MAX_VALUE;
+	auto nextLevelXBestFit = -1;
+	for (auto i = 0; i < description.arguments.size(); i++) {
+		auto nextLevelNode = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("d" + id + "." + to_string(i)));
+		auto nodeXPosition = nextLevelNode->getRequestsConstraints().left;
+		auto rootDistance = Math::abs(x - nodeXPosition);
+		if (rootDistance < rootDistanceMax) {
+			rootDistanceMax = rootDistance;
+			nextLevelXBestFit = nodeXPosition;
+		}
+	}
+	for (auto i = 0; i < description.arguments.size(); i++) {
+		auto subNodeId = id + "." + to_string(i);
+		auto nextLevelNode = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("d" + id + "." + to_string(i)));
+		auto nodeXPosition = nextLevelNode->getRequestsConstraints().left;
+		auto deltaX = nextLevelXBestFit - nodeXPosition;
+		if (deltaX == 0) continue;
+		addNodeDeltaX(subNodeId, description.arguments[i], parentNode, deltaX);
+	}
+}
+
+void TextEditorTabView::setMiniScriptDescription(const vector<MiniScript::StatementDescription>& description) {
+	this->description = description;
+	auto visualisationNode = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("visualization"));
+	auto x = 200;
+	auto y = 200;
+	for (auto i = 0; i < description.size(); i++) {
+		auto width = 0;
+		auto height = 0;
+		createNodes(to_string(i), description[i], visualisationNode, x, y, width, height);
+		x+= width + 100;
+	}
 }

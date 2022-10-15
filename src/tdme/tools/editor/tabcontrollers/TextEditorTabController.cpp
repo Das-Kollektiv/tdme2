@@ -26,6 +26,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
+#include <tdme/utilities/MiniScript.h>
 #include <tdme/utilities/StringTools.h>
 
 #include <ext/tinyxml/tinyxml.h>
@@ -56,6 +57,7 @@ using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
+using tdme::utilities::MiniScript;
 using tdme::utilities::StringTools;
 
 using tinyxml::TiXmlAttribute;
@@ -161,6 +163,7 @@ void TextEditorTabController::onValueChanged(GUIElementNode* node)
 		auto visual = node->getController()->getValue().equals("1");
 		if (visual == true) {
 			view->setVisualEditor();
+			describeMiniScript();
 		} else {
 			view->setCodeEditor();
 		}
@@ -194,6 +197,21 @@ void TextEditorTabController::setOutlinerContent() {
 
 void TextEditorTabController::setOutlinerAddDropDownContent() {
 	view->getEditorView()->setOutlinerAddDropDownContent(string());
+}
+
+void TextEditorTabController::describeMiniScript() {
+	auto scriptFileName = view->getFileName();
+	//
+	MiniScript* scriptInstance = new MiniScript();
+	scriptInstance->loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName));
+
+	// TODO: testing: script 0 is hard coded right now
+	//	also script conditions need to be select
+	vector<MiniScript::StatementDescription> description;
+	scriptInstance->describeScript(0, description);
+
+	// pass it to view
+	view->setMiniScriptDescription(description);
 }
 
 void TextEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)

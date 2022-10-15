@@ -11,6 +11,7 @@
 #include <tdme/tools/editor/tabcontrollers/TextEditorTabController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/fwd-tdme.h>
+#include <tdme/utilities/MiniScript.h>
 
 using std::string;
 
@@ -23,6 +24,7 @@ using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabcontrollers::TextEditorTabController;
 using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
+using tdme::utilities::MiniScript;
 
 /**
  * Text editor tab view
@@ -47,6 +49,7 @@ private:
 	GUIStyledTextNodeController::ChangeListener* textNodeChangeListener { nullptr };
 	GUIStyledTextNodeController::CodeCompletionListener* textNodeCodeCompletionListener { nullptr };
 	const TextFormatter::CodeCompletion* codeCompletion { nullptr };
+	vector<MiniScript::StatementDescription> description;
 
 	struct CodeCompletionSymbol {
 		enum Type { TYPE_NONE, TYPE_SYMBOL, TYPE_FUNCTION };
@@ -146,6 +149,34 @@ public:
 	 * Set code editor
 	 */
 	void setCodeEditor();
+
+	/**
+	 * Adds a delta X value to UI node with given id and all nodes down the statement description tree
+	 * @param id id
+	 * @param description description
+	 * @param parentNode parent node
+	 * @param deltaX delta X
+	 */
+	void addNodeDeltaX(const string& id, const MiniScript::StatementDescription& description, GUIParentNode* parentNode, int deltaX);
+
+	/**
+	 * Create UI nodes for given statement description, which matches a statement in miniscript
+	 * @param id id
+	 * @param description description
+	 * @param parentNode parent node
+	 * @param x x
+	 * @param y y
+	 * @param width width
+	 * @param height height
+	 * @param depth depth
+	 */
+	void createNodes(const string& id, const MiniScript::StatementDescription& description, GUIParentNode* parentNode, int x, int y, int& width, int& height, int depth = 0);
+
+	/**
+	 * Set miniscript description
+	 * @param description description
+	 */
+	void setMiniScriptDescription(const vector<MiniScript::StatementDescription>& description);
 
 	// overridden methods
 	void handleInputEvents() override;
