@@ -1,0 +1,73 @@
+# initialize
+on: initialize
+	console.log("-----------------------")
+	console.log("visual-test: Initialize")
+	console.log("-----------------------")
+	console.log()
+end
+
+# if no condition is met, nothing will be executed, lol :D
+on: nothing
+	console.log("--------------------")
+	console.log("visual-test: Nothing")
+	console.log("--------------------")
+	console.log()
+	console.log("20 / 2: ", 20 / 2)
+	console.log("11 * 10: ", 11 * 10)
+	console.log("2 > 1: ", 2 > 1)
+	console.log("2 < 1: ", 2 < 1)
+	# if, elseif, else, end
+	$i = 1
+	if ($i == 0)
+		console.log("i -> 0")
+	elseif ($i == 1)
+		console.log("i -> 1")
+	elseif ($i == 2)
+		console.log("i -> 2")
+	elseif ($i == 3)
+		console.log("i -> 3")
+	else
+		console.log("else: ", $i)
+	end
+	# loops
+	$i = 1
+	forTime(2000)
+		console.log($i, ": Hello World")
+		script.wait(500)
+		$i = $i + 1
+	end
+	$i = 1
+	forCondition($i != 6)
+		console.log($i, ": Hello World")
+		script.wait(500)
+		$i = $i + 1
+	end
+	# loops + if, elseif, else, end
+	$i = 1
+	forCondition($i < 5)
+		console.log($i, ":")
+		if ($i == 0)
+			console.log("i -> 0")
+		elseif ($i == 1)
+			console.log("i -> 1")
+		elseif ($i == 2)
+			console.log("i -> 2")
+		elseif ($i == 3)
+			console.log("i -> 3")
+		else
+			console.log("else: ", $i)
+		end
+		$i = $i + 1
+	end
+	# 
+	script.stop()
+end
+
+# an error has occurred
+on: error
+	console.log("------------------")
+	console.log("visual-test: Error")
+	console.log("------------------")
+	console.log("An error occurred")
+	script.wait(1000)
+end
