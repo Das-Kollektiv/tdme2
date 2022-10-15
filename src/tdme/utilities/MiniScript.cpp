@@ -498,6 +498,97 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string_view&
 	return returnValue;
 }
 
+bool MiniScript::describeScriptStatement(const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, StatementDescription& description) {
+	if (VERBOSE == true) Console::println("MiniScript::describeScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': string arguments: " + string(method) + "(" + getArgumentsAsString(arguments) + ")");
+	// arguments
+	for (auto& argument: arguments) {
+		// variable
+		if (StringTools::viewStartsWith(argument, "$") == true) {
+			description.arguments.push_back(
+				{
+					.type = StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD,
+					.value = "getVariable",
+					.method = nullptr,
+					.arguments = {
+						{
+							.type = StatementDescription::STATEMENTDESCRIPTION_LITERAL,
+							.value = string(argument),
+							.arguments = {}
+						}
+					}
+				}
+			);
+		} else
+		// method call
+		if (argument.empty() == false &&
+			StringTools::viewStartsWith(argument, "\"") == false &&
+			StringTools::viewEndsWith(argument, "\"") == false &&
+			argument.find('(') != string::npos &&
+			argument.find(')') != string::npos) {
+			// method call
+			string_view subMethod;
+			vector<string_view> subArguments;
+			if (parseScriptStatement(argument, subMethod, subArguments) == true) {
+				StatementDescription subDescription;
+				describeScriptStatement(subMethod, subArguments, statement, subDescription);
+				description.arguments.push_back(subDescription);
+			} else {
+				Console::println("MiniScript::describeScriptStatement(): " + getStatementInformation(statement) + ": '" + string(argument) + "': parse error");
+				startErrorScript();
+			}
+		} else {
+			// literal
+			ScriptVariable argumentValue;
+			if (StringTools::viewStartsWith(argument, "\"") == true &&
+				StringTools::viewEndsWith(argument, "\"") == true) {
+				description.arguments.push_back(
+					{
+						.type = StatementDescription::STATEMENTDESCRIPTION_LITERAL,
+						.value = string(StringTools::viewSubstring(argument, 1, argument.size() - 1)),
+						.method = nullptr,
+						.arguments = {}
+					}
+				);
+			} else {
+				description.arguments.push_back(
+					{
+						.type = StatementDescription::STATEMENTDESCRIPTION_LITERAL,
+						.value = string(argument),
+						.method = nullptr,
+						.arguments = {}
+					}
+				);
+			}
+		}
+	}
+	// try first user functions
+	{
+		auto scriptFunctionsIt = scriptFunctions.find(string(method));
+		if (scriptFunctionsIt != scriptFunctions.end()) {
+			description.type = StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION;
+			description.value = string(method);
+			//
+			return true;
+		}
+	}
+	// try methods next
+	{
+		auto scriptMethodsIt = scriptMethods.find(string(method));
+		if (scriptMethodsIt != scriptMethods.end()) {
+			description.type = StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD;
+			description.value = string(method);
+			description.method = scriptMethodsIt->second;
+			//
+			return true;
+		} else {
+			Console::println("MiniScript::describeScriptStatement(): '" + scriptFileName + "': unknown method @" + to_string(statement.line) + ": '" + statement.statement + "': " + string(method) + "(" + getArgumentsAsString(arguments) + ")");
+			startErrorScript();
+		}
+	}
+	//
+	return false;
+}
+
 void MiniScript::emit(const string& condition) {
 	if (VERBOSE == true) Console::println("MiniScript::emit(): '" + scriptFileName + "': " + condition);
 	auto scriptIdxToStart = 0;
@@ -1262,6 +1353,10 @@ const string MiniScript::doStatementPreProcessing(const string& statement) {
 }
 
 bool MiniScript::call(int scriptIdx, span<ScriptVariable>& argumentValues, ScriptVariable& returnValue) {
+	if (scriptIdx < 0 || scriptIdx >= scripts.size()) {
+		Console::println("MiniScript::call(): invalid script index: " + to_string(scriptIdx));
+		return false;
+	}
 	// push a new script state
 	pushScriptState();
 	// script state vector could get modified, so
@@ -1385,35 +1480,80 @@ const vector<MiniScript::ScriptMethod*> MiniScript::getOperatorMethods() {
 	return methods;
 }
 
-const string MiniScript::getInformation() {
+bool MiniScript::describeScript(int scriptIdx, vector<StatementDescription>& description) {
+	if (scriptIdx < 0 || scriptIdx >= scripts.size()) {
+		Console::println("MiniScript::describeScript(): invalid script index");
+		return false;
+	}
+
+	//
+	auto& script = scripts[scriptIdx];
+
+	//
+	for (auto scriptStatement: script.statements) {
+		//
+		string_view method;
+		vector<string_view> arguments;
+		if (parseScriptStatement(scriptStatement.executableStatement, method, arguments) == false) {
+			Console::println("MiniScript::describeScript(): '" + scriptFileName + "': " + scriptStatement.statement + "@" + to_string(scriptStatement.line) + ": failed to parse statement");
+			return false;
+		}
+		description.push_back(StatementDescription());
+		if (describeScriptStatement(method, arguments, scriptStatement, description[description.size() - 1]) == false) {
+			Console::println("MiniScript::describeScript(): '" + scriptFileName + "': " + scriptStatement.statement + "@" + to_string(scriptStatement.line) + ": failed to describe statement");
+			return false;
+		}
+	}
+
+	//
+	return true;
+}
+
+const string MiniScript::getScriptInformation(int scriptIdx, bool includeStatements) {
+	if (scriptIdx < 0 || scriptIdx >= scripts.size()) {
+		Console::println("MiniScript::getScriptInformation(): invalid script index: " + to_string(scriptIdx));
+		return string();
+	}
+	auto& script = scripts[scriptIdx];
 	string result;
-	result+= "Script: " + scriptPathName + "/" + scriptFileName + " (runs " + (native == true?"natively":"interpreted") + ")" + "\n\n";
-	for (auto& script: scripts) {
-		string argumentsString;
-		switch(script.scriptType) {
-			case Script::SCRIPTTYPE_FUNCTION: {
-				for (auto& argument: script.arguments) {
-					if (argumentsString.empty() == false) argumentsString+= ", ";
-					if (argument.assignBack == true) argumentsString+= "=";
-					argumentsString+= argument.name;
-				}
-				argumentsString = "(" + argumentsString + ")";
-				result+= "function: "; break;
+	string argumentsString;
+	switch(script.scriptType) {
+		case Script::SCRIPTTYPE_FUNCTION: {
+			for (auto& argument: script.arguments) {
+				if (argumentsString.empty() == false) argumentsString+= ", ";
+				if (argument.assignBack == true) argumentsString+= "=";
+				argumentsString+= argument.name;
 			}
-			case Script::SCRIPTTYPE_ON: result+= "on: "; break;
-			case Script::SCRIPTTYPE_ONENABLED: result+= "on-enabled: "; break;
+			argumentsString = "(" + argumentsString + ")";
+			result+= "function: "; break;
 		}
-		if (script.condition.empty() == false)
-			result+= script.condition + argumentsString + "; ";
-		if (script.name.empty() == false) {
-			result+= "name = '" + script.name + argumentsString + "';\n";
-		} else {
-			result+= "\n";
-		}
+		case Script::SCRIPTTYPE_ON: result+= "on: "; break;
+		case Script::SCRIPTTYPE_ONENABLED: result+= "on-enabled: "; break;
+	}
+	if (script.condition.empty() == false)
+		result+= script.condition + argumentsString + "; ";
+	if (script.name.empty() == false) {
+		result+= "name = '" + script.name + argumentsString + "';\n";
+	} else {
+		result+= "\n";
+	}
+	if (includeStatements == true) {
 		for (auto& scriptStatement: script.statements) {
 			result+= "\t" + to_string(scriptStatement.statementIdx) + ": " + scriptStatement.statement + (scriptStatement.gotoStatementIdx != STATEMENTIDX_NONE?" (gotoStatement " + to_string(scriptStatement.gotoStatementIdx) + ")":"") + "\n";
 		}
 		result+= "\n";
+	}
+	//
+	return result;
+}
+
+const string MiniScript::getInformation() {
+	string result;
+	result+= "Script: " + scriptPathName + "/" + scriptFileName + " (runs " + (native == true?"natively":"interpreted") + ")" + "\n\n";
+	auto scriptIdx = 0;
+	for (auto& script: scripts) {
+		result+= getScriptInformation(scriptIdx);
+		scriptIdx++;
 	}
 
 	//
