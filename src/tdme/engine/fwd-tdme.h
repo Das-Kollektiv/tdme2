@@ -5,6 +5,7 @@ namespace tdme {
 namespace engine {
 	class Camera;
 	class ColorTexture;
+	class ColorTextureCanvas;
 	class Decal;
 	class DynamicColorTexture;
 	class Engine;
