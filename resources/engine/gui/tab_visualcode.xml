@@ -1,6 +1,6 @@
 <screen id="tab_text">
 	<element id="editor" width="100%" height="100%">
-		<texture id="visualization_texture" width="100%" height="100%" />
+		<texture id="visualization_texture" show-on="visualization" width="100%" height="100%" />
 		<scrollarea id="visualization" show-on="visualization" padding="5" width="100%" height="100%">
 		</scrollarea> 
 		<styled-input show-on="text" id="text" font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" padding="5" width="100%" height="100%" preformatted="true">

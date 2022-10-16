@@ -5,6 +5,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/engine/DynamicColorTexture.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
@@ -17,6 +18,7 @@
 using std::string;
 
 using tdme::engine::fileio::textures::Texture;
+using tdme::engine::DynamicColorTexture;
 using tdme::engine::FrameBuffer;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUINode_Alignments;
@@ -121,5 +123,11 @@ public:
 	 * @param texture texture
 	 */
 	void setTexture(Texture* texture);
+
+	/**
+	 * Set texture
+	 * @param texture texture
+	 */
+	void setTexture(DynamicColorTexture* texture);
 
 };

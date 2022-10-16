@@ -3,6 +3,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/DynamicColorTexture.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIStyledTextNodeController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
@@ -15,6 +16,8 @@
 
 using std::string;
 
+using tdme::engine::DynamicColorTexture;
+using tdme::engine::Engine;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUIStyledTextNodeController;
@@ -67,6 +70,9 @@ private:
 	static bool compareCodeCompletionStruct(const CodeCompletionSymbol& lhs, const CodeCompletionSymbol& rhs) {
 		return lhs.display < rhs.display;
 	}
+
+	DynamicColorTexture* linesTexture { nullptr };
+	int linesCreationPasses { -1 };
 
 public:
 	/**

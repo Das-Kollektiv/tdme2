@@ -3,6 +3,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
+#include <tdme/engine/DynamicColorTexture.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/gui/nodes/GUIColor.h>
@@ -20,6 +21,7 @@ using tdme::gui::nodes::GUITextureNode;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::subsystems::manager::TextureManager;
+using tdme::engine::DynamicColorTexture;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::gui::nodes::GUIColor;
@@ -123,6 +125,23 @@ void GUITextureNode::setTexture(Texture* texture) {
 	}
 	texture->acquireReference();
 	textureId = Engine::getInstance()->getTextureManager()->addTexture(texture, 0);
+	textureWidth = texture->getWidth();
+	textureHeight = texture->getHeight();
+}
+
+void GUITextureNode::setTexture(DynamicColorTexture* texture) {
+	if (this->texture != nullptr) {
+		Engine::getInstance()->getTextureManager()->removeTexture(this->texture->getId());
+		this->texture->releaseReference();
+	}
+	this->texture = nullptr;
+	if (texture == nullptr) {
+		textureId = 0;
+		textureWidth = 0;
+		textureHeight = 0;
+		return;
+	}
+	textureId = texture->getColorTextureId();
 	textureWidth = texture->getWidth();
 	textureHeight = texture->getHeight();
 }

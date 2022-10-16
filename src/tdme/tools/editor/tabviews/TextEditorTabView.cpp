@@ -6,6 +6,8 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/Color4.h>
+#include <tdme/engine/ColorTextureCanvas.h>
+#include <tdme/engine/DynamicColorTexture.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIFrameBufferNode.h>
@@ -13,6 +15,7 @@
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/nodes/GUIStyledTextNodeController.h>
+#include <tdme/gui/nodes/GUITextureNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -32,12 +35,15 @@ using std::string;
 using tdme::tools::editor::tabviews::TextEditorTabView;
 
 using tdme::engine::model::Color4;
+using tdme::engine::ColorTextureCanvas;
+using tdme::engine::DynamicColorTexture;
 using tdme::engine::Engine;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIFrameBufferNode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIStyledTextNode;
+using tdme::gui::nodes::GUITextureNode;
 using tdme::gui::GUI;
 using tdme::gui::GUIParser;
 using tdme::os::filesystem::FileSystem;
@@ -65,6 +71,9 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	engine->getGUI()->addScreen(screenNode->getId(), screenNode);
 	engine->getGUI()->addRenderScreen(screenNode->getId());
+	linesTexture = new DynamicColorTexture(engine->getWidth(), engine->getHeight());
+	linesTexture->initialize();
+	required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("visualization_texture"))->setTexture(linesTexture);
 	// enable code mode
 	setCodeEditor();
 
@@ -269,6 +278,21 @@ void TextEditorTabView::handleInputEvents()
 
 void TextEditorTabView::display()
 {
+	// TODO: maybe have a hook here if engine was resized
+	if (linesTexture->getWidth() != engine->getWidth() ||
+		linesTexture->getHeight() != engine->getHeight()) {
+		linesTexture->reshape(engine->getWidth(), engine->getHeight());
+		required_dynamic_cast<GUITextureNode*>(tabScreenNode->getNodeById("visualization_texture"))->setTexture(linesTexture);
+		linesCreationPasses = 0;
+	}
+	if (linesCreationPasses != -1 && linesCreationPasses < 2) {
+		// create lines
+		ColorTextureCanvas canvas(linesTexture->getTexture());
+		canvas.drawLine(0, 0, linesTexture->getWidth() - 1, linesTexture->getHeight() - 1, 255, 0, 0, 255);
+		linesTexture->update();
+		linesCreationPasses = -1;
+	}
+	//
 	engine->display();
 	engine->getGUI()->render();
 }
@@ -432,4 +456,6 @@ void TextEditorTabView::setMiniScriptDescription(const vector<MiniScript::Statem
 		createNodes(to_string(i), description[i], visualisationNode, x, y, width, height);
 		x+= width + 100;
 	}
+	//
+	linesCreationPasses = 0;
 }
