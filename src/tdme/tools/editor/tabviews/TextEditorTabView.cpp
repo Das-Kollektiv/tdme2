@@ -19,6 +19,8 @@
 #include <tdme/gui/nodes/GUITextureNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
+#include <tdme/math/Math.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
@@ -48,6 +50,8 @@ using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUITextureNode;
 using tdme::gui::GUI;
 using tdme::gui::GUIParser;
+using tdme::math::Math;
+using tdme::math::Vector2;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
@@ -293,7 +297,22 @@ void TextEditorTabView::display()
 		// create lines
 		ColorTextureCanvas canvas(linesTexture->getTexture());
 		for (auto& connection: connections) {
-			canvas.drawLine(connection.x1, connection.y1, connection.x2, connection.y2, 255, 0, 0, 255);
+			auto x1 = connection.x1;
+			auto y1 = connection.y1;
+			auto x2 = connection.x2;
+			auto y2 = connection.y2;
+			auto STRAIGHTLINE_LENGTH = 50.0f;
+			//
+			Vector2 srcVector1(x1, y1);
+			Vector2 srcVector2(x1 + (x2 < x1?-STRAIGHTLINE_LENGTH:STRAIGHTLINE_LENGTH), y1);
+			Vector2 dstVector1(x1 + (x2 < x1?-STRAIGHTLINE_LENGTH:STRAIGHTLINE_LENGTH), y2 - (y2 < y1?-STRAIGHTLINE_LENGTH:STRAIGHTLINE_LENGTH));
+			Vector2 dstVector2(x2, y2);
+			vector<Vector2> controlPoints;
+			controlPoints.push_back(srcVector1);
+			controlPoints.push_back(srcVector2);
+			controlPoints.push_back(dstVector1);
+			controlPoints.push_back(dstVector2);
+			canvas.drawBezier(controlPoints, 255, 0, 0, 255);
 		}
 		linesTexture->update();
 		linesCreationPasses++;

@@ -133,6 +133,16 @@ public:
 	 */
 	void drawBezier(const vector<Vector2>& controlPoints, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
 
+	/**
+	 * Debug control points for bezier curve
+	 * @param controlPoints control points
+	 * @param red red
+	 * @param green green
+	 * @param blue blue
+	 * @param alpha alpha
+	 */
+	void debugBezier(const vector<Vector2>& controlPoints, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
+
 private:
 	Texture* texture { nullptr };
 
