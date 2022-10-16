@@ -46,6 +46,23 @@ public:
 	}
 
 	/**
+	 * Clear texture with given clear color
+	 * @param red red
+	 * @param green green
+	 * @param blue blue
+	 * @param alpha alpha
+	 */
+	inline void clear(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha) {
+		auto textureWidth = texture->getTextureWidth();
+		auto textureHeight = texture->getTextureHeight();
+		for (auto y = 0; y < textureHeight; y++) {
+			for (auto x = 0; x < textureWidth; x++) {
+				drawPixel(x, y, red, green, blue, alpha);
+			}
+		}
+	}
+
+	/**
 	 * Draw pixel
 	 * @param x x
 	 * @param y y
