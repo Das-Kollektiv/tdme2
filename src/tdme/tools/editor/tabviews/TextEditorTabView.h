@@ -74,6 +74,23 @@ private:
 	DynamicColorTexture* linesTexture { nullptr };
 	int linesCreationPasses { -1 };
 
+	struct Node {
+		int x1;
+		int y1;
+		int x2;
+		int y2;
+	};
+
+	struct Connection {
+		int x1;
+		int y1;
+		int x2;
+		int y2;
+	};
+
+	vector<Node> nodes;
+	vector<Connection> connections;
+
 public:
 	/**
 	 * Public constructor
@@ -183,6 +200,19 @@ public:
 	 * @param description description
 	 */
 	void setMiniScriptDescription(const vector<MiniScript::StatementDescription>& description);
+
+	/**
+	 * Create connections
+	 * @param id id
+	 * @param description description
+	 * @param parentNode parent node
+	 */
+	void createConnections(const string& id, const MiniScript::StatementDescription& description, GUIParentNode* parentNode);
+
+	/**
+	 * Create connections
+	 */
+	void createConnections();
 
 	// overridden methods
 	void handleInputEvents() override;
