@@ -436,6 +436,8 @@ SRCS = \
 	src/tdme/gui/elements/GUIMenuItem.cpp \
 	src/tdme/gui/elements/GUIMenuItemController.cpp \
 	src/tdme/gui/elements/GUIMenuSeparator.cpp \
+	src/tdme/gui/elements/GUIMoveable.cpp \
+	src/tdme/gui/elements/GUIMoveableController.cpp \
 	src/tdme/gui/elements/GUIProgressBar.cpp \
 	src/tdme/gui/elements/GUIProgressBarController.cpp \
 	src/tdme/gui/elements/GUIRadioButton.cpp \

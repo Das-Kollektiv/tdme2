@@ -9,6 +9,7 @@
 #include <tdme/engine/ColorTextureCanvas.h>
 #include <tdme/engine/DynamicColorTexture.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/gui/events/GUIMoveListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIFrameBufferNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -41,6 +42,7 @@ using tdme::engine::model::Color4;
 using tdme::engine::ColorTextureCanvas;
 using tdme::engine::DynamicColorTexture;
 using tdme::engine::Engine;
+using tdme::gui::events::GUIMoveListener;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIFrameBufferNode;
 using tdme::gui::nodes::GUINode;
@@ -84,6 +86,27 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 		linesTexture = new DynamicColorTexture(engine->getWidth(), engine->getHeight());
 		linesTexture->initialize();
 		required_dynamic_cast<GUITextureNode*>(tabScreenNode->getNodeById("visualization_texture"))->setTexture(linesTexture);
+		// add node move listener
+		class NodeMoveListener: public GUIMoveListener {
+		public:
+			NodeMoveListener(TextEditorTabView* textEditorTabView): textEditorTabView(textEditorTabView) {
+			}
+			void onMoved(GUINode* node) {
+				auto visualisationNode = required_dynamic_cast<GUIParentNode*>(textEditorTabView->tabScreenNode->getNodeById("visualization_canvas"));
+				auto& nodeComputedConstraints = node->getComputedConstraints();
+				auto xMax = nodeComputedConstraints.left + nodeComputedConstraints.width;
+				auto yMax = nodeComputedConstraints.top + nodeComputedConstraints.height;
+				visualisationNode->getComputedConstraints().width = Math::max(visualisationNode->getComputedConstraints().width, xMax);
+				visualisationNode->getComputedConstraints().height = Math::max(visualisationNode->getComputedConstraints().height, yMax);
+				visualisationNode->getRequestsConstraints().width = Math::max(visualisationNode->getRequestsConstraints().width, xMax);
+				visualisationNode->getRequestsConstraints().height = Math::max(visualisationNode->getRequestsConstraints().height, yMax);
+				textEditorTabView->createConnectionsPasses = 3;
+			}
+
+		private:
+			TextEditorTabView* textEditorTabView;
+		};
+		tabScreenNode->addMoveListener(new NodeMoveListener(this));
 		// enable code mode
 		setCodeEditor();
 	}
@@ -435,7 +458,7 @@ void TextEditorTabView::createNodes(const string& id, const MiniScript::Statemen
 
 	//
 	string xml;
-	xml+= "<layout id='d" + id + "' left='" + to_string(x) + "' top='" + to_string(y) + "' padding='5' width='auto' height='auto' alignment='vertical' background-color='#606060' border-color='black' border='1'>";
+	xml+= "<moveable id='d" + id + "' left='" + to_string(x) + "' top='" + to_string(y) + "' width='auto' height='auto' alignment='vertical'>";
 	switch (description.type) {
 		case MiniScript::StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD:
 		case MiniScript::StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION:
@@ -472,7 +495,7 @@ void TextEditorTabView::createNodes(const string& id, const MiniScript::Statemen
 		xml+= "<space width='100%' height='5' />";
 		xml+= "<text id='d" + id + "_flow' font='{$font.default}' size='{$fontsize.default}' text='Flow' color='{$color.font_normal}' width='100%' horizontal-align='right'/>";
 	}
-	xml+= "</layout>";
+	xml+= "</moveable>";
 
 	try {
 		GUIParser::parse(parentNode, xml);

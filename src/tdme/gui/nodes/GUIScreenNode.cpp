@@ -15,6 +15,7 @@
 #include <tdme/gui/events/GUIFocusListener.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
 #include <tdme/gui/events/GUIMouseOverListener.h>
+#include <tdme/gui/events/GUIMoveListener.h>
 #include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -48,6 +49,7 @@ using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::gui::events::GUIMouseOverListener;
+using tdme::gui::events::GUIMoveListener;
 using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
@@ -564,6 +566,21 @@ void GUIScreenNode::delegateFocus(GUIElementNode* node) {
 void GUIScreenNode::delegateUnfocus(GUIElementNode* node) {
 	for (auto i = 0; i < focusListener.size(); i++) {
 		focusListener[i]->onUnfocus(node);
+	}
+}
+
+void GUIScreenNode::addMoveListener(GUIMoveListener* listener) {
+	removeMoveListener(listener);
+	moveListener.push_back(listener);
+}
+
+void GUIScreenNode::removeMoveListener(GUIMoveListener* listener) {
+	moveListener.erase(std::remove(moveListener.begin(), moveListener.end(), listener), moveListener.end());
+}
+
+void GUIScreenNode::delegateMove(GUINode* node) {
+	for (auto i = 0; i < moveListener.size(); i++) {
+		moveListener[i]->onMoved(node);
 	}
 }
 

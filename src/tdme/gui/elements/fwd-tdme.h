@@ -29,6 +29,8 @@ namespace elements {
 	class GUIMenuItem;
 	class GUIMenuItemController;
 	class GUIMenuSeparator;
+	class GUIMoveable;
+	class GUIMoveableController;
 	class GUIProgressBar;
 	class GUIProgressBarController;
 	class GUIRadioButton;
