@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
@@ -11,10 +12,12 @@
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
 #include <tdme/tools/editor/tabviews/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/MiniScript.h>
 
 #include <ext/tinyxml/tinyxml.h>
 
 using std::string;
+using std::vector;
 
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
@@ -26,7 +29,7 @@ using tdme::gui::nodes::GUITextNode;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::tabcontrollers::TabController;
 using tdme::tools::editor::tabviews::TextEditorTabView;
-using tdme::utilities::MutableString;
+using tdme::utilities::MiniScript;
 
 using tinyxml::TiXmlAttribute;
 using tinyxml::TiXmlDocument;
@@ -39,11 +42,17 @@ using tinyxml::TiXmlElement;
 class tdme::tools::editor::tabcontrollers::TextEditorTabController final
 	: public TabController
 {
+public:
+	struct MiniScriptScriptDescription {
+		string name;
+		vector<MiniScript::StatementDescription> description;
+	};
 
 private:
 	TextEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
+	vector<MiniScriptScriptDescription> miniScriptDescription;
 
 public:
 	/**
@@ -89,9 +98,17 @@ public:
 	void setOutlinerAddDropDownContent();
 
 	/**
-	 * Describe mini script
+	 * @return miniscript description
 	 */
-	void describeMiniScript();
+	inline vector<MiniScriptScriptDescription>& getMiniScriptDescription() {
+		return miniScriptDescription;
+	}
+
+	/**
+	 * Update MiniScript description
+	 * @param miniScriptScriptIdx MiniScript script index
+	 */
+	void updateMiniScriptDescription(int miniScriptScriptIdx);
 
 	/**
 	 * Shows the error pop up

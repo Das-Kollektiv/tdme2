@@ -208,12 +208,14 @@ GUINode* GUIScreenNode::forceInvalidateLayout(GUINode* node) {
 	// first step, make sure all parents up to screen node are layouted
 	auto _node = node;
 	auto __node = node;
-	__node = __node->parentNode;
-	while (_node != nullptr) {
-		if (_node->layouted == false) __node = _node;
-		_node = _node->parentNode;
+	if (node->parentNode != nullptr) {
+		__node = __node->parentNode;
+		while (_node != nullptr) {
+			if (_node->layouted == false) __node = _node;
+			_node = _node->parentNode;
+		}
+		_node = __node;
 	}
-	_node = __node;
 
 	// invalidate all nodes from node to _node
 	for (__node = node; __node != _node; __node = __node->parentNode) {

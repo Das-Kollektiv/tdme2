@@ -39,7 +39,7 @@ void Curve::add_node(const Vector& node)
 	{
 		int new_node_index=_nodes.size() - 1;
 
-		double segment_distance=(_nodes[new_node_index] - _nodes[new_node_index-1]).length();
+		float segment_distance=(_nodes[new_node_index] - _nodes[new_node_index-1]).length();
 		_distances.push_back(segment_distance + _distances[new_node_index-1]);
 	}
 }

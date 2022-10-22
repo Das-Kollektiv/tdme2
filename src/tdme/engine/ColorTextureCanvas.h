@@ -72,15 +72,16 @@ public:
 	 * @param alpha alpha
 	 */
 	inline void drawPixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha) {
-		auto buffer = texture->getTextureData()->getBuffer();
 		auto textureWidth = texture->getTextureWidth();
 		auto textureHeight = texture->getTextureHeight();
 		if (x < 0 || x >= textureWidth) return;
 		if (y < 0 || y >= textureHeight) return;
-		buffer[y * textureWidth * 4 + x * 4 + 0] = red;
-		buffer[y * textureWidth * 4 + x * 4 + 1] = green;
-		buffer[y * textureWidth * 4 + x * 4 + 2] = blue;
-		buffer[y * textureWidth * 4 + x * 4 + 3] = alpha;
+		auto buffer = texture->getTextureData()->getBuffer();
+		auto bytesPerPixel = texture->getDepth() / 8;
+		buffer[y * textureWidth * bytesPerPixel + x * bytesPerPixel + 0] = red;
+		buffer[y * textureWidth * bytesPerPixel + x * bytesPerPixel + 1] = green;
+		buffer[y * textureWidth * bytesPerPixel + x * bytesPerPixel + 2] = blue;
+		if (bytesPerPixel == 4) buffer[y * textureWidth * bytesPerPixel + x * bytesPerPixel + 3] = alpha;
 	}
 
 	/**

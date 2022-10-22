@@ -284,25 +284,51 @@ void TextEditorTabView::handleInputEvents()
 
 void TextEditorTabView::display()
 {
+	//
+	auto visualizationNode = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getInnerNodeById("visualization"));
+
+	auto scrolled = false;
+	auto scrollXNew = visualizationNode->getChildrenRenderOffsetX();
+	auto scrollYNew = visualizationNode->getChildrenRenderOffsetY();
+	if (Float::equals(scrollXNew, scrollX) == false ||
+		Float::equals(scrollYNew, scrollY) == false) {
+		scrollX = scrollXNew;
+		scrollY = scrollYNew;
+		scrolled = true;
+	}
+
+
 	// TODO: maybe have a hook here if engine was resized
-	if (linesTexture->getWidth() != engine->getWidth() ||
+	if (scrolled == true ||
+		linesTexture->getWidth() != engine->getWidth() ||
 		linesTexture->getHeight() != engine->getHeight()) {
 		linesTexture->reshape(engine->getWidth(), engine->getHeight());
 		required_dynamic_cast<GUITextureNode*>(tabScreenNode->getNodeById("visualization_texture"))->setTexture(linesTexture);
-		linesCreationPasses = 0;
+		createConnectionsPasses = 3;
 	}
 	// we have a layouting issue here, we cant get dimensions of nodes right after adding them, so defer this for now
-	if (linesCreationPasses != -1 && linesCreationPasses < 2) {
+	if (createConnectionsPasses > 0) {
+		auto visualizationScrollArea = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("visualization"));
+		auto visualizationWidth = visualizationScrollArea->getComputedConstraints().width;
+		auto visualizationHeight = visualizationScrollArea->getComputedConstraints().height;
+		auto visualizationScrollX = static_cast<int>(scrollX);
+		auto visualizationScrollY = static_cast<int>(scrollY);
 		createConnections();
 		// create lines
 		ColorTextureCanvas canvas(linesTexture->getTexture());
+		canvas.clear(0, 0, 0, 0);
 		for (auto& connection: connections) {
-			auto x1 = connection.x1;
-			auto y1 = connection.y1;
-			auto x2 = connection.x2;
-			auto y2 = connection.y2;
+			auto x1 = connection.x1 - visualizationScrollX;
+			auto y1 = connection.y1 - visualizationScrollY;
+			auto x2 = connection.x2 - visualizationScrollX;
+			auto y2 = connection.y2 - visualizationScrollY;
+
+			if ((x1 < 0 && x2 < 0) ||
+				(x1 > visualizationWidth && x2 > visualizationWidth) ||
+				(y1 < 0 && y2 < 0) ||
+				(y1 > visualizationHeight && y2 > visualizationHeight)) continue;
+
 			auto STRAIGHTLINE_LENGTH = 50.0f;
-			//
 			Vector2 srcVector1(x1, y1);
 			Vector2 srcVector2(x1 + (x2 < x1?-STRAIGHTLINE_LENGTH:STRAIGHTLINE_LENGTH), y1);
 			Vector2 dstVector1(x1 + (x2 < x1?-STRAIGHTLINE_LENGTH:STRAIGHTLINE_LENGTH), y2 - (y2 < y1?-STRAIGHTLINE_LENGTH:STRAIGHTLINE_LENGTH));
@@ -315,9 +341,9 @@ void TextEditorTabView::display()
 			canvas.drawBezier(controlPoints, 255, 0, 0, 255);
 		}
 		linesTexture->update();
-		linesCreationPasses++;
-		if (linesCreationPasses == 2) linesCreationPasses = -1;
+		createConnectionsPasses--;
 	}
+
 	//
 	engine->display();
 	engine->getGUI()->render();
@@ -367,11 +393,13 @@ void TextEditorTabView::reloadOutliner() {
 void TextEditorTabView::setVisualEditor() {
 	auto editorNode = dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen(tabScreenNode->getId())->getNodeById("editor"));
 	if (editorNode != nullptr) editorNode->getActiveConditions().set("visualization");
+	visualEditor = true;
 }
 
 void TextEditorTabView::setCodeEditor() {
 	auto editorNode = dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen(tabScreenNode->getId())->getNodeById("editor"));
 	if (editorNode != nullptr) editorNode->getActiveConditions().set("text");
+	visualEditor = false;
 }
 
 void TextEditorTabView::addNodeDeltaX(const string& id, const MiniScript::StatementDescription& description, GUIParentNode* parentNode, int deltaX) {
@@ -471,19 +499,32 @@ void TextEditorTabView::createNodes(const string& id, const MiniScript::Statemen
 	}
 }
 
-void TextEditorTabView::setMiniScriptDescription(const vector<MiniScript::StatementDescription>& description) {
-	this->description = description;
-	auto visualisationNode = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("visualization"));
+void TextEditorTabView::updateMiniScriptDescription(int miniScriptScriptIdx) {
+	required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("visualization_canvas"))->clearSubNodes();
+	//
+	this->miniScriptScriptIdx = miniScriptScriptIdx;
+	auto& description = textEditorTabController->getMiniScriptDescription()[miniScriptScriptIdx].description;
+	auto visualisationNode = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("visualization_canvas"));
 	auto x = 200;
 	auto y = 200;
+	auto yMax = y;
 	for (auto i = 0; i < description.size(); i++) {
 		auto width = 0;
 		auto height = 0;
 		createNodes(to_string(i), description[i], visualisationNode, x, y, width, height);
 		x+= width + 100;
+		yMax = Math::max(y + height, yMax);
 	}
+	// TODO: with absolute align of nodes content width/height is not yet computed in UI
+	visualisationNode->getComputedConstraints().width = x;
+	visualisationNode->getComputedConstraints().height = yMax;
+	visualisationNode->getRequestsConstraints().width = x;
+	visualisationNode->getRequestsConstraints().height = yMax;
+	// Bug: Work around! Sometimes layouting is not issued! Need to check!
+	tabScreenNode->forceInvalidateLayout(tabScreenNode);
+
 	//
-	linesCreationPasses = 0;
+	createConnectionsPasses = 3;
 }
 
 void TextEditorTabView::createConnections(const string& id, const MiniScript::StatementDescription& description, GUIParentNode* parentNode) {
@@ -515,15 +556,15 @@ void TextEditorTabView::createConnections(const string& id, const MiniScript::St
 }
 
 void TextEditorTabView::createConnections() {
-	// request lines creation
-	linesCreationPasses = 0;
 	// reset
 	nodes.clear();
 	connections.clear();
 
 	//
+	if (miniScriptScriptIdx >= textEditorTabController->getMiniScriptDescription().size()) return;
+	auto& description = textEditorTabController->getMiniScriptDescription()[miniScriptScriptIdx].description;
 	GUINode* previousNodeFlowNode = nullptr;
-	auto visualisationNode = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("visualization"));
+	auto visualisationNode = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("visualization_canvas"));
 	for (auto i = 0; i < description.size(); i++) {
 		createConnections(to_string(i), description[i], visualisationNode);
 		auto node = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById("d" + to_string(i) + "_flow"));

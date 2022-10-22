@@ -6,30 +6,30 @@
 class Vector
 {
 public:
-	double x;
-	double y;
-	double z;
+	float x;
+	float y;
+	float z;
 
 public:
 	Vector();
-	Vector(double _x, double _y, double _z);
+	Vector(float _x, float _y, float _z);
 	Vector(const Vector& rhs);
 	Vector& operator=(const Vector& rhs);
 
 public:
 	Vector cross(const Vector& rhs) const;
 	Vector normalize() const;
-	double dot(const Vector& rhs) const;
-	double lengthSq() const;
+	float dot(const Vector& rhs) const;
+	float lengthSq() const;
 
 public:
-	Vector Truncate(double max_value) const;
+	Vector Truncate(float max_value) const;
 
 public:
 	Vector& operator-=(const Vector& rhs);
 	Vector& operator+=(const Vector& rhs);
-	Vector& operator*=(double value);
-	Vector& operator/=(double value);
+	Vector& operator*=(float value);
+	Vector& operator/=(float value);
 
 public:
 	bool operator <=(const Vector& rhs) const;
@@ -44,13 +44,13 @@ public:
 	std::string toString() const;
 
 public:
-	double length() const;
+	float length() const;
 };
 
 Vector operator+(const Vector& v1, const Vector& v2);
 Vector operator-(const Vector& v1, const Vector& v2);
-Vector operator*(const Vector& v1, double value);
-Vector operator*(double value, const Vector& v1);
-Vector operator/(const Vector& v1, double value);
+Vector operator*(const Vector& v1, float value);
+Vector operator*(float value, const Vector& v1);
+Vector operator/(const Vector& v1, float value);
 
 #endif

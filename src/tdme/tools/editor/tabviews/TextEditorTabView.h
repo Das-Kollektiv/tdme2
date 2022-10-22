@@ -52,7 +52,6 @@ private:
 	GUIStyledTextNodeController::ChangeListener* textNodeChangeListener { nullptr };
 	GUIStyledTextNodeController::CodeCompletionListener* textNodeCodeCompletionListener { nullptr };
 	const TextFormatter::CodeCompletion* codeCompletion { nullptr };
-	vector<MiniScript::StatementDescription> description;
 
 	struct CodeCompletionSymbol {
 		enum Type { TYPE_NONE, TYPE_SYMBOL, TYPE_FUNCTION };
@@ -63,6 +62,11 @@ private:
 		string returnValue;
 	};
 
+	int miniScriptScriptIdx { 0 };
+
+	float scrollX { 0.0f };
+	float scrollY { 0.0f };
+
 	/**
 	 * Compare CodeCompletionSymbol structs
 	 * @return lhs < rhs
@@ -72,7 +76,7 @@ private:
 	}
 
 	DynamicColorTexture* linesTexture { nullptr };
-	int linesCreationPasses { -1 };
+	int createConnectionsPasses { -1 };
 
 	struct Node {
 		int x1;
@@ -90,6 +94,7 @@ private:
 
 	vector<Node> nodes;
 	vector<Connection> connections;
+	bool visualEditor { false };
 
 public:
 	/**
@@ -164,6 +169,13 @@ public:
 	}
 
 	/**
+	 * @return is showing visual editor
+	 */
+	inline bool isVisualEditor() {
+		return visualEditor;
+	}
+
+	/**
 	 * Set visual editor
 	 */
 	void setVisualEditor();
@@ -196,10 +208,17 @@ public:
 	void createNodes(const string& id, const MiniScript::StatementDescription& description, GUIParentNode* parentNode, int x, int y, int& width, int& height, int depth = 0);
 
 	/**
-	 * Set miniscript description
-	 * @param description description
+	 * @return MiniScript script index
 	 */
-	void setMiniScriptDescription(const vector<MiniScript::StatementDescription>& description);
+	inline int getMiniScriptScriptIdx() {
+		return miniScriptScriptIdx;
+	}
+
+	/**
+	 * Update miniscript description
+	 * @param miniScriptScriptIdx MiniScript script index
+	 */
+	void updateMiniScriptDescription(int miniScriptScriptIdx);
 
 	/**
 	 * Create connections
