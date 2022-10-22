@@ -19,11 +19,7 @@ Vector::Vector(float _x, float _y, float _z)
 
 float Vector::length() const
 {
-	#if defined(__APPLE__)
-		return sqrtf(x*x + y* y + z*z);
-	#else
-		return fsqrt(x*x + y* y + z*z);
-	#endif
+	return std::sqrt(x*x + y* y + z*z);
 }
 
 bool Vector::operator==(const Vector& rhs) const
