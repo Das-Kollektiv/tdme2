@@ -267,7 +267,7 @@ SRCS = \
 	src/tdme/engine/subsystems/shadowmapping/ShadowMapRenderShaderTreeImplementation.cpp \
 	src/tdme/engine/subsystems/skinning/SkinningShader.cpp \
 	src/tdme/engine/subsystems/texture2D/Texture2DRenderShader.cpp \
-	src/tdme/gui/GUI1.cpp \
+	src/tdme/gui/GUI.cpp \
 	src/tdme/gui/GUIParser.cpp \
 	src/tdme/gui/GUIParserException.cpp \
 	src/tdme/gui/effects/GUIColorEffect.cpp \
