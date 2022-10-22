@@ -520,14 +520,14 @@ void GUIParentNode::render(GUIRenderer* guiRenderer)
 	auto renderAreaBottom = renderAreaBottomCurrent;
 	// Floating node does not have correct dimension and such due non existance when layouting
 	if (flow == GUINode_Flow::INTEGRATED) {
-		renderAreaLeft = ((left) / (screenWidth / 2.0f)) - 1.0f;
+		renderAreaLeft = ((left) / (screenWidth / 2.0f)) - renderOffsetXCurrent - 1.0f;
 		renderAreaTop = ((screenHeight - top) / (screenHeight / 2.0f)) + renderOffsetYCurrent - 1.0f;
-		renderAreaRight = ((left + width) / (screenWidth / 2.0f)) - 1.0f;
+		renderAreaRight = ((left + width) / (screenWidth / 2.0f)) - renderOffsetXCurrent - 1.0f;
 		renderAreaBottom = ((screenHeight - top - height) / (screenHeight / 2.0f)) + renderOffsetYCurrent - 1.0f;
 	}
-	// guiRenderer->setSubRenderAreaLeft(renderAreaLeft);
+	guiRenderer->setSubRenderAreaLeft(renderAreaLeft);
 	guiRenderer->setSubRenderAreaTop(renderAreaTop);
-	// guiRenderer->setSubRenderAreaRight(renderAreaRight);
+	guiRenderer->setSubRenderAreaRight(renderAreaRight);
 	guiRenderer->setSubRenderAreaBottom(renderAreaBottom);
 	guiRenderer->setRenderOffsetX(renderOffsetX);
 	guiRenderer->setRenderOffsetY(renderOffsetY);
@@ -545,13 +545,13 @@ void GUIParentNode::render(GUIRenderer* guiRenderer)
 			if (guiSubNode->layouted == false) {
 				continue;
 			}
-			//guiRenderer->setRenderAreaLeft(renderAreaLeftCurrent);
+			guiRenderer->setRenderAreaLeft(renderAreaLeftCurrent);
 			guiRenderer->setRenderAreaTop(renderAreaTopCurrent);
-			//guiRenderer->setRenderAreaRight(renderAreaRightCurrent);
+			guiRenderer->setRenderAreaRight(renderAreaRightCurrent);
 			guiRenderer->setRenderAreaBottom(renderAreaBottomCurrent);
-			//guiRenderer->setSubRenderAreaLeft(renderAreaLeft);
+			guiRenderer->setSubRenderAreaLeft(renderAreaLeft);
 			guiRenderer->setSubRenderAreaTop(renderAreaTop);
-			//guiRenderer->setSubRenderAreaRight(renderAreaRight);
+			guiRenderer->setSubRenderAreaRight(renderAreaRight);
 			guiRenderer->setSubRenderAreaBottom(renderAreaBottom);
 			guiRenderer->setRenderOffsetX(renderOffsetX);
 			guiRenderer->setRenderOffsetY(renderOffsetY);
@@ -580,13 +580,13 @@ void GUIParentNode::render(GUIRenderer* guiRenderer)
 	} else {
 		for (auto i = 0; i < vieportSubNodesCache.size(); i++) {
 			auto guiSubNode = vieportSubNodesCache[i];
-			//guiRenderer->setRenderAreaLeft(renderAreaLeftCurrent);
+			guiRenderer->setRenderAreaLeft(renderAreaLeftCurrent);
 			guiRenderer->setRenderAreaTop(renderAreaTopCurrent);
-			//guiRenderer->setRenderAreaRight(renderAreaRightCurrent);
+			guiRenderer->setRenderAreaRight(renderAreaRightCurrent);
 			guiRenderer->setRenderAreaBottom(renderAreaBottomCurrent);
-			//guiRenderer->setSubRenderAreaLeft(renderAreaLeft);
+			guiRenderer->setSubRenderAreaLeft(renderAreaLeft);
 			guiRenderer->setSubRenderAreaTop(renderAreaTop);
-			//guiRenderer->setSubRenderAreaRight(renderAreaRight);
+			guiRenderer->setSubRenderAreaRight(renderAreaRight);
 			guiRenderer->setSubRenderAreaBottom(renderAreaBottom);
 			guiRenderer->setRenderOffsetX(renderOffsetX);
 			guiRenderer->setRenderOffsetY(renderOffsetY);

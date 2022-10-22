@@ -77,11 +77,16 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	engine->getGUI()->addScreen(screenNode->getId(), screenNode);
 	engine->getGUI()->addRenderScreen(screenNode->getId());
-	linesTexture = new DynamicColorTexture(engine->getWidth(), engine->getHeight());
-	linesTexture->initialize();
-	required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("visualization_texture"))->setTexture(linesTexture);
-	// enable code mode
-	setCodeEditor();
+
+	//
+	visualCodingEnabled = extension == "tscript";
+	if (visualCodingEnabled == true) {
+		linesTexture = new DynamicColorTexture(engine->getWidth(), engine->getHeight());
+		linesTexture->initialize();
+		required_dynamic_cast<GUITextureNode*>(tabScreenNode->getNodeById("visualization_texture"))->setTexture(linesTexture);
+		// enable code mode
+		setCodeEditor();
+	}
 
 	// initial text format
 	TextFormatter::getInstance()->format(extension, textNode);
@@ -285,63 +290,66 @@ void TextEditorTabView::handleInputEvents()
 void TextEditorTabView::display()
 {
 	//
-	auto visualizationNode = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getInnerNodeById("visualization"));
+	if (visualCodingEnabled == true) {
+		auto visualizationNode = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getInnerNodeById("visualization"));
 
-	auto scrolled = false;
-	auto scrollXNew = visualizationNode->getChildrenRenderOffsetX();
-	auto scrollYNew = visualizationNode->getChildrenRenderOffsetY();
-	if (Float::equals(scrollXNew, scrollX) == false ||
-		Float::equals(scrollYNew, scrollY) == false) {
-		scrollX = scrollXNew;
-		scrollY = scrollYNew;
-		scrolled = true;
-	}
+		auto scrolled = false;
+		auto scrollXNew = visualizationNode->getChildrenRenderOffsetX();
+		auto scrollYNew = visualizationNode->getChildrenRenderOffsetY();
 
-
-	// TODO: maybe have a hook here if engine was resized
-	if (scrolled == true ||
-		linesTexture->getWidth() != engine->getWidth() ||
-		linesTexture->getHeight() != engine->getHeight()) {
-		linesTexture->reshape(engine->getWidth(), engine->getHeight());
-		required_dynamic_cast<GUITextureNode*>(tabScreenNode->getNodeById("visualization_texture"))->setTexture(linesTexture);
-		createConnectionsPasses = 3;
-	}
-	// we have a layouting issue here, we cant get dimensions of nodes right after adding them, so defer this for now
-	if (createConnectionsPasses > 0) {
-		auto visualizationScrollArea = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("visualization"));
-		auto visualizationWidth = visualizationScrollArea->getComputedConstraints().width;
-		auto visualizationHeight = visualizationScrollArea->getComputedConstraints().height;
-		auto visualizationScrollX = static_cast<int>(scrollX);
-		auto visualizationScrollY = static_cast<int>(scrollY);
-		createConnections();
-		// create lines
-		ColorTextureCanvas canvas(linesTexture->getTexture());
-		canvas.clear(0, 0, 0, 0);
-		for (auto& connection: connections) {
-			auto x1 = connection.x1 - visualizationScrollX;
-			auto y1 = connection.y1 - visualizationScrollY;
-			auto x2 = connection.x2 - visualizationScrollX;
-			auto y2 = connection.y2 - visualizationScrollY;
-
-			if ((x1 < 0 && x2 < 0) ||
-				(x1 > visualizationWidth && x2 > visualizationWidth) ||
-				(y1 < 0 && y2 < 0) ||
-				(y1 > visualizationHeight && y2 > visualizationHeight)) continue;
-
-			auto STRAIGHTLINE_LENGTH = 50.0f;
-			Vector2 srcVector1(x1, y1);
-			Vector2 srcVector2(x1 + (x2 < x1?-STRAIGHTLINE_LENGTH:STRAIGHTLINE_LENGTH), y1);
-			Vector2 dstVector1(x1 + (x2 < x1?-STRAIGHTLINE_LENGTH:STRAIGHTLINE_LENGTH), y2 - (y2 < y1?-STRAIGHTLINE_LENGTH:STRAIGHTLINE_LENGTH));
-			Vector2 dstVector2(x2, y2);
-			vector<Vector2> controlPoints;
-			controlPoints.push_back(srcVector1);
-			controlPoints.push_back(srcVector2);
-			controlPoints.push_back(dstVector1);
-			controlPoints.push_back(dstVector2);
-			canvas.drawBezier(controlPoints, 255, 0, 0, 255);
+		if (Float::equals(scrollXNew, scrollX) == false ||
+			Float::equals(scrollYNew, scrollY) == false) {
+			scrollX = scrollXNew;
+			scrollY = scrollYNew;
+			scrolled = true;
 		}
-		linesTexture->update();
-		createConnectionsPasses--;
+
+		// resize?
+		if (scrolled == true ||
+			linesTexture->getWidth() != engine->getWidth() ||
+			linesTexture->getHeight() != engine->getHeight()) {
+			linesTexture->reshape(engine->getWidth(), engine->getHeight());
+			auto visualizationTextureNode = dynamic_cast<GUITextureNode*>(tabScreenNode->getNodeById("visualization_texture"));
+			if (visualizationTextureNode != nullptr) visualizationTextureNode->setTexture(linesTexture);
+			createConnectionsPasses = 3;
+		}
+		// we have a layouting issue here, we cant get dimensions of nodes right after adding them, so defer this for now
+		if (createConnectionsPasses > 0) {
+			auto visualizationScrollArea = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("visualization"));
+			auto visualizationWidth = visualizationScrollArea->getComputedConstraints().width;
+			auto visualizationHeight = visualizationScrollArea->getComputedConstraints().height;
+			auto visualizationScrollX = static_cast<int>(scrollX);
+			auto visualizationScrollY = static_cast<int>(scrollY);
+			createConnections();
+			// create lines
+			ColorTextureCanvas canvas(linesTexture->getTexture());
+			canvas.clear(0, 0, 0, 0);
+			for (auto& connection: connections) {
+				auto x1 = connection.x1 - visualizationScrollX;
+				auto y1 = connection.y1 - visualizationScrollY;
+				auto x2 = connection.x2 - visualizationScrollX;
+				auto y2 = connection.y2 - visualizationScrollY;
+
+				if ((x1 < 0 && x2 < 0) ||
+					(x1 > visualizationWidth && x2 > visualizationWidth) ||
+					(y1 < 0 && y2 < 0) ||
+					(y1 > visualizationHeight && y2 > visualizationHeight)) continue;
+
+				auto STRAIGHTLINE_LENGTH = 50.0f;
+				Vector2 srcVector1(x1, y1);
+				Vector2 srcVector2(x1 + (x2 < x1?-STRAIGHTLINE_LENGTH:STRAIGHTLINE_LENGTH), y1);
+				Vector2 dstVector1(x1 + (x2 < x1?-STRAIGHTLINE_LENGTH:STRAIGHTLINE_LENGTH), y2 - (y2 < y1?-STRAIGHTLINE_LENGTH:STRAIGHTLINE_LENGTH));
+				Vector2 dstVector2(x2, y2);
+				vector<Vector2> controlPoints;
+				controlPoints.push_back(srcVector1);
+				controlPoints.push_back(srcVector2);
+				controlPoints.push_back(dstVector1);
+				controlPoints.push_back(dstVector2);
+				canvas.drawBezier(controlPoints, 255, 0, 0, 255);
+			}
+			linesTexture->update();
+			createConnectionsPasses--;
+		}
 	}
 
 	//

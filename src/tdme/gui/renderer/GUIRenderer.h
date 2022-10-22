@@ -407,13 +407,11 @@ public:
 		auto renderAreaBottom = this->renderAreaBottom;
 		auto renderAreaRight = this->renderAreaRight;
 		auto renderAreaLeft = this->renderAreaLeft;
-		/*
 		// TODO: This prevented off screen rendering, but does collide with position effects and parent children viewport caches
 		renderAreaTop = Math::min(renderAreaTop + guiEffectOffsetY, SCREEN_TOP);
 		renderAreaBottom = Math::max(renderAreaBottom + guiEffectOffsetY, SCREEN_BOTTOM);
 		renderAreaRight = Math::min(renderAreaRight - guiEffectOffsetX, SCREEN_RIGHT);
 		renderAreaLeft = Math::max(renderAreaLeft - guiEffectOffsetX, SCREEN_LEFT);
-		*/
 		renderAreaTop = renderAreaTop + guiEffectOffsetY;
 		renderAreaBottom = renderAreaBottom + guiEffectOffsetY;
 		renderAreaRight = renderAreaRight - guiEffectOffsetX;
@@ -437,13 +435,11 @@ public:
 		auto renderAreaBottom = this->renderAreaBottom;
 		auto renderAreaRight = this->renderAreaRight;
 		auto renderAreaLeft = this->renderAreaLeft;
-		/*
 		// TODO: This prevented off screen rendering, but does collide with position effects and parent children viewport caches
 		renderAreaTop = Math::min(renderAreaTop + guiEffectOffsetY, SCREEN_TOP);
 		renderAreaBottom = Math::max(renderAreaBottom + guiEffectOffsetY, SCREEN_BOTTOM);
 		renderAreaRight = Math::min(renderAreaRight - guiEffectOffsetX, SCREEN_RIGHT);
 		renderAreaLeft = Math::max(renderAreaLeft - guiEffectOffsetX, SCREEN_LEFT);
-		*/
 		renderAreaTop = renderAreaTop + guiEffectOffsetY;
 		renderAreaBottom = renderAreaBottom + guiEffectOffsetY;
 		if (y3 > renderAreaTop) return false;
@@ -524,6 +520,7 @@ public:
 		renderAreaRight = Math::min(renderAreaRight - guiEffectOffsetX, SCREEN_RIGHT);
 		renderAreaLeft = Math::max(renderAreaLeft - guiEffectOffsetX, SCREEN_LEFT);
 
+
 		auto quadBottom = y3;
 		if (quadBottom > renderAreaTop) return;
 		auto quadTop = y1;
@@ -545,7 +542,6 @@ public:
 			y1 = renderAreaTop;
 			y2 = renderAreaTop;
 		}
-		/*
 		if (quadLeft < renderAreaLeft) {
 			tu1 = tu1 + ((tu2 - tu1) * ((renderAreaLeft - x1) / (x2 - x1)));
 			tu4 = tu4 + ((tu3 - tu4) * ((renderAreaLeft - x4) / (x3 - x4)));
@@ -558,7 +554,6 @@ public:
 			x2 = renderAreaRight;
 			x3 = renderAreaRight;
 		}
-		*/
 
 		fbVertices.put(x1);
 		fbVertices.put(y1);

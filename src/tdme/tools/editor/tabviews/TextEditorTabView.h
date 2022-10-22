@@ -95,6 +95,7 @@ private:
 	vector<Node> nodes;
 	vector<Connection> connections;
 	bool visualEditor { false };
+	bool visualCodingEnabled { false };
 
 public:
 	/**
