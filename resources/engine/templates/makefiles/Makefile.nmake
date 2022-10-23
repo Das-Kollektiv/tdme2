@@ -6,7 +6,7 @@ INCLUDES = \
 	/I "ext" \
 	/I "ext\src" \
 	/I "ext\v-hacd\src\VHACD_Lib\inc" \
-	/I "ext\reactphysics3d\src" \
+	/I "ext\reactphysics3d\include" \
 	/I "ext\fbx\win64\include" \
 	/I "ext\glfw3\include" \
 	/I "ext\windows-msc\pthread\includes" \
@@ -15,7 +15,8 @@ INCLUDES = \
 	/I "ext\windows-msc\dirent\include" \
 	/I "ext\windows-msc\vulkan-sdk\include" \
 	/I "ext\freetype\include" \
-	/I "ext\rapidjson\include"
+	/I "ext\rapidjson\include" \
+	/I "ext\cpp-spline\src"
 
 # For some reason this works only once LOL
 # WINDOWS_SDK_DIR = %WindowsSdkDir%Lib\%WindowsSDKLibVersion%
