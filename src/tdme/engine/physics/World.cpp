@@ -67,6 +67,10 @@ using tdme::utilities::VectorIteratorMultiple;
 
 World::World()
 {
+	reactphysics3d::PhysicsWorld::WorldSettings worldSettings;
+	worldSettings.isSleepingEnabled = true;
+	worldSettings.defaultVelocitySolverNbIterations = 10;
+	worldSettings.defaultPositionSolverNbIterations = 5;
 	world = physicsCommon.createPhysicsWorld();
 }
 

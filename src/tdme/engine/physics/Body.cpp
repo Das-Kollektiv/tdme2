@@ -111,39 +111,12 @@ Body::Body(World* world, const string& id, int type, bool enabled, uint16_t coll
 
 Body::~Body() {
 	for (auto boundingVolume: boundingVolumes) {
-		if (dynamic_cast<TerrainMesh*>(boundingVolume) != nullptr && cloned == true) continue;
 		delete boundingVolume;
 	}
 }
 
 const Vector3 Body::getNoRotationInertiaTensor() {
 	return Vector3(0.0f, 0.0f, 0.0f);
-}
-
-Matrix4x4 Body::computeInverseInertiaMatrix(BoundingBox* boundingBox, float mass, float scaleXAxis, float scaleYAxis, float scaleZAxis)
-{
-	auto width = boundingBox->getDimensions().getX();
-	auto height = boundingBox->getDimensions().getY();
-	auto depth = boundingBox->getDimensions().getZ();
-	return
-		(Matrix4x4(
-			scaleXAxis > Math::EPSILON && mass > Math::EPSILON?1.0f / (scaleXAxis * 1.0f / 12.0f * mass * (height * height + depth * depth)):0.0f,
-			0.0f,
-			0.0f,
-			0.0f,
-			0.0f,
-			scaleYAxis > Math::EPSILON && mass > Math::EPSILON?1.0f / (scaleYAxis * 1.0f / 12.0f * mass * (width * width + depth * depth)):0.0f,
-			0.0f,
-			0.0f,
-			0.0f,
-			0.0f,
-			scaleZAxis > Math::EPSILON && mass > Math::EPSILON?1.0f / (scaleZAxis * 1.0f / 12.0f * mass * (width * width + height * height)):0.0f,
-			0.0f,
-			0.0f,
-			0.0f,
-			0.0f,
-			1.0f
-		));
 }
 
 bool Body::isCloned() {
@@ -214,7 +187,7 @@ vector<BoundingVolume*>& Body::getBoundingVolumes() {
 }
 
 void Body::resetColliders() {
-	// remove proxy shapes
+	// remove colliders
 	for (auto collider: colliders) {
 		if (rigidBody != nullptr) {
 			rigidBody->removeCollider(collider);
@@ -223,13 +196,12 @@ void Body::resetColliders() {
 		}
 	}
 	colliders.clear();
-	// TODO: do they need to be removed too?
-	collisionShapes.clear();
 
 	// set up scale
 	for (auto boundingVolume: boundingVolumes) {
 		// scale bounding volume and recreate it if nessessary
 		if (boundingVolume->getScale().equals(transform.getScale()) == false) {
+			boundingVolume->destroyCollisionShape();
 			boundingVolume->setScale(transform.getScale());
 			boundingVolume->createCollisionShape(world);
 		}
@@ -266,37 +238,16 @@ void Body::resetColliders() {
 		collider->setCollisionCategoryBits(collisionTypeId);
 
 		//
-		collisionShapes.push_back(boundingVolume->collisionShape);
 		colliders.push_back(collider);
 	}
 
 	// set up inverse inertia tensor local
 	if (rigidBody != nullptr) {
-		// set inverse inertia tensor local
-		// 	TODO: transform with identity transform, this is a bit sub optimal but currently required to get rigid body dimensions
 		// 	this method is only used when setting TDME2 transform, so no need to transform back
 		reactphysics3d::Transform transform;
 		collisionBody->setTransform(transform);
-
-		//
-		auto boundingBoxTransformed = computeBoundingBoxTransformed();
-		auto& inverseInertiaMatrixArray = computeInverseInertiaMatrix(&boundingBoxTransformed, mass, inertiaTensor.getX(), inertiaTensor.getY(), inertiaTensor.getZ()).getArray();
-
-		/*
-		rigidBody->setInverseInertiaTensorLocal(
-			reactphysics3d::Matrix3x3(
-				inverseInertiaMatrixArray[0],
-				inverseInertiaMatrixArray[1],
-				inverseInertiaMatrixArray[2],
-				inverseInertiaMatrixArray[4],
-				inverseInertiaMatrixArray[5],
-				inverseInertiaMatrixArray[6],
-				inverseInertiaMatrixArray[8],
-				inverseInertiaMatrixArray[9],
-				inverseInertiaMatrixArray[10]
-			)
-		);
-		*/
+		// set inverse inertia tensor local
+		rigidBody->setLocalInertiaTensor(reactphysics3d::Vector3(inertiaTensor.getX(), inertiaTensor.getY(), inertiaTensor.getZ()));
 	};
 }
 

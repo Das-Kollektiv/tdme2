@@ -54,6 +54,11 @@ private:
 	ConvexMesh(const vector<Vector3>& vertices, const vector<int>& facesVerticesCount, const vector<int>& indices, const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f));
 
 	/**
+	 * Public destructor
+	 */
+	~ConvexMesh();
+
+	/**
 	 * Checks if vertex lives on triangle plane
 	 * @param triangle triangle
 	 * @param vertex vertex
@@ -80,6 +85,7 @@ private:
 	void createConvexMesh(const vector<Vector3>& vertices, const vector<int>& facesVerticesCount, const vector<int>& indices, const Vector3& scale);
 
 	// overriden methods
+	void destroyCollisionShape() override;
 	void createCollisionShape(World* world) override;
 
 public:
@@ -94,11 +100,6 @@ public:
 	 * @param scale scale
 	 */
 	ConvexMesh(ObjectModel* model, const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f));
-
-	/**
-	 * Public denstructor
-	 */
-	~ConvexMesh();
 
 	// overridden methods
 	void setScale(const Vector3& scale) override;

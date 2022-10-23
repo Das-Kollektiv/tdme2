@@ -51,6 +51,11 @@ protected:
 	void computeBoundingBox();
 
 	/**
+	 * Destroy collision shape
+	 */
+	virtual void destroyCollisionShape() = 0;
+
+	/**
 	 * Create collision shap
 	 */
 	virtual void createCollisionShape(World* world) = 0;

@@ -88,7 +88,6 @@ private:
 	Vector3 transformScale;
 	vector<BoundingVolume*> boundingVolumes;
 	vector<reactphysics3d::Collider*> colliders;
-	vector<reactphysics3d::CollisionShape*> collisionShapes;
 	vector<CollisionListener*> collisionListener;
 
 	/**
@@ -147,17 +146,6 @@ private:
 	 * @param other other
 	 */
 	void fireOnCollisionEnd(Body* other);
-
-	/**
-	 * Computes the inverse inertia matrix
-	 * @param boundingBox bounding box
-	 * @param mass mass
-	 * @param scaleXAxis scale x axis
-	 * @param scaleYAxis scale y axis
-	 * @param scaleZAxis scale z axis
-	 * @return inverse inertia matrix
-	 */
-	static Matrix4x4 computeInverseInertiaMatrix(BoundingBox* boundingBox, float mass, float scaleXAxis, float scaleYAxis, float scaleZAxis);
 
 public:
 

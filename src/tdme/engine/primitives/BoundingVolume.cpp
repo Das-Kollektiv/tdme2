@@ -26,7 +26,6 @@ using tdme::engine::Transform;
 using tdme::math::Vector3;
 
 BoundingVolume::~BoundingVolume() {
-	if (collisionShape != nullptr) delete collisionShape;
 }
 
 void BoundingVolume::computeBoundingBox() {

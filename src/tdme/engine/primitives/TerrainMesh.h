@@ -34,6 +34,7 @@ private:
 	reactphysics3d::TriangleMesh* triangleMesh { nullptr };
 
 	// overriden methods
+	void destroyCollisionShape() override;
 	void createCollisionShape(World* world) override;
 
 public:

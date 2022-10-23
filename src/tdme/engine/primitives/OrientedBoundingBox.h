@@ -38,6 +38,7 @@ private:
 	STATIC_DLL_IMPEXT static const array<array<int32_t,3>,12> facesVerticesIndexes;
 
 	// overriden methods
+	void destroyCollisionShape() override;
 	void createCollisionShape(World* world) override;
 
 public:
@@ -67,6 +68,11 @@ public:
 	 * Public constructor
 	 */
 	OrientedBoundingBox();
+
+	/**
+	 * Public destructor
+	 */
+	~OrientedBoundingBox();
 
 	/**
 	 * @return 3 axes

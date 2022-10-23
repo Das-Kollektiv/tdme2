@@ -75,6 +75,10 @@ OrientedBoundingBox::OrientedBoundingBox()
 	setScale(Vector3(1.0f, 1.0f, 1.0f));
 }
 
+OrientedBoundingBox::~OrientedBoundingBox() {
+	destroyCollisionShape();
+}
+
 const array<Vector3, 8> OrientedBoundingBox::getVertices() const {
 	array<Vector3, 8> vertices;
 	array<Vector3, 3> xyzAxes;
@@ -152,12 +156,6 @@ const Vector3& OrientedBoundingBox::getHalfExtension() const
 }
 
 void OrientedBoundingBox::setScale(const Vector3& scale) {
-	// remove old collision shape
-	if (collisionShape != nullptr) {
-		this->world->physicsCommon.destroyBoxShape(static_cast<reactphysics3d::BoxShape*>(collisionShape));
-		collisionShape = nullptr;
-	}
-
 	// store new scale
 	this->scale.set(scale);
 
@@ -179,6 +177,13 @@ void OrientedBoundingBox::setScale(const Vector3& scale) {
 			)
 		)
 	);
+}
+
+void OrientedBoundingBox::destroyCollisionShape() {
+	if (collisionShape == nullptr) return;
+	this->world->physicsCommon.destroyBoxShape(static_cast<reactphysics3d::BoxShape*>(collisionShape));
+	collisionShape = nullptr;
+	world = nullptr;
 }
 
 void OrientedBoundingBox::createCollisionShape(World* world) {

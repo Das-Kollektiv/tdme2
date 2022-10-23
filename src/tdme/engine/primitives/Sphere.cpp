@@ -28,18 +28,16 @@ Sphere::Sphere(const Vector3& center, float radius, const Vector3& scale)
 	setScale(scale);
 }
 
+Sphere::~Sphere() {
+	destroyCollisionShape();
+}
+
 float Sphere::getRadius() const
 {
 	return radius;
 }
 
 void Sphere::setScale(const Vector3& scale) {
-	// remove old collision shape
-	if (collisionShape != nullptr) {
-		this->world->physicsCommon.destroySphereShape(static_cast<reactphysics3d::SphereShape*>(collisionShape));
-		collisionShape = nullptr;
-	}
-
 	// store new scale
 	this->scale.set(scale);
 
@@ -50,6 +48,14 @@ void Sphere::setScale(const Vector3& scale) {
 	//
 	collisionShapeLocalTranslation.set(center).scale(scale);
 	collisionShapeLocalTransform.setPosition(reactphysics3d::Vector3(collisionShapeLocalTranslation.getX(), collisionShapeLocalTranslation.getY(), collisionShapeLocalTranslation.getZ()));
+}
+
+void Sphere::destroyCollisionShape() {
+	// remove collision shape
+	if (collisionShape == nullptr) return;
+	this->world->physicsCommon.destroySphereShape(static_cast<reactphysics3d::SphereShape*>(collisionShape));
+	collisionShape = nullptr;
+	world = nullptr;
 }
 
 void Sphere::createCollisionShape(World* world) {

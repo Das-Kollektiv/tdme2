@@ -32,8 +32,19 @@ HeightMap::HeightMap(
 	this->heightValues = heightValues;
 }
 
+HeightMap::~HeightMap() {
+	destroyCollisionShape();
+}
+
 void HeightMap::setScale(const Vector3& scale) {
 	Console::println("HeightMap::setScale(): not supported!");
+}
+
+void HeightMap::destroyCollisionShape() {
+	if (collisionShape == nullptr) return;
+	this->world->physicsCommon.destroyHeightFieldShape(static_cast<reactphysics3d::HeightFieldShape*>(collisionShape));
+	collisionShape = nullptr;
+	world = nullptr;
 }
 
 void HeightMap::createCollisionShape(World* world) {

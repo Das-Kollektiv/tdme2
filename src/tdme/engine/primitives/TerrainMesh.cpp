@@ -56,21 +56,10 @@ TerrainMesh::TerrainMesh(ObjectModel* model, const Transform& transform)
 }
 
 TerrainMesh::~TerrainMesh() {
-	if (triangleMesh != nullptr) delete triangleMesh;
-	if (triangleVertexArray != nullptr) delete triangleVertexArray;
+	destroyCollisionShape();
 }
 
 void TerrainMesh::setScale(const Vector3& scale) {
-	// remove old collision shape
-	if (collisionShape != nullptr) {
-		this->world->physicsCommon.destroyConcaveMeshShape(static_cast<reactphysics3d::ConcaveMeshShape*>(collisionShape));
-		collisionShape = nullptr;
-	}
-	if (triangleMesh != nullptr) {
-		this->world->physicsCommon.destroyTriangleMesh(triangleMesh);
-		triangleMesh = nullptr;
-	}
-
 	//
 	if (scale.equals(Vector3(1.0f, 1.0f, 1.0f)) == false) {
 		Console::println("TerrainMesh::setScale(): != 1.0f: Not supported!");
@@ -79,8 +68,6 @@ void TerrainMesh::setScale(const Vector3& scale) {
 	this->scale.set(scale);
 
 	// delete old collision shape
-	if (collisionShape != nullptr) delete collisionShape;
-	if (triangleMesh != nullptr) delete triangleMesh;
 	if (triangleVertexArray != nullptr) delete triangleVertexArray;
 	collisionShape = nullptr;
 	triangleMesh = nullptr;
@@ -89,6 +76,17 @@ void TerrainMesh::setScale(const Vector3& scale) {
 
 void TerrainMesh::setTransform(const Transform& transform) {
 	Console::println("TerrainMesh::setTransform(): Not supported!");
+}
+
+void TerrainMesh::destroyCollisionShape() {
+	if (collisionShape == nullptr) return;
+	// remove old collision shape
+	this->world->physicsCommon.destroyConcaveMeshShape(static_cast<reactphysics3d::ConcaveMeshShape*>(collisionShape));
+	this->world->physicsCommon.destroyTriangleMesh(triangleMesh);
+	delete triangleVertexArray;
+	collisionShape = nullptr;
+	triangleMesh = nullptr;
+	triangleVertexArray = nullptr;
 }
 
 void TerrainMesh::createCollisionShape(World* world) {

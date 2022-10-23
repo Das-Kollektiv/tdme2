@@ -21,6 +21,7 @@ private:
 	float radius;
 
 	// overriden methods
+	void destroyCollisionShape() override;
 	void createCollisionShape(World* world) override;
 
 public:
@@ -36,6 +37,11 @@ public:
 	 * @param scale scale
 	 */
 	Sphere(const Vector3& center, float radius, const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f));
+
+	/**
+	 * Public destructor
+	 */
+	~Sphere();
 
 	/**
 	 * @return float radius

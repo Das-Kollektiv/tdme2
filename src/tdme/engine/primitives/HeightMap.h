@@ -25,6 +25,7 @@ private:
 	float* heightValues;
 
 	// overriden methods
+	void destroyCollisionShape() override;
 	void createCollisionShape(World* world) override;
 
 public:
@@ -45,6 +46,11 @@ public:
 		float* heightValues,
 		const Vector3& scale = Vector3(1.0f, 1.0f, 1.0f)
 	);
+
+	/**
+	 * Public destructor
+	 */
+	~HeightMap();
 
 	// overrides
 	void setScale(const Vector3& scale) override;

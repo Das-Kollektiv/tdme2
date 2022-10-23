@@ -30,6 +30,10 @@ Capsule::Capsule(const Vector3& a, const Vector3& b, float radius, const Vector3
 	setScale(scale);
 }
 
+Capsule::~Capsule() {
+	destroyCollisionShape();
+}
+
 float Capsule::getRadius() const
 {
 	return radius;
@@ -46,12 +50,6 @@ const Vector3& Capsule::getB() const
 }
 
 void Capsule::setScale(const Vector3& scale) {
-	// remove old collision shape
-	if (collisionShape != nullptr) {
-		this->world->physicsCommon.destroyCapsuleShape(static_cast<reactphysics3d::CapsuleShape*>(collisionShape));
-		collisionShape = nullptr;
-	}
-
 	// store new scale
 	this->scale.set(scale);
 
@@ -95,6 +93,13 @@ void Capsule::setScale(const Vector3& scale) {
 		)
 	);
 
+}
+
+void Capsule::destroyCollisionShape() {
+	if (collisionShape == nullptr) return;
+	this->world->physicsCommon.destroyCapsuleShape(static_cast<reactphysics3d::CapsuleShape*>(collisionShape));
+	collisionShape = nullptr;
+	world = nullptr;
 }
 
 void Capsule::createCollisionShape(World* world) {

@@ -54,14 +54,6 @@ ConvexMesh::ConvexMesh()
 {
 }
 
-ConvexMesh::~ConvexMesh()
-{
-	if (polyhedronMesh != nullptr) delete polyhedronMesh;
-	if (polygonVertexArray != nullptr) delete polygonVertexArray;
-	if (verticesByteBuffer != nullptr) delete verticesByteBuffer;
-	if (indicesByteBuffer != nullptr) delete indicesByteBuffer;
-}
-
 inline bool ConvexMesh::isVertexOnTrianglePlane(Triangle& triangle, const Vector3& vertex) {
 	for (auto& triangleVertex: triangle.getVertices()) {
 		if (triangleVertex.equals(vertex) == true) return true;
@@ -88,24 +80,8 @@ inline bool ConvexMesh::areTrianglesAdjacent(Triangle& triangle1, Triangle& tria
 }
 
 void ConvexMesh::createConvexMesh(const vector<Vector3>& vertices, const vector<int>& facesVerticesCount, const vector<int>& indices, const Vector3& scale) {
-	// delete old collision shape if we have any
-	if (collisionShape != nullptr) {
-		this->world->physicsCommon.destroyConvexMeshShape(static_cast<reactphysics3d::ConvexMeshShape*>(collisionShape));
-		collisionShape = nullptr;
-	}
-	if (polyhedronMesh != nullptr) {
-		this->world->physicsCommon.destroyPolyhedronMesh(polyhedronMesh);
-		polyhedronMesh = nullptr;
-	}
-	if (polygonVertexArray != nullptr) delete polygonVertexArray;
-	if (verticesByteBuffer != nullptr) delete verticesByteBuffer;
-	if (indicesByteBuffer != nullptr) delete indicesByteBuffer;
-	polygonVertexArray = nullptr;
-	verticesByteBuffer = nullptr;
-	indicesByteBuffer = nullptr;
-
 	// check if local translation is given
-	// determine center/position transformed
+	// 	determine center/position transformed
 	collisionShapeLocalTranslation.set(0.0f, 0.0f, 0.0f);
 	for (auto vertexIdx: indices) {
 		auto& vertex = vertices[vertexIdx];
@@ -351,6 +327,10 @@ ConvexMesh::ConvexMesh(const vector<Vector3>& vertices, const vector<int>& faces
 	setScale(scale);
 }
 
+ConvexMesh::~ConvexMesh() {
+	destroyCollisionShape();
+}
+
 void ConvexMesh::setScale(const Vector3& scale) {
 	// store new scale
 	this->scale.set(scale);
@@ -381,6 +361,21 @@ void ConvexMesh::setScale(const Vector3& scale) {
 		faces.push_back(face);
 		indexIdx+= faceVerticesCount;
 	}
+}
+
+void ConvexMesh::destroyCollisionShape() {
+	if (collisionShape == nullptr) return;
+	this->world->physicsCommon.destroyConvexMeshShape(static_cast<reactphysics3d::ConvexMeshShape*>(collisionShape));
+	this->world->physicsCommon.destroyPolyhedronMesh(polyhedronMesh);
+	delete polygonVertexArray;
+	delete verticesByteBuffer;
+	delete indicesByteBuffer;
+	collisionShape = nullptr;
+	polyhedronMesh = nullptr;
+	polygonVertexArray = nullptr;
+	verticesByteBuffer = nullptr;
+	indicesByteBuffer = nullptr;
+	world = nullptr;
 }
 
 void ConvexMesh::createCollisionShape(World* world) {
