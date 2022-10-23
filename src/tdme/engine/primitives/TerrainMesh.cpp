@@ -66,12 +66,6 @@ void TerrainMesh::setScale(const Vector3& scale) {
 	}
 	// store new scale
 	this->scale.set(scale);
-
-	// delete old collision shape
-	if (triangleVertexArray != nullptr) delete triangleVertexArray;
-	collisionShape = nullptr;
-	triangleMesh = nullptr;
-	triangleVertexArray = nullptr;
 }
 
 void TerrainMesh::setTransform(const Transform& transform) {
@@ -80,7 +74,6 @@ void TerrainMesh::setTransform(const Transform& transform) {
 
 void TerrainMesh::destroyCollisionShape() {
 	if (collisionShape == nullptr) return;
-	// remove old collision shape
 	this->world->physicsCommon.destroyConcaveMeshShape(static_cast<reactphysics3d::ConcaveMeshShape*>(collisionShape));
 	this->world->physicsCommon.destroyTriangleMesh(triangleMesh);
 	delete triangleVertexArray;
