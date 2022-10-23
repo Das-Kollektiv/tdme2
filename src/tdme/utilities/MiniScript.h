@@ -1715,6 +1715,14 @@ public:
 		ScriptVariableType returnValueType;
 	};
 
+	struct StatementDescription {
+		enum Type { STATEMENTDESCRIPTION_NONE, STATEMENTDESCRIPTION_LITERAL, STATEMENTDESCRIPTION_EXECUTE_METHOD, STATEMENTDESCRIPTION_EXECUTE_FUNCTION };
+		Type type { STATEMENTDESCRIPTION_NONE };
+		string value;
+		ScriptMethod* method { nullptr };
+		vector<StatementDescription> arguments;
+	};
+
 protected:
 	static constexpr int SETACCESSBOOL_NONE { -1 };
 	static constexpr int SETACCESSBOOL_TRUE { 0 };
@@ -1983,6 +1991,16 @@ private:
 	 * @return return value as script variablle
 	 */
 	ScriptVariable executeScriptStatement(const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement);
+
+	/**
+	 * Describe a script statement
+	 * @param method method
+	 * @param arguments arguments
+	 * @param statement statement
+	 * @param description description
+	 * @return success
+	 */
+	bool describeScriptStatement(const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, StatementDescription& description);
 
 	/**
 	 * Returns if char is operator char
@@ -2962,7 +2980,24 @@ public:
 	const vector<ScriptMethod*> getOperatorMethods();
 
 	/**
+	 * Describe a script with given index
+	 * @param scriptIdx script index
+	 * @param description description
+	 * @return success
+	 */
+	bool describeScript(int scriptIdx, vector<StatementDescription>& description);
+
+	/**
+	 * Get miniscript script information
+	 * @param scriptIdx script index
+	 * @param includeStatements include statements
+	 * @return information as string
+	 */
+	const string getScriptInformation(int scriptIdx, bool includeStatements = true);
+
+	/**
 	 * Get miniscript instance information
+	 * @return information as string
 	 */
 	const string getInformation();
 

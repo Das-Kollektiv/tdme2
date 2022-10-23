@@ -1,0 +1,13 @@
+<layout id="{$id}" width="100%" height="100%" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
+	<layer width="100%" height="100%">
+		<frame-buffer
+			id="{$id}_framebuffer"
+			width="100%" 
+			height="100%" 
+			background-color="black"
+		/>
+		<layout width="100%" height="100%" padding="5" alignment="horizontal" horizontal-align="right" vertical-align="top">
+			<checkbox id="{$id}_checkbox_visualcode" image-unchecked="resources/engine/images/checkbox_gridoff.png" image-checked="resources/engine/images/checkbox_gridon.png" value="1" selected="false" />
+		</layout>
+	</layer>
+</layout>

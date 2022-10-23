@@ -20,6 +20,7 @@
 #include <tdme/gui/elements/GUIMenuHeaderItem.h>
 #include <tdme/gui/elements/GUIMenuItem.h>
 #include <tdme/gui/elements/GUIMenuSeparator.h>
+#include <tdme/gui/elements/GUIMoveable.h>
 #include <tdme/gui/elements/GUIProgressBar.h>
 #include <tdme/gui/elements/GUIRadioButton.h>
 #include <tdme/gui/elements/GUIScrollArea.h>
@@ -98,6 +99,7 @@ using tdme::gui::elements::GUIMenuHeader;
 using tdme::gui::elements::GUIMenuHeaderItem;
 using tdme::gui::elements::GUIMenuItem;
 using tdme::gui::elements::GUIMenuSeparator;
+using tdme::gui::elements::GUIMoveable;
 using tdme::gui::elements::GUIProgressBar;
 using tdme::gui::elements::GUIRadioButton;
 using tdme::gui::elements::GUIScrollArea;
@@ -379,6 +381,9 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 	for (auto node = xmlParentNode->FirstChildElement(); node != nullptr; node = node->NextSiblingElement()) {
 		{
 			string nodeTagName = string(node->Value());
+			if (nodeTagName == "defaults") {
+				// no op
+			} else
 			if (nodeTagName == "effect-in") {
 				parseEffect(guiParentNode, "tdme.xmleffect.in", true, node);
 			} else
@@ -1688,51 +1693,80 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 }
 
 void GUIParser::parseTemplate(GUIParentNode* parentNode, const string& parentElementId, TiXmlElement* node, const string& templateXML, const unordered_map<string, string>& attributes, GUIElement* guiElement) {
-	auto newGuiElementTemplateXML = templateXML;
+	//
+	auto templateAttributes = attributes;
+	{
+		// parse defaults
+		TiXmlDocument newTemplateDocument;
+		newTemplateDocument.Parse(("<template>\n" + templateXML + "</template>\n").c_str());
+		if (newTemplateDocument.Error() == true) {
+			string message = "GUIParser::parseTemplate(): Could not parse XML. Error='" + string(newTemplateDocument.ErrorDesc()) + ":\n\n" + templateXML;
+			Console::println(message);
+			throw GUIParserException(message);
+		}
+		auto defaultsNodes = getChildrenByTagName(newTemplateDocument.RootElement(), "defaults");
+		for (auto defaultsNode: defaultsNodes) {
+			for (auto node = defaultsNode->FirstChildElement(); node != nullptr; node = node->NextSiblingElement()) {
+				auto nodeTagName = string(node->Value());
+				if (nodeTagName == "attribute") {
+					auto name =	string(AVOID_NULLPTR_STRING(node->Attribute("name")));
+					auto value = string(AVOID_NULLPTR_STRING(node->Attribute("value")));
+					if (templateAttributes.find(name) == templateAttributes.end()) {
+						templateAttributes[name] = value;
+					}
+				} else {
+					Console::println("GUIParser::parseTemplate(): unknown defaults node: " + nodeTagName);
+				}
+			}
+		}
+	}
+
+	//
+	auto newTemplateXML = templateXML;
 
 	//
 	auto themeProperties = parentNode->getScreenNode()->getApplicationSubPathName() == "project"?projectThemeProperties:engineThemeProperties;
 
 	// replace with theme properties
 	for (auto& themePropertyIt: themeProperties->getProperties()) {
-		newGuiElementTemplateXML = StringTools::replace(newGuiElementTemplateXML, "{$" + themePropertyIt.first + "}", escapeQuotes(themePropertyIt.second));
+		newTemplateXML = StringTools::replace(newTemplateXML, "{$" + themePropertyIt.first + "}", escapeQuotes(themePropertyIt.second));
 	}
 
 	// replace attributes given
 	for (TiXmlAttribute* attribute = node->FirstAttribute(); attribute != nullptr; attribute = attribute->Next()) {
 		auto attributeKey = string(attribute->Name());
 		auto attributeValue = string(attribute->Value());
-		newGuiElementTemplateXML = StringTools::replace(newGuiElementTemplateXML, "{$" + attributeKey + "}", escapeQuotes(attributeValue));
+		newTemplateXML = StringTools::replace(newTemplateXML, "{$" + attributeKey + "}", escapeQuotes(attributeValue));
 	}
 
 	// replace attributes from element
-	for (auto newGuiElementAttributesIt : attributes) {
+	for (auto newGuiElementAttributesIt : templateAttributes) {
 		auto guiElementAttributeValue = escapeQuotes(newGuiElementAttributesIt.second);
-		newGuiElementTemplateXML = StringTools::replace(newGuiElementTemplateXML, "{$" + newGuiElementAttributesIt.first + "}", guiElementAttributeValue);
+		newTemplateXML = StringTools::replace(newTemplateXML, "{$" + newGuiElementAttributesIt.first + "}", guiElementAttributeValue);
 	}
 
 	// replace remaining unset parameters with empty spaces
-	newGuiElementTemplateXML = StringTools::regexReplace(newGuiElementTemplateXML, "\\{\\$[a-zA-Z\\-_0-9]{1,}\\}", "");
+	newTemplateXML = StringTools::regexReplace(newTemplateXML, "\\{\\$[a-zA-Z\\-_0-9]{1,}\\}", "");
 
 	// replace inner XML
-	newGuiElementTemplateXML = StringTools::replace(newGuiElementTemplateXML, "{__InnerXML__}", getInnerXml(node));
+	newTemplateXML = StringTools::replace(newTemplateXML, "{__InnerXML__}", getInnerXml(node));
 
 	// add root tag
 	if (guiElement != nullptr) {
-		newGuiElementTemplateXML =  "<" + guiElement->getName() + ">\n" + newGuiElementTemplateXML + "</" + guiElement->getName() + ">\n";
+		newTemplateXML =  "<" + guiElement->getName() + ">\n" + newTemplateXML + "</" + guiElement->getName() + ">\n";
 	} else {
-		newGuiElementTemplateXML =  "<template>\n" + newGuiElementTemplateXML + "</template>\n";
+		newTemplateXML =  "<template>\n" + newTemplateXML + "</template>\n";
 	}
 
 	// parse
-	TiXmlDocument newGuiElementDocument;
-	newGuiElementDocument.Parse(newGuiElementTemplateXML.c_str());
-	if (newGuiElementDocument.Error() == true) {
-		string message = "GUIParser::parseTemplate():: Could not parse XML. Error='" + string(newGuiElementDocument.ErrorDesc()) + ":\n\n" + newGuiElementTemplateXML;
+	TiXmlDocument newTemplateDocument;
+	newTemplateDocument.Parse(newTemplateXML.c_str());
+	if (newTemplateDocument.Error() == true) {
+		string message = "GUIParser::parseTemplate(): Could not parse XML. Error='" + string(newTemplateDocument.ErrorDesc()) + ":\n\n" + newTemplateXML;
 		Console::println(message);
 		throw GUIParserException(message);
 	}
-	parseGUINode(parentNode, parentElementId, newGuiElementDocument.RootElement(), guiElement);
+	parseGUINode(parentNode, parentElementId, newTemplateDocument.RootElement(), guiElement);
 }
 
 void GUIParser::parseInnerXML(GUIParentNode* parentNode, const string& parentElementId, TiXmlElement* node, const string& innerXML, const unordered_map<string, string>& attributes, GUIElement* guiElement) {
@@ -1772,13 +1806,13 @@ void GUIParser::parseInnerXML(GUIParentNode* parentNode, const string& parentEle
 	newInnerXML =  "<inner-xml>\n" + newInnerXML + "</inner-xml>\n";
 
 	// parse
-	TiXmlDocument newGuiElementDocument;
-	newGuiElementDocument.Parse(newInnerXML.c_str());
-	if (newGuiElementDocument.Error() == true) {
-		auto message = "GUIParser::parseInnerXML():: Could not parse XML. Error='" + string(newGuiElementDocument.ErrorDesc()) + ":\n\n" + newInnerXML;
+	TiXmlDocument newInnerXMLDocument;
+	newInnerXMLDocument.Parse(newInnerXML.c_str());
+	if (newInnerXMLDocument.Error() == true) {
+		auto message = "GUIParser::parseInnerXML(): Could not parse XML. Error='" + string(newInnerXMLDocument.ErrorDesc()) + ":\n\n" + newInnerXML;
 		throw GUIParserException(message);
 	}
-	parseGUINode(parentNode, newParentElementId, newGuiElementDocument.RootElement(), guiElement);
+	parseGUINode(parentNode, newParentElementId, newInnerXMLDocument.RootElement(), guiElement);
 }
 
 int GUIParser::parseFactor(GUIParentNode* guiParentNode, const string& factor) {
@@ -2080,6 +2114,13 @@ void GUIParser::initialize()
 	}
 	try {
 		auto guiElement = new GUIStyledInput();
+		addElement(guiElement);
+	} catch (Exception& exception) {
+		Console::print(string("GUIParser::initialize(): An error occurred: "));
+		Console::println(string(exception.what()));
+	}
+	try {
+		auto guiElement = new GUIMoveable();
 		addElement(guiElement);
 	} catch (Exception& exception) {
 		Console::print(string("GUIParser::initialize(): An error occurred: "));

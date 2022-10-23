@@ -206,6 +206,7 @@ SRCS = \
 	src/tdme/audio/decoder/VorbisDecoder.cpp \
 	src/tdme/application/Application.cpp \
 	src/tdme/engine/Camera.cpp \
+	src/tdme/engine/ColorTextureCanvas.cpp \
 	src/tdme/engine/Decal.cpp \
 	src/tdme/engine/DynamicColorTexture.cpp \
 	src/tdme/engine/Engine.cpp \
@@ -435,6 +436,8 @@ SRCS = \
 	src/tdme/gui/elements/GUIMenuItem.cpp \
 	src/tdme/gui/elements/GUIMenuItemController.cpp \
 	src/tdme/gui/elements/GUIMenuSeparator.cpp \
+	src/tdme/gui/elements/GUIMoveable.cpp \
+	src/tdme/gui/elements/GUIMoveableController.cpp \
 	src/tdme/gui/elements/GUIProgressBar.cpp \
 	src/tdme/gui/elements/GUIProgressBarController.cpp \
 	src/tdme/gui/elements/GUIRadioButton.cpp \

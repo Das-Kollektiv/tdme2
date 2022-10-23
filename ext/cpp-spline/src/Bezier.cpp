@@ -24,7 +24,7 @@ void Bezier::_on_way_point_added()
 	{
 		for(int i=0; i<=_steps; i++)
 		{
-			double u=(double)i / (double)_steps;
+			float u=(float)i / (float)_steps;
 
 			add_node(interpolate(u, _way_points[0], _way_points[1], _way_points[2], _way_points[3]));
 		}
@@ -39,7 +39,7 @@ void Bezier::_on_way_point_added()
 		int pt=new_control_point_index - 2;
 		for(int i=0; i<=_steps; i++)
 		{
-			double u=(double)i / (double)_steps;
+			float u=(float)i / (float)_steps;
 			Vector point4=2 * _way_points[pt] - _way_points[pt-1];
 
 			add_node(interpolate(u, _way_points[pt], point4, _way_points[pt+1], _way_points[pt+2]));
@@ -47,7 +47,7 @@ void Bezier::_on_way_point_added()
 	}
 }
 
-Vector Bezier::interpolate(double u, const Vector& P0, const Vector& P1, const Vector& P2, const Vector& P3)
+Vector Bezier::interpolate(float u, const Vector& P0, const Vector& P1, const Vector& P2, const Vector& P3)
 {
 	Vector point;
 	point=u*u*u*((-1) * P0 + 3 * P1 - 3 * P2 + P3);

@@ -1436,18 +1436,48 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 				}
 			case FILETYPE_SCREEN_TEXT:
 				{
-					try {
-						icon = "{$icon.type_gui}";
-						colorType = "{$color.type_gui}";
-						auto screenNode = GUIParser::parse(
-							FileSystem::getInstance()->getPathName(absoluteFileName),
-							FileSystem::getInstance()->getFileName(absoluteFileName)
-						);
-						tabType = EditorTabView::TABTYPE_UIEDITOR;
-						tabView = new UIEditorTabView(view, tabId, screenNode);
-						viewPortTemplate = "template_viewport_ui.xml";
-					} catch (Exception &exception) {
-						Console::println("EditorScreenController::openFile(): " + absoluteFileName + ": " + exception.what());
+					auto success = false;
+					if (success == false) {
+						try {
+							icon = "{$icon.type_gui}";
+							colorType = "{$color.type_gui}";
+							auto screenNode = GUIParser::parse(
+								FileSystem::getInstance()->getPathName(absoluteFileName),
+								FileSystem::getInstance()->getFileName(absoluteFileName)
+							);
+							tabType = EditorTabView::TABTYPE_UIEDITOR;
+							tabView = new UIEditorTabView(view, tabId, screenNode);
+							viewPortTemplate = "template_viewport_ui.xml";
+							success = true;
+						} catch (Exception &exception) {
+							Console::println("EditorScreenController::openFile(): " + absoluteFileName + ": " + exception.what());
+						}
+					}
+					if (success == false) {
+						try {
+							icon = "{$icon.type_gui}";
+							colorType = "{$color.type_gui}";
+							auto relativeFileName = StringTools::substring(absoluteFileName, projectPath.size() + 1);
+							auto screenNode = GUIParser::parse(
+								string() +
+								"<screen id='screen_template'>\n" +
+								"	<layout width='100%' height='100%' alignment='none' horizontal-align='center' vertical-align='center'>\n" +
+								"		<template src='" + GUIParser::escapeQuotes(relativeFileName) + "' id='template_preview_id' />\n" +
+								"	</layout>'>\n" +
+								"</screen>>\n",
+								{},
+								FileSystem::getInstance()->getPathName(relativeFileName),
+								FileSystem::getInstance()->getFileName(relativeFileName)
+							);
+							tabType = EditorTabView::TABTYPE_UIEDITOR;
+							tabView = new UIEditorTabView(view, tabId, screenNode);
+							viewPortTemplate = "template_viewport_ui.xml";
+							success = true;
+						} catch (Exception &exception) {
+							Console::println("EditorScreenController::openFile(): " + absoluteFileName + ": " + exception.what());
+						}
+					}
+					if (success == false) {
 						icon = "{$icon.type_script}";
 						colorType = "{$color.type_script}";
 						auto text =
@@ -1463,6 +1493,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 						tabType = EditorTabView::TABTYPE_TEXT;
 						tabView = new TextEditorTabView(view, tabId, screenNode, absoluteFileName);
 						viewPortTemplate = "template_viewport_plain.xml";
+						success = true;
 					}
 					break;
 				}
@@ -1533,6 +1564,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 				}
 			case FILETYPE_TEXT:
 				{
+					auto hasVisualCode = StringTools::endsWith(fileNameLowerCase, ".tscript");
 					icon = "{$icon.type_script}";
 					colorType = "{$color.type_script}";
 					auto text =
@@ -1542,12 +1574,12 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 						);
 					auto screenNode = GUIParser::parse(
 						"resources/engine/gui/",
-						"tab_text.xml",
+						hasVisualCode == true?"tab_visualcode.xml":"tab_text.xml",
 						{{ "text", StringTools::replace(StringTools::replace(text, "[", "\\["), "]", "\\]") }}
 					);
 					tabType = EditorTabView::TABTYPE_TEXT;
 					tabView = new TextEditorTabView(view, tabId, screenNode, absoluteFileName);
-					viewPortTemplate = "template_viewport_plain.xml";
+					viewPortTemplate = hasVisualCode == true?"template_viewport_visualcode.xml":"template_viewport_plain.xml";
 					break;
 				}
 			default:

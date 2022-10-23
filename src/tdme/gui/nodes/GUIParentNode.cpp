@@ -520,9 +520,9 @@ void GUIParentNode::render(GUIRenderer* guiRenderer)
 	auto renderAreaBottom = renderAreaBottomCurrent;
 	// Floating node does not have correct dimension and such due non existance when layouting
 	if (flow == GUINode_Flow::INTEGRATED) {
-		renderAreaLeft = ((left) / (screenWidth / 2.0f)) - 1.0f;
+		renderAreaLeft = ((left) / (screenWidth / 2.0f)) - renderOffsetXCurrent - 1.0f;
 		renderAreaTop = ((screenHeight - top) / (screenHeight / 2.0f)) + renderOffsetYCurrent - 1.0f;
-		renderAreaRight = ((left + width) / (screenWidth / 2.0f)) - 1.0f;
+		renderAreaRight = ((left + width) / (screenWidth / 2.0f)) - renderOffsetXCurrent - 1.0f;
 		renderAreaBottom = ((screenHeight - top - height) / (screenHeight / 2.0f)) + renderOffsetYCurrent - 1.0f;
 	}
 	guiRenderer->setSubRenderAreaLeft(renderAreaLeft);

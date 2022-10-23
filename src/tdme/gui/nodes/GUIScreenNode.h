@@ -32,6 +32,7 @@ using tdme::gui::events::GUIInputEventHandler;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::events::GUIMouseOverListener;
+using tdme::gui::events::GUIMoveListener;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
@@ -80,6 +81,7 @@ private:
 	vector<GUIMouseOverListener*> mouseOverListener;
 	vector<GUIContextMenuRequestListener*> contextMenuRequestListener;
 	vector<GUIFocusListener*> focusListener;
+	vector<GUIMoveListener*> moveListener;
 	GUIInputEventHandler* inputEventHandler;
 	vector<GUINode*> childControllerNodes;
 	GUIScreenNode_SizeConstraints sizeConstraints;
@@ -510,6 +512,24 @@ public:
 	 * @param node node
 	 */
 	void delegateUnfocus(GUIElementNode* node);
+
+	/**
+	 * Add move listener
+	 * @param listener listener
+	 */
+	void addMoveListener(GUIMoveListener* listener);
+
+	/**
+	 * Remove move listener
+	 * @param listener listener
+	 */
+	void removeMoveListener(GUIMoveListener* listener);
+
+	/**
+	 * Delegate move event
+	 * @param node node
+	 */
+	void delegateMove(GUINode* node);
 
 	/**
 	 * @return if haveing given node registered as tick node

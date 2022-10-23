@@ -407,13 +407,11 @@ public:
 		auto renderAreaBottom = this->renderAreaBottom;
 		auto renderAreaRight = this->renderAreaRight;
 		auto renderAreaLeft = this->renderAreaLeft;
-		/*
 		// TODO: This prevented off screen rendering, but does collide with position effects and parent children viewport caches
 		renderAreaTop = Math::min(renderAreaTop + guiEffectOffsetY, SCREEN_TOP);
 		renderAreaBottom = Math::max(renderAreaBottom + guiEffectOffsetY, SCREEN_BOTTOM);
 		renderAreaRight = Math::min(renderAreaRight - guiEffectOffsetX, SCREEN_RIGHT);
 		renderAreaLeft = Math::max(renderAreaLeft - guiEffectOffsetX, SCREEN_LEFT);
-		*/
 		renderAreaTop = renderAreaTop + guiEffectOffsetY;
 		renderAreaBottom = renderAreaBottom + guiEffectOffsetY;
 		renderAreaRight = renderAreaRight - guiEffectOffsetX;
@@ -437,13 +435,11 @@ public:
 		auto renderAreaBottom = this->renderAreaBottom;
 		auto renderAreaRight = this->renderAreaRight;
 		auto renderAreaLeft = this->renderAreaLeft;
-		/*
 		// TODO: This prevented off screen rendering, but does collide with position effects and parent children viewport caches
 		renderAreaTop = Math::min(renderAreaTop + guiEffectOffsetY, SCREEN_TOP);
 		renderAreaBottom = Math::max(renderAreaBottom + guiEffectOffsetY, SCREEN_BOTTOM);
 		renderAreaRight = Math::min(renderAreaRight - guiEffectOffsetX, SCREEN_RIGHT);
 		renderAreaLeft = Math::max(renderAreaLeft - guiEffectOffsetX, SCREEN_LEFT);
-		*/
 		renderAreaTop = renderAreaTop + guiEffectOffsetY;
 		renderAreaBottom = renderAreaBottom + guiEffectOffsetY;
 		if (y3 > renderAreaTop) return false;
@@ -523,6 +519,7 @@ public:
 		renderAreaBottom = Math::max(renderAreaBottom + guiEffectOffsetY, SCREEN_BOTTOM);
 		renderAreaRight = Math::min(renderAreaRight - guiEffectOffsetX, SCREEN_RIGHT);
 		renderAreaLeft = Math::max(renderAreaLeft - guiEffectOffsetX, SCREEN_LEFT);
+
 
 		auto quadBottom = y3;
 		if (quadBottom > renderAreaTop) return;

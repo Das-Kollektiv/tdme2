@@ -11,6 +11,7 @@ namespace events {
 	struct GUIInputEventHandler;
 	class GUIKeyboardEvent;
 	class GUIMouseEvent;
+	class GUIMoveListener;
 	struct GUIMouseOverListener;
 }  // namespace events
 }  // namespace gui

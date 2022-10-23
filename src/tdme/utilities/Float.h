@@ -1,6 +1,7 @@
 #pragma once
 
 #include <tdme/tdme.h>
+#include <tdme/math/Math.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 #include <cmath>
@@ -13,6 +14,8 @@ using std::isnan;
 using std::numeric_limits;
 using std::string;
 using std::string_view;
+
+using tdme::math::Math;
 
 /**
  * Float class
@@ -80,6 +83,13 @@ public:
 	 */
 	inline static float interpolateLinear(float f1, float f2, float t) {
 		return (f2 * t) + ((1.0f - t) * f1);
+	}
+
+	/**
+	 * @return f1 and f2 are equals
+	 */
+	inline static bool equals(float f1, float f2) {
+		return Math::abs(f2 - f1) < Math::EPSILON;
 	}
 
 };

@@ -6,12 +6,22 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/Color4.h>
+#include <tdme/engine/ColorTextureCanvas.h>
+#include <tdme/engine/DynamicColorTexture.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/gui/events/GUIMoveListener.h>
+#include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIFrameBufferNode.h>
+#include <tdme/gui/nodes/GUINode.h>
+#include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/nodes/GUIStyledTextNodeController.h>
+#include <tdme/gui/nodes/GUITextureNode.h>
 #include <tdme/gui/GUI.h>
+#include <tdme/gui/GUIParser.h>
+#include <tdme/math/Math.h>
+#include <tdme/math/Vector2.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
@@ -29,11 +39,21 @@ using std::string;
 using tdme::tools::editor::tabviews::TextEditorTabView;
 
 using tdme::engine::model::Color4;
+using tdme::engine::ColorTextureCanvas;
+using tdme::engine::DynamicColorTexture;
 using tdme::engine::Engine;
+using tdme::gui::events::GUIMoveListener;
+using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIFrameBufferNode;
+using tdme::gui::nodes::GUINode;
+using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIStyledTextNode;
+using tdme::gui::nodes::GUITextureNode;
 using tdme::gui::GUI;
+using tdme::gui::GUIParser;
+using tdme::math::Math;
+using tdme::math::Vector2;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
@@ -59,6 +79,37 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	engine->getGUI()->addScreen(screenNode->getId(), screenNode);
 	engine->getGUI()->addRenderScreen(screenNode->getId());
+
+	//
+	visualCodingEnabled = extension == "tscript";
+	if (visualCodingEnabled == true) {
+		linesTexture = new DynamicColorTexture(engine->getWidth(), engine->getHeight());
+		linesTexture->initialize();
+		required_dynamic_cast<GUITextureNode*>(tabScreenNode->getNodeById("visualization_texture"))->setTexture(linesTexture);
+		// add node move listener
+		class NodeMoveListener: public GUIMoveListener {
+		public:
+			NodeMoveListener(TextEditorTabView* textEditorTabView): textEditorTabView(textEditorTabView) {
+			}
+			void onMoved(GUINode* node) {
+				auto visualisationNode = required_dynamic_cast<GUIParentNode*>(textEditorTabView->tabScreenNode->getNodeById("visualization_canvas"));
+				auto& nodeComputedConstraints = node->getComputedConstraints();
+				auto xMax = nodeComputedConstraints.left + nodeComputedConstraints.width;
+				auto yMax = nodeComputedConstraints.top + nodeComputedConstraints.height;
+				visualisationNode->getComputedConstraints().width = Math::max(visualisationNode->getComputedConstraints().width, xMax);
+				visualisationNode->getComputedConstraints().height = Math::max(visualisationNode->getComputedConstraints().height, yMax);
+				visualisationNode->getRequestsConstraints().width = Math::max(visualisationNode->getRequestsConstraints().width, xMax);
+				visualisationNode->getRequestsConstraints().height = Math::max(visualisationNode->getRequestsConstraints().height, yMax);
+				textEditorTabView->createConnectionsPasses = 3;
+			}
+
+		private:
+			TextEditorTabView* textEditorTabView;
+		};
+		tabScreenNode->addMoveListener(new NodeMoveListener(this));
+		// enable code mode
+		setCodeEditor();
+	}
 
 	// initial text format
 	TextFormatter::getInstance()->format(extension, textNode);
@@ -261,6 +312,70 @@ void TextEditorTabView::handleInputEvents()
 
 void TextEditorTabView::display()
 {
+	//
+	if (visualCodingEnabled == true) {
+		auto visualizationNode = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getInnerNodeById("visualization"));
+
+		auto scrolled = false;
+		auto scrollXNew = visualizationNode->getChildrenRenderOffsetX();
+		auto scrollYNew = visualizationNode->getChildrenRenderOffsetY();
+
+		if (Float::equals(scrollXNew, scrollX) == false ||
+			Float::equals(scrollYNew, scrollY) == false) {
+			scrollX = scrollXNew;
+			scrollY = scrollYNew;
+			scrolled = true;
+		}
+
+		// resize?
+		if (scrolled == true ||
+			linesTexture->getWidth() != engine->getWidth() ||
+			linesTexture->getHeight() != engine->getHeight()) {
+			linesTexture->reshape(engine->getWidth(), engine->getHeight());
+			auto visualizationTextureNode = dynamic_cast<GUITextureNode*>(tabScreenNode->getNodeById("visualization_texture"));
+			if (visualizationTextureNode != nullptr) visualizationTextureNode->setTexture(linesTexture);
+			createConnectionsPasses = 3;
+		}
+		// we have a layouting issue here, we cant get dimensions of nodes right after adding them, so defer this for now
+		if (createConnectionsPasses > 0) {
+			auto visualizationScrollArea = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("visualization"));
+			auto visualizationWidth = visualizationScrollArea->getComputedConstraints().width;
+			auto visualizationHeight = visualizationScrollArea->getComputedConstraints().height;
+			auto visualizationScrollX = static_cast<int>(scrollX);
+			auto visualizationScrollY = static_cast<int>(scrollY);
+			createConnections();
+			// create lines
+			ColorTextureCanvas canvas(linesTexture->getTexture());
+			canvas.clear(0, 0, 0, 0);
+			for (auto& connection: connections) {
+				auto x1 = connection.x1 - visualizationScrollX;
+				auto y1 = connection.y1 - visualizationScrollY;
+				auto x2 = connection.x2 - visualizationScrollX;
+				auto y2 = connection.y2 - visualizationScrollY;
+
+				if ((x1 < 0 && x2 < 0) ||
+					(x1 > visualizationWidth && x2 > visualizationWidth) ||
+					(y1 < 0 && y2 < 0) ||
+					(y1 > visualizationHeight && y2 > visualizationHeight)) continue;
+
+				auto STRAIGHTLINE_LENGTH = 50.0f;
+				Vector2 srcVector1(x1, y1);
+				Vector2 srcVector2(x1 + (x2 < x1?-STRAIGHTLINE_LENGTH:STRAIGHTLINE_LENGTH), y1);
+				Vector2 dstVector1(x1 + (x2 < x1?-STRAIGHTLINE_LENGTH:STRAIGHTLINE_LENGTH), y2 - (y2 < y1?-STRAIGHTLINE_LENGTH:STRAIGHTLINE_LENGTH));
+				Vector2 dstVector2(x2, y2);
+				vector<Vector2> controlPoints;
+				controlPoints.push_back(srcVector1);
+				controlPoints.push_back(srcVector2);
+				controlPoints.push_back(dstVector1);
+				controlPoints.push_back(dstVector2);
+				canvas.drawBezier(controlPoints, 255, 0, 0, 255);
+			}
+			linesTexture->update();
+			createConnectionsPasses--;
+		}
+	}
+
+	//
 	engine->display();
 	engine->getGUI()->render();
 }
@@ -306,3 +421,198 @@ void TextEditorTabView::reloadOutliner() {
 	editorView->getScreenController()->setDetailsContent(string());
 }
 
+void TextEditorTabView::setVisualEditor() {
+	auto editorNode = dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen(tabScreenNode->getId())->getNodeById("editor"));
+	if (editorNode != nullptr) editorNode->getActiveConditions().set("visualization");
+	visualEditor = true;
+}
+
+void TextEditorTabView::setCodeEditor() {
+	auto editorNode = dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen(tabScreenNode->getId())->getNodeById("editor"));
+	if (editorNode != nullptr) editorNode->getActiveConditions().set("text");
+	visualEditor = false;
+}
+
+void TextEditorTabView::addNodeDeltaX(const string& id, const MiniScript::StatementDescription& description, GUIParentNode* parentNode, int deltaX) {
+	auto node = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("d" + id));
+	node->getRequestsConstraints().left+= deltaX;
+	for (auto i = 0; i < description.arguments.size(); i++) {
+		addNodeDeltaX(id + "." + to_string(i), description.arguments[i], parentNode, deltaX);
+	}
+}
+
+void TextEditorTabView::createNodes(const string& id, const MiniScript::StatementDescription& description, GUIParentNode* parentNode, int x, int y, int& width, int& height, int depth) {
+	//
+	int childMaxWidth = 0;
+	for (auto i = 0; i < description.arguments.size(); i++) {
+		auto childWidth = 0;
+		auto childHeight = 0;
+		createNodes(id + "." + to_string(i), description.arguments[i], parentNode, x, y, childWidth, childHeight, depth + 1);
+		if (childWidth > childMaxWidth) childMaxWidth = childWidth;
+		y+= childHeight;
+		height+= childHeight;
+	}
+	//
+	x+= childMaxWidth;
+	width+= childMaxWidth;
+
+	//
+	string xml;
+	xml+= "<moveable id='d" + id + "' left='" + to_string(x) + "' top='" + to_string(y) + "' width='auto' height='auto' alignment='vertical'>";
+	switch (description.type) {
+		case MiniScript::StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD:
+		case MiniScript::StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION:
+			{
+				xml+= "<text id='d" + id + "_title' font='{$font.default}' size='{$fontsize.default}' text='" + GUIParser::escapeQuotes(description.value) + "()' color='{$color.font_normal}' />";
+				xml+= "<space width='100%' height='5' />";
+				xml+= "<space height='1' width='100%' border-top='1' border-color='#202020' />";
+				xml+= "<space width='100%' height='5' />";
+				auto argumentIdx = 0;
+				if (description.method != nullptr) {
+					auto& argumentTypes = description.method->getArgumentTypes();
+					for (argumentIdx = 0; argumentIdx < argumentTypes.size(); argumentIdx++) {
+						xml+= "<text id='d" + id + "_a" + to_string(argumentIdx) + "' font='{$font.default}' size='{$fontsize.default}' text='" + argumentTypes[argumentIdx].name + ": " + MiniScript::ScriptVariable::getTypeAsString(argumentTypes[argumentIdx].type)+ "' color='{$color.font_normal}' />";
+					}
+				}
+				for (; argumentIdx < description.arguments.size(); argumentIdx++) {
+					xml+= "<text id='d" + id + "_a" + to_string(argumentIdx) + "' font='{$font.default}' size='{$fontsize.default}' text='Argument " + to_string(argumentIdx) + "' color='{$color.font_normal}' />";
+				}
+				break;
+			}
+		case MiniScript::StatementDescription::STATEMENTDESCRIPTION_LITERAL:
+			{
+				xml+= "<text id='d" + id + "_title' font='{$font.default}' size='{$fontsize.default}' text='Literal' color='{$color.font_normal}' />";
+				xml+= "<space width='100%' height='5' />";
+				xml+= "<space height='1' width='100%' border-top='1' border-color='#202020' />";
+				xml+= "<space width='100%' height='5' />";
+				xml+= "<text id='" + id + "_value' font='{$font.default}' size='{$fontsize.default}' text='" + GUIParser::escapeQuotes(description.value) + "' color='{$color.font_normal}' />";
+				break;
+			}
+	}
+	if (depth == 0) {
+		xml+= "<space width='100%' height='5' />";
+		xml+= "<space height='1' width='100%' border-top='1' border-color='#202020' />";
+		xml+= "<space width='100%' height='5' />";
+		xml+= "<text id='d" + id + "_flow' font='{$font.default}' size='{$fontsize.default}' text='Flow' color='{$color.font_normal}' width='100%' horizontal-align='right'/>";
+	}
+	xml+= "</moveable>";
+
+	try {
+		GUIParser::parse(parentNode, xml);
+	} catch (Exception& exception) {
+		Console::println("TextEditorTabView::visualizeDescription(): " + string(exception.what()));
+	}
+
+	//
+	auto node = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById("d" + id));
+	width+= 200; //node->getContentWidth();
+	height+= 100; //node->getContentHeight();
+
+	// post layout, move first level child argument nodes from from left to right according to the closest one
+	auto rootDistanceMax = Integer::MAX_VALUE;
+	auto nextLevelXBestFit = -1;
+	for (auto i = 0; i < description.arguments.size(); i++) {
+		auto nextLevelNode = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById("d" + id + "." + to_string(i)));
+		auto nodeXPosition = nextLevelNode->getRequestsConstraints().left;
+		auto rootDistance = Math::abs(x - nodeXPosition);
+		if (rootDistance < rootDistanceMax) {
+			rootDistanceMax = rootDistance;
+			nextLevelXBestFit = nodeXPosition;
+		}
+	}
+	for (auto i = 0; i < description.arguments.size(); i++) {
+		auto subNodeId = id + "." + to_string(i);
+		auto nextLevelNode = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById("d" + id + "." + to_string(i)));
+		auto nodeXPosition = nextLevelNode->getRequestsConstraints().left;
+		auto deltaX = nextLevelXBestFit - nodeXPosition;
+		if (deltaX == 0) continue;
+		addNodeDeltaX(subNodeId, description.arguments[i], parentNode, deltaX);
+	}
+}
+
+void TextEditorTabView::updateMiniScriptDescription(int miniScriptScriptIdx) {
+	required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("visualization_canvas"))->clearSubNodes();
+	//
+	this->miniScriptScriptIdx = miniScriptScriptIdx;
+	auto& description = textEditorTabController->getMiniScriptDescription()[miniScriptScriptIdx].description;
+	auto visualisationNode = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("visualization_canvas"));
+	auto x = 200;
+	auto y = 200;
+	auto yMax = y;
+	for (auto i = 0; i < description.size(); i++) {
+		auto width = 0;
+		auto height = 0;
+		createNodes(to_string(i), description[i], visualisationNode, x, y, width, height);
+		x+= width + 100;
+		yMax = Math::max(y + height, yMax);
+	}
+	// TODO: with absolute align of nodes content width/height is not yet computed in UI
+	visualisationNode->getComputedConstraints().width = x;
+	visualisationNode->getComputedConstraints().height = yMax;
+	visualisationNode->getRequestsConstraints().width = x;
+	visualisationNode->getRequestsConstraints().height = yMax;
+	// Bug: Work around! Sometimes layouting is not issued! Need to check!
+	tabScreenNode->forceInvalidateLayout(tabScreenNode);
+
+	//
+	createConnectionsPasses = 3;
+}
+
+void TextEditorTabView::createConnections(const string& id, const MiniScript::StatementDescription& description, GUIParentNode* parentNode) {
+	auto node = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById("d" + id));
+	auto& computedConstraints = node->getComputedConstraints();
+	nodes.push_back(
+		{
+			.x1 = computedConstraints.left,
+			.y1 = computedConstraints.top,
+			.x2 = computedConstraints.left + computedConstraints.width,
+			.y2 = computedConstraints.top + computedConstraints.height,
+		}
+	);
+	for (auto i = 0; i < description.arguments.size(); i++) {
+		auto argumentInputNode = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById("d" + id + "_a" + to_string(i)));
+		auto argumentOutputNode = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById("d" + id + "." + to_string(i) + "_title"));
+		auto& argumentInputNodeComputedConstraints = argumentInputNode->getComputedConstraints();
+		auto& argumentOutputNodeComputedConstraints = argumentOutputNode->getComputedConstraints();
+		connections.push_back(
+			{
+				.x1 = argumentInputNodeComputedConstraints.left,
+				.y1 = argumentInputNodeComputedConstraints.top + argumentInputNodeComputedConstraints.height / 2,
+				.x2 = argumentOutputNodeComputedConstraints.left + argumentOutputNodeComputedConstraints.width,
+				.y2 = argumentOutputNodeComputedConstraints.top + argumentOutputNodeComputedConstraints.height / 2,
+			}
+		);
+		createConnections(id + "." + to_string(i), description.arguments[i], parentNode);
+	}
+}
+
+void TextEditorTabView::createConnections() {
+	// reset
+	nodes.clear();
+	connections.clear();
+
+	//
+	if (miniScriptScriptIdx >= textEditorTabController->getMiniScriptDescription().size()) return;
+	auto& description = textEditorTabController->getMiniScriptDescription()[miniScriptScriptIdx].description;
+	GUINode* previousNodeFlowNode = nullptr;
+	auto visualisationNode = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("visualization_canvas"));
+	for (auto i = 0; i < description.size(); i++) {
+		createConnections(to_string(i), description[i], visualisationNode);
+		auto node = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById("d" + to_string(i) + "_flow"));
+		auto nodeFlowNode = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById("d" + to_string(i) + "_flow"));
+		if (previousNodeFlowNode != nullptr) {
+			auto& previousNodeComputedConstraints = previousNodeFlowNode->getComputedConstraints();
+			auto& nodeComputedConstraints = node->getComputedConstraints();
+			connections.push_back(
+				{
+					.x1 = previousNodeComputedConstraints.left + previousNodeComputedConstraints.width,
+					.y1 = previousNodeComputedConstraints.top + previousNodeComputedConstraints.height / 2,
+					.x2 = nodeComputedConstraints.left,
+					.y2 = nodeComputedConstraints.top + nodeComputedConstraints.height / 2,
+				}
+			);
+		}
+		//
+		previousNodeFlowNode = nodeFlowNode;
+	}
+}

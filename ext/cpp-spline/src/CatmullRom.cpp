@@ -22,13 +22,13 @@ void CatmullRom::_on_way_point_added()
 	int pt=new_control_point_index - 2;
 	for(int i=0; i<=_steps; i++)
 	{
-		double u=(double)i / (double)_steps;
+		float u=(float)i / (float)_steps;
 
 		add_node(interpolate(u, _way_points[pt-1], _way_points[pt], _way_points[pt+1], _way_points[pt+2]));
 	}
 }
 
-Vector CatmullRom::interpolate(double u, const Vector& P0, const Vector& P1, const Vector& P2, const Vector& P3)
+Vector CatmullRom::interpolate(float u, const Vector& P0, const Vector& P1, const Vector& P2, const Vector& P3)
 {
 	Vector point;
 	point=u*u*u*((-1) * P0 + 3 * P1 - 3 * P2 + P3) / 2;

@@ -55,7 +55,7 @@ public:
 	 * @throws tdme::gui::GUIParserException
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
-	static GUIScreenNode* parse(const string& pathName, const string& fileName, const unordered_map<string, string>& parameters = unordered_map<string, string>());
+	static GUIScreenNode* parse(const string& pathName, const string& fileName, const unordered_map<string, string>& parameters = {});
 
 	/**
 	 * Parses a GUI XML content
@@ -67,7 +67,7 @@ public:
 	 * @throws tdme::gui::GUIParserException
 	 * @throws tdme::os::filesystem::FileSystemException
 	 */
-	static GUIScreenNode* parse(const string& xml, const unordered_map<string, string>& parameters = unordered_map<string, string>(), const string& pathName = string(), const string& fileName = string());
+	static GUIScreenNode* parse(const string& xml, const unordered_map<string, string>& parameters = {}, const string& pathName = string(), const string& fileName = string());
 
 	/**
 	 * Parses a GUI XML file into parent node
@@ -137,22 +137,22 @@ private:
 	 * @param guiParentNode GUI parent node
 	 * @param parentElementId parent element id
 	 * @param node template xml node
-	 * @param _template template
+	 * @param templateXML template xml
 	 * @param attributes attributes
 	 * @param guiElement GUI element
 	 */
-	static void parseTemplate(GUIParentNode* guiParentNode, const string& parentElementId, TiXmlElement* node, const string& _template, const unordered_map<string, string>& attributes, GUIElement* guiElement);
+	static void parseTemplate(GUIParentNode* guiParentNode, const string& parentElementId, TiXmlElement* node, const string& templateXML, const unordered_map<string, string>& attributes, GUIElement* guiElement);
 
 	/**
 	 * Parse inner XML
 	 * @param guiParentNode GUI parent node
 	 * @param parentElementId parent element id
 	 * @param node template xml node
-	 * @param _template template
+	 * @param innerXML inner xml
 	 * @param attributes attributes
 	 * @param guiElement GUI element
 	 */
-	static void parseInnerXML(GUIParentNode* guiParentNode, const string& parentElementId, TiXmlElement* node, const string& _template, const unordered_map<string, string>& attributes, GUIElement* guiElement);
+	static void parseInnerXML(GUIParentNode* guiParentNode, const string& parentElementId, TiXmlElement* node, const string& innerXML, const unordered_map<string, string>& attributes, GUIElement* guiElement);
 
 	/**
 	 * Parse factor

@@ -8,12 +8,14 @@
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
@@ -25,6 +27,9 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
+#include <tdme/utilities/Integer.h>
+#include <tdme/utilities/MiniScript.h>
+#include <tdme/utilities/StringTools.h>
 
 #include <ext/tinyxml/tinyxml.h>
 
@@ -36,12 +41,14 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::engine::Engine;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
 using tdme::gui::GUIParser;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
+using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::PopUps;
@@ -53,6 +60,9 @@ using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
+using tdme::utilities::Integer;
+using tdme::utilities::MiniScript;
+using tdme::utilities::StringTools;
 
 using tinyxml::TiXmlAttribute;
 using tinyxml::TiXmlDocument;
@@ -153,6 +163,26 @@ void TextEditorTabController::showErrorPopUp(const string& caption, const string
 
 void TextEditorTabController::onValueChanged(GUIElementNode* node)
 {
+	if (node->getId() == "selectbox_outliner") {
+		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+		if (StringTools::startsWith(outlinerNode, "miniscript.script.") == true) {
+			auto scriptIdx = Integer::parse(StringTools::substring(outlinerNode, string("miniscript.script.").size()));
+			if (view->isVisualEditor() == true) {
+				updateMiniScriptDescription(scriptIdx);
+			} else {
+				// TODO: jump to line
+			}
+		}
+	} else
+	if (node->getId() == view->getTabId() + "_tab_checkbox_visualcode" == true) {
+		auto visual = node->getController()->getValue().equals("1");
+		if (visual == true) {
+			view->setVisualEditor();
+			updateMiniScriptDescription(view->getMiniScriptScriptIdx());
+		} else {
+			view->setCodeEditor();
+		}
+	}
 }
 
 void TextEditorTabController::onFocus(GUIElementNode* node) {
@@ -176,12 +206,72 @@ void TextEditorTabController::onContextMenuRequested(GUIElementNode* node, int m
 
 void TextEditorTabController::setOutlinerContent() {
 	string xml;
-	xml+= "<selectbox-option text=\"Text\" value=\"texture\" />\n";
+	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"MiniScript\" value=\"miniscript\">\n";
+	auto scriptIdx = 0;
+	for (auto& miniScriptScriptDescription: miniScriptDescription) {
+		xml+= "<selectbox-option text=\"" + GUIParser::escapeQuotes(miniScriptScriptDescription.name) + "\" value=\"miniscript.script." + to_string(scriptIdx) + "\" />\n";
+		scriptIdx++;
+	}
+	xml+= "</selectbox-parent-option>\n";
 	view->getEditorView()->setOutlinerContent(xml);
 }
 
 void TextEditorTabController::setOutlinerAddDropDownContent() {
 	view->getEditorView()->setOutlinerAddDropDownContent(string());
+}
+
+void TextEditorTabController::updateMiniScriptDescription(int miniScriptScriptIdx) {
+	auto scriptFileName = view->getFileName();
+	//
+	MiniScript* scriptInstance = new MiniScript();
+	scriptInstance->loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName));
+
+	//
+	auto scriptIdx = 0;
+	miniScriptDescription.clear();
+	for (auto script: scriptInstance->getScripts()) {
+		vector<MiniScript::StatementDescription> description;
+		scriptInstance->describeScript(scriptIdx, description);
+
+		// determine name
+		string name;
+		string argumentsString;
+		switch(script.scriptType) {
+			case MiniScript::Script::SCRIPTTYPE_FUNCTION: {
+				for (auto& argument: script.arguments) {
+					if (argumentsString.empty() == false) argumentsString+= ", ";
+					if (argument.assignBack == true) argumentsString+= "=";
+					argumentsString+= argument.name;
+				}
+				argumentsString = "(" + argumentsString + ")";
+				name+= "function: "; break;
+			}
+			case MiniScript::Script::SCRIPTTYPE_ON: name+= "on: "; break;
+			case MiniScript::Script::SCRIPTTYPE_ONENABLED: name+= "on-enabled: "; break;
+		}
+		if (script.condition.empty() == false)
+			name+= script.condition + argumentsString;
+		if (script.name.empty() == false) {
+			name+= script.name + argumentsString;
+		}
+
+		//
+		miniScriptDescription.push_back(
+			{
+				.name = name,
+				.description = description
+			}
+		);
+
+		//
+		scriptIdx++;
+	}
+
+	// pass it to view
+	view->updateMiniScriptDescription(miniScriptScriptIdx);
+
+	//
+	setOutlinerContent();
 }
 
 void TextEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
