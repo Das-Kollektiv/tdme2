@@ -511,7 +511,7 @@ bool MiniScript::describeScriptStatement(const string_view& method, const vector
 			description.arguments.push_back(
 				{
 					.type = StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD,
-					.value = "getVariable",
+					.value = MiniScript::ScriptVariable(string("getVariable")),
 					.method = nullptr,
 					.arguments = {
 						{
