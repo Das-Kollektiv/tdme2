@@ -541,13 +541,13 @@ bool MiniScript::describeScriptStatement(const string_view& method, const vector
 				startErrorScript();
 			}
 		} else {
-			// literal
+			// string literal
 			ScriptVariable argumentValue;
 			if (StringTools::viewStartsWith(argument, "\"") == true &&
 				StringTools::viewEndsWith(argument, "\"") == true) {
 				//
 				ScriptVariable value;
-				value.setValue(string(argument));
+				value.setValue(string(StringTools::viewSubstring(argument, 1, argument.size() - 1)));
 				//
 				description.arguments.push_back(
 					{
@@ -558,7 +558,7 @@ bool MiniScript::describeScriptStatement(const string_view& method, const vector
 					}
 				);
 			} else {
-				//
+				// implicitely literal
 				ScriptVariable value;
 				value.setImplicitTypedValueFromStringView(argument);
 				//
