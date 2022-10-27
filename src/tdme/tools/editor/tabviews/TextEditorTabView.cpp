@@ -457,56 +457,158 @@ void TextEditorTabView::createNodes(const string& id, const MiniScript::Statemen
 	width+= childMaxWidth;
 
 	//
-	string xml;
-	xml+= "<moveable id='d" + id + "' left='" + to_string(x) + "' top='" + to_string(y) + "' width='auto' height='auto' alignment='vertical'>";
 	switch (description.type) {
 		case MiniScript::StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD:
 		case MiniScript::StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION:
 			{
-				xml+= "<text id='d" + id + "_title' font='{$font.default}' size='{$fontsize.default}' text='" + GUIParser::escapeQuotes(description.value.getValueString()) + "()' color='{$color.font_normal}' />";
-				xml+= "<space width='100%' height='5' />";
-				xml+= "<space height='1' width='100%' border-top='1' border-color='#202020' />";
-				xml+= "<space width='100%' height='5' />";
-				auto argumentIdx = 0;
-				if (description.method != nullptr) {
-					auto& argumentTypes = description.method->getArgumentTypes();
-					for (argumentIdx = 0; argumentIdx < argumentTypes.size(); argumentIdx++) {
-						xml+= "<text id='d" + id + "_a" + to_string(argumentIdx) + "' font='{$font.default}' size='{$fontsize.default}' text='" + argumentTypes[argumentIdx].name + ": " + MiniScript::ScriptVariable::getTypeAsString(argumentTypes[argumentIdx].type)+ "' color='{$color.font_normal}' />";
-					}
-				}
-				for (; argumentIdx < description.arguments.size(); argumentIdx++) {
-					xml+= "<text id='d" + id + "_a" + to_string(argumentIdx) + "' font='{$font.default}' size='{$fontsize.default}' text='Argument " + to_string(argumentIdx) + "' color='{$color.font_normal}' />";
-				}
-				break;
-			}
-		case MiniScript::StatementDescription::STATEMENTDESCRIPTION_LITERAL:
-			{
+				/*
 				xml+= "<text id='d" + id + "_title' font='{$font.default}' size='{$fontsize.default}' text='Literal' color='{$color.font_normal}' />";
 				xml+= "<space width='100%' height='5' />";
 				xml+= "<space height='1' width='100%' border-top='1' border-color='#202020' />";
 				xml+= "<space width='100%' height='5' />";
 				xml+= "<text id='" + id + "_value' font='{$font.default}' size='{$fontsize.default}' text='" + GUIParser::escapeQuotes(description.value.getValueString()) + "' color='{$color.font_normal}' />";
+				*/
+				{
+					string xml = "<template src='resources/engine/gui/template_visualcode_node.xml' id='d" + id + "' left='" + to_string(x) + "' top='" + to_string(y) + "' node-name='" + GUIParser::escapeQuotes(description.value.getValueString()) + "' />";
+					try {
+						GUIParser::parse(parentNode, xml);
+					} catch (Exception& exception) {
+						Console::println("TextEditorTabView::visualizeDescription(): method/function: " + string(exception.what()));
+					}
+				}
+				//
+				auto nodeInputContainer = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("d" + id + "_input_container"));
+				auto nodeOutputContainer = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("d" + id + "_output_container"));
+				// PIN INPUT im InputContainer oben
+				{
+					{
+						// inputs
+						string xml;
+						//
+						auto argumentIdx = 0;
+						if (description.method != nullptr) {
+							auto& argumentTypes = description.method->getArgumentTypes();
+							for (argumentIdx = 0; argumentIdx < argumentTypes.size(); argumentIdx++) {
+								xml+=
+									string() +
+									"<template " +
+									"	id='d" + id + "_a" + to_string(argumentIdx) + "' " +
+									"	src='resources/engine/gui/template_visualcode_input.xml' " +
+									"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
+									"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
+									"	pin_color='{$color.pintype_integer}' " +
+									"	text='" + GUIParser::escapeQuotes(argumentTypes[argumentIdx].name + ": " + MiniScript::ScriptVariable::getTypeAsString(argumentTypes[argumentIdx].type)) + "' " +
+									"/>";
+							}
+						}
+						for (; argumentIdx < description.arguments.size(); argumentIdx++) {
+							xml+=
+								string() +
+								"<template " +
+								"	id='d" + id + "_a" + to_string(argumentIdx) + "' " +
+								"	src='resources/engine/gui/template_visualcode_input.xml' " +
+								"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
+								"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
+								"	pin_color='{$color.pintype_integer}' " +
+								"	text='Argument " + to_string(argumentIdx) + "' " +
+								"/>";
+						}
+						//
+						try {
+							GUIParser::parse(nodeInputContainer, xml);
+						} catch (Exception& exception) {
+							Console::println("TextEditorTabView::visualizeDescription(): method/function: " + string(exception.what()));
+						}
+					}
+					// PIN OUTPUT im OutputContainer oben
+					//
+					if (description.method != nullptr && description.method->getReturnValueType() != MiniScript::ScriptVariableType::TYPE_VOID) {
+						// output
+						string xml;
+						//
+						xml+=
+							string() +
+							"<template " +
+							"	id='d" + id + "_r' " +
+							"	src='resources/engine/gui/template_visualcode_output.xml' " +
+							"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
+							"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
+							"	pin_color='{$color.pintype_integer}' " +
+							"	text='Return Value' " +
+							"/>";
+						//
+						try {
+							GUIParser::parse(nodeOutputContainer, xml);
+						} catch (Exception& exception) {
+							Console::println("TextEditorTabView::visualizeDescription(): method/function: " + string(exception.what()));
+						}
+					}
+					if (depth == 0) {
+						// PIN OUTPUT TEMP
+						// flow node
+						string xml;
+						//
+						xml+=
+							string() +
+							"<template " +
+							"	id='d" + id + "_flow' " +
+							"	src='resources/engine/gui/template_visualcode_output.xml' " +
+							"	pin_type_connected='resources/engine/images/visualcode_flow_connected.png' " +
+							"	pin_type_unconnected='resources/engine/images/visualcode_flow_unconnected.png' " +
+							"/>";
+						//
+						try {
+							GUIParser::parse(nodeOutputContainer, xml);
+						} catch (Exception& exception) {
+							Console::println("TextEditorTabView::visualizeDescription(): method/function: " + string(exception.what()));
+						}
+					}
+				}
 				break;
 			}
-	}
-	if (depth == 0) {
-		xml+= "<space width='100%' height='5' />";
-		xml+= "<space height='1' width='100%' border-top='1' border-color='#202020' />";
-		xml+= "<space width='100%' height='5' />";
-		xml+= "<text id='d" + id + "_flow' font='{$font.default}' size='{$fontsize.default}' text='Flow' color='{$color.font_normal}' width='100%' horizontal-align='right'/>";
-	}
-	xml+= "</moveable>";
+		case MiniScript::StatementDescription::STATEMENTDESCRIPTION_LITERAL:
+			{
+				/*
+				xml+= "<text id='d" + id + "_title' font='{$font.default}' size='{$fontsize.default}' text='Literal' color='{$color.font_normal}' />";
+				xml+= "<space width='100%' height='5' />";
+				xml+= "<space height='1' width='100%' border-top='1' border-color='#202020' />";
+				xml+= "<space width='100%' height='5' />";
+				xml+= "<text id='" + id + "_value' font='{$font.default}' size='{$fontsize.default}' text='" + GUIParser::escapeQuotes(description.value.getValueString()) + "' color='{$color.font_normal}' />";
+				*/
+				{
+					string xml = "<template src='resources/engine/gui/template_visualcode_node.xml' id='d" + id + "' left='" + to_string(x) + "' top='" + to_string(y) + "' node-name='Literal' />";
+					try {
+						GUIParser::parse(parentNode, xml);
+					} catch (Exception& exception) {
+						Console::println("TextEditorTabView::visualizeDescription(): literal: " + string(exception.what()));
+					}
+				}
+				{
+					string xml =
+						string() +
+						"<template " +
+							"id='d" + id + "_value' " +
+							"src='resources/engine/gui/template_visualcode_output.xml' " +
+							"pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
+							"pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
+							"pin_color='{$color.pintype_integer}' " +
+							"text='" + GUIParser::escapeQuotes(description.value.getValueString()) + "' " +
+						"/>";
 
-	try {
-		GUIParser::parse(parentNode, xml);
-	} catch (Exception& exception) {
-		Console::println("TextEditorTabView::visualizeDescription(): " + string(exception.what()));
+					try {
+						GUIParser::parse(required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("d" + id + "_output_container")), xml);
+					} catch (Exception& exception) {
+						Console::println("TextEditorTabView::visualizeDescription(): literal: " + string(exception.what()));
+					}
+				}
+				break;
+			}
 	}
 
 	//
 	auto node = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById("d" + id));
-	width+= 200; //node->getContentWidth();
-	height+= 100; //node->getContentHeight();
+	width+= 400; //node->getContentWidth();
+	height+= 200; //node->getContentHeight();
 
 	// post layout, move first level child argument nodes from from left to right according to the closest one
 	auto rootDistanceMax = Integer::MAX_VALUE;
@@ -587,6 +689,7 @@ void TextEditorTabView::createConnections(const string& id, const MiniScript::St
 }
 
 void TextEditorTabView::createConnections() {
+	/*
 	// reset
 	nodes.clear();
 	connections.clear();
@@ -615,4 +718,5 @@ void TextEditorTabView::createConnections() {
 		//
 		previousNodeFlowNode = nodeFlowNode;
 	}
+	*/
 }

@@ -1,4 +1,4 @@
-<moveable id="{$id}" alignment="vertical" horizontal-align="center" vertical-align="center" width="auto" height="auto">	
+<moveable id="{$id}" alignment="vertical" horizontal-align="center" vertical-align="center" left="{$left}" top="{$top}" width="auto" height="auto">	
 
 	<layer width="315" height="auto" horizontal-align="center">
 
@@ -14,7 +14,7 @@
 		<layout padding="5" alignment="horizontal" horizontal-align="left" vertical-align="center" width="300" height="auto">
 			<image src="resources/engine/images/arrow_down.png"/>
 			<space width="10"/>
-			<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="{$node_name}" width="*" height="auto"/>
+			<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="{$node-name}" width="*" height="auto"/>
 		</layout>
 		
 		<layout padding-top="40" padding-bottom="10" alignment="horizontal" width="100%" height="auto">
@@ -64,8 +64,8 @@
 					<!-- id="output2"  -->
 					<!-- src="resources/engine/gui/template_visualcode_output.xml"					 -->
 
-					<!-- pin_type_connected="resources/engine/images/vscript_value_connected.png"  -->
-					<!-- pin_type_unconnected="resources/engine/images/vscript_value_unconnected.png"  -->
+					<!-- pin_type_connected="resources/engine/images/visualcode_value_connected.png"  -->
+					<!-- pin_type_unconnected="resources/engine/images/visualcode_value_unconnected.png"  -->
 					<!-- pin_color="{$color.pintype_integer}" -->
 					
 					<!-- text="Result"	 -->
