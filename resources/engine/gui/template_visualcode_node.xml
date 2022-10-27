@@ -1,0 +1,81 @@
+<moveable id="{$id}" alignment="vertical" horizontal-align="center" vertical-align="center" width="auto" height="auto">	
+
+	<layer width="315" height="auto" horizontal-align="center">
+
+		<layout border-right="1" border-bottom="1" border-color="{$color.element_frame}" width="300" height="*" alignment="vertical" vertical-align="top" background-color="{$color.element_foreground}">
+
+			<layer border-bottom="1" border-color="{$color.element_frame}" width="100%" height="auto" >
+				<layout width="100%" height="30" background-color="{$node_type_color}"/>
+				<layout width="100%" height="30" background-color="#00000080"/>
+			</layer>
+
+		</layout>
+
+		<layout padding="5" alignment="horizontal" horizontal-align="left" vertical-align="center" width="300" height="auto">
+			<image src="resources/engine/images/arrow_down.png"/>
+			<space width="10"/>
+			<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="{$node_name}" width="*" height="auto"/>
+		</layout>
+		
+		<layout padding-top="40" padding-bottom="10" alignment="horizontal" width="100%" height="auto">
+		
+			<!-- input container -->
+			<layout id="{$id}_input_container" alignment="vertical" width="60%" height="auto">
+				
+				<!-- <template  -->
+					<!-- id="input1"  -->
+					<!-- src="resources/engine/gui/template_visualcode_input.xml" -->
+					
+					<!-- pin_type_connected="resources/engine/images/vscript_flow_connected.png"  -->
+					<!-- pin_type_unconnected="resources/engine/images/vscript_flow_unconnected.png"  -->
+				<!-- /> -->
+				
+				<!-- <template  -->
+					<!-- id="input2"  -->
+					<!-- src="resources/engine/gui/template_visualcode_input.xml" -->
+					<!-- on-initialize="input2_input_type_panel.condition=input; input2_pin_type_panel.condition=connected"						 -->
+
+					<!-- pin_type_connected="resources/engine/images/vscript_value_connected.png"  -->
+					<!-- pin_type_unconnected="resources/engine/images/vscript_value_unconnected.png"  -->
+					<!-- pin_color="{$color.pintype_integer}" -->
+					
+					<!-- text="A" -->
+					
+					<!-- input_text="1" -->
+					<!-- input_unit="" -->
+					<!-- input_options="" -->
+				<!-- /> -->
+				
+			</layout>
+			<!-- --------------- -->
+
+			<!-- output container -->			
+			<layout id="{$id}_output_container" alignment="vertical" width="40%" height="auto">
+			
+				<!-- <template  -->
+					<!-- id="output1"  -->
+					<!-- src="resources/engine/gui/template_visualcode_output.xml" -->
+					
+					<!-- pin_type_connected="resources/engine/images/vscript_flow_connected.png"  -->
+					<!-- pin_type_unconnected="resources/engine/images/vscript_flow_unconnected.png"  -->
+				<!-- /> -->
+				
+				<!-- <template  -->
+					<!-- id="output2"  -->
+					<!-- src="resources/engine/gui/template_visualcode_output.xml"					 -->
+
+					<!-- pin_type_connected="resources/engine/images/vscript_value_connected.png"  -->
+					<!-- pin_type_unconnected="resources/engine/images/vscript_value_unconnected.png"  -->
+					<!-- pin_color="{$color.pintype_integer}" -->
+					
+					<!-- text="Result"	 -->
+				<!-- /> -->
+				
+			</layout>
+			<!-- --------------- -->
+
+		</layout>		
+	
+	</layer>
+			
+</moveable>
