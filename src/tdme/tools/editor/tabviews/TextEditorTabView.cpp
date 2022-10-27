@@ -463,7 +463,7 @@ void TextEditorTabView::createNodes(const string& id, const MiniScript::Statemen
 		case MiniScript::StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD:
 		case MiniScript::StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION:
 			{
-				xml+= "<text id='d" + id + "_title' font='{$font.default}' size='{$fontsize.default}' text='" + GUIParser::escapeQuotes(description.value) + "()' color='{$color.font_normal}' />";
+				xml+= "<text id='d" + id + "_title' font='{$font.default}' size='{$fontsize.default}' text='" + GUIParser::escapeQuotes(description.value.getValueString()) + "()' color='{$color.font_normal}' />";
 				xml+= "<space width='100%' height='5' />";
 				xml+= "<space height='1' width='100%' border-top='1' border-color='#202020' />";
 				xml+= "<space width='100%' height='5' />";
@@ -485,7 +485,7 @@ void TextEditorTabView::createNodes(const string& id, const MiniScript::Statemen
 				xml+= "<space width='100%' height='5' />";
 				xml+= "<space height='1' width='100%' border-top='1' border-color='#202020' />";
 				xml+= "<space width='100%' height='5' />";
-				xml+= "<text id='" + id + "_value' font='{$font.default}' size='{$fontsize.default}' text='" + GUIParser::escapeQuotes(description.value) + "' color='{$color.font_normal}' />";
+				xml+= "<text id='" + id + "_value' font='{$font.default}' size='{$fontsize.default}' text='" + GUIParser::escapeQuotes(description.value.getValueString()) + "' color='{$color.font_normal}' />";
 				break;
 			}
 	}

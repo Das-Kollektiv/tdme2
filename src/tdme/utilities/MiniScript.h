@@ -1718,7 +1718,7 @@ public:
 	struct StatementDescription {
 		enum Type { STATEMENTDESCRIPTION_NONE, STATEMENTDESCRIPTION_LITERAL, STATEMENTDESCRIPTION_EXECUTE_METHOD, STATEMENTDESCRIPTION_EXECUTE_FUNCTION };
 		Type type { STATEMENTDESCRIPTION_NONE };
-		string value;
+		ScriptVariable value;
 		ScriptMethod* method { nullptr };
 		vector<StatementDescription> arguments;
 	};

@@ -504,6 +504,10 @@ bool MiniScript::describeScriptStatement(const string_view& method, const vector
 	for (auto& argument: arguments) {
 		// variable
 		if (StringTools::viewStartsWith(argument, "$") == true) {
+			//
+			ScriptVariable value;
+			value.setValue(string(argument));
+			//
 			description.arguments.push_back(
 				{
 					.type = StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD,
@@ -512,7 +516,7 @@ bool MiniScript::describeScriptStatement(const string_view& method, const vector
 					.arguments = {
 						{
 							.type = StatementDescription::STATEMENTDESCRIPTION_LITERAL,
-							.value = string(argument),
+							.value = value,
 							.arguments = {}
 						}
 					}
@@ -541,19 +545,27 @@ bool MiniScript::describeScriptStatement(const string_view& method, const vector
 			ScriptVariable argumentValue;
 			if (StringTools::viewStartsWith(argument, "\"") == true &&
 				StringTools::viewEndsWith(argument, "\"") == true) {
+				//
+				ScriptVariable value;
+				value.setValue(string(argument));
+				//
 				description.arguments.push_back(
 					{
 						.type = StatementDescription::STATEMENTDESCRIPTION_LITERAL,
-						.value = string(StringTools::viewSubstring(argument, 1, argument.size() - 1)),
+						.value = value,
 						.method = nullptr,
 						.arguments = {}
 					}
 				);
 			} else {
+				//
+				ScriptVariable value;
+				value.setImplicitTypedValueFromStringView(argument);
+				//
 				description.arguments.push_back(
 					{
 						.type = StatementDescription::STATEMENTDESCRIPTION_LITERAL,
-						.value = string(argument),
+						.value = value,
 						.method = nullptr,
 						.arguments = {}
 					}
