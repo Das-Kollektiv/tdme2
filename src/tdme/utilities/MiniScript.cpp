@@ -507,12 +507,25 @@ bool MiniScript::describeScriptStatement(const string_view& method, const vector
 			//
 			ScriptVariable value;
 			value.setValue(string(argument));
+
+			// look up getVariable method
+			string methodName = "getVariable";
+			ScriptMethod* method = nullptr;
+			{
+				auto scriptMethodsIt = scriptMethods.find(methodName);
+				if (scriptMethodsIt != scriptMethods.end()) {
+					method = scriptMethodsIt->second;
+				} else {
+					Console::println("MiniScript::describeScriptStatement(): '" + scriptFileName + "': unknown method @" + to_string(statement.line) + ": '" + statement.statement + "': " + string("getVariable") + "(" + getArgumentsAsString(arguments) + ")");
+				}
+			}
+
 			//
 			description.arguments.push_back(
 				{
 					.type = StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD,
-					.value = MiniScript::ScriptVariable(string("getVariable")),
-					.method = nullptr,
+					.value = MiniScript::ScriptVariable(methodName),
+					.method = method,
 					.arguments = {
 						{
 							.type = StatementDescription::STATEMENTDESCRIPTION_LITERAL,
@@ -538,7 +551,6 @@ bool MiniScript::describeScriptStatement(const string_view& method, const vector
 				description.arguments.push_back(subDescription);
 			} else {
 				Console::println("MiniScript::describeScriptStatement(): " + getStatementInformation(statement) + ": '" + string(argument) + "': parse error");
-				startErrorScript();
 			}
 		} else {
 			// string literal
@@ -594,7 +606,6 @@ bool MiniScript::describeScriptStatement(const string_view& method, const vector
 			return true;
 		} else {
 			Console::println("MiniScript::describeScriptStatement(): '" + scriptFileName + "': unknown method @" + to_string(statement.line) + ": '" + statement.statement + "': " + string(method) + "(" + getArgumentsAsString(arguments) + ")");
-			startErrorScript();
 		}
 	}
 	//

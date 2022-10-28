@@ -616,6 +616,32 @@ void TextEditorTabView::createNodes(const string& id, int descriptionIdx, int de
 						"	pin_color='{$color.pintype_integer}' " +
 						"	text='Return Value' " +
 						"/>";
+
+					//
+					try {
+						GUIParser::parse(nodeOutputContainer, xml);
+						// update to be connected
+						required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById("d" + id + "_r_pin_type_panel"))->getActiveConditions().add("connected");
+					} catch (Exception& exception) {
+						Console::println("TextEditorTabView::visualizeDescription(): method/function: " + string(exception.what()));
+					}
+				} else
+				// functions have a return value pin by default for now
+				//	TODO: MiniScript user functions need also formal return values a) to find out if we have a return value at all and to know the type
+				if (description.method == nullptr) {
+					string xml;
+					//
+					xml+=
+						string() +
+						"<template " +
+						"	id='d" + id + "_r' " +
+						"	src='resources/engine/gui/template_visualcode_output.xml' " +
+						"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
+						"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
+						"	pin_color='{$color.pintype_integer}' " +
+						"	text='Return Value' " +
+						"/>";
+
 					//
 					try {
 						GUIParser::parse(nodeOutputContainer, xml);
@@ -628,37 +654,7 @@ void TextEditorTabView::createNodes(const string& id, int descriptionIdx, int de
 				break;
 			}
 		case MiniScript::StatementDescription::STATEMENTDESCRIPTION_LITERAL:
-			{
-				{
-					string xml = "<template src='resources/engine/gui/template_visualcode_node.xml' id='d" + id + "' left='" + to_string(x) + "' top='" + to_string(y) + "' node-name='Literal' />";
-					try {
-						GUIParser::parse(parentNode, xml);
-					} catch (Exception& exception) {
-						Console::println("TextEditorTabView::visualizeDescription(): literal: " + string(exception.what()));
-					}
-				}
-				{
-					string xml =
-						string() +
-						"<template " +
-							"id='d" + id + "_r' " +
-							"src='resources/engine/gui/template_visualcode_output.xml' " +
-							"pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
-							"pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
-							"pin_color='{$color.pintype_integer}' " +
-							"text='" + GUIParser::escapeQuotes(description.value.getValueString()) + "' " +
-						"/>";
-
-					try {
-						GUIParser::parse(required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("d" + id + "_output_container")), xml);
-						// update to be connected
-						required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById("d" + id + "_r_pin_type_panel"))->getActiveConditions().add("connected");
-					} catch (Exception& exception) {
-						Console::println("TextEditorTabView::visualizeDescription(): literal: " + string(exception.what()));
-					}
-				}
-				break;
-			}
+			break;
 	}
 
 	//
@@ -740,8 +736,18 @@ void TextEditorTabView::createConnections(const string& id, const MiniScript::St
 		auto isLiteral = description.arguments[argumentIdx].type == MiniScript::StatementDescription::STATEMENTDESCRIPTION_LITERAL;
 		if (isLiteral == true) continue;
 		//
-		auto argumentInputNode = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById("d" + id + "_a" + to_string(argumentIdx)));
-		auto argumentOutputNode = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById("d" + id + "." + to_string(argumentIdx) + "_r"));
+		string argumentInputNodeId = "d" + id + "_a" + to_string(argumentIdx);
+		string argumentOutputNodeId = "d" + id + "." + to_string(argumentIdx) + "_r";
+		auto argumentInputNode = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(argumentInputNodeId));
+		auto argumentOutputNode = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(argumentOutputNodeId));
+		if (argumentInputNode == nullptr) {
+			Console::println("TextEditorTabView::createConnections(): missing argument input node: " + argumentInputNodeId);
+			continue;
+		}
+		if (argumentOutputNode == nullptr) {
+			Console::println(string() + "TextEditorTabView::createConnections(): missing argument output node: " + argumentOutputNodeId);
+			continue;
+		}
 		auto& argumentInputNodeComputedConstraints = argumentInputNode->getComputedConstraints();
 		auto& argumentOutputNodeComputedConstraints = argumentOutputNode->getComputedConstraints();
 		connections.push_back(
