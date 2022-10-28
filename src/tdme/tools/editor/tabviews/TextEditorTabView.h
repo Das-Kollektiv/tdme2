@@ -86,6 +86,8 @@ private:
 	};
 
 	struct Connection {
+		enum ConnectionType { CONNECTIONTYPE_NONE, CONNECTIONTYPE_FLOW, CONNECTIONTYPE_ARGUMENT };
+		ConnectionType type { CONNECTIONTYPE_NONE };
 		int x1;
 		int y1;
 		int x2;

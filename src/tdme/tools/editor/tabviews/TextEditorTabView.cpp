@@ -368,7 +368,14 @@ void TextEditorTabView::display()
 				controlPoints.push_back(srcVector2);
 				controlPoints.push_back(dstVector1);
 				controlPoints.push_back(dstVector2);
-				canvas.drawBezier(controlPoints, 255, 0, 0, 255);
+				switch (connection.type) {
+					case Connection::CONNECTIONTYPE_FLOW:
+						canvas.drawBezier(controlPoints, 255, 255, 255, 255);
+						break;
+					case Connection::CONNECTIONTYPE_ARGUMENT:
+						canvas.drawBezier(controlPoints, 0, 255, 0, 255);
+						break;
+				}
 			}
 			linesTexture->update();
 			createConnectionsPasses--;
@@ -456,6 +463,8 @@ void TextEditorTabView::createNodes(const string& id, int descriptionIdx, int de
 	x+= childMaxWidth;
 	width+= childMaxWidth;
 
+	//input2_pin_type_panel.condition=connected
+
 	//
 	switch (description.type) {
 		case MiniScript::StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD:
@@ -486,7 +495,7 @@ void TextEditorTabView::createNodes(const string& id, int descriptionIdx, int de
 					xml+=
 						string() +
 						"<template " +
-						"	id='d" + id + "_flow_input' " +
+						"	id='d" + id + "_flow_in' " +
 						"	src='resources/engine/gui/template_visualcode_input.xml' " +
 						"	pin_type_connected='resources/engine/images/visualcode_flow_connected.png' " +
 						"	pin_type_unconnected='resources/engine/images/visualcode_flow_unconnected.png' " +
@@ -494,19 +503,20 @@ void TextEditorTabView::createNodes(const string& id, int descriptionIdx, int de
 					//
 					try {
 						GUIParser::parse(nodeInputContainer, xml);
+						// update to be connected
+						required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById("d" + id + "_flow_in_pin_type_panel"))->getActiveConditions().add("connected");
 					} catch (Exception& exception) {
 						Console::println("TextEditorTabView::visualizeDescription(): method/function: " + string(exception.what()));
 					}
 				}
 				// inputs aka arguments
 				{
-					string xml;
 					//
 					auto argumentIdx = 0;
 					if (description.method != nullptr) {
 						auto& argumentTypes = description.method->getArgumentTypes();
 						for (argumentIdx = 0; argumentIdx < argumentTypes.size(); argumentIdx++) {
-							xml+=
+							string xml =
 								string() +
 								"<template " +
 								"	id='d" + id + "_a" + to_string(argumentIdx) + "' " +
@@ -516,10 +526,18 @@ void TextEditorTabView::createNodes(const string& id, int descriptionIdx, int de
 								"	pin_color='{$color.pintype_integer}' " +
 								"	text='" + GUIParser::escapeQuotes(argumentTypes[argumentIdx].name + ": " + MiniScript::ScriptVariable::getTypeAsString(argumentTypes[argumentIdx].type)) + "' " +
 								"/>";
+							//
+							try {
+								GUIParser::parse(nodeInputContainer, xml);
+								// update to be connected
+								required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById("d" + id + "_a" + to_string(argumentIdx) + "_pin_type_panel"))->getActiveConditions().add("connected");
+							} catch (Exception& exception) {
+								Console::println("TextEditorTabView::visualizeDescription(): method/function: " + string(exception.what()));
+							}
 						}
 					}
 					for (; argumentIdx < description.arguments.size(); argumentIdx++) {
-						xml+=
+						string xml =
 							string() +
 							"<template " +
 							"	id='d" + id + "_a" + to_string(argumentIdx) + "' " +
@@ -529,12 +547,14 @@ void TextEditorTabView::createNodes(const string& id, int descriptionIdx, int de
 							"	pin_color='{$color.pintype_integer}' " +
 							"	text='Argument " + to_string(argumentIdx) + "' " +
 							"/>";
-					}
-					//
-					try {
-						GUIParser::parse(nodeInputContainer, xml);
-					} catch (Exception& exception) {
-						Console::println("TextEditorTabView::visualizeDescription(): method/function: " + string(exception.what()));
+						//
+						try {
+							GUIParser::parse(nodeInputContainer, xml);
+							// update to be connected
+							required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById("d" + id + "_a" + to_string(argumentIdx) + "_pin_type_panel"))->getActiveConditions().add("connected");
+						} catch (Exception& exception) {
+							Console::println("TextEditorTabView::visualizeDescription(): method/function: " + string(exception.what()));
+						}
 					}
 				}
 				// pin output aka flow output
@@ -544,7 +564,7 @@ void TextEditorTabView::createNodes(const string& id, int descriptionIdx, int de
 					xml+=
 						string() +
 						"<template " +
-						"	id='d" + id + "_flow_output' " +
+						"	id='d" + id + "_flow_out' " +
 						"	src='resources/engine/gui/template_visualcode_output.xml' " +
 						"	pin_type_connected='resources/engine/images/visualcode_flow_connected.png' " +
 						"	pin_type_unconnected='resources/engine/images/visualcode_flow_unconnected.png' " +
@@ -552,6 +572,8 @@ void TextEditorTabView::createNodes(const string& id, int descriptionIdx, int de
 					//
 					try {
 						GUIParser::parse(nodeOutputContainer, xml);
+						// update to be connected
+						required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById("d" + id + "_flow_out_pin_type_panel"))->getActiveConditions().add("connected");
 					} catch (Exception& exception) {
 						Console::println("TextEditorTabView::visualizeDescription(): method/function: " + string(exception.what()));
 					}
@@ -573,6 +595,8 @@ void TextEditorTabView::createNodes(const string& id, int descriptionIdx, int de
 					//
 					try {
 						GUIParser::parse(nodeOutputContainer, xml);
+						// update to be connected
+						required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById("d" + id + "_r_pin_type_panel"))->getActiveConditions().add("connected");
 					} catch (Exception& exception) {
 						Console::println("TextEditorTabView::visualizeDescription(): method/function: " + string(exception.what()));
 					}
@@ -600,7 +624,7 @@ void TextEditorTabView::createNodes(const string& id, int descriptionIdx, int de
 					string xml =
 						string() +
 						"<template " +
-							"id='d" + id + "_value' " +
+							"id='d" + id + "_r' " +
 							"src='resources/engine/gui/template_visualcode_output.xml' " +
 							"pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
 							"pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
@@ -610,6 +634,8 @@ void TextEditorTabView::createNodes(const string& id, int descriptionIdx, int de
 
 					try {
 						GUIParser::parse(required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("d" + id + "_output_container")), xml);
+						// update to be connected
+						required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById("d" + id + "_r_pin_type_panel"))->getActiveConditions().add("connected");
 					} catch (Exception& exception) {
 						Console::println("TextEditorTabView::visualizeDescription(): literal: " + string(exception.what()));
 					}
@@ -686,11 +712,12 @@ void TextEditorTabView::createConnections(const string& id, const MiniScript::St
 	);
 	for (auto i = 0; i < description.arguments.size(); i++) {
 		auto argumentInputNode = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById("d" + id + "_a" + to_string(i)));
-		auto argumentOutputNode = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById("d" + id + "." + to_string(i) + "_title"));
+		auto argumentOutputNode = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById("d" + id + "." + to_string(i) + "_r"));
 		auto& argumentInputNodeComputedConstraints = argumentInputNode->getComputedConstraints();
 		auto& argumentOutputNodeComputedConstraints = argumentOutputNode->getComputedConstraints();
 		connections.push_back(
 			{
+				.type = Connection::CONNECTIONTYPE_ARGUMENT,
 				.x1 = argumentInputNodeComputedConstraints.left,
 				.y1 = argumentInputNodeComputedConstraints.top + argumentInputNodeComputedConstraints.height / 2,
 				.x2 = argumentOutputNodeComputedConstraints.left + argumentOutputNodeComputedConstraints.width,
@@ -702,7 +729,6 @@ void TextEditorTabView::createConnections(const string& id, const MiniScript::St
 }
 
 void TextEditorTabView::createConnections() {
-	/*
 	// reset
 	nodes.clear();
 	connections.clear();
@@ -714,13 +740,14 @@ void TextEditorTabView::createConnections() {
 	auto visualisationNode = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("visualization_canvas"));
 	for (auto i = 0; i < description.size(); i++) {
 		createConnections(to_string(i), description[i], visualisationNode);
-		auto node = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById("d" + to_string(i) + "_flow"));
-		auto nodeFlowNode = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById("d" + to_string(i) + "_flow"));
-		if (previousNodeFlowNode != nullptr) {
+		auto nodeFlowIn = dynamic_cast<GUINode*>(tabScreenNode->getNodeById("d" + to_string(i) + "_flow_in"));
+		auto nodeFlowOut = dynamic_cast<GUINode*>(tabScreenNode->getNodeById("d" + to_string(i) + "_flow_out"));
+		if (previousNodeFlowNode != nullptr && nodeFlowIn != nullptr) {
 			auto& previousNodeComputedConstraints = previousNodeFlowNode->getComputedConstraints();
-			auto& nodeComputedConstraints = node->getComputedConstraints();
+			auto& nodeComputedConstraints = nodeFlowIn->getComputedConstraints();
 			connections.push_back(
 				{
+					.type = Connection::CONNECTIONTYPE_FLOW,
 					.x1 = previousNodeComputedConstraints.left + previousNodeComputedConstraints.width,
 					.y1 = previousNodeComputedConstraints.top + previousNodeComputedConstraints.height / 2,
 					.x2 = nodeComputedConstraints.left,
@@ -729,7 +756,6 @@ void TextEditorTabView::createConnections() {
 			);
 		}
 		//
-		previousNodeFlowNode = nodeFlowNode;
+		previousNodeFlowNode = nodeFlowOut;
 	}
-	*/
 }
