@@ -441,13 +441,13 @@ void TextEditorTabView::addNodeDeltaX(const string& id, const MiniScript::Statem
 	}
 }
 
-void TextEditorTabView::createNodes(const string& id, const MiniScript::StatementDescription& description, GUIParentNode* parentNode, int x, int y, int& width, int& height, int depth) {
+void TextEditorTabView::createNodes(const string& id, int descriptionIdx, int descriptionCount, const MiniScript::StatementDescription& description, GUIParentNode* parentNode, int x, int y, int& width, int& height, int depth) {
 	//
 	int childMaxWidth = 0;
 	for (auto i = 0; i < description.arguments.size(); i++) {
 		auto childWidth = 0;
 		auto childHeight = 0;
-		createNodes(id + "." + to_string(i), description.arguments[i], parentNode, x, y, childWidth, childHeight, depth + 1);
+		createNodes(id + "." + to_string(i), i, description.arguments.size(), description.arguments[i], parentNode, x, y, childWidth, childHeight, depth + 1);
 		if (childWidth > childMaxWidth) childMaxWidth = childWidth;
 		y+= childHeight;
 		height+= childHeight;
@@ -479,29 +479,33 @@ void TextEditorTabView::createNodes(const string& id, const MiniScript::Statemen
 				//
 				auto nodeInputContainer = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("d" + id + "_input_container"));
 				auto nodeOutputContainer = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("d" + id + "_output_container"));
-				// PIN INPUT im InputContainer oben
+				// pin input aka flow input
+				if (depth == 0 && descriptionIdx > 0) {
+					string xml;
+					//
+					xml+=
+						string() +
+						"<template " +
+						"	id='d" + id + "_flow_input' " +
+						"	src='resources/engine/gui/template_visualcode_input.xml' " +
+						"	pin_type_connected='resources/engine/images/visualcode_flow_connected.png' " +
+						"	pin_type_unconnected='resources/engine/images/visualcode_flow_unconnected.png' " +
+						"/>";
+					//
+					try {
+						GUIParser::parse(nodeInputContainer, xml);
+					} catch (Exception& exception) {
+						Console::println("TextEditorTabView::visualizeDescription(): method/function: " + string(exception.what()));
+					}
+				}
+				// inputs aka arguments
 				{
-					{
-						// inputs
-						string xml;
-						//
-						auto argumentIdx = 0;
-						if (description.method != nullptr) {
-							auto& argumentTypes = description.method->getArgumentTypes();
-							for (argumentIdx = 0; argumentIdx < argumentTypes.size(); argumentIdx++) {
-								xml+=
-									string() +
-									"<template " +
-									"	id='d" + id + "_a" + to_string(argumentIdx) + "' " +
-									"	src='resources/engine/gui/template_visualcode_input.xml' " +
-									"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
-									"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
-									"	pin_color='{$color.pintype_integer}' " +
-									"	text='" + GUIParser::escapeQuotes(argumentTypes[argumentIdx].name + ": " + MiniScript::ScriptVariable::getTypeAsString(argumentTypes[argumentIdx].type)) + "' " +
-									"/>";
-							}
-						}
-						for (; argumentIdx < description.arguments.size(); argumentIdx++) {
+					string xml;
+					//
+					auto argumentIdx = 0;
+					if (description.method != nullptr) {
+						auto& argumentTypes = description.method->getArgumentTypes();
+						for (argumentIdx = 0; argumentIdx < argumentTypes.size(); argumentIdx++) {
 							xml+=
 								string() +
 								"<template " +
@@ -510,58 +514,67 @@ void TextEditorTabView::createNodes(const string& id, const MiniScript::Statemen
 								"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
 								"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
 								"	pin_color='{$color.pintype_integer}' " +
-								"	text='Argument " + to_string(argumentIdx) + "' " +
+								"	text='" + GUIParser::escapeQuotes(argumentTypes[argumentIdx].name + ": " + MiniScript::ScriptVariable::getTypeAsString(argumentTypes[argumentIdx].type)) + "' " +
 								"/>";
 						}
-						//
-						try {
-							GUIParser::parse(nodeInputContainer, xml);
-						} catch (Exception& exception) {
-							Console::println("TextEditorTabView::visualizeDescription(): method/function: " + string(exception.what()));
-						}
 					}
-					// PIN OUTPUT im OutputContainer oben
-					//
-					if (description.method != nullptr && description.method->getReturnValueType() != MiniScript::ScriptVariableType::TYPE_VOID) {
-						// output
-						string xml;
-						//
+					for (; argumentIdx < description.arguments.size(); argumentIdx++) {
 						xml+=
 							string() +
 							"<template " +
-							"	id='d" + id + "_r' " +
-							"	src='resources/engine/gui/template_visualcode_output.xml' " +
+							"	id='d" + id + "_a" + to_string(argumentIdx) + "' " +
+							"	src='resources/engine/gui/template_visualcode_input.xml' " +
 							"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
 							"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
 							"	pin_color='{$color.pintype_integer}' " +
-							"	text='Return Value' " +
+							"	text='Argument " + to_string(argumentIdx) + "' " +
 							"/>";
-						//
-						try {
-							GUIParser::parse(nodeOutputContainer, xml);
-						} catch (Exception& exception) {
-							Console::println("TextEditorTabView::visualizeDescription(): method/function: " + string(exception.what()));
-						}
 					}
-					if (depth == 0) {
-						// PIN OUTPUT TEMP
-						// flow node
-						string xml;
-						//
-						xml+=
-							string() +
-							"<template " +
-							"	id='d" + id + "_flow' " +
-							"	src='resources/engine/gui/template_visualcode_output.xml' " +
-							"	pin_type_connected='resources/engine/images/visualcode_flow_connected.png' " +
-							"	pin_type_unconnected='resources/engine/images/visualcode_flow_unconnected.png' " +
-							"/>";
-						//
-						try {
-							GUIParser::parse(nodeOutputContainer, xml);
-						} catch (Exception& exception) {
-							Console::println("TextEditorTabView::visualizeDescription(): method/function: " + string(exception.what()));
-						}
+					//
+					try {
+						GUIParser::parse(nodeInputContainer, xml);
+					} catch (Exception& exception) {
+						Console::println("TextEditorTabView::visualizeDescription(): method/function: " + string(exception.what()));
+					}
+				}
+				// pin output aka flow output
+				if (depth == 0 && descriptionIdx < descriptionCount - 1) {
+					string xml;
+					//
+					xml+=
+						string() +
+						"<template " +
+						"	id='d" + id + "_flow_output' " +
+						"	src='resources/engine/gui/template_visualcode_output.xml' " +
+						"	pin_type_connected='resources/engine/images/visualcode_flow_connected.png' " +
+						"	pin_type_unconnected='resources/engine/images/visualcode_flow_unconnected.png' " +
+						"/>";
+					//
+					try {
+						GUIParser::parse(nodeOutputContainer, xml);
+					} catch (Exception& exception) {
+						Console::println("TextEditorTabView::visualizeDescription(): method/function: " + string(exception.what()));
+					}
+				}
+				// return value
+				if (description.method != nullptr && description.method->getReturnValueType() != MiniScript::ScriptVariableType::TYPE_VOID) {
+					string xml;
+					//
+					xml+=
+						string() +
+						"<template " +
+						"	id='d" + id + "_r' " +
+						"	src='resources/engine/gui/template_visualcode_output.xml' " +
+						"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
+						"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
+						"	pin_color='{$color.pintype_integer}' " +
+						"	text='Return Value' " +
+						"/>";
+					//
+					try {
+						GUIParser::parse(nodeOutputContainer, xml);
+					} catch (Exception& exception) {
+						Console::println("TextEditorTabView::visualizeDescription(): method/function: " + string(exception.what()));
 					}
 				}
 				break;
@@ -644,7 +657,7 @@ void TextEditorTabView::updateMiniScriptDescription(int miniScriptScriptIdx) {
 	for (auto i = 0; i < description.size(); i++) {
 		auto width = 0;
 		auto height = 0;
-		createNodes(to_string(i), description[i], visualisationNode, x, y, width, height);
+		createNodes(to_string(i), i, description.size(), description[i], visualisationNode, x, y, width, height);
 		x+= width + 100;
 		yMax = Math::max(y + height, yMax);
 	}
