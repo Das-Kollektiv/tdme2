@@ -533,13 +533,15 @@ void TextEditorTabView::createNodes(const string& id, int descriptionIdx, int de
 							//
 							try {
 								GUIParser::parse(nodeInputContainer, xml);
-								// update to be connected
-								required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById("d" + id + "_a" + to_string(argumentIdx) + "_pin_type_panel"))->getActiveConditions().add("connected");
 								//
 								if (isLiteral == true) {
 									// update to be a literal
 									required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById("d" + id + "_a" + to_string(argumentIdx) + "_input_type_panel"))->getActiveConditions().add("input");
+								} else {
+									// update to be connected
+									required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById("d" + id + "_a" + to_string(argumentIdx) + "_pin_type_panel"))->getActiveConditions().add("connected");
 								}
+
 							} catch (Exception& exception) {
 								Console::println("TextEditorTabView::visualizeDescription(): method/function: " + string(exception.what()));
 							}
@@ -566,12 +568,13 @@ void TextEditorTabView::createNodes(const string& id, int descriptionIdx, int de
 						//
 						try {
 							GUIParser::parse(nodeInputContainer, xml);
-							// update to be connected
-							required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById("d" + id + "_a" + to_string(argumentIdx) + "_pin_type_panel"))->getActiveConditions().add("connected");
 							//
 							if (isLiteral == true) {
 								// update to be a literal
 								required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById("d" + id + "_a" + to_string(argumentIdx) + "_input_type_panel"))->getActiveConditions().add("input");
+							} else {
+								// update to be connected
+								required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById("d" + id + "_a" + to_string(argumentIdx) + "_pin_type_panel"))->getActiveConditions().add("connected");
 							}
 						} catch (Exception& exception) {
 							Console::println("TextEditorTabView::visualizeDescription(): method/function: " + string(exception.what()));
