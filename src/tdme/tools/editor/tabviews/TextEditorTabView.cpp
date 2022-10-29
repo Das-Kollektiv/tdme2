@@ -370,6 +370,22 @@ void TextEditorTabView::display()
 				controlPoints.push_back(dstVector2);
 				canvas.drawBezier(controlPoints, 255, 0, 0, 255);
 			}
+
+			for (auto y = 0; y < linesTexture->getHeight(); y+= 10) {
+				
+				// canvas.drawLine(0, Math::absmod(y - visualizationScrollY, linesTexture->getHeight()), linesTexture->getWidth(), Math::absmod(y - visualizationScrollY, linesTexture->getHeight()), 125, 125, 125, 50);
+				
+				for (auto x = 0; x < linesTexture->getWidth(); x+= 10) {
+					canvas.drawPixel(Math::absmod(x - visualizationScrollX, linesTexture->getWidth()), Math::absmod(y - visualizationScrollY, linesTexture->getHeight()), 125, 125, 125, 50);
+				}
+			}
+			
+			// for (auto x = 0; x < linesTexture->getWidth(); x+= 10) {
+				
+				// canvas.drawLine(Math::absmod(x - visualizationScrollX, linesTexture->getWidth()), 0, Math::absmod(x - visualizationScrollX, linesTexture->getWidth()), linesTexture->getHeight(), 125, 125, 125, 50);
+				
+			// }
+			
 			linesTexture->update();
 			createConnectionsPasses--;
 		}

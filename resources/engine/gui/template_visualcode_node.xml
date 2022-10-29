@@ -22,7 +22,7 @@
 			<!-- input container -->
 			<layout id="{$id}_input_container" alignment="vertical" width="60%" height="auto">
 				
-				<!-- <template  -->
+				<template 
 					<!-- id="input1"  -->
 					<!-- src="resources/engine/gui/template_visualcode_input.xml" -->
 					
@@ -33,7 +33,7 @@
 				<!-- <template  -->
 					<!-- id="input2"  -->
 					<!-- src="resources/engine/gui/template_visualcode_input.xml" -->
-					<!-- on-initialize="input2_input_type_panel.condition=input; input2_pin_type_panel.condition=connected"						 -->
+					<!-- on-initialize="input2_input_type_panel.condition=input; input2_pin_type_panel.condition=connected"  -->
 
 					<!-- pin_type_connected="resources/engine/images/visualcode_value_connected.png"  -->
 					<!-- pin_type_unconnected="resources/engine/images/visualcode_value_unconnected.png"  -->
@@ -64,8 +64,8 @@
 					<!-- id="output2"  -->
 					<!-- src="resources/engine/gui/template_visualcode_output.xml"					 -->
 
-					<!-- pin_type_connected="resources/engine/images/vscript_value_connected.png"  -->
-					<!-- pin_type_unconnected="resources/engine/images/vscript_value_unconnected.png"  -->
+					<!-- pin_type_connected="resources/engine/images/visualcode_value_connected.png"  -->
+					<!-- pin_type_unconnected="resources/engine/images/visualcode_value_unconnected.png"  -->
 					<!-- pin_color="{$color.pintype_integer}" -->
 					
 					<!-- text="Result"	 -->
