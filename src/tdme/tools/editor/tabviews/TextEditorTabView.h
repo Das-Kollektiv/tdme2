@@ -86,6 +86,8 @@ private:
 	};
 
 	struct Connection {
+		enum ConnectionType { CONNECTIONTYPE_NONE, CONNECTIONTYPE_FLOW, CONNECTIONTYPE_ARGUMENT };
+		ConnectionType type { CONNECTIONTYPE_NONE };
 		int x1;
 		int y1;
 		int x2;
@@ -198,6 +200,8 @@ public:
 	/**
 	 * Create UI nodes for given statement description, which matches a statement in miniscript
 	 * @param id id
+	 * @param descriptionIdx description index
+	 * @param descriptionCount description count
 	 * @param description description
 	 * @param parentNode parent node
 	 * @param x x
@@ -206,7 +210,7 @@ public:
 	 * @param height height
 	 * @param depth depth
 	 */
-	void createNodes(const string& id, const MiniScript::StatementDescription& description, GUIParentNode* parentNode, int x, int y, int& width, int& height, int depth = 0);
+	void createNodes(const string& id, int descriptionIdx, int descriptionCount, const MiniScript::StatementDescription& description, GUIParentNode* parentNode, int x, int y, int& width, int& height, int depth = 0);
 
 	/**
 	 * @return MiniScript script index

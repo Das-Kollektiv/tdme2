@@ -2140,11 +2140,16 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 					argumentValues[0].setValue(string("MiniScript will do the job"));
 					argumentValues[1].setValue(string("MiniScript will not do the job"));
 					// method code: equals
-					returnValue.setValue(true);
-					for (auto i = 1; i < argumentValues.size(); i++) {
-						if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
-							returnValue.setValue(false);
-							break;
+					if (argumentValues.size() != 2) {
+						Console::println("ScriptMethodEquals::executeMethod(): " + string("equals") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
+						miniScript->startErrorScript(); return;
+					} else {
+						returnValue.setValue(true);
+						for (auto i = 1; i < argumentValues.size(); i++) {
+							if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
+								returnValue.setValue(false);
+								break;
+							}
 						}
 					}
 				}
@@ -2157,39 +2162,56 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 					argumentValues[0].setValue(string("it will"));
 					argumentValues[1].setValue(string("it will"));
 					// method code: equals
-					returnValue.setValue(true);
-					for (auto i = 1; i < argumentValues.size(); i++) {
-						if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
-							returnValue.setValue(false);
-							break;
+					if (argumentValues.size() != 2) {
+						Console::println("ScriptMethodEquals::executeMethod(): " + string("equals") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
+						miniScript->startErrorScript(); return;
+					} else {
+						returnValue.setValue(true);
+						for (auto i = 1; i < argumentValues.size(); i++) {
+							if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
+								returnValue.setValue(false);
+								break;
+							}
 						}
 					}
 				}
 				// method code: or
-				returnValue.setValue(false);
-				for (auto i = 0; i < argumentValues.size(); i++) {
-					bool booleanValue;
-					if (MiniScript::getBooleanValue(argumentValues, i, booleanValue, false) == false) {
-						Console::println("ScriptMethodOr::executeMethod(): " + string("or") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument " + to_string(i) + ": boolean expected");
-						miniScript->startErrorScript(); return;
-					} else
-					if (booleanValue == true) {
-						returnValue.setValue(true);
-						break;
+				if (argumentValues.size() != 2) {
+					returnValue.setValue(false);
+					Console::println("ScriptMethodOr::executeMethod(): " + string("or") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: boolean expected, @ argument 1: boolean expected");
+					miniScript->startErrorScript(); return;
+				} else {
+					returnValue.setValue(false);
+					for (auto i = 0; i < argumentValues.size(); i++) {
+						bool booleanValue;
+						if (MiniScript::getBooleanValue(argumentValues, i, booleanValue, false) == false) {
+							Console::println("ScriptMethodOr::executeMethod(): " + string("or") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument " + to_string(i) + ": boolean expected");
+							miniScript->startErrorScript(); return;
+						} else
+						if (booleanValue == true) {
+							returnValue.setValue(true);
+							break;
+						}
 					}
 				}
 			}
 			// method code: and
-			returnValue.setValue(true);
-			for (auto i = 0; i < argumentValues.size(); i++) {
-				bool booleanValue;
-				if (MiniScript::getBooleanValue(argumentValues, i, booleanValue, false) == false) {
-					Console::println("ScriptMethodAnd::executeMethod(): " + string("and") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument " + to_string(i) + ": boolean expected");
-					miniScript->startErrorScript(); return;
-				} else
-				if (booleanValue == false) {
-					returnValue.setValue(false);
-					break;
+			if (argumentValues.size() != 2) {
+				returnValue.setValue(false);
+				Console::println("ScriptMethodOr::executeMethod(): " + string("and") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: boolean expected, @ argument 1: boolean expected");
+				miniScript->startErrorScript(); return;
+			} else {
+				returnValue.setValue(true);
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					bool booleanValue;
+					if (MiniScript::getBooleanValue(argumentValues, i, booleanValue, false) == false) {
+						Console::println("ScriptMethodAnd::executeMethod(): " + string("and") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument " + to_string(i) + ": boolean expected");
+						miniScript->startErrorScript(); return;
+					} else
+					if (booleanValue == false) {
+						returnValue.setValue(false);
+						break;
+					}
 				}
 			}
 		}
@@ -10605,11 +10627,16 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 				}
 			}
 			// method code: notequal
-			returnValue.setValue(true);
-			for (auto i = 1; i < argumentValues.size(); i++) {
-				if (argumentValues[0].getValueString() == argumentValues[i].getValueString()) {
-					returnValue.setValue(false);
-					break;
+			if (argumentValues.size() != 2) {
+				Console::println("ScriptMethodNotEqual::executeMethod(): " + string("notequal") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
+				miniScript->startErrorScript(); return;
+			} else {
+				returnValue.setValue(true);
+				for (auto i = 1; i < argumentValues.size(); i++) {
+					if (argumentValues[0].getValueString() == argumentValues[i].getValueString()) {
+						returnValue.setValue(false);
+						break;
+					}
 				}
 			}
 		}
@@ -11034,11 +11061,16 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 				}
 			}
 			// method code: equals
-			returnValue.setValue(true);
-			for (auto i = 1; i < argumentValues.size(); i++) {
-				if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
-					returnValue.setValue(false);
-					break;
+			if (argumentValues.size() != 2) {
+				Console::println("ScriptMethodEquals::executeMethod(): " + string("equals") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
+				miniScript->startErrorScript(); return;
+			} else {
+				returnValue.setValue(true);
+				for (auto i = 1; i < argumentValues.size(); i++) {
+					if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
+						returnValue.setValue(false);
+						break;
+					}
 				}
 			}
 		}
@@ -11117,11 +11149,16 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 				}
 			}
 			// method code: equals
-			returnValue.setValue(true);
-			for (auto i = 1; i < argumentValues.size(); i++) {
-				if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
-					returnValue.setValue(false);
-					break;
+			if (argumentValues.size() != 2) {
+				Console::println("ScriptMethodEquals::executeMethod(): " + string("equals") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
+				miniScript->startErrorScript(); return;
+			} else {
+				returnValue.setValue(true);
+				for (auto i = 1; i < argumentValues.size(); i++) {
+					if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
+						returnValue.setValue(false);
+						break;
+					}
 				}
 			}
 		}
@@ -11206,11 +11243,16 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 				}
 			}
 			// method code: equals
-			returnValue.setValue(true);
-			for (auto i = 1; i < argumentValues.size(); i++) {
-				if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
-					returnValue.setValue(false);
-					break;
+			if (argumentValues.size() != 2) {
+				Console::println("ScriptMethodEquals::executeMethod(): " + string("equals") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
+				miniScript->startErrorScript(); return;
+			} else {
+				returnValue.setValue(true);
+				for (auto i = 1; i < argumentValues.size(); i++) {
+					if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
+						returnValue.setValue(false);
+						break;
+					}
 				}
 			}
 		}
@@ -11295,11 +11337,16 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 				}
 			}
 			// method code: equals
-			returnValue.setValue(true);
-			for (auto i = 1; i < argumentValues.size(); i++) {
-				if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
-					returnValue.setValue(false);
-					break;
+			if (argumentValues.size() != 2) {
+				Console::println("ScriptMethodEquals::executeMethod(): " + string("equals") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
+				miniScript->startErrorScript(); return;
+			} else {
+				returnValue.setValue(true);
+				for (auto i = 1; i < argumentValues.size(); i++) {
+					if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
+						returnValue.setValue(false);
+						break;
+					}
 				}
 			}
 		}
@@ -11676,11 +11723,16 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 					}
 				}
 				// method code: equals
-				returnValue.setValue(true);
-				for (auto i = 1; i < argumentValues.size(); i++) {
-					if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
-						returnValue.setValue(false);
-						break;
+				if (argumentValues.size() != 2) {
+					Console::println("ScriptMethodEquals::executeMethod(): " + string("equals") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
+					miniScript->startErrorScript(); return;
+				} else {
+					returnValue.setValue(true);
+					for (auto i = 1; i < argumentValues.size(); i++) {
+						if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
+							returnValue.setValue(false);
+							break;
+						}
 					}
 				}
 			}
@@ -11725,25 +11777,36 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 					}
 				}
 				// method code: equals
-				returnValue.setValue(true);
-				for (auto i = 1; i < argumentValues.size(); i++) {
-					if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
-						returnValue.setValue(false);
-						break;
+				if (argumentValues.size() != 2) {
+					Console::println("ScriptMethodEquals::executeMethod(): " + string("equals") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
+					miniScript->startErrorScript(); return;
+				} else {
+					returnValue.setValue(true);
+					for (auto i = 1; i < argumentValues.size(); i++) {
+						if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
+							returnValue.setValue(false);
+							break;
+						}
 					}
 				}
 			}
 			// method code: or
-			returnValue.setValue(false);
-			for (auto i = 0; i < argumentValues.size(); i++) {
-				bool booleanValue;
-				if (MiniScript::getBooleanValue(argumentValues, i, booleanValue, false) == false) {
-					Console::println("ScriptMethodOr::executeMethod(): " + string("or") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument " + to_string(i) + ": boolean expected");
-					miniScript->startErrorScript(); return;
-				} else
-				if (booleanValue == true) {
-					returnValue.setValue(true);
-					break;
+			if (argumentValues.size() != 2) {
+				returnValue.setValue(false);
+				Console::println("ScriptMethodOr::executeMethod(): " + string("or") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: boolean expected, @ argument 1: boolean expected");
+				miniScript->startErrorScript(); return;
+			} else {
+				returnValue.setValue(false);
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					bool booleanValue;
+					if (MiniScript::getBooleanValue(argumentValues, i, booleanValue, false) == false) {
+						Console::println("ScriptMethodOr::executeMethod(): " + string("or") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument " + to_string(i) + ": boolean expected");
+						miniScript->startErrorScript(); return;
+					} else
+					if (booleanValue == true) {
+						returnValue.setValue(true);
+						break;
+					}
 				}
 			}
 		}

@@ -1358,7 +1358,7 @@ public:
 			if (type == expectedType) return true;
 			switch(expectedType) {
 				case TYPE_PSEUDO_NUMBER:
-					return type == TYPE_INTEGER || type == TYPE_FLOAT;
+					return type == TYPE_INTEGER || type == TYPE_FLOAT || type == TYPE_BOOLEAN;
 				case TYPE_PSEUDO_MIXED:
 					return true;
 				default:
@@ -1718,7 +1718,7 @@ public:
 	struct StatementDescription {
 		enum Type { STATEMENTDESCRIPTION_NONE, STATEMENTDESCRIPTION_LITERAL, STATEMENTDESCRIPTION_EXECUTE_METHOD, STATEMENTDESCRIPTION_EXECUTE_FUNCTION };
 		Type type { STATEMENTDESCRIPTION_NONE };
-		string value;
+		ScriptVariable value;
 		ScriptMethod* method { nullptr };
 		vector<StatementDescription> arguments;
 	};

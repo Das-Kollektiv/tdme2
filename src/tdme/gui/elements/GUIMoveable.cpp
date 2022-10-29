@@ -44,9 +44,9 @@ unordered_map<string, string> GUIMoveable::getAttributes(GUIScreenNode* screenNo
 	attributes["top"] = "0";
 	attributes["width"] = "auto";
 	attributes["height"] = "auto";
-	attributes["horizontal-align"] = "left";
-	attributes["vertical-align"] = "top";
-	attributes["alignment"] = "vertical";
+	attributes["horizontal-align"] = "center";
+	attributes["vertical-align"] = "center";
+	attributes["alignment"] = "none";
 	return attributes;
 }
 
