@@ -526,8 +526,8 @@ Reading all keys as array from set:
 | getVariable($variable: String): Mixed                                                            |
 | setVariable($variable: String, $value: Mixed): Mixed                                             |
 | unsetVariable($variable: String): Void                                                           |
-| add(...): Mixed                                                                                  |
-| and(...): Boolean                                                                                |
+| add($a: Mixed, $b: Mixed): Mixed                                                                 |
+| and($a: Boolean, $b: Boolean): Boolean                                                           |
 | array(...): Array                                                                                |
 | array.get($array: Array, $index: Integer): Mixed                                                 |
 | array.set(=$array: Array, $index: Integer, ...): Void                                            |
@@ -539,11 +539,11 @@ Reading all keys as array from set:
 | bool($bool: Boolean): Boolean                                                                    |
 | concatenate(...): String                                                                         |
 | console.log(...): Void                                                                           |
-| div(...): Mixed                                                                                  |
+| div($a: Mixed, $b: Mixed): Mixed                                                                 |
 | else(): Void                                                                                     |
 | elseif($condition: Boolean): Void                                                                |
 | end(): Void                                                                                      |
-| equals(...): Boolean                                                                             |
+| equals($a: Mixed, $b: Mixed): Boolean                                                            |
 | float($float: Float): Float                                                                      |
 | forCondition($condition: Boolean): Void                                                          |
 | forTime($time: Integer): Void                                                                    |
@@ -601,10 +601,10 @@ Reading all keys as array from set:
 | math.sqrt($value: Float): Float                                                                  |
 | math.square($value: Number): Number                                                              |
 | math.tan($value: Float): Float                                                                   |
-| mul(...): Mixed                                                                                  |
+| mul($a: Mixed, $b: Mixed): Mixed                                                                 |
 | not($bool: Boolean): Boolean                                                                     |
-| notequal(...): Boolean                                                                           |
-| or(...): Boolean                                                                                 |
+| notequal($a: Mixed, $b: Mixed): Boolean                                                          |
+| or($a: Boolean, $b: Boolean): Boolean                                                            |
 | quaternion.computeMatrix($quaternion: Quaternion): Matrix4x4                                     |
 | quaternion.identity(): Quaternion                                                                |
 | quaternion.invert($quaternion: Vector4): Quaternion                                              |
@@ -629,7 +629,7 @@ Reading all keys as array from set:
 | set.remove(=$set: Set, $key: String): Void                                                       |
 | space([$spaces: Integer]): String                                                                |
 | string($string: String): String                                                                  |
-| sub(...): Mixed                                                                                  |
+| sub($a: Mixed, $b: Mixed): Mixed                                                                 |
 | time.getCurrentMillis(): Integer                                                                 |
 | toLowerCase($string: String): String                                                             |
 | toUpperCase($string: String): String                                                             |
@@ -817,16 +817,16 @@ Reading all keys as array from set:
 | Op | Method                                                                                      |
 |----|---------------------------------------------------------------------------------------------|
 | !  | not($bool: Boolean): Boolean                                                                |
-| != | notequal(...): Boolean                                                                      |
-| && | and(...): Boolean                                                                           |
-| *  | mul(...): Mixed                                                                             |
-| +  | add(...): Mixed                                                                             |
-| -  | sub(...): Mixed                                                                             |
-| /  | div(...): Mixed                                                                             |
+| != | notequal($a: Mixed, $b: Mixed): Boolean                                                     |
+| && | and($a: Boolean, $b: Boolean): Boolean                                                      |
+| *  | mul($a: Mixed, $b: Mixed): Mixed                                                            |
+| +  | add($a: Mixed, $b: Mixed): Mixed                                                            |
+| -  | sub($a: Mixed, $b: Mixed): Mixed                                                            |
+| /  | div($a: Mixed, $b: Mixed): Mixed                                                            |
 | <  | lesser($a: Number, $b: Number): Boolean                                                     |
 | <= | lesserequals($a: Number, $b: Number): Boolean                                               |
 | =  | setVariable($variable: String, $value: Mixed): Mixed                                        |
-| == | equals(...): Boolean                                                                        |
+| == | equals($a: Mixed, $b: Mixed): Boolean                                                       |
 | >  | greater($a: Number, $b: Number): Boolean                                                    |
 | >= | greaterequals($a: Number, $b: Number): Boolean                                              |
-| \|\|| or(...): Boolean                                                                           |
+| \|\|| or($a: Boolean, $b: Boolean): Boolean                                                      |

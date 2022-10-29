@@ -1358,7 +1358,7 @@ public:
 			if (type == expectedType) return true;
 			switch(expectedType) {
 				case TYPE_PSEUDO_NUMBER:
-					return type == TYPE_INTEGER || type == TYPE_FLOAT;
+					return type == TYPE_INTEGER || type == TYPE_FLOAT || type == TYPE_BOOLEAN;
 				case TYPE_PSEUDO_MIXED:
 					return true;
 				default:

@@ -2338,21 +2338,31 @@ void MiniScript::registerMethods() {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodEquals(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN), miniScript(miniScript) {}
+			ScriptMethodEquals(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_BOOLEAN
+				),
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "equals";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue.setValue(true);
-				for (auto i = 1; i < argumentValues.size(); i++) {
-					if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
-						returnValue.setValue(false);
-						break;
+				if (argumentValues.size() != 2) {
+					Console::println("ScriptMethodEquals::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
+					miniScript->startErrorScript();
+				} else {
+					returnValue.setValue(true);
+					for (auto i = 1; i < argumentValues.size(); i++) {
+						if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
+							returnValue.setValue(false);
+							break;
+						}
 					}
 				}
-			}
-			bool isVariadic() override {
-				return true;
 			}
 			ScriptOperator getOperator() override {
 				return OPERATOR_EQUALS;
@@ -2366,21 +2376,31 @@ void MiniScript::registerMethods() {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodNotEqual(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN), miniScript(miniScript) {}
+			ScriptMethodNotEqual(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_BOOLEAN
+				),
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "notequal";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue.setValue(true);
-				for (auto i = 1; i < argumentValues.size(); i++) {
-					if (argumentValues[0].getValueString() == argumentValues[i].getValueString()) {
-						returnValue.setValue(false);
-						break;
+				if (argumentValues.size() != 2) {
+					Console::println("ScriptMethodNotEqual::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
+					miniScript->startErrorScript();
+				} else {
+					returnValue.setValue(true);
+					for (auto i = 1; i < argumentValues.size(); i++) {
+						if (argumentValues[0].getValueString() == argumentValues[i].getValueString()) {
+							returnValue.setValue(false);
+							break;
+						}
 					}
 				}
-			}
-			bool isVariadic() override {
-				return true;
 			}
 			ScriptOperator getOperator() override {
 				return OPERATOR_NOTEQUAL;
@@ -4634,26 +4654,37 @@ void MiniScript::registerMethods() {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodAnd(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN), miniScript(miniScript) {}
+			ScriptMethodAnd(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "a", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "b", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_BOOLEAN
+				),
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "and";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue.setValue(true);
-				for (auto i = 0; i < argumentValues.size(); i++) {
-					bool booleanValue;
-					if (MiniScript::getBooleanValue(argumentValues, i, booleanValue, false) == false) {
-						Console::println("ScriptMethodAnd::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument " + to_string(i) + ": boolean expected");
-						miniScript->startErrorScript();
-					} else
-					if (booleanValue == false) {
-						returnValue.setValue(false);
-						break;
+				if (argumentValues.size() != 2) {
+					returnValue.setValue(false);
+					Console::println("ScriptMethodOr::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: boolean expected, @ argument 1: boolean expected");
+					miniScript->startErrorScript();
+				} else {
+					returnValue.setValue(true);
+					for (auto i = 0; i < argumentValues.size(); i++) {
+						bool booleanValue;
+						if (MiniScript::getBooleanValue(argumentValues, i, booleanValue, false) == false) {
+							Console::println("ScriptMethodAnd::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument " + to_string(i) + ": boolean expected");
+							miniScript->startErrorScript();
+						} else
+						if (booleanValue == false) {
+							returnValue.setValue(false);
+							break;
+						}
 					}
 				}
-			}
-			bool isVariadic() override {
-				return true;
 			}
 			ScriptOperator getOperator() override {
 				return OPERATOR_AND;
@@ -4667,26 +4698,37 @@ void MiniScript::registerMethods() {
 		private:
 			MiniScript* miniScript { nullptr };
 		public:
-			ScriptMethodOr(MiniScript* miniScript): ScriptMethod({}, ScriptVariableType::TYPE_BOOLEAN), miniScript(miniScript) {}
+			ScriptMethodOr(MiniScript* miniScript):
+				ScriptMethod(
+					{
+						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "a", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_BOOLEAN, .name = "b", .optional = false, .assignBack = false }
+					},
+					ScriptVariableType::TYPE_BOOLEAN
+				),
+				miniScript(miniScript) {}
 			const string getMethodName() override {
 				return "or";
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
-				returnValue.setValue(false);
-				for (auto i = 0; i < argumentValues.size(); i++) {
-					bool booleanValue;
-					if (MiniScript::getBooleanValue(argumentValues, i, booleanValue, false) == false) {
-						Console::println("ScriptMethodOr::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument " + to_string(i) + ": boolean expected");
-						miniScript->startErrorScript();
-					} else
-					if (booleanValue == true) {
-						returnValue.setValue(true);
-						break;
+				if (argumentValues.size() != 2) {
+					returnValue.setValue(false);
+					Console::println("ScriptMethodOr::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: boolean expected, @ argument 1: boolean expected");
+					miniScript->startErrorScript();
+				} else {
+					returnValue.setValue(false);
+					for (auto i = 0; i < argumentValues.size(); i++) {
+						bool booleanValue;
+						if (MiniScript::getBooleanValue(argumentValues, i, booleanValue, false) == false) {
+							Console::println("ScriptMethodOr::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument " + to_string(i) + ": boolean expected");
+							miniScript->startErrorScript();
+						} else
+						if (booleanValue == true) {
+							returnValue.setValue(true);
+							break;
+						}
 					}
 				}
-			}
-			bool isVariadic() override {
-				return true;
 			}
 			ScriptOperator getOperator() override {
 				return OPERATOR_OR;

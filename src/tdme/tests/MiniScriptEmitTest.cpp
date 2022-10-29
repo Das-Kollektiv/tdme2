@@ -563,11 +563,16 @@ int MiniScriptEmitTest::determineNamedScriptIdxToStart() {
 				argumentValues[0].setValue(true);
 				argumentValues[1].setValue(true);
 				// method code: equals
-				returnValue.setValue(true);
-				for (auto i = 1; i < argumentValues.size(); i++) {
-					if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
-						returnValue.setValue(false);
-						break;
+				if (argumentValues.size() != 2) {
+					Console::println("ScriptMethodEquals::executeMethod(): " + string("equals") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
+					miniScript->startErrorScript(); return -1;
+				} else {
+					returnValue.setValue(true);
+					for (auto i = 1; i < argumentValues.size(); i++) {
+						if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
+							returnValue.setValue(false);
+							break;
+						}
 					}
 				}
 				bool returnValueBool; returnValue.getBooleanValue(returnValueBool); if (returnValueBool == true) return 4;
@@ -1642,11 +1647,16 @@ void MiniScriptEmitTest::on_emittest(int miniScriptGotoStatementIdx) {
 				}
 			}
 			// method code: equals
-			returnValue.setValue(true);
-			for (auto i = 1; i < argumentValues.size(); i++) {
-				if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
-					returnValue.setValue(false);
-					break;
+			if (argumentValues.size() != 2) {
+				Console::println("ScriptMethodEquals::executeMethod(): " + string("equals") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
+				miniScript->startErrorScript(); return;
+			} else {
+				returnValue.setValue(true);
+				for (auto i = 1; i < argumentValues.size(); i++) {
+					if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
+						returnValue.setValue(false);
+						break;
+					}
 				}
 			}
 		}
@@ -1901,11 +1911,16 @@ void MiniScriptEmitTest::on_emittest(int miniScriptGotoStatementIdx) {
 				}
 			}
 			// method code: equals
-			returnValue.setValue(true);
-			for (auto i = 1; i < argumentValues.size(); i++) {
-				if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
-					returnValue.setValue(false);
-					break;
+			if (argumentValues.size() != 2) {
+				Console::println("ScriptMethodEquals::executeMethod(): " + string("equals") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
+				miniScript->startErrorScript(); return;
+			} else {
+				returnValue.setValue(true);
+				for (auto i = 1; i < argumentValues.size(); i++) {
+					if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
+						returnValue.setValue(false);
+						break;
+					}
 				}
 			}
 		}
