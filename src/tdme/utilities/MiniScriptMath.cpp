@@ -28,10 +28,8 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 			ScriptMethodAdd(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{
-							{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .assignBack = false },
-							{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .assignBack = false }
-						},
+						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .assignBack = false },
+						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .assignBack = false }
 					},
 					MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED
 				),
@@ -57,10 +55,8 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 			ScriptMethodSub(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{
-							{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .assignBack = false },
-							{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .assignBack = false }
-						},
+						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .assignBack = false },
+						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .assignBack = false }
 					},
 					MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED
 				),
@@ -86,10 +82,8 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 			ScriptMethodMul(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{
-							{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .assignBack = false },
-							{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .assignBack = false }
-						},
+						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .assignBack = false },
+						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .assignBack = false }
 					},
 					MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED
 				),
@@ -115,10 +109,8 @@ void MiniScriptMath::registerMethods(MiniScript* miniScript) {
 			ScriptMethodDiv(MiniScript* miniScript):
 				MiniScript::ScriptMethod(
 					{
-						{
-							{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .assignBack = false },
-							{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .assignBack = false }
-						},
+						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "a", .optional = false, .assignBack = false },
+						{ .type = MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED, .name = "b", .optional = false, .assignBack = false }
 					},
 					MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED
 				),
