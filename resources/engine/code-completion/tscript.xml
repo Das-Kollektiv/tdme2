@@ -1,13 +1,31 @@
 <?xml version="1.0"?>
 <code-completion>
+	<keyword name="getVariable" func="yes">
+		<overload return-value="Mixed" descr="">
+			<parameter name="String $variable" />
+		</overload>
+	</keyword>
+	<keyword name="setVariable" func="yes">
+		<overload return-value="Mixed" descr="">
+			<parameter name="String $variable" />
+			<parameter name="Mixed $value" />
+		</overload>
+	</keyword>
+	<keyword name="unsetVariable" func="yes">
+		<overload return-value="Void" descr="">
+			<parameter name="String $variable" />
+		</overload>
+	</keyword>
 	<keyword name="add" func="yes">
 		<overload return-value="Mixed" descr="">
-			<parameter name="..." />
+			<parameter name="Mixed $a" />
+			<parameter name="Mixed $b" />
 		</overload>
 	</keyword>
 	<keyword name="and" func="yes">
 		<overload return-value="Boolean" descr="">
-			<parameter name="..." />
+			<parameter name="Boolean $a" />
+			<parameter name="Boolean $b" />
 		</overload>
 	</keyword>
 	<keyword name="array" func="yes">
@@ -19,6 +37,13 @@
 		<overload return-value="Mixed" descr="">
 			<parameter name="Array $array" />
 			<parameter name="Integer $index" />
+		</overload>
+	</keyword>
+	<keyword name="array.set" func="yes">
+		<overload return-value="Void" descr="">
+			<parameter name="Array =$array" />
+			<parameter name="Integer $index" />
+			<parameter name="..." />
 		</overload>
 	</keyword>
 	<keyword name="array.indexOf" func="yes">
@@ -50,13 +75,7 @@
 		<overload return-value="Void" descr="">
 			<parameter name="Array =$array" />
 			<parameter name="String $value" />
-		</overload>
-	</keyword>
-	<keyword name="array.set" func="yes">
-		<overload return-value="Void" descr="">
-			<parameter name="Array =$array" />
-			<parameter name="Integer $index" />
-			<parameter name="..." />
+			<parameter name="[Integer $beginIndex]" />
 		</overload>
 	</keyword>
 	<keyword name="bool" func="yes">
@@ -76,7 +95,8 @@
 	</keyword>
 	<keyword name="div" func="yes">
 		<overload return-value="Mixed" descr="">
-			<parameter name="..." />
+			<parameter name="Mixed $a" />
+			<parameter name="Mixed $b" />
 		</overload>
 	</keyword>
 	<keyword name="else" func="yes">
@@ -94,7 +114,8 @@
 	</keyword>
 	<keyword name="equals" func="yes">
 		<overload return-value="Boolean" descr="">
-			<parameter name="..." />
+			<parameter name="Mixed $a" />
+			<parameter name="Mixed $b" />
 		</overload>
 	</keyword>
 	<keyword name="float" func="yes">
@@ -110,11 +131,6 @@
 	<keyword name="forTime" func="yes">
 		<overload return-value="Void" descr="">
 			<parameter name="Integer $time" />
-		</overload>
-	</keyword>
-	<keyword name="getVariable" func="yes">
-		<overload return-value="Mixed" descr="">
-			<parameter name="String $variable" />
 		</overload>
 	</keyword>
 	<keyword name="greater" func="yes">
@@ -155,10 +171,23 @@
 		<overload return-value="Map" descr="">
 		</overload>
 	</keyword>
+	<keyword name="map.has" func="yes">
+		<overload return-value="Boolean" descr="">
+			<parameter name="Map $map" />
+			<parameter name="String $key" />
+		</overload>
+	</keyword>
 	<keyword name="map.get" func="yes">
 		<overload return-value="Mixed" descr="">
 			<parameter name="Map $map" />
 			<parameter name="String $key" />
+		</overload>
+	</keyword>
+	<keyword name="map.set" func="yes">
+		<overload return-value="Void" descr="">
+			<parameter name="Map =$map" />
+			<parameter name="String $key" />
+			<parameter name="..." />
 		</overload>
 	</keyword>
 	<keyword name="map.getKeys" func="yes">
@@ -171,23 +200,10 @@
 			<parameter name="Map $map" />
 		</overload>
 	</keyword>
-	<keyword name="map.has" func="yes">
-		<overload return-value="Boolean" descr="">
-			<parameter name="Map $map" />
-			<parameter name="String $key" />
-		</overload>
-	</keyword>
 	<keyword name="map.remove" func="yes">
 		<overload return-value="Void" descr="">
 			<parameter name="Map =$map" />
 			<parameter name="String $key" />
-		</overload>
-	</keyword>
-	<keyword name="map.set" func="yes">
-		<overload return-value="Void" descr="">
-			<parameter name="Map =$map" />
-			<parameter name="String $key" />
-			<parameter name="..." />
 		</overload>
 	</keyword>
 	<keyword name="mat3.identity" func="yes">
@@ -402,7 +418,8 @@
 	</keyword>
 	<keyword name="mul" func="yes">
 		<overload return-value="Mixed" descr="">
-			<parameter name="..." />
+			<parameter name="Mixed $a" />
+			<parameter name="Mixed $b" />
 		</overload>
 	</keyword>
 	<keyword name="not" func="yes">
@@ -412,12 +429,14 @@
 	</keyword>
 	<keyword name="notequal" func="yes">
 		<overload return-value="Boolean" descr="">
-			<parameter name="..." />
+			<parameter name="Mixed $a" />
+			<parameter name="Mixed $b" />
 		</overload>
 	</keyword>
 	<keyword name="or" func="yes">
 		<overload return-value="Boolean" descr="">
-			<parameter name="..." />
+			<parameter name="Boolean $a" />
+			<parameter name="Boolean $b" />
 		</overload>
 	</keyword>
 	<keyword name="quaternion.computeMatrix" func="yes">
@@ -456,6 +475,14 @@
 			<parameter name="..." />
 		</overload>
 	</keyword>
+	<keyword name="script.getNamedConditions" func="yes">
+		<overload return-value="String" descr="">
+		</overload>
+	</keyword>
+	<keyword name="script.getVariables" func="yes">
+		<overload return-value="Map" descr="">
+		</overload>
+	</keyword>
 	<keyword name="script.call" func="yes">
 		<overload return-value="Mixed" descr="">
 			<parameter name="String $function" />
@@ -482,14 +509,6 @@
 			<parameter name="..." />
 		</overload>
 	</keyword>
-	<keyword name="script.getNamedConditions" func="yes">
-		<overload return-value="String" descr="">
-		</overload>
-	</keyword>
-	<keyword name="script.getVariables" func="yes">
-		<overload return-value="Map" descr="">
-		</overload>
-	</keyword>
 	<keyword name="script.stop" func="yes">
 		<overload return-value="Void" descr="">
 		</overload>
@@ -507,15 +526,15 @@
 		<overload return-value="Set" descr="">
 		</overload>
 	</keyword>
-	<keyword name="set.getKeys" func="yes">
-		<overload return-value="Array" descr="">
-			<parameter name="Set $set" />
-		</overload>
-	</keyword>
 	<keyword name="set.has" func="yes">
 		<overload return-value="Boolean" descr="">
 			<parameter name="Set $set" />
 			<parameter name="String $key" />
+		</overload>
+	</keyword>
+	<keyword name="set.getKeys" func="yes">
+		<overload return-value="Array" descr="">
+			<parameter name="Set $set" />
 		</overload>
 	</keyword>
 	<keyword name="set.insert" func="yes">
@@ -530,12 +549,6 @@
 			<parameter name="String $key" />
 		</overload>
 	</keyword>
-	<keyword name="setVariable" func="yes">
-		<overload return-value="Mixed" descr="">
-			<parameter name="String $variable" />
-			<parameter name="..." />
-		</overload>
-	</keyword>
 	<keyword name="space" func="yes">
 		<overload return-value="String" descr="">
 			<parameter name="[Integer $spaces]" />
@@ -548,7 +561,8 @@
 	</keyword>
 	<keyword name="sub" func="yes">
 		<overload return-value="Mixed" descr="">
-			<parameter name="..." />
+			<parameter name="Mixed $a" />
+			<parameter name="Mixed $b" />
 		</overload>
 	</keyword>
 	<keyword name="time.getCurrentMillis" func="yes">
@@ -569,15 +583,34 @@
 		<overload return-value="Transform" descr="">
 			<parameter name="[Vector3 $translation]" />
 			<parameter name="[Vector3 $scale]" />
-			<parameter name="[Vector3 $rotationAxis0]" />
-			<parameter name="[Vector3 $rotationAxis1]" />
-			<parameter name="[Vector3 $rotationAxis2]" />
+			<parameter name="[Float $rotationZ]" />
+			<parameter name="[Float $rotationY]" />
+			<parameter name="[Float $rotationX]" />
+		</overload>
+	</keyword>
+	<keyword name="transform.AXIS_X" func="yes">
+		<overload return-value="Vector3" descr="">
+		</overload>
+	</keyword>
+	<keyword name="transform.AXIS_Y" func="yes">
+		<overload return-value="Vector3" descr="">
+		</overload>
+	</keyword>
+	<keyword name="transform.AXIS_Z" func="yes">
+		<overload return-value="Vector3" descr="">
 		</overload>
 	</keyword>
 	<keyword name="transform.getRotationAngle" func="yes">
 		<overload return-value="Float" descr="">
 			<parameter name="Transform $transform" />
 			<parameter name="Integer $idx" />
+		</overload>
+	</keyword>
+	<keyword name="transform.setRotationAngle" func="yes">
+		<overload return-value="Void" descr="">
+			<parameter name="Transform =$transform" />
+			<parameter name="Integer $idx" />
+			<parameter name="Float $angle" />
 		</overload>
 	</keyword>
 	<keyword name="transform.getRotationAxis" func="yes">
@@ -596,6 +629,12 @@
 			<parameter name="Transform $transform" />
 		</overload>
 	</keyword>
+	<keyword name="transform.setScale" func="yes">
+		<overload return-value="Void" descr="">
+			<parameter name="Transform =$transform" />
+			<parameter name="Vector3 $scale" />
+		</overload>
+	</keyword>
 	<keyword name="transform.getTransformMatrix" func="yes">
 		<overload return-value="Matrix4x4" descr="">
 			<parameter name="Transform $transform" />
@@ -604,6 +643,33 @@
 	<keyword name="transform.getTranslation" func="yes">
 		<overload return-value="Vector3" descr="">
 			<parameter name="Transform $transform" />
+		</overload>
+	</keyword>
+	<keyword name="transform.setTranslation" func="yes">
+		<overload return-value="Void" descr="">
+			<parameter name="Transform =$transform" />
+			<parameter name="Vector3 $translation" />
+		</overload>
+	</keyword>
+	<keyword name="transform.applyRotation" func="yes">
+		<overload return-value="Void" descr="">
+			<parameter name="Transform =$transform" />
+			<parameter name="Vector3 $axis" />
+			<parameter name="Float $angle" />
+		</overload>
+	</keyword>
+	<keyword name="transform.fromMatrix" func="yes">
+		<overload return-value="Transform" descr="">
+			<parameter name="Matrix4x4 $transformMatrix" />
+		</overload>
+	</keyword>
+	<keyword name="transform.interpolateRotation" func="yes">
+		<overload return-value="Boolean" descr="">
+			<parameter name="Float $currentAngle" />
+			<parameter name="Float $targetAngle" />
+			<parameter name="Float $timePassedSeconds" />
+			<parameter name="Float $degreesPerSeconds" />
+			<parameter name="Float =$interpolatedAngle" />
 		</overload>
 	</keyword>
 	<keyword name="transform.multiply" func="yes">
@@ -616,30 +682,6 @@
 		<overload return-value="Vector3" descr="">
 			<parameter name="Transform $transform" />
 			<parameter name="Vector3 $vec3" />
-		</overload>
-	</keyword>
-	<keyword name="transform.setRotationAngle" func="yes">
-		<overload return-value="Void" descr="">
-			<parameter name="Transform =$transform" />
-			<parameter name="Integer $idx" />
-			<parameter name="Float $angle" />
-		</overload>
-	</keyword>
-	<keyword name="transform.setScale" func="yes">
-		<overload return-value="Void" descr="">
-			<parameter name="Transform =$transform" />
-			<parameter name="Vector3 $scale" />
-		</overload>
-	</keyword>
-	<keyword name="transform.setTranslation" func="yes">
-		<overload return-value="Void" descr="">
-			<parameter name="Transform =$transform" />
-			<parameter name="Vector3 $translation" />
-		</overload>
-	</keyword>
-	<keyword name="unsetVariable" func="yes">
-		<overload return-value="Void" descr="">
-			<parameter name="String $variable" />
 		</overload>
 	</keyword>
 	<keyword name="vec2" func="yes">
