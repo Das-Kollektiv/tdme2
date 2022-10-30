@@ -535,7 +535,7 @@ Reading all keys as array from set:
 | array.length($array: Array): Integer                                                             |
 | array.push(=$array: Array, ...): Void                                                            |
 | array.remove(=$array: Array, $index: Integer): Void                                              |
-| array.removeOf(=$array: Array, $value: String): Void                                             |
+| array.removeOf(=$array: Array, $value: String[, $beginIndex: Integer]): Void                     |
 | bool($bool: Boolean): Boolean                                                                    |
 | concatenate(...): String                                                                         |
 | console.log(...): Void                                                                           |
@@ -811,7 +811,6 @@ Reading all keys as array from set:
 | world.doCollide($bodyId1: String, $bodyId2: String): Boolean                                     |
 | world.doRayCasting($collisionTypeIds: Integer, $start: Vector3, $end: Vector3, =$hitPoint: Vector3, =$bodyId: String[, $actorId: String]): Boolean|
 | world.doesCollideWith($collisionTypeIds: Integer, $bodyId: String): Array                        |
-
 
 # 8. Operators
 

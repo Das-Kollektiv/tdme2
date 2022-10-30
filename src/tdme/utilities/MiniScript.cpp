@@ -5079,6 +5079,7 @@ void MiniScript::registerMethods() {
 					{
 						{ .type = ScriptVariableType::TYPE_ARRAY, .name = "array", .optional = false, .assignBack = true },
 						{ .type = ScriptVariableType::TYPE_STRING, .name = "value", .optional = false, .assignBack = false },
+						{ .type = ScriptVariableType::TYPE_INTEGER, .name = "beginIndex", .optional = true, .assignBack = false },
 					},
 					ScriptVariableType::TYPE_VOID
 				),
@@ -5088,14 +5089,15 @@ void MiniScript::registerMethods() {
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string stringValue;
-				int64_t index;
-				if (argumentValues.size() != 2 ||
+				int64_t beginIndex = 0;
+				if (argumentValues.size() < 2 ||
 					argumentValues[0].getType() != ScriptVariableType::TYPE_ARRAY ||
-					MiniScript::getStringValue(argumentValues, 1, stringValue, false) == false) {
-					Console::println("ScriptMethodArraySet::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: array expected, @argument 1: mixed expected");
+					MiniScript::getStringValue(argumentValues, 1, stringValue, false) == false ||
+					MiniScript::getIntegerValue(argumentValues, 2, beginIndex, true) == false) {
+					Console::println("ScriptMethodArrayRemoveOf::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: array expected, @argument 1: mixed expected");
 				} else {
 					auto& array = argumentValues[0];
-					for (auto i = 0; i < array.getArraySize(); i++) {
+					for (auto i = beginIndex; i < array.getArraySize(); i++) {
 						auto arrayValue = array.getArrayValue(i);
 						if (arrayValue.getValueString() == stringValue) {
 							array.removeArrayValue(i);
@@ -5133,7 +5135,7 @@ void MiniScript::registerMethods() {
 					argumentValues[0].getType() != ScriptVariableType::TYPE_ARRAY ||
 					MiniScript::getStringValue(argumentValues, 1, stringValue, false) == false ||
 					MiniScript::getIntegerValue(argumentValues, 2, beginIndex, true) == false) {
-					Console::println("ScriptMethodArraySet::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: array expected, @argument 1: mixed expected");
+					Console::println("ScriptMethodArrayIndexOf::executeMethod(): " + getMethodName() + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: array expected, @argument 1: mixed expected");
 				} else {
 					auto& array = argumentValues[0];
 					returnValue.setValue(static_cast<int64_t>(-1));
