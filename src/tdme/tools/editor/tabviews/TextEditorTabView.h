@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <unordered_map>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/DynamicColorTexture.h>
@@ -15,6 +16,7 @@
 #include <tdme/utilities/MiniScript.h>
 
 using std::string;
+using std::unordered_map;
 
 using tdme::engine::DynamicColorTexture;
 using tdme::engine::Engine;
@@ -79,25 +81,70 @@ private:
 	int createConnectionsPasses { -1 };
 
 	struct Node {
+		string id;
+		const MiniScript::StatementDescription* description { nullptr };
+		/*
 		int x1;
 		int y1;
 		int x2;
 		int y2;
+		*/
 	};
 
 	struct Connection {
 		enum ConnectionType { CONNECTIONTYPE_NONE, CONNECTIONTYPE_FLOW, CONNECTIONTYPE_ARGUMENT };
 		ConnectionType type { CONNECTIONTYPE_NONE };
+		uint8_t red;
+		uint8_t green;
+		uint8_t blue;
+		uint8_t alpha;
 		int x1;
 		int y1;
 		int x2;
 		int y2;
 	};
 
-	vector<Node> nodes;
+	unordered_map<string, string> methodOperatorMap;
+	unordered_map<string, Node> nodes;
 	vector<Connection> connections;
 	bool visualEditor { false };
 	bool visualCodingEnabled { false };
+
+	/**
+	 * Get script variable type pin color
+	 * @param type type
+	 * @return string with color property name from theme
+	 */
+	inline const string getScriptVariableTypePinColor(MiniScript::ScriptVariableType type) {
+		switch (type) {
+			case MiniScript::ScriptVariableType::TYPE_BOOLEAN:
+				return string("color.pintype_boolean");
+			case MiniScript::ScriptVariableType::TYPE_INTEGER:
+				return string("color.pintype_integer");
+			case MiniScript::ScriptVariableType::TYPE_FLOAT:
+				return string("color.pintype_float");
+			case MiniScript::ScriptVariableType::TYPE_STRING:
+				return string("color.pintype_string");
+			case MiniScript::ScriptVariableType::TYPE_VECTOR2:
+			case MiniScript::ScriptVariableType::TYPE_VECTOR3:
+			case MiniScript::ScriptVariableType::TYPE_VECTOR4:
+				return string("color.pintype_vector");
+			case MiniScript::ScriptVariableType::TYPE_QUATERNION:
+			case MiniScript::ScriptVariableType::TYPE_MATRIX3x3:
+			case MiniScript::ScriptVariableType::TYPE_MATRIX4x4:
+			case MiniScript::ScriptVariableType::TYPE_TRANSFORM:
+				return string("color.pintype_transform");
+			case MiniScript::ScriptVariableType::TYPE_ARRAY:
+			case MiniScript::ScriptVariableType::TYPE_MAP:
+			case MiniScript::ScriptVariableType::TYPE_SET:
+			case MiniScript::ScriptVariableType::TYPE_PSEUDO_MIXED:
+			case MiniScript::ScriptVariableType::TYPE_VOID:
+				return string("color.pintype_undefined");
+			case MiniScript::ScriptVariableType::TYPE_PSEUDO_NUMBER:
+				return string("color.pintype_float");
+		}
+		return string("color.pintype_undefined");
+	}
 
 public:
 	/**
@@ -217,6 +264,14 @@ public:
 	 */
 	inline int getMiniScriptScriptIdx() {
 		return miniScriptScriptIdx;
+	}
+
+	/**
+	 * Set method -> operator map
+	 * @param methodOperatorMap method operator map
+	 */
+	inline void setMethodOperatorMap(const unordered_map<string, string>& methodOperatorMap) {
+		this->methodOperatorMap = methodOperatorMap;
 	}
 
 	/**

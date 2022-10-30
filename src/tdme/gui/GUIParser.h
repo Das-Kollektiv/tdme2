@@ -47,6 +47,20 @@ private:
 public:
 
 	/**
+	 * @return engine theme properties
+	 */
+	inline static const Properties* getEngineThemeProperties() {
+		return engineThemeProperties;
+	}
+
+	/**
+	 * @return project theme properties
+	 */
+	inline static const Properties* getProjectThemeProperties() {
+		return projectThemeProperties;
+	}
+
+	/**
 	 * Parses a GUI XML file
 	 * @param pathName path name
 	 * @param fileName file name

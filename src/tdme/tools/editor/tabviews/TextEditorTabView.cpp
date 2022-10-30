@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cctype>
 #include <string>
+#include <unordered_map>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/model/Color4.h>
@@ -10,6 +11,7 @@
 #include <tdme/engine/DynamicColorTexture.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/events/GUIMoveListener.h>
+#include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIFrameBufferNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -31,10 +33,12 @@
 #include <tdme/tools/editor/tabcontrollers/TextEditorTabController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
+#include <tdme/utilities/Properties.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::sort;
 using std::string;
+using std::unordered_map;
 
 using tdme::tools::editor::tabviews::TextEditorTabView;
 
@@ -43,6 +47,7 @@ using tdme::engine::ColorTextureCanvas;
 using tdme::engine::DynamicColorTexture;
 using tdme::engine::Engine;
 using tdme::gui::events::GUIMoveListener;
+using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIFrameBufferNode;
 using tdme::gui::nodes::GUINode;
@@ -62,6 +67,7 @@ using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::TextFormatter;
 using tdme::tools::editor::tabcontrollers::TextEditorTabController;
 using tdme::tools::editor::views::EditorView;
+using tdme::utilities::Properties;
 using tdme::utilities::StringTools;
 
 TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId, GUIScreenNode* screenNode, const string& fileName)
@@ -347,6 +353,13 @@ void TextEditorTabView::display()
 			// create lines
 			ColorTextureCanvas canvas(linesTexture->getTexture());
 			canvas.clear(0, 0, 0, 0);
+			// grid dots
+			for (auto y = 0; y < linesTexture->getHeight(); y+= 10) {
+				for (auto x = 0; x < linesTexture->getWidth(); x+= 10) {
+					canvas.drawPixel(Math::absmod(x - visualizationScrollX, linesTexture->getWidth()), Math::absmod(y - visualizationScrollY, linesTexture->getHeight()), 125, 125, 125, 50);
+				}
+			}
+			// connections
 			for (auto& connection: connections) {
 				auto x1 = connection.x1 - visualizationScrollX;
 				auto y1 = connection.y1 - visualizationScrollY;
@@ -368,31 +381,8 @@ void TextEditorTabView::display()
 				controlPoints.push_back(srcVector2);
 				controlPoints.push_back(dstVector1);
 				controlPoints.push_back(dstVector2);
-				switch (connection.type) {
-					case Connection::CONNECTIONTYPE_FLOW:
-						canvas.drawBezier(controlPoints, 255, 255, 255, 255);
-						break;
-					case Connection::CONNECTIONTYPE_ARGUMENT:
-						canvas.drawBezier(controlPoints, 0, 255, 0, 255);
-						break;
-				}
+				canvas.drawBezier(controlPoints, connection.red, connection.green, connection.blue, connection.alpha);
 			}
-
-			for (auto y = 0; y < linesTexture->getHeight(); y+= 10) {
-				
-				// canvas.drawLine(0, Math::absmod(y - visualizationScrollY, linesTexture->getHeight()), linesTexture->getWidth(), Math::absmod(y - visualizationScrollY, linesTexture->getHeight()), 125, 125, 125, 50);
-				
-				for (auto x = 0; x < linesTexture->getWidth(); x+= 10) {
-					canvas.drawPixel(Math::absmod(x - visualizationScrollX, linesTexture->getWidth()), Math::absmod(y - visualizationScrollY, linesTexture->getHeight()), 125, 125, 125, 50);
-				}
-			}
-			
-			// for (auto x = 0; x < linesTexture->getWidth(); x+= 10) {
-				
-				// canvas.drawLine(Math::absmod(x - visualizationScrollX, linesTexture->getWidth()), 0, Math::absmod(x - visualizationScrollX, linesTexture->getWidth()), linesTexture->getHeight(), 125, 125, 125, 50);
-				
-			// }
-			
 			linesTexture->update();
 			createConnectionsPasses--;
 		}
@@ -459,8 +449,12 @@ void TextEditorTabView::setCodeEditor() {
 void TextEditorTabView::addNodeDeltaX(const string& id, const MiniScript::StatementDescription& description, GUIParentNode* parentNode, int deltaX) {
 	auto node = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("d" + id));
 	node->getRequestsConstraints().left+= deltaX;
-	for (auto i = 0; i < description.arguments.size(); i++) {
-		addNodeDeltaX(id + "." + to_string(i), description.arguments[i], parentNode, deltaX);
+	for (auto argumentIdx = 0; argumentIdx < description.arguments.size(); argumentIdx++) {
+		//
+		auto isLiteral = description.arguments[argumentIdx].type == MiniScript::StatementDescription::STATEMENTDESCRIPTION_LITERAL;
+		if (isLiteral == true) continue;
+
+		addNodeDeltaX(id + "." + to_string(argumentIdx), description.arguments[argumentIdx], parentNode, deltaX);
 	}
 }
 
@@ -490,8 +484,20 @@ void TextEditorTabView::createNodes(const string& id, int descriptionIdx, int de
 		case MiniScript::StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD:
 		case MiniScript::StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION:
 			{
+				//
+				nodes["d" + id] = {
+					.id = "d" + id,
+					.description = &description
+				};
+				//
+				auto nodeName = description.value.getValueString();
+				auto methodOperatorMapIt = methodOperatorMap.find(nodeName);
+				if (methodOperatorMapIt != methodOperatorMap.end()) {
+					nodeName = methodOperatorMapIt->second;
+				}
+				//
 				{
-					string xml = "<template src='resources/engine/gui/template_visualcode_node.xml' id='d" + id + "' left='" + to_string(x) + "' top='" + to_string(y) + "' node-name='" + GUIParser::escapeQuotes(description.value.getValueString()) + "' />";
+					string xml = "<template src='resources/engine/gui/template_visualcode_node.xml' id='d" + id + "' left='" + to_string(x) + "' top='" + to_string(y) + "' node-name='" + GUIParser::escapeQuotes(nodeName) + "' />";
 					try {
 						GUIParser::parse(parentNode, xml);
 					} catch (Exception& exception) {
@@ -540,8 +546,8 @@ void TextEditorTabView::createNodes(const string& id, int descriptionIdx, int de
 								"	src='resources/engine/gui/template_visualcode_input.xml' " +
 								"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
 								"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
-								"	pin_color='{$color.pintype_integer}' " +
-								"	text='" + GUIParser::escapeQuotes(argumentTypes[argumentIdx].name + ": " + MiniScript::ScriptVariable::getTypeAsString(argumentTypes[argumentIdx].type)) + "' ";
+								"	pin_color='{$" + GUIParser::escapeQuotes(getScriptVariableTypePinColor(argumentTypes[argumentIdx].type)) + "}' " +
+								"	text='" + GUIParser::escapeQuotes(argumentTypes[argumentIdx].name) + "' ";
 							if (isLiteral == true) {
 								xml+= "	input_text='" + GUIParser::escapeQuotes(literal) + "' ";
 							}
@@ -575,8 +581,8 @@ void TextEditorTabView::createNodes(const string& id, int descriptionIdx, int de
 							"	src='resources/engine/gui/template_visualcode_input.xml' " +
 							"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
 							"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
-							"	pin_color='{$color.pintype_integer}' " +
-							"	text='Argument " + to_string(argumentIdx) + "' ";
+							"	pin_color='{$color.pintype_undefined}' " +
+							"	text='Arg " + to_string(argumentIdx) + "' ";
 						if (isLiteral == true) {
 							xml+= "	input_text='" + GUIParser::escapeQuotes(literal) + "' ";
 						}
@@ -629,8 +635,8 @@ void TextEditorTabView::createNodes(const string& id, int descriptionIdx, int de
 						"	src='resources/engine/gui/template_visualcode_output.xml' " +
 						"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
 						"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
-						"	pin_color='{$color.pintype_integer}' " +
-						"	text='Return Value' " +
+						"	pin_color='{$" + GUIParser::escapeQuotes(getScriptVariableTypePinColor(description.method->getReturnValueType())) + "}' " +
+						"	text='Return' " +
 						"/>";
 
 					//
@@ -654,7 +660,7 @@ void TextEditorTabView::createNodes(const string& id, int descriptionIdx, int de
 						"	src='resources/engine/gui/template_visualcode_output.xml' " +
 						"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
 						"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
-						"	pin_color='{$color.pintype_integer}' " +
+						"	pin_color='{$color.pintype_undefined}' " +
 						"	text='Return Value' " +
 						"/>";
 
@@ -711,6 +717,7 @@ void TextEditorTabView::createNodes(const string& id, int descriptionIdx, int de
 void TextEditorTabView::updateMiniScriptDescription(int miniScriptScriptIdx) {
 	required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("visualization_canvas"))->clearSubNodes();
 	//
+	this->nodes.clear();
 	this->miniScriptScriptIdx = miniScriptScriptIdx;
 	auto& description = textEditorTabController->getMiniScriptDescription()[miniScriptScriptIdx].description;
 	auto visualisationNode = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("visualization_canvas"));
@@ -739,14 +746,6 @@ void TextEditorTabView::updateMiniScriptDescription(int miniScriptScriptIdx) {
 void TextEditorTabView::createConnections(const string& id, const MiniScript::StatementDescription& description, GUIParentNode* parentNode) {
 	auto node = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById("d" + id));
 	auto& computedConstraints = node->getComputedConstraints();
-	nodes.push_back(
-		{
-			.x1 = computedConstraints.left,
-			.y1 = computedConstraints.top,
-			.x2 = computedConstraints.left + computedConstraints.width,
-			.y2 = computedConstraints.top + computedConstraints.height,
-		}
-	);
 	for (auto argumentIdx = 0; argumentIdx < description.arguments.size(); argumentIdx++) {
 		//
 		auto isLiteral = description.arguments[argumentIdx].type == MiniScript::StatementDescription::STATEMENTDESCRIPTION_LITERAL;
@@ -764,11 +763,38 @@ void TextEditorTabView::createConnections(const string& id, const MiniScript::St
 			Console::println(string() + "TextEditorTabView::createConnections(): missing argument output node: " + argumentOutputNodeId);
 			continue;
 		}
+
+		//
+		auto pinColor = string("color.pintype_undefined");
+		if (description.method != nullptr) {
+			auto& argumentTypes = description.method->getArgumentTypes();
+			// first guess from argument type
+			if (argumentIdx < argumentTypes.size()) {
+				pinColor = getScriptVariableTypePinColor(argumentTypes[argumentIdx].type);
+			}
+			// no color?, try return value
+			if (pinColor == "color.pintype_undefined") {
+				auto nodeIt = nodes.find("d" + id + "." + to_string(argumentIdx));
+				if (nodeIt != nodes.end()) {
+					auto& node = nodeIt->second;
+					if (node.description->method != nullptr) {
+						pinColor = getScriptVariableTypePinColor(node.description->method->getReturnValueType());
+					}
+				}
+			}
+		}
+		GUIColor color(GUIParser::getEngineThemeProperties()->get(pinColor, "#ffffff"));
+
+		//
 		auto& argumentInputNodeComputedConstraints = argumentInputNode->getComputedConstraints();
 		auto& argumentOutputNodeComputedConstraints = argumentOutputNode->getComputedConstraints();
 		connections.push_back(
 			{
 				.type = Connection::CONNECTIONTYPE_ARGUMENT,
+				.red = static_cast<uint8_t>(color.getRed() * 255.0f),
+				.green = static_cast<uint8_t>(color.getGreen() * 255.0f),
+				.blue = static_cast<uint8_t>(color.getBlue() * 255.0f),
+				.alpha = static_cast<uint8_t>(color.getAlpha() * 255.0f),
 				.x1 = argumentInputNodeComputedConstraints.left,
 				.y1 = argumentInputNodeComputedConstraints.top + argumentInputNodeComputedConstraints.height / 2,
 				.x2 = argumentOutputNodeComputedConstraints.left + argumentOutputNodeComputedConstraints.width,
@@ -781,7 +807,6 @@ void TextEditorTabView::createConnections(const string& id, const MiniScript::St
 
 void TextEditorTabView::createConnections() {
 	// reset
-	nodes.clear();
 	connections.clear();
 
 	//
@@ -799,6 +824,10 @@ void TextEditorTabView::createConnections() {
 			connections.push_back(
 				{
 					.type = Connection::CONNECTIONTYPE_FLOW,
+					.red = 255,
+					.green = 255,
+					.blue = 255,
+					.alpha = 255,
 					.x1 = previousNodeComputedConstraints.left + previousNodeComputedConstraints.width,
 					.y1 = previousNodeComputedConstraints.top + previousNodeComputedConstraints.height / 2,
 					.x2 = nodeComputedConstraints.left,

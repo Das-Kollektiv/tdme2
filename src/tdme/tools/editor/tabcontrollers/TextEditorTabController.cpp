@@ -1,6 +1,7 @@
 #include <tdme/tools/editor/tabcontrollers/TextEditorTabController.h>
 
 #include <string>
+#include <unordered_map>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/Texture.h>
@@ -36,6 +37,7 @@
 using tdme::tools::editor::tabcontrollers::TextEditorTabController;
 
 using std::string;
+using std::unordered_map;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::Engine;
@@ -227,6 +229,12 @@ void TextEditorTabController::updateMiniScriptDescription(int miniScriptScriptId
 	scriptInstance->loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName));
 
 	//
+	unordered_map<string, string> methodOperatorMap;
+	for (auto operatorMethod: scriptInstance->getOperatorMethods()) {
+		methodOperatorMap[operatorMethod->getMethodName()] = MiniScript::getOperatorAsString(operatorMethod->getOperator());
+	}
+
+	//
 	auto scriptIdx = 0;
 	miniScriptDescription.clear();
 	for (auto script: scriptInstance->getScripts()) {
@@ -268,6 +276,7 @@ void TextEditorTabController::updateMiniScriptDescription(int miniScriptScriptId
 	}
 
 	// pass it to view
+	view->setMethodOperatorMap(methodOperatorMap);
 	view->updateMiniScriptDescription(miniScriptScriptIdx);
 
 	//
