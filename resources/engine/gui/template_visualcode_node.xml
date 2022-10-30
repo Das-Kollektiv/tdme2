@@ -5,7 +5,7 @@
 		<layout border-right="1" border-bottom="1" border-color="{$color.element_frame}" width="300" height="*" alignment="vertical" vertical-align="top" background-color="{$color.element_foreground}">
 
 			<layer border-bottom="1" border-color="{$color.element_frame}" width="100%" height="auto" >
-				<layout width="100%" height="30" background-color="{$node_type_color}"/>
+				<layout width="100%" height="30" background-color="{$node-type-color}"/>
 				<layout width="100%" height="30" background-color="#00000080"/>
 			</layer>
 

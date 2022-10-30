@@ -146,6 +146,30 @@ private:
 		return string("color.pintype_undefined");
 	}
 
+	const array<string, 6> flowControlNodes = {
+		"if",
+		"elseif",
+		"else",
+		"forTime",
+		"forCondition",
+		"end",
+	};
+
+	const array<string, 12> mathNodes = {
+		"int",
+		"float",
+		"math",
+		"vec2",
+		"vec3",
+		"vec4",
+		"mat3",
+		"mat4",
+		"quaternion",
+		"mat3",
+		"mat4",
+		"transform"
+	};
+
 public:
 	/**
 	 * Public constructor

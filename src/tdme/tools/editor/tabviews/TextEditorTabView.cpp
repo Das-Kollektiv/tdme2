@@ -33,6 +33,7 @@
 #include <tdme/tools/editor/tabcontrollers/TextEditorTabController.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
+#include <tdme/utilities/Character.h>
 #include <tdme/utilities/Properties.h>
 #include <tdme/utilities/StringTools.h>
 
@@ -67,6 +68,7 @@ using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::TextFormatter;
 using tdme::tools::editor::tabcontrollers::TextEditorTabController;
 using tdme::tools::editor::views::EditorView;
+using tdme::utilities::Character;
 using tdme::utilities::Properties;
 using tdme::utilities::StringTools;
 
@@ -491,13 +493,32 @@ void TextEditorTabView::createNodes(const string& id, int descriptionIdx, int de
 				};
 				//
 				auto nodeName = description.value.getValueString();
+				auto nodeTypeColor = string("color.nodetype_method");
 				auto methodOperatorMapIt = methodOperatorMap.find(nodeName);
 				if (methodOperatorMapIt != methodOperatorMap.end()) {
 					nodeName = methodOperatorMapIt->second;
+					nodeTypeColor = "color.nodetype_math";
+				}
+
+				if (description.method == nullptr) {
+					nodeTypeColor = "color.nodetype_function";
+				} else {
+					for (auto& flowControlNode: flowControlNodes) {
+						if (nodeName == flowControlNode) {
+							nodeTypeColor = "color.nodetype_flowcontrol";
+							break;
+						}
+					}
+					for (auto& mathNode: mathNodes) {
+						if (nodeName == mathNode || StringTools::startsWith(nodeName, mathNode + ".")) {
+							nodeTypeColor = "color.nodetype_math";
+							break;
+						}
+					}
 				}
 				//
 				{
-					string xml = "<template src='resources/engine/gui/template_visualcode_node.xml' id='d" + id + "' left='" + to_string(x) + "' top='" + to_string(y) + "' node-name='" + GUIParser::escapeQuotes(nodeName) + "' />";
+					string xml = "<template src='resources/engine/gui/template_visualcode_node.xml' id='d" + id + "' left='" + to_string(x) + "' top='" + to_string(y) + "' node-name='" + GUIParser::escapeQuotes(nodeName) + "' node-type-color='{$" + GUIParser::escapeQuotes(nodeTypeColor) + "}' />";
 					try {
 						GUIParser::parse(parentNode, xml);
 					} catch (Exception& exception) {
@@ -538,6 +559,8 @@ void TextEditorTabView::createNodes(const string& id, int descriptionIdx, int de
 							//
 							auto isLiteral = description.arguments[argumentIdx].type == MiniScript::StatementDescription::STATEMENTDESCRIPTION_LITERAL;
 							auto literal = isLiteral == true?description.arguments[argumentIdx].value.getValueString():string();
+							auto argumentName = argumentTypes[argumentIdx].name;
+							if (argumentName.empty() == false) argumentName[0] = Character::toUpperCase(argumentName[0]);
 							//
 							string xml =
 								string() +
@@ -547,7 +570,7 @@ void TextEditorTabView::createNodes(const string& id, int descriptionIdx, int de
 								"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
 								"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
 								"	pin_color='{$" + GUIParser::escapeQuotes(getScriptVariableTypePinColor(argumentTypes[argumentIdx].type)) + "}' " +
-								"	text='" + GUIParser::escapeQuotes(argumentTypes[argumentIdx].name) + "' ";
+								"	text='" + GUIParser::escapeQuotes(argumentName) + "' ";
 							if (isLiteral == true) {
 								xml+= "	input_text='" + GUIParser::escapeQuotes(literal) + "' ";
 							}
