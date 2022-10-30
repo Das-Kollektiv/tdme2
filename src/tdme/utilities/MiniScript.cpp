@@ -1604,21 +1604,25 @@ const string MiniScript::getInformation() {
 				string method;
 				method+= scriptMethod->getMethodName();
 				method+= "(";
+				auto optionalArgumentCount = 0;
 				auto argumentIdx = 0;
 				for (auto& argumentType: scriptMethod->getArgumentTypes()) {
+					if (argumentType.optional == true) {
+						method+= "[";
+						optionalArgumentCount++;
+					}
 					if (argumentIdx > 0) method+= ", ";
-					if (argumentType.optional == true) method+= "[";
 					if (argumentType.assignBack == true) {
 						method+= "=";
 					}
 					method+= "$" + argumentType.name + ": " + ScriptVariable::getTypeAsString(argumentType.type);
-					if (argumentType.optional == true) method+= "]";
 					argumentIdx++;
 				}
 				if (scriptMethod->isVariadic() == true) {
 					if (argumentIdx > 0) method+= ", ";
 					method+="...";
 				}
+				for (auto i = 0; i < optionalArgumentCount; i++) method+= "]";
 				method+= "): ";
 				method+= ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType());
 				methods.push_back(method);
@@ -1639,9 +1643,13 @@ const string MiniScript::getInformation() {
 				operatorString+= " --> ";
 				operatorString+= method->getMethodName();
 				operatorString+= "(";
+				auto optionalArgumentCount = 0;
 				auto argumentIdx = 0;
 				for (auto& argumentType: method->getArgumentTypes()) {
-					if (argumentType.optional == true) operatorString+= "[";
+					if (argumentType.optional == true) {
+						operatorString+= "[";
+						optionalArgumentCount++;
+					}
 					if (argumentIdx > 0) operatorString+= ", ";
 					if (argumentType.assignBack == true) {
 						operatorString+= "=";
@@ -1654,6 +1662,7 @@ const string MiniScript::getInformation() {
 					if (argumentIdx > 0) operatorString+= ", ";
 					operatorString+="...";
 				}
+				for (auto i = 0; i < optionalArgumentCount; i++) operatorString+= "]";
 				operatorString+= "): ";
 				operatorString+= ScriptVariable::getTypeAsString(method->getReturnValueType());
 				operators.push_back(operatorString);
