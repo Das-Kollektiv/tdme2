@@ -1080,9 +1080,11 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 			vector<string_view> arguments;
 			if (parseScriptStatement(script.executableCondition, method, arguments) == false) {
 				Console::println("MiniScript::loadScript(): '" + scriptFileName + "': " + script.conditionStatement.statement + "@" + to_string(script.conditionStatement.line) + ": failed to parse condition statement");
+				scriptValid = false;
 			} else
 			if (describeScriptStatement(method, arguments, script.conditionStatement, script.conditionDescription) == false) {
 				Console::println("MiniScript::loadScript(): '" + scriptFileName + "': " + script.conditionStatement.statement + "@" + to_string(script.conditionStatement.line) + ": failed to describe condition statement");
+				scriptValid = false;
 			}
 		}
 		for (auto statementIdx = 0; statementIdx < script.statements.size(); statementIdx++) {
@@ -1093,9 +1095,11 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 			vector<string_view> arguments;
 			if (parseScriptStatement(statement.executableStatement, method, arguments) == false) {
 				Console::println("MiniScript::loadScript(): '" + scriptFileName + "': " + statement.statement + "@" + to_string(statement.line) + ": failed to parse statement");
+				scriptValid = false;
 			} else
 			if (describeScriptStatement(method, arguments, statement, description) == false) {
 				Console::println("MiniScript::loadScript(): '" + scriptFileName + "': " + statement.statement + "@" + to_string(statement.line) + ": failed to describe statement");
+				scriptValid = false;
 			}
 		}
 	}
