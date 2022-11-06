@@ -5766,7 +5766,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const Statement
 					// have a wrapping script.call call
 					StatementDescription callDescription;
 					callDescription.type = StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD;
-					callDescription.value = "script.call";
+					callDescription.value = string("script.call");
 					callDescription.arguments = { description };
 					// asign script.call method
 					auto methodIt = scriptMethods.find(callDescription.value.getValueString());
@@ -5868,7 +5868,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const Statement
 			switch (argument.type) {
 				case StatementDescription::STATEMENTDESCRIPTION_LITERAL:
 					{
-						switch (argument.type)  {
+						switch (argument.value.getType())  {
 							case TYPE_VOID:
 								break;
 							case TYPE_BOOLEAN:
@@ -5909,12 +5909,12 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const Statement
 					}
 				case StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION:
 					{
-						argumentValuesCode.push_back("// argumentValues[" + to_string(subArgumentIdx) + "] --> returnValue of " + description.value.getValueString() + "(" + getArgumentsAsString(description.arguments));
+						argumentValuesCode.push_back("// argumentValues[" + to_string(subArgumentIdx) + "] --> returnValue of " + argument.value.getValueString() + "(" + getArgumentsAsString(argument.arguments) + ")");
 						break;
 					}
 				case StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD:
 					{
-						argumentValuesCode.push_back("// argumentValues[" + to_string(subArgumentIdx) + "] --> returnValue of " + description.value.getValueString() + "(" + getArgumentsAsString(description.arguments));
+						argumentValuesCode.push_back("// argumentValues[" + to_string(subArgumentIdx) + "] --> returnValue of " + argument.value.getValueString() + "(" + getArgumentsAsString(argument.arguments) + ")");
 						break;
 					}
 				default:
@@ -5972,7 +5972,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const Statement
 				case StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION:
 				case StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD:
 					if (transpileScriptStatement(generatedCode, argument, statement, scriptConditionIdx, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, depth + 1, subArgumentIdx, argumentIdx, returnValue) == false) {
-						Console::println("MiniScript::transpileScriptStatement(): transpileScriptStatement(): " + getStatementInformation(statement) + ": '" + description.value.getValueString() + "(" + getArgumentsAsString(description.arguments) + ")" + "': transpile error");
+ 						Console::println("MiniScript::transpileScriptStatement(): transpileScriptStatement(): " + getStatementInformation(statement) + ": '" + description.value.getValueString() + "(" + getArgumentsAsString(description.arguments) + ")" + "': transpile error");
 					}
 					break;
 				default:
@@ -6095,7 +6095,8 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 		);
 
 	Console::println("MiniScript::transpile(): transpiling code for " + scriptType + " = '" + script.condition + "', with name '" + script.name + "'");
-	auto statementIdx = 0;
+
+	//
 	string methodIndent = "\t";
 	string generatedCodeHeader;
 
@@ -6126,11 +6127,12 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 	for (auto scriptStatement: script.statements) gotoStatementIdxSet.insert(scriptStatement.gotoStatementIdx);
 
 	//
+	auto statementIdx = 0;
 	vector<string> enabledNamedConditions;
 	auto scriptStateChanged = false;
-	for (auto statementIdx = 0; statementIdx < script.statements.size(); statementIdx++) {
-		auto& statement = script.statements[statementIdx];
-		auto& description = script.descriptions[statementIdx];
+	for (auto scriptStatementIdx = 0; scriptStatementIdx < script.statements.size(); scriptStatementIdx++) {
+		auto& statement = script.statements[scriptStatementIdx];
+		auto& description = script.descriptions[scriptStatementIdx];
 		//
 		if (scriptStateChanged == true) {
 			generatedCodeHeader+= methodIndent + "if (miniScriptGotoStatementIdx == " + to_string(statement.statementIdx)  + ") goto miniscript_statement_" + to_string(statement.statementIdx) + "; else" + "\n";
@@ -6193,17 +6195,16 @@ bool MiniScript::transpileScriptCondition(string& generatedCode, int scriptIdx, 
 
 	//
 	Console::println("MiniScript::transpile(): transpiling code condition for condition = '" + scripts[scriptIdx].condition + "', with name '" + scripts[scriptIdx].name + "'");
-	auto statementIdx = 0;
-	string methodIndent = "\t";
 
 	//
+	auto statementIdx = 0;
 	auto scriptStateChanged = false;
 	auto scriptStopped = false;
 	vector<string >enabledNamedConditions;
 	transpileScriptStatement(generatedCode, script.conditionDescription, script.conditionStatement, scriptIdx, SCRIPTIDX_NONE, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, 0, ARGUMENTIDX_NONE, ARGUMENTIDX_NONE, returnValue, injectCode, depth + 1);
 
 	//
-	generatedCode+= methodIndent + "\n";
+	generatedCode+= "\t\n";
 
 	//
 	return true;

@@ -1982,7 +1982,30 @@ private:
 		for (auto& argument: arguments) {
 			switch (argument.type) {
 				case StatementDescription::STATEMENTDESCRIPTION_LITERAL:
-					argumentsString+= (argumentsString.empty() == false?", ":"") + string("'") + argument.value.getValueString() + string("'");
+					switch(argument.value.getType()) {
+						case TYPE_VOID:
+							{
+								argumentsString+= (argumentsString.empty() == false?", ":"") + string("<VOID>");
+								break;
+							}
+						case TYPE_BOOLEAN:
+						case TYPE_INTEGER:
+						case TYPE_FLOAT:
+							{
+								argumentsString+= (argumentsString.empty() == false?", ":"") + argument.value.getValueString();
+								break;
+							}
+						case TYPE_STRING:
+							{
+								argumentsString+= (argumentsString.empty() == false?", ":"") + string("\"") + argument.value.getValueString() + string("\"");
+								break;
+							}
+						default:
+							{
+								argumentsString+= (argumentsString.empty() == false?", ":"") + string("<COMPLEX DATATYPE>");
+								break;
+							}
+					}
 					break;
 				case StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD:
 				case StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION:
