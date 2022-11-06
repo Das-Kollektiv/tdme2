@@ -269,7 +269,7 @@ bool MiniScript::parseScriptStatement(const string_view& statement, string_view&
 }
 
 MiniScript::ScriptVariable MiniScript::executeScriptStatement(const StatementDescription& description, const ScriptStatement& statement) {
-	if (VERBOSE == true) Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': string arguments: " + string(description.value.getValueString()) + "(" + getArgumentsAsString(description.arguments) + ")");
+	if (VERBOSE == true) Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': string arguments: " + description.value.getValueString() + "(" + getArgumentsAsString(description.arguments) + ")");
 	// return on literal or empty description
 	if (description.type != StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD && description.type != StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION) {
 		return description.value;
@@ -301,9 +301,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const StatementDes
 	}
 	//
 	if (VERBOSE == true) {
-		string argumentValuesString;
-		for (auto& argumentValue: argumentValues) argumentValuesString+= (argumentValuesString.empty() == false?",":"") + argumentValue.getAsString();
-		Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': " + string(description.value.getValueString()) + "(" + argumentValuesString + ")");
+		Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': " + description.value.getValueString() + "(" + getArgumentsAsString(description.arguments) + ")");
 	}
 	// try first user functions
 	{
@@ -5753,25 +5751,53 @@ void MiniScript::registerMethods() {
 void MiniScript::registerVariables() {
 }
 
-bool MiniScript::transpileScriptStatement(string& generatedCode, const string_view& method, const span<string_view>& arguments, const ScriptStatement& statement, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth, int argumentIdx, int parentArgumentIdx, const string& returnValue, const string& injectCode, int additionalIndent) {
+bool MiniScript::transpileScriptStatement(string& generatedCode, const StatementDescription& description, const ScriptStatement& statement, int scriptConditionIdx, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth, int argumentIdx, int parentArgumentIdx, const string& returnValue, const string& injectCode, int additionalIndent) {
 	//
 	statementIdx++;
 	auto currentStatementIdx = statementIdx;
 
-	// check script user functions
-	auto scriptFunctionsIt = scriptFunctions.find(string(method));
-	if (scriptFunctionsIt != scriptFunctions.end()) {
-		string callMethod = "script.call";
-		vector<string_view> callArguments;
-		callArguments.push_back(method);
-		for (auto& argument: arguments) callArguments.push_back(argument);
-		return transpileScriptStatement(generatedCode, callMethod, callArguments, statement, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, depth, argumentIdx, parentArgumentIdx, returnValue, injectCode, additionalIndent);
+	//
+	switch (description.type) {
+		case StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION:
+			{
+				// check script user functions
+				auto scriptFunctionsIt = scriptFunctions.find(description.value.getValueString());
+				if (scriptFunctionsIt != scriptFunctions.end()) {
+					// have a wrapping script.call call
+					StatementDescription callDescription;
+					callDescription.type = StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD;
+					callDescription.value = "script.call";
+					callDescription.arguments = { description };
+					// asign script.call method
+					auto methodIt = scriptMethods.find(callDescription.value.getValueString());
+					if (methodIt == scriptMethods.end()) {
+						Console::println("MiniScript::transpileScriptStatement(): method code not found: '" + callDescription.value.getValueString() + "'");
+						return false;
+					}
+					callDescription.method = methodIt->second;
+					return transpileScriptStatement(generatedCode, callDescription, statement, scriptConditionIdx, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, depth, argumentIdx, parentArgumentIdx, returnValue, injectCode, additionalIndent);
+				} else {
+					Console::println("MiniScript::transpileScriptStatement(): function not found: '" + description.value.getValueString() + "'");
+					return false;
+				}
+				//
+				break;
+			}
+		case StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD:
+			break;
+		default:
+			Console::println("MiniScript::transpileScriptStatement(): " + getStatementInformation(statement) + ": function or method call expected, but got literal or 'none' description");
+			return false;
+
 	}
 
+	//
+	auto method = description.value.getValueString();
+
 	// find method code in method code map
-	auto methodCodeMapIt = methodCodeMap.find(string(method));
+	auto methodCodeMapIt = methodCodeMap.find(method);
 	if (methodCodeMapIt == methodCodeMap.end()) {
-		Console::println("MiniScript::transpileScriptStatement(): method code not found: '" + string(method) + "'");
+		Console::println("MiniScript::transpileScriptStatement(): method code not found: '" + method + "'");
 		return false;
 	}
 	auto& methodCode = methodCodeMapIt->second;
@@ -5779,7 +5805,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 	// script method
 	auto scriptMethodIt = scriptMethods.find(string(method));
 	if (scriptMethodIt == scriptMethods.end()) {
-		Console::println("MiniScript::transpileScriptStatement(): method not found: '" + string(method) + "'");
+		Console::println("MiniScript::transpileScriptStatement(): method not found: '" + method + "'");
 		return false;
 	}
 	auto scriptMethod = scriptMethodIt->second;
@@ -5792,23 +5818,16 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 	// comment about current statement
 	generatedCode+= minIndentString + depthIndentString;
 	generatedCode+= "// " + (depth > 0?"depth = " + to_string(depth):"") + (depth > 0 && argumentIdx != ARGUMENTIDX_NONE?" / ":"") + (argumentIdx != ARGUMENTIDX_NONE?"argument index = " + to_string(argumentIdx):"") + (depth > 0 || argumentIdx != ARGUMENTIDX_NONE?": ":"");
-	generatedCode+= string(method) + "(";
-	auto subArgumentIdx = 0;
-	for (auto& argument: arguments) {
-		if (subArgumentIdx > 0) generatedCode+= ", ";
-		generatedCode+= string(argument);
-		subArgumentIdx++;
-	}
-	generatedCode+= ")";
+	generatedCode+= description.value.getValueString() + "(" + getArgumentsAsString(description.arguments) + ")";
 	generatedCode+= "\n";
 
-	// construct argument values
+	// construct argument values, which applies to script.call only
 	vector<string> argumentValuesCode;
 	if (scriptMethod->isRequiringArguments() == true) {
-		argumentValuesCode.push_back("array<string, " + to_string(arguments.size()) + "> arguments {");
+		argumentValuesCode.push_back("array<string, " + to_string(description.arguments.size()) + "> arguments {");
 		auto argumentIdx = 0;
-		for (auto& argument: arguments) {
-			argumentValuesCode.push_back(string() + "\t" + "\"" + string(argument) + "\"" + (argumentIdx < arguments.size() - 1?",":""));
+		for (auto& argument: description.arguments) {
+			argumentValuesCode.push_back(string() + "\t" + "\"" + string(argument.value.getValueString()) + "\"" + (argumentIdx < description.arguments.size() - 1?",":""));
 			argumentIdx++;
 		}
 		argumentValuesCode.push_back("};");
@@ -5818,21 +5837,15 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 	} else {
 		argumentValuesCode.push_back("ScriptVariable returnValue;");
 	}
-	argumentValuesCode.push_back("array<ScriptVariable, " + to_string(arguments.size()) + "> argumentValues;");
-	argumentValuesCode.push_back("array<ScriptVariable, " + to_string(arguments.size()) + ">& argumentValuesD" + to_string(depth) + (argumentIdx != ARGUMENTIDX_NONE?"AIDX" + to_string(argumentIdx):"") + " = argumentValues;");
+	argumentValuesCode.push_back("array<ScriptVariable, " + to_string(description.arguments.size()) + "> argumentValues;");
+	argumentValuesCode.push_back("array<ScriptVariable, " + to_string(description.arguments.size()) + ">& argumentValuesD" + to_string(depth) + (argumentIdx != ARGUMENTIDX_NONE?"AIDX" + to_string(argumentIdx):"") + " = argumentValues;");
 
 	// argument values header
 	generatedCode+= minIndentString + depthIndentString + "{" + "\n";
 	// statement
 	if (depth == 0) {
-		if (scriptIdx == SCRIPTIDX_NONE) {
-			generatedCode+= minIndentString + depthIndentString + "\t" + "const ScriptStatement statement = {" + "\n";
-			generatedCode+= minIndentString + depthIndentString + "\t\t" + ".line = " + to_string(statement.line) + "," + "\n";
-			generatedCode+= minIndentString + depthIndentString + "\t\t" + ".statementIdx = " + to_string(statement.statementIdx) + "," + "\n";
-			generatedCode+= minIndentString + depthIndentString + "\t\t" + ".statement = \"<unavailable>\"," + "\n";
-			generatedCode+= minIndentString + depthIndentString + "\t\t" + ".executableStatement = \"<unavailable>\"," + "\n";
-			generatedCode+= minIndentString + depthIndentString + "\t\t" + ".gotoStatementIdx = " + to_string(statement.gotoStatementIdx) + "\n";
-			generatedCode+= minIndentString + depthIndentString + "\t};" + "\n";
+		if (scriptConditionIdx != SCRIPTIDX_NONE) {
+			generatedCode+= minIndentString + depthIndentString + "\t" + "const ScriptStatement& statement = scripts[" + to_string(scriptConditionIdx) + "].conditionStatement;" + "\n";
 		} else {
 			generatedCode+= minIndentString + depthIndentString + "\t" + "const ScriptStatement& statement = scripts[" + to_string(scriptIdx) + "].statements[" + to_string(statement.statementIdx) + "];" + "\n";
 		}
@@ -5846,71 +5859,68 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 	}
 	argumentValuesCode.clear();
 
-	// check arguments that require a method call
+	//
+	vector<ScriptVariable> argumentValues;
+	// construct argument values
 	{
 		auto subArgumentIdx = 0;
-		for (auto& argument: arguments) {
-			// variable
-			if (StringTools::viewStartsWith(argument, "$") == true) {
-				// method call, call method and put its return value into argument value
-				string generatedStatement = "getVariable(\"" + string(argument) + "\")";
-				argumentValuesCode.push_back("// argumentValues[" + to_string(subArgumentIdx) + "] --> returnValue of " + string(generatedStatement));
-			} else
-			// method call
-			if (argument.empty() == false &&
-				StringTools::viewStartsWith(argument, "\"") == false &&
-				StringTools::viewEndsWith(argument, "\"") == false &&
-				argument.find('(') != string::npos &&
-				argument.find(')') != string::npos) {
-				argumentValuesCode.push_back("// argumentValues[" + to_string(subArgumentIdx) + "] --> returnValue of " + string(argument));
-			} else {
-				// literal
-				ScriptVariable argumentValue;
-				if (StringTools::viewStartsWith(argument, "\"") == true &&
-					StringTools::viewEndsWith(argument, "\"") == true) {
-					argumentValuesCode.push_back("argumentValues[" + to_string(subArgumentIdx) + "].setValue(string(\"" + string(StringTools::viewSubstring(argument, 1, argument.size() - 1)) + "\"));");
-				} else {
-					MiniScript::ScriptVariable argumentValue;
-					argumentValue.setImplicitTypedValueFromStringView(argument);
-					switch (argumentValue.getType())  {
-						case TYPE_VOID:
-							break;
-						case TYPE_BOOLEAN:
-							{
-								bool value;
-								argumentValue.getBooleanValue(value);
-								argumentValuesCode.push_back(string() + "argumentValues[" + to_string(subArgumentIdx) + "].setValue(" + (value == true?"true":"false") + ");");
-							}
-							break;
-						case TYPE_INTEGER:
-							{
-								int64_t value;
-								argumentValue.getIntegerValue(value);
-								argumentValuesCode.push_back("argumentValues[" + to_string(subArgumentIdx) + "].setValue(static_cast<int64_t>(" + to_string(value) + "));");
-							}
-							break;
-						case TYPE_FLOAT:
-							{
-								float value;
-								argumentValue.getFloatValue(value);
-								argumentValuesCode.push_back("argumentValues[" + to_string(subArgumentIdx) + "].setValue(" + to_string(value) + "f);");
-							}
-							break;
-						case TYPE_STRING:
-							{
-								string value;
-								argumentValue.getStringValue(value);
-								argumentValuesCode.push_back("argumentValues[" + to_string(subArgumentIdx) + "].setValue(string(\"" + value + "\"));");
-							}
-							break;
-						default:
-							{
-								Console::println("MiniScript::transpileScriptStatement(): " + getStatementInformation(statement) + ": '" + string(argument) + "': unknown argument type: " + argumentValue.getTypeAsString());
+		for (auto& argument: description.arguments) {
+			switch (argument.type) {
+				case StatementDescription::STATEMENTDESCRIPTION_LITERAL:
+					{
+						switch (argument.type)  {
+							case TYPE_VOID:
 								break;
-							}
+							case TYPE_BOOLEAN:
+								{
+									bool value;
+									argument.value.getBooleanValue(value);
+									argumentValuesCode.push_back(string() + "argumentValues[" + to_string(subArgumentIdx) + "].setValue(" + (value == true?"true":"false") + ");");
+								}
+								break;
+							case TYPE_INTEGER:
+								{
+									int64_t value;
+									argument.value.getIntegerValue(value);
+									argumentValuesCode.push_back("argumentValues[" + to_string(subArgumentIdx) + "].setValue(static_cast<int64_t>(" + to_string(value) + "));");
+								}
+								break;
+							case TYPE_FLOAT:
+								{
+									float value;
+									argument.value.getFloatValue(value);
+									argumentValuesCode.push_back("argumentValues[" + to_string(subArgumentIdx) + "].setValue(" + to_string(value) + "f);");
+								}
+								break;
+							case TYPE_STRING:
+								{
+									string value;
+									argument.value.getStringValue(value);
+									argumentValuesCode.push_back("argumentValues[" + to_string(subArgumentIdx) + "].setValue(string(\"" + value + "\"));");
+								}
+								break;
+							default:
+								{
+									Console::println("MiniScript::transpileScriptStatement(): " + getStatementInformation(statement) + ": '" + argument.value.getAsString() + "': unknown argument type: " + argument.value.getTypeAsString());
+									break;
+								}
+						}
+						break;
 					}
-				}
+				case StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION:
+					{
+						argumentValuesCode.push_back("// argumentValues[" + to_string(subArgumentIdx) + "] --> returnValue of " + description.value.getValueString() + "(" + getArgumentsAsString(description.arguments));
+						break;
+					}
+				case StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD:
+					{
+						argumentValuesCode.push_back("// argumentValues[" + to_string(subArgumentIdx) + "] --> returnValue of " + description.value.getValueString() + "(" + getArgumentsAsString(description.arguments));
+						break;
+					}
+				default:
+					break;
 			}
+			//
 			subArgumentIdx++;
 		}
 	}
@@ -5922,11 +5932,11 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 	argumentValuesCode.clear();
 
 	// enabled named conditions
-	if (method == "script.enableNamedCondition" && arguments.size()) {
-		if (arguments.size() != 1) {
+	if (method == "script.enableNamedCondition" && description.arguments.empty() == false) {
+		if (description.arguments.size() != 1) {
 			Console::println("MiniScript::transpileScriptStatement(): " + getStatementInformation(statement) + ": script.enableNamedCondition(): expected string argument @ 0");
 		} else {
-			string name = string(arguments[0]);
+			string name = description.arguments[0].value.getValueString();
 			enabledNamedConditions.erase(
 				remove(
 					enabledNamedConditions.begin(),
@@ -5938,11 +5948,11 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 			enabledNamedConditions.push_back(name);
 		}
 	} else
-	if (method == "script.disableNamedCondition") {
-		if (arguments.size() != 1) {
+	if (method == "script.disableNamedCondition" && description.arguments.empty() == false) {
+		if (description.arguments.size() != 1) {
 			Console::println("MiniScript::transpileScriptStatement(): " + getStatementInformation(statement) + ": script.disableNamedCondition(): expected string argument @ 0");
 		} else {
-			string name = string(arguments[0]);
+			string name = description.arguments[0].value.getValueString();
 			enabledNamedConditions.erase(
 				remove(
 					enabledNamedConditions.begin(),
@@ -5954,44 +5964,19 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 		}
 	}
 
-	// check arguments that require a method call
+	// transpile method/function call argument
 	{
 		auto subArgumentIdx = 0;
-		for (auto& argument: arguments) {
-			// variable
-			if (StringTools::viewStartsWith(argument, "$") == true) {
-				// method call, call method and put its return value into argument value
-				string generatedStatement = "getVariable(\"" + string(argument) + "\")";
-				string_view subMethod;
-				vector<string_view> subArguments;
-				if (parseScriptStatement(generatedStatement, subMethod, subArguments) == true) {
-					if (transpileScriptStatement(generatedCode, subMethod, subArguments, statement, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, depth + 1, subArgumentIdx, argumentIdx, returnValue) == false) {
-						Console::println("MiniScript::transpileScriptStatement(): transpileScriptStatement(): " + getStatementInformation(statement) + ": '" + string(argument) + "' --> '" + generatedStatement + "': parse error");
+		for (auto& argument: description.arguments) {
+			switch (argument.type) {
+				case StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION:
+				case StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD:
+					if (transpileScriptStatement(generatedCode, argument, statement, scriptConditionIdx, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, depth + 1, subArgumentIdx, argumentIdx, returnValue) == false) {
+						Console::println("MiniScript::transpileScriptStatement(): transpileScriptStatement(): " + getStatementInformation(statement) + ": '" + description.value.getValueString() + "(" + getArgumentsAsString(description.arguments) + ")" + "': transpile error");
 					}
-				} else {
-					Console::println("MiniScript::transpileScriptStatement(): parseScriptStatement(): " + getStatementInformation(statement) + ": '" + string(argument) + "' --> '" + generatedStatement + "': parse error");
-					startErrorScript();
-				}
-			} else
-			// method call
-			if (argument.empty() == false &&
-				StringTools::viewStartsWith(argument, "\"") == false &&
-				StringTools::viewEndsWith(argument, "\"") == false &&
-				argument.find('(') != string::npos &&
-				argument.find(')') != string::npos) {
-				// method call, call method and put its return value into argument value
-				string_view subMethod;
-				vector<string_view> subArguments;
-				if (parseScriptStatement(argument, subMethod, subArguments) == true) {
-					if (transpileScriptStatement(generatedCode, subMethod, subArguments, statement, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, depth + 1, subArgumentIdx, argumentIdx, returnValue) == false) {
-						Console::println("MiniScript::transpileScriptStatement(): transpileScriptStatement(): " + getStatementInformation(statement) + ": '" + string(argument) + "': parse error");
-					}
-				} else {
-					Console::println("MiniScript::transpileScriptStatement(): parseScriptStatement(): " + getStatementInformation(statement) + ": '" + string(argument) + "': parse error");
-					startErrorScript();
-				}
-			} else {
-				// no op
+					break;
+				default:
+					break;
 			}
 			subArgumentIdx++;
 		}
@@ -5999,6 +5984,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 
 	// assign back arguments code
 	vector<string> assignBackCodeLines;
+	/*
 	{
 		auto argumentIdx = 0;
 		for (auto& argumentType: scriptMethod->getArgumentTypes()) {
@@ -6016,6 +6002,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const string_vi
 			assignBackCodeLines.insert(assignBackCodeLines.end(), string() + "//");
 		}
 	}
+	*/
 
 	// generate code
 	generatedCode+= minIndentString + depthIndentString + "\t" + "// method code: " + string(method) + "\n";
@@ -6141,17 +6128,12 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 	//
 	vector<string> enabledNamedConditions;
 	auto scriptStateChanged = false;
-	for (auto scriptStatement: script.statements) {
-		//
-		string_view method;
-		vector<string_view> arguments;
-		if (parseScriptStatement(scriptStatement.executableStatement, method, arguments) == false) {
-			Console::println("MiniScript::transpileScriptStatement(): '" + scriptFileName + "': " + scriptStatement.statement + "@" + to_string(scriptStatement.line) + ": failed to parse statement");
-			return false;
-		}
+	for (auto statementIdx = 0; statementIdx < script.statements.size(); statementIdx++) {
+		auto& statement = script.statements[statementIdx];
+		auto& description = script.descriptions[statementIdx];
 		//
 		if (scriptStateChanged == true) {
-			generatedCodeHeader+= methodIndent + "if (miniScriptGotoStatementIdx == " + to_string(scriptStatement.statementIdx)  + ") goto miniscript_statement_" + to_string(scriptStatement.statementIdx) + "; else" + "\n";
+			generatedCodeHeader+= methodIndent + "if (miniScriptGotoStatementIdx == " + to_string(statement.statementIdx)  + ") goto miniscript_statement_" + to_string(statement.statementIdx) + "; else" + "\n";
 		}
 
 		// enabled named conditions
@@ -6170,13 +6152,13 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 
 		// statement_xyz goto label
 		generatedCode+= "\n";
-		generatedCode+= methodIndent + "// Statement: " + to_string(scriptStatement.statementIdx) + "\n";
-		if (scriptStateChanged == true || gotoStatementIdxSet.find(scriptStatement.statementIdx) != gotoStatementIdxSet.end()) {
-			generatedCode+= methodIndent + "miniscript_statement_" + to_string(scriptStatement.statementIdx) + ":" + "\n";
+		generatedCode+= methodIndent + "// Statement: " + to_string(statement.statementIdx) + "\n";
+		if (scriptStateChanged == true || gotoStatementIdxSet.find(statement.statementIdx) != gotoStatementIdxSet.end()) {
+			generatedCode+= methodIndent + "miniscript_statement_" + to_string(statement.statementIdx) + ":" + "\n";
 		}
 		scriptStateChanged = false;
 		auto scriptStopped = false;
-		transpileScriptStatement(generatedCode, method, arguments, scriptStatement, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions);
+		transpileScriptStatement(generatedCode, description, statement, SCRIPTIDX_NONE, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions);
 		if (scriptStopped == true) {
 			generatedCode+= methodIndent + "if (getScriptState().running == false) {" + "\n";
 			generatedCode+= methodIndent + "\t" + "return;" + "\n";
@@ -6207,31 +6189,18 @@ bool MiniScript::transpileScriptCondition(string& generatedCode, int scriptIdx, 
 	}
 
 	//
+	auto& script = scripts[scriptIdx];
+
+	//
 	Console::println("MiniScript::transpile(): transpiling code condition for condition = '" + scripts[scriptIdx].condition + "', with name '" + scripts[scriptIdx].name + "'");
 	auto statementIdx = 0;
 	string methodIndent = "\t";
-
-	const MiniScript::ScriptStatement scriptStatement = {
-		.line = scripts[scriptIdx].line,
-		.statementIdx = 0,
-		.statement = scripts[scriptIdx].condition,
-		.executableStatement = scripts[scriptIdx].executableCondition,
-		.gotoStatementIdx = STATEMENTIDX_NONE
-	};
-
-	//
-	string_view method;
-	vector<string_view> arguments;
-	if (parseScriptStatement(scriptStatement.executableStatement, method, arguments) == false) {
-		Console::println("MiniScript::transpileScriptStatement(): '" + scriptFileName + "': " + scriptStatement.statement + "@" + to_string(scriptStatement.line) + ": failed to parse statement");
-		return false;
-	}
 
 	//
 	auto scriptStateChanged = false;
 	auto scriptStopped = false;
 	vector<string >enabledNamedConditions;
-	transpileScriptStatement(generatedCode, method, arguments, scriptStatement, SCRIPTIDX_NONE, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, 0, ARGUMENTIDX_NONE, ARGUMENTIDX_NONE, returnValue, injectCode, depth + 1);
+	transpileScriptStatement(generatedCode, script.conditionDescription, script.conditionStatement, scriptIdx, SCRIPTIDX_NONE, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, 0, ARGUMENTIDX_NONE, ARGUMENTIDX_NONE, returnValue, injectCode, depth + 1);
 
 	//
 	generatedCode+= methodIndent + "\n";

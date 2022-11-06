@@ -428,7 +428,7 @@ static void processFile(const string& scriptFileName, const string& miniscriptTr
 			generatedDefinitions+= string() + "}" + "\n\n";
 
 			//
-			if (StringTools::regexMatch(script.condition, "[a-zA-Z0-9]+") == false) {
+			if (script.emitCondition == false) {
 				if (script.scriptType == MiniScript::Script::SCRIPTTYPE_ONENABLED) {
 					generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\n";
 					generatedDetermineNamedScriptIdxToStartDefinition+= string() + "\t" + "\t" + "// next statements belong to tested enabled named condition with name \"" + script.name + "\"" + "\n";

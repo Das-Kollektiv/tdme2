@@ -1402,7 +1402,7 @@ public:
 		/**
 		 * @return string representation of script variable type
 		 */
-		inline const string getAsString() {
+		inline const string getAsString() const {
 			string result;
 			result+= getTypeAsString();
 			result+= "(";
@@ -2077,9 +2077,9 @@ private:
 	/**
 	 * Transpile script statement
 	 * @param generatedCode generated code
-	 * @param method method
-	 * @param arguments arguments
+	 * @param description script statement description
 	 * @param statement script statement
+	 * @param scriptConditionIdx script condition index
 	 * @param scriptIdx script index
 	 * @param statementIdx statement index
 	 * @param methodCodeMap method code map
@@ -2093,7 +2093,7 @@ private:
 	 * @param injectCode code to additionally inject
 	 * @param additionalIndent additional indent
 	 */
-	bool transpileScriptStatement(string& generatedCode, const string_view& method, const span<string_view>& arguments, const ScriptStatement& statement, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth = 0, int argumentIdx = ARGUMENTIDX_NONE, int parentArgumentIdx = ARGUMENTIDX_NONE, const string& returnValue = string(), const string& injectCode = string(), int additionalIndent = 0);
+	bool transpileScriptStatement(string& generatedCode, const StatementDescription& description, const ScriptStatement& statement, int scriptConditionIdx, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth = 0, int argumentIdx = ARGUMENTIDX_NONE, int parentArgumentIdx = ARGUMENTIDX_NONE, const string& returnValue = string(), const string& injectCode = string(), int additionalIndent = 0);
 
 	/**
 	 * Get access operator left and right indices
