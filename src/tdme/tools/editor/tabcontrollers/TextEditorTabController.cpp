@@ -238,9 +238,6 @@ void TextEditorTabController::updateMiniScriptDescription(int miniScriptScriptId
 	auto scriptIdx = 0;
 	miniScriptDescription.clear();
 	for (auto script: scriptInstance->getScripts()) {
-		vector<MiniScript::StatementDescription> description;
-		scriptInstance->describeScript(scriptIdx, description);
-
 		// determine name
 		string name;
 		string argumentsString;
@@ -267,7 +264,7 @@ void TextEditorTabController::updateMiniScriptDescription(int miniScriptScriptId
 		miniScriptDescription.push_back(
 			{
 				.name = name,
-				.description = description
+				.description = script.descriptions
 			}
 		);
 

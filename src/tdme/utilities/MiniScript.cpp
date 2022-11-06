@@ -119,6 +119,7 @@ void MiniScript::executeScriptLine() {
 	auto& script = scripts[scriptState.scriptIdx];
 	if (script.statements.empty() == true) return;
 	auto& statement = script.statements[scriptState.statementIdx];
+	auto& description = script.descriptions[scriptState.statementIdx];
 	if (VERBOSE == true) Console::println("MiniScript::executeScriptLine(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "'");
 
 	scriptState.statementIdx++;
@@ -128,14 +129,8 @@ void MiniScript::executeScriptLine() {
 		setScriptStateState(STATEMACHINESTATE_WAIT_FOR_CONDITION);
 	}
 
-	string_view method;
-	vector<string_view> arguments;
-	if (parseScriptStatement(statement.executableStatement, method, arguments) == true) {
-		auto returnValue = executeScriptStatement(method, arguments, statement);
-	} else {
-		Console::println("MiniScript::executeScriptLine(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': parse error");
-		startErrorScript();
-	}
+	//
+	auto returnValue = executeScriptStatement(description, statement);
 }
 
 bool MiniScript::parseScriptStatement(const string_view& statement, string_view& method, vector<string_view>& arguments) {
@@ -273,52 +268,47 @@ bool MiniScript::parseScriptStatement(const string_view& statement, string_view&
 	return true;
 }
 
-MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement) {
-	if (VERBOSE == true) Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': string arguments: " + string(method) + "(" + getArgumentsAsString(arguments) + ")");
+MiniScript::ScriptVariable MiniScript::executeScriptStatement(const StatementDescription& description, const ScriptStatement& statement) {
+	if (VERBOSE == true) Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': string arguments: " + string(description.value.getValueString()) + "(" + getArgumentsAsString(description.arguments) + ")");
+	// return on literal or empty description
+	if (description.type != StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD && description.type != StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION) {
+		return description.value;
+	}
+	//
 	vector<ScriptVariable> argumentValues;
 	ScriptVariable returnValue;
-	// check if argument is a method calls return value
-	for (auto& argument: arguments) {
-		// variable
-		if (StringTools::viewStartsWith(argument, "$") == true) {
-			argumentValues.push_back(getVariable(string(argument), &statement));
-		} else
-		// method call
-		if (argument.empty() == false &&
-			StringTools::viewStartsWith(argument, "\"") == false &&
-			StringTools::viewEndsWith(argument, "\"") == false &&
-			argument.find('(') != string::npos &&
-			argument.find(')') != string::npos) {
-			// method call, call method and put its return value into argument value
-			string_view subMethod;
-			vector<string_view> subArguments;
-			if (parseScriptStatement(argument, subMethod, subArguments) == true) {
-				auto argumentValue = executeScriptStatement(subMethod, subArguments, statement);
-				argumentValues.push_back(argumentValue);
-			} else {
-				Console::println("MiniScript::executeScriptStatement(): " + getStatementInformation(statement) + ": '" + string(argument) + "': parse error");
-				startErrorScript();
-			}
-		} else {
-			// literal
-			ScriptVariable argumentValue;
-			if (StringTools::viewStartsWith(argument, "\"") == true &&
-				StringTools::viewEndsWith(argument, "\"") == true) {
-				argumentValue.setValue(string(StringTools::viewSubstring(argument, 1, argument.size() - 1)));
-			} else {
-				argumentValue.setImplicitTypedValueFromStringView(argument);
-			}
-			argumentValues.push_back(argumentValue);
+	// construct argument values
+	for (auto& argument: description.arguments) {
+		switch (argument.type) {
+			case StatementDescription::STATEMENTDESCRIPTION_LITERAL:
+				{
+					argumentValues.push_back(argument.value);
+					break;
+				}
+			case StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION:
+				{
+					argumentValues.push_back(executeScriptStatement(argument, statement));
+					break;
+				}
+			case StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD:
+				{
+					argumentValues.push_back(executeScriptStatement(argument, statement));
+					break;
+				}
+			default:
+				break;
 		}
 	}
+	//
 	if (VERBOSE == true) {
 		string argumentValuesString;
 		for (auto& argumentValue: argumentValues) argumentValuesString+= (argumentValuesString.empty() == false?",":"") + argumentValue.getAsString();
-		Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': " + string(method) + "(" + argumentValuesString + ")");
+		Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': " + string(description.value.getValueString()) + "(" + argumentValuesString + ")");
 	}
 	// try first user functions
 	{
-		auto scriptFunctionsIt = scriptFunctions.find(string(method));
+		auto method = description.value.getValueString();
+		auto scriptFunctionsIt = scriptFunctions.find(method);
 		if (scriptFunctionsIt != scriptFunctions.end()) {
 			auto scriptIdx = scriptFunctionsIt->second;
 			// call
@@ -327,14 +317,39 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string_view&
 			// assign back arguments
 			auto argumentIdx = 0;
 			for (auto& argument: scripts[scriptIdx].arguments) {
+				//
 				if (argumentIdx == argumentValues.size()) {
 					break;
 				}
+				//
 				if (argument.assignBack == true) {
-					if (StringTools::viewStartsWith(arguments[argumentIdx], "$") == true) {
-						setVariable(string(arguments[argumentIdx]), argumentValues[argumentIdx], &statement);
+					auto& assignBackArgument = description.arguments[argumentIdx];
+					if (assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD &&
+						assignBackArgument.value.getValueString() == "getVariable" &&
+						assignBackArgument.arguments.empty() == false) {
+						//
+						auto variableName = assignBackArgument.arguments[0].value.getValueString();
+						if (StringTools::startsWith(variableName, "$") == true) {
+							setVariable(variableName, argumentValues[argumentIdx], &statement);
+						} else {
+							Console::println("MiniScript::executeScriptStatement(): " + getStatementInformation(statement) + ": Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + variableName + "'");
+						}
 					} else {
-						Console::println("MiniScript::executeScriptStatement(): " + getStatementInformation(statement) + ": Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + string(arguments[argumentIdx]) + "'");
+						Console::println(
+							"MiniScript::executeScriptStatement(): " +
+							getStatementInformation(statement) +
+							": Can not assign back argument value @ " +
+							to_string(argumentIdx) +
+							" to variable '" +
+							assignBackArgument.value.getValueString() +
+							(
+								assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD ||
+								assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION
+									?"(...)"
+									:""
+							) +
+							"'"
+						);
 					}
 				}
 				argumentIdx++;
@@ -345,9 +360,8 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string_view&
 	}
 	// try methods next
 	{
-		auto scriptMethodsIt = scriptMethods.find(string(method));
-		if (scriptMethodsIt != scriptMethods.end()) {
-			auto scriptMethod = scriptMethodsIt->second;
+		if (description.method != nullptr) {
+			auto scriptMethod = description.method;
 			// validate arguments
 			{
 				auto argumentIdx = 0;
@@ -447,7 +461,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string_view&
 							"'" + scriptFileName + "': " +
 							"@" + to_string(statement.line) +
 							": '" + statement.statement + "'" +
-							": method '" + string(method) + "'" +
+							": method '" + string(description.value.getValueString()) + "'" +
 							": argument value @ " + to_string(argumentIdx) + ": expected " + ScriptVariable::getTypeAsString(argumentType.type) + ", but got: " + (argumentIdx < argumentValues.size()?argumentValues[argumentIdx].getAsString():"nothing"));
 					}
 					argumentIdx++;
@@ -458,7 +472,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string_view&
 						"'" + scriptFileName + "': " +
 						"@" + to_string(statement.line) +
 						": '" + statement.statement + "'" +
-						": method '" + string(method) + "'" +
+						": method '" + string(description.value.getValueString()) + "'" +
 						": too many arguments: expected: " + to_string(scriptMethod->getArgumentTypes().size()) + ", got " + to_string(argumentValues.size()));
 				}
 			}
@@ -469,12 +483,41 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string_view&
 			{
 				auto argumentIdx = 0;
 				for (auto& argumentType: scriptMethod->getArgumentTypes()) {
+					//
+					if (argumentIdx == argumentValues.size()) {
+						break;
+					}
+					//
 					if (argumentType.assignBack == true) {
-						if (StringTools::viewStartsWith(arguments[argumentIdx], "$") == true) {
-							setVariable(string(arguments[argumentIdx]), argumentValues[argumentIdx], &statement);
+						auto& assignBackArgument = description.arguments[argumentIdx];
+						if (assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD &&
+							assignBackArgument.value.getValueString() == "getVariable" &&
+							assignBackArgument.arguments.empty() == false) {
+							//
+							auto variableName = assignBackArgument.arguments[0].value.getValueString();
+							if (StringTools::startsWith(variableName, "$") == true) {
+								setVariable(variableName, argumentValues[argumentIdx], &statement);
+							} else {
+								Console::println("MiniScript::executeScriptStatement(): " + getStatementInformation(statement) + ": Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + variableName + "'");
+							}
 						} else {
-							Console::println("MiniScript::executeScriptStatement(): " + getStatementInformation(statement) + ": Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + string(arguments[argumentIdx]) + "'");
+							Console::println(
+								"MiniScript::executeScriptStatement(): " +
+								getStatementInformation(statement) +
+								": Can not assign back argument value @ " +
+								to_string(argumentIdx) +
+								" to variable '" +
+								assignBackArgument.value.getValueString() +
+								(
+									assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD ||
+									assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION
+										?"(...)"
+										:""
+								) +
+								"'"
+							);
 						}
+
 					}
 					argumentIdx++;
 				}
@@ -486,12 +529,12 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const string_view&
 					"'" + scriptFileName + "': " +
 					"@" + to_string(statement.line) +
 					": '" + statement.statement + "'" +
-					": method '" + string(method) + "'" +
+					": method '" + string(description.value.getValueString()) + "'" +
 					": return value: expected " + ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType()) + ", but got: " + ScriptVariable::getTypeAsString(returnValue.getType()));
 			}
 			return returnValue;
 		} else {
-			Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': unknown method @" + to_string(statement.line) + ": '" + statement.statement + "': " + string(method) + "(" + getArgumentsAsString(arguments) + ")");
+			Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': unknown method @" + to_string(statement.line) + ": '" + statement.statement + "': " + string(description.value.getValueString()) + "(" + getArgumentsAsString(description.arguments) + ")");
 			startErrorScript();
 		}
 	}
@@ -863,6 +906,7 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 				if (scriptType == Script::SCRIPTTYPE_FUNCTION) {
 					scriptFunctions[conditionOrName] = scripts.size();
 				}
+
 				// push to scripts
 				scripts.push_back(
 					{
@@ -870,9 +914,18 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 						.line = line,
 						.condition = conditionOrName,
 						.executableCondition = conditionOrNameExecutable,
+						.conditionStatement = {
+							.line = line,
+							.statementIdx = statementIdx,
+							.statement = conditionOrName,
+							.executableStatement = conditionOrNameExecutable,
+							.gotoStatementIdx = STATEMENTIDX_NONE
+						},
+						.conditionDescription = StatementDescription(),
 						.name = name,
 						.emitCondition = emitCondition,
 						.statements = {},
+						.descriptions = {},
 						.arguments = arguments,
 					}
 				);
@@ -1017,6 +1070,34 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 		// TODO: give some more info about line and statement of not closed condition
 		Console::println("MiniScript::loadScript(): '" + scriptFileName + ": unbalanced forXXX/if/elseif/else/end");
 		return;
+	}
+
+	// describe
+	for (auto& script: scripts) {
+		// describe executable condition if we have any
+		if (script.emitCondition == false && script.executableCondition.empty() == false) {
+			string_view method;
+			vector<string_view> arguments;
+			if (parseScriptStatement(script.executableCondition, method, arguments) == false) {
+				Console::println("MiniScript::loadScript(): '" + scriptFileName + "': " + script.conditionStatement.statement + "@" + to_string(script.conditionStatement.line) + ": failed to parse condition statement");
+			} else
+			if (describeScriptStatement(method, arguments, script.conditionStatement, script.conditionDescription) == false) {
+				Console::println("MiniScript::loadScript(): '" + scriptFileName + "': " + script.conditionStatement.statement + "@" + to_string(script.conditionStatement.line) + ": failed to describe condition statement");
+			}
+		}
+		for (auto statementIdx = 0; statementIdx < script.statements.size(); statementIdx++) {
+			auto& statement = script.statements[statementIdx];
+			script.descriptions.push_back(StatementDescription());
+			auto& description = script.descriptions[script.descriptions.size() - 1];
+			string_view method;
+			vector<string_view> arguments;
+			if (parseScriptStatement(statement.executableStatement, method, arguments) == false) {
+				Console::println("MiniScript::loadScript(): '" + scriptFileName + "': " + statement.statement + "@" + to_string(statement.line) + ": failed to parse statement");
+			} else
+			if (describeScriptStatement(method, arguments, statement, description) == false) {
+				Console::println("MiniScript::loadScript(): '" + scriptFileName + "': " + statement.statement + "@" + to_string(statement.line) + ": failed to describe statement");
+			}
+		}
 	}
 
 	// check for initialize and error condition

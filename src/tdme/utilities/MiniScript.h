@@ -1617,28 +1617,6 @@ public:
 	};
 
 	/**
-	 * Script
-	 */
-	struct Script {
-		struct ScriptArgument {
-			string name;
-			bool assignBack;
-		};
-		enum ScriptType { SCRIPTTYPE_NONE, SCRIPTTYPE_FUNCTION, SCRIPTTYPE_ON, SCRIPTTYPE_ONENABLED };
-		ScriptType scriptType;
-		int line;
-		// applies only for on and on-enabled
-		string condition;
-		string executableCondition;
-		// applies only for on-enabled
-		string name;
-		bool emitCondition;
-		vector<ScriptStatement> statements;
-		// applies only for functions
-		vector<ScriptArgument> arguments;
-	};
-
-	/**
 	 * Script method
 	 */
 	class ScriptMethod {
@@ -1721,6 +1699,31 @@ public:
 		ScriptVariable value;
 		ScriptMethod* method { nullptr };
 		vector<StatementDescription> arguments;
+	};
+
+	/**
+	 * Script
+	 */
+	struct Script {
+		struct ScriptArgument {
+			string name;
+			bool assignBack;
+		};
+		enum ScriptType { SCRIPTTYPE_NONE, SCRIPTTYPE_FUNCTION, SCRIPTTYPE_ON, SCRIPTTYPE_ONENABLED };
+		ScriptType scriptType;
+		int line;
+		// applies only for on and on-enabled
+		string condition;
+		string executableCondition;
+		ScriptStatement conditionStatement;
+		StatementDescription conditionDescription;
+		// applies only for on-enabled
+		string name;
+		bool emitCondition;
+		vector<ScriptStatement> statements;
+		vector<StatementDescription> descriptions;
+		// applies only for functions
+		vector<ScriptArgument> arguments;
 	};
 
 protected:
@@ -1970,6 +1973,29 @@ private:
 	}
 
 	/**
+	 * Returns arguments as string
+	 * @param arguments arguments
+	 * @return arguments as string
+	 */
+	inline const string getArgumentsAsString(const vector<StatementDescription>& arguments) {
+		string argumentsString;
+		for (auto& argument: arguments) {
+			switch (argument.type) {
+				case StatementDescription::STATEMENTDESCRIPTION_LITERAL:
+					argumentsString+= (argumentsString.empty() == false?", ":"") + string("'") + argument.value.getValueString() + string("'");
+					break;
+				case StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD:
+				case StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION:
+					argumentsString+= (argumentsString.empty() == false?", ":"") + argument.value.getValueString() + string("(") + getArgumentsAsString(argument.arguments) + string(")");
+					break;
+				default:
+					break;
+			}
+		}
+		return argumentsString;
+	}
+
+	/**
 	 * Execute a single script line
 	 */
 	void executeScriptLine();
@@ -1985,12 +2011,11 @@ private:
 
 	/**
 	 * Execute a script statement
-	 * @param method method 
-	 * @param arguments arguments
+	 * @param description description
 	 * @param statement statement
-	 * @return return value as script variablle
+	 * @return return value as script variable
 	 */
-	ScriptVariable executeScriptStatement(const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement);
+	ScriptVariable executeScriptStatement(const StatementDescription& description, const ScriptStatement& statement);
 
 	/**
 	 * Describe a script statement
@@ -2887,29 +2912,38 @@ public:
 	 * @return return value
 	 */
 	inline bool evaluate(const string& statement, ScriptVariable& returnValue) {
+		ScriptStatement evaluateStatement =
+			{
+				.line = LINEIDX_NONE,
+				.statementIdx = 0,
+				.statement = "script.evaluate(" + statement + ")",
+				.executableStatement = "script.evaluate(" + statement + ")",
+				.gotoStatementIdx = STATEMENTIDX_NONE
+			};
 		auto scriptEvaluateStatement = "script.evaluate(" + statement + ")";
+		//
 		string_view method;
 		vector<string_view> arguments;
-		pushScriptState();
-		resetScriptExecutationState(SCRIPTIDX_NONE, STATEMACHINESTATE_NEXT_STATEMENT);
-		getScriptState().running = true;
-		if (parseScriptStatement(scriptEvaluateStatement, method, arguments) == true) {
+		StatementDescription evaluateDescription;
+		if (parseScriptStatement(scriptEvaluateStatement, method, arguments) == false) {
+			Console::println("MiniScript::evaluate(): '" + scriptFileName + "': " + evaluateStatement.statement + "@" + to_string(evaluateStatement.line) + ": failed to parse evaluation statement");
+			return false;
+		} else
+		if (describeScriptStatement(method, arguments, evaluateStatement, evaluateDescription) == false) {
+			Console::println("MiniScript::evaluate(): '" + scriptFileName + "': " + evaluateStatement.statement + "@" + to_string(evaluateStatement.line) + ": failed to describe evaluation statement");
+			return false;
+		} else {
+			//
+			pushScriptState();
+			resetScriptExecutationState(SCRIPTIDX_NONE, STATEMACHINESTATE_NEXT_STATEMENT);
+			getScriptState().running = true;
+			//
 			returnValue = executeScriptStatement(
-				method,
-				arguments,
-				{
-					.line = LINEIDX_NONE,
-					.statementIdx = 0,
-					.statement = "script.evaluate(" + statement + ")",
-					.executableStatement = "script.evaluate(" + statement + ")",
-					.gotoStatementIdx = STATEMENTIDX_NONE
-				}
+				evaluateDescription,
+				evaluateStatement
 			);
 			popScriptState();
 			return true;
-		} else {
-			popScriptState();
-			return false;
 		}
 	}
 
