@@ -5962,9 +5962,60 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const Statement
 		}
 	}
 
-	// assign back arguments code
+	// assign back arguments code for functions
 	vector<string> assignBackCodeLines;
-	{
+	if (method == METHOD_SCRIPTCALL && description.arguments.empty() == false) {
+		// check script user functions
+		auto scriptFunctionsIt = scriptFunctions.find(description.arguments[0].value.getValueString());
+		if (scriptFunctionsIt != scriptFunctions.end()) {
+			//
+			auto scriptIdx = scriptFunctionsIt->second;
+			// assign back arguments starting from argument index 1 as 0 is function name
+			auto argumentIdx = 1;
+			for (auto& argument: scripts[scriptIdx].arguments) {
+				//
+				if (argumentIdx == description.arguments.size()) {
+					break;
+				}
+				//
+				if (argument.assignBack == true) {
+					auto& assignBackArgument = description.arguments[argumentIdx];
+					if (assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD &&
+						assignBackArgument.value.getValueString() == "getVariable" &&
+						assignBackArgument.arguments.empty() == false) {
+						//
+						auto variableName = assignBackArgument.arguments[0].value.getValueString();
+						if (StringTools::startsWith(variableName, "$") == true) {
+							assignBackCodeLines.push_back("setVariable(\"" + variableName + "\", argumentValues[" + to_string(argumentIdx) + "], &statement);");
+						} else {
+							Console::println("MiniScript::executeScriptStatement(): " + getStatementInformation(statement) + ": Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + variableName + "'");
+						}
+					} else {
+						Console::println(
+							"MiniScript::executeScriptStatement(): " +
+							getStatementInformation(statement) +
+							": Can not assign back argument value @ " +
+							to_string(argumentIdx) +
+							" to variable '" +
+							assignBackArgument.value.getValueString() +
+							(
+								assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD ||
+								assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION
+									?"(...)"
+									:""
+							) +
+							"'"
+						);
+					}
+				}
+				argumentIdx++;
+			}
+		} else {
+			Console::println("MiniScript::transpileScriptStatement(): function not found: '" + description.value.getValueString() + "'");
+			return false;
+		}
+	} else {
+		// for methods
 		auto argumentIdx = 0;
 		for (auto& argumentType: scriptMethod->getArgumentTypes()) {
 			//
@@ -6004,10 +6055,12 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const Statement
 			}
 			argumentIdx++;
 		}
-		if (assignBackCodeLines.empty() == false) {
-			assignBackCodeLines.insert(assignBackCodeLines.begin(), string() + "// assign back");
-			assignBackCodeLines.insert(assignBackCodeLines.end(), string() + "//");
-		}
+	}
+
+	//
+	if (assignBackCodeLines.empty() == false) {
+		assignBackCodeLines.insert(assignBackCodeLines.begin(), string() + "// assign back");
+		assignBackCodeLines.insert(assignBackCodeLines.end(), string() + "//");
 	}
 
 	// generate code
