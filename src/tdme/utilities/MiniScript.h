@@ -1675,13 +1675,6 @@ public:
 		}
 
 		/**
-		 * @return if variadic method
-		 */
-		virtual bool isRequiringArguments() {
-			return false;
-		}
-
-		/**
 		 * @return operator
 		 */
 		virtual ScriptOperator getOperator() {
@@ -1914,29 +1907,6 @@ protected:
 	 * @return script index or SCRIPTIDX_NONE if no script to start
 	 */
 	virtual int determineNamedScriptIdxToStart();
-
-	/**
-	 * Assign back variables after function call
-	 * @param scriptIdx script index
-	 * @param argumentValues argument values
-	 * @param arguments arguments
-	 */
-	void assignBackFunction(int scriptIdx, const span<string>& arguments, const span<ScriptVariable>& argumentValues, const ScriptStatement& statement) {
-		auto argumentIdx = 0;
-		for (auto& argument: scripts[scriptIdx].arguments) {
-			if (argumentIdx == argumentValues.size()) {
-				break;
-			}
-			if (argument.assignBack == true) {
-				if (StringTools::startsWith(arguments[argumentIdx], "$") == true) {
-					setVariable(string(arguments[argumentIdx]), argumentValues[argumentIdx], &statement);
-				} else {
-					Console::println("MiniScript::assignBackFunction(): '" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + string(arguments[argumentIdx]) + "'");
-				}
-			}
-			argumentIdx++;
-		}
-	}
 
 private:
 	static constexpr bool VERBOSE { false };

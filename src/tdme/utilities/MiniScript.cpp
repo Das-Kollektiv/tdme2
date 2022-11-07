@@ -1918,33 +1918,14 @@ void MiniScript::registerMethods() {
 							// call
 							span callArgumentValuesSpan(callArgumentValues);
 							miniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
-							// and copy back
-							for (auto i = 1; i < argumentValues.size(); i++) argumentValues[i] = callArgumentValues[i];
-							//
-							#if defined(__MINISCRIPT_TRANSPILATION__)
-								// copy our arguments as well
-								vector<string> callArguments;
-								for (auto i = 1; i < arguments.size(); i++) callArguments.push_back(arguments[i]);
-								// and assign back
-								assignBackFunction(scriptIdx, callArguments, callArgumentValues, statement);
-							#endif
 						#else
 							span callArgumentValuesSpan(argumentValues.begin() + 1, argumentValues.end());
 							miniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
-							//
-							#if defined(__MINISCRIPT_TRANSPILATION__)
-								// copy our arguments as well
-								span callArgumentsSpan(arguments.begin() + 1, arguments.end());
-								assignBackFunction(scriptIdx, callArgumentsSpan, callArgumentValuesSpan, statement);
-							#endif
 						#endif
 					}
 				}
 			}
 			bool isVariadic() override {
-				return true;
-			}
-			bool isRequiringArguments() override {
 				return true;
 			}
 		};
@@ -5767,7 +5748,16 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const Statement
 					StatementDescription callDescription;
 					callDescription.type = StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD;
 					callDescription.value = string("script.call");
-					callDescription.arguments = { description };
+					// construct argument for name of function
+					StatementDescription callArgumentDescription;
+					callArgumentDescription.type = StatementDescription::STATEMENTDESCRIPTION_LITERAL;
+					callArgumentDescription.value = description.value;
+					// add argumnet for name of function
+					callDescription.arguments.push_back(callArgumentDescription);
+					// add original parameter to call description
+					for (auto& argument: description.arguments) {
+						callDescription.arguments.push_back(argument);
+					}
 					// asign script.call method
 					auto methodIt = scriptMethods.find(callDescription.value.getValueString());
 					if (methodIt == scriptMethods.end()) {
@@ -5823,15 +5813,6 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const Statement
 
 	// construct argument values, which applies to script.call only
 	vector<string> argumentValuesCode;
-	if (scriptMethod->isRequiringArguments() == true) {
-		argumentValuesCode.push_back("array<string, " + to_string(description.arguments.size()) + "> arguments {");
-		auto argumentIdx = 0;
-		for (auto& argument: description.arguments) {
-			argumentValuesCode.push_back(string() + "\t" + "\"" + string(argument.value.getValueString()) + "\"" + (argumentIdx < description.arguments.size() - 1?",":""));
-			argumentIdx++;
-		}
-		argumentValuesCode.push_back("};");
-	}
 	if (depth > 0) {
 		argumentValuesCode.push_back("ScriptVariable& returnValue = argumentValuesD" + to_string(depth - 1) + (parentArgumentIdx != ARGUMENTIDX_NONE?"AIDX" + to_string(parentArgumentIdx):"") + "[" + to_string(argumentIdx) + "];");
 	} else {
@@ -5859,8 +5840,6 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const Statement
 	}
 	argumentValuesCode.clear();
 
-	//
-	vector<ScriptVariable> argumentValues;
 	// construct argument values
 	{
 		auto subArgumentIdx = 0;
@@ -5984,15 +5963,42 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const Statement
 
 	// assign back arguments code
 	vector<string> assignBackCodeLines;
-	/*
 	{
 		auto argumentIdx = 0;
 		for (auto& argumentType: scriptMethod->getArgumentTypes()) {
+			//
+			if (argumentIdx == description.arguments.size()) {
+				break;
+			}
+			//
 			if (argumentType.assignBack == true) {
-				if (StringTools::viewStartsWith(arguments[argumentIdx], "$") == true) {
-					assignBackCodeLines.push_back("setVariable(\"" + string(arguments[argumentIdx]) + "\", argumentValues[" + to_string(argumentIdx) + "], &statement);");
+				auto& assignBackArgument = description.arguments[argumentIdx];
+				if (assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD &&
+					assignBackArgument.value.getValueString() == "getVariable" &&
+					assignBackArgument.arguments.empty() == false) {
+					//
+					auto variableName = assignBackArgument.arguments[0].value.getValueString();
+					if (StringTools::startsWith(variableName, "$") == true) {
+						assignBackCodeLines.push_back("setVariable(\"" + variableName + "\", argumentValues[" + to_string(argumentIdx) + "], &statement);");
+					} else {
+						Console::println("MiniScript::transpileScriptStatement(): " + getStatementInformation(statement) + ": Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + variableName + "'");
+					}
 				} else {
-					Console::println("MiniScript::transpileScriptStatement(): " + getStatementInformation(statement) + ": Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + string(arguments[argumentIdx]) + "'");
+					Console::println(
+						"MiniScript::transpileScriptStatement(): " +
+						getStatementInformation(statement) +
+						": Can not assign back argument value @ " +
+						to_string(argumentIdx) +
+						" to variable '" +
+						assignBackArgument.value.getValueString() +
+						(
+							assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD ||
+							assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION
+								?"(...)"
+								:""
+						) +
+						"'"
+					);
 				}
 			}
 			argumentIdx++;
@@ -6002,7 +6008,6 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const Statement
 			assignBackCodeLines.insert(assignBackCodeLines.end(), string() + "//");
 		}
 	}
-	*/
 
 	// generate code
 	generatedCode+= minIndentString + depthIndentString + "\t" + "// method code: " + string(method) + "\n";
