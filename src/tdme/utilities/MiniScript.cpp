@@ -308,7 +308,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const StatementDes
 		Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': " + description.value.getValueString() + "(" + getArgumentsAsString(description.arguments) + ")");
 	}
 	// try first user functions
-	{
+	if (description.method == nullptr) {
 		auto method = description.value.getValueString();
 		auto scriptFunctionsIt = scriptFunctions.find(method);
 		if (scriptFunctionsIt != scriptFunctions.end()) {
@@ -358,187 +358,184 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const StatementDes
 			}
 			//
 			return returnValue;
+		} else {
+			Console::println("MiniScript::executeScriptStatement(): " + getStatementInformation(statement) + ": unknown method/function @" + to_string(statement.line) + ": '" + statement.statement + "': " + string(description.value.getValueString()) + "(" + getArgumentsAsString(description.arguments) + ")");
+			startErrorScript();
 		}
-	}
-	// try methods next
-	{
-		if (description.method != nullptr) {
-			auto scriptMethod = description.method;
-			// validate arguments
-			{
-				auto argumentIdx = 0;
-				for (auto& argumentType: scriptMethod->getArgumentTypes()) {
-					auto argumentOk = true;
-					switch(argumentType.type) {
-						case TYPE_VOID:
+	} else {
+		// try methods next
+		auto scriptMethod = description.method;
+		// validate arguments
+		{
+			auto argumentIdx = 0;
+			for (auto& argumentType: scriptMethod->getArgumentTypes()) {
+				auto argumentOk = true;
+				switch(argumentType.type) {
+					case TYPE_VOID:
+						break;
+					case TYPE_BOOLEAN:
+						{
+							bool booleanValue;
+							argumentOk = getBooleanValue(argumentValues, argumentIdx, booleanValue, argumentType.optional);
+						}
+						break;
+					case TYPE_INTEGER:
+						{
+							int64_t integerValue;
+							argumentOk = getIntegerValue(argumentValues, argumentIdx, integerValue, argumentType.optional);
+						}
+						break;
+					case TYPE_FLOAT:
+						{
+							float floatValue;
+							argumentOk = getFloatValue(argumentValues, argumentIdx, floatValue, argumentType.optional);
+						}
+						break;
+					case TYPE_STRING:
+						{
+							string stringValue;
+							argumentOk = getStringValue(argumentValues, argumentIdx, stringValue, argumentType.optional);
+						}
+						break;
+					case TYPE_VECTOR2:
+						{
+							Vector2 vector3Value;
+							argumentOk = getVector2Value(argumentValues, argumentIdx, vector3Value, argumentType.optional);
 							break;
-						case TYPE_BOOLEAN:
-							{
-								bool booleanValue;
-								argumentOk = getBooleanValue(argumentValues, argumentIdx, booleanValue, argumentType.optional);
-							}
+						}
+					case TYPE_VECTOR3:
+						{
+							Vector3 vector3Value;
+							argumentOk = getVector3Value(argumentValues, argumentIdx, vector3Value, argumentType.optional);
 							break;
-						case TYPE_INTEGER:
-							{
-								int64_t integerValue;
-								argumentOk = getIntegerValue(argumentValues, argumentIdx, integerValue, argumentType.optional);
-							}
+						}
+					case TYPE_VECTOR4:
+						{
+							Vector4 vector3Value;
+							argumentOk = getVector4Value(argumentValues, argumentIdx, vector3Value, argumentType.optional);
 							break;
-						case TYPE_FLOAT:
-							{
-								float floatValue;
-								argumentOk = getFloatValue(argumentValues, argumentIdx, floatValue, argumentType.optional);
-							}
+						}
+					case TYPE_QUATERNION:
+						{
+							Quaternion quaternionValue;
+							argumentOk = getQuaternionValue(argumentValues, argumentIdx, quaternionValue, argumentType.optional);
 							break;
-						case TYPE_STRING:
-							{
-								string stringValue;
-								argumentOk = getStringValue(argumentValues, argumentIdx, stringValue, argumentType.optional);
-							}
+						}
+					case TYPE_MATRIX3x3:
+						{
+							Matrix2D3x3 matrix3x3Value;
+							argumentOk = getMatrix3x3Value(argumentValues, argumentIdx, matrix3x3Value, argumentType.optional);
 							break;
-						case TYPE_VECTOR2:
-							{
-								Vector2 vector3Value;
-								argumentOk = getVector2Value(argumentValues, argumentIdx, vector3Value, argumentType.optional);
-								break;
-							}
-						case TYPE_VECTOR3:
-							{
-								Vector3 vector3Value;
-								argumentOk = getVector3Value(argumentValues, argumentIdx, vector3Value, argumentType.optional);
-								break;
-							}
-						case TYPE_VECTOR4:
-							{
-								Vector4 vector3Value;
-								argumentOk = getVector4Value(argumentValues, argumentIdx, vector3Value, argumentType.optional);
-								break;
-							}
-						case TYPE_QUATERNION:
-							{
-								Quaternion quaternionValue;
-								argumentOk = getQuaternionValue(argumentValues, argumentIdx, quaternionValue, argumentType.optional);
-								break;
-							}
-						case TYPE_MATRIX3x3:
-							{
-								Matrix2D3x3 matrix3x3Value;
-								argumentOk = getMatrix3x3Value(argumentValues, argumentIdx, matrix3x3Value, argumentType.optional);
-								break;
-							}
-						case TYPE_MATRIX4x4:
-							{
-								Matrix4x4 matrix4x4Value;
-								argumentOk = getMatrix4x4Value(argumentValues, argumentIdx, matrix4x4Value, argumentType.optional);
-								break;
-							}
-						case TYPE_TRANSFORM:
-							{
-								Transform transformValue;
-								argumentOk = getTransformValue(argumentValues, argumentIdx, transformValue, argumentType.optional);
-								break;
-							}
-						case TYPE_ARRAY:
-							{
-								vector<ScriptVariable> arrayValue;
-								argumentOk = getArrayValue(argumentValues, argumentIdx, arrayValue, argumentType.optional);
-								break;
-							}
-						case TYPE_MAP:
-							{
-								unordered_map<string, ScriptVariable> mapValue;
-								argumentOk = getMapValue(argumentValues, argumentIdx, mapValue, argumentType.optional);
-								break;
-							}
-						case TYPE_PSEUDO_NUMBER:
-							{
-								float floatValue;
-								argumentOk = getFloatValue(argumentValues, argumentIdx, floatValue, argumentType.optional);
-								break;
-							}
-					}
-					if (argumentOk == false) {
-						Console::println(
-							string("MiniScript::executeScriptStatement(): ") +
-							"'" + scriptFileName + "': " +
-							"@" + to_string(statement.line) +
-							": '" + statement.statement + "'" +
-							": method '" + string(description.value.getValueString()) + "'" +
-							": argument value @ " + to_string(argumentIdx) + ": expected " + ScriptVariable::getTypeAsString(argumentType.type) + ", but got: " + (argumentIdx < argumentValues.size()?argumentValues[argumentIdx].getAsString():"nothing"));
-					}
-					argumentIdx++;
+						}
+					case TYPE_MATRIX4x4:
+						{
+							Matrix4x4 matrix4x4Value;
+							argumentOk = getMatrix4x4Value(argumentValues, argumentIdx, matrix4x4Value, argumentType.optional);
+							break;
+						}
+					case TYPE_TRANSFORM:
+						{
+							Transform transformValue;
+							argumentOk = getTransformValue(argumentValues, argumentIdx, transformValue, argumentType.optional);
+							break;
+						}
+					case TYPE_ARRAY:
+						{
+							vector<ScriptVariable> arrayValue;
+							argumentOk = getArrayValue(argumentValues, argumentIdx, arrayValue, argumentType.optional);
+							break;
+						}
+					case TYPE_MAP:
+						{
+							unordered_map<string, ScriptVariable> mapValue;
+							argumentOk = getMapValue(argumentValues, argumentIdx, mapValue, argumentType.optional);
+							break;
+						}
+					case TYPE_PSEUDO_NUMBER:
+						{
+							float floatValue;
+							argumentOk = getFloatValue(argumentValues, argumentIdx, floatValue, argumentType.optional);
+							break;
+						}
 				}
-				if (scriptMethod->isVariadic() == false && argumentValues.size() > scriptMethod->getArgumentTypes().size()) {
+				if (argumentOk == false) {
 					Console::println(
 						string("MiniScript::executeScriptStatement(): ") +
 						"'" + scriptFileName + "': " +
 						"@" + to_string(statement.line) +
 						": '" + statement.statement + "'" +
 						": method '" + string(description.value.getValueString()) + "'" +
-						": too many arguments: expected: " + to_string(scriptMethod->getArgumentTypes().size()) + ", got " + to_string(argumentValues.size()));
+						": argument value @ " + to_string(argumentIdx) + ": expected " + ScriptVariable::getTypeAsString(argumentType.type) + ", but got: " + (argumentIdx < argumentValues.size()?argumentValues[argumentIdx].getAsString():"nothing"));
 				}
+				argumentIdx++;
 			}
-			// execute method
-			span argumentValuesSpan(argumentValues);
-			scriptMethod->executeMethod(argumentValuesSpan, returnValue, statement);
-			// assign back arguments
-			{
-				auto argumentIdx = 0;
-				for (auto& argumentType: scriptMethod->getArgumentTypes()) {
-					//
-					if (argumentIdx == argumentValues.size()) {
-						break;
-					}
-					//
-					if (argumentType.assignBack == true) {
-						auto& assignBackArgument = description.arguments[argumentIdx];
-						if (assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD &&
-							assignBackArgument.value.getValueString() == "getVariable" &&
-							assignBackArgument.arguments.empty() == false) {
-							//
-							auto variableName = assignBackArgument.arguments[0].value.getValueString();
-							if (StringTools::startsWith(variableName, "$") == true) {
-								setVariable(variableName, argumentValues[argumentIdx], &statement);
-							} else {
-								Console::println("MiniScript::executeScriptStatement(): " + getStatementInformation(statement) + ": Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + variableName + "'");
-							}
-						} else {
-							Console::println(
-								"MiniScript::executeScriptStatement(): " +
-								getStatementInformation(statement) +
-								": Can not assign back argument value @ " +
-								to_string(argumentIdx) +
-								" to variable '" +
-								assignBackArgument.value.getValueString() +
-								(
-									assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD ||
-									assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION
-										?"(...)"
-										:""
-								) +
-								"'"
-							);
-						}
-
-					}
-					argumentIdx++;
-				}
-			}
-			// check return type
-			if (MiniScript::ScriptVariable::isExpectedType(returnValue.getType(), scriptMethod->getReturnValueType()) == false) {
+			if (scriptMethod->isVariadic() == false && argumentValues.size() > scriptMethod->getArgumentTypes().size()) {
 				Console::println(
 					string("MiniScript::executeScriptStatement(): ") +
 					"'" + scriptFileName + "': " +
 					"@" + to_string(statement.line) +
 					": '" + statement.statement + "'" +
 					": method '" + string(description.value.getValueString()) + "'" +
-					": return value: expected " + ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType()) + ", but got: " + ScriptVariable::getTypeAsString(returnValue.getType()));
+					": too many arguments: expected: " + to_string(scriptMethod->getArgumentTypes().size()) + ", got " + to_string(argumentValues.size()));
 			}
-			return returnValue;
-		} else {
-			Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': unknown method @" + to_string(statement.line) + ": '" + statement.statement + "': " + string(description.value.getValueString()) + "(" + getArgumentsAsString(description.arguments) + ")");
-			startErrorScript();
 		}
+		// execute method
+		span argumentValuesSpan(argumentValues);
+		scriptMethod->executeMethod(argumentValuesSpan, returnValue, statement);
+		// assign back arguments
+		{
+			auto argumentIdx = 0;
+			for (auto& argumentType: scriptMethod->getArgumentTypes()) {
+				//
+				if (argumentIdx == argumentValues.size()) {
+					break;
+				}
+				//
+				if (argumentType.assignBack == true) {
+					auto& assignBackArgument = description.arguments[argumentIdx];
+					if (assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD &&
+						assignBackArgument.value.getValueString() == "getVariable" &&
+						assignBackArgument.arguments.empty() == false) {
+						//
+						auto variableName = assignBackArgument.arguments[0].value.getValueString();
+						if (StringTools::startsWith(variableName, "$") == true) {
+							setVariable(variableName, argumentValues[argumentIdx], &statement);
+						} else {
+							Console::println("MiniScript::executeScriptStatement(): " + getStatementInformation(statement) + ": Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + variableName + "'");
+						}
+					} else {
+						Console::println(
+							"MiniScript::executeScriptStatement(): " +
+							getStatementInformation(statement) +
+							": Can not assign back argument value @ " +
+							to_string(argumentIdx) +
+							" to variable '" +
+							assignBackArgument.value.getValueString() +
+							(
+								assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD ||
+								assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION
+									?"(...)"
+									:""
+							) +
+							"'"
+						);
+					}
+
+				}
+				argumentIdx++;
+			}
+		}
+		// check return type
+		if (MiniScript::ScriptVariable::isExpectedType(returnValue.getType(), scriptMethod->getReturnValueType()) == false) {
+			Console::println(
+				string("MiniScript::executeScriptStatement(): ") +
+				"'" + scriptFileName + "': " +
+				"@" + to_string(statement.line) +
+				": '" + statement.statement + "'" +
+				": method '" + string(description.value.getValueString()) + "'" +
+				": return value: expected " + ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType()) + ", but got: " + ScriptVariable::getTypeAsString(returnValue.getType()));
+		}
+		return returnValue;
 	}
 	return returnValue;
 }
