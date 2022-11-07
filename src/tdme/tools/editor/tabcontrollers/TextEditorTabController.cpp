@@ -170,7 +170,7 @@ void TextEditorTabController::onValueChanged(GUIElementNode* node)
 		if (StringTools::startsWith(outlinerNode, "miniscript.script.") == true) {
 			auto scriptIdx = Integer::parse(StringTools::substring(outlinerNode, string("miniscript.script.").size()));
 			if (view->isVisualEditor() == true) {
-				updateMiniScriptDescription(scriptIdx);
+				updateMiniScriptSyntaxTree(scriptIdx);
 			} else {
 				// TODO: jump to line
 			}
@@ -180,7 +180,7 @@ void TextEditorTabController::onValueChanged(GUIElementNode* node)
 		auto visual = node->getController()->getValue().equals("1");
 		if (visual == true) {
 			view->setVisualEditor();
-			updateMiniScriptDescription(view->getMiniScriptScriptIdx());
+			updateMiniScriptSyntaxTree(view->getMiniScriptScriptIdx());
 		} else {
 			view->setCodeEditor();
 		}
@@ -210,8 +210,8 @@ void TextEditorTabController::setOutlinerContent() {
 	string xml;
 	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"MiniScript\" value=\"miniscript\">\n";
 	auto scriptIdx = 0;
-	for (auto& miniScriptScriptDescription: miniScriptDescription) {
-		xml+= "<selectbox-option text=\"" + GUIParser::escapeQuotes(miniScriptScriptDescription.name) + "\" value=\"miniscript.script." + to_string(scriptIdx) + "\" />\n";
+	for (auto& miniScriptSyntaxTree: miniScriptSyntaxTrees) {
+		xml+= "<selectbox-option text=\"" + GUIParser::escapeQuotes(miniScriptSyntaxTree.name) + "\" value=\"miniscript.script." + to_string(scriptIdx) + "\" />\n";
 		scriptIdx++;
 	}
 	xml+= "</selectbox-parent-option>\n";
@@ -222,7 +222,7 @@ void TextEditorTabController::setOutlinerAddDropDownContent() {
 	view->getEditorView()->setOutlinerAddDropDownContent(string());
 }
 
-void TextEditorTabController::updateMiniScriptDescription(int miniScriptScriptIdx) {
+void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
 	auto scriptFileName = view->getFileName();
 	//
 	MiniScript* scriptInstance = new MiniScript();
@@ -236,7 +236,7 @@ void TextEditorTabController::updateMiniScriptDescription(int miniScriptScriptId
 
 	//
 	auto scriptIdx = 0;
-	miniScriptDescription.clear();
+	miniScriptSyntaxTrees.clear();
 	for (auto script: scriptInstance->getScripts()) {
 		// determine name
 		string name;
@@ -261,10 +261,10 @@ void TextEditorTabController::updateMiniScriptDescription(int miniScriptScriptId
 		}
 
 		//
-		miniScriptDescription.push_back(
+		miniScriptSyntaxTrees.push_back(
 			{
 				.name = name,
-				.description = script.descriptions
+				.syntaxTree = script.syntaxTree
 			}
 		);
 
@@ -273,8 +273,8 @@ void TextEditorTabController::updateMiniScriptDescription(int miniScriptScriptId
 	}
 
 	// pass it to view
-	view->setMethodOperatorMap(methodOperatorMap);
-	view->updateMiniScriptDescription(miniScriptScriptIdx);
+	view->setMiniScriptMethodOperatorMap(methodOperatorMap);
+	view->updateMiniScriptSyntaxTree(miniScriptScriptIdx);
 
 	//
 	setOutlinerContent();

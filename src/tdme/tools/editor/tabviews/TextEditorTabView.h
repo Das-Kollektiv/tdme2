@@ -82,7 +82,7 @@ private:
 
 	struct Node {
 		string id;
-		const MiniScript::StatementDescription* description { nullptr };
+		const MiniScript::ScriptSyntaxTreeNode* syntaxTreeNode { nullptr };
 		/*
 		int x1;
 		int y1;
@@ -262,18 +262,18 @@ public:
 	/**
 	 * Adds a delta X value to UI node with given id and all nodes down the statement description tree
 	 * @param id id
-	 * @param description description
+	 * @param syntaxTreeNode syntax tree node
 	 * @param parentNode parent node
 	 * @param deltaX delta X
 	 */
-	void addNodeDeltaX(const string& id, const MiniScript::StatementDescription& description, GUIParentNode* parentNode, int deltaX);
+	void addMiniScriptNodeDeltaX(const string& id, const MiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, GUIParentNode* parentNode, int deltaX);
 
 	/**
 	 * Create UI nodes for given statement description, which matches a statement in miniscript
 	 * @param id id
 	 * @param descriptionIdx description index
 	 * @param descriptionCount description count
-	 * @param description description
+	 * @param syntaxTreeNode syntax tree node
 	 * @param parentNode parent node
 	 * @param x x
 	 * @param y y
@@ -281,7 +281,7 @@ public:
 	 * @param height height
 	 * @param depth depth
 	 */
-	void createNodes(const string& id, int descriptionIdx, int descriptionCount, const MiniScript::StatementDescription& description, GUIParentNode* parentNode, int x, int y, int& width, int& height, int depth = 0);
+	void createMiniScriptNodes(const string& id, int descriptionIdx, int descriptionCount, const MiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, GUIParentNode* parentNode, int x, int y, int& width, int& height, int depth = 0);
 
 	/**
 	 * @return MiniScript script index
@@ -294,28 +294,28 @@ public:
 	 * Set method -> operator map
 	 * @param methodOperatorMap method operator map
 	 */
-	inline void setMethodOperatorMap(const unordered_map<string, string>& methodOperatorMap) {
+	inline void setMiniScriptMethodOperatorMap(const unordered_map<string, string>& methodOperatorMap) {
 		this->methodOperatorMap = methodOperatorMap;
 	}
 
 	/**
-	 * Update miniscript description
+	 * Update miniscript syntax tree
 	 * @param miniScriptScriptIdx MiniScript script index
 	 */
-	void updateMiniScriptDescription(int miniScriptScriptIdx);
+	void updateMiniScriptSyntaxTree(int miniScriptScriptIdx);
 
 	/**
-	 * Create connections
+	 * Create miniscript connections
 	 * @param id id
-	 * @param description description
-	 * @param parentNode parent node
+	 * @param syntaxTreeNode syntax tree node
+	 * @param parentNode GUI parent node
 	 */
-	void createConnections(const string& id, const MiniScript::StatementDescription& description, GUIParentNode* parentNode);
+	void createMiniScriptConnections(const string& id, const MiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, GUIParentNode* parentNode);
 
 	/**
-	 * Create connections
+	 * Create miniscript connections
 	 */
-	void createConnections();
+	void createMiniScriptConnections();
 
 	// overridden methods
 	void handleInputEvents() override;

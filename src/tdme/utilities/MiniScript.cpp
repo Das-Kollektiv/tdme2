@@ -123,7 +123,7 @@ void MiniScript::executeScriptLine() {
 	auto& script = scripts[scriptState.scriptIdx];
 	if (script.statements.empty() == true) return;
 	auto& statement = script.statements[scriptState.statementIdx];
-	auto& description = script.descriptions[scriptState.statementIdx];
+	auto& syntaxTree = script.syntaxTree[scriptState.statementIdx];
 	if (VERBOSE == true) Console::println("MiniScript::executeScriptLine(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "'");
 
 	scriptState.statementIdx++;
@@ -134,7 +134,7 @@ void MiniScript::executeScriptLine() {
 	}
 
 	//
-	auto returnValue = executeScriptStatement(description, statement);
+	auto returnValue = executeScriptStatement(syntaxTree, statement);
 }
 
 bool MiniScript::parseScriptStatement(const string_view& statement, string_view& method, vector<string_view>& arguments) {
@@ -272,29 +272,29 @@ bool MiniScript::parseScriptStatement(const string_view& statement, string_view&
 	return true;
 }
 
-MiniScript::ScriptVariable MiniScript::executeScriptStatement(const StatementDescription& description, const ScriptStatement& statement) {
-	if (VERBOSE == true) Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': string arguments: " + description.value.getValueString() + "(" + getArgumentsAsString(description.arguments) + ")");
-	// return on literal or empty description
-	if (description.type != StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD && description.type != StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION) {
-		return description.value;
+MiniScript::ScriptVariable MiniScript::executeScriptStatement(const ScriptSyntaxTreeNode& syntaxTree, const ScriptStatement& statement) {
+	if (VERBOSE == true) Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': string arguments: " + syntaxTree.value.getValueString() + "(" + getArgumentsAsString(syntaxTree.arguments) + ")");
+	// return on literal or empty syntaxTree
+	if (syntaxTree.type != ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD && syntaxTree.type != ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION) {
+		return syntaxTree.value;
 	}
 	//
 	vector<ScriptVariable> argumentValues;
 	ScriptVariable returnValue;
 	// construct argument values
-	for (auto& argument: description.arguments) {
+	for (auto& argument: syntaxTree.arguments) {
 		switch (argument.type) {
-			case StatementDescription::STATEMENTDESCRIPTION_LITERAL:
+			case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
 				{
 					argumentValues.push_back(argument.value);
 					break;
 				}
-			case StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION:
+			case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
 				{
 					argumentValues.push_back(executeScriptStatement(argument, statement));
 					break;
 				}
-			case StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD:
+			case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
 				{
 					argumentValues.push_back(executeScriptStatement(argument, statement));
 					break;
@@ -305,11 +305,11 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const StatementDes
 	}
 	//
 	if (VERBOSE == true) {
-		Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': " + description.value.getValueString() + "(" + getArgumentsAsString(description.arguments) + ")");
+		Console::println("MiniScript::executeScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': " + syntaxTree.value.getValueString() + "(" + getArgumentsAsString(syntaxTree.arguments) + ")");
 	}
 	// try first user functions
-	if (description.method == nullptr) {
-		auto method = description.value.getValueString();
+	if (syntaxTree.method == nullptr) {
+		auto method = syntaxTree.value.getValueString();
 		auto scriptFunctionsIt = scriptFunctions.find(method);
 		if (scriptFunctionsIt != scriptFunctions.end()) {
 			auto scriptIdx = scriptFunctionsIt->second;
@@ -325,8 +325,8 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const StatementDes
 				}
 				//
 				if (argument.assignBack == true) {
-					auto& assignBackArgument = description.arguments[argumentIdx];
-					if (assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD &&
+					auto& assignBackArgument = syntaxTree.arguments[argumentIdx];
+					if (assignBackArgument.type == ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD &&
 						assignBackArgument.value.getValueString() == "getVariable" &&
 						assignBackArgument.arguments.empty() == false) {
 						//
@@ -345,8 +345,8 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const StatementDes
 							" to variable '" +
 							assignBackArgument.value.getValueString() +
 							(
-								assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD ||
-								assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION
+								assignBackArgument.type == ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD ||
+								assignBackArgument.type == ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION
 									?"(...)"
 									:""
 							) +
@@ -359,12 +359,12 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const StatementDes
 			//
 			return returnValue;
 		} else {
-			Console::println("MiniScript::executeScriptStatement(): " + getStatementInformation(statement) + ": unknown method/function @" + to_string(statement.line) + ": '" + statement.statement + "': " + string(description.value.getValueString()) + "(" + getArgumentsAsString(description.arguments) + ")");
+			Console::println("MiniScript::executeScriptStatement(): " + getStatementInformation(statement) + ": unknown method/function @" + to_string(statement.line) + ": '" + statement.statement + "': " + string(syntaxTree.value.getValueString()) + "(" + getArgumentsAsString(syntaxTree.arguments) + ")");
 			startErrorScript();
 		}
 	} else {
 		// try methods next
-		auto scriptMethod = description.method;
+		auto scriptMethod = syntaxTree.method;
 		// validate arguments
 		{
 			auto argumentIdx = 0;
@@ -464,7 +464,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const StatementDes
 						"'" + scriptFileName + "': " +
 						"@" + to_string(statement.line) +
 						": '" + statement.statement + "'" +
-						": method '" + string(description.value.getValueString()) + "'" +
+						": method '" + string(syntaxTree.value.getValueString()) + "'" +
 						": argument value @ " + to_string(argumentIdx) + ": expected " + ScriptVariable::getTypeAsString(argumentType.type) + ", but got: " + (argumentIdx < argumentValues.size()?argumentValues[argumentIdx].getAsString():"nothing"));
 				}
 				argumentIdx++;
@@ -475,7 +475,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const StatementDes
 					"'" + scriptFileName + "': " +
 					"@" + to_string(statement.line) +
 					": '" + statement.statement + "'" +
-					": method '" + string(description.value.getValueString()) + "'" +
+					": method '" + string(syntaxTree.value.getValueString()) + "'" +
 					": too many arguments: expected: " + to_string(scriptMethod->getArgumentTypes().size()) + ", got " + to_string(argumentValues.size()));
 			}
 		}
@@ -492,8 +492,8 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const StatementDes
 				}
 				//
 				if (argumentType.assignBack == true) {
-					auto& assignBackArgument = description.arguments[argumentIdx];
-					if (assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD &&
+					auto& assignBackArgument = syntaxTree.arguments[argumentIdx];
+					if (assignBackArgument.type == ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD &&
 						assignBackArgument.value.getValueString() == "getVariable" &&
 						assignBackArgument.arguments.empty() == false) {
 						//
@@ -512,8 +512,8 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const StatementDes
 							" to variable '" +
 							assignBackArgument.value.getValueString() +
 							(
-								assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD ||
-								assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION
+								assignBackArgument.type == ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD ||
+								assignBackArgument.type == ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION
 									?"(...)"
 									:""
 							) +
@@ -532,7 +532,7 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const StatementDes
 				"'" + scriptFileName + "': " +
 				"@" + to_string(statement.line) +
 				": '" + statement.statement + "'" +
-				": method '" + string(description.value.getValueString()) + "'" +
+				": method '" + string(syntaxTree.value.getValueString()) + "'" +
 				": return value: expected " + ScriptVariable::getTypeAsString(scriptMethod->getReturnValueType()) + ", but got: " + ScriptVariable::getTypeAsString(returnValue.getType()));
 		}
 		return returnValue;
@@ -540,8 +540,8 @@ MiniScript::ScriptVariable MiniScript::executeScriptStatement(const StatementDes
 	return returnValue;
 }
 
-bool MiniScript::describeScriptStatement(const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, StatementDescription& description) {
-	if (VERBOSE == true) Console::println("MiniScript::describeScriptStatement(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': string arguments: " + string(method) + "(" + getArgumentsAsString(arguments) + ")");
+bool MiniScript::createScriptStatementSyntaxTree(const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, ScriptSyntaxTreeNode& syntaxTree) {
+	if (VERBOSE == true) Console::println("MiniScript::createScriptStatementSyntaxTree(): '" + scriptFileName + "': @" + to_string(statement.line) + ": '" + statement.statement + "': string arguments: " + string(method) + "(" + getArgumentsAsString(arguments) + ")");
 	// arguments
 	for (auto& argument: arguments) {
 		// variable
@@ -558,19 +558,19 @@ bool MiniScript::describeScriptStatement(const string_view& method, const vector
 				if (scriptMethodsIt != scriptMethods.end()) {
 					method = scriptMethodsIt->second;
 				} else {
-					Console::println("MiniScript::describeScriptStatement(): '" + scriptFileName + "': unknown method @" + to_string(statement.line) + ": '" + statement.statement + "': " + string("getVariable") + "(" + getArgumentsAsString(arguments) + ")");
+					Console::println("MiniScript::createScriptStatementSyntaxTree(): '" + scriptFileName + "': unknown method @" + to_string(statement.line) + ": '" + statement.statement + "': " + string("getVariable") + "(" + getArgumentsAsString(arguments) + ")");
 				}
 			}
 
 			//
-			description.arguments.push_back(
+			syntaxTree.arguments.push_back(
 				{
-					.type = StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD,
+					.type = ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD,
 					.value = MiniScript::ScriptVariable(methodName),
 					.method = method,
 					.arguments = {
 						{
-							.type = StatementDescription::STATEMENTDESCRIPTION_LITERAL,
+							.type = ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL,
 							.value = value,
 							.arguments = {}
 						}
@@ -588,11 +588,11 @@ bool MiniScript::describeScriptStatement(const string_view& method, const vector
 			string_view subMethod;
 			vector<string_view> subArguments;
 			if (parseScriptStatement(argument, subMethod, subArguments) == true) {
-				StatementDescription subDescription;
-				describeScriptStatement(subMethod, subArguments, statement, subDescription);
-				description.arguments.push_back(subDescription);
+				ScriptSyntaxTreeNode subSyntaxTree;
+				createScriptStatementSyntaxTree(subMethod, subArguments, statement, subSyntaxTree);
+				syntaxTree.arguments.push_back(subSyntaxTree);
 			} else {
-				Console::println("MiniScript::describeScriptStatement(): " + getStatementInformation(statement) + ": '" + string(argument) + "': parse error");
+				Console::println("MiniScript::createScriptStatementSyntaxTree(): " + getStatementInformation(statement) + ": '" + string(argument) + "': parse error");
 			}
 		} else {
 			// string literal
@@ -603,9 +603,9 @@ bool MiniScript::describeScriptStatement(const string_view& method, const vector
 				ScriptVariable value;
 				value.setValue(string(StringTools::viewSubstring(argument, 1, argument.size() - 1)));
 				//
-				description.arguments.push_back(
+				syntaxTree.arguments.push_back(
 					{
-						.type = StatementDescription::STATEMENTDESCRIPTION_LITERAL,
+						.type = ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL,
 						.value = value,
 						.method = nullptr,
 						.arguments = {}
@@ -616,9 +616,9 @@ bool MiniScript::describeScriptStatement(const string_view& method, const vector
 				ScriptVariable value;
 				value.setImplicitTypedValueFromStringView(argument);
 				//
-				description.arguments.push_back(
+				syntaxTree.arguments.push_back(
 					{
-						.type = StatementDescription::STATEMENTDESCRIPTION_LITERAL,
+						.type = ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL,
 						.value = value,
 						.method = nullptr,
 						.arguments = {}
@@ -631,8 +631,8 @@ bool MiniScript::describeScriptStatement(const string_view& method, const vector
 	{
 		auto scriptFunctionsIt = scriptFunctions.find(string(method));
 		if (scriptFunctionsIt != scriptFunctions.end()) {
-			description.type = StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION;
-			description.value = string(method);
+			syntaxTree.type = ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION;
+			syntaxTree.value = string(method);
 			//
 			return true;
 		}
@@ -641,13 +641,13 @@ bool MiniScript::describeScriptStatement(const string_view& method, const vector
 	{
 		auto scriptMethodsIt = scriptMethods.find(string(method));
 		if (scriptMethodsIt != scriptMethods.end()) {
-			description.type = StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD;
-			description.value = string(method);
-			description.method = scriptMethodsIt->second;
+			syntaxTree.type = ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD;
+			syntaxTree.value = string(method);
+			syntaxTree.method = scriptMethodsIt->second;
 			//
 			return true;
 		} else {
-			Console::println("MiniScript::describeScriptStatement(): '" + scriptFileName + "': unknown method @" + to_string(statement.line) + ": '" + statement.statement + "': " + string(method) + "(" + getArgumentsAsString(arguments) + ")");
+			Console::println("MiniScript::createScriptStatementSyntaxTree(): '" + scriptFileName + "': unknown method @" + to_string(statement.line) + ": '" + statement.statement + "': " + string(method) + "(" + getArgumentsAsString(arguments) + ")");
 		}
 	}
 	//
@@ -920,11 +920,11 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 							.executableStatement = conditionOrNameExecutable,
 							.gotoStatementIdx = STATEMENTIDX_NONE
 						},
-						.conditionDescription = StatementDescription(),
+						.conditionSyntaxTree = ScriptSyntaxTreeNode(),
 						.name = name,
 						.emitCondition = emitCondition,
 						.statements = {},
-						.descriptions = {},
+						.syntaxTree = {},
 						.arguments = arguments,
 					}
 				);
@@ -1071,9 +1071,9 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 		return;
 	}
 
-	// describe
+	// create syntax tree
 	for (auto& script: scripts) {
-		// describe executable condition if we have any
+		// create syntax tree of executable condition if we have any
 		if (script.emitCondition == false && script.executableCondition.empty() == false) {
 			string_view method;
 			vector<string_view> arguments;
@@ -1081,23 +1081,24 @@ void MiniScript::loadScript(const string& pathName, const string& fileName) {
 				Console::println("MiniScript::loadScript(): '" + scriptFileName + "': " + script.conditionStatement.statement + "@" + to_string(script.conditionStatement.line) + ": failed to parse condition statement");
 				scriptValid = false;
 			} else
-			if (describeScriptStatement(method, arguments, script.conditionStatement, script.conditionDescription) == false) {
-				Console::println("MiniScript::loadScript(): '" + scriptFileName + "': " + script.conditionStatement.statement + "@" + to_string(script.conditionStatement.line) + ": failed to describe condition statement");
+			if (createScriptStatementSyntaxTree(method, arguments, script.conditionStatement, script.conditionSyntaxTree) == false) {
+				Console::println("MiniScript::loadScript(): '" + scriptFileName + "': " + script.conditionStatement.statement + "@" + to_string(script.conditionStatement.line) + ": failed to create syntax tree for condition statement");
 				scriptValid = false;
 			}
 		}
+		// create script syntax tree
 		for (auto statementIdx = 0; statementIdx < script.statements.size(); statementIdx++) {
 			auto& statement = script.statements[statementIdx];
-			script.descriptions.push_back(StatementDescription());
-			auto& description = script.descriptions[script.descriptions.size() - 1];
+			script.syntaxTree.push_back(ScriptSyntaxTreeNode());
+			auto& sytaxTree = script.syntaxTree[script.syntaxTree.size() - 1];
 			string_view method;
 			vector<string_view> arguments;
 			if (parseScriptStatement(statement.executableStatement, method, arguments) == false) {
 				Console::println("MiniScript::loadScript(): '" + scriptFileName + "': " + statement.statement + "@" + to_string(statement.line) + ": failed to parse statement");
 				scriptValid = false;
 			} else
-			if (describeScriptStatement(method, arguments, statement, description) == false) {
-				Console::println("MiniScript::loadScript(): '" + scriptFileName + "': " + statement.statement + "@" + to_string(statement.line) + ": failed to describe statement");
+			if (createScriptStatementSyntaxTree(method, arguments, statement, sytaxTree) == false) {
+				Console::println("MiniScript::loadScript(): '" + scriptFileName + "': " + statement.statement + "@" + to_string(statement.line) + ": failed to create syntax tree for statement");
 				scriptValid = false;
 			}
 		}
@@ -1585,35 +1586,6 @@ const vector<MiniScript::ScriptMethod*> MiniScript::getOperatorMethods() {
 		methods.push_back(scriptOperatorIt.second);
 	}
 	return methods;
-}
-
-bool MiniScript::describeScript(int scriptIdx, vector<StatementDescription>& description) {
-	if (scriptIdx < 0 || scriptIdx >= scripts.size()) {
-		Console::println("MiniScript::describeScript(): invalid script index");
-		return false;
-	}
-
-	//
-	auto& script = scripts[scriptIdx];
-
-	//
-	for (auto scriptStatement: script.statements) {
-		//
-		string_view method;
-		vector<string_view> arguments;
-		if (parseScriptStatement(scriptStatement.executableStatement, method, arguments) == false) {
-			Console::println("MiniScript::describeScript(): '" + scriptFileName + "': " + scriptStatement.statement + "@" + to_string(scriptStatement.line) + ": failed to parse statement");
-			return false;
-		}
-		description.push_back(StatementDescription());
-		if (describeScriptStatement(method, arguments, scriptStatement, description[description.size() - 1]) == false) {
-			Console::println("MiniScript::describeScript(): '" + scriptFileName + "': " + scriptStatement.statement + "@" + to_string(scriptStatement.line) + ": failed to describe statement");
-			return false;
-		}
-	}
-
-	//
-	return true;
 }
 
 const string MiniScript::getScriptInformation(int scriptIdx, bool includeStatements) {
@@ -5733,57 +5705,57 @@ void MiniScript::registerMethods() {
 void MiniScript::registerVariables() {
 }
 
-bool MiniScript::transpileScriptStatement(string& generatedCode, const StatementDescription& description, const ScriptStatement& statement, int scriptConditionIdx, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth, int argumentIdx, int parentArgumentIdx, const string& returnValue, const string& injectCode, int additionalIndent) {
+bool MiniScript::transpileScriptStatement(string& generatedCode, const ScriptSyntaxTreeNode& syntaxTree, const ScriptStatement& statement, int scriptConditionIdx, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth, int argumentIdx, int parentArgumentIdx, const string& returnValue, const string& injectCode, int additionalIndent) {
 	//
 	statementIdx++;
 	auto currentStatementIdx = statementIdx;
 
 	//
-	switch (description.type) {
-		case StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION:
+	switch (syntaxTree.type) {
+		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
 			{
 				// check script user functions
-				auto scriptFunctionsIt = scriptFunctions.find(description.value.getValueString());
+				auto scriptFunctionsIt = scriptFunctions.find(syntaxTree.value.getValueString());
 				if (scriptFunctionsIt != scriptFunctions.end()) {
 					// have a wrapping script.call call
-					StatementDescription callDescription;
-					callDescription.type = StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD;
-					callDescription.value = METHOD_SCRIPTCALL;
+					ScriptSyntaxTreeNode callSyntaxTreeNode;
+					callSyntaxTreeNode.type = ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD;
+					callSyntaxTreeNode.value = METHOD_SCRIPTCALL;
 					// construct argument for name of function
-					StatementDescription callArgumentDescription;
-					callArgumentDescription.type = StatementDescription::STATEMENTDESCRIPTION_LITERAL;
-					callArgumentDescription.value = description.value;
+					ScriptSyntaxTreeNode callArgumentSyntaxTreeNode;
+					callArgumentSyntaxTreeNode.type = ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
+					callArgumentSyntaxTreeNode.value = syntaxTree.value;
 					// add argumnet for name of function
-					callDescription.arguments.push_back(callArgumentDescription);
-					// add original parameter to call description
-					for (auto& argument: description.arguments) {
-						callDescription.arguments.push_back(argument);
+					callSyntaxTreeNode.arguments.push_back(callArgumentSyntaxTreeNode);
+					// add original parameter to call syntaxTree
+					for (auto& argument: syntaxTree.arguments) {
+						callSyntaxTreeNode.arguments.push_back(argument);
 					}
 					// asign script.call method
-					auto methodIt = scriptMethods.find(callDescription.value.getValueString());
+					auto methodIt = scriptMethods.find(callSyntaxTreeNode.value.getValueString());
 					if (methodIt == scriptMethods.end()) {
-						Console::println("MiniScript::transpileScriptStatement(): method code not found: '" + callDescription.value.getValueString() + "'");
+						Console::println("MiniScript::transpileScriptStatement(): method code not found: '" + callSyntaxTreeNode.value.getValueString() + "'");
 						return false;
 					}
-					callDescription.method = methodIt->second;
-					return transpileScriptStatement(generatedCode, callDescription, statement, scriptConditionIdx, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, depth, argumentIdx, parentArgumentIdx, returnValue, injectCode, additionalIndent);
+					callSyntaxTreeNode.method = methodIt->second;
+					return transpileScriptStatement(generatedCode, callSyntaxTreeNode, statement, scriptConditionIdx, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, depth, argumentIdx, parentArgumentIdx, returnValue, injectCode, additionalIndent);
 				} else {
-					Console::println("MiniScript::transpileScriptStatement(): function not found: '" + description.value.getValueString() + "'");
+					Console::println("MiniScript::transpileScriptStatement(): function not found: '" + syntaxTree.value.getValueString() + "'");
 					return false;
 				}
 				//
 				break;
 			}
-		case StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD:
+		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
 			break;
 		default:
-			Console::println("MiniScript::transpileScriptStatement(): " + getStatementInformation(statement) + ": function or method call expected, but got literal or 'none' description");
+			Console::println("MiniScript::transpileScriptStatement(): " + getStatementInformation(statement) + ": function or method call expected, but got literal or 'none' syntaxTree");
 			return false;
 
 	}
 
 	//
-	auto method = description.value.getValueString();
+	auto method = syntaxTree.value.getValueString();
 
 	// find method code in method code map
 	auto methodCodeMapIt = methodCodeMap.find(method);
@@ -5809,7 +5781,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const Statement
 	// comment about current statement
 	generatedCode+= minIndentString + depthIndentString;
 	generatedCode+= "// " + (depth > 0?"depth = " + to_string(depth):"") + (depth > 0 && argumentIdx != ARGUMENTIDX_NONE?" / ":"") + (argumentIdx != ARGUMENTIDX_NONE?"argument index = " + to_string(argumentIdx):"") + (depth > 0 || argumentIdx != ARGUMENTIDX_NONE?": ":"");
-	generatedCode+= description.value.getValueString() + "(" + getArgumentsAsString(description.arguments) + ")";
+	generatedCode+= syntaxTree.value.getValueString() + "(" + getArgumentsAsString(syntaxTree.arguments) + ")";
 	generatedCode+= "\n";
 
 	// construct argument values, which applies to script.call only
@@ -5819,8 +5791,8 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const Statement
 	} else {
 		argumentValuesCode.push_back("ScriptVariable returnValue;");
 	}
-	argumentValuesCode.push_back("array<ScriptVariable, " + to_string(description.arguments.size()) + "> argumentValues;");
-	argumentValuesCode.push_back("array<ScriptVariable, " + to_string(description.arguments.size()) + ">& argumentValuesD" + to_string(depth) + (argumentIdx != ARGUMENTIDX_NONE?"AIDX" + to_string(argumentIdx):"") + " = argumentValues;");
+	argumentValuesCode.push_back("array<ScriptVariable, " + to_string(syntaxTree.arguments.size()) + "> argumentValues;");
+	argumentValuesCode.push_back("array<ScriptVariable, " + to_string(syntaxTree.arguments.size()) + ">& argumentValuesD" + to_string(depth) + (argumentIdx != ARGUMENTIDX_NONE?"AIDX" + to_string(argumentIdx):"") + " = argumentValues;");
 
 	// argument values header
 	generatedCode+= minIndentString + depthIndentString + "{" + "\n";
@@ -5844,9 +5816,9 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const Statement
 	// construct argument values
 	{
 		auto subArgumentIdx = 0;
-		for (auto& argument: description.arguments) {
+		for (auto& argument: syntaxTree.arguments) {
 			switch (argument.type) {
-				case StatementDescription::STATEMENTDESCRIPTION_LITERAL:
+				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
 					{
 						switch (argument.value.getType())  {
 							case TYPE_VOID:
@@ -5887,12 +5859,12 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const Statement
 						}
 						break;
 					}
-				case StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION:
+				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
 					{
 						argumentValuesCode.push_back("// argumentValues[" + to_string(subArgumentIdx) + "] --> returnValue of " + argument.value.getValueString() + "(" + getArgumentsAsString(argument.arguments) + ")");
 						break;
 					}
-				case StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD:
+				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
 					{
 						argumentValuesCode.push_back("// argumentValues[" + to_string(subArgumentIdx) + "] --> returnValue of " + argument.value.getValueString() + "(" + getArgumentsAsString(argument.arguments) + ")");
 						break;
@@ -5912,11 +5884,11 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const Statement
 	argumentValuesCode.clear();
 
 	// enabled named conditions
-	if (method == METHOD_ENABLENAMEDCONDITION && description.arguments.empty() == false) {
-		if (description.arguments.size() != 1) {
+	if (method == METHOD_ENABLENAMEDCONDITION && syntaxTree.arguments.empty() == false) {
+		if (syntaxTree.arguments.size() != 1) {
 			Console::println("MiniScript::transpileScriptStatement(): " + getStatementInformation(statement) + ": " + METHOD_ENABLENAMEDCONDITION + "(): expected string argument @ 0");
 		} else {
-			string name = description.arguments[0].value.getValueString();
+			string name = syntaxTree.arguments[0].value.getValueString();
 			enabledNamedConditions.erase(
 				remove(
 					enabledNamedConditions.begin(),
@@ -5928,11 +5900,11 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const Statement
 			enabledNamedConditions.push_back(name);
 		}
 	} else
-	if (method == METHOD_DISABLENAMEDCONDITION && description.arguments.empty() == false) {
-		if (description.arguments.size() != 1) {
+	if (method == METHOD_DISABLENAMEDCONDITION && syntaxTree.arguments.empty() == false) {
+		if (syntaxTree.arguments.size() != 1) {
 			Console::println("MiniScript::transpileScriptStatement(): " + getStatementInformation(statement) + ": " + METHOD_DISABLENAMEDCONDITION + "(): expected string argument @ 0");
 		} else {
-			string name = description.arguments[0].value.getValueString();
+			string name = syntaxTree.arguments[0].value.getValueString();
 			enabledNamedConditions.erase(
 				remove(
 					enabledNamedConditions.begin(),
@@ -5947,12 +5919,12 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const Statement
 	// transpile method/function call argument
 	{
 		auto subArgumentIdx = 0;
-		for (auto& argument: description.arguments) {
+		for (auto& argument: syntaxTree.arguments) {
 			switch (argument.type) {
-				case StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION:
-				case StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD:
+				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
+				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
 					if (transpileScriptStatement(generatedCode, argument, statement, scriptConditionIdx, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, depth + 1, subArgumentIdx, argumentIdx, returnValue) == false) {
- 						Console::println("MiniScript::transpileScriptStatement(): transpileScriptStatement(): " + getStatementInformation(statement) + ": '" + description.value.getValueString() + "(" + getArgumentsAsString(description.arguments) + ")" + "': transpile error");
+ 						Console::println("MiniScript::transpileScriptStatement(): transpileScriptStatement(): " + getStatementInformation(statement) + ": '" + syntaxTree.value.getValueString() + "(" + getArgumentsAsString(syntaxTree.arguments) + ")" + "': transpile error");
 					}
 					break;
 				default:
@@ -5964,9 +5936,9 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const Statement
 
 	// assign back arguments code for functions
 	vector<string> assignBackCodeLines;
-	if (method == METHOD_SCRIPTCALL && description.arguments.empty() == false) {
+	if (method == METHOD_SCRIPTCALL && syntaxTree.arguments.empty() == false) {
 		// check script user functions
-		auto scriptFunctionsIt = scriptFunctions.find(description.arguments[0].value.getValueString());
+		auto scriptFunctionsIt = scriptFunctions.find(syntaxTree.arguments[0].value.getValueString());
 		if (scriptFunctionsIt != scriptFunctions.end()) {
 			//
 			auto scriptIdx = scriptFunctionsIt->second;
@@ -5974,13 +5946,13 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const Statement
 			auto argumentIdx = 1;
 			for (auto& argument: scripts[scriptIdx].arguments) {
 				//
-				if (argumentIdx == description.arguments.size()) {
+				if (argumentIdx == syntaxTree.arguments.size()) {
 					break;
 				}
 				//
 				if (argument.assignBack == true) {
-					auto& assignBackArgument = description.arguments[argumentIdx];
-					if (assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD &&
+					auto& assignBackArgument = syntaxTree.arguments[argumentIdx];
+					if (assignBackArgument.type == ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD &&
 						assignBackArgument.value.getValueString() == "getVariable" &&
 						assignBackArgument.arguments.empty() == false) {
 						//
@@ -5999,8 +5971,8 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const Statement
 							" to variable '" +
 							assignBackArgument.value.getValueString() +
 							(
-								assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD ||
-								assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION
+								assignBackArgument.type == ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD ||
+								assignBackArgument.type == ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION
 									?"(...)"
 									:""
 							) +
@@ -6011,7 +5983,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const Statement
 				argumentIdx++;
 			}
 		} else {
-			Console::println("MiniScript::transpileScriptStatement(): function not found: '" + description.value.getValueString() + "'");
+			Console::println("MiniScript::transpileScriptStatement(): function not found: '" + syntaxTree.value.getValueString() + "'");
 			return false;
 		}
 	} else {
@@ -6019,13 +5991,13 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const Statement
 		auto argumentIdx = 0;
 		for (auto& argumentType: scriptMethod->getArgumentTypes()) {
 			//
-			if (argumentIdx == description.arguments.size()) {
+			if (argumentIdx == syntaxTree.arguments.size()) {
 				break;
 			}
 			//
 			if (argumentType.assignBack == true) {
-				auto& assignBackArgument = description.arguments[argumentIdx];
-				if (assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD &&
+				auto& assignBackArgument = syntaxTree.arguments[argumentIdx];
+				if (assignBackArgument.type == ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD &&
 					assignBackArgument.value.getValueString() == "getVariable" &&
 					assignBackArgument.arguments.empty() == false) {
 					//
@@ -6044,8 +6016,8 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const Statement
 						" to variable '" +
 						assignBackArgument.value.getValueString() +
 						(
-							assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD ||
-							assignBackArgument.type == StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION
+							assignBackArgument.type == ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD ||
+							assignBackArgument.type == ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION
 								?"(...)"
 								:""
 						) +
@@ -6191,7 +6163,7 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 	auto scriptStateChanged = false;
 	for (auto scriptStatementIdx = 0; scriptStatementIdx < script.statements.size(); scriptStatementIdx++) {
 		auto& statement = script.statements[scriptStatementIdx];
-		auto& description = script.descriptions[scriptStatementIdx];
+		auto& syntaxTree = script.syntaxTree[scriptStatementIdx];
 		//
 		if (scriptStateChanged == true) {
 			generatedCodeHeader+= methodIndent + "if (miniScriptGotoStatementIdx == " + to_string(statement.statementIdx)  + ") goto miniscript_statement_" + to_string(statement.statementIdx) + "; else" + "\n";
@@ -6219,7 +6191,7 @@ bool MiniScript::transpile(string& generatedCode, int scriptIdx, const unordered
 		}
 		scriptStateChanged = false;
 		auto scriptStopped = false;
-		transpileScriptStatement(generatedCode, description, statement, SCRIPTIDX_NONE, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions);
+		transpileScriptStatement(generatedCode, syntaxTree, statement, SCRIPTIDX_NONE, scriptIdx, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions);
 		if (scriptStopped == true) {
 			generatedCode+= methodIndent + "if (getScriptState().running == false) {" + "\n";
 			generatedCode+= methodIndent + "\t" + "return;" + "\n";
@@ -6260,7 +6232,7 @@ bool MiniScript::transpileScriptCondition(string& generatedCode, int scriptIdx, 
 	auto scriptStateChanged = false;
 	auto scriptStopped = false;
 	vector<string >enabledNamedConditions;
-	transpileScriptStatement(generatedCode, script.conditionDescription, script.conditionStatement, scriptIdx, SCRIPTIDX_NONE, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, 0, ARGUMENTIDX_NONE, ARGUMENTIDX_NONE, returnValue, injectCode, depth + 1);
+	transpileScriptStatement(generatedCode, script.conditionSyntaxTree, script.conditionStatement, scriptIdx, SCRIPTIDX_NONE, statementIdx, methodCodeMap, scriptStateChanged, scriptStopped, enabledNamedConditions, 0, ARGUMENTIDX_NONE, ARGUMENTIDX_NONE, returnValue, injectCode, depth + 1);
 
 	//
 	generatedCode+= "\t\n";

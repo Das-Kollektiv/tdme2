@@ -1686,12 +1686,12 @@ public:
 		ScriptVariableType returnValueType;
 	};
 
-	struct StatementDescription {
-		enum Type { STATEMENTDESCRIPTION_NONE, STATEMENTDESCRIPTION_LITERAL, STATEMENTDESCRIPTION_EXECUTE_METHOD, STATEMENTDESCRIPTION_EXECUTE_FUNCTION };
-		Type type { STATEMENTDESCRIPTION_NONE };
+	struct ScriptSyntaxTreeNode {
+		enum Type { SCRIPTSYNTAXTREENODE_NONE, SCRIPTSYNTAXTREENODE_LITERAL, SCRIPTSYNTAXTREENODE_EXECUTE_METHOD, SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION };
+		Type type { SCRIPTSYNTAXTREENODE_NONE };
 		ScriptVariable value;
 		ScriptMethod* method { nullptr };
-		vector<StatementDescription> arguments;
+		vector<ScriptSyntaxTreeNode> arguments;
 	};
 
 	/**
@@ -1709,12 +1709,12 @@ public:
 		string condition;
 		string executableCondition;
 		ScriptStatement conditionStatement;
-		StatementDescription conditionDescription;
+		ScriptSyntaxTreeNode conditionSyntaxTree;
 		// applies only for on-enabled
 		string name;
 		bool emitCondition;
 		vector<ScriptStatement> statements;
-		vector<StatementDescription> descriptions;
+		vector<ScriptSyntaxTreeNode> syntaxTree;
 		// applies only for functions
 		vector<ScriptArgument> arguments;
 	};
@@ -1952,11 +1952,11 @@ private:
 	 * @param arguments arguments
 	 * @return arguments as string
 	 */
-	inline const string getArgumentsAsString(const vector<StatementDescription>& arguments) {
+	inline const string getArgumentsAsString(const vector<ScriptSyntaxTreeNode>& arguments) {
 		string argumentsString;
 		for (auto& argument: arguments) {
 			switch (argument.type) {
-				case StatementDescription::STATEMENTDESCRIPTION_LITERAL:
+				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
 					switch(argument.value.getType()) {
 						case TYPE_VOID:
 							{
@@ -1982,8 +1982,8 @@ private:
 							}
 					}
 					break;
-				case StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD:
-				case StatementDescription::STATEMENTDESCRIPTION_EXECUTE_FUNCTION:
+				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
+				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
 					argumentsString+= (argumentsString.empty() == false?", ":"") + argument.value.getValueString() + string("(") + getArgumentsAsString(argument.arguments) + string(")");
 					break;
 				default:
@@ -2009,21 +2009,21 @@ private:
 
 	/**
 	 * Execute a script statement
-	 * @param description description
+	 * @param syntaxTree syntax tree
 	 * @param statement statement
 	 * @return return value as script variable
 	 */
-	ScriptVariable executeScriptStatement(const StatementDescription& description, const ScriptStatement& statement);
+	ScriptVariable executeScriptStatement(const ScriptSyntaxTreeNode& syntaxTree, const ScriptStatement& statement);
 
 	/**
-	 * Describe a script statement
+	 * Create script statement syntax tree
 	 * @param method method
 	 * @param arguments arguments
 	 * @param statement statement
-	 * @param description description
+	 * @param syntaxTree syntax tree
 	 * @return success
 	 */
-	bool describeScriptStatement(const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, StatementDescription& description);
+	bool createScriptStatementSyntaxTree(const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, ScriptSyntaxTreeNode& syntaxTree);
 
 	/**
 	 * Returns if char is operator char
@@ -2075,7 +2075,7 @@ private:
 	/**
 	 * Transpile script statement
 	 * @param generatedCode generated code
-	 * @param description script statement description
+	 * @param syntaxTree syntax tree
 	 * @param statement script statement
 	 * @param scriptConditionIdx script condition index
 	 * @param scriptIdx script index
@@ -2091,7 +2091,7 @@ private:
 	 * @param injectCode code to additionally inject
 	 * @param additionalIndent additional indent
 	 */
-	bool transpileScriptStatement(string& generatedCode, const StatementDescription& description, const ScriptStatement& statement, int scriptConditionIdx, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth = 0, int argumentIdx = ARGUMENTIDX_NONE, int parentArgumentIdx = ARGUMENTIDX_NONE, const string& returnValue = string(), const string& injectCode = string(), int additionalIndent = 0);
+	bool transpileScriptStatement(string& generatedCode, const ScriptSyntaxTreeNode& syntaxTree, const ScriptStatement& statement, int scriptConditionIdx, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth = 0, int argumentIdx = ARGUMENTIDX_NONE, int parentArgumentIdx = ARGUMENTIDX_NONE, const string& returnValue = string(), const string& injectCode = string(), int additionalIndent = 0);
 
 	/**
 	 * Get access operator left and right indices
@@ -2922,13 +2922,13 @@ public:
 		//
 		string_view method;
 		vector<string_view> arguments;
-		StatementDescription evaluateDescription;
+		ScriptSyntaxTreeNode evaluateSyntaxTree;
 		if (parseScriptStatement(scriptEvaluateStatement, method, arguments) == false) {
 			Console::println("MiniScript::evaluate(): '" + scriptFileName + "': " + evaluateStatement.statement + "@" + to_string(evaluateStatement.line) + ": failed to parse evaluation statement");
 			return false;
 		} else
-		if (describeScriptStatement(method, arguments, evaluateStatement, evaluateDescription) == false) {
-			Console::println("MiniScript::evaluate(): '" + scriptFileName + "': " + evaluateStatement.statement + "@" + to_string(evaluateStatement.line) + ": failed to describe evaluation statement");
+		if (createScriptStatementSyntaxTree(method, arguments, evaluateStatement, evaluateSyntaxTree) == false) {
+			Console::println("MiniScript::evaluate(): '" + scriptFileName + "': " + evaluateStatement.statement + "@" + to_string(evaluateStatement.line) + ": failed to create syntax tree for evaluation statement");
 			return false;
 		} else {
 			//
@@ -2937,7 +2937,7 @@ public:
 			getScriptState().running = true;
 			//
 			returnValue = executeScriptStatement(
-				evaluateDescription,
+				evaluateSyntaxTree,
 				evaluateStatement
 			);
 			popScriptState();
@@ -3010,14 +3010,6 @@ public:
 	 * @return script operator methods
 	 */
 	const vector<ScriptMethod*> getOperatorMethods();
-
-	/**
-	 * Describe a script with given index
-	 * @param scriptIdx script index
-	 * @param description description
-	 * @return success
-	 */
-	bool describeScript(int scriptIdx, vector<StatementDescription>& description);
 
 	/**
 	 * Get miniscript script information
