@@ -2105,7 +2105,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 7
-	// console.log("MiniScript will do the job: and(or(equals(MiniScript will do the job, MiniScript will not do the job), equals(it will, it will)), true): ", and(or(equals(MiniScript will do the job, MiniScript will not do the job), equals(it will, it will)), true))
+	// console.log("MiniScript will do the job: and(or(equals(MiniScript will do the job, MiniScript will not do the job), equals(it will, it will)), true): ", and(or(equals("MiniScript will do the job", "MiniScript will not do the job"), equals("it will", "it will")), 1))
 	{
 		const ScriptStatement& statement = scripts[1].statements[7];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -2114,24 +2114,24 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("MiniScript will do the job: and(or(equals(MiniScript will do the job, MiniScript will not do the job), equals(it will, it will)), true): "));
-		// argumentValues[1] --> returnValue of and(or(equals(MiniScript will do the job, MiniScript will not do the job), equals(it will, it will)), true)
-		// depth = 1 / argument index = 1: and(or(equals(MiniScript will do the job, MiniScript will not do the job), equals(it will, it will)), true)
+		// argumentValues[1] --> returnValue of and(or(equals("MiniScript will do the job", "MiniScript will not do the job"), equals("it will", "it will")), 1)
+		// depth = 1 / argument index = 1: and(or(equals("MiniScript will do the job", "MiniScript will not do the job"), equals("it will", "it will")), 1)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of or(equals(MiniScript will do the job, MiniScript will not do the job), equals(it will, it will))
+			// argumentValues[0] --> returnValue of or(equals("MiniScript will do the job", "MiniScript will not do the job"), equals("it will", "it will"))
 			argumentValues[1].setValue(true);
-			// depth = 2 / argument index = 0: or(equals(MiniScript will do the job, MiniScript will not do the job), equals(it will, it will))
+			// depth = 2 / argument index = 0: or(equals("MiniScript will do the job", "MiniScript will not do the job"), equals("it will", "it will"))
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
 				array<ScriptVariable, 2> argumentValues;
 				array<ScriptVariable, 2>& argumentValuesD2AIDX0 = argumentValues;
-				// argumentValues[0] --> returnValue of equals(MiniScript will do the job, MiniScript will not do the job)
-				// argumentValues[1] --> returnValue of equals(it will, it will)
-				// depth = 3 / argument index = 0: equals(MiniScript will do the job, MiniScript will not do the job)
+				// argumentValues[0] --> returnValue of equals("MiniScript will do the job", "MiniScript will not do the job")
+				// argumentValues[1] --> returnValue of equals("it will", "it will")
+				// depth = 3 / argument index = 0: equals("MiniScript will do the job", "MiniScript will not do the job")
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX0[0];
@@ -2140,15 +2140,20 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 					argumentValues[0].setValue(string("MiniScript will do the job"));
 					argumentValues[1].setValue(string("MiniScript will not do the job"));
 					// method code: equals
-					returnValue.setValue(true);
-					for (auto i = 1; i < argumentValues.size(); i++) {
-						if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
-							returnValue.setValue(false);
-							break;
+					if (argumentValues.size() != 2) {
+						Console::println("ScriptMethodEquals::executeMethod(): " + string("equals") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
+						miniScript->startErrorScript(); return;
+					} else {
+						returnValue.setValue(true);
+						for (auto i = 1; i < argumentValues.size(); i++) {
+							if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
+								returnValue.setValue(false);
+								break;
+							}
 						}
 					}
 				}
-				// depth = 3 / argument index = 1: equals(it will, it will)
+				// depth = 3 / argument index = 1: equals("it will", "it will")
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX0[1];
@@ -2157,39 +2162,56 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 					argumentValues[0].setValue(string("it will"));
 					argumentValues[1].setValue(string("it will"));
 					// method code: equals
-					returnValue.setValue(true);
-					for (auto i = 1; i < argumentValues.size(); i++) {
-						if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
-							returnValue.setValue(false);
-							break;
+					if (argumentValues.size() != 2) {
+						Console::println("ScriptMethodEquals::executeMethod(): " + string("equals") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
+						miniScript->startErrorScript(); return;
+					} else {
+						returnValue.setValue(true);
+						for (auto i = 1; i < argumentValues.size(); i++) {
+							if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
+								returnValue.setValue(false);
+								break;
+							}
 						}
 					}
 				}
 				// method code: or
-				returnValue.setValue(false);
-				for (auto i = 0; i < argumentValues.size(); i++) {
-					bool booleanValue;
-					if (MiniScript::getBooleanValue(argumentValues, i, booleanValue, false) == false) {
-						Console::println("ScriptMethodOr::executeMethod(): " + string("or") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument " + to_string(i) + ": boolean expected");
-						miniScript->startErrorScript(); return;
-					} else
-					if (booleanValue == true) {
-						returnValue.setValue(true);
-						break;
+				if (argumentValues.size() != 2) {
+					returnValue.setValue(false);
+					Console::println("ScriptMethodOr::executeMethod(): " + string("or") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: boolean expected, @ argument 1: boolean expected");
+					miniScript->startErrorScript(); return;
+				} else {
+					returnValue.setValue(false);
+					for (auto i = 0; i < argumentValues.size(); i++) {
+						bool booleanValue;
+						if (MiniScript::getBooleanValue(argumentValues, i, booleanValue, false) == false) {
+							Console::println("ScriptMethodOr::executeMethod(): " + string("or") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument " + to_string(i) + ": boolean expected");
+							miniScript->startErrorScript(); return;
+						} else
+						if (booleanValue == true) {
+							returnValue.setValue(true);
+							break;
+						}
 					}
 				}
 			}
 			// method code: and
-			returnValue.setValue(true);
-			for (auto i = 0; i < argumentValues.size(); i++) {
-				bool booleanValue;
-				if (MiniScript::getBooleanValue(argumentValues, i, booleanValue, false) == false) {
-					Console::println("ScriptMethodAnd::executeMethod(): " + string("and") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument " + to_string(i) + ": boolean expected");
-					miniScript->startErrorScript(); return;
-				} else
-				if (booleanValue == false) {
-					returnValue.setValue(false);
-					break;
+			if (argumentValues.size() != 2) {
+				returnValue.setValue(false);
+				Console::println("ScriptMethodOr::executeMethod(): " + string("and") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: boolean expected, @ argument 1: boolean expected");
+				miniScript->startErrorScript(); return;
+			} else {
+				returnValue.setValue(true);
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					bool booleanValue;
+					if (MiniScript::getBooleanValue(argumentValues, i, booleanValue, false) == false) {
+						Console::println("ScriptMethodAnd::executeMethod(): " + string("and") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument " + to_string(i) + ": boolean expected");
+						miniScript->startErrorScript(); return;
+					} else
+					if (booleanValue == false) {
+						returnValue.setValue(false);
+						break;
+					}
 				}
 			}
 		}
@@ -2252,7 +2274,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 11
-	// console.log("1 + 2 + 3 - 1: ", sub(add(1,add(2, 3)), 1))
+	// console.log("1 + 2 + 3 - 1: ", sub(add(1, add(2, 3)), 1))
 	{
 		const ScriptStatement& statement = scripts[1].statements[11];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -2261,14 +2283,14 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("1 + 2 + 3 - 1: "));
-		// argumentValues[1] --> returnValue of sub(add(1,add(2, 3)), 1)
-		// depth = 1 / argument index = 1: sub(add(1,add(2, 3)), 1)
+		// argumentValues[1] --> returnValue of sub(add(1, add(2, 3)), 1)
+		// depth = 1 / argument index = 1: sub(add(1, add(2, 3)), 1)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of add(1,add(2, 3))
+			// argumentValues[0] --> returnValue of add(1, add(2, 3))
 			argumentValues[1].setValue(static_cast<int64_t>(1));
 			// depth = 2 / argument index = 0: add(1, add(2, 3))
 			{
@@ -2486,7 +2508,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 19
-	// console.log("(1.1 + 2.2 + 3.3) - 1.2: ", sub(add(1.1,add(2.2, 3.3)), 1.2))
+	// console.log("(1.1 + 2.2 + 3.3) - 1.2: ", sub(add(1.100000, add(2.200000, 3.300000)), 1.200000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[19];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -2495,24 +2517,24 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("(1.1 + 2.2 + 3.3) - 1.2: "));
-		// argumentValues[1] --> returnValue of sub(add(1.1,add(2.2, 3.3)), 1.2)
-		// depth = 1 / argument index = 1: sub(add(1.1,add(2.2, 3.3)), 1.2)
+		// argumentValues[1] --> returnValue of sub(add(1.100000, add(2.200000, 3.300000)), 1.200000)
+		// depth = 1 / argument index = 1: sub(add(1.100000, add(2.200000, 3.300000)), 1.200000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of add(1.1,add(2.2, 3.3))
+			// argumentValues[0] --> returnValue of add(1.100000, add(2.200000, 3.300000))
 			argumentValues[1].setValue(1.200000f);
-			// depth = 2 / argument index = 0: add(1.1, add(2.2, 3.3))
+			// depth = 2 / argument index = 0: add(1.100000, add(2.200000, 3.300000))
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
 				array<ScriptVariable, 2> argumentValues;
 				array<ScriptVariable, 2>& argumentValuesD2AIDX0 = argumentValues;
 				argumentValues[0].setValue(1.100000f);
-				// argumentValues[1] --> returnValue of add(2.2, 3.3)
-				// depth = 3 / argument index = 1: add(2.2, 3.3)
+				// argumentValues[1] --> returnValue of add(2.200000, 3.300000)
+				// depth = 3 / argument index = 1: add(2.200000, 3.300000)
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX0[1];
@@ -2537,7 +2559,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 20
-	// console.log("20 / 1.5: ", div(20, 1.5))
+	// console.log("20 / 1.5: ", div(20, 1.500000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[20];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -2546,8 +2568,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("20 / 1.5: "));
-		// argumentValues[1] --> returnValue of div(20, 1.5)
-		// depth = 1 / argument index = 1: div(20, 1.5)
+		// argumentValues[1] --> returnValue of div(20, 1.500000)
+		// depth = 1 / argument index = 1: div(20, 1.500000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -2566,7 +2588,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 21
-	// console.log("11.5 * 10.5: ", mul(11.5, 10.5))
+	// console.log("11.5 * 10.5: ", mul(11.500000, 10.500000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[21];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -2575,8 +2597,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("11.5 * 10.5: "));
-		// argumentValues[1] --> returnValue of mul(11.5, 10.5)
-		// depth = 1 / argument index = 1: mul(11.5, 10.5)
+		// argumentValues[1] --> returnValue of mul(11.500000, 10.500000)
+		// depth = 1 / argument index = 1: mul(11.500000, 10.500000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -2595,7 +2617,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 22
-	// console.log("2.2 > 1.3: ", greater(2.2, 1.3))
+	// console.log("2.2 > 1.3: ", greater(2.200000, 1.300000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[22];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -2604,8 +2626,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("2.2 > 1.3: "));
-		// argumentValues[1] --> returnValue of greater(2.2, 1.3)
-		// depth = 1 / argument index = 1: greater(2.2, 1.3)
+		// argumentValues[1] --> returnValue of greater(2.200000, 1.300000)
+		// depth = 1 / argument index = 1: greater(2.200000, 1.300000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -2632,7 +2654,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 23
-	// console.log("2.5 < 1.2: ", lesser(2.5, 1.2))
+	// console.log("2.5 < 1.2: ", lesser(2.500000, 1.200000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[23];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -2641,8 +2663,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("2.5 < 1.2: "));
-		// argumentValues[1] --> returnValue of lesser(2.5, 1.2)
-		// depth = 1 / argument index = 1: lesser(2.5, 1.2)
+		// argumentValues[1] --> returnValue of lesser(2.500000, 1.200000)
+		// depth = 1 / argument index = 1: lesser(2.500000, 1.200000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -3067,7 +3089,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 33
-	// console.log("vec2(1.1, 2.2) - vec2(1.2, 1.0): ", sub(vec2(1.1, 2.2), vec2(1.2, 1.0)))
+	// console.log("vec2(1.1, 2.2) - vec2(1.2, 1.0): ", sub(vec2(1.100000, 2.200000), vec2(1.200000, 1.000000)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[33];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -3076,16 +3098,16 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("vec2(1.1, 2.2) - vec2(1.2, 1.0): "));
-		// argumentValues[1] --> returnValue of sub(vec2(1.1, 2.2), vec2(1.2, 1.0))
-		// depth = 1 / argument index = 1: sub(vec2(1.1, 2.2), vec2(1.2, 1.0))
+		// argumentValues[1] --> returnValue of sub(vec2(1.100000, 2.200000), vec2(1.200000, 1.000000))
+		// depth = 1 / argument index = 1: sub(vec2(1.100000, 2.200000), vec2(1.200000, 1.000000))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of vec2(1.1, 2.2)
-			// argumentValues[1] --> returnValue of vec2(1.2, 1.0)
-			// depth = 2 / argument index = 0: vec2(1.1, 2.2)
+			// argumentValues[0] --> returnValue of vec2(1.100000, 2.200000)
+			// argumentValues[1] --> returnValue of vec2(1.200000, 1.000000)
+			// depth = 2 / argument index = 0: vec2(1.100000, 2.200000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
@@ -3105,7 +3127,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// depth = 2 / argument index = 1: vec2(1.2, 1.0)
+			// depth = 2 / argument index = 1: vec2(1.200000, 1.000000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
@@ -3136,7 +3158,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 34
-	// console.log("vec2(20, 10) / vec2(1.5, 2.5): ", div(vec2(20, 10), vec2(1.5, 2.5)))
+	// console.log("vec2(20, 10) / vec2(1.5, 2.5): ", div(vec2(20, 10), vec2(1.500000, 2.500000)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[34];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -3145,15 +3167,15 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("vec2(20, 10) / vec2(1.5, 2.5): "));
-		// argumentValues[1] --> returnValue of div(vec2(20, 10), vec2(1.5, 2.5))
-		// depth = 1 / argument index = 1: div(vec2(20, 10), vec2(1.5, 2.5))
+		// argumentValues[1] --> returnValue of div(vec2(20, 10), vec2(1.500000, 2.500000))
+		// depth = 1 / argument index = 1: div(vec2(20, 10), vec2(1.500000, 2.500000))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
 			// argumentValues[0] --> returnValue of vec2(20, 10)
-			// argumentValues[1] --> returnValue of vec2(1.5, 2.5)
+			// argumentValues[1] --> returnValue of vec2(1.500000, 2.500000)
 			// depth = 2 / argument index = 0: vec2(20, 10)
 			{
 				// required method code arguments
@@ -3174,7 +3196,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// depth = 2 / argument index = 1: vec2(1.5, 2.5)
+			// depth = 2 / argument index = 1: vec2(1.500000, 2.500000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
@@ -3205,7 +3227,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 35
-	// console.log("vec2(20, 10) * vec2(1.5, 2.5)): ", mul(vec2(20, 10), vec2(1.5, 2.5)))
+	// console.log("vec2(20, 10) * vec2(1.5, 2.5)): ", mul(vec2(20, 10), vec2(1.500000, 2.500000)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[35];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -3214,15 +3236,15 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("vec2(20, 10) * vec2(1.5, 2.5)): "));
-		// argumentValues[1] --> returnValue of mul(vec2(20, 10), vec2(1.5, 2.5))
-		// depth = 1 / argument index = 1: mul(vec2(20, 10), vec2(1.5, 2.5))
+		// argumentValues[1] --> returnValue of mul(vec2(20, 10), vec2(1.500000, 2.500000))
+		// depth = 1 / argument index = 1: mul(vec2(20, 10), vec2(1.500000, 2.500000))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
 			// argumentValues[0] --> returnValue of vec2(20, 10)
-			// argumentValues[1] --> returnValue of vec2(1.5, 2.5)
+			// argumentValues[1] --> returnValue of vec2(1.500000, 2.500000)
 			// depth = 2 / argument index = 0: vec2(20, 10)
 			{
 				// required method code arguments
@@ -3243,7 +3265,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// depth = 2 / argument index = 1: vec2(1.5, 2.5)
+			// depth = 2 / argument index = 1: vec2(1.500000, 2.500000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
@@ -4040,7 +4062,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 50
-	// console.log("vec3(1.1, 2.2, 3.3) - vec3(1.2, 1.0, 1.0): ", sub(vec3(1.1, 2.2, 3.3), vec3(1.2, 1.0, 1.0)))
+	// console.log("vec3(1.1, 2.2, 3.3) - vec3(1.2, 1.0, 1.0): ", sub(vec3(1.100000, 2.200000, 3.300000), vec3(1.200000, 1.000000, 1.000000)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[50];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -4049,16 +4071,16 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("vec3(1.1, 2.2, 3.3) - vec3(1.2, 1.0, 1.0): "));
-		// argumentValues[1] --> returnValue of sub(vec3(1.1, 2.2, 3.3), vec3(1.2, 1.0, 1.0))
-		// depth = 1 / argument index = 1: sub(vec3(1.1, 2.2, 3.3), vec3(1.2, 1.0, 1.0))
+		// argumentValues[1] --> returnValue of sub(vec3(1.100000, 2.200000, 3.300000), vec3(1.200000, 1.000000, 1.000000))
+		// depth = 1 / argument index = 1: sub(vec3(1.100000, 2.200000, 3.300000), vec3(1.200000, 1.000000, 1.000000))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of vec3(1.1, 2.2, 3.3)
-			// argumentValues[1] --> returnValue of vec3(1.2, 1.0, 1.0)
-			// depth = 2 / argument index = 0: vec3(1.1, 2.2, 3.3)
+			// argumentValues[0] --> returnValue of vec3(1.100000, 2.200000, 3.300000)
+			// argumentValues[1] --> returnValue of vec3(1.200000, 1.000000, 1.000000)
+			// depth = 2 / argument index = 0: vec3(1.100000, 2.200000, 3.300000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
@@ -4081,7 +4103,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// depth = 2 / argument index = 1: vec3(1.2, 1.0, 1.0)
+			// depth = 2 / argument index = 1: vec3(1.200000, 1.000000, 1.000000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
@@ -4115,7 +4137,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 51
-	// console.log("vec3(20, 10, 5) / vec3(1.5, 2.5, 3.5): ", div(vec3(20, 10, 5), vec3(1.5, 2.5, 3.5)))
+	// console.log("vec3(20, 10, 5) / vec3(1.5, 2.5, 3.5): ", div(vec3(20, 10, 5), vec3(1.500000, 2.500000, 3.500000)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[51];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -4124,15 +4146,15 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("vec3(20, 10, 5) / vec3(1.5, 2.5, 3.5): "));
-		// argumentValues[1] --> returnValue of div(vec3(20, 10, 5), vec3(1.5, 2.5, 3.5))
-		// depth = 1 / argument index = 1: div(vec3(20, 10, 5), vec3(1.5, 2.5, 3.5))
+		// argumentValues[1] --> returnValue of div(vec3(20, 10, 5), vec3(1.500000, 2.500000, 3.500000))
+		// depth = 1 / argument index = 1: div(vec3(20, 10, 5), vec3(1.500000, 2.500000, 3.500000))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
 			// argumentValues[0] --> returnValue of vec3(20, 10, 5)
-			// argumentValues[1] --> returnValue of vec3(1.5, 2.5, 3.5)
+			// argumentValues[1] --> returnValue of vec3(1.500000, 2.500000, 3.500000)
 			// depth = 2 / argument index = 0: vec3(20, 10, 5)
 			{
 				// required method code arguments
@@ -4156,7 +4178,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// depth = 2 / argument index = 1: vec3(1.5, 2.5, 3.5)
+			// depth = 2 / argument index = 1: vec3(1.500000, 2.500000, 3.500000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
@@ -4190,7 +4212,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 52
-	// console.log("vec3(20, 10, 5) * vec3(1.5, 2.5, 3.5)): ", mul(vec3(20, 10, 5), vec3(1.5, 2.5, 3.5)))
+	// console.log("vec3(20, 10, 5) * vec3(1.5, 2.5, 3.5)): ", mul(vec3(20, 10, 5), vec3(1.500000, 2.500000, 3.500000)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[52];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -4199,15 +4221,15 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("vec3(20, 10, 5) * vec3(1.5, 2.5, 3.5)): "));
-		// argumentValues[1] --> returnValue of mul(vec3(20, 10, 5), vec3(1.5, 2.5, 3.5))
-		// depth = 1 / argument index = 1: mul(vec3(20, 10, 5), vec3(1.5, 2.5, 3.5))
+		// argumentValues[1] --> returnValue of mul(vec3(20, 10, 5), vec3(1.500000, 2.500000, 3.500000))
+		// depth = 1 / argument index = 1: mul(vec3(20, 10, 5), vec3(1.500000, 2.500000, 3.500000))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
 			// argumentValues[0] --> returnValue of vec3(20, 10, 5)
-			// argumentValues[1] --> returnValue of vec3(1.5, 2.5, 3.5)
+			// argumentValues[1] --> returnValue of vec3(1.500000, 2.500000, 3.500000)
 			// depth = 2 / argument index = 0: vec3(20, 10, 5)
 			{
 				// required method code arguments
@@ -4231,7 +4253,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// depth = 2 / argument index = 1: vec3(1.5, 2.5, 3.5)
+			// depth = 2 / argument index = 1: vec3(1.500000, 2.500000, 3.500000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
@@ -4420,7 +4442,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 58
-	// console.log("vec4.computeLength(vec4(20, 10, 5, 2.5)): ", vec4.computeLength(vec4(20, 10, 5, 2.5)))
+	// console.log("vec4.computeLength(vec4(20, 10, 5, 2.5)): ", vec4.computeLength(vec4(20, 10, 5, 2.500000)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[58];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -4429,15 +4451,15 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("vec4.computeLength(vec4(20, 10, 5, 2.5)): "));
-		// argumentValues[1] --> returnValue of vec4.computeLength(vec4(20, 10, 5, 2.5))
-		// depth = 1 / argument index = 1: vec4.computeLength(vec4(20, 10, 5, 2.5))
+		// argumentValues[1] --> returnValue of vec4.computeLength(vec4(20, 10, 5, 2.500000))
+		// depth = 1 / argument index = 1: vec4.computeLength(vec4(20, 10, 5, 2.500000))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 1> argumentValues;
 			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of vec4(20, 10, 5, 2.5)
-			// depth = 2 / argument index = 0: vec4(20, 10, 5, 2.5)
+			// argumentValues[0] --> returnValue of vec4(20, 10, 5, 2.500000)
+			// depth = 2 / argument index = 0: vec4(20, 10, 5, 2.500000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
@@ -4480,7 +4502,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 59
-	// console.log("vec4.computeLengthSquared(vec3(20, 10, 5)): ", vec4.computeLengthSquared(vec4(20, 10, 5, 2.5)))
+	// console.log("vec4.computeLengthSquared(vec3(20, 10, 5)): ", vec4.computeLengthSquared(vec4(20, 10, 5, 2.500000)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[59];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -4489,15 +4511,15 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("vec4.computeLengthSquared(vec3(20, 10, 5)): "));
-		// argumentValues[1] --> returnValue of vec4.computeLengthSquared(vec4(20, 10, 5, 2.5))
-		// depth = 1 / argument index = 1: vec4.computeLengthSquared(vec4(20, 10, 5, 2.5))
+		// argumentValues[1] --> returnValue of vec4.computeLengthSquared(vec4(20, 10, 5, 2.500000))
+		// depth = 1 / argument index = 1: vec4.computeLengthSquared(vec4(20, 10, 5, 2.500000))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 1> argumentValues;
 			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of vec4(20, 10, 5, 2.5)
-			// depth = 2 / argument index = 0: vec4(20, 10, 5, 2.5)
+			// argumentValues[0] --> returnValue of vec4(20, 10, 5, 2.500000)
+			// depth = 2 / argument index = 0: vec4(20, 10, 5, 2.500000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
@@ -4929,7 +4951,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 66
-	// console.log("vec4(1.1, 2.2, 3.3, 1.0) - vec4(1.2, 1.0, 1.0, 1.0): ", sub(vec4(1.1, 2.2, 3.3, 1.0), vec4(1.2, 1.0, 1.0, 1.0)))
+	// console.log("vec4(1.1, 2.2, 3.3, 1.0) - vec4(1.2, 1.0, 1.0, 1.0): ", sub(vec4(1.100000, 2.200000, 3.300000, 1.000000), vec4(1.200000, 1.000000, 1.000000, 1.000000)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[66];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -4938,16 +4960,16 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("vec4(1.1, 2.2, 3.3, 1.0) - vec4(1.2, 1.0, 1.0, 1.0): "));
-		// argumentValues[1] --> returnValue of sub(vec4(1.1, 2.2, 3.3, 1.0), vec4(1.2, 1.0, 1.0, 1.0))
-		// depth = 1 / argument index = 1: sub(vec4(1.1, 2.2, 3.3, 1.0), vec4(1.2, 1.0, 1.0, 1.0))
+		// argumentValues[1] --> returnValue of sub(vec4(1.100000, 2.200000, 3.300000, 1.000000), vec4(1.200000, 1.000000, 1.000000, 1.000000))
+		// depth = 1 / argument index = 1: sub(vec4(1.100000, 2.200000, 3.300000, 1.000000), vec4(1.200000, 1.000000, 1.000000, 1.000000))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of vec4(1.1, 2.2, 3.3, 1.0)
-			// argumentValues[1] --> returnValue of vec4(1.2, 1.0, 1.0, 1.0)
-			// depth = 2 / argument index = 0: vec4(1.1, 2.2, 3.3, 1.0)
+			// argumentValues[0] --> returnValue of vec4(1.100000, 2.200000, 3.300000, 1.000000)
+			// argumentValues[1] --> returnValue of vec4(1.200000, 1.000000, 1.000000, 1.000000)
+			// depth = 2 / argument index = 0: vec4(1.100000, 2.200000, 3.300000, 1.000000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
@@ -4973,7 +4995,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// depth = 2 / argument index = 1: vec4(1.2, 1.0, 1.0, 1.0)
+			// depth = 2 / argument index = 1: vec4(1.200000, 1.000000, 1.000000, 1.000000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
@@ -5010,7 +5032,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 67
-	// console.log("vec4(20, 10, 5, 1) / vec4(1.5, 2.5, 3.5, 1): ", div(vec4(20, 10, 5, 1), vec4(1.5, 2.5, 3.5, 1)))
+	// console.log("vec4(20, 10, 5, 1) / vec4(1.5, 2.5, 3.5, 1): ", div(vec4(20, 10, 5, 1), vec4(1.500000, 2.500000, 3.500000, 1)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[67];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -5019,15 +5041,15 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("vec4(20, 10, 5, 1) / vec4(1.5, 2.5, 3.5, 1): "));
-		// argumentValues[1] --> returnValue of div(vec4(20, 10, 5, 1), vec4(1.5, 2.5, 3.5, 1))
-		// depth = 1 / argument index = 1: div(vec4(20, 10, 5, 1), vec4(1.5, 2.5, 3.5, 1))
+		// argumentValues[1] --> returnValue of div(vec4(20, 10, 5, 1), vec4(1.500000, 2.500000, 3.500000, 1))
+		// depth = 1 / argument index = 1: div(vec4(20, 10, 5, 1), vec4(1.500000, 2.500000, 3.500000, 1))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
 			// argumentValues[0] --> returnValue of vec4(20, 10, 5, 1)
-			// argumentValues[1] --> returnValue of vec4(1.5, 2.5, 3.5, 1)
+			// argumentValues[1] --> returnValue of vec4(1.500000, 2.500000, 3.500000, 1)
 			// depth = 2 / argument index = 0: vec4(20, 10, 5, 1)
 			{
 				// required method code arguments
@@ -5054,7 +5076,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// depth = 2 / argument index = 1: vec4(1.5, 2.5, 3.5, 1)
+			// depth = 2 / argument index = 1: vec4(1.500000, 2.500000, 3.500000, 1)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
@@ -5091,7 +5113,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 68
-	// console.log("vec4(20, 10, 5, 1) * vec4(1.5, 2.5, 3.5, 1)): ", mul(vec4(20, 10, 5, 1), vec4(1.5, 2.5, 3.5, 1)))
+	// console.log("vec4(20, 10, 5, 1) * vec4(1.5, 2.5, 3.5, 1)): ", mul(vec4(20, 10, 5, 1), vec4(1.500000, 2.500000, 3.500000, 1)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[68];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -5100,15 +5122,15 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("vec4(20, 10, 5, 1) * vec4(1.5, 2.5, 3.5, 1)): "));
-		// argumentValues[1] --> returnValue of mul(vec4(20, 10, 5, 1), vec4(1.5, 2.5, 3.5, 1))
-		// depth = 1 / argument index = 1: mul(vec4(20, 10, 5, 1), vec4(1.5, 2.5, 3.5, 1))
+		// argumentValues[1] --> returnValue of mul(vec4(20, 10, 5, 1), vec4(1.500000, 2.500000, 3.500000, 1))
+		// depth = 1 / argument index = 1: mul(vec4(20, 10, 5, 1), vec4(1.500000, 2.500000, 3.500000, 1))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
 			// argumentValues[0] --> returnValue of vec4(20, 10, 5, 1)
-			// argumentValues[1] --> returnValue of vec4(1.5, 2.5, 3.5, 1)
+			// argumentValues[1] --> returnValue of vec4(1.500000, 2.500000, 3.500000, 1)
 			// depth = 2 / argument index = 0: vec4(20, 10, 5, 1)
 			{
 				// required method code arguments
@@ -5135,7 +5157,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// depth = 2 / argument index = 1: vec4(1.5, 2.5, 3.5, 1)
+			// depth = 2 / argument index = 1: vec4(1.500000, 2.500000, 3.500000, 1)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
@@ -5360,7 +5382,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 75
-	// console.log("quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0): ", quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0))
+	// console.log("quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0): ", quaternion.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[75];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -5369,16 +5391,16 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0): "));
-		// argumentValues[1] --> returnValue of quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0)
-		// depth = 1 / argument index = 1: quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0)
+		// argumentValues[1] --> returnValue of quaternion.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000)
+		// depth = 1 / argument index = 1: quaternion.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of vec3(0.0, 1.0, 0.0)
+			// argumentValues[0] --> returnValue of vec3(0.000000, 1.000000, 0.000000)
 			argumentValues[1].setValue(90.000000f);
-			// depth = 2 / argument index = 0: vec3(0.0, 1.0, 0.0)
+			// depth = 2 / argument index = 0: vec3(0.000000, 1.000000, 0.000000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
@@ -5420,7 +5442,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 76
-	// console.log("quaternion.normalize(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0)): ", quaternion.normalize(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0)))
+	// console.log("quaternion.normalize(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0)): ", quaternion.normalize(quaternion.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[76];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -5429,23 +5451,23 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("quaternion.normalize(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0)): "));
-		// argumentValues[1] --> returnValue of quaternion.normalize(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0))
-		// depth = 1 / argument index = 1: quaternion.normalize(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0))
+		// argumentValues[1] --> returnValue of quaternion.normalize(quaternion.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000))
+		// depth = 1 / argument index = 1: quaternion.normalize(quaternion.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 1> argumentValues;
 			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0)
-			// depth = 2 / argument index = 0: quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0)
+			// argumentValues[0] --> returnValue of quaternion.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000)
+			// depth = 2 / argument index = 0: quaternion.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
 				array<ScriptVariable, 2> argumentValues;
 				array<ScriptVariable, 2>& argumentValuesD2AIDX0 = argumentValues;
-				// argumentValues[0] --> returnValue of vec3(0.0, 1.0, 0.0)
+				// argumentValues[0] --> returnValue of vec3(0.000000, 1.000000, 0.000000)
 				argumentValues[1].setValue(90.000000f);
-				// depth = 3 / argument index = 0: vec3(0.0, 1.0, 0.0)
+				// depth = 3 / argument index = 0: vec3(0.000000, 1.000000, 0.000000)
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX0[0];
@@ -5496,7 +5518,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 77
-	// console.log("quaternion.multiply(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0), quaternion.rotate(vec3(1.0, 0.0, 0.0), 90.0)): ", quaternion.multiply(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0), quaternion.rotate(vec3(1.0, 0.0, 0.0), 90.0)))
+	// console.log("quaternion.multiply(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0), quaternion.rotate(vec3(1.0, 0.0, 0.0), 90.0)): ", quaternion.multiply(quaternion.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000), quaternion.rotate(vec3(1.000000, 0.000000, 0.000000), 90.000000)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[77];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -5505,24 +5527,24 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("quaternion.multiply(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0), quaternion.rotate(vec3(1.0, 0.0, 0.0), 90.0)): "));
-		// argumentValues[1] --> returnValue of quaternion.multiply(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0), quaternion.rotate(vec3(1.0, 0.0, 0.0), 90.0))
-		// depth = 1 / argument index = 1: quaternion.multiply(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0), quaternion.rotate(vec3(1.0, 0.0, 0.0), 90.0))
+		// argumentValues[1] --> returnValue of quaternion.multiply(quaternion.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000), quaternion.rotate(vec3(1.000000, 0.000000, 0.000000), 90.000000))
+		// depth = 1 / argument index = 1: quaternion.multiply(quaternion.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000), quaternion.rotate(vec3(1.000000, 0.000000, 0.000000), 90.000000))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0)
-			// argumentValues[1] --> returnValue of quaternion.rotate(vec3(1.0, 0.0, 0.0), 90.0)
-			// depth = 2 / argument index = 0: quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0)
+			// argumentValues[0] --> returnValue of quaternion.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000)
+			// argumentValues[1] --> returnValue of quaternion.rotate(vec3(1.000000, 0.000000, 0.000000), 90.000000)
+			// depth = 2 / argument index = 0: quaternion.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
 				array<ScriptVariable, 2> argumentValues;
 				array<ScriptVariable, 2>& argumentValuesD2AIDX0 = argumentValues;
-				// argumentValues[0] --> returnValue of vec3(0.0, 1.0, 0.0)
+				// argumentValues[0] --> returnValue of vec3(0.000000, 1.000000, 0.000000)
 				argumentValues[1].setValue(90.000000f);
-				// depth = 3 / argument index = 0: vec3(0.0, 1.0, 0.0)
+				// depth = 3 / argument index = 0: vec3(0.000000, 1.000000, 0.000000)
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX0[0];
@@ -5556,15 +5578,15 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// depth = 2 / argument index = 1: quaternion.rotate(vec3(1.0, 0.0, 0.0), 90.0)
+			// depth = 2 / argument index = 1: quaternion.rotate(vec3(1.000000, 0.000000, 0.000000), 90.000000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
 				array<ScriptVariable, 2> argumentValues;
 				array<ScriptVariable, 2>& argumentValuesD2AIDX1 = argumentValues;
-				// argumentValues[0] --> returnValue of vec3(1.0, 0.0, 0.0)
+				// argumentValues[0] --> returnValue of vec3(1.000000, 0.000000, 0.000000)
 				argumentValues[1].setValue(90.000000f);
-				// depth = 3 / argument index = 0: vec3(1.0, 0.0, 0.0)
+				// depth = 3 / argument index = 0: vec3(1.000000, 0.000000, 0.000000)
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX1[0];
@@ -5629,7 +5651,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 78
-	// console.log("quaternion.multiply(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0), vec3(0.0, 0.0, 1.0)): ", quaternion.multiply(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0), vec3(0.0, 0.0, 1.0)))
+	// console.log("quaternion.multiply(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0), vec3(0.0, 0.0, 1.0)): ", quaternion.multiply(quaternion.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000), vec3(0.000000, 0.000000, 1.000000)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[78];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -5638,24 +5660,24 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("quaternion.multiply(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0), vec3(0.0, 0.0, 1.0)): "));
-		// argumentValues[1] --> returnValue of quaternion.multiply(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0), vec3(0.0, 0.0, 1.0))
-		// depth = 1 / argument index = 1: quaternion.multiply(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0), vec3(0.0, 0.0, 1.0))
+		// argumentValues[1] --> returnValue of quaternion.multiply(quaternion.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000), vec3(0.000000, 0.000000, 1.000000))
+		// depth = 1 / argument index = 1: quaternion.multiply(quaternion.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000), vec3(0.000000, 0.000000, 1.000000))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0)
-			// argumentValues[1] --> returnValue of vec3(0.0, 0.0, 1.0)
-			// depth = 2 / argument index = 0: quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0)
+			// argumentValues[0] --> returnValue of quaternion.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000)
+			// argumentValues[1] --> returnValue of vec3(0.000000, 0.000000, 1.000000)
+			// depth = 2 / argument index = 0: quaternion.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
 				array<ScriptVariable, 2> argumentValues;
 				array<ScriptVariable, 2>& argumentValuesD2AIDX0 = argumentValues;
-				// argumentValues[0] --> returnValue of vec3(0.0, 1.0, 0.0)
+				// argumentValues[0] --> returnValue of vec3(0.000000, 1.000000, 0.000000)
 				argumentValues[1].setValue(90.000000f);
-				// depth = 3 / argument index = 0: vec3(0.0, 1.0, 0.0)
+				// depth = 3 / argument index = 0: vec3(0.000000, 1.000000, 0.000000)
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX0[0];
@@ -5689,7 +5711,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// depth = 2 / argument index = 1: vec3(0.0, 0.0, 1.0)
+			// depth = 2 / argument index = 1: vec3(0.000000, 0.000000, 1.000000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
@@ -5743,7 +5765,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 79
-	// console.log("quaternion.computeMatrix(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0)): ", quaternion.computeMatrix(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0)))
+	// console.log("quaternion.computeMatrix(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0)): ", quaternion.computeMatrix(quaternion.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[79];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -5752,23 +5774,23 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("quaternion.computeMatrix(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0)): "));
-		// argumentValues[1] --> returnValue of quaternion.computeMatrix(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0))
-		// depth = 1 / argument index = 1: quaternion.computeMatrix(quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0))
+		// argumentValues[1] --> returnValue of quaternion.computeMatrix(quaternion.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000))
+		// depth = 1 / argument index = 1: quaternion.computeMatrix(quaternion.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 1> argumentValues;
 			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0)
-			// depth = 2 / argument index = 0: quaternion.rotate(vec3(0.0, 1.0, 0.0), 90.0)
+			// argumentValues[0] --> returnValue of quaternion.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000)
+			// depth = 2 / argument index = 0: quaternion.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
 				array<ScriptVariable, 2> argumentValues;
 				array<ScriptVariable, 2>& argumentValuesD2AIDX0 = argumentValues;
-				// argumentValues[0] --> returnValue of vec3(0.0, 1.0, 0.0)
+				// argumentValues[0] --> returnValue of vec3(0.000000, 1.000000, 0.000000)
 				argumentValues[1].setValue(90.000000f);
-				// depth = 3 / argument index = 0: vec3(0.0, 1.0, 0.0)
+				// depth = 3 / argument index = 0: vec3(0.000000, 1.000000, 0.000000)
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX0[0];
@@ -5897,7 +5919,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 84
-	// console.log("mat4.translate(vec3(1.0, 2.0, 3.0)): ", mat4.translate(vec3(1.0, 2.0, 3.0)))
+	// console.log("mat4.translate(vec3(1.0, 2.0, 3.0)): ", mat4.translate(vec3(1.000000, 2.000000, 3.000000)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[84];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -5906,15 +5928,15 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("mat4.translate(vec3(1.0, 2.0, 3.0)): "));
-		// argumentValues[1] --> returnValue of mat4.translate(vec3(1.0, 2.0, 3.0))
-		// depth = 1 / argument index = 1: mat4.translate(vec3(1.0, 2.0, 3.0))
+		// argumentValues[1] --> returnValue of mat4.translate(vec3(1.000000, 2.000000, 3.000000))
+		// depth = 1 / argument index = 1: mat4.translate(vec3(1.000000, 2.000000, 3.000000))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 1> argumentValues;
 			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of vec3(1.0, 2.0, 3.0)
-			// depth = 2 / argument index = 0: vec3(1.0, 2.0, 3.0)
+			// argumentValues[0] --> returnValue of vec3(1.000000, 2.000000, 3.000000)
+			// depth = 2 / argument index = 0: vec3(1.000000, 2.000000, 3.000000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
@@ -5954,7 +5976,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 85
-	// console.log("mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0): ", mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0))
+	// console.log("mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0): ", mat4.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[85];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -5963,16 +5985,16 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0): "));
-		// argumentValues[1] --> returnValue of mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0)
-		// depth = 1 / argument index = 1: mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0)
+		// argumentValues[1] --> returnValue of mat4.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000)
+		// depth = 1 / argument index = 1: mat4.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of vec3(0.0, 1.0, 0.0)
+			// argumentValues[0] --> returnValue of vec3(0.000000, 1.000000, 0.000000)
 			argumentValues[1].setValue(90.000000f);
-			// depth = 2 / argument index = 0: vec3(0.0, 1.0, 0.0)
+			// depth = 2 / argument index = 0: vec3(0.000000, 1.000000, 0.000000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
@@ -6014,7 +6036,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 86
-	// console.log("mat4.scale(vec3(1.0, 2.0, 3.0)): ", mat4.scale(vec3(1.0, 2.0, 3.0)))
+	// console.log("mat4.scale(vec3(1.0, 2.0, 3.0)): ", mat4.scale(vec3(1.000000, 2.000000, 3.000000)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[86];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -6023,15 +6045,15 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("mat4.scale(vec3(1.0, 2.0, 3.0)): "));
-		// argumentValues[1] --> returnValue of mat4.scale(vec3(1.0, 2.0, 3.0))
-		// depth = 1 / argument index = 1: mat4.scale(vec3(1.0, 2.0, 3.0))
+		// argumentValues[1] --> returnValue of mat4.scale(vec3(1.000000, 2.000000, 3.000000))
+		// depth = 1 / argument index = 1: mat4.scale(vec3(1.000000, 2.000000, 3.000000))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 1> argumentValues;
 			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of vec3(1.0, 2.0, 3.0)
-			// depth = 2 / argument index = 0: vec3(1.0, 2.0, 3.0)
+			// argumentValues[0] --> returnValue of vec3(1.000000, 2.000000, 3.000000)
+			// depth = 2 / argument index = 0: vec3(1.000000, 2.000000, 3.000000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
@@ -6075,7 +6097,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 87
-	// console.log("mat4.scale(3.0): ", mat4.scale(3.0))
+	// console.log("mat4.scale(3.0): ", mat4.scale(3.000000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[87];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -6084,8 +6106,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("mat4.scale(3.0): "));
-		// argumentValues[1] --> returnValue of mat4.scale(3.0)
-		// depth = 1 / argument index = 1: mat4.scale(3.0)
+		// argumentValues[1] --> returnValue of mat4.scale(3.000000)
+		// depth = 1 / argument index = 1: mat4.scale(3.000000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -6113,7 +6135,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 88
-	// console.log("mat4.invert(mat4.scale(3.0)): ", mat4.invert(mat4.scale(3.0)))
+	// console.log("mat4.invert(mat4.scale(3.0)): ", mat4.invert(mat4.scale(3.000000)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[88];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -6122,15 +6144,15 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("mat4.invert(mat4.scale(3.0)): "));
-		// argumentValues[1] --> returnValue of mat4.invert(mat4.scale(3.0))
-		// depth = 1 / argument index = 1: mat4.invert(mat4.scale(3.0))
+		// argumentValues[1] --> returnValue of mat4.invert(mat4.scale(3.000000))
+		// depth = 1 / argument index = 1: mat4.invert(mat4.scale(3.000000))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 1> argumentValues;
 			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of mat4.scale(3.0)
-			// depth = 2 / argument index = 0: mat4.scale(3.0)
+			// argumentValues[0] --> returnValue of mat4.scale(3.000000)
+			// depth = 2 / argument index = 0: mat4.scale(3.000000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
@@ -6167,7 +6189,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 89
-	// console.log("mat4.computeEulerAngles(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0)): ", mat4.computeEulerAngles(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0)))
+	// console.log("mat4.computeEulerAngles(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0)): ", mat4.computeEulerAngles(mat4.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[89];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -6176,23 +6198,23 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("mat4.computeEulerAngles(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0)): "));
-		// argumentValues[1] --> returnValue of mat4.computeEulerAngles(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0))
-		// depth = 1 / argument index = 1: mat4.computeEulerAngles(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0))
+		// argumentValues[1] --> returnValue of mat4.computeEulerAngles(mat4.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000))
+		// depth = 1 / argument index = 1: mat4.computeEulerAngles(mat4.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 1> argumentValues;
 			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0)
-			// depth = 2 / argument index = 0: mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0)
+			// argumentValues[0] --> returnValue of mat4.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000)
+			// depth = 2 / argument index = 0: mat4.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
 				array<ScriptVariable, 2> argumentValues;
 				array<ScriptVariable, 2>& argumentValuesD2AIDX0 = argumentValues;
-				// argumentValues[0] --> returnValue of vec3(0.0, 1.0, 0.0)
+				// argumentValues[0] --> returnValue of vec3(0.000000, 1.000000, 0.000000)
 				argumentValues[1].setValue(90.000000f);
-				// depth = 3 / argument index = 0: vec3(0.0, 1.0, 0.0)
+				// depth = 3 / argument index = 0: vec3(0.000000, 1.000000, 0.000000)
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX0[0];
@@ -6243,7 +6265,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 90
-	// console.log("mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.rotate(vec3(1.0, 0.0, 0.0), 90.0)): ", mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.rotate(vec3(1.0, 0.0, 0.0), 90.0)))
+	// console.log("mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.rotate(vec3(1.0, 0.0, 0.0), 90.0)): ", mat4.multiply(mat4.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000), mat4.rotate(vec3(1.000000, 0.000000, 0.000000), 90.000000)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[90];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -6252,24 +6274,24 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.rotate(vec3(1.0, 0.0, 0.0), 90.0)): "));
-		// argumentValues[1] --> returnValue of mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.rotate(vec3(1.0, 0.0, 0.0), 90.0))
-		// depth = 1 / argument index = 1: mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.rotate(vec3(1.0, 0.0, 0.0), 90.0))
+		// argumentValues[1] --> returnValue of mat4.multiply(mat4.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000), mat4.rotate(vec3(1.000000, 0.000000, 0.000000), 90.000000))
+		// depth = 1 / argument index = 1: mat4.multiply(mat4.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000), mat4.rotate(vec3(1.000000, 0.000000, 0.000000), 90.000000))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0)
-			// argumentValues[1] --> returnValue of mat4.rotate(vec3(1.0, 0.0, 0.0), 90.0)
-			// depth = 2 / argument index = 0: mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0)
+			// argumentValues[0] --> returnValue of mat4.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000)
+			// argumentValues[1] --> returnValue of mat4.rotate(vec3(1.000000, 0.000000, 0.000000), 90.000000)
+			// depth = 2 / argument index = 0: mat4.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
 				array<ScriptVariable, 2> argumentValues;
 				array<ScriptVariable, 2>& argumentValuesD2AIDX0 = argumentValues;
-				// argumentValues[0] --> returnValue of vec3(0.0, 1.0, 0.0)
+				// argumentValues[0] --> returnValue of vec3(0.000000, 1.000000, 0.000000)
 				argumentValues[1].setValue(90.000000f);
-				// depth = 3 / argument index = 0: vec3(0.0, 1.0, 0.0)
+				// depth = 3 / argument index = 0: vec3(0.000000, 1.000000, 0.000000)
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX0[0];
@@ -6303,15 +6325,15 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// depth = 2 / argument index = 1: mat4.rotate(vec3(1.0, 0.0, 0.0), 90.0)
+			// depth = 2 / argument index = 1: mat4.rotate(vec3(1.000000, 0.000000, 0.000000), 90.000000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
 				array<ScriptVariable, 2> argumentValues;
 				array<ScriptVariable, 2>& argumentValuesD2AIDX1 = argumentValues;
-				// argumentValues[0] --> returnValue of vec3(1.0, 0.0, 0.0)
+				// argumentValues[0] --> returnValue of vec3(1.000000, 0.000000, 0.000000)
 				argumentValues[1].setValue(90.000000f);
-				// depth = 3 / argument index = 0: vec3(1.0, 0.0, 0.0)
+				// depth = 3 / argument index = 0: vec3(1.000000, 0.000000, 0.000000)
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX1[0];
@@ -6380,7 +6402,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 91
-	// console.log("mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), vec3(0.0, 0.0, 1.0)): ", mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), vec3(0.0, 0.0, 1.0)))
+	// console.log("mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), vec3(0.0, 0.0, 1.0)): ", mat4.multiply(mat4.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000), vec3(0.000000, 0.000000, 1.000000)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[91];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -6389,24 +6411,24 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), vec3(0.0, 0.0, 1.0)): "));
-		// argumentValues[1] --> returnValue of mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), vec3(0.0, 0.0, 1.0))
-		// depth = 1 / argument index = 1: mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), vec3(0.0, 0.0, 1.0))
+		// argumentValues[1] --> returnValue of mat4.multiply(mat4.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000), vec3(0.000000, 0.000000, 1.000000))
+		// depth = 1 / argument index = 1: mat4.multiply(mat4.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000), vec3(0.000000, 0.000000, 1.000000))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0)
-			// argumentValues[1] --> returnValue of vec3(0.0, 0.0, 1.0)
-			// depth = 2 / argument index = 0: mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0)
+			// argumentValues[0] --> returnValue of mat4.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000)
+			// argumentValues[1] --> returnValue of vec3(0.000000, 0.000000, 1.000000)
+			// depth = 2 / argument index = 0: mat4.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
 				array<ScriptVariable, 2> argumentValues;
 				array<ScriptVariable, 2>& argumentValuesD2AIDX0 = argumentValues;
-				// argumentValues[0] --> returnValue of vec3(0.0, 1.0, 0.0)
+				// argumentValues[0] --> returnValue of vec3(0.000000, 1.000000, 0.000000)
 				argumentValues[1].setValue(90.000000f);
-				// depth = 3 / argument index = 0: vec3(0.0, 1.0, 0.0)
+				// depth = 3 / argument index = 0: vec3(0.000000, 1.000000, 0.000000)
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX0[0];
@@ -6440,7 +6462,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// depth = 2 / argument index = 1: vec3(0.0, 0.0, 1.0)
+			// depth = 2 / argument index = 1: vec3(0.000000, 0.000000, 1.000000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
@@ -6498,7 +6520,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 92
-	// console.log("mat4.multiply(mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.translate(vec3(1.0, 2.0, 3.0))), vec4(0.0, 0.0, 1.0, 0.0)): ", mat4.multiply(mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.translate(vec3(1.0, 2.0, 3.0))), vec4(0.0, 0.0, 1.0, 0.0)))
+	// console.log("mat4.multiply(mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.translate(vec3(1.0, 2.0, 3.0))), vec4(0.0, 0.0, 1.0, 0.0)): ", mat4.multiply(mat4.multiply(mat4.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000), mat4.translate(vec3(1.000000, 2.000000, 3.000000))), vec4(0.000000, 0.000000, 1.000000, 0.000000)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[92];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -6507,32 +6529,32 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("mat4.multiply(mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.translate(vec3(1.0, 2.0, 3.0))), vec4(0.0, 0.0, 1.0, 0.0)): "));
-		// argumentValues[1] --> returnValue of mat4.multiply(mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.translate(vec3(1.0, 2.0, 3.0))), vec4(0.0, 0.0, 1.0, 0.0))
-		// depth = 1 / argument index = 1: mat4.multiply(mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.translate(vec3(1.0, 2.0, 3.0))), vec4(0.0, 0.0, 1.0, 0.0))
+		// argumentValues[1] --> returnValue of mat4.multiply(mat4.multiply(mat4.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000), mat4.translate(vec3(1.000000, 2.000000, 3.000000))), vec4(0.000000, 0.000000, 1.000000, 0.000000))
+		// depth = 1 / argument index = 1: mat4.multiply(mat4.multiply(mat4.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000), mat4.translate(vec3(1.000000, 2.000000, 3.000000))), vec4(0.000000, 0.000000, 1.000000, 0.000000))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.translate(vec3(1.0, 2.0, 3.0)))
-			// argumentValues[1] --> returnValue of vec4(0.0, 0.0, 1.0, 0.0)
-			// depth = 2 / argument index = 0: mat4.multiply(mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0), mat4.translate(vec3(1.0, 2.0, 3.0)))
+			// argumentValues[0] --> returnValue of mat4.multiply(mat4.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000), mat4.translate(vec3(1.000000, 2.000000, 3.000000)))
+			// argumentValues[1] --> returnValue of vec4(0.000000, 0.000000, 1.000000, 0.000000)
+			// depth = 2 / argument index = 0: mat4.multiply(mat4.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000), mat4.translate(vec3(1.000000, 2.000000, 3.000000)))
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
 				array<ScriptVariable, 2> argumentValues;
 				array<ScriptVariable, 2>& argumentValuesD2AIDX0 = argumentValues;
-				// argumentValues[0] --> returnValue of mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0)
-				// argumentValues[1] --> returnValue of mat4.translate(vec3(1.0, 2.0, 3.0))
-				// depth = 3 / argument index = 0: mat4.rotate(vec3(0.0, 1.0, 0.0), 90.0)
+				// argumentValues[0] --> returnValue of mat4.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000)
+				// argumentValues[1] --> returnValue of mat4.translate(vec3(1.000000, 2.000000, 3.000000))
+				// depth = 3 / argument index = 0: mat4.rotate(vec3(0.000000, 1.000000, 0.000000), 90.000000)
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX0[0];
 					array<ScriptVariable, 2> argumentValues;
 					array<ScriptVariable, 2>& argumentValuesD3AIDX0 = argumentValues;
-					// argumentValues[0] --> returnValue of vec3(0.0, 1.0, 0.0)
+					// argumentValues[0] --> returnValue of vec3(0.000000, 1.000000, 0.000000)
 					argumentValues[1].setValue(90.000000f);
-					// depth = 4 / argument index = 0: vec3(0.0, 1.0, 0.0)
+					// depth = 4 / argument index = 0: vec3(0.000000, 1.000000, 0.000000)
 					{
 						// required method code arguments
 						ScriptVariable& returnValue = argumentValuesD3AIDX0[0];
@@ -6566,14 +6588,14 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 						miniScript->startErrorScript(); return;
 					}
 				}
-				// depth = 3 / argument index = 1: mat4.translate(vec3(1.0, 2.0, 3.0))
+				// depth = 3 / argument index = 1: mat4.translate(vec3(1.000000, 2.000000, 3.000000))
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX0[1];
 					array<ScriptVariable, 1> argumentValues;
 					array<ScriptVariable, 1>& argumentValuesD3AIDX1 = argumentValues;
-					// argumentValues[0] --> returnValue of vec3(1.0, 2.0, 3.0)
-					// depth = 4 / argument index = 0: vec3(1.0, 2.0, 3.0)
+					// argumentValues[0] --> returnValue of vec3(1.000000, 2.000000, 3.000000)
+					// depth = 4 / argument index = 0: vec3(1.000000, 2.000000, 3.000000)
 					{
 						// required method code arguments
 						ScriptVariable& returnValue = argumentValuesD3AIDX1[0];
@@ -6632,7 +6654,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// depth = 2 / argument index = 1: vec4(0.0, 0.0, 1.0, 0.0)
+			// depth = 2 / argument index = 1: vec4(0.000000, 0.000000, 1.000000, 0.000000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
@@ -6771,7 +6793,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 97
-	// console.log("mat3.translate(vec2(1.0, 2.0)): ", mat3.translate(vec2(1.0, 2.0)))
+	// console.log("mat3.translate(vec2(1.0, 2.0)): ", mat3.translate(vec2(1.000000, 2.000000)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[97];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -6780,15 +6802,15 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("mat3.translate(vec2(1.0, 2.0)): "));
-		// argumentValues[1] --> returnValue of mat3.translate(vec2(1.0, 2.0))
-		// depth = 1 / argument index = 1: mat3.translate(vec2(1.0, 2.0))
+		// argumentValues[1] --> returnValue of mat3.translate(vec2(1.000000, 2.000000))
+		// depth = 1 / argument index = 1: mat3.translate(vec2(1.000000, 2.000000))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 1> argumentValues;
 			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of vec2(1.0, 2.0)
-			// depth = 2 / argument index = 0: vec2(1.0, 2.0)
+			// argumentValues[0] --> returnValue of vec2(1.000000, 2.000000)
+			// depth = 2 / argument index = 0: vec2(1.000000, 2.000000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
@@ -6825,7 +6847,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 98
-	// console.log("mat3.rotate(90.0): ", mat3.rotate(90.0))
+	// console.log("mat3.rotate(90.0): ", mat3.rotate(90.000000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[98];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -6834,8 +6856,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("mat3.rotate(90.0): "));
-		// argumentValues[1] --> returnValue of mat3.rotate(90.0)
-		// depth = 1 / argument index = 1: mat3.rotate(90.0)
+		// argumentValues[1] --> returnValue of mat3.rotate(90.000000)
+		// depth = 1 / argument index = 1: mat3.rotate(90.000000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -6859,7 +6881,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 99
-	// console.log("mat3.rotateAroundTextureCenter(90.0): ", mat3.rotateAroundTextureCenter(90.0))
+	// console.log("mat3.rotateAroundTextureCenter(90.0): ", mat3.rotateAroundTextureCenter(90.000000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[99];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -6868,8 +6890,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("mat3.rotateAroundTextureCenter(90.0): "));
-		// argumentValues[1] --> returnValue of mat3.rotateAroundTextureCenter(90.0)
-		// depth = 1 / argument index = 1: mat3.rotateAroundTextureCenter(90.0)
+		// argumentValues[1] --> returnValue of mat3.rotateAroundTextureCenter(90.000000)
+		// depth = 1 / argument index = 1: mat3.rotateAroundTextureCenter(90.000000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -6893,7 +6915,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 100
-	// console.log("mat3.rotateAroundPoint(vec2(0.5, 0.5), 90.0): ", mat3.rotateAroundPoint(vec2(0.5, 0.4), 90.0))
+	// console.log("mat3.rotateAroundPoint(vec2(0.5, 0.5), 90.0): ", mat3.rotateAroundPoint(vec2(0.500000, 0.400000), 90.000000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[100];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -6902,16 +6924,16 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("mat3.rotateAroundPoint(vec2(0.5, 0.5), 90.0): "));
-		// argumentValues[1] --> returnValue of mat3.rotateAroundPoint(vec2(0.5, 0.4), 90.0)
-		// depth = 1 / argument index = 1: mat3.rotateAroundPoint(vec2(0.5, 0.4), 90.0)
+		// argumentValues[1] --> returnValue of mat3.rotateAroundPoint(vec2(0.500000, 0.400000), 90.000000)
+		// depth = 1 / argument index = 1: mat3.rotateAroundPoint(vec2(0.500000, 0.400000), 90.000000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of vec2(0.5, 0.4)
+			// argumentValues[0] --> returnValue of vec2(0.500000, 0.400000)
 			argumentValues[1].setValue(90.000000f);
-			// depth = 2 / argument index = 0: vec2(0.5, 0.4)
+			// depth = 2 / argument index = 0: vec2(0.500000, 0.400000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
@@ -6950,7 +6972,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 101
-	// console.log("mat3.scale(vec2(1.0, 2.0)): ", mat3.scale(vec2(1.0, 2.0)))
+	// console.log("mat3.scale(vec2(1.0, 2.0)): ", mat3.scale(vec2(1.000000, 2.000000)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[101];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -6959,15 +6981,15 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("mat3.scale(vec2(1.0, 2.0)): "));
-		// argumentValues[1] --> returnValue of mat3.scale(vec2(1.0, 2.0))
-		// depth = 1 / argument index = 1: mat3.scale(vec2(1.0, 2.0))
+		// argumentValues[1] --> returnValue of mat3.scale(vec2(1.000000, 2.000000))
+		// depth = 1 / argument index = 1: mat3.scale(vec2(1.000000, 2.000000))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 1> argumentValues;
 			array<ScriptVariable, 1>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of vec2(1.0, 2.0)
-			// depth = 2 / argument index = 0: vec2(1.0, 2.0)
+			// argumentValues[0] --> returnValue of vec2(1.000000, 2.000000)
+			// depth = 2 / argument index = 0: vec2(1.000000, 2.000000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
@@ -7008,7 +7030,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 102
-	// console.log("mat3.scale(3.0): ", mat3.scale(3.0))
+	// console.log("mat3.scale(3.0): ", mat3.scale(3.000000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[102];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -7017,8 +7039,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("mat3.scale(3.0): "));
-		// argumentValues[1] --> returnValue of mat3.scale(3.0)
-		// depth = 1 / argument index = 1: mat3.scale(3.0)
+		// argumentValues[1] --> returnValue of mat3.scale(3.000000)
+		// depth = 1 / argument index = 1: mat3.scale(3.000000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -7046,7 +7068,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 103
-	// console.log("mat3.multiply(mat3.rotate(90.0), mat3.translate(vec2(1.0, 2.0))): ", mat3.multiply(mat3.rotate(90.0), mat3.translate(vec2(1.0, 2.0))))
+	// console.log("mat3.multiply(mat3.rotate(90.0), mat3.translate(vec2(1.0, 2.0))): ", mat3.multiply(mat3.rotate(90.000000), mat3.translate(vec2(1.000000, 2.000000))))
 	{
 		const ScriptStatement& statement = scripts[1].statements[103];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -7055,16 +7077,16 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("mat3.multiply(mat3.rotate(90.0), mat3.translate(vec2(1.0, 2.0))): "));
-		// argumentValues[1] --> returnValue of mat3.multiply(mat3.rotate(90.0), mat3.translate(vec2(1.0, 2.0)))
-		// depth = 1 / argument index = 1: mat3.multiply(mat3.rotate(90.0), mat3.translate(vec2(1.0, 2.0)))
+		// argumentValues[1] --> returnValue of mat3.multiply(mat3.rotate(90.000000), mat3.translate(vec2(1.000000, 2.000000)))
+		// depth = 1 / argument index = 1: mat3.multiply(mat3.rotate(90.000000), mat3.translate(vec2(1.000000, 2.000000)))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of mat3.rotate(90.0)
-			// argumentValues[1] --> returnValue of mat3.translate(vec2(1.0, 2.0))
-			// depth = 2 / argument index = 0: mat3.rotate(90.0)
+			// argumentValues[0] --> returnValue of mat3.rotate(90.000000)
+			// argumentValues[1] --> returnValue of mat3.translate(vec2(1.000000, 2.000000))
+			// depth = 2 / argument index = 0: mat3.rotate(90.000000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
@@ -7080,14 +7102,14 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// depth = 2 / argument index = 1: mat3.translate(vec2(1.0, 2.0))
+			// depth = 2 / argument index = 1: mat3.translate(vec2(1.000000, 2.000000))
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
 				array<ScriptVariable, 1> argumentValues;
 				array<ScriptVariable, 1>& argumentValuesD2AIDX1 = argumentValues;
-				// argumentValues[0] --> returnValue of vec2(1.0, 2.0)
-				// depth = 3 / argument index = 0: vec2(1.0, 2.0)
+				// argumentValues[0] --> returnValue of vec2(1.000000, 2.000000)
+				// depth = 3 / argument index = 0: vec2(1.000000, 2.000000)
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX1[0];
@@ -7147,7 +7169,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 104
-	// console.log("mat3.multiply(mat3.rotate(90.0), vec2(1.0, 2.0)): ", mat3.multiply(mat3.rotate(90.0), vec2(1.0, 2.0)))
+	// console.log("mat3.multiply(mat3.rotate(90.0), vec2(1.0, 2.0)): ", mat3.multiply(mat3.rotate(90.000000), vec2(1.000000, 2.000000)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[104];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -7156,16 +7178,16 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("mat3.multiply(mat3.rotate(90.0), vec2(1.0, 2.0)): "));
-		// argumentValues[1] --> returnValue of mat3.multiply(mat3.rotate(90.0), vec2(1.0, 2.0))
-		// depth = 1 / argument index = 1: mat3.multiply(mat3.rotate(90.0), vec2(1.0, 2.0))
+		// argumentValues[1] --> returnValue of mat3.multiply(mat3.rotate(90.000000), vec2(1.000000, 2.000000))
+		// depth = 1 / argument index = 1: mat3.multiply(mat3.rotate(90.000000), vec2(1.000000, 2.000000))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of mat3.rotate(90.0)
-			// argumentValues[1] --> returnValue of vec2(1.0, 2.0)
-			// depth = 2 / argument index = 0: mat3.rotate(90.0)
+			// argumentValues[0] --> returnValue of mat3.rotate(90.000000)
+			// argumentValues[1] --> returnValue of vec2(1.000000, 2.000000)
+			// depth = 2 / argument index = 0: mat3.rotate(90.000000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
@@ -7181,7 +7203,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// depth = 2 / argument index = 1: vec2(1.0, 2.0)
+			// depth = 2 / argument index = 1: vec2(1.000000, 2.000000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
@@ -7391,7 +7413,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 112
-	// console.log("math.acos(0.0): ", math.acos(0.0))
+	// console.log("math.acos(0.0): ", math.acos(0.000000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[112];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -7400,8 +7422,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("math.acos(0.0): "));
-		// argumentValues[1] --> returnValue of math.acos(0.0)
-		// depth = 1 / argument index = 1: math.acos(0.0)
+		// argumentValues[1] --> returnValue of math.acos(0.000000)
+		// depth = 1 / argument index = 1: math.acos(0.000000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -7425,7 +7447,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 113
-	// console.log("math.asin(1.0): ", math.asin(1.0))
+	// console.log("math.asin(1.0): ", math.asin(1.000000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[113];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -7434,8 +7456,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("math.asin(1.0): "));
-		// argumentValues[1] --> returnValue of math.asin(1.0)
-		// depth = 1 / argument index = 1: math.asin(1.0)
+		// argumentValues[1] --> returnValue of math.asin(1.000000)
+		// depth = 1 / argument index = 1: math.asin(1.000000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -7459,7 +7481,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 114
-	// console.log("math.atan(1.0): ", math.atan(1.0))
+	// console.log("math.atan(1.0): ", math.atan(1.000000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[114];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -7468,8 +7490,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("math.atan(1.0): "));
-		// argumentValues[1] --> returnValue of math.atan(1.0)
-		// depth = 1 / argument index = 1: math.atan(1.0)
+		// argumentValues[1] --> returnValue of math.atan(1.000000)
+		// depth = 1 / argument index = 1: math.atan(1.000000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -7493,7 +7515,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 115
-	// console.log("math.atan2(-1.0, -1.0): ", math.atan2(-1.0, -1.0))
+	// console.log("math.atan2(-1.0, -1.0): ", math.atan2(-1.000000, -1.000000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[115];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -7502,8 +7524,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("math.atan2(-1.0, -1.0): "));
-		// argumentValues[1] --> returnValue of math.atan2(-1.0, -1.0)
-		// depth = 1 / argument index = 1: math.atan2(-1.0, -1.0)
+		// argumentValues[1] --> returnValue of math.atan2(-1.000000, -1.000000)
+		// depth = 1 / argument index = 1: math.atan2(-1.000000, -1.000000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -7530,7 +7552,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 116
-	// console.log("math.floor(2.87): ", math.floor(2.87))
+	// console.log("math.floor(2.87): ", math.floor(2.870000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[116];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -7539,8 +7561,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("math.floor(2.87): "));
-		// argumentValues[1] --> returnValue of math.floor(2.87)
-		// depth = 1 / argument index = 1: math.floor(2.87)
+		// argumentValues[1] --> returnValue of math.floor(2.870000)
+		// depth = 1 / argument index = 1: math.floor(2.870000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -7564,7 +7586,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 117
-	// console.log("math.ceil(2.87): ", math.ceil(2.87))
+	// console.log("math.ceil(2.87): ", math.ceil(2.870000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[117];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -7573,8 +7595,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("math.ceil(2.87): "));
-		// argumentValues[1] --> returnValue of math.ceil(2.87)
-		// depth = 1 / argument index = 1: math.ceil(2.87)
+		// argumentValues[1] --> returnValue of math.ceil(2.870000)
+		// depth = 1 / argument index = 1: math.ceil(2.870000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -7598,7 +7620,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 118
-	// console.log("math.round(2.37): ", math.round(2.37))
+	// console.log("math.round(2.37): ", math.round(2.370000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[118];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -7607,8 +7629,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("math.round(2.37): "));
-		// argumentValues[1] --> returnValue of math.round(2.37)
-		// depth = 1 / argument index = 1: math.round(2.37)
+		// argumentValues[1] --> returnValue of math.round(2.370000)
+		// depth = 1 / argument index = 1: math.round(2.370000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -7632,7 +7654,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 119
-	// console.log("math.round(2.87): ", math.round(2.87))
+	// console.log("math.round(2.87): ", math.round(2.870000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[119];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -7641,8 +7663,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("math.round(2.87): "));
-		// argumentValues[1] --> returnValue of math.round(2.87)
-		// depth = 1 / argument index = 1: math.round(2.87)
+		// argumentValues[1] --> returnValue of math.round(2.870000)
+		// depth = 1 / argument index = 1: math.round(2.870000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -7666,7 +7688,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 120
-	// console.log("math.cos(0.0): ", math.cos(0.0))
+	// console.log("math.cos(0.0): ", math.cos(0.000000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[120];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -7675,8 +7697,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("math.cos(0.0): "));
-		// argumentValues[1] --> returnValue of math.cos(0.0)
-		// depth = 1 / argument index = 1: math.cos(0.0)
+		// argumentValues[1] --> returnValue of math.cos(0.000000)
+		// depth = 1 / argument index = 1: math.cos(0.000000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -7700,7 +7722,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 121
-	// console.log("math.sin(0.0): ", math.sin(0.0))
+	// console.log("math.sin(0.0): ", math.sin(0.000000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[121];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -7709,8 +7731,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("math.sin(0.0): "));
-		// argumentValues[1] --> returnValue of math.sin(0.0)
-		// depth = 1 / argument index = 1: math.sin(0.0)
+		// argumentValues[1] --> returnValue of math.sin(0.000000)
+		// depth = 1 / argument index = 1: math.sin(0.000000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -7734,7 +7756,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 122
-	// console.log("math.tan(1.0): ", math.tan(1.0))
+	// console.log("math.tan(1.0): ", math.tan(1.000000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[122];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -7743,8 +7765,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("math.tan(1.0): "));
-		// argumentValues[1] --> returnValue of math.tan(1.0)
-		// depth = 1 / argument index = 1: math.tan(1.0)
+		// argumentValues[1] --> returnValue of math.tan(1.000000)
+		// depth = 1 / argument index = 1: math.tan(1.000000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -7883,7 +7905,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 127
-	// console.log("math.exp(1.0): ", math.exp(1.0))
+	// console.log("math.exp(1.0): ", math.exp(1.000000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[127];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -7892,8 +7914,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("math.exp(1.0): "));
-		// argumentValues[1] --> returnValue of math.exp(1.0)
-		// depth = 1 / argument index = 1: math.exp(1.0)
+		// argumentValues[1] --> returnValue of math.exp(1.000000)
+		// depth = 1 / argument index = 1: math.exp(1.000000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -7917,7 +7939,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 128
-	// console.log("math.log(2.0): ", math.log(2.0))
+	// console.log("math.log(2.0): ", math.log(2.000000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[128];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -7926,8 +7948,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("math.log(2.0): "));
-		// argumentValues[1] --> returnValue of math.log(2.0)
-		// depth = 1 / argument index = 1: math.log(2.0)
+		// argumentValues[1] --> returnValue of math.log(2.000000)
+		// depth = 1 / argument index = 1: math.log(2.000000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -7989,7 +8011,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 130
-	// console.log("math.sign(-2.0): ", math.sign(-2.0))
+	// console.log("math.sign(-2.0): ", math.sign(-2.000000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[130];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -7998,8 +8020,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("math.sign(-2.0): "));
-		// argumentValues[1] --> returnValue of math.sign(-2.0)
-		// depth = 1 / argument index = 1: math.sign(-2.0)
+		// argumentValues[1] --> returnValue of math.sign(-2.000000)
+		// depth = 1 / argument index = 1: math.sign(-2.000000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -8065,7 +8087,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 132
-	// console.log("math.square(3.0): ", math.square(3.0))
+	// console.log("math.square(3.0): ", math.square(3.000000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[132];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -8074,8 +8096,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("math.square(3.0): "));
-		// argumentValues[1] --> returnValue of math.square(3.0)
-		// depth = 1 / argument index = 1: math.square(3.0)
+		// argumentValues[1] --> returnValue of math.square(3.000000)
+		// depth = 1 / argument index = 1: math.square(3.000000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -8151,7 +8173,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 134
-	// console.log("math.min(4.1, 9.3): ", math.min(4.1, 9.3))
+	// console.log("math.min(4.1, 9.3): ", math.min(4.100000, 9.300000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[134];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -8160,8 +8182,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("math.min(4.1, 9.3): "));
-		// argumentValues[1] --> returnValue of math.min(4.1, 9.3)
-		// depth = 1 / argument index = 1: math.min(4.1, 9.3)
+		// argumentValues[1] --> returnValue of math.min(4.100000, 9.300000)
+		// depth = 1 / argument index = 1: math.min(4.100000, 9.300000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -8247,7 +8269,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 136
-	// console.log("math.max(4.1, 9.3): ", math.max(4.1, 9.3))
+	// console.log("math.max(4.1, 9.3): ", math.max(4.100000, 9.300000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[136];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -8256,8 +8278,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("math.max(4.1, 9.3): "));
-		// argumentValues[1] --> returnValue of math.max(4.1, 9.3)
-		// depth = 1 / argument index = 1: math.max(4.1, 9.3)
+		// argumentValues[1] --> returnValue of math.max(4.100000, 9.300000)
+		// depth = 1 / argument index = 1: math.max(4.100000, 9.300000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -8333,7 +8355,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 138
-	// console.log("math.abs(-9.3): ", math.abs(-9.3))
+	// console.log("math.abs(-9.3): ", math.abs(-9.300000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[138];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -8342,8 +8364,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("math.abs(-9.3): "));
-		// argumentValues[1] --> returnValue of math.abs(-9.3)
-		// depth = 1 / argument index = 1: math.abs(-9.3)
+		// argumentValues[1] --> returnValue of math.abs(-9.300000)
+		// depth = 1 / argument index = 1: math.abs(-9.300000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -8424,7 +8446,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 140
-	// console.log("math.clamp(10.0, 4.1, 9.3): ", math.clamp(10.0, 4.1, 9.3))
+	// console.log("math.clamp(10.0, 4.1, 9.3): ", math.clamp(10.000000, 4.100000, 9.300000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[140];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -8433,8 +8455,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("math.clamp(10.0, 4.1, 9.3): "));
-		// argumentValues[1] --> returnValue of math.clamp(10.0, 4.1, 9.3)
-		// depth = 1 / argument index = 1: math.clamp(10.0, 4.1, 9.3)
+		// argumentValues[1] --> returnValue of math.clamp(10.000000, 4.100000, 9.300000)
+		// depth = 1 / argument index = 1: math.clamp(10.000000, 4.100000, 9.300000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -8525,7 +8547,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 142
-	// console.log("math.pow(2.0, 16.0): ", math.pow(2.0, 16.0))
+	// console.log("math.pow(2.0, 16.0): ", math.pow(2.000000, 16.000000))
 	{
 		const ScriptStatement& statement = scripts[1].statements[142];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -8534,8 +8556,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("math.pow(2.0, 16.0): "));
-		// argumentValues[1] --> returnValue of math.pow(2.0, 16.0)
-		// depth = 1 / argument index = 1: math.pow(2.0, 16.0)
+		// argumentValues[1] --> returnValue of math.pow(2.000000, 16.000000)
+		// depth = 1 / argument index = 1: math.pow(2.000000, 16.000000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -8789,7 +8811,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 151
-	// setVariable("$transform", transform(vec3(1,2,3), vec3(2, 3, 4)))
+	// setVariable("$transform", transform(vec3(1, 2, 3), vec3(2, 3, 4)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[151];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -8798,14 +8820,14 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("$transform"));
-		// argumentValues[1] --> returnValue of transform(vec3(1,2,3), vec3(2, 3, 4))
-		// depth = 1 / argument index = 1: transform(vec3(1,2,3), vec3(2, 3, 4))
+		// argumentValues[1] --> returnValue of transform(vec3(1, 2, 3), vec3(2, 3, 4))
+		// depth = 1 / argument index = 1: transform(vec3(1, 2, 3), vec3(2, 3, 4))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of vec3(1,2,3)
+			// argumentValues[0] --> returnValue of vec3(1, 2, 3)
 			// argumentValues[1] --> returnValue of vec3(2, 3, 4)
 			// depth = 2 / argument index = 0: vec3(1, 2, 3)
 			{
@@ -8904,7 +8926,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 152
-	// console.log("$transform: ", $transform)
+	// console.log("$transform: ", getVariable("$transform"))
 	{
 		const ScriptStatement& statement = scripts[1].statements[152];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -8955,7 +8977,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 154
-	// transform.setRotationAngle($transform, 1, 90)
+	// transform.setRotationAngle(getVariable("$transform"), 1, 90)
 	{
 		const ScriptStatement& statement = scripts[1].statements[154];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -9013,7 +9035,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 155
-	// console.log("transform.getRotationAngle($transform, 1): ", transform.getRotationAngle($transform, 1))
+	// console.log("transform.getRotationAngle($transform, 1): ", transform.getRotationAngle(getVariable("$transform"), 1))
 	{
 		const ScriptStatement& statement = scripts[1].statements[155];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -9022,8 +9044,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("transform.getRotationAngle($transform, 1): "));
-		// argumentValues[1] --> returnValue of transform.getRotationAngle($transform, 1)
-		// depth = 1 / argument index = 1: transform.getRotationAngle($transform, 1)
+		// argumentValues[1] --> returnValue of transform.getRotationAngle(getVariable("$transform"), 1)
+		// depth = 1 / argument index = 1: transform.getRotationAngle(getVariable("$transform"), 1)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -9071,7 +9093,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 156
-	// console.log("transform.getTranslation($transform): ", transform.getTranslation($transform))
+	// console.log("transform.getTranslation($transform): ", transform.getTranslation(getVariable("$transform")))
 	{
 		const ScriptStatement& statement = scripts[1].statements[156];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -9080,8 +9102,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("transform.getTranslation($transform): "));
-		// argumentValues[1] --> returnValue of transform.getTranslation($transform)
-		// depth = 1 / argument index = 1: transform.getTranslation($transform)
+		// argumentValues[1] --> returnValue of transform.getTranslation(getVariable("$transform"))
+		// depth = 1 / argument index = 1: transform.getTranslation(getVariable("$transform"))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -9138,7 +9160,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 158
-	// transform.setTranslation($transform, vec3(-1,-2,-3))
+	// transform.setTranslation(getVariable("$transform"), vec3(-1, -2, -3))
 	{
 		const ScriptStatement& statement = scripts[1].statements[158];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -9147,7 +9169,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		// argumentValues[0] --> returnValue of getVariable("$transform")
-		// argumentValues[1] --> returnValue of vec3(-1,-2,-3)
+		// argumentValues[1] --> returnValue of vec3(-1, -2, -3)
 		// depth = 1 / argument index = 0: getVariable("$transform")
 		{
 			// required method code arguments
@@ -9208,7 +9230,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 159
-	// console.log("transform.getTranslation($transform): ", transform.getTranslation($transform))
+	// console.log("transform.getTranslation($transform): ", transform.getTranslation(getVariable("$transform")))
 	{
 		const ScriptStatement& statement = scripts[1].statements[159];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -9217,8 +9239,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("transform.getTranslation($transform): "));
-		// argumentValues[1] --> returnValue of transform.getTranslation($transform)
-		// depth = 1 / argument index = 1: transform.getTranslation($transform)
+		// argumentValues[1] --> returnValue of transform.getTranslation(getVariable("$transform"))
+		// depth = 1 / argument index = 1: transform.getTranslation(getVariable("$transform"))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -9258,7 +9280,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 160
-	// console.log("transform.getScale($transform): ", transform.getScale($transform))
+	// console.log("transform.getScale($transform): ", transform.getScale(getVariable("$transform")))
 	{
 		const ScriptStatement& statement = scripts[1].statements[160];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -9267,8 +9289,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("transform.getScale($transform): "));
-		// argumentValues[1] --> returnValue of transform.getScale($transform)
-		// depth = 1 / argument index = 1: transform.getScale($transform)
+		// argumentValues[1] --> returnValue of transform.getScale(getVariable("$transform"))
+		// depth = 1 / argument index = 1: transform.getScale(getVariable("$transform"))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -9325,7 +9347,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 162
-	// transform.setScale($transform, vec3(-2,-3,-4))
+	// transform.setScale(getVariable("$transform"), vec3(-2, -3, -4))
 	{
 		const ScriptStatement& statement = scripts[1].statements[162];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -9334,7 +9356,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		// argumentValues[0] --> returnValue of getVariable("$transform")
-		// argumentValues[1] --> returnValue of vec3(-2,-3,-4)
+		// argumentValues[1] --> returnValue of vec3(-2, -3, -4)
 		// depth = 1 / argument index = 0: getVariable("$transform")
 		{
 			// required method code arguments
@@ -9395,7 +9417,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 163
-	// console.log("transform.getScale($transform): ", transform.getScale($transform))
+	// console.log("transform.getScale($transform): ", transform.getScale(getVariable("$transform")))
 	{
 		const ScriptStatement& statement = scripts[1].statements[163];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -9404,8 +9426,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("transform.getScale($transform): "));
-		// argumentValues[1] --> returnValue of transform.getScale($transform)
-		// depth = 1 / argument index = 1: transform.getScale($transform)
+		// argumentValues[1] --> returnValue of transform.getScale(getVariable("$transform"))
+		// depth = 1 / argument index = 1: transform.getScale(getVariable("$transform"))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -9445,7 +9467,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 164
-	// console.log("transform.getRotationAxis($transform, 0): ", transform.getRotationAxis($transform, 0))
+	// console.log("transform.getRotationAxis($transform, 0): ", transform.getRotationAxis(getVariable("$transform"), 0))
 	{
 		const ScriptStatement& statement = scripts[1].statements[164];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -9454,8 +9476,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("transform.getRotationAxis($transform, 0): "));
-		// argumentValues[1] --> returnValue of transform.getRotationAxis($transform, 0)
-		// depth = 1 / argument index = 1: transform.getRotationAxis($transform, 0)
+		// argumentValues[1] --> returnValue of transform.getRotationAxis(getVariable("$transform"), 0)
+		// depth = 1 / argument index = 1: transform.getRotationAxis(getVariable("$transform"), 0)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -9503,7 +9525,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 165
-	// console.log("transform.multiply($transform, vec3(0,0,0)): ", transform.multiply($transform, vec3(0,0,0)))
+	// console.log("transform.multiply($transform, vec3(0,0,0)): ", transform.multiply(getVariable("$transform"), vec3(0, 0, 0)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[165];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -9512,15 +9534,15 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("transform.multiply($transform, vec3(0,0,0)): "));
-		// argumentValues[1] --> returnValue of transform.multiply($transform, vec3(0,0,0))
-		// depth = 1 / argument index = 1: transform.multiply($transform, vec3(0,0,0))
+		// argumentValues[1] --> returnValue of transform.multiply(getVariable("$transform"), vec3(0, 0, 0))
+		// depth = 1 / argument index = 1: transform.multiply(getVariable("$transform"), vec3(0, 0, 0))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
 			// argumentValues[0] --> returnValue of getVariable("$transform")
-			// argumentValues[1] --> returnValue of vec3(0,0,0)
+			// argumentValues[1] --> returnValue of vec3(0, 0, 0)
 			// depth = 2 / argument index = 0: getVariable("$transform")
 			{
 				// required method code arguments
@@ -9579,7 +9601,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 166
-	// console.log("transform.rotate($transform, vec3(0,0,1)): ", transform.rotate($transform, vec3(0,0,1)))
+	// console.log("transform.rotate($transform, vec3(0,0,1)): ", transform.rotate(getVariable("$transform"), vec3(0, 0, 1)))
 	{
 		const ScriptStatement& statement = scripts[1].statements[166];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -9588,15 +9610,15 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("transform.rotate($transform, vec3(0,0,1)): "));
-		// argumentValues[1] --> returnValue of transform.rotate($transform, vec3(0,0,1))
-		// depth = 1 / argument index = 1: transform.rotate($transform, vec3(0,0,1))
+		// argumentValues[1] --> returnValue of transform.rotate(getVariable("$transform"), vec3(0, 0, 1))
+		// depth = 1 / argument index = 1: transform.rotate(getVariable("$transform"), vec3(0, 0, 1))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
 			// argumentValues[0] --> returnValue of getVariable("$transform")
-			// argumentValues[1] --> returnValue of vec3(0,0,1)
+			// argumentValues[1] --> returnValue of vec3(0, 0, 1)
 			// depth = 2 / argument index = 0: getVariable("$transform")
 			{
 				// required method code arguments
@@ -9655,7 +9677,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 167
-	// console.log("transform.getTransformMatrix($transform): ", transform.getTransformMatrix($transform))
+	// console.log("transform.getTransformMatrix($transform): ", transform.getTransformMatrix(getVariable("$transform")))
 	{
 		const ScriptStatement& statement = scripts[1].statements[167];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -9664,8 +9686,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("transform.getTransformMatrix($transform): "));
-		// argumentValues[1] --> returnValue of transform.getTransformMatrix($transform)
-		// depth = 1 / argument index = 1: transform.getTransformMatrix($transform)
+		// argumentValues[1] --> returnValue of transform.getTransformMatrix(getVariable("$transform"))
+		// depth = 1 / argument index = 1: transform.getTransformMatrix(getVariable("$transform"))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -9705,7 +9727,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 168
-	// console.log("transform.getRotationsQuaternion($transform): ", transform.getRotationsQuaternion($transform))
+	// console.log("transform.getRotationsQuaternion($transform): ", transform.getRotationsQuaternion(getVariable("$transform")))
 	{
 		const ScriptStatement& statement = scripts[1].statements[168];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -9714,8 +9736,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("transform.getRotationsQuaternion($transform): "));
-		// argumentValues[1] --> returnValue of transform.getRotationsQuaternion($transform)
-		// depth = 1 / argument index = 1: transform.getRotationsQuaternion($transform)
+		// argumentValues[1] --> returnValue of transform.getRotationsQuaternion(getVariable("$transform"))
+		// depth = 1 / argument index = 1: transform.getRotationsQuaternion(getVariable("$transform"))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -10047,7 +10069,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 180
-	// console.log(add("abc",add("def", "ghi")))
+	// console.log(add("abc", add("def", "ghi")))
 	{
 		const ScriptStatement& statement = scripts[1].statements[180];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -10055,7 +10077,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 1> argumentValues;
 		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
-		// argumentValues[0] --> returnValue of add("abc",add("def", "ghi"))
+		// argumentValues[0] --> returnValue of add("abc", add("def", "ghi"))
 		// depth = 1 / argument index = 0: add("abc", add("def", "ghi"))
 		{
 			// required method code arguments
@@ -10342,7 +10364,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 
 	// Statement: 192
 	miniscript_statement_192:
-	// console.log($i, ": Hello World")
+	// console.log(getVariable("$i"), ": Hello World")
 	{
 		const ScriptStatement& statement = scripts[1].statements[192];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -10402,7 +10424,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 
 	// Statement: 194
 	miniscript_statement_194:
-	// setVariable("$i", add($i, 1))
+	// setVariable("$i", add(getVariable("$i"), 1))
 	{
 		const ScriptStatement& statement = scripts[1].statements[194];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -10411,8 +10433,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("$i"));
-		// argumentValues[1] --> returnValue of add($i, 1)
-		// depth = 1 / argument index = 1: add($i, 1)
+		// argumentValues[1] --> returnValue of add(getVariable("$i"), 1)
+		// depth = 1 / argument index = 1: add(getVariable("$i"), 1)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -10571,7 +10593,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 
 	// Statement: 200
 	miniscript_statement_200:
-	// forCondition(notequal($i, 6))
+	// forCondition(notequal(getVariable("$i"), 6))
 	{
 		const ScriptStatement& statement = scripts[1].statements[200];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -10579,8 +10601,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 1> argumentValues;
 		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
-		// argumentValues[0] --> returnValue of notequal($i, 6)
-		// depth = 1 / argument index = 0: notequal($i, 6)
+		// argumentValues[0] --> returnValue of notequal(getVariable("$i"), 6)
+		// depth = 1 / argument index = 0: notequal(getVariable("$i"), 6)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
@@ -10605,11 +10627,16 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 				}
 			}
 			// method code: notequal
-			returnValue.setValue(true);
-			for (auto i = 1; i < argumentValues.size(); i++) {
-				if (argumentValues[0].getValueString() == argumentValues[i].getValueString()) {
-					returnValue.setValue(false);
-					break;
+			if (argumentValues.size() != 2) {
+				Console::println("ScriptMethodNotEqual::executeMethod(): " + string("notequal") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
+				miniScript->startErrorScript(); return;
+			} else {
+				returnValue.setValue(true);
+				for (auto i = 1; i < argumentValues.size(); i++) {
+					if (argumentValues[0].getValueString() == argumentValues[i].getValueString()) {
+						returnValue.setValue(false);
+						break;
+					}
 				}
 			}
 		}
@@ -10636,7 +10663,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 
 	// Statement: 201
 	miniscript_statement_201:
-	// console.log($i, ": Hello World")
+	// console.log(getVariable("$i"), ": Hello World")
 	{
 		const ScriptStatement& statement = scripts[1].statements[201];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -10696,7 +10723,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 
 	// Statement: 203
 	miniscript_statement_203:
-	// setVariable("$i", add($i, 1))
+	// setVariable("$i", add(getVariable("$i"), 1))
 	{
 		const ScriptStatement& statement = scripts[1].statements[203];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -10705,8 +10732,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("$i"));
-		// argumentValues[1] --> returnValue of add($i, 1)
-		// depth = 1 / argument index = 1: add($i, 1)
+		// argumentValues[1] --> returnValue of add(getVariable("$i"), 1)
+		// depth = 1 / argument index = 1: add(getVariable("$i"), 1)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -10790,7 +10817,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 
 	// Statement: 205
 	miniscript_statement_205:
-	// console.log("i -> ", $i)
+	// console.log("i -> ", getVariable("$i"))
 	{
 		const ScriptStatement& statement = scripts[1].statements[205];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -10899,7 +10926,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 
 	// Statement: 210
 	miniscript_statement_210:
-	// forCondition(lesser($i, 5))
+	// forCondition(lesser(getVariable("$i"), 5))
 	{
 		const ScriptStatement& statement = scripts[1].statements[210];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -10907,8 +10934,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 1> argumentValues;
 		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
-		// argumentValues[0] --> returnValue of lesser($i, 5)
-		// depth = 1 / argument index = 0: lesser($i, 5)
+		// argumentValues[0] --> returnValue of lesser(getVariable("$i"), 5)
+		// depth = 1 / argument index = 0: lesser(getVariable("$i"), 5)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
@@ -10966,7 +10993,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 
 	// Statement: 211
 	miniscript_statement_211:
-	// console.log($i, ":")
+	// console.log(getVariable("$i"), ":")
 	{
 		const ScriptStatement& statement = scripts[1].statements[211];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -11000,7 +11027,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 212
-	// if(equals($i, 0))
+	// if(equals(getVariable("$i"), 0))
 	{
 		const ScriptStatement& statement = scripts[1].statements[212];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -11008,8 +11035,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 1> argumentValues;
 		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
-		// argumentValues[0] --> returnValue of equals($i, 0)
-		// depth = 1 / argument index = 0: equals($i, 0)
+		// argumentValues[0] --> returnValue of equals(getVariable("$i"), 0)
+		// depth = 1 / argument index = 0: equals(getVariable("$i"), 0)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
@@ -11034,11 +11061,16 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 				}
 			}
 			// method code: equals
-			returnValue.setValue(true);
-			for (auto i = 1; i < argumentValues.size(); i++) {
-				if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
-					returnValue.setValue(false);
-					break;
+			if (argumentValues.size() != 2) {
+				Console::println("ScriptMethodEquals::executeMethod(): " + string("equals") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
+				miniScript->startErrorScript(); return;
+			} else {
+				returnValue.setValue(true);
+				for (auto i = 1; i < argumentValues.size(); i++) {
+					if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
+						returnValue.setValue(false);
+						break;
+					}
 				}
 			}
 		}
@@ -11083,7 +11115,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 
 	// Statement: 214
 	miniscript_statement_214:
-	// elseif(equals($i, 1))
+	// elseif(equals(getVariable("$i"), 1))
 	{
 		const ScriptStatement& statement = scripts[1].statements[214];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -11091,8 +11123,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 1> argumentValues;
 		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
-		// argumentValues[0] --> returnValue of equals($i, 1)
-		// depth = 1 / argument index = 0: equals($i, 1)
+		// argumentValues[0] --> returnValue of equals(getVariable("$i"), 1)
+		// depth = 1 / argument index = 0: equals(getVariable("$i"), 1)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
@@ -11117,11 +11149,16 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 				}
 			}
 			// method code: equals
-			returnValue.setValue(true);
-			for (auto i = 1; i < argumentValues.size(); i++) {
-				if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
-					returnValue.setValue(false);
-					break;
+			if (argumentValues.size() != 2) {
+				Console::println("ScriptMethodEquals::executeMethod(): " + string("equals") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
+				miniScript->startErrorScript(); return;
+			} else {
+				returnValue.setValue(true);
+				for (auto i = 1; i < argumentValues.size(); i++) {
+					if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
+						returnValue.setValue(false);
+						break;
+					}
 				}
 			}
 		}
@@ -11172,7 +11209,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 
 	// Statement: 216
 	miniscript_statement_216:
-	// elseif(equals($i, 2))
+	// elseif(equals(getVariable("$i"), 2))
 	{
 		const ScriptStatement& statement = scripts[1].statements[216];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -11180,8 +11217,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 1> argumentValues;
 		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
-		// argumentValues[0] --> returnValue of equals($i, 2)
-		// depth = 1 / argument index = 0: equals($i, 2)
+		// argumentValues[0] --> returnValue of equals(getVariable("$i"), 2)
+		// depth = 1 / argument index = 0: equals(getVariable("$i"), 2)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
@@ -11206,11 +11243,16 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 				}
 			}
 			// method code: equals
-			returnValue.setValue(true);
-			for (auto i = 1; i < argumentValues.size(); i++) {
-				if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
-					returnValue.setValue(false);
-					break;
+			if (argumentValues.size() != 2) {
+				Console::println("ScriptMethodEquals::executeMethod(): " + string("equals") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
+				miniScript->startErrorScript(); return;
+			} else {
+				returnValue.setValue(true);
+				for (auto i = 1; i < argumentValues.size(); i++) {
+					if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
+						returnValue.setValue(false);
+						break;
+					}
 				}
 			}
 		}
@@ -11261,7 +11303,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 
 	// Statement: 218
 	miniscript_statement_218:
-	// elseif(equals($i, 3))
+	// elseif(equals(getVariable("$i"), 3))
 	{
 		const ScriptStatement& statement = scripts[1].statements[218];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -11269,8 +11311,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 1> argumentValues;
 		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
-		// argumentValues[0] --> returnValue of equals($i, 3)
-		// depth = 1 / argument index = 0: equals($i, 3)
+		// argumentValues[0] --> returnValue of equals(getVariable("$i"), 3)
+		// depth = 1 / argument index = 0: equals(getVariable("$i"), 3)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
@@ -11295,11 +11337,16 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 				}
 			}
 			// method code: equals
-			returnValue.setValue(true);
-			for (auto i = 1; i < argumentValues.size(); i++) {
-				if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
-					returnValue.setValue(false);
-					break;
+			if (argumentValues.size() != 2) {
+				Console::println("ScriptMethodEquals::executeMethod(): " + string("equals") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
+				miniScript->startErrorScript(); return;
+			} else {
+				returnValue.setValue(true);
+				for (auto i = 1; i < argumentValues.size(); i++) {
+					if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
+						returnValue.setValue(false);
+						break;
+					}
 				}
 			}
 		}
@@ -11377,7 +11424,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 
 	// Statement: 221
 	miniscript_statement_221:
-	// console.log("else: ", $i)
+	// console.log("else: ", getVariable("$i"))
 	{
 		const ScriptStatement& statement = scripts[1].statements[221];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -11455,7 +11502,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 
 	// Statement: 223
 	miniscript_statement_223:
-	// setVariable("$i", add($i, 1))
+	// setVariable("$i", add(getVariable("$i"), 1))
 	{
 		const ScriptStatement& statement = scripts[1].statements[223];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -11464,8 +11511,8 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("$i"));
-		// argumentValues[1] --> returnValue of add($i, 1)
-		// depth = 1 / argument index = 1: add($i, 1)
+		// argumentValues[1] --> returnValue of add(getVariable("$i"), 1)
+		// depth = 1 / argument index = 1: add(getVariable("$i"), 1)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -11618,7 +11665,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 228
-	// if(or(equals(getVariable("$i"), $j),equals(getVariable("$i"), $k)))
+	// if(or(equals(getVariable("$i"), getVariable("$j")), equals(getVariable("$i"), getVariable("$k"))))
 	{
 		const ScriptStatement& statement = scripts[1].statements[228];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -11626,16 +11673,16 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 1> argumentValues;
 		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
-		// argumentValues[0] --> returnValue of or(equals(getVariable("$i"), $j),equals(getVariable("$i"), $k))
-		// depth = 1 / argument index = 0: or(equals(getVariable("$i"), $j), equals(getVariable("$i"), $k))
+		// argumentValues[0] --> returnValue of or(equals(getVariable("$i"), getVariable("$j")), equals(getVariable("$i"), getVariable("$k")))
+		// depth = 1 / argument index = 0: or(equals(getVariable("$i"), getVariable("$j")), equals(getVariable("$i"), getVariable("$k")))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX0 = argumentValues;
-			// argumentValues[0] --> returnValue of equals(getVariable("$i"), $j)
-			// argumentValues[1] --> returnValue of equals(getVariable("$i"), $k)
-			// depth = 2 / argument index = 0: equals(getVariable("$i"), $j)
+			// argumentValues[0] --> returnValue of equals(getVariable("$i"), getVariable("$j"))
+			// argumentValues[1] --> returnValue of equals(getVariable("$i"), getVariable("$k"))
+			// depth = 2 / argument index = 0: equals(getVariable("$i"), getVariable("$j"))
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX0[0];
@@ -11676,15 +11723,20 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 					}
 				}
 				// method code: equals
-				returnValue.setValue(true);
-				for (auto i = 1; i < argumentValues.size(); i++) {
-					if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
-						returnValue.setValue(false);
-						break;
+				if (argumentValues.size() != 2) {
+					Console::println("ScriptMethodEquals::executeMethod(): " + string("equals") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
+					miniScript->startErrorScript(); return;
+				} else {
+					returnValue.setValue(true);
+					for (auto i = 1; i < argumentValues.size(); i++) {
+						if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
+							returnValue.setValue(false);
+							break;
+						}
 					}
 				}
 			}
-			// depth = 2 / argument index = 1: equals(getVariable("$i"), $k)
+			// depth = 2 / argument index = 1: equals(getVariable("$i"), getVariable("$k"))
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX0[1];
@@ -11725,25 +11777,36 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 					}
 				}
 				// method code: equals
-				returnValue.setValue(true);
-				for (auto i = 1; i < argumentValues.size(); i++) {
-					if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
-						returnValue.setValue(false);
-						break;
+				if (argumentValues.size() != 2) {
+					Console::println("ScriptMethodEquals::executeMethod(): " + string("equals") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
+					miniScript->startErrorScript(); return;
+				} else {
+					returnValue.setValue(true);
+					for (auto i = 1; i < argumentValues.size(); i++) {
+						if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
+							returnValue.setValue(false);
+							break;
+						}
 					}
 				}
 			}
 			// method code: or
-			returnValue.setValue(false);
-			for (auto i = 0; i < argumentValues.size(); i++) {
-				bool booleanValue;
-				if (MiniScript::getBooleanValue(argumentValues, i, booleanValue, false) == false) {
-					Console::println("ScriptMethodOr::executeMethod(): " + string("or") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument " + to_string(i) + ": boolean expected");
-					miniScript->startErrorScript(); return;
-				} else
-				if (booleanValue == true) {
-					returnValue.setValue(true);
-					break;
+			if (argumentValues.size() != 2) {
+				returnValue.setValue(false);
+				Console::println("ScriptMethodOr::executeMethod(): " + string("or") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: boolean expected, @ argument 1: boolean expected");
+				miniScript->startErrorScript(); return;
+			} else {
+				returnValue.setValue(false);
+				for (auto i = 0; i < argumentValues.size(); i++) {
+					bool booleanValue;
+					if (MiniScript::getBooleanValue(argumentValues, i, booleanValue, false) == false) {
+						Console::println("ScriptMethodOr::executeMethod(): " + string("or") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument " + to_string(i) + ": boolean expected");
+						miniScript->startErrorScript(); return;
+					} else
+					if (booleanValue == true) {
+						returnValue.setValue(true);
+						break;
+					}
 				}
 			}
 		}
@@ -11848,7 +11911,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 232
-	// console.log(add("Test: string concatenation with brackets in string literals: ",add($i,add("(",add($j, ")")))))
+	// console.log(add("Test: string concatenation with brackets in string literals: ", add(getVariable("$i"), add("(", add(getVariable("$j"), ")")))))
 	{
 		const ScriptStatement& statement = scripts[1].statements[232];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -11856,23 +11919,23 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 1> argumentValues;
 		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
-		// argumentValues[0] --> returnValue of add("Test: string concatenation with brackets in string literals: ",add($i,add("(",add($j, ")"))))
-		// depth = 1 / argument index = 0: add("Test: string concatenation with brackets in string literals: ", add($i,add("(",add($j, ")"))))
+		// argumentValues[0] --> returnValue of add("Test: string concatenation with brackets in string literals: ", add(getVariable("$i"), add("(", add(getVariable("$j"), ")"))))
+		// depth = 1 / argument index = 0: add("Test: string concatenation with brackets in string literals: ", add(getVariable("$i"), add("(", add(getVariable("$j"), ")"))))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX0 = argumentValues;
 			argumentValues[0].setValue(string("Test: string concatenation with brackets in string literals: "));
-			// argumentValues[1] --> returnValue of add($i,add("(",add($j, ")")))
-			// depth = 2 / argument index = 1: add($i, add("(",add($j, ")")))
+			// argumentValues[1] --> returnValue of add(getVariable("$i"), add("(", add(getVariable("$j"), ")")))
+			// depth = 2 / argument index = 1: add(getVariable("$i"), add("(", add(getVariable("$j"), ")")))
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX0[1];
 				array<ScriptVariable, 2> argumentValues;
 				array<ScriptVariable, 2>& argumentValuesD2AIDX1 = argumentValues;
 				// argumentValues[0] --> returnValue of getVariable("$i")
-				// argumentValues[1] --> returnValue of add("(",add($j, ")"))
+				// argumentValues[1] --> returnValue of add("(", add(getVariable("$j"), ")"))
 				// depth = 3 / argument index = 0: getVariable("$i")
 				{
 					// required method code arguments
@@ -11889,15 +11952,15 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 						miniScript->startErrorScript(); return;
 					}
 				}
-				// depth = 3 / argument index = 1: add("(", add($j, ")"))
+				// depth = 3 / argument index = 1: add("(", add(getVariable("$j"), ")"))
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX1[1];
 					array<ScriptVariable, 2> argumentValues;
 					array<ScriptVariable, 2>& argumentValuesD3AIDX1 = argumentValues;
 					argumentValues[0].setValue(string("("));
-					// argumentValues[1] --> returnValue of add($j, ")")
-					// depth = 4 / argument index = 1: add($j, ")")
+					// argumentValues[1] --> returnValue of add(getVariable("$j"), ")")
+					// depth = 4 / argument index = 1: add(getVariable("$j"), ")")
 					{
 						// required method code arguments
 						ScriptVariable& returnValue = argumentValuesD3AIDX1[1];
@@ -11958,7 +12021,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 234
-	// console.log("(4.0 + 2.0) / 2.0 + (20.0 / 10.0 * (2.0 + 5)): ", add(div(add(4.0, 2.0), 2.0),mul(div(20.0, 10.0), add(2.0, 5))), " = 17")
+	// console.log("(4.0 + 2.0) / 2.0 + (20.0 / 10.0 * (2.0 + 5)): ", add(div(add(4.000000, 2.000000), 2.000000), mul(div(20.000000, 10.000000), add(2.000000, 5))), " = 17")
 	{
 		const ScriptStatement& statement = scripts[1].statements[234];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -11967,25 +12030,25 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 3> argumentValues;
 		array<ScriptVariable, 3>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("(4.0 + 2.0) / 2.0 + (20.0 / 10.0 * (2.0 + 5)): "));
-		// argumentValues[1] --> returnValue of add(div(add(4.0, 2.0), 2.0),mul(div(20.0, 10.0), add(2.0, 5)))
+		// argumentValues[1] --> returnValue of add(div(add(4.000000, 2.000000), 2.000000), mul(div(20.000000, 10.000000), add(2.000000, 5)))
 		argumentValues[2].setValue(string(" = 17"));
-		// depth = 1 / argument index = 1: add(div(add(4.0, 2.0), 2.0), mul(div(20.0, 10.0), add(2.0, 5)))
+		// depth = 1 / argument index = 1: add(div(add(4.000000, 2.000000), 2.000000), mul(div(20.000000, 10.000000), add(2.000000, 5)))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of div(add(4.0, 2.0), 2.0)
-			// argumentValues[1] --> returnValue of mul(div(20.0, 10.0), add(2.0, 5))
-			// depth = 2 / argument index = 0: div(add(4.0, 2.0), 2.0)
+			// argumentValues[0] --> returnValue of div(add(4.000000, 2.000000), 2.000000)
+			// argumentValues[1] --> returnValue of mul(div(20.000000, 10.000000), add(2.000000, 5))
+			// depth = 2 / argument index = 0: div(add(4.000000, 2.000000), 2.000000)
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
 				array<ScriptVariable, 2> argumentValues;
 				array<ScriptVariable, 2>& argumentValuesD2AIDX0 = argumentValues;
-				// argumentValues[0] --> returnValue of add(4.0, 2.0)
+				// argumentValues[0] --> returnValue of add(4.000000, 2.000000)
 				argumentValues[1].setValue(2.000000f);
-				// depth = 3 / argument index = 0: add(4.0, 2.0)
+				// depth = 3 / argument index = 0: add(4.000000, 2.000000)
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX0[0];
@@ -11999,15 +12062,15 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 				// method code: div
 				MiniScriptMath::div(miniScript, argumentValues, returnValue, statement);
 			}
-			// depth = 2 / argument index = 1: mul(div(20.0, 10.0), add(2.0, 5))
+			// depth = 2 / argument index = 1: mul(div(20.000000, 10.000000), add(2.000000, 5))
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[1];
 				array<ScriptVariable, 2> argumentValues;
 				array<ScriptVariable, 2>& argumentValuesD2AIDX1 = argumentValues;
-				// argumentValues[0] --> returnValue of div(20.0, 10.0)
-				// argumentValues[1] --> returnValue of add(2.0, 5)
-				// depth = 3 / argument index = 0: div(20.0, 10.0)
+				// argumentValues[0] --> returnValue of div(20.000000, 10.000000)
+				// argumentValues[1] --> returnValue of add(2.000000, 5)
+				// depth = 3 / argument index = 0: div(20.000000, 10.000000)
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX1[0];
@@ -12018,7 +12081,7 @@ void MiniScriptBaseTest::on_nothing(int miniScriptGotoStatementIdx) {
 					// method code: div
 					MiniScriptMath::div(miniScript, argumentValues, returnValue, statement);
 				}
-				// depth = 3 / argument index = 1: add(2.0, 5)
+				// depth = 3 / argument index = 1: add(2.000000, 5)
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX1[1];

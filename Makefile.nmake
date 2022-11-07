@@ -812,6 +812,7 @@ all: \
 	msclib2dll \
 	makefilegenerator \
 	miniscripttranspiler \
+	miniscriptuntranspiler \
 	nmakefilegenerator \
 	optimizemodel \
 	parsehplusplus \
@@ -1194,6 +1195,11 @@ miniscripttranspiler:
 	rc $(MSCBIN)\miniscripttranspiler.exe.rc
 	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\miniscripttranspiler $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tools/cli/miniscripttranspiler-main.cpp $(MSCBIN)\miniscripttranspiler.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
 
+miniscriptuntranspiler:
+	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc miniscriptuntranspiler.exe $(MSCBIN)\miniscriptuntranspiler.exe.rc
+	rc $(MSCBIN)\miniscriptuntranspiler.exe.rc
+	cl /D TDME2_DLL_IMPORT /Fe$(MSCBIN)\miniscriptuntranspiler $(FLAGS) /Fo$(MSCOBJ)/ $(INCLUDES) src/tdme/tools/cli/miniscriptuntranspiler-main.cpp $(MSCBIN)\miniscriptuntranspiler.exe.res /link $(LD_FLAGS) $(MAIN_LDFLAGS)
+
 nmakefilegenerator:
 	.\ext\windows-msc\tools\createrc.exe resources/platforms/win32/app.rc nmakefilegenerator.exe $(MSCBIN)\nmakefilegenerator.exe.rc
 	rc $(MSCBIN)\nmakefilegenerator.exe.rc
@@ -1307,6 +1313,7 @@ copy-executables:
 	copy $(MSCBIN)\importtmodel.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\makefilegenerator.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\miniscripttranspiler.exe bin\tdme\tools\cli\.
+	copy $(MSCBIN)\miniscriptuntranspiler.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\msclib2dll.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\nmakefilegenerator.exe bin\tdme\tools\cli\.
 	copy $(MSCBIN)\optimizemodel.exe bin\tdme\tools\cli\.

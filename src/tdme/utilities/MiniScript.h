@@ -1358,7 +1358,7 @@ public:
 			if (type == expectedType) return true;
 			switch(expectedType) {
 				case TYPE_PSEUDO_NUMBER:
-					return type == TYPE_INTEGER || type == TYPE_FLOAT;
+					return type == TYPE_INTEGER || type == TYPE_FLOAT || type == TYPE_BOOLEAN;
 				case TYPE_PSEUDO_MIXED:
 					return true;
 				default:
@@ -1402,7 +1402,7 @@ public:
 		/**
 		 * @return string representation of script variable type
 		 */
-		inline const string getAsString() {
+		inline const string getAsString() const {
 			string result;
 			result+= getTypeAsString();
 			result+= "(";
@@ -1617,28 +1617,6 @@ public:
 	};
 
 	/**
-	 * Script
-	 */
-	struct Script {
-		struct ScriptArgument {
-			string name;
-			bool assignBack;
-		};
-		enum ScriptType { SCRIPTTYPE_NONE, SCRIPTTYPE_FUNCTION, SCRIPTTYPE_ON, SCRIPTTYPE_ONENABLED };
-		ScriptType scriptType;
-		int line;
-		// applies only for on and on-enabled
-		string condition;
-		string executableCondition;
-		// applies only for on-enabled
-		string name;
-		bool emitCondition;
-		vector<ScriptStatement> statements;
-		// applies only for functions
-		vector<ScriptArgument> arguments;
-	};
-
-	/**
 	 * Script method
 	 */
 	class ScriptMethod {
@@ -1697,13 +1675,6 @@ public:
 		}
 
 		/**
-		 * @return if variadic method
-		 */
-		virtual bool isRequiringArguments() {
-			return false;
-		}
-
-		/**
 		 * @return operator
 		 */
 		virtual ScriptOperator getOperator() {
@@ -1715,12 +1686,37 @@ public:
 		ScriptVariableType returnValueType;
 	};
 
-	struct StatementDescription {
-		enum Type { STATEMENTDESCRIPTION_NONE, STATEMENTDESCRIPTION_LITERAL, STATEMENTDESCRIPTION_EXECUTE_METHOD, STATEMENTDESCRIPTION_EXECUTE_FUNCTION };
-		Type type { STATEMENTDESCRIPTION_NONE };
-		string value;
+	struct ScriptSyntaxTreeNode {
+		enum Type { SCRIPTSYNTAXTREENODE_NONE, SCRIPTSYNTAXTREENODE_LITERAL, SCRIPTSYNTAXTREENODE_EXECUTE_METHOD, SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION };
+		Type type { SCRIPTSYNTAXTREENODE_NONE };
+		ScriptVariable value;
 		ScriptMethod* method { nullptr };
-		vector<StatementDescription> arguments;
+		vector<ScriptSyntaxTreeNode> arguments;
+	};
+
+	/**
+	 * Script
+	 */
+	struct Script {
+		struct ScriptArgument {
+			string name;
+			bool assignBack;
+		};
+		enum ScriptType { SCRIPTTYPE_NONE, SCRIPTTYPE_FUNCTION, SCRIPTTYPE_ON, SCRIPTTYPE_ONENABLED };
+		ScriptType scriptType;
+		int line;
+		// applies only for on and on-enabled
+		string condition;
+		string executableCondition;
+		ScriptStatement conditionStatement;
+		ScriptSyntaxTreeNode conditionSyntaxTree;
+		// applies only for on-enabled
+		string name;
+		bool emitCondition;
+		vector<ScriptStatement> statements;
+		vector<ScriptSyntaxTreeNode> syntaxTree;
+		// applies only for functions
+		vector<ScriptArgument> arguments;
 	};
 
 protected:
@@ -1912,34 +1908,16 @@ protected:
 	 */
 	virtual int determineNamedScriptIdxToStart();
 
-	/**
-	 * Assign back variables after function call
-	 * @param scriptIdx script index
-	 * @param argumentValues argument values
-	 * @param arguments arguments
-	 */
-	void assignBackFunction(int scriptIdx, const span<string>& arguments, const span<ScriptVariable>& argumentValues, const ScriptStatement& statement) {
-		auto argumentIdx = 0;
-		for (auto& argument: scripts[scriptIdx].arguments) {
-			if (argumentIdx == argumentValues.size()) {
-				break;
-			}
-			if (argument.assignBack == true) {
-				if (StringTools::startsWith(arguments[argumentIdx], "$") == true) {
-					setVariable(string(arguments[argumentIdx]), argumentValues[argumentIdx], &statement);
-				} else {
-					Console::println("MiniScript::assignBackFunction(): '" + scriptFileName + "': @" + to_string(statement.line) +  ": '" + statement.statement + "': Can not assign back argument value @ " + to_string(argumentIdx) + " to variable '" + string(arguments[argumentIdx]) + "'");
-				}
-			}
-			argumentIdx++;
-		}
-	}
-
 private:
 	static constexpr bool VERBOSE { false };
 
 	//
 	STATIC_DLL_IMPEXT static string OPERATOR_CHARS;
+
+	//
+	STATIC_DLL_IMPEXT static string METHOD_SCRIPTCALL;
+	STATIC_DLL_IMPEXT static string METHOD_ENABLENAMEDCONDITION;
+	STATIC_DLL_IMPEXT static string METHOD_DISABLENAMEDCONDITION;
 
 	// TODO: maybe we need a better naming for this
 	// script functions defined by script itself
@@ -1970,6 +1948,52 @@ private:
 	}
 
 	/**
+	 * Returns arguments as string
+	 * @param arguments arguments
+	 * @return arguments as string
+	 */
+	inline const string getArgumentsAsString(const vector<ScriptSyntaxTreeNode>& arguments) {
+		string argumentsString;
+		for (auto& argument: arguments) {
+			switch (argument.type) {
+				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
+					switch(argument.value.getType()) {
+						case TYPE_VOID:
+							{
+								argumentsString+= (argumentsString.empty() == false?", ":"") + string("<VOID>");
+								break;
+							}
+						case TYPE_BOOLEAN:
+						case TYPE_INTEGER:
+						case TYPE_FLOAT:
+							{
+								argumentsString+= (argumentsString.empty() == false?", ":"") + argument.value.getValueString();
+								break;
+							}
+						case TYPE_STRING:
+							{
+								argumentsString+= (argumentsString.empty() == false?", ":"") + string("\"") + argument.value.getValueString() + string("\"");
+								break;
+							}
+						default:
+							{
+								argumentsString+= (argumentsString.empty() == false?", ":"") + string("<COMPLEX DATATYPE>");
+								break;
+							}
+					}
+					break;
+				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
+				case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
+					argumentsString+= (argumentsString.empty() == false?", ":"") + argument.value.getValueString() + string("(") + getArgumentsAsString(argument.arguments) + string(")");
+					break;
+				default:
+					break;
+			}
+		}
+		return argumentsString;
+	}
+
+	/**
 	 * Execute a single script line
 	 */
 	void executeScriptLine();
@@ -1985,22 +2009,21 @@ private:
 
 	/**
 	 * Execute a script statement
-	 * @param method method 
-	 * @param arguments arguments
+	 * @param syntaxTree syntax tree
 	 * @param statement statement
-	 * @return return value as script variablle
+	 * @return return value as script variable
 	 */
-	ScriptVariable executeScriptStatement(const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement);
+	ScriptVariable executeScriptStatement(const ScriptSyntaxTreeNode& syntaxTree, const ScriptStatement& statement);
 
 	/**
-	 * Describe a script statement
+	 * Create script statement syntax tree
 	 * @param method method
 	 * @param arguments arguments
 	 * @param statement statement
-	 * @param description description
+	 * @param syntaxTree syntax tree
 	 * @return success
 	 */
-	bool describeScriptStatement(const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, StatementDescription& description);
+	bool createScriptStatementSyntaxTree(const string_view& method, const vector<string_view>& arguments, const ScriptStatement& statement, ScriptSyntaxTreeNode& syntaxTree);
 
 	/**
 	 * Returns if char is operator char
@@ -2052,9 +2075,9 @@ private:
 	/**
 	 * Transpile script statement
 	 * @param generatedCode generated code
-	 * @param method method
-	 * @param arguments arguments
+	 * @param syntaxTree syntax tree
 	 * @param statement script statement
+	 * @param scriptConditionIdx script condition index
 	 * @param scriptIdx script index
 	 * @param statementIdx statement index
 	 * @param methodCodeMap method code map
@@ -2068,7 +2091,7 @@ private:
 	 * @param injectCode code to additionally inject
 	 * @param additionalIndent additional indent
 	 */
-	bool transpileScriptStatement(string& generatedCode, const string_view& method, const span<string_view>& arguments, const ScriptStatement& statement, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth = 0, int argumentIdx = ARGUMENTIDX_NONE, int parentArgumentIdx = ARGUMENTIDX_NONE, const string& returnValue = string(), const string& injectCode = string(), int additionalIndent = 0);
+	bool transpileScriptStatement(string& generatedCode, const ScriptSyntaxTreeNode& syntaxTree, const ScriptStatement& statement, int scriptConditionIdx, int scriptIdx, int& statementIdx, const unordered_map<string, vector<string>>& methodCodeMap, bool& scriptStateChanged, bool& scriptStopped, vector<string>& enabledNamedConditions, int depth = 0, int argumentIdx = ARGUMENTIDX_NONE, int parentArgumentIdx = ARGUMENTIDX_NONE, const string& returnValue = string(), const string& injectCode = string(), int additionalIndent = 0);
 
 	/**
 	 * Get access operator left and right indices
@@ -2887,29 +2910,38 @@ public:
 	 * @return return value
 	 */
 	inline bool evaluate(const string& statement, ScriptVariable& returnValue) {
+		ScriptStatement evaluateStatement =
+			{
+				.line = LINEIDX_NONE,
+				.statementIdx = 0,
+				.statement = "script.evaluate(" + statement + ")",
+				.executableStatement = "script.evaluate(" + statement + ")",
+				.gotoStatementIdx = STATEMENTIDX_NONE
+			};
 		auto scriptEvaluateStatement = "script.evaluate(" + statement + ")";
+		//
 		string_view method;
 		vector<string_view> arguments;
-		pushScriptState();
-		resetScriptExecutationState(SCRIPTIDX_NONE, STATEMACHINESTATE_NEXT_STATEMENT);
-		getScriptState().running = true;
-		if (parseScriptStatement(scriptEvaluateStatement, method, arguments) == true) {
+		ScriptSyntaxTreeNode evaluateSyntaxTree;
+		if (parseScriptStatement(scriptEvaluateStatement, method, arguments) == false) {
+			Console::println("MiniScript::evaluate(): '" + scriptFileName + "': " + evaluateStatement.statement + "@" + to_string(evaluateStatement.line) + ": failed to parse evaluation statement");
+			return false;
+		} else
+		if (createScriptStatementSyntaxTree(method, arguments, evaluateStatement, evaluateSyntaxTree) == false) {
+			Console::println("MiniScript::evaluate(): '" + scriptFileName + "': " + evaluateStatement.statement + "@" + to_string(evaluateStatement.line) + ": failed to create syntax tree for evaluation statement");
+			return false;
+		} else {
+			//
+			pushScriptState();
+			resetScriptExecutationState(SCRIPTIDX_NONE, STATEMACHINESTATE_NEXT_STATEMENT);
+			getScriptState().running = true;
+			//
 			returnValue = executeScriptStatement(
-				method,
-				arguments,
-				{
-					.line = LINEIDX_NONE,
-					.statementIdx = 0,
-					.statement = "script.evaluate(" + statement + ")",
-					.executableStatement = "script.evaluate(" + statement + ")",
-					.gotoStatementIdx = STATEMENTIDX_NONE
-				}
+				evaluateSyntaxTree,
+				evaluateStatement
 			);
 			popScriptState();
 			return true;
-		} else {
-			popScriptState();
-			return false;
 		}
 	}
 
@@ -2978,14 +3010,6 @@ public:
 	 * @return script operator methods
 	 */
 	const vector<ScriptMethod*> getOperatorMethods();
-
-	/**
-	 * Describe a script with given index
-	 * @param scriptIdx script index
-	 * @param description description
-	 * @return success
-	 */
-	bool describeScript(int scriptIdx, vector<StatementDescription>& description);
 
 	/**
 	 * Get miniscript script information

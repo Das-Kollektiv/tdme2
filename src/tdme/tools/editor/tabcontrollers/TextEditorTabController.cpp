@@ -1,6 +1,7 @@
 #include <tdme/tools/editor/tabcontrollers/TextEditorTabController.h>
 
 #include <string>
+#include <unordered_map>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/Texture.h>
@@ -36,6 +37,7 @@
 using tdme::tools::editor::tabcontrollers::TextEditorTabController;
 
 using std::string;
+using std::unordered_map;
 
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::Engine;
@@ -168,7 +170,7 @@ void TextEditorTabController::onValueChanged(GUIElementNode* node)
 		if (StringTools::startsWith(outlinerNode, "miniscript.script.") == true) {
 			auto scriptIdx = Integer::parse(StringTools::substring(outlinerNode, string("miniscript.script.").size()));
 			if (view->isVisualEditor() == true) {
-				updateMiniScriptDescription(scriptIdx);
+				updateMiniScriptSyntaxTree(scriptIdx);
 			} else {
 				// TODO: jump to line
 			}
@@ -178,7 +180,7 @@ void TextEditorTabController::onValueChanged(GUIElementNode* node)
 		auto visual = node->getController()->getValue().equals("1");
 		if (visual == true) {
 			view->setVisualEditor();
-			updateMiniScriptDescription(view->getMiniScriptScriptIdx());
+			updateMiniScriptSyntaxTree(view->getMiniScriptScriptIdx());
 		} else {
 			view->setCodeEditor();
 		}
@@ -208,8 +210,8 @@ void TextEditorTabController::setOutlinerContent() {
 	string xml;
 	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"MiniScript\" value=\"miniscript\">\n";
 	auto scriptIdx = 0;
-	for (auto& miniScriptScriptDescription: miniScriptDescription) {
-		xml+= "<selectbox-option text=\"" + GUIParser::escapeQuotes(miniScriptScriptDescription.name) + "\" value=\"miniscript.script." + to_string(scriptIdx) + "\" />\n";
+	for (auto& miniScriptSyntaxTree: miniScriptSyntaxTrees) {
+		xml+= "<selectbox-option text=\"" + GUIParser::escapeQuotes(miniScriptSyntaxTree.name) + "\" value=\"miniscript.script." + to_string(scriptIdx) + "\" />\n";
 		scriptIdx++;
 	}
 	xml+= "</selectbox-parent-option>\n";
@@ -220,19 +222,22 @@ void TextEditorTabController::setOutlinerAddDropDownContent() {
 	view->getEditorView()->setOutlinerAddDropDownContent(string());
 }
 
-void TextEditorTabController::updateMiniScriptDescription(int miniScriptScriptIdx) {
+void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
 	auto scriptFileName = view->getFileName();
 	//
 	MiniScript* scriptInstance = new MiniScript();
 	scriptInstance->loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName));
 
 	//
-	auto scriptIdx = 0;
-	miniScriptDescription.clear();
-	for (auto script: scriptInstance->getScripts()) {
-		vector<MiniScript::StatementDescription> description;
-		scriptInstance->describeScript(scriptIdx, description);
+	unordered_map<string, string> methodOperatorMap;
+	for (auto operatorMethod: scriptInstance->getOperatorMethods()) {
+		methodOperatorMap[operatorMethod->getMethodName()] = MiniScript::getOperatorAsString(operatorMethod->getOperator());
+	}
 
+	//
+	auto scriptIdx = 0;
+	miniScriptSyntaxTrees.clear();
+	for (auto script: scriptInstance->getScripts()) {
 		// determine name
 		string name;
 		string argumentsString;
@@ -256,10 +261,10 @@ void TextEditorTabController::updateMiniScriptDescription(int miniScriptScriptId
 		}
 
 		//
-		miniScriptDescription.push_back(
+		miniScriptSyntaxTrees.push_back(
 			{
 				.name = name,
-				.description = description
+				.syntaxTree = script.syntaxTree
 			}
 		);
 
@@ -268,7 +273,8 @@ void TextEditorTabController::updateMiniScriptDescription(int miniScriptScriptId
 	}
 
 	// pass it to view
-	view->updateMiniScriptDescription(miniScriptScriptIdx);
+	view->setMiniScriptMethodOperatorMap(methodOperatorMap);
+	view->updateMiniScriptSyntaxTree(miniScriptScriptIdx);
 
 	//
 	setOutlinerContent();

@@ -546,15 +546,9 @@ int MiniScriptEmitTest::determineNamedScriptIdxToStart() {
 
 		// next statements belong to tested enabled named condition with name "named_condition_1"
 		if (enabledNamedCondition == "named_condition_1")
-			// equals(true, true)
+			// equals(1, 1)
 			{
-				const ScriptStatement statement = {
-					.line = 66,
-					.statementIdx = 0,
-					.statement = "<unavailable>",
-					.executableStatement = "<unavailable>",
-					.gotoStatementIdx = -1
-				};
+				const ScriptStatement& statement = scripts[4].conditionStatement;
 				getScriptState().statementIdx = statement.statementIdx;
 				// required method code arguments
 				ScriptVariable returnValue;
@@ -563,11 +557,16 @@ int MiniScriptEmitTest::determineNamedScriptIdxToStart() {
 				argumentValues[0].setValue(true);
 				argumentValues[1].setValue(true);
 				// method code: equals
-				returnValue.setValue(true);
-				for (auto i = 1; i < argumentValues.size(); i++) {
-					if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
-						returnValue.setValue(false);
-						break;
+				if (argumentValues.size() != 2) {
+					Console::println("ScriptMethodEquals::executeMethod(): " + string("equals") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
+					miniScript->startErrorScript(); return -1;
+				} else {
+					returnValue.setValue(true);
+					for (auto i = 1; i < argumentValues.size(); i++) {
+						if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
+							returnValue.setValue(false);
+							break;
+						}
 					}
 				}
 				bool returnValueBool; returnValue.getBooleanValue(returnValueBool); if (returnValueBool == true) return 4;
@@ -1452,7 +1451,7 @@ void MiniScriptEmitTest::on_emittest(int miniScriptGotoStatementIdx) {
 
 	// Statement: 11
 	miniscript_statement_11:
-	// forCondition(lesser($i, 500000))
+	// forCondition(lesser(getVariable("$i"), 500000))
 	{
 		const ScriptStatement& statement = scripts[3].statements[11];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -1460,8 +1459,8 @@ void MiniScriptEmitTest::on_emittest(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 1> argumentValues;
 		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
-		// argumentValues[0] --> returnValue of lesser($i, 500000)
-		// depth = 1 / argument index = 0: lesser($i, 500000)
+		// argumentValues[0] --> returnValue of lesser(getVariable("$i"), 500000)
+		// depth = 1 / argument index = 0: lesser(getVariable("$i"), 500000)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
@@ -1519,7 +1518,7 @@ void MiniScriptEmitTest::on_emittest(int miniScriptGotoStatementIdx) {
 
 	// Statement: 12
 	miniscript_statement_12:
-	// setVariable("$a", sub(add(123,add(mul(456,div(25, 12)),mul(7.5, 12.25))), 8))
+	// setVariable("$a", sub(add(123, add(mul(456, div(25, 12)), mul(7.500000, 12.250000))), 8))
 	{
 		const ScriptStatement& statement = scripts[3].statements[12];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -1528,31 +1527,31 @@ void MiniScriptEmitTest::on_emittest(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("$a"));
-		// argumentValues[1] --> returnValue of sub(add(123,add(mul(456,div(25, 12)),mul(7.5, 12.25))), 8)
-		// depth = 1 / argument index = 1: sub(add(123,add(mul(456,div(25, 12)),mul(7.5, 12.25))), 8)
+		// argumentValues[1] --> returnValue of sub(add(123, add(mul(456, div(25, 12)), mul(7.500000, 12.250000))), 8)
+		// depth = 1 / argument index = 1: sub(add(123, add(mul(456, div(25, 12)), mul(7.500000, 12.250000))), 8)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX1 = argumentValues;
-			// argumentValues[0] --> returnValue of add(123,add(mul(456,div(25, 12)),mul(7.5, 12.25)))
+			// argumentValues[0] --> returnValue of add(123, add(mul(456, div(25, 12)), mul(7.500000, 12.250000)))
 			argumentValues[1].setValue(static_cast<int64_t>(8));
-			// depth = 2 / argument index = 0: add(123, add(mul(456,div(25, 12)),mul(7.5, 12.25)))
+			// depth = 2 / argument index = 0: add(123, add(mul(456, div(25, 12)), mul(7.500000, 12.250000)))
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX1[0];
 				array<ScriptVariable, 2> argumentValues;
 				array<ScriptVariable, 2>& argumentValuesD2AIDX0 = argumentValues;
 				argumentValues[0].setValue(static_cast<int64_t>(123));
-				// argumentValues[1] --> returnValue of add(mul(456,div(25, 12)),mul(7.5, 12.25))
-				// depth = 3 / argument index = 1: add(mul(456,div(25, 12)), mul(7.5, 12.25))
+				// argumentValues[1] --> returnValue of add(mul(456, div(25, 12)), mul(7.500000, 12.250000))
+				// depth = 3 / argument index = 1: add(mul(456, div(25, 12)), mul(7.500000, 12.250000))
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX0[1];
 					array<ScriptVariable, 2> argumentValues;
 					array<ScriptVariable, 2>& argumentValuesD3AIDX1 = argumentValues;
-					// argumentValues[0] --> returnValue of mul(456,div(25, 12))
-					// argumentValues[1] --> returnValue of mul(7.5, 12.25)
+					// argumentValues[0] --> returnValue of mul(456, div(25, 12))
+					// argumentValues[1] --> returnValue of mul(7.500000, 12.250000)
 					// depth = 4 / argument index = 0: mul(456, div(25, 12))
 					{
 						// required method code arguments
@@ -1575,7 +1574,7 @@ void MiniScriptEmitTest::on_emittest(int miniScriptGotoStatementIdx) {
 						// method code: mul
 						MiniScriptMath::mul(miniScript, argumentValues, returnValue, statement);
 					}
-					// depth = 4 / argument index = 1: mul(7.5, 12.25)
+					// depth = 4 / argument index = 1: mul(7.500000, 12.250000)
 					{
 						// required method code arguments
 						ScriptVariable& returnValue = argumentValuesD3AIDX1[1];
@@ -1608,7 +1607,7 @@ void MiniScriptEmitTest::on_emittest(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 13
-	// if(equals($j, 0))
+	// if(equals(getVariable("$j"), 0))
 	{
 		const ScriptStatement& statement = scripts[3].statements[13];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -1616,8 +1615,8 @@ void MiniScriptEmitTest::on_emittest(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 1> argumentValues;
 		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
-		// argumentValues[0] --> returnValue of equals($j, 0)
-		// depth = 1 / argument index = 0: equals($j, 0)
+		// argumentValues[0] --> returnValue of equals(getVariable("$j"), 0)
+		// depth = 1 / argument index = 0: equals(getVariable("$j"), 0)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
@@ -1642,11 +1641,16 @@ void MiniScriptEmitTest::on_emittest(int miniScriptGotoStatementIdx) {
 				}
 			}
 			// method code: equals
-			returnValue.setValue(true);
-			for (auto i = 1; i < argumentValues.size(); i++) {
-				if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
-					returnValue.setValue(false);
-					break;
+			if (argumentValues.size() != 2) {
+				Console::println("ScriptMethodEquals::executeMethod(): " + string("equals") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
+				miniScript->startErrorScript(); return;
+			} else {
+				returnValue.setValue(true);
+				for (auto i = 1; i < argumentValues.size(); i++) {
+					if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
+						returnValue.setValue(false);
+						break;
+					}
 				}
 			}
 		}
@@ -1673,7 +1677,7 @@ void MiniScriptEmitTest::on_emittest(int miniScriptGotoStatementIdx) {
 
 	// Statement: 14
 	miniscript_statement_14:
-	// setVariable("$k", add($k, 1))
+	// setVariable("$k", add(getVariable("$k"), 1))
 	{
 		const ScriptStatement& statement = scripts[3].statements[14];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -1682,8 +1686,8 @@ void MiniScriptEmitTest::on_emittest(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("$k"));
-		// argumentValues[1] --> returnValue of add($k, 1)
-		// depth = 1 / argument index = 1: add($k, 1)
+		// argumentValues[1] --> returnValue of add(getVariable("$k"), 1)
+		// depth = 1 / argument index = 1: add(getVariable("$k"), 1)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -1767,7 +1771,7 @@ void MiniScriptEmitTest::on_emittest(int miniScriptGotoStatementIdx) {
 
 	// Statement: 16
 	miniscript_statement_16:
-	// setVariable("$i", add($i, 1))
+	// setVariable("$i", add(getVariable("$i"), 1))
 	{
 		const ScriptStatement& statement = scripts[3].statements[16];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -1776,8 +1780,8 @@ void MiniScriptEmitTest::on_emittest(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("$i"));
-		// argumentValues[1] --> returnValue of add($i, 1)
-		// depth = 1 / argument index = 1: add($i, 1)
+		// argumentValues[1] --> returnValue of add(getVariable("$i"), 1)
+		// depth = 1 / argument index = 1: add(getVariable("$i"), 1)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -1817,7 +1821,7 @@ void MiniScriptEmitTest::on_emittest(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 17
-	// setVariable("$j", add($j, 1))
+	// setVariable("$j", add(getVariable("$j"), 1))
 	{
 		const ScriptStatement& statement = scripts[3].statements[17];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -1826,8 +1830,8 @@ void MiniScriptEmitTest::on_emittest(int miniScriptGotoStatementIdx) {
 		array<ScriptVariable, 2> argumentValues;
 		array<ScriptVariable, 2>& argumentValuesD0 = argumentValues;
 		argumentValues[0].setValue(string("$j"));
-		// argumentValues[1] --> returnValue of add($j, 1)
-		// depth = 1 / argument index = 1: add($j, 1)
+		// argumentValues[1] --> returnValue of add(getVariable("$j"), 1)
+		// depth = 1 / argument index = 1: add(getVariable("$j"), 1)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[1];
@@ -1867,7 +1871,7 @@ void MiniScriptEmitTest::on_emittest(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 18
-	// if(equals($j, 2))
+	// if(equals(getVariable("$j"), 2))
 	{
 		const ScriptStatement& statement = scripts[3].statements[18];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -1875,8 +1879,8 @@ void MiniScriptEmitTest::on_emittest(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 1> argumentValues;
 		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
-		// argumentValues[0] --> returnValue of equals($j, 2)
-		// depth = 1 / argument index = 0: equals($j, 2)
+		// argumentValues[0] --> returnValue of equals(getVariable("$j"), 2)
+		// depth = 1 / argument index = 0: equals(getVariable("$j"), 2)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
@@ -1901,11 +1905,16 @@ void MiniScriptEmitTest::on_emittest(int miniScriptGotoStatementIdx) {
 				}
 			}
 			// method code: equals
-			returnValue.setValue(true);
-			for (auto i = 1; i < argumentValues.size(); i++) {
-				if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
-					returnValue.setValue(false);
-					break;
+			if (argumentValues.size() != 2) {
+				Console::println("ScriptMethodEquals::executeMethod(): " + string("equals") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
+				miniScript->startErrorScript(); return;
+			} else {
+				returnValue.setValue(true);
+				for (auto i = 1; i < argumentValues.size(); i++) {
+					if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
+						returnValue.setValue(false);
+						break;
+					}
 				}
 			}
 		}
@@ -2075,7 +2084,7 @@ void MiniScriptEmitTest::on_emittest(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 23
-	// console.log(add("Finished. Time: ", sub($endTime, $startTime)))
+	// console.log(add("Finished. Time: ", sub(getVariable("$endTime"), getVariable("$startTime"))))
 	{
 		const ScriptStatement& statement = scripts[3].statements[23];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -2083,16 +2092,16 @@ void MiniScriptEmitTest::on_emittest(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 1> argumentValues;
 		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
-		// argumentValues[0] --> returnValue of add("Finished. Time: ", sub($endTime, $startTime))
-		// depth = 1 / argument index = 0: add("Finished. Time: ", sub($endTime, $startTime))
+		// argumentValues[0] --> returnValue of add("Finished. Time: ", sub(getVariable("$endTime"), getVariable("$startTime")))
+		// depth = 1 / argument index = 0: add("Finished. Time: ", sub(getVariable("$endTime"), getVariable("$startTime")))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX0 = argumentValues;
 			argumentValues[0].setValue(string("Finished. Time: "));
-			// argumentValues[1] --> returnValue of sub($endTime, $startTime)
-			// depth = 2 / argument index = 1: sub($endTime, $startTime)
+			// argumentValues[1] --> returnValue of sub(getVariable("$endTime"), getVariable("$startTime"))
+			// depth = 2 / argument index = 1: sub(getVariable("$endTime"), getVariable("$startTime"))
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX0[1];
@@ -2379,7 +2388,7 @@ void MiniScriptEmitTest::on_enabled_named_condition_1(int miniScriptGotoStatemen
 	}
 
 	// Statement: 9
-	// script.emit(emittest)
+	// script.emit("emittest")
 	{
 		const ScriptStatement& statement = scripts[4].statements[9];
 		getScriptState().statementIdx = statement.statementIdx;

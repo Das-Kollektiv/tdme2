@@ -618,7 +618,7 @@ void MiniScriptFunctionsTest::factorial(int miniScriptGotoStatementIdx) {
 	if (miniScriptGotoStatementIdx != STATEMENTIDX_NONE && miniScriptGotoStatementIdx != 0) Console::println("MiniScript::factorial(): Can not go to statement " + to_string(miniScriptGotoStatementIdx));
 
 	// Statement: 0
-	// console.log(add("factorial(): $arguments = ",add($arguments,add(" / $value = ", $value))))
+	// console.log(add("factorial(): $arguments = ", add(getVariable("$arguments"), add(" / $value = ", getVariable("$value")))))
 	{
 		const ScriptStatement& statement = scripts[1].statements[0];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -626,23 +626,23 @@ void MiniScriptFunctionsTest::factorial(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 1> argumentValues;
 		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
-		// argumentValues[0] --> returnValue of add("factorial(): $arguments = ",add($arguments,add(" / $value = ", $value)))
-		// depth = 1 / argument index = 0: add("factorial(): $arguments = ", add($arguments,add(" / $value = ", $value)))
+		// argumentValues[0] --> returnValue of add("factorial(): $arguments = ", add(getVariable("$arguments"), add(" / $value = ", getVariable("$value"))))
+		// depth = 1 / argument index = 0: add("factorial(): $arguments = ", add(getVariable("$arguments"), add(" / $value = ", getVariable("$value"))))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX0 = argumentValues;
 			argumentValues[0].setValue(string("factorial(): $arguments = "));
-			// argumentValues[1] --> returnValue of add($arguments,add(" / $value = ", $value))
-			// depth = 2 / argument index = 1: add($arguments, add(" / $value = ", $value))
+			// argumentValues[1] --> returnValue of add(getVariable("$arguments"), add(" / $value = ", getVariable("$value")))
+			// depth = 2 / argument index = 1: add(getVariable("$arguments"), add(" / $value = ", getVariable("$value")))
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX0[1];
 				array<ScriptVariable, 2> argumentValues;
 				array<ScriptVariable, 2>& argumentValuesD2AIDX1 = argumentValues;
 				// argumentValues[0] --> returnValue of getVariable("$arguments")
-				// argumentValues[1] --> returnValue of add(" / $value = ", $value)
+				// argumentValues[1] --> returnValue of add(" / $value = ", getVariable("$value"))
 				// depth = 3 / argument index = 0: getVariable("$arguments")
 				{
 					// required method code arguments
@@ -659,7 +659,7 @@ void MiniScriptFunctionsTest::factorial(int miniScriptGotoStatementIdx) {
 						miniScript->startErrorScript(); return;
 					}
 				}
-				// depth = 3 / argument index = 1: add(" / $value = ", $value)
+				// depth = 3 / argument index = 1: add(" / $value = ", getVariable("$value"))
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX1[1];
@@ -700,7 +700,7 @@ void MiniScriptFunctionsTest::factorial(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 1
-	// if(equals($value, 0))
+	// if(equals(getVariable("$value"), 0))
 	{
 		const ScriptStatement& statement = scripts[1].statements[1];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -708,8 +708,8 @@ void MiniScriptFunctionsTest::factorial(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 1> argumentValues;
 		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
-		// argumentValues[0] --> returnValue of equals($value, 0)
-		// depth = 1 / argument index = 0: equals($value, 0)
+		// argumentValues[0] --> returnValue of equals(getVariable("$value"), 0)
+		// depth = 1 / argument index = 0: equals(getVariable("$value"), 0)
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
@@ -734,11 +734,16 @@ void MiniScriptFunctionsTest::factorial(int miniScriptGotoStatementIdx) {
 				}
 			}
 			// method code: equals
-			returnValue.setValue(true);
-			for (auto i = 1; i < argumentValues.size(); i++) {
-				if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
-					returnValue.setValue(false);
-					break;
+			if (argumentValues.size() != 2) {
+				Console::println("ScriptMethodEquals::executeMethod(): " + string("equals") + "(): " + miniScript->getStatementInformation(statement) + ": parameter type mismatch @ argument 0: mixed expected, @ argument 1: mixed expected");
+				miniScript->startErrorScript(); return;
+			} else {
+				returnValue.setValue(true);
+				for (auto i = 1; i < argumentValues.size(); i++) {
+					if (argumentValues[0].getValueString() != argumentValues[i].getValueString()) {
+						returnValue.setValue(false);
+						break;
+					}
 				}
 			}
 		}
@@ -835,7 +840,7 @@ void MiniScriptFunctionsTest::factorial(int miniScriptGotoStatementIdx) {
 
 	// Statement: 4
 	miniscript_statement_4:
-	// return(mul($value, factorial(sub($value, 1))))
+	// return(mul(getVariable("$value"), factorial(sub(getVariable("$value"), 1))))
 	{
 		const ScriptStatement& statement = scripts[1].statements[4];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -843,15 +848,15 @@ void MiniScriptFunctionsTest::factorial(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 1> argumentValues;
 		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
-		// argumentValues[0] --> returnValue of mul($value, factorial(sub($value, 1)))
-		// depth = 1 / argument index = 0: mul($value, factorial(sub($value, 1)))
+		// argumentValues[0] --> returnValue of mul(getVariable("$value"), factorial(sub(getVariable("$value"), 1)))
+		// depth = 1 / argument index = 0: mul(getVariable("$value"), factorial(sub(getVariable("$value"), 1)))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX0 = argumentValues;
 			// argumentValues[0] --> returnValue of getVariable("$value")
-			// argumentValues[1] --> returnValue of factorial(sub($value, 1))
+			// argumentValues[1] --> returnValue of factorial(sub(getVariable("$value"), 1))
 			// depth = 2 / argument index = 0: getVariable("$value")
 			{
 				// required method code arguments
@@ -868,19 +873,15 @@ void MiniScriptFunctionsTest::factorial(int miniScriptGotoStatementIdx) {
 					miniScript->startErrorScript(); return;
 				}
 			}
-			// depth = 2 / argument index = 1: script.call(factorial, sub($value, 1))
+			// depth = 2 / argument index = 1: script.call("factorial", sub(getVariable("$value"), 1))
 			{
 				// required method code arguments
-				array<string, 2> arguments {
-					"factorial",
-					"sub($value, 1)"
-				};
 				ScriptVariable& returnValue = argumentValuesD1AIDX0[1];
 				array<ScriptVariable, 2> argumentValues;
 				array<ScriptVariable, 2>& argumentValuesD2AIDX1 = argumentValues;
 				argumentValues[0].setValue(string("factorial"));
-				// argumentValues[1] --> returnValue of sub($value, 1)
-				// depth = 3 / argument index = 1: sub($value, 1)
+				// argumentValues[1] --> returnValue of sub(getVariable("$value"), 1)
+				// depth = 3 / argument index = 1: sub(getVariable("$value"), 1)
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX1[1];
@@ -924,25 +925,9 @@ void MiniScriptFunctionsTest::factorial(int miniScriptGotoStatementIdx) {
 							// call
 							span callArgumentValuesSpan(callArgumentValues);
 							miniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
-							// and copy back
-							for (auto i = 1; i < argumentValues.size(); i++) argumentValues[i] = callArgumentValues[i];
-							//
-							#if defined(__MINISCRIPT_TRANSPILATION__)
-								// copy our arguments as well
-								vector<string> callArguments;
-								for (auto i = 1; i < arguments.size(); i++) callArguments.push_back(arguments[i]);
-								// and assign back
-								assignBackFunction(scriptIdx, callArguments, callArgumentValues, statement);
-							#endif
 						#else
 							span callArgumentValuesSpan(argumentValues.begin() + 1, argumentValues.end());
 							miniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
-							//
-							#if defined(__MINISCRIPT_TRANSPILATION__)
-								// copy our arguments as well
-								span callArgumentsSpan(arguments.begin() + 1, arguments.end());
-								assignBackFunction(scriptIdx, callArgumentsSpan, callArgumentValuesSpan, statement);
-							#endif
 						#endif
 					}
 				}
@@ -1218,7 +1203,7 @@ void MiniScriptFunctionsTest::globalVariableTest(int miniScriptGotoStatementIdx)
 	if (miniScriptGotoStatementIdx != STATEMENTIDX_NONE && miniScriptGotoStatementIdx != 0) Console::println("MiniScript::globalVariableTest(): Can not go to statement " + to_string(miniScriptGotoStatementIdx));
 
 	// Statement: 0
-	// console.log(add("globalVariableTest(): $GLOBAL.globalTest = ", $GLOBAL.globalTest))
+	// console.log(add("globalVariableTest(): $GLOBAL.globalTest = ", getVariable("$GLOBAL.globalTest")))
 	{
 		const ScriptStatement& statement = scripts[4].statements[0];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -1226,8 +1211,8 @@ void MiniScriptFunctionsTest::globalVariableTest(int miniScriptGotoStatementIdx)
 		ScriptVariable returnValue;
 		array<ScriptVariable, 1> argumentValues;
 		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
-		// argumentValues[0] --> returnValue of add("globalVariableTest(): $GLOBAL.globalTest = ", $GLOBAL.globalTest)
-		// depth = 1 / argument index = 0: add("globalVariableTest(): $GLOBAL.globalTest = ", $GLOBAL.globalTest)
+		// argumentValues[0] --> returnValue of add("globalVariableTest(): $GLOBAL.globalTest = ", getVariable("$GLOBAL.globalTest"))
+		// depth = 1 / argument index = 0: add("globalVariableTest(): $GLOBAL.globalTest = ", getVariable("$GLOBAL.globalTest"))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
@@ -1391,14 +1376,11 @@ void MiniScriptFunctionsTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 3
-	// script.call(helloWorldFunction)
+	// script.call("helloWorldFunction")
 	{
 		const ScriptStatement& statement = scripts[5].statements[3];
 		getScriptState().statementIdx = statement.statementIdx;
 		// required method code arguments
-		array<string, 1> arguments {
-			"helloWorldFunction"
-		};
 		ScriptVariable returnValue;
 		array<ScriptVariable, 1> argumentValues;
 		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
@@ -1420,25 +1402,9 @@ void MiniScriptFunctionsTest::on_nothing(int miniScriptGotoStatementIdx) {
 					// call
 					span callArgumentValuesSpan(callArgumentValues);
 					miniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
-					// and copy back
-					for (auto i = 1; i < argumentValues.size(); i++) argumentValues[i] = callArgumentValues[i];
-					//
-					#if defined(__MINISCRIPT_TRANSPILATION__)
-						// copy our arguments as well
-						vector<string> callArguments;
-						for (auto i = 1; i < arguments.size(); i++) callArguments.push_back(arguments[i]);
-						// and assign back
-						assignBackFunction(scriptIdx, callArguments, callArgumentValues, statement);
-					#endif
 				#else
 					span callArgumentValuesSpan(argumentValues.begin() + 1, argumentValues.end());
 					miniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
-					//
-					#if defined(__MINISCRIPT_TRANSPILATION__)
-						// copy our arguments as well
-						span callArgumentsSpan(arguments.begin() + 1, arguments.end());
-						assignBackFunction(scriptIdx, callArgumentsSpan, callArgumentValuesSpan, statement);
-					#endif
 				#endif
 			}
 		}
@@ -1462,13 +1428,9 @@ void MiniScriptFunctionsTest::on_nothing(int miniScriptGotoStatementIdx) {
 			array<ScriptVariable, 2>& argumentValuesD1AIDX0 = argumentValues;
 			argumentValues[0].setValue(string("factorial(5) = "));
 			// argumentValues[1] --> returnValue of factorial(5)
-			// depth = 2 / argument index = 1: script.call(factorial, 5)
+			// depth = 2 / argument index = 1: script.call("factorial", 5)
 			{
 				// required method code arguments
-				array<string, 2> arguments {
-					"factorial",
-					"5"
-				};
 				ScriptVariable& returnValue = argumentValuesD1AIDX0[1];
 				array<ScriptVariable, 2> argumentValues;
 				array<ScriptVariable, 2>& argumentValuesD2AIDX1 = argumentValues;
@@ -1491,25 +1453,9 @@ void MiniScriptFunctionsTest::on_nothing(int miniScriptGotoStatementIdx) {
 							// call
 							span callArgumentValuesSpan(callArgumentValues);
 							miniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
-							// and copy back
-							for (auto i = 1; i < argumentValues.size(); i++) argumentValues[i] = callArgumentValues[i];
-							//
-							#if defined(__MINISCRIPT_TRANSPILATION__)
-								// copy our arguments as well
-								vector<string> callArguments;
-								for (auto i = 1; i < arguments.size(); i++) callArguments.push_back(arguments[i]);
-								// and assign back
-								assignBackFunction(scriptIdx, callArguments, callArgumentValues, statement);
-							#endif
 						#else
 							span callArgumentValuesSpan(argumentValues.begin() + 1, argumentValues.end());
 							miniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
-							//
-							#if defined(__MINISCRIPT_TRANSPILATION__)
-								// copy our arguments as well
-								span callArgumentsSpan(arguments.begin() + 1, arguments.end());
-								assignBackFunction(scriptIdx, callArgumentsSpan, callArgumentValuesSpan, statement);
-							#endif
 						#endif
 					}
 				}
@@ -1594,7 +1540,7 @@ void MiniScriptFunctionsTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 8
-	// console.log(add("assignTest(): pre: $a = ",add($a,add(", $b = ",add($b,add(", $c = ", $c))))))
+	// console.log(add("assignTest(): pre: $a = ", add(getVariable("$a"), add(", $b = ", add(getVariable("$b"), add(", $c = ", getVariable("$c")))))))
 	{
 		const ScriptStatement& statement = scripts[5].statements[8];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -1602,23 +1548,23 @@ void MiniScriptFunctionsTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 1> argumentValues;
 		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
-		// argumentValues[0] --> returnValue of add("assignTest(): pre: $a = ",add($a,add(", $b = ",add($b,add(", $c = ", $c)))))
-		// depth = 1 / argument index = 0: add("assignTest(): pre: $a = ", add($a,add(", $b = ",add($b,add(", $c = ", $c)))))
+		// argumentValues[0] --> returnValue of add("assignTest(): pre: $a = ", add(getVariable("$a"), add(", $b = ", add(getVariable("$b"), add(", $c = ", getVariable("$c"))))))
+		// depth = 1 / argument index = 0: add("assignTest(): pre: $a = ", add(getVariable("$a"), add(", $b = ", add(getVariable("$b"), add(", $c = ", getVariable("$c"))))))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX0 = argumentValues;
 			argumentValues[0].setValue(string("assignTest(): pre: $a = "));
-			// argumentValues[1] --> returnValue of add($a,add(", $b = ",add($b,add(", $c = ", $c))))
-			// depth = 2 / argument index = 1: add($a, add(", $b = ",add($b,add(", $c = ", $c))))
+			// argumentValues[1] --> returnValue of add(getVariable("$a"), add(", $b = ", add(getVariable("$b"), add(", $c = ", getVariable("$c")))))
+			// depth = 2 / argument index = 1: add(getVariable("$a"), add(", $b = ", add(getVariable("$b"), add(", $c = ", getVariable("$c")))))
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX0[1];
 				array<ScriptVariable, 2> argumentValues;
 				array<ScriptVariable, 2>& argumentValuesD2AIDX1 = argumentValues;
 				// argumentValues[0] --> returnValue of getVariable("$a")
-				// argumentValues[1] --> returnValue of add(", $b = ",add($b,add(", $c = ", $c)))
+				// argumentValues[1] --> returnValue of add(", $b = ", add(getVariable("$b"), add(", $c = ", getVariable("$c"))))
 				// depth = 3 / argument index = 0: getVariable("$a")
 				{
 					// required method code arguments
@@ -1635,22 +1581,22 @@ void MiniScriptFunctionsTest::on_nothing(int miniScriptGotoStatementIdx) {
 						miniScript->startErrorScript(); return;
 					}
 				}
-				// depth = 3 / argument index = 1: add(", $b = ", add($b,add(", $c = ", $c)))
+				// depth = 3 / argument index = 1: add(", $b = ", add(getVariable("$b"), add(", $c = ", getVariable("$c"))))
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX1[1];
 					array<ScriptVariable, 2> argumentValues;
 					array<ScriptVariable, 2>& argumentValuesD3AIDX1 = argumentValues;
 					argumentValues[0].setValue(string(", $b = "));
-					// argumentValues[1] --> returnValue of add($b,add(", $c = ", $c))
-					// depth = 4 / argument index = 1: add($b, add(", $c = ", $c))
+					// argumentValues[1] --> returnValue of add(getVariable("$b"), add(", $c = ", getVariable("$c")))
+					// depth = 4 / argument index = 1: add(getVariable("$b"), add(", $c = ", getVariable("$c")))
 					{
 						// required method code arguments
 						ScriptVariable& returnValue = argumentValuesD3AIDX1[1];
 						array<ScriptVariable, 2> argumentValues;
 						array<ScriptVariable, 2>& argumentValuesD4AIDX1 = argumentValues;
 						// argumentValues[0] --> returnValue of getVariable("$b")
-						// argumentValues[1] --> returnValue of add(", $c = ", $c)
+						// argumentValues[1] --> returnValue of add(", $c = ", getVariable("$c"))
 						// depth = 5 / argument index = 0: getVariable("$b")
 						{
 							// required method code arguments
@@ -1667,7 +1613,7 @@ void MiniScriptFunctionsTest::on_nothing(int miniScriptGotoStatementIdx) {
 								miniScript->startErrorScript(); return;
 							}
 						}
-						// depth = 5 / argument index = 1: add(", $c = ", $c)
+						// depth = 5 / argument index = 1: add(", $c = ", getVariable("$c"))
 						{
 							// required method code arguments
 							ScriptVariable& returnValue = argumentValuesD4AIDX1[1];
@@ -1714,17 +1660,11 @@ void MiniScriptFunctionsTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 9
-	// script.call(assignTest, $a, $b, $c)
+	// script.call("assignTest", getVariable("$a"), getVariable("$b"), getVariable("$c"))
 	{
 		const ScriptStatement& statement = scripts[5].statements[9];
 		getScriptState().statementIdx = statement.statementIdx;
 		// required method code arguments
-		array<string, 4> arguments {
-			"assignTest",
-			"$a",
-			"$b",
-			"$c"
-		};
 		ScriptVariable returnValue;
 		array<ScriptVariable, 4> argumentValues;
 		array<ScriptVariable, 4>& argumentValuesD0 = argumentValues;
@@ -1797,32 +1737,20 @@ void MiniScriptFunctionsTest::on_nothing(int miniScriptGotoStatementIdx) {
 					// call
 					span callArgumentValuesSpan(callArgumentValues);
 					miniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
-					// and copy back
-					for (auto i = 1; i < argumentValues.size(); i++) argumentValues[i] = callArgumentValues[i];
-					//
-					#if defined(__MINISCRIPT_TRANSPILATION__)
-						// copy our arguments as well
-						vector<string> callArguments;
-						for (auto i = 1; i < arguments.size(); i++) callArguments.push_back(arguments[i]);
-						// and assign back
-						assignBackFunction(scriptIdx, callArguments, callArgumentValues, statement);
-					#endif
 				#else
 					span callArgumentValuesSpan(argumentValues.begin() + 1, argumentValues.end());
 					miniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
-					//
-					#if defined(__MINISCRIPT_TRANSPILATION__)
-						// copy our arguments as well
-						span callArgumentsSpan(arguments.begin() + 1, arguments.end());
-						assignBackFunction(scriptIdx, callArgumentsSpan, callArgumentValuesSpan, statement);
-					#endif
 				#endif
 			}
 		}
+		// assign back
+		setVariable("$b", argumentValues[2], &statement);
+		setVariable("$c", argumentValues[3], &statement);
+		//
 	}
 
 	// Statement: 10
-	// console.log(add("assignTest(): post: $a = ",add($a,add(", $b = ",add($b,add(", $c = ", $c))))))
+	// console.log(add("assignTest(): post: $a = ", add(getVariable("$a"), add(", $b = ", add(getVariable("$b"), add(", $c = ", getVariable("$c")))))))
 	{
 		const ScriptStatement& statement = scripts[5].statements[10];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -1830,23 +1758,23 @@ void MiniScriptFunctionsTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 1> argumentValues;
 		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
-		// argumentValues[0] --> returnValue of add("assignTest(): post: $a = ",add($a,add(", $b = ",add($b,add(", $c = ", $c)))))
-		// depth = 1 / argument index = 0: add("assignTest(): post: $a = ", add($a,add(", $b = ",add($b,add(", $c = ", $c)))))
+		// argumentValues[0] --> returnValue of add("assignTest(): post: $a = ", add(getVariable("$a"), add(", $b = ", add(getVariable("$b"), add(", $c = ", getVariable("$c"))))))
+		// depth = 1 / argument index = 0: add("assignTest(): post: $a = ", add(getVariable("$a"), add(", $b = ", add(getVariable("$b"), add(", $c = ", getVariable("$c"))))))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
 			array<ScriptVariable, 2> argumentValues;
 			array<ScriptVariable, 2>& argumentValuesD1AIDX0 = argumentValues;
 			argumentValues[0].setValue(string("assignTest(): post: $a = "));
-			// argumentValues[1] --> returnValue of add($a,add(", $b = ",add($b,add(", $c = ", $c))))
-			// depth = 2 / argument index = 1: add($a, add(", $b = ",add($b,add(", $c = ", $c))))
+			// argumentValues[1] --> returnValue of add(getVariable("$a"), add(", $b = ", add(getVariable("$b"), add(", $c = ", getVariable("$c")))))
+			// depth = 2 / argument index = 1: add(getVariable("$a"), add(", $b = ", add(getVariable("$b"), add(", $c = ", getVariable("$c")))))
 			{
 				// required method code arguments
 				ScriptVariable& returnValue = argumentValuesD1AIDX0[1];
 				array<ScriptVariable, 2> argumentValues;
 				array<ScriptVariable, 2>& argumentValuesD2AIDX1 = argumentValues;
 				// argumentValues[0] --> returnValue of getVariable("$a")
-				// argumentValues[1] --> returnValue of add(", $b = ",add($b,add(", $c = ", $c)))
+				// argumentValues[1] --> returnValue of add(", $b = ", add(getVariable("$b"), add(", $c = ", getVariable("$c"))))
 				// depth = 3 / argument index = 0: getVariable("$a")
 				{
 					// required method code arguments
@@ -1863,22 +1791,22 @@ void MiniScriptFunctionsTest::on_nothing(int miniScriptGotoStatementIdx) {
 						miniScript->startErrorScript(); return;
 					}
 				}
-				// depth = 3 / argument index = 1: add(", $b = ", add($b,add(", $c = ", $c)))
+				// depth = 3 / argument index = 1: add(", $b = ", add(getVariable("$b"), add(", $c = ", getVariable("$c"))))
 				{
 					// required method code arguments
 					ScriptVariable& returnValue = argumentValuesD2AIDX1[1];
 					array<ScriptVariable, 2> argumentValues;
 					array<ScriptVariable, 2>& argumentValuesD3AIDX1 = argumentValues;
 					argumentValues[0].setValue(string(", $b = "));
-					// argumentValues[1] --> returnValue of add($b,add(", $c = ", $c))
-					// depth = 4 / argument index = 1: add($b, add(", $c = ", $c))
+					// argumentValues[1] --> returnValue of add(getVariable("$b"), add(", $c = ", getVariable("$c")))
+					// depth = 4 / argument index = 1: add(getVariable("$b"), add(", $c = ", getVariable("$c")))
 					{
 						// required method code arguments
 						ScriptVariable& returnValue = argumentValuesD3AIDX1[1];
 						array<ScriptVariable, 2> argumentValues;
 						array<ScriptVariable, 2>& argumentValuesD4AIDX1 = argumentValues;
 						// argumentValues[0] --> returnValue of getVariable("$b")
-						// argumentValues[1] --> returnValue of add(", $c = ", $c)
+						// argumentValues[1] --> returnValue of add(", $c = ", getVariable("$c"))
 						// depth = 5 / argument index = 0: getVariable("$b")
 						{
 							// required method code arguments
@@ -1895,7 +1823,7 @@ void MiniScriptFunctionsTest::on_nothing(int miniScriptGotoStatementIdx) {
 								miniScript->startErrorScript(); return;
 							}
 						}
-						// depth = 5 / argument index = 1: add(", $c = ", $c)
+						// depth = 5 / argument index = 1: add(", $c = ", getVariable("$c"))
 						{
 							// required method code arguments
 							ScriptVariable& returnValue = argumentValuesD4AIDX1[1];
@@ -1965,7 +1893,7 @@ void MiniScriptFunctionsTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 12
-	// console.log(add("globalVariableTest(): pre: $globalTest = ", $globalTest))
+	// console.log(add("globalVariableTest(): pre: $globalTest = ", getVariable("$globalTest")))
 	{
 		const ScriptStatement& statement = scripts[5].statements[12];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -1973,8 +1901,8 @@ void MiniScriptFunctionsTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 1> argumentValues;
 		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
-		// argumentValues[0] --> returnValue of add("globalVariableTest(): pre: $globalTest = ", $globalTest)
-		// depth = 1 / argument index = 0: add("globalVariableTest(): pre: $globalTest = ", $globalTest)
+		// argumentValues[0] --> returnValue of add("globalVariableTest(): pre: $globalTest = ", getVariable("$globalTest"))
+		// depth = 1 / argument index = 0: add("globalVariableTest(): pre: $globalTest = ", getVariable("$globalTest"))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];
@@ -2009,14 +1937,11 @@ void MiniScriptFunctionsTest::on_nothing(int miniScriptGotoStatementIdx) {
 	}
 
 	// Statement: 13
-	// script.call(globalVariableTest)
+	// script.call("globalVariableTest")
 	{
 		const ScriptStatement& statement = scripts[5].statements[13];
 		getScriptState().statementIdx = statement.statementIdx;
 		// required method code arguments
-		array<string, 1> arguments {
-			"globalVariableTest"
-		};
 		ScriptVariable returnValue;
 		array<ScriptVariable, 1> argumentValues;
 		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
@@ -2038,32 +1963,16 @@ void MiniScriptFunctionsTest::on_nothing(int miniScriptGotoStatementIdx) {
 					// call
 					span callArgumentValuesSpan(callArgumentValues);
 					miniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
-					// and copy back
-					for (auto i = 1; i < argumentValues.size(); i++) argumentValues[i] = callArgumentValues[i];
-					//
-					#if defined(__MINISCRIPT_TRANSPILATION__)
-						// copy our arguments as well
-						vector<string> callArguments;
-						for (auto i = 1; i < arguments.size(); i++) callArguments.push_back(arguments[i]);
-						// and assign back
-						assignBackFunction(scriptIdx, callArguments, callArgumentValues, statement);
-					#endif
 				#else
 					span callArgumentValuesSpan(argumentValues.begin() + 1, argumentValues.end());
 					miniScript->call(scriptIdx, callArgumentValuesSpan, returnValue);
-					//
-					#if defined(__MINISCRIPT_TRANSPILATION__)
-						// copy our arguments as well
-						span callArgumentsSpan(arguments.begin() + 1, arguments.end());
-						assignBackFunction(scriptIdx, callArgumentsSpan, callArgumentValuesSpan, statement);
-					#endif
 				#endif
 			}
 		}
 	}
 
 	// Statement: 14
-	// console.log(add("globalVariableTest(): post: $globalTest = ", $globalTest))
+	// console.log(add("globalVariableTest(): post: $globalTest = ", getVariable("$globalTest")))
 	{
 		const ScriptStatement& statement = scripts[5].statements[14];
 		getScriptState().statementIdx = statement.statementIdx;
@@ -2071,8 +1980,8 @@ void MiniScriptFunctionsTest::on_nothing(int miniScriptGotoStatementIdx) {
 		ScriptVariable returnValue;
 		array<ScriptVariable, 1> argumentValues;
 		array<ScriptVariable, 1>& argumentValuesD0 = argumentValues;
-		// argumentValues[0] --> returnValue of add("globalVariableTest(): post: $globalTest = ", $globalTest)
-		// depth = 1 / argument index = 0: add("globalVariableTest(): post: $globalTest = ", $globalTest)
+		// argumentValues[0] --> returnValue of add("globalVariableTest(): post: $globalTest = ", getVariable("$globalTest"))
+		// depth = 1 / argument index = 0: add("globalVariableTest(): post: $globalTest = ", getVariable("$globalTest"))
 		{
 			// required method code arguments
 			ScriptVariable& returnValue = argumentValuesD0[0];

@@ -43,16 +43,16 @@ class tdme::tools::editor::tabcontrollers::TextEditorTabController final
 	: public TabController
 {
 public:
-	struct MiniScriptScriptDescription {
+	struct MiniScriptScriptSyntaxTree {
 		string name;
-		vector<MiniScript::StatementDescription> description;
+		vector<MiniScript::ScriptSyntaxTreeNode> syntaxTree;
 	};
 
 private:
 	TextEditorTabView* view { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
-	vector<MiniScriptScriptDescription> miniScriptDescription;
+	vector<MiniScriptScriptSyntaxTree> miniScriptSyntaxTrees;
 
 public:
 	/**
@@ -98,17 +98,17 @@ public:
 	void setOutlinerAddDropDownContent();
 
 	/**
-	 * @return miniscript description
+	 * @return miniscript syntax trees
 	 */
-	inline vector<MiniScriptScriptDescription>& getMiniScriptDescription() {
-		return miniScriptDescription;
+	inline vector<MiniScriptScriptSyntaxTree>& getMiniScriptSyntaxTrees() {
+		return miniScriptSyntaxTrees;
 	}
 
 	/**
-	 * Update MiniScript description
+	 * Update MiniScript syntax tree
 	 * @param miniScriptScriptIdx MiniScript script index
 	 */
-	void updateMiniScriptDescription(int miniScriptScriptIdx);
+	void updateMiniScriptSyntaxTree(int miniScriptScriptIdx);
 
 	/**
 	 * Shows the error pop up
