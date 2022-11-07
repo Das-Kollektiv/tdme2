@@ -80,6 +80,10 @@ using tdme::utilities::SHA256;
 using tdme::utilities::Time;
 
 string MiniScript::OPERATOR_CHARS = "!*/%+-<>&|=";
+string MiniScript::METHOD_SCRIPTCALL = "script.call";
+string MiniScript::METHOD_ENABLENAMEDCONDITION = "script.enableNamedCondition";
+string MiniScript::METHOD_DISABLENAMEDCONDITION = "script.disableNamedCondition";
+
 
 MiniScript::MiniScript() {
 	setNative(false);
@@ -1899,7 +1903,7 @@ void MiniScript::registerMethods() {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "script.call";
+				return "script.call"; // METHOD_SCRIPTCALL;
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string function;
@@ -2286,7 +2290,7 @@ void MiniScript::registerMethods() {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "script.enableNamedCondition";
+				return "script.enableNamedCondition"; // METHOD_ENABLENAMEDCONDITION;
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string name;
@@ -2322,7 +2326,7 @@ void MiniScript::registerMethods() {
 				),
 				miniScript(miniScript) {}
 			const string getMethodName() override {
-				return "script.disableNamedCondition";
+				return "script.disableNamedCondition"; // METHOD_DISABLENAMEDCONDITION;
 			}
 			void executeMethod(span<ScriptVariable>& argumentValues, ScriptVariable& returnValue, const ScriptStatement& statement) override {
 				string name;
@@ -5747,7 +5751,7 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const Statement
 					// have a wrapping script.call call
 					StatementDescription callDescription;
 					callDescription.type = StatementDescription::STATEMENTDESCRIPTION_EXECUTE_METHOD;
-					callDescription.value = string("script.call");
+					callDescription.value = METHOD_SCRIPTCALL;
 					// construct argument for name of function
 					StatementDescription callArgumentDescription;
 					callArgumentDescription.type = StatementDescription::STATEMENTDESCRIPTION_LITERAL;
@@ -5911,9 +5915,9 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const Statement
 	argumentValuesCode.clear();
 
 	// enabled named conditions
-	if (method == "script.enableNamedCondition" && description.arguments.empty() == false) {
+	if (method == METHOD_ENABLENAMEDCONDITION && description.arguments.empty() == false) {
 		if (description.arguments.size() != 1) {
-			Console::println("MiniScript::transpileScriptStatement(): " + getStatementInformation(statement) + ": script.enableNamedCondition(): expected string argument @ 0");
+			Console::println("MiniScript::transpileScriptStatement(): " + getStatementInformation(statement) + ": " + METHOD_ENABLENAMEDCONDITION + "(): expected string argument @ 0");
 		} else {
 			string name = description.arguments[0].value.getValueString();
 			enabledNamedConditions.erase(
@@ -5927,9 +5931,9 @@ bool MiniScript::transpileScriptStatement(string& generatedCode, const Statement
 			enabledNamedConditions.push_back(name);
 		}
 	} else
-	if (method == "script.disableNamedCondition" && description.arguments.empty() == false) {
+	if (method == METHOD_DISABLENAMEDCONDITION && description.arguments.empty() == false) {
 		if (description.arguments.size() != 1) {
-			Console::println("MiniScript::transpileScriptStatement(): " + getStatementInformation(statement) + ": script.disableNamedCondition(): expected string argument @ 0");
+			Console::println("MiniScript::transpileScriptStatement(): " + getStatementInformation(statement) + ": " + METHOD_DISABLENAMEDCONDITION + "(): expected string argument @ 0");
 		} else {
 			string name = description.arguments[0].value.getValueString();
 			enabledNamedConditions.erase(

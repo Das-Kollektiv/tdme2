@@ -1914,6 +1914,11 @@ private:
 	//
 	STATIC_DLL_IMPEXT static string OPERATOR_CHARS;
 
+	//
+	STATIC_DLL_IMPEXT static string METHOD_SCRIPTCALL;
+	STATIC_DLL_IMPEXT static string METHOD_ENABLENAMEDCONDITION;
+	STATIC_DLL_IMPEXT static string METHOD_DISABLENAMEDCONDITION;
+
 	// TODO: maybe we need a better naming for this
 	// script functions defined by script itself
 	unordered_map<string, int> scriptFunctions;
