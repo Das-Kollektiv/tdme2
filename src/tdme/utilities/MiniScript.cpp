@@ -6241,3 +6241,134 @@ bool MiniScript::transpileScriptCondition(string& generatedCode, int scriptIdx, 
 	return true;
 }
 
+const string MiniScript::createSourceCode(const ScriptSyntaxTreeNode& syntaxTreeNode) {
+	//
+	string result;
+	switch (syntaxTreeNode.type) {
+		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL:
+			{
+				switch(syntaxTreeNode.value.getType()) {
+					case TYPE_VOID:
+						{
+							result+= (result.empty() == false?", ":"") + string("<VOID>");
+							break;
+						}
+					case TYPE_BOOLEAN:
+					case TYPE_INTEGER:
+					case TYPE_FLOAT:
+						{
+							result+= (result.empty() == false?", ":"") + syntaxTreeNode.value.getValueString();
+							break;
+						}
+					case TYPE_STRING:
+						{
+							result+= (result.empty() == false?", ":"") + string("\"") + syntaxTreeNode.value.getValueString() + string("\"");
+							break;
+						}
+					default:
+						{
+							result+= (result.empty() == false?", ":"") + string("<COMPLEX DATATYPE>");
+							break;
+						}
+				}
+				break;
+			}
+		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
+		case ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
+			{
+				auto endElse = syntaxTreeNode.value.getValueString() == "end" || syntaxTreeNode.value.getValueString() == "else";
+				result+= syntaxTreeNode.value.getValueString();
+				if (endElse == false) result+= string("(");
+				auto argumentIdx = 0;
+				for (auto& argument: syntaxTreeNode.arguments) {
+					if (argumentIdx > 0) result+= ", ";
+					result+= createSourceCode(argument);
+					argumentIdx++;
+				}
+				if (endElse == false) result+= string(")");
+				break;
+			}
+		default:
+			break;
+	}
+	return result;
+}
+
+const string MiniScript::createSourceCode(Script::ScriptType scriptType, const string& condition, const vector<Script::ScriptArgument>& arguments, const string& name, const ScriptSyntaxTreeNode& conditionSyntaxTree, const vector<ScriptSyntaxTreeNode>& syntaxTree) {
+	//
+	string result;
+	//
+	switch(scriptType) {
+		case Script::SCRIPTTYPE_FUNCTION: {
+			result+= "function: ";
+			if (condition.empty() == false) {
+				result+= condition;
+			}
+			auto argumentIdx = 0;
+			result+= "(";
+			for (auto& argument: arguments) {
+				if (argumentIdx > 0) result+= ", ";
+				if (argument.assignBack == true) result+= "=";
+				result+= argument.name;
+				argumentIdx++;
+			}
+			result+= ")";
+			break;
+		}
+		case Script::SCRIPTTYPE_ON:
+			{
+				result+= "on: ";
+				if (condition.empty() == false) {
+					result+= condition;
+				}
+				break;
+			}
+		case Script::SCRIPTTYPE_ONENABLED:
+			{
+				result+= "on-enabled: "; break;
+				if (condition.empty() == false) {
+					result+= condition;
+				}
+			}
+	}
+	if (conditionSyntaxTree.type != ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_NONE)
+		result+= createSourceCode(conditionSyntaxTree);
+	if (name.empty() == false) {
+		result+= " := " + name + "\n";
+	} else {
+		result+= "\n";
+	}
+	//
+	auto indent = 1;
+	for (auto& syntaxTreeNode: syntaxTree) {
+		if (syntaxTreeNode.type == ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD) {
+			if (syntaxTreeNode.value.getValueString() == "if") indent+= 0; else
+			if (syntaxTreeNode.value.getValueString() == "elseif") indent-= 1; else
+			if (syntaxTreeNode.value.getValueString() == "else") indent-= 1; else
+			if (syntaxTreeNode.value.getValueString() == "end") indent-= 1; else
+			if (syntaxTreeNode.value.getValueString() == "forTime") indent+= 0; else
+			if (syntaxTreeNode.value.getValueString() == "forCondition") indent+= 0;
+		}
+		for (auto i = 0; i < indent; i++) result+= "\t";
+		result+= createSourceCode(syntaxTreeNode) + "\n";
+		if (syntaxTreeNode.type == ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD) {
+			if (syntaxTreeNode.value.getValueString() == "if") indent+= 1; else
+			if (syntaxTreeNode.value.getValueString() == "elseif") indent+= 1; else
+			if (syntaxTreeNode.value.getValueString() == "else") indent+= 1; else
+			if (syntaxTreeNode.value.getValueString() == "end") indent-= 0; else
+			if (syntaxTreeNode.value.getValueString() == "forTime") indent+= 1; else
+			if (syntaxTreeNode.value.getValueString() == "forCondition") indent+= 1;
+		}
+	}
+	return result;
+}
+
+const string MiniScript::createSourceCode() {
+	string result;
+	// create syntax tree
+	for (auto& script: scripts) {
+		result+= createSourceCode(script.scriptType, script.emitCondition == true?script.condition:string(), script.arguments, script.name, script.conditionSyntaxTree, script.syntaxTree);
+	}
+	//
+	return result;
+}
