@@ -153,4 +153,23 @@ int main(int argc, char** argv)
 	Console::println("| Op | Method                                                                                      |");
 	Console::println("|----|---------------------------------------------------------------------------------------------|");
 	for (auto& method: operators) Console::println(method);
+	//
+	Console::println();
+	Console::println("# properties methodname=human readable string");
+	//
+	{
+		Console::println("# base methods");
+		auto scriptMethods = baseMiniScript->getMethods();
+		for (auto scriptMethod: scriptMethods) {
+			Console::println("miniscript.basemethod." + scriptMethod->getMethodName() + "=");
+		}
+	}
+	{
+		Console::println("# miniscript logic methods");
+		auto scriptMethods = logicMiniScript->getMethods();
+		for (auto scriptMethod: scriptMethods) {
+			if (baseMiniScript->hasMethod(scriptMethod->getMethodName()) == true) continue;
+			Console::println("miniscript.logicmethod." + scriptMethod->getMethodName() + "=");
+		}
+	}
 }
