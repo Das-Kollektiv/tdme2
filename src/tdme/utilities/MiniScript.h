@@ -3029,7 +3029,7 @@ public:
 	 * Create source code for given syntax tree node
 	 * @param syntaxTreeNode syntax tree node
 	 */
-	const string createSourceCode(const ScriptSyntaxTreeNode& syntaxTreeNode);
+	static const string createSourceCode(const ScriptSyntaxTreeNode& syntaxTreeNode);
 
 	/**
 	 * Create source code for given syntax tree
@@ -3040,7 +3040,7 @@ public:
 	 * @param conditionSyntaxTree condition syntax tree
 	 * @param syntaxTree syntax tree
 	 */
-	const string createSourceCode(Script::ScriptType scriptType, const string& condition, const vector<Script::ScriptArgument>& arguments, const string& name, const ScriptSyntaxTreeNode& conditionSyntaxTree, const vector<ScriptSyntaxTreeNode>& syntaxTree);
+	static const string createSourceCode(Script::ScriptType scriptType, const string& condition, const vector<Script::ScriptArgument>& arguments, const string& name, const ScriptSyntaxTreeNode& conditionSyntaxTree, const vector<ScriptSyntaxTreeNode>& syntaxTree);
 
 	/**
 	 * Create source code for whole script

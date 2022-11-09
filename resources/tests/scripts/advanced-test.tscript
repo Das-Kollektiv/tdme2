@@ -1,9 +1,20 @@
 # initialize
 on: initialize
-	console.log("---------------------------")
 	console.log("advanced-test: Initialize")
-	console.log("--------------------------")
 	console.log()
+	$i = 1
+	console.log($i, ":")
+	if ($i == 0)
+		console.log("i -> 0")
+	elseif ($i == 1)
+		console.log("i -> 1")
+	elseif ($i == 2)
+		console.log("i -> 2")
+	elseif ($i == 3)
+		console.log("i -> 3")
+	else
+		console.log("else: ", $i)
+	end
 end
 
 # if no condition is met, nothing will be executed, lol :D
