@@ -260,7 +260,7 @@ public:
 	void setCodeEditor();
 
 	/**
-	 * Adds a delta X value to UI node with given id and all nodes down the statement description tree
+	 * Adds a delta X value to UI node with given id and all nodes down the statement syntax tree
 	 * @param id id
 	 * @param syntaxTreeNode syntax tree node
 	 * @param parentNode parent node
@@ -269,10 +269,10 @@ public:
 	void addMiniScriptNodeDeltaX(const string& id, const MiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, GUIParentNode* parentNode, int deltaX);
 
 	/**
-	 * Create UI nodes for given statement description, which matches a statement in miniscript
+	 * Create UI nodes for given statement syntax tree, which matches a statement in miniscript
 	 * @param id id
-	 * @param descriptionIdx description index
-	 * @param descriptionCount description count
+	 * @param syntaxTreeNodeIdx syntax tree node index
+	 * @param syntaxTreeNodeCount syntax tree node count
 	 * @param syntaxTreeNode syntax tree node
 	 * @param parentNode parent node
 	 * @param x x
@@ -281,7 +281,7 @@ public:
 	 * @param height height
 	 * @param depth depth
 	 */
-	void createMiniScriptNodes(const string& id, int descriptionIdx, int descriptionCount, const MiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, GUIParentNode* parentNode, int x, int y, int& width, int& height, int depth = 0);
+	void createMiniScriptNodes(const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const MiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, GUIParentNode* parentNode, int x, int y, int& width, int& height, int depth = 0);
 
 	/**
 	 * @return MiniScript script index

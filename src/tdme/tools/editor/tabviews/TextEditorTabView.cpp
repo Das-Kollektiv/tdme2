@@ -460,7 +460,7 @@ void TextEditorTabView::addMiniScriptNodeDeltaX(const string& id, const MiniScri
 	}
 }
 
-void TextEditorTabView::createMiniScriptNodes(const string& id, int descriptionIdx, int descriptionCount, const MiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, GUIParentNode* parentNode, int x, int y, int& width, int& height, int depth) {
+void TextEditorTabView::createMiniScriptNodes(const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const MiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, GUIParentNode* parentNode, int x, int y, int& width, int& height, int depth) {
 	//
 	int childMaxWidth = 0;
 	for (auto argumentIdx = 0; argumentIdx < syntaxTreeNode.arguments.size(); argumentIdx++) {
@@ -529,7 +529,7 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int descriptionI
 				auto nodeInputContainer = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("d" + id + "_input_container"));
 				auto nodeOutputContainer = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("d" + id + "_output_container"));
 				// pin input aka flow input
-				if (depth == 0 && descriptionIdx > 0) {
+				if (depth == 0 && syntaxTreeNodeIdx > 0) {
 					string xml;
 					//
 					xml+=
@@ -627,7 +627,7 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int descriptionI
 					}
 				}
 				// pin output aka flow output
-				if (depth == 0 && descriptionIdx < descriptionCount - 1) {
+				if (depth == 0 && syntaxTreeNodeIdx < syntaxTreeNodeCount - 1) {
 					string xml;
 					//
 					xml+=
@@ -742,15 +742,15 @@ void TextEditorTabView::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
 	//
 	this->nodes.clear();
 	this->miniScriptScriptIdx = miniScriptScriptIdx;
-	auto& description = textEditorTabController->getMiniScriptSyntaxTrees()[miniScriptScriptIdx].syntaxTree;
+	auto& syntaxTree = textEditorTabController->getMiniScriptSyntaxTrees()[miniScriptScriptIdx].syntaxTree;
 	auto visualisationNode = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("visualization_canvas"));
 	auto x = 200;
 	auto y = 200;
 	auto yMax = y;
-	for (auto i = 0; i < description.size(); i++) {
+	for (auto i = 0; i < syntaxTree.size(); i++) {
 		auto width = 0;
 		auto height = 0;
-		createMiniScriptNodes(to_string(i), i, description.size(), description[i], visualisationNode, x, y, width, height);
+		createMiniScriptNodes(to_string(i), i, syntaxTree.size(), syntaxTree[i], visualisationNode, x, y, width, height);
 		x+= width + 100;
 		yMax = Math::max(y + height, yMax);
 	}
@@ -766,12 +766,12 @@ void TextEditorTabView::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
 	createConnectionsPasses = 3;
 }
 
-void TextEditorTabView::createMiniScriptConnections(const string& id, const MiniScript::ScriptSyntaxTreeNode& description, GUIParentNode* parentNode) {
+void TextEditorTabView::createMiniScriptConnections(const string& id, const MiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, GUIParentNode* parentNode) {
 	auto node = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById("d" + id));
 	auto& computedConstraints = node->getComputedConstraints();
-	for (auto argumentIdx = 0; argumentIdx < description.arguments.size(); argumentIdx++) {
+	for (auto argumentIdx = 0; argumentIdx < syntaxTreeNode.arguments.size(); argumentIdx++) {
 		//
-		auto isLiteral = description.arguments[argumentIdx].type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
+		auto isLiteral = syntaxTreeNode.arguments[argumentIdx].type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
 		if (isLiteral == true) continue;
 		//
 		string argumentInputNodeId = "d" + id + "_a" + to_string(argumentIdx);
@@ -789,8 +789,8 @@ void TextEditorTabView::createMiniScriptConnections(const string& id, const Mini
 
 		//
 		auto pinColor = string("color.pintype_undefined");
-		if (description.method != nullptr) {
-			auto& argumentTypes = description.method->getArgumentTypes();
+		if (syntaxTreeNode.method != nullptr) {
+			auto& argumentTypes = syntaxTreeNode.method->getArgumentTypes();
 			// first guess from argument type
 			if (argumentIdx < argumentTypes.size()) {
 				pinColor = getScriptVariableTypePinColor(argumentTypes[argumentIdx].type);
@@ -824,7 +824,7 @@ void TextEditorTabView::createMiniScriptConnections(const string& id, const Mini
 				.y2 = argumentOutputNodeComputedConstraints.top + argumentOutputNodeComputedConstraints.height / 2,
 			}
 		);
-		createMiniScriptConnections(id + "." + to_string(argumentIdx), description.arguments[argumentIdx], parentNode);
+		createMiniScriptConnections(id + "." + to_string(argumentIdx), syntaxTreeNode.arguments[argumentIdx], parentNode);
 	}
 }
 
@@ -834,11 +834,11 @@ void TextEditorTabView::createMiniScriptConnections() {
 
 	//
 	if (miniScriptScriptIdx >= textEditorTabController->getMiniScriptSyntaxTrees().size()) return;
-	auto& description = textEditorTabController->getMiniScriptSyntaxTrees()[miniScriptScriptIdx].syntaxTree;
+	auto& syntaxTree = textEditorTabController->getMiniScriptSyntaxTrees()[miniScriptScriptIdx].syntaxTree;
 	GUINode* previousNodeFlowNode = nullptr;
 	auto visualisationNode = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("visualization_canvas"));
-	for (auto i = 0; i < description.size(); i++) {
-		createMiniScriptConnections(to_string(i), description[i], visualisationNode);
+	for (auto i = 0; i < syntaxTree.size(); i++) {
+		createMiniScriptConnections(to_string(i), syntaxTree[i], visualisationNode);
 		auto nodeFlowIn = dynamic_cast<GUINode*>(tabScreenNode->getNodeById("d" + to_string(i) + "_flow_in"));
 		auto nodeFlowOut = dynamic_cast<GUINode*>(tabScreenNode->getNodeById("d" + to_string(i) + "_flow_out"));
 		if (previousNodeFlowNode != nullptr && nodeFlowIn != nullptr) {
