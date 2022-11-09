@@ -373,10 +373,10 @@ void TextEditorTabView::display()
 					(y1 < 0 && y2 < 0) ||
 					(y1 > visualizationHeight && y2 > visualizationHeight)) continue;
 
-				auto STRAIGHTLINE_LENGTH = 50.0f;
+				auto straightLineLength = Math::min(static_cast<float>(Math::abs(y2 - y1)), 50.0f);
 				Vector2 srcVector1(x1, y1);
-				Vector2 srcVector2(x1 + (x2 < x1?-STRAIGHTLINE_LENGTH:STRAIGHTLINE_LENGTH), y1);
-				Vector2 dstVector1(x1 + (x2 < x1?-STRAIGHTLINE_LENGTH:STRAIGHTLINE_LENGTH), y2 - (y2 < y1?-STRAIGHTLINE_LENGTH:STRAIGHTLINE_LENGTH));
+				Vector2 srcVector2(x1 + (x2 < x1?-straightLineLength:straightLineLength), y1);
+				Vector2 dstVector1(x1 + (x2 < x1?-straightLineLength:straightLineLength), y2 - (y2 < y1?-straightLineLength:straightLineLength));
 				Vector2 dstVector2(x2, y2);
 				vector<Vector2> controlPoints;
 				controlPoints.push_back(srcVector1);
