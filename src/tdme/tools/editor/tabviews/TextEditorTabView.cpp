@@ -967,16 +967,16 @@ void TextEditorTabView::createMiniScriptIfBranchNodes(const string& id, int synt
 	// create connections
 	for (auto branchIdx = 0; branchIdx < branches.size(); branchIdx++) {
 		//
-		string argumentInputNodeId = "d" + id + "_c" + to_string(branchIdx);
-		string argumentOutputNodeId = "d" + id + "." + to_string(branchIdx);
-		auto argumentInputNode = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(argumentInputNodeId));
-		auto argumentOutputNode = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(argumentOutputNodeId));
-		if (argumentInputNode == nullptr) {
-			Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): missing argument input node: " + argumentInputNodeId);
+		string conditionInputNodeId = "d" + id + "_c" + to_string(branchIdx);
+		string conditionOutputNodeId = "d" + id + "." + to_string(branchIdx);
+		auto conditionInputNode = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(conditionInputNodeId));
+		auto conditionOutputNode = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(conditionOutputNodeId));
+		if (conditionInputNode == nullptr) {
+			Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): missing condition input node: " + conditionInputNodeId);
 			continue;
 		}
-		if (argumentOutputNode == nullptr) {
-			Console::println(string() + "TextEditorTabView::createMiniScriptIfBranchNodes(): missing argument output node: " + argumentOutputNodeId);
+		if (conditionOutputNode == nullptr) {
+			Console::println(string() + "TextEditorTabView::createMiniScriptIfBranchNodes(): missing condition output node: " + conditionOutputNodeId);
 			continue;
 		}
 
@@ -985,21 +985,21 @@ void TextEditorTabView::createMiniScriptIfBranchNodes(const string& id, int synt
 		GUIColor color(GUIParser::getEngineThemeProperties()->get(pinColor, "#ffffff"));
 
 		//
-		auto& argumentInputNodeComputedConstraints = argumentInputNode->getComputedConstraints();
-		auto& argumentOutputNodeComputedConstraints = argumentOutputNode->getComputedConstraints();
+		auto& conditionInputNodeComputedConstraints = conditionInputNode->getComputedConstraints();
+		auto& conditionOutputNodeComputedConstraints = conditionOutputNode->getComputedConstraints();
 		connections.push_back(
 			{
 				.type = Connection::CONNECTIONTYPE_ARGUMENT,
-				.srcNodeId = argumentInputNodeId,
-				.dstNodeId = argumentOutputNodeId,
+				.srcNodeId = conditionInputNodeId,
+				.dstNodeId = conditionOutputNodeId,
 				.red = static_cast<uint8_t>(color.getRed() * 255.0f),
 				.green = static_cast<uint8_t>(color.getGreen() * 255.0f),
 				.blue = static_cast<uint8_t>(color.getBlue() * 255.0f),
 				.alpha = static_cast<uint8_t>(color.getAlpha() * 255.0f),
-				.x1 = argumentInputNodeComputedConstraints.left,
-				.y1 = argumentInputNodeComputedConstraints.top + argumentInputNodeComputedConstraints.height / 2,
-				.x2 = argumentOutputNodeComputedConstraints.left + argumentOutputNodeComputedConstraints.width,
-				.y2 = argumentOutputNodeComputedConstraints.top + argumentOutputNodeComputedConstraints.height / 2,
+				.x1 = conditionInputNodeComputedConstraints.left,
+				.y1 = conditionInputNodeComputedConstraints.top + conditionInputNodeComputedConstraints.height / 2,
+				.x2 = conditionOutputNodeComputedConstraints.left + conditionOutputNodeComputedConstraints.width,
+				.y2 = conditionOutputNodeComputedConstraints.top + conditionOutputNodeComputedConstraints.height / 2,
 			}
 		);
 	}
