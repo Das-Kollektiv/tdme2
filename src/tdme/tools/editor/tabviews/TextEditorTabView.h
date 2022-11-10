@@ -113,10 +113,13 @@ private:
 	};
 
 	unordered_map<string, string> methodOperatorMap;
+	vector<MiniScript::ScriptSyntaxTreeNode> syntaxTree;
 	unordered_map<string, Node> nodes;
 	vector<Connection> connections;
 	bool visualEditor { false };
 	bool visualCodingEnabled { false };
+
+	GUIParentNode* visualisationNode { nullptr };
 
 	/**
 	 * Get script variable type pin color
@@ -271,10 +274,9 @@ public:
 	 * Adds a delta X value to UI node with given id and all nodes down the statement syntax tree
 	 * @param id id
 	 * @param syntaxTreeNode syntax tree node
-	 * @param parentNode parent node
 	 * @param deltaX delta X
 	 */
-	void addMiniScriptNodeDeltaX(const string& id, const MiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, GUIParentNode* parentNode, int deltaX);
+	void addMiniScriptNodeDeltaX(const string& id, const MiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, int deltaX);
 
 	/**
 	 * Create UI nodes for given statement syntax tree, which matches a statement in miniscript
@@ -282,14 +284,13 @@ public:
 	 * @param syntaxTreeNodeIdx syntax tree node index
 	 * @param syntaxTreeNodeCount syntax tree node count
 	 * @param syntaxTreeNode syntax tree node
-	 * @param parentNode parent node
 	 * @param x x
 	 * @param y y
 	 * @param width width
 	 * @param height height
 	 * @param depth depth
 	 */
-	void createBranchMiniScriptNodes(const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const MiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, GUIParentNode* parentNode, int x, int y, int& width, int& height, int depth = 0);
+	void createBranchMiniScriptNodes(const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const MiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, int x, int y, int& width, int& height, int depth = 0);
 
 	/**
 	 * Create UI nodes for given statement syntax tree, which matches a statement in miniscript
@@ -297,16 +298,15 @@ public:
 	 * @param syntaxTreeNodeIdx syntax tree node index
 	 * @param syntaxTreeNodeCount syntax tree node count
 	 * @param syntaxTreeNode syntax tree node
-	 * @param parentNode parent node
 	 * @param x x
 	 * @param y y
 	 * @param width width
 	 * @param height height
 	 * @param depth depth
 	 */
-	void createMiniScriptNodes(const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const MiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, GUIParentNode* parentNode, int x, int y, int& width, int& height, int depth = 0);
+	void createMiniScriptNodes(const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const MiniScript::ScriptSyntaxTreeNode* syntaxTreeNode, int x, int y, int& width, int& height, int depth = 0);
 
-	void createMiniScriptIfBranchNodes(const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const vector<MiniScriptBranch>& branches, GUIParentNode* parentNode, int x, int y, int& width, int& height, int depth = 0);
+	void createMiniScriptIfBranchNodes(const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const vector<MiniScriptBranch>& branches, int x, int y, int& width, int& height, int depth = 0);
 
 	/**
 	 * @return MiniScript script index
@@ -327,7 +327,7 @@ public:
 	/**
 	 *
 	 */
-	void handleMiniScriptBranch(vector<MiniScript::ScriptSyntaxTreeNode>& syntaxTree, int& i, GUIParentNode* parentNode, int x, int y, int& width, int& height);
+	void handleMiniScriptBranch(const vector<MiniScript::ScriptSyntaxTreeNode*>& syntaxTree, int& i, int x, int y, int& width, int& height);
 
 	/**
 	 * Update miniscript syntax tree
