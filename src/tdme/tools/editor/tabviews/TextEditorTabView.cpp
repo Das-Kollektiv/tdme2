@@ -1025,7 +1025,7 @@ void TextEditorTabView::createMiniScriptIfBranchNodes(const string& id, int synt
 			auto syntaxTreeNode = syntaxTreeNodes[i];
 
 			//
-			handleMiniScriptBranch(syntaxTreeNodes, i, x, y, width, height);
+			// handleMiniScriptBranch(syntaxTreeNodes, i, x, y, width, height);
 
 			//
 			if (i >= syntaxTree.size()) continue;
@@ -1070,17 +1070,21 @@ void TextEditorTabView::createMiniScriptIfBranchNodes(const string& id, int synt
 			previousNodeFlowNode = nodeFlowOut;
 		}
 		//
+		if (syntaxTreeNodes.empty() == false) branchWidth-= 100;
 		branchWidthMax = Math::max(branchWidthMax, branchWidth);
 		y+= branchHeightMax;
 	}
 	//
 	width+= branchWidthMax;
 	height = Math::max(height, y);
+	//
 }
 
 
-void TextEditorTabView::handleMiniScriptBranch(const vector<MiniScript::ScriptSyntaxTreeNode*>& syntaxTree, int& i, int x, int y, int& width, int& height) {
+bool TextEditorTabView::handleMiniScriptBranch(const vector<MiniScript::ScriptSyntaxTreeNode*>& syntaxTree, int& i, int x, int y, int& width, int& height) {
+	//
 	auto syntaxTreeNode = syntaxTree[i];
+	auto syntaxTreeNodeIdx = i;
 	// handle if
 	if (syntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD && syntaxTreeNode->value.getValueString() == "if") {
 		// support if depth
@@ -1113,25 +1117,27 @@ void TextEditorTabView::handleMiniScriptBranch(const vector<MiniScript::ScriptSy
 				);
 			} else
 			if (branchSyntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD && branchSyntaxTreeNode->value.getValueString() == "end") {
-
 				for (auto& branch: branches) {
-					Console::println("Branch: " + branch.name);
 					if (branch.conditionSyntaxTree != nullptr) Console::println("cond: " + MiniScript::createSourceCode(*branch.conditionSyntaxTree));
 					auto j = 0;
 					for (auto node: branch.syntaxTreeNodes) {
-						Console::println("flow " + to_string(j) + ": " + MiniScript::createSourceCode(*branch.syntaxTreeNodes[j]));
 						j++;
 					}
 				}
-				createMiniScriptIfBranchNodes(to_string(i), i, syntaxTree.size(), branches, x, y, width, height);
 				//
-				break;
+				createMiniScriptIfBranchNodes(to_string(syntaxTreeNodeIdx), syntaxTreeNodeIdx, syntaxTree.size(), branches, x, y, width, height);
+				//
+				i++;
+				//
+				return true;
 			} else {
 				// add other to branch
 				branches[branches.size() - 1].syntaxTreeNodes.push_back(branchSyntaxTreeNode);
 			}
 		}
 	}
+	//
+	return false;
 }
 
 void TextEditorTabView::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
@@ -1156,20 +1162,27 @@ void TextEditorTabView::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
 		auto syntaxTreeNode = syntaxTreeNodes[i];
 
 		//
-		handleMiniScriptBranch(syntaxTreeNodes, i, x, y, width, height);
+		width = 0;
+		height = 0;
+		if (handleMiniScriptBranch(syntaxTreeNodes, i, x, y, width, height) == true) {
+			//
+			x+= width + 100;
+			yMax = Math::max(y + height, yMax);
+		}
 
 		//
 		if (i >= syntaxTree.size()) continue;
 		syntaxTreeNode = syntaxTreeNodes[i];
 
 		//
+		width = 0;
+		height = 0;
 		createMiniScriptNodes(to_string(i), i, syntaxTreeNodes.size(), syntaxTreeNode, x, y, width, height);
 
 		//
 		x+= width + 100;
 		yMax = Math::max(y + height, yMax);
-		width = 0;
-		height = 0;
+
 
 		// connections
 		auto nodeFlowInId = to_string(i) + "_flow_in";
