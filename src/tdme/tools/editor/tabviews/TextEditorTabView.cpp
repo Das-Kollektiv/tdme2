@@ -464,7 +464,7 @@ void TextEditorTabView::addMiniScriptNodeDeltaX(const string& id, const MiniScri
 }
 
 void TextEditorTabView::createMiniScriptNodes(const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const MiniScript::ScriptSyntaxTreeNode* syntaxTreeNode, int x, int y, int& width, int& height, int depth) {
-	//
+	// create input nodes
 	int childMaxWidth = 0;
 	for (auto argumentIdx = 0; argumentIdx < syntaxTreeNode->arguments.size(); argumentIdx++) {
 		//
@@ -481,8 +481,6 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int syntaxTreeNo
 	//
 	x+= childMaxWidth;
 	width+= childMaxWidth;
-
-	//input2_pin_type_panel.condition=connected
 
 	//
 	switch (syntaxTreeNode->type) {
@@ -710,7 +708,7 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int syntaxTreeNo
 	width+= 400; //node->getContentWidth();
 	height+= 200; //node->getContentHeight();
 
-	// post layout, move first level child argument nodes from from left to right according to the closest one
+	// post layout of input nodes, move first level child argument nodes from from left to right according to the closest one
 	auto rootDistanceMax = Integer::MAX_VALUE;
 	auto nextLevelXBestFit = -1;
 	for (auto argumentIdx = 0; argumentIdx < syntaxTreeNode->arguments.size(); argumentIdx++) {
@@ -739,7 +737,7 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int syntaxTreeNo
 		addMiniScriptNodeDeltaX(subNodeId, syntaxTreeNode->arguments[argumentIdx], deltaX);
 	}
 
-	// create connections
+	// create connections to input nodes
 	for (auto argumentIdx = 0; argumentIdx < syntaxTreeNode->arguments.size(); argumentIdx++) {
 		//
 		auto isLiteral = syntaxTreeNode->arguments[argumentIdx].type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
@@ -801,6 +799,10 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int syntaxTreeNo
 }
 
 void TextEditorTabView::createMiniScriptIfBranchNodes(const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const vector<MiniScriptBranch>& branches, int x, int y, int& width, int& height, int depth) {
+	//
+	auto xInitial = x;
+	auto yInitial = y;
+
 	//
 	int childMaxWidth = 0;
 	for (auto branchIdx = 0; branchIdx < branches.size(); branchIdx++) {
@@ -940,7 +942,7 @@ void TextEditorTabView::createMiniScriptIfBranchNodes(const string& id, int synt
 	width+= 400; //node->getContentWidth();
 	height+= 200; //node->getContentHeight();
 
-	// post layout, move first level child argument nodes from from left to right according to the closest one
+	// post layout of conditions, move first level child argument nodes from from left to right according to the closest one
 	auto rootDistanceMax = Integer::MAX_VALUE;
 	auto nextLevelXBestFit = -1;
 	for (auto branchIdx = 0; branchIdx < branches.size(); branchIdx++) {
@@ -967,7 +969,7 @@ void TextEditorTabView::createMiniScriptIfBranchNodes(const string& id, int synt
 		addMiniScriptNodeDeltaX(subNodeId, *branches[branchIdx].conditionSyntaxTree, deltaX);
 	}
 
-	// create connections
+	// create condition connections
 	for (auto branchIdx = 0; branchIdx < branches.size(); branchIdx++) {
 		//
 		string conditionInputNodeId = id + "_c" + to_string(branchIdx);
@@ -1006,6 +1008,74 @@ void TextEditorTabView::createMiniScriptIfBranchNodes(const string& id, int synt
 			}
 		);
 	}
+
+	// create branch flows
+	auto branchWidthMax = 0;
+	y = yInitial;
+	for (auto branchIdx = 0; branchIdx < branches.size(); branchIdx++) {
+		// for each branch
+		auto syntaxTreeNodes = branches[branchIdx].syntaxTreeNodes;
+		//
+		GUINode* previousNodeFlowNode = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(id + "_b" + to_string(branchIdx)));
+		//
+		x = xInitial + width;
+		auto branchHeightMax = 0;
+		auto branchWidth = 0;
+		for (auto i = 0; i < syntaxTreeNodes.size(); i++) {
+			auto syntaxTreeNode = syntaxTreeNodes[i];
+
+			//
+			handleMiniScriptBranch(syntaxTreeNodes, i, x, y, width, height);
+
+			//
+			if (i >= syntaxTree.size()) continue;
+			syntaxTreeNode = syntaxTreeNodes[i];
+
+			//
+			auto branchNodesWidth = 0;
+			auto branchNodesHeight = 0;
+			createMiniScriptNodes(id + ".b." + to_string(branchIdx) + "." + to_string(i), i + 1, syntaxTreeNodes.size() + 1, syntaxTreeNode, x, y, branchNodesWidth, branchNodesHeight);
+
+			// advance x
+			x+= branchNodesWidth + 100;
+			// store max
+			branchWidth += branchNodesWidth + 100;
+			branchHeightMax = Math::max(branchHeightMax, branchNodesHeight);
+
+			// connections
+			auto nodeFlowInId = id + ".b." + to_string(branchIdx) + "." + to_string(i) + "_flow_in";
+			auto nodeFlowOutId = id + ".b." + to_string(branchIdx) + "." + to_string(i) + "_flow_out";
+			auto nodeFlowIn = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(nodeFlowInId));
+			auto nodeFlowOut = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(nodeFlowOutId));
+			if (previousNodeFlowNode != nullptr && nodeFlowIn != nullptr) {
+				auto& previousNodeComputedConstraints = previousNodeFlowNode->getComputedConstraints();
+				auto& nodeComputedConstraints = nodeFlowIn->getComputedConstraints();
+				connections.push_back(
+					{
+						.type = Connection::CONNECTIONTYPE_FLOW,
+						.srcNodeId = previousNodeFlowNode->getId(),
+						.dstNodeId = nodeFlowInId,
+						.red = 255,
+						.green = 255,
+						.blue = 255,
+						.alpha = 255,
+						.x1 = previousNodeComputedConstraints.left + previousNodeComputedConstraints.width,
+						.y1 = previousNodeComputedConstraints.top + previousNodeComputedConstraints.height / 2,
+						.x2 = nodeComputedConstraints.left,
+						.y2 = nodeComputedConstraints.top + nodeComputedConstraints.height / 2,
+					}
+				);
+			}
+			//
+			previousNodeFlowNode = nodeFlowOut;
+		}
+		//
+		branchWidthMax = Math::max(branchWidthMax, branchWidth);
+		y+= branchHeightMax;
+	}
+	//
+	width+= branchWidthMax;
+	height = Math::max(height, y);
 }
 
 

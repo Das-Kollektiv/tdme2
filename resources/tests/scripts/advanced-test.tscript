@@ -6,14 +6,19 @@ on: initialize
 	console.log($i, ":")
 	if ($i == 0)
 		console.log("i -> 0")
+		console.log("Yarr0")
 	elseif ($i == 1)
 		console.log("i -> 1")
+		console.log("Yarr1")
 	elseif ($i == 2)
 		console.log("i -> 2")
+		console.log("Yarr2")
 	elseif ($i == 3)
 		console.log("i -> 3")
+		console.log("Yarr3")
 	else
 		console.log("else: ", $i)
+		console.log("YarrE")
 	end
 end
 
