@@ -327,7 +327,7 @@ public:
 	/**
 	 *
 	 */
-	bool handleMiniScriptBranch(const vector<MiniScript::ScriptSyntaxTreeNode*>& syntaxTree, int& i, int x, int y, int& width, int& height);
+	bool handleMiniScriptBranch(const string& idPrefix, const vector<MiniScript::ScriptSyntaxTreeNode*>& syntaxTree, int& i, int x, int y, int& width, int& height);
 
 	/**
 	 * Update miniscript syntax tree

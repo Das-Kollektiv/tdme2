@@ -3,6 +3,7 @@ on: initialize
 	console.log("advanced-test: Initialize")
 	console.log()
 	$i = 1
+	$j = 2
 	console.log($i, ":")
 	if ($i == 0)
 		console.log("i -> 0")
@@ -10,10 +11,18 @@ on: initialize
 	elseif ($i == 1)
 		console.log("i -> 1")
 		console.log("Yarr1")
+#		if ($j == 1)
+#			console.log("j -> 1")
+#		elseif ($j == 2)
+#			console.log("j -> 2")
+#		else
+#			console.log("else: ", $j)
+#			console.log("TarrE")
+#		end
 	elseif ($i == 2)
 		console.log("i -> 2")
 		console.log("Yarr2")
-	elseif ($i == 3)
+		elseif ($i == 3)
 		console.log("i -> 3")
 		console.log("Yarr3")
 	else

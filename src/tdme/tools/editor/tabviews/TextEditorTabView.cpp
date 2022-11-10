@@ -1021,19 +1021,54 @@ void TextEditorTabView::createMiniScriptIfBranchNodes(const string& id, int synt
 		x = xInitial + width;
 		auto branchHeightMax = 0;
 		auto branchWidth = 0;
+		auto branchNodesWidth = 0;
+		auto branchNodesHeight = 0;
 		for (auto i = 0; i < syntaxTreeNodes.size(); i++) {
 			auto syntaxTreeNode = syntaxTreeNodes[i];
 
 			//
-			// handleMiniScriptBranch(syntaxTreeNodes, i, x, y, width, height);
+			auto branchNodeIdx = i;
+			branchNodesWidth = 0;
+			branchNodesHeight = 0;
+			if (handleMiniScriptBranch(id + ".b." + to_string(branchIdx) + ".", syntaxTreeNodes, i, x, y, branchNodesWidth, branchNodesHeight) == true) {
+				//
+				x+= branchNodesWidth + 100;
+				branchHeightMax = Math::max(branchHeightMax, branchNodesHeight);
+				//
+				auto nodeFlowInId = id + ".b." + to_string(branchIdx) + "." + to_string(branchNodeIdx) + "_flow_in";
+				auto nodeFlowOutId = id + ".b." + to_string(branchIdx) + "." + to_string(branchNodeIdx) + "_flow_out";
+				auto nodeFlowIn = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(nodeFlowInId));
+				auto nodeFlowOut = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(nodeFlowOutId));
+				if (previousNodeFlowNode != nullptr && nodeFlowIn != nullptr) {
+					auto& previousNodeComputedConstraints = previousNodeFlowNode->getComputedConstraints();
+					auto& nodeComputedConstraints = nodeFlowIn->getComputedConstraints();
+					connections.push_back(
+						{
+							.type = Connection::CONNECTIONTYPE_FLOW,
+							.srcNodeId = previousNodeFlowNode->getId(),
+							.dstNodeId = nodeFlowInId,
+							.red = 255,
+							.green = 255,
+							.blue = 255,
+							.alpha = 255,
+							.x1 = previousNodeComputedConstraints.left + previousNodeComputedConstraints.width,
+							.y1 = previousNodeComputedConstraints.top + previousNodeComputedConstraints.height / 2,
+							.x2 = nodeComputedConstraints.left,
+							.y2 = nodeComputedConstraints.top + nodeComputedConstraints.height / 2,
+						}
+					);
+				}
+				//
+				previousNodeFlowNode = nodeFlowOut;
+			}
 
 			//
-			if (i >= syntaxTree.size()) continue;
+			if (i >= syntaxTreeNodes.size()) continue;
 			syntaxTreeNode = syntaxTreeNodes[i];
 
 			//
-			auto branchNodesWidth = 0;
-			auto branchNodesHeight = 0;
+			branchNodesWidth = 0;
+			branchNodesHeight = 0;
 			createMiniScriptNodes(id + ".b." + to_string(branchIdx) + "." + to_string(i), i + 1, syntaxTreeNodes.size() + 1, syntaxTreeNode, x, y, branchNodesWidth, branchNodesHeight);
 
 			// advance x
@@ -1081,7 +1116,7 @@ void TextEditorTabView::createMiniScriptIfBranchNodes(const string& id, int synt
 }
 
 
-bool TextEditorTabView::handleMiniScriptBranch(const vector<MiniScript::ScriptSyntaxTreeNode*>& syntaxTree, int& i, int x, int y, int& width, int& height) {
+bool TextEditorTabView::handleMiniScriptBranch(const string& idPrefix, const vector<MiniScript::ScriptSyntaxTreeNode*>& syntaxTree, int& i, int x, int y, int& width, int& height) {
 	//
 	auto syntaxTreeNode = syntaxTree[i];
 	auto syntaxTreeNodeIdx = i;
@@ -1125,7 +1160,7 @@ bool TextEditorTabView::handleMiniScriptBranch(const vector<MiniScript::ScriptSy
 					}
 				}
 				//
-				createMiniScriptIfBranchNodes(to_string(syntaxTreeNodeIdx), syntaxTreeNodeIdx, syntaxTree.size(), branches, x, y, width, height);
+				createMiniScriptIfBranchNodes(idPrefix + to_string(syntaxTreeNodeIdx), syntaxTreeNodeIdx, syntaxTree.size(), branches, x, y, width, height);
 				//
 				i++;
 				//
@@ -1165,7 +1200,7 @@ void TextEditorTabView::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
 		width = 0;
 		height = 0;
 		auto branchNodeIdx = i;
-		if (handleMiniScriptBranch(syntaxTreeNodes, i, x, y, width, height) == true) {
+		if (handleMiniScriptBranch(string(), syntaxTreeNodes, i, x, y, width, height) == true) {
 			//
 			x+= width + 100;
 			yMax = Math::max(y + height, yMax);
@@ -1198,7 +1233,7 @@ void TextEditorTabView::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
 		}
 
 		//
-		if (i >= syntaxTree.size()) continue;
+		if (i >= syntaxTreeNodes.size()) continue;
 		syntaxTreeNode = syntaxTreeNodes[i];
 
 		//
