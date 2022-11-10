@@ -1164,10 +1164,37 @@ void TextEditorTabView::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
 		//
 		width = 0;
 		height = 0;
+		auto branchNodeIdx = i;
 		if (handleMiniScriptBranch(syntaxTreeNodes, i, x, y, width, height) == true) {
 			//
 			x+= width + 100;
 			yMax = Math::max(y + height, yMax);
+			//
+			auto nodeFlowInId = to_string(branchNodeIdx) + "_flow_in";
+			auto nodeFlowOutId = to_string(branchNodeIdx) + "_flow_out";
+			auto nodeFlowIn = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(nodeFlowInId));
+			auto nodeFlowOut = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(nodeFlowOutId));
+			if (previousNodeFlowNode != nullptr && nodeFlowIn != nullptr) {
+				auto& previousNodeComputedConstraints = previousNodeFlowNode->getComputedConstraints();
+				auto& nodeComputedConstraints = nodeFlowIn->getComputedConstraints();
+				connections.push_back(
+					{
+						.type = Connection::CONNECTIONTYPE_FLOW,
+						.srcNodeId = previousNodeFlowNode->getId(),
+						.dstNodeId = nodeFlowInId,
+						.red = 255,
+						.green = 255,
+						.blue = 255,
+						.alpha = 255,
+						.x1 = previousNodeComputedConstraints.left + previousNodeComputedConstraints.width,
+						.y1 = previousNodeComputedConstraints.top + previousNodeComputedConstraints.height / 2,
+						.x2 = nodeComputedConstraints.left,
+						.y2 = nodeComputedConstraints.top + nodeComputedConstraints.height / 2,
+					}
+				);
+			}
+			//
+			previousNodeFlowNode = nodeFlowOut;
 		}
 
 		//
@@ -1182,7 +1209,6 @@ void TextEditorTabView::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
 		//
 		x+= width + 100;
 		yMax = Math::max(y + height, yMax);
-
 
 		// connections
 		auto nodeFlowInId = to_string(i) + "_flow_in";
