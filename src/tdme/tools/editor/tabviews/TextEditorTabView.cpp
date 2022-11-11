@@ -1129,7 +1129,7 @@ void TextEditorTabView::createMiniScriptIfBranchNodes(const string& id, int synt
 	}
 	//
 	width+= branchWidthMax;
-	height = Math::max(height, y);
+	height = Math::max(height, y - yInitial);
 	//
 	for (auto& nodeId: rightNodeIds) createdNodeIds.push_back(nodeId);
 
