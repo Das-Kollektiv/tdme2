@@ -807,7 +807,7 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int syntaxTreeNo
 	}
 }
 
-void TextEditorTabView::createMiniScriptIfBranchNodes(const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const vector<MiniScriptBranch>& branches, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth) {
+void TextEditorTabView::createMiniScriptBranchNodes(const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const MiniScript::ScriptSyntaxTreeNode* syntaxTreeNode, const vector<MiniScriptBranch>& branches, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth) {
 	//
 	auto xInitial = x;
 	auto yInitial = y;
@@ -818,6 +818,9 @@ void TextEditorTabView::createMiniScriptIfBranchNodes(const string& id, int synt
 	for (auto branchIdx = 0; branchIdx < branches.size(); branchIdx++) {
 		// note: else has no condition
 		if (branches[branchIdx].conditionSyntaxTree == nullptr) break;
+		//
+		if (branches[branchIdx].conditionSyntaxTree->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL) continue;
+
 		//
 		auto childWidth = 0;
 		auto childHeight = 0;
@@ -843,7 +846,7 @@ void TextEditorTabView::createMiniScriptIfBranchNodes(const string& id, int synt
 			.syntaxTreeNode = branches[0].syntaxTreeNodes[0]
 		};
 		//
-		string nodeName = "if";
+		string nodeName = syntaxTreeNode->value.getValueString();
 		string nodeTypeColor = string("color.nodetype_flowcontrol");
 		//
 		{
@@ -886,6 +889,9 @@ void TextEditorTabView::createMiniScriptIfBranchNodes(const string& id, int synt
 				//	note: else has no condition syntax tree
 				if (branches[branchIdx].conditionSyntaxTree != nullptr) {
 					//
+					auto isLiteral = branches[branchIdx].conditionSyntaxTree->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
+					auto literal = isLiteral == true?branches[branchIdx].conditionSyntaxTree->value.getValueString():string();
+					//
 					string xml =
 						string() +
 						"<template " +
@@ -893,14 +899,23 @@ void TextEditorTabView::createMiniScriptIfBranchNodes(const string& id, int synt
 						"	src='resources/engine/gui/template_visualcode_input.xml' " +
 						"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
 						"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
-						"	pin_color='{$" + GUIParser::escapeQuotes(getScriptVariableTypePinColor(MiniScript::ScriptVariableType::TYPE_BOOLEAN)) + "}' " +
-						"	text='" + GUIParser::escapeQuotes("Cond " + to_string(branchIdx)) + "' ";
+						"	pin_color='{$" + GUIParser::escapeQuotes(getScriptVariableTypePinColor(nodeName == "forTime"?MiniScript::ScriptVariableType::TYPE_INTEGER:MiniScript::ScriptVariableType::TYPE_BOOLEAN)) + "}' " +
+						"	text='" + GUIParser::escapeQuotes(nodeName == "forTime"?"time":"Cond " + to_string(branchIdx)) + "' ";
+					if (isLiteral == true) {
+						xml+= "	input_text='" + GUIParser::escapeQuotes(literal) + "' ";
+					}
 					xml+= "/>";
 					//
 					try {
 						GUIParser::parse(nodeInputContainer, xml);
-						// update to be connected
-						required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_c" + to_string(branchIdx) + "_pin_type_panel"))->getActiveConditions().add("connected");
+						//
+						if (isLiteral == true) {
+							// update to be a literal
+							required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_c" + to_string(branchIdx) + "_input_type_panel"))->getActiveConditions().add("input");
+						} else {
+							// update to be connected
+							required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_c" + to_string(branchIdx) + "_pin_type_panel"))->getActiveConditions().add("connected");
+						}
 					} catch (Exception& exception) {
 						Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): method/function: " + string(exception.what()));
 					}
@@ -964,6 +979,8 @@ void TextEditorTabView::createMiniScriptIfBranchNodes(const string& id, int synt
 		// note: else has no condition
 		if (branches[branchIdx].conditionSyntaxTree == nullptr) break;
 		//
+		if (branches[branchIdx].conditionSyntaxTree->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL) continue;
+		//
 		auto nextLevelNode = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById(id + "." + to_string(branchIdx)));
 		auto nodeXPosition = nextLevelNode->getRequestsConstraints().left;
 		auto rootDistance = Math::abs(x - nodeXPosition);
@@ -976,6 +993,8 @@ void TextEditorTabView::createMiniScriptIfBranchNodes(const string& id, int synt
 		// note: else has no condition
 		if (branches[branchIdx].conditionSyntaxTree == nullptr) break;
 		//
+		if (branches[branchIdx].conditionSyntaxTree->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL) continue;
+		//
 		auto subNodeId = id + "." + to_string(branchIdx);
 		auto nextLevelNode = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById(id + "." + to_string(branchIdx)));
 		auto nodeXPosition = nextLevelNode->getRequestsConstraints().left;
@@ -986,6 +1005,8 @@ void TextEditorTabView::createMiniScriptIfBranchNodes(const string& id, int synt
 
 	// create condition connections
 	for (auto branchIdx = 0; branchIdx < branches.size(); branchIdx++) {
+		//
+		if (branches[branchIdx].conditionSyntaxTree != nullptr && branches[branchIdx].conditionSyntaxTree->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL) continue;
 		//
 		string conditionInputNodeId = id + "_c" + to_string(branchIdx);
 		string conditionOutputNodeId = id + "." + to_string(branchIdx);
@@ -1030,7 +1051,7 @@ void TextEditorTabView::createMiniScriptIfBranchNodes(const string& id, int synt
 	y = yInitial;
 	for (auto branchIdx = 0; branchIdx < branches.size(); branchIdx++) {
 		// for each branch
-		auto syntaxTreeNodes = branches[branchIdx].syntaxTreeNodes;
+		auto branchSyntaxTreeNodes = branches[branchIdx].syntaxTreeNodes;
 		//
 		GUINode* previousNodeFlowNode = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(id + "_b" + to_string(branchIdx)));
 		//
@@ -1039,14 +1060,14 @@ void TextEditorTabView::createMiniScriptIfBranchNodes(const string& id, int synt
 		auto branchWidth = 0;
 		auto branchNodesWidth = 0;
 		auto branchNodesHeight = 0;
-		for (auto i = 0; i < syntaxTreeNodes.size(); i++) {
-			auto syntaxTreeNode = syntaxTreeNodes[i];
+		for (auto i = 0; i < branchSyntaxTreeNodes.size(); i++) {
+			auto branchSyntaxTreeNode = branchSyntaxTreeNodes[i];
 
 			//
 			auto branchNodeIdx = i;
 			branchNodesWidth = 0;
 			branchNodesHeight = 0;
-			if (handleMiniScriptBranch(id + ".b." + to_string(branchIdx) + ".", syntaxTreeNodes, i, x, y, branchNodesWidth, branchNodesHeight, rightNodeIds) == true) {
+			if (handleMiniScriptBranch(id + ".b." + to_string(branchIdx) + ".", branchSyntaxTreeNodes, i, x, y, branchNodesWidth, branchNodesHeight, rightNodeIds) == true) {
 				// advance x
 				x+= branchNodesWidth + 100;
 				// store max
@@ -1081,13 +1102,13 @@ void TextEditorTabView::createMiniScriptIfBranchNodes(const string& id, int synt
 			}
 
 			//
-			if (i >= syntaxTreeNodes.size()) continue;
-			syntaxTreeNode = syntaxTreeNodes[i];
+			if (i >= branchSyntaxTreeNodes.size()) continue;
+			branchSyntaxTreeNode = branchSyntaxTreeNodes[i];
 
 			//
 			branchNodesWidth = 0;
 			branchNodesHeight = 0;
-			createMiniScriptNodes(id + ".b." + to_string(branchIdx) + "." + to_string(i), i + 1, syntaxTreeNodes.size() + 1, syntaxTreeNode, x, y, branchNodesWidth, branchNodesHeight, rightNodeIds);
+			createMiniScriptNodes(id + ".b." + to_string(branchIdx) + "." + to_string(i), i + 1, branchSyntaxTreeNodes.size() + 1, branchSyntaxTreeNode, x, y, branchNodesWidth, branchNodesHeight, rightNodeIds);
 
 			// advance x
 			x+= branchNodesWidth + 100;
@@ -1123,7 +1144,7 @@ void TextEditorTabView::createMiniScriptIfBranchNodes(const string& id, int synt
 			previousNodeFlowNode = nodeFlowOut;
 		}
 		//
-		if (syntaxTreeNodes.empty() == false) branchWidth-= 100;
+		if (branchSyntaxTreeNodes.empty() == false) branchWidth-= 100;
 		branchWidthMax = Math::max(branchWidthMax, branchWidth);
 		y+= branchHeightMax;
 	}
@@ -1192,9 +1213,13 @@ bool TextEditorTabView::handleMiniScriptBranch(const string& idPrefix, const vec
 	auto syntaxTreeNode = syntaxTree[i];
 	auto syntaxTreeNodeIdx = i;
 	// handle if
-	if (syntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD && syntaxTreeNode->value.getValueString() == "if") {
+	if (syntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD &&
+		(syntaxTreeNode->value.getValueString() == "if" ||
+		syntaxTreeNode->value.getValueString() == "forCondition" ||
+		syntaxTreeNode->value.getValueString() == "forTime")) {
 		// support if depth
-		auto ifDepth = 1;
+		auto ifStatement = syntaxTreeNode->value.getValueString() == "if";
+		auto stackDepth = 1;
 		vector<MiniScriptBranch> branches;
 		branches.push_back(
 			{
@@ -1205,11 +1230,14 @@ bool TextEditorTabView::handleMiniScriptBranch(const string& idPrefix, const vec
 		);
 		for (i++; i < syntaxTree.size(); i++) {
 			auto branchSyntaxTreeNode = syntaxTree[i];
-			if (branchSyntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD && branchSyntaxTreeNode->value.getValueString() == "if") {
-				ifDepth++;
+			if (branchSyntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD &&
+				(branchSyntaxTreeNode->value.getValueString() == "if" ||
+				branchSyntaxTreeNode->value.getValueString() == "forCondition" ||
+				branchSyntaxTreeNode->value.getValueString() == "forTime")) {
+				stackDepth++;
 				branches[branches.size() - 1].syntaxTreeNodes.push_back(branchSyntaxTreeNode);
 			} else
-			if (ifDepth == 1 && branchSyntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD && branchSyntaxTreeNode->value.getValueString() == "elseif") {
+			if (ifStatement == true && stackDepth == 1 && branchSyntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD && branchSyntaxTreeNode->value.getValueString() == "elseif") {
 				branches.push_back(
 					{
 						.name = branchSyntaxTreeNode->value.getValueString(),
@@ -1218,7 +1246,7 @@ bool TextEditorTabView::handleMiniScriptBranch(const string& idPrefix, const vec
 					}
 				);
 			} else
-			if (ifDepth == 1 && branchSyntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD && branchSyntaxTreeNode->value.getValueString() == "else") {
+			if (ifStatement == true && stackDepth == 1 && branchSyntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD && branchSyntaxTreeNode->value.getValueString() == "else") {
 				branches.push_back(
 					{
 						.name = branchSyntaxTreeNode->value.getValueString(),
@@ -1229,10 +1257,11 @@ bool TextEditorTabView::handleMiniScriptBranch(const string& idPrefix, const vec
 			} else
 			if (branchSyntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD && branchSyntaxTreeNode->value.getValueString() == "end") {
 				//
-				ifDepth--;
+				stackDepth--;
 				// done?
-				if (ifDepth == 0) {
+				if (stackDepth == 0) {
 					// yup
+					Console::println("statement: " + MiniScript::createSourceCode(*syntaxTreeNode));
 					for (auto& branch: branches) {
 						if (branch.conditionSyntaxTree != nullptr) Console::println("cond: " + MiniScript::createSourceCode(*branch.conditionSyntaxTree));
 						auto j = 0;
@@ -1241,7 +1270,7 @@ bool TextEditorTabView::handleMiniScriptBranch(const string& idPrefix, const vec
 						}
 					}
 					//
-					createMiniScriptIfBranchNodes(idPrefix + to_string(syntaxTreeNodeIdx), syntaxTreeNodeIdx, syntaxTree.size(), branches, x, y, width, height, createdNodeIds);
+					createMiniScriptBranchNodes(idPrefix + to_string(syntaxTreeNodeIdx), syntaxTreeNodeIdx, syntaxTree.size(), syntaxTreeNode, branches, x, y, width, height, createdNodeIds);
 					//
 					i++;
 					//

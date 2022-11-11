@@ -294,10 +294,11 @@ public:
 	void createMiniScriptNodes(const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const MiniScript::ScriptSyntaxTreeNode* syntaxTreeNode, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth = 0);
 
 	/**
-	 * Create UI nodes for if branch syntax tree
+	 * Create UI nodes for branch nodes like if, elseif, else, end; forTime, end; forCondition, end
 	 * @param id id
 	 * @param syntaxTreeNodeIdx syntax tree node index
 	 * @param syntaxTreeNodeCount syntax tree node count
+	 * @param syntaxTreeNode syntax tree node
 	 * @param branches branches
 	 * @param x x
 	 * @param y y
@@ -306,7 +307,7 @@ public:
 	 * @oaram createdNodeIds created node ids
 	 * @param depth depth
 	 */
-	void createMiniScriptIfBranchNodes(const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const vector<MiniScriptBranch>& branches, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth = 0);
+	void createMiniScriptBranchNodes(const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const MiniScript::ScriptSyntaxTreeNode* syntaxTreeNode, const vector<MiniScriptBranch>& branches, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth = 0);
 
 	/**
 	 * @return MiniScript script index
