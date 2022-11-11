@@ -1305,6 +1305,12 @@ void TextEditorTabView::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
 	// construct syntax tree as vector of pointers to the nodes
 	vector<MiniScript::ScriptSyntaxTreeNode*> syntaxTreeNodes;
 	for (auto& syntaxTreeNode: syntaxTree) syntaxTreeNodes.push_back(&syntaxTreeNode);
+	// remove end node if we have any
+	if (syntaxTreeNodes.empty() == false &&
+		syntaxTreeNodes[syntaxTreeNodes.size() - 1]->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD &&
+		syntaxTreeNodes[syntaxTreeNodes.size() - 1]->value.getValueString() == "end") {
+		syntaxTreeNodes.erase(syntaxTreeNodes.begin() + syntaxTreeNodes.size() - 1);
+	}
 	//
 	auto width = 0;
 	auto height = 0;
