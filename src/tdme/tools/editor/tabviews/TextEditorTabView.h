@@ -288,25 +288,25 @@ public:
 	 * @param y y
 	 * @param width width
 	 * @param height height
+	 * @oaram createdNodeIds created node ids
 	 * @param depth depth
 	 */
-	void createBranchMiniScriptNodes(const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const MiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, int x, int y, int& width, int& height, int depth = 0);
+	void createMiniScriptNodes(const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const MiniScript::ScriptSyntaxTreeNode* syntaxTreeNode, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth = 0);
 
 	/**
-	 * Create UI nodes for given statement syntax tree, which matches a statement in miniscript
+	 * Create UI nodes for if branch syntax tree
 	 * @param id id
 	 * @param syntaxTreeNodeIdx syntax tree node index
 	 * @param syntaxTreeNodeCount syntax tree node count
-	 * @param syntaxTreeNode syntax tree node
+	 * @param branches branches
 	 * @param x x
 	 * @param y y
 	 * @param width width
 	 * @param height height
+	 * @oaram createdNodeIds created node ids
 	 * @param depth depth
 	 */
-	void createMiniScriptNodes(const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const MiniScript::ScriptSyntaxTreeNode* syntaxTreeNode, int x, int y, int& width, int& height, int depth = 0);
-
-	void createMiniScriptIfBranchNodes(const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const vector<MiniScriptBranch>& branches, int x, int y, int& width, int& height, int depth = 0);
+	void createMiniScriptIfBranchNodes(const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const vector<MiniScriptBranch>& branches, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth = 0);
 
 	/**
 	 * @return MiniScript script index
@@ -323,11 +323,18 @@ public:
 		this->methodOperatorMap = methodOperatorMap;
 	}
 
-
 	/**
-	 *
+	 * Handle MiniScript branch
+	 * @param idPrefix id prefix
+	 * @param syntaxTree syntax tree
+	 * @param i iterator
+	 * @param x x
+	 * @param y y
+	 * @param width width
+	 * @param height height
+	 * @oaram createdNodeIds created node ids
 	 */
-	bool handleMiniScriptBranch(const string& idPrefix, const vector<MiniScript::ScriptSyntaxTreeNode*>& syntaxTree, int& i, int x, int y, int& width, int& height);
+	bool handleMiniScriptBranch(const string& idPrefix, const vector<MiniScript::ScriptSyntaxTreeNode*>& syntaxTree, int& i, int x, int y, int& width, int& height, vector<string>& createdNodeIds);
 
 	/**
 	 * Update miniscript syntax tree

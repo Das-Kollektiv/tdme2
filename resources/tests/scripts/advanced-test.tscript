@@ -11,14 +11,14 @@ on: initialize
 	elseif ($i == 1)
 		console.log("i -> 1")
 		console.log("Yarr1")
-#		if ($j == 1)
-#			console.log("j -> 1")
-#		elseif ($j == 2)
-#			console.log("j -> 2")
-#		else
-#			console.log("else: ", $j)
-#			console.log("TarrE")
-#		end
+		if ($j == 1)
+			console.log("j -> 1")
+		elseif ($j == 2)
+			console.log("j -> 2")
+		else
+			console.log("else: ", $j)
+			console.log("TarrE")
+		end
 	elseif ($i == 2)
 		console.log("i -> 2")
 		console.log("Yarr2")
