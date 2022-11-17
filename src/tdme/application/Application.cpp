@@ -401,19 +401,23 @@ bool Application::isActive() {
 	#endif
 }
 
-int Application::getWindowXPosition() const {
+int Application::getWindowXPosition() {
+	if (glfwWindow != nullptr) glfwGetWindowPos(glfwWindow, &windowXPosition, &windowYPosition);
 	return windowXPosition;
 }
 
 void Application::setWindowXPosition(int windowXPosition) {
+	if (glfwWindow != nullptr) glfwSetWindowPos(glfwWindow, windowXPosition, windowYPosition);
 	this->windowXPosition = windowXPosition;
 }
 
-int Application::getWindowYPosition() const {
+int Application::getWindowYPosition() {
+	if (glfwWindow != nullptr) glfwGetWindowPos(glfwWindow, &windowXPosition, &windowYPosition);
 	return windowYPosition;
 }
 
 void Application::setWindowYPosition(int windowYPosition) {
+	if (glfwWindow != nullptr) glfwSetWindowPos(glfwWindow, windowXPosition, windowYPosition);
 	this->windowYPosition = windowYPosition;
 }
 
