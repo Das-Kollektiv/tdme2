@@ -509,9 +509,8 @@ void TextEditorTabView::createMiniScriptScriptNode(const string& id, MiniScript:
 		}
 		//
 		auto nodeInputContainer = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById(id + "_input_container"));
-		// inputs aka arguments
+		// condition input
 		{
-			// condition inputs
 			//
 			auto isLiteral = conditionSyntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_NONE;
 			auto literal = isLiteral == true?condition:string();
@@ -546,7 +545,7 @@ void TextEditorTabView::createMiniScriptScriptNode(const string& id, MiniScript:
 		}
 	}
 
-	// create connection to condition node return to node cond
+	// create connection to condition node return to node cond node
 	if (conditionSyntaxTreeNode->type != MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_NONE) {
 		//
 		string argumentInputNodeId = id + "_c";
