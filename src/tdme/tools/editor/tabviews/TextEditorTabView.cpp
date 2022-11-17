@@ -1013,6 +1013,27 @@ void TextEditorTabView::createMiniScriptBranchNodes(const string& id, int syntax
 				Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): method/function: " + string(exception.what()));
 			}
 		}
+		// pin output aka flow output
+		if (depth == 0 && syntaxTreeNodeIdx < syntaxTreeNodeCount - 1) {
+			string xml;
+			//
+			xml+=
+				string() +
+				"<template " +
+				"	id='" + id + "_flow_out' " +
+				"	src='resources/engine/gui/template_visualcode_output.xml' " +
+				"	pin_type_connected='resources/engine/images/visualcode_flow_connected.png' " +
+				"	pin_type_unconnected='resources/engine/images/visualcode_flow_unconnected.png' " +
+				"/>";
+			//
+			try {
+				GUIParser::parse(nodeOutputContainer, xml);
+				// update to be connected
+				required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_flow_out_pin_type_panel"))->getActiveConditions().add("connected");
+			} catch (Exception& exception) {
+				Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): method/function: " + string(exception.what()));
+			}
+		}
 		// inputs aka arguments
 		for (auto branchIdx = 0; branchIdx < branches.size(); branchIdx++) {
 			// condition inputs
@@ -1046,27 +1067,6 @@ void TextEditorTabView::createMiniScriptBranchNodes(const string& id, int syntax
 						// update to be connected
 						required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_c" + to_string(branchIdx) + "_pin_type_panel"))->getActiveConditions().add("connected");
 					}
-				} catch (Exception& exception) {
-					Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): method/function: " + string(exception.what()));
-				}
-			}
-			// pin output aka flow output
-			if (depth == 0 && syntaxTreeNodeIdx < syntaxTreeNodeCount - 1) {
-				string xml;
-				//
-				xml+=
-					string() +
-					"<template " +
-					"	id='" + id + "_flow_out' " +
-					"	src='resources/engine/gui/template_visualcode_output.xml' " +
-					"	pin_type_connected='resources/engine/images/visualcode_flow_connected.png' " +
-					"	pin_type_unconnected='resources/engine/images/visualcode_flow_unconnected.png' " +
-					"/>";
-				//
-				try {
-					GUIParser::parse(nodeOutputContainer, xml);
-					// update to be connected
-					required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_flow_out_pin_type_panel"))->getActiveConditions().add("connected");
 				} catch (Exception& exception) {
 					Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): method/function: " + string(exception.what()));
 				}
@@ -1134,7 +1134,8 @@ void TextEditorTabView::createMiniScriptBranchNodes(const string& id, int syntax
 	// create condition connections
 	for (auto branchIdx = 0; branchIdx < branches.size(); branchIdx++) {
 		//
-		if (branches[branchIdx].conditionSyntaxTree != nullptr && branches[branchIdx].conditionSyntaxTree->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL) continue;
+		if (branches[branchIdx].conditionSyntaxTree == nullptr ||
+			(branches[branchIdx].conditionSyntaxTree != nullptr && branches[branchIdx].conditionSyntaxTree->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL)) continue;
 		//
 		string conditionInputNodeId = id + "_c" + to_string(branchIdx);
 		string conditionOutputNodeId = id + "." + to_string(branchIdx);
@@ -1389,9 +1390,7 @@ bool TextEditorTabView::handleMiniScriptBranch(const string& idPrefix, const vec
 				// done?
 				if (stackDepth == 0) {
 					// yup
-					Console::println("statement: " + MiniScript::createSourceCode(*syntaxTreeNode));
 					for (auto& branch: branches) {
-						if (branch.conditionSyntaxTree != nullptr) Console::println("cond: " + MiniScript::createSourceCode(*branch.conditionSyntaxTree));
 						auto j = 0;
 						for (auto node: branch.syntaxTreeNodes) {
 							j++;
