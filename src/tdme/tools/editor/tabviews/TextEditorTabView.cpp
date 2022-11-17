@@ -1424,6 +1424,7 @@ void TextEditorTabView::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
 	if (miniScriptScriptIdx == MINISCRIPT_SCRIPTIDX_STRUCTURE) {
 		auto syntaxTrees = textEditorTabController->getMiniScriptSyntaxTrees();
 
+		//
 		auto width = 0;
 		auto height = 0;
 		auto y = 200;
