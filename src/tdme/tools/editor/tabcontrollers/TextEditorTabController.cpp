@@ -4,6 +4,7 @@
 #include <unordered_map>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/logics/LogicMiniScript.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/events/GUIActionListener.h>
@@ -40,6 +41,7 @@ using std::string;
 using std::unordered_map;
 
 using tdme::engine::fileio::textures::Texture;
+using tdme::engine::logics::LogicMiniScript;
 using tdme::engine::Engine;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
@@ -225,7 +227,7 @@ void TextEditorTabController::setOutlinerAddDropDownContent() {
 void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
 	auto scriptFileName = view->getFileName();
 	//
-	MiniScript* scriptInstance = new MiniScript();
+	LogicMiniScript* scriptInstance = new LogicMiniScript();
 	scriptInstance->loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName));
 
 	//

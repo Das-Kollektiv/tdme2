@@ -97,42 +97,76 @@ void EditorView::handleInputEvents()
 	//
 	auto tabView = editorScreenController->getSelectedTab();
 	if (tabView != nullptr) {
+		// get viewport position, dimension
 		auto xScale = static_cast<float>(engine->getWidth()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenWidth());
 		auto yScale = static_cast<float>(engine->getHeight()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenHeight());
 		int left, top, width, height;
 		getViewPort(tabView->getFrameBufferNode(), left, top, width, height);
 		auto offsetX = tabView->getFrameBufferNode()->computeParentChildrenRenderOffsetXTotal();
 		auto offsetY = tabView->getFrameBufferNode()->computeParentChildrenRenderOffsetYTotal();
+		// deactivate old tab/activate new tab
 		if (tabView->getId() != lastSelectedTabId) {
 			auto lastTabView = lastSelectedTabId.empty() == true?nullptr:editorScreenController->getTab(lastSelectedTabId);
 			if (lastTabView != nullptr) lastTabView->getTabView()->deactivate();
 			tabView->getTabView()->activate();
 			editorScreenController->getScreenNode()->invalidateLayout(editorScreenController->getScreenNode()->getNodeById(tabView->getFrameBufferNode()->getId()));
 		}
+		// forward mouse events if belonging to view
 		for (auto event: Engine::getInstance()->getGUI()->getMouseEvents()) {
+			// event position in our tab
 			auto eventX = (event.getXUnscaled() - left + offsetX) / xScale;
 			auto eventY = (event.getYUnscaled() - top + offsetY) / yScale;
-			if ((eventX < 0 || eventX >= width || eventY < 0 || eventY >= height) &&
-				event.getType() != GUIMouseEvent::MOUSEEVENT_RELEASED) continue;
+			// out of tab bounds?
+			if (eventX < 0 || eventX >= width || eventY < 0 || eventY >= height) {
+				switch (event.getType()) {
+					case GUIMouseEvent::MOUSEEVENT_RELEASED:
+					case GUIMouseEvent::MOUSEEVENT_DRAGGED:
+						// if no mouse down is registered on button do not forward the event to the tab
+						if (mouseButtonsDown[event.getButton() - 1] == false) {
+							continue;
+						}
+						break;
+					default:
+						break;
+				}
+			}
+			// track mouse buttons down states
+			switch (event.getType()) {
+				case GUIMouseEvent::MOUSEEVENT_PRESSED:
+					mouseButtonsDown[event.getButton() - 1] = true;
+					break;
+				case GUIMouseEvent::MOUSEEVENT_RELEASED:
+					mouseButtonsDown[event.getButton() - 1] = false;
+					break;
+				default:
+					break;
+			}
+			// pass the event on to tab
 			event.setX(eventX);
 			event.setY(eventY);
 			event.setXUnscaled(eventX);
 			event.setYUnscaled(eventY);
 			tabView->getTabView()->getEngine()->getGUI()->getMouseEvents().push_back(event);
 		}
+		// just forward keyboard events
 		for (auto& event: Engine::getInstance()->getGUI()->getKeyboardEvents()) {
 			tabView->getTabView()->getEngine()->getGUI()->getKeyboardEvents().push_back(event);
 		}
+		// handle events
 		tabView->getTabView()->handleInputEvents();
+		//
 		for (auto i = 0; i < Engine::getInstance()->getGUI()->getKeyboardEvents().size(); i++) {
 			auto& srcEvent = Engine::getInstance()->getGUI()->getKeyboardEvents()[i];
 			auto& dstEvent = tabView->getTabView()->getEngine()->getGUI()->getKeyboardEvents()[i];
 			if (dstEvent.isProcessed() == true) srcEvent.setProcessed(true);
 		}
+		// clear
 		tabView->getTabView()->getEngine()->getGUI()->getMouseEvents().clear();
 		tabView->getTabView()->getEngine()->getGUI()->getKeyboardEvents().clear();
+		// last tab
 		lastSelectedTabId = tabView->getId();
 	} else {
+		// no current tab, just deactivate last one
 		auto lastTabView = editorScreenController->getTab(lastSelectedTabId);
 		if (lastTabView != nullptr) lastTabView->getTabView()->deactivate();
 		lastSelectedTabId.clear();
