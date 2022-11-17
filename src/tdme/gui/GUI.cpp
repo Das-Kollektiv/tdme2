@@ -53,6 +53,8 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::Time;
 
+bool GUI::disableTabFocusControl = false;
+
 GUI::GUI(Engine* engine, GUIRenderer* guiRenderer)
 {
 	this->mouseButtonLast = 0;
@@ -439,7 +441,7 @@ void GUI::handleKeyboardEvent(GUIKeyboardEvent* event) {
 	//
 	switch (event->getKeyCode()) {
 		case (GUIKeyboardEvent::KEYCODE_TAB):
-			{
+			if (disableTabFocusControl == false) {
 				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 					if (event->isShiftDown() == true) {
 						focusPreviousNode();
@@ -448,8 +450,8 @@ void GUI::handleKeyboardEvent(GUIKeyboardEvent* event) {
 					}
 				}
 				event->setProcessed(true);
-				break;
 			}
+			break;
 		case (GUIKeyboardEvent::KEYCODE_LEFT_ALT):
 		case (GUIKeyboardEvent::KEYCODE_RIGHT_ALT):
 			{
