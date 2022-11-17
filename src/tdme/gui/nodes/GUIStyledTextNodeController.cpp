@@ -457,19 +457,37 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 						} else {
 							if (selectionIndex == -1) selectionIndex = index;
 						}
+						//
+						auto& text = styledTextNode->getText();
 						// find index of current line newline and store difference
-						auto lineNewLineIndex = styledTextNode->getPreviousNewLineUtf8(index) + (index == 0?0:1);
+						auto lineNewLineIndex = styledTextNode->getPreviousNewLineUtf8(index);
+						if (lineNewLineIndex == index) lineNewLineIndex = styledTextNode->getPreviousNewLineUtf8(index - 1);
+						lineNewLineIndex++;
 						// current line index
 						auto lineIndex = Math::max(index - lineNewLineIndex, 0);
+						// take tabs into account
+						for (auto i = lineNewLineIndex; i < index; i++) {
+							if (text.getUTF8CharAt(i) == '\t') lineIndex+= 3;
+						}
+						// store or reuse line index
+						if (lineIndex != 0) {
+							this->lineIndex = lineIndex;
+						} else {
+							lineIndex = this->lineIndex;
+						}
 						// find index of previous newline and iterate to difference if possible
 						auto previousNewLineIndex = styledTextNode->getPreviousNewLineUtf8(styledTextNode->getPreviousNewLineUtf8(index - 1) - 1);
 						if (previousNewLineIndex != 0) previousNewLineIndex++;
 						// find next index of previous 2 newline as upper bound
 						auto nextNewLineIndex = styledTextNode->getNextNewLineUtf8(previousNewLineIndex);
+						// take tabs into account
+						index = previousNewLineIndex;
+						for (auto i = 0; i < lineIndex && index < nextNewLineIndex; ) {
+							if (text.getUTF8CharAt(index) == '\t') i+= 4; else i+= 1;
+							index++;
+						}
 						//
-						index = Math::min(previousNewLineIndex + lineIndex, nextNewLineIndex);
 						styledTextNode->scrollToIndex();
-						//
 						resetCursorMode();
 					}
 				}
@@ -482,16 +500,34 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 						} else {
 							if (selectionIndex == -1) selectionIndex = index;
 						}
+						//
+						auto& text = styledTextNode->getText();
 						// find index of current line newline and store difference
-						auto lineNewLineIndex = styledTextNode->getPreviousNewLineUtf8(index) + (index == 0?0:1);
+						auto lineNewLineIndex = styledTextNode->getPreviousNewLineUtf8(index);
+						if (lineNewLineIndex == index) lineNewLineIndex = styledTextNode->getPreviousNewLineUtf8(index - 1);
+						lineNewLineIndex++;
 						// current line index
 						auto lineIndex = Math::max(index - lineNewLineIndex, 0);
+						// take tabs into account
+						for (auto i = lineNewLineIndex; i < index; i++) {
+							if (text.getUTF8CharAt(i) == '\t') lineIndex+= 3;
+						}
+						// store or reuse line index
+						if (lineIndex != 0) {
+							this->lineIndex = lineIndex;
+						} else {
+							lineIndex = this->lineIndex;
+						}
 						// find index of next newline
 						auto nextNewLineIndex = styledTextNode->getNextNewLineUtf8(index);
 						// find index of next * 2 newline as upper bound
 						auto next2NewLineIndex = styledTextNode->getNextNewLineUtf8(nextNewLineIndex + 1);
-						// iterate to difference if possible
-						index = Math::min(nextNewLineIndex + 1 + lineIndex, next2NewLineIndex);
+						// take tabs into account
+						index = nextNewLineIndex + 1;
+						for (auto i = 0; i < lineIndex && index < next2NewLineIndex; ) {
+							if (text.getUTF8CharAt(index) == '\t') i+= 4; else i+= 1;
+							index++;
+						}
 						//
 						styledTextNode->scrollToIndex();
 						resetCursorMode();
@@ -567,10 +603,28 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 					}
 				}
 				break;
-			case GUIKeyboardEvent::KEYCODE_RETURN:{
+			case GUIKeyboardEvent::KEYCODE_RETURN: {
 					if (disabled == false) {
 						event->setProcessed(true);
 						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+							// find out current line indenting
+							string newLinePrefix;
+							{
+								auto& text = styledTextNode->getText();
+								auto lineNewLineIndex = styledTextNode->getPreviousNewLineUtf8(index);
+								if (lineNewLineIndex == index) lineNewLineIndex = styledTextNode->getPreviousNewLineUtf8(index - 1);
+								lineNewLineIndex++;
+								//
+								for (auto i = lineNewLineIndex; i < index; i++) {
+									auto c = text.getUTF8CharAt(i);
+									if (c == ' ' || c == '\t') {
+										newLinePrefix+= (char)c;
+									} else {
+										break;
+									}
+								}
+							}
+							//
 							if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
 								styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 								styledTextNode->scrollToIndex();
@@ -579,17 +633,18 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 								selectionIndex = -1;
 							}
 							if (maxLength == 0 || styledTextNode->getTextLength() < maxLength) {
-								styledTextNode->insertText(index, '\n');
+								// insert new line and new line prefix
+								styledTextNode->insertText(index, '\n' + newLinePrefix);
 								styledTextNode->scrollToIndex();
 								forwardInsertText(index, 1);
-								index++;
+								index+= 1 + newLinePrefix.size();
 								resetCursorMode();
 							}
 						}
 					}
 				}
 				break;
-			case GUIKeyboardEvent::KEYCODE_TAB:{
+			case GUIKeyboardEvent::KEYCODE_TAB: {
 					if (disabled == false) {
 						event->setProcessed(true);
 						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {

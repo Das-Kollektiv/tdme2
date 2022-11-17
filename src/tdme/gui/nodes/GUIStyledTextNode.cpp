@@ -171,14 +171,13 @@ void GUIStyledTextNode::removeText(int32_t idx, int32_t count) {
 	}
 	charEndIdx = text.size();
 	startTextStyleIdx = -1;
-	//
+	// TODO: this can be optimized later
 	computeContentAlignmentInternal();
 	//
 	screenNode->invalidateLayout(parentNode);
 }
 
 void GUIStyledTextNode::insertText(int32_t idx, int c) {
-	// TODO: we have new node dimension after remove
 	auto s = Character::toString(c);
 	text.insert(idx, s);
 	idx = text.getUtf8BinaryIndex(idx);
@@ -206,7 +205,7 @@ void GUIStyledTextNode::insertText(int32_t idx, int c) {
 	}
 	charEndIdx = text.size();
 	startTextStyleIdx = -1;
-	//
+	// TODO: this can be optimized later
 	computeContentAlignmentInternal();
 	//
 	screenNode->invalidateLayout(parentNode);
@@ -240,7 +239,7 @@ void GUIStyledTextNode::insertText(int32_t idx, const string& s) {
 	}
 	charEndIdx = text.size();
 	startTextStyleIdx = -1;
-	//
+	// TODO: this can be optimized later
 	computeContentAlignmentInternal();
 	//
 	screenNode->invalidateLayout(parentNode);
