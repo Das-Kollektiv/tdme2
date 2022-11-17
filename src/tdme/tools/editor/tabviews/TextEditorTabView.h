@@ -42,6 +42,8 @@ protected:
 	Engine* engine { nullptr };
 
 private:
+	static constexpr int MINISCRIPT_SCRIPTIDX_STRUCTURE { -1 };
+
 	EditorView* editorView { nullptr };
 	string tabId;
 	PopUps* popUps { nullptr };
@@ -64,7 +66,7 @@ private:
 		string returnValue;
 	};
 
-	int miniScriptScriptIdx { 0 };
+	int miniScriptScriptIdx { MINISCRIPT_SCRIPTIDX_STRUCTURE };
 
 	float scrollX { 0.0f };
 	float scrollY { 0.0f };
@@ -82,7 +84,7 @@ private:
 
 	struct Node {
 		string id;
-		const MiniScript::ScriptSyntaxTreeNode* syntaxTreeNode { nullptr };
+		MiniScript::ScriptVariableType returnValueType;
 		/*
 		int x1;
 		int y1;
@@ -108,12 +110,11 @@ private:
 
 	struct MiniScriptBranch {
 		string name;
-		MiniScript::ScriptSyntaxTreeNode* conditionSyntaxTree;
+		MiniScript::ScriptSyntaxTreeNode* conditionSyntaxTree { nullptr };
 		vector<MiniScript::ScriptSyntaxTreeNode*> syntaxTreeNodes;
 	};
 
 	unordered_map<string, string> methodOperatorMap;
-	vector<MiniScript::ScriptSyntaxTreeNode> syntaxTree;
 	unordered_map<string, Node> nodes;
 	vector<Connection> connections;
 	bool visualEditor { false };
@@ -277,6 +278,21 @@ public:
 	 * @param deltaX delta X
 	 */
 	void addMiniScriptNodeDeltaX(const string& id, const MiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, int deltaX);
+
+	/**
+	 * Create UI nodes for MiniScript script node syntax tree, which matches a event or function in MiniScript
+	 * @param id id
+	 * @param scriptType script type
+	 * @param condition condition
+	 * @param readableName readableName
+	 * @param conditionSyntaxTreeNode condition syntax tree node
+	 * @param x x
+	 * @param y y
+	 * @param width width
+	 * @param height height
+	 * @param createdNodeIds created node ids
+	 */
+	void createMiniScriptScriptNode(const string& id, MiniScript::Script::ScriptType scriptType, const string& condition, const string& readableName, const MiniScript::ScriptSyntaxTreeNode* conditionSyntaxTreeNode, int x, int y, int& width, int& height);
 
 	/**
 	 * Create UI nodes for given statement syntax tree, which matches a statement in miniscript

@@ -44,7 +44,10 @@ class tdme::tools::editor::tabcontrollers::TextEditorTabController final
 {
 public:
 	struct MiniScriptScriptSyntaxTree {
+		MiniScript::Script::ScriptType type;
+		string condition;
 		string name;
+		MiniScript::ScriptSyntaxTreeNode conditionSyntaxTree;
 		vector<MiniScript::ScriptSyntaxTreeNode> syntaxTree;
 	};
 
@@ -100,7 +103,7 @@ public:
 	/**
 	 * @return miniscript syntax trees
 	 */
-	inline vector<MiniScriptScriptSyntaxTree>& getMiniScriptSyntaxTrees() {
+	inline const vector<MiniScriptScriptSyntaxTree>& getMiniScriptSyntaxTrees() {
 		return miniScriptSyntaxTrees;
 	}
 
