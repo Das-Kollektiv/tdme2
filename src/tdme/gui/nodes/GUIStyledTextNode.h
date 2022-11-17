@@ -246,6 +246,11 @@ private:
 	 */
 	void determineNextLineConstraints(UTF8CharacterIterator& u8It, int charEndIdx, int textStyleIdx);
 
+	/**
+	 * Compute content alignment internal
+	 */
+	void computeContentAlignmentInternal();
+
 protected:
 	/**
 	 * Constructor
