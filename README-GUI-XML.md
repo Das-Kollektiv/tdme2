@@ -322,7 +322,7 @@ Currently supported BBCode like tags are:
 | value                             | value of this element, which will represent selection state                            | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
-## 2.3.1. Context Menu
+## 2.3. Context Menu
 
 ### 2.3.1. \<context-menu\>
 
@@ -359,9 +359,9 @@ This element supports \<context-menu-item\> and others as sub elements.
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
-## 2.3. Dropdown
+## 2.4. Dropdown
 
-### 2.3.1. \<dropdown\>
+### 2.4.1. \<dropdown\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -385,7 +385,7 @@ This element supports \<context-menu-item\> and others as sub elements.
 
 This element supports \<dropdown-option\> and others as sub elements.
 
-### 2.3.2. \<dropdown-option\>
+### 2.4.2. \<dropdown-option\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -403,7 +403,7 @@ This element supports \<dropdown-option\> and others as sub elements.
 | value                             | value of this element, which will represent selection state                            | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
-## 2.4. \<image-button\>
+## 2.5. \<image-button\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -426,7 +426,7 @@ This element supports \<dropdown-option\> and others as sub elements.
 | value                             | value of this element, which will represent selection state                            | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
-## 2.5. \<input\>
+## 2.6. \<input\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -451,9 +451,9 @@ This element supports \<dropdown-option\> and others as sub elements.
 | name                              | formular name of this element                                                          | none              |
 | value                             | value of this element, which will represent selection state                            | none              |
 
-## 2.6. Menu
+## 2.7. Menu
 
-### 2.6.1. \<menu-header\>
+### 2.7.1. \<menu-header\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -463,7 +463,7 @@ This element supports \<dropdown-option\> and others as sub elements.
 
 This element supports \<menu-header-item\> and others as sub elements.
 
-### 2.6.2. \<menu-header-item\>
+### 2.7.2. \<menu-header-item\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -481,7 +481,7 @@ This element supports \<menu-header-item\> and others as sub elements.
 
 This element supports \<menu-item\>and others as sub elements.
 
-### 2.6.3. \<menu-item\>
+### 2.7.3. \<menu-item\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -499,9 +499,9 @@ This element supports \<menu-item\>and others as sub elements.
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
-### 2.6.4. \<menu-separator\>
+### 2.7.4. \<menu-separator\>
 
-## 2.7. \<moveable\>
+## 2.8. \<moveable\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
