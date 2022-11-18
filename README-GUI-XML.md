@@ -591,9 +591,29 @@ This element supports all other elements as sub elements.
 | value                             | value of this element                                                                  | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
-This element supports \<selectbox-option\> and others as sub elements.
+This element supports \<selectbox-option\>, \<selectbox-parent-option\> and others as sub elements.
 
 ### 2.12.2. \<selectbox-option\>
+
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| id                                | the unique node id within screen                                                       | auto generated id |
+| show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
+| hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
+| disabled                          | true \| false                                                                          | false             |
+| image                             | select box option image location                                                       | none              |
+| text                              | text to render                                                                         | none              |
+| selected                          | true \| false                                                                          | false             |
+| on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
+| on-mouse-click                    | SimpleScript expression to be executed if a mouse click did happen                     | none              |
+| on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
+| on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
+| on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
+| parent-id                         | Used to generate hierarchical/tree like select box options                             | none              |
+| value                             | value of this element, which will represent selection state                            | none              |
+| template                          | location of template XML file to override compound element XML                         | none              |
+
+### 2.12.3. \<selectbox-parent-option\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
