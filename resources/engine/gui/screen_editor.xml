@@ -98,8 +98,8 @@
 										<dropdown-option text="Terrain" value="terrain" />
 										<dropdown-option text="Particle" value="particle" />
 										<dropdown-option text="Scene" value="scene" />
-										<!--
 										<dropdown-option text="Script" value="script" />
+										<!--
 										<dropdown-option text="GUI" value="gui" />
 										-->
 									</dropdown>

@@ -1,0 +1,54 @@
+# update engine
+function: updateEngine()
+	console.log("-----------------------------")
+	console.log("updateEngine(): " + logic.getId())
+	console.log("-----------------------------")
+	console.log()
+end
+
+# update logic
+function: updateLogic()
+	console.log("-----------------------------")
+	console.log("updateLogic(): " + logic.getId())
+	console.log("-----------------------------")
+	console.log()
+end
+
+# on logic added
+function: onLogicAdded()
+	console.log("-----------------------------")
+	console.log("onLogicAdded(): " + logic.getId())
+	console.log("-----------------------------")
+	console.log()
+end
+
+# on logics processed
+function: onLogicsProcessed()
+	console.log("-----------------------------")
+	console.log("onLogicsProcessed(): " + logic.getId())
+	console.log("-----------------------------")
+	console.log()
+end
+
+# on initialize
+on: initialize
+	# this is not yet called
+	console.log("-----------------------------")
+	console.log("initialize: " + logic.getId())
+	console.log("-----------------------------")
+	console.log()
+end
+
+# if no condition is met, nothing will be executed, lol :D
+on: nothing
+	console.log("-----------------------------")
+	console.log("Nothing: " + logic.getId())
+	console.log("-----------------------------")
+	console.log()
+end
+
+# on error
+on: error
+	console.log("An error occurred")
+	script.stop()
+end

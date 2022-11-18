@@ -4,6 +4,7 @@
 #include <unordered_map>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/logics/LogicMiniScript.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/events/GUIActionListener.h>
@@ -40,6 +41,7 @@ using std::string;
 using std::unordered_map;
 
 using tdme::engine::fileio::textures::Texture;
+using tdme::engine::logics::LogicMiniScript;
 using tdme::engine::Engine;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
@@ -208,7 +210,7 @@ void TextEditorTabController::onContextMenuRequested(GUIElementNode* node, int m
 
 void TextEditorTabController::setOutlinerContent() {
 	string xml;
-	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"MiniScript\" value=\"miniscript\">\n";
+	xml+= "<selectbox-parent-option image=\"resources/engine/images/folder.png\" text=\"MiniScript\" value=\"miniscript.script." + to_string(-1) + "\">\n";
 	auto scriptIdx = 0;
 	for (auto& miniScriptSyntaxTree: miniScriptSyntaxTrees) {
 		xml+= "<selectbox-option text=\"" + GUIParser::escapeQuotes(miniScriptSyntaxTree.name) + "\" value=\"miniscript.script." + to_string(scriptIdx) + "\" />\n";
@@ -225,7 +227,7 @@ void TextEditorTabController::setOutlinerAddDropDownContent() {
 void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
 	auto scriptFileName = view->getFileName();
 	//
-	MiniScript* scriptInstance = new MiniScript();
+	LogicMiniScript* scriptInstance = new LogicMiniScript();
 	scriptInstance->loadScript(Tools::getPathName(scriptFileName), Tools::getFileName(scriptFileName));
 
 	//
@@ -254,16 +256,18 @@ void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx
 			case MiniScript::Script::SCRIPTTYPE_ON: name+= "on: "; break;
 			case MiniScript::Script::SCRIPTTYPE_ONENABLED: name+= "on-enabled: "; break;
 		}
-		if (script.condition.empty() == false)
-			name+= script.condition + argumentsString;
 		if (script.name.empty() == false) {
-			name+= script.name + argumentsString;
-		}
-
+			name+= script.name;
+		} else
+		if (script.condition.empty() == false)
+			name+= script.condition + (argumentsString.empty() == false?": " + argumentsString:"");
 		//
 		miniScriptSyntaxTrees.push_back(
 			{
+				.type = script.scriptType,
+				.condition = script.condition,
 				.name = name,
+				.conditionSyntaxTree = script.conditionSyntaxTree,
 				.syntaxTree = script.syntaxTree
 			}
 		);

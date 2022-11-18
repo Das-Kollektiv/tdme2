@@ -82,7 +82,7 @@ public:
 	/**
 	 * @return utf 8 character at given character index
 	 */
-	inline int getUTF8CharAt(int32_t idx) {
+	inline int getUTF8CharAt(int32_t idx) const {
 		auto u8It = getUTF8CharacterIterator();
 		u8It.seekBinaryPosition(getUtf8BinaryIndex(idx));
 		return u8It.hasNext() == true?u8It.next():-1;

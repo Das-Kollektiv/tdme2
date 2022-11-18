@@ -3025,4 +3025,26 @@ public:
 	 */
 	const string getInformation();
 
+	/**
+	 * Create source code for given syntax tree node
+	 * @param syntaxTreeNode syntax tree node
+	 */
+	static const string createSourceCode(const ScriptSyntaxTreeNode& syntaxTreeNode);
+
+	/**
+	 * Create source code for given syntax tree
+	 * @param scriptType script type
+	 * @param condition condition
+	 * @param arguments function arguments
+	 * @param name name of named conditions
+	 * @param conditionSyntaxTree condition syntax tree
+	 * @param syntaxTree syntax tree
+	 */
+	static const string createSourceCode(Script::ScriptType scriptType, const string& condition, const vector<Script::ScriptArgument>& arguments, const string& name, const ScriptSyntaxTreeNode& conditionSyntaxTree, const vector<ScriptSyntaxTreeNode>& syntaxTree);
+
+	/**
+	 * Create source code for whole script
+	 */
+	const string createSourceCode();
+
 };

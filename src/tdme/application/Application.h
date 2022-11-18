@@ -175,7 +175,7 @@ public:
 	/**
 	 * @return window X position
 	 */
-	int getWindowXPosition() const;
+	int getWindowXPosition();
 
 	/**
 	 * Set window X position when initializing
@@ -186,7 +186,7 @@ public:
 	/**
 	 * @return window Y position
 	 */
-	int getWindowYPosition() const;
+	int getWindowYPosition();
 
 	/**
 	 * Set window Y position when initializing

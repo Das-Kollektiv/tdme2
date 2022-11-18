@@ -147,6 +147,9 @@ void GUIScrollAreaController::postLayout()
 		auto scrollableHeight = contentHeight - elementHeight;
 		if (contentHeight > elementHeight) {
 			required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions().add("vertical-scrollbar");
+			if (contentNode->getChildrenRenderOffsetY() + elementHeight > contentHeight) {
+				contentNode->setChildrenRenderOffsetY(contentHeight - elementHeight);
+			}
 		} else {
 			required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions().remove("vertical-scrollbar");
 			contentNode->setChildrenRenderOffsetY(0.0f);
@@ -159,6 +162,9 @@ void GUIScrollAreaController::postLayout()
 		auto scrollableWidth = contentWidth - elementWidth;
 		if (contentWidth > elementWidth) {
 			required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions().add("horizontal-scrollbar");
+			if (contentNode->getChildrenRenderOffsetX() + elementWidth > contentWidth) {
+				contentNode->setChildrenRenderOffsetX(contentWidth - elementWidth);
+			}
 		} else {
 			contentNode->setChildrenRenderOffsetX(0.0f);
 			required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions().remove("horizontal-scrollbar");

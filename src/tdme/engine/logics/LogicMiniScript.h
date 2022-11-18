@@ -48,9 +48,9 @@ protected:
 	int mouseY { -1 };
 	int mouseXUnscaled { -1 };
 	int mouseYUnscaled { -1 };
-	array<bool, 3> mouseDown {{ false, false, false }};
-	array<bool, 3> mouseUp {{ false, false, false }};
-	array<bool, 3> mouseDragging {{ false, false, false }};
+	array<bool, 8> mouseDown {{ false, false, false, false, false, false, false, false }};
+	array<bool, 8> mouseUp {{ false, false, false, false, false, false, false, false }};
+	array<bool, 8> mouseDragging {{ false, false, false, false, false, false, false, false }};
 	bool mouseMoved = false;
 	float mouseWheelX { 0.0f };
 	float mouseWheelY { 0.0f };

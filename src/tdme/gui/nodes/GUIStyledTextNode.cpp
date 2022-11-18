@@ -21,7 +21,6 @@
 #include <tdme/gui/renderer/GUIFont.h>
 #include <tdme/gui/renderer/GUIRenderer.h>
 #include <tdme/gui/GUI.h>
-#include <tdme/math/Math.h>
 #include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -53,7 +52,6 @@ using tdme::gui::renderer::GUICharacter;
 using tdme::gui::renderer::GUIFont;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::gui::GUI;
-using tdme::math::Math;
 using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -173,10 +171,13 @@ void GUIStyledTextNode::removeText(int32_t idx, int32_t count) {
 	}
 	charEndIdx = text.size();
 	startTextStyleIdx = -1;
+	// TODO: this can be optimized later
+	computeContentAlignmentInternal();
+	//
+	screenNode->invalidateLayout(parentNode);
 }
 
 void GUIStyledTextNode::insertText(int32_t idx, int c) {
-	// TODO: we have new node dimension after remove
 	auto s = Character::toString(c);
 	text.insert(idx, s);
 	idx = text.getUtf8BinaryIndex(idx);
@@ -204,6 +205,10 @@ void GUIStyledTextNode::insertText(int32_t idx, int c) {
 	}
 	charEndIdx = text.size();
 	startTextStyleIdx = -1;
+	// TODO: this can be optimized later
+	computeContentAlignmentInternal();
+	//
+	screenNode->invalidateLayout(parentNode);
 }
 
 void GUIStyledTextNode::insertText(int32_t idx, const string& s) {
@@ -234,6 +239,10 @@ void GUIStyledTextNode::insertText(int32_t idx, const string& s) {
 	}
 	charEndIdx = text.size();
 	startTextStyleIdx = -1;
+	// TODO: this can be optimized later
+	computeContentAlignmentInternal();
+	//
+	screenNode->invalidateLayout(parentNode);
 }
 
 void GUIStyledTextNode::scrollToIndex(int cursorIndex) {
@@ -480,7 +489,7 @@ int GUIStyledTextNode::getContentHeight()
 	}
 }
 
-void GUIStyledTextNode::computeContentAlignment() {
+void GUIStyledTextNode::computeContentAlignmentInternal() {
 	// If fixed width requested and no computed constraints yet, abort
 	if (requestedConstraints.widthType != GUINode_RequestedConstraints_RequestedConstraintsType::AUTO && computedConstraints.width == -1) return;
 	// width did not change, but relayout has been requested
@@ -499,31 +508,6 @@ void GUIStyledTextNode::computeContentAlignment() {
 		//
 		determineNextLineConstraints(u8It, text.size(), textStyleIdx);
 
-		/*
-		{
-			auto l = 0;
-			for (auto k = 0; k < lineConstraints.size(); k++) {
-				string linePart;
-				for (auto j = l; j < lineConstraints[k].idx; j++) {
-					if (line[j] == 0) {
-						linePart += "[image]";
-					} else {
-						linePart += line[j];
-					}
-				}
-				Console::println(
-					"auto line@" + to_string(k) + ": '" + line + "': '" + linePart
-							+ "': " + to_string(lineConstraints[k].idx) + "; width = "
-							+ to_string(lineConstraints[k].width) + " / "
-							+ to_string(maxLineWidth) + ", line height = "
-							+ to_string(lineConstraints[k].lineHeight) + ", height "
-							+ to_string(lineConstraints[k].height) + ", base line: "
-							+ to_string(lineConstraints[k].baseLine) + ": Y = " + to_string(autoHeight));
-				l = lineConstraints[k].idx;
-			}
-		}
-		*/
-
 		//
 		for (auto& lineConstraintsEntity: lineConstraints) {
 			if (lineConstraintsEntity.width > autoWidth) autoWidth = lineConstraintsEntity.width;
@@ -538,9 +522,15 @@ void GUIStyledTextNode::computeContentAlignment() {
 	}
 
 	//
-	this->parentOffsetsChanged = true;
 	this->widthLast = computedConstraints.width;
 	this->heightLast = computedConstraints.height;
+}
+
+void GUIStyledTextNode::computeContentAlignment() {
+	computeContentAlignmentInternal();
+
+	//
+	this->parentOffsetsChanged = true;
 }
 
 void GUIStyledTextNode::setText(const MutableString& text) {
@@ -1050,8 +1040,8 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 
 	// did a scrolling appear, then reset bounds to work with
 	if (parentOffsetsChanged == true ||
-		Math::abs(parentXOffset - parentXOffsetLast) > Math::EPSILON ||
-		Math::abs(parentYOffset - parentYOffsetLast) > Math::EPSILON) {
+		Float::equals(parentXOffset, parentXOffsetLast) == true ||
+		Float::equals(parentYOffset, parentYOffsetLast) == true) {
 		parentXOffsetLast = parentXOffset;
 		parentYOffsetLast = parentYOffset;
 		charStartIdx = 0;

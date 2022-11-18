@@ -61,6 +61,8 @@ class tdme::gui::GUI final: public virtual InputEventHandler
 	friend class tdme::gui::nodes::GUIScreenNode;
 
 private:
+	STATIC_DLL_IMPEXT static bool disableTabFocusControl;
+
 	GUIRenderer* guiRenderer { nullptr };
 	Engine* engine { nullptr };
 	unordered_map<string, GUIScreenNode*> screens;
@@ -133,6 +135,22 @@ private:
 	void applyRenderScreensChange();
 
 public:
+
+	/**
+	 * @return is focus control by TAB key disabled
+	 */
+	inline static bool isDisableTabFocusControl() {
+		return disableTabFocusControl;
+	}
+
+	/**
+	 * Set focus control by TAB key disabled
+	 * @param disableTabFocusControl disable TAB focus control
+	 */
+	inline static void setDisableTabFocusControl(bool disableTabFocusControl) {
+		GUI::disableTabFocusControl = disableTabFocusControl;
+	}
+
 	/**
 	 * Public constructor
 	 * @param engine engine

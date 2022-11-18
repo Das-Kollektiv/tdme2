@@ -179,10 +179,7 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 				mouseDraggingSlideValueActive = true;
 				auto application = Application::getApplication();
 				Application::setMouseCursor(MOUSE_CURSOR_DISABLED);
-				Application::setMousePosition(
-					application->getWindowXPosition() + application->getWindowWidth() / 2,
-					application->getWindowYPosition() + application->getWindowHeight() / 2
-				);
+				Application::setMousePosition(mouseOriginalPosition[0], mouseOriginalPosition[1]);
 			} else {
 				mouseDraggingSelectionActive = true;
 				selectionIndex = index;
@@ -231,10 +228,7 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 					break;
 			}
 			auto application = Application::getApplication();
-			Application::setMousePosition(
-				application->getWindowXPosition() + application->getWindowWidth() / 2,
-				application->getWindowYPosition() + application->getWindowHeight() / 2
-			);
+			Application::setMousePosition(mouseOriginalPosition[0], mouseOriginalPosition[1]);
 			mouseDragPosition[0] = Application::getMousePositionX();
 			mouseDragPosition[1] = Application::getMousePositionY();
 		} else

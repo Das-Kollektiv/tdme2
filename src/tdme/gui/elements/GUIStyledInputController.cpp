@@ -81,12 +81,14 @@ void GUIStyledInputController::tick()
 
 void GUIStyledInputController::onFocusGained()
 {
+	GUI::setDisableTabFocusControl(true);
 	required_dynamic_cast<GUIStyledTextNode*>(styledTextNodeController->getNode())->setEditMode(true);
 }
 
 void GUIStyledInputController::onFocusLost()
 {
 	required_dynamic_cast<GUIStyledTextNode*>(styledTextNodeController->getNode())->setEditMode(false);
+	GUI::setDisableTabFocusControl(false);
 }
 
 bool GUIStyledInputController::hasValue()

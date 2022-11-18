@@ -34,6 +34,7 @@
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/views/EditorView.h>
 #include <tdme/utilities/Character.h>
+#include <tdme/utilities/Integer.h>
 #include <tdme/utilities/Properties.h>
 #include <tdme/utilities/StringTools.h>
 
@@ -69,6 +70,7 @@ using tdme::tools::editor::misc::TextFormatter;
 using tdme::tools::editor::tabcontrollers::TextEditorTabController;
 using tdme::tools::editor::views::EditorView;
 using tdme::utilities::Character;
+using tdme::utilities::Integer;
 using tdme::utilities::Properties;
 using tdme::utilities::StringTools;
 
@@ -91,6 +93,9 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 	//
 	visualCodingEnabled = extension == "tscript";
 	if (visualCodingEnabled == true) {
+		//
+		visualisationNode = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("visualization_canvas"));
+		//
 		linesTexture = new DynamicColorTexture(engine->getWidth(), engine->getHeight());
 		linesTexture->initialize();
 		required_dynamic_cast<GUITextureNode*>(tabScreenNode->getNodeById("visualization_texture"))->setTexture(linesTexture);
@@ -100,7 +105,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 			NodeMoveListener(TextEditorTabView* textEditorTabView): textEditorTabView(textEditorTabView) {
 			}
 			void onMoved(GUINode* node) {
-				auto visualisationNode = required_dynamic_cast<GUIParentNode*>(textEditorTabView->tabScreenNode->getNodeById("visualization_canvas"));
+				auto visualisationNode = textEditorTabView->visualisationNode;
 				auto& nodeComputedConstraints = node->getComputedConstraints();
 				auto xMax = nodeComputedConstraints.left + nodeComputedConstraints.width;
 				auto yMax = nodeComputedConstraints.top + nodeComputedConstraints.height;
@@ -373,10 +378,10 @@ void TextEditorTabView::display()
 					(y1 < 0 && y2 < 0) ||
 					(y1 > visualizationHeight && y2 > visualizationHeight)) continue;
 
-				auto STRAIGHTLINE_LENGTH = 50.0f;
+				auto straightLineLength = Math::min(static_cast<float>(Math::abs(y2 - y1)), 50.0f);
 				Vector2 srcVector1(x1, y1);
-				Vector2 srcVector2(x1 + (x2 < x1?-STRAIGHTLINE_LENGTH:STRAIGHTLINE_LENGTH), y1);
-				Vector2 dstVector1(x1 + (x2 < x1?-STRAIGHTLINE_LENGTH:STRAIGHTLINE_LENGTH), y2 - (y2 < y1?-STRAIGHTLINE_LENGTH:STRAIGHTLINE_LENGTH));
+				Vector2 srcVector2(x1 + (x2 < x1?-straightLineLength:straightLineLength), y1);
+				Vector2 dstVector1(x1 + (x2 < x1?-straightLineLength:straightLineLength), y2 - (y2 < y1?-straightLineLength:straightLineLength));
 				Vector2 dstVector2(x2, y2);
 				vector<Vector2> controlPoints;
 				controlPoints.push_back(srcVector1);
@@ -448,51 +453,185 @@ void TextEditorTabView::setCodeEditor() {
 	visualEditor = false;
 }
 
-void TextEditorTabView::addMiniScriptNodeDeltaX(const string& id, const MiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, GUIParentNode* parentNode, int deltaX) {
-	auto node = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("d" + id));
+void TextEditorTabView::addMiniScriptNodeDeltaX(const string& id, const MiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, int deltaX) {
+	auto node = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById(id));
 	node->getRequestsConstraints().left+= deltaX;
 	for (auto argumentIdx = 0; argumentIdx < syntaxTreeNode.arguments.size(); argumentIdx++) {
 		//
 		auto isLiteral = syntaxTreeNode.arguments[argumentIdx].type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
 		if (isLiteral == true) continue;
 
-		addMiniScriptNodeDeltaX(id + "." + to_string(argumentIdx), syntaxTreeNode.arguments[argumentIdx], parentNode, deltaX);
+		addMiniScriptNodeDeltaX(id + "." + to_string(argumentIdx), syntaxTreeNode.arguments[argumentIdx], deltaX);
 	}
 }
 
-void TextEditorTabView::createMiniScriptNodes(const string& id, int descriptionIdx, int descriptionCount, const MiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, GUIParentNode* parentNode, int x, int y, int& width, int& height, int depth) {
+void TextEditorTabView::createMiniScriptScriptNode(const string& id, MiniScript::Script::ScriptType scriptType, const string& condition, const string& readableName, const MiniScript::ScriptSyntaxTreeNode* conditionSyntaxTreeNode, int x, int y, int& width, int& height) {
+	// create input nodes
+	auto yInitial = y;
+
 	//
-	int childMaxWidth = 0;
-	for (auto argumentIdx = 0; argumentIdx < syntaxTreeNode.arguments.size(); argumentIdx++) {
+	if (conditionSyntaxTreeNode->type != MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_NONE) {
+		y+= 200;
+		{
+			auto childWidth = 0;
+			auto childHeight = 0;
+			vector<string> leftNodeIds;
+			createMiniScriptNodes(id + ".c", 0, 1, conditionSyntaxTreeNode, x, y, childWidth, childHeight, leftNodeIds, 1);
+			x+= childWidth;
+			width+= childWidth;
+			height+= childHeight;
+		}
+
 		//
-		auto isLiteral = syntaxTreeNode.arguments[argumentIdx].type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
+		y = yInitial;
+	}
+
+	//
+	{
+		//
+		nodes[id] = {
+			.id = id,
+			.returnValueType = MiniScript::ScriptVariableType::TYPE_VOID
+		};
+		//
+
+		//
+		auto nodeName = readableName;
+		string nodeTypeColor = string("color.nodetype_condition");
+		//
+		{
+			string xml = "<template src='resources/engine/gui/template_visualcode_node.xml' id='" + id + "' left='" + to_string(x) + "' top='" + to_string(y) + "' node-name='" + GUIParser::escapeQuotes(nodeName) + "' node-type-color='{$" + GUIParser::escapeQuotes(nodeTypeColor) + "}' />";
+			try {
+				GUIParser::parse(visualisationNode, xml);
+			} catch (Exception& exception) {
+				Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): method/function: " + string(exception.what()));
+			}
+		}
+		//
+		auto nodeInputContainer = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById(id + "_input_container"));
+		// condition input
+		{
+			//
+			auto isLiteral = conditionSyntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_NONE;
+			auto literal = isLiteral == true?condition:string();
+			//
+			string xml =
+				string() +
+				"<template " +
+				"	id='" + id + "_c' " +
+				"	src='resources/engine/gui/template_visualcode_input.xml' " +
+				"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
+				"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
+				"	pin_color='{$" + GUIParser::escapeQuotes(getScriptVariableTypePinColor(MiniScript::ScriptVariableType::TYPE_BOOLEAN)) + "}' " +
+				"	text='" + GUIParser::escapeQuotes("Cond") + "' ";
+			if (isLiteral == true) {
+				xml+= "	input_text='" + GUIParser::escapeQuotes(literal) + "' ";
+			}
+			xml+= "/>";
+			//
+			try {
+				GUIParser::parse(nodeInputContainer, xml);
+				//
+				if (isLiteral == true) {
+					// update to be a literal
+					required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_c_input_type_panel"))->getActiveConditions().add("input");
+				} else {
+					// update to be connected
+					required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_c_pin_type_panel"))->getActiveConditions().add("connected");
+				}
+			} catch (Exception& exception) {
+				Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): method/function: " + string(exception.what()));
+			}
+		}
+	}
+
+	// create connection to condition node return to node cond node
+	if (conditionSyntaxTreeNode->type != MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_NONE) {
+		//
+		string argumentInputNodeId = id + "_c";
+		string argumentOutputNodeId = id + ".c_r";
+		auto argumentInputNode = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(argumentInputNodeId));
+		auto argumentOutputNode = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(argumentOutputNodeId));
+		if (argumentInputNode == nullptr) {
+			Console::println("TextEditorTabView::createMiniScriptNodes(): missing argument input node: " + argumentInputNodeId);
+		} else
+		if (argumentOutputNode == nullptr) {
+			Console::println(string() + "TextEditorTabView::createMiniScriptNodes(): missing argument output node: " + argumentOutputNodeId);
+		} else {
+
+			//
+			auto pinColor = string("color.pintype_boolean");
+			GUIColor color(GUIParser::getEngineThemeProperties()->get(pinColor, "#ffffff"));
+
+			//
+			auto& argumentInputNodeComputedConstraints = argumentInputNode->getComputedConstraints();
+			auto& argumentOutputNodeComputedConstraints = argumentOutputNode->getComputedConstraints();
+			connections.push_back(
+				{
+					.type = Connection::CONNECTIONTYPE_ARGUMENT,
+					.srcNodeId = argumentInputNodeId,
+					.dstNodeId = argumentOutputNodeId,
+					.red = static_cast<uint8_t>(color.getRed() * 255.0f),
+					.green = static_cast<uint8_t>(color.getGreen() * 255.0f),
+					.blue = static_cast<uint8_t>(color.getBlue() * 255.0f),
+					.alpha = static_cast<uint8_t>(color.getAlpha() * 255.0f),
+					.x1 = argumentInputNodeComputedConstraints.left,
+					.y1 = argumentInputNodeComputedConstraints.top + argumentInputNodeComputedConstraints.height / 2,
+					.x2 = argumentOutputNodeComputedConstraints.left + argumentOutputNodeComputedConstraints.width,
+					.y2 = argumentOutputNodeComputedConstraints.top + argumentOutputNodeComputedConstraints.height / 2,
+				}
+			);
+		}
+	}
+
+	//
+	width+= 400;
+	height = Math::max(height, 200);
+}
+
+void TextEditorTabView::createMiniScriptNodes(const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const MiniScript::ScriptSyntaxTreeNode* syntaxTreeNode, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth) {
+	// create input nodes
+	int childMaxWidth = 0;
+	auto yInitial = y;
+
+	//
+	y+= 200;
+	vector<string> leftNodeIds;
+	for (auto argumentIdx = 0; argumentIdx < syntaxTreeNode->arguments.size(); argumentIdx++) {
+		//
+		auto isLiteral = syntaxTreeNode->arguments[argumentIdx].type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
 		if (isLiteral == true) continue;
 		//
 		auto childWidth = 0;
 		auto childHeight = 0;
-		createMiniScriptNodes(id + "." + to_string(argumentIdx), argumentIdx, syntaxTreeNode.arguments.size(), syntaxTreeNode.arguments[argumentIdx], parentNode, x, y, childWidth, childHeight, depth + 1);
+		createMiniScriptNodes(id + "." + to_string(argumentIdx), argumentIdx, syntaxTreeNode->arguments.size(), &syntaxTreeNode->arguments[argumentIdx], x, y, childWidth, childHeight, leftNodeIds, depth + 1);
 		if (childWidth > childMaxWidth) childMaxWidth = childWidth;
 		y+= childHeight;
 		height+= childHeight;
 	}
+
 	//
+	y = yInitial;
 	x+= childMaxWidth;
 	width+= childMaxWidth;
 
-	//input2_pin_type_panel.condition=connected
+	//
+	for (auto& nodeId: leftNodeIds) createdNodeIds.push_back(nodeId);
 
 	//
-	switch (syntaxTreeNode.type) {
+	switch (syntaxTreeNode->type) {
 		case MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD:
 		case MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_FUNCTION:
 			{
 				//
-				nodes["d" + id] = {
-					.id = "d" + id,
-					.syntaxTreeNode = &syntaxTreeNode
+				createdNodeIds.push_back(id);
+				//
+				nodes[id] = {
+					.id = id,
+					.returnValueType = syntaxTreeNode->method != nullptr?syntaxTreeNode->method->getReturnValueType():MiniScript::ScriptVariableType::TYPE_VOID
 				};
 				//
-				auto nodeName = syntaxTreeNode.value.getValueString();
+				auto nodeName = syntaxTreeNode->value.getValueString();
 				auto nodeTypeColor = string("color.nodetype_method");
 				auto methodOperatorMapIt = methodOperatorMap.find(nodeName);
 				if (methodOperatorMapIt != methodOperatorMap.end()) {
@@ -500,7 +639,7 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int descriptionI
 					nodeTypeColor = "color.nodetype_math";
 				}
 
-				if (syntaxTreeNode.method == nullptr) {
+				if (syntaxTreeNode->method == nullptr) {
 					nodeTypeColor = "color.nodetype_function";
 				} else {
 					for (auto& flowControlNode: flowControlNodes) {
@@ -518,24 +657,24 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int descriptionI
 				}
 				//
 				{
-					string xml = "<template src='resources/engine/gui/template_visualcode_node.xml' id='d" + id + "' left='" + to_string(x) + "' top='" + to_string(y) + "' node-name='" + GUIParser::escapeQuotes(nodeName) + "' node-type-color='{$" + GUIParser::escapeQuotes(nodeTypeColor) + "}' />";
+					string xml = "<template src='resources/engine/gui/template_visualcode_node.xml' id='" + id + "' left='" + to_string(x) + "' top='" + to_string(y) + "' node-name='" + GUIParser::escapeQuotes(nodeName) + "' node-type-color='{$" + GUIParser::escapeQuotes(nodeTypeColor) + "}' />";
 					try {
-						GUIParser::parse(parentNode, xml);
+						GUIParser::parse(visualisationNode, xml);
 					} catch (Exception& exception) {
 						Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
 					}
 				}
 				//
-				auto nodeInputContainer = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("d" + id + "_input_container"));
-				auto nodeOutputContainer = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("d" + id + "_output_container"));
+				auto nodeInputContainer = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById(id + "_input_container"));
+				auto nodeOutputContainer = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById(id + "_output_container"));
 				// pin input aka flow input
-				if (depth == 0 && descriptionIdx > 0) {
+				if (depth == 0 && syntaxTreeNodeIdx > 0) {
 					string xml;
 					//
 					xml+=
 						string() +
 						"<template " +
-						"	id='d" + id + "_flow_in' " +
+						"	id='" + id + "_flow_in' " +
 						"	src='resources/engine/gui/template_visualcode_input.xml' " +
 						"	pin_type_connected='resources/engine/images/visualcode_flow_connected.png' " +
 						"	pin_type_unconnected='resources/engine/images/visualcode_flow_unconnected.png' " +
@@ -544,7 +683,7 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int descriptionI
 					try {
 						GUIParser::parse(nodeInputContainer, xml);
 						// update to be connected
-						required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById("d" + id + "_flow_in_pin_type_panel"))->getActiveConditions().add("connected");
+						required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_flow_in_pin_type_panel"))->getActiveConditions().add("connected");
 					} catch (Exception& exception) {
 						Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
 					}
@@ -553,19 +692,19 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int descriptionI
 				{
 					//
 					auto argumentIdx = 0;
-					if (syntaxTreeNode.method != nullptr) {
-						auto& argumentTypes = syntaxTreeNode.method->getArgumentTypes();
+					if (syntaxTreeNode->method != nullptr) {
+						auto& argumentTypes = syntaxTreeNode->method->getArgumentTypes();
 						for (argumentIdx = 0; argumentIdx < argumentTypes.size(); argumentIdx++) {
 							//
-							auto isLiteral = syntaxTreeNode.arguments[argumentIdx].type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
-							auto literal = isLiteral == true?syntaxTreeNode.arguments[argumentIdx].value.getValueString():string();
+							auto isLiteral = syntaxTreeNode->arguments[argumentIdx].type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
+							auto literal = isLiteral == true?syntaxTreeNode->arguments[argumentIdx].value.getValueString():string();
 							auto argumentName = argumentTypes[argumentIdx].name;
 							if (argumentName.empty() == false) argumentName[0] = Character::toUpperCase(argumentName[0]);
 							//
 							string xml =
 								string() +
 								"<template " +
-								"	id='d" + id + "_a" + to_string(argumentIdx) + "' " +
+								"	id='" + id + "_a" + to_string(argumentIdx) + "' " +
 								"	src='resources/engine/gui/template_visualcode_input.xml' " +
 								"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
 								"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
@@ -581,10 +720,10 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int descriptionI
 								//
 								if (isLiteral == true) {
 									// update to be a literal
-									required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById("d" + id + "_a" + to_string(argumentIdx) + "_input_type_panel"))->getActiveConditions().add("input");
+									required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_a" + to_string(argumentIdx) + "_input_type_panel"))->getActiveConditions().add("input");
 								} else {
 									// update to be connected
-									required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById("d" + id + "_a" + to_string(argumentIdx) + "_pin_type_panel"))->getActiveConditions().add("connected");
+									required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_a" + to_string(argumentIdx) + "_pin_type_panel"))->getActiveConditions().add("connected");
 								}
 
 							} catch (Exception& exception) {
@@ -592,15 +731,15 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int descriptionI
 							}
 						}
 					}
-					for (; argumentIdx < syntaxTreeNode.arguments.size(); argumentIdx++) {
+					for (; argumentIdx < syntaxTreeNode->arguments.size(); argumentIdx++) {
 						//
-						auto isLiteral = syntaxTreeNode.arguments[argumentIdx].type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
-						auto literal = isLiteral == true?syntaxTreeNode.arguments[argumentIdx].value.getValueString():string();
+						auto isLiteral = syntaxTreeNode->arguments[argumentIdx].type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
+						auto literal = isLiteral == true?syntaxTreeNode->arguments[argumentIdx].value.getValueString():string();
 						//
 						string xml =
 							string() +
 							"<template " +
-							"	id='d" + id + "_a" + to_string(argumentIdx) + "' " +
+							"	id='" + id + "_a" + to_string(argumentIdx) + "' " +
 							"	src='resources/engine/gui/template_visualcode_input.xml' " +
 							"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
 							"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
@@ -616,10 +755,10 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int descriptionI
 							//
 							if (isLiteral == true) {
 								// update to be a literal
-								required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById("d" + id + "_a" + to_string(argumentIdx) + "_input_type_panel"))->getActiveConditions().add("input");
+								required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_a" + to_string(argumentIdx) + "_input_type_panel"))->getActiveConditions().add("input");
 							} else {
 								// update to be connected
-								required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById("d" + id + "_a" + to_string(argumentIdx) + "_pin_type_panel"))->getActiveConditions().add("connected");
+								required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_a" + to_string(argumentIdx) + "_pin_type_panel"))->getActiveConditions().add("connected");
 							}
 						} catch (Exception& exception) {
 							Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
@@ -627,13 +766,13 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int descriptionI
 					}
 				}
 				// pin output aka flow output
-				if (depth == 0 && descriptionIdx < descriptionCount - 1) {
+				if (depth == 0 && syntaxTreeNodeIdx < syntaxTreeNodeCount - 1) {
 					string xml;
 					//
 					xml+=
 						string() +
 						"<template " +
-						"	id='d" + id + "_flow_out' " +
+						"	id='" + id + "_flow_out' " +
 						"	src='resources/engine/gui/template_visualcode_output.xml' " +
 						"	pin_type_connected='resources/engine/images/visualcode_flow_connected.png' " +
 						"	pin_type_unconnected='resources/engine/images/visualcode_flow_unconnected.png' " +
@@ -642,23 +781,23 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int descriptionI
 					try {
 						GUIParser::parse(nodeOutputContainer, xml);
 						// update to be connected
-						required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById("d" + id + "_flow_out_pin_type_panel"))->getActiveConditions().add("connected");
+						required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_flow_out_pin_type_panel"))->getActiveConditions().add("connected");
 					} catch (Exception& exception) {
 						Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
 					}
 				}
 				// return value
-				if (syntaxTreeNode.method != nullptr && syntaxTreeNode.method->getReturnValueType() != MiniScript::ScriptVariableType::TYPE_VOID) {
+				if (syntaxTreeNode->method != nullptr && syntaxTreeNode->method->getReturnValueType() != MiniScript::ScriptVariableType::TYPE_VOID) {
 					string xml;
 					//
 					xml+=
 						string() +
 						"<template " +
-						"	id='d" + id + "_r' " +
+						"	id='" + id + "_r' " +
 						"	src='resources/engine/gui/template_visualcode_output.xml' " +
 						"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
 						"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
-						"	pin_color='{$" + GUIParser::escapeQuotes(getScriptVariableTypePinColor(syntaxTreeNode.method->getReturnValueType())) + "}' " +
+						"	pin_color='{$" + GUIParser::escapeQuotes(getScriptVariableTypePinColor(syntaxTreeNode->method->getReturnValueType())) + "}' " +
 						"	text='Return' " +
 						"/>";
 
@@ -666,20 +805,20 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int descriptionI
 					try {
 						GUIParser::parse(nodeOutputContainer, xml);
 						// update to be connected
-						required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById("d" + id + "_r_pin_type_panel"))->getActiveConditions().add("connected");
+						required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_r_pin_type_panel"))->getActiveConditions().add("connected");
 					} catch (Exception& exception) {
 						Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
 					}
 				} else
 				// functions have a return value pin by default for now
 				//	TODO: MiniScript user functions need also formal return values a) to find out if we have a return value at all and to know the type
-				if (syntaxTreeNode.method == nullptr) {
+				if (syntaxTreeNode->method == nullptr) {
 					string xml;
 					//
 					xml+=
 						string() +
 						"<template " +
-						"	id='d" + id + "_r' " +
+						"	id='" + id + "_r' " +
 						"	src='resources/engine/gui/template_visualcode_output.xml' " +
 						"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
 						"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
@@ -691,7 +830,7 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int descriptionI
 					try {
 						GUIParser::parse(nodeOutputContainer, xml);
 						// update to be connected
-						required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById("d" + id + "_r_pin_type_panel"))->getActiveConditions().add("connected");
+						required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_r_pin_type_panel"))->getActiveConditions().add("connected");
 					} catch (Exception& exception) {
 						Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
 					}
@@ -703,19 +842,18 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int descriptionI
 	}
 
 	//
-	auto node = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById("d" + id));
 	width+= 400; //node->getContentWidth();
 	height+= 200; //node->getContentHeight();
 
-	// post layout, move first level child argument nodes from from left to right according to the closest one
+	// post layout of input nodes, move first level child argument nodes from from left to right according to the closest one
 	auto rootDistanceMax = Integer::MAX_VALUE;
 	auto nextLevelXBestFit = -1;
-	for (auto argumentIdx = 0; argumentIdx < syntaxTreeNode.arguments.size(); argumentIdx++) {
+	for (auto argumentIdx = 0; argumentIdx < syntaxTreeNode->arguments.size(); argumentIdx++) {
 		//
-		auto isLiteral = syntaxTreeNode.arguments[argumentIdx].type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
+		auto isLiteral = syntaxTreeNode->arguments[argumentIdx].type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
 		if (isLiteral == true) continue;
 		//
-		auto nextLevelNode = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById("d" + id + "." + to_string(argumentIdx)));
+		auto nextLevelNode = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById(id + "." + to_string(argumentIdx)));
 		auto nodeXPosition = nextLevelNode->getRequestsConstraints().left;
 		auto rootDistance = Math::abs(x - nodeXPosition);
 		if (rootDistance < rootDistanceMax) {
@@ -723,85 +861,53 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int descriptionI
 			nextLevelXBestFit = nodeXPosition;
 		}
 	}
-	for (auto argumentIdx = 0; argumentIdx < syntaxTreeNode.arguments.size(); argumentIdx++) {
+	for (auto argumentIdx = 0; argumentIdx < syntaxTreeNode->arguments.size(); argumentIdx++) {
 		//
-		auto isLiteral = syntaxTreeNode.arguments[argumentIdx].type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
+		auto isLiteral = syntaxTreeNode->arguments[argumentIdx].type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
 		if (isLiteral == true) continue;
 		//
 		auto subNodeId = id + "." + to_string(argumentIdx);
-		auto nextLevelNode = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById("d" + id + "." + to_string(argumentIdx)));
+		auto nextLevelNode = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById(id + "." + to_string(argumentIdx)));
 		auto nodeXPosition = nextLevelNode->getRequestsConstraints().left;
 		auto deltaX = nextLevelXBestFit - nodeXPosition;
 		if (deltaX == 0) continue;
-		addMiniScriptNodeDeltaX(subNodeId, syntaxTreeNode.arguments[argumentIdx], parentNode, deltaX);
+		addMiniScriptNodeDeltaX(subNodeId, syntaxTreeNode->arguments[argumentIdx], deltaX);
 	}
-}
 
-void TextEditorTabView::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
-	required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("visualization_canvas"))->clearSubNodes();
-	//
-	this->nodes.clear();
-	this->miniScriptScriptIdx = miniScriptScriptIdx;
-	auto& description = textEditorTabController->getMiniScriptSyntaxTrees()[miniScriptScriptIdx].syntaxTree;
-	auto visualisationNode = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("visualization_canvas"));
-	auto x = 200;
-	auto y = 200;
-	auto yMax = y;
-	for (auto i = 0; i < description.size(); i++) {
-		auto width = 0;
-		auto height = 0;
-		createMiniScriptNodes(to_string(i), i, description.size(), description[i], visualisationNode, x, y, width, height);
-		x+= width + 100;
-		yMax = Math::max(y + height, yMax);
-	}
-	// TODO: with absolute align of nodes content width/height is not yet computed in UI
-	visualisationNode->getComputedConstraints().width = x;
-	visualisationNode->getComputedConstraints().height = yMax;
-	visualisationNode->getRequestsConstraints().width = x;
-	visualisationNode->getRequestsConstraints().height = yMax;
-	// Bug: Work around! Sometimes layouting is not issued! Need to check!
-	tabScreenNode->forceInvalidateLayout(tabScreenNode);
-
-	//
-	createConnectionsPasses = 3;
-}
-
-void TextEditorTabView::createMiniScriptConnections(const string& id, const MiniScript::ScriptSyntaxTreeNode& description, GUIParentNode* parentNode) {
-	auto node = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById("d" + id));
-	auto& computedConstraints = node->getComputedConstraints();
-	for (auto argumentIdx = 0; argumentIdx < description.arguments.size(); argumentIdx++) {
+	// create connections to input nodes
+	for (auto argumentIdx = 0; argumentIdx < syntaxTreeNode->arguments.size(); argumentIdx++) {
 		//
-		auto isLiteral = description.arguments[argumentIdx].type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
+		auto isLiteral = syntaxTreeNode->arguments[argumentIdx].type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
 		if (isLiteral == true) continue;
 		//
-		string argumentInputNodeId = "d" + id + "_a" + to_string(argumentIdx);
-		string argumentOutputNodeId = "d" + id + "." + to_string(argumentIdx) + "_r";
+		string argumentInputNodeId = id + "_a" + to_string(argumentIdx);
+		string argumentOutputNodeId = id + "." + to_string(argumentIdx) + "_r";
 		auto argumentInputNode = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(argumentInputNodeId));
 		auto argumentOutputNode = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(argumentOutputNodeId));
 		if (argumentInputNode == nullptr) {
-			Console::println("TextEditorTabView::createMiniScriptConnections(): missing argument input node: " + argumentInputNodeId);
+			Console::println("TextEditorTabView::createMiniScriptNodes(): missing argument input node: " + argumentInputNodeId);
 			continue;
 		}
 		if (argumentOutputNode == nullptr) {
-			Console::println(string() + "TextEditorTabView::createMiniScriptConnections(): missing argument output node: " + argumentOutputNodeId);
+			Console::println(string() + "TextEditorTabView::createMiniScriptNodes(): missing argument output node: " + argumentOutputNodeId);
 			continue;
 		}
 
 		//
 		auto pinColor = string("color.pintype_undefined");
-		if (description.method != nullptr) {
-			auto& argumentTypes = description.method->getArgumentTypes();
+		if (syntaxTreeNode->method != nullptr) {
+			auto& argumentTypes = syntaxTreeNode->method->getArgumentTypes();
 			// first guess from argument type
 			if (argumentIdx < argumentTypes.size()) {
 				pinColor = getScriptVariableTypePinColor(argumentTypes[argumentIdx].type);
 			}
 			// no color?, try return value
 			if (pinColor == "color.pintype_undefined") {
-				auto nodeIt = nodes.find("d" + id + "." + to_string(argumentIdx));
+				auto nodeIt = nodes.find(id + "." + to_string(argumentIdx));
 				if (nodeIt != nodes.end()) {
 					auto& node = nodeIt->second;
-					if (node.syntaxTreeNode->method != nullptr) {
-						pinColor = getScriptVariableTypePinColor(node.syntaxTreeNode->method->getReturnValueType());
+					if (node.returnValueType != MiniScript::ScriptVariableType::TYPE_VOID) {
+						pinColor = getScriptVariableTypePinColor(node.returnValueType);
 					}
 				}
 			}
@@ -814,6 +920,8 @@ void TextEditorTabView::createMiniScriptConnections(const string& id, const Mini
 		connections.push_back(
 			{
 				.type = Connection::CONNECTIONTYPE_ARGUMENT,
+				.srcNodeId = argumentInputNodeId,
+				.dstNodeId = argumentOutputNodeId,
 				.red = static_cast<uint8_t>(color.getRed() * 255.0f),
 				.green = static_cast<uint8_t>(color.getGreen() * 255.0f),
 				.blue = static_cast<uint8_t>(color.getBlue() * 255.0f),
@@ -824,41 +932,665 @@ void TextEditorTabView::createMiniScriptConnections(const string& id, const Mini
 				.y2 = argumentOutputNodeComputedConstraints.top + argumentOutputNodeComputedConstraints.height / 2,
 			}
 		);
-		createMiniScriptConnections(id + "." + to_string(argumentIdx), description.arguments[argumentIdx], parentNode);
 	}
 }
 
-void TextEditorTabView::createMiniScriptConnections() {
-	// reset
-	connections.clear();
+void TextEditorTabView::createMiniScriptBranchNodes(const string& id, int syntaxTreeNodeIdx, int syntaxTreeNodeCount, const MiniScript::ScriptSyntaxTreeNode* syntaxTreeNode, const vector<MiniScriptBranch>& branches, int x, int y, int& width, int& height, vector<string>& createdNodeIds, int depth) {
+	//
+	auto xInitial = x;
+	auto yInitial = y;
 
 	//
-	if (miniScriptScriptIdx >= textEditorTabController->getMiniScriptSyntaxTrees().size()) return;
-	auto& description = textEditorTabController->getMiniScriptSyntaxTrees()[miniScriptScriptIdx].syntaxTree;
-	GUINode* previousNodeFlowNode = nullptr;
-	auto visualisationNode = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("visualization_canvas"));
-	for (auto i = 0; i < description.size(); i++) {
-		createMiniScriptConnections(to_string(i), description[i], visualisationNode);
-		auto nodeFlowIn = dynamic_cast<GUINode*>(tabScreenNode->getNodeById("d" + to_string(i) + "_flow_in"));
-		auto nodeFlowOut = dynamic_cast<GUINode*>(tabScreenNode->getNodeById("d" + to_string(i) + "_flow_out"));
-		if (previousNodeFlowNode != nullptr && nodeFlowIn != nullptr) {
-			auto& previousNodeComputedConstraints = previousNodeFlowNode->getComputedConstraints();
-			auto& nodeComputedConstraints = nodeFlowIn->getComputedConstraints();
-			connections.push_back(
-				{
-					.type = Connection::CONNECTIONTYPE_FLOW,
-					.red = 255,
-					.green = 255,
-					.blue = 255,
-					.alpha = 255,
-					.x1 = previousNodeComputedConstraints.left + previousNodeComputedConstraints.width,
-					.y1 = previousNodeComputedConstraints.top + previousNodeComputedConstraints.height / 2,
-					.x2 = nodeComputedConstraints.left,
-					.y2 = nodeComputedConstraints.top + nodeComputedConstraints.height / 2,
-				}
-			);
+	y+= 200;
+
+	//
+	vector<string> leftNodeIds;
+	auto childMaxWidth = 0;
+	for (auto branchIdx = 0; branchIdx < branches.size(); branchIdx++) {
+		// note: else has no condition
+		if (branches[branchIdx].conditionSyntaxTree == nullptr) break;
+		//
+		if (branches[branchIdx].conditionSyntaxTree->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL) continue;
+
+		//
+		auto childWidth = 0;
+		auto childHeight = 0;
+		createMiniScriptNodes(id + "." + to_string(branchIdx), branchIdx, branches.size(), branches[branchIdx].conditionSyntaxTree, x, y, childWidth, childHeight, leftNodeIds, depth + 1);
+		if (childWidth > childMaxWidth) childMaxWidth = childWidth;
+		y+= childHeight;
+		height+= childHeight;
+	}
+	//
+	x+= childMaxWidth;
+	width+= childMaxWidth;
+	y = yInitial;
+
+	//
+	for (auto& nodeId: leftNodeIds) createdNodeIds.push_back(nodeId);
+
+	//
+	{
+		//
+		createdNodeIds.push_back(id);
+		//
+		nodes[id] = {
+			.id = id,
+			.returnValueType = MiniScript::ScriptVariableType::TYPE_VOID
+		};
+		//
+		string nodeName = syntaxTreeNode->value.getValueString();
+		string nodeTypeColor = string("color.nodetype_flowcontrol");
+		//
+		{
+			string xml = "<template src='resources/engine/gui/template_visualcode_node.xml' id='" + id + "' left='" + to_string(x) + "' top='" + to_string(y) + "' node-name='" + GUIParser::escapeQuotes(nodeName) + "' node-type-color='{$" + GUIParser::escapeQuotes(nodeTypeColor) + "}' />";
+			try {
+				GUIParser::parse(visualisationNode, xml);
+			} catch (Exception& exception) {
+				Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): method/function: " + string(exception.what()));
+			}
 		}
 		//
-		previousNodeFlowNode = nodeFlowOut;
+		auto nodeInputContainer = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById(id + "_input_container"));
+		auto nodeOutputContainer = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById(id + "_output_container"));
+		// pin input aka flow input
+		if (depth == 0 && syntaxTreeNodeIdx > 0) {
+			string xml;
+			//
+			xml+=
+				string() +
+				"<template " +
+				"	id='" + id + "_flow_in' " +
+				"	src='resources/engine/gui/template_visualcode_input.xml' " +
+				"	pin_type_connected='resources/engine/images/visualcode_flow_connected.png' " +
+				"	pin_type_unconnected='resources/engine/images/visualcode_flow_unconnected.png' " +
+				"/>";
+			//
+			try {
+				GUIParser::parse(nodeInputContainer, xml);
+				// update to be connected
+				required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_flow_in_pin_type_panel"))->getActiveConditions().add("connected");
+			} catch (Exception& exception) {
+				Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): method/function: " + string(exception.what()));
+			}
+		}
+		// pin output aka flow output
+		if (depth == 0 && syntaxTreeNodeIdx < syntaxTreeNodeCount - 1) {
+			string xml;
+			//
+			xml+=
+				string() +
+				"<template " +
+				"	id='" + id + "_flow_out' " +
+				"	src='resources/engine/gui/template_visualcode_output.xml' " +
+				"	pin_type_connected='resources/engine/images/visualcode_flow_connected.png' " +
+				"	pin_type_unconnected='resources/engine/images/visualcode_flow_unconnected.png' " +
+				"/>";
+			//
+			try {
+				GUIParser::parse(nodeOutputContainer, xml);
+				// update to be connected
+				required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_flow_out_pin_type_panel"))->getActiveConditions().add("connected");
+			} catch (Exception& exception) {
+				Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): method/function: " + string(exception.what()));
+			}
+		}
+		// inputs aka arguments
+		for (auto branchIdx = 0; branchIdx < branches.size(); branchIdx++) {
+			// condition inputs
+			//	note: else has no condition syntax tree
+			if (branches[branchIdx].conditionSyntaxTree != nullptr) {
+				//
+				auto isLiteral = branches[branchIdx].conditionSyntaxTree->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
+				auto literal = isLiteral == true?branches[branchIdx].conditionSyntaxTree->value.getValueString():string();
+				//
+				string xml =
+					string() +
+					"<template " +
+					"	id='" + id + "_c" + to_string(branchIdx) + "' " +
+					"	src='resources/engine/gui/template_visualcode_input.xml' " +
+					"	pin_type_connected='resources/engine/images/visualcode_value_connected.png' " +
+					"	pin_type_unconnected='resources/engine/images/visualcode_value_unconnected.png' " +
+					"	pin_color='{$" + GUIParser::escapeQuotes(getScriptVariableTypePinColor(nodeName == "forTime"?MiniScript::ScriptVariableType::TYPE_INTEGER:MiniScript::ScriptVariableType::TYPE_BOOLEAN)) + "}' " +
+					"	text='" + GUIParser::escapeQuotes(nodeName == "forTime"?"time":"Cond " + to_string(branchIdx)) + "' ";
+				if (isLiteral == true) {
+					xml+= "	input_text='" + GUIParser::escapeQuotes(literal) + "' ";
+				}
+				xml+= "/>";
+				//
+				try {
+					GUIParser::parse(nodeInputContainer, xml);
+					//
+					if (isLiteral == true) {
+						// update to be a literal
+						required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_c" + to_string(branchIdx) + "_input_type_panel"))->getActiveConditions().add("input");
+					} else {
+						// update to be connected
+						required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_c" + to_string(branchIdx) + "_pin_type_panel"))->getActiveConditions().add("connected");
+					}
+				} catch (Exception& exception) {
+					Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): method/function: " + string(exception.what()));
+				}
+			}
+			// flow outputs
+			{
+				string xml;
+				//
+				xml+=
+					string() +
+					"<template " +
+					"	id='" + id + "_b" + to_string(branchIdx) + "' " +
+					"	src='resources/engine/gui/template_visualcode_output.xml' " +
+					"	pin_type_connected='resources/engine/images/visualcode_flow_connected.png' " +
+					"	pin_type_unconnected='resources/engine/images/visualcode_flow_unconnected.png' " +
+					"	text='Flow " + to_string(branchIdx) + "' " +
+					"/>";
+				//
+				try {
+					GUIParser::parse(nodeOutputContainer, xml);
+					// update to be connected
+					required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_b" + to_string(branchIdx) + "_pin_type_panel"))->getActiveConditions().add("connected");
+				} catch (Exception& exception) {
+					Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): method/function: " + string(exception.what()));
+				}
+			}
+		}
+	}
+
+	//
+	width+= 400; //node->getContentWidth();
+	height+= 200; //node->getContentHeight();
+
+	// post layout of conditions, move first level child argument nodes from from left to right according to the closest one
+	auto rootDistanceMax = Integer::MAX_VALUE;
+	auto nextLevelXBestFit = -1;
+	for (auto branchIdx = 0; branchIdx < branches.size(); branchIdx++) {
+		// note: else has no condition
+		if (branches[branchIdx].conditionSyntaxTree == nullptr) break;
+		//
+		if (branches[branchIdx].conditionSyntaxTree->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL) continue;
+		//
+		auto nextLevelNode = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById(id + "." + to_string(branchIdx)));
+		auto nodeXPosition = nextLevelNode->getRequestsConstraints().left;
+		auto rootDistance = Math::abs(x - nodeXPosition);
+		if (rootDistance < rootDistanceMax) {
+			rootDistanceMax = rootDistance;
+			nextLevelXBestFit = nodeXPosition;
+		}
+	}
+	for (auto branchIdx = 0; branchIdx < branches.size(); branchIdx++) {
+		// note: else has no condition
+		if (branches[branchIdx].conditionSyntaxTree == nullptr) break;
+		//
+		if (branches[branchIdx].conditionSyntaxTree->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL) continue;
+		//
+		auto subNodeId = id + "." + to_string(branchIdx);
+		auto nextLevelNode = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById(id + "." + to_string(branchIdx)));
+		auto nodeXPosition = nextLevelNode->getRequestsConstraints().left;
+		auto deltaX = nextLevelXBestFit - nodeXPosition;
+		if (deltaX == 0) continue;
+		addMiniScriptNodeDeltaX(subNodeId, *branches[branchIdx].conditionSyntaxTree, deltaX);
+	}
+
+	// create condition connections
+	for (auto branchIdx = 0; branchIdx < branches.size(); branchIdx++) {
+		//
+		if (branches[branchIdx].conditionSyntaxTree == nullptr ||
+			(branches[branchIdx].conditionSyntaxTree != nullptr && branches[branchIdx].conditionSyntaxTree->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL)) continue;
+		//
+		string conditionInputNodeId = id + "_c" + to_string(branchIdx);
+		string conditionOutputNodeId = id + "." + to_string(branchIdx);
+		auto conditionInputNode = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(conditionInputNodeId));
+		auto conditionOutputNode = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(conditionOutputNodeId));
+		if (conditionInputNode == nullptr) {
+			Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): missing condition input node: " + conditionInputNodeId);
+			continue;
+		}
+		if (conditionOutputNode == nullptr) {
+			Console::println(string() + "TextEditorTabView::createMiniScriptIfBranchNodes(): missing condition output node: " + conditionOutputNodeId);
+			continue;
+		}
+
+		//
+		auto pinColor = string("color.pintype_boolean");
+		GUIColor color(GUIParser::getEngineThemeProperties()->get(pinColor, "#ffffff"));
+
+		//
+		auto& conditionInputNodeComputedConstraints = conditionInputNode->getComputedConstraints();
+		auto& conditionOutputNodeComputedConstraints = conditionOutputNode->getComputedConstraints();
+		connections.push_back(
+			{
+				.type = Connection::CONNECTIONTYPE_ARGUMENT,
+				.srcNodeId = conditionInputNodeId,
+				.dstNodeId = conditionOutputNodeId,
+				.red = static_cast<uint8_t>(color.getRed() * 255.0f),
+				.green = static_cast<uint8_t>(color.getGreen() * 255.0f),
+				.blue = static_cast<uint8_t>(color.getBlue() * 255.0f),
+				.alpha = static_cast<uint8_t>(color.getAlpha() * 255.0f),
+				.x1 = conditionInputNodeComputedConstraints.left,
+				.y1 = conditionInputNodeComputedConstraints.top + conditionInputNodeComputedConstraints.height / 2,
+				.x2 = conditionOutputNodeComputedConstraints.left + conditionOutputNodeComputedConstraints.width,
+				.y2 = conditionOutputNodeComputedConstraints.top + conditionOutputNodeComputedConstraints.height / 2,
+			}
+		);
+	}
+
+	// create branch flows
+	vector<string> rightNodeIds;
+	auto branchWidthMax = 0;
+	y = yInitial;
+	for (auto branchIdx = 0; branchIdx < branches.size(); branchIdx++) {
+		// for each branch
+		auto branchSyntaxTreeNodes = branches[branchIdx].syntaxTreeNodes;
+		//
+		GUINode* previousNodeFlowNode = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(id + "_b" + to_string(branchIdx)));
+		//
+		x = xInitial + width;
+		auto branchHeightMax = 0;
+		auto branchWidth = 0;
+		auto branchNodesWidth = 0;
+		auto branchNodesHeight = 0;
+		for (auto i = 0; i < branchSyntaxTreeNodes.size(); i++) {
+			auto branchSyntaxTreeNode = branchSyntaxTreeNodes[i];
+
+			//
+			auto branchNodeIdx = i;
+			branchNodesWidth = 0;
+			branchNodesHeight = 0;
+			if (handleMiniScriptBranch(id + ".b." + to_string(branchIdx) + ".", branchSyntaxTreeNodes, i, x, y, branchNodesWidth, branchNodesHeight, rightNodeIds) == true) {
+				// advance x
+				x+= branchNodesWidth + 100;
+				// store max
+				branchWidth += branchNodesWidth + 100;
+				branchHeightMax = Math::max(branchHeightMax, branchNodesHeight);
+				//
+				auto nodeFlowInId = id + ".b." + to_string(branchIdx) + "." + to_string(branchNodeIdx) + "_flow_in";
+				auto nodeFlowOutId = id + ".b." + to_string(branchIdx) + "." + to_string(branchNodeIdx) + "_flow_out";
+				auto nodeFlowIn = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(nodeFlowInId));
+				auto nodeFlowOut = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(nodeFlowOutId));
+				if (previousNodeFlowNode != nullptr && nodeFlowIn != nullptr) {
+					auto& previousNodeComputedConstraints = previousNodeFlowNode->getComputedConstraints();
+					auto& nodeComputedConstraints = nodeFlowIn->getComputedConstraints();
+					connections.push_back(
+						{
+							.type = Connection::CONNECTIONTYPE_FLOW,
+							.srcNodeId = previousNodeFlowNode->getId(),
+							.dstNodeId = nodeFlowInId,
+							.red = 255,
+							.green = 255,
+							.blue = 255,
+							.alpha = 255,
+							.x1 = previousNodeComputedConstraints.left + previousNodeComputedConstraints.width,
+							.y1 = previousNodeComputedConstraints.top + previousNodeComputedConstraints.height / 2,
+							.x2 = nodeComputedConstraints.left,
+							.y2 = nodeComputedConstraints.top + nodeComputedConstraints.height / 2,
+						}
+					);
+				}
+				//
+				previousNodeFlowNode = nodeFlowOut;
+			}
+
+			//
+			if (i >= branchSyntaxTreeNodes.size()) continue;
+			branchSyntaxTreeNode = branchSyntaxTreeNodes[i];
+
+			//
+			branchNodesWidth = 0;
+			branchNodesHeight = 0;
+			createMiniScriptNodes(id + ".b." + to_string(branchIdx) + "." + to_string(i), i + 1, branchSyntaxTreeNodes.size() + 1, branchSyntaxTreeNode, x, y, branchNodesWidth, branchNodesHeight, rightNodeIds);
+
+			// advance x
+			x+= branchNodesWidth + 100;
+			// store max
+			branchWidth += branchNodesWidth + 100;
+			branchHeightMax = Math::max(branchHeightMax, branchNodesHeight);
+
+			// connections
+			auto nodeFlowInId = id + ".b." + to_string(branchIdx) + "." + to_string(i) + "_flow_in";
+			auto nodeFlowOutId = id + ".b." + to_string(branchIdx) + "." + to_string(i) + "_flow_out";
+			auto nodeFlowIn = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(nodeFlowInId));
+			auto nodeFlowOut = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(nodeFlowOutId));
+			if (previousNodeFlowNode != nullptr && nodeFlowIn != nullptr) {
+				auto& previousNodeComputedConstraints = previousNodeFlowNode->getComputedConstraints();
+				auto& nodeComputedConstraints = nodeFlowIn->getComputedConstraints();
+				connections.push_back(
+					{
+						.type = Connection::CONNECTIONTYPE_FLOW,
+						.srcNodeId = previousNodeFlowNode->getId(),
+						.dstNodeId = nodeFlowInId,
+						.red = 255,
+						.green = 255,
+						.blue = 255,
+						.alpha = 255,
+						.x1 = previousNodeComputedConstraints.left + previousNodeComputedConstraints.width,
+						.y1 = previousNodeComputedConstraints.top + previousNodeComputedConstraints.height / 2,
+						.x2 = nodeComputedConstraints.left,
+						.y2 = nodeComputedConstraints.top + nodeComputedConstraints.height / 2,
+					}
+				);
+			}
+			//
+			previousNodeFlowNode = nodeFlowOut;
+		}
+		//
+		if (branchSyntaxTreeNodes.empty() == false) branchWidth-= 100;
+		branchWidthMax = Math::max(branchWidthMax, branchWidth);
+		y+= branchHeightMax;
+	}
+	//
+	width+= branchWidthMax;
+	height = Math::max(height, y - yInitial);
+	//
+	for (auto& nodeId: rightNodeIds) createdNodeIds.push_back(nodeId);
+
+	// determine bounding box left and right
+	auto leftTop = Integer::MAX_VALUE;
+	auto leftBottom = Integer::MIN_VALUE;
+	for (auto& leftNodeId: leftNodeIds) {
+		auto node = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById(leftNodeId));
+		auto nodeTop = node->getRequestsConstraints().top;
+		auto nodeBottom = node->getRequestsConstraints().top + 200;
+		leftTop = Math::min(leftTop, nodeTop);
+		leftBottom = Math::max(leftBottom, nodeBottom);
+	}
+
+	//
+	auto rightTop = Integer::MAX_VALUE;
+	auto rightBottom = Integer::MIN_VALUE;
+	for (auto& rightNodeId: rightNodeIds) {
+		auto node = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById(rightNodeId));
+		auto nodeTop = node->getRequestsConstraints().top;
+		auto nodeBottom = node->getRequestsConstraints().top + 200;
+		rightTop = Math::min(rightTop, nodeTop);
+		rightBottom = Math::max(rightBottom, nodeBottom);
+	}
+
+	//
+	auto leftHeight = leftBottom - leftTop;
+	auto rightHeight = rightBottom - rightTop;
+	if (leftNodeIds.empty() == false && rightNodeIds.empty() == false) {
+		if (leftHeight == rightHeight) {
+			// no op
+		} else
+		if (leftHeight > rightHeight) {
+			auto deltaY = (leftHeight - rightHeight) / 2;
+			for (auto& rightNodeId: rightNodeIds) {
+				auto node = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById(rightNodeId));
+				node->getRequestsConstraints().top+= deltaY;
+			}
+			{
+				auto node = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById(id));
+				node->getRequestsConstraints().top = yInitial + (leftHeight - 200) / 2;
+			}
+		} else {
+			auto deltaY = (rightHeight - leftHeight) / 2;
+			for (auto& leftNodeId: leftNodeIds) {
+				auto node = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById(leftNodeId));
+				node->getRequestsConstraints().top+= deltaY;
+			}
+			{
+				auto node = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById(id));
+				node->getRequestsConstraints().top = yInitial + (rightHeight - 200) / 2;
+			}
+		}
+	}
+}
+
+
+bool TextEditorTabView::handleMiniScriptBranch(const string& idPrefix, const vector<MiniScript::ScriptSyntaxTreeNode*>& syntaxTree, int& i, int x, int y, int& width, int& height, vector<string>& createdNodeIds) {
+	//
+	auto syntaxTreeNode = syntaxTree[i];
+	auto syntaxTreeNodeIdx = i;
+	// handle if
+	if (syntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD &&
+		(syntaxTreeNode->value.getValueString() == "if" ||
+		syntaxTreeNode->value.getValueString() == "forCondition" ||
+		syntaxTreeNode->value.getValueString() == "forTime")) {
+		// support if depth
+		auto ifStatement = syntaxTreeNode->value.getValueString() == "if";
+		auto stackDepth = 1;
+		vector<MiniScriptBranch> branches;
+		branches.push_back(
+			{
+				.name = syntaxTreeNode->value.getValueString(),
+				.conditionSyntaxTree = syntaxTreeNode->arguments.empty() == false?&syntaxTreeNode->arguments[0]:nullptr,
+				.syntaxTreeNodes = {}
+			}
+		);
+		for (i++; i < syntaxTree.size(); i++) {
+			auto branchSyntaxTreeNode = syntaxTree[i];
+			if (branchSyntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD &&
+				(branchSyntaxTreeNode->value.getValueString() == "if" ||
+				branchSyntaxTreeNode->value.getValueString() == "forCondition" ||
+				branchSyntaxTreeNode->value.getValueString() == "forTime")) {
+				stackDepth++;
+				branches[branches.size() - 1].syntaxTreeNodes.push_back(branchSyntaxTreeNode);
+			} else
+			if (ifStatement == true && stackDepth == 1 && branchSyntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD && branchSyntaxTreeNode->value.getValueString() == "elseif") {
+				branches.push_back(
+					{
+						.name = branchSyntaxTreeNode->value.getValueString(),
+						.conditionSyntaxTree = branchSyntaxTreeNode->arguments.empty() == false?&branchSyntaxTreeNode->arguments[0]:nullptr,
+						.syntaxTreeNodes = {}
+					}
+				);
+			} else
+			if (ifStatement == true && stackDepth == 1 && branchSyntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD && branchSyntaxTreeNode->value.getValueString() == "else") {
+				branches.push_back(
+					{
+						.name = branchSyntaxTreeNode->value.getValueString(),
+						.conditionSyntaxTree = nullptr,
+						.syntaxTreeNodes = {}
+					}
+				);
+			} else
+			if (branchSyntaxTreeNode->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD && branchSyntaxTreeNode->value.getValueString() == "end") {
+				//
+				stackDepth--;
+				// done?
+				if (stackDepth == 0) {
+					// yup
+					for (auto& branch: branches) {
+						auto j = 0;
+						for (auto node: branch.syntaxTreeNodes) {
+							j++;
+						}
+					}
+					//
+					createMiniScriptBranchNodes(idPrefix + to_string(syntaxTreeNodeIdx), syntaxTreeNodeIdx, syntaxTree.size(), syntaxTreeNode, branches, x, y, width, height, createdNodeIds);
+					//
+					i++;
+					//
+					return true;
+				} else {
+					// a end that does not belong to our initial if, yarr
+					branches[branches.size() - 1].syntaxTreeNodes.push_back(branchSyntaxTreeNode);
+				}
+			} else {
+				branches[branches.size() - 1].syntaxTreeNodes.push_back(branchSyntaxTreeNode);
+			}
+		}
+	}
+	//
+	return false;
+}
+
+void TextEditorTabView::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
+	visualisationNode->clearSubNodes();
+	this->connections.clear();
+	this->nodes.clear();
+	this->miniScriptScriptIdx = miniScriptScriptIdx;
+	// structure
+	if (miniScriptScriptIdx == MINISCRIPT_SCRIPTIDX_STRUCTURE) {
+		auto syntaxTrees = textEditorTabController->getMiniScriptSyntaxTrees();
+
+		//
+		auto width = 0;
+		auto height = 0;
+		auto y = 200;
+		auto yMax = y;
+		auto xMax = 200;
+		for (auto i = 0; i < syntaxTrees.size(); i++) {
+			//
+			auto x = 200;
+			width = 0;
+			height = 0;
+			createMiniScriptScriptNode(to_string(i), syntaxTrees[i].type, syntaxTrees[i].condition, syntaxTrees[i].name, &syntaxTrees[i].conditionSyntaxTree, x, y, width, height);
+
+			//
+			y+= height + 100;
+			yMax = Math::max(y + height, yMax);
+			xMax = Math::max(x + width, xMax);
+		}
+
+		// TODO: with absolute align of nodes content width/height is not yet computed in UI
+		visualisationNode->getComputedConstraints().width = xMax;
+		visualisationNode->getComputedConstraints().height = yMax;
+		visualisationNode->getRequestsConstraints().width = xMax;
+		visualisationNode->getRequestsConstraints().height = yMax;
+	} else {
+		// script
+		// 	copy syntax tree
+		auto syntaxTree = textEditorTabController->getMiniScriptSyntaxTrees()[miniScriptScriptIdx].syntaxTree;
+		// 	construct syntax tree as vector of pointers to the nodes
+		vector<MiniScript::ScriptSyntaxTreeNode*> syntaxTreeNodes;
+		for (auto& syntaxTreeNode: syntaxTree) syntaxTreeNodes.push_back(&syntaxTreeNode);
+		// 	remove end node if we have any
+		if (syntaxTreeNodes.empty() == false &&
+			syntaxTreeNodes[syntaxTreeNodes.size() - 1]->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_EXECUTE_METHOD &&
+			syntaxTreeNodes[syntaxTreeNodes.size() - 1]->value.getValueString() == "end") {
+			syntaxTreeNodes.erase(syntaxTreeNodes.begin() + syntaxTreeNodes.size() - 1);
+		}
+		//
+		auto width = 0;
+		auto height = 0;
+		auto x = 200;
+		auto y = 200;
+		auto yMax = y;
+		vector<string> createdNodeIds;
+		GUINode* previousNodeFlowNode = nullptr;
+		for (auto i = 0; i < syntaxTreeNodes.size(); i++) {
+			auto syntaxTreeNode = syntaxTreeNodes[i];
+
+			//
+			width = 0;
+			height = 0;
+			auto branchNodeIdx = i;
+			if (handleMiniScriptBranch(string(), syntaxTreeNodes, i, x, y, width, height, createdNodeIds) == true) {
+				//
+				x+= width + 100;
+				yMax = Math::max(y + height, yMax);
+				//
+				auto nodeFlowInId = to_string(branchNodeIdx) + "_flow_in";
+				auto nodeFlowOutId = to_string(branchNodeIdx) + "_flow_out";
+				auto nodeFlowIn = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(nodeFlowInId));
+				auto nodeFlowOut = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(nodeFlowOutId));
+				if (previousNodeFlowNode != nullptr && nodeFlowIn != nullptr) {
+					auto& previousNodeComputedConstraints = previousNodeFlowNode->getComputedConstraints();
+					auto& nodeComputedConstraints = nodeFlowIn->getComputedConstraints();
+					connections.push_back(
+						{
+							.type = Connection::CONNECTIONTYPE_FLOW,
+							.srcNodeId = previousNodeFlowNode->getId(),
+							.dstNodeId = nodeFlowInId,
+							.red = 255,
+							.green = 255,
+							.blue = 255,
+							.alpha = 255,
+							.x1 = previousNodeComputedConstraints.left + previousNodeComputedConstraints.width,
+							.y1 = previousNodeComputedConstraints.top + previousNodeComputedConstraints.height / 2,
+							.x2 = nodeComputedConstraints.left,
+							.y2 = nodeComputedConstraints.top + nodeComputedConstraints.height / 2,
+						}
+					);
+				}
+				//
+				previousNodeFlowNode = nodeFlowOut;
+			}
+
+			//
+			if (i >= syntaxTreeNodes.size()) continue;
+			syntaxTreeNode = syntaxTreeNodes[i];
+
+			//
+			width = 0;
+			height = 0;
+			createMiniScriptNodes(to_string(i), i, syntaxTreeNodes.size(), syntaxTreeNode, x, y, width, height, createdNodeIds);
+
+			//
+			x+= width + 100;
+			yMax = Math::max(y + height, yMax);
+
+			// connections
+			auto nodeFlowInId = to_string(i) + "_flow_in";
+			auto nodeFlowOutId = to_string(i) + "_flow_out";
+			auto nodeFlowIn = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(nodeFlowInId));
+			auto nodeFlowOut = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(nodeFlowOutId));
+			if (previousNodeFlowNode != nullptr && nodeFlowIn != nullptr) {
+				auto& previousNodeComputedConstraints = previousNodeFlowNode->getComputedConstraints();
+				auto& nodeComputedConstraints = nodeFlowIn->getComputedConstraints();
+				connections.push_back(
+					{
+						.type = Connection::CONNECTIONTYPE_FLOW,
+						.srcNodeId = previousNodeFlowNode->getId(),
+						.dstNodeId = nodeFlowInId,
+						.red = 255,
+						.green = 255,
+						.blue = 255,
+						.alpha = 255,
+						.x1 = previousNodeComputedConstraints.left + previousNodeComputedConstraints.width,
+						.y1 = previousNodeComputedConstraints.top + previousNodeComputedConstraints.height / 2,
+						.x2 = nodeComputedConstraints.left,
+						.y2 = nodeComputedConstraints.top + nodeComputedConstraints.height / 2,
+					}
+				);
+			}
+			//
+			previousNodeFlowNode = nodeFlowOut;
+		}
+
+		// TODO: with absolute align of nodes content width/height is not yet computed in UI
+		visualisationNode->getComputedConstraints().width = x;
+		visualisationNode->getComputedConstraints().height = yMax;
+		visualisationNode->getRequestsConstraints().width = x;
+		visualisationNode->getRequestsConstraints().height = yMax;
+	}
+
+	// Bug: Work around! Sometimes layouting is not issued! Need to check!
+	tabScreenNode->forceInvalidateLayout(tabScreenNode);
+
+	//
+	createConnectionsPasses = 3;
+}
+
+void TextEditorTabView::createMiniScriptConnections() {
+	for (auto& connection: connections) {
+		auto srcNode = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(connection.srcNodeId));
+		auto dstNode = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(connection.dstNodeId));
+		if (srcNode == nullptr) {
+			Console::println("TextEditorTabView::createMiniScriptConnections(): could not find src node with id: " + connection.srcNodeId);
+			continue;
+		} else
+		if (dstNode == nullptr) {
+			Console::println("TextEditorTabView::createMiniScriptConnections(): could not find dst node with id: " + connection.dstNodeId);
+			continue;
+		}
+		auto& srcNodeComputedConstraints = srcNode->getComputedConstraints();
+		auto& dstNodeComputedConstraints = dstNode->getComputedConstraints();
+		switch (connection.type) {
+			case Connection::CONNECTIONTYPE_FLOW:
+				connection.x1 = srcNodeComputedConstraints.left + srcNodeComputedConstraints.width;
+				connection.y1 = srcNodeComputedConstraints.top + srcNodeComputedConstraints.height / 2;
+				connection.x2 = dstNodeComputedConstraints.left;
+				connection.y2 = dstNodeComputedConstraints.top + dstNodeComputedConstraints.height / 2;
+				break;
+			case Connection::CONNECTIONTYPE_ARGUMENT:
+				connection.x1 = srcNodeComputedConstraints.left;
+				connection.y1 = srcNodeComputedConstraints.top + srcNodeComputedConstraints.height / 2;
+				connection.x2 = dstNodeComputedConstraints.left + dstNodeComputedConstraints.width;
+				connection.y2 = dstNodeComputedConstraints.top + dstNodeComputedConstraints.height / 2;
+				break;
+			default: break;
+		}
 	}
 }

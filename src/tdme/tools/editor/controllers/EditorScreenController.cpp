@@ -863,144 +863,153 @@ void EditorScreenController::onAddFile(const string& type) {
 }
 
 void EditorScreenController::addFile(const string& pathName, const string& fileName, const string& type) {
-	Prototype* prototype = nullptr;
-	Scene* scene = nullptr;
-	if (type == "empty") {
-		prototype = new Prototype(
-			Prototype::ID_NONE,
-			Prototype_Type::EMPTY,
-			Tools::removeFileEnding(fileName),
-			Tools::removeFileEnding(fileName),
-			pathName + "/" + fileName,
-			"resources/engine/models/empty.tm",
-			string(),
-			ModelReader::read("resources/engine/models", "empty.tm"), // TODO: exception
-			Vector3(0.0f, 0.0f, 0.0f)
-		);
-	} else
-	if (type == "trigger") {
-		auto width = 1.0f;
-		auto height = 1.0f;
-		auto depth = 1.0f;
-		auto boundingBox = BoundingBox(Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), Vector3(+width / 2.0f, height, +depth / 2.0f));
-		prototype = new Prototype(
-			Prototype::ID_NONE,
-			Prototype_Type::TRIGGER,
-			Tools::removeFileEnding(fileName),
-			Tools::removeFileEnding(fileName),
-			pathName + "/" + fileName,
-			string(),
-			string(),
-			nullptr,
-			Vector3()
-		);
-		prototype->addBoundingVolume(0, new PrototypeBoundingVolume(0, prototype));
-		prototype->getBoundingVolume(0)->setupAabb(boundingBox.getMin(), boundingBox.getMax());
-	} else
-	if (type == "envmap") {
-		auto width = 1.0f;
-		auto height = 1.0f;
-		auto depth = 1.0f;
-		auto boundingBox = BoundingBox(Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), Vector3(+width / 2.0f, height, +depth / 2.0f));
-		prototype = new Prototype(
-			Prototype::ID_NONE,
-			Prototype_Type::ENVIRONMENTMAPPING,
-			Tools::removeFileEnding(fileName),
-			Tools::removeFileEnding(fileName),
-			pathName + "/" + fileName,
-			string(),
-			string(),
-			nullptr,
-			Vector3()
-		);
-		prototype->addBoundingVolume(0, new PrototypeBoundingVolume(0, prototype));
-		prototype->getBoundingVolume(0)->setupAabb(boundingBox.getMin(), boundingBox.getMax());
-	} else
-	if (type == "decal") {
-		auto width = 1.0f;
-		auto height = 1.0f;
-		auto depth = 1.0f;
-		auto boundingBox = BoundingBox(Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), Vector3(+width / 2.0f, height, +depth / 2.0f));
-		prototype = new Prototype(
-			Prototype::ID_NONE,
-			Prototype_Type::DECAL,
-			Tools::removeFileEnding(fileName),
-			Tools::removeFileEnding(fileName),
-			pathName + "/" + fileName,
-			string(),
-			string(),
-			nullptr,
-			Vector3()
-		);
-		prototype->addBoundingVolume(0, new PrototypeBoundingVolume(0, prototype));
-		prototype->getBoundingVolume(0)->setupAabb(boundingBox.getMin(), boundingBox.getMax());
-	} else
-	if (type == "model") {
-		prototype = new Prototype(
-			Prototype::ID_NONE,
-			Prototype_Type::MODEL,
-			Tools::removeFileEnding(fileName),
-			Tools::removeFileEnding(fileName),
-			pathName + "/" + fileName,
-			"resources/engine/models/empty.tm",
-			string(),
-			ModelReader::read("resources/engine/models", "empty.tm"), // TODO: exception
-			Vector3(0.0f, 0.0f, 0.0f)
-		);
-	} else
-	if (type == "terrain") {
-		prototype = new Prototype(
-			Prototype::ID_NONE,
-			Prototype_Type::TERRAIN,
-			Tools::removeFileEnding(fileName),
-			Tools::removeFileEnding(fileName),
-			pathName + "/" + fileName,
-			string(),
-			string(),
-			nullptr,
-			Vector3()
-		);
-	} else
-	if (type == "particle") {
-		prototype = new Prototype(
-			Prototype::ID_NONE,
-			Prototype_Type::PARTICLESYSTEM,
-			Tools::removeFileEnding(fileName),
-			Tools::removeFileEnding(fileName),
-			pathName + "/" + fileName,
-			string(),
-			string(),
-			nullptr,
-			Vector3()
-		);
-	} else
-	if (type == "scene") {
-		scene = new Scene(
-			Tools::removeFileEnding(fileName),
-			Tools::removeFileEnding(fileName)
-		);
-	}
-	if (prototype != nullptr) {
+	if (type == "script") {
 		try {
-			PrototypeWriter::write(pathName, fileName, prototype);
+			FileSystem::getInstance()->setContentFromString(pathName, fileName, FileSystem::getInstance()->getContentAsString("resources/engine/templates/tscript", "template.tscript"));
 			openFile(pathName + "/" + fileName);
 		} catch (Exception& exception) {
-			Console::print(string("EditorScreenController::addFile(): An error occurred: "));
-			Console::println(string(exception.what()));
-			showErrorPopUp("Error", string() + "An error occurred: " + exception.what());
-		}
-	} else
-	if (scene != nullptr) {
-		try {
-			SceneWriter::write(pathName, fileName, scene);
-			openFile(pathName + "/" + fileName);
-		} catch (Exception& exception) {
-			Console::print(string("EditorScreenController::addFile(): An error occurred: "));
-			Console::println(string(exception.what()));
-			showErrorPopUp("Error", string() + "An error occurred: " + exception.what());
+			showErrorPopUp("Error", string() + "An error occurred: file type: " + type + ": " + exception.what());
 		}
 	} else {
-		showErrorPopUp("Error", string() + "Unknown file type: " + type);
+		Prototype* prototype = nullptr;
+		Scene* scene = nullptr;
+		if (type == "empty") {
+			prototype = new Prototype(
+				Prototype::ID_NONE,
+				Prototype_Type::EMPTY,
+				Tools::removeFileEnding(fileName),
+				Tools::removeFileEnding(fileName),
+				pathName + "/" + fileName,
+				"resources/engine/models/empty.tm",
+				string(),
+				ModelReader::read("resources/engine/models", "empty.tm"), // TODO: exception
+				Vector3(0.0f, 0.0f, 0.0f)
+			);
+		} else
+		if (type == "trigger") {
+			auto width = 1.0f;
+			auto height = 1.0f;
+			auto depth = 1.0f;
+			auto boundingBox = BoundingBox(Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), Vector3(+width / 2.0f, height, +depth / 2.0f));
+			prototype = new Prototype(
+				Prototype::ID_NONE,
+				Prototype_Type::TRIGGER,
+				Tools::removeFileEnding(fileName),
+				Tools::removeFileEnding(fileName),
+				pathName + "/" + fileName,
+				string(),
+				string(),
+				nullptr,
+				Vector3()
+			);
+			prototype->addBoundingVolume(0, new PrototypeBoundingVolume(0, prototype));
+			prototype->getBoundingVolume(0)->setupAabb(boundingBox.getMin(), boundingBox.getMax());
+		} else
+		if (type == "envmap") {
+			auto width = 1.0f;
+			auto height = 1.0f;
+			auto depth = 1.0f;
+			auto boundingBox = BoundingBox(Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), Vector3(+width / 2.0f, height, +depth / 2.0f));
+			prototype = new Prototype(
+				Prototype::ID_NONE,
+				Prototype_Type::ENVIRONMENTMAPPING,
+				Tools::removeFileEnding(fileName),
+				Tools::removeFileEnding(fileName),
+				pathName + "/" + fileName,
+				string(),
+				string(),
+				nullptr,
+				Vector3()
+			);
+			prototype->addBoundingVolume(0, new PrototypeBoundingVolume(0, prototype));
+			prototype->getBoundingVolume(0)->setupAabb(boundingBox.getMin(), boundingBox.getMax());
+		} else
+		if (type == "decal") {
+			auto width = 1.0f;
+			auto height = 1.0f;
+			auto depth = 1.0f;
+			auto boundingBox = BoundingBox(Vector3(-width / 2.0f, 0.0f, -depth / 2.0f), Vector3(+width / 2.0f, height, +depth / 2.0f));
+			prototype = new Prototype(
+				Prototype::ID_NONE,
+				Prototype_Type::DECAL,
+				Tools::removeFileEnding(fileName),
+				Tools::removeFileEnding(fileName),
+				pathName + "/" + fileName,
+				string(),
+				string(),
+				nullptr,
+				Vector3()
+			);
+			prototype->addBoundingVolume(0, new PrototypeBoundingVolume(0, prototype));
+			prototype->getBoundingVolume(0)->setupAabb(boundingBox.getMin(), boundingBox.getMax());
+		} else
+		if (type == "model") {
+			prototype = new Prototype(
+				Prototype::ID_NONE,
+				Prototype_Type::MODEL,
+				Tools::removeFileEnding(fileName),
+				Tools::removeFileEnding(fileName),
+				pathName + "/" + fileName,
+				"resources/engine/models/empty.tm",
+				string(),
+				ModelReader::read("resources/engine/models", "empty.tm"), // TODO: exception
+				Vector3(0.0f, 0.0f, 0.0f)
+			);
+		} else
+		if (type == "terrain") {
+			prototype = new Prototype(
+				Prototype::ID_NONE,
+				Prototype_Type::TERRAIN,
+				Tools::removeFileEnding(fileName),
+				Tools::removeFileEnding(fileName),
+				pathName + "/" + fileName,
+				string(),
+				string(),
+				nullptr,
+				Vector3()
+			);
+		} else
+		if (type == "particle") {
+			prototype = new Prototype(
+				Prototype::ID_NONE,
+				Prototype_Type::PARTICLESYSTEM,
+				Tools::removeFileEnding(fileName),
+				Tools::removeFileEnding(fileName),
+				pathName + "/" + fileName,
+				string(),
+				string(),
+				nullptr,
+				Vector3()
+			);
+		} else
+		if (type == "scene") {
+			scene = new Scene(
+				Tools::removeFileEnding(fileName),
+				Tools::removeFileEnding(fileName)
+			);
+		}
+		if (prototype != nullptr) {
+			try {
+				PrototypeWriter::write(pathName, fileName, prototype);
+				openFile(pathName + "/" + fileName);
+			} catch (Exception& exception) {
+				Console::print(string("EditorScreenController::addFile(): An error occurred: "));
+				Console::println(string(exception.what()));
+				showErrorPopUp("Error", string() + "An error occurred: " + exception.what());
+			}
+		} else
+		if (scene != nullptr) {
+			try {
+				SceneWriter::write(pathName, fileName, scene);
+				openFile(pathName + "/" + fileName);
+			} catch (Exception& exception) {
+				Console::print(string("EditorScreenController::addFile(): An error occurred: "));
+				Console::println(string(exception.what()));
+				showErrorPopUp("Error", string() + "An error occurred: " + exception.what());
+			}
+		} else {
+			showErrorPopUp("Error", string() + "Unknown file type: " + type);
+		}
 	}
 }
 

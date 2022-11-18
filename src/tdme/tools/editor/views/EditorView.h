@@ -32,6 +32,7 @@ private:
 	PopUps* popUps { nullptr };
 	EditorScreenController* editorScreenController { nullptr };
 	string lastSelectedTabId;
+	array<bool, 8> mouseButtonsDown = { false, false, false, false, false, false, false, false };
 
 public:
 	/**

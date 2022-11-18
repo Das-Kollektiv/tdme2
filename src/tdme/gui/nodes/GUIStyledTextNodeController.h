@@ -84,6 +84,7 @@ private:
 	CursorMode cursorMode { CURSORMODE_SHOW };
 	int index { 0 };
 	int selectionIndex { -1 };
+	int lineIndex { 0 };
 	vector<ChangeListener*> changeListeners;
 	vector<CodeCompletionListener*> codeCompletionListeners;
 	enum ScrollMode { SCROLLMODE_NONE, SCROLLMODE_UP, SCROLLMODE_DOWN };
