@@ -60,7 +60,7 @@ This is the documentation of supported TDME2-GUI XML elements and their attribut
 
 This element supports all other elements as sub elements.
 
-## 1.2. \<element\> node
+## 1.3. \<element\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -81,7 +81,7 @@ This element supports all other elements as sub elements.
 
 This element supports all other elements as sub elements.
 
-## 1.3. \<gradient\> node
+## 1.4. \<gradient\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -89,9 +89,9 @@ This element supports all other elements as sub elements.
 | rotation                          | rotation angle                                                                         | 0.0f              |
 
 
-## 1.4. Frame Buffer / Image / Texture / Video nodes
+## 1.5. Frame Buffer / Image / Texture / Video nodes
 
-### 1.4.1. \<frame-buffer\> node
+### 1.5.1. \<frame-buffer\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -115,7 +115,7 @@ This element supports all other elements as sub elements.
 | mirror-y                          | mirror frame buffer on y axis                                                          | false             |
 
 
-### 1.4.2. \<image\> node
+### 1.5.2. \<image\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -140,7 +140,7 @@ This element supports all other elements as sub elements.
 | rotation                          | rotation angle                                                                         | 0.0               |
 | src                               | image location                                                                         | 0.0               |
 
-### 1.4.3. \<texture\> node
+### 1.5.3. \<texture\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -163,7 +163,7 @@ This element supports all other elements as sub elements.
 | mirror-x                          | mirror texture on x axis                                                               | false             |
 | mirror-y                          | mirror texture on y axis                                                               | false             |
 
-### 1.4.4. \<video\> node
+### 1.5.4. \<video\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -187,7 +187,7 @@ This element supports all other elements as sub elements.
 | mirror-y                          | mirror video on y axis                                                                 | false             |
 | src                               | video location                                                                         | 0.0               |
 
-## 1.5. \<layer\> node
+## 1.6. \<layer\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -196,17 +196,7 @@ This element supports all other elements as sub elements.
 
 This element supports all other elements as sub elements.
 
-## 1.6. \<layout\> node
-
-| Attribute name                    | Attribute description                                                                  | Default           |
-| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
-| alignment                         | none \| horizontal \| vertical                                                         | none              |
-| overflow-x                        | hidden \| downsize-children \| scroll                                                  | hidden            |
-| overflow-y                        | hidden \| downsize-children \| scroll                                                  | hidden            |
-
-This element supports all other elements as sub elements.
-
-## 1.7. \<panel\> node
+## 1.7. \<layout\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -216,19 +206,29 @@ This element supports all other elements as sub elements.
 
 This element supports all other elements as sub elements.
 
-## 1.8. \<space\> node
+## 1.8. \<panel\> node
 
-## 1.9 Table nodes
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| alignment                         | none \| horizontal \| vertical                                                         | none              |
+| overflow-x                        | hidden \| downsize-children \| scroll                                                  | hidden            |
+| overflow-y                        | hidden \| downsize-children \| scroll                                                  | hidden            |
 
-### 1.9.1 \<table\> node
+This element supports all other elements as sub elements.
+
+## 1.9. \<space\> node
+
+## 1.10. Table nodes
+
+### 1.10.1. \<table\> node
 
 This element supports \<table-row\> as sub elements.
 
-### 1.9.2 \<table-row\> node
+### 1.10.2. \<table-row\> node
 
 This element supports  \<table-cell\> as sub elements.
 
-### 1.9.3 \<table-cell\> node
+### 1.10.3 \<table-cell\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -236,9 +236,9 @@ This element supports  \<table-cell\> as sub elements.
 
 This element supports all other elements as sub elements.
 
-## 1.10. Text nodes
+## 1.11. Text nodes
 
-### 1.10.1. \<text\> node
+### 1.11.1. \<text\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -247,7 +247,7 @@ This element supports all other elements as sub elements.
 | size                              | TTF font size                                                                          | none              |
 | text                              | text to be rendered                                                                    | none              |
 
-### 1.10.2. \<styled-text\> node
+### 1.11.2. \<styled-text\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -267,7 +267,7 @@ Currently supported BBCode like tags are:
 [image=horizontal-scale:50%|0.5,vertical-scale:50%|0.5,width:100,height:100,effect-color-mul:#ff0000ff,effect-color-add:#ff000000]image.png[/image]
 ```
 
-## 1.11. \<template\>
+## 1.12. \<template\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
