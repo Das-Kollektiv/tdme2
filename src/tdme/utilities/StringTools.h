@@ -86,43 +86,69 @@ public:
 	static const string replace(const string& src, const string& what, const string& by, int beginIndex = 0);
 
 	/**
+	 * Finds index of given character
+	 * @param src source string
+	 * @param what what
+	 * @param beginIndex index to begin with
+	 * @return index or -1 if not found
+	 */
+	inline static int32_t indexOf(const string& src, char what, int beginIndex = 0) {
+		return src.find(what, beginIndex);
+	}
+
+	/**
+	 * Finds first index of given string
+	 * @param src source string
+	 * @param what what
+	 * @param beginIndex index to begin with
+	 * @return index or -1 if not found
+	 */
+	inline static int32_t indexOf(const string& src, const string& what, int beginIndex = 0) {
+		return src.find(what, beginIndex);
+	}
+
+	/**
 	 * Finds first index of given character
 	 * @param src source string
 	 * @param what what
+	 * @param beginIndex index to begin with
 	 * @return index or -1 if not found
 	 */
-	inline static int32_t firstIndexOf(const string& src, char what) {
-		return src.find_first_of(what);
+	inline static int32_t firstIndexOf(const string& src, char what, int beginIndex = 0) {
+		return src.find_first_of(what, beginIndex);
 	}
 
 	/**
 	 * Finds first index of characters provided within given string
 	 * @param src source string
 	 * @param what what
+	 * @param beginIndex index to begin with
 	 * @return index or -1 if not found
 	 */
-	inline static int32_t firstIndexOf(const string& src, const string& what) {
-		return src.find_first_of(what);
+	inline static int32_t firstIndexOf(const string& src, const string& what, int beginIndex = 0) {
+		return src.find_first_of(what, beginIndex);
 	}
 
 	/**
 	 * Finds last index of given character
 	 * @param src source string
 	 * @param what what
+	 * @param beginIndex index to begin with
 	 * @return index or -1 if not found
 	 */
-	inline static int32_t lastIndexOf(const string& src, char what) {
-		return src.find_last_of(what);
+	inline static int32_t lastIndexOf(const string& src, char what, int beginIndex = 0) {
+		return src.find_last_of(what, beginIndex);
 	}
 
 	/**
 	 * Finds last index of characters provided within given string
 	 * @param src source string
 	 * @param what what
+	 * @param beginIndex index to begin with
 	 * @return index or -1 if not found
 	 */
-	inline static int32_t lastIndexOf(const string& src, const string& what) {
-		return src.find_last_of(what);
+	inline static int32_t lastIndexOf(const string& src, const string& what, int beginIndex = 0) {
+		return src.find_last_of(what, beginIndex);
 	}
 
 	/**

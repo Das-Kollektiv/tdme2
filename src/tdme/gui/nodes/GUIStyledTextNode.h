@@ -169,21 +169,6 @@ private:
 	}
 
 	/**
-	 * Set scroll to index
-	 */
-	void scrollToIndex(int index);
-
-	/**
-	 * Set scroll to index
-	 */
-	void scrollToIndex();
-
-	/**
-	 * Set scroll to selection index
-	 */
-	void scrollToSelectionIndex();
-
-	/**
 	 * Do page up
 	 * @return cursor index
 	 */
@@ -595,5 +580,20 @@ public:
 			effectColorAdd
 		);
 	}
+
+	/**
+	 * Set scroll to index
+	 */
+	void scrollToIndex(int index);
+
+	/**
+	 * Set scroll to index
+	 */
+	void scrollToIndex();
+
+	/**
+	 * Set scroll to selection index
+	 */
+	void scrollToSelectionIndex();
 
 };

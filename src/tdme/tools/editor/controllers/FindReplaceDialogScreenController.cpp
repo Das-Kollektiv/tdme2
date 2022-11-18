@@ -8,11 +8,13 @@
 #include <tdme/engine/Version.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
+#include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/MutableString.h>
@@ -25,11 +27,13 @@ using tdme::engine::Engine;
 using tdme::engine::Version;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
 using tdme::tools::editor::controllers::FindReplaceDialogScreenController;
+using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
@@ -42,6 +46,11 @@ FindReplaceDialogScreenController::FindReplaceDialogScreenController()
 FindReplaceDialogScreenController::~FindReplaceDialogScreenController()
 {
 	screenNode = nullptr;
+	if (findAction != nullptr) delete findAction;
+	if (countAction != nullptr) delete countAction;
+	if (replaceAction != nullptr) delete replaceAction;
+	if (replaceAllAction != nullptr) delete replaceAllAction;
+	if (completeAction != nullptr) delete completeAction;
 }
 
 GUIScreenNode* FindReplaceDialogScreenController::getScreenNode()
@@ -64,7 +73,7 @@ void FindReplaceDialogScreenController::initialize()
 		countButton = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("findreplace_count"));
 		cancelButton = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("findreplace_cancel"));
 		replaceButton = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("findreplace_replace"));
-		replaceButtonAll = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("findreplace_replaceall"));
+		replaceAllButton = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("findreplace_replaceall"));
 	} catch (Exception& exception) {
 		Console::print(string("FindReplaceDialogScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -75,21 +84,72 @@ void FindReplaceDialogScreenController::dispose()
 {
 }
 
-void FindReplaceDialogScreenController::show()
+const string FindReplaceDialogScreenController::getFindText() {
+	return findText->getController()->getValue().getString();
+}
+
+const string FindReplaceDialogScreenController::getReplaceText() {
+	return replaceText->getController()->getValue().getString();
+}
+
+bool FindReplaceDialogScreenController::isMatchCase() {
+	return matchCase->getController()->getValue().equals("1");
+}
+
+bool FindReplaceDialogScreenController::isWholeWordOnly() {
+	return wholeWordOnly->getController()->getValue().equals("1");
+}
+
+bool FindReplaceDialogScreenController::isInSelectionOnly() {
+	return inSelectionOnly->getController()->getValue().equals("1");
+}
+
+void FindReplaceDialogScreenController::show(Action* findAction, Action* countAction, Action* replaceAction, Action* replaceAllAction, Action* completeAction)
 {
+	this->findAction = findAction;
+	this->countAction = countAction;
+	this->replaceAction = replaceAction;
+	this->replaceAllAction = replaceAllAction;
+	this->completeAction = completeAction;
+	//
 	screenNode->setVisible(true);
 }
 
 void FindReplaceDialogScreenController::close()
 {
 	screenNode->setVisible(false);
+	if (findAction != nullptr) delete findAction;
+	if (countAction != nullptr) delete countAction;
+	if (replaceAction != nullptr) delete replaceAction;
+	if (replaceAllAction != nullptr) delete replaceAllAction;
+	if (completeAction != nullptr) delete completeAction;
+	findAction = nullptr;
+	countAction = nullptr;
+	replaceAction = nullptr;
+	replaceAllAction = nullptr;
+	completeAction = nullptr;
 }
 
 void FindReplaceDialogScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (StringTools::startsWith(node->getId(), "findreplace_caption_close_") == true) { // TODO: a.drewke, check with DH) {
-			close();
+			if (completeAction != nullptr) completeAction->performAction();
+		} else
+		if (node->getId() == findButton->getId()) {
+			if (findAction != nullptr) findAction->performAction();
+		} else
+		if (node->getId() == countButton->getId()) {
+			if (countAction != nullptr) countAction->performAction();
+		} else
+		if (node->getId() == replaceButton->getId()) {
+			if (replaceAction != nullptr) replaceAction->performAction();
+		} else
+		if (node->getId() == replaceAllButton->getId()) {
+			if (replaceAllAction != nullptr) replaceAllAction->performAction();
+		} else
+		if (node->getId() == cancelButton->getId()) {
+			if (completeAction != nullptr) completeAction->performAction();
 		}
 	}
 }

@@ -1594,3 +1594,140 @@ void TextEditorTabView::createMiniScriptConnections() {
 		}
 	}
 }
+
+bool TextEditorTabView::find(const string& findString, bool matchCase, bool wholeWord, bool selection) {
+	reformat();
+	auto success = false;
+	auto _findString = matchCase == false?StringTools::toLowerCase(findString):findString;
+	auto _text = matchCase == false?StringTools::toLowerCase(textNode->getText().getString()):textNode->getText().getString();
+	auto textNodeController = required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController());
+	auto inSelectionAvailable = textNodeController->getIndex() != -1 && textNodeController->getSelectionIndex() != -1;
+	auto i = selection == true && inSelectionAvailable == true?Math::min(textNodeController->getIndex(), textNodeController->getSelectionIndex()):0;
+	auto fi = -1;
+	auto ni = textNodeController->getIndex();
+	auto l = selection == true && inSelectionAvailable == true?Math::max(textNodeController->getIndex(), textNodeController->getSelectionIndex()):_text.size();
+	while (i < l) {
+		auto p = StringTools::indexOf(_text, _findString, i);
+		if (p != string::npos) {
+			i = p + _findString.size();
+			if (fi == -1) fi = p;
+			if (ni != -1 && p > ni) {
+				textNodeController->setIndex(p);
+				textNodeController->setSelectionIndex(-1);
+				textNode->setTextStyle(p, p + _findString.size() - 1, GUIColor("#ff0000"));
+				textNode->scrollToIndex();
+				ni = -1;
+				success = true;
+				//
+				break;
+			}
+		} else {
+			break;
+		}
+	}
+	if (ni != -1 && fi != -1) {
+		textNode->setTextStyle(fi, fi + _findString.size() - 1, GUIColor("#ff0000"));
+		textNodeController->setIndex(fi);
+		textNodeController->setSelectionIndex(-1);
+		textNode->scrollToIndex();
+		success = true;
+	}
+	//
+	return success;
+}
+
+int TextEditorTabView::count(const string& findString, bool matchCase, bool wholeWord, bool selection) {
+	reformat();
+	auto _findString = matchCase == false?StringTools::toLowerCase(findString):findString;
+	auto _text = matchCase == false?StringTools::toLowerCase(textNode->getText().getString()):textNode->getText().getString();
+	auto textNodeController = required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController());
+	auto inSelectionAvailable = textNodeController->getIndex() != -1 && textNodeController->getSelectionIndex() != -1;
+	auto i = selection == true && inSelectionAvailable == true?Math::min(textNodeController->getIndex(), textNodeController->getSelectionIndex()):0;
+	auto l = selection == true && inSelectionAvailable == true?Math::max(textNodeController->getIndex(), textNodeController->getSelectionIndex()):_text.size();
+	auto c = 0;
+	while (i < l) {
+		auto p = StringTools::indexOf(_text, _findString, i);
+		if (p != string::npos) {
+			textNode->setTextStyle(p, p + _findString.size() - 1, GUIColor("#ff0000"));
+			i = p + _findString.size();
+			c++;
+		} else {
+			break;
+		}
+	}
+	return c;
+}
+
+bool TextEditorTabView::replace(const string& findString, const string& replaceString, bool matchCase, bool wholeWord, bool selection) {
+	reformat();
+	auto success = false;
+	auto _findString = matchCase == false?StringTools::toLowerCase(findString):findString;
+	auto text = textNode->getText().getString();
+	auto _text = matchCase == false?StringTools::toLowerCase(text):text;
+	auto textNodeController = required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController());
+	auto inSelectionAvailable = textNodeController->getIndex() != -1 && textNodeController->getSelectionIndex() != -1;
+	auto i = selection == true && inSelectionAvailable == true?Math::min(textNodeController->getIndex(), textNodeController->getSelectionIndex()):0;
+	auto fi = -1;
+	auto ni = textNodeController->getIndex();
+	auto l = selection == true && inSelectionAvailable == true?Math::max(textNodeController->getIndex(), textNodeController->getSelectionIndex()):_text.size();
+	while (i < l) {
+		auto p = StringTools::indexOf(_text, _findString, i);
+		if (p != string::npos) {
+			i = p + _findString.size();
+			if (fi == -1) fi = p;
+			if (ni != -1 && p >= ni) {
+				text = StringTools::substring(text, 0, p) + replaceString + StringTools::substring(text, p + _findString.size());
+				textNodeController->setIndex(p);
+				textNodeController->setSelectionIndex(-1);
+				textNode->scrollToIndex();
+				ni = -1;
+				success = true;
+				//
+				break;
+			}
+		} else {
+			break;
+		}
+	}
+	if (ni != -1 && fi != -1) {
+		text = StringTools::substring(text, 0, fi) + replaceString + StringTools::substring(text, fi + _findString.size());
+		textNodeController->setIndex(fi);
+		textNodeController->setSelectionIndex(-1);
+		textNode->scrollToIndex();
+		success = true;
+	}
+	//
+	textNode->setText(StringTools::replace(StringTools::replace(text, "[", "\\["), "]", "\\]"));
+	reformat();
+	//
+	return success;
+}
+
+bool TextEditorTabView::replaceAll(const string& findString, const string& replaceString, bool matchCase, bool wholeWord, bool selection) {
+	auto success = false;
+	auto _findString = matchCase == false?StringTools::toLowerCase(findString):findString;
+	auto text = textNode->getText().getString();
+	auto _text = matchCase == false?StringTools::toLowerCase(text):text;
+	auto textNodeController = required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController());
+	auto inSelectionAvailable = textNodeController->getIndex() != -1 && textNodeController->getSelectionIndex() != -1;
+	auto i = selection == true && inSelectionAvailable == true?Math::min(textNodeController->getIndex(), textNodeController->getSelectionIndex()):0;
+	auto l = selection == true && inSelectionAvailable == true?Math::max(textNodeController->getIndex(), textNodeController->getSelectionIndex()):_text.size();
+	while (i < l) {
+		auto p = StringTools::indexOf(_text, _findString, i);
+		if (p != string::npos) {
+			text = StringTools::substring(text, 0, p) + replaceString + StringTools::substring(text, p + _findString.size());
+			_text = matchCase == false?StringTools::toLowerCase(text):text;
+			i = p + replaceString.size();
+			success = true;
+		} else {
+			break;
+		}
+	}
+	textNode->setText(StringTools::replace(StringTools::replace(text, "[", "\\["), "]", "\\]"));
+	reformat();
+	return success;
+}
+
+void TextEditorTabView::reformat() {
+	TextFormatter::getInstance()->format(extension, textNode, 0, textNode->getText().size());
+}

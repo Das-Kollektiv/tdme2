@@ -166,8 +166,104 @@ void TextEditorTabController::executeCommand(TabControllerCommand command)
 			break;
 		case COMMAND_FINDREPLACE:
 			{
-				Console::println("xxxxxx");
-				popUps->getFindReplaceDialogScreenController()->show();
+				//
+				class FindAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						if (textEditorTabController->view->find(
+							textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText(),
+							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isMatchCase(),
+							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isWholeWordOnly(),
+							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly()
+						) == false) {
+							textEditorTabController->showErrorPopUp("Find", "Text not found.");
+						}
+					}
+					FindAction(TextEditorTabController* textEditorTabController): textEditorTabController(textEditorTabController) {
+					}
+				private:
+					TextEditorTabController* textEditorTabController;
+				};
+				//
+				class CountAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						auto count = textEditorTabController->view->count(
+							textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText(),
+							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isMatchCase(),
+							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isWholeWordOnly(),
+							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly()
+						);
+						textEditorTabController->showErrorPopUp("Count", "The text occurred " + to_string(count) + " times.");
+					}
+					CountAction(TextEditorTabController* textEditorTabController): textEditorTabController(textEditorTabController) {
+					}
+				private:
+					TextEditorTabController* textEditorTabController;
+				};
+				//
+				class ReplaceAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						if (textEditorTabController->view->replace(
+							textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText(),
+							textEditorTabController->popUps->getFindReplaceDialogScreenController()->getReplaceText(),
+							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isMatchCase(),
+							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isWholeWordOnly(),
+							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly()
+						) == false) {
+							textEditorTabController->showErrorPopUp("Replace", "Text not found.");
+						}
+					}
+					ReplaceAction(TextEditorTabController* textEditorTabController): textEditorTabController(textEditorTabController) {
+					}
+				private:
+					TextEditorTabController* textEditorTabController;
+				};
+				//
+				class ReplaceAllAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						if (textEditorTabController->view->replaceAll(
+							textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText(),
+							textEditorTabController->popUps->getFindReplaceDialogScreenController()->getReplaceText(),
+							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isMatchCase(),
+							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isWholeWordOnly(),
+							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly()
+						) == false) {
+							textEditorTabController->showErrorPopUp("Replace All", "Text not found.");
+						}
+					}
+					ReplaceAllAction(TextEditorTabController* textEditorTabController): textEditorTabController(textEditorTabController) {
+					}
+				private:
+					TextEditorTabController* textEditorTabController;
+				};
+				//
+				class CompleteAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						textEditorTabController->view->reformat();
+						textEditorTabController->popUps->getFindReplaceDialogScreenController()->close();
+					}
+					CompleteAction(TextEditorTabController* textEditorTabController): textEditorTabController(textEditorTabController) {
+					}
+				private:
+					TextEditorTabController* textEditorTabController;
+				};
+				//
+				popUps->getFindReplaceDialogScreenController()->show(
+					new FindAction(this),
+					new CountAction(this),
+					new ReplaceAction(this),
+					new ReplaceAllAction(this),
+					new CompleteAction(this)
+				);
 			}
 			break;
 		default:

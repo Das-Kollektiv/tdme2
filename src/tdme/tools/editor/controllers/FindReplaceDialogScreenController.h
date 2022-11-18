@@ -16,6 +16,7 @@ using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::editor::controllers::ScreenController;
+using tdme::utilities::Action;
 using tdme::utilities::MutableString;
 
 /**
@@ -38,7 +39,13 @@ private:
 	GUIElementNode* countButton { nullptr };
 	GUIElementNode* cancelButton { nullptr };
 	GUIElementNode* replaceButton { nullptr };
-	GUIElementNode* replaceButtonAll { nullptr };
+	GUIElementNode* replaceAllButton { nullptr };
+
+	Action* findAction { nullptr };
+	Action* countAction { nullptr };
+	Action* replaceAction { nullptr };
+	Action* replaceAllAction { nullptr };
+	Action* completeAction { nullptr };
 
 public:
 	/**
@@ -51,15 +58,46 @@ public:
 	 */
 	virtual ~FindReplaceDialogScreenController();
 
+	// overridden methods
 	GUIScreenNode* getScreenNode() override;
 	void initialize() override;
 	void dispose() override;
 	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
 
 	/**
-	 * Shows the pop up
+	 * @return find text
 	 */
-	void show();
+	const string getFindText();
+
+	/**
+	 * @return replace text
+	 */
+	const string getReplaceText();
+
+	/**
+	 * @return is match case checked
+	 */
+	bool isMatchCase();
+
+	/**
+	 * @return is whole world only checked
+	 */
+	bool isWholeWordOnly();
+
+	/**
+	 * @return is in selection only checked
+	 */
+	bool isInSelectionOnly();
+
+	/**
+	 * Shows the pop up
+	 * @param findAction find action
+	 * @param coundAction count action
+	 * @param replaceAction replace action
+	 * @param replaceAllAction replace all action
+	 * @param completeAction complete action
+	 */
+	void show(Action* findAction, Action* countAction, Action* replaceAction, Action* replaceAllAction, Action* completeAction);
 	/**
 	 * Closes the pop up
 	 */
