@@ -55,6 +55,16 @@ void FindReplaceDialogScreenController::initialize()
 		screenNode = GUIParser::parse("resources/engine/gui", "popup_findreplace.xml");
 		screenNode->setVisible(false);
 		screenNode->addActionListener(this);
+		findText = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("findreplace_findtext"));
+		replaceText = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("findreplace_replacetext"));
+		matchCase = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("findreplace_matchcase"));
+		wholeWordOnly = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("findreplace_wholewordonly"));
+		inSelectionOnly = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("findreplace_inselectiononly"));
+		findButton = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("findreplace_find"));
+		countButton = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("findreplace_count"));
+		cancelButton = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("findreplace_cancel"));
+		replaceButton = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("findreplace_replace"));
+		replaceButtonAll = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("findreplace_replaceall"));
 	} catch (Exception& exception) {
 		Console::print(string("FindReplaceDialogScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));

@@ -13,6 +13,7 @@ using std::string;
 
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
+using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::editor::controllers::ScreenController;
 using tdme::utilities::MutableString;
@@ -28,6 +29,16 @@ class tdme::tools::editor::controllers::FindReplaceDialogScreenController final
 
 private:
 	GUIScreenNode* screenNode { nullptr };
+	GUIElementNode* findText { nullptr };
+	GUIElementNode* replaceText { nullptr };
+	GUIElementNode* matchCase { nullptr };
+	GUIElementNode* wholeWordOnly { nullptr };
+	GUIElementNode* inSelectionOnly { nullptr };
+	GUIElementNode* findButton { nullptr };
+	GUIElementNode* countButton { nullptr };
+	GUIElementNode* cancelButton { nullptr };
+	GUIElementNode* replaceButton { nullptr };
+	GUIElementNode* replaceButtonAll { nullptr };
 
 public:
 	/**

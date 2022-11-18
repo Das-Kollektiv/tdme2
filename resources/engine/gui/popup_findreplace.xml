@@ -30,7 +30,7 @@
 								<space height="10" />
 								<checkbox id="findreplace_wholewordonly" width="25" height="25" value="1" text="whole word only" />
 								<space height="10" />
-								<checkbox id="findreplace_inselectionly" width="25" height="25" value="1" text="in selection only" />
+								<checkbox id="findreplace_inselectiononly" width="25" height="25" value="1" text="in selection only" />
 							</layout>
 							
 							<space height="40" />
@@ -39,17 +39,17 @@
 								
 								<layout width="100%" height="auto" alignment="vertical" horizontal-align="center" vertical-align="center" >
 									<layout width="100%" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center" >
-										<button width="*" id="findreplace_button1" text="Find" />
+										<button width="*" id="findreplace_find" text="Find" />
 										<space width="10" />
-										<button width="*" id="findreplace_button2" text="Count" />
+										<button width="*" id="findreplace_count" text="Count" />
 										<space width="20" />
-										<button width="*" id="findreplace_button5" text="Cancel" />
+										<button width="*" id="findreplace_cancel" text="Cancel" />
 									</layout>
 									<space height="10" />
 									<layout width="100%" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center" >
-										<button width="*" id="findreplace_button3" text="Replace" />
+										<button width="*" id="findreplace_replace" text="Replace" />
 										<space width="10" />
-										<button width="*" id="findreplace_button4" text="Replace All" />
+										<button width="*" id="findreplace_replaceall" text="Replace All" />
 										<space width="20" />
 										<space width="*" />
 									</layout>
