@@ -1,94 +1,96 @@
 <screen id="popup_filedialog" background-color="#00000080" popup="true" min-width="1024" min-height="768" max-width="3200" max-height="1800">
-	<layout alignment="vertical" horizontal-align="center" vertical-align="center" width="100%" height="100%">	
-		<tabs width="800" height="500">
-			<tabs-header id="filedialog_tabs-header">
-				<tab id="filedialog_caption" image="resources/engine/images/attention.png" text="Load" closeable="true"/>
-			</tabs-header>
-			<tabs-content>
-				<tab-content tab-id="filedialog_caption">
-				
-					<layout padding="10" alignment="horizontal" horizontal-align="center" vertical-align="center" width="100%" height="100%">
-				
-						<layout alignment="vertical" horizontal-align="center" vertical-align="center" width="25%" height="100%">
-						
-						
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Drives" width="100%" height="25" />
-							<selectbox id="filedialog_drives" width="100%" height="55">
-								<scrollarea width="100%" height="100%" background-color="{$color.element_midground}">
-									<selectbox-option image="resources/engine/images/script.png" text="C:" value="0" />
-									<selectbox-option image="resources/engine/images/script.png" text="D:" value="1" />
-								</scrollarea>
-							</selectbox>
-							<space height="10" />
-							<layout alignment="horizontal" horizontal-align="center" vertical-align="center" width="100%" height="25">
-								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Favorites" width="*" height="25" />
-								<space width="10"/>
-								<button id="filedialog_favorites_add" width="20" height="20" image="resources/engine/images/add.png"/>
-								<space width="5"/>
-								<button id="filedialog_favorites_remove" width="20" height="20" image="resources/engine/images/substract.png"/>
-							</layout>
-							<selectbox id="filedialog_favorites" width="100%" height="*">
-								<scrollarea width="100%" height="100%" background-color="{$color.element_midground}">
-									<selectbox-option image="resources/engine/images/folder.png" text="folder1" value="0" />
-									<selectbox-option image="resources/engine/images/folder.png" text="folder2" value="1" />
-								</scrollarea>
-							</selectbox>
-							<space height="10" />
-							<layout alignment="horizontal" horizontal-align="center" vertical-align="center" width="100%" height="25">
-								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Recent" width="*" height="25" />
-								<space width="10"/>
-								<button id="filedialog_recent_delete" width="20" height="20" image="resources/engine/images/delete.png"/>
-							</layout>
-							<selectbox id="filedialog_recent" width="100%" height="*">
-								<scrollarea width="100%" height="100%" background-color="{$color.element_midground}">
-									<selectbox-option image="resources/engine/images/tdme.png" text="asset1" value="0" />
-									<selectbox-option image="resources/engine/images/tdme.png" text="asset2" value="1" />
-								</scrollarea>
-							</selectbox>
-						
-						</layout>
-						<space width="10"/>
-						<layout alignment="vertical" horizontal-align="center" vertical-align="center" width="*" height="100%">
+	<layout alignment="none" horizontal-align="center" vertical-align="center" width="100%" height="100%">
+		<moveable alignment="vertical" width="auto" height="auto">	
+			<tabs width="800" height="500">
+				<tabs-header id="filedialog_tabs-header">
+					<tab id="filedialog_caption" image="resources/engine/images/attention.png" text="Load" closeable="true"/>
+				</tabs-header>
+				<tabs-content>
+					<tab-content tab-id="filedialog_caption">
+					
+						<layout padding="10" alignment="horizontal" horizontal-align="center" vertical-align="center" width="100%" height="100%">
+					
+							<layout alignment="vertical" horizontal-align="center" vertical-align="center" width="25%" height="100%">
 							
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Path" width="100%" height="25" />
-							<input id="filedialog_path" width="100%" height="25" text="./path" />
-							<space height="10" />
-						
-							<selectbox id="filedialog_files" name="filedialog_files" width="100%" height="*">
-								<scrollarea width="100%" height="100%" background-color="{$color.element_midground}">
-									<selectbox-option image="resources/engine/images/tdme.png" text="Option 00" value="00" />
-									<selectbox-option image="resources/engine/images/tdme.png" text="Option 01" value="01" />
-									<selectbox-option image="resources/engine/images/tdme.png" text="Option 02" value="02" />
-									<selectbox-option image="resources/engine/images/tdme.png" text="Option 03" value="03" />
-									<selectbox-option image="resources/engine/images/tdme.png" text="Option 04" value="04" />
-									<selectbox-option image="resources/engine/images/tdme.png" text="Option 05" value="05" />
-									<selectbox-option image="resources/engine/images/tdme.png" text="Option 06" value="06" />
-									<selectbox-option image="resources/engine/images/tdme.png" text="Option 07" value="07" />
-									<selectbox-option image="resources/engine/images/tdme.png" text="Option 08" value="08" />
-									<selectbox-option image="resources/engine/images/tdme.png" text="Option 09" value="09" />
-									<selectbox-option image="resources/engine/images/tdme.png" text="Option 10" value="10" />
-									<selectbox-option image="resources/engine/images/tdme.png" text="Option 10" value="10" />
-								</scrollarea>
-							</selectbox>
-							<space height="10" />
-							<layout width="100%" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center">
-								<input id="filedialog_filename" name="filedialog_filename" width="*" height="25" text="./file.end" />
-								<space width="10" />
-								<dropdown width="100" height="25" id="filedialog_typedropdown" text="">
-								</dropdown>
+							
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Drives" width="100%" height="25" />
+								<selectbox id="filedialog_drives" width="100%" height="55">
+									<scrollarea width="100%" height="100%" background-color="{$color.element_midground}">
+										<selectbox-option image="resources/engine/images/script.png" text="C:" value="0" />
+										<selectbox-option image="resources/engine/images/script.png" text="D:" value="1" />
+									</scrollarea>
+								</selectbox>
+								<space height="10" />
+								<layout alignment="horizontal" horizontal-align="center" vertical-align="center" width="100%" height="25">
+									<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Favorites" width="*" height="25" />
+									<space width="10"/>
+									<button id="filedialog_favorites_add" width="20" height="20" image="resources/engine/images/add.png"/>
+									<space width="5"/>
+									<button id="filedialog_favorites_remove" width="20" height="20" image="resources/engine/images/substract.png"/>
+								</layout>
+								<selectbox id="filedialog_favorites" width="100%" height="*">
+									<scrollarea width="100%" height="100%" background-color="{$color.element_midground}">
+										<selectbox-option image="resources/engine/images/folder.png" text="folder1" value="0" />
+										<selectbox-option image="resources/engine/images/folder.png" text="folder2" value="1" />
+									</scrollarea>
+								</selectbox>
+								<space height="10" />
+								<layout alignment="horizontal" horizontal-align="center" vertical-align="center" width="100%" height="25">
+									<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Recent" width="*" height="25" />
+									<space width="10"/>
+									<button id="filedialog_recent_delete" width="20" height="20" image="resources/engine/images/delete.png"/>
+								</layout>
+								<selectbox id="filedialog_recent" width="100%" height="*">
+									<scrollarea width="100%" height="100%" background-color="{$color.element_midground}">
+										<selectbox-option image="resources/engine/images/tdme.png" text="asset1" value="0" />
+										<selectbox-option image="resources/engine/images/tdme.png" text="asset2" value="1" />
+									</scrollarea>
+								</selectbox>
+							
 							</layout>
-							<space height="10" />
-							<layout width="100%" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center">
-								<button id="filedialog_apply" width="*" text="Apply" />
-								<space width="10" />
-								<button id="filedialog_abort" width="*" text="Cancel" />
-							</layout>						
-						
+							<space width="10"/>
+							<layout alignment="vertical" horizontal-align="center" vertical-align="center" width="*" height="100%">
+								
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Path" width="100%" height="25" />
+								<input id="filedialog_path" width="100%" height="25" text="./path" />
+								<space height="10" />
+							
+								<selectbox id="filedialog_files" name="filedialog_files" width="100%" height="*">
+									<scrollarea width="100%" height="100%" background-color="{$color.element_midground}">
+										<selectbox-option image="resources/engine/images/tdme.png" text="Option 00" value="00" />
+										<selectbox-option image="resources/engine/images/tdme.png" text="Option 01" value="01" />
+										<selectbox-option image="resources/engine/images/tdme.png" text="Option 02" value="02" />
+										<selectbox-option image="resources/engine/images/tdme.png" text="Option 03" value="03" />
+										<selectbox-option image="resources/engine/images/tdme.png" text="Option 04" value="04" />
+										<selectbox-option image="resources/engine/images/tdme.png" text="Option 05" value="05" />
+										<selectbox-option image="resources/engine/images/tdme.png" text="Option 06" value="06" />
+										<selectbox-option image="resources/engine/images/tdme.png" text="Option 07" value="07" />
+										<selectbox-option image="resources/engine/images/tdme.png" text="Option 08" value="08" />
+										<selectbox-option image="resources/engine/images/tdme.png" text="Option 09" value="09" />
+										<selectbox-option image="resources/engine/images/tdme.png" text="Option 10" value="10" />
+										<selectbox-option image="resources/engine/images/tdme.png" text="Option 10" value="10" />
+									</scrollarea>
+								</selectbox>
+								<space height="10" />
+								<layout width="100%" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center">
+									<input id="filedialog_filename" name="filedialog_filename" width="*" height="25" text="./file.end" />
+									<space width="10" />
+									<dropdown width="100" height="25" id="filedialog_typedropdown" text="">
+									</dropdown>
+								</layout>
+								<space height="10" />
+								<layout width="100%" height="auto" alignment="horizontal" horizontal-align="center" vertical-align="center">
+									<button id="filedialog_apply" width="*" text="Apply" />
+									<space width="10" />
+									<button id="filedialog_abort" width="*" text="Cancel" />
+								</layout>						
+							
+							</layout>
 						</layout>
-					</layout>
-				
-				</tab-content>
-			</tabs-content>
-		</tabs>
+					
+					</tab-content>
+				</tabs-content>
+			</tabs>
+		</moveable>
 	</layout>
 </screen>

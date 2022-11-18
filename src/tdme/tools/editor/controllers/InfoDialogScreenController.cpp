@@ -68,7 +68,6 @@ void InfoDialogScreenController::show(const string& caption, const string& messa
 	screenNode->setVisible(true);
 	required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(tabsHeaderNode->getId()))->replaceSubNodes("<tab id=\"infodialog_caption\" image=\"resources/engine/images/attention.png\" text=\"" + caption + "\" closeable=\"true\"/>", true);
 	messageNode->setText(message);
-	screenNode->layout();
 }
 
 void InfoDialogScreenController::close()
