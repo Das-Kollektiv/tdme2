@@ -1,6 +1,7 @@
 <screen id="popup_findreplace" background-color="#00000080" popup="true" min-width="1024" min-height="768" max-width="3200" max-height="1800">
-	<layout alignment="vertical" horizontal-align="center" vertical-align="center" width="100%" height="100%">
+	<layout alignment="none" horizontal-align="center" vertical-align="center" width="100%" height="100%">
 	
+		<moveable alignment="vertical" width="auto" height="auto">
 			<tabs width="500" height="330">
 				<tabs-header id="findreplace_tabs-header">
 					<tab id="findreplace_caption" image="resources/engine/images/attention.png" text="Find and Replace" closeable="true"/>
@@ -61,7 +62,8 @@
 					</tab-content>
 				</tabs-content>
 			</tabs>
-			
+		</moveable>
+
 	</layout>
 </screen>
 

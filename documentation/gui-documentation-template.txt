@@ -233,6 +233,7 @@ knob
 layer
 	background-color
 	border
+	border-bottom
 	border-color
 	height
 	hide-on
@@ -308,6 +309,19 @@ menu-item
 
 menu-separator
 
+moveable
+	* accepts XML within tag
+	alignment
+	height
+	hide-on
+	horizontal-align
+	id
+	left
+	show-on
+	top
+	vertical-align
+	width
+
 panel
 	background-color
 	height
@@ -346,6 +360,7 @@ scrollarea
 	alignment
 	background-color
 	border
+	border-color
 	focusable
 	height
 	hide-on
@@ -410,6 +425,7 @@ selector-horizontal
 	* accepts XML within tag
 	hide-on
 	id
+	name
 	on-change
 	on-initialize
 	on-mouse-click
@@ -466,7 +482,9 @@ slider-vertical
 
 space
 	alignment
+	border
 	border-bottom
+	border-color
 	border-color-bottom
 	factor
 	height
@@ -494,6 +512,7 @@ styled-input
 	padding
 	preformatted
 	show-on
+	size
 	width
 
 styled-text
@@ -504,6 +523,7 @@ styled-text
 	horizontal-align
 	id
 	preformatted
+	size
 	width
 
 tab
@@ -581,18 +601,26 @@ text
 	hide-on
 	horizontal-align
 	id
+	padding
 	padding-bottom
 	padding-left
 	padding-right
 	padding-top
 	show-on
+	size
 	text
 	vertical-align
 	width
 
 texture
+	background-color
 	height
 	id
+	show-on
 	src
 	width
 
+video
+	height
+	src
+	width

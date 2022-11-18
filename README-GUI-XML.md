@@ -12,8 +12,8 @@ This is the documentation of supported TDME2-GUI XML elements and their attribut
 | flow                              | floating \| integrated                                                                 | integrated        |
 | horizontal-align                  | left \| center \| right                                                                | left              |
 | vertical-align                    | top \| center \| bottom                                                                | top               |
-| x                                 | x position of node in %, pixel                                                         | none              |
-| y                                 | y position of node in %, pixel                                                         | none              |
+| left                              | x position of node in %, pixel                                                         | none              |
+| top                               | y position of node in %, pixel                                                         | none              |
 | width                             | width in %, pixel or rest(*) or auto for computed width                                | auto              |
 | height                            | height in %, pixel or rest(*) or auto for computed height                              | auto              |
 | factor                            |                                                                                        | 0                 |
@@ -501,7 +501,25 @@ This element supports \<menu-item\>and others as sub elements.
 
 ### 2.6.4. \<menu-separator\>
 
-## 2.7. \<progress-bar\>
+## 2.7. \<moveable\>
+
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| id                                | the unique node id within screen                                                       | auto generated id |
+| show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
+| hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
+| horizontal-align                  | left \| center \| right                                                                | left              |
+| vertical-align                    | top \| center \| bottom                                                                | top               |
+| alignment                         | none \| horizontal \| vertical                                                         | none              |
+| left                              | x position of node in %, pixel                                                         | none              |
+| top                               | y position of node in %, pixel                                                         | none              |
+| width                             | width in %, pixel or rest(*) or auto for computed width                                | auto              |
+| height                            | height in %, pixel or rest(*) or auto for computed height                              | auto              |
+| template                          | location of template XML file to override compound element XML                         | none              |
+
+This element supports all other elements as sub elements.
+
+## 2.8. \<progress-bar\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -512,7 +530,7 @@ This element supports \<menu-item\>and others as sub elements.
 | width                             | width in %, pixel                                                                      | 223               |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
-## 2.8. \<radiobutton\>
+## 2.9. \<radiobutton\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -533,7 +551,7 @@ This element supports \<menu-item\>and others as sub elements.
 | value                             | value of this element, which will represent selection state                            | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
-## 2.9. \<scrollarea\>
+## 2.10. \<scrollarea\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -550,9 +568,9 @@ This element supports \<menu-item\>and others as sub elements.
 | padding                           | padding for content node                                                               | 0                 |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
-## 2.10. Selectbox
+## 2.11. Selectbox
 
-### 2.10.1. \<selectbox\>
+### 2.11.1. \<selectbox\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -575,7 +593,7 @@ This element supports \<menu-item\>and others as sub elements.
 
 This element supports \<selectbox-option\> and others as sub elements.
 
-### 2.10.2. \<selectbox-option\>
+### 2.11.2. \<selectbox-option\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -595,9 +613,9 @@ This element supports \<selectbox-option\> and others as sub elements.
 | value                             | value of this element, which will represent selection state                            | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
-## 2.11. Horizontal selector
+## 2.12. Horizontal selector
 
-### 2.11.1. \<selector-horizontal\>
+### 2.12.1. \<selector-horizontal\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -614,7 +632,7 @@ This element supports \<selectbox-option\> and others as sub elements.
 
 This element supports  \<selector-horizontal-option\> and others as sub elements.
 
-### 2.11.2. \<selector-horizontal-option\>
+### 2.12.2. \<selector-horizontal-option\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -631,9 +649,9 @@ This element supports  \<selector-horizontal-option\> and others as sub elements
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
 | value                             | value of this element, which will represent selection state                            | none              |
 
-## 2.12. Sliders
+## 2.13. Sliders
 
-### 2.12.1. \<slider-horizontal\>
+### 2.13.1. \<slider-horizontal\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -652,7 +670,7 @@ This element supports  \<selector-horizontal-option\> and others as sub elements
 | value                             | value of this element, ranging from 0.0 <= value <= 1.0                                | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
-### 2.12.2. \<slider-vertical\>
+### 2.13.2. \<slider-vertical\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -671,7 +689,7 @@ This element supports  \<selector-horizontal-option\> and others as sub elements
 | value                             | value of this element, ranging from 0.0 <= value <= 1.0                                | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
-## 2.13. \<styled-input\>
+## 2.14. \<styled-input\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -702,9 +720,9 @@ Currently supported BBCode like tags are:
 [image=horizontal-scale:50%|0.5,vertical-scale:50%|0.5,width:100,height:100,effect-color-mul:#ff0000ff,effect-color-add:#ff000000]image.png[/image]
 ```
 
-## 2.14. Tabs
+## 2.15. Tabs
 
-### 2.14.1. \<tabs\>
+### 2.15.1. \<tabs\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -718,7 +736,7 @@ Currently supported BBCode like tags are:
 
 This element supports \<tabs-header\>,  \<tabs-content\> and others as sub elements.
 
-### 2.14.2. \<tabs-header\>
+### 2.15.2. \<tabs-header\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -730,7 +748,7 @@ This element supports \<tabs-header\>,  \<tabs-content\> and others as sub eleme
 
 This element supports \<tab\> and others as sub elements.
 
-### 2.14.3. \<tab\>
+### 2.15.3. \<tab\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -748,7 +766,7 @@ This element supports \<tab\> and others as sub elements.
 | on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
 
-### 2.14.4. \<tabs-content\>
+### 2.15.4. \<tabs-content\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -759,7 +777,7 @@ This element supports \<tab\> and others as sub elements.
 
 This element supports \<tab-content\> and others as sub elements.
 
-### 2.14.5. \<tab-content\>
+### 2.15.5. \<tab-content\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
