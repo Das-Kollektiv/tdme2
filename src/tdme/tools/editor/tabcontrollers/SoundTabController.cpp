@@ -81,12 +81,9 @@ void SoundTabController::dispose()
 {
 }
 
-void SoundTabController::save()
+void SoundTabController::executeCommand(TabControllerCommand command)
 {
-}
-
-void SoundTabController::saveAs()
-{
+	showErrorPopUp("Warning", "This command is not supported yet");
 }
 
 void SoundTabController::showErrorPopUp(const string& caption, const string& message)

@@ -235,13 +235,19 @@ void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIEl
 			onOpenProject();
 		} else
 		if (node->getId() == "menu_file_save") {
-			onSaveCurrentTab();
+			auto selectedTab = getSelectedTab();
+			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->executeCommand(TabController::COMMAND_SAVE);
 		} else
 		if (node->getId() == "menu_file_saveas") {
-			onSaveAsCurrentTab();
+			auto selectedTab = getSelectedTab();
+			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->executeCommand(TabController::COMMAND_SAVEAS);
 		} else
 		if (node->getId() == "menu_file_saveall") {
-			onSaveAllTabs();
+			// forward saveAs to active tab tab controller
+			for (auto& tabViewIt: tabViews) {
+				auto& tab = tabViewIt.second;
+				tab.getTabView()->getTabController()->executeCommand(TabController::COMMAND_SAVE);
+			}
 		} else
 		if (node->getId() == "menu_view_fullscreen") {
 			setFullScreen(isFullScreen() == false?true:false);
@@ -1736,26 +1742,6 @@ void EditorScreenController::enableSceneMenuEntry() {
 void EditorScreenController::disableSceneMenuEntry() {
 	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("menu_project_scene_run"))->getController()->setDisabled(true);
 	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("menu_project_scene_stop"))->getController()->setDisabled(true);
-}
-
-void EditorScreenController::onSaveCurrentTab() {
-	// forward save to active tab tab controller
-	auto selectedTab = getSelectedTab();
-	if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->save();
-}
-
-void EditorScreenController::onSaveAsCurrentTab() {
-	// forward saveAs to active tab tab controller
-	auto selectedTab = getSelectedTab();
-	if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->saveAs();
-}
-
-void EditorScreenController::onSaveAllTabs() {
-	// forward saveAs to active tab tab controller
-	for (auto& tabViewIt: tabViews) {
-		auto& tab = tabViewIt.second;
-		tab.getTabView()->getTabController()->save();
-	}
 }
 
 void EditorScreenController::getViewPort(GUINode* viewPortNode, int& left, int& top, int& width, int& height) {

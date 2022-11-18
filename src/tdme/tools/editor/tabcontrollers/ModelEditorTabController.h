@@ -188,8 +188,6 @@ public:
 	// overridden methods
 	void initialize(GUIScreenNode* screenNode) override;
 	void dispose() override;
-	void save() override;
-	void saveAs() override;
 
 	/**
 	 * Set outliner content
@@ -476,6 +474,7 @@ public:
 	void onFocus(GUIElementNode* node) override;
 	void onUnfocus(GUIElementNode* node) override;
 	void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) override;
+	void executeCommand(TabControllerCommand command) override;
 
 	/**
 	 * Update info text line

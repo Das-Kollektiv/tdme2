@@ -132,65 +132,74 @@ void TerrainEditorTabController::dispose()
 {
 }
 
-void TerrainEditorTabController::save()
+void TerrainEditorTabController::executeCommand(TabControllerCommand command)
 {
-	//
-	auto prototype = view->getPrototype();
-	if (prototype == nullptr) return;
+	switch (command) {
+		case COMMAND_SAVE:
+			{
+				//
+				auto prototype = view->getPrototype();
+				if (prototype == nullptr) return;
 
-	//
-	try {
-		if (prototype->getFileName().empty() == true) throw ExceptionBase("Could not save file. No filename known");
-		view->saveFile(
-			Tools::getPathName(prototype->getFileName()),
-			Tools::getFileName(prototype->getFileName())
-		);
-	} catch (Exception& exception) {
-		showErrorPopUp("Warning", (string(exception.what())));
-	}
-}
-
-void TerrainEditorTabController::saveAs()
-{
-	class OnModelSave: public virtual Action
-	{
-	public:
-		void performAction() override {
-			try {
-				modelEditorTabController->view->saveFile(
-					modelEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
-					modelEditorTabController->popUps->getFileDialogScreenController()->getFileName()
-				);
-			} catch (Exception& exception) {
-				modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+				//
+				try {
+					if (prototype->getFileName().empty() == true) throw ExceptionBase("Could not save file. No filename known");
+					view->saveFile(
+						Tools::getPathName(prototype->getFileName()),
+						Tools::getFileName(prototype->getFileName())
+					);
+				} catch (Exception& exception) {
+					showErrorPopUp("Warning", (string(exception.what())));
+				}
 			}
-			modelEditorTabController->popUps->getFileDialogScreenController()->close();
-		}
+			break;
+		case COMMAND_SAVEAS:
+			{
+				class OnModelSave: public virtual Action
+				{
+				public:
+					void performAction() override {
+						try {
+							modelEditorTabController->view->saveFile(
+								modelEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
+								modelEditorTabController->popUps->getFileDialogScreenController()->getFileName()
+							);
+						} catch (Exception& exception) {
+							modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+						}
+						modelEditorTabController->popUps->getFileDialogScreenController()->close();
+					}
 
-		/**
-		 * Public constructor
-		 * @param modelEditorTabController model editor tab controller
-		 */
-		OnModelSave(TerrainEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
-		}
+					/**
+					 * Public constructor
+					 * @param modelEditorTabController model editor tab controller
+					 */
+					OnModelSave(TerrainEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
+					}
 
-	private:
-		TerrainEditorTabController* modelEditorTabController;
-	};
+				private:
+					TerrainEditorTabController* modelEditorTabController;
+				};
 
-	//
-	auto prototype = view->getPrototype();
-	if (prototype == nullptr) return;
+				//
+				auto prototype = view->getPrototype();
+				if (prototype == nullptr) return;
 
-	//
-	popUps->getFileDialogScreenController()->show(
-		prototype->getFileName().empty() == false?Tools::getPathName(prototype->getFileName()):string(),
-		"Save to: ",
-		{{ "tterrain" }},
-		Tools::getFileName(prototype->getFileName()),
-		false,
-		new OnModelSave(this)
-	);
+				//
+				popUps->getFileDialogScreenController()->show(
+					prototype->getFileName().empty() == false?Tools::getPathName(prototype->getFileName()):string(),
+					"Save to: ",
+					{{ "tterrain" }},
+					Tools::getFileName(prototype->getFileName()),
+					false,
+					new OnModelSave(this)
+				);
+			}
+			break;
+		default:
+			showErrorPopUp("Warning", "This command is not supported yet");
+			break;
+	}
 }
 
 void TerrainEditorTabController::updateInfoText(const MutableString& text) {

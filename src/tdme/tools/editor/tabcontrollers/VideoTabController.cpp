@@ -71,12 +71,9 @@ void VideoTabController::dispose()
 {
 }
 
-void VideoTabController::save()
+void VideoTabController::executeCommand(TabControllerCommand command)
 {
-}
-
-void VideoTabController::saveAs()
-{
+	showErrorPopUp("Warning", "This command is not supported yet");
 }
 
 void VideoTabController::showErrorPopUp(const string& caption, const string& message)

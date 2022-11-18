@@ -157,66 +157,75 @@ void ModelEditorTabController::dispose()
 {
 }
 
-void ModelEditorTabController::save()
+void ModelEditorTabController::executeCommand(TabControllerCommand command)
 {
-	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
-	try {
-		if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
-		view->saveFile(
-			Tools::getPathName(fileName),
-			Tools::getFileName(fileName)
-		);
-	} catch (Exception& exception) {
-		showErrorPopUp("Warning", (string(exception.what())));
-	}
-}
-
-void ModelEditorTabController::saveAs()
-{
-	class OnModelSave: public virtual Action
-	{
-	public:
-		void performAction() override {
-			try {
-				modelEditorTabController->view->saveFile(
-					modelEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
-					modelEditorTabController->popUps->getFileDialogScreenController()->getFileName()
-				);
-			} catch (Exception& exception) {
-				modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+	switch (command) {
+		case COMMAND_SAVE:
+			{
+				auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
+				try {
+					if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
+					view->saveFile(
+						Tools::getPathName(fileName),
+						Tools::getFileName(fileName)
+					);
+				} catch (Exception& exception) {
+					showErrorPopUp("Warning", (string(exception.what())));
+				}
 			}
-			modelEditorTabController->popUps->getFileDialogScreenController()->close();
-		}
+			break;
+		case COMMAND_SAVEAS:
+			{
+				class OnModelSave: public virtual Action
+				{
+				public:
+					void performAction() override {
+						try {
+							modelEditorTabController->view->saveFile(
+								modelEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
+								modelEditorTabController->popUps->getFileDialogScreenController()->getFileName()
+							);
+						} catch (Exception& exception) {
+							modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+						}
+						modelEditorTabController->popUps->getFileDialogScreenController()->close();
+					}
 
-		/**
-		 * Public constructor
-		 * @param modelEditorTabController model editor tab controller
-		 */
-		OnModelSave(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
-		}
+					/**
+					 * Public constructor
+					 * @param modelEditorTabController model editor tab controller
+					 */
+					OnModelSave(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
+					}
 
-	private:
-		ModelEditorTabController* modelEditorTabController;
-	};
+				private:
+					ModelEditorTabController* modelEditorTabController;
+				};
 
-	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
-	if (fileName.length() == 0) {
-		fileName = view->getFileName();
-		if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmodel") == false) {
-			fileName = Tools::removeFileEnding(fileName) + ".tmodel";
-		}
+				auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
+				if (fileName.length() == 0) {
+					fileName = view->getFileName();
+					if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmodel") == false) {
+						fileName = Tools::removeFileEnding(fileName) + ".tmodel";
+					}
+				}
+				vector<string> extensions = {
+					"tmodel"
+				};
+				popUps->getFileDialogScreenController()->show(
+					Tools::getPathName(fileName),
+					"Save to: ",
+					extensions,
+					Tools::getFileName(fileName),
+					false,
+					new OnModelSave(this)
+				);
+			}
+			break;
+		default:
+			showErrorPopUp("Warning", "This command is not supported yet");
+			break;
 	}
-	vector<string> extensions = {
-		"tmodel"
-	};
-	popUps->getFileDialogScreenController()->show(
-		Tools::getPathName(fileName),
-		"Save to: ",
-		extensions,
-		Tools::getFileName(fileName),
-		false,
-		new OnModelSave(this)
-	);
 }
 
 void ModelEditorTabController::createOutlinerModelNodesXML(const string& prefix, const map<string, Node*>& subNodes, string& xml) {

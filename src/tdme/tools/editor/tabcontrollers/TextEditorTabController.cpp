@@ -103,61 +103,69 @@ void TextEditorTabController::dispose()
 	this->view->getTabScreenNode()->removeFocusListener(this);
 }
 
-void TextEditorTabController::save()
+void TextEditorTabController::executeCommand(TabControllerCommand command)
 {
-	auto fileName = view->getFileName();
-	try {
-		if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
-		view->saveFile(
-			Tools::getPathName(fileName),
-			Tools::getFileName(fileName)
-		);
-	} catch (Exception& exception) {
-		showErrorPopUp("Warning", (string(exception.what())));
-	}
-
-}
-
-void TextEditorTabController::saveAs()
-{
-	class OnTextSave: public virtual Action
-	{
-	public:
-		void performAction() override {
-			try {
-				textEditorTabController->view->saveFile(
-					textEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
-					textEditorTabController->popUps->getFileDialogScreenController()->getFileName()
-				);
-			} catch (Exception& exception) {
-				textEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+	switch (command) {
+		case COMMAND_SAVE:
+			{
+				auto fileName = view->getFileName();
+				try {
+					if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
+					view->saveFile(
+						Tools::getPathName(fileName),
+						Tools::getFileName(fileName)
+					);
+				} catch (Exception& exception) {
+					showErrorPopUp("Warning", (string(exception.what())));
+				}
 			}
-			textEditorTabController->popUps->getFileDialogScreenController()->close();
-		}
+			break;
+		case COMMAND_SAVEAS:
+			{
+				class OnTextSave: public virtual Action
+				{
+				public:
+					void performAction() override {
+						try {
+							textEditorTabController->view->saveFile(
+								textEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
+								textEditorTabController->popUps->getFileDialogScreenController()->getFileName()
+							);
+						} catch (Exception& exception) {
+							textEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+						}
+						textEditorTabController->popUps->getFileDialogScreenController()->close();
+					}
 
-		/**
-		 * Public constructor
-		 * @param textEditorTabController text editor tab controller
-		 */
-		OnTextSave(TextEditorTabController* textEditorTabController): textEditorTabController(textEditorTabController) {
-		}
+					/**
+					 * Public constructor
+					 * @param textEditorTabController text editor tab controller
+					 */
+					OnTextSave(TextEditorTabController* textEditorTabController): textEditorTabController(textEditorTabController) {
+					}
 
-	private:
-		TextEditorTabController* textEditorTabController;
-	};
+				private:
+					TextEditorTabController* textEditorTabController;
+				};
 
-	auto fileName = view->getFileName();
-	vector<string> extensions = {
-		view->getExtension()
-	};
-	popUps->getFileDialogScreenController()->show(
-		Tools::getPathName(fileName),
-		"Save to: ",
-		extensions,
-		Tools::getFileName(fileName),
-		false,
-		new OnTextSave(this)
-	);
+				auto fileName = view->getFileName();
+				vector<string> extensions = {
+					view->getExtension()
+				};
+				popUps->getFileDialogScreenController()->show(
+					Tools::getPathName(fileName),
+					"Save to: ",
+					extensions,
+					Tools::getFileName(fileName),
+					false,
+					new OnTextSave(this)
+				);
+			}
+			break;
+		default:
+			showErrorPopUp("Warning", "This command is not supported yet");
+			break;
+	}
 }
 
 void TextEditorTabController::showErrorPopUp(const string& caption, const string& message)

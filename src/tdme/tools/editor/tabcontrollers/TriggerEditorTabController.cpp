@@ -98,54 +98,63 @@ void TriggerEditorTabController::dispose()
 {
 }
 
-void TriggerEditorTabController::save()
+void TriggerEditorTabController::executeCommand(TabControllerCommand command)
 {
-	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
-	try {
-		if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
-		view->saveFile(
-			Tools::getPathName(fileName),
-			Tools::getFileName(fileName)
-		);
-	} catch (Exception& exception) {
-		showErrorPopUp("Warning", (string(exception.what())));
-	}
-}
-
-void TriggerEditorTabController::saveAs()
-{
-	class OnTriggerSave: public virtual Action
-	{
-	public:
-		void performAction() override {
-			try {
-				triggerEditorTabController->view->saveFile(
-					triggerEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
-					triggerEditorTabController->popUps->getFileDialogScreenController()->getFileName()
-				);
-			} catch (Exception& exception) {
-				triggerEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+	switch (command) {
+		case COMMAND_SAVE:
+			{
+				auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
+				try {
+					if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
+					view->saveFile(
+						Tools::getPathName(fileName),
+						Tools::getFileName(fileName)
+					);
+				} catch (Exception& exception) {
+					showErrorPopUp("Warning", (string(exception.what())));
+				}
 			}
-			triggerEditorTabController->popUps->getFileDialogScreenController()->close();
-		}
-		OnTriggerSave(TriggerEditorTabController* triggerEditorTabController): triggerEditorTabController(triggerEditorTabController) {
-		}
-	private:
-		TriggerEditorTabController* triggerEditorTabController;
-	};
+			break;
+		case COMMAND_SAVEAS:
+			{
+				class OnTriggerSave: public virtual Action
+				{
+				public:
+					void performAction() override {
+						try {
+							triggerEditorTabController->view->saveFile(
+								triggerEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
+								triggerEditorTabController->popUps->getFileDialogScreenController()->getFileName()
+							);
+						} catch (Exception& exception) {
+							triggerEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+						}
+						triggerEditorTabController->popUps->getFileDialogScreenController()->close();
+					}
+					OnTriggerSave(TriggerEditorTabController* triggerEditorTabController): triggerEditorTabController(triggerEditorTabController) {
+					}
+				private:
+					TriggerEditorTabController* triggerEditorTabController;
+				};
 
-	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
-	vector<string> extensions = {
-		"ttrigger"
-	};
-	popUps->getFileDialogScreenController()->show(
-		fileName.empty() == false?Tools::getPathName(fileName):string(),
-		"Save to: ",
-		extensions,
-		Tools::getFileName(fileName),
-		false,
-		new OnTriggerSave(this)
-	);
+				auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
+				vector<string> extensions = {
+					"ttrigger"
+				};
+				popUps->getFileDialogScreenController()->show(
+					fileName.empty() == false?Tools::getPathName(fileName):string(),
+					"Save to: ",
+					extensions,
+					Tools::getFileName(fileName),
+					false,
+					new OnTriggerSave(this)
+				);
+			}
+			break;
+		default:
+			showErrorPopUp("Warning", "This command is not supported yet");
+			break;
+	}
 }
 
 void TriggerEditorTabController::onValueChanged(GUIElementNode* node)

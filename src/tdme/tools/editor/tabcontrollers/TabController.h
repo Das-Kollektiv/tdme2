@@ -20,6 +20,8 @@ using tdme::gui::nodes::GUIScreenNode;
  */
 struct tdme::tools::editor::tabcontrollers::TabController: public GUIActionListener, public GUIChangeListener, public GUIFocusListener, public GUIContextMenuRequestListener
 {
+	enum TabControllerCommand { COMMAND_SAVE, COMMAND_SAVEAS, COMMAND_UNDO, COMMAND_REDO, COMMAND_CUT, COMMAND_COPY, COMMAND_PASTE, COMMAND_DELETE, COMMAND_FINDREPLACE};
+
 	/**
 	 * Destructor
 	 */
@@ -39,13 +41,9 @@ struct tdme::tools::editor::tabcontrollers::TabController: public GUIActionListe
 	virtual GUIScreenNode* getScreenNode() = 0;
 
 	/**
-	 * Save
+	 * Execute command
+	 * @param command command
 	 */
-	virtual void save() = 0;
-
-	/**
-	 * Save
-	 */
-	virtual void saveAs() = 0;
+	virtual void executeCommand(TabControllerCommand command) = 0;
 
 };
