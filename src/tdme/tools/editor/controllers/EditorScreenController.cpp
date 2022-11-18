@@ -249,6 +249,34 @@ void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIEl
 				tab.getTabView()->getTabController()->executeCommand(TabController::COMMAND_SAVE);
 			}
 		} else
+		if (node->getId() == "menu_edit_undo") {
+			auto selectedTab = getSelectedTab();
+			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->executeCommand(TabController::COMMAND_UNDO);
+		} else
+		if (node->getId() == "menu_edit_redo") {
+			auto selectedTab = getSelectedTab();
+			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->executeCommand(TabController::COMMAND_REDO);
+		} else
+		if (node->getId() == "menu_edit_cut") {
+			auto selectedTab = getSelectedTab();
+			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->executeCommand(TabController::COMMAND_CUT);
+		} else
+		if (node->getId() == "menu_edit_copy") {
+			auto selectedTab = getSelectedTab();
+			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->executeCommand(TabController::COMMAND_COPY);
+		} else
+		if (node->getId() == "menu_edit_paste") {
+			auto selectedTab = getSelectedTab();
+			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->executeCommand(TabController::COMMAND_PASTE);
+		} else
+		if (node->getId() == "menu_edit_delete") {
+			auto selectedTab = getSelectedTab();
+			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->executeCommand(TabController::COMMAND_DELETE);
+		} else
+		if (node->getId() == "menu_edit_findreplace") {
+			auto selectedTab = getSelectedTab();
+			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->executeCommand(TabController::COMMAND_FINDREPLACE);
+		} else
 		if (node->getId() == "menu_view_fullscreen") {
 			setFullScreen(isFullScreen() == false?true:false);
 		} else

@@ -11,6 +11,7 @@ namespace controllers {
 	class ContextMenuScreenController;
 	class EditorScreenController;
 	class FileDialogScreenController;
+	class FindReplaceDialogScreenController;
 	class InfoDialogScreenController;
 	class ProgressBarScreenController;
 	struct ScreenController;

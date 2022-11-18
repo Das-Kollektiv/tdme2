@@ -8,6 +8,7 @@ using tdme::tools::editor::controllers::AboutDialogScreenController;
 using tdme::tools::editor::controllers::ColorPickerScreenController;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
+using tdme::tools::editor::controllers::FindReplaceDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::ProgressBarScreenController;
 
@@ -24,6 +25,7 @@ private:
 	ColorPickerScreenController* colorPickerScreenController { nullptr };
 	ContextMenuScreenController* contextMenuScreenController { nullptr };
 	AboutDialogScreenController* aboutDialogScreenController { nullptr };
+	FindReplaceDialogScreenController* findReplaceDialogScreenController { nullptr };
 
 public:
 	/**
@@ -76,6 +78,13 @@ public:
 	 */
 	inline AboutDialogScreenController* getAboutDialogScreenController() {
 		return aboutDialogScreenController;
+	}
+
+	/**
+	 * @return find replace dialog screen controller
+	 */
+	inline FindReplaceDialogScreenController* getFindReplaceDialogScreenController() {
+		return findReplaceDialogScreenController;
 	}
 
 	/**
