@@ -1610,6 +1610,16 @@ bool TextEditorTabView::find(const string& findString, bool matchCase, bool whol
 		auto p = StringTools::indexOf(_text, _findString, i);
 		if (p != string::npos) {
 			i = p + _findString.size();
+			if (wholeWord == true) {
+				auto __text = MutableString(_text);
+				auto __textCharIdxBefore = __text.getUtf8CharacterIndex(p) - 1;
+				auto __textCharIdxAfter = __text.getUtf8CharacterIndex(p + _findString.size());
+				auto __textCharBefore = __text.getUTF8CharAt(__textCharIdxBefore);
+				auto __textCharAfter = __text.getUTF8CharAt(__textCharIdxAfter);
+				if (Character::isAlphaNumeric(__textCharBefore) == true || Character::isAlphaNumeric(__textCharAfter) == true) {
+					continue;
+				}
+			}
 			if (fi == -1) fi = p;
 			if (ni != -1 && (firstSearch == true?p >= ni:p > ni)) {
 				textNodeController->setIndex(p);
@@ -1649,8 +1659,18 @@ int TextEditorTabView::count(const string& findString, bool matchCase, bool whol
 	while (i < l) {
 		auto p = StringTools::indexOf(_text, _findString, i);
 		if (p != string::npos) {
-			textNode->setTextStyle(p, p + _findString.size() - 1, GUIColor("#ff0000"));
 			i = p + _findString.size();
+			if (wholeWord == true) {
+				auto __text = MutableString(_text);
+				auto __textCharIdxBefore = __text.getUtf8CharacterIndex(p) - 1;
+				auto __textCharIdxAfter = __text.getUtf8CharacterIndex(p + _findString.size());
+				auto __textCharBefore = __text.getUTF8CharAt(__textCharIdxBefore);
+				auto __textCharAfter = __text.getUTF8CharAt(__textCharIdxAfter);
+				if (Character::isAlphaNumeric(__textCharBefore) == true || Character::isAlphaNumeric(__textCharAfter) == true) {
+					continue;
+				}
+			}
+			textNode->setTextStyle(p, p + _findString.size() - 1, GUIColor("#ff0000"));
 			c++;
 		} else {
 			break;
@@ -1675,6 +1695,16 @@ bool TextEditorTabView::replace(const string& findString, const string& replaceS
 		auto p = StringTools::indexOf(_text, _findString, i);
 		if (p != string::npos) {
 			i = p + _findString.size();
+			if (wholeWord == true) {
+				auto __text = MutableString(_text);
+				auto __textCharIdxBefore = __text.getUtf8CharacterIndex(p) - 1;
+				auto __textCharIdxAfter = __text.getUtf8CharacterIndex(p + _findString.size());
+				auto __textCharBefore = __text.getUTF8CharAt(__textCharIdxBefore);
+				auto __textCharAfter = __text.getUTF8CharAt(__textCharIdxAfter);
+				if (Character::isAlphaNumeric(__textCharBefore) == true || Character::isAlphaNumeric(__textCharAfter) == true) {
+					continue;
+				}
+			}
 			if (fi == -1) fi = p;
 			if (ni != -1 && p >= ni) {
 				text = StringTools::substring(text, 0, p) + replaceString + StringTools::substring(text, p + _findString.size());
@@ -1716,9 +1746,19 @@ bool TextEditorTabView::replaceAll(const string& findString, const string& repla
 	while (i < l) {
 		auto p = StringTools::indexOf(_text, _findString, i);
 		if (p != string::npos) {
+			i = p + replaceString.size();
+			if (wholeWord == true) {
+				auto __text = MutableString(_text);
+				auto __textCharIdxBefore = __text.getUtf8CharacterIndex(p) - 1;
+				auto __textCharIdxAfter = __text.getUtf8CharacterIndex(p + _findString.size());
+				auto __textCharBefore = __text.getUTF8CharAt(__textCharIdxBefore);
+				auto __textCharAfter = __text.getUTF8CharAt(__textCharIdxAfter);
+				if (Character::isAlphaNumeric(__textCharBefore) == true || Character::isAlphaNumeric(__textCharAfter) == true) {
+					continue;
+				}
+			}
 			text = StringTools::substring(text, 0, p) + replaceString + StringTools::substring(text, p + _findString.size());
 			_text = matchCase == false?StringTools::toLowerCase(text):text;
-			i = p + replaceString.size();
 			success = true;
 		} else {
 			break;
