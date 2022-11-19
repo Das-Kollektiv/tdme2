@@ -119,4 +119,9 @@ public:
 	 */
 	void showErrorPopUp(const string& caption, const string& message);
 
+	/**
+	 * Close find/replace window
+	 */
+	void closeFindReplaceWindow();
+
 };

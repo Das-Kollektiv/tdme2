@@ -407,3 +407,7 @@ void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx
 void TextEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
 }
+
+void TextEditorTabController::closeFindReplaceWindow() {
+	popUps->getFindReplaceDialogScreenController()->close();
+}

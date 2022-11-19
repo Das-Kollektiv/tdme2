@@ -415,6 +415,7 @@ void TextEditorTabView::initialize()
 void TextEditorTabView::dispose()
 {
 	required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->removeChangeListener(textNodeChangeListener);
+	textEditorTabController->closeFindReplaceWindow();
 	engine->dispose();
 }
 
@@ -434,6 +435,7 @@ void TextEditorTabView::activate() {
 
 void TextEditorTabView::deactivate() {
 	editorView->getScreenController()->storeOutlinerState(outlinerState);
+	textEditorTabController->closeFindReplaceWindow();
 }
 
 void TextEditorTabView::reloadOutliner() {
@@ -442,6 +444,7 @@ void TextEditorTabView::reloadOutliner() {
 }
 
 void TextEditorTabView::setVisualEditor() {
+	textEditorTabController->closeFindReplaceWindow();
 	auto editorNode = dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen(tabScreenNode->getId())->getNodeById("editor"));
 	if (editorNode != nullptr) editorNode->getActiveConditions().set("visualization");
 	visualEditor = true;
