@@ -1595,7 +1595,7 @@ void TextEditorTabView::createMiniScriptConnections() {
 	}
 }
 
-bool TextEditorTabView::find(const string& findString, bool matchCase, bool wholeWord, bool selection) {
+bool TextEditorTabView::find(const string& findString, bool matchCase, bool wholeWord, bool selection, bool firstSearch) {
 	reformat();
 	auto success = false;
 	auto _findString = matchCase == false?StringTools::toLowerCase(findString):findString;
@@ -1611,12 +1611,13 @@ bool TextEditorTabView::find(const string& findString, bool matchCase, bool whol
 		if (p != string::npos) {
 			i = p + _findString.size();
 			if (fi == -1) fi = p;
-			if (ni != -1 && p > ni) {
+			if (ni != -1 && (firstSearch == true?p >= ni:p > ni)) {
 				textNodeController->setIndex(p);
 				textNodeController->setSelectionIndex(-1);
 				textNode->setTextStyle(p, p + _findString.size() - 1, GUIColor("#ff0000"));
 				textNode->scrollToIndex();
 				ni = -1;
+				firstSearch = false;
 				success = true;
 				//
 				break;
@@ -1677,7 +1678,7 @@ bool TextEditorTabView::replace(const string& findString, const string& replaceS
 			if (fi == -1) fi = p;
 			if (ni != -1 && p >= ni) {
 				text = StringTools::substring(text, 0, p) + replaceString + StringTools::substring(text, p + _findString.size());
-				textNodeController->setIndex(p);
+				textNodeController->setIndex(p + _findString.size());
 				textNodeController->setSelectionIndex(-1);
 				textNode->scrollToIndex();
 				ni = -1;
@@ -1691,7 +1692,7 @@ bool TextEditorTabView::replace(const string& findString, const string& replaceS
 	}
 	if (ni != -1 && fi != -1) {
 		text = StringTools::substring(text, 0, fi) + replaceString + StringTools::substring(text, fi + _findString.size());
-		textNodeController->setIndex(fi);
+		textNodeController->setIndex(fi + _findString.size());
 		textNodeController->setSelectionIndex(-1);
 		textNode->scrollToIndex();
 		success = true;

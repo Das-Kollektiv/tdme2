@@ -370,9 +370,10 @@ public:
 	 * @param matchCase only find string that also matches case in find string
 	 * @param wholeWord only find whole worlds
 	 * @param selection only find in selection
+	 * @param firstSearch first search
 	 * @return success
 	 */
-	bool find(const string& findString, bool matchCase, bool wholeWord, bool selection);
+	bool find(const string& findString, bool matchCase, bool wholeWord, bool selection, bool firstSearch);
 
 	/**
 	 * Count string

@@ -167,6 +167,8 @@ void TextEditorTabController::executeCommand(TabControllerCommand command)
 		case COMMAND_FINDREPLACE:
 			{
 				//
+				firstSearch = true;
+				//
 				class FindAction: public virtual Action
 				{
 				public:
@@ -175,10 +177,12 @@ void TextEditorTabController::executeCommand(TabControllerCommand command)
 							textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText(),
 							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isMatchCase(),
 							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isWholeWordOnly(),
-							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly()
+							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly(),
+							textEditorTabController->firstSearch
 						) == false) {
 							textEditorTabController->showErrorPopUp("Find", "Text not found.");
 						}
+						textEditorTabController->firstSearch = false;
 					}
 					FindAction(TextEditorTabController* textEditorTabController): textEditorTabController(textEditorTabController) {
 					}

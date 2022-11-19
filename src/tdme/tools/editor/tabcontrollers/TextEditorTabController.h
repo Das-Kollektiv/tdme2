@@ -56,6 +56,7 @@ private:
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
 	vector<MiniScriptScriptSyntaxTree> miniScriptSyntaxTrees;
+	bool firstSearch { true };
 
 public:
 	/**
