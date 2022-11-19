@@ -175,17 +175,21 @@ void TextEditorTabController::executeCommand(TabControllerCommand command)
 				{
 				public:
 					void performAction() override {
-						if (textEditorTabController->view->find(
-							textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText(),
-							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isMatchCase(),
-							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isWholeWordOnly(),
-							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly(),
-							textEditorTabController->firstSearch,
-							textEditorTabController->searchIndex
-						) == false) {
-							textEditorTabController->showErrorPopUp("Find", "Text not found.");
+						if (textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText().empty() == true) {
+							textEditorTabController->showErrorPopUp("Find", "No find string given.");
+						} else {
+							if (textEditorTabController->view->find(
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText(),
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->isMatchCase(),
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->isWholeWordOnly(),
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly(),
+								textEditorTabController->firstSearch,
+								textEditorTabController->searchIndex
+							) == false) {
+								textEditorTabController->showErrorPopUp("Find", "Text not found.");
+							}
+							textEditorTabController->firstSearch = false;
 						}
-						textEditorTabController->firstSearch = false;
 					}
 					FindAction(TextEditorTabController* textEditorTabController): textEditorTabController(textEditorTabController) {
 					}
@@ -197,13 +201,17 @@ void TextEditorTabController::executeCommand(TabControllerCommand command)
 				{
 				public:
 					void performAction() override {
-						auto count = textEditorTabController->view->count(
-							textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText(),
-							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isMatchCase(),
-							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isWholeWordOnly(),
-							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly()
-						);
-						textEditorTabController->showErrorPopUp("Count", "The text occurred " + to_string(count) + " times.");
+						if (textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText().empty() == true) {
+							textEditorTabController->showErrorPopUp("Count", "No find string given.");
+						} else {
+							auto count = textEditorTabController->view->count(
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText(),
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->isMatchCase(),
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->isWholeWordOnly(),
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly()
+							);
+							textEditorTabController->showErrorPopUp("Count", "The text occurred " + to_string(count) + " times.");
+						}
 					}
 					CountAction(TextEditorTabController* textEditorTabController): textEditorTabController(textEditorTabController) {
 					}
@@ -215,15 +223,19 @@ void TextEditorTabController::executeCommand(TabControllerCommand command)
 				{
 				public:
 					void performAction() override {
-						if (textEditorTabController->view->replace(
-							textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText(),
-							textEditorTabController->popUps->getFindReplaceDialogScreenController()->getReplaceText(),
-							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isMatchCase(),
-							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isWholeWordOnly(),
-							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly(),
-							textEditorTabController->searchIndex
-						) == false) {
-							textEditorTabController->showErrorPopUp("Replace", "Text not found.");
+						if (textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText().empty() == true) {
+							textEditorTabController->showErrorPopUp("Replace", "No find string given.");
+						} else {
+							if (textEditorTabController->view->replace(
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText(),
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->getReplaceText(),
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->isMatchCase(),
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->isWholeWordOnly(),
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly(),
+								textEditorTabController->searchIndex
+							) == false) {
+								textEditorTabController->showErrorPopUp("Replace", "Text not found.");
+							}
 						}
 					}
 					ReplaceAction(TextEditorTabController* textEditorTabController): textEditorTabController(textEditorTabController) {
@@ -236,14 +248,18 @@ void TextEditorTabController::executeCommand(TabControllerCommand command)
 				{
 				public:
 					void performAction() override {
-						if (textEditorTabController->view->replaceAll(
-							textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText(),
-							textEditorTabController->popUps->getFindReplaceDialogScreenController()->getReplaceText(),
-							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isMatchCase(),
-							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isWholeWordOnly(),
-							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly()
-						) == false) {
-							textEditorTabController->showErrorPopUp("Replace All", "Text not found.");
+						if (textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText().empty() == true) {
+							textEditorTabController->showErrorPopUp("Replace All", "No find string given.");
+						} else {
+							if (textEditorTabController->view->replaceAll(
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText(),
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->getReplaceText(),
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->isMatchCase(),
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->isWholeWordOnly(),
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly()
+							) == false) {
+								textEditorTabController->showErrorPopUp("Replace All", "Text not found.");
+							}
 						}
 					}
 					ReplaceAllAction(TextEditorTabController* textEditorTabController): textEditorTabController(textEditorTabController) {
