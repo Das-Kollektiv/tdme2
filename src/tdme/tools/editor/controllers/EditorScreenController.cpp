@@ -1172,11 +1172,11 @@ void EditorScreenController::FileOpenThread::run() {
 }
 
 void EditorScreenController::openFile(const string& absoluteFileName) {
-	Console::println("EditorScreenController::onOpenFile(): " + absoluteFileName);
+	Console::println("EditorScreenController::openFile(): " + absoluteFileName);
 
 	// should never happen but still ...
 	if (fileOpenThread != nullptr) {
-		Console::println("EditorScreenController::onOpenFile(): " + absoluteFileName + ": file open thread is already busy with opening a file");
+		Console::println("EditorScreenController::openFile(): " + absoluteFileName + ": file open thread is already busy with opening a file");
 		showErrorPopUp("Error", string() + "File open thread is already busy with opening a file");
 		return;
 	}
@@ -1378,13 +1378,15 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 				throw ExceptionBase("Unknown file type.");
 		}
 	} catch (Exception& exception) {
-		Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));
+		Console::print(string("EditorScreenController::openFile(): An error occurred: "));
 		Console::println(string(exception.what()));
 		showErrorPopUp("Error", string() + "An error occurred: " + exception.what());
 	}
 }
 
 void EditorScreenController::onOpenFileFinish(const string& tabId, FileType fileType, const string& absoluteFileName, Prototype* prototype, Scene* scene) {
+	Console::println(string("EditorScreenController::onOpenFileFinish(): absoluteFileName: " + absoluteFileName));
+
 	auto fileName = FileSystem::getInstance()->getFileName(absoluteFileName);
 	auto fileNameLowerCase = StringTools::toLowerCase(fileName);
 

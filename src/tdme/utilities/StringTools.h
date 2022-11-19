@@ -136,7 +136,7 @@ public:
 	 * @param beginIndex index to begin with
 	 * @return index or -1 if not found
 	 */
-	inline static int32_t lastIndexOf(const string& src, char what, int beginIndex = 0) {
+	inline static int32_t lastIndexOf(const string& src, char what, int beginIndex = -1) {
 		return src.find_last_of(what, beginIndex);
 	}
 
@@ -147,7 +147,7 @@ public:
 	 * @param beginIndex index to begin with
 	 * @return index or -1 if not found
 	 */
-	inline static int32_t lastIndexOf(const string& src, const string& what, int beginIndex = 0) {
+	inline static int32_t lastIndexOf(const string& src, const string& what, int beginIndex = -1) {
 		return src.find_last_of(what, beginIndex);
 	}
 

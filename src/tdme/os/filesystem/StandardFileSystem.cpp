@@ -299,15 +299,15 @@ void StandardFileSystem::changePath(const string& pathName) {
 }
 
 const string StandardFileSystem::getPathName(const string& fileName) {
-	string unixFileName = StringTools::replace(fileName, '\\', '/');
-	int32_t lastPathSeparator = StringTools::lastIndexOf(unixFileName, L'/');
+	auto unixFileName = StringTools::replace(fileName, '\\', '/');
+	auto lastPathSeparator = StringTools::lastIndexOf(unixFileName, '/');
 	if (lastPathSeparator == -1) return ".";
 	return StringTools::substring(unixFileName, 0, lastPathSeparator);
 }
 
 const string StandardFileSystem::getFileName(const string& fileName) {
-	string unixFileName = StringTools::replace(fileName, '\\', '/');
-	int32_t lastPathSeparator = StringTools::lastIndexOf(unixFileName, L'/');
+	auto unixFileName = StringTools::replace(fileName, '\\', '/');
+	auto lastPathSeparator = StringTools::lastIndexOf(unixFileName, '/');
 	if (lastPathSeparator == -1) return fileName;
 	return StringTools::substring(unixFileName, lastPathSeparator + 1, unixFileName.length());
 }
