@@ -190,6 +190,7 @@
             - slider horizontal
             - slider vertical
             - tabs
+            - moveable
         - supports custom templates in general
         - supports overriding used template of a compound element while using its controller
         - so TDME2 GUI is fully customizable in terms of appearance by modifying or adding XML template definitions
