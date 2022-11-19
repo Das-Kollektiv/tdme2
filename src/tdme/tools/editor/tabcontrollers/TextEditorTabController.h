@@ -57,6 +57,7 @@ private:
 	PopUps* popUps { nullptr };
 	vector<MiniScriptScriptSyntaxTree> miniScriptSyntaxTrees;
 	bool firstSearch { true };
+	int searchIndex { -1 };
 
 public:
 	/**

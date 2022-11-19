@@ -1056,14 +1056,12 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 	// Console::println("char start idx: " + to_string(charStartIdx) + ", char end idx: " + to_string(charEndIdx) + ", chars: " + to_string(text.size()) + ", start text style idx: " + to_string(startTextStyleIdx) + ", start render y: " + to_string(startRenderY) + ", auto width: " + to_string(autoWidth) + ", auto height = " + to_string(autoHeight))
 
 	//
-	auto cursorMode = GUIStyledTextNodeController::CURSORMODE_HIDE;
-	auto cursorIndex = -1;
-	auto cursorSelectionIndex = -1;
 	auto styledTextController = required_dynamic_cast<GUIStyledTextNodeController*>(controller);
+	auto cursorMode = GUIStyledTextNodeController::CURSORMODE_HIDE;
+	auto cursorIndex = styledTextController->getIndex();
+	auto cursorSelectionIndex = styledTextController->getSelectionIndex();
 	if (editMode == true) {
 		cursorMode = styledTextController->getCursorMode();
-		cursorIndex = styledTextController->getIndex();
-		cursorSelectionIndex = styledTextController->getSelectionIndex();
 	}
 
 	//
@@ -1470,7 +1468,7 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 
 								//
 								auto hasSelection = false;
-								if (editMode == true && (cursorSelectionIndex != -1 || findNewSelectionIndex == true)) {
+								if (cursorSelectionIndex != -1 || findNewSelectionIndex == true) {
 									if ((cursorSelectionIndex != -1 && lineCharIdxs[kc] >= Math::min(cursorIndex, cursorSelectionIndex) && lineCharIdxs[kc] < Math::max(cursorIndex, cursorSelectionIndex)) ||
 										(cursorSelectionIndex == -1 && lineCharIdxs[kc] >= cursorIndex)) {
 										for (auto l = 0; l < characterCount; l++) {
@@ -1500,11 +1498,7 @@ void GUIStyledTextNode::render(GUIRenderer* guiRenderer)
 										guiRenderer->render();
 										lastColor = currentColor;
 									}
-									if (hasSelection == true) {
-										currentFont->drawCharacter(guiRenderer, character, left, top, selectionTextColor);
-									} else {
-										currentFont->drawCharacter(guiRenderer, character, left, top, currentColor);
-									}
+									currentFont->drawCharacter(guiRenderer, character, left, top, currentColor);
 								}
 
 								// draw cursor

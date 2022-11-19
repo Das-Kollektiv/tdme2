@@ -1595,7 +1595,12 @@ void TextEditorTabView::createMiniScriptConnections() {
 	}
 }
 
-bool TextEditorTabView::find(const string& findString, bool matchCase, bool wholeWord, bool selection, bool firstSearch) {
+int TextEditorTabView::getTextIndex() {
+	auto textNodeController = required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController());
+	return textNodeController->getIndex();
+}
+
+bool TextEditorTabView::find(const string& findString, bool matchCase, bool wholeWord, bool selection, bool firstSearch, int& index) {
 	reformat();
 	auto success = false;
 	auto _findString = matchCase == false?StringTools::toLowerCase(findString):findString;
@@ -1604,11 +1609,11 @@ bool TextEditorTabView::find(const string& findString, bool matchCase, bool whol
 	auto inSelectionAvailable = textNodeController->getIndex() != -1 && textNodeController->getSelectionIndex() != -1;
 	auto i = selection == true && inSelectionAvailable == true?Math::min(textNodeController->getIndex(), textNodeController->getSelectionIndex()):0;
 	auto fi = -1;
-	auto ni = textNodeController->getIndex();
+	auto ni = index;
 	auto l = selection == true && inSelectionAvailable == true?Math::max(textNodeController->getIndex(), textNodeController->getSelectionIndex()):_text.size();
 	while (i < l) {
 		auto p = StringTools::indexOf(_text, _findString, i);
-		if (p != string::npos) {
+		if (p != string::npos && p < l) {
 			i = p + _findString.size();
 			if (wholeWord == true) {
 				auto __text = MutableString(_text);
@@ -1622,10 +1627,9 @@ bool TextEditorTabView::find(const string& findString, bool matchCase, bool whol
 			}
 			if (fi == -1) fi = p;
 			if (ni != -1 && (firstSearch == true?p >= ni:p > ni)) {
-				textNodeController->setIndex(p);
-				textNodeController->setSelectionIndex(-1);
+				index = p;
 				textNode->setTextStyle(p, p + _findString.size() - 1, GUIColor("#ff0000"));
-				textNode->scrollToIndex();
+				textNode->scrollToIndex(index);
 				ni = -1;
 				firstSearch = false;
 				success = true;
@@ -1638,9 +1642,8 @@ bool TextEditorTabView::find(const string& findString, bool matchCase, bool whol
 	}
 	if (ni != -1 && fi != -1) {
 		textNode->setTextStyle(fi, fi + _findString.size() - 1, GUIColor("#ff0000"));
-		textNodeController->setIndex(fi);
-		textNodeController->setSelectionIndex(-1);
-		textNode->scrollToIndex();
+		index = fi;
+		textNode->scrollToIndex(index);
 		success = true;
 	}
 	//
@@ -1658,7 +1661,7 @@ int TextEditorTabView::count(const string& findString, bool matchCase, bool whol
 	auto c = 0;
 	while (i < l) {
 		auto p = StringTools::indexOf(_text, _findString, i);
-		if (p != string::npos) {
+		if (p != string::npos && p < l) {
 			i = p + _findString.size();
 			if (wholeWord == true) {
 				auto __text = MutableString(_text);
@@ -1679,7 +1682,7 @@ int TextEditorTabView::count(const string& findString, bool matchCase, bool whol
 	return c;
 }
 
-bool TextEditorTabView::replace(const string& findString, const string& replaceString, bool matchCase, bool wholeWord, bool selection) {
+bool TextEditorTabView::replace(const string& findString, const string& replaceString, bool matchCase, bool wholeWord, bool selection, int& index) {
 	reformat();
 	auto success = false;
 	auto _findString = matchCase == false?StringTools::toLowerCase(findString):findString;
@@ -1689,11 +1692,11 @@ bool TextEditorTabView::replace(const string& findString, const string& replaceS
 	auto inSelectionAvailable = textNodeController->getIndex() != -1 && textNodeController->getSelectionIndex() != -1;
 	auto i = selection == true && inSelectionAvailable == true?Math::min(textNodeController->getIndex(), textNodeController->getSelectionIndex()):0;
 	auto fi = -1;
-	auto ni = textNodeController->getIndex();
+	auto ni = index;
 	auto l = selection == true && inSelectionAvailable == true?Math::max(textNodeController->getIndex(), textNodeController->getSelectionIndex()):_text.size();
 	while (i < l) {
 		auto p = StringTools::indexOf(_text, _findString, i);
-		if (p != string::npos) {
+		if (p != string::npos && p < l) {
 			i = p + _findString.size();
 			if (wholeWord == true) {
 				auto __text = MutableString(_text);
@@ -1708,9 +1711,8 @@ bool TextEditorTabView::replace(const string& findString, const string& replaceS
 			if (fi == -1) fi = p;
 			if (ni != -1 && p >= ni) {
 				text = StringTools::substring(text, 0, p) + replaceString + StringTools::substring(text, p + _findString.size());
-				textNodeController->setIndex(p + _findString.size());
-				textNodeController->setSelectionIndex(-1);
-				textNode->scrollToIndex();
+				index = p + _findString.size();
+				textNode->scrollToIndex(index);
 				ni = -1;
 				success = true;
 				//
@@ -1722,9 +1724,8 @@ bool TextEditorTabView::replace(const string& findString, const string& replaceS
 	}
 	if (ni != -1 && fi != -1) {
 		text = StringTools::substring(text, 0, fi) + replaceString + StringTools::substring(text, fi + _findString.size());
-		textNodeController->setIndex(fi + _findString.size());
-		textNodeController->setSelectionIndex(-1);
-		textNode->scrollToIndex();
+		index = fi + _findString.size();
+		textNode->scrollToIndex(index);
 		success = true;
 	}
 	//
@@ -1745,7 +1746,7 @@ bool TextEditorTabView::replaceAll(const string& findString, const string& repla
 	auto l = selection == true && inSelectionAvailable == true?Math::max(textNodeController->getIndex(), textNodeController->getSelectionIndex()):_text.size();
 	while (i < l) {
 		auto p = StringTools::indexOf(_text, _findString, i);
-		if (p != string::npos) {
+		if (p != string::npos && p < l) {
 			i = p + replaceString.size();
 			if (wholeWord == true) {
 				auto __text = MutableString(_text);

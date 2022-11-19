@@ -168,6 +168,8 @@ void TextEditorTabController::executeCommand(TabControllerCommand command)
 			{
 				//
 				firstSearch = true;
+				searchIndex = view->getTextIndex();
+
 				//
 				class FindAction: public virtual Action
 				{
@@ -178,7 +180,8 @@ void TextEditorTabController::executeCommand(TabControllerCommand command)
 							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isMatchCase(),
 							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isWholeWordOnly(),
 							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly(),
-							textEditorTabController->firstSearch
+							textEditorTabController->firstSearch,
+							textEditorTabController->searchIndex
 						) == false) {
 							textEditorTabController->showErrorPopUp("Find", "Text not found.");
 						}
@@ -217,7 +220,8 @@ void TextEditorTabController::executeCommand(TabControllerCommand command)
 							textEditorTabController->popUps->getFindReplaceDialogScreenController()->getReplaceText(),
 							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isMatchCase(),
 							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isWholeWordOnly(),
-							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly()
+							textEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly(),
+							textEditorTabController->searchIndex
 						) == false) {
 							textEditorTabController->showErrorPopUp("Replace", "Text not found.");
 						}

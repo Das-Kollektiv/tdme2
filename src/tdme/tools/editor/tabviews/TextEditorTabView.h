@@ -365,15 +365,21 @@ public:
 	void createMiniScriptConnections();
 
 	/**
+	 * @return text index
+	 */
+	int getTextIndex();
+
+	/**
 	 * Find string
 	 * @param findString find string
 	 * @param matchCase only find string that also matches case in find string
 	 * @param wholeWord only find whole worlds
 	 * @param selection only find in selection
 	 * @param firstSearch first search
+	 * @param index index
 	 * @return success
 	 */
-	bool find(const string& findString, bool matchCase, bool wholeWord, bool selection, bool firstSearch);
+	bool find(const string& findString, bool matchCase, bool wholeWord, bool selection, bool firstSearch, int& index);
 
 	/**
 	 * Count string
@@ -391,9 +397,10 @@ public:
 	 * @param matchCase only find string that also matches case in find string
 	 * @param wholeWord only find whole worlds
 	 * @param selection only find in selection
+	 * @param index index
 	 * @return success
 	 */
-	bool replace(const string& findString, const string& replaceString, bool matchCase, bool wholeWord, bool selection);
+	bool replace(const string& findString, const string& replaceString, bool matchCase, bool wholeWord, bool selection, int& index);
 
 	/**
 	 * Replace all string
