@@ -59,6 +59,7 @@ public:
 	 * @param padding padding
 	 * @param showOn show on
 	 * @param hideOn hide on
+	 * @param tooltip tooltip
 	 * @param barColorNone bar color none
 	 * @param barColorMouseOver bar color mouse over
 	 * @param barColorDragging bar color dragging
@@ -79,6 +80,7 @@ public:
 		const GUINode_Padding& padding,
 		const GUINodeConditions& showOn,
 		const GUINodeConditions& hideOn,
+		const string& tooltip,
 		const GUIColor& barColorNone,
 		const GUIColor& barColorMouseOver,
 		const GUIColor& barColorDragging

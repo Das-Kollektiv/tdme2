@@ -78,6 +78,7 @@ protected:
 	 * @param padding padding
 	 * @param showOn show on
 	 * @param hideOn hide on
+	 * @param tooltip tooltip
 	 */
 	GUILayerNode(
 		GUIScreenNode* screenNode,
@@ -96,7 +97,8 @@ protected:
 		const GUINode_Border& border,
 		const GUINode_Padding& padding,
 		const GUINodeConditions& showOn,
-		const GUINodeConditions& hideOn
+		const GUINodeConditions& hideOn,
+		const string& tooltip
 	);
 
 public:

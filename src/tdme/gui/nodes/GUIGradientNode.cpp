@@ -81,13 +81,14 @@ GUIGradientNode::GUIGradientNode(
 	const GUINode_Padding& padding,
 	const GUINodeConditions& showOn,
 	const GUINodeConditions& hideOn,
+	const string& tooltip,
 	const GUIColor& effectColorMul,
 	const GUIColor& effectColorAdd,
 	const GUINode_Clipping& clipping,
 	const string& mask,
 	float maskMaxValue,
 	const Gradient& gradient):
-	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
+	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn, tooltip)
 {
 	this->effectColorMul = effectColorMul;
 	this->effectColorAdd = effectColorAdd;

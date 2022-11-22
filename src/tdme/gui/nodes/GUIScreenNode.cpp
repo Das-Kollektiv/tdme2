@@ -90,10 +90,11 @@ GUIScreenNode::GUIScreenNode(
 	const GUIScreenNode_SizeConstraints& sizeConstraints,
 	const GUINodeConditions& showOn,
 	const GUINodeConditions& hideOn,
+	const string& tooltip,
 	bool scrollable,
 	bool popUp
 ):
-	GUIParentNode(this, nullptr, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
+	GUIParentNode(this, nullptr, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn, tooltip)
 {
 	this->fileName = fileName;
 	this->applicationRootPathName = applicationRootPathName;
@@ -458,12 +459,12 @@ void GUIScreenNode::determineFocussedNodes(GUIParentNode* parentNode, vector<GUI
 	}
 }
 
-void GUIScreenNode::determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds)
+void GUIScreenNode::determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds, int flags)
 {
 	for (auto i = 0; i < floatingNodes.size(); i++) {
-		floatingNodes[i]->determineMouseEventNodes(event, floatingNode == true || flow == GUINode_Flow::FLOATING, eventNodeIds, eventFloatingNodeIds);
+		floatingNodes[i]->determineMouseEventNodes(event, floatingNode == true || flow == GUINode_Flow::FLOATING, eventNodeIds, eventFloatingNodeIds, flags);
 	}
-	GUIParentNode::determineMouseEventNodes(event, floatingNode, eventNodeIds, eventFloatingNodeIds);
+	GUIParentNode::determineMouseEventNodes(event, floatingNode, eventNodeIds, eventFloatingNodeIds, flags);
 }
 
 void GUIScreenNode::addActionListener(GUIActionListener* listener)

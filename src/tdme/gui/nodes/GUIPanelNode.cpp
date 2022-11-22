@@ -30,9 +30,10 @@ GUIPanelNode::GUIPanelNode(
 	const GUINode_Padding& padding,
 	const GUINodeConditions& showOn,
 	const GUINodeConditions& hideOn,
+	const string& tooltip,
 	GUILayoutNode_Alignment* alignment
 ) :
-	GUILayoutNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn, alignment)
+	GUILayoutNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn, tooltip, alignment)
 {
 }
 
@@ -41,9 +42,9 @@ const string GUIPanelNode::getNodeType()
 	return "panel";
 }
 
-void GUIPanelNode::determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds)
+void GUIPanelNode::determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds, int flags)
 {
-	GUILayoutNode::determineMouseEventNodes(event, floatingNode, eventNodeIds, eventFloatingNodeIds);
+	GUILayoutNode::determineMouseEventNodes(event, floatingNode, eventNodeIds, eventFloatingNodeIds, flags);
 	if (isEventBelongingToNode(event) == true) {
 		event->setProcessed(true);
 	}

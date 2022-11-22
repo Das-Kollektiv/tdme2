@@ -5,6 +5,7 @@
 #endif
 
 #include <algorithm>
+#include <map>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -15,6 +16,7 @@
 #include <tdme/gui/events/GUIInputEventHandler.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
+#include <tdme/gui/events/GUITooltipRequestListener.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -28,7 +30,9 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/Time.h>
 
+using std::map;
 using std::remove;
+using std::reverse;
 using std::string;
 using std::to_string;
 using std::unordered_map;
@@ -39,6 +43,7 @@ using tdme::engine::Engine;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
+using tdme::gui::events::GUITooltipRequestListener;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
@@ -57,7 +62,7 @@ bool GUI::disableTabFocusControl = false;
 
 GUI::GUI(Engine* engine, GUIRenderer* guiRenderer)
 {
-	this->mouseButtonLast = 0;
+	this->lastMouseButton = 0;
 	this->engine = engine;
 	this->guiRenderer = guiRenderer;
 	this->width = engine->getWidth();
@@ -485,8 +490,110 @@ void GUI::handleEvents(bool clearEvents)
 	//
 	auto renderScreensCopy = renderScreens;
 
+	// tooltips
+	if (mouseEvents.empty() == true && keyboardEvents.empty() == true) {
+		if (tooltipShown == false && Time::getCurrentMillis() - lastEventTime > TOOLTIP_TIME) {
+			//
+			map<string, GUINode*> tooltipFloatingNodes;
+			map<string, GUINode*> tooltipNodes;
+
+			// handle floating nodes first
+			for (int i = renderScreensCopy.size() - 1; i >= 0; i--) {
+				auto screen = renderScreensCopy[i];
+
+				// skip on invisible
+				if (screen->isVisible() == false) continue;
+
+				//
+				auto& floatingNodes = screen->getFloatingNodes();
+				for (auto j = 0; j < floatingNodes.size(); j++) {
+					//
+					unordered_set<string> eventNodeIds;
+					unordered_set<string> eventFloatingNodeIds;
+
+					//
+					auto floatingNode = floatingNodes[j];
+					// TODO: collect only nodes with tooltips
+					floatingNode->determineMouseEventNodes(&lastMouseEvent, floatingNode->flow == GUINode_Flow::FLOATING, eventNodeIds, eventFloatingNodeIds, GUINode::DETERMINEMOUSEEVENTNODES_FLAG_TOOLTIP);
+
+					// collect as hierarchical ids -> node
+					for (auto& eventFloatingNodeId: eventFloatingNodeIds) {
+						auto node = screen->getNodeById(eventFloatingNodeId);
+						tooltipFloatingNodes[node->getHierarchicalId()] = node;
+					}
+					for (auto& eventNodeId: eventNodeIds) {
+						auto node = screen->getNodeById(eventNodeId);
+						tooltipFloatingNodes[node->getHierarchicalId()] = node;
+					}
+				}
+				// skip on pop ups
+				if (screen->isPopUp() == true) break;
+			}
+
+			// handle normal screen nodes if not processed already by floating node
+			for (int i = renderScreensCopy.size() - 1; i >= 0; i--) {
+				//
+				unordered_set<string> eventNodeIds;
+				unordered_set<string> eventFloatingNodeIds;
+
+				//
+				auto screen = renderScreensCopy[i];
+				if (screen->isVisible() == false) continue;
+
+				//
+				screen->determineMouseEventNodes(&lastMouseEvent, screen->flow == GUINode_Flow::FLOATING, eventNodeIds, eventFloatingNodeIds, GUINode::DETERMINEMOUSEEVENTNODES_FLAG_TOOLTIP);
+
+				// collect as hierarchical ids -> node
+				for (auto& eventFloatingNodeId: eventFloatingNodeIds) {
+					auto node = screen->getNodeById(eventFloatingNodeId);
+					tooltipNodes[node->getHierarchicalId()] = node;
+				}
+				for (auto& eventNodeId: eventNodeIds) {
+					auto node = screen->getNodeById(eventNodeId);
+					tooltipNodes[node->getHierarchicalId()] = node;
+				}
+
+				//
+				if (screen->isPopUp() == true) break;
+			}
+
+			//
+			if (tooltipFloatingNodes.empty() == false) {
+				vector<GUINode*> tooltipFloatingNodesVector;
+				for (auto& tooltipFloatingNodeIt: tooltipFloatingNodes) {
+					tooltipFloatingNodesVector.push_back(tooltipFloatingNodeIt.second);
+				}
+				reverse(tooltipFloatingNodesVector.begin(), tooltipFloatingNodesVector.end());
+				//
+				auto node = tooltipFloatingNodesVector[0];
+				delegateTooltipShowRequest(node, lastMouseEvent.getXUnscaled(), lastMouseEvent.getYUnscaled());
+			} else
+			if (tooltipNodes.empty() == false) {
+				vector<GUINode*> tooltipNodesVector;
+				for (auto& tooltipNodeIt: tooltipNodes) {
+					tooltipNodesVector.push_back(tooltipNodeIt.second);
+				}
+				reverse(tooltipNodesVector.begin(), tooltipNodesVector.end());
+
+				//
+				auto node = tooltipNodesVector[0];
+				delegateTooltipShowRequest(node, lastMouseEvent.getXUnscaled(), lastMouseEvent.getYUnscaled());
+			}
+
+			//
+			tooltipShown = true;
+		}
+	} else
+	if (tooltipShown == true) {
+		// close tooltip
+		tooltipShown = false;
+		delegateTooltipCloseRequest();
+	}
+
 	// handle mouse events
 	for (auto& event: mouseEvents) {
+		//
+		lastEventTime = event.getTime();
 
 		// fetch and clear last mouse out candidates as we now will actually send them
 		if (event.getType() == GUIMouseEvent::MOUSEEVENT_MOVED) {
@@ -520,7 +627,7 @@ void GUI::handleEvents(bool clearEvents)
 			auto processed = false;
 			auto& floatingNodes = screen->getFloatingNodes();
 			for (auto j = 0; j < floatingNodes.size(); j++) {
-				auto floatingNode = floatingNodes.at(j);
+				auto floatingNode = floatingNodes[j];
 
 				handleMouseEvent(floatingNode, &event, _mouseOutCandidateEventNodeIds[screen->getId()], _mouseOutClickCandidateEventNodeIds[screen->getId()], mousePressedEventNodeIds[screen->getId()], true);
 
@@ -566,8 +673,16 @@ void GUI::handleEvents(bool clearEvents)
 		}
 	}
 
+	//
+	if (mouseEvents.empty() == false) {
+		lastMouseEvent = mouseEvents[mouseEvents.size()];
+	}
+
 	// handle keyboard events
 	for (auto& event: keyboardEvents) {
+		//
+		lastEventTime = event.getTime();
+		//
 		handleKeyboardEvent(&event);
 	}
 
@@ -647,7 +762,7 @@ void GUI::onMouseDragged(int x, int y) {
 	guiMouseEvent.setYUnscaled(y);
 	guiMouseEvent.setX(x);
 	guiMouseEvent.setY(y);
-	guiMouseEvent.setButton(mouseButtonLast);
+	guiMouseEvent.setButton(lastMouseButton);
 	guiMouseEvent.setWheelX(0.0f);
 	guiMouseEvent.setWheelY(0.0f);
 	guiMouseEvent.setWheelZ(0.0f);
@@ -682,7 +797,7 @@ void GUI::onMouseMoved(int x, int y) {
 void GUI::onMouseButton(int button, int state, int x, int y) {
 	fakeKeyboardModifierEvent();
 
-	mouseButtonLast = button + 1;
+	lastMouseButton = button + 1;
 	GUIMouseEvent guiMouseEvent;
 	guiMouseEvent.setTime(Time::getCurrentMillis());
 	guiMouseEvent.setType(state == MOUSE_BUTTON_DOWN?GUIMouseEvent::MOUSEEVENT_PRESSED:GUIMouseEvent::MOUSEEVENT_RELEASED);
@@ -690,7 +805,7 @@ void GUI::onMouseButton(int button, int state, int x, int y) {
 	guiMouseEvent.setYUnscaled(y);
 	guiMouseEvent.setX(x);
 	guiMouseEvent.setY(y);
-	guiMouseEvent.setButton(mouseButtonLast);
+	guiMouseEvent.setButton(lastMouseButton);
 	guiMouseEvent.setWheelX(0.0f);
 	guiMouseEvent.setWheelY(0.0f);
 	guiMouseEvent.setWheelZ(0.0f);
@@ -704,7 +819,7 @@ void GUI::onMouseButton(int button, int state, int x, int y) {
 void GUI::onMouseWheel(int button, int direction, int x, int y) {
 	fakeKeyboardModifierEvent();
 
-	mouseButtonLast = button + 1;
+	lastMouseButton = button + 1;
 	GUIMouseEvent guiMouseEvent;
 	guiMouseEvent.setTime(Time::getCurrentMillis());
 	guiMouseEvent.setType(GUIMouseEvent::MOUSEEVENT_WHEEL_MOVED);
@@ -712,7 +827,7 @@ void GUI::onMouseWheel(int button, int direction, int x, int y) {
 	guiMouseEvent.setYUnscaled(y);
 	guiMouseEvent.setX(x);
 	guiMouseEvent.setY(y);
-	guiMouseEvent.setButton(mouseButtonLast);
+	guiMouseEvent.setButton(lastMouseButton);
 	guiMouseEvent.setWheelX(0.0f);
 	guiMouseEvent.setWheelY(direction * 1.0f);
 	guiMouseEvent.setWheelZ(0.0f);
@@ -817,4 +932,25 @@ void GUI::reshapeScreen(GUIScreenNode* screenNode) {
 
 void GUI::applyRenderScreensChange() {
 	for (auto screen: renderScreens) screen->unsetMouseOver();
+}
+
+void GUI::addTooltipRequestListener(GUITooltipRequestListener* listener) {
+	removeTooltipRequestListener(listener);
+	tooltipRequestListener.push_back(listener);
+}
+
+void GUI::removeTooltipRequestListener(GUITooltipRequestListener* listener) {
+	tooltipRequestListener.erase(std::remove(tooltipRequestListener.begin(), tooltipRequestListener.end(), listener), tooltipRequestListener.end());
+}
+
+void GUI::delegateTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
+	for (auto i = 0; i < tooltipRequestListener.size(); i++) {
+		tooltipRequestListener[i]->onTooltipShowRequest(node, mouseX, mouseY);
+	}
+}
+
+void GUI::delegateTooltipCloseRequest() {
+	for (auto i = 0; i < tooltipRequestListener.size(); i++) {
+		tooltipRequestListener[i]->onTooltipCloseRequest();
+	}
 }

@@ -53,6 +53,7 @@ GUITextureBaseNode::GUITextureBaseNode(
 	const GUINode_Padding& padding,
 	const GUINodeConditions& showOn,
 	const GUINodeConditions& hideOn,
+	const string& tooltip,
 	const RequestedDimensionConstraints& requestedDimensionConstraints,
 	bool mirrorX,
 	bool mirrorY,
@@ -62,7 +63,7 @@ GUITextureBaseNode::GUITextureBaseNode(
 	const GUINode_Clipping& clipping,
 	const string& mask,
 	float maskMaxValue):
-	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
+	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn, tooltip)
 {
 	this->requestedDimensionConstraints = requestedDimensionConstraints;
 	this->mirrorX = mirrorX;

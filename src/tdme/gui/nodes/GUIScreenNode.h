@@ -231,6 +231,7 @@ protected:
 	 * @param sizeConstraints size constraints
 	 * @param showOn show on
 	 * @param hideOn hide on
+	 * @param tooltip tooltip
 	 * @param scrollable scrollable
 	 * @param popUp pop up
 	 * @throws tdme::gui::GUIParserException
@@ -255,6 +256,7 @@ protected:
 		const GUIScreenNode_SizeConstraints& sizeConstraints,
 		const GUINodeConditions& showOn,
 		const GUINodeConditions& hideOn,
+		const string& tooltip,
 		bool scrollable,
 		bool popUp
 	);
@@ -401,7 +403,7 @@ public:
 	void determineFocussedNodes(GUIParentNode* parentNode, vector<GUIElementNode*>& focusableNodes);
 
 	// overridden methods
-	void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds) override;
+	void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds, int flags = DETERMINEMOUSEEVENTNODES_FLAG_NONE) override;
 
 	/**
 	 * Add action listener

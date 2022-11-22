@@ -57,9 +57,10 @@ GUILayoutNode::GUILayoutNode(
 	const GUINode_Padding& padding,
 	const GUINodeConditions& showOn,
 	const GUINodeConditions& hideOn,
+	const string& tooltip,
 	GUILayoutNode_Alignment* alignment
 ):
-	GUIParentNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
+	GUIParentNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn, tooltip)
 {
 	this->alignment = alignment;
 }

@@ -48,6 +48,7 @@ protected:
 	 * @param padding padding
 	 * @param showOn show on
 	 * @param hideOn hide on
+	 * @param tooltip tooltip
 	 * @param alignment alignment
 	 * @throws tdme::gui::GUIParserException
 	 */
@@ -69,6 +70,7 @@ protected:
 		const GUINode_Padding& padding,
 		const GUINodeConditions& showOn,
 		const GUINodeConditions& hideOn,
+		const string& tooltip,
 		GUILayoutNode_Alignment* alignment
 	);
 

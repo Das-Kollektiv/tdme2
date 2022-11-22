@@ -254,6 +254,7 @@ protected:
 	 * @param padding padding
 	 * @param showOn show on
 	 * @param hideOn hide on
+	 * @param tooltip tooltip
 	 * @param preformatted preformatted
 	 * @param font font
 	 * @param size font size
@@ -277,6 +278,7 @@ protected:
 		const GUINode_Padding& padding,
 		const GUINodeConditions& showOn,
 		const GUINodeConditions& hideOn,
+		const string& tooltip,
 		bool preformatted,
 		const string& font,
 		int size,

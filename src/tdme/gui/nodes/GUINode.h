@@ -167,6 +167,7 @@ protected:
 	bool haveOutEffect;
 	vector<string> lastConditions;
 	GUIEffectState* effectState { nullptr };
+	string tooltip;
 
 	/**
 	 * Public constructor
@@ -185,6 +186,7 @@ protected:
 	 * @param padding padding
 	 * @param showOn show on
 	 * @param hideOn hide on
+	 * @param tooltip tooltip
 	 */
 	GUINode(
 		GUIScreenNode* screenNode,
@@ -201,7 +203,8 @@ protected:
 		const GUINode_Border& border,
 		const GUINode_Padding& padding,
 		const GUINodeConditions& showOn,
-		const GUINodeConditions& hideOn
+		const GUINodeConditions& hideOn,
+		const string& tooltip
 	);
 
 	/**
@@ -308,6 +311,9 @@ protected:
 	void _scrollToNodeY(GUIParentNode* toNode = nullptr);
 
 public:
+	static constexpr int DETERMINEMOUSEEVENTNODES_FLAG_NONE { 0 };
+	static constexpr int DETERMINEMOUSEEVENTNODES_FLAG_TOOLTIP { 1 };
+
 	/**
 	 * @return scren node
 	 */
@@ -327,6 +333,13 @@ public:
 	 */
 	inline const string& getId() {
 		return id;
+	}
+
+	/**
+	 * @return tooltip
+	 */
+	inline const string& getToolTip() {
+		return tooltip;
 	}
 
 	/**
@@ -576,8 +589,9 @@ public:
 	 * @param floatingNode if node is floating node
 	 * @param eventNodeIds event node ids
 	 * @param eventFloatingNodeIds event floating node ids
+	 * @param flags flags see DETERMINEMOUSEEVENTNODES_FLAG_*
 	 */
-	virtual void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds);
+	virtual void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds, int flags = DETERMINEMOUSEEVENTNODES_FLAG_NONE);
 
 	/**
 	 * @return controller

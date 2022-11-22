@@ -13,6 +13,7 @@ namespace events {
 	class GUIMouseEvent;
 	class GUIMoveListener;
 	struct GUIMouseOverListener;
+	struct GUITooltipRequestListener;
 }  // namespace events
 }  // namespace gui
 }  // namespace tdme

@@ -86,6 +86,7 @@ GUIElementNode::GUIElementNode(
 	const GUINode_Padding& padding,
 	const GUINodeConditions& showOn,
 	const GUINodeConditions& hideOn,
+	const string& tooltip,
 	const string& name,
 	const string& value,
 	bool selected,
@@ -101,7 +102,7 @@ GUIElementNode::GUIElementNode(
 	const string& parentElementId,
 	const string& options
 	) :
-	GUILayerNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScaleGrid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn),
+	GUILayerNode(screenNode, parentNode, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScaleGrid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn, tooltip),
 	activeConditions(this)
 {
 	this->name = name;
