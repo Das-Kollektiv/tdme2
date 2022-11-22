@@ -272,7 +272,7 @@ void TextEditorTabController::executeCommand(TabControllerCommand command)
 				{
 				public:
 					void performAction() override {
-						textEditorTabController->view->reformat();
+						textEditorTabController->view->cancelFind();
 						textEditorTabController->popUps->getFindReplaceDialogScreenController()->close();
 					}
 					CompleteAction(TextEditorTabController* textEditorTabController): textEditorTabController(textEditorTabController) {

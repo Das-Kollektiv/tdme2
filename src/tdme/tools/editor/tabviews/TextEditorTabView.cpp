@@ -141,10 +141,20 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 			}
 
 			virtual void onRemoveText(int idx, int count) override {
-				TextFormatter::getInstance()->format(textEditorTabView->extension, textEditorTabView->textNode, idx, idx + count);
+				if (textEditorTabView->countEnabled == true) {
+					TextFormatter::getInstance()->format(textEditorTabView->extension, textEditorTabView->textNode, 0, textEditorTabView->textNode->getText().size());
+					textEditorTabView->countEnabled = false;
+				} else {
+					TextFormatter::getInstance()->format(textEditorTabView->extension, textEditorTabView->textNode, idx, idx + count);
+				}
 			}
 			virtual void onInsertText(int idx, int count) override {
-				TextFormatter::getInstance()->format(textEditorTabView->extension, textEditorTabView->textNode, idx, idx + count);
+				if (textEditorTabView->countEnabled == true) {
+					TextFormatter::getInstance()->format(textEditorTabView->extension, textEditorTabView->textNode, 0, textEditorTabView->textNode->getText().size());
+					textEditorTabView->countEnabled = false;
+				} else {
+					TextFormatter::getInstance()->format(textEditorTabView->extension, textEditorTabView->textNode, idx, idx + count);
+				}
 			}
 		private:
 			TextEditorTabView* textEditorTabView;
@@ -1604,7 +1614,7 @@ int TextEditorTabView::getTextIndex() {
 }
 
 bool TextEditorTabView::find(const string& findString, bool matchCase, bool wholeWord, bool selection, bool firstSearch, int& index) {
-	reformat();
+	cancelFind();
 	auto success = false;
 	auto _findString = matchCase == false?StringTools::toLowerCase(findString):findString;
 	auto _text = matchCase == false?StringTools::toLowerCase(textNode->getText().getString()):textNode->getText().getString();
@@ -1654,7 +1664,7 @@ bool TextEditorTabView::find(const string& findString, bool matchCase, bool whol
 }
 
 int TextEditorTabView::count(const string& findString, bool matchCase, bool wholeWord, bool selection) {
-	reformat();
+	cancelFind();
 	auto _findString = matchCase == false?StringTools::toLowerCase(findString):findString;
 	auto _text = matchCase == false?StringTools::toLowerCase(textNode->getText().getString()):textNode->getText().getString();
 	auto textNodeController = required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController());
@@ -1682,11 +1692,14 @@ int TextEditorTabView::count(const string& findString, bool matchCase, bool whol
 			break;
 		}
 	}
+	//
+	countEnabled = true;
+	//
 	return c;
 }
 
 bool TextEditorTabView::replace(const string& findString, const string& replaceString, bool matchCase, bool wholeWord, bool selection, int& index) {
-	reformat();
+	cancelFind();
 	auto success = false;
 	auto _findString = matchCase == false?StringTools::toLowerCase(findString):findString;
 	auto text = textNode->getText().getString();
@@ -1733,7 +1746,7 @@ bool TextEditorTabView::replace(const string& findString, const string& replaceS
 	}
 	//
 	textNode->setText(StringTools::replace(StringTools::replace(text, "[", "\\["), "]", "\\]"));
-	reformat();
+	TextFormatter::getInstance()->format(extension, textNode, 0, textNode->getText().size());
 	//
 	return success;
 }
@@ -1769,10 +1782,11 @@ bool TextEditorTabView::replaceAll(const string& findString, const string& repla
 		}
 	}
 	textNode->setText(StringTools::replace(StringTools::replace(text, "[", "\\["), "]", "\\]"));
-	reformat();
+	cancelFind();
 	return success;
 }
 
-void TextEditorTabView::reformat() {
+void TextEditorTabView::cancelFind() {
 	TextFormatter::getInstance()->format(extension, textNode, 0, textNode->getText().size());
+	countEnabled = false;
 }

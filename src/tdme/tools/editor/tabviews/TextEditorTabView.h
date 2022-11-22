@@ -121,6 +121,7 @@ private:
 	bool visualCodingEnabled { false };
 
 	GUIParentNode* visualisationNode { nullptr };
+	bool countEnabled { false };
 
 	/**
 	 * Get script variable type pin color
@@ -414,9 +415,9 @@ public:
 	bool replaceAll(const string& findString, const string& replaceString, bool matchCase, bool wholeWord, bool selection);
 
 	/**
-	 * Reformat code style
+	 * Cancel find
 	 */
-	void reformat();
+	void cancelFind();
 
 	// overridden methods
 	void handleInputEvents() override;
