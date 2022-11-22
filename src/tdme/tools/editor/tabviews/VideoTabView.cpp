@@ -28,9 +28,9 @@ using tdme::utilities::Exception;
 
 VideoTabView::VideoTabView(EditorView* editorView, const string& tabId, GUIScreenNode* screenNode)
 {
-	this->screenNode = screenNode;
 	this->editorView = editorView;
 	this->tabId = tabId;
+	this->screenNode = screenNode;
 	this->popUps = editorView->getPopUps();
 	engine = Engine::createOffScreenInstance(512, 512, false, false, false);
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));

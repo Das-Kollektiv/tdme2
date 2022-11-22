@@ -37,6 +37,7 @@ protected:
 private:
 	EditorView* editorView { nullptr };
 	string tabId;
+	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
 	TextureTabController* textureTabController { nullptr };
 	TabView::OutlinerState outlinerState;

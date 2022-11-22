@@ -56,6 +56,7 @@ protected:
 private:
 	EditorView* editorView { nullptr };
 	string tabId;
+	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
 	UIEditorTabController* uiTabController { nullptr };
 	TabView::OutlinerState outlinerState;

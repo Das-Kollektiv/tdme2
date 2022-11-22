@@ -32,12 +32,12 @@ class tdme::tools::editor::tabviews::VideoTabView final
 	: public TabView
 {
 protected:
-	GUIScreenNode* screenNode { nullptr };
 	Engine* engine { nullptr };
 
 private:
 	EditorView* editorView { nullptr };
 	string tabId;
+	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
 	VideoTabController* videoTabController { nullptr };
 	TabView::OutlinerState outlinerState;

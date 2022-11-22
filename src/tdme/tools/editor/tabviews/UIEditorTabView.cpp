@@ -69,6 +69,7 @@ UIEditorTabView::UIEditorTabView(EditorView* editorView, const string& tabId, GU
 {
 	this->editorView = editorView;
 	this->tabId = tabId;
+	this->screenNode = screenNode;
 	this->popUps = editorView->getPopUps();
 	screenNodes.push_back(screenNode);
 	screenDimensions.push_back({ screenNode->getSizeConstraints().maxWidth, screenNode->getSizeConstraints().maxHeight });
@@ -183,6 +184,7 @@ void UIEditorTabView::initialize()
 	try {
 		uiTabController = new UIEditorTabController(this);
 		uiTabController->initialize(editorView->getScreenController()->getScreenNode());
+		screenNode->addTooltipRequestListener(uiTabController);
 	} catch (Exception& exception) {
 		Console::print(string("UIEditorTabView::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));

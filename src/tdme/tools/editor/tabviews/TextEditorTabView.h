@@ -49,7 +49,7 @@ private:
 	PopUps* popUps { nullptr };
 	TextEditorTabController* textEditorTabController { nullptr };
 	TabView::OutlinerState outlinerState;
-	GUIScreenNode* tabScreenNode { nullptr };
+	GUIScreenNode* screenNode { nullptr };
 	string fileName;
 	string extension;
 	GUIStyledTextNode* textNode { nullptr };
@@ -238,7 +238,7 @@ public:
 	 * @return tab screen node
 	 */
 	inline GUIScreenNode* getTabScreenNode() {
-		return tabScreenNode;
+		return screenNode;
 	}
 
 	/**

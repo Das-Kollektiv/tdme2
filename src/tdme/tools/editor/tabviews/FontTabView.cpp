@@ -30,6 +30,7 @@ FontTabView::FontTabView(EditorView* editorView, const string& tabId, GUIScreenN
 {
 	this->editorView = editorView;
 	this->tabId = tabId;
+	this->screenNode = screenNode;
 	this->popUps = editorView->getPopUps();
 	engine = Engine::createOffScreenInstance(512, 512, true, false, false);
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
@@ -58,6 +59,7 @@ void FontTabView::initialize()
 	try {
 		fontTabController = new FontTabController(this);
 		fontTabController->initialize(editorView->getScreenController()->getScreenNode());
+		screenNode->addTooltipRequestListener(fontTabController);
 	} catch (Exception& exception) {
 		Console::print(string("FontTabView::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));

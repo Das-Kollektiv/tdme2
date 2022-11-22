@@ -41,8 +41,8 @@ protected:
 private:
 	EditorView* editorView { nullptr };
 	string tabId;
+	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
-	GUIScreenNode* uiScreenNode { nullptr };
 	SoundTabController* soundTabController { nullptr };
 	TabView::OutlinerState outlinerState;
 	AudioEntity* audioEntity { nullptr };

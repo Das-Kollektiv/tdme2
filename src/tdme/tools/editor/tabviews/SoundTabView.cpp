@@ -34,12 +34,12 @@ SoundTabView::SoundTabView(EditorView* editorView, const string& tabId, GUIScree
 {
 	this->editorView = editorView;
 	this->tabId = tabId;
+	this->screenNode = screenNode;
 	this->popUps = editorView->getPopUps();
 	engine = Engine::createOffScreenInstance(512, 512, false, false, false);
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
 	engine->getGUI()->addScreen(screenNode->getId(), screenNode);
 	engine->getGUI()->addRenderScreen(screenNode->getId());
-	this->uiScreenNode = screenNode;
 	this->audio = Audio::getInstance();
 	this->audioEntity = audioEntity;
 	this->audioEntity->setFixed(true);
@@ -65,7 +65,8 @@ void SoundTabView::initialize()
 {
 	try {
 		soundTabController = new SoundTabController(this);
-		this->uiScreenNode->addActionListener(soundTabController);
+		screenNode->addActionListener(soundTabController);
+		screenNode->addTooltipRequestListener(soundTabController);
 		soundTabController->initialize(editorView->getScreenController()->getScreenNode());
 	} catch (Exception& exception) {
 		Console::print(string("SoundTabView::initialize(): An error occurred: "));
