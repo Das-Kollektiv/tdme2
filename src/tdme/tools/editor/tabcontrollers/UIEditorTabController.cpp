@@ -104,12 +104,9 @@ void UIEditorTabController::dispose()
 {
 }
 
-void UIEditorTabController::save()
+void UIEditorTabController::executeCommand(TabControllerCommand command)
 {
-}
-
-void UIEditorTabController::saveAs()
-{
+	showErrorPopUp("Warning", "This command is not supported yet");
 }
 
 void UIEditorTabController::showErrorPopUp(const string& caption, const string& message)

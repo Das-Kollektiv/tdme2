@@ -8,6 +8,7 @@
 #include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUINode.h>
+#include <tdme/gui/nodes/GUINode_RequestedConstraints_RequestedConstraintsType.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/utilities/Console.h>
@@ -20,6 +21,7 @@ using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUINode;
+using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
 using tdme::utilities::Console;
@@ -64,7 +66,18 @@ void GUIMoveableController::handleMouseEvent(GUINode* node, GUIMouseEvent* event
 		event->getButton() == MOUSE_BUTTON_LEFT) {
 		auto movedX = event->getX() - mouseLastX;
 		auto movedY = event->getY() - mouseLastY;
-		//
+		// switch to positioning by pixels if not yet done
+		//	horizontal
+		if (this->node->getRequestsConstraints().leftType != GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) {
+			this->node->getRequestsConstraints().leftType = GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL;
+			this->node->getRequestsConstraints().left = this->node->getComputedConstraints().left;
+		}
+		//	vertical
+		if (this->node->getRequestsConstraints().topType != GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) {
+			this->node->getRequestsConstraints().topType = GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL;
+			this->node->getRequestsConstraints().top = this->node->getComputedConstraints().top;
+		}
+		// move it, move it
 		this->node->getRequestsConstraints().left+= movedX;
 		this->node->getRequestsConstraints().top+= movedY;
 		this->node->getComputedConstraints().left+= movedX;

@@ -12,8 +12,8 @@ This is the documentation of supported TDME2-GUI XML elements and their attribut
 | flow                              | floating \| integrated                                                                 | integrated        |
 | horizontal-align                  | left \| center \| right                                                                | left              |
 | vertical-align                    | top \| center \| bottom                                                                | top               |
-| x                                 | x position of node in %, pixel                                                         | none              |
-| y                                 | y position of node in %, pixel                                                         | none              |
+| left                              | x position of node in %, pixel                                                         | none              |
+| top                               | y position of node in %, pixel                                                         | none              |
 | width                             | width in %, pixel or rest(*) or auto for computed width                                | auto              |
 | height                            | height in %, pixel or rest(*) or auto for computed height                              | auto              |
 | factor                            |                                                                                        | 0                 |
@@ -60,7 +60,7 @@ This is the documentation of supported TDME2-GUI XML elements and their attribut
 
 This element supports all other elements as sub elements.
 
-## 1.2. \<element\> node
+## 1.3. \<element\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -81,7 +81,7 @@ This element supports all other elements as sub elements.
 
 This element supports all other elements as sub elements.
 
-## 1.3. \<gradient\> node
+## 1.4. \<gradient\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -89,9 +89,9 @@ This element supports all other elements as sub elements.
 | rotation                          | rotation angle                                                                         | 0.0f              |
 
 
-## 1.4. Frame Buffer / Image / Texture / Video nodes
+## 1.5. Frame Buffer / Image / Texture / Video nodes
 
-### 1.4.1. \<frame-buffer\> node
+### 1.5.1. \<frame-buffer\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -115,7 +115,7 @@ This element supports all other elements as sub elements.
 | mirror-y                          | mirror frame buffer on y axis                                                          | false             |
 
 
-### 1.4.2. \<image\> node
+### 1.5.2. \<image\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -140,7 +140,7 @@ This element supports all other elements as sub elements.
 | rotation                          | rotation angle                                                                         | 0.0               |
 | src                               | image location                                                                         | 0.0               |
 
-### 1.4.3. \<texture\> node
+### 1.5.3. \<texture\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -163,7 +163,7 @@ This element supports all other elements as sub elements.
 | mirror-x                          | mirror texture on x axis                                                               | false             |
 | mirror-y                          | mirror texture on y axis                                                               | false             |
 
-### 1.4.4. \<video\> node
+### 1.5.4. \<video\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -187,7 +187,7 @@ This element supports all other elements as sub elements.
 | mirror-y                          | mirror video on y axis                                                                 | false             |
 | src                               | video location                                                                         | 0.0               |
 
-## 1.5. \<layer\> node
+## 1.6. \<layer\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -196,17 +196,7 @@ This element supports all other elements as sub elements.
 
 This element supports all other elements as sub elements.
 
-## 1.6. \<layout\> node
-
-| Attribute name                    | Attribute description                                                                  | Default           |
-| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
-| alignment                         | none \| horizontal \| vertical                                                         | none              |
-| overflow-x                        | hidden \| downsize-children \| scroll                                                  | hidden            |
-| overflow-y                        | hidden \| downsize-children \| scroll                                                  | hidden            |
-
-This element supports all other elements as sub elements.
-
-## 1.7. \<panel\> node
+## 1.7. \<layout\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -216,19 +206,29 @@ This element supports all other elements as sub elements.
 
 This element supports all other elements as sub elements.
 
-## 1.8. \<space\> node
+## 1.8. \<panel\> node
 
-## 1.9 Table nodes
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| alignment                         | none \| horizontal \| vertical                                                         | none              |
+| overflow-x                        | hidden \| downsize-children \| scroll                                                  | hidden            |
+| overflow-y                        | hidden \| downsize-children \| scroll                                                  | hidden            |
 
-### 1.9.1 \<table\> node
+This element supports all other elements as sub elements.
+
+## 1.9. \<space\> node
+
+## 1.10. Table nodes
+
+### 1.10.1. \<table\> node
 
 This element supports \<table-row\> as sub elements.
 
-### 1.9.2 \<table-row\> node
+### 1.10.2. \<table-row\> node
 
 This element supports  \<table-cell\> as sub elements.
 
-### 1.9.3 \<table-cell\> node
+### 1.10.3 \<table-cell\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -236,9 +236,9 @@ This element supports  \<table-cell\> as sub elements.
 
 This element supports all other elements as sub elements.
 
-## 1.10. Text nodes
+## 1.11. Text nodes
 
-### 1.10.1. \<text\> node
+### 1.11.1. \<text\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -247,7 +247,7 @@ This element supports all other elements as sub elements.
 | size                              | TTF font size                                                                          | none              |
 | text                              | text to be rendered                                                                    | none              |
 
-### 1.10.2. \<styled-text\> node
+### 1.11.2. \<styled-text\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -267,7 +267,7 @@ Currently supported BBCode like tags are:
 [image=horizontal-scale:50%|0.5,vertical-scale:50%|0.5,width:100,height:100,effect-color-mul:#ff0000ff,effect-color-add:#ff000000]image.png[/image]
 ```
 
-## 1.11. \<template\>
+## 1.12. \<template\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -322,7 +322,7 @@ Currently supported BBCode like tags are:
 | value                             | value of this element, which will represent selection state                            | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
-## 2.3.1. Context Menu
+## 2.3. Context Menu
 
 ### 2.3.1. \<context-menu\>
 
@@ -359,9 +359,9 @@ This element supports \<context-menu-item\> and others as sub elements.
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
-## 2.3. Dropdown
+## 2.4. Dropdown
 
-### 2.3.1. \<dropdown\>
+### 2.4.1. \<dropdown\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -385,7 +385,7 @@ This element supports \<context-menu-item\> and others as sub elements.
 
 This element supports \<dropdown-option\> and others as sub elements.
 
-### 2.3.2. \<dropdown-option\>
+### 2.4.2. \<dropdown-option\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -403,7 +403,7 @@ This element supports \<dropdown-option\> and others as sub elements.
 | value                             | value of this element, which will represent selection state                            | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
-## 2.4. \<image-button\>
+## 2.5. \<image-button\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -426,7 +426,7 @@ This element supports \<dropdown-option\> and others as sub elements.
 | value                             | value of this element, which will represent selection state                            | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
-## 2.5. \<input\>
+## 2.6. \<input\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -451,9 +451,9 @@ This element supports \<dropdown-option\> and others as sub elements.
 | name                              | formular name of this element                                                          | none              |
 | value                             | value of this element, which will represent selection state                            | none              |
 
-## 2.6. Menu
+## 2.7. Menu
 
-### 2.6.1. \<menu-header\>
+### 2.7.1. \<menu-header\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -463,7 +463,7 @@ This element supports \<dropdown-option\> and others as sub elements.
 
 This element supports \<menu-header-item\> and others as sub elements.
 
-### 2.6.2. \<menu-header-item\>
+### 2.7.2. \<menu-header-item\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -481,7 +481,7 @@ This element supports \<menu-header-item\> and others as sub elements.
 
 This element supports \<menu-item\>and others as sub elements.
 
-### 2.6.3. \<menu-item\>
+### 2.7.3. \<menu-item\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -499,9 +499,27 @@ This element supports \<menu-item\>and others as sub elements.
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
-### 2.6.4. \<menu-separator\>
+### 2.7.4. \<menu-separator\>
 
-## 2.7. \<progress-bar\>
+## 2.8. \<moveable\>
+
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| id                                | the unique node id within screen                                                       | auto generated id |
+| show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
+| hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
+| horizontal-align                  | left \| center \| right                                                                | left              |
+| vertical-align                    | top \| center \| bottom                                                                | top               |
+| alignment                         | none \| horizontal \| vertical                                                         | none              |
+| left                              | x position of node in %, pixel                                                         | none              |
+| top                               | y position of node in %, pixel                                                         | none              |
+| width                             | width in %, pixel or rest(*) or auto for computed width                                | auto              |
+| height                            | height in %, pixel or rest(*) or auto for computed height                              | auto              |
+| template                          | location of template XML file to override compound element XML                         | none              |
+
+This element supports all other elements as sub elements.
+
+## 2.9. \<progress-bar\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -512,7 +530,7 @@ This element supports \<menu-item\>and others as sub elements.
 | width                             | width in %, pixel                                                                      | 223               |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
-## 2.8. \<radiobutton\>
+## 2.10. \<radiobutton\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -533,7 +551,7 @@ This element supports \<menu-item\>and others as sub elements.
 | value                             | value of this element, which will represent selection state                            | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
-## 2.9. \<scrollarea\>
+## 2.11. \<scrollarea\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -550,9 +568,9 @@ This element supports \<menu-item\>and others as sub elements.
 | padding                           | padding for content node                                                               | 0                 |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
-## 2.10. Selectbox
+## 2.12. Selectbox
 
-### 2.10.1. \<selectbox\>
+### 2.12.1. \<selectbox\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -573,9 +591,9 @@ This element supports \<menu-item\>and others as sub elements.
 | value                             | value of this element                                                                  | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
-This element supports \<selectbox-option\> and others as sub elements.
+This element supports \<selectbox-option\>, \<selectbox-parent-option\> and others as sub elements.
 
-### 2.10.2. \<selectbox-option\>
+### 2.12.2. \<selectbox-option\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -595,9 +613,29 @@ This element supports \<selectbox-option\> and others as sub elements.
 | value                             | value of this element, which will represent selection state                            | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
-## 2.11. Horizontal selector
+### 2.12.3. \<selectbox-parent-option\>
 
-### 2.11.1. \<selector-horizontal\>
+| Attribute name                    | Attribute description                                                                  | Default           |
+| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
+| id                                | the unique node id within screen                                                       | auto generated id |
+| show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
+| hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
+| disabled                          | true \| false                                                                          | false             |
+| image                             | select box option image location                                                       | none              |
+| text                              | text to render                                                                         | none              |
+| selected                          | true \| false                                                                          | false             |
+| on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
+| on-mouse-click                    | SimpleScript expression to be executed if a mouse click did happen                     | none              |
+| on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
+| on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
+| on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
+| parent-id                         | Used to generate hierarchical/tree like select box options                             | none              |
+| value                             | value of this element, which will represent selection state                            | none              |
+| template                          | location of template XML file to override compound element XML                         | none              |
+
+## 2.13. Horizontal selector
+
+### 2.13.1. \<selector-horizontal\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -614,7 +652,7 @@ This element supports \<selectbox-option\> and others as sub elements.
 
 This element supports  \<selector-horizontal-option\> and others as sub elements.
 
-### 2.11.2. \<selector-horizontal-option\>
+### 2.13.2. \<selector-horizontal-option\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -631,9 +669,9 @@ This element supports  \<selector-horizontal-option\> and others as sub elements
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
 | value                             | value of this element, which will represent selection state                            | none              |
 
-## 2.12. Sliders
+## 2.14. Sliders
 
-### 2.12.1. \<slider-horizontal\>
+### 2.14.1. \<slider-horizontal\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -652,7 +690,7 @@ This element supports  \<selector-horizontal-option\> and others as sub elements
 | value                             | value of this element, ranging from 0.0 <= value <= 1.0                                | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
-### 2.12.2. \<slider-vertical\>
+### 2.14.2. \<slider-vertical\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -671,7 +709,7 @@ This element supports  \<selector-horizontal-option\> and others as sub elements
 | value                             | value of this element, ranging from 0.0 <= value <= 1.0                                | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
-## 2.13. \<styled-input\>
+## 2.15. \<styled-input\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -702,9 +740,9 @@ Currently supported BBCode like tags are:
 [image=horizontal-scale:50%|0.5,vertical-scale:50%|0.5,width:100,height:100,effect-color-mul:#ff0000ff,effect-color-add:#ff000000]image.png[/image]
 ```
 
-## 2.14. Tabs
+## 2.16. Tabs
 
-### 2.14.1. \<tabs\>
+### 2.16.1. \<tabs\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -718,7 +756,7 @@ Currently supported BBCode like tags are:
 
 This element supports \<tabs-header\>,  \<tabs-content\> and others as sub elements.
 
-### 2.14.2. \<tabs-header\>
+### 2.16.2. \<tabs-header\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -730,7 +768,7 @@ This element supports \<tabs-header\>,  \<tabs-content\> and others as sub eleme
 
 This element supports \<tab\> and others as sub elements.
 
-### 2.14.3. \<tab\>
+### 2.16.3. \<tab\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -748,7 +786,7 @@ This element supports \<tab\> and others as sub elements.
 | on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
 
-### 2.14.4. \<tabs-content\>
+### 2.16.4. \<tabs-content\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -759,7 +797,7 @@ This element supports \<tab\> and others as sub elements.
 
 This element supports \<tab-content\> and others as sub elements.
 
-### 2.14.5. \<tab-content\>
+### 2.16.5. \<tab-content\>
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |

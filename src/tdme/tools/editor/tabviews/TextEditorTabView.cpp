@@ -415,6 +415,7 @@ void TextEditorTabView::initialize()
 void TextEditorTabView::dispose()
 {
 	required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->removeChangeListener(textNodeChangeListener);
+	textEditorTabController->closeFindReplaceWindow();
 	engine->dispose();
 }
 
@@ -434,6 +435,7 @@ void TextEditorTabView::activate() {
 
 void TextEditorTabView::deactivate() {
 	editorView->getScreenController()->storeOutlinerState(outlinerState);
+	textEditorTabController->closeFindReplaceWindow();
 }
 
 void TextEditorTabView::reloadOutliner() {
@@ -442,6 +444,7 @@ void TextEditorTabView::reloadOutliner() {
 }
 
 void TextEditorTabView::setVisualEditor() {
+	textEditorTabController->closeFindReplaceWindow();
 	auto editorNode = dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen(tabScreenNode->getId())->getNodeById("editor"));
 	if (editorNode != nullptr) editorNode->getActiveConditions().set("visualization");
 	visualEditor = true;
@@ -1593,4 +1596,183 @@ void TextEditorTabView::createMiniScriptConnections() {
 			default: break;
 		}
 	}
+}
+
+int TextEditorTabView::getTextIndex() {
+	auto textNodeController = required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController());
+	return textNodeController->getIndex();
+}
+
+bool TextEditorTabView::find(const string& findString, bool matchCase, bool wholeWord, bool selection, bool firstSearch, int& index) {
+	reformat();
+	auto success = false;
+	auto _findString = matchCase == false?StringTools::toLowerCase(findString):findString;
+	auto _text = matchCase == false?StringTools::toLowerCase(textNode->getText().getString()):textNode->getText().getString();
+	auto textNodeController = required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController());
+	auto inSelectionAvailable = textNodeController->getIndex() != -1 && textNodeController->getSelectionIndex() != -1;
+	auto i = selection == true && inSelectionAvailable == true?Math::min(textNodeController->getIndex(), textNodeController->getSelectionIndex()):0;
+	auto fi = -1;
+	auto ni = index;
+	auto l = selection == true && inSelectionAvailable == true?Math::max(textNodeController->getIndex(), textNodeController->getSelectionIndex()):_text.size();
+	while (i < l) {
+		auto p = StringTools::indexOf(_text, _findString, i);
+		if (p != string::npos && p < l) {
+			i = p + _findString.size();
+			if (wholeWord == true) {
+				auto __text = MutableString(_text);
+				auto __textCharIdxBefore = __text.getUtf8CharacterIndex(p) - 1;
+				auto __textCharIdxAfter = __text.getUtf8CharacterIndex(p + _findString.size());
+				auto __textCharBefore = __text.getUTF8CharAt(__textCharIdxBefore);
+				auto __textCharAfter = __text.getUTF8CharAt(__textCharIdxAfter);
+				if (Character::isAlphaNumeric(__textCharBefore) == true || Character::isAlphaNumeric(__textCharAfter) == true) {
+					continue;
+				}
+			}
+			if (fi == -1) fi = p;
+			if (ni != -1 && (firstSearch == true?p >= ni:p > ni)) {
+				index = p;
+				textNode->setTextStyle(p, p + _findString.size() - 1, GUIColor("#ff0000"));
+				textNode->scrollToIndex(index);
+				ni = -1;
+				firstSearch = false;
+				success = true;
+				//
+				break;
+			}
+		} else {
+			break;
+		}
+	}
+	if (ni != -1 && fi != -1) {
+		textNode->setTextStyle(fi, fi + _findString.size() - 1, GUIColor("#ff0000"));
+		index = fi;
+		textNode->scrollToIndex(index);
+		success = true;
+	}
+	//
+	return success;
+}
+
+int TextEditorTabView::count(const string& findString, bool matchCase, bool wholeWord, bool selection) {
+	reformat();
+	auto _findString = matchCase == false?StringTools::toLowerCase(findString):findString;
+	auto _text = matchCase == false?StringTools::toLowerCase(textNode->getText().getString()):textNode->getText().getString();
+	auto textNodeController = required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController());
+	auto inSelectionAvailable = textNodeController->getIndex() != -1 && textNodeController->getSelectionIndex() != -1;
+	auto i = selection == true && inSelectionAvailable == true?Math::min(textNodeController->getIndex(), textNodeController->getSelectionIndex()):0;
+	auto l = selection == true && inSelectionAvailable == true?Math::max(textNodeController->getIndex(), textNodeController->getSelectionIndex()):_text.size();
+	auto c = 0;
+	while (i < l) {
+		auto p = StringTools::indexOf(_text, _findString, i);
+		if (p != string::npos && p < l) {
+			i = p + _findString.size();
+			if (wholeWord == true) {
+				auto __text = MutableString(_text);
+				auto __textCharIdxBefore = __text.getUtf8CharacterIndex(p) - 1;
+				auto __textCharIdxAfter = __text.getUtf8CharacterIndex(p + _findString.size());
+				auto __textCharBefore = __text.getUTF8CharAt(__textCharIdxBefore);
+				auto __textCharAfter = __text.getUTF8CharAt(__textCharIdxAfter);
+				if (Character::isAlphaNumeric(__textCharBefore) == true || Character::isAlphaNumeric(__textCharAfter) == true) {
+					continue;
+				}
+			}
+			textNode->setTextStyle(p, p + _findString.size() - 1, GUIColor("#ff0000"));
+			c++;
+		} else {
+			break;
+		}
+	}
+	return c;
+}
+
+bool TextEditorTabView::replace(const string& findString, const string& replaceString, bool matchCase, bool wholeWord, bool selection, int& index) {
+	reformat();
+	auto success = false;
+	auto _findString = matchCase == false?StringTools::toLowerCase(findString):findString;
+	auto text = textNode->getText().getString();
+	auto _text = matchCase == false?StringTools::toLowerCase(text):text;
+	auto textNodeController = required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController());
+	auto inSelectionAvailable = textNodeController->getIndex() != -1 && textNodeController->getSelectionIndex() != -1;
+	auto i = selection == true && inSelectionAvailable == true?Math::min(textNodeController->getIndex(), textNodeController->getSelectionIndex()):0;
+	auto fi = -1;
+	auto ni = index;
+	auto l = selection == true && inSelectionAvailable == true?Math::max(textNodeController->getIndex(), textNodeController->getSelectionIndex()):_text.size();
+	while (i < l) {
+		auto p = StringTools::indexOf(_text, _findString, i);
+		if (p != string::npos && p < l) {
+			i = p + _findString.size();
+			if (wholeWord == true) {
+				auto __text = MutableString(_text);
+				auto __textCharIdxBefore = __text.getUtf8CharacterIndex(p) - 1;
+				auto __textCharIdxAfter = __text.getUtf8CharacterIndex(p + _findString.size());
+				auto __textCharBefore = __text.getUTF8CharAt(__textCharIdxBefore);
+				auto __textCharAfter = __text.getUTF8CharAt(__textCharIdxAfter);
+				if (Character::isAlphaNumeric(__textCharBefore) == true || Character::isAlphaNumeric(__textCharAfter) == true) {
+					continue;
+				}
+			}
+			if (fi == -1) fi = p;
+			if (ni != -1 && p >= ni) {
+				text = StringTools::substring(text, 0, p) + replaceString + StringTools::substring(text, p + _findString.size());
+				index = p + _findString.size();
+				textNode->scrollToIndex(index);
+				ni = -1;
+				success = true;
+				//
+				break;
+			}
+		} else {
+			break;
+		}
+	}
+	if (ni != -1 && fi != -1) {
+		text = StringTools::substring(text, 0, fi) + replaceString + StringTools::substring(text, fi + _findString.size());
+		index = fi + _findString.size();
+		textNode->scrollToIndex(index);
+		success = true;
+	}
+	//
+	textNode->setText(StringTools::replace(StringTools::replace(text, "[", "\\["), "]", "\\]"));
+	reformat();
+	//
+	return success;
+}
+
+bool TextEditorTabView::replaceAll(const string& findString, const string& replaceString, bool matchCase, bool wholeWord, bool selection) {
+	auto success = false;
+	auto _findString = matchCase == false?StringTools::toLowerCase(findString):findString;
+	auto text = textNode->getText().getString();
+	auto _text = matchCase == false?StringTools::toLowerCase(text):text;
+	auto textNodeController = required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController());
+	auto inSelectionAvailable = textNodeController->getIndex() != -1 && textNodeController->getSelectionIndex() != -1;
+	auto i = selection == true && inSelectionAvailable == true?Math::min(textNodeController->getIndex(), textNodeController->getSelectionIndex()):0;
+	auto l = selection == true && inSelectionAvailable == true?Math::max(textNodeController->getIndex(), textNodeController->getSelectionIndex()):_text.size();
+	while (i < l) {
+		auto p = StringTools::indexOf(_text, _findString, i);
+		if (p != string::npos && p < l) {
+			i = p + replaceString.size();
+			if (wholeWord == true) {
+				auto __text = MutableString(_text);
+				auto __textCharIdxBefore = __text.getUtf8CharacterIndex(p) - 1;
+				auto __textCharIdxAfter = __text.getUtf8CharacterIndex(p + _findString.size());
+				auto __textCharBefore = __text.getUTF8CharAt(__textCharIdxBefore);
+				auto __textCharAfter = __text.getUTF8CharAt(__textCharIdxAfter);
+				if (Character::isAlphaNumeric(__textCharBefore) == true || Character::isAlphaNumeric(__textCharAfter) == true) {
+					continue;
+				}
+			}
+			text = StringTools::substring(text, 0, p) + replaceString + StringTools::substring(text, p + _findString.size());
+			_text = matchCase == false?StringTools::toLowerCase(text):text;
+			success = true;
+		} else {
+			break;
+		}
+	}
+	textNode->setText(StringTools::replace(StringTools::replace(text, "[", "\\["), "]", "\\]"));
+	reformat();
+	return success;
+}
+
+void TextEditorTabView::reformat() {
+	TextFormatter::getInstance()->format(extension, textNode, 0, textNode->getText().size());
 }

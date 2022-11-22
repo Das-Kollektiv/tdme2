@@ -235,13 +235,47 @@ void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIEl
 			onOpenProject();
 		} else
 		if (node->getId() == "menu_file_save") {
-			onSaveCurrentTab();
+			auto selectedTab = getSelectedTab();
+			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->executeCommand(TabController::COMMAND_SAVE);
 		} else
 		if (node->getId() == "menu_file_saveas") {
-			onSaveAsCurrentTab();
+			auto selectedTab = getSelectedTab();
+			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->executeCommand(TabController::COMMAND_SAVEAS);
 		} else
 		if (node->getId() == "menu_file_saveall") {
-			onSaveAllTabs();
+			// forward saveAs to active tab tab controller
+			for (auto& tabViewIt: tabViews) {
+				auto& tab = tabViewIt.second;
+				tab.getTabView()->getTabController()->executeCommand(TabController::COMMAND_SAVE);
+			}
+		} else
+		if (node->getId() == "menu_edit_undo") {
+			auto selectedTab = getSelectedTab();
+			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->executeCommand(TabController::COMMAND_UNDO);
+		} else
+		if (node->getId() == "menu_edit_redo") {
+			auto selectedTab = getSelectedTab();
+			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->executeCommand(TabController::COMMAND_REDO);
+		} else
+		if (node->getId() == "menu_edit_cut") {
+			auto selectedTab = getSelectedTab();
+			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->executeCommand(TabController::COMMAND_CUT);
+		} else
+		if (node->getId() == "menu_edit_copy") {
+			auto selectedTab = getSelectedTab();
+			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->executeCommand(TabController::COMMAND_COPY);
+		} else
+		if (node->getId() == "menu_edit_paste") {
+			auto selectedTab = getSelectedTab();
+			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->executeCommand(TabController::COMMAND_PASTE);
+		} else
+		if (node->getId() == "menu_edit_delete") {
+			auto selectedTab = getSelectedTab();
+			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->executeCommand(TabController::COMMAND_DELETE);
+		} else
+		if (node->getId() == "menu_edit_findreplace") {
+			auto selectedTab = getSelectedTab();
+			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->executeCommand(TabController::COMMAND_FINDREPLACE);
 		} else
 		if (node->getId() == "menu_view_fullscreen") {
 			setFullScreen(isFullScreen() == false?true:false);
@@ -1138,11 +1172,11 @@ void EditorScreenController::FileOpenThread::run() {
 }
 
 void EditorScreenController::openFile(const string& absoluteFileName) {
-	Console::println("EditorScreenController::onOpenFile(): " + absoluteFileName);
+	Console::println("EditorScreenController::openFile(): " + absoluteFileName);
 
 	// should never happen but still ...
 	if (fileOpenThread != nullptr) {
-		Console::println("EditorScreenController::onOpenFile(): " + absoluteFileName + ": file open thread is already busy with opening a file");
+		Console::println("EditorScreenController::openFile(): " + absoluteFileName + ": file open thread is already busy with opening a file");
 		showErrorPopUp("Error", string() + "File open thread is already busy with opening a file");
 		return;
 	}
@@ -1344,13 +1378,15 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 				throw ExceptionBase("Unknown file type.");
 		}
 	} catch (Exception& exception) {
-		Console::print(string("EditorScreenController::onOpenFile(): An error occurred: "));
+		Console::print(string("EditorScreenController::openFile(): An error occurred: "));
 		Console::println(string(exception.what()));
 		showErrorPopUp("Error", string() + "An error occurred: " + exception.what());
 	}
 }
 
 void EditorScreenController::onOpenFileFinish(const string& tabId, FileType fileType, const string& absoluteFileName, Prototype* prototype, Scene* scene) {
+	Console::println(string("EditorScreenController::onOpenFileFinish(): absoluteFileName: " + absoluteFileName));
+
 	auto fileName = FileSystem::getInstance()->getFileName(absoluteFileName);
 	auto fileNameLowerCase = StringTools::toLowerCase(fileName);
 
@@ -1736,26 +1772,6 @@ void EditorScreenController::enableSceneMenuEntry() {
 void EditorScreenController::disableSceneMenuEntry() {
 	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("menu_project_scene_run"))->getController()->setDisabled(true);
 	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("menu_project_scene_stop"))->getController()->setDisabled(true);
-}
-
-void EditorScreenController::onSaveCurrentTab() {
-	// forward save to active tab tab controller
-	auto selectedTab = getSelectedTab();
-	if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->save();
-}
-
-void EditorScreenController::onSaveAsCurrentTab() {
-	// forward saveAs to active tab tab controller
-	auto selectedTab = getSelectedTab();
-	if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->saveAs();
-}
-
-void EditorScreenController::onSaveAllTabs() {
-	// forward saveAs to active tab tab controller
-	for (auto& tabViewIt: tabViews) {
-		auto& tab = tabViewIt.second;
-		tab.getTabView()->getTabController()->save();
-	}
 }
 
 void EditorScreenController::getViewPort(GUINode* viewPortNode, int& left, int& top, int& width, int& height) {

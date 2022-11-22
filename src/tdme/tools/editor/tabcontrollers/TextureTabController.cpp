@@ -71,12 +71,9 @@ void TextureTabController::dispose()
 {
 }
 
-void TextureTabController::save()
+void TextureTabController::executeCommand(TabControllerCommand command)
 {
-}
-
-void TextureTabController::saveAs()
-{
+	showErrorPopUp("Warning", "This command is not supported yet");
 }
 
 void TextureTabController::showErrorPopUp(const string& caption, const string& message)

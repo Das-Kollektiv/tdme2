@@ -364,6 +364,60 @@ public:
 	 */
 	void createMiniScriptConnections();
 
+	/**
+	 * @return text index
+	 */
+	int getTextIndex();
+
+	/**
+	 * Find string
+	 * @param findString find string
+	 * @param matchCase only find string that also matches case in find string
+	 * @param wholeWord only find whole worlds
+	 * @param selection only find in selection
+	 * @param firstSearch first search
+	 * @param index index
+	 * @return success
+	 */
+	bool find(const string& findString, bool matchCase, bool wholeWord, bool selection, bool firstSearch, int& index);
+
+	/**
+	 * Count string
+	 * @param findString find string
+	 * @param matchCase only find string that also matches case in find string
+	 * @param wholeWord only find whole worlds
+	 * @param selection only find in selection
+	 */
+	int count(const string& findString, bool matchCase, bool wholeWord, bool selection);
+
+	/**
+	 * Replace string
+	 * @param findString find string
+	 * @param replaceString replace string
+	 * @param matchCase only find string that also matches case in find string
+	 * @param wholeWord only find whole worlds
+	 * @param selection only find in selection
+	 * @param index index
+	 * @return success
+	 */
+	bool replace(const string& findString, const string& replaceString, bool matchCase, bool wholeWord, bool selection, int& index);
+
+	/**
+	 * Replace all string
+	 * @param findString find string
+	 * @param replaceString replace string
+	 * @param matchCase only find string that also matches case in find string
+	 * @param wholeWord only find whole worlds
+	 * @param selection only find in selection
+	 * @return success
+	 */
+	bool replaceAll(const string& findString, const string& replaceString, bool matchCase, bool wholeWord, bool selection);
+
+	/**
+	 * Reformat code style
+	 */
+	void reformat();
+
 	// overridden methods
 	void handleInputEvents() override;
 	void display() override;

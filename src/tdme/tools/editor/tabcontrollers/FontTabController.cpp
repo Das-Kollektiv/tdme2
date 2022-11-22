@@ -79,12 +79,9 @@ void FontTabController::dispose()
 {
 }
 
-void FontTabController::save()
+void FontTabController::executeCommand(TabControllerCommand command)
 {
-}
-
-void FontTabController::saveAs()
-{
+	showErrorPopUp("Warning", "This command is not supported yet");
 }
 
 void FontTabController::showErrorPopUp(const string& caption, const string& message)

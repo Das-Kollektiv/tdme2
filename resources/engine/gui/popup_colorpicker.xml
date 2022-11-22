@@ -1,85 +1,89 @@
 <screen id="popup_colorpicker" popup="true" min-width="1024" min-height="768" max-width="3200" max-height="1800">
-	<layout alignment="vertical" horizontal-align="center" vertical-align="center" width="100%" height="100%">	
-		<tabs width="220" height="515">
-			<tabs-header id="colorpicker_tabs-header">
-				<tab id="colorpicker_caption" image="resources/engine/images/attention.png" text="Color Picker" closeable="true"/>
-			</tabs-header>
-			<tabs-content>
-				<tab-content tab-id="colorpicker_caption">
-				
-					<layout padding="5" border="0" border-color="{$color.element_frame}" width="auto" height="auto" alignment="vertical" background-color="{$color.element_foreground}">
-						<layout alignment="horizontal" width="200" height="auto">
-							<image id="colorpicker_image" src="resources/engine/images/colorpicker.png" />
-							<space width="5" />
-							<space width="*" />
-							<slider-vertical template="slider-v_template_gradient.xml" id="slider_colorpicker_brightness" value="0.5" height="175" />
-						</layout>
-						<space height="5" />
-						<menu-separator />
-						<layout padding="5" width="200" height="auto" alignment="vertical">	
-							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="New" width="*" height="auto"/>
-								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-									<image id="colorpicker_color_new" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>					
+	<layout alignment="none" horizontal-align="center" vertical-align="center" width="100%" height="100%">
+
+		<moveable alignment="vertical" width="auto" height="auto">
+			<tabs width="220" height="515">
+				<tabs-header id="colorpicker_tabs-header">
+					<tab id="colorpicker_caption" image="resources/engine/images/attention.png" text="Color Picker" closeable="true"/>
+				</tabs-header>
+				<tabs-content>
+					<tab-content tab-id="colorpicker_caption">
+					
+						<layout padding="5" border="0" border-color="{$color.element_frame}" width="auto" height="auto" alignment="vertical" background-color="{$color.element_foreground}">
+							<layout alignment="horizontal" width="200" height="auto">
+								<image id="colorpicker_image" src="resources/engine/images/colorpicker.png" />
+								<space width="5" />
+								<space width="*" />
+								<slider-vertical template="slider-v_template_gradient.xml" id="slider_colorpicker_brightness" value="0.5" height="175" />
+							</layout>
+							<space height="5" />
+							<menu-separator />
+							<layout padding="5" width="200" height="auto" alignment="vertical">	
+								<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+									<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="New" width="*" height="auto"/>
+									<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+										<image id="colorpicker_color_new" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>					
+									</layout>
+								</layout>
+								<space height="5" />
+								<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+									<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Old" width="*" height="auto"/>
+									<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
+										<image id="colorpicker_color_old" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>					
+									</layout>
 								</layout>
 							</layout>
-							<space height="5" />
-							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Old" width="*" height="auto"/>
-								<layout alignment="horizontal" width="50%" height="auto" horizontal-align="right">
-									<image id="colorpicker_color_old" width="*" height="auto" src="resources/engine/images/button.png" scale9="10" effect-color-mul="red"/>					
+							<menu-separator />
+		
+							<layout padding="5" width="*" height="auto" alignment="vertical">	
+								<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+									<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Red" width="45" height="auto" />
+									<space width="5" />
+									<space width="*" />
+									<input id="colorpicker_red" width="60" height="auto" text="255" options="type=int,min=0,max=255,step=1" image="resources/engine/images/inputslider.png" />
+								</layout>
+								<space height="5" />
+								<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+									<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Green" width="45" height="auto" />
+									<space width="5" />
+									<space width="*" />
+									<input id="colorpicker_green" width="60" height="auto" text="255" options="type=int,min=0,max=255,step=1" image="resources/engine/images/inputslider.png" />
+								</layout>
+								<space height="5" />
+								<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+									<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Blue" width="45" height="auto" />
+									<space width="5" />
+									<space width="*" />
+									<input id="colorpicker_blue" width="60" height="auto" text="255" options="type=int,min=0,max=255,step=1" image="resources/engine/images/inputslider.png" />
+								</layout>
+								<space height="5" />
+								<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
+									<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Alpha" width="45" height="auto" />
+									<space width="5" />
+									<space width="*" />
+									<input id="colorpicker_alpha" width="60" height="auto" text="255" options="type=int,min=0,max=255,step=1" image="resources/engine/images/inputslider.png"  />
 								</layout>
 							</layout>
-						</layout>
-						<menu-separator />
-	
-						<layout padding="5" width="*" height="auto" alignment="vertical">	
-							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Red" width="45" height="auto" />
+							<menu-separator />
+							<layout padding="5" width="200" height="auto" alignment="horizontal" vertical-align="center">
+								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Hex" width="*" height="auto" />
 								<space width="5" />
-								<space width="*" />
-								<input id="colorpicker_red" width="60" height="auto" text="255" options="type=int,min=0,max=255,step=1" image="resources/engine/images/inputslider.png" />
+								<input id="colorpicker_hex" width="85" height="auto" text="#00000000" />
+								<space width="10" />
+								<button id="colorpicker_pipette" image="resources/engine/images/pipette.png" width="25" height="25" />
 							</layout>
 							<space height="5" />
 							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Green" width="45" height="auto" />
+								<button id="colorpicker_apply" width="*" height="25" text="Apply"/>
 								<space width="5" />
-								<space width="*" />
-								<input id="colorpicker_green" width="60" height="auto" text="255" options="type=int,min=0,max=255,step=1" image="resources/engine/images/inputslider.png" />
-							</layout>
-							<space height="5" />
-							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Blue" width="45" height="auto" />
-								<space width="5" />
-								<space width="*" />
-								<input id="colorpicker_blue" width="60" height="auto" text="255" options="type=int,min=0,max=255,step=1" image="resources/engine/images/inputslider.png" />
-							</layout>
-							<space height="5" />
-							<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-								<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Alpha" width="45" height="auto" />
-								<space width="5" />
-								<space width="*" />
-								<input id="colorpicker_alpha" width="60" height="auto" text="255" options="type=int,min=0,max=255,step=1" image="resources/engine/images/inputslider.png"  />
-							</layout>
+								<button id="colorpicker_reset" width="*" height="25" text="Reset"/>
+							</layout>							
 						</layout>
-						<menu-separator />
-						<layout padding="5" width="200" height="auto" alignment="horizontal" vertical-align="center">
-							<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" text="Hex" width="*" height="auto" />
-							<space width="5" />
-							<input id="colorpicker_hex" width="85" height="auto" text="#00000000" />
-							<space width="10" />
-							<button id="colorpicker_pipette" image="resources/engine/images/pipette.png" width="25" height="25" />
-						</layout>
-						<space height="5" />
-						<layout width="100%" height="auto" alignment="horizontal" vertical-align="center">
-							<button id="colorpicker_apply" width="*" height="25" text="Apply"/>
-							<space width="5" />
-							<button id="colorpicker_reset" width="*" height="25" text="Reset"/>
-						</layout>							
-					</layout>
-				
-				</tab-content>
-			</tabs-content>
-		</tabs>
+					
+					</tab-content>
+				</tabs-content>
+			</tabs>
+		</moveable>
+
 	</layout>
 </screen>

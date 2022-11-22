@@ -1,0 +1,106 @@
+#pragma once
+
+#include <string>
+
+#include <tdme/tdme.h>
+#include <tdme/gui/events/fwd-tdme.h>
+#include <tdme/gui/events/GUIActionListener.h>
+#include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/tools/editor/controllers/ScreenController.h>
+#include <tdme/utilities/fwd-tdme.h>
+
+using std::string;
+
+using tdme::gui::events::GUIActionListener;
+using tdme::gui::events::GUIActionListenerType;
+using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUIScreenNode;
+using tdme::tools::editor::controllers::ScreenController;
+using tdme::utilities::Action;
+using tdme::utilities::MutableString;
+
+/**
+ * Find/Replace dialog screen controller
+ * @author Andreas Drewke
+ */
+class tdme::tools::editor::controllers::FindReplaceDialogScreenController final
+	: public ScreenController
+	, public virtual GUIActionListener
+{
+
+private:
+	GUIScreenNode* screenNode { nullptr };
+	GUIElementNode* findText { nullptr };
+	GUIElementNode* replaceText { nullptr };
+	GUIElementNode* matchCase { nullptr };
+	GUIElementNode* wholeWordOnly { nullptr };
+	GUIElementNode* inSelectionOnly { nullptr };
+	GUIElementNode* findButton { nullptr };
+	GUIElementNode* countButton { nullptr };
+	GUIElementNode* cancelButton { nullptr };
+	GUIElementNode* replaceButton { nullptr };
+	GUIElementNode* replaceAllButton { nullptr };
+
+	Action* findAction { nullptr };
+	Action* countAction { nullptr };
+	Action* replaceAction { nullptr };
+	Action* replaceAllAction { nullptr };
+	Action* completeAction { nullptr };
+
+public:
+	/**
+	 * Public constructor
+	 */
+	FindReplaceDialogScreenController();
+
+	/**
+	 * Destructor
+	 */
+	virtual ~FindReplaceDialogScreenController();
+
+	// overridden methods
+	GUIScreenNode* getScreenNode() override;
+	void initialize() override;
+	void dispose() override;
+	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
+
+	/**
+	 * @return find text
+	 */
+	const string getFindText();
+
+	/**
+	 * @return replace text
+	 */
+	const string getReplaceText();
+
+	/**
+	 * @return is match case checked
+	 */
+	bool isMatchCase();
+
+	/**
+	 * @return is whole world only checked
+	 */
+	bool isWholeWordOnly();
+
+	/**
+	 * @return is in selection only checked
+	 */
+	bool isInSelectionOnly();
+
+	/**
+	 * Shows the pop up
+	 * @param findAction find action
+	 * @param coundAction count action
+	 * @param replaceAction replace action
+	 * @param replaceAllAction replace all action
+	 * @param completeAction complete action
+	 */
+	void show(Action* findAction, Action* countAction, Action* replaceAction, Action* replaceAllAction, Action* completeAction);
+	/**
+	 * Closes the pop up
+	 */
+	void close();
+
+};

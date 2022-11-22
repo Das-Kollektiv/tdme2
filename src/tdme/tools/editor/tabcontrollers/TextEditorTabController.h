@@ -56,6 +56,8 @@ private:
 	GUIScreenNode* screenNode { nullptr };
 	PopUps* popUps { nullptr };
 	vector<MiniScriptScriptSyntaxTree> miniScriptSyntaxTrees;
+	bool firstSearch { true };
+	int searchIndex { -1 };
 
 public:
 	/**
@@ -80,15 +82,12 @@ public:
 	// overridden methods
 	void initialize(GUIScreenNode* screenNode) override;
 	void dispose() override;
-	void save() override;
-	void saveAs() override;
-
-	// overridden methods
 	void onValueChanged(GUIElementNode* node) override;
 	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
 	void onFocus(GUIElementNode* node) override;
 	void onUnfocus(GUIElementNode* node) override;
 	void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) override;
+	void executeCommand(TabControllerCommand command) override;
 
 	/**
 	 * Set outliner content
@@ -119,5 +118,10 @@ public:
 	 * @param message message
 	 */
 	void showErrorPopUp(const string& caption, const string& message);
+
+	/**
+	 * Close find/replace window
+	 */
+	void closeFindReplaceWindow();
 
 };

@@ -58,6 +58,7 @@ void AboutDialogScreenController::initialize()
 		required_dynamic_cast<GUITextNode*>(screenNode->getNodeById("about_version"))->setText(MutableString(Version::getVersion()));
 		required_dynamic_cast<GUITextNode*>(screenNode->getNodeById("about_platform"))->setText(MutableString("Platform: " + Application::getOSName() + "/" + Application::getCPUName()));
 		required_dynamic_cast<GUIStyledTextNode*>(screenNode->getNodeById("about_graphics"))->setText(MutableString("Graphics: " + StringTools::replace(StringTools::replace(Engine::getInstance()->getGraphicsRenderer(), "[", "\\["), "]", "\\]")));
+		screenNode->invalidateLayouts();
 	} catch (Exception& exception) {
 		Console::print(string("AboutDialogScreenController::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -71,7 +72,6 @@ void AboutDialogScreenController::dispose()
 void AboutDialogScreenController::show()
 {
 	screenNode->setVisible(true);
-	screenNode->layout();
 }
 
 void AboutDialogScreenController::close()

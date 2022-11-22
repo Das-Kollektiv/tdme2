@@ -25,8 +25,9 @@
 						<menu-item text="Cut" id="menu_edit_cut" shortcut="Ctrl X" />
 						<menu-item text="Copy" id="menu_edit_copy" shortcut="Ctrl C" />
 						<menu-item text="Paste" id="menu_edit_paste" shortcut="Ctrl V" />
-						<menu-separator />
 						<menu-item text="Delete" id="menu_edit_delete" image="resources/engine/images/delete.png" shortcut="Del" />
+						<menu-separator />
+						<menu-item text="Find/Replace" id="menu_edit_findreplace" image="resources/engine/images/search.png" shortcut="Ctrl F" />
 					</menu-header-item>
 					<menu-header-item text="View">
 						<menu-item text="Full Screen" id="menu_view_fullscreen" image="resources/engine/images/fullscreen.png" shortcut="F11" />

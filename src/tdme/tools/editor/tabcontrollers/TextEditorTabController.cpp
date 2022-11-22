@@ -19,6 +19,7 @@
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
+#include <tdme/tools/editor/controllers/FindReplaceDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
@@ -54,6 +55,7 @@ using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
+using tdme::tools::editor::controllers::FindReplaceDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
@@ -103,61 +105,195 @@ void TextEditorTabController::dispose()
 	this->view->getTabScreenNode()->removeFocusListener(this);
 }
 
-void TextEditorTabController::save()
+void TextEditorTabController::executeCommand(TabControllerCommand command)
 {
-	auto fileName = view->getFileName();
-	try {
-		if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
-		view->saveFile(
-			Tools::getPathName(fileName),
-			Tools::getFileName(fileName)
-		);
-	} catch (Exception& exception) {
-		showErrorPopUp("Warning", (string(exception.what())));
-	}
-
-}
-
-void TextEditorTabController::saveAs()
-{
-	class OnTextSave: public virtual Action
-	{
-	public:
-		void performAction() override {
-			try {
-				textEditorTabController->view->saveFile(
-					textEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
-					textEditorTabController->popUps->getFileDialogScreenController()->getFileName()
-				);
-			} catch (Exception& exception) {
-				textEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+	switch (command) {
+		case COMMAND_SAVE:
+			{
+				auto fileName = view->getFileName();
+				try {
+					if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
+					view->saveFile(
+						Tools::getPathName(fileName),
+						Tools::getFileName(fileName)
+					);
+				} catch (Exception& exception) {
+					showErrorPopUp("Warning", (string(exception.what())));
+				}
 			}
-			textEditorTabController->popUps->getFileDialogScreenController()->close();
-		}
+			break;
+		case COMMAND_SAVEAS:
+			{
+				class OnTextSave: public virtual Action
+				{
+				public:
+					void performAction() override {
+						try {
+							textEditorTabController->view->saveFile(
+								textEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
+								textEditorTabController->popUps->getFileDialogScreenController()->getFileName()
+							);
+						} catch (Exception& exception) {
+							textEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+						}
+						textEditorTabController->popUps->getFileDialogScreenController()->close();
+					}
 
-		/**
-		 * Public constructor
-		 * @param textEditorTabController text editor tab controller
-		 */
-		OnTextSave(TextEditorTabController* textEditorTabController): textEditorTabController(textEditorTabController) {
-		}
+					/**
+					 * Public constructor
+					 * @param textEditorTabController text editor tab controller
+					 */
+					OnTextSave(TextEditorTabController* textEditorTabController): textEditorTabController(textEditorTabController) {
+					}
 
-	private:
-		TextEditorTabController* textEditorTabController;
-	};
+				private:
+					TextEditorTabController* textEditorTabController;
+				};
 
-	auto fileName = view->getFileName();
-	vector<string> extensions = {
-		view->getExtension()
-	};
-	popUps->getFileDialogScreenController()->show(
-		Tools::getPathName(fileName),
-		"Save to: ",
-		extensions,
-		Tools::getFileName(fileName),
-		false,
-		new OnTextSave(this)
-	);
+				auto fileName = view->getFileName();
+				vector<string> extensions = {
+					view->getExtension()
+				};
+				popUps->getFileDialogScreenController()->show(
+					Tools::getPathName(fileName),
+					"Save to: ",
+					extensions,
+					Tools::getFileName(fileName),
+					false,
+					new OnTextSave(this)
+				);
+			}
+			break;
+		case COMMAND_FINDREPLACE:
+			{
+				//
+				firstSearch = true;
+				searchIndex = view->getTextIndex();
+
+				//
+				class FindAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						if (textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText().empty() == true) {
+							textEditorTabController->showErrorPopUp("Find", "No find string given.");
+						} else {
+							if (textEditorTabController->view->find(
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText(),
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->isMatchCase(),
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->isWholeWordOnly(),
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly(),
+								textEditorTabController->firstSearch,
+								textEditorTabController->searchIndex
+							) == false) {
+								textEditorTabController->showErrorPopUp("Find", "Text not found.");
+							}
+							textEditorTabController->firstSearch = false;
+						}
+					}
+					FindAction(TextEditorTabController* textEditorTabController): textEditorTabController(textEditorTabController) {
+					}
+				private:
+					TextEditorTabController* textEditorTabController;
+				};
+				//
+				class CountAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						if (textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText().empty() == true) {
+							textEditorTabController->showErrorPopUp("Count", "No find string given.");
+						} else {
+							auto count = textEditorTabController->view->count(
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText(),
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->isMatchCase(),
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->isWholeWordOnly(),
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly()
+							);
+							textEditorTabController->showErrorPopUp("Count", "The text occurred " + to_string(count) + " times.");
+						}
+					}
+					CountAction(TextEditorTabController* textEditorTabController): textEditorTabController(textEditorTabController) {
+					}
+				private:
+					TextEditorTabController* textEditorTabController;
+				};
+				//
+				class ReplaceAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						if (textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText().empty() == true) {
+							textEditorTabController->showErrorPopUp("Replace", "No find string given.");
+						} else {
+							if (textEditorTabController->view->replace(
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText(),
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->getReplaceText(),
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->isMatchCase(),
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->isWholeWordOnly(),
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly(),
+								textEditorTabController->searchIndex
+							) == false) {
+								textEditorTabController->showErrorPopUp("Replace", "Text not found.");
+							}
+						}
+					}
+					ReplaceAction(TextEditorTabController* textEditorTabController): textEditorTabController(textEditorTabController) {
+					}
+				private:
+					TextEditorTabController* textEditorTabController;
+				};
+				//
+				class ReplaceAllAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						if (textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText().empty() == true) {
+							textEditorTabController->showErrorPopUp("Replace All", "No find string given.");
+						} else {
+							if (textEditorTabController->view->replaceAll(
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText(),
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->getReplaceText(),
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->isMatchCase(),
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->isWholeWordOnly(),
+								textEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly()
+							) == false) {
+								textEditorTabController->showErrorPopUp("Replace All", "Text not found.");
+							}
+						}
+					}
+					ReplaceAllAction(TextEditorTabController* textEditorTabController): textEditorTabController(textEditorTabController) {
+					}
+				private:
+					TextEditorTabController* textEditorTabController;
+				};
+				//
+				class CompleteAction: public virtual Action
+				{
+				public:
+					void performAction() override {
+						textEditorTabController->view->reformat();
+						textEditorTabController->popUps->getFindReplaceDialogScreenController()->close();
+					}
+					CompleteAction(TextEditorTabController* textEditorTabController): textEditorTabController(textEditorTabController) {
+					}
+				private:
+					TextEditorTabController* textEditorTabController;
+				};
+				//
+				popUps->getFindReplaceDialogScreenController()->show(
+					new FindAction(this),
+					new CountAction(this),
+					new ReplaceAction(this),
+					new ReplaceAllAction(this),
+					new CompleteAction(this)
+				);
+			}
+			break;
+		default:
+			showErrorPopUp("Warning", "This command is not supported yet");
+			break;
+	}
 }
 
 void TextEditorTabController::showErrorPopUp(const string& caption, const string& message)
@@ -286,4 +422,8 @@ void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx
 
 void TextEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
 {
+}
+
+void TextEditorTabController::closeFindReplaceWindow() {
+	popUps->getFindReplaceDialogScreenController()->close();
 }

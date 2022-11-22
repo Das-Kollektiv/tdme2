@@ -157,51 +157,60 @@ void ParticleSystemEditorTabController::dispose()
 {
 }
 
-void ParticleSystemEditorTabController::save()
+void ParticleSystemEditorTabController::executeCommand(TabControllerCommand command)
 {
-	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
-	try {
-		if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
-		view->saveFile(
-			Tools::getPathName(fileName),
-			Tools::getFileName(fileName)
-		);
-	} catch (Exception& exception) {
-		showErrorPopUp("Warning", (string(exception.what())));
-	}
-}
-
-void ParticleSystemEditorTabController::saveAs()
-{
-	class OnParticleSave: public virtual Action
-	{
-	public:
-		void performAction() override {
-			try {
-				particleSystemEditorTabController->view->saveFile(
-					particleSystemEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
-					particleSystemEditorTabController->popUps->getFileDialogScreenController()->getFileName()
-				);
-			} catch (Exception& exception) {
-				particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+	switch (command) {
+		case COMMAND_SAVE:
+			{
+				auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
+				try {
+					if (fileName.empty() == true) throw ExceptionBase("Could not save file. No filename known");
+					view->saveFile(
+						Tools::getPathName(fileName),
+						Tools::getFileName(fileName)
+					);
+				} catch (Exception& exception) {
+					showErrorPopUp("Warning", (string(exception.what())));
+				}
 			}
-			particleSystemEditorTabController->popUps->getFileDialogScreenController()->close();
-		}
-		OnParticleSave(ParticleSystemEditorTabController* particleSystemEditorTabController): particleSystemEditorTabController(particleSystemEditorTabController) {
-		}
-	private:
-		ParticleSystemEditorTabController* particleSystemEditorTabController;
-	};
+			break;
+		case COMMAND_SAVEAS:
+			{
+				class OnParticleSave: public virtual Action
+				{
+				public:
+					void performAction() override {
+						try {
+							particleSystemEditorTabController->view->saveFile(
+								particleSystemEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
+								particleSystemEditorTabController->popUps->getFileDialogScreenController()->getFileName()
+							);
+						} catch (Exception& exception) {
+							particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+						}
+						particleSystemEditorTabController->popUps->getFileDialogScreenController()->close();
+					}
+					OnParticleSave(ParticleSystemEditorTabController* particleSystemEditorTabController): particleSystemEditorTabController(particleSystemEditorTabController) {
+					}
+				private:
+					ParticleSystemEditorTabController* particleSystemEditorTabController;
+				};
 
-	auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
-	popUps->getFileDialogScreenController()->show(
-		fileName.empty() == false?Tools::getPathName(fileName):string(),
-		"Save to: ",
-		{{ "tparticle" }},
-		Tools::getFileName(fileName),
-		false,
-		new OnParticleSave(this)
-	);
+				auto fileName = view->getPrototype() != nullptr?view->getPrototype()->getFileName():"";
+				popUps->getFileDialogScreenController()->show(
+					fileName.empty() == false?Tools::getPathName(fileName):string(),
+					"Save to: ",
+					{{ "tparticle" }},
+					Tools::getFileName(fileName),
+					false,
+					new OnParticleSave(this)
+				);
+			}
+			break;
+		default:
+			showErrorPopUp("Warning", "This command is not supported yet");
+			break;
+	}
 }
 
 void ParticleSystemEditorTabController::updateInfoText(const MutableString& text) {

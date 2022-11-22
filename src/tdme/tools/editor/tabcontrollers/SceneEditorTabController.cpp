@@ -120,50 +120,59 @@ void SceneEditorTabController::dispose()
 {
 }
 
-void SceneEditorTabController::save()
+void SceneEditorTabController::executeCommand(TabControllerCommand command)
 {
-	auto scene = view->getScene();
-	if (scene == nullptr) return;
+	switch (command) {
+		case COMMAND_SAVE:
+			{
+				auto scene = view->getScene();
+				if (scene == nullptr) return;
 
-	//
-	save(Tools::getPathName(scene->getFileName()), Tools::getFileName(scene->getFileName()));
-}
+				//
+				save(Tools::getPathName(scene->getFileName()), Tools::getFileName(scene->getFileName()));
+			}
+			break;
+		case COMMAND_SAVEAS:
+			{
+				class OnSceneSave: public virtual Action
+				{
+				public:
+					void performAction() override {
+						sceneEditorTabController->save(
+							sceneEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
+							sceneEditorTabController->popUps->getFileDialogScreenController()->getFileName()
+						);
+						sceneEditorTabController->popUps->getFileDialogScreenController()->close();
+					}
 
-void SceneEditorTabController::saveAs()
-{
-	class OnSceneSave: public virtual Action
-	{
-	public:
-		void performAction() override {
-			sceneEditorTabController->save(
-				sceneEditorTabController->popUps->getFileDialogScreenController()->getPathName(),
-				sceneEditorTabController->popUps->getFileDialogScreenController()->getFileName()
-			);
-			sceneEditorTabController->popUps->getFileDialogScreenController()->close();
-		}
+					OnSceneSave(SceneEditorTabController* sceneEditorTabController): sceneEditorTabController(sceneEditorTabController) {
+					}
 
-		OnSceneSave(SceneEditorTabController* sceneEditorTabController): sceneEditorTabController(sceneEditorTabController) {
-		}
+				private:
+					SceneEditorTabController* sceneEditorTabController;
+				};
 
-	private:
-		SceneEditorTabController* sceneEditorTabController;
-	};
+				auto scene = view->getScene();
+				if (scene == nullptr) return;
 
-	auto scene = view->getScene();
-	if (scene == nullptr) return;
-
-	auto fileName = scene->getFileName();
-	vector<string> extensions = {
-		"tscene"
-	};
-	popUps->getFileDialogScreenController()->show(
-		Tools::getPathName(fileName),
-		"Save Scene to: ",
-		extensions,
-		Tools::getFileName(fileName),
-		false,
-		new OnSceneSave(this)
-	);
+				auto fileName = scene->getFileName();
+				vector<string> extensions = {
+					"tscene"
+				};
+				popUps->getFileDialogScreenController()->show(
+					Tools::getPathName(fileName),
+					"Save Scene to: ",
+					extensions,
+					Tools::getFileName(fileName),
+					false,
+					new OnSceneSave(this)
+				);
+			}
+			break;
+		default:
+			showErrorPopUp("Warning", "This command is not supported yet");
+			break;
+	}
 }
 
 void SceneEditorTabController::save(const string& pathName, const string& fileName)

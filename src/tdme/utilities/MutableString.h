@@ -76,6 +76,7 @@ public:
 	 * @return char
 	 */
 	inline char getCharAt(int32_t idx) const {
+		if (idx < 0 || idx >= data.size()) return 0;
 		return data[idx];
 	}
 
@@ -393,11 +394,23 @@ public:
 	/**
 	 * @return Get utf8 binary index
 	 * @param idx character index
+	 * @return utf8 binary index
 	 */
 	int getUtf8BinaryIndex(int idx) const {
 		auto u8It = getUTF8CharacterIterator();
 		u8It.seekCharacterPosition(idx);
 		return u8It.getBinaryPosition();
+	}
+
+	/**
+	 * @return Get utf8 character index
+	 * @param idx binary index
+	 * @return utf8 character index
+	 */
+	int getUtf8CharacterIndex(int idx) const {
+		auto u8It = getUTF8CharacterIterator();
+		u8It.seekBinaryPosition(idx);
+		return u8It.getCharacterPosition();
 	}
 
 	/**
