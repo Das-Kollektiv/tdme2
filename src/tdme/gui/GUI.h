@@ -12,7 +12,6 @@
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
-#include <tdme/gui/events/GUITooltipRequestListener.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
@@ -34,7 +33,6 @@ using tdme::application::InputEventHandler;
 using tdme::engine::Engine;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
-using tdme::gui::events::GUITooltipRequestListener;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
@@ -92,8 +90,6 @@ private:
 	unordered_map<string, unordered_set<string>> mousePressedEventNodeIds;
 	unordered_map<string, unordered_set<string>> mouseDraggingEventNodeIds;
 	unordered_map<string, bool> mouseIsDragging;
-
-	vector<GUITooltipRequestListener*> tooltipRequestListener;
 
 	bool altDown { false };
 	bool controlDown { false };
@@ -411,30 +407,5 @@ public:
 	 * @param clearEvents clear events
 	 */
 	void handleEvents(bool clearEvents = true);
-
-	/**
-	 * Add tooltip request listener
-	 * @param listener listener
-	 */
-	void addTooltipRequestListener(GUITooltipRequestListener* listener);
-
-	/**
-	 * Remove tooltip request listener
-	 * @param listener listener
-	 */
-	void removeTooltipRequestListener(GUITooltipRequestListener* listener);
-
-	/**
-	 * Delegate tooltip show request
-	 * @param node node
-	 * @param mouseX unscaled mouse X position
-	 * @param mouseY unscaled mouse Y position
-	 */
-	void delegateTooltipShowRequest(GUINode* node, int mouseX, int mouseY);
-
-	/**
-	 * Delegate tooltip close request
-	 */
-	void delegateTooltipCloseRequest();
 
 };

@@ -16,6 +16,7 @@
 #include <tdme/gui/events/GUIInputEventHandler.h>
 #include <tdme/gui/events/GUIMouseOverListener.h>
 #include <tdme/gui/events/GUIMoveListener.h>
+#include <tdme/gui/events/GUITooltipRequestListener.h>
 #include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -582,6 +583,27 @@ void GUIScreenNode::removeMoveListener(GUIMoveListener* listener) {
 void GUIScreenNode::delegateMove(GUINode* node) {
 	for (auto i = 0; i < moveListener.size(); i++) {
 		moveListener[i]->onMoved(node);
+	}
+}
+
+void GUIScreenNode::addTooltipRequestListener(GUITooltipRequestListener* listener) {
+	removeTooltipRequestListener(listener);
+	tooltipRequestListener.push_back(listener);
+}
+
+void GUIScreenNode::removeTooltipRequestListener(GUITooltipRequestListener* listener) {
+	tooltipRequestListener.erase(std::remove(tooltipRequestListener.begin(), tooltipRequestListener.end(), listener), tooltipRequestListener.end());
+}
+
+void GUIScreenNode::delegateTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
+	for (auto i = 0; i < tooltipRequestListener.size(); i++) {
+		tooltipRequestListener[i]->onTooltipShowRequest(node, mouseX, mouseY);
+	}
+}
+
+void GUIScreenNode::delegateTooltipCloseRequest() {
+	for (auto i = 0; i < tooltipRequestListener.size(); i++) {
+		tooltipRequestListener[i]->onTooltipCloseRequest();
 	}
 }
 

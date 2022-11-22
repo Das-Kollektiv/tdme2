@@ -27,6 +27,7 @@ using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::events::GUIContextMenuRequestListener;
+using tdme::gui::events::GUITooltipRequestListener;
 using tdme::gui::events::GUIFocusListener;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -82,6 +83,7 @@ private:
 	vector<GUIContextMenuRequestListener*> contextMenuRequestListener;
 	vector<GUIFocusListener*> focusListener;
 	vector<GUIMoveListener*> moveListener;
+	vector<GUITooltipRequestListener*> tooltipRequestListener;
 	GUIInputEventHandler* inputEventHandler;
 	vector<GUINode*> childControllerNodes;
 	GUIScreenNode_SizeConstraints sizeConstraints;
@@ -532,6 +534,31 @@ public:
 	 * @param node node
 	 */
 	void delegateMove(GUINode* node);
+
+	/**
+	 * Add tooltip request listener
+	 * @param listener listener
+	 */
+	void addTooltipRequestListener(GUITooltipRequestListener* listener);
+
+	/**
+	 * Remove tooltip request listener
+	 * @param listener listener
+	 */
+	void removeTooltipRequestListener(GUITooltipRequestListener* listener);
+
+	/**
+	 * Delegate tooltip show request
+	 * @param node node
+	 * @param mouseX unscaled mouse X position
+	 * @param mouseY unscaled mouse Y position
+	 */
+	void delegateTooltipShowRequest(GUINode* node, int mouseX, int mouseY);
+
+	/**
+	 * Delegate tooltip close request
+	 */
+	void delegateTooltipCloseRequest();
 
 	/**
 	 * @return if haveing given node registered as tick node

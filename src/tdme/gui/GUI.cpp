@@ -16,7 +16,6 @@
 #include <tdme/gui/events/GUIInputEventHandler.h>
 #include <tdme/gui/events/GUIKeyboardEvent.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
-#include <tdme/gui/events/GUITooltipRequestListener.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -43,7 +42,6 @@ using tdme::engine::Engine;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
-using tdme::gui::events::GUITooltipRequestListener;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
@@ -566,7 +564,7 @@ void GUI::handleEvents(bool clearEvents)
 				reverse(tooltipFloatingNodesVector.begin(), tooltipFloatingNodesVector.end());
 				//
 				auto node = tooltipFloatingNodesVector[0];
-				delegateTooltipShowRequest(node, lastMouseEvent.getXUnscaled(), lastMouseEvent.getYUnscaled());
+				node->getScreenNode()->delegateTooltipShowRequest(node, lastMouseEvent.getXUnscaled(), lastMouseEvent.getYUnscaled());
 			} else
 			if (tooltipNodes.empty() == false) {
 				vector<GUINode*> tooltipNodesVector;
@@ -577,7 +575,7 @@ void GUI::handleEvents(bool clearEvents)
 
 				//
 				auto node = tooltipNodesVector[0];
-				delegateTooltipShowRequest(node, lastMouseEvent.getXUnscaled(), lastMouseEvent.getYUnscaled());
+				node->getScreenNode()->delegateTooltipShowRequest(node, lastMouseEvent.getXUnscaled(), lastMouseEvent.getYUnscaled());
 			}
 
 			//
@@ -587,7 +585,14 @@ void GUI::handleEvents(bool clearEvents)
 	if (tooltipShown == true) {
 		// close tooltip
 		tooltipShown = false;
-		delegateTooltipCloseRequest();
+		//
+		for (int i = renderScreensCopy.size() - 1; i >= 0; i--) {
+			//
+			auto screen = renderScreensCopy[i];
+
+			//
+			screen->delegateTooltipCloseRequest();
+		}
 	}
 
 	// handle mouse events
@@ -932,25 +937,4 @@ void GUI::reshapeScreen(GUIScreenNode* screenNode) {
 
 void GUI::applyRenderScreensChange() {
 	for (auto screen: renderScreens) screen->unsetMouseOver();
-}
-
-void GUI::addTooltipRequestListener(GUITooltipRequestListener* listener) {
-	removeTooltipRequestListener(listener);
-	tooltipRequestListener.push_back(listener);
-}
-
-void GUI::removeTooltipRequestListener(GUITooltipRequestListener* listener) {
-	tooltipRequestListener.erase(std::remove(tooltipRequestListener.begin(), tooltipRequestListener.end(), listener), tooltipRequestListener.end());
-}
-
-void GUI::delegateTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
-	for (auto i = 0; i < tooltipRequestListener.size(); i++) {
-		tooltipRequestListener[i]->onTooltipShowRequest(node, mouseX, mouseY);
-	}
-}
-
-void GUI::delegateTooltipCloseRequest() {
-	for (auto i = 0; i < tooltipRequestListener.size(); i++) {
-		tooltipRequestListener[i]->onTooltipCloseRequest();
-	}
 }
