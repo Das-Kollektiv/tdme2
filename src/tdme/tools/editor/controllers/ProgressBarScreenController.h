@@ -5,17 +5,22 @@
 #include <tdme/tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
+#include <tdme/gui/events/GUITooltipRequestListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/tools/editor/controllers/fwd-tdme.h>
 #include <tdme/tools/editor/controllers/ScreenController.h>
+#include <tdme/tools/editor/misc/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::string;
 
+using tdme::gui::events::GUITooltipRequestListener;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::tools::editor::controllers::ScreenController;
+using tdme::tools::editor::misc::PopUps;
 using tdme::utilities::MutableString;
 
 /**
@@ -24,9 +29,11 @@ using tdme::utilities::MutableString;
  */
 class tdme::tools::editor::controllers::ProgressBarScreenController final
 	: public ScreenController
+	, public virtual GUITooltipRequestListener
 {
 
 private:
+	PopUps* popUps { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	GUIElementNode* progressBarNode { nullptr };
 	GUIElementNode* progressBarParent { nullptr };
@@ -35,8 +42,9 @@ private:
 public:
 	/**
 	 * Public constructor
+	 * @param popUps pop ups
 	 */
-	ProgressBarScreenController();
+	ProgressBarScreenController(PopUps* popUps);
 
 	/**
 	 * Destructor
@@ -46,6 +54,8 @@ public:
 	GUIScreenNode* getScreenNode() override;
 	void initialize() override;
 	void dispose() override;
+	void onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) override;
+	void onTooltipCloseRequest() override;
 
 	/**
 	 * Shows the pop up

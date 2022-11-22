@@ -7,12 +7,15 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/Version.h>
 #include <tdme/gui/events/GUIActionListener.h>
+#include <tdme/gui/events/GUITooltipRequestListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
+#include <tdme/tools/editor/controllers/TooltipScreenController.h>
+#include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/MutableString.h>
@@ -23,19 +26,23 @@ using std::string;
 using tdme::application::Application;
 using tdme::engine::Engine;
 using tdme::engine::Version;
+using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
+using tdme::gui::events::GUITooltipRequestListener;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
 using tdme::tools::editor::controllers::AboutDialogScreenController;
+using tdme::tools::editor::controllers::TooltipScreenController;
+using tdme::tools::editor::misc::PopUps;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 
-AboutDialogScreenController::AboutDialogScreenController()
+AboutDialogScreenController::AboutDialogScreenController(PopUps* popUps): popUps(popUps)
 {
 }
 
@@ -55,6 +62,7 @@ void AboutDialogScreenController::initialize()
 		screenNode = GUIParser::parse("resources/engine/gui", "popup_about.xml");
 		screenNode->setVisible(false);
 		screenNode->addActionListener(this);
+		screenNode->addTooltipRequestListener(this);
 		required_dynamic_cast<GUITextNode*>(screenNode->getNodeById("about_version"))->setText(MutableString(Version::getVersion()));
 		required_dynamic_cast<GUITextNode*>(screenNode->getNodeById("about_platform"))->setText(MutableString("Platform: " + Application::getOSName() + "/" + Application::getCPUName()));
 		required_dynamic_cast<GUIStyledTextNode*>(screenNode->getNodeById("about_graphics"))->setText(MutableString("Graphics: " + StringTools::replace(StringTools::replace(Engine::getInstance()->getGraphicsRenderer(), "[", "\\["), "]", "\\]")));
@@ -86,4 +94,12 @@ void AboutDialogScreenController::onActionPerformed(GUIActionListenerType type, 
 			close();
 		}
 	}
+}
+
+void AboutDialogScreenController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
+	popUps->getTooltipScreenController()->show(mouseX, mouseY, node->getToolTip());
+}
+
+void AboutDialogScreenController::onTooltipCloseRequest() {
+	popUps->getTooltipScreenController()->close();
 }

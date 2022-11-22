@@ -5,17 +5,21 @@
 #include <tdme/tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
+#include <tdme/gui/events/GUITooltipRequestListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/tools/editor/controllers/ScreenController.h>
+#include <tdme/tools/editor/misc/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
 
 using std::string;
 
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
+using tdme::gui::events::GUITooltipRequestListener;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::editor::controllers::ScreenController;
+using tdme::tools::editor::misc::PopUps;
 using tdme::utilities::Action;
 using tdme::utilities::MutableString;
 
@@ -26,9 +30,11 @@ using tdme::utilities::MutableString;
 class tdme::tools::editor::controllers::FindReplaceDialogScreenController final
 	: public ScreenController
 	, public virtual GUIActionListener
+	, public virtual GUITooltipRequestListener
 {
 
 private:
+	PopUps* popUps { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	GUIElementNode* findText { nullptr };
 	GUIElementNode* replaceText { nullptr };
@@ -50,8 +56,9 @@ private:
 public:
 	/**
 	 * Public constructor
+	 * @param popUps pop ups
 	 */
-	FindReplaceDialogScreenController();
+	FindReplaceDialogScreenController(PopUps* popUps);
 
 	/**
 	 * Destructor
@@ -63,6 +70,8 @@ public:
 	void initialize() override;
 	void dispose() override;
 	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
+	void onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) override;
+	void onTooltipCloseRequest() override;
 
 	/**
 	 * @return find text

@@ -12,6 +12,7 @@
 #include <tdme/gui/GUIParser.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
+#include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.h>
@@ -31,11 +32,13 @@ using tdme::tools::editor::tabcontrollers::EmptyEditorTabController;
 
 using tdme::engine::prototype::Prototype;
 using tdme::gui::events::GUIActionListenerType;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
+using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
@@ -156,6 +159,16 @@ void EmptyEditorTabController::onUnfocus(GUIElementNode* node) {
 
 void EmptyEditorTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
 	basePropertiesSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
+}
+
+void EmptyEditorTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
+	int left, top;
+	view->getEditorView()->getViewPortUnscaledOffset(left, top);
+	popUps->getTooltipScreenController()->show(left + mouseX, top + mouseY, node->getToolTip());
+}
+
+void EmptyEditorTabController::onTooltipCloseRequest() {
+	popUps->getTooltipScreenController()->close();
 }
 
 void EmptyEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)

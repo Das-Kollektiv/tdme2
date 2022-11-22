@@ -106,4 +106,11 @@ public:
 	 */
 	void getViewPort(GUINode* viewPortNode, int& left, int& top, int& width, int& height);
 
+	/**
+	 * Determine viewport offset unscaled screen constraints
+	 * @param left left
+	 * @param top top
+	 */
+	void getViewPortUnscaledOffset(int& left, int& top);
+
 };

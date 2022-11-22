@@ -15,6 +15,7 @@ namespace controllers {
 	class InfoDialogScreenController;
 	class ProgressBarScreenController;
 	struct ScreenController;
+	class TooltipScreenController;
 }  // namespace controllers
 }  // namespace editor
 }  // namespace tools

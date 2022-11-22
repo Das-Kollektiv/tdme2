@@ -32,6 +32,7 @@ class tdme::tools::editor::tabviews::VideoTabView final
 	: public TabView
 {
 protected:
+	GUIScreenNode* screenNode { nullptr };
 	Engine* engine { nullptr };
 
 private:

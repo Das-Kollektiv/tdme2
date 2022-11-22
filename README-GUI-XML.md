@@ -43,6 +43,7 @@ This is the documentation of supported TDME2-GUI XML elements and their attribut
 | padding-bottom                    | padding in pixels for bottom area                                                      | 0 pixel           |
 | show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
 | hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
+| tooltip                           | optional tooltip                                                                       | none              |
 
 ## 1.2. \<screen\> node
 
@@ -297,6 +298,7 @@ Currently supported BBCode like tags are:
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
 | name                              | formular name of this element                                                          | none              |
 | value                             | value of this element                                                                  | none              |
+| tooltip                           | optional tooltip text                                                                  | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 ## 2.2. \<checkbox\>
@@ -320,6 +322,7 @@ Currently supported BBCode like tags are:
 | on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
 | name                              | formular name of this element                                                          | none              |
 | value                             | value of this element, which will represent selection state                            | none              |
+| tooltip                           | optional tooltip text                                                                  | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 ## 2.3. Context Menu
@@ -337,6 +340,7 @@ Currently supported BBCode like tags are:
 | on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
 | on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
+| tooltip                           | optional tooltip text                                                                  | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 This element supports \<context-menu-item\> and others as sub elements.
@@ -357,6 +361,7 @@ This element supports \<context-menu-item\> and others as sub elements.
 | on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
 | on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
+| tooltip                           | optional tooltip text                                                                  | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 ## 2.4. Dropdown
@@ -381,6 +386,7 @@ This element supports \<context-menu-item\> and others as sub elements.
 | on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
 | name                              | formular name of this element                                                          | none              |
 | value                             | value of this element                                                                  | none              |
+| tooltip                           | optional tooltip text                                                                  | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 This element supports \<dropdown-option\> and others as sub elements.
@@ -401,6 +407,7 @@ This element supports \<dropdown-option\> and others as sub elements.
 | on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
 | value                             | value of this element, which will represent selection state                            | none              |
+| tooltip                           | optional tooltip text                                                                  | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 ## 2.5. \<image-button\>
@@ -424,6 +431,7 @@ This element supports \<dropdown-option\> and others as sub elements.
 | src-over                          | image location for mouse over button state                                             | none              |
 | name                              | formular name of this element                                                          | none              |
 | value                             | value of this element, which will represent selection state                            | none              |
+| tooltip                           | optional tooltip text                                                                  | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 ## 2.6. \<input\>
@@ -450,6 +458,8 @@ This element supports \<dropdown-option\> and others as sub elements.
 | on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
 | name                              | formular name of this element                                                          | none              |
 | value                             | value of this element, which will represent selection state                            | none              |
+| tooltip                           | optional tooltip text                                                                  | none              |
+| template                          | location of template XML file to override compound element XML                         | none              |
 
 ## 2.7. Menu
 
@@ -460,6 +470,8 @@ This element supports \<dropdown-option\> and others as sub elements.
 | id                                | the unique node id within screen                                                       | auto generated id |
 | show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
 | hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
+| tooltip                           | optional tooltip text                                                                  | none              |
+| template                          | location of template XML file to override compound element XML                         | none              |
 
 This element supports \<menu-header-item\> and others as sub elements.
 
@@ -477,6 +489,7 @@ This element supports \<menu-header-item\> and others as sub elements.
 | on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
 | on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
+| tooltip                           | optional tooltip text                                                                  | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 This element supports \<menu-item\>and others as sub elements.
@@ -497,6 +510,7 @@ This element supports \<menu-item\>and others as sub elements.
 | on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
 | on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
+| tooltip                           | optional tooltip text                                                                  | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 ### 2.7.4. \<menu-separator\>
@@ -515,6 +529,7 @@ This element supports \<menu-item\>and others as sub elements.
 | top                               | y position of node in %, pixel                                                         | none              |
 | width                             | width in %, pixel or rest(*) or auto for computed width                                | auto              |
 | height                            | height in %, pixel or rest(*) or auto for computed height                              | auto              |
+| tooltip                           | optional tooltip text                                                                  | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 This element supports all other elements as sub elements.
@@ -528,6 +543,7 @@ This element supports all other elements as sub elements.
 | hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
 | text-on                           | true \|false to enable/disable text rendering                                          | false             |
 | width                             | width in %, pixel                                                                      | 223               |
+| tooltip                           | optional tooltip text                                                                  | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 ## 2.10. \<radiobutton\>
@@ -549,6 +565,7 @@ This element supports all other elements as sub elements.
 | on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
 | name                              | formular name of this element                                                          | none              |
 | value                             | value of this element, which will represent selection state                            | none              |
+| tooltip                           | optional tooltip text                                                                  | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 ## 2.11. \<scrollarea\>
@@ -566,6 +583,7 @@ This element supports all other elements as sub elements.
 | vertical-align                    | top \| center \| bottom                                                                | top               |
 | alignment                         | none \| horizontal \| vertical                                                         | none              |
 | padding                           | padding for content node                                                               | 0                 |
+| tooltip                           | optional tooltip text                                                                  | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 ## 2.12. Selectbox
@@ -589,6 +607,7 @@ This element supports all other elements as sub elements.
 | options                           | supports optional multiple selecting by "multiple" option                              | none              |
 | name                              | formular name of this element                                                          | none              |
 | value                             | value of this element                                                                  | none              |
+| tooltip                           | optional tooltip text                                                                  | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 This element supports \<selectbox-option\>, \<selectbox-parent-option\> and others as sub elements.
@@ -611,6 +630,7 @@ This element supports \<selectbox-option\>, \<selectbox-parent-option\> and othe
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
 | parent-id                         | Used to generate hierarchical/tree like select box options                             | none              |
 | value                             | value of this element, which will represent selection state                            | none              |
+| tooltip                           | optional tooltip text                                                                  | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 ### 2.12.3. \<selectbox-parent-option\>
@@ -631,6 +651,7 @@ This element supports \<selectbox-option\>, \<selectbox-parent-option\> and othe
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
 | parent-id                         | Used to generate hierarchical/tree like select box options                             | none              |
 | value                             | value of this element, which will represent selection state                            | none              |
+| tooltip                           | optional tooltip text                                                                  | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 ## 2.13. Horizontal selector
@@ -649,6 +670,8 @@ This element supports \<selectbox-option\>, \<selectbox-parent-option\> and othe
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
 | name                              | formular name of this element                                                          | none              |
 | value                             | value of this element                                                                  | none              |
+| tooltip                           | optional tooltip text                                                                  | none              |
+| template                          | location of template XML file to override compound element XML                         | none              |
 
 This element supports  \<selector-horizontal-option\> and others as sub elements.
 
@@ -668,6 +691,8 @@ This element supports  \<selector-horizontal-option\> and others as sub elements
 | on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
 | value                             | value of this element, which will represent selection state                            | none              |
+| tooltip                           | optional tooltip text                                                                  | none              |
+| template                          | location of template XML file to override compound element XML                         | none              |
 
 ## 2.14. Sliders
 
@@ -688,6 +713,7 @@ This element supports  \<selector-horizontal-option\> and others as sub elements
 | on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
 | name                              | formular name of this element                                                          | none              |
 | value                             | value of this element, ranging from 0.0 <= value <= 1.0                                | none              |
+| tooltip                           | optional tooltip text                                                                  | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 ### 2.14.2. \<slider-vertical\>
@@ -707,6 +733,7 @@ This element supports  \<selector-horizontal-option\> and others as sub elements
 | on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
 | name                              | formular name of this element                                                          | none              |
 | value                             | value of this element, ranging from 0.0 <= value <= 1.0                                | none              |
+| tooltip                           | optional tooltip text                                                                  | none              |
 | template                          | location of template XML file to override compound element XML                         | none              |
 
 ## 2.15. \<styled-input\>
@@ -728,6 +755,8 @@ This element supports  \<selector-horizontal-option\> and others as sub elements
 | on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
 | on-change                         | SimpleScript expression to be executed if element forwarded a change event             | none              |
+| tooltip                           | optional tooltip text                                                                  | none              |
+| template                          | location of template XML file to override compound element XML                         | none              |
 
 The \<styled-text\>Inner Data\<\/styled-text\> is the text that will be rendered. Also note that this element supports some sort of BBCode syntax.
 
@@ -753,6 +782,7 @@ Currently supported BBCode like tags are:
 | height                            | height in %, pixel or rest(*) or auto for computed height                              | *                 |
 | alignment                         | none \| horizontal \| vertical                                                         | none              |
 | ignore-events                     | true \| false                                                                          | false             |
+| template                          | location of template XML file to override compound element XML                         | none              |
 
 This element supports \<tabs-header\>,  \<tabs-content\> and others as sub elements.
 
@@ -765,6 +795,8 @@ This element supports \<tabs-header\>,  \<tabs-content\> and others as sub eleme
 | hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
 | on-initialize                     | SimpleScript expression to be executed initially                                       | none              |
 | scrollable                        | true \| false                                                                          | false             |
+| tooltip                           | optional tooltip text                                                                  | none              |
+| template                          | location of template XML file to override compound element XML                         | none              |
 
 This element supports \<tab\> and others as sub elements.
 
@@ -785,6 +817,8 @@ This element supports \<tab\> and others as sub elements.
 | on-mouse-doubleclick              | SimpleScript expression to be executed if a double mouse click did happen              | none              |
 | on-mouse-over                     | SimpleScript expression to be executed if a mouse over event did happen                | none              |
 | on-mouse-out                      | SimpleScript expression to be executed if a mouse out event did happen                 | none              |
+| tooltip                           | optional tooltip text                                                                  | none              |
+| template                          | location of template XML file to override compound element XML                         | none              |
 
 ### 2.16.4. \<tabs-content\>
 
@@ -794,6 +828,7 @@ This element supports \<tab\> and others as sub elements.
 | show-on                           | comma separated list for conditions that has to be met (or connection) to show node    | none              |
 | hide-on                           | comma separated list for conditions that has to be met (or connection) to hide node    | none              |
 | ignore-events                     | true \| false                                                                          | false             |
+| template                          | location of template XML file to override compound element XML                         | none              |
 
 This element supports \<tab-content\> and others as sub elements.
 
@@ -808,5 +843,7 @@ This element supports \<tab-content\> and others as sub elements.
 | horizontal-align                  | left \| center \| right                                                                | left              |
 | vertical-align                    | top \| center \| bottom                                                                | top               |
 | alignment                         | none \| horizontal \| vertical                                                         | none              |
+| tooltip                           | optional tooltip text                                                                  | none              |
+| template                          | location of template XML file to override compound element XML                         | none              |
         
 This element supports all other elements as sub elements.

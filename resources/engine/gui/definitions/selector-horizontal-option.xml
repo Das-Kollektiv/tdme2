@@ -1,4 +1,4 @@
-<element id="{$id}" width="auto" height="25" value="{$value}" selected="{$selected}" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" on-change="{$on-change}" disabled="{$disabled}" show-on="{$show-on}" hide-on="{$hide-on}">
+<element id="{$id}" width="auto" height="25" value="{$value}" selected="{$selected}" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" on-change="{$on-change}" disabled="{$disabled}" show-on="{$show-on}" hide-on="{$hide-on}" tooltip="{$tooltip}">
 	<text
 		show-on="selected"
 		id="{$id}_normal"

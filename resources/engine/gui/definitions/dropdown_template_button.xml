@@ -1,4 +1,4 @@
-<element id="{$id}" width="{$width}" height="25"  disabled="{$disabled}" focusable="true" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" on-change="{$on-change}">
+<element id="{$id}" width="{$width}" height="25"  disabled="{$disabled}" focusable="true" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" on-change="{$on-change}" tooltip="{$tooltip}">
 	<layout id="{$id}_layout_vertical" alignment="vertical" vertical-align="center" horizontal-align="center" width="100%" height="25">
 		<layout id="{$id}_layout_horizontal" width="100%" height="25" vertical-align="center" horizontal-align="center" alignment="horizontal" background-image="resources/engine/images/button.png" background-image-scale9="10" background-image-effect-color-mul="{$color.button_normal}">				
 			

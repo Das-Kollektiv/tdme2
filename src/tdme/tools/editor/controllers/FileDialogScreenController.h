@@ -9,7 +9,9 @@
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/events/GUIFocusListener.h>
+#include <tdme/gui/events/GUITooltipRequestListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
+#include <tdme/tools/editor/misc/fwd-tdme.h>
 #include <tdme/tools/editor/controllers/ScreenController.h>
 #include <tdme/utilities/fwd-tdme.h>
 
@@ -21,9 +23,12 @@ using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::events::GUIFocusListener;
+using tdme::gui::events::GUITooltipRequestListener;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
+using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::controllers::ScreenController;
 using tdme::utilities::Action;
 using tdme::utilities::MutableString;
@@ -37,9 +42,11 @@ class tdme::tools::editor::controllers::FileDialogScreenController final
 	, public virtual GUIActionListener
 	, public virtual GUIChangeListener
 	, public virtual GUIFocusListener
+	, public virtual GUITooltipRequestListener
 {
 
 private:
+	PopUps* popUps { nullptr };
 	GUIScreenNode* screenNode { nullptr };
 	string cwd;
 	vector<string> extensions;
@@ -107,8 +114,9 @@ private:
 public:
 	/**
 	 * Public constructor
+	 * @param popUps pop ups
 	 */
-	FileDialogScreenController();
+	FileDialogScreenController(PopUps* popUps);
 
 	/**
 	 * Destructor
@@ -168,6 +176,8 @@ public:
 	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
 	void onFocus(GUIElementNode* node) override;
 	void onUnfocus(GUIElementNode* node) override;
+	void onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) override;
+	void onTooltipCloseRequest() override;
 
 	/**
 	 * Load settings

@@ -37,6 +37,7 @@
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
+#include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/GenerateBillboardLOD.h>
 #include <tdme/tools/editor/misc/GenerateImposterLOD.h>
 #include <tdme/tools/editor/misc/PopUps.h>
@@ -94,6 +95,7 @@ using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
+using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::GenerateBillboardLOD;
 using tdme::tools::editor::misc::GenerateImposterLOD;
 using tdme::tools::editor::misc::PopUps;
@@ -2300,6 +2302,16 @@ void ModelEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
 		}
 	}
+}
+
+void ModelEditorTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
+	int left, top;
+	view->getEditorView()->getViewPortUnscaledOffset(left, top);
+	popUps->getTooltipScreenController()->show(left + mouseX, top + mouseY, node->getToolTip());
+}
+
+void ModelEditorTabController::onTooltipCloseRequest() {
+	popUps->getTooltipScreenController()->close();
 }
 
 void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)

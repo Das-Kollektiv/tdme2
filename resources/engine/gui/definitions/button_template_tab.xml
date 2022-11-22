@@ -1,4 +1,4 @@
-<element id="{$id}" width="{$width}" height="{$height}" horizontal-align="center" vertical-align="center" value="{$value}" disabled="{$disabled}" focusable="true" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-out="{$on-mouse-out}" on-mouse-doubleclick="{$on-mouse-doubleclick}" show-on="{$show-on}" hide-on="{$hide-on}">
+<element id="{$id}" width="{$width}" height="{$height}" horizontal-align="center" vertical-align="center" value="{$value}" disabled="{$disabled}" focusable="true" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-out="{$on-mouse-out}" on-mouse-doubleclick="{$on-mouse-doubleclick}" show-on="{$show-on}" hide-on="{$hide-on}" tooltip="{$tooltip}">
 	<!-- normal -->
 	<layout width="{$width}" height="{$height}" padding="5" hide-on="disabled,mouseover,click" alignment="horizontal" horizontal-align="center" vertical-align="center" >
 		<image src="{$image}" />

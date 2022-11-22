@@ -1,4 +1,4 @@
-<element id="{$id}" width="auto" height="auto" disabled="{$disabled}" focusable="false" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" show-on="{$show-on}" hide-on="{$hide-on}">
+<element id="{$id}" width="auto" height="auto" disabled="{$disabled}" focusable="false" on-initialize="{$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" show-on="{$show-on}" hide-on="{$hide-on}" tooltip="{$tooltip}">
 	<layout alignment="vertical" width="auto">
 		<layer width="auto" height="auto">
 			<!-- normal -->

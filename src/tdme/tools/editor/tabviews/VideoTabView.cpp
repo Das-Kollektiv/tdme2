@@ -28,6 +28,7 @@ using tdme::utilities::Exception;
 
 VideoTabView::VideoTabView(EditorView* editorView, const string& tabId, GUIScreenNode* screenNode)
 {
+	this->screenNode = screenNode;
 	this->editorView = editorView;
 	this->tabId = tabId;
 	this->popUps = editorView->getPopUps();
@@ -58,6 +59,7 @@ void VideoTabView::initialize()
 	try {
 		videoTabController = new VideoTabController(this);
 		videoTabController->initialize(editorView->getScreenController()->getScreenNode());
+		screenNode->addTooltipRequestListener(videoTabController);
 	} catch (Exception& exception) {
 		Console::print(string("VideoTabView::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));

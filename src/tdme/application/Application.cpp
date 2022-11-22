@@ -30,6 +30,7 @@
 #include <stdlib.h>
 
 #include <array>
+#include <clocale>
 #include <memory>
 #include <string>
 
@@ -387,6 +388,10 @@ string Application::getCPUName() {
 	#else
 		return "Unknown";
 	#endif
+}
+
+void Application::setLocale(const string& locale) {
+	setlocale(LC_ALL, locale.c_str());
 }
 
 void Application::setInputEventHandler(InputEventHandler* inputEventHandler) {

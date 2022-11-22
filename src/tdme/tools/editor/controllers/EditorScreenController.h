@@ -15,6 +15,7 @@
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/events/GUIContextMenuRequestListener.h>
 #include <tdme/gui/events/GUIFocusListener.h>
+#include <tdme/gui/events/GUITooltipRequestListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/Thread.h>
@@ -41,6 +42,7 @@ using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::events::GUIContextMenuRequestListener;
 using tdme::gui::events::GUIFocusListener;
+using tdme::gui::events::GUITooltipRequestListener;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIFrameBufferNode;
 using tdme::gui::nodes::GUINode;
@@ -65,6 +67,7 @@ class tdme::tools::editor::controllers::EditorScreenController final
 	, public GUIChangeListener
 	, public GUIFocusListener
 	, public GUIContextMenuRequestListener
+	, public GUITooltipRequestListener
 {
 public:
 	enum FileType {
@@ -389,6 +392,8 @@ public:
 	void onFocus(GUIElementNode* node) override;
 	void onUnfocus(GUIElementNode* node) override;
 	void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) override;
+	void onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) override;
+	void onTooltipCloseRequest() override;
 
 	/**
 	 * @return project path

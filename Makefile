@@ -581,6 +581,7 @@ SRCS = \
 	src/tdme/tools/editor/controllers/FindReplaceDialogScreenController.cpp \
 	src/tdme/tools/editor/controllers/InfoDialogScreenController.cpp \
 	src/tdme/tools/editor/controllers/ProgressBarScreenController.cpp \
+	src/tdme/tools/editor/controllers/TooltipScreenController.cpp \
 	src/tdme/tools/editor/misc/CameraInputHandler.cpp \
 	src/tdme/tools/editor/misc/CameraRotationInputHandler.cpp \
 	src/tdme/tools/editor/misc/GenerateBillboardLOD.cpp \

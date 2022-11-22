@@ -43,6 +43,7 @@
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/controllers/ProgressBarScreenController.h>
+#include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
@@ -112,6 +113,7 @@ using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::ProgressBarScreenController;
+using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::TabController;
@@ -161,6 +163,7 @@ void EditorScreenController::initialize()
 		screenNode->addChangeListener(this);
 		screenNode->addFocusListener(this);
 		screenNode->addContextMenuRequestListener(this);
+		screenNode->addTooltipRequestListener(this);
 		projectPathsScrollArea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_projectpaths_scrollarea"));
 		projectPathFilesScrollArea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_projectpathfiles_scrollarea"));
 		tabs = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("tabs"));
@@ -402,6 +405,15 @@ void EditorScreenController::onContextMenuRequested(GUIElementNode* node, int mo
 	// forward onContextMenuRequested to active tab tab controller
 	auto selectedTab = getSelectedTab();
 	if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onContextMenuRequested(node, mouseX, mouseY);
+}
+
+void EditorScreenController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
+	//
+	view->getPopUps()->getTooltipScreenController()->show(mouseX, mouseY, node->getToolTip());
+}
+
+void EditorScreenController::onTooltipCloseRequest() {
+	view->getPopUps()->getTooltipScreenController()->close();
 }
 
 void EditorScreenController::openProject(const string& path) {
