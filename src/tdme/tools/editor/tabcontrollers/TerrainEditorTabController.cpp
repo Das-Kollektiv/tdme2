@@ -716,6 +716,7 @@ void TerrainEditorTabController::onAction(GUIActionListenerType type, GUIElement
 							false
 						);
 					required_dynamic_cast<GUITextureNode*>(terrainEditorTabController->screenNode->getNodeById("terrainbrush_texture"))->setTexture(terrainEditorTabController->currentTerrainBrushTexture);
+					required_dynamic_cast<GUITextureNode*>(terrainEditorTabController->screenNode->getNodeById("terrainbrush_texture"))->setTooltip(terrainEditorTabController->currentTerrainBrushTextureFileName);
 					terrainEditorTabController->view->setBrush(
 						terrainEditorTabController->currentTerrainBrushTexture,
 						terrainEditorTabController->currentTerrainBrushScale,
@@ -749,6 +750,7 @@ void TerrainEditorTabController::onAction(GUIActionListenerType type, GUIElement
 			if (currentTerrainBrushTexture != nullptr) currentTerrainBrushTexture->releaseReference();
 			currentTerrainBrushTexture = nullptr;
 			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("terrainbrush_texture"))->setTexture(currentTerrainBrushTexture);
+			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("terrainbrush_texture"))->setTooltip(string());
 		} else
 		if (node->getId() == "terrainbrush_texture_browseto") {
 		} else
@@ -996,6 +998,7 @@ void TerrainEditorTabController::setTerrainBrushDetails() {
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_terrainbrush"))->getActiveConditions().add("open");
 		required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("terrainbrush_texture"))->setTexture(currentTerrainBrushTexture);
+		required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("terrainbrush_texture"))->setTooltip(currentTerrainBrushTextureFileName);
 	} catch (Exception& exception) {
 		Console::println(string("TerrainEditorTabController::setTerrainBrushDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -1058,6 +1061,7 @@ void TerrainEditorTabController::updateFoliageBrushDetails() {
 	//
 	try {
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("foliagebrush_texture"))->setSource(brush->getFileName());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("foliagebrush_texture"))->setTooltip(brush->getFileName());
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_size"))->getController()->setValue(MutableString(brush->getSize()));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_density"))->getController()->setValue(MutableString(brush->getDensity()));
 	} catch (Exception& exception) {
@@ -1110,6 +1114,7 @@ void TerrainEditorTabController::setFoliageBrushPrototypeDetails() {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_foliagebrush_prototype"))->getActiveConditions().add("open");
 
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("foliagebrush_prototype_file"))->setSource(brushPrototype->getFileName());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("foliagebrush_prototype_file"))->setTooltip(brushPrototype->getFileName());
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_object_count"))->getController()->setValue(MutableString(brushPrototype->getCount()));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_normalalign"))->getController()->setValue(MutableString(brushPrototype->isNormalAlign() == true?"1":""));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_rotationrange_x_min"))->getController()->setValue(MutableString(brushPrototype->getRotationXMin()));
@@ -1469,7 +1474,7 @@ void TerrainEditorTabController::updateFoliageBrush() {
 	foliageBrush.brushTexture = TextureReader::read(Tools::getPathName(brush->getFileName()), Tools::getFileName(brush->getFileName()), false, false);
 	foliageBrush.brushScale = brush->getSize();
 	foliageBrush.brushDensity = brush->getDensity();
-	foliageBrush.brushTexture->acquireReference();
+	if (foliageBrush.brushTexture != nullptr) foliageBrush.brushTexture->acquireReference();
 
 	//
 	foliageBrushPrototypes.clear();
