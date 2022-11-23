@@ -258,6 +258,7 @@ void DecalEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 							decalEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
 						}
 						required_dynamic_cast<GUIImageNode*>(decalEditorTabController->screenNode->getNodeById("decal_texture"))->setSource(decal->getTextureFileName());
+						required_dynamic_cast<GUIImageNode*>(decalEditorTabController->screenNode->getNodeById("decal_texture"))->setTooltip(decal->getTextureFileName());
 					}
 					decalEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 				}
@@ -295,6 +296,7 @@ void DecalEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 			decal->setTextureFileName(string());
 			prototype->setThumbnail(string());
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("decal_texture"))->setSource(prototype->getDecal()->getTextureFileName());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("decal_texture"))->setTooltip(prototype->getDecal()->getTextureFileName());
 		} else
 		if (node->getId() == "decal_texture_browseto") {
 
@@ -340,6 +342,7 @@ void DecalEditorTabController::setDecalDetails() {
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_decal"))->getActiveConditions().add("open");
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("decal_texture"))->setSource(decal->getTextureFileName());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("decal_texture"))->setTooltip(decal->getTextureFileName());
 	} catch (Exception& exception) {
 		Console::println(string("DecalEditorTabController::setDecalDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
