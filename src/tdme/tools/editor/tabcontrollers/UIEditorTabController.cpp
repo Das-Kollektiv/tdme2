@@ -357,6 +357,7 @@ void UIEditorTabController::updateScreensDetails() {
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_screens"))->getActiveConditions().add("open");
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("projectedui_prototype"))->setSource(prototypeFileName);
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("projectedui_prototype"))->setTooltip(prototypeFileName);
 	} catch (Exception& exception) {
 		Console::println(string("UIEditorTabController::updateScreensDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
@@ -631,6 +632,7 @@ void UIEditorTabController::onRemovePrototype() {
 		}
 		virtual void performAction() {
 			auto view = uiEditorTabController->getView();
+			uiEditorTabController->prototypeFileName.clear();
 			view->removePrototype();
 			view->reAddScreens();
 			view->getEditorView()->reloadTabOutliner("screens");
