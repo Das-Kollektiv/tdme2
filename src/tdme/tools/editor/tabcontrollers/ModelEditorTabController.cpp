@@ -1037,10 +1037,13 @@ void ModelEditorTabController::onPreviewAnimationsAttachment1ModelLoad() {
 
 	public:
 		void performAction() override {
+			auto attachmentFileName = modelEditorTabController->popUps->getFileDialogScreenController()->getPathName() + "/" + modelEditorTabController->popUps->getFileDialogScreenController()->getFileName();
 			modelEditorTabController->view->addAttachment1(
 				required_dynamic_cast<GUIElementNode*>(modelEditorTabController->screenNode->getNodeById("animationpreview_attachment1_bone"))->getController()->getValue().getString(),
-				modelEditorTabController->popUps->getFileDialogScreenController()->getPathName() + "/" + modelEditorTabController->popUps->getFileDialogScreenController()->getFileName()
+				attachmentFileName
 			);
+			required_dynamic_cast<GUIImageNode*>(modelEditorTabController->screenNode->getNodeById("animationpreview_attachment1_model"))->setSource(attachmentFileName);
+			required_dynamic_cast<GUIImageNode*>(modelEditorTabController->screenNode->getNodeById("animationpreview_attachment1_model"))->setTooltip(attachmentFileName);
 			modelEditorTabController->popUps->getFileDialogScreenController()->close();
 		}
 
@@ -1066,6 +1069,8 @@ void ModelEditorTabController::onPreviewAnimationsAttachment1ModelLoad() {
 }
 
 void ModelEditorTabController::onPreviewAnimationsAttachment1ModelClear() {
+	required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("animationpreview_attachment1_model"))->setSource(string());
+	required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("animationpreview_attachment1_model"))->setTooltip(string());
 	view->addAttachment1(string(), string());
 }
 
