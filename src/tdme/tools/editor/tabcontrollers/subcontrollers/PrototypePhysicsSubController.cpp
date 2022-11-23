@@ -428,6 +428,7 @@ void PrototypePhysicsSubController::setBoundingVolumeDetails(Prototype* prototyp
 				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_type_details"))->getActiveConditions().add("convexmesh");
 				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("boundingvolume_type"))->getController()->setValue(MutableString("convexmesh"));
 				Texture* thumbnailTexture = nullptr;
+				string thumbnailTooltip = boundingVolume->hasConvexMeshData() == false?boundingVolume->getConvexMeshFile():"Embedded";
 				{
 					vector<uint8_t> thumbnailPNGData;
 					if (// extern
@@ -445,6 +446,7 @@ void PrototypePhysicsSubController::setBoundingVolumeDetails(Prototype* prototyp
 					}
 				}
 				required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("boundingvolume_convexmesh_file"))->setTexture(thumbnailTexture);
+				required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("boundingvolume_convexmesh_file"))->setTooltip(thumbnailTooltip);
 			} else {
 				Console::println(string("PrototypePhysicsSubController::setBoundingVolumeDetails(): invalid bounding volume@" + to_string(boundingVolumeIdx)));
 			}

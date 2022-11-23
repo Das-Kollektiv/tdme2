@@ -69,10 +69,16 @@ public:
 	void createScriptXML(Prototype* prototype, string& xml);
 
 	/**
-	 * Set property details
+	 * Set script details
 	 * @param prototype prototype
 	 */
 	void setScriptDetails(Prototype* prototype);
+
+	/**
+	 * Update script details
+	 * @param prototype prototype
+	 */
+	void updateScriptDetails(Prototype* prototype);
 
 	/**
 	 * Update details panel
