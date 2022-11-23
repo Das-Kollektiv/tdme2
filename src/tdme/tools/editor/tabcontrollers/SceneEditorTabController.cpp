@@ -804,9 +804,8 @@ void SceneEditorTabController::setSkyDetails() {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky_model_scale"))->getController()->setValue(
 			Math::max(scene->getSkyModelScale().getX(), Math::max(scene->getSkyModelScale().getY(), scene->getSkyModelScale().getZ()))
 		);
-		if (scene->getSkyModelFileName().empty() == false) {
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("sky_model"))->setSource(scene->getSkyModelFileName());
-		}
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("sky_model"))->setSource(scene->getSkyModelFileName());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("sky_model"))->setTooltip(scene->getSkyModelFileName());
 	} catch (Exception& exception) {
 		Console::println(string("SceneEditorTabController::setSkyDetails(): An error occurred: ") + exception.what());;
 		showErrorPopUp("Warning", (string(exception.what())));
