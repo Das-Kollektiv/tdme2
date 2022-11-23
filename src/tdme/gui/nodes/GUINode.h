@@ -343,6 +343,14 @@ public:
 	}
 
 	/**
+	 * Set tooltip
+	 * @param tooltip tooltip
+	 */
+	inline void setTooltip(const string& tooltip) {
+		this->tooltip = tooltip;
+	}
+
+	/**
 	 * @return hierarchical id
 	 */
 	const string getHierarchicalId();

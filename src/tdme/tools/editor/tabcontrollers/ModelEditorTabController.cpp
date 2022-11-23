@@ -691,32 +691,73 @@ void ModelEditorTabController::updateMaterialDetails() {
 	auto pbrMaterialProperties = material->getPBRMaterialProperties();
 
 	try {
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_diffuse_texture"))->setSource(
-			PrototypeReader::getResourcePathName(
-				view->getEditorView()->getScreenController()->getProjectPath() + "/resources",
-				specularMaterialProperties->getDiffuseTexturePathName() + "/" + specularMaterialProperties->getDiffuseTextureFileName()
-			) +
-			"/" +
-			specularMaterialProperties->getDiffuseTextureFileName()
-		);
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_transparency_texture"))->setSource(
-			PrototypeReader::getResourcePathName(
-				view->getEditorView()->getScreenController()->getProjectPath() + "/resources",
-				specularMaterialProperties->getDiffuseTransparencyTexturePathName() + "/" + specularMaterialProperties->getDiffuseTransparencyTextureFileName()
-			) +
-			"/" +
-			specularMaterialProperties->getDiffuseTextureFileName()
-		);
-		required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("specularmaterial_normal_texture"))->setTexture(specularMaterialProperties->getNormalTexture());
-		required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("specularmaterial_specular_texture"))->setTexture(specularMaterialProperties->getSpecularTexture());
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("specularmaterial_shininess"))->getController()->setValue(specularMaterialProperties->getShininess());
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("specularmaterial_reflection"))->getController()->setValue(specularMaterialProperties->getReflection());
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("specularmaterial_maskedtransparency"))->getController()->setValue(MutableString(specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true?"1":""));
+		{
+			auto diffuseTextureFileName = PrototypeReader::getResourcePathName(
+					view->getEditorView()->getScreenController()->getProjectPath() + "/resources",
+					specularMaterialProperties->getDiffuseTexturePathName() + "/" + specularMaterialProperties->getDiffuseTextureFileName()
+				) +
+				"/" +
+				specularMaterialProperties->getDiffuseTextureFileName();
+			auto diffuseTransparencyTextureFileName =
+				specularMaterialProperties->getDiffuseTransparencyTextureFileName().empty() == true?
+					diffuseTextureFileName:
+					PrototypeReader::getResourcePathName(
+						view->getEditorView()->getScreenController()->getProjectPath() + "/resources",
+						specularMaterialProperties->getDiffuseTransparencyTexturePathName() + "/" + specularMaterialProperties->getDiffuseTransparencyTextureFileName()
+					) +
+					"/" + specularMaterialProperties->getDiffuseTransparencyTextureFileName();
+			auto normalTextureFileName = PrototypeReader::getResourcePathName(
+					view->getEditorView()->getScreenController()->getProjectPath() + "/resources",
+					specularMaterialProperties->getNormalTexturePathName() + "/" + specularMaterialProperties->getNormalTextureFileName()
+				) +
+				"/" +
+				specularMaterialProperties->getNormalTextureFileName();
+			auto specularTextureFileName = PrototypeReader::getResourcePathName(
+					view->getEditorView()->getScreenController()->getProjectPath() + "/resources",
+					specularMaterialProperties->getSpecularTexturePathName() + "/" + specularMaterialProperties->getSpecularTextureFileName()
+				) +
+				"/" +
+				specularMaterialProperties->getSpecularTextureFileName();
+			//
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_diffuse_texture"))->setSource(diffuseTextureFileName);
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_diffuse_texture"))->setTooltip(diffuseTextureFileName);
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_transparency_texture"))->setSource(diffuseTransparencyTextureFileName);
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_transparency_texture"))->setTooltip(diffuseTransparencyTextureFileName);
+			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("specularmaterial_normal_texture"))->setTexture(specularMaterialProperties->getNormalTexture());
+			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("specularmaterial_normal_texture"))->setTooltip(normalTextureFileName);
+			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("specularmaterial_specular_texture"))->setTexture(specularMaterialProperties->getSpecularTexture());
+			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("specularmaterial_specular_texture"))->setTooltip(specularTextureFileName);
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("specularmaterial_shininess"))->getController()->setValue(specularMaterialProperties->getShininess());
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("specularmaterial_reflection"))->getController()->setValue(specularMaterialProperties->getReflection());
+			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("specularmaterial_maskedtransparency"))->getController()->setValue(MutableString(specularMaterialProperties->hasDiffuseTextureMaskedTransparency() == true?"1":""));
+		}
 
 		if (model->getShaderModel() != ShaderModel::SPECULAR && pbrMaterialProperties != nullptr) {
+			auto baseColorTextureFileName = PrototypeReader::getResourcePathName(
+					view->getEditorView()->getScreenController()->getProjectPath() + "/resources",
+					pbrMaterialProperties->getBaseColorTexturePathName() + "/" + pbrMaterialProperties->getBaseColorTextureFileName()
+				) +
+				"/" +
+				pbrMaterialProperties->getBaseColorTextureFileName();
+			auto metallicRoughnessTextureFileName = PrototypeReader::getResourcePathName(
+					view->getEditorView()->getScreenController()->getProjectPath() + "/resources",
+					pbrMaterialProperties->getMetallicRoughnessTexturePathName() + "/" + pbrMaterialProperties->getMetallicRoughnessTextureFileName()
+				) +
+				"/" +
+				pbrMaterialProperties->getMetallicRoughnessTextureFileName();
+			auto normalTextureFileName = PrototypeReader::getResourcePathName(
+					view->getEditorView()->getScreenController()->getProjectPath() + "/resources",
+					pbrMaterialProperties->getNormalTexturePathName() + "/" + pbrMaterialProperties->getNormalTextureFileName()
+				) +
+				"/" +
+				pbrMaterialProperties->getNormalTextureFileName();
+			//
 			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("pbrmaterial_basecolor_texture"))->setTexture(pbrMaterialProperties->getBaseColorTexture());
+			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("pbrmaterial_basecolor_texture"))->setTooltip(baseColorTextureFileName);
 			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("pbrmaterial_metallic_roughness_texture"))->setTexture(pbrMaterialProperties->getMetallicRoughnessTexture());
+			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("pbrmaterial_metallic_roughness_texture"))->setTooltip(metallicRoughnessTextureFileName);
 			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("pbrmaterial_normal_texture"))->setTexture(pbrMaterialProperties->getNormalTexture());
+			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("pbrmaterial_normal_texture"))->setTooltip(normalTextureFileName);
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_metallic_factor"))->getController()->setValue(pbrMaterialProperties->getMetallicFactor());
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_roughness_factor"))->getController()->setValue(pbrMaterialProperties->getRoughnessFactor());
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_normal_scale"))->getController()->setValue(pbrMaterialProperties->getNormalScale());
