@@ -11,6 +11,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/gui/nodes/GUIImageNode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
@@ -46,6 +47,7 @@ using tdme::engine::prototype::PrototypeAudio;
 using tdme::engine::Engine;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUIParser;
@@ -112,6 +114,7 @@ void PrototypeSoundsSubController::onSoundLoad(Prototype* prototype, const strin
 				"/" +
 				prototypeSoundsSubController->getView()->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
+			required_dynamic_cast<GUIImageNode*>(prototypeSoundsSubController->screenNode->getNodeById("sound"))->setSource("resources/engine/images/sound_big.png");
 			prototypeSoundsSubController->playableSoundView->playSound(sound->getId());
 			prototypeSoundsSubController->getView()->getPopUps()->getFileDialogScreenController()->close();
 		}
@@ -198,6 +201,7 @@ void PrototypeSoundsSubController::updateDetails(Prototype* prototype, Model* mo
 
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_sound"))->getActiveConditions().add("open");
+		if (sound->getFileName().empty() == false) required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("sound"))->setSource("resources/engine/images/sound_big.png");
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_animation"))->getController()->setValue(MutableString(sound->getAnimation()));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_gain"))->getController()->setValue(MutableString(sound->getGain()));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_pitch"))->getController()->setValue(MutableString(sound->getPitch()));
