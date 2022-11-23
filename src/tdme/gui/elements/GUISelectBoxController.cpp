@@ -369,7 +369,7 @@ void GUISelectBoxController::handleKeyboardEvent(GUIKeyboardEvent* event)
 					}
 				} else
 				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_RELEASED) {
-					node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node));
+					node->getScreenNode()->forwardChange(required_dynamic_cast<GUIElementNode*>(node));
 				}
 			}
 			break;
@@ -385,7 +385,7 @@ void GUISelectBoxController::handleKeyboardEvent(GUIKeyboardEvent* event)
 					}
 				} else
 				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_RELEASED) {
-					node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node));
+					node->getScreenNode()->forwardChange(required_dynamic_cast<GUIElementNode*>(node));
 				}
 			}
 			break;
@@ -412,7 +412,7 @@ void GUISelectBoxController::handleKeyboardEvent(GUIKeyboardEvent* event)
 					}
 				} else
 				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_RELEASED) {
-					node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node));
+					node->getScreenNode()->forwardChange(required_dynamic_cast<GUIElementNode*>(node));
 				}
 			}
 			break;

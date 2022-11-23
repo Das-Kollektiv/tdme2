@@ -37,7 +37,7 @@ void GUIScrollAreaController::initialize()
 	{
 
 	public:
-		void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override {
+		void onAction(GUIActionListenerType type, GUIElementNode* node) override {
 			if (node == upArrowNode) {
 				float elementHeight = contentNode->getComputedConstraints().height;
 				float contentHeight = contentNode->getContentHeight();

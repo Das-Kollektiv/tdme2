@@ -56,7 +56,7 @@ public:
 	GUIScreenNode* getScreenNode() override;
 	void initialize() override;
 	void dispose() override;
-	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
+	void onAction(GUIActionListenerType type, GUIElementNode* node) override;
 	void onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) override;
 	void onTooltipCloseRequest() override;
 

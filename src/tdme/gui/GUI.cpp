@@ -234,7 +234,7 @@ void GUI::unfocusNode()
 		focussedNode->getBorder().bottomColor = unfocussedNodeBorderBottomColor;
 		focussedNode->getBorder().rightColor = unfocussedNodeBorderRightColor;
 		if (focussedNode->getController() != nullptr) focussedNode->getController()->onFocusLost();
-		focussedNode->getScreenNode()->delegateUnfocus(focussedNode);
+		focussedNode->getScreenNode()->forwardUnfocus(focussedNode);
 	}
 }
 
@@ -253,7 +253,7 @@ void GUI::focusNode()
 		focussedNode->getBorder().bottomColor = foccussedBorderColor;
 		focussedNode->getBorder().rightColor = foccussedBorderColor;
 		if (focussedNode->getController() != nullptr) focussedNode->getController()->onFocusGained();
-		focussedNode->getScreenNode()->delegateFocus(focussedNode);
+		focussedNode->getScreenNode()->forwardFocus(focussedNode);
 	}
 }
 
@@ -564,7 +564,7 @@ void GUI::handleEvents(bool clearEvents)
 				reverse(tooltipFloatingNodesVector.begin(), tooltipFloatingNodesVector.end());
 				//
 				auto node = tooltipFloatingNodesVector[0];
-				node->getScreenNode()->delegateTooltipShowRequest(node, lastMouseEvent.getXUnscaled(), lastMouseEvent.getYUnscaled());
+				node->getScreenNode()->forwardTooltipShowRequest(node, lastMouseEvent.getXUnscaled(), lastMouseEvent.getYUnscaled());
 			} else
 			if (tooltipNodes.empty() == false) {
 				vector<GUINode*> tooltipNodesVector;
@@ -575,7 +575,7 @@ void GUI::handleEvents(bool clearEvents)
 
 				//
 				auto node = tooltipNodesVector[0];
-				node->getScreenNode()->delegateTooltipShowRequest(node, lastMouseEvent.getXUnscaled(), lastMouseEvent.getYUnscaled());
+				node->getScreenNode()->forwardTooltipShowRequest(node, lastMouseEvent.getXUnscaled(), lastMouseEvent.getYUnscaled());
 			}
 
 			//
@@ -591,7 +591,7 @@ void GUI::handleEvents(bool clearEvents)
 			auto screen = renderScreensCopy[i];
 
 			//
-			screen->delegateTooltipCloseRequest();
+			screen->forwardTooltipCloseRequest();
 		}
 	}
 

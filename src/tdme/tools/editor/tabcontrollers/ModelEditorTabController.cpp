@@ -1534,7 +1534,7 @@ void ModelEditorTabController::startRenameAnimation(int lodLevel, const string& 
 		true
 	);
 	Engine::getInstance()->getGUI()->setFoccussedNode(dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById("tdme.animations.rename_input")));
-	view->getEditorView()->getScreenController()->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
+	view->getEditorView()->getScreenController()->getScreenNode()->forwardChange(required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
 }
 
 void ModelEditorTabController::renameAnimation() {
@@ -1817,7 +1817,7 @@ bool ModelEditorTabController::getOutlinerNodeLOD(const string& outlinerNode, st
 	return model != nullptr;
 }
 
-void ModelEditorTabController::onValueChanged(GUIElementNode* node)
+void ModelEditorTabController::onChange(GUIElementNode* node)
 {
 	if (node->getId() == "dropdown_outliner_add") {
 		auto addOutlinerType = node->getController()->getValue().getString();
@@ -1911,13 +1911,13 @@ void ModelEditorTabController::onValueChanged(GUIElementNode* node)
 			}
 		}
 	}
-	basePropertiesSubController->onValueChanged(node, view->getPrototype(), view->getPrototype());
-	prototypeDisplaySubController->onValueChanged(node, view->getPrototype());
-	prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
-	prototypeScriptSubController->onValueChanged(node, view->getPrototype());
+	basePropertiesSubController->onChange(node, view->getPrototype(), view->getPrototype());
+	prototypeDisplaySubController->onChange(node, view->getPrototype());
+	prototypePhysicsSubController->onChange(node, view->getPrototype());
+	prototypeScriptSubController->onChange(node, view->getPrototype());
 	{
 		auto model = getSelectedModel();
-		if (model != nullptr) prototypeSoundsSubController->onValueChanged(node, view->getPrototype(), model);
+		if (model != nullptr) prototypeSoundsSubController->onChange(node, view->getPrototype(), model);
 	}
 }
 
@@ -1934,10 +1934,10 @@ void ModelEditorTabController::onUnfocus(GUIElementNode* node) {
 	}
 }
 
-void ModelEditorTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
-	basePropertiesSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
-	prototypePhysicsSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
-	prototypeSoundsSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
+void ModelEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
+	basePropertiesSubController->onContextMenuRequest(node, mouseX, mouseY, view->getPrototype());
+	prototypePhysicsSubController->onContextMenuRequest(node, mouseX, mouseY, view->getPrototype());
+	prototypeSoundsSubController->onContextMenuRequest(node, mouseX, mouseY, view->getPrototype());
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		string modelOutlinerNode;
@@ -2314,13 +2314,13 @@ void ModelEditorTabController::onTooltipCloseRequest() {
 	popUps->getTooltipScreenController()->close();
 }
 
-void ModelEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void ModelEditorTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	auto prototype = view->getPrototype();
-	basePropertiesSubController->onActionPerformed(type, node, prototype);
-	prototypePhysicsSubController->onActionPerformed(type, node, prototype);
-	prototypeSoundsSubController->onActionPerformed(type, node, prototype);
-	prototypeScriptSubController->onActionPerformed(type, node, prototype);
+	basePropertiesSubController->onAction(type, node, prototype);
+	prototypePhysicsSubController->onAction(type, node, prototype);
+	prototypeSoundsSubController->onAction(type, node, prototype);
+	prototypeScriptSubController->onAction(type, node, prototype);
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId().compare("specularmaterial_diffuse_texture_open") == 0) {
 			onMaterialLoadDiffuseTexture();

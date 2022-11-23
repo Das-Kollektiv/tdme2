@@ -135,7 +135,7 @@ void FindReplaceDialogScreenController::close()
 	completeAction = nullptr;
 }
 
-void FindReplaceDialogScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void FindReplaceDialogScreenController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (StringTools::startsWith(node->getId(), "findreplace_caption_close_") == true) { // TODO: a.drewke, check with DH) {

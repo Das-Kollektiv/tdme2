@@ -215,7 +215,7 @@ void TerrainEditorTabController::showErrorPopUp(const string& caption, const str
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
 
-void TerrainEditorTabController::onValueChanged(GUIElementNode* node)
+void TerrainEditorTabController::onChange(GUIElementNode* node)
 {
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
@@ -312,7 +312,7 @@ void TerrainEditorTabController::onValueChanged(GUIElementNode* node)
 			}
 		}
 	}
-	basePropertiesSubController->onValueChanged(node, view->getPrototype());
+	basePropertiesSubController->onChange(node, view->getPrototype());
 }
 
 void TerrainEditorTabController::onFocus(GUIElementNode* node) {
@@ -323,7 +323,7 @@ void TerrainEditorTabController::onUnfocus(GUIElementNode* node) {
 	basePropertiesSubController->onUnfocus(node, view->getPrototype());
 }
 
-void TerrainEditorTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
+void TerrainEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		if (StringTools::startsWith(outlinerNode, "terrain.waters.") == true) {
@@ -523,7 +523,7 @@ void TerrainEditorTabController::onContextMenuRequested(GUIElementNode* node, in
 			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
 		}
 	}
-	basePropertiesSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
+	basePropertiesSubController->onContextMenuRequest(node, mouseX, mouseY, view->getPrototype());
 }
 
 void TerrainEditorTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
@@ -536,7 +536,7 @@ void TerrainEditorTabController::onTooltipCloseRequest() {
 	popUps->getTooltipScreenController()->close();
 }
 
-void TerrainEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void TerrainEditorTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId() == "terrain_create") {
@@ -694,7 +694,7 @@ void TerrainEditorTabController::onActionPerformed(GUIActionListenerType type, G
 			try {
 				required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("foliagebrush_prototype_file"))->setSource(brushPrototype->getFileName());
 			} catch (Exception& exception) {
-				Console::println(string("TerrainEditorTabController::onActionPerformed(): ") + exception.what());
+				Console::println(string("TerrainEditorTabController::onAction(): ") + exception.what());
 			}
 		} else
 		if (node->getId() == "terrainbrush_texture_open") {
@@ -811,7 +811,7 @@ void TerrainEditorTabController::onActionPerformed(GUIActionListenerType type, G
 			view->initializeTerrain();
 		}
 	}
-	basePropertiesSubController->onActionPerformed(type, node, view->getPrototype());
+	basePropertiesSubController->onAction(type, node, view->getPrototype());
 }
 
 void TerrainEditorTabController::setOutlinerContent() {

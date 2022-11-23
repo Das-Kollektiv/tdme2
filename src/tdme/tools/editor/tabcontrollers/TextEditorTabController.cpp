@@ -305,7 +305,7 @@ void TextEditorTabController::showErrorPopUp(const string& caption, const string
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
 
-void TextEditorTabController::onValueChanged(GUIElementNode* node)
+void TextEditorTabController::onChange(GUIElementNode* node)
 {
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
@@ -345,7 +345,7 @@ void TextEditorTabController::onFocus(GUIElementNode* node) {
 void TextEditorTabController::onUnfocus(GUIElementNode* node) {
 }
 
-void TextEditorTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
+void TextEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
 }
 
 void TextEditorTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
@@ -434,7 +434,7 @@ void TextEditorTabController::updateMiniScriptSyntaxTree(int miniScriptScriptIdx
 	setOutlinerContent();
 }
 
-void TextEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void TextEditorTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 }
 

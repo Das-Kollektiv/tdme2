@@ -115,7 +115,7 @@ void ColorPickerScreenController::close()
 	screenNode->setVisible(false);
 }
 
-void ColorPickerScreenController::onValueChanged(GUIElementNode* node) {
+void ColorPickerScreenController::onChange(GUIElementNode* node) {
 	if (node->getId() == "colorpicker_red") {
 		color.setRed(Float::parse(node->getController()->getValue().getString()) / 255.0f);
 		updateColor();
@@ -166,7 +166,7 @@ void ColorPickerScreenController::onValueChanged(GUIElementNode* node) {
 	if (onColorChangeAction != nullptr) onColorChangeAction->performAction();
 }
 
-void ColorPickerScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void ColorPickerScreenController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (StringTools::startsWith(node->getId(), "colorpicker_caption_close_") == true) { // TODO: a.drewke, check with DH) {

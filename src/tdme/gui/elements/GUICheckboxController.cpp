@@ -88,7 +88,7 @@ void GUICheckboxController::handleMouseEvent(GUINode* node, GUIMouseEvent* event
 		if (event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 			setChecked(checked == true ? false : true);
 			node->getScreenNode()->getGUI()->setFoccussedNode(required_dynamic_cast<GUIElementNode*>(node));
-			node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node));
+			node->getScreenNode()->forwardChange(required_dynamic_cast<GUIElementNode*>(node));
 		}
 	}
 }
@@ -102,7 +102,7 @@ void GUICheckboxController::handleKeyboardEvent(GUIKeyboardEvent* event)
 				event->setProcessed(true);
 				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 					setChecked(checked == true ? false : true);
-					node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node));
+					node->getScreenNode()->forwardChange(required_dynamic_cast<GUIElementNode*>(node));
 				}
 			}
 			break;

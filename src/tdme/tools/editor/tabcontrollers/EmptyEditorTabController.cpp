@@ -143,10 +143,10 @@ void EmptyEditorTabController::executeCommand(TabControllerCommand command)
 	}
 }
 
-void EmptyEditorTabController::onValueChanged(GUIElementNode* node)
+void EmptyEditorTabController::onChange(GUIElementNode* node)
 {
-	basePropertiesSubController->onValueChanged(node, view->getPrototype());
-	prototypeScriptSubController->onValueChanged(node, view->getPrototype());
+	basePropertiesSubController->onChange(node, view->getPrototype());
+	prototypeScriptSubController->onChange(node, view->getPrototype());
 }
 
 void EmptyEditorTabController::onFocus(GUIElementNode* node) {
@@ -157,8 +157,8 @@ void EmptyEditorTabController::onUnfocus(GUIElementNode* node) {
 	basePropertiesSubController->onUnfocus(node, view->getPrototype());
 }
 
-void EmptyEditorTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
-	basePropertiesSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
+void EmptyEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
+	basePropertiesSubController->onContextMenuRequest(node, mouseX, mouseY, view->getPrototype());
 }
 
 void EmptyEditorTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
@@ -171,11 +171,11 @@ void EmptyEditorTabController::onTooltipCloseRequest() {
 	popUps->getTooltipScreenController()->close();
 }
 
-void EmptyEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void EmptyEditorTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	auto prototype = view->getPrototype();
-	basePropertiesSubController->onActionPerformed(type, node, prototype);
-	prototypeScriptSubController->onActionPerformed(type, node, prototype);
+	basePropertiesSubController->onAction(type, node, prototype);
+	prototypeScriptSubController->onAction(type, node, prototype);
 }
 
 void EmptyEditorTabController::setOutlinerContent() {

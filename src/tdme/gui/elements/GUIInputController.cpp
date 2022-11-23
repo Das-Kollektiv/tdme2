@@ -37,7 +37,7 @@ GUIInputController::GUIInputController(GUINode* node)
 	this->disabled = required_dynamic_cast<GUIElementNode*>(node)->isDisabled();
 }
 
-void GUIInputController::onValueChange() {
+void GUIInputController::onChange() {
 	auto& nodeConditions = required_dynamic_cast<GUIElementNode*>(node)->getActiveConditions();
 	if (inputNode->getText().getString().empty() == true) {
 		if (nodeConditions.has("hint") == false) nodeConditions.add("hint");
@@ -67,7 +67,7 @@ void GUIInputController::initialize()
 	GUIElementController::initialize();
 
 	//
-	onValueChange();
+	onChange();
 }
 
 void GUIInputController::dispose()
@@ -125,7 +125,7 @@ void GUIInputController::setValue(const MutableString& value)
 	auto inputInternalController = required_dynamic_cast<GUIInputInternalController*>(inputNode->getController());
 	inputInternalController->formatText();
 	inputInternalController->onTextUpdate();
-	onValueChange();
+	onChange();
 }
 
 void GUIInputController::onSubTreeChange()

@@ -555,7 +555,7 @@ void PrototypePhysicsSubController::createBoundingVolume(Prototype* prototype) {
 	editorView->reloadTabOutliner(string() + "physics.boundingvolumes." + to_string(boundingVolumeIdx));
 }
 
-void PrototypePhysicsSubController::onValueChanged(GUIElementNode* node, Prototype* prototype) {
+void PrototypePhysicsSubController::onChange(GUIElementNode* node, Prototype* prototype) {
 	if (node->getId() == "dropdown_outliner_add") {
 		auto addOutlinerType = node->getController()->getValue().getString();
 		if (addOutlinerType == "boundingvolume") {
@@ -621,7 +621,7 @@ void PrototypePhysicsSubController::onValueChanged(GUIElementNode* node, Prototy
 	}
 }
 
-void PrototypePhysicsSubController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype)
+void PrototypePhysicsSubController::onAction(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId() == "boundingvolume_convexmesh_file_open") {
@@ -831,7 +831,7 @@ void PrototypePhysicsSubController::onActionPerformed(GUIActionListenerType type
 	}
 }
 
-void PrototypePhysicsSubController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY, Prototype* prototype) {
+void PrototypePhysicsSubController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY, Prototype* prototype) {
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 		if (StringTools::startsWith(outlinerNode, "physics.boundingvolumes.") == true) {

@@ -1132,7 +1132,7 @@ void Installer::reshape(int width, int height)
 	engine->reshape(width, height);
 }
 
-void Installer::onActionPerformed(GUIActionListenerType type, GUIElementNode* node) {
+void Installer::onAction(GUIActionListenerType type, GUIElementNode* node) {
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId() == "button_next") {
 			if (screen == SCREEN_COMPONENTS && (installerMode == INSTALLERMODE_UPDATE || installerMode == INSTALLERMODE_REPAIR)) {
@@ -1147,7 +1147,7 @@ void Installer::onActionPerformed(GUIActionListenerType type, GUIElementNode* no
 				try {
 					timestamp = FileSystem::getStandardFileSystem()->getContentAsString(".", "install.version.db");
 				} catch (Exception& exception) {
-					Console::println(string("Installer::onActionPerformed(): An error occurred: ") + exception.what());
+					Console::println(string("Installer::onAction(): An error occurred: ") + exception.what());
 				}
 				screen = SCREEN_WELCOME2;
 			} else
@@ -1175,7 +1175,7 @@ void Installer::onActionPerformed(GUIActionListenerType type, GUIElementNode* no
 				try {
 					FileSystem::getStandardFileSystem()->removeFile(".", downloadedFile);
 				} catch (Exception& exception) {
-					Console::println("Installer::onActionPerformed(): Removing downloaded file failed: " + downloadedFile);
+					Console::println("Installer::onAction(): Removing downloaded file failed: " + downloadedFile);
 				}
 			}
 			Application::exit(0);
@@ -1295,8 +1295,8 @@ void Installer::onActionPerformed(GUIActionListenerType type, GUIElementNode* no
 	}
 }
 
-void Installer::onValueChanged(GUIElementNode* node) {
-	Console::println(node->getName() + ": onValueChanged(): " + node->getController()->getValue().getString());
+void Installer::onChange(GUIElementNode* node) {
+	Console::println(node->getName() + ": onChange(): " + node->getController()->getValue().getString());
 }
 
 void Installer::display()

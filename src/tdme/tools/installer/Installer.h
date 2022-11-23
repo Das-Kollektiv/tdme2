@@ -89,8 +89,8 @@ public:
 	void reshape(int width, int height) override;
 	void display() override;
 	void onClose() override;
-	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
-	void onValueChanged(GUIElementNode* node) override;
+	void onAction(GUIActionListenerType type, GUIElementNode* node) override;
+	void onChange(GUIElementNode* node) override;
 
 	/**
 	 * Main

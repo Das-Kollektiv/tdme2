@@ -172,8 +172,8 @@ public:
 	// overridden methods
 	void initialize() override;
 	void dispose() override;
-	void onValueChanged(GUIElementNode* node) override;
-	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
+	void onChange(GUIElementNode* node) override;
+	void onAction(GUIActionListenerType type, GUIElementNode* node) override;
 	void onFocus(GUIElementNode* node) override;
 	void onUnfocus(GUIElementNode* node) override;
 	void onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) override;

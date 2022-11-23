@@ -226,9 +226,9 @@ void ParticleSystemEditorTabController::showErrorPopUp(const string& caption, co
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
 
-void ParticleSystemEditorTabController::onValueChanged(GUIElementNode* node)
+void ParticleSystemEditorTabController::onChange(GUIElementNode* node)
 {
-	Console::println("ParticleSystemEditorTabController::onValueChanged(): " + node->getId() + ": " + node->getController()->getValue().getString());
+	Console::println("ParticleSystemEditorTabController::onChange(): " + node->getId() + ": " + node->getController()->getValue().getString());
 
 	//
 	if (node->getId() == "dropdown_outliner_add") {
@@ -327,11 +327,11 @@ void ParticleSystemEditorTabController::onValueChanged(GUIElementNode* node)
 		}
 	}
 	//
-	basePropertiesSubController->onValueChanged(node, view->getPrototype());
-	prototypeDisplaySubController->onValueChanged(node, view->getPrototype());
-	prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
-	prototypeSoundsSubController->onValueChanged(node, view->getPrototype(), nullptr);
-	prototypeScriptSubController->onValueChanged(node, view->getPrototype());
+	basePropertiesSubController->onChange(node, view->getPrototype());
+	prototypeDisplaySubController->onChange(node, view->getPrototype());
+	prototypePhysicsSubController->onChange(node, view->getPrototype());
+	prototypeSoundsSubController->onChange(node, view->getPrototype(), nullptr);
+	prototypeScriptSubController->onChange(node, view->getPrototype());
 }
 
 void ParticleSystemEditorTabController::onFocus(GUIElementNode* node) {
@@ -344,11 +344,11 @@ void ParticleSystemEditorTabController::onUnfocus(GUIElementNode* node) {
 	prototypeSoundsSubController->onUnfocus(node, view->getPrototype());
 }
 
-void ParticleSystemEditorTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
+void ParticleSystemEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
 
-	basePropertiesSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
-	prototypePhysicsSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
-	prototypeSoundsSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
+	basePropertiesSubController->onContextMenuRequest(node, mouseX, mouseY, view->getPrototype());
+	prototypePhysicsSubController->onContextMenuRequest(node, mouseX, mouseY, view->getPrototype());
+	prototypeSoundsSubController->onContextMenuRequest(node, mouseX, mouseY, view->getPrototype());
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		if (outlinerNode == "particlesystems") {
@@ -447,7 +447,7 @@ void ParticleSystemEditorTabController::onTooltipCloseRequest() {
 	popUps->getTooltipScreenController()->close();
 }
 
-void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	auto prototype = view->getPrototype();
 	if (prototype == nullptr) return;
@@ -886,7 +886,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 						pps->setTextureFileName(string(), pps->getTransparencyTextureFileName());
 						required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_point_texture"))->setSource(pps->getTextureFileName());
 					} catch (Exception& exception) {
-						Console::println(string("ParticleSystemEditorTabController::onActionPerformed(): An error occurred: ") + exception.what());;
+						Console::println(string("ParticleSystemEditorTabController::onAction(): An error occurred: ") + exception.what());;
 						showErrorPopUp("Warning", (string(exception.what())));
 					}
 					view->initParticleSystem();
@@ -955,7 +955,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 						pps->setTextureFileName(pps->getTextureFileName(), string());
 						required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_point_transparency"))->setSource(pps->getTransparencyTextureFileName());
 					} catch (Exception& exception) {
-						Console::println(string("ParticleSystemEditorTabController::onActionPerformed(): An error occurred: ") + exception.what());;
+						Console::println(string("ParticleSystemEditorTabController::onAction(): An error occurred: ") + exception.what());;
 						showErrorPopUp("Warning", (string(exception.what())));
 					}
 					view->initParticleSystem();
@@ -1024,7 +1024,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 						fps->setTextureFileName(string(), fps->getTransparencyTextureFileName());
 						required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_fog_texture"))->setSource(fps->getTextureFileName());
 					} catch (Exception& exception) {
-						Console::println(string("ParticleSystemEditorTabController::onActionPerformed(): An error occurred: ") + exception.what());;
+						Console::println(string("ParticleSystemEditorTabController::onAction(): An error occurred: ") + exception.what());;
 						showErrorPopUp("Warning", (string(exception.what())));
 					}
 					view->initParticleSystem();
@@ -1093,7 +1093,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 						fps->setTextureFileName(fps->getTextureFileName(), string());
 						required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_fog_transparency"))->setSource(fps->getTransparencyTextureFileName());
 					} catch (Exception& exception) {
-						Console::println(string("ParticleSystemEditorTabController::onActionPerformed(): An error occurred: ") + exception.what());;
+						Console::println(string("ParticleSystemEditorTabController::onAction(): An error occurred: ") + exception.what());;
 						showErrorPopUp("Warning", (string(exception.what())));
 					}
 					view->initParticleSystem();
@@ -1167,7 +1167,7 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 					ops->setModelFile(string());
 					required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_object"))->setSource(ops->getModelFileName());
 				} catch (Exception& exception) {
-					Console::println(string("ParticleSystemEditorTabController::onActionPerformed(): An error occurred: ") + exception.what());;
+					Console::println(string("ParticleSystemEditorTabController::onAction(): An error occurred: ") + exception.what());;
 					showErrorPopUp("Warning", (string(exception.what())));
 				}
 				view->initParticleSystem();
@@ -1175,10 +1175,10 @@ void ParticleSystemEditorTabController::onActionPerformed(GUIActionListenerType 
 		}
 	}
 
-	basePropertiesSubController->onActionPerformed(type, node, prototype);
-	prototypePhysicsSubController->onActionPerformed(type, node, prototype);
-	prototypeSoundsSubController->onActionPerformed(type, node, prototype);
-	prototypeScriptSubController->onActionPerformed(type, node, prototype);
+	basePropertiesSubController->onAction(type, node, prototype);
+	prototypePhysicsSubController->onAction(type, node, prototype);
+	prototypeSoundsSubController->onAction(type, node, prototype);
+	prototypeScriptSubController->onAction(type, node, prototype);
 }
 
 void ParticleSystemEditorTabController::setOutlinerContent() {

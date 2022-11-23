@@ -293,7 +293,7 @@ void PrototypeSoundsSubController::startRenameSound(Prototype* prototype, const 
 		true
 	);
 	Engine::getInstance()->getGUI()->setFoccussedNode(dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("tdme.sounds.rename_input")));
-	editorView->getScreenController()->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
+	editorView->getScreenController()->getScreenNode()->forwardChange(required_dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
 }
 
 void PrototypeSoundsSubController::renameSound(Prototype* prototype) {
@@ -327,7 +327,7 @@ void PrototypeSoundsSubController::renameSound(Prototype* prototype) {
 	Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(editorView, string("sounds") + "." + newSoundName));
 }
 
-void PrototypeSoundsSubController::onValueChanged(GUIElementNode* node, Prototype* prototype, Model* model) {
+void PrototypeSoundsSubController::onChange(GUIElementNode* node, Prototype* prototype, Model* model) {
 	if (node->getId() == "dropdown_outliner_add") {
 		auto addOutlinerType = node->getController()->getValue().getString();
 		if (addOutlinerType == "sound") {
@@ -355,7 +355,7 @@ void PrototypeSoundsSubController::onValueChanged(GUIElementNode* node, Prototyp
 	}
 }
 
-void PrototypeSoundsSubController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype)
+void PrototypeSoundsSubController::onAction(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype)
 {
 	if (type != GUIActionListenerType::PERFORMED) return;
 	if (StringTools::startsWith(node->getId(), "sound_remove") == true) {
@@ -391,7 +391,7 @@ void PrototypeSoundsSubController::onUnfocus(GUIElementNode* node, Prototype* pr
 	}
 }
 
-void PrototypeSoundsSubController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY, Prototype* prototype) {
+void PrototypeSoundsSubController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY, Prototype* prototype) {
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 		if (outlinerNode == "sounds") {

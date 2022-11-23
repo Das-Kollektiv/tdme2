@@ -85,7 +85,7 @@ void TextureTabController::showErrorPopUp(const string& caption, const string& m
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
 
-void TextureTabController::onValueChanged(GUIElementNode* node)
+void TextureTabController::onChange(GUIElementNode* node)
 {
 }
 
@@ -95,7 +95,7 @@ void TextureTabController::onFocus(GUIElementNode* node) {
 void TextureTabController::onUnfocus(GUIElementNode* node) {
 }
 
-void TextureTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
+void TextureTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
 }
 
 void TextureTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
@@ -118,6 +118,6 @@ void TextureTabController::setOutlinerAddDropDownContent() {
 	view->getEditorView()->setOutlinerAddDropDownContent(string());
 }
 
-void TextureTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void TextureTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 }

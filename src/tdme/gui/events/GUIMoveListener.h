@@ -19,8 +19,8 @@ struct tdme::gui::events::GUIMoveListener
 	virtual ~GUIMoveListener() {}
 
 	/**
-	 * On moved
+	 * On move
 	 * @param node node
 	 */
-	virtual void onMoved(GUINode* node) = 0;
+	virtual void onMove(GUINode* node) = 0;
 };

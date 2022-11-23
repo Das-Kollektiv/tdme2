@@ -118,9 +118,9 @@ void UIEditorTabController::showErrorPopUp(const string& caption, const string& 
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
 
-void UIEditorTabController::onValueChanged(GUIElementNode* node)
+void UIEditorTabController::onChange(GUIElementNode* node)
 {
-	Console::println("UIEditorTabController::onValueChanged(): " + node->getId() + " = " + node->getController()->getValue().getString());
+	Console::println("UIEditorTabController::onChange(): " + node->getId() + " = " + node->getController()->getValue().getString());
 	if (node->getId() == "selectbox_outliner") {
 		updateDetails(node->getController()->getValue().getString());
 	} else
@@ -147,7 +147,7 @@ void UIEditorTabController::onFocus(GUIElementNode* node) {
 void UIEditorTabController::onUnfocus(GUIElementNode* node) {
 }
 
-void UIEditorTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
+void UIEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		if (outlinerNode == "screens") {
@@ -639,10 +639,10 @@ void UIEditorTabController::onRemovePrototype() {
 	Engine::getInstance()->enqueueAction(new RemovePrototypeAction(this));
 }
 
-void UIEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void UIEditorTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type != GUIActionListenerType::PERFORMED) return;
-	Console::println("UIEditorTabController::onActionPerformed(): " + node->getId());
+	Console::println("UIEditorTabController::onAction(): " + node->getId());
 	if (node->getId() == "screen_open") {
 		onLoadScreen();
 	} else

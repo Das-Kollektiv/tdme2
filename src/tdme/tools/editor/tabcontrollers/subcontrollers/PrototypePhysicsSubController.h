@@ -257,7 +257,7 @@ public:
 	 * @param node node
 	 * @param prototype prototype
 	 */
-	void onValueChanged(GUIElementNode* node, Prototype* prototype);
+	void onChange(GUIElementNode* node, Prototype* prototype);
 
 	/**
 	 * On action performed
@@ -265,7 +265,7 @@ public:
 	 * @param node node
 	 * @param prototype prototype
 	 */
-	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype);
+	void onAction(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype);
 
 	/**
 	 * On context menu requested
@@ -274,7 +274,7 @@ public:
 	 * @param mouseY unscaled mouse Y position
 	 * @param prototype prototype
 	 */
-	void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY, Prototype* prototype);
+	void onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY, Prototype* prototype);
 
 	/**
 	 * Enable tool bar

@@ -7,6 +7,7 @@ namespace events {
 	struct GUIActionListener;
 	struct GUIChangeListener;
 	struct GUIContextMenuRequestListener;
+	struct GUIDragRequestListener;
 	struct GUIFocusListener;
 	struct GUIInputEventHandler;
 	class GUIKeyboardEvent;

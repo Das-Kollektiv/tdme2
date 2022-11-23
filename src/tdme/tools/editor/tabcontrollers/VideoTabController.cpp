@@ -85,7 +85,7 @@ void VideoTabController::showErrorPopUp(const string& caption, const string& mes
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
 
-void VideoTabController::onValueChanged(GUIElementNode* node)
+void VideoTabController::onChange(GUIElementNode* node)
 {
 }
 
@@ -95,7 +95,7 @@ void VideoTabController::onFocus(GUIElementNode* node) {
 void VideoTabController::onUnfocus(GUIElementNode* node) {
 }
 
-void VideoTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
+void VideoTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
 }
 
 void VideoTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
@@ -118,6 +118,6 @@ void VideoTabController::setOutlinerAddDropDownContent() {
 	view->getEditorView()->setOutlinerAddDropDownContent(string());
 }
 
-void VideoTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void VideoTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 }

@@ -104,7 +104,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 		public:
 			NodeMoveListener(TextEditorTabView* textEditorTabView): textEditorTabView(textEditorTabView) {
 			}
-			void onMoved(GUINode* node) {
+			void onMove(GUINode* node) {
 				auto visualisationNode = textEditorTabView->visualisationNode;
 				auto& nodeComputedConstraints = node->getComputedConstraints();
 				auto xMax = nodeComputedConstraints.left + nodeComputedConstraints.width;

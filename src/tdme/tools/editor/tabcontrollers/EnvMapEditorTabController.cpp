@@ -156,7 +156,7 @@ void EnvMapEditorTabController::showErrorPopUp(const string& caption, const stri
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
 
-void EnvMapEditorTabController::onValueChanged(GUIElementNode* node)
+void EnvMapEditorTabController::onChange(GUIElementNode* node)
 {
 	for (auto& applyNode: applyNodesRenderPasses) {
 		if (node->getId() == applyNode) {
@@ -178,7 +178,7 @@ void EnvMapEditorTabController::onFocus(GUIElementNode* node) {
 void EnvMapEditorTabController::onUnfocus(GUIElementNode* node) {
 }
 
-void EnvMapEditorTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
+void EnvMapEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
 }
 
 void EnvMapEditorTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
@@ -191,7 +191,7 @@ void EnvMapEditorTabController::onTooltipCloseRequest() {
 	popUps->getTooltipScreenController()->close();
 }
 
-void EnvMapEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void EnvMapEditorTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 }
 

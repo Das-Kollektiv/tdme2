@@ -95,7 +95,7 @@ void SoundTabController::showErrorPopUp(const string& caption, const string& mes
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
 
-void SoundTabController::onValueChanged(GUIElementNode* node)
+void SoundTabController::onChange(GUIElementNode* node)
 {
 }
 
@@ -105,7 +105,7 @@ void SoundTabController::onFocus(GUIElementNode* node) {
 void SoundTabController::onUnfocus(GUIElementNode* node) {
 }
 
-void SoundTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
+void SoundTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
 }
 
 void SoundTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
@@ -128,7 +128,7 @@ void SoundTabController::setOutlinerAddDropDownContent() {
 	view->getEditorView()->setOutlinerAddDropDownContent(string());
 }
 
-void SoundTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void SoundTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type != GUIActionListenerType::PERFORMED) return;
 	if (node->getId() == "play") {

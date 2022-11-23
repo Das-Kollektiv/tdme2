@@ -157,7 +157,7 @@ public:
 	 * @param node node
 	 * @param prototype prototype
 	 */
-	void onValueChanged(GUIElementNode* node, Prototype* prototype);
+	void onChange(GUIElementNode* node, Prototype* prototype);
 
 	/**
 	 * Shows the error pop up

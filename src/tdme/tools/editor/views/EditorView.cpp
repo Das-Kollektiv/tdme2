@@ -277,7 +277,7 @@ void EditorView::reloadTabOutliner(const string& newSelectionValue) {
 		if (newSelectionValue.empty() == false) outlinerState.value = newSelectionValue;
 		editorScreenController->restoreOutlinerState(outlinerState);
 	}
-	editorScreenController->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(editorScreenController->getScreenNode()->getNodeById("selectbox_outliner")));
+	editorScreenController->getScreenNode()->forwardChange(required_dynamic_cast<GUIElementNode*>(editorScreenController->getScreenNode()->getNodeById("selectbox_outliner")));
 }
 
 void EditorView::getViewPort(GUINode* viewPortNode, int& left, int& top, int& width, int& height) {

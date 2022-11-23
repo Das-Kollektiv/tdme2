@@ -208,7 +208,7 @@ void SceneEditorTabController::showErrorPopUp(const string& caption, const strin
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
 
-void SceneEditorTabController::onValueChanged(GUIElementNode* node)
+void SceneEditorTabController::onChange(GUIElementNode* node)
 {
 	if (node->getId() == "dropdown_outliner_add") {
 		auto addOutlinerType = node->getController()->getValue().getString();
@@ -264,7 +264,7 @@ void SceneEditorTabController::onValueChanged(GUIElementNode* node)
 						)
 					);
 				} catch (Exception& exception) {
-					Console::println(string("SceneEditorTabController::onValueChanged(): An error occurred: ") + exception.what());;
+					Console::println(string("SceneEditorTabController::onChange(): An error occurred: ") + exception.what());;
 					showErrorPopUp("Warning", (string(exception.what())));
 				}
 				//
@@ -283,7 +283,7 @@ void SceneEditorTabController::onValueChanged(GUIElementNode* node)
 						)
 					);
 				} catch (Exception& exception) {
-					Console::println(string("SceneEditorTabController::onValueChanged(): An error occurred: ") + exception.what());;
+					Console::println(string("SceneEditorTabController::onChange(): An error occurred: ") + exception.what());;
 					showErrorPopUp("Warning", (string(exception.what())));
 				}
 				//
@@ -302,7 +302,7 @@ void SceneEditorTabController::onValueChanged(GUIElementNode* node)
 						)
 					);
 				} catch (Exception& exception) {
-					Console::println(string("SceneEditorTabController::onValueChanged(): An error occurred: ") + exception.what());;
+					Console::println(string("SceneEditorTabController::onChange(): An error occurred: ") + exception.what());;
 					showErrorPopUp("Warning", (string(exception.what())));
 				}
 				//
@@ -323,7 +323,7 @@ void SceneEditorTabController::onValueChanged(GUIElementNode* node)
 					);
 					view->updateSky();
 				} catch (Exception& exception) {
-					Console::println(string("SceneEditorTabController::onValueChanged(): An error occurred: ") + exception.what());;
+					Console::println(string("SceneEditorTabController::onChange(): An error occurred: ") + exception.what());;
 					showErrorPopUp("Warning", (string(exception.what())));
 				}
 				//
@@ -336,7 +336,7 @@ void SceneEditorTabController::onValueChanged(GUIElementNode* node)
 				try {
 					view->applyReflectionEnvironmentMappingId(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("reflection_environmentmap"))->getController()->getValue().getString());
 				} catch (Exception& exception) {
-					Console::println(string("SceneEditorTabController::onValueChanged(): An error occurred: ") + exception.what());;
+					Console::println(string("SceneEditorTabController::onChange(): An error occurred: ") + exception.what());;
 					showErrorPopUp("Warning", (string(exception.what())));
 				}
 				//
@@ -353,7 +353,7 @@ void SceneEditorTabController::onValueChanged(GUIElementNode* node)
 				}
 			}
 		}
-		basePropertiesSubController->onValueChanged(node, view->getScene());
+		basePropertiesSubController->onChange(node, view->getScene());
 	}
 }
 
@@ -378,7 +378,7 @@ void SceneEditorTabController::onUnfocus(GUIElementNode* node) {
 						throw ExceptionBase("Could not rename entity");
 					}
 				} catch (Exception& exception) {
-					Console::println(string("SceneEditorTabController::onValueChanged(): An error occurred: ") + exception.what());;
+					Console::println(string("SceneEditorTabController::onChange(): An error occurred: ") + exception.what());;
 					showErrorPopUp("Warning", (string(exception.what())));
 				}
 				//
@@ -389,7 +389,7 @@ void SceneEditorTabController::onUnfocus(GUIElementNode* node) {
 	basePropertiesSubController->onUnfocus(node, view->getScene());
 }
 
-void SceneEditorTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
+void SceneEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		if (outlinerNode == "scene.lights") {
@@ -601,7 +601,7 @@ void SceneEditorTabController::onContextMenuRequested(GUIElementNode* node, int 
 			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
 		}
 	} else {
-		basePropertiesSubController->onContextMenuRequested(node, mouseX, mouseY, view->getScene());
+		basePropertiesSubController->onContextMenuRequest(node, mouseX, mouseY, view->getScene());
 	}
 }
 
@@ -615,7 +615,7 @@ void SceneEditorTabController::onTooltipCloseRequest() {
 	popUps->getTooltipScreenController()->close();
 }
 
-void SceneEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void SceneEditorTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type != GUIActionListenerType::PERFORMED) return;
 	if (node->getId() == "menu_project_scene_run") {
@@ -785,7 +785,7 @@ void SceneEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 			popUps->getColorPickerScreenController()->show(light->getSpecular(), new OnColorChangeAction(this, lightIdx));
 		}
 	} else {
-		basePropertiesSubController->onActionPerformed(type, node, view->getScene());
+		basePropertiesSubController->onAction(type, node, view->getScene());
 	}
 }
 
@@ -1354,7 +1354,7 @@ void SceneEditorTabController::startRenameEntity(const string& entityName) {
 		true
 	);
 	Engine::getInstance()->getGUI()->setFoccussedNode(dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById("tdme.entities.rename_input")));
-	view->getEditorView()->getScreenController()->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
+	view->getEditorView()->getScreenController()->getScreenNode()->forwardChange(required_dynamic_cast<GUIElementNode*>(view->getEditorView()->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
 }
 
 void SceneEditorTabController::renameEntity() {

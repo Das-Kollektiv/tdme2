@@ -93,7 +93,7 @@ void FontTabController::showErrorPopUp(const string& caption, const string& mess
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
 
-void FontTabController::onValueChanged(GUIElementNode* node)
+void FontTabController::onChange(GUIElementNode* node)
 {
 }
 
@@ -103,7 +103,7 @@ void FontTabController::onFocus(GUIElementNode* node) {
 void FontTabController::onUnfocus(GUIElementNode* node) {
 }
 
-void FontTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
+void FontTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
 }
 
 void FontTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
@@ -126,6 +126,6 @@ void FontTabController::setOutlinerAddDropDownContent() {
 	view->getEditorView()->setOutlinerAddDropDownContent(string());
 }
 
-void FontTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void FontTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 }

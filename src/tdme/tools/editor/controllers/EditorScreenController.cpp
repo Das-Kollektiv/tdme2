@@ -210,7 +210,7 @@ void EditorScreenController::showErrorPopUp(const string& caption, const string&
 	view->getPopUps()->getInfoDialogScreenController()->show(caption, message);
 }
 
-void EditorScreenController::onValueChanged(GUIElementNode* node)
+void EditorScreenController::onChange(GUIElementNode* node)
 {
 	if (node->getId() == "projectpathfiles_search") {
 		fileNameSearchTerm = node->getController()->getValue().getString();
@@ -226,12 +226,12 @@ void EditorScreenController::onValueChanged(GUIElementNode* node)
 	if (node->getId() == "dropdown_projectlibrary_add") {
 		onAddFile(node->getController()->getValue().getString());
 	}
-	// forward onValueChanged to active tab tab controller
+	// forward onChange to active tab tab controller
 	auto selectedTab = getSelectedTab();
-	if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onValueChanged(node);
+	if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onChange(node);
 }
 
-void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void EditorScreenController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId() == "menu_file_open") {
@@ -295,7 +295,7 @@ void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIEl
 				auto& tab = tabsIt.second;
 				if (StringTools::startsWith(node->getId(), tab.getId() + "_close") == true) {
 					tabIdToClose = tab.getId();
-					Console::println("EditorScreenController::onActionPerformed(): close tab: " + tab.getId());
+					Console::println("EditorScreenController::onAction(): close tab: " + tab.getId());
 				}
 			}
 			if (tabIdToClose.empty() == false) {
@@ -331,9 +331,9 @@ void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIEl
 			TDMEEditor::getInstance()->quit();
 		}
 	}
-	// forward onActionPerformed to active tab tab controller
+	// forward onAction to active tab tab controller
 	auto selectedTab = getSelectedTab();
-	if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onActionPerformed(type, node);
+	if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onAction(type, node);
 }
 
 void EditorScreenController::onFocus(GUIElementNode* node) {
@@ -348,7 +348,7 @@ void EditorScreenController::onUnfocus(GUIElementNode* node) {
 	if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onUnfocus(node);
 }
 
-void EditorScreenController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
+void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
 	if (StringTools::startsWith(node->getId(), "projectpathfiles_file_") == true) {
 		auto absoluteFileName = required_dynamic_cast<GUIElementNode*>(node)->getValue();
 		auto selectedTab = getSelectedTab();
@@ -402,9 +402,9 @@ void EditorScreenController::onContextMenuRequested(GUIElementNode* node, int mo
 			default: break;
 		}
 	}
-	// forward onContextMenuRequested to active tab tab controller
+	// forward onContextMenuRequest to active tab tab controller
 	auto selectedTab = getSelectedTab();
-	if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onContextMenuRequested(node, mouseX, mouseY);
+	if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onContextMenuRequest(node, mouseX, mouseY);
 }
 
 void EditorScreenController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {

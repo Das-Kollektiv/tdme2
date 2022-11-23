@@ -476,11 +476,11 @@ public:
 	bool getOutlinerNodeLOD(const string& outlinerNode, string& modelOutlinerNode, Model** model = nullptr, int* lodLevel = nullptr);
 
 	// overridden methods
-	void onValueChanged(GUIElementNode* node) override;
-	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
+	void onChange(GUIElementNode* node) override;
+	void onAction(GUIActionListenerType type, GUIElementNode* node) override;
 	void onFocus(GUIElementNode* node) override;
 	void onUnfocus(GUIElementNode* node) override;
-	void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) override;
+	void onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) override;
 	void onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) override;
 	void onTooltipCloseRequest() override;
 	void executeCommand(TabControllerCommand command) override;

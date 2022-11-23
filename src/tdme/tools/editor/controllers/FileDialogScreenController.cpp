@@ -355,7 +355,7 @@ void FileDialogScreenController::close()
 	cancelAction = nullptr;
 }
 
-void FileDialogScreenController::onValueChanged(GUIElementNode* node)
+void FileDialogScreenController::onChange(GUIElementNode* node)
 {
 	if (node->getId() == typeDropDownNode->getId()) {
 		setupFiles();
@@ -376,7 +376,7 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 				try {
 					cwd = FileSystem::getStandardFileSystem()->getCanonicalPath(cwd, selectedFile);
 				} catch (Exception& exception) {
-					Console::print(string("FileDialogScreenController::onValueChanged(): An error occurred: "));
+					Console::print(string("FileDialogScreenController::onChange(): An error occurred: "));
 					Console::println(string(exception.what()));
 				}
 				if (setupFiles() == false) {
@@ -391,7 +391,7 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 				fileNameNode->getController()->setValue(selectedFile);
 			}
 		} catch (Exception& exception) {
-			Console::print(string("FileDialogScreenController::onValueChanged(): An error occurred: "));
+			Console::print(string("FileDialogScreenController::onChange(): An error occurred: "));
 			Console::println(string(exception.what()));
 			fileNameNode->getController()->setValue(MutableString());
 		}
@@ -413,14 +413,14 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 				}
 			}
 		} catch (Exception& exception) {
-			Console::print(string("FileDialogScreenController::onValueChanged(): An error occurred: "));
+			Console::print(string("FileDialogScreenController::onChange(): An error occurred: "));
 			Console::println(string(exception.what()));
 			fileNameNode->getController()->setValue(MutableString());
 		}
 	}
 }
 
-void FileDialogScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void FileDialogScreenController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId() == pathNode->getId()) {

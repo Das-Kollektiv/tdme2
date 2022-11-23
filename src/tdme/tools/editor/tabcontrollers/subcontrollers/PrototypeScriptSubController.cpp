@@ -100,7 +100,7 @@ void PrototypeScriptSubController::updateDetails(Prototype* prototype, const str
 	}
 }
 
-void PrototypeScriptSubController::onValueChanged(GUIElementNode* node, Prototype* prototype)
+void PrototypeScriptSubController::onChange(GUIElementNode* node, Prototype* prototype)
 {
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
@@ -111,10 +111,10 @@ void PrototypeScriptSubController::onValueChanged(GUIElementNode* node, Prototyp
 	}
 }
 
-void PrototypeScriptSubController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype)
+void PrototypeScriptSubController::onAction(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype)
 {
 	if (type != GUIActionListenerType::PERFORMED) return;
-	Console::println("PrototypeScriptSubController::onActionPerformed(): " + node->getId());
+	Console::println("PrototypeScriptSubController::onAction(): " + node->getId());
 	if (node->getId() == "script_open") {
 		onScriptSet(prototype);
 	} else

@@ -87,7 +87,7 @@ void AboutDialogScreenController::close()
 	screenNode->setVisible(false);
 }
 
-void AboutDialogScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void AboutDialogScreenController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (StringTools::startsWith(node->getId(), "about_caption_close_") == true) { // TODO: a.drewke, check with DH) {

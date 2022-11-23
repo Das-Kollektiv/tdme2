@@ -137,7 +137,7 @@ void GUIDropDownOptionController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 		if (event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 			required_dynamic_cast<GUIDropDownController*>(dropDownNode->getController())->select(required_dynamic_cast<GUIElementNode*>(this->node));
 			required_dynamic_cast<GUIDropDownController*>(dropDownNode->getController())->toggleOpenState();
-			node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(dropDownNode));
+			node->getScreenNode()->forwardChange(required_dynamic_cast<GUIElementNode*>(dropDownNode));
 		}
 	}
 }

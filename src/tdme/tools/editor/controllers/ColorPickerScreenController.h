@@ -81,15 +81,15 @@ public:
 	void dispose() override;
 	#if defined(_WIN32) && defined(_MSC_VER)
 		// I do not get it currently, somehow it does not accept override whereas everything works fine
-		void onValueChanged(GUIElementNode* node);
-		void onActionPerformed(GUIActionListenerType type, GUIElementNode* node);
+		void onChange(GUIElementNode* node);
+		void onAction(GUIActionListenerType type, GUIElementNode* node);
 		void onFocus(GUIElementNode* node);
 		void onUnfocus(GUIElementNode* node);
 		void onTooltipShowRequest(GUINode* node, int mouseX, int mouseY);
 		void onTooltipCloseRequest();
 	#else
-		void onValueChanged(GUIElementNode* node) override;
-		void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
+		void onChange(GUIElementNode* node) override;
+		void onAction(GUIActionListenerType type, GUIElementNode* node) override;
 		void onFocus(GUIElementNode* node) override;
 		void onUnfocus(GUIElementNode* node) override;
 		void onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) override;

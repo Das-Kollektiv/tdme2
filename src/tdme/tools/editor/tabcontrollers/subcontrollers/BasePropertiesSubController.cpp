@@ -207,7 +207,7 @@ void BasePropertiesSubController::startRenameProperty(BaseProperties* baseProper
 		true
 	);
 	Engine::getInstance()->getGUI()->setFoccussedNode(dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("tdme.properties.rename_input")));
-	editorView->getScreenController()->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
+	editorView->getScreenController()->getScreenNode()->forwardChange(required_dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
 }
 
 void BasePropertiesSubController::renameProperty(BaseProperties* baseProperties) {
@@ -242,7 +242,7 @@ void BasePropertiesSubController::renameProperty(BaseProperties* baseProperties)
 	Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(editorView, "properties" + (property != nullptr?"." + property->getName():"")));
 }
 
-void BasePropertiesSubController::onValueChanged(GUIElementNode* node, BaseProperties* baseProperties, Prototype* prototype)
+void BasePropertiesSubController::onChange(GUIElementNode* node, BaseProperties* baseProperties, Prototype* prototype)
 {
 	if (node->getId() == "dropdown_outliner_add") {
 		auto addOutlinerType = node->getController()->getValue().getString();
@@ -262,7 +262,7 @@ void BasePropertiesSubController::onValueChanged(GUIElementNode* node, BasePrope
 	}
 }
 
-void BasePropertiesSubController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node, BaseProperties* baseProperties)
+void BasePropertiesSubController::onAction(GUIActionListenerType type, GUIElementNode* node, BaseProperties* baseProperties)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId() == "tdme.properties.rename_input") {
@@ -293,7 +293,7 @@ void BasePropertiesSubController::onUnfocus(GUIElementNode* node, BaseProperties
 	}
 }
 
-void BasePropertiesSubController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY, BaseProperties* baseProperties) {
+void BasePropertiesSubController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY, BaseProperties* baseProperties) {
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 		if (outlinerNode == "properties") {

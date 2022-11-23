@@ -297,7 +297,7 @@ void PrototypeDisplaySubController::applyDisplayShaderDetails(Prototype* prototy
 	}
 }
 
-void PrototypeDisplaySubController::onValueChanged(GUIElementNode* node, Prototype* prototype) {
+void PrototypeDisplaySubController::onChange(GUIElementNode* node, Prototype* prototype) {
 	for (auto& applyDisplayNode: applyDisplayNodes) {
 		if (node->getId() == applyDisplayNode) {
 			applyDisplayDetails(prototype);

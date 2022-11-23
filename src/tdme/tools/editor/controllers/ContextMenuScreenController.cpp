@@ -99,7 +99,7 @@ void ContextMenuScreenController::close()
 	screenNode->setVisible(false);
 }
 
-void ContextMenuScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void ContextMenuScreenController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
 		close();

@@ -86,7 +86,7 @@ public:
 	 * @param node node
 	 * @param prototype prototype
 	 */
-	void onValueChanged(GUIElementNode* node, Prototype* prototype);
+	void onChange(GUIElementNode* node, Prototype* prototype);
 
 	/**
 	 * On action performed
@@ -94,7 +94,7 @@ public:
 	 * @param node node
 	 * @param prototype prototype
 	 */
-	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype);
+	void onAction(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype);
 
 	/**
 	 * On script set

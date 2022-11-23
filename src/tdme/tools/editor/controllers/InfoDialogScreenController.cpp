@@ -81,7 +81,7 @@ void InfoDialogScreenController::close()
 	screenNode->setVisible(false);
 }
 
-void InfoDialogScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void InfoDialogScreenController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId() == "infodialog_button1" ||

@@ -161,16 +161,16 @@ void TriggerEditorTabController::executeCommand(TabControllerCommand command)
 	}
 }
 
-void TriggerEditorTabController::onValueChanged(GUIElementNode* node)
+void TriggerEditorTabController::onChange(GUIElementNode* node)
 {
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		updateDetails(outlinerNode);
 	}
-	basePropertiesSubController->onValueChanged(node, view->getPrototype());
-	prototypeDisplaySubController->onValueChanged(node, view->getPrototype());
-	prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
-	prototypeScriptSubController->onValueChanged(node, view->getPrototype());
+	basePropertiesSubController->onChange(node, view->getPrototype());
+	prototypeDisplaySubController->onChange(node, view->getPrototype());
+	prototypePhysicsSubController->onChange(node, view->getPrototype());
+	prototypeScriptSubController->onChange(node, view->getPrototype());
 }
 
 void TriggerEditorTabController::onFocus(GUIElementNode* node) {
@@ -181,9 +181,9 @@ void TriggerEditorTabController::onUnfocus(GUIElementNode* node) {
 	basePropertiesSubController->onUnfocus(node, view->getPrototype());
 }
 
-void TriggerEditorTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
-	basePropertiesSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
-	prototypePhysicsSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
+void TriggerEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
+	basePropertiesSubController->onContextMenuRequest(node, mouseX, mouseY, view->getPrototype());
+	prototypePhysicsSubController->onContextMenuRequest(node, mouseX, mouseY, view->getPrototype());
 }
 
 void TriggerEditorTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
@@ -196,11 +196,11 @@ void TriggerEditorTabController::onTooltipCloseRequest() {
 	popUps->getTooltipScreenController()->close();
 }
 
-void TriggerEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void TriggerEditorTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
-	basePropertiesSubController->onActionPerformed(type, node, view->getPrototype());
-	prototypePhysicsSubController->onActionPerformed(type, node, view->getPrototype());
-	prototypeScriptSubController->onActionPerformed(type, node, view->getPrototype());
+	basePropertiesSubController->onAction(type, node, view->getPrototype());
+	prototypePhysicsSubController->onAction(type, node, view->getPrototype());
+	prototypeScriptSubController->onAction(type, node, view->getPrototype());
 }
 
 void TriggerEditorTabController::setOutlinerContent() {
