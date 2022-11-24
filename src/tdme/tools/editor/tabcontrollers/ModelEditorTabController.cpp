@@ -1185,6 +1185,29 @@ void ModelEditorTabController::onMaterialClearDiffuseTexture() {
 	updateMaterialDetails();
 }
 
+void ModelEditorTabController::onMaterialBrowseToDiffuseTexture() {
+	auto model = getSelectedModel();
+	if (model == nullptr) {
+		showErrorPopUp("Browse To", "Nothing to browse to.");
+		return;
+	}
+	if (model->hasEmbeddedSpecularTextures() == true) {
+		showErrorPopUp("Browse To", "This model has embedded specular material textures.");
+		return;
+	}
+	auto material = getSelectedMaterial();
+	if (material == nullptr) {
+		showErrorPopUp("Browse To", "Nothing to browse to.");
+		return;
+	}
+	auto specularMaterialProperties = material->getSpecularMaterialProperties();
+	if (specularMaterialProperties == nullptr || specularMaterialProperties->getDiffuseTextureFileName().empty() == true) {
+		showErrorPopUp("Browse To", "Nothing to browse to.");
+		return;
+	}
+	view->getEditorView()->getScreenController()->browseTo(specularMaterialProperties->getDiffuseTexturePathName() + "/" + specularMaterialProperties->getDiffuseTextureFileName());
+}
+
 void ModelEditorTabController::onMaterialLoadDiffuseTransparencyTexture() {
 	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
@@ -1254,6 +1277,36 @@ void ModelEditorTabController::onMaterialClearDiffuseTransparencyTexture() {
 	updateMaterialDetails();
 }
 
+void ModelEditorTabController::onMaterialBrowseToDiffuseTransparencyTexture() {
+	auto model = getSelectedModel();
+	if (model == nullptr) {
+		showErrorPopUp("Browse To", "Nothing to browse to.");
+		return;
+	}
+	if (model->hasEmbeddedSpecularTextures() == true) {
+		showErrorPopUp("Browse To", "This model has embedded specular material textures.");
+		return;
+	}
+	auto material = getSelectedMaterial();
+	if (material == nullptr) {
+		showErrorPopUp("Browse To", "Nothing to browse to.");
+		return;
+	}
+	auto specularMaterialProperties = material->getSpecularMaterialProperties();
+	if (specularMaterialProperties == nullptr) {
+		showErrorPopUp("Browse To", "Nothing to browse to.");
+		return;
+	}
+	if (specularMaterialProperties->getDiffuseTransparencyTextureFileName().empty() == false) {
+		view->getEditorView()->getScreenController()->browseTo(specularMaterialProperties->getDiffuseTransparencyTexturePathName() + "/" + specularMaterialProperties->getDiffuseTransparencyTextureFileName());
+	} else
+	if (specularMaterialProperties->getDiffuseTextureFileName().empty() == false) {
+		view->getEditorView()->getScreenController()->browseTo(specularMaterialProperties->getDiffuseTexturePathName() + "/" + specularMaterialProperties->getDiffuseTextureFileName());
+	} else {
+		showErrorPopUp("Browse To", "Nothing to browse to.");
+	}
+}
+
 void ModelEditorTabController::onMaterialLoadNormalTexture() {
 	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
@@ -1318,6 +1371,29 @@ void ModelEditorTabController::onMaterialClearNormalTexture() {
 		string()
 	);
 	updateMaterialDetails();
+}
+
+void ModelEditorTabController::onMaterialBrowseToNormalTexture() {
+	auto model = getSelectedModel();
+	if (model == nullptr) {
+		showErrorPopUp("Browse To", "Nothing to browse to.");
+		return;
+	}
+	if (model->hasEmbeddedSpecularTextures() == true) {
+		showErrorPopUp("Browse To", "This model has embedded specular material textures.");
+		return;
+	}
+	auto material = getSelectedMaterial();
+	if (material == nullptr) {
+		showErrorPopUp("Browse To", "Nothing to browse to.");
+		return;
+	}
+	auto specularMaterialProperties = material->getSpecularMaterialProperties();
+	if (specularMaterialProperties == nullptr || specularMaterialProperties->getNormalTextureFileName().empty() == true) {
+		showErrorPopUp("Browse To", "Nothing to browse to.");
+		return;
+	}
+	view->getEditorView()->getScreenController()->browseTo(specularMaterialProperties->getNormalTexturePathName() + "/" + specularMaterialProperties->getNormalTextureFileName());
 }
 
 void ModelEditorTabController::onMaterialLoadSpecularTexture() {
@@ -1386,6 +1462,30 @@ void ModelEditorTabController::onMaterialClearSpecularTexture() {
 	updateMaterialDetails();
 }
 
+void ModelEditorTabController::onMaterialBrowseToSpecularTexture() {
+	auto model = getSelectedModel();
+	if (model == nullptr) {
+		showErrorPopUp("Browse To", "Nothing to browse to.");
+		return;
+	}
+	if (model->hasEmbeddedSpecularTextures() == true) {
+		showErrorPopUp("Browse To", "This model has embedded specular material textures.");
+		return;
+	}
+	auto material = getSelectedMaterial();
+	if (material == nullptr) {
+		showErrorPopUp("Browse To", "Nothing to browse to.");
+		return;
+	}
+	auto specularMaterialProperties = material->getSpecularMaterialProperties();
+	if (specularMaterialProperties == nullptr || specularMaterialProperties->getSpecularTextureFileName().empty() == true) {
+		showErrorPopUp("Browse To", "Nothing to browse to.");
+		return;
+	}
+	view->getEditorView()->getScreenController()->browseTo(specularMaterialProperties->getSpecularTexturePathName() + "/" + specularMaterialProperties->getSpecularTextureFileName());
+}
+
+
 void ModelEditorTabController::onMaterialLoadPBRBaseColorTexture() {
 	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
@@ -1444,6 +1544,29 @@ void ModelEditorTabController::onMaterialClearPBRBaseColorTexture() {
 		string()
 	);
 	updateMaterialDetails();
+}
+
+void ModelEditorTabController::onMaterialBrowseToPBRBaseColorTexture() {
+	auto model = getSelectedModel();
+	if (model == nullptr) {
+		showErrorPopUp("Browse To", "Nothing to browse to.");
+		return;
+	}
+	if (model->hasEmbeddedPBRTextures() == true) {
+		showErrorPopUp("Browse To", "This model has embedded PBR material textures.");
+		return;
+	}
+	auto material = getSelectedMaterial();
+	if (material == nullptr) {
+		showErrorPopUp("Browse To", "Nothing to browse to.");
+		return;
+	}
+	auto pbrMaterialProperties = material->getPBRMaterialProperties();
+	if (pbrMaterialProperties == nullptr || pbrMaterialProperties->getBaseColorTextureFileName().empty() == true) {
+		showErrorPopUp("Browse To", "Nothing to browse to.");
+		return;
+	}
+	view->getEditorView()->getScreenController()->browseTo(pbrMaterialProperties->getBaseColorTexturePathName() + "/" + pbrMaterialProperties->getBaseColorTextureFileName());
 }
 
 void ModelEditorTabController::onMaterialLoadPBRMetallicRoughnessTexture() {
@@ -1506,6 +1629,29 @@ void ModelEditorTabController::onMaterialClearPBRMetallicRoughnessTexture() {
 	updateMaterialDetails();
 }
 
+void ModelEditorTabController::onMaterialBrowseToPBRMetallicRoughnessTexture() {
+	auto model = getSelectedModel();
+	if (model == nullptr) {
+		showErrorPopUp("Browse To", "Nothing to browse to.");
+		return;
+	}
+	if (model->hasEmbeddedPBRTextures() == true) {
+		showErrorPopUp("Browse To", "This model has embedded PBR material textures.");
+		return;
+	}
+	auto material = getSelectedMaterial();
+	if (material == nullptr) {
+		showErrorPopUp("Browse To", "Nothing to browse to.");
+		return;
+	}
+	auto pbrMaterialProperties = material->getPBRMaterialProperties();
+	if (pbrMaterialProperties == nullptr || pbrMaterialProperties->getMetallicRoughnessTextureFileName().empty() == true) {
+		showErrorPopUp("Browse To", "Nothing to browse to.");
+		return;
+	}
+	view->getEditorView()->getScreenController()->browseTo(pbrMaterialProperties->getMetallicRoughnessTexturePathName() + "/" + pbrMaterialProperties->getMetallicRoughnessTextureFileName());
+}
+
 void ModelEditorTabController::onMaterialLoadPBRNormalTexture() {
 	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
@@ -1564,6 +1710,29 @@ void ModelEditorTabController::onMaterialClearPBRNormalTexture() {
 		string()
 	);
 	updateMaterialDetails();
+}
+
+void ModelEditorTabController::onMaterialBrowseToPBRNormalTexture() {
+	auto model = getSelectedModel();
+	if (model == nullptr) {
+		showErrorPopUp("Browse To", "Nothing to browse to.");
+		return;
+	}
+	if (model->hasEmbeddedPBRTextures() == true) {
+		showErrorPopUp("Browse To", "This model has embedded PBR material textures.");
+		return;
+	}
+	auto material = getSelectedMaterial();
+	if (material == nullptr) {
+		showErrorPopUp("Browse To", "Nothing to browse to.");
+		return;
+	}
+	auto pbrMaterialProperties = material->getPBRMaterialProperties();
+	if (pbrMaterialProperties == nullptr || pbrMaterialProperties->getNormalTextureFileName().empty() == true) {
+		showErrorPopUp("Browse To", "Nothing to browse to.");
+		return;
+	}
+	view->getEditorView()->getScreenController()->browseTo(pbrMaterialProperties->getNormalTexturePathName() + "/" + pbrMaterialProperties->getNormalTextureFileName());
 }
 
 void ModelEditorTabController::startRenameAnimation(int lodLevel, const string& animationId) {
@@ -2374,11 +2543,17 @@ void ModelEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 		if (node->getId().compare("specularmaterial_diffuse_texture_remove") == 0) {
 			onMaterialClearDiffuseTexture();
 		} else
+		if (node->getId().compare("specularmaterial_diffuse_texture_browseto") == 0) {
+			onMaterialBrowseToDiffuseTexture();
+		} else
 		if (node->getId().compare("specularmaterial_transparency_texture_open") == 0) {
 			onMaterialLoadDiffuseTransparencyTexture();
 		} else
 		if (node->getId().compare("specularmaterial_transparency_texture_remove") == 0) {
 			onMaterialClearDiffuseTransparencyTexture();
+		} else
+		if (node->getId().compare("specularmaterial_transparency_texture_browseto") == 0) {
+			onMaterialBrowseToDiffuseTransparencyTexture();
 		} else
 		if (node->getId().compare("specularmaterial_normal_texture_open") == 0) {
 			onMaterialLoadNormalTexture();
@@ -2386,11 +2561,17 @@ void ModelEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 		if (node->getId().compare("specularmaterial_normal_texture_remove") == 0) {
 			onMaterialClearNormalTexture();
 		} else
+		if (node->getId().compare("specularmaterial_normal_texture_browseto") == 0) {
+			onMaterialBrowseToNormalTexture();
+		} else
 		if (node->getId().compare("specularmaterial_specular_texture_open") == 0) {
 			onMaterialLoadSpecularTexture();
 		} else
 		if (node->getId().compare("specularmaterial_specular_texture_remove") == 0) {
 			onMaterialClearSpecularTexture();
+		} else
+		if (node->getId().compare("specularmaterial_specular_texture_browseto") == 0) {
+			onMaterialBrowseToSpecularTexture();
 		} else
 		if (node->getId().compare("pbrmaterial_basecolor_texture_open") == 0) {
 			onMaterialLoadPBRBaseColorTexture();
@@ -2398,17 +2579,26 @@ void ModelEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 		if (node->getId().compare("pbrmaterial_basecolor_texture_remove") == 0) {
 			onMaterialClearPBRBaseColorTexture();
 		} else
+		if (node->getId().compare("pbrmaterial_basecolor_texture_browseto") == 0) {
+			onMaterialBrowseToPBRBaseColorTexture();
+		} else
 		if (node->getId().compare("pbrmaterial_metallic_roughness_texture_open") == 0) {
 			onMaterialLoadPBRMetallicRoughnessTexture();
 		} else
 		if (node->getId().compare("pbrmaterial_metallic_roughness_texture_remove") == 0) {
 			onMaterialClearPBRMetallicRoughnessTexture();
 		} else
+		if (node->getId().compare("pbrmaterial_metallic_roughness_texture_browseto") == 0) {
+			onMaterialBrowseToPBRMetallicRoughnessTexture();
+		} else
 		if (node->getId().compare("pbrmaterial_normal_texture_open") == 0) {
 			onMaterialLoadPBRNormalTexture();
 		} else
 		if (node->getId().compare("pbrmaterial_normal_texture_remove") == 0) {
 			onMaterialClearPBRNormalTexture();
+		} else
+		if (node->getId().compare("pbrmaterial_normal_texture_browseto") == 0) {
+			onMaterialBrowseToPBRNormalTexture();
 		} else
 		if (node->getId().compare("animationpreview_attachment1_model_open") == 0) {
 			onPreviewAnimationsAttachment1ModelLoad();

@@ -350,6 +350,11 @@ public:
 	void onMaterialClearDiffuseTexture();
 
 	/**
+	 * On material browse to diffuse texture
+	 */
+	void onMaterialBrowseToDiffuseTexture();
+
+	/**
 	 * On material load diffuse transparency texture
 	 */
 	void onMaterialLoadDiffuseTransparencyTexture();
@@ -358,6 +363,11 @@ public:
 	 * On material clear diffuse transparency texture
 	 */
 	void onMaterialClearDiffuseTransparencyTexture();
+
+	/**
+	 * On material browse to diffuse transparency texture
+	 */
+	void onMaterialBrowseToDiffuseTransparencyTexture();
 
 	/**
 	 * On material load normal texture
@@ -370,6 +380,11 @@ public:
 	void onMaterialClearNormalTexture();
 
 	/**
+	 * On material browse to normal texture
+	 */
+	void onMaterialBrowseToNormalTexture();
+
+	/**
 	 * On material load specular texture
 	 */
 	void onMaterialLoadSpecularTexture();
@@ -378,6 +393,11 @@ public:
 	 * On material clear specular texture
 	 */
 	void onMaterialClearSpecularTexture();
+
+	/**
+	 * On material browse to specular texture
+	 */
+	void onMaterialBrowseToSpecularTexture();
 
 	/**
 	 * On material load PBR base color texture
@@ -390,6 +410,11 @@ public:
 	void onMaterialClearPBRBaseColorTexture();
 
 	/**
+	 * On material browse to PBR base color texture
+	 */
+	void onMaterialBrowseToPBRBaseColorTexture();
+
+	/**
 	 * On material load PBR metallic roughness texture
 	 */
 	void onMaterialLoadPBRMetallicRoughnessTexture();
@@ -400,6 +425,11 @@ public:
 	void onMaterialClearPBRMetallicRoughnessTexture();
 
 	/**
+	 * On material browse to PBR metallic roughness texture
+	 */
+	void onMaterialBrowseToPBRMetallicRoughnessTexture();
+
+	/**
 	 * On material load PBR normal texture
 	 */
 	void onMaterialLoadPBRNormalTexture();
@@ -408,6 +438,11 @@ public:
 	 * On material load PBR normal texture
 	 */
 	void onMaterialClearPBRNormalTexture();
+
+	/**
+	 * On material browse to PBR normal texture
+	 */
+	void onMaterialBrowseToPBRNormalTexture();
 
 	/**
 	 * On preview animations attachment 1 model load
