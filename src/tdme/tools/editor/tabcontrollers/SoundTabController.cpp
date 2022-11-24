@@ -120,7 +120,7 @@ void SoundTabController::onTooltipCloseRequest() {
 
 void SoundTabController::setOutlinerContent() {
 	string xml;
-	xml+= "<selectbox-option text=\"Sound\" value=\"texture\" />\n";
+	xml+= "<selectbox-option text=\"Sound\" value=\"sound\" />\n";
 	view->getEditorView()->setOutlinerContent(xml);
 }
 

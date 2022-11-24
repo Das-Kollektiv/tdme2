@@ -94,12 +94,6 @@ void PrototypeSoundsSubController::initialize(GUIScreenNode* screenNode)
 	this->screenNode = screenNode;
 }
 
-void PrototypeSoundsSubController::onSoundClear(Prototype* prototype, const string& soundId) {
-	playableSoundView->stopSound();
-	prototype->removeSound(soundId);
-	editorView->reloadTabOutliner();
-}
-
 void PrototypeSoundsSubController::onSoundLoad(Prototype* prototype, const string& soundId) {
 	class LoadSoundAction: public virtual Action
 	{
@@ -136,6 +130,21 @@ void PrototypeSoundsSubController::onSoundLoad(Prototype* prototype, const strin
 		true,
 		new LoadSoundAction(this, prototype, soundId)
 	);
+}
+
+void PrototypeSoundsSubController::onSoundClear(Prototype* prototype, const string& soundId) {
+	playableSoundView->stopSound();
+	prototype->removeSound(soundId);
+	editorView->reloadTabOutliner();
+}
+
+void PrototypeSoundsSubController::onSoundBrowseTo(Prototype* prototype, const string& soundId) {
+	auto sound = prototype->getSound(soundId);
+	if (sound == nullptr) {
+		showInfoPopUp("Browse To", "Nothing to browse to");
+	} else {
+		editorView->getScreenController()->browseTo(sound->getFileName());
+	}
 }
 
 void PrototypeSoundsSubController::showInfoPopUp(const string& caption, const string& message)
@@ -362,16 +371,22 @@ void PrototypeSoundsSubController::onChange(GUIElementNode* node, Prototype* pro
 void PrototypeSoundsSubController::onAction(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype)
 {
 	if (type != GUIActionListenerType::PERFORMED) return;
+	if (StringTools::startsWith(node->getId(), "sound_open") == true) {
+		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
+		if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
+			onSoundLoad(prototype, StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size()));
+		}
+	} else
 	if (StringTools::startsWith(node->getId(), "sound_remove") == true) {
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 		if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
 			onSoundClear(prototype, StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size()));
 		}
 	} else
-	if (StringTools::startsWith(node->getId(), "sound_open") == true) {
+	if (StringTools::startsWith(node->getId(), "sound_browseto") == true) {
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 		if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
-			onSoundLoad(prototype, StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size()));
+			onSoundBrowseTo(prototype, StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size()));
 		}
 	} else
 	if (node->getId() == "tdme.sounds.rename_input") {

@@ -84,6 +84,13 @@ public:
 	void initialize(GUIScreenNode* screenNode);
 
 	/**
+	 * On sound load
+	 * @param protoype prototype
+	 * @param soundId sound id
+	 */
+	void onSoundLoad(Prototype* prototype, const string& soundId);
+
+	/**
 	 * On sound clear
 	 * @param prototype prototype
 	 * @param soundId sound id
@@ -91,11 +98,11 @@ public:
 	void onSoundClear(Prototype* prototype, const string& soundId);
 
 	/**
-	 * On sound load
-	 * @param protoype prototype
+	 * On sound browse to
+	 * @param prototype prototype
 	 * @param soundId sound id
 	 */
-	void onSoundLoad(Prototype* prototype, const string& soundId);
+	void onSoundBrowseTo(Prototype* prototype, const string& soundId);
 
 	/**
 	 * Show the information pop up / modal
