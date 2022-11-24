@@ -148,7 +148,7 @@ public:
 	void onRemovePrototype();
 
 	/**
-	 * Shows the error pop up
+	 * Show the information pop up / modal
 	 * @param caption caption
 	 * @param message message
 	 */

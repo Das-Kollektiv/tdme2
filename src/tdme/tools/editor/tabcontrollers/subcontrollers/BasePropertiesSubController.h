@@ -183,7 +183,7 @@ public:
 	void applyPropertyValue(BaseProperties* baseProperties);
 
 	/**
-	 * Shows the error pop up
+	 * Show the information pop up / modal
 	 * @param caption caption
 	 * @param message message
 	 */

@@ -160,7 +160,7 @@ public:
 	void onChange(GUIElementNode* node, Prototype* prototype);
 
 	/**
-	 * Shows the error pop up
+	 * Show the information pop up / modal
 	 * @param caption caption
 	 * @param message message
 	 */
