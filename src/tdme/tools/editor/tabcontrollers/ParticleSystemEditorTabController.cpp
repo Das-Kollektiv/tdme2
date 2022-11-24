@@ -933,8 +933,8 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 								Console::println(string("OnPointParticleSystemLoadTransparencyTexture::performAction(): An error occurred: ") + exception.what());;
 								particleSystemEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 							}
-							required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particletype_point_transparency"))->setSource(pps->getTextureFileName());
-							required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particletype_point_transparency"))->setTooltip(pps->getTextureFileName());
+							required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particletype_point_transparency"))->setSource(pps->getTransparencyTextureFileName());
+							required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particletype_point_transparency"))->setTooltip(pps->getTransparencyTextureFileName());
 							particleSystemEditorTabController->view->initParticleSystem();
 							particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 						}

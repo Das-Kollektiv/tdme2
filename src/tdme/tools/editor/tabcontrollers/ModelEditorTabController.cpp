@@ -692,32 +692,50 @@ void ModelEditorTabController::updateMaterialDetails() {
 
 	try {
 		{
-			auto diffuseTextureFileName = PrototypeReader::getResourcePathName(
-					view->getEditorView()->getScreenController()->getProjectPath() + "/resources",
-					specularMaterialProperties->getDiffuseTexturePathName() + "/" + specularMaterialProperties->getDiffuseTextureFileName()
-				) +
-				"/" +
-				specularMaterialProperties->getDiffuseTextureFileName();
+			auto diffuseTextureFileName =
+				specularMaterialProperties->getDiffuseTextureFileName().empty() == true?
+					string():
+					(
+						PrototypeReader::getResourcePathName(
+							view->getEditorView()->getScreenController()->getProjectPath() + "/resources",
+							specularMaterialProperties->getDiffuseTexturePathName() + "/" + specularMaterialProperties->getDiffuseTextureFileName()
+						) +
+						"/" +
+						specularMaterialProperties->getDiffuseTextureFileName()
+					);
 			auto diffuseTransparencyTextureFileName =
 				specularMaterialProperties->getDiffuseTransparencyTextureFileName().empty() == true?
-					diffuseTextureFileName:
-					PrototypeReader::getResourcePathName(
-						view->getEditorView()->getScreenController()->getProjectPath() + "/resources",
-						specularMaterialProperties->getDiffuseTransparencyTexturePathName() + "/" + specularMaterialProperties->getDiffuseTransparencyTextureFileName()
-					) +
-					"/" + specularMaterialProperties->getDiffuseTransparencyTextureFileName();
-			auto normalTextureFileName = PrototypeReader::getResourcePathName(
-					view->getEditorView()->getScreenController()->getProjectPath() + "/resources",
-					specularMaterialProperties->getNormalTexturePathName() + "/" + specularMaterialProperties->getNormalTextureFileName()
-				) +
-				"/" +
-				specularMaterialProperties->getNormalTextureFileName();
-			auto specularTextureFileName = PrototypeReader::getResourcePathName(
-					view->getEditorView()->getScreenController()->getProjectPath() + "/resources",
-					specularMaterialProperties->getSpecularTexturePathName() + "/" + specularMaterialProperties->getSpecularTextureFileName()
-				) +
-				"/" +
-				specularMaterialProperties->getSpecularTextureFileName();
+					string():
+					(
+						PrototypeReader::getResourcePathName(
+							view->getEditorView()->getScreenController()->getProjectPath() + "/resources",
+							specularMaterialProperties->getDiffuseTransparencyTexturePathName() + "/" + specularMaterialProperties->getDiffuseTransparencyTextureFileName()
+						) +
+						"/" +
+						specularMaterialProperties->getDiffuseTextureFileName()
+					);
+			auto normalTextureFileName =
+					specularMaterialProperties->getNormalTextureFileName().empty() == true?
+						string():
+						(
+							PrototypeReader::getResourcePathName(
+								view->getEditorView()->getScreenController()->getProjectPath() + "/resources",
+								specularMaterialProperties->getNormalTexturePathName() + "/" + specularMaterialProperties->getNormalTextureFileName()
+							) +
+							"/" +
+							specularMaterialProperties->getNormalTextureFileName()
+						);
+			auto specularTextureFileName =
+					specularMaterialProperties->getSpecularTextureFileName().empty() == true?
+						string():
+						(
+							PrototypeReader::getResourcePathName(
+								view->getEditorView()->getScreenController()->getProjectPath() + "/resources",
+								specularMaterialProperties->getSpecularTexturePathName() + "/" + specularMaterialProperties->getSpecularTextureFileName()
+							) +
+							"/" +
+							specularMaterialProperties->getSpecularTextureFileName()
+						);
 			//
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_diffuse_texture"))->setSource(diffuseTextureFileName);
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("specularmaterial_diffuse_texture"))->setTooltip(diffuseTextureFileName);
@@ -733,24 +751,39 @@ void ModelEditorTabController::updateMaterialDetails() {
 		}
 
 		if (model->getShaderModel() != ShaderModel::SPECULAR && pbrMaterialProperties != nullptr) {
-			auto baseColorTextureFileName = PrototypeReader::getResourcePathName(
-					view->getEditorView()->getScreenController()->getProjectPath() + "/resources",
-					pbrMaterialProperties->getBaseColorTexturePathName() + "/" + pbrMaterialProperties->getBaseColorTextureFileName()
-				) +
-				"/" +
-				pbrMaterialProperties->getBaseColorTextureFileName();
-			auto metallicRoughnessTextureFileName = PrototypeReader::getResourcePathName(
-					view->getEditorView()->getScreenController()->getProjectPath() + "/resources",
-					pbrMaterialProperties->getMetallicRoughnessTexturePathName() + "/" + pbrMaterialProperties->getMetallicRoughnessTextureFileName()
-				) +
-				"/" +
-				pbrMaterialProperties->getMetallicRoughnessTextureFileName();
-			auto normalTextureFileName = PrototypeReader::getResourcePathName(
-					view->getEditorView()->getScreenController()->getProjectPath() + "/resources",
-					pbrMaterialProperties->getNormalTexturePathName() + "/" + pbrMaterialProperties->getNormalTextureFileName()
-				) +
-				"/" +
-				pbrMaterialProperties->getNormalTextureFileName();
+			auto baseColorTextureFileName =
+				pbrMaterialProperties->getBaseColorTextureFileName().empty() == true?
+					string():
+					(
+						PrototypeReader::getResourcePathName(
+							view->getEditorView()->getScreenController()->getProjectPath() + "/resources",
+							pbrMaterialProperties->getBaseColorTexturePathName() + "/" + pbrMaterialProperties->getBaseColorTextureFileName()
+						) +
+						"/" +
+						pbrMaterialProperties->getBaseColorTextureFileName()
+					);
+			auto metallicRoughnessTextureFileName =
+				pbrMaterialProperties->getMetallicRoughnessTextureFileName().empty() == true?
+					string():
+					(
+						PrototypeReader::getResourcePathName(
+							view->getEditorView()->getScreenController()->getProjectPath() + "/resources",
+							pbrMaterialProperties->getMetallicRoughnessTexturePathName() + "/" + pbrMaterialProperties->getMetallicRoughnessTextureFileName()
+						) +
+						"/" +
+						pbrMaterialProperties->getMetallicRoughnessTextureFileName()
+					);
+			auto normalTextureFileName =
+				pbrMaterialProperties->getNormalTextureFileName().empty() == true?
+					string():
+					(
+						PrototypeReader::getResourcePathName(
+							view->getEditorView()->getScreenController()->getProjectPath() + "/resources",
+							pbrMaterialProperties->getNormalTexturePathName() + "/" + pbrMaterialProperties->getNormalTextureFileName()
+					) +
+					"/" +
+					pbrMaterialProperties->getNormalTextureFileName()
+				);
 			//
 			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("pbrmaterial_basecolor_texture"))->setTexture(pbrMaterialProperties->getBaseColorTexture());
 			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("pbrmaterial_basecolor_texture"))->setTooltip(baseColorTextureFileName);
