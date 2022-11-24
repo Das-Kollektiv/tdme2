@@ -133,6 +133,11 @@ public:
 	void onUnsetScreen();
 
 	/**
+	 * On browse to screen
+	 */
+	void onBrowseToScreen();
+
+	/**
 	 * Reload screens
 	 */
 	void reloadScreens();

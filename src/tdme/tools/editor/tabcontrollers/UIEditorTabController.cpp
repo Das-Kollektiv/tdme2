@@ -340,8 +340,20 @@ void UIEditorTabController::updateScreenDetails() {
 		string("<template id=\"details_screen\" src=\"resources/engine/gui/template_details_screen.xml\" />\n")
 	);
 
+	//
+	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+	auto screenIdx = Integer::parse(StringTools::substring(outlinerNode, 0, outlinerNode.find(".")));
+
+	//
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_screen"))->getActiveConditions().add("open");
+		if (screenIdx >= 0 &&
+			screenIdx < view->getScreenNodes().size() &&
+			view->getScreenNodes()[screenIdx] != nullptr &&
+			view->getScreenNodes()[screenIdx]->getFileName().empty() == false) {
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("screen"))->setSource("resources/engine/images/gui_big.png");
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("screen"))->setTooltip(view->getScreenNodes()[screenIdx]->getFileName());
+		}
 	} catch (Exception& exception) {
 		Console::println(string("UIEditorTabController::updateScreenDetails(): An error occurred: ") + exception.what());;
 		showInfoPopUp("Warning", (string(exception.what())));
@@ -521,6 +533,16 @@ void UIEditorTabController::onUnsetScreen() {
 	);
 }
 
+void UIEditorTabController::onBrowseToScreen() {
+	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+	auto screenIdx = Integer::parse(StringTools::substring(outlinerNode, 0, outlinerNode.find(".")));
+	if (screenIdx < 0 || screenIdx >= view->getScreenNodes().size()) {
+		showInfoPopUp("Browse To", "Nothing to browse to");
+	} else {
+		view->getEditorView()->getScreenController()->browseTo(view->getScreenNodes()[screenIdx]->getFileName());
+	}
+}
+
 void UIEditorTabController::reloadScreens() {
 	//
 	class ReloadScreensAction: public Action {
@@ -660,7 +682,7 @@ void UIEditorTabController::onAction(GUIActionListenerType type, GUIElementNode*
 		onUnsetScreen();
 	} else
 	if (node->getId() == "screen_browseto") {
-		// TODO
+		onBrowseToScreen();
 	} else
 	if (node->getId() == "projectedui_prototype_open") {
 		onLoadPrototype();
