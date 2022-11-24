@@ -16,6 +16,7 @@
 #include <tdme/tools/editor/controllers/AboutDialogScreenController.h>
 #include <tdme/tools/editor/controllers/ColorPickerScreenController.h>
 #include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
+#include <tdme/tools/editor/controllers/DraggingScreenController.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/FindReplaceDialogScreenController.h>
@@ -44,6 +45,7 @@ using tdme::math::Vector3;
 using tdme::tools::editor::controllers::AboutDialogScreenController;
 using tdme::tools::editor::controllers::ColorPickerScreenController;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
+using tdme::tools::editor::controllers::DraggingScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::FindReplaceDialogScreenController;
@@ -235,6 +237,7 @@ void EditorView::activate()
 	engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(popUps->getProgressBarScreenController()->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(popUps->getTooltipScreenController()->getScreenNode()->getId());
+	engine->getGUI()->addRenderScreen(popUps->getDraggingScreenController()->getScreenNode()->getId());
 }
 
 void EditorView::deactivate()

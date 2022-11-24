@@ -1156,7 +1156,8 @@ void GUINode::dumpNode(GUINode* node, int depth, int indent, int depthIdx) {
 		": conditions met: " +
 		to_string(node->conditionsMet) + "; layouted: " +
 		to_string(node->layouted) +
-		(dynamic_cast<GUIParentNode*>(node) != nullptr?"; child count: " + to_string(dynamic_cast<GUIParentNode*>(node)->subNodes.size()):"")
+		(dynamic_cast<GUIParentNode*>(node) != nullptr?"; child count: " + to_string(dynamic_cast<GUIParentNode*>(node)->subNodes.size()):"") +
+		(node->getController() != nullptr?"; controller attached":"; no controller")
 	);
 	if (dynamic_cast<GUIParentNode*>(node) != nullptr && (depth == 0 || depthIdx + 1 < depth)) {
 		auto parentNode = required_dynamic_cast<GUIParentNode*>(node);

@@ -408,4 +408,14 @@ public:
 	 */
 	void handleEvents(bool clearEvents = true);
 
+	/**
+	 * Register mouse dragging
+	 * @param node node
+	 */
+	void startMouseDragging(GUINode* node) {
+		mouseIsDragging[node->screenNode->getId()] = true;
+		mousePressedEventNodeIds[node->screenNode->getId()].insert(node->getId());
+		mouseDraggingEventNodeIds[node->screenNode->getId()].insert(node->getId());
+	}
+
 };

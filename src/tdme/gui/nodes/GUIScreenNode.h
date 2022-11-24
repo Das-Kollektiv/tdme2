@@ -27,13 +27,14 @@ using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::events::GUIContextMenuRequestListener;
-using tdme::gui::events::GUITooltipRequestListener;
+using tdme::gui::events::GUIDragRequestListener;
 using tdme::gui::events::GUIFocusListener;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::gui::events::GUIKeyboardEvent;
 using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::events::GUIMouseOverListener;
 using tdme::gui::events::GUIMoveListener;
+using tdme::gui::events::GUITooltipRequestListener;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
@@ -84,6 +85,7 @@ private:
 	vector<GUIFocusListener*> focusListener;
 	vector<GUIMoveListener*> moveListener;
 	vector<GUITooltipRequestListener*> tooltipRequestListener;
+	vector<GUIDragRequestListener*> dragRequestListener;
 	GUIInputEventHandler* inputEventHandler;
 	vector<GUINode*> childControllerNodes;
 	GUIScreenNode_SizeConstraints sizeConstraints;
@@ -536,6 +538,14 @@ public:
 	void forwardMove(GUINode* node);
 
 	/**
+	 * Forward move release event
+	 * @param node node
+	 * @param mouseX unscaled mouse x
+	 * @param mouseY unscaled mouse y
+	 */
+	void forwardMoveRelease(GUINode* node, int mouseX, int mouseY);
+
+	/**
 	 * Add tooltip request listener
 	 * @param listener listener
 	 */
@@ -559,6 +569,26 @@ public:
 	 * Forward tooltip close request event
 	 */
 	void forwardTooltipCloseRequest();
+
+	/**
+	 * Add drag request listener
+	 * @param listener listener
+	 */
+	void addDragRequestListener(GUIDragRequestListener* listener);
+
+	/**
+	 * Remove drag request listener
+	 * @param listener listener
+	 */
+	void removeDragRequestListener(GUIDragRequestListener* listener);
+
+	/**
+	 * Forward drag request event
+	 * @param node node
+	 * @param mouseX unscaled mouse X position
+	 * @param mouseY unscaled mouse Y position
+	 */
+	void forwardDragRequest(GUIElementNode* node, int mouseX, int mouseY);
 
 	/**
 	 * @return if haveing given node registered as tick node

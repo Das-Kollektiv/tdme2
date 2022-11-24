@@ -7,6 +7,7 @@
 using tdme::tools::editor::controllers::AboutDialogScreenController;
 using tdme::tools::editor::controllers::ColorPickerScreenController;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
+using tdme::tools::editor::controllers::DraggingScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::FindReplaceDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
@@ -28,6 +29,7 @@ private:
 	AboutDialogScreenController* aboutDialogScreenController { nullptr };
 	FindReplaceDialogScreenController* findReplaceDialogScreenController { nullptr };
 	TooltipScreenController* tooltipScreenController { nullptr };
+	DraggingScreenController* draggingScreenController { nullptr };
 
 public:
 	/**
@@ -94,6 +96,13 @@ public:
 	 */
 	inline TooltipScreenController* getTooltipScreenController() {
 		return tooltipScreenController;
+	}
+
+	/**
+	 * @return dragging screen controller
+	 */
+	inline DraggingScreenController* getDraggingScreenController() {
+		return draggingScreenController;
 	}
 
 	/**

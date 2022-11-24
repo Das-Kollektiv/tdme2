@@ -40,6 +40,7 @@
 #include <tdme/os/threading/Thread.h>
 #include <tdme/tools/editor/controllers/AboutDialogScreenController.h>
 #include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
+#include <tdme/tools/editor/controllers/DraggingScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/controllers/ProgressBarScreenController.h>
@@ -109,6 +110,7 @@ using tdme::os::threading::Mutex;
 using tdme::os::threading::Thread;
 using tdme::tools::editor::controllers::AboutDialogScreenController;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
+using tdme::tools::editor::controllers::DraggingScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
@@ -164,6 +166,7 @@ void EditorScreenController::initialize()
 		screenNode->addFocusListener(this);
 		screenNode->addContextMenuRequestListener(this);
 		screenNode->addTooltipRequestListener(this);
+		screenNode->addDragRequestListener(this);
 		projectPathsScrollArea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_projectpaths_scrollarea"));
 		projectPathFilesScrollArea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_projectpathfiles_scrollarea"));
 		tabs = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("tabs"));
@@ -413,6 +416,13 @@ void EditorScreenController::onTooltipShowRequest(GUINode* node, int mouseX, int
 
 void EditorScreenController::onTooltipCloseRequest() {
 	view->getPopUps()->getTooltipScreenController()->close();
+}
+
+void EditorScreenController::onDragRequest(GUIElementNode* node, int mouseX, int mouseY) {
+	if (StringTools::startsWith(node->getId(), "projectpathfiles_file_") == true) {
+		auto xml = "<image width=\"auto\" height=\"auto\" src=\"resources/engine/images/" + FileDialogScreenController::getFileImageName(node->getValue()) + "_big.png\" />";
+		view->getPopUps()->getDraggingScreenController()->start(mouseX, mouseY, xml);
+	}
 }
 
 void EditorScreenController::openProject(const string& path) {

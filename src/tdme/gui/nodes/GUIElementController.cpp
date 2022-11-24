@@ -85,6 +85,8 @@ void GUIElementController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 		} else
 		if (event->getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
 			isActionPerforming = true;
+			//
+			node->getScreenNode()->forwardDragRequest(elementNode, event->getXUnscaled(), event->getYUnscaled());
 		} else
 		if (event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 			elementNode->getActiveConditions().remove(GUIElementNode::CONDITION_CLICK);

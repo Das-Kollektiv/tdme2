@@ -12,6 +12,7 @@
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/events/GUIContextMenuRequestListener.h>
+#include <tdme/gui/events/GUIDragRequestListener.h>
 #include <tdme/gui/events/GUIFocusListener.h>
 #include <tdme/gui/events/GUIInputEventHandler.h>
 #include <tdme/gui/events/GUIMouseOverListener.h>
@@ -48,9 +49,13 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIChangeListener;
+using tdme::gui::events::GUIContextMenuRequestListener;
+using tdme::gui::events::GUIDragRequestListener;
+using tdme::gui::events::GUIFocusListener;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::gui::events::GUIMouseOverListener;
 using tdme::gui::events::GUIMoveListener;
+using tdme::gui::events::GUITooltipRequestListener;
 using tdme::gui::nodes::GUIElementController;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
@@ -586,6 +591,12 @@ void GUIScreenNode::forwardMove(GUINode* node) {
 	}
 }
 
+void GUIScreenNode::forwardMoveRelease(GUINode* node, int mouseX, int mouseY) {
+	for (auto i = 0; i < moveListener.size(); i++) {
+		moveListener[i]->onRelease(node, mouseX, mouseY);
+	}
+}
+
 void GUIScreenNode::addTooltipRequestListener(GUITooltipRequestListener* listener) {
 	removeTooltipRequestListener(listener);
 	tooltipRequestListener.push_back(listener);
@@ -604,6 +615,21 @@ void GUIScreenNode::forwardTooltipShowRequest(GUINode* node, int mouseX, int mou
 void GUIScreenNode::forwardTooltipCloseRequest() {
 	for (auto i = 0; i < tooltipRequestListener.size(); i++) {
 		tooltipRequestListener[i]->onTooltipCloseRequest();
+	}
+}
+
+void GUIScreenNode::addDragRequestListener(GUIDragRequestListener* listener) {
+	removeDragRequestListener(listener);
+	dragRequestListener.push_back(listener);
+}
+
+void GUIScreenNode::removeDragRequestListener(GUIDragRequestListener* listener) {
+	dragRequestListener.erase(std::remove(dragRequestListener.begin(), dragRequestListener.end(), listener), dragRequestListener.end());
+}
+
+void GUIScreenNode::forwardDragRequest(GUIElementNode* node, int mouseX, int mouseY) {
+	for (auto i = 0; i < dragRequestListener.size(); i++) {
+		dragRequestListener[i]->onDragRequest(node, mouseX, mouseY);
 	}
 }
 

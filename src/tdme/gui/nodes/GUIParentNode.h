@@ -256,8 +256,8 @@ private:
 	void removeSubNode(GUINode* node, bool resetScrollOffsets);
 
 	/**
-	 * Unset mouse event condition on element nodes
+	 * Unset mouse over and click conditions on element nodes
 	 */
-	void unsetMouseOver();
+	void unsetMouseStates();
 
 };

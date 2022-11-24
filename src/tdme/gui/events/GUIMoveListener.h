@@ -23,4 +23,13 @@ struct tdme::gui::events::GUIMoveListener
 	 * @param node node
 	 */
 	virtual void onMove(GUINode* node) = 0;
+
+	/**
+	 * On release
+	 * @param node node
+	 * @param mouseX unscaled mouse x
+	 * @param mouseY unscaled mouse y
+	 */
+	virtual void onRelease(GUINode* node, int mouseX, int mouseY) = 0;
+
 };

@@ -932,5 +932,5 @@ void GUI::reshapeScreen(GUIScreenNode* screenNode) {
 }
 
 void GUI::applyRenderScreensChange() {
-	for (auto screen: renderScreens) screen->unsetMouseOver();
+	for (auto screen: renderScreens) screen->unsetMouseStates();
 }

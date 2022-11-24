@@ -679,6 +679,10 @@ const string FileDialogScreenController::getFileImageName(const string& fileName
 	if (StringTools::endsWith(fileNameLowerCase, ".tparticle") == true) {
 		return "particle";
 	} else
+	// tdme decal
+	if (StringTools::endsWith(fileNameLowerCase, ".tdecal") == true) {
+		return "texture";
+	} else
 	// tdme terrain
 	if (StringTools::endsWith(fileNameLowerCase, ".tterrain") == true) {
 		return "terrain";
@@ -687,7 +691,7 @@ const string FileDialogScreenController::getFileImageName(const string& fileName
 	if (StringTools::endsWith(fileNameLowerCase, ".tscript") == true) {
 		return "script";
 	} else
-	// xml
+		// xml
 	if (StringTools::endsWith(fileNameLowerCase, ".xml") == true) {
 		return "gui";
 	} else
