@@ -299,7 +299,14 @@ void DecalEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("decal_texture"))->setTooltip(prototype->getDecal()->getTextureFileName());
 		} else
 		if (node->getId() == "decal_texture_browseto") {
-
+			auto prototype = view->getPrototype();
+			if (prototype == nullptr) return;
+			auto decal = prototype->getDecal();
+			if (decal != nullptr && decal->getTextureFileName().empty() == false) {
+				view->getEditorView()->getScreenController()->browseTo(decal->getTextureFileName());
+			} else {
+				showInfoPopUp("Browse To", "Nothig to browse to");
+			}
 		}
 	}
 	basePropertiesSubController->onAction(type, node, view->getPrototype());
