@@ -30,6 +30,7 @@ VideoTabView::VideoTabView(EditorView* editorView, const string& tabId, GUIScree
 {
 	this->editorView = editorView;
 	this->tabId = tabId;
+	this->screenNode = screenNode;
 	this->popUps = editorView->getPopUps();
 	engine = Engine::createOffScreenInstance(512, 512, false, false, false);
 	engine->setSceneColor(Color4(125.0f / 255.0f, 125.0f / 255.0f, 125.0f / 255.0f, 1.0f));
@@ -58,6 +59,7 @@ void VideoTabView::initialize()
 	try {
 		videoTabController = new VideoTabController(this);
 		videoTabController->initialize(editorView->getScreenController()->getScreenNode());
+		screenNode->addTooltipRequestListener(videoTabController);
 	} catch (Exception& exception) {
 		Console::print(string("VideoTabView::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));

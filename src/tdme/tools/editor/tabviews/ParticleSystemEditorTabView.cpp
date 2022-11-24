@@ -348,13 +348,13 @@ void ParticleSystemEditorTabView::setParticleSystemIndex(int idx, bool changeOut
 	if (particleSystemIdx == -1) {
 		if (changeOutlinerSelection == true) {
 			editorView->getScreenController()->setOutlinerSelection("particlesystems");
-			editorView->getScreenController()->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
+			editorView->getScreenController()->getScreenNode()->forwardChange(required_dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
 		}
 		removeGizmo();
 	} else {
 		if (changeOutlinerSelection == true) {
 			editorView->getScreenController()->setOutlinerSelection("particlesystems." + to_string(idx));
-			editorView->getScreenController()->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
+			editorView->getScreenController()->getScreenNode()->forwardChange(required_dynamic_cast<GUIElementNode*>(editorView->getScreenController()->getScreenNode()->getNodeById("selectbox_outliner")));
 		}
 		updateGizmo();
 	}

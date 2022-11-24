@@ -18,10 +18,10 @@ struct tdme::gui::events::GUIContextMenuRequestListener
 	virtual ~GUIContextMenuRequestListener() {}
 
 	/**
-	 * On mouse over
+	 * On context menu request
 	 * @param node node
 	 * @param mouseX unscaled mouse X position
 	 * @param mouseY unscaled mouse Y position
 	 */
-	virtual void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) = 0;
+	virtual void onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) = 0;
 };

@@ -98,13 +98,13 @@ void GUIElementController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 					} else {
 						auto onMouseClickExpression = elementNode->getOnMouseClickExpression();
 						if (onMouseClickExpression.size() > 0) GUIElementNode::executeExpression(elementNode->getScreenNode(), onMouseClickExpression);
-						node->getScreenNode()->delegateActionPerformed(GUIActionListenerType::PERFORMED, elementNode);
+						node->getScreenNode()->forwardAction(GUIActionListenerType::PERFORMED, elementNode);
 					}
 					timeLastClicked = -1LL;
 				} else {
 					auto onMouseClickExpression = elementNode->getOnMouseClickExpression();
 					if (onMouseClickExpression.size() > 0) GUIElementNode::executeExpression(elementNode->getScreenNode(), onMouseClickExpression);
-					node->getScreenNode()->delegateActionPerformed(GUIActionListenerType::PERFORMED, elementNode);
+					node->getScreenNode()->forwardAction(GUIActionListenerType::PERFORMED, elementNode);
 					timeLastClicked = -1LL;
 				}
 			} else {
@@ -114,14 +114,14 @@ void GUIElementController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 				} else {
 					auto onMouseClickExpression = elementNode->getOnMouseClickExpression();
 					if (onMouseClickExpression.size() > 0) GUIElementNode::executeExpression(elementNode->getScreenNode(), onMouseClickExpression);
-					node->getScreenNode()->delegateActionPerformed(GUIActionListenerType::PERFORMED, elementNode);
+					node->getScreenNode()->forwardAction(GUIActionListenerType::PERFORMED, elementNode);
 				}
 			}
 		}
 	} else
 	if (node == elementNode && elementNode->isEventBelongingToNode(event) == true && event->getButton() == MOUSE_BUTTON_RIGHT) {
 		if (event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED) {
-			node->getScreenNode()->delegateContextMenuRequest(elementNode, event->getXUnscaled(), event->getYUnscaled());
+			node->getScreenNode()->forwardContextMenuRequest(elementNode, event->getXUnscaled(), event->getYUnscaled());
 		}
 		event->setProcessed(true);
 	} else
@@ -132,7 +132,7 @@ void GUIElementController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 	if (event->getType() == GUIMouseEvent::MOUSEEVENT_MOVED) {
 		if (elementNode->isEventBelongingToNode(event) == true) {
 			if (elementNode->getOptionValue("mouse-cursor") == "hand") Application::setMouseCursor(MOUSE_CURSOR_HAND);
-			node->getScreenNode()->delegateMouseOver(elementNode);
+			node->getScreenNode()->forwardMouseOver(elementNode);
 			elementNode->getActiveConditions().add(GUIElementNode::CONDITION_ONMOUSEOVER);
 			node->getScreenNode()->getGUI()->addMouseOutCandidateNode(elementNode);
 			auto onMouseOverExpression = elementNode->getOnMouseOverExpression();
@@ -157,7 +157,7 @@ void GUIElementController::handleKeyboardEvent(GUIKeyboardEvent* event)
 					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 						auto onMouseClickExpression = required_dynamic_cast<GUIElementNode*>(node)->getOnMouseClickExpression();
 						if (onMouseClickExpression.size() > 0) GUIElementNode::executeExpression(node->getScreenNode(), onMouseClickExpression);
-						node->getScreenNode()->delegateActionPerformed(GUIActionListenerType::PERFORMED, required_dynamic_cast<GUIElementNode*>(node));
+						node->getScreenNode()->forwardAction(GUIActionListenerType::PERFORMED, required_dynamic_cast<GUIElementNode*>(node));
 					}
 				}
 				break;
@@ -184,7 +184,7 @@ void GUIElementController::tick()
 		timeLastClicked = -1LL;
 		auto onMouseClickExpression = required_dynamic_cast<GUIElementNode*>(node)->getOnMouseClickExpression();
 		if (onMouseClickExpression.size() > 0) GUIElementNode::executeExpression(node->getScreenNode(), onMouseClickExpression);
-		node->getScreenNode()->delegateActionPerformed(GUIActionListenerType::PERFORMED, required_dynamic_cast<GUIElementNode*>(node));
+		node->getScreenNode()->forwardAction(GUIActionListenerType::PERFORMED, required_dynamic_cast<GUIElementNode*>(node));
 	}
 
 	if (isActionPerforming == true) {
@@ -192,7 +192,7 @@ void GUIElementController::tick()
 			isActionPerforming = false;
 			return;
 		}
-		node->getScreenNode()->delegateActionPerformed(GUIActionListenerType::PERFORMING, required_dynamic_cast<GUIElementNode*>(node));
+		node->getScreenNode()->forwardAction(GUIActionListenerType::PERFORMING, required_dynamic_cast<GUIElementNode*>(node));
 	}
 }
 

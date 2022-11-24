@@ -45,11 +45,12 @@ GUIHorizontalScrollbarInternalNode::GUIHorizontalScrollbarInternalNode(
 	const GUINode_Padding& padding,
 	const GUINodeConditions& showOn,
 	const GUINodeConditions& hideOn,
+	const string& tooltip,
 	const GUIColor& barColorNone,
 	const GUIColor& barColorMouseOver,
 	const GUIColor& barColorDragging
 	):
-	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
+	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn, tooltip)
 {
 	this->controller = new GUIHorizontalScrollbarInternalController(this);
 	this->barColorNone = barColorNone;

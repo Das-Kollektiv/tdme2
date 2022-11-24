@@ -6,6 +6,7 @@
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
@@ -13,6 +14,7 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
+#include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
@@ -31,6 +33,7 @@ using std::string;
 
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
@@ -38,6 +41,7 @@ using tdme::gui::GUIParser;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
+using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::TabController;
@@ -83,15 +87,15 @@ void SoundTabController::dispose()
 
 void SoundTabController::executeCommand(TabControllerCommand command)
 {
-	showErrorPopUp("Warning", "This command is not supported yet");
+	showInfoPopUp("Warning", "This command is not supported yet");
 }
 
-void SoundTabController::showErrorPopUp(const string& caption, const string& message)
+void SoundTabController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
 
-void SoundTabController::onValueChanged(GUIElementNode* node)
+void SoundTabController::onChange(GUIElementNode* node)
 {
 }
 
@@ -101,12 +105,22 @@ void SoundTabController::onFocus(GUIElementNode* node) {
 void SoundTabController::onUnfocus(GUIElementNode* node) {
 }
 
-void SoundTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
+void SoundTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
+}
+
+void SoundTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
+	int left, top;
+	view->getEditorView()->getViewPortUnscaledOffset(left, top);
+	popUps->getTooltipScreenController()->show(left + mouseX, top + mouseY, node->getToolTip());
+}
+
+void SoundTabController::onTooltipCloseRequest() {
+	popUps->getTooltipScreenController()->close();
 }
 
 void SoundTabController::setOutlinerContent() {
 	string xml;
-	xml+= "<selectbox-option text=\"Sound\" value=\"texture\" />\n";
+	xml+= "<selectbox-option text=\"Sound\" value=\"sound\" />\n";
 	view->getEditorView()->setOutlinerContent(xml);
 }
 
@@ -114,7 +128,7 @@ void SoundTabController::setOutlinerAddDropDownContent() {
 	view->getEditorView()->setOutlinerAddDropDownContent(string());
 }
 
-void SoundTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void SoundTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type != GUIActionListenerType::PERFORMED) return;
 	if (node->getId() == "play") {

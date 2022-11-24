@@ -1,7 +1,7 @@
 <screen id="tab_video">
 	<layout width="100%" height="100%" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
 		<scrollarea width="100%" height="100%" alignment="none" vertical-align="center" horizontal-align="center">
-			<video src="{$video}" width="auto" height="auto" />
+			<video src="{$video}" width="auto" height="auto" tooltip="{$video}" />
 		</scrollarea>
 	</layout>
 </screen>

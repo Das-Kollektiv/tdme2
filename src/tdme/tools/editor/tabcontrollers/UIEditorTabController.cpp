@@ -11,6 +11,7 @@
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIImageNode.h>
+#include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -22,6 +23,7 @@
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
+#include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
@@ -47,6 +49,7 @@ using tdme::engine::Engine;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIImageNode;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
@@ -58,6 +61,7 @@ using tdme::tools::editor::controllers::ContextMenuScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
+using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::TabController;
@@ -106,17 +110,17 @@ void UIEditorTabController::dispose()
 
 void UIEditorTabController::executeCommand(TabControllerCommand command)
 {
-	showErrorPopUp("Warning", "This command is not supported yet");
+	showInfoPopUp("Warning", "This command is not supported yet");
 }
 
-void UIEditorTabController::showErrorPopUp(const string& caption, const string& message)
+void UIEditorTabController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
 
-void UIEditorTabController::onValueChanged(GUIElementNode* node)
+void UIEditorTabController::onChange(GUIElementNode* node)
 {
-	Console::println("UIEditorTabController::onValueChanged(): " + node->getId() + " = " + node->getController()->getValue().getString());
+	Console::println("UIEditorTabController::onChange(): " + node->getId() + " = " + node->getController()->getValue().getString());
 	if (node->getId() == "selectbox_outliner") {
 		updateDetails(node->getController()->getValue().getString());
 	} else
@@ -143,7 +147,7 @@ void UIEditorTabController::onFocus(GUIElementNode* node) {
 void UIEditorTabController::onUnfocus(GUIElementNode* node) {
 }
 
-void UIEditorTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
+void UIEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		if (outlinerNode == "screens") {
@@ -256,6 +260,16 @@ void UIEditorTabController::onContextMenuRequested(GUIElementNode* node, int mou
 	}
 }
 
+void UIEditorTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
+	int left, top;
+	view->getEditorView()->getViewPortUnscaledOffset(left, top);
+	popUps->getTooltipScreenController()->show(left + mouseX, top + mouseY, node->getToolTip());
+}
+
+void UIEditorTabController::onTooltipCloseRequest() {
+	popUps->getTooltipScreenController()->close();
+}
+
 void UIEditorTabController::createOutlinerParentNodeNodesXML(TiXmlElement* xmlParentNode, string& xml, int screenIdx, int& nodeIdx) {
 	if (xmlParentNode->FirstChildElement() == nullptr) {
 		auto nodeId = string(AVOID_NULLPTR_STRING(xmlParentNode->Attribute("id")));
@@ -296,7 +310,7 @@ void UIEditorTabController::setOutlinerContent() {
 			int nodeIdx = 0;
 			createOutlinerParentNodeNodesXML(xmlRoot, xml, screenIdx, nodeIdx);
 		} catch (Exception& exception) {
-			showErrorPopUp("Warning", (string(exception.what())));
+			showInfoPopUp("Warning", (string(exception.what())));
 		}
 		screenIdx++;
 	}
@@ -326,11 +340,23 @@ void UIEditorTabController::updateScreenDetails() {
 		string("<template id=\"details_screen\" src=\"resources/engine/gui/template_details_screen.xml\" />\n")
 	);
 
+	//
+	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+	auto screenIdx = Integer::parse(StringTools::substring(outlinerNode, 0, outlinerNode.find(".")));
+
+	//
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_screen"))->getActiveConditions().add("open");
+		if (screenIdx >= 0 &&
+			screenIdx < view->getScreenNodes().size() &&
+			view->getScreenNodes()[screenIdx] != nullptr &&
+			view->getScreenNodes()[screenIdx]->getFileName().empty() == false) {
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("screen"))->setSource("resources/engine/images/gui_big.png");
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("screen"))->setTooltip(view->getScreenNodes()[screenIdx]->getFileName());
+		}
 	} catch (Exception& exception) {
 		Console::println(string("UIEditorTabController::updateScreenDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -343,9 +369,10 @@ void UIEditorTabController::updateScreensDetails() {
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_screens"))->getActiveConditions().add("open");
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("projectedui_prototype"))->setSource(prototypeFileName);
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("projectedui_prototype"))->setTooltip(prototypeFileName);
 	} catch (Exception& exception) {
 		Console::println(string("UIEditorTabController::updateScreensDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 
 	//
@@ -506,6 +533,16 @@ void UIEditorTabController::onUnsetScreen() {
 	);
 }
 
+void UIEditorTabController::onBrowseToScreen() {
+	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+	auto screenIdx = Integer::parse(StringTools::substring(outlinerNode, 0, outlinerNode.find(".")));
+	if (screenIdx < 0 || screenIdx >= view->getScreenNodes().size()) {
+		showInfoPopUp("Browse To", "Nothing to browse to");
+	} else {
+		view->getEditorView()->getScreenController()->browseTo(view->getScreenNodes()[screenIdx]->getFileName());
+	}
+}
+
 void UIEditorTabController::reloadScreens() {
 	//
 	class ReloadScreensAction: public Action {
@@ -617,6 +654,7 @@ void UIEditorTabController::onRemovePrototype() {
 		}
 		virtual void performAction() {
 			auto view = uiEditorTabController->getView();
+			uiEditorTabController->prototypeFileName.clear();
 			view->removePrototype();
 			view->reAddScreens();
 			view->getEditorView()->reloadTabOutliner("screens");
@@ -625,10 +663,18 @@ void UIEditorTabController::onRemovePrototype() {
 	Engine::getInstance()->enqueueAction(new RemovePrototypeAction(this));
 }
 
-void UIEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void UIEditorTabController::onBrowseToPrototype() {
+	if (prototypeFileName.empty() == true) {
+		showInfoPopUp("Browse To", "Nothing to browse to");
+	} else {
+		view->getEditorView()->getScreenController()->browseTo(prototypeFileName);
+	}
+}
+
+void UIEditorTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type != GUIActionListenerType::PERFORMED) return;
-	Console::println("UIEditorTabController::onActionPerformed(): " + node->getId());
+	Console::println("UIEditorTabController::onAction(): " + node->getId());
 	if (node->getId() == "screen_open") {
 		onLoadScreen();
 	} else
@@ -636,12 +682,15 @@ void UIEditorTabController::onActionPerformed(GUIActionListenerType type, GUIEle
 		onUnsetScreen();
 	} else
 	if (node->getId() == "screen_browseto") {
-		// TODO
+		onBrowseToScreen();
 	} else
 	if (node->getId() == "projectedui_prototype_open") {
 		onLoadPrototype();
 	} else
 	if (node->getId() == "projectedui_prototype_remove") {
 		onRemovePrototype();
+	} else
+	if (node->getId() == "projectedui_prototype_browseto") {
+		onBrowseToPrototype();
 	}
 }

@@ -64,6 +64,7 @@ protected:
 	 * @param padding padding
 	 * @param showOn show on
 	 * @param hideOn hide on
+	 * @param tooltip tooltip
 	 * @param texture texture
 	 * @param requestedDimensionConstraints requested dimension constraints
 	 * @param mirrorX mirror X
@@ -92,6 +93,7 @@ protected:
 		const GUINode_Padding& padding,
 		const GUINodeConditions& showOn,
 		const GUINodeConditions& hideOn,
+		const string& tooltip,
 		Texture* texture,
 		const RequestedDimensionConstraints& requestedDimensionConstraints,
 		bool mirrorX,

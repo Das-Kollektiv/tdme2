@@ -261,8 +261,10 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 			auto id = jSound["i"].GetString();
 			auto sound = prototype->addSound(id);
 			if (sound == nullptr) continue;
+			auto soundFileName = jSound["file"].GetString();
+			auto soundPathName = getResourcePathName(pathName, soundFileName);
+			sound->setFileName(getResourcePathName(pathName, soundFileName) + "/" + FileSystem::getInstance()->getFileName(soundFileName));
 			sound->setAnimation(jSound["a"].GetString());
-			sound->setFileName(jSound["file"].GetString());
 			sound->setGain(static_cast<float>(jSound["g"].GetFloat()));
 			sound->setPitch(static_cast<float>(jSound["p"].GetFloat()));
 			sound->setOffset(static_cast<float>(jSound["o"].GetInt()));

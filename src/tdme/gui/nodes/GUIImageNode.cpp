@@ -3,6 +3,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/fileio/textures/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
@@ -29,6 +30,7 @@ using tdme::gui::nodes::GUIImageNode;
 using std::string;
 using std::to_string;
 
+using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
@@ -67,6 +69,7 @@ GUIImageNode::GUIImageNode(
 	const GUINode_Padding& padding,
 	const GUINodeConditions& showOn,
 	const GUINodeConditions& hideOn,
+	const string& tooltip,
 	const string& source,
 	const RequestedDimensionConstraints& requestedDimensionConstraints,
 	bool mirrorX,
@@ -94,6 +97,7 @@ GUIImageNode::GUIImageNode(
 		padding,
 		showOn,
 		hideOn,
+		tooltip,
 		requestedDimensionConstraints,
 		mirrorX,
 		mirrorY,
@@ -177,7 +181,18 @@ void GUIImageNode::setSource(const string& source) {
 				Console::println(string() + "GUIImageNode::setSource(): " + exception.what());
 			}
 		} else {
-			this->texture = source.empty() == true?nullptr:screenNode->getImage(screenNode->getApplicationRootPathName(), source);
+			// other model without thumbnail
+			for (auto& extension: ModelReader::getModelExtensions()) {
+				if (StringTools::endsWith(StringTools::toLowerCase(source), "." + extension) == true) {
+					this->texture = screenNode->getImage(screenNode->getApplicationRootPathName(), "resources/engine/images/mesh_big.png");
+					// done
+					break;
+				}
+			}
+			// load it
+			if (this->texture == nullptr) {
+				this->texture = source.empty() == true?nullptr:screenNode->getImage(screenNode->getApplicationRootPathName(), source);
+			}
 		}
 	}
 	this->textureId = texture == nullptr?0:Engine::getInstance()->getTextureManager()->addTexture(texture, 0);

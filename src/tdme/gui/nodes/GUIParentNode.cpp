@@ -76,9 +76,10 @@ GUIParentNode::GUIParentNode(
 	const GUINode_Border& border,
 	const GUINode_Padding& padding,
 	const GUINodeConditions& showOn,
-	const GUINodeConditions& hideOn
+	const GUINodeConditions& hideOn,
+	const string& tooltip
 	):
-	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
+	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn, tooltip)
 {
 	this->overflowX = overflowX;
 	this->overflowY = overflowY;
@@ -605,7 +606,7 @@ void GUIParentNode::render(GUIRenderer* guiRenderer)
 	guiRenderer->setRenderAreaBottom(renderAreaBottomCurrent);
 }
 
-void GUIParentNode::determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds)
+void GUIParentNode::determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds, int flags)
 {
 	if (conditionsMet == false)
 		return;
@@ -645,11 +646,11 @@ void GUIParentNode::determineMouseEventNodes(GUIMouseEvent* event, bool floating
 		}
 		for (auto i = 0; i < vieportSubNodesCache.size(); i++) {
 			auto subNode = vieportSubNodesCache[i];
-			subNode->determineMouseEventNodes(event, floatingNode == true || subNode->flow == GUINode_Flow::FLOATING, eventNodeIds, eventFloatingNodeIds);
+			subNode->determineMouseEventNodes(event, floatingNode == true || subNode->flow == GUINode_Flow::FLOATING, eventNodeIds, eventFloatingNodeIds, flags);
 		}
 	}
 
-	GUINode::determineMouseEventNodes(event, floatingNode, eventNodeIds, eventFloatingNodeIds);
+	GUINode::determineMouseEventNodes(event, floatingNode, eventNodeIds, eventFloatingNodeIds, flags);
 }
 
 void GUIParentNode::invalidateRenderCaches() {

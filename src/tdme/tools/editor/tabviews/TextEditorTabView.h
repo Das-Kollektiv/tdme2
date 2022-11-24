@@ -49,7 +49,7 @@ private:
 	PopUps* popUps { nullptr };
 	TextEditorTabController* textEditorTabController { nullptr };
 	TabView::OutlinerState outlinerState;
-	GUIScreenNode* tabScreenNode { nullptr };
+	GUIScreenNode* screenNode { nullptr };
 	string fileName;
 	string extension;
 	GUIStyledTextNode* textNode { nullptr };
@@ -121,6 +121,7 @@ private:
 	bool visualCodingEnabled { false };
 
 	GUIParentNode* visualisationNode { nullptr };
+	bool countEnabled { false };
 
 	/**
 	 * Get script variable type pin color
@@ -237,7 +238,7 @@ public:
 	 * @return tab screen node
 	 */
 	inline GUIScreenNode* getTabScreenNode() {
-		return tabScreenNode;
+		return screenNode;
 	}
 
 	/**
@@ -414,9 +415,9 @@ public:
 	bool replaceAll(const string& findString, const string& replaceString, bool matchCase, bool wholeWord, bool selection);
 
 	/**
-	 * Reformat code style
+	 * Cancel find
 	 */
-	void reformat();
+	void cancelFind();
 
 	// overridden methods
 	void handleInputEvents() override;

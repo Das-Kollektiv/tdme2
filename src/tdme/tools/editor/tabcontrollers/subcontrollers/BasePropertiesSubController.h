@@ -143,7 +143,7 @@ public:
 	 * @param baseProperties base properties
 	 * @param prototype prototype or nullptr
 	 */
-	void onValueChanged(GUIElementNode* node, BaseProperties* baseProperties, Prototype* prototype = nullptr);
+	void onChange(GUIElementNode* node, BaseProperties* baseProperties, Prototype* prototype = nullptr);
 
 	/**
 	 * On action performed
@@ -151,7 +151,7 @@ public:
 	 * @param node node
 	 * @param baseProperties base properties
 	 */
-	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node, BaseProperties* baseProperties);
+	void onAction(GUIActionListenerType type, GUIElementNode* node, BaseProperties* baseProperties);
 
 	/**
 	 * On focus
@@ -174,7 +174,7 @@ public:
 	 * @param mouseY unscaled mouse Y position
 	 * @param baseProperties base properties
 	 */
-	void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY, BaseProperties* baseProperties);
+	void onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY, BaseProperties* baseProperties);
 
 	/**
 	 * Apply property value
@@ -183,10 +183,10 @@ public:
 	void applyPropertyValue(BaseProperties* baseProperties);
 
 	/**
-	 * Shows the error pop up
+	 * Show the information pop up / modal
 	 * @param caption caption
 	 * @param message message
 	 */
-	void showErrorPopUp(const string& caption, const string& message);
+	void showInfoPopUp(const string& caption, const string& message);
 
 };

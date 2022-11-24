@@ -12,6 +12,9 @@
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
+#include <tdme/gui/events/GUIContextMenuRequestListener.h>
+#include <tdme/gui/events/GUIFocusListener.h>
+#include <tdme/gui/events/GUITooltipRequestListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/tools/editor/misc/fwd-tdme.h>
@@ -35,7 +38,11 @@ using tdme::engine::ShaderParameter;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
+using tdme::gui::events::GUIContextMenuRequestListener;
+using tdme::gui::events::GUIFocusListener;
+using tdme::gui::events::GUITooltipRequestListener;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
@@ -96,11 +103,12 @@ private:
 		"pbrmaterial_maskedtransparency"
 	};
 
-	array<string, 4> applyAnimationPreviewNodes = {
+	array<string, 5> applyAnimationPreviewNodes = {
 		"animationpreview_base",
 		"animationpreview_overlay1",
 		"animationpreview_overlay2",
-		"animationpreview_overlay3"
+		"animationpreview_overlay3",
+		"animationpreview_attachment1_bone"
 	};
 
 	array<string, 4> applyLODNodes = {
@@ -109,6 +117,8 @@ private:
 
 	string renameAnimationId;
 	int renameAnimationLOD { -1 };
+
+	string attachment1ModelFileName;
 
 	/**
 	 * Get LOD level
@@ -343,6 +353,11 @@ public:
 	void onMaterialClearDiffuseTexture();
 
 	/**
+	 * On material browse to diffuse texture
+	 */
+	void onMaterialBrowseToDiffuseTexture();
+
+	/**
 	 * On material load diffuse transparency texture
 	 */
 	void onMaterialLoadDiffuseTransparencyTexture();
@@ -351,6 +366,11 @@ public:
 	 * On material clear diffuse transparency texture
 	 */
 	void onMaterialClearDiffuseTransparencyTexture();
+
+	/**
+	 * On material browse to diffuse transparency texture
+	 */
+	void onMaterialBrowseToDiffuseTransparencyTexture();
 
 	/**
 	 * On material load normal texture
@@ -363,6 +383,11 @@ public:
 	void onMaterialClearNormalTexture();
 
 	/**
+	 * On material browse to normal texture
+	 */
+	void onMaterialBrowseToNormalTexture();
+
+	/**
 	 * On material load specular texture
 	 */
 	void onMaterialLoadSpecularTexture();
@@ -371,6 +396,11 @@ public:
 	 * On material clear specular texture
 	 */
 	void onMaterialClearSpecularTexture();
+
+	/**
+	 * On material browse to specular texture
+	 */
+	void onMaterialBrowseToSpecularTexture();
 
 	/**
 	 * On material load PBR base color texture
@@ -383,6 +413,11 @@ public:
 	void onMaterialClearPBRBaseColorTexture();
 
 	/**
+	 * On material browse to PBR base color texture
+	 */
+	void onMaterialBrowseToPBRBaseColorTexture();
+
+	/**
 	 * On material load PBR metallic roughness texture
 	 */
 	void onMaterialLoadPBRMetallicRoughnessTexture();
@@ -391,6 +426,11 @@ public:
 	 * On material clear PBR metallic roughness texture
 	 */
 	void onMaterialClearPBRMetallicRoughnessTexture();
+
+	/**
+	 * On material browse to PBR metallic roughness texture
+	 */
+	void onMaterialBrowseToPBRMetallicRoughnessTexture();
 
 	/**
 	 * On material load PBR normal texture
@@ -403,6 +443,11 @@ public:
 	void onMaterialClearPBRNormalTexture();
 
 	/**
+	 * On material browse to PBR normal texture
+	 */
+	void onMaterialBrowseToPBRNormalTexture();
+
+	/**
 	 * On preview animations attachment 1 model load
 	 */
 	void onPreviewAnimationsAttachment1ModelLoad();
@@ -411,6 +456,11 @@ public:
 	 * On preview animations attachment 1 model clear
 	 */
 	void onPreviewAnimationsAttachment1ModelClear();
+
+	/**
+	 * On preview animations attachment 1 model browse to
+	 */
+	void onPreviewAnimationsAttachment1ModelBrowseTo();
 
 	/**
 	 * Start rename animation
@@ -469,11 +519,13 @@ public:
 	bool getOutlinerNodeLOD(const string& outlinerNode, string& modelOutlinerNode, Model** model = nullptr, int* lodLevel = nullptr);
 
 	// overridden methods
-	void onValueChanged(GUIElementNode* node) override;
-	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
+	void onChange(GUIElementNode* node) override;
+	void onAction(GUIActionListenerType type, GUIElementNode* node) override;
 	void onFocus(GUIElementNode* node) override;
 	void onUnfocus(GUIElementNode* node) override;
-	void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) override;
+	void onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) override;
+	void onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) override;
+	void onTooltipCloseRequest() override;
 	void executeCommand(TabControllerCommand command) override;
 
 	/**
@@ -483,10 +535,10 @@ public:
 	void updateInfoText(const MutableString& text);
 
 	/**
-	 * Shows the error pop up
+	 * Show the information pop up / modal
 	 * @param caption caption
 	 * @param message message
 	 */
-	void showErrorPopUp(const string& caption, const string& message);
+	void showInfoPopUp(const string& caption, const string& message);
 
 };

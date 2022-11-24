@@ -5,6 +5,7 @@
 #include <tdme/tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
+#include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
@@ -12,6 +13,7 @@
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
+#include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
@@ -27,6 +29,7 @@ using tdme::tools::editor::tabcontrollers::VideoTabController;
 using std::string;
 
 using tdme::gui::events::GUIActionListenerType;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
@@ -34,6 +37,7 @@ using tdme::gui::GUIParser;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
+using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::TabController;
@@ -73,15 +77,15 @@ void VideoTabController::dispose()
 
 void VideoTabController::executeCommand(TabControllerCommand command)
 {
-	showErrorPopUp("Warning", "This command is not supported yet");
+	showInfoPopUp("Warning", "This command is not supported yet");
 }
 
-void VideoTabController::showErrorPopUp(const string& caption, const string& message)
+void VideoTabController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
 
-void VideoTabController::onValueChanged(GUIElementNode* node)
+void VideoTabController::onChange(GUIElementNode* node)
 {
 }
 
@@ -91,7 +95,17 @@ void VideoTabController::onFocus(GUIElementNode* node) {
 void VideoTabController::onUnfocus(GUIElementNode* node) {
 }
 
-void VideoTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
+void VideoTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
+}
+
+void VideoTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
+	int left, top;
+	view->getEditorView()->getViewPortUnscaledOffset(left, top);
+	popUps->getTooltipScreenController()->show(left + mouseX, top + mouseY, node->getToolTip());
+}
+
+void VideoTabController::onTooltipCloseRequest() {
+	popUps->getTooltipScreenController()->close();
 }
 
 void VideoTabController::setOutlinerContent() {
@@ -104,6 +118,6 @@ void VideoTabController::setOutlinerAddDropDownContent() {
 	view->getEditorView()->setOutlinerAddDropDownContent(string());
 }
 
-void VideoTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void VideoTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 }

@@ -14,6 +14,8 @@
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
+#include <tdme/tools/editor/controllers/TooltipScreenController.h>
+#include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -21,6 +23,8 @@
 #include <tdme/utilities/StringTools.h>
 
 using std::string;
+
+using tdme::tools::editor::controllers::FindReplaceDialogScreenController;
 
 using tdme::application::Application;
 using tdme::engine::Engine;
@@ -32,14 +36,15 @@ using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
-using tdme::tools::editor::controllers::FindReplaceDialogScreenController;
+using tdme::tools::editor::controllers::TooltipScreenController;
+using tdme::tools::editor::misc::PopUps;
 using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
 using tdme::utilities::StringTools;
 
-FindReplaceDialogScreenController::FindReplaceDialogScreenController()
+FindReplaceDialogScreenController::FindReplaceDialogScreenController(PopUps* PopUps): popUps(popUps)
 {
 }
 
@@ -130,7 +135,7 @@ void FindReplaceDialogScreenController::close()
 	completeAction = nullptr;
 }
 
-void FindReplaceDialogScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void FindReplaceDialogScreenController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (StringTools::startsWith(node->getId(), "findreplace_caption_close_") == true) { // TODO: a.drewke, check with DH) {
@@ -152,4 +157,12 @@ void FindReplaceDialogScreenController::onActionPerformed(GUIActionListenerType 
 			if (completeAction != nullptr) completeAction->performAction();
 		}
 	}
+}
+
+void FindReplaceDialogScreenController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
+	popUps->getTooltipScreenController()->show(mouseX, mouseY, node->getToolTip());
+}
+
+void FindReplaceDialogScreenController::onTooltipCloseRequest() {
+	popUps->getTooltipScreenController()->close();
 }

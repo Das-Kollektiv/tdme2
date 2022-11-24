@@ -88,6 +88,7 @@ protected:
 	 * @param padding padding
 	 * @param showOn show on
 	 * @param hideOn hide on
+	 * @param tooltip tooltip
 	 * @param name name
 	 * @param value value
 	 * @param selected selected
@@ -121,6 +122,7 @@ protected:
 		const GUINode_Padding& padding,
 		const GUINodeConditions& showOn,
 		const GUINodeConditions& hideOn,
+		const string& tooltip,
 		const string& name,
 		const string& value,
 		bool selected,

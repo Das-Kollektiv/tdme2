@@ -85,6 +85,7 @@ protected:
 	 * @param padding padding
 	 * @param showOn show on
 	 * @param hideOn hide on
+	 * @param tooltip tooltip
 	 * @param effectColorMul effect color mul
 	 * @param effectColorAdd effect color add
 	 * @param clipping clipping
@@ -109,6 +110,7 @@ protected:
 		const GUINode_Padding& padding,
 		const GUINodeConditions& showOn,
 		const GUINodeConditions& hideOn,
+		const string& tooltip,
 		const GUIColor& effectColorMul,
 		const GUIColor& effectColorAdd,
 		const GUINode_Clipping& clipping,

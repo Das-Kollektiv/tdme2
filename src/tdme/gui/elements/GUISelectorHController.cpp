@@ -75,7 +75,7 @@ void GUISelectorHController::initialize()
 	class GUISelectorHControllerActionListener: public virtual GUIActionListener
 	{
 	public:
-		void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override {
+		void onAction(GUIActionListenerType type, GUIElementNode* node) override {
 			if (type != GUIActionListenerType::PERFORMED) return;
 			if (node == leftArrowNode) {
 				selectorHController->selectPrevious();

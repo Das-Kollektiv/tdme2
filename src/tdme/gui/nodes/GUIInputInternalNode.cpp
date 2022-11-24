@@ -58,6 +58,7 @@ GUIInputInternalNode::GUIInputInternalNode(
 	const GUINode_Padding& padding,
 	const GUINodeConditions& showOn,
 	const GUINodeConditions& hideOn,
+	const string& tooltip,
 	const string& font,
 	int size,
 	const string& color,
@@ -65,7 +66,7 @@ GUIInputInternalNode::GUIInputInternalNode(
 	const MutableString& text,
 	int maxLength
 	):
-	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
+	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn, tooltip)
 {
 	this->font = font.empty() == true?nullptr:screenNode->getFont(screenNode->getApplicationRootPathName(), font, size);
 	this->color = color.empty() == true || color.length() == 0 ? GUIColor() : GUIColor(color);

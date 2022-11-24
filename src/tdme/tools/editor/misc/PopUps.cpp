@@ -11,6 +11,7 @@
 #include <tdme/tools/editor/controllers/FindReplaceDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/controllers/ProgressBarScreenController.h>
+#include <tdme/tools/editor/controllers/TooltipScreenController.h>
 
 using tdme::engine::Engine;
 using tdme::gui::nodes::GUIScreenNode;
@@ -22,17 +23,19 @@ using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::FindReplaceDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::ProgressBarScreenController;
+using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
 
 PopUps::PopUps()
 {
-	fileDialogScreenController = new FileDialogScreenController();
-	infoDialogScreenController = new InfoDialogScreenController();
-	aboutDialogScreenController = new AboutDialogScreenController();
-	progressBarScreenController = new ProgressBarScreenController();
-	colorPickerScreenController = new ColorPickerScreenController();
-	contextMenuScreenController = new ContextMenuScreenController();
-	findReplaceDialogScreenController = new FindReplaceDialogScreenController();
+	fileDialogScreenController = new FileDialogScreenController(this);
+	infoDialogScreenController = new InfoDialogScreenController(this);
+	aboutDialogScreenController = new AboutDialogScreenController(this);
+	progressBarScreenController = new ProgressBarScreenController(this);
+	colorPickerScreenController = new ColorPickerScreenController(this);
+	contextMenuScreenController = new ContextMenuScreenController(this);
+	findReplaceDialogScreenController = new FindReplaceDialogScreenController(this);
+	tooltipScreenController = new TooltipScreenController();
 }
 
 PopUps::~PopUps() {
@@ -43,6 +46,7 @@ PopUps::~PopUps() {
 	delete colorPickerScreenController;
 	delete contextMenuScreenController;
 	delete findReplaceDialogScreenController;
+	delete tooltipScreenController;
 }
 
 void PopUps::initialize()
@@ -54,6 +58,7 @@ void PopUps::initialize()
 	colorPickerScreenController->initialize();
 	contextMenuScreenController->initialize();
 	findReplaceDialogScreenController->initialize();
+	tooltipScreenController->initialize();
 	Engine::getInstance()->getGUI()->addScreen(aboutDialogScreenController->getScreenNode()->getId(), aboutDialogScreenController->getScreenNode());
 	Engine::getInstance()->getGUI()->addScreen(colorPickerScreenController->getScreenNode()->getId(), colorPickerScreenController->getScreenNode());
 	Engine::getInstance()->getGUI()->addScreen(fileDialogScreenController->getScreenNode()->getId(), fileDialogScreenController->getScreenNode());
@@ -61,6 +66,8 @@ void PopUps::initialize()
 	Engine::getInstance()->getGUI()->addScreen(contextMenuScreenController->getScreenNode()->getId(), contextMenuScreenController->getScreenNode());
 	Engine::getInstance()->getGUI()->addScreen(infoDialogScreenController->getScreenNode()->getId(), infoDialogScreenController->getScreenNode());
 	Engine::getInstance()->getGUI()->addScreen(progressBarScreenController->getScreenNode()->getId(), progressBarScreenController->getScreenNode());
+	Engine::getInstance()->getGUI()->addScreen(progressBarScreenController->getScreenNode()->getId(), progressBarScreenController->getScreenNode());
+	Engine::getInstance()->getGUI()->addScreen(tooltipScreenController->getScreenNode()->getId(), tooltipScreenController->getScreenNode());
 }
 
 void PopUps::dispose()
@@ -72,6 +79,7 @@ void PopUps::dispose()
 	Engine::getInstance()->getGUI()->removeScreen(contextMenuScreenController->getScreenNode()->getId());
 	Engine::getInstance()->getGUI()->removeScreen(infoDialogScreenController->getScreenNode()->getId());
 	Engine::getInstance()->getGUI()->removeScreen(progressBarScreenController->getScreenNode()->getId());
+	Engine::getInstance()->getGUI()->removeScreen(tooltipScreenController->getScreenNode()->getId());
 	fileDialogScreenController->dispose();
 	infoDialogScreenController->dispose();
 	aboutDialogScreenController->dispose();
@@ -79,4 +87,5 @@ void PopUps::dispose()
 	colorPickerScreenController->dispose();
 	contextMenuScreenController->dispose();
 	findReplaceDialogScreenController->dispose();
+	tooltipScreenController->dispose();
 }

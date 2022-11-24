@@ -27,6 +27,7 @@ using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::events::GUIContextMenuRequestListener;
+using tdme::gui::events::GUITooltipRequestListener;
 using tdme::gui::events::GUIFocusListener;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -82,6 +83,7 @@ private:
 	vector<GUIContextMenuRequestListener*> contextMenuRequestListener;
 	vector<GUIFocusListener*> focusListener;
 	vector<GUIMoveListener*> moveListener;
+	vector<GUITooltipRequestListener*> tooltipRequestListener;
 	GUIInputEventHandler* inputEventHandler;
 	vector<GUINode*> childControllerNodes;
 	GUIScreenNode_SizeConstraints sizeConstraints;
@@ -231,6 +233,7 @@ protected:
 	 * @param sizeConstraints size constraints
 	 * @param showOn show on
 	 * @param hideOn hide on
+	 * @param tooltip tooltip
 	 * @param scrollable scrollable
 	 * @param popUp pop up
 	 * @throws tdme::gui::GUIParserException
@@ -255,6 +258,7 @@ protected:
 		const GUIScreenNode_SizeConstraints& sizeConstraints,
 		const GUINodeConditions& showOn,
 		const GUINodeConditions& hideOn,
+		const string& tooltip,
 		bool scrollable,
 		bool popUp
 	);
@@ -401,7 +405,7 @@ public:
 	void determineFocussedNodes(GUIParentNode* parentNode, vector<GUIElementNode*>& focusableNodes);
 
 	// overridden methods
-	void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds) override;
+	void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds, int flags = DETERMINEMOUSEEVENTNODES_FLAG_NONE) override;
 
 	/**
 	 * Add action listener
@@ -427,11 +431,11 @@ public:
 	void setInputEventHandler(GUIInputEventHandler* inputEventHandler);
 
 	/**
-	 * Delegate action performed
+	 * Forward action event
 	 * @param type type
 	 * @param node node
 	 */
-	void delegateActionPerformed(GUIActionListenerType type, GUIElementNode* node);
+	void forwardAction(GUIActionListenerType type, GUIElementNode* node);
 
 	/**
 	 * Add change listener
@@ -446,10 +450,10 @@ public:
 	void removeChangeListener(GUIChangeListener* listener);
 
 	/**
-	 * Delegate value changed
+	 * Forward change event
 	 * @param node node
 	 */
-	void delegateValueChanged(GUIElementNode* node);
+	void forwardChange(GUIElementNode* node);
 
 	/**
 	 * Add mouse over listener
@@ -464,10 +468,10 @@ public:
 	void removeMouseOverListener(GUIMouseOverListener* listener);
 
 	/**
-	 * Delegate mouse over event
+	 * Forward mouse over event
 	 * @param node node
 	 */
-	void delegateMouseOver(GUIElementNode* node);
+	void forwardMouseOver(GUIElementNode* node);
 
 	/**
 	 * Add context menu request listener
@@ -482,12 +486,12 @@ public:
 	void removeContextMenuRequestListener(GUIContextMenuRequestListener* listener);
 
 	/**
-	 * Delegate mouse over event
+	 * Forward context menu request event
 	 * @param node node
 	 * @param mouseX unscaled mouse X position
 	 * @param mouseY unscaled mouse Y position
 	 */
-	void delegateContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY);
+	void forwardContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY);
 
 	/**
 	 * Add focus listener
@@ -502,16 +506,16 @@ public:
 	void removeFocusListener(GUIFocusListener* listener);
 
 	/**
-	 * Delegate focus event
+	 * Forward focus event
 	 * @param node node
 	 */
-	void delegateFocus(GUIElementNode* node);
+	void forwardFocus(GUIElementNode* node);
 
 	/**
-	 * Delegate unfocus event
+	 * Forward unfocus event
 	 * @param node node
 	 */
-	void delegateUnfocus(GUIElementNode* node);
+	void forwardUnfocus(GUIElementNode* node);
 
 	/**
 	 * Add move listener
@@ -526,10 +530,35 @@ public:
 	void removeMoveListener(GUIMoveListener* listener);
 
 	/**
-	 * Delegate move event
+	 * Forward move event
 	 * @param node node
 	 */
-	void delegateMove(GUINode* node);
+	void forwardMove(GUINode* node);
+
+	/**
+	 * Add tooltip request listener
+	 * @param listener listener
+	 */
+	void addTooltipRequestListener(GUITooltipRequestListener* listener);
+
+	/**
+	 * Remove tooltip request listener
+	 * @param listener listener
+	 */
+	void removeTooltipRequestListener(GUITooltipRequestListener* listener);
+
+	/**
+	 * Forward tooltip show request event
+	 * @param node node
+	 * @param mouseX unscaled mouse X position
+	 * @param mouseY unscaled mouse Y position
+	 */
+	void forwardTooltipShowRequest(GUINode* node, int mouseX, int mouseY);
+
+	/**
+	 * Forward tooltip close request event
+	 */
+	void forwardTooltipCloseRequest();
 
 	/**
 	 * @return if haveing given node registered as tick node

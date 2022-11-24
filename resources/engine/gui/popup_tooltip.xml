@@ -1,0 +1,5 @@
+<screen id="popup_tooltip" popup="false" background-color="#00000000" min-width="1024" min-height="768" max-width="3200" max-height="1800">
+	<layout width="100%" alignment="none" height="100%" horizontal-align="none" vertical-align="none">
+		<text id="tooltip" font="{$font.default}" size="{$fontsize.default}" text="<Insert tooltip here>" color="{$color.font_normal}" background-color="{$color.element_midground}" border="1" border-color="{$color.element_frame}" padding="5" />
+	</layout>
+</screen>

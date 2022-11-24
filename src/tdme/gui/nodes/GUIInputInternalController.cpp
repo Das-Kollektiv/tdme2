@@ -206,7 +206,7 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 							if (value > max) value = max;
 						}
 						textInputNode->getText().set(value, decimals);
-						node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
+						node->getScreenNode()->forwardChange(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
 					}
 					break;
 				case TYPE_INT:
@@ -223,7 +223,7 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 							if (value > static_cast<int>(max)) value = static_cast<int>(max);
 						}
 						textInputNode->getText().set(value);
-						node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
+						node->getScreenNode()->forwardChange(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
 					}
 					break;
 			}
@@ -329,8 +329,8 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 				index++;
 				resetCursorMode();
 				checkOffset();
-				required_dynamic_cast<GUIInputController*>(inputNode->getController())->onValueChange();
-				node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
+				required_dynamic_cast<GUIInputController*>(inputNode->getController())->onChange();
+				node->getScreenNode()->forwardChange(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
 			}
 		}
 	} else {
@@ -443,8 +443,8 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 								index--;
 								checkOffset();
 								resetCursorMode();
-								required_dynamic_cast<GUIInputController*>(inputNode->getController())->onValueChange();
-								node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
+								required_dynamic_cast<GUIInputController*>(inputNode->getController())->onChange();
+								node->getScreenNode()->forwardChange(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
 							}
 						}
 					}
@@ -462,8 +462,8 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 							if (index < textInputNode->getText().length()) {
 								textInputNode->getText().remove(index, 1);
 								resetCursorMode();
-								required_dynamic_cast<GUIInputController*>(inputNode->getController())->onValueChange();
-								node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
+								required_dynamic_cast<GUIInputController*>(inputNode->getController())->onChange();
+								node->getScreenNode()->forwardChange(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
 							}
 						}
 					}
@@ -473,7 +473,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 					if (disabled == false) {
 						event->setProcessed(true);
 						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
-							node->getScreenNode()->delegateActionPerformed(GUIActionListenerType::PERFORMED, required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
+							node->getScreenNode()->forwardAction(GUIActionListenerType::PERFORMED, required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
 						}
 					}
 				}
@@ -603,7 +603,7 @@ void GUIInputInternalController::formatText()
 			break;
 	}
 	if (originalText != textInputNode->getText().getString()) {
-		node->getScreenNode()->delegateActionPerformed(GUIActionListenerType::PERFORMED, required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
+		node->getScreenNode()->forwardAction(GUIActionListenerType::PERFORMED, required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
 	}
 }
 

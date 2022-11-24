@@ -44,7 +44,7 @@ public:
 	/**
 	 * On value change
 	 */
-	void onValueChange();
+	void onChange();
 
 	// overridden methods
 	bool isDisabled() override;

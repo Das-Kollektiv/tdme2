@@ -15,6 +15,7 @@
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/events/GUIContextMenuRequestListener.h>
 #include <tdme/gui/events/GUIFocusListener.h>
+#include <tdme/gui/events/GUITooltipRequestListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/os/threading/Thread.h>
@@ -41,6 +42,7 @@ using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::events::GUIContextMenuRequestListener;
 using tdme::gui::events::GUIFocusListener;
+using tdme::gui::events::GUITooltipRequestListener;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIFrameBufferNode;
 using tdme::gui::nodes::GUINode;
@@ -65,6 +67,7 @@ class tdme::tools::editor::controllers::EditorScreenController final
 	, public GUIChangeListener
 	, public GUIFocusListener
 	, public GUIContextMenuRequestListener
+	, public GUITooltipRequestListener
 {
 public:
 	enum FileType {
@@ -171,6 +174,7 @@ private:
 	unordered_map<string, EditorTabView> tabViews;
 	string fileNameSearchTerm;
 	int64_t timeFileNameSearchTerm { -1LL };
+	string browseToFileName;
 
 	//
 	class FileOpenThread: public Thread {
@@ -269,6 +273,7 @@ private:
 		string id;
 		string buttonXML;
 		Texture* thumbnailTexture { nullptr };
+		bool scrollTo { false };
 	};
 
 	//
@@ -384,11 +389,13 @@ public:
 	void setScreenCaption(const string& text);
 
 	// overridden methods
-	void onValueChanged(GUIElementNode* node) override;
-	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override;
+	void onChange(GUIElementNode* node) override;
+	void onAction(GUIActionListenerType type, GUIElementNode* node) override;
 	void onFocus(GUIElementNode* node) override;
 	void onUnfocus(GUIElementNode* node) override;
-	void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) override;
+	void onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) override;
+	void onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) override;
+	void onTooltipCloseRequest() override;
 
 	/**
 	 * @return project path
@@ -421,6 +428,12 @@ public:
 	void scanProjectPaths(const string& path, string& xml);
 
 	/**
+	 * Browse to file name
+	 * @param fileName file name
+	 */
+	void browseTo(const string& fileName);
+
+	/**
 	 * Close tabs
 	 */
 	void closeTabs();
@@ -449,6 +462,11 @@ public:
 	 * Stop scan files
 	 */
 	void stopScanFiles();
+
+	/**
+	 * Reset scan files
+	 */
+	void resetScanFiles();
 
 	/**
 	 * Add project path files pending file entities
@@ -567,11 +585,11 @@ public:
 	void disableSceneMenuEntry();
 
 	/**
-	 * Shows the error pop up
+	 * Show the information pop up / modal
 	 * @param caption caption
 	 * @param message message
 	 */
-	void showErrorPopUp(const string& caption, const string& message);
+	void showInfoPopUp(const string& caption, const string& message);
 
 	/**
 	 * Get engine viewport constraints

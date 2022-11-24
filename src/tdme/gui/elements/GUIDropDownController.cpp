@@ -320,7 +320,7 @@ void GUIDropDownController::handleKeyboardEvent(GUIKeyboardEvent* event)
 							toggleOpenState();
 						}
 						if (open == false) {
-							node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node));
+							node->getScreenNode()->forwardChange(required_dynamic_cast<GUIElementNode*>(node));
 						}
 					}
 					break;

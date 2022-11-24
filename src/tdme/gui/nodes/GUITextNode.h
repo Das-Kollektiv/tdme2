@@ -64,6 +64,7 @@ protected:
 	 * @param padding padding
 	 * @param showOn show on
 	 * @param hideOn hide on
+	 * @param tooltip tooltip
 	 * @param font font
 	 * @param size size
 	 * @param color color
@@ -86,6 +87,7 @@ protected:
 		const GUINode_Padding& padding,
 		const GUINodeConditions& showOn,
 		const GUINodeConditions& hideOn,
+		const string& tooltip,
 		const string& font,
 		int size,
 		const string& color,

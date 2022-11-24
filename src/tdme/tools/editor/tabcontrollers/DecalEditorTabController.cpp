@@ -13,6 +13,7 @@
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUIImageNode.h>
+#include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUI.h>
@@ -20,6 +21,7 @@
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
+#include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.h>
@@ -49,12 +51,14 @@ using tdme::engine::prototype::Prototype;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUIImageNode;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
+using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
@@ -123,7 +127,7 @@ void DecalEditorTabController::executeCommand(TabControllerCommand command)
 						Tools::getFileName(fileName)
 					);
 				} catch (Exception& exception) {
-					showErrorPopUp("Warning", (string(exception.what())));
+					showInfoPopUp("Warning", (string(exception.what())));
 				}
 			}
 			break;
@@ -139,7 +143,7 @@ void DecalEditorTabController::executeCommand(TabControllerCommand command)
 								decalEditorTabController->popUps->getFileDialogScreenController()->getFileName()
 							);
 						} catch (Exception& exception) {
-							decalEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+							decalEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 						}
 						decalEditorTabController->popUps->getFileDialogScreenController()->close();
 					}
@@ -164,21 +168,21 @@ void DecalEditorTabController::executeCommand(TabControllerCommand command)
 			}
 			break;
 		default:
-			showErrorPopUp("Warning", "This command is not supported yet");
+			showInfoPopUp("Warning", "This command is not supported yet");
 			break;
 	}
 }
 
-void DecalEditorTabController::onValueChanged(GUIElementNode* node)
+void DecalEditorTabController::onChange(GUIElementNode* node)
 {
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		updateDetails(outlinerNode);
 	}
-	basePropertiesSubController->onValueChanged(node, view->getPrototype());
-	prototypeDisplaySubController->onValueChanged(node, view->getPrototype());
-	prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
-	prototypeScriptSubController->onValueChanged(node, view->getPrototype());
+	basePropertiesSubController->onChange(node, view->getPrototype());
+	prototypeDisplaySubController->onChange(node, view->getPrototype());
+	prototypePhysicsSubController->onChange(node, view->getPrototype());
+	prototypeScriptSubController->onChange(node, view->getPrototype());
 }
 
 void DecalEditorTabController::onFocus(GUIElementNode* node) {
@@ -189,12 +193,22 @@ void DecalEditorTabController::onUnfocus(GUIElementNode* node) {
 	basePropertiesSubController->onUnfocus(node, view->getPrototype());
 }
 
-void DecalEditorTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
-	basePropertiesSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
-	prototypePhysicsSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
+void DecalEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
+	basePropertiesSubController->onContextMenuRequest(node, mouseX, mouseY, view->getPrototype());
+	prototypePhysicsSubController->onContextMenuRequest(node, mouseX, mouseY, view->getPrototype());
 }
 
-void DecalEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void DecalEditorTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
+	int left, top;
+	view->getEditorView()->getViewPortUnscaledOffset(left, top);
+	popUps->getTooltipScreenController()->show(left + mouseX, top + mouseY, node->getToolTip());
+}
+
+void DecalEditorTabController::onTooltipCloseRequest() {
+	popUps->getTooltipScreenController()->close();
+}
+
+void DecalEditorTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId() == "decal_texture_open") {
@@ -241,9 +255,10 @@ void DecalEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 							}
 						} catch (Exception& exception) {
 							Console::println(string() + "OnDecalTextureFileOpenAction::performAction(): An error occurred: " + exception.what());
-							decalEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+							decalEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 						}
 						required_dynamic_cast<GUIImageNode*>(decalEditorTabController->screenNode->getNodeById("decal_texture"))->setSource(decal->getTextureFileName());
+						required_dynamic_cast<GUIImageNode*>(decalEditorTabController->screenNode->getNodeById("decal_texture"))->setTooltip(decal->getTextureFileName());
 					}
 					decalEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 				}
@@ -281,14 +296,22 @@ void DecalEditorTabController::onActionPerformed(GUIActionListenerType type, GUI
 			decal->setTextureFileName(string());
 			prototype->setThumbnail(string());
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("decal_texture"))->setSource(prototype->getDecal()->getTextureFileName());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("decal_texture"))->setTooltip(prototype->getDecal()->getTextureFileName());
 		} else
 		if (node->getId() == "decal_texture_browseto") {
-
+			auto prototype = view->getPrototype();
+			if (prototype == nullptr) return;
+			auto decal = prototype->getDecal();
+			if (decal != nullptr && decal->getTextureFileName().empty() == false) {
+				view->getEditorView()->getScreenController()->browseTo(decal->getTextureFileName());
+			} else {
+				showInfoPopUp("Browse To", "Nothig to browse to");
+			}
 		}
 	}
-	basePropertiesSubController->onActionPerformed(type, node, view->getPrototype());
-	prototypePhysicsSubController->onActionPerformed(type, node, view->getPrototype());
-	prototypeScriptSubController->onActionPerformed(type, node, view->getPrototype());
+	basePropertiesSubController->onAction(type, node, view->getPrototype());
+	prototypePhysicsSubController->onAction(type, node, view->getPrototype());
+	prototypeScriptSubController->onAction(type, node, view->getPrototype());
 }
 
 void DecalEditorTabController::setOutlinerContent() {
@@ -326,9 +349,10 @@ void DecalEditorTabController::setDecalDetails() {
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_decal"))->getActiveConditions().add("open");
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("decal_texture"))->setSource(decal->getTextureFileName());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("decal_texture"))->setTooltip(decal->getTextureFileName());
 	} catch (Exception& exception) {
 		Console::println(string("DecalEditorTabController::setDecalDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -349,7 +373,7 @@ void DecalEditorTabController::updateInfoText(const MutableString& text) {
 	required_dynamic_cast<GUITextNode*>(screenNode->getNodeById(view->getTabId() + "_tab_text_info"))->setText(text);
 }
 
-void DecalEditorTabController::showErrorPopUp(const string& caption, const string& message)
+void DecalEditorTabController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }

@@ -37,7 +37,7 @@ void GUISelectBoxParentOptionController::initialize()
 
 	public:
 		// overridden method
-		void onActionPerformed(GUIActionListenerType type, GUIElementNode* node) override {
+		void onAction(GUIActionListenerType type, GUIElementNode* node) override {
 			if (node == selectBoxParentOptionController->arrowNode && type == GUIActionListenerType::PERFORMED) {
 				required_dynamic_cast<GUISelectBoxController*>(selectBoxParentOptionController->selectBoxNode->getController())->toggleOpenState(required_dynamic_cast<GUIElementNode*>(selectBoxParentOptionController->node));
 			}

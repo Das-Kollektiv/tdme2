@@ -11,6 +11,7 @@ using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::FindReplaceDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::ProgressBarScreenController;
+using tdme::tools::editor::controllers::TooltipScreenController;
 
 /**
  * Pop ups controller accessor class
@@ -26,6 +27,7 @@ private:
 	ContextMenuScreenController* contextMenuScreenController { nullptr };
 	AboutDialogScreenController* aboutDialogScreenController { nullptr };
 	FindReplaceDialogScreenController* findReplaceDialogScreenController { nullptr };
+	TooltipScreenController* tooltipScreenController { nullptr };
 
 public:
 	/**
@@ -85,6 +87,13 @@ public:
 	 */
 	inline FindReplaceDialogScreenController* getFindReplaceDialogScreenController() {
 		return findReplaceDialogScreenController;
+	}
+
+	/**
+	 * @return tooltip screen controller
+	 */
+	inline TooltipScreenController* getTooltipScreenController() {
+		return tooltipScreenController;
 	}
 
 	/**

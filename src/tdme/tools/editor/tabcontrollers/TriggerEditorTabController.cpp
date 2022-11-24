@@ -7,6 +7,7 @@
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUI.h>
@@ -14,6 +15,7 @@
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
+#include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.h>
@@ -37,12 +39,14 @@ using tdme::tools::editor::tabcontrollers::TriggerEditorTabController;
 using tdme::engine::prototype::Prototype;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
+using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
@@ -111,7 +115,7 @@ void TriggerEditorTabController::executeCommand(TabControllerCommand command)
 						Tools::getFileName(fileName)
 					);
 				} catch (Exception& exception) {
-					showErrorPopUp("Warning", (string(exception.what())));
+					showInfoPopUp("Warning", (string(exception.what())));
 				}
 			}
 			break;
@@ -127,7 +131,7 @@ void TriggerEditorTabController::executeCommand(TabControllerCommand command)
 								triggerEditorTabController->popUps->getFileDialogScreenController()->getFileName()
 							);
 						} catch (Exception& exception) {
-							triggerEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+							triggerEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 						}
 						triggerEditorTabController->popUps->getFileDialogScreenController()->close();
 					}
@@ -152,21 +156,21 @@ void TriggerEditorTabController::executeCommand(TabControllerCommand command)
 			}
 			break;
 		default:
-			showErrorPopUp("Warning", "This command is not supported yet");
+			showInfoPopUp("Warning", "This command is not supported yet");
 			break;
 	}
 }
 
-void TriggerEditorTabController::onValueChanged(GUIElementNode* node)
+void TriggerEditorTabController::onChange(GUIElementNode* node)
 {
 	if (node->getId() == "selectbox_outliner") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 		updateDetails(outlinerNode);
 	}
-	basePropertiesSubController->onValueChanged(node, view->getPrototype());
-	prototypeDisplaySubController->onValueChanged(node, view->getPrototype());
-	prototypePhysicsSubController->onValueChanged(node, view->getPrototype());
-	prototypeScriptSubController->onValueChanged(node, view->getPrototype());
+	basePropertiesSubController->onChange(node, view->getPrototype());
+	prototypeDisplaySubController->onChange(node, view->getPrototype());
+	prototypePhysicsSubController->onChange(node, view->getPrototype());
+	prototypeScriptSubController->onChange(node, view->getPrototype());
 }
 
 void TriggerEditorTabController::onFocus(GUIElementNode* node) {
@@ -177,16 +181,26 @@ void TriggerEditorTabController::onUnfocus(GUIElementNode* node) {
 	basePropertiesSubController->onUnfocus(node, view->getPrototype());
 }
 
-void TriggerEditorTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
-	basePropertiesSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
-	prototypePhysicsSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
+void TriggerEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
+	basePropertiesSubController->onContextMenuRequest(node, mouseX, mouseY, view->getPrototype());
+	prototypePhysicsSubController->onContextMenuRequest(node, mouseX, mouseY, view->getPrototype());
 }
 
-void TriggerEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void TriggerEditorTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
+	int left, top;
+	view->getEditorView()->getViewPortUnscaledOffset(left, top);
+	popUps->getTooltipScreenController()->show(left + mouseX, top + mouseY, node->getToolTip());
+}
+
+void TriggerEditorTabController::onTooltipCloseRequest() {
+	popUps->getTooltipScreenController()->close();
+}
+
+void TriggerEditorTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
-	basePropertiesSubController->onActionPerformed(type, node, view->getPrototype());
-	prototypePhysicsSubController->onActionPerformed(type, node, view->getPrototype());
-	prototypeScriptSubController->onActionPerformed(type, node, view->getPrototype());
+	basePropertiesSubController->onAction(type, node, view->getPrototype());
+	prototypePhysicsSubController->onAction(type, node, view->getPrototype());
+	prototypeScriptSubController->onAction(type, node, view->getPrototype());
 }
 
 void TriggerEditorTabController::setOutlinerContent() {
@@ -221,7 +235,7 @@ void TriggerEditorTabController::updateInfoText(const MutableString& text) {
 	required_dynamic_cast<GUITextNode*>(screenNode->getNodeById(view->getTabId() + "_tab_text_info"))->setText(text);
 }
 
-void TriggerEditorTabController::showErrorPopUp(const string& caption, const string& message)
+void TriggerEditorTabController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }

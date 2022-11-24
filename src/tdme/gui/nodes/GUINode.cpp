@@ -97,7 +97,8 @@ GUINode::GUINode(
 	const GUINode_Border& border,
 	const GUINode_Padding& padding,
 	const GUINodeConditions& showOn,
-	const GUINodeConditions& hideOn)
+	const GUINodeConditions& hideOn,
+	const string& tooltip)
 {
 	this->screenNode = screenNode;
 	this->parentNode = parentNode;
@@ -120,6 +121,7 @@ GUINode::GUINode(
 	this->padding = padding;
 	this->showOn = showOn;
 	this->hideOn = hideOn;
+	this->tooltip = tooltip;
 	this->controller = nullptr;
 	this->guiEffectOffsetX = 0;
 	this->guiEffectOffsetY = 0;
@@ -1057,15 +1059,19 @@ GUIParentNode* GUINode::getParentControllerNode()
 	return node;
 }
 
-void GUINode::determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds)
+void GUINode::determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds, int flags)
 {
 	if (conditionsMet == false)
 		return;
 
 	// node belongs to event?
 	if (isEventBelongingToNode(event) == true) {
-		// yep insert
-		if (floatingNode == true || flow == GUINode_Flow::FLOATING) eventFloatingNodeIds.insert(id); else eventNodeIds.insert(id);
+		if ((flags & DETERMINEMOUSEEVENTNODES_FLAG_TOOLTIP) == DETERMINEMOUSEEVENTNODES_FLAG_TOOLTIP && tooltip.empty() == true) {
+			// no op
+		} else {
+			// yep insert
+			if (floatingNode == true || flow == GUINode_Flow::FLOATING) eventFloatingNodeIds.insert(id); else eventNodeIds.insert(id);
+		}
 	}
 }
 

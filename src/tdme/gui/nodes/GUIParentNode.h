@@ -85,6 +85,7 @@ protected:
 	 * @param padding padding
 	 * @param showOn show on
 	 * @param hideOn hide on
+	 * @param tooltip tooltip
 	 * @throws tdme::gui::GUIParserException
 	 */
 	GUIParentNode(
@@ -104,7 +105,8 @@ protected:
 		const GUINode_Border& border,
 		const GUINode_Padding& padding,
 		const GUINodeConditions& showOn,
-		const GUINodeConditions& hideOn
+		const GUINodeConditions& hideOn,
+		const string& tooltip
 	);
 
 	/**
@@ -231,7 +233,7 @@ public:
 	void dispose() override;
 	void setConditionsMet() override;
 	void render(GUIRenderer* guiRenderer) override;
-	void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds) override;
+	void determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds, int flags = DETERMINEMOUSEEVENTNODES_FLAG_NONE) override;
 
 	/**
 	 * Invalidate render caches

@@ -83,7 +83,7 @@ void GUIMoveableController::handleMouseEvent(GUINode* node, GUIMouseEvent* event
 		this->node->getComputedConstraints().left+= movedX;
 		this->node->getComputedConstraints().top+= movedY;
 		//
-		node->getScreenNode()->delegateMove(this->node);
+		node->getScreenNode()->forwardMove(this->node);
 		//
 		node->getScreenNode()->invalidateLayout(this->node);
 		//

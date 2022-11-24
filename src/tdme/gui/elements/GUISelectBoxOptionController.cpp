@@ -212,9 +212,9 @@ void GUISelectBoxOptionController::handleMouseEvent(GUINode* node, GUIMouseEvent
 			node->getScreenNode()->getGUI()->setFoccussedNode(required_dynamic_cast<GUIElementNode*>(selectBoxNode));
 			node->scrollToNodeX(selectBoxNode);
 			node->scrollToNodeY(selectBoxNode);
-			node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(selectBoxNode));
+			node->getScreenNode()->forwardChange(required_dynamic_cast<GUIElementNode*>(selectBoxNode));
 			if (event->getButton() == MOUSE_BUTTON_RIGHT) {
-				node->getScreenNode()->delegateContextMenuRequest(required_dynamic_cast<GUIElementNode*>(selectBoxNode), event->getXUnscaled(), event->getYUnscaled());
+				node->getScreenNode()->forwardContextMenuRequest(required_dynamic_cast<GUIElementNode*>(selectBoxNode), event->getXUnscaled(), event->getYUnscaled());
 			}
 		}
 	}

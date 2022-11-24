@@ -12,11 +12,15 @@
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
+#include <tdme/tools/editor/controllers/TooltipScreenController.h>
+#include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/MutableString.h>
 
 using std::string;
+
+using tdme::tools::editor::controllers::ProgressBarScreenController;
 
 using tdme::application::Application;
 using tdme::engine::Engine;
@@ -28,12 +32,13 @@ using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUI;
 using tdme::gui::GUIParser;
-using tdme::tools::editor::controllers::ProgressBarScreenController;
+using tdme::tools::editor::controllers::TooltipScreenController;
+using tdme::tools::editor::misc::PopUps;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
 
-ProgressBarScreenController::ProgressBarScreenController()
+ProgressBarScreenController::ProgressBarScreenController(PopUps* popUps): popUps(popUps)
 {
 }
 
@@ -49,6 +54,7 @@ void ProgressBarScreenController::initialize()
 {
 	try {
 		screenNode = GUIParser::parse("resources/engine/gui", "popup_progressbar.xml");
+		screenNode->addTooltipRequestListener(this);
 		screenNode->setVisible(false);
 		progressBarNode = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("progressbar"));
 		progressBarParent = dynamic_cast<GUIElementNode*>(screenNode->getNodeById("progressbar_parent"));
@@ -91,4 +97,12 @@ void ProgressBarScreenController::progress2(float value) {
 void ProgressBarScreenController::close()
 {
 	screenNode->setVisible(false);
+}
+
+void ProgressBarScreenController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
+	popUps->getTooltipScreenController()->show(mouseX, mouseY, node->getToolTip());
+}
+
+void ProgressBarScreenController::onTooltipCloseRequest() {
+	popUps->getTooltipScreenController()->close();
 }

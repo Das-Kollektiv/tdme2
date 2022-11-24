@@ -100,6 +100,12 @@ public:
 	static string getCPUName();
 
 	/**
+	 * Set locale
+	 * @param locale locale
+	 */
+	static void setLocale(const string& locale);
+
+	/**
 	 * Public constructor
 	 */
 	Application();

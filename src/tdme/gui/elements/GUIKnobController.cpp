@@ -88,7 +88,7 @@ void GUIKnobController::handleMouseEvent(GUINode* node, GUIMouseEvent* event) {
 			1.0f
 		);
 		updateKnob();
-		node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(this->node));
+		node->getScreenNode()->forwardChange(required_dynamic_cast<GUIElementNode*>(this->node));
 		mouseLastX = event->getX();
 		event->setProcessed(true);
 	}
@@ -102,7 +102,7 @@ void GUIKnobController::handleKeyboardEvent(GUIKeyboardEvent* event) {
 				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 					this->valueFloat = Math::clamp(valueFloat - 0.1f, 0.0f, 1.0f);
 					updateKnob();
-					node->getScreenNode()->delegateValueChanged(required_dynamic_cast< GUIElementNode* >(this->node));
+					node->getScreenNode()->forwardChange(required_dynamic_cast< GUIElementNode* >(this->node));
 				}
 			}
 			break;
@@ -111,7 +111,7 @@ void GUIKnobController::handleKeyboardEvent(GUIKeyboardEvent* event) {
 				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 					this->valueFloat = Math::clamp(valueFloat + 0.1f, 0.0f, 1.0f);
 					updateKnob();
-					node->getScreenNode()->delegateValueChanged(required_dynamic_cast< GUIElementNode* >(this->node));
+					node->getScreenNode()->forwardChange(required_dynamic_cast< GUIElementNode* >(this->node));
 				}
 			}
 			break;

@@ -80,7 +80,11 @@ private:
 	vector<GUIScreenNode*> renderScreens;
 	int width;
 	int height;
-	int mouseButtonLast;
+	int lastMouseButton;
+	int64_t lastEventTime { -1LL };
+	bool tooltipShown { false };
+	GUIMouseEvent lastMouseEvent;
+
 	unordered_map<string, unordered_set<string>> mouseOutCandidateEventNodeIds;
 	unordered_map<string, unordered_set<string>> mouseOutClickCandidateEventNodeIds;
 	unordered_map<string, unordered_set<string>> mousePressedEventNodeIds;
@@ -135,6 +139,7 @@ private:
 	void applyRenderScreensChange();
 
 public:
+	static constexpr int64_t TOOLTIP_TIME { 250LL };
 
 	/**
 	 * @return is focus control by TAB key disabled

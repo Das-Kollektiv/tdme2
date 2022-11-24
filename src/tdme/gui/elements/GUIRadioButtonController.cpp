@@ -113,7 +113,7 @@ void GUIRadioButtonController::handleMouseEvent(GUINode* node, GUIMouseEvent* ev
 		if (event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
 			select();
 			node->getScreenNode()->getGUI()->setFoccussedNode(required_dynamic_cast<GUIElementNode*>(node));
-			node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node));
+			node->getScreenNode()->forwardChange(required_dynamic_cast<GUIElementNode*>(node));
 		}
 	}
 }
@@ -127,7 +127,7 @@ void GUIRadioButtonController::handleKeyboardEvent(GUIKeyboardEvent* event)
 				event->setProcessed(true);
 				if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
 					select();
-					node->getScreenNode()->delegateValueChanged(required_dynamic_cast<GUIElementNode*>(node));
+					node->getScreenNode()->forwardChange(required_dynamic_cast<GUIElementNode*>(node));
 				}
 			}
 			break;

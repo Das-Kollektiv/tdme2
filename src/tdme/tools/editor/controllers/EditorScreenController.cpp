@@ -43,6 +43,7 @@
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
 #include <tdme/tools/editor/controllers/ProgressBarScreenController.h>
+#include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/fwd-tdme.h>
@@ -112,6 +113,7 @@ using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
 using tdme::tools::editor::controllers::ProgressBarScreenController;
+using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::TabController;
@@ -161,6 +163,7 @@ void EditorScreenController::initialize()
 		screenNode->addChangeListener(this);
 		screenNode->addFocusListener(this);
 		screenNode->addContextMenuRequestListener(this);
+		screenNode->addTooltipRequestListener(this);
 		projectPathsScrollArea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_projectpaths_scrollarea"));
 		projectPathFilesScrollArea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("selectbox_projectpathfiles_scrollarea"));
 		tabs = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("tabs"));
@@ -202,33 +205,32 @@ void EditorScreenController::onQuit()
 	TDMEEditor::getInstance()->quit();
 }
 
-void EditorScreenController::showErrorPopUp(const string& caption, const string& message)
+void EditorScreenController::showInfoPopUp(const string& caption, const string& message)
 {
 	view->getPopUps()->getInfoDialogScreenController()->show(caption, message);
 }
 
-void EditorScreenController::onValueChanged(GUIElementNode* node)
+void EditorScreenController::onChange(GUIElementNode* node)
 {
 	if (node->getId() == "projectpathfiles_search") {
 		fileNameSearchTerm = node->getController()->getValue().getString();
 		timeFileNameSearchTerm = Time::getCurrentMillis();
 	} else
 	if (node->getId() == "selectbox_projectpaths") {
-		fileNameSearchTerm.clear();
-		timeFileNameSearchTerm = -1LL;
 		stopScanFiles();
+		resetScanFiles();
 		relativeProjectPath = node->getController()->getValue().getString();
 		startScanFiles();
 	} else
 	if (node->getId() == "dropdown_projectlibrary_add") {
 		onAddFile(node->getController()->getValue().getString());
 	}
-	// forward onValueChanged to active tab tab controller
+	// forward onChange to active tab tab controller
 	auto selectedTab = getSelectedTab();
-	if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onValueChanged(node);
+	if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onChange(node);
 }
 
-void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void EditorScreenController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId() == "menu_file_open") {
@@ -292,7 +294,7 @@ void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIEl
 				auto& tab = tabsIt.second;
 				if (StringTools::startsWith(node->getId(), tab.getId() + "_close") == true) {
 					tabIdToClose = tab.getId();
-					Console::println("EditorScreenController::onActionPerformed(): close tab: " + tab.getId());
+					Console::println("EditorScreenController::onAction(): close tab: " + tab.getId());
 				}
 			}
 			if (tabIdToClose.empty() == false) {
@@ -328,9 +330,9 @@ void EditorScreenController::onActionPerformed(GUIActionListenerType type, GUIEl
 			TDMEEditor::getInstance()->quit();
 		}
 	}
-	// forward onActionPerformed to active tab tab controller
+	// forward onAction to active tab tab controller
 	auto selectedTab = getSelectedTab();
-	if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onActionPerformed(type, node);
+	if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onAction(type, node);
 }
 
 void EditorScreenController::onFocus(GUIElementNode* node) {
@@ -345,7 +347,7 @@ void EditorScreenController::onUnfocus(GUIElementNode* node) {
 	if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onUnfocus(node);
 }
 
-void EditorScreenController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
+void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
 	if (StringTools::startsWith(node->getId(), "projectpathfiles_file_") == true) {
 		auto absoluteFileName = required_dynamic_cast<GUIElementNode*>(node)->getValue();
 		auto selectedTab = getSelectedTab();
@@ -375,7 +377,7 @@ void EditorScreenController::onContextMenuRequested(GUIElementNode* node, int mo
 								sceneEditorTabView->addPrototype(prototype);
 							} catch (Exception& exception) {
 								Console::println(string("OnAddToSceneAction::performAction(): An error occurred: ") + exception.what());;
-								editorScreenController->showErrorPopUp("Warning", (string(exception.what())));
+								editorScreenController->showInfoPopUp("Warning", (string(exception.what())));
 							}
 						}
 						OnAddToSceneAction(EditorScreenController* editorScreenController, const string& absoluteFileName): editorScreenController(editorScreenController), absoluteFileName(absoluteFileName) {
@@ -399,9 +401,18 @@ void EditorScreenController::onContextMenuRequested(GUIElementNode* node, int mo
 			default: break;
 		}
 	}
-	// forward onContextMenuRequested to active tab tab controller
+	// forward onContextMenuRequest to active tab tab controller
 	auto selectedTab = getSelectedTab();
-	if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onContextMenuRequested(node, mouseX, mouseY);
+	if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onContextMenuRequest(node, mouseX, mouseY);
+}
+
+void EditorScreenController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
+	//
+	view->getPopUps()->getTooltipScreenController()->show(mouseX, mouseY, node->getToolTip());
+}
+
+void EditorScreenController::onTooltipCloseRequest() {
+	view->getPopUps()->getTooltipScreenController()->close();
 }
 
 void EditorScreenController::openProject(const string& path) {
@@ -545,6 +556,7 @@ void EditorScreenController::closeTabs() {
 
 void EditorScreenController::closeProject() {
 	stopScanFiles();
+	resetScanFiles();
 	view->getPopUps()->getFileDialogScreenController()->setDefaultCWD(string());
 	closeTabs();
 	clearProjectPathFiles();
@@ -575,15 +587,21 @@ void EditorScreenController::startScanFiles() {
 }
 
 void EditorScreenController::addPendingFileEntities() {
+	string scrollToNodeId;
 	string xml;
 	xml+= "<layout alignment=\"horizontal\">\n";
 	for (auto pendingFileEntity: pendingFileEntities) {
 		xml+= pendingFileEntity->buttonXML;
+		if (pendingFileEntity->scrollTo == true) scrollToNodeId = pendingFileEntity->id;
 	}
 	xml+= "</layout>\n";
 	//
 	try {
 		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(projectPathFilesScrollArea->getId()))->addSubNodes(xml, false);
+		if (scrollToNodeId.empty() == false) {
+			required_dynamic_cast<GUINode*>(screenNode->getNodeById(scrollToNodeId))->scrollToNodeX();
+			required_dynamic_cast<GUINode*>(screenNode->getNodeById(scrollToNodeId))->scrollToNodeY();
+		}
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::addPendingFileEntities(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -626,6 +644,24 @@ void EditorScreenController::stopScanFiles() {
 		delete scanFilesThread;
 		scanFilesThread = nullptr;
 	}
+}
+
+void EditorScreenController::resetScanFiles() {
+	Console::println("EditorScreenController::resetScanFiles()");
+	fileNameSearchTerm.clear();
+	browseToFileName.clear();
+	timeFileNameSearchTerm = -1LL;
+}
+
+void EditorScreenController::browseTo(const string& fileName) {
+	Console::println("EditorScreenController::browseTo(): " + fileName);
+	stopScanFiles();
+	auto newRelativeProjectPath = Tools::getPathName(fileName);
+	if (StringTools::startsWith(newRelativeProjectPath, projectPath) == true) newRelativeProjectPath = StringTools::substring(newRelativeProjectPath, projectPath.size() + 1);
+	browseToFileName = projectPath + "/" + newRelativeProjectPath + "/" + Tools::getFileName(fileName);
+	Console::println("EditorScreenController::browseTo(): relative project path: " + newRelativeProjectPath + ", filename = " + browseToFileName);
+	setRelativeProjectPath(newRelativeProjectPath);
+	startScanFiles();
 }
 
 void EditorScreenController::ScanFilesThread::run() {
@@ -734,7 +770,7 @@ void EditorScreenController::ScanFilesThread::run() {
 
 			//
 			auto fileEntity = new FileEntity();
-			fileEntity->id = "projectpathfiles_file_" + GUIParser::escapeQuotes(Tools::getFileName(fileName));
+			fileEntity->id = "projectpathfiles_file_" + GUIParser::escapeQuotes(StringTools::replace(Tools::getFileName(fileName), '.', '_'));
 			fileEntity->buttonXML =
 				string() +
 				"<button " +
@@ -764,7 +800,15 @@ void EditorScreenController::ScanFilesThread::run() {
 
 			//
 			auto fileEntity = new FileEntity();
-			fileEntity->id = "projectpathfiles_file_" + GUIParser::escapeQuotes(Tools::getFileName(fileName));
+			fileEntity->id = "projectpathfiles_file_" + GUIParser::escapeQuotes(StringTools::replace(Tools::getFileName(fileName), '.', '_'));
+
+			//
+			string buttonOnInitialize;
+			if (editorScreenController->browseToFileName.empty() == false && editorScreenController->browseToFileName == absolutePath) {
+				fileEntity->scrollTo = true;
+				buttonOnInitialize = "on-initialize=\"" + fileEntity->id + ".condition+=selected\" ";
+			}
+
 			fileEntity->buttonXML =
 				string() +
 				"<button " +
@@ -775,6 +819,7 @@ void EditorScreenController::ScanFilesThread::run() {
 				"icon=\"" + GUIParser::escapeQuotes(icon) + "\" " +
 				"icon-big=\"" + GUIParser::escapeQuotes(iconBig) + "\" " +
 				"filename=\"" + GUIParser::escapeQuotes(fileName) + "\" " +
+				buttonOnInitialize +
 				"/>\n";
 			editorScreenController->lockFileEntities();
 			editorScreenController->getFileEntities().push_back(fileEntity);
@@ -837,7 +882,15 @@ void EditorScreenController::ScanFilesThread::run() {
 
 				//
 				auto fileEntity = new FileEntity();
-				fileEntity->id = "projectpathfiles_file_" + GUIParser::escapeQuotes(Tools::getFileName(fileName));
+				fileEntity->id = "projectpathfiles_file_" + GUIParser::escapeQuotes(StringTools::replace(Tools::getFileName(fileName), '.', '_'));
+
+				//
+				string buttonOnInitialize;
+				if (editorScreenController->browseToFileName.empty() == false && editorScreenController->browseToFileName == absolutePath) {
+					fileEntity->scrollTo = true;
+					buttonOnInitialize = "on-initialize=\"" + fileEntity->id + ".condition+=selected\" ";
+				}
+
 				fileEntity->buttonXML =
 					string() +
 					"<button " +
@@ -849,7 +902,9 @@ void EditorScreenController::ScanFilesThread::run() {
 					"icon-big=\"" + GUIParser::escapeQuotes(iconBig) + "\" " +
 					"filename=\"" + GUIParser::escapeQuotes(fileName) + "\" " +
 					"type-color=\"" + GUIParser::escapeQuotes(typeColor) + "\" " +
+					buttonOnInitialize +
 					"/>\n";
+
 				fileEntity->thumbnailTexture = thumbnailTexture;
 				editorScreenController->lockFileEntities();
 				editorScreenController->getFileEntities().push_back(fileEntity);
@@ -902,7 +957,7 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			FileSystem::getInstance()->setContentFromString(pathName, fileName, FileSystem::getInstance()->getContentAsString("resources/engine/templates/tscript", "template.tscript"));
 			openFile(pathName + "/" + fileName);
 		} catch (Exception& exception) {
-			showErrorPopUp("Error", string() + "An error occurred: file type: " + type + ": " + exception.what());
+			showInfoPopUp("Error", string() + "An error occurred: file type: " + type + ": " + exception.what());
 		}
 	} else {
 		Prototype* prototype = nullptr;
@@ -1029,7 +1084,7 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			} catch (Exception& exception) {
 				Console::print(string("EditorScreenController::addFile(): An error occurred: "));
 				Console::println(string(exception.what()));
-				showErrorPopUp("Error", string() + "An error occurred: " + exception.what());
+				showInfoPopUp("Error", string() + "An error occurred: " + exception.what());
 			}
 		} else
 		if (scene != nullptr) {
@@ -1039,10 +1094,10 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			} catch (Exception& exception) {
 				Console::print(string("EditorScreenController::addFile(): An error occurred: "));
 				Console::println(string(exception.what()));
-				showErrorPopUp("Error", string() + "An error occurred: " + exception.what());
+				showInfoPopUp("Error", string() + "An error occurred: " + exception.what());
 			}
 		} else {
-			showErrorPopUp("Error", string() + "Unknown file type: " + type);
+			showInfoPopUp("Error", string() + "Unknown file type: " + type);
 		}
 	}
 }
@@ -1177,15 +1232,14 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 	// should never happen but still ...
 	if (fileOpenThread != nullptr) {
 		Console::println("EditorScreenController::openFile(): " + absoluteFileName + ": file open thread is already busy with opening a file");
-		showErrorPopUp("Error", string() + "File open thread is already busy with opening a file");
+		showInfoPopUp("Error", string() + "File open thread is already busy with opening a file");
 		return;
 	}
 
 	// path
 	if (FileSystem::getInstance()->isPath(absoluteFileName)) {
-		fileNameSearchTerm.clear();
-		timeFileNameSearchTerm = -1LL;
 		stopScanFiles();
+		resetScanFiles();
 		setRelativeProjectPath(StringTools::substring(absoluteFileName, projectPath.size() + 1));
 		startScanFiles();
 		return;
@@ -1260,7 +1314,7 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 		}
 	}
 	if (fileType == FILETYPE_UNKNOWN) {
-		showErrorPopUp("Error", "File format not yet supported");
+		showInfoPopUp("Error", "File format not yet supported");
 		return;
 	}
 
@@ -1380,7 +1434,7 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::openFile(): An error occurred: "));
 		Console::println(string(exception.what()));
-		showErrorPopUp("Error", string() + "An error occurred: " + exception.what());
+		showInfoPopUp("Error", string() + "An error occurred: " + exception.what());
 	}
 }
 
@@ -1664,7 +1718,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::onOpenFileFinish(): An error occurred: "));
 		Console::println(string(exception.what()));
-		showErrorPopUp("Error", string() + "An error occurred: " + exception.what());
+		showInfoPopUp("Error", string() + "An error occurred: " + exception.what());
 	}
 
 	//
@@ -1790,8 +1844,8 @@ const string EditorScreenController::getSelectedTabId() {
 void EditorScreenController::tick() {
 	auto now = Time::getCurrentMillis();
 	if (timeFileNameSearchTerm != -1LL && now - timeFileNameSearchTerm >= 1000LL) {
-		startScanFiles();
 		timeFileNameSearchTerm = -1LL;
+		startScanFiles();
 	}
 	if (scanFilesThread != nullptr) {
 		lockFileEntities();
@@ -1805,9 +1859,9 @@ void EditorScreenController::tick() {
 			addPendingFileEntities();
 			if (scanFilesThread->isError() == true) {
 				if (scanFilesThread->getErrorMessage().empty() == true) {
-					showErrorPopUp("Error", string() + "An error occurred: Unknown error");
+					showInfoPopUp("Error", string() + "An error occurred: Unknown error");
 				} else {
-					showErrorPopUp("Error", string() + "An error occurred: " + scanFilesThread->getErrorMessage());
+					showInfoPopUp("Error", string() + "An error occurred: " + scanFilesThread->getErrorMessage());
 				}
 			}
 			delete scanFilesThread;
@@ -1820,9 +1874,9 @@ void EditorScreenController::tick() {
 			fileOpenThread->join();
 			if (fileOpenThread->isError() == true) {
 				if (fileOpenThread->getErrorMessage().empty() == true) {
-					showErrorPopUp("Error", string() + "An error occurred: Unknown error");
+					showInfoPopUp("Error", string() + "An error occurred: Unknown error");
 				} else {
-					showErrorPopUp("Error", string() + "An error occurred: " + fileOpenThread->getErrorMessage());
+					showInfoPopUp("Error", string() + "An error occurred: " + fileOpenThread->getErrorMessage());
 				}
 			} else {
 				onOpenFileFinish(

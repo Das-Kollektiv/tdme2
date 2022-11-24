@@ -9,6 +9,7 @@
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeConditions.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
@@ -18,6 +19,7 @@
 #include <tdme/math/Vector3.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
+#include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/TabController.h>
@@ -40,6 +42,7 @@ using tdme::engine::prototype::Prototype;
 using tdme::engine::Entity;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
@@ -48,6 +51,7 @@ using tdme::gui::GUIParser;
 using tdme::math::Vector3;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
+using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::TabController;
@@ -101,7 +105,7 @@ void EnvMapEditorTabController::executeCommand(TabControllerCommand command)
 						Tools::getFileName(fileName)
 					);
 				} catch (Exception& exception) {
-					showErrorPopUp("Warning", (string(exception.what())));
+					showInfoPopUp("Warning", (string(exception.what())));
 				}
 			}
 			break;
@@ -117,7 +121,7 @@ void EnvMapEditorTabController::executeCommand(TabControllerCommand command)
 								envMapEditorTabController->popUps->getFileDialogScreenController()->getFileName()
 							);
 						} catch (Exception& exception) {
-							envMapEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+							envMapEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 						}
 						envMapEditorTabController->popUps->getFileDialogScreenController()->close();
 					}
@@ -142,17 +146,17 @@ void EnvMapEditorTabController::executeCommand(TabControllerCommand command)
 			}
 			break;
 		default:
-			showErrorPopUp("Warning", "This command is not supported yet");
+			showInfoPopUp("Warning", "This command is not supported yet");
 			break;
 	}
 }
 
-void EnvMapEditorTabController::showErrorPopUp(const string& caption, const string& message)
+void EnvMapEditorTabController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
 
-void EnvMapEditorTabController::onValueChanged(GUIElementNode* node)
+void EnvMapEditorTabController::onChange(GUIElementNode* node)
 {
 	for (auto& applyNode: applyNodesRenderPasses) {
 		if (node->getId() == applyNode) {
@@ -174,10 +178,20 @@ void EnvMapEditorTabController::onFocus(GUIElementNode* node) {
 void EnvMapEditorTabController::onUnfocus(GUIElementNode* node) {
 }
 
-void EnvMapEditorTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
+void EnvMapEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
 }
 
-void EnvMapEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void EnvMapEditorTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
+	int left, top;
+	view->getEditorView()->getViewPortUnscaledOffset(left, top);
+	popUps->getTooltipScreenController()->show(left + mouseX, top + mouseY, node->getToolTip());
+}
+
+void EnvMapEditorTabController::onTooltipCloseRequest() {
+	popUps->getTooltipScreenController()->close();
+}
+
+void EnvMapEditorTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 }
 
@@ -233,7 +247,7 @@ void EnvMapEditorTabController::updateDetails(const string& outlinerNode) {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("location_translation_z"))->getController()->setValue(MutableString(environmentMapTranslation.getZ()));
 	} catch (Exception& exception) {
 		Console::println(string("EnvMapEditorTabController::updateDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -270,7 +284,7 @@ void EnvMapEditorTabController::applyRenderPasses() {
 		prototype->setEnvironmentMapRenderPassMask(renderPassMask);
 	} catch (Exception& exception) {
 		Console::println(string("EnvMapEditorTabController::applyRenderPasses(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -284,7 +298,7 @@ void EnvMapEditorTabController::applyLocation() {
 		view->setEnvironmentMapTranslation(environmentMapTranslation);
 	} catch (Exception& exception) {
 		Console::println(string("EnvMapEditorTabController::applyLocation(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 

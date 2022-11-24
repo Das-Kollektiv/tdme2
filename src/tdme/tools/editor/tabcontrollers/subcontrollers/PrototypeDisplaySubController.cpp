@@ -139,7 +139,7 @@ void PrototypeDisplaySubController::setDisplayDetails(Prototype* prototype) {
 
 	} catch (Exception& exception) {
 		Console::println(string("PrototypeDisplaySubController::setDisplayDetails(): An error occurred: ") + exception.what());
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 
 	//
@@ -158,7 +158,7 @@ void PrototypeDisplaySubController::applyDisplayDetails(Prototype* prototype) {
 		prototype->setRenderGroups(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("rendering_render_groups"))->getController()->getValue().getString() == "1");
 	} catch (Exception& exception) {
 		Console::println(string("PrototypeDisplaySubController::applyDisplayDetails(): An error occurred: ") + exception.what());
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 	setDisplayShaderDetails(prototype);
 }
@@ -220,7 +220,7 @@ void PrototypeDisplaySubController::setDisplayShaderDetails(Prototype* prototype
 		required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("rendering_shader_details"))->replaceSubNodes(xml, false);
 	} catch (Exception& exception) {
 		Console::println(string("PrototypeDisplaySubController::setDisplayShaderDetails(): An error occurred: ") + exception.what());
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -293,11 +293,11 @@ void PrototypeDisplaySubController::applyDisplayShaderDetails(Prototype* prototy
 		}
 	} catch (Exception& exception) {
 		Console::println(string("PrototypeDisplaySubController::applyDisplayShaderDetails(): An error occurred: ") + exception.what());
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
-void PrototypeDisplaySubController::onValueChanged(GUIElementNode* node, Prototype* prototype) {
+void PrototypeDisplaySubController::onChange(GUIElementNode* node, Prototype* prototype) {
 	for (auto& applyDisplayNode: applyDisplayNodes) {
 		if (node->getId() == applyDisplayNode) {
 			applyDisplayDetails(prototype);
@@ -319,7 +319,7 @@ void PrototypeDisplaySubController::onValueChanged(GUIElementNode* node, Prototy
 	if (node->getId() == tabView->getTabId() + "_tab_checkbox_grid") view->setDisplayGroundPlate(node->getController()->getValue().equals("1"));
 }
 
-void PrototypeDisplaySubController::showErrorPopUp(const string& caption, const string& message)
+void PrototypeDisplaySubController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }

@@ -16,6 +16,7 @@
 #include <tdme/gui/events/GUIInputEventHandler.h>
 #include <tdme/gui/events/GUIMouseOverListener.h>
 #include <tdme/gui/events/GUIMoveListener.h>
+#include <tdme/gui/events/GUITooltipRequestListener.h>
 #include <tdme/gui/nodes/GUIElementController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
@@ -90,10 +91,11 @@ GUIScreenNode::GUIScreenNode(
 	const GUIScreenNode_SizeConstraints& sizeConstraints,
 	const GUINodeConditions& showOn,
 	const GUINodeConditions& hideOn,
+	const string& tooltip,
 	bool scrollable,
 	bool popUp
 ):
-	GUIParentNode(this, nullptr, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
+	GUIParentNode(this, nullptr, id, flow, overflowX, overflowY, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn, tooltip)
 {
 	this->fileName = fileName;
 	this->applicationRootPathName = applicationRootPathName;
@@ -458,12 +460,12 @@ void GUIScreenNode::determineFocussedNodes(GUIParentNode* parentNode, vector<GUI
 	}
 }
 
-void GUIScreenNode::determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds)
+void GUIScreenNode::determineMouseEventNodes(GUIMouseEvent* event, bool floatingNode, unordered_set<string>& eventNodeIds, unordered_set<string>& eventFloatingNodeIds, int flags)
 {
 	for (auto i = 0; i < floatingNodes.size(); i++) {
-		floatingNodes[i]->determineMouseEventNodes(event, floatingNode == true || flow == GUINode_Flow::FLOATING, eventNodeIds, eventFloatingNodeIds);
+		floatingNodes[i]->determineMouseEventNodes(event, floatingNode == true || flow == GUINode_Flow::FLOATING, eventNodeIds, eventFloatingNodeIds, flags);
 	}
-	GUIParentNode::determineMouseEventNodes(event, floatingNode, eventNodeIds, eventFloatingNodeIds);
+	GUIParentNode::determineMouseEventNodes(event, floatingNode, eventNodeIds, eventFloatingNodeIds, flags);
 }
 
 void GUIScreenNode::addActionListener(GUIActionListener* listener)
@@ -487,10 +489,10 @@ void GUIScreenNode::setInputEventHandler(GUIInputEventHandler* inputEventHandler
 	this->inputEventHandler = inputEventHandler;
 }
 
-void GUIScreenNode::delegateActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void GUIScreenNode::forwardAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	for (auto i = 0; i < actionListener.size(); i++) {
-		actionListener[i]->onActionPerformed(type, node);
+		actionListener[i]->onAction(type, node);
 	}
 }
 
@@ -505,11 +507,11 @@ void GUIScreenNode::removeChangeListener(GUIChangeListener* listener)
 	changeListener.erase(std::remove(changeListener.begin(), changeListener.end(), listener), changeListener.end());
 }
 
-void GUIScreenNode::delegateValueChanged(GUIElementNode* node)
+void GUIScreenNode::forwardChange(GUIElementNode* node)
 {
 	node->executeOnChangeExpression();
 	for (auto i = 0; i < changeListener.size(); i++) {
-		changeListener[i]->onValueChanged(node);
+		changeListener[i]->onChange(node);
 	}
 }
 
@@ -524,7 +526,7 @@ void GUIScreenNode::removeMouseOverListener(GUIMouseOverListener* listener)
 	mouseOverListener.erase(std::remove(mouseOverListener.begin(), mouseOverListener.end(), listener), mouseOverListener.end());
 }
 
-void GUIScreenNode::delegateMouseOver(GUIElementNode* node)
+void GUIScreenNode::forwardMouseOver(GUIElementNode* node)
 {
 	for (auto i = 0; i < mouseOverListener.size(); i++) {
 		mouseOverListener[i]->onMouseOver(node);
@@ -540,9 +542,9 @@ void GUIScreenNode::removeContextMenuRequestListener(GUIContextMenuRequestListen
 	contextMenuRequestListener.erase(std::remove(contextMenuRequestListener.begin(), contextMenuRequestListener.end(), listener), contextMenuRequestListener.end());
 }
 
-void GUIScreenNode::delegateContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
+void GUIScreenNode::forwardContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
 	for (auto i = 0; i < contextMenuRequestListener.size(); i++) {
-		contextMenuRequestListener[i]->onContextMenuRequested(node, mouseX, mouseY);
+		contextMenuRequestListener[i]->onContextMenuRequest(node, mouseX, mouseY);
 	}
 }
 
@@ -557,13 +559,13 @@ void GUIScreenNode::removeFocusListener(GUIFocusListener* listener)
 	focusListener.erase(std::remove(focusListener.begin(), focusListener.end(), listener), focusListener.end());
 }
 
-void GUIScreenNode::delegateFocus(GUIElementNode* node) {
+void GUIScreenNode::forwardFocus(GUIElementNode* node) {
 	for (auto i = 0; i < focusListener.size(); i++) {
 		focusListener[i]->onFocus(node);
 	}
 }
 
-void GUIScreenNode::delegateUnfocus(GUIElementNode* node) {
+void GUIScreenNode::forwardUnfocus(GUIElementNode* node) {
 	for (auto i = 0; i < focusListener.size(); i++) {
 		focusListener[i]->onUnfocus(node);
 	}
@@ -578,9 +580,30 @@ void GUIScreenNode::removeMoveListener(GUIMoveListener* listener) {
 	moveListener.erase(std::remove(moveListener.begin(), moveListener.end(), listener), moveListener.end());
 }
 
-void GUIScreenNode::delegateMove(GUINode* node) {
+void GUIScreenNode::forwardMove(GUINode* node) {
 	for (auto i = 0; i < moveListener.size(); i++) {
-		moveListener[i]->onMoved(node);
+		moveListener[i]->onMove(node);
+	}
+}
+
+void GUIScreenNode::addTooltipRequestListener(GUITooltipRequestListener* listener) {
+	removeTooltipRequestListener(listener);
+	tooltipRequestListener.push_back(listener);
+}
+
+void GUIScreenNode::removeTooltipRequestListener(GUITooltipRequestListener* listener) {
+	tooltipRequestListener.erase(std::remove(tooltipRequestListener.begin(), tooltipRequestListener.end(), listener), tooltipRequestListener.end());
+}
+
+void GUIScreenNode::forwardTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
+	for (auto i = 0; i < tooltipRequestListener.size(); i++) {
+		tooltipRequestListener[i]->onTooltipShowRequest(node, mouseX, mouseY);
+	}
+}
+
+void GUIScreenNode::forwardTooltipCloseRequest() {
+	for (auto i = 0; i < tooltipRequestListener.size(); i++) {
+		tooltipRequestListener[i]->onTooltipCloseRequest();
 	}
 }
 

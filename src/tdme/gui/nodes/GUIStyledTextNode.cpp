@@ -76,13 +76,14 @@ GUIStyledTextNode::GUIStyledTextNode(
 	const GUINode_Padding& padding,
 	const GUINodeConditions& showOn,
 	const GUINodeConditions& hideOn,
+	const string& tooltip,
 	bool preformatted,
 	const string& font,
 	int size,
 	const string& color,
 	const MutableString& text
 ):
-	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn)
+	GUINode(screenNode, parentNode, id, flow, alignments, requestedConstraints, backgroundColor, backgroundImage, backgroundImageScale9Grid, backgroundImageEffectColorMul, backgroundImageEffectColorAdd, border, padding, showOn, hideOn, tooltip)
 {
 	this->font = font.empty() == true?nullptr:screenNode->getFont(screenNode->getApplicationRootPathName(), font, size);
 	this->size = size;

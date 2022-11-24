@@ -84,13 +84,6 @@ public:
 	void initialize(GUIScreenNode* screenNode);
 
 	/**
-	 * On sound clear
-	 * @param prototype prototype
-	 * @param soundId sound id
-	 */
-	void onSoundClear(Prototype* prototype, const string& soundId);
-
-	/**
 	 * On sound load
 	 * @param protoype prototype
 	 * @param soundId sound id
@@ -98,11 +91,25 @@ public:
 	void onSoundLoad(Prototype* prototype, const string& soundId);
 
 	/**
-	 * Shows the error pop up
+	 * On sound clear
+	 * @param prototype prototype
+	 * @param soundId sound id
+	 */
+	void onSoundClear(Prototype* prototype, const string& soundId);
+
+	/**
+	 * On sound browse to
+	 * @param prototype prototype
+	 * @param soundId sound id
+	 */
+	void onSoundBrowseTo(Prototype* prototype, const string& soundId);
+
+	/**
+	 * Show the information pop up / modal
 	 * @param caption caption
 	 * @param message message
 	 */
-	void showErrorPopUp(const string& caption, const string& message);
+	void showInfoPopUp(const string& caption, const string& message);
 
 	/**
 	 * Create sounds XML for outliner
@@ -159,7 +166,7 @@ public:
 	 * @param prototype prototype
 	 * @param model model
 	 */
-	void onValueChanged(GUIElementNode* node, Prototype* prototype, Model* model);
+	void onChange(GUIElementNode* node, Prototype* prototype, Model* model);
 
 	/**
 	 * On focus
@@ -181,7 +188,7 @@ public:
 	 * @param node node
 	 * @param prototype prototype
 	 */
-	void onActionPerformed(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype);
+	void onAction(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype);
 
 	/**
 	 * On context menu requested
@@ -190,6 +197,6 @@ public:
 	 * @param mouseY unscaled mouse Y position
 	 * @param prototype prototype
 	 */
-	void onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY, Prototype* prototype);
+	void onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY, Prototype* prototype);
 
 };

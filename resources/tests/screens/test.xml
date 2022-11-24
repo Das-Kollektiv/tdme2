@@ -160,7 +160,7 @@
 							<image hide-on="mouseover,click" src="resources/tests/screens/images/button_normal.png" horizontal-align="center" vertical-align="center" />
 							<image show-on="mouseover" src="resources/tests/screens/images/button_mouseover.png" horizontal-align="center" vertical-align="center" />
 							<image show-on="click" src="resources/tests/screens/images/button_click.png" horizontal-align="center" vertical-align="center" />
-							<text font="resources/engine/fonts/Roboto_20.fnt" text="ImageBtn!" color="{$color.font_highlight}" horizontal-align="center" vertical-align="center" />
+							<text font="{$font.default}" size="{$fontsize.default}" text="ImageBtn!" color="{$color.font_highlight}" horizontal-align="center" vertical-align="center" />
 						</element>
 						<space height="*" />
 						<image-button
@@ -203,22 +203,23 @@
 								<dropdown-option text="Option H" value="8" on-mouse-click="dropdownvaluetext.condition=h" />
 							</dropdown>
 							<space height="20" />
-							<text font="resources/engine/fonts/Roboto_20.fnt" text="Lorem ipsum dolor sit amet," color="#000000" />
-							<text font="resources/engine/fonts/Roboto_20.fnt" text="consetetur sadipscing elitr," color="#000000" />
-							<text font="resources/engine/fonts/Roboto_20.fnt" text="sed diam nonumy eirmod tempor invidunt " color="#000000" />
-							<text font="resources/engine/fonts/Roboto_20.fnt" text="ut labore et dolore magna aliquyam erat" color="#000000" />
-							<text font="resources/engine/fonts/Roboto_20.fnt" text="sed diam voluptua." color="#000000" />
-							<text font="resources/engine/fonts/Roboto_20.fnt" text="sed diam voluptua." color="#000000" />
+							<text font="{$font.default}" size="{$fontsize.default}" text="Lorem ipsum dolor sit amet," color="#000000" />
+							<text font="{$font.default}" size="{$fontsize.default}" text="consetetur sadipscing elitr," color="#000000" />
+							<text font="{$font.default}" size="{$fontsize.default}" text="sed diam nonumy eirmod tempor invidunt " color="#000000" />
+							<text font="{$font.default}" size="{$fontsize.default}" text="ut labore et dolore magna aliquyam erat" color="#000000" />
+							<text font="{$font.default}" size="{$fontsize.default}" text="sed diam voluptua." color="#000000" />
+							<text font="{$font.default}" size="{$fontsize.default}" text="sed diam voluptua." color="#000000" />
+							<text font="{$font.default}" size="{$fontsize.default}" text="Show me the fucking ToolTip." color="#000000" tooltip="Hi. I am a mighty tooltip." />
 							<space height="20" />
 							<element id="dropdownvaluetext" on-initialize="dropdownvaluetext.condition=a">
-								<text show-on="a" font="resources/engine/fonts/Roboto_20.fnt" text="You have selected A" color="#FF0000" />
-								<text show-on="b" font="resources/engine/fonts/Roboto_20.fnt" text="You have selected B" color="#FF0000" />
-								<text show-on="c" font="resources/engine/fonts/Roboto_20.fnt" text="You have selected C" color="#FF0000" />
-								<text show-on="d" font="resources/engine/fonts/Roboto_20.fnt" text="You have selected D" color="#FF0000" />
-								<text show-on="e" font="resources/engine/fonts/Roboto_20.fnt" text="You have selected E" color="#FF0000" />
-								<text show-on="f" font="resources/engine/fonts/Roboto_20.fnt" text="You have selected F" color="#FF0000" />
-								<text show-on="g" font="resources/engine/fonts/Roboto_20.fnt" text="You have selected G" color="#FF0000" />
-								<text show-on="h" font="resources/engine/fonts/Roboto_20.fnt" text="You have selected H" color="#FF0000" />
+								<text show-on="a" font="{$font.default}" size="{$fontsize.default}" text="You have selected A" color="#FF0000" />
+								<text show-on="b" font="{$font.default}" size="{$fontsize.default}" text="You have selected B" color="#FF0000" />
+								<text show-on="c" font="{$font.default}" size="{$fontsize.default}" text="You have selected C" color="#FF0000" />
+								<text show-on="d" font="{$font.default}" size="{$fontsize.default}" text="You have selected D" color="#FF0000" />
+								<text show-on="e" font="{$font.default}" size="{$fontsize.default}" text="You have selected E" color="#FF0000" />
+								<text show-on="f" font="{$font.default}" size="{$fontsize.default}" text="You have selected F" color="#FF0000" />
+								<text show-on="g" font="{$font.default}" size="{$fontsize.default}" text="You have selected G" color="#FF0000" />
+								<text show-on="h" font="{$font.default}" size="{$fontsize.default}" text="You have selected H" color="#FF0000" />
 							</element>
 							<space height="20" />
 							<selector-horizontal>
@@ -236,7 +237,7 @@
 				</tab-content>
 				<tab-content tab-id="tab6" horizontal-align="center" vertical-align="center">
 					<scrollarea width="80%" height="80%" padding="5" border="1">
-						<styled-text font="{$font.default}" color="{$color.font_normal}" width="100%" height="auto" horizontal-align="left" preformatted="true">
+						<styled-text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_normal}" width="100%" height="auto" horizontal-align="left" preformatted="true">
 							<![CDATA[
 [url=https://github.com/andreasdr/tdme2.git][image]resources/github/tdme2-logo.png[/image][/url]
 
@@ -2600,7 +2601,7 @@ in this repository.
 						<template src="resources/tests/screens/template.xml" my-text="Hello this is the first template parameter" />
 						<space height="10" />
 						<template src="resources/tests/screens/template.xml" my-text="Hello this is the second template parameter">
-							<text font="resources/engine/fonts/Roboto_20.fnt" text="In this case I have something additional to tell!" color="#000000" />
+							<text font="{$font.default}" size="{$fontsize.default}" text="In this case I have something additional to tell!" color="#000000" />
 						</template>
 					</layout>
 				</tab-content>
@@ -2609,30 +2610,30 @@ in this repository.
 						<space height="*" />
 						<layout horizontal-align="center" vertical-align="center" alignment="horizontal">
 							<element id="000" border="2" focusable="true" on-mouse-click="tab10-element.condition=a">
-								<text font="resources/engine/fonts/Roboto_20.fnt" text="Click-A" color="#000000" />
+								<text font="{$font.default}" size="{$fontsize.default}" text="Click-A" color="#000000" />
 							</element>
 							<space width="20" />
 							<element id="111" border="2" focusable="true" on-mouse-click="tab10-element.condition=b">
-								<text font="resources/engine/fonts/Roboto_20.fnt" text="Click-B" color="#000000" />
+								<text font="{$font.default}" size="{$fontsize.default}" text="Click-B" color="#000000" />
 							</element>
 							<space width="20" />
 							<element id="222" border="2" focusable="true" on-mouse-over="tab10-element.condition=c" on-mouse-out="tab10-element.condition=">
-								<text font="resources/engine/fonts/Roboto_20.fnt" text="Over-C" color="#000000" />
+								<text font="{$font.default}" size="{$fontsize.default}" text="Over-C" color="#000000" />
 							</element>
 							<space width="20" />
 							<element id="333" border="2" focusable="true" on-mouse-click="tab10-element.condition=">
-								<text font="resources/engine/fonts/Roboto_20.fnt" text="Hide" color="#000000" />
+								<text font="{$font.default}" size="{$fontsize.default}" text="Hide" color="#000000" />
 							</element>
 						</layout>
 						<space height="10" />
 						<element on-initialize="tab10-element.condition=a" id="tab10-element" horizontal-align="center" vertical-align="center" alignment="horizontal">
-							<text show-on="a" font="resources/engine/fonts/Roboto_20.fnt" text="A" color="#000000" />
-							<text show-on="b" font="resources/engine/fonts/Roboto_20.fnt" text="B" color="#000000" />
-							<text show-on="c" font="resources/engine/fonts/Roboto_20.fnt" text="C" color="#000000" />
+							<text show-on="a" font="{$font.default}" size="{$fontsize.default}" text="A" color="#000000" />
+							<text show-on="b" font="{$font.default}" size="{$fontsize.default}" text="B" color="#000000" />
+							<text show-on="c" font="{$font.default}" size="{$fontsize.default}" text="C" color="#000000" />
 						</element>
 						<space height="*" />
-						<text show-on="empty('x', 'y', 'z')" font="resources/engine/fonts/Roboto_20.fnt" text="show-on,hide-on functions: This should not be visible as empty function should return false on 'x', 'y', 'z'" color="#000000" />
-						<text show-on="empty('x', 'y', 'z', '')" font="resources/engine/fonts/Roboto_20.fnt" text="show-on,hide-on functions: This should be visible as empty function should return true on 'x', 'y', 'z', ''" color="#000000" />
+						<text show-on="empty('x', 'y', 'z')" font="{$font.default}" size="{$fontsize.default}" text="show-on,hide-on functions: This should not be visible as empty function should return false on 'x', 'y', 'z'" color="#000000" />
+						<text show-on="empty('x', 'y', 'z', '')" font="{$font.default}" size="{$fontsize.default}" text="show-on,hide-on functions: This should be visible as empty function should return true on 'x', 'y', 'z', ''" color="#000000" />
 						<space height="*" />
 					</layout>
 				</tab-content>
@@ -2640,35 +2641,35 @@ in this repository.
 					<table width="auto" height="auto" background-color="white">
 						<table-row>
 							<table-cell border="1" border-color="red">
-								<text font="resources/engine/fonts/Roboto_20.fnt" text="aaa" color="#000000"/>
+								<text font="{$font.default}" size="{$fontsize.default}" text="aaa" color="#000000"/>
 							</table-cell>
 							<table-cell border="1" border-color="green">
-								<text font="resources/engine/fonts/Roboto_20.fnt" text="b" color="#000000" />
+								<text font="{$font.default}" size="{$fontsize.default}" text="b" color="#000000" />
 							</table-cell>
 							<table-cell border="1" border-color="blue">
-								<text font="resources/engine/fonts/Roboto_20.fnt" text="cc" color="#000000" />
+								<text font="{$font.default}" size="{$fontsize.default}" text="cc" color="#000000" />
 							</table-cell>
 						</table-row>
 						<table-row>
 							<table-cell border="1" border-color="red">
-								<text font="resources/engine/fonts/Roboto_20.fnt" text="a" color="#000000" />
+								<text font="{$font.default}" size="{$fontsize.default}" text="a" color="#000000" />
 							</table-cell>
 							<table-cell border="1" border-color="green">
-								<text font="resources/engine/fonts/Roboto_20.fnt" text="bb" color="#000000" />
+								<text font="{$font.default}" size="{$fontsize.default}" text="bb" color="#000000" />
 							</table-cell>
 							<table-cell border="1" border-color="blue">
-								<text font="resources/engine/fonts/Roboto_20.fnt" text="ccc" color="#000000" />
+								<text font="{$font.default}" size="{$fontsize.default}" text="ccc" color="#000000" />
 							</table-cell>
 						</table-row>
 						<table-row>
 							<table-cell border="1" border-color="red">
-								<text font="resources/engine/fonts/Roboto_20.fnt" text="ab" color="#000000" />
+								<text font="{$font.default}" size="{$fontsize.default}" text="ab" color="#000000" />
 							</table-cell>
 							<table-cell border="1" border-color="green">
-								<text font="resources/engine/fonts/Roboto_20.fnt" text="bbb" color="#000000" />
+								<text font="{$font.default}" size="{$fontsize.default}" text="bbb" color="#000000" />
 							</table-cell>
 							<table-cell border="1" border-color="blue">
-								<text font="resources/engine/fonts/Roboto_20.fnt" text="c" color="#000000" />
+								<text font="{$font.default}" size="{$fontsize.default}" text="c" color="#000000" />
 							</table-cell>
 						</table-row>
 					</table>

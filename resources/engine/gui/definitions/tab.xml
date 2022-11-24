@@ -1,4 +1,4 @@
-<element id="{$id}" width="auto" height="25" disabled="{$disabled}" on-initialize="{$id}.condition+={$closeable}; {$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" vertical-align="center" show-on="{$show-on}" hide-on="{$hide-on}">
+<element id="{$id}" width="auto" height="25" disabled="{$disabled}" on-initialize="{$id}.condition+={$closeable}; {$on-initialize}" on-mouse-over="{$on-mouse-over}" on-mouse-click="{$on-mouse-click}" on-mouse-doubleclick="{$on-mouse-doubleclick}" on-mouse-out="{$on-mouse-out}" vertical-align="center" show-on="{$show-on}" hide-on="{$hide-on}" tooltip="{$tooltip}">
 	
 	<!-- normal -->
 	<layout 

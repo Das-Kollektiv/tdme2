@@ -258,6 +258,7 @@ GUIScreenNode* GUIParser::parse(const string& xml, const unordered_map<string, s
 		),
 		GUINode::createConditions(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("show-on")))),
 		GUINode::createConditions(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("hide-on")))),
+		unescapeQuotes(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("tooltip")))),
 		StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("scrollable")))), "true"),
 		StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(xmlRoot->Attribute("popup")))), "true")
 	);
@@ -444,6 +445,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
+					unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("tooltip")))),
 					GUILayoutNode::createAlignment(string(AVOID_NULLPTR_STRING(node->Attribute("alignment"))))
 				);
 				guiParentNode->addSubNode(guiPanelNode);
@@ -506,7 +508,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 						string(AVOID_NULLPTR_STRING(node->Attribute("padding-bottom")))
 					),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
-					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on"))))
+					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
+					unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("tooltip"))))
 				);
 				guiParentNode->addSubNode(guiLayerNode);
 				if (guiElement != nullptr && guiElementControllerInstalled == false) {
@@ -569,6 +572,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
+					unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("tooltip")))),
 					GUILayoutNode::createAlignment(string(AVOID_NULLPTR_STRING(node->Attribute("alignment"))))
 				);
 				guiParentNode->addSubNode(guiLayoutNode);
@@ -629,7 +633,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 						string(AVOID_NULLPTR_STRING(node->Attribute("padding-bottom")))
 					),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
-					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on"))))
+					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
+					unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("tooltip"))))
 				);
 				guiParentNode->addSubNode(guiSpaceNode);
 				if (guiElement != nullptr && guiElementControllerInstalled == false) {
@@ -692,6 +697,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
+					unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("tooltip")))),
 					unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("name")))),
 					unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("value")))),
 					StringTools::equalsIgnoreCase(StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("selected")))), "true"),
@@ -766,6 +772,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
+					unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("tooltip")))),
 					StringTools::trim(unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("src"))))),
 					GUIImageNode::createRequestedDimensionConstraints(
 						StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-scale")))),
@@ -852,6 +859,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
+					unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("tooltip")))),
 					nullptr,
 					GUIFrameBufferNode::createRequestedDimensionConstraints(
 						StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-scale")))),
@@ -937,6 +945,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
+					unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("tooltip")))),
 					nullptr,
 					GUITextureNode::createRequestedDimensionConstraints(
 						StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-scale")))),
@@ -1022,6 +1031,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
+					unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("tooltip")))),
 					StringTools::trim(unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("src"))))),
 					GUIImageNode::createRequestedDimensionConstraints(
 						StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("horizontal-scale")))),
@@ -1107,6 +1117,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
+					unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("tooltip")))),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("effect-color-mul"))), GUIColor::GUICOLOR_EFFECT_COLOR_MUL),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("effect-color-add"))), GUIColor::GUICOLOR_EFFECT_COLOR_ADD),
 					GUIGradientNode::createClipping(
@@ -1179,6 +1190,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
+					unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("tooltip")))),
 					StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("font")))),
 					parseInteger(StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("size")))), FONTSIZE_FALLBACK),
 					string(AVOID_NULLPTR_STRING(node->Attribute("color"))),
@@ -1243,6 +1255,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
+					unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("tooltip")))),
 					node->Attribute("preformatted") == nullptr?false:StringTools::toLowerCase(StringTools::trim(node->Attribute("preformatted"))) == "true",
 					StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("font")))),
 					parseInteger(StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("size")))), FONTSIZE_FALLBACK),
@@ -1307,7 +1320,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 						string(AVOID_NULLPTR_STRING(node->Attribute("padding-bottom")))
 					),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
-					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on"))))
+					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
+					unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("tooltip"))))
 				);
 				guiParentNode->addSubNode(guiTableNode);
 				if (guiElement != nullptr && guiElementControllerInstalled == false) {
@@ -1370,6 +1384,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
+					unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("tooltip")))),
 					GUILayoutNode::createAlignment(string(AVOID_NULLPTR_STRING(node->Attribute("alignment"))))
 				);
 				guiParentNode->addSubNode(guiTableCellNode);
@@ -1432,7 +1447,8 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 						string(AVOID_NULLPTR_STRING(node->Attribute("padding-bottom")))
 					),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
-					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on"))))
+					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
+					unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("tooltip"))))
 				);
 				guiParentNode->addSubNode(guiTableRowNode);
 				if (guiElement != nullptr && guiElementControllerInstalled == false) {
@@ -1493,6 +1509,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
+					unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("tooltip")))),
 					StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("font")))),
 					parseInteger(StringTools::trim(string(AVOID_NULLPTR_STRING(node->Attribute("size")))), FONTSIZE_FALLBACK),
 					string(AVOID_NULLPTR_STRING(node->Attribute("color"))),
@@ -1559,6 +1576,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
+					unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("tooltip")))),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("color-none"))), GUIColor::GUICOLOR_BLACK),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("color-mouseover"))), GUIColor::GUICOLOR_BLACK),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("color-dragging"))), GUIColor::GUICOLOR_BLACK)
@@ -1622,6 +1640,7 @@ void GUIParser::parseGUINode(GUIParentNode* guiParentNode, const string& parentE
 					),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("show-on")))),
 					GUINode::createConditions(string(AVOID_NULLPTR_STRING(node->Attribute("hide-on")))),
+					unescapeQuotes(string(AVOID_NULLPTR_STRING(node->Attribute("tooltip")))),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("color-none"))), GUIColor::GUICOLOR_BLACK),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("color-mouseover"))), GUIColor::GUICOLOR_BLACK),
 					GUINode::getRequestedColor(string(AVOID_NULLPTR_STRING(node->Attribute("color-dragging"))), GUIColor::GUICOLOR_BLACK)

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cctype>
 #include <cwctype>
 
 #include <string>
@@ -23,8 +22,8 @@ public:
 	 * @param character character
 	 * @return lower case character
 	 */
-	inline static char toLowerCase(int32_t character) {
-		return tolower(character);
+	inline static uint32_t toLowerCase(uint32_t character) {
+		return towlower(character);
 	}
 
 	/**
@@ -32,24 +31,24 @@ public:
 	 * @param character character
 	 * @return upper case character
 	 */
-	inline static char toUpperCase(int32_t character) {
-		return toupper(character);
+	inline static uint32_t toUpperCase(uint32_t character) {
+		return towupper(character);
 	}
 
 	/**
 	 * Returns if character is alpha numeric
 	 * @return if character is alpha numeric
 	 */
-	inline static bool isAlphaNumeric(int32_t character) {
-		return isalnum(character) != 0;
+	inline static bool isAlphaNumeric(uint32_t character) {
+		return iswalnum(character) != 0;
 	}
 
 	/**
 	 * Returns if character is a white space
 	 * @return if character is a white space
 	 */
-	inline static bool isSpace(int32_t character) {
-		return isspace(character) != 0;
+	inline static bool isSpace(uint32_t character) {
+		return iswspace(character) != 0;
 	}
 
 	/**

@@ -12,6 +12,7 @@
 #include <tdme/gui/GUIParser.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/InfoDialogScreenController.h>
+#include <tdme/tools/editor/controllers/TooltipScreenController.h>
 #include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabcontrollers/subcontrollers/BasePropertiesSubController.h>
@@ -31,11 +32,13 @@ using tdme::tools::editor::tabcontrollers::EmptyEditorTabController;
 
 using tdme::engine::prototype::Prototype;
 using tdme::gui::events::GUIActionListenerType;
+using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::InfoDialogScreenController;
+using tdme::tools::editor::controllers::TooltipScreenController;
 using tdme::tools::editor::misc::PopUps;
 using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabcontrollers::subcontrollers::BasePropertiesSubController;
@@ -94,7 +97,7 @@ void EmptyEditorTabController::executeCommand(TabControllerCommand command)
 						Tools::getFileName(fileName)
 					);
 				} catch (Exception& exception) {
-					showErrorPopUp("Warning", (string(exception.what())));
+					showInfoPopUp("Warning", (string(exception.what())));
 				}
 			}
 			break;
@@ -110,7 +113,7 @@ void EmptyEditorTabController::executeCommand(TabControllerCommand command)
 								emptyEditorTabController->popUps->getFileDialogScreenController()->getFileName()
 							);
 						} catch (Exception& exception) {
-							emptyEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+							emptyEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 						}
 						emptyEditorTabController->popUps->getFileDialogScreenController()->close();
 					}
@@ -135,15 +138,15 @@ void EmptyEditorTabController::executeCommand(TabControllerCommand command)
 			}
 			break;
 		default:
-			showErrorPopUp("Warning", "This command is not supported yet");
+			showInfoPopUp("Warning", "This command is not supported yet");
 			break;
 	}
 }
 
-void EmptyEditorTabController::onValueChanged(GUIElementNode* node)
+void EmptyEditorTabController::onChange(GUIElementNode* node)
 {
-	basePropertiesSubController->onValueChanged(node, view->getPrototype());
-	prototypeScriptSubController->onValueChanged(node, view->getPrototype());
+	basePropertiesSubController->onChange(node, view->getPrototype());
+	prototypeScriptSubController->onChange(node, view->getPrototype());
 }
 
 void EmptyEditorTabController::onFocus(GUIElementNode* node) {
@@ -154,15 +157,25 @@ void EmptyEditorTabController::onUnfocus(GUIElementNode* node) {
 	basePropertiesSubController->onUnfocus(node, view->getPrototype());
 }
 
-void EmptyEditorTabController::onContextMenuRequested(GUIElementNode* node, int mouseX, int mouseY) {
-	basePropertiesSubController->onContextMenuRequested(node, mouseX, mouseY, view->getPrototype());
+void EmptyEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) {
+	basePropertiesSubController->onContextMenuRequest(node, mouseX, mouseY, view->getPrototype());
 }
 
-void EmptyEditorTabController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void EmptyEditorTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
+	int left, top;
+	view->getEditorView()->getViewPortUnscaledOffset(left, top);
+	popUps->getTooltipScreenController()->show(left + mouseX, top + mouseY, node->getToolTip());
+}
+
+void EmptyEditorTabController::onTooltipCloseRequest() {
+	popUps->getTooltipScreenController()->close();
+}
+
+void EmptyEditorTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	auto prototype = view->getPrototype();
-	basePropertiesSubController->onActionPerformed(type, node, prototype);
-	prototypeScriptSubController->onActionPerformed(type, node, prototype);
+	basePropertiesSubController->onAction(type, node, prototype);
+	prototypeScriptSubController->onAction(type, node, prototype);
 }
 
 void EmptyEditorTabController::setOutlinerContent() {
@@ -192,7 +205,7 @@ void EmptyEditorTabController::updateInfoText(const MutableString& text) {
 	required_dynamic_cast<GUITextNode*>(screenNode->getNodeById(view->getTabId() + "_tab_text_info"))->setText(text);
 }
 
-void EmptyEditorTabController::showErrorPopUp(const string& caption, const string& message)
+void EmptyEditorTabController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }

@@ -8,6 +8,7 @@
 #include <tdme/tdme.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
+#include <tdme/gui/events/GUITooltipRequestListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
@@ -19,6 +20,8 @@
 #include <tdme/os/filesystem/FileNameFilter.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
+#include <tdme/tools/editor/controllers/TooltipScreenController.h>
+#include <tdme/tools/editor/misc/PopUps.h>
 #include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
@@ -31,7 +34,11 @@ using std::string;
 using std::unordered_map;
 using std::vector;
 
+using tdme::tools::editor::controllers::FileDialogScreenController;
+
+using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
+using tdme::gui::events::GUITooltipRequestListener;
 using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
@@ -42,7 +49,8 @@ using tdme::gui::GUIParser;
 using tdme::os::filesystem::FileNameFilter;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
-using tdme::tools::editor::controllers::FileDialogScreenController;
+using tdme::tools::editor::controllers::TooltipScreenController;
+using tdme::tools::editor::misc::PopUps;
 using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
@@ -50,8 +58,9 @@ using tdme::utilities::MutableString;
 using tdme::utilities::Properties;
 using tdme::utilities::StringTools;
 
-FileDialogScreenController::FileDialogScreenController()
+FileDialogScreenController::FileDialogScreenController(PopUps* popUps)
 {
+	this->popUps = popUps;
 	this->cwd = FileSystem::getStandardFileSystem()->getCurrentWorkingPathName();
 	this->applyAction = nullptr;
 	this->enableFilter = false;
@@ -90,6 +99,7 @@ void FileDialogScreenController::initialize()
 		screenNode->addActionListener(this);
 		screenNode->addChangeListener(this);
 		screenNode->addFocusListener(this);
+		screenNode->addTooltipRequestListener(this);
 		tabsHeaderNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_tabs-header"));
 		pathNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_path"));
 		filesNode = required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("filedialog_files"));
@@ -345,7 +355,7 @@ void FileDialogScreenController::close()
 	cancelAction = nullptr;
 }
 
-void FileDialogScreenController::onValueChanged(GUIElementNode* node)
+void FileDialogScreenController::onChange(GUIElementNode* node)
 {
 	if (node->getId() == typeDropDownNode->getId()) {
 		setupFiles();
@@ -366,7 +376,7 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 				try {
 					cwd = FileSystem::getStandardFileSystem()->getCanonicalPath(cwd, selectedFile);
 				} catch (Exception& exception) {
-					Console::print(string("FileDialogScreenController::onValueChanged(): An error occurred: "));
+					Console::print(string("FileDialogScreenController::onChange(): An error occurred: "));
 					Console::println(string(exception.what()));
 				}
 				if (setupFiles() == false) {
@@ -381,7 +391,7 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 				fileNameNode->getController()->setValue(selectedFile);
 			}
 		} catch (Exception& exception) {
-			Console::print(string("FileDialogScreenController::onValueChanged(): An error occurred: "));
+			Console::print(string("FileDialogScreenController::onChange(): An error occurred: "));
 			Console::println(string(exception.what()));
 			fileNameNode->getController()->setValue(MutableString());
 		}
@@ -403,14 +413,14 @@ void FileDialogScreenController::onValueChanged(GUIElementNode* node)
 				}
 			}
 		} catch (Exception& exception) {
-			Console::print(string("FileDialogScreenController::onValueChanged(): An error occurred: "));
+			Console::print(string("FileDialogScreenController::onChange(): An error occurred: "));
 			Console::println(string(exception.what()));
 			fileNameNode->getController()->setValue(MutableString());
 		}
 	}
 }
 
-void FileDialogScreenController::onActionPerformed(GUIActionListenerType type, GUIElementNode* node)
+void FileDialogScreenController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type == GUIActionListenerType::PERFORMED) {
 		if (node->getId() == pathNode->getId()) {
@@ -688,4 +698,12 @@ const string FileDialogScreenController::getFileImageName(const string& fileName
 		return "script";
 	}
 	return string();
+}
+
+void FileDialogScreenController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
+	popUps->getTooltipScreenController()->show(mouseX, mouseY, node->getToolTip());
+}
+
+void FileDialogScreenController::onTooltipCloseRequest() {
+	popUps->getTooltipScreenController()->close();
 }

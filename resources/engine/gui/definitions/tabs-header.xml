@@ -1,4 +1,4 @@
-<element id="{$id}" width="100%" height="auto" focusable="true" on-initialize="{$id}.condition+={$scrollable};{$on-initialize}" show-on="{$show-on}" hide-on="{$hide-on}">
+<element id="{$id}" width="100%" height="auto" focusable="true" on-initialize="{$id}.condition+={$scrollable};{$on-initialize}" show-on="{$show-on}" hide-on="{$hide-on}" tooltip="{$tooltip}">
 
 	<layout alignment="horizontal" width="100%" height="auto">
 		<layout id="{$id}_inner" alignment="horizontal" width="100%" height="auto">

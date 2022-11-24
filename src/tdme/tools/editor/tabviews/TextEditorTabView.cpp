@@ -78,8 +78,8 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 {
 	this->editorView = editorView;
 	this->tabId = tabId;
+	this->screenNode = screenNode;
 	this->popUps = editorView->getPopUps();
-	this->tabScreenNode = screenNode;
 	this->extension = extension;
 	this->textNode = required_dynamic_cast<GUIStyledTextNode*>(screenNode->getInnerNodeById("text"));
 	this->fileName = fileName;
@@ -94,17 +94,17 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 	visualCodingEnabled = extension == "tscript";
 	if (visualCodingEnabled == true) {
 		//
-		visualisationNode = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("visualization_canvas"));
+		visualisationNode = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("visualization_canvas"));
 		//
 		linesTexture = new DynamicColorTexture(engine->getWidth(), engine->getHeight());
 		linesTexture->initialize();
-		required_dynamic_cast<GUITextureNode*>(tabScreenNode->getNodeById("visualization_texture"))->setTexture(linesTexture);
+		required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("visualization_texture"))->setTexture(linesTexture);
 		// add node move listener
 		class NodeMoveListener: public GUIMoveListener {
 		public:
 			NodeMoveListener(TextEditorTabView* textEditorTabView): textEditorTabView(textEditorTabView) {
 			}
-			void onMoved(GUINode* node) {
+			void onMove(GUINode* node) {
 				auto visualisationNode = textEditorTabView->visualisationNode;
 				auto& nodeComputedConstraints = node->getComputedConstraints();
 				auto xMax = nodeComputedConstraints.left + nodeComputedConstraints.width;
@@ -119,7 +119,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 		private:
 			TextEditorTabView* textEditorTabView;
 		};
-		tabScreenNode->addMoveListener(new NodeMoveListener(this));
+		screenNode->addMoveListener(new NodeMoveListener(this));
 		// enable code mode
 		setCodeEditor();
 	}
@@ -141,10 +141,20 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 			}
 
 			virtual void onRemoveText(int idx, int count) override {
-				TextFormatter::getInstance()->format(textEditorTabView->extension, textEditorTabView->textNode, idx, idx + count);
+				if (textEditorTabView->countEnabled == true) {
+					TextFormatter::getInstance()->format(textEditorTabView->extension, textEditorTabView->textNode, 0, textEditorTabView->textNode->getText().size());
+					textEditorTabView->countEnabled = false;
+				} else {
+					TextFormatter::getInstance()->format(textEditorTabView->extension, textEditorTabView->textNode, idx, idx + count);
+				}
 			}
 			virtual void onInsertText(int idx, int count) override {
-				TextFormatter::getInstance()->format(textEditorTabView->extension, textEditorTabView->textNode, idx, idx + count);
+				if (textEditorTabView->countEnabled == true) {
+					TextFormatter::getInstance()->format(textEditorTabView->extension, textEditorTabView->textNode, 0, textEditorTabView->textNode->getText().size());
+					textEditorTabView->countEnabled = false;
+				} else {
+					TextFormatter::getInstance()->format(textEditorTabView->extension, textEditorTabView->textNode, idx, idx + count);
+				}
 			}
 		private:
 			TextEditorTabView* textEditorTabView;
@@ -327,7 +337,7 @@ void TextEditorTabView::display()
 {
 	//
 	if (visualCodingEnabled == true) {
-		auto visualizationNode = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getInnerNodeById("visualization"));
+		auto visualizationNode = required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("visualization"));
 
 		auto scrolled = false;
 		auto scrollXNew = visualizationNode->getChildrenRenderOffsetX();
@@ -345,13 +355,13 @@ void TextEditorTabView::display()
 			linesTexture->getWidth() != engine->getWidth() ||
 			linesTexture->getHeight() != engine->getHeight()) {
 			linesTexture->reshape(engine->getWidth(), engine->getHeight());
-			auto visualizationTextureNode = dynamic_cast<GUITextureNode*>(tabScreenNode->getNodeById("visualization_texture"));
+			auto visualizationTextureNode = dynamic_cast<GUITextureNode*>(screenNode->getNodeById("visualization_texture"));
 			if (visualizationTextureNode != nullptr) visualizationTextureNode->setTexture(linesTexture);
 			createConnectionsPasses = 3;
 		}
 		// we have a layouting issue here, we cant get dimensions of nodes right after adding them, so defer this for now
 		if (createConnectionsPasses > 0) {
-			auto visualizationScrollArea = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById("visualization"));
+			auto visualizationScrollArea = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById("visualization"));
 			auto visualizationWidth = visualizationScrollArea->getComputedConstraints().width;
 			auto visualizationHeight = visualizationScrollArea->getComputedConstraints().height;
 			auto visualizationScrollX = static_cast<int>(scrollX);
@@ -405,6 +415,7 @@ void TextEditorTabView::initialize()
 	try {
 		textEditorTabController = new TextEditorTabController(this);
 		textEditorTabController->initialize(editorView->getScreenController()->getScreenNode());
+		screenNode->addTooltipRequestListener(textEditorTabController);
 	} catch (Exception& exception) {
 		Console::print(string("TextEditorTabView::initialize(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -445,19 +456,19 @@ void TextEditorTabView::reloadOutliner() {
 
 void TextEditorTabView::setVisualEditor() {
 	textEditorTabController->closeFindReplaceWindow();
-	auto editorNode = dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen(tabScreenNode->getId())->getNodeById("editor"));
+	auto editorNode = dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen(screenNode->getId())->getNodeById("editor"));
 	if (editorNode != nullptr) editorNode->getActiveConditions().set("visualization");
 	visualEditor = true;
 }
 
 void TextEditorTabView::setCodeEditor() {
-	auto editorNode = dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen(tabScreenNode->getId())->getNodeById("editor"));
+	auto editorNode = dynamic_cast<GUIElementNode*>(engine->getGUI()->getScreen(screenNode->getId())->getNodeById("editor"));
 	if (editorNode != nullptr) editorNode->getActiveConditions().set("text");
 	visualEditor = false;
 }
 
 void TextEditorTabView::addMiniScriptNodeDeltaX(const string& id, const MiniScript::ScriptSyntaxTreeNode& syntaxTreeNode, int deltaX) {
-	auto node = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById(id));
+	auto node = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById(id));
 	node->getRequestsConstraints().left+= deltaX;
 	for (auto argumentIdx = 0; argumentIdx < syntaxTreeNode.arguments.size(); argumentIdx++) {
 		//
@@ -511,7 +522,7 @@ void TextEditorTabView::createMiniScriptScriptNode(const string& id, MiniScript:
 			}
 		}
 		//
-		auto nodeInputContainer = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById(id + "_input_container"));
+		auto nodeInputContainer = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById(id + "_input_container"));
 		// condition input
 		{
 			//
@@ -537,10 +548,10 @@ void TextEditorTabView::createMiniScriptScriptNode(const string& id, MiniScript:
 				//
 				if (isLiteral == true) {
 					// update to be a literal
-					required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_c_input_type_panel"))->getActiveConditions().add("input");
+					required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(id + "_c_input_type_panel"))->getActiveConditions().add("input");
 				} else {
 					// update to be connected
-					required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_c_pin_type_panel"))->getActiveConditions().add("connected");
+					required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(id + "_c_pin_type_panel"))->getActiveConditions().add("connected");
 				}
 			} catch (Exception& exception) {
 				Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): method/function: " + string(exception.what()));
@@ -553,8 +564,8 @@ void TextEditorTabView::createMiniScriptScriptNode(const string& id, MiniScript:
 		//
 		string argumentInputNodeId = id + "_c";
 		string argumentOutputNodeId = id + ".c_r";
-		auto argumentInputNode = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(argumentInputNodeId));
-		auto argumentOutputNode = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(argumentOutputNodeId));
+		auto argumentInputNode = dynamic_cast<GUINode*>(screenNode->getNodeById(argumentInputNodeId));
+		auto argumentOutputNode = dynamic_cast<GUINode*>(screenNode->getNodeById(argumentOutputNodeId));
 		if (argumentInputNode == nullptr) {
 			Console::println("TextEditorTabView::createMiniScriptNodes(): missing argument input node: " + argumentInputNodeId);
 		} else
@@ -668,8 +679,8 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int syntaxTreeNo
 					}
 				}
 				//
-				auto nodeInputContainer = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById(id + "_input_container"));
-				auto nodeOutputContainer = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById(id + "_output_container"));
+				auto nodeInputContainer = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById(id + "_input_container"));
+				auto nodeOutputContainer = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById(id + "_output_container"));
 				// pin input aka flow input
 				if (depth == 0 && syntaxTreeNodeIdx > 0) {
 					string xml;
@@ -686,7 +697,7 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int syntaxTreeNo
 					try {
 						GUIParser::parse(nodeInputContainer, xml);
 						// update to be connected
-						required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_flow_in_pin_type_panel"))->getActiveConditions().add("connected");
+						required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(id + "_flow_in_pin_type_panel"))->getActiveConditions().add("connected");
 					} catch (Exception& exception) {
 						Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
 					}
@@ -723,10 +734,10 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int syntaxTreeNo
 								//
 								if (isLiteral == true) {
 									// update to be a literal
-									required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_a" + to_string(argumentIdx) + "_input_type_panel"))->getActiveConditions().add("input");
+									required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(id + "_a" + to_string(argumentIdx) + "_input_type_panel"))->getActiveConditions().add("input");
 								} else {
 									// update to be connected
-									required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_a" + to_string(argumentIdx) + "_pin_type_panel"))->getActiveConditions().add("connected");
+									required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(id + "_a" + to_string(argumentIdx) + "_pin_type_panel"))->getActiveConditions().add("connected");
 								}
 
 							} catch (Exception& exception) {
@@ -758,10 +769,10 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int syntaxTreeNo
 							//
 							if (isLiteral == true) {
 								// update to be a literal
-								required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_a" + to_string(argumentIdx) + "_input_type_panel"))->getActiveConditions().add("input");
+								required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(id + "_a" + to_string(argumentIdx) + "_input_type_panel"))->getActiveConditions().add("input");
 							} else {
 								// update to be connected
-								required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_a" + to_string(argumentIdx) + "_pin_type_panel"))->getActiveConditions().add("connected");
+								required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(id + "_a" + to_string(argumentIdx) + "_pin_type_panel"))->getActiveConditions().add("connected");
 							}
 						} catch (Exception& exception) {
 							Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
@@ -784,7 +795,7 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int syntaxTreeNo
 					try {
 						GUIParser::parse(nodeOutputContainer, xml);
 						// update to be connected
-						required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_flow_out_pin_type_panel"))->getActiveConditions().add("connected");
+						required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(id + "_flow_out_pin_type_panel"))->getActiveConditions().add("connected");
 					} catch (Exception& exception) {
 						Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
 					}
@@ -808,7 +819,7 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int syntaxTreeNo
 					try {
 						GUIParser::parse(nodeOutputContainer, xml);
 						// update to be connected
-						required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_r_pin_type_panel"))->getActiveConditions().add("connected");
+						required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(id + "_r_pin_type_panel"))->getActiveConditions().add("connected");
 					} catch (Exception& exception) {
 						Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
 					}
@@ -833,7 +844,7 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int syntaxTreeNo
 					try {
 						GUIParser::parse(nodeOutputContainer, xml);
 						// update to be connected
-						required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_r_pin_type_panel"))->getActiveConditions().add("connected");
+						required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(id + "_r_pin_type_panel"))->getActiveConditions().add("connected");
 					} catch (Exception& exception) {
 						Console::println("TextEditorTabView::createMiniScriptNodes(): method/function: " + string(exception.what()));
 					}
@@ -856,7 +867,7 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int syntaxTreeNo
 		auto isLiteral = syntaxTreeNode->arguments[argumentIdx].type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL;
 		if (isLiteral == true) continue;
 		//
-		auto nextLevelNode = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById(id + "." + to_string(argumentIdx)));
+		auto nextLevelNode = required_dynamic_cast<GUINode*>(screenNode->getNodeById(id + "." + to_string(argumentIdx)));
 		auto nodeXPosition = nextLevelNode->getRequestsConstraints().left;
 		auto rootDistance = Math::abs(x - nodeXPosition);
 		if (rootDistance < rootDistanceMax) {
@@ -870,7 +881,7 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int syntaxTreeNo
 		if (isLiteral == true) continue;
 		//
 		auto subNodeId = id + "." + to_string(argumentIdx);
-		auto nextLevelNode = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById(id + "." + to_string(argumentIdx)));
+		auto nextLevelNode = required_dynamic_cast<GUINode*>(screenNode->getNodeById(id + "." + to_string(argumentIdx)));
 		auto nodeXPosition = nextLevelNode->getRequestsConstraints().left;
 		auto deltaX = nextLevelXBestFit - nodeXPosition;
 		if (deltaX == 0) continue;
@@ -885,8 +896,8 @@ void TextEditorTabView::createMiniScriptNodes(const string& id, int syntaxTreeNo
 		//
 		string argumentInputNodeId = id + "_a" + to_string(argumentIdx);
 		string argumentOutputNodeId = id + "." + to_string(argumentIdx) + "_r";
-		auto argumentInputNode = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(argumentInputNodeId));
-		auto argumentOutputNode = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(argumentOutputNodeId));
+		auto argumentInputNode = dynamic_cast<GUINode*>(screenNode->getNodeById(argumentInputNodeId));
+		auto argumentOutputNode = dynamic_cast<GUINode*>(screenNode->getNodeById(argumentOutputNodeId));
 		if (argumentInputNode == nullptr) {
 			Console::println("TextEditorTabView::createMiniScriptNodes(): missing argument input node: " + argumentInputNodeId);
 			continue;
@@ -993,8 +1004,8 @@ void TextEditorTabView::createMiniScriptBranchNodes(const string& id, int syntax
 			}
 		}
 		//
-		auto nodeInputContainer = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById(id + "_input_container"));
-		auto nodeOutputContainer = required_dynamic_cast<GUIParentNode*>(tabScreenNode->getNodeById(id + "_output_container"));
+		auto nodeInputContainer = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById(id + "_input_container"));
+		auto nodeOutputContainer = required_dynamic_cast<GUIParentNode*>(screenNode->getNodeById(id + "_output_container"));
 		// pin input aka flow input
 		if (depth == 0 && syntaxTreeNodeIdx > 0) {
 			string xml;
@@ -1011,7 +1022,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(const string& id, int syntax
 			try {
 				GUIParser::parse(nodeInputContainer, xml);
 				// update to be connected
-				required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_flow_in_pin_type_panel"))->getActiveConditions().add("connected");
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(id + "_flow_in_pin_type_panel"))->getActiveConditions().add("connected");
 			} catch (Exception& exception) {
 				Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): method/function: " + string(exception.what()));
 			}
@@ -1032,7 +1043,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(const string& id, int syntax
 			try {
 				GUIParser::parse(nodeOutputContainer, xml);
 				// update to be connected
-				required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_flow_out_pin_type_panel"))->getActiveConditions().add("connected");
+				required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(id + "_flow_out_pin_type_panel"))->getActiveConditions().add("connected");
 			} catch (Exception& exception) {
 				Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): method/function: " + string(exception.what()));
 			}
@@ -1065,10 +1076,10 @@ void TextEditorTabView::createMiniScriptBranchNodes(const string& id, int syntax
 					//
 					if (isLiteral == true) {
 						// update to be a literal
-						required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_c" + to_string(branchIdx) + "_input_type_panel"))->getActiveConditions().add("input");
+						required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(id + "_c" + to_string(branchIdx) + "_input_type_panel"))->getActiveConditions().add("input");
 					} else {
 						// update to be connected
-						required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_c" + to_string(branchIdx) + "_pin_type_panel"))->getActiveConditions().add("connected");
+						required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(id + "_c" + to_string(branchIdx) + "_pin_type_panel"))->getActiveConditions().add("connected");
 					}
 				} catch (Exception& exception) {
 					Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): method/function: " + string(exception.what()));
@@ -1091,7 +1102,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(const string& id, int syntax
 				try {
 					GUIParser::parse(nodeOutputContainer, xml);
 					// update to be connected
-					required_dynamic_cast<GUIElementNode*>(tabScreenNode->getNodeById(id + "_b" + to_string(branchIdx) + "_pin_type_panel"))->getActiveConditions().add("connected");
+					required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById(id + "_b" + to_string(branchIdx) + "_pin_type_panel"))->getActiveConditions().add("connected");
 				} catch (Exception& exception) {
 					Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): method/function: " + string(exception.what()));
 				}
@@ -1112,7 +1123,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(const string& id, int syntax
 		//
 		if (branches[branchIdx].conditionSyntaxTree->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL) continue;
 		//
-		auto nextLevelNode = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById(id + "." + to_string(branchIdx)));
+		auto nextLevelNode = required_dynamic_cast<GUINode*>(screenNode->getNodeById(id + "." + to_string(branchIdx)));
 		auto nodeXPosition = nextLevelNode->getRequestsConstraints().left;
 		auto rootDistance = Math::abs(x - nodeXPosition);
 		if (rootDistance < rootDistanceMax) {
@@ -1127,7 +1138,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(const string& id, int syntax
 		if (branches[branchIdx].conditionSyntaxTree->type == MiniScript::ScriptSyntaxTreeNode::SCRIPTSYNTAXTREENODE_LITERAL) continue;
 		//
 		auto subNodeId = id + "." + to_string(branchIdx);
-		auto nextLevelNode = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById(id + "." + to_string(branchIdx)));
+		auto nextLevelNode = required_dynamic_cast<GUINode*>(screenNode->getNodeById(id + "." + to_string(branchIdx)));
 		auto nodeXPosition = nextLevelNode->getRequestsConstraints().left;
 		auto deltaX = nextLevelXBestFit - nodeXPosition;
 		if (deltaX == 0) continue;
@@ -1142,8 +1153,8 @@ void TextEditorTabView::createMiniScriptBranchNodes(const string& id, int syntax
 		//
 		string conditionInputNodeId = id + "_c" + to_string(branchIdx);
 		string conditionOutputNodeId = id + "." + to_string(branchIdx);
-		auto conditionInputNode = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(conditionInputNodeId));
-		auto conditionOutputNode = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(conditionOutputNodeId));
+		auto conditionInputNode = dynamic_cast<GUINode*>(screenNode->getNodeById(conditionInputNodeId));
+		auto conditionOutputNode = dynamic_cast<GUINode*>(screenNode->getNodeById(conditionOutputNodeId));
 		if (conditionInputNode == nullptr) {
 			Console::println("TextEditorTabView::createMiniScriptIfBranchNodes(): missing condition input node: " + conditionInputNodeId);
 			continue;
@@ -1185,7 +1196,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(const string& id, int syntax
 		// for each branch
 		auto branchSyntaxTreeNodes = branches[branchIdx].syntaxTreeNodes;
 		//
-		GUINode* previousNodeFlowNode = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(id + "_b" + to_string(branchIdx)));
+		GUINode* previousNodeFlowNode = dynamic_cast<GUINode*>(screenNode->getNodeById(id + "_b" + to_string(branchIdx)));
 		//
 		x = xInitial + width;
 		auto branchHeightMax = 0;
@@ -1208,8 +1219,8 @@ void TextEditorTabView::createMiniScriptBranchNodes(const string& id, int syntax
 				//
 				auto nodeFlowInId = id + ".b." + to_string(branchIdx) + "." + to_string(branchNodeIdx) + "_flow_in";
 				auto nodeFlowOutId = id + ".b." + to_string(branchIdx) + "." + to_string(branchNodeIdx) + "_flow_out";
-				auto nodeFlowIn = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(nodeFlowInId));
-				auto nodeFlowOut = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(nodeFlowOutId));
+				auto nodeFlowIn = dynamic_cast<GUINode*>(screenNode->getNodeById(nodeFlowInId));
+				auto nodeFlowOut = dynamic_cast<GUINode*>(screenNode->getNodeById(nodeFlowOutId));
 				if (previousNodeFlowNode != nullptr && nodeFlowIn != nullptr) {
 					auto& previousNodeComputedConstraints = previousNodeFlowNode->getComputedConstraints();
 					auto& nodeComputedConstraints = nodeFlowIn->getComputedConstraints();
@@ -1251,8 +1262,8 @@ void TextEditorTabView::createMiniScriptBranchNodes(const string& id, int syntax
 			// connections
 			auto nodeFlowInId = id + ".b." + to_string(branchIdx) + "." + to_string(i) + "_flow_in";
 			auto nodeFlowOutId = id + ".b." + to_string(branchIdx) + "." + to_string(i) + "_flow_out";
-			auto nodeFlowIn = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(nodeFlowInId));
-			auto nodeFlowOut = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(nodeFlowOutId));
+			auto nodeFlowIn = dynamic_cast<GUINode*>(screenNode->getNodeById(nodeFlowInId));
+			auto nodeFlowOut = dynamic_cast<GUINode*>(screenNode->getNodeById(nodeFlowOutId));
 			if (previousNodeFlowNode != nullptr && nodeFlowIn != nullptr) {
 				auto& previousNodeComputedConstraints = previousNodeFlowNode->getComputedConstraints();
 				auto& nodeComputedConstraints = nodeFlowIn->getComputedConstraints();
@@ -1290,7 +1301,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(const string& id, int syntax
 	auto leftTop = Integer::MAX_VALUE;
 	auto leftBottom = Integer::MIN_VALUE;
 	for (auto& leftNodeId: leftNodeIds) {
-		auto node = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById(leftNodeId));
+		auto node = required_dynamic_cast<GUINode*>(screenNode->getNodeById(leftNodeId));
 		auto nodeTop = node->getRequestsConstraints().top;
 		auto nodeBottom = node->getRequestsConstraints().top + 200;
 		leftTop = Math::min(leftTop, nodeTop);
@@ -1301,7 +1312,7 @@ void TextEditorTabView::createMiniScriptBranchNodes(const string& id, int syntax
 	auto rightTop = Integer::MAX_VALUE;
 	auto rightBottom = Integer::MIN_VALUE;
 	for (auto& rightNodeId: rightNodeIds) {
-		auto node = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById(rightNodeId));
+		auto node = required_dynamic_cast<GUINode*>(screenNode->getNodeById(rightNodeId));
 		auto nodeTop = node->getRequestsConstraints().top;
 		auto nodeBottom = node->getRequestsConstraints().top + 200;
 		rightTop = Math::min(rightTop, nodeTop);
@@ -1318,21 +1329,21 @@ void TextEditorTabView::createMiniScriptBranchNodes(const string& id, int syntax
 		if (leftHeight > rightHeight) {
 			auto deltaY = (leftHeight - rightHeight) / 2;
 			for (auto& rightNodeId: rightNodeIds) {
-				auto node = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById(rightNodeId));
+				auto node = required_dynamic_cast<GUINode*>(screenNode->getNodeById(rightNodeId));
 				node->getRequestsConstraints().top+= deltaY;
 			}
 			{
-				auto node = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById(id));
+				auto node = required_dynamic_cast<GUINode*>(screenNode->getNodeById(id));
 				node->getRequestsConstraints().top = yInitial + (leftHeight - 200) / 2;
 			}
 		} else {
 			auto deltaY = (rightHeight - leftHeight) / 2;
 			for (auto& leftNodeId: leftNodeIds) {
-				auto node = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById(leftNodeId));
+				auto node = required_dynamic_cast<GUINode*>(screenNode->getNodeById(leftNodeId));
 				node->getRequestsConstraints().top+= deltaY;
 			}
 			{
-				auto node = required_dynamic_cast<GUINode*>(tabScreenNode->getNodeById(id));
+				auto node = required_dynamic_cast<GUINode*>(screenNode->getNodeById(id));
 				node->getRequestsConstraints().top = yInitial + (rightHeight - 200) / 2;
 			}
 		}
@@ -1486,8 +1497,8 @@ void TextEditorTabView::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
 				//
 				auto nodeFlowInId = to_string(branchNodeIdx) + "_flow_in";
 				auto nodeFlowOutId = to_string(branchNodeIdx) + "_flow_out";
-				auto nodeFlowIn = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(nodeFlowInId));
-				auto nodeFlowOut = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(nodeFlowOutId));
+				auto nodeFlowIn = dynamic_cast<GUINode*>(screenNode->getNodeById(nodeFlowInId));
+				auto nodeFlowOut = dynamic_cast<GUINode*>(screenNode->getNodeById(nodeFlowOutId));
 				if (previousNodeFlowNode != nullptr && nodeFlowIn != nullptr) {
 					auto& previousNodeComputedConstraints = previousNodeFlowNode->getComputedConstraints();
 					auto& nodeComputedConstraints = nodeFlowIn->getComputedConstraints();
@@ -1527,8 +1538,8 @@ void TextEditorTabView::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
 			// connections
 			auto nodeFlowInId = to_string(i) + "_flow_in";
 			auto nodeFlowOutId = to_string(i) + "_flow_out";
-			auto nodeFlowIn = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(nodeFlowInId));
-			auto nodeFlowOut = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(nodeFlowOutId));
+			auto nodeFlowIn = dynamic_cast<GUINode*>(screenNode->getNodeById(nodeFlowInId));
+			auto nodeFlowOut = dynamic_cast<GUINode*>(screenNode->getNodeById(nodeFlowOutId));
 			if (previousNodeFlowNode != nullptr && nodeFlowIn != nullptr) {
 				auto& previousNodeComputedConstraints = previousNodeFlowNode->getComputedConstraints();
 				auto& nodeComputedConstraints = nodeFlowIn->getComputedConstraints();
@@ -1560,7 +1571,7 @@ void TextEditorTabView::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
 	}
 
 	// Bug: Work around! Sometimes layouting is not issued! Need to check!
-	tabScreenNode->forceInvalidateLayout(tabScreenNode);
+	screenNode->forceInvalidateLayout(screenNode);
 
 	//
 	createConnectionsPasses = 3;
@@ -1568,8 +1579,8 @@ void TextEditorTabView::updateMiniScriptSyntaxTree(int miniScriptScriptIdx) {
 
 void TextEditorTabView::createMiniScriptConnections() {
 	for (auto& connection: connections) {
-		auto srcNode = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(connection.srcNodeId));
-		auto dstNode = dynamic_cast<GUINode*>(tabScreenNode->getNodeById(connection.dstNodeId));
+		auto srcNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connection.srcNodeId));
+		auto dstNode = dynamic_cast<GUINode*>(screenNode->getNodeById(connection.dstNodeId));
 		if (srcNode == nullptr) {
 			Console::println("TextEditorTabView::createMiniScriptConnections(): could not find src node with id: " + connection.srcNodeId);
 			continue;
@@ -1604,7 +1615,7 @@ int TextEditorTabView::getTextIndex() {
 }
 
 bool TextEditorTabView::find(const string& findString, bool matchCase, bool wholeWord, bool selection, bool firstSearch, int& index) {
-	reformat();
+	cancelFind();
 	auto success = false;
 	auto _findString = matchCase == false?StringTools::toLowerCase(findString):findString;
 	auto _text = matchCase == false?StringTools::toLowerCase(textNode->getText().getString()):textNode->getText().getString();
@@ -1654,7 +1665,7 @@ bool TextEditorTabView::find(const string& findString, bool matchCase, bool whol
 }
 
 int TextEditorTabView::count(const string& findString, bool matchCase, bool wholeWord, bool selection) {
-	reformat();
+	cancelFind();
 	auto _findString = matchCase == false?StringTools::toLowerCase(findString):findString;
 	auto _text = matchCase == false?StringTools::toLowerCase(textNode->getText().getString()):textNode->getText().getString();
 	auto textNodeController = required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController());
@@ -1682,11 +1693,14 @@ int TextEditorTabView::count(const string& findString, bool matchCase, bool whol
 			break;
 		}
 	}
+	//
+	countEnabled = true;
+	//
 	return c;
 }
 
 bool TextEditorTabView::replace(const string& findString, const string& replaceString, bool matchCase, bool wholeWord, bool selection, int& index) {
-	reformat();
+	cancelFind();
 	auto success = false;
 	auto _findString = matchCase == false?StringTools::toLowerCase(findString):findString;
 	auto text = textNode->getText().getString();
@@ -1733,7 +1747,7 @@ bool TextEditorTabView::replace(const string& findString, const string& replaceS
 	}
 	//
 	textNode->setText(StringTools::replace(StringTools::replace(text, "[", "\\["), "]", "\\]"));
-	reformat();
+	TextFormatter::getInstance()->format(extension, textNode, 0, textNode->getText().size());
 	//
 	return success;
 }
@@ -1769,10 +1783,11 @@ bool TextEditorTabView::replaceAll(const string& findString, const string& repla
 		}
 	}
 	textNode->setText(StringTools::replace(StringTools::replace(text, "[", "\\["), "]", "\\]"));
-	reformat();
+	cancelFind();
 	return success;
 }
 
-void TextEditorTabView::reformat() {
+void TextEditorTabView::cancelFind() {
 	TextFormatter::getInstance()->format(extension, textNode, 0, textNode->getText().size());
+	countEnabled = false;
 }
