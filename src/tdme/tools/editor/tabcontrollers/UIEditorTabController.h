@@ -148,6 +148,11 @@ public:
 	void onRemovePrototype();
 
 	/**
+	 * On browse to prototype
+	 */
+	void onBrowseToPrototype();
+
+	/**
 	 * Show the information pop up / modal
 	 * @param caption caption
 	 * @param message message

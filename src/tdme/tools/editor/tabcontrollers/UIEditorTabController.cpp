@@ -641,6 +641,14 @@ void UIEditorTabController::onRemovePrototype() {
 	Engine::getInstance()->enqueueAction(new RemovePrototypeAction(this));
 }
 
+void UIEditorTabController::onBrowseToPrototype() {
+	if (prototypeFileName.empty() == true) {
+		showInfoPopUp("Browse To", "Nothing to browse to");
+	} else {
+		view->getEditorView()->getScreenController()->browseTo(prototypeFileName);
+	}
+}
+
 void UIEditorTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
 {
 	if (type != GUIActionListenerType::PERFORMED) return;
@@ -659,5 +667,8 @@ void UIEditorTabController::onAction(GUIActionListenerType type, GUIElementNode*
 	} else
 	if (node->getId() == "projectedui_prototype_remove") {
 		onRemovePrototype();
+	} else
+	if (node->getId() == "projectedui_prototype_browseto") {
+		onBrowseToPrototype();
 	}
 }
