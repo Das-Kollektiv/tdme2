@@ -627,14 +627,6 @@ void SceneEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 	if (node->getId() == "tdme.entities.rename_input") {
 		renameEntity();
 	} else
-	if (node->getId() == "sky_model_remove") {
-		view->removeSky();
-		auto scene = view->getScene();
-		scene->setSkyModel(nullptr);
-		scene->setSkyModelFileName(string());
-		scene->setSkyModelScale(Vector3(1.0f, 1.0f, 1.0f));
-		setSkyDetails();
-	} else
 	if (node->getId() == "sky_model_open") {
 		class OnLoadSkyModelAction: public virtual Action
 		{
@@ -686,6 +678,22 @@ void SceneEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 			true,
 			new OnLoadSkyModelAction(this)
 		);
+	} else
+	if (node->getId() == "sky_model_remove") {
+		view->removeSky();
+		auto scene = view->getScene();
+		scene->setSkyModel(nullptr);
+		scene->setSkyModelFileName(string());
+		scene->setSkyModelScale(Vector3(1.0f, 1.0f, 1.0f));
+		setSkyDetails();
+	} else
+	if (node->getId() == "sky_model_browseto") {
+		auto scene = view->getScene();
+		if (scene->getSkyModelFileName().empty() == true) {
+			showInfoPopUp("Browse To", "Nothing to browse to");
+		} else {
+			view->getEditorView()->getScreenController()->browseTo(scene->getSkyModelFileName());
+		}
 	} else
 	if (node->getId() == "prototype_place") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
