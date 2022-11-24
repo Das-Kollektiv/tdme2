@@ -77,10 +77,10 @@ void TextureTabController::dispose()
 
 void TextureTabController::executeCommand(TabControllerCommand command)
 {
-	showErrorPopUp("Warning", "This command is not supported yet");
+	showInfoPopUp("Warning", "This command is not supported yet");
 }
 
-void TextureTabController::showErrorPopUp(const string& caption, const string& message)
+void TextureTabController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }

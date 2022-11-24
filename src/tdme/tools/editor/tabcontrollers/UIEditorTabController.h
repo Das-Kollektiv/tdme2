@@ -152,6 +152,6 @@ public:
 	 * @param caption caption
 	 * @param message message
 	 */
-	void showErrorPopUp(const string& caption, const string& message);
+	void showInfoPopUp(const string& caption, const string& message);
 
 };

@@ -101,7 +101,7 @@ void BasePropertiesSubController::setBasePropertiesDetails(BaseProperties* baseP
 		}
 	} catch (Exception& exception) {
 		Console::println(string("PrototypeBaseSubController::setPrototypeBaseDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -111,7 +111,7 @@ void BasePropertiesSubController::applyPropertyDetails(BaseProperties* basePrope
 		baseProperties->setDescription(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_description"))->getController()->getValue().getString());
 	} catch (Exception& exception) {
 		Console::println(string("PrototypeBaseSubController::applyPrototypeBaseDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -128,7 +128,7 @@ void BasePropertiesSubController::setPropertyDetails(BaseProperties* basePropert
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("property_value"))->getController()->setValue(MutableString(property->getValue()));
 	} catch (Exception& exception) {
 		Console::println(string("PrototypeBaseSubController::setPropertyDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -152,7 +152,7 @@ void BasePropertiesSubController::applyPropertyDetails(BaseProperties* basePrope
 		}
 	} catch (Exception& exception) {
 		Console::println(string("PrototypeBaseSubController::applyPropertyDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -184,7 +184,7 @@ void BasePropertiesSubController::createProperty(BaseProperties* baseProperties)
 		}
 	} catch (Exception& exception) {
 		Console::println(string("PrototypeBaseSubController::createProperty(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 
 	if (propertyCreated == true) {
@@ -224,7 +224,7 @@ void BasePropertiesSubController::renameProperty(BaseProperties* baseProperties)
 			}
 		} catch (Exception& exception) {
 			Console::println(string("PrototypeBaseSubController::renameProperty(): An error occurred: ") + exception.what());;
-			showErrorPopUp("Warning", (string(exception.what())));
+			showInfoPopUp("Warning", (string(exception.what())));
 		}
 	}
 
@@ -387,7 +387,7 @@ void BasePropertiesSubController::applyPropertyValue(BaseProperties* basePropert
 	Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(editorView, outlinerNode));
 }
 
-void BasePropertiesSubController::showErrorPopUp(const string& caption, const string& message)
+void BasePropertiesSubController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }

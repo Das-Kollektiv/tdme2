@@ -205,7 +205,7 @@ void EditorScreenController::onQuit()
 	TDMEEditor::getInstance()->quit();
 }
 
-void EditorScreenController::showErrorPopUp(const string& caption, const string& message)
+void EditorScreenController::showInfoPopUp(const string& caption, const string& message)
 {
 	view->getPopUps()->getInfoDialogScreenController()->show(caption, message);
 }
@@ -377,7 +377,7 @@ void EditorScreenController::onContextMenuRequest(GUIElementNode* node, int mous
 								sceneEditorTabView->addPrototype(prototype);
 							} catch (Exception& exception) {
 								Console::println(string("OnAddToSceneAction::performAction(): An error occurred: ") + exception.what());;
-								editorScreenController->showErrorPopUp("Warning", (string(exception.what())));
+								editorScreenController->showInfoPopUp("Warning", (string(exception.what())));
 							}
 						}
 						OnAddToSceneAction(EditorScreenController* editorScreenController, const string& absoluteFileName): editorScreenController(editorScreenController), absoluteFileName(absoluteFileName) {
@@ -956,7 +956,7 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			FileSystem::getInstance()->setContentFromString(pathName, fileName, FileSystem::getInstance()->getContentAsString("resources/engine/templates/tscript", "template.tscript"));
 			openFile(pathName + "/" + fileName);
 		} catch (Exception& exception) {
-			showErrorPopUp("Error", string() + "An error occurred: file type: " + type + ": " + exception.what());
+			showInfoPopUp("Error", string() + "An error occurred: file type: " + type + ": " + exception.what());
 		}
 	} else {
 		Prototype* prototype = nullptr;
@@ -1083,7 +1083,7 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			} catch (Exception& exception) {
 				Console::print(string("EditorScreenController::addFile(): An error occurred: "));
 				Console::println(string(exception.what()));
-				showErrorPopUp("Error", string() + "An error occurred: " + exception.what());
+				showInfoPopUp("Error", string() + "An error occurred: " + exception.what());
 			}
 		} else
 		if (scene != nullptr) {
@@ -1093,10 +1093,10 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 			} catch (Exception& exception) {
 				Console::print(string("EditorScreenController::addFile(): An error occurred: "));
 				Console::println(string(exception.what()));
-				showErrorPopUp("Error", string() + "An error occurred: " + exception.what());
+				showInfoPopUp("Error", string() + "An error occurred: " + exception.what());
 			}
 		} else {
-			showErrorPopUp("Error", string() + "Unknown file type: " + type);
+			showInfoPopUp("Error", string() + "Unknown file type: " + type);
 		}
 	}
 }
@@ -1231,7 +1231,7 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 	// should never happen but still ...
 	if (fileOpenThread != nullptr) {
 		Console::println("EditorScreenController::openFile(): " + absoluteFileName + ": file open thread is already busy with opening a file");
-		showErrorPopUp("Error", string() + "File open thread is already busy with opening a file");
+		showInfoPopUp("Error", string() + "File open thread is already busy with opening a file");
 		return;
 	}
 
@@ -1313,7 +1313,7 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 		}
 	}
 	if (fileType == FILETYPE_UNKNOWN) {
-		showErrorPopUp("Error", "File format not yet supported");
+		showInfoPopUp("Error", "File format not yet supported");
 		return;
 	}
 
@@ -1433,7 +1433,7 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::openFile(): An error occurred: "));
 		Console::println(string(exception.what()));
-		showErrorPopUp("Error", string() + "An error occurred: " + exception.what());
+		showInfoPopUp("Error", string() + "An error occurred: " + exception.what());
 	}
 }
 
@@ -1717,7 +1717,7 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::onOpenFileFinish(): An error occurred: "));
 		Console::println(string(exception.what()));
-		showErrorPopUp("Error", string() + "An error occurred: " + exception.what());
+		showInfoPopUp("Error", string() + "An error occurred: " + exception.what());
 	}
 
 	//
@@ -1858,9 +1858,9 @@ void EditorScreenController::tick() {
 			addPendingFileEntities();
 			if (scanFilesThread->isError() == true) {
 				if (scanFilesThread->getErrorMessage().empty() == true) {
-					showErrorPopUp("Error", string() + "An error occurred: Unknown error");
+					showInfoPopUp("Error", string() + "An error occurred: Unknown error");
 				} else {
-					showErrorPopUp("Error", string() + "An error occurred: " + scanFilesThread->getErrorMessage());
+					showInfoPopUp("Error", string() + "An error occurred: " + scanFilesThread->getErrorMessage());
 				}
 			}
 			delete scanFilesThread;
@@ -1873,9 +1873,9 @@ void EditorScreenController::tick() {
 			fileOpenThread->join();
 			if (fileOpenThread->isError() == true) {
 				if (fileOpenThread->getErrorMessage().empty() == true) {
-					showErrorPopUp("Error", string() + "An error occurred: Unknown error");
+					showInfoPopUp("Error", string() + "An error occurred: Unknown error");
 				} else {
-					showErrorPopUp("Error", string() + "An error occurred: " + fileOpenThread->getErrorMessage());
+					showInfoPopUp("Error", string() + "An error occurred: " + fileOpenThread->getErrorMessage());
 				}
 			} else {
 				onOpenFileFinish(

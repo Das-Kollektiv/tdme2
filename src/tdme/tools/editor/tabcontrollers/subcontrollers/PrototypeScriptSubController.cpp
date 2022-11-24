@@ -89,7 +89,7 @@ void PrototypeScriptSubController::setScriptDetails(Prototype* prototype) {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_script"))->getActiveConditions().add("open");
 	} catch (Exception& exception) {
 		Console::println(string("PrototypeScriptSubController::setScriptDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 	//
 	updateScriptDetails(prototype);
@@ -107,7 +107,7 @@ void PrototypeScriptSubController::updateScriptDetails(Prototype* prototype) {
 		}
 	} catch (Exception& exception) {
 		Console::println(string("PrototypeScriptSubController::updateScriptDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -189,7 +189,7 @@ void PrototypeScriptSubController::onScriptUnset(Prototype* prototype) {
 	updateScriptDetails(prototype);
 }
 
-void PrototypeScriptSubController::showErrorPopUp(const string& caption, const string& message)
+void PrototypeScriptSubController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }

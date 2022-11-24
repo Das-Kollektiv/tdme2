@@ -115,7 +115,7 @@ void TriggerEditorTabController::executeCommand(TabControllerCommand command)
 						Tools::getFileName(fileName)
 					);
 				} catch (Exception& exception) {
-					showErrorPopUp("Warning", (string(exception.what())));
+					showInfoPopUp("Warning", (string(exception.what())));
 				}
 			}
 			break;
@@ -131,7 +131,7 @@ void TriggerEditorTabController::executeCommand(TabControllerCommand command)
 								triggerEditorTabController->popUps->getFileDialogScreenController()->getFileName()
 							);
 						} catch (Exception& exception) {
-							triggerEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+							triggerEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 						}
 						triggerEditorTabController->popUps->getFileDialogScreenController()->close();
 					}
@@ -156,7 +156,7 @@ void TriggerEditorTabController::executeCommand(TabControllerCommand command)
 			}
 			break;
 		default:
-			showErrorPopUp("Warning", "This command is not supported yet");
+			showInfoPopUp("Warning", "This command is not supported yet");
 			break;
 	}
 }
@@ -235,7 +235,7 @@ void TriggerEditorTabController::updateInfoText(const MutableString& text) {
 	required_dynamic_cast<GUITextNode*>(screenNode->getNodeById(view->getTabId() + "_tab_text_info"))->setText(text);
 }
 
-void TriggerEditorTabController::showErrorPopUp(const string& caption, const string& message)
+void TriggerEditorTabController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }

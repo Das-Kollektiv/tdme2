@@ -110,10 +110,10 @@ void UIEditorTabController::dispose()
 
 void UIEditorTabController::executeCommand(TabControllerCommand command)
 {
-	showErrorPopUp("Warning", "This command is not supported yet");
+	showInfoPopUp("Warning", "This command is not supported yet");
 }
 
-void UIEditorTabController::showErrorPopUp(const string& caption, const string& message)
+void UIEditorTabController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
@@ -310,7 +310,7 @@ void UIEditorTabController::setOutlinerContent() {
 			int nodeIdx = 0;
 			createOutlinerParentNodeNodesXML(xmlRoot, xml, screenIdx, nodeIdx);
 		} catch (Exception& exception) {
-			showErrorPopUp("Warning", (string(exception.what())));
+			showInfoPopUp("Warning", (string(exception.what())));
 		}
 		screenIdx++;
 	}
@@ -344,7 +344,7 @@ void UIEditorTabController::updateScreenDetails() {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_screen"))->getActiveConditions().add("open");
 	} catch (Exception& exception) {
 		Console::println(string("UIEditorTabController::updateScreenDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -360,7 +360,7 @@ void UIEditorTabController::updateScreensDetails() {
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("projectedui_prototype"))->setTooltip(prototypeFileName);
 	} catch (Exception& exception) {
 		Console::println(string("UIEditorTabController::updateScreensDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 
 	//

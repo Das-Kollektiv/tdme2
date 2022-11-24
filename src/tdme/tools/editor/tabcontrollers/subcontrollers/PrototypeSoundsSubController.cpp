@@ -138,7 +138,7 @@ void PrototypeSoundsSubController::onSoundLoad(Prototype* prototype, const strin
 	);
 }
 
-void PrototypeSoundsSubController::showErrorPopUp(const string& caption, const string& message)
+void PrototypeSoundsSubController::showInfoPopUp(const string& caption, const string& message)
 {
 	view->getPopUps()->getInfoDialogScreenController()->show(caption, message);
 }
@@ -211,7 +211,7 @@ void PrototypeSoundsSubController::updateDetails(Prototype* prototype, Model* mo
 
 	} catch (Exception& exception) {
 		Console::println(string("PrototypeSoundsSubController::setSoundDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -227,7 +227,7 @@ void PrototypeSoundsSubController::applySoundDetails(Prototype* prototype, const
 		playableSoundView->playSound(sound->getId());
 	} catch (Exception& exception) {
 		Console::println(string("PrototypeSoundsSubController::updateSoundDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -246,7 +246,7 @@ const string PrototypeSoundsSubController::applySoundDetailsRename(Prototype* pr
 		playableSoundView->playSound(sound->getId());
 	} catch (Exception& exception) {
 		Console::println(string("PrototypeSoundsSubController::updateSoundDetailsRename(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 	return newSoundId;
 }
@@ -273,7 +273,7 @@ void PrototypeSoundsSubController::createSound(Prototype* prototype) {
 		}
 	} catch (Exception& exception) {
 		Console::println(string("PrototypeSoundsSubController::createSound(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 
 	if (soundCreate == true) {
@@ -310,7 +310,7 @@ void PrototypeSoundsSubController::renameSound(Prototype* prototype) {
 		}
 	} catch (Exception& exception) {
 		Console::println(string("PrototypeSoundsSubController::renameSound(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 		return;
 	}
 

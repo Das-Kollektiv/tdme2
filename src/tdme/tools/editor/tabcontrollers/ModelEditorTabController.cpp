@@ -172,7 +172,7 @@ void ModelEditorTabController::executeCommand(TabControllerCommand command)
 						Tools::getFileName(fileName)
 					);
 				} catch (Exception& exception) {
-					showErrorPopUp("Warning", (string(exception.what())));
+					showInfoPopUp("Warning", (string(exception.what())));
 				}
 			}
 			break;
@@ -188,7 +188,7 @@ void ModelEditorTabController::executeCommand(TabControllerCommand command)
 								modelEditorTabController->popUps->getFileDialogScreenController()->getFileName()
 							);
 						} catch (Exception& exception) {
-							modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+							modelEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 						}
 						modelEditorTabController->popUps->getFileDialogScreenController()->close();
 					}
@@ -225,7 +225,7 @@ void ModelEditorTabController::executeCommand(TabControllerCommand command)
 			}
 			break;
 		default:
-			showErrorPopUp("Warning", "This command is not supported yet");
+			showInfoPopUp("Warning", "This command is not supported yet");
 			break;
 	}
 }
@@ -545,7 +545,7 @@ void ModelEditorTabController::onLODLoad(int lodLevel) {
 				);
 			} catch (Exception& exception) {
 				Console::println(string("OnLODLoad::performAction(): An error occurred: ") + exception.what());;
-				modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+				modelEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 			}
 
 			modelEditorTabController->view->setLODLevel(lodLevel);
@@ -582,7 +582,7 @@ void ModelEditorTabController::updateInfoText(const MutableString& text) {
 	required_dynamic_cast<GUITextNode*>(screenNode->getNodeById(view->getTabId() + "_tab_text_info"))->setText(text);
 }
 
-void ModelEditorTabController::showErrorPopUp(const string& caption, const string& message)
+void ModelEditorTabController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
@@ -596,7 +596,7 @@ void ModelEditorTabController::setMaterialBaseDetails() {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_material_base"))->getActiveConditions().add("open");
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::setMaterialBaseDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 
 	//
@@ -622,7 +622,7 @@ void ModelEditorTabController::updateMaterialBaseDetails() {
 		}
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::updateMaterialBaseDetails(): An error occurred: ") + exception.what());
-		showErrorPopUp("Warning", string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 }
 
@@ -646,7 +646,7 @@ void ModelEditorTabController::applyMaterialBaseDetails() {
 		}
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::applyMaterialBaseDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 
 	//
@@ -674,7 +674,7 @@ void ModelEditorTabController::setMaterialDetails() {
 		}
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::setMaterialDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 
 	//
@@ -766,7 +766,7 @@ void ModelEditorTabController::updateMaterialDetails() {
 		}
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::updateMaterialDetails(): An error occurred: ") + exception.what());
-		showErrorPopUp("Warning", string(exception.what()));
+		showInfoPopUp("Warning", string(exception.what()));
 	}
 
 	//
@@ -791,7 +791,7 @@ void ModelEditorTabController::updateMaterialColorDetails() {
 		}
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::updateMaterialColorDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -807,7 +807,7 @@ void ModelEditorTabController::applySpecularMaterialDetails() {
 		specularMaterialProperties->setDiffuseTextureMaskedTransparency(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("specularmaterial_maskedtransparency"))->getController()->getValue().getString() == "1");
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::applySpecularMaterialDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -826,7 +826,7 @@ void ModelEditorTabController::applyPBRMaterialDetails() {
 		}
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::applyPBRMaterialDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 
 	auto pbrMaterialProperties = material->getPBRMaterialProperties();
@@ -840,7 +840,7 @@ void ModelEditorTabController::applyPBRMaterialDetails() {
 		pbrMaterialProperties->setBaseColorTextureMaskedTransparency(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("pbrmaterial_maskedtransparency"))->getController()->getValue().getString() == "1");
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::applyPBRMaterialDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -901,7 +901,7 @@ void ModelEditorTabController::setAnimationDetails() {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animation_overlaybone"))->getController()->setDisabled(defaultAnimation == true);
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::setAnimationDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -932,7 +932,7 @@ void ModelEditorTabController::applyAnimationDetails() {
 		view->playAnimation(animationSetup->getId());
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::setAnimationDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -1027,7 +1027,7 @@ void ModelEditorTabController::setAnimationPreviewDetails() {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_animationpreview"))->getActiveConditions().add("open");
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::setAnimationPreviewDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -1070,14 +1070,14 @@ void ModelEditorTabController::onPreviewAnimationsAttachment1ModelLoad() {
 
 void ModelEditorTabController::onPreviewAnimationsAttachment1ModelClear() {
 	attachment1ModelFileName.clear();
-	required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("animationpreview_attachment1_model"))->setSource(string());
-	required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("animationpreview_attachment1_model"))->setTooltip(string());
-	view->addAttachment1(string(), string());
+	required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("animationpreview_attachment1_model"))->setSource(attachment1ModelFileName);
+	required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("animationpreview_attachment1_model"))->setTooltip(attachment1ModelFileName);
+	view->addAttachment1(string(), attachment1ModelFileName);
 }
 
 void ModelEditorTabController::onPreviewAnimationsAttachment1ModelBrowseTo() {
 	if (attachment1ModelFileName.empty() == true) {
-		showErrorPopUp("Browse To", "Nothing to browse to");
+		showInfoPopUp("Browse To", "Nothing to browse to");
 		return;
 	}
 	view->getEditorView()->getScreenController()->browseTo(attachment1ModelFileName);
@@ -1094,7 +1094,7 @@ void ModelEditorTabController::applyAnimationPreviewDetails() {
 		);
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::applyAnimationPreviewDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -1198,21 +1198,21 @@ void ModelEditorTabController::onMaterialClearDiffuseTexture() {
 void ModelEditorTabController::onMaterialBrowseToDiffuseTexture() {
 	auto model = getSelectedModel();
 	if (model == nullptr) {
-		showErrorPopUp("Browse To", "Nothing to browse to");
+		showInfoPopUp("Browse To", "Nothing to browse to");
 		return;
 	}
 	if (model->hasEmbeddedSpecularTextures() == true) {
-		showErrorPopUp("Browse To", "This model has embedded specular material textures");
+		showInfoPopUp("Browse To", "This model has embedded specular material textures");
 		return;
 	}
 	auto material = getSelectedMaterial();
 	if (material == nullptr) {
-		showErrorPopUp("Browse To", "Nothing to browse to");
+		showInfoPopUp("Browse To", "Nothing to browse to");
 		return;
 	}
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties == nullptr || specularMaterialProperties->getDiffuseTextureFileName().empty() == true) {
-		showErrorPopUp("Browse To", "Nothing to browse to");
+		showInfoPopUp("Browse To", "Nothing to browse to");
 		return;
 	}
 	view->getEditorView()->getScreenController()->browseTo(specularMaterialProperties->getDiffuseTexturePathName() + "/" + specularMaterialProperties->getDiffuseTextureFileName());
@@ -1290,21 +1290,21 @@ void ModelEditorTabController::onMaterialClearDiffuseTransparencyTexture() {
 void ModelEditorTabController::onMaterialBrowseToDiffuseTransparencyTexture() {
 	auto model = getSelectedModel();
 	if (model == nullptr) {
-		showErrorPopUp("Browse To", "Nothing to browse to");
+		showInfoPopUp("Browse To", "Nothing to browse to");
 		return;
 	}
 	if (model->hasEmbeddedSpecularTextures() == true) {
-		showErrorPopUp("Browse To", "This model has embedded specular material textures");
+		showInfoPopUp("Browse To", "This model has embedded specular material textures");
 		return;
 	}
 	auto material = getSelectedMaterial();
 	if (material == nullptr) {
-		showErrorPopUp("Browse To", "Nothing to browse to");
+		showInfoPopUp("Browse To", "Nothing to browse to");
 		return;
 	}
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties == nullptr) {
-		showErrorPopUp("Browse To", "Nothing to browse to");
+		showInfoPopUp("Browse To", "Nothing to browse to");
 		return;
 	}
 	if (specularMaterialProperties->getDiffuseTransparencyTextureFileName().empty() == false) {
@@ -1313,7 +1313,7 @@ void ModelEditorTabController::onMaterialBrowseToDiffuseTransparencyTexture() {
 	if (specularMaterialProperties->getDiffuseTextureFileName().empty() == false) {
 		view->getEditorView()->getScreenController()->browseTo(specularMaterialProperties->getDiffuseTexturePathName() + "/" + specularMaterialProperties->getDiffuseTextureFileName());
 	} else {
-		showErrorPopUp("Browse To", "Nothing to browse to");
+		showInfoPopUp("Browse To", "Nothing to browse to");
 	}
 }
 
@@ -1386,21 +1386,21 @@ void ModelEditorTabController::onMaterialClearNormalTexture() {
 void ModelEditorTabController::onMaterialBrowseToNormalTexture() {
 	auto model = getSelectedModel();
 	if (model == nullptr) {
-		showErrorPopUp("Browse To", "Nothing to browse to");
+		showInfoPopUp("Browse To", "Nothing to browse to");
 		return;
 	}
 	if (model->hasEmbeddedSpecularTextures() == true) {
-		showErrorPopUp("Browse To", "This model has embedded specular material textures");
+		showInfoPopUp("Browse To", "This model has embedded specular material textures");
 		return;
 	}
 	auto material = getSelectedMaterial();
 	if (material == nullptr) {
-		showErrorPopUp("Browse To", "Nothing to browse to");
+		showInfoPopUp("Browse To", "Nothing to browse to");
 		return;
 	}
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties == nullptr || specularMaterialProperties->getNormalTextureFileName().empty() == true) {
-		showErrorPopUp("Browse To", "Nothing to browse to");
+		showInfoPopUp("Browse To", "Nothing to browse to");
 		return;
 	}
 	view->getEditorView()->getScreenController()->browseTo(specularMaterialProperties->getNormalTexturePathName() + "/" + specularMaterialProperties->getNormalTextureFileName());
@@ -1475,21 +1475,21 @@ void ModelEditorTabController::onMaterialClearSpecularTexture() {
 void ModelEditorTabController::onMaterialBrowseToSpecularTexture() {
 	auto model = getSelectedModel();
 	if (model == nullptr) {
-		showErrorPopUp("Browse To", "Nothing to browse to");
+		showInfoPopUp("Browse To", "Nothing to browse to");
 		return;
 	}
 	if (model->hasEmbeddedSpecularTextures() == true) {
-		showErrorPopUp("Browse To", "This model has embedded specular material textures");
+		showInfoPopUp("Browse To", "This model has embedded specular material textures");
 		return;
 	}
 	auto material = getSelectedMaterial();
 	if (material == nullptr) {
-		showErrorPopUp("Browse To", "Nothing to browse to");
+		showInfoPopUp("Browse To", "Nothing to browse to");
 		return;
 	}
 	auto specularMaterialProperties = material->getSpecularMaterialProperties();
 	if (specularMaterialProperties == nullptr || specularMaterialProperties->getSpecularTextureFileName().empty() == true) {
-		showErrorPopUp("Browse To", "Nothing to browse to");
+		showInfoPopUp("Browse To", "Nothing to browse to");
 		return;
 	}
 	view->getEditorView()->getScreenController()->browseTo(specularMaterialProperties->getSpecularTexturePathName() + "/" + specularMaterialProperties->getSpecularTextureFileName());
@@ -1559,21 +1559,21 @@ void ModelEditorTabController::onMaterialClearPBRBaseColorTexture() {
 void ModelEditorTabController::onMaterialBrowseToPBRBaseColorTexture() {
 	auto model = getSelectedModel();
 	if (model == nullptr) {
-		showErrorPopUp("Browse To", "Nothing to browse to");
+		showInfoPopUp("Browse To", "Nothing to browse to");
 		return;
 	}
 	if (model->hasEmbeddedPBRTextures() == true) {
-		showErrorPopUp("Browse To", "This model has embedded PBR material textures");
+		showInfoPopUp("Browse To", "This model has embedded PBR material textures");
 		return;
 	}
 	auto material = getSelectedMaterial();
 	if (material == nullptr) {
-		showErrorPopUp("Browse To", "Nothing to browse to");
+		showInfoPopUp("Browse To", "Nothing to browse to");
 		return;
 	}
 	auto pbrMaterialProperties = material->getPBRMaterialProperties();
 	if (pbrMaterialProperties == nullptr || pbrMaterialProperties->getBaseColorTextureFileName().empty() == true) {
-		showErrorPopUp("Browse To", "Nothing to browse to");
+		showInfoPopUp("Browse To", "Nothing to browse to");
 		return;
 	}
 	view->getEditorView()->getScreenController()->browseTo(pbrMaterialProperties->getBaseColorTexturePathName() + "/" + pbrMaterialProperties->getBaseColorTextureFileName());
@@ -1642,21 +1642,21 @@ void ModelEditorTabController::onMaterialClearPBRMetallicRoughnessTexture() {
 void ModelEditorTabController::onMaterialBrowseToPBRMetallicRoughnessTexture() {
 	auto model = getSelectedModel();
 	if (model == nullptr) {
-		showErrorPopUp("Browse To", "Nothing to browse to");
+		showInfoPopUp("Browse To", "Nothing to browse to");
 		return;
 	}
 	if (model->hasEmbeddedPBRTextures() == true) {
-		showErrorPopUp("Browse To", "This model has embedded PBR material textures");
+		showInfoPopUp("Browse To", "This model has embedded PBR material textures");
 		return;
 	}
 	auto material = getSelectedMaterial();
 	if (material == nullptr) {
-		showErrorPopUp("Browse To", "Nothing to browse to");
+		showInfoPopUp("Browse To", "Nothing to browse to");
 		return;
 	}
 	auto pbrMaterialProperties = material->getPBRMaterialProperties();
 	if (pbrMaterialProperties == nullptr || pbrMaterialProperties->getMetallicRoughnessTextureFileName().empty() == true) {
-		showErrorPopUp("Browse To", "Nothing to browse to");
+		showInfoPopUp("Browse To", "Nothing to browse to");
 		return;
 	}
 	view->getEditorView()->getScreenController()->browseTo(pbrMaterialProperties->getMetallicRoughnessTexturePathName() + "/" + pbrMaterialProperties->getMetallicRoughnessTextureFileName());
@@ -1725,21 +1725,21 @@ void ModelEditorTabController::onMaterialClearPBRNormalTexture() {
 void ModelEditorTabController::onMaterialBrowseToPBRNormalTexture() {
 	auto model = getSelectedModel();
 	if (model == nullptr) {
-		showErrorPopUp("Browse To", "Nothing to browse to");
+		showInfoPopUp("Browse To", "Nothing to browse to");
 		return;
 	}
 	if (model->hasEmbeddedPBRTextures() == true) {
-		showErrorPopUp("Browse To", "This model has embedded PBR material textures");
+		showInfoPopUp("Browse To", "This model has embedded PBR material textures");
 		return;
 	}
 	auto material = getSelectedMaterial();
 	if (material == nullptr) {
-		showErrorPopUp("Browse To", "Nothing to browse to");
+		showInfoPopUp("Browse To", "Nothing to browse to");
 		return;
 	}
 	auto pbrMaterialProperties = material->getPBRMaterialProperties();
 	if (pbrMaterialProperties == nullptr || pbrMaterialProperties->getNormalTextureFileName().empty() == true) {
-		showErrorPopUp("Browse To", "Nothing to browse to");
+		showInfoPopUp("Browse To", "Nothing to browse to");
 		return;
 	}
 	view->getEditorView()->getScreenController()->browseTo(pbrMaterialProperties->getNormalTexturePathName() + "/" + pbrMaterialProperties->getNormalTextureFileName());
@@ -1784,7 +1784,7 @@ void ModelEditorTabController::renameAnimation() {
 			}
 		} catch (Exception& exception) {
 			Console::println(string("ModelEditorTabController::renameAnimation(): An error occurred: ") + exception.what());;
-			showErrorPopUp("Warning", (string(exception.what())));
+			showInfoPopUp("Warning", (string(exception.what())));
 		}
 	}
 
@@ -1833,7 +1833,7 @@ void ModelEditorTabController::createAnimationSetup(int lodLevel) {
 		}
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::createAnimationSetup(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 
 	if (animationSetupCreated == true) {
@@ -1876,7 +1876,7 @@ void ModelEditorTabController::createLOD() {
 				);
 			} catch (Exception& exception) {
 				Console::println(string("OnLoadLODModel::performAction(): An error occurred: ") + exception.what());;
-				modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+				modelEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 			}
 			modelEditorTabController->view->getEditorView()->reloadTabOutliner("lod" + to_string(lodLevelIdx) + ".model");
 			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
@@ -1898,7 +1898,7 @@ void ModelEditorTabController::createLOD() {
 	PrototypeLODLevel* lodLevel = nullptr;
 	if (view->getPrototype()->getLODLevel2() != nullptr && view->getPrototype()->getLODLevel3() != nullptr) {
 		Console::println("ModelEditorTabController::createLOD(): LOD level 2 and LOD level 3 is already in use");
-		showErrorPopUp("Warning", "LOD level 2 and LOD level 3 is already in use");
+		showInfoPopUp("Warning", "LOD level 2 and LOD level 3 is already in use");
 		return;
 	}
 
@@ -1949,7 +1949,7 @@ void ModelEditorTabController::setLODDetails(int lodLevel) {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("lod_min_distance"))->getController()->setValue(prototypeLODLevel->getMinDistance());
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::setLODDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 
 	//
@@ -1974,7 +1974,7 @@ void ModelEditorTabController::updateLODColorDetails(int lodLevel) {
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("lod_color_mul"))->setEffectColorMul(Color4(prototypeLODLevel->getColorMul()));
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::updateLODColorDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -1995,7 +1995,7 @@ void ModelEditorTabController::applyLODDetails(int lodLevel) {
 		prototypeLODLevel->setMinDistance(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("lod_min_distance"))->getController()->getValue().getString()));
 	} catch (Exception& exception) {
 		Console::println(string("ModelEditorTabController::applyLODDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -2257,7 +2257,7 @@ void ModelEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 						}
 						modelEditorTabController->getView()->reloadPrototype();
 					} catch (Exception& exception) {
-						modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+						modelEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 					}
 				}
 				OnModelGenerateBillboardLodAction(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {
@@ -2311,7 +2311,7 @@ void ModelEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 						);
 						modelEditorTabController->getView()->reloadPrototype();
 					} catch (Exception& exception) {
-						modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+						modelEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 					}
 				}
 				OnModelGenerateImposterLodAction(ModelEditorTabController* modelEditorTabController): modelEditorTabController(modelEditorTabController) {

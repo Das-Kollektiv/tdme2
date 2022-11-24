@@ -153,7 +153,7 @@ void TerrainEditorTabController::executeCommand(TabControllerCommand command)
 						Tools::getFileName(prototype->getFileName())
 					);
 				} catch (Exception& exception) {
-					showErrorPopUp("Warning", (string(exception.what())));
+					showInfoPopUp("Warning", (string(exception.what())));
 				}
 			}
 			break;
@@ -169,7 +169,7 @@ void TerrainEditorTabController::executeCommand(TabControllerCommand command)
 								modelEditorTabController->popUps->getFileDialogScreenController()->getFileName()
 							);
 						} catch (Exception& exception) {
-							modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+							modelEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 						}
 						modelEditorTabController->popUps->getFileDialogScreenController()->close();
 					}
@@ -201,7 +201,7 @@ void TerrainEditorTabController::executeCommand(TabControllerCommand command)
 			}
 			break;
 		default:
-			showErrorPopUp("Warning", "This command is not supported yet");
+			showInfoPopUp("Warning", "This command is not supported yet");
 			break;
 	}
 }
@@ -210,7 +210,7 @@ void TerrainEditorTabController::updateInfoText(const MutableString& text) {
 	required_dynamic_cast<GUITextNode*>(screenNode->getNodeById(view->getTabId() + "_tab_text_info"))->setText(text);
 }
 
-void TerrainEditorTabController::showErrorPopUp(const string& caption, const string& message)
+void TerrainEditorTabController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
@@ -897,7 +897,7 @@ void TerrainEditorTabController::onCreateTerrain() {
 		terrain->setDepth(terrainBoundingBox.getDimensions().getZ());
 		view->initializeTerrain();
 	} catch (Exception& exception) {
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 
 	//
@@ -985,7 +985,7 @@ void TerrainEditorTabController::setTerrainDetails() {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrain_size_z"))->getController()->setValue(MutableString(terrain->getDepth()));
 	} catch (Exception& exception) {
 		Console::println(string("TerrainEditorTabController::setTerrainDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -1001,7 +1001,7 @@ void TerrainEditorTabController::setTerrainBrushDetails() {
 		required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("terrainbrush_texture"))->setTooltip(currentTerrainBrushTextureFileName);
 	} catch (Exception& exception) {
 		Console::println(string("TerrainEditorTabController::setTerrainBrushDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 
 	//
@@ -1014,7 +1014,7 @@ void TerrainEditorTabController::updateTerrainBrushDetails() {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrainbrush_strength"))->getController()->setValue(MutableString(currentTerrainBrushStrength));
 	} catch (Exception& exception) {
 		Console::println(string("TerrainEditorTabController::updateTerrainBrushDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -1024,7 +1024,7 @@ void TerrainEditorTabController::applyTerrainBrushDetails() {
 		currentTerrainBrushStrength = Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("terrainbrush_strength"))->getController()->getValue().getString());
 	} catch (Exception& exception) {
 		Console::println(string("TerrainEditorTabController::setTerrainBrushDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 	// TODO: a.drewke, maybe improve me
 	view->setBrush(currentTerrainBrushOperation == Terrain::BRUSHOPERATION_RAMP?rampTerrainBrushTexture:currentTerrainBrushTexture, currentTerrainBrushScale, currentTerrainBrushStrength);
@@ -1040,7 +1040,7 @@ void TerrainEditorTabController::setFoliageBrushDetails() {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_foliagebrush"))->getActiveConditions().add("open");
 	} catch (Exception& exception) {
 		Console::println(string("TerrainEditorTabController::setFoliageBrushDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 
 	//
@@ -1066,7 +1066,7 @@ void TerrainEditorTabController::updateFoliageBrushDetails() {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_density"))->getController()->setValue(MutableString(brush->getDensity()));
 	} catch (Exception& exception) {
 		Console::println(string("TerrainEditorTabController::updateFoliageBrushDetails(): An error occurred: ") + exception.what());
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -1087,7 +1087,7 @@ void TerrainEditorTabController::applyFoliageBrushDetails() {
 		brush->setDensity(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_density"))->getController()->getValue().getString()));
 	} catch (Exception& exception) {
 		Console::println(string("TerrainEditorTabController::applyFoliageBrushDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -1131,7 +1131,7 @@ void TerrainEditorTabController::setFoliageBrushPrototypeDetails() {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_sloperange_max"))->getController()->setValue(MutableString(brushPrototype->getSlopeMax()));
 	} catch (Exception& exception) {
 		Console::println(string("TerrainEditorTabController::setFoliageBrushPrototypeDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -1166,7 +1166,7 @@ void TerrainEditorTabController::applyFoliageBrushPrototypeDetails() {
 		brushPrototype->setSlopeMax(Float::parse(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("foliagebrush_prototype_sloperange_max"))->getController()->getValue().getString()));
 	} catch (Exception& exception) {
 		Console::println(string("TerrainEditorTabController::applyFoliageBrushPrototypeDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -1262,7 +1262,7 @@ void TerrainEditorTabController::initializeTerrain() {
 		prototype->getTerrain()->setWidth(terrainBoundingBox.getDimensions().getX());
 		prototype->getTerrain()->setDepth(terrainBoundingBox.getDimensions().getZ());
 	} catch (Exception& exception) {
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 

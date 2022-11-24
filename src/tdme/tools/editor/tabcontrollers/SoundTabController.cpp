@@ -87,10 +87,10 @@ void SoundTabController::dispose()
 
 void SoundTabController::executeCommand(TabControllerCommand command)
 {
-	showErrorPopUp("Warning", "This command is not supported yet");
+	showInfoPopUp("Warning", "This command is not supported yet");
 }
 
-void SoundTabController::showErrorPopUp(const string& caption, const string& message)
+void SoundTabController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }

@@ -97,7 +97,7 @@ void EmptyEditorTabController::executeCommand(TabControllerCommand command)
 						Tools::getFileName(fileName)
 					);
 				} catch (Exception& exception) {
-					showErrorPopUp("Warning", (string(exception.what())));
+					showInfoPopUp("Warning", (string(exception.what())));
 				}
 			}
 			break;
@@ -113,7 +113,7 @@ void EmptyEditorTabController::executeCommand(TabControllerCommand command)
 								emptyEditorTabController->popUps->getFileDialogScreenController()->getFileName()
 							);
 						} catch (Exception& exception) {
-							emptyEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+							emptyEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 						}
 						emptyEditorTabController->popUps->getFileDialogScreenController()->close();
 					}
@@ -138,7 +138,7 @@ void EmptyEditorTabController::executeCommand(TabControllerCommand command)
 			}
 			break;
 		default:
-			showErrorPopUp("Warning", "This command is not supported yet");
+			showInfoPopUp("Warning", "This command is not supported yet");
 			break;
 	}
 }
@@ -205,7 +205,7 @@ void EmptyEditorTabController::updateInfoText(const MutableString& text) {
 	required_dynamic_cast<GUITextNode*>(screenNode->getNodeById(view->getTabId() + "_tab_text_info"))->setText(text);
 }
 
-void EmptyEditorTabController::showErrorPopUp(const string& caption, const string& message)
+void EmptyEditorTabController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }

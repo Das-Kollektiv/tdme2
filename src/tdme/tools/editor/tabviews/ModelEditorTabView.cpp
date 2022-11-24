@@ -274,7 +274,7 @@ void ModelEditorTabView::loadModel(const string& pathName, const string& fileNam
 			)
 		);
 	} catch (Exception& exception) {
-		modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+		modelEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 	}
 	reimportPrototype();
 }
@@ -330,11 +330,11 @@ void ModelEditorTabView::reimportModel(const string& pathName, const string& fil
 		// set model in entity
 		prototype->setModel(model);
 	} catch (Exception& exception) {
-		modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+		modelEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 	}
 	reimportPrototype();
 	if (log.size() > 0) {
-		modelEditorTabController->showErrorPopUp("Warning", log);
+		modelEditorTabController->showInfoPopUp("Warning", log);
 	}
 }
 

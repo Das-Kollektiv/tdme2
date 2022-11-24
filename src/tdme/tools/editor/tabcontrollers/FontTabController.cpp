@@ -85,10 +85,10 @@ void FontTabController::dispose()
 
 void FontTabController::executeCommand(TabControllerCommand command)
 {
-	showErrorPopUp("Warning", "This command is not supported yet");
+	showInfoPopUp("Warning", "This command is not supported yet");
 }
 
-void FontTabController::showErrorPopUp(const string& caption, const string& message)
+void FontTabController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }

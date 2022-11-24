@@ -77,10 +77,10 @@ void VideoTabController::dispose()
 
 void VideoTabController::executeCommand(TabControllerCommand command)
 {
-	showErrorPopUp("Warning", "This command is not supported yet");
+	showInfoPopUp("Warning", "This command is not supported yet");
 }
 
-void VideoTabController::showErrorPopUp(const string& caption, const string& message)
+void VideoTabController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
