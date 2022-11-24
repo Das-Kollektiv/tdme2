@@ -339,12 +339,8 @@ void GUI::render()
 
 		if (screen->isVisible() == false) continue;
 
+		//
 		screen->render(guiRenderer);
-	}
-	for (auto i = 0; i < renderScreens.size(); i++) {
-		auto screen = renderScreens[i];
-		if (screen->isVisible() == false) continue;
-
 		screen->renderFloatingNodes(guiRenderer);
 	}
 	guiRenderer->doneRendering();
