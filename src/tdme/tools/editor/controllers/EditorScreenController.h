@@ -174,6 +174,7 @@ private:
 	unordered_map<string, EditorTabView> tabViews;
 	string fileNameSearchTerm;
 	int64_t timeFileNameSearchTerm { -1LL };
+	string browseToFileName;
 
 	//
 	class FileOpenThread: public Thread {
@@ -272,6 +273,7 @@ private:
 		string id;
 		string buttonXML;
 		Texture* thumbnailTexture { nullptr };
+		bool scrollTo { false };
 	};
 
 	//
@@ -426,6 +428,12 @@ public:
 	void scanProjectPaths(const string& path, string& xml);
 
 	/**
+	 * Browse to file name
+	 * @param fileName file name
+	 */
+	void browseTo(const string& fileName);
+
+	/**
 	 * Close tabs
 	 */
 	void closeTabs();
@@ -454,6 +462,11 @@ public:
 	 * Stop scan files
 	 */
 	void stopScanFiles();
+
+	/**
+	 * Reset scan files
+	 */
+	void resetScanFiles();
 
 	/**
 	 * Add project path files pending file entities

@@ -217,9 +217,8 @@ void EditorScreenController::onChange(GUIElementNode* node)
 		timeFileNameSearchTerm = Time::getCurrentMillis();
 	} else
 	if (node->getId() == "selectbox_projectpaths") {
-		fileNameSearchTerm.clear();
-		timeFileNameSearchTerm = -1LL;
 		stopScanFiles();
+		resetScanFiles();
 		relativeProjectPath = node->getController()->getValue().getString();
 		startScanFiles();
 	} else
@@ -557,6 +556,7 @@ void EditorScreenController::closeTabs() {
 
 void EditorScreenController::closeProject() {
 	stopScanFiles();
+	resetScanFiles();
 	view->getPopUps()->getFileDialogScreenController()->setDefaultCWD(string());
 	closeTabs();
 	clearProjectPathFiles();
@@ -587,15 +587,21 @@ void EditorScreenController::startScanFiles() {
 }
 
 void EditorScreenController::addPendingFileEntities() {
+	string scrollToNodeId;
 	string xml;
 	xml+= "<layout alignment=\"horizontal\">\n";
 	for (auto pendingFileEntity: pendingFileEntities) {
 		xml+= pendingFileEntity->buttonXML;
+		if (pendingFileEntity->scrollTo == true) scrollToNodeId = pendingFileEntity->id;
 	}
 	xml+= "</layout>\n";
 	//
 	try {
 		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(projectPathFilesScrollArea->getId()))->addSubNodes(xml, false);
+		if (scrollToNodeId.empty() == false) {
+			required_dynamic_cast<GUINode*>(screenNode->getNodeById(scrollToNodeId))->scrollToNodeX();
+			required_dynamic_cast<GUINode*>(screenNode->getNodeById(scrollToNodeId))->scrollToNodeY();
+		}
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::addPendingFileEntities(): An error occurred: "));
 		Console::println(string(exception.what()));
@@ -638,6 +644,23 @@ void EditorScreenController::stopScanFiles() {
 		delete scanFilesThread;
 		scanFilesThread = nullptr;
 	}
+}
+
+void EditorScreenController::resetScanFiles() {
+	Console::println("EditorScreenController::resetScanFiles()");
+	fileNameSearchTerm.clear();
+	browseToFileName.clear();
+	timeFileNameSearchTerm = -1LL;
+}
+
+void EditorScreenController::browseTo(const string& fileName) {
+	Console::println("EditorScreenController::browseTo(): " + fileName);
+	stopScanFiles();
+	relativeProjectPath = Tools::getPathName(fileName);
+	if (StringTools::startsWith(relativeProjectPath, projectPath) == true) relativeProjectPath = StringTools::substring(relativeProjectPath, projectPath.size() + 1);
+	browseToFileName = projectPath + "/" + relativeProjectPath + "/" + Tools::getFileName(fileName);
+	Console::println("EditorScreenController::browseTo(): relative project path: " + relativeProjectPath + ", filename = " + browseToFileName);
+	startScanFiles();
 }
 
 void EditorScreenController::ScanFilesThread::run() {
@@ -746,7 +769,7 @@ void EditorScreenController::ScanFilesThread::run() {
 
 			//
 			auto fileEntity = new FileEntity();
-			fileEntity->id = "projectpathfiles_file_" + GUIParser::escapeQuotes(Tools::getFileName(fileName));
+			fileEntity->id = "projectpathfiles_file_" + GUIParser::escapeQuotes(StringTools::replace(Tools::getFileName(fileName), '.', '_'));
 			fileEntity->buttonXML =
 				string() +
 				"<button " +
@@ -776,7 +799,15 @@ void EditorScreenController::ScanFilesThread::run() {
 
 			//
 			auto fileEntity = new FileEntity();
-			fileEntity->id = "projectpathfiles_file_" + GUIParser::escapeQuotes(Tools::getFileName(fileName));
+			fileEntity->id = "projectpathfiles_file_" + GUIParser::escapeQuotes(StringTools::replace(Tools::getFileName(fileName), '.', '_'));
+
+			//
+			string buttonOnInitialize;
+			if (editorScreenController->browseToFileName.empty() == false && editorScreenController->browseToFileName == absolutePath) {
+				fileEntity->scrollTo = true;
+				buttonOnInitialize = "on-initialize=\"" + fileEntity->id + ".condition+=selected\" ";
+			}
+
 			fileEntity->buttonXML =
 				string() +
 				"<button " +
@@ -787,6 +818,7 @@ void EditorScreenController::ScanFilesThread::run() {
 				"icon=\"" + GUIParser::escapeQuotes(icon) + "\" " +
 				"icon-big=\"" + GUIParser::escapeQuotes(iconBig) + "\" " +
 				"filename=\"" + GUIParser::escapeQuotes(fileName) + "\" " +
+				buttonOnInitialize +
 				"/>\n";
 			editorScreenController->lockFileEntities();
 			editorScreenController->getFileEntities().push_back(fileEntity);
@@ -849,7 +881,15 @@ void EditorScreenController::ScanFilesThread::run() {
 
 				//
 				auto fileEntity = new FileEntity();
-				fileEntity->id = "projectpathfiles_file_" + GUIParser::escapeQuotes(Tools::getFileName(fileName));
+				fileEntity->id = "projectpathfiles_file_" + GUIParser::escapeQuotes(StringTools::replace(Tools::getFileName(fileName), '.', '_'));
+
+				//
+				string buttonOnInitialize;
+				if (editorScreenController->browseToFileName.empty() == false && editorScreenController->browseToFileName == absolutePath) {
+					fileEntity->scrollTo = true;
+					buttonOnInitialize = "on-initialize=\"" + fileEntity->id + ".condition+=selected\" ";
+				}
+
 				fileEntity->buttonXML =
 					string() +
 					"<button " +
@@ -861,7 +901,9 @@ void EditorScreenController::ScanFilesThread::run() {
 					"icon-big=\"" + GUIParser::escapeQuotes(iconBig) + "\" " +
 					"filename=\"" + GUIParser::escapeQuotes(fileName) + "\" " +
 					"type-color=\"" + GUIParser::escapeQuotes(typeColor) + "\" " +
+					buttonOnInitialize +
 					"/>\n";
+
 				fileEntity->thumbnailTexture = thumbnailTexture;
 				editorScreenController->lockFileEntities();
 				editorScreenController->getFileEntities().push_back(fileEntity);
@@ -1195,9 +1237,8 @@ void EditorScreenController::openFile(const string& absoluteFileName) {
 
 	// path
 	if (FileSystem::getInstance()->isPath(absoluteFileName)) {
-		fileNameSearchTerm.clear();
-		timeFileNameSearchTerm = -1LL;
 		stopScanFiles();
+		resetScanFiles();
 		setRelativeProjectPath(StringTools::substring(absoluteFileName, projectPath.size() + 1));
 		startScanFiles();
 		return;
@@ -1802,8 +1843,8 @@ const string EditorScreenController::getSelectedTabId() {
 void EditorScreenController::tick() {
 	auto now = Time::getCurrentMillis();
 	if (timeFileNameSearchTerm != -1LL && now - timeFileNameSearchTerm >= 1000LL) {
-		startScanFiles();
 		timeFileNameSearchTerm = -1LL;
+		startScanFiles();
 	}
 	if (scanFilesThread != nullptr) {
 		lockFileEntities();
