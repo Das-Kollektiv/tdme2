@@ -115,6 +115,12 @@ public:
 	void onScriptUnset(Prototype* prototype);
 
 	/**
+	 * On script browse to
+	 * @param prototype prototype
+	 */
+	void onScriptBrowseTo(Prototype* prototype);
+
+	/**
 	 * Show the information pop up / modal
 	 * @param caption caption
 	 * @param message message

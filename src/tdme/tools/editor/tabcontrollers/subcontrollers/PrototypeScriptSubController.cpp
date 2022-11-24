@@ -139,7 +139,7 @@ void PrototypeScriptSubController::onAction(GUIActionListenerType type, GUIEleme
 		onScriptUnset(prototype);
 	} else
 	if (node->getId() == "script_browseto") {
-		// TODO
+		onScriptBrowseTo(prototype);
 	}
 }
 
@@ -187,6 +187,14 @@ void PrototypeScriptSubController::onScriptSet(Prototype* prototype) {
 void PrototypeScriptSubController::onScriptUnset(Prototype* prototype) {
 	prototype->setScript(string());
 	updateScriptDetails(prototype);
+}
+
+void PrototypeScriptSubController::onScriptBrowseTo(Prototype* prototype) {
+	if (prototype->getScript().empty() == true) {
+		showInfoPopUp("Browse To", "Nothing to browse to");
+	} else {
+		editorView->getScreenController()->browseTo(prototype->getScript());
+	}
 }
 
 void PrototypeScriptSubController::showInfoPopUp(const string& caption, const string& message)
