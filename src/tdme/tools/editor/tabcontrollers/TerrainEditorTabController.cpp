@@ -610,7 +610,21 @@ void TerrainEditorTabController::onAction(GUIActionListenerType type, GUIElement
 			updateFoliageBrush();
 		} else
 		if (node->getId() == "foliagebrush_texture_browseto") {
-
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == false) return;
+			auto foliageBrushIdx = Integer::parse(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
+			auto prototype = view->getPrototype();
+			auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
+			if (terrain == nullptr) {
+				showInfoPopUp("Browse To", "Nothing to browse to");
+				return;
+			}
+			auto brush = terrain->getBrush(foliageBrushIdx);
+			if (brush == nullptr || brush->getFileName().empty() == true) {
+				showInfoPopUp("Browse To", "Nothing to browse to");
+				return;
+			}
+			view->getEditorView()->getScreenController()->browseTo(brush->getFileName());
 		} else
 		if (node->getId() == "foliagebrush_prototype_file_open") {
 			class OnTerrainBrushPrototypeFileOpenAction: public virtual Action
@@ -697,6 +711,27 @@ void TerrainEditorTabController::onAction(GUIActionListenerType type, GUIElement
 				Console::println(string("TerrainEditorTabController::onAction(): ") + exception.what());
 			}
 		} else
+		if (node->getId() == "foliagebrush_prototype_file_browseto") {
+			auto prototype = view->getPrototype();
+			auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
+			if (terrain == nullptr) return;
+
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			auto foliageBrushIdx = -1;
+			auto foliageBrushPrototypeIdx = -1;
+			if (checkOutlinerFoliageBrushPrototype(outlinerNode, foliageBrushIdx, foliageBrushPrototypeIdx) == false) return;
+			auto brush = terrain->getBrush(foliageBrushIdx);
+			if (brush == nullptr) {
+				showInfoPopUp("Browse To", "Nothing to browse to");
+				return;
+			}
+			auto brushPrototype = brush->getPrototype(foliageBrushPrototypeIdx);
+			if (brushPrototype == nullptr || brushPrototype->getFileName().empty() == true) {
+				showInfoPopUp("Browse To", "Nothing to browse to");
+				return;
+			}
+			view->getEditorView()->getScreenController()->browseTo(brushPrototype->getFileName());
+		} else
 		if (node->getId() == "terrainbrush_texture_open") {
 			class OnTerrainBrushFileOpenAction: public virtual Action
 			{
@@ -749,10 +784,16 @@ void TerrainEditorTabController::onAction(GUIActionListenerType type, GUIElement
 		if (node->getId() == "terrainbrush_texture_remove") {
 			if (currentTerrainBrushTexture != nullptr) currentTerrainBrushTexture->releaseReference();
 			currentTerrainBrushTexture = nullptr;
+			currentTerrainBrushTextureFileName.clear();
 			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("terrainbrush_texture"))->setTexture(currentTerrainBrushTexture);
-			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("terrainbrush_texture"))->setTooltip(string());
+			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("terrainbrush_texture"))->setTooltip(currentTerrainBrushTextureFileName);
 		} else
 		if (node->getId() == "terrainbrush_texture_browseto") {
+			if (currentTerrainBrushTextureFileName.empty() == true) {
+				showInfoPopUp("Browse To", "Nothing to browse to");
+			} else {
+				view->getEditorView()->getScreenController()->browseTo(currentTerrainBrushTextureFileName);
+			}
 		} else
 		if (node->getId() == "terrain_mirrormode_apply") {
 			auto prototype = view->getPrototype();

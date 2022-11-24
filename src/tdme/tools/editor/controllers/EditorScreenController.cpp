@@ -656,10 +656,11 @@ void EditorScreenController::resetScanFiles() {
 void EditorScreenController::browseTo(const string& fileName) {
 	Console::println("EditorScreenController::browseTo(): " + fileName);
 	stopScanFiles();
-	relativeProjectPath = Tools::getPathName(fileName);
-	if (StringTools::startsWith(relativeProjectPath, projectPath) == true) relativeProjectPath = StringTools::substring(relativeProjectPath, projectPath.size() + 1);
-	browseToFileName = projectPath + "/" + relativeProjectPath + "/" + Tools::getFileName(fileName);
-	Console::println("EditorScreenController::browseTo(): relative project path: " + relativeProjectPath + ", filename = " + browseToFileName);
+	auto newRelativeProjectPath = Tools::getPathName(fileName);
+	if (StringTools::startsWith(newRelativeProjectPath, projectPath) == true) newRelativeProjectPath = StringTools::substring(newRelativeProjectPath, projectPath.size() + 1);
+	browseToFileName = projectPath + "/" + newRelativeProjectPath + "/" + Tools::getFileName(fileName);
+	Console::println("EditorScreenController::browseTo(): relative project path: " + newRelativeProjectPath + ", filename = " + browseToFileName);
+	setRelativeProjectPath(newRelativeProjectPath);
 	startScanFiles();
 }
 
