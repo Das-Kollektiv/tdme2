@@ -103,11 +103,12 @@ private:
 		"pbrmaterial_maskedtransparency"
 	};
 
-	array<string, 4> applyAnimationPreviewNodes = {
+	array<string, 5> applyAnimationPreviewNodes = {
 		"animationpreview_base",
 		"animationpreview_overlay1",
 		"animationpreview_overlay2",
-		"animationpreview_overlay3"
+		"animationpreview_overlay3",
+		"animationpreview_attachment1_bone"
 	};
 
 	array<string, 4> applyLODNodes = {
@@ -116,6 +117,8 @@ private:
 
 	string renameAnimationId;
 	int renameAnimationLOD { -1 };
+
+	string attachment1ModelFileName;
 
 	/**
 	 * Get LOD level
@@ -453,6 +456,11 @@ public:
 	 * On preview animations attachment 1 model clear
 	 */
 	void onPreviewAnimationsAttachment1ModelClear();
+
+	/**
+	 * On preview animations attachment 1 model browse to
+	 */
+	void onPreviewAnimationsAttachment1ModelBrowseTo();
 
 	/**
 	 * Start rename animation

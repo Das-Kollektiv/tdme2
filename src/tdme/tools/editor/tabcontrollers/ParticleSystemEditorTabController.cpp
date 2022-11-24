@@ -895,6 +895,19 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 				}
 			}
 		} else
+		if (node->getId().compare("particletype_point_texture_browseto") == 0) {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+				auto pps = particleSystem != nullptr?particleSystem->getPointParticleSystem():nullptr;
+				if (pps != nullptr && pps->getTextureFileName().empty() == false) {
+					view->getEditorView()->getScreenController()->browseTo(pps->getTextureFileName());
+				} else {
+					showErrorPopUp("Browse To", "Nothing to browse to");
+				}
+			}
+		} else
 		if (node->getId().compare("particletype_point_transparency_open") == 0) {
 			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
@@ -963,6 +976,19 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 						showErrorPopUp("Warning", (string(exception.what())));
 					}
 					view->initParticleSystem();
+				}
+			}
+		} else
+		if (node->getId().compare("particletype_point_transparency_browseto") == 0) {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+				auto pps = particleSystem != nullptr?particleSystem->getPointParticleSystem():nullptr;
+				if (pps != nullptr && pps->getTransparencyTextureFileName().empty() == false) {
+					view->getEditorView()->getScreenController()->browseTo(pps->getTransparencyTextureFileName());
+				} else {
+					showErrorPopUp("Browse To", "Nothing to browse to");
 				}
 			}
 		} else
@@ -1037,6 +1063,19 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 				}
 			}
 		} else
+		if (node->getId().compare("particletype_fog_texture_browseto") == 0) {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+				auto fps = particleSystem != nullptr?particleSystem->getFogParticleSystem():nullptr;
+				if (fps != nullptr && fps->getTextureFileName().empty() == false) {
+					view->getEditorView()->getScreenController()->browseTo(fps->getTextureFileName());
+				} else {
+					showErrorPopUp("Browse To", "Nothing to browse to");
+				}
+			}
+		} else
 		if (node->getId().compare("particletype_fog_transparency_open") == 0) {
 			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
 			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
@@ -1105,6 +1144,19 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 						showErrorPopUp("Warning", (string(exception.what())));
 					}
 					view->initParticleSystem();
+				}
+			}
+		} else
+		if (node->getId().compare("particletype_fog_transparency_browseto") == 0) {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+				auto fps = particleSystem != nullptr?particleSystem->getFogParticleSystem():nullptr;
+				if (fps != nullptr && fps->getTransparencyTextureFileName().empty() == false) {
+					view->getEditorView()->getScreenController()->browseTo(fps->getTransparencyTextureFileName());
+				} else {
+					showErrorPopUp("Browse To", "Nothing to browse to");
 				}
 			}
 		} else
@@ -1179,6 +1231,20 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 				} catch (Exception& exception) {
 					Console::println(string("ParticleSystemEditorTabController::onAction(): An error occurred: ") + exception.what());;
 					showErrorPopUp("Warning", (string(exception.what())));
+				}
+				view->initParticleSystem();
+			}
+		} else
+		if (node->getId() == "particletype_object_browseto") {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+				auto ops = particleSystem != nullptr?particleSystem->getObjectParticleSystem():nullptr;
+				if (ops != nullptr && ops->getModelFileName().empty() == false) {
+					view->getEditorView()->getScreenController()->browseTo(ops->getModelFileName());
+				} else {
+					showErrorPopUp("Browse To", "Nothing to browse to");
 				}
 				view->initParticleSystem();
 			}

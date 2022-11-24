@@ -577,6 +577,10 @@ void ModelEditorTabView::addAttachment1(const string& nodeId, const string& atta
 	attachment1Bone = nodeId;
 }
 
+void ModelEditorTabView::setAttachment1NodeId(const string& nodeId) {
+	attachment1Bone = nodeId;
+}
+
 void ModelEditorTabView::playSound(const string& soundId) {
 	audio->removeEntity("sound");
 	auto object = dynamic_cast<Object*>(engine->getEntity("model"));

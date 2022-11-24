@@ -682,6 +682,21 @@ void PrototypePhysicsSubController::onAction(GUIActionListenerType type, GUIElem
 				}
 			}
 		} else
+		if (node->getId() == "boundingvolume_convexmesh_file_browseto") {
+			if (prototype != nullptr) {
+				auto boundingVolume = prototype->getBoundingVolume(boundingVolumeIdxActivated);
+				if (boundingVolume != nullptr) {
+					if (boundingVolume->hasConvexMeshData() == true) {
+						showErrorPopUp("Browse To", "This bounding volume has embedded convex mesh data");
+					} else
+					if (boundingVolume->getConvexMeshFile().empty() == false) {
+						editorView->getScreenController()->browseTo(boundingVolume->getConvexMeshFile());
+					} else {
+						showErrorPopUp("Browse To", "Nothing to browse to");
+					}
+				}
+			}
+		} else
 		if (node->getId() == "importconvexmesh_file_open") {
 			if (prototype != nullptr) {
 				class OnConvexMeshesFileImport: public virtual Action

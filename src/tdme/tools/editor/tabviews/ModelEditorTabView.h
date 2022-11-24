@@ -257,6 +257,12 @@ public:
 	void addAttachment1(const string& nodeId, const string& attachmentModelFile);
 
 	/**
+	 * Set attachment 1 node id
+	 * @param nodeId node id to attach model to
+	 */
+	void setAttachment1NodeId(const string& nodeId);
+
+	/**
 	 * Update shader parameters
 	 */
 	void updateShaderParemeters();
