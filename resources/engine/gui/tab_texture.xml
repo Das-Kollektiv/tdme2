@@ -1,7 +1,7 @@
 <screen id="tab_texture">
 	<layout width="100%" height="100%" padding="5" alignment="vertical" vertical-align="center" horizontal-align="center">
 		<scrollarea width="100%" height="100%" alignment="none" vertical-align="center" horizontal-align="center">
-			<image src="{$texture}" width="auto" height="auto" />
+			<image src="{$texture}" width="auto" height="auto" tooltip="{$texture}" />
 		</scrollarea>
 	</layout>
 </screen>
