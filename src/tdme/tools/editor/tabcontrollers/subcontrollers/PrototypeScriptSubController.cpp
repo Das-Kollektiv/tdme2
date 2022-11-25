@@ -148,12 +148,12 @@ void PrototypeScriptSubController::onScriptSet(Prototype* prototype) {
 	{
 	public:
 		void performAction() override {
-			string scriptFileName =
+			prototypeScriptSubController->setScript(
 				prototypeScriptSubController->popUps->getFileDialogScreenController()->getPathName() +
 				"/" +
-				prototypeScriptSubController->popUps->getFileDialogScreenController()->getFileName();
-			prototype->setScript(scriptFileName);
-			prototypeScriptSubController->updateScriptDetails(prototype);
+				prototypeScriptSubController->popUps->getFileDialogScreenController()->getFileName(),
+				prototype
+			);
 			prototypeScriptSubController->popUps->getFileDialogScreenController()->close();
 		}
 
@@ -200,4 +200,22 @@ void PrototypeScriptSubController::onScriptBrowseTo(Prototype* prototype) {
 void PrototypeScriptSubController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
+}
+
+void PrototypeScriptSubController::setScript(const string& fileName, Prototype* prototype) {
+	prototype->setScript(fileName);
+	updateScriptDetails(prototype);
+}
+
+bool PrototypeScriptSubController::onDrop(const string& payload, int mouseX, int mouseY, Prototype* prototype) {
+	Console::println("PrototypeScriptSubController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
+	if (StringTools::startsWith(payload, "file:") == false) {
+		return false;
+	} else
+	if (editorView->getScreenController()->isDropOnNode(mouseX, mouseY, "script") == true) {
+		setScript(StringTools::substring(payload, string("file:").size()), prototype);
+		return true;
+	} else {
+		return false;
+	}
 }

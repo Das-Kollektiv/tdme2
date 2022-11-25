@@ -127,4 +127,20 @@ public:
 	 */
 	void showInfoPopUp(const string& caption, const string& message);
 
+	/**
+	 * Set script
+	 * @param fileName file name
+	 * @param prototype prototype
+	 */
+	void setScript(const string& fileName, Prototype* prototype);
+
+	/**
+	 * On drop
+	 * @param payload payload
+	 * @param mouseX mouse X
+	 * @param mouseY mouse Y
+	 * @param prototype prototype
+	 */
+	bool onDrop(const string& payload, int mouseX, int mouseY, Prototype* prototype);
+
 };

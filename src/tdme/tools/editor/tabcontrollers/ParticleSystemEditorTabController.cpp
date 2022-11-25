@@ -221,6 +221,7 @@ void ParticleSystemEditorTabController::onDrop(const string& payload, int mouseX
 	Console::println("ParticleSystemEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
 	if (prototypeSoundsSubController->onDrop(payload, mouseX, mouseY, view->getPrototype()) == true) return;
 	if (prototypePhysicsSubController->onDrop(payload, mouseX, mouseY, view->getPrototype()) == true) return;
+	if (prototypeScriptSubController->onDrop(payload, mouseX, mouseY, view->getPrototype()) == true) return;
 	showInfoPopUp("Warning", "You can not drop a file here");
 }
 
