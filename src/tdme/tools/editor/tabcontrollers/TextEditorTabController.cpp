@@ -302,6 +302,7 @@ void TextEditorTabController::onCommand(TabControllerCommand command)
 
 void TextEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
 	Console::println("TextEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
+	showInfoPopUp("Warning", "You can not drop a file here");
 }
 
 void TextEditorTabController::showInfoPopUp(const string& caption, const string& message)

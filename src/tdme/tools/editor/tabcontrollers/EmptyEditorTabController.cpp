@@ -145,6 +145,7 @@ void EmptyEditorTabController::onCommand(TabControllerCommand command)
 
 void EmptyEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
 	Console::println("EmptyEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
+	showInfoPopUp("Warning", "You can not drop a file here");
 }
 
 void EmptyEditorTabController::onChange(GUIElementNode* node)

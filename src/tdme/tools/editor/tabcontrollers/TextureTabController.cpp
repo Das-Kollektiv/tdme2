@@ -82,6 +82,7 @@ void TextureTabController::onCommand(TabControllerCommand command)
 
 void TextureTabController::onDrop(const string& payload, int mouseX, int mouseY) {
 	Console::println("TextureTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
+	showInfoPopUp("Warning", "You can not drop a file here");
 }
 
 void TextureTabController::showInfoPopUp(const string& caption, const string& message)

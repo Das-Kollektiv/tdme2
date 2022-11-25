@@ -232,6 +232,7 @@ void ModelEditorTabController::onCommand(TabControllerCommand command)
 
 void ModelEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
 	Console::println("ModelEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
+	showInfoPopUp("Warning", "You can not drop a file here");
 }
 
 void ModelEditorTabController::createOutlinerModelNodesXML(const string& prefix, const map<string, Node*>& subNodes, string& xml) {

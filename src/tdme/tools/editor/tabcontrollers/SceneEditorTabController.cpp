@@ -181,6 +181,7 @@ void SceneEditorTabController::onCommand(TabControllerCommand command)
 
 void SceneEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
 	Console::println("SceneEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
+	showInfoPopUp("Warning", "You can not drop a file here");
 }
 
 void SceneEditorTabController::save(const string& pathName, const string& fileName)

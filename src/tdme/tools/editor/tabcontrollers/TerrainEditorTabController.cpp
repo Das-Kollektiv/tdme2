@@ -208,6 +208,7 @@ void TerrainEditorTabController::onCommand(TabControllerCommand command)
 
 void TerrainEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
 	Console::println("TerrainEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
+	showInfoPopUp("Warning", "You can not drop a file here");
 }
 
 void TerrainEditorTabController::updateInfoText(const MutableString& text) {

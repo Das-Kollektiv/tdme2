@@ -163,6 +163,7 @@ void TriggerEditorTabController::onCommand(TabControllerCommand command)
 
 void TriggerEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
 	Console::println("TriggerEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
+	showInfoPopUp("Warning", "You can not drop a file here");
 }
 
 void TriggerEditorTabController::onChange(GUIElementNode* node)
