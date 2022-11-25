@@ -554,12 +554,27 @@ public:
 	float computeParentChildrenRenderOffsetYTotal();
 
 	/**
-	 * Is event belonging to node
-	 * @param event event
-	 * @param position in node coordinate space
+	 * Is coordinate belonging to node
+	 * @param coordinate coordinate
+	 * @param nodeCoordinate node coordinate
 	 * @return boolean
 	 */
-	bool isEventBelongingToNode(GUIMouseEvent* event, Vector2& position);
+	bool isCoordinateBelongingToNode(const Vector2& coordinate, Vector2& nodeCoordinate);
+
+	/**
+	 * Is coordinate belonging to node
+	 * @param coordinate coordinate
+	 * @return boolean
+	 */
+	bool isCoordinateBelongingToNode(const Vector2& coordinate);
+
+	/**
+	 * Is event belonging to node
+	 * @param event event
+	 * @param nodeCoordinate node coordinate
+	 * @return boolean
+	 */
+	bool isEventBelongingToNode(GUIMouseEvent* event, Vector2& nodeCoordinate);
 
 	/**
 	 * Is event belonging to node

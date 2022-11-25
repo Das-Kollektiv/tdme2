@@ -418,4 +418,24 @@ public:
 		mouseDraggingEventNodeIds[node->screenNode->getId()].insert(node->getId());
 	}
 
+	/**
+	 * Get scaled x from unscaled x
+	 * @param screenNode screen node
+	 * @param x x
+	 * @return scaled x
+	 */
+	inline int getScaledX(GUIScreenNode* screenNode, int x) {
+		return (float)x * (float)screenNode->getScreenWidth() / (float)width + screenNode->getGUIEffectOffsetX();
+	}
+
+	/**
+	 * Get scaled y from unscaled y
+	 * @param screenNode screen node
+	 * @param y y
+	 * @return scaled y
+	 */
+	inline int getScaledY(GUIScreenNode* screenNode, int y) {
+		return (float)y * (float)screenNode->getScreenHeight() / (float)height + screenNode->getGUIEffectOffsetY();
+	}
+
 };

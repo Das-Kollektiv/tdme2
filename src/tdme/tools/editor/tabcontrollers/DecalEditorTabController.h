@@ -103,6 +103,12 @@ public:
 	void onDrop(const string& payload, int mouseX, int mouseY) override;
 
 	/**
+	 * Set decal texture
+	 * @param fileName file name
+	 */
+	void setDecalTexture(const string& fileName);
+
+	/**
 	 * Set outliner content
 	 */
 	void setOutlinerContent();

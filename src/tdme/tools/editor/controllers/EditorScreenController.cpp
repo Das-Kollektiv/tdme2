@@ -1931,3 +1931,16 @@ void EditorScreenController::tick() {
 		}
 	}
 }
+
+bool EditorScreenController::isDropOnNode(int dropX, int dropY, const string& nodeId) {
+	auto decalTextureNode = screenNode->getNodeById(nodeId);
+	if (decalTextureNode == nullptr) return false;
+	//
+	auto gui = Engine::getInstance()->getGUI();
+	return decalTextureNode->isCoordinateBelongingToNode(
+		Vector2(
+			gui->getScaledX(screenNode, dropX),
+			gui->getScaledY(screenNode, dropY)
+		)
+	);
+}

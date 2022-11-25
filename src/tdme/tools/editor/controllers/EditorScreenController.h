@@ -646,4 +646,14 @@ public:
 	 * On quit
 	 */
 	void onQuit();
+
+	/**
+	 * Is drop on node
+	 * @param dropX drop x
+	 * @param dropY drop y
+	 * @param nodeId node id
+	 * @return drop is on node or not
+	 */
+	bool isDropOnNode(int dropX, int dropY, const string& nodeId);
+
 };
