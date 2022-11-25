@@ -435,12 +435,15 @@ void EditorScreenController::onDragRequest(GUIElementNode* node, int mouseX, int
 					to_string(draggingScreenController->getDragReleaseMouseY())
 				);
 				auto selectedTab = editorScreenController->getSelectedTab();
-				if (selectedTab != nullptr)
+				if (selectedTab == nullptr) {
+					editorScreenController->showInfoPopUp("Warning", "No tab opened to drop files into");
+				} else {
 					selectedTab->getTabView()->getTabController()->onDrop(
 						draggingScreenController->getPayload(),
 						draggingScreenController->getDragReleaseMouseX(),
 						draggingScreenController->getDragReleaseMouseY()
 					);
+				}
 			}
 		};
 
