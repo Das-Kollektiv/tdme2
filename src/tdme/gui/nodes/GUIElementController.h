@@ -34,6 +34,9 @@ private:
 	MutableString value;
 	int64_t timeLastClicked { -1LL };
 
+	int mouseLastX { -1 };
+	int mouseLastY { -1 };
+
 protected:
 	STATIC_DLL_IMPEXT static string CONDITION_DISABLED;
 	STATIC_DLL_IMPEXT static string CONDITION_ENABLED;
