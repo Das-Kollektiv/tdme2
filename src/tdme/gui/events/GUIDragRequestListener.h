@@ -18,7 +18,7 @@ struct tdme::gui::events::GUIDragRequestListener
 	virtual ~GUIDragRequestListener() {}
 
 	/**
-	 * On tooltip show request
+	 * On drag request
 	 * @param node node
 	 * @param mouseX unscaled mouse X position
 	 * @param mouseY unscaled mouse Y position
