@@ -26,7 +26,7 @@ class tdme::gui::nodes::GUIElementController
 	friend class GUIElementNode;
 
 private:
-	static constexpr int64_t TIME_DOUBLECLICK { 200LL };
+	static constexpr int64_t TIME_DOUBLECLICK { 250LL };
 
 	bool disabled;
 	bool isActionPerforming;

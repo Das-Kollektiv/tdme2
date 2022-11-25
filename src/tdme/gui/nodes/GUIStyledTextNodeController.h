@@ -78,6 +78,7 @@ public:
 	};
 
 private:
+	static constexpr int64_t TIME_DOUBLECLICK { 250LL };
 	static constexpr int64_t CURSOR_MODE_DURATION { 500LL };
 	int64_t cursorModeStarted { -1LL };
 	enum CursorMode { CURSORMODE_HIDE, CURSORMODE_SHOW};
@@ -91,6 +92,7 @@ private:
 	ScrollMode scrollMode { SCROLLMODE_NONE };
 	bool dragging { false };
 	bool input { false };
+	int64_t timeLastClick { -1LL };
 
 	/**
 	 * @return must show cursor

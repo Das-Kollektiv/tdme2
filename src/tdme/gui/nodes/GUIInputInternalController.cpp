@@ -132,8 +132,38 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 	if (disabled == true) {
 		return;
 	}
-	if (node == this->node &&
-		event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED == true) {
+	if (event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
+		if (doubleClick == true) {
+			//
+			auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
+			auto& text = textInputNode->getText();
+			auto textLength = text.length();
+			if (textLength > 0) {
+				auto wordBeginIdx = 0;
+				for (auto i = 0; i < index && i < textLength; i++) {
+					auto c = text.getCharAt(i);
+					if (Character::isAlphaNumeric(c) == false) {
+						wordBeginIdx = i + 1;
+					}
+				}
+				auto wordEndIdx = textLength;
+				for (auto i = index; i < textLength; i++) {
+					auto c = text.getCharAt(i);
+					if (Character::isAlphaNumeric(c) == false) {
+						wordEndIdx = i;
+						break;
+					}
+				}
+				if (wordBeginIdx != wordEndIdx) {
+					index = wordBeginIdx;
+					selectionIndex = wordEndIdx;
+				}
+				//
+				resetCursorMode();
+			}
+			//
+			doubleClick = false;
+		} else
 		if (mouseDraggingSlideValueActive == false) {
 			if (node->isEventBelongingToNode(event) == true &&
 				event->getButton() == MOUSE_BUTTON_LEFT) {
@@ -156,7 +186,7 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 				}
 				editMode = true;
 			}
-		}
+		} else
 		if (mouseDraggingSlideValueActive == true) {
 			// Application::setMouseCursor(MOUSE_CURSOR_NORMAL);
 			Application::setMousePosition(mouseOriginalPosition[0], mouseOriginalPosition[1]);
@@ -182,7 +212,7 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 				Application::setMousePosition(mouseOriginalPosition[0], mouseOriginalPosition[1]);
 			} else {
 				mouseDraggingSelectionActive = true;
-				selectionIndex = -1;
+				selectionIndex = index;
 			}
 			mouseDragPosition[0] = Application::getMousePositionX();
 			mouseDragPosition[1] = Application::getMousePositionY();
@@ -247,9 +277,21 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 		}
 		event->setProcessed(true);
 	} else
-	if (node == this->node && node->isEventBelongingToNode(event) == true &&
-		event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED == true &&
+	if (node == this->node &&
+		node->isEventBelongingToNode(event) == true &&
+		event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED &&
 		event->getButton() == MOUSE_BUTTON_LEFT) {
+		//
+		if (timeLastClick != -1LL &&
+			Time::getCurrentMillis() - timeLastClick < TIME_DOUBLECLICK) {
+			doubleClick = true;
+			timeLastClick = -1LL;
+		} else {
+			timeLastClick = Time::getCurrentMillis();
+			doubleClick = false;
+		}
+
+		//
 		auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
 		index = textInputNode->getFont()->getTextIndexByX(
 			textInputNode->getText(),
@@ -262,11 +304,11 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 				)
 		);
 		resetCursorMode();
-		event->setProcessed(true);
 		mouseDraggingInit = true;
 		mouseOriginalPosition[0] = Application::getMousePositionX();
 		mouseOriginalPosition[1] = Application::getMousePositionY();
 		selectionIndex = -1;
+		event->setProcessed(true);
 	}
 }
 
