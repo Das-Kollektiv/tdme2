@@ -338,20 +338,10 @@ GUIParentNode_Overflow* GUIParentNode::createOverflow(const string& overflow)
 	}
 }
 
-float GUIParentNode::getChildrenRenderOffsetX()
-{
-	return childrenRenderOffsetX;
-}
-
 void GUIParentNode::setChildrenRenderOffsetX(float childrenRenderOffsetX)
 {
 	invalidateRenderCaches();
 	this->childrenRenderOffsetX = childrenRenderOffsetX;
-}
-
-float GUIParentNode::getChildrenRenderOffsetY()
-{
-	return childrenRenderOffsetY;
 }
 
 void GUIParentNode::setChildrenRenderOffsetY(float childrenRenderOffsetY)

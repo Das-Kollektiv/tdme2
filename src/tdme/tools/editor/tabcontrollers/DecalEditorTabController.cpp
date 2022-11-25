@@ -301,7 +301,9 @@ void DecalEditorTabController::setDecalTexture(const string& fileName) {
 	try {
 		decal->setTextureFileName(fileName);
 		//
-		if (decal->getTexture() != nullptr) {
+		if (decal->getTexture() == nullptr) {
+			showInfoPopUp("Warning", "Unsupported file format or corrupt file");
+		} else {
 			// thumbnail
 			auto decalTextureThumbnail = TextureReader::scale(decal->getTexture(), 128, 128);
 			vector<uint8_t> pngData;

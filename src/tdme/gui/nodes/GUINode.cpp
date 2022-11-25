@@ -950,8 +950,7 @@ void GUINode::render(GUIRenderer* guiRenderer)
 	}
 }
 
-float GUINode::computeParentChildrenRenderOffsetXTotal()
-{
+float GUINode::computeParentChildrenRenderOffsetXTotal() {
 	auto childrenRenderOffSetX = 0.0f;
 	auto parentNode = this->parentNode;
 	while (parentNode != nullptr) {
@@ -961,8 +960,7 @@ float GUINode::computeParentChildrenRenderOffsetXTotal()
 	return childrenRenderOffSetX;
 }
 
-float GUINode::computeParentChildrenRenderOffsetYTotal()
-{
+float GUINode::computeParentChildrenRenderOffsetYTotal() {
 	auto childrenRenderOffSetY = 0.0f;
 	auto parentNode = this->parentNode;
 	while (parentNode != nullptr) {
@@ -970,35 +968,6 @@ float GUINode::computeParentChildrenRenderOffsetYTotal()
 		parentNode = parentNode->parentNode;
 	}
 	return childrenRenderOffSetY;
-}
-
-bool GUINode::isCoordinateBelongingToNode(const Vector2& coordinate, Vector2& nodeCoordinate) {
-	auto x = coordinate[0] + computeParentChildrenRenderOffsetXTotal();
-	auto y = coordinate[1] + computeParentChildrenRenderOffsetYTotal();
-	auto belongsToElement =
-		x >= computedConstraints.left + computedConstraints.alignmentLeft &&
-		x < computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.width &&
-		y >= computedConstraints.top + computedConstraints.alignmentTop &&
-		y < computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.height;
-	nodeCoordinate[0] = static_cast<int>((x - (computedConstraints.left + computedConstraints.alignmentLeft)));
-	nodeCoordinate[1] = static_cast<int>((y - (computedConstraints.top + computedConstraints.alignmentTop)));
-	return belongsToElement;
-}
-
-bool GUINode::isCoordinateBelongingToNode(const Vector2& coordinate) {
-	Vector2 nodeCoordinate;
-	return isCoordinateBelongingToNode(coordinate, nodeCoordinate);
-}
-
-bool GUINode::isEventBelongingToNode(GUIMouseEvent* event, Vector2& nodeCoordinate)
-{
-	return isCoordinateBelongingToNode(Vector2(event->getX(), event->getY()), nodeCoordinate);
-}
-
-bool GUINode::isEventBelongingToNode(GUIMouseEvent* event)
-{
-	Vector2 nodeCoordinate;
-	return isEventBelongingToNode(event, nodeCoordinate);
 }
 
 void GUINode::getEventOffNodeRelativePosition(GUIMouseEvent* event, Vector2& position)
