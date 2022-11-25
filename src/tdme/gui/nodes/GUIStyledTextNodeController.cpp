@@ -669,38 +669,42 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 			case GUIKeyboardEvent::KEYCODE_POS1: {
 					if (disabled == false) {
 						event->setProcessed(true);
-						resetCursorMode();
-						if (event->isShiftDown() == false) {
-							selectionIndex = -1;
-						} else {
-							if (selectionIndex == -1) selectionIndex = index;
+						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+							resetCursorMode();
+							if (event->isShiftDown() == false) {
+								selectionIndex = -1;
+							} else {
+								if (selectionIndex == -1) selectionIndex = index;
+							}
+							if (keyControl == true) {
+								index = 0;
+							} else {
+								// find index of previous newline
+								index = styledTextNode->getPreviousNewLineUtf8(index - 1);
+								if (index != 0) index++;
+							}
+							styledTextNode->scrollToIndex();
 						}
-						if (keyControl == true) {
-							index = 0;
-						} else {
-							// find index of previous newline
-							index = styledTextNode->getPreviousNewLineUtf8(index - 1);
-							if (index != 0) index++;
-						}
-						styledTextNode->scrollToIndex();
 					}
 				}
 				break;
 			case GUIKeyboardEvent::KEYCODE_END: {
 					if (disabled == false) {
-						resetCursorMode();
-						if (event->isShiftDown() == false) {
-							selectionIndex = -1;
-						} else {
-							if (selectionIndex == -1) selectionIndex = index;
+						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+							resetCursorMode();
+							if (event->isShiftDown() == false) {
+								selectionIndex = -1;
+							} else {
+								if (selectionIndex == -1) selectionIndex = index;
+							}
+							if (keyControl == true) {
+								index = styledTextNode->getTextLength() - 1;
+							} else {
+								// find index of next newline
+								index = styledTextNode->getNextNewLineUtf8(index);;
+							}
+							styledTextNode->scrollToIndex();
 						}
-						if (keyControl == true) {
-							index = styledTextNode->getTextLength() - 1;
-						} else {
-							// find index of next newline
-							index = styledTextNode->getNextNewLineUtf8(index);;
-						}
-						styledTextNode->scrollToIndex();
 					}
 				}
 				break;

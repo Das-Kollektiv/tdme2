@@ -403,10 +403,13 @@ void FileDialogScreenController::onChange(GUIElementNode* node)
 				if (FileSystem::getStandardFileSystem()->fileExists(cwd + "/" + filterString) == true) {
 					auto selectedFile = node->getController()->getValue().getString();
 					setupFiles(fileList, selectedFile);
+				} else
+				if (filterString.empty() == true) {
+					setupFiles(fileList);
 				} else {
 					vector<string> fileListFiltered;
 					for (auto file: fileList) {
-						if (StringTools::toLowerCase(file).find(filterString) != -1) fileListFiltered.push_back(file);
+						if (filterString.empty() == true || StringTools::toLowerCase(file).find(filterString) != -1) fileListFiltered.push_back(file);
 					}
 					setupFiles(fileListFiltered);
 					filtered = true;

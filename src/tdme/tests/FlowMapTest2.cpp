@@ -957,7 +957,7 @@ void FlowMapTest2::onChar(int key, int x, int y) {
 	if (key == ' ') pause = pause == true?false:true;
 }
 
-void FlowMapTest2::onKeyDown (int key, int keyCode, int x, int y, bool repeat) {
+void FlowMapTest2::onKeyDown (int key, int keyCode, int x, int y, bool repeat, int modifiers) {
 }
 
 void FlowMapTest2::onKeyUp(int key, int keyCode, int x, int y) {

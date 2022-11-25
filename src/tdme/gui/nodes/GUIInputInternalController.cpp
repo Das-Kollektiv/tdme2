@@ -152,7 +152,7 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 				event->setProcessed(true);
 				if (editMode == false) {
 					index = 0;
-					selectionIndex = textInputNode->getText().length();
+					selectionIndex = textInputNode->getText().length() == 0?-1:textInputNode->getText().length();
 				}
 				editMode = true;
 			}
@@ -182,7 +182,7 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 				Application::setMousePosition(mouseOriginalPosition[0], mouseOriginalPosition[1]);
 			} else {
 				mouseDraggingSelectionActive = true;
-				selectionIndex = index;
+				selectionIndex = -1;
 			}
 			mouseDragPosition[0] = Application::getMousePositionX();
 			mouseDragPosition[1] = Application::getMousePositionY();
@@ -437,6 +437,8 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 								textInputNode->getText().remove(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 								index = Math::min(index, selectionIndex);
 								selectionIndex = -1;
+								required_dynamic_cast<GUIInputController*>(inputNode->getController())->onChange();
+								node->getScreenNode()->forwardChange(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
 							} else
 							if (index > 0) {
 								textInputNode->getText().remove(index - 1, 1);
@@ -458,6 +460,8 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 								textInputNode->getText().remove(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 								index = Math::min(index, selectionIndex);
 								selectionIndex = -1;
+								required_dynamic_cast<GUIInputController*>(inputNode->getController())->onChange();
+								node->getScreenNode()->forwardChange(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
 							} else
 							if (index < textInputNode->getText().length()) {
 								textInputNode->getText().remove(index, 1);
@@ -481,27 +485,32 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 			case GUIKeyboardEvent::KEYCODE_POS1: {
 					if (disabled == false) {
 						event->setProcessed(true);
-						resetCursorMode();
-						if (event->isShiftDown() == false) {
-							selectionIndex = -1;
-						} else {
-							if (selectionIndex == -1) selectionIndex = index;
+						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+							resetCursorMode();
+							if (event->isShiftDown() == false) {
+								selectionIndex = -1;
+							} else {
+								if (selectionIndex == -1) selectionIndex = index;
+							}
+							index = 0;
+							checkOffset();
 						}
-						index = 0;
-						checkOffset();
 					}
 				}
 				break;
 			case GUIKeyboardEvent::KEYCODE_END: {
 					if (disabled == false) {
-						resetCursorMode();
-						if (event->isShiftDown() == false) {
-							selectionIndex = -1;
-						} else {
-							if (selectionIndex == -1) selectionIndex = index;
+						event->setProcessed(true);
+						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+							resetCursorMode();
+							if (event->isShiftDown() == false) {
+								selectionIndex = -1;
+							} else {
+								if (selectionIndex == -1) selectionIndex = index;
+							}
+							index = textInputNode->getText().length();
+							checkOffset();
 						}
-						index = textInputNode->getText().length();
-						checkOffset();
 					}
 				}
 				break;
