@@ -159,6 +159,22 @@ public:
 	void onBrowseToPrototype();
 
 	/**
+	 * Set screen
+	 * @param screenIdx screen index
+	 * @param fileName file name
+	 */
+	void setScreen(int screenIdx, const string& fileName);
+
+	/**
+	 * Set prototype
+	 * @param pathName path name
+	 * @param fileName file name
+	 * @param modelMeshNode model mesh node
+	 * @param modelMeshAnimation model mesh animation
+	 */
+	void setPrototype(const string& pathName, const string& fileName, const string& modelMeshNode, const string& modelMeshAnimation);
+
+	/**
 	 * Show the information pop up / modal
 	 * @param caption caption
 	 * @param message message

@@ -681,7 +681,7 @@ const string FileDialogScreenController::getFileImageName(const string& fileName
 	} else
 	// tdme decal
 	if (StringTools::endsWith(fileNameLowerCase, ".tdecal") == true) {
-		return "texture";
+		return "prototype";
 	} else
 	// tdme terrain
 	if (StringTools::endsWith(fileNameLowerCase, ".tterrain") == true) {

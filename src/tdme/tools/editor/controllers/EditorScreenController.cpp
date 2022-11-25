@@ -70,6 +70,7 @@
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/Properties.h>
 #include <tdme/utilities/StringTools.h>
 
 using std::remove;
@@ -140,6 +141,7 @@ using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
+using tdme::utilities::Properties;
 using tdme::utilities::StringTools;
 
 EditorScreenController::EditorScreenController(EditorView* view): fileEntitiesMutex("fileentities-mutex")
@@ -447,7 +449,8 @@ void EditorScreenController::onDragRequest(GUIElementNode* node, int mouseX, int
 			}
 		};
 
-		auto xml = "<image width=\"auto\" height=\"auto\" src=\"resources/engine/images/" + FileDialogScreenController::getFileImageName(node->getValue()) + "_big.png\" />";
+		auto imageSource = GUIParser::getEngineThemeProperties()->get("{$icon.type_" + FileDialogScreenController::getFileImageName(node->getValue()) + "_big}", "resources/engine/images/tdme_big.png");
+		auto xml = "<image width=\"auto\" height=\"auto\" src=\"" + imageSource + "\" />";
 		view->getPopUps()->getDraggingScreenController()->start(mouseX, mouseY, xml, "file:" + node->getValue(), new OnDragReleaseAction(this));
 	}
 }
