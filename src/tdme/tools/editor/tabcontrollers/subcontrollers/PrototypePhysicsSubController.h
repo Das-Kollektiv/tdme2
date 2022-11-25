@@ -285,4 +285,36 @@ public:
 	 * Disable tool bar
 	 */
 	void disableTools();
+
+	/**
+	 * Set bounding volume convex mesh file
+	 * @param boundingVolumeIdx bounding volume index
+	 * @param fileName file name
+	 * @param prototype prototype
+	 */
+	void setBoundingVolumeConvexMeshFile(int boundingVolumeIdx, const string& fileName, Prototype* prototype);
+
+	/**
+	 * Import bounding volume convex mesh file
+	 * @param fileName file name
+	 * @param prototype prototype
+	 */
+	void importBoundingVolumeConvexMeshFile(const string& fileName, Prototype* prototype);
+
+	/**
+	 * Generate bounding volume convex mesh files
+	 * @param fileName file name
+	 * @param prototype prototype
+	 */
+	void generateBoundingVolumeConvexMeshFiles(const string& fileName, Prototype* prototype);
+
+	/**
+	 * On drop
+	 * @param payload payload
+	 * @param mouseX mouse X
+	 * @param mouseY mouse Y
+	 * @param prototype prototype
+	 */
+	bool onDrop(const string& payload, int mouseX, int mouseY, Prototype* prototype);
+
 };

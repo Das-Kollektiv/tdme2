@@ -177,6 +177,7 @@ void DecalEditorTabController::onCommand(TabControllerCommand command)
 
 void DecalEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
 	Console::println("DecalEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
+	if (prototypePhysicsSubController->onDrop(payload, mouseX, mouseY, view->getPrototype()) == true) return;
 	if (StringTools::startsWith(payload, "file:") == false) {
 		showInfoPopUp("Warning", "Unknown payload in drop");
 	} else

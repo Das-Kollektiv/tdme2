@@ -124,7 +124,7 @@ bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode,
 					const char* const stage,
 					const char* const operation)
 				{
-					progressBarScreenController->progress((int)(overallProgress + 0.5) / 100.0f);
+					// progressBarScreenController->progress((int)(overallProgress + 0.5) / 100.0f);
 				};
 		};
 
@@ -139,7 +139,7 @@ bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode,
 		};
 
 		//
-		if (popUps != nullptr) popUps->getProgressBarScreenController()->show("Generate convex meshes ...");
+		// if (popUps != nullptr) popUps->getProgressBarScreenController()->show("Generate convex meshes ...");
 		IVHACD* vhacd = CreateVHACD();
 		try {
 			if (parameters.m_resolution < 10000 || parameters.m_resolution > 64000000) {
@@ -171,10 +171,12 @@ bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode,
 			}
 			VHACDLogger vhacdLogger;
 			parameters.m_logger = &vhacdLogger;
+			/*
 			if (popUps != nullptr) {
 				VHACDCallback vhacdCallback(popUps->getProgressBarScreenController());
 				parameters.m_callback = &vhacdCallback;
 			}
+			*/
 			vector<float> meshPoints;
 			vector<int> meshTriangles;
 			auto meshModel = ModelReader::read(
@@ -231,19 +233,21 @@ bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode,
 				}
 			}
 		} catch (Exception &exception) {
+			/*
 			if (popUps != nullptr) {
 				popUps->getInfoDialogScreenController()->show(
 					"Warning: Could not create convex hulls",
 					exception.what()
 				);
 			}
+			*/
 			Console::println(string("Could not create convex hulls: ") + exception.what());
 			convexMeshTMsData.clear();
 			success = false;
 		}
 		vhacd->Clean();
 		vhacd->Release();
-		if (popUps != nullptr) popUps->getProgressBarScreenController()->close();
+		// if (popUps != nullptr) popUps->getProgressBarScreenController()->close();
 	} else
 	if (mode == MODE_IMPORT) {
 		try {
@@ -274,12 +278,14 @@ bool GenerateConvexMeshes::generateConvexMeshes(Prototype* prototype, Mode mode,
 			}
 			delete meshModel;
 		} catch (Exception &exception) {
+			/*
 			if (popUps != nullptr) {
 				popUps->getInfoDialogScreenController()->show(
 					"Warning: Could not create convex hulls",
 					exception.what()
 				);
 			}
+			*/
 			Console::println(string("Could not create convex hulls: ") + exception.what());
 			convexMeshTMsData.clear();
 			success = false;

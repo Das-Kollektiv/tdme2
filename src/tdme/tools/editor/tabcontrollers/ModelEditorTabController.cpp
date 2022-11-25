@@ -233,6 +233,7 @@ void ModelEditorTabController::onCommand(TabControllerCommand command)
 void ModelEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
 	Console::println("ModelEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
 	if (prototypeSoundsSubController->onDrop(payload, mouseX, mouseY, view->getPrototype()) == true) return;
+	if (prototypePhysicsSubController->onDrop(payload, mouseX, mouseY, view->getPrototype()) == true) return;
 	showInfoPopUp("Warning", "You can not drop a file here");
 }
 
