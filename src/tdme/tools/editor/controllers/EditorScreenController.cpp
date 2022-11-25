@@ -965,6 +965,7 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 	if (type == "script") {
 		try {
 			FileSystem::getInstance()->setContentFromString(pathName, fileName, FileSystem::getInstance()->getContentAsString("resources/engine/templates/tscript", "template.tscript"));
+			browseTo(pathName + "/" + fileName);
 			openFile(pathName + "/" + fileName);
 		} catch (Exception& exception) {
 			showInfoPopUp("Error", string() + "An error occurred: file type: " + type + ": " + exception.what());
@@ -1090,6 +1091,7 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 		if (prototype != nullptr) {
 			try {
 				PrototypeWriter::write(pathName, fileName, prototype);
+				browseTo(pathName + "/" + fileName);
 				openFile(pathName + "/" + fileName);
 			} catch (Exception& exception) {
 				Console::print(string("EditorScreenController::addFile(): An error occurred: "));
@@ -1100,6 +1102,7 @@ void EditorScreenController::addFile(const string& pathName, const string& fileN
 		if (scene != nullptr) {
 			try {
 				SceneWriter::write(pathName, fileName, scene);
+				browseTo(pathName + "/" + fileName);
 				openFile(pathName + "/" + fileName);
 			} catch (Exception& exception) {
 				Console::print(string("EditorScreenController::addFile(): An error occurred: "));
