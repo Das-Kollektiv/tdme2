@@ -442,6 +442,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 			case GUIKeyboardEvent::KEYCODE_LEFT: {
 					event->setProcessed(true);
 					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+						string delimiter = "^´!\"§$%&/()=?`+#<,.-*'>;:_";
 						auto wordLeftIdx = -1;
 						if (event->isControlDown() == true) {
 							auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
@@ -450,12 +451,20 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 							if (textLength > 0) {
 								wordLeftIdx = 0;
 								auto i = index - 1;
-								for (; i >= 0 && Character::isAlphaNumeric(text.getUTF8CharAt(i)) == false; i--);
 								for (; i >= 0; i--) {
 									auto c = text.getUTF8CharAt(i);
-									if (Character::isAlphaNumeric(c) == false) {
-										wordLeftIdx = i + 1;
-										break;
+									if (Character::isAlphaNumeric(c) == true || delimiter.find(c) != string::npos) break;
+								}
+								if (delimiter.find(text.getUTF8CharAt(i)) != string::npos) {
+									for (; i >= 0 && delimiter.find(text.getUTF8CharAt(i)) != string::npos; i--);
+									wordLeftIdx = i + 1;
+								} else {
+									for (; i >= 0; i--) {
+										auto c = text.getUTF8CharAt(i);
+										if (Character::isAlphaNumeric(c) == false || delimiter.find(c) != string::npos) {
+											wordLeftIdx = i + 1;
+											break;
+										}
 									}
 								}
 							}
@@ -480,6 +489,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 			case GUIKeyboardEvent::KEYCODE_RIGHT: {
 					event->setProcessed(true);
 					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+						string delimiter = "^´!\"§$%&/()=?`+#<,.-*'>;:_";
 						auto wordRightIdx = -1;
 						if (event->isControlDown() == true) {
 							auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
@@ -488,15 +498,27 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 							if (textLength > 0) {
 								wordRightIdx = textLength;
 								auto i = index + 1;
-								for (; i < textLength && Character::isAlphaNumeric(text.getUTF8CharAt(i)) == false; i++);
 								for (; i < textLength; i++) {
 									auto c = text.getUTF8CharAt(i);
-									if (Character::isAlphaNumeric(c) == false) {
-										wordRightIdx = i;
-										break;
+									if (Character::isAlphaNumeric(c) == true || delimiter.find(c) != string::npos) break;
+								}
+								if (delimiter.find(text.getUTF8CharAt(i)) != string::npos) {
+									for (; i < textLength && delimiter.find(text.getUTF8CharAt(i)) != string::npos; i++);
+									wordRightIdx = i;
+								} else {
+									for (; i < textLength; i++) {
+										auto c = text.getUTF8CharAt(i);
+										if (Character::isAlphaNumeric(c) == false || delimiter.find(c) != string::npos) {
+											wordRightIdx = i;
+											break;
+										}
+									}
+									for (; wordRightIdx < textLength; wordRightIdx++) {
+										if (Character::isAlphaNumeric(text.getUTF8CharAt(wordRightIdx)) == true || delimiter.find(text.getUTF8CharAt(wordRightIdx)) != string::npos) {
+											break;
+										}
 									}
 								}
-								for (; wordRightIdx < textLength && Character::isAlphaNumeric(text.getUTF8CharAt(wordRightIdx)) == false; wordRightIdx++);
 							}
 						}
 						if (event->isShiftDown() == false) {
