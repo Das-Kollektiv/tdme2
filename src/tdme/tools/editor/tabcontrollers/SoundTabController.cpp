@@ -85,9 +85,13 @@ void SoundTabController::dispose()
 {
 }
 
-void SoundTabController::executeCommand(TabControllerCommand command)
+void SoundTabController::onCommand(TabControllerCommand command)
 {
 	showInfoPopUp("Warning", "This command is not supported yet");
+}
+
+void SoundTabController::onDrop(const string& payload, int mouseX, int mouseY) {
+	Console::println("SoundTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
 }
 
 void SoundTabController::showInfoPopUp(const string& caption, const string& message)

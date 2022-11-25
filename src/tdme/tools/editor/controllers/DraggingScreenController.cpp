@@ -13,6 +13,7 @@
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/math/Math.h>
+#include <tdme/utilities/Action.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/MutableString.h>
@@ -35,6 +36,7 @@ using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUIParser;
 using tdme::math::Math;
+using tdme::utilities::Action;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::MutableString;
@@ -47,6 +49,7 @@ DraggingScreenController::DraggingScreenController()
 DraggingScreenController::~DraggingScreenController()
 {
 	screenNode = nullptr;
+	if (onReleaseAction != nullptr) delete onReleaseAction;
 }
 
 GUIScreenNode* DraggingScreenController::getScreenNode()
@@ -77,11 +80,23 @@ void DraggingScreenController::onMove(GUINode* node) {
 
 void DraggingScreenController::onRelease(GUINode* node, int mouseX, int mouseY) {
 	Console::println("DraggingScreenController::onRelease(): " + node->getId() + ", x: " + to_string(mouseX) + ", y: " + to_string(mouseY));
+	dragReleaseMouseX = mouseX;
+	dragReleaseMouseY = mouseY;
 	close();
+	if (onReleaseAction != nullptr) {
+		onReleaseAction->performAction();
+		delete onReleaseAction;
+		onReleaseAction = nullptr;
+	}
 }
 
-void DraggingScreenController::start(int mouseX, int mouseY, const string& xml)
+void DraggingScreenController::start(int mouseX, int mouseY, const string& xml, const string& payload, Action* onReleaseAction)
 {
+	this->payload = payload;
+	if (this->onReleaseAction != nullptr) delete this->onReleaseAction;
+	this->onReleaseAction = onReleaseAction;
+	dragReleaseMouseX = -1;
+	dragReleaseMouseY = -1;
 	//
 	try {
 		draggableNode->replaceSubNodes(xml, true);

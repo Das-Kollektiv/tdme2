@@ -159,7 +159,7 @@ void ModelEditorTabController::dispose()
 {
 }
 
-void ModelEditorTabController::executeCommand(TabControllerCommand command)
+void ModelEditorTabController::onCommand(TabControllerCommand command)
 {
 	switch (command) {
 		case COMMAND_SAVE:
@@ -228,6 +228,10 @@ void ModelEditorTabController::executeCommand(TabControllerCommand command)
 			showInfoPopUp("Warning", "This command is not supported yet");
 			break;
 	}
+}
+
+void ModelEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
+	Console::println("ModelEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
 }
 
 void ModelEditorTabController::createOutlinerModelNodesXML(const string& prefix, const map<string, Node*>& subNodes, string& xml) {

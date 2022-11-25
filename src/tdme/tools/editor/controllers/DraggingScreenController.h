@@ -15,6 +15,7 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::tools::editor::controllers::ScreenController;
+using tdme::utilities::Action;
 
 /**
  * Dragging screen controller
@@ -29,6 +30,12 @@ private:
 	GUIScreenNode* screenNode { nullptr };
 	GUIParentNode* draggableNode { nullptr };
 
+	string payload;
+
+	int dragReleaseMouseX { -1 };
+	int dragReleaseMouseY { -1 };
+
+	Action* onReleaseAction { nullptr };
 public:
 	/**
 	 * Public constructor
@@ -39,6 +46,27 @@ public:
 	 * Destructor
 	 */
 	virtual ~DraggingScreenController();
+
+	/**
+	 * @return current payload
+	 */
+	inline const string& getPayload() {
+		return payload;
+	}
+
+	/**
+	 * @return unscaled drag release mouse X position
+	 */
+	inline int getDragReleaseMouseX() {
+		return dragReleaseMouseX;
+	}
+
+	/**
+	 * @return unscaled drag release mouse Y position
+	 */
+	inline int getDragReleaseMouseY() {
+		return dragReleaseMouseY;
+	}
 
 	// overridden methods
 	GUIScreenNode* getScreenNode() override;
@@ -52,8 +80,10 @@ public:
 	 * @param mouseX mouse X
 	 * @param mouseY mouse Y
 	 * @param xml xml
+	 * @param payload payload
+	 * @param onReleaseAction on release action
 	 */
-	void start(int mouseX, int mouseY, const string& xml);
+	void start(int mouseX, int mouseY, const string& xml, const string& payload, Action* onReleaseAction);
 
 	/**
 	 * Close dragging screen

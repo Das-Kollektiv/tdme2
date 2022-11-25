@@ -161,7 +161,7 @@ void ParticleSystemEditorTabController::dispose()
 {
 }
 
-void ParticleSystemEditorTabController::executeCommand(TabControllerCommand command)
+void ParticleSystemEditorTabController::onCommand(TabControllerCommand command)
 {
 	switch (command) {
 		case COMMAND_SAVE:
@@ -215,6 +215,10 @@ void ParticleSystemEditorTabController::executeCommand(TabControllerCommand comm
 			showInfoPopUp("Warning", "This command is not supported yet");
 			break;
 	}
+}
+
+void ParticleSystemEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
+	Console::println("ParticleSystemEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
 }
 
 void ParticleSystemEditorTabController::updateInfoText(const MutableString& text) {

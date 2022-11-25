@@ -114,7 +114,7 @@ void DecalEditorTabController::dispose()
 {
 }
 
-void DecalEditorTabController::executeCommand(TabControllerCommand command)
+void DecalEditorTabController::onCommand(TabControllerCommand command)
 {
 	switch (command) {
 		case COMMAND_SAVE:
@@ -171,6 +171,10 @@ void DecalEditorTabController::executeCommand(TabControllerCommand command)
 			showInfoPopUp("Warning", "This command is not supported yet");
 			break;
 	}
+}
+
+void DecalEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
+	Console::println("DecalEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
 }
 
 void DecalEditorTabController::onChange(GUIElementNode* node)

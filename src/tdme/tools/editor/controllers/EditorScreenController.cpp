@@ -241,46 +241,46 @@ void EditorScreenController::onAction(GUIActionListenerType type, GUIElementNode
 		} else
 		if (node->getId() == "menu_file_save") {
 			auto selectedTab = getSelectedTab();
-			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->executeCommand(TabController::COMMAND_SAVE);
+			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onCommand(TabController::COMMAND_SAVE);
 		} else
 		if (node->getId() == "menu_file_saveas") {
 			auto selectedTab = getSelectedTab();
-			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->executeCommand(TabController::COMMAND_SAVEAS);
+			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onCommand(TabController::COMMAND_SAVEAS);
 		} else
 		if (node->getId() == "menu_file_saveall") {
 			// forward saveAs to active tab tab controller
 			for (auto& tabViewIt: tabViews) {
 				auto& tab = tabViewIt.second;
-				tab.getTabView()->getTabController()->executeCommand(TabController::COMMAND_SAVE);
+				tab.getTabView()->getTabController()->onCommand(TabController::COMMAND_SAVE);
 			}
 		} else
 		if (node->getId() == "menu_edit_undo") {
 			auto selectedTab = getSelectedTab();
-			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->executeCommand(TabController::COMMAND_UNDO);
+			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onCommand(TabController::COMMAND_UNDO);
 		} else
 		if (node->getId() == "menu_edit_redo") {
 			auto selectedTab = getSelectedTab();
-			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->executeCommand(TabController::COMMAND_REDO);
+			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onCommand(TabController::COMMAND_REDO);
 		} else
 		if (node->getId() == "menu_edit_cut") {
 			auto selectedTab = getSelectedTab();
-			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->executeCommand(TabController::COMMAND_CUT);
+			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onCommand(TabController::COMMAND_CUT);
 		} else
 		if (node->getId() == "menu_edit_copy") {
 			auto selectedTab = getSelectedTab();
-			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->executeCommand(TabController::COMMAND_COPY);
+			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onCommand(TabController::COMMAND_COPY);
 		} else
 		if (node->getId() == "menu_edit_paste") {
 			auto selectedTab = getSelectedTab();
-			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->executeCommand(TabController::COMMAND_PASTE);
+			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onCommand(TabController::COMMAND_PASTE);
 		} else
 		if (node->getId() == "menu_edit_delete") {
 			auto selectedTab = getSelectedTab();
-			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->executeCommand(TabController::COMMAND_DELETE);
+			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onCommand(TabController::COMMAND_DELETE);
 		} else
 		if (node->getId() == "menu_edit_findreplace") {
 			auto selectedTab = getSelectedTab();
-			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->executeCommand(TabController::COMMAND_FINDREPLACE);
+			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onCommand(TabController::COMMAND_FINDREPLACE);
 		} else
 		if (node->getId() == "menu_view_fullscreen") {
 			setFullScreen(isFullScreen() == false?true:false);
@@ -420,8 +420,32 @@ void EditorScreenController::onTooltipCloseRequest() {
 
 void EditorScreenController::onDragRequest(GUIElementNode* node, int mouseX, int mouseY) {
 	if (StringTools::startsWith(node->getId(), "projectpathfiles_file_") == true) {
+		//
+		class OnDragReleaseAction: public Action {
+		private:
+			EditorScreenController* editorScreenController;
+		public:
+			OnDragReleaseAction(EditorScreenController* editorScreenController): editorScreenController(editorScreenController) {}
+			virtual void performAction() {
+				auto draggingScreenController = editorScreenController->view->getPopUps()->getDraggingScreenController();
+				Console::println(
+					"OnDragReleaseAction::performAction(): payload: " +
+					draggingScreenController->getPayload() + " @ " +
+					to_string(draggingScreenController->getDragReleaseMouseX()) + ", " +
+					to_string(draggingScreenController->getDragReleaseMouseY())
+				);
+				auto selectedTab = editorScreenController->getSelectedTab();
+				if (selectedTab != nullptr)
+					selectedTab->getTabView()->getTabController()->onDrop(
+						draggingScreenController->getPayload(),
+						draggingScreenController->getDragReleaseMouseX(),
+						draggingScreenController->getDragReleaseMouseY()
+					);
+			}
+		};
+
 		auto xml = "<image width=\"auto\" height=\"auto\" src=\"resources/engine/images/" + FileDialogScreenController::getFileImageName(node->getValue()) + "_big.png\" />";
-		view->getPopUps()->getDraggingScreenController()->start(mouseX, mouseY, xml);
+		view->getPopUps()->getDraggingScreenController()->start(mouseX, mouseY, xml, "file:" + node->getValue(), new OnDragReleaseAction(this));
 	}
 }
 

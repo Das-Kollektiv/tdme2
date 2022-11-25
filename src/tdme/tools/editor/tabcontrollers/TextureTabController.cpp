@@ -75,9 +75,13 @@ void TextureTabController::dispose()
 {
 }
 
-void TextureTabController::executeCommand(TabControllerCommand command)
+void TextureTabController::onCommand(TabControllerCommand command)
 {
 	showInfoPopUp("Warning", "This command is not supported yet");
+}
+
+void TextureTabController::onDrop(const string& payload, int mouseX, int mouseY) {
+	Console::println("TextureTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
 }
 
 void TextureTabController::showInfoPopUp(const string& caption, const string& message)

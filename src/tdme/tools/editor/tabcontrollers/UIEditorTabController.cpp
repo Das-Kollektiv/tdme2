@@ -108,9 +108,13 @@ void UIEditorTabController::dispose()
 {
 }
 
-void UIEditorTabController::executeCommand(TabControllerCommand command)
+void UIEditorTabController::onCommand(TabControllerCommand command)
 {
 	showInfoPopUp("Warning", "This command is not supported yet");
+}
+
+void UIEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
+	Console::println("UIEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
 }
 
 void UIEditorTabController::showInfoPopUp(const string& caption, const string& message)

@@ -83,9 +83,13 @@ void FontTabController::dispose()
 {
 }
 
-void FontTabController::executeCommand(TabControllerCommand command)
+void FontTabController::onCommand(TabControllerCommand command)
 {
 	showInfoPopUp("Warning", "This command is not supported yet");
+}
+
+void FontTabController::onDrop(const string& payload, int mouseX, int mouseY) {
+	Console::println("FontTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
 }
 
 void FontTabController::showInfoPopUp(const string& caption, const string& message)
