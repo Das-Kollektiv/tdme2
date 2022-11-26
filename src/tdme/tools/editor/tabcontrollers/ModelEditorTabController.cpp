@@ -1624,10 +1624,8 @@ void ModelEditorTabController::onMaterialBrowseToSpecularTexture() {
 
 void ModelEditorTabController::setMaterialPBRBaseColorTexture(const string& fileName) {
 	auto material = getSelectedMaterial();
-	Console::println("material: " + to_string(material != nullptr));
 	if (material == nullptr) return;
 	auto pbrMaterialProperties = material->getPBRMaterialProperties();
-	Console::println("material pbr: " + to_string(pbrMaterialProperties != nullptr));
 	if (pbrMaterialProperties == nullptr) return;
 	//
 	view->reloadPrototype();
