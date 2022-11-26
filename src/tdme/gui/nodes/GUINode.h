@@ -291,7 +291,7 @@ protected:
 	bool haveActiveOutEffect();
 
 	/**
-	 * Determine if to render
+	 * Returns if to render
 	 * @return if node will be rendered
 	 */
 	inline bool shouldRender() {
@@ -500,7 +500,7 @@ public:
 	virtual void dispose();
 
 	/**
-	 * Determine if conditions are set
+	 * Returns if conditions are set
 	 * @return if conditions are set
 	 */
 	inline bool isConditionsMet() {
@@ -513,7 +513,7 @@ public:
 	virtual void setConditionsMet();
 
 	/**
-	 * Determine if layouted
+	 * Returns if layouted
 	 * @return if layouted
 	 */
 	inline bool isLayouted() {
