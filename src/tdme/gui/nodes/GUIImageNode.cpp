@@ -149,10 +149,10 @@ void GUIImageNode::setSource(const string& source) {
 						thumbnailTexture->acquireReference();
 						this->texture = thumbnailTexture;
 					} else {
-						this->source = "resources/engine/images/mesh.png";
+						this->texture = screenNode->getImage(screenNode->getApplicationRootPathName(), "resources/engine/images/mesh_big.png");
 					}
 				} else {
-					this->source = "resources/engine/images/mesh.png";
+					this->texture = screenNode->getImage(screenNode->getApplicationRootPathName(), "resources/engine/images/mesh_big.png");
 				}
 			} catch (Exception& exception) {
 				Console::println(string() + "GUIImageNode::setSource(): " + exception.what());
@@ -172,10 +172,10 @@ void GUIImageNode::setSource(const string& source) {
 						thumbnailTexture->acquireReference();
 						this->texture = thumbnailTexture;
 					} else {
-						this->source = "resources/engine/images/tdme.png";
+						this->texture = screenNode->getImage(screenNode->getApplicationRootPathName(), "resources/engine/images/tdme_big.png");
 					}
 				} else {
-					this->source = "resources/engine/images/tdme.png";
+					this->texture = screenNode->getImage(screenNode->getApplicationRootPathName(), "resources/engine/images/tdme_big.png");
 				}
 			} catch (Exception& exception) {
 				Console::println(string() + "GUIImageNode::setSource(): " + exception.what());

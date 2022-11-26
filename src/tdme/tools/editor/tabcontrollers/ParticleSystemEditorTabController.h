@@ -328,4 +328,39 @@ public:
 	 */
 	void showInfoPopUp(const string& caption, const string& message);
 
+	/**
+	 * Set point particle system texture
+	 * @param particleSystemIdx particle system idx
+	 * @param fileName file name
+	 */
+	void setPointParticleSystemTexture(int particleSystemIdx, const string& fileName);
+
+	/**
+	 * Set point particle system transparency texture
+	 * @param particleSystemIdx particle system idx
+	 * @param fileName file name
+	 */
+	void setPointParticleSystemTransparencyTexture(int particleSystemIdx, const string& fileName);
+
+	/**
+	 * Set fog particle system texture
+	 * @param particleSystemIdx particle system idx
+	 * @param fileName file name
+	 */
+	void setFogParticleSystemTexture(int particleSystemIdx, const string& fileName);
+
+	/**
+	 * Set fog particle system transparency texture
+	 * @param particleSystemIdx particle system idx
+	 * @param fileName file name
+	 */
+	void setFogParticleSystemTransparencyTexture(int particleSystemIdx, const string& fileName);
+
+	/**
+	 * Set object particle system model
+	 * @param particleSystemIdx particle system idx
+	 * @param fileName file name
+	 */
+	void setObjectParticleSystemModel(int particleSystemIdx, const string& fileName);
+
 };
