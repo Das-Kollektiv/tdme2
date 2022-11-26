@@ -691,11 +691,13 @@ void EditorScreenController::resetScanFiles() {
 	fileNameSearchTerm.clear();
 	browseToFileName.clear();
 	timeFileNameSearchTerm = -1LL;
+	required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("projectpathfiles_search"))->getController()->setValue(MutableString());
 }
 
 void EditorScreenController::browseTo(const string& fileName) {
 	Console::println("EditorScreenController::browseTo(): " + fileName);
 	stopScanFiles();
+	resetScanFiles();
 	auto newRelativeProjectPath = Tools::getPathName(fileName);
 	if (StringTools::startsWith(newRelativeProjectPath, projectPath) == true) newRelativeProjectPath = StringTools::substring(newRelativeProjectPath, projectPath.size() + 1);
 	browseToFileName = projectPath + "/" + newRelativeProjectPath + "/" + Tools::getFileName(fileName);
