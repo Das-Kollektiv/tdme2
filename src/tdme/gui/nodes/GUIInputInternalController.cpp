@@ -442,9 +442,9 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 			case GUIKeyboardEvent::KEYCODE_LEFT: {
 					event->setProcessed(true);
 					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
-						string delimiter = "^´!\"§$%&/()=?`+#<,.-*'>;:_";
 						auto wordLeftIdx = -1;
 						if (event->isControlDown() == true) {
+							string delimiter = "^´!\"§$%&/()=?`+#<,.-*'>;:_";
 							auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
 							auto& text = textInputNode->getText();
 							auto textLength = text.length();
@@ -489,9 +489,9 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 			case GUIKeyboardEvent::KEYCODE_RIGHT: {
 					event->setProcessed(true);
 					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
-						string delimiter = "^´!\"§$%&/()=?`+#<,.-*'>;:_";
 						auto wordRightIdx = -1;
 						if (event->isControlDown() == true) {
+							string delimiter = "^´!\"§$%&/()=?`+#<,.-*'>;:_";
 							auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
 							auto& text = textInputNode->getText();
 							auto textLength = text.length();

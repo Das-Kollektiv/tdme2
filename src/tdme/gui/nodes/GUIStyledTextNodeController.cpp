@@ -420,13 +420,45 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 			case GUIKeyboardEvent::KEYCODE_LEFT: {
 					event->setProcessed(true);
 					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+						auto wordLeftIdx = -1;
+						auto lineStartIdx = styledTextNode->getPreviousNewLineUtf8(index - 1);
+						if (lineStartIdx != 0) lineStartIdx++;
+						if (event->isControlDown() == true) {
+							string delimiter = "^´!\"§$%&/()=?`+#<,.-*'>;:_";
+							auto& text = styledTextNode->getText();
+							auto textLength = text.length();
+							if (textLength > 0) {
+								wordLeftIdx = lineStartIdx;
+								auto i = index - 1;
+								for (; i >= lineStartIdx; i--) {
+									auto c = text.getUTF8CharAt(i);
+									if (Character::isAlphaNumeric(c) == true || delimiter.find(c) != string::npos) break;
+								}
+								if (delimiter.find(text.getUTF8CharAt(i)) != string::npos) {
+									for (; i >= lineStartIdx && delimiter.find(text.getUTF8CharAt(i)) != string::npos; i--);
+									wordLeftIdx = i + 1;
+								} else {
+									for (; i >= lineStartIdx; i--) {
+										auto c = text.getUTF8CharAt(i);
+										if (Character::isAlphaNumeric(c) == false || delimiter.find(c) != string::npos) {
+											wordLeftIdx = i + 1;
+											break;
+										}
+									}
+								}
+							}
+						}
 						if (event->isShiftDown() == false) {
 							selectionIndex = -1;
 						} else {
 							if (selectionIndex == -1) selectionIndex = index;
 						}
 						if (index > 0) {
-							index--;
+							if (wordLeftIdx == -1) {
+								index--;
+							} else {
+								index = wordLeftIdx;
+							}
 							styledTextNode->scrollToIndex();
 							resetCursorMode();
 						}
@@ -436,13 +468,48 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 			case GUIKeyboardEvent::KEYCODE_RIGHT: {
 					event->setProcessed(true);
 					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+						auto wordRightIdx = -1;
+						if (event->isControlDown() == true) {
+							string delimiter = "^´!\"§$%&/()=?`+#<,.-*'>;:_";
+							auto& text = styledTextNode->getText();
+							auto lineEndIdx = styledTextNode->getNextNewLineUtf8(index);
+							if (lineEndIdx > 0) {
+								wordRightIdx = lineEndIdx;
+								auto i = index + 1;
+								for (; i < lineEndIdx; i++) {
+									auto c = text.getUTF8CharAt(i);
+									if (Character::isAlphaNumeric(c) == true || delimiter.find(c) != string::npos) break;
+								}
+								if (delimiter.find(text.getUTF8CharAt(i)) != string::npos) {
+									for (; i < lineEndIdx && delimiter.find(text.getUTF8CharAt(i)) != string::npos; i++);
+									wordRightIdx = i;
+								} else {
+									for (; i < lineEndIdx; i++) {
+										auto c = text.getUTF8CharAt(i);
+										if (Character::isAlphaNumeric(c) == false || delimiter.find(c) != string::npos) {
+											wordRightIdx = i;
+											break;
+										}
+									}
+									for (; wordRightIdx < lineEndIdx; wordRightIdx++) {
+										if (Character::isAlphaNumeric(text.getUTF8CharAt(wordRightIdx)) == true || delimiter.find(text.getUTF8CharAt(wordRightIdx)) != string::npos) {
+											break;
+										}
+									}
+								}
+							}
+						}
 						if (event->isShiftDown() == false) {
 							selectionIndex = -1;
 						} else {
 							if (selectionIndex == -1) selectionIndex = index;
 						}
 						if (index < styledTextNode->getTextLength()) {
-							index++;
+							if (wordRightIdx == -1) {
+								index++;
+							} else {
+								index = wordRightIdx;
+							}
 							styledTextNode->scrollToIndex();
 							resetCursorMode();
 						}
@@ -682,6 +749,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 								// find index of previous newline
 								index = styledTextNode->getPreviousNewLineUtf8(index - 1);
 								if (index != 0) index++;
+
 							}
 							styledTextNode->scrollToIndex();
 						}
