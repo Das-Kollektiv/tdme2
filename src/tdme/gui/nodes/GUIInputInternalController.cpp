@@ -497,7 +497,7 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 							auto textLength = text.length();
 							if (textLength > 0) {
 								wordRightIdx = textLength;
-								auto i = index + 1;
+								auto i = index;
 								for (; i < textLength; i++) {
 									auto c = text.getUTF8CharAt(i);
 									if (Character::isAlphaNumeric(c) == true || delimiter.find(c) != string::npos) break;
@@ -513,11 +513,10 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 											break;
 										}
 									}
-									for (; wordRightIdx < textLength; wordRightIdx++) {
-										if (Character::isAlphaNumeric(text.getUTF8CharAt(wordRightIdx)) == true || delimiter.find(text.getUTF8CharAt(wordRightIdx)) != string::npos) {
-											break;
-										}
-									}
+								}
+								if (Character::isSpace(text.getUTF8CharAt(i)) == true) {
+									for (; i < textLength && Character::isSpace(text.getUTF8CharAt(i)) == true; i++);
+									wordRightIdx = i;
 								}
 							}
 						}

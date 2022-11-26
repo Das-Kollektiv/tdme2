@@ -475,7 +475,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 							auto lineEndIdx = styledTextNode->getNextNewLineUtf8(index);
 							if (lineEndIdx > 0) {
 								wordRightIdx = lineEndIdx;
-								auto i = index + 1;
+								auto i = index;
 								for (; i < lineEndIdx; i++) {
 									auto c = text.getUTF8CharAt(i);
 									if (Character::isAlphaNumeric(c) == true || delimiter.find(c) != string::npos) break;
@@ -491,11 +491,10 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 											break;
 										}
 									}
-									for (; wordRightIdx < lineEndIdx; wordRightIdx++) {
-										if (Character::isAlphaNumeric(text.getUTF8CharAt(wordRightIdx)) == true || delimiter.find(text.getUTF8CharAt(wordRightIdx)) != string::npos) {
-											break;
-										}
-									}
+								}
+								if (Character::isSpace(text.getUTF8CharAt(i)) == true) {
+									for (; i < lineEndIdx && Character::isSpace(text.getUTF8CharAt(i)) == true; i++);
+									wordRightIdx = i;
 								}
 							}
 						}
