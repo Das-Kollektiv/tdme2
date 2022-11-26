@@ -93,6 +93,8 @@ private:
 	bool dragging { false };
 	bool input { false };
 	int64_t timeLastClick { -1LL };
+	bool doubleClick { false };
+
 
 	/**
 	 * @return must show cursor

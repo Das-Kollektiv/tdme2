@@ -139,6 +139,16 @@ void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 				case GUIMouseEvent::MOUSEEVENT_PRESSED:
 					{
 						if (input == true) {
+							//
+							if (timeLastClick != -1LL &&
+								Time::getCurrentMillis() - timeLastClick < TIME_DOUBLECLICK) {
+								doubleClick = true;
+								timeLastClick = -1LL;
+							} else {
+								timeLastClick = Time::getCurrentMillis();
+								doubleClick = false;
+							}
+
 							// submit to styled text node
 							selectionIndex = -1;
 							styledTextNode->setIndexMousePosition(nodeMouseCoordinateNoOffsets.getX(), nodeMouseCoordinateNoOffsets.getY());
@@ -186,27 +196,58 @@ void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 				case GUIMouseEvent::MOUSEEVENT_RELEASED:
 					{
 						if (input == true) {
-							//
-							styledTextNode->unsetIndexMousePosition();
-							styledTextNode->unsetSelectionIndexMousePosition();
+							if (doubleClick == true) {
+								//
+								auto& text = styledTextNode->getText();
+								auto textLength = text.length();
+								if (textLength > 0) {
+									auto wordLeftIdx = 0;
+									for (auto i = 0; i < index && i < textLength; i++) {
+										auto c = text.getUTF8CharAt(i);
+										if (Character::isAlphaNumeric(c) == false) {
+											wordLeftIdx = i + 1;
+										}
+									}
+									auto wordRightIdx = textLength;
+									for (auto i = index; i < textLength; i++) {
+										auto c = text.getUTF8CharAt(i);
+										if (Character::isAlphaNumeric(c) == false) {
+											wordRightIdx = i;
+											break;
+										}
+									}
+									if (wordLeftIdx != wordRightIdx) {
+										index = wordLeftIdx;
+										selectionIndex = wordRightIdx;
+									}
+									//
+									resetCursorMode();
+								}
+								//
+								doubleClick = false;
+							} else {
+								//
+								styledTextNode->unsetIndexMousePosition();
+								styledTextNode->unsetSelectionIndexMousePosition();
 
-							//
-							styledTextNode->getScreenNode()->removeTickNode(styledTextNode);
+								//
+								styledTextNode->getScreenNode()->removeTickNode(styledTextNode);
 
-							//
-							if (dragging == true && selectionIndex != -1) {
-								auto _index = index;
-								index = selectionIndex;
-								selectionIndex = _index;
+								//
+								if (dragging == true && selectionIndex != -1) {
+									auto _index = index;
+									index = selectionIndex;
+									selectionIndex = _index;
+								}
+
+								//
+								released = true;
+
+								//
+								scrollMode = SCROLLMODE_NONE;
+								//
+								styledTextNode->scrollToIndex();
 							}
-
-							//
-							released = true;
-
-							//
-							scrollMode = SCROLLMODE_NONE;
-							//
-							styledTextNode->scrollToIndex();
 						}
 
 						// find URL area that had a hit and setup corresponding cursor
