@@ -343,6 +343,12 @@ public:
 	void updateDetails(const string& outlinerNode);
 
 	/**
+	 * Set material diffuse texture
+	 * @param fileName file name
+	 */
+	void setMaterialDiffuseTexture(const string& fileName);
+
+	/**
 	 * On material load diffuse texture
 	 */
 	void onMaterialLoadDiffuseTexture();
@@ -356,6 +362,12 @@ public:
 	 * On material browse to diffuse texture
 	 */
 	void onMaterialBrowseToDiffuseTexture();
+
+	/**
+	 * Set material diffuse transparency texture
+	 * @param fileName file name
+	 */
+	void setMaterialDiffuseTransparencyTexture(const string& fileName);
 
 	/**
 	 * On material load diffuse transparency texture
@@ -373,6 +385,12 @@ public:
 	void onMaterialBrowseToDiffuseTransparencyTexture();
 
 	/**
+	 * Set material normal texture
+	 * @param fileName file name
+	 */
+	void setMaterialNormalTexture(const string& fileName);
+
+	/**
 	 * On material load normal texture
 	 */
 	void onMaterialLoadNormalTexture();
@@ -386,6 +404,12 @@ public:
 	 * On material browse to normal texture
 	 */
 	void onMaterialBrowseToNormalTexture();
+
+	/**
+	 * Set material specular texture
+	 * @param fileName file name
+	 */
+	void setMaterialSpecularTexture(const string& fileName);
 
 	/**
 	 * On material load specular texture
@@ -403,6 +427,12 @@ public:
 	void onMaterialBrowseToSpecularTexture();
 
 	/**
+	 * Set material PBR base color texture
+	 * @param fileName file name
+	 */
+	void setMaterialPBRBaseColorTexture(const string& fileName);
+
+	/**
 	 * On material load PBR base color texture
 	 */
 	void onMaterialLoadPBRBaseColorTexture();
@@ -416,6 +446,12 @@ public:
 	 * On material browse to PBR base color texture
 	 */
 	void onMaterialBrowseToPBRBaseColorTexture();
+
+	/**
+	 * Set material PBR metallic roughness texture
+	 * @param fileName file name
+	 */
+	void setMaterialPBRMetallicRoughnessTexture(const string& fileName);
 
 	/**
 	 * On material load PBR metallic roughness texture
@@ -433,6 +469,12 @@ public:
 	void onMaterialBrowseToPBRMetallicRoughnessTexture();
 
 	/**
+	 * Set material PBR normal texture
+	 * @param fileName file name
+	 */
+	void setMaterialPBRNormalTexture(const string& fileName);
+
+	/**
 	 * On material load PBR normal texture
 	 */
 	void onMaterialLoadPBRNormalTexture();
@@ -446,6 +488,12 @@ public:
 	 * On material browse to PBR normal texture
 	 */
 	void onMaterialBrowseToPBRNormalTexture();
+
+	/**
+	 * Set preview animations attachment 1 model
+	 * @param fileName file name
+	 */
+	void setPreviewAnimationsAttachment1Model(const string& fileName);
 
 	/**
 	 * On preview animations attachment 1 model load

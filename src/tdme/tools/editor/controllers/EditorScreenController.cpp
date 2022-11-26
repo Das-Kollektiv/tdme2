@@ -1775,44 +1775,35 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 
 void EditorScreenController::storeOutlinerState(TabView::OutlinerState& outlinerState) {
 	required_dynamic_cast<GUISelectBoxController*>(outliner->getController())->determineExpandedParentOptionValues(outlinerState.expandedOutlinerParentOptionValues);
-	outlinerState.value = required_dynamic_cast<GUISelectBoxController*>(screenNode->getNodeById("selectbox_outliner")->getController())->getValue();
-	outlinerState.renderOffsetX = required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("selectbox_outliner_scrollarea"))->getChildrenRenderOffsetX();
-	outlinerState.renderOffsetY = required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById("selectbox_outliner_scrollarea"))->getChildrenRenderOffsetY();
+	outlinerState.value = required_dynamic_cast<GUISelectBoxController*>(outliner->getController())->getValue();
+	outlinerState.renderOffsetX = required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(outlinerScrollarea->getId()))->getChildrenRenderOffsetX();
+	outlinerState.renderOffsetY = required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(outlinerScrollarea->getId()))->getChildrenRenderOffsetY();
 }
 
 void EditorScreenController::restoreOutlinerState(const TabView::OutlinerState& outlinerState) {
-	required_dynamic_cast<GUISelectBoxController*>(outliner->getController())->setValue(outlinerState.value);
 	required_dynamic_cast<GUISelectBoxController*>(outliner->getController())->expandParentOptionsByValues(outlinerState.expandedOutlinerParentOptionValues);
+	required_dynamic_cast<GUISelectBoxController*>(outliner->getController())->setValue(outlinerState.value);
 	required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(outlinerScrollarea->getId()))->setChildrenRenderOffsetX(outlinerState.renderOffsetX);
 	required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(outlinerScrollarea->getId()))->setChildrenRenderOffsetY(outlinerState.renderOffsetY);
 }
 
 const string EditorScreenController::getOutlinerSelection() {
-	try {
-		return outliner->getController()->getValue().getString();
-	} catch (Exception& exception) {
-		Console::print(string("EditorScreenController::getOutlinerSelection(): An error occurred: "));
-		Console::println(string(exception.what()));
-	}
-	return string();
+	return outliner->getController()->getValue().getString();
 }
 
 void EditorScreenController::setOutlinerSelection(const string& newSelectionValue) {
-	try {
-		outliner->getController()->setValue(MutableString(newSelectionValue));
-	} catch (Exception& exception) {
-		Console::print(string("EditorScreenController::setOutlinerSelection(): An error occurred: "));
-		Console::println(string(exception.what()));
-	}
+	outliner->getController()->setValue(MutableString(newSelectionValue));
 }
 
 void EditorScreenController::setOutlinerContent(const string& xml) {
+	auto outlinerSelection = getOutlinerSelection();
 	try {
 		required_dynamic_cast<GUIParentNode*>(screenNode->getInnerNodeById(outlinerScrollarea->getId()))->replaceSubNodes(xml, true);
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::setOutlinerContent(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
+	setOutlinerSelection(outlinerSelection);
 }
 
 void EditorScreenController::setOutlinerAddDropDownContent(const string& xml) {
@@ -1943,8 +1934,16 @@ void EditorScreenController::tick() {
 bool EditorScreenController::isDropOnNode(int dropX, int dropY, const string& nodeId) {
 	auto node = screenNode->getNodeById(nodeId);
 	if (node == nullptr) return false;
+	auto _node = node;
+	while (_node != nullptr) {
+		if (_node->isConditionsMet() == false || _node->isLayouted() == false) {
+			return false;
+		}
+		_node = _node->getParentNode();
+	}
 	//
 	auto gui = Engine::getInstance()->getGUI();
+	// TODO: node->isCoordinateBelongingToNode() could check if layouted and conditions met
 	return node->isCoordinateBelongingToNode(
 		Vector2(
 			gui->getScaledX(screenNode, dropX),

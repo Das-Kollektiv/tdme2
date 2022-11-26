@@ -235,7 +235,35 @@ void ModelEditorTabController::onDrop(const string& payload, int mouseX, int mou
 	if (prototypeSoundsSubController->onDrop(payload, mouseX, mouseY, view->getPrototype()) == true) return;
 	if (prototypePhysicsSubController->onDrop(payload, mouseX, mouseY, view->getPrototype()) == true) return;
 	if (prototypeScriptSubController->onDrop(payload, mouseX, mouseY, view->getPrototype()) == true) return;
-	showInfoPopUp("Warning", "You can not drop a file here");
+	if (StringTools::startsWith(payload, "file:") == false) {
+		showInfoPopUp("Warning", "Unknown payload in drop");
+	} else
+	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "specularmaterial_diffuse_texture") == true) {
+		setMaterialDiffuseTexture(StringTools::substring(payload, string("file:").size()));
+	} else
+	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "specularmaterial_transparency_texture") == true) {
+		setMaterialDiffuseTransparencyTexture(StringTools::substring(payload, string("file:").size()));
+	} else
+	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "specularmaterial_normal_texture") == true) {
+		setMaterialNormalTexture(StringTools::substring(payload, string("file:").size()));
+	} else
+	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "specularmaterial_specular_texture") == true) {
+		setMaterialSpecularTexture(StringTools::substring(payload, string("file:").size()));
+	} else
+	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "pbrmaterial_basecolor_texture") == true) {
+		setMaterialPBRBaseColorTexture(StringTools::substring(payload, string("file:").size()));
+	} else
+	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "pbrmaterial_metallic_roughness_texture") == true) {
+		setMaterialPBRMetallicRoughnessTexture(StringTools::substring(payload, string("file:").size()));
+	} else
+	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "pbrmaterial_normal_texture") == true) {
+		setMaterialPBRNormalTexture(StringTools::substring(payload, string("file:").size()));
+	} else
+	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "animationpreview_attachment1_model") == true) {
+		setPreviewAnimationsAttachment1Model(StringTools::substring(payload, string("file:").size()));
+	} else {
+		showInfoPopUp("Warning", "You can not drop a file here");
+	}
 }
 
 void ModelEditorTabController::createOutlinerModelNodesXML(const string& prefix, const map<string, Node*>& subNodes, string& xml) {
@@ -720,7 +748,7 @@ void ModelEditorTabController::updateMaterialDetails() {
 							specularMaterialProperties->getDiffuseTransparencyTexturePathName() + "/" + specularMaterialProperties->getDiffuseTransparencyTextureFileName()
 						) +
 						"/" +
-						specularMaterialProperties->getDiffuseTextureFileName()
+						specularMaterialProperties->getDiffuseTransparencyTextureFileName()
 					);
 			auto normalTextureFileName =
 					specularMaterialProperties->getNormalTextureFileName().empty() == true?
@@ -1072,19 +1100,28 @@ void ModelEditorTabController::setAnimationPreviewDetails() {
 	}
 }
 
+void ModelEditorTabController::setPreviewAnimationsAttachment1Model(const string& fileName) {
+	attachment1ModelFileName = fileName;
+	view->addAttachment1(
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("animationpreview_attachment1_bone"))->getController()->getValue().getString(),
+		attachment1ModelFileName
+	);
+	try {
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("animationpreview_attachment1_model"))->setSource(attachment1ModelFileName);
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("animationpreview_attachment1_model"))->setTooltip(attachment1ModelFileName);
+	} catch (Exception& exception) {
+		Console::println(string("ModelEditorTabController::setPreviewAnimationsAttachment1Model(): An error occurred: ") + exception.what());;
+		showInfoPopUp("Warning", (string(exception.what())));
+	}
+}
+
 void ModelEditorTabController::onPreviewAnimationsAttachment1ModelLoad() {
 	class OnPreviewAnimationsAttachment1ModelLoad: public virtual Action
 	{
 
 	public:
 		void performAction() override {
-			modelEditorTabController->attachment1ModelFileName = modelEditorTabController->popUps->getFileDialogScreenController()->getPathName() + "/" + modelEditorTabController->popUps->getFileDialogScreenController()->getFileName();
-			modelEditorTabController->view->addAttachment1(
-				required_dynamic_cast<GUIElementNode*>(modelEditorTabController->screenNode->getNodeById("animationpreview_attachment1_bone"))->getController()->getValue().getString(),
-				modelEditorTabController->attachment1ModelFileName
-			);
-			required_dynamic_cast<GUIImageNode*>(modelEditorTabController->screenNode->getNodeById("animationpreview_attachment1_model"))->setSource(modelEditorTabController->attachment1ModelFileName);
-			required_dynamic_cast<GUIImageNode*>(modelEditorTabController->screenNode->getNodeById("animationpreview_attachment1_model"))->setTooltip(modelEditorTabController->attachment1ModelFileName);
+			modelEditorTabController->setPreviewAnimationsAttachment1Model(modelEditorTabController->popUps->getFileDialogScreenController()->getPathName() + "/" + modelEditorTabController->popUps->getFileDialogScreenController()->getFileName());
 			modelEditorTabController->popUps->getFileDialogScreenController()->close();
 		}
 
@@ -1166,6 +1203,24 @@ void ModelEditorTabController::updateDetails(const string& outlinerNode) {
 	}
 }
 
+void ModelEditorTabController::setMaterialDiffuseTexture(const string& fileName) {
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+	auto specularMaterialProperties = material->getSpecularMaterialProperties();
+	if (specularMaterialProperties == nullptr) {
+		specularMaterialProperties = new SpecularMaterialProperties();
+		material->setSpecularMaterialProperties(specularMaterialProperties);
+	}
+	view->reloadPrototype();
+	specularMaterialProperties->setDiffuseTexture(
+		Tools::getPathName(fileName),
+		Tools::getFileName(fileName),
+		specularMaterialProperties->getDiffuseTransparencyTexturePathName(),
+		specularMaterialProperties->getDiffuseTransparencyTextureFileName()
+	);
+	updateMaterialDetails();
+}
+
 void ModelEditorTabController::onMaterialLoadDiffuseTexture() {
 	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
@@ -1179,15 +1234,9 @@ void ModelEditorTabController::onMaterialLoadDiffuseTexture() {
 	{
 	public:
 		void performAction() override {
-			MutableString value;
-			modelEditorTabController->view->reloadPrototype();
-			specularMaterialProperties->setDiffuseTexture(
-				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
-				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName(),
-				specularMaterialProperties->getDiffuseTransparencyTexturePathName(),
-				specularMaterialProperties->getDiffuseTransparencyTextureFileName()
+			modelEditorTabController->setMaterialDiffuseTexture(
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() + "/" + modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
-			modelEditorTabController->updateMaterialDetails();
 			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
@@ -1259,6 +1308,24 @@ void ModelEditorTabController::onMaterialBrowseToDiffuseTexture() {
 	view->getEditorView()->getScreenController()->browseTo(specularMaterialProperties->getDiffuseTexturePathName() + "/" + specularMaterialProperties->getDiffuseTextureFileName());
 }
 
+void ModelEditorTabController::setMaterialDiffuseTransparencyTexture(const string& fileName) {
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+	auto specularMaterialProperties = material->getSpecularMaterialProperties();
+	if (specularMaterialProperties == nullptr) {
+		specularMaterialProperties = new SpecularMaterialProperties();
+		material->setSpecularMaterialProperties(specularMaterialProperties);
+	}
+	view->reloadPrototype();
+	specularMaterialProperties->setDiffuseTexture(
+		specularMaterialProperties->getDiffuseTexturePathName(),
+		specularMaterialProperties->getDiffuseTextureFileName(),
+		Tools::getPathName(fileName),
+		Tools::getFileName(fileName)
+	);
+	updateMaterialDetails();
+}
+
 void ModelEditorTabController::onMaterialLoadDiffuseTransparencyTexture() {
 	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
@@ -1272,15 +1339,9 @@ void ModelEditorTabController::onMaterialLoadDiffuseTransparencyTexture() {
 	{
 	public:
 		void performAction() override {
-			MutableString value;
-			modelEditorTabController->view->reloadPrototype();
-			specularMaterialProperties->setDiffuseTexture(
-				specularMaterialProperties->getDiffuseTexturePathName(),
-				specularMaterialProperties->getDiffuseTextureFileName(),
-				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
-				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+			modelEditorTabController->setMaterialDiffuseTransparencyTexture(
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() + "/" + modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
-			modelEditorTabController->updateMaterialDetails();
 			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
@@ -1358,6 +1419,22 @@ void ModelEditorTabController::onMaterialBrowseToDiffuseTransparencyTexture() {
 	}
 }
 
+void ModelEditorTabController::setMaterialNormalTexture(const string& fileName) {
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+	auto specularMaterialProperties = material->getSpecularMaterialProperties();
+	if (specularMaterialProperties == nullptr) {
+		specularMaterialProperties = new SpecularMaterialProperties();
+		material->setSpecularMaterialProperties(specularMaterialProperties);
+	}
+	view->reloadPrototype();
+	specularMaterialProperties->setNormalTexture(
+		Tools::getPathName(fileName),
+		Tools::getFileName(fileName)
+	);
+	updateMaterialDetails();
+}
+
 void ModelEditorTabController::onMaterialLoadNormalTexture() {
 	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
@@ -1371,13 +1448,9 @@ void ModelEditorTabController::onMaterialLoadNormalTexture() {
 	{
 	public:
 		void performAction() override {
-			MutableString value;
-			modelEditorTabController->view->reloadPrototype();
-			specularMaterialProperties->setNormalTexture(
-				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
-				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+			modelEditorTabController->setMaterialNormalTexture(
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() + "/" + modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
-			modelEditorTabController->updateMaterialDetails();
 			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
@@ -1447,6 +1520,23 @@ void ModelEditorTabController::onMaterialBrowseToNormalTexture() {
 	view->getEditorView()->getScreenController()->browseTo(specularMaterialProperties->getNormalTexturePathName() + "/" + specularMaterialProperties->getNormalTextureFileName());
 }
 
+void ModelEditorTabController::setMaterialSpecularTexture(const string& fileName) {
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+	auto specularMaterialProperties = material->getSpecularMaterialProperties();
+	if (specularMaterialProperties == nullptr) {
+		specularMaterialProperties = new SpecularMaterialProperties();
+		material->setSpecularMaterialProperties(specularMaterialProperties);
+	}
+	//
+	view->reloadPrototype();
+	specularMaterialProperties->setSpecularTexture(
+		Tools::getPathName(fileName),
+		Tools::getFileName(fileName)
+	);
+	updateMaterialDetails();
+}
+
 void ModelEditorTabController::onMaterialLoadSpecularTexture() {
 	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
@@ -1460,13 +1550,9 @@ void ModelEditorTabController::onMaterialLoadSpecularTexture() {
 	{
 	public:
 		void performAction() override {
-			MutableString value;
-			modelEditorTabController->view->reloadPrototype();
-			specularMaterialProperties->setSpecularTexture(
-				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
-				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+			modelEditorTabController->setMaterialSpecularTexture(
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() + "/" + modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
-			modelEditorTabController->updateMaterialDetails();
 			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
@@ -1536,6 +1622,21 @@ void ModelEditorTabController::onMaterialBrowseToSpecularTexture() {
 	view->getEditorView()->getScreenController()->browseTo(specularMaterialProperties->getSpecularTexturePathName() + "/" + specularMaterialProperties->getSpecularTextureFileName());
 }
 
+void ModelEditorTabController::setMaterialPBRBaseColorTexture(const string& fileName) {
+	auto material = getSelectedMaterial();
+	Console::println("material: " + to_string(material != nullptr));
+	if (material == nullptr) return;
+	auto pbrMaterialProperties = material->getPBRMaterialProperties();
+	Console::println("material pbr: " + to_string(pbrMaterialProperties != nullptr));
+	if (pbrMaterialProperties == nullptr) return;
+	//
+	view->reloadPrototype();
+	pbrMaterialProperties->setBaseColorTexture(
+		Tools::getPathName(fileName),
+		Tools::getFileName(fileName)
+	);
+	updateMaterialDetails();
+}
 
 void ModelEditorTabController::onMaterialLoadPBRBaseColorTexture() {
 	auto material = getSelectedMaterial();
@@ -1547,13 +1648,9 @@ void ModelEditorTabController::onMaterialLoadPBRBaseColorTexture() {
 	{
 	public:
 		void performAction() override {
-			MutableString value;
-			modelEditorTabController->view->reloadPrototype();
-			pbrMaterialProperties->setBaseColorTexture(
-				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
-				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+			modelEditorTabController->setMaterialPBRBaseColorTexture(
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() + "/" + modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
-			modelEditorTabController->updateMaterialDetails();
 			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
@@ -1620,6 +1717,20 @@ void ModelEditorTabController::onMaterialBrowseToPBRBaseColorTexture() {
 	view->getEditorView()->getScreenController()->browseTo(pbrMaterialProperties->getBaseColorTexturePathName() + "/" + pbrMaterialProperties->getBaseColorTextureFileName());
 }
 
+void ModelEditorTabController::setMaterialPBRMetallicRoughnessTexture(const string& fileName) {
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+	auto pbrMaterialProperties = material->getPBRMaterialProperties();
+	if (pbrMaterialProperties == nullptr) return;
+	//
+	view->reloadPrototype();
+	pbrMaterialProperties->setMetallicRoughnessTexture(
+		Tools::getPathName(fileName),
+		Tools::getFileName(fileName)
+	);
+	updateMaterialDetails();
+}
+
 void ModelEditorTabController::onMaterialLoadPBRMetallicRoughnessTexture() {
 	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
@@ -1630,13 +1741,9 @@ void ModelEditorTabController::onMaterialLoadPBRMetallicRoughnessTexture() {
 	{
 	public:
 		void performAction() override {
-			MutableString value;
-			modelEditorTabController->view->reloadPrototype();
-			pbrMaterialProperties->setMetallicRoughnessTexture(
-				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
-				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+			modelEditorTabController->setMaterialPBRMetallicRoughnessTexture(
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() + "/" + modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
-			modelEditorTabController->updateMaterialDetails();
 			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 
@@ -1703,6 +1810,20 @@ void ModelEditorTabController::onMaterialBrowseToPBRMetallicRoughnessTexture() {
 	view->getEditorView()->getScreenController()->browseTo(pbrMaterialProperties->getMetallicRoughnessTexturePathName() + "/" + pbrMaterialProperties->getMetallicRoughnessTextureFileName());
 }
 
+void ModelEditorTabController::setMaterialPBRNormalTexture(const string& fileName) {
+	auto material = getSelectedMaterial();
+	if (material == nullptr) return;
+	auto pbrMaterialProperties = material->getPBRMaterialProperties();
+	if (pbrMaterialProperties == nullptr) return;
+	//
+	view->reloadPrototype();
+	pbrMaterialProperties->setNormalTexture(
+		Tools::getPathName(fileName),
+		Tools::getFileName(fileName)
+	);
+	updateMaterialDetails();
+}
+
 void ModelEditorTabController::onMaterialLoadPBRNormalTexture() {
 	auto material = getSelectedMaterial();
 	if (material == nullptr) return;
@@ -1713,13 +1834,9 @@ void ModelEditorTabController::onMaterialLoadPBRNormalTexture() {
 	{
 	public:
 		void performAction() override {
-			MutableString value;
-			modelEditorTabController->view->reloadPrototype();
-			pbrMaterialProperties->setNormalTexture(
-				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName(),
-				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+			modelEditorTabController->setMaterialPBRNormalTexture(
+				modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() + "/" + modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 			);
-			modelEditorTabController->updateMaterialDetails();
 			modelEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
 

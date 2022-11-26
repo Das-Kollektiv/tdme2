@@ -513,6 +513,14 @@ public:
 	virtual void setConditionsMet();
 
 	/**
+	 * Determine if layouted
+	 * @return if layouted
+	 */
+	inline bool isLayouted() {
+		return layouted;
+	}
+
+	/**
 	 * Layout on demand
 	 */
 	virtual void layoutOnDemand();

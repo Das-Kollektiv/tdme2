@@ -79,7 +79,7 @@ Texture* TextureReader::read(const string& pathName, const string& fileName, boo
 				}
 			}
 		} catch (Exception& exception) {
-			Console::println("TextureReader::loadTexture(): Could not load texture: " + canonicalPathName + "/" + canonicalFileName + ": " + (exception.what()));
+			Console::println("TextureReader::read(): Could not load texture: " + canonicalPathName + "/" + canonicalFileName + ": " + (exception.what()));
 		}
 	}
 
@@ -127,7 +127,7 @@ Texture* TextureReader::read16(const string& pathName, const string& fileName, b
 				}
 			}
 		} catch (Exception& exception) {
-			Console::println("TextureReader::loadTexture(): Could not load texture: " + canonicalPathName + "/" + canonicalFileName + ": " + (exception.what()));
+			Console::println("TextureReader::read16(): Could not load texture: " + canonicalPathName + "/" + canonicalFileName + ": " + (exception.what()));
 		}
 	}
 
@@ -170,7 +170,7 @@ Texture* TextureReader::read2(const string& texturePathName, const string& textu
 	auto transparencyTexture = TextureReader::read(transparencyTexturePathName, transparencyTextureFileName, false, powerOfTwo, idPrefix);
 	// do we have one?
 	if (transparencyTexture == nullptr) {
-		Console::println("TextureReader::read(): transparency texture: failed: " + texturePathName + "/" + textureFileName + ";" + transparencyTexturePathName + "/" + transparencyTextureFileName);
+		Console::println("TextureReader::read2(): transparency texture: failed: " + texturePathName + "/" + textureFileName + ";" + transparencyTexturePathName + "/" + transparencyTextureFileName);
 		if (useCache == true) {
 			(*textureCache)[cacheId] = texture;
 			textureCacheMutex->unlock();
@@ -179,7 +179,7 @@ Texture* TextureReader::read2(const string& texturePathName, const string& textu
 	}
 	// same dimensions and supported pixel depth?
 	if (texture->getTextureWidth() != transparencyTexture->getTextureWidth() || texture->getTextureHeight() != transparencyTexture->getTextureHeight()) {
-		Console::println("TextureReader::read(): texture does not match transparency texture dimension: " + texturePathName + "/" + textureFileName + ";" + transparencyTexturePathName + "/" + transparencyTextureFileName);
+		Console::println("TextureReader::read2(): texture does not match transparency texture dimension: " + texturePathName + "/" + textureFileName + ";" + transparencyTexturePathName + "/" + transparencyTextureFileName);
 		if (useCache == true) {
 			(*textureCache)[cacheId] = texture;
 			textureCacheMutex->unlock();
@@ -357,7 +357,7 @@ Texture* TextureReader::readPNG(const string& textureId, const vector<uint8_t>& 
 		textureHeight = 1;
 		while (textureHeight < height) textureHeight*= 2;
 		if (textureWidth != width || textureHeight != height) {
-			Console::println("TextureReader::loadPNG(): " + idPrefix + textureId + ": scaling to fit power of 2: " + to_string(width) + "x" + to_string(height) + " --> " + to_string(textureWidth) + "x" + to_string(textureHeight));
+			Console::println("TextureReader::readPNG(): " + idPrefix + textureId + ": scaling to fit power of 2: " + to_string(width) + "x" + to_string(height) + " --> " + to_string(textureWidth) + "x" + to_string(textureHeight));
 			auto pixelByteBufferScaled = ByteBuffer::allocate(textureWidth * textureHeight * bytesPerPixel);
 			auto textureYIncrement = (float)textureHeight / (float)height;
 			auto textureYPixelRest = 0.0f;
@@ -512,7 +512,7 @@ Texture* TextureReader::readPNG16(const string& textureId, const vector<uint8_t>
 		textureHeight = 1;
 		while (textureHeight < height) textureHeight*= 2;
 		if (textureWidth != width || textureHeight != height) {
-			Console::println("TextureReader::loadPNG(): " + idPrefix + textureId + ": scaling to fit power of 2: " + to_string(width) + "x" + to_string(height) + " --> " + to_string(textureWidth) + "x" + to_string(textureHeight));
+			Console::println("TextureReader::readPNG16(): " + idPrefix + textureId + ": scaling to fit power of 2: " + to_string(width) + "x" + to_string(height) + " --> " + to_string(textureWidth) + "x" + to_string(textureHeight));
 			auto pixelByteBufferScaled = ByteBuffer::allocate(textureWidth * textureHeight * bytesPerPixel);
 			auto textureYIncrement = (float)textureHeight / (float)height;
 			auto textureYPixelRest = 0.0f;
