@@ -206,7 +206,20 @@ void TerrainEditorTabController::onCommand(TabControllerCommand command)
 
 void TerrainEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
 	Console::println("TerrainEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
-	showInfoPopUp("Warning", "You can not drop a file here");
+	if (StringTools::startsWith(payload, "file:") == false) {
+		showInfoPopUp("Warning", "Unknown payload in drop");
+	} else
+	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "terrainbrush_texture") == true) {
+		setTerrainBrushTexture(StringTools::substring(payload, string("file:").size()));
+	} else
+	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "foliagebrush_texture") == true) {
+		setFoliageBrushTexture(StringTools::substring(payload, string("file:").size()));
+	} else
+	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "foliagebrush_prototype_file") == true) {
+		setFoliageBrushPrototype(StringTools::substring(payload, string("file:").size()));
+	} else {
+		showInfoPopUp("Warning", "You can not drop a file here");
+	}
 }
 
 void TerrainEditorTabController::updateInfoText(const MutableString& text) {
@@ -560,21 +573,11 @@ void TerrainEditorTabController::onAction(GUIActionListenerType type, GUIElement
 			{
 			public:
 				void performAction() override {
-					auto outlinerNode = terrainEditorTabController->view->getEditorView()->getScreenController()->getOutlinerSelection();
-					if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == false) return;
-					auto foliageBrushIdx = Integer::parse(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
-					auto prototype = terrainEditorTabController->view->getPrototype();
-					auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
-					if (terrain == nullptr) return;
-					auto brush = terrain->getBrush(foliageBrushIdx);
-					if (brush == nullptr) return;
-					brush->setFileName(
+					terrainEditorTabController->setFoliageBrushTexture(
 						terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
 						"/" +
 						terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 					);
-					required_dynamic_cast<GUIImageNode*>(terrainEditorTabController->screenNode->getNodeById("foliagebrush_texture"))->setSource(brush->getFileName());
-					terrainEditorTabController->updateFoliageBrush();
 					terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 				}
 
@@ -634,28 +637,11 @@ void TerrainEditorTabController::onAction(GUIActionListenerType type, GUIElement
 			{
 			public:
 				void performAction() override {
-					auto prototype = terrainEditorTabController->view->getPrototype();
-					auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
-					if (terrain == nullptr) return;
-
-					auto outlinerNode = terrainEditorTabController->view->getEditorView()->getScreenController()->getOutlinerSelection();
-					auto foliageBrushIdx = -1;
-					auto foliageBrushPrototypeIdx = -1;
-					if (terrainEditorTabController->checkOutlinerFoliageBrushPrototype(outlinerNode, foliageBrushIdx, foliageBrushPrototypeIdx) == false) return;
-					auto brush = terrain->getBrush(foliageBrushIdx);
-					if (brush == nullptr) return;
-					auto brushPrototype = brush->getPrototype(foliageBrushPrototypeIdx);
-					brushPrototype->setFileName(
+					terrainEditorTabController->setFoliageBrushPrototype(
 						terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
 						"/" +
 						terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 					);
-					try {
-						required_dynamic_cast<GUIImageNode*>(terrainEditorTabController->screenNode->getNodeById("foliagebrush_prototype_file"))->setSource(brushPrototype->getFileName());
-					} catch (Exception& exception) {
-						Console::println(string("OnTerrainBrushPrototypeFileOpenAction::performAction(): ") + exception.what());
-					}
-					terrainEditorTabController->updateFoliageBrush();
 					terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 				}
 
@@ -740,25 +726,10 @@ void TerrainEditorTabController::onAction(GUIActionListenerType type, GUIElement
 			{
 			public:
 				void performAction() override {
-					if (terrainEditorTabController->currentTerrainBrushTexture != nullptr) terrainEditorTabController->currentTerrainBrushTexture->releaseReference();
-					terrainEditorTabController->currentTerrainBrushTexture = nullptr;
-					terrainEditorTabController->currentTerrainBrushTextureFileName =
+					terrainEditorTabController->setTerrainBrushTexture(
 						terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
 						"/" +
-						terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName();
-					terrainEditorTabController->currentTerrainBrushTexture =
-						TextureReader::read(
-							Tools::getPathName(terrainEditorTabController->currentTerrainBrushTextureFileName),
-							Tools::getFileName(terrainEditorTabController->currentTerrainBrushTextureFileName),
-							false,
-							false
-						);
-					required_dynamic_cast<GUIImageNode*>(terrainEditorTabController->screenNode->getNodeById("terrainbrush_texture"))->setTexture(terrainEditorTabController->currentTerrainBrushTexture);
-					required_dynamic_cast<GUIImageNode*>(terrainEditorTabController->screenNode->getNodeById("terrainbrush_texture"))->setTooltip(terrainEditorTabController->currentTerrainBrushTextureFileName);
-					terrainEditorTabController->view->setBrush(
-						terrainEditorTabController->currentTerrainBrushTexture,
-						terrainEditorTabController->currentTerrainBrushScale,
-						terrainEditorTabController->currentTerrainBrushStrength
+						terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
 					);
 					terrainEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 				}
@@ -1678,4 +1649,69 @@ Terrain::BrushOperation TerrainEditorTabController::getUIFoliageBrushOperation()
 	} else {
 		return Terrain::BRUSHOPERATION_NONE;
 	}
+}
+
+void TerrainEditorTabController::setTerrainBrushTexture(const string& fileName) {
+	if (currentTerrainBrushTexture != nullptr) currentTerrainBrushTexture->releaseReference();
+	currentTerrainBrushTexture = nullptr;
+	currentTerrainBrushTextureFileName = fileName;
+	currentTerrainBrushTexture =
+		TextureReader::read(
+			Tools::getPathName(currentTerrainBrushTextureFileName),
+			Tools::getFileName(currentTerrainBrushTextureFileName),
+			false,
+			false
+		);
+	try {
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("terrainbrush_texture"))->setTexture(currentTerrainBrushTexture);
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("terrainbrush_texture"))->setTooltip(currentTerrainBrushTextureFileName);
+	} catch (Exception& exception) {
+		Console::println(string("TerrainEditorTabController::setTerrainBrushTexture(): An error occurred: ") + exception.what());;
+		showInfoPopUp("Warning", (string(exception.what())));
+	}
+	view->setBrush(
+		currentTerrainBrushTexture,
+		currentTerrainBrushScale,
+		currentTerrainBrushStrength
+	);
+}
+
+void TerrainEditorTabController::setFoliageBrushTexture(const string& fileName) {
+	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+	if (StringTools::startsWith(outlinerNode, "terrain.foliage.") == false) return;
+	auto foliageBrushIdx = Integer::parse(StringTools::substring(outlinerNode, string("terrain.foliage.").size(), outlinerNode.size()));
+	auto prototype = view->getPrototype();
+	auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
+	if (terrain == nullptr) return;
+	auto brush = terrain->getBrush(foliageBrushIdx);
+	if (brush == nullptr) return;
+	brush->setFileName(fileName);
+	try {
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("foliagebrush_texture"))->setSource(brush->getFileName());
+	} catch (Exception& exception) {
+		Console::println(string("TerrainEditorTabController::setFoliageBrushTexture(): An error occurred: ") + exception.what());;
+		showInfoPopUp("Warning", (string(exception.what())));
+	}
+	updateFoliageBrush();
+}
+
+void TerrainEditorTabController::setFoliageBrushPrototype(const string& fileName) {
+	auto prototype = view->getPrototype();
+	auto terrain = prototype != nullptr?prototype->getTerrain():nullptr;
+	if (terrain == nullptr) return;
+
+	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+	auto foliageBrushIdx = -1;
+	auto foliageBrushPrototypeIdx = -1;
+	if (checkOutlinerFoliageBrushPrototype(outlinerNode, foliageBrushIdx, foliageBrushPrototypeIdx) == false) return;
+	auto brush = terrain->getBrush(foliageBrushIdx);
+	if (brush == nullptr) return;
+	auto brushPrototype = brush->getPrototype(foliageBrushPrototypeIdx);
+	brushPrototype->setFileName(fileName);
+	try {
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("foliagebrush_prototype_file"))->setSource(brushPrototype->getFileName());
+	} catch (Exception& exception) {
+		Console::println(string("TerrainEditorTabController::setFoliageBrushPrototype(): ") + exception.what());
+	}
+	updateFoliageBrush();
 }
