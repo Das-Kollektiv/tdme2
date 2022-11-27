@@ -4,6 +4,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
@@ -15,6 +16,8 @@
 using std::string;
 
 using tdme::engine::fileio::textures::Texture;
+using tdme::engine::DynamicColorTexture;
+using tdme::engine::FrameBuffer;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUINode_Alignments;
 using tdme::gui::nodes::GUINode_Border;
@@ -38,9 +41,16 @@ class tdme::gui::nodes::GUIImageNode final
 	friend class tdme::gui::GUIParser;
 
 private:
-	Texture* texture { nullptr };
+	bool releaseTextureReference { false };
 	string source;
+	Texture* texture { nullptr };
+	FrameBuffer* frameBuffer { nullptr };
 	STATIC_DLL_IMPEXT static int thumbnailTextureIdx;
+
+	/**
+	 * Release texture
+	 */
+	void disposeTexture();
 
 protected:
 	/**
@@ -113,6 +123,14 @@ public:
 	// overridden methods
 	void dispose() override;
 
+
+	/**
+	 * @return texture
+	 */
+	inline Texture* getTexture() {
+		return texture;
+	}
+
 	/**
 	 * @return image source
 	 */
@@ -125,14 +143,31 @@ public:
 	void setSource(const string& source);
 
 	/**
-	 * @return texture
+	 * Set texture
+	 * @param texture texture
 	 */
-	inline Texture* getTexture() {
-		return texture;
-	}
+	void setTexture(Texture* texture);
+
+	/**
+	 * Set texture
+	 * @param texture texture
+	 */
+	void setTexture(DynamicColorTexture* texture);
+
+	/**
+	 * @return frame buffer
+	 */
+	FrameBuffer* getFrameBuffer();
+
+	/**
+	 * Set frame buffer
+	 * @param frameBuffer frame buffer
+	 */
+	void setFrameBuffer(FrameBuffer* frameBuffer);
 
 	/**
 	 * Rotate image around center
 	 */
 	void rotate(float rotation);
+
 };

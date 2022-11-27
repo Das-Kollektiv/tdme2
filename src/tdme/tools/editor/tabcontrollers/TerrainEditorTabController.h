@@ -362,4 +362,21 @@ public:
 	 */
 	void showInfoPopUp(const string& caption, const string& message);
 
+	/**
+	 * Set terrain brush texture
+	 * @param fileName file name
+	 */
+	void setTerrainBrushTexture(const string& fileName);
+
+	/**
+	 * Set foliage brush texture
+	 * @param fileName file name
+	 */
+	void setFoliageBrushTexture(const string& fileName);
+
+	/**
+	 * Set foliage brush prototype
+	 * @param fileName file name
+	 */
+	void setFoliageBrushPrototype(const string& fileName);
 };

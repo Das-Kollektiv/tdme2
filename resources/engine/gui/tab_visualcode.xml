@@ -1,6 +1,6 @@
 <screen id="tab_text">
 	<element id="editor" width="100%" height="100%">
-		<texture id="visualization_texture" show-on="visualization" width="100%" height="100%" background-color="{$color.element_background}" />
+		<image id="visualization_texture" show-on="visualization" width="100%" height="100%" background-color="{$color.element_background}" />
 		<scrollarea id="visualization" show-on="visualization" padding="5" width="100%" height="100%" border="1" border-color="{$color.element_frame}" >
 			<layout id="visualization_canvas" alignment="none" width="512" height="512">
 			</layout>

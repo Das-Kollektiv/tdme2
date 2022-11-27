@@ -13,13 +13,12 @@
 #include <tdme/gui/events/GUIMoveListener.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
-#include <tdme/gui/nodes/GUIFrameBufferNode.h>
+#include <tdme/gui/nodes/GUIImageNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/nodes/GUIStyledTextNodeController.h>
-#include <tdme/gui/nodes/GUITextureNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/math/Math.h>
@@ -51,12 +50,11 @@ using tdme::engine::Engine;
 using tdme::gui::events::GUIMoveListener;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUIFrameBufferNode;
+using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIStyledTextNode;
-using tdme::gui::nodes::GUITextureNode;
 using tdme::gui::GUI;
 using tdme::gui::GUIParser;
 using tdme::math::Math;
@@ -98,7 +96,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 		//
 		linesTexture = new DynamicColorTexture(engine->getWidth(), engine->getHeight());
 		linesTexture->initialize();
-		required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("visualization_texture"))->setTexture(linesTexture);
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("visualization_texture"))->setTexture(linesTexture);
 		// add node move listener
 		class NodeMoveListener: public GUIMoveListener {
 		public:
@@ -357,7 +355,7 @@ void TextEditorTabView::display()
 			linesTexture->getWidth() != engine->getWidth() ||
 			linesTexture->getHeight() != engine->getHeight()) {
 			linesTexture->reshape(engine->getWidth(), engine->getHeight());
-			auto visualizationTextureNode = dynamic_cast<GUITextureNode*>(screenNode->getNodeById("visualization_texture"));
+			auto visualizationTextureNode = dynamic_cast<GUIImageNode*>(screenNode->getNodeById("visualization_texture"));
 			if (visualizationTextureNode != nullptr) visualizationTextureNode->setTexture(linesTexture);
 			createConnectionsPasses = 3;
 		}

@@ -8,9 +8,9 @@
 			<space height="10" />
 			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="specularmaterial_transparency_texture" type="Transparency" />
 			<space height="10" />
-			<template src="resources/engine/gui/template_details_shared_fileinput_texture.xml" id="specularmaterial_normal_texture" type="Normal" />
+			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="specularmaterial_normal_texture" type="Normal" />
 			<space height="10" />
-			<template src="resources/engine/gui/template_details_shared_fileinput_texture.xml" id="specularmaterial_specular_texture" type="Specular" />
+			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="specularmaterial_specular_texture" type="Specular" />
 			
 			<space height="5" />
 			<menu-separator />

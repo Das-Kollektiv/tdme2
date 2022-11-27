@@ -92,31 +92,7 @@ This element supports all other elements as sub elements.
 
 ## 1.5. Frame Buffer / Image / Texture / Video nodes
 
-### 1.5.1. \<frame-buffer\> node
-
-| Attribute name                    | Attribute description                                                                  | Default           |
-| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
-| clipping                          | frame buffer clipping in pixels for left, top, right, bottom area                      | 0 pixel           |
-| clipping-left                     | frame buffer clipping in pixels for left area                                          | 0 pixel           |
-| clipping-top                      | frame buffer clipping in pixels for top area                                           | 0 pixel           |
-| clipping-right                    | frame buffer clipping in pixels for right area                                         | 0 pixel           |
-| clipping-right                    | frame buffer clipping in pixels for bottom area                                        | 0 pixel           |
-| mask                              | frame buffer mask image location                                                       | none              |
-| mask-max-value                    | mask max value, means if mask image pixel > mask max value the fragment is discared    | none              |
-| scale9                            | frame buffer scale 9 in pixels for left, top, right, bottom area                       | 0 pixel           |
-| scale9-left                       | frame buffer scale 9 in pixels for left area                                           | 0 pixel           |
-| scale9-top                        | frame buffer scale 9 in pixels for top area                                            | 0 pixel           |
-| scale9-right                      | frame buffer scale 9 in pixels for right area                                          | 0 pixel           |
-| scale9-bottom                     | frame buffer scale 9 in pixels for bottom area                                         | 0 pixel           |
-| effect-color-mul                  | frame buffer color multiplication in hex notation or color name                        | #ffffffff         |
-| effect-color-add                  | frame buffer color addition in hex notation or color name                              | #00000000         |
-| horizontal-scale                  | float factor to scale original frame buffer width with                                 | 1.0               |
-| vertical-scale                    | float factor to scale original frame buffer width with                                 | 1.0               |
-| mirror-x                          | mirror frame buffer on x axis                                                          | false             |
-| mirror-y                          | mirror frame buffer on y axis                                                          | false             |
-
-
-### 1.5.2. \<image\> node
+### 1.5.1. \<image\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
@@ -141,30 +117,7 @@ This element supports all other elements as sub elements.
 | rotation                          | rotation angle                                                                         | 0.0               |
 | src                               | image location                                                                         | 0.0               |
 
-### 1.5.3. \<texture\> node
-
-| Attribute name                    | Attribute description                                                                  | Default           |
-| --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |
-| clipping                          | texture clipping in pixels for left, top, right, bottom area                           | 0 pixel           |
-| clipping-left                     | texture clipping in pixels for left area                                               | 0 pixel           |
-| clipping-top                      | texture clipping in pixels for top area                                                | 0 pixel           |
-| clipping-right                    | texture clipping in pixels for right area                                              | 0 pixel           |
-| clipping-right                    | texture clipping in pixels for bottom area                                             | 0 pixel           |
-| mask                              | texture mask texture location                                                          | none              |
-| mask-max-value                    | mask max value, means if mask texture pixel > mask max value the fragment is discared  | none              |
-| scale9                            | texture scale 9 in pixels for left, top, right, bottom area                            | 0 pixel           |
-| scale9-left                       | texture scale 9 in pixels for left area                                                | 0 pixel           |
-| scale9-top                        | texture scale 9 in pixels for top area                                                 | 0 pixel           |
-| scale9-right                      | texture scale 9 in pixels for right area                                               | 0 pixel           |
-| scale9-bottom                     | texture scale 9 in pixels for bottom area                                              | 0 pixel           |
-| effect-color-mul                  | texture color multiplication in hex notation or color name                             | #ffffffff         |
-| effect-color-add                  | texture color addition in hex notation or color name                                   | #00000000         |
-| horizontal-scale                  | float factor to scale original texture width with                                      | 1.0               |
-| vertical-scale                    | float factor to scale original texture width with                                      | 1.0               |
-| mirror-x                          | mirror texture on x axis                                                               | false             |
-| mirror-y                          | mirror texture on y axis                                                               | false             |
-
-### 1.5.4. \<video\> node
+### 1.5.2. \<video\> node
 
 | Attribute name                    | Attribute description                                                                  | Default           |
 | --------------------------------- | ---------------------------------------------------------------------------------------| ----------------- |

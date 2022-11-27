@@ -473,7 +473,6 @@ SRCS = \
 	src/tdme/gui/nodes/GUIElementController.cpp \
 	src/tdme/gui/nodes/GUIElementIgnoreEventsController.cpp \
 	src/tdme/gui/nodes/GUIElementNode.cpp \
-	src/tdme/gui/nodes/GUIFrameBufferNode.cpp \
 	src/tdme/gui/nodes/GUIGradientNode.cpp \
 	src/tdme/gui/nodes/GUIHorizontalScrollbarInternalController.cpp \
 	src/tdme/gui/nodes/GUIHorizontalScrollbarInternalNode.cpp \
@@ -502,7 +501,6 @@ SRCS = \
 	src/tdme/gui/nodes/GUITableRowNode.cpp \
 	src/tdme/gui/nodes/GUITextNode.cpp \
 	src/tdme/gui/nodes/GUITextureBaseNode.cpp \
-	src/tdme/gui/nodes/GUITextureNode.cpp \
 	src/tdme/gui/nodes/GUIVerticalScrollbarInternalController.cpp \
 	src/tdme/gui/nodes/GUIVerticalScrollbarInternalNode.cpp \
 	src/tdme/gui/nodes/GUIVideoNode.cpp \

@@ -5,7 +5,7 @@
 		
 			<space height="5" />
 			
-			<template src="resources/engine/gui/template_details_shared_fileinput_texture.xml" id="terrainbrush_texture" type="Brush Texture" />
+			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="terrainbrush_texture" type="Brush Texture" />
 			
 			<space height="5" />
 			<menu-separator />

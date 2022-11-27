@@ -46,7 +46,7 @@ using tdme::gui::events::GUIDragRequestListener;
 using tdme::gui::events::GUIFocusListener;
 using tdme::gui::events::GUITooltipRequestListener;
 using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUIFrameBufferNode;
+using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
@@ -103,7 +103,7 @@ public:
 		string id;
 		TabType type { TABTYPE_UNKNOWN };
 		TabView* tabView { nullptr };
-		GUIFrameBufferNode* frameBufferNode { nullptr };
+		GUIImageNode* frameBufferNode { nullptr };
 
 	public:
 		/**
@@ -122,7 +122,7 @@ public:
 			string id,
 			TabType type,
 			TabView* tabView,
-			GUIFrameBufferNode* frameBufferNode
+			GUIImageNode* frameBufferNode
 		):
 			id(id),
 			type(type),
@@ -154,7 +154,7 @@ public:
 		/**
 		 * @return frame buffer GUI node
 		 */
-		inline GUIFrameBufferNode* getFrameBufferNode() {
+		inline GUIImageNode* getFrameBufferNode() {
 			return frameBufferNode;
 		}
 
