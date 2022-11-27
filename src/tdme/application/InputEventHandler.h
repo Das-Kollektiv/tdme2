@@ -31,8 +31,9 @@ public:
 	 * @param x x
 	 * @param y y
 	 * @param repeat event
+	 * @param modifiers modifiers
 	 */
-	virtual void onKeyDown(int key, int keyCode, int x, int y, bool repeat) = 0;
+	virtual void onKeyDown(int key, int keyCode, int x, int y, bool repeat, int modifiers) = 0;
 
 	/**
 	 * On key up

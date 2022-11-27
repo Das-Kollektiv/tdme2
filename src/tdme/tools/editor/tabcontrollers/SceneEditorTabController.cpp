@@ -124,7 +124,7 @@ void SceneEditorTabController::dispose()
 {
 }
 
-void SceneEditorTabController::executeCommand(TabControllerCommand command)
+void SceneEditorTabController::onCommand(TabControllerCommand command)
 {
 	switch (command) {
 		case COMMAND_SAVE:
@@ -177,6 +177,11 @@ void SceneEditorTabController::executeCommand(TabControllerCommand command)
 			showInfoPopUp("Warning", "This command is not supported yet");
 			break;
 	}
+}
+
+void SceneEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
+	Console::println("SceneEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
+	showInfoPopUp("Warning", "You can not drop a file here");
 }
 
 void SceneEditorTabController::save(const string& pathName, const string& fileName)

@@ -38,6 +38,7 @@
 #include <tdme/utilities/Exception.h>
 #include <tdme/utilities/ExceptionBase.h>
 #include <tdme/utilities/MutableString.h>
+#include <tdme/utilities/StringTools.h>
 
 using std::string;
 
@@ -74,6 +75,7 @@ using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::ExceptionBase;
 using tdme::utilities::MutableString;
+using tdme::utilities::StringTools;
 
 DecalEditorTabController::DecalEditorTabController(DecalEditorTabView* view)
 {
@@ -114,7 +116,7 @@ void DecalEditorTabController::dispose()
 {
 }
 
-void DecalEditorTabController::executeCommand(TabControllerCommand command)
+void DecalEditorTabController::onCommand(TabControllerCommand command)
 {
 	switch (command) {
 		case COMMAND_SAVE:
@@ -173,6 +175,20 @@ void DecalEditorTabController::executeCommand(TabControllerCommand command)
 	}
 }
 
+void DecalEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
+	Console::println("DecalEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
+	if (prototypePhysicsSubController->onDrop(payload, mouseX, mouseY, view->getPrototype()) == true) return;
+	if (prototypeScriptSubController->onDrop(payload, mouseX, mouseY, view->getPrototype()) == true) return;
+	if (StringTools::startsWith(payload, "file:") == false) {
+		showInfoPopUp("Warning", "Unknown payload in drop");
+	} else
+	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "decal_texture") == true) {
+		setDecalTexture(StringTools::substring(payload, string("file:").size()));
+	} else {
+		showInfoPopUp("Warning", "You can not drop a file here");
+	}
+}
+
 void DecalEditorTabController::onChange(GUIElementNode* node)
 {
 	if (node->getId() == "selectbox_outliner") {
@@ -217,49 +233,11 @@ void DecalEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 			{
 			public:
 				void performAction() override {
-					auto prototype = decalEditorTabController->view->getPrototype();
-					auto decal = prototype != nullptr?prototype->getDecal():nullptr;
-					if (prototype != nullptr && decal != nullptr) {
-						try {
-							decal->setTextureFileName(
-								decalEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
-								"/" +
-								decalEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
-							);
-							//
-							if (decal->getTexture() != nullptr) {
-								// thumbnail
-								auto decalTextureThumbnail = TextureReader::scale(decal->getTexture(), 128, 128);
-								vector<uint8_t> pngData;
-								string base64PNGData;
-								PNGTextureWriter::write(decalTextureThumbnail, pngData, false, false);
-								Base64::encode(pngData, base64PNGData);
-								prototype->setThumbnail(base64PNGData);
-								decalTextureThumbnail->releaseReference();
-								// adjust oriented bounding box
-								auto physicsSubView = decalEditorTabController->prototypePhysicsSubController->getView();
-								physicsSubView->applyBoundingVolumeObb(
-									prototype,
-									0,
-									Vector3(),
-									OrientedBoundingBox::AABB_AXIS_X,
-									OrientedBoundingBox::AABB_AXIS_Y,
-									OrientedBoundingBox::AABB_AXIS_Z,
-									Vector3(
-										0.5f * (static_cast<float>(decal->getTexture()->getWidth()) / static_cast<float>(decal->getTexture()->getHeight())),
-										0.5f,
-										0.5f
-									)
-								);
-								physicsSubView->updateGizmo(prototype);
-							}
-						} catch (Exception& exception) {
-							Console::println(string() + "OnDecalTextureFileOpenAction::performAction(): An error occurred: " + exception.what());
-							decalEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
-						}
-						required_dynamic_cast<GUIImageNode*>(decalEditorTabController->screenNode->getNodeById("decal_texture"))->setSource(decal->getTextureFileName());
-						required_dynamic_cast<GUIImageNode*>(decalEditorTabController->screenNode->getNodeById("decal_texture"))->setTooltip(decal->getTextureFileName());
-					}
+					decalEditorTabController->setDecalTexture(
+						decalEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
+						"/" +
+						decalEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+					);
 					decalEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 				}
 
@@ -312,6 +290,53 @@ void DecalEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 	basePropertiesSubController->onAction(type, node, view->getPrototype());
 	prototypePhysicsSubController->onAction(type, node, view->getPrototype());
 	prototypeScriptSubController->onAction(type, node, view->getPrototype());
+}
+
+void DecalEditorTabController::setDecalTexture(const string& fileName) {
+	//
+	auto prototype = view->getPrototype();
+	if (prototype == nullptr) return;
+	//
+	auto decal = prototype != nullptr?prototype->getDecal():nullptr;
+	if (decal == nullptr) return;
+	//
+	try {
+		decal->setTextureFileName(fileName);
+		//
+		if (decal->getTexture() == nullptr) {
+			showInfoPopUp("Warning", "Unsupported file format or corrupt file");
+		} else {
+			// thumbnail
+			auto decalTextureThumbnail = TextureReader::scale(decal->getTexture(), 128, 128);
+			vector<uint8_t> pngData;
+			string base64PNGData;
+			PNGTextureWriter::write(decalTextureThumbnail, pngData, false, false);
+			Base64::encode(pngData, base64PNGData);
+			prototype->setThumbnail(base64PNGData);
+			decalTextureThumbnail->releaseReference();
+			// adjust oriented bounding box
+			auto physicsSubView = prototypePhysicsSubController->getView();
+			physicsSubView->applyBoundingVolumeObb(
+				prototype,
+				0,
+				Vector3(),
+				OrientedBoundingBox::AABB_AXIS_X,
+				OrientedBoundingBox::AABB_AXIS_Y,
+				OrientedBoundingBox::AABB_AXIS_Z,
+				Vector3(
+					0.5f * (static_cast<float>(decal->getTexture()->getWidth()) / static_cast<float>(decal->getTexture()->getHeight())),
+					0.5f,
+					0.5f
+				)
+			);
+			physicsSubView->updateGizmo(prototype);
+		}
+	} catch (Exception& exception) {
+		Console::println(string() + "OnDecalTextureFileOpenAction::performAction(): An error occurred: " + exception.what());
+		showInfoPopUp("Warning", (string(exception.what())));
+	}
+	required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("decal_texture"))->setSource(decal->getTextureFileName());
+	required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("decal_texture"))->setTooltip(decal->getTextureFileName());
 }
 
 void DecalEditorTabController::setOutlinerContent() {

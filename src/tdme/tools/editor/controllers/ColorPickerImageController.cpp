@@ -70,8 +70,8 @@ void ColorPickerImageController::postLayout()
 
 void ColorPickerImageController::handleMouseEvent(GUINode* node, GUIMouseEvent* event)
 {
-	Vector2 imageMousePosition;
-	if (node == this->node && this->node->isEventBelongingToNode(event, imageMousePosition) == true && event->getButton() == MOUSE_BUTTON_LEFT) {
+	Vector2 imageMouseCoordinate;
+	if (node == this->node && this->node->isEventBelongingToNode(event, imageMouseCoordinate) == true && event->getButton() == MOUSE_BUTTON_LEFT) {
 		if (event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED || event->getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED) {
 			auto imageNode = required_dynamic_cast<GUIImageNode*>(this->node);
 			auto imageNodeWidth = imageNode->getComputedConstraints().width;
@@ -81,8 +81,8 @@ void ColorPickerImageController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 				auto textureWidth = imageNodeTexture->getTextureWidth();
 				auto textureHeight = imageNodeTexture->getTextureHeight();
 				auto textureData = imageNodeTexture->getTextureData();
-				auto textureX = static_cast<int>(static_cast<float>(textureWidth) * (imageMousePosition[0] / imageNodeWidth));
-				auto textureY = static_cast<int>(static_cast<float>(textureHeight) * (imageMousePosition[1] / imageNodeHeight));
+				auto textureX = static_cast<int>(static_cast<float>(textureWidth) * (imageMouseCoordinate[0] / imageNodeWidth));
+				auto textureY = static_cast<int>(static_cast<float>(textureHeight) * (imageMouseCoordinate[1] / imageNodeHeight));
 				auto textureBytesPerPixel = -1;
 				switch (imageNodeTexture->getDepth()) {
 					case 24:

@@ -132,8 +132,38 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 	if (disabled == true) {
 		return;
 	}
-	if (node == this->node &&
-		event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED == true) {
+	if (event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED) {
+		if (doubleClick == true) {
+			//
+			auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
+			auto& text = textInputNode->getText();
+			auto textLength = text.length();
+			if (textLength > 0) {
+				auto wordLeftIdx = 0;
+				for (auto i = 0; i < index && i < textLength; i++) {
+					auto c = text.getUTF8CharAt(i);
+					if (Character::isAlphaNumeric(c) == false) {
+						wordLeftIdx = i + 1;
+					}
+				}
+				auto wordRightIdx = textLength;
+				for (auto i = index; i < textLength; i++) {
+					auto c = text.getUTF8CharAt(i);
+					if (Character::isAlphaNumeric(c) == false) {
+						wordRightIdx = i;
+						break;
+					}
+				}
+				if (wordLeftIdx != wordRightIdx) {
+					index = wordLeftIdx;
+					selectionIndex = wordRightIdx;
+				}
+				//
+				resetCursorMode();
+			}
+			//
+			doubleClick = false;
+		} else
 		if (mouseDraggingSlideValueActive == false) {
 			if (node->isEventBelongingToNode(event) == true &&
 				event->getButton() == MOUSE_BUTTON_LEFT) {
@@ -152,11 +182,11 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 				event->setProcessed(true);
 				if (editMode == false) {
 					index = 0;
-					selectionIndex = textInputNode->getText().length();
+					selectionIndex = textInputNode->getText().length() == 0?-1:textInputNode->getText().length();
 				}
 				editMode = true;
 			}
-		}
+		} else
 		if (mouseDraggingSlideValueActive == true) {
 			// Application::setMouseCursor(MOUSE_CURSOR_NORMAL);
 			Application::setMousePosition(mouseOriginalPosition[0], mouseOriginalPosition[1]);
@@ -247,9 +277,21 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 		}
 		event->setProcessed(true);
 	} else
-	if (node == this->node && node->isEventBelongingToNode(event) == true &&
-		event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED == true &&
+	if (node == this->node &&
+		node->isEventBelongingToNode(event) == true &&
+		event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED &&
 		event->getButton() == MOUSE_BUTTON_LEFT) {
+		//
+		if (timeLastClick != -1LL &&
+			Time::getCurrentMillis() - timeLastClick < TIME_DOUBLECLICK) {
+			doubleClick = true;
+			timeLastClick = -1LL;
+		} else {
+			timeLastClick = Time::getCurrentMillis();
+			doubleClick = false;
+		}
+
+		//
 		auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
 		index = textInputNode->getFont()->getTextIndexByX(
 			textInputNode->getText(),
@@ -262,11 +304,11 @@ void GUIInputInternalController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 				)
 		);
 		resetCursorMode();
-		event->setProcessed(true);
 		mouseDraggingInit = true;
 		mouseOriginalPosition[0] = Application::getMousePositionX();
 		mouseOriginalPosition[1] = Application::getMousePositionY();
 		selectionIndex = -1;
+		event->setProcessed(true);
 	}
 }
 
@@ -400,13 +442,44 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 			case GUIKeyboardEvent::KEYCODE_LEFT: {
 					event->setProcessed(true);
 					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+						auto wordLeftIdx = -1;
+						if (event->isControlDown() == true) {
+							string delimiter = "^´!\"§$%&/()=?`+#<,.-*'>;:_";
+							auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
+							auto& text = textInputNode->getText();
+							auto textLength = text.length();
+							if (textLength > 0) {
+								wordLeftIdx = 0;
+								auto i = index - 1;
+								for (; i >= 0; i--) {
+									auto c = text.getUTF8CharAt(i);
+									if (Character::isAlphaNumeric(c) == true || delimiter.find(c) != string::npos) break;
+								}
+								if (delimiter.find(text.getUTF8CharAt(i)) != string::npos) {
+									for (; i >= 0 && delimiter.find(text.getUTF8CharAt(i)) != string::npos; i--);
+									wordLeftIdx = i + 1;
+								} else {
+									for (; i >= 0; i--) {
+										auto c = text.getUTF8CharAt(i);
+										if (Character::isAlphaNumeric(c) == false || delimiter.find(c) != string::npos) {
+											wordLeftIdx = i + 1;
+											break;
+										}
+									}
+								}
+							}
+						}
 						if (event->isShiftDown() == false) {
 							selectionIndex = -1;
 						} else {
 							if (selectionIndex == -1) selectionIndex = index;
 						}
 						if (index > 0) {
-							index--;
+							if (wordLeftIdx == -1) {
+								index--;
+							} else {
+								index = wordLeftIdx;
+							}
 							checkOffset();
 							resetCursorMode();
 						}
@@ -416,13 +489,48 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 			case GUIKeyboardEvent::KEYCODE_RIGHT: {
 					event->setProcessed(true);
 					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+						auto wordRightIdx = -1;
+						if (event->isControlDown() == true) {
+							string delimiter = "^´!\"§$%&/()=?`+#<,.-*'>;:_";
+							auto textInputNode = required_dynamic_cast<GUIInputInternalNode*>(node);
+							auto& text = textInputNode->getText();
+							auto textLength = text.length();
+							if (textLength > 0) {
+								wordRightIdx = textLength;
+								auto i = index;
+								for (; i < textLength; i++) {
+									auto c = text.getUTF8CharAt(i);
+									if (Character::isAlphaNumeric(c) == true || delimiter.find(c) != string::npos) break;
+								}
+								if (delimiter.find(text.getUTF8CharAt(i)) != string::npos) {
+									for (; i < textLength && delimiter.find(text.getUTF8CharAt(i)) != string::npos; i++);
+									wordRightIdx = i;
+								} else {
+									for (; i < textLength; i++) {
+										auto c = text.getUTF8CharAt(i);
+										if (Character::isAlphaNumeric(c) == false || delimiter.find(c) != string::npos) {
+											wordRightIdx = i;
+											break;
+										}
+									}
+								}
+								if (Character::isSpace(text.getUTF8CharAt(i)) == true) {
+									for (; i < textLength && Character::isSpace(text.getUTF8CharAt(i)) == true; i++);
+									wordRightIdx = i;
+								}
+							}
+						}
 						if (event->isShiftDown() == false) {
 							selectionIndex = -1;
 						} else {
 							if (selectionIndex == -1) selectionIndex = index;
 						}
 						if (index < textInputNode->getText().length()) {
-							index++;
+							if (wordRightIdx == -1) {
+								index++;
+							} else {
+								index = wordRightIdx;
+							}
 							checkOffset();
 							resetCursorMode();
 						}
@@ -437,6 +545,8 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 								textInputNode->getText().remove(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 								index = Math::min(index, selectionIndex);
 								selectionIndex = -1;
+								required_dynamic_cast<GUIInputController*>(inputNode->getController())->onChange();
+								node->getScreenNode()->forwardChange(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
 							} else
 							if (index > 0) {
 								textInputNode->getText().remove(index - 1, 1);
@@ -458,6 +568,8 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 								textInputNode->getText().remove(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
 								index = Math::min(index, selectionIndex);
 								selectionIndex = -1;
+								required_dynamic_cast<GUIInputController*>(inputNode->getController())->onChange();
+								node->getScreenNode()->forwardChange(required_dynamic_cast<GUIElementNode*>(node->getParentControllerNode()));
 							} else
 							if (index < textInputNode->getText().length()) {
 								textInputNode->getText().remove(index, 1);
@@ -481,27 +593,32 @@ void GUIInputInternalController::handleKeyboardEvent(GUIKeyboardEvent* event)
 			case GUIKeyboardEvent::KEYCODE_POS1: {
 					if (disabled == false) {
 						event->setProcessed(true);
-						resetCursorMode();
-						if (event->isShiftDown() == false) {
-							selectionIndex = -1;
-						} else {
-							if (selectionIndex == -1) selectionIndex = index;
+						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+							resetCursorMode();
+							if (event->isShiftDown() == false) {
+								selectionIndex = -1;
+							} else {
+								if (selectionIndex == -1) selectionIndex = index;
+							}
+							index = 0;
+							checkOffset();
 						}
-						index = 0;
-						checkOffset();
 					}
 				}
 				break;
 			case GUIKeyboardEvent::KEYCODE_END: {
 					if (disabled == false) {
-						resetCursorMode();
-						if (event->isShiftDown() == false) {
-							selectionIndex = -1;
-						} else {
-							if (selectionIndex == -1) selectionIndex = index;
+						event->setProcessed(true);
+						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+							resetCursorMode();
+							if (event->isShiftDown() == false) {
+								selectionIndex = -1;
+							} else {
+								if (selectionIndex == -1) selectionIndex = index;
+							}
+							index = textInputNode->getText().length();
+							checkOffset();
 						}
-						index = textInputNode->getText().length();
-						checkOffset();
 					}
 				}
 				break;

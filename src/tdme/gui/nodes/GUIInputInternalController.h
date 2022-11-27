@@ -30,6 +30,7 @@ class tdme::gui::nodes::GUIInputInternalController final
 public:
 	enum CursorMode { CURSORMODE_HIDE, CURSORMODE_SHOW};
 private:
+	static constexpr int64_t TIME_DOUBLECLICK { 250LL };
 	static constexpr int64_t CURSOR_MODE_DURATION { 500LL };
 	static constexpr int64_t DRAGGING_CALMDOWN { 50LL };
 	GUIElementNode* inputNode { nullptr };
@@ -56,6 +57,9 @@ private:
 	int decimals { 3 };
 
 	bool editMode { false };
+
+	int64_t timeLastClick { -1LL };
+	bool doubleClick { false };
 
 	/**
 	 * Private constructor

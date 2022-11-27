@@ -786,7 +786,8 @@ void Application::glfwOnKey(GLFWwindow* window, int key, int scanCode, int actio
 			key,
 			(int)mouseX,
 			(int)mouseY,
-			action == GLFW_REPEAT
+			action == GLFW_REPEAT,
+			mods
 		);
 	} else
 	if (action == GLFW_RELEASE) {

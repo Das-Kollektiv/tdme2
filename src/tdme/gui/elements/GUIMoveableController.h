@@ -25,6 +25,8 @@ private:
 	MutableString value;
 	int mouseLastX { -1 };
 	int mouseLastY { -1 };
+	bool dragging { false };
+	bool haveLastMousePosition { false };
 
 	/**
 	 * Private constructor
@@ -33,6 +35,11 @@ private:
 	GUIMoveableController(GUINode* node);
 
 public:
+	/**
+	 * Start moving
+	 */
+	void startMoving();
+
 	// overridden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;

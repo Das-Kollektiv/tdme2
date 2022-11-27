@@ -950,8 +950,7 @@ void GUINode::render(GUIRenderer* guiRenderer)
 	}
 }
 
-float GUINode::computeParentChildrenRenderOffsetXTotal()
-{
+float GUINode::computeParentChildrenRenderOffsetXTotal() {
 	auto childrenRenderOffSetX = 0.0f;
 	auto parentNode = this->parentNode;
 	while (parentNode != nullptr) {
@@ -961,8 +960,7 @@ float GUINode::computeParentChildrenRenderOffsetXTotal()
 	return childrenRenderOffSetX;
 }
 
-float GUINode::computeParentChildrenRenderOffsetYTotal()
-{
+float GUINode::computeParentChildrenRenderOffsetYTotal() {
 	auto childrenRenderOffSetY = 0.0f;
 	auto parentNode = this->parentNode;
 	while (parentNode != nullptr) {
@@ -970,45 +968,6 @@ float GUINode::computeParentChildrenRenderOffsetYTotal()
 		parentNode = parentNode->parentNode;
 	}
 	return childrenRenderOffSetY;
-}
-
-bool GUINode::isEventBelongingToNode(GUIMouseEvent* event, Vector2& position)
-{
-	auto eventXScreen = event->getX();
-	auto eventYScreen = event->getY();
-	/*
-	auto parentNode = this->parentNode;
-	while (parentNode != nullptr) {
-		if (parentNode->flow == GUINode_Flow::FLOATING)
-			break;
-
-		auto eventX = eventXScreen + parentNode->computeParentChildrenRenderOffsetXTotal();
-		auto eventY = eventYScreen + parentNode->computeParentChildrenRenderOffsetYTotal();
-		if ((eventX >= parentNode->computedConstraints.left + parentNode->computedConstraints.alignmentLeft &&
-			eventX < parentNode->computedConstraints.left + parentNode->computedConstraints.alignmentLeft + parentNode->computedConstraints.width &&
-			eventY >= parentNode->computedConstraints.top + parentNode->computedConstraints.alignmentTop &&
-			eventY < parentNode->computedConstraints.top + parentNode->computedConstraints.alignmentTop + parentNode->computedConstraints.height) == false) {
-			return false;
-		}
-		parentNode = parentNode->parentNode;
-	}
-	*/
-	auto eventX = eventXScreen + computeParentChildrenRenderOffsetXTotal();
-	auto eventY = eventYScreen + computeParentChildrenRenderOffsetYTotal();
-	auto belongsToElement =
-		eventX >= computedConstraints.left + computedConstraints.alignmentLeft &&
-		eventX < computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.width &&
-		eventY >= computedConstraints.top + computedConstraints.alignmentTop &&
-		eventY < computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.height;
-	position[0] = static_cast<int>((eventX - (computedConstraints.left + computedConstraints.alignmentLeft)));
-	position[1] = static_cast<int>((eventY - (computedConstraints.top + computedConstraints.alignmentTop)));
-	return belongsToElement;
-}
-
-bool GUINode::isEventBelongingToNode(GUIMouseEvent* event)
-{
-	Vector2 position;
-	return isEventBelongingToNode(event, position);
 }
 
 void GUINode::getEventOffNodeRelativePosition(GUIMouseEvent* event, Vector2& position)
@@ -1156,7 +1115,8 @@ void GUINode::dumpNode(GUINode* node, int depth, int indent, int depthIdx) {
 		": conditions met: " +
 		to_string(node->conditionsMet) + "; layouted: " +
 		to_string(node->layouted) +
-		(dynamic_cast<GUIParentNode*>(node) != nullptr?"; child count: " + to_string(dynamic_cast<GUIParentNode*>(node)->subNodes.size()):"")
+		(dynamic_cast<GUIParentNode*>(node) != nullptr?"; child count: " + to_string(dynamic_cast<GUIParentNode*>(node)->subNodes.size()):"") +
+		(node->getController() != nullptr?"; controller attached":"; no controller")
 	);
 	if (dynamic_cast<GUIParentNode*>(node) != nullptr && (depth == 0 || depthIdx + 1 < depth)) {
 		auto parentNode = required_dynamic_cast<GUIParentNode*>(node);

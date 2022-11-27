@@ -115,7 +115,9 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 				visualisationNode->getRequestsConstraints().height = Math::max(visualisationNode->getRequestsConstraints().height, yMax);
 				textEditorTabView->createConnectionsPasses = 3;
 			}
-
+			void onRelease(GUINode* node, int mouseX, int mouseY) {
+				// no op
+			}
 		private:
 			TextEditorTabView* textEditorTabView;
 		};

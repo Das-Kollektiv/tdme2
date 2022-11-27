@@ -210,7 +210,7 @@ void SkinningTest::reshape(int32_t width, int32_t height)
 void SkinningTest::onChar(int key, int x, int y) {
 }
 
-void SkinningTest::onKeyDown(int key, int keyCode, int x, int y, bool repeat) {
+void SkinningTest::onKeyDown(int key, int keyCode, int x, int y, bool repeat, int modifiers) {
 	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == 'w') keyW = true;
 	if (keyChar == 'a') keyA = true;

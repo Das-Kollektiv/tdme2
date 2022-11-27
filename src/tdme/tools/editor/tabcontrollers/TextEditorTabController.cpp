@@ -109,7 +109,7 @@ void TextEditorTabController::dispose()
 	this->view->getTabScreenNode()->removeFocusListener(this);
 }
 
-void TextEditorTabController::executeCommand(TabControllerCommand command)
+void TextEditorTabController::onCommand(TabControllerCommand command)
 {
 	switch (command) {
 		case COMMAND_SAVE:
@@ -298,6 +298,11 @@ void TextEditorTabController::executeCommand(TabControllerCommand command)
 			showInfoPopUp("Warning", "This command is not supported yet");
 			break;
 	}
+}
+
+void TextEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
+	Console::println("TextEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
+	showInfoPopUp("Warning", "You can not drop a file here");
 }
 
 void TextEditorTabController::showInfoPopUp(const string& caption, const string& message)

@@ -192,7 +192,9 @@ public:
 	/**
 	 * @return children render offset x
 	 */
-	float getChildrenRenderOffsetX();
+	inline float getChildrenRenderOffsetX() {
+		return childrenRenderOffsetX;
+	}
 
 	/**
 	 * Set children render offset x
@@ -203,7 +205,9 @@ public:
 	/**
 	 * @return children render offset y
 	 */
-	float getChildrenRenderOffsetY();
+	inline float getChildrenRenderOffsetY() {
+		return childrenRenderOffsetY;
+	}
 
 	/**
 	 * Set children render offset y
@@ -256,8 +260,8 @@ private:
 	void removeSubNode(GUINode* node, bool resetScrollOffsets);
 
 	/**
-	 * Unset mouse event condition on element nodes
+	 * Unset mouse over and click conditions on element nodes
 	 */
-	void unsetMouseOver();
+	void unsetMouseStates();
 
 };

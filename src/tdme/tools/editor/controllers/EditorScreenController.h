@@ -14,6 +14,7 @@
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/events/GUIContextMenuRequestListener.h>
+#include <tdme/gui/events/GUIDragRequestListener.h>
 #include <tdme/gui/events/GUIFocusListener.h>
 #include <tdme/gui/events/GUITooltipRequestListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
@@ -41,6 +42,7 @@ using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::events::GUIContextMenuRequestListener;
+using tdme::gui::events::GUIDragRequestListener;
 using tdme::gui::events::GUIFocusListener;
 using tdme::gui::events::GUITooltipRequestListener;
 using tdme::gui::nodes::GUIElementNode;
@@ -68,6 +70,7 @@ class tdme::tools::editor::controllers::EditorScreenController final
 	, public GUIFocusListener
 	, public GUIContextMenuRequestListener
 	, public GUITooltipRequestListener
+	, public GUIDragRequestListener
 {
 public:
 	enum FileType {
@@ -396,6 +399,7 @@ public:
 	void onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) override;
 	void onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) override;
 	void onTooltipCloseRequest() override;
+	void onDragRequest(GUIElementNode* node, int mouseX, int mouseY) override;
 
 	/**
 	 * @return project path
@@ -642,4 +646,14 @@ public:
 	 * On quit
 	 */
 	void onQuit();
+
+	/**
+	 * Is drop on node
+	 * @param dropX drop x
+	 * @param dropY drop y
+	 * @param nodeId node id
+	 * @return drop is on node or not
+	 */
+	bool isDropOnNode(int dropX, int dropY, const string& nodeId);
+
 };

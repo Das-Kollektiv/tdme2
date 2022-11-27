@@ -438,6 +438,7 @@ SRCS = \
 	src/tdme/tools/editor/controllers/ColorPickerImageController.cpp \
 	src/tdme/tools/editor/controllers/ColorPickerScreenController.cpp \
 	src/tdme/tools/editor/controllers/ContextMenuScreenController.cpp \
+	src/tdme/tools/editor/controllers/DraggingScreenController.cpp \
 	src/tdme/tools/editor/controllers/EditorScreenController.cpp \
 	src/tdme/tools/editor/controllers/FileDialogScreenController.cpp \
 	src/tdme/tools/editor/controllers/FindReplaceDialogScreenController.cpp \

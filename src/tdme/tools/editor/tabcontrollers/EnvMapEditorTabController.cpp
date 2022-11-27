@@ -92,7 +92,7 @@ void EnvMapEditorTabController::dispose()
 {
 }
 
-void EnvMapEditorTabController::executeCommand(TabControllerCommand command)
+void EnvMapEditorTabController::onCommand(TabControllerCommand command)
 {
 	switch (command) {
 		case COMMAND_SAVE:
@@ -149,6 +149,11 @@ void EnvMapEditorTabController::executeCommand(TabControllerCommand command)
 			showInfoPopUp("Warning", "This command is not supported yet");
 			break;
 	}
+}
+
+void EnvMapEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
+	Console::println("EnvMapEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
+	showInfoPopUp("Warning", "You can not drop a file here");
 }
 
 void EnvMapEditorTabController::showInfoPopUp(const string& caption, const string& message)

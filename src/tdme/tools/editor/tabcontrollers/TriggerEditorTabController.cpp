@@ -102,7 +102,7 @@ void TriggerEditorTabController::dispose()
 {
 }
 
-void TriggerEditorTabController::executeCommand(TabControllerCommand command)
+void TriggerEditorTabController::onCommand(TabControllerCommand command)
 {
 	switch (command) {
 		case COMMAND_SAVE:
@@ -159,6 +159,13 @@ void TriggerEditorTabController::executeCommand(TabControllerCommand command)
 			showInfoPopUp("Warning", "This command is not supported yet");
 			break;
 	}
+}
+
+void TriggerEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
+	Console::println("TriggerEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
+	if (prototypePhysicsSubController->onDrop(payload, mouseX, mouseY, view->getPrototype()) == true) return;
+	if (prototypeScriptSubController->onDrop(payload, mouseX, mouseY, view->getPrototype()) == true) return;
+	showInfoPopUp("Warning", "You can not drop a file here");
 }
 
 void TriggerEditorTabController::onChange(GUIElementNode* node)

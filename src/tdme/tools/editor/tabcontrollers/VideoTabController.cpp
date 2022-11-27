@@ -75,9 +75,14 @@ void VideoTabController::dispose()
 {
 }
 
-void VideoTabController::executeCommand(TabControllerCommand command)
+void VideoTabController::onCommand(TabControllerCommand command)
 {
 	showInfoPopUp("Warning", "This command is not supported yet");
+}
+
+void VideoTabController::onDrop(const string& payload, int mouseX, int mouseY) {
+	Console::println("VideoTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
+	showInfoPopUp("Warning", "You can not drop a file here");
 }
 
 void VideoTabController::showInfoPopUp(const string& caption, const string& message)

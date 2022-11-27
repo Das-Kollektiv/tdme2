@@ -84,7 +84,7 @@ void EmptyEditorTabController::dispose()
 {
 }
 
-void EmptyEditorTabController::executeCommand(TabControllerCommand command)
+void EmptyEditorTabController::onCommand(TabControllerCommand command)
 {
 	switch (command) {
 		case COMMAND_SAVE:
@@ -141,6 +141,12 @@ void EmptyEditorTabController::executeCommand(TabControllerCommand command)
 			showInfoPopUp("Warning", "This command is not supported yet");
 			break;
 	}
+}
+
+void EmptyEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
+	Console::println("EmptyEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
+	if (prototypeScriptSubController->onDrop(payload, mouseX, mouseY, view->getPrototype()) == true) return;
+	showInfoPopUp("Warning", "You can not drop a file here");
 }
 
 void EmptyEditorTabController::onChange(GUIElementNode* node)

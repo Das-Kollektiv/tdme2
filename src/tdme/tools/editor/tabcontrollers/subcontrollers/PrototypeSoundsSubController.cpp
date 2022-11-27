@@ -101,15 +101,13 @@ void PrototypeSoundsSubController::onSoundLoad(Prototype* prototype, const strin
 		LoadSoundAction(PrototypeSoundsSubController* prototypeSoundsSubController, Prototype* prototype, const string& soundId): prototypeSoundsSubController(prototypeSoundsSubController), prototype(prototype), soundId(soundId) {
 		}
 		void performAction() override {
-			auto sound = prototype->getSound(soundId);
-			if (sound == nullptr) return;
-			sound->setFileName(
+			prototypeSoundsSubController->setSound(
+				soundId,
 				prototypeSoundsSubController->getView()->getPopUps()->getFileDialogScreenController()->getPathName() +
-				"/" +
-				prototypeSoundsSubController->getView()->getPopUps()->getFileDialogScreenController()->getFileName()
+					"/" +
+					prototypeSoundsSubController->getView()->getPopUps()->getFileDialogScreenController()->getFileName(),
+				prototype
 			);
-			required_dynamic_cast<GUIImageNode*>(prototypeSoundsSubController->screenNode->getNodeById("sound"))->setSource("resources/engine/images/sound_big.png");
-			prototypeSoundsSubController->playableSoundView->playSound(sound->getId());
 			prototypeSoundsSubController->getView()->getPopUps()->getFileDialogScreenController()->close();
 		}
 	private:
@@ -485,5 +483,33 @@ void PrototypeSoundsSubController::onContextMenuRequest(GUIElementNode* node, in
 			//
 			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
 		}
+	}
+}
+
+void PrototypeSoundsSubController::setSound(const string& soundId, const string& fileName, Prototype* prototype) {
+	auto sound = prototype->getSound(soundId);
+	if (sound == nullptr) return;
+	sound->setFileName(fileName);
+	try {
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("sound"))->setSource("resources/engine/images/sound_big.png");
+	} catch (Exception& exception) {
+		Console::println(string() + "PrototypeSoundsSubController::setSound(): An error occurred: " + exception.what());
+		showInfoPopUp("Warning", (string(exception.what())));
+	}
+	playableSoundView->playSound(sound->getId());
+}
+
+bool PrototypeSoundsSubController::onDrop(const string& payload, int mouseX, int mouseY, Prototype* prototype) {
+	Console::println("PrototypeSoundsSubController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
+	if (StringTools::startsWith(payload, "file:") == false) {
+		return false;
+	} else
+	if (editorView->getScreenController()->isDropOnNode(mouseX, mouseY, "sound") == true) {
+		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
+		auto soundId = StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size());
+		setSound(soundId, StringTools::substring(payload, string("file:").size()), prototype);
+		return true;
+	} else {
+		return false;
 	}
 }

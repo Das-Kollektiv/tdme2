@@ -1,0 +1,6 @@
+<screen id="popup_dragging" popup="true" background-color="#00000000" min-width="1024" min-height="768" max-width="3200" max-height="1800">
+	<layout width="100%" height="100%" alignment="none" horizontal-align="none" vertical-align="none">
+		<moveable id="draggable" width="auto" height="auto">
+		</moveable>
+	</layout>
+</screen>

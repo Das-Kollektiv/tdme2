@@ -136,7 +136,7 @@ void TerrainEditorTabController::dispose()
 {
 }
 
-void TerrainEditorTabController::executeCommand(TabControllerCommand command)
+void TerrainEditorTabController::onCommand(TabControllerCommand command)
 {
 	switch (command) {
 		case COMMAND_SAVE:
@@ -204,6 +204,11 @@ void TerrainEditorTabController::executeCommand(TabControllerCommand command)
 			showInfoPopUp("Warning", "This command is not supported yet");
 			break;
 	}
+}
+
+void TerrainEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
+	Console::println("TerrainEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
+	showInfoPopUp("Warning", "You can not drop a file here");
 }
 
 void TerrainEditorTabController::updateInfoText(const MutableString& text) {

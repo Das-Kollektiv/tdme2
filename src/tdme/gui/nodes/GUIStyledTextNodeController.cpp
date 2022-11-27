@@ -131,17 +131,27 @@ void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 	auto released = false;
 	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
 	if (node == styledTextNode) {
-		Vector2 nodeMousePosition;
-		Vector2 nodeMousePositionNoOffsets;
-		if (styledTextNode->isEventBelongingToNode(event, nodeMousePosition) == true) {
-			nodeMousePositionNoOffsets = nodeMousePosition.clone().sub(Vector2(styledTextNode->getParentNode()->getChildrenRenderOffsetX(), styledTextNode->getParentNode()->getChildrenRenderOffsetY()));
+		Vector2 nodeMouseCoordinate;
+		Vector2 nodeMouseCoordinateNoOffsets;
+		if (styledTextNode->isEventBelongingToNode(event, nodeMouseCoordinate) == true) {
+			nodeMouseCoordinateNoOffsets = nodeMouseCoordinate.clone().sub(Vector2(styledTextNode->getParentNode()->getChildrenRenderOffsetX(), styledTextNode->getParentNode()->getChildrenRenderOffsetY()));
 			switch(event->getType()) {
 				case GUIMouseEvent::MOUSEEVENT_PRESSED:
 					{
 						if (input == true) {
+							//
+							if (timeLastClick != -1LL &&
+								Time::getCurrentMillis() - timeLastClick < TIME_DOUBLECLICK) {
+								doubleClick = true;
+								timeLastClick = -1LL;
+							} else {
+								timeLastClick = Time::getCurrentMillis();
+								doubleClick = false;
+							}
+
 							// submit to styled text node
 							selectionIndex = -1;
-							styledTextNode->setIndexMousePosition(nodeMousePositionNoOffsets.getX(), nodeMousePositionNoOffsets.getY());
+							styledTextNode->setIndexMousePosition(nodeMouseCoordinateNoOffsets.getX(), nodeMouseCoordinateNoOffsets.getY());
 							//
 							resetCursorMode();
 							//
@@ -157,10 +167,10 @@ void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 						auto& urlAreas = styledTextNode->getURLAreas();
 						const GUIStyledTextNode::URLArea* urlAreaHit = nullptr;
 						for (auto& urlArea: urlAreas) {
-							if (nodeMousePosition.getX() < urlArea.left ||
-								nodeMousePosition.getY() < urlArea.top ||
-								nodeMousePosition.getX() > urlArea.left + urlArea.width ||
-								nodeMousePosition.getY() > urlArea.top + urlArea.height) {
+							if (nodeMouseCoordinate.getX() < urlArea.left ||
+								nodeMouseCoordinate.getY() < urlArea.top ||
+								nodeMouseCoordinate.getX() > urlArea.left + urlArea.width ||
+								nodeMouseCoordinate.getY() > urlArea.top + urlArea.height) {
 								continue;
 							}
 							urlAreaHit = &urlArea;
@@ -186,37 +196,68 @@ void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 				case GUIMouseEvent::MOUSEEVENT_RELEASED:
 					{
 						if (input == true) {
-							//
-							styledTextNode->unsetIndexMousePosition();
-							styledTextNode->unsetSelectionIndexMousePosition();
+							if (doubleClick == true) {
+								//
+								auto& text = styledTextNode->getText();
+								auto textLength = text.length();
+								if (textLength > 0) {
+									auto wordLeftIdx = 0;
+									for (auto i = 0; i < index && i < textLength; i++) {
+										auto c = text.getUTF8CharAt(i);
+										if (Character::isAlphaNumeric(c) == false) {
+											wordLeftIdx = i + 1;
+										}
+									}
+									auto wordRightIdx = textLength;
+									for (auto i = index; i < textLength; i++) {
+										auto c = text.getUTF8CharAt(i);
+										if (Character::isAlphaNumeric(c) == false) {
+											wordRightIdx = i;
+											break;
+										}
+									}
+									if (wordLeftIdx != wordRightIdx) {
+										index = wordLeftIdx;
+										selectionIndex = wordRightIdx;
+									}
+									//
+									resetCursorMode();
+								}
+								//
+								doubleClick = false;
+							} else {
+								//
+								styledTextNode->unsetIndexMousePosition();
+								styledTextNode->unsetSelectionIndexMousePosition();
 
-							//
-							styledTextNode->getScreenNode()->removeTickNode(styledTextNode);
+								//
+								styledTextNode->getScreenNode()->removeTickNode(styledTextNode);
 
-							//
-							if (dragging == true && selectionIndex != -1) {
-								auto _index = index;
-								index = selectionIndex;
-								selectionIndex = _index;
+								//
+								if (dragging == true && selectionIndex != -1) {
+									auto _index = index;
+									index = selectionIndex;
+									selectionIndex = _index;
+								}
+
+								//
+								released = true;
+
+								//
+								scrollMode = SCROLLMODE_NONE;
+								//
+								styledTextNode->scrollToIndex();
 							}
-
-							//
-							released = true;
-
-							//
-							scrollMode = SCROLLMODE_NONE;
-							//
-							styledTextNode->scrollToIndex();
 						}
 
 						// find URL area that had a hit and setup corresponding cursor
 						auto& urlAreas = styledTextNode->getURLAreas();
 						const GUIStyledTextNode::URLArea* urlAreaHit = nullptr;
 						for (auto& urlArea: urlAreas) {
-							if (nodeMousePosition.getX() < urlArea.left ||
-								nodeMousePosition.getY() < urlArea.top ||
-								nodeMousePosition.getX() > urlArea.left + urlArea.width ||
-								nodeMousePosition.getY() > urlArea.top + urlArea.height) {
+							if (nodeMouseCoordinate.getX() < urlArea.left ||
+								nodeMouseCoordinate.getY() < urlArea.top ||
+								nodeMouseCoordinate.getX() > urlArea.left + urlArea.width ||
+								nodeMouseCoordinate.getY() > urlArea.top + urlArea.height) {
 								continue;
 							}
 							urlAreaHit = &urlArea;
@@ -240,7 +281,7 @@ void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 		}
 
 		//
-		nodeMousePositionNoOffsets = nodeMousePosition.clone().sub(Vector2(styledTextNode->getParentNode()->getChildrenRenderOffsetX(), styledTextNode->getParentNode()->getChildrenRenderOffsetY()));
+		nodeMouseCoordinateNoOffsets = nodeMouseCoordinate.clone().sub(Vector2(styledTextNode->getParentNode()->getChildrenRenderOffsetX(), styledTextNode->getParentNode()->getChildrenRenderOffsetY()));
 
 		//
 		if (input == true) {
@@ -251,7 +292,7 @@ void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 						//
 						dragging = true;
 						//
-						if (nodeMousePositionNoOffsets.getY() < 50) {
+						if (nodeMouseCoordinateNoOffsets.getY() < 50) {
 							scrollMode = SCROLLMODE_UP;
 							// unset
 							styledTextNode->unsetIndexMousePosition();
@@ -259,7 +300,7 @@ void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 							//
 							styledTextNode->getScreenNode()->addTickNode(styledTextNode);
 						} else
-						if (nodeMousePositionNoOffsets.getY() > styledTextNode->getParentNode()->getComputedConstraints().height - 50) {
+						if (nodeMouseCoordinateNoOffsets.getY() > styledTextNode->getParentNode()->getComputedConstraints().height - 50) {
 							scrollMode = SCROLLMODE_DOWN;
 							// unset
 							styledTextNode->unsetIndexMousePosition();
@@ -271,7 +312,7 @@ void GUIStyledTextNodeController::handleMouseEvent(GUINode* node, GUIMouseEvent*
 							//
 							scrollMode = SCROLLMODE_NONE;
 							// submit to styled text node
-							styledTextNode->setSelectionIndexMousePosition(nodeMousePositionNoOffsets.getX(), nodeMousePositionNoOffsets.getY());
+							styledTextNode->setSelectionIndexMousePosition(nodeMouseCoordinateNoOffsets.getX(), nodeMouseCoordinateNoOffsets.getY());
 						}
 						//
 						resetCursorMode();
@@ -420,13 +461,45 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 			case GUIKeyboardEvent::KEYCODE_LEFT: {
 					event->setProcessed(true);
 					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+						auto wordLeftIdx = -1;
+						auto lineStartIdx = styledTextNode->getPreviousNewLineUtf8(index - 1);
+						if (lineStartIdx != 0) lineStartIdx++;
+						if (event->isControlDown() == true) {
+							string delimiter = "^´!\"§$%&/()=?`+#<,.-*'>;:_";
+							auto& text = styledTextNode->getText();
+							auto textLength = text.length();
+							if (textLength > 0) {
+								wordLeftIdx = lineStartIdx;
+								auto i = index - 1;
+								for (; i >= lineStartIdx; i--) {
+									auto c = text.getUTF8CharAt(i);
+									if (Character::isAlphaNumeric(c) == true || delimiter.find(c) != string::npos) break;
+								}
+								if (delimiter.find(text.getUTF8CharAt(i)) != string::npos) {
+									for (; i >= lineStartIdx && delimiter.find(text.getUTF8CharAt(i)) != string::npos; i--);
+									wordLeftIdx = i + 1;
+								} else {
+									for (; i >= lineStartIdx; i--) {
+										auto c = text.getUTF8CharAt(i);
+										if (Character::isAlphaNumeric(c) == false || delimiter.find(c) != string::npos) {
+											wordLeftIdx = i + 1;
+											break;
+										}
+									}
+								}
+							}
+						}
 						if (event->isShiftDown() == false) {
 							selectionIndex = -1;
 						} else {
 							if (selectionIndex == -1) selectionIndex = index;
 						}
 						if (index > 0) {
-							index--;
+							if (wordLeftIdx == -1) {
+								index--;
+							} else {
+								index = wordLeftIdx;
+							}
 							styledTextNode->scrollToIndex();
 							resetCursorMode();
 						}
@@ -436,13 +509,47 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 			case GUIKeyboardEvent::KEYCODE_RIGHT: {
 					event->setProcessed(true);
 					if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+						auto wordRightIdx = -1;
+						if (event->isControlDown() == true) {
+							string delimiter = "^´!\"§$%&/()=?`+#<,.-*'>;:_";
+							auto& text = styledTextNode->getText();
+							auto lineEndIdx = styledTextNode->getNextNewLineUtf8(index);
+							if (lineEndIdx > 0) {
+								wordRightIdx = lineEndIdx;
+								auto i = index;
+								for (; i < lineEndIdx; i++) {
+									auto c = text.getUTF8CharAt(i);
+									if (Character::isAlphaNumeric(c) == true || delimiter.find(c) != string::npos) break;
+								}
+								if (delimiter.find(text.getUTF8CharAt(i)) != string::npos) {
+									for (; i < lineEndIdx && delimiter.find(text.getUTF8CharAt(i)) != string::npos; i++);
+									wordRightIdx = i;
+								} else {
+									for (; i < lineEndIdx; i++) {
+										auto c = text.getUTF8CharAt(i);
+										if (Character::isAlphaNumeric(c) == false || delimiter.find(c) != string::npos) {
+											wordRightIdx = i;
+											break;
+										}
+									}
+								}
+								if (Character::isSpace(text.getUTF8CharAt(i)) == true) {
+									for (; i < lineEndIdx && Character::isSpace(text.getUTF8CharAt(i)) == true; i++);
+									wordRightIdx = i;
+								}
+							}
+						}
 						if (event->isShiftDown() == false) {
 							selectionIndex = -1;
 						} else {
 							if (selectionIndex == -1) selectionIndex = index;
 						}
 						if (index < styledTextNode->getTextLength()) {
-							index++;
+							if (wordRightIdx == -1) {
+								index++;
+							} else {
+								index = wordRightIdx;
+							}
 							styledTextNode->scrollToIndex();
 							resetCursorMode();
 						}
@@ -669,38 +776,43 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 			case GUIKeyboardEvent::KEYCODE_POS1: {
 					if (disabled == false) {
 						event->setProcessed(true);
-						resetCursorMode();
-						if (event->isShiftDown() == false) {
-							selectionIndex = -1;
-						} else {
-							if (selectionIndex == -1) selectionIndex = index;
+						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+							resetCursorMode();
+							if (event->isShiftDown() == false) {
+								selectionIndex = -1;
+							} else {
+								if (selectionIndex == -1) selectionIndex = index;
+							}
+							if (keyControl == true) {
+								index = 0;
+							} else {
+								// find index of previous newline
+								index = styledTextNode->getPreviousNewLineUtf8(index - 1);
+								if (index != 0) index++;
+
+							}
+							styledTextNode->scrollToIndex();
 						}
-						if (keyControl == true) {
-							index = 0;
-						} else {
-							// find index of previous newline
-							index = styledTextNode->getPreviousNewLineUtf8(index - 1);
-							if (index != 0) index++;
-						}
-						styledTextNode->scrollToIndex();
 					}
 				}
 				break;
 			case GUIKeyboardEvent::KEYCODE_END: {
 					if (disabled == false) {
-						resetCursorMode();
-						if (event->isShiftDown() == false) {
-							selectionIndex = -1;
-						} else {
-							if (selectionIndex == -1) selectionIndex = index;
+						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+							resetCursorMode();
+							if (event->isShiftDown() == false) {
+								selectionIndex = -1;
+							} else {
+								if (selectionIndex == -1) selectionIndex = index;
+							}
+							if (keyControl == true) {
+								index = styledTextNode->getTextLength() - 1;
+							} else {
+								// find index of next newline
+								index = styledTextNode->getNextNewLineUtf8(index);;
+							}
+							styledTextNode->scrollToIndex();
 						}
-						if (keyControl == true) {
-							index = styledTextNode->getTextLength() - 1;
-						} else {
-							// find index of next newline
-							index = styledTextNode->getNextNewLineUtf8(index);;
-						}
-						styledTextNode->scrollToIndex();
 					}
 				}
 				break;

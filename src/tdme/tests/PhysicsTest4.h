@@ -59,7 +59,7 @@ public:
 	void initialize() override;
 	void reshape(int32_t width, int32_t height) override;
 	void onChar(int key, int x, int y) override;
-	void onKeyDown(int key, int keyCode, int x, int y, bool repeat) override;
+	void onKeyDown(int key, int keyCode, int x, int y, bool repeat, int modifiers) override;
 	void onKeyUp(int key, int keyCode, int x, int y) override;
 	void onMouseDragged(int x, int y) override;
 	void onMouseMoved(int x, int y) override;
