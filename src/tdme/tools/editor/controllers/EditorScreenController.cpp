@@ -23,12 +23,11 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/elements/GUISelectBoxController.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
-#include <tdme/gui/nodes/GUIFrameBufferNode.h>
+#include <tdme/gui/nodes/GUIImageNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/nodes/GUITextureNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
@@ -95,12 +94,11 @@ using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::gui::elements::GUISelectBoxController;
 using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUIFrameBufferNode;
+using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::nodes::GUITextureNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
 using tdme::math::Matrix2D3x3;
@@ -651,9 +649,9 @@ void EditorScreenController::addPendingFileEntities() {
 		if (pendingFileEntity->thumbnailTexture == nullptr) continue;
 		if (screenNode->getNodeById(pendingFileEntity->id + "_texture_normal") == nullptr) continue;
 		try {
-			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById(pendingFileEntity->id + "_texture_normal"))->setTexture(pendingFileEntity->thumbnailTexture);
-			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById(pendingFileEntity->id + "_texture_mouseover"))->setTexture(pendingFileEntity->thumbnailTexture);
-			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById(pendingFileEntity->id + "_texture_clicked"))->setTexture(pendingFileEntity->thumbnailTexture);
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById(pendingFileEntity->id + "_texture_normal"))->setTexture(pendingFileEntity->thumbnailTexture);
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById(pendingFileEntity->id + "_texture_mouseover"))->setTexture(pendingFileEntity->thumbnailTexture);
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById(pendingFileEntity->id + "_texture_clicked"))->setTexture(pendingFileEntity->thumbnailTexture);
 		} catch (Exception& exception) {
 			Console::print(string("EditorScreenController::addPendingFileEntities(): An error occurred: "));
 			Console::println(string(exception.what()));
@@ -886,7 +884,7 @@ void EditorScreenController::ScanFilesThread::run() {
 				auto fileNameLowerCase = StringTools::toLowerCase(fileName);
 
 				//
-				string templateSource = "button_template_thumbnail_texture.xml";
+				string templateSource = "button_template_thumbnail.xml";
 				Texture* thumbnailTexture = nullptr;
 				vector<uint8_t> thumbnailPNGData;
 				if (StringTools::endsWith(fileNameLowerCase, ".png") == true) {
@@ -897,9 +895,6 @@ void EditorScreenController::ScanFilesThread::run() {
 					thumbnailPNGData.empty() == false) {
 					static int thumbnailIdx = 0; // TODO: improve me
 					thumbnailTexture = TextureReader::readPNG("tdme.editor.projectpathfiles." + to_string(thumbnailIdx++), thumbnailPNGData, false);
-				} else {
-					// no valid thumbnail texture
-					templateSource = "button_template_thumbnail.xml";
 				}
 				if (thumbnailTexture != nullptr) {
 					auto textureWidth = thumbnailTexture->getTextureWidth();
@@ -1756,9 +1751,9 @@ void EditorScreenController::onOpenFileFinish(const string& tabId, FileType file
 		//
 		// TODO: move me into GUIFrameBufferNode
 		if (Engine::getInstance()->getGraphicsRendererType() != Renderer::RENDERERTYPE_VULKAN) {
-			required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer"))->setTextureMatrix((new Matrix2D3x3())->identity().scale(Vector2(1.0f, -1.0f)));
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer"))->setTextureMatrix((new Matrix2D3x3())->identity().scale(Vector2(1.0f, -1.0f)));
 		}
-		tabViews[tabId] = EditorTabView(tabId, tabType, tabView, required_dynamic_cast<GUIFrameBufferNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));
+		tabViews[tabId] = EditorTabView(tabId, tabType, tabView, required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById(tabId + "_tab_framebuffer")));
 		tabs->getController()->setValue(MutableString(tabId));
 	} catch (Exception& exception) {
 		Console::print(string("EditorScreenController::onOpenFileFinish(): An error occurred: "));

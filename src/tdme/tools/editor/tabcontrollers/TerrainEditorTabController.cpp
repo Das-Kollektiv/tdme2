@@ -20,7 +20,6 @@
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
-#include <tdme/gui/nodes/GUITextureNode.h>
 #include <tdme/gui/nodes/GUITextNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
@@ -69,7 +68,6 @@ using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::nodes::GUITextureNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUI;
 using tdme::gui::GUIParser;
@@ -755,8 +753,8 @@ void TerrainEditorTabController::onAction(GUIActionListenerType type, GUIElement
 							false,
 							false
 						);
-					required_dynamic_cast<GUITextureNode*>(terrainEditorTabController->screenNode->getNodeById("terrainbrush_texture"))->setTexture(terrainEditorTabController->currentTerrainBrushTexture);
-					required_dynamic_cast<GUITextureNode*>(terrainEditorTabController->screenNode->getNodeById("terrainbrush_texture"))->setTooltip(terrainEditorTabController->currentTerrainBrushTextureFileName);
+					required_dynamic_cast<GUIImageNode*>(terrainEditorTabController->screenNode->getNodeById("terrainbrush_texture"))->setTexture(terrainEditorTabController->currentTerrainBrushTexture);
+					required_dynamic_cast<GUIImageNode*>(terrainEditorTabController->screenNode->getNodeById("terrainbrush_texture"))->setTooltip(terrainEditorTabController->currentTerrainBrushTextureFileName);
 					terrainEditorTabController->view->setBrush(
 						terrainEditorTabController->currentTerrainBrushTexture,
 						terrainEditorTabController->currentTerrainBrushScale,
@@ -790,8 +788,8 @@ void TerrainEditorTabController::onAction(GUIActionListenerType type, GUIElement
 			if (currentTerrainBrushTexture != nullptr) currentTerrainBrushTexture->releaseReference();
 			currentTerrainBrushTexture = nullptr;
 			currentTerrainBrushTextureFileName.clear();
-			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("terrainbrush_texture"))->setTexture(currentTerrainBrushTexture);
-			required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("terrainbrush_texture"))->setTooltip(currentTerrainBrushTextureFileName);
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("terrainbrush_texture"))->setTexture(currentTerrainBrushTexture);
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("terrainbrush_texture"))->setTooltip(currentTerrainBrushTextureFileName);
 		} else
 		if (node->getId() == "terrainbrush_texture_browseto") {
 			if (currentTerrainBrushTextureFileName.empty() == true) {
@@ -1043,8 +1041,8 @@ void TerrainEditorTabController::setTerrainBrushDetails() {
 	//
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_terrainbrush"))->getActiveConditions().add("open");
-		required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("terrainbrush_texture"))->setTexture(currentTerrainBrushTexture);
-		required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("terrainbrush_texture"))->setTooltip(currentTerrainBrushTextureFileName);
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("terrainbrush_texture"))->setTexture(currentTerrainBrushTexture);
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("terrainbrush_texture"))->setTooltip(currentTerrainBrushTextureFileName);
 	} catch (Exception& exception) {
 		Console::println(string("TerrainEditorTabController::setTerrainBrushDetails(): An error occurred: ") + exception.what());;
 		showInfoPopUp("Warning", (string(exception.what())));

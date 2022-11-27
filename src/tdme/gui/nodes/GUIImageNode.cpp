@@ -9,6 +9,8 @@
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/DynamicColorTexture.h>
+#include <tdme/engine/FrameBuffer.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUINode_Border.h>
 #include <tdme/gui/nodes/GUINode_Clipping.h>
@@ -36,6 +38,8 @@ using tdme::engine::fileio::textures::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::Engine;
+using tdme::engine::DynamicColorTexture;
+using tdme::engine::FrameBuffer;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUINode_Border;
 using tdme::gui::nodes::GUINode_Clipping;
@@ -113,6 +117,19 @@ GUIImageNode::GUIImageNode(
 	if (Math::abs(rotation) > Math::EPSILON) rotate(rotation);
 }
 
+void GUIImageNode::disposeTexture() {
+	if (texture != nullptr) {
+		Engine::getInstance()->getTextureManager()->removeTexture(texture->getId());
+		if (releaseTextureReference == true) {
+			texture->releaseReference();
+		}
+	}
+	releaseTextureReference = false;
+	source.clear();
+	texture = nullptr;
+	frameBuffer = nullptr;
+}
+
 const string GUIImageNode::getNodeType()
 {
 	return "image";
@@ -120,7 +137,7 @@ const string GUIImageNode::getNodeType()
 
 void GUIImageNode::dispose()
 {
-	if (texture != nullptr) Engine::getInstance()->getTextureManager()->removeTexture(texture->getId());
+	disposeTexture();
 	GUITextureBaseNode::dispose();
 }
 
@@ -129,10 +146,7 @@ const string& GUIImageNode::getSource() {
 }
 
 void GUIImageNode::setSource(const string& source) {
-	if (texture != nullptr) {
-		Engine::getInstance()->getTextureManager()->removeTexture(texture->getId());
-		texture = nullptr;
-	}
+	disposeTexture();
 	this->source = source;
 	if (source.empty() == false) {
 		if (StringTools::endsWith(StringTools::toLowerCase(source), ".tm") == true) {
@@ -148,11 +162,14 @@ void GUIImageNode::setSource(const string& source) {
 					if (thumbnailTexture != nullptr) {
 						thumbnailTexture->acquireReference();
 						this->texture = thumbnailTexture;
+						this->releaseTextureReference = true;
 					} else {
 						this->texture = screenNode->getImage(screenNode->getApplicationRootPathName(), "resources/engine/images/mesh_big.png");
+						this->releaseTextureReference = false;
 					}
 				} else {
 					this->texture = screenNode->getImage(screenNode->getApplicationRootPathName(), "resources/engine/images/mesh_big.png");
+					this->releaseTextureReference = false;
 				}
 			} catch (Exception& exception) {
 				Console::println(string() + "GUIImageNode::setSource(): " + exception.what());
@@ -171,8 +188,10 @@ void GUIImageNode::setSource(const string& source) {
 					if (thumbnailTexture != nullptr) {
 						thumbnailTexture->acquireReference();
 						this->texture = thumbnailTexture;
+						this->releaseTextureReference = true;
 					} else {
 						this->texture = screenNode->getImage(screenNode->getApplicationRootPathName(), "resources/engine/images/tdme_big.png");
+						this->releaseTextureReference = false;
 					}
 				} else {
 					this->texture = screenNode->getImage(screenNode->getApplicationRootPathName(), "resources/engine/images/tdme_big.png");
@@ -185,6 +204,7 @@ void GUIImageNode::setSource(const string& source) {
 			for (auto& extension: ModelReader::getModelExtensions()) {
 				if (StringTools::endsWith(StringTools::toLowerCase(source), "." + extension) == true) {
 					this->texture = screenNode->getImage(screenNode->getApplicationRootPathName(), "resources/engine/images/mesh_big.png");
+					this->releaseTextureReference = false;
 					// done
 					break;
 				}
@@ -192,6 +212,7 @@ void GUIImageNode::setSource(const string& source) {
 			// load it
 			if (this->texture == nullptr) {
 				this->texture = source.empty() == true?nullptr:screenNode->getImage(screenNode->getApplicationRootPathName(), source);
+				this->releaseTextureReference = false;
 			}
 		}
 	}
@@ -200,16 +221,63 @@ void GUIImageNode::setSource(const string& source) {
 	this->textureHeight = texture == nullptr?0:texture->getHeight();
 }
 
+void GUIImageNode::setTexture(Texture* texture) {
+	if (this->texture == texture) return;
+	disposeTexture();
+	this->texture = texture;
+	if (texture == nullptr) {
+		textureId = 0;
+		textureWidth = 0;
+		textureHeight = 0;
+		return;
+	}
+	texture->acquireReference();
+	releaseTextureReference = true;
+	textureId = Engine::getInstance()->getTextureManager()->addTexture(texture, 0);
+	textureWidth = texture->getWidth();
+	textureHeight = texture->getHeight();
+}
+
+void GUIImageNode::setTexture(DynamicColorTexture* texture) {
+	disposeTexture();
+	this->texture = nullptr;
+	if (texture == nullptr) {
+		textureId = 0;
+		textureWidth = 0;
+		textureHeight = 0;
+		return;
+	}
+	textureId = texture->getColorTextureId();
+	textureWidth = texture->getWidth();
+	textureHeight = texture->getHeight();
+	releaseTextureReference = false;
+}
+
 void GUIImageNode::rotate(float rotation) {
 	if (texture == nullptr) return;
 	auto rotatedTexture = TextureReader::rotate(texture, rotation);
 	if (rotatedTexture == nullptr) return;
-	if (texture != nullptr) {
-		Engine::getInstance()->getTextureManager()->removeTexture(texture->getId());
-		texture = nullptr;
-	}
+	disposeTexture();
 	this->texture = rotatedTexture;
 	this->textureId = texture == nullptr?0:Engine::getInstance()->getTextureManager()->addTexture(texture, 0);
 	this->textureWidth = texture == nullptr?0:texture->getWidth();
 	this->textureHeight = texture == nullptr?0:texture->getHeight();
+	releaseTextureReference = true;
+}
+
+FrameBuffer* GUIImageNode::getFrameBuffer() {
+	return frameBuffer;
+}
+
+void GUIImageNode::setFrameBuffer(FrameBuffer* frameBuffer) {
+	disposeTexture();
+	if (frameBuffer == nullptr) {
+		textureId = 0;
+		textureWidth = 0;
+		textureHeight = 0;
+		return;
+	}
+	textureId = frameBuffer->getColorBufferTextureId();
+	textureWidth = frameBuffer->getWidth();
+	textureHeight = frameBuffer->getHeight();
 }

@@ -8,7 +8,7 @@
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/SimplePartition.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
-#include <tdme/gui/nodes/GUIFrameBufferNode.h>
+#include <tdme/gui/nodes/GUIImageNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
@@ -37,7 +37,7 @@ using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::engine::SimplePartition;
 using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUIFrameBufferNode;
+using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
