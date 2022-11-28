@@ -70,7 +70,7 @@ void TooltipScreenController::dispose()
 void TooltipScreenController::show(int mouseX, int mouseY, const string& tooltip)
 {
 	auto x = static_cast<int>((float)mouseX * (float)screenNode->getScreenWidth() / (float)Engine::getInstance()->getGUI()->getWidth());
-	auto y = static_cast<int>((float)mouseY * (float)screenNode->getScreenHeight() / (float)Engine::getInstance()->getGUI()->getHeight());
+	auto y = static_cast<int>((float)(mouseY + tooltipNode->getContentHeight() / 2) * (float)screenNode->getScreenHeight() / (float)Engine::getInstance()->getGUI()->getHeight());
 	tooltipNode->setText(MutableString(tooltip));
 	x = Math::min(x, screenNode->getScreenWidth() - tooltipNode->getContentWidth());
 	y = Math::min(y, screenNode->getScreenHeight() - tooltipNode->getContentHeight());
