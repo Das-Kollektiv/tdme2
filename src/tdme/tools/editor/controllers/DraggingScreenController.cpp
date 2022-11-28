@@ -104,21 +104,23 @@ void DraggingScreenController::start(int mouseX, int mouseY, const string& xml, 
 		Console::print(string("DraggingScreenController::start(): An error occurred: "));
 		Console::println(string(exception.what()));
 	}
-	auto x = static_cast<int>((float)(mouseX - draggableNode->getContentWidth() / 2) * (float)screenNode->getScreenWidth() / (float)Engine::getInstance()->getGUI()->getWidth());
-	auto y = static_cast<int>((float)(mouseY - draggableNode->getContentHeight() / 2) * (float)screenNode->getScreenHeight() / (float)Engine::getInstance()->getGUI()->getHeight());
-	x = Math::min(x, screenNode->getScreenWidth() - draggableNode->getContentWidth());
-	y = Math::min(y, screenNode->getScreenHeight() - draggableNode->getContentHeight());
+	auto scaledMouseX = Engine::getInstance()->getGUI()->getScaledX(screenNode, mouseX);
+	auto scaledMouseY = Engine::getInstance()->getGUI()->getScaledY(screenNode, mouseY);
+	auto scaledX = Engine::getInstance()->getGUI()->getScaledX(screenNode, mouseX - draggableNode->getContentWidth() / 2);
+	auto scaledY = Engine::getInstance()->getGUI()->getScaledY(screenNode, mouseY - draggableNode->getContentHeight() / 2);
+	scaledX = Math::min(scaledX, screenNode->getScreenWidth() - draggableNode->getContentWidth());
+	scaledY = Math::min(scaledY, screenNode->getScreenHeight() - draggableNode->getContentHeight());
 	draggableNode->getRequestsConstraints().leftType = GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL;
-	draggableNode->getRequestsConstraints().left = x;
+	draggableNode->getRequestsConstraints().left = scaledX;
 	draggableNode->getRequestsConstraints().topType = GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL;
-	draggableNode->getRequestsConstraints().top = y;
+	draggableNode->getRequestsConstraints().top = scaledY;
 	screenNode->setVisible(true);
 	screenNode->layout();
 	//
 	Engine::getInstance()->getGUI()->startMouseDragging(draggableNode);
 	//
 	try {
-		((GUIMoveableController*)(draggableNode->getController()))->startMoving();
+		((GUIMoveableController*)(draggableNode->getController()))->startMoving(scaledMouseX, scaledMouseY);
 	} catch (Exception& exception) {
 		Console::print(string("DraggingScreenController::start(): An error occurred: "));
 		Console::println(string(exception.what()));
