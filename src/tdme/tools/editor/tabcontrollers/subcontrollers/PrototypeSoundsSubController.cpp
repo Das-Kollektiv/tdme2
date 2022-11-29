@@ -503,13 +503,19 @@ bool PrototypeSoundsSubController::onDrop(const string& payload, int mouseX, int
 	Console::println("PrototypeSoundsSubController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
 	if (StringTools::startsWith(payload, "file:") == false) {
 		return false;
-	} else
-	if (editorView->getScreenController()->isDropOnNode(mouseX, mouseY, "sound") == true) {
-		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
-		auto soundId = StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size());
-		setSound(soundId, StringTools::substring(payload, string("file:").size()), prototype);
-		return true;
 	} else {
-		return false;
+		auto fileName = StringTools::substring(payload, string("file:").size());
+		if (editorView->getScreenController()->isDropOnNode(mouseX, mouseY, "sound") == true) {
+			if (Tools::hasFileExtension(fileName, {{ "ogg"}}) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions({{ "ogg" }}));
+			} else {
+				auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
+				auto soundId = StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size());
+				setSound(soundId, fileName, prototype);
+			}
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
