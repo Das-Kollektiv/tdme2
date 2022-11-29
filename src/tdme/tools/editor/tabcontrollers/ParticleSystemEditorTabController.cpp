@@ -224,33 +224,55 @@ void ParticleSystemEditorTabController::onDrop(const string& payload, int mouseX
 	if (prototypeScriptSubController->onDrop(payload, mouseX, mouseY, view->getPrototype()) == true) return;
 	if (StringTools::startsWith(payload, "file:") == false) {
 		showInfoPopUp("Warning", "Unknown payload in drop");
-	} else
-	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "particletype_point_texture") == true) {
-		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
-		auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
-		setPointParticleSystemTexture(particleSystemIdx, StringTools::substring(payload, string("file:").size()));
-	} else
-	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "particletype_point_transparency") == true) {
-		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
-		auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
-		setPointParticleSystemTransparencyTexture(particleSystemIdx, StringTools::substring(payload, string("file:").size()));
-	} else
-	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "particletype_fog_texture") == true) {
-		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
-		auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
-		setFogParticleSystemTexture(particleSystemIdx, StringTools::substring(payload, string("file:").size()));
-	} else
-	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "particletype_fog_transparency") == true) {
-		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
-		auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
-		setFogParticleSystemTransparencyTexture(particleSystemIdx, StringTools::substring(payload, string("file:").size()));
-	} else
-	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "particletype_object") == true) {
-		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
-		auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
-		setObjectParticleSystemModel(particleSystemIdx, StringTools::substring(payload, string("file:").size()));
-	} else	{
-		showInfoPopUp("Warning", "You can not drop a file here");
+	} else {
+		auto fileName = StringTools::substring(payload, string("file:").size());
+		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "particletype_point_texture") == true) {
+			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			} else {
+				auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				setPointParticleSystemTexture(particleSystemIdx, fileName);
+			}
+		} else
+		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "particletype_point_transparency") == true) {
+			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			} else {
+				auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				setPointParticleSystemTransparencyTexture(particleSystemIdx, fileName);
+			}
+		} else
+		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "particletype_fog_texture") == true) {
+			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			} else {
+				auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				setFogParticleSystemTexture(particleSystemIdx, fileName);
+			}
+		} else
+		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "particletype_fog_transparency") == true) {
+			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			} else {
+				auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				setFogParticleSystemTransparencyTexture(particleSystemIdx, fileName);
+			}
+		} else
+		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "particletype_object") == true) {
+			if (Tools::hasFileExtension(fileName, ModelReader::getModelExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(ModelReader::getModelExtensions()));
+			} else {
+				auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				setObjectParticleSystemModel(particleSystemIdx, fileName);
+			}
+		} else	{
+			showInfoPopUp("Warning", "You can not drop a file here");
+		}
 	}
 }
 
