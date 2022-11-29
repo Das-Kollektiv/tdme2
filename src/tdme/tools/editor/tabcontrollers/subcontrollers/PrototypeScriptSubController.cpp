@@ -211,11 +211,17 @@ bool PrototypeScriptSubController::onDrop(const string& payload, int mouseX, int
 	Console::println("PrototypeScriptSubController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
 	if (StringTools::startsWith(payload, "file:") == false) {
 		return false;
-	} else
-	if (editorView->getScreenController()->isDropOnNode(mouseX, mouseY, "script") == true) {
-		setScript(StringTools::substring(payload, string("file:").size()), prototype);
-		return true;
 	} else {
-		return false;
+		auto fileName = StringTools::substring(payload, string("file:").size());
+		if (editorView->getScreenController()->isDropOnNode(mouseX, mouseY, "script") == true) {
+			if (Tools::hasFileExtension(fileName, {{ "tscript" }}) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions({{ "tscript" }}));
+			} else {
+				setScript(fileName, prototype);
+			}
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
