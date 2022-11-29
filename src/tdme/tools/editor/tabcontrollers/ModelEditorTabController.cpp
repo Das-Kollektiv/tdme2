@@ -235,32 +235,66 @@ void ModelEditorTabController::onDrop(const string& payload, int mouseX, int mou
 	if (prototypeScriptSubController->onDrop(payload, mouseX, mouseY, view->getPrototype()) == true) return;
 	if (StringTools::startsWith(payload, "file:") == false) {
 		showInfoPopUp("Warning", "Unknown payload in drop");
-	} else
-	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "specularmaterial_diffuse_texture") == true) {
-		setMaterialDiffuseTexture(StringTools::substring(payload, string("file:").size()));
-	} else
-	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "specularmaterial_transparency_texture") == true) {
-		setMaterialDiffuseTransparencyTexture(StringTools::substring(payload, string("file:").size()));
-	} else
-	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "specularmaterial_normal_texture") == true) {
-		setMaterialNormalTexture(StringTools::substring(payload, string("file:").size()));
-	} else
-	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "specularmaterial_specular_texture") == true) {
-		setMaterialSpecularTexture(StringTools::substring(payload, string("file:").size()));
-	} else
-	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "pbrmaterial_basecolor_texture") == true) {
-		setMaterialPBRBaseColorTexture(StringTools::substring(payload, string("file:").size()));
-	} else
-	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "pbrmaterial_metallic_roughness_texture") == true) {
-		setMaterialPBRMetallicRoughnessTexture(StringTools::substring(payload, string("file:").size()));
-	} else
-	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "pbrmaterial_normal_texture") == true) {
-		setMaterialPBRNormalTexture(StringTools::substring(payload, string("file:").size()));
-	} else
-	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "animationpreview_attachment1_model") == true) {
-		setPreviewAnimationsAttachment1Model(StringTools::substring(payload, string("file:").size()));
 	} else {
-		showInfoPopUp("Warning", "You can not drop a file here");
+		auto fileName = StringTools::substring(payload, string("file:").size());
+		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "specularmaterial_diffuse_texture") == true) {
+			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			} else {
+				setMaterialDiffuseTexture(fileName);
+			}
+		} else
+		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "specularmaterial_transparency_texture") == true) {
+			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			} else {
+				setMaterialDiffuseTransparencyTexture(fileName);
+			}
+		} else
+		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "specularmaterial_normal_texture") == true) {
+			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			} else {
+				setMaterialNormalTexture(fileName);
+			}
+		} else
+		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "specularmaterial_specular_texture") == true) {
+			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			} else {
+				setMaterialSpecularTexture(fileName);
+			}
+		} else
+		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "pbrmaterial_basecolor_texture") == true) {
+			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			} else {
+				setMaterialPBRBaseColorTexture(fileName);
+			}
+		} else
+		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "pbrmaterial_metallic_roughness_texture") == true) {
+			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			} else {
+				setMaterialPBRMetallicRoughnessTexture(fileName);
+			}
+		} else
+		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "pbrmaterial_normal_texture") == true) {
+			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			} else {
+				setMaterialPBRNormalTexture(fileName);
+			}
+		} else
+		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "animationpreview_attachment1_model") == true) {
+			if (Tools::hasFileExtension(fileName, ModelReader::getModelExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(ModelReader::getModelExtensions()));
+			} else {
+				setPreviewAnimationsAttachment1Model(fileName);
+			}
+		} else {
+			showInfoPopUp("Warning", "You can not drop a file here");
+		}
 	}
 }
 
