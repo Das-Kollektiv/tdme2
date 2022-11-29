@@ -887,6 +887,16 @@ void SceneEditorTabView::placeEntity()
 	cameraInputHandler->setSceneCenter(Vector3(scene->getCenter().getX(), scene->getBoundingBox()->getMax().getY() + 3.0f, scene->getCenter().getZ()));
 }
 
+bool SceneEditorTabView::placeEntity(Prototype* prototype, int mouseX, int mouseY) {
+	if (engine->getEntityByMousePosition(mouseX, mouseY, placeEntityTranslation, entityPickingFilterPlacing) != nullptr) {
+		setPlaceEntityMode(prototype);
+		placeEntity();
+		unsetPlaceEntityMode(false);
+		return true;
+	}
+	return false;
+}
+
 void SceneEditorTabView::removeEntities()
 {
 	removeGizmo();

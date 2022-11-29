@@ -292,6 +292,14 @@ public:
 	void placeEntity();
 
 	/**
+	 * Place entity
+	 * @param prototype prototype
+	 * @param mouseX mouse X
+	 * @param mouseY mouse Y
+	 */
+	bool placeEntity(Prototype* prototype, int mouseX, int mouseY);
+
+	/**
 	 * Removes selected entities
 	 */
 	void removeEntities();

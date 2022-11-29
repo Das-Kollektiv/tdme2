@@ -106,10 +106,8 @@ void EditorView::handleInputEvents()
 		// get viewport position, dimension
 		auto xScale = static_cast<float>(engine->getWidth()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenWidth());
 		auto yScale = static_cast<float>(engine->getHeight()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenHeight());
-		int left, top, width, height;
-		getViewPort(tabView->getFrameBufferNode(), left, top, width, height);
-		auto offsetX = tabView->getFrameBufferNode()->computeParentChildrenRenderOffsetXTotal();
-		auto offsetY = tabView->getFrameBufferNode()->computeParentChildrenRenderOffsetYTotal();
+		int left, top, width, height, offsetX, offsetY;
+		getViewPort(tabView->getFrameBufferNode(), left, top, width, height, offsetX, offsetY);
 		// deactivate old tab/activate new tab
 		if (tabView->getId() != lastSelectedTabId) {
 			auto lastTabView = lastSelectedTabId.empty() == true?nullptr:editorScreenController->getTab(lastSelectedTabId);
@@ -185,8 +183,8 @@ void EditorView::display()
 	if (tabView != nullptr) {
 		auto xScale = static_cast<float>(engine->getWidth()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenWidth());
 		auto yScale = static_cast<float>(engine->getHeight()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenHeight());
-		int left, top, width, height;
-		getViewPort(tabView->getFrameBufferNode()->getParentNode(), left, top, width, height);
+		int left, top, width, height, offsetX, offsetY;
+		getViewPort(tabView->getFrameBufferNode()->getParentNode(), left, top, width, height, offsetX, offsetY);
 		width/= xScale;
 		height/= yScale;
 		auto reshaped = false;
@@ -283,7 +281,14 @@ void EditorView::reloadTabOutliner(const string& newSelectionValue) {
 	editorScreenController->getScreenNode()->forwardChange(required_dynamic_cast<GUIElementNode*>(editorScreenController->getScreenNode()->getNodeById("selectbox_outliner")));
 }
 
-void EditorView::getViewPort(GUINode* viewPortNode, int& left, int& top, int& width, int& height) {
+bool EditorView::getCurrentTabViewPort(int& left, int& top, int& width, int& height, int& offsetX, int& offsetY) {
+	auto currentTab = editorScreenController->getSelectedTab();
+	if (currentTab == nullptr) return false;
+	getViewPort(currentTab->getFrameBufferNode(), left, top, width, height, offsetX, offsetY);
+	return true;
+}
+
+void EditorView::getViewPort(GUINode* viewPortNode, int& left, int& top, int& width, int& height, int& offsetX, int& offsetY) {
 	auto xScale = static_cast<float>(engine->getWidth()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenWidth());
 	auto yScale = static_cast<float>(engine->getHeight()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenHeight());
 	editorScreenController->getViewPort(viewPortNode, left, top, width, height);
@@ -291,6 +296,8 @@ void EditorView::getViewPort(GUINode* viewPortNode, int& left, int& top, int& wi
 	top = static_cast<int>(static_cast<float>(top) * yScale);
 	width = static_cast<int>(static_cast<float>(width) * xScale);
 	height = static_cast<int>(static_cast<float>(height) * yScale);
+	offsetX = viewPortNode->computeParentChildrenRenderOffsetXTotal();
+	offsetY = viewPortNode->computeParentChildrenRenderOffsetYTotal();
 }
 
 void EditorView::getViewPortUnscaledOffset(int& left, int& top) {

@@ -97,14 +97,28 @@ public:
 	void reloadTabOutliner(const string& newSelectionValue = string());
 
 	/**
+	 * Determine current tab viewport screen constraints
+	 * @param left left
+	 * @param top top
+	 * @param width width
+	 * @param height height
+	 * @param offsetX offset X
+	 * @param offsetY offset Y
+	 * @return success
+	 */
+	bool getCurrentTabViewPort(int& left, int& top, int& width, int& height, int& offsetX, int& offsetY);
+
+	/**
 	 * Determine viewport screen constraints
 	 * @param viewPortNode view port node
 	 * @param left left
 	 * @param top top
 	 * @param width width
 	 * @param height height
+	 * @param offsetX offset X
+	 * @param offsetY offset Y
 	 */
-	void getViewPort(GUINode* viewPortNode, int& left, int& top, int& width, int& height);
+	void getViewPort(GUINode* viewPortNode, int& left, int& top, int& width, int& height, int& offsetX, int& offsetY);
 
 	/**
 	 * Determine viewport offset unscaled screen constraints

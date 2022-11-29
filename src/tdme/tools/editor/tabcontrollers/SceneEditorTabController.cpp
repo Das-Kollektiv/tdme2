@@ -181,7 +181,48 @@ void SceneEditorTabController::onCommand(TabControllerCommand command)
 
 void SceneEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
 	Console::println("SceneEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
-	showInfoPopUp("Warning", "You can not drop a file here");
+	if (StringTools::startsWith(payload, "file:") == false) {
+		showInfoPopUp("Warning", "Unknown payload in drop");
+	} else {
+		auto fileName = StringTools::substring(payload, string("file:").size());
+		if (Tools::hasFileExtension(fileName, PrototypeReader::getPrototypeExtensions()) == false) {
+			showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(PrototypeReader::getPrototypeExtensions()));
+		} else {
+			auto xScale = static_cast<float>(Engine::getInstance()->getWidth()) / static_cast<float>(screenNode->getScreenWidth());
+			auto yScale = static_cast<float>(Engine::getInstance()->getHeight()) / static_cast<float>(screenNode->getScreenHeight());
+			int left, top, width, height, offsetX, offsetY;
+			if (view->getEditorView()->getCurrentTabViewPort(left, top, width, height, offsetX, offsetY) == true) {
+				auto tabMouseX = (mouseX - left + offsetX) / xScale;
+				auto tabMouseY = (mouseY - top + offsetY) / yScale;
+				if (tabMouseX < 0 || tabMouseX >= width || tabMouseX < 0 || tabMouseY >= height) {
+					showInfoPopUp("Warning", "You can not drop a file here");
+				} else {
+					//
+					try {
+						auto prototype = PrototypeReader::read(
+							Tools::getPathName(fileName),
+							Tools::getFileName(fileName)
+						);
+						auto libraryPrototype = view->getScene()->getLibrary()->getPrototypeByName(prototype->getName());
+						if (libraryPrototype != nullptr) {
+							delete prototype;
+							prototype = libraryPrototype;
+						} else {
+							view->addPrototype(prototype);
+						}
+						if (view->placeEntity(prototype, tabMouseX, tabMouseY) == false) {
+							showInfoPopUp("Warning", "Could not place prototype entity.");
+						}
+					} catch (Exception& exception) {
+						Console::println(string("SceneEditorTabController::onDrop(): An error occurred: ") + exception.what());;
+						showInfoPopUp("Warning", (string(exception.what())));
+					}
+				}
+			} else {
+				showInfoPopUp("Warning", "Could not place prototype entity.");
+			}
+		}
+	}
 }
 
 void SceneEditorTabController::save(const string& pathName, const string& fileName)
