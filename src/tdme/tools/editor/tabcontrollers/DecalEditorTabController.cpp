@@ -181,11 +181,17 @@ void DecalEditorTabController::onDrop(const string& payload, int mouseX, int mou
 	if (prototypeScriptSubController->onDrop(payload, mouseX, mouseY, view->getPrototype()) == true) return;
 	if (StringTools::startsWith(payload, "file:") == false) {
 		showInfoPopUp("Warning", "Unknown payload in drop");
-	} else
-	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "decal_texture") == true) {
-		setDecalTexture(StringTools::substring(payload, string("file:").size()));
 	} else {
-		showInfoPopUp("Warning", "You can not drop a file here");
+		auto fileName = StringTools::substring(payload, string("file:").size());
+		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "decal_texture") == true) {
+			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			} else {
+				setDecalTexture(fileName);
+			}
+		} else {
+			showInfoPopUp("Warning", "You can not drop a file here");
+		}
 	}
 }
 
