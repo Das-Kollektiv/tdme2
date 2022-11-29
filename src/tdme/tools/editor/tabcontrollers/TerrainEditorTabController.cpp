@@ -208,17 +208,31 @@ void TerrainEditorTabController::onDrop(const string& payload, int mouseX, int m
 	Console::println("TerrainEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
 	if (StringTools::startsWith(payload, "file:") == false) {
 		showInfoPopUp("Warning", "Unknown payload in drop");
-	} else
-	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "terrainbrush_texture") == true) {
-		setTerrainBrushTexture(StringTools::substring(payload, string("file:").size()));
-	} else
-	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "foliagebrush_texture") == true) {
-		setFoliageBrushTexture(StringTools::substring(payload, string("file:").size()));
-	} else
-	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "foliagebrush_prototype_file") == true) {
-		setFoliageBrushPrototype(StringTools::substring(payload, string("file:").size()));
 	} else {
-		showInfoPopUp("Warning", "You can not drop a file here");
+		auto fileName = StringTools::substring(payload, string("file:").size());
+		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "terrainbrush_texture") == true) {
+			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			} else {
+				setTerrainBrushTexture(fileName);
+			}
+		} else
+		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "foliagebrush_texture") == true) {
+			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			} else {
+				setFoliageBrushTexture(fileName);
+			}
+		} else
+		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "foliagebrush_prototype_file") == true) {
+			if (Tools::hasFileExtension(fileName, {{ "tmodel" }}) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions({{ "tmodel" }}));
+			} else {
+				setFoliageBrushPrototype(fileName);
+			}
+		} else {
+			showInfoPopUp("Warning", "You can not drop a file here");
+		}
 	}
 }
 
