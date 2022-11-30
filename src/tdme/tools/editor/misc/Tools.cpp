@@ -652,3 +652,11 @@ Model* Tools::getDefaultObb() {
 Tools::ToolsShutdown::~ToolsShutdown() {
 	if (Application::hasApplication() == true) Tools::oseDispose();
 };
+
+bool Tools::hasFileExtension(const string& fileName, const vector<string>& extensions) {
+	auto fileNameLowerCase = StringTools::toLowerCase(fileName);
+	for (auto& extension: extensions) {
+		if (StringTools::endsWith(fileNameLowerCase, "." + extension) == true) return true;
+	}
+	return false;
+}

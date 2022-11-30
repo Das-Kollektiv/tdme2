@@ -938,6 +938,13 @@ public:
 	virtual void bindVerticesBufferObject(int contextIdx, int32_t bufferObjectId) = 0;
 
 	/**
+	 * Bind vertices 2 buffer object
+	 * @param contextIdx context index
+	 * @param bufferObjectId buffer object id
+	 */
+	virtual void bindVertices2BufferObject(int contextIdx, int32_t bufferObjectId) = 0;
+
+	/**
 	 * Bind normals buffer object
 	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id

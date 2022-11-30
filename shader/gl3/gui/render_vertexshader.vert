@@ -1,7 +1,7 @@
 #version 330 core
 
 // layout
-layout (location = 0) in vec3 inVertex;
+layout (location = 0) in vec2 inVertex;
 layout (location = 1) in float inSolidColor;
 layout (location = 2) in vec2 inTextureUV;
 layout (location = 3) in vec4 inColor;
@@ -25,5 +25,5 @@ void main(void) {
 	vsFragGradientTextureUV = vec2(inverseGradientTextureMatrix * vec3(inTextureUV, 1.0));
 
 	// compute gl position
-	gl_Position = vec4(inVertex, 1.0);
+	gl_Position = vec4(vec3(inVertex, 0.0), 1.0);
 }

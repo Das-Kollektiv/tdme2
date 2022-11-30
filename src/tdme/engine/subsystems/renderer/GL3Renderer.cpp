@@ -1,6 +1,7 @@
 #include <tdme/engine/subsystems/renderer/GL3Renderer.h>
 
 #if defined (__APPLE__)
+	#define GL_SILENCE_DEPRECATION
 	#include <OpenGL/gl3.h>
 	#include <OpenGL/OpenGL.h>
 	#if !defined(__aarch64__)
@@ -1030,6 +1031,13 @@ void GL3Renderer::bindVerticesBufferObject(int contextIdx, int32_t bufferObjectI
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0LL);
+}
+
+void GL3Renderer::bindVertices2BufferObject(int contextIdx, int32_t bufferObjectId)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0LL);
 }
 
 void GL3Renderer::bindNormalsBufferObject(int contextIdx, int32_t bufferObjectId)

@@ -57,7 +57,6 @@ void GUIMoveableController::handleMouseEvent(GUINode* node, GUIMouseEvent* event
 		event->setProcessed(true);
 		//
 		dragging = false;
-		haveLastMousePosition = false;
 		//
 		node->getScreenNode()->forwardMoveRelease(this->node, event->getXUnscaled(), event->getYUnscaled());
 	} else
@@ -67,7 +66,6 @@ void GUIMoveableController::handleMouseEvent(GUINode* node, GUIMouseEvent* event
 		//
 		mouseLastX = event->getX();
 		mouseLastY = event->getY();
-		haveLastMousePosition = true;
 		//
 		event->setProcessed(true);
 		//
@@ -76,8 +74,8 @@ void GUIMoveableController::handleMouseEvent(GUINode* node, GUIMouseEvent* event
 	if (dragging == true &&
 		event->getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED == true &&
 		event->getButton() == MOUSE_BUTTON_LEFT) {
-		auto movedX = haveLastMousePosition == true?event->getX() - mouseLastX:0;
-		auto movedY = haveLastMousePosition == true?event->getY() - mouseLastY:0;
+		auto movedX = event->getX() - mouseLastX;
+		auto movedY = event->getY() - mouseLastY;
 		// switch to positioning by pixels if not yet done
 		//	horizontal
 		if (this->node->getRequestsConstraints().leftType != GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL) {
@@ -101,7 +99,6 @@ void GUIMoveableController::handleMouseEvent(GUINode* node, GUIMouseEvent* event
 		//
 		mouseLastX = event->getX();
 		mouseLastY = event->getY();
-		haveLastMousePosition = true;
 		//
 		event->setProcessed(true);
 	}
@@ -133,7 +130,8 @@ void GUIMoveableController::setValue(const MutableString& value) {
 void GUIMoveableController::onSubTreeChange() {
 }
 
-void GUIMoveableController::startMoving() {
+void GUIMoveableController::startMoving(int mouseX, int mouseY) {
 	dragging = true;
-	haveLastMousePosition = false;
+	mouseLastX = mouseX;
+	mouseLastY = mouseY;
 }

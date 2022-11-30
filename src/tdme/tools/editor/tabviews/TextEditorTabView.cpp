@@ -293,10 +293,10 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 				}
 				if (codeCompletionSymbolCandidates.empty() == false) {
 					//
-					int left, top, width, height;
+					int left, top, width, height, offsetX, offsetY;
 					auto selectedTab = textEditorTabView->getEditorView()->getScreenController()->getSelectedTab();
 					if (selectedTab != nullptr) {
-						textEditorTabView->getEditorView()->getViewPort(selectedTab->getFrameBufferNode(), left, top, width, height);
+						textEditorTabView->getEditorView()->getViewPort(selectedTab->getFrameBufferNode(), left, top, width, height, offsetX, offsetY);
 						popUps->getContextMenuScreenController()->show(
 							left + textEditorTabView->textNode->getIndexPositionX() - textEditorTabView->textNode->computeParentChildrenRenderOffsetXTotal(),
 							top + textEditorTabView->textNode->getIndexPositionY() - textEditorTabView->textNode->computeParentChildrenRenderOffsetYTotal()

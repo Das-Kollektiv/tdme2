@@ -900,6 +900,13 @@ void GL2Renderer::bindVerticesBufferObject(int contextIdx, int32_t bufferObjectI
 	glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0LL);
 }
 
+void GL2Renderer::bindVertices2BufferObject(int contextIdx, int32_t bufferObjectId)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0LL);
+}
+
 void GL2Renderer::bindNormalsBufferObject(int contextIdx, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);

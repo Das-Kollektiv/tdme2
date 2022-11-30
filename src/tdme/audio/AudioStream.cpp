@@ -1,6 +1,7 @@
 #include <tdme/audio/AudioStream.h>
 
 #if defined(__APPLE__)
+	#define AL_SILENCE_DEPRECATION
 	#include <OpenAL/al.h>
 #elif defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__linux__) || defined(_WIN32) || defined(__HAIKU__)
 	#include <AL/al.h>

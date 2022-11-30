@@ -9,7 +9,9 @@
 #include <tdme/engine/fileio/models/GLTFReader.h>
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
 #include <tdme/engine/fileio/models/TMReader.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/model/Model.h>
+#include <tdme/engine/prototype/Prototype.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/Console.h>
@@ -25,14 +27,16 @@ using tdme::engine::fileio::models::GLTFReader;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::models::TMReader;
+using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::model::Model;
+using tdme::engine::prototype::Prototype;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 using tdme::utilities::StringTools;
 
-vector<string> ModelReader::extensions = {{"dae", "dxf", "fbx", "glb", "gltf", "obj", "tm"}};
+vector<string> ModelReader::extensions = {{"dae", "dxf", "fbx", "glb", "gltf", "obj", "tm", "tmodel"}};
 
 const vector<string>& ModelReader::getModelExtensions() {
 	return extensions;
@@ -58,6 +62,17 @@ Model* ModelReader::read(const string& pathName, const string& fileName)
 		} else
 		if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tm") == true) {
 			return TMReader::read(pathName, fileName);
+		} else
+		if (StringTools::endsWith(StringTools::toLowerCase(fileName), ".tmodel") == true) {
+			auto prototype = PrototypeReader::read(pathName, fileName);
+			if (prototype != nullptr && prototype->getModel() != nullptr) {
+				auto model = prototype->unsetModel();
+				delete prototype;
+				return model;
+			} else {
+				delete prototype;
+				return nullptr;
+			}
 		} else {
 			throw ModelFileIOException(string("Unsupported mode file: ") + pathName + "/" + fileName);
 		}

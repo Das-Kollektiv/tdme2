@@ -676,7 +676,7 @@ void GUI::handleEvents(bool clearEvents)
 
 	//
 	if (mouseEvents.empty() == false) {
-		lastMouseEvent = mouseEvents[mouseEvents.size()];
+		lastMouseEvent = mouseEvents[mouseEvents.size() - 1];
 	}
 
 	// handle keyboard events

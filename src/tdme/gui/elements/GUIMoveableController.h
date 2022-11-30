@@ -26,7 +26,6 @@ private:
 	int mouseLastX { -1 };
 	int mouseLastY { -1 };
 	bool dragging { false };
-	bool haveLastMousePosition { false };
 
 	/**
 	 * Private constructor
@@ -37,8 +36,10 @@ private:
 public:
 	/**
 	 * Start moving
+	 * @param mouseX mouse x
+	 * @param mouseY mouse y
 	 */
-	void startMoving();
+	void startMoving(int mouseX, int mouseY);
 
 	// overridden methods
 	bool isDisabled() override;

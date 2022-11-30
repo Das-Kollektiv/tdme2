@@ -3,6 +3,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/Node.h>
 #include <tdme/engine/prototype/Prototype.h>
@@ -43,6 +44,7 @@ using tdme::tools::editor::tabcontrollers::UIEditorTabController;
 
 using std::string;
 
+using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::Engine;
@@ -120,22 +122,31 @@ void UIEditorTabController::onDrop(const string& payload, int mouseX, int mouseY
 	Console::println("UIEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
 	if (StringTools::startsWith(payload, "file:") == false) {
 		showInfoPopUp("Warning", "Unknown payload in drop");
-	} else
-	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "screen") == true) {
-		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
-		auto screenIdx = Integer::parse(StringTools::substring(outlinerNode, 0, outlinerNode.find(".")));
-		setScreen(screenIdx, StringTools::substring(payload, string("file:").size()));
-	} else
-	if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "projectedui_prototype") == true) {
-		auto modelFileName = StringTools::substring(payload, string("file:").size());
-		setPrototype(
-			Tools::getPathName(modelFileName),
-			Tools::getFileName(modelFileName),
-			prototypeMeshNode,
-			prototypeMeshAnimation
-		);
 	} else {
-		showInfoPopUp("Warning", "You can not drop a file here");
+		auto fileName = StringTools::substring(payload, string("file:").size());
+		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "screen") == true) {
+			if (Tools::hasFileExtension(fileName, {{ "xml" }}) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions({{ "xml" }}));
+			} else {
+				auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+				auto screenIdx = Integer::parse(StringTools::substring(outlinerNode, 0, outlinerNode.find(".")));
+				setScreen(screenIdx, fileName);
+			}
+		} else
+		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "projectedui_prototype") == true) {
+			if (Tools::hasFileExtension(fileName, PrototypeReader::getModelExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(PrototypeReader::getModelExtensions()));
+			} else {
+				setPrototype(
+					Tools::getPathName(fileName),
+					Tools::getFileName(fileName),
+					prototypeMeshNode,
+					prototypeMeshAnimation
+				);
+			}
+		} else {
+			showInfoPopUp("Warning", "You can not drop a file here");
+		}
 	}
 }
 
@@ -287,9 +298,10 @@ void UIEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouse
 }
 
 void UIEditorTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
-	int left, top;
-	view->getEditorView()->getViewPortUnscaledOffset(left, top);
-	popUps->getTooltipScreenController()->show(left + mouseX, top + mouseY, node->getToolTip());
+	int tooltipLeft, tooltipTop;
+	if (view->getEditorView()->getCurrentTabTooltipPosition(screenNode, mouseX, mouseY, tooltipLeft, tooltipTop) == false) return;
+	//
+	popUps->getTooltipScreenController()->show(tooltipLeft, tooltipTop, node->getToolTip());
 }
 
 void UIEditorTabController::onTooltipCloseRequest() {
