@@ -48,6 +48,12 @@ void HeightMap::destroyCollisionShape() {
 }
 
 void HeightMap::createCollisionShape(World* world) {
+	if (this->world != nullptr && this->world != world) {
+		Console::println("HeightMap::createCollisionShape(): already attached to a world.");
+	}
+	this->world = world;
+
+	//
 	collisionShape = world->physicsCommon.createHeightFieldShape(
 		columns,
 		rows,
@@ -59,6 +65,8 @@ void HeightMap::createCollisionShape(World* world) {
 		1.0f,
 		reactphysics3d::Vector3(scale.getX(), scale.getY(), scale.getZ())
 	);
+
+	// compute bounding box
 	computeBoundingBox();
 }
 

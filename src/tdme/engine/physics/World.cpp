@@ -380,6 +380,7 @@ Body* World::determineHeight(uint16_t collisionTypeIds, float stepUpMax, const V
 	if (customCallbackObject.getBody() != nullptr) {
 		heightPoint.set(point);
 		heightPoint.setY(customCallbackObject.getHeight());
+		//
 		return customCallbackObject.getBody();
 	} else {
 		return nullptr;
@@ -430,26 +431,26 @@ bool World::doesCollideWith(uint16_t collisionTypeIds, Body* body, vector<Body*>
 	// callback
 	class CustomOverlapCallback: public reactphysics3d::OverlapCallback {
 	    public:
-			CustomOverlapCallback(Body* body, vector<Body*>& rigidBodies): body(body), rigidBodies(rigidBodies) {
+			CustomOverlapCallback(int collisionTypeIds, Body* body, vector<Body*>& rigidBodies): collisionTypeIds(collisionTypeIds), body(body), rigidBodies(rigidBodies) {
 			}
 
 			void onOverlap(CallbackData &callbackData) {
 				for (auto i = 0; i < callbackData.getNbOverlappingPairs(); i++) {
 					auto overlappingPair = callbackData.getOverlappingPair(i);
 					auto body1 = static_cast<Body*>(overlappingPair.getBody1()->getUserData());
-					auto body2 = static_cast<Body*>(overlappingPair.getBody1()->getUserData());
-					if (body1 != body) rigidBodies.push_back(body1);
-					if (body2 != body) rigidBodies.push_back(body2);
+					auto body2 = static_cast<Body*>(overlappingPair.getBody2()->getUserData());
+					if (body1 != body && (body1->getCollisionTypeId() & collisionTypeIds) != 0) rigidBodies.push_back(body1);
+					if (body2 != body && (body2->getCollisionTypeId() & collisionTypeIds) != 0) rigidBodies.push_back(body2);
 				}
 			}
 	    private:
+			int collisionTypeIds;
 			Body* body;
 			vector<Body*>& rigidBodies;
 	};
 
-	// TODO: check collision type ids
 	// do the test
-	CustomOverlapCallback customOverlapCallback(body, collisionBodies);
+	CustomOverlapCallback customOverlapCallback(collisionTypeIds, body, collisionBodies);
 	world->testOverlap(body->collisionBody, customOverlapCallback);
 
 	// done

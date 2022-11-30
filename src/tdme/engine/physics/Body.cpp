@@ -210,6 +210,9 @@ void Body::resetColliders() {
 	// determine total volume
 	float volumeTotal = 0.0f;
 	for (auto boundingVolume: boundingVolumes) {
+		// skip if not attached
+		if (boundingVolume->isAttachedToWorld() == false) continue;
+		//
 		volumeTotal+=
 			boundingVolume->boundingBoxTransformed.getDimensions().getX() *
 			boundingVolume->boundingBoxTransformed.getDimensions().getY() *
@@ -217,6 +220,9 @@ void Body::resetColliders() {
 	}
 	// add bounding volumes with mass
 	for (auto boundingVolume: boundingVolumes) {
+		// skip if not attached
+		if (boundingVolume->isAttachedToWorld() == false) continue;
+		//
 		float volumeBoundingVolume =
 			boundingVolume->boundingBoxTransformed.getDimensions().getX() *
 			boundingVolume->boundingBoxTransformed.getDimensions().getY() *

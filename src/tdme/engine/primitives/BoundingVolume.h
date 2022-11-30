@@ -60,6 +60,13 @@ protected:
 	 */
 	virtual void createCollisionShape(World* world) = 0;
 
+	/**
+	 * @return is attached to world
+	 */
+	inline bool isAttachedToWorld() {
+		return world != nullptr;
+	}
+
 public:
 	/**
 	 * Destructor

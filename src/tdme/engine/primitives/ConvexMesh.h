@@ -10,6 +10,7 @@
 #include <tdme/engine/physics/fwd-tdme.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/Triangle.h>
+#include <tdme/math/Math.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/fwd-tdme.h>
 
@@ -20,6 +21,7 @@ using tdme::engine::physics::World;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::Triangle;
 using tdme::engine::ObjectModel;
+using tdme::math::Math;
 using tdme::math::Vector3;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::FloatBuffer;
@@ -33,6 +35,8 @@ class tdme::engine::primitives::ConvexMesh final
 	: public BoundingVolume
 {
 private:
+	static constexpr float VERTEX_COMPARE_EPSILON { Math::EPSILON };
+
 	vector<Vector3> vertices;
 	vector<int> facesVerticesCount;
 	vector<int> indices;
