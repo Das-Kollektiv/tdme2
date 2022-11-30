@@ -840,6 +840,13 @@ void GLES2Renderer::bindVerticesBufferObject(int contextIdx, int32_t bufferObjec
 	glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0LL);
 }
 
+void GLES2Renderer::bindVertices2BufferObject(int contextIdx, int32_t bufferObjectId)
+{
+	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0LL);
+}
+
 void GLES2Renderer::bindNormalsBufferObject(int contextIdx, int32_t bufferObjectId)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObjectId);

@@ -193,7 +193,7 @@ void GUIRenderer::render()
 	renderer->uploadBufferObject(contextIdx, (*vboIds)[3], fbTextureCoordinates.getPosition() * sizeof(float), &fbTextureCoordinates);
 	renderer->uploadBufferObject(contextIdx, (*vboIds)[4], fbColors.getPosition() * sizeof(float), &fbColors);
 	renderer->bindIndicesBufferObject(contextIdx, (*vboIds)[0]);
-	renderer->bindVerticesBufferObject(contextIdx, (*vboIds)[1]);
+	renderer->bindVertices2BufferObject(contextIdx, (*vboIds)[1]);
 	renderer->bindSolidColorsBufferObject(contextIdx, (*vboIds)[2]);
 	renderer->bindTextureCoordinatesBufferObject(contextIdx, (*vboIds)[3]);
 	renderer->bindColorsBufferObject(contextIdx, (*vboIds)[4]);

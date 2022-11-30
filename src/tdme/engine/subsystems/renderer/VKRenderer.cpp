@@ -2357,11 +2357,11 @@ void VKRenderer::createGUIRenderingPipeline(int contextIdx, program_type* progra
 
 	// vertices
 	vb[0].binding = 0;
-	vb[0].stride = sizeof(float) * 3;
+	vb[0].stride = sizeof(float) * 2;
 	vb[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 	va[0].binding = 0;
 	va[0].location = 0;
-	va[0].format = VK_FORMAT_R32G32B32_SFLOAT;
+	va[0].format = VK_FORMAT_R32G32_SFLOAT;
 	va[0].offset = 0;
 
 	// solid colors
@@ -6203,6 +6203,12 @@ void VKRenderer::bindTextureCoordinatesBufferObject(int contextIdx, int32_t buff
 }
 
 void VKRenderer::bindVerticesBufferObject(int contextIdx, int32_t bufferObjectId)
+{
+	auto& currentContext = contexts[contextIdx];
+	currentContext.boundBuffers[0] = getBindBufferObjectInternal(bufferObjectId, currentContext.boundBufferSizes[0]);
+}
+
+void VKRenderer::bindVertices2BufferObject(int contextIdx, int32_t bufferObjectId)
 {
 	auto& currentContext = contexts[contextIdx];
 	currentContext.boundBuffers[0] = getBindBufferObjectInternal(bufferObjectId, currentContext.boundBufferSizes[0]);

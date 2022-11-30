@@ -649,6 +649,7 @@ public:
 	void bindSolidColorsBufferObject(int contextIdx, int32_t bufferObjectId) override;
 	void bindTextureCoordinatesBufferObject(int contextIdx, int32_t bufferObjectId) override;
 	void bindVerticesBufferObject(int contextIdx, int32_t bufferObjectId) override;
+	void bindVertices2BufferObject(int contextIdx, int32_t bufferObjectId) override;
 	void bindNormalsBufferObject(int contextIdx, int32_t bufferObjectId) override;
 	void bindColorsBufferObject(int contextIdx, int32_t bufferObjectId) override;
 	void bindTangentsBufferObject(int contextIdx, int32_t bufferObjectId) override;

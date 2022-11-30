@@ -557,28 +557,24 @@ public:
 
 		fbVertices.put(x1);
 		fbVertices.put(y1);
-		fbVertices.put(0.0f);
 		fbColors.put(colorR1);
 		fbColors.put(colorG1);
 		fbColors.put(colorB1);
 		fbColors.put(colorA1);
 		fbVertices.put(x2);
 		fbVertices.put(y2);
-		fbVertices.put(0.0f);
 		fbColors.put(colorR2);
 		fbColors.put(colorG2);
 		fbColors.put(colorB2);
 		fbColors.put(colorA2);
 		fbVertices.put(x3);
 		fbVertices.put(y3);
-		fbVertices.put(0.0f);
 		fbColors.put(colorR3);
 		fbColors.put(colorG3);
 		fbColors.put(colorB3);
 		fbColors.put(colorA3);
 		fbVertices.put(x4);
 		fbVertices.put(y4);
-		fbVertices.put(0.0f);
 		fbColors.put(colorR4);
 		fbColors.put(colorG4);
 		fbColors.put(colorB4);
