@@ -225,8 +225,8 @@ void TerrainEditorTabController::onDrop(const string& payload, int mouseX, int m
 			}
 		} else
 		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "foliagebrush_prototype_file") == true) {
-			if (Tools::hasFileExtension(fileName, {{ "tmodel" }}) == false) {
-				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions({{ "tmodel" }}));
+			if (Tools::hasFileExtension(fileName, PrototypeReader::getModelExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(PrototypeReader::getModelExtensions()));
 			} else {
 				setFoliageBrushPrototype(fileName);
 			}

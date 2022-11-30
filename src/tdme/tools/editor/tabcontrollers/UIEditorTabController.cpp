@@ -3,6 +3,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/Node.h>
 #include <tdme/engine/prototype/Prototype.h>
@@ -43,6 +44,7 @@ using tdme::tools::editor::tabcontrollers::UIEditorTabController;
 
 using std::string;
 
+using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::Engine;
@@ -132,8 +134,8 @@ void UIEditorTabController::onDrop(const string& payload, int mouseX, int mouseY
 			}
 		} else
 		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "projectedui_prototype") == true) {
-			if (Tools::hasFileExtension(fileName, {{ "tmodel" }}) == false) {
-				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions({{ "tmodel" }}));
+			if (Tools::hasFileExtension(fileName, PrototypeReader::getModelExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(PrototypeReader::getModelExtensions()));
 			} else {
 				setPrototype(
 					Tools::getPathName(fileName),

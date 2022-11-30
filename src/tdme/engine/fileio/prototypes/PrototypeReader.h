@@ -39,7 +39,12 @@ public:
 	/**
 	 * Get supported model extensions
 	 */
-	static const vector<string>& getPrototypeExtensions();
+	static const vector<string> getPrototypeExtensions();
+
+	/**
+	 * Get supported tmodel extensions
+	 */
+	static const vector<string> getModelExtensions();
 
 	/**
 	 * Read thumbnail from file
