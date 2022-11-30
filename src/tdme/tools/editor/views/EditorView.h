@@ -14,6 +14,7 @@
 using tdme::engine::Engine;
 using tdme::gui::events::GUIInputEventHandler;
 using tdme::gui::nodes::GUINode;
+using tdme::gui::nodes::GUIScreenNode;
 using tdme::math::Vector3;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::misc::PopUps;
@@ -121,10 +122,14 @@ public:
 	void getViewPort(GUINode* viewPortNode, int& left, int& top, int& width, int& height, int& offsetX, int& offsetY);
 
 	/**
-	 * Determine viewport offset unscaled screen constraints
-	 * @param left left
-	 * @param top top
+	 * Determine current tab tooltip position
+	 * @param screenNode screen node
+	 * @param mouseX mouse x
+	 * @param mouseY mouse Y
+	 * @param tooltipLeft tooltip left
+	 * @param tooltipTop tooltip top
+	 * @return success
 	 */
-	void getViewPortUnscaledOffset(int& left, int& top);
+	bool getCurrentTabTooltipPosition(GUIScreenNode* screenNode, int mouseX, int mouseY, int& tooltipLeft, int& tooltipTop);
 
 };

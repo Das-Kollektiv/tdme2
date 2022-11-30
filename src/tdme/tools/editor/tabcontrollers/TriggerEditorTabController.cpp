@@ -194,9 +194,10 @@ void TriggerEditorTabController::onContextMenuRequest(GUIElementNode* node, int 
 }
 
 void TriggerEditorTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
-	int left, top;
-	view->getEditorView()->getViewPortUnscaledOffset(left, top);
-	popUps->getTooltipScreenController()->show(left + mouseX, top + mouseY, node->getToolTip());
+	int tooltipLeft, tooltipTop;
+	if (view->getEditorView()->getCurrentTabTooltipPosition(screenNode, mouseX, mouseY, tooltipLeft, tooltipTop) == false) return;
+	//
+	popUps->getTooltipScreenController()->show(tooltipLeft, tooltipTop, node->getToolTip());
 }
 
 void TriggerEditorTabController::onTooltipCloseRequest() {

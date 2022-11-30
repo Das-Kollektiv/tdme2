@@ -118,8 +118,8 @@ void EditorView::handleInputEvents()
 		// forward mouse events if belonging to view
 		for (auto event: Engine::getInstance()->getGUI()->getMouseEvents()) {
 			// event position in our tab
-			auto eventX = (event.getXUnscaled() - left + offsetX) / xScale;
-			auto eventY = (event.getYUnscaled() - top + offsetY) / yScale;
+			auto eventX = (event.getXUnscaled() - left) / xScale + offsetX;
+			auto eventY = (event.getYUnscaled() - top) / yScale + offsetY;
 			// out of tab bounds?
 			if (eventX < 0 || eventX >= width || eventY < 0 || eventY >= height) {
 				switch (event.getType()) {
@@ -300,16 +300,15 @@ void EditorView::getViewPort(GUINode* viewPortNode, int& left, int& top, int& wi
 	offsetY = viewPortNode->computeParentChildrenRenderOffsetYTotal();
 }
 
-void EditorView::getViewPortUnscaledOffset(int& left, int& top) {
-	auto tabView = editorScreenController->getSelectedTab();
-	if (tabView == nullptr) {
-		return;
-	}
-	auto xScale = static_cast<float>(engine->getWidth()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenWidth());
-	auto yScale = static_cast<float>(engine->getHeight()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenHeight());
-	int width;
-	int height;
-	editorScreenController->getViewPort(tabView->getFrameBufferNode(), left, top, width, height);
-	left = static_cast<int>(static_cast<float>(left) * xScale);
-	top = static_cast<int>(static_cast<float>(top) * yScale);
+bool EditorView::getCurrentTabTooltipPosition(GUIScreenNode* screenNode, int mouseX, int mouseY, int& tooltipLeft, int& tooltipTop) {
+	int left, top, width, height, offsetX, offsetY;
+	if (getCurrentTabViewPort(left, top, width, height, offsetX, offsetY) == false) return false;
+	//
+	auto xScale = static_cast<float>(Engine::getInstance()->getWidth()) / static_cast<float>(screenNode->getScreenWidth());
+	auto yScale = static_cast<float>(Engine::getInstance()->getHeight()) / static_cast<float>(screenNode->getScreenHeight());
+	//
+	tooltipLeft = left + mouseX * xScale - offsetX * xScale;
+	tooltipTop = top + mouseY * yScale - offsetY * yScale;
+	//
+	return true;
 }

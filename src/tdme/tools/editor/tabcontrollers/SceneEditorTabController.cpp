@@ -192,8 +192,8 @@ void SceneEditorTabController::onDrop(const string& payload, int mouseX, int mou
 			auto yScale = static_cast<float>(Engine::getInstance()->getHeight()) / static_cast<float>(screenNode->getScreenHeight());
 			int left, top, width, height, offsetX, offsetY;
 			if (view->getEditorView()->getCurrentTabViewPort(left, top, width, height, offsetX, offsetY) == true) {
-				auto tabMouseX = (mouseX - left + offsetX) / xScale;
-				auto tabMouseY = (mouseY - top + offsetY) / yScale;
+				auto tabMouseX = (mouseX - left) / xScale + offsetX;
+				auto tabMouseY = (mouseY - top) / yScale + offsetY;
 				if (tabMouseX < 0 || tabMouseX >= width || tabMouseX < 0 || tabMouseY >= height) {
 					showInfoPopUp("Warning", "You can not drop a file here");
 				} else {
@@ -652,9 +652,10 @@ void SceneEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 }
 
 void SceneEditorTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
-	int left, top;
-	view->getEditorView()->getViewPortUnscaledOffset(left, top);
-	popUps->getTooltipScreenController()->show(left + mouseX, top + mouseY, node->getToolTip());
+	int tooltipLeft, tooltipTop;
+	if (view->getEditorView()->getCurrentTabTooltipPosition(screenNode, mouseX, mouseY, tooltipLeft, tooltipTop) == false) return;
+	//
+	popUps->getTooltipScreenController()->show(tooltipLeft, tooltipTop, node->getToolTip());
 }
 
 void SceneEditorTabController::onTooltipCloseRequest() {
