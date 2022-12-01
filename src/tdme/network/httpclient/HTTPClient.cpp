@@ -158,9 +158,6 @@ void HTTPClient::reset() {
 
 void HTTPClient::execute() {
 	//
-	return;
-
-	//
 	TCPSocket socket;
 	try {
 		if (StringTools::startsWith(url, "http://") == false) throw HTTPClientException("Invalid protocol");
@@ -198,13 +195,14 @@ void HTTPClient::execute() {
 			// end of stream
 		}
 
+		//
 		parseHTTPResponseHeaders(rawResponse, httpStatusCode, httpHeader);
 
-		Console::println("HTTPClient::execute(): performed HTTP request: HTTP status code: " + to_string(httpStatusCode));
-
+		//
 		socket.shutdown();
 	} catch (Exception& exception) {
 		socket.shutdown();
+		//
 		Console::println(string("HTTPClient::execute(): performed HTTP request: FAILED: ") + exception.what());
 		// rethrow
 		throw;
