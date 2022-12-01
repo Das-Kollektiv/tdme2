@@ -22,5 +22,6 @@ cp /mingw64/bin/libiconv-2.dll platform/libs/
 cp /mingw64/bin/libintl-8.dll platform/libs/
 cp /mingw64/bin/zlib1.dll platform/libs/
 cp /mingw64/bin/libpcre-1.dll platform/libs/
+cp /mingw64/bin/libpcre2-8-0.dll platform/libs/
 #
 cp /mingw64/bin/addr2line.exe platform/libs/
