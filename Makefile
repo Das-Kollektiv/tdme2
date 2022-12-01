@@ -70,7 +70,7 @@ ifeq ($(OS), Darwin)
 		VULKAN_RENDERER_LDFLAGS := $(VULKAN_RENDERER_LDFLAGS) -Lext/glfw3/lib/macosx/arm64 -lglfw.3
 		OPENGLES2_RENDERER_LDFLAGS := $(OPENGLES2_RENDERER_LDFLAGS) -Lext/glfw3/lib/macosx/arm64 -lglfw.3
 	endif
-	OFLAGS := -O2
+	OFLAGS := -O3
 else ifeq ($(OS), FreeBSD)
 	# FreeBSD
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
@@ -81,7 +81,7 @@ else ifeq ($(OS), FreeBSD)
 	VULKAN_RENDERER_LDFLAGS := -L/usr/local/lib -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -L/usr/local/lib -lGLESv2 -lEGL -lglfw
 	LIBS_LDFLAGS := -L/usr/local/lib -ldl -lglfw -lopenal -lexecinfo
-	OFLAGS := -O2
+	OFLAGS := -O3
 else ifeq ($(OS), NetBSD)
 	# NetBSD
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
@@ -92,7 +92,7 @@ else ifeq ($(OS), NetBSD)
 	VULKAN_RENDERER_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -lGLESv2 -lEGL -lglfw
 	LIBS_LDFLAGS := -L/usr/X11R7/lib -L/usr/pkg/lib -ldl -lglfw -lopenal -lexecinfo
-	OFLAGS := -O2
+	OFLAGS := -O3
 else ifeq ($(OS), OpenBSD)
 	# OpenBSD
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
@@ -103,7 +103,7 @@ else ifeq ($(OS), OpenBSD)
 	VULKAN_RENDERER_LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -lGLESv2 -lEGL -lglfw
 	LIBS_LDFLAGS := -L/usr/X11R6/lib -L/usr/local/lib -lm -lstdc++ -ldl -lglfw -lopenal
-	OFLAGS := -O2
+	OFLAGS := -O3
 else ifeq ($(OS), Haiku)
 	# Haiku
 	SRCS_PLATFORM := $(SRCS_PLATFORM) \
@@ -114,7 +114,7 @@ else ifeq ($(OS), Haiku)
 	VULKAN_RENDERER_LDFLAGS := -lvulkan -lglfw
 	OPENGLES2_RENDERER_LDFLAGS := -lGLESv2 -lEGL -lglfw
 	LIBS_LDFLAGS := -lnetwork -lglfw -lopenal -lfreetype
-	OFLAGS := -O2
+	OFLAGS := -O3
 else ifeq ($(OS), Linux)
 	# Linux
 	INCLUDES := $(INCLUDES) -I/usr/include/freetype2
@@ -149,7 +149,7 @@ else
 	LIBS_LDFLAGS := -L/mingw64/lib -lws2_32 -ldl -lglfw3 -lopenal -lfreetype -ldbghelp
 	LDFLAG_LIB := $(NAME)$(LIB_EXT)
 	LDFLAG_EXT_LIB := $(EXT_NAME)$(LIB_EXT)
-	OFLAGS := -O2
+	OFLAGS := -O3
 endif
 
 CPPFLAGS := $(INCLUDES)

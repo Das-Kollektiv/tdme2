@@ -23,43 +23,43 @@ ifeq ($(OS), Darwin)
 	EXTRAFLAGS := $(EXTRAFLAGS) -DHAVE_UNISTD_H $(FLAGS)
 	INCLUDES := $(INCLUDES) -Iext/fbx/macosx/include -Iext/glfw3/include
 	MAIN_LDFLAGS := -L$(LIB_DIR) -ltdme2-ext -ltdme2 $(LDFLAGS)
-	OFLAGS := -O2
+	OFLAGS := -O3
 else ifeq ($(OS), FreeBSD)
 	# FreeBSD
 	EXTRAFLAGS := $(EXTRAFLAGS) $(FLAGS)
 	INCLUDES := $(INCLUDES) -I/usr/local/include
 	MAIN_LDFLAGS := -L$(LIB_DIR) -ltdme2-ext -ltdme2 $(LDFLAGS)
-	OFLAGS := -O2
+	OFLAGS := -O3
 else ifeq ($(OS), NetBSD)
 	# NetBSD
 	EXTRAFLAGS := $(EXTRAFLAGS) $(FLAGS)
 	INCLUDES := $(INCLUDES) -I/usr/X11R7/include -I/usr/pkg/include
 	MAIN_LDFLAGS := -L$(LIB_DIR) -ltdme2-ext -ltdme2 $(LDFLAGS)
-	OFLAGS := -O2
+	OFLAGS := -O3
 else ifeq ($(OS), OpenBSD)
 	# OpenBSD
 	EXTRAFLAGS := $(EXTRAFLAGS) $(FLAGS)
 	INCLUDES := $(INCLUDES) -I/usr/X11R6/include -I/usr/local/include
 	MAIN_LDFLAGS := -L$(LIB_DIR) -ltdme2-ext -ltdme2 $(LDFLAGS)
-	OFLAGS := -O2
+	OFLAGS := -O3
 else ifeq ($(OS), Haiku)
 	# Haiku
 	EXTRAFLAGS := $(EXTRAFLAGS) $(FLAGS)
 	INCLUDES := $(INCLUDES) -I/boot/system/develop/headers
 	MAIN_LDFLAGS := -L$(LIB_DIR) -ltdme2-ext -ltdme2 $(LDFLAGS)
-	OFLAGS := -O2
+	OFLAGS := -O3
 else ifeq ($(OS), Linux)
 	# Linux
 	EXTRAFLAGS := $(EXTRAFLAGS) $(FLAGS)
 	INCLUDES := $(INCLUDES) -L/usr/lib64
 	MAIN_LDFLAGS := -L$(LIB_DIR) -ltdme2-ext -ltdme2 $(LDFLAGS)
-	OFLAGS := -O2
+	OFLAGS := -O3
 else
 	# Windows/MINGW
 	EXTRAFLAGS := $(EXTRAFLAGS) $(FLAGS)
 	INCLUDES := $(INCLUDES) -I/mingw64/include
 	MAIN_LDFLAGS := -L$(LIB_DIR) -ltdme2-ext.dll -ltdme2.dll $(LDFLAGS)
-	OFLAGS := -O2
+	OFLAGS := -O3
 endif
 
 # set default application build type if not yet done
