@@ -8,9 +8,11 @@
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUINodeController.h>
+#include <tdme/utilities/Console.h>
 #include <tdme/utilities/MutableString.h>
 
 using std::string;
+using std::to_string;
 using std::vector;
 
 using tdme::gui::events::GUIKeyboardEvent;
@@ -18,6 +20,7 @@ using tdme::gui::events::GUIMouseEvent;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::GUIParser;
+using tdme::utilities::Console;
 using tdme::utilities::MutableString;
 
 /**
@@ -78,6 +81,13 @@ public:
 	};
 
 private:
+	struct HistoryEntry {
+		enum Type { TYPE_NONE, TYPE_INSERT, TYPE_DELETE, TYPE_BACKSPACE };
+		Type type { TYPE_NONE };
+		int idx { -1 };
+		string data;
+	};
+
 	static constexpr int64_t TIME_DOUBLECLICK { 250LL };
 	static constexpr int64_t CURSOR_MODE_DURATION { 500LL };
 	int64_t cursorModeStarted { -1LL };
@@ -95,6 +105,9 @@ private:
 	int64_t timeLastClick { -1LL };
 	bool doubleClick { false };
 
+	vector<HistoryEntry> history;
+	int historyEntryIdx { -1 };
+	int historyIdx { -1 };
 
 	/**
 	 * @return must show cursor
@@ -170,6 +183,21 @@ public:
 	inline void setSelectionIndex(int selectionIndex) {
 		this->selectionIndex = selectionIndex;
 	}
+
+	/**
+	 * Prepare typing history entry
+	 */
+	inline void prepareTypingHistoryEntry() {
+		if (historyEntryIdx != -1) return;
+		historyEntryIdx = index;
+		Console::println("GUIStyledTextNodeController::prepareTypingHistoryEntry(): " + index);
+	}
+
+	/**
+	 * Store typing history entry
+	 * @param cutHistory cut history from current to end
+	 */
+	void storeTypingHistoryEntry(bool cutHistory);
 
 	/**
 	 * Redo
