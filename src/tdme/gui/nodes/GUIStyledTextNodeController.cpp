@@ -363,10 +363,8 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 	auto maxLength = 0;
 	auto disabled = false;
 	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
-	auto keyControl = event->isControlDown();
-	auto keyChar = event->getKeyChar();
 	if (disabled == false &&
-		keyControl == false &&
+		event->isControlDown() == false &&
 		event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_TYPED) {
 		event->setProcessed(true);
 		if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
@@ -384,77 +382,26 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 			resetCursorMode();
 		}
 	} else {
-		auto keyControlA = false;
-		auto keyControlX = false;
-		auto keyControlC = false;
-		auto keyControlV = false;
-		auto keyControlSpace = false;
-		auto isKeyDown = event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED;
 		// determine select all, copy, paste, cut
-		if (Character::toLowerCase(event->getKeyChar()) == 'a' && keyControl == true) {
-			keyControlA = isKeyDown;
+		if (Character::toLowerCase(event->getKeyChar()) == 'a' && event->isControlDown() == true) {
+			if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) selectAll();
 			event->setProcessed(true);
-		}
-		if (Character::toLowerCase(event->getKeyChar()) == 'x' && keyControl == true) {
-			keyControlX = isKeyDown;
-			event->setProcessed(true);
-		}
-		if (Character::toLowerCase(event->getKeyChar()) == 'c' && keyControl == true) {
-			keyControlC = isKeyDown;
-			event->setProcessed(true);
-		}
-		if (Character::toLowerCase(event->getKeyChar()) == 'v' && keyControl == true) {
-			keyControlV = isKeyDown;
-			event->setProcessed(true);
-		}
-		if (event->getKeyChar() == ' ' && keyControl == true) {
-			keyControlSpace = isKeyDown;
-			event->setProcessed(true);
-		}
-		// handle them ...
-		if (keyControlA == true) {
-			auto& text = styledTextNode->getText();
-			index = 0;
-			selectionIndex = text.length() - 1;
 		} else
-		if (keyControlX == true) {
-			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
-				auto& text = styledTextNode->getText();
-				Application::getApplication()->setClipboardContent(StringTools::substring(text.getString(), Math::min(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex)), Math::max(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex))));
-				styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
-				styledTextNode->scrollToIndex();
-				forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
-				index = Math::min(index, selectionIndex);
-				selectionIndex = -1;
-			}
+		if (Character::toLowerCase(event->getKeyChar()) == 'x' && event->isControlDown() == true) {
+			if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) cut();
+			event->setProcessed(true);
 		} else
-		if (keyControlC == true) {
-			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
-				auto& text = styledTextNode->getText();
-				Application::getApplication()->setClipboardContent(StringTools::substring(text.getString(), Math::min(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex)), Math::max(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex))));
-			}
+		if (Character::toLowerCase(event->getKeyChar()) == 'c' && event->isControlDown() == true) {
+			if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) copy();
+			event->setProcessed(true);
 		} else
-		if (keyControlV == true) {
-			auto clipboardContent = Application::getApplication()->getClipboardContent();
-			auto clipboardContentLength = StringTools::getUtf8Length(clipboardContent);
-			if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
-				if (maxLength == 0 || styledTextNode->getTextLength() - Math::abs(index - selectionIndex) + clipboardContentLength < maxLength) {
-					styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
-					styledTextNode->scrollToIndex();
-					forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
-					index = Math::min(index, selectionIndex);
-					selectionIndex = -1;
-				}
-			}
-			if (maxLength == 0 || styledTextNode->getTextLength() + clipboardContentLength < maxLength) {
-				styledTextNode->insertText(index, clipboardContent);
-				styledTextNode->scrollToIndex();
-				forwardInsertText(index, clipboardContentLength);
-				index+= clipboardContentLength;
-			}
+		if (Character::toLowerCase(event->getKeyChar()) == 'v' && event->isControlDown() == true) {
+			if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) paste();
+			event->setProcessed(true);
 		} else
-		if (keyControlSpace == true) {
-			forwardCodeCompletion(index);
+		if (event->getKeyChar() == ' ' && event->isControlDown() == true) {
+			if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) forwardCodeCompletion(index);
+			event->setProcessed(true);
 		} else {
 			// navigation, delete, return
 			switch (event->getKeyCode()) {
@@ -693,19 +640,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 					if (disabled == false) {
 						event->setProcessed(true);
 						if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
-							if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
-								styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
-								styledTextNode->scrollToIndex();
-								forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
-								index = Math::min(index, selectionIndex);
-								selectionIndex = -1;
-							} else
-							if (index < styledTextNode->getTextLength()) {
-								styledTextNode->removeText(index, 1);
-								styledTextNode->scrollToIndex();
-								forwardRemoveText(index, 1);
-								resetCursorMode();
-							}
+							delete_();
 						}
 					}
 				}
@@ -783,7 +718,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 							} else {
 								if (selectionIndex == -1) selectionIndex = index;
 							}
-							if (keyControl == true) {
+							if (event->isControlDown() == true) {
 								index = 0;
 							} else {
 								// find index of previous newline
@@ -805,7 +740,7 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 							} else {
 								if (selectionIndex == -1) selectionIndex = index;
 							}
-							if (keyControl == true) {
+							if (event->isControlDown() == true) {
 								index = styledTextNode->getTextLength() - 1;
 							} else {
 								// find index of next newline
@@ -941,5 +876,73 @@ void GUIStyledTextNodeController::forwardCodeCompletion(int idx) {
 	auto binaryIdx = text.getUtf8BinaryIndex(idx);
 	for (auto i = 0; i < changeListeners.size(); i++) {
 		codeCompletionListeners[i]->onCodeCompletion(binaryIdx);
+	}
+}
+
+void GUIStyledTextNodeController::selectAll() {
+	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
+	auto& text = styledTextNode->getText();
+	index = 0;
+	selectionIndex = text.length() - 1;
+}
+
+void GUIStyledTextNodeController::cut() {
+	if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
+		auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
+		auto& text = styledTextNode->getText();
+		Application::getApplication()->setClipboardContent(StringTools::substring(text.getString(), Math::min(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex)), Math::max(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex))));
+		styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+		styledTextNode->scrollToIndex();
+		forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+		index = Math::min(index, selectionIndex);
+		selectionIndex = -1;
+	}
+}
+
+void GUIStyledTextNodeController::copy() {
+	if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
+		auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
+		auto& text = styledTextNode->getText();
+		Application::getApplication()->setClipboardContent(StringTools::substring(text.getString(), Math::min(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex)), Math::max(text.getUtf8BinaryIndex(index), text.getUtf8BinaryIndex(selectionIndex))));
+	}
+}
+
+void GUIStyledTextNodeController::paste() {
+	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
+	auto maxLength = 0;
+	auto clipboardContent = Application::getApplication()->getClipboardContent();
+	auto clipboardContentLength = StringTools::getUtf8Length(clipboardContent);
+	if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
+		if (maxLength == 0 || styledTextNode->getTextLength() - Math::abs(index - selectionIndex) + clipboardContentLength < maxLength) {
+			styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+			styledTextNode->scrollToIndex();
+			forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+			index = Math::min(index, selectionIndex);
+			selectionIndex = -1;
+		}
+	}
+	if (maxLength == 0 || styledTextNode->getTextLength() + clipboardContentLength < maxLength) {
+		styledTextNode->insertText(index, clipboardContent);
+		styledTextNode->scrollToIndex();
+		forwardInsertText(index, clipboardContentLength);
+		index+= clipboardContentLength;
+	}
+
+}
+
+void GUIStyledTextNodeController::delete_() {
+	auto styledTextNode = required_dynamic_cast<GUIStyledTextNode*>(this->node);
+	if (index != -1 && selectionIndex != -1 && index != selectionIndex) {
+		styledTextNode->removeText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+		styledTextNode->scrollToIndex();
+		forwardRemoveText(Math::min(index, selectionIndex), Math::abs(index - selectionIndex));
+		index = Math::min(index, selectionIndex);
+		selectionIndex = -1;
+	} else
+	if (index < styledTextNode->getTextLength()) {
+		styledTextNode->removeText(index, 1);
+		styledTextNode->scrollToIndex();
+		forwardRemoveText(index, 1);
+		resetCursorMode();
 	}
 }

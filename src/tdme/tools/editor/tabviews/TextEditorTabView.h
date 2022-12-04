@@ -434,4 +434,29 @@ public:
 	inline bool hasFixedSize() override{ return false; };
 	void updateRendering() override;
 
+	/**
+	 * Select all
+	 */
+	void selectAll();
+
+	/**
+	 * Cut
+	 */
+	void cut();
+
+	/**
+	 * Copy
+	 */
+	void copy();
+
+	/**
+	 * Paste
+	 */
+	void paste();
+
+	/**
+	 * Delete
+	 */
+	void delete_();
+
 };

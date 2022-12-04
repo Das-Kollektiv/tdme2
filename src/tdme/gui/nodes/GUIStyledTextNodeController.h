@@ -171,6 +171,31 @@ public:
 		this->selectionIndex = selectionIndex;
 	}
 
+	/**
+	 * Select all
+	 */
+	void selectAll();
+
+	/**
+	 * Cut
+	 */
+	void cut();
+
+	/**
+	 * Copy
+	 */
+	void copy();
+
+	/**
+	 * Paste
+	 */
+	void paste();
+
+	/**
+	 * Delete
+	 */
+	void delete_();
+
 	// overridden methods
 	bool isDisabled() override;
 	void setDisabled(bool disabled) override;

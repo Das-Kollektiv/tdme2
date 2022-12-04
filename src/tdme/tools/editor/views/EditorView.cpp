@@ -27,6 +27,7 @@
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/TDMEEditor.h>
+#include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
@@ -58,6 +59,7 @@ using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
 using tdme::tools::editor::TDMEEditor;
+using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 
@@ -83,20 +85,50 @@ void EditorView::handleInputEvents()
 		// skip if already processed
 		if (event.isProcessed() == true) return;
 
-		//
-		switch (event.getKeyCode()) {
-			case (GUIKeyboardEvent::KEYCODE_F11):
-				{
-					if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
-						editorScreenController->setFullScreen(editorScreenController->isFullScreen() == false?true:false);
+		// determine select all, copy, paste, cut
+		if (Character::toLowerCase(event.getKeyChar()) == 'a' && event.isControlDown() == true) {
+			if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+				auto selectedTab = editorScreenController->getSelectedTab();
+				if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onCommand(TabController::COMMAND_SELECTALL);
+			}
+			event.setProcessed(true);
+		} else
+		if (Character::toLowerCase(event.getKeyChar()) == 'x' && event.isControlDown() == true) {
+			if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+				auto selectedTab = editorScreenController->getSelectedTab();
+				if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onCommand(TabController::COMMAND_CUT);
+			}
+			event.setProcessed(true);
+		} else
+		if (Character::toLowerCase(event.getKeyChar()) == 'c' && event.isControlDown() == true) {
+			if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+				auto selectedTab = editorScreenController->getSelectedTab();
+				if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onCommand(TabController::COMMAND_COPY);
+			}
+			event.setProcessed(true);
+		} else
+		if (Character::toLowerCase(event.getKeyChar()) == 'v' && event.isControlDown() == true) {
+			if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+				auto selectedTab = editorScreenController->getSelectedTab();
+				if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onCommand(TabController::COMMAND_PASTE);
+			}
+			event.setProcessed(true);
+		} else {
+			//
+			switch (event.getKeyCode()) {
+				case (GUIKeyboardEvent::KEYCODE_F11):
+					{
+						if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+							editorScreenController->setFullScreen(editorScreenController->isFullScreen() == false?true:false);
+						}
+						event.setProcessed(true);
+						break;
 					}
-					event.setProcessed(true);
-					break;
-				}
-			default:
-				{
-					break;
-				}
+				default:
+					{
+						break;
+					}
+			}
 		}
 	}
 
