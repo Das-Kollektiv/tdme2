@@ -82,10 +82,11 @@ public:
 
 private:
 	struct HistoryEntry {
-		enum Type { TYPE_NONE, TYPE_INSERT, TYPE_DELETE, TYPE_BACKSPACE };
+		enum Type { TYPE_NONE, TYPE_INSERT, TYPE_DELETE };
 		Type type { TYPE_NONE };
 		int idx { -1 };
 		string data;
+		bool joinable { false };
 	};
 
 	static constexpr int64_t TIME_DOUBLECLICK { 250LL };
@@ -107,6 +108,7 @@ private:
 
 	vector<HistoryEntry> history;
 	int historyEntryIdx { -1 };
+	int historyEntryDeletion { -1 };
 	int historyIdx { -1 };
 
 	/**
@@ -198,6 +200,14 @@ public:
 	 * @param cutHistory cut history from current to end
 	 */
 	void storeTypingHistoryEntry(bool cutHistory);
+
+	/**
+	 * Store typing history entry
+	 * @param cutHistory cut history from current to end
+	 * @param index index
+	 * @param count count
+	 */
+	void storeDeletionHistoryEntry(bool cutHistory, int index, int count);
 
 	/**
 	 * Redo
