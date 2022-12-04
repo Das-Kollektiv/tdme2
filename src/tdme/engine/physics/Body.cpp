@@ -70,6 +70,8 @@ Body::Body(World* world, const string& id, int type, bool enabled, uint16_t coll
 			this->rigidBody->setType(reactphysics3d::BodyType::STATIC);
 			this->rigidBody->setMass(mass);
 			this->rigidBody->setIsAllowedToSleep(true);
+			this->rigidBody->enableGravity(false);
+			this->rigidBody->setIsSleeping(true);
 			this->collisionBody = rigidBody;
 			break;
 		case TYPE_DYNAMIC:
@@ -110,6 +112,21 @@ Body::Body(World* world, const string& id, int type, bool enabled, uint16_t coll
 }
 
 Body::~Body() {
+	// remove colliders
+	for (auto collider: colliders) {
+		if (rigidBody != nullptr) {
+			rigidBody->removeCollider(collider);
+		} else {
+			collisionBody->removeCollider(collider);
+		}
+	}
+	// destroy rigid body
+	if (rigidBody != nullptr) {
+		this->world->world->destroyRigidBody(rigidBody);
+	} else {
+		this->world->world->destroyCollisionBody(collisionBody);
+	}
+	// delete bounding volumes
 	for (auto boundingVolume: boundingVolumes) {
 		delete boundingVolume;
 	}

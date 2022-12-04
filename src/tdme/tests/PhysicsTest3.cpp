@@ -71,7 +71,7 @@ PhysicsTest3::PhysicsTest3()
 {
 	Application::setLimitFPS(true);
 	engine = Engine::getInstance();
-	world = new World();
+	world = new World("world");
 }
 
 PhysicsTest3::~PhysicsTest3()

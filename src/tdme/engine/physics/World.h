@@ -69,8 +69,9 @@ private:
 public:
 	/**
 	 * Public constructor
+	 * @param id id
 	 */
-	World();
+	World(const string& id);
 
 	/**
 	 * Destructor
@@ -222,9 +223,10 @@ public:
 
 	/**
 	 * Clone this world
+	 * @param id id
 	 * @param collisionTypeIds collision type ids to clone
 	 */
-	World* clone(uint16_t collisionTypeIds = ~0);
+	World* clone(const string& id, uint16_t collisionTypeIds = ~0);
 
 	/**
 	 * Updates given world with this world

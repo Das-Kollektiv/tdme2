@@ -51,7 +51,7 @@ PhysicsTest2::PhysicsTest2()
 {
 	Application::setLimitFPS(true);
 	engine = Engine::getInstance();
-	world = new World();
+	world = new World("world");
 }
 
 PhysicsTest2::~PhysicsTest2()

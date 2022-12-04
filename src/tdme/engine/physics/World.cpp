@@ -6,6 +6,8 @@
 #include <string>
 #include <unordered_set>
 
+#include <reactphysics3d/utils/DefaultLogger.h>
+
 #include <reactphysics3d/collision/shapes/AABB.h>
 #include <reactphysics3d/collision/ContactManifold.h>
 #include <reactphysics3d/collision/OverlapCallback.h>
@@ -36,6 +38,7 @@
 #include <tdme/math/Quaternion.h>
 #include <tdme/math/Vector3.h>
 #include <tdme/utilities/Console.h>
+#include <tdme/utilities/Time.h>
 #include <tdme/utilities/VectorIteratorMultiple.h>
 
 using std::find;
@@ -63,15 +66,28 @@ using tdme::math::Matrix4x4;
 using tdme::math::Quaternion;
 using tdme::math::Vector3;
 using tdme::utilities::Console;
+using tdme::utilities::Time;
 using tdme::utilities::VectorIteratorMultiple;
 
-World::World()
+World::World(const string& id)
 {
-	reactphysics3d::PhysicsWorld::WorldSettings worldSettings;
-	worldSettings.isSleepingEnabled = true;
-	worldSettings.defaultVelocitySolverNbIterations = 10;
-	worldSettings.defaultPositionSolverNbIterations = 5;
-	world = physicsCommon.createPhysicsWorld();
+	// logger
+	if (physicsCommon.getLogger() == nullptr) {
+		// Create the default logger 
+		auto logger = physicsCommon.createDefaultLogger();
+		// Log level (warnings and errors) 
+		auto logLevel = static_cast<uint32_t>(static_cast<uint32_t>(reactphysics3d::Logger::Level::Warning) | static_cast<uint32_t>(reactphysics3d::Logger::Level::Error));
+		// Output the logs into the standard output 
+		logger->addStreamDestination(std::cout, logLevel, reactphysics3d::DefaultLogger::Format::Text);
+		// Set the logger 
+		physicsCommon.setLogger(logger);
+	}
+	//
+    reactphysics3d::PhysicsWorld::WorldSettings worldSettings;
+    worldSettings.worldName = id;
+
+	//
+	world = physicsCommon.createPhysicsWorld(worldSettings);
 }
 
 World::~World()
@@ -84,6 +100,7 @@ World::~World()
 
 void World::reset()
 {
+	Console::println("World::reset(): init: dynamic rigid bodies: " + to_string(rigidBodiesDynamic.size()) + ", static rigid bodies: " + to_string(bodies.size()) + ", joints: " + to_string(jointsById.size()));
 	// joints
 	{
 		vector<string> jointIds;
@@ -91,17 +108,14 @@ void World::reset()
 			jointIds.push_back(jointIt.first);
 		}
 		for (auto& jointId: jointIds) removeJoint(jointId);
-		jointsById.clear();
 	}
 	// bodies
 	{
 		auto _bodies = bodies;
 		for (auto body: _bodies) removeBody(body->getId());
-		bodies.clear();
-		rigidBodiesDynamic.clear();
-		bodiesById.clear();
 		bodyCollisionsLastFrame.clear();
 	}
+	Console::println("World::reset(): done: dynamic rigid bodies: " + to_string(rigidBodiesDynamic.size()) + ", static rigid bodies: " + to_string(bodies.size()) + ", joints: " + to_string(jointsById.size()));
 }
 
 Body* World::addRigidBody(const string& id, bool enabled, uint16_t collisionTypeId, const Transform& transform, float restitution, float friction, float mass, const Vector3& inertiaTensor, const vector<BoundingVolume*>& boundingVolumes)
@@ -153,17 +167,13 @@ void World::removeBody(const string& id) {
 	auto bodyByIdIt = bodiesById.find(id);
 	if (bodyByIdIt != bodiesById.end()) {
 		auto body = bodyByIdIt->second;
-		if (body->rigidBody != nullptr) {
-			world->destroyRigidBody(body->rigidBody);
-		} else {
-			world->destroyCollisionBody(body->collisionBody);
-		}
 		bodies.erase(remove(bodies.begin(), bodies.end(), body), bodies.end());
 		rigidBodiesDynamic.erase(remove(rigidBodiesDynamic.begin(), rigidBodiesDynamic.end(), body), rigidBodiesDynamic.end());
 		bodiesById.erase(bodyByIdIt);
 		for (auto listener: worldListeners) {
 			listener->onRemovedBody(id, body->getType(), body->getCollisionTypeId());
 		}
+		//
 		delete body;
 	}
 }
@@ -197,7 +207,10 @@ void World::update(float deltaTime)
 	if (deltaTime < Math::EPSILON) return;
 
 	// do the job
+	auto startTime = Time::getCurrentMillis();
 	world->update(deltaTime);
+	auto endTime = Time::getCurrentMillis();
+	Console::println("World::update(): " + to_string(endTime - startTime) + " ms");
 
 	/*
 	// TODO: collision events
@@ -273,6 +286,8 @@ void World::update(float deltaTime)
 		bodyCollisionsLastFrame = bodyCollisionsCurrentFrame;
 	}
 	*/
+
+	Console::println("World::update(): dynamic rigid bodies: " + to_string(rigidBodiesDynamic.size()) + ", static rigid bodies: " + to_string(bodies.size()));
 
 	// update transform for rigid body
 	for (auto i = 0; i < rigidBodiesDynamic.size(); i++) {
@@ -509,9 +524,9 @@ bool World::getCollisionResponse(Body* body1, Body* body2, CollisionResponse& co
 	return collision.getEntityCount() > 0;
 }
 
-World* World::clone(uint16_t collisionTypeIds)
+World* World::clone(const string& id, uint16_t collisionTypeIds)
 {
-	auto clonedWorld = new World();
+	auto clonedWorld = new World(id);
 	for (auto i = 0; i < bodies.size(); i++) {
 		auto body = bodies[i];
 		// clone obv

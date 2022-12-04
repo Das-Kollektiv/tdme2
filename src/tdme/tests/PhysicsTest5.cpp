@@ -76,7 +76,7 @@ PhysicsTest5::PhysicsTest5()
 	keyS = false;
 	keyD = false;
 	engine = Engine::getInstance();
-	world = new World();
+	world = new World("world");
 }
 
 PhysicsTest5::~PhysicsTest5()
