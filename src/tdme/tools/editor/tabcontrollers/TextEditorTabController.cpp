@@ -112,6 +112,12 @@ void TextEditorTabController::dispose()
 void TextEditorTabController::onCommand(TabControllerCommand command)
 {
 	switch (command) {
+		case COMMAND_REDO:
+			view->redo();
+			break;
+		case COMMAND_UNDO:
+			view->undo();
+			break;
 		case COMMAND_CUT:
 			view->cut();
 			break;

@@ -172,6 +172,16 @@ public:
 	}
 
 	/**
+	 * Redo
+	 */
+	void redo();
+
+	/**
+	 * Undo
+	 */
+	void undo();
+
+	/**
 	 * Select all
 	 */
 	void selectAll();

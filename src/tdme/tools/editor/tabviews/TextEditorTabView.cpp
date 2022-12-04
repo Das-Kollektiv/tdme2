@@ -1792,6 +1792,18 @@ void TextEditorTabView::cancelFind() {
 	countEnabled = false;
 }
 
+void TextEditorTabView::redo() {
+	if (visualEditor == false) {
+		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->redo();
+	}
+}
+
+void TextEditorTabView::undo() {
+	if (visualEditor == false) {
+		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->undo();
+	}
+}
+
 void TextEditorTabView::selectAll() {
 	if (visualEditor == false) {
 		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->selectAll();

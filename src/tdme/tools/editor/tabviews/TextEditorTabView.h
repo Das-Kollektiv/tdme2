@@ -435,6 +435,16 @@ public:
 	void updateRendering() override;
 
 	/**
+	 * Redo
+	 */
+	void redo();
+
+	/**
+	 * Redo
+	 */
+	void undo();
+
+	/**
 	 * Select all
 	 */
 	void selectAll();

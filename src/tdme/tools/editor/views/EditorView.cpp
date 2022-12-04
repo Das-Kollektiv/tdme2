@@ -85,6 +85,21 @@ void EditorView::handleInputEvents()
 		// skip if already processed
 		if (event.isProcessed() == true) return;
 
+		// determine redo and undo
+		if (Character::toLowerCase(event.getKeyChar()) == 'z' && event.isControlDown() == true && event.isShiftDown() == true) {
+			if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+				auto selectedTab = editorScreenController->getSelectedTab();
+				if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onCommand(TabController::COMMAND_REDO);
+			}
+			event.setProcessed(true);
+		} else
+		if (Character::toLowerCase(event.getKeyChar()) == 'z' && event.isControlDown() == true) {
+			if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+				auto selectedTab = editorScreenController->getSelectedTab();
+				if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onCommand(TabController::COMMAND_UNDO);
+			}
+			event.setProcessed(true);
+		} else
 		// determine select all, copy, paste, cut
 		if (Character::toLowerCase(event.getKeyChar()) == 'a' && event.isControlDown() == true) {
 			if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {

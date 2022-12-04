@@ -382,6 +382,14 @@ void GUIStyledTextNodeController::handleKeyboardEvent(GUIKeyboardEvent* event)
 			resetCursorMode();
 		}
 	} else {
+		if (Character::toLowerCase(event->getKeyChar()) == 'z' && event->isControlDown() == true && event->isShiftDown() == true) {
+			if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) redo();
+			event->setProcessed(true);
+		} else
+		if (Character::toLowerCase(event->getKeyChar()) == 'z' && event->isControlDown() == true) {
+			if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) undo();
+			event->setProcessed(true);
+		} else
 		// determine select all, copy, paste, cut
 		if (Character::toLowerCase(event->getKeyChar()) == 'a' && event->isControlDown() == true) {
 			if (event->getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) selectAll();
@@ -877,6 +885,14 @@ void GUIStyledTextNodeController::forwardCodeCompletion(int idx) {
 	for (auto i = 0; i < changeListeners.size(); i++) {
 		codeCompletionListeners[i]->onCodeCompletion(binaryIdx);
 	}
+}
+
+void GUIStyledTextNodeController::redo() {
+	Console::println("GUIStyledTextNodeController::redo()");
+}
+
+void GUIStyledTextNodeController::undo() {
+	Console::println("GUIStyledTextNodeController::undo()");
 }
 
 void GUIStyledTextNodeController::selectAll() {
