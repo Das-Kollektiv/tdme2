@@ -56,7 +56,7 @@ public:
 	/**
 	 * @return underlying texture byte buffer, the format is currently RGBA
 	 */
-	inline ByteBuffer* getByteBuffer() {
+	inline ByteBuffer getByteBuffer() {
 		return texture->getTextureData();
 	}
 

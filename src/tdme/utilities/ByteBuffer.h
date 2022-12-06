@@ -65,4 +65,11 @@ public:
 	 */
 	inline ByteBuffer(vector<uint8_t>* data) : Buffer(data) {
 	}
+
+	/**
+	 * Public constructor
+	 * @param bytebuffer byte buffer to use as underlying buffer
+	 */
+	inline ByteBuffer(ByteBuffer& byteBuffer) : Buffer(byteBuffer.buffer) {
+	}
 };

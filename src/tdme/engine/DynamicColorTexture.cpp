@@ -21,10 +21,12 @@ void DynamicColorTexture::initialize()
 	colorBufferTextureId = Engine::renderer->createColorBufferTexture(width, height, Engine::renderer->ID_NONE, Engine::renderer->ID_NONE);
 	texture = new Texture(
 		"dynamic-color-texture:" + to_string(DynamicColorTexture::counter++),
-		32,
+		Texture::TEXTUREDEPTH_RGBA,
+		Texture::TEXTUREFORMAT_RGBA,
 		width, height,
 		width, height,
-		ByteBuffer::allocate(width * height * 4)
+		Texture::TEXTUREFORMAT_RGBA,
+		ByteBuffer(width * height * 4)
 	);
 	texture->acquireReference();
 	texture->setUseMipMap(false);
@@ -36,10 +38,12 @@ void DynamicColorTexture::reshape(int32_t width, int32_t height)
 	texture->releaseReference();
 	texture = new Texture(
 		"dynamic-color-texture:" + to_string(DynamicColorTexture::counter++),
-		32,
+		Texture::TEXTUREDEPTH_RGBA,
+		Texture::TEXTUREFORMAT_RGBA,
 		width, height,
 		width, height,
-		ByteBuffer::allocate(width * height * 4)
+		Texture::TEXTUREFORMAT_RGBA,
+		ByteBuffer(width * height * 4)
 	);
 	texture->acquireReference();
 	texture->setUseMipMap(false);

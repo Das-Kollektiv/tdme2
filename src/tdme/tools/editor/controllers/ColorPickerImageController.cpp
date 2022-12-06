@@ -80,11 +80,11 @@ void ColorPickerImageController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 			if (imageNodeTexture != nullptr) {
 				auto textureWidth = imageNodeTexture->getTextureWidth();
 				auto textureHeight = imageNodeTexture->getTextureHeight();
-				auto textureData = imageNodeTexture->getTextureData();
+				auto textureData = imageNodeTexture->getUncompressedTextureData();
 				auto textureX = static_cast<int>(static_cast<float>(textureWidth) * (imageMouseCoordinate[0] / imageNodeWidth));
 				auto textureY = static_cast<int>(static_cast<float>(textureHeight) * (imageMouseCoordinate[1] / imageNodeHeight));
 				auto textureBytesPerPixel = -1;
-				switch (imageNodeTexture->getDepth()) {
+				switch (imageNodeTexture->getDepthBitsPerPixel()) {
 					case 24:
 						textureBytesPerPixel = 3;
 						break;
@@ -95,9 +95,9 @@ void ColorPickerImageController::handleMouseEvent(GUINode* node, GUIMouseEvent* 
 				auto texturePixelOffset = textureY * textureWidth * textureBytesPerPixel + textureX * textureBytesPerPixel;
 				colorPickerScreenController->setColor(
 					Color4Base(
-						static_cast<float>(textureData->get(texturePixelOffset + 0)) / 255.0f,
-						static_cast<float>(textureData->get(texturePixelOffset + 1)) / 255.0f,
-						static_cast<float>(textureData->get(texturePixelOffset + 2)) / 255.0f,
+						static_cast<float>(textureData.get(texturePixelOffset + 0)) / 255.0f,
+						static_cast<float>(textureData.get(texturePixelOffset + 1)) / 255.0f,
+						static_cast<float>(textureData.get(texturePixelOffset + 2)) / 255.0f,
 						1.0f
 					)
 				);

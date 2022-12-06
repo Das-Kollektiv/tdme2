@@ -683,7 +683,7 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_type*
 		.pNext = nullptr,
 		.flags = 0,
 		.imageType = VK_IMAGE_TYPE_2D,
-		.format = texture->getDepth() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM,
+		.format = texture->getDepthBitsPerPixel() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM,
 		.extent = {
 			.width = textureWidth,
 			.height = textureHeight,
@@ -724,15 +724,15 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_type*
 		void* data;
 		err = vmaMapMemory(vmaAllocator, textureObject->allocation, &data);
 		assert(!err);
-		auto bytesPerPixel = texture->getDepth() / 8;
-		auto textureBuffer = texture->getTextureData();
+		auto bytesPerPixel = texture->getDepthBitsPerPixel() / 8;
+		auto textureTextureData = texture->getUncompressedTextureData();
 		for (auto y = 0; y < textureHeight; y++) {
 			uint8_t* row = (uint8_t*)((uint8_t*)data + subResourceLayout.offset + subResourceLayout.rowPitch * y);
 			for (auto x = 0; x < textureWidth; x++) {
-				row[x * 4 + 0] = textureBuffer->get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 0);
-				row[x * 4 + 1] = textureBuffer->get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 1);
-				row[x * 4 + 2] = textureBuffer->get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 2);
-				row[x * 4 + 3] = bytesPerPixel == 4?textureBuffer->get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 3):0xff;
+				row[x * 4 + 0] = textureTextureData.get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 0);
+				row[x * 4 + 1] = textureTextureData.get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 1);
+				row[x * 4 + 2] = textureTextureData.get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 2);
+				row[x * 4 + 3] = bytesPerPixel == 4?textureTextureData.get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 3):0xff;
 			}
 		}
 		vmaFlushAllocation(vmaAllocator, textureObject->allocation, 0, VK_WHOLE_SIZE);
@@ -4628,7 +4628,7 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 	textureType.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 
 	//
-	const VkFormat textureFormat = texture->getDepth() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
+	const VkFormat textureFormat = texture->getDepthBitsPerPixel() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
 	VkFormatProperties textureFormatProperties;
 	VkResult err;
 
@@ -4880,7 +4880,7 @@ void VKRenderer::uploadCubeMapSingleTexture(int contextIdx, texture_type* cubema
 	auto& cubemapTextureTypeRef = *cubemapTextureType;
 
 	//
-	const VkFormat textureFormat = texture->getDepth() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
+	const VkFormat textureFormat = texture->getDepthBitsPerPixel() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
 	VkFormatProperties textureFormatProperties;
 	VkResult err;
 	vkGetPhysicalDeviceFormatProperties(physicalDevice, textureFormat, &textureFormatProperties);

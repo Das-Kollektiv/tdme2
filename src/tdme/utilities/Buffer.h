@@ -18,9 +18,9 @@ using tdme::math::Math;
  */
 class tdme::utilities::Buffer
 {
-private:
+protected:
 	bool createdBuffer;
-	int64_t position { 0 };
+	mutable int64_t position { 0 };
 	vector<uint8_t>* buffer { nullptr };
 
 public:
@@ -74,14 +74,14 @@ public:
 	/**
 	 * @returns capacity
 	 */
-	inline virtual int64_t getCapacity() {
+	inline virtual int64_t getCapacity() const {
 		return buffer->size();
 	}
 
 	/**
 	 * @returns position
 	 */
-	inline virtual int64_t getPosition() {
+	inline virtual int64_t getPosition() const {
 		return position;
 	}
 
@@ -99,7 +99,7 @@ public:
 	 * @returns value at given position
 	 * @param position position
 	 */
-	inline uint8_t get(int64_t position) {
+	inline uint8_t get(int64_t position) const {
 		return (*buffer)[position];
 	}
 
@@ -123,6 +123,13 @@ public:
 		memcpy(&(*buffer)[position], data, sizeUsed);
 		position+= sizeUsed;
 		return this;
+	}
+
+	/**
+	 * @returns const pointer to underlying data
+	 */
+	inline const uint8_t* getBuffer() const {
+		return buffer->data();
 	}
 
 	/**

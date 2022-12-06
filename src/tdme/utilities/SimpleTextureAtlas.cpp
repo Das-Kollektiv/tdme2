@@ -99,7 +99,7 @@ void SimpleTextureAtlas::update() {
 	auto textureAtlasSize = static_cast<int>(Math::ceil(Math::sqrt(atlasTextureIdxToTextureMapping.size())));
 	auto atlasTextureWidth = textureAtlasSize * ATLAS_TEXTURE_SIZE;
 	auto atlasTextureHeight = textureAtlasSize * ATLAS_TEXTURE_SIZE;
-	auto atlasTextureByteBuffer = ByteBuffer::allocate(atlasTextureWidth * atlasTextureHeight * 4);
+	auto atlasTextureByteBuffer = ByteBuffer(atlasTextureWidth * atlasTextureHeight * 4);
 	for (auto y = 0; y < atlasTextureHeight; y++)
 	for (auto x = 0; x < atlasTextureWidth; x++) {
 		auto atlasTextureIdxX = x / ATLAS_TEXTURE_SIZE;
@@ -112,9 +112,10 @@ void SimpleTextureAtlas::update() {
 		auto textureIt = atlasTextureIdxToTextureMapping.find(atlasTextureIdx);
 		auto texture = textureIt != atlasTextureIdxToTextureMapping.end()?textureIt->second:nullptr;
 		if (texture != nullptr) {
+			auto textureTextureData = texture->getUncompressedTextureData();
 			auto textureWidth = texture->getTextureWidth();
 			auto textureHeight = texture->getTextureHeight();
-			auto textureBytesPerPixel = texture->getDepth() / 8;
+			auto textureBytesPerPixel = texture->getDepthBitsPerPixel() / 8;
 			auto textureXInt = static_cast<int>(textureXFloat * static_cast<float>(textureWidth));
 			auto textureYInt = static_cast<int>(textureYFloat * static_cast<float>(textureHeight));
 			if (textureXInt < ATLAS_TEXTURE_BORDER) textureXInt = 0; else
@@ -126,30 +127,32 @@ void SimpleTextureAtlas::update() {
 			auto texturePixelOffset =
 				textureYInt * textureWidth * textureBytesPerPixel +
 				textureXInt * textureBytesPerPixel;
-			auto r = texture->getTextureData()->get(texturePixelOffset + 0);
-			auto g = texture->getTextureData()->get(texturePixelOffset + 1);
-			auto b = texture->getTextureData()->get(texturePixelOffset + 2);
-			auto a = textureBytesPerPixel == 4?texture->getTextureData()->get(texturePixelOffset + 3):0xff;
-			atlasTextureByteBuffer->put(r);
-			atlasTextureByteBuffer->put(g);
-			atlasTextureByteBuffer->put(b);
-			atlasTextureByteBuffer->put(a);
+			auto r = textureTextureData.get(texturePixelOffset + 0);
+			auto g = textureTextureData.get(texturePixelOffset + 1);
+			auto b = textureTextureData.get(texturePixelOffset + 2);
+			auto a = textureBytesPerPixel == 4?textureTextureData.get(texturePixelOffset + 3):0xff;
+			atlasTextureByteBuffer.put(r);
+			atlasTextureByteBuffer.put(g);
+			atlasTextureByteBuffer.put(b);
+			atlasTextureByteBuffer.put(a);
 		} else {
 			auto r = 0xff;
 			auto g = 0x00;
 			auto b = 0x00;
 			auto a = 0xff;
-			atlasTextureByteBuffer->put(r);
-			atlasTextureByteBuffer->put(g);
-			atlasTextureByteBuffer->put(b);
-			atlasTextureByteBuffer->put(a);
+			atlasTextureByteBuffer.put(r);
+			atlasTextureByteBuffer.put(g);
+			atlasTextureByteBuffer.put(b);
+			atlasTextureByteBuffer.put(a);
 		}
 	}
 	atlasTexture = new Texture(
 		atlasTextureId,
-		32,
+		Texture::TEXTUREDEPTH_RGBA,
+		Texture::TEXTUREFORMAT_RGBA,
 		atlasTextureWidth, atlasTextureHeight,
 		atlasTextureWidth, atlasTextureHeight,
+		Texture::TEXTUREFORMAT_RGBA,
 		atlasTextureByteBuffer
 	);
 	atlasTexture->setAtlasSize(textureAtlasSize);

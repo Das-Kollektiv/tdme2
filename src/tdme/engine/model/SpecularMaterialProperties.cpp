@@ -88,10 +88,10 @@ void SpecularMaterialProperties::checkDiffuseTextureTransparency()
 {
 	diffuseTextureTransparency = false;
 	auto diffuseTextureMaskedTransparencyTest = true;
-	if (diffuseTexture != nullptr && diffuseTexture->getDepth() == 32) {
-		auto textureData = diffuseTexture->getTextureData();
+	if (diffuseTexture != nullptr && diffuseTexture->getDepthBitsPerPixel() == 32) {
+		auto textureData = diffuseTexture->getUncompressedTextureData();
 		for (auto i = 0; i < diffuseTexture->getTextureWidth() * diffuseTexture->getTextureHeight(); i++) {
-			auto alpha = textureData->get(i * 4 + 3);
+			auto alpha = textureData.get(i * 4 + 3);
 			if (alpha != 255) diffuseTextureTransparency = true;
 			if (alpha > 5 || alpha < 250) diffuseTextureMaskedTransparencyTest = false;
 		}

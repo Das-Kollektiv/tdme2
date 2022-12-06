@@ -5,6 +5,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/utilities/fwd-tdme.h>
+#include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Reference.h>
 
 using std::string;
@@ -20,24 +21,68 @@ class tdme::engine::fileio::textures::Texture final: public Reference
 {
 public:
 
+	enum TextureDepth {
+		TEXTUREDEPTH_UNKNOWN,
+		TEXTUREDEPTH_RGB,
+		TEXTUREDEPTH_RGBA
+	};
+
+	enum TextureFormat {
+		TEXTUREFORMAT_UNKNOWN,
+		TEXTUREFORMAT_RGB,
+		TEXTUREFORMAT_RGBA,
+		TEXTUREFORMAT_RGB_PNG,
+		TEXTUREFORMAT_RGBA_PNG
+	};
+
 	enum ClampMode { CLAMPMODE_EDGE, CLAMPMODE_TRANSPARENTPIXEL };
+
+	/**
+	 * Return texture depth by bits per pixel
+	 * @param bpp bits per pixel
+	 * @return texture depth by bits per pixel
+	 */
+	inline static TextureDepth getDepthByPixelBitsPerPixel(int bpp) {
+		switch (bpp) {
+			case 24: return TEXTUREDEPTH_RGB;
+			case 32: return TEXTUREDEPTH_RGBA;
+			default: return TEXTUREDEPTH_UNKNOWN;
+		}
+	}
+
+	/**
+	 * Return texture depth by bits per pixel
+	 * @param bpp bits per pixel
+	 * @return texture depth by bits per pixel
+	 */
+	inline static TextureFormat getRGBFormatByPixelBitsPerPixel(int bpp) {
+		switch (bpp) {
+			case 24: return TEXTUREFORMAT_RGB;
+			case 32: return TEXTUREFORMAT_RGBA;
+			default: return TEXTUREFORMAT_UNKNOWN;
+		}
+	}
 
 	/**
 	 * Public constructor
 	 * @param id id
 	 * @param depth depth
+	 * @param format texture backing format
 	 * @param width width
 	 * @param height height
 	 * @param textureWidth texture width
 	 * @param textureHeight texture height
+	 * @param textureDataFormat texture data format
 	 * @param textureData texture data
 	 */
 	inline Texture(
 		const string& id,
-		uint8_t depth,
+		TextureDepth depth,
+		TextureFormat format,
 		uint16_t width, uint16_t height,
 		uint16_t textureWidth, uint16_t textureHeight,
-		ByteBuffer* textureData):
+		TextureFormat textureDataFormat,
+		const ByteBuffer& textureData):
 		Reference(),
 		id(id),
 		depth(depth),
@@ -45,12 +90,13 @@ public:
 		height(height),
 		textureWidth(textureWidth),
 		textureHeight(textureHeight),
-		textureData(textureData),
 		useMipMap(true),
 		repeat(true),
 		clampMode(CLAMPMODE_EDGE),
-		atlasSize(1) {
+		atlasSize(1),
+		textureData(textureWidth * textureHeight * (depth / 8)) {
 		//
+		setTextureData(textureDataFormat, textureData);
 	}
 
 	/**
@@ -61,10 +107,21 @@ public:
 	}
 
 	/**
+	 * @return depth
+	 */
+	inline TextureDepth getDepth() {
+		return depth;
+	}
+
+	/**
 	 * @return depth in bits per pixel
 	 */
-	inline uint8_t getDepth() const {
-		return depth;
+	inline uint8_t getDepthBitsPerPixel() const {
+		switch (depth) {
+			case TEXTUREDEPTH_RGB: return 24;
+			case TEXTUREDEPTH_RGBA: return 32;
+		}
+		return 0;
 	}
 
 	/**
@@ -96,10 +153,22 @@ public:
 	}
 
 	/**
-	 * @return texture data wrapped in a byte buffer
+	 * @return RGB/RGBA texture data wrapped in a byte buffer
 	 */
-	inline ByteBuffer* getTextureData() {
-		return textureData;
+	ByteBuffer getUncompressedTextureData();
+
+	/**
+	 * Set RGB(A) texture data
+	 * @param format texture data format
+	 * @param textureData texture data
+	 */
+	void setTextureData(TextureFormat format, const ByteBuffer& textureData);
+
+	/**
+	 * @return backing texture data wrapped in a byte buffer
+	 */
+	inline ByteBuffer getTextureData() {
+		return ByteBuffer(textureData);
 	}
 
 	/**
@@ -163,16 +232,16 @@ public:
 	}
 
 	// overridden methods
-	inline virtual void onDelete() override;
+	virtual void onDelete() override;
 
 private:
 	string id;
-	uint8_t depth;
+	TextureDepth depth;
 	uint16_t width;
 	uint16_t height;
 	uint16_t textureHeight;
 	uint16_t textureWidth;
-	ByteBuffer* textureData;
+	ByteBuffer textureData;
 	bool useMipMap;
 	bool repeat;
 	ClampMode clampMode;
@@ -181,5 +250,7 @@ private:
 	/**
 	 * Destructor
 	 */
-	~Texture();
+	inline virtual ~Texture() {
+	}
+
 };

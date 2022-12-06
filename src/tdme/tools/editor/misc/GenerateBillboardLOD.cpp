@@ -101,9 +101,10 @@ Model* GenerateBillboardLOD::generate(
 	auto minY = 10000;
 	auto maxY = -1;
 	auto texture = TextureReader::read(pathName, textureFileName, false, false);
+	auto textureTextureData = texture->getUncompressedTextureData();
 	for (auto y = 0; y < texture->getTextureHeight(); y++) {
 		for (auto x = 0; x < texture->getTextureWidth(); x++) {
-			auto alpha = texture->getTextureData()->get(y * texture->getTextureWidth() * 4 + x * 4 + 3);
+			auto alpha = textureTextureData.get(y * texture->getTextureWidth() * 4 + x * 4 + 3);
 			if (alpha < 5) continue;
 			minX = Math::min(minX, x);
 			maxX = Math::max(maxX, x);
@@ -115,34 +116,35 @@ Model* GenerateBillboardLOD::generate(
 	// crop texture
 	auto croppedTextureWidth = maxX - minX;
 	auto croppedTextureHeight = maxY - minY;
-	auto croppedTextureByteBuffer = new ByteBuffer(croppedTextureWidth * croppedTextureHeight * 4);
-	auto croppedTexture = new Texture(
-		"tdme.engine.croppedtexture",
-		32,
-		croppedTextureWidth,
-		croppedTextureHeight,
-		croppedTextureWidth,
-		croppedTextureHeight,
-		croppedTextureByteBuffer
-	);
+	auto croppedTextureByteBuffer = ByteBuffer(croppedTextureWidth * croppedTextureHeight * 4);
 	for (auto y = minY; y < maxY; y++) {
 		for (auto x = minX; x < maxX; x++) {
 			auto pixelOffset = y * texture->getTextureWidth() * 4 + x * 4;
-			auto red = texture->getTextureData()->get(pixelOffset + 0);
-			auto green = texture->getTextureData()->get(pixelOffset + 1);
-			auto blue = texture->getTextureData()->get(pixelOffset + 2);
-			auto alpha = texture->getTextureData()->get(pixelOffset + 3);
-			croppedTextureByteBuffer->put(red);
-			croppedTextureByteBuffer->put(green);
-			croppedTextureByteBuffer->put(blue);
-			croppedTextureByteBuffer->put(alpha);
+			auto red = textureTextureData.get(pixelOffset + 0);
+			auto green = textureTextureData.get(pixelOffset + 1);
+			auto blue = textureTextureData.get(pixelOffset + 2);
+			auto alpha = textureTextureData.get(pixelOffset + 3);
+			croppedTextureByteBuffer.put(red);
+			croppedTextureByteBuffer.put(green);
+			croppedTextureByteBuffer.put(blue);
+			croppedTextureByteBuffer.put(alpha);
 		}
 	}
-
 	//
 	texture->releaseReference();
 
 	//
+	auto croppedTexture = new Texture(
+		"tdme.engine.croppedtexture",
+		Texture::TEXTUREDEPTH_RGBA,
+		Texture::TEXTUREFORMAT_RGBA,
+		croppedTextureWidth,
+		croppedTextureHeight,
+		croppedTextureWidth,
+		croppedTextureHeight,
+		Texture::TEXTUREFORMAT_RGBA,
+		croppedTextureByteBuffer
+	);
 	croppedTexture->acquireReference();
 	auto scaledTexture = TextureReader::scale(croppedTexture, 1024, 1024);
 	croppedTexture->releaseReference();

@@ -76,8 +76,8 @@ public:
 		auto textureHeight = texture->getTextureHeight();
 		if (x < 0 || x >= textureWidth) return;
 		if (y < 0 || y >= textureHeight) return;
-		auto buffer = texture->getTextureData()->getBuffer();
-		auto bytesPerPixel = texture->getDepth() / 8;
+		auto buffer = texture->getTextureData().getBuffer();
+		auto bytesPerPixel = texture->getDepthBitsPerPixel() / 8;
 		buffer[y * textureWidth * bytesPerPixel + x * bytesPerPixel + 0] = red;
 		buffer[y * textureWidth * bytesPerPixel + x * bytesPerPixel + 1] = green;
 		buffer[y * textureWidth * bytesPerPixel + x * bytesPerPixel + 2] = blue;
@@ -96,7 +96,7 @@ public:
 	 * @param alpha alpha
 	 */
 	inline void drawLine(int x1, int y1, int x2, int y2, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha) {
-		auto buffer = texture->getTextureData()->getBuffer();
+		auto buffer = texture->getTextureData().getBuffer();
 		auto imageWidth = texture->getTextureWidth();
 		auto imageHeight = texture->getTextureHeight();
 

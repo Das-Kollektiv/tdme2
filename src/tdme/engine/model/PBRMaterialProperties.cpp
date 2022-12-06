@@ -92,10 +92,10 @@ void PBRMaterialProperties::checkBaseColorTextureTransparency()
 {
 	baseColorTextureTransparency = false;
 	auto baseColorTextureMaskedTransparencyTest = true;
-	if (baseColorTexture != nullptr && baseColorTexture->getDepth() == 32) {
-		auto textureData = baseColorTexture->getTextureData();
+	if (baseColorTexture != nullptr && baseColorTexture->getDepthBitsPerPixel() == 32) {
+		auto textureData = baseColorTexture->getUncompressedTextureData();
 		for (auto i = 0; i < baseColorTexture->getTextureWidth() * baseColorTexture->getTextureHeight(); i++) {
-			auto alpha = textureData->get(i * 4 + 3);
+			auto alpha = textureData.get(i * 4 + 3);
 			if (alpha != 255) baseColorTextureTransparency = true;
 			if (alpha > 5 || alpha < 250) baseColorTextureMaskedTransparencyTest = false;
 		}

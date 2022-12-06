@@ -2168,16 +2168,21 @@ bool Engine::makeScreenshot(const string& pathName, const string& fileName, bool
 	// create texture, write and delete
 	auto texture = new Texture(
 		"tdme.engine.makescreenshot",
-		32,
+		Texture::TEXTUREDEPTH_RGBA,
+		Texture::TEXTUREFORMAT_RGBA,
 		width,
 		height,
 		width,
 		height,
-		pixels
+		Texture::TEXTUREFORMAT_RGBA,
+		*pixels
 	);
 	texture->acquireReference();
 	PNGTextureWriter::write(texture, pathName, fileName, removeAlphaChannel);
 	texture->releaseReference();
+
+	//
+	delete pixels;
 
 	// unuse framebuffer if we have one
 	if (frameBuffer != nullptr) FrameBuffer::disableFrameBuffer();
@@ -2201,17 +2206,22 @@ bool Engine::makeScreenshot(vector<uint8_t>& pngData)
 	// create texture, write and delete
 	auto texture = new Texture(
 		"tdme.engine.makescreenshot",
-		32,
+		Texture::TEXTUREDEPTH_RGBA,
+		Texture::TEXTUREFORMAT_RGBA,
 		width,
 		height,
 		width,
 		height,
-		pixels
+		Texture::TEXTUREFORMAT_RGBA,
+		*pixels
 	);
 
 	texture->acquireReference();
 	PNGTextureWriter::write(texture, pngData);
 	texture->releaseReference();
+
+	//
+	delete pixels;
 
 	// unuse framebuffer if we have one
 	if (frameBuffer != nullptr) FrameBuffer::disableFrameBuffer();

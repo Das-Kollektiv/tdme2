@@ -9,8 +9,17 @@ using tdme::engine::fileio::textures::TextureReader;
 
 using tdme::utilities::ByteBuffer;
 
-Texture::~Texture() {
-	delete textureData;
+ByteBuffer Texture::getUncompressedTextureData() {
+	auto textureSize = textureWidth * textureHeight * (depth / 8);
+	textureData.clear();
+	textureData.put(textureData.getBuffer(), textureSize);
+	return textureData;
+}
+
+void Texture::setTextureData(TextureFormat format, const ByteBuffer& textureData) {
+	auto textureSize = textureWidth * textureHeight * (depth / 8);
+	this->textureData.clear();
+	this->textureData.put(textureData.getBuffer(), textureSize);
 }
 
 void Texture::onDelete() {

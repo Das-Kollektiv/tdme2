@@ -177,7 +177,7 @@ private:
 	 * @param bytesPerPixel bytes per pixel
 	 * @param y y position in original image
 	 */
-	static void scaleTextureLine(ByteBuffer* pixelByteBuffer, ByteBuffer* pixelByteBufferScaled, int width, int textureWidth, int bytesPerPixel, int y);
+	static void scaleTextureLine(const ByteBuffer& pixelByteBuffer, ByteBuffer& pixelByteBufferScaled, int width, int textureWidth, int bytesPerPixel, int y);
 
 	//
 	STATIC_DLL_IMPEXT static vector<string> extensions;

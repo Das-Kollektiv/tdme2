@@ -72,10 +72,10 @@ bool PNGTextureWriter::write(Texture* texture, vector<uint8_t>& pngData, bool re
 	png_set_write_fn(png, &pngOutputStream, PNGTextureWriter::writePNGDataToMemory, PNGTextureWriter::flushPNGDataToMemory);
 
 	//
-	auto bytesPerPixel = texture->getDepth() / 8;
+	auto bytesPerPixel = texture->getDepthBitsPerPixel() / 8;
 	auto width = texture->getTextureWidth();
 	auto height = texture->getTextureHeight();
-	auto pixels = texture->getTextureData();
+	auto pixels = texture->getUncompressedTextureData();
 
 	// output is 8bit depth, RGBA format.
 	png_set_IHDR(
@@ -97,11 +97,12 @@ bool PNGTextureWriter::write(Texture* texture, vector<uint8_t>& pngData, bool re
 	}
 
 	//
+	auto pixelBuffer = pixels.getBuffer();
 	png_bytep* row_pointers = new png_bytep[height];
 	if (flipY == true) {
-		for (auto y = 0; y < height; y++) row_pointers[y] = pixels->getBuffer() + width * bytesPerPixel * (height - 1 - y);
+		for (auto y = 0; y < height; y++) row_pointers[y] = pixelBuffer + width * bytesPerPixel * (height - 1 - y);
 	} else {
-		for (auto y = 0; y < height; y++) row_pointers[y] = pixels->getBuffer() + width * bytesPerPixel * y;
+		for (auto y = 0; y < height; y++) row_pointers[y] = pixelBuffer + width * bytesPerPixel * y;
 	}
 
 	png_write_image(png, row_pointers);
