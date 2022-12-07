@@ -8,7 +8,7 @@
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Color4.h>
@@ -47,7 +47,7 @@ using tdme::application::Application;
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::fileio::models::TMWriterOutputStream;
 using tdme::engine::fileio::textures::PNGTextureWriter;
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Color4;

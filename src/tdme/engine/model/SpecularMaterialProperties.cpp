@@ -3,7 +3,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/math/Math.h>
@@ -11,7 +11,7 @@
 
 using std::string;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::SpecularMaterialProperties;
@@ -88,8 +88,8 @@ void SpecularMaterialProperties::checkDiffuseTextureTransparency()
 {
 	diffuseTextureTransparency = false;
 	auto diffuseTextureMaskedTransparencyTest = true;
-	if (diffuseTexture != nullptr && diffuseTexture->getDepthBitsPerPixel() == 32) {
-		auto textureData = diffuseTexture->getUncompressedTextureData();
+	if (diffuseTexture != nullptr && diffuseTexture->getRGBDepthBitsPerPixel() == 32) {
+		auto textureData = diffuseTexture->getRGBTextureData();
 		for (auto i = 0; i < diffuseTexture->getTextureWidth() * diffuseTexture->getTextureHeight(); i++) {
 			auto alpha = textureData.get(i * 4 + 3);
 			if (alpha != 255) diffuseTextureTransparency = true;

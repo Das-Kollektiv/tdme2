@@ -3,14 +3,14 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/utilities/ByteBuffer.h>
 
 using std::vector;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::ColorTexture;
 using tdme::math::Vector2;
 using tdme::utilities::ByteBuffer;
@@ -77,7 +77,7 @@ public:
 		if (x < 0 || x >= textureWidth) return;
 		if (y < 0 || y >= textureHeight) return;
 		auto buffer = texture->getTextureData().getBuffer();
-		auto bytesPerPixel = texture->getDepthBitsPerPixel() / 8;
+		auto bytesPerPixel = texture->getRGBDepthBitsPerPixel() / 8;
 		buffer[y * textureWidth * bytesPerPixel + x * bytesPerPixel + 0] = red;
 		buffer[y * textureWidth * bytesPerPixel + x * bytesPerPixel + 1] = green;
 		buffer[y * textureWidth * bytesPerPixel + x * bytesPerPixel + 2] = blue;

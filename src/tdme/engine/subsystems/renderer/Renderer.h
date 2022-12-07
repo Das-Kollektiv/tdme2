@@ -27,7 +27,7 @@ using std::map;
 using std::string;
 using std::vector;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::EntityShaderParameters;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;

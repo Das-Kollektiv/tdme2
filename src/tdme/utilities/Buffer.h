@@ -25,6 +25,38 @@ protected:
 
 public:
 	/**
+	 * Assignment operator
+	 * @param buffer buffer
+	 * @return this buffer
+	 */
+	inline Buffer& operator=(const Buffer& buffer) {
+		this->createdBuffer = buffer.createdBuffer;
+		this->position = buffer.position;
+		if (createdBuffer == true) {
+			this->buffer = new vector<uint8_t>(0);
+			*this->buffer = *buffer.buffer;
+		} else {
+			this->buffer = buffer.buffer;
+		}
+		return *this;
+	}
+
+	/**
+	 * Copy constructor
+	 * @param buffer buffer
+	 */
+	inline Buffer(const Buffer& buffer) {
+		this->createdBuffer = buffer.createdBuffer;
+		this->position = buffer.position;
+		if (createdBuffer == true) {
+			this->buffer = new vector<uint8_t>(0);
+			*this->buffer = *buffer.buffer;
+		} else {
+			this->buffer = buffer.buffer;
+		}
+	}
+
+	/**
 	 * Public constructor
 	 * @param capacity capacity
 	 */

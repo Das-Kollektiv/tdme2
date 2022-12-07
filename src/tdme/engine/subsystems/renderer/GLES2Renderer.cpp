@@ -11,7 +11,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/math/Matrix4x4.h>
@@ -34,7 +34,7 @@ using std::vector;
 
 using tdme::engine::subsystems::renderer::GLES2Renderer;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::math::Matrix4x4;
@@ -483,16 +483,16 @@ int32_t GLES2Renderer::createGBufferColorTexture(int32_t width, int32_t height) 
 void GLES2Renderer::uploadTexture(int contextIdx, Texture* texture)
 {
 	//
-	auto textureTextureData = texture->getUncompressedTextureData();
+	auto textureTextureData = texture->getRGBTextureData();
 	//
 	glTexImage2D(
 		GL_TEXTURE_2D,
 		0,
-		texture->getDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
+		texture->getRGBDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
 		texture->getTextureWidth(),
 		texture->getTextureHeight(),
 		0,
-		texture->getDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
+		texture->getRGBDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
 		GL_UNSIGNED_BYTE,
 		textureTextureData.getBuffer()
 	);
@@ -526,96 +526,96 @@ void GLES2Renderer::uploadTexture(int contextIdx, Texture* texture)
 void GLES2Renderer::uploadCubeMapTexture(int contextIdx, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) {
 	{
 		//
-		auto textureTextureData = textureLeft->getUncompressedTextureData();
+		auto textureTextureData = textureLeft->getRGBTextureData();
 		//
 		glTexImage2D(
 			GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
 			0,
-			textureLeft->getDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
+			textureLeft->getRGBDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
 			textureLeft->getTextureWidth(),
 			textureLeft->getTextureHeight(),
 			0,
-			textureLeft->getDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
+			textureLeft->getRGBDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
 			GL_UNSIGNED_BYTE,
 			textureTextureData.getBuffer()
 		);
 	}
 	{
 		//
-		auto textureTextureData = textureRight->getUncompressedTextureData();
+		auto textureTextureData = textureRight->getRGBTextureData();
 		//
 		glTexImage2D(
 			GL_TEXTURE_CUBE_MAP_POSITIVE_X,
 			0,
-			textureRight->getDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
+			textureRight->getRGBDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
 			textureRight->getTextureWidth(),
 			textureRight->getTextureHeight(),
 			0,
-			textureRight->getDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
+			textureRight->getRGBDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
 			GL_UNSIGNED_BYTE,
 			textureTextureData.getBuffer()
 		);
 	}
 	{
 		//
-		auto textureTextureData = textureTop->getUncompressedTextureData();
+		auto textureTextureData = textureTop->getRGBTextureData();
 		//
 		glTexImage2D(
 			GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
 			0,
-			textureTop->getDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
+			textureTop->getRGBDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
 			textureTop->getTextureWidth(),
 			textureTop->getTextureHeight(),
 			0,
-			textureTop->getDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
+			textureTop->getRGBDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
 			GL_UNSIGNED_BYTE,
 			textureTextureData.getBuffer()
 		);
 	}
 	{
 		//
-		auto textureTextureData = textureBottom->getUncompressedTextureData();
+		auto textureTextureData = textureBottom->getRGBTextureData();
 		//
 		glTexImage2D(
 			GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
 			0,
-			textureBottom->getDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
+			textureBottom->getRGBDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
 			textureBottom->getTextureWidth(),
 			textureBottom->getTextureHeight(),
 			0,
-			textureBottom->getDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
+			textureBottom->getRGBDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
 			GL_UNSIGNED_BYTE,
 			textureTextureData.getBuffer()
 		);
 	}
 	{
 		//
-		auto textureTextureData = textureFront->getUncompressedTextureData();
+		auto textureTextureData = textureFront->getRGBTextureData();
 		//
 		glTexImage2D(
 			GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
 			0,
-			textureFront->getDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
+			textureFront->getRGBDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
 			textureFront->getTextureWidth(),
 			textureFront->getTextureHeight(),
 			0,
-			textureFront->getDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
+			textureFront->getRGBDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
 			GL_UNSIGNED_BYTE,
 			textureTextureData.getBuffer()
 		);
 	}
 	{
 		//
-		auto textureTextureData = textureBack->getUncompressedTextureData();
+		auto textureTextureData = textureBack->getRGBTextureData();
 		//
 		glTexImage2D(
 			GL_TEXTURE_CUBE_MAP_NEGATIVE_Z,
 			0,
-			textureBack->getDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
+			textureBack->getRGBDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
 			textureBack->getTextureWidth(),
 			textureBack->getTextureHeight(),
 			0,
-			textureBack->getDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
+			textureBack->getRGBDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
 			GL_UNSIGNED_BYTE,
 			textureTextureData.getBuffer()
 		);

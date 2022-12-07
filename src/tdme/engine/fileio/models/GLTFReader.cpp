@@ -13,7 +13,7 @@
 #include <ext/tinygltf/tiny_gltf.h>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
@@ -52,7 +52,7 @@ using std::vector;
 
 using tdme::engine::fileio::models::GLTFReader;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::model::Animation;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
@@ -496,7 +496,7 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 						}
 						auto texture = new Texture(
 							fileName,
-							Texture::getDepthByPixelBitsPerPixel(image.bits * image.component),
+							Texture::getRGBDepthByPixelBitsPerPixel(image.bits * image.component),
 							Texture::getRGBFormatByPixelBitsPerPixel(image.bits * image.component),
 							image.width,
 							image.height,
@@ -529,7 +529,7 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 						}
 						auto texture = new Texture(
 							fileName,
-							Texture::getDepthByPixelBitsPerPixel(image.bits * image.component),
+							Texture::getRGBDepthByPixelBitsPerPixel(image.bits * image.component),
 							Texture::getRGBFormatByPixelBitsPerPixel(image.bits * image.component),
 							image.width,
 							image.height,
@@ -559,7 +559,7 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 						}
 						auto texture = new Texture(
 							fileName,
-							Texture::getDepthByPixelBitsPerPixel(image.bits * image.component),
+							Texture::getRGBDepthByPixelBitsPerPixel(image.bits * image.component),
 							Texture::getRGBFormatByPixelBitsPerPixel(image.bits * image.component),
 							image.width,
 							image.height,

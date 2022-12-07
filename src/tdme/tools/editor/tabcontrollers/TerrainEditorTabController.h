@@ -29,7 +29,7 @@ using std::string;
 using std::unordered_map;
 using std::vector;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::Transform;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;

@@ -7,7 +7,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/Color4.h>
@@ -42,7 +42,7 @@ using std::vector;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::fileio::models::TMReader;
 using tdme::engine::fileio::models::TMReaderInputStream;
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::model::Animation;
 using tdme::engine::model::Color4;

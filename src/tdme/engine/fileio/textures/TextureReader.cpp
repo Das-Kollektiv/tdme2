@@ -8,7 +8,7 @@
 #include <tdme/tdme.h>
 #include <tdme/utilities/ByteBuffer.h>
 
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Vector2.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -28,7 +28,7 @@ using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Vector2;
@@ -190,10 +190,10 @@ Texture* TextureReader::read2(const string& texturePathName, const string& textu
 	auto textureWidth = texture->getTextureWidth();
 	auto textureHeight = texture->getTextureHeight();
 	auto textureByteBuffer = ByteBuffer(textureWidth * textureHeight * 4);
-	auto diffuseTextureBytesPerPixel = texture->getDepthBitsPerPixel() / 8;
-	auto transparencyTextureBytesPerPixel = transparencyTexture->getDepthBitsPerPixel() / 8;
-	auto transparencyTextureTextureData = transparencyTexture->getUncompressedTextureData();
-	auto textureTextureData = texture->getUncompressedTextureData();
+	auto diffuseTextureBytesPerPixel = texture->getRGBDepthBitsPerPixel() / 8;
+	auto transparencyTextureBytesPerPixel = transparencyTexture->getRGBDepthBitsPerPixel() / 8;
+	auto transparencyTextureTextureData = transparencyTexture->getRGBTextureData();
+	auto textureTextureData = texture->getRGBTextureData();
 	for (auto y = 0; y < textureHeight; y++) {
 		for (auto x = 0; x < textureWidth; x++) {
 			auto transparencyTextureRed = transparencyTextureTextureData.get((y * textureWidth * transparencyTextureBytesPerPixel) + (x * transparencyTextureBytesPerPixel) + 0);
@@ -383,7 +383,7 @@ Texture* TextureReader::readPNG(const string& textureId, const vector<uint8_t>& 
 			// thats it, return the scaled version
 			auto texture = new Texture(
 				idPrefix + textureId,
-				Texture::getDepthByPixelBitsPerPixel(bytesPerPixel * 8),
+				Texture::getRGBDepthByPixelBitsPerPixel(bytesPerPixel * 8),
 				Texture::getRGBFormatByPixelBitsPerPixel(bytesPerPixel * 8),
 				width,
 				height,
@@ -400,7 +400,7 @@ Texture* TextureReader::readPNG(const string& textureId, const vector<uint8_t>& 
 	// thats it, return unscaled version
 	auto texture = new Texture(
 		idPrefix + textureId,
-		Texture::getDepthByPixelBitsPerPixel(bytesPerPixel * 8),
+		Texture::getRGBDepthByPixelBitsPerPixel(bytesPerPixel * 8),
 		Texture::getRGBFormatByPixelBitsPerPixel(bytesPerPixel * 8),
 		width,
 		height,
@@ -552,7 +552,7 @@ Texture* TextureReader::readPNG16(const string& textureId, const vector<uint8_t>
 			// thats it, return scaled version
 			auto texture = new Texture(
 				idPrefix + textureId + ":16",
-				Texture::getDepthByPixelBitsPerPixel(bytesPerPixel * 8),
+				Texture::getRGBDepthByPixelBitsPerPixel(bytesPerPixel * 8),
 				Texture::getRGBFormatByPixelBitsPerPixel(bytesPerPixel * 8),
 				width,
 				height,
@@ -569,7 +569,7 @@ Texture* TextureReader::readPNG16(const string& textureId, const vector<uint8_t>
 	// thats it, return unscaled version
 	auto texture = new Texture(
 		idPrefix + textureId + ":16",
-		Texture::getDepthByPixelBitsPerPixel(bytesPerPixel * 8),
+		Texture::getRGBDepthByPixelBitsPerPixel(bytesPerPixel * 8),
 		Texture::getRGBFormatByPixelBitsPerPixel(bytesPerPixel * 8),
 		width,
 		height,
@@ -617,7 +617,7 @@ void TextureReader::removeFromCache(Texture* texture) {
 Texture* TextureReader::rotate(Texture* texture, float rotation, const string& idSuffix) {
 	auto textureWidth = texture->getTextureWidth();
 	auto textureHeight = texture->getTextureHeight();
-	auto textureBytesPerPixel = texture->getDepthBitsPerPixel() / 8;
+	auto textureBytesPerPixel = texture->getRGBDepthBitsPerPixel() / 8;
 	auto textureWidthRotated = -1;
 	auto textureHeightRotated = -1;
 	{
@@ -651,7 +651,7 @@ Texture* TextureReader::rotate(Texture* texture, float rotation, const string& i
 		textureHeightRotated = static_cast<int>(textureHeightTransformedMax
 				- textureHeightTransformedMin);
 	}
-	auto textureTextureData = texture->getUncompressedTextureData();
+	auto textureTextureData = texture->getRGBTextureData();
 	auto rotatedTextureByteBuffer = ByteBuffer(textureWidthRotated * textureHeightRotated * 4);
 	auto rotationsMatrix = Matrix2D3x3::rotateAroundPoint(Vector2(textureWidth / 2.0f, textureHeight / 2.0f), rotation);
 	for (auto y = 0; y < textureHeightRotated; y++) {
@@ -700,10 +700,10 @@ Texture* TextureReader::rotate(Texture* texture, float rotation, const string& i
 }
 
 Texture* TextureReader::scale(Texture* texture, int width, int height, const string& idSuffix) {
-	auto textureTextureData = texture->getUncompressedTextureData();
+	auto textureTextureData = texture->getRGBTextureData();
 	auto textureWidth = texture->getTextureWidth();
 	auto textureHeight = texture->getTextureHeight();
-	auto textureBytesPerPixel = texture->getDepthBitsPerPixel() / 8;
+	auto textureBytesPerPixel = texture->getRGBDepthBitsPerPixel() / 8;
 	auto textureWidthScaled = width;
 	auto textureHeightScaled = height;
 	auto scaledTextureByteBuffer = ByteBuffer(textureWidthScaled * textureHeightScaled * 4);
@@ -755,10 +755,10 @@ Texture* TextureReader::smooth(Texture* texture, const string& idSuffix, float a
 	//
 	auto textureWidth = texture->getTextureWidth();
 	auto textureHeight = texture->getTextureHeight();
-	auto textureBytesPerPixel = texture->getDepthBitsPerPixel() / 8;
+	auto textureBytesPerPixel = texture->getRGBDepthBitsPerPixel() / 8;
 
 	//
-	auto textureTextureData = texture->getUncompressedTextureData();
+	auto textureTextureData = texture->getRGBTextureData();
 
 	//
 	auto filteredTextureByteBuffer = ByteBuffer(textureWidth * textureHeight * 4);

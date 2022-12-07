@@ -7,7 +7,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/ByteBuffer.h>
@@ -21,7 +21,7 @@ using std::vector;
 
 using tdme::engine::fileio::textures::PNGTextureWriter;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::ByteBuffer;
@@ -72,10 +72,10 @@ bool PNGTextureWriter::write(Texture* texture, vector<uint8_t>& pngData, bool re
 	png_set_write_fn(png, &pngOutputStream, PNGTextureWriter::writePNGDataToMemory, PNGTextureWriter::flushPNGDataToMemory);
 
 	//
-	auto bytesPerPixel = texture->getDepthBitsPerPixel() / 8;
+	auto bytesPerPixel = texture->getRGBDepthBitsPerPixel() / 8;
 	auto width = texture->getTextureWidth();
 	auto height = texture->getTextureHeight();
-	auto pixels = texture->getUncompressedTextureData();
+	auto pixels = texture->getRGBTextureData();
 
 	// output is 8bit depth, RGBA format.
 	png_set_IHDR(

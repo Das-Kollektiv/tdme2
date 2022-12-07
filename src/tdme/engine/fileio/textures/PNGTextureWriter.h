@@ -7,11 +7,12 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
+#include <tdme/engine/fwd-tdme.h>
 
 using std::string;
 using std::vector;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 
 /**
  * PNG texture writer class

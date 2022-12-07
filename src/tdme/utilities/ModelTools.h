@@ -22,7 +22,7 @@ using std::map;
 using std::string;
 using std::vector;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::fileio::ProgressCallback;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;

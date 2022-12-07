@@ -7,7 +7,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/ProgressCallback.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/AnimationSetup.h>
@@ -41,7 +41,7 @@ using std::to_string;
 using std::unordered_set;
 using std::vector;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::fileio::ProgressCallback;
 using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;

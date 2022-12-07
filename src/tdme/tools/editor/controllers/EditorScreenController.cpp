@@ -12,7 +12,7 @@
 #include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
 #include <tdme/engine/fileio/scenes/SceneReader.h>
 #include <tdme/engine/fileio/scenes/SceneWriter.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/prototype/Prototype.h>
@@ -83,7 +83,7 @@ using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::fileio::prototypes::PrototypeWriter;
 using tdme::engine::fileio::scenes::SceneReader;
 using tdme::engine::fileio::scenes::SceneWriter;
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::prototype::Prototype_Type;

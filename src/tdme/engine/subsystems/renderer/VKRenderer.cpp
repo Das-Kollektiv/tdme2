@@ -39,7 +39,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
@@ -109,7 +109,7 @@ using std::vector;
 using tdme::engine::subsystems::renderer::VKRenderer;
 
 using tdme::application::Application;
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::renderer::Renderer;
@@ -683,7 +683,7 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_type*
 		.pNext = nullptr,
 		.flags = 0,
 		.imageType = VK_IMAGE_TYPE_2D,
-		.format = texture->getDepthBitsPerPixel() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM,
+		.format = texture->getRGBDepthBitsPerPixel() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM,
 		.extent = {
 			.width = textureWidth,
 			.height = textureHeight,
@@ -724,8 +724,8 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_type*
 		void* data;
 		err = vmaMapMemory(vmaAllocator, textureObject->allocation, &data);
 		assert(!err);
-		auto bytesPerPixel = texture->getDepthBitsPerPixel() / 8;
-		auto textureTextureData = texture->getUncompressedTextureData();
+		auto bytesPerPixel = texture->getRGBDepthBitsPerPixel() / 8;
+		auto textureTextureData = texture->getRGBTextureData();
 		for (auto y = 0; y < textureHeight; y++) {
 			uint8_t* row = (uint8_t*)((uint8_t*)data + subResourceLayout.offset + subResourceLayout.rowPitch * y);
 			for (auto x = 0; x < textureWidth; x++) {
@@ -4628,7 +4628,7 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 	textureType.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 
 	//
-	const VkFormat textureFormat = texture->getDepthBitsPerPixel() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
+	const VkFormat textureFormat = texture->getRGBDepthBitsPerPixel() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
 	VkFormatProperties textureFormatProperties;
 	VkResult err;
 
@@ -4880,7 +4880,7 @@ void VKRenderer::uploadCubeMapSingleTexture(int contextIdx, texture_type* cubema
 	auto& cubemapTextureTypeRef = *cubemapTextureType;
 
 	//
-	const VkFormat textureFormat = texture->getDepthBitsPerPixel() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
+	const VkFormat textureFormat = texture->getRGBDepthBitsPerPixel() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
 	VkFormatProperties textureFormatProperties;
 	VkResult err;
 	vkGetPhysicalDeviceFormatProperties(physicalDevice, textureFormat, &textureFormatProperties);

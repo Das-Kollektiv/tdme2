@@ -9,7 +9,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
@@ -44,7 +44,7 @@ using std::vector;
 
 using tdme::utilities::Terrain;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
@@ -421,10 +421,10 @@ void Terrain::applyBrushToTerrainModels(
 	if (brushOperation == BRUSHOPERATION_WATER_ADD) return;
 
 	// other operations
-	auto textureData = brushTexture->getUncompressedTextureData();
+	auto textureData = brushTexture->getRGBTextureData();
 	auto textureWidth = brushTexture->getTextureWidth();
 	auto textureHeight = brushTexture->getTextureHeight();
-	auto textureBytePerPixel = brushTexture->getDepthBitsPerPixel() == 32?4:3;
+	auto textureBytePerPixel = brushTexture->getRGBDepthBitsPerPixel() == 32?4:3;
 	for (auto z = 0.0f; z < textureHeight * brushScale; z+= STEP_SIZE) {
 		auto brushPosition =
 			brushCenterPosition.
@@ -759,10 +759,10 @@ void Terrain::applyRampBrushToTerrainModels(
 	auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getZ() / STEP_SIZE));
 
 	// texture
-	auto textureData = brushTexture->getUncompressedTextureData();
+	auto textureData = brushTexture->getRGBTextureData();
 	auto textureWidth = brushTexture->getTextureWidth();
 	auto textureHeight = brushTexture->getTextureHeight();
-	auto textureBytePerPixel = brushTexture->getDepthBitsPerPixel() == 32?4:3;
+	auto textureBytePerPixel = brushTexture->getRGBDepthBitsPerPixel() == 32?4:3;
 
 	// brush texture matrix
 	Matrix2D3x3 brushTextureMatrix;
@@ -1401,10 +1401,10 @@ void Terrain::applyFoliageBrush(
 	auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getZ() / STEP_SIZE));
 
 	// other operations
-	auto textureData = foliageBrush.brushTexture->getUncompressedTextureData();
+	auto textureData = foliageBrush.brushTexture->getRGBTextureData();
 	auto textureWidth = foliageBrush.brushTexture->getTextureWidth();
 	auto textureHeight = foliageBrush.brushTexture->getTextureHeight();
-	auto textureBytePerPixel = foliageBrush.brushTexture->getDepthBitsPerPixel() == 32?4:3;
+	auto textureBytePerPixel = foliageBrush.brushTexture->getRGBDepthBitsPerPixel() == 32?4:3;
 
 	//
 	vector<unordered_map<int, float>> brushMapCountMapTemplate;
@@ -1649,10 +1649,10 @@ void Terrain::applyFoliageDeleteBrush(
 	auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getZ() / STEP_SIZE));
 
 	// other operations
-	auto textureData = foliageBrush.brushTexture->getUncompressedTextureData();
+	auto textureData = foliageBrush.brushTexture->getRGBTextureData();
 	auto textureWidth = foliageBrush.brushTexture->getTextureWidth();
 	auto textureHeight = foliageBrush.brushTexture->getTextureHeight();
-	auto textureBytePerPixel = foliageBrush.brushTexture->getDepthBitsPerPixel() == 32?4:3;
+	auto textureBytePerPixel = foliageBrush.brushTexture->getRGBDepthBitsPerPixel() == 32?4:3;
 
 	auto heightMin = Float::MAX_VALUE;
 	auto heightMax = Float::MIN_VALUE;
@@ -1780,10 +1780,10 @@ void Terrain::updateFoliageTerrainBrush(
 	auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getZ() / STEP_SIZE));
 
 	// other operations
-	auto textureData = foliageBrush.brushTexture->getUncompressedTextureData();
+	auto textureData = foliageBrush.brushTexture->getRGBTextureData();
 	auto textureWidth = foliageBrush.brushTexture->getTextureWidth();
 	auto textureHeight = foliageBrush.brushTexture->getTextureHeight();
-	auto textureBytePerPixel = foliageBrush.brushTexture->getDepthBitsPerPixel() == 32?4:3;
+	auto textureBytePerPixel = foliageBrush.brushTexture->getRGBDepthBitsPerPixel() == 32?4:3;
 
 	//
 	for (auto z = 0.0f; z < textureHeight * foliageBrush.brushScale; z+= 1.0f) {
@@ -1940,10 +1940,10 @@ void Terrain::updateFoliageTerrainRampBrush(
 	auto terreinHeightVectorVerticesPerZ = static_cast<int>(Math::ceil(terrainBoundingBox.getDimensions().getZ() / STEP_SIZE));
 
 	// texture
-	auto textureData = brushTexture->getUncompressedTextureData();
+	auto textureData = brushTexture->getRGBTextureData();
 	auto textureWidth = brushTexture->getTextureWidth();
 	auto textureHeight = brushTexture->getTextureHeight();
-	auto textureBytePerPixel = brushTexture->getDepthBitsPerPixel() == 32?4:3;
+	auto textureBytePerPixel = brushTexture->getRGBDepthBitsPerPixel() == 32?4:3;
 
 	// brush texture matrix
 	Matrix2D3x3 brushTextureMatrix;

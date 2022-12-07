@@ -6,7 +6,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/TMWriter.h>
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
@@ -35,7 +35,7 @@ using std::vector;
 
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::fileio::textures::PNGTextureWriter;
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
@@ -121,7 +121,7 @@ void GenerateImposterLOD::generate(
 		auto minY = 10000;
 		auto maxY = -1;
 		auto texture = TextureReader::read(pathName, textureFileName, false, false);
-		auto textureTextureData = texture->getUncompressedTextureData();
+		auto textureTextureData = texture->getRGBTextureData();
 		for (auto y = 0; y < texture->getTextureHeight(); y++) {
 			for (auto x = 0; x < texture->getTextureWidth(); x++) {
 				auto alpha = textureTextureData.get(y * texture->getTextureWidth() * 4 + x * 4 + 3);

@@ -38,6 +38,7 @@ namespace engine {
 	class SceneConnector;
 	class SimplePartition;
 	class ShaderParameter;
+	class Texture;
 	class Timing;
 	class Transform;
 	struct Version;

@@ -6,7 +6,6 @@ namespace tdme {
 namespace engine {
 namespace fileio {
 namespace textures {
-	class Texture;
 	class TextureReader;
 	class PNGTextureWriter;
 }  // namespace textures

@@ -7,7 +7,7 @@
 #include <unordered_set>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
@@ -45,7 +45,7 @@ using std::to_string;
 using std::unordered_map;
 using std::unordered_set;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIChangeListener;

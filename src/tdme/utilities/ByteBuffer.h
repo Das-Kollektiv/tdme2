@@ -52,6 +52,13 @@ public:
 	}
 
 public:
+
+	/**
+	 * Public constructor
+	 */
+	inline ByteBuffer() : Buffer(static_cast<Buffer*>(nullptr)) {
+	}
+
 	/**
 	 * Public constructor
 	 * @param capacity capacity

@@ -4,7 +4,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/math/Math.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
@@ -15,7 +15,7 @@ using std::sort;
 using std::string;
 using std::to_string;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::math::Math;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
@@ -206,8 +206,8 @@ void TextureAtlas::update() {
 		auto atlasLeft = atlasTexture.left;
 		auto atlasTop = atlasTexture.top;
 		auto texture = atlasTexture.texture;
-		auto textureData = texture->getUncompressedTextureData();
-		auto textureBytesPerPixel = texture->getDepthBitsPerPixel() / 8;
+		auto textureData = texture->getRGBTextureData();
+		auto textureBytesPerPixel = texture->getRGBDepthBitsPerPixel() / 8;
 		auto textureWidth = texture->getTextureWidth();
 		auto textureHeight = texture->getTextureHeight();
 		for (auto y = 0; y < textureHeight; y++) {

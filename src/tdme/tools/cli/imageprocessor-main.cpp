@@ -3,7 +3,7 @@
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/Version.h>
 #include <tdme/os/filesystem/FileSystem.h>
@@ -15,7 +15,7 @@ using std::string;
 
 using tdme::application::Application;
 using tdme::engine::fileio::textures::PNGTextureWriter;
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::Version;
 using tdme::os::filesystem::FileSystem;
@@ -52,8 +52,8 @@ int main(int argc, char** argv)
 
 		// for now: do black pixel -> transparent pixels, every other pixel gets white
 		//	later we can provide color transform matrices with preset matrices
-		auto bytesPerPixel = image->getDepthBitsPerPixel() / 8;
-		auto imageTextureData = image->getUncompressedTextureData();
+		auto bytesPerPixel = image->getRGBDepthBitsPerPixel() / 8;
+		auto imageTextureData = image->getRGBTextureData();
 		for (auto y = 0; y < image->getTextureHeight(); y++) {
 			for (auto x = 0; x < image->getTextureWidth(); x++) {
 				auto offset = y * bytesPerPixel * image->getTextureWidth() + x * bytesPerPixel;
@@ -80,7 +80,7 @@ int main(int argc, char** argv)
 			}
 		}
 		// write back to image
-		image->setTextureData(Texture::getRGBFormatByPixelBitsPerPixel(image->getDepthBitsPerPixel()), imageTextureData);
+		image->setTextureData(Texture::getRGBFormatByPixelBitsPerPixel(image->getRGBDepthBitsPerPixel()), imageTextureData);
 
 		// smooth
 		auto smoothedTexture = TextureReader::smooth(image);

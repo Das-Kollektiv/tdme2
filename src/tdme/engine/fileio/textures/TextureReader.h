@@ -6,6 +6,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/threading/Mutex.h>
@@ -17,7 +18,7 @@ using std::map;
 using std::string;
 using std::vector;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::threading::Mutex;
 using tdme::utilities::ByteBuffer;
@@ -28,7 +29,7 @@ using tdme::utilities::ByteBuffer;
  */
 class tdme::engine::fileio::textures::TextureReader final
 {
-	friend class Texture;
+	friend class tdme::engine::Texture;
 
 public:
 	/**

@@ -5,7 +5,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/logics/LogicMiniScript.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
@@ -43,7 +43,7 @@ using tdme::tools::editor::tabcontrollers::TextEditorTabController;
 using std::string;
 using std::unordered_map;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::logics::LogicMiniScript;
 using tdme::engine::Engine;
 using tdme::gui::events::GUIActionListenerType;

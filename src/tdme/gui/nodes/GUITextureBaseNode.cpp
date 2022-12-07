@@ -1,7 +1,7 @@
 #include <tdme/gui/nodes/GUITextureBaseNode.h>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/nodes/GUIColor.h>
@@ -20,7 +20,7 @@
 
 using tdme::gui::nodes::GUITextureBaseNode;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::Engine;
 using tdme::gui::nodes::GUIColor;

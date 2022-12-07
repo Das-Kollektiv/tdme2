@@ -4,7 +4,7 @@
 #include <unordered_map>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/subsystems/manager/TextureManager_TextureManaged.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/os/threading/Mutex.h>
@@ -13,7 +13,7 @@
 using std::string;
 using std::unordered_map;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::manager::TextureManager_TextureManaged;
 using tdme::engine::subsystems::renderer::Renderer;

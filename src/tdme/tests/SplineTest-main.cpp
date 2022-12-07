@@ -2,7 +2,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
 #include <tdme/engine/ColorTextureCanvas.h>
@@ -17,7 +17,7 @@ using std::to_string;
 
 using tdme::application::Application;
 using tdme::engine::ColorTextureCanvas;
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::fileio::textures::PNGTextureWriter;
 using tdme::math::Math;

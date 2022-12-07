@@ -3,7 +3,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utilities/ByteBuffer.h>
@@ -13,7 +13,7 @@ using std::to_string;
 
 using tdme::engine::subsystems::renderer::Renderer;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::utilities::ByteBuffer;
@@ -68,14 +68,14 @@ Renderer::~Renderer() {
 }
 
 Texture* Renderer::generateMipMap(const string& id, Texture* texture, int32_t level, int32_t atlasBorderSize) {
-	auto textureTextureData = texture->getUncompressedTextureData();
+	auto textureTextureData = texture->getRGBTextureData();
 	auto generatedTextureWidth = texture->getTextureWidth() / 2;
 	auto generatedTextureHeight = texture->getTextureHeight() / 2;
 	auto generatedTextureByteBuffer = ByteBuffer(generatedTextureWidth * generatedTextureHeight * 4);
 	auto atlasTextureSize = texture->getWidth() / texture->getAtlasSize();
 	auto materialTextureWidth = texture->getTextureWidth() / texture->getAtlasSize();
 	auto materialTextureHeight = texture->getTextureHeight() / texture->getAtlasSize();
-	auto materialTextureBytesPerPixel = texture->getDepthBitsPerPixel() / 8;
+	auto materialTextureBytesPerPixel = texture->getRGBDepthBitsPerPixel() / 8;
 	for (auto y = 0; y < generatedTextureHeight; y++)
 	for (auto x = 0; x < generatedTextureWidth; x++) {
 		auto atlasTextureIdxX = (x * 2) / atlasTextureSize;

@@ -232,6 +232,7 @@ SRCS = \
 	src/tdme/engine/Rotation.cpp \
 	src/tdme/engine/SceneConnector.cpp \
 	src/tdme/engine/SimplePartition.cpp \
+	src/tdme/engine/Texture.cpp \
 	src/tdme/engine/Timing.cpp \
 	src/tdme/engine/Transform.cpp \
 	src/tdme/engine/Version.cpp \
@@ -246,7 +247,6 @@ SRCS = \
 	src/tdme/engine/fileio/scenes/SceneWriter.cpp \
 	src/tdme/engine/fileio/scenes/SceneReader.cpp \
 	src/tdme/engine/fileio/textures/PNGTextureWriter.cpp \
-	src/tdme/engine/fileio/textures/Texture.cpp \
 	src/tdme/engine/fileio/textures/TextureReader.cpp \
 	src/tdme/engine/logics/ApplicationClient.cpp \
 	src/tdme/engine/logics/ApplicationServer.cpp \
