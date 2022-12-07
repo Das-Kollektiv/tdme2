@@ -192,6 +192,7 @@ OGLCOMPILERSDLL = vulkan/OGLCompilersDLL
 VMA = vulkan/vma
 UINT128_T = uint128_t
 CPPSPLINE = cpp-spline
+BC7 = bc7
 
 SRCS_DEBUG =
 
@@ -817,6 +818,10 @@ EXT_CPPSPLINE_SRCS = \
 	ext/cpp-spline/src/Curve.cpp \
 	ext/cpp-spline/src/Vector.cpp
 
+EXT_BC7_SRCS = \
+	ext/bc7/bc7decomp.cpp \
+	ext/bc7/bc7enc.cpp
+
 OPENGL2_RENDERER_LIB_SRCS = \
 	src/tdme/engine/subsystems/renderer/EngineGL2Renderer.cpp \
 	src/tdme/engine/subsystems/renderer/GL2Renderer.cpp
@@ -976,6 +981,7 @@ EXT_VHACD_OBJS = $(EXT_VHACD_SRCS:ext/$(VHACD)/%.cpp=$(OBJ)/%.o)
 EXT_REACTPHYSICS3D_OBJS = $(EXT_REACTPHYSICS3D_SRCS:ext/$(REACTPHYSICS3D)/%.cpp=$(OBJ)/%.o)
 EXT_UINT128_T_OBJS = $(EXT_UINT128_T_SRCS:ext/$(UINT128_T)/%.cpp=$(OBJ)/%.o)
 EXT_CPPSPLINE_OBJS = $(EXT_CPPSPLINE_SRCS:ext/$(CPPSPLINE)/%.cpp=$(OBJ)/%.o)
+EXT_BC7_OBJS = $(EXT_BC7_SRCS:ext/$(BC7)/%.cpp=$(OBJ)/%.o)
 EXT_SPIRV_OBJS = $(EXT_SPIRV_SRCS:ext/$(SPIRV)/%.cpp=$(OBJ)/vulkan/%.o)
 EXT_GLSLANG_OBJS = $(EXT_GLSLANG_SRCS:ext/$(GLSLANG)/%.cpp=$(OBJ)/vulkan/%.o)
 EXT_OGLCOMPILERSDLL_OBJS = $(EXT_OGLCOMPILERSDLL_SRCS:ext/$(OGLCOMPILERSDLL)/%.cpp=$(OBJ)/vulkan/%.o)
@@ -1045,6 +1051,9 @@ $(EXT_UINT128_T_OBJS):$(OBJ)/%.o: ext/$(UINT128_T)/%.cpp | print-opts
 	$(cpp-command)
 
 $(EXT_CPPSPLINE_OBJS):$(OBJ)/%.o: ext/$(CPPSPLINE)/%.cpp | print-opts
+	$(cpp-command)
+
+$(EXT_BC7_OBJS):$(OBJ)/%.o: ext/$(BC7)/%.cpp | print-opts
 	$(cpp-command)
 
 $(EXT_SPIRV_OBJS):$(OBJ)/vulkan/%.o: ext/$(SPIRV)/%.cpp | print-opts
@@ -1169,7 +1178,7 @@ endif
 
 $(LIB_DIR)/$(LIB): $(OBJS) $(OBJS_DEBUG)
 
-$(LIB_DIR)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_SHA256_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_UINT128_T_OBJS) $(EXT_CPPSPLINE_OBJS)
+$(LIB_DIR)/$(EXT_LIB): $(EXT_OBJS) $(EXT_TINYXML_OBJS) $(EXT_ZLIB_OBJS) $(EXT_LIBPNG_OBJS) $(EXT_VORBIS_OBJS) $(EXT_OGG_OBJS) $(EXT_SHA256_OBJS) $(EXT_VHACD_OBJS) $(EXT_REACTPHYSICS3D_OBJS) $(EXT_UINT128_T_OBJS) $(EXT_CPPSPLINE_OBJS) $(EXT_BC7_OBJS)
 
 $(LIB_DIR)/$(OPENGL2_RENDERER_LIB): $(OPENGL2_RENDERER_LIB_OBJS)
 
