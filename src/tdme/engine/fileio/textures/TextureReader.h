@@ -49,17 +49,6 @@ public:
 	static Texture* read(const string& pathName, const string& fileName, bool useCache = true, bool powerOfTwo = true, const string& idPrefix = string());
 
 	/**
-	 * Reads a 16 bit texture
-	 * @param pathName path name
-	 * @param fileName file name
-	 * @param useCache use cache
-	 * @param powerOfTwo scale image to fit power of two dimensions
-	 * @param idPrefix id prefix
-	 * @return texture data instance or null
-	 */
-	static Texture* read16(const string& pathName, const string& fileName, bool useCache = true, bool powerOfTwo = true, const string& idPrefix = string());
-
-	/**
 	 * Reads a texture with additional transparency texture
 	 * @param texturePathName texture path name
 	 * @param textureFileName texture file name
@@ -73,22 +62,31 @@ public:
 	static Texture* read2(const string& texturePathName, const string& textureFileName, const string& transparencyTexturePathName, const string& transparencyTextureFileName, bool useCache = true, bool powerOfTwo = true, const string& idPrefix = string());
 
 	/**
-	 * Read PNG
+	 * Read PNG header from memory
+	 * @param data vector data to read PNG from
+	 * @param width width
+	 * @param height height
+	 * @param bytes per pixel
+	 * @return success
+	 */
+	static bool readPNGHeader(const vector<uint8_t>& data, int& width, int& height, uint8_t& bytesPerPixel);
+
+	/**
+	 * Read PNG from memory into texture byte buffer
+	 * @param data vector data to read PNG from
+	 * @param textureByteBuffer texture byte buffer
+	 * @return success
+	 */
+	static bool readPNG(const vector<uint8_t>& data, ByteBuffer& textureByteBuffer);
+
+	/**
+	 * Read PNG from memory
 	 * @param textureId texture id
-	 * @param data vector data to write PNG to
+	 * @param data vector data to read PNG from
 	 * @param powerOfTwo scale image to fit power of two dimensions
 	 * @param idPrefix id prefix
 	 */
 	static Texture* readPNG(const string& textureId, const vector<uint8_t>& data, bool powerOfTwo = true, const string& idPrefix = string());
-
-	/**
-	 * Read 16 bit PNG
-	 * @param textureId texture id
-	 * @param data vector data to write PNG to
-	 * @param powerOfTwo scale image to fit power of two dimensions
-	 * @param idPrefix id prefix
-	 */
-	static Texture* readPNG16(const string& textureId, const vector<uint8_t>& data, bool powerOfTwo = true, const string& idPrefix = string());
 
 	/**
 	 * Rotate texture around center

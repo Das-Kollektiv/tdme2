@@ -75,8 +75,9 @@ public:
 
 	/**
 	 * Public constructor
-	 * @param bytebuffer byte buffer to use as underlying buffer
+	 * @param data data
 	 */
-	inline ByteBuffer(ByteBuffer& byteBuffer) : Buffer(byteBuffer.buffer) {
+	inline ByteBuffer(const vector<uint8_t>& data) : Buffer(data) {
 	}
+
 };

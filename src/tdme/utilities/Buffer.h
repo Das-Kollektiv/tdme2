@@ -4,6 +4,7 @@
 #include <tdme/math/Math.h>
 #include <tdme/utilities/fwd-tdme.h>
 
+#include <string>
 #include <cstring>
 #include <vector>
 
@@ -33,8 +34,10 @@ public:
 		this->createdBuffer = buffer.createdBuffer;
 		this->position = buffer.position;
 		if (createdBuffer == true) {
-			this->buffer = new vector<uint8_t>(0);
-			*this->buffer = *buffer.buffer;
+			if (buffer.buffer != nullptr) {
+				this->buffer = new vector<uint8_t>(0);
+				*this->buffer = *buffer.buffer;
+			}
 		} else {
 			this->buffer = buffer.buffer;
 		}
@@ -49,8 +52,10 @@ public:
 		this->createdBuffer = buffer.createdBuffer;
 		this->position = buffer.position;
 		if (createdBuffer == true) {
-			this->buffer = new vector<uint8_t>(0);
-			*this->buffer = *buffer.buffer;
+			if (buffer.buffer != nullptr) {
+				this->buffer = new vector<uint8_t>(0);
+				*this->buffer = *buffer.buffer;
+			}
 		} else {
 			this->buffer = buffer.buffer;
 		}
@@ -87,11 +92,22 @@ public:
 	}
 
 	/**
+	 * Public constructor
+	 * @param data data
+	 */
+	inline Buffer(const vector<uint8_t>& data) {
+		this->createdBuffer = true;
+		this->position = 0;
+		this->buffer = new vector<uint8_t>(0);
+		*this->buffer = data;
+	}
+
+	/**
 	 * Destructor
 	 */
 	inline virtual ~Buffer() {
-		if (createdBuffer == true) {
-			delete this->buffer;
+		if (createdBuffer == true && buffer != nullptr) {
+			delete buffer;
 		}
 	}
 
@@ -155,6 +171,20 @@ public:
 		memcpy(&(*buffer)[position], data, sizeUsed);
 		position+= sizeUsed;
 		return this;
+	}
+
+	/**
+	 * @returns const pointer to underlying data vector
+	 */
+	inline const vector<uint8_t>* getBufferVector() const {
+		return buffer;
+	}
+
+	/**
+	 * @returns pointer to underlying data vector
+	 */
+	inline vector<uint8_t>* getBufferVector() {
+		return buffer;
 	}
 
 	/**

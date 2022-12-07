@@ -8,11 +8,13 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/utilities/ByteBuffer.h>
 
 using std::string;
 using std::vector;
 
 using tdme::engine::Texture;
+using tdme::utilities::ByteBuffer;
 
 /**
  * PNG texture writer class
@@ -78,7 +80,7 @@ public:
 	 * @param fileName file name
 	 * @param removeAlphaChannel remove alpha channel
 	 * @param flipY flip Y
-	 * @return texture data instance or null
+	 * @return success
 	 */
 	static bool write(Texture* texture, const string& pathName, const string& fileName, bool removeAlphaChannel = true, bool flipY = true);
 
@@ -88,8 +90,20 @@ public:
 	 * @param pngData PNG data
 	 * @param removeAlphaChannel remove alpha channel
 	 * @param flipY flip Y
-	 * @return texture data instance or null
+	 * @return success
 	 */
 	static bool write(Texture* texture, vector<uint8_t>& pngData, bool removeAlphaChannel = true, bool flipY = true);
+
+	/**
+	 * Writes a texture to PNG using a data vector
+	 * @param width width
+	 * @param height height
+	 * @param bytesPerPixel bytes per pixel
+	 * @param textureByteBuffer texture RGB byte buffer
+	 * @param pngData PNG data
+	 * @param removeAlphaChannel remove alpha channel
+	 * @return success
+	 */
+	static bool write(int width, int height, int bytesPerPixel, const ByteBuffer& textureByteBuffer, vector<uint8_t>& pngData, bool removeAlphaChannel = true, bool flipY = false);
 
 };

@@ -50,6 +50,19 @@ bool PNGTextureWriter::write(Texture* texture, const string& pathName, const str
 }
 
 bool PNGTextureWriter::write(Texture* texture, vector<uint8_t>& pngData, bool removeAlphaChannel, bool flipY) {
+	return
+		write(
+			texture->getTextureWidth(),
+			texture->getTextureHeight(),
+			texture->getRGBDepthBitsPerPixel(),
+			texture->getRGBTextureData(),
+			pngData,
+			removeAlphaChannel,
+			flipY
+		);
+}
+
+bool PNGTextureWriter::write(int width, int height, int bytesPerPixel, const ByteBuffer& textureByteBuffer, vector<uint8_t>& pngData, bool removeAlphaChannel, bool flipY) {
 	// see: https://gist.github.com/niw/5963798
 	png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	if (!png) {
@@ -71,12 +84,6 @@ bool PNGTextureWriter::write(Texture* texture, vector<uint8_t>& pngData, bool re
 	// set up custom read function
 	png_set_write_fn(png, &pngOutputStream, PNGTextureWriter::writePNGDataToMemory, PNGTextureWriter::flushPNGDataToMemory);
 
-	//
-	auto bytesPerPixel = texture->getRGBDepthBitsPerPixel() / 8;
-	auto width = texture->getTextureWidth();
-	auto height = texture->getTextureHeight();
-	auto pixels = texture->getRGBTextureData();
-
 	// output is 8bit depth, RGBA format.
 	png_set_IHDR(
 		png,
@@ -97,7 +104,7 @@ bool PNGTextureWriter::write(Texture* texture, vector<uint8_t>& pngData, bool re
 	}
 
 	//
-	auto pixelBuffer = pixels.getBuffer();
+	auto pixelBuffer = (uint8_t*)textureByteBuffer.getBuffer();
 	png_bytep* row_pointers = new png_bytep[height];
 	if (flipY == true) {
 		for (auto y = 0; y < height; y++) row_pointers[y] = pixelBuffer + width * bytesPerPixel * (height - 1 - y);
@@ -105,12 +112,16 @@ bool PNGTextureWriter::write(Texture* texture, vector<uint8_t>& pngData, bool re
 		for (auto y = 0; y < height; y++) row_pointers[y] = pixelBuffer + width * bytesPerPixel * y;
 	}
 
+	//
 	png_write_image(png, row_pointers);
 	png_write_end(png, NULL);
 
-	free (row_pointers);
+	//
+	delete [] row_pointers;
 
+	//
 	png_destroy_write_struct(&png, &info);
 
+	//
 	return true;
 }

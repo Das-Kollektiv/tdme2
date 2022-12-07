@@ -3,9 +3,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/utilities/fwd-tdme.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Reference.h>
 
@@ -87,6 +85,7 @@ public:
 		Reference(),
 		id(id),
 		depth(depth),
+		format(format),
 		width(width),
 		height(height),
 		textureWidth(textureWidth),
@@ -94,8 +93,7 @@ public:
 		useMipMap(true),
 		repeat(true),
 		clampMode(CLAMPMODE_EDGE),
-		atlasSize(1),
-		textureData(textureWidth * textureHeight * (getRGBDepthBitsPerPixel() / 8)) {
+		atlasSize(1) {
 		//
 		setTextureData(textureDataFormat, textureData);
 	}
@@ -156,7 +154,9 @@ public:
 	/**
 	 * @return RGB/RGBA texture data wrapped in a byte buffer
 	 */
-	ByteBuffer getRGBTextureData();
+	inline ByteBuffer getRGBTextureData() {
+		return getRGBTextureData(format, textureData);
+	}
 
 	/**
 	 * Set RGB(A) texture data
@@ -238,6 +238,7 @@ public:
 private:
 	string id;
 	TextureDepth depth;
+	TextureFormat format;
 	uint16_t width;
 	uint16_t height;
 	uint16_t textureHeight;
@@ -253,5 +254,13 @@ private:
 	 */
 	inline virtual ~Texture() {
 	}
+
+	/**
+	 * Get RGB/RGBA texture data wrapped in a byte buffer
+	 * @param format texture data format
+	 * @param textureData texture data
+	 * @return RGB/RGBA texture data wrapped in a byte buffer
+	 */
+	ByteBuffer getRGBTextureData(TextureFormat format, const ByteBuffer& textureData);
 
 };
