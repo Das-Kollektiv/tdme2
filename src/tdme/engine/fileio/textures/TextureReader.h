@@ -12,8 +12,6 @@
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/utilities/ByteBuffer.h>
 
-#include <ext/libpng/png.h>
-
 using std::map;
 using std::string;
 using std::vector;
@@ -30,6 +28,7 @@ using tdme::utilities::ByteBuffer;
 class tdme::engine::fileio::textures::TextureReader final
 {
 	friend class tdme::engine::Texture;
+	friend class PNGTextureReader;
 
 public:
 	/**
@@ -62,33 +61,6 @@ public:
 	static Texture* read2(const string& texturePathName, const string& textureFileName, const string& transparencyTexturePathName, const string& transparencyTextureFileName, bool useCache = true, bool powerOfTwo = true, const string& idPrefix = string());
 
 	/**
-	 * Read PNG header from memory
-	 * @param data vector data to read PNG from
-	 * @param width width
-	 * @param height height
-	 * @param bytes per pixel
-	 * @return success
-	 */
-	static bool readPNGHeader(const vector<uint8_t>& data, int& width, int& height, uint8_t& bytesPerPixel);
-
-	/**
-	 * Read PNG from memory into texture byte buffer
-	 * @param data vector data to read PNG from
-	 * @param textureByteBuffer texture byte buffer
-	 * @return success
-	 */
-	static bool readPNG(const vector<uint8_t>& data, ByteBuffer& textureByteBuffer);
-
-	/**
-	 * Read PNG from memory
-	 * @param textureId texture id
-	 * @param data vector data to read PNG from
-	 * @param powerOfTwo scale image to fit power of two dimensions
-	 * @param idPrefix id prefix
-	 */
-	static Texture* readPNG(const string& textureId, const vector<uint8_t>& data, bool powerOfTwo = true, const string& idPrefix = string());
-
-	/**
 	 * Rotate texture around center
 	 * @param texture texture
 	 * @param rotation rotation in degree
@@ -117,49 +89,6 @@ public:
 	static Texture* smooth(Texture* texture, const string& idSuffix = ":smoothed", float adjacentSampleWeight = 0.05f);
 
 private:
-	/**
-	 * PNG input stream
-	 */
-	class PNGInputStream {
-	public:
-
-		/**
-		 * Public constructor
-		 * @param data data
-		 */
-		PNGInputStream(const vector<uint8_t>* data): offset(0), data(data) {
-		}
-
-		/**
-		 * Destructor
-		 */
-		~PNGInputStream() {
-		}
-
-		/**
-		 * Read bytes
-		 * @param outBytes out bytes
-		 * @param outBytesToRead out bytes to read
-		 */
-		void readBytes(int8_t* outBytes, int32_t outBytesToRead) {
-			for (int32_t i = 0; i < outBytesToRead && offset < data->size(); i++) {
-				outBytes[i] = (*data)[offset++];
-			}
-		}
-
-	private:
-		int offset;
-		const vector<uint8_t>* data;
-
-	};
-
-	/**
-	 * Read PNG data from memory
-	 * @param png_ptr png structure
-	 * @param outBytes out bytes
-	 * @param outBytesToRead out bytes to read
-	 */
-	static void readPNGDataFromMemory(png_structp png_ptr, png_bytep outBytes, png_size_t outBytesToRead);
 
 	/**
 	 * Remove texture from cache

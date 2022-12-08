@@ -5,7 +5,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/Texture.h>
-#include <tdme/engine/fileio/textures/TextureReader.h>
+#include <tdme/engine/fileio/textures/PNGTextureReader.h>
 #include <tdme/engine/primitives/BoundingBox.h>
 #include <tdme/engine/primitives/BoundingVolume.h>
 #include <tdme/engine/primitives/Capsule.h>
@@ -55,7 +55,7 @@ using tdme::tools::editor::tabcontrollers::subcontrollers::PrototypePhysicsSubCo
 
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::Texture;
-using tdme::engine::fileio::textures::TextureReader;
+using tdme::engine::fileio::textures::PNGTextureReader;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::primitives::BoundingVolume;
 using tdme::engine::primitives::Capsule;
@@ -439,7 +439,7 @@ void PrototypePhysicsSubController::setBoundingVolumeDetails(Prototype* prototyp
 						(boundingVolume->hasConvexMeshData() == true &&
 						FileSystem::getInstance()->getThumbnailAttachment(boundingVolume->getConvexMeshData(), thumbnailPNGData) == true)
 						) {
-						thumbnailTexture = TextureReader::readPNG("tdme.editor.physics.convexmeshes." + to_string(thumbnailTextureIdx++), thumbnailPNGData, true);
+						thumbnailTexture = PNGTextureReader::read("tdme.editor.physics.convexmeshes." + to_string(thumbnailTextureIdx++), thumbnailPNGData, true);
 						if (thumbnailTexture != nullptr) {
 							thumbnailTexture->acquireReference();
 						}

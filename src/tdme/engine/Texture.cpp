@@ -3,6 +3,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
+#include <tdme/engine/fileio/textures/PNGTextureReader.h>
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
 #include <tdme/utilities/ByteBuffer.h>
 
@@ -11,6 +12,7 @@ using std::string;
 using tdme::engine::Texture;
 
 using tdme::engine::fileio::textures::TextureReader;
+using tdme::engine::fileio::textures::PNGTextureReader;
 using tdme::engine::fileio::textures::PNGTextureWriter;
 using tdme::utilities::ByteBuffer;
 
@@ -71,7 +73,7 @@ ByteBuffer Texture::getRGBTextureData(TextureFormat format, const ByteBuffer& te
 				auto rgbTextureData = ByteBuffer(textureWidth * textureHeight * rgbTextureDataBytesPerPixel);
 
 				//
-				TextureReader::readPNG(*textureData.getBufferVector(), rgbTextureData);
+				PNGTextureReader::read(*textureData.getBufferVector(), rgbTextureData);
 
 				//
 				return rgbTextureData;
@@ -83,7 +85,7 @@ ByteBuffer Texture::getRGBTextureData(TextureFormat format, const ByteBuffer& te
 				auto rgbTextureData = ByteBuffer(textureWidth * textureHeight * rgbTextureDataBytesPerPixel);
 
 				//
-				TextureReader::readPNG(*textureData.getBufferVector(), rgbTextureData);
+				PNGTextureReader::read(*textureData.getBufferVector(), rgbTextureData);
 
 				//
 				return rgbTextureData;
