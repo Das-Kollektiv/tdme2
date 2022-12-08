@@ -759,7 +759,6 @@ void Engine::initialize()
 	if (shadowMappingEnabled == true) {
 		if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(2048, 2048);
 		if (getShadowMapRenderLookUps() == 0) setShadowMapRenderLookUps(8);
-		shadowMappingEnabled = renderer->isBufferObjectsAvailable() == true && renderer->isDepthTextureAvailable() == true;
 	}
 	animationProcessingTarget = renderer->isGLCLAvailable() == true || renderer->isComputeShaderAvailable() == true?Engine::AnimationProcessingTarget::GPU:Engine::AnimationProcessingTarget::CPU;
 
@@ -868,20 +867,11 @@ void Engine::initialize()
 	texture2DRenderShader = new Texture2DRenderShader(renderer);
 	texture2DRenderShader->initialize();
 
-	// check if VBOs are available
-	if (renderer->isBufferObjectsAvailable()) {
-		Console::println("TDME2::VBOs are available.");
+	// check if texture compression is available
+	if (renderer->isTextureCompressionAvailable() == true) {
+		Console::println("TDME2::BC7 texture compression is available.");
 	} else {
-		Console::println("TDME2::VBOs are not available! Engine will not work!");
-		initialized = false;
-	}
-
-	// check FBO support
-	if (true == false/*glContext->hasBasicFBOSupport() == false*/) {
-		Console::println("TDME2::Basic FBOs are not available!");
-		shadowMappingEnabled = false;
-	} else {
-		Console::println("TDME2::Basic FBOs are available.");
+		Console::println("TDME2::BC7 texture compression is not available.");
 	}
 
 	// TODO: make this configurable

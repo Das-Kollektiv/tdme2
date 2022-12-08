@@ -49,8 +49,7 @@ public:
 	void initialize() override;
 	void initializeFrame() override;
 	void finishFrame() override;
-	bool isBufferObjectsAvailable() override;
-	bool isDepthTextureAvailable() override;
+	bool isTextureCompressionAvailable() override;
 	bool isUsingProgramAttributeLocation() override;
 	bool isSupportingIntegerProgramAttributes() override;
 	bool isSpecularMappingAvailable() override;

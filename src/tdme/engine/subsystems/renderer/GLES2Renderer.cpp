@@ -127,15 +127,9 @@ void GLES2Renderer::finishFrame()
 {
 }
 
-bool GLES2Renderer::isBufferObjectsAvailable()
+bool GLES2Renderer::isTextureCompressionAvailable()
 {
-	return true;
-}
-
-bool GLES2Renderer::isDepthTextureAvailable()
-{
-	// return glGetString(GL::GL_EXTENSIONS)->indexOf(u"GL_OES_depth_texture"_j) != -1;
-	return true;
+	return false;
 }
 
 bool GLES2Renderer::isUsingProgramAttributeLocation()

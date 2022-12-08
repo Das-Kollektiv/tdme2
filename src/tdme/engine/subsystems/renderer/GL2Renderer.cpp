@@ -81,7 +81,6 @@ GL2Renderer::GL2Renderer()
 	CUBEMAPTEXTUREINDEX_NEGATIVE_Z = GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
 	// TODO: buffer objects available
 	activeTextureUnit = 0;
-	bufferObjectsAvailable = true;
 }
 
 const string GL2Renderer::getVendor() {
@@ -103,19 +102,9 @@ bool GL2Renderer::isSupportingMultithreadedRendering() {
 	return false;
 }
 
-bool GL2Renderer::checkBufferObjectsAvailable()
+bool GL2Renderer::isTextureCompressionAvailable()
 {
-	// see: http://www.felixgers.de/teaching/jogl/vertexBufferObject.html
-	// Check if extension is available.
-	auto extensionOK = true; // isExtensionAvailable(u"GL_ARB_vertex_buffer_object"_j);
-	// Check for VBO functions.
-	auto functionsOK = true; // isFunctionAvailable(u"glGenBuffersARB"_j) && isFunctionAvailable(u"glBindBufferARB"_j) && isFunctionAvailable(u"glBufferDataARB"_j)&& isFunctionAvailable(u"glDeleteBuffersARB"_j);
-	return extensionOK == true && functionsOK == true;
-}
-
-bool GL2Renderer::isDepthTextureAvailable()
-{
-	return true;
+	return false;
 }
 
 void GL2Renderer::initialize()
@@ -123,8 +112,6 @@ void GL2Renderer::initialize()
 	glGetError();
 	// get default framebuffer
 	FRAMEBUFFER_DEFAULT = 0; // getContext()->getDefaultDrawFramebuffer();
-	// check VBO
-	bufferObjectsAvailable = checkBufferObjectsAvailable();
 	// setup open gl
 	glShadeModel(GL_SMOOTH);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -154,11 +141,6 @@ void GL2Renderer::initializeFrame()
 
 void GL2Renderer::finishFrame()
 {
-}
-
-bool GL2Renderer::isBufferObjectsAvailable()
-{
-	return bufferObjectsAvailable;
 }
 
 bool GL2Renderer::isUsingProgramAttributeLocation()

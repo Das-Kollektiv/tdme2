@@ -254,16 +254,9 @@ public:
 	virtual bool isSupportingMultithreadedRendering() = 0;
 
 	/**
-	 * Checks if buffer objects is available
-	 * @return buffer objects availability
+	 * @return returns if texture compression is available
 	 */
-	virtual bool isBufferObjectsAvailable() = 0;
-
-	/**
-	 * Checks if depth texture is available
-	 * @return depth texture is available
-	 */
-	virtual bool isDepthTextureAvailable() = 0;
+	virtual bool isTextureCompressionAvailable() = 0;
 
 	/**
 	 * @return requires program attribute location

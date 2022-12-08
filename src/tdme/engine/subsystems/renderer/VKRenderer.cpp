@@ -1984,14 +1984,9 @@ void VKRenderer::finishFrame()
 	frame++;
 }
 
-bool VKRenderer::isBufferObjectsAvailable()
+bool VKRenderer::isTextureCompressionAvailable()
 {
-	return true;
-}
-
-bool VKRenderer::isDepthTextureAvailable()
-{
-	return true;
+	return false;
 }
 
 bool VKRenderer::isUsingProgramAttributeLocation()

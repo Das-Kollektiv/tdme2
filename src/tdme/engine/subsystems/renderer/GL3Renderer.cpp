@@ -98,7 +98,7 @@ GL3Renderer::GL3Renderer()
 	activeTextureUnit = 0;
 	engineVAO = ID_NONE;
 	deferredShadingAvailable = false;
-	textureCompressionAvailable = true;
+	textureCompressionAvailable = false;
 }
 
 const string GL3Renderer::getVendor() {
@@ -192,6 +192,16 @@ void GL3Renderer::initialize()
 	int glMaxDrawBuffers = 0;
 	glGetIntegerv(GL_MAX_DRAW_BUFFERS, &glMaxDrawBuffers);
 	deferredShadingAvailable = glMaxColorAttachments >= 8 && glMaxDrawBuffers >= 8;
+	// texture compression
+	int textureCompressionParam = 0;
+	glGetInternalformativ(
+		GL_TEXTURE_2D,
+		GL_COMPRESSED_RGBA_BPTC_UNORM,
+		GL_INTERNALFORMAT_SUPPORTED,
+		1,
+		&textureCompressionParam
+	);
+	textureCompressionAvailable = textureCompressionParam == GL_TRUE;
 	// renderer contexts
 	rendererContexts.resize(1);
 	for (auto& rendererContext: rendererContexts) {
@@ -210,14 +220,9 @@ void GL3Renderer::finishFrame()
 {
 }
 
-bool GL3Renderer::isBufferObjectsAvailable()
+bool GL3Renderer::isTextureCompressionAvailable()
 {
-	return true;
-}
-
-bool GL3Renderer::isDepthTextureAvailable()
-{
-	return true;
+	return textureCompressionAvailable;
 }
 
 bool GL3Renderer::isUsingProgramAttributeLocation()
