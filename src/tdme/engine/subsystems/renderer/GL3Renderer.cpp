@@ -3,6 +3,7 @@
 #if defined (__APPLE__)
 	#define GL_SILENCE_DEPRECATION
 	#define GL_COMPRESSED_RGBA_BPTC_UNORM 0x8E8C
+	#define GL_INTERNALFORMAT_SUPPORTED 0x826F
 	#include <OpenGL/gl3.h>
 	#include <OpenGL/OpenGL.h>
 	#if !defined(__aarch64__)
