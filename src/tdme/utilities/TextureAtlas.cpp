@@ -242,6 +242,7 @@ void TextureAtlas::update() {
 		Texture::TEXTUREFORMAT_RGBA,
 		atlasTextureByteBuffer
 	);
+	atlasTexture->setUseCompression(false);
 	atlasTexture->setUseMipMap(false);
 	atlasTexture->acquireReference();
 

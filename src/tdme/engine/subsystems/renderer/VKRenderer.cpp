@@ -656,21 +656,6 @@ inline void VKRenderer::setImageLayout3(int contextIdx, VkImage image, VkImageAs
 	finishSetupCommandBuffer(contextIdx);
 }
 
-inline uint32_t VKRenderer::getMipLevels(Texture* texture) {
-	if (texture->isUseMipMap() == false) return 1;
-	if (texture->getAtlasSize() > 1) {
-		auto borderSize = 32;
-		auto maxLevel = 0;
-		while (borderSize > 4) {
-			maxLevel++;
-			borderSize/= 2;
-		}
-		return maxLevel;
-	} else {
-		return static_cast<uint32_t>(std::floor(std::log2(std::max(texture->getTextureWidth(), texture->getTextureHeight())))) + 1;
-	}
-}
-
 inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_type* textureObject, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags requiredFlags, Texture* texture, const array<ThsvsAccessType,2>& nextAccesses, ThsvsImageLayout imageLayout, bool disableMipMaps, uint32_t baseLevel, uint32_t levelCount) {
 	VkResult err;
 	bool pass;
@@ -689,7 +674,7 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_type*
 			.height = textureHeight,
 			.depth = 1
 		},
-		.mipLevels = disableMipMaps == false && texture->isUseMipMap() == true?getMipLevels(texture):1,
+		.mipLevels = disableMipMaps == false && texture->isUseMipMap() == true?static_cast<uint32_t>(getMipLevels(texture)):1,
 		.arrayLayers = 1,
 		.samples = VK_SAMPLE_COUNT_1_BIT,
 		.tiling = tiling,

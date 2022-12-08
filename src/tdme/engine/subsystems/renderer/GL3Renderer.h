@@ -73,6 +73,7 @@ private:
 	#endif
 
 	bool deferredShadingAvailable;
+	bool textureCompressionAvailable;
 public:
 	/**
 	 * Public constructor

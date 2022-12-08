@@ -770,6 +770,7 @@ Texture* GUIScreenNode::getImage(const string& applicationRootPath, const string
 		try {
 			image = TextureReader::read(path, file, false, false, "tdme.gui." + screenNode->getId() + ".");
 			if (image != nullptr) {
+				image->setUseCompression(false);
 				image->setUseMipMap(false);
 				image->setRepeat(false);
 				image->setClampMode(Texture::CLAMPMODE_TRANSPARENTPIXEL);

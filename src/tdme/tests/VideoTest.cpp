@@ -160,7 +160,8 @@ void VideoTest::display()
 	// video
 	videoDecoder.update(static_cast<float>(engine->getTiming()->getDeltaTime()) / 1000.0f);
 	auto videoTextureData = videoTexture->getByteBuffer();
-	if (videoDecoder.readVideoFromStream(&videoTextureData) > 0) {
+	videoTextureData->clear();
+	if (videoDecoder.readVideoFromStream(videoTextureData) > 0) {
 		videoTexture->update();
 	}
 	videoAudioBuffer->clear();

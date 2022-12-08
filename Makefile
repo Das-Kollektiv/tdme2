@@ -192,7 +192,7 @@ OGLCOMPILERSDLL = vulkan/OGLCompilersDLL
 VMA = vulkan/vma
 UINT128_T = uint128_t
 CPPSPLINE = cpp-spline
-BC7 = bc7
+BC7 = bc7enc_rdo
 
 SRCS_DEBUG =
 
@@ -247,6 +247,7 @@ SRCS = \
 	src/tdme/engine/fileio/prototypes/PrototypeReader.cpp \
 	src/tdme/engine/fileio/scenes/SceneWriter.cpp \
 	src/tdme/engine/fileio/scenes/SceneReader.cpp \
+	src/tdme/engine/fileio/textures/BZ7TextureWriter.cpp \
 	src/tdme/engine/fileio/textures/PNGTextureReader.cpp \
 	src/tdme/engine/fileio/textures/PNGTextureWriter.cpp \
 	src/tdme/engine/fileio/textures/TextureReader.cpp \
@@ -820,8 +821,8 @@ EXT_CPPSPLINE_SRCS = \
 	ext/cpp-spline/src/Vector.cpp
 
 EXT_BC7_SRCS = \
-	ext/bc7/bc7decomp.cpp \
-	ext/bc7/bc7enc.cpp
+	ext/bc7enc_rdo/bc7decomp.cpp \
+	ext/bc7enc_rdo/bc7enc.cpp
 
 OPENGL2_RENDERER_LIB_SRCS = \
 	src/tdme/engine/subsystems/renderer/EngineGL2Renderer.cpp \

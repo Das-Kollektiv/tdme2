@@ -56,7 +56,7 @@ OGG = ogg
 VHACD = v-hacd
 REACTPHYSICS3D = reactphysics3d
 CPPSPLINE = cppspline
-BC7 = bc7
+BC7 = bc7enc_rdo
 
 SRCS = \
 	src/tdme/audio/Audio.cpp \
@@ -109,6 +109,7 @@ SRCS = \
 	src/tdme/engine/fileio/prototypes/PrototypeReader.cpp \
 	src/tdme/engine/fileio/scenes/SceneWriter.cpp \
 	src/tdme/engine/fileio/scenes/SceneReader.cpp \
+	src/tdme/engine/fileio/textures/BZ7TextureWriter.cpp \
 	src/tdme/engine/fileio/textures/PNGTextureReader.cpp \
 	src/tdme/engine/fileio/textures/PNGTextureWriter.cpp \
 	src/tdme/engine/fileio/textures/TextureReader.cpp \
@@ -682,8 +683,8 @@ EXT_CPPSPLINE_SRCS = \
 	ext/cpp-spline/src/Vector.cpp
 
 EXT_BC7_SRCS = \
-	ext/bc7/bc7decomp.cpp \
-	ext/bc7/bc7enc.cpp
+	ext/bc7enc_rdo/bc7decomp.cpp \
+	ext/bc7enc_rdo/bc7enc.cpp
 
 EXT_SRCS = \
 	$(EXT_TINYXML_SRCS) \

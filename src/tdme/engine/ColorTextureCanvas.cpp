@@ -28,7 +28,7 @@ void ColorTextureCanvas::drawBezier(const vector<Vector2>& controlPoints, uint8_
 	//
 	auto textureWidth = texture->getTextureWidth();
 	auto textureHeight = texture->getTextureHeight();
-	auto buffer = texture->getTextureData().getBuffer();
+	auto buffer = texture->getTextureData()->getBuffer();
 
 	//
 	Bezier bezier;
@@ -65,7 +65,7 @@ void ColorTextureCanvas::debugBezier(const vector<Vector2>& controlPoints, uint8
 	//
 	auto textureWidth = texture->getTextureWidth();
 	auto textureHeight = texture->getTextureHeight();
-	auto buffer = texture->getTextureData().getBuffer();
+	auto buffer = texture->getTextureData()->getBuffer();
 
 	//
 	auto previousX = static_cast<int>(Math::round(controlPoints[0].getX()));

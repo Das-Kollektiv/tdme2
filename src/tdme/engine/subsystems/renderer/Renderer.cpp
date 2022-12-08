@@ -127,3 +127,31 @@ Texture* Renderer::generateMipMap(const string& id, Texture* texture, int32_t le
 	generatedTexture->acquireReference();
 	return generatedTexture;
 }
+
+int Renderer::getMipLevels(Texture* texture) {
+	if (texture->isUseMipMap() == false) return 1;
+	auto widthMipLevels = 1;
+	auto heightMipLevels = 1;
+	auto textureWidth = texture->getTextureWidth();
+	auto textureHeight = texture->getTextureHeight();
+	while (textureWidth > 16) {
+		textureWidth/= 2;
+		widthMipLevels++;
+	}
+	while (textureHeight > 16) {
+		textureHeight/= 2;
+		heightMipLevels++;
+	}
+	auto mipLevels = Math::min(widthMipLevels, heightMipLevels);
+	if (texture->getAtlasSize() > 1) {
+		auto borderSize = 32;
+		auto maxLevel = 0;
+		while (borderSize > 4) {
+			maxLevel++;
+			borderSize/= 2;
+		}
+		return Math::min(mipLevels, maxLevel);
+	}
+	//
+	return mipLevels;
+}

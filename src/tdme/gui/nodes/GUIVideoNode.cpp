@@ -179,7 +179,8 @@ void GUIVideoNode::onRenderTexture() {
 	// video
 	videoDecoder.update(static_cast<float>(timeDelta) / 1000.0f);
 	auto videoTextureData = videoTexture->getByteBuffer();
-	if (videoDecoder.readVideoFromStream(&videoTextureData) > 0) {
+	videoTextureData->clear();
+	if (videoDecoder.readVideoFromStream(videoTextureData) > 0) {
 		videoTexture->update();
 	}
 	videoAudioBuffer->clear();

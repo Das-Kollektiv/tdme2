@@ -90,6 +90,7 @@ public:
 		height(height),
 		textureWidth(textureWidth),
 		textureHeight(textureHeight),
+		useCompression(true),
 		useMipMap(true),
 		repeat(true),
 		clampMode(CLAMPMODE_EDGE),
@@ -159,6 +160,11 @@ public:
 	}
 
 	/**
+	 * @return BZ7 texture data wrapped in a byte buffer
+	 */
+	ByteBuffer getBZ7TextureData();
+
+	/**
 	 * Set RGB(A) texture data
 	 * @param format texture data format
 	 * @param textureData texture data
@@ -168,8 +174,23 @@ public:
 	/**
 	 * @return backing texture data wrapped in a byte buffer
 	 */
-	inline ByteBuffer getTextureData() {
-		return ByteBuffer(textureData);
+	inline ByteBuffer* getTextureData() {
+		return &textureData;
+	}
+
+	/**
+	 * @return is use compression
+	 */
+	inline bool isUseCompression() const {
+		return useCompression;
+	}
+
+	/**
+	 * Set if to use compression
+	 * @param useCompression use compression if available
+	 */
+	inline void setUseCompression(bool useCompression) {
+		this->useCompression = useCompression;
 	}
 
 	/**
@@ -244,6 +265,7 @@ private:
 	uint16_t textureHeight;
 	uint16_t textureWidth;
 	ByteBuffer textureData;
+	bool useCompression;
 	bool useMipMap;
 	bool repeat;
 	ClampMode clampMode;

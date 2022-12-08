@@ -2,19 +2,24 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Texture.h>
+#include <tdme/engine/fileio/textures/BZ7TextureWriter.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/fileio/textures/PNGTextureReader.h>
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
 #include <tdme/utilities/ByteBuffer.h>
+#include <tdme/utilities/Console.h>
 
 using std::string;
+using std::to_string;
 
 using tdme::engine::Texture;
 
+using tdme::engine::fileio::textures::BZ7TextureWriter;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::fileio::textures::PNGTextureReader;
 using tdme::engine::fileio::textures::PNGTextureWriter;
 using tdme::utilities::ByteBuffer;
+using tdme::utilities::Console;
 
 ByteBuffer Texture::getRGBTextureData(TextureFormat format, const ByteBuffer& textureData) {
 	switch(format) {
@@ -94,6 +99,18 @@ ByteBuffer Texture::getRGBTextureData(TextureFormat format, const ByteBuffer& te
 
 	//
 	return ByteBuffer();
+}
+
+ByteBuffer Texture::getBZ7TextureData() {
+	auto rgbaTextureData = getRGBTextureData();
+	auto rgbaTextureDataBytesPerPixel = getRGBDepthBitsPerPixel() / 8;
+
+	//
+	vector<uint8_t> bz7Data;
+	BZ7TextureWriter::write(textureWidth, textureHeight, rgbaTextureDataBytesPerPixel, rgbaTextureData, bz7Data);
+
+	//
+	return ByteBuffer(bz7Data);
 }
 
 void Texture::setTextureData(TextureFormat format, const ByteBuffer& textureData) {

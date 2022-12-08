@@ -29,6 +29,7 @@ void DynamicColorTexture::initialize()
 		ByteBuffer(width * height * 4)
 	);
 	texture->acquireReference();
+	texture->setUseCompression(false);
 	texture->setUseMipMap(false);
 	texture->setRepeat(false);
 }
@@ -46,6 +47,7 @@ void DynamicColorTexture::reshape(int32_t width, int32_t height)
 		ByteBuffer(width * height * 4)
 	);
 	texture->acquireReference();
+	texture->setUseCompression(false);
 	texture->setUseMipMap(false);
 	texture->setRepeat(false);
 	Engine::renderer->resizeColorBufferTexture(colorBufferTextureId, width, height);
