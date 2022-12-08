@@ -6,14 +6,14 @@
 #include <Vector.h>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/math/Math.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
 
 using tdme::engine::ColorTextureCanvas;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::DynamicColorTexture;
 using tdme::math::Math;
 using tdme::utilities::ByteBuffer;

@@ -7,7 +7,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fileio/textures/fwd-tdme.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/gui/effects/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
 #include <tdme/gui/events/GUIMouseEvent.h>
@@ -32,7 +32,7 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::gui::effects::GUIEffect;
 using tdme::gui::effects::GUIEffectState;
 using tdme::gui::events::GUIKeyboardEvent;

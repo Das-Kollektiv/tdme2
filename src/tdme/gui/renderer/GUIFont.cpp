@@ -8,7 +8,7 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
@@ -31,7 +31,7 @@ using std::string;
 using std::unordered_map;
 using std::vector;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
@@ -121,23 +121,25 @@ GUICharacter* GUIFont::addToTextureAtlas(uint32_t charId) {
 	auto glyphBitmapWidth = ftFace->glyph->bitmap.width;
 	auto glyphBitmapHeight = ftFace->glyph->bitmap.rows;
 	auto glyphBitmapBuffer = ftFace->glyph->bitmap.buffer;
-	auto glyphByteBuffer = ByteBuffer::allocate(glyphBitmapWidth * glyphBitmapHeight * 4);
+	auto glyphByteBuffer = ByteBuffer(glyphBitmapWidth * glyphBitmapHeight * 4);
 	for (int y = glyphBitmapHeight - 1; y >= 0; y--) {
 		for (auto x = 0; x < glyphBitmapWidth; x++) {
 			auto v = glyphBitmapBuffer[y * glyphBitmapWidth + x];
-			glyphByteBuffer->put(v); // red
-			glyphByteBuffer->put(v); // green
-			glyphByteBuffer->put(v); // blue
-			glyphByteBuffer->put(v == 0?0:(v < 0xff / 2?v * 2:0xff)); // alpha
+			glyphByteBuffer.put(v); // red
+			glyphByteBuffer.put(v); // green
+			glyphByteBuffer.put(v); // blue
+			glyphByteBuffer.put(v == 0?0:(v < 0xff / 2?v * 2:0xff)); // alpha
 		}
 	}
 
 	//
 	auto glyphTexture = new Texture(
 		Character::toString(charId),
-		32,
+		Texture::TEXTUREDEPTH_RGBA,
+		Texture::TEXTUREFORMAT_RGBA,
 		glyphBitmapWidth, glyphBitmapHeight,
 		glyphBitmapWidth, glyphBitmapHeight,
+		Texture::TEXTUREFORMAT_RGBA,
 		glyphByteBuffer
 	);
 	glyphTexture->acquireReference();

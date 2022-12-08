@@ -17,7 +17,7 @@ using std::map;
 using std::string;
 using std::vector;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::FrameBuffer;
 using tdme::math::Matrix4x4;
@@ -32,17 +32,8 @@ using tdme::utilities::ShortBuffer;
 class tdme::engine::subsystems::renderer::GL2Renderer: public Renderer
 {
 private:
-	bool bufferObjectsAvailable;
 	map<uint32_t, int32_t> vbosUsage;
 	int activeTextureUnit;
-
-private:
-
-	/**
-	 * Checks if VBO is available
-	 * @return vbo availability
-	 */
-	bool checkBufferObjectsAvailable();
 
 public:
 	/**
@@ -51,7 +42,6 @@ public:
 	GL2Renderer();
 
 	// overridden methods
-	bool isDepthTextureAvailable() override;
 	void initialize() override;
 	void initializeFrame() override;
 	void finishFrame() override;
@@ -59,7 +49,7 @@ public:
 	const string getRenderer() override;
 	const string getShaderVersion() override;
 	bool isSupportingMultithreadedRendering() override;
-	bool isBufferObjectsAvailable() override;
+	bool isTextureCompressionAvailable() override;
 	bool isUsingProgramAttributeLocation() override;
 	bool isSupportingIntegerProgramAttributes() override;
 	bool isSpecularMappingAvailable() override;

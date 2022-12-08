@@ -23,7 +23,7 @@
 using std::string;
 using std::unordered_map;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUICharacter;

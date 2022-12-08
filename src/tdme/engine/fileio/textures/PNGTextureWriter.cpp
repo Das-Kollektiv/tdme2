@@ -1,13 +1,10 @@
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-
 #include <string>
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/ByteBuffer.h>
@@ -21,7 +18,7 @@ using std::vector;
 
 using tdme::engine::fileio::textures::PNGTextureWriter;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::ByteBuffer;
@@ -50,6 +47,19 @@ bool PNGTextureWriter::write(Texture* texture, const string& pathName, const str
 }
 
 bool PNGTextureWriter::write(Texture* texture, vector<uint8_t>& pngData, bool removeAlphaChannel, bool flipY) {
+	return
+		write(
+			texture->getTextureWidth(),
+			texture->getTextureHeight(),
+			texture->getRGBDepthBitsPerPixel(),
+			texture->getRGBTextureData(),
+			pngData,
+			removeAlphaChannel,
+			flipY
+		);
+}
+
+bool PNGTextureWriter::write(int width, int height, int bytesPerPixel, const ByteBuffer& textureByteBuffer, vector<uint8_t>& pngData, bool removeAlphaChannel, bool flipY) {
 	// see: https://gist.github.com/niw/5963798
 	png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	if (!png) {
@@ -71,12 +81,6 @@ bool PNGTextureWriter::write(Texture* texture, vector<uint8_t>& pngData, bool re
 	// set up custom read function
 	png_set_write_fn(png, &pngOutputStream, PNGTextureWriter::writePNGDataToMemory, PNGTextureWriter::flushPNGDataToMemory);
 
-	//
-	auto bytesPerPixel = texture->getDepth() / 8;
-	auto width = texture->getTextureWidth();
-	auto height = texture->getTextureHeight();
-	auto pixels = texture->getTextureData();
-
 	// output is 8bit depth, RGBA format.
 	png_set_IHDR(
 		png,
@@ -97,19 +101,24 @@ bool PNGTextureWriter::write(Texture* texture, vector<uint8_t>& pngData, bool re
 	}
 
 	//
+	auto pixelBuffer = (uint8_t*)textureByteBuffer.getBuffer();
 	png_bytep* row_pointers = new png_bytep[height];
 	if (flipY == true) {
-		for (auto y = 0; y < height; y++) row_pointers[y] = pixels->getBuffer() + width * bytesPerPixel * (height - 1 - y);
+		for (auto y = 0; y < height; y++) row_pointers[y] = pixelBuffer + width * bytesPerPixel * (height - 1 - y);
 	} else {
-		for (auto y = 0; y < height; y++) row_pointers[y] = pixels->getBuffer() + width * bytesPerPixel * y;
+		for (auto y = 0; y < height; y++) row_pointers[y] = pixelBuffer + width * bytesPerPixel * y;
 	}
 
+	//
 	png_write_image(png, row_pointers);
 	png_write_end(png, NULL);
 
-	free (row_pointers);
+	//
+	delete [] row_pointers;
 
+	//
 	png_destroy_write_struct(&png, &info);
 
+	//
 	return true;
 }

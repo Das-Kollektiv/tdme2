@@ -1,13 +1,13 @@
 #include <tdme/engine/subsystems/particlesystem/ParticlesShader.h>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utilities/TextureAtlas.h>
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::subsystems::particlesystem::ParticlesShader;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;

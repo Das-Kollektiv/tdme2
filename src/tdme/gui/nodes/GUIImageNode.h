@@ -15,7 +15,7 @@
 
 using std::string;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::DynamicColorTexture;
 using tdme::engine::FrameBuffer;
 using tdme::gui::nodes::GUIColor;

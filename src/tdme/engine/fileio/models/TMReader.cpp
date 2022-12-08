@@ -7,8 +7,8 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
-#include <tdme/engine/fileio/textures/Texture.h>
-#include <tdme/engine/fileio/textures/TextureReader.h>
+#include <tdme/engine/Texture.h>
+#include <tdme/engine/fileio/textures/PNGTextureReader.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
@@ -42,8 +42,8 @@ using std::vector;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::fileio::models::TMReader;
 using tdme::engine::fileio::models::TMReaderInputStream;
-using tdme::engine::fileio::textures::Texture;
-using tdme::engine::fileio::textures::TextureReader;
+using tdme::engine::Texture;
+using tdme::engine::fileio::textures::PNGTextureReader;
 using tdme::engine::model::Animation;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
@@ -188,7 +188,7 @@ void TMReader::readEmbeddedTextures(TMReaderInputStream* is, map<string, Texture
 			vector<uint8_t> pngData;
 			pngData.resize(textureSize);
 			for (auto j = 0; j < textureSize; j++) pngData[j] = is->readByte();
-			auto embeddedTexture = TextureReader::readPNG(embeddedTextureId, pngData, true);
+			auto embeddedTexture = PNGTextureReader::read(embeddedTextureId, pngData, true);
 			if (embeddedTexture != nullptr) {
 				embeddedTexture->acquireReference();
 				embeddedTextures[embeddedTextureId] = embeddedTexture;

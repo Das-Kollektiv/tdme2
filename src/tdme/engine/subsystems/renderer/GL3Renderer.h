@@ -20,7 +20,7 @@ using std::map;
 using std::string;
 using std::vector;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::FrameBuffer;
 using tdme::utilities::ByteBuffer;
@@ -73,6 +73,7 @@ private:
 	#endif
 
 	bool deferredShadingAvailable;
+	bool textureCompressionAvailable;
 public:
 	/**
 	 * Public constructor
@@ -87,8 +88,7 @@ public:
 	const string getRenderer() override;
 	const string getShaderVersion() override;
 	bool isSupportingMultithreadedRendering() override;
-	bool isBufferObjectsAvailable() override;
-	bool isDepthTextureAvailable() override;
+	bool isTextureCompressionAvailable() override;
 	bool isUsingProgramAttributeLocation() override;
 	bool isSupportingIntegerProgramAttributes() override;
 	bool isSpecularMappingAvailable() override;

@@ -5,7 +5,8 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
+#include <tdme/engine/fileio/textures/PNGTextureReader.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/Engine.h>
@@ -34,7 +35,8 @@ using std::to_string;
 
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::prototypes::PrototypeReader;
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
+using tdme::engine::fileio::textures::PNGTextureReader;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::Engine;
@@ -158,7 +160,7 @@ void GUIImageNode::setSource(const string& source) {
 						thumbnailPNGData
 					) == true) {
 					//
-					auto thumbnailTexture = TextureReader::readPNG("tdme.gui.guiimagenode." + to_string(thumbnailTextureIdx++), thumbnailPNGData, true);
+					auto thumbnailTexture = PNGTextureReader::read("tdme.gui.guiimagenode." + to_string(thumbnailTextureIdx++), thumbnailPNGData, true);
 					if (thumbnailTexture != nullptr) {
 						thumbnailTexture->acquireReference();
 						this->texture = thumbnailTexture;
@@ -184,7 +186,7 @@ void GUIImageNode::setSource(const string& source) {
 						thumbnailPNGData
 					) == true) {
 					//
-					auto thumbnailTexture = TextureReader::readPNG("tdme.gui.guiimagenode." + to_string(thumbnailTextureIdx++), thumbnailPNGData, true);
+					auto thumbnailTexture = PNGTextureReader::read("tdme.gui.guiimagenode." + to_string(thumbnailTextureIdx++), thumbnailPNGData, true);
 					if (thumbnailTexture != nullptr) {
 						thumbnailTexture->acquireReference();
 						this->texture = thumbnailTexture;

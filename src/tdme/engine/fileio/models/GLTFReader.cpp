@@ -13,7 +13,7 @@
 #include <ext/tinygltf/tiny_gltf.h>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Color4Base.h>
@@ -52,7 +52,7 @@ using std::vector;
 
 using tdme::engine::fileio::models::GLTFReader;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::model::Animation;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Color4Base;
@@ -490,17 +490,19 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 						if (image.bits != 8) throw ExceptionBase("We only support 8 bit channels for now");
 						auto fileName = determineTextureFileName(image.name);
 						Console::println("GLTFReader::parseNode(): " + node->getId() + ": have base color texture with " + to_string(image.width) + " x " + to_string(image.height) + " x " + to_string(image.component) + " x " + to_string(image.bits) + ": " + fileName);
-						auto textureData = ByteBuffer::allocate(image.width * image.height * image.component * image.bits / 8);
+						auto textureData = ByteBuffer(image.width * image.height * image.component * image.bits / 8);
 						for (int y = image.height - 1; y >= 0; y--) {
-							textureData->put(&image.image[y * image.width * image.component * image.bits / 8], image.width * image.component * image.bits / 8);
+							textureData.put(&image.image[y * image.width * image.component * image.bits / 8], image.width * image.component * image.bits / 8);
 						}
 						auto texture = new Texture(
 							fileName,
-							image.bits * image.component,
+							Texture::getRGBDepthByPixelBitsPerPixel(image.bits * image.component),
+							Texture::getRGBFormatByPixelBitsPerPixel(image.bits * image.component),
 							image.width,
 							image.height,
 							image.width,
 							image.height,
+							Texture::getRGBFormatByPixelBitsPerPixel(image.bits * image.component),
 							textureData
 						);
 						pbrMaterialProperties->setBaseColorTexture(texture);
@@ -521,17 +523,19 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 						if (image.bits != 8) throw ExceptionBase("We only support 8 bit channels for now");
 						auto fileName = determineTextureFileName(image.name);
 						Console::println("GLTFReader::parseNode(): " + node->getId() + ": have metallic roughness texture with " + to_string(image.width) + " x " + to_string(image.height) + " x " + to_string(image.component) + " x " + to_string(image.bits) + ": " + fileName);
-						auto textureData = ByteBuffer::allocate(image.width * image.height * image.component * image.bits / 8);
+						auto textureData = ByteBuffer(image.width * image.height * image.component * image.bits / 8);
 						for (int y = image.height - 1; y >= 0; y--) {
-							textureData->put(&image.image[y * image.width * image.component * image.bits / 8], image.width * image.component * image.bits / 8);
+							textureData.put(&image.image[y * image.width * image.component * image.bits / 8], image.width * image.component * image.bits / 8);
 						}
 						auto texture = new Texture(
 							fileName,
-							image.bits * image.component,
+							Texture::getRGBDepthByPixelBitsPerPixel(image.bits * image.component),
+							Texture::getRGBFormatByPixelBitsPerPixel(image.bits * image.component),
 							image.width,
 							image.height,
 							image.width,
 							image.height,
+							Texture::getRGBFormatByPixelBitsPerPixel(image.bits * image.component),
 							textureData
 						);
 						pbrMaterialProperties->setMetallicRoughnessTexture(texture);
@@ -549,17 +553,19 @@ Node* GLTFReader::parseNode(const string& pathName, tinygltf::Model& gltfModel, 
 						if (image.bits != 8) throw ExceptionBase("We only support 8 bit channels for now");
 						auto fileName = determineTextureFileName(image.name);
 						Console::println("GLTFReader::parseNode(): " + node->getId() + ": have normal texture with " + to_string(image.width) + " x " + to_string(image.height) + " x " + to_string(image.component) + " x " + to_string(image.bits) + ": " + fileName);
-						auto textureData = ByteBuffer::allocate(image.width * image.height * image.component * image.bits / 8);
+						auto textureData = ByteBuffer(image.width * image.height * image.component * image.bits / 8);
 						for (int y = image.height - 1; y >= 0; y--) {
-							textureData->put(&image.image[y * image.width * image.component * image.bits / 8], image.width * image.component * image.bits / 8);
+							textureData.put(&image.image[y * image.width * image.component * image.bits / 8], image.width * image.component * image.bits / 8);
 						}
 						auto texture = new Texture(
 							fileName,
-							image.bits * image.component,
+							Texture::getRGBDepthByPixelBitsPerPixel(image.bits * image.component),
+							Texture::getRGBFormatByPixelBitsPerPixel(image.bits * image.component),
 							image.width,
 							image.height,
 							image.width,
 							image.height,
+							Texture::getRGBFormatByPixelBitsPerPixel(image.bits * image.component),
 							textureData
 						);
 						pbrMaterialProperties->setNormalTexture(texture);

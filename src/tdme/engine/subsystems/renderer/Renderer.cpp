@@ -3,7 +3,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/math/Math.h>
 #include <tdme/math/Matrix4x4.h>
 #include <tdme/utilities/ByteBuffer.h>
@@ -13,7 +13,7 @@ using std::to_string;
 
 using tdme::engine::subsystems::renderer::Renderer;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::math::Math;
 using tdme::math::Matrix4x4;
 using tdme::utilities::ByteBuffer;
@@ -68,13 +68,14 @@ Renderer::~Renderer() {
 }
 
 Texture* Renderer::generateMipMap(const string& id, Texture* texture, int32_t level, int32_t atlasBorderSize) {
+	auto textureTextureData = texture->getRGBTextureData();
 	auto generatedTextureWidth = texture->getTextureWidth() / 2;
 	auto generatedTextureHeight = texture->getTextureHeight() / 2;
-	auto generatedTextureByteBuffer = ByteBuffer::allocate(generatedTextureWidth * generatedTextureHeight * 4);
+	auto generatedTextureByteBuffer = ByteBuffer(generatedTextureWidth * generatedTextureHeight * 4);
 	auto atlasTextureSize = texture->getWidth() / texture->getAtlasSize();
 	auto materialTextureWidth = texture->getTextureWidth() / texture->getAtlasSize();
 	auto materialTextureHeight = texture->getTextureHeight() / texture->getAtlasSize();
-	auto materialTextureBytesPerPixel = texture->getDepth() / 8;
+	auto materialTextureBytesPerPixel = texture->getRGBDepthBitsPerPixel() / 8;
 	for (auto y = 0; y < generatedTextureHeight; y++)
 	for (auto x = 0; x < generatedTextureWidth; x++) {
 		auto atlasTextureIdxX = (x * 2) / atlasTextureSize;
@@ -99,28 +100,58 @@ Texture* Renderer::generateMipMap(const string& id, Texture* texture, int32_t le
 				auto materialTexturePixelOffset =
 					(atlasTextureIdxY * materialTextureHeight + materialTextureYInt + y) * texture->getTextureWidth() * materialTextureBytesPerPixel +
 					(atlasTextureIdxX * materialTextureWidth + materialTextureXInt + x) * materialTextureBytesPerPixel;
-				materialPixelR+= texture->getTextureData()->get(materialTexturePixelOffset + 0);
-				materialPixelG+= texture->getTextureData()->get(materialTexturePixelOffset + 1);
-				materialPixelB+= texture->getTextureData()->get(materialTexturePixelOffset + 2);
-				materialPixelA+= materialTextureBytesPerPixel == 4?texture->getTextureData()->get(materialTexturePixelOffset + 3):0xff;
+				materialPixelR+= textureTextureData.get(materialTexturePixelOffset + 0);
+				materialPixelG+= textureTextureData.get(materialTexturePixelOffset + 1);
+				materialPixelB+= textureTextureData.get(materialTexturePixelOffset + 2);
+				materialPixelA+= materialTextureBytesPerPixel == 4?textureTextureData.get(materialTexturePixelOffset + 3):0xff;
 				materialSamples++;
 			}
-			generatedTextureByteBuffer->put(materialPixelR / materialSamples);
-			generatedTextureByteBuffer->put(materialPixelG / materialSamples);
-			generatedTextureByteBuffer->put(materialPixelB / materialSamples);
-			generatedTextureByteBuffer->put(materialPixelA / materialSamples);
+			generatedTextureByteBuffer.put(materialPixelR / materialSamples);
+			generatedTextureByteBuffer.put(materialPixelG / materialSamples);
+			generatedTextureByteBuffer.put(materialPixelB / materialSamples);
+			generatedTextureByteBuffer.put(materialPixelA / materialSamples);
 		}
 	}
 	auto generatedTexture = new Texture(
 		id + ".mipmap." + to_string(level),
-		32,
+		Texture::TEXTUREDEPTH_RGBA,
+		Texture::TEXTUREFORMAT_RGBA,
 		generatedTextureWidth,
 		generatedTextureHeight,
 		generatedTextureWidth,
 		generatedTextureHeight,
+		Texture::TEXTUREFORMAT_RGBA,
 		generatedTextureByteBuffer
 	);
 	generatedTexture->setAtlasSize(texture->getAtlasSize());
 	generatedTexture->acquireReference();
 	return generatedTexture;
+}
+
+int Renderer::getMipLevels(Texture* texture) {
+	if (texture->isUseMipMap() == false) return 1;
+	auto widthMipLevels = 1;
+	auto heightMipLevels = 1;
+	auto textureWidth = texture->getTextureWidth();
+	auto textureHeight = texture->getTextureHeight();
+	while (textureWidth > 16) {
+		textureWidth/= 2;
+		widthMipLevels++;
+	}
+	while (textureHeight > 16) {
+		textureHeight/= 2;
+		heightMipLevels++;
+	}
+	auto mipLevels = Math::min(widthMipLevels, heightMipLevels);
+	if (texture->getAtlasSize() > 1) {
+		auto borderSize = 32;
+		auto maxLevel = 0;
+		while (borderSize > 4) {
+			maxLevel++;
+			borderSize/= 2;
+		}
+		return Math::min(mipLevels, maxLevel);
+	}
+	//
+	return mipLevels;
 }

@@ -39,7 +39,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/manager/TextureManager.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
@@ -109,7 +109,7 @@ using std::vector;
 using tdme::engine::subsystems::renderer::VKRenderer;
 
 using tdme::application::Application;
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::manager::TextureManager;
 using tdme::engine::subsystems::renderer::Renderer;
@@ -656,21 +656,6 @@ inline void VKRenderer::setImageLayout3(int contextIdx, VkImage image, VkImageAs
 	finishSetupCommandBuffer(contextIdx);
 }
 
-inline uint32_t VKRenderer::getMipLevels(Texture* texture) {
-	if (texture->isUseMipMap() == false) return 1;
-	if (texture->getAtlasSize() > 1) {
-		auto borderSize = 32;
-		auto maxLevel = 0;
-		while (borderSize > 4) {
-			maxLevel++;
-			borderSize/= 2;
-		}
-		return maxLevel;
-	} else {
-		return static_cast<uint32_t>(std::floor(std::log2(std::max(texture->getTextureWidth(), texture->getTextureHeight())))) + 1;
-	}
-}
-
 inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_type* textureObject, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags requiredFlags, Texture* texture, const array<ThsvsAccessType,2>& nextAccesses, ThsvsImageLayout imageLayout, bool disableMipMaps, uint32_t baseLevel, uint32_t levelCount) {
 	VkResult err;
 	bool pass;
@@ -683,13 +668,13 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_type*
 		.pNext = nullptr,
 		.flags = 0,
 		.imageType = VK_IMAGE_TYPE_2D,
-		.format = texture->getDepth() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM,
+		.format = texture->getRGBDepthBitsPerPixel() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM,
 		.extent = {
 			.width = textureWidth,
 			.height = textureHeight,
 			.depth = 1
 		},
-		.mipLevels = disableMipMaps == false && texture->isUseMipMap() == true?getMipLevels(texture):1,
+		.mipLevels = disableMipMaps == false && texture->isUseMipMap() == true?static_cast<uint32_t>(getMipLevels(texture)):1,
 		.arrayLayers = 1,
 		.samples = VK_SAMPLE_COUNT_1_BIT,
 		.tiling = tiling,
@@ -724,15 +709,15 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_type*
 		void* data;
 		err = vmaMapMemory(vmaAllocator, textureObject->allocation, &data);
 		assert(!err);
-		auto bytesPerPixel = texture->getDepth() / 8;
-		auto textureBuffer = texture->getTextureData();
+		auto bytesPerPixel = texture->getRGBDepthBitsPerPixel() / 8;
+		auto textureTextureData = texture->getRGBTextureData();
 		for (auto y = 0; y < textureHeight; y++) {
 			uint8_t* row = (uint8_t*)((uint8_t*)data + subResourceLayout.offset + subResourceLayout.rowPitch * y);
 			for (auto x = 0; x < textureWidth; x++) {
-				row[x * 4 + 0] = textureBuffer->get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 0);
-				row[x * 4 + 1] = textureBuffer->get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 1);
-				row[x * 4 + 2] = textureBuffer->get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 2);
-				row[x * 4 + 3] = bytesPerPixel == 4?textureBuffer->get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 3):0xff;
+				row[x * 4 + 0] = textureTextureData.get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 0);
+				row[x * 4 + 1] = textureTextureData.get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 1);
+				row[x * 4 + 2] = textureTextureData.get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 2);
+				row[x * 4 + 3] = bytesPerPixel == 4?textureTextureData.get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 3):0xff;
 			}
 		}
 		vmaFlushAllocation(vmaAllocator, textureObject->allocation, 0, VK_WHOLE_SIZE);
@@ -1999,14 +1984,9 @@ void VKRenderer::finishFrame()
 	frame++;
 }
 
-bool VKRenderer::isBufferObjectsAvailable()
+bool VKRenderer::isTextureCompressionAvailable()
 {
-	return true;
-}
-
-bool VKRenderer::isDepthTextureAvailable()
-{
-	return true;
+	return false;
 }
 
 bool VKRenderer::isUsingProgramAttributeLocation()
@@ -4628,7 +4608,7 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 	textureType.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 
 	//
-	const VkFormat textureFormat = texture->getDepth() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
+	const VkFormat textureFormat = texture->getRGBDepthBitsPerPixel() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
 	VkFormatProperties textureFormatProperties;
 	VkResult err;
 
@@ -4880,7 +4860,7 @@ void VKRenderer::uploadCubeMapSingleTexture(int contextIdx, texture_type* cubema
 	auto& cubemapTextureTypeRef = *cubemapTextureType;
 
 	//
-	const VkFormat textureFormat = texture->getDepth() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
+	const VkFormat textureFormat = texture->getRGBDepthBitsPerPixel() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
 	VkFormatProperties textureFormatProperties;
 	VkResult err;
 	vkGetPhysicalDeviceFormatProperties(physicalDevice, textureFormat, &textureFormatProperties);
