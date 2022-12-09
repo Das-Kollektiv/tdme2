@@ -31,7 +31,9 @@ public:
 		TEXTUREFORMAT_RGB,
 		TEXTUREFORMAT_RGBA,
 		TEXTUREFORMAT_RGB_PNG,
-		TEXTUREFORMAT_RGBA_PNG
+		TEXTUREFORMAT_RGBA_PNG,
+		TEXTUREFORMAT_RGB_BZ7,
+		TEXTUREFORMAT_RGBA_BZ7
 	};
 
 	enum ClampMode { CLAMPMODE_EDGE, CLAMPMODE_TRANSPARENTPIXEL };
@@ -71,6 +73,19 @@ public:
 		switch (bpp) {
 			case 24: return TEXTUREFORMAT_RGB_PNG;
 			case 32: return TEXTUREFORMAT_RGBA_PNG;
+			default: return TEXTUREFORMAT_UNKNOWN;
+		}
+	}
+
+	/**
+	 * Return BZ7 RGB/A texture format by bits per pixel
+	 * @param bpp bits per pixel
+	 * @return BZ7 RGB/A texture format by bits per pixel
+	 */
+	inline static TextureFormat getBZ7FormatByPixelBitsPerPixel(int bpp) {
+		switch (bpp) {
+			case 24: return TEXTUREFORMAT_RGB_BZ7;
+			case 32: return TEXTUREFORMAT_RGBA_BZ7;
 			default: return TEXTUREFORMAT_UNKNOWN;
 		}
 	}

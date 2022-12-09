@@ -2,6 +2,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Texture.h>
+#include <tdme/engine/fileio/textures/BZ7TextureReader.h>
 #include <tdme/engine/fileio/textures/BZ7TextureWriter.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/fileio/textures/PNGTextureReader.h>
@@ -14,6 +15,7 @@ using std::to_string;
 
 using tdme::engine::Texture;
 
+using tdme::engine::fileio::textures::BZ7TextureReader;
 using tdme::engine::fileio::textures::BZ7TextureWriter;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::fileio::textures::PNGTextureReader;
@@ -22,6 +24,14 @@ using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
 
 ByteBuffer Texture::getRGBTextureData(TextureFormat format, const ByteBuffer& textureData) {
+	// do we already have the requested rgb format?
+	auto rgbFormat = getRGBFormatByPixelBitsPerPixel(getRGBDepthBitsPerPixel());
+	if (format == rgbFormat) {
+		// yup, done
+		return textureData;
+	}
+
+	// no?, convert it
 	switch(format) {
 		case TEXTUREFORMAT_RGB:
 			{
@@ -95,6 +105,30 @@ ByteBuffer Texture::getRGBTextureData(TextureFormat format, const ByteBuffer& te
 				//
 				return rgbTextureData;
 			}
+		case TEXTUREFORMAT_RGB_BZ7:
+			{
+				// generated rgb raw data
+				auto rgbTextureDataBytesPerPixel = getRGBDepthBitsPerPixel() / 8;
+				auto rgbTextureData = ByteBuffer(textureWidth * textureHeight * rgbTextureDataBytesPerPixel);
+
+				//
+				BZ7TextureReader::read(textureWidth, textureHeight, rgbTextureDataBytesPerPixel, *textureData.getBufferVector(), rgbTextureData);
+
+				//
+				return rgbTextureData;
+			}
+		case TEXTUREFORMAT_RGBA_BZ7:
+			{
+				// generated rgb raw data
+				auto rgbTextureDataBytesPerPixel = getRGBDepthBitsPerPixel() / 8;
+				auto rgbTextureData = ByteBuffer(textureWidth * textureHeight * rgbTextureDataBytesPerPixel);
+
+				//
+				BZ7TextureReader::read(textureWidth, textureHeight, rgbTextureDataBytesPerPixel, *textureData.getBufferVector(), rgbTextureData);
+
+				//
+				return rgbTextureData;
+			}
 	}
 
 	//
@@ -102,10 +136,18 @@ ByteBuffer Texture::getRGBTextureData(TextureFormat format, const ByteBuffer& te
 }
 
 ByteBuffer Texture::getBZ7TextureData() {
+	// do we already have the requested bz7 format?
+	auto bz7Format = getBZ7FormatByPixelBitsPerPixel(getRGBDepthBitsPerPixel());
+	if (format == bz7Format) {
+		// yup, done
+		return textureData;
+	}
+
+	//
 	auto rgbaTextureData = getRGBTextureData();
 	auto rgbaTextureDataBytesPerPixel = getRGBDepthBitsPerPixel() / 8;
 
-	//
+	// no?, convert it
 	vector<uint8_t> bz7Data;
 	BZ7TextureWriter::write(textureWidth, textureHeight, rgbaTextureDataBytesPerPixel, rgbaTextureData, bz7Data);
 

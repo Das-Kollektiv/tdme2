@@ -7,8 +7,6 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/fwd-tdme.h>
-#include <tdme/os/filesystem/fwd-tdme.h>
-#include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/utilities/ByteBuffer.h>
 
 #include <ext/libpng/png.h>
@@ -18,7 +16,6 @@ using std::string;
 using std::vector;
 
 using tdme::engine::Texture;
-using tdme::os::filesystem::FileSystemException;
 using tdme::utilities::ByteBuffer;
 
 /**
@@ -32,30 +29,30 @@ class tdme::engine::fileio::textures::PNGTextureReader final
 public:
 	/**
 	 * Read PNG header from memory
-	 * @param data vector data to read PNG from
+	 * @param pngData png vector data to read PNG from
 	 * @param width width
 	 * @param height height
 	 * @param bytes per pixel
 	 * @return success
 	 */
-	static bool readHeader(const vector<uint8_t>& data, int& width, int& height, uint8_t& bytesPerPixel);
+	static bool readHeader(const vector<uint8_t>& pngData, int& width, int& height, uint8_t& bytesPerPixel);
 
 	/**
 	 * Read PNG from memory into texture byte buffer
-	 * @param data vector data to read PNG from
+	 * @param pngData png vector data to read PNG from
 	 * @param textureByteBuffer texture byte buffer
 	 * @return success
 	 */
-	static bool read(const vector<uint8_t>& data, ByteBuffer& textureByteBuffer);
+	static bool read(const vector<uint8_t>& pngData, ByteBuffer& textureByteBuffer);
 
 	/**
 	 * Read PNG from memory
 	 * @param textureId texture id
-	 * @param data vector data to read PNG from
+	 * @param pngData png vector data to read PNG from
 	 * @param powerOfTwo scale image to fit power of two dimensions
 	 * @param idPrefix id prefix
 	 */
-	static Texture* read(const string& textureId, const vector<uint8_t>& data, bool powerOfTwo = true, const string& idPrefix = string());
+	static Texture* read(const string& textureId, const vector<uint8_t>& pngData, bool powerOfTwo = true, const string& idPrefix = string());
 
 private:
 	/**

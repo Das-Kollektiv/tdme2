@@ -25,7 +25,7 @@ using tdme::utilities::Console;
 bool BZ7TextureWriter::write(int width, int height, int bytesPerPixel, const ByteBuffer& textureByteBuffer, vector<uint8_t>& bz7Data) {
 	//
 	bc7enc_compress_block_params bc7encParameters;
-	bc7encParameters.m_uber_level = 4;
+	bc7encParameters.m_uber_level = BC7ENC_MAX_UBER_LEVEL;
 	bc7enc_compress_block_params_init(&bc7encParameters);
 	bc7enc_compress_block_params_init_linear_weights(&bc7encParameters);
 
