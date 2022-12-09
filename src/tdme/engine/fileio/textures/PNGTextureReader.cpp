@@ -285,7 +285,7 @@ Texture* PNGTextureReader::read(const string& textureId, const vector<uint8_t>& 
 			auto texture = new Texture(
 				idPrefix + textureId,
 				Texture::getRGBDepthByPixelBitsPerPixel(bytesPerPixel * 8),
-				Texture::getRGBFormatByPixelBitsPerPixel(bytesPerPixel * 8),
+				Texture::getPNGFormatByPixelBitsPerPixel(bytesPerPixel * 8),
 				width,
 				height,
 				textureWidth,
@@ -302,12 +302,12 @@ Texture* PNGTextureReader::read(const string& textureId, const vector<uint8_t>& 
 	auto texture = new Texture(
 		idPrefix + textureId,
 		Texture::getRGBDepthByPixelBitsPerPixel(bytesPerPixel * 8),
-		bytesPerPixel == 3?Texture::TEXTUREFORMAT_RGB_PNG:Texture::TEXTUREFORMAT_RGBA_PNG,
+		Texture::getPNGFormatByPixelBitsPerPixel(bytesPerPixel * 8),
 		width,
 		height,
 		textureWidth,
 		textureHeight,
-		bytesPerPixel == 3?Texture::TEXTUREFORMAT_RGB_PNG:Texture::TEXTUREFORMAT_RGBA_PNG,
+		Texture::getPNGFormatByPixelBitsPerPixel(bytesPerPixel * 8),
 		ByteBuffer(data)
 	);
 	texture->acquireReference();

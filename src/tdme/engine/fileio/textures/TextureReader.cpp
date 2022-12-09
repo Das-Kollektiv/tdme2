@@ -163,7 +163,7 @@ Texture* TextureReader::read2(const string& texturePathName, const string& textu
 	auto textureWithTransparency = new Texture(
 		idPrefix + texture->getId() + "/transparency",
 		Texture::TEXTUREDEPTH_RGBA,
-		Texture::TEXTUREFORMAT_RGBA,
+		Texture::TEXTUREFORMAT_RGBA_PNG,
 		texture->getWidth(),
 		texture->getHeight(),
 		texture->getTextureWidth(),
@@ -283,7 +283,7 @@ Texture* TextureReader::rotate(Texture* texture, float rotation, const string& i
 	auto rotatedTexture = new Texture(
 		texture->getId() + idSuffix + ":tmp",
 		Texture::TEXTUREDEPTH_RGBA,
-		Texture::TEXTUREFORMAT_RGBA,
+		Texture::TEXTUREFORMAT_RGBA_PNG,
 		textureWidthRotated,
 		textureHeightRotated,
 		textureWidthRotated,
@@ -333,7 +333,7 @@ Texture* TextureReader::scale(Texture* texture, int width, int height, const str
 	auto scaledTexture = new Texture(
 		texture->getId() + idSuffix,
 		Texture::TEXTUREDEPTH_RGBA,
-		Texture::TEXTUREFORMAT_RGBA,
+		Texture::TEXTUREFORMAT_RGBA_PNG,
 		textureWidthScaled,
 		textureHeightScaled,
 		textureWidthScaled,
@@ -400,7 +400,7 @@ Texture* TextureReader::smooth(Texture* texture, const string& idSuffix, float a
 	auto filteredTexture = new Texture(
 		texture->getId() + idSuffix,
 		Texture::TEXTUREDEPTH_RGBA,
-		Texture::TEXTUREFORMAT_RGBA,
+		Texture::TEXTUREFORMAT_RGBA_PNG,
 		textureWidth,
 		textureHeight,
 		textureWidth,

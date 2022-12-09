@@ -63,6 +63,19 @@ public:
 	}
 
 	/**
+	 * Return RGB/A texture depth by bits per pixel
+	 * @param bpp bits per pixel
+	 * @return RGB/A texture depth by bits per pixel
+	 */
+	inline static TextureFormat getPNGFormatByPixelBitsPerPixel(int bpp) {
+		switch (bpp) {
+			case 24: return TEXTUREFORMAT_RGB_PNG;
+			case 32: return TEXTUREFORMAT_RGBA_PNG;
+			default: return TEXTUREFORMAT_UNKNOWN;
+		}
+	}
+
+	/**
 	 * Public constructor
 	 * @param id id
 	 * @param depth depth
