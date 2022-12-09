@@ -50,9 +50,9 @@ public:
 	}
 
 	/**
-	 * Return RGB/A texture depth by bits per pixel
+	 * Return RGB/A texture format by bits per pixel
 	 * @param bpp bits per pixel
-	 * @return RGB/A texture depth by bits per pixel
+	 * @return RGB/A texture format by bits per pixel
 	 */
 	inline static TextureFormat getRGBFormatByPixelBitsPerPixel(int bpp) {
 		switch (bpp) {
@@ -63,9 +63,9 @@ public:
 	}
 
 	/**
-	 * Return RGB/A texture depth by bits per pixel
+	 * Return PNG RGB/A texture format by bits per pixel
 	 * @param bpp bits per pixel
-	 * @return RGB/A texture depth by bits per pixel
+	 * @return PNG RGB/A texture format by bits per pixel
 	 */
 	inline static TextureFormat getPNGFormatByPixelBitsPerPixel(int bpp) {
 		switch (bpp) {
