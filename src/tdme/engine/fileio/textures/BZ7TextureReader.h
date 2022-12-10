@@ -25,7 +25,7 @@ public:
 	 * @param width width
 	 * @param height height
 	 * @param bytesPerPixel bytes per pixel
-	 * @param bz7Data bz7 vector data to read PNG from
+	 * @param bz7Data BZ7 vector data to read BZ7 from
 	 * @param textureByteBuffer texture byte buffer
 	 * @return success
 	 */
