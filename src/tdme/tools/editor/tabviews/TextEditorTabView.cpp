@@ -1791,3 +1791,45 @@ void TextEditorTabView::cancelFind() {
 	TextFormatter::getInstance()->format(extension, textNode, 0, textNode->getText().size());
 	countEnabled = false;
 }
+
+void TextEditorTabView::redo() {
+	if (visualEditor == false) {
+		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->redo();
+	}
+}
+
+void TextEditorTabView::undo() {
+	if (visualEditor == false) {
+		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->undo();
+	}
+}
+
+void TextEditorTabView::selectAll() {
+	if (visualEditor == false) {
+		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->selectAll();
+	}
+}
+
+void TextEditorTabView::cut() {
+	if (visualEditor == false) {
+		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->cut();
+	}
+}
+
+void TextEditorTabView::copy() {
+	if (visualEditor == false) {
+		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->copy();
+	}
+}
+
+void TextEditorTabView::paste() {
+	if (visualEditor == false) {
+		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->paste();
+	}
+}
+
+void TextEditorTabView::delete_() {
+	if (visualEditor == false) {
+		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->delete_();
+	}
+}

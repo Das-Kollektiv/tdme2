@@ -32,7 +32,7 @@ struct tdme::tools::editor::tabcontrollers::TabController:
 	public GUIContextMenuRequestListener,
 	public GUITooltipRequestListener
 {
-	enum TabControllerCommand { COMMAND_SAVE, COMMAND_SAVEAS, COMMAND_UNDO, COMMAND_REDO, COMMAND_CUT, COMMAND_COPY, COMMAND_PASTE, COMMAND_DELETE, COMMAND_FINDREPLACE};
+	enum TabControllerCommand { COMMAND_SAVE, COMMAND_SAVEAS, COMMAND_UNDO, COMMAND_REDO, COMMAND_CUT, COMMAND_COPY, COMMAND_PASTE, COMMAND_DELETE, COMMAND_SELECTALL, COMMAND_FINDREPLACE};
 
 	/**
 	 * Destructor

@@ -112,6 +112,27 @@ void TextEditorTabController::dispose()
 void TextEditorTabController::onCommand(TabControllerCommand command)
 {
 	switch (command) {
+		case COMMAND_REDO:
+			view->redo();
+			break;
+		case COMMAND_UNDO:
+			view->undo();
+			break;
+		case COMMAND_CUT:
+			view->cut();
+			break;
+		case COMMAND_COPY:
+			view->copy();
+			break;
+		case COMMAND_PASTE:
+			view->paste();
+			break;
+		case COMMAND_DELETE:
+			view->delete_();
+			break;
+		case COMMAND_SELECTALL:
+			view->selectAll();
+			break;
 		case COMMAND_SAVE:
 			{
 				auto fileName = view->getFileName();

@@ -278,6 +278,10 @@ void EditorScreenController::onAction(GUIActionListenerType type, GUIElementNode
 			auto selectedTab = getSelectedTab();
 			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onCommand(TabController::COMMAND_DELETE);
 		} else
+		if (node->getId() == "menu_edit_selectall") {
+			auto selectedTab = getSelectedTab();
+			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onCommand(TabController::COMMAND_SELECTALL);
+		} else
 		if (node->getId() == "menu_edit_findreplace") {
 			auto selectedTab = getSelectedTab();
 			if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onCommand(TabController::COMMAND_FINDREPLACE);
@@ -446,8 +450,8 @@ void EditorScreenController::onDragRequest(GUIElementNode* node, int mouseX, int
 				}
 			}
 		};
-
-		auto imageSource = GUIParser::getEngineThemeProperties()->get("{$icon.type_" + FileDialogScreenController::getFileImageName(node->getValue()) + "_big}", "resources/engine/images/tdme_big.png");
+		//
+		auto imageSource = GUIParser::getEngineThemeProperties()->get("icon.type_" + FileDialogScreenController::getFileImageName(node->getValue()) + "_big", "resources/engine/images/tdme_big.png");
 		auto xml = "<image width=\"auto\" height=\"auto\" src=\"" + imageSource + "\" />";
 		view->getPopUps()->getDraggingScreenController()->start(mouseX, mouseY, xml, "file:" + node->getValue(), new OnDragReleaseAction(this));
 	}
