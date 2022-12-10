@@ -6,8 +6,6 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/Texture.h>
-#include <tdme/os/filesystem/FileSystem.h>
-#include <tdme/os/filesystem/FileSystemInterface.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
 
@@ -21,8 +19,6 @@ using tdme::engine::fileio::textures::PNGTextureReader;
 
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::Texture;
-using tdme::os::filesystem::FileSystem;
-using tdme::os::filesystem::FileSystemInterface;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
 
@@ -34,9 +30,9 @@ void PNGTextureReader::readDataFromMemory(png_structp png_ptr, png_bytep outByte
 	pngInputStream->readBytes((int8_t*)outBytes, outBytesToRead);
 }
 
-bool PNGTextureReader::readHeader(const vector<uint8_t>& data, int& width, int& height, uint8_t& bytesPerPixel) {
+bool PNGTextureReader::readHeader(const vector<uint8_t>& pngData, int& width, int& height, uint8_t& bytesPerPixel) {
 	// create PNG input stream
-	PNGInputStream pngInputStream(&data);
+	PNGInputStream pngInputStream(&pngData);
 
 	// check that the PNG signature is in the file header
 	unsigned char sig[8];
@@ -122,11 +118,11 @@ bool PNGTextureReader::readHeader(const vector<uint8_t>& data, int& width, int& 
 	return true;
 }
 
-bool PNGTextureReader::read(const vector<uint8_t>& data, ByteBuffer& textureByteBuffer) {
+bool PNGTextureReader::read(const vector<uint8_t>& pngData, ByteBuffer& textureByteBuffer) {
 	// see: http://devcry.heiho.net/html/2015/20150517-libpng.html
 
 	// create PNG input stream
-	PNGInputStream pngInputStream(&data);
+	PNGInputStream pngInputStream(&pngData);
 
 	// check that the PNG signature is in the file header
 	unsigned char sig[8];
@@ -241,11 +237,11 @@ bool PNGTextureReader::read(const vector<uint8_t>& data, ByteBuffer& textureByte
 	return true;
 }
 
-Texture* PNGTextureReader::read(const string& textureId, const vector<uint8_t>& data, bool powerOfTwo, const string& idPrefix) {
+Texture* PNGTextureReader::read(const string& textureId, const vector<uint8_t>& pngData, bool powerOfTwo, const string& idPrefix) {
 	int width;
 	int height;
 	uint8_t bytesPerPixel;
-	if (readHeader(data, width, height, bytesPerPixel) == false) {
+	if (readHeader(pngData, width, height, bytesPerPixel) == false) {
 		Console::println("PNGTextureReader::read(): " + idPrefix + textureId + ": Could not read PNG header");
 		return nullptr;
 	}
@@ -259,7 +255,7 @@ Texture* PNGTextureReader::read(const string& textureId, const vector<uint8_t>& 
 		while (textureHeight < height) textureHeight*= 2;
 		if (textureWidth != width || textureHeight != height) {
 			auto textureByteBuffer = ByteBuffer(width * height * bytesPerPixel);
-			if (read(data, textureByteBuffer) == false) {
+			if (read(pngData, textureByteBuffer) == false) {
 				Console::println("PNGTextureReader::read(): " + idPrefix + textureId + ": Could not read PNG bitmap data");
 				return nullptr;
 			}
@@ -285,7 +281,7 @@ Texture* PNGTextureReader::read(const string& textureId, const vector<uint8_t>& 
 			auto texture = new Texture(
 				idPrefix + textureId,
 				Texture::getRGBDepthByPixelBitsPerPixel(bytesPerPixel * 8),
-				Texture::getRGBFormatByPixelBitsPerPixel(bytesPerPixel * 8),
+				Texture::getPNGFormatByPixelBitsPerPixel(bytesPerPixel * 8),
 				width,
 				height,
 				textureWidth,
@@ -302,13 +298,13 @@ Texture* PNGTextureReader::read(const string& textureId, const vector<uint8_t>& 
 	auto texture = new Texture(
 		idPrefix + textureId,
 		Texture::getRGBDepthByPixelBitsPerPixel(bytesPerPixel * 8),
-		bytesPerPixel == 3?Texture::TEXTUREFORMAT_RGB_PNG:Texture::TEXTUREFORMAT_RGBA_PNG,
+		Texture::getPNGFormatByPixelBitsPerPixel(bytesPerPixel * 8),
 		width,
 		height,
 		textureWidth,
 		textureHeight,
-		bytesPerPixel == 3?Texture::TEXTUREFORMAT_RGB_PNG:Texture::TEXTUREFORMAT_RGBA_PNG,
-		ByteBuffer(data)
+		Texture::getPNGFormatByPixelBitsPerPixel(bytesPerPixel * 8),
+		ByteBuffer(pngData)
 	);
 	texture->acquireReference();
 	return texture;

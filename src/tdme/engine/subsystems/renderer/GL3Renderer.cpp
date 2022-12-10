@@ -2,6 +2,8 @@
 
 #if defined (__APPLE__)
 	#define GL_SILENCE_DEPRECATION
+	#define GL_COMPRESSED_RGBA_BPTC_UNORM 0x8E8C
+	#define GL_INTERNALFORMAT_SUPPORTED 0x826F
 	#include <OpenGL/gl3.h>
 	#include <OpenGL/OpenGL.h>
 	#if !defined(__aarch64__)
@@ -192,16 +194,18 @@ void GL3Renderer::initialize()
 	int glMaxDrawBuffers = 0;
 	glGetIntegerv(GL_MAX_DRAW_BUFFERS, &glMaxDrawBuffers);
 	deferredShadingAvailable = glMaxColorAttachments >= 8 && glMaxDrawBuffers >= 8;
-	// texture compression
-	int textureCompressionParam = 0;
-	glGetInternalformativ(
-		GL_TEXTURE_2D,
-		GL_COMPRESSED_RGBA_BPTC_UNORM,
-		GL_INTERNALFORMAT_SUPPORTED,
-		1,
-		&textureCompressionParam
-	);
-	textureCompressionAvailable = textureCompressionParam == GL_TRUE;
+	#if !defined (__APPLE__)
+		// texture compression
+		int textureCompressionParam = 0;
+		glGetInternalformativ(
+			GL_TEXTURE_2D,
+			GL_COMPRESSED_RGBA_BPTC_UNORM,
+			GL_INTERNALFORMAT_SUPPORTED,
+			1,
+			&textureCompressionParam
+		);
+		textureCompressionAvailable = textureCompressionParam == GL_TRUE;
+	#endif
 	// renderer contexts
 	rendererContexts.resize(1);
 	for (auto& rendererContext: rendererContexts) {

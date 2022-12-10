@@ -109,6 +109,7 @@ SRCS = \
 	src/tdme/engine/fileio/prototypes/PrototypeReader.cpp \
 	src/tdme/engine/fileio/scenes/SceneWriter.cpp \
 	src/tdme/engine/fileio/scenes/SceneReader.cpp \
+	src/tdme/engine/fileio/textures/BZ7TextureReader.cpp \
 	src/tdme/engine/fileio/textures/BZ7TextureWriter.cpp \
 	src/tdme/engine/fileio/textures/PNGTextureReader.cpp \
 	src/tdme/engine/fileio/textures/PNGTextureWriter.cpp \

@@ -32,7 +32,7 @@ public:
 	 * @param height height
 	 * @param bytesPerPixel bytes per pixel
 	 * @param textureByteBuffer texture RGB byte buffer
-	 * @param pngData BZ7 data
+	 * @param bz7Data BZ7 data
 	 * @return success
 	 */
 	static bool write(int width, int height, int bytesPerPixel, const ByteBuffer& textureByteBuffer, vector<uint8_t>& bz7Data);
