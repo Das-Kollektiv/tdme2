@@ -2,6 +2,8 @@
 
 #if defined (__APPLE__)
 	#define GL_SILENCE_DEPRECATION
+	#define GL_COMPRESSED_RGBA_BPTC_UNORM 0x8E8C
+	#define GL_INTERNALFORMAT_SUPPORTED 0x826F
 	#include <OpenGL/gl3.h>
 	#include <OpenGL/OpenGL.h>
 	#if !defined(__aarch64__)
@@ -22,7 +24,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/math/Math.h>
@@ -48,7 +50,7 @@ using std::vector;
 using tdme::engine::subsystems::renderer::GL3Renderer;
 
 using tdme::engine::fileio::textures::PNGTextureWriter;
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::math::Math;
@@ -98,6 +100,7 @@ GL3Renderer::GL3Renderer()
 	activeTextureUnit = 0;
 	engineVAO = ID_NONE;
 	deferredShadingAvailable = false;
+	textureCompressionAvailable = false;
 }
 
 const string GL3Renderer::getVendor() {
@@ -191,6 +194,18 @@ void GL3Renderer::initialize()
 	int glMaxDrawBuffers = 0;
 	glGetIntegerv(GL_MAX_DRAW_BUFFERS, &glMaxDrawBuffers);
 	deferredShadingAvailable = glMaxColorAttachments >= 8 && glMaxDrawBuffers >= 8;
+	#if !defined (__APPLE__)
+		// texture compression
+		int textureCompressionParam = 0;
+		glGetInternalformativ(
+			GL_TEXTURE_2D,
+			GL_COMPRESSED_RGBA_BPTC_UNORM,
+			GL_INTERNALFORMAT_SUPPORTED,
+			1,
+			&textureCompressionParam
+		);
+		textureCompressionAvailable = textureCompressionParam == GL_TRUE;
+	#endif
 	// renderer contexts
 	rendererContexts.resize(1);
 	for (auto& rendererContext: rendererContexts) {
@@ -209,14 +224,9 @@ void GL3Renderer::finishFrame()
 {
 }
 
-bool GL3Renderer::isBufferObjectsAvailable()
+bool GL3Renderer::isTextureCompressionAvailable()
 {
-	return true;
-}
-
-bool GL3Renderer::isDepthTextureAvailable()
-{
-	return true;
+	return textureCompressionAvailable;
 }
 
 bool GL3Renderer::isUsingProgramAttributeLocation()
@@ -610,36 +620,78 @@ int32_t GL3Renderer::createGBufferColorTexture(int32_t width, int32_t height) {
 
 void GL3Renderer::uploadTexture(int contextIdx, Texture* texture)
 {
-	glTexImage2D(
-		GL_TEXTURE_2D,
-		0,
-		texture->getDepth() > 32?(texture->getDepth() == 64?GL_RGBA:GL_RGB):(texture->getDepth() == 32?GL_RGBA:GL_RGB),
-		texture->getTextureWidth(),
-		texture->getTextureHeight(),
-		0,
-		texture->getDepth() > 32?(texture->getDepth() == 64?GL_RGBA:GL_RGB):(texture->getDepth() == 32?GL_RGBA:GL_RGB),
-		texture->getDepth() > 32?GL_UNSIGNED_SHORT:GL_UNSIGNED_BYTE,
-		texture->getTextureData()->getBuffer()
-	);
+	if (textureCompressionAvailable == true && texture->isUseCompression() == true) {
+		//
+		auto mipLevels = getMipLevels(texture);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, getMipLevels(texture) - 1);
+		//
+		auto textureWidth = texture->getTextureWidth();
+		auto textureHeight = texture->getTextureHeight();
+		auto previousMipmapTexture = static_cast<Texture*>(nullptr);
+		auto mipmapTexture = static_cast<Texture*>(nullptr);
+		// and generate and upload mip maps also including level 0 image using BZ7 compression
+		for (auto i = 0; i < mipLevels; i++) {
+			//
+			auto textureTextureData = mipmapTexture == nullptr?texture->getBZ7TextureData():mipmapTexture->getBZ7TextureData();
+			//
+			glCompressedTexImage2D(
+				GL_TEXTURE_2D,
+				i,
+				GL_COMPRESSED_RGBA_BPTC_UNORM,
+				textureWidth,
+				textureHeight,
+				0,
+				textureTextureData.getCapacity(),
+				textureTextureData.getBuffer()
+			);
+			//
+			textureWidth/= 2;
+			textureHeight/= 2;
+			//
+			if (i < mipLevels - 1) {
+				previousMipmapTexture = mipmapTexture;
+				mipmapTexture = generateMipMap(texture->getId(), mipmapTexture != nullptr?mipmapTexture:texture, i, texture->getAtlasSize() > 1?32:0);
+				if (previousMipmapTexture != nullptr) previousMipmapTexture->releaseReference();
+				previousMipmapTexture = nullptr;
+			} else {
+				if (mipmapTexture != nullptr) mipmapTexture->releaseReference();
+				mipmapTexture = nullptr;
+			}
+		}
+	} else {
+		//
+		auto textureTextureData = texture->getRGBTextureData();
+		//
+		glTexImage2D(
+			GL_TEXTURE_2D,
+			0,
+			texture->getRGBDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
+			texture->getTextureWidth(),
+			texture->getTextureHeight(),
+			0,
+			texture->getRGBDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
+			GL_UNSIGNED_BYTE,
+			textureTextureData.getBuffer()
+		);
+	}
+
+	//
 	if (texture->getAtlasSize() > 1) {
 		if (texture->isUseMipMap() == true) {
 			float maxLodBias;
 			glGetFloatv(GL_MAX_TEXTURE_LOD_BIAS, &maxLodBias);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -Math::clamp(static_cast<float>(texture->getAtlasSize()) * 0.125f, 0.0f, maxLodBias));
-			auto borderSize = 32;
-			auto maxLevel = 0;
-			while (borderSize > 4) {
-				maxLevel++;
-				borderSize/= 2;
+			if (textureCompressionAvailable == false || texture->isUseCompression() == false) {
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, getMipLevels(texture) - 1);
+				glGenerateMipmap(GL_TEXTURE_2D);
 			}
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, maxLevel - 1);
-			glGenerateMipmap(GL_TEXTURE_2D);
 		}
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	} else {
-		if (texture->isUseMipMap() == true) glGenerateMipmap(GL_TEXTURE_2D);
+		if (texture->isUseMipMap() == true && (textureCompressionAvailable == false || texture->isUseCompression() == false)) glGenerateMipmap(GL_TEXTURE_2D);
 		if (texture->isRepeat() == true) {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -656,72 +708,186 @@ void GL3Renderer::uploadTexture(int contextIdx, Texture* texture)
 }
 
 void GL3Renderer::uploadCubeMapTexture(int contextIdx, Texture* textureLeft, Texture* textureRight, Texture* textureTop, Texture* textureBottom, Texture* textureFront, Texture* textureBack) {
-	glTexImage2D(
-		GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
-		0,
-		textureLeft->getDepth() > 32?(textureLeft->getDepth() == 64?GL_RGBA:GL_RGB):(textureLeft->getDepth() == 32?GL_RGBA:GL_RGB),
-		textureLeft->getTextureWidth(),
-		textureLeft->getTextureHeight(),
-		0,
-		textureLeft->getDepth() > 32?(textureLeft->getDepth() == 64?GL_RGBA:GL_RGB):(textureLeft->getDepth() == 32?GL_RGBA:GL_RGB),
-		textureLeft->getDepth() > 32?GL_UNSIGNED_SHORT:GL_UNSIGNED_BYTE,
-		textureLeft->getTextureData()->getBuffer()
-	);
-	glTexImage2D(
-		GL_TEXTURE_CUBE_MAP_POSITIVE_X,
-		0,
-		textureRight->getDepth() > 32?(textureRight->getDepth() == 64?GL_RGBA:GL_RGB):(textureRight->getDepth() == 32?GL_RGBA:GL_RGB),
-		textureRight->getTextureWidth(),
-		textureRight->getTextureHeight(),
-		0,
-		textureRight->getDepth() > 32?(textureRight->getDepth() == 64?GL_RGBA:GL_RGB):(textureRight->getDepth() == 32?GL_RGBA:GL_RGB),
-		textureRight->getDepth() > 32?GL_UNSIGNED_SHORT:GL_UNSIGNED_BYTE,
-		textureRight->getTextureData()->getBuffer()
-	);
-	glTexImage2D(
-		GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
-		0,
-		textureTop->getDepth() > 32?(textureTop->getDepth() == 64?GL_RGBA:GL_RGB):(textureTop->getDepth() == 32?GL_RGBA:GL_RGB),
-		textureTop->getTextureWidth(),
-		textureTop->getTextureHeight(),
-		0,
-		textureTop->getDepth() > 32?(textureTop->getDepth() == 64?GL_RGBA:GL_RGB):(textureTop->getDepth() == 32?GL_RGBA:GL_RGB),
-		textureTop->getDepth() > 32?GL_UNSIGNED_SHORT:GL_UNSIGNED_BYTE,
-		textureTop->getTextureData()->getBuffer()
-	);
-	glTexImage2D(
-		GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
-		0,
-		textureBottom->getDepth() > 32?(textureBottom->getDepth() == 64?GL_RGBA:GL_RGB):(textureBottom->getDepth() == 32?GL_RGBA:GL_RGB),
-		textureBottom->getTextureWidth(),
-		textureBottom->getTextureHeight(),
-		0,
-		textureBottom->getDepth() > 32?(textureBottom->getDepth() == 64?GL_RGBA:GL_RGB):(textureBottom->getDepth() == 32?GL_RGBA:GL_RGB),
-		textureBottom->getDepth() > 32?GL_UNSIGNED_SHORT:GL_UNSIGNED_BYTE,
-		textureBottom->getTextureData()->getBuffer()
-	);
-	glTexImage2D(
-		GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
-		0,
-		textureFront->getDepth() > 32?(textureFront->getDepth() == 64?GL_RGBA:GL_RGB):(textureFront->getDepth() == 32?GL_RGBA:GL_RGB),
-		textureFront->getTextureWidth(),
-		textureFront->getTextureHeight(),
-		0,
-		textureFront->getDepth() > 32?(textureFront->getDepth() == 64?GL_RGBA:GL_RGB):(textureFront->getDepth() == 32?GL_RGBA:GL_RGB),
-		textureFront->getDepth() > 32?GL_UNSIGNED_SHORT:GL_UNSIGNED_BYTE,
-		textureFront->getTextureData()->getBuffer()
-	);
-	glTexImage2D(
-		GL_TEXTURE_CUBE_MAP_NEGATIVE_Z,
-		0,
-		textureBack->getDepth() > 32?(textureBack->getDepth() == 64?GL_RGBA:GL_RGB):(textureBack->getDepth() == 32?GL_RGBA:GL_RGB),
-		textureBack->getTextureWidth(),
-		textureBack->getTextureHeight(),
-		0,
-		textureBack->getDepth() > 32?(textureBack->getDepth() == 64?GL_RGBA:GL_RGB):(textureBack->getDepth() == 32?GL_RGBA:GL_RGB),
-		textureBack->getDepth() > 32?GL_UNSIGNED_SHORT:GL_UNSIGNED_BYTE,
-		textureBack->getTextureData()->getBuffer()
-	);
+	if (textureCompressionAvailable == true && textureLeft->isUseCompression() == true) {
+		//
+		auto textureTextureData = textureLeft->getBZ7TextureData();
+		//
+		glCompressedTexImage2D(
+			GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+			0,
+			GL_COMPRESSED_RGBA_BPTC_UNORM,
+			textureLeft->getTextureWidth(),
+			textureLeft->getTextureHeight(),
+			0,
+			textureTextureData.getCapacity(),
+			textureTextureData.getBuffer()
+		);
+	} else {
+		//
+		auto textureTextureData = textureLeft->getRGBTextureData();
+		//
+		glTexImage2D(
+			GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+			0,
+			textureLeft->getRGBDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
+			textureLeft->getTextureWidth(),
+			textureLeft->getTextureHeight(),
+			0,
+			textureLeft->getRGBDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
+			GL_UNSIGNED_BYTE,
+			textureTextureData.getBuffer()
+		);
+	}
+	if (textureCompressionAvailable == true && textureRight->isUseCompression() == true) {
+		//
+		auto textureTextureData = textureRight->getBZ7TextureData();
+		//
+		glCompressedTexImage2D(
+			GL_TEXTURE_CUBE_MAP_POSITIVE_X,
+			0,
+			GL_COMPRESSED_RGBA_BPTC_UNORM,
+			textureRight->getTextureWidth(),
+			textureRight->getTextureHeight(),
+			0,
+			textureTextureData.getCapacity(),
+			textureTextureData.getBuffer()
+		);
+	} else {
+		//
+		auto textureTextureData = textureRight->getRGBTextureData();
+		//
+		glTexImage2D(
+			GL_TEXTURE_CUBE_MAP_POSITIVE_X,
+			0,
+			textureRight->getRGBDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
+			textureRight->getTextureWidth(),
+			textureRight->getTextureHeight(),
+			0,
+			textureRight->getRGBDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
+			GL_UNSIGNED_BYTE,
+			textureTextureData.getBuffer()
+		);
+	}
+	if (textureCompressionAvailable == true && textureTop->isUseCompression() == true) {
+		//
+		auto textureTextureData = textureTop->getBZ7TextureData();
+		//
+		glCompressedTexImage2D(
+			GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
+			0,
+			GL_COMPRESSED_RGBA_BPTC_UNORM,
+			textureTop->getTextureWidth(),
+			textureTop->getTextureHeight(),
+			0,
+			textureTextureData.getCapacity(),
+			textureTextureData.getBuffer()
+		);
+	} else {
+		//
+		auto textureTextureData = textureTop->getRGBTextureData();
+		//
+		glTexImage2D(
+			GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
+			0,
+			textureTop->getRGBDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
+			textureTop->getTextureWidth(),
+			textureTop->getTextureHeight(),
+			0,
+			textureTop->getRGBDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
+			GL_UNSIGNED_BYTE,
+			textureTextureData.getBuffer()
+		);
+	}
+	if (textureCompressionAvailable == true && textureBottom->isUseCompression() == true) {
+		//
+		auto textureTextureData = textureBottom->getBZ7TextureData();
+		//
+		glCompressedTexImage2D(
+			GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+			0,
+			GL_COMPRESSED_RGBA_BPTC_UNORM,
+			textureBottom->getTextureWidth(),
+			textureBottom->getTextureHeight(),
+			0,
+			textureTextureData.getCapacity(),
+			textureTextureData.getBuffer()
+		);
+	} else {
+		//
+		auto textureTextureData = textureBottom->getRGBTextureData();
+		//
+		glTexImage2D(
+			GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+			0,
+			textureBottom->getRGBDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
+			textureBottom->getTextureWidth(),
+			textureBottom->getTextureHeight(),
+			0,
+			textureBottom->getRGBDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
+			GL_UNSIGNED_BYTE,
+			textureTextureData.getBuffer()
+		);
+	}
+	if (textureCompressionAvailable == true && textureFront->isUseCompression() == true) {
+		//
+		auto textureTextureData = textureFront->getBZ7TextureData();
+		//
+		glCompressedTexImage2D(
+			GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
+			0,
+			GL_COMPRESSED_RGBA_BPTC_UNORM,
+			textureFront->getTextureWidth(),
+			textureFront->getTextureHeight(),
+			0,
+			textureTextureData.getCapacity(),
+			textureTextureData.getBuffer()
+		);
+	} else {
+		//
+		auto textureTextureData = textureFront->getRGBTextureData();
+		//
+		glTexImage2D(
+			GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
+			0,
+			textureFront->getRGBDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
+			textureFront->getTextureWidth(),
+			textureFront->getTextureHeight(),
+			0,
+			textureFront->getRGBDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
+			GL_UNSIGNED_BYTE,
+			textureTextureData.getBuffer()
+		);
+	}
+	if (textureCompressionAvailable == true && textureBack->isUseCompression() == true) {
+		//
+		auto textureTextureData = textureBack->getBZ7TextureData();
+		//
+		glCompressedTexImage2D(
+			GL_TEXTURE_CUBE_MAP_NEGATIVE_Z,
+			0,
+			GL_COMPRESSED_RGBA_BPTC_UNORM,
+			textureBack->getTextureWidth(),
+			textureBack->getTextureHeight(),
+			0,
+			textureTextureData.getCapacity(),
+			textureTextureData.getBuffer()
+		);
+	} else {
+		//
+		auto textureTextureData = textureBack->getRGBTextureData();
+		//
+		glTexImage2D(
+			GL_TEXTURE_CUBE_MAP_NEGATIVE_Z,
+			0,
+			textureBack->getRGBDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
+			textureBack->getTextureWidth(),
+			textureBack->getTextureHeight(),
+			0,
+			textureBack->getRGBDepthBitsPerPixel() == 32?GL_RGBA:GL_RGB,
+			GL_UNSIGNED_BYTE,
+			textureTextureData.getBuffer()
+		);
+	}
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);

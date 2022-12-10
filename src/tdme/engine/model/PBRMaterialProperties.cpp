@@ -3,13 +3,13 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/model/Color4.h>
 
 using std::string;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::PBRMaterialProperties;
@@ -92,10 +92,10 @@ void PBRMaterialProperties::checkBaseColorTextureTransparency()
 {
 	baseColorTextureTransparency = false;
 	auto baseColorTextureMaskedTransparencyTest = true;
-	if (baseColorTexture != nullptr && baseColorTexture->getDepth() == 32) {
-		auto textureData = baseColorTexture->getTextureData();
+	if (baseColorTexture != nullptr && baseColorTexture->getRGBDepthBitsPerPixel() == 32) {
+		auto textureData = baseColorTexture->getRGBTextureData();
 		for (auto i = 0; i < baseColorTexture->getTextureWidth() * baseColorTexture->getTextureHeight(); i++) {
-			auto alpha = textureData->get(i * 4 + 3);
+			auto alpha = textureData.get(i * 4 + 3);
 			if (alpha != 255) baseColorTextureTransparency = true;
 			if (alpha > 5 || alpha < 250) baseColorTextureMaskedTransparencyTest = false;
 		}

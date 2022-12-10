@@ -2,7 +2,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
 #include <tdme/engine/ColorTextureCanvas.h>
@@ -17,7 +17,7 @@ using std::to_string;
 
 using tdme::application::Application;
 using tdme::engine::ColorTextureCanvas;
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::fileio::textures::PNGTextureWriter;
 using tdme::math::Math;
@@ -37,19 +37,21 @@ int main(int argc, char** argv) {
 	auto imageWidth = 1024;
 	auto imageHeight = 1024;
 	auto imageScale = 1024.0f / 7.0f;
-	auto textureByteBuffer = ByteBuffer::allocate(imageWidth * imageHeight * 4);
+	auto textureByteBuffer = ByteBuffer(imageWidth * imageHeight * 4);
 	auto texture = new Texture(
 		"bezier-test",
-		32,
+		Texture::TEXTUREDEPTH_RGBA,
+		Texture::TEXTUREFORMAT_RGBA,
 		imageWidth,
 		imageHeight,
 		imageWidth,
 		imageHeight,
+		Texture::TEXTUREFORMAT_RGBA,
 		textureByteBuffer
 	);
 	texture->acquireReference();
 
-
+	//
 	ColorTextureCanvas canvas(texture);
 	canvas.drawBezier(
 		{

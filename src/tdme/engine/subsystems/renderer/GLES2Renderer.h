@@ -17,7 +17,7 @@ using std::map;
 using std::string;
 using std::vector;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::FrameBuffer;
 using tdme::math::Matrix4x4;
@@ -49,8 +49,7 @@ public:
 	void initialize() override;
 	void initializeFrame() override;
 	void finishFrame() override;
-	bool isBufferObjectsAvailable() override;
-	bool isDepthTextureAvailable() override;
+	bool isTextureCompressionAvailable() override;
 	bool isUsingProgramAttributeLocation() override;
 	bool isSupportingIntegerProgramAttributes() override;
 	bool isSpecularMappingAvailable() override;

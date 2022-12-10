@@ -6,18 +6,17 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/os/filesystem/fwd-tdme.h>
 #include <tdme/os/filesystem/FileSystemException.h>
 #include <tdme/os/threading/Mutex.h>
 #include <tdme/utilities/ByteBuffer.h>
 
-#include <ext/libpng/png.h>
-
 using std::map;
 using std::string;
 using std::vector;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::os::filesystem::FileSystemException;
 using tdme::os::threading::Mutex;
 using tdme::utilities::ByteBuffer;
@@ -28,7 +27,8 @@ using tdme::utilities::ByteBuffer;
  */
 class tdme::engine::fileio::textures::TextureReader final
 {
-	friend class Texture;
+	friend class tdme::engine::Texture;
+	friend class PNGTextureReader;
 
 public:
 	/**
@@ -48,17 +48,6 @@ public:
 	static Texture* read(const string& pathName, const string& fileName, bool useCache = true, bool powerOfTwo = true, const string& idPrefix = string());
 
 	/**
-	 * Reads a 16 bit texture
-	 * @param pathName path name
-	 * @param fileName file name
-	 * @param useCache use cache
-	 * @param powerOfTwo scale image to fit power of two dimensions
-	 * @param idPrefix id prefix
-	 * @return texture data instance or null
-	 */
-	static Texture* read16(const string& pathName, const string& fileName, bool useCache = true, bool powerOfTwo = true, const string& idPrefix = string());
-
-	/**
 	 * Reads a texture with additional transparency texture
 	 * @param texturePathName texture path name
 	 * @param textureFileName texture file name
@@ -70,24 +59,6 @@ public:
 	 * @return texture data instance or null
 	 */
 	static Texture* read2(const string& texturePathName, const string& textureFileName, const string& transparencyTexturePathName, const string& transparencyTextureFileName, bool useCache = true, bool powerOfTwo = true, const string& idPrefix = string());
-
-	/**
-	 * Read PNG
-	 * @param textureId texture id
-	 * @param data vector data to write PNG to
-	 * @param powerOfTwo scale image to fit power of two dimensions
-	 * @param idPrefix id prefix
-	 */
-	static Texture* readPNG(const string& textureId, const vector<uint8_t>& data, bool powerOfTwo = true, const string& idPrefix = string());
-
-	/**
-	 * Read 16 bit PNG
-	 * @param textureId texture id
-	 * @param data vector data to write PNG to
-	 * @param powerOfTwo scale image to fit power of two dimensions
-	 * @param idPrefix id prefix
-	 */
-	static Texture* readPNG16(const string& textureId, const vector<uint8_t>& data, bool powerOfTwo = true, const string& idPrefix = string());
 
 	/**
 	 * Rotate texture around center
@@ -118,49 +89,6 @@ public:
 	static Texture* smooth(Texture* texture, const string& idSuffix = ":smoothed", float adjacentSampleWeight = 0.05f);
 
 private:
-	/**
-	 * PNG input stream
-	 */
-	class PNGInputStream {
-	public:
-
-		/**
-		 * Public constructor
-		 * @param data data
-		 */
-		PNGInputStream(const vector<uint8_t>* data): offset(0), data(data) {
-		}
-
-		/**
-		 * Destructor
-		 */
-		~PNGInputStream() {
-		}
-
-		/**
-		 * Read bytes
-		 * @param outBytes out bytes
-		 * @param outBytesToRead out bytes to read
-		 */
-		void readBytes(int8_t* outBytes, int32_t outBytesToRead) {
-			for (int32_t i = 0; i < outBytesToRead && offset < data->size(); i++) {
-				outBytes[i] = (*data)[offset++];
-			}
-		}
-
-	private:
-		int offset;
-		const vector<uint8_t>* data;
-
-	};
-
-	/**
-	 * Read PNG data from memory
-	 * @param png_ptr png structure
-	 * @param outBytes out bytes
-	 * @param outBytesToRead out bytes to read
-	 */
-	static void readPNGDataFromMemory(png_structp png_ptr, png_bytep outBytes, png_size_t outBytesToRead);
 
 	/**
 	 * Remove texture from cache
@@ -177,7 +105,7 @@ private:
 	 * @param bytesPerPixel bytes per pixel
 	 * @param y y position in original image
 	 */
-	static void scaleTextureLine(ByteBuffer* pixelByteBuffer, ByteBuffer* pixelByteBufferScaled, int width, int textureWidth, int bytesPerPixel, int y);
+	static void scaleTextureLine(const ByteBuffer& pixelByteBuffer, ByteBuffer& pixelByteBufferScaled, int width, int textureWidth, int bytesPerPixel, int y);
 
 	//
 	STATIC_DLL_IMPEXT static vector<string> extensions;

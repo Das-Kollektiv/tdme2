@@ -13,7 +13,7 @@
 using std::array;
 using std::vector;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Camera;
 using tdme::engine::Decal;

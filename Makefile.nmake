@@ -56,6 +56,7 @@ OGG = ogg
 VHACD = v-hacd
 REACTPHYSICS3D = reactphysics3d
 CPPSPLINE = cppspline
+BC7 = bc7enc_rdo
 
 SRCS = \
 	src/tdme/audio/Audio.cpp \
@@ -94,6 +95,7 @@ SRCS = \
 	src/tdme/engine/Rotation.cpp \
 	src/tdme/engine/SceneConnector.cpp \
 	src/tdme/engine/SimplePartition.cpp \
+	src/tdme/engine/Texture.cpp \
 	src/tdme/engine/Timing.cpp \
 	src/tdme/engine/Transform.cpp \
 	src/tdme/engine/Version.cpp \
@@ -107,8 +109,10 @@ SRCS = \
 	src/tdme/engine/fileio/prototypes/PrototypeReader.cpp \
 	src/tdme/engine/fileio/scenes/SceneWriter.cpp \
 	src/tdme/engine/fileio/scenes/SceneReader.cpp \
+	src/tdme/engine/fileio/textures/BZ7TextureReader.cpp \
+	src/tdme/engine/fileio/textures/BZ7TextureWriter.cpp \
+	src/tdme/engine/fileio/textures/PNGTextureReader.cpp \
 	src/tdme/engine/fileio/textures/PNGTextureWriter.cpp \
-	src/tdme/engine/fileio/textures/Texture.cpp \
 	src/tdme/engine/fileio/textures/TextureReader.cpp \
 	src/tdme/engine/logics/ApplicationClient.cpp \
 	src/tdme/engine/logics/ApplicationServer.cpp \
@@ -696,6 +700,10 @@ EXT_CPPSPLINE_SRCS = \
 	ext/cpp-spline/src/Curve.cpp \
 	ext/cpp-spline/src/Vector.cpp
 
+EXT_BC7_SRCS = \
+	ext/bc7enc_rdo/bc7decomp.cpp \
+	ext/bc7enc_rdo/bc7enc.cpp
+
 EXT_SRCS = \
 	$(EXT_TINYXML_SRCS) \
 	$(EXT_ZLIB_SRCS) \
@@ -705,7 +713,8 @@ EXT_SRCS = \
 	$(EXT_SHA256_SRCS) \
 	$(EXT_VHACD_SRCS) \
 	$(EXT_REACTPHYSICS3D_SRCS) \
-	$(EXT_CPPSPLINE_SRCS)
+	$(EXT_CPPSPLINE_SRCS) \
+	$(EXT_BC7_SRCS)
 
 OPENGL3CORE_RENDERER_LIB_SRCS = \
 	src/tdme/engine/subsystems/renderer/EngineGL3Renderer.cpp \
