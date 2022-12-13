@@ -11,6 +11,10 @@
 		<element id="{$id}_input_type_panel" width="*" horizontal-align="left">
 			<input id="{$id}_input" show-on="input" width="*" height="auto" text="{$input_text}" unit="{$input_unit}" options="{$input_options}"/>
 			<checkbox id="{$id}_checkbox" show-on="checkbox" width="25" height="25" value="1"/>
+			<layer show-on="dropdown">
+				<dropdown id="{$id}_dropdown" width="*" value="1">
+				</dropdown>
+			</layer>
 		</element>
 	</layout>
 </element>
