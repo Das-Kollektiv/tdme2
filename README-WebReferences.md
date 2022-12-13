@@ -23,7 +23,8 @@
   - http://www.songho.ca/opengl/gl_matrix.html
   - http://www.songho.ca/opengl/gl_transform.html
   - http://www.wazim.com/Collada_Tutorial_1.htm
-  - http://www.zedwood.com/article/cpp-utf8-char-to-codepoint  
+  - http://www.zedwood.com/article/cpp-utf8-char-to-codepoint
+  - https://aras-p.info/blog/2020/12/08/Texture-Compression-in-2020/
   - https://asmaloney.com/2017/08/code/crash-reporting-for-mingw-32-windows-and-clang-macos-with-qt/
   - https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
   - https://forum.unity.com/threads/how-do-i-find-the-closest-point-on-a-line.340058/
@@ -44,6 +45,7 @@
   - https://github.com/SaschaWillems/Vulkan-glTF-PBR
   - https://github.com/erich666/GraphicsGems/tree/master/gemsiv/euler_angle
   - https://github.com/glfw/glfw/blob/master/tests/vulkan.c
+  - https://github.com/richgel999/bc7enc_rdo
   - https://google.github.io/filament/Filament.md.html#materialsystem/specularbrdf/geometricshadowing(specularg)
   - https://howtorts.github.io/2014/01/04/basic-flow-fields.html
   - https://hub.jmonkeyengine.org/t/depth-only-ssao/37749

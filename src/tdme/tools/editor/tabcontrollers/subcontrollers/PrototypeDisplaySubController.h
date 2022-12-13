@@ -160,10 +160,10 @@ public:
 	void onChange(GUIElementNode* node, Prototype* prototype);
 
 	/**
-	 * Shows the error pop up
+	 * Show the information pop up / modal
 	 * @param caption caption
 	 * @param message message
 	 */
-	void showErrorPopUp(const string& caption, const string& message);
+	void showInfoPopUp(const string& caption, const string& message);
 
 };

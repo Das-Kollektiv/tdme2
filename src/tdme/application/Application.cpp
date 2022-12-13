@@ -38,7 +38,7 @@
 
 #include <tdme/application/Application.h>
 #include <tdme/application/InputEventHandler.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/subsystems/renderer/Renderer.h>
 #include <tdme/engine/Engine.h>
@@ -61,7 +61,7 @@ using std::to_string;
 
 using tdme::application::Application;
 using tdme::application::InputEventHandler;
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::subsystems::renderer::Renderer;
 using tdme::engine::Engine;
@@ -715,17 +715,17 @@ void Application::setIcon() {
 	if (FileSystem::getInstance()->fileExists("resources/platforms/icons/" + logoFileName) == false) logoFileName = "default-icon.png";
 	auto texture = TextureReader::read("resources/platforms/icons", logoFileName, false, false);
 	if (texture != nullptr) {
-		auto textureData = texture->getTextureData();
+		auto textureData = texture->getRGBTextureData();
 		auto textureWidth = texture->getTextureWidth();
 		auto textureHeight = texture->getTextureHeight();
-		auto textureBytePerPixel = texture->getDepth() == 32?4:3;
+		auto textureBytePerPixel = texture->getRGBDepthBitsPerPixel() == 32?4:3;
 		auto glfwPixels = new uint8_t[textureWidth * textureHeight * 4];
 		for (auto y = 0; y < textureHeight; y++)
 		for (auto x = 0; x < textureWidth; x++) {
-			glfwPixels[y * textureWidth * 4 + x * 4 + 0] = textureData->get(y * textureWidth * textureBytePerPixel + x * textureBytePerPixel + 0);
-			glfwPixels[y * textureWidth * 4 + x * 4 + 1] = textureData->get(y * textureWidth * textureBytePerPixel + x * textureBytePerPixel + 1);
-			glfwPixels[y * textureWidth * 4 + x * 4 + 2] = textureData->get(y * textureWidth * textureBytePerPixel + x * textureBytePerPixel + 2);
-			glfwPixels[y * textureWidth * 4 + x * 4 + 3] = textureBytePerPixel == 3?255:textureData->get(y * textureWidth * textureBytePerPixel + x * textureBytePerPixel + 3);
+			glfwPixels[y * textureWidth * 4 + x * 4 + 0] = textureData.get(y * textureWidth * textureBytePerPixel + x * textureBytePerPixel + 0);
+			glfwPixels[y * textureWidth * 4 + x * 4 + 1] = textureData.get(y * textureWidth * textureBytePerPixel + x * textureBytePerPixel + 1);
+			glfwPixels[y * textureWidth * 4 + x * 4 + 2] = textureData.get(y * textureWidth * textureBytePerPixel + x * textureBytePerPixel + 2);
+			glfwPixels[y * textureWidth * 4 + x * 4 + 3] = textureBytePerPixel == 3?255:textureData.get(y * textureWidth * textureBytePerPixel + x * textureBytePerPixel + 3);
 		}
 		GLFWimage glfwIcon;
 		glfwIcon.width = texture->getTextureWidth();
@@ -786,7 +786,8 @@ void Application::glfwOnKey(GLFWwindow* window, int key, int scanCode, int actio
 			key,
 			(int)mouseX,
 			(int)mouseY,
-			action == GLFW_REPEAT
+			action == GLFW_REPEAT,
+			mods
 		);
 	} else
 	if (action == GLFW_RELEASE) {

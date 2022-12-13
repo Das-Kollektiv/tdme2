@@ -102,7 +102,7 @@ void TriggerEditorTabController::dispose()
 {
 }
 
-void TriggerEditorTabController::executeCommand(TabControllerCommand command)
+void TriggerEditorTabController::onCommand(TabControllerCommand command)
 {
 	switch (command) {
 		case COMMAND_SAVE:
@@ -115,7 +115,7 @@ void TriggerEditorTabController::executeCommand(TabControllerCommand command)
 						Tools::getFileName(fileName)
 					);
 				} catch (Exception& exception) {
-					showErrorPopUp("Warning", (string(exception.what())));
+					showInfoPopUp("Warning", (string(exception.what())));
 				}
 			}
 			break;
@@ -131,7 +131,7 @@ void TriggerEditorTabController::executeCommand(TabControllerCommand command)
 								triggerEditorTabController->popUps->getFileDialogScreenController()->getFileName()
 							);
 						} catch (Exception& exception) {
-							triggerEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+							triggerEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 						}
 						triggerEditorTabController->popUps->getFileDialogScreenController()->close();
 					}
@@ -156,9 +156,16 @@ void TriggerEditorTabController::executeCommand(TabControllerCommand command)
 			}
 			break;
 		default:
-			showErrorPopUp("Warning", "This command is not supported yet");
+			showInfoPopUp("Warning", "This command is not supported yet");
 			break;
 	}
+}
+
+void TriggerEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
+	Console::println("TriggerEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
+	if (prototypePhysicsSubController->onDrop(payload, mouseX, mouseY, view->getPrototype()) == true) return;
+	if (prototypeScriptSubController->onDrop(payload, mouseX, mouseY, view->getPrototype()) == true) return;
+	showInfoPopUp("Warning", "You can not drop a file here");
 }
 
 void TriggerEditorTabController::onChange(GUIElementNode* node)
@@ -187,9 +194,10 @@ void TriggerEditorTabController::onContextMenuRequest(GUIElementNode* node, int 
 }
 
 void TriggerEditorTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
-	int left, top;
-	view->getEditorView()->getViewPortUnscaledOffset(left, top);
-	popUps->getTooltipScreenController()->show(left + mouseX, top + mouseY, node->getToolTip());
+	int tooltipLeft, tooltipTop;
+	if (view->getEditorView()->getCurrentTabTooltipPosition(screenNode, mouseX, mouseY, tooltipLeft, tooltipTop) == false) return;
+	//
+	popUps->getTooltipScreenController()->show(tooltipLeft, tooltipTop, node->getToolTip());
 }
 
 void TriggerEditorTabController::onTooltipCloseRequest() {
@@ -235,7 +243,7 @@ void TriggerEditorTabController::updateInfoText(const MutableString& text) {
 	required_dynamic_cast<GUITextNode*>(screenNode->getNodeById(view->getTabId() + "_tab_text_info"))->setText(text);
 }
 
-void TriggerEditorTabController::showErrorPopUp(const string& caption, const string& message)
+void TriggerEditorTabController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }

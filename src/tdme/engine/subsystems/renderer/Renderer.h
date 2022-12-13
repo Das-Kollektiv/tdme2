@@ -17,6 +17,7 @@
 #include <tdme/engine/fileio/textures/fwd-tdme.h>
 #include <tdme/engine/subsystems/renderer/fwd-tdme.h>
 #include <tdme/engine/EntityShaderParameters.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/math/fwd-tdme.h>
 #include <tdme/math/Matrix2D3x3.h>
 #include <tdme/math/Matrix4x4.h>
@@ -27,7 +28,7 @@ using std::map;
 using std::string;
 using std::vector;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::EntityShaderParameters;
 using tdme::math::Matrix2D3x3;
 using tdme::math::Matrix4x4;
@@ -253,16 +254,9 @@ public:
 	virtual bool isSupportingMultithreadedRendering() = 0;
 
 	/**
-	 * Checks if buffer objects is available
-	 * @return buffer objects availability
+	 * @return returns if texture compression is available
 	 */
-	virtual bool isBufferObjectsAvailable() = 0;
-
-	/**
-	 * Checks if depth texture is available
-	 * @return depth texture is available
-	 */
-	virtual bool isDepthTextureAvailable() = 0;
+	virtual bool isTextureCompressionAvailable() = 0;
 
 	/**
 	 * @return requires program attribute location
@@ -938,6 +932,13 @@ public:
 	virtual void bindVerticesBufferObject(int contextIdx, int32_t bufferObjectId) = 0;
 
 	/**
+	 * Bind vertices 2 buffer object
+	 * @param contextIdx context index
+	 * @param bufferObjectId buffer object id
+	 */
+	virtual void bindVertices2BufferObject(int contextIdx, int32_t bufferObjectId) = 0;
+
+	/**
 	 * Bind normals buffer object
 	 * @param contextIdx context index
 	 * @param bufferObjectId buffer object id
@@ -1395,4 +1396,8 @@ public:
 	 */
 	Texture* generateMipMap(const string& id, Texture* texture, int32_t level, int32_t atlasBorderSize);
 
+	/**
+	 * @return mip levels
+	 */
+	int getMipLevels(Texture* texture);
 };

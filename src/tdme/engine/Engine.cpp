@@ -7,7 +7,7 @@
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Node.h>
@@ -90,7 +90,7 @@ using std::to_string;
 
 using tdme::application::Application;
 using tdme::engine::fileio::textures::PNGTextureWriter;
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Node;
@@ -759,7 +759,6 @@ void Engine::initialize()
 	if (shadowMappingEnabled == true) {
 		if (getShadowMapWidth() == 0 || getShadowMapHeight() == 0) setShadowMapSize(2048, 2048);
 		if (getShadowMapRenderLookUps() == 0) setShadowMapRenderLookUps(8);
-		shadowMappingEnabled = renderer->isBufferObjectsAvailable() == true && renderer->isDepthTextureAvailable() == true;
 	}
 	animationProcessingTarget = renderer->isGLCLAvailable() == true || renderer->isComputeShaderAvailable() == true?Engine::AnimationProcessingTarget::GPU:Engine::AnimationProcessingTarget::CPU;
 
@@ -868,20 +867,11 @@ void Engine::initialize()
 	texture2DRenderShader = new Texture2DRenderShader(renderer);
 	texture2DRenderShader->initialize();
 
-	// check if VBOs are available
-	if (renderer->isBufferObjectsAvailable()) {
-		Console::println("TDME2::VBOs are available.");
+	// check if texture compression is available
+	if (renderer->isTextureCompressionAvailable() == true) {
+		Console::println("TDME2::BC7 texture compression is available.");
 	} else {
-		Console::println("TDME2::VBOs are not available! Engine will not work!");
-		initialized = false;
-	}
-
-	// check FBO support
-	if (true == false/*glContext->hasBasicFBOSupport() == false*/) {
-		Console::println("TDME2::Basic FBOs are not available!");
-		shadowMappingEnabled = false;
-	} else {
-		Console::println("TDME2::Basic FBOs are available.");
+		Console::println("TDME2::BC7 texture compression is not available.");
 	}
 
 	// TODO: make this configurable
@@ -2168,16 +2158,21 @@ bool Engine::makeScreenshot(const string& pathName, const string& fileName, bool
 	// create texture, write and delete
 	auto texture = new Texture(
 		"tdme.engine.makescreenshot",
-		32,
+		Texture::TEXTUREDEPTH_RGBA,
+		Texture::TEXTUREFORMAT_RGBA,
 		width,
 		height,
 		width,
 		height,
-		pixels
+		Texture::TEXTUREFORMAT_RGBA,
+		*pixels
 	);
 	texture->acquireReference();
 	PNGTextureWriter::write(texture, pathName, fileName, removeAlphaChannel);
 	texture->releaseReference();
+
+	//
+	delete pixels;
 
 	// unuse framebuffer if we have one
 	if (frameBuffer != nullptr) FrameBuffer::disableFrameBuffer();
@@ -2201,17 +2196,22 @@ bool Engine::makeScreenshot(vector<uint8_t>& pngData)
 	// create texture, write and delete
 	auto texture = new Texture(
 		"tdme.engine.makescreenshot",
-		32,
+		Texture::TEXTUREDEPTH_RGBA,
+		Texture::TEXTUREFORMAT_RGBA,
 		width,
 		height,
 		width,
 		height,
-		pixels
+		Texture::TEXTUREFORMAT_RGBA,
+		*pixels
 	);
 
 	texture->acquireReference();
 	PNGTextureWriter::write(texture, pngData);
 	texture->releaseReference();
+
+	//
+	delete pixels;
 
 	// unuse framebuffer if we have one
 	if (frameBuffer != nullptr) FrameBuffer::disableFrameBuffer();

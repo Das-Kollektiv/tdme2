@@ -5,7 +5,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/logics/LogicMiniScript.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
@@ -43,7 +43,7 @@ using tdme::tools::editor::tabcontrollers::TextEditorTabController;
 using std::string;
 using std::unordered_map;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::logics::LogicMiniScript;
 using tdme::engine::Engine;
 using tdme::gui::events::GUIActionListenerType;
@@ -109,9 +109,30 @@ void TextEditorTabController::dispose()
 	this->view->getTabScreenNode()->removeFocusListener(this);
 }
 
-void TextEditorTabController::executeCommand(TabControllerCommand command)
+void TextEditorTabController::onCommand(TabControllerCommand command)
 {
 	switch (command) {
+		case COMMAND_REDO:
+			view->redo();
+			break;
+		case COMMAND_UNDO:
+			view->undo();
+			break;
+		case COMMAND_CUT:
+			view->cut();
+			break;
+		case COMMAND_COPY:
+			view->copy();
+			break;
+		case COMMAND_PASTE:
+			view->paste();
+			break;
+		case COMMAND_DELETE:
+			view->delete_();
+			break;
+		case COMMAND_SELECTALL:
+			view->selectAll();
+			break;
 		case COMMAND_SAVE:
 			{
 				auto fileName = view->getFileName();
@@ -122,7 +143,7 @@ void TextEditorTabController::executeCommand(TabControllerCommand command)
 						Tools::getFileName(fileName)
 					);
 				} catch (Exception& exception) {
-					showErrorPopUp("Warning", (string(exception.what())));
+					showInfoPopUp("Warning", (string(exception.what())));
 				}
 			}
 			break;
@@ -138,7 +159,7 @@ void TextEditorTabController::executeCommand(TabControllerCommand command)
 								textEditorTabController->popUps->getFileDialogScreenController()->getFileName()
 							);
 						} catch (Exception& exception) {
-							textEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+							textEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 						}
 						textEditorTabController->popUps->getFileDialogScreenController()->close();
 					}
@@ -180,7 +201,7 @@ void TextEditorTabController::executeCommand(TabControllerCommand command)
 				public:
 					void performAction() override {
 						if (textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText().empty() == true) {
-							textEditorTabController->showErrorPopUp("Find", "No find string given.");
+							textEditorTabController->showInfoPopUp("Find", "No find string given.");
 						} else {
 							if (textEditorTabController->view->find(
 								textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText(),
@@ -190,7 +211,7 @@ void TextEditorTabController::executeCommand(TabControllerCommand command)
 								textEditorTabController->firstSearch,
 								textEditorTabController->searchIndex
 							) == false) {
-								textEditorTabController->showErrorPopUp("Find", "Text not found.");
+								textEditorTabController->showInfoPopUp("Find", "Text not found.");
 							}
 							textEditorTabController->firstSearch = false;
 						}
@@ -206,7 +227,7 @@ void TextEditorTabController::executeCommand(TabControllerCommand command)
 				public:
 					void performAction() override {
 						if (textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText().empty() == true) {
-							textEditorTabController->showErrorPopUp("Count", "No find string given.");
+							textEditorTabController->showInfoPopUp("Count", "No find string given.");
 						} else {
 							auto count = textEditorTabController->view->count(
 								textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText(),
@@ -214,7 +235,7 @@ void TextEditorTabController::executeCommand(TabControllerCommand command)
 								textEditorTabController->popUps->getFindReplaceDialogScreenController()->isWholeWordOnly(),
 								textEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly()
 							);
-							textEditorTabController->showErrorPopUp("Count", "The text occurred " + to_string(count) + " times.");
+							textEditorTabController->showInfoPopUp("Count", "The text occurred " + to_string(count) + " times.");
 						}
 					}
 					CountAction(TextEditorTabController* textEditorTabController): textEditorTabController(textEditorTabController) {
@@ -228,7 +249,7 @@ void TextEditorTabController::executeCommand(TabControllerCommand command)
 				public:
 					void performAction() override {
 						if (textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText().empty() == true) {
-							textEditorTabController->showErrorPopUp("Replace", "No find string given.");
+							textEditorTabController->showInfoPopUp("Replace", "No find string given.");
 						} else {
 							if (textEditorTabController->view->replace(
 								textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText(),
@@ -238,7 +259,7 @@ void TextEditorTabController::executeCommand(TabControllerCommand command)
 								textEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly(),
 								textEditorTabController->searchIndex
 							) == false) {
-								textEditorTabController->showErrorPopUp("Replace", "Text not found.");
+								textEditorTabController->showInfoPopUp("Replace", "Text not found.");
 							}
 						}
 					}
@@ -253,7 +274,7 @@ void TextEditorTabController::executeCommand(TabControllerCommand command)
 				public:
 					void performAction() override {
 						if (textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText().empty() == true) {
-							textEditorTabController->showErrorPopUp("Replace All", "No find string given.");
+							textEditorTabController->showInfoPopUp("Replace All", "No find string given.");
 						} else {
 							if (textEditorTabController->view->replaceAll(
 								textEditorTabController->popUps->getFindReplaceDialogScreenController()->getFindText(),
@@ -262,7 +283,7 @@ void TextEditorTabController::executeCommand(TabControllerCommand command)
 								textEditorTabController->popUps->getFindReplaceDialogScreenController()->isWholeWordOnly(),
 								textEditorTabController->popUps->getFindReplaceDialogScreenController()->isInSelectionOnly()
 							) == false) {
-								textEditorTabController->showErrorPopUp("Replace All", "Text not found.");
+								textEditorTabController->showInfoPopUp("Replace All", "Text not found.");
 							}
 						}
 					}
@@ -295,12 +316,17 @@ void TextEditorTabController::executeCommand(TabControllerCommand command)
 			}
 			break;
 		default:
-			showErrorPopUp("Warning", "This command is not supported yet");
+			showInfoPopUp("Warning", "This command is not supported yet");
 			break;
 	}
 }
 
-void TextEditorTabController::showErrorPopUp(const string& caption, const string& message)
+void TextEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
+	Console::println("TextEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
+	showInfoPopUp("Warning", "You can not drop a file here");
+}
+
+void TextEditorTabController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
@@ -349,9 +375,10 @@ void TextEditorTabController::onContextMenuRequest(GUIElementNode* node, int mou
 }
 
 void TextEditorTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
-	int left, top;
-	view->getEditorView()->getViewPortUnscaledOffset(left, top);
-	popUps->getTooltipScreenController()->show(left + mouseX, top + mouseY, node->getToolTip());
+	int tooltipLeft, tooltipTop;
+	if (view->getEditorView()->getCurrentTabTooltipPosition(screenNode, mouseX, mouseY, tooltipLeft, tooltipTop) == false) return;
+	//
+	popUps->getTooltipScreenController()->show(tooltipLeft, tooltipTop, node->getToolTip());
 }
 
 void TextEditorTabController::onTooltipCloseRequest() {

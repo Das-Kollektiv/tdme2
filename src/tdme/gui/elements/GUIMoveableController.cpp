@@ -53,16 +53,26 @@ void GUIMoveableController::postLayout() {
 void GUIMoveableController::handleMouseEvent(GUINode* node, GUIMouseEvent* event) {
 	if (node == this->node &&
 		event->getType() == GUIMouseEvent::MOUSEEVENT_RELEASED == true) {
+		//
 		event->setProcessed(true);
+		//
+		dragging = false;
+		//
+		node->getScreenNode()->forwardMoveRelease(this->node, event->getXUnscaled(), event->getYUnscaled());
 	} else
 	if (node == this->node && node->isEventBelongingToNode(event) == true &&
 		event->getType() == GUIMouseEvent::MOUSEEVENT_PRESSED == true &&
 		event->getButton() == MOUSE_BUTTON_LEFT) {
+		//
 		mouseLastX = event->getX();
 		mouseLastY = event->getY();
+		//
 		event->setProcessed(true);
+		//
+		dragging = true;
 	} else
-	if (event->getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED == true &&
+	if (dragging == true &&
+		event->getType() == GUIMouseEvent::MOUSEEVENT_DRAGGED == true &&
 		event->getButton() == MOUSE_BUTTON_LEFT) {
 		auto movedX = event->getX() - mouseLastX;
 		auto movedY = event->getY() - mouseLastY;
@@ -89,6 +99,7 @@ void GUIMoveableController::handleMouseEvent(GUINode* node, GUIMouseEvent* event
 		//
 		mouseLastX = event->getX();
 		mouseLastY = event->getY();
+		//
 		event->setProcessed(true);
 	}
 }
@@ -117,4 +128,10 @@ void GUIMoveableController::setValue(const MutableString& value) {
 }
 
 void GUIMoveableController::onSubTreeChange() {
+}
+
+void GUIMoveableController::startMoving(int mouseX, int mouseY) {
+	dragging = true;
+	mouseLastX = mouseX;
+	mouseLastY = mouseY;
 }

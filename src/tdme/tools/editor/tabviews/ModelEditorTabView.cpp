@@ -274,7 +274,7 @@ void ModelEditorTabView::loadModel(const string& pathName, const string& fileNam
 			)
 		);
 	} catch (Exception& exception) {
-		modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+		modelEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 	}
 	reimportPrototype();
 }
@@ -330,11 +330,11 @@ void ModelEditorTabView::reimportModel(const string& pathName, const string& fil
 		// set model in entity
 		prototype->setModel(model);
 	} catch (Exception& exception) {
-		modelEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+		modelEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 	}
 	reimportPrototype();
 	if (log.size() > 0) {
-		modelEditorTabController->showErrorPopUp("Warning", log);
+		modelEditorTabController->showInfoPopUp("Warning", log);
 	}
 }
 
@@ -574,6 +574,10 @@ void ModelEditorTabView::addAttachment1(const string& nodeId, const string& atta
 		attachment->addRotation(Vector3(0.0f, 1.0f, 0.0f), 0.0f);
 		attachment->addRotation(Vector3(1.0f, 0.0f, 0.0f), 0.0f);
 	}
+	attachment1Bone = nodeId;
+}
+
+void ModelEditorTabView::setAttachment1NodeId(const string& nodeId) {
 	attachment1Bone = nodeId;
 }
 

@@ -13,13 +13,12 @@
 #include <tdme/gui/events/GUIMoveListener.h>
 #include <tdme/gui/nodes/GUIColor.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
-#include <tdme/gui/nodes/GUIFrameBufferNode.h>
+#include <tdme/gui/nodes/GUIImageNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIParentNode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/nodes/GUIStyledTextNode.h>
 #include <tdme/gui/nodes/GUIStyledTextNodeController.h>
-#include <tdme/gui/nodes/GUITextureNode.h>
 #include <tdme/gui/GUI.h>
 #include <tdme/gui/GUIParser.h>
 #include <tdme/math/Math.h>
@@ -51,12 +50,11 @@ using tdme::engine::Engine;
 using tdme::gui::events::GUIMoveListener;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUIFrameBufferNode;
+using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::nodes::GUIStyledTextNode;
-using tdme::gui::nodes::GUITextureNode;
 using tdme::gui::GUI;
 using tdme::gui::GUIParser;
 using tdme::math::Math;
@@ -98,7 +96,7 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 		//
 		linesTexture = new DynamicColorTexture(engine->getWidth(), engine->getHeight());
 		linesTexture->initialize();
-		required_dynamic_cast<GUITextureNode*>(screenNode->getNodeById("visualization_texture"))->setTexture(linesTexture);
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("visualization_texture"))->setTexture(linesTexture);
 		// add node move listener
 		class NodeMoveListener: public GUIMoveListener {
 		public:
@@ -115,7 +113,9 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 				visualisationNode->getRequestsConstraints().height = Math::max(visualisationNode->getRequestsConstraints().height, yMax);
 				textEditorTabView->createConnectionsPasses = 3;
 			}
-
+			void onRelease(GUINode* node, int mouseX, int mouseY) {
+				// no op
+			}
 		private:
 			TextEditorTabView* textEditorTabView;
 		};
@@ -293,10 +293,10 @@ TextEditorTabView::TextEditorTabView(EditorView* editorView, const string& tabId
 				}
 				if (codeCompletionSymbolCandidates.empty() == false) {
 					//
-					int left, top, width, height;
+					int left, top, width, height, offsetX, offsetY;
 					auto selectedTab = textEditorTabView->getEditorView()->getScreenController()->getSelectedTab();
 					if (selectedTab != nullptr) {
-						textEditorTabView->getEditorView()->getViewPort(selectedTab->getFrameBufferNode(), left, top, width, height);
+						textEditorTabView->getEditorView()->getViewPort(selectedTab->getFrameBufferNode(), left, top, width, height, offsetX, offsetY);
 						popUps->getContextMenuScreenController()->show(
 							left + textEditorTabView->textNode->getIndexPositionX() - textEditorTabView->textNode->computeParentChildrenRenderOffsetXTotal(),
 							top + textEditorTabView->textNode->getIndexPositionY() - textEditorTabView->textNode->computeParentChildrenRenderOffsetYTotal()
@@ -355,7 +355,7 @@ void TextEditorTabView::display()
 			linesTexture->getWidth() != engine->getWidth() ||
 			linesTexture->getHeight() != engine->getHeight()) {
 			linesTexture->reshape(engine->getWidth(), engine->getHeight());
-			auto visualizationTextureNode = dynamic_cast<GUITextureNode*>(screenNode->getNodeById("visualization_texture"));
+			auto visualizationTextureNode = dynamic_cast<GUIImageNode*>(screenNode->getNodeById("visualization_texture"));
 			if (visualizationTextureNode != nullptr) visualizationTextureNode->setTexture(linesTexture);
 			createConnectionsPasses = 3;
 		}
@@ -1790,4 +1790,46 @@ bool TextEditorTabView::replaceAll(const string& findString, const string& repla
 void TextEditorTabView::cancelFind() {
 	TextFormatter::getInstance()->format(extension, textNode, 0, textNode->getText().size());
 	countEnabled = false;
+}
+
+void TextEditorTabView::redo() {
+	if (visualEditor == false) {
+		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->redo();
+	}
+}
+
+void TextEditorTabView::undo() {
+	if (visualEditor == false) {
+		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->undo();
+	}
+}
+
+void TextEditorTabView::selectAll() {
+	if (visualEditor == false) {
+		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->selectAll();
+	}
+}
+
+void TextEditorTabView::cut() {
+	if (visualEditor == false) {
+		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->cut();
+	}
+}
+
+void TextEditorTabView::copy() {
+	if (visualEditor == false) {
+		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->copy();
+	}
+}
+
+void TextEditorTabView::paste() {
+	if (visualEditor == false) {
+		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->paste();
+	}
+}
+
+void TextEditorTabView::delete_() {
+	if (visualEditor == false) {
+		required_dynamic_cast<GUIStyledTextNodeController*>(textNode->getController())->delete_();
+	}
 }

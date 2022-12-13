@@ -209,7 +209,7 @@
 				
 				<layout show-on="convexmesh" id="boundingvolume_convexmesh" alignment="horizontal" width="100%" height="auto" vertical-align="center">
 				
-					<template src="resources/engine/gui/template_details_shared_fileinput_texture.xml" id="boundingvolume_convexmesh_file" type="Convex Mesh" />
+					<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="boundingvolume_convexmesh_file" type="Convex Mesh" />
 					
 				</layout> 
 				

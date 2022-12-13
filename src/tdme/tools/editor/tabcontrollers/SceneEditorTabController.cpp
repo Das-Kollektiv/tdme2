@@ -124,7 +124,7 @@ void SceneEditorTabController::dispose()
 {
 }
 
-void SceneEditorTabController::executeCommand(TabControllerCommand command)
+void SceneEditorTabController::onCommand(TabControllerCommand command)
 {
 	switch (command) {
 		case COMMAND_SAVE:
@@ -174,8 +174,54 @@ void SceneEditorTabController::executeCommand(TabControllerCommand command)
 			}
 			break;
 		default:
-			showErrorPopUp("Warning", "This command is not supported yet");
+			showInfoPopUp("Warning", "This command is not supported yet");
 			break;
+	}
+}
+
+void SceneEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
+	Console::println("SceneEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
+	if (StringTools::startsWith(payload, "file:") == false) {
+		showInfoPopUp("Warning", "Unknown payload in drop");
+	} else {
+		auto fileName = StringTools::substring(payload, string("file:").size());
+		if (Tools::hasFileExtension(fileName, PrototypeReader::getPrototypeExtensions()) == false) {
+			showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(PrototypeReader::getPrototypeExtensions()));
+		} else {
+			auto xScale = static_cast<float>(Engine::getInstance()->getWidth()) / static_cast<float>(screenNode->getScreenWidth());
+			auto yScale = static_cast<float>(Engine::getInstance()->getHeight()) / static_cast<float>(screenNode->getScreenHeight());
+			int left, top, width, height, offsetX, offsetY;
+			if (view->getEditorView()->getCurrentTabViewPort(left, top, width, height, offsetX, offsetY) == true) {
+				auto tabMouseX = (mouseX - left) / xScale + offsetX;
+				auto tabMouseY = (mouseY - top) / yScale + offsetY;
+				if (tabMouseX < 0 || tabMouseX >= width || tabMouseX < 0 || tabMouseY >= height) {
+					showInfoPopUp("Warning", "You can not drop a file here");
+				} else {
+					//
+					try {
+						auto prototype = PrototypeReader::read(
+							Tools::getPathName(fileName),
+							Tools::getFileName(fileName)
+						);
+						auto libraryPrototype = view->getScene()->getLibrary()->getPrototypeByName(prototype->getName());
+						if (libraryPrototype != nullptr) {
+							delete prototype;
+							prototype = libraryPrototype;
+						} else {
+							view->addPrototype(prototype);
+						}
+						if (view->placeEntity(prototype, tabMouseX, tabMouseY) == false) {
+							showInfoPopUp("Warning", "Could not place prototype entity.");
+						}
+					} catch (Exception& exception) {
+						Console::println(string("SceneEditorTabController::onDrop(): An error occurred: ") + exception.what());;
+						showInfoPopUp("Warning", (string(exception.what())));
+					}
+				}
+			} else {
+				showInfoPopUp("Warning", "Could not place prototype entity.");
+			}
+		}
 	}
 }
 
@@ -195,7 +241,7 @@ void SceneEditorTabController::save(const string& pathName, const string& fileNa
 		);
 	} catch (Exception& exception) {
 		Console::println(string("SceneEditorTabController::save(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -203,7 +249,7 @@ void SceneEditorTabController::updateInfoText(const MutableString& text) {
 	required_dynamic_cast<GUITextNode*>(screenNode->getNodeById(view->getTabId() + "_tab_text_info"))->setText(text);
 }
 
-void SceneEditorTabController::showErrorPopUp(const string& caption, const string& message)
+void SceneEditorTabController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
@@ -265,7 +311,7 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 					);
 				} catch (Exception& exception) {
 					Console::println(string("SceneEditorTabController::onChange(): An error occurred: ") + exception.what());;
-					showErrorPopUp("Warning", (string(exception.what())));
+					showInfoPopUp("Warning", (string(exception.what())));
 				}
 				//
 				break;
@@ -284,7 +330,7 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 					);
 				} catch (Exception& exception) {
 					Console::println(string("SceneEditorTabController::onChange(): An error occurred: ") + exception.what());;
-					showErrorPopUp("Warning", (string(exception.what())));
+					showInfoPopUp("Warning", (string(exception.what())));
 				}
 				//
 				break;
@@ -303,7 +349,7 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 					);
 				} catch (Exception& exception) {
 					Console::println(string("SceneEditorTabController::onChange(): An error occurred: ") + exception.what());;
-					showErrorPopUp("Warning", (string(exception.what())));
+					showInfoPopUp("Warning", (string(exception.what())));
 				}
 				//
 				break;
@@ -324,7 +370,7 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 					view->updateSky();
 				} catch (Exception& exception) {
 					Console::println(string("SceneEditorTabController::onChange(): An error occurred: ") + exception.what());;
-					showErrorPopUp("Warning", (string(exception.what())));
+					showInfoPopUp("Warning", (string(exception.what())));
 				}
 				//
 				break;
@@ -337,7 +383,7 @@ void SceneEditorTabController::onChange(GUIElementNode* node)
 					view->applyReflectionEnvironmentMappingId(required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("reflection_environmentmap"))->getController()->getValue().getString());
 				} catch (Exception& exception) {
 					Console::println(string("SceneEditorTabController::onChange(): An error occurred: ") + exception.what());;
-					showErrorPopUp("Warning", (string(exception.what())));
+					showInfoPopUp("Warning", (string(exception.what())));
 				}
 				//
 				break;
@@ -379,7 +425,7 @@ void SceneEditorTabController::onUnfocus(GUIElementNode* node) {
 					}
 				} catch (Exception& exception) {
 					Console::println(string("SceneEditorTabController::onChange(): An error occurred: ") + exception.what());;
-					showErrorPopUp("Warning", (string(exception.what())));
+					showInfoPopUp("Warning", (string(exception.what())));
 				}
 				//
 				break;
@@ -606,9 +652,10 @@ void SceneEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 }
 
 void SceneEditorTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
-	int left, top;
-	view->getEditorView()->getViewPortUnscaledOffset(left, top);
-	popUps->getTooltipScreenController()->show(left + mouseX, top + mouseY, node->getToolTip());
+	int tooltipLeft, tooltipTop;
+	if (view->getEditorView()->getCurrentTabTooltipPosition(screenNode, mouseX, mouseY, tooltipLeft, tooltipTop) == false) return;
+	//
+	popUps->getTooltipScreenController()->show(tooltipLeft, tooltipTop, node->getToolTip());
 }
 
 void SceneEditorTabController::onTooltipCloseRequest() {
@@ -626,14 +673,6 @@ void SceneEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 	}
 	if (node->getId() == "tdme.entities.rename_input") {
 		renameEntity();
-	} else
-	if (node->getId() == "sky_model_remove") {
-		view->removeSky();
-		auto scene = view->getScene();
-		scene->setSkyModel(nullptr);
-		scene->setSkyModelFileName(string());
-		scene->setSkyModelScale(Vector3(1.0f, 1.0f, 1.0f));
-		setSkyDetails();
 	} else
 	if (node->getId() == "sky_model_open") {
 		class OnLoadSkyModelAction: public virtual Action
@@ -658,7 +697,7 @@ void SceneEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 					sceneEditorTabController->setSkyDetails();
 				} catch (Exception& exception) {
 					Console::println(string("OnLoadSkyModel::performAction(): An error occurred: ") + exception.what());;
-					sceneEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+					sceneEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 				}
 				sceneEditorTabController->updateDetails("scene");
 				sceneEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
@@ -686,6 +725,22 @@ void SceneEditorTabController::onAction(GUIActionListenerType type, GUIElementNo
 			true,
 			new OnLoadSkyModelAction(this)
 		);
+	} else
+	if (node->getId() == "sky_model_remove") {
+		view->removeSky();
+		auto scene = view->getScene();
+		scene->setSkyModel(nullptr);
+		scene->setSkyModelFileName(string());
+		scene->setSkyModelScale(Vector3(1.0f, 1.0f, 1.0f));
+		setSkyDetails();
+	} else
+	if (node->getId() == "sky_model_browseto") {
+		auto scene = view->getScene();
+		if (scene->getSkyModelFileName().empty() == true) {
+			showInfoPopUp("Browse To", "Nothing to browse to");
+		} else {
+			view->getEditorView()->getScreenController()->browseTo(scene->getSkyModelFileName());
+		}
 	} else
 	if (node->getId() == "prototype_place") {
 		auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
@@ -804,12 +859,11 @@ void SceneEditorTabController::setSkyDetails() {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sky_model_scale"))->getController()->setValue(
 			Math::max(scene->getSkyModelScale().getX(), Math::max(scene->getSkyModelScale().getY(), scene->getSkyModelScale().getZ()))
 		);
-		if (scene->getSkyModelFileName().empty() == false) {
-			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("sky_model"))->setSource(scene->getSkyModelFileName());
-		}
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("sky_model"))->setSource(scene->getSkyModelFileName());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("sky_model"))->setTooltip(scene->getSkyModelFileName());
 	} catch (Exception& exception) {
 		Console::println(string("SceneEditorTabController::setSkyDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -885,7 +939,7 @@ void SceneEditorTabController::setLightDetails(int lightIdx) {
 		}
 	} catch (Exception& exception) {
 		Console::println(string("SceneEditorTabController::setLightDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 
 	//
@@ -915,7 +969,7 @@ void SceneEditorTabController::updateLightDetails(int lightIdx) {
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("light_directional_specular"))->setEffectColorMul(Color4(light->getSpecular()));
 	} catch (Exception& exception) {
 		Console::println(string("SceneEditorTabController::updateLightDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 
 	//
@@ -1004,7 +1058,7 @@ void SceneEditorTabController::applyLightDetails(int lightIdx) {
 		}
 	} catch (Exception& exception) {
 		Console::println(string("SceneEditorTabController::applyLightDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 
 	//
@@ -1023,7 +1077,7 @@ void SceneEditorTabController::setPrototypeDetails() {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_prototype"))->getActiveConditions().add("open");
 	} catch (Exception& exception) {
 		Console::println(string("SceneEditorTabController::setEntityDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -1078,7 +1132,7 @@ void SceneEditorTabController::setEntityDetails(const string& entityId) {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("base_description"))->getController()->setValue(entity->getDescription());
 	} catch (Exception& exception) {
 		Console::println(string("SceneEditorTabController::setEntityDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 
 	//
@@ -1103,7 +1157,7 @@ void SceneEditorTabController::setEntityDetailsMultiple(const Vector3& pivot, co
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_reflections"))->getActiveConditions().add("open");
 	} catch (Exception& exception) {
 		Console::println(string("SceneEditorTabController::setEntityDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 
 	//
@@ -1145,7 +1199,7 @@ void SceneEditorTabController::updateEntityDetails(const Vector3& translation, c
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("transform_scale_z"))->getController()->setValue(scale.getZ());
 	} catch (Exception& exception) {
 		Console::println(string("SceneEditorTabController::updateEntityDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -1313,7 +1367,7 @@ void SceneEditorTabController::onReplacePrototype() {
 				Engine::getInstance()->enqueueAction(new ReloadTabOutlinerAction(sceneEditorTabController->view->getEditorView(), "scene.entities"));
 			} catch (Exception& exception) {
 				Console::println(string("OnReplacePrototypeAction::performAction(): An error occurred: ") + exception.what());;
-				sceneEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+				sceneEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 			}
 			sceneEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 		}
@@ -1374,7 +1428,7 @@ void SceneEditorTabController::renameEntity() {
 			view->reloadScene();
 		} catch (Exception& exception) {
 			Console::println(string("SceneEditorTabController::renameProperty(): An error occurred: ") + exception.what());;
-			showErrorPopUp("Warning", (string(exception.what())));
+			showInfoPopUp("Warning", (string(exception.what())));
 		}
 	}
 

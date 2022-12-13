@@ -28,9 +28,7 @@ using tdme::gui::nodes::GUIElementNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
-using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
-using tdme::gui::nodes::GUIStyledTextNode;
 using tdme::gui::nodes::GUITextNode;
 using tdme::gui::GUIParser;
 using tdme::math::Math;
@@ -71,15 +69,15 @@ void TooltipScreenController::dispose()
 
 void TooltipScreenController::show(int mouseX, int mouseY, const string& tooltip)
 {
-	auto x = static_cast<int>((float)mouseX * (float)screenNode->getScreenWidth() / (float)Engine::getInstance()->getGUI()->getWidth());
-	auto y = static_cast<int>((float)mouseY * (float)screenNode->getScreenHeight() / (float)Engine::getInstance()->getGUI()->getHeight());
+	auto scaledX = Engine::getInstance()->getGUI()->getScaledX(screenNode, mouseX);
+	auto scaledY = Engine::getInstance()->getGUI()->getScaledY(screenNode, mouseY + tooltipNode->getContentHeight() / 2);
+	scaledX = Math::min(scaledX, screenNode->getScreenWidth() - tooltipNode->getContentWidth());
+	scaledY = Math::min(scaledY, screenNode->getScreenHeight() - tooltipNode->getContentHeight());
 	tooltipNode->setText(MutableString(tooltip));
-	x = Math::min(x, screenNode->getScreenWidth() - tooltipNode->getContentWidth());
-	y = Math::min(y, screenNode->getScreenHeight() - tooltipNode->getContentHeight());
 	tooltipNode->getRequestsConstraints().leftType = GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL;
-	tooltipNode->getRequestsConstraints().left = x;
+	tooltipNode->getRequestsConstraints().left = scaledX;
 	tooltipNode->getRequestsConstraints().topType = GUINode_RequestedConstraints_RequestedConstraintsType::PIXEL;
-	tooltipNode->getRequestsConstraints().top = y;
+	tooltipNode->getRequestsConstraints().top = scaledY;
 	screenNode->setVisible(true);
 	screenNode->layout();
 }

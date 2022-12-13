@@ -159,8 +159,9 @@ void VideoTest::display()
 
 	// video
 	videoDecoder.update(static_cast<float>(engine->getTiming()->getDeltaTime()) / 1000.0f);
-	videoTexture->getByteBuffer()->clear();
-	if (videoDecoder.readVideoFromStream(videoTexture->getByteBuffer()) > 0) {
+	auto videoTextureData = videoTexture->getByteBuffer();
+	videoTextureData->clear();
+	if (videoDecoder.readVideoFromStream(videoTextureData) > 0) {
 		videoTexture->update();
 	}
 	videoAudioBuffer->clear();
@@ -258,7 +259,7 @@ void VideoTest::reshape(int32_t width, int32_t height)
 void VideoTest::onChar(int key, int x, int y) {
 }
 
-void VideoTest::onKeyDown(int key, int keyCode, int x, int y, bool repeat) {
+void VideoTest::onKeyDown(int key, int keyCode, int x, int y, bool repeat, int modifiers) {
 	auto keyChar = Character::toLowerCase(key);
 	if (keyChar == 'w') keyW = true;
 	if (keyChar == 'a') keyA = true;

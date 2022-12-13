@@ -4,7 +4,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/math/Math.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Console.h>
@@ -15,7 +15,7 @@ using std::sort;
 using std::string;
 using std::to_string;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::math::Math;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
@@ -198,24 +198,24 @@ void TextureAtlas::update() {
 	}
 
 	//
-	auto atlasTextureByteBuffer = ByteBuffer::allocate(atlasTextureWidth * atlasTextureHeight * 4);
-	auto atlasTextureBuffer = atlasTextureByteBuffer->getBuffer();
+	auto atlasTextureByteBuffer = ByteBuffer(atlasTextureWidth * atlasTextureHeight * 4);
+	auto atlasTextureBuffer = atlasTextureByteBuffer.getBuffer();
 
 	// generate atlas
 	for (auto& atlasTexture: atlasTextures) {
 		auto atlasLeft = atlasTexture.left;
 		auto atlasTop = atlasTexture.top;
 		auto texture = atlasTexture.texture;
-		auto textureData = texture->getTextureData();
-		auto textureBytesPerPixel = texture->getDepth() / 8;
+		auto textureData = texture->getRGBTextureData();
+		auto textureBytesPerPixel = texture->getRGBDepthBitsPerPixel() / 8;
 		auto textureWidth = texture->getTextureWidth();
 		auto textureHeight = texture->getTextureHeight();
 		for (auto y = 0; y < textureHeight; y++) {
 			for (auto x = 0; x < textureWidth; x++) {
-				auto r = textureData->get(y * textureWidth * textureBytesPerPixel + x * textureBytesPerPixel + 0);
-				auto g = textureData->get(y * textureWidth * textureBytesPerPixel + x * textureBytesPerPixel + 1);
-				auto b = textureData->get(y * textureWidth * textureBytesPerPixel + x * textureBytesPerPixel + 2);
-				auto a = textureBytesPerPixel == 4?textureData->get(y * textureWidth * textureBytesPerPixel + x * textureBytesPerPixel + 3):0xff;
+				auto r = textureData.get(y * textureWidth * textureBytesPerPixel + x * textureBytesPerPixel + 0);
+				auto g = textureData.get(y * textureWidth * textureBytesPerPixel + x * textureBytesPerPixel + 1);
+				auto b = textureData.get(y * textureWidth * textureBytesPerPixel + x * textureBytesPerPixel + 2);
+				auto a = textureBytesPerPixel == 4?textureData.get(y * textureWidth * textureBytesPerPixel + x * textureBytesPerPixel + 3):0xff;
 				if (atlasTexture.orientation == AtlasTexture::ORIENTATION_NORMAL) {
 					atlasTextureBuffer[(atlasTop + textureHeight - 1 - y) * atlasTextureWidth * 4 + (atlasLeft + x) * 4 + 0] = r;
 					atlasTextureBuffer[(atlasTop + textureHeight - 1 - y) * atlasTextureWidth * 4 + (atlasLeft + x) * 4 + 1] = g;
@@ -235,11 +235,14 @@ void TextureAtlas::update() {
 	//
 	atlasTexture = new Texture(
 		atlasTextureId,
-		32,
+		Texture::TEXTUREDEPTH_RGBA,
+		Texture::TEXTUREFORMAT_RGBA,
 		atlasTextureWidth, atlasTextureHeight,
 		atlasTextureWidth, atlasTextureHeight,
+		Texture::TEXTUREFORMAT_RGBA,
 		atlasTextureByteBuffer
 	);
+	atlasTexture->setUseCompression(false);
 	atlasTexture->setUseMipMap(false);
 	atlasTexture->acquireReference();
 

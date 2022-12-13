@@ -92,7 +92,7 @@ void EnvMapEditorTabController::dispose()
 {
 }
 
-void EnvMapEditorTabController::executeCommand(TabControllerCommand command)
+void EnvMapEditorTabController::onCommand(TabControllerCommand command)
 {
 	switch (command) {
 		case COMMAND_SAVE:
@@ -105,7 +105,7 @@ void EnvMapEditorTabController::executeCommand(TabControllerCommand command)
 						Tools::getFileName(fileName)
 					);
 				} catch (Exception& exception) {
-					showErrorPopUp("Warning", (string(exception.what())));
+					showInfoPopUp("Warning", (string(exception.what())));
 				}
 			}
 			break;
@@ -121,7 +121,7 @@ void EnvMapEditorTabController::executeCommand(TabControllerCommand command)
 								envMapEditorTabController->popUps->getFileDialogScreenController()->getFileName()
 							);
 						} catch (Exception& exception) {
-							envMapEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+							envMapEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 						}
 						envMapEditorTabController->popUps->getFileDialogScreenController()->close();
 					}
@@ -146,12 +146,17 @@ void EnvMapEditorTabController::executeCommand(TabControllerCommand command)
 			}
 			break;
 		default:
-			showErrorPopUp("Warning", "This command is not supported yet");
+			showInfoPopUp("Warning", "This command is not supported yet");
 			break;
 	}
 }
 
-void EnvMapEditorTabController::showErrorPopUp(const string& caption, const string& message)
+void EnvMapEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
+	Console::println("EnvMapEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
+	showInfoPopUp("Warning", "You can not drop a file here");
+}
+
+void EnvMapEditorTabController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
@@ -182,9 +187,10 @@ void EnvMapEditorTabController::onContextMenuRequest(GUIElementNode* node, int m
 }
 
 void EnvMapEditorTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
-	int left, top;
-	view->getEditorView()->getViewPortUnscaledOffset(left, top);
-	popUps->getTooltipScreenController()->show(left + mouseX, top + mouseY, node->getToolTip());
+	int tooltipLeft, tooltipTop;
+	if (view->getEditorView()->getCurrentTabTooltipPosition(screenNode, mouseX, mouseY, tooltipLeft, tooltipTop) == false) return;
+	//
+	popUps->getTooltipScreenController()->show(tooltipLeft, tooltipTop, node->getToolTip());
 }
 
 void EnvMapEditorTabController::onTooltipCloseRequest() {
@@ -247,7 +253,7 @@ void EnvMapEditorTabController::updateDetails(const string& outlinerNode) {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("location_translation_z"))->getController()->setValue(MutableString(environmentMapTranslation.getZ()));
 	} catch (Exception& exception) {
 		Console::println(string("EnvMapEditorTabController::updateDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -284,7 +290,7 @@ void EnvMapEditorTabController::applyRenderPasses() {
 		prototype->setEnvironmentMapRenderPassMask(renderPassMask);
 	} catch (Exception& exception) {
 		Console::println(string("EnvMapEditorTabController::applyRenderPasses(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -298,7 +304,7 @@ void EnvMapEditorTabController::applyLocation() {
 		view->setEnvironmentMapTranslation(environmentMapTranslation);
 	} catch (Exception& exception) {
 		Console::println(string("EnvMapEditorTabController::applyLocation(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 

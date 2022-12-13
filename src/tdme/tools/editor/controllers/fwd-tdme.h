@@ -9,6 +9,7 @@ namespace controllers {
 	class ColorPickerImageController;
 	class ColorPickerScreenController;
 	class ContextMenuScreenController;
+	class DraggingScreenController;
 	class EditorScreenController;
 	class FileDialogScreenController;
 	class FindReplaceDialogScreenController;

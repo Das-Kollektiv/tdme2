@@ -8,7 +8,7 @@
 #include <tdme/engine/FrameBuffer.h>
 #include <tdme/engine/SimplePartition.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
-#include <tdme/gui/nodes/GUIFrameBufferNode.h>
+#include <tdme/gui/nodes/GUIImageNode.h>
 #include <tdme/gui/nodes/GUINode.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
@@ -16,6 +16,7 @@
 #include <tdme/tools/editor/controllers/AboutDialogScreenController.h>
 #include <tdme/tools/editor/controllers/ColorPickerScreenController.h>
 #include <tdme/tools/editor/controllers/ContextMenuScreenController.h>
+#include <tdme/tools/editor/controllers/DraggingScreenController.h>
 #include <tdme/tools/editor/controllers/EditorScreenController.h>
 #include <tdme/tools/editor/controllers/FileDialogScreenController.h>
 #include <tdme/tools/editor/controllers/FindReplaceDialogScreenController.h>
@@ -26,6 +27,7 @@
 #include <tdme/tools/editor/misc/Tools.h>
 #include <tdme/tools/editor/tabviews/TabView.h>
 #include <tdme/tools/editor/TDMEEditor.h>
+#include <tdme/utilities/Character.h>
 #include <tdme/utilities/Console.h>
 #include <tdme/utilities/Exception.h>
 
@@ -36,7 +38,7 @@ using tdme::engine::Engine;
 using tdme::engine::FrameBuffer;
 using tdme::engine::SimplePartition;
 using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUIFrameBufferNode;
+using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUI;
@@ -44,6 +46,7 @@ using tdme::math::Vector3;
 using tdme::tools::editor::controllers::AboutDialogScreenController;
 using tdme::tools::editor::controllers::ColorPickerScreenController;
 using tdme::tools::editor::controllers::ContextMenuScreenController;
+using tdme::tools::editor::controllers::DraggingScreenController;
 using tdme::tools::editor::controllers::EditorScreenController;
 using tdme::tools::editor::controllers::FileDialogScreenController;
 using tdme::tools::editor::controllers::FindReplaceDialogScreenController;
@@ -56,6 +59,7 @@ using tdme::tools::editor::misc::Tools;
 using tdme::tools::editor::tabviews::TabView;
 using tdme::tools::editor::views::EditorView;
 using tdme::tools::editor::TDMEEditor;
+using tdme::utilities::Character;
 using tdme::utilities::Console;
 using tdme::utilities::Exception;
 
@@ -81,20 +85,65 @@ void EditorView::handleInputEvents()
 		// skip if already processed
 		if (event.isProcessed() == true) return;
 
-		//
-		switch (event.getKeyCode()) {
-			case (GUIKeyboardEvent::KEYCODE_F11):
-				{
-					if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
-						editorScreenController->setFullScreen(editorScreenController->isFullScreen() == false?true:false);
+		// determine redo and undo
+		if (Character::toLowerCase(event.getKeyChar()) == 'z' && event.isControlDown() == true && event.isShiftDown() == true) {
+			if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+				auto selectedTab = editorScreenController->getSelectedTab();
+				if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onCommand(TabController::COMMAND_REDO);
+			}
+			event.setProcessed(true);
+		} else
+		if (Character::toLowerCase(event.getKeyChar()) == 'z' && event.isControlDown() == true) {
+			if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+				auto selectedTab = editorScreenController->getSelectedTab();
+				if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onCommand(TabController::COMMAND_UNDO);
+			}
+			event.setProcessed(true);
+		} else
+		// determine select all, copy, paste, cut
+		if (Character::toLowerCase(event.getKeyChar()) == 'a' && event.isControlDown() == true) {
+			if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+				auto selectedTab = editorScreenController->getSelectedTab();
+				if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onCommand(TabController::COMMAND_SELECTALL);
+			}
+			event.setProcessed(true);
+		} else
+		if (Character::toLowerCase(event.getKeyChar()) == 'x' && event.isControlDown() == true) {
+			if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+				auto selectedTab = editorScreenController->getSelectedTab();
+				if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onCommand(TabController::COMMAND_CUT);
+			}
+			event.setProcessed(true);
+		} else
+		if (Character::toLowerCase(event.getKeyChar()) == 'c' && event.isControlDown() == true) {
+			if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+				auto selectedTab = editorScreenController->getSelectedTab();
+				if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onCommand(TabController::COMMAND_COPY);
+			}
+			event.setProcessed(true);
+		} else
+		if (Character::toLowerCase(event.getKeyChar()) == 'v' && event.isControlDown() == true) {
+			if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+				auto selectedTab = editorScreenController->getSelectedTab();
+				if (selectedTab != nullptr) selectedTab->getTabView()->getTabController()->onCommand(TabController::COMMAND_PASTE);
+			}
+			event.setProcessed(true);
+		} else {
+			//
+			switch (event.getKeyCode()) {
+				case (GUIKeyboardEvent::KEYCODE_F11):
+					{
+						if (event.getType() == GUIKeyboardEvent::KEYBOARDEVENT_KEY_PRESSED) {
+							editorScreenController->setFullScreen(editorScreenController->isFullScreen() == false?true:false);
+						}
+						event.setProcessed(true);
+						break;
 					}
-					event.setProcessed(true);
-					break;
-				}
-			default:
-				{
-					break;
-				}
+				default:
+					{
+						break;
+					}
+			}
 		}
 	}
 
@@ -104,10 +153,8 @@ void EditorView::handleInputEvents()
 		// get viewport position, dimension
 		auto xScale = static_cast<float>(engine->getWidth()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenWidth());
 		auto yScale = static_cast<float>(engine->getHeight()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenHeight());
-		int left, top, width, height;
-		getViewPort(tabView->getFrameBufferNode(), left, top, width, height);
-		auto offsetX = tabView->getFrameBufferNode()->computeParentChildrenRenderOffsetXTotal();
-		auto offsetY = tabView->getFrameBufferNode()->computeParentChildrenRenderOffsetYTotal();
+		int left, top, width, height, offsetX, offsetY;
+		getViewPort(tabView->getFrameBufferNode(), left, top, width, height, offsetX, offsetY);
 		// deactivate old tab/activate new tab
 		if (tabView->getId() != lastSelectedTabId) {
 			auto lastTabView = lastSelectedTabId.empty() == true?nullptr:editorScreenController->getTab(lastSelectedTabId);
@@ -118,8 +165,8 @@ void EditorView::handleInputEvents()
 		// forward mouse events if belonging to view
 		for (auto event: Engine::getInstance()->getGUI()->getMouseEvents()) {
 			// event position in our tab
-			auto eventX = (event.getXUnscaled() - left + offsetX) / xScale;
-			auto eventY = (event.getYUnscaled() - top + offsetY) / yScale;
+			auto eventX = (event.getXUnscaled() - left) / xScale + offsetX;
+			auto eventY = (event.getYUnscaled() - top) / yScale + offsetY;
 			// out of tab bounds?
 			if (eventX < 0 || eventX >= width || eventY < 0 || eventY >= height) {
 				switch (event.getType()) {
@@ -183,8 +230,8 @@ void EditorView::display()
 	if (tabView != nullptr) {
 		auto xScale = static_cast<float>(engine->getWidth()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenWidth());
 		auto yScale = static_cast<float>(engine->getHeight()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenHeight());
-		int left, top, width, height;
-		getViewPort(tabView->getFrameBufferNode()->getParentNode(), left, top, width, height);
+		int left, top, width, height, offsetX, offsetY;
+		getViewPort(tabView->getFrameBufferNode()->getParentNode(), left, top, width, height, offsetX, offsetY);
 		width/= xScale;
 		height/= yScale;
 		auto reshaped = false;
@@ -235,6 +282,7 @@ void EditorView::activate()
 	engine->getGUI()->addRenderScreen(popUps->getInfoDialogScreenController()->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(popUps->getProgressBarScreenController()->getScreenNode()->getId());
 	engine->getGUI()->addRenderScreen(popUps->getTooltipScreenController()->getScreenNode()->getId());
+	engine->getGUI()->addRenderScreen(popUps->getDraggingScreenController()->getScreenNode()->getId());
 }
 
 void EditorView::deactivate()
@@ -280,7 +328,14 @@ void EditorView::reloadTabOutliner(const string& newSelectionValue) {
 	editorScreenController->getScreenNode()->forwardChange(required_dynamic_cast<GUIElementNode*>(editorScreenController->getScreenNode()->getNodeById("selectbox_outliner")));
 }
 
-void EditorView::getViewPort(GUINode* viewPortNode, int& left, int& top, int& width, int& height) {
+bool EditorView::getCurrentTabViewPort(int& left, int& top, int& width, int& height, int& offsetX, int& offsetY) {
+	auto currentTab = editorScreenController->getSelectedTab();
+	if (currentTab == nullptr) return false;
+	getViewPort(currentTab->getFrameBufferNode(), left, top, width, height, offsetX, offsetY);
+	return true;
+}
+
+void EditorView::getViewPort(GUINode* viewPortNode, int& left, int& top, int& width, int& height, int& offsetX, int& offsetY) {
 	auto xScale = static_cast<float>(engine->getWidth()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenWidth());
 	auto yScale = static_cast<float>(engine->getHeight()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenHeight());
 	editorScreenController->getViewPort(viewPortNode, left, top, width, height);
@@ -288,18 +343,19 @@ void EditorView::getViewPort(GUINode* viewPortNode, int& left, int& top, int& wi
 	top = static_cast<int>(static_cast<float>(top) * yScale);
 	width = static_cast<int>(static_cast<float>(width) * xScale);
 	height = static_cast<int>(static_cast<float>(height) * yScale);
+	offsetX = viewPortNode->computeParentChildrenRenderOffsetXTotal();
+	offsetY = viewPortNode->computeParentChildrenRenderOffsetYTotal();
 }
 
-void EditorView::getViewPortUnscaledOffset(int& left, int& top) {
-	auto tabView = editorScreenController->getSelectedTab();
-	if (tabView == nullptr) {
-		return;
-	}
-	auto xScale = static_cast<float>(engine->getWidth()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenWidth());
-	auto yScale = static_cast<float>(engine->getHeight()) / static_cast<float>(editorScreenController->getScreenNode()->getScreenHeight());
-	int width;
-	int height;
-	editorScreenController->getViewPort(tabView->getFrameBufferNode(), left, top, width, height);
-	left = static_cast<int>(static_cast<float>(left) * xScale);
-	top = static_cast<int>(static_cast<float>(top) * yScale);
+bool EditorView::getCurrentTabTooltipPosition(GUIScreenNode* screenNode, int mouseX, int mouseY, int& tooltipLeft, int& tooltipTop) {
+	int left, top, width, height, offsetX, offsetY;
+	if (getCurrentTabViewPort(left, top, width, height, offsetX, offsetY) == false) return false;
+	//
+	auto xScale = static_cast<float>(Engine::getInstance()->getWidth()) / static_cast<float>(screenNode->getScreenWidth());
+	auto yScale = static_cast<float>(Engine::getInstance()->getHeight()) / static_cast<float>(screenNode->getScreenHeight());
+	//
+	tooltipLeft = left + mouseX * xScale - offsetX * xScale;
+	tooltipTop = top + mouseY * yScale - offsetY * yScale;
+	//
+	return true;
 }

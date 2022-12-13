@@ -6,9 +6,6 @@
 			<element width="85" height="85" horizontal-align="center" vertical-align="center" border="1" border-color="{$color.element_frame}" background-color="{$color.element_midground}">
 				<text font="{$font.default}" size="{$fontsize.default}" color="{$color.font_hint}" text="Select"  />
 				<image id="{$id}" width="100%" height="100%" />
-				<layer hide-on="empty('{$id}')" width="100%" height="100%" padding="5" horizontal-align="left" vertical-align="bottom">
-					<button id="{$id}_options" image="resources/engine/images/options.png" width="25" height="25" />
-				</layer>
 			</element>
 			<space width="5" />
 			<layout width="auto" height="auto" alignment="vertical">

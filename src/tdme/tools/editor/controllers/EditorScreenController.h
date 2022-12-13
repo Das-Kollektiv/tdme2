@@ -14,6 +14,7 @@
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/events/GUIChangeListener.h>
 #include <tdme/gui/events/GUIContextMenuRequestListener.h>
+#include <tdme/gui/events/GUIDragRequestListener.h>
 #include <tdme/gui/events/GUIFocusListener.h>
 #include <tdme/gui/events/GUITooltipRequestListener.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
@@ -32,7 +33,7 @@ using std::string;
 using std::unordered_map;
 using std::vector;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::prototype::Prototype;
 using tdme::engine::scene::Scene;
 using tdme::engine::Engine;
@@ -41,10 +42,11 @@ using tdme::gui::events::GUIActionListener;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::events::GUIChangeListener;
 using tdme::gui::events::GUIContextMenuRequestListener;
+using tdme::gui::events::GUIDragRequestListener;
 using tdme::gui::events::GUIFocusListener;
 using tdme::gui::events::GUITooltipRequestListener;
 using tdme::gui::nodes::GUIElementNode;
-using tdme::gui::nodes::GUIFrameBufferNode;
+using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
@@ -68,6 +70,7 @@ class tdme::tools::editor::controllers::EditorScreenController final
 	, public GUIFocusListener
 	, public GUIContextMenuRequestListener
 	, public GUITooltipRequestListener
+	, public GUIDragRequestListener
 {
 public:
 	enum FileType {
@@ -100,7 +103,7 @@ public:
 		string id;
 		TabType type { TABTYPE_UNKNOWN };
 		TabView* tabView { nullptr };
-		GUIFrameBufferNode* frameBufferNode { nullptr };
+		GUIImageNode* frameBufferNode { nullptr };
 
 	public:
 		/**
@@ -119,7 +122,7 @@ public:
 			string id,
 			TabType type,
 			TabView* tabView,
-			GUIFrameBufferNode* frameBufferNode
+			GUIImageNode* frameBufferNode
 		):
 			id(id),
 			type(type),
@@ -151,7 +154,7 @@ public:
 		/**
 		 * @return frame buffer GUI node
 		 */
-		inline GUIFrameBufferNode* getFrameBufferNode() {
+		inline GUIImageNode* getFrameBufferNode() {
 			return frameBufferNode;
 		}
 
@@ -174,6 +177,7 @@ private:
 	unordered_map<string, EditorTabView> tabViews;
 	string fileNameSearchTerm;
 	int64_t timeFileNameSearchTerm { -1LL };
+	string browseToFileName;
 
 	//
 	class FileOpenThread: public Thread {
@@ -272,6 +276,7 @@ private:
 		string id;
 		string buttonXML;
 		Texture* thumbnailTexture { nullptr };
+		bool scrollTo { false };
 	};
 
 	//
@@ -394,6 +399,7 @@ public:
 	void onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) override;
 	void onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) override;
 	void onTooltipCloseRequest() override;
+	void onDragRequest(GUIElementNode* node, int mouseX, int mouseY) override;
 
 	/**
 	 * @return project path
@@ -426,6 +432,12 @@ public:
 	void scanProjectPaths(const string& path, string& xml);
 
 	/**
+	 * Browse to file name
+	 * @param fileName file name
+	 */
+	void browseTo(const string& fileName);
+
+	/**
 	 * Close tabs
 	 */
 	void closeTabs();
@@ -454,6 +466,11 @@ public:
 	 * Stop scan files
 	 */
 	void stopScanFiles();
+
+	/**
+	 * Reset scan files
+	 */
+	void resetScanFiles();
 
 	/**
 	 * Add project path files pending file entities
@@ -572,11 +589,11 @@ public:
 	void disableSceneMenuEntry();
 
 	/**
-	 * Shows the error pop up
+	 * Show the information pop up / modal
 	 * @param caption caption
 	 * @param message message
 	 */
-	void showErrorPopUp(const string& caption, const string& message);
+	void showInfoPopUp(const string& caption, const string& message);
 
 	/**
 	 * Get engine viewport constraints
@@ -629,4 +646,14 @@ public:
 	 * On quit
 	 */
 	void onQuit();
+
+	/**
+	 * Is drop on node
+	 * @param dropX drop x
+	 * @param dropY drop y
+	 * @param nodeId node id
+	 * @return drop is on node or not
+	 */
+	bool isDropOnNode(int dropX, int dropY, const string& nodeId);
+
 };

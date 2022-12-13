@@ -7,8 +7,9 @@
 
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
+#include <tdme/engine/fileio/textures/BZ7TextureWriter.h>
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/AnimationSetup.h>
 #include <tdme/engine/model/Color4.h>
@@ -46,8 +47,9 @@ using std::vector;
 using tdme::application::Application;
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::fileio::models::TMWriterOutputStream;
+using tdme::engine::fileio::textures::BZ7TextureWriter;
 using tdme::engine::fileio::textures::PNGTextureWriter;
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::model::Animation;
 using tdme::engine::model::AnimationSetup;
 using tdme::engine::model::Color4;
@@ -135,11 +137,25 @@ void TMWriter::writeEmbeddedTextures(TMWriterOutputStream* os, Model* m) {
 	for (auto it: embeddedTextures) {
 		auto texture = it.second;
 		os->writeString(texture->getId());
+		// optional PNG
+		/*
 		vector<uint8_t> pngData;
 		PNGTextureWriter::write(texture, pngData, false, false);
 		os->writeByte(1); // PNG
 		os->writeInt(pngData.size());
 		os->writeUInt8tArray(pngData);
+		*/
+		//
+		os->writeByte(2); // BZ7
+		vector<uint8_t> bz7Data;
+		os->writeInt(texture->getWidth());
+		os->writeInt(texture->getHeight());
+		os->writeInt(texture->getTextureWidth());
+		os->writeInt(texture->getTextureHeight());
+		os->writeByte(texture->getRGBDepthBitsPerPixel());
+		BZ7TextureWriter::write(texture->getTextureWidth(), texture->getTextureHeight(), texture->getRGBDepthBitsPerPixel() / 8, texture->getRGBTextureData(), bz7Data);
+		os->writeInt(bz7Data.size());
+		os->writeUInt8tArray(bz7Data);
 	}
 }
 

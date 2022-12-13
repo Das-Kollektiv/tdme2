@@ -3,6 +3,7 @@
 #include <string>
 
 #include <tdme/tdme.h>
+#include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/model/Model.h>
 #include <tdme/engine/model/Node.h>
 #include <tdme/engine/prototype/Prototype.h>
@@ -43,6 +44,7 @@ using tdme::tools::editor::tabcontrollers::UIEditorTabController;
 
 using std::string;
 
+using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::model::Model;
 using tdme::engine::model::Node;
 using tdme::engine::Engine;
@@ -108,12 +110,47 @@ void UIEditorTabController::dispose()
 {
 }
 
-void UIEditorTabController::executeCommand(TabControllerCommand command)
+void UIEditorTabController::onCommand(TabControllerCommand command)
 {
-	showErrorPopUp("Warning", "This command is not supported yet");
+	showInfoPopUp("Warning", "This command is not supported yet");
 }
 
-void UIEditorTabController::showErrorPopUp(const string& caption, const string& message)
+void UIEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
+	/*
+	 * uiEditorTabController->setPrototype(pathName, fileName, uiEditorTabController->prototypeMeshNode, uiEditorTabController->prototypeMeshAnimation);
+	 */
+	Console::println("UIEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
+	if (StringTools::startsWith(payload, "file:") == false) {
+		showInfoPopUp("Warning", "Unknown payload in drop");
+	} else {
+		auto fileName = StringTools::substring(payload, string("file:").size());
+		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "screen") == true) {
+			if (Tools::hasFileExtension(fileName, {{ "xml" }}) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions({{ "xml" }}));
+			} else {
+				auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+				auto screenIdx = Integer::parse(StringTools::substring(outlinerNode, 0, outlinerNode.find(".")));
+				setScreen(screenIdx, fileName);
+			}
+		} else
+		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "projectedui_prototype") == true) {
+			if (Tools::hasFileExtension(fileName, PrototypeReader::getModelExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(PrototypeReader::getModelExtensions()));
+			} else {
+				setPrototype(
+					Tools::getPathName(fileName),
+					Tools::getFileName(fileName),
+					prototypeMeshNode,
+					prototypeMeshAnimation
+				);
+			}
+		} else {
+			showInfoPopUp("Warning", "You can not drop a file here");
+		}
+	}
+}
+
+void UIEditorTabController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
@@ -261,9 +298,10 @@ void UIEditorTabController::onContextMenuRequest(GUIElementNode* node, int mouse
 }
 
 void UIEditorTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
-	int left, top;
-	view->getEditorView()->getViewPortUnscaledOffset(left, top);
-	popUps->getTooltipScreenController()->show(left + mouseX, top + mouseY, node->getToolTip());
+	int tooltipLeft, tooltipTop;
+	if (view->getEditorView()->getCurrentTabTooltipPosition(screenNode, mouseX, mouseY, tooltipLeft, tooltipTop) == false) return;
+	//
+	popUps->getTooltipScreenController()->show(tooltipLeft, tooltipTop, node->getToolTip());
 }
 
 void UIEditorTabController::onTooltipCloseRequest() {
@@ -310,7 +348,7 @@ void UIEditorTabController::setOutlinerContent() {
 			int nodeIdx = 0;
 			createOutlinerParentNodeNodesXML(xmlRoot, xml, screenIdx, nodeIdx);
 		} catch (Exception& exception) {
-			showErrorPopUp("Warning", (string(exception.what())));
+			showInfoPopUp("Warning", (string(exception.what())));
 		}
 		screenIdx++;
 	}
@@ -340,11 +378,23 @@ void UIEditorTabController::updateScreenDetails() {
 		string("<template id=\"details_screen\" src=\"resources/engine/gui/template_details_screen.xml\" />\n")
 	);
 
+	//
+	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+	auto screenIdx = Integer::parse(StringTools::substring(outlinerNode, 0, outlinerNode.find(".")));
+
+	//
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_screen"))->getActiveConditions().add("open");
+		if (screenIdx >= 0 &&
+			screenIdx < view->getScreenNodes().size() &&
+			view->getScreenNodes()[screenIdx] != nullptr &&
+			view->getScreenNodes()[screenIdx]->getFileName().empty() == false) {
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("screen"))->setSource("resources/engine/images/gui_big.png");
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("screen"))->setTooltip(view->getScreenNodes()[screenIdx]->getFileName());
+		}
 	} catch (Exception& exception) {
 		Console::println(string("UIEditorTabController::updateScreenDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -357,9 +407,10 @@ void UIEditorTabController::updateScreensDetails() {
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_screens"))->getActiveConditions().add("open");
 		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("projectedui_prototype"))->setSource(prototypeFileName);
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("projectedui_prototype"))->setTooltip(prototypeFileName);
 	} catch (Exception& exception) {
 		Console::println(string("UIEditorTabController::updateScreensDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 
 	//
@@ -436,18 +487,10 @@ void UIEditorTabController::onLoadScreen() {
 					fileName(fileName) {
 				}
 				virtual void performAction() {
-					auto view = uiEditorTabController->getView();
-					view->unsetScreen(screenIdx);
-					try {
-						view->setScreen(screenIdx, GUIParser::parse(pathName, fileName));
-					} catch (Exception& exception) {
-						Console::println(
-							string() +
-							"UIEditorTabController::onLoadScreen(): ReloadScreensAction::performAction(): An error occurred: " + exception.what()
-						);
-					}
-					view->reAddScreens();
-					view->getEditorView()->reloadTabOutliner(to_string(screenIdx) + ".0");
+					uiEditorTabController->setScreen(
+						screenIdx,
+						pathName + "/" + fileName
+					);
 				}
 			};
 			Engine::getInstance()->enqueueAction(
@@ -520,6 +563,16 @@ void UIEditorTabController::onUnsetScreen() {
 	);
 }
 
+void UIEditorTabController::onBrowseToScreen() {
+	auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+	auto screenIdx = Integer::parse(StringTools::substring(outlinerNode, 0, outlinerNode.find(".")));
+	if (screenIdx < 0 || screenIdx >= view->getScreenNodes().size()) {
+		showInfoPopUp("Browse To", "Nothing to browse to");
+	} else {
+		view->getEditorView()->getScreenController()->browseTo(view->getScreenNodes()[screenIdx]->getFileName());
+	}
+}
+
 void UIEditorTabController::reloadScreens() {
 	//
 	class ReloadScreensAction: public Action {
@@ -578,12 +631,7 @@ void UIEditorTabController::onLoadPrototype() {
 					fileName(fileName) {
 				}
 				virtual void performAction() {
-					auto view = uiEditorTabController->getView();
-					if (view->loadPrototype(pathName, fileName, uiEditorTabController->prototypeMeshNode, uiEditorTabController->prototypeMeshAnimation) != nullptr) {
-						uiEditorTabController->prototypeFileName = pathName + "/" + fileName;
-						view->reAddScreens();
-						view->getEditorView()->reloadTabOutliner("screens");
-					}
+					uiEditorTabController->setPrototype(pathName, fileName, uiEditorTabController->prototypeMeshNode, uiEditorTabController->prototypeMeshAnimation);
 				}
 			};
 			Engine::getInstance()->enqueueAction(
@@ -631,12 +679,21 @@ void UIEditorTabController::onRemovePrototype() {
 		}
 		virtual void performAction() {
 			auto view = uiEditorTabController->getView();
+			uiEditorTabController->prototypeFileName.clear();
 			view->removePrototype();
 			view->reAddScreens();
 			view->getEditorView()->reloadTabOutliner("screens");
 		}
 	};
 	Engine::getInstance()->enqueueAction(new RemovePrototypeAction(this));
+}
+
+void UIEditorTabController::onBrowseToPrototype() {
+	if (prototypeFileName.empty() == true) {
+		showInfoPopUp("Browse To", "Nothing to browse to");
+	} else {
+		view->getEditorView()->getScreenController()->browseTo(prototypeFileName);
+	}
 }
 
 void UIEditorTabController::onAction(GUIActionListenerType type, GUIElementNode* node)
@@ -650,12 +707,40 @@ void UIEditorTabController::onAction(GUIActionListenerType type, GUIElementNode*
 		onUnsetScreen();
 	} else
 	if (node->getId() == "screen_browseto") {
-		// TODO
+		onBrowseToScreen();
 	} else
 	if (node->getId() == "projectedui_prototype_open") {
 		onLoadPrototype();
 	} else
 	if (node->getId() == "projectedui_prototype_remove") {
 		onRemovePrototype();
+	} else
+	if (node->getId() == "projectedui_prototype_browseto") {
+		onBrowseToPrototype();
+	}
+}
+
+void UIEditorTabController::setScreen(int screenIdx, const string& fileName) {
+	view->unsetScreen(screenIdx);
+	try {
+		view->setScreen(screenIdx, GUIParser::parse(Tools::getPathName(fileName), Tools::getFileName(fileName)));
+	} catch (Exception& exception) {
+		Console::println(
+			string() +
+			"UIEditorTabController::setScreen(): An error occurred: " + exception.what()
+		);
+		showInfoPopUp("Error", string() + "An error occurred: " + exception.what());
+	}
+	view->reAddScreens();
+	view->getEditorView()->reloadTabOutliner(to_string(screenIdx) + ".0");
+}
+
+void UIEditorTabController::setPrototype(const string& pathName, const string& fileName, const string& modelMeshNode, const string& modelMeshAnimation) {
+	if (view->loadPrototype(pathName, fileName, prototypeMeshNode, prototypeMeshAnimation) != nullptr) {
+		prototypeFileName = pathName + "/" + fileName;
+		view->reAddScreens();
+		view->getEditorView()->reloadTabOutliner("screens");
+	} else {
+		showInfoPopUp("Error", string() + "Could not load prototype");
 	}
 }

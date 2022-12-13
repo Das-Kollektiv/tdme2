@@ -18,7 +18,7 @@
 
 using std::string;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::model::Color4;
 using tdme::engine::primitives::BoundingBox;
 using tdme::engine::subsystems::particlesystem::FogParticleSystemInternal;

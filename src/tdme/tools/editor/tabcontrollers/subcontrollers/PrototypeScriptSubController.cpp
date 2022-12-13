@@ -84,13 +84,30 @@ void PrototypeScriptSubController::setScriptDetails(Prototype* prototype) {
 	editorView->setDetailsContent(
 		"<template id=\"details_script\" src=\"resources/engine/gui/template_details_script.xml\" />\n"
 	);
-
+	//
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_script"))->getActiveConditions().add("open");
-		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("script_hid"))->getController()->setValue(MutableString(prototype->isScriptHandlingHID() == true?"1":""));
 	} catch (Exception& exception) {
 		Console::println(string("PrototypeScriptSubController::setScriptDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
+	}
+	//
+	updateScriptDetails(prototype);
+}
+
+void PrototypeScriptSubController::updateScriptDetails(Prototype* prototype) {
+	try {
+		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("script_hid"))->getController()->setValue(MutableString(prototype->isScriptHandlingHID() == true?"1":""));
+		if (prototype->getScript().empty() == true) {
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("script"))->setSource(string());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("script"))->setTooltip(string());
+		} else {
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("script"))->setSource("resources/engine/images/script_big.png");
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("script"))->setTooltip(prototype->getScript());
+		}
+	} catch (Exception& exception) {
+		Console::println(string("PrototypeScriptSubController::updateScriptDetails(): An error occurred: ") + exception.what());;
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -122,7 +139,7 @@ void PrototypeScriptSubController::onAction(GUIActionListenerType type, GUIEleme
 		onScriptUnset(prototype);
 	} else
 	if (node->getId() == "script_browseto") {
-		// TODO
+		onScriptBrowseTo(prototype);
 	}
 }
 
@@ -131,19 +148,12 @@ void PrototypeScriptSubController::onScriptSet(Prototype* prototype) {
 	{
 	public:
 		void performAction() override {
-			prototype->setScript(
+			prototypeScriptSubController->setScript(
 				prototypeScriptSubController->popUps->getFileDialogScreenController()->getPathName() +
 				"/" +
-				prototypeScriptSubController->popUps->getFileDialogScreenController()->getFileName()
+				prototypeScriptSubController->popUps->getFileDialogScreenController()->getFileName(),
+				prototype
 			);
-			//
-			try {
-				required_dynamic_cast<GUIImageNode*>(prototypeScriptSubController->screenNode->getNodeById("script"))->setSource("resources/engine/images/script_big.png");
-			} catch (Exception& exception) {
-				Console::println(string("OnSetScript::performAction(): An error occurred: ") + exception.what());;
-				prototypeScriptSubController->showErrorPopUp("Warning", (string(exception.what())));
-			}
-			//
 			prototypeScriptSubController->popUps->getFileDialogScreenController()->close();
 		}
 
@@ -175,17 +185,43 @@ void PrototypeScriptSubController::onScriptSet(Prototype* prototype) {
 }
 
 void PrototypeScriptSubController::onScriptUnset(Prototype* prototype) {
-	//
-	try {
-		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("script"))->setSource(string());
-	} catch (Exception& exception) {
-		showErrorPopUp("Warning", (string(exception.what())));
-		Console::println(string("PrototypeScriptSubController::onScriptUnset(): An error occurred: ") + exception.what());;
-	}
 	prototype->setScript(string());
+	updateScriptDetails(prototype);
 }
 
-void PrototypeScriptSubController::showErrorPopUp(const string& caption, const string& message)
+void PrototypeScriptSubController::onScriptBrowseTo(Prototype* prototype) {
+	if (prototype->getScript().empty() == true) {
+		showInfoPopUp("Browse To", "Nothing to browse to");
+	} else {
+		editorView->getScreenController()->browseTo(prototype->getScript());
+	}
+}
+
+void PrototypeScriptSubController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
+}
+
+void PrototypeScriptSubController::setScript(const string& fileName, Prototype* prototype) {
+	prototype->setScript(fileName);
+	updateScriptDetails(prototype);
+}
+
+bool PrototypeScriptSubController::onDrop(const string& payload, int mouseX, int mouseY, Prototype* prototype) {
+	Console::println("PrototypeScriptSubController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
+	if (StringTools::startsWith(payload, "file:") == false) {
+		return false;
+	} else {
+		auto fileName = StringTools::substring(payload, string("file:").size());
+		if (editorView->getScreenController()->isDropOnNode(mouseX, mouseY, "script") == true) {
+			if (Tools::hasFileExtension(fileName, {{ "tscript" }}) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions({{ "tscript" }}));
+			} else {
+				setScript(fileName, prototype);
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

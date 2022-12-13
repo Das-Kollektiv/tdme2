@@ -5,7 +5,7 @@
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/prototypes/PrototypeReader.h>
 #include <tdme/engine/fileio/prototypes/PrototypeWriter.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/model/Material.h>
 #include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/prototype/Prototype.h>
@@ -41,7 +41,7 @@ using tdme::tools::editor::tabviews::TerrainEditorTabView;
 
 using tdme::engine::fileio::prototypes::PrototypeReader;
 using tdme::engine::fileio::prototypes::PrototypeWriter;
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::model::Material;
 using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::prototype::Prototype;
@@ -777,8 +777,8 @@ void TerrainEditorTabView::setBrush(Texture* texture, float scale, float density
 	brushTexture = texture;
 	//
 	brushScale = scale;
-	auto _scale = terrainEditorTabController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_RAMP?scale:1.0f;
-	engine->setShaderParameter("terraineditor", "brushDimension", Vector2(static_cast<int>(texture->getTextureWidth()) * _scale, static_cast<int>(texture->getTextureHeight()) * _scale));
+	rampMode = -1;
+	brushDensityStrength = densityStrength;
 	engine->setShaderParameter("terraineditor", "brushTexture", brushTexture == nullptr?0:engine->getTextureManager()->addTexture(brushTexture));
 	engine->setShaderParameter(
 		"terraineditor",
@@ -786,8 +786,9 @@ void TerrainEditorTabView::setBrush(Texture* texture, float scale, float density
 		(terrainEditorTabController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_NONE && terrainEditorTabController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_RAMP) ||
 		terrainEditorTabController->getFoliageBrushOperation() != Terrain::BRUSHOPERATION_NONE
 	);
-	rampMode = -1;
-	brushDensityStrength = densityStrength;
+	if (texture == nullptr) return;
+	auto _scale = terrainEditorTabController->getTerrainBrushOperation() != Terrain::BRUSHOPERATION_RAMP?scale:1.0f;
+	engine->setShaderParameter("terraineditor", "brushDimension", Vector2(static_cast<int>(texture->getTextureWidth()) * _scale, static_cast<int>(texture->getTextureHeight()) * _scale));
 }
 
 void TerrainEditorTabView::setBrushScale(float scale) {

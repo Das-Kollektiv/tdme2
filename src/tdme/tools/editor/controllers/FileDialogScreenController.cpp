@@ -403,10 +403,13 @@ void FileDialogScreenController::onChange(GUIElementNode* node)
 				if (FileSystem::getStandardFileSystem()->fileExists(cwd + "/" + filterString) == true) {
 					auto selectedFile = node->getController()->getValue().getString();
 					setupFiles(fileList, selectedFile);
+				} else
+				if (filterString.empty() == true) {
+					setupFiles(fileList);
 				} else {
 					vector<string> fileListFiltered;
 					for (auto file: fileList) {
-						if (StringTools::toLowerCase(file).find(filterString) != -1) fileListFiltered.push_back(file);
+						if (filterString.empty() == true || StringTools::toLowerCase(file).find(filterString) != -1) fileListFiltered.push_back(file);
 					}
 					setupFiles(fileListFiltered);
 					filtered = true;
@@ -679,6 +682,10 @@ const string FileDialogScreenController::getFileImageName(const string& fileName
 	if (StringTools::endsWith(fileNameLowerCase, ".tparticle") == true) {
 		return "particle";
 	} else
+	// tdme decal
+	if (StringTools::endsWith(fileNameLowerCase, ".tdecal") == true) {
+		return "prototype";
+	} else
 	// tdme terrain
 	if (StringTools::endsWith(fileNameLowerCase, ".tterrain") == true) {
 		return "terrain";
@@ -687,7 +694,7 @@ const string FileDialogScreenController::getFileImageName(const string& fileName
 	if (StringTools::endsWith(fileNameLowerCase, ".tscript") == true) {
 		return "script";
 	} else
-	// xml
+		// xml
 	if (StringTools::endsWith(fileNameLowerCase, ".xml") == true) {
 		return "gui";
 	} else

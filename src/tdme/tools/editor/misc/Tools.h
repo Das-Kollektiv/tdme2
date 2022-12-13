@@ -201,4 +201,26 @@ public:
 	 */
 	static Model* getDefaultObb();
 
+	/**
+	 * Returns if file extension of given file name does match a extension in given extensions
+	 * @param fileName file name
+	 * @param extensions extensions
+	 * @return success
+	 */
+	static bool hasFileExtension(const string& fileName, const vector<string>& extensions);
+
+	/**
+	 * Enumerate file extensions
+	 * @param extensions extensions
+	 * @return file extensions as human readable string
+	 */
+	inline static const string enumerateFileExtensions(const vector<string>& extensions) {
+		string result;
+		for (auto& extension: extensions) {
+			if (result.empty() == false) result+= ", ";
+			result+= "*." + extension;
+		}
+		return result;
+	}
+
 };

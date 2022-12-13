@@ -6,7 +6,7 @@
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
-#include <tdme/engine/fileio/textures/Texture.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/fileio/textures/TextureReader.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
@@ -62,7 +62,7 @@ using tdme::tools::editor::misc::Tools;
 
 using tdme::application::Application;
 using tdme::engine::fileio::models::ModelReader;
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::engine::fileio::textures::TextureReader;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
@@ -652,3 +652,11 @@ Model* Tools::getDefaultObb() {
 Tools::ToolsShutdown::~ToolsShutdown() {
 	if (Application::hasApplication() == true) Tools::oseDispose();
 };
+
+bool Tools::hasFileExtension(const string& fileName, const vector<string>& extensions) {
+	auto fileNameLowerCase = StringTools::toLowerCase(fileName);
+	for (auto& extension: extensions) {
+		if (StringTools::endsWith(fileNameLowerCase, "." + extension) == true) return true;
+	}
+	return false;
+}

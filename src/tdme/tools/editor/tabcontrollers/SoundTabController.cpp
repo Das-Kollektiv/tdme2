@@ -85,12 +85,17 @@ void SoundTabController::dispose()
 {
 }
 
-void SoundTabController::executeCommand(TabControllerCommand command)
+void SoundTabController::onCommand(TabControllerCommand command)
 {
-	showErrorPopUp("Warning", "This command is not supported yet");
+	showInfoPopUp("Warning", "This command is not supported yet");
 }
 
-void SoundTabController::showErrorPopUp(const string& caption, const string& message)
+void SoundTabController::onDrop(const string& payload, int mouseX, int mouseY) {
+	Console::println("SoundTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
+	showInfoPopUp("Warning", "You can not drop a file here");
+}
+
+void SoundTabController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
@@ -109,9 +114,10 @@ void SoundTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, 
 }
 
 void SoundTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
-	int left, top;
-	view->getEditorView()->getViewPortUnscaledOffset(left, top);
-	popUps->getTooltipScreenController()->show(left + mouseX, top + mouseY, node->getToolTip());
+	int tooltipLeft, tooltipTop;
+	if (view->getEditorView()->getCurrentTabTooltipPosition(screenNode, mouseX, mouseY, tooltipLeft, tooltipTop) == false) return;
+	//
+	popUps->getTooltipScreenController()->show(tooltipLeft, tooltipTop, node->getToolTip());
 }
 
 void SoundTabController::onTooltipCloseRequest() {
@@ -120,7 +126,7 @@ void SoundTabController::onTooltipCloseRequest() {
 
 void SoundTabController::setOutlinerContent() {
 	string xml;
-	xml+= "<selectbox-option text=\"Sound\" value=\"texture\" />\n";
+	xml+= "<selectbox-option text=\"Sound\" value=\"sound\" />\n";
 	view->getEditorView()->setOutlinerContent(xml);
 }
 

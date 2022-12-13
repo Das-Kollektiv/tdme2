@@ -75,12 +75,17 @@ void VideoTabController::dispose()
 {
 }
 
-void VideoTabController::executeCommand(TabControllerCommand command)
+void VideoTabController::onCommand(TabControllerCommand command)
 {
-	showErrorPopUp("Warning", "This command is not supported yet");
+	showInfoPopUp("Warning", "This command is not supported yet");
 }
 
-void VideoTabController::showErrorPopUp(const string& caption, const string& message)
+void VideoTabController::onDrop(const string& payload, int mouseX, int mouseY) {
+	Console::println("VideoTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
+	showInfoPopUp("Warning", "You can not drop a file here");
+}
+
+void VideoTabController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
@@ -99,9 +104,10 @@ void VideoTabController::onContextMenuRequest(GUIElementNode* node, int mouseX, 
 }
 
 void VideoTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
-	int left, top;
-	view->getEditorView()->getViewPortUnscaledOffset(left, top);
-	popUps->getTooltipScreenController()->show(left + mouseX, top + mouseY, node->getToolTip());
+	int tooltipLeft, tooltipTop;
+	if (view->getEditorView()->getCurrentTabTooltipPosition(screenNode, mouseX, mouseY, tooltipLeft, tooltipTop) == false) return;
+	//
+	popUps->getTooltipScreenController()->show(tooltipLeft, tooltipTop, node->getToolTip());
 }
 
 void VideoTabController::onTooltipCloseRequest() {

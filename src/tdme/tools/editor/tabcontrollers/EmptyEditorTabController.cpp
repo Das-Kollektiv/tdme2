@@ -84,7 +84,7 @@ void EmptyEditorTabController::dispose()
 {
 }
 
-void EmptyEditorTabController::executeCommand(TabControllerCommand command)
+void EmptyEditorTabController::onCommand(TabControllerCommand command)
 {
 	switch (command) {
 		case COMMAND_SAVE:
@@ -97,7 +97,7 @@ void EmptyEditorTabController::executeCommand(TabControllerCommand command)
 						Tools::getFileName(fileName)
 					);
 				} catch (Exception& exception) {
-					showErrorPopUp("Warning", (string(exception.what())));
+					showInfoPopUp("Warning", (string(exception.what())));
 				}
 			}
 			break;
@@ -113,7 +113,7 @@ void EmptyEditorTabController::executeCommand(TabControllerCommand command)
 								emptyEditorTabController->popUps->getFileDialogScreenController()->getFileName()
 							);
 						} catch (Exception& exception) {
-							emptyEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+							emptyEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 						}
 						emptyEditorTabController->popUps->getFileDialogScreenController()->close();
 					}
@@ -138,9 +138,15 @@ void EmptyEditorTabController::executeCommand(TabControllerCommand command)
 			}
 			break;
 		default:
-			showErrorPopUp("Warning", "This command is not supported yet");
+			showInfoPopUp("Warning", "This command is not supported yet");
 			break;
 	}
+}
+
+void EmptyEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
+	Console::println("EmptyEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
+	if (prototypeScriptSubController->onDrop(payload, mouseX, mouseY, view->getPrototype()) == true) return;
+	showInfoPopUp("Warning", "You can not drop a file here");
 }
 
 void EmptyEditorTabController::onChange(GUIElementNode* node)
@@ -162,9 +168,10 @@ void EmptyEditorTabController::onContextMenuRequest(GUIElementNode* node, int mo
 }
 
 void EmptyEditorTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
-	int left, top;
-	view->getEditorView()->getViewPortUnscaledOffset(left, top);
-	popUps->getTooltipScreenController()->show(left + mouseX, top + mouseY, node->getToolTip());
+	int tooltipLeft, tooltipTop;
+	if (view->getEditorView()->getCurrentTabTooltipPosition(screenNode, mouseX, mouseY, tooltipLeft, tooltipTop) == false) return;
+	//
+	popUps->getTooltipScreenController()->show(tooltipLeft, tooltipTop, node->getToolTip());
 }
 
 void EmptyEditorTabController::onTooltipCloseRequest() {
@@ -205,7 +212,7 @@ void EmptyEditorTabController::updateInfoText(const MutableString& text) {
 	required_dynamic_cast<GUITextNode*>(screenNode->getNodeById(view->getTabId() + "_tab_text_info"))->setText(text);
 }
 
-void EmptyEditorTabController::showErrorPopUp(const string& caption, const string& message)
+void EmptyEditorTabController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }

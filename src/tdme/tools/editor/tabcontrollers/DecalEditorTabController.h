@@ -99,7 +99,14 @@ public:
 	void onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) override;
 	void onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) override;
 	void onTooltipCloseRequest() override;
-	void executeCommand(TabControllerCommand command) override;
+	void onCommand(TabControllerCommand command) override;
+	void onDrop(const string& payload, int mouseX, int mouseY) override;
+
+	/**
+	 * Set decal texture
+	 * @param fileName file name
+	 */
+	void setDecalTexture(const string& fileName);
 
 	/**
 	 * Set outliner content
@@ -129,10 +136,10 @@ public:
 	void updateInfoText(const MutableString& text);
 
 	/**
-	 * Shows the error pop up
+	 * Show the information pop up / modal
 	 * @param caption caption
 	 * @param message message
 	 */
-	void showErrorPopUp(const string& caption, const string& message);
+	void showInfoPopUp(const string& caption, const string& message);
 
 };

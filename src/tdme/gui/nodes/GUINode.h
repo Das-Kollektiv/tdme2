@@ -7,9 +7,10 @@
 #include <vector>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fileio/textures/fwd-tdme.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/gui/effects/fwd-tdme.h>
 #include <tdme/gui/events/fwd-tdme.h>
+#include <tdme/gui/events/GUIMouseEvent.h>
 #include <tdme/gui/fwd-tdme.h>
 #include <tdme/gui/nodes/fwd-tdme.h>
 #include <tdme/gui/nodes/GUIColor.h>
@@ -31,7 +32,7 @@ using std::unordered_map;
 using std::unordered_set;
 using std::vector;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::gui::effects::GUIEffect;
 using tdme::gui::effects::GUIEffectState;
 using tdme::gui::events::GUIKeyboardEvent;
@@ -49,7 +50,6 @@ using tdme::gui::nodes::GUINode_RequestedConstraints;
 using tdme::gui::nodes::GUINode_RequestedConstraints_RequestedConstraintsType;
 using tdme::gui::nodes::GUINodeConditions;
 using tdme::gui::nodes::GUINodeController;
-using tdme::gui::nodes::GUIParentNode;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::renderer::GUIRenderer;
 using tdme::math::Vector2;
@@ -291,7 +291,7 @@ protected:
 	bool haveActiveOutEffect();
 
 	/**
-	 * Determine if to render
+	 * Returns if to render
 	 * @return if node will be rendered
 	 */
 	inline bool shouldRender() {
@@ -340,6 +340,14 @@ public:
 	 */
 	inline const string& getToolTip() {
 		return tooltip;
+	}
+
+	/**
+	 * Set tooltip
+	 * @param tooltip tooltip
+	 */
+	inline void setTooltip(const string& tooltip) {
+		this->tooltip = tooltip;
 	}
 
 	/**
@@ -492,7 +500,7 @@ public:
 	virtual void dispose();
 
 	/**
-	 * Determine if conditions are set
+	 * Returns if conditions are set
 	 * @return if conditions are set
 	 */
 	inline bool isConditionsMet() {
@@ -503,6 +511,14 @@ public:
 	 * Set conditions met for this node and its subnodes
 	 */
 	virtual void setConditionsMet();
+
+	/**
+	 * Returns if layouted
+	 * @return if layouted
+	 */
+	inline bool isLayouted() {
+		return layouted;
+	}
 
 	/**
 	 * Layout on demand
@@ -546,19 +562,53 @@ public:
 	float computeParentChildrenRenderOffsetYTotal();
 
 	/**
-	 * Is event belonging to node
-	 * @param event event
-	 * @param position in node coordinate space
+	 * Is coordinate belonging to node
+	 * @param coordinate coordinate
+	 * @param nodeCoordinate node coordinate
 	 * @return boolean
 	 */
-	bool isEventBelongingToNode(GUIMouseEvent* event, Vector2& position);
+	inline bool isCoordinateBelongingToNode(const Vector2& coordinate, Vector2& nodeCoordinate) {
+		auto x = coordinate[0] + computeParentChildrenRenderOffsetXTotal();
+		auto y = coordinate[1] + computeParentChildrenRenderOffsetYTotal();
+		auto belongsToElement =
+			x >= computedConstraints.left + computedConstraints.alignmentLeft &&
+			x < computedConstraints.left + computedConstraints.alignmentLeft + computedConstraints.width &&
+			y >= computedConstraints.top + computedConstraints.alignmentTop &&
+			y < computedConstraints.top + computedConstraints.alignmentTop + computedConstraints.height;
+		nodeCoordinate[0] = static_cast<int>((x - (computedConstraints.left + computedConstraints.alignmentLeft)));
+		nodeCoordinate[1] = static_cast<int>((y - (computedConstraints.top + computedConstraints.alignmentTop)));
+		return belongsToElement;
+	}
+
+	/**
+	 * Is coordinate belonging to node
+	 * @param coordinate coordinate
+	 * @return boolean
+	 */
+	inline bool isCoordinateBelongingToNode(const Vector2& coordinate) {
+		Vector2 nodeCoordinate;
+		return isCoordinateBelongingToNode(coordinate, nodeCoordinate);
+	}
+
+	/**
+	 * Is event belonging to node
+	 * @param event event
+	 * @param nodeCoordinate node coordinate
+	 * @return boolean
+	 */
+	inline bool isEventBelongingToNode(GUIMouseEvent* event, Vector2& nodeCoordinate) {
+		return isCoordinateBelongingToNode(Vector2(event->getX(), event->getY()), nodeCoordinate);
+	}
 
 	/**
 	 * Is event belonging to node
 	 * @param event event
 	 * @return boolean
 	 */
-	bool isEventBelongingToNode(GUIMouseEvent* event);
+	inline bool isEventBelongingToNode(GUIMouseEvent* event) {
+		Vector2 nodeCoordinate;
+		return isEventBelongingToNode(event, nodeCoordinate);
+	}
 
 	/**
 	 * Get event off node relative position

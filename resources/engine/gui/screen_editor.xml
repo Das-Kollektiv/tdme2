@@ -27,6 +27,7 @@
 						<menu-item text="Paste" id="menu_edit_paste" shortcut="Ctrl V" />
 						<menu-item text="Delete" id="menu_edit_delete" image="resources/engine/images/delete.png" shortcut="Del" />
 						<menu-separator />
+						<menu-item text="Select All" id="menu_edit_selectall" shortcut="Ctrl A" />
 						<menu-item text="Find/Replace" id="menu_edit_findreplace" image="resources/engine/images/search.png" shortcut="Ctrl F" />
 					</menu-header-item>
 					<menu-header-item text="View">

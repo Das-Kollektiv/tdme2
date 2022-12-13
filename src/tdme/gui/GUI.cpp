@@ -339,12 +339,8 @@ void GUI::render()
 
 		if (screen->isVisible() == false) continue;
 
+		//
 		screen->render(guiRenderer);
-	}
-	for (auto i = 0; i < renderScreens.size(); i++) {
-		auto screen = renderScreens[i];
-		if (screen->isVisible() == false) continue;
-
 		screen->renderFloatingNodes(guiRenderer);
 	}
 	guiRenderer->doneRendering();
@@ -680,7 +676,7 @@ void GUI::handleEvents(bool clearEvents)
 
 	//
 	if (mouseEvents.empty() == false) {
-		lastMouseEvent = mouseEvents[mouseEvents.size()];
+		lastMouseEvent = mouseEvents[mouseEvents.size() - 1];
 	}
 
 	// handle keyboard events
@@ -725,7 +721,7 @@ void GUI::onChar(int key, int x, int y) {
 	keyboardEvents.push_back(guiKeyboardEvent);
 }
 
-void GUI::onKeyDown (int key, int keyCode, int x, int y, bool repeat) {
+void GUI::onKeyDown (int key, int keyCode, int x, int y, bool repeat, int modifiers) {
 	fakeMouseMovedEvent();
 	GUIKeyboardEvent guiKeyboardEvent;
 	guiKeyboardEvent.setTime(Time::getCurrentMillis());
@@ -733,9 +729,9 @@ void GUI::onKeyDown (int key, int keyCode, int x, int y, bool repeat) {
 	guiKeyboardEvent.setKeyCode(keyCode);
 	guiKeyboardEvent.setKeyChar(key);
 	guiKeyboardEvent.setMetaDown(false);
-	guiKeyboardEvent.setControlDown(controlDown);
-	guiKeyboardEvent.setAltDown(altDown);
-	guiKeyboardEvent.setShiftDown(shiftDown);
+	guiKeyboardEvent.setControlDown((modifiers & KEYBOARD_MODIFIER_CTRL) != 0);
+	guiKeyboardEvent.setAltDown((modifiers & KEYBOARD_MODIFIER_ALT) != 0);
+	guiKeyboardEvent.setShiftDown((modifiers & KEYBOARD_MODIFIER_SHIFT) != 0);
 	guiKeyboardEvent.setRepeat(repeat);
 	guiKeyboardEvent.setProcessed(false);
 	keyboardEvents.push_back(guiKeyboardEvent);
@@ -936,5 +932,5 @@ void GUI::reshapeScreen(GUIScreenNode* screenNode) {
 }
 
 void GUI::applyRenderScreensChange() {
-	for (auto screen: renderScreens) screen->unsetMouseOver();
+	for (auto screen: renderScreens) screen->unsetMouseStates();
 }

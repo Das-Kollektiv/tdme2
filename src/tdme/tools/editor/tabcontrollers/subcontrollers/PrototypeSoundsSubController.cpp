@@ -11,6 +11,7 @@
 #include <tdme/engine/Engine.h>
 #include <tdme/gui/events/GUIActionListener.h>
 #include <tdme/gui/nodes/GUIElementNode.h>
+#include <tdme/gui/nodes/GUIImageNode.h>
 #include <tdme/gui/nodes/GUINodeController.h>
 #include <tdme/gui/nodes/GUIScreenNode.h>
 #include <tdme/gui/GUI.h>
@@ -46,6 +47,7 @@ using tdme::engine::prototype::PrototypeAudio;
 using tdme::engine::Engine;
 using tdme::gui::events::GUIActionListenerType;
 using tdme::gui::nodes::GUIElementNode;
+using tdme::gui::nodes::GUIImageNode;
 using tdme::gui::nodes::GUINodeController;
 using tdme::gui::nodes::GUIScreenNode;
 using tdme::gui::GUIParser;
@@ -92,12 +94,6 @@ void PrototypeSoundsSubController::initialize(GUIScreenNode* screenNode)
 	this->screenNode = screenNode;
 }
 
-void PrototypeSoundsSubController::onSoundClear(Prototype* prototype, const string& soundId) {
-	playableSoundView->stopSound();
-	prototype->removeSound(soundId);
-	editorView->reloadTabOutliner();
-}
-
 void PrototypeSoundsSubController::onSoundLoad(Prototype* prototype, const string& soundId) {
 	class LoadSoundAction: public virtual Action
 	{
@@ -105,14 +101,13 @@ void PrototypeSoundsSubController::onSoundLoad(Prototype* prototype, const strin
 		LoadSoundAction(PrototypeSoundsSubController* prototypeSoundsSubController, Prototype* prototype, const string& soundId): prototypeSoundsSubController(prototypeSoundsSubController), prototype(prototype), soundId(soundId) {
 		}
 		void performAction() override {
-			auto sound = prototype->getSound(soundId);
-			if (sound == nullptr) return;
-			sound->setFileName(
+			prototypeSoundsSubController->setSound(
+				soundId,
 				prototypeSoundsSubController->getView()->getPopUps()->getFileDialogScreenController()->getPathName() +
-				"/" +
-				prototypeSoundsSubController->getView()->getPopUps()->getFileDialogScreenController()->getFileName()
+					"/" +
+					prototypeSoundsSubController->getView()->getPopUps()->getFileDialogScreenController()->getFileName(),
+				prototype
 			);
-			prototypeSoundsSubController->playableSoundView->playSound(sound->getId());
 			prototypeSoundsSubController->getView()->getPopUps()->getFileDialogScreenController()->close();
 		}
 	private:
@@ -135,7 +130,22 @@ void PrototypeSoundsSubController::onSoundLoad(Prototype* prototype, const strin
 	);
 }
 
-void PrototypeSoundsSubController::showErrorPopUp(const string& caption, const string& message)
+void PrototypeSoundsSubController::onSoundClear(Prototype* prototype, const string& soundId) {
+	playableSoundView->stopSound();
+	prototype->removeSound(soundId);
+	editorView->reloadTabOutliner();
+}
+
+void PrototypeSoundsSubController::onSoundBrowseTo(Prototype* prototype, const string& soundId) {
+	auto sound = prototype->getSound(soundId);
+	if (sound == nullptr) {
+		showInfoPopUp("Browse To", "Nothing to browse to");
+	} else {
+		editorView->getScreenController()->browseTo(sound->getFileName());
+	}
+}
+
+void PrototypeSoundsSubController::showInfoPopUp(const string& caption, const string& message)
 {
 	view->getPopUps()->getInfoDialogScreenController()->show(caption, message);
 }
@@ -198,6 +208,7 @@ void PrototypeSoundsSubController::updateDetails(Prototype* prototype, Model* mo
 
 	try {
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("details_sound"))->getActiveConditions().add("open");
+		if (sound->getFileName().empty() == false) required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("sound"))->setSource("resources/engine/images/sound_big.png");
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_animation"))->getController()->setValue(MutableString(sound->getAnimation()));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_gain"))->getController()->setValue(MutableString(sound->getGain()));
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("sound_pitch"))->getController()->setValue(MutableString(sound->getPitch()));
@@ -207,7 +218,7 @@ void PrototypeSoundsSubController::updateDetails(Prototype* prototype, Model* mo
 
 	} catch (Exception& exception) {
 		Console::println(string("PrototypeSoundsSubController::setSoundDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -223,7 +234,7 @@ void PrototypeSoundsSubController::applySoundDetails(Prototype* prototype, const
 		playableSoundView->playSound(sound->getId());
 	} catch (Exception& exception) {
 		Console::println(string("PrototypeSoundsSubController::updateSoundDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -242,7 +253,7 @@ const string PrototypeSoundsSubController::applySoundDetailsRename(Prototype* pr
 		playableSoundView->playSound(sound->getId());
 	} catch (Exception& exception) {
 		Console::println(string("PrototypeSoundsSubController::updateSoundDetailsRename(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 	return newSoundId;
 }
@@ -269,7 +280,7 @@ void PrototypeSoundsSubController::createSound(Prototype* prototype) {
 		}
 	} catch (Exception& exception) {
 		Console::println(string("PrototypeSoundsSubController::createSound(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 
 	if (soundCreate == true) {
@@ -306,7 +317,7 @@ void PrototypeSoundsSubController::renameSound(Prototype* prototype) {
 		}
 	} catch (Exception& exception) {
 		Console::println(string("PrototypeSoundsSubController::renameSound(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 		return;
 	}
 
@@ -358,16 +369,22 @@ void PrototypeSoundsSubController::onChange(GUIElementNode* node, Prototype* pro
 void PrototypeSoundsSubController::onAction(GUIActionListenerType type, GUIElementNode* node, Prototype* prototype)
 {
 	if (type != GUIActionListenerType::PERFORMED) return;
+	if (StringTools::startsWith(node->getId(), "sound_open") == true) {
+		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
+		if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
+			onSoundLoad(prototype, StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size()));
+		}
+	} else
 	if (StringTools::startsWith(node->getId(), "sound_remove") == true) {
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 		if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
 			onSoundClear(prototype, StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size()));
 		}
 	} else
-	if (StringTools::startsWith(node->getId(), "sound_open") == true) {
+	if (StringTools::startsWith(node->getId(), "sound_browseto") == true) {
 		auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
 		if (StringTools::startsWith(outlinerNode, "sounds.") == true) {
-			onSoundLoad(prototype, StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size()));
+			onSoundBrowseTo(prototype, StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size()));
 		}
 	} else
 	if (node->getId() == "tdme.sounds.rename_input") {
@@ -465,6 +482,40 @@ void PrototypeSoundsSubController::onContextMenuRequest(GUIElementNode* node, in
 
 			//
 			popUps->getContextMenuScreenController()->show(mouseX, mouseY);
+		}
+	}
+}
+
+void PrototypeSoundsSubController::setSound(const string& soundId, const string& fileName, Prototype* prototype) {
+	auto sound = prototype->getSound(soundId);
+	if (sound == nullptr) return;
+	sound->setFileName(fileName);
+	try {
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("sound"))->setSource("resources/engine/images/sound_big.png");
+	} catch (Exception& exception) {
+		Console::println(string() + "PrototypeSoundsSubController::setSound(): An error occurred: " + exception.what());
+		showInfoPopUp("Warning", (string(exception.what())));
+	}
+	playableSoundView->playSound(sound->getId());
+}
+
+bool PrototypeSoundsSubController::onDrop(const string& payload, int mouseX, int mouseY, Prototype* prototype) {
+	Console::println("PrototypeSoundsSubController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
+	if (StringTools::startsWith(payload, "file:") == false) {
+		return false;
+	} else {
+		auto fileName = StringTools::substring(payload, string("file:").size());
+		if (editorView->getScreenController()->isDropOnNode(mouseX, mouseY, "sound") == true) {
+			if (Tools::hasFileExtension(fileName, {{ "ogg"}}) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions({{ "ogg" }}));
+			} else {
+				auto outlinerNode = editorView->getScreenController()->getOutlinerSelection();
+				auto soundId = StringTools::substring(outlinerNode, string("sounds.").size(), outlinerNode.size());
+				setSound(soundId, fileName, prototype);
+			}
+			return true;
+		} else {
+			return false;
 		}
 	}
 }

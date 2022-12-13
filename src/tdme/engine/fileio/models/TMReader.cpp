@@ -7,8 +7,8 @@
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fileio/models/ModelFileIOException.h>
-#include <tdme/engine/fileio/textures/Texture.h>
-#include <tdme/engine/fileio/textures/TextureReader.h>
+#include <tdme/engine/Texture.h>
+#include <tdme/engine/fileio/textures/PNGTextureReader.h>
 #include <tdme/engine/model/Animation.h>
 #include <tdme/engine/model/Color4.h>
 #include <tdme/engine/model/Face.h>
@@ -42,8 +42,8 @@ using std::vector;
 using tdme::engine::fileio::models::ModelFileIOException;
 using tdme::engine::fileio::models::TMReader;
 using tdme::engine::fileio::models::TMReaderInputStream;
-using tdme::engine::fileio::textures::Texture;
-using tdme::engine::fileio::textures::TextureReader;
+using tdme::engine::Texture;
+using tdme::engine::fileio::textures::PNGTextureReader;
 using tdme::engine::model::Animation;
 using tdme::engine::model::Color4;
 using tdme::engine::model::Face;
@@ -183,12 +183,40 @@ void TMReader::readEmbeddedTextures(TMReaderInputStream* is, map<string, Texture
 	for (auto i = 0; i < embeddedTextureCount; i++) {
 		auto embeddedTextureId = is->readString();
 		auto embeddedTextureType = is->readByte();
+		// png
 		if (embeddedTextureType == 1) {
 			auto textureSize = is->readInt();
 			vector<uint8_t> pngData;
 			pngData.resize(textureSize);
 			for (auto j = 0; j < textureSize; j++) pngData[j] = is->readByte();
-			auto embeddedTexture = TextureReader::readPNG(embeddedTextureId, pngData, true);
+			auto embeddedTexture = PNGTextureReader::read(embeddedTextureId, pngData, true);
+			if (embeddedTexture != nullptr) {
+				embeddedTexture->acquireReference();
+				embeddedTextures[embeddedTextureId] = embeddedTexture;
+			}
+		} else
+		// bz7
+		if (embeddedTextureType == 2) {
+			auto width = is->readInt();
+			auto height = is->readInt();
+			auto textureWidth = is->readInt();
+			auto textureHeight = is->readInt();
+			auto bitsPerPixel = is->readByte();
+			auto textureSize = is->readInt();
+			ByteBuffer bz7Data(textureSize);
+			for (auto j = 0; j < textureSize; j++) bz7Data.put(is->readByte());
+			auto embeddedTexture =
+				new Texture(
+					embeddedTextureId,
+					Texture::getRGBDepthByPixelBitsPerPixel(bitsPerPixel),
+					Texture::getBZ7FormatByPixelBitsPerPixel(bitsPerPixel),
+					width,
+					height,
+					textureWidth,
+					textureHeight,
+					Texture::getBZ7FormatByPixelBitsPerPixel(bitsPerPixel),
+					bz7Data
+				);
 			if (embeddedTexture != nullptr) {
 				embeddedTexture->acquireReference();
 				embeddedTextures[embeddedTextureId] = embeddedTexture;

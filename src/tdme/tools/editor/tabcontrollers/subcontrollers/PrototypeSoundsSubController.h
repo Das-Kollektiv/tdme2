@@ -84,13 +84,6 @@ public:
 	void initialize(GUIScreenNode* screenNode);
 
 	/**
-	 * On sound clear
-	 * @param prototype prototype
-	 * @param soundId sound id
-	 */
-	void onSoundClear(Prototype* prototype, const string& soundId);
-
-	/**
 	 * On sound load
 	 * @param protoype prototype
 	 * @param soundId sound id
@@ -98,11 +91,25 @@ public:
 	void onSoundLoad(Prototype* prototype, const string& soundId);
 
 	/**
-	 * Shows the error pop up
+	 * On sound clear
+	 * @param prototype prototype
+	 * @param soundId sound id
+	 */
+	void onSoundClear(Prototype* prototype, const string& soundId);
+
+	/**
+	 * On sound browse to
+	 * @param prototype prototype
+	 * @param soundId sound id
+	 */
+	void onSoundBrowseTo(Prototype* prototype, const string& soundId);
+
+	/**
+	 * Show the information pop up / modal
 	 * @param caption caption
 	 * @param message message
 	 */
-	void showErrorPopUp(const string& caption, const string& message);
+	void showInfoPopUp(const string& caption, const string& message);
 
 	/**
 	 * Create sounds XML for outliner
@@ -191,5 +198,22 @@ public:
 	 * @param prototype prototype
 	 */
 	void onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY, Prototype* prototype);
+
+	/**
+	 * Set sound
+	 * @param soundId sound id
+	 * @param fileName file name
+	 * @param prototype prototype
+	 */
+	void setSound(const string& soundId, const string& fileName, Prototype* prototype);
+
+	/**
+	 * On drop
+	 * @param payload payload
+	 * @param mouseX mouse X
+	 * @param mouseY mouse Y
+	 * @param prototype prototype
+	 */
+	bool onDrop(const string& payload, int mouseX, int mouseY, Prototype* prototype);
 
 };

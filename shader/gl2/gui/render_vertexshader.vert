@@ -1,7 +1,7 @@
 #version 100
 
 // layouts
-attribute vec3 inVertex;
+attribute vec2 inVertex;
 attribute vec2 inTextureUV;
 attribute vec4 inColor;
 
@@ -22,5 +22,5 @@ void main(void) {
 	vsFragGradientTextureUV = vec2(inverseGradientTextureMatrix * vec3(inTextureUV, 1.0));
 
 	// compute gl position
-	gl_Position = vec4(inVertex, 1.0);
+	gl_Position = vec4(vec3(inVertex, 0.0), 1.0);
 }

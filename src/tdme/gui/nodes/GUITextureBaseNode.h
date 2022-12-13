@@ -16,7 +16,7 @@
 
 using std::string;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 using tdme::gui::nodes::GUIColor;
 using tdme::gui::nodes::GUINode;
 using tdme::gui::nodes::GUINode_Alignments;

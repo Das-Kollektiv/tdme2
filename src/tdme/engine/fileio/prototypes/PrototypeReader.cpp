@@ -100,13 +100,29 @@ using tdme::utilities::Terrain;
 using rapidjson::Document;
 using rapidjson::Value;
 
-vector<string> PrototypeReader::extensions = {"tenvmap", "tmodel", "tparticle", "tterrain", "ttrigger"};
+vector<string> PrototypeReader::extensions = {"tmodel", "tdecal", "tempty", "tenvmap", "tparticle", "tterrain", "ttrigger"};
 
-const vector<string>& PrototypeReader::getPrototypeExtensions() {
+const vector<string> PrototypeReader::getPrototypeExtensions() {
+	auto& modelReaderExtensions = ModelReader::getModelExtensions();
+	vector<string> extensions;
+	for (auto& extension: PrototypeReader::extensions) extensions.push_back(extension);
+	for (auto& extension: modelReaderExtensions) extensions.push_back(extension);
+	return extensions;
+}
+
+const vector<string> PrototypeReader::getModelExtensions() {
+	auto& modelReaderExtensions = ModelReader::getModelExtensions();
+	vector<string> extensions;
+	extensions.push_back(PrototypeReader::extensions[0]);
+	for (auto& extension: modelReaderExtensions) extensions.push_back(extension);
 	return extensions;
 }
 
 bool PrototypeReader::readThumbnail(const string& pathName, const string& fileName, vector<uint8_t>& pngData) {
+	//
+	if (Tools::hasFileExtension(fileName, {{"tmodel"}}) == false &&
+		Tools::hasFileExtension(fileName, ModelReader::getModelExtensions()) == true) return false;
+	//
 	try {
 		auto jsonContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 
@@ -127,6 +143,23 @@ bool PrototypeReader::readThumbnail(const string& pathName, const string& fileNa
 
 Prototype* PrototypeReader::read(int id, const string& pathName, const string& fileName, PrototypeTransformFilter* transformFilter)
 {
+	//
+	if (Tools::hasFileExtension(fileName, {{"tmodel"}}) == false &&
+		Tools::hasFileExtension(fileName, ModelReader::getModelExtensions()) == true) {
+		return new Prototype(
+			Prototype::ID_NONE,
+			Prototype_Type::MODEL,
+			Tools::removeFileEnding(fileName),
+			Tools::removeFileEnding(fileName),
+			pathName + "/" + fileName,
+			pathName + "/" + fileName,
+			string(),
+			ModelReader::read(pathName, fileName),
+			Vector3(0.0f, 0.0f, 0.0f)
+		);
+	}
+
+	//
 	auto jsonContent = FileSystem::getInstance()->getContentAsString(pathName, fileName);
 
 	Document jPrototypeRoot;
@@ -261,8 +294,10 @@ Prototype* PrototypeReader::read(int id, const string& pathName, Value& jPrototy
 			auto id = jSound["i"].GetString();
 			auto sound = prototype->addSound(id);
 			if (sound == nullptr) continue;
+			auto soundFileName = jSound["file"].GetString();
+			auto soundPathName = getResourcePathName(pathName, soundFileName);
+			sound->setFileName(getResourcePathName(pathName, soundFileName) + "/" + FileSystem::getInstance()->getFileName(soundFileName));
 			sound->setAnimation(jSound["a"].GetString());
-			sound->setFileName(jSound["file"].GetString());
 			sound->setGain(static_cast<float>(jSound["g"].GetFloat()));
 			sound->setPitch(static_cast<float>(jSound["p"].GetFloat()));
 			sound->setOffset(static_cast<float>(jSound["o"].GetInt()));

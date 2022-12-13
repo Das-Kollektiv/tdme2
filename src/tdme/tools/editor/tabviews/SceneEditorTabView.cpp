@@ -887,6 +887,16 @@ void SceneEditorTabView::placeEntity()
 	cameraInputHandler->setSceneCenter(Vector3(scene->getCenter().getX(), scene->getBoundingBox()->getMax().getY() + 3.0f, scene->getCenter().getZ()));
 }
 
+bool SceneEditorTabView::placeEntity(Prototype* prototype, int mouseX, int mouseY) {
+	if (engine->getEntityByMousePosition(mouseX, mouseY, placeEntityTranslation, entityPickingFilterPlacing) != nullptr) {
+		setPlaceEntityMode(prototype);
+		placeEntity();
+		unsetPlaceEntityMode(false);
+		return true;
+	}
+	return false;
+}
+
 void SceneEditorTabView::removeEntities()
 {
 	removeGizmo();
@@ -1135,7 +1145,7 @@ void SceneEditorTabView::openPrototype() {
 	auto sceneEntity = scene->getEntity(selectedEntityIds[0]);
 	auto prototype = sceneEntity != nullptr?sceneEntity->getPrototype():nullptr;
 	if (prototype == nullptr || prototype->getFileName().empty() == true) {
-		sceneEditorTabController->showErrorPopUp("Warning", "Prototype is embedded and can not be opened");
+		sceneEditorTabController->showInfoPopUp("Warning", "Prototype is embedded and can not be opened");
 	} else {
 		editorView->getScreenController()->openFile(prototype->getFileName());
 	}
@@ -1452,7 +1462,7 @@ void SceneEditorTabView::addPrototype(Prototype* prototype) {
 		}
 	} catch (Exception& exception) {
 		Console::println(string("SceneEditorTabView::addPrototype(): An error occurred: ") + exception.what());;
-		sceneEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+		sceneEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 	}
 	reloadOutliner("scene.prototypes." + to_string(prototype->getId()));
 }

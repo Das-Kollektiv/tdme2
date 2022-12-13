@@ -78,6 +78,7 @@ public:
 	};
 
 private:
+	static constexpr int64_t TIME_DOUBLECLICK { 250LL };
 	static constexpr int64_t CURSOR_MODE_DURATION { 500LL };
 	int64_t cursorModeStarted { -1LL };
 	enum CursorMode { CURSORMODE_HIDE, CURSORMODE_SHOW};
@@ -91,6 +92,9 @@ private:
 	ScrollMode scrollMode { SCROLLMODE_NONE };
 	bool dragging { false };
 	bool input { false };
+	int64_t timeLastClick { -1LL };
+	bool doubleClick { false };
+
 
 	/**
 	 * @return must show cursor
@@ -166,6 +170,41 @@ public:
 	inline void setSelectionIndex(int selectionIndex) {
 		this->selectionIndex = selectionIndex;
 	}
+
+	/**
+	 * Redo
+	 */
+	void redo();
+
+	/**
+	 * Undo
+	 */
+	void undo();
+
+	/**
+	 * Select all
+	 */
+	void selectAll();
+
+	/**
+	 * Cut
+	 */
+	void cut();
+
+	/**
+	 * Copy
+	 */
+	void copy();
+
+	/**
+	 * Paste
+	 */
+	void paste();
+
+	/**
+	 * Delete
+	 */
+	void delete_();
 
 	// overridden methods
 	bool isDisabled() override;

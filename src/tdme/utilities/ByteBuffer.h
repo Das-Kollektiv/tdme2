@@ -52,6 +52,13 @@ public:
 	}
 
 public:
+
+	/**
+	 * Public constructor
+	 */
+	inline ByteBuffer() : Buffer(static_cast<Buffer*>(nullptr)) {
+	}
+
 	/**
 	 * Public constructor
 	 * @param capacity capacity
@@ -65,4 +72,12 @@ public:
 	 */
 	inline ByteBuffer(vector<uint8_t>* data) : Buffer(data) {
 	}
+
+	/**
+	 * Public constructor
+	 * @param data data
+	 */
+	inline ByteBuffer(const vector<uint8_t>& data) : Buffer(data) {
+	}
+
 };

@@ -53,6 +53,7 @@
         - TDME Model file format
             - this is a much more efficient model file format for TDME
             - can also be written
+            - can use external or embedded PNG and embedded BZ7 textures
     - objects/entity types
         - 3d model based objects with
             - animations
@@ -65,6 +66,7 @@
             - both animations and skinning have some sort of configurable LOD functionality
             - texture transforms/animations
                 - via texture matrices
+            - supports BC7 texture compression
         - objects with support for LOD
         - imposter objects with support for LOD
         - render group objects for foliage and such including LOD support
@@ -336,6 +338,7 @@
         - xml2(port-linux for FBXSDK)
         - Vulkan(optional)
     - included in TDME2 repository
+        - bc7enc_rdo
         - cpp-spline 
         - FBXSDK
         - libpng

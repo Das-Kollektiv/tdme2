@@ -34,7 +34,7 @@ private:
 	string password;
 
 	stringstream rawResponse;
-	int16_t httpStatusCode;
+	int16_t httpStatusCode { -1 };
 	vector<string> httpHeader;
 
 	/**

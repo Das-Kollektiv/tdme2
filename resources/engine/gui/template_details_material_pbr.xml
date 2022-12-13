@@ -6,11 +6,11 @@
 			<space height="5" />
 			<menu-separator />
 			<space height="5" />
-			<template src="resources/engine/gui/template_details_shared_fileinput_texture.xml" id="pbrmaterial_basecolor_texture" type="Texture" />
+			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="pbrmaterial_basecolor_texture" type="Texture" />
 			<space height="10" />
-			<template src="resources/engine/gui/template_details_shared_fileinput_texture.xml" id="pbrmaterial_metallic_roughness_texture" type="Met./Roug." />
+			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="pbrmaterial_metallic_roughness_texture" type="Met./Roug." />
 			<space height="10" />
-			<template src="resources/engine/gui/template_details_shared_fileinput_texture.xml" id="pbrmaterial_normal_texture" type="Normal" />
+			<template src="resources/engine/gui/template_details_shared_fileinput.xml" id="pbrmaterial_normal_texture" type="Normal" />
 			
 			<space height="5" />
 			<menu-separator />

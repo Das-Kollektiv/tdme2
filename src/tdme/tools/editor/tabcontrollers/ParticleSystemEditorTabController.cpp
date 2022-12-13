@@ -161,7 +161,7 @@ void ParticleSystemEditorTabController::dispose()
 {
 }
 
-void ParticleSystemEditorTabController::executeCommand(TabControllerCommand command)
+void ParticleSystemEditorTabController::onCommand(TabControllerCommand command)
 {
 	switch (command) {
 		case COMMAND_SAVE:
@@ -174,7 +174,7 @@ void ParticleSystemEditorTabController::executeCommand(TabControllerCommand comm
 						Tools::getFileName(fileName)
 					);
 				} catch (Exception& exception) {
-					showErrorPopUp("Warning", (string(exception.what())));
+					showInfoPopUp("Warning", (string(exception.what())));
 				}
 			}
 			break;
@@ -190,7 +190,7 @@ void ParticleSystemEditorTabController::executeCommand(TabControllerCommand comm
 								particleSystemEditorTabController->popUps->getFileDialogScreenController()->getFileName()
 							);
 						} catch (Exception& exception) {
-							particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+							particleSystemEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 						}
 						particleSystemEditorTabController->popUps->getFileDialogScreenController()->close();
 					}
@@ -212,8 +212,67 @@ void ParticleSystemEditorTabController::executeCommand(TabControllerCommand comm
 			}
 			break;
 		default:
-			showErrorPopUp("Warning", "This command is not supported yet");
+			showInfoPopUp("Warning", "This command is not supported yet");
 			break;
+	}
+}
+
+void ParticleSystemEditorTabController::onDrop(const string& payload, int mouseX, int mouseY) {
+	Console::println("ParticleSystemEditorTabController::onDrop(): " + payload + " @ " + to_string(mouseX) + ", " + to_string(mouseY));
+	if (prototypeSoundsSubController->onDrop(payload, mouseX, mouseY, view->getPrototype()) == true) return;
+	if (prototypePhysicsSubController->onDrop(payload, mouseX, mouseY, view->getPrototype()) == true) return;
+	if (prototypeScriptSubController->onDrop(payload, mouseX, mouseY, view->getPrototype()) == true) return;
+	if (StringTools::startsWith(payload, "file:") == false) {
+		showInfoPopUp("Warning", "Unknown payload in drop");
+	} else {
+		auto fileName = StringTools::substring(payload, string("file:").size());
+		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "particletype_point_texture") == true) {
+			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			} else {
+				auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				setPointParticleSystemTexture(particleSystemIdx, fileName);
+			}
+		} else
+		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "particletype_point_transparency") == true) {
+			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			} else {
+				auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				setPointParticleSystemTransparencyTexture(particleSystemIdx, fileName);
+			}
+		} else
+		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "particletype_fog_texture") == true) {
+			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			} else {
+				auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				setFogParticleSystemTexture(particleSystemIdx, fileName);
+			}
+		} else
+		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "particletype_fog_transparency") == true) {
+			if (Tools::hasFileExtension(fileName, TextureReader::getTextureExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(TextureReader::getTextureExtensions()));
+			} else {
+				auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				setFogParticleSystemTransparencyTexture(particleSystemIdx, fileName);
+			}
+		} else
+		if (view->getEditorView()->getScreenController()->isDropOnNode(mouseX, mouseY, "particletype_object") == true) {
+			if (Tools::hasFileExtension(fileName, ModelReader::getModelExtensions()) == false) {
+				showInfoPopUp("Warning", "You can not drop this file here. Allowed file extensions are " + Tools::enumerateFileExtensions(ModelReader::getModelExtensions()));
+			} else {
+				auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				setObjectParticleSystemModel(particleSystemIdx, fileName);
+			}
+		} else	{
+			showInfoPopUp("Warning", "You can not drop a file here");
+		}
 	}
 }
 
@@ -221,7 +280,7 @@ void ParticleSystemEditorTabController::updateInfoText(const MutableString& text
 	required_dynamic_cast<GUITextNode*>(screenNode->getNodeById(view->getTabId() + "_tab_text_info"))->setText(text);
 }
 
-void ParticleSystemEditorTabController::showErrorPopUp(const string& caption, const string& message)
+void ParticleSystemEditorTabController::showInfoPopUp(const string& caption, const string& message)
 {
 	popUps->getInfoDialogScreenController()->show(caption, message);
 }
@@ -438,9 +497,10 @@ void ParticleSystemEditorTabController::onContextMenuRequest(GUIElementNode* nod
 }
 
 void ParticleSystemEditorTabController::onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) {
-	int left, top;
-	view->getEditorView()->getViewPortUnscaledOffset(left, top);
-	popUps->getTooltipScreenController()->show(left + mouseX, top + mouseY, node->getToolTip());
+	int tooltipLeft, tooltipTop;
+	if (view->getEditorView()->getCurrentTabTooltipPosition(screenNode, mouseX, mouseY, tooltipLeft, tooltipTop) == false) return;
+	//
+	popUps->getTooltipScreenController()->show(tooltipLeft, tooltipTop, node->getToolTip());
 }
 
 void ParticleSystemEditorTabController::onTooltipCloseRequest() {
@@ -477,7 +537,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_box_colorstart"))->setEffectColorMul(bbpe->getColorStart());
 							} catch (Exception& exception) {
 								Console::println(string("OnColorChangeAction::performAction(): An error occurred: ") + exception.what());;
-								particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+								particleSystemEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 							}
 							particleSystemEditorTabController->view->initParticleSystem();
 						}
@@ -514,7 +574,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_box_colorend"))->setEffectColorMul(bbpe->getColorEnd());
 							} catch (Exception& exception) {
 								Console::println(string("OnColorChangeAction::performAction(): An error occurred: ") + exception.what());;
-								particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+								particleSystemEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 							}
 							particleSystemEditorTabController->view->initParticleSystem();
 						}
@@ -551,7 +611,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_point_colorstart"))->setEffectColorMul(ppe->getColorStart());
 							} catch (Exception& exception) {
 								Console::println(string("OnColorChangeAction::performAction(): An error occurred: ") + exception.what());;
-								particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+								particleSystemEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 							}
 							particleSystemEditorTabController->view->initParticleSystem();
 						}
@@ -588,7 +648,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_point_colorend"))->setEffectColorMul(ppe->getColorEnd());
 							} catch (Exception& exception) {
 								Console::println(string("OnColorChangeAction::performAction(): An error occurred: ") + exception.what());;
-								particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+								particleSystemEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 							}
 							particleSystemEditorTabController->view->initParticleSystem();
 						}
@@ -625,7 +685,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_sphere_colorstart"))->setEffectColorMul(spe->getColorStart());
 							} catch (Exception& exception) {
 								Console::println(string("OnColorChangeAction::performAction(): An error occurred: ") + exception.what());;
-								particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+								particleSystemEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 							}
 							particleSystemEditorTabController->view->initParticleSystem();
 						}
@@ -662,7 +722,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_sphere_colorend"))->setEffectColorMul(spe->getColorEnd());
 							} catch (Exception& exception) {
 								Console::println(string("OnColorChangeAction::performAction(): An error occurred: ") + exception.what());;
-								particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+								particleSystemEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 							}
 							particleSystemEditorTabController->view->initParticleSystem();
 						}
@@ -699,7 +759,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_circle_colorstart"))->setEffectColorMul(cpe->getColorStart());
 							} catch (Exception& exception) {
 								Console::println(string("OnColorChangeAction::performAction(): An error occurred: ") + exception.what());;
-								particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+								particleSystemEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 							}
 							particleSystemEditorTabController->view->initParticleSystem();
 						}
@@ -736,7 +796,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_circle_colorend"))->setEffectColorMul(cpe->getColorEnd());
 							} catch (Exception& exception) {
 								Console::println(string("OnColorChangeAction::performAction(): An error occurred: ") + exception.what());;
-								particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+								particleSystemEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 							}
 							particleSystemEditorTabController->view->initParticleSystem();
 						}
@@ -773,7 +833,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_radial_colorstart"))->setEffectColorMul(rpe->getColorStart());
 							} catch (Exception& exception) {
 								Console::println(string("OnColorChangeAction::performAction(): An error occurred: ") + exception.what());;
-								particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+								particleSystemEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 							}
 							particleSystemEditorTabController->view->initParticleSystem();
 						}
@@ -810,7 +870,7 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particleemitter_radial_colorend"))->setEffectColorMul(rpe->getColorEnd());
 							} catch (Exception& exception) {
 								Console::println(string("OnColorChangeAction::performAction(): An error occurred: ") + exception.what());;
-								particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
+								particleSystemEditorTabController->showInfoPopUp("Warning", (string(exception.what())));
 							}
 							particleSystemEditorTabController->view->initParticleSystem();
 						}
@@ -835,22 +895,10 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 					{
 					public:
 						void performAction() override {
-							auto prototype = particleSystemEditorTabController->view->getPrototype();
-							auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
-							auto pps = particleSystem != nullptr?particleSystem->getPointParticleSystem():nullptr;
-							if (pps == nullptr) return;
-							particleSystemEditorTabController->view->uninitParticleSystem();
-							try {
-								pps->setTextureFileName(
-									particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() + "/" + particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName(),
-									pps->getTransparencyTextureFileName()
-								);
-							} catch (Exception& exception) {
-								Console::println(string("OnPointParticleSystemLoadTexture::performAction(): An error occurred: ") + exception.what());;
-								particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
-							}
-							required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particletype_point_texture"))->setSource(pps->getTextureFileName());
-							particleSystemEditorTabController->view->initParticleSystem();
+							particleSystemEditorTabController->setPointParticleSystemTexture(
+								particleSystemIdx,
+								particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() + "/" + particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+							);
 							particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 						}
 
@@ -885,11 +933,25 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 					try {
 						pps->setTextureFileName(string(), pps->getTransparencyTextureFileName());
 						required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_point_texture"))->setSource(pps->getTextureFileName());
+						required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_point_texture"))->setTooltip(pps->getTextureFileName());
 					} catch (Exception& exception) {
 						Console::println(string("ParticleSystemEditorTabController::onAction(): An error occurred: ") + exception.what());;
-						showErrorPopUp("Warning", (string(exception.what())));
+						showInfoPopUp("Warning", (string(exception.what())));
 					}
 					view->initParticleSystem();
+				}
+			}
+		} else
+		if (node->getId().compare("particletype_point_texture_browseto") == 0) {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+				auto pps = particleSystem != nullptr?particleSystem->getPointParticleSystem():nullptr;
+				if (pps != nullptr && pps->getTextureFileName().empty() == false) {
+					view->getEditorView()->getScreenController()->browseTo(pps->getTextureFileName());
+				} else {
+					showInfoPopUp("Browse To", "Nothing to browse to");
 				}
 			}
 		} else
@@ -904,22 +966,10 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 					{
 					public:
 						void performAction() override {
-							auto prototype = particleSystemEditorTabController->view->getPrototype();
-							auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
-							auto pps = particleSystem != nullptr?particleSystem->getPointParticleSystem():nullptr;
-							if (pps == nullptr) return;
-							particleSystemEditorTabController->view->uninitParticleSystem();
-							try {
-								pps->setTextureFileName(
-									pps->getTextureFileName(),
-									particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() + "/" + particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
-								);
-							} catch (Exception& exception) {
-								Console::println(string("OnPointParticleSystemLoadTransparencyTexture::performAction(): An error occurred: ") + exception.what());;
-								particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
-							}
-							required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particletype_point_transparency"))->setSource(pps->getTextureFileName());
-							particleSystemEditorTabController->view->initParticleSystem();
+							particleSystemEditorTabController->setPointParticleSystemTransparencyTexture(
+								particleSystemIdx,
+								particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() + "/" + particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+							);
 							particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 						}
 
@@ -954,11 +1004,25 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 					try {
 						pps->setTextureFileName(pps->getTextureFileName(), string());
 						required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_point_transparency"))->setSource(pps->getTransparencyTextureFileName());
+						required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_point_transparency"))->setTooltip(pps->getTransparencyTextureFileName());
 					} catch (Exception& exception) {
 						Console::println(string("ParticleSystemEditorTabController::onAction(): An error occurred: ") + exception.what());;
-						showErrorPopUp("Warning", (string(exception.what())));
+						showInfoPopUp("Warning", (string(exception.what())));
 					}
 					view->initParticleSystem();
+				}
+			}
+		} else
+		if (node->getId().compare("particletype_point_transparency_browseto") == 0) {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+				auto pps = particleSystem != nullptr?particleSystem->getPointParticleSystem():nullptr;
+				if (pps != nullptr && pps->getTransparencyTextureFileName().empty() == false) {
+					view->getEditorView()->getScreenController()->browseTo(pps->getTransparencyTextureFileName());
+				} else {
+					showInfoPopUp("Browse To", "Nothing to browse to");
 				}
 			}
 		} else
@@ -973,22 +1037,10 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 					{
 					public:
 						void performAction() override {
-							auto prototype = particleSystemEditorTabController->view->getPrototype();
-							auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
-							auto fps = particleSystem != nullptr?particleSystem->getFogParticleSystem():nullptr;
-							if (fps == nullptr) return;
-							particleSystemEditorTabController->view->uninitParticleSystem();
-							try {
-								fps->setTextureFileName(
-									particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() + "/" + particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName(),
-									fps->getTransparencyTextureFileName()
-								);
-							} catch (Exception& exception) {
-								Console::println(string("OnFogParticleSystemLoadTexture::performAction(): An error occurred: ") + exception.what());;
-								particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
-							}
-							required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particletype_fog_texture"))->setSource(fps->getTextureFileName());
-							particleSystemEditorTabController->view->initParticleSystem();
+							particleSystemEditorTabController->setFogParticleSystemTexture(
+								particleSystemIdx,
+								particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() + "/" + particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+							);
 							particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 						}
 
@@ -1023,11 +1075,25 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 					try {
 						fps->setTextureFileName(string(), fps->getTransparencyTextureFileName());
 						required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_fog_texture"))->setSource(fps->getTextureFileName());
+						required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_fog_texture"))->setTooltip(fps->getTextureFileName());
 					} catch (Exception& exception) {
 						Console::println(string("ParticleSystemEditorTabController::onAction(): An error occurred: ") + exception.what());;
-						showErrorPopUp("Warning", (string(exception.what())));
+						showInfoPopUp("Warning", (string(exception.what())));
 					}
 					view->initParticleSystem();
+				}
+			}
+		} else
+		if (node->getId().compare("particletype_fog_texture_browseto") == 0) {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+				auto fps = particleSystem != nullptr?particleSystem->getFogParticleSystem():nullptr;
+				if (fps != nullptr && fps->getTextureFileName().empty() == false) {
+					view->getEditorView()->getScreenController()->browseTo(fps->getTextureFileName());
+				} else {
+					showInfoPopUp("Browse To", "Nothing to browse to");
 				}
 			}
 		} else
@@ -1042,22 +1108,10 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 					{
 					public:
 						void performAction() override {
-							auto prototype = particleSystemEditorTabController->view->getPrototype();
-							auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
-							auto fps = particleSystem != nullptr?particleSystem->getFogParticleSystem():nullptr;
-							if (fps == nullptr) return;
-							particleSystemEditorTabController->view->uninitParticleSystem();
-							try {
-								fps->setTextureFileName(
-									fps->getTextureFileName(),
-									particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() + "/" + particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
-								);
-							} catch (Exception& exception) {
-								Console::println(string("OnFogParticleSystemLoadTransparencyTexture::performAction(): An error occurred: ") + exception.what());;
-								particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
-							}
-							required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particletype_fog_transparency"))->setSource(fps->getTextureFileName());
-							particleSystemEditorTabController->view->initParticleSystem();
+							particleSystemEditorTabController->setFogParticleSystemTransparencyTexture(
+								particleSystemIdx,
+								particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() + "/" + particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+							);
 							particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 						}
 
@@ -1092,11 +1146,25 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 					try {
 						fps->setTextureFileName(fps->getTextureFileName(), string());
 						required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_fog_transparency"))->setSource(fps->getTransparencyTextureFileName());
+						required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_fog_transparency"))->setTooltip(fps->getTransparencyTextureFileName());
 					} catch (Exception& exception) {
 						Console::println(string("ParticleSystemEditorTabController::onAction(): An error occurred: ") + exception.what());;
-						showErrorPopUp("Warning", (string(exception.what())));
+						showInfoPopUp("Warning", (string(exception.what())));
 					}
 					view->initParticleSystem();
+				}
+			}
+		} else
+		if (node->getId().compare("particletype_fog_transparency_browseto") == 0) {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+				auto fps = particleSystem != nullptr?particleSystem->getFogParticleSystem():nullptr;
+				if (fps != nullptr && fps->getTransparencyTextureFileName().empty() == false) {
+					view->getEditorView()->getScreenController()->browseTo(fps->getTransparencyTextureFileName());
+				} else {
+					showInfoPopUp("Browse To", "Nothing to browse to");
 				}
 			}
 		} else
@@ -1112,24 +1180,10 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 					{
 					public:
 						void performAction() override {
-							auto prototype = particleSystemEditorTabController->view->getPrototype();
-							auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
-							auto ops = particleSystem != nullptr?particleSystem->getObjectParticleSystem():nullptr;
-							if (ops == nullptr) return;
-							particleSystemEditorTabController->view->uninitParticleSystem();
-							try {
-								ops->setModelFile(
-									particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() +
-									"/" +
-									particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
-								);
-								required_dynamic_cast<GUIImageNode*>(particleSystemEditorTabController->screenNode->getNodeById("particletype_object"))->setSource(ops->getModelFileName());
-							} catch (Exception& exception) {
-								Console::println(string("OnObjectParticleSystemLoadModel::performAction(): An error occurred: ") + exception.what());;
-								particleSystemEditorTabController->showErrorPopUp("Warning", (string(exception.what())));
-							}
-							particleSystemEditorTabController->view->initParticleSystem();
-							particleSystemEditorTabController->view->getEditorView()->reloadTabOutliner();
+							particleSystemEditorTabController->setObjectParticleSystemModel(
+								particleSystemIdx,
+								particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getPathName() + "/" + particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->getFileName()
+							);
 							particleSystemEditorTabController->view->getPopUps()->getFileDialogScreenController()->close();
 						}
 
@@ -1166,9 +1220,24 @@ void ParticleSystemEditorTabController::onAction(GUIActionListenerType type, GUI
 				try {
 					ops->setModelFile(string());
 					required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_object"))->setSource(ops->getModelFileName());
+					required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_object"))->setTooltip(ops->getModelFileName());
 				} catch (Exception& exception) {
 					Console::println(string("ParticleSystemEditorTabController::onAction(): An error occurred: ") + exception.what());;
-					showErrorPopUp("Warning", (string(exception.what())));
+					showInfoPopUp("Warning", (string(exception.what())));
+				}
+				view->initParticleSystem();
+			}
+		} else
+		if (node->getId() == "particletype_object_browseto") {
+			auto outlinerNode = view->getEditorView()->getScreenController()->getOutlinerSelection();
+			if (StringTools::startsWith(outlinerNode, "particlesystems.") == true) {
+				auto particleSystemIdx = Integer::parse(StringTools::substring(outlinerNode, string("particlesystems.").size(), outlinerNode.size()));
+				auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+				auto ops = particleSystem != nullptr?particleSystem->getObjectParticleSystem():nullptr;
+				if (ops != nullptr && ops->getModelFileName().empty() == false) {
+					view->getEditorView()->getScreenController()->browseTo(ops->getModelFileName());
+				} else {
+					showInfoPopUp("Browse To", "Nothing to browse to");
 				}
 				view->initParticleSystem();
 			}
@@ -1240,6 +1309,7 @@ void ParticleSystemEditorTabController::setParticleSystemDetails(int particleSys
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_type"))->getController()->setValue(MutableString(1));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_type_details"))->getActiveConditions().set("object");
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_object"))->setSource(ops->getModelFileName());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_object"))->setTooltip(ops->getModelFileName());
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_object_scale"))->getController()->setValue(MutableString(Math::max(ops->getScale().getX(), Math::max(ops->getScale().getY(), ops->getScale().getZ()))));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_object_maxcount"))->getController()->setValue(MutableString(ops->getMaxCount()));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_object_autoemit"))->getController()->setValue(MutableString(ops->isAutoEmit() == true?"1":""));
@@ -1250,7 +1320,9 @@ void ParticleSystemEditorTabController::setParticleSystemDetails(int particleSys
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_type"))->getController()->setValue(MutableString(2));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_type_details"))->getActiveConditions().set("point");
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_point_texture"))->setSource(pps->getTextureFileName());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_point_texture"))->setTooltip(pps->getTextureFileName());
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_point_transparency"))->setSource(pps->getTransparencyTextureFileName());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_point_transparency"))->setTooltip(pps->getTransparencyTextureFileName());
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_point_size"))->getController()->setValue(MutableString(pps->getPointSize()));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_point_maxcount"))->getController()->setValue(MutableString(pps->getMaxPoints()));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_point_horizontal_sprites"))->getController()->setValue(MutableString(pps->getTextureHorizontalSprites()));
@@ -1264,7 +1336,9 @@ void ParticleSystemEditorTabController::setParticleSystemDetails(int particleSys
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_type"))->getController()->setValue(MutableString(3));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_type_details"))->getActiveConditions().set("fog");
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_fog_texture"))->setSource(fps->getTextureFileName());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_fog_texture"))->setTooltip(fps->getTextureFileName());
 			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_fog_transparency"))->setSource(fps->getTransparencyTextureFileName());
+			required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_fog_transparency"))->setTooltip(fps->getTransparencyTextureFileName());
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_fog_size"))->getController()->setValue(MutableString(fps->getPointSize()));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_fog_maxcount"))->getController()->setValue(MutableString(fps->getMaxPoints()));
 			required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particletype_fog_horizontal_sprites"))->getController()->setValue(MutableString(fps->getTextureHorizontalSprites()));
@@ -1425,7 +1499,7 @@ void ParticleSystemEditorTabController::setParticleSystemDetails(int particleSys
 		}
 	} catch (Exception& exception) {
 		Console::println(string("ParticleSystemEditorTabController::setParticleSystemDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -1760,7 +1834,7 @@ void ParticleSystemEditorTabController::applyParticleSystemDetails(int particleS
 		}
 	} catch (Exception& exception) {
 		Console::println(string("ParticleSystemEditorTabController::applyParticleSystemDetails(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 	//
 	view->initParticleSystem();
@@ -1784,7 +1858,7 @@ void ParticleSystemEditorTabController::updatePointParticleSystemEmitter(const V
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_point_location_z"))->getController()->setValue(MutableString(position.getZ()));
 	} catch (Exception& exception) {
 		Console::println(string("ParticleSystemEditorTabController::updatePointParticleSystemEmitter(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -1809,7 +1883,7 @@ void ParticleSystemEditorTabController::updateBoundingBoxParticleSystemEmitter(c
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_box_halfsize_z"))->getController()->setValue(MutableString(halfExtension.getZ()));
 	} catch (Exception& exception) {
 		Console::println(string("ParticleSystemEditorTabController::updateBoundingBoxParticleSystemEmitter(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -1832,7 +1906,7 @@ void ParticleSystemEditorTabController::updateCircleParticleSystemEmitter(const 
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_circle_radius"))->getController()->setValue(MutableString(radius));
 	} catch (Exception& exception) {
 		Console::println(string("ParticleSystemEditorTabController::updateCircleParticleSystemEmitter(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -1855,7 +1929,7 @@ void ParticleSystemEditorTabController::updateRadialParticleSystemEmitter(const 
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_radial_radius"))->getController()->setValue(MutableString(radius));
 	} catch (Exception& exception) {
 		Console::println(string("ParticleSystemEditorTabController::updateRadialParticleSystemEmitter(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
 }
 
@@ -1870,6 +1944,128 @@ void ParticleSystemEditorTabController::updateSphereParticleSystemEmitter(const 
 		required_dynamic_cast<GUIElementNode*>(screenNode->getNodeById("particleemitter_sphere_radius"))->getController()->setValue(MutableString(radius));
 	} catch (Exception& exception) {
 		Console::println(string("ParticleSystemEditorTabController::updateSphereParticleSystemEmitter(): An error occurred: ") + exception.what());;
-		showErrorPopUp("Warning", (string(exception.what())));
+		showInfoPopUp("Warning", (string(exception.what())));
 	}
+}
+
+void ParticleSystemEditorTabController::setPointParticleSystemTexture(int particleSystemIdx, const string& fileName) {
+	auto prototype = view->getPrototype();
+	auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+	auto pps = particleSystem != nullptr?particleSystem->getPointParticleSystem():nullptr;
+	if (pps == nullptr) return;
+	view->uninitParticleSystem();
+	try {
+		pps->setTextureFileName(
+			fileName,
+			pps->getTransparencyTextureFileName()
+		);
+	} catch (Exception& exception) {
+		Console::println(string("ParticleSystemEditorTabController::setPointParticleSystemTexture(): An error occurred: ") + exception.what());;
+		showInfoPopUp("Warning", (string(exception.what())));
+	}
+	try {
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_point_texture"))->setSource(pps->getTextureFileName());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_point_texture"))->setTooltip(pps->getTextureFileName());
+	} catch (Exception& exception) {
+		Console::println(string("ParticleSystemEditorTabController::setPointParticleSystemTexture(): An error occurred: ") + exception.what());;
+		showInfoPopUp("Warning", (string(exception.what())));
+	}
+	view->initParticleSystem();
+}
+
+void ParticleSystemEditorTabController::setPointParticleSystemTransparencyTexture(int particleSystemIdx, const string& fileName) {
+	auto prototype = view->getPrototype();
+	auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+	auto pps = particleSystem != nullptr?particleSystem->getPointParticleSystem():nullptr;
+	if (pps == nullptr) return;
+	view->uninitParticleSystem();
+	try {
+		pps->setTextureFileName(
+			pps->getTextureFileName(),
+			fileName
+		);
+	} catch (Exception& exception) {
+		Console::println(string("ParticleSystemEditorTabController::setPointParticleSystemTransparencyTexture(): An error occurred: ") + exception.what());;
+		showInfoPopUp("Warning", (string(exception.what())));
+	}
+	try {
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_point_transparency"))->setSource(pps->getTransparencyTextureFileName());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_point_transparency"))->setTooltip(pps->getTransparencyTextureFileName());
+	} catch (Exception& exception) {
+		Console::println(string("ParticleSystemEditorTabController::setPointParticleSystemTransparencyTexture(): An error occurred: ") + exception.what());;
+		showInfoPopUp("Warning", (string(exception.what())));
+	}
+	view->initParticleSystem();
+}
+
+void ParticleSystemEditorTabController::setFogParticleSystemTexture(int particleSystemIdx, const string& fileName) {
+	auto prototype = view->getPrototype();
+	auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+	auto fps = particleSystem != nullptr?particleSystem->getFogParticleSystem():nullptr;
+	if (fps == nullptr) return;
+	view->uninitParticleSystem();
+	try {
+		fps->setTextureFileName(
+			fileName,
+			fps->getTransparencyTextureFileName()
+		);
+	} catch (Exception& exception) {
+		Console::println(string("ParticleSystemEditorTabController::setFogParticleSystemTexture(): An error occurred: ") + exception.what());;
+		showInfoPopUp("Warning", (string(exception.what())));
+	}
+	try {
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_fog_texture"))->setSource(fps->getTextureFileName());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_fog_texture"))->setTooltip(fps->getTextureFileName());
+	} catch (Exception& exception) {
+		Console::println(string("ParticleSystemEditorTabController::setFogParticleSystemTexture(): An error occurred: ") + exception.what());;
+		showInfoPopUp("Warning", (string(exception.what())));
+	}
+	view->initParticleSystem();
+}
+
+void ParticleSystemEditorTabController::setFogParticleSystemTransparencyTexture(int particleSystemIdx, const string& fileName) {
+	auto prototype = view->getPrototype();
+	auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+	auto fps = particleSystem != nullptr?particleSystem->getFogParticleSystem():nullptr;
+	if (fps == nullptr) return;
+	view->uninitParticleSystem();
+	try {
+		fps->setTextureFileName(
+			fps->getTextureFileName(),
+			fileName
+		);
+	} catch (Exception& exception) {
+		Console::println(string("ParticleSystemEditorTabController::setFogParticleSystemTransparencyTexture(): An error occurred: ") + exception.what());;
+		showInfoPopUp("Warning", (string(exception.what())));
+	}
+	try {
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_fog_transparency"))->setSource(fps->getTransparencyTextureFileName());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_fog_transparency"))->setTooltip(fps->getTransparencyTextureFileName());
+	} catch (Exception& exception) {
+		Console::println(string("ParticleSystemEditorTabController::setFogParticleSystemTransparencyTexture(): An error occurred: ") + exception.what());;
+		showInfoPopUp("Warning", (string(exception.what())));
+	}
+	view->initParticleSystem();
+}
+
+void ParticleSystemEditorTabController::setObjectParticleSystemModel(int particleSystemIdx, const string& fileName) {
+	auto prototype = view->getPrototype();
+	auto particleSystem = prototype->getParticleSystemAt(particleSystemIdx);
+	auto ops = particleSystem != nullptr?particleSystem->getObjectParticleSystem():nullptr;
+	if (ops == nullptr) return;
+	view->uninitParticleSystem();
+	try {
+		ops->setModelFile(fileName);
+	} catch (Exception& exception) {
+		Console::println(string("ParticleSystemEditorTabController::setObjectParticleSystemModel(): An error occurred: ") + exception.what());;
+		showInfoPopUp("Warning", (string(exception.what())));
+	}
+	try {
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_object"))->setSource(ops->getModelFileName());
+		required_dynamic_cast<GUIImageNode*>(screenNode->getNodeById("particletype_object"))->setTooltip(ops->getModelFileName());
+	} catch (Exception& exception) {
+		Console::println(string("ParticleSystemEditorTabController::setObjectParticleSystemModel(): An error occurred: ") + exception.what());;
+		showInfoPopUp("Warning", (string(exception.what())));
+	}
+	view->initParticleSystem();
 }

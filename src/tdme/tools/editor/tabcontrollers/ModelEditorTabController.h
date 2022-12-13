@@ -103,11 +103,12 @@ private:
 		"pbrmaterial_maskedtransparency"
 	};
 
-	array<string, 4> applyAnimationPreviewNodes = {
+	array<string, 5> applyAnimationPreviewNodes = {
 		"animationpreview_base",
 		"animationpreview_overlay1",
 		"animationpreview_overlay2",
-		"animationpreview_overlay3"
+		"animationpreview_overlay3",
+		"animationpreview_attachment1_bone"
 	};
 
 	array<string, 4> applyLODNodes = {
@@ -116,6 +117,8 @@ private:
 
 	string renameAnimationId;
 	int renameAnimationLOD { -1 };
+
+	string attachment1ModelFileName;
 
 	/**
 	 * Get LOD level
@@ -340,6 +343,12 @@ public:
 	void updateDetails(const string& outlinerNode);
 
 	/**
+	 * Set material diffuse texture
+	 * @param fileName file name
+	 */
+	void setMaterialDiffuseTexture(const string& fileName);
+
+	/**
 	 * On material load diffuse texture
 	 */
 	void onMaterialLoadDiffuseTexture();
@@ -348,6 +357,17 @@ public:
 	 * On material clear diffuse texture
 	 */
 	void onMaterialClearDiffuseTexture();
+
+	/**
+	 * On material browse to diffuse texture
+	 */
+	void onMaterialBrowseToDiffuseTexture();
+
+	/**
+	 * Set material diffuse transparency texture
+	 * @param fileName file name
+	 */
+	void setMaterialDiffuseTransparencyTexture(const string& fileName);
 
 	/**
 	 * On material load diffuse transparency texture
@@ -360,6 +380,17 @@ public:
 	void onMaterialClearDiffuseTransparencyTexture();
 
 	/**
+	 * On material browse to diffuse transparency texture
+	 */
+	void onMaterialBrowseToDiffuseTransparencyTexture();
+
+	/**
+	 * Set material normal texture
+	 * @param fileName file name
+	 */
+	void setMaterialNormalTexture(const string& fileName);
+
+	/**
 	 * On material load normal texture
 	 */
 	void onMaterialLoadNormalTexture();
@@ -368,6 +399,17 @@ public:
 	 * On material clear normal texture
 	 */
 	void onMaterialClearNormalTexture();
+
+	/**
+	 * On material browse to normal texture
+	 */
+	void onMaterialBrowseToNormalTexture();
+
+	/**
+	 * Set material specular texture
+	 * @param fileName file name
+	 */
+	void setMaterialSpecularTexture(const string& fileName);
 
 	/**
 	 * On material load specular texture
@@ -380,6 +422,17 @@ public:
 	void onMaterialClearSpecularTexture();
 
 	/**
+	 * On material browse to specular texture
+	 */
+	void onMaterialBrowseToSpecularTexture();
+
+	/**
+	 * Set material PBR base color texture
+	 * @param fileName file name
+	 */
+	void setMaterialPBRBaseColorTexture(const string& fileName);
+
+	/**
 	 * On material load PBR base color texture
 	 */
 	void onMaterialLoadPBRBaseColorTexture();
@@ -388,6 +441,17 @@ public:
 	 * On material clear PBR base color texture
 	 */
 	void onMaterialClearPBRBaseColorTexture();
+
+	/**
+	 * On material browse to PBR base color texture
+	 */
+	void onMaterialBrowseToPBRBaseColorTexture();
+
+	/**
+	 * Set material PBR metallic roughness texture
+	 * @param fileName file name
+	 */
+	void setMaterialPBRMetallicRoughnessTexture(const string& fileName);
 
 	/**
 	 * On material load PBR metallic roughness texture
@@ -400,6 +464,17 @@ public:
 	void onMaterialClearPBRMetallicRoughnessTexture();
 
 	/**
+	 * On material browse to PBR metallic roughness texture
+	 */
+	void onMaterialBrowseToPBRMetallicRoughnessTexture();
+
+	/**
+	 * Set material PBR normal texture
+	 * @param fileName file name
+	 */
+	void setMaterialPBRNormalTexture(const string& fileName);
+
+	/**
 	 * On material load PBR normal texture
 	 */
 	void onMaterialLoadPBRNormalTexture();
@@ -410,6 +485,17 @@ public:
 	void onMaterialClearPBRNormalTexture();
 
 	/**
+	 * On material browse to PBR normal texture
+	 */
+	void onMaterialBrowseToPBRNormalTexture();
+
+	/**
+	 * Set preview animations attachment 1 model
+	 * @param fileName file name
+	 */
+	void setPreviewAnimationsAttachment1Model(const string& fileName);
+
+	/**
 	 * On preview animations attachment 1 model load
 	 */
 	void onPreviewAnimationsAttachment1ModelLoad();
@@ -418,6 +504,11 @@ public:
 	 * On preview animations attachment 1 model clear
 	 */
 	void onPreviewAnimationsAttachment1ModelClear();
+
+	/**
+	 * On preview animations attachment 1 model browse to
+	 */
+	void onPreviewAnimationsAttachment1ModelBrowseTo();
 
 	/**
 	 * Start rename animation
@@ -483,7 +574,8 @@ public:
 	void onContextMenuRequest(GUIElementNode* node, int mouseX, int mouseY) override;
 	void onTooltipShowRequest(GUINode* node, int mouseX, int mouseY) override;
 	void onTooltipCloseRequest() override;
-	void executeCommand(TabControllerCommand command) override;
+	void onCommand(TabControllerCommand command) override;
+	void onDrop(const string& payload, int mouseX, int mouseY) override;
 
 	/**
 	 * Update info text line
@@ -492,10 +584,10 @@ public:
 	void updateInfoText(const MutableString& text);
 
 	/**
-	 * Shows the error pop up
+	 * Show the information pop up / modal
 	 * @param caption caption
 	 * @param message message
 	 */
-	void showErrorPopUp(const string& caption, const string& message);
+	void showInfoPopUp(const string& caption, const string& message);
 
 };

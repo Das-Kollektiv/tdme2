@@ -3,12 +3,12 @@
 #include <string>
 
 #include <tdme/tdme.h>
-#include <tdme/engine/fileio/textures/fwd-tdme.h>
+#include <tdme/engine/fwd-tdme.h>
 #include <tdme/engine/prototype/fwd-tdme.h>
 
 using std::string;
 
-using tdme::engine::fileio::textures::Texture;
+using tdme::engine::Texture;
 
 /**
  * Prototype point particle system definition

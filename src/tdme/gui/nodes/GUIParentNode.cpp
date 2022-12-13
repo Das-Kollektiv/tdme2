@@ -338,20 +338,10 @@ GUIParentNode_Overflow* GUIParentNode::createOverflow(const string& overflow)
 	}
 }
 
-float GUIParentNode::getChildrenRenderOffsetX()
-{
-	return childrenRenderOffsetX;
-}
-
 void GUIParentNode::setChildrenRenderOffsetX(float childrenRenderOffsetX)
 {
 	invalidateRenderCaches();
 	this->childrenRenderOffsetX = childrenRenderOffsetX;
-}
-
-float GUIParentNode::getChildrenRenderOffsetY()
-{
-	return childrenRenderOffsetY;
 }
 
 void GUIParentNode::setChildrenRenderOffsetY(float childrenRenderOffsetY)
@@ -710,16 +700,17 @@ void GUIParentNode::removeSubNode(GUINode* node, bool resetScrollOffsets)
 	}
 }
 
-void GUIParentNode::unsetMouseOver() {
+void GUIParentNode::unsetMouseStates() {
 	for (auto i = 0; i < subNodes.size(); i++) {
 		auto guiSubNode = subNodes[i];
 		auto guiElementSubNode = dynamic_cast<GUIElementNode*>(guiSubNode);
 		if (guiElementSubNode != nullptr) {
 			guiElementSubNode->getActiveConditions().remove(GUIElementNode::CONDITION_ONMOUSEOVER);
-			guiElementSubNode->unsetMouseOver();
+			guiElementSubNode->getActiveConditions().remove(GUIElementNode::CONDITION_CLICK);
+			guiElementSubNode->unsetMouseStates();
 		} else {
 			auto guiParentSubNode = dynamic_cast<GUIParentNode*>(guiSubNode);
-			if (guiParentSubNode != nullptr) guiParentSubNode->unsetMouseOver();
+			if (guiParentSubNode != nullptr) guiParentSubNode->unsetMouseStates();
 		}
 	}
 }

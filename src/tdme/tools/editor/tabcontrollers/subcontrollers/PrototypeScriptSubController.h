@@ -69,10 +69,16 @@ public:
 	void createScriptXML(Prototype* prototype, string& xml);
 
 	/**
-	 * Set property details
+	 * Set script details
 	 * @param prototype prototype
 	 */
 	void setScriptDetails(Prototype* prototype);
+
+	/**
+	 * Update script details
+	 * @param prototype prototype
+	 */
+	void updateScriptDetails(Prototype* prototype);
 
 	/**
 	 * Update details panel
@@ -109,10 +115,32 @@ public:
 	void onScriptUnset(Prototype* prototype);
 
 	/**
-	 * Shows the error pop up
+	 * On script browse to
+	 * @param prototype prototype
+	 */
+	void onScriptBrowseTo(Prototype* prototype);
+
+	/**
+	 * Show the information pop up / modal
 	 * @param caption caption
 	 * @param message message
 	 */
-	void showErrorPopUp(const string& caption, const string& message);
+	void showInfoPopUp(const string& caption, const string& message);
+
+	/**
+	 * Set script
+	 * @param fileName file name
+	 * @param prototype prototype
+	 */
+	void setScript(const string& fileName, Prototype* prototype);
+
+	/**
+	 * On drop
+	 * @param payload payload
+	 * @param mouseX mouse X
+	 * @param mouseY mouse Y
+	 * @param prototype prototype
+	 */
+	bool onDrop(const string& payload, int mouseX, int mouseY, Prototype* prototype);
 
 };
