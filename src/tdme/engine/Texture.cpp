@@ -1,4 +1,5 @@
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/Texture.h>
@@ -12,6 +13,7 @@
 
 using std::string;
 using std::to_string;
+using std::vector;
 
 using tdme::engine::Texture;
 
@@ -233,6 +235,98 @@ void Texture::setTextureData(TextureFormat format, const ByteBuffer& textureData
 				}
 		}
 	}
+}
+
+ByteBuffer Texture::generateMipMap(int textureWidth, int textureHeight, int bytesPerPixel, const ByteBuffer& textureTextureData) {
+	auto generatedTextureWidth = textureWidth / 2;
+	auto generatedTextureHeight = textureHeight / 2;
+	auto generatedTextureByteBuffer = ByteBuffer(generatedTextureWidth * generatedTextureHeight * bytesPerPixel);
+	auto atlasTextureSize = textureWidth / atlasSize;
+	auto materialTextureWidth = textureWidth / atlasSize;
+	auto materialTextureHeight = textureHeight / atlasSize;
+	auto materialTextureBytesPerPixel = bytesPerPixel;
+	for (auto y = 0; y < generatedTextureHeight; y++)
+	for (auto x = 0; x < generatedTextureWidth; x++) {
+		auto atlasTextureIdxX = (x * 2) / atlasTextureSize;
+		auto atlasTextureIdxY = (y * 2) / atlasTextureSize;
+		auto materialTextureX = (x * 2) - (atlasTextureIdxX * atlasTextureSize);
+		auto materialTextureY = (y * 2) - (atlasTextureIdxY * atlasTextureSize);
+		auto materialTextureXFloat = static_cast<float>(materialTextureX) / static_cast<float>(atlasTextureSize);
+		auto materialTextureYFloat = static_cast<float>(materialTextureY) / static_cast<float>(atlasTextureSize);
+		{
+			auto materialSamples = 0;
+			auto materialTextureXInt = static_cast<int>(materialTextureXFloat * static_cast<float>(materialTextureWidth));
+			auto materialTextureYInt = static_cast<int>(materialTextureYFloat * static_cast<float>(materialTextureHeight));
+			auto materialPixelR = 0;
+			auto materialPixelG = 0;
+			auto materialPixelB = 0;
+			auto materialPixelA = 0;
+			for (auto y = -1; y <= 1; y++)
+			for (auto x = -1; x <= 1; x++)
+			if ((Math::abs(x) == 1 && Math::abs(y) == 1) == false &&
+				materialTextureXInt + x >= 0 && materialTextureXInt + x < materialTextureWidth &&
+				materialTextureYInt + y >= 0 && materialTextureYInt + y < materialTextureHeight) {
+				auto materialTexturePixelOffset =
+					(atlasTextureIdxY * materialTextureHeight + materialTextureYInt + y) * textureWidth * materialTextureBytesPerPixel +
+					(atlasTextureIdxX * materialTextureWidth + materialTextureXInt + x) * materialTextureBytesPerPixel;
+				materialPixelR+= textureTextureData.get(materialTexturePixelOffset + 0);
+				materialPixelG+= textureTextureData.get(materialTexturePixelOffset + 1);
+				materialPixelB+= textureTextureData.get(materialTexturePixelOffset + 2);
+				materialPixelA+= materialTextureBytesPerPixel == 4?textureTextureData.get(materialTexturePixelOffset + 3):0xff;
+				materialSamples++;
+			}
+			generatedTextureByteBuffer.put(materialPixelR / materialSamples);
+			generatedTextureByteBuffer.put(materialPixelG / materialSamples);
+			generatedTextureByteBuffer.put(materialPixelB / materialSamples);
+			if (bytesPerPixel == 4) generatedTextureByteBuffer.put(materialPixelA / materialSamples);
+		}
+	}
+	return generatedTextureByteBuffer;
+}
+
+vector<Texture::MipMapTexture> Texture::getMipMapTextures(bool bz7Encoded) {
+	vector<Texture::MipMapTexture> mipMapTextures;
+	//
+	auto mipLevels = getMipLevels();
+	auto previousMipmapTexture = static_cast<Texture*>(nullptr);
+	auto mipmapTexture = static_cast<Texture*>(nullptr);
+	auto mipMapTextureWidth = textureWidth;
+	auto mipMapTextureHeight = textureHeight;
+	auto textureTextureData = getRGBTextureData();
+	auto textureBytePerPixel = getRGBDepthBitsPerPixel() / 8;
+	for (auto i = 1; i < mipLevels; i++) {
+		textureTextureData = generateMipMap(mipMapTextureWidth, mipMapTextureHeight, textureBytePerPixel, textureTextureData);
+		//
+		mipMapTextureWidth/= 2;
+		mipMapTextureHeight/= 2;
+		//
+		if (bz7Encoded == true) {
+			vector<uint8_t> bz7Data;
+			BZ7TextureWriter::write(mipMapTextureWidth, mipMapTextureHeight, textureBytePerPixel, textureTextureData, bz7Data);
+			//
+			mipMapTextures.push_back(
+				{
+					.format = getBZ7FormatByPixelBitsPerPixel(getRGBDepthBitsPerPixel()),
+					.width = mipMapTextureWidth,
+					.height = mipMapTextureHeight,
+					.textureData = ByteBuffer(bz7Data)
+
+				}
+			);
+		} else {
+			//
+			mipMapTextures.push_back(
+				{
+					.format = getRGBFormatByPixelBitsPerPixel(getRGBDepthBitsPerPixel()),
+					.width = mipMapTextureWidth,
+					.height = mipMapTextureHeight,
+					.textureData = textureTextureData
+
+				}
+			);
+		}
+	}
+	return mipMapTextures;
 }
 
 void Texture::onDelete() {

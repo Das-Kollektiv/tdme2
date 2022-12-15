@@ -60,7 +60,6 @@ bool PNGTextureWriter::write(Texture* texture, vector<uint8_t>& pngData, bool re
 }
 
 bool PNGTextureWriter::write(int width, int height, int bytesPerPixel, const ByteBuffer& textureByteBuffer, vector<uint8_t>& pngData, bool removeAlphaChannel, bool flipY) {
-	Console::println("PNGTextureWriter::write(): " + to_string(width) + "x" + to_string(height) + "x" + to_string(bytesPerPixel) + "; " + to_string(textureByteBuffer.getCapacity()));
 	// see: https://gist.github.com/niw/5963798
 	png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	if (!png) {
