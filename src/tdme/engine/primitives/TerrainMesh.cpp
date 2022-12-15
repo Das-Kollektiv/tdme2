@@ -106,9 +106,6 @@ void TerrainMesh::createCollisionShape(World* world) {
 
 	// create the concave mesh shape
 	collisionShape = world->physicsCommon.createConcaveMeshShape(triangleMesh);
-
-	// compute bounding box
-	computeBoundingBox();
 }
 
 TerrainMesh::BoundingVolume* TerrainMesh::clone() const {

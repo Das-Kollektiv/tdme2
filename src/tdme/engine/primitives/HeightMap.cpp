@@ -65,9 +65,6 @@ void HeightMap::createCollisionShape(World* world) {
 		1.0f,
 		reactphysics3d::Vector3(scale.getX(), scale.getY(), scale.getZ())
 	);
-
-	// compute bounding box
-	computeBoundingBox();
 }
 
 BoundingVolume* HeightMap::clone() const

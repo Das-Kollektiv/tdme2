@@ -225,6 +225,7 @@ void Body::resetColliders() {
 	}
 
 	// determine total volume
+	/*
 	float volumeTotal = 0.0f;
 	for (auto boundingVolume: boundingVolumes) {
 		// skip if not attached
@@ -235,23 +236,25 @@ void Body::resetColliders() {
 			boundingVolume->boundingBoxTransformed.getDimensions().getY() *
 			boundingVolume->boundingBoxTransformed.getDimensions().getZ();
 	}
+	*/
 	// add bounding volumes with mass
 	for (auto boundingVolume: boundingVolumes) {
 		// skip if not attached
 		if (boundingVolume->isAttachedToWorld() == false) continue;
 		//
+		/*
 		float volumeBoundingVolume =
 			boundingVolume->boundingBoxTransformed.getDimensions().getX() *
 			boundingVolume->boundingBoxTransformed.getDimensions().getY() *
 			boundingVolume->boundingBoxTransformed.getDimensions().getZ();
-
+		*/
 		reactphysics3d::Collider* collider = nullptr;
 		if (rigidBody != nullptr) {
 			//
 			collider = rigidBody->addCollider(boundingVolume->collisionShape, boundingVolume->collisionShapeLocalTransform);
 			collider->getMaterial().setBounciness(restitution);
 			collider->getMaterial().setFrictionCoefficient(friction);
-			collider->getMaterial().setMassDensity(volumeBoundingVolume / volumeTotal);
+			// collider->getMaterial().setMassDensity(volumeBoundingVolume / volumeTotal);
 		} else {
 			collider = collisionBody->addCollider(boundingVolume->collisionShape, boundingVolume->collisionShapeLocalTransform);
 		}

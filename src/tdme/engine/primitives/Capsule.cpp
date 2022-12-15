@@ -119,8 +119,6 @@ void Capsule::createCollisionShape(World* world) {
 		Math::max(Math::EPSILON, radius * Math::max(Math::abs(scale.getZ()), Math::max(Math::abs(scale.getX()), Math::abs(scale.getY())))),
 		Math::max(Math::EPSILON, bScaled.clone().sub(aScaled).computeLength())
 	);
-	// compute bounding box
-	computeBoundingBox();
 }
 
 BoundingVolume* Capsule::clone() const

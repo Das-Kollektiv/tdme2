@@ -63,8 +63,6 @@ void Sphere::createCollisionShape(World* world) {
 	collisionShape = world->physicsCommon.createSphereShape(
 		Math::max(Math::EPSILON, radius * Math::max(Math::abs(scale.getZ()), Math::max(Math::abs(scale.getX()), Math::abs(scale.getY()))))
 	);
-	// compute bounding box
-	computeBoundingBox();
 }
 
 BoundingVolume* Sphere::clone() const

@@ -24,7 +24,6 @@ using tdme::math::Vector3;
  */
 class tdme::engine::primitives::BoundingVolume
 {
-	friend class BoundingBox;
 	friend class Capsule;
 	friend class ConvexMesh;
 	friend class OrientedBoundingBox;
@@ -41,14 +40,6 @@ protected:
 	reactphysics3d::CollisionShape* collisionShape { nullptr };
 	reactphysics3d::Transform collisionShapeLocalTransform;
 	reactphysics3d::Transform collisionShapeTransform;
-	reactphysics3d::AABB collisionShapeAABB;
-	BoundingBox boundingBoxTransformed;
-	Vector3 centerTransformed;
-
-	/**
-	 * Compute bounding box
-	 */
-	void computeBoundingBox();
 
 	/**
 	 * Destroy collision shape
@@ -95,17 +86,6 @@ public:
 	 * @return center
 	 */
 	const Vector3& getCenter() const;
-
-	/**
-	 * @return transformed center
-	 */
-	const Vector3& getCenterTransformed() const;
-
-	/**
-	 * Get bounding box transformed
-	 * @return bounding box
-	 */
-	BoundingBox& getBoundingBoxTransformed();
 
 	/**
 	 * Clones this bounding volume

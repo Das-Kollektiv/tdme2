@@ -444,8 +444,6 @@ void ConvexMesh::createCollisionShape(World* world) {
 		}
 		// create convex mesh shape
 		collisionShape = world->physicsCommon.createConvexMeshShape(polyhedronMesh);
-		// compute bounding box
-		computeBoundingBox();
 	} catch (Exception& exception) {
 		Console::println("ConvexMesh::createCollisionShape(): an error occurred: " + string(exception.what()));
 		if (collisionShape != nullptr) {

@@ -200,8 +200,6 @@ void OrientedBoundingBox::createCollisionShape(World* world) {
 			Math::max(Math::EPSILON, Math::abs(halfExtension.getZ() * scale.getZ()))
 		)
 	);
-	// compute bounding box
-	computeBoundingBox();
 }
 
 BoundingVolume* OrientedBoundingBox::clone() const

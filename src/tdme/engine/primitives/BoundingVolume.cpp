@@ -28,15 +28,6 @@ using tdme::math::Vector3;
 BoundingVolume::~BoundingVolume() {
 }
 
-void BoundingVolume::computeBoundingBox() {
-	collisionShape->computeAABB(collisionShapeAABB, collisionShapeTransform * collisionShapeLocalTransform);
-	boundingBoxTransformed = BoundingBox(
-		Vector3(collisionShapeAABB.getMin().x, collisionShapeAABB.getMin().y, collisionShapeAABB.getMin().z),
-		Vector3(collisionShapeAABB.getMax().x, collisionShapeAABB.getMax().y, collisionShapeAABB.getMax().z)
-	);
-	centerTransformed = boundingBoxTransformed.getCenter();
-}
-
 void BoundingVolume::setTransform(const Transform& transform) {
 	//
 	setScale(transform.getScale());
@@ -57,9 +48,6 @@ void BoundingVolume::setTransform(const Transform& transform) {
 			transform.getRotationsQuaternion().getW()
 		)
 	);
-
-	// compute bounding box
-	computeBoundingBox();
 }
 
 const Vector3& BoundingVolume::getScale() {
@@ -68,12 +56,4 @@ const Vector3& BoundingVolume::getScale() {
 
 const Vector3& BoundingVolume::getCenter() const {
 	return center;
-}
-
-const Vector3& BoundingVolume::getCenterTransformed() const {
-	return centerTransformed;
-}
-
-BoundingBox& BoundingVolume::getBoundingBoxTransformed() {
-	return boundingBoxTransformed;
 }
