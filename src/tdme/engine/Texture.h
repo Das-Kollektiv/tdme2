@@ -1,14 +1,18 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include <tdme/tdme.h>
 #include <tdme/engine/fwd-tdme.h>
+#include <tdme/math/Math.h>
 #include <tdme/utilities/ByteBuffer.h>
 #include <tdme/utilities/Reference.h>
 
 using std::string;
+using std::vector;
 
+using tdme::math::Math;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Reference;
 
@@ -89,6 +93,16 @@ public:
 			default: return TEXTUREFORMAT_UNKNOWN;
 		}
 	}
+
+	/**
+	 * Mip Map Texture
+	 */
+	struct MipMapTexture {
+		TextureFormat format;
+		uint16_t width;
+		uint16_t height;
+		ByteBuffer textureData;
+	};
 
 	/**
 	 * Public constructor
@@ -281,6 +295,51 @@ public:
 		this->atlasSize = atlasSize;
 	}
 
+	/**
+	 * @return mip levels
+	 */
+	inline int getMipLevels() {
+		if (useMipMap == false) return 1;
+		auto widthMipLevels = 1;
+		auto heightMipLevels = 1;
+		auto textureWidth = this->textureWidth;
+		auto textureHeight = this->textureHeight;
+		while (textureWidth > 16) {
+			textureWidth/= 2;
+			widthMipLevels++;
+		}
+		while (textureHeight > 16) {
+			textureHeight/= 2;
+			heightMipLevels++;
+		}
+		auto mipLevels = Math::min(widthMipLevels, heightMipLevels);
+		if (atlasSize > 1) {
+			auto borderSize = 32;
+			auto maxLevel = 0;
+			while (borderSize > 4) {
+				maxLevel++;
+				borderSize/= 2;
+			}
+			return Math::min(mipLevels, maxLevel);
+		}
+		//
+		return mipLevels;
+	}
+
+	/**
+	 * Set mip map textures
+	 * @param mipMapTextures mip map textures
+	 */
+	inline void setMipMapTextures(const vector<MipMapTexture>& mipMapTextures) {
+		this->mipMapTextures = mipMapTextures;
+	}
+
+	/**
+	 * Get mip map textures
+	 * @param bz7Encoded bz7 encoded if true or RGB/A if false
+	 */
+	vector<MipMapTexture> getMipMapTextures(bool bz7Encoded);
+
 	// overridden methods
 	virtual void onDelete() override;
 
@@ -298,6 +357,7 @@ private:
 	bool repeat;
 	ClampMode clampMode;
 	uint16_t atlasSize;
+	vector<MipMapTexture> mipMapTextures;
 
 	/**
 	 * Destructor
@@ -312,5 +372,14 @@ private:
 	 * @return RGB/RGBA texture data wrapped in a byte buffer
 	 */
 	ByteBuffer getRGBTextureData(TextureFormat format, const ByteBuffer& textureData);
+
+	/**
+	 * Generate mip map texture
+	 * @param textureWidth texture width
+	 * @param textureHeight texture height
+	 * @param bytesPerPixel bytes per pixel
+	 * @param textureTextureData texture texture data
+	 */
+	ByteBuffer generateMipMap(int textureWidth, int textureHeight, int bytesPerPixel, const ByteBuffer& textureTextureData);
 
 };

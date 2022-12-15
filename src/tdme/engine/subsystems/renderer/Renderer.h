@@ -1387,17 +1387,4 @@ public:
 	 */
 	virtual const Renderer_Statistics getStatistics() = 0;
 
-	/**
-	 * Generate mip map for atlas texture currently
-	 * @param id id
-	 * @param texture texture
-	 * @param level level
-	 * @param atlasBorderSize atlasBorderSize
-	 */
-	Texture* generateMipMap(const string& id, Texture* texture, int32_t level, int32_t atlasBorderSize);
-
-	/**
-	 * @return mip levels
-	 */
-	int getMipLevels(Texture* texture);
 };
