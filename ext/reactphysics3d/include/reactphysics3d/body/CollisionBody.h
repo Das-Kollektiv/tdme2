@@ -198,7 +198,6 @@ RP3D_FORCE_INLINE void CollisionBody::setProfiler(Profiler* profiler) {
 }
 
 #endif
-
 }
 
 #endif
