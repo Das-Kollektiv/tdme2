@@ -96,7 +96,7 @@ bool PNGTextureWriter::write(int width, int height, int bytesPerPixel, const Byt
 	png_write_info(png, info);
 
 	// remove the alpha channel for PNG_COLOR_TYPE_RGB format
-	if (removeAlphaChannel == true) {
+	if (removeAlphaChannel == true && bytesPerPixel == 4) {
 		png_set_filler(png, 0, PNG_FILLER_AFTER);
 	}
 

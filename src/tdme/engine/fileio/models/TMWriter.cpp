@@ -146,6 +146,7 @@ void TMWriter::writeEmbeddedTextures(TMWriterOutputStream* os, Model* m) {
 		os->writeUInt8tArray(pngData);
 		*/
 		//
+		/*
 		os->writeByte(2); // BZ7
 		vector<uint8_t> bz7Data;
 		os->writeInt(texture->getWidth());
@@ -156,6 +157,26 @@ void TMWriter::writeEmbeddedTextures(TMWriterOutputStream* os, Model* m) {
 		BZ7TextureWriter::write(texture->getTextureWidth(), texture->getTextureHeight(), texture->getRGBDepthBitsPerPixel() / 8, texture->getRGBTextureData(), bz7Data);
 		os->writeInt(bz7Data.size());
 		os->writeUInt8tArray(bz7Data);
+		*/
+		os->writeByte(3); // BZ7 with mip maps
+		vector<uint8_t> bz7Data;
+		os->writeInt(texture->getWidth());
+		os->writeInt(texture->getHeight());
+		os->writeInt(texture->getTextureWidth());
+		os->writeInt(texture->getTextureHeight());
+		os->writeByte(texture->getRGBDepthBitsPerPixel());
+		BZ7TextureWriter::write(texture->getTextureWidth(), texture->getTextureHeight(), texture->getRGBDepthBitsPerPixel() / 8, texture->getRGBTextureData(), bz7Data);
+		os->writeInt(bz7Data.size());
+		os->writeUInt8tArray(bz7Data);
+		auto mipMapTextures = texture->getMipMapTextures(true);
+		os->writeByte(mipMapTextures.size());
+		for (auto& mipMapTexture: mipMapTextures) {
+			os->writeByte(mipMapTexture.format);
+			os->writeInt(mipMapTexture.width);
+			os->writeInt(mipMapTexture.height);
+			os->writeInt(mipMapTexture.textureData.getBufferVector()->size());
+			os->writeUInt8tArray(*mipMapTexture.textureData.getBufferVector());
+		}
 	}
 }
 

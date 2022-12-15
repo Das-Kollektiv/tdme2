@@ -327,6 +327,14 @@ public:
 	}
 
 	/**
+	 * Set mip map textures
+	 * @param mipMapTextures mip map textures
+	 */
+	inline void setMipMapTextures(const vector<MipMapTexture>& mipMapTextures) {
+		this->mipMapTextures = mipMapTextures;
+	}
+
+	/**
 	 * Get mip map textures
 	 * @param bz7Encoded bz7 encoded if true or RGB/A if false
 	 */
@@ -349,6 +357,7 @@ private:
 	bool repeat;
 	ClampMode clampMode;
 	uint16_t atlasSize;
+	vector<MipMapTexture> mipMapTextures;
 
 	/**
 	 * Destructor

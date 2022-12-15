@@ -285,7 +285,18 @@ ByteBuffer Texture::generateMipMap(int textureWidth, int textureHeight, int byte
 }
 
 vector<Texture::MipMapTexture> Texture::getMipMapTextures(bool bz7Encoded) {
-	vector<Texture::MipMapTexture> mipMapTextures;
+	// do we have any mip maps stored already?
+	if (mipMapTextures.empty() == false) {
+		// for now we only support stored BZ7 mip maps and only return those if bz7 encodeding was requested
+		//	TODO: maybe conversion from BZ7 to RGB is required here conditionally, but can also be that decoding BZ7 is slower than generating new mip maps
+		auto mipMapFormatBZ7 = mipMapTextures[0].format == TEXTUREFORMAT_RGB_BZ7 || mipMapTextures[0].format == TEXTUREFORMAT_RGBA_BZ7;
+		if (mipMapFormatBZ7 == true && bz7Encoded == true) {
+			return mipMapTextures;
+		}
+	}
+
+	//
+	vector<Texture::MipMapTexture> generatedMipMapTextures;
 	//
 	auto mipLevels = getMipLevels();
 	auto previousMipmapTexture = static_cast<Texture*>(nullptr);
@@ -304,7 +315,7 @@ vector<Texture::MipMapTexture> Texture::getMipMapTextures(bool bz7Encoded) {
 			vector<uint8_t> bz7Data;
 			BZ7TextureWriter::write(mipMapTextureWidth, mipMapTextureHeight, textureBytePerPixel, textureTextureData, bz7Data);
 			//
-			mipMapTextures.push_back(
+			generatedMipMapTextures.push_back(
 				{
 					.format = getBZ7FormatByPixelBitsPerPixel(getRGBDepthBitsPerPixel()),
 					.width = mipMapTextureWidth,
@@ -315,7 +326,7 @@ vector<Texture::MipMapTexture> Texture::getMipMapTextures(bool bz7Encoded) {
 			);
 		} else {
 			//
-			mipMapTextures.push_back(
+			generatedMipMapTextures.push_back(
 				{
 					.format = getRGBFormatByPixelBitsPerPixel(getRGBDepthBitsPerPixel()),
 					.width = mipMapTextureWidth,
@@ -326,7 +337,7 @@ vector<Texture::MipMapTexture> Texture::getMipMapTextures(bool bz7Encoded) {
 			);
 		}
 	}
-	return mipMapTextures;
+	return generatedMipMapTextures;
 }
 
 void Texture::onDelete() {
