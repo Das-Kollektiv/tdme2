@@ -622,42 +622,38 @@ void GL3Renderer::uploadTexture(int contextIdx, Texture* texture)
 {
 	if (textureCompressionAvailable == true && texture->isUseCompression() == true) {
 		//
-		auto mipLevels = getMipLevels(texture);
+		auto level = 0;
+		auto mipLevels = texture->getMipLevels();
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, getMipLevels(texture) - 1);
-		//
-		auto textureWidth = texture->getTextureWidth();
-		auto textureHeight = texture->getTextureHeight();
-		auto previousMipmapTexture = static_cast<Texture*>(nullptr);
-		auto mipmapTexture = static_cast<Texture*>(nullptr);
-		// and generate and upload mip maps also including level 0 image using BZ7 compression
-		for (auto i = 0; i < mipLevels; i++) {
-			//
-			auto textureTextureData = mipmapTexture == nullptr?texture->getBZ7TextureData():mipmapTexture->getBZ7TextureData();
-			//
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, mipLevels - 1);
+		{
+			auto textureTextureData = texture->getBZ7TextureData();
+			// base level
 			glCompressedTexImage2D(
 				GL_TEXTURE_2D,
-				i,
+				level++,
 				GL_COMPRESSED_RGBA_BPTC_UNORM,
-				textureWidth,
-				textureHeight,
+				texture->getTextureWidth(),
+				texture->getTextureHeight(),
 				0,
 				textureTextureData.getCapacity(),
 				textureTextureData.getBuffer()
 			);
-			//
-			textureWidth/= 2;
-			textureHeight/= 2;
-			//
-			if (i < mipLevels - 1) {
-				previousMipmapTexture = mipmapTexture;
-				mipmapTexture = generateMipMap(texture->getId(), mipmapTexture != nullptr?mipmapTexture:texture, i, texture->getAtlasSize() > 1?32:0);
-				if (previousMipmapTexture != nullptr) previousMipmapTexture->releaseReference();
-				previousMipmapTexture = nullptr;
-			} else {
-				if (mipmapTexture != nullptr) mipmapTexture->releaseReference();
-				mipmapTexture = nullptr;
-			}
+		}
+
+		// mip levels
+		auto textureMipMaps = texture->getMipMapTextures(true);
+		for (auto& textureMipMap: textureMipMaps) {
+			glCompressedTexImage2D(
+				GL_TEXTURE_2D,
+				level++,
+				GL_COMPRESSED_RGBA_BPTC_UNORM,
+				textureMipMap.width,
+				textureMipMap.height,
+				0,
+				textureMipMap.textureData.getCapacity(),
+				textureMipMap.textureData.getBuffer()
+			);
 		}
 	} else {
 		//
@@ -683,15 +679,17 @@ void GL3Renderer::uploadTexture(int contextIdx, Texture* texture)
 			glGetFloatv(GL_MAX_TEXTURE_LOD_BIAS, &maxLodBias);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -Math::clamp(static_cast<float>(texture->getAtlasSize()) * 0.125f, 0.0f, maxLodBias));
 			if (textureCompressionAvailable == false || texture->isUseCompression() == false) {
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, getMipLevels(texture) - 1);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, texture->getMipLevels() - 1);
 				glGenerateMipmap(GL_TEXTURE_2D);
 			}
 		}
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	} else {
-		if (texture->isUseMipMap() == true && (textureCompressionAvailable == false || texture->isUseCompression() == false)) glGenerateMipmap(GL_TEXTURE_2D);
+		if (texture->isUseMipMap() == true && (textureCompressionAvailable == false || texture->isUseCompression() == false)) {
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, texture->getMipLevels() - 1);
+			glGenerateMipmap(GL_TEXTURE_2D);
+		}
 		if (texture->isRepeat() == true) {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);

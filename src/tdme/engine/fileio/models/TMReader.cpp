@@ -221,6 +221,57 @@ void TMReader::readEmbeddedTextures(TMReaderInputStream* is, map<string, Texture
 				embeddedTexture->acquireReference();
 				embeddedTextures[embeddedTextureId] = embeddedTexture;
 			}
+		} else
+		// bz7 with mip maps
+		if (embeddedTextureType == 3) {
+			// base texture
+			auto width = is->readInt();
+			auto height = is->readInt();
+			auto textureWidth = is->readInt();
+			auto textureHeight = is->readInt();
+			auto bitsPerPixel = is->readByte();
+			auto textureSize = is->readInt();
+			ByteBuffer bz7Data(textureSize);
+			for (auto j = 0; j < textureSize; j++) bz7Data.put(is->readByte());
+			auto embeddedTexture =
+				new Texture(
+					embeddedTextureId,
+					Texture::getRGBDepthByPixelBitsPerPixel(bitsPerPixel),
+					Texture::getBZ7FormatByPixelBitsPerPixel(bitsPerPixel),
+					width,
+					height,
+					textureWidth,
+					textureHeight,
+					Texture::getBZ7FormatByPixelBitsPerPixel(bitsPerPixel),
+					bz7Data
+				);
+			// mip maps
+			auto mipMapTextureCount = is->readByte();
+			vector<Texture::MipMapTexture> mipMapTextures;
+			for (auto j = 0; j < mipMapTextureCount; j++) {
+				Texture::TextureFormat mipMapTextureFormat = static_cast<Texture::TextureFormat>(is->readByte());
+				auto mipMapWidth = static_cast<uint16_t>(is->readInt());
+				auto mipMapHeight = static_cast<uint16_t>(is->readInt());
+				auto mipMapSize = is->readInt();
+				mipMapTextures.push_back(
+					{
+						.format = mipMapTextureFormat,
+						.width = mipMapWidth,
+						.height = mipMapHeight,
+						.textureData = ByteBuffer(mipMapSize)
+					}
+				);
+				auto& mipMapBZ7Data = mipMapTextures[mipMapTextures.size() - 1].textureData;
+				for (auto k = 0; k < mipMapSize; k++) {
+					mipMapBZ7Data.put(is->readByte());
+				}
+			}
+			embeddedTexture->setMipMapTextures(mipMapTextures);
+			//
+			if (embeddedTexture != nullptr) {
+				embeddedTexture->acquireReference();
+				embeddedTextures[embeddedTextureId] = embeddedTexture;
+			}
 		}
 	}
 }

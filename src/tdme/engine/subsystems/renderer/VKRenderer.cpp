@@ -176,6 +176,8 @@ VKRenderer::VKRenderer():
 	viewport.maxDepth = 1.0f;
 	scissor.offset.x = 0;
 	scissor.offset.y = 0;
+	deferredShadingAvailable = true;
+	textureCompressionAvailable = true;
 }
 
 inline VkBool32 VKRenderer::checkLayers(uint32_t checkCount, const char **checkNames, const vector<VkLayerProperties>& instanceLayers) {
@@ -352,7 +354,6 @@ inline bool VKRenderer::beginDrawCommandBuffer(int contextIdx, int bufferId) {
 
 inline VkCommandBuffer VKRenderer::endDrawCommandBuffer(int contextIdx, int bufferId, bool cycleBuffers) {
 	auto& currentContext = contexts[contextIdx];
-
 	//
 	if (bufferId == -1) bufferId = currentContext.currentCommandBuffer;
 	auto& commandBuffer = currentContext.commandBuffers[bufferId];
@@ -668,13 +669,13 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_type*
 		.pNext = nullptr,
 		.flags = 0,
 		.imageType = VK_IMAGE_TYPE_2D,
-		.format = texture->getRGBDepthBitsPerPixel() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM,
+		.format = VK_FORMAT_R8G8B8A8_UNORM,
 		.extent = {
 			.width = textureWidth,
 			.height = textureHeight,
 			.depth = 1
 		},
-		.mipLevels = disableMipMaps == false && texture->isUseMipMap() == true?static_cast<uint32_t>(getMipLevels(texture)):1,
+		.mipLevels = disableMipMaps == false && texture->isUseMipMap() == true?static_cast<uint32_t>(texture->getMipLevels()):1,
 		.arrayLayers = 1,
 		.samples = VK_SAMPLE_COUNT_1_BIT,
 		.tiling = tiling,
@@ -709,6 +710,8 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_type*
 		void* data;
 		err = vmaMapMemory(vmaAllocator, textureObject->allocation, &data);
 		assert(!err);
+
+		// rgba
 		auto bytesPerPixel = texture->getRGBDepthBitsPerPixel() / 8;
 		auto textureTextureData = texture->getRGBTextureData();
 		for (auto y = 0; y < textureHeight; y++) {
@@ -720,8 +723,11 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_type*
 				row[x * 4 + 3] = bytesPerPixel == 4?textureTextureData.get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 3):0xff;
 			}
 		}
+
+		//
 		vmaFlushAllocation(vmaAllocator, textureObject->allocation, 0, VK_WHOLE_SIZE);
 		vmaUnmapMemory(vmaAllocator, textureObject->allocation);
+
 		//
 		vmaSpinlock.unlock();
 	}
@@ -736,6 +742,95 @@ inline void VKRenderer::prepareTextureImage(int contextIdx, struct texture_type*
 		false,
 		baseLevel,
 		levelCount,
+		true
+	);
+}
+
+inline void VKRenderer::prepareMipMapTextureImage(int contextIdx, struct texture_type* textureObject, VkImageTiling tiling, VkImageUsageFlags usage, VkFlags requiredFlags, Texture* texture, Texture::MipMapTexture& mipMapTexture, const array<ThsvsAccessType,2>& nextAccesses, ThsvsImageLayout imageLayout) {
+	VkResult err;
+	bool pass;
+
+	auto textureWidth = static_cast<uint32_t>(mipMapTexture.width);
+	auto textureHeight = static_cast<uint32_t>(mipMapTexture.height);
+
+	const VkImageCreateInfo imageCreateInfo = {
+		.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0,
+		.imageType = VK_IMAGE_TYPE_2D,
+		.format = VK_FORMAT_R8G8B8A8_UNORM,
+		.extent = {
+			.width = textureWidth,
+			.height = textureHeight,
+			.depth = 1
+		},
+		.mipLevels = 1,
+		.arrayLayers = 1,
+		.samples = VK_SAMPLE_COUNT_1_BIT,
+		.tiling = tiling,
+		.usage = usage,
+		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+	    .queueFamilyIndexCount = 0,
+	    .pQueueFamilyIndices = 0,
+		.initialLayout = VK_IMAGE_LAYOUT_PREINITIALIZED
+	};
+
+	VmaAllocationCreateInfo imageAllocCreateInfo = {};
+	imageAllocCreateInfo.usage = VMA_MEMORY_USAGE_UNKNOWN;
+	imageAllocCreateInfo.requiredFlags = requiredFlags;
+
+	VmaAllocationInfo allocationInfo = {};
+	err = vmaCreateImage(vmaAllocator, &imageCreateInfo, &imageAllocCreateInfo, &textureObject->image, &textureObject->allocation, &allocationInfo);
+	assert(!err);
+
+	if ((requiredFlags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) == VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) {
+		const VkImageSubresource imageSubResource = {
+			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+			.mipLevel = 0,
+			.arrayLayer = 0,
+		};
+		VkSubresourceLayout subResourceLayout;
+		vkGetImageSubresourceLayout(device, textureObject->image, &imageSubResource, &subResourceLayout);
+
+		//
+		vmaSpinlock.lock();
+
+		//
+		void* data;
+		err = vmaMapMemory(vmaAllocator, textureObject->allocation, &data);
+		assert(!err);
+
+		// rgba
+		auto bytesPerPixel = texture->getRGBDepthBitsPerPixel() / 8;
+		auto& textureTextureData = mipMapTexture.textureData;
+		for (auto y = 0; y < textureHeight; y++) {
+			uint8_t* row = (uint8_t*)((uint8_t*)data + subResourceLayout.offset + subResourceLayout.rowPitch * y);
+			for (auto x = 0; x < textureWidth; x++) {
+				row[x * 4 + 0] = textureTextureData.get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 0);
+				row[x * 4 + 1] = textureTextureData.get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 1);
+				row[x * 4 + 2] = textureTextureData.get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 2);
+				row[x * 4 + 3] = bytesPerPixel == 4?textureTextureData.get((y * textureWidth * bytesPerPixel) + (x * bytesPerPixel) + 3):0xff;
+			}
+		}
+
+		//
+		vmaFlushAllocation(vmaAllocator, textureObject->allocation, 0, VK_WHOLE_SIZE);
+		vmaUnmapMemory(vmaAllocator, textureObject->allocation);
+
+		//
+		vmaSpinlock.unlock();
+	}
+
+	//
+	textureObject->accessTypes = { THSVS_ACCESS_HOST_PREINITIALIZED, THSVS_ACCESS_NONE };
+	setImageLayout(
+		contextIdx,
+		textureObject,
+		nextAccesses,
+		THSVS_IMAGE_LAYOUT_OPTIMAL,
+		false,
+		0,
+		1,
 		true
 	);
 }
@@ -1138,6 +1233,9 @@ void VKRenderer::initialize()
 	assert(queueCount >= 1);
 
 	vkGetPhysicalDeviceFeatures(physicalDevice, &gpuFeatures);
+
+	//
+	textureCompressionAvailable == gpuFeatures.textureCompressionBC == VK_TRUE;
 
 	// Create a WSI surface for the window:
 	err = glfwCreateWindowSurface(instance, Application::glfwWindow, nullptr, &surface);
@@ -1986,7 +2084,7 @@ void VKRenderer::finishFrame()
 
 bool VKRenderer::isTextureCompressionAvailable()
 {
-	return false;
+	return textureCompressionAvailable;
 }
 
 bool VKRenderer::isUsingProgramAttributeLocation()
@@ -2031,7 +2129,7 @@ bool VKRenderer::isUsingShortIndices() {
 }
 
 bool VKRenderer::isDeferredShadingAvailable() {
-	return true;
+	return deferredShadingAvailable;
 }
 
 int32_t VKRenderer::getTextureUnits()
@@ -4223,6 +4321,7 @@ void VKRenderer::uploadCubeMapTexture(int contextIdx, Texture* textureLeft, Text
 	}
 	*/
 
+	//
 	texture.type = texture_type::TYPE_CUBEMAP_TEXTURE;
 	texture.width = textureLeft->getTextureWidth();
 	texture.height = textureLeft->getTextureHeight();
@@ -4608,11 +4707,14 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 	textureType.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 
 	//
-	const VkFormat textureFormat = texture->getRGBDepthBitsPerPixel() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
+	const VkFormat textureFormat = VK_FORMAT_R8G8B8A8_UNORM;
 	VkFormatProperties textureFormatProperties;
 	VkResult err;
 
+	//
+	vector<delete_image_type> deleteStagingImages;
 
+	//
 	vkGetPhysicalDeviceFormatProperties(physicalDevice, textureFormat, &textureFormatProperties);
 	if ((textureFormatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) == VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) {
 		//
@@ -4623,9 +4725,9 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 		stagingTexture.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 
 		//
-		mipLevels = texture->isUseMipMap() == true?getMipLevels(texture):1;
+		mipLevels = texture->getMipLevels();
 
-		//
+		// upload staging texture
 		prepareTextureImage(
 			currentContext.idx,
 			&stagingTexture,
@@ -4636,6 +4738,7 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 			{ THSVS_ACCESS_TRANSFER_READ, THSVS_ACCESS_NONE },
 			THSVS_IMAGE_LAYOUT_OPTIMAL
 		);
+		// generate final texture
 		prepareTextureImage(
 			currentContext.idx,
 			&textureType,
@@ -4649,6 +4752,7 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 			0,
 			mipLevels
 		);
+		// copy staging to final texture to mip base level = 0
 		VkImageCopy imageCopy = {
 			.srcSubresource = {
 				.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
@@ -4678,6 +4782,7 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 				.depth = 1
 			}
 		};
+		//
 		prepareSetupCommandBuffer(currentContext.idx);
 		vkCmdCopyImage(
 			currentContext.setupCommandInUse,
@@ -4689,64 +4794,97 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 			&imageCopy
 		);
 		finishSetupCommandBuffer(currentContext.idx);
+		//
+		deleteStagingImages.push_back(
+			{
+				.image = stagingTexture.image,
+				.allocation = stagingTexture.allocation,
+				.imageView = VK_NULL_HANDLE,
+				.sampler = VK_NULL_HANDLE
+			}
+		);
+		// mip maps
 		if (texture->isUseMipMap() == true) {
-			//
-			auto textureWidth = texture->getTextureWidth();
-			auto textureHeight = texture->getTextureHeight();
-			for (uint32_t i = 1; i < mipLevels; i++) {
-				const VkImageBlit imageBlit = {
+			// mip levels
+			auto textureMipMaps = texture->getMipMapTextures(false);
+			auto level = 1;
+			for (auto& textureMipMap: textureMipMaps) {
+				//
+				struct texture_type mipMapStagingTexture {};
+				mipMapStagingTexture.width = textureMipMap.width;
+				mipMapStagingTexture.height = textureMipMap.height;
+				mipMapStagingTexture.type = texture_type::TYPE_TEXTURE;
+				mipMapStagingTexture.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+
+				// upload mip map texture
+				prepareMipMapTextureImage(
+					currentContext.idx,
+					&mipMapStagingTexture,
+					VK_IMAGE_TILING_LINEAR,
+					VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
+					VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
+					texture,
+					textureMipMap,
+					{ THSVS_ACCESS_TRANSFER_READ, THSVS_ACCESS_NONE },
+					THSVS_IMAGE_LAYOUT_OPTIMAL
+				);
+
+				// copy mip map staging texture to final texture at current mip map level
+				VkImageCopy imageCopy = {
 					.srcSubresource = {
 						.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
 						.mipLevel = 0,
 						.baseArrayLayer = 0,
 						.layerCount = 1
 					},
-					.srcOffsets = {
-						{
-							.x = 0,
-							.y = 0,
-							.z = 0
-						},
-						{
-							.x = textureWidth,
-							.y = textureHeight,
-							.z = 1
-						}
+					.srcOffset = {
+						.x = 0,
+						.y = 0,
+						.z = 0
 					},
 					.dstSubresource = {
 						.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-						.mipLevel = i,
+						.mipLevel = static_cast<uint32_t>(level),
 						.baseArrayLayer = 0,
 						.layerCount = 1
 					},
-					.dstOffsets = {
-						{
-							.x = 0,
-							.y = 0,
-							.z = 0
-						},
-						{
-							.x = int32_t(textureWidth >> i),
-							.y = int32_t(textureHeight >> i),
-							.z = 1
-						}
+					.dstOffset = {
+						.x = 0,
+						.y = 0,
+						.z = 0
+					},
+					.extent = {
+						.width = mipMapStagingTexture.width,
+						.height = mipMapStagingTexture.height,
+						.depth = 1
 					}
 				};
 				prepareSetupCommandBuffer(currentContext.idx);
-				vkCmdBlitImage(
+				vkCmdCopyImage(
 					currentContext.setupCommandInUse,
-					stagingTexture.image,
+					mipMapStagingTexture.image,
 					VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
 					textureType.image,
 					VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 					1,
-					&imageBlit,
-					VK_FILTER_LINEAR
+					&imageCopy
 				);
 				finishSetupCommandBuffer(currentContext.idx);
+				//
+				deleteStagingImages.push_back(
+					{
+						.image = mipMapStagingTexture.image,
+						.allocation = mipMapStagingTexture.allocation,
+						.imageView = VK_NULL_HANDLE,
+						.sampler = VK_NULL_HANDLE
+					}
+				);
+				//
+				level++;
 			}
 		}
 
+		//
 		setImageLayout(
 			currentContext.idx,
 			&textureType,
@@ -4760,14 +4898,16 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 
 		// mark for deletion
 		deleteMutex.lock();
-		deleteImages.push_back(
-			{
-				.image = stagingTexture.image,
-				.allocation = stagingTexture.allocation,
-				.imageView = VK_NULL_HANDLE,
-				.sampler = VK_NULL_HANDLE
-			}
-		);
+		for (auto& deleteStagingImage: deleteStagingImages) {
+			deleteImages.push_back(
+				{
+					.image = deleteStagingImage.image,
+					.allocation = deleteStagingImage.allocation,
+					.imageView = VK_NULL_HANDLE,
+					.sampler = VK_NULL_HANDLE
+				}
+			);
+		}
 		deleteMutex.unlock();
 	} else
 	if ((textureFormatProperties.linearTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) == VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) {
@@ -4860,7 +5000,7 @@ void VKRenderer::uploadCubeMapSingleTexture(int contextIdx, texture_type* cubema
 	auto& cubemapTextureTypeRef = *cubemapTextureType;
 
 	//
-	const VkFormat textureFormat = texture->getRGBDepthBitsPerPixel() == 32?VK_FORMAT_R8G8B8A8_UNORM:VK_FORMAT_R8G8B8A8_UNORM;
+	const VkFormat textureFormat = VK_FORMAT_R8G8B8A8_UNORM;
 	VkFormatProperties textureFormatProperties;
 	VkResult err;
 	vkGetPhysicalDeviceFormatProperties(physicalDevice, textureFormat, &textureFormatProperties);

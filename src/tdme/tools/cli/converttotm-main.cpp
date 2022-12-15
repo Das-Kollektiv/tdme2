@@ -5,7 +5,13 @@
 #include <tdme/application/Application.h>
 #include <tdme/engine/fileio/models/ModelReader.h>
 #include <tdme/engine/fileio/models/TMWriter.h>
+#include <tdme/engine/fileio/textures/TextureReader.h>
+#include <tdme/engine/model/Material.h>
+#include <tdme/engine/model/Model.h>
+#include <tdme/engine/model/PBRMaterialProperties.h>
+#include <tdme/engine/model/SpecularMaterialProperties.h>
 #include <tdme/engine/Engine.h>
+#include <tdme/engine/Texture.h>
 #include <tdme/engine/Version.h>
 #include <tdme/os/filesystem/FileSystem.h>
 #include <tdme/os/filesystem/FileSystemInterface.h>
@@ -16,7 +22,13 @@
 using tdme::application::Application;
 using tdme::engine::fileio::models::ModelReader;
 using tdme::engine::fileio::models::TMWriter;
+using tdme::engine::fileio::textures::TextureReader;
+using tdme::engine::model::Material;
+using tdme::engine::model::Model;
+using tdme::engine::model::PBRMaterialProperties;
+using tdme::engine::model::SpecularMaterialProperties;
 using tdme::engine::Engine;
+using tdme::engine::Texture;
 using tdme::engine::Version;
 using tdme::os::filesystem::FileSystem;
 using tdme::os::filesystem::FileSystemInterface;
@@ -68,6 +80,9 @@ public:
 	// overridden methods
 	void display() override {
 		try {
+			//
+			auto scaleTo = 1024.0f;
+			//
 			for (auto inputFileName: modelFileNames) {
 				auto outputFileName = StringTools::substring(inputFileName, 0, inputFileName.rfind('.')) + ".tm";
 				try {
@@ -76,6 +91,103 @@ public:
 						FileSystem::getInstance()->getPathName(inputFileName),
 						FileSystem::getInstance()->getFileName(inputFileName)
 					);
+					for (auto& materialIt: model->getMaterials()) {
+						auto material = materialIt.second;
+						auto specularMaterialProperties = material->getSpecularMaterialProperties();
+						// specular material
+						if (specularMaterialProperties != nullptr) {
+							// diffuse texture
+							{
+								auto texture = specularMaterialProperties->getDiffuseTexture();
+								if (texture != nullptr) {
+									auto widthScale = scaleTo / texture->getTextureWidth();
+									auto heightScale = scaleTo / texture->getTextureHeight();
+									auto scale = Math::min(widthScale, heightScale);
+									if (scale < 1.0f) {
+										auto scaledTexture = TextureReader::scale(texture, texture->getTextureWidth() * scale, texture->getTextureHeight() * scale, string());
+										specularMaterialProperties->setDiffuseTexture(scaledTexture);
+										scaledTexture->releaseReference();
+									}
+								}
+							}
+							// spec texture
+							{
+								auto texture = specularMaterialProperties->getSpecularTexture();
+								if (texture != nullptr) {
+									auto widthScale = scaleTo / texture->getTextureWidth();
+									auto heightScale = scaleTo / texture->getTextureHeight();
+									auto scale = Math::min(widthScale, heightScale);
+									if (scale < 1.0f) {
+										auto scaledTexture = TextureReader::scale(texture, texture->getTextureWidth() * scale, texture->getTextureHeight() * scale, string());
+										specularMaterialProperties->setSpecularTexture(scaledTexture);
+										scaledTexture->releaseReference();
+									}
+								}
+							}
+							// normal texture
+							{
+								auto texture = specularMaterialProperties->getNormalTexture();
+								if (texture != nullptr) {
+									auto widthScale = scaleTo / texture->getTextureWidth();
+									auto heightScale = scaleTo / texture->getTextureHeight();
+									auto scale = Math::min(widthScale, heightScale);
+									if (scale < 1.0f) {
+										auto scaledTexture = TextureReader::scale(texture, texture->getTextureWidth() * scale, texture->getTextureHeight() * scale, string());
+										specularMaterialProperties->setNormalTexture(scaledTexture);
+										scaledTexture->releaseReference();
+									}
+								}
+							}
+						}
+						//
+						auto pbrMaterialProperties = material->getPBRMaterialProperties();
+						// pbr material
+						if (pbrMaterialProperties != nullptr) {
+							// base texture
+							{
+								auto texture = pbrMaterialProperties->getBaseColorTexture();
+								if (texture != nullptr) {
+									auto widthScale = scaleTo / texture->getTextureWidth();
+									auto heightScale = scaleTo / texture->getTextureHeight();
+									auto scale = Math::min(widthScale, heightScale);
+									if (scale < 1.0f) {
+										auto scaledTexture = TextureReader::scale(texture, texture->getTextureWidth() * scale, texture->getTextureHeight() * scale, string());
+										pbrMaterialProperties->setBaseColorTexture(scaledTexture);
+										scaledTexture->releaseReference();
+									}
+								}
+							}
+							// metallic roughness texture
+							{
+								auto texture = pbrMaterialProperties->getMetallicRoughnessTexture();
+								if (texture != nullptr) {
+									auto widthScale = scaleTo / texture->getTextureWidth();
+									auto heightScale = scaleTo / texture->getTextureHeight();
+									auto scale = Math::min(widthScale, heightScale);
+									if (scale < 1.0f) {
+										auto scaledTexture = TextureReader::scale(texture, texture->getTextureWidth() * scale, texture->getTextureHeight() * scale, string());
+										pbrMaterialProperties->setMetallicRoughnessTexture(scaledTexture);
+										scaledTexture->releaseReference();
+									}
+								}
+							}
+							// normal texture
+							{
+								auto texture = pbrMaterialProperties->getNormalTexture();
+								if (texture != nullptr) {
+									auto widthScale = scaleTo / texture->getTextureWidth();
+									auto heightScale = scaleTo / texture->getTextureHeight();
+									auto scale = Math::min(widthScale, heightScale);
+									if (scale < 1.0f) {
+										auto scaledTexture = TextureReader::scale(texture, texture->getTextureWidth() * scale, texture->getTextureHeight() * scale, string());
+										pbrMaterialProperties->setNormalTexture(scaledTexture);
+										scaledTexture->releaseReference();
+									}
+								}
+							}
+						}
+					}
+					//
 					Console::println("Exporting model: " + outputFileName);
 					TMWriter::write(
 						model,
