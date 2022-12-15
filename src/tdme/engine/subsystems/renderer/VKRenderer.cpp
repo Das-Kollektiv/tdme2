@@ -4844,7 +4844,7 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 					},
 					.dstSubresource = {
 						.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-						.mipLevel = level,
+						.mipLevel = static_cast<uint32_t>(level),
 						.baseArrayLayer = 0,
 						.layerCount = 1
 					},
