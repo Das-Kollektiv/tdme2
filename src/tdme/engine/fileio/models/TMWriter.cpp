@@ -7,7 +7,7 @@
 
 #include <tdme/tdme.h>
 #include <tdme/application/Application.h>
-#include <tdme/engine/fileio/textures/BZ7TextureWriter.h>
+#include <tdme/engine/fileio/textures/BC7TextureWriter.h>
 #include <tdme/engine/fileio/textures/PNGTextureWriter.h>
 #include <tdme/engine/Texture.h>
 #include <tdme/engine/model/Animation.h>
@@ -47,7 +47,7 @@ using std::vector;
 using tdme::application::Application;
 using tdme::engine::fileio::models::TMWriter;
 using tdme::engine::fileio::models::TMWriterOutputStream;
-using tdme::engine::fileio::textures::BZ7TextureWriter;
+using tdme::engine::fileio::textures::BC7TextureWriter;
 using tdme::engine::fileio::textures::PNGTextureWriter;
 using tdme::engine::Texture;
 using tdme::engine::model::Animation;
@@ -147,27 +147,27 @@ void TMWriter::writeEmbeddedTextures(TMWriterOutputStream* os, Model* m) {
 		*/
 		//
 		/*
-		os->writeByte(2); // BZ7
-		vector<uint8_t> bz7Data;
+		os->writeByte(2); // BC7
+		vector<uint8_t> bc7Data;
 		os->writeInt(texture->getWidth());
 		os->writeInt(texture->getHeight());
 		os->writeInt(texture->getTextureWidth());
 		os->writeInt(texture->getTextureHeight());
 		os->writeByte(texture->getRGBDepthBitsPerPixel());
-		BZ7TextureWriter::write(texture->getTextureWidth(), texture->getTextureHeight(), texture->getRGBDepthBitsPerPixel() / 8, texture->getRGBTextureData(), bz7Data);
-		os->writeInt(bz7Data.size());
-		os->writeUInt8tArray(bz7Data);
+		BC7TextureWriter::write(texture->getTextureWidth(), texture->getTextureHeight(), texture->getRGBDepthBitsPerPixel() / 8, texture->getRGBTextureData(), bc7Data);
+		os->writeInt(bc7Data.size());
+		os->writeUInt8tArray(bc7Data);
 		*/
-		os->writeByte(3); // BZ7 with mip maps
-		vector<uint8_t> bz7Data;
+		os->writeByte(3); // BC7 with mip maps
+		vector<uint8_t> bc7Data;
 		os->writeInt(texture->getWidth());
 		os->writeInt(texture->getHeight());
 		os->writeInt(texture->getTextureWidth());
 		os->writeInt(texture->getTextureHeight());
 		os->writeByte(texture->getRGBDepthBitsPerPixel());
-		BZ7TextureWriter::write(texture->getTextureWidth(), texture->getTextureHeight(), texture->getRGBDepthBitsPerPixel() / 8, texture->getRGBTextureData(), bz7Data);
-		os->writeInt(bz7Data.size());
-		os->writeUInt8tArray(bz7Data);
+		BC7TextureWriter::write(texture->getTextureWidth(), texture->getTextureHeight(), texture->getRGBDepthBitsPerPixel() / 8, texture->getRGBTextureData(), bc7Data);
+		os->writeInt(bc7Data.size());
+		os->writeUInt8tArray(bc7Data);
 		auto mipMapTextures = texture->getMipMapTextures(true);
 		os->writeByte(mipMapTextures.size());
 		for (auto& mipMapTexture: mipMapTextures) {
