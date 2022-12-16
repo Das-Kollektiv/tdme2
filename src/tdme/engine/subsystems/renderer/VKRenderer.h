@@ -117,7 +117,7 @@ private:
 		struct reusable_buffer {
 			bool memoryMappable { false };
 			int64_t frameUsedLast { -1 };
-			VkBuffer buf { VK_NULL_HANDLE };
+			VkBuffer buffer { VK_NULL_HANDLE };
 			VmaAllocation allocation { VK_NULL_HANDLE };
 			uint32_t size { 0 };
 		};
