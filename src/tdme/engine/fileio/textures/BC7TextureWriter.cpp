@@ -1,4 +1,4 @@
-#include <tdme/engine/fileio/textures/BZ7TextureWriter.h>
+#include <tdme/engine/fileio/textures/BC7TextureWriter.h>
 
 #include <ext/bc7enc_rdo/bc7enc.h>
 
@@ -15,14 +15,14 @@ using std::string;
 using std::to_string;
 using std::vector;
 
-using tdme::engine::fileio::textures::BZ7TextureWriter;
+using tdme::engine::fileio::textures::BC7TextureWriter;
 
 using tdme::engine::Texture;
 using tdme::math::Math;
 using tdme::utilities::ByteBuffer;
 using tdme::utilities::Console;
 
-bool BZ7TextureWriter::write(int width, int height, int bytesPerPixel, const ByteBuffer& textureByteBuffer, vector<uint8_t>& bz7Data) {
+bool BC7TextureWriter::write(int width, int height, int bytesPerPixel, const ByteBuffer& textureByteBuffer, vector<uint8_t>& bc7Data) {
 	//
 	bc7enc_compress_block_params bc7encParameters;
 	bc7encParameters.m_uber_level = BC7ENC_MAX_UBER_LEVEL;
@@ -32,7 +32,7 @@ bool BZ7TextureWriter::write(int width, int height, int bytesPerPixel, const Byt
 	//
 	auto xBlocks = static_cast<int>(Math::ceil(width / 4.0f));
 	auto yBlocks = static_cast<int>(Math::ceil(height / 4.0f));
-	bz7Data.resize(xBlocks * yBlocks * 16);
+	bc7Data.resize(xBlocks * yBlocks * 16);
 
 	//
 	for (auto yBlock = 0; yBlock < yBlocks; yBlock++) {
@@ -64,7 +64,7 @@ bool BZ7TextureWriter::write(int width, int height, int bytesPerPixel, const Byt
 			}
 			//
 			bc7enc_compress_block_init();
-			bc7enc_compress_block(&bz7Data.data()[yBlock * xBlocks * 16 + xBlock * 16], rgbaBlockPixels.data(), &bc7encParameters);
+			bc7enc_compress_block(&bc7Data.data()[yBlock * xBlocks * 16 + xBlock * 16], rgbaBlockPixels.data(), &bc7encParameters);
 		}
 	}
 

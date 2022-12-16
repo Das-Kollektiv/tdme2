@@ -1,4 +1,4 @@
-#include <tdme/engine/fileio/textures/BZ7TextureReader.h>
+#include <tdme/engine/fileio/textures/BC7TextureReader.h>
 
 #include <array>
 #include <string>
@@ -11,11 +11,11 @@
 using std::array;
 using std::string;
 
-using tdme::engine::fileio::textures::BZ7TextureReader;
+using tdme::engine::fileio::textures::BC7TextureReader;
 
 using tdme::utilities::ByteBuffer;
 
-bool BZ7TextureReader::read(int width, int height, int bytesPerPixel, const vector<uint8_t>& bz7Data, ByteBuffer& textureByteBuffer) {
+bool BC7TextureReader::read(int width, int height, int bytesPerPixel, const vector<uint8_t>& bc7Data, ByteBuffer& textureByteBuffer) {
 	//
 	auto xBlocks = static_cast<int>(Math::ceil(width / 4.0f));
 	auto yBlocks = static_cast<int>(Math::ceil(height / 4.0f));
@@ -28,7 +28,7 @@ bool BZ7TextureReader::read(int width, int height, int bytesPerPixel, const vect
 		for (auto xBlock = 0; xBlock < xBlocks; xBlock++) {
 			//
 			array<bc7decomp::color_rgba, 4 * 4> rgbaBlockPixels { 0 };
-			bc7decomp::unpack_bc7(&bz7Data.data()[yBlock * xBlocks * 16 + xBlock * 16], rgbaBlockPixels.data());
+			bc7decomp::unpack_bc7(&bc7Data.data()[yBlock * xBlocks * 16 + xBlock * 16], rgbaBlockPixels.data());
 			//
 			auto blockPixelIdx = 0;
 			auto xBlockOffset = xBlock * 4;

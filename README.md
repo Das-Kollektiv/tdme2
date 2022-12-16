@@ -53,7 +53,7 @@
         - TDME Model file format
             - this is a much more efficient model file format for TDME
             - can also be written
-            - can use external or embedded PNG and embedded BZ7 textures
+            - can use external or embedded PNG and embedded BC7 textures
     - objects/entity types
         - 3d model based objects with
             - animations
