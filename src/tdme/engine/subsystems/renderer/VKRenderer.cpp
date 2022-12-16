@@ -2032,7 +2032,7 @@ void VKRenderer::finishFrame()
 				// mark staging buffer for deletion when finishing frame
 				deleteBuffers.push_back(
 					{
-						.buffer = reusableBuffer.buf,
+						.buffer = reusableBuffer.buffer,
 						.allocation = reusableBuffer.allocation
 					}
 				);
@@ -4752,10 +4752,10 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 		{
 			//
 			auto bc7TextureData = texture->getBC7TextureData();
-			VkBuffer buf { VK_NULL_HANDLE };
+			VkBuffer buffer { VK_NULL_HANDLE };
 			VmaAllocation allocation { VK_NULL_HANDLE };
 			VmaAllocationInfo allocationInfo = {};
-			createBuffer(bc7TextureData.getCapacity(), VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, buf, allocation, allocationInfo);
+			createBuffer(bc7TextureData.getCapacity(), VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, buffer, allocation, allocationInfo);
 			void* data;
 			vmaMapMemory(vmaAllocator, allocation, &data);
 			vmaMemCpy(allocation, bc7TextureData.getBuffer(), bc7TextureData.getCapacity());
@@ -4787,7 +4787,7 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 			// Copy mip levels from staging buffer
 			vkCmdCopyBufferToImage(
 				currentContext.setupCommandInUse,
-				buf,
+				buffer,
 				textureType.image,
 				VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 				1,
@@ -4798,7 +4798,7 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 			//
 			vmaFlushAllocation(vmaAllocator, allocation, 0, VK_WHOLE_SIZE);
 			vmaUnmapMemory(vmaAllocator, allocation);
-			vmaDestroyBuffer(vmaAllocator, buf, allocation);
+			vmaDestroyBuffer(vmaAllocator, buffer, allocation);
 		}
 
 
@@ -4810,10 +4810,10 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 			for (auto& textureMipMap: textureMipMaps) {
 				//
 				auto& bc7TextureData = textureMipMap.textureData;
-				VkBuffer buf { VK_NULL_HANDLE };
+				VkBuffer buffer { VK_NULL_HANDLE };
 				VmaAllocation allocation { VK_NULL_HANDLE };
 				VmaAllocationInfo allocationInfo = {};
-				createBuffer(bc7TextureData.getCapacity(), VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, buf, allocation, allocationInfo);
+				createBuffer(bc7TextureData.getCapacity(), VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, buffer, allocation, allocationInfo);
 				void* data;
 				vmaMapMemory(vmaAllocator, allocation, &data);
 				vmaMemCpy(allocation, bc7TextureData.getBuffer(), bc7TextureData.getCapacity());
@@ -4845,7 +4845,7 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 				// Copy mip levels from staging buffer
 				vkCmdCopyBufferToImage(
 					currentContext.setupCommandInUse,
-					buf,
+					buffer,
 					textureType.image,
 					VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 					1,
@@ -4856,7 +4856,7 @@ void VKRenderer::uploadTexture(int contextIdx, Texture* texture)
 				//
 				vmaFlushAllocation(vmaAllocator, allocation, 0, VK_WHOLE_SIZE);
 				vmaUnmapMemory(vmaAllocator, allocation);
-				vmaDestroyBuffer(vmaAllocator, buf, allocation);
+				vmaDestroyBuffer(vmaAllocator, buffer, allocation);
 
 				//
 				level++;
@@ -5183,10 +5183,10 @@ void VKRenderer::uploadCubeMapSingleTexture(int contextIdx, texture_type* cubema
 
 		//
 		auto bc7TextureData = texture->getBC7TextureData();
-		VkBuffer buf { VK_NULL_HANDLE };
+		VkBuffer buffer { VK_NULL_HANDLE };
 		VmaAllocation allocation { VK_NULL_HANDLE };
 		VmaAllocationInfo allocationInfo = {};
-		createBuffer(bc7TextureData.getCapacity(), VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, buf, allocation, allocationInfo);
+		createBuffer(bc7TextureData.getCapacity(), VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, buffer, allocation, allocationInfo);
 		void* data;
 		vmaMapMemory(vmaAllocator, allocation, &data);
 		vmaMemCpy(allocation, bc7TextureData.getBuffer(), bc7TextureData.getCapacity());
@@ -5218,7 +5218,7 @@ void VKRenderer::uploadCubeMapSingleTexture(int contextIdx, texture_type* cubema
 		// Copy mip levels from staging buffer
 		vkCmdCopyBufferToImage(
 			currentContext.setupCommandInUse,
-			buf,
+			buffer,
 			cubemapTextureTypeRef.image,
 			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 			1,
@@ -5229,7 +5229,7 @@ void VKRenderer::uploadCubeMapSingleTexture(int contextIdx, texture_type* cubema
 		//
 		vmaFlushAllocation(vmaAllocator, allocation, 0, VK_WHOLE_SIZE);
 		vmaUnmapMemory(vmaAllocator, allocation);
-		vmaDestroyBuffer(vmaAllocator, buf, allocation);
+		vmaDestroyBuffer(vmaAllocator, buffer, allocation);
 	} else
 	if ((textureFormatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) == VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) {
 		//
@@ -6254,7 +6254,7 @@ inline VkBuffer VKRenderer::getBindBufferObjectInternal(int32_t bufferObjectId, 
 	auto buffer = bufferObject->bindBuffer;
 	buffer->frameUsedLast = frame;
 	size = buffer->size;
-	return buffer->buf;
+	return buffer->buffer;
 }
 
 inline VKRenderer::buffer_object_type* VKRenderer::getBufferObjectInternal(int32_t bufferObjectId) {
@@ -6347,7 +6347,7 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 			for (auto& reusableBufferCandidate: buffer->buffers) {
 				if (frame >= reusableBufferCandidate.frameUsedLast + 10) {
 					if (reusableBufferCandidate.memoryMappable == true) vmaUnmapMemory(vmaAllocator, reusableBufferCandidate.allocation);
-					vmaDestroyBuffer(vmaAllocator, reusableBufferCandidate.buf, reusableBufferCandidate.allocation);
+					vmaDestroyBuffer(vmaAllocator, reusableBufferCandidate.buffer, reusableBufferCandidate.allocation);
 					buffersToRemove.push_back(i - buffersToRemove.size());
 				}
 				i++;
@@ -6397,7 +6397,7 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 	// create buffer if not yet done
 	if (reusableBuffer->size == 0) {
 		VmaAllocationInfo allocationInfo = {};
-		createBuffer(size, usage, buffer->useGPUMemory == true?VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT:VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, reusableBuffer->buf, reusableBuffer->allocation, allocationInfo);
+		createBuffer(size, usage, buffer->useGPUMemory == true?VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT:VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, reusableBuffer->buffer, reusableBuffer->allocation, allocationInfo);
 		reusableBuffer->size = size;
 
 		VkMemoryPropertyFlags memoryFlags;
@@ -6444,7 +6444,7 @@ inline void VKRenderer::uploadBufferObjectInternal(int contextIdx, buffer_object
 			.dstOffset = 0,
 			.size = static_cast<VkDeviceSize>(size)
 		};
-		vkCmdCopyBuffer(contexts[contextIdx].setupCommandInUse, stagingBuffer, reusableBuffer->buf, 1, &copyRegion);
+		vkCmdCopyBuffer(contexts[contextIdx].setupCommandInUse, stagingBuffer, reusableBuffer->buffer, 1, &copyRegion);
 
 		//
 		finishSetupCommandBuffer(contextIdx);
