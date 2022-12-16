@@ -41,6 +41,7 @@
   - https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_lights_punctual/README.md#range-property
   - https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_materials_pbrSpecularGlossiness/examples/convert-between-workflows/js/three.pbrUtilities.js#L34
   - https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_lights_punctual
+  - https://github.com/KhronosGroup/Vulkan-Samples/blob/master/samples/performance/texture_compression_basisu/texture_compression_basisu.cpp
   - https://github.com/SaschaWillems/Vulkan
   - https://github.com/SaschaWillems/Vulkan-glTF-PBR
   - https://github.com/erich666/GraphicsGems/tree/master/gemsiv/euler_angle
