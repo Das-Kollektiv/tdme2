@@ -241,18 +241,17 @@ ByteBuffer Texture::generateMipMap(int textureWidth, int textureHeight, int byte
 	auto generatedTextureWidth = textureWidth / 2;
 	auto generatedTextureHeight = textureHeight / 2;
 	auto generatedTextureByteBuffer = ByteBuffer(generatedTextureWidth * generatedTextureHeight * bytesPerPixel);
-	auto atlasTextureSize = textureWidth / atlasSize;
 	auto materialTextureWidth = textureWidth / atlasSize;
 	auto materialTextureHeight = textureHeight / atlasSize;
 	auto materialTextureBytesPerPixel = bytesPerPixel;
 	for (auto y = 0; y < generatedTextureHeight; y++)
 	for (auto x = 0; x < generatedTextureWidth; x++) {
-		auto atlasTextureIdxX = (x * 2) / atlasTextureSize;
-		auto atlasTextureIdxY = (y * 2) / atlasTextureSize;
-		auto materialTextureX = (x * 2) - (atlasTextureIdxX * atlasTextureSize);
-		auto materialTextureY = (y * 2) - (atlasTextureIdxY * atlasTextureSize);
-		auto materialTextureXFloat = static_cast<float>(materialTextureX) / static_cast<float>(atlasTextureSize);
-		auto materialTextureYFloat = static_cast<float>(materialTextureY) / static_cast<float>(atlasTextureSize);
+		auto atlasTextureIdxX = (x * 2) / materialTextureWidth;
+		auto atlasTextureIdxY = (y * 2) / materialTextureHeight;
+		auto materialTextureX = (x * 2) - (atlasTextureIdxX * materialTextureWidth);
+		auto materialTextureY = (y * 2) - (atlasTextureIdxY * materialTextureHeight);
+		auto materialTextureXFloat = static_cast<float>(materialTextureX) / static_cast<float>(materialTextureWidth);
+		auto materialTextureYFloat = static_cast<float>(materialTextureY) / static_cast<float>(materialTextureHeight);
 		{
 			auto materialSamples = 0;
 			auto materialTextureXInt = static_cast<int>(materialTextureXFloat * static_cast<float>(materialTextureWidth));
